@@ -16,14 +16,14 @@ include $(INCLUDE_DIR)/package.mk
 define Package/tunneldigger
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=libnl-tiny
+  DEPENDS:=+libnl-tiny
   TITLE:=L2TPv3 tunnel broker client
 endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	mv $(PKG_BUILD_DIR)/client/* $(PKG_BUILD_DIR)
-	sed -i s/-lnl /-lnl-tiny /g $(PKG_BUILD_DIR)/Makefile
+	sed -i s/-lnl/-lnl-tiny/g $(PKG_BUILD_DIR)/Makefile
 endef
 
 define Package/tunneldigger/install
