@@ -22,7 +22,8 @@ endef
 
 TARGET_CFLAGS += \
 	-I$(STAGING_DIR)/usr/include/libnl-tiny \
-	-I$(STAGING_DIR)/usr/include
+	-I$(STAGING_DIR)/usr/include \
+	-DLIBNL_TINY
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
