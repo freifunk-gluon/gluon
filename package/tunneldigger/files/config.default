@@ -1,0 +1,6 @@
+config broker
+	option address 'x.y.z.w'
+	option port 53
+	option uuid 'abcd'
+	option interface 'l2tp0'
+

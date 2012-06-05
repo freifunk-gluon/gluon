@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+START=40
+STOP=90
+
+config_cb() {
+	local cfg="$CONFIG_SECTION"
+	config_get configname "$cfg" TYPE
+
+	case "$configname" in
+		broker)
+			config_get address "$cfg" address
+			config_get port "$cfg" port
+			config_get uuid "$cfg" uuid
+			config_get interface "$cfg" interface
+			/usr/bin/tunneldigger -u ${uuid} -l 0.0.0.0 -b ${address} -p ${port} -i ${interface} &
+		;;
+	esac
+}
+
+start() 
+{
+	config_load tunneldigger
+}
+
+stop() {
+	killall tunneldigger
+}
+
