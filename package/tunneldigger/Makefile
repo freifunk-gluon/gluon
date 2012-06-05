@@ -20,6 +20,10 @@ define Package/tunneldigger
   TITLE:=L2TPv3 tunnel broker client
 endef
 
+TARGET_CFLAGS += \
+	-I$(STAGING_DIR)/usr/include/libnl-tiny \
+	-I$(STAGING_DIR)/usr/include
+
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	mv $(PKG_BUILD_DIR)/client/* $(PKG_BUILD_DIR)
