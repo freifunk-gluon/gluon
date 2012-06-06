@@ -36,8 +36,6 @@ define Package/tunneldigger/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/l2tp_client $(1)/usr/bin/tunneldigger
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/tunneldigger.init $(1)/etc/init.d/tunneldigger
-	$(INSTALL_DIR) $(1)/lib/tunneldigger
-	$(INSTALL_BIN) ./files/iface_setup.sh $(1)/lib/tunneldigger/iface_setup.sh
 endef
 
 $(eval $(call BuildPackage,tunneldigger))
