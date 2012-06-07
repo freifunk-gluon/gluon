@@ -1,6 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=40
-STOP=90
+START=90
 
 config_cb() {
 	local cfg="$CONFIG_SECTION"
