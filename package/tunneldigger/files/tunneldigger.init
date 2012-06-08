@@ -1,6 +1,8 @@
 #!/bin/sh /etc/rc.common
 START=90
 
+tunnel_id=1
+
 config_cb() {
 	local cfg="$CONFIG_SECTION"
 	config_get configname "$cfg" TYPE
@@ -11,7 +13,8 @@ config_cb() {
 			config_get port "$cfg" port
 			config_get uuid "$cfg" uuid
 			config_get interface "$cfg" interface
-			/usr/bin/tunneldigger -u ${uuid} -l 0.0.0.0 -b ${address} -p ${port} -i ${interface} &
+			/usr/bin/tunneldigger -u ${uuid} -l 0.0.0.0 -b ${address} -p ${port} -i ${interface} -t ${tunnel_id} &
+			let tunnel_id++
 		;;
 	esac
 }
