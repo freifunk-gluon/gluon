@@ -1,8 +1,7 @@
 config broker
-	option address 'x.y.z.w'
-	list port 8942
-	list port 53
-	list port 123
+	list address 'x.y.z.w:8942'
+	list address 'x.y.z.w:53'
+	list address 'x.y.z.w:123'
 	option uuid 'abcd'
 	option interface 'l2tp0'
 

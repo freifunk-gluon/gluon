@@ -9,14 +9,13 @@ config_cb() {
 
 	case "$configname" in
 		broker)
-			config_get address "$cfg" address
-			config_get ports "$cfg" port
+			config_get addresses "$cfg" address
 			config_get uuid "$cfg" uuid
 			config_get interface "$cfg" interface
 			
 			local broker_opts=""
-			for port in $ports; do
-			  broker_opts="${broker_opts} -b ${address}:${port}"
+			for address in $addresses; do
+			  broker_opts="${broker_opts} -b ${address}"
 			done
 			
 			/usr/bin/tunneldigger -u ${uuid} -i ${interface} -t ${tunnel_id} ${broker_opts} &
