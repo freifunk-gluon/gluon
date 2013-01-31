@@ -15,7 +15,7 @@ define Package/gluon-core
 endef
 
 define Package/gluon-core/description
-	The core of the Gluon community wifi mesh firmware framework
+	Gluon community wifi mesh firmware framework: core
 endef
 
 define Build/Prepare
