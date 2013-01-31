@@ -1,0 +1,6 @@
+#!/bin/sh
+
+
+if [ "$(md5sum /etc/avahi/avahi-daemon.conf | cut -d ' ' -f 1)" = e63b3d69311b496c0a06555ea04bc20b ]; then
+	cp /rom/etc/avahi/avahi-daemon.conf /etc/avahi/avahi-daemon.conf
+fi

@@ -1,0 +1,69 @@
+#!/bin/sh
+
+
+UPGRADE_DIR=/lib/gluon/upgrade
+VERSION_DIR=/lib/gluon/version
+
+
+version_of() {
+	opkg status "gluon-$1" | grep '^Version: ' | cut -d' ' -f 2
+}
+
+oldversion_of() {
+	oldversion="$(cat "$VERSION_DIR"/"$1" 2>/dev/null)"
+
+	# Legacy support
+	if [ -z "$oldversion" ]; then oldversion="$(cat /etc/.freifunk_version_keep 2>/dev/null)"; fi
+	if [ -z "$oldversion" ]; then oldversion="$(cat /etc/.lff_version_keep 2>/dev/null)"; fi
+	if [ -z "$oldversion" ]; then oldversion="$(cat /etc/.kff_version_keep 2>/dev/null)"; fi
+
+	echo "$oldversion"
+}
+
+do_dir() {
+	if [ -d "$1" ]; then
+		local s
+		for s in "$1"/*; do "$s"; done
+	fi
+}
+
+
+version="$(version_of gluon-core)"
+
+oldversion="$(cat "$VERSION_FILE" 2>/dev/null)"
+if [ -z "$oldversion" ]; then oldversion="$(cat "$VERSION_FILE_FREIFUNK" 2>/dev/null)"; fi
+if [ -z "$oldversion" ]; then oldversion="$(cat "$VERSION_FILE_LFF" 2>/dev/null)"; fi
+if [ -z "$oldversion" ]; then oldversion="$(cat "$VERSION_FILE_KFF" 2>/dev/null)"; fi
+
+(
+	cd "$UPGRADE_DIR"
+
+	for component in *; do (
+		local version="$(version_of "$component")"
+		if [ -z "$version" ]; then continue; fi
+
+		cd "$component"
+
+		local oldversion="$(oldversion_of "$component")"
+		if [ -z "$oldversion" ]; then
+			do_dir initial
+		else
+			local v
+
+			for v in *; do
+				if [ "$v" = initial -o "$v" = invariant -o "$v" = version ]; then continue; fi
+
+				# The return value of opkg compare-versions is negated
+				if ! opkg compare-versions "$v" '>>' "$oldversion"; then
+					do_dir "$v"
+				fi
+			done
+		fi
+
+		do_dir invariant
+
+		echo "$version" > "$VERSION_DIR"/"$component"
+	) done
+)
+
+rm -f "$VERSION_FILE_FREIFUNK" "$VERSION_FILE_LFF" "$VERSION_FILE_KFF"

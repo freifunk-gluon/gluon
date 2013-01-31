@@ -1,0 +1,40 @@
+#!/bin/sh
+
+. /lib/ar71xx.sh
+
+board="$(ar71xx_board_name)"
+
+case "$board" in
+tl-wdr3600|\
+tl-wdr4300)
+	macaddr="$(uci get wireless.radio1.macaddr)"
+
+	uci -q batch <<EOF
+		set system.led_wlan2g.trigger='netdev'
+		set system.led_wlan2g.dev='wlan0'
+		set system.led_wlan2g.mode='link'
+
+		set system.led_wlan5='led'
+		set system.led_wlan5.name='WLAN5'
+		set system.led_wlan5.sysfs='ath9k-phy1'
+		set system.led_wlan5.trigger='netdev'
+		set system.led_wlan5.dev='wlan1'
+		set system.led_wlan5.mode='link'
+EOF
+	;;
+*)
+	macaddr="$(uci get wireless.radio0.macaddr)"
+
+	uci -q batch <<EOF
+		set system.led_wlan.trigger='netdev'
+		set system.led_wlan.dev='wlan0'
+		set system.led_wlan.mode='link'
+EOF
+	;;
+esac
+
+uci -q batch <<EOF
+	set system.@system[0].hostname='Freifunk-${macaddr//:/}'
+	set system.@system[0].timezone='CET-1CEST,M3.5.0,M10.5.0/3'
+	commit system
+EOF

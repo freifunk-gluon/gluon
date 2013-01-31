@@ -1,0 +1,6 @@
+#!/bin/sh
+
+uci -q batch <<EOF
+set wireless.wifi_freifunk.ssid='luebeck.freifunk.net'
+commit wireless
+EOF
