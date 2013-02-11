@@ -12,7 +12,7 @@ define Package/gluon-mesh-batman-adv
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing
-  DEPENDS:=+gluon-core
+  DEPENDS:=+gluon-core +kmod-batman-adv
 endef
 
 define Package/gluon-mesh-batman-adv/description
