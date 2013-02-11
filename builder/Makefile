@@ -6,9 +6,11 @@
 # See /LICENSE for more information.
 #
 
-BUILDERDIR:=${CURDIR}
-GLUONDIR:=$(BUILDERDIR)/..
-TOPDIR:=$(GLUONDIR)/openwrt
+GLUONDIR:=${CURDIR}/..
+
+include ${CURDIR}/gluon.mk
+
+TOPDIR:=$(GLUON_OPENWRTDIR)
 LC_ALL:=C
 LANG:=C
 export TOPDIR LC_ALL LANG
@@ -28,7 +30,7 @@ include $(INCLUDE_DIR)/depends.mk
 
 include $(INCLUDE_DIR)/version.mk
 
-REVISION:=$(shell $(BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
+REVISION:=$(shell $(GLUON_BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
 export REVISION
 
 define Helptext
@@ -64,7 +66,7 @@ OPKG:= \
   IPKG_CONF_DIR="$(TOPDIR)/tmp" \
   IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
   $(STAGING_DIR_HOST)/bin/opkg \
-	-f $(BUILDERDIR)/repositories.conf \
+	-f $(GLUONDIR)/build/opkg-$(BOARD).conf \
 	--force-depends \
 	--force-overwrite \
 	--force-postinstall \
@@ -183,7 +185,7 @@ image:
 		$(if $(PROFILE),USER_PROFILE="$(PROFILE)") \
 		$(if $(FILES),USER_FILES="$(FILES)") \
 		$(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)") \
-		$(if $(BIN_DIR),BIN_DIR="$(BIN_DIR)") \
+		BIN_DIR="$(GLUON_IMAGEDIR)" \
 		$(if $(PACKAGE_DIR),PACKAGE_DIR="$(PACKAGE_DIR)"))
 
 .SILENT: help info image
