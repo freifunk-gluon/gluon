@@ -1,0 +1,9 @@
+[submodule "packages_gluon"]
+	path = packages_gluon
+	url = git://github.com/freifunk-gluon/packages.git
+[submodule "packages_openwrt"]
+	path = packages_openwrt
+	url = git://nbd.name/packages_12.09.git
+[submodule "openwrt"]
+	path = openwrt
+	url = git://nbd.name/attitude_adjustment.git
