@@ -15,7 +15,7 @@ LC_ALL:=C
 LANG:=C
 export TOPDIR LC_ALL LANG
 export OPENWRT_VERBOSE=s
-all: help
+all: image
 
 include $(TOPDIR)/include/host.mk
 
@@ -32,30 +32,6 @@ include $(INCLUDE_DIR)/version.mk
 
 REVISION:=$(shell $(GLUON_BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
 export REVISION
-
-define Helptext
-Available Commands:
-	help:	This help text
-	info:	Show a list of available target profiles
-	clean:	Remove images and temporary build files
-	image:	Build an image (see below for more information).
-
-Building images:
-	By default 'make image' will create an image with the default
-	target profile and package set. You can use the following parameters
-	to change that:
-
-	make image PROFILE="<profilename>" # override the default target profile
-	make image PACKAGES="<pkg1> [<pkg2> [<pkg3> ...]]" # include extra packages
-	make image FILES="<path>" # include extra files from <path>
-	make image BIN_DIR="<path>" # alternative output directory for the images
-
-endef
-$(eval $(call shexport,Helptext))
-
-help: FORCE
-	echo "$$$(call shvar,Helptext)"
-
 
 include $(INCLUDE_DIR)/package-ipkg.mk
 
@@ -90,16 +66,15 @@ endef
 
 include $(INCLUDE_DIR)/target.mk
 
-_call_info: FORCE
-	echo 'Current Target: "$(BOARD)$(if $(SUBTARGET), ($(BOARDNAME)))"'
-	echo 'Default Packages: $(DEFAULT_PACKAGES)'
-	echo 'Available Profiles:'
-	echo; $(PROFILE_LIST)
-
 BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
 # "-pkgname" in the package list means remove "pkgname" from the package list
 BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
 PACKAGES:=
+
+include $(INCLUDE_DIR)/kernel-build.mk
+
+kernel: FORCE
+	$(Kernel/CompileImage)
 
 _call_image:
 	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
@@ -169,15 +144,8 @@ package_postinst: FORCE
 build_image: FORCE
 	@echo
 	@echo Building images...
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 \
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 \
 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
-
-clean:
-	rm -rf $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR) $(BIN_DIR)
-
-
-info:
-	(unset PROFILE FILES PACKAGES MAKEFLAGS; $(MAKE) -s _call_info)
 
 image:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
@@ -188,5 +156,5 @@ image:
 		BIN_DIR="$(GLUON_IMAGEDIR)" \
 		$(if $(PACKAGE_DIR),PACKAGE_DIR="$(PACKAGE_DIR)"))
 
-.SILENT: help info image
+.SILENT: image
 
