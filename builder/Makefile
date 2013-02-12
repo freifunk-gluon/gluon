@@ -60,8 +60,6 @@ define Profile
   endif
   $(1)_NAME:=$(NAME)
   $(1)_PACKAGES:=$(PACKAGES)
-  PROFILE_LIST += \
-  	echo '$(1):'; [ -z '$(NAME)' ] || echo '	$(NAME)'; echo '	Packages: $(PACKAGES)';
 endef
 
 include $(INCLUDE_DIR)/target.mk
@@ -144,7 +142,7 @@ package_postinst: FORCE
 build_image: FORCE
 	@echo
 	@echo Building images...
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 \
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
 
 image:
@@ -156,5 +154,5 @@ image:
 		BIN_DIR="$(GLUON_IMAGEDIR)" \
 		$(if $(PACKAGE_DIR),PACKAGE_DIR="$(PACKAGE_DIR)"))
 
-.SILENT: image
+.SILENT: kernel image
 
