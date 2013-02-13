@@ -41,9 +41,8 @@ prepare:
 	$(GLUON_OPENWRTDIR)/scripts/feeds install -a
 
 	echo -e "CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${ },\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_PACKAGES) $(PROFILE_PACKAGES)))" > $(GLUON_OPENWRTDIR)/.config
-	$(MAKE) -C $(GLUON_OPENWRTDIR) defconfig prepare
-	$(MAKE) -C $(GLUON_BUILDERDIR) kernel
-	$(MAKE) -C $(GLUON_OPENWRTDIR) package/compile
+	$(MAKE) -C $(GLUON_OPENWRTDIR) defconfig prepare package/compile
+	$(MAKE) -C $(GLUON_BUILDERDIR) prepare
 
 	touch $(prepared_stamp)
 

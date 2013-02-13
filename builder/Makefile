@@ -71,22 +71,18 @@ PACKAGES:=
 
 include $(INCLUDE_DIR)/kernel-build.mk
 
-kernel: FORCE
+prepare: FORCE
 	$(Kernel/CompileImage)
+	$(MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare
+	$(MAKE) package_index
 
 _call_image:
 	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
 	rm -rf $(TARGET_DIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
-	if [ ! -f "$(PACKAGE_DIR)/Packages" ] || [ ! -f "$(PACKAGE_DIR)/Packages.gz" ] || [ "`find $(PACKAGE_DIR) -cnewer $(PACKAGE_DIR)/Packages.gz`" ]; then \
-		echo "Package list missing or not up-to-date, generating it.";\
-		$(MAKE) package_index; \
-	else \
-		mkdir -p $(TARGET_DIR)/tmp; \
-		$(OPKG) update; \
-	fi
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
+	$(OPKG) update
 	$(MAKE) package_install
 ifneq ($(USER_FILES),)
 	$(MAKE) copy_files
@@ -97,11 +93,9 @@ endif
 package_index: FORCE
 	@echo
 	@echo Building package index...
-	@mkdir -p $(TOPDIR)/tmp $(TOPDIR)/dl $(TARGET_DIR)/tmp
 	(cd $(PACKAGE_DIR); $(SCRIPT_DIR)/ipkg-make-index.sh . > Packages && \
 		gzip -9c Packages > Packages.gz \
 	) >/dev/null 2>/dev/null
-	$(OPKG) update
 
 package_install: FORCE
 	@echo
@@ -139,10 +133,13 @@ package_postinst: FORCE
 	)
 	$(if $(CONFIG_CLEAN_IPKG),rm -rf $(TARGET_DIR)/usr/lib/opkg)
 
+include $(INCLUDE_DIR)/image.mk
+
 build_image: FORCE
 	@echo
 	@echo Building images...
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+	$(call Image/mkfs/prepare)
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
 
 image:

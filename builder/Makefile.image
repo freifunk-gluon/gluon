@@ -1,0 +1,7 @@
+override BuildImage :=
+
+# The Makefile included here is $(TOPDIR)/target/linux/$(BOARD)/image/Makefile
+include Makefile
+
+prepare: FORCE
+	$(call Image/Prepare)
