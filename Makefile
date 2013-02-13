@@ -16,13 +16,12 @@ null :=
 space := ${null} ${null}
 ${space} := ${space}
 
-prepared_stamp := $(GLUON_BUILDDIR)/prepared
+prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
 define GluonProfile
 image/$(1): $(prepared_stamp)
 	$(MAKE) -C $(GLUON_BUILDERDIR) image \
 		PROFILE="$(1)" \
-		PACKAGE_DIR="$(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages" \
 		$(if $(2),PACKAGES="$(2)")
 
 PROFILES += $(1)
@@ -32,8 +31,8 @@ endef
 include profiles.mk
 
 prepare:
-	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)
-	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/opkg-$(BOARD).conf
+	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
+	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/$(BOARD)/opkg.conf
 
 	$(LN_S) $(GLUON_BUILDERDIR)/feeds.conf $(GLUON_OPENWRTDIR)/feeds.conf
 	$(GLUON_OPENWRTDIR)/scripts/feeds uninstall -a

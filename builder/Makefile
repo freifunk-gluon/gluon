@@ -1,6 +1,7 @@
-# Makefile for OpenWrt
+# Greatly modified OpenWRT Image Builder Makefile
 #
 # Copyright (C) 2007-2010 OpenWrt.org
+# Copyright (C) 2013 Project Gluon
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -24,7 +25,17 @@ ifneq ($(OPENWRT_BUILD),1)
   export OPENWRT_BUILD
 endif
 
-include rules.mk
+include $(TOPDIR)/rules.mk
+
+PACKAGE_DIR := $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
+BIN_DIR := $(GLUON_IMAGEDIR)/$(BOARD)/$(PROFILE)
+
+BOARD_BUILDDIR := $(GLUON_BUILDDIR)/$(BOARD)
+PROFILE_BUILDDIR := $(BOARD_BUILDDIR)/$(PROFILE)
+
+TMP_DIR := $(PROFILE_BUILDDIR)/tmp
+TARGET_DIR := $(PROFILE_BUILDDIR)/root
+
 include $(INCLUDE_DIR)/debug.mk
 include $(INCLUDE_DIR)/depends.mk
 
@@ -37,16 +48,16 @@ include $(INCLUDE_DIR)/package-ipkg.mk
 
 # override variables from rules.mk
 OPKG:= \
-  IPKG_TMP="$(TOPDIR)/tmp/ipkgtmp" \
+  IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
   IPKG_INSTROOT="$(TARGET_DIR)" \
-  IPKG_CONF_DIR="$(TOPDIR)/tmp" \
+  IPKG_CONF_DIR="$(TMP_DIR)" \
   IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
   $(STAGING_DIR_HOST)/bin/opkg \
-	-f $(GLUONDIR)/build/opkg-$(BOARD).conf \
+	-f $(BOARD_BUILDDIR)/opkg.conf \
 	--force-depends \
 	--force-overwrite \
 	--force-postinstall \
-	--cache $(TOPDIR)/dl \
+	--cache $(TMP_DIR)/dl \
 	--offline-root $(TARGET_DIR) \
 	--add-dest root:/ \
 	--add-arch all:100 \
@@ -55,8 +66,8 @@ OPKG:= \
 define Profile
   $(eval $(call Profile/Default))
   $(eval $(call Profile/$(1)))
-  ifeq ($(USER_PROFILE),)
-    USER_PROFILE:=$(1)
+  ifeq ($(PROFILE),)
+    PROFILE:=$(1)
   endif
   $(1)_NAME:=$(NAME)
   $(1)_PACKAGES:=$(PACKAGES)
@@ -64,7 +75,7 @@ endef
 
 include $(INCLUDE_DIR)/target.mk
 
-BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
+BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(PROFILE)_PACKAGES) kernel)
 # "-pkgname" in the package list means remove "pkgname" from the package list
 BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
 PACKAGES:=
@@ -77,10 +88,10 @@ prepare: FORCE
 	$(MAKE) package_index
 
 _call_image:
-	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
+	echo 'Building images for $(BOARD)$(if $($(PROFILE)_NAME), - $($(PROFILE)_NAME))'
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
-	rm -rf $(TARGET_DIR)
+	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	$(OPKG) update
 	$(MAKE) package_install
@@ -140,16 +151,15 @@ build_image: FORCE
 	@echo Building images...
 	$(call Image/mkfs/prepare)
 	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
-		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
+		PROFILE="$(PROFILE)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 image:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
 	$(MAKE) _call_image \
-		$(if $(PROFILE),USER_PROFILE="$(PROFILE)") \
+		$(if $(PROFILE),PROFILE="$(PROFILE)") \
 		$(if $(FILES),USER_FILES="$(FILES)") \
 		$(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)") \
-		BIN_DIR="$(GLUON_IMAGEDIR)" \
-		$(if $(PACKAGE_DIR),PACKAGE_DIR="$(PACKAGE_DIR)"))
+	)
 
-.SILENT: kernel image
+.SILENT: prepare image
 
