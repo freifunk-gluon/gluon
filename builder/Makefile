@@ -33,6 +33,9 @@ BIN_DIR := $(GLUON_IMAGEDIR)/$(BOARD)/$(PROFILE)
 BOARD_BUILDDIR := $(GLUON_BUILDDIR)/$(BOARD)
 PROFILE_BUILDDIR := $(BOARD_BUILDDIR)/$(PROFILE)
 
+BOARD_KDIR := $(BOARD_BUILDDIR)/kernel
+PROFILE_KDIR := $(PROFILE_BUILDDIR)/kernel
+
 TMP_DIR := $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR := $(PROFILE_BUILDDIR)/root
 
@@ -84,7 +87,10 @@ include $(INCLUDE_DIR)/kernel-build.mk
 
 prepare: FORCE
 	$(Kernel/CompileImage)
-	$(MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare
+	rm -rf $(BOARD_KDIR)
+	mkdir -p $(BOARD_KDIR)
+	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
+	$(MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 	$(MAKE) package_index
 
 _call_image:
@@ -149,9 +155,13 @@ include $(INCLUDE_DIR)/image.mk
 build_image: FORCE
 	@echo
 	@echo Building images...
+
+	rm -rf $(PROFILE_KDIR)
+	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
+
 	$(call Image/mkfs/prepare)
 	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
-		PROFILE="$(PROFILE)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
+		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 image:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
