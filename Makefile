@@ -2,7 +2,9 @@ GLUONDIR:=${CURDIR}
 
 LN_S:=ln -sf
 
-all: images
+all:
+	$(MAKE) prepare
+	$(MAKE) images
 
 include $(GLUONDIR)/builder/gluon.mk
 
