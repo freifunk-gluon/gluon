@@ -48,8 +48,7 @@ prepare:
 $(prepared_stamp):
 	$(MAKE) prepare
 
-images:
-	for profile in $(PROFILES); do $(MAKE) image/$$profile; done
+images: $(patsubst %,image/%,$(PROFILES))
 
 clean:
 	rm -rf $(GLUON_BUILDDIR)
