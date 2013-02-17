@@ -4,6 +4,9 @@ LC_ALL:=C
 LANG:=C
 export LC_ALL LANG
 
+empty:=
+space:= $(empty) $(empty)
+
 ifneq ($(GLUON_BUILD),1)
 
 override GLUON_BUILD=1
@@ -42,8 +45,6 @@ export TOPDIR
 
 include $(TOPDIR)/include/host.mk
 
-empty:=
-space:= $(empty) $(empty)
 _SINGLE=export MAKEFLAGS=$(space);
 
 override OPENWRT_BUILD=1
@@ -85,10 +86,6 @@ include package/Makefile
 include tools/Makefile
 include toolchain/Makefile
 
-null :=
-space := ${null} ${null}
-${space} := ${space}
-
 BOARD := ar71xx
 PROFILES :=
 PROFILE_PACKAGES :=
@@ -124,13 +121,14 @@ feeds: FORCE
 
 	scripts/feeds uninstall -a
 	scripts/feeds update -a
+
 	scripts/feeds install -a
 
 	rm -f $(TMP_DIR)/info/.files-packageinfo-$(SCAN_COOKIE)
 	$(SUBMAKE) prepare-tmpinfo OPENWRT_BUILD=0
 
 config: FORCE
-	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${ },\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_PACKAGES) $(PROFILE_PACKAGES)))' > .config
+	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_PACKAGES) $(PROFILE_PACKAGES)))' > .config
 	$(SUBMAKE) defconfig OPENWRT_BUILD=0
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
