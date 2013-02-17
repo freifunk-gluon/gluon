@@ -48,8 +48,10 @@ include $(TOPDIR)/include/host.mk
 _SINGLE=export MAKEFLAGS=$(space);
 
 override OPENWRT_BUILD=1
+override REVISION:=$(shell $(GLUON_BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
 GREP_OPTIONS=
-export OPENWRT_BUILD GREP_OPTIONS
+export OPENWRT_BUILD GREP_OPTIONS REVISION
+
 include $(TOPDIR)/include/debug.mk
 include $(TOPDIR)/include/depends.mk
 include $(TOPDIR)/include/toplevel.mk
@@ -81,7 +83,8 @@ include $(TOPDIR)/include/host.mk
 include rules.mk
 include $(INCLUDE_DIR)/depends.mk
 include $(INCLUDE_DIR)/subdir.mk
-include target/Makefile
+include $(INCLUDE_DIR)/kernel.mk
+
 include package/Makefile
 include tools/Makefile
 include toolchain/Makefile
@@ -109,12 +112,7 @@ $(BUILD_DIR)/.prepared: Makefile
 	@touch $@
 
 $(toolchain/stamp-install): $(tools/stamp-install)
-$(target/stamp-compile): $(toolchain/stamp-install) $(tools/stamp-install) $(BUILD_DIR)/.prepared
-$(package/stamp-cleanup): $(target/stamp-compile)
-$(package/stamp-compile): $(target/stamp-compile) $(package/stamp-cleanup)
-$(package/stamp-install): $(package/stamp-compile)
-$(package/stamp-rootfs-prepare): $(package/stamp-install)
-$(target/stamp-install): $(package/stamp-compile) $(package/stamp-install) $(package/stamp-rootfs-prepare)
+$(package/stamp-compile): $(package/stamp-cleanup)
 
 feeds: FORCE
 	ln -sf $(GLUON_BUILDERDIR)/feeds.conf feeds.conf
@@ -132,8 +130,19 @@ config: FORCE
 	$(SUBMAKE) defconfig OPENWRT_BUILD=0
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
-target: $(target/stamp-compile)
+
+kernel: FORCE
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUON_BUILDERDIR)/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUON_BUILDERDIR)/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
+
 packages: $(package/stamp-compile)
+	$(_SINGLE)$(SUBMAKE) -r package/index
+
+prepare-image: FORCE
+	rm -rf $(BOARD_KDIR)
+	mkdir -p $(BOARD_KDIR)
+	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
+	$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
 	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
@@ -142,9 +151,9 @@ prepare: FORCE
 	$(GLUONMAKE) feeds
 	$(GLUONMAKE) config
 	$(GLUONMAKE) toolchain
-	$(GLUONMAKE) target
+	$(GLUONMAKE) kernel
 	$(GLUONMAKE) packages
-	$(SUBMAKE) -C $(GLUON_BUILDERDIR) prepare
+	$(GLUONMAKE) prepare-image
 
 	touch $(gluon_prepared_stamp)
 

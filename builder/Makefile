@@ -17,10 +17,7 @@ include $(TOPDIR)/rules.mk
 PACKAGE_DIR := $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
 BIN_DIR := $(GLUON_IMAGEDIR)/$(BOARD)/$(PROFILE)
 
-BOARD_BUILDDIR := $(GLUON_BUILDDIR)/$(BOARD)
 PROFILE_BUILDDIR := $(BOARD_BUILDDIR)/$(PROFILE)
-
-BOARD_KDIR := $(BOARD_BUILDDIR)/kernel
 PROFILE_KDIR := $(PROFILE_BUILDDIR)/kernel
 
 TMP_DIR := $(PROFILE_BUILDDIR)/tmp
@@ -70,20 +67,10 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(PROFILE)_PACKAGE
 BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
 PACKAGES:=
 
-include $(INCLUDE_DIR)/kernel-build.mk
-
-prepare: FORCE
-	$(Kernel/CompileImage)
-	rm -rf $(BOARD_KDIR)
-	mkdir -p $(BOARD_KDIR)
-	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
-	$(MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare KDIR="$(BOARD_KDIR)"
-	$(MAKE) package_index
-
 image/%:: FORCE
 	$(MAKE) assemble_image PROFILE="$(patsubst image/%,%,$@)"
 
-assemble_image:
+assemble_image: FORCE
 	echo 'Building images for $(BOARD)$(if $($(PROFILE)_NAME), - $($(PROFILE)_NAME))'
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
@@ -91,18 +78,8 @@ assemble_image:
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	$(OPKG) update
 	$(MAKE) package_install
-ifneq ($(USER_FILES),)
-	$(MAKE) copy_files
-endif
 	$(MAKE) package_postinst
 	$(MAKE) build_image
-
-package_index: FORCE
-	@echo
-	@echo Building package index...
-	(cd $(PACKAGE_DIR); $(SCRIPT_DIR)/ipkg-make-index.sh . > Packages && \
-		gzip -9c Packages > Packages.gz \
-	) >/dev/null 2>/dev/null
 
 package_install: FORCE
 	@echo
@@ -153,12 +130,8 @@ build_image: FORCE
 	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
-image:
-	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
-		$(MAKE) image/$(PROFILE) OPENWRT_VERBOSE="$(OPENWRT_VERBOSE)" \
-			$(if $(FILES),USER_FILES="$(FILES)") \
-			$(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)") \
-	)
+image: FORCE
+	$(MAKE) image/$(PROFILE) V="$(OPENWRT_VERBOSE)" $(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)")
 
 .SILENT: prepare image
 
