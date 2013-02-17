@@ -4,6 +4,31 @@ LC_ALL:=C
 LANG:=C
 export LC_ALL LANG
 
+ifneq ($(GLUON_BUILD),1)
+
+override GLUON_BUILD=1
+export GLUON_BUILD
+TARGETS := all prepare images
+SUBMAKE := $(MAKE) --no-print-directory
+
+FORCE: ;
+
+$(TARGETS): FORCE
+	@$(SUBMAKE) $@
+
+image/%:: FORCE
+	@$(SUBMAKE) $@
+
+clean: FORCE
+	@$(SUBMAKE) clean-gluon
+
+cleanall: FORCE
+	@$(SUBMAKE) clean
+
+.PHONY: FORCE
+
+else
+
 GLUONMAKE = $(SUBMAKE) -C $(GLUON_OPENWRTDIR) -f $(GLUONDIR)/Makefile
 
 ifneq ($(OPENWRT_BUILD),1)
@@ -37,6 +62,9 @@ prepare: FORCE
 
 images: FORCE
 	+@$(GLUONMAKE) images
+
+image/%:: FORCE
+	+@$(GLUONMAKE) $@
 
 clean: clean-gluon
 
@@ -129,4 +157,5 @@ images: $(patsubst %,image/%,$(PROFILES))
 
 .PHONY: all images prepare clean cleanall
 
+endif
 endif
