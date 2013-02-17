@@ -7,24 +7,11 @@
 # See /LICENSE for more information.
 #
 
-GLUONDIR:=${CURDIR}/..
+all: image
 
 include ${CURDIR}/gluon.mk
 
-TOPDIR:=$(GLUON_OPENWRTDIR)
-LC_ALL:=C
-LANG:=C
-export TOPDIR LC_ALL LANG
-export OPENWRT_VERBOSE=s
-all: image
-
 include $(TOPDIR)/include/host.mk
-
-ifneq ($(OPENWRT_BUILD),1)
-  override OPENWRT_BUILD=1
-  export OPENWRT_BUILD
-endif
-
 include $(TOPDIR)/rules.mk
 
 PACKAGE_DIR := $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
@@ -93,7 +80,10 @@ prepare: FORCE
 	$(MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 	$(MAKE) package_index
 
-_call_image:
+image/%:: FORCE
+	$(MAKE) assemble_image PROFILE="$(patsubst image/%,%,$@)"
+
+assemble_image:
 	echo 'Building images for $(BOARD)$(if $($(PROFILE)_NAME), - $($(PROFILE)_NAME))'
 	echo 'Packages: $(BUILD_PACKAGES)'
 	echo
@@ -165,10 +155,9 @@ build_image: FORCE
 
 image:
 	(unset PROFILE FILES PACKAGES MAKEFLAGS; \
-	$(MAKE) _call_image \
-		$(if $(PROFILE),PROFILE="$(PROFILE)") \
-		$(if $(FILES),USER_FILES="$(FILES)") \
-		$(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)") \
+		$(MAKE) image/$(PROFILE) OPENWRT_VERBOSE="$(OPENWRT_VERBOSE)" \
+			$(if $(FILES),USER_FILES="$(FILES)") \
+			$(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)") \
 	)
 
 .SILENT: prepare image

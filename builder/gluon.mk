@@ -7,6 +7,8 @@ GLUON_OPENWRTDIR := $(GLUONDIR)/openwrt
 GLUON_BUILDERDIR := $(GLUONDIR)/builder
 GLUON_BUILDDIR := $(GLUONDIR)/build
 
+export GLUONDIR GLUON_SITEDIR GLUON_IMAGEDIR GLUON_OPENWRTDIR GLUON_BUILDERDIR GLUON_BUILDDIR
+
 $(GLUON_SITEDIR)/site.mk:
 	$(error There was no site configuration found. Please check out a site configuration to $(GLUON_SITEDIR))
 
