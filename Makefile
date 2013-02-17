@@ -149,7 +149,7 @@ prepare: FORCE
 	touch $(gluon_prepared_stamp)
 
 $(gluon_prepared_stamp):
-	$(MAKE) prepare
+	$(GLUONMAKE) prepare
 
 images: $(patsubst %,image/%,$(PROFILES))
 
