@@ -17,10 +17,14 @@ $(GLUON_SITEDIR)/site.mk:
 
 -include $(GLUON_SITEDIR)/site.mk
 
+define merge-lists
+$(1) :=
+$(foreach var,$(2),$(1) := $$(sort $$(filter-out -% $$(patsubst -%,%,$$(filter -%,$$($(var)))),$$($(1)) $$($(var))))
+)
+endef
+
 GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables
 
-GLUON_PACKAGES := $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES)
-DEFAULT_PACKAGES.gluon := $(GLUON_PACKAGES)
-DEVICE_TYPE := gluon
+override DEFAULT_PACKAGES.router :=
 
 endif #__gluon_inc

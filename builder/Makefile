@@ -62,18 +62,19 @@ endef
 
 include $(INCLUDE_DIR)/target.mk
 
-BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $(USER_PACKAGES) $($(PROFILE)_PACKAGES) kernel)
-# "-pkgname" in the package list means remove "pkgname" from the package list
-BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
-PACKAGES:=
+define GluonProfile
+  GLUON_$(1)_DEFAULT_PACKAGES := $(2)
+endef
+
+include $(GLUONDIR)/profiles.mk
+
+# Generate Gluon package list
+$(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 image/%:: FORCE
 	$(MAKE) assemble_image PROFILE="$(patsubst image/%,%,$@)"
 
 assemble_image: FORCE
-	echo 'Building images for $(BOARD)$(if $($(PROFILE)_NAME), - $($(PROFILE)_NAME))'
-	echo 'Packages: $(BUILD_PACKAGES)'
-	echo
 	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	$(OPKG) update
@@ -92,7 +93,8 @@ endef
 package_install: FORCE
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
-	$(OPKG) install $(BUILD_PACKAGES)
+	$(OPKG) install $(DEFAULT_PACKAGES) $($(PROFILE)_PACKAGES)
+	$(OPKG) install $(GLUON_PACKAGES)
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
 copy_files: FORCE
@@ -126,7 +128,7 @@ build_image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 image: FORCE
-	$(MAKE) image/$(PROFILE) OPENWRT_VERBOSE="$(OPENWRT_VERBOSE)" $(if $(PACKAGES),USER_PACKAGES="$(PACKAGES)")
+	$(MAKE) image/$(PROFILE) OPENWRT_VERBOSE="$(OPENWRT_VERBOSE)"
 
 .SILENT: prepare image
 

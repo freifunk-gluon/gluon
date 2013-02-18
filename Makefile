@@ -97,12 +97,10 @@ gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
 define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
-	$(MAKE) -C $(GLUON_BUILDERDIR) image \
-		PROFILE="$(1)" \
-		$(if $(2),PACKAGES="$(2)")
+	$(MAKE) -C $(GLUON_BUILDERDIR) image PROFILE="$(1)"
 
 PROFILES += $(1)
-PROFILE_PACKAGES += $(filter-out -%,$(2))
+PROFILE_PACKAGES += $(filter-out -%,$(2)) $(GLUON_$(1)_SITE_PACKAGES)
 endef
 
 include $(GLUONDIR)/profiles.mk
@@ -126,7 +124,7 @@ feeds: FORCE
 	$(SUBMAKE) prepare-tmpinfo OPENWRT_BUILD=0
 
 config: FORCE
-	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_PACKAGES) $(PROFILE_PACKAGES)))' > .config
+	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES)))' > .config
 	$(SUBMAKE) defconfig OPENWRT_BUILD=0
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
