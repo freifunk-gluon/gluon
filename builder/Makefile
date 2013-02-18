@@ -81,16 +81,21 @@ assemble_image: FORCE
 	$(MAKE) package_postinst
 	$(MAKE) build_image
 
+define EnableInitscript
+	cd $(TARGET_DIR) && ( \
+		grep '#!/bin/sh /etc/rc.common' $(1) >/dev/null && \
+		IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $$script enable || \
+		true \
+	)
+endef
+
 package_install: FORCE
-	@echo
-	@echo Installing packages...
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 	$(OPKG) install $(BUILD_PACKAGES)
-	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/*
+	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
 copy_files: FORCE
-	@echo
 	@echo Copying extra files
 	@( cd $(USER_FILES); find -type f ) | \
 		( cd $(TARGET_DIR); while :; do \
@@ -103,19 +108,9 @@ copy_files: FORCE
 	$(CP) $(USER_FILES)/* $(TARGET_DIR)/
 
 package_postinst: FORCE
-	@echo
-	@echo Cleaning up
-	@rm -f $(TARGET_DIR)/tmp/opkg.lock
-	@echo
-	@echo Activating init scripts
-	@( \
-		cd $(TARGET_DIR); \
-		for script in ./etc/init.d/*; do \
-			grep '#!/bin/sh /etc/rc.common' $$script >/dev/null || continue; \
-			IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $$script enable; \
-		done || true; \
-	)
-	$(if $(CONFIG_CLEAN_IPKG),rm -rf $(TARGET_DIR)/usr/lib/opkg)
+	for script in $(TARGET_DIR)/etc/init.d/*; do \
+		$(call EnableInitscript,$$script); \
+	done || true
 
 include $(INCLUDE_DIR)/image.mk
 
