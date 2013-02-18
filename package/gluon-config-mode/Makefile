@@ -5,7 +5,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-config-mode
 PKG_VERSION:=0.3.2.99
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -15,7 +15,7 @@ define Package/gluon-config-mode
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based config mode for user friendly setup of new meshnodes
-  DEPENDS:=+gluon-core +luci-mod-admin-core
+  DEPENDS:=+gluon-core +uhttpd +dnsmasq +luci-mod-admin-core
 endef
 
 define Package/gluon-config-mode/description
