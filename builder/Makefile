@@ -79,22 +79,37 @@ assemble_image: FORCE
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	$(OPKG) update
 	$(MAKE) package_install
-	$(MAKE) package_postinst
 	$(MAKE) build_image
 
 define EnableInitscript
-	cd $(TARGET_DIR) && ( \
+	( \
 		grep '#!/bin/sh /etc/rc.common' $(1) >/dev/null && \
-		IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $$script enable || \
+		IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $(1) enable || \
 		true \
 	)
 endef
 
+define FileOrigin
+	$(firstword $(shell $(OPKG) search $(1)))
+endef
+
+enable_initscripts: FORCE
+	cd $(TARGET_DIR) && ( \
+		$(foreach script,$(wildcard $(TARGET_DIR)/etc/init.d/*), \
+			$(if $(filter $(ENABLE_INITSCRIPTS_FROM),$(call FileOrigin,$(script))),$(call EnableInitscript,$(script));) \
+		) : \
+	)
+
 package_install: FORCE
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
+
 	$(OPKG) install $(DEFAULT_PACKAGES) $($(PROFILE)_PACKAGES)
+	$(NO_TRACE_MAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
+
 	$(OPKG) install $(GLUON_PACKAGES)
+	$(NO_TRACE_MAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM="$(GLUON_PACKAGES)"
+
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
 copy_files: FORCE
@@ -108,11 +123,6 @@ copy_files: FORCE
 			rm -f "$$FILE"; \
 		done; )
 	$(CP) $(USER_FILES)/* $(TARGET_DIR)/
-
-package_postinst: FORCE
-	for script in $(TARGET_DIR)/etc/init.d/*; do \
-		$(call EnableInitscript,$$script); \
-	done || true
 
 include $(INCLUDE_DIR)/image.mk
 
