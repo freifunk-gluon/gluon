@@ -17,16 +17,16 @@ SUBMAKE := $(MAKE) --no-print-directory
 FORCE: ;
 
 $(TARGETS): FORCE
-	@$(SUBMAKE) $@
+	+@$(SUBMAKE) $@
 
 image/%:: FORCE
-	@$(SUBMAKE) $@
+	+@$(SUBMAKE) $@
 
 clean: FORCE
-	@$(SUBMAKE) clean-gluon
+	+@$(SUBMAKE) clean-gluon
 
 cleanall: FORCE
-	@$(SUBMAKE) clean
+	+@$(SUBMAKE) clean
 
 .PHONY: FORCE
 
