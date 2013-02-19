@@ -100,7 +100,7 @@ image/$(1): $(gluon_prepared_stamp)
 	$(NO_TRACE_MAKE) -C $(GLUON_BUILDERDIR) image PROFILE="$(1)"
 
 PROFILES += $(1)
-PROFILE_PACKAGES += $(filter-out -%,$(2)) $(GLUON_$(1)_SITE_PACKAGES)
+PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 endef
 
 include $(GLUONDIR)/profiles.mk
@@ -124,7 +124,7 @@ feeds: FORCE
 	$(SUBMAKE) prepare-tmpinfo OPENWRT_BUILD=0
 
 config: FORCE
-	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES)))' > .config
+	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
 	$(SUBMAKE) defconfig OPENWRT_BUILD=0
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
