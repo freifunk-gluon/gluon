@@ -97,7 +97,7 @@ gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
 define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
-	$(MAKE) -C $(GLUON_BUILDERDIR) image PROFILE="$(1)"
+	$(NO_TRACE_MAKE) -C $(GLUON_BUILDERDIR) image PROFILE="$(1)"
 
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2)) $(GLUON_$(1)_SITE_PACKAGES)
@@ -158,7 +158,10 @@ prepare: FORCE
 $(gluon_prepared_stamp):
 	$(GLUONMAKE) prepare
 
-images: $(patsubst %,image/%,$(PROFILES))
+call_image/%: FORCE
+	$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
+
+images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
 .PHONY: all images prepare clean cleanall
 
