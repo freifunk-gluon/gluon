@@ -71,15 +71,7 @@ include $(GLUONDIR)/profiles.mk
 # Generate Gluon package list
 $(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
-image/%:: FORCE
-	$(MAKE) assemble_image PROFILE="$(patsubst image/%,%,$@)"
-
-assemble_image: FORCE
-	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
-	$(OPKG) update
-	$(MAKE) package_install
-	$(MAKE) build_image
+include $(INCLUDE_DIR)/image.mk
 
 define EnableInitscript
 	( \
@@ -101,6 +93,7 @@ enable_initscripts: FORCE
 	)
 
 package_install: FORCE
+	$(OPKG) update
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 
@@ -112,33 +105,13 @@ package_install: FORCE
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
-copy_files: FORCE
-	@echo Copying extra files
-	@( cd $(USER_FILES); find -type f ) | \
-		( cd $(TARGET_DIR); while :; do \
-			read FILE; \
-			[ -z "$$FILE" ] && break; \
-			[ -L "$$FILE" ] || continue; \
-			echo "Removing symlink $(TARGET_DIR)/$$FILE"; \
-			rm -f "$$FILE"; \
-		done; )
-	$(CP) $(USER_FILES)/* $(TARGET_DIR)/
-
-include $(INCLUDE_DIR)/image.mk
-
-build_image: FORCE
-	@echo
-	@echo Building images...
-
-	rm -rf $(PROFILE_KDIR)
+image: FORCE
+	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
+
+	$(NO_TRACE_MAKE) package_install
 
 	$(call Image/mkfs/prepare)
 	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
-
-image: FORCE
-	$(MAKE) image/$(PROFILE) OPENWRT_VERBOSE="$(OPENWRT_VERBOSE)"
-
-.SILENT: prepare image
-
