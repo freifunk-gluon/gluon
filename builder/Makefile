@@ -68,7 +68,8 @@ endef
 
 include $(GLUONDIR)/profiles.mk
 
-# Generate Gluon package list
+# Generate package list s
+$(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))
 $(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 include $(INCLUDE_DIR)/image.mk
@@ -97,7 +98,7 @@ package_install: FORCE
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 
-	$(OPKG) install $(DEFAULT_PACKAGES) $($(PROFILE)_PACKAGES)
+	$(OPKG) install $(BASE_PACKAGES)
 	$(NO_TRACE_MAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
 
 	$(OPKG) install $(GLUON_PACKAGES)
