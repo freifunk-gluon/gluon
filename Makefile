@@ -56,6 +56,13 @@ include $(TOPDIR)/include/debug.mk
 include $(TOPDIR)/include/depends.mk
 include $(TOPDIR)/include/toplevel.mk
 
+define GluonProfile
+image/$(1): FORCE
+	+@$$(GLUONMAKE) $$@
+endef
+
+include $(GLUONDIR)/profiles.mk
+
 all: FORCE
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
@@ -65,9 +72,6 @@ prepare: FORCE
 
 images: FORCE
 	+@$(GLUONMAKE) images
-
-image/%:: FORCE
-	+@$(GLUONMAKE) $@
 
 clean: clean-gluon
 
