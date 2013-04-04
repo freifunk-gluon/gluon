@@ -9,7 +9,7 @@
 
 all: image
 
-include ${CURDIR}/gluon.mk
+include ${CURDIR}/../include/gluon.mk
 
 include $(TOPDIR)/include/host.mk
 include $(TOPDIR)/rules.mk
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/depends.mk
 
 include $(INCLUDE_DIR)/version.mk
 
-REVISION:=$(shell $(GLUON_BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
+REVISION:=$(shell $(GLUONDIR)/scripts/openwrt_rev.sh $(GLUONDIR))
 export REVISION
 
 include $(INCLUDE_DIR)/package-ipkg.mk
@@ -66,7 +66,7 @@ define GluonProfile
   GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 endef
 
-include $(GLUONDIR)/profiles.mk
+include $(GLUONDIR)/include/profiles.mk
 
 # Generate package list s
 $(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))

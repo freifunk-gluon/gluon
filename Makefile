@@ -7,38 +7,13 @@ export LC_ALL LANG
 empty:=
 space:= $(empty) $(empty)
 
-ifneq ($(GLUON_BUILD),1)
-
-override GLUON_BUILD=1
-export GLUON_BUILD
-TARGETS := all prepare images
-SUBMAKE := $(MAKE) --no-print-directory
-
-FORCE: ;
-
-$(TARGETS): FORCE
-	+@$(SUBMAKE) $@
-
-image/%:: FORCE
-	+@$(SUBMAKE) $@
-
-clean: FORCE
-	+@$(SUBMAKE) clean-gluon
-
-cleanall: FORCE
-	+@$(SUBMAKE) clean
-
-.PHONY: FORCE
-
-else
-
 GLUONMAKE = $(SUBMAKE) -C $(GLUON_OPENWRTDIR) -f $(GLUONDIR)/Makefile
 
 ifneq ($(OPENWRT_BUILD),1)
 
 GLUONDIR:=${CURDIR}
 
-include $(GLUONDIR)/builder/gluon.mk
+include $(GLUONDIR)/include/gluon.mk
 
 TOPDIR:=$(GLUON_OPENWRTDIR)
 export TOPDIR
@@ -48,20 +23,20 @@ include $(TOPDIR)/include/host.mk
 _SINGLE=export MAKEFLAGS=$(space);
 
 override OPENWRT_BUILD=1
-override REVISION:=$(shell $(GLUON_BUILDERDIR)/openwrt_rev.sh $(GLUONDIR))
+override REVISION:=$(shell $(GLUONDIR)/scripts/openwrt_rev.sh $(GLUONDIR))
 GREP_OPTIONS=
 export OPENWRT_BUILD GREP_OPTIONS REVISION
 
 include $(TOPDIR)/include/debug.mk
 include $(TOPDIR)/include/depends.mk
-include $(TOPDIR)/include/toplevel.mk
+include $(GLUONDIR)/include/toplevel.mk
 
 define GluonProfile
 image/$(1): FORCE
 	+@$$(GLUONMAKE) $$@
 endef
 
-include $(GLUONDIR)/profiles.mk
+include $(GLUONDIR)/include/profiles.mk
 
 all: FORCE
 	+@$(GLUONMAKE) prepare
@@ -80,7 +55,7 @@ clean-gluon:
 
 else
 
-include $(GLUONDIR)/builder/gluon.mk
+include $(GLUONDIR)/include/gluon.mk
 
 include $(TOPDIR)/include/host.mk
 
@@ -107,7 +82,7 @@ PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 endef
 
-include $(GLUONDIR)/profiles.mk
+include $(GLUONDIR)/include/profiles.mk
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
@@ -169,5 +144,4 @@ images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
 .PHONY: all images prepare clean cleanall
 
-endif
 endif
