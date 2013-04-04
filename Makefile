@@ -42,16 +42,17 @@ all: FORCE
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
-prepare: FORCE
-	+@$(GLUONMAKE) prepare
+download prepare images: FORCE
+	+@$(GLUONMAKE) $@
 
-images: FORCE
-	+@$(GLUONMAKE) images
+dirclean: clean
+	+@$(SUBMAKE) -C $(TOPDIR) -r dirclean
 
-clean: clean-gluon
+cleanall: clean
+	+@$(SUBMAKE) -C $(TOPDIR) -r clean
 
-clean-gluon:
-	rm -rf $(GLUON_BUILDDIR)
+clean:
+	+@$(GLUONMAKE) clean
 
 else
 
@@ -91,6 +92,9 @@ $(BUILD_DIR)/.prepared: Makefile
 $(toolchain/stamp-install): $(tools/stamp-install)
 $(package/stamp-compile): $(package/stamp-cleanup)
 
+clean: FORCE
+	rm -rf $(GLUON_BUILDDIR)
+
 feeds: FORCE
 	ln -sf $(GLUON_BUILDERDIR)/feeds.conf feeds.conf
 
@@ -105,6 +109,15 @@ feeds: FORCE
 config: FORCE
 	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
 	$(SUBMAKE) defconfig OPENWRT_BUILD=0
+
+.config:
+	$(GLUONMAKE) config
+
+download: .config FORCE
+	$(SUBMAKE) tools/download
+	$(SUBMAKE) toolchain/download
+	$(SUBMAKE) package/download
+	$(SUBMAKE) target/download
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
 
