@@ -75,15 +75,22 @@ PROFILE_PACKAGES :=
 
 gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
+
 define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
-	$(NO_TRACE_MAKE) -C $(GLUON_BUILDERDIR) image PROFILE="$(1)"
+	$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
 
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
+GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 endef
 
 include $(GLUONDIR)/include/profiles.mk
+
+# Generate package lists
+$(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))
+$(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
+
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
@@ -103,13 +110,21 @@ refresh_feeds: FORCE
 		scripts/feeds install -a; \
 	)
 
+
+export define FEEDS
+src-link gluon ../../packages_gluon
+src-link packages ../../packages_openwrt
+src-svn luci http://svn.luci.subsignal.org/luci/tags/0.11.1/contrib/package
+endef
+
 feeds: FORCE
-	ln -sf $(GLUON_BUILDERDIR)/feeds.conf feeds.conf
+	rm feeds.conf
+	echo "$$FEEDS" > feeds.conf
 	$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
 	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
-	$(SUBMAKE) defconfig OPENWRT_BUILD=0
+	$(SUBMAKE) defconfig OPENWRT_BUILD=
 
 .config:
 	$(GLUONMAKE) config
@@ -123,8 +138,8 @@ download: .config FORCE
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
 
 kernel: FORCE
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUON_BUILDERDIR)/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUON_BUILDERDIR)/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
 
 packages: $(package/stamp-compile)
 	$(_SINGLE)$(SUBMAKE) -r package/index
@@ -133,7 +148,7 @@ prepare-image: FORCE
 	rm -rf $(BOARD_KDIR)
 	mkdir -p $(BOARD_KDIR)
 	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
-	$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUON_BUILDERDIR)/Makefile.image prepare KDIR="$(BOARD_KDIR)"
+	$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
 	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
@@ -150,6 +165,70 @@ prepare: FORCE
 
 $(gluon_prepared_stamp):
 	$(GLUONMAKE) prepare
+
+
+include $(INCLUDE_DIR)/package-ipkg.mk
+
+# override variables from rules.mk
+PACKAGE_DIR = $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
+BIN_DIR = $(GLUON_IMAGEDIR)/$(BOARD)/$(PROFILE)
+
+PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/$(PROFILE)
+PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
+
+TMP_DIR = $(PROFILE_BUILDDIR)/tmp
+TARGET_DIR = $(PROFILE_BUILDDIR)/root
+
+OPKG:= \
+  IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
+  IPKG_INSTROOT="$(TARGET_DIR)" \
+  IPKG_CONF_DIR="$(TMP_DIR)" \
+  IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
+  $(STAGING_DIR_HOST)/bin/opkg \
+	-f $(BOARD_BUILDDIR)/opkg.conf \
+	--force-depends \
+	--force-overwrite \
+	--force-postinstall \
+	--cache $(TMP_DIR)/dl \
+	--offline-root $(TARGET_DIR) \
+	--add-dest root:/ \
+	--add-arch all:100 \
+	--add-arch $(ARCH_PACKAGES):200
+
+EnableInitscript = ! grep -q '\#!/bin/sh /etc/rc.common' $(1) || bash ./etc/rc.common $(1) enable
+FileOrigin = $(firstword $(shell $(OPKG) search $(1)))
+
+enable_initscripts: FORCE
+	cd $(TARGET_DIR) && ( export IPKG_INSTROOT=$(TARGET_DIR); \
+		$(foreach script,$(wildcard $(TARGET_DIR)/etc/init.d/*), \
+			$(if $(filter $(ENABLE_INITSCRIPTS_FROM),$(call FileOrigin,$(script))),$(call EnableInitscript,$(script));) \
+		) : \
+	)
+
+package_install: FORCE
+	$(OPKG) update
+	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
+	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
+
+	$(OPKG) install $(BASE_PACKAGES)
+	$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
+
+	$(OPKG) install $(GLUON_PACKAGES)
+	$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM="$(GLUON_PACKAGES)"
+
+	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
+
+image: FORCE
+	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
+	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
+
+	$(GLUONMAKE) package_install
+
+	$(call Image/mkfs/prepare)
+	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
+
 
 call_image/%: FORCE
 	$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
