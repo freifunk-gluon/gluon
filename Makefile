@@ -95,16 +95,17 @@ $(package/stamp-compile): $(package/stamp-cleanup)
 clean: FORCE
 	rm -rf $(GLUON_BUILDDIR)
 
+refresh_feeds: FORCE
+	( \
+		export SCAN_COOKIE=; \
+		scripts/feeds uninstall -a; \
+		scripts/feeds update -a; \
+		scripts/feeds install -a; \
+	)
+
 feeds: FORCE
 	ln -sf $(GLUON_BUILDERDIR)/feeds.conf feeds.conf
-
-	scripts/feeds uninstall -a
-	scripts/feeds update -a
-
-	scripts/feeds install -a
-
-	rm -f $(TMP_DIR)/info/.files-packageinfo-$(SCAN_COOKIE)
-	$(SUBMAKE) prepare-tmpinfo OPENWRT_BUILD=0
+	$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
 	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
