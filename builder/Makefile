@@ -74,20 +74,11 @@ $(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKA
 
 include $(INCLUDE_DIR)/image.mk
 
-define EnableInitscript
-	( \
-		grep '#!/bin/sh /etc/rc.common' $(1) >/dev/null && \
-		IPKG_INSTROOT=$(TARGET_DIR) $(which bash) ./etc/rc.common $(1) enable || \
-		true \
-	)
-endef
-
-define FileOrigin
-	$(firstword $(shell $(OPKG) search $(1)))
-endef
+EnableInitscript = ! grep -q '\#!/bin/sh /etc/rc.common' $(1) || bash ./etc/rc.common $(1) enable
+FileOrigin = $(firstword $(shell $(OPKG) search $(1)))
 
 enable_initscripts: FORCE
-	cd $(TARGET_DIR) && ( \
+	cd $(TARGET_DIR) && ( export IPKG_INSTROOT=$(TARGET_DIR); \
 		$(foreach script,$(wildcard $(TARGET_DIR)/etc/init.d/*), \
 			$(if $(filter $(ENABLE_INITSCRIPTS_FROM),$(call FileOrigin,$(script))),$(call EnableInitscript,$(script));) \
 		) : \
