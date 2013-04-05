@@ -10,3 +10,18 @@ the images only, just use:
     make images
 
 The built images can be found in the directory /images.
+
+
+There are three levels of 'make clean':
+
+    make clean
+
+will only clean the Gluon-specific files;
+
+    make cleanall
+
+will also call 'make clean' on the OpenWRT tree, and
+
+    make dirclean
+
+will do all this, and call 'make dirclean' on the OpenWRT tree.
