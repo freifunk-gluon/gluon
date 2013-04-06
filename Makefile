@@ -63,7 +63,6 @@ include $(TOPDIR)/include/host.mk
 include rules.mk
 include $(INCLUDE_DIR)/depends.mk
 include $(INCLUDE_DIR)/subdir.mk
-include $(INCLUDE_DIR)/kernel.mk
 
 include package/Makefile
 include tools/Makefile
@@ -136,6 +135,8 @@ download: .config FORCE
 	$(SUBMAKE) target/download
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
+
+include $(INCLUDE_DIR)/kernel.mk
 
 kernel: FORCE
 	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
