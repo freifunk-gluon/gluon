@@ -118,7 +118,7 @@ src-svn luci http://svn.luci.subsignal.org/luci/tags/0.11.1/contrib/package
 endef
 
 feeds: FORCE
-	rm feeds.conf
+	rm -f feeds.conf
 	echo "$$FEEDS" > feeds.conf
 	$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
