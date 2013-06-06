@@ -12,11 +12,16 @@ config_cb() {
 			config_get addresses "$cfg" address
 			config_get uuid "$cfg" uuid
 			config_get interface "$cfg" interface
+			config_get limit_bw_down "$cfg" limit_bw_down
 			
 			local broker_opts=""
 			for address in $addresses; do
 			  broker_opts="${broker_opts} -b ${address}"
 			done
+
+			if [ ! -z "${limit_bw_down}" ]; then
+				broker_opts="${broker_opts} -L ${limit_bw_down}"
+			fi
 			
 			/usr/bin/tunneldigger -u ${uuid} -i ${interface} -t ${tunnel_id} ${broker_opts} &
 			let tunnel_id++
