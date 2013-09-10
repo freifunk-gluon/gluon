@@ -7,3 +7,6 @@
 [submodule "openwrt"]
 	path = openwrt
 	url = git://nbd.name/attitude_adjustment.git
+[submodule "packages_routing"]
+	path = packages_routing
+	url = https://github.com/openwrt-routing/packages.git
