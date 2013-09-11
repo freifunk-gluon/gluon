@@ -113,6 +113,7 @@ refresh_feeds: FORCE
 export define FEEDS
 src-link gluon ../../packages_gluon
 src-link packages ../../packages_openwrt
+src-link routing ../../packages_routing
 src-svn luci http://svn.luci.subsignal.org/luci/tags/0.11.1/contrib/package
 endef
 
