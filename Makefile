@@ -86,10 +86,6 @@ endef
 
 include $(GLUONDIR)/include/profiles.mk
 
-# Generate package lists
-$(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))
-$(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
-
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
@@ -200,12 +196,18 @@ OPKG:= \
 EnableInitscript = ! grep -q '\#!/bin/sh /etc/rc.common' $(1) || bash ./etc/rc.common $(1) enable
 FileOrigin = $(firstword $(shell $(OPKG) search $(1)))
 
+
 enable_initscripts: FORCE
 	cd $(TARGET_DIR) && ( export IPKG_INSTROOT=$(TARGET_DIR); \
 		$(foreach script,$(wildcard $(TARGET_DIR)/etc/init.d/*), \
 			$(if $(filter $(ENABLE_INITSCRIPTS_FROM),$(call FileOrigin,$(script))),$(call EnableInitscript,$(script));) \
 		) : \
 	)
+
+
+# Generate package lists
+$(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))
+$(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 package_install: FORCE
 	$(OPKG) update
