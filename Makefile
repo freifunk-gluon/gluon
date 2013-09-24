@@ -99,7 +99,7 @@ clean: FORCE
 
 refresh_feeds: FORCE
 	( \
-		MAKEFLAGS=V=s$(OPENWRT_VERBOSE) \
+		export MAKEFLAGS=V=s$(OPENWRT_VERBOSE) \
 		export SCAN_COOKIE=; \
 		scripts/feeds uninstall -a; \
 		scripts/feeds update -a; \
