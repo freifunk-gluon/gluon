@@ -77,7 +77,7 @@ gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
 define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
-	$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
+	+$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
 
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
@@ -99,6 +99,7 @@ clean: FORCE
 
 refresh_feeds: FORCE
 	( \
+		MAKEFLAGS=V=s$(OPENWRT_VERBOSE) \
 		export SCAN_COOKIE=; \
 		scripts/feeds uninstall -a; \
 		scripts/feeds update -a; \
@@ -117,28 +118,28 @@ export FEEDS
 feeds: FORCE
 	rm -f feeds.conf
 	echo "$$FEEDS" > feeds.conf
-	$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
+	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
 	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
-	$(SUBMAKE) defconfig OPENWRT_BUILD=
+	$(_SINGLE)$(SUBMAKE) defconfig OPENWRT_BUILD=
 
 .config:
-	$(GLUONMAKE) config
+	+$(GLUONMAKE) config
 
 download: .config FORCE
-	$(SUBMAKE) tools/download
-	$(SUBMAKE) toolchain/download
-	$(SUBMAKE) package/download
-	$(SUBMAKE) target/download
+	+$(SUBMAKE) tools/download
+	+$(SUBMAKE) toolchain/download
+	+$(SUBMAKE) package/download
+	+$(SUBMAKE) target/download
 
 toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
 
 include $(INCLUDE_DIR)/kernel.mk
 
 kernel: FORCE
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
+	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
+	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
 
 packages: $(package/stamp-compile)
 	$(_SINGLE)$(SUBMAKE) -r package/index
@@ -147,23 +148,23 @@ prepare-image: FORCE
 	rm -rf $(BOARD_KDIR)
 	mkdir -p $(BOARD_KDIR)
 	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
-	$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
+	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
 	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/$(BOARD)/opkg.conf
 
-	$(GLUONMAKE) feeds
-	$(GLUONMAKE) config
-	$(GLUONMAKE) toolchain
-	$(GLUONMAKE) kernel
-	$(GLUONMAKE) packages
-	$(GLUONMAKE) prepare-image
+	+$(GLUONMAKE) feeds
+	+$(GLUONMAKE) config
+	+$(GLUONMAKE) toolchain
+	+$(GLUONMAKE) kernel
+	+$(GLUONMAKE) packages
+	+$(GLUONMAKE) prepare-image
 
 	touch $(gluon_prepared_stamp)
 
 $(gluon_prepared_stamp):
-	$(GLUONMAKE) prepare
+	+$(GLUONMAKE) prepare
 
 
 include $(INCLUDE_DIR)/package-ipkg.mk
@@ -216,10 +217,10 @@ package_install: FORCE
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 
 	$(OPKG) install $(BASE_PACKAGES)
-	$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
+	+$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
 
 	$(OPKG) install $(GLUON_PACKAGES)
-	$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM="$(GLUON_PACKAGES)"
+	+$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM="$(GLUON_PACKAGES)"
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
@@ -228,15 +229,15 @@ image: FORCE
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
-	$(GLUONMAKE) package_install
+	+$(GLUONMAKE) package_install
 
 	$(call Image/mkfs/prepare)
-	$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 
 call_image/%: FORCE
-	$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
+	+$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
 
 images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
