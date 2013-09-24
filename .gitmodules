@@ -10,3 +10,7 @@
 [submodule "packages_routing"]
 	path = packages_routing
 	url = https://github.com/openwrt-routing/packages.git
+[submodule "packages_luci"]
+	path = packages_luci
+	url = https://github.com/freifunk-gluon/luci.git
+	branch = luci-0.11
