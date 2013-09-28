@@ -1,0 +1,4 @@
+rule FORWARD --logical-out br-freifunk -o bat0 -d @next_node.mac@ -j DROP
+rule OUTPUT --logical-out br-freifunk -o bat0 -d @next_node.mac@ -j DROP
+rule FORWARD --logical-out br-freifunk -o bat0 -s @next_node.mac@ -j DROP
+rule OUTPUT --logical-out br-freifunk -o bat0 -s @next_node.mac@ -j DROP
