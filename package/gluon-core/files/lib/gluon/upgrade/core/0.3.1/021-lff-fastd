@@ -1,9 +1,0 @@
-#!/bin/sh
-
-
-uci -q batch <<EOF
-delete fastd.ffhl_mesh_vpn.config
-add_list fastd.ffhl_mesh_vpn.config=/lib/freifunk/mesh-vpn-up.conf
-
-commit fastd
-EOF

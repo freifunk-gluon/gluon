@@ -5,14 +5,14 @@ delete wireless.radio0.disabled
 delete wireless.@wifi-iface[0]
 
 set wireless.radio0.channel='@wifi24.channel@'
-set wireless.radio0.htmode='HT40+'
+set wireless.radio0.htmode='@wifi24.htmode@'
 set wireless.radio0.country='DE'
 
-set wireless.wifi_freifunk='wifi-iface'
-set wireless.wifi_freifunk.device='radio0'
-set wireless.wifi_freifunk.network='freifunk'
-set wireless.wifi_freifunk.mode='ap'
-set wireless.wifi_freifunk.ssid='@wifi24.ssid@'
+set wireless.wifi_client='wifi-iface'
+set wireless.wifi_client.device='radio0'
+set wireless.wifi_client.network='client'
+set wireless.wifi_client.mode='ap'
+set wireless.wifi_client.ssid='@wifi24.ssid@'
 
 set wireless.wifi_mesh='wifi-iface'
 set wireless.wifi_mesh.device='radio0'
