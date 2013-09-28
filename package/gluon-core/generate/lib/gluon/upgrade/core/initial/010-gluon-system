@@ -7,7 +7,7 @@ board="$(ar71xx_board_name)"
 case "$board" in
 tl-wdr3600|\
 tl-wdr4300)
-	macaddr="$(uci get wireless.radio1.macaddr)"
+	macaddr="$(cat /sys/class/ieee80211/phy1/macaddress)"
 
 	uci -q batch <<EOF
 		set system.led_wlan2g.trigger='netdev'
@@ -23,7 +23,7 @@ tl-wdr4300)
 EOF
 	;;
 *)
-	macaddr="$(uci get wireless.radio0.macaddr)"
+	macaddr="$(cat /sys/class/ieee80211/phy0/macaddress)"
 
 	uci -q batch <<EOF
 		set system.led_wlan.trigger='netdev'

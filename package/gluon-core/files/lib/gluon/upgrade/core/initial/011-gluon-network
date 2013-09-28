@@ -34,10 +34,10 @@ EOF
 get_main_address() {
     case "$board" in
 	tl-wdr3600|tl-wdr4300)
-	    uci get wireless.radio1.macaddr
+	    cat /sys/class/ieee80211/phy1/macaddress
 	    ;;
 	*)
-	    uci get wireless.radio0.macaddr
+	    cat /sys/class/ieee80211/phy0/macaddress
 	    ;;
     esac
 }
