@@ -115,6 +115,10 @@ src-link luci ../../packages_luci
 endef
 export FEEDS
 
+
+export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
+
+
 feeds: FORCE
 	rm -f feeds.conf
 	echo "$$FEEDS" > feeds.conf
