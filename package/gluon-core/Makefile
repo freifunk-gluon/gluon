@@ -30,6 +30,7 @@ endef
 
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
+	$(GLUON_GENERATE) ./generate/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-core))
