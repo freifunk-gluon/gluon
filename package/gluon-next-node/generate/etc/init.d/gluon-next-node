@@ -9,17 +9,17 @@ start() {
 	ip link set local-node address @next_node.mac@
 
 	ip address add @next_node.ip4@/32 dev local-node
-	ip route add @next_node.prefix4@ dev br-freifunk
+	ip route add @prefix4@ dev br-freifunk
 
 	ip address add @next_node.ip6@/128 dev local-node
-	ip route add @next_node.prefix6@ dev br-freifunk
+	ip route add @prefix6@ dev br-freifunk
 
 	ip link set local-node up
 }
 
 stop() {
-	ip route del @next_node.prefix4@ dev br-freifunk
-	ip route del @next_node.prefix6@ dev br-freifunk
+	ip route del @prefix4@ dev br-freifunk
+	ip route del @prefix6@ dev br-freifunk
 	ip link set local-node down
 	ip link del local-node
 }
