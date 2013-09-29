@@ -34,6 +34,7 @@ endef
 
 define Package/gluon-config-mode/install
 	$(CP) ./files/* $(1)/
+	$(GLUON_GENERATE) ./generate/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-config-mode))

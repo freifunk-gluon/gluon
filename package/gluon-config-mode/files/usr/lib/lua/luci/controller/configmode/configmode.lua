@@ -47,12 +47,11 @@ function action_reboot()
   local configmode = require "luci.tools.configmode"
   local pubkey
   local uci = luci.model.uci.cursor()
-  local address = uci:get_first("configmode", "wizard", "keyaddress")
   local meshvpn_enabled = uci:get("fastd", meshvpn_name, "enabled", "0")
   if meshvpn_enabled == "1" then
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
-	luci.template.render("configmode/reboot", {pubkey=pubkey, address=address})
+	luci.template.render("configmode/reboot", {pubkey=pubkey})
 
   uci:foreach("configmode", "wizard", function(s)
       uci:set("configmode", s[".name"], "configured", "1")
