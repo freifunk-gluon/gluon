@@ -1,5 +1,5 @@
 config autoupdater
-        option enabled 0
+        option enabled 1
         option branch "stable"
         option url 'http://[fdef:ffc0:3dd7::8]/~freifunk/firmware/autoupdate'
 
