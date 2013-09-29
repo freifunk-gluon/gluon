@@ -38,7 +38,7 @@ function index()
     page.setgroup = "root"
     page.index    = true
 
-    entry({"configmode", "wizard"}, form("configmode/wizard"), _("Wizard"), 10).index = true
+    entry({"configmode", "wizard"}, form("configmode/wizard")).index = true
     entry({"configmode", "reboot"}, call("action_reboot"))
   end
 end
