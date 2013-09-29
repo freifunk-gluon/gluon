@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-declare -a IN
+set -e
 
+declare -a IN
 
 GLUONDIR="$(dirname "$0")/.."
 
