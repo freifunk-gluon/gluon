@@ -56,7 +56,6 @@ function action_reboot()
 
   uci:foreach("configmode", "wizard", function(s)
       uci:set("configmode", s[".name"], "configured", "1")
-      uci:set("configmode", s[".name"], "enabled", "0")
     end)
   uci:save("configmode")
   uci:commit("configmode")
