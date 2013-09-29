@@ -193,7 +193,7 @@ static int handle_line(const char *line) {
 	ret = 0;
 
   end:
-	for (i = 0; i < matches; i++)
+	for (i = 0; i < matches && i < 5; i++)
 		free(columns[i]);
 
 	return ret;
