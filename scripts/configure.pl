@@ -28,7 +28,7 @@ sub read_config {
 }
 
 
-read_config 'site/site.pl';
+read_config 'site/site.conf';
 
 
 my $regex = join '|', map {quotemeta} keys %config;
