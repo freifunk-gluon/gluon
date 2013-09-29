@@ -1,0 +1,140 @@
+#!/bin/sh
+
+if test $(uci get autoupdater.@autoupdater[0].enabled) != 1; then
+  echo "autoupdater is disabled"
+  exit 0
+fi
+
+PROBABILITY=$(uci get autoupdater.@autoupdater[0].probability)
+
+if test "a$1" != "a-f"; then
+  echo | awk "END{srand();exit rand() > $PROBABILITY}"
+  if test $? -ne 0; then
+    echo "No autoupdate this time. Use -f to override"
+    exit 0
+  fi
+fi
+
+BASE=$(uci get autoupdater.@autoupdater[0].url)
+PUBKEYS=$(uci get autoupdater.@autoupdater[0].pubkey)
+GOOD_SIGNATURES=$(uci get autoupdater.@autoupdater[0].good_signatures)
+BRANCH=$(uci get autoupdater.@autoupdater[0].branch)
+
+VERSION_FILE=/etc/firmware_version
+
+newer_than() {
+  local old="$(printf '%s\n%s\n' "$1" "$2" | sort -n | head -n 1)"
+  test "$1" != "$old"
+}
+
+cleanup() {
+  rm -f $manifest
+  rm -f $fw_image
+  rm -f $manifest_upper
+  rm -f $manifest_lower
+}
+
+trap cleanup INT TERM EXIT PIPE
+
+my_model="$(cat /tmp/sysinfo/model | sed 's/ /-/g' | tr '[A-Z]' '[a-z]')"
+
+case "$my_model" in
+  "tl-wdr4300")
+    case "$(tplink_get_hwid)" in
+      "360000"*)
+        my_model="tl-wdr3600"
+        ;;
+    esac
+    ;;
+esac
+
+if [ ! -f "$VERSION_FILE" ]; then
+  echo "Couldn't determine firmware version!" >&2
+  exit 1
+fi
+
+my_version="$(cat "$VERSION_FILE")"
+
+fw_image=$(mktemp)
+manifest=$(mktemp)
+manifest_upper=$(mktemp)
+manifest_lower=$(mktemp)
+
+wget -O$manifest "$BASE"/manifest
+
+if test $? -ne 0; then
+  echo "Couldn't fetch manifest" >&2
+  exit 1
+fi
+
+seperator_line=$(cat $manifest|grep -n "^---$"|cut -d: -f1|head -n1)
+
+if test -z "$seperator_line"; then
+  echo "Couldn't find --- marker!" >&2
+  exit 1
+fi
+
+head -n$(($seperator_line-1)) $manifest > $manifest_upper
+tail -n+$(($seperator_line+1)) $manifest > $manifest_lower
+
+signatures=""
+while read sig; do
+  echo "$sig" | grep -q "^[0-9a-f]\{128\}$"
+  if test $? -ne 0; then
+    continue
+  fi
+  signatures="$signatures -s $sig"
+done < $manifest_lower
+
+pubkeys=""
+for key in $PUBKEYS; do
+  pubkeys="$pubkeys -p $key"
+done
+
+ecdsaverify -n $GOOD_SIGNATURES $pubkeys $signatures $manifest_upper
+
+if test $? -ne 0; then
+  echo "Not enough valid signatures!" >&2
+  exit 1
+fi
+
+grep -q "^BRANCH=${BRANCH}$" $manifest_upper
+
+if test $? -ne 0; then
+  echo "Wrong branch. We'are on ${BRANCH}" >&2
+  exit 1
+fi
+
+my_firmware=$(grep "^${my_model} " $manifest_upper)
+
+if test $? -ne 0; then
+  echo "No matching firmware found (model ${my_model})" >&2
+  exit 1
+fi
+
+fw_version=$(echo "${my_firmware}"|cut -d' ' -f2)
+fw_md5=$(echo "${my_firmware}"|cut -d' ' -f3)
+fw_file=$(echo "${my_firmware}"|cut -d' ' -f4)
+
+if newer_than "$fw_version" "$my_version"; then
+  echo "New version available"
+  wget -O$fw_image "${BASE}/${fw_file}"
+  if test $? -ne 0; then
+    echo "Error downloading image" >&2
+    exit 1
+  fi
+
+  image_md5=$(md5sum "$fw_image"|cut -b-32)
+  if test "$image_md5" != "$fw_md5"; then
+    echo "Invalid image checksum" >&2
+    exit 1
+  fi
+
+  echo "Upgrading firmware."
+
+  sysupgrade "${fw_image}"
+else
+  echo "No new firmware available"
+fi
+
+exit 0

@@ -1,0 +1,19 @@
+config autoupdater
+        option enabled 0
+        option branch "stable"
+        option url 'http://[fdef:ffc0:3dd7::8]/~freifunk/firmware/autoupdate'
+
+        # The updater will run once per hour and perform an update with a certain
+        # probability.
+        # 1.0 - perform an update every hour
+        # 0.5 - on average, perform an update every two hours
+        # 0.0 - inhibit any automatic updates
+        option probability 0.5
+
+        # Minimum valid signatures required to perform the update
+        option good_signatures 2
+
+        # List of public keys
+        list pubkey 'beea7da92ed0c19563b6c259162b4cb471aa2fdf9d3939d05fea2cf498ea7642'
+        list pubkey 'c75c9390cf5d7cc49a388d35f831ca379060cf7bca8c6e3d2d1ea31604597c42'
+        list pubkey '03e9514f137f0467c0f0ac108892c0da2b71f1039b30f863331cbd5701abd042'
