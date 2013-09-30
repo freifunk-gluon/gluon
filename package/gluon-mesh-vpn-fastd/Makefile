@@ -27,10 +27,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(GLUON_CONFIGURE) fastd.pl > $(PKG_BUILD_DIR)/fastd.sh
 endef
 
 define Package/gluon-mesh-vpn-fastd/install
-	$(CP) ./files/* $(1)/
+	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/fastd.sh $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant/010-mesh-vpn-fastd
 endef
 
 $(eval $(call BuildPackage,gluon-mesh-vpn-fastd))
