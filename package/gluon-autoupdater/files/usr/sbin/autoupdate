@@ -1,11 +1,11 @@
 #!/bin/sh
 
-if test $(uci get autoupdater.@autoupdater[0].enabled) != 1; then
+if test $(uci get autoupdater.default.enabled) != 1; then
   echo "autoupdater is disabled"
   exit 0
 fi
 
-PROBABILITY=$(uci get autoupdater.@autoupdater[0].probability)
+PROBABILITY=$(uci get autoupdater.default.probability)
 
 if test "a$1" != "a-f"; then
   echo | awk "END{srand();exit rand() > $PROBABILITY}"
@@ -15,10 +15,10 @@ if test "a$1" != "a-f"; then
   fi
 fi
 
-BASE=$(uci get autoupdater.@autoupdater[0].url)
-PUBKEYS=$(uci get autoupdater.@autoupdater[0].pubkey)
-GOOD_SIGNATURES=$(uci get autoupdater.@autoupdater[0].good_signatures)
-BRANCH=$(uci get autoupdater.@autoupdater[0].branch)
+BASE=$(uci get autoupdater.default.url)
+PUBKEYS=$(uci get autoupdater.default.pubkey)
+GOOD_SIGNATURES=$(uci get autoupdater.default.good_signatures)
+BRANCH=$(uci get autoupdater.default.branch)
 
 VERSION_FILE=/lib/gluon/release
 

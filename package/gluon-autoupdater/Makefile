@@ -23,11 +23,13 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(GLUON_CONFIGURE) autoupdater.pl > $(PKG_BUILD_DIR)/autoupdater.sh
 endef
 
 define Package/gluon-autoupdater/install
 	$(CP) ./files/* $(1)/
-	chmod +x $(1)/usr/sbin/autoupdate
+	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/autoupdater/initial
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/autoupdater.sh $(1)/lib/gluon/upgrade/autoupdater/initial/010-autoupdater
 endef
 
 $(eval $(call BuildPackage,gluon-autoupdater))
