@@ -12,7 +12,7 @@ define Package/gluon-ebtables
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Ebtables support
-  DEPENDS:=+gluon-core +ebtables +kmod-ebtables-ipv4 +kmod-ebtables-ipv6
+  DEPENDS:=+gluon-core +ebtables +kmod-ebtables-ipv4 +kmod-ebtables-ipv6 +kmod-ipt-core
 endef
 
 define Package/gluon-ebtables/description
