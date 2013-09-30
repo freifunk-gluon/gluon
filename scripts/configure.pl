@@ -12,10 +12,10 @@ sub add_config {
     foreach my $key (keys $c) {
 	my $val = $c->{$key};
 
-	if (ref($val)) {
+	if (ref($val) eq 'HASH') {
 	    add_config($key . '.', $val);
 	}
-	else {
+	unless (ref($val)) {
 	    $config{'@' . $prefix . $key . '@'} = $val;
 	}
     }
