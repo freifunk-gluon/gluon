@@ -117,6 +117,7 @@ export FEEDS
 
 
 export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
+export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
 
 feeds: FORCE

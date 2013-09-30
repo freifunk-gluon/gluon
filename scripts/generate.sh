@@ -4,8 +4,6 @@ set -e
 
 declare -a IN
 
-GLUONDIR="$(dirname "$0")/.."
-
 
 for ((i = 1; i < $#; i++)); do
 	IN[$i]="${!i}"
@@ -23,7 +21,7 @@ for S in "${IN[@]}"; do (
 		D="$(dirname "$FILE")"
 
 		mkdir -p "$OUT/$D"
-		(cd "$GLUONDIR"; scripts/configure.pl) < "$FILE" > "$OUT/$FILE"
+		(cd "$GLUONDIR"; scripts/configure.pl scripts/generate.pl) < "$FILE" > "$OUT/$FILE"
 		chmod --reference="$FILE" "$OUT/$FILE"
 	done
 ); done
