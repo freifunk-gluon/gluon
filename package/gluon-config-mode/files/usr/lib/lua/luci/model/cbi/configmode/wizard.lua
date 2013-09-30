@@ -19,9 +19,14 @@ o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
 o.default = string.format("%d", uci:get("fastd", meshvpn_name, "enabled", "0"))
 o.rmempty = false
 
+local upstream, downstream
+upstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "upstream"))
+downstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "downstream"))
+
 o = s:option(Flag, "_bwlimit", "Bandbreitenbegrenzung aktivieren?")
 o.default = string.format("%d", uci:get_first("freifunk", "bandwidth", "enabled", "0"))
 o.rmempty = false
+o.description = downstream .. " Downstream / " .. upstream .. " Upstream"
 
 o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
 o.default = string.format("%d", uci:get_first("autoupdater", "autoupdater", "enabled", "0"))
