@@ -16,7 +16,7 @@ $Id$
 module("luci.controller.admin.system", package.seeall)
 
 function index()
-	entry({"admin", "passwd"}, form("admin/passwd"), _("Admin Password"), 10)
+	entry({"admin", "passwd"}, cbi("admin/passwd"), _("Admin Password"), 10)
 	entry({"admin", "backup"}, call("action_backup"), _("Backup / Restore"), 80)
 	entry({"admin", "upgrade"}, call("action_upgrade"), _("Flash Firmware"), 90)
 	entry({"admin", "reboot"}, call("action_reboot"), _("Reboot"), 100)
