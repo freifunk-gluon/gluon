@@ -6,6 +6,7 @@ START=95
 
 start() {
 	ip link add link br-client name local-node type macvlan
+	echo 0 > /proc/sys/net/ipv6/conf/local-node/accept_ra
 	ip link set local-node address @next_node.mac@
 
 	ip address add @next_node.ip4@/32 dev local-node
