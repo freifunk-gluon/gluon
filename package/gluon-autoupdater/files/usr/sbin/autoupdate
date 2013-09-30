@@ -20,7 +20,7 @@ PUBKEYS=$(uci get autoupdater.@autoupdater[0].pubkey)
 GOOD_SIGNATURES=$(uci get autoupdater.@autoupdater[0].good_signatures)
 BRANCH=$(uci get autoupdater.@autoupdater[0].branch)
 
-VERSION_FILE=/etc/firmware_version
+VERSION_FILE=/lib/gluon/release
 
 newer_than() {
   local old="$(printf '%s\n%s\n' "$1" "$2" | sort -n | head -n 1)"
