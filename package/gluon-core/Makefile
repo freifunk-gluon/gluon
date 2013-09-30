@@ -12,6 +12,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
+  DEPENDS:=+odhcp6c
 endef
 
 define Package/gluon-core/description
