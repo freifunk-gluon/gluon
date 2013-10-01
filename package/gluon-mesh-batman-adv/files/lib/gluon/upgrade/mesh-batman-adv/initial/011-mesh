@@ -1,0 +1,45 @@
+#!/bin/sh
+
+
+. /lib/gluon/functions/sysconfig.sh
+
+
+uci -q batch <<EOF
+delete batman-adv.bat0
+
+set batman-adv.bat0='mesh'
+set batman-adv.bat0.orig_interval='5000'
+
+commit batman-adv
+EOF
+
+uci -q batch <<EOF
+set network.client='interface'
+set network.client.ifname='$(sysconfig lan_ifname) bat0'
+set network.client.type='bridge'
+set network.client.proto='dhcpv6'
+set network.client.reqprefix='no'
+set network.client.peerdns='0'
+
+set network.mesh='interface'
+set network.mesh.proto='batadv'
+set network.mesh.mtu='1528'
+set network.mesh.mesh='bat0'
+
+set network.mesh_vpn='interface'
+set network.mesh_vpn.ifname='mesh-vpn'
+set network.mesh_vpn.proto='batadv'
+set network.mesh_vpn.mesh='bat0'
+EOF
+
+
+local mainaddr=$(sysconfig primary_mac)
+local oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
+local b2mask=0x02
+
+local vpnaddr=$(printf "%02x:%s:%s:%02x:%s:%s" $(( 0x$1 | $b2mask )) $2 $3 $(( (0x$4 + 1) % 0x100 )) $5 $6)
+
+uci set network.client.macaddr="$mainaddr"
+uci set network.mesh_vpn.macaddr="$vpnaddr"
+
+uci commit network

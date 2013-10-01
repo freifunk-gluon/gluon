@@ -1,5 +1,0 @@
-#!/bin/sh
-
-
-uci set batman-adv.bat0.interfaces="mesh-vpn $(uci -q get batman-adv.bat0.interfaces)"
-uci commit batman-adv
