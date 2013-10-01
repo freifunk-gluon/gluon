@@ -1,0 +1,20 @@
+#!/bin/sh
+
+. /lib/gluon/functions/sysconfig.sh
+. /lib/ar71xx.sh
+
+
+get_primary_mac() {
+    case "$(ar71xx_board_name)" in
+	tl-wdr3600|tl-wdr4300)
+	    cat /sys/class/ieee80211/phy1/macaddress
+	    ;;
+	*)
+	    cat /sys/class/ieee80211/phy0/macaddress
+	    ;;
+    esac
+}
+
+
+sysconfig_set lan_ifname "$(uci get network.lan.ifname)"
+sysconfig_set primary_mac "$(get_primary_mac)"
