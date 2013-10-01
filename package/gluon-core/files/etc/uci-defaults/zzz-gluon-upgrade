@@ -5,6 +5,9 @@ UPGRADE_DIR=/lib/gluon/upgrade
 VERSION_DIR=/lib/gluon/version
 
 
+mkdir -p "$VERSION_DIR"
+
+
 version_of() {
 	opkg status "gluon-$1" | grep '^Version: ' | cut -d' ' -f 2
 }
