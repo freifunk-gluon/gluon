@@ -27,8 +27,36 @@ do_dir() {
 	fi
 }
 
+do_component() {
+	local component="$1"
+	local version="$(version_of "$component")"
+	if [ -z "$version" ]; then continue; fi
 
-version="$(version_of gluon-core)"
+	cd "$component"
+
+	local oldversion="$(oldversion_of "$component")"
+	if [ -z "$oldversion" ]; then
+		do_dir initial
+	else
+		local v
+
+		for v in *; do
+			if [ "$v" = initial -o "$v" = invariant -o "$v" = version ]; then continue; fi
+
+			# The return value of opkg compare-versions is negated
+			if ! opkg compare-versions "$v" '>>' "$oldversion"; then
+				do_dir "$v"
+			fi
+		done
+	fi
+
+	do_dir invariant
+
+	echo "$version" > "$VERSION_DIR"/"$component"
+}
+
+
+version="$(version_of core)"
 
 oldversion="$(cat "$VERSION_FILE" 2>/dev/null)"
 if [ -z "$oldversion" ]; then oldversion="$(cat "$VERSION_FILE_FREIFUNK" 2>/dev/null)"; fi
@@ -38,31 +66,12 @@ if [ -z "$oldversion" ]; then oldversion="$(cat "$VERSION_FILE_KFF" 2>/dev/null)
 (
 	cd "$UPGRADE_DIR"
 
+	do_compoment core
+
 	for component in *; do (
-		local version="$(version_of "$component")"
-		if [ -z "$version" ]; then continue; fi
-
-		cd "$component"
-
-		local oldversion="$(oldversion_of "$component")"
-		if [ -z "$oldversion" ]; then
-			do_dir initial
-		else
-			local v
-
-			for v in *; do
-				if [ "$v" = initial -o "$v" = invariant -o "$v" = version ]; then continue; fi
-
-				# The return value of opkg compare-versions is negated
-				if ! opkg compare-versions "$v" '>>' "$oldversion"; then
-					do_dir "$v"
-				fi
-			done
+		if [ "$component" != 'core' ]; then
+			do_component "$component"
 		fi
-
-		do_dir invariant
-
-		echo "$version" > "$VERSION_DIR"/"$component"
 	) done
 )
 
