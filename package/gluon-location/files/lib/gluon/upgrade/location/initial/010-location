@@ -1,0 +1,12 @@
+#!/bin/sh
+
+CFG="@system[0]"
+
+uci -q batch <<EOF
+
+set system.${CFG}.share_location=0
+set system.${CFG}.latitude=0
+set system.${CFG}.longitude=0
+
+commit system
+EOF
