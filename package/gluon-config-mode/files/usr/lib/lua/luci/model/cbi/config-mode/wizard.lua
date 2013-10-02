@@ -1,4 +1,4 @@
-local configmode = require "luci.tools.configmode"
+local configmode = require "luci.tools.config-mode"
 local meshvpn_name = "mesh_vpn"
 local uci = luci.model.uci.cursor()
 local f, s, o
@@ -75,7 +75,7 @@ function f.handle(self, state, data)
     uci:save("system")
     uci:commit("system")
 
-    luci.http.redirect(luci.dispatcher.build_url("configmode", "reboot"))
+    luci.http.redirect(luci.dispatcher.build_url("config-mode", "reboot"))
   end
 
   return true
