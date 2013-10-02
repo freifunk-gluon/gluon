@@ -16,7 +16,7 @@ o.rmempty = false
 o.datatype = "hostname"
 
 o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
-o.default = string.format("%d", uci:get("fastd", meshvpn_name, "enabled", "0"))
+o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
 
 local upstream, downstream
@@ -24,23 +24,27 @@ upstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "up
 downstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "downstream"))
 
 o = s:option(Flag, "_bwlimit", "Bandbreitenbegrenzung aktivieren?")
-o.default = string.format("%d", uci:get_first("freifunk", "bandwidth", "enabled", "0"))
+o.default = uci:get_first("freifunk", "bandwidth", "enabled", "0")
 o.rmempty = false
 o.description = downstream .. " Downstream / " .. upstream .. " Upstream"
 
 o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
-o.default = string.format("%d", uci:get_first("autoupdater", "autoupdater", "enabled", "0"))
+o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or o.disabled
 o.rmempty = false
 
 s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS Koordinaten deines Knotens festlegen damit er in der Karte angezeigt werden kann.")
 
+o = s:option(Flag, "_location", "Koordinaten veröffentlichen?")
+o.default = uci:get_first("system", "system", "share_location", o.disabled)
+o.rmempty = false
+
 o = s:option(Value, "_latitude", "Breitengrad")
-o.default = string.format("%f", uci:get_first("system", "location", "latitude", "0"))
+o.default = string.format("%f", uci:get_first("system", "system", "latitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 
 o = s:option(Value, "_longitude", "Längengrad")
-o.default = string.format("%f", uci:get_first("system", "location", "longitude", "0"))
+o.default = string.format("%f", uci:get_first("system", "system", "longitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 
@@ -48,9 +52,7 @@ function f.handle(self, state, data)
   if state == FORM_VALID then
     local stat = false
 
-    uci:foreach("autoupdater", "autoupdater", function(s)
-            uci:set("autoupdater", s[".name"], "enabled", data._autoupdate)
-            end)
+    uci:set("autoupdater", "settings", "enabled", data._autoupdate)
     uci:save("autoupdater")
     uci:commit("autoupdater")
 
@@ -66,9 +68,7 @@ function f.handle(self, state, data)
 
     uci:foreach("system", "system", function(s)
             uci:set("system", s[".name"], "hostname", data._hostname)
-            end)
-
-    uci:foreach("system", "location", function(s)
+            uci:set("system", s[".name"], "share_location", data._location)
             uci:set("system", s[".name"], "latitude", data._latitude)
             uci:set("system", s[".name"], "longitude", data._longitude)
             end)
