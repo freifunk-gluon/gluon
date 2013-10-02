@@ -19,6 +19,7 @@ print <<END;
 
 uci -q batch <<EOF
 set fastd.mesh_vpn='fastd'
+set fastd.mesh_vpn.enabled=$cfg->{enabled}
 set fastd.mesh_vpn.syslog_level='verbose'
 delete fastd.mesh_vpn.config
 delete fastd.mesh_vpn.config_peer_dir
