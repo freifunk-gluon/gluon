@@ -1,7 +1,7 @@
 local luci = require "luci"
 local io = require "io"
 
-module "luci.tools.config-mode"
+module "luci.tools.gluon-config-mode"
 
 function setup_fastd_secret(name)
   local uci = luci.model.uci.cursor()

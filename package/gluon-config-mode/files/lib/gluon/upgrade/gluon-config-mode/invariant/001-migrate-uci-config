@@ -1,6 +1,6 @@
 #!/bin/sh
 
 OLD_CFG=/etc/config/config_mode
-NEW_CFG=/etc/config/config-mode
+NEW_CFG=/etc/config/gluon-config-mode
 
 [ -f $OLD_CFG ] && mv $OLD_CFG $NEW_CFG
