@@ -31,6 +31,7 @@ define Build/Compile
 endef
 
 define Package/gluon-mesh-vpn-fastd/install
+	$(CP) ./files/* $(1)/
 	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/fastd.sh $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant/010-mesh-vpn-fastd
 endef
