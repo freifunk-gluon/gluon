@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gluon-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+ecdsautils +gluon-cron +gluon-release +gluon-location
+  DEPENDS:=+ecdsautils +gluon-cron +gluon-release
   TITLE:=Automatically update firmware
 endef
 
