@@ -1,0 +1,3 @@
+#/bin/sh
+
+uci -q delete autoupdater.settings
