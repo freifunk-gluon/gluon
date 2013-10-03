@@ -27,10 +27,13 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(GLUON_CONFIGURE) initial.pl > $(PKG_BUILD_DIR)/initial.sh
 endef
 
 define Package/gluon-simple-tc/install
 	$(CP) ./files/* $(1)/
+	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/simple-tc/initial
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/initial.sh $(1)/lib/gluon/upgrade/simple-tc/initial/010-site-defaults
 endef
 
 $(eval $(call BuildPackage,gluon-simple-tc))
