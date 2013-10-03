@@ -17,4 +17,5 @@ get_primary_mac() {
 
 
 sysconfig_set lan_ifname "$(uci get network.lan.ifname)"
+sysconfig_set wan_ifname "$(uci get network.wan.ifname)"
 sysconfig_set primary_mac "$(get_primary_mac)"

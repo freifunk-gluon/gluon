@@ -1,20 +1,19 @@
 #!/bin/sh
 
 
+. /lib/functions.sh
 . /lib/gluon/functions/sysconfig.sh
 
-uci -q batch <<EOF
-delete network.lan
+uci_remove network lan
 
-set network.wan.type='bridge'
-set network.wan.proto='dhcp'
-set network.wan.auto='1'
+uci_set network wan type 'bridge'
+uci_set network wan proto 'dhcp'
 EOF
 
 
-local mainaddr=$(sysconfig primary_mac)
-local oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
-local b2mask=0x02
+mainaddr=$(sysconfig primary_mac)
+oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
+b2mask=0x02
 
 case "$board" in
 tl-wr1043nd|\
@@ -22,8 +21,8 @@ tl-wdr3600|\
 tl-wdr4300) # fix up duplicate mac addresses
 	local wanaddr=$(printf "%02x:%s:%s:%02x:%s:%02x" $(( 0x$1 | $b2mask )) $2 $3 $(( (0x$4 + 1) % 0x100 )) $5 $(( (0x$6 + 1) % 0x100 )) )
 
-	uci set network.wan.macaddr="$wanaddr"
+	uci_set network wan macaddr "$wanaddr"
 	;;
 esac
 
-uci commit network
+uci_commit network
