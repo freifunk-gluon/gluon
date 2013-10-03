@@ -6,7 +6,7 @@ wait=3
 
 wait_config_mode() {
 	sleep $wait
-	uci set 'config-mode.@wizard[0].enabled=1'
+	uci set 'gluon-config-mode.@wizard[0].enabled=1'
 	uci commit config-mode
 	reboot
 }
