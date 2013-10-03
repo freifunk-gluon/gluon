@@ -17,7 +17,7 @@ module("luci.controller.admin.index", package.seeall)
 
 function index()
   local uci_state = luci.model.uci.cursor_state()
-  local configmode = uci_state:get_first("configmode", "wizard", "running", "0") == "1"
+  local configmode = uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1"
 
 	local root = node()
 	if not root.lock then
