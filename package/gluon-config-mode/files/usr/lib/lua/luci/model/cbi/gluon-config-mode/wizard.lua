@@ -15,22 +15,29 @@ o.value = uci:get_first("system", "system", "hostname")
 o.rmempty = false
 o.datatype = "hostname"
 
+o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
+o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or o.disabled
+o.rmempty = false
+
+s = f:section(SimpleSection, "Mesh-VPN", nil)
+
 o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
 o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
 
-local upstream, downstream
-upstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "upstream"))
-downstream = string.format("%d KBit/s", uci:get_first("freifunk", "bandwidth", "downstream"))
-
-o = s:option(Flag, "_bwlimit", "Bandbreitenbegrenzung aktivieren?")
-o.default = uci:get_first("freifunk", "bandwidth", "enabled", "0")
+o = s:option(Flag, "_limit_enabled", "Bandbreitenbegrenzung aktivieren?")
+o.default = uci:get_bool("gluon-simple-tc", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
-o.description = downstream .. " Downstream / " .. upstream .. " Upstream"
 
-o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
-o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or o.disabled
+o = s:option(Value, "_limit_ingress", "Downstream")
+o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_ingress")
 o.rmempty = false
+o.datatype = "integer"
+
+o = s:option(Value, "_limit_egress", "Upstream")
+o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
+o.rmempty = false
+o.datatype = "integer"
 
 s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS Koordinaten deines Knotens festlegen damit er in der Karte angezeigt werden kann.")
 
@@ -56,11 +63,12 @@ function f.handle(self, state, data)
     uci:save("autoupdater")
     uci:commit("autoupdater")
 
-    uci:foreach("freifunk", "bandwidth", function(s)
-            uci:set("freifunk", s[".name"], "enabled", data._bwlimit)
-            end)
-    uci:save("freifunk")
-    uci:commit("freifunk")
+    uci:set("gluon-simple-tc", meshvpn_name, "interface")
+    uci:set("gluon-simple-tc", meshvpn_name, "enabled", data._limit_enabled)
+    uci:set("gluon-simple-tc", meshvpn_name, "ifname", meshvpn_name)
+    uci:set("gluon-simple-tc", meshvpn_name, "limit_ingress", data._limit_ingress)
+    uci:set("gluon-simple-tc", meshvpn_name, "limit_egress", data._limit_egress)
+    uci:commit("gluon-simple-tc")
 
     uci:set("fastd", meshvpn_name, "enabled", data._meshvpn)
     uci:save("fastd")
