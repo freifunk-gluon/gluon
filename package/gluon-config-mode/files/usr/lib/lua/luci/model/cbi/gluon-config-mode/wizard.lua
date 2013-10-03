@@ -65,7 +65,7 @@ function f.handle(self, state, data)
 
     uci:set("gluon-simple-tc", meshvpn_name, "interface")
     uci:set("gluon-simple-tc", meshvpn_name, "enabled", data._limit_enabled)
-    uci:set("gluon-simple-tc", meshvpn_name, "ifname", meshvpn_name)
+    uci:set("gluon-simple-tc", meshvpn_name, "ifname", "mesh-vpn")
     uci:set("gluon-simple-tc", meshvpn_name, "limit_ingress", data._limit_ingress)
     uci:set("gluon-simple-tc", meshvpn_name, "limit_egress", data._limit_egress)
     uci:commit("gluon-simple-tc")
