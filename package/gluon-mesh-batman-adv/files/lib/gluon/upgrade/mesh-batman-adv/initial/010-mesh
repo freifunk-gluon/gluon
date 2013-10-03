@@ -11,25 +11,13 @@ set batman-adv.bat0='mesh'
 set batman-adv.bat0.orig_interval='5000'
 
 commit batman-adv
-EOF
 
-uci -q batch <<EOF
 set network.client='interface'
 set network.client.ifname='$(sysconfig lan_ifname) bat0'
 set network.client.type='bridge'
 set network.client.proto='dhcpv6'
 set network.client.reqprefix='no'
 set network.client.peerdns='0'
-
-set network.mesh='interface'
-set network.mesh.proto='batadv'
-set network.mesh.mtu='1528'
-set network.mesh.mesh='bat0'
-
-set network.mesh_vpn='interface'
-set network.mesh_vpn.ifname='mesh-vpn'
-set network.mesh_vpn.proto='batadv'
-set network.mesh_vpn.mesh='bat0'
 EOF
 
 

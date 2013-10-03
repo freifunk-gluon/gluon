@@ -55,5 +55,11 @@ EOF
 print <<END;
 
 commit fastd
+
+set network.mesh_vpn='interface'
+set network.mesh_vpn.ifname='mesh-vpn'
+set network.mesh_vpn.proto='batadv'
+set network.mesh_vpn.mesh='bat0'
+commit network
 EOF
 END

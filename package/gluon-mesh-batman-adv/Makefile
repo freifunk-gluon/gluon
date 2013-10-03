@@ -31,6 +31,7 @@ endef
 
 define Package/gluon-mesh-batman-adv/install
 	$(CP) ./files/* $(1)/
+	$(GLUON_GENERATE) ./generate/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-mesh-batman-adv))

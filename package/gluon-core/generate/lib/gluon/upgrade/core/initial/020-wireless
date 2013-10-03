@@ -1,26 +1,14 @@
 #!/bin/sh
 
-uci -q batch <<EOF
-delete wireless.radio0.disabled
-delete wireless.@wifi-iface[0]
+. /lib/functions.sh
 
-set wireless.radio0.channel='@wifi24.channel@'
-set wireless.radio0.htmode='@wifi24.htmode@'
-set wireless.radio0.country='DE'
+config_load wireless
 
-set wireless.wifi_client='wifi-iface'
-set wireless.wifi_client.device='radio0'
-set wireless.wifi_client.network='client'
-set wireless.wifi_client.mode='ap'
-set wireless.wifi_client.ssid='@wifi24.ssid@'
+delete_iface() {
+	local iface="$1"
 
-set wireless.wifi_mesh='wifi-iface'
-set wireless.wifi_mesh.device='radio0'
-set wireless.wifi_mesh.network='mesh'
-set wireless.wifi_mesh.mode='adhoc'
-set wireless.wifi_mesh.ssid='@wifi24.mesh_ssid@'
-set wireless.wifi_mesh.bssid='@wifi24.mesh_bssid@'
-set wireless.wifi_mesh.mcast_rate='12000'
+	uci_remove wireless "$iface"
+}
 
-commit wireless
-EOF
+config_foreach delete_iface 'wifi-iface'
+uci_commit wireless
