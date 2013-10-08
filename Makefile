@@ -69,21 +69,30 @@ include tools/Makefile
 include toolchain/Makefile
 
 BOARD := ar71xx
+override SUBTARGET := generic
+
 PROFILES :=
 PROFILE_PACKAGES :=
 
 gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
 
 
+define Profile
+  $(eval $(call Profile/Default))
+  $(eval $(call Profile/$(1)))
+  $(1)_PACKAGES := $(PACKAGES)
+endef
+
 define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
 	+$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
 
 PROFILES += $(1)
-PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
+PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 endef
 
+include $(INCLUDE_DIR)/target.mk
 include $(GLUONDIR)/include/profiles.mk
 
 
