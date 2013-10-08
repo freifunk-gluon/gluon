@@ -11,6 +11,11 @@ BOARD_KDIR = $(BOARD_BUILDDIR)/kernel
 
 export GLUONDIR GLUON_SITEDIR GLUON_IMAGEDIR GLUON_OPENWRTDIR GLUON_BUILDDIR
 
+
+CONFIG_VERSION_REPO := http://downloads.openwrt.org/attitude_adjustment/12.09/%S/packages
+
+export CONFIG_VERSION_REPO
+
 $(GLUON_SITEDIR)/site.mk:
 	$(error There was no site configuration found. Please check out a site configuration to $(GLUON_SITEDIR))
 
