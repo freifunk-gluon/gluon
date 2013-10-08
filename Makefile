@@ -135,7 +135,11 @@ feeds: FORCE
 	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
-	echo -e 'CONFIG_TARGET_$(BOARD)=y\nCONFIG_TARGET_ROOTFS_JFFS2=n\n$(subst ${space},\n,$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' > .config
+	echo \
+		'CONFIG_TARGET_$(BOARD)=y' \
+		'CONFIG_TARGET_ROOTFS_JFFS2=n' \
+		'$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES)))' \
+		| sed -e 's/ /\n/g' > .config
 	$(_SINGLE)$(SUBMAKE) defconfig OPENWRT_BUILD=
 
 .config:
