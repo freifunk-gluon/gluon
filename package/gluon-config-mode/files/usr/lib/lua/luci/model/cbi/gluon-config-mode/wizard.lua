@@ -6,7 +6,7 @@ local f, s, o
 -- prepare fastd key as early as possible
 configmode.setup_fastd_secret(meshvpn_name)
 
-f = SimpleForm("wizard", "Wizard", "Lorem ipsum...")
+f = SimpleForm("wizard", "Willkommen!", "Willkommen zum Einrichtungsassistenten für deinen neuen Lübecker Freifunk-Knoten.  Fülle das folgende Formular deinen Vorstellungen entsprechend aus und klicke anschließend auf den „Senden“-Button.")
 
 s = f:section(SimpleSection, "Grundeinstellungen", nil)
 
@@ -14,12 +14,14 @@ o = s:option(Value, "_hostname", "Knotenname")
 o.value = uci:get_first("system", "system", "hostname")
 o.rmempty = false
 o.datatype = "hostname"
+o.description = "Öffentlicher Name deines Knotens. Wird z.B. für die Anzeige auf der Knotenkarte benutzt."
 
 o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
 o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or o.disabled
 o.rmempty = false
+o.description = "Aktiviert automatische Updates der Firmware (empfohlen)"
 
-s = f:section(SimpleSection, "Mesh-VPN", nil)
+s = f:section(SimpleSection, "Mesh-VPN", "Nutzt die Internet-Verbindung, um diesem Knoten auch dann Zugang zum Freifunknetz zu geben, wenn er außerhalb der Funkreichweite anderer Freifunk-Knoten ist.")
 
 o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
 o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
@@ -28,6 +30,7 @@ o.rmempty = false
 o = s:option(Flag, "_limit_enabled", "Bandbreitenbegrenzung aktivieren?")
 o.default = uci:get_bool("gluon-simple-tc", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
+o.description = "Begrenzt die Geschwindigkeit, mit der dieser Knoten auf das Internet zugreifen darf. Kann aktiviert werden, wenn der eigene Internetanschluss durch den Freifunkknoten merklich ausgebremst wird."
 
 o = s:option(Value, "_limit_ingress", "Downstream")
 o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_ingress")
@@ -39,7 +42,7 @@ o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
 o.rmempty = false
 o.datatype = "integer"
 
-s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS Koordinaten deines Knotens festlegen damit er in der Karte angezeigt werden kann.")
+s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS-Koordinaten deines Knotens eintragen, um ihn in der Knotenkarte anzeigen zu lassen.")
 
 o = s:option(Flag, "_location", "Koordinaten veröffentlichen?")
 o.default = uci:get_first("system", "system", "share_location", o.disabled)
