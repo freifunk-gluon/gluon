@@ -29,6 +29,6 @@ OpenWRT is licensed under the terms of the GNU General Public License Version 2,
 which can be found under openwrt/LICENSE after the openwrt submodule has been
 obtained. This applies to the following submodules:
  * openwrt
- * packages_luci
- * packages_openwrt
- * packages_routing
+ * packages/openwrt
+ * packages/routing
+ * packages/luci

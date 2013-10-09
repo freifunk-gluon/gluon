@@ -117,10 +117,10 @@ refresh_feeds: FORCE
 
 
 define FEEDS
-src-link gluon ../../packages_gluon
-src-link packages ../../packages_openwrt
-src-link routing ../../packages_routing
-src-link luci ../../packages_luci
+src-link gluon ../../packages/gluon
+src-link packages ../../packages/openwrt
+src-link routing ../../packages/routing
+src-link luci ../../packages/luci
 endef
 export FEEDS
 
