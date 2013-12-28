@@ -1,0 +1,16 @@
+GLUON_MODULES='openwrt packages/openwrt packages/gluon packages/routing packages/luci'
+
+MODULE_OPENWRT_REPO=git://nbd.name/attitude_adjustment.git
+MODULE_OPENWRT_COMMIT=162cca9386fd2d451732562efeaf57a533f3de86
+
+MODULE_PACKAGES_OPENWRT_REPO=git://nbd.name/packages_12.09.git
+MODULE_PACKAGES_OPENWRT_COMMIT=b4aa2d25af02e55e223f31894facf6d0e5300146
+
+MODULE_PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
+MODULE_PACKAGES_GLUON_COMMIT=f34c54d84cb1f874bf7d588d264dae3c0706ba0b
+
+MODULE_PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+MODULE_PACKAGES_ROUTING_COMMIT=1c0b31528970a181327ff9309e3efd1e8c625ff0
+
+MODULE_PACKAGES_LUCI_REPO=https://github.com/freifunk-gluon/luci.git
+MODULE_PACKAGES_LUCI_COMMIT=bed710786d8a3a63f5908823e6382a51efc91003

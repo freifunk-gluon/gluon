@@ -10,7 +10,7 @@
 RELEASE:=Attitude Adjustment
 PREP_MK= OPENWRT_BUILD= QUIET=0
 
-include $(TOPDIR)/include/verbose.mk
+-include $(TOPDIR)/include/verbose.mk
 
 REVISION:=$(shell $(TOPDIR)/scripts/getver.sh)
 

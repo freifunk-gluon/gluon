@@ -18,7 +18,11 @@ include $(GLUONDIR)/include/gluon.mk
 TOPDIR:=$(GLUON_OPENWRTDIR)
 export TOPDIR
 
-include $(TOPDIR)/include/host.mk
+
+update: FORCE
+	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
+
+-include $(TOPDIR)/include/host.mk
 
 _SINGLE=export MAKEFLAGS=$(space);
 
@@ -27,8 +31,8 @@ override REVISION:=$(shell $(GLUONDIR)/scripts/openwrt_rev.sh $(GLUONDIR))
 GREP_OPTIONS=
 export OPENWRT_BUILD GREP_OPTIONS REVISION
 
-include $(TOPDIR)/include/debug.mk
-include $(TOPDIR)/include/depends.mk
+-include $(TOPDIR)/include/debug.mk
+-include $(TOPDIR)/include/depends.mk
 include $(GLUONDIR)/include/toplevel.mk
 
 define GluonProfile
