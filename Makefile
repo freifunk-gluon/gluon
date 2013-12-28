@@ -28,6 +28,10 @@ patch: FORCE
 unpatch: FORCE
 	$(GLUONDIR)/scripts/unpatch.sh $(GLUONDIR)
 
+update-patches: FORCE
+	$(GLUONDIR)/scripts/update-patches.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
+
 -include $(TOPDIR)/include/host.mk
 
 _SINGLE=export MAKEFLAGS=$(space);
