@@ -21,6 +21,7 @@ export TOPDIR
 
 update: FORCE
 	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
 
 patch: FORCE
 	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)

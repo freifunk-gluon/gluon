@@ -11,6 +11,7 @@ for module in $GLUON_MODULES; do
 	eval repo=\${MODULE_${var}_REPO}
 	eval commit=\${MODULE_${var}_COMMIT}
 	git -C "$dir" init
-	git -C "$dir" fetch $repo
+
+	git -C "$dir" checkout $commit 2>/dev/null || git -C "$dir" fetch $repo
 	git -C "$dir" checkout -B base $commit
 done
