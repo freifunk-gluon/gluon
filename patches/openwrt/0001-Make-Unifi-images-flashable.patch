@@ -1,12 +1,6 @@
-From e541a190d4f54d35043a804f42af746793181405 Mon Sep 17 00:00:00 2001
-Message-Id: <e541a190d4f54d35043a804f42af746793181405.1388240789.git.mschiffer@universe-factory.net>
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Fri, 27 Dec 2013 18:48:19 +0100
-Subject: [PATCH] Make Unifi images flashable
-
----
- target/linux/ar71xx/image/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Subject: Make Unifi images flashable
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
 index 9ebe486..8e82f7f 100644
@@ -23,6 +17,3 @@ index 9ebe486..8e82f7f 100644
  
  $(eval $(call SingleProfile,WHRHPG300N,$(fs_64k),WHRG301N,whr-g301n,WHR-G301N,ttyS0,115200,$$(whrhpg300n_mtdlayout),WHR-G301N))
  $(eval $(call SingleProfile,WHRHPG300N,$(fs_64k),WHRHPG300N,whr-hp-g300n,WHR-HP-G300N,ttyS0,115200,$$(whrhpg300n_mtdlayout),WHR-HP-G300N))
--- 
-1.8.5.2
-
