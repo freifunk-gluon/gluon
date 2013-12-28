@@ -30,6 +30,7 @@ unpatch: FORCE
 	$(GLUONDIR)/scripts/unpatch.sh $(GLUONDIR)
 
 update-patches: FORCE
+	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
 	$(GLUONDIR)/scripts/update-patches.sh $(GLUONDIR)
 	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
 
@@ -38,9 +39,8 @@ update-patches: FORCE
 _SINGLE=export MAKEFLAGS=$(space);
 
 override OPENWRT_BUILD=1
-override REVISION:=$(shell $(GLUONDIR)/scripts/openwrt_rev.sh $(GLUONDIR))
 GREP_OPTIONS=
-export OPENWRT_BUILD GREP_OPTIONS REVISION
+export OPENWRT_BUILD GREP_OPTIONS
 
 -include $(TOPDIR)/include/debug.mk
 -include $(TOPDIR)/include/depends.mk
@@ -53,20 +53,27 @@ endef
 
 include $(GLUONDIR)/include/profiles.mk
 
+CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have optained the external repositories needed by Gluon; please call `make update` first!'; false)
+
 all: FORCE
+	+@$(CheckExternal)
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
 download prepare images: FORCE
+	+@$(CheckExternal)
 	+@$(GLUONMAKE) $@
 
 dirclean: clean
+	+@$(CheckExternal)
 	+@$(SUBMAKE) -C $(TOPDIR) -r dirclean
 
 cleanall: clean
+	+@$(CheckExternal)
 	+@$(SUBMAKE) -C $(TOPDIR) -r clean
 
 clean:
+	+@$(CheckExternal)
 	+@$(GLUONMAKE) clean
 
 else
