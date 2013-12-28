@@ -22,6 +22,12 @@ export TOPDIR
 update: FORCE
 	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
 
+patch: FORCE
+	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
+
+unpatch: FORCE
+	$(GLUONDIR)/scripts/unpatch.sh $(GLUONDIR)
+
 -include $(TOPDIR)/include/host.mk
 
 _SINGLE=export MAKEFLAGS=$(space);
