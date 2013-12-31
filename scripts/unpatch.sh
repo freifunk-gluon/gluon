@@ -5,6 +5,6 @@ set -e
 . "$1"/modules
 
 for module in $GLUON_MODULES; do
-	dir="$1"/$module
-	git -C "$dir" checkout base
+	cd "$1"/$module
+	git checkout base
 done

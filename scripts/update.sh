@@ -5,13 +5,14 @@ set -e
 . "$1"/modules
 
 for module in $GLUON_MODULES; do
-	dir="$1"/$module
-	mkdir -p "$dir"
 	var=$(echo $module | tr '[:lower:]/' '[:upper:]_')
 	eval repo=\${MODULE_${var}_REPO}
 	eval commit=\${MODULE_${var}_COMMIT}
-	git -C "$dir" init
 
-	git -C "$dir" checkout $commit 2>/dev/null || git -C "$dir" fetch $repo
-	git -C "$dir" checkout -B base $commit
+	mkdir -p "$1"/$module
+	cd "$1"/$module
+	git init
+
+	git checkout $commit 2>/dev/null || fetch $repo
+	git checkout -B base $commit
 done
