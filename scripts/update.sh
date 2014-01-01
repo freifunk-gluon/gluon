@@ -13,6 +13,6 @@ for module in $GLUON_MODULES; do
 	cd "$1"/$module
 	git init
 
-	git checkout $commit 2>/dev/null || fetch $repo
+	git checkout $commit 2>/dev/null || git fetch $repo
 	git checkout -B base $commit
 done
