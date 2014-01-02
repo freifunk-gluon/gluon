@@ -2,12 +2,12 @@
 
 set -e
 
-. "$1"/modules
+. "$1"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
 	var=$(echo $module | tr '[:lower:]/' '[:upper:]_')
-	eval repo=\${MODULE_${var}_REPO}
-	eval commit=\${MODULE_${var}_COMMIT}
+	eval repo=\${${var}_REPO}
+	eval commit=\${${var}_COMMIT}
 
 	mkdir -p "$1"/$module
 	cd "$1"/$module

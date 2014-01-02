@@ -1,19 +1,19 @@
-GLUON_MODULES='openwrt packages/openwrt packages/gluon packages/routing packages/luci'
+GLUON_FEEDS='openwrt gluon routing luci'
 
-MODULE_OPENWRT_REPO=git://nbd.name/attitude_adjustment.git
-MODULE_OPENWRT_COMMIT=f22d159c5ccb289125a9299c178236b075a73eaf
+OPENWRT_REPO=git://nbd.name/attitude_adjustment.git
+OPENWRT_COMMIT=f22d159c5ccb289125a9299c178236b075a73eaf
 
-MODULE_PACKAGES_OPENWRT_REPO=git://nbd.name/packages_12.09.git
-MODULE_PACKAGES_OPENWRT_COMMIT=c67cd451ac28058a4992ba9eb2eb5551f6cd1adb
+PACKAGES_OPENWRT_REPO=git://nbd.name/packages_12.09.git
+PACKAGES_OPENWRT_COMMIT=c67cd451ac28058a4992ba9eb2eb5551f6cd1adb
 
-MODULE_PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
-MODULE_PACKAGES_GLUON_COMMIT=c045ce17dac418c69135ed40ac1a06ea1d6b3885
+PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
+PACKAGES_GLUON_COMMIT=c045ce17dac418c69135ed40ac1a06ea1d6b3885
 
-MODULE_PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
-MODULE_PACKAGES_ROUTING_COMMIT=0e4201a983df967e88e6ce5451f5f5f99bab2370
+PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_COMMIT=0e4201a983df967e88e6ce5451f5f5f99bab2370
 
-MODULE_PACKAGES_LUCI_REPO=https://github.com/freifunk-gluon/luci.git
-MODULE_PACKAGES_LUCI_COMMIT=bed710786d8a3a63f5908823e6382a51efc91003
+PACKAGES_LUCI_REPO=https://github.com/freifunk-gluon/luci.git
+PACKAGES_LUCI_COMMIT=bed710786d8a3a63f5908823e6382a51efc91003
 
 # It is possible to change the values defined in this file in a new file `modules.local`
 if [ -f modules.local ]; then . ./modules.local; fi

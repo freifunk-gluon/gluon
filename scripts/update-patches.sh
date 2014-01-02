@@ -3,7 +3,7 @@
 set -e
 shopt -s nullglob
 
-. "$1"/modules
+. "$1"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
 	rm -f "$1"/patches/$module/*.patch

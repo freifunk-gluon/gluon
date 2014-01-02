@@ -3,7 +3,7 @@
 set -e
 shopt -s nullglob
 
-. "$1"/modules
+. "$1"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
 	cd "$1"/$module
@@ -17,6 +17,5 @@ for module in $GLUON_MODULES; do
 			false
 		)
 	fi
-	git checkout -B patched
-	git branch -d patching
+	git branch -M patched
 done

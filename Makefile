@@ -129,22 +129,11 @@ clean: FORCE
 	rm -rf $(GLUON_BUILDDIR)
 
 refresh_feeds: FORCE
-	( \
-		export MAKEFLAGS=V=s$(OPENWRT_VERBOSE) \
-		export SCAN_COOKIE=; \
-		scripts/feeds uninstall -a; \
-		scripts/feeds update -a; \
-		scripts/feeds install -a; \
-	)
-
-
-define FEEDS
-src-link gluon ../../packages/gluon
-src-link packages ../../packages/openwrt
-src-link routing ../../packages/routing
-src-link luci ../../packages/luci
-endef
-export FEEDS
+	export MAKEFLAGS=V=s$(OPENWRT_VERBOSE); \
+	export SCAN_COOKIE=; \
+	scripts/feeds uninstall -a; \
+	scripts/feeds update -a; \
+	scripts/feeds install -a
 
 
 export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
@@ -152,8 +141,7 @@ export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
 
 feeds: FORCE
-	rm -f feeds.conf
-	echo "$$FEEDS" > feeds.conf
+	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do echo src-link $$feed ../../packages/$$feed; done > feeds.conf
 	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
