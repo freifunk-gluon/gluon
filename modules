@@ -14,6 +14,3 @@ PACKAGES_ROUTING_COMMIT=0e4201a983df967e88e6ce5451f5f5f99bab2370
 
 PACKAGES_LUCI_REPO=https://github.com/freifunk-gluon/luci.git
 PACKAGES_LUCI_COMMIT=bed710786d8a3a63f5908823e6382a51efc91003
-
-# It is possible to change the values defined in this file in a new file `modules.local`
-if [ -f modules.local ]; then . ./modules.local; fi

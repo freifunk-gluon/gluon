@@ -39,8 +39,6 @@ rerun
 
 	make update
 
-The repository paths may be changed locally by creating a file `modules.local`.
-
 `make update` also applies the patches that can be found in the directories found in
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
 can be refered to by the branch `base`.
