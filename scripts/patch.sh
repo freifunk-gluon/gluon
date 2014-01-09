@@ -9,7 +9,7 @@ for module in $GLUON_MODULES; do
 	cd "$1"/$module
 	git checkout -B patching base
 
-	if [ "$1"/patches/$module/*.patch ]; then
+	if [ "$(echo "$1"/patches/$module/*.patch)" ]; then
 		git am "$1"/patches/$module/*.patch || (
 			git am --abort
 			git checkout patched
