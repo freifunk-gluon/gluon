@@ -1,0 +1,263 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 9 Jan 2014 20:17:09 +0100
+Subject: Update netifd and odhcp6c from Barrier Breaker
+
+diff --git a/package/netifd/Makefile b/package/netifd/Makefile
+index 5f2ee03..6f6f30e 100644
+--- a/package/netifd/Makefile
++++ b/package/netifd/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=netifd
+-PKG_VERSION:=2013-07-16
++PKG_VERSION:=2013-12-29
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=git://nbd.name/luci2/netifd.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=2674941b06c1ec67f1aff1bff9212e1372106641
++PKG_SOURCE_VERSION:=7d79d0a8aa5a5b4c1ed987af119356438d98fe7b
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+ # PKG_MIRROR_MD5SUM:=
+@@ -40,7 +40,7 @@ define Package/netifd/install
+ 	$(INSTALL_DIR) $(1)/sbin
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/netifd $(1)/sbin/
+ 	$(CP) ./files/* $(1)/
+-	$(CP) $(PKG_BUILD_DIR)/dummy/netifd-proto.sh $(1)/lib/netifd/
++	$(CP) $(PKG_BUILD_DIR)/scripts/* $(1)/lib/netifd/
+ endef
+ 
+ $(eval $(call BuildPackage,netifd))
+diff --git a/package/netifd/files/etc/hotplug.d/iface/00-netstate b/package/netifd/files/etc/hotplug.d/iface/00-netstate
+index c50cda6..023025c 100644
+--- a/package/netifd/files/etc/hotplug.d/iface/00-netstate
++++ b/package/netifd/files/etc/hotplug.d/iface/00-netstate
+@@ -1,6 +1,5 @@
+ [ ifup = "$ACTION" ] && {
+ 	uci_toggle_state network "$INTERFACE" up 1
+-	uci_toggle_state network "$INTERFACE" connect_time $(sed -ne 's![^0-9].*$!!p' /proc/uptime)
+ 	[ -n "$DEVICE" ] && {
+ 		uci_toggle_state network "$INTERFACE" device "$(uci -q get network.$INTERFACE.ifname)"
+ 		uci_toggle_state network "$INTERFACE" ifname "$DEVICE"
+diff --git a/package/netifd/files/lib/netifd/dhcp.script b/package/netifd/files/lib/netifd/dhcp.script
+index 50163da..77b77f5 100755
+--- a/package/netifd/files/lib/netifd/dhcp.script
++++ b/package/netifd/files/lib/netifd/dhcp.script
+@@ -44,19 +44,18 @@ setup_interface () {
+ 		ip6rd="${ip6rd#* }"
+ 		local ip6rdbr="${ip6rd%% *}"
+ 
+-uci -q batch <<-EOF >/dev/null
+-set network.$IFACE6RD.proto=6rd
+-set network.$IFACE6RD.auto=0
+-set network.$IFACE6RD.peeraddr=$ip6rdbr
+-set network.$IFACE6RD.ip4prefixlen=$v4mask
+-set network.$IFACE6RD.ip6prefix=$ip6rdprefix
+-set network.$IFACE6RD.ip6prefixlen=$ip6rdprefixlen
+-commit network
+-EOF
++		json_init
++		json_add_string name "$IFACE6RD"
++		json_add_string ifname "@$INTERFACE"
++		json_add_string proto "6rd"
++		json_add_string peeraddr "$ip6rdbr"
++		json_add_int ip4prefixlen "$v4mask"
++		json_add_string ip6prefix "$ip6rdprefix"
++		json_add_int ip6prefixlen "$ip6rdprefixlen"
++		json_add_string tunlink "$INTERFACE"
++		json_close_object
+ 
+-		ifdown "$IFACE6RD"
+-		/etc/init.d/network reload
+-		ifup "$IFACE6RD"
++		ubus call network add_dynamic "$(json_dump)"
+ 	fi
+ 
+ 	# TODO
+diff --git a/package/netifd/files/lib/netifd/proto/dhcp.sh b/package/netifd/files/lib/netifd/proto/dhcp.sh
+index a270c68..0117b27 100755
+--- a/package/netifd/files/lib/netifd/proto/dhcp.sh
++++ b/package/netifd/files/lib/netifd/proto/dhcp.sh
+@@ -13,20 +13,25 @@ proto_dhcp_init_config() {
+ 	proto_config_add_boolean "broadcast"
+ 	proto_config_add_string "reqopts"
+ 	proto_config_add_string "iface6rd"
++	proto_config_add_string "sendopts"
+ }
+ 
+ proto_dhcp_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd
+-	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd
++	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts
++	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts
+ 
+ 	local opt dhcpopts
+ 	for opt in $reqopts; do
+ 		append dhcpopts "-O $opt"
+ 	done
+ 
++	for opt in $sendopts; do
++		append dhcpopts "-x $opt"
++	done
++
+ 	[ "$broadcast" = 1 ] && broadcast="-B" || broadcast=
+ 	[ -n "$clientid" ] && clientid="-x 0x3d:${clientid//:/}" || clientid="-C"
+ 	[ -n "$iface6rd" ] && proto_export "IFACE6RD=$iface6rd"
+diff --git a/package/netifd/patches/001-musl_af_inet_include.patch b/package/netifd/patches/001-musl_af_inet_include.patch
+new file mode 100644
+index 0000000..510ee05
+--- /dev/null
++++ b/package/netifd/patches/001-musl_af_inet_include.patch
+@@ -0,0 +1,11 @@
++diff -urN netifd-2012-10-29/utils.c netifd-2012-10-29.new/utils.c
++--- netifd-2012-10-29/utils.c	2012-11-23 17:15:39.000000000 +0100
+++++ netifd-2012-10-29.new/utils.c	2012-11-23 17:16:53.409244361 +0100
++@@ -17,6 +17,7 @@
++ 
++ #include <arpa/inet.h>
++ #include <netinet/in.h>
+++#include <sys/socket.h>
++ 
++ void
++ __vlist_simple_init(struct vlist_simple_tree *tree, int offset)
+diff --git a/package/odhcp6c/Makefile b/package/odhcp6c/Makefile
+index e37b72e..7d0c48d 100644
+--- a/package/odhcp6c/Makefile
++++ b/package/odhcp6c/Makefile
+@@ -8,26 +8,37 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=odhcp6c
+-PKG_VERSION:=2013-10-02
++PKG_VERSION:=2013-12-15
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+ PKG_SOURCE_URL:=git://github.com/sbyx/odhcp6c.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_VERSION:=357ecc1f5163bc7f74c64f4bca387e8d44a2eac5
++PKG_SOURCE_VERSION:=be05c0ded0257cbb82857f6d01226ef6de28befe
+ PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
+ 
+ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/cmake.mk
+ 
++ifneq ($(CONFIG_PACKAGE_odhcp6c_ext_prefix_class),0)
++  CMAKE_OPTIONS += -DEXT_PREFIX_CLASS=$(CONFIG_PACKAGE_odhcp6c_ext_prefix_class)
++endif
++
+ define Package/odhcp6c
+-  SECTION:=ipv6
+-  CATEGORY:=IPv6
++  SECTION:=net
++  CATEGORY:=Network
+   TITLE:=Embedded DHCPv6-client for OpenWrt
+   DEPENDS:=+kmod-ipv6
+ endef
+ 
++define Package/odhcp6c/config
++  config PACKAGE_odhcp6c_ext_prefix_class
++    int "Prefix Class Extension ID (0 = disabled)"
++    depends on PACKAGE_odhcp6c
++    default 0
++endef
++
+ define Package/odhcp6c/install
+ 	$(INSTALL_DIR) $(1)/usr/sbin/
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/odhcp6c $(1)/usr/sbin/
+diff --git a/package/odhcp6c/files/dhcpv6.script b/package/odhcp6c/files/dhcpv6.script
+index 324a823..8bcf766 100755
+--- a/package/odhcp6c/files/dhcpv6.script
++++ b/package/odhcp6c/files/dhcpv6.script
+@@ -64,23 +64,28 @@ setup_interface () {
+ 		entry="${entry#*,}"
+ 		local metric="${entry%%,*}"
+ 
+-		proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
++		if [ -z "$SOURCE_ROUTING" -o -z "$gw" ]; then
++			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
++		else
++			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "::/128"
++			for prefix in $PREFIXES; do
++				local paddr="${prefix%%,*}"
++				proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$paddr"
++			done
++		fi
+ 	done
+ 
+ 	proto_send_update "$INTERFACE"
+ 
+ 	if [ -n "$AFTR_IP " -a -n "$IFACE_DSLITE" ]; then
+-uci -q batch <<-EOF >/dev/null
+-set network.$IFACE_DSLITE.proto=dslite
+-set network.$IFACE_DSLITE.auto=0
+-set network.$IFACE_DSLITE.peeraddr=$AFTR_IP
+-set network.$IFACE_DSLITE.tunlink=$INTERFACE
+-commit network
+-EOF
+-
+-		ifdown "$IFACE_DSLITE"
+-		/etc/init.d/network reload
+-		ifup "$IFACE_DSLITE"
++		json_init
++		json_add_string name "$IFACE_DSLITE"
++		json_add_string ifname "@$INTERFACE"
++		json_add_string proto "dslite"
++		json_add_string peeraddr "$AFTR_IP"
++		json_add_string tunlink "$INTERFACE"
++		json_close_object
++		ubus call network add_dynamic "$(json_dump)"
+ 	fi
+ 
+ 	# TODO: $SNTP_IP $SIP_IP $SNTP_FQDN $SIP_DOMAIN
+diff --git a/package/odhcp6c/files/dhcpv6.sh b/package/odhcp6c/files/dhcpv6.sh
+index bf6cd9a..0638d28 100755
+--- a/package/odhcp6c/files/dhcpv6.sh
++++ b/package/odhcp6c/files/dhcpv6.sh
+@@ -10,18 +10,20 @@ proto_dhcpv6_init_config() {
+ 	proto_config_add_string "clientid"
+ 	proto_config_add_string "reqopts"
+ 	proto_config_add_string "noslaaconly"
++	proto_config_add_string "forceprefix"
+ 	proto_config_add_string "norelease"
+ 	proto_config_add_string "ip6prefix"
+ 	proto_config_add_string "iface_dslite"
+ 	proto_config_add_string "ifaceid"
++	proto_config_add_string "sourcerouting"
+ }
+ 
+ proto_dhcpv6_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local reqaddress reqprefix clientid reqopts noslaaconly norelease ip6prefix iface_dslite ifaceid
+-	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly norelease ip6prefix iface_dslite ifaceid
++	local reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite ifaceid sourcerouting
++	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite ifaceid sourcerouting
+ 
+ 
+ 	# Configure
+@@ -35,6 +37,8 @@ proto_dhcpv6_setup() {
+ 
+ 	[ "$noslaaconly" = "1" ] && append opts "-S"
+ 
++	[ "$forceprefix" = "1" ] && append opts "-F"
++
+ 	[ "$norelease" = "1" ] && append opts "-k"
+ 
+ 	[ -n "$ifaceid" ] && append opts "-i$ifaceid"
+@@ -45,6 +49,7 @@ proto_dhcpv6_setup() {
+ 
+ 	[ -n "$ip6prefix" ] && proto_export "USERPREFIX=$ip6prefix"
+ 	[ -n "$iface_dslite" ] && proto_export "IFACE_DSLITE=$iface_dslite"
++	[ "$sourcerouting" = "1" ] && proto_export "SOURCE_ROUTING=1"
+ 
+ 	proto_export "INTERFACE=$config"
+ 	proto_run_command "$config" odhcp6c \
