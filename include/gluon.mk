@@ -22,7 +22,7 @@ $(GLUON_SITEDIR)/site.mk:
 -include $(GLUON_SITEDIR)/site.mk
 
 
-GLUON_CONFIG_VERSION := $(shell cd $(GLUON_SITEDIR) && git describe --always --dirty=.$$(stat -c %Y $(GLUON_SITEDIR)/site.conf))
+GLUON_CONFIG_VERSION := $(shell cd $(GLUON_SITEDIR) && git describe --always --dirty=.$$(stat -c %Y $(GLUON_SITEDIR)/site.conf) 2>/dev/null || stat -c %Y site.conf)
 export GLUON_CONFIG_VERSION
 
 define merge-lists
