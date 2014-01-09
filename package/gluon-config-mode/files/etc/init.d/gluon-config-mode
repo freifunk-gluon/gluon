@@ -32,8 +32,9 @@ start() {
 		ip addr add $config_mode_addr/$config_mode_plen dev $config_mode_iface
 		ip link set up dev $config_mode_iface
 
+		/usr/sbin/telnetd -l /lib/gluon/config-mode/ash-login
+
 		/etc/init.d/haveged start
-		/etc/init.d/telnet start
 		/etc/init.d/dropbear start
 		/etc/init.d/uhttpd start
 		/etc/init.d/led start
