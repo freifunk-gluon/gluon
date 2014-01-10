@@ -1,0 +1,37 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/gluon/functions/sysconfig.sh
+
+
+uci_remove network local_node
+uci_add network device local_node
+uci_set network local_node name 'local-node'
+uci_set network local_node ifname '@client'
+uci_set network local_node type 'macvlan'
+uci_set network local_node macaddr '@next_node.mac@'
+
+uci_remove network local_node_if
+uci_add network interface local_node_if
+uci_set network local_node_if ifname 'local-node'
+uci_set network local_node_if proto 'static'
+uci_set network local_node_if ipaddr '@next_node.ip4@'
+uci_set network local_node_if netmask '255.255.255.255'
+uci_set network local_node_if ip6addr '@next_node.ip6@/128'
+
+eval $(ipcalc.sh '@prefix4@')
+
+uci_remove network local_node_route4
+uci_add network route local_node_route4
+uci_set network local_node_route4 interface 'client'
+uci_set network local_node_route4 target "$IP"
+uci_set network local_node_route4 netmask "$NETMASK"
+uci_set network local_node_route4 gateway '0.0.0.0'
+
+uci_remove network local_node_route6
+uci_add network route6 local_node_route6
+uci_set network local_node_route6 interface 'client'
+uci_set network local_node_route6 target '@prefix6@'
+uci_set network local_node_route6 gateway '::'
+
+uci_commit network
