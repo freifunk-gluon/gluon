@@ -2,7 +2,7 @@
 
 START=90
 
-PIDFILE=/var/run/tunneldigger.pid
+PIDPATH=/var/run
 tunnel_id=1
 
 config_cb() {
@@ -25,7 +25,7 @@ config_cb() {
 				broker_opts="${broker_opts} -L ${limit_bw_down}"
 			fi
 			echo "Starting tunneldigger on ${interface}"
-			/sbin/start-stop-daemon -S -q -b -m -p $PIDFILE -x /usr/bin/tunneldigger -- -u ${uuid} -i ${interface} -t ${tunnel_id} -s ${hook_script} ${broker_opts}
+			/sbin/start-stop-daemon -S -q -b -m -p ${PIDPATH}/tunneldigger.${interface}.pid -x /usr/bin/tunneldigger -- -u ${uuid} -i ${interface} -t ${tunnel_id} -s ${hook_script} ${broker_opts}
 			let tunnel_id++
 		;;
 	esac
@@ -36,18 +36,17 @@ start() {
 }
 
 stop() {
-	echo "Stopping tunneldigger"
-	if [ -f $PIDFILE ]; then
+  for PIDFILE in `find ${PIDPATH}/ -name "tunneldigger\.*\.pid"`; do
 		PID=`cat ${PIDFILE}`
+    IFACE=`echo ${PIDFILE} | awk -F\/tunneldigger '{print $2}' | cut -d'.' -f2`
+    echo "Stopping tunneldigger for interface ${IFACE}"
 		start-stop-daemon -K -q -p $PIDFILE 
 		while test -d "/proc/${PID}"; do
-			echo "waiting for tunneldigger to stop"
+			echo "  waiting for tunneldigger to stop"
 			sleep 1
 		done
-		echo "tunneldigger stopped"
-	else
-		echo "Looks like tunneldigger wasn't running"
-	fi
+		echo "  tunneldigger stopped"
+  done
 }
 
 restart() {
