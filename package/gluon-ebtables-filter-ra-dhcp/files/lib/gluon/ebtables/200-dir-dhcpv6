@@ -1,0 +1,5 @@
+rule FORWARD -p IPv6 --ip6-protocol udp --ip6-destination-port 546 -j OUT_ONLY
+rule OUTPUT -p IPv6 --ip6-protocol udp --ip6-destination-port 546 -j OUT_ONLY
+
+rule FORWARD -p IPv6 --ip6-protocol udp --ip6-destination-port 547 -j IN_ONLY
+rule INPUT -p IPv6 --ip6-protocol udp --ip6-destination-port 547 -j IN_ONLY

@@ -1,0 +1,1 @@
+rule MULTICAST_OUT -p IPv4 --ip-protocol udp --ip-destination-port 67 -j RETURN

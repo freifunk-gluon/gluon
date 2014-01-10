@@ -1,0 +1,1 @@
+rule MULTICAST_OUT -p IPv6 --ip6-protocol ipv6-icmp -j RETURN

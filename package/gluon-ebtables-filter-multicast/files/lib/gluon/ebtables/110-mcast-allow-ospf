@@ -1,0 +1,2 @@
+rule MULTICAST_OUT -p IPv4 --ip-protocol ospf -j RETURN
+rule MULTICAST_OUT -p IPv6 --ip6-protocol ospf -j RETURN

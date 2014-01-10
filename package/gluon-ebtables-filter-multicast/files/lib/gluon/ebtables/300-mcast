@@ -1,0 +1,2 @@
+rule FORWARD --logical-out br-freifunk -o bat0 -d Multicast -j MULTICAST_OUT
+rule OUTPUT --logical-out br-freifunk -o bat0 -d Multicast -j MULTICAST_OUT

@@ -1,0 +1,5 @@
+rule FORWARD -p IPv4 --ip-protocol udp --ip-destination-port 67 -j OUT_ONLY
+rule OUTPUT -p IPv4 --ip-protocol udp --ip-destination-port 67 -j OUT_ONLY
+
+rule FORWARD -p IPv4 --ip-protocol udp --ip-destination-port 68 -j IN_ONLY
+rule INPUT -p IPv4 --ip-protocol udp --ip-destination-port 68 -j IN_ONLY
