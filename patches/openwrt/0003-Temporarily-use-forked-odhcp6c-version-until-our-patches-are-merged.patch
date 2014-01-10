@@ -1,0 +1,26 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 10 Jan 2014 22:43:19 +0100
+Subject: Temporarily use forked odhcp6c version until our patches are merged
+
+diff --git a/package/odhcp6c/Makefile b/package/odhcp6c/Makefile
+index 7d0c48d..7badd2c 100644
+--- a/package/odhcp6c/Makefile
++++ b/package/odhcp6c/Makefile
+@@ -8,14 +8,14 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=odhcp6c
+-PKG_VERSION:=2013-12-15
++PKG_VERSION:=2014-01-10
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_URL:=git://github.com/sbyx/odhcp6c.git
++PKG_SOURCE_URL:=git://github.com/NeoRaider/odhcp6c.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_VERSION:=be05c0ded0257cbb82857f6d01226ef6de28befe
++PKG_SOURCE_VERSION:=3d77dda32f4d7525b4553eaa99eb44bb28bcc113
+ PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
+ 
+ include $(INCLUDE_DIR)/package.mk
