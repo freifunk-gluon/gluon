@@ -6,11 +6,11 @@ OPENWRT_COMMIT=f22d159c5ccb289125a9299c178236b075a73eaf
 PACKAGES_OPENWRT_REPO=git://nbd.name/packages_12.09.git
 PACKAGES_OPENWRT_COMMIT=c67cd451ac28058a4992ba9eb2eb5551f6cd1adb
 
-PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
-PACKAGES_GLUON_COMMIT=bb3fd05d1a233dd01984dc631a8055df118774da
+PACKAGES_GLUON_REPO=git://github.com/freifunk-gluon/packages.git
+PACKAGES_GLUON_COMMIT=4efe5575febcccc96786e5521c2aba873ff68954
 
-PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_REPO=git://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_COMMIT=0e4201a983df967e88e6ce5451f5f5f99bab2370
 
-PACKAGES_LUCI_REPO=https://github.com/freifunk-gluon/luci.git
+PACKAGES_LUCI_REPO=git://github.com/freifunk-gluon/luci.git
 PACKAGES_LUCI_COMMIT=bed710786d8a3a63f5908823e6382a51efc91003
