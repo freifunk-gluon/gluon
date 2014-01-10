@@ -24,7 +24,7 @@ config_cb() {
 			if [ ! -z "${limit_bw_down}" ]; then
 				broker_opts="${broker_opts} -L ${limit_bw_down}"
 			fi
-			echo "Starting tunneldigger"		
+			echo "Starting tunneldigger on ${interface}"
 			/sbin/start-stop-daemon -S -q -b -m -p $PIDFILE -x /usr/bin/tunneldigger -- -u ${uuid} -i ${interface} -t ${tunnel_id} -s ${hook_script} ${broker_opts}
 			let tunnel_id++
 		;;
