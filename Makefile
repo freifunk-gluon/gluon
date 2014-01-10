@@ -109,6 +109,8 @@ define GluonProfile
 image/$(1): $(gluon_prepared_stamp)
 	+$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
 
+CheckSite := (perl $(GLUON_SITEDIR)/site.conf 2>&1) > /dev/null || (echo 'Your site configuration did not pass validation; please verify yourself with `perl site.conf` and fix the problems.';false)
+
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
@@ -179,6 +181,7 @@ prepare-image: FORCE
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
+	+@$(CheckSite)
 	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/$(BOARD)/opkg.conf
 
