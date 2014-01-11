@@ -34,6 +34,8 @@ will do all this, and call `make dirclean` on the OpenWRT tree.
 
 # Development
 
+**Gluon IRC channel: `#gluon` in hackint**
+
 To update the repositories used by Gluon, just adjust the commit IDs in `modules` and
 rerun
 
