@@ -18,3 +18,5 @@ uci_set network client peerdns '0'
 uci_set network client macaddr "$(sysconfig primary_mac)"
 
 uci_commit network
+
+echo 'net.ipv6.conf.br-client.forwarding=0' >> /etc/sysctl.conf
