@@ -1,10 +1,13 @@
-GLUON_FEEDS='openwrt gluon routing luci'
+GLUON_FEEDS='openwrt mac80211 gluon routing luci'
 
 OPENWRT_REPO=git://nbd.name/attitude_adjustment.git
 OPENWRT_COMMIT=f22d159c5ccb289125a9299c178236b075a73eaf
 
 PACKAGES_OPENWRT_REPO=git://nbd.name/packages_12.09.git
 PACKAGES_OPENWRT_COMMIT=c67cd451ac28058a4992ba9eb2eb5551f6cd1adb
+
+PACKAGES_MAC80211_REPO=git://nbd.name/aa-mac80211.git
+PACKAGES_MAC80211_COMMIT=59581a13b62e2ea6ba5bfa8f5aaf80a4d6c3ad8d
 
 PACKAGES_GLUON_REPO=git://github.com/freifunk-gluon/packages.git
 PACKAGES_GLUON_COMMIT=616fef804d465587d226f843d73f9485fbe69d48
