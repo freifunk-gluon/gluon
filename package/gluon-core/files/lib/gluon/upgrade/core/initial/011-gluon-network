@@ -8,7 +8,6 @@ uci_remove network lan
 
 uci_set network wan type 'bridge'
 uci_set network wan proto 'dhcp'
-EOF
 
 
 mainaddr=$(sysconfig primary_mac)
