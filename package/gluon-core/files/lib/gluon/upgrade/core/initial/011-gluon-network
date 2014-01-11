@@ -26,3 +26,6 @@ tl-wdr4300) # fix up duplicate mac addresses
 esac
 
 uci_commit network
+
+echo 'net.ipv6.conf.all.accept_ra=0' >> /etc/sysctl.conf
+echo 'net.ipv6.conf.default.accept_ra=0' >> /etc/sysctl.conf
