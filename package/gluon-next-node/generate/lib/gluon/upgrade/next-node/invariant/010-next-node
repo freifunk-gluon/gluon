@@ -3,20 +3,20 @@
 . /lib/functions.sh
 
 
-uci_remove network local_node
-uci_add network device local_node
-uci_set network local_node name 'local-node'
-uci_set network local_node ifname '@client'
-uci_set network local_node type 'macvlan'
-uci_set network local_node macaddr '@next_node.mac@'
+uci_remove network local_node_dev
+uci_add network device local_node_dev
+uci_set network local_node_dev name 'local-node'
+uci_set network local_node_dev ifname '@client'
+uci_set network local_node_dev type 'macvlan'
+uci_set network local_node_dev macaddr '@next_node.mac@'
 
-uci_remove network local_node_if
-uci_add network interface local_node_if
-uci_set network local_node_if ifname 'local-node'
-uci_set network local_node_if proto 'static'
-uci_set network local_node_if ipaddr '@next_node.ip4@'
-uci_set network local_node_if netmask '255.255.255.255'
-uci_set network local_node_if ip6addr '@next_node.ip6@/128'
+uci_remove network local_node
+uci_add network interface local_node
+uci_set network local_node ifname 'local-node'
+uci_set network local_node proto 'static'
+uci_set network local_node ipaddr '@next_node.ip4@'
+uci_set network local_node netmask '255.255.255.255'
+uci_set network local_node ip6addr '@next_node.ip6@/128'
 
 eval $(ipcalc.sh '@prefix4@')
 
