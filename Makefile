@@ -56,24 +56,24 @@ include $(GLUONDIR)/include/profiles.mk
 CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have optained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 all: FORCE
-	+@$(CheckExternal)
+	@$(CheckExternal)
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
 download prepare images: FORCE
-	+@$(CheckExternal)
+	@$(CheckExternal)
 	+@$(GLUONMAKE) $@
 
 dirclean: clean
-	+@$(CheckExternal)
+	@$(CheckExternal)
 	+@$(SUBMAKE) -C $(TOPDIR) -r dirclean
 
 cleanall: clean
-	+@$(CheckExternal)
+	@$(CheckExternal)
 	+@$(SUBMAKE) -C $(TOPDIR) -r clean
 
 clean:
-	+@$(CheckExternal)
+	@$(CheckExternal)
 	+@$(GLUONMAKE) clean
 
 else
@@ -181,7 +181,8 @@ prepare-image: FORCE
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
-	+@$(CheckSite)
+	@$(CheckSite)
+
 	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/$(BOARD)/opkg.conf
 
