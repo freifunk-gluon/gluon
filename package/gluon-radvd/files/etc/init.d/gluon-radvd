@@ -1,0 +1,14 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+SERVICE_USE_PID=1
+SERVICE_NAME=gluon-radvd
+
+start() {
+	service_start /usr/sbin/radvd -C /lib/gluon/radvd/radvd.conf -m stderr_syslog -p /var/run/gluon-radvd.pid
+}
+
+stop() {
+	service_stop /usr/sbin/radvd
+}
