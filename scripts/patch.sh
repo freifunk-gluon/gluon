@@ -10,7 +10,7 @@ for module in $GLUON_MODULES; do
 	git checkout -B patching base
 
 	if [ "$(echo "$1"/patches/$module/*.patch)" ]; then
-		git am "$1"/patches/$module/*.patch || (
+		git am --whitespace=nowarn "$1"/patches/$module/*.patch || (
 			git am --abort
 			git checkout patched
 			git branch -D patching
