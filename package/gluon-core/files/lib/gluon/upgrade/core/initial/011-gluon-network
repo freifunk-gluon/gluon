@@ -3,6 +3,8 @@
 
 . /lib/functions.sh
 . /lib/gluon/functions/sysconfig.sh
+. /lib/ar71xx.sh
+
 
 uci_remove network lan
 
@@ -10,14 +12,14 @@ uci_set network wan type 'bridge'
 uci_set network wan proto 'dhcp'
 
 
-mainaddr=$(sysconfig primary_mac)
-oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
-b2mask=0x02
-
-case "$board" in
+case "$(ar71xx_board_name)" in
 tl-wr1043nd|\
 tl-wdr3600|\
 tl-wdr4300) # fix up duplicate mac addresses
+	local mainaddr=$(sysconfig primary_mac)
+	local oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
+	local b2mask=0x02
+
 	local wanaddr=$(printf "%02x:%s:%s:%02x:%s:%02x" $(( 0x$1 | $b2mask )) $2 $3 $(( (0x$4 + 1) % 0x100 )) $5 $(( (0x$6 + 1) % 0x100 )) )
 
 	uci_set network wan macaddr "$wanaddr"
