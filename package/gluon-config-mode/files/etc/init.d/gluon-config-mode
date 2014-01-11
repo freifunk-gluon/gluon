@@ -34,7 +34,6 @@ start() {
 
 		/usr/sbin/telnetd -l /lib/gluon/config-mode/ash-login
 
-		/etc/init.d/haveged start
 		/etc/init.d/dropbear start
 		/etc/init.d/uhttpd start
 		/etc/init.d/led start
