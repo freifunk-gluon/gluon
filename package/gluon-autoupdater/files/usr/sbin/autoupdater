@@ -39,16 +39,6 @@ trap cleanup INT TERM EXIT PIPE
 
 my_model="$(cat /tmp/sysinfo/model | sed 's/ /-/g' | tr '[A-Z]' '[a-z]')"
 
-case "$my_model" in
-  "tl-wdr4300")
-    case "$(tplink_get_hwid)" in
-      "360000"*)
-        my_model="tl-wdr3600"
-        ;;
-    esac
-    ;;
-esac
-
 if [ ! -f "$VERSION_FILE" ]; then
   echo "Couldn't determine firmware version!" >&2
   exit 1
