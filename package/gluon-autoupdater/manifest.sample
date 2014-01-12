@@ -1,4 +1,6 @@
 BRANCH=stable
 
-# board    ver md5sum                           filename
-tl-wdr4300 0.4 73e0788596850798d8e02a9ac577d201 sysupgrade-wdr4300.bin
+# model               ver md5sum                           filename
+tp-link-tl-wdr4300-v1 0.4 73e0788596850798d8e02a9ac577d201 sysupgrade-wdr4300.bin
+---
+49030b7b394e0bd204e0faf17f2d2b2756b503c9d682b135deea42b34a09010bff139cbf7513be3f9f8aae126b7f6ff3a7bfe862a798eae9b005d75abbba770a
