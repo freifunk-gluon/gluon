@@ -1,5 +1,16 @@
 #!/bin/sh
 
-uci set alfred.alfred.interface=br-client
-uci set alfred.alfred.mode=slave
-uci delete alfred.alfred.disabled
+. /lib/functions.sh
+
+uci_remove alfred alfred
+
+uci_add alfred alfred alfred
+uci_set alfred alfred interface 'br-client'
+uci_set alfred alfred mode 'slave'
+uci_set alfred alfred batmanif 'bat0'
+uci_set alfred alfred start_vis '1'
+uci_set alfred alfred run_facters '0'
+
+uci_commit alfred
+
+/etc/init.d/alfred enable

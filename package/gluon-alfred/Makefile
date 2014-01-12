@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-alfred
-PKG_VERSION:=0.1
-PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)
+PKG_VERSION:=1
+PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gluon-alfred
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+alfred +gluon-cron
+  DEPENDS:=+gluon-core +gluon-location +gluon-cron +alfred
   TITLE:=Configure alfred
 endef
 
