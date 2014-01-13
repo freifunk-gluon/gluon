@@ -62,6 +62,7 @@ uci_add network interface mesh_vpn
 uci_set network mesh_vpn ifname 'mesh-vpn'
 uci_set network mesh_vpn proto 'batadv'
 uci_set network mesh_vpn mesh 'bat0'
+uci_set network mesh_vpn mesh_no_rebroadcast '1'
 
 mainaddr=$(sysconfig primary_mac)
 oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
