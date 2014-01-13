@@ -33,9 +33,10 @@ start() {
 		ip link set up dev $config_mode_iface
 
 		/usr/sbin/telnetd -l /lib/gluon/config-mode/ash-login
-
 		/etc/init.d/dropbear start
-		/etc/init.d/uhttpd start
+
+		/usr/sbin/uhttpd -h /lib/gluon/config-mode/www -x /cgi-bin -A 1 -R -p 0.0.0.0:80
+
 		/etc/init.d/led start
 
 		# correctly finish firstboot
