@@ -26,12 +26,21 @@ if [ "$(uci -q get 'system.@system[0].share_location')" = 1 ]; then
 	json_close_object # location
 fi
 json_add_object "software"
-	json_add_string "firmware" "gluon $(cat /lib/gluon/release)"
+	json_add_object "firmware"
+		json_add_string "base" "gluon"
+		json_add_string "release" "$(cat /lib/gluon/release)"
+	json_close_object # firmware
 	if [ -x /usr/sbin/autoupdater ]; then
 	json_add_object "autoupdater"
 		json_add_string "branch" "$(uci -q get autoupdater.settings.branch)"
 		json_add_boolean "enabled" "$(uci -q get autoupdater.settings.enabled)"
 	json_close_object # autoupdater
+	fi
+	if [ -x /usr/bin/fastd ]; then
+	json_add_object "fastd"
+		json_add_string "version" "$(fastd -v | cut -d' ' -f2)"
+		json_add_boolean "enabled" "$(uci -q get fastd.mesh_vpn.enabled)"
+	json_close_object # fastd
 	fi
 json_close_object # software
 json_add_object "hardware"
