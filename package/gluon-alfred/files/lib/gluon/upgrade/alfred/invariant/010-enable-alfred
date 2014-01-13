@@ -12,5 +12,3 @@ uci_set alfred alfred start_vis '1'
 uci_set alfred alfred run_facters '0'
 
 uci_commit alfred
-
-/etc/init.d/alfred enable
