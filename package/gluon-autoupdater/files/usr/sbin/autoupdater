@@ -38,7 +38,7 @@ cleanup() {
 trap cleanup INT TERM EXIT PIPE
 
 . /lib/gluon/functions/model.sh
-my_model="$(get_model | tr '[A-Z]' '[a-z]' | sed -r 's/[^a-z0-9]+/-/g')"
+my_model="$(get_model | tr '[A-Z]' '[a-z]' | sed -r 's/[^a-z0-9]+/-/g;s/-$//')"
 
 if [ ! -f "$VERSION_FILE" ]; then
   echo "Couldn't determine firmware version!" >&2
