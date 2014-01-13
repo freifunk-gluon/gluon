@@ -234,25 +234,21 @@ FileOrigin = $(firstword $(shell $(OPKG) search $(1)))
 enable_initscripts: FORCE
 	cd $(TARGET_DIR) && ( export IPKG_INSTROOT=$(TARGET_DIR); \
 		$(foreach script,$(wildcard $(TARGET_DIR)/etc/init.d/*), \
-			$(if $(filter $(ENABLE_INITSCRIPTS_FROM),$(call FileOrigin,$(script))),$(call EnableInitscript,$(script));) \
+			$(call EnableInitscript,$(script)); \
 		) : \
 	)
 
 
-# Generate package lists
-$(eval $(call merge-lists,BASE_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES))
-$(eval $(call merge-lists,GLUON_PACKAGES,GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
+# Generate package list
+$(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 package_install: FORCE
 	$(OPKG) update
 	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 
-	$(OPKG) install $(BASE_PACKAGES)
-	+$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM=%
-
-	$(OPKG) install $(GLUON_PACKAGES)
-	+$(GLUONMAKE) enable_initscripts ENABLE_INITSCRIPTS_FROM="$(GLUON_PACKAGES)"
+	$(OPKG) install $(INSTALL_PACKAGES)
+	+$(GLUONMAKE) enable_initscripts
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
