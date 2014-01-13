@@ -18,7 +18,7 @@ fi
 set -e
 
 json_init
-json_add_string "name" "$(uci get 'system.@system[0].hostname')"
+json_add_string "hostname" "$(uci get 'system.@system[0].hostname')"
 
 if [ "$(uci -q get 'system.@system[0].share_location')" = 1 ]; then
 json_add_object "location"
