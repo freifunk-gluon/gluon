@@ -228,7 +228,6 @@ OPKG:= \
 	--add-arch $(ARCH_PACKAGES):200
 
 EnableInitscript = ! grep -q '\#!/bin/sh /etc/rc.common' $(1) || bash ./etc/rc.common $(1) enable
-FileOrigin = $(firstword $(shell $(OPKG) search $(1)))
 
 
 enable_initscripts: FORCE
