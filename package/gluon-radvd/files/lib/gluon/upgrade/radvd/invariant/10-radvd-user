@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /lib/gluon/functions/users.sh
+
+add_user gluon-radvd 801

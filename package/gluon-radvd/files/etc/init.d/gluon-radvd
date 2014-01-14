@@ -4,9 +4,13 @@ START=50
 
 SERVICE_USE_PID=1
 SERVICE_NAME=gluon-radvd
+SERVICE_PID_DIR=/var/run/gluon-radvd
+SERVICE_PID_FILE="$SERVICE_PID_DIR"/gluon-radvd.pid
 
 start() {
-	service_start /usr/sbin/radvd -C /lib/gluon/radvd/radvd.conf -m stderr_syslog -p /var/run/gluon-radvd.pid
+	mkdir -p "$SERVICE_PID_DIR"
+	chown gluon-radvd "$SERVICE_PID_DIR"
+	service_start /usr/sbin/radvd -C /lib/gluon/radvd/radvd.conf -m stderr_syslog -u gluon-radvd -p "$SERVICE_PID_FILE"
 }
 
 stop() {
