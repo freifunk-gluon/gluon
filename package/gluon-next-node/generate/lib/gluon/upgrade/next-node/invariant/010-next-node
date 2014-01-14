@@ -34,3 +34,12 @@ uci_set network local_node_route6 target '@prefix6@'
 uci_set network local_node_route6 gateway '::'
 
 uci_commit network
+
+uci_remove firewall local_node
+uci_add firewall zone local_node
+uci_set firewall local_node name 'local_node'
+uci add_list firewall.local_node.network='local_node'
+uci_set firewall local_node input 'ACCEPT'
+uci_set firewall local_node output 'ACCEPT'
+uci_set firewall local_node forward 'REJECT'
+uci_commit firewall
