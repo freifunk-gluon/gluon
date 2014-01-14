@@ -33,6 +33,7 @@ uci_set fastd mesh_vpn syslog_level 'verbose'
 uci_set fastd mesh_vpn interface 'mesh-vpn'
 uci_set fastd mesh_vpn mode 'tap'
 uci_set fastd mesh_vpn mtu '$cfg->{mtu}'
+uci_set fastd mesh_vpn secure_handshakes '1'
 
 uci_remove fastd mesh_vpn method
 $add_methods
