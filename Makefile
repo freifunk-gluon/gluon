@@ -150,6 +150,7 @@ config: FORCE
 	echo \
 		'CONFIG_TARGET_$(BOARD)=y' \
 		'CONFIG_TARGET_ROOTFS_JFFS2=n' \
+		'CONFIG_ATH_USER_REGD=y' \
 		'$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES)))' \
 		| sed -e 's/ /\n/g' > .config
 	$(_SINGLE)$(SUBMAKE) defconfig OPENWRT_BUILD=
