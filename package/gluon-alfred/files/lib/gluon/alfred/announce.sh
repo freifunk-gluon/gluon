@@ -15,8 +15,16 @@ fi
 # set defaults
 [ -z "$ALFRED_DATA_TYPE" ] && ALFRED_DATA_TYPE=158
 [ -z "$NET_IF" ] && NET_IF=br-client
+[ -z "$MAX_WAIT" ] && MAX_WAIT=300
 
 set -e
+
+# To avoid mass flooding the network every five minutes with all clients
+# simultaneously, wait for a random time between 0 and 300 seconds, but fixed
+# for each device to maintain 5 minutes between updates.
+# Calculated using first 3 hex digits of the primary MAC address' MD5 hash
+DELAY=$((0x$(sysconfig primary_mac | tr -d ':' | md5sum | head -c3) * $MAX_WAIT / (16**3)))
+sleep $DELAY
 
 json_init
 json_add_string "hostname" "$(uci get 'system.@system[0].hostname')"
