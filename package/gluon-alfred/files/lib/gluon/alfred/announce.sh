@@ -75,8 +75,16 @@ json_close_object # network
 json_add_object "statistics"
 	json_add_int "uptime" "$(cut -d' ' -f1 /proc/uptime)"
 	json_add_object "traffic"
-		json_add_double "rx" "$(cat /sys/class/net/bat0/statistics/rx_bytes)"
-		json_add_double "tx" "$(cat /sys/class/net/bat0/statistics/tx_bytes)"
+		TRAFFIC="$(ethtool -S bat0 | sed -e 's/^ *//')"
+		for class in rx tx forward mgmt_rx mgmt_tx; do
+		json_add_object "$class"
+			json_add_int "bytes" "$(echo "$TRAFFIC" | awk -F': ' "/^${class}_bytes:/ { print \$2 }")"
+			json_add_int "packets" "$(echo "$TRAFFIC" | awk -F': ' "/^${class}:/ { print \$2 }")"
+			if [ "$class" = "tx" ]; then
+				json_add_int "dropped" "$(echo "$TRAFFIC" | awk -F': ' "/^${class}_dropped:/ { print \$2 }")"
+			fi
+		json_close_object # $class
+		done
 	json_close_object # traffic
 json_close_object # statistics
 
