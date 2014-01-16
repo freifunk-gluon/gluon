@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tunneldigger
 PKG_VERSION:=0.3
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_REV:=HEAD
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -36,6 +36,8 @@ define Package/tunneldigger/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/l2tp_client $(1)/usr/bin/tunneldigger
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/tunneldigger.init $(1)/etc/init.d/tunneldigger
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DATA) ./files/config.default $(1)/etc/config/tunneldigger
 endef
 
 $(eval $(call BuildPackage,tunneldigger))
