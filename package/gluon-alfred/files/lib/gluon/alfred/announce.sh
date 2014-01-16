@@ -23,8 +23,10 @@ set -e
 # simultaneously, wait for a random time between 0 and 300 seconds, but fixed
 # for each device to maintain 5 minutes between updates.
 # Calculated using first 3 hex digits of the primary MAC address' MD5 hash
-DELAY=$((0x$(sysconfig primary_mac | md5sum | head -c3) * $MAX_WAIT / (16**3)))
-sleep $DELAY
+if [ "$1" != "--no-sleep" ]; then
+	DELAY=$((0x$(sysconfig primary_mac | md5sum | head -c3) * $MAX_WAIT / (16**3)))
+	sleep $DELAY
+fi
 
 json_init
 json_add_string "hostname" "$(uci get 'system.@system[0].hostname')"
