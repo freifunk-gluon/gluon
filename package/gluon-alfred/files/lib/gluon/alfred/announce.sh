@@ -12,10 +12,30 @@ fi
 . /lib/gluon/functions/model.sh
 . /lib/gluon/functions/sysconfig.sh
 
+# set defaults
 [ -z "$ALFRED_DATA_TYPE" ] && ALFRED_DATA_TYPE=158
 [ -z "$NET_IF" ] && NET_IF=br-client
+[ -z "$TRAFFIC_FILE" ] && TRAFFIC_FILE=/var/run/traffic
 
 set -e
+
+get_traffic() {
+	if [ -f "$TRAFFIC_FILE" ]; then
+		OLD_TIME="$(cut -d' ' -f1 "$TRAFFIC_FILE")"
+		OLD_RX="$(cut -d' ' -f2 "$TRAFFIC_FILE")"
+		OLD_TX="$(cut -d' ' -f3 "$TRAFFIC_FILE")"
+	else
+		OLD_TIME=0
+		OLD_RX=0
+		OLD_TX=0
+	fi
+	NEW_TIME="$(cut -d' ' -f1 /proc/uptime)"
+	NEW_RX="$(cat /sys/class/net/bat0/statistics/rx_bytes)"
+	NEW_TX="$(cat /sys/class/net/bat0/statistics/tx_bytes)"
+	echo "$NEW_TIME $NEW_RX $NEW_TX" > "$TRAFFIC_FILE"
+	echo "$OLD_TIME $OLD_RX $OLD_TX $NEW_TIME $NEW_RX $NEW_TX" |\
+		awk '{tdiff=$4-$1; print ($5-$2)/tdiff " " ($6-$3)/tdiff;}'
+}
 
 json_init
 json_add_string "hostname" "$(uci get 'system.@system[0].hostname')"
@@ -60,5 +80,14 @@ json_add_object "network"
 		done
 	json_close_array # adresses
 json_close_object # network
+
+json_add_object "statistics"
+	json_add_int "uptime" "$(cut -d' ' -f1 /proc/uptime)"
+	TRAFFIC="$(get_traffic)"
+	json_add_object "traffic"
+		json_add_double "rx" "$(echo $TRAFFIC | cut -d' ' -f1)"
+		json_add_double "tx" "$(echo $TRAFFIC | cut -d' ' -f2)"
+	json_close_object
+json_close_object # statistics
 
 json_dump | tr -d '\n' | alfred -s "$ALFRED_DATA_TYPE"
