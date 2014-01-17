@@ -59,15 +59,11 @@ if test $? -ne 0; then
   exit 1
 fi
 
-seperator_line=$(cat $manifest|grep -n "^---$"|cut -d: -f1|head -n1)
-
-if test -z "$seperator_line"; then
-  echo "Couldn't find --- marker!" >&2
-  exit 1
-fi
-
-head -n$(($seperator_line-1)) $manifest > $manifest_upper
-tail -n+$(($seperator_line+1)) $manifest > $manifest_lower
+awk "BEGIN    { sep=0 }
+     /^---\$/ { sep=1; next }
+              { if(sep==0) print > \"$manifest_upper\";
+                else       print > \"$manifest_lower\"}" \
+    $manifest
 
 signatures=""
 while read sig; do
