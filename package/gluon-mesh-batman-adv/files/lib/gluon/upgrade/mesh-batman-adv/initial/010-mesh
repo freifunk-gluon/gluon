@@ -7,6 +7,7 @@
 uci_remove batman-adv bat0
 uci_add batman-adv mesh bat0
 uci_set batman-adv bat0 orig_interval '5000'
+uci_set batman-adv bat0 gw_mode 'client'
 uci_commit batman-adv
 
 uci_add network interface client
