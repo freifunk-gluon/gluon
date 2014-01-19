@@ -49,82 +49,109 @@ fi
 
 my_version="$(cat "$VERSION_FILE")"
 
-fw_image=$(mktemp)
-manifest=$(mktemp)
-manifest_upper=$(mktemp)
-manifest_lower=$(mktemp)
 
-wget -O$manifest "$BASE"/manifest
+fetch_manifest() {
+  local MIRROR=$1
+  wget -O$manifest "$MIRROR"/manifest
 
-if test $? -ne 0; then
-  echo "Couldn't fetch manifest" >&2
-  exit 1
-fi
+  if test $? -ne 0; then
+    echo "Couldn't fetch manifest from $MIRROR" >&2
+    return 1
+  fi
+}
 
-awk "BEGIN    { sep=0 }
+verify_and_analyse_manifest() {
+  awk "BEGIN    { sep=0 }
      /^---\$/ { sep=1; next }
               { if(sep==0) print > \"$manifest_upper\";
                 else       print > \"$manifest_lower\"}" \
     $manifest
 
-signatures=""
-while read sig; do
-  echo "$sig" | grep -q "^[0-9a-f]\{128\}$"
+  local signatures=""
+  while read sig; do
+    echo "$sig" | grep -q "^[0-9a-f]\{128\}$"
+    if test $? -ne 0; then
+      continue
+    fi
+    signatures="$signatures -s $sig"
+  done < $manifest_lower
+
+  local pubkeys=""
+  for key in $PUBKEYS; do
+    pubkeys="$pubkeys -p $key"
+  done
+
+  ecdsaverify -n $GOOD_SIGNATURES $pubkeys $signatures $manifest_upper
+
   if test $? -ne 0; then
-    continue
+    echo "Not enough valid signatures!" >&2
+    return 1
   fi
-  signatures="$signatures -s $sig"
-done < $manifest_lower
 
-pubkeys=""
-for key in $PUBKEYS; do
-  pubkeys="$pubkeys -p $key"
-done
+  grep -q "^BRANCH=${BRANCH}$" $manifest_upper
 
-ecdsaverify -n $GOOD_SIGNATURES $pubkeys $signatures $manifest_upper
-
-if test $? -ne 0; then
-  echo "Not enough valid signatures!" >&2
-  exit 1
-fi
-
-grep -q "^BRANCH=${BRANCH}$" $manifest_upper
-
-if test $? -ne 0; then
-  echo "Wrong branch. We are on ${BRANCH}" >&2
-  exit 1
-fi
-
-my_firmware=$(grep "^${my_model} " $manifest_upper)
-
-if test $? -ne 0; then
-  echo "No matching firmware found (model ${my_model})" >&2
-  exit 1
-fi
-
-fw_version=$(echo "${my_firmware}"|cut -d' ' -f2)
-fw_md5=$(echo "${my_firmware}"|cut -d' ' -f3)
-fw_file=$(echo "${my_firmware}"|cut -d' ' -f4)
-
-if newer_than "$fw_version" "$my_version"; then
-  echo "New version available"
-  wget -O$fw_image "${BASE}/${fw_file}"
   if test $? -ne 0; then
-    echo "Error downloading image" >&2
-    exit 1
+    echo "Wrong branch. We are on ${BRANCH}" >&2
+    return 1
   fi
 
-  image_md5=$(md5sum "$fw_image"|cut -b-32)
-  if test "$image_md5" != "$fw_md5"; then
-    echo "Invalid image checksum" >&2
-    exit 1
+  local my_firmware=$(grep "^${my_model} " $manifest_upper)
+
+  if test $? -ne 0; then
+    echo "No matching firmware found (model ${my_model})" >&2
+    return 1
   fi
 
-  echo "Upgrading firmware."
+  fw_version=$(echo "${my_firmware}"|cut -d' ' -f2)
+  fw_md5=$(echo "${my_firmware}"|cut -d' ' -f3)
+  fw_file=$(echo "${my_firmware}"|cut -d' ' -f4)
 
-  sysupgrade "${fw_image}"
-else
-  echo "No new firmware available"
-fi
+  return 0
+}
 
-exit 0
+fetch_firmware() {
+  local MIRROR=$1
+
+  wget -O$fw_image "${MIRROR}/${fw_file}"
+
+  if test $? -ne 0; then
+    echo "Error downloading image from $MIRROR" >&2
+    return 1
+  else
+    return 0
+  fi
+}
+
+autoupdate() {
+  local MIRROR=$1
+
+  fw_image=$(mktemp)
+  manifest=$(mktemp)
+  manifest_upper=$(mktemp)
+  manifest_lower=$(mktemp)
+
+  fetch_manifest $MIRROR || return 1
+  verify_and_analyse_manifest || return 1
+
+  if newer_than "$fw_version" "$my_version"; then
+    echo "New version available"
+
+    fetch_firmware $MIRROR || return 1
+
+    image_md5=$(md5sum "$fw_image"|cut -b-32)
+    if test "$image_md5" != "$fw_md5"; then
+      echo "Invalid image checksum" >&2
+      return 1
+    fi
+    echo "Upgrading firmware."
+
+    sysupgrade "${fw_image}"
+  else
+    echo "No new firmware available"
+  fi
+
+  return 0
+}
+
+
+autoupdate $BASE && exit 0
