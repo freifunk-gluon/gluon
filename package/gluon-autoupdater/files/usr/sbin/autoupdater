@@ -30,37 +30,24 @@ newer_than() {
   test "$1" != "$old"
 }
 
-cleanup() {
-  rm -f $manifest
-  rm -f $fw_image
-  rm -f $manifest_upper
-  rm -f $manifest_lower
-}
-
-trap cleanup INT TERM EXIT PIPE
-
-. /lib/gluon/functions/model.sh
-my_model="$(get_model | tr '[A-Z]' '[a-z]' | sed -r 's/[^a-z0-9]+/-/g;s/-$//')"
-
-if [ ! -f "$VERSION_FILE" ]; then
-  echo "Couldn't determine firmware version!" >&2
-  exit 1
-fi
-
-my_version="$(cat "$VERSION_FILE")"
-
-
 fetch_manifest() {
   local MIRROR=$1
+  local manifest=$2
+
   wget -O$manifest "$MIRROR"/manifest
 
   if test $? -ne 0; then
     echo "Couldn't fetch manifest from $MIRROR" >&2
     return 1
   fi
+
+  return 0
 }
 
-verify_and_analyse_manifest() {
+verify_manifest() {
+  local manifest=$1
+  local manifest_upper=$2
+  local manifest_lower=$(mktemp)
   awk "BEGIN    { sep=0 }
      /^---\$/ { sep=1; next }
               { if(sep==0) print > \"$manifest_upper\";
@@ -81,12 +68,20 @@ verify_and_analyse_manifest() {
     pubkeys="$pubkeys -p $key"
   done
 
+  rm -f $manifest_lower
+
   ecdsaverify -n $GOOD_SIGNATURES $pubkeys $signatures $manifest_upper
 
   if test $? -ne 0; then
     echo "Not enough valid signatures!" >&2
     return 1
   fi
+
+  return 0
+}
+
+analyse_manifest() {
+  local manifest_upper=$1
 
   grep -q "^BRANCH=${BRANCH}$" $manifest_upper
 
@@ -95,7 +90,8 @@ verify_and_analyse_manifest() {
     return 1
   fi
 
-  local my_firmware=$(grep "^${my_model} " $manifest_upper)
+  local my_firmware
+  my_firmware=$(grep "^${my_model} " $manifest_upper)
 
   if test $? -ne 0; then
     echo "No matching firmware found (model ${my_model})" >&2
@@ -111,36 +107,41 @@ verify_and_analyse_manifest() {
 
 fetch_firmware() {
   local MIRROR=$1
+  local fw_image=$2
 
   wget -O$fw_image "${MIRROR}/${fw_file}"
 
   if test $? -ne 0; then
     echo "Error downloading image from $MIRROR" >&2
     return 1
-  else
-    return 0
   fi
+
+  return 0
 }
 
 autoupdate() {
   local MIRROR=$1
 
-  fw_image=$(mktemp)
-  manifest=$(mktemp)
-  manifest_upper=$(mktemp)
-  manifest_lower=$(mktemp)
+  local manifest=$(mktemp)
+  fetch_manifest $MIRROR $manifest || { rm -f $manifest; return 1; }
 
-  fetch_manifest $MIRROR || return 1
-  verify_and_analyse_manifest || return 1
+  local manifest_upper=$(mktemp)
+  verify_manifest $manifest $manifest_upper || { rm -f $manifest $manifest_upper; return 1; }
+  rm -f $manifest
+
+  analyse_manifest $manifest_upper || { rm -f $manifest_upper; return 1; }
+  rm -f $manifest_upper
 
   if newer_than "$fw_version" "$my_version"; then
     echo "New version available"
 
-    fetch_firmware $MIRROR || return 1
+    local fw_image=$(mktemp)
+    fetch_firmware $MIRROR $fw_image || { rm -f $fw_image; return 1; }
 
     image_md5=$(md5sum "$fw_image"|cut -b-32)
     if test "$image_md5" != "$fw_md5"; then
       echo "Invalid image checksum" >&2
+      rm -f $fw_image
       return 1
     fi
     echo "Upgrading firmware."
@@ -153,5 +154,16 @@ autoupdate() {
   return 0
 }
 
+trap 'echo Signal ignored.' INT TERM PIPE
+
+. /lib/gluon/functions/model.sh
+my_model="$(get_model | tr '[A-Z]' '[a-z]' | sed -r 's/[^a-z0-9]+/-/g;s/-$//')"
+
+if [ ! -f "$VERSION_FILE" ]; then
+  echo "Couldn't determine firmware version!" >&2
+  exit 1
+fi
+
+my_version="$(cat "$VERSION_FILE")"
 
 autoupdate $BASE && exit 0
