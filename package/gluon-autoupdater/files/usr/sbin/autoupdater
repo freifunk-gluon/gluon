@@ -91,7 +91,7 @@ fi
 grep -q "^BRANCH=${BRANCH}$" $manifest_upper
 
 if test $? -ne 0; then
-  echo "Wrong branch. We'are on ${BRANCH}" >&2
+  echo "Wrong branch. We are on ${BRANCH}" >&2
   exit 1
 fi
 
