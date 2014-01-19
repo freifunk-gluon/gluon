@@ -19,7 +19,7 @@ if test "a$1" != "a-f"; then
   fi
 fi
 
-BASE=$(uci get autoupdater.${BRANCH}.url)
+MIRRORS=$(uci get autoupdater.${BRANCH}.mirror)
 PUBKEYS=$(uci get autoupdater.${BRANCH}.pubkey)
 GOOD_SIGNATURES=$(uci get autoupdater.${BRANCH}.good_signatures)
 
@@ -166,4 +166,13 @@ fi
 
 my_version="$(cat "$VERSION_FILE")"
 
-autoupdate $BASE && exit 0
+for mirror in $MIRRORS; do
+
+  autoupdate $mirror && exit 0
+
+  unset fw_version
+  unset fw_md5
+  unset fw_file
+
+done
+

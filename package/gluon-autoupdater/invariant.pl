@@ -28,8 +28,12 @@ delete autoupdater.$name
 set autoupdater.$name=branch
 END
 
-  for (qw(url probability good_signatures)) {
+  for (qw(probability good_signatures)) {
     print "set autoupdater.$name.$_=$branch->{$_}\n";
+  }
+
+  for (@{$branch->{mirrors}}) {
+    print "add_list autoupdater.$name.mirror=$_\n";
   }
 
   for (@{$branch->{pubkeys}}) {
