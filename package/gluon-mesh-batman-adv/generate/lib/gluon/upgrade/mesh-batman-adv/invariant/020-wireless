@@ -39,17 +39,20 @@ configure_radio() {
 	uci_set wireless "$radio" htmode "$htmode"
 	uci_set wireless "$radio" country '@regdom@'
 
+	uci_remove wireless "client_${radio}"
 	uci_add wireless 'wifi-iface' "client_${radio}"
 	uci_set wireless "client_${radio}" device "$radio"
 	uci_set wireless "client_${radio}" network 'client'
 	uci_set wireless "client_${radio}" mode 'ap'
 	uci_set wireless "client_${radio}" ssid "$ssid"
 
+	uci_remove network "mesh_${radio}"
 	uci_add network 'interface' "mesh_${radio}"
 	uci_set network "mesh_${radio}" proto 'batadv'
 	uci_set network "mesh_${radio}" mtu '1528'
 	uci_set network "mesh_${radio}" mesh 'bat0'
 
+	uci_remove wireless "mesh_${radio}"
 	uci_add wireless 'wifi-iface' "mesh_${radio}"
 	uci_set wireless "mesh_${radio}" device "$radio"
 	uci_set wireless "mesh_${radio}" network "mesh_${radio}"
