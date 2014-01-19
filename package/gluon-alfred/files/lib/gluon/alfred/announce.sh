@@ -60,10 +60,14 @@ json_add_object "network"
 			json_add_string "" "$addr"
 		done
 	json_close_array # adresses
+
+	GATEWAY="$(batctl -m bat0 gateways | awk '/^=>/ { print $2 }')"
+	[ -z "$GATEWAY" ] || json_add_string "gateway" "$GATEWAY"
 json_close_object # network
 
 json_add_object "statistics"
 	json_add_int "uptime" "$(cut -d' ' -f1 /proc/uptime)"
+	json_add_double "loadavg" "$(cut -d' ' -f1 /proc/loadavg)"
 	json_add_object "traffic"
 		TRAFFIC="$(ethtool -S bat0 | sed -e 's/^ *//')"
 		for class in rx tx forward mgmt_rx mgmt_tx; do
