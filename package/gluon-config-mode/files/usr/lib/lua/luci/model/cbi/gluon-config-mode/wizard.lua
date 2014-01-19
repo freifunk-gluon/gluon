@@ -45,16 +45,16 @@ o.datatype = "integer"
 s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS-Koordinaten deines Knotens eintragen, um ihn in der Knotenkarte anzeigen zu lassen.")
 
 o = s:option(Flag, "_location", "Koordinaten veröffentlichen?")
-o.default = uci:get_first("system", "system", "share_location", o.disabled)
+o.default = uci:get_first("gluon-locaton", "location", "share_location", o.disabled)
 o.rmempty = false
 
 o = s:option(Value, "_latitude", "Breitengrad")
-o.default = string.format("%f", uci:get_first("system", "system", "latitude", "0"))
+o.default = string.format("%f", uci:get_first("gluon-location", "location", "latitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 
 o = s:option(Value, "_longitude", "Längengrad")
-o.default = string.format("%f", uci:get_first("system", "system", "longitude", "0"))
+o.default = string.format("%f", uci:get_first("gluon-location", "location", "longitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 
@@ -79,12 +79,17 @@ function f.handle(self, state, data)
 
     uci:foreach("system", "system", function(s)
             uci:set("system", s[".name"], "hostname", data._hostname)
-            uci:set("system", s[".name"], "share_location", data._location)
-            uci:set("system", s[".name"], "latitude", data._latitude)
-            uci:set("system", s[".name"], "longitude", data._longitude)
             end)
     uci:save("system")
     uci:commit("system")
+
+    uci:foreach("gluon-location", "location", function(s)
+            uci:set("gluon-location", s[".name"], "share_location", data._location)
+            uci:set("gluon-location", s[".name"], "latitude", data._latitude)
+            uci:set("gluon-location", s[".name"], "longitude", data._longitude)
+            end)
+    uci:save("gluon-location")
+    uci:commit("gluon-location")
 
     luci.http.redirect(luci.dispatcher.build_url("gluon-config-mode", "reboot"))
   end

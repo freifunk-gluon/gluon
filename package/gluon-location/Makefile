@@ -11,12 +11,12 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gluon-location
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=Add system.location to uci
+  TITLE:=Add /etc/config/gluon-location to uci
   DEPENDS:=+gluon-core
 endef
 
 define Package/gluon-location/description
-	This packages creates /lib/gluon/location.
+	This packages creates /etc/config/gluon-location.
 endef
 
 define Build/Prepare
