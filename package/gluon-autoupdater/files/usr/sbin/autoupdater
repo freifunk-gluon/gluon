@@ -10,7 +10,9 @@ BRANCH=$(uci get autoupdater.settings.branch)
 PROBABILITY=$(uci get autoupdater.${BRANCH}.probability)
 
 if test "a$1" != "a-f"; then
-  echo | awk "END{srand();exit rand() > $PROBABILITY}"
+  # get one random byte from /dev/urandom, convert it to decimal and check
+  # against update_probability*255
+  hexdump -n1 -e '/1 "%d"' /dev/urandom | awk "{exit \$1 > $PROBABILITY * 255}"
   if test $? -ne 0; then
     echo "No autoupdate this time. Use -f to override"
     exit 0
