@@ -28,7 +28,7 @@ delete autoupdater.$name
 set autoupdater.$name=branch
 END
 
-  for (qw(probability good_signatures)) {
+  for (qw(name probability good_signatures)) {
     print "set autoupdater.$name.$_=$branch->{$_}\n";
   }
 

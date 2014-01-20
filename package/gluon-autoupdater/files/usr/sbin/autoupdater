@@ -19,6 +19,7 @@ if test "a$1" != "a-f"; then
   fi
 fi
 
+BRANCH_NAME=$(uci get autoupdater.${BRANCH}.name)
 MIRRORS=$(uci get autoupdater.${BRANCH}.mirror)
 PUBKEYS=$(uci get autoupdater.${BRANCH}.pubkey)
 GOOD_SIGNATURES=$(uci get autoupdater.${BRANCH}.good_signatures)
@@ -83,10 +84,10 @@ verify_manifest() {
 analyse_manifest() {
   local manifest_upper=$1
 
-  grep -q "^BRANCH=${BRANCH}$" $manifest_upper
+  grep -q "^BRANCH=${BRANCH_NAME}$" $manifest_upper
 
   if test $? -ne 0; then
-    echo "Wrong branch. We are on ${BRANCH}" >&2
+    echo "Wrong branch. We are on ${BRANCH_NAME}" >&2
     return 1
   fi
 
