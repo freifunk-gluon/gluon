@@ -25,7 +25,7 @@ uci.cursor():foreach("autoupdater", "branch", function (section) f:value(section
 s = m:section(TypedSection, "branch", "Branches")
 s.addremove = true
 
-s:option(Value, "url", "URL")
+s:option(DynamicList, "mirror", "Mirrors")
 s:option(Value, "probability", "Update Wahrscheinlichkeit")
 s:option(Value, "good_signatures", "Benötigte Signaturen")
 
