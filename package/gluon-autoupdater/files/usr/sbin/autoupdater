@@ -20,7 +20,9 @@ if test "a$1" != "a-f"; then
 fi
 
 BRANCH_NAME=$(uci get autoupdater.${BRANCH}.name)
-MIRRORS=$(uci get autoupdater.${BRANCH}.mirror)
+MIRRORS=$(for mirror in $(uci get autoupdater.${BRANCH}.mirror); do \
+            hexdump -n1 -e '/1 "%d '"$mirror"'\n"' /dev/urandom; \
+          done | sort -n | cut -d' ' -f2)
 PUBKEYS=$(uci get autoupdater.${BRANCH}.pubkey)
 GOOD_SIGNATURES=$(uci get autoupdater.${BRANCH}.good_signatures)
 
