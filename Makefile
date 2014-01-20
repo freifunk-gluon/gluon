@@ -143,8 +143,9 @@ export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
 
 feeds: FORCE
-	[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do echo src-link $$feed ../../packages/$$feed; done > feeds.conf
-	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do echo src-link $$feed ../../packages/$$feed; done > feeds.conf
+	echo -n > feeds.conf
+	[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do echo src-link $$feed ../../packages/$$feed; done >> feeds.conf
+	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do echo src-link $$feed ../../packages/$$feed; done >> feeds.conf
 	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
