@@ -195,7 +195,7 @@ prepare: FORCE
 	+$(GLUONMAKE) packages
 	+$(GLUONMAKE) prepare-image
 
-	touch $(gluon_prepared_stamp)
+	echo "$(GLUON_RELEASE)" > $(gluon_prepared_stamp)
 
 $(gluon_prepared_stamp):
 	+$(GLUONMAKE) prepare
@@ -261,7 +261,7 @@ image: FORCE
 	+$(GLUONMAKE) package_install
 
 	$(call Image/mkfs/prepare)
-	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 

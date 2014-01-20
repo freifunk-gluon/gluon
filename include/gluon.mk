@@ -25,6 +25,12 @@ $(GLUON_SITEDIR)/site.mk:
 GLUON_CONFIG_VERSION := $(shell cd $(GLUON_SITEDIR) && git describe --always --dirty=.$$(stat -c %Y $(GLUON_SITEDIR)/site.conf) 2>/dev/null || stat -c %Y site.conf)
 export GLUON_CONFIG_VERSION
 
+GLUON_SITE_CODE := $(shell $(GLUONDIR)/scripts/site.sh site_code)
+export GLUON_SITE_CODE
+
+GLUON_RELEASE ?= $(shell $(GLUONDIR)/scripts/site.sh release)
+export GLUON_RELEASE
+
 define merge-lists
 $(1) :=
 $(foreach var,$(2),$(1) := $$(sort $$(filter-out -% $$(patsubst -%,%,$$(filter -%,$$($(var)))),$$($(1)) $$($(var))))
