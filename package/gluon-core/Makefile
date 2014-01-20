@@ -27,11 +27,15 @@ define Build/Configure
 endef
 
 define Build/Compile
+	echo "$(GLUON_RELEASE)" > $(PKG_BUILD_DIR)/release
 endef
 
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
 	$(GLUON_GENERATE) ./generate/* $(1)/
+
+	$(INSTALL_DIR) $(1)/lib/gluon
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/release $(1)/lib/gluon/release
 endef
 
 $(eval $(call BuildPackage,gluon-core))
