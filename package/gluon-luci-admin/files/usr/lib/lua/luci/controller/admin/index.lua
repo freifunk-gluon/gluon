@@ -16,8 +16,8 @@ $Id$
 module("luci.controller.admin.index", package.seeall)
 
 function index()
-  local uci_state = luci.model.uci.cursor_state()
-  local configmode = uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1"
+	local uci_state = luci.model.uci.cursor_state()
+	local configmode = uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1"
 
 	-- Disable gluon-luci-admin when configmode is not enabled
 	if not configmode then
@@ -30,14 +30,14 @@ function index()
 		root.index = true
 	end
 	
-	local page   = entry({"admin"}, alias("admin", "index"), _("Expertmode"), 10)
+	local page	 = entry({"admin"}, alias("admin", "index"), _("Expertmode"), 10)
 	page.sysauth = "root"
-  if configmode then
-    -- force root to be logged in when running in configmode
-    page.sysauth_authenticator = function() return "root" end
-  else
-	  page.sysauth_authenticator = "htmlauth"
-  end
+	if configmode then
+		-- force root to be logged in when running in configmode
+		page.sysauth_authenticator = function() return "root" end
+	else
+		page.sysauth_authenticator = "htmlauth"
+	end
 	page.index = true
 	
 	entry({"admin", "index"}, form("admin/index"), _("Overview"), 1).ignoreindex = true
