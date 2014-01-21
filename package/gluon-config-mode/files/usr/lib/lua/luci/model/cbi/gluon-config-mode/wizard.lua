@@ -33,11 +33,13 @@ o.rmempty = false
 o.description = "Begrenzt die Geschwindigkeit, mit der dieser Knoten auf das Internet zugreifen darf. Kann aktiviert werden, wenn der eigene Internetanschluss durch den Freifunkknoten merklich ausgebremst wird."
 
 o = s:option(Value, "_limit_ingress", "Downstream")
+o:depends("_limit_enabled", "1")
 o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_ingress")
 o.rmempty = false
 o.datatype = "integer"
 
 o = s:option(Value, "_limit_egress", "Upstream")
+o:depends("_limit_enabled", "1")
 o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
 o.rmempty = false
 o.datatype = "integer"
