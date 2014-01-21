@@ -12,6 +12,9 @@ sub add_config {
 		if (ref($val) eq 'HASH') {
 			add_config($key . '.', $val);
 		}
+		elsif (ref($val) eq 'ARRAY') {
+			$config{'@' . $prefix . $key . '@'} = join ' ', @{$val};
+		}
 		unless (ref($val)) {
 			$config{'@' . $prefix . $key . '@'} = $val;
 		}
