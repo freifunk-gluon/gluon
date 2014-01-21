@@ -26,6 +26,10 @@ uci_set firewall client output 'ACCEPT'
 uci_set firewall client forward 'REJECT'
 uci_commit firewall
 
+uci_set dhcp '@dnsmasq[0]' boguspriv '0'
+uci_set dhcp '@dnsmasq[0]' localise_queries '0'
+uci_set dhcp '@dnsmasq[0]' rebind_protection '0'
+
 uci_remove dhcp client
 uci_add dhcp dhcp client
 uci_set dhcp client interface 'client'
