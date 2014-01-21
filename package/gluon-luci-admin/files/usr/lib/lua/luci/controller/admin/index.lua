@@ -41,7 +41,10 @@ function index()
 	page.index = true
 	
 	entry({"admin", "index"}, form("admin/index"), _("Overview"), 1).ignoreindex = true
-	entry({"admin", "logout"}, call("action_logout"), _("Logout"))
+
+	if not configmode then
+		entry({"admin", "logout"}, call("action_logout"), _("Logout"))
+	end
 end
 
 function action_logout()
