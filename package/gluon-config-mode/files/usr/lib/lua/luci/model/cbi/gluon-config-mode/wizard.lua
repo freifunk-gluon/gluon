@@ -69,12 +69,22 @@ function f.handle(self, state, data)
     uci:save("autoupdater")
     uci:commit("autoupdater")
 
-    uci:set("gluon-simple-tc", meshvpn_name, "interface")
-    uci:set("gluon-simple-tc", meshvpn_name, "enabled", data._limit_enabled)
-    uci:set("gluon-simple-tc", meshvpn_name, "ifname", "mesh-vpn")
-    uci:set("gluon-simple-tc", meshvpn_name, "limit_ingress", data._limit_ingress)
-    uci:set("gluon-simple-tc", meshvpn_name, "limit_egress", data._limit_egress)
-    uci:commit("gluon-simple-tc")
+    -- checks for nil needed due to o:depends(...)
+    if data._limit_enabled ~= nil then
+      uci:set("gluon-simple-tc", meshvpn_name, "interface")
+      uci:set("gluon-simple-tc", meshvpn_name, "enabled", data._limit_enabled)
+      uci:set("gluon-simple-tc", meshvpn_name, "ifname", "mesh-vpn")
+
+      if data._limit_ingress ~= nil then
+        uci:set("gluon-simple-tc", meshvpn_name, "limit_ingress", data._limit_ingress)
+      end
+
+      if data._limit_egress ~= nil then
+        uci:set("gluon-simple-tc", meshvpn_name, "limit_egress", data._limit_egress)
+      end
+
+      uci:commit("gluon-simple-tc")
+    end
 
     uci:set("fastd", meshvpn_name, "enabled", data._meshvpn)
     uci:save("fastd")
