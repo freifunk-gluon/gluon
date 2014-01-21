@@ -24,6 +24,14 @@ uci add_list firewall.client.network='client'
 uci_set firewall client input 'ACCEPT'
 uci_set firewall client output 'ACCEPT'
 uci_set firewall client forward 'REJECT'
+
+config_load firewall
+accept_input_on_wan() {
+	config_get name "$1" name
+	[ "$name" = 'wan' ] && uci_set firewall "$1" input 'ACCEPT'
+}
+config_foreach accept_input_on_wan 'zone'
+
 uci_commit firewall
 
 uci_set dhcp '@dnsmasq[0]' boguspriv '0'
