@@ -19,6 +19,11 @@ function index()
   local uci_state = luci.model.uci.cursor_state()
   local configmode = uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1"
 
+	-- Disable gluon-luci-admin when configmode is not enabled
+	if not configmode then
+		return
+	end
+
 	local root = node()
 	if not root.lock then
 		root.target = alias("admin")
