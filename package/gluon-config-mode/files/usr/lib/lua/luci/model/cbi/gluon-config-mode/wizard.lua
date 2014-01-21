@@ -28,6 +28,7 @@ o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.di
 o.rmempty = false
 
 o = s:option(Flag, "_limit_enabled", "Bandbreitenbegrenzung aktivieren?")
+o:depends("_meshvpn", "1")
 o.default = uci:get_bool("gluon-simple-tc", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
 o.description = "Begrenzt die Geschwindigkeit, mit der dieser Knoten auf das Internet zugreifen darf. Kann aktiviert werden, wenn der eigene Internetanschluss durch den Freifunkknoten merklich ausgebremst wird."
