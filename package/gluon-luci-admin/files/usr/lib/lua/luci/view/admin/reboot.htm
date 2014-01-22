@@ -13,8 +13,7 @@ $Id$
 
 -%>
 <%+header%>
-<h2><a id="content" name="content"><%:System%></a></h2>
-<h3><%:Reboot%></h3>
+<h2><a id="content" name="content"><%:Reboot%></a></h2>
 <p><%:Reboots the operating system of your device%></p>
 <%-
 local c = require("luci.model.uci").cursor():changes()
@@ -28,6 +27,5 @@ if not reboot then
 <p><a href="<%=REQUEST_URI%>?reboot=1"><%:Perform reboot%></a></p>
 <%- else -%>
 <p><%:Please wait: Device rebooting...%></p>
-<script type="text/javascript">setTimeout("location='<%=controller%>'", 60000)</script>
 <%- end -%>
 <%+footer%>
