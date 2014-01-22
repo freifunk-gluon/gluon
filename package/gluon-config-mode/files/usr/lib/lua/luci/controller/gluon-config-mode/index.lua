@@ -51,7 +51,6 @@ function action_reboot()
   if meshvpn_enabled == "1" then
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
-  luci.template.render("gluon-config-mode/reboot", {pubkey=pubkey})
 
   uci:foreach("gluon-config-mode", "wizard", function(s)
       uci:set("gluon-config-mode", s[".name"], "configured", "1")
@@ -59,5 +58,20 @@ function action_reboot()
   uci:save("gluon-config-mode")
   uci:commit("gluon-config-mode")
 
-  luci.sys.reboot()
+  if nixio.fork() ~= 0 then
+    luci.template.render("gluon-config-mode/reboot", {pubkey=pubkey})
+  else
+    debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
+    io.stdout:close()
+
+    -- Sleep a little so the browser can fetch everything required to
+    -- display the reboot page, then reboot the device.
+    nixio.nanosleep(2)
+
+    -- Run reboot with popen so it gets its own std filehandles.
+    io.popen("reboot")
+
+    -- Prevent any further execution in this child.
+    os.exit()
+  end
 end
