@@ -3,9 +3,16 @@
 . /lib/functions.sh
 . /lib/gluon/functions/sysconfig.sh
 
+lan_ifname="$(sysconfig lan_ifname)"
 
 uci_add network interface client
-uci_set network client ifname "$(sysconfig lan_ifname) bat0"
+
+if [ -n "$lan_ifname" ]; then
+	uci_set network client ifname "$lan_ifname bat0"
+else
+	uci_set network client ifname "bat0"
+fi
+
 uci_set network client type 'bridge'
 uci_set network client proto 'dhcpv6'
 uci_set network client reqprefix 'no'

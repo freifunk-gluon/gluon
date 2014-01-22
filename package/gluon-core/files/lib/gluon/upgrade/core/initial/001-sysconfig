@@ -15,7 +15,14 @@ get_primary_mac() {
     esac
 }
 
+lan_ifname="$(uci get network.lan.ifname)"
+wan_ifname="$(uci get network.wan.ifname)"
 
-sysconfig_set lan_ifname "$(uci get network.lan.ifname)"
-sysconfig_set wan_ifname "$(uci get network.wan.ifname)"
+if [ -n "$wan_ifname" ]; then
+	[ -z "$lan_ifname" ] || sysconfig_set lan_ifname "$lan_ifname"
+	sysconfig_set wan_ifname "$wan_ifname"
+else
+	sysconfig_set wan_ifname "$lan_ifname"
+fi
+
 sysconfig_set primary_mac "$(get_primary_mac)"
