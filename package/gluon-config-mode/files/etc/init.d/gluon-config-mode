@@ -3,12 +3,21 @@
 START=12
 
 
-config_mode_iface=eth0
 config_mode_addr=192.168.1.1
-config_mode_plen=24
+config_mode_netmask=255.255.255.0
 
 config_mode_dnsname=freifunk
 config_mode_dhcp_range=192.168.1.2,192.168.1.254
+
+
+. /lib/functions.sh
+. /lib/gluon/functions/sysconfig.sh
+
+
+delete_interface() {
+	[ "$1" = 'loopback' ] || uci_remove network "$1"
+}
+
 
 check_enable() {
 	config_get enabled "$1" enabled
@@ -29,8 +38,27 @@ start() {
 		uci set 'gluon-config-mode.@wizard[0].enabled=0'
 		uci commit gluon-config-mode
 
-		ip addr add $config_mode_addr/$config_mode_plen dev $config_mode_iface
-		ip link set up dev $config_mode_iface
+		mkdir -p /var/gluon/config-mode/config
+		mount -o bind /etc/config /var/gluon/config-mode/config
+
+		touch /var/gluon/config-mode/wireless
+		mount -o bind /var/gluon/config-mode/wireless /etc/config/wireless
+
+		cp /etc/config/network /var/gluon/config-mode
+		mount -o bind /var/gluon/config-mode/network /etc/config/network
+
+		config_load network
+		config_foreach delete_interface interface
+
+		uci_add network interface config
+		uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
+		uci_set network config type 'bridge'
+		uci_set network config proto 'static'
+		uci_set network config ipaddr "$config_mode_addr"
+		uci_set network config netmask "$config_mode_netmask"
+
+		uci_commit network
+		/etc/init.d/network start
 
 		/usr/sbin/telnetd -l /lib/gluon/config-mode/ash-login
 		/etc/init.d/dropbear start
@@ -42,8 +70,8 @@ start() {
 		# correctly finish firstboot
 		/etc/init.d/done boot
 
-		echo "$config_mode_addr $config_mode_dnsname" > /tmp/hosts.gluon-config-mode
-		dnsmasq -h -H /tmp/hosts.gluon-config-mode -R -F interface:$config_mode_iface,$config_mode_dhcp_range -l /tmp/dhcp.leases -O option:router
+		echo "$config_mode_addr $config_mode_dnsname" > /var/gluon/config-mode/hosts
+		dnsmasq -h -H /var/gluon/config-mode/hosts -R -F interface:br-config,$config_mode_dhcp_range -l /tmp/dhcp.leases -O option:router
 
 		. /etc/diag.sh
 		get_status_led
