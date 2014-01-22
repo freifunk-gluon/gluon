@@ -7,7 +7,10 @@
 
 
 uci_remove network lan
+uci_remove network wan
 
+uci_add network interface wan
+uci_set network wan ifname "$(sysconfig wan_ifname)"
 uci_set network wan type 'bridge'
 uci_set network wan proto 'dhcp'
 

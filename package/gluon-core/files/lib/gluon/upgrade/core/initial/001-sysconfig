@@ -15,10 +15,15 @@ get_primary_mac() {
     esac
 }
 
+iface_exists() {
+	local name="$1"
+	ip link show dev "${name//.*/}" >/dev/null 2>&1
+}
+
 lan_ifname="$(uci get network.lan.ifname)"
 wan_ifname="$(uci get network.wan.ifname)"
 
-if [ -n "$wan_ifname" ]; then
+if [ -n "$wan_ifname" ] && iface_exists "$wan_ifname"; then
 	[ -z "$lan_ifname" ] || sysconfig_set lan_ifname "$lan_ifname"
 	sysconfig_set wan_ifname "$wan_ifname"
 else
