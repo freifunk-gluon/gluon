@@ -51,7 +51,7 @@ function action_reboot()
   if meshvpn_enabled == "1" then
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
-	luci.template.render("gluon-config-mode/reboot", {pubkey=pubkey})
+  luci.template.render("gluon-config-mode/reboot", {pubkey=pubkey})
 
   uci:foreach("gluon-config-mode", "wizard", function(s)
       uci:set("gluon-config-mode", s[".name"], "configured", "1")
