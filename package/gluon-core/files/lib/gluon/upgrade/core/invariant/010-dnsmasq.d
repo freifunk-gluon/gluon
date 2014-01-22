@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo 'conf-dir=/lib/gluon/dnsmasq.d' > /etc/dnsmasq.conf
+echo -e 'conf-dir=/lib/gluon/dnsmasq.d\nconf-dir=/var/gluon/dnsmasq.d' > /etc/dnsmasq.conf

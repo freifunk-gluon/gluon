@@ -10,12 +10,12 @@ for ns in $RDNSS $RA_DNS; do
 	done
 done > /var/gluon/mesh-batman-adv/dnsmasq.conf.$$
 
-if cmp -s /var/gluon/mesh-batman-adv/dnsmasq.conf.$$ /var/gluon/mesh-batman-adv/dnsmasq.conf; then
+if cmp -s /var/gluon/mesh-batman-adv/dnsmasq.conf.$$ /var/gluon/dnsmasq.d/mesh-batman-adv.conf; then
 	rm /var/gluon/mesh-batman-adv/dnsmasq.conf.$$
 	exit 0
 fi
 
 lock /var/gluon/mesh-batman-adv/dnsmasq.conf.lock
-mv -f /var/gluon/mesh-batman-adv/dnsmasq.conf.$$ /var/gluon/mesh-batman-adv/dnsmasq.conf
+mv -f /var/gluon/mesh-batman-adv/dnsmasq.conf.$$ /var/gluon/dnsmasq.d/mesh-batman-adv.conf
 /etc/init.d/dnsmasq restart
 lock -u /var/gluon/mesh-batman-adv/dnsmasq.conf.lock
