@@ -9,7 +9,7 @@ configmode.setup_fastd_secret(meshvpn_name)
 f = SimpleForm("wizard", "Willkommen!", "Willkommen zum Einrichtungsassistenten für deinen neuen Lübecker Freifunk-Knoten.  Fülle das folgende Formular deinen Vorstellungen entsprechend aus und klicke anschließend auf den „Senden“-Button.")
 f.reset = false
 
-s = f:section(SimpleSection, "Grundeinstellungen", nil)
+s = f:section(SimpleSection, nil, nil)
 
 o = s:option(Value, "_hostname", "Knotenname")
 o.value = uci:get_first("system", "system", "hostname")
@@ -22,7 +22,7 @@ o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or 
 o.rmempty = false
 o.description = "Aktiviert automatische Updates der Firmware (empfohlen)"
 
-s = f:section(SimpleSection, "Mesh-VPN", "Nutzt die Internet-Verbindung, um diesem Knoten auch dann Zugang zum Freifunknetz zu geben, wenn er außerhalb der Funkreichweite anderer Freifunk-Knoten ist.")
+s = f:section(SimpleSection, nil, "Nutzt die Internet-Verbindung, um diesem Knoten auch dann Zugang zum Freifunknetz zu geben, wenn er außerhalb der Funkreichweite anderer Freifunk-Knoten ist.")
 
 o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
 o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
@@ -46,7 +46,7 @@ o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
 o.rmempty = false
 o.datatype = "integer"
 
-s = f:section(SimpleSection, "GPS Koordinaten", "Hier kannst du die GPS-Koordinaten deines Knotens eintragen, um ihn in der Knotenkarte anzeigen zu lassen.")
+s = f:section(SimpleSection, nil, "Hier kannst du die GPS-Koordinaten deines Knotens eintragen, um ihn in der Knotenkarte anzeigen zu lassen.")
 
 o = s:option(Flag, "_location", "Koordinaten veröffentlichen?")
 o.default = uci:get_first("gluon-locaton", "location", "share_location", o.disabled)
