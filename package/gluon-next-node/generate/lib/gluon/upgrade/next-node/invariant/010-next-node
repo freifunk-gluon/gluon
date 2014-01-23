@@ -6,7 +6,7 @@
 uci_remove network local_node_dev
 uci_add network device local_node_dev
 uci_set network local_node_dev name 'local-node'
-uci_set network local_node_dev ifname '@client'
+uci_set network local_node_dev ifname 'br-client'
 uci_set network local_node_dev type 'macvlan'
 uci_set network local_node_dev macaddr '@next_node.mac@'
 
