@@ -6,8 +6,9 @@ local f, s, o
 -- prepare fastd key as early as possible
 configmode.setup_fastd_secret(meshvpn_name)
 
-f = SimpleForm("wizard", "Willkommen!", "Willkommen zum Einrichtungsassistenten für deinen neuen Lübecker Freifunk-Knoten.  Fülle das folgende Formular deinen Vorstellungen entsprechend aus und klicke anschließend auf den „Senden“-Button.")
+f = SimpleForm("wizard")
 f.reset = false
+f.template = "gluon-config-mode/cbi/wizard"
 
 s = f:section(SimpleSection, nil, nil)
 
