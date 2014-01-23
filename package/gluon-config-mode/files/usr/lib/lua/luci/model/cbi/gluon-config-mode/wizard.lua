@@ -13,28 +13,28 @@ f.submit = "Fertig"
 
 s = f:section(SimpleSection, nil, nil)
 
-o = s:option(Value, "_hostname", "Knotenname")
+o = s:option(Value, "_hostname", "Name dieses Knotens")
 o.value = uci:get_first("system", "system", "hostname")
 o.rmempty = false
 o.datatype = "hostname"
-o.description = "Öffentlicher Name deines Knotens. Wird z.B. für die Anzeige auf der Knotenkarte benutzt."
 
-o = s:option(Flag, "_autoupdate", "Automatische Updates aktivieren?")
+o = s:option(Flag, "_autoupdate", "Firmware automatisch aktualisieren")
 o.default = uci:get_bool("autoupdater", "settings", "enabled") and o.enabled or o.disabled
 o.rmempty = false
-o.description = "Aktiviert automatische Updates der Firmware (empfohlen)"
 
-s = f:section(SimpleSection, nil, "Nutzt die Internet-Verbindung, um diesem Knoten auch dann Zugang zum Freifunknetz zu geben, wenn er außerhalb der Funkreichweite anderer Freifunk-Knoten ist.")
+s = f:section(SimpleSection, nil, [[Falls du deinen Knoten über das Internet
+mit Freifunk verbinden möchtest, kannst du hier das Mesh-VPN aktivieren.
+Solltest du dich dafür entscheiden, hast du die Möglichkeit die dafür
+genutzte Bandbreite zu beschränken.]])
 
-o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren?")
+o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren")
 o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
 
-o = s:option(Flag, "_limit_enabled", "Bandbreitenbegrenzung aktivieren?")
+o = s:option(Flag, "_limit_enabled", "Mesh-VPN Bandbreite begrenzen")
 o:depends("_meshvpn", "1")
 o.default = uci:get_bool("gluon-simple-tc", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
-o.description = "Begrenzt die Geschwindigkeit, mit der dieser Knoten auf das Internet zugreifen darf. Kann aktiviert werden, wenn der eigene Internetanschluss durch den Freifunkknoten merklich ausgebremst wird."
 
 o = s:option(Value, "_limit_ingress", "Downstream")
 o:depends("_limit_enabled", "1")
@@ -48,9 +48,11 @@ o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
 o.rmempty = false
 o.datatype = "integer"
 
-s = f:section(SimpleSection, nil, "Hier kannst du die GPS-Koordinaten deines Knotens eintragen, um ihn in der Knotenkarte anzeigen zu lassen.")
+s = f:section(SimpleSection, nil, [[Um deinen Knoten auf der Karte anzeigen
+zu können benötigen wir seine Koordinaten. Hier hast du die Möglichkeit
+diese zu hinterlegen.]])
 
-o = s:option(Flag, "_location", "Koordinaten veröffentlichen?")
+o = s:option(Flag, "_location", "Knoten auf der Karte anzeigen")
 o.default = uci:get_first("gluon-locaton", "location", "share_location", o.disabled)
 o.rmempty = false
 
@@ -58,11 +60,13 @@ o = s:option(Value, "_latitude", "Breitengrad")
 o.default = string.format("%f", uci:get_first("gluon-location", "location", "latitude", "0"))
 o.rmempty = false
 o.datatype = "float"
+o.description = "z.B. 53.873621"
 
 o = s:option(Value, "_longitude", "Längengrad")
 o.default = string.format("%f", uci:get_first("gluon-location", "location", "longitude", "0"))
 o.rmempty = false
 o.datatype = "float"
+o.description = "z.B. 10.689901"
 
 function f.handle(self, state, data)
   if state == FORM_VALID then
