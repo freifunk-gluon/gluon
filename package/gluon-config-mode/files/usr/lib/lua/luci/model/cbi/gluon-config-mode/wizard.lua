@@ -9,6 +9,7 @@ configmode.setup_fastd_secret(meshvpn_name)
 f = SimpleForm("wizard")
 f.reset = false
 f.template = "gluon-config-mode/cbi/wizard"
+f.submit = "Fertig"
 
 s = f:section(SimpleSection, nil, nil)
 
