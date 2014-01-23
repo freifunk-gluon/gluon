@@ -12,7 +12,7 @@ define Package/gluon-radvd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Advertise an IPv6 prefix from the node
-  DEPENDS:=+gluon-core +gluon-ebtables-filter-ra-dhcp +radvd
+  DEPENDS:=+gluon-core +gluon-ebtables +gluon-next-node +radvd
 endef
 
 define Package/gluon-radvd/description
