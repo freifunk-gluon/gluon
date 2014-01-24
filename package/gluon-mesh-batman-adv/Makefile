@@ -12,7 +12,7 @@ define Package/gluon-mesh-batman-adv
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing
-  DEPENDS:=+gluon-core +kmod-batman-adv +firewall +kmod-ipt-nathelper
+  DEPENDS:=+gluon-core +kmod-batman-adv-legacy +firewall +kmod-ipt-nathelper
 endef
 
 define Package/gluon-mesh-batman-adv/description
