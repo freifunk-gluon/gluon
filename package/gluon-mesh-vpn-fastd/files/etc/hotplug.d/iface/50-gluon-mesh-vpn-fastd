@@ -1,0 +1,3 @@
+[ "$INTERFACE" = 'wan' ] || exit 0
+
+/lib/gluon/mesh-vpn-fastd/update-dnsmasq
