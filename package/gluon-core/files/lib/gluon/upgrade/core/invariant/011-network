@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+
+uci_set network wan peerdns '0'
+uci_commit network

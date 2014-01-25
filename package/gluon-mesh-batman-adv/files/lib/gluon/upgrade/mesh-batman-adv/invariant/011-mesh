@@ -10,6 +10,9 @@ uci_set batman-adv bat0 orig_interval '5000'
 uci_set batman-adv bat0 gw_mode 'client'
 uci_commit batman-adv
 
+uci_set network client macaddr "$(sysconfig primary_mac)"
+uci_set network client peerdns '1'
+
 uci_remove network bat0
 uci_add network interface bat0
 uci_set network bat0 ifname 'bat0'
