@@ -1,3 +1,0 @@
-for file in /lib/gluon/odhcp6c.d/*; do
-	[ ! -x $file ] || $file
-done
