@@ -10,12 +10,15 @@ config_cb() {
 	config_get configname "$cfg" TYPE
 	case "$configname" in
 		broker)
+			config_get_bool enabled "$cfg" enabled 1
 			config_get addresses "$cfg" address
 			config_get uuid "$cfg" uuid
 			config_get interface "$cfg" interface
 			config_get limit_bw_down "$cfg" limit_bw_down
 			config_get hook_script "$cfg" hook_script
 			
+			[ $enabled -eq 0 ] && return
+
 			local broker_opts=""
 			for address in $addresses; do
 			  broker_opts="${broker_opts} -b ${address}"
