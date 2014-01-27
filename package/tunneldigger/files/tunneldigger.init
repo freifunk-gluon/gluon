@@ -5,6 +5,10 @@ START=90
 PIDPATH=/var/run
 tunnel_id=1
 
+missing() {
+	echo "Not starting tunneldigger - missing $1" >&2
+}
+
 config_cb() {
 	local cfg="$CONFIG_SECTION"
 	config_get configname "$cfg" TYPE
@@ -27,6 +31,12 @@ config_cb() {
 			[ ! -z "${limit_bw_down}" ] && append broker_opts "-L ${limit_bw_down}"
 			[ ! -z "${hook_script}" ] && append broker_opts "-s ${hook_script}"
 
+			if [ -z "$uuid" ]; then
+				missing uuid
+				return
+			elif [ -z "$interface" ]; then
+				missing interface
+				return
 			fi
 
 			echo "Starting tunneldigger on ${interface}"
