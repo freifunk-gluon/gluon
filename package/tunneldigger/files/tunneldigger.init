@@ -21,15 +21,12 @@ config_cb() {
 
 			local broker_opts=""
 			for address in $addresses; do
-			  broker_opts="${broker_opts} -b ${address}"
+			  append broker_opts "-b ${address}"
 			done
 
-			if [ ! -z "${limit_bw_down}" ]; then
-				broker_opts="${broker_opts} -L ${limit_bw_down}"
-			fi
+			[ ! -z "${limit_bw_down}" ] && append broker_opts "-L ${limit_bw_down}"
+			[ ! -z "${hook_script}" ] && append broker_opts "-s ${hook_script}"
 
-			if [ ! -z "${hook_script}" ] ; then
-				broker_opts="${broker_opts} -s ${hook_script}"
 			fi
 
 			echo "Starting tunneldigger on ${interface}"
