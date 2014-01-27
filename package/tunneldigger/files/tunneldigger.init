@@ -52,17 +52,17 @@ start() {
 }
 
 stop() {
-  for PIDFILE in `find ${PIDPATH}/ -name "tunneldigger\.*\.pid"`; do
-		PID=`cat ${PIDFILE}`
-    IFACE=`echo ${PIDFILE} | awk -F\/tunneldigger '{print $2}' | cut -d'.' -f2`
-    echo "Stopping tunneldigger for interface ${IFACE}"
+	for PIDFILE in `find ${PIDPATH}/ -name "tunneldigger\.*\.pid"`; do
+		PID="$(cat ${PIDFILE})"
+		IFACE="$(echo ${PIDFILE} | awk -F\/tunneldigger '{print $2}' | cut -d'.' -f2)"
+		echo "Stopping tunneldigger for interface ${IFACE}"
 		start-stop-daemon -K -q -p $PIDFILE 
 		while test -d "/proc/${PID}"; do
 			echo "  waiting for tunneldigger to stop"
 			sleep 1
 		done
 		echo "  tunneldigger stopped"
-  done
+	done
 }
 
 restart() {
