@@ -15,7 +15,7 @@ $Id$
 
 <html>
   <head>
-    <title><%=luci.sys.hostname()%> - <% if title then %><%=title%><% else %><%:Rebooting...%><% end %></title>
+    <title><%=hostname%> - <% if title then %><%=title%><% else %><%:Rebooting...%><% end %></title>
     <link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
   </head>
   <body>
@@ -28,7 +28,7 @@ $Id$
             @config_mode.msg_pubkey@
           </p>
           <div class="the-key">
-            # <%=luci.sys.hostname()%>
+            # <%=hostname%>
             <br/>
             <%=pubkey%>
           </div>

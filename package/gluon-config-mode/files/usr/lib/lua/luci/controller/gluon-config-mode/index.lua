@@ -58,8 +58,11 @@ function action_reboot()
   uci:save("gluon-config-mode")
   uci:commit("gluon-config-mode")
 
+  hostname = uci:get_first("system", "system", "hostname")
+
   if nixio.fork() ~= 0 then
-    luci.template.render("gluon-config-mode/reboot", {pubkey=pubkey})
+    luci.template.render("gluon-config-mode/reboot",
+      {pubkey=pubkey, hostname=hostname})
   else
     debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
     io.stdout:close()
