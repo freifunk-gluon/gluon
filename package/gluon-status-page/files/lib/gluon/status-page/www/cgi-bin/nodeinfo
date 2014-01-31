@@ -1,0 +1,15 @@
+#!/usr/bin/lua
+
+local announce = require 'gluon.announce'
+local json = require 'luci.json'
+local util = require 'luci.util'
+local nixio = require 'nixio'
+
+local announce_dir = '/lib/gluon/announce/nodeinfo.d/'
+
+io.write("Access-Control-Allow-Origin: *\n")
+io.write("Content-type: application/json\n\n")
+
+local data = json.encode(announce.collect_dir(announce_dir))
+io.write(data)
+io.flush()
