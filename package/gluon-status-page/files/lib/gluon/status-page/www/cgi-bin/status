@@ -1,0 +1,60 @@
+#!/bin/sh
+
+linknodes() {
+  PREFIX=$(uci get network.local_node_route6.target | cut -d: -f 1-4)
+  sed 's#\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\)#<a href="http://['$PREFIX':\1\2:\3ff:fe\4:\5\6]/">&</a>#g'
+}
+
+echo Content-type: text/html
+echo ""
+
+cat <<EOF
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>$(cat /proc/sys/kernel/hostname)</title>
+  </head>
+  <body>
+EOF
+
+echo "<h1>$(cat /proc/sys/kernel/hostname)</h1>"
+
+echo "<pre>"
+
+echo "Firmware release: $(cat /lib/gluon/release)"
+echo
+
+uptime | sed 's/^ \+//'
+echo
+
+ip address show dev br-client
+echo
+
+free -m
+echo
+
+df /rom /overlay
+
+echo "</pre>"
+
+echo "<h2>Neighbours</h2>"
+
+
+iw dev | grep IBSS -B 4 | grep Interface | cut -d' ' -f2 | while read if
+do
+  echo "<h3>$if</h3>"
+  echo "<pre>"
+  
+  iw dev $if link
+
+  echo 
+  
+  iw dev $if station dump | linknodes
+
+  echo "</pre>"
+done
+
+cat <<EOF
+  </body>
+</html>
+EOF
