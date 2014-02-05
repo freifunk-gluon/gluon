@@ -102,7 +102,7 @@ analyse_manifest() {
   fi
 
   fw_version=$(echo "${my_firmware}"|cut -d' ' -f2)
-  fw_md5=$(echo "${my_firmware}"|cut -d' ' -f3)
+  fw_checksum=$(echo "${my_firmware}"|cut -d' ' -f3)
   fw_file=$(echo "${my_firmware}"|cut -d' ' -f4)
 
   return 0
@@ -141,8 +141,9 @@ autoupdate() {
     local fw_image=$(mktemp)
     fetch_firmware $MIRROR $fw_image || { rm -f $fw_image; return 1; }
 
-    image_md5=$(md5sum "$fw_image"|cut -b-32)
-    if test "$image_md5" != "$fw_md5"; then
+    image_sha512=$(sha512sum "$fw_image" | awk '{print $1}')
+    image_md5=$(md5sum "$fw_image" | awk '{print $1}')
+    if [ "$image_sha512" != "$fw_checksum" -a "$image_md5" != "$fw_checksum" ]; then
       echo "Invalid image checksum" >&2
       rm -f $fw_image
       return 1
@@ -174,7 +175,7 @@ for mirror in $MIRRORS; do
   autoupdate $mirror && exit 0
 
   unset fw_version
-  unset fw_md5
+  unset fw_checksum
   unset fw_file
 
 done
