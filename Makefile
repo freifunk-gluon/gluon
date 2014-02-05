@@ -51,6 +51,9 @@ image/$(1): FORCE
 	+@$$(GLUONMAKE) $$@
 endef
 
+define GluonModel
+endef
+
 include $(GLUONDIR)/include/profiles.mk
 
 CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have optained the external repositories needed by Gluon; please call `make update` first!'; false)
@@ -114,6 +117,12 @@ CheckSite := (perl $(GLUON_SITEDIR)/site.conf 2>&1) > /dev/null || (echo 'Your s
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
+GLUON_$(1)_MODELS :=
+endef
+
+define GluonModel
+GLUON_$(1)_MODELS += $(2)
+GLUON_$(1)_MODEL_$(2) := $(3)
 endef
 
 include $(INCLUDE_DIR)/target.mk
@@ -207,13 +216,15 @@ include $(INCLUDE_DIR)/package-ipkg.mk
 
 # override variables from rules.mk
 PACKAGE_DIR = $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
-BIN_DIR = $(GLUON_IMAGEDIR)/$(BOARD)/$(PROFILE)
 
 PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/$(PROFILE)
 PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
+BIN_DIR = $(PROFILE_BUILDDIR)/images
 
 TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
+
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
 OPKG:= \
   IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
@@ -257,15 +268,22 @@ package_install: FORCE
 
 image: FORCE
 	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
 	+$(GLUONMAKE) package_install
 
 	$(call Image/mkfs/prepare)
-	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="$(IMAGE_PREFIX)" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
+	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
+		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*.bin && \
+		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*.bin && \
+		\
+		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(model)-*-factory.bin $(GLUON_IMAGEDIR)/factory/ && \
+		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(model)-*-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/ && \
+	) :
 
 call_image/%: FORCE
 	+$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
