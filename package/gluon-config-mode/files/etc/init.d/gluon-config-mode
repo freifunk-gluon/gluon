@@ -10,10 +10,6 @@ config_mode_dnsname=freifunk
 config_mode_dhcp_range=192.168.1.2,192.168.1.254
 
 
-. /lib/functions.sh
-. /lib/gluon/functions/sysconfig.sh
-
-
 delete_interface() {
 	[ "$1" = 'loopback' ] || uci_remove network "$1"
 }
@@ -29,6 +25,8 @@ check_enable() {
 }
 
 start() {
+	. /lib/gluon/functions/sysconfig.sh
+
 	enable=0
 	config_load gluon-config-mode
 	config_foreach check_enable wizard
