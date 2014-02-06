@@ -1,5 +1,9 @@
 #!/bin/sh
 
+escape_html() {
+  sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
+}
+
 linknodes() {
   PREFIX=$(uci get network.local_node_route6.target | cut -d: -f 1-4)
   sed 's#\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\)#<a href="http://['$PREFIX':\1\2:\3ff:fe\4:\5\6]/">&</a>#g'
@@ -21,19 +25,19 @@ echo "<h1>$(cat /proc/sys/kernel/hostname)</h1>"
 
 echo "<pre>"
 
-echo "Firmware release: $(cat /lib/gluon/release)"
+echo "Firmware release: $(cat /lib/gluon/release | escape_html)"
 echo
 
-uptime | sed 's/^ \+//'
+uptime | sed 's/^ \+//' | escape_html
 echo
 
-ip address show dev br-client
+ip address show dev br-client | escape_html
 echo
 
-free -m
+free -m | escape_html
 echo
 
-df /rom /overlay
+df /rom /overlay | escape_html
 
 echo "</pre>"
 
@@ -45,11 +49,11 @@ do
   echo "<h3>$if</h3>"
   echo "<pre>"
   
-  iw dev $if link
+  iw dev $if link | escape_html
 
   echo 
   
-  iw dev $if station dump | linknodes
+  iw dev $if station dump | escape_html | linknodes
 
   echo "</pre>"
 done
