@@ -53,7 +53,7 @@ zu können benötigen wir seine Koordinaten. Hier hast du die Möglichkeit
 diese zu hinterlegen.]])
 
 o = s:option(Flag, "_location", "Knoten auf der Karte anzeigen")
-o.default = uci:get_first("gluon-locaton", "location", "share_location", o.disabled)
+o.default = uci:get_first("gluon-location", "location", "share_location", o.disabled)
 o.rmempty = false
 
 o = s:option(Value, "_latitude", "Breitengrad")
