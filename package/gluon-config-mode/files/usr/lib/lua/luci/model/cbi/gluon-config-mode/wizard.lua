@@ -49,7 +49,7 @@ o.rmempty = false
 o.datatype = "integer"
 
 s = f:section(SimpleSection, nil, [[Um deinen Knoten auf der Karte anzeigen
-zu können benötigen wir seine Koordinaten. Hier hast du die Möglichkeit
+zu können, benötigen wir seine Koordinaten. Hier hast du die Möglichkeit,
 diese zu hinterlegen.]])
 
 o = s:option(Flag, "_location", "Knoten auf der Karte anzeigen")
