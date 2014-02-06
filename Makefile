@@ -67,6 +67,11 @@ download prepare images: FORCE
 	@$(CheckExternal)
 	+@$(GLUONMAKE) $@
 
+manifest: FORCE
+	@$(CheckExternal)
+	[ -n "$(BRANCH)" ] || (echo 'Please set BRANCH to create a manifest.'; false)
+	+@$(GLUONMAKE) $@
+
 dirclean: clean
 	@$(CheckExternal)
 	+@$(SUBMAKE) -C $(TOPDIR) -r dirclean
@@ -290,6 +295,22 @@ call_image/%: FORCE
 	+$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)
 
 images: $(patsubst %,call_image/%,$(PROFILES)) ;
+
+
+manifest: FORCE
+	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
+	(cd $(GLUON_IMAGEDIR)/sysupgrade && echo "BRANCH=$(BRANCH)" && echo && ($(foreach profile,$(PROFILES), \
+		$(foreach model,$(GLUON_$(profile)_MODELS), \
+			for file in gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*-sysupgrade.bin; do \
+				[ -e "$$file" ] && echo \
+					$(GLUON_$(profile)_MODEL_$(model)) \
+					$$(echo "$$file" | sed -n -r 's/^gluon-$(GLUON_SITE_CODE)-(.*)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-[^-]*-sysupgrade\.bin$$/\1/p') \
+					$$(sha512sum "$$file" | awk '{print $$1}') \
+					"$$file" && break; \
+			done; \
+		) \
+	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(BRANCH).manifest
+
 
 .PHONY: all images prepare clean cleanall
 
