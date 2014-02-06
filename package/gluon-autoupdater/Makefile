@@ -23,13 +23,14 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(GLUON_CONFIGURE) invariant.pl > $(PKG_BUILD_DIR)/invariant.sh
 endef
 
 define Package/gluon-autoupdater/install
 	$(CP) ./files/* $(1)/
+
 	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/autoupdater/invariant
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/invariant.sh $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
+	$(GLUON_CONFIGURE) invariant.pl > $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
+	chmod +x $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
 endef
 
 $(eval $(call BuildPackage,gluon-autoupdater))
