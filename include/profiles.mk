@@ -63,5 +63,6 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1,tp-link-tl-mr3420))
 
 ## Ubiquiti (everything)
 $(eval $(call GluonProfile,UBNT,$(USB_PACKAGES)))
-$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquity-bullet-m))
-$(eval $(call GluonModel,UBNT,ubnt-nano-m,ubiquity-nanostation-m))
+$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-bullet-m))
+$(eval $(call GluonModel,UBNT,ubnt-nano-m,ubiquiti-nanostation-m))
+$(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
