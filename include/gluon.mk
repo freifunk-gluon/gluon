@@ -37,7 +37,7 @@ $(foreach var,$(2),$(1) := $$(sort $$(filter-out -% $$(patsubst -%,%,$$(filter -
 )
 endef
 
-GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables
+GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools
 
 override DEFAULT_PACKAGES.router :=
 
