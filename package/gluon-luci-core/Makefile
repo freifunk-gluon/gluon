@@ -3,7 +3,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gluon-luci-admin
+PKG_NAME:=gluon-luci-core
 PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
@@ -11,15 +11,15 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/gluon-luci-admin
+define Package/gluon-luci-core
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=Luci based simple administration interface for mesh nodes
-  DEPENDS:=+gluon-luci-core +gluon-config-mode
+  TITLE:=Luci code shared by configmode and expertmode
+  DEPENDS:=+gluon-core +gluon-luci-theme +luci-lib-web
 endef
 
-define Package/gluon-luci-admin/description
-	Luci based config mode
+define Package/gluon-luci-core/description
+	Luci code shared by various gluon packages
 endef
 
 define Build/Prepare
@@ -32,8 +32,8 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-luci-admin/install
+define Package/gluon-luci-core/install
 	$(CP) ./files/* $(1)/
 endef
 
-$(eval $(call BuildPackage,gluon-luci-admin))
+$(eval $(call BuildPackage,gluon-luci-core))
