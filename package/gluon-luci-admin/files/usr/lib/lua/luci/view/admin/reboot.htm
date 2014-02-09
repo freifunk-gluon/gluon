@@ -13,19 +13,19 @@ $Id$
 
 -%>
 <%+header%>
-<h2><a id="content" name="content"><%:Reboot%></a></h2>
-<p><%:Reboots the operating system of your device%></p>
+<h2><a id="content" name="content">Reboot</a></h2>
+<p>Reboots the operating system of your device</p>
 <%-
 local c = require("luci.model.uci").cursor():changes()
 if c and next(c) then
 -%>
-	<p class="warning"><%:Warning: There are unsaved changes that will be lost while rebooting!%></p> 
+	<p class="warning">Warning: There are unsaved changes that will be lost while rebooting!</p> 
 <%-
 end
 if not reboot then 
 -%>
-<p><a href="<%=REQUEST_URI%>?reboot=1"><%:Perform reboot%></a></p>
+<p><a href="<%=REQUEST_URI%>?reboot=1">Perform reboot</a></p>
 <%- else -%>
-<p><%:Please wait: Device rebooting...%></p>
+<p>Please wait: Device rebooting...</p>
 <%- end -%>
 <%+footer%>

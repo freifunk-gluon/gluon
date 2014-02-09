@@ -30,7 +30,7 @@ function index()
 		root.index = true
 	end
 	
-	local page	 = entry({"admin"}, alias("admin", "index"), _("Expertmode"), 10)
+	local page	 = entry({"admin"}, alias("admin", "index"), "Expertmode", 10)
 	page.sysauth = "root"
 	if configmode then
 		-- force root to be logged in when running in configmode
@@ -40,10 +40,10 @@ function index()
 	end
 	page.index = true
 	
-	entry({"admin", "index"}, form("admin/index"), _("Overview"), 1).ignoreindex = true
+	entry({"admin", "index"}, form("admin/index"), "Overview", 1).ignoreindex = true
 
 	if not configmode then
-		entry({"admin", "logout"}, call("action_logout"), _("Logout"))
+		entry({"admin", "logout"}, call("action_logout"), "Logout")
 	end
 end
 
