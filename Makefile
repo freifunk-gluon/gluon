@@ -298,7 +298,7 @@ images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
 manifest: FORCE
 	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
-	(cd $(GLUON_IMAGEDIR)/sysupgrade && echo "BRANCH=$(BRANCH)" && echo && ($(foreach profile,$(PROFILES), \
+	(cd $(GLUON_IMAGEDIR)/sysupgrade && echo 'BRANCH=$(GLUON_BRANCH)' && echo && ($(foreach profile,$(PROFILES), \
 		$(foreach model,$(GLUON_$(profile)_MODELS), \
 			for file in gluon-*-'$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin'; do \
 				[ -e "$$file" ] && echo \
