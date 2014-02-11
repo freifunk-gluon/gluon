@@ -230,7 +230,7 @@ BIN_DIR = $(PROFILE_BUILDDIR)/images
 TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
 
-IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))
 
 OPKG:= \
   IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
@@ -280,15 +280,15 @@ image: FORCE
 	+$(GLUONMAKE) package_install
 
 	$(call Image/mkfs/prepare)
-	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="$(IMAGE_PREFIX)" \
+	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*.bin && \
-		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*.bin && \
+		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(GLUON_$(profile)_MODEL_$(model)).bin && \
+		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin && \
 		\
-		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(model)-*-factory.bin $(GLUON_IMAGEDIR)/factory/ && \
-		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(model)-*-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/ && \
+		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
+		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
 	) :
 
 call_image/%: FORCE
@@ -296,16 +296,15 @@ call_image/%: FORCE
 
 images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
-
 manifest: FORCE
 	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
 	(cd $(GLUON_IMAGEDIR)/sysupgrade && echo "BRANCH=$(BRANCH)" && echo && ($(foreach profile,$(PROFILES), \
 		$(foreach model,$(GLUON_$(profile)_MODELS), \
-			for file in gluon-*-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-*-sysupgrade.bin; do \
+			for file in gluon-*-'$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin'; do \
 				[ -e "$$file" ] && echo \
-					$(GLUON_$(profile)_MODEL_$(model)) \
-					$$(echo "$$file" | sed -n -r 's/^gluon-$(GLUON_SITE_CODE)-(.*)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-[^-]*-sysupgrade\.bin$$/\1/p') \
-					$$(sha512sum "$$file" | awk '{print $$1}') \
+					'$(GLUON_$(profile)_MODEL_$(model))' \
+					"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(GLUON_$(profile)_MODEL_$(model)))-sysupgrade\.bin$$/\1/p')" \
+					"$$(sha512sum "$$file" | awk '{print $$1}')" \
 					"$$file" && break; \
 			done; \
 		) \
