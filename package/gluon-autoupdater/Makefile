@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-autoupdater
 PKG_VERSION:=0.1
-PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)
+PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)$(if $(GLUON_BRANCH),.$(GLUON_BRANCH))
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -29,7 +29,7 @@ define Package/gluon-autoupdater/install
 	$(CP) ./files/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/autoupdater/invariant
-	$(GLUON_CONFIGURE) invariant.pl > $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
+	GLUON_BRANCH='$(GLUON_BRANCH)' $(GLUON_CONFIGURE) invariant.pl > $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
 	chmod +x $(1)/lib/gluon/upgrade/autoupdater/invariant/010-autoupdater
 endef
 

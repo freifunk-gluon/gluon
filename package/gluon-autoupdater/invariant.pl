@@ -1,18 +1,16 @@
 my $cfg = $CONFIG->{autoupdater};
 
-print <<'END';
+my $branch = $ENV{GLUON_BRANCH} || $cfg->{branch};
+my $enabled = $ENV{GLUON_BRANCH} ? 1 : 0;
+
+print <<END;
 #/bin/sh
 
 uci -q get autoupdater.settings || {
 uci -q batch <<EOF
 set autoupdater.settings=autoupdater
-END
-
-for (qw(enabled branch)) {
-  print "set autoupdater.settings.$_=$cfg->{$_}\n";
-}
-
-print <<'END';
+set autoupdater.settings.branch=$branch
+set autoupdater.settings.enabled=$enabled
 EOF
 }
 
