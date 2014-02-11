@@ -46,19 +46,19 @@ $(eval $(call GluonModel,TLWDR4300,tl-wdr3600-v1-squashfs,tp-link-tl-wdr3600-v1)
 $(eval $(call GluonModel,TLWDR4300,tl-wdr4300-v1-squashfs,tp-link-tl-wdr4300-v1))
 
 # TL-MR3020 v1
-$(eval $(call GluonProfile,TLMR3020,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLMR3020))
 $(eval $(call GluonModel,TLMR3020,tl-mr3020-v1-squashfs,tp-link-tl-mr3020))
 
 # TL-MR3040 v1
-$(eval $(call GluonProfile,TLMR3040,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLMR3040))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v1-squashfs,tp-link-tl-mr3040))
 
 # TL-MR3220 v1
-$(eval $(call GluonProfile,TLMR3220,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLMR3220))
 $(eval $(call GluonModel,TLMR3220,tl-mr3220-v1-squashfs,tp-link-tl-mr3220))
 
 # TL-MR3420 v1
-$(eval $(call GluonProfile,TLMR3420,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLMR3420))
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1-squashfs,tp-link-tl-mr3420))
 
 ## Ubiquiti (everything)
