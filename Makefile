@@ -69,7 +69,7 @@ download prepare images: FORCE
 
 manifest: FORCE
 	@$(CheckExternal)
-	[ -n "$(BRANCH)" ] || (echo 'Please set BRANCH to create a manifest.'; false)
+	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	+@$(GLUONMAKE) $@
 
 dirclean: clean
@@ -308,7 +308,7 @@ manifest: FORCE
 					"$$file" && break; \
 			done; \
 		) \
-	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(BRANCH).manifest
+	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 
 .PHONY: all images prepare clean cleanall
