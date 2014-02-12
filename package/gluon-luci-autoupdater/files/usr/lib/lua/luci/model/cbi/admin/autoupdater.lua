@@ -14,7 +14,7 @@ $Id$
 
 m = Map("autoupdater", "Autoupdater")
 
-s = m:section(TypedSection, "autoupdater", "Einstelleungen")
+s = m:section(TypedSection, "autoupdater", "Einstellungen")
 s.addremove = false
 
 s:option(Flag, "enabled", "Aktivieren")
