@@ -24,33 +24,34 @@ check_enable() {
 }
 
 setup_network() {
-	export UCI_CONFIG_DIR=/var/gluon/config-mode/config
+	(
+		export UCI_CONFIG_DIR=/var/gluon/config-mode/config
 
-	mkdir -p "$UCI_CONFIG_DIR"
+		mkdir -p "$UCI_CONFIG_DIR"
 
-	cp /etc/config/network "$UCI_CONFIG_DIR"
+		cp /etc/config/network "$UCI_CONFIG_DIR"
 
-	config_load network
-	config_foreach delete_interface interface
+		config_load network
+		config_foreach delete_interface interface
 
-	uci_add network interface config
-	uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
-	uci_set network config type 'bridge'
-	uci_set network config proto 'static'
-	uci_set network config ipaddr "$CONFIG_MODE_ADDR"
-	uci_set network config netmask "$CONFIG_MODE_NETMASK"
+		uci_add network interface config
+		uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
+		uci_set network config type 'bridge'
+		uci_set network config proto 'static'
+		uci_set network config ipaddr "$CONFIG_MODE_ADDR"
+		uci_set network config netmask "$CONFIG_MODE_NETMASK"
 
-	uci_commit network
+		uci_commit network
 
+		SERVICE_DAEMONIZE=1
+		SERVICE_WRITE_PID=1
+		service_start /sbin/netifd -c "$UCI_CONFIG_DIR"
 
-	SERVICE_DAEMONIZE=1
-	SERVICE_WRITE_PID=1
-	service_start /sbin/netifd -c "$UCI_CONFIG_DIR"
+		setup_switch() { return 0; }
 
-	setup_switch() { return 0; }
-
-	include /lib/network
-	setup_switch
+		include /lib/network
+		setup_switch
+	)
 }
 
 start() {
