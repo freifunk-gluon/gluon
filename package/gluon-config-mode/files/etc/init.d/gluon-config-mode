@@ -3,11 +3,10 @@
 START=12
 
 
-config_mode_addr=192.168.1.1
-config_mode_netmask=255.255.255.0
+CONFIG_MODE_ADDR=192.168.1.1
+CONFIG_MODE_NETMASK=255.255.255.0
 
-config_mode_dnsname=freifunk
-config_mode_dhcp_range=192.168.1.2,192.168.1.254
+CONFIG_MODE_DHCP_RANGE=192.168.1.2,192.168.1.254
 
 
 delete_interface() {
@@ -24,6 +23,38 @@ check_enable() {
 	fi
 }
 
+setup_network() {
+	export UCI_CONFIG_DIR=/var/gluon/config-mode/config
+
+	mkdir -p "$UCI_CONFIG_DIR"
+
+	cp /etc/config/network "$UCI_CONFIG_DIR"
+
+	config_load network
+	config_foreach delete_interface interface
+
+	uci_add network interface config
+	uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
+	uci_set network config type 'bridge'
+	uci_set network config proto 'static'
+	uci_set network config ipaddr "$CONFIG_MODE_ADDR"
+	uci_set network config netmask "$CONFIG_MODE_NETMASK"
+
+	uci_commit network
+
+
+	SERVICE_DAEMONIZE=1
+	SERVICE_WRITE_PID=1
+	service_start /sbin/netifd -c "$UCI_CONFIG_DIR"
+
+	setup_switch() { return 0; }
+
+	include /lib/network
+	setup_switch
+
+	sleep 5
+}
+
 start() {
 	. /lib/gluon/functions/sysconfig.sh
 
@@ -36,27 +67,7 @@ start() {
 		uci set 'gluon-config-mode.@wizard[0].enabled=0'
 		uci commit gluon-config-mode
 
-		mkdir -p /var/gluon/config-mode/config
-		mount -o bind /etc/config /var/gluon/config-mode/config
-
-		touch /var/gluon/config-mode/wireless
-		mount -o bind /var/gluon/config-mode/wireless /etc/config/wireless
-
-		cp /etc/config/network /var/gluon/config-mode
-		mount -o bind /var/gluon/config-mode/network /etc/config/network
-
-		config_load network
-		config_foreach delete_interface interface
-
-		uci_add network interface config
-		uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
-		uci_set network config type 'bridge'
-		uci_set network config proto 'static'
-		uci_set network config ipaddr "$config_mode_addr"
-		uci_set network config netmask "$config_mode_netmask"
-
-		uci_commit network
-		/etc/init.d/network start
+		setup_network
 
 		/usr/sbin/telnetd -l /lib/gluon/config-mode/ash-login
 		/etc/init.d/dropbear start
@@ -68,8 +79,7 @@ start() {
 		# correctly finish firstboot
 		/etc/init.d/done boot
 
-		echo "$config_mode_addr $config_mode_dnsname" > /var/gluon/config-mode/hosts
-		dnsmasq -h -H /var/gluon/config-mode/hosts -R -F interface:br-config,$config_mode_dhcp_range -l /tmp/dhcp.leases -O option:router
+		dnsmasq -h -R -F interface:br-config,$CONFIG_MODE_DHCP_RANGE -l /tmp/dhcp.leases -O option:router
 
 		. /etc/diag.sh
 		get_status_led
