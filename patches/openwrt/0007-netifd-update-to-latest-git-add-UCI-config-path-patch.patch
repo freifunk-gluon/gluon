@@ -1,0 +1,136 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 13 Feb 2014 15:12:37 +0100
+Subject: netifd: update to latest git, add UCI config path patch
+
+diff --git a/package/netifd/Makefile b/package/netifd/Makefile
+index 6f6f30e..d5fa7f0 100644
+--- a/package/netifd/Makefile
++++ b/package/netifd/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=netifd
+-PKG_VERSION:=2013-12-29
++PKG_VERSION:=2014-02-13
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=git://nbd.name/luci2/netifd.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=7d79d0a8aa5a5b4c1ed987af119356438d98fe7b
++PKG_SOURCE_VERSION:=88b3e92933925c09cfb6e95e9c8645727654ddf7
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+ # PKG_MIRROR_MD5SUM:=
+diff --git a/package/netifd/patches/001-musl_af_inet_include.patch b/package/netifd/patches/001-musl_af_inet_include.patch
+index 510ee05..0dbe645 100644
+--- a/package/netifd/patches/001-musl_af_inet_include.patch
++++ b/package/netifd/patches/001-musl_af_inet_include.patch
+@@ -1,11 +1,10 @@
+-diff -urN netifd-2012-10-29/utils.c netifd-2012-10-29.new/utils.c
+---- netifd-2012-10-29/utils.c	2012-11-23 17:15:39.000000000 +0100
+-+++ netifd-2012-10-29.new/utils.c	2012-11-23 17:16:53.409244361 +0100
++--- a/utils.c
+++++ b/utils.c
+ @@ -17,6 +17,7 @@
+  
+  #include <arpa/inet.h>
+  #include <netinet/in.h>
+ +#include <sys/socket.h>
+  
+- void
+- __vlist_simple_init(struct vlist_simple_tree *tree, int offset)
++ #ifdef __APPLE__
++ #include <libproc.h>
+diff --git a/package/netifd/patches/101-allow-setting-the-uci-config-path.patch b/package/netifd/patches/101-allow-setting-the-uci-config-path.patch
+new file mode 100644
+index 0000000..7561dd5
+--- /dev/null
++++ b/package/netifd/patches/101-allow-setting-the-uci-config-path.patch
+@@ -0,0 +1,86 @@
++From addf95eebc22afd78c516664ae27f955277e3ee8 Mon Sep 17 00:00:00 2001
++Message-Id: <addf95eebc22afd78c516664ae27f955277e3ee8.1392300589.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 13 Feb 2014 15:02:18 +0100
++Subject: [PATCH] Allow setting the UCI config path
++
++---
++ config.c | 4 +++-
++ main.c   | 7 ++++++-
++ netifd.h | 3 +++
++ 3 files changed, 12 insertions(+), 2 deletions(-)
++
++--- a/config.c
+++++ b/config.c
++@@ -190,8 +190,10 @@ config_init_package(const char *config)
++ 		ctx = uci_alloc_context();
++ 		uci_ctx = ctx;
++ 
+++		if (config_path)
+++			uci_set_confdir(ctx, config_path);
+++
++ #ifdef DUMMY_MODE
++-		uci_set_confdir(ctx, "./config");
++ 		uci_set_savedir(ctx, "./tmp");
++ #endif
++ 	} else {
++--- a/main.c
+++++ b/main.c
++@@ -27,6 +27,7 @@
++ 
++ unsigned int debug_mask = 0;
++ const char *main_path = DEFAULT_MAIN_PATH;
+++const char *config_path = DEFAULT_CONFIG_PATH;
++ const char *resolv_conf = DEFAULT_RESOLV_CONF;
++ static char **global_argv;
++ 
++@@ -235,6 +236,7 @@ static int usage(const char *progname)
++ 		" -d <mask>:		Mask for debug messages\n"
++ 		" -s <path>:		Path to the ubus socket\n"
++ 		" -p <path>:		Path to netifd addons (default: %s)\n"
+++		" -c <path>:		Path to UCI configuration\n"
++ 		" -h <path>:		Path to the hotplug script\n"
++ 		" -r <path>:		Path to resolv.conf\n"
++ 		" -l <level>:		Log output level (default: %d)\n"
++@@ -284,7 +286,7 @@ int main(int argc, char **argv)
++ 
++ 	global_argv = argv;
++ 
++-	while ((ch = getopt(argc, argv, "d:s:p:h:r:l:S")) != -1) {
+++	while ((ch = getopt(argc, argv, "d:s:p:c:h:r:l:S")) != -1) {
++ 		switch(ch) {
++ 		case 'd':
++ 			debug_mask = strtoul(optarg, NULL, 0);
++@@ -295,6 +297,9 @@ int main(int argc, char **argv)
++ 		case 'p':
++ 			main_path = optarg;
++ 			break;
+++		case 'c':
+++			config_path = optarg;
+++			break;
++ 		case 'h':
++ 			hotplug_cmd_path = optarg;
++ 			break;
++--- a/netifd.h
+++++ b/netifd.h
++@@ -30,10 +30,12 @@
++ 
++ #ifdef DUMMY_MODE
++ #define DEFAULT_MAIN_PATH	"./examples"
+++#define DEFAULT_CONFIG_PATH	"./config"
++ #define DEFAULT_HOTPLUG_PATH	"./examples/hotplug-cmd"
++ #define DEFAULT_RESOLV_CONF	"./tmp/resolv.conf"
++ #else
++ #define DEFAULT_MAIN_PATH	"/lib/netifd"
+++#define DEFAULT_CONFIG_PATH	NULL /* use the default set in libuci */
++ #define DEFAULT_HOTPLUG_PATH	"/sbin/hotplug-call"
++ #define DEFAULT_RESOLV_CONF	"/tmp/resolv.conf.auto"
++ #endif
++@@ -94,6 +96,7 @@ struct device;
++ struct interface;
++ 
++ extern const char *main_path;
+++extern const char *config_path;
++ void netifd_restart(void);
++ void netifd_reload(void);
++ 
