@@ -284,8 +284,8 @@ image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(GLUON_$(profile)_MODEL_$(model)).bin && \
-		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin && \
+		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
+		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
 		\
 		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
 		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
