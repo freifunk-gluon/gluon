@@ -51,8 +51,6 @@ setup_network() {
 
 	include /lib/network
 	setup_switch
-
-	sleep 5
 }
 
 start() {
@@ -74,12 +72,12 @@ start() {
 
 		/usr/sbin/uhttpd -h /lib/gluon/config-mode/www -x /cgi-bin -A 1 -R -p 0.0.0.0:80
 
+		/usr/sbin/dnsmasq -p 0 -F $CONFIG_MODE_DHCP_RANGE -l /tmp/dhcp.leases -O option:router
+
 		/etc/init.d/led start
 
 		# correctly finish firstboot
 		/etc/init.d/done boot
-
-		dnsmasq -h -R -F interface:br-config,$CONFIG_MODE_DHCP_RANGE -l /tmp/dhcp.leases -O option:router
 
 		. /etc/diag.sh
 		get_status_led
