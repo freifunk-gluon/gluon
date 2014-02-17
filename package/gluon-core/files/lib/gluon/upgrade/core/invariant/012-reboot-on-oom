@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /lib/gluon/functions/sysctl.sh
+
+sysctl_set vm.panic_on_oom 1
