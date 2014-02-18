@@ -17,49 +17,7 @@ module("luci.controller.admin.system", package.seeall)
 
 function index()
 	entry({"admin", "passwd"}, cbi("admin/passwd"), "Admin Password", 10)
-	entry({"admin", "backup"}, call("action_backup"), "Backup / Restore", 80)
 	entry({"admin", "upgrade"}, call("action_upgrade"), "Flash Firmware", 90)
-end
-
-function action_backup()
-	local reset_avail = os.execute([[grep '"rootfs_data"' /proc/mtd >/dev/null 2>&1]]) == 0
-	local restore_cmd = "gunzip | tar -xC/ >/dev/null 2>&1"
-	local backup_cmd  = "tar -c %s | gzip 2>/dev/null"
-	
-	local restore_fpi 
-	luci.http.setfilehandler(
-		function(meta, chunk, eof)
-			if not restore_fpi then
-				restore_fpi = io.popen(restore_cmd, "w")
-			end
-			if chunk then
-				restore_fpi:write(chunk)
-			end
-			if eof then
-				restore_fpi:close()
-			end
-		end
-	)
-		  
-	local upload = luci.http.formvalue("archive")
-	local backup = luci.http.formvalue("backup")
-	local reset  = reset_avail and luci.http.formvalue("reset")
-	
-	if upload and #upload > 0 then
-		luci.template.render("admin/applyreboot")
-		luci.sys.reboot()
-	elseif backup then
-		local reader = ltn12_popen(backup_cmd:format(_keep_pattern()))
-		luci.http.header('Content-Disposition', 'attachment; filename="backup-%s-%s.tar.gz"' % {
-			luci.sys.hostname(), os.date("%Y-%m-%d")})
-		luci.http.prepare_content("application/x-targz")
-		luci.ltn12.pump.all(reader, luci.http.write)
-	elseif reset then
-		luci.template.render("admin/applyreboot")
-		luci.util.exec("mtd -r erase rootfs_data")
-	else
-		luci.template.render("admin/backup", {reset_avail = reset_avail})
-	end
 end
 
 function action_upgrade()
@@ -185,36 +143,6 @@ function _keep_pattern()
 		end
 	end
 	return kpattern
-end
-
-function ltn12_popen(command)
-
-	local fdi, fdo = nixio.pipe()
-	local pid = nixio.fork()
-
-	if pid > 0 then
-		fdo:close()
-		local close
-		return function()
-			local buffer = fdi:read(2048)
-			local wpid, stat = nixio.waitpid(pid, "nohang")
-			if not close and wpid and stat == "exited" then
-				close = true
-			end
-
-			if buffer and #buffer > 0 then
-				return buffer
-			elseif close then
-				fdi:close()
-				return nil
-			end
-		end
-	elseif pid == 0 then
-		nixio.dup(fdo, nixio.stdout)
-		fdi:close()
-		fdo:close()
-		nixio.exec("/bin/sh", "-c", command)
-	end
 end
 
 function fork_exec(command)
