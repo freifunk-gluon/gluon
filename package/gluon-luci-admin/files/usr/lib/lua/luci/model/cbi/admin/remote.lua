@@ -18,9 +18,42 @@ local fs = require "nixio.fs"
 
 local m, s, pw1, pw2
 
-m = Map("system", "Passwort &amp; SSH Keys")
+m = Map("system", "Remotezugriff")
+m.submit = "Speichern"
+m.reset = "Zurücksetzen"
+m.pageaction = false
+m.template = "admin/expertmode"
 
-s = m:section(TypedSection, "Router Password",
+if fs.access("/etc/config/dropbear") then
+  s = m:section(TypedSection, "_keys", nil,
+    "Here you can paste public SSH-Keys (one per line) for SSH public-key authentication.")
+
+  s.addremove = false
+  s.anonymous = true
+
+  function s.cfgsections()
+    return { "_keys" }
+  end
+
+  local keys
+
+  keys = s:option(TextValue, "_data", "")
+  keys.wrap    = "off"
+  keys.rows    = 5
+  keys.rmempty = false
+
+  function keys.cfgvalue()
+    return fs.readfile("/etc/dropbear/authorized_keys") or ""
+  end
+
+  function keys.write(self, section, value)
+    if value then
+      fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"))
+    end
+  end
+end
+
+s = m:section(TypedSection, "_pass", nil,
   "Changes the administrator password for accessing the device")
 
 s.addremove = false
@@ -45,39 +78,10 @@ function m.on_commit(map)
       if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
         m.message = "Password successfully changed!"
       else
-        m.message = "Unknown Error, password not changed!"
+        m.errmessage = "Unknown Error, password not changed!"
       end
     else
-      m.message = "Given password confirmation did not match, password not changed!"
-    end
-  end
-end
-
-if fs.access("/etc/config/dropbear") then
-  s = m:section(TypedSection, "_keys", "SSH Keys",
-    "Here you can paste public SSH-Keys (one per line) for SSH public-key authentication.")
-
-  s.addremove = false
-  s.anonymous = true
-
-  function s.cfgsections()
-    return { "_keys" }
-  end
-
-  local keys
-
-  keys = s:option(TextValue, "_data", "")
-  keys.wrap    = "off"
-  keys.rows    = 3
-  keys.rmempty = false
-
-  function keys.cfgvalue()
-    return fs.readfile("/etc/dropbear/authorized_keys") or ""
-  end
-
-  function keys.write(self, section, value)
-    if value then
-      fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"))
+      m.errmessage = "Given password confirmation did not match, password not changed!"
     end
   end
 end

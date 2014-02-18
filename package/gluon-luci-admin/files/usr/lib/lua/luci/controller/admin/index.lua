@@ -40,7 +40,7 @@ function index()
 	end
 	page.index = true
 	
-	entry({"admin", "index"}, form("admin/index"), "Overview", 1).ignoreindex = true
+	entry({"admin", "index"}, cbi("admin/remote"), "Remotezugriff", 1).ignoreindex = true
 
 	if not configmode then
 		entry({"admin", "logout"}, call("action_logout"), "Logout")

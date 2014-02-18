@@ -16,8 +16,7 @@ $Id$
 module("luci.controller.admin.upgrade", package.seeall)
 
 function index()
-	entry({"admin", "passwd"}, cbi("admin/passwd"), "Admin Password", 10)
-	entry({"admin", "upgrade"}, call("action_upgrade"), "Flash Firmware", 90)
+	entry({"admin", "upgrade"}, call("action_upgrade"), "Firmware aktualisieren", 90)
 end
 
 function action_upgrade()
