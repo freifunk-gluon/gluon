@@ -19,7 +19,6 @@ function index()
 	entry({"admin", "passwd"}, cbi("admin/passwd"), "Admin Password", 10)
 	entry({"admin", "backup"}, call("action_backup"), "Backup / Restore", 80)
 	entry({"admin", "upgrade"}, call("action_upgrade"), "Flash Firmware", 90)
-	entry({"admin", "reboot"}, call("action_reboot"), "Reboot", 100)
 end
 
 function action_backup()
@@ -60,14 +59,6 @@ function action_backup()
 		luci.util.exec("mtd -r erase rootfs_data")
 	else
 		luci.template.render("admin/backup", {reset_avail = reset_avail})
-	end
-end
-
-function action_reboot()
-	local reboot = luci.http.formvalue("reboot")
-	luci.template.render("admin/reboot", {reboot=reboot})
-	if reboot then
-		luci.sys.reboot()
 	end
 end
 
