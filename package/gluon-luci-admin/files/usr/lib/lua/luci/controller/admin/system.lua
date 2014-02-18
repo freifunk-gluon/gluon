@@ -129,35 +129,13 @@ function action_upgrade()
 	local has_platform = nixio.fs.access("/lib/upgrade/platform.sh")
 	local has_upload   = luci.http.formvalue("image")
 	
-	-- This does the actual flashing which is invoked inside an iframe
-	-- so don't produce meaningful errors here because the the 
-	-- previous pages should arrange the stuff as required.
-	if step == 4 then
-		if has_platform and has_image and has_support then
-			-- Mimetype text/plain
-			luci.http.prepare_content("text/plain")
-			luci.http.write("Starting luci-flash...\n")
-
-			-- Now invoke sysupgrade
-			local keepcfg = keep_avail and luci.http.formvalue("keepcfg") == "1"
-			local flash = ltn12_popen("/sbin/luci-flash %s %q" %{
-				keepcfg and "-k %q" % _keep_pattern() or "", tmpfile
-			})
-
-			luci.ltn12.pump.all(flash, luci.http.write)
-
-			-- Make sure the device is rebooted
-			luci.sys.reboot()
-		end
-
-
 	--
 	-- This is step 1-3, which does the user interaction and
 	-- image upload.
 	--
 
 	-- Step 1: file upload, error on unsupported image format
-	elseif not has_image or not has_support or step == 1 then
+	if not has_image or not has_support or step == 1 then
 		-- If there is an image but user has requested step 1
 		-- or type is not supported, then remove it.
 		if has_image then
@@ -183,11 +161,16 @@ function action_upgrade()
 	
 	-- Step 3: load iframe which calls the actual flash procedure
 	elseif step == 3 then
-		luci.template.render("admin/upgrade", {
-			step=3,
-			keepconfig=(keep_avail and luci.http.formvalue("keepcfg") == "1")
-		} )
-	end	
+		-- invoke sysupgrade
+		local keepcfg = keep_avail and luci.http.formvalue("keepcfg") == "1"
+		fork_exec("/sbin/sysupgrade %s %q" %
+				{ keepcfg and "" or "-n"
+				, tmpfile
+				}
+			)
+
+		luci.template.render("admin/upgrade", { step=3 } )
+	end
 end
 
 function _keep_pattern()
@@ -230,6 +213,30 @@ function ltn12_popen(command)
 		nixio.dup(fdo, nixio.stdout)
 		fdi:close()
 		fdo:close()
+		nixio.exec("/bin/sh", "-c", command)
+	end
+end
+
+function fork_exec(command)
+	local pid = nixio.fork()
+	if pid > 0 then
+		return
+	elseif pid == 0 then
+		-- change to root dir
+		nixio.chdir("/")
+
+		-- patch stdin, out, err to /dev/null
+		local null = nixio.open("/dev/null", "w+")
+		if null then
+			nixio.dup(null, nixio.stderr)
+			nixio.dup(null, nixio.stdout)
+			nixio.dup(null, nixio.stdin)
+			if null:fileno() > 2 then
+				null:close()
+			end
+		end
+
+		-- replace with target command
 		nixio.exec("/bin/sh", "-c", command)
 	end
 end
