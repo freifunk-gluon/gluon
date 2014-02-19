@@ -13,7 +13,7 @@ You may obtain a copy of the License at
 $Id$
 ]]--
 
-module("luci.controller.admin.system", package.seeall)
+module("luci.controller.admin.upgrade", package.seeall)
 
 function index()
 	entry({"admin", "passwd"}, cbi("admin/passwd"), "Admin Password", 10)
@@ -24,7 +24,7 @@ function action_upgrade()
 	require("luci.model.uci")
 
 	local tmpfile = "/tmp/firmware.img"
-	
+
 	local function image_supported()
 		-- XXX: yay...
 		return ( 0 == os.execute(
@@ -34,11 +34,11 @@ function action_upgrade()
 				% tmpfile
 		) )
 	end
-	
+
 	local function image_checksum()
 		return (luci.sys.exec("md5sum %q" % tmpfile):match("^([^%s]+)"))
 	end
-	
+
 	local function storage_size()
 		local size = 0
 		if nixio.fs.access("/proc/mtd") then
@@ -86,7 +86,7 @@ function action_upgrade()
 	local has_support  = image_supported()
 	local has_platform = nixio.fs.access("/lib/upgrade/platform.sh")
 	local has_upload   = luci.http.formvalue("image")
-	
+
 	--
 	-- This is step 1-3, which does the user interaction and
 	-- image upload.
@@ -99,7 +99,7 @@ function action_upgrade()
 		if has_image then
 			nixio.fs.unlink(tmpfile)
 		end
-			
+
 		luci.template.render("admin/upgrade", {
 			step=1,
 			bad_image=(has_image and not has_support or false),
@@ -116,7 +116,7 @@ function action_upgrade()
 			flashsize=storage_size(),
 			keepconfig=(keep_avail and luci.http.formvalue("keepcfg") == "1")
 		} )
-	
+
 	-- Step 3: load iframe which calls the actual flash procedure
 	elseif step == 3 then
 		-- invoke sysupgrade
