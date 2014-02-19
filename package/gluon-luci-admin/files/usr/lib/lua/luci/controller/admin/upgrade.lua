@@ -131,20 +131,6 @@ function action_upgrade()
 	end
 end
 
-function _keep_pattern()
-	local kpattern = ""
-	local files = luci.model.uci.cursor():get_all("luci", "flash_keep")
-	if files then
-		kpattern = ""
-		for k, v in pairs(files) do
-			if k:sub(1,1) ~= "." and nixio.fs.glob(v)() then
-				kpattern = kpattern .. " " ..  v
-			end
-		end
-	end
-	return kpattern
-end
-
 function fork_exec(command)
 	local pid = nixio.fork()
 	if pid > 0 then
