@@ -16,8 +16,10 @@ $Id$
 	local sys  = require "luci.sys"
 	local http = require "luci.http"
 	local disp = require "luci.dispatcher"
+	local fs   = require "nixio.fs"
 
 	local hostname = sys.hostname()
+	local release = fs.readfile("/lib/gluon/release")
 	local load1, load5, load15 = sys.loadavg()
 
 	local request  = disp.context.path
@@ -116,6 +118,9 @@ $Id$
 <div id="menubar">
 <div class="hostinfo">
 	<%=hostname%>
+	<% if release then %>
+	/ <%=release%>
+	<% end %>
 	<span id="xhr_poll_status" style="display:none" onclick="XHR.running() ? XHR.halt() : XHR.run()">
 		| <%:Auto Refresh%>:
 		<span id="xhr_poll_status_on"><%:on%></span>
