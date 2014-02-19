@@ -13,6 +13,10 @@ $Id$
 ]]--
 
 m = Map("autoupdater", "Autoupdater")
+m.submit = "Speichern"
+m.reset = "Zurücksetzen"
+m.pageaction = false
+m.template = "admin/expertmode"
 
 s = m:section(TypedSection, "autoupdater", "Einstellungen")
 s.addremove = false
