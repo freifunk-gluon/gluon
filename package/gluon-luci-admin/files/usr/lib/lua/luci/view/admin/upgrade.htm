@@ -15,58 +15,50 @@ $Id$
 
 <%+header%>
 
-<h2><a id="content" name="content">Flash Firmware</a></h2>
+<h2>Firmware aktualisieren</h2>
 
 <% if step == 1 then %>
 	<% if supported then %>
 	<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
 	<p>
-		Upload an OpenWrt image file to reflash the device.
-		<% if bad_image then %>
-			<br /><br />
-			<div class="error">The uploaded image file does not
-				contain a supported format. Make sure that you choose the generic
-				image format for your platform.</div>
-		<% end %>
+		Hier kannst du ein manuelles Firmwareupdate durchführen.
 	</p>
+	<% if bad_image then %>
+	<p class="error">Die übermittelte Firmwaredatei kann nicht verwendet werden.</p>
+	<% end %>
 	<div>
-		Firmware image:<br />
+		<h3>Firmware image</h3>
 		<input type="hidden" name="step" value="2" />
 		<input type="file" size="30" name="image" />
-		<br />
-		<br />
 		<% if keepavail then -%>
+		<br/>
 		<input type="checkbox" name="keepcfg" value="1" checked="checked" />
-		<span class="bold">Keep configuration files</span>
+		<label for="keepcfg">Einstellungen beibehalten</label>
 		<% end -%>
 
-		<br />
-		<input class="cbi-button cbi-button-apply" type="submit" value="Upload image" />
+		<div class="cbi-page-actions right">
+			<input class="cbi-button cbi-button-apply" type="submit" value="Upload image" />
+		</div>
 	</div>
 	</form>
 	<% else %>
-		<div class="error">Sorry.
-			OpenWrt does not support a system upgrade on this platform.<br />
-			You need to manually flash your device.</div>
+		<p class="error">Auf diesem Gerät kann kein Upgrade durchgeführt werden.
+			Bitte führe das Upgrade manuell durch.</p>
 	<% end %>
 <% elseif step == 2 then %>
 	<p>
-		  The flash image was uploaded.
-			Below is the checksum and file size listed,
-			compare them with the original file to ensure data integrity.<br />
-			Click "Proceed" below to start the flash procedure.
+			Die Firmwaredatei wurde übermittelt. Bitte vergleiche MD5-Checksumme
+			und Dateigröße und klicke anschließend auf "Fortfahren".
+	</p>
 
-		<% if flashsize > 0 and filesize > flashsize then %>
-			<br /><br />
-			<div class="error">It appears that you try to
-				flash an image that does not fit into the flash memory, please verify
-				the image file!</div>
-		<% end %>
+	<% if flashsize > 0 and filesize > flashsize then %>
+	<p class="error">Die Firmware passt nicht in den Speicher des Gerätes.</p>
+	<% end %>
 
-		<br />
+	<p>
 		<ul>
-			<li>Checksum: <code><%=checksum%></code></li>
-			<li>Size: <%
+			<li>md5sum: <code><%=checksum%></code></li>
+			<li>Größe: <%
 				function byte_format(byte)
 					local suff = {"B", "KB", "MB", "GB", "TB"}
 					for i=1, 5 do
@@ -93,20 +85,21 @@ $Id$
 		<form style="display:inline">
 			<input type="hidden" name="step" value="3" />
 			<input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-			<input class="cbi-button cbi-button-apply" type="submit" value="Proceed" />	
+			<input class="cbi-button cbi-button-apply" type="submit" value="Fortfahren" />	
 		</form>
 		<form style="display:inline">
 			<input type="hidden" name="step" value="1" />
 			<input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-			<input class="cbi-button cbi-button-reset" type="submit" value="Cancel" />
+			<input class="cbi-button cbi-button-reset" type="submit" value="Abbrechen" />
 		</form>
 	</div>
 <% elseif step == 3 then %>
-	<p>The system is flashing now.<br />
-		DO NOT POWER OFF THE DEVICE!<br />
-		Wait a few minutes until you try to reconnect.
-		It might be necessary to renew the address of your computer to reach the device
-		again, depending on your settings.</p>
+	<p>
+		Die Firmware wird jetzt aktualisiert.
+		<strong>UNTERBRECHE AUF KEINEN FALL DIE STROMVERSORGUNG!</strong>
+		Dieser Vorgang wird einige Minuten dauern. Anschließend startet
+		das Gerät automatisch neu.
+	</p>
 <% end %>
 <%+footer%>
 

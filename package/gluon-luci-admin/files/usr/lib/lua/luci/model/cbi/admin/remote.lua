@@ -26,7 +26,7 @@ m.template = "admin/expertmode"
 
 if fs.access("/etc/config/dropbear") then
   s = m:section(TypedSection, "_keys", nil,
-    "Here you can paste public SSH-Keys (one per line) for SSH public-key authentication.")
+    "Hier hast du die Möglichkeit SSH-Keys (einen pro Zeile) zu hinterlegen:")
 
   s.addremove = false
   s.anonymous = true
@@ -54,15 +54,15 @@ if fs.access("/etc/config/dropbear") then
 end
 
 s = m:section(TypedSection, "_pass", nil,
-  "Changes the administrator password for accessing the device")
+  "Alternativ kannst du auch ein Passwort setzen. Wähle bitte ein sicheres Passwort, das du nirgendswo anders verwendest.")
 
 s.addremove = false
 s.anonymous = true
 
-pw1 = s:option(Value, "pw1", "Password")
+pw1 = s:option(Value, "pw1", "Passwort")
 pw1.password = true
 
-pw2 = s:option(Value, "pw2", "Confirmation")
+pw2 = s:option(Value, "pw2", "Wiederholung")
 pw2.password = true
 
 function s.cfgsections()
@@ -76,12 +76,12 @@ function m.on_commit(map)
   if v1 and v2 and #v1 > 0 and #v2 > 0 then
     if v1 == v2 then
       if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
-        m.message = "Password successfully changed!"
+        m.message = "Passwort geändert."
       else
-        m.errmessage = "Unknown Error, password not changed!"
+        m.errmessage = "Das Passwort konnte nicht geändert werden."
       end
     else
-      m.errmessage = "Given password confirmation did not match, password not changed!"
+      m.errmessage = "Die beiden Passwörter stimmen nicht überein."
     end
   end
 end
