@@ -138,6 +138,10 @@ autoupdate() {
   if newer_than "$fw_version" "$my_version"; then
     echo "New version available"
 
+    # drop caches to make room for firmware image
+    sync
+    sysctl -w vm.drop_caches=3
+
     local fw_image=$(mktemp)
     fetch_firmware $MIRROR $fw_image || { rm -f $fw_image; return 1; }
 
