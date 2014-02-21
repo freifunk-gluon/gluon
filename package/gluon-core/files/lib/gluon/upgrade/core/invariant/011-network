@@ -1,7 +1,11 @@
 #!/bin/sh
 
 . /lib/functions.sh
+. /lib/gluon/functions/sysctl.sh
 
 
 uci_set network wan peerdns '0'
 uci_commit network
+
+sysctl_set net.ipv6.conf.all.accept_ra 0
+sysctl_set net.ipv6.conf.default.accept_ra 0
