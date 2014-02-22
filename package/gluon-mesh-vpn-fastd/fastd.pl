@@ -25,9 +25,6 @@ add_user gluon-fastd 800
 
 uci_add fastd fastd mesh_vpn
 
-uci_remove fastd mesh_vpn config
-uci_remove fastd mesh_vpn config_peer_dir
-
 uci_set fastd mesh_vpn user 'gluon-fastd'
 uci_set fastd mesh_vpn syslog_level 'verbose'
 uci_set fastd mesh_vpn interface 'mesh-vpn'

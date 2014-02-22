@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+. /lib/functions.sh
+. /lib/gluon/functions/sysconfig.sh
+
+
+uci_rename network '@legacy.mesh_ifname@' 'client'
+
+if [ "$(uci_get network client proto)" = 'none' ]; then
+	uci_remove network client auto
+	uci_remove network client accept_ra
+
+	uci_set network client proto 'dhcpv6'
+	uci_set network client reqprefix 'no'
+fi
+
+uci_commit network

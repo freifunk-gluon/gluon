@@ -1,0 +1,37 @@
+#!/bin/sh
+
+. /lib/gluon/functions/sysconfig.sh
+. /lib/ar71xx.sh
+
+
+get_primary_mac() {
+    case "$(ar71xx_board_name)" in
+	tl-wdr3600|tl-wdr4300)
+	    cat /sys/class/ieee80211/phy1/macaddress
+	    ;;
+	*)
+	    cat /sys/class/ieee80211/phy0/macaddress
+	    ;;
+    esac
+}
+
+iface_exists() {
+	local name="$1"
+	ip link show dev "${name//.*/}" >/dev/null 2>&1
+}
+
+remove_bat0() {
+	sed -r -e 's/(^| )bat0( |$)/ /g' -e 's/^ | $//g'
+}
+
+mesh_ifname="$(uci get 'network.@legacy.mesh_ifname@.ifname' | remove_bat0)"
+wan_ifname="$(uci get network.wan.ifname | remove_bat0)"
+
+if [ -n "$wan_ifname" ] && iface_exists "$wan_ifname"; then
+	[ -z "$mesh_ifname" ] || sysconfig_set lan_ifname "$mesh_ifname"
+	sysconfig_set wan_ifname "$wan_ifname"
+else
+	sysconfig_set wan_ifname "$mesh_ifname"
+fi
+
+sysconfig_set primary_mac "$(get_primary_mac)"

@@ -5,6 +5,13 @@ UPGRADE_DIR=/lib/gluon/upgrade
 VERSION_DIR=/lib/gluon/version
 
 
+if [ -x /lib/gluon/legacy/legacy-upgrade ] && /lib/gluon/legacy/legacy-upgrade; then
+	HAS_LEGACY=1
+else
+	HAS_LEGACY=
+fi
+
+
 mkdir -p "$VERSION_DIR"
 
 
@@ -33,7 +40,11 @@ do_component() {
 
 		local oldversion="$(oldversion_of "$component")"
 		if [ -z "$oldversion" ]; then
-			do_dir initial
+			if [ "$HAS_LEGACY" ]; then
+				do_dir legacy
+			else
+				do_dir initial
+			fi
 		else
 			local v
 
@@ -62,3 +73,7 @@ for component in *; do
 	[ "$component" != 'core' ] || continue
 	do_component "$component"
 done
+
+if [ "$HAS_LEGACY" ]; then
+	/lib/gluon/legacy/legacy-upgrade-late
+fi

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+. /lib/functions.sh
+
+
+for config in @legacy.config_mode_configs@; do
+	if [ "$(uci -q get "$config".configured)" = '1' ]; then
+		uci_set gluon-config-mode '@wizard[0]' 'configured' '1'
+		uci_commit gluon-config-mode
+
+		break
+	fi
+done

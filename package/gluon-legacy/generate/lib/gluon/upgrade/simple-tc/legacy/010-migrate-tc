@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+
+for config in @legacy.tc_configs@; do
+	if uci -q get "$config" >/dev/null; then
+		uci_add gluon-simple-tc interface 'mesh_vpn'
+		uci_set gluon-simple-tc 'mesh_vpn' ifname 'mesh-vpn'
+
+		uci_set gluon-simple-tc 'mesh_vpn' enabled "$(uci get "$config".enabled)"
+		uci_set gluon-simple-tc 'mesh_vpn' limit_ingress "$(uci get "$config".downstream)"
+		uci_set gluon-simple-tc 'mesh_vpn' limit_egress "$(uci get "$config".upstream)"
+
+		uci_commit gluon-simple-tc
+
+		break
+	fi
+done
