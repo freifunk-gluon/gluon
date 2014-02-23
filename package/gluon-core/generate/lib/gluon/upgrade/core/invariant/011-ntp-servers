@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -n '@ntp_servers@' ] || exit 0
+[ -n "$(echo @ntp_servers@)" ] || exit 0
 
 
 uci delete system.ntp.server
