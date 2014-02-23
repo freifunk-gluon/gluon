@@ -8,7 +8,7 @@ delete_legacy_iface() {
 	local iface="$1"
 
 	for wifi in @legacy.wifi_names@; do
-		if [ "$wifi" =  "$iface" ]; then
+		if [ "$wifi" = "$iface" ]; then
 			uci_remove wireless "$iface"
 			break
 		fi
