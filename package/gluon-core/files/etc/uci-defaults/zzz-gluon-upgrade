@@ -45,17 +45,6 @@ do_component() {
 			else
 				do_dir initial
 			fi
-		else
-			local v
-
-			for v in *; do
-				[ "$v" != initial -a "$v" != invariant -a "$v" != legacy ] || continue
-
-				# The return value of opkg compare-versions is negated
-				if ! opkg compare-versions "$v" '>>' "$oldversion"; then
-					do_dir "$v"
-				fi
-			done
 		fi
 
 		do_dir invariant
