@@ -25,7 +25,7 @@ remove_bat0() {
 }
 
 mesh_ifname="$(uci get 'network.@legacy.mesh_ifname@.ifname' | remove_bat0)"
-wan_ifname="$(uci get network.wan.ifname | remove_bat0)"
+wan_ifname="$(uci get network.wan.ifname)"
 
 if [ -n "$wan_ifname" ] && iface_exists "$wan_ifname"; then
 	[ -z "$mesh_ifname" ] || sysconfig_set lan_ifname "$mesh_ifname"
