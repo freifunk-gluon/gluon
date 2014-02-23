@@ -13,7 +13,7 @@ sub add_config {
 			add_config($key . '.', $val);
 		}
 		elsif (ref($val) eq 'ARRAY') {
-			$config{'@' . $prefix . $key . '@'} = join ' ', @{$val};
+			$config{'@' . $prefix . $key . '@'} = join ' ', map {s/'/'\\''/g; "'" . $_ . "'"} @{$val}
 		}
 		unless (ref($val)) {
 			$config{'@' . $prefix . $key . '@'} = $val;
