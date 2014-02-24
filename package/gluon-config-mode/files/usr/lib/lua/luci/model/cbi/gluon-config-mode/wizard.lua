@@ -53,17 +53,17 @@ zu können, benötigen wir seine Koordinaten. Hier hast du die Möglichkeit,
 diese zu hinterlegen.]])
 
 o = s:option(Flag, "_location", "Knoten auf der Karte anzeigen")
-o.default = uci:get_first("gluon-location", "location", "share_location", o.disabled)
+o.default = uci:get_first("gluon-node-info", "location", "share_location", o.disabled)
 o.rmempty = false
 
 o = s:option(Value, "_latitude", "Breitengrad")
-o.default = string.format("%f", uci:get_first("gluon-location", "location", "latitude", "0"))
+o.default = string.format("%f", uci:get_first("gluon-node-info", "location", "latitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 53.873621"
 
 o = s:option(Value, "_longitude", "Längengrad")
-o.default = string.format("%f", uci:get_first("gluon-location", "location", "longitude", "0"))
+o.default = string.format("%f", uci:get_first("gluon-node-info", "location", "longitude", "0"))
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 10.689901"
@@ -103,13 +103,13 @@ function f.handle(self, state, data)
     uci:save("system")
     uci:commit("system")
 
-    uci:foreach("gluon-location", "location", function(s)
-            uci:set("gluon-location", s[".name"], "share_location", data._location)
-            uci:set("gluon-location", s[".name"], "latitude", data._latitude)
-            uci:set("gluon-location", s[".name"], "longitude", data._longitude)
+    uci:foreach("gluon-node-info", "location", function(s)
+            uci:set("gluon-node-info", s[".name"], "share_location", data._location)
+            uci:set("gluon-node-info", s[".name"], "latitude", data._latitude)
+            uci:set("gluon-node-info", s[".name"], "longitude", data._longitude)
             end)
-    uci:save("gluon-location")
-    uci:commit("gluon-location")
+    uci:save("gluon-node-info")
+    uci:commit("gluon-node-info")
 
     luci.http.redirect(luci.dispatcher.build_url("gluon-config-mode", "reboot"))
   end

@@ -1,0 +1,15 @@
+#!/bin/sh
+# This is a temporary upgrade script for an upgrade between experimental versions. It should be removed before the first Gluon release
+
+. /lib/functions.sh
+
+
+if [ -e /etc/config/gluon-location ]; then
+	uci_set gluon-node-info '@location[0]' share_location "$(uci get gluon-location.@location[0].share_location)"
+	uci_set gluon-node-info '@location[0]' latitude "$(uci get gluon-location.@location[0].latitude)"
+	uci_set gluon-node-info '@location[0]' longitude "$(uci get gluon-location.@location[0].longitude)"
+
+	uci_commit gluon-node-info
+
+	rm /etc/config/gluon-location
+fi

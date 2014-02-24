@@ -15,7 +15,7 @@ define Package/gluon-config-mode
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based config mode for user friendly setup of new meshnodes
-  DEPENDS:=+gluon-luci-core +gluon-lock-password +gluon-location +gluon-simple-tc +uhttpd +dnsmasq +ip
+  DEPENDS:=+gluon-luci-core +gluon-lock-password +gluon-node-info +gluon-simple-tc +uhttpd +dnsmasq +ip
 endef
 
 define Package/gluon-config-mode/description

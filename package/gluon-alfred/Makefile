@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/gluon-alfred
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-core +gluon-location +gluon-cron +alfred +ethtool
+  DEPENDS:=+gluon-core +gluon-node-info +gluon-cron +alfred +ethtool
   TITLE:=Configure alfred
 endef
 

@@ -21,11 +21,17 @@ set -e
 json_init
 json_add_string "hostname" "$(uci get 'system.@system[0].hostname')"
 
-if [ "$(uci -q get 'gluon-location.@location[0].share_location')" = 1 ]; then
+if [ "$(uci -q get 'gluon-node-info.@location[0].share_location')" = 1 ]; then
 json_add_object "location"
-	json_add_double "latitude" "$(uci get 'gluon-location.@location[0].latitude')"
-	json_add_double "longitude" "$(uci get 'gluon-location.@location[0].longitude')"
+	json_add_double "latitude" "$(uci get 'gluon-node-info.@location[0].latitude')"
+	json_add_double "longitude" "$(uci get 'gluon-node-info.@location[0].longitude')"
 json_close_object # location
+fi
+
+if [ -n "$(uci -q get 'gluon-node-info.@owner[0].contact')" ]; then
+json_add_object "owner"
+	json_add_string "contact" "$(uci get 'gluon-node-info.@owner[0].contact')"
+json_close_object # owner
 fi
 
 json_add_object "software"
