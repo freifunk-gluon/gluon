@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
 PKG_VERSION:=1
-PKG_RELEASE:=1.$(GLUON_SITE_CODE)-$(GLUON_RELEASE).$(GLUON_CONFIG_VERSION)
+PKG_RELEASE:=$(GLUON_VERSION).$(GLUON_SITE_CODE)-$(GLUON_RELEASE).$(GLUON_CONFIG_VERSION)
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -34,6 +34,7 @@ define Package/gluon-core/install
 	$(GLUON_GENERATE) ./generate/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon
+	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/version
 	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 endef
 
