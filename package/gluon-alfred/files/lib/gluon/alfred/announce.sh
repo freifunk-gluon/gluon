@@ -36,7 +36,7 @@ fi
 
 json_add_object "software"
 	json_add_object "firmware"
-		json_add_string "base" "gluon"
+		json_add_string "base" "gluon-$(cat /lib/gluon/version)"
 		json_add_string "release" "$(cat /lib/gluon/release)"
 	json_close_object # firmware
 
