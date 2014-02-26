@@ -34,7 +34,7 @@ define Package/gluon-core/install
 	$(GLUON_GENERATE) ./generate/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon
-	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/version
+	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version
 	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 endef
 
