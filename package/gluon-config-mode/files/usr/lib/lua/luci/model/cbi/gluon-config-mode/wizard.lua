@@ -78,7 +78,7 @@ einsehbar sein wird.]])
 
 o = s:option(Value, "_contact", "Kontakt")
 o.default = uci:get_first("gluon-node-info", "owner", "contact", "")
-o.rmempty = false
+o.rmempty = true
 o.datatype = "string"
 o.description = "z.B. E-Mail oder Telefonnummer"
 o.maxlen = 140
@@ -122,7 +122,11 @@ function f.handle(self, state, data)
       uci:set("gluon-node-info", sname, "latitude", data._latitude)
       uci:set("gluon-node-info", sname, "longitude", data._longitude)
     end
-    uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact", data._contact)
+    if data._contact ~= nil then
+      uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact", data._contact)
+    else
+      uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact")
+    end
     uci:save("gluon-node-info")
     uci:commit("gluon-node-info")
 
