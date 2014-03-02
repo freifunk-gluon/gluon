@@ -118,7 +118,7 @@ function f.handle(self, state, data)
 
     local sname = uci:get_first("gluon-node-info", "location")
     uci:set("gluon-node-info", sname, "share_location", data._location)
-    if data._location then
+    if data._location and data._latitude ~= nil and data._longitude ~= nil then
       uci:set("gluon-node-info", sname, "latitude", data._latitude)
       uci:set("gluon-node-info", sname, "longitude", data._longitude)
     end
