@@ -52,9 +52,7 @@ function action_reboot()
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
 
-  uci:foreach("gluon-config-mode", "wizard", function(s)
-      uci:set("gluon-config-mode", s[".name"], "configured", "1")
-    end)
+  uci:set("gluon-config-mode", uci:get_first("gluon-config-mode", "wizard"), "configured", "1")
   uci:save("gluon-config-mode")
   uci:commit("gluon-config-mode")
 
