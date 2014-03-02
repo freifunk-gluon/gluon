@@ -68,6 +68,19 @@ o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 10.689901"
 
+s = f:section(SimpleSection, nil, [[Hier kannst du einen
+<em>öffentlichen</em> Hinweis hinterlegen um anderen Freifunkern zu
+ermöglichen Kontakt mit dir aufzunehmen. Bitte beachte, dass dieser Hinweis
+auch öffentlich im Internet, zusammen mit den Koordinaten deines Knotens,
+einsehbar sein wird.]])
+
+o = s:option(Value, "_contact", "Kontakt")
+o.default = uci:get_first("gluon-node-info", "owner", "contact", "")
+o.rmempty = false
+o.datatype = "string"
+o.description = "z.B. E-Mail oder Telefonnummer"
+o.maxlen = 140
+
 function f.handle(self, state, data)
   if state == FORM_VALID then
     local stat = false
@@ -105,6 +118,7 @@ function f.handle(self, state, data)
     uci:set("gluon-node-info", sname, "share_location", data._location)
     uci:set("gluon-node-info", sname, "latitude", data._latitude)
     uci:set("gluon-node-info", sname, "longitude", data._longitude)
+    uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact", data._contact)
     uci:save("gluon-node-info")
     uci:commit("gluon-node-info")
 
