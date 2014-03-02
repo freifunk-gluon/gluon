@@ -57,13 +57,15 @@ o.default = uci:get_first("gluon-node-info", "location", "share_location", o.dis
 o.rmempty = false
 
 o = s:option(Value, "_latitude", "Breitengrad")
-o.default = uci:get_first("gluon-node-info", "location", "latitude", 0)
+o.default = uci:get_first("gluon-node-info", "location", "latitude")
+o:depends("_location", "1")
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 53.873621"
 
 o = s:option(Value, "_longitude", "Längengrad")
-o.default = uci:get_first("gluon-node-info", "location", "longitude", 0)
+o.default = uci:get_first("gluon-node-info", "location", "longitude")
+o:depends("_location", "1")
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 10.689901"
@@ -116,8 +118,10 @@ function f.handle(self, state, data)
 
     local sname = uci:get_first("gluon-node-info", "location")
     uci:set("gluon-node-info", sname, "share_location", data._location)
-    uci:set("gluon-node-info", sname, "latitude", data._latitude)
-    uci:set("gluon-node-info", sname, "longitude", data._longitude)
+    if data._location then
+      uci:set("gluon-node-info", sname, "latitude", data._latitude)
+      uci:set("gluon-node-info", sname, "longitude", data._longitude)
+    end
     uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact", data._contact)
     uci:save("gluon-node-info")
     uci:commit("gluon-node-info")
