@@ -57,13 +57,13 @@ o.default = uci:get_first("gluon-node-info", "location", "share_location", o.dis
 o.rmempty = false
 
 o = s:option(Value, "_latitude", "Breitengrad")
-o.default = string.format("%f", uci:get_first("gluon-node-info", "location", "latitude", "0"))
+o.default = uci:get_first("gluon-node-info", "location", "latitude", 0)
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 53.873621"
 
 o = s:option(Value, "_longitude", "Längengrad")
-o.default = string.format("%f", uci:get_first("gluon-node-info", "location", "longitude", "0"))
+o.default = uci:get_first("gluon-node-info", "location", "longitude", 0)
 o.rmempty = false
 o.datatype = "float"
 o.description = "z.B. 10.689901"
