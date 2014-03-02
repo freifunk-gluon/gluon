@@ -35,7 +35,7 @@ setup_network() {
 		config_foreach delete_interface interface
 
 		uci_add network interface config
-		uci_set network config ifname "$(sysconfig lan_ifname || sysconfig wan_ifname)"
+		uci_set network config ifname "$(sysconfig config_ifname)"
 		uci_set network config type 'bridge'
 		uci_set network config proto 'static'
 		uci_set network config ipaddr "$CONFIG_MODE_ADDR"
