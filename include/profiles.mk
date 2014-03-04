@@ -1,10 +1,5 @@
 # List of hardware profiles
 
-USB_PACKAGES := block-mount kmod-fs-ext4 kmod-fs-vfat kmod-usb-storage kmod-usb-storage-extras blkid swap-utils \
-	kmod-nls-cp1250 kmod-nls-cp1251 kmod-nls-cp437 kmod-nls-cp775 kmod-nls-cp850 kmod-nls-cp852 kmod-nls-cp866 \
-	kmod-nls-iso8859-1 kmod-nls-iso8859-13 kmod-nls-iso8859-15 kmod-nls-iso8859-2 kmod-nls-koi8r kmod-nls-utf8
-
-
 ## TP-Link
 
 # TL-WR740N v1, v3, v4
@@ -27,7 +22,7 @@ $(eval $(call GluonModel,TLWR841,tl-wr841nd-v7-squashfs,tp-link-tl-wr841n-nd-v7)
 $(eval $(call GluonModel,TLWR841,tl-wr841n-v8-squashfs,tp-link-tl-wr841n-nd-v8))
 
 # TL-WR842N/ND v1
-$(eval $(call GluonProfile,TLWR842,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLWR842))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v1-squashfs,tp-link-tl-wr842n-nd-v1))
 
 # TL-WR941N/ND v2, v3, v4
@@ -37,11 +32,11 @@ $(eval $(call GluonModel,TLWR941,tl-wr941nd-v3-squashfs,tp-link-tl-wr941n-nd-v3)
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v4-squashfs,tp-link-tl-wr941n-nd-v4))
 
 # TL-WR1043N/ND v1
-$(eval $(call GluonProfile,TLWR1043,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLWR1043))
 $(eval $(call GluonModel,TLWR1043,tl-wr1043nd-v1-squashfs,tp-link-tl-wr1043n-nd-v1))
 
 # TL-WDR350/3600/4300 v1
-$(eval $(call GluonProfile,TLWDR4300,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,TLWDR4300))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3500-v1-squashfs,tp-link-tl-wdr3500-v1))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3600-v1-squashfs,tp-link-tl-wdr3600-v1))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr4300-v1-squashfs,tp-link-tl-wdr4300-v1))
@@ -63,7 +58,7 @@ $(eval $(call GluonProfile,TLMR3420))
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1-squashfs,tp-link-tl-mr3420-v1))
 
 ## Ubiquiti (everything)
-$(eval $(call GluonProfile,UBNT,$(USB_PACKAGES)))
+$(eval $(call GluonProfile,UBNT))
 $(eval $(call GluonModel,UBNT,ubnt-bullet-m-squashfs,ubiquiti-bullet-m))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-squashfs,ubiquiti-nanostation-m))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-squashfs,ubiquiti-unifi))
