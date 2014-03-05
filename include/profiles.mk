@@ -35,7 +35,7 @@ $(eval $(call GluonModel,TLWR941,tl-wr941nd-v4-squashfs,tp-link-tl-wr941n-nd-v4)
 $(eval $(call GluonProfile,TLWR1043))
 $(eval $(call GluonModel,TLWR1043,tl-wr1043nd-v1-squashfs,tp-link-tl-wr1043n-nd-v1))
 
-# TL-WDR350/3600/4300 v1
+# TL-WDR3500/3600/4300 v1
 $(eval $(call GluonProfile,TLWDR4300))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3500-v1-squashfs,tp-link-tl-wdr3500-v1))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3600-v1-squashfs,tp-link-tl-wdr3600-v1))
