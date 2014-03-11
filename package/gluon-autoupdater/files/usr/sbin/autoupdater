@@ -28,9 +28,10 @@ GOOD_SIGNATURES=$(uci get autoupdater.${BRANCH}.good_signatures)
 
 VERSION_FILE=/lib/gluon/release
 
+# returns 0 when $1 is a higher version number than $2
 newer_than() {
-  local old="$(printf '%s\n%s\n' "$1" "$2" | sort -n | head -n 1)"
-  test "$1" != "$old"
+	# negate the return value as opkg returns 1 when the proposition is true
+	! opkg compare-versions "$1" '>>' "$2"
 }
 
 fetch_manifest() {
