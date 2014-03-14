@@ -18,22 +18,14 @@ m.reset = "Zurücksetzen"
 m.pageaction = false
 m.template = "admin/expertmode"
 
-s = m:section(TypedSection, "autoupdater", "Einstellungen")
+s = m:section(TypedSection, "autoupdater", nil)
 s.addremove = false
+s.anonymous = true
 
 s:option(Flag, "enabled", "Aktivieren")
 f = s:option(ListValue, "branch", "Branch")
 
 uci.cursor():foreach("autoupdater", "branch", function (section) f:value(section[".name"]) end)
-
-s = m:section(TypedSection, "branch", "Branches")
-s.addremove = true
-
-s:option(DynamicList, "mirror", "Mirrors")
-s:option(Value, "probability", "Update Wahrscheinlichkeit")
-s:option(Value, "good_signatures", "Benötigte Signaturen")
-
-o = s:option(DynamicList, "pubkey", "Public Keys")
 
 return m
 
