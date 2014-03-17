@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+
+uci_remove gluon-node-info '@contact[0]' 2>/dev/null
+
+uci_get gluon-node-info '@owner[0]' >/dev/null || uci_add gluon-node-info 'owner'
+
+
+uci_commit gluon-node-info
