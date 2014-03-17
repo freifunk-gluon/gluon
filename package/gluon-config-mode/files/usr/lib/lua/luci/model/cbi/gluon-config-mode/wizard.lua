@@ -125,7 +125,7 @@ function f.handle(self, state, data)
     if data._contact ~= nil then
       uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact", data._contact)
     else
-      uci:set("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact")
+      uci:delete("gluon-node-info", uci:get_first("gluon-node-info", "owner"), "contact")
     end
     uci:save("gluon-node-info")
     uci:commit("gluon-node-info")
