@@ -1,0 +1,140 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 29 Mar 2014 21:33:11 +0100
+Subject: mac80211: ath9k: add support for QCA953x
+
+This adds the following patches by Sujith Manoharan from ath9k-devel:
+
+ath9k: Add QCA953x WMAC platform support
+ath9k: Disable AR_INTR_SYNC_HOST1_FATAL for QCA953x
+ath9k: Fix temperature compensation
+
+diff --git a/mac80211/patches/567-ath9k-qca953x-support.patch b/mac80211/patches/567-ath9k-qca953x-support.patch
+new file mode 100644
+index 0000000..e73083a
+--- /dev/null
++++ b/mac80211/patches/567-ath9k-qca953x-support.patch
+@@ -0,0 +1,124 @@
++--- a/drivers/net/wireless/ath/ath9k/ahb.c
+++++ b/drivers/net/wireless/ath/ath9k/ahb.c
++@@ -39,6 +39,10 @@ static const struct platform_device_id a
++ 		.name = "qca955x_wmac",
++ 		.driver_data = AR9300_DEVID_QCA955X,
++ 	},
+++	{
+++		.name = "qca953x_wmac",
+++		.driver_data = AR9300_DEVID_AR953X,
+++	},
++ 	{},
++ };
++ 
++--- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
++@@ -4792,43 +4792,54 @@ static void ar9003_hw_power_control_over
++ 
++ tempslope:
++ 	if (AR_SREV_9550(ah) || AR_SREV_9531(ah)) {
+++		u8 txmask = (eep->baseEepHeader.txrxMask & 0xf0) >> 4;
+++
++ 		/*
++ 		 * AR955x has tempSlope register for each chain.
++ 		 * Check whether temp_compensation feature is enabled or not.
++ 		 */
++ 		if (eep->baseEepHeader.featureEnable & 0x1) {
++ 			if (frequency < 4000) {
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      eep->base_ext2.tempSlopeLow);
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      temp_slope);
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      eep->base_ext2.tempSlopeHigh);
+++				if (txmask & BIT(0))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      eep->base_ext2.tempSlopeLow);
+++				if (txmask & BIT(1))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      temp_slope);
+++				if (txmask & BIT(2))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      eep->base_ext2.tempSlopeHigh);
++ 			} else {
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      temp_slope);
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      temp_slope1);
++-				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
++-					      AR_PHY_TPC_19_ALPHA_THERM,
++-					      temp_slope2);
+++				if (txmask & BIT(0))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      temp_slope);
+++				if (txmask & BIT(1))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      temp_slope1);
+++				if (txmask & BIT(2))
+++					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
+++						      AR_PHY_TPC_19_ALPHA_THERM,
+++						      temp_slope2);
++ 			}
++ 		} else {
++ 			/*
++ 			 * If temp compensation is not enabled,
++ 			 * set all registers to 0.
++ 			 */
++-			REG_RMW_FIELD(ah, AR_PHY_TPC_19,
++-				      AR_PHY_TPC_19_ALPHA_THERM, 0);
++-			REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
++-				      AR_PHY_TPC_19_ALPHA_THERM, 0);
++-			REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
++-				      AR_PHY_TPC_19_ALPHA_THERM, 0);
+++			if (txmask & BIT(0))
+++				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
+++					      AR_PHY_TPC_19_ALPHA_THERM, 0);
+++			if (txmask & BIT(1))
+++				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
+++					      AR_PHY_TPC_19_ALPHA_THERM, 0);
+++			if (txmask & BIT(2))
+++				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
+++					      AR_PHY_TPC_19_ALPHA_THERM, 0);
++ 		}
++ 	} else {
++ 		REG_RMW_FIELD(ah, AR_PHY_TPC_19,
++--- a/drivers/net/wireless/ath/ath9k/hw.c
+++++ b/drivers/net/wireless/ath/ath9k/hw.c
++@@ -901,7 +901,7 @@ static void ath9k_hw_init_interrupt_mask
++ 		AR_IMR_RXORN |
++ 		AR_IMR_BCNMISC;
++ 
++-	if (AR_SREV_9340(ah) || AR_SREV_9550(ah))
+++	if (AR_SREV_9340(ah) || AR_SREV_9550(ah) || AR_SREV_9531(ah))
++ 		sync_default &= ~AR_INTR_SYNC_HOST1_FATAL;
++ 
++ 	if (AR_SREV_9300_20_OR_LATER(ah)) {
++@@ -3104,6 +3104,7 @@ static struct {
++ 	{ AR_SREV_VERSION_9462,         "9462" },
++ 	{ AR_SREV_VERSION_9550,         "9550" },
++ 	{ AR_SREV_VERSION_9565,         "9565" },
+++	{ AR_SREV_VERSION_9531,         "9531" },
++ };
++ 
++ /* For devices with external radios */
++--- a/drivers/net/wireless/ath/ath9k/mac.c
+++++ b/drivers/net/wireless/ath/ath9k/mac.c
++@@ -837,7 +837,7 @@ void ath9k_hw_enable_interrupts(struct a
++ 		return;
++ 	}
++ 
++-	if (AR_SREV_9340(ah) || AR_SREV_9550(ah))
+++	if (AR_SREV_9340(ah) || AR_SREV_9550(ah) || AR_SREV_9531(ah))
++ 		sync_default &= ~AR_INTR_SYNC_HOST1_FATAL;
++ 
++ 	async_mask = AR_INTR_MAC_IRQ;

@@ -14,12 +14,13 @@ $(eval $(call GluonModel,TLWR741,tl-wr741nd-v1-squashfs,tp-link-tl-wr741n-nd-v1)
 $(eval $(call GluonModel,TLWR741,tl-wr741nd-v2-squashfs,tp-link-tl-wr741n-nd-v2))
 $(eval $(call GluonModel,TLWR741,tl-wr741nd-v4-squashfs,tp-link-tl-wr741n-nd-v4))
 
-# TL-WR841N/ND v3, v5, v7, v8
+# TL-WR841N/ND v3, v5, v7, v8, v9
 $(eval $(call GluonProfile,TLWR841))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v3-squashfs,tp-link-tl-wr841n-nd-v3))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v5-squashfs,tp-link-tl-wr841n-nd-v5))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v7-squashfs,tp-link-tl-wr841n-nd-v7))
 $(eval $(call GluonModel,TLWR841,tl-wr841n-v8-squashfs,tp-link-tl-wr841n-nd-v8))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v9-squashfs,tp-link-tl-wr841n-nd-v9))
 
 # TL-WR842N/ND v1
 $(eval $(call GluonProfile,TLWR842))
