@@ -1,15 +1,15 @@
 #!/bin/sh
 
-if test $(uci get autoupdater.settings.enabled) != 1; then
-  echo "autoupdater is disabled"
-  exit 0
-fi
 
 BRANCH=$(uci get autoupdater.settings.branch)
 
 PROBABILITY=$(uci get autoupdater.${BRANCH}.probability)
 
 if test "a$1" != "a-f"; then
+  if test $(uci get autoupdater.settings.enabled) != 1; then
+    echo "autoupdater is disabled"
+    exit 0
+  fi
   # get one random byte from /dev/urandom, convert it to decimal and check
   # against update_probability*255
   hexdump -n1 -e '/1 "%d"' /dev/urandom | awk "{exit \$1 > $PROBABILITY * 255}"
