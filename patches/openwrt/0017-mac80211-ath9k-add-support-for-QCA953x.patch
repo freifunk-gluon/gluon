@@ -1,5 +1,5 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Sat, 29 Mar 2014 21:33:11 +0100
+Date: Fri, 18 Apr 2014 18:30:05 +0200
 Subject: mac80211: ath9k: add support for QCA953x
 
 This adds the following patches by Sujith Manoharan from ath9k-devel:
@@ -8,11 +8,11 @@ ath9k: Add QCA953x WMAC platform support
 ath9k: Disable AR_INTR_SYNC_HOST1_FATAL for QCA953x
 ath9k: Fix temperature compensation
 
-diff --git a/mac80211/patches/567-ath9k-qca953x-support.patch b/mac80211/patches/567-ath9k-qca953x-support.patch
+diff --git a/package/mac80211/patches/567-ath9k-qca953x-support.patch b/package/mac80211/patches/567-ath9k-qca953x-support.patch
 new file mode 100644
 index 0000000..e73083a
 --- /dev/null
-+++ b/mac80211/patches/567-ath9k-qca953x-support.patch
++++ b/package/mac80211/patches/567-ath9k-qca953x-support.patch
 @@ -0,0 +1,124 @@
 +--- a/drivers/net/wireless/ath/ath9k/ahb.c
 ++++ b/drivers/net/wireless/ath/ath9k/ahb.c

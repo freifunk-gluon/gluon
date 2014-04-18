@@ -1,0 +1,220 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 11 Jan 2014 11:47:58 +0100
+Subject: Update odhcp6c from Barrier Breaker
+
+diff --git a/package/odhcp6c/Makefile b/package/odhcp6c/Makefile
+index e767064..f18e7fa 100644
+--- a/package/odhcp6c/Makefile
++++ b/package/odhcp6c/Makefile
+@@ -8,26 +8,37 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=odhcp6c
+-PKG_VERSION:=2013-10-02
+-PKG_RELEASE=$(PKG_SOURCE_VERSION)-1
++PKG_VERSION:=2014-04-09
++PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+ PKG_SOURCE_URL:=git://github.com/sbyx/odhcp6c.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_VERSION:=357ecc1f5163bc7f74c64f4bca387e8d44a2eac5
++PKG_SOURCE_VERSION:=6bbd2b0208fc17b6566595bfdfef2ff1d012d143
+ PKG_MAINTAINER:=Steven Barth <steven@midlink.org>
+ 
+ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/cmake.mk
+ 
++ifneq ($(CONFIG_PACKAGE_odhcp6c_ext_prefix_class),0)
++  CMAKE_OPTIONS += -DEXT_PREFIX_CLASS=$(CONFIG_PACKAGE_odhcp6c_ext_prefix_class)
++endif
++
+ define Package/odhcp6c
+-  SECTION:=ipv6
+-  CATEGORY:=IPv6
++  SECTION:=net
++  CATEGORY:=Network
+   TITLE:=Embedded DHCPv6-client for OpenWrt
+   DEPENDS:=+kmod-ipv6
+ endef
+ 
++define Package/odhcp6c/config
++  config PACKAGE_odhcp6c_ext_prefix_class
++    int "Prefix Class Extension ID (0 = disabled)"
++    depends on PACKAGE_odhcp6c
++    default 0
++endef
++
+ define Package/odhcp6c/install
+ 	$(INSTALL_DIR) $(1)/usr/sbin/
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/odhcp6c $(1)/usr/sbin/
+diff --git a/package/odhcp6c/files/dhcpv6.script b/package/odhcp6c/files/dhcpv6.script
+index 324a823..d228014 100755
+--- a/package/odhcp6c/files/dhcpv6.script
++++ b/package/odhcp6c/files/dhcpv6.script
+@@ -64,23 +64,34 @@ setup_interface () {
+ 		entry="${entry#*,}"
+ 		local metric="${entry%%,*}"
+ 
+-		proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
++		if [ -z "$SOURCE_ROUTING" -o -z "$gw" ]; then
++			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
++		else
++			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "::/128"
++			for prefix in $PREFIXES $ADDRESSES; do
++				local paddr="${prefix%%,*}"
++				proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$paddr"
++			done
++		fi
+ 	done
+ 
++	proto_add_data
++	[ -n "$CER" ] && json_add_string cer "$CER"
++	proto_close_data
++
+ 	proto_send_update "$INTERFACE"
+ 
+ 	if [ -n "$AFTR_IP " -a -n "$IFACE_DSLITE" ]; then
+-uci -q batch <<-EOF >/dev/null
+-set network.$IFACE_DSLITE.proto=dslite
+-set network.$IFACE_DSLITE.auto=0
+-set network.$IFACE_DSLITE.peeraddr=$AFTR_IP
+-set network.$IFACE_DSLITE.tunlink=$INTERFACE
+-commit network
+-EOF
+-
+-		ifdown "$IFACE_DSLITE"
+-		/etc/init.d/network reload
+-		ifup "$IFACE_DSLITE"
++		json_init
++		json_add_string name "$IFACE_DSLITE"
++		json_add_string ifname "@$INTERFACE"
++		json_add_string proto "dslite"
++		json_add_string peeraddr "$AFTR_IP"
++		json_add_string tunlink "$INTERFACE"
++		[ -n "$ZONE_DSLITE" ] && json_add_string zone "$ZONE_DSLITE"
++		[ -n "$IFACE_DSLITE_DELEGATE" ] && json_add_boolean delegate "$IFACE_DSLITE_DELEGATE"
++		json_close_object
++		ubus call network add_dynamic "$(json_dump)"
+ 	fi
+ 
+ 	# TODO: $SNTP_IP $SIP_IP $SNTP_FQDN $SIP_DOMAIN
+diff --git a/package/odhcp6c/files/dhcpv6.sh b/package/odhcp6c/files/dhcpv6.sh
+index bf6cd9a..90a8371 100755
+--- a/package/odhcp6c/files/dhcpv6.sh
++++ b/package/odhcp6c/files/dhcpv6.sh
+@@ -5,23 +5,31 @@
+ init_proto "$@"
+ 
+ proto_dhcpv6_init_config() {
+-	proto_config_add_string "reqaddress"
+-	proto_config_add_string "reqprefix"
+-	proto_config_add_string "clientid"
+-	proto_config_add_string "reqopts"
+-	proto_config_add_string "noslaaconly"
+-	proto_config_add_string "norelease"
+-	proto_config_add_string "ip6prefix"
+-	proto_config_add_string "iface_dslite"
+-	proto_config_add_string "ifaceid"
++	renew_handler=1
++
++	proto_config_add_string 'reqaddress:or("try","force","none")'
++	proto_config_add_string 'reqprefix:or("auto","no",range(0, 64))'
++	proto_config_add_string clientid
++	proto_config_add_string 'reqopts:list(uinteger)'
++	proto_config_add_string 'noslaaconly:bool'
++	proto_config_add_string 'forceprefix:bool'
++	proto_config_add_string 'norelease:bool'
++	proto_config_add_string 'ip6prefix:ip6addr'
++	proto_config_add_string iface_dslite
++	proto_config_add_string zone_dslite
++	proto_config_add_string 'ifaceid:ip6addr'
++	proto_config_add_string 'sourcerouting:bool'
++	proto_config_add_string "userclass"
++	proto_config_add_string "vendorclass"
++	proto_config_add_boolean delegate
+ }
+ 
+ proto_dhcpv6_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local reqaddress reqprefix clientid reqopts noslaaconly norelease ip6prefix iface_dslite ifaceid
+-	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly norelease ip6prefix iface_dslite ifaceid
++	local reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite ifaceid sourcerouting userclass vendorclass delegate zone_dslite
++	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite ifaceid sourcerouting userclass vendorclass delegate zone_dslite
+ 
+ 
+ 	# Configure
+@@ -35,16 +43,25 @@ proto_dhcpv6_setup() {
+ 
+ 	[ "$noslaaconly" = "1" ] && append opts "-S"
+ 
++	[ "$forceprefix" = "1" ] && append opts "-F"
++
+ 	[ "$norelease" = "1" ] && append opts "-k"
+ 
+ 	[ -n "$ifaceid" ] && append opts "-i$ifaceid"
+ 
++	[ -n "$vendorclass" ] && append opts "-V$vendorclass"
++
++	[ -n "$userclass" ] && append opts "-u$userclass"
++
+ 	for opt in $reqopts; do
+ 		append opts "-r$opt"
+ 	done
+ 
+ 	[ -n "$ip6prefix" ] && proto_export "USERPREFIX=$ip6prefix"
+ 	[ -n "$iface_dslite" ] && proto_export "IFACE_DSLITE=$iface_dslite"
++	[ "$sourcerouting" != "0" ] && proto_export "SOURCE_ROUTING=1"
++	[ "$delegate" = "0" ] && proto_export "IFACE_DSLITE_DELEGATE=0"
++	[ -n "$zone_dslite" ] && proto_export "ZONE_DSLITE=$zone_dslite"
+ 
+ 	proto_export "INTERFACE=$config"
+ 	proto_run_command "$config" odhcp6c \
+@@ -52,6 +69,13 @@ proto_dhcpv6_setup() {
+ 		$opts $iface
+ }
+ 
++proto_dhcpv6_renew() {
++	local interface="$1"
++	# SIGUSR1 forces odhcp6c to renew its lease
++	local sigusr1="$(kill -l SIGUSR1)"
++	[ -n "$sigusr1" ] && proto_kill_command "$interface" $sigusr1
++}
++
+ proto_dhcpv6_teardown() {
+ 	local interface="$1"
+ 	proto_kill_command "$interface"
+diff --git a/package/odhcp6c/patches/001-fix-integer-overflow-after-50-days.patch b/package/odhcp6c/patches/001-fix-integer-overflow-after-50-days.patch
+deleted file mode 100644
+index 292d023..0000000
+--- a/package/odhcp6c/patches/001-fix-integer-overflow-after-50-days.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From 5b98f902f616bd9b96a2128587bc6995555a43c1 Mon Sep 17 00:00:00 2001
+-From: Steven Barth <steven@midlink.org>
+-Date: Fri, 7 Mar 2014 10:33:49 +0100
+-Subject: [PATCH] fix integer overflow after 50 days (thx Hauke Mehrtens)
+-
+----
+- src/odhcp6c.c |    2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+-diff --git a/src/odhcp6c.c b/src/odhcp6c.c
+-index 3c6b3b0..ba11ced 100644
+---- a/src/odhcp6c.c
+-+++ b/src/odhcp6c.c
+-@@ -470,7 +470,7 @@ uint64_t odhcp6c_get_milli_time(void)
+- {
+- 	struct timespec t = {0, 0};
+- 	syscall(SYS_clock_gettime, CLOCK_MONOTONIC, &t);
+--	return t.tv_sec * 1000 + t.tv_nsec / 1000000;
+-+	return ((uint64_t)t.tv_sec) * 1000 + ((uint64_t)t.tv_nsec) / 1000000;
+- }
+- 
+- 
+--- 
+-1.7.10.4
+-
