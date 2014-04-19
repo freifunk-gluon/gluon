@@ -60,7 +60,7 @@ index bcf4481..fc9834a 100644
  $(eval $(call BuildPackage,libjson-script))
 +$(eval $(call BuildPackage,libubox-lua))
 diff --git a/package/netifd/Makefile b/package/netifd/Makefile
-index 5f2ee03..21137d0 100644
+index 5f2ee03..1d7f363 100644
 --- a/package/netifd/Makefile
 +++ b/package/netifd/Makefile
 @@ -1,13 +1,13 @@
@@ -68,7 +68,7 @@ index 5f2ee03..21137d0 100644
  
  PKG_NAME:=netifd
 -PKG_VERSION:=2013-07-16
-+PKG_VERSION:=2014-04-11
++PKG_VERSION:=2014-04-19
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
@@ -76,7 +76,7 @@ index 5f2ee03..21137d0 100644
 +PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=2674941b06c1ec67f1aff1bff9212e1372106641
-+PKG_SOURCE_VERSION:=d2a33f3f0fe704e4396fa2ada08401cb955ba7cb
++PKG_SOURCE_VERSION:=ede9739fe90f5da09f14481d10a4f11c000072de
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
  PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
  # PKG_MIRROR_MD5SUM:=
