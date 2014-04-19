@@ -234,6 +234,54 @@ index 0000000..510ee05
 + 
 + void
 + __vlist_simple_init(struct vlist_simple_tree *tree, int offset)
+diff --git a/package/ubus/Makefile b/package/ubus/Makefile
+index be18fb5..53fb586 100644
+--- a/package/ubus/Makefile
++++ b/package/ubus/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=ubus
+-PKG_VERSION:=2013-08-08
++PKG_VERSION:=2014-03-18
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=git://nbd.name/luci2/ubus.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=b20a8a01c7faea5bcc9d34d10dcf7736589021b8
++PKG_SOURCE_VERSION:=1d5ac421a5b3dca60562e876ba70d0c2fe46b3d2
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MIRROR_MD5SUM:=
+ CMAKE_INSTALL:=1
+@@ -38,6 +38,7 @@ define Package/libubus
+   SECTION:=libs
+   CATEGORY:=Libraries
+   DEPENDS:=+libubox
++  ABI_VERSION:=$(PKG_VERSION)
+   TITLE:=OpenWrt RPC client library
+ endef
+ 
+@@ -66,7 +67,7 @@ endef
+ 
+ define Package/libubus/install
+ 	$(INSTALL_DIR) $(1)/lib
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/lib/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so $(1)/lib/
+ endef
+ 
+ define Package/libubus-lua/install
+@@ -74,8 +75,7 @@ define Package/libubus-lua/install
+ 	$(CP) $(PKG_BUILD_DIR)/lua/ubus.so $(1)/usr/lib/lua/
+ endef
+ 
+-$(eval $(call BuildPackage,ubus))
+-$(eval $(call BuildPackage,ubusd))
+ $(eval $(call BuildPackage,libubus))
+ $(eval $(call BuildPackage,libubus-lua))
+-
++$(eval $(call BuildPackage,ubus))
++$(eval $(call BuildPackage,ubusd))
 diff --git a/package/uci/Makefile b/package/uci/Makefile
 index 54ad80b..29f9ef3 100644
 --- a/package/uci/Makefile
