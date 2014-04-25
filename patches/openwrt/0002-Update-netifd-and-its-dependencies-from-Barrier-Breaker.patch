@@ -1,0 +1,311 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 11 Jan 2014 11:47:31 +0100
+Subject: Update netifd and its dependencies from Barrier Breaker
+
+diff --git a/package/libubox/Makefile b/package/libubox/Makefile
+index bcf4481..fc9834a 100644
+--- a/package/libubox/Makefile
++++ b/package/libubox/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=libubox
+-PKG_VERSION:=2013-10-19
++PKG_VERSION:=2014-03-18
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_URL:=git://nbd.name/luci2/libubox.git
++PKG_SOURCE_URL:=http://git.openwrt.org/project/libubox.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=734d28eb1a46358743cf8837c91e5d46695c3b91
++PKG_SOURCE_VERSION:=4f44401ae8d23465261cef80b87630ffccd5a864
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MIRROR_MD5SUM:=
+ CMAKE_INSTALL:=1
+@@ -26,6 +26,7 @@ define Package/libubox
+   SECTION:=libs
+   CATEGORY:=Libraries
+   TITLE:=Basic utility library
++  ABI_VERSION:=$(PKG_VERSION)
+   DEPENDS:=
+ endef
+ 
+@@ -54,6 +55,13 @@ define Package/libjson-script
+   TITLE:=Minimalistic JSON based scripting engine
+ endef
+ 
++define Package/libubox-lua
++  SECTION:=libs
++  CATEGORY:=Libraries
++  DEPENDS:=+libubox +liblua
++  TITLE:=Lua binding for the OpenWrt Basic utility library
++endef
++
+ TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
+ CMAKE_OPTIONS = \
+ 	-DLUAPATH=/usr/lib/lua
+@@ -79,7 +87,13 @@ define Package/libjson-script/install
+ 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libjson_script.so $(1)/lib/
+ endef
+ 
++define Package/libubox-lua/install
++	$(INSTALL_DIR) $(1)/usr/lib/lua
++	$(CP) $(PKG_BUILD_DIR)/lua/uloop.so $(1)/usr/lib/lua/
++endef
++
+ $(eval $(call BuildPackage,libubox))
+ $(eval $(call BuildPackage,libblobmsg-json))
+ $(eval $(call BuildPackage,jshn))
+ $(eval $(call BuildPackage,libjson-script))
++$(eval $(call BuildPackage,libubox-lua))
+diff --git a/package/netifd/Makefile b/package/netifd/Makefile
+index 5f2ee03..1d7f363 100644
+--- a/package/netifd/Makefile
++++ b/package/netifd/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=netifd
+-PKG_VERSION:=2013-07-16
++PKG_VERSION:=2014-04-19
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_URL:=git://nbd.name/luci2/netifd.git
++PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=2674941b06c1ec67f1aff1bff9212e1372106641
++PKG_SOURCE_VERSION:=ede9739fe90f5da09f14481d10a4f11c000072de
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+ # PKG_MIRROR_MD5SUM:=
+@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/cmake.mk
+ define Package/netifd
+   SECTION:=base
+   CATEGORY:=Base system
+-  DEPENDS:=+libuci +libnl-tiny +libubus +ubus +ubusd +jshn
++  DEPENDS:=+libuci +libnl-tiny +libubus +ubus +ubusd +jshn +libubox
+   TITLE:=OpenWrt Network Interface Configuration Daemon
+ endef
+ 
+@@ -40,7 +40,7 @@ define Package/netifd/install
+ 	$(INSTALL_DIR) $(1)/sbin
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/netifd $(1)/sbin/
+ 	$(CP) ./files/* $(1)/
+-	$(CP) $(PKG_BUILD_DIR)/dummy/netifd-proto.sh $(1)/lib/netifd/
++	$(CP) $(PKG_BUILD_DIR)/scripts/* $(1)/lib/netifd/
+ endef
+ 
+ $(eval $(call BuildPackage,netifd))
+diff --git a/package/netifd/files/etc/hotplug.d/iface/00-netstate b/package/netifd/files/etc/hotplug.d/iface/00-netstate
+index c50cda6..023025c 100644
+--- a/package/netifd/files/etc/hotplug.d/iface/00-netstate
++++ b/package/netifd/files/etc/hotplug.d/iface/00-netstate
+@@ -1,6 +1,5 @@
+ [ ifup = "$ACTION" ] && {
+ 	uci_toggle_state network "$INTERFACE" up 1
+-	uci_toggle_state network "$INTERFACE" connect_time $(sed -ne 's![^0-9].*$!!p' /proc/uptime)
+ 	[ -n "$DEVICE" ] && {
+ 		uci_toggle_state network "$INTERFACE" device "$(uci -q get network.$INTERFACE.ifname)"
+ 		uci_toggle_state network "$INTERFACE" ifname "$DEVICE"
+diff --git a/package/netifd/files/lib/netifd/dhcp.script b/package/netifd/files/lib/netifd/dhcp.script
+index 50163da..948c3cd 100755
+--- a/package/netifd/files/lib/netifd/dhcp.script
++++ b/package/netifd/files/lib/netifd/dhcp.script
+@@ -44,19 +44,20 @@ setup_interface () {
+ 		ip6rd="${ip6rd#* }"
+ 		local ip6rdbr="${ip6rd%% *}"
+ 
+-uci -q batch <<-EOF >/dev/null
+-set network.$IFACE6RD.proto=6rd
+-set network.$IFACE6RD.auto=0
+-set network.$IFACE6RD.peeraddr=$ip6rdbr
+-set network.$IFACE6RD.ip4prefixlen=$v4mask
+-set network.$IFACE6RD.ip6prefix=$ip6rdprefix
+-set network.$IFACE6RD.ip6prefixlen=$ip6rdprefixlen
+-commit network
+-EOF
++		json_init
++		json_add_string name "$IFACE6RD"
++		json_add_string ifname "@$INTERFACE"
++		json_add_string proto "6rd"
++		json_add_string peeraddr "$ip6rdbr"
++		json_add_int ip4prefixlen "$v4mask"
++		json_add_string ip6prefix "$ip6rdprefix"
++		json_add_int ip6prefixlen "$ip6rdprefixlen"
++		json_add_string tunlink "$INTERFACE"
++		[ -n "$IFACE6RD_DELEGATE" ] && json_add_boolean delegate "$IFACE6RD_DELEGATE"
++		[ -n "$ZONE6RD" ] && json_add_string zone "$ZONE6RD"
++		json_close_object
+ 
+-		ifdown "$IFACE6RD"
+-		/etc/init.d/network reload
+-		ifup "$IFACE6RD"
++		ubus call network add_dynamic "$(json_dump)"
+ 	fi
+ 
+ 	# TODO
+diff --git a/package/netifd/files/lib/netifd/proto/dhcp.sh b/package/netifd/files/lib/netifd/proto/dhcp.sh
+index a270c68..2e58c19 100755
+--- a/package/netifd/files/lib/netifd/proto/dhcp.sh
++++ b/package/netifd/files/lib/netifd/proto/dhcp.sh
+@@ -5,31 +5,42 @@
+ init_proto "$@"
+ 
+ proto_dhcp_init_config() {
+-	proto_config_add_string "ipaddr"
+-	proto_config_add_string "netmask"
+-	proto_config_add_string "hostname"
+-	proto_config_add_string "clientid"
+-	proto_config_add_string "vendorid"
+-	proto_config_add_boolean "broadcast"
+-	proto_config_add_string "reqopts"
+-	proto_config_add_string "iface6rd"
++	renew_handler=1
++
++	proto_config_add_string 'ipaddr:ipaddr'
++	proto_config_add_string 'hostname:hostname'
++	proto_config_add_string clientid
++	proto_config_add_string vendorid
++	proto_config_add_boolean 'broadcast:bool'
++	proto_config_add_string 'reqopts:list(string)'
++	proto_config_add_string iface6rd
++	proto_config_add_string sendopts
++	proto_config_add_boolean delegate
++	proto_config_add_string zone6rd
+ }
+ 
+ proto_dhcp_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd
+-	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd
++	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd
++	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd
+ 
+ 	local opt dhcpopts
+ 	for opt in $reqopts; do
+ 		append dhcpopts "-O $opt"
+ 	done
+ 
++	for opt in $sendopts; do
++		append dhcpopts "-x $opt"
++	done
++
+ 	[ "$broadcast" = 1 ] && broadcast="-B" || broadcast=
+ 	[ -n "$clientid" ] && clientid="-x 0x3d:${clientid//:/}" || clientid="-C"
+ 	[ -n "$iface6rd" ] && proto_export "IFACE6RD=$iface6rd"
++	[ -n "$iface6rd" ] && append dhcpopts "-O 212"
++	[ -n "$zone6rd" ] && proto_export "ZONE6RD=$zone6rd"
++	[ "$delegate" = "0" ] && proto_export "IFACE6RD_DELEGATE=0"
+ 
+ 	proto_export "INTERFACE=$config"
+ 	proto_run_command "$config" udhcpc \
+@@ -42,6 +53,13 @@ proto_dhcp_setup() {
+ 		$clientid $broadcast $dhcpopts
+ }
+ 
++proto_dhcp_renew() {
++	local interface="$1"
++	# SIGUSR1 forces udhcpc to renew its lease
++	local sigusr1="$(kill -l SIGUSR1)"
++	[ -n "$sigusr1" ] && proto_kill_command "$interface" $sigusr1
++}
++
+ proto_dhcp_teardown() {
+ 	local interface="$1"
+ 	proto_kill_command "$interface"
+diff --git a/package/netifd/patches/001-musl_af_inet_include.patch b/package/netifd/patches/001-musl_af_inet_include.patch
+new file mode 100644
+index 0000000..510ee05
+--- /dev/null
++++ b/package/netifd/patches/001-musl_af_inet_include.patch
+@@ -0,0 +1,11 @@
++diff -urN netifd-2012-10-29/utils.c netifd-2012-10-29.new/utils.c
++--- netifd-2012-10-29/utils.c	2012-11-23 17:15:39.000000000 +0100
+++++ netifd-2012-10-29.new/utils.c	2012-11-23 17:16:53.409244361 +0100
++@@ -17,6 +17,7 @@
++ 
++ #include <arpa/inet.h>
++ #include <netinet/in.h>
+++#include <sys/socket.h>
++ 
++ void
++ __vlist_simple_init(struct vlist_simple_tree *tree, int offset)
+diff --git a/package/ubus/Makefile b/package/ubus/Makefile
+index be18fb5..53fb586 100644
+--- a/package/ubus/Makefile
++++ b/package/ubus/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=ubus
+-PKG_VERSION:=2013-08-08
++PKG_VERSION:=2014-03-18
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=git://nbd.name/luci2/ubus.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=b20a8a01c7faea5bcc9d34d10dcf7736589021b8
++PKG_SOURCE_VERSION:=1d5ac421a5b3dca60562e876ba70d0c2fe46b3d2
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MIRROR_MD5SUM:=
+ CMAKE_INSTALL:=1
+@@ -38,6 +38,7 @@ define Package/libubus
+   SECTION:=libs
+   CATEGORY:=Libraries
+   DEPENDS:=+libubox
++  ABI_VERSION:=$(PKG_VERSION)
+   TITLE:=OpenWrt RPC client library
+ endef
+ 
+@@ -66,7 +67,7 @@ endef
+ 
+ define Package/libubus/install
+ 	$(INSTALL_DIR) $(1)/lib
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/lib/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/*.so $(1)/lib/
+ endef
+ 
+ define Package/libubus-lua/install
+@@ -74,8 +75,7 @@ define Package/libubus-lua/install
+ 	$(CP) $(PKG_BUILD_DIR)/lua/ubus.so $(1)/usr/lib/lua/
+ endef
+ 
+-$(eval $(call BuildPackage,ubus))
+-$(eval $(call BuildPackage,ubusd))
+ $(eval $(call BuildPackage,libubus))
+ $(eval $(call BuildPackage,libubus-lua))
+-
++$(eval $(call BuildPackage,ubus))
++$(eval $(call BuildPackage,ubusd))
+diff --git a/package/uci/Makefile b/package/uci/Makefile
+index 54ad80b..29f9ef3 100644
+--- a/package/uci/Makefile
++++ b/package/uci/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2008-2013 OpenWrt.org
++# Copyright (C) 2008-2014 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -7,13 +7,13 @@
+ 
+ include $(TOPDIR)/rules.mk
+ 
+-UCI_VERSION=2013-06-11
++UCI_VERSION=2014-04-11
+ UCI_RELEASE=1
+ 
+ PKG_NAME:=uci
+ PKG_VERSION:=$(UCI_VERSION)$(if $(UCI_RELEASE),.$(UCI_RELEASE))
+ PKG_RELEASE:=1
+-PKG_REV:=c9c9d5cb085acc58b6579ace83fb79c085a9db27
++PKG_REV:=e339407372ffc70b1451e4eda218c01aa95a6a7f
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=git://nbd.name/uci.git

@@ -10,9 +10,9 @@
 RELEASE:=Attitude Adjustment
 PREP_MK= OPENWRT_BUILD= QUIET=0
 
--include $(TOPDIR)/include/verbose.mk
+include $(GLUONDIR)/include/verbose.mk
 
-REVISION:=$(shell cd $(TOPDIR) && ./scripts/getver.sh 2>/dev/null)
+REVISION:=$(shell [ -d $(TOPDIR) ] && cd $(TOPDIR) && ./scripts/getver.sh 2>/dev/null)
 
 HOSTCC ?= gcc
 OPENWRTVERSION:=$(RELEASE)$(if $(REVISION), ($(REVISION)))

@@ -14,12 +14,13 @@ $(eval $(call GluonModel,TLWR741,tl-wr741nd-v1-squashfs,tp-link-tl-wr741n-nd-v1)
 $(eval $(call GluonModel,TLWR741,tl-wr741nd-v2-squashfs,tp-link-tl-wr741n-nd-v2))
 $(eval $(call GluonModel,TLWR741,tl-wr741nd-v4-squashfs,tp-link-tl-wr741n-nd-v4))
 
-# TL-WR841N/ND v3, v5, v7, v8
+# TL-WR841N/ND v3, v5, v7, v8, v9
 $(eval $(call GluonProfile,TLWR841))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v3-squashfs,tp-link-tl-wr841n-nd-v3))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v5-squashfs,tp-link-tl-wr841n-nd-v5))
 $(eval $(call GluonModel,TLWR841,tl-wr841nd-v7-squashfs,tp-link-tl-wr841n-nd-v7))
 $(eval $(call GluonModel,TLWR841,tl-wr841n-v8-squashfs,tp-link-tl-wr841n-nd-v8))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v9-squashfs,tp-link-tl-wr841n-nd-v9))
 
 # TL-WR842N/ND v1
 $(eval $(call GluonProfile,TLWR842))
@@ -40,6 +41,10 @@ $(eval $(call GluonProfile,TLWDR4300))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3500-v1-squashfs,tp-link-tl-wdr3500-v1))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr3600-v1-squashfs,tp-link-tl-wdr3600-v1))
 $(eval $(call GluonModel,TLWDR4300,tl-wdr4300-v1-squashfs,tp-link-tl-wdr4300-v1))
+
+# TL-WA901N/ND v2
+$(eval $(call GluonProfile,TLWA901))
+$(eval $(call GluonModel,TLWA901,tl-wa901nd-v2-squashfs,tp-link-tl-wa901n-nd-v2))
 
 # TL-MR3020 v1
 $(eval $(call GluonProfile,TLMR3020))
@@ -63,3 +68,7 @@ $(eval $(call GluonModel,UBNT,ubnt-bullet-m-squashfs,ubiquiti-bullet-m))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-squashfs,ubiquiti-nanostation-m))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-squashfs,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdoor))
+
+# D-Link DIR-825 rev. B1
+$(eval $(call GluonProfile,DIR825B1))
+$(eval $(call GluonModel,DIR825B1,dir-825-b1-squashfs,d-link-dir-825-rev-b1))
