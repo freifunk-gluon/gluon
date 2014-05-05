@@ -3881,10 +3881,10 @@ index 7b50154..3f749e9 100644
   	pm_qos_remove_notifier(PM_QOS_NETWORK_LATENCY,
   			       &local->network_latency_notifier);
 diff --git a/package/mac80211/patches/300-pending_work.patch b/package/mac80211/patches/300-pending_work.patch
-index a1af6c2..1405cc3 100644
+index a1af6c2..892f51e 100644
 --- a/package/mac80211/patches/300-pending_work.patch
 +++ b/package/mac80211/patches/300-pending_work.patch
-@@ -1,4153 +1,378 @@
+@@ -1,4153 +1,543 @@
 -commit 93f310a38a1d81a4bc8fcd9bf29628bd721cf2ef
 -Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sun Apr 6 23:35:28 2014 +0200
@@ -3921,37 +3921,23 @@ index a1af6c2..1405cc3 100644
 -commit 3a0f984b1cdcd6a9f8c441635ef3b05d58547f4e
 -Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Tue Mar 11 14:03:32 2014 +0100
-+commit 8c7ae357cc5b6bd037ad2d666e9f3789cf882925
-+Author: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
-+Date:   Wed Apr 23 15:07:57 2014 +0530
- 
+-
 -    ath9k_hw: set ANI firstep as absolute values instead of relative
 -    
 -    On older chips, the INI value differ in similar ways as cycpwr_thr1, so
 -    convert it to absolute values as well.
-+    ath9k: fix race in setting ATH_OP_INVALID
-     
+-    
 -    Since the ANI algorithm is different here compared to the old
 -    implementation (fewer steps, controlled at a different point in time),
 -    it makes sense to use values similar to what would be applied for newer
 -    chips, just without relying on INI defaults.
-+    The commit "ath9k: move sc_flags to ath_common" moved setting
-+    ATH_OP_INVALID flag below ieee80211_register_hw. This is causing
-+    the flag never being cleared randomly as the drv_start is called
-+    prior to setting flag. Fix this by setting the flag prior to
-+    register_hw.
-     
+-    
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+    Signed-off-by: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
-+    Signed-off-by: John W. Linville <linville@tuxdriver.com>
- 
+-
 -commit 91d70d40400c569b49605b78fd7c43e9405694f4
 -Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Tue Mar 11 14:00:37 2014 +0100
-+commit c82552c5b0cb1735dbcbad78b1ffc6d3c212dc56
-+Author: Tim Harvey <tharvey@gateworks.com>
-+Date:   Mon Apr 21 16:14:57 2014 -0700
- 
+-
 -    ath9k_hw: set ANI cycpwr_thr1 as absolute values instead of relative
 -    
 -    The table was copied from the ANI implementation of AR9300. It assumes
@@ -3960,26 +3946,22 @@ index a1af6c2..1405cc3 100644
 -    
 -    On older chips, the differences are bigger and especially AR5008/AR9001
 -    are configured to much more sensitive values than what is useful.
-+    ath9k: add a recv budget
-     
+-    
 -    Improve ANI behavior by reverting to the absolute values used in the
 -    previous implementation (expressed as a simple formula instead of the
 -    old table).
-+    Implement a recv budget so that in cases of high traffic we still allow other
-+    taskets to get processed.
-     
+-    
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
--
++commit 4c8a3486cb577d40c1ef75f0a8dc9a04773eef83
++Author: Nickolay Ledovskikh <nledovskikh@gmail.com>
++Date:   Fri Apr 25 22:53:34 2014 +0400
+ 
 -commit c977493766310a825f406836636ffd66e1447783
 -Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Mon Mar 10 19:52:56 2014 +0100
 -
 -    ath9k_hw: remove ANI function restrictions for AP mode
-+    Without this, we can encounter a host of issues during high wireless traffic
-+    reception depending on system load including rcu stall's detected (ARM),
-+    soft lockups, failure to service critical tasks such as watchdog resets,
-+    and triggering of the tx stuck tasklet.
-     
+-    
 -    The primary purpose of this piece of code was to selectively disable
 -    OFDM weak signal detection. The checks for this are elsewhere, and an
 -    earlier commit relaxed the restrictions for older chips, which are more
@@ -3992,64 +3974,74 @@ index a1af6c2..1405cc3 100644
 -Date:   Sun Mar 9 11:25:43 2014 +0100
 -
 -    ath9k: clean up and enhance ANI debugfs file
-+    The same thing was proposed previously by Ben:
-+     http://www.spinics.net/lists/linux-wireless/msg112891.html
++    ath5k: Fix AR5K_PHY_TXPOWER_RATE_MAX register value setting.
      
 -    Unify scnprintf calls and include the current OFDM/CCK immunity level.
-+    The only difference here is that I make sure only processed packets are counted
-+    in the budget by checking at the end of the rx loop.
++    I was reading ath5k power setting code and
++    noticed typing error in ath5k_hw_txpower function.
++    Invalid value was written to AR5K_PHY_TXPOWER_RATE_MAX
++    register.
      
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+    Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-+    Acked-by: Felix Fietkau <nbd@openwrt.org>
++    Signed-off-by: Nikolay Ledovskikh <nledovskikh@gmail.com>
++    Acked-by: Nick Kossifidis <mickflemm@gmail.com>
 +    Signed-off-by: John W. Linville <linville@tuxdriver.com>
  
 -commit 22e298b5a3a8a49e33805d4e351965123dede35b
 -Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sun Mar 9 10:58:47 2014 +0100
-+commit 3a758134e66ca74a9df792616b5288b2fa2cfd7f
-+Author: Tim Harvey <tharvey@gateworks.com>
-+Date:   Mon Apr 21 16:14:56 2014 -0700
++commit 4d76248013dbb1948429555208900a585b0f351d
++Author: Janusz Dziedzic <janusz.dziedzic@tieto.com>
++Date:   Tue Apr 8 13:38:43 2014 +0200
  
 -    ath9k: fix ready time of the multicast buffer queue
-+    ath9k: fix possible hang on flush
-     
+-    
 -    qi->tqi_readyTime is written directly to registers that expect
 -    microseconds as unit instead of TU.
 -    When setting the CABQ ready time, cur_conf->beacon_interval is in TU, so
 -    convert it to microseconds before passing it to ath9k_hw.
-+    If a flush is requested, make sure to clear the descriptor once we've
-+    processed it.
++    ath9k: Enable DFS only when ATH9K_DFS_CERTIFIED
      
 -    This should hopefully fix some Tx DMA issues with buffered multicast
 -    frames in AP mode.
-+    This resolves a hang that will occur if all RX descriptors are full when a
-+    flush is requested.
++    Add DFS interface combination only when
++    CONFIG_ATH9K_DFS_CERTIFIED is set. In other case
++    user can run CAC/beaconing without proper handling
++    of pulse events (without radar detection activated).
      
 -    Cc: stable@vger.kernel.org
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+    Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-+    Acked-by: Felix Fietkau <nbd@openwrt.org>
++    Reported-by: Cedric Voncken <cedric.voncken@acksys.fr>
++    Signed-off-by: Janusz Dziedzic <janusz.dziedzic@tieto.com>
 +    Signed-off-by: John W. Linville <linville@tuxdriver.com>
  
 -commit fcb064fdd5a27bec8d24099bc0172468f34c97cb
-+commit eefb1d6adc4c60d219182b8917e4567484ce07fc
- Author: Felix Fietkau <nbd@openwrt.org>
+-Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sun Mar 9 09:43:09 2014 +0100
--
++commit c83a4e5156a4b4dd22137d33a5625440982d6d37
++Author: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++Date:   Mon Apr 28 21:17:08 2014 +0530
+ 
 -    ath9k_hw: fix unreachable code in baseband hang detection code
--    
++    ath9k_hw: fix worse EVM for 11b rates
+     
 -    The commit "ath9k: reduce baseband hang detection false positive rate"
 -    added a delay in the loop checking the baseband state, however it was
 -    unreachable due to previous 'continue' statements.
--    
++    Adjust FIR filter co-efficients to improve EVM for 11b rates.
+     
 -    Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
--
++    Signed-off-by: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++    Signed-off-by: John W. Linville <linville@tuxdriver.com>
+ 
 -commit 31959d8df39319e32c6d5ba9c135727be90cfad7
 -Author: Michal Kazior <michal.kazior@tieto.com>
 -Date:   Fri Mar 7 08:09:38 2014 +0100
--
++commit 8aab2c7a2f4a957e344db429dfb1190ae59ce8b5
++Author: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++Date:   Mon Apr 28 21:17:07 2014 +0530
+ 
 -    mac80211: fix possible NULL dereference
 -    
 -    If chanctx is missing on a given vif then the band
@@ -4061,24 +4053,37 @@ index a1af6c2..1405cc3 100644
 -    
 -    [ 4605.207223] BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
 -    [ 4605.210789] IP: [<ffffffffa07b5635>] ieee80211_parse_bitrates+0x65/0x110 [mac80211]
--    
++    ath9k_hw: update ar9300 initvals
+     
 -    The splat was preceeded by WARN_ON(!chanctx_conf)
 -    in ieee80211_get_sdata_band().
--    
++     * rfsat gainchange hysteresis of rf_gain stuck with large
++       interference present.
+     
 -    Signed-off-by: Michal Kazior <michal.kazior@tieto.com>
-+Date:   Mon Apr 28 18:27:41 2014 +0200
++    Signed-off-by: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++    Signed-off-by: John W. Linville <linville@tuxdriver.com>
  
 -commit 6c5a3ffa0a2d22c091a2717f427259bacf77ac5e
 -Author: Michael Braun <michael-dev@fami-braun.de>
 -Date:   Thu Mar 6 15:08:43 2014 +0100
--
++commit 8c7ae357cc5b6bd037ad2d666e9f3789cf882925
++Author: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++Date:   Wed Apr 23 15:07:57 2014 +0530
+ 
 -    mac80211: fix WPA with VLAN on AP side with ps-sta again
--    
++    ath9k: fix race in setting ATH_OP_INVALID
+     
 -    commit de74a1d9032f4d37ea453ad2a647e1aff4cd2591
 -      "mac80211: fix WPA with VLAN on AP side with ps-sta"
 -    fixed an issue where queued multicast packets would
 -    be sent out encrypted with the key of an other bss.
--    
++    The commit "ath9k: move sc_flags to ath_common" moved setting
++    ATH_OP_INVALID flag below ieee80211_register_hw. This is causing
++    the flag never being cleared randomly as the drv_start is called
++    prior to setting flag. Fix this by setting the flag prior to
++    register_hw.
+     
 -    commit "7cbf9d017dbb5e3276de7d527925d42d4c11e732"
 -      "mac80211: fix oops on mesh PS broadcast forwarding"
 -    essentially reverted it, because vif.type cannot be AP_VLAN
@@ -4095,18 +4100,25 @@ index a1af6c2..1405cc3 100644
 -    Cc: <linux-wireless@vger.kernel.org>
 -    Cc: <projekt-wlan@fem.tu-ilmenau.de>
 -    Signed-off-by: Michael Braun <michael-dev@fami-braun.de>
--
++    Signed-off-by: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++    Signed-off-by: John W. Linville <linville@tuxdriver.com>
+ 
 -commit 9d6ab9bdb9b368a6cf9519f0f92509b5b2c297ec
 -Author: Johannes Berg <johannes.berg@intel.com>
 -Date:   Mon Mar 3 14:19:08 2014 +0100
--
++commit c82552c5b0cb1735dbcbad78b1ffc6d3c212dc56
++Author: Tim Harvey <tharvey@gateworks.com>
++Date:   Mon Apr 21 16:14:57 2014 -0700
+ 
 -    cfg80211: remove racy beacon_interval assignment
--    
++    ath9k: add a recv budget
+     
 -    In case of AP mode, the beacon interval is already reset to
 -    zero inside cfg80211_stop_ap(), and in the other modes it
 -    isn't relevant. Remove the assignment to remove a potential
 -    race since the assignment isn't properly locked.
-+    ath9k: remove tid->paused flag
++    Implement a recv budget so that in cases of high traffic we still allow other
++    taskets to get processed.
      
 -    Reported-by: Michal Kazior <michal.kazior@tieto.com>
 -    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
@@ -4116,82 +4128,86 @@ index a1af6c2..1405cc3 100644
 -Date:   Fri Feb 28 18:52:56 2014 +0100
 -
 -    ath9k_hw: tweak noise immunity thresholds for older chipsets
-+    There are some corner cases where the driver could get stuck with a full
-+    tid queue that is paused, leading to a software tx queue hang.
++    Without this, we can encounter a host of issues during high wireless traffic
++    reception depending on system load including rcu stall's detected (ARM),
++    soft lockups, failure to service critical tasks such as watchdog resets,
++    and triggering of the tx stuck tasklet.
      
 -    Older chipsets are more sensitive to high PHY error counts, and the
 -    current noise immunity thresholds were based on tests run at QCA with
 -    newer chipsets.
-+    Since the tx queueing rework, pausing per-tid queues on aggregation
-+    session setup is no longer necessary. The driver will assign sequence
-+    numbers to buffered frames when a new session is established, in order
-+    to get the correct starting sequence number.
++    The same thing was proposed previously by Ben:
++     http://www.spinics.net/lists/linux-wireless/msg112891.html
      
 -    This patch brings back the values from the old ANI implementation for
 -    old chipsets, and it also disables weak signal detection on an earlier
 -    noise immunity level, to improve overall radio stability on affected
 -    devices.
-+    mac80211 prevents new frames from entering the queue during setup.
++    The only difference here is that I make sure only processed packets are counted
++    in the budget by checking at the end of the rx loop.
      
-     Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+-    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++    Signed-off-by: Tim Harvey <tharvey@gateworks.com>
++    Acked-by: Felix Fietkau <nbd@openwrt.org>
++    Signed-off-by: John W. Linville <linville@tuxdriver.com>
  
 -commit 431e506da5953adc3b65af25f4b90873d528c115
-+commit 98a713933d8495f4078f561c1e651b738dd5b531
- Author: Felix Fietkau <nbd@openwrt.org>
+-Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Fri Feb 28 18:44:13 2014 +0100
-+Date:   Sun Apr 27 14:49:03 2014 +0200
++commit 3a758134e66ca74a9df792616b5288b2fa2cfd7f
++Author: Tim Harvey <tharvey@gateworks.com>
++Date:   Mon Apr 21 16:14:56 2014 -0700
  
 -    ath9k_hw: toggle weak signal detection in AP mode on older chipsets
 -    
 -    The commit 80b4205b "ath9k: Fix OFDM weak signal detection for AP mode"
 -    prevented weak signal detection changes from taking effect in AP mode on
 -    all chipsets, claiming it is "not allowed".
-+    ath9k_hw: do not lower ANI setting below default on AR913x
++    ath9k: fix possible hang on flush
      
 -    The main reason for not disabling weak signal detection in AP mode is
 -    that typically beacon RSSI is used to track whether it is needed to
 -    boost range, and this is unavailable in AP mode for obvious reasons.
-+    When the amount of noise fluctuates strongly, low immunity settings
-+    can sometimes disrupt signal detection on AR913x chips. When that
-+    happens, no OFDM/CCK errors are reported anymore, and ANI tunes the
-+    radio to the lowest immunity settings.
-+    Usually rx/tx fails as well in that case.
++    If a flush is requested, make sure to clear the descriptor once we've
++    processed it.
      
 -    The problem with not disabling weak signal detection is that older
 -    chipsets are very sensitive to high PHY error counts. When faced with
 -    heavy noise, this can lead to an excessive amount of "Failed to stop
 -    TX DMA" errors in the field.
-+    To fix this, keep noise immunity settings at or above ANI default level,
-+    which will keep radio parameters at or above INI values.
++    This resolves a hang that will occur if all RX descriptors are full when a
++    flush is requested.
      
-     Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+-    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++    Signed-off-by: Tim Harvey <tharvey@gateworks.com>
++    Acked-by: Felix Fietkau <nbd@openwrt.org>
++    Signed-off-by: John W. Linville <linville@tuxdriver.com>
  
 -commit 98d1a6c5b14688ed030e81b889f607be308e0df9
-+commit 7cbb4c021bfd1e656f5b9953a947ab3c64e4e3b0
++commit eefb1d6adc4c60d219182b8917e4567484ce07fc
  Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Mon Feb 24 22:20:32 2014 +0100
-+Date:   Thu Apr 10 10:49:01 2014 +0200
++Date:   Mon Apr 28 18:27:41 2014 +0200
  
 -    ath9k: fix invalid descriptor discarding
-+    mac80211: exclude AP_VLAN interfaces from tx power calculation
-     
+-    
 -    Only set sc->rx.discard_next to rx_stats->rs_more when actually
 -    discarding the current descriptor.
--    
++    ath9k: remove tid->paused flag
+     
 -    Also, fix a detection of broken descriptors:
 -    First the code checks if the current descriptor is not done.
 -    Then it checks if the next descriptor is done.
 -    Add a check that afterwards checks the first descriptor again, because
 -    it might have been completed in the mean time.
--    
++    There are some corner cases where the driver could get stuck with a full
++    tid queue that is paused, leading to a software tx queue hang.
+     
 -    This fixes a regression introduced in
 -    commit 723e711356b5a8a95728a890e254e8b0d47b55cf
 -    "ath9k: fix handling of broken descriptors"
-+    Their power value is initialized to zero. This patch fixes an issue
-+    where the configured power drops to the minimum value when AP_VLAN
-+    interfaces are created/removed.
-     
-     Cc: stable@vger.kernel.org
+-    
+-    Cc: stable@vger.kernel.org
 -    Reported-by: Marco André Dinis <marcoandredinis@gmail.com>
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 -
@@ -4200,18 +4216,26 @@ index a1af6c2..1405cc3 100644
 -Date:   Mon Feb 24 11:43:50 2014 +0100
 -
 -    ath9k: reduce baseband hang detection false positive rate
--    
++    Since the tx queueing rework, pausing per-tid queues on aggregation
++    session setup is no longer necessary. The driver will assign sequence
++    numbers to buffered frames when a new session is established, in order
++    to get the correct starting sequence number.
+     
 -    Check if the baseband state remains stable, and add a small delay
 -    between register reads.
--    
--    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
--
++    mac80211 prevents new frames from entering the queue during setup.
+     
+     Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+ 
 -commit 118945bb12082e9d4edddc868d88143164e0f440
--Author: Felix Fietkau <nbd@openwrt.org>
++commit 98a713933d8495f4078f561c1e651b738dd5b531
+ Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sat Feb 22 14:55:23 2014 +0100
--
++Date:   Sun Apr 27 14:49:03 2014 +0200
+ 
 -    ath5k: set SURVEY_INFO_IN_USE on get_survey
--    
++    ath9k_hw: do not lower ANI setting below default on AR913x
+     
 -    Only one channel is returned - the one currently being used.
 -    
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
@@ -4221,46 +4245,60 @@ index a1af6c2..1405cc3 100644
 -Date:   Sat Feb 22 14:44:52 2014 +0100
 -
 -    ath9k: make some hardware reset log messages debug-only
--    
++    When the amount of noise fluctuates strongly, low immunity settings
++    can sometimes disrupt signal detection on AR913x chips. When that
++    happens, no OFDM/CCK errors are reported anymore, and ANI tunes the
++    radio to the lowest immunity settings.
++    Usually rx/tx fails as well in that case.
+     
 -    On some chips, baseband watchdog hangs are more common than others, and
 -    the driver has support for handling them.
 -    Interrupts even after a watchdog hang are also quite common, so there's
 -    not much point in spamming the user's logfiles.
--    
++    To fix this, keep noise immunity settings at or above ANI default level,
++    which will keep radio parameters at or above INI values.
+     
      Signed-off-by: Felix Fietkau <nbd@openwrt.org>
  
 -commit b14fbb554fc65a2e0b5c41a319269b0350f187e7
-+commit 0ca13e26341733bf9577287fb04a3bef0d2f5cc9
++commit 7cbb4c021bfd1e656f5b9953a947ab3c64e4e3b0
  Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sat Feb 22 14:35:25 2014 +0100
-+Date:   Wed Apr 9 00:07:01 2014 +0200
++Date:   Thu Apr 10 10:49:01 2014 +0200
  
 -    ath9k: do not set half/quarter channel flags in AR_PHY_MODE
-+    mac80211: suppress BSS info change notifications for AP_VLAN
-     
+-    
 -    5/10 MHz channel bandwidth is configured via the PLL clock, instead of
 -    the AR_PHY_MODE register. Using that register is AR93xx specific, and
 -    makes the mode incompatible with earlier chipsets.
-+    Fixes warnings on tx power changes
++    mac80211: exclude AP_VLAN interfaces from tx power calculation
      
 -    In some early versions, these flags were apparently applied at the wrong
 -    point in time and thus did not cause connectivity issues, however now
 -    they are causing problems, as pointed out in this OpenWrt ticket:
 -    
 -    https://dev.openwrt.org/ticket/14916
--    
--    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
--
++    Their power value is initialized to zero. This patch fixes an issue
++    where the configured power drops to the minimum value when AP_VLAN
++    interfaces are created/removed.
+     
++    Cc: stable@vger.kernel.org
+     Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+ 
 -commit 0f1cb7be2551b30b02cd54c897e0e29e483cfda5
--Author: Felix Fietkau <nbd@openwrt.org>
++commit 0ca13e26341733bf9577287fb04a3bef0d2f5cc9
+ Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sat Feb 22 13:43:29 2014 +0100
--
++Date:   Wed Apr 9 00:07:01 2014 +0200
+ 
 -    ath9k: fix ps-poll responses under a-mpdu sessions
--    
++    mac80211: suppress BSS info change notifications for AP_VLAN
+     
 -    When passing tx frames to the U-APSD queue for powersave poll responses,
 -    the ath_atx_tid pointer needs to be passed to ath_tx_setup_buffer for
 -    proper sequence number accounting.
--    
++    Fixes warnings on tx power changes
+     
 -    This fixes high latency and connection stability issues with ath9k
 -    running as AP and a few kinds of mobile phones as client, when PS-Poll
 -    is heavily used
@@ -4907,7 +4945,7 @@ index a1af6c2..1405cc3 100644
 -commit dfb6889a75c601aedb7450b7e606668e77da6679
 -Author: Johannes Berg <johannes.berg@intel.com>
 -Date:   Wed Jan 22 11:14:19 2014 +0200
- 
+-
 -    cfg80211: send scan results from work queue
 -    
 -    Due to the previous commit, when a scan finishes, it is in theory
@@ -4935,7 +4973,7 @@ index a1af6c2..1405cc3 100644
 -commit 45b7ab41fc08627d9a8428cb413d5d84662a9707
 -Author: Johannes Berg <johannes.berg@intel.com>
 -Date:   Wed Jan 22 11:14:18 2014 +0200
--
+ 
 -    cfg80211: fix scan done race
 -    
 -    When an interface/wdev is removed, any ongoing scan should be
@@ -6878,9 +6916,7 @@ index a1af6c2..1405cc3 100644
 - 				     !wdev->ibss_dfs_possible)
 - 				  ? CHAN_MODE_SHARED
 - 				  : CHAN_MODE_EXCLUSIVE;
-++	if (AR_SREV_9100(ah) && immunityLevel < ATH9K_ANI_OFDM_DEF_LEVEL)
-++		immunityLevel = ATH9K_ANI_OFDM_DEF_LEVEL;
- +
+-+
 -+			/* consider worst-case - IBSS can try to return to the
 -+			 * original user-specified channel as creator */
 -+			if (wdev->ibss_dfs_possible)
@@ -6911,7 +6947,9 @@ index a1af6c2..1405cc3 100644
 --			*chan = wdev->channel;
 -+			*chan = wdev->chandef.chan;
 - 			*chanmode = CHAN_MODE_SHARED;
--+
+++	if (AR_SREV_9100(ah) && immunityLevel < ATH9K_ANI_OFDM_DEF_LEVEL)
+++		immunityLevel = ATH9K_ANI_OFDM_DEF_LEVEL;
+ +
 -+			if (cfg80211_chandef_dfs_required(wdev->wiphy,
 -+							  &wdev->chandef))
 -+				*radar_detect |= BIT(wdev->chandef.width);
@@ -6927,9 +6965,7 @@ index a1af6c2..1405cc3 100644
 --		wdev->channel = setup->chandef.chan;
 -+		wdev->chandef = setup->chandef;
 - 	}
-+ 	if (!scan)
-+ 		aniState->ofdmNoiseImmunityLevel = immunityLevel;
-  
+- 
 - 	return err;
 -@@ -244,7 +244,7 @@ int cfg80211_set_mesh_channel(struct cfg
 - 		err = rdev_libertas_set_mesh_channel(rdev, wdev->netdev,
@@ -6937,9 +6973,8 @@ index a1af6c2..1405cc3 100644
 - 		if (!err)
 --			wdev->channel = chandef->chan;
 -+			wdev->chandef = *chandef;
-+@@ -235,6 +238,9 @@ static void ath9k_hw_set_cck_nil(struct 
-+ 		BEACON_RSSI(ah), ATH9K_ANI_RSSI_THR_LOW,
-+ 		ATH9K_ANI_RSSI_THR_HIGH);
++ 	if (!scan)
++ 		aniState->ofdmNoiseImmunityLevel = immunityLevel;
   
 - 		return err;
 - 	}
@@ -6957,7 +6992,10 @@ index a1af6c2..1405cc3 100644
 -@@ -772,7 +772,7 @@ void cfg80211_cac_event(struct net_devic
 - 	if (WARN_ON(!wdev->cac_started))
 - 		return;
-- 
++@@ -235,6 +238,9 @@ static void ath9k_hw_set_cck_nil(struct 
++ 		BEACON_RSSI(ah), ATH9K_ANI_RSSI_THR_LOW,
++ 		ATH9K_ANI_RSSI_THR_HIGH);
+  
 --	if (WARN_ON(!wdev->channel))
 -+	if (WARN_ON(!wdev->chandef.chan))
 - 		return;
@@ -6969,12 +7007,12 @@ index a1af6c2..1405cc3 100644
 - 			break;
 - 		}
 - 	}
--+
--+	if (is2GHz && !twiceMaxEdgePower)
--+		twiceMaxEdgePower = 60;
 ++	if (AR_SREV_9100(ah) && immunityLevel < ATH9K_ANI_CCK_DEF_LEVEL)
 ++		immunityLevel = ATH9K_ANI_CCK_DEF_LEVEL;
  +
+-+	if (is2GHz && !twiceMaxEdgePower)
+-+		twiceMaxEdgePower = 60;
+-+
 - 	return twiceMaxEdgePower;
 - }
 - 
@@ -7093,12 +7131,12 @@ index a1af6c2..1405cc3 100644
 -+	int magnitude, phase;
 - 	u32 tx_corr_coeff[MAX_MEASUREMENT][AR9300_MAX_CHAINS];
 - 	struct ath9k_hw_cal_data *caldata = ah->caldata;
-+ 	struct ath_atx_ac *ac = tid->ac;
-  
+- 
 -@@ -920,21 +923,30 @@ static void ar9003_hw_tx_iqcal_load_avg_
 - 		if (nmeasurement > MAX_MEASUREMENT)
 - 			nmeasurement = MAX_MEASUREMENT;
-- 
++ 	struct ath_atx_ac *ac = tid->ac;
+  
 --		/* detect outlier only if nmeasurement > 1 */
 --		if (nmeasurement > 1) {
 --			/* Detect magnitude outlier */
@@ -7273,16 +7311,14 @@ index a1af6c2..1405cc3 100644
 - 
 -@@ -1409,7 +1484,7 @@ skip_tx_iqcal:
 - 	}
-+@@ -1510,7 +1505,6 @@ void ath_tx_aggr_resume(struct ath_softc
-+ 	ath_txq_lock(sc, txq);
-  
+- 
 - 	if (txiqcal_done)
 --		ar9003_hw_tx_iq_cal_post_proc(ah, is_reusable);
 -+		ar9003_hw_tx_iq_cal_post_proc(ah, 0, is_reusable);
 - 	else if (caldata && test_bit(TXIQCAL_DONE, &caldata->cal_flags))
 - 		ar9003_hw_tx_iq_cal_reload(ah);
-+ 	tid->baw_size = IEEE80211_MIN_AMPDU_BUF << sta->ht_cap.ampdu_factor;
-+-	tid->paused = false;
++@@ -1510,7 +1505,6 @@ void ath_tx_aggr_resume(struct ath_softc
++ 	ath_txq_lock(sc, txq);
   
 -@@ -1455,14 +1530,38 @@ skip_tx_iqcal:
 - 	return true;
@@ -7321,7 +7357,9 @@ index a1af6c2..1405cc3 100644
 -+	bool status = true;
 - 	bool run_agc_cal = false, sep_iq_cal = false;
 -+	int i = 0;
-- 
++ 	tid->baw_size = IEEE80211_MIN_AMPDU_BUF << sta->ht_cap.ampdu_factor;
++-	tid->paused = false;
+  
 - 	/* Use chip chainmask only for calibration */
 - 	ar9003_hw_set_chain_masks(ah, ah->caps.rx_chainmask, ah->caps.tx_chainmask);
 -@@ -1485,7 +1584,12 @@ static bool ar9003_hw_init_cal_soc(struc
@@ -7607,20 +7645,7 @@ index a1af6c2..1405cc3 100644
 - 
 --static void cleanup_single_sta(struct sta_info *sta)
 -+static void __cleanup_single_sta(struct sta_info *sta)
-+@@ -781,6 +781,9 @@ int ath9k_init_device(u16 devid, struct 
-+ 	common = ath9k_hw_common(ah);
-+ 	ath9k_set_hw_capab(sc, hw);
-+ 
-++	/* Will be cleared in ath9k_start() */
-++	set_bit(ATH_OP_INVALID, &common->op_flags);
-++
-+ 	/* Initialize regulatory */
-+ 	error = ath_regd_init(&common->regulatory, sc->hw->wiphy,
-+ 			      ath9k_reg_notifier);
-+--- a/drivers/net/wireless/ath/ath9k/pci.c
-++++ b/drivers/net/wireless/ath/ath9k/pci.c
-+@@ -784,7 +784,6 @@ static int ath_pci_probe(struct pci_dev 
-  {
+- {
 - 	int ac, i;
 - 	struct tid_ampdu_tx *tid_tx;
 -@@ -99,7 +99,8 @@ static void cleanup_single_sta(struct st
@@ -7672,20 +7697,7 @@ index a1af6c2..1405cc3 100644
 --	err = sta_info_insert_drv_state(local, sdata, sta);
 --	if (err)
 --		goto out_err;
-+ 	struct ath_softc *sc;
-+ 	struct ieee80211_hw *hw;
-+-	struct ath_common *common;
-+ 	u8 csz;
-+ 	u32 val;
-+ 	int ret = 0;
-+@@ -877,10 +876,6 @@ static int ath_pci_probe(struct pci_dev 
-+ 	wiphy_info(hw->wiphy, "%s mem=0x%lx, irq=%d\n",
-+ 		   hw_name, (unsigned long)sc->mem, pdev->irq);
-+ 
-+-	/* Will be cleared in ath9k_start() */
-+-	common = ath9k_hw_common(sc->sc_ah);
-+-	set_bit(ATH_OP_INVALID, &common->op_flags);
- -
+--
 - 	local->num_sta++;
 - 	local->sta_generation++;
 - 	smp_mb();
@@ -7712,7 +7724,7 @@ index a1af6c2..1405cc3 100644
 -@@ -522,6 +537,12 @@ static int sta_info_insert_finish(struct
 - 		mesh_accept_plinks_update(sdata);
 - 
-  	return 0;
+- 	return 0;
 -+ out_remove:
 -+	sta_info_hash_del(local, sta);
 -+	list_del_rcu(&sta->list);
@@ -7763,7 +7775,21 @@ index a1af6c2..1405cc3 100644
 -@@ -1109,6 +1120,8 @@ void ieee80211_sta_ps_deliver_wakeup(str
 - 
 - 	skb_queue_head_init(&pending);
-- 
++@@ -670,6 +670,7 @@ static const struct ieee80211_iface_comb
++ 		.num_different_channels = 1,
++ 		.beacon_int_infra_match = true,
++ 	},
+++#ifdef CONFIG_ATH9K_DFS_CERTIFIED
++ 	{
++ 		.limits = if_dfs_limits,
++ 		.n_limits = ARRAY_SIZE(if_dfs_limits),
++@@ -679,6 +680,7 @@ static const struct ieee80211_iface_comb
++ 		.radar_detect_widths =	BIT(NL80211_CHAN_WIDTH_20_NOHT) |
++ 					BIT(NL80211_CHAN_WIDTH_20),
++ 	}
+++#endif
++ };
+  
 -+	/* sync with ieee80211_tx_h_unicast_ps_buf */
 -+	spin_lock(&sta->ps_lock);
 - 	/* Send all buffered frames to the station */
@@ -7772,13 +7798,19 @@ index a1af6c2..1405cc3 100644
 -@@ -1127,7 +1140,12 @@ void ieee80211_sta_ps_deliver_wakeup(str
 - 		buffered += tmp - count;
 - 	}
-- 
++ static void ath9k_set_hw_capab(struct ath_softc *sc, struct ieee80211_hw *hw)
++@@ -781,6 +783,9 @@ int ath9k_init_device(u16 devid, struct 
++ 	common = ath9k_hw_common(ah);
++ 	ath9k_set_hw_capab(sc, hw);
+  
 --	ieee80211_add_pending_skbs_fn(local, &pending, clear_sta_ps_flags, sta);
 -+	ieee80211_add_pending_skbs(local, &pending);
 -+	clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
 -+	clear_sta_flag(sta, WLAN_STA_PS_STA);
 -+	spin_unlock(&sta->ps_lock);
--+
+++	/* Will be cleared in ath9k_start() */
+++	set_bit(ATH_OP_INVALID, &common->op_flags);
+ +
 -+	atomic_dec(&ps->num_sta_ps);
 - 
 - 	/* This station just woke up and isn't aware of our SMPS state */
@@ -7817,7 +7849,13 @@ index a1af6c2..1405cc3 100644
 --				   void (*fn)(void *data), void *data)
 -+void ieee80211_add_pending_skbs(struct ieee80211_local *local,
 -+				struct sk_buff_head *skbs)
-- {
++ 	/* Initialize regulatory */
++ 	error = ath_regd_init(&common->regulatory, sc->hw->wiphy,
++ 			      ath9k_reg_notifier);
++--- a/drivers/net/wireless/ath/ath9k/pci.c
+++++ b/drivers/net/wireless/ath/ath9k/pci.c
++@@ -784,7 +784,6 @@ static int ath_pci_probe(struct pci_dev 
+  {
 - 	struct ieee80211_hw *hw = &local->hw;
 - 	struct sk_buff *skb;
 -@@ -461,9 +460,6 @@ void ieee80211_add_pending_skbs_fn(struc
@@ -7826,7 +7864,20 @@ index a1af6c2..1405cc3 100644
 - 
 --	if (fn)
 --		fn(data);
---
++ 	struct ath_softc *sc;
++ 	struct ieee80211_hw *hw;
++-	struct ath_common *common;
++ 	u8 csz;
++ 	u32 val;
++ 	int ret = 0;
++@@ -877,10 +876,6 @@ static int ath_pci_probe(struct pci_dev 
++ 	wiphy_info(hw->wiphy, "%s mem=0x%lx, irq=%d\n",
++ 		   hw_name, (unsigned long)sc->mem, pdev->irq);
++ 
++-	/* Will be cleared in ath9k_start() */
++-	common = ath9k_hw_common(sc->sc_ah);
++-	set_bit(ATH_OP_INVALID, &common->op_flags);
+ -
 - 	for (i = 0; i < hw->queues; i++)
 - 		__ieee80211_wake_queue(hw, i,
 - 			IEEE80211_QUEUE_STOP_REASON_SKB_ADD);
@@ -7927,7 +7978,7 @@ index a1af6c2..1405cc3 100644
 -+	len += scnprintf(buf + len, sizeof(buf) - len,
 - 			 "%17s: %2d\n", "MCI Reset",
 - 			 sc->debug.stats.reset[RESET_TYPE_MCI]);
-  
+- 
 ---- a/drivers/net/wireless/ath/ath9k/ar9003_phy.c
 -+++ b/drivers/net/wireless/ath/ath9k/ar9003_phy.c
 -@@ -868,10 +868,6 @@ static void ar9003_hw_set_rfmode(struct 
@@ -8035,12 +8086,107 @@ index a1af6c2..1405cc3 100644
 -@@ -1043,18 +1048,15 @@ static int ath9k_rx_skb_preprocess(struc
 - 		if (ath_process_fft(sc, hdr, rx_stats, rx_status->mactime))
 - 			RX_STAT_INC(rx_spectral);
-- 
++ 	return 0;
+  
 --		ret = -EINVAL;
 --		goto exit;
 -+		return -EINVAL;
-- 	}
-- 
++ err_init:
++--- a/drivers/net/wireless/ath/ath9k/ar9003_2p2_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9003_2p2_initvals.h
++@@ -410,7 +410,7 @@ static const u32 ar9300_2p2_baseband_cor
++ 	{0x00009e30, 0x06336f77},
++ 	{0x00009e34, 0x6af6532f},
++ 	{0x00009e38, 0x0cc80c00},
++-	{0x00009e40, 0x0d261820},
+++	{0x00009e40, 0x0d261800},
++ 	{0x00009e4c, 0x00001004},
++ 	{0x00009e50, 0x00ff03f1},
++ 	{0x00009e54, 0x00000000},
++--- a/drivers/net/wireless/ath/ath9k/ar9330_1p1_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9330_1p1_initvals.h
++@@ -592,7 +592,7 @@ static const u32 ar9331_1p1_baseband_cor
++ 	{0x00009e30, 0x06336f77},
++ 	{0x00009e34, 0x6af6532f},
++ 	{0x00009e38, 0x0cc80c00},
++-	{0x00009e40, 0x0d261820},
+++	{0x00009e40, 0x0d261800},
++ 	{0x00009e4c, 0x00001004},
++ 	{0x00009e50, 0x00ff03f1},
++ 	{0x00009fc0, 0x803e4788},
++--- a/drivers/net/wireless/ath/ath9k/ar9330_1p2_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9330_1p2_initvals.h
++@@ -231,7 +231,7 @@ static const u32 ar9331_1p2_baseband_cor
++ 	{0x00009e30, 0x06336f77},
++ 	{0x00009e34, 0x6af6532f},
++ 	{0x00009e38, 0x0cc80c00},
++-	{0x00009e40, 0x0d261820},
+++	{0x00009e40, 0x0d261800},
++ 	{0x00009e4c, 0x00001004},
++ 	{0x00009e50, 0x00ff03f1},
++ 	{0x00009fc0, 0x803e4788},
++--- a/drivers/net/wireless/ath/ath9k/ar9340_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9340_initvals.h
++@@ -318,7 +318,7 @@ static const u32 ar9340_1p0_baseband_cor
++ 	{0x00009e30, 0x06336f77},
++ 	{0x00009e34, 0x6af6532f},
++ 	{0x00009e38, 0x0cc80c00},
++-	{0x00009e40, 0x0d261820},
+++	{0x00009e40, 0x0d261800},
++ 	{0x00009e4c, 0x00001004},
++ 	{0x00009e50, 0x00ff03f1},
++ 	{0x00009e54, 0x00000000},
++@@ -348,9 +348,9 @@ static const u32 ar9340_1p0_baseband_cor
++ 	{0x0000a370, 0x00000000},
++ 	{0x0000a390, 0x00000001},
++ 	{0x0000a394, 0x00000444},
++-	{0x0000a398, 0x00000000},
++-	{0x0000a39c, 0x210d0401},
++-	{0x0000a3a0, 0xab9a7144},
+++	{0x0000a398, 0x001f0e0f},
+++	{0x0000a39c, 0x0075393f},
+++	{0x0000a3a0, 0xb79f6427},
++ 	{0x0000a3a4, 0x00000000},
++ 	{0x0000a3a8, 0xaaaaaaaa},
++ 	{0x0000a3ac, 0x3c466478},
++--- a/drivers/net/wireless/ath/ath9k/ar9580_1p0_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar9580_1p0_initvals.h
++@@ -90,7 +90,7 @@ static const u32 ar9580_1p0_baseband_cor
++ 	{0x00009e30, 0x06336f77},
++ 	{0x00009e34, 0x6af6532f},
++ 	{0x00009e38, 0x0cc80c00},
++-	{0x00009e40, 0x0d261820},
+++	{0x00009e40, 0x0d261800},
++ 	{0x00009e4c, 0x00001004},
++ 	{0x00009e50, 0x00ff03f1},
++ 	{0x00009e54, 0x00000000},
++--- a/drivers/net/wireless/ath/ath9k/ar953x_initvals.h
+++++ b/drivers/net/wireless/ath/ath9k/ar953x_initvals.h
++@@ -257,9 +257,9 @@ static const u32 qca953x_1p0_baseband_co
++ 	{0x0000a370, 0x00000000},
++ 	{0x0000a390, 0x00000001},
++ 	{0x0000a394, 0x00000444},
++-	{0x0000a398, 0x1f020503},
++-	{0x0000a39c, 0x29180c03},
++-	{0x0000a3a0, 0x9a8b6844},
+++	{0x0000a398, 0x001f0e0f},
+++	{0x0000a39c, 0x0075393f},
+++	{0x0000a3a0, 0xb79f6427},
++ 	{0x0000a3a4, 0x000000ff},
++ 	{0x0000a3a8, 0x6a6a6a6a},
++ 	{0x0000a3ac, 0x6a6a6a6a},
++--- a/drivers/net/wireless/ath/ath5k/phy.c
+++++ b/drivers/net/wireless/ath/ath5k/phy.c
++@@ -3709,8 +3709,8 @@ ath5k_hw_txpower(struct ath5k_hw *ah, st
++ 			AR5K_REG_MS(AR5K_TUNE_MAX_TXPOWER, AR5K_TPC_CHIRP),
++ 			AR5K_TPC);
++ 	} else {
++-		ath5k_hw_reg_write(ah, AR5K_PHY_TXPOWER_RATE_MAX |
++-			AR5K_TUNE_MAX_TXPOWER, AR5K_PHY_TXPOWER_RATE_MAX);
+++		ath5k_hw_reg_write(ah, AR5K_TUNE_MAX_TXPOWER,
+++			AR5K_PHY_TXPOWER_RATE_MAX);
+  	}
+  
 - 	/*
 - 	 * everything but the rate is checked here, the rate check is done
 - 	 * separately to avoid doing two lookups for a rate for each frame.
@@ -8317,7 +8463,7 @@ index a1af6c2..1405cc3 100644
 - 				aniState->iniDef.cycpwrThr1Ext);
 - 			if (level > aniState->spurImmunityLevel)
 - 				ah->stats.ast_ani_spurup++;
-+ err_init:
++ 	return 0;
 diff --git a/package/mac80211/patches/310-ap_scan.patch b/package/mac80211/patches/310-ap_scan.patch
 index 389a003..87f165a 100644
 --- a/package/mac80211/patches/310-ap_scan.patch
@@ -8468,7 +8614,7 @@ index 96e7c6d..169eb9a 100644
   		ah->get_mac_revision = pdata->get_mac_revision;
   		ah->external_reset = pdata->external_reset;
 diff --git a/package/mac80211/patches/502-ath9k_ahb_init.patch b/package/mac80211/patches/502-ath9k_ahb_init.patch
-index 4edc63b..c1bdc6f 100644
+index 4edc63b..de61a9e 100644
 --- a/package/mac80211/patches/502-ath9k_ahb_init.patch
 +++ b/package/mac80211/patches/502-ath9k_ahb_init.patch
 @@ -1,15 +1,15 @@
@@ -8477,7 +8623,7 @@ index 4edc63b..c1bdc6f 100644
 -@@ -1112,23 +1112,23 @@ static int __init ath9k_init(void)
 - 		goto err_out;
 - 	}
-+@@ -895,23 +895,23 @@ static int __init ath9k_init(void)
++@@ -897,23 +897,23 @@ static int __init ath9k_init(void)
 + {
 + 	int error;
   
@@ -8853,7 +8999,7 @@ index 30aa9ee..b84a991 100644
   
   	if (changed & IEEE80211_CONF_CHANGE_POWER) {
 diff --git a/package/mac80211/patches/530-ath9k_extra_leds.patch b/package/mac80211/patches/530-ath9k_extra_leds.patch
-index 59f78d9..1174a47 100644
+index 59f78d9..c78a3e5 100644
 --- a/package/mac80211/patches/530-ath9k_extra_leds.patch
 +++ b/package/mac80211/patches/530-ath9k_extra_leds.patch
 @@ -1,6 +1,6 @@
@@ -8889,7 +9035,7 @@ index 59f78d9..1174a47 100644
  --- a/drivers/net/wireless/ath/ath9k/init.c
  +++ b/drivers/net/wireless/ath/ath9k/init.c
 -@@ -1018,7 +1018,7 @@ int ath9k_init_device(u16 devid, struct 
-+@@ -809,7 +809,7 @@ int ath9k_init_device(u16 devid, struct 
++@@ -811,7 +811,7 @@ int ath9k_init_device(u16 devid, struct 
   
   #ifdef CPTCFG_MAC80211_LEDS
   	/* must be initialized before ieee80211_register_hw */
@@ -8982,7 +9128,7 @@ index d26a5af..e2e18c9 100644
   		ah->get_mac_revision = pdata->get_mac_revision;
   		ah->external_reset = pdata->external_reset;
 diff --git a/package/mac80211/patches/550-ath9k_entropy_from_adc.patch b/package/mac80211/patches/550-ath9k_entropy_from_adc.patch
-index b59c362..513c48d 100644
+index b59c362..439a574 100644
 --- a/package/mac80211/patches/550-ath9k_entropy_from_adc.patch
 +++ b/package/mac80211/patches/550-ath9k_entropy_from_adc.patch
 @@ -55,7 +55,7 @@
@@ -9001,7 +9147,7 @@ index b59c362..513c48d 100644
 - void ath9k_reload_chainmask_settings(struct ath_softc *sc)
 -@@ -980,6 +981,18 @@ static void ath9k_set_hw_capab(struct at
 + static const struct ieee80211_iface_limit if_limits[] = {
-+@@ -768,6 +769,18 @@ static void ath9k_set_hw_capab(struct at
++@@ -770,6 +771,18 @@ static void ath9k_set_hw_capab(struct at
   	SET_IEEE80211_PERM_ADDR(hw, common->macaddr);
   }
   
@@ -9010,7 +9156,7 @@ index b59c362..513c48d 100644
   		    const struct ath_bus_ops *bus_ops)
   {
 -@@ -1025,6 +1038,8 @@ int ath9k_init_device(u16 devid, struct 
-+@@ -816,6 +829,8 @@ int ath9k_init_device(u16 devid, struct 
++@@ -818,6 +831,8 @@ int ath9k_init_device(u16 devid, struct 
   		ARRAY_SIZE(ath9k_tpt_blink));
   #endif
   
@@ -9037,7 +9183,7 @@ index ffffe0c..579a633 100644
   static const struct ieee80211_iface_limit if_limits[] = {
   	{ .max = 2048,	.types = BIT(NL80211_IFTYPE_STATION) |
 diff --git a/package/mac80211/patches/552-ath9k_p2p_ps_support.patch b/package/mac80211/patches/552-ath9k_p2p_ps_support.patch
-index 4a61db3..e066a38 100644
+index 4a61db3..8cf9e61 100644
 --- a/package/mac80211/patches/552-ath9k_p2p_ps_support.patch
 +++ b/package/mac80211/patches/552-ath9k_p2p_ps_support.patch
 @@ -27,7 +27,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
@@ -9166,7 +9312,7 @@ index 4a61db3..e066a38 100644
   	ath9k_init_misc(sc);
   	ath_fill_led_pin(sc);
 -@@ -1082,6 +1085,9 @@ static void ath9k_deinit_softc(struct at
-+@@ -873,6 +876,9 @@ static void ath9k_deinit_softc(struct at
++@@ -875,6 +878,9 @@ static void ath9k_deinit_softc(struct at
   {
   	int i = 0;
   
@@ -9218,136 +9364,111 @@ index af94c9e..eddbc6c 100644
   	if (AR_SREV_9565(ah) && common->bt_ant_diversity)
   		REG_SET_BIT(ah, AR_BTCOEX_WL_LNADIV, AR_BTCOEX_WL_LNADIV_FORCE_ON);
   
-diff --git a/package/mac80211/patches/567-ath9k-qca953x-support.patch b/package/mac80211/patches/567-ath9k-qca953x-support.patch
-deleted file mode 100644
-index e73083a..0000000
---- a/package/mac80211/patches/567-ath9k-qca953x-support.patch
-+++ /dev/null
-@@ -1,124 +0,0 @@
----- a/drivers/net/wireless/ath/ath9k/ahb.c
--+++ b/drivers/net/wireless/ath/ath9k/ahb.c
--@@ -39,6 +39,10 @@ static const struct platform_device_id a
-- 		.name = "qca955x_wmac",
-- 		.driver_data = AR9300_DEVID_QCA955X,
-- 	},
--+	{
--+		.name = "qca953x_wmac",
--+		.driver_data = AR9300_DEVID_AR953X,
--+	},
-- 	{},
-- };
-- 
----- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
--+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
--@@ -4792,43 +4792,54 @@ static void ar9003_hw_power_control_over
-- 
-- tempslope:
-- 	if (AR_SREV_9550(ah) || AR_SREV_9531(ah)) {
--+		u8 txmask = (eep->baseEepHeader.txrxMask & 0xf0) >> 4;
--+
-- 		/*
-- 		 * AR955x has tempSlope register for each chain.
-- 		 * Check whether temp_compensation feature is enabled or not.
-- 		 */
-- 		if (eep->baseEepHeader.featureEnable & 0x1) {
-- 			if (frequency < 4000) {
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      eep->base_ext2.tempSlopeLow);
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      temp_slope);
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      eep->base_ext2.tempSlopeHigh);
--+				if (txmask & BIT(0))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      eep->base_ext2.tempSlopeLow);
--+				if (txmask & BIT(1))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      temp_slope);
--+				if (txmask & BIT(2))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      eep->base_ext2.tempSlopeHigh);
-- 			} else {
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      temp_slope);
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      temp_slope1);
---				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
---					      AR_PHY_TPC_19_ALPHA_THERM,
---					      temp_slope2);
--+				if (txmask & BIT(0))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      temp_slope);
--+				if (txmask & BIT(1))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      temp_slope1);
--+				if (txmask & BIT(2))
--+					REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
--+						      AR_PHY_TPC_19_ALPHA_THERM,
--+						      temp_slope2);
-- 			}
-- 		} else {
-- 			/*
-- 			 * If temp compensation is not enabled,
-- 			 * set all registers to 0.
-- 			 */
---			REG_RMW_FIELD(ah, AR_PHY_TPC_19,
---				      AR_PHY_TPC_19_ALPHA_THERM, 0);
---			REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
---				      AR_PHY_TPC_19_ALPHA_THERM, 0);
---			REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
---				      AR_PHY_TPC_19_ALPHA_THERM, 0);
--+			if (txmask & BIT(0))
--+				REG_RMW_FIELD(ah, AR_PHY_TPC_19,
--+					      AR_PHY_TPC_19_ALPHA_THERM, 0);
--+			if (txmask & BIT(1))
--+				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B1,
--+					      AR_PHY_TPC_19_ALPHA_THERM, 0);
--+			if (txmask & BIT(2))
--+				REG_RMW_FIELD(ah, AR_PHY_TPC_19_B2,
--+					      AR_PHY_TPC_19_ALPHA_THERM, 0);
-- 		}
-- 	} else {
-- 		REG_RMW_FIELD(ah, AR_PHY_TPC_19,
----- a/drivers/net/wireless/ath/ath9k/hw.c
--+++ b/drivers/net/wireless/ath/ath9k/hw.c
--@@ -901,7 +901,7 @@ static void ath9k_hw_init_interrupt_mask
-- 		AR_IMR_RXORN |
-- 		AR_IMR_BCNMISC;
-- 
---	if (AR_SREV_9340(ah) || AR_SREV_9550(ah))
--+	if (AR_SREV_9340(ah) || AR_SREV_9550(ah) || AR_SREV_9531(ah))
-- 		sync_default &= ~AR_INTR_SYNC_HOST1_FATAL;
-- 
-- 	if (AR_SREV_9300_20_OR_LATER(ah)) {
--@@ -3104,6 +3104,7 @@ static struct {
-- 	{ AR_SREV_VERSION_9462,         "9462" },
-- 	{ AR_SREV_VERSION_9550,         "9550" },
-- 	{ AR_SREV_VERSION_9565,         "9565" },
--+	{ AR_SREV_VERSION_9531,         "9531" },
-- };
-- 
-- /* For devices with external radios */
----- a/drivers/net/wireless/ath/ath9k/mac.c
--+++ b/drivers/net/wireless/ath/ath9k/mac.c
--@@ -837,7 +837,7 @@ void ath9k_hw_enable_interrupts(struct a
-- 		return;
-- 	}
-- 
---	if (AR_SREV_9340(ah) || AR_SREV_9550(ah))
--+	if (AR_SREV_9340(ah) || AR_SREV_9550(ah) || AR_SREV_9531(ah))
-- 		sync_default &= ~AR_INTR_SYNC_HOST1_FATAL;
-- 
-- 	async_mask = AR_INTR_MAC_IRQ;
+diff --git a/package/mac80211/patches/567-ath9k_ar953x_read_mac_rev.patch b/package/mac80211/patches/567-ath9k_ar953x_read_mac_rev.patch
+new file mode 100644
+index 0000000..31778a4
+--- /dev/null
++++ b/package/mac80211/patches/567-ath9k_ar953x_read_mac_rev.patch
+@@ -0,0 +1,11 @@
++--- a/drivers/net/wireless/ath/ath9k/hw.c
+++++ b/drivers/net/wireless/ath/ath9k/hw.c
++@@ -260,6 +260,8 @@ static void ath9k_hw_read_revisions(stru
++ 		return;
++ 	case AR9300_DEVID_AR953X:
++ 		ah->hw_version.macVersion = AR_SREV_VERSION_9531;
+++		if (ah->get_mac_revision)
+++			ah->hw_version.macRev = ah->get_mac_revision();
++ 		return;
++ 	}
++ 
+diff --git a/package/mac80211/patches/570-restrict_dfs_regions.patch b/package/mac80211/patches/570-restrict_dfs_regions.patch
+new file mode 100644
+index 0000000..10157dc
+--- /dev/null
++++ b/package/mac80211/patches/570-restrict_dfs_regions.patch
+@@ -0,0 +1,82 @@
++--- a/drivers/net/wireless/ath/ath10k/mac.c
+++++ b/drivers/net/wireless/ath/ath10k/mac.c
++@@ -4321,6 +4321,7 @@ static const struct ieee80211_iface_comb
++ 					BIT(NL80211_CHAN_WIDTH_20) |
++ 					BIT(NL80211_CHAN_WIDTH_40) |
++ 					BIT(NL80211_CHAN_WIDTH_80),
+++		.radar_detect_regions = BIT(NL80211_DFS_ETSI),
++ #endif
++ 	},
++ };
++--- a/drivers/net/wireless/ath/ath9k/init.c
+++++ b/drivers/net/wireless/ath/ath9k/init.c
++@@ -688,6 +688,7 @@ static const struct ieee80211_iface_comb
++ 		.beacon_int_infra_match = true,
++ 		.radar_detect_widths =	BIT(NL80211_CHAN_WIDTH_20_NOHT) |
++ 					BIT(NL80211_CHAN_WIDTH_20),
+++		.radar_detect_regions = BIT(NL80211_DFS_ETSI),
++ 	}
++ #endif
++ };
++--- a/include/net/cfg80211.h
+++++ b/include/net/cfg80211.h
++@@ -2620,6 +2620,7 @@ struct ieee80211_iface_limit {
++  *	between infrastructure and AP types must match. This is required
++  *	only in special cases.
++  * @radar_detect_widths: bitmap of channel widths supported for radar detection
+++ * @radar_detect_regions: bitmap of regions supported for radar detection
++  *
++  * With this structure the driver can describe which interface
++  * combinations it supports concurrently.
++@@ -2677,6 +2678,7 @@ struct ieee80211_iface_combination {
++ 	u8 n_limits;
++ 	bool beacon_int_infra_match;
++ 	u8 radar_detect_widths;
+++	u8 radar_detect_regions;
++ };
++ 
++ struct ieee80211_txrx_stypes {
++--- a/net/wireless/util.c
+++++ b/net/wireless/util.c
++@@ -1259,6 +1259,7 @@ int cfg80211_can_use_iftype_chan(struct 
++ 				 enum cfg80211_chan_mode chanmode,
++ 				 u8 radar_detect)
++ {
+++	const struct ieee80211_regdomain *regdom;
++ 	struct wireless_dev *wdev_iter;
++ 	u32 used_iftypes = BIT(iftype);
++ 	int num[NUM_NL80211_IFTYPES];
++@@ -1267,6 +1268,7 @@ int cfg80211_can_use_iftype_chan(struct 
++ 	struct ieee80211_channel *ch;
++ 	enum cfg80211_chan_mode chmode;
++ 	int num_different_channels = 0;
+++	enum nl80211_dfs_regions region = 0;
++ 	int total = 1;
++ 	int i, j;
++ 
++@@ -1285,6 +1287,14 @@ int cfg80211_can_use_iftype_chan(struct 
++ 		return 0;
++ 	}
++ 
+++	if (radar_detect) {
+++		rcu_read_lock();
+++		regdom = rcu_dereference(cfg80211_regdomain);
+++		if (regdom)
+++			region = regdom->dfs_region;
+++		rcu_read_unlock();
+++	}
+++
++ 	memset(num, 0, sizeof(num));
++ 	memset(used_channels, 0, sizeof(used_channels));
++ 
++@@ -1392,6 +1402,10 @@ int cfg80211_can_use_iftype_chan(struct 
++ 		if (radar_detect && !(c->radar_detect_widths & radar_detect))
++ 			goto cont;
++ 
+++		if (radar_detect && c->radar_detect_regions &&
+++		    !(c->radar_detect_regions & BIT(region)))
+++			goto cont;
+++
++ 		/*
++ 		 * Finally check that all iftypes that we're currently
++ 		 * using are actually part of this combination. If they
 diff --git a/package/mac80211/patches/600-0001-rt2x00-rt2800lib-move-rt2800_drv_data-declaration-in.patch b/package/mac80211/patches/600-0001-rt2x00-rt2800lib-move-rt2800_drv_data-declaration-in.patch
 new file mode 100644
 index 0000000..d344957
