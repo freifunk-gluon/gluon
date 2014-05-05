@@ -251,11 +251,11 @@ index 01d1e67..c270f73 100644
  $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4))
  $(eval $(call MultiProfile,TLWDR4300,TLWDR3500V1 TLWDR3600V1 TLWDR4300V1 TLWDR4310V1))
  $(eval $(call MultiProfile,UBNT,UBNTAIRROUTER UBNTRS UBNTRSPRO UBNTLSSR71 UBNTBULLETM UBNTROCKETM UBNTNANOM UBNTUNIFI UBNTUNIFIOUTDOOR))
-diff --git a/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch b/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch
+diff --git a/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
 new file mode 100644
-index 0000000..ebc82c6
+index 0000000..37425a6
 --- /dev/null
-+++ b/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch
++++ b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
 @@ -0,0 +1,38 @@
 +--- a/arch/mips/ath79/Kconfig
 ++++ b/arch/mips/ath79/Kconfig
@@ -287,7 +287,7 @@ index 0000000..ebc82c6
 + obj-$(CONFIG_ATH79_MACH_TL_WR1043ND)	+= mach-tl-wr1043nd.o
 +--- a/arch/mips/ath79/machtypes.h
 ++++ b/arch/mips/ath79/machtypes.h
-+@@ -91,6 +91,7 @@ enum ath79_mach_type {
++@@ -90,6 +90,7 @@ enum ath79_mach_type {
 + 	ATH79_MACH_TL_WR841N_V1,	/* TP-LINK TL-WR841N v1 */
 + 	ATH79_MACH_TL_WR841N_V7,	/* TP-LINK TL-WR841N/ND v7 */
 + 	ATH79_MACH_TL_WR841N_V8,	/* TP-LINK TL-WR841N/ND v8 */

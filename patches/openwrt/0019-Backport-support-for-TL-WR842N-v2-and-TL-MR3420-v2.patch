@@ -413,32 +413,10 @@ index 8a1c770..9766afe 100644
   	ATH79_MACH_UBNT_RSPRO,		/* Ubiquiti RouterStation Pro */
   	ATH79_MACH_UBNT_RS,		/* Ubiquiti RouterStation */
   	ATH79_MACH_UBNT_UNIFI, 		/* Ubiquiti Unifi */
-diff --git a/target/linux/ar71xx/patches-3.3/705-MIPS-ath79-add-support-for-QCA953x-SoC.patch b/target/linux/ar71xx/patches-3.3/705-MIPS-ath79-add-support-for-QCA953x-SoC.patch
-index bd08685..d111353 100644
---- a/target/linux/ar71xx/patches-3.3/705-MIPS-ath79-add-support-for-QCA953x-SoC.patch
-+++ b/target/linux/ar71xx/patches-3.3/705-MIPS-ath79-add-support-for-QCA953x-SoC.patch
-@@ -22,7 +22,7 @@ some bits' meanings are slightly different.
- 
- --- a/arch/mips/ath79/Kconfig
- +++ b/arch/mips/ath79/Kconfig
--@@ -698,6 +698,10 @@ config SOC_AR934X
-+@@ -688,6 +688,10 @@ config SOC_AR934X
-  	select PCI_AR724X if PCI
-  	def_bool n
-  
-@@ -33,7 +33,7 @@ some bits' meanings are slightly different.
-  config SOC_QCA955X
-  	select USB_ARCH_HAS_EHCI
-  	select HW_HAS_PCI
--@@ -741,7 +745,7 @@ config ATH79_DEV_USB
-+@@ -731,7 +735,7 @@ config ATH79_DEV_USB
-  	def_bool n
-  
-  config ATH79_DEV_WMAC
-diff --git a/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch b/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch
-index ebc82c6..dcbb112 100644
---- a/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch
-+++ b/target/linux/ar71xx/patches-3.3/706-MIPS-ath79-TL-WR841v9-support.patch
+diff --git a/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
+index 37425a6..612970b 100644
+--- a/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
++++ b/target/linux/ar71xx/patches-3.3/708-MIPS-ath79-TL-WR841v9-support.patch
 @@ -33,6 +33,6 @@
   	ATH79_MACH_TL_WR841N_V7,	/* TP-LINK TL-WR841N/ND v7 */
   	ATH79_MACH_TL_WR841N_V8,	/* TP-LINK TL-WR841N/ND v8 */
