@@ -1,7 +1,8 @@
 To build Gluon, after checking out the repository change to the source root directory
 to  perform the following commands:
 
-    git clone git://github.com/freifunk-gluon/site-ffhl.git site # Get the Freifunk Lübeck site repository - or use your own!
+    git clone git://github.com/ffrl/sites-ffrl.git sites         # Get the Freifunk Rheinland sites repository - or use your own!
+	ln -s sites/site-rheinufer site                              # Link the site you want to compile images for
     make update                                                  # Get other repositories used by Gluon
     make                                                         # Build Gluon
 

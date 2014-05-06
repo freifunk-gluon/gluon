@@ -6,7 +6,7 @@ OPENWRT_COMMIT=bccb82223911823bf4ab040997757708b002a75f
 PACKAGES_OPENWRT_REPO=git://git.openwrt.org/12.09/packages.git
 PACKAGES_OPENWRT_COMMIT=381bbea65989b63e30f43ab87e51b042325bbff3
 
-PACKAGES_GLUON_REPO=git://github.com/freifunk-gluon/packages.git
+PACKAGES_GLUON_REPO=git://github.com/ffrl/packages.git
 PACKAGES_GLUON_COMMIT=2ced9d31f75624a7b02067e167cb34d77c4f9eb8
 
 PACKAGES_ROUTING_REPO=git://github.com/openwrt-routing/packages.git
