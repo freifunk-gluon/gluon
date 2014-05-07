@@ -39,8 +39,9 @@ update-patches: FORCE
 _SINGLE=export MAKEFLAGS=$(space);
 
 override OPENWRT_BUILD=1
+override GLUON_TOOLS=1
 GREP_OPTIONS=
-export OPENWRT_BUILD GREP_OPTIONS
+export OPENWRT_BUILD GLUON_TOOLS GREP_OPTIONS
 
 -include $(TOPDIR)/include/debug.mk
 -include $(TOPDIR)/include/depends.mk
@@ -56,19 +57,24 @@ endef
 
 include $(GLUONDIR)/include/profiles.mk
 
-CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have optained the external repositories needed by Gluon; please call `make update` first!'; false)
+CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 all: FORCE
 	@$(CheckExternal)
+	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
+	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
 download prepare images: FORCE
 	@$(CheckExternal)
+	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
+	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
 	+@$(GLUONMAKE) $@
 
 manifest: FORCE
 	@$(CheckExternal)
+	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
 	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	+@$(GLUONMAKE) $@
 
@@ -132,6 +138,10 @@ endef
 
 include $(INCLUDE_DIR)/target.mk
 include $(GLUONDIR)/include/profiles.mk
+
+
+$(STAGING_DIR_HOST)/bin/stat: $(STAGING_DIR_HOST)/.prepared
+gluon-tools: $(STAGING_DIR_HOST)/bin/stat
 
 
 $(BUILD_DIR)/.prepared: Makefile
@@ -311,6 +321,6 @@ manifest: FORCE
 	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 
-.PHONY: all images prepare clean cleanall
+.PHONY: all images prepare clean cleanall gluon-tools
 
 endif
