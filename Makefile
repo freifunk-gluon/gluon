@@ -136,7 +136,6 @@ include $(INCLUDE_DIR)/target.mk
 include $(GLUONDIR)/include/profiles.mk
 
 
-$(STAGING_DIR_HOST)/bin/stat: $(STAGING_DIR_HOST)/.prepared
 gluon-tools: $(STAGING_DIR_HOST)/bin/stat
 
 
