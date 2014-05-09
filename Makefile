@@ -70,6 +70,9 @@ all: gluon-tools
 download prepare images: gluon-tools
 	+@$(GLUONMAKE) $@
 
+tools/% toolchain/% package/% target/%: gluon-tools
+	+@$(GLUONMAKE) $@
+
 manifest: gluon-tools
 	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	+@$(GLUONMAKE) $@
