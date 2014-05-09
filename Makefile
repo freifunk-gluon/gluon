@@ -109,7 +109,7 @@ override SUBTARGET := generic
 PROFILES :=
 PROFILE_PACKAGES :=
 
-gluon_prepared_stamp := $(GLUON_BUILDDIR)/$(BOARD)/prepared
+gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
 
 
 define Profile
@@ -210,8 +210,8 @@ prepare-image: FORCE
 prepare: FORCE
 	@$(CheckSite)
 
-	mkdir -p $(GLUON_IMAGEDIR) $(GLUON_BUILDDIR)/$(BOARD)
-	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(GLUON_BUILDDIR)/$(BOARD)/opkg.conf
+	mkdir -p $(GLUON_IMAGEDIR) $(BOARD_BUILDDIR)
+	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(BOARD_BUILDDIR)/opkg.conf
 
 	+$(GLUONMAKE) feeds
 	+$(GLUONMAKE) config
@@ -288,15 +288,15 @@ image: FORCE
 	+$(GLUONMAKE) package_install
 
 	$(call Image/mkfs/prepare)
-	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX="$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))" \
+	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX=gluon \
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
 		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
 		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
 		\
-		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
-		cp $(BIN_DIR)/$(IMAGE_PREFIX)-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
+		cp $(BIN_DIR)/gluon-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
+		cp $(BIN_DIR)/gluon-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
 	) :
 
 call_image/%: FORCE
