@@ -59,22 +59,18 @@ include $(GLUONDIR)/include/profiles.mk
 
 CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
-all: FORCE
-	@$(CheckExternal)
+gluon-tools: FORCE
 	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
 	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
+
+all: gluon-tools
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
-download prepare images: FORCE
-	@$(CheckExternal)
-	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
-	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
+download prepare images: gluon-tools
 	+@$(GLUONMAKE) $@
 
-manifest: FORCE
-	@$(CheckExternal)
-	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
+manifest: gluon-tools
 	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	+@$(GLUONMAKE) $@
 
