@@ -172,14 +172,15 @@ feeds: FORCE
 	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
 
 config: FORCE
-	echo \
-		'CONFIG_TARGET_$(BOARD)=y' \
-		'CONFIG_TARGET_ROOTFS_JFFS2=n' \
-		'CONFIG_BUSYBOX_CONFIG_SHA512SUM=y' \
-		'CONFIG_ATH_USER_REGD=y' \
-		'$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES)))' \
-		| sed -e 's/ /\n/g' > .config
-	$(_SINGLE)$(SUBMAKE) defconfig OPENWRT_BUILD=
+	( \
+		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/config; \
+		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
+			| sed -e 's/ /\n/g'; \
+	) > $(BOARD_BUILDDIR)/config
+	+$(NO_TRACE_MAKE) scripts/config/conf
+	scripts/config/conf -D $(BOARD_BUILDDIR)/config -w $(BOARD_BUILDDIR)/config Config.in
+
+	ln -sf $(BOARD_BUILDDIR)/config .config
 
 .config:
 	+$(GLUONMAKE) config
