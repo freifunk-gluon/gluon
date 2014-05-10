@@ -19,6 +19,10 @@ TOPDIR:=$(GLUON_OPENWRTDIR)
 export TOPDIR
 
 
+GLUON_TARGET ?= ar71xx-generic
+export GLUON_TARGET
+
+
 update: FORCE
 	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
 	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
@@ -55,7 +59,7 @@ endef
 define GluonModel
 endef
 
-include $(GLUONDIR)/include/profiles.mk
+include $(GLUONDIR)/targets/targets.mk
 
 CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
@@ -103,14 +107,9 @@ include package/Makefile
 include tools/Makefile
 include toolchain/Makefile
 
-BOARD := ar71xx
-override SUBTARGET := generic
 
 PROFILES :=
 PROFILE_PACKAGES :=
-
-gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
-
 
 define Profile
   $(eval $(call Profile/Default))
@@ -119,11 +118,6 @@ define Profile
 endef
 
 define GluonProfile
-image/$(1): $(gluon_prepared_stamp)
-	+$(GLUONMAKE) image PROFILE="$(1)" V=s$(OPENWRT_VERBOSE)
-
-CheckSite := (perl $(GLUON_SITEDIR)/site.conf 2>&1) > /dev/null || (echo 'Your site configuration did not pass validation; please verify yourself with `perl site.conf` and fix the problems.';false)
-
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
@@ -135,8 +129,16 @@ GLUON_$(1)_MODELS += $(2)
 GLUON_$(1)_MODEL_$(2) := $(3)
 endef
 
+
+include $(GLUONDIR)/targets/targets.mk
+
+BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
+override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
+
+gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
+
+
 include $(INCLUDE_DIR)/target.mk
-include $(GLUONDIR)/include/profiles.mk
 
 
 gluon-tools: $(STAGING_DIR_HOST)/bin/stat
@@ -173,7 +175,7 @@ feeds: FORCE
 
 config: FORCE
 	( \
-		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/config; \
+		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config
@@ -207,6 +209,8 @@ prepare-image: FORCE
 	mkdir -p $(BOARD_KDIR)
 	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
+
+CheckSite := (perl $(GLUON_SITEDIR)/site.conf 2>&1) > /dev/null || (echo 'Your site configuration did not pass validation; please verify yourself with `perl site.conf` and fix the problems.';false)
 
 prepare: FORCE
 	@$(CheckSite)
@@ -299,6 +303,9 @@ image: FORCE
 		cp $(BIN_DIR)/gluon-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
 		cp $(BIN_DIR)/gluon-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
 	) :
+
+image/%: $(gluon_prepared_stamp)
+	+$(GLUONMAKE) image PROFILE="$(patsubst image/%,%,$@)" V=s$(OPENWRT_VERBOSE)
 
 call_image/%: FORCE
 	+$(GLUONMAKE) $(patsubst call_image/%,image/%,$@)

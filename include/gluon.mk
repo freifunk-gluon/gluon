@@ -47,6 +47,17 @@ $(foreach var,$(2),$(1) := $$(sort $$(filter-out -% $$(patsubst -%,%,$$(filter -
 )
 endef
 
+GLUON_TARGETS :=
+
+define GluonTarget
+gluon_target := $(1)$$(if $(2),-$(2))
+GLUON_TARGETS += $$(gluon_target)
+GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
+GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
+
+include $$(GLUONDIR)/targets/$$(gluon_target)/profiles.mk
+endef
+
 regex-escape = $(shell echo '$(1)' | sed -e 's/[]\/()$*.^|[]/\\&/g')
 
 GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools
