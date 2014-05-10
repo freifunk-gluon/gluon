@@ -12,7 +12,7 @@ the images only, just use:
 
 The built images can be found in the directory `images`.
 
-For the build reserve 6GB of disk space. The building requires packages
+For the build reserve 6GB of disk space. The build requires packages
 for `subversion`, ncurses headers (`libncurses-dev`) and zlib headers
 (`libz-dev`).`
 
@@ -29,7 +29,16 @@ will also call `make clean` on the OpenWRT tree, and
 
     make dirclean
 
-will do all this, and call `make dirclean` on the OpenWRT tree.
+will do all this, and call `make dirclean` on the OpenWRT tree. Of these, `make cleanall`
+is the most useful as it ensures that the kernel and all packages are rebuilt (which won't
+be done when only patches have changed), but doesn't rebuild the toolchain unnecessarily.
+
+So all in all, to update and rebuild a Gluon build tree, the following commands should be used:
+
+    git pull
+    make update
+    make cleanall
+    make
 
 
 # Development
