@@ -64,7 +64,7 @@ include $(GLUONDIR)/targets/targets.mk
 CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 gluon-tools: FORCE
-	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
+	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0 V=s$(OPENWRT_VERBOSE)
 	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
 
 all: gluon-tools
@@ -172,6 +172,7 @@ feeds: FORCE
 		. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do echo src-link $$feed ../../packages/$$feed; done; \
 	) > feeds.conf
 	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
+	+$(NO_TRACE_MAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
 
 config: FORCE
 	( \
