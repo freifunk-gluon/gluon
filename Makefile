@@ -95,11 +95,11 @@ clean:
 
 else
 
+include rules.mk
+
 include $(GLUONDIR)/include/gluon.mk
 
-include $(TOPDIR)/include/host.mk
-
-include rules.mk
+include $(INCLUDE_DIR)/host.mk
 include $(INCLUDE_DIR)/depends.mk
 include $(INCLUDE_DIR)/subdir.mk
 
