@@ -12,7 +12,7 @@ define Package/gluon-legacy
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Legacy update scripts
-  DEPENDS:=+gluon-legacy
+  DEPENDS:=+gluon-core
 endef
 
 define Package/gluon-legacy/description
