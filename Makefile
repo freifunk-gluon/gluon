@@ -175,15 +175,13 @@ feeds: FORCE
 	+$(NO_TRACE_MAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
 
 config: FORCE
+	rm .config
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
-	) > $(BOARD_BUILDDIR)/config
-	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD=0
-	scripts/config/conf -D $(BOARD_BUILDDIR)/config -w $(BOARD_BUILDDIR)/config Config.in
-
-	ln -sf $(BOARD_BUILDDIR)/config .config
+	) > .config
+	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
 
 .config:
 	+$(GLUONMAKE) config
