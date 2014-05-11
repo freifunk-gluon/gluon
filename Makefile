@@ -94,8 +94,7 @@ manifest: FORCE
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
 	+@$(GLUONMAKE) $@
 
-cleanall: clean
-	;
+cleanall: clean ;
 
 else
 
