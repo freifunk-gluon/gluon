@@ -7,6 +7,7 @@ export LC_ALL LANG
 empty:=
 space:= $(empty) $(empty)
 
+GLUONMAKE_EARLY = $(SUBMAKE) -C $(GLUON_ORIGOPENWRTDIR) -f $(GLUONDIR)/Makefile GLUON_TOOLS=0
 GLUONMAKE = $(SUBMAKE) -C $(GLUON_OPENWRTDIR) -f $(GLUONDIR)/Makefile
 
 ifneq ($(OPENWRT_BUILD),1)
@@ -15,7 +16,7 @@ GLUONDIR:=${CURDIR}
 
 include $(GLUONDIR)/include/gluon.mk
 
-TOPDIR:=$(GLUON_OPENWRTDIR)
+TOPDIR:=$(GLUON_ORIGOPENWRTDIR)
 export TOPDIR
 
 
@@ -61,39 +62,45 @@ endef
 
 include $(GLUONDIR)/targets/targets.mk
 
-CheckExternal := test -d $(GLUON_OPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
-gluon-tools: FORCE
-	+@$(SUBMAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0 V=s$(OPENWRT_VERBOSE)
-	+@$(GLUONMAKE) gluon-tools GLUON_TOOLS=0
+CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
-all: gluon-tools
+
+prepare-target: FORCE
+	@$(CheckExternal)
+	+@$(GLUONMAKE_EARLY) prepare-target
+
+
+all: prepare-target
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 
-download prepare images: gluon-tools
+prepare: prepare-target
 	+@$(GLUONMAKE) $@
 
-tools/% toolchain/% package/% target/%: gluon-tools
-	+@$(GLUONMAKE) $@
-
-manifest: gluon-tools
-	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
-	+@$(GLUONMAKE) $@
-
-dirclean: clean
+clean dirclean download images: FORCE
 	@$(CheckExternal)
-	+@$(SUBMAKE) -C $(TOPDIR) -r dirclean
+	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) $@
+
+toolchain/% package/% target/%: FORCE
+	@$(CheckExternal)
+	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) $@
+
+manifest: FORCE
+	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
+	@$(CheckExternal)
+	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) $@
 
 cleanall: clean
-	@$(CheckExternal)
-	+@$(SUBMAKE) -C $(TOPDIR) -r clean
-
-clean:
-	@$(CheckExternal)
-	+@$(GLUONMAKE) clean
+	;
 
 else
+
+TOPDIR=${CURDIR}
+export TOPDIR
 
 include rules.mk
 
@@ -135,6 +142,7 @@ include $(GLUONDIR)/targets/targets.mk
 BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
 override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
 
+target_prepared_stamp := $(BOARD_BUILDDIR)/target-prepared
 gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
 
 
@@ -143,6 +151,38 @@ include $(INCLUDE_DIR)/target.mk
 
 gluon-tools: $(STAGING_DIR_HOST)/bin/stat
 
+feeds: FORCE
+	rm -rf $(TOPDIR)/package/feeds
+	mkdir $(TOPDIR)/package/feeds
+	[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
+	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
+	+$(NO_TRACE_MAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
+
+config: FORCE
+	( \
+		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
+		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
+			| sed -e 's/ /\n/g'; \
+	) > .config
+	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
+
+prepare-target: FORCE
+	mkdir -p $(GLUON_OPENWRTDIR)
+	for dir in build_dir dl staging_dir tmp; do \
+		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
+	for link in build_dir Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
+		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
+	done
+	+$(GLUONMAKE_EARLY) feeds
+	+$(GLUONMAKE_EARLY) gluon-tools
+	+$(GLUONMAKE) config
+	touch $(target_prepared_stamp)
+
+$(target_prepared_stamp):
+	+$(GLUONMAKE_EARLY) prepare-target
+
+maybe-prepare-target: $(target_prepared_stamp)
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
@@ -151,42 +191,19 @@ $(BUILD_DIR)/.prepared: Makefile
 $(toolchain/stamp-install): $(tools/stamp-install)
 $(package/stamp-compile): $(package/stamp-cleanup)
 
+
 clean: FORCE
+	+$(SUBMAKE) clean
+
+dirclean: FORCE
+	+$(SUBMAKE) dirclean
 	rm -rf $(GLUON_BUILDDIR)
-
-refresh_feeds: FORCE
-	export MAKEFLAGS=V=s$(OPENWRT_VERBOSE); \
-	export SCAN_COOKIE=; \
-	scripts/feeds uninstall -a; \
-	scripts/feeds update -a; \
-	scripts/feeds install -a
-
 
 export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
 export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
 
-feeds: FORCE
-	( \
-		[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do echo src-link $$feed ../../packages/$$feed; done; \
-		. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do echo src-link $$feed ../../packages/$$feed; done; \
-	) > feeds.conf
-	+$(GLUONMAKE) refresh_feeds V=s$(OPENWRT_VERBOSE)
-	+$(NO_TRACE_MAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
-
-config: FORCE
-	rm .config
-	( \
-		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
-		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
-			| sed -e 's/ /\n/g'; \
-	) > .config
-	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
-
-.config:
-	+$(GLUONMAKE) config
-
-download: .config FORCE
+download: FORCE
 	+$(SUBMAKE) tools/download
 	+$(SUBMAKE) toolchain/download
 	+$(SUBMAKE) package/download
@@ -217,7 +234,6 @@ prepare: FORCE
 	mkdir -p $(GLUON_IMAGEDIR) $(BOARD_BUILDDIR)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(BOARD_BUILDDIR)/opkg.conf
 
-	+$(GLUONMAKE) feeds
 	+$(GLUONMAKE) config
 	+$(GLUONMAKE) toolchain
 	+$(GLUONMAKE) kernel
