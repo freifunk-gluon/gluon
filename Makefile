@@ -267,9 +267,6 @@ OPKG:= \
   IPKG_OFFLINE_ROOT="$(TARGET_DIR)" \
   $(STAGING_DIR_HOST)/bin/opkg \
 	-f $(BOARD_BUILDDIR)/opkg.conf \
-	--force-depends \
-	--force-overwrite \
-	--force-postinstall \
 	--cache $(TMP_DIR)/dl \
 	--offline-root $(TARGET_DIR) \
 	--add-dest root:/ \
