@@ -150,12 +150,23 @@ include $(INCLUDE_DIR)/target.mk
 
 gluon-tools: $(STAGING_DIR_HOST)/bin/stat
 
+prepare-tmpinfo: FORCE
+	mkdir -p tmp/info
+	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="packageinfo" SCAN_DIR="package" SCAN_NAME="package" SCAN_DEPS="$(TOPDIR)/include/package*.mk $(TOPDIR)/overlay/*/*.mk" SCAN_EXTRA=""
+	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="targetinfo" SCAN_DIR="target/linux" SCAN_NAME="target" SCAN_DEPS="profiles/*.mk $(TOPDIR)/include/kernel*.mk $(TOPDIR)/include/target.mk" SCAN_DEPTH=2 SCAN_EXTRA="" SCAN_MAKEOPTS="TARGET_BUILD=1"
+	for type in package target; do \
+		f=tmp/.$${type}info; t=tmp/.config-$${type}.in; \
+		[ "$$t" -nt "$$f" ] || ./scripts/metadata.pl $${type}_config "$$f" > "$$t" || { rm -f "$$t"; echo "Failed to build $$t"; false; break; }; \
+	done
+	./scripts/metadata.pl package_mk tmp/.packageinfo > tmp/.packagedeps || { rm -f tmp/.packagedeps; false; }
+	touch $(TOPDIR)/tmp/.build
+
 feeds: FORCE
 	rm -rf $(TOPDIR)/package/feeds
 	mkdir $(TOPDIR)/package/feeds
 	[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
 	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
-	+$(NO_TRACE_MAKE) -C $(TOPDIR) prepare-tmpinfo OPENWRT_BUILD=0
+	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 config: FORCE
 	( \
