@@ -245,7 +245,6 @@ prepare: FORCE
 	mkdir -p $(GLUON_IMAGEDIR) $(BOARD_BUILDDIR)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(BOARD_BUILDDIR)/opkg.conf
 
-	+$(GLUONMAKE) config
 	+$(GLUONMAKE) toolchain
 	+$(GLUONMAKE) kernel
 	+$(GLUONMAKE) packages
