@@ -193,6 +193,7 @@ $(package/stamp-compile): $(package/stamp-cleanup)
 
 clean: FORCE
 	+$(SUBMAKE) clean
+	rm -f $(gluon_prepared_stamp)
 
 dirclean: FORCE
 	+$(SUBMAKE) dirclean
