@@ -240,10 +240,9 @@ prepare-image: FORCE
 	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
-CheckSite := $(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/scripts/load_site.lua || (echo 'Your site configuration did not pass validation.';false)
-
 prepare: FORCE
-	@$(CheckSite)
+	@$(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/packages/gluon/gluon/gluon-core/files/usr/lib/lua/gluon/site_config.lua \
+		|| (echo 'Your site configuration did not pass validation.'; false)
 
 	mkdir -p $(GLUON_IMAGEDIR) $(BOARD_BUILDDIR)
 	echo 'src packages file:../openwrt/bin/$(BOARD)/packages' > $(BOARD_BUILDDIR)/opkg.conf
