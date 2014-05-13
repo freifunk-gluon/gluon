@@ -213,6 +213,9 @@ dirclean: FORCE
 export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
 export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
+export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
+export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
+
 
 download: FORCE
 	+$(SUBMAKE) tools/download
@@ -342,7 +345,7 @@ manifest: FORCE
 				[ -e "$$file" ] && echo \
 					'$(GLUON_$(profile)_MODEL_$(model))' \
 					"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(GLUON_$(profile)_MODEL_$(model)))-sysupgrade\.bin$$/\1/p')" \
-					"$$(sha512sum "$$file" | awk '{print $$1}')" \
+					"$$($(SHA512SUM) "$$file")" \
 					"$$file" && break; \
 			done; \
 		) \
