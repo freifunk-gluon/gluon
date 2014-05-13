@@ -2,5 +2,4 @@
 
 export GLUONDIR="$(dirname "$0")/.."
 
-RESULT=$(echo "@$1@" | $GLUONDIR/scripts/configure.pl $GLUONDIR/scripts/generate.pl)
-test ! "$RESULT" = "@$1@" && echo $RESULT
+"$GLUONDIR"/openwrt/staging_dir/host/bin/lua -e "dofile(os.getenv('GLUONDIR') .. '/scripts/load_site.lua') print(assert(config.$1))" 2>/dev/null

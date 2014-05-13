@@ -36,7 +36,9 @@ export CONFIG_VERSION_REPO
 GLUON_SITE_CODE := $(shell $(GLUONDIR)/scripts/site.sh site_code)
 export GLUON_SITE_CODE
 
-GLUON_RELEASE ?= $(shell $(GLUONDIR)/scripts/site.sh release)
+ifeq ($(GLUON_RELEASE),)
+$(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line.)
+endif
 export GLUON_RELEASE
 
 endif

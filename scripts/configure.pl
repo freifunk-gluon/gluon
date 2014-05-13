@@ -10,7 +10,7 @@ sub nightly {
 }
 
 
-our $CONFIG = do $ENV{GLUONDIR} . '/site/site.conf';
+our $CONFIG = do $ENV{GLUONDIR} . '/site/site.conf.pl';
 
 my $script = shift @ARGV;
 do $script;

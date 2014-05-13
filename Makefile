@@ -148,7 +148,7 @@ gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
 include $(INCLUDE_DIR)/target.mk
 
 
-gluon-tools: $(STAGING_DIR_HOST)/bin/stat
+gluon-tools: $(STAGING_DIR_HOST)/bin/stat package/lua/host/install
 
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
@@ -237,7 +237,7 @@ prepare-image: FORCE
 	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
-CheckSite := (perl $(GLUON_SITEDIR)/site.conf 2>&1) > /dev/null || (echo 'Your site configuration did not pass validation; please verify yourself with `perl site.conf` and fix the problems.';false)
+CheckSite := $(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/scripts/load_site.lua || (echo 'Your site configuration did not pass validation.';false)
 
 prepare: FORCE
 	@$(CheckSite)
