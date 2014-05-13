@@ -1,8 +1,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
-PKG_VERSION:=1
-PKG_RELEASE:=$(GLUON_VERSION).$(GLUON_SITE_CODE)-$(GLUON_RELEASE).$(GLUON_CONFIG_VERSION)
+PKG_VERSION:=2
+PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -12,7 +12,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
-  DEPENDS:=+odhcp6c
+  DEPENDS:=+gluon-config +odhcp6c
 endef
 
 define Package/gluon-core/description
@@ -35,7 +35,6 @@ define Package/gluon-core/install
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version
-	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 endef
 
 $(eval $(call BuildPackage,gluon-core))
