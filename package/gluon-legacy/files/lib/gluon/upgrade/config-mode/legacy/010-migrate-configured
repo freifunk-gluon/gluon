@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for _, config in ipairs(site.legacy.config_mode_configs) do
+	local old = c:get_first(config, 'wizard', 'configured')
+	if old == '1' then
+		local wizard = c:get_first('gluon-config-mode', 'wizard')
+		c:set('gluon-config-mode', wizard, 'configured', '1')
+
+		c:save('gluon-config-mode')
+		c:commit('gluon-config-mode')
+
+		break
+	end
+end

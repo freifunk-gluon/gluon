@@ -1,0 +1,22 @@
+#!/usr/bin/lua
+
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+local s = c:get_all('network', site.legacy.mesh_ifname)
+c:delete('network', site.legacy.mesh_ifname)
+
+s.auto = nil
+s.accept_ra = nil
+s.defaultroute = nil
+s.proto = 'dhcpv6'
+s.reqprefix = 'no'
+
+c:section('network', 'interface', 'client', s)
+
+c:save('network')
+c:commit('network')

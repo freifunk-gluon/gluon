@@ -1,0 +1,27 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for _, config in ipairs(site.legacy.tc_configs) do
+	local s = c:get_first(config, 'bandwidth')
+	if s then
+		old = c:get_all(config, s)
+		c:section('gluon-simple-tc', 'interface', 'mesh_vpn',
+			  {
+				  ifname = 'mesh-vpn',
+				  enabled = old.enabled,
+				  limit_ingress = old.downstream,
+				  limit_egress = old.upstream,
+			  }
+		)
+
+		c:save('gluon-simple-tc')
+		c:commit('gluon-simple-tc')
+
+		break
+	end
+end

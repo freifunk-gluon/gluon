@@ -1,0 +1,8 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+
+
+for _, file in pairs(site.legacy.old_files) do
+	os.remove(file)
+end
