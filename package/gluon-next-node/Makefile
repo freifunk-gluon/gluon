@@ -30,7 +30,6 @@ endef
 
 define Package/gluon-next-node/install
 	$(CP) ./files/* $(1)/
-	$(GLUON_GENERATE) ./generate/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-next-node))
