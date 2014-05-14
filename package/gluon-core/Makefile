@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
 PKG_VERSION:=2
-PKG_RELEASE:=1
+PKG_RELEASE:=$(GLUON_VERSION)
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -12,7 +12,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
-  DEPENDS:=+gluon-config +odhcp6c
+  DEPENDS:=+gluon-config +luci-lib-core +odhcp6c
 endef
 
 define Package/gluon-core/description
@@ -31,7 +31,6 @@ endef
 
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
-	$(GLUON_GENERATE) ./generate/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version

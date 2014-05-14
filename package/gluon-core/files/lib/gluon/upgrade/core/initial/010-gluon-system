@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+local system = c:get_first('system', 'system')
+
+c:set('system', system, 'hostname', site.hostname_prefix .. '-' .. string.gsub(sysconfig.primary_mac, ':', ''))
+c:set('system', system, 'timezone', site.timezone)
+
+c:save('system')
+c:commit('system')
