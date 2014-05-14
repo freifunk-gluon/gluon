@@ -6,4 +6,16 @@ local function loader()
 end
 
 -- setfenv doesn't work with Lua 5.2 anymore, but we're using 5.1
-return setfenv(assert(load(coroutine.wrap(loader), 'site.conf')), {})()
+local site_config = setfenv(assert(load(coroutine.wrap(loader), 'site.conf')), {})()
+
+local setmetatable = setmetatable
+
+module 'gluon.site_config'
+
+setmetatable(_M,
+	{
+		__index = site_config,
+	}
+)
+
+return _M

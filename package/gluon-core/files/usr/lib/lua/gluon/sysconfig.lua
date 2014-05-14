@@ -17,11 +17,15 @@ local function set(_, name, val)
 	f:close()
 end
 
-local sysconfig = {}
-local mt = {
-	__index = get,
-	__newindex = set,
-}
+local setmetatable = setmetatable
 
-setmetatable(sysconfig, mt)
-return sysconfig
+module 'gluon.sysconfig'
+
+setmetatable(_M,
+	{
+		__index = get,
+		__newindex = set,
+	}
+)
+
+return _M
