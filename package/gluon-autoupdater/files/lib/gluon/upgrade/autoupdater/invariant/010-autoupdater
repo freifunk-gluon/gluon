@@ -1,0 +1,42 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for name, config in pairs(site.autoupdater.branches) do
+	c:delete('autoupdater', name)
+	c:section('autoupdater', 'branch', name,
+		  {
+			  name = config.name,
+			  mirror = config.mirrors,
+			  probability = config.probability,
+			  good_signatures = config.good_signatures,
+			  pubkey = config.pubkeys,
+		  }
+	)
+end
+
+if not c:get('autoupdater', 'settings') then
+	local enabled = 0
+	local branch = site.autoupdater.branch
+
+	local f = io.open('/lib/gluon/autoupdater/default_branch')
+	if f then
+		enabled = 1
+		branch = f:read('*line')
+		f:close()
+	end
+
+	c:section('autoupdater', 'autoupdater', 'settings',
+		  {
+			  enabled = enabled,
+			  branch = branch,
+		  }
+	)
+end
+
+c:save('autoupdater')
+c:commit('autoupdater')
