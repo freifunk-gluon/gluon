@@ -1,8 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-next-node
-PKG_VERSION:=1
-PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -30,6 +29,7 @@ define Build/Compile
 endef
 
 define Package/gluon-next-node/install
+	$(CP) ./files/* $(1)/
 	$(GLUON_GENERATE) ./generate/* $(1)/
 endef
 
