@@ -12,7 +12,11 @@ $Id$
 
 module("luci.controller.gluon-config-mode.index", package.seeall)
 
+local site = require 'gluon.site_config'
+
+
 local meshvpn_name = "mesh_vpn"
+
 
 function index()
   local uci_state = luci.model.uci.cursor_state()
@@ -56,11 +60,11 @@ function action_reboot()
   uci:save("gluon-config-mode")
   uci:commit("gluon-config-mode")
 
-  hostname = uci:get_first("system", "system", "hostname")
+  local hostname = uci:get_first("system", "system", "hostname")
 
   if nixio.fork() ~= 0 then
     luci.template.render("gluon-config-mode/reboot",
-      {pubkey=pubkey, hostname=hostname})
+      {pubkey=pubkey, hostname=hostname, site=site})
   else
     debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
     io.stdout:close()

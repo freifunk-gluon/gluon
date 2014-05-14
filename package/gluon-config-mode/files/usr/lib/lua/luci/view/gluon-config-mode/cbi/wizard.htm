@@ -1,6 +1,10 @@
+<%-
+	local site = require 'gluon.site_config'
+-%>
+
 <h2>Willkommen!</h2>
 <p>
-  @config_mode.msg_welcome@
+	<%= site.config_mode.msg_welcome %>
 </p>
 
 <% if not self.embedded then %>
