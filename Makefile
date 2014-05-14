@@ -148,7 +148,7 @@ gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
 include $(INCLUDE_DIR)/target.mk
 
 
-gluon-tools: $(STAGING_DIR_HOST)/bin/stat package/lua/host/install
+gluon-tools: package/lua/host/install
 
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
@@ -210,8 +210,6 @@ dirclean: FORCE
 	+$(SUBMAKE) dirclean
 	rm -rf $(GLUON_BUILDDIR)
 
-export GLUON_GENERATE := $(GLUONDIR)/scripts/generate.sh
-export GLUON_CONFIGURE := $(GLUONDIR)/scripts/configure.pl
 
 export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
 export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh

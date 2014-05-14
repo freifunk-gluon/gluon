@@ -28,9 +28,6 @@ export GLUON_VERSION
 ifeq ($(OPENWRT_BUILD),1)
 ifeq ($(GLUON_TOOLS),1)
 
-GLUON_CONFIG_VERSION := $(shell test -d $(GLUON_SITEDIR) && (cd $(GLUON_SITEDIR) && git describe --always --dirty=.$$($(STAGING_DIR_HOST)/bin/stat -c %Y $(GLUON_SITEDIR)/site.conf) 2>/dev/null || $(STAGING_DIR_HOST)/bin/stat -c %Y site.conf))
-export GLUON_CONFIG_VERSION
-
 CONFIG_VERSION_REPO := $(shell $(GLUONDIR)/scripts/site.sh opkg_repo || echo http://downloads.openwrt.org/attitude_adjustment/12.09/%S/packages)
 export CONFIG_VERSION_REPO
 
