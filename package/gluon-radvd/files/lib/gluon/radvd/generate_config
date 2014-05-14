@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+
+print([[
+interface br-client
+{
+	IgnoreIfMissing on;
+	AdvSendAdvert on;
+	AdvDefaultLifetime 0;
+
+	prefix ]] .. site.prefix6 .. [[ {};
+};
+]])
