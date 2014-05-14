@@ -1,8 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-simple-tc
-PKG_VERSION:=1
-PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -31,10 +30,6 @@ endef
 
 define Package/gluon-simple-tc/install
 	$(CP) ./files/* $(1)/
-
-	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/simple-tc/invariant
-	$(GLUON_CONFIGURE) invariant.pl > $(1)/lib/gluon/upgrade/simple-tc/invariant/010-site-defaults
-	chmod +x $(1)/lib/gluon/upgrade/simple-tc/invariant/010-site-defaults
 endef
 
 $(eval $(call BuildPackage,gluon-simple-tc))

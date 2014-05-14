@@ -1,0 +1,16 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for name, config in pairs(site.simple_tc) do
+	if not c:get('gluon-simple-tc', name) then
+		c:section('gluon-simple-tc', 'interface', name, config)
+	end
+end
+
+c:save('gluon-simple-tc')
+c:commit('gluon-simple-tc')
