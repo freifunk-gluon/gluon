@@ -1,0 +1,68 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+local nixio = require 'nixio'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+os.execute('. /lib/gluon/functions/users.sh && add_user gluon-fastd 800')
+
+
+c:section('fastd', 'fastd', 'mesh_vpn',
+	  {
+		  user = 'gluon-fastd',
+		  syslog_level = 'verbose',
+		  interface = 'mesh-vpn',
+		  mode = 'tap',
+		  mtu = site.fastd_mesh_vpn.mtu,
+		  secure_handshakes = '1',
+		  method = site.fastd_mesh_vpn.methods,
+	  }
+)
+
+c:delete('fastd', 'mesh_vpn_backbone')
+c:section('fastd', 'peer_group', 'mesh_vpn_backbone',
+	  {
+		  enabled = 1,
+		  net = 'mesh_vpn',
+		  peer_limit = site.fastd_mesh_vpn.backbone.limit,
+	  }
+)
+
+for name, config in pairs(site.fastd_mesh_vpn.backbone.peers) do
+	c:delete('fastd', 'mesh_vpn_backbone_peer_' .. name)
+	c:section('fastd', 'peer', 'mesh_vpn_backbone_peer_' .. name,
+		  {
+			  enabled = 1,
+			  net = 'mesh_vpn',
+			  group = 'mesh_vpn_backbone',
+			  key = config.key,
+			  remote = config.remotes,
+		  }
+	)
+end
+
+c:save('fastd')
+c:commit('fastd')
+
+
+local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
+m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
+m4 = (tonumber(m4, 16)+1) % 0x100
+local vpnaddr = string.format('%02x:%s:%s:%02x:%s:%s', m1, m2, m3, m4, m5, m6)
+
+c:section('network', 'interface', 'mesh_vpn',
+	  {
+		  ifname = 'mesh-vpn',
+		  proto = 'batadv',
+		  mesh = 'bat0',
+		  mesh_no_rebroadcast = 1,
+		  macaddr = vpnaddr,
+	  }
+)
+
+c:save('network')
+c:commit('network')

@@ -1,8 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-mesh-vpn-fastd
-PKG_VERSION:=1
-PKG_RELEASE:=1.$(GLUON_CONFIG_VERSION)
+PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -31,10 +30,6 @@ endef
 
 define Package/gluon-mesh-vpn-fastd/install
 	$(CP) ./files/* $(1)/
-
-	$(INSTALL_DIR) $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant
-	$(GLUON_CONFIGURE) fastd.pl > $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant/010-mesh-vpn-fastd
-	chmod +x $(1)/lib/gluon/upgrade/mesh-vpn-fastd/invariant/010-mesh-vpn-fastd
 endef
 
 $(eval $(call BuildPackage,gluon-mesh-vpn-fastd))
