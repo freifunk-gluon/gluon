@@ -1,0 +1,69 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+local function configure_radio(device)
+	local radio = device['.name']
+	local hwmode = c:get('wireless', radio, 'hwmode')
+
+	local config
+	if hwmode == '11g' or hwmode == '11ng' then
+		config = site.wifi24
+	elseif hwmode == '11a' or hwmode == '11na' then
+		config = site.wifi5
+	else
+		return true
+	end
+
+	c:delete('wireless', radio, 'disabled')
+
+	c:set('wireless', radio, 'channel', config.channel)
+	c:set('wireless', radio, 'htmode', config.htmode)
+	c:set('wireless', radio, 'country', site.regdom)
+
+	local client = 'client_' .. radio
+	c:delete('wireless', client)
+	c:section('wireless', 'wifi-iface', client,
+		  {
+			  device = radio,
+			  network = 'client',
+			  mode = 'ap',
+			  ssid = config.ssid,
+		  }
+	)
+
+	local mesh = 'mesh_' .. radio
+	c:delete('network', mesh)
+	c:section('network', 'interface', mesh,
+		  {
+			  proto = 'batadv',
+			  mtu = '1528',
+			  mesh = 'bat0',
+		  }
+	)
+
+	c:delete('wireless', mesh)
+	c:section('wireless', 'wifi-iface', mesh,
+		  {
+			  device = radio,
+			  network = mesh,
+			  mode = 'adhoc',
+			  ssid = config.mesh_ssid,
+			  bssid = config.mesh_bssid,
+			  mcast_rate = config.mesh_mcast_rate,
+		  }
+	)
+
+	return true
+end
+
+c:foreach('wireless', 'wifi-device', configure_radio)
+
+c:save('wireless')
+c:save('network')
+c:commit('wireless')
+c:commit('network')
