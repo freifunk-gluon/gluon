@@ -23,15 +23,14 @@ STOP=91
 exec_file() {
 	local file="$1"
 
-	sh -c "
-		eval 'rule() {
-			$EBTABLES_RULE
-		}'
-		eval 'chain() {
-			$EBTABLES_CHAIN
-		}'
-		source \"$1\"
-	" - "$file"
+	/usr/bin/lua -e "
+		function rule(command)
+			os.execute($EBTABLES_RULE)
+		end
+		function chain(name, policy)
+			os.execute($EBTABLES_CHAIN)
+		end
+	" "$file"
 }
 
 exec_all() {
@@ -49,8 +48,8 @@ exec_all() {
 
 start() {
 	(
-		export EBTABLES_RULE='ebtables -A "$@"'
-		export EBTABLES_CHAIN='ebtables -N "$1" -P "$2"'
+		export EBTABLES_RULE='"ebtables -A " .. command'
+		export EBTABLES_CHAIN='"ebtables -N " .. name .. " -P " .. policy'
 
 		if [ -z "$1" ]; then
 			exec_all ''
@@ -62,8 +61,8 @@ start() {
 
 stop() {
 	(
-		export EBTABLES_RULE='ebtables -D "$@"'
-		export EBTABLES_CHAIN='ebtables -X "$1"'
+		export EBTABLES_RULE='"ebtables -D " .. command'
+		export EBTABLES_CHAIN='"ebtables -X " .. name'
 
 		if [ -z "$1" ]; then
 			exec_all '-r'

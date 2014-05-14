@@ -1,1 +1,1 @@
-chain MULTICAST_OUT DROP
+chain('MULTICAST_OUT', 'DROP')
