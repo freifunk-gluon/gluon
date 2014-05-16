@@ -64,7 +64,7 @@ function action_reboot()
 
   if nixio.fork() ~= 0 then
     luci.template.render("gluon-config-mode/reboot",
-      {pubkey=pubkey, hostname=hostname, site=site})
+      {luci=luci, pubkey=pubkey, hostname=hostname, site=site})
   else
     debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
     io.stdout:close()

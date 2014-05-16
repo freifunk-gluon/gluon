@@ -13,17 +13,17 @@
         <% if pubkey then %>
         <fieldset class="cbi-section">
           <p>
-            <%= site.config_mode.msg_pubkey %>
+            <%= luci.template.render_string(site.config_mode.msg_pubkey) %>
           </p>
           <div class="the-key">
-            # Hostname: <%= hostname %>
+            # <%= hostname %>
             <br/>
             <%= pubkey %>
           </div>
         </fieldset>
         <% end %>
         <fieldset class="cbi-section">
-          <%= site.config_mode.msg_reboot %>
+          <%= luci.template.render_string(site.config_mode.msg_reboot) %>
         </fieldset>
       </div>
     </div>

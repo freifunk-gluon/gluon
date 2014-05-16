@@ -1,10 +1,12 @@
 <%-
 	local site = require 'gluon.site_config'
+	local sysconfig = require 'gluon.sysconfig'
+	local template = require 'luci.template'
 -%>
 
 <h2>Willkommen!</h2>
 <p>
-	<%= site.config_mode.msg_welcome %>
+	<%= template.render_string(site.config_mode.msg_welcome, {hostname=hostname, sysconfig=sysconfig}) %>
 </p>
 
 <% if not self.embedded then %>
