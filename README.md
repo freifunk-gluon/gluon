@@ -17,28 +17,24 @@ for `subversion`, ncurses headers (`libncurses-dev`) and zlib headers
 (`libz-dev`).`
 
 
-There are three levels of `make clean`:
+There are two levels of `make clean`:
 
     make clean
 
-will only clean the Gluon-specific files;
-
-    make cleanall
-
-will also call `make clean` on the OpenWRT tree, and
+will ensure all packages are rebuilt; this is what you normally want to do after an update.
 
     make dirclean
 
-will do all this, and call `make dirclean` on the OpenWRT tree. Of these, `make cleanall`
-is the most useful as it ensures that the kernel and all packages are rebuilt (which won't
-be done when only patches have changed), but doesn't rebuild the toolchain unnecessarily.
+will clean the entire tree, so the toolchain will be rebuilt as well, which is
+not necessary in most cases, and will take a while. (`make cleanall` is a deprecated
+alias for `make clean`)
 
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used:
 
     git pull
     (cd site && git pull)
     make update
-    make cleanall
+    make clean
     make
 
 
@@ -58,7 +54,7 @@ A fully automated nightly build could use the following commands:
     git pull
     (cd site && git pull)
     make update
-    make cleanall
+    make clean
     make -j5 GLUON_BRANCH=experimental
     make manifest GLUON_BRANCH=experimental
     contrib/sign.sh $SECRETKEY images/sysupgrade/experimental.manifest
