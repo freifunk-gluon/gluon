@@ -10,7 +10,10 @@ the images only, just use:
 
     make images
 
-The built images can be found in the directory `images`.
+The built images can be found in the directory `images`. Of these, the factory
+images are to be used when flashing from the original firmware a device came with,
+and sysupgrade is to upgrade from other versions of Gluon or any other OpenWRT-based
+system.
 
 For the build reserve 6GB of disk space. The build requires packages
 for `subversion`, ncurses headers (`libncurses-dev`) and zlib headers
