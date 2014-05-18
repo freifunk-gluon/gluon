@@ -1,0 +1,62 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 7 May 2014 22:57:10 +0200
+Subject: tools/Makefile: fix host tools build dependencies
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 2236373..1f45367 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -74,6 +74,7 @@ endif
+ $(curdir)/builddirs := $(tools-y) $(tools-dep) $(tools-)
+ $(curdir)/builddirs-default := $(tools-y)
+ 
++
+ ifndef DUMP_TARGET_DB
+ define PrepareStaging
+ 	@for dir in $(1); do ( \
+@@ -85,10 +86,16 @@ define PrepareStaging
+ endef
+ 
+ # preparatory work
++ifneq ($(ARCH),)
++staging_prepared = $(STAGING_DIR)/.prepared
++
+ $(STAGING_DIR)/.prepared: $(TMP_DIR)/.build
+ 	$(call PrepareStaging,$(STAGING_DIR))
+ 	mkdir -p $(BUILD_DIR)/stamp
+ 	touch $@
++else
++staging_prepared :=
++endif
+ 
+ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
+ 	$(call PrepareStaging,$(STAGING_DIR_HOST))
+@@ -100,7 +107,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
+ 
+ 
+ define PrepareCommand
+-$(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
++$(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR_HOST)/.prepared
+ 	@mkdir -p "$$(dir $$@)"; rm -f "$$@"
+ 	@export FILE="$$$$(which $(2) 2>/dev/null | grep -v 'not found' | head -n1)"; [ -n "$$$$FILE" ] || { \
+ 		echo "Command $(1) not found."; false; \
+@@ -109,7 +116,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
+ endef
+ endif
+ 
+-$(STAGING_DIR_HOST)/bin/stat: $(STAGING_DIR)/.prepared
++$(STAGING_DIR_HOST)/bin/stat: $(STAGING_DIR_HOST)/.prepared
+ 	@rm -f $@
+ 	@if stat --version > /dev/null 2>&1; then \
+ 		ln -s `which stat` $@; \
+@@ -127,8 +134,8 @@ $(eval $(call PrepareCommand,seq,gseq seq))
+ $(eval $(call PrepareCommand,python,python2 python))
+ 
+ $(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,find md5sum cp stat seq python)
+-$(curdir)//prepare = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
+-$(curdir)//compile = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
++$(curdir)//prepare = $(staging_prepared) $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
++$(curdir)//compile = $(staging_prepared) $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
+ 
+ # prerequisites for the individual targets
+ $(curdir)/ := .config prereq
