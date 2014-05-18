@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-config
 PKG_VERSION:=$(GLUON_SITE_CODE)
-PKG_RELEASE:=$(shell $(MD5SUM) $(GLUON_SITEDIR)/site.conf)
+PKG_RELEASE:=$(GLUON_RELEASE).$(shell $(MD5SUM) $(GLUON_SITEDIR)/site.conf)
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -31,6 +31,7 @@ endef
 define Package/gluon-config/install
 	$(INSTALL_DIR) $(1)/lib/gluon
 	$(CP) $(GLUON_SITEDIR)/site.conf $(1)/lib/gluon/site.conf
+	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 endef
 
 $(eval $(call BuildPackage,gluon-config))
