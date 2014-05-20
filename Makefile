@@ -112,6 +112,7 @@ include $(INCLUDE_DIR)/subdir.mk
 include package/Makefile
 include tools/Makefile
 include toolchain/Makefile
+include target/Makefile
 
 
 PROFILES :=
