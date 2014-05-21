@@ -61,6 +61,7 @@ define GluonModel
 endef
 
 include $(GLUONDIR)/targets/targets.mk
+include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
 
 
 CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
@@ -138,6 +139,7 @@ endef
 
 
 include $(GLUONDIR)/targets/targets.mk
+include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
 
 BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
 override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)

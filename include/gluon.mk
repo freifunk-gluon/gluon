@@ -56,8 +56,6 @@ gluon_target := $(1)$$(if $(2),-$(2))
 GLUON_TARGETS += $$(gluon_target)
 GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
 GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
-
-include $$(GLUONDIR)/targets/$$(gluon_target)/profiles.mk
 endef
 
 regex-escape = $(shell echo '$(1)' | sed -e 's/[]\/()$*.^|[]/\\&/g')
