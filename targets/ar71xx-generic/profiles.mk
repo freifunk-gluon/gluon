@@ -71,6 +71,10 @@ $(eval $(call GluonModel,UBNT,ubnt-nano-m-squashfs,ubiquiti-nanostation-m))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-squashfs,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdoor))
 
+# D-Link DIR-615 rev. E1
+$(eval $(call GluonProfile,DIR615E1))
+$(eval $(call GluonModel,DIR615E1,dir-615-e1-squashfs,d-link-dir-615-rev-e1))
+
 # D-Link DIR-825 rev. B1
 $(eval $(call GluonProfile,DIR825B1))
 $(eval $(call GluonModel,DIR825B1,dir-825-b1-squashfs,d-link-dir-825-rev-b1))
