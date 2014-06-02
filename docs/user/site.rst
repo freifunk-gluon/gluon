@@ -74,22 +74,82 @@ wifi5
     Same as `wifi24` but for the 5Ghz band.
 
 next_node : package
-    Configuration of the local node feature of Gluon.
+    Configuration of the local node feature of Gluon 
+    ::
+      next_node = {
+        ip4 = '10.23.42.1',
+        ip6 = 'fdca:ffee:babe:1::1',
+        mac = 'ca:ff:ee:ba:be'
+      }
+
 
 fastd_mesh_vpn
-    Remote servers fastd should connect against.
+    Remote server setup for vpn. 
+    ::
+      fastd_mesh_vpn = {
+        methods = {'salsa2012+gmac'},
+        mtu = 1426,
+        backbone = {
+          limit = 2,
+          peers = {
+            ffki_rz = {
+              key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+              remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+            },
+          }
+        }
+      }
 
 autoupdater : package 
     Configuration for the autoupdater feature of Gluon.
+    ::
+      autoupdater = {
+        enabled = 1,
+        branch = 'experimental',
+        branches = {
+          stable = {
+            name = 'stable',
+            mirrors = {
+              'http://{fdca:ffee:babe:1::fec1}/firmware/stable/sysupgrade/',
+              'http://{fdca:ffee:babe:1::fec2}/firmware/stable/sysupgrade/',
+            },
+            probability = 0.08,
+            good_signatures = 2,
+            pubkeys = {
+              'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
+              'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someother
+            }
+          }
+        }
+      }
 
 simple_tc : package
     Uplink traffic control
+    ::
+      simple_tc = {
+        mesh_vpn = {
+          ifname = 'mesh-vpn',
+          enabled = 0,
+          limit_egress = 200,
+          limit_ingress = 3000,
+        },
+      },
 
 config_mode : package
     Configuration Mode text blocks
 
 legacy : package
     Configuration for the legacy upgrade path.
+    ::
+      legacy = {
+             version_files = {'/etc/.freifunk_version_keep', '/etc/.eff_version_keep'},
+             old_files = {'/etc/config/config_mode', '/etc/config/ffeh', '/etc/config/freifunk'},
+             config_mode_configs = {'config_mode', 'ffeh', 'freifunk'},
+             fastd_configs = {'ffeh_mesh_vpn', 'mesh_vpn'},
+             mesh_ifname = 'freifunk',
+             tc_configs = {'ffki', 'freifunk'},
+             wifi_names = {'wifi_freifunk', 'wifi_freifunk5', 'wifi_mesh', 'wifi_mesh5'},
+      }
 
 Packages
 --------
