@@ -1,6 +1,6 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Mon, 19 May 2014 15:59:37 +0200
-Subject: Backport mac80211 from Barrier Breaker (r40842)
+Subject: Backport mac80211 from Barrier Breaker (r40995)
 
 diff --git a/package/mac80211/Makefile b/package/mac80211/Makefile
 index 9a7093c..c286b0f 100644
@@ -2142,26 +2142,20 @@ index 7b50154..6a7f5c1 100644
   	pm_qos_remove_notifier(PM_QOS_NETWORK_LATENCY,
   			       &local->network_latency_notifier);
 diff --git a/package/mac80211/patches/300-pending_work.patch b/package/mac80211/patches/300-pending_work.patch
-index a1af6c2..0a2e86b 100644
+index a1af6c2..c621ddb 100644
 --- a/package/mac80211/patches/300-pending_work.patch
 +++ b/package/mac80211/patches/300-pending_work.patch
-@@ -1,4153 +1,163 @@
+@@ -1,4153 +1,386 @@
 -commit 93f310a38a1d81a4bc8fcd9bf29628bd721cf2ef
-+commit 6df35206bc6c1c6aad1d8077df5786b4a7f77873
- Author: Felix Fietkau <nbd@openwrt.org>
+-Author: Felix Fietkau <nbd@openwrt.org>
 -Date:   Sun Apr 6 23:35:28 2014 +0200
-+Date:   Fri May 23 19:58:14 2014 +0200
- 
+-
 -    ath9k_hw: reduce ANI firstep range for older chips
-+    mac80211: reduce packet loss notifications under load
-     
+-    
 -    Use 0-8 instead of 0-16, which is closer to the old implementation.
 -    Also drop the overwrite of the firstep_low parameter to improve
 -    stability.
-+    During strong signal fluctuations under high throughput, few consecutive
-+    failed A-MPDU transmissions can easily trigger packet loss notification,
-+    and thus (in AP mode) client disconnection.
-     
+-    
 -    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 -
 -commit 584d297fd29fb39c76af25ae74ff9d5fe74c8a14
@@ -4737,44 +4731,7 @@ index a1af6c2..0a2e86b 100644
 ---- a/net/mac80211/chan.c
 -+++ b/net/mac80211/chan.c
 -@@ -196,6 +196,8 @@ static bool ieee80211_is_radar_required(
-+    Reduce the number of false positives by checking the A-MPDU status flag
-+    and treating a failed A-MPDU as a single packet.
-+    
-+    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+
-+commit 7b7843a36fbcc568834404c7430ff895d8502131
-+Author: Felix Fietkau <nbd@openwrt.org>
-+Date:   Fri May 23 19:26:32 2014 +0200
-+
-+    mac80211: fix a memory leak on sta rate selection table
-+    
-+    Cc: stable@vger.kernel.org
-+    Reported-by: Christophe Prévotaux <cprevotaux@nltinc.com>
-+    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+
-+commit 96892d6aa0a153423070addf3070bc79578b3897
-+Author: Felix Fietkau <nbd@openwrt.org>
-+Date:   Mon May 19 21:20:49 2014 +0200
-+
-+    ath9k: avoid passing buffers to the hardware during flush
-+    
-+    The commit "ath9k: fix possible hang on flush" changed the receive code
-+    to always link rx descriptors of processed frames, even when flushing.
-+    In some cases, this leads to flushed rx buffers being passed to the
-+    hardware while rx is already stopped.
-+    
-+    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+
-+--- a/drivers/net/wireless/ath/ath9k/recv.c
-++++ b/drivers/net/wireless/ath/ath9k/recv.c
-+@@ -34,7 +34,8 @@ static inline bool ath9k_check_auto_slee
-+  * buffer (or rx fifo). This can incorrectly acknowledge packets
-+  * to a sender if last desc is self-linked.
-+  */
-+-static void ath_rx_buf_link(struct ath_softc *sc, struct ath_rxbuf *bf)
-++static void ath_rx_buf_link(struct ath_softc *sc, struct ath_rxbuf *bf,
-++			    bool flush)
-  {
+- {
 - 	struct ieee80211_sub_if_data *sdata;
 - 
 -+	lockdep_assert_held(&local->mtx);
@@ -4815,24 +4772,12 @@ index a1af6c2..0a2e86b 100644
 --	cfg80211_ibss_joined(sdata->dev, ifibss->bssid, GFP_KERNEL);
 -+	cfg80211_ibss_joined(sdata->dev, ifibss->bssid, chan, GFP_KERNEL);
 - }
-+ 	struct ath_hw *ah = sc->sc_ah;
-+ 	struct ath_common *common = ath9k_hw_common(ah);
-+@@ -59,18 +60,19 @@ static void ath_rx_buf_link(struct ath_s
-+ 			     common->rx_bufsize,
-+ 			     0);
-  
+- 
 - static void ieee80211_sta_join_ibss(struct ieee80211_sub_if_data *sdata,
 -@@ -802,6 +801,8 @@ ieee80211_ibss_process_chanswitch(struct
 - 	int err;
 - 	u32 sta_flags;
-+-	if (sc->rx.rxlink == NULL)
-+-		ath9k_hw_putrxbuf(ah, bf->bf_daddr);
-+-	else
-++	if (sc->rx.rxlink)
-+ 		*sc->rx.rxlink = bf->bf_daddr;
-++	else if (!flush)
-++		ath9k_hw_putrxbuf(ah, bf->bf_daddr);
-  
+- 
 -+	sdata_assert_lock(sdata);
 -+
 - 	sta_flags = IEEE80211_STA_DISABLE_VHT;
@@ -4848,9 +4793,8 @@ index a1af6c2..0a2e86b 100644
 -+		IEEE80211_SKB_CB(skb)->flags |= IEEE80211_TX_CTL_NO_ACK;
 -+
 - 	ieee80211_tx_skb(sdata, skb);
-+ 	sc->rx.rxlink = &ds->ds_link;
-  }
-  
+- }
+- 
 ---- a/net/mac80211/mesh.c
 -+++ b/net/mac80211/mesh.c
 -@@ -872,6 +872,8 @@ ieee80211_mesh_process_chnswitch(struct 
@@ -4930,19 +4874,13 @@ index a1af6c2..0a2e86b 100644
 --void __cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid)
 -+void __cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid,
 -+			    struct ieee80211_channel *channel)
-+-static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_rxbuf *bf)
-++static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_rxbuf *bf,
-++			      bool flush)
-  {
+- {
 - 	struct wireless_dev *wdev = dev->ieee80211_ptr;
 - 	struct cfg80211_bss *bss;
 -@@ -28,8 +29,7 @@ void __cfg80211_ibss_joined(struct net_d
 - 	if (!wdev->ssid_len)
 - 		return;
-+ 	if (sc->rx.buf_hold)
-+-		ath_rx_buf_link(sc, sc->rx.buf_hold);
-++		ath_rx_buf_link(sc, sc->rx.buf_hold, flush);
-  
+- 
 --	bss = cfg80211_get_bss(wdev->wiphy, NULL, bssid,
 --			       wdev->ssid, wdev->ssid_len,
 -+	bss = cfg80211_get_bss(wdev->wiphy, channel, bssid, NULL, 0,
@@ -4951,8 +4889,7 @@ index a1af6c2..0a2e86b 100644
 - 	if (WARN_ON(!bss))
 -@@ -54,21 +54,26 @@ void __cfg80211_ibss_joined(struct net_d
 - #endif
-+ 	sc->rx.buf_hold = bf;
-  }
+- }
 - 
 --void cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid, gfp_t gfp)
 -+void cfg80211_ibss_joined(struct net_device *dev, const u8 *bssid,
@@ -5129,13 +5066,7 @@ index a1af6c2..0a2e86b 100644
 -+			wdev->chandef = *chandef;
 - 
 - 		return err;
-+@@ -442,7 +444,7 @@ int ath_startrecv(struct ath_softc *sc)
-+ 	sc->rx.buf_hold = NULL;
-+ 	sc->rx.rxlink = NULL;
-+ 	list_for_each_entry_safe(bf, tbf, &sc->rx.rxbuf, list) {
-+-		ath_rx_buf_link(sc, bf);
-++		ath_rx_buf_link(sc, bf, false);
-  	}
+- 	}
 -@@ -276,7 +276,7 @@ static int __cfg80211_leave_mesh(struct 
 - 	err = rdev_leave_mesh(rdev, dev);
 - 	if (!err) {
@@ -5150,31 +5081,17 @@ index a1af6c2..0a2e86b 100644
 -@@ -772,7 +772,7 @@ void cfg80211_cac_event(struct net_devic
 - 	if (WARN_ON(!wdev->cac_started))
 - 		return;
-  
+- 
 --	if (WARN_ON(!wdev->channel))
 -+	if (WARN_ON(!wdev->chandef.chan))
 - 		return;
-+ 	/* We could have deleted elements so the list may be empty now */
-+@@ -1118,12 +1120,12 @@ requeue_drop_frag:
-+ requeue:
-+ 		list_add_tail(&bf->list, &sc->rx.rxbuf);
-  
+- 
 - 	switch (event) {
 ---- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
 -+++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
 -@@ -5065,6 +5065,10 @@ static u16 ar9003_hw_get_max_edge_power(
 - 			break;
-+-		if (edma) {
-+-			ath_rx_edma_buf_link(sc, qtype);
-+-		} else {
-+-			ath_rx_buf_relink(sc, bf);
-++		if (!edma) {
-++			ath_rx_buf_relink(sc, bf, flush);
-+ 			if (!flush)
-+ 				ath9k_hw_rxena(ah);
-++		} else if (!flush) {
-++			ath_rx_edma_buf_link(sc, qtype);
-  		}
+- 		}
 - 	}
 -+
 -+	if (is2GHz && !twiceMaxEdgePower)
@@ -5220,18 +5137,12 @@ index a1af6c2..0a2e86b 100644
 -@@ -839,7 +840,8 @@ static bool ar9003_hw_calc_iq_corr(struc
 - 	return true;
 - }
-  
+- 
 --static void ar9003_hw_detect_outlier(int *mp_coeff, int nmeasurement,
 -+static void ar9003_hw_detect_outlier(int mp_coeff[][MAXIQCAL],
 -+				     int nmeasurement,
 - 				     int max_delta)
-+ 		if (!budget--)
-+--- a/net/mac80211/sta_info.c
-++++ b/net/mac80211/sta_info.c
-+@@ -227,6 +227,7 @@ struct sta_info *sta_info_get_by_idx(str
-+  */
-+ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
-  {
+- {
 - 	int mp_max = -64, max_idx = 0;
 -@@ -848,20 +850,20 @@ static void ar9003_hw_detect_outlier(int
 - 
@@ -5273,17 +5184,12 @@ index a1af6c2..0a2e86b 100644
 -@@ -882,15 +884,16 @@ static void ar9003_hw_detect_outlier(int
 - 		else
 - 			outlier_idx = min_idx;
-++	struct ieee80211_sta_rates *rates;
-+ 	int i;
-  
+- 
 --		mp_coeff[outlier_idx] = mp_avg;
 -+		mp_coeff[outlier_idx][0] = mp_avg;
-+ 	if (sta->rate_ctrl)
-+@@ -238,6 +239,10 @@ void sta_info_free(struct ieee80211_loca
-+ 		kfree(sta->tx_lat);
-  	}
+- 	}
 - }
-  
+- 
 --static void ar9003_hw_tx_iqcal_load_avg_2_passes(struct ath_hw *ah,
 --						 struct coeff *coeff,
 --						 bool is_reusable)
@@ -5319,18 +5225,14 @@ index a1af6c2..0a2e86b 100644
 -+				ar9003_hw_detect_outlier(coeff->mag_coeff[i],
 -+							 nmeasurement,
 -+							 MAX_MAG_DELTA);
-++	rates = rcu_dereference_protected(sta->sta.rates, true);
-++	if (rates)
-++		kfree(rates);
- +
+-+
 -+				/* Detect phase outlier */
 -+				ar9003_hw_detect_outlier(coeff->phs_coeff[i],
 -+							 nmeasurement,
 -+							 MAX_PHS_DELTA);
 -+			}
 - 		}
-+ 	sta_dbg(sta->sdata, "Destroyed STA %pM\n", sta->sta.addr);
-  
+- 
 - 		for (im = 0; im < nmeasurement; im++) {
 -+			magnitude = coeff->mag_coeff[i][im][0];
 -+			phase = coeff->phs_coeff[i][im][0];
@@ -5345,13 +5247,7 @@ index a1af6c2..0a2e86b 100644
 -@@ -991,7 +1003,63 @@ static bool ar9003_hw_tx_iq_cal_run(stru
 - 	return true;
 - }
-+ 	kfree(sta);
-+--- a/net/mac80211/status.c
-++++ b/net/mac80211/status.c
-+@@ -541,6 +541,23 @@ static void ieee80211_tx_latency_end_msr
-+  */
-+ #define STA_LOST_PKT_THRESHOLD	50
-  
+- 
 --static void ar9003_hw_tx_iq_cal_post_proc(struct ath_hw *ah, bool is_reusable)
 -+static void __ar955x_tx_iq_cal_sort(struct ath_hw *ah,
 -+				    struct coeff *coeff,
@@ -5394,35 +5290,109 @@ index a1af6c2..0a2e86b 100644
 -+				    struct coeff *coeff,
 -+				    int iqcal_idx,
 -+				    int nmeasurement)
-++static void ieee80211_lost_packet(struct sta_info *sta, struct sk_buff *skb)
- +{
+-+{
 -+	int i;
-++	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
- +
+-+
 -+	if ((iqcal_idx + 1) != MAXIQCAL)
 -+		return false;
-++	/* This packet was aggregated but doesn't carry status info */
-++	if ((info->flags & IEEE80211_TX_CTL_AMPDU) &&
-++	    !(info->flags & IEEE80211_TX_STAT_AMPDU))
-++		return;
- +
+-+
 -+	for (i = 0; i < AR9300_MAX_CHAINS; i++) {
 -+		__ar955x_tx_iq_cal_sort(ah, coeff, i, nmeasurement);
 -+	}
-++	if (++sta->lost_packets < STA_LOST_PKT_THRESHOLD)
-++		return;
- +
+-+
 -+	return true;
-++	cfg80211_cqm_pktloss_notify(sta->sdata->dev, sta->sta.addr,
-++				    sta->lost_packets, GFP_ATOMIC);
-++	sta->lost_packets = 0;
- +}
- +
+-+}
+-+
 -+static void ar9003_hw_tx_iq_cal_post_proc(struct ath_hw *ah,
 -+					  int iqcal_idx,
 -+					  bool is_reusable)
-- {
-- 	struct ath_common *common = ath9k_hw_common(ah);
++commit 930b0dffd1731f3f418f9132faea720a23b7af61
++Author: Johannes Berg <johannes.berg@intel.com>
++Date:   Tue Jun 3 11:18:47 2014 +0200
++
++    mac80211: fix station/driver powersave race
++    
++    It is currently possible to have a race due to the station PS
++    unblock work like this:
++     * station goes to sleep with frames buffered in the driver
++     * driver blocks wakeup
++     * station wakes up again
++     * driver flushes/returns frames, and unblocks, which schedules
++       the unblock work
++     * unblock work starts to run, and checks that the station is
++       awake (i.e. that the WLAN_STA_PS_STA flag isn't set)
++     * we process a received frame with PM=1, setting the flag again
++     * ieee80211_sta_ps_deliver_wakeup() runs, delivering all frames
++       to the driver, and then clearing the WLAN_STA_PS_DRIVER and
++       WLAN_STA_PS_STA flags
++    
++    In this scenario, mac80211 will think that the station is awake,
++    while it really is asleep, and any TX'ed frames should be filtered
++    by the device (it will know that the station is sleeping) but then
++    passed to mac80211 again, which will not buffer it either as it
++    thinks the station is awake, and eventually the packets will be
++    dropped.
++    
++    Fix this by moving the clearing of the flags to exactly where we
++    learn about the situation. This creates a problem of reordering,
++    so introduce another flag indicating that delivery is being done,
++    this new flag also queues frames and is cleared only while the
++    spinlock is held (which the queuing code also holds) so that any
++    concurrent delivery/TX is handled correctly.
++    
++    Reported-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
++    Signed-off-by: Johannes Berg <johannes.berg@intel.com>
++
++commit 6df35206bc6c1c6aad1d8077df5786b4a7f77873
++Author: Felix Fietkau <nbd@openwrt.org>
++Date:   Fri May 23 19:58:14 2014 +0200
++
++    mac80211: reduce packet loss notifications under load
++    
++    During strong signal fluctuations under high throughput, few consecutive
++    failed A-MPDU transmissions can easily trigger packet loss notification,
++    and thus (in AP mode) client disconnection.
++    
++    Reduce the number of false positives by checking the A-MPDU status flag
++    and treating a failed A-MPDU as a single packet.
++    
++    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++
++commit 7b7843a36fbcc568834404c7430ff895d8502131
++Author: Felix Fietkau <nbd@openwrt.org>
++Date:   Fri May 23 19:26:32 2014 +0200
++
++    mac80211: fix a memory leak on sta rate selection table
++    
++    Cc: stable@vger.kernel.org
++    Reported-by: Christophe Prévotaux <cprevotaux@nltinc.com>
++    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++
++commit 96892d6aa0a153423070addf3070bc79578b3897
++Author: Felix Fietkau <nbd@openwrt.org>
++Date:   Mon May 19 21:20:49 2014 +0200
++
++    ath9k: avoid passing buffers to the hardware during flush
++    
++    The commit "ath9k: fix possible hang on flush" changed the receive code
++    to always link rx descriptors of processed frames, even when flushing.
++    In some cases, this leads to flushed rx buffers being passed to the
++    hardware while rx is already stopped.
++    
++    Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++
++--- a/drivers/net/wireless/ath/ath9k/recv.c
+++++ b/drivers/net/wireless/ath/ath9k/recv.c
++@@ -34,7 +34,8 @@ static inline bool ath9k_check_auto_slee
++  * buffer (or rx fifo). This can incorrectly acknowledge packets
++  * to a sender if last desc is self-linked.
++  */
++-static void ath_rx_buf_link(struct ath_softc *sc, struct ath_rxbuf *bf)
+++static void ath_rx_buf_link(struct ath_softc *sc, struct ath_rxbuf *bf,
+++			    bool flush)
+  {
++ 	struct ath_hw *ah = sc->sc_ah;
+  	struct ath_common *common = ath9k_hw_common(ah);
 - 	const u32 txiqcal_status[AR9300_MAX_CHAINS] = {
 -@@ -1004,10 +1072,11 @@ static void ar9003_hw_tx_iq_cal_post_pro
 - 		AR_PHY_CHAN_INFO_TAB_1,
@@ -5440,22 +5410,7 @@ index a1af6c2..0a2e86b 100644
 - 		if (!(ah->txchainmask & (1 << i)))
 -@@ -1065,17 +1134,23 @@ static void ar9003_hw_tx_iq_cal_post_pro
 - 				goto tx_iqcal_fail;
-+ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
-+ {
-+ 	struct sk_buff *skb2;
-+@@ -680,12 +697,8 @@ void ieee80211_tx_status(struct ieee8021
-+ 			if (info->flags & IEEE80211_TX_STAT_ACK) {
-+ 				if (sta->lost_packets)
-+ 					sta->lost_packets = 0;
-+-			} else if (++sta->lost_packets >= STA_LOST_PKT_THRESHOLD) {
-+-				cfg80211_cqm_pktloss_notify(sta->sdata->dev,
-+-							    sta->sta.addr,
-+-							    sta->lost_packets,
-+-							    GFP_ATOMIC);
-+-				sta->lost_packets = 0;
-++			} else {
-++				ieee80211_lost_packet(sta, skb);
-  			}
+- 			}
 - 
 --			coeff.mag_coeff[i][im] = coeff.iqc_coeff[0] & 0x7f;
 --			coeff.phs_coeff[i][im] =
@@ -5472,7 +5427,7 @@ index a1af6c2..0a2e86b 100644
 -+				coeff.mag_coeff[i][im][iqcal_idx] -= 128;
 -+			if (coeff.phs_coeff[i][im][iqcal_idx] > 63)
 -+				coeff.phs_coeff[i][im][iqcal_idx] -= 128;
-  		}
+- 		}
 - 	}
 --	ar9003_hw_tx_iqcal_load_avg_2_passes(ah, &coeff, is_reusable);
 -+
@@ -5481,9 +5436,19 @@ index a1af6c2..0a2e86b 100644
 -+							 iqcal_idx, nmeasurement);
 -+	if (outlier_detect)
 -+		ar9003_hw_tx_iq_cal_outlier_detection(ah, &coeff, is_reusable);
-- 
++@@ -59,18 +60,19 @@ static void ath_rx_buf_link(struct ath_s
++ 			     common->rx_bufsize,
++ 			     0);
+  
 - 	return;
-- 
++-	if (sc->rx.rxlink == NULL)
++-		ath9k_hw_putrxbuf(ah, bf->bf_daddr);
++-	else
+++	if (sc->rx.rxlink)
++ 		*sc->rx.rxlink = bf->bf_daddr;
+++	else if (!flush)
+++		ath9k_hw_putrxbuf(ah, bf->bf_daddr);
+  
 -@@ -1409,7 +1484,7 @@ skip_tx_iqcal:
 - 	}
 - 
@@ -5495,8 +5460,9 @@ index a1af6c2..0a2e86b 100644
 - 
 -@@ -1455,14 +1530,38 @@ skip_tx_iqcal:
 - 	return true;
-- }
-- 
++ 	sc->rx.rxlink = &ds->ds_link;
+  }
+  
 -+static bool do_ar9003_agc_cal(struct ath_hw *ah)
 -+{
 -+	struct ath_common *common = ath9k_hw_common(ah);
@@ -5522,7 +5488,10 @@ index a1af6c2..0a2e86b 100644
 -+
 - static bool ar9003_hw_init_cal_soc(struct ath_hw *ah,
 - 				   struct ath9k_channel *chan)
-- {
++-static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_rxbuf *bf)
+++static void ath_rx_buf_relink(struct ath_softc *sc, struct ath_rxbuf *bf,
+++			      bool flush)
+  {
 - 	struct ath_common *common = ath9k_hw_common(ah);
 - 	struct ath9k_hw_cal_data *caldata = ah->caldata;
 - 	bool txiqcal_done = false;
@@ -5736,9 +5705,40 @@ index a1af6c2..0a2e86b 100644
 -+				struct sk_buff_head *skbs);
 - void ieee80211_flush_queues(struct ieee80211_local *local,
 - 			    struct ieee80211_sub_if_data *sdata);
-- 
----- a/net/mac80211/sta_info.c
--+++ b/net/mac80211/sta_info.c
++ 	if (sc->rx.buf_hold)
++-		ath_rx_buf_link(sc, sc->rx.buf_hold);
+++		ath_rx_buf_link(sc, sc->rx.buf_hold, flush);
++ 
++ 	sc->rx.buf_hold = bf;
++ }
++@@ -442,7 +444,7 @@ int ath_startrecv(struct ath_softc *sc)
++ 	sc->rx.buf_hold = NULL;
++ 	sc->rx.rxlink = NULL;
++ 	list_for_each_entry_safe(bf, tbf, &sc->rx.rxbuf, list) {
++-		ath_rx_buf_link(sc, bf);
+++		ath_rx_buf_link(sc, bf, false);
++ 	}
++ 
++ 	/* We could have deleted elements so the list may be empty now */
++@@ -1118,12 +1120,12 @@ requeue_drop_frag:
++ requeue:
++ 		list_add_tail(&bf->list, &sc->rx.rxbuf);
++ 
++-		if (edma) {
++-			ath_rx_edma_buf_link(sc, qtype);
++-		} else {
++-			ath_rx_buf_relink(sc, bf);
+++		if (!edma) {
+++			ath_rx_buf_relink(sc, bf, flush);
++ 			if (!flush)
++ 				ath9k_hw_rxena(ah);
+++		} else if (!flush) {
+++			ath_rx_edma_buf_link(sc, qtype);
++ 		}
+  
++ 		if (!budget--)
+ --- a/net/mac80211/sta_info.c
+ +++ b/net/mac80211/sta_info.c
 -@@ -91,7 +91,7 @@ static int sta_info_hash_del(struct ieee
 - 	return -ENOENT;
 - }
@@ -5750,28 +5750,39 @@ index a1af6c2..0a2e86b 100644
 - 	struct tid_ampdu_tx *tid_tx;
 -@@ -99,7 +99,8 @@ static void cleanup_single_sta(struct st
 - 	struct ieee80211_local *local = sdata->local;
-- 	struct ps_data *ps;
-- 
++@@ -100,7 +100,8 @@ static void __cleanup_single_sta(struct 
+  	struct ps_data *ps;
+  
 --	if (test_sta_flag(sta, WLAN_STA_PS_STA)) {
 -+	if (test_sta_flag(sta, WLAN_STA_PS_STA) ||
 -+	    test_sta_flag(sta, WLAN_STA_PS_DRIVER)) {
-- 		if (sta->sdata->vif.type == NL80211_IFTYPE_AP ||
-- 		    sta->sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
-- 			ps = &sdata->bss->ps;
++ 	if (test_sta_flag(sta, WLAN_STA_PS_STA) ||
++-	    test_sta_flag(sta, WLAN_STA_PS_DRIVER)) {
+++	    test_sta_flag(sta, WLAN_STA_PS_DRIVER) ||
+++	    test_sta_flag(sta, WLAN_STA_PS_DELIVER)) {
+  		if (sta->sdata->vif.type == NL80211_IFTYPE_AP ||
+  		    sta->sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+  			ps = &sdata->bss->ps;
 -@@ -109,6 +110,7 @@ static void cleanup_single_sta(struct st
 - 			return;
-- 
-- 		clear_sta_flag(sta, WLAN_STA_PS_STA);
++@@ -111,6 +112,7 @@ static void __cleanup_single_sta(struct 
+  
+  		clear_sta_flag(sta, WLAN_STA_PS_STA);
 -+		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
-- 
-- 		atomic_dec(&ps->num_sta_ps);
-- 		sta_info_recalc_tim(sta);
++ 		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+++		clear_sta_flag(sta, WLAN_STA_PS_DELIVER);
+  
+  		atomic_dec(&ps->num_sta_ps);
+  		sta_info_recalc_tim(sta);
 -@@ -139,7 +141,14 @@ static void cleanup_single_sta(struct st
 - 		ieee80211_purge_tx_queue(&local->hw, &tid_tx->pending);
 - 		kfree(tid_tx);
 - 	}
 -+}
-- 
++@@ -125,7 +127,7 @@ static void __cleanup_single_sta(struct 
++ 	if (ieee80211_vif_is_mesh(&sdata->vif))
++ 		mesh_sta_cleanup(sta);
+  
 -+static void cleanup_single_sta(struct sta_info *sta)
 -+{
 -+	struct ieee80211_sub_if_data *sdata = sta->sdata;
@@ -5780,10 +5791,20 @@ index a1af6c2..0a2e86b 100644
 -+	__cleanup_single_sta(sta);
 - 	sta_info_free(local, sta);
 - }
-- 
++-	cancel_work_sync(&sta->drv_unblock_wk);
+++	cancel_work_sync(&sta->drv_deliver_wk);
+  
 -@@ -330,6 +339,7 @@ struct sta_info *sta_info_alloc(struct i
 - 	rcu_read_unlock();
-- 
++ 	/*
++ 	 * Destroy aggregation state here. It would be nice to wait for the
++@@ -227,6 +229,7 @@ struct sta_info *sta_info_get_by_idx(str
++  */
++ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
++ {
+++	struct ieee80211_sta_rates *rates;
++ 	int i;
+  
 - 	spin_lock_init(&sta->lock);
 -+	spin_lock_init(&sta->ps_lock);
 - 	INIT_WORK(&sta->drv_unblock_wk, sta_unblock);
@@ -5791,8 +5812,11 @@ index a1af6c2..0a2e86b 100644
 - 	mutex_init(&sta->ampdu_mlme.mtx);
 -@@ -487,21 +497,26 @@ static int sta_info_insert_finish(struct
 - 		goto out_err;
-- 	}
-- 
++ 	if (sta->rate_ctrl)
++@@ -238,6 +241,10 @@ void sta_info_free(struct ieee80211_loca
++ 		kfree(sta->tx_lat);
+  	}
+  
 --	/* notify driver */
 --	err = sta_info_insert_drv_state(local, sdata, sta);
 --	if (err)
@@ -5804,10 +5828,14 @@ index a1af6c2..0a2e86b 100644
 - 
 -+	/* simplify things and don't accept BA sessions yet */
 -+	set_sta_flag(sta, WLAN_STA_BLOCK_BA);
--+
+++	rates = rcu_dereference_protected(sta->sta.rates, true);
+++	if (rates)
+++		kfree(rates);
+ +
 - 	/* make the station visible */
 - 	sta_info_hash_add(local, sta);
-- 
++ 	sta_dbg(sta->sdata, "Destroyed STA %pM\n", sta->sta.addr);
+  
 - 	list_add_rcu(&sta->list, &local->sta_list);
 - 
 -+	/* notify driver */
@@ -5835,13 +5863,18 @@ index a1af6c2..0a2e86b 100644
 - 	mutex_unlock(&local->sta_mtx);
 - 	rcu_read_lock();
 -@@ -1071,10 +1092,14 @@ struct ieee80211_sta *ieee80211_find_sta
-- }
++ 	kfree(sta);
++@@ -252,33 +259,23 @@ static void sta_info_hash_add(struct iee
++ 	rcu_assign_pointer(local->sta_hash[STA_HASH(sta->sta.addr)], sta);
+  }
 - EXPORT_SYMBOL(ieee80211_find_sta);
-- 
+  
 --static void clear_sta_ps_flags(void *_sta)
 -+/* powersave support code */
 -+void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
-- {
++-static void sta_unblock(struct work_struct *wk)
+++static void sta_deliver_ps_frames(struct work_struct *wk)
+  {
 --	struct sta_info *sta = _sta;
 - 	struct ieee80211_sub_if_data *sdata = sta->sdata;
 -+	struct ieee80211_local *local = sdata->local;
@@ -5849,17 +5882,30 @@ index a1af6c2..0a2e86b 100644
 -+	int filtered = 0, buffered = 0, ac;
 -+	unsigned long flags;
 - 	struct ps_data *ps;
-- 
++ 	struct sta_info *sta;
++ 
++-	sta = container_of(wk, struct sta_info, drv_unblock_wk);
+++	sta = container_of(wk, struct sta_info, drv_deliver_wk);
+  
 - 	if (sdata->vif.type == NL80211_IFTYPE_AP ||
 -@@ -1085,20 +1110,6 @@ static void clear_sta_ps_flags(void *_st
 - 	else
-- 		return;
-- 
++ 	if (sta->dead)
+  		return;
+  
 --	clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
 --	if (test_and_clear_sta_flag(sta, WLAN_STA_PS_STA))
 --		atomic_dec(&ps->num_sta_ps);
 --}
---
++-	if (!test_sta_flag(sta, WLAN_STA_PS_STA)) {
++-		local_bh_disable();
+++	local_bh_disable();
+++	if (!test_sta_flag(sta, WLAN_STA_PS_STA))
++ 		ieee80211_sta_ps_deliver_wakeup(sta);
++-		local_bh_enable();
++-	} else if (test_and_clear_sta_flag(sta, WLAN_STA_PSPOLL)) {
++-		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+ -
 --/* powersave support code */
 --void ieee80211_sta_ps_deliver_wakeup(struct sta_info *sta)
 --{
@@ -5868,7 +5914,13 @@ index a1af6c2..0a2e86b 100644
 --	struct sk_buff_head pending;
 --	int filtered = 0, buffered = 0, ac;
 --	unsigned long flags;
---
++-		local_bh_disable();
+++	else if (test_and_clear_sta_flag(sta, WLAN_STA_PSPOLL))
++ 		ieee80211_sta_ps_deliver_poll_response(sta);
++-		local_bh_enable();
++-	} else if (test_and_clear_sta_flag(sta, WLAN_STA_UAPSD)) {
++-		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+ -
 - 	clear_sta_flag(sta, WLAN_STA_SP);
 - 
 - 	BUILD_BUG_ON(BITS_TO_LONGS(IEEE80211_NUM_TIDS) > 1);
@@ -5922,8 +5974,15 @@ index a1af6c2..0a2e86b 100644
 -+++ b/net/mac80211/util.c
 -@@ -435,9 +435,8 @@ void ieee80211_add_pending_skb(struct ie
 - 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
-- }
-- 
++-		local_bh_disable();
+++	else if (test_and_clear_sta_flag(sta, WLAN_STA_UAPSD))
++ 		ieee80211_sta_ps_deliver_uapsd(sta);
++-		local_bh_enable();
++-	} else
++-		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+++	local_bh_enable();
+  }
+  
 --void ieee80211_add_pending_skbs_fn(struct ieee80211_local *local,
 --				   struct sk_buff_head *skbs,
 --				   void (*fn)(void *data), void *data)
@@ -6050,7 +6109,9 @@ index a1af6c2..0a2e86b 100644
 --		rfMode |= AR_PHY_MODE_QUARTER;
 --	if (IS_CHAN_HALF_RATE(chan))
 --		rfMode |= AR_PHY_MODE_HALF;
-- 
++ static int sta_prepare_rate_control(struct ieee80211_local *local,
++@@ -340,7 +337,7 @@ struct sta_info *sta_info_alloc(struct i
+  
 - 	if (rfMode & (AR_PHY_MODE_QUARTER | AR_PHY_MODE_HALF))
 - 		REG_RMW_FIELD(ah, AR_PHY_FRAME_CTL,
 ---- a/drivers/net/wireless/ath/ath5k/mac80211-ops.c
@@ -6085,8 +6146,16 @@ index a1af6c2..0a2e86b 100644
 -+			rs->rs_datalen = 0;
 -+			rs->rs_more = true;
 -+		}
-- 	}
-- 
++ 	spin_lock_init(&sta->lock);
++ 	spin_lock_init(&sta->ps_lock);
++-	INIT_WORK(&sta->drv_unblock_wk, sta_unblock);
+++	INIT_WORK(&sta->drv_deliver_wk, sta_deliver_ps_frames);
++ 	INIT_WORK(&sta->ampdu_mlme.work, ieee80211_ba_session_work);
++ 	mutex_init(&sta->ampdu_mlme.mtx);
++ #ifdef CPTCFG_MAC80211_MESH
++@@ -1140,8 +1137,15 @@ void ieee80211_sta_ps_deliver_wakeup(str
+  	}
+  
 - 	list_del(&bf->list);
 -@@ -985,32 +992,32 @@ static int ath9k_rx_skb_preprocess(struc
 - 	struct ath_common *common = ath9k_hw_common(ah);
@@ -6102,7 +6171,10 @@ index a1af6c2..0a2e86b 100644
 - 	if (discard_current)
 --		return -EINVAL;
 -+		goto corrupt;
--+
++ 	ieee80211_add_pending_skbs(local, &pending);
++-	clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
++-	clear_sta_flag(sta, WLAN_STA_PS_STA);
+ +
 -+	sc->rx.discard_next = false;
 - 
 - 	/*
@@ -6123,7 +6195,12 @@ index a1af6c2..0a2e86b 100644
 -+	 * rs_status follows rs_datalen so if rs_datalen is too large
 -+	 * we can take a hint that hardware corrupted it, so ignore
 -+	 * those frames.
--+	 */
+++	/* now we're no longer in the deliver code */
+++	clear_sta_flag(sta, WLAN_STA_PS_DELIVER);
+++
+++	/* The station might have polled and then woken up before we responded,
+++	 * so clear these flags now to avoid them sticking around.
+ +	 */
 - 	if (rx_stats->rs_datalen > (common->rx_bufsize - ah->caps.rx_status_len)) {
 - 		RX_STAT_INC(rx_len_err);
 --		return -EINVAL;
@@ -6163,7 +6240,10 @@ index a1af6c2..0a2e86b 100644
 --	}
 -+	if (!ath9k_rx_accept(common, hdr, rx_status, rx_stats, decrypt_error))
 -+		return -EINVAL;
-- 
+++	clear_sta_flag(sta, WLAN_STA_PSPOLL);
+++	clear_sta_flag(sta, WLAN_STA_UAPSD);
++ 	spin_unlock(&sta->ps_lock);
+  
 - 	if (ath_is_mybeacon(common, hdr)) {
 - 		RX_STAT_INC(rx_beacons);
 -@@ -1064,15 +1066,11 @@ static int ath9k_rx_skb_preprocess(struc
@@ -6189,7 +6269,9 @@ index a1af6c2..0a2e86b 100644
 -@@ -1087,9 +1085,11 @@ static int ath9k_rx_skb_preprocess(struc
 - 		sc->rx.num_pkts++;
 - #endif
-- 
++ 	atomic_dec(&ps->num_sta_ps);
++@@ -1542,10 +1546,26 @@ void ieee80211_sta_block_awake(struct ie
+  
 --exit:
 --	sc->rx.discard_next = false;
 --	return ret;
@@ -6199,7 +6281,8 @@ index a1af6c2..0a2e86b 100644
 -+	sc->rx.discard_next = rx_stats->rs_more;
 -+	return -EINVAL;
 - }
-- 
++ 	trace_api_sta_block_awake(sta->local, pubsta, block);
+  
 - static void ath9k_rx_skb_postprocess(struct ath_common *common,
 ---- a/drivers/net/wireless/ath/ath9k/ani.c
 -+++ b/drivers/net/wireless/ath/ath9k/ani.c
@@ -6232,9 +6315,17 @@ index a1af6c2..0a2e86b 100644
 -+	if (aniState->ofdmWeakSigDetect != weak_sig)
 -+		ath9k_hw_ani_control(ah, ATH9K_ANI_OFDM_WEAK_SIGNAL_DETECTION,
 -+				     weak_sig);
--+
++-	if (block)
+++	if (block) {
++ 		set_sta_flag(sta, WLAN_STA_PS_DRIVER);
++-	else if (test_sta_flag(sta, WLAN_STA_PS_DRIVER))
++-		ieee80211_queue_work(hw, &sta->drv_unblock_wk);
+++		return;
+++	}
+ +
 -+	if (!AR_SREV_9300_20_OR_LATER(ah))
--+		return;
+++	if (!test_sta_flag(sta, WLAN_STA_PS_DRIVER))
+ +		return;
 - 
 - 	if (aniState->ofdmNoiseImmunityLevel >= ATH9K_ANI_OFDM_DEF_LEVEL) {
 - 		ah->config.ofdm_trig_high = ATH9K_ANI_OFDM_TRIG_HIGH;
@@ -6269,13 +6360,26 @@ index a1af6c2..0a2e86b 100644
 -+		ah->config.ofdm_trig_low = ATH9K_ANI_OFDM_TRIG_LOW;
 -+		ah->config.cck_trig_high = ATH9K_ANI_CCK_TRIG_HIGH;
 -+		ah->config.cck_trig_low = ATH9K_ANI_CCK_TRIG_LOW;
--+	} else {
+++
+++	if (!test_sta_flag(sta, WLAN_STA_PS_STA)) {
+++		set_sta_flag(sta, WLAN_STA_PS_DELIVER);
+++		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+++		ieee80211_queue_work(hw, &sta->drv_deliver_wk);
+++	} else if (test_sta_flag(sta, WLAN_STA_PSPOLL) ||
+++		   test_sta_flag(sta, WLAN_STA_UAPSD)) {
+++		/* must be asleep in this case */
+++		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+++		ieee80211_queue_work(hw, &sta->drv_deliver_wk);
+ +	} else {
 -+		ah->config.ofdm_trig_high = ATH9K_ANI_OFDM_TRIG_HIGH_OLD;
 -+		ah->config.ofdm_trig_low = ATH9K_ANI_OFDM_TRIG_LOW_OLD;
 -+		ah->config.cck_trig_high = ATH9K_ANI_CCK_TRIG_HIGH_OLD;
 -+		ah->config.cck_trig_low = ATH9K_ANI_CCK_TRIG_LOW_OLD;
--+	}
-- 
+++		clear_sta_flag(sta, WLAN_STA_PS_DRIVER);
+ +	}
++ }
++ EXPORT_SYMBOL(ieee80211_sta_block_awake);
+  
 - 	ani->spurImmunityLevel = ATH9K_ANI_SPUR_IMMUNE_LVL;
 - 	ani->firstepLevel = ATH9K_ANI_FIRSTEP_LVL;
 ---- a/drivers/net/wireless/ath/ath9k/ani.h
@@ -6285,16 +6389,60 @@ index a1af6c2..0a2e86b 100644
 - #define ATH9K_ANI_OFDM_TRIG_HIGH           3500
 - #define ATH9K_ANI_OFDM_TRIG_HIGH_BELOW_INI 1000
 -+#define ATH9K_ANI_OFDM_TRIG_HIGH_OLD       500
-- 
++--- a/net/mac80211/status.c
+++++ b/net/mac80211/status.c
++@@ -541,6 +541,23 @@ static void ieee80211_tx_latency_end_msr
++  */
++ #define STA_LOST_PKT_THRESHOLD	50
+  
 - #define ATH9K_ANI_OFDM_TRIG_LOW           400
 - #define ATH9K_ANI_OFDM_TRIG_LOW_ABOVE_INI 900
 -+#define ATH9K_ANI_OFDM_TRIG_LOW_OLD       200
-- 
+++static void ieee80211_lost_packet(struct sta_info *sta, struct sk_buff *skb)
+++{
+++	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+++
+++	/* This packet was aggregated but doesn't carry status info */
+++	if ((info->flags & IEEE80211_TX_CTL_AMPDU) &&
+++	    !(info->flags & IEEE80211_TX_STAT_AMPDU))
+++		return;
+++
+++	if (++sta->lost_packets < STA_LOST_PKT_THRESHOLD)
+++		return;
+++
+++	cfg80211_cqm_pktloss_notify(sta->sdata->dev, sta->sta.addr,
+++				    sta->lost_packets, GFP_ATOMIC);
+++	sta->lost_packets = 0;
+++}
+++
++ void ieee80211_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
++ {
++ 	struct sk_buff *skb2;
++@@ -680,12 +697,8 @@ void ieee80211_tx_status(struct ieee8021
++ 			if (info->flags & IEEE80211_TX_STAT_ACK) {
++ 				if (sta->lost_packets)
++ 					sta->lost_packets = 0;
++-			} else if (++sta->lost_packets >= STA_LOST_PKT_THRESHOLD) {
++-				cfg80211_cqm_pktloss_notify(sta->sdata->dev,
++-							    sta->sta.addr,
++-							    sta->lost_packets,
++-							    GFP_ATOMIC);
++-				sta->lost_packets = 0;
+++			} else {
+++				ieee80211_lost_packet(sta, skb);
++ 			}
++ 		}
+  
 - #define ATH9K_ANI_CCK_TRIG_HIGH           600
 -+#define ATH9K_ANI_CCK_TRIG_HIGH_OLD       200
 - #define ATH9K_ANI_CCK_TRIG_LOW            300
 -+#define ATH9K_ANI_CCK_TRIG_LOW_OLD        100
-- 
++--- a/net/mac80211/rx.c
+++++ b/net/mac80211/rx.c
++@@ -1107,6 +1107,8 @@ static void sta_ps_end(struct sta_info *
++ 		return;
++ 	}
+  
 - #define ATH9K_ANI_SPUR_IMMUNE_LVL         3
 - #define ATH9K_ANI_FIRSTEP_LVL             2
 ---- a/drivers/net/wireless/ath/ath9k/ar5008_phy.c
@@ -6302,7 +6450,11 @@ index a1af6c2..0a2e86b 100644
 -@@ -26,10 +26,6 @@ static const int firstep_table[] =
 - /* level:  0   1   2   3   4   5   6   7   8  */
 - 	{ -4, -2,  0,  2,  4,  6,  8, 10, 12 }; /* lvl 0-8, default 2 */
-- 
+++	set_sta_flag(sta, WLAN_STA_PS_DELIVER);
+++	clear_sta_flag(sta, WLAN_STA_PS_STA);
++ 	ieee80211_sta_ps_deliver_wakeup(sta);
++ }
+  
 --static const int cycpwrThr1_table[] =
 --/* level:  0   1   2   3   4   5   6   7   8  */
 --	{ -6, -4, -2,  0,  2,  4,  6,  8 };     /* lvl 0-7, default 3 */
@@ -6316,13 +6468,34 @@ index a1af6c2..0a2e86b 100644
 - 	struct ar5416AniState *aniState = &ah->ani;
 --	s32 value, value2;
 -+	s32 value;
-- 
++--- a/net/mac80211/sta_info.h
+++++ b/net/mac80211/sta_info.h
++@@ -82,6 +82,7 @@ enum ieee80211_sta_info_flags {
++ 	WLAN_STA_TOFFSET_KNOWN,
++ 	WLAN_STA_MPSP_OWNER,
++ 	WLAN_STA_MPSP_RECIPIENT,
+++	WLAN_STA_PS_DELIVER,
++ };
+  
 - 	switch (cmd & ah->ani_function) {
 - 	case ATH9K_ANI_OFDM_WEAK_SIGNAL_DETECTION:{
 -@@ -1008,42 +1004,9 @@ static bool ar5008_hw_ani_control_new(st
 - 	case ATH9K_ANI_FIRSTEP_LEVEL:{
 - 		u32 level = param;
-- 
++ #define ADDBA_RESP_INTERVAL HZ
++@@ -265,7 +266,7 @@ struct ieee80211_tx_latency_stat {
++  * @last_rx_rate_vht_nss: rx status nss of last data packet
++  * @lock: used for locking all fields that require locking, see comments
++  *	in the header file.
++- * @drv_unblock_wk: used for driver PS unblocking
+++ * @drv_deliver_wk: used for delivering frames after driver PS unblocking
++  * @listen_interval: listen interval of this station, when we're acting as AP
++  * @_flags: STA flags, see &enum ieee80211_sta_info_flags, do not use directly
++  * @ps_lock: used for powersave (when mac80211 is the AP) related locking
++@@ -345,7 +346,7 @@ struct sta_info {
++ 	void *rate_ctrl_priv;
++ 	spinlock_t lock;
+  
 --		if (level >= ARRAY_SIZE(firstep_table)) {
 --			ath_dbg(common, ANI,
 --				"ATH9K_ANI_FIRSTEP_LEVEL: level out of range (%u > %zu)\n",
@@ -6361,7 +6534,9 @@ index a1af6c2..0a2e86b 100644
 --		REG_RMW_FIELD(ah, AR_PHY_FIND_SIG_LOW,
 --			      AR_PHY_FIND_SIG_FIRSTEP_LOW, value2);
 -+			      AR_PHY_FIND_SIG_FIRSTEP, value);
-- 
++-	struct work_struct drv_unblock_wk;
+++	struct work_struct drv_deliver_wk;
+  
 - 		if (level != aniState->firstepLevel) {
 - 			ath_dbg(common, ANI,
 -@@ -1060,7 +1023,7 @@ static bool ar5008_hw_ani_control_new(st
@@ -6376,7 +6551,8 @@ index a1af6c2..0a2e86b 100644
 -@@ -1073,41 +1036,13 @@ static bool ar5008_hw_ani_control_new(st
 - 	case ATH9K_ANI_SPUR_IMMUNITY_LEVEL:{
 - 		u32 level = param;
-- 
++ 	u16 listen_interval;
+  
 --		if (level >= ARRAY_SIZE(cycpwrThr1_table)) {
 --			ath_dbg(common, ANI,
 --				"ATH9K_ANI_SPUR_IMMUNITY_LEVEL: level out of range (%u > %zu)\n",
@@ -6399,7 +6575,11 @@ index a1af6c2..0a2e86b 100644
 --			      AR_PHY_TIMING5_CYCPWR_THR1,
 --			      value);
 -+			      AR_PHY_TIMING5_CYCPWR_THR1, value);
-- 
++--- a/net/mac80211/tx.c
+++++ b/net/mac80211/tx.c
++@@ -469,7 +469,8 @@ ieee80211_tx_h_unicast_ps_buf(struct iee
++ 		return TX_CONTINUE;
+  
 --		/*
 --		 * set AR_PHY_EXT_CCA for extension channel
 --		 * make register setting relative to default
@@ -6417,6 +6597,12 @@ index a1af6c2..0a2e86b 100644
 -+		if (IS_CHAN_HT40(ah->curchan))
 -+			REG_RMW_FIELD(ah, AR_PHY_EXT_CCA,
 -+				      AR_PHY_EXT_TIMING5_CYCPWR_THR1, value);
++ 	if (unlikely((test_sta_flag(sta, WLAN_STA_PS_STA) ||
++-		      test_sta_flag(sta, WLAN_STA_PS_DRIVER)) &&
+++		      test_sta_flag(sta, WLAN_STA_PS_DRIVER) ||
+++		      test_sta_flag(sta, WLAN_STA_PS_DELIVER)) &&
++ 		     !(info->flags & IEEE80211_TX_CTL_NO_PS_BUFFER))) {
++ 		int ac = skb_get_queue_mapping(tx->skb);
   
 - 		if (level != aniState->spurImmunityLevel) {
 - 			ath_dbg(common, ANI,
@@ -6429,6 +6615,16 @@ index a1af6c2..0a2e86b 100644
 - 				aniState->iniDef.cycpwrThr1Ext);
 - 			if (level > aniState->spurImmunityLevel)
 - 				ah->stats.ast_ani_spurup++;
++@@ -486,7 +487,8 @@ ieee80211_tx_h_unicast_ps_buf(struct iee
++ 		 * ahead and Tx the packet.
++ 		 */
++ 		if (!test_sta_flag(sta, WLAN_STA_PS_STA) &&
++-		    !test_sta_flag(sta, WLAN_STA_PS_DRIVER)) {
+++		    !test_sta_flag(sta, WLAN_STA_PS_DRIVER) &&
+++		    !test_sta_flag(sta, WLAN_STA_PS_DELIVER)) {
++ 			spin_unlock(&sta->ps_lock);
++ 			return TX_CONTINUE;
++ 		}
 diff --git a/package/mac80211/patches/310-ap_scan.patch b/package/mac80211/patches/310-ap_scan.patch
 index 389a003..9334e4d 100644
 --- a/package/mac80211/patches/310-ap_scan.patch
@@ -10216,14 +10412,14 @@ index 0000000..79334dd
 + 	 */
 + 	spinlock_t irqmask_lock;
 diff --git a/package/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch b/package/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
-index 2bbc6f1..c7d71e2 100644
+index 2bbc6f1..b7ba2af 100644
 --- a/package/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
 +++ b/package/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
 @@ -1,6 +1,6 @@
  --- a/.local-symbols
  +++ b/.local-symbols
 -@@ -279,6 +279,7 @@ RT2X00_LIB_FIRMWARE=
-+@@ -280,6 +280,7 @@ RT2X00_LIB_FIRMWARE=
++@@ -281,6 +281,7 @@ RT2X00_LIB_FIRMWARE=
   RT2X00_LIB_CRYPTO=
   RT2X00_LIB_LEDS=
   RT2X00_LIB_DEBUGFS=
