@@ -1,9 +1,9 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Mon, 19 May 2014 15:59:06 +0200
-Subject: Backport hostapd from Barrier Breaker
+Subject: Backport hostapd from Barrier Breaker (r41029)
 
 diff --git a/package/hostapd/Makefile b/package/hostapd/Makefile
-index b4dc242..ecf9e4b 100644
+index b4dc242..beb37a3 100644
 --- a/package/hostapd/Makefile
 +++ b/package/hostapd/Makefile
 @@ -8,9 +8,9 @@
@@ -11,13 +11,27 @@ index b4dc242..ecf9e4b 100644
  
  PKG_NAME:=hostapd
 -PKG_VERSION:=20131120
-+PKG_VERSION:=2014-04-24
++PKG_VERSION:=2014-06-03
  PKG_RELEASE:=1
 -PKG_REV:=594516b4c28a94ca686b17f1e463dfd6712b75a7
-+PKG_REV:=3cf48c4f2e2d558130253457fea02ef4047cf8e1
++PKG_REV:=84df167554569af8c87f0a8ac1fb508192417d8e
  
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
  PKG_SOURCE_URL:=git://w1.fi/srv/git/hostap.git
+diff --git a/package/hostapd/files/hostapd.sh b/package/hostapd/files/hostapd.sh
+index b55b63d..2a16bb4 100644
+--- a/package/hostapd/files/hostapd.sh
++++ b/package/hostapd/files/hostapd.sh
+@@ -130,7 +130,9 @@ hostapd_set_bss_options() {
+ 				append "$var" "radius_das_client=$dae_client $dae_secret" "$N"
+ 			}
+ 			config_get nasid "$vif" nasid
++			config_get ownip "$vif" ownip
+ 			append "$var" "nas_identifier=$nasid" "$N"
++			append "$var" "own_ip_addr=$ownip" "$N"
+ 			append "$var" "eapol_key_index_workaround=1" "$N"
+ 			append "$var" "ieee8021x=1" "$N"
+ 			append "$var" "wpa_key_mgmt=WPA-EAP" "$N"
 diff --git a/package/hostapd/patches/100-madwifi_key_fixes.patch b/package/hostapd/patches/100-madwifi_key_fixes.patch
 index dcd6d10..a46943b 100644
 --- a/package/hostapd/patches/100-madwifi_key_fixes.patch
@@ -51,6 +65,26 @@ index 9f82b0b..1ad84bf 100644
   }
   
   
+diff --git a/package/hostapd/patches/130-no_eapol_fix.patch b/package/hostapd/patches/130-no_eapol_fix.patch
+new file mode 100644
+index 0000000..3c19cb3
+--- /dev/null
++++ b/package/hostapd/patches/130-no_eapol_fix.patch
+@@ -0,0 +1,14 @@
++--- a/wpa_supplicant/wpa_supplicant.c
+++++ b/wpa_supplicant/wpa_supplicant.c
++@@ -247,9 +247,10 @@ void wpa_supplicant_cancel_auth_timeout(
++  */
++ void wpa_supplicant_initiate_eapol(struct wpa_supplicant *wpa_s)
++ {
+++	struct wpa_ssid *ssid = wpa_s->current_ssid;
+++
++ #ifdef IEEE8021X_EAPOL
++ 	struct eapol_config eapol_conf;
++-	struct wpa_ssid *ssid = wpa_s->current_ssid;
++ 
++ #ifdef CONFIG_IBSS_RSN
++ 	if (ssid->mode == WPAS_MODE_IBSS &&
 diff --git a/package/hostapd/patches/130-wds_sta_del_fix.patch b/package/hostapd/patches/130-wds_sta_del_fix.patch
 deleted file mode 100644
 index 06b6906..0000000
@@ -71,7 +105,7 @@ index 06b6906..0000000
 - }
 - 
 diff --git a/package/hostapd/patches/200-multicall.patch b/package/hostapd/patches/200-multicall.patch
-index 2289f51..1511b19 100644
+index 2289f51..efe151c 100644
 --- a/package/hostapd/patches/200-multicall.patch
 +++ b/package/hostapd/patches/200-multicall.patch
 @@ -1,14 +1,14 @@
@@ -128,16 +162,18 @@ index 2289f51..1511b19 100644
 -@@ -727,6 +728,10 @@ ifdef CONFIG_DYNAMIC_EAP_METHODS
 + ifdef CONFIG_TESTING_OPTIONS
 + CFLAGS += -DCONFIG_TESTING_OPTIONS
-+@@ -746,6 +747,10 @@ ifdef CONFIG_DYNAMIC_EAP_METHODS
++@@ -741,6 +742,10 @@ ifdef CONFIG_DYNAMIC_EAP_METHODS
   CFLAGS += -DCONFIG_DYNAMIC_EAP_METHODS
   LIBS += -ldl -rdynamic
   endif
-@@ -73,7 +73,7 @@
+@@ -72,8 +72,8 @@
+ +  endif
   endif
   
-  ifdef CONFIG_AP
+- ifdef CONFIG_AP
 -@@ -735,9 +740,11 @@ NEED_EAP_COMMON=y
-+@@ -754,9 +759,11 @@ NEED_EAP_COMMON=y
++ ifdef CONFIG_MACSEC
++@@ -762,9 +767,11 @@ NEED_EAP_COMMON=y
   NEED_RSN_AUTHENTICATOR=y
   CFLAGS += -DCONFIG_AP
   OBJS += ap.o
@@ -146,7 +182,7 @@ index 2289f51..1511b19 100644
   OBJS += ../src/ap/wpa_auth_glue.o
   OBJS += ../src/ap/utils.o
 -@@ -799,10 +806,18 @@ endif
-+@@ -818,10 +825,18 @@ endif
++@@ -826,10 +833,18 @@ endif
   ifdef CONFIG_HS20
   OBJS += ../src/ap/hs20.o
   endif
@@ -155,7 +191,7 @@ index 2289f51..1511b19 100644
   OBJS += ../src/ap/wpa_auth.o
   OBJS += ../src/ap/wpa_auth_ie.o
 -@@ -1551,6 +1566,12 @@ wpa_priv: $(BCHECK) $(OBJS_priv)
-+@@ -1584,6 +1599,12 @@ wpa_priv: $(BCHECK) $(OBJS_priv)
++@@ -1602,6 +1617,12 @@ wpa_priv: $(BCHECK) $(OBJS_priv)
   
   $(OBJS_c) $(OBJS_t) $(OBJS_t2) $(OBJS) $(BCHECK) $(EXTRA_progs): .config
   
@@ -164,7 +200,7 @@ index 2289f51..1511b19 100644
   	$(Q)$(LDO) $(LDFLAGS) -o wpa_supplicant $(OBJS) $(LIBS) $(EXTRALIBS)
   	@$(E) "  LD " $@
 -@@ -1625,6 +1646,12 @@ eap_eke.so: ../src/eap_peer/eap_eke.c ..
-+@@ -1664,6 +1685,12 @@ endif
++@@ -1682,6 +1703,12 @@ endif
   %@.service: %.service.arg.in
   	sed -e 's|\@BINDIR\@|$(BINDIR)|g' $< >$@
   
@@ -173,7 +209,7 @@ index 2289f51..1511b19 100644
  --- a/src/drivers/driver.h
  +++ b/src/drivers/driver.h
 -@@ -4079,8 +4079,8 @@ union wpa_event_data {
-+@@ -3886,8 +3886,8 @@ union wpa_event_data {
++@@ -4117,8 +4117,8 @@ union wpa_event_data {
    * Driver wrapper code should call this function whenever an event is received
    * from the driver.
    */
@@ -182,7 +218,7 @@ index 2289f51..1511b19 100644
  --- a/src/ap/drv_callbacks.c
  +++ b/src/ap/drv_callbacks.c
 -@@ -844,8 +844,8 @@ static void hostapd_event_dfs_nop_finish
-+@@ -906,8 +906,8 @@ static void hostapd_event_dfs_nop_finish
++@@ -926,8 +926,8 @@ static void hostapd_event_dfs_nop_finish
   #endif /* NEED_AP_MLME */
   
   
@@ -209,7 +245,7 @@ index 2289f51..1511b19 100644
  --- a/wpa_supplicant/events.c
  +++ b/wpa_supplicant/events.c
 -@@ -2710,8 +2710,8 @@ static void wpa_supplicant_update_channe
-+@@ -2929,8 +2929,8 @@ static void wpa_supplicant_notify_avoid_
++@@ -2919,8 +2919,8 @@ static void wpa_supplicant_notify_avoid_
   }
   
   
@@ -218,7 +254,7 @@ index 2289f51..1511b19 100644
  --- a/wpa_supplicant/wpa_supplicant.c
  +++ b/wpa_supplicant/wpa_supplicant.c
 -@@ -3138,6 +3138,9 @@ static void wpa_supplicant_deinit_iface(
-+@@ -3724,6 +3724,9 @@ static void wpa_supplicant_deinit_iface(
++@@ -3811,6 +3811,9 @@ static void wpa_supplicant_deinit_iface(
   	os_free(wpa_s);
   }
   
@@ -227,7 +263,7 @@ index 2289f51..1511b19 100644
   /**
    * wpa_supplicant_add_iface - Add a new network interface
 -@@ -3329,6 +3332,7 @@ struct wpa_global * wpa_supplicant_init(
-+@@ -3915,6 +3918,7 @@ struct wpa_global * wpa_supplicant_init(
++@@ -4002,6 +4005,7 @@ struct wpa_global * wpa_supplicant_init(
   	wpa_msg_register_ifname_cb(wpa_supplicant_msg_ifname_cb);
   #endif /* CONFIG_NO_WPA_MSG */
   
@@ -240,7 +276,7 @@ index 2289f51..1511b19 100644
   	return 0;
   }
   
-@@ -220,27 +220,25 @@
+@@ -220,27 +220,57 @@
  +                       union wpa_event_data *data);
  +
   
@@ -277,8 +313,40 @@ index 2289f51..1511b19 100644
   #ifdef CONFIG_DRIVER_WEXT
   extern struct wpa_driver_ops wpa_driver_wext_ops; /* driver_wext.c */
 + #endif /* CONFIG_DRIVER_WEXT */
++--- a/wpa_supplicant/eapol_test.c
+++++ b/wpa_supplicant/eapol_test.c
++@@ -28,8 +28,12 @@
++ #include "ctrl_iface.h"
++ #include "pcsc_funcs.h"
++ #include "wpas_glue.h"
+++#include "drivers/driver.h"
++ 
++ 
+++void (*wpa_supplicant_event)(void *ctx, enum wpa_event_type event,
+++			     union wpa_event_data *data);
+++
++ struct wpa_driver_ops *wpa_drivers[] = { NULL };
++ 
++ 
++@@ -1185,6 +1189,8 @@ static void usage(void)
++ 	       "option several times.\n");
++ }
++ 
+++extern void supplicant_event(void *ctx, enum wpa_event_type event,
+++			     union wpa_event_data *data);
++ 
++ int main(int argc, char *argv[])
++ {
++@@ -1203,6 +1209,7 @@ int main(int argc, char *argv[])
++ 	if (os_program_init())
++ 		return -1;
++ 
+++	wpa_supplicant_event = supplicant_event;
++ 	hostapd_logger_register_cb(hostapd_logger_cb);
++ 
++ 	os_memset(&eapol_test, 0, sizeof(eapol_test));
 diff --git a/package/hostapd/patches/300-noscan.patch b/package/hostapd/patches/300-noscan.patch
-index 17e7661..50b70b7 100644
+index 17e7661..4ea26b6 100644
 --- a/package/hostapd/patches/300-noscan.patch
 +++ b/package/hostapd/patches/300-noscan.patch
 @@ -1,17 +1,17 @@
@@ -286,7 +354,7 @@ index 17e7661..50b70b7 100644
  +++ b/hostapd/config_file.c
 -@@ -2412,6 +2412,8 @@ static int hostapd_config_fill(struct ho
 - 			}
-+@@ -2638,6 +2638,8 @@ static int hostapd_config_fill(struct ho
++@@ -2639,6 +2639,8 @@ static int hostapd_config_fill(struct ho
 + 		}
   #endif /* CONFIG_IEEE80211W */
   #ifdef CONFIG_IEEE80211N
@@ -307,32 +375,35 @@ index 17e7661..50b70b7 100644
   
   	int ht_op_mode_fixed;
   	u16 ht_capab;
-@@ -21,7 +21,7 @@
+@@ -21,9 +21,9 @@
   	int require_ht;
  --- a/src/ap/hw_features.c
  +++ b/src/ap/hw_features.c
 -@@ -577,7 +577,7 @@ static int ieee80211n_check_40mhz(struct
-+@@ -574,7 +574,7 @@ static int ieee80211n_check_40mhz(struct
-  {
+- {
++@@ -690,7 +690,7 @@ static int ieee80211n_check_40mhz(struct
   	struct wpa_driver_scan_params params;
++ 	int ret;
   
+ -	if (!iface->conf->secondary_channel)
+ +	if (!iface->conf->secondary_channel || iface->conf->noscan)
 diff --git a/package/hostapd/patches/310-rescan_immediately.patch b/package/hostapd/patches/310-rescan_immediately.patch
-index 043f07c..f96c7e6 100644
+index 043f07c..dac0f6e 100644
 --- a/package/hostapd/patches/310-rescan_immediately.patch
 +++ b/package/hostapd/patches/310-rescan_immediately.patch
 @@ -1,6 +1,6 @@
  --- a/wpa_supplicant/wpa_supplicant.c
  +++ b/wpa_supplicant/wpa_supplicant.c
 -@@ -2488,7 +2488,7 @@ static struct wpa_supplicant * wpa_suppl
-+@@ -2746,7 +2746,7 @@ static struct wpa_supplicant * wpa_suppl
++@@ -2752,7 +2752,7 @@ static struct wpa_supplicant * wpa_suppl
   	if (wpa_s == NULL)
   		return NULL;
   	wpa_s->scan_req = INITIAL_SCAN_REQ;
 diff --git a/package/hostapd/patches/320-optional_rfkill.patch b/package/hostapd/patches/320-optional_rfkill.patch
-index 7ec51b1..b0ea38f 100644
+index 7ec51b1..3808f9b 100644
 --- a/package/hostapd/patches/320-optional_rfkill.patch
 +++ b/package/hostapd/patches/320-optional_rfkill.patch
-@@ -1,218 +1,3 @@
+@@ -1,221 +1,6 @@
 ---- a/src/drivers/driver_nl80211.c
 -+++ b/src/drivers/driver_nl80211.c
 -@@ -254,7 +254,9 @@ struct wpa_driver_nl80211_data {
@@ -550,7 +621,38 @@ index 7ec51b1..b0ea38f 100644
 - 		eloop_unregister_read_sock(drv->mlme_sock);
  --- a/src/drivers/drivers.mak
  +++ b/src/drivers/drivers.mak
- @@ -25,7 +25,6 @@ NEED_SME=y
+-@@ -25,7 +25,6 @@ NEED_SME=y
++@@ -30,7 +30,6 @@ NEED_SME=y
+  NEED_AP_MLME=y
+  NEED_NETLINK=y
+  NEED_LINUX_IOCTL=y
+@@ -223,7 +8,7 @@
+  
+  ifdef CONFIG_LIBNL32
+    DRV_LIBS += -lnl-3
+-@@ -109,7 +108,6 @@ DRV_WPA_CFLAGS += -DCONFIG_DRIVER_WEXT
++@@ -114,7 +113,6 @@ DRV_WPA_CFLAGS += -DCONFIG_DRIVER_WEXT
+  CONFIG_WIRELESS_EXTENSION=y
+  NEED_NETLINK=y
+  NEED_LINUX_IOCTL=y
+@@ -231,7 +16,7 @@
+  endif
+  
+  ifdef CONFIG_DRIVER_NDIS
+-@@ -135,7 +133,6 @@ endif
++@@ -140,7 +138,6 @@ endif
+  ifdef CONFIG_WIRELESS_EXTENSION
+  DRV_WPA_CFLAGS += -DCONFIG_WIRELESS_EXTENSION
+  DRV_WPA_OBJS += ../src/drivers/driver_wext.o
+@@ -239,7 +24,7 @@
+  endif
+  
+  ifdef NEED_NETLINK
+-@@ -148,6 +145,7 @@ endif
++@@ -153,6 +150,7 @@ endif
+  
+  ifdef NEED_RFKILL
+  DRV_OBJS += ../src/drivers/rfkill.o
 @@ -247,15 +32,30 @@
   endif
   
@@ -595,35 +697,38 @@ index 7ec51b1..b0ea38f 100644
 + 
 + #endif /* RFKILL_H */
 diff --git a/package/hostapd/patches/330-nl80211_fix_set_freq.patch b/package/hostapd/patches/330-nl80211_fix_set_freq.patch
-index a505a60..864ac5e 100644
+index a505a60..dbc9ef8 100644
 --- a/package/hostapd/patches/330-nl80211_fix_set_freq.patch
 +++ b/package/hostapd/patches/330-nl80211_fix_set_freq.patch
-@@ -1,6 +1,6 @@
+@@ -1,15 +1,15 @@
  --- a/src/drivers/driver_nl80211.c
  +++ b/src/drivers/driver_nl80211.c
 -@@ -6860,7 +6860,7 @@ static int wpa_driver_nl80211_set_freq(s
-+@@ -7380,7 +7380,7 @@ static int wpa_driver_nl80211_set_freq(s
+- 
+- 	nl80211_cmd(drv, msg, 0, NL80211_CMD_SET_WIPHY);
++@@ -7488,7 +7488,7 @@ static int nl80211_set_channel(struct i8
++ 	nl80211_cmd(drv, msg, 0, set_chan ? NL80211_CMD_SET_CHANNEL :
++ 		    NL80211_CMD_SET_WIPHY);
   
-  	nl80211_cmd(drv, msg, 0, NL80211_CMD_SET_WIPHY);
-  
-@@ -9,7 +9,7 @@
+ -	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, drv->ifindex);
+ +	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, bss->ifindex);
   	if (nl80211_put_freq_params(msg, freq) < 0)
   		goto nla_put_failure;
   
 -@@ -11322,7 +11322,7 @@ static int nl80211_switch_channel(void *
-+@@ -11905,7 +11905,7 @@ static int nl80211_switch_channel(void *
++@@ -12047,7 +12047,7 @@ static int nl80211_switch_channel(void *
   		return -ENOMEM;
   
   	nl80211_cmd(drv, msg, 0, NL80211_CMD_CHANNEL_SWITCH);
 diff --git a/package/hostapd/patches/340-reload_freq_change.patch b/package/hostapd/patches/340-reload_freq_change.patch
-index 9316794..d76f9de 100644
+index 9316794..d3e8918 100644
 --- a/package/hostapd/patches/340-reload_freq_change.patch
 +++ b/package/hostapd/patches/340-reload_freq_change.patch
 @@ -1,6 +1,6 @@
  --- a/src/ap/hostapd.c
  +++ b/src/ap/hostapd.c
 -@@ -72,6 +72,16 @@ static void hostapd_reload_bss(struct ho
-+@@ -68,6 +68,16 @@ static void hostapd_reload_bss(struct ho
++@@ -70,6 +70,16 @@ static void hostapd_reload_bss(struct ho
   #endif /* CONFIG_NO_RADIUS */
   
   	ssid = &hapd->conf->ssid;
@@ -632,7 +737,7 @@ index 9316794..d76f9de 100644
   	    ssid->wpa_passphrase_set && ssid->wpa_passphrase) {
   		/*
 -@@ -172,6 +182,9 @@ int hostapd_reload_config(struct hostapd
-+@@ -168,20 +178,12 @@ int hostapd_reload_config(struct hostapd
++@@ -170,20 +180,12 @@ int hostapd_reload_config(struct hostapd
   	oldconf = hapd->iconf;
   	iface->conf = newconf;
   
@@ -655,14 +760,14 @@ index 9316794..d76f9de 100644
 + 		hostapd_reload_bss(hapd);
 + 	}
 diff --git a/package/hostapd/patches/350-nl80211_del_beacon_bss.patch b/package/hostapd/patches/350-nl80211_del_beacon_bss.patch
-index 885922c..8da6372 100644
+index 885922c..e6f6cf3 100644
 --- a/package/hostapd/patches/350-nl80211_del_beacon_bss.patch
 +++ b/package/hostapd/patches/350-nl80211_del_beacon_bss.patch
 @@ -1,6 +1,6 @@
  --- a/src/drivers/driver_nl80211.c
  +++ b/src/drivers/driver_nl80211.c
 -@@ -4290,18 +4290,20 @@ wpa_driver_nl80211_finish_drv_init(struc
-+@@ -4748,18 +4748,20 @@ wpa_driver_nl80211_finish_drv_init(struc
++@@ -4817,18 +4817,20 @@ wpa_driver_nl80211_finish_drv_init(struc
   }
   
   
@@ -671,7 +776,7 @@ index 885922c..8da6372 100644
   	return send_and_recv_msgs(drv, msg, NULL, NULL);
    nla_put_failure:
 -@@ -4309,6 +4311,15 @@ static int wpa_driver_nl80211_del_beacon
-+@@ -4767,6 +4769,15 @@ static int wpa_driver_nl80211_del_beacon
++@@ -4836,6 +4838,15 @@ static int wpa_driver_nl80211_del_beacon
   	return -ENOBUFS;
   }
   
@@ -680,7 +785,7 @@ index 885922c..8da6372 100644
   /**
    * wpa_driver_nl80211_deinit - Deinitialize nl80211 driver interface
 -@@ -9911,7 +9922,6 @@ static int wpa_driver_nl80211_stop_ap(vo
-+@@ -10475,7 +10486,6 @@ static int wpa_driver_nl80211_stop_ap(vo
++@@ -10617,7 +10628,6 @@ static int wpa_driver_nl80211_stop_ap(vo
   	if (!is_ap_interface(drv->nlmode))
   		return -1;
   	wpa_driver_nl80211_del_beacon(drv);
@@ -737,7 +842,7 @@ index 170d4f2..e69c3d3 100644
 + 	} else {
 + 		os_memcpy(reply, "UNKNOWN COMMAND\n", 16);
 diff --git a/package/hostapd/patches/370-ap_sta_support.patch b/package/hostapd/patches/370-ap_sta_support.patch
-index a3d0572..5e82252 100644
+index a3d0572..8a92ead 100644
 --- a/package/hostapd/patches/370-ap_sta_support.patch
 +++ b/package/hostapd/patches/370-ap_sta_support.patch
 @@ -1,6 +1,6 @@
@@ -789,61 +894,98 @@ index a3d0572..5e82252 100644
 -@@ -109,6 +109,46 @@ extern int wpa_debug_show_keys;
 - extern int wpa_debug_timestamp;
 - extern struct wpa_driver_ops *wpa_drivers[];
-+@@ -104,6 +104,46 @@ const char *wpa_supplicant_full_license5
++@@ -105,6 +105,55 @@ const char *wpa_supplicant_full_license5
 + "\n";
 + #endif /* CONFIG_NO_STDOUT_DEBUG */
   
  +static int hostapd_stop(struct wpa_supplicant *wpa_s)
  +{
-@@ -92,7 +92,7 @@
+@@ -69,14 +69,23 @@
+ +	int len = sizeof(buf);
+ +	enum hostapd_hw_mode hw_mode;
+ +	u8 channel;
+++	int sec_chan = 0;
+ +	int ret;
+ +
+ +	if (!bss)
+ +		return;
+ +
+++	if (bss->ht_param & HT_INFO_HT_PARAM_STA_CHNL_WIDTH) {
+++		int sec = bss->ht_param & HT_INFO_HT_PARAM_SECONDARY_CHNL_OFF_MASK;
+++		if (sec == HT_INFO_HT_PARAM_SECONDARY_CHNL_ABOVE)
+++			sec_chan = 1;
+++		else if (sec ==  HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW)
+++			sec_chan = -1;
+++	}
+++
+ +	hw_mode = ieee80211_freq_to_chan(bss->freq, &channel);
+-+	if (asprintf(&cmd, "UPDATE channel=%d sec_chan=0 hw_mode=%d ieee80211n=%d",
+-+		     channel, hw_mode, !!bss->ht_capab) < 0)
+++	if (asprintf(&cmd, "UPDATE channel=%d sec_chan=%d hw_mode=%d ieee80211n=%d",
+++		     channel, sec_chan, hw_mode, !!bss->ht_capab) < 0)
+ +		return -1;
+ +
+ +	ret = wpa_ctrl_request(wpa_s->hostapd, cmd, os_strlen(cmd), buf, &len, NULL);
+@@ -92,7 +101,7 @@
   /* Configure default/group WEP keys for static WEP */
   int wpa_set_wep_keys(struct wpa_supplicant *wpa_s, struct wpa_ssid *ssid)
   {
 -@@ -685,8 +725,12 @@ void wpa_supplicant_set_state(struct wpa
-+@@ -705,8 +745,12 @@ void wpa_supplicant_set_state(struct wpa
++@@ -711,8 +760,12 @@ void wpa_supplicant_set_state(struct wpa
   #endif /* CONFIG_P2P */
   
   		sme_sched_obss_scan(wpa_s, 1);
-@@ -105,7 +105,7 @@
+@@ -105,7 +114,7 @@
   		wpa_s->new_connection = 1;
   		wpa_drv_set_operstate(wpa_s, 0);
   #ifndef IEEE8021X_EAPOL
 -@@ -2906,6 +2950,20 @@ static int wpa_supplicant_init_iface(str
-+@@ -3516,6 +3560,20 @@ static int wpa_supplicant_init_iface(str
++@@ -3595,6 +3648,20 @@ static int wpa_supplicant_init_iface(str
   			   sizeof(wpa_s->bridge_ifname));
   	}
   
-@@ -126,7 +126,7 @@
+@@ -126,7 +135,7 @@
   	/* RSNA Supplicant Key Management - INITIALIZE */
   	eapol_sm_notify_portEnabled(wpa_s->eapol, FALSE);
   	eapol_sm_notify_portValid(wpa_s->eapol, FALSE);
 -@@ -3125,6 +3183,11 @@ static void wpa_supplicant_deinit_iface(
-+@@ -3711,6 +3769,11 @@ static void wpa_supplicant_deinit_iface(
++@@ -3798,6 +3865,11 @@ static void wpa_supplicant_deinit_iface(
   	if (terminate)
   		wpa_msg(wpa_s, MSG_INFO, WPA_EVENT_TERMINATING);
   
-@@ -148,9 +148,9 @@
+@@ -148,41 +157,45 @@
   #include "drivers/driver.h"
   #include "wpa_supplicant_i.h"
   #include "config.h"
 -@@ -245,6 +246,9 @@ static void calculate_update_time(const 
-+@@ -247,6 +248,9 @@ static void calculate_update_time(const 
++@@ -247,6 +248,10 @@ static void calculate_update_time(const 
   static void wpa_bss_copy_res(struct wpa_bss *dst, struct wpa_scan_res *src,
 - 			     struct os_time *fetch_time)
 + 			     struct os_reltime *fetch_time)
   {
  +	struct ieee80211_ht_capabilities *capab;
+++	struct ieee80211_ht_operation *oper;
  +	struct ieee802_11_elems elems;
-@@ -158,7 +158,7 @@
+ +
   	dst->flags = src->flags;
   	os_memcpy(dst->bssid, src->bssid, ETH_ALEN);
   	dst->freq = src->freq;
 -@@ -255,6 +259,12 @@ static void wpa_bss_copy_res(struct wpa_
-+@@ -257,6 +261,12 @@ static void wpa_bss_copy_res(struct wpa_
++@@ -257,6 +262,15 @@ static void wpa_bss_copy_res(struct wpa_
   	dst->level = src->level;
   	dst->tsf = src->tsf;
   
-@@ -173,16 +173,16 @@
+ +	memset(&elems, 0, sizeof(elems));
+ +	ieee802_11_parse_elems((u8 *) (src + 1), src->ie_len, &elems, 0);
+ +	capab = (struct ieee80211_ht_capabilities *) elems.ht_capabilities;
+++	oper = (struct ieee80211_ht_operation *) elems.ht_operation;
+ +	if (capab)
+ +		dst->ht_capab = le_to_host16(capab->ht_capabilities_info);
+++	if (oper)
+++		dst->ht_param = oper->ht_param;
+ +
+  	calculate_update_time(fetch_time, src->age, &dst->last_update);
+  }
   
  --- a/wpa_supplicant/main.c
  +++ b/wpa_supplicant/main.c
@@ -865,7 +1007,7 @@ index a3d0572..5e82252 100644
   #endif /* CONFIG_DEBUG_LINUX_TRACING */
   	printf("  -t = include timestamp in debug messages\n"
   	       "  -h = show this help text\n"
-@@ -190,16 +190,16 @@
+@@ -190,16 +203,16 @@
   	       "  -L = show license (BSD)\n"
   	       "  -o = override driver parameter for new interfaces\n"
   	       "  -O = override ctrl_interface parameter for new interfaces\n"
@@ -886,17 +1028,24 @@ index a3d0572..5e82252 100644
   			usage();
   			exitcode = 0;
   			goto out;
-@@ -211,7 +211,7 @@
+@@ -211,12 +224,14 @@
   			break;
  --- a/wpa_supplicant/bss.h
  +++ b/wpa_supplicant/bss.h
 -@@ -69,6 +69,8 @@ struct wpa_bss {
-+@@ -70,6 +70,8 @@ struct wpa_bss {
++@@ -70,6 +70,10 @@ struct wpa_bss {
   	u8 ssid[32];
   	/** Length of SSID */
   	size_t ssid_len;
+ +	/** HT caapbilities */
+ +	u16 ht_capab;
+++	/* Five octets of HT Operation Information */
+++	u8 ht_param;
+  	/** Frequency of the channel in MHz (e.g., 2412 = channel 1) */
+  	int freq;
+  	/** Beacon interval in TUs (host byte order) */
 diff --git a/package/hostapd/patches/380-disable_ctrl_iface_mib.patch b/package/hostapd/patches/380-disable_ctrl_iface_mib.patch
-index 27f21bd..d39ba2e 100644
+index 27f21bd..dee1ab3 100644
 --- a/package/hostapd/patches/380-disable_ctrl_iface_mib.patch
 +++ b/package/hostapd/patches/380-disable_ctrl_iface_mib.patch
 @@ -1,6 +1,6 @@
@@ -945,7 +1094,7 @@ index 27f21bd..d39ba2e 100644
  --- a/wpa_supplicant/Makefile
  +++ b/wpa_supplicant/Makefile
 -@@ -778,6 +778,9 @@ ifdef CONFIG_WNM
-+@@ -797,6 +797,9 @@ ifdef CONFIG_WNM
++@@ -805,6 +805,9 @@ ifdef CONFIG_WNM
   OBJS += ../src/ap/wnm_ap.o
   endif
   ifdef CONFIG_CTRL_IFACE
@@ -954,7 +1103,7 @@ index 27f21bd..d39ba2e 100644
  --- a/wpa_supplicant/ctrl_iface.c
  +++ b/wpa_supplicant/ctrl_iface.c
 -@@ -5262,6 +5262,7 @@ char * wpa_supplicant_ctrl_iface_process
-+@@ -6075,6 +6075,7 @@ char * wpa_supplicant_ctrl_iface_process
++@@ -6243,6 +6243,7 @@ char * wpa_supplicant_ctrl_iface_process
   			reply_len = -1;
   	} else if (os_strncmp(buf, "NOTE ", 5) == 0) {
   		wpa_printf(MSG_INFO, "NOTE: %s", buf + 5);
@@ -963,7 +1112,7 @@ index 27f21bd..d39ba2e 100644
   		reply_len = wpa_sm_get_mib(wpa_s->wpa, reply, reply_size);
   		if (reply_len >= 0) {
 -@@ -5273,6 +5274,7 @@ char * wpa_supplicant_ctrl_iface_process
-+@@ -6086,6 +6087,7 @@ char * wpa_supplicant_ctrl_iface_process
++@@ -6254,6 +6255,7 @@ char * wpa_supplicant_ctrl_iface_process
   			else
   				reply_len += res;
   		}
@@ -972,7 +1121,7 @@ index 27f21bd..d39ba2e 100644
   		reply_len = wpa_supplicant_ctrl_iface_status(
   			wpa_s, buf + 6, reply, reply_size);
 -@@ -5687,6 +5689,7 @@ char * wpa_supplicant_ctrl_iface_process
-+@@ -6490,6 +6492,7 @@ char * wpa_supplicant_ctrl_iface_process
++@@ -6661,6 +6663,7 @@ char * wpa_supplicant_ctrl_iface_process
   		reply_len = wpa_supplicant_ctrl_iface_bss(
   			wpa_s, buf + 4, reply, reply_size);
   #ifdef CONFIG_AP
@@ -981,7 +1130,7 @@ index 27f21bd..d39ba2e 100644
   		reply_len = ap_ctrl_iface_sta_first(wpa_s, reply, reply_size);
   	} else if (os_strncmp(buf, "STA ", 4) == 0) {
 -@@ -5695,6 +5698,7 @@ char * wpa_supplicant_ctrl_iface_process
-+@@ -6498,6 +6501,7 @@ char * wpa_supplicant_ctrl_iface_process
++@@ -6669,6 +6672,7 @@ char * wpa_supplicant_ctrl_iface_process
   	} else if (os_strncmp(buf, "STA-NEXT ", 9) == 0) {
   		reply_len = ap_ctrl_iface_sta_next(wpa_s, buf + 9, reply,
   						   reply_size);
@@ -1010,7 +1159,7 @@ index 27f21bd..d39ba2e 100644
   #ifdef CONFIG_P2P_MANAGER
   static int p2p_manager_disconnect(struct hostapd_data *hapd, u16 stype,
 -@@ -423,3 +425,4 @@ int hostapd_parse_csa_settings(const cha
-+@@ -524,3 +526,4 @@ int hostapd_parse_csa_settings(const cha
++@@ -526,3 +528,4 @@ int hostapd_parse_csa_settings(const cha
   
   	return 0;
   }
@@ -1039,7 +1188,7 @@ index 27f21bd..d39ba2e 100644
  --- a/src/ap/wpa_auth.c
  +++ b/src/ap/wpa_auth.c
 -@@ -2708,6 +2708,7 @@ static const char * wpa_bool_txt(int boo
-+@@ -2830,6 +2830,7 @@ static const char * wpa_bool_txt(int boo
++@@ -2832,6 +2832,7 @@ static const char * wpa_bool_txt(int boo
   	return bool ? "TRUE" : "FALSE";
   }
   
@@ -1048,7 +1197,7 @@ index 27f21bd..d39ba2e 100644
   #define RSN_SUITE "%02x-%02x-%02x-%d"
   #define RSN_SUITE_ARG(s) \
 -@@ -2852,7 +2853,7 @@ int wpa_get_mib_sta(struct wpa_state_mac
-+@@ -2974,7 +2975,7 @@ int wpa_get_mib_sta(struct wpa_state_mac
++@@ -2976,7 +2977,7 @@ int wpa_get_mib_sta(struct wpa_state_mac
   
   	return len;
   }
@@ -1057,7 +1206,7 @@ index 27f21bd..d39ba2e 100644
  --- a/src/rsn_supp/wpa.c
  +++ b/src/rsn_supp/wpa.c
 -@@ -1844,6 +1844,8 @@ static u32 wpa_key_mgmt_suite(struct wpa
-+@@ -1912,6 +1912,8 @@ static u32 wpa_key_mgmt_suite(struct wpa
++@@ -1911,6 +1911,8 @@ static u32 wpa_key_mgmt_suite(struct wpa
   }
   
   
@@ -1066,7 +1215,7 @@ index 27f21bd..d39ba2e 100644
   #define RSN_SUITE_ARG(s) \
   ((s) >> 24) & 0xff, ((s) >> 16) & 0xff, ((s) >> 8) & 0xff, (s) & 0xff
 -@@ -1927,6 +1929,7 @@ int wpa_sm_get_mib(struct wpa_sm *sm, ch
-+@@ -1995,6 +1997,7 @@ int wpa_sm_get_mib(struct wpa_sm *sm, ch
++@@ -1994,6 +1996,7 @@ int wpa_sm_get_mib(struct wpa_sm *sm, ch
   
   	return (int) len;
   }
@@ -1183,14 +1332,14 @@ index 0d9065a..0000000
 - 
 - 
 diff --git a/package/hostapd/patches/410-bring_down_interface.patch b/package/hostapd/patches/410-bring_down_interface.patch
-index 31033a0..5a57249 100644
+index 31033a0..165484b 100644
 --- a/package/hostapd/patches/410-bring_down_interface.patch
 +++ b/package/hostapd/patches/410-bring_down_interface.patch
 @@ -1,6 +1,6 @@
  --- a/src/drivers/driver_nl80211.c
  +++ b/src/drivers/driver_nl80211.c
 -@@ -8480,12 +8480,7 @@ static int wpa_driver_nl80211_set_mode(s
-+@@ -8936,12 +8936,7 @@ static int wpa_driver_nl80211_set_mode(s
++@@ -9070,12 +9070,7 @@ static int wpa_driver_nl80211_set_mode(s
   			/* Try to set the mode again while the interface is
   			 * down */
   			ret = nl80211_set_mode(drv, drv->ifindex, nlmode);
@@ -1199,7 +1348,7 @@ index 31033a0..5a57249 100644
   		} else
   			wpa_printf(MSG_DEBUG, "nl80211: Failed to set "
 -@@ -8498,6 +8493,8 @@ static int wpa_driver_nl80211_set_mode(s
-+@@ -8954,6 +8949,8 @@ static int wpa_driver_nl80211_set_mode(s
++@@ -9088,6 +9083,8 @@ static int wpa_driver_nl80211_set_mode(s
   			   "interface is down");
   		drv->nlmode = nlmode;
   		drv->ignore_if_down_event = 1;
@@ -1237,12 +1386,13 @@ index 6e86658..8dae52b 100644
   		if (conf->wpa_pairwise & WPA_CIPHER_CCMP)
   			wps->encr_types |= WPS_ENCR_AES;
 diff --git a/package/hostapd/patches/440-dynamic_20_40_mhz.patch b/package/hostapd/patches/440-dynamic_20_40_mhz.patch
-index 905ec2c..af2fb26 100644
+deleted file mode 100644
+index 905ec2c..0000000
 --- a/package/hostapd/patches/440-dynamic_20_40_mhz.patch
-+++ b/package/hostapd/patches/440-dynamic_20_40_mhz.patch
-@@ -1,19 +1,19 @@
- --- a/hostapd/config_file.c
- +++ b/hostapd/config_file.c
++++ /dev/null
+@@ -1,206 +0,0 @@
+---- a/hostapd/config_file.c
+-+++ b/hostapd/config_file.c
 -@@ -2422,6 +2422,10 @@ static int hostapd_config_fill(struct ho
 - 					   "ht_capab", line);
 - 				errors++;
@@ -1254,90 +1404,96 @@ index 905ec2c..af2fb26 100644
 - 		} else if (os_strcmp(buf, "require_ht") == 0) {
 - 			conf->require_ht = atoi(pos);
 - 		} else if (os_strcmp(buf, "obss_interval") == 0) {
-+@@ -2648,6 +2648,10 @@ static int hostapd_config_fill(struct ho
-+ 				   line);
-+ 			return 1;
-+ 		}
-++	} else if (os_strcmp(buf, "dynamic_ht40") == 0) {
-++		conf->dynamic_ht40 = atoi(pos);
-++		if (conf->dynamic_ht40 == 1)
-++			conf->dynamic_ht40 = 1500;
-+ 	} else if (os_strcmp(buf, "require_ht") == 0) {
-+ 		conf->require_ht = atoi(pos);
-+ 	} else if (os_strcmp(buf, "obss_interval") == 0) {
- --- a/src/ap/ap_config.h
- +++ b/src/ap/ap_config.h
+---- a/src/ap/ap_config.h
+-+++ b/src/ap/ap_config.h
 -@@ -531,6 +531,7 @@ struct hostapd_config {
-+@@ -580,6 +580,7 @@ struct hostapd_config {
-  	int ieee80211n;
-  	int secondary_channel;
-  	int require_ht;
-@@ -23,7 +23,7 @@
-  	int ieee80211ac;
- --- a/src/ap/hostapd.c
- +++ b/src/ap/hostapd.c
+- 	int ieee80211n;
+- 	int secondary_channel;
+- 	int require_ht;
+-+	int dynamic_ht40;
+- 	int obss_interval;
+- 	u32 vht_capab;
+- 	int ieee80211ac;
+---- a/src/ap/hostapd.c
+-+++ b/src/ap/hostapd.c
 -@@ -23,6 +23,7 @@
-+@@ -22,6 +22,7 @@
-  #include "beacon.h"
-  #include "iapp.h"
-  #include "ieee802_1x.h"
-@@ -31,7 +31,7 @@
-  #include "ieee802_11_auth.h"
-  #include "vlan_init.h"
-  #include "wpa_auth.h"
+- #include "beacon.h"
+- #include "iapp.h"
+- #include "ieee802_1x.h"
+-+#include "ieee802_11.h"
+- #include "ieee802_11_auth.h"
+- #include "vlan_init.h"
+- #include "wpa_auth.h"
 -@@ -332,6 +333,7 @@ static void hostapd_cleanup(struct hosta
-+@@ -328,6 +329,7 @@ static void hostapd_cleanup(struct hosta
-  static void hostapd_cleanup_iface_partial(struct hostapd_iface *iface)
-  {
-  	wpa_printf(MSG_DEBUG, "%s(%p)", __func__, iface);
-@@ -41,7 +41,7 @@
-  	os_free(iface->current_rates);
- --- a/src/ap/hostapd.h
- +++ b/src/ap/hostapd.h
+- static void hostapd_cleanup_iface_partial(struct hostapd_iface *iface)
+- {
+- 	wpa_printf(MSG_DEBUG, "%s(%p)", __func__, iface);
+-+	hostapd_deinit_ht(iface);
+- 	hostapd_free_hw_features(iface->hw_features, iface->num_hw_features);
+- 	iface->hw_features = NULL;
+- 	os_free(iface->current_rates);
+---- a/src/ap/hostapd.h
+-+++ b/src/ap/hostapd.h
 -@@ -326,6 +326,9 @@ struct hostapd_iface {
-+@@ -330,6 +330,9 @@ struct hostapd_iface {
-  	/* Overlapping BSS information */
-  	int olbc_ht;
-  
-@@ -53,7 +53,7 @@
-  	/* surveying helpers */
- --- a/src/ap/ieee802_11.c
- +++ b/src/ap/ieee802_11.c
+- 	/* Overlapping BSS information */
+- 	int olbc_ht;
+- 
+-+	int force_20mhz;
+-+	struct os_time last_20mhz_trigger;
+-+
+- 	u16 ht_op_mode;
+- 
+- 	/* surveying helpers */
+---- a/src/ap/ieee802_11.c
+-+++ b/src/ap/ieee802_11.c
 -@@ -1538,6 +1538,9 @@ static void handle_beacon(struct hostapd
-+@@ -1556,6 +1556,9 @@ static void handle_beacon(struct hostapd
-  					     sizeof(mgmt->u.beacon)), &elems,
-  				      0);
-  
-@@ -65,7 +65,7 @@
-  
- --- a/src/ap/ieee802_11.h
- +++ b/src/ap/ieee802_11.h
+- 					     sizeof(mgmt->u.beacon)), &elems,
+- 				      0);
+- 
+-+	if (!elems.ht_capabilities)
+-+		hostapd_trigger_20mhz(hapd->iface);
+-+
+- 	ap_list_process_beacon(hapd->iface, mgmt, &elems, fi);
+- }
+- 
+---- a/src/ap/ieee802_11.h
+-+++ b/src/ap/ieee802_11.h
 -@@ -82,4 +82,17 @@ int hostapd_update_time_adv(struct hosta
-+@@ -83,4 +83,17 @@ int hostapd_update_time_adv(struct hosta
-  void hostapd_client_poll_ok(struct hostapd_data *hapd, const u8 *addr);
-  u8 * hostapd_eid_bss_max_idle_period(struct hostapd_data *hapd, u8 *eid);
-  
-@@ -85,8 +85,8 @@
-  #endif /* IEEE802_11_H */
- --- a/src/ap/ieee802_11_ht.c
- +++ b/src/ap/ieee802_11_ht.c
+- void hostapd_client_poll_ok(struct hostapd_data *hapd, const u8 *addr);
+- u8 * hostapd_eid_bss_max_idle_period(struct hostapd_data *hapd, u8 *eid);
+- 
+-+#ifdef CONFIG_IEEE80211N
+-+void hostapd_trigger_20mhz(struct hostapd_iface *iface);
+-+void hostapd_deinit_ht(struct hostapd_iface *iface);
+-+
+-+#else
+-+static inline void hostapd_deinit_ht(struct hostapd_iface *iface)
+-+{
+-+}
+-+static inline void hostapd_trigger_20mhz(struct hostapd_iface *iface)
+-+{
+-+}
+-+#endif /* CONFIG_IEEE80211N */
+-+
+- #endif /* IEEE802_11_H */
+---- a/src/ap/ieee802_11_ht.c
+-+++ b/src/ap/ieee802_11_ht.c
 -@@ -20,9 +20,11 @@
 - #include "drivers/driver.h"
-+@@ -13,9 +13,11 @@
-+ #include "common/ieee802_11_defs.h"
-  #include "hostapd.h"
-  #include "ap_config.h"
- +#include "ap_drv_ops.h"
-@@ -97,29 +97,25 @@
-  
-  
-  u8 * hostapd_eid_ht_capabilities(struct hostapd_data *hapd, u8 *eid)
+- #include "hostapd.h"
+- #include "ap_config.h"
+-+#include "ap_drv_ops.h"
+- #include "sta_info.h"
+- #include "beacon.h"
+- #include "ieee802_11.h"
+-+#include "utils/eloop.h"
+- 
+- 
+- u8 * hostapd_eid_ht_capabilities(struct hostapd_data *hapd, u8 *eid)
 -@@ -86,12 +88,15 @@ u8 * hostapd_eid_ht_operation(struct hos
-+@@ -92,6 +94,9 @@ u8 * hostapd_eid_ht_operation(struct hos
-  
+- 
 - 	oper->control_chan = hapd->iconf->channel;
-+ 	oper->primary_chan = hapd->iconf->channel;
-  	oper->operation_mode = host_to_le16(hapd->iface->ht_op_mode);
+- 	oper->operation_mode = host_to_le16(hapd->iface->ht_op_mode);
 --	if (hapd->iconf->secondary_channel == 1)
 --		oper->ht_param |= HT_INFO_HT_PARAM_SECONDARY_CHNL_ABOVE |
 --			HT_INFO_HT_PARAM_REC_TRANS_CHNL_WIDTH;
@@ -1353,25 +1509,94 @@ index 905ec2c..af2fb26 100644
 -+			oper->ht_param |= HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW |
 -+				HT_INFO_HT_PARAM_REC_TRANS_CHNL_WIDTH;
 -+	}
-++	if (hapd->iface->force_20mhz)
-++		goto skip;
-++
-+ 	if (hapd->iconf->secondary_channel == 1)
-+ 		oper->ht_param |= HT_INFO_HT_PARAM_SECONDARY_CHNL_ABOVE |
-+ 			HT_INFO_HT_PARAM_STA_CHNL_WIDTH;
-+@@ -99,6 +104,7 @@ u8 * hostapd_eid_ht_operation(struct hos
-+ 		oper->ht_param |= HT_INFO_HT_PARAM_SECONDARY_CHNL_BELOW |
-+ 			HT_INFO_HT_PARAM_STA_CHNL_WIDTH;
-  
-++skip:
-  	pos += sizeof(*oper);
-  
+- 
+- 	pos += sizeof(*oper);
+- 
 -@@ -286,3 +291,84 @@ void hostapd_get_ht_capab(struct hostapd
-+ 	return pos;
-+@@ -288,3 +294,84 @@ void hostapd_get_ht_capab(struct hostapd
-  
-  	neg_ht_cap->ht_capabilities_info = host_to_le16(cap);
-  }
+- 
+- 	neg_ht_cap->ht_capabilities_info = host_to_le16(cap);
+- }
+-+
+-+static void hostapd_set_force_20mhz(struct hostapd_iface *iface);
+-+
+-+static void hostapd_restore_40mhz(void *eloop_data, void *user_ctx)
+-+{
+-+	struct hostapd_iface *iface = eloop_data;
+-+	struct os_time time;
+-+	int timeout;
+-+
+-+	if (!iface->last_20mhz_trigger.sec)
+-+	    return;
+-+
+-+	os_get_time(&time);
+-+	timeout = iface->last_20mhz_trigger.sec + iface->conf->dynamic_ht40 -
+-+		  time.sec;
+-+
+-+	if (timeout > 0) {
+-+		eloop_register_timeout(timeout, 0, hostapd_restore_40mhz,
+-+				       iface, NULL);
+-+		return;
+-+	}
+-+
+-+	iface->last_20mhz_trigger.sec = 0;
+-+	iface->last_20mhz_trigger.usec = 0;
+-+
+-+	iface->force_20mhz = 0;
+-+	hostapd_set_force_20mhz(iface);
+-+}
+-+
+-+static void hostapd_set_force_20mhz(struct hostapd_iface *iface)
+-+{
+-+	int secondary_channel;
+-+	int i;
+-+
+-+	ieee802_11_set_beacons(iface);
+-+
+-+	for (i = 0; i < iface->num_bss; i++) {
+-+		struct hostapd_data *hapd = iface->bss[i];
+-+
+-+		if (iface->force_20mhz)
+-+			secondary_channel = 0;
+-+		else
+-+			secondary_channel = hapd->iconf->secondary_channel;
+-+
+-+		if (hostapd_set_freq(hapd, hapd->iconf->hw_mode, iface->freq,
+-+				     hapd->iconf->channel,
+-+				     hapd->iconf->ieee80211n,
+-+				     hapd->iconf->ieee80211ac,
+-+				     secondary_channel,
+-+				     hapd->iconf->vht_oper_chwidth,
+-+				     hapd->iconf->vht_oper_centr_freq_seg0_idx,
+-+				     hapd->iconf->vht_oper_centr_freq_seg1_idx)) {
+-+			wpa_printf(MSG_ERROR, "Could not set channel for "
+-+				   "kernel driver");
+-+		}
+-+	}
+-+}
+-+
+-+void hostapd_deinit_ht(struct hostapd_iface *iface)
+-+{
+-+	eloop_cancel_timeout(hostapd_restore_40mhz, iface, NULL);
+-+}
+-+
+-+void hostapd_trigger_20mhz(struct hostapd_iface *iface)
+-+{
+-+	if (!iface->conf->dynamic_ht40)
+-+		return;
+-+
+-+	if (!iface->force_20mhz) {
+-+		iface->force_20mhz = 1;
+-+		hostapd_set_force_20mhz(iface);
+-+	}
+-+
+-+	if (!iface->last_20mhz_trigger.sec) {
+-+		eloop_cancel_timeout(hostapd_restore_40mhz, iface, NULL);
+-+		eloop_register_timeout(iface->conf->dynamic_ht40, 0,
+-+				       hostapd_restore_40mhz, iface, NULL);
+-+	}
+-+
+-+	os_get_time(&iface->last_20mhz_trigger);
+-+}
 diff --git a/package/hostapd/patches/450-limit_debug_messages.patch b/package/hostapd/patches/450-limit_debug_messages.patch
 index aaea941..08f17dc 100644
 --- a/package/hostapd/patches/450-limit_debug_messages.patch
@@ -1733,7 +1958,7 @@ index 61715d6..3459a61 100644
   	int ret = 1;
   	size_t i, j;
 diff --git a/package/hostapd/patches/500-wpa_supplicant-add-new-config-params-to-be-used-with.patch b/package/hostapd/patches/500-wpa_supplicant-add-new-config-params-to-be-used-with.patch
-index 544151e..5656970 100644
+index 544151e..9f4a5f5 100644
 --- a/package/hostapd/patches/500-wpa_supplicant-add-new-config-params-to-be-used-with.patch
 +++ b/package/hostapd/patches/500-wpa_supplicant-add-new-config-params-to-be-used-with.patch
 @@ -22,9 +22,9 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
@@ -1773,7 +1998,7 @@ index 544151e..5656970 100644
   
   #endif /* CONFIG_P2P */
   
-@@ -142,7 +142,7 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
+@@ -142,16 +142,16 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
   /* Helper macros for network block parser */
   
   #ifdef OFFSET
@@ -1782,17 +2007,39 @@ index 544151e..5656970 100644
   	{ INT(ap_max_inactivity) },
   	{ INT(dtim_period) },
   	{ INT(beacon_int) },
-@@ -162,7 +162,7 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
+ +	{ INT_RANGE(fixed_freq, 0, 1) },
+ +	{ FUNC(rates) },
+ +	{ FUNC(mcast_rate) },
+- };
+- 
+- #undef OFFSET
++ #ifdef CONFIG_MACSEC
++ 	{ INT_RANGE(macsec_policy, 0, 1) },
++ #endif /* CONFIG_MACSEC */
+ --- a/wpa_supplicant/config_ssid.h
+ +++ b/wpa_supplicant/config_ssid.h
+ @@ -12,6 +12,7 @@
+@@ -162,37 +162,24 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
   
   #define MAX_SSID_LEN 32
   
 -@@ -620,6 +621,10 @@ struct wpa_ssid {
-+@@ -636,6 +637,10 @@ struct wpa_ssid {
-  	 * dereferences since it may not be updated in all cases.
+- 	 * dereferences since it may not be updated in all cases.
++@@ -637,6 +638,10 @@ struct wpa_ssid {
   	 */
   	void *parent_cred;
-@@ -175,24 +175,11 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
-  #endif /* CONFIG_SSID_H */
+-+
++ 
+ +	int fixed_freq;
+ +	unsigned char rates[NL80211_MAX_SUPP_RATES];
+ +	double mcast_rate;
+- };
+- 
+- #endif /* CONFIG_SSID_H */
+++
++ #ifdef CONFIG_MACSEC
++ 	/**
++ 	 * macsec_policy - Determines the policy for MACsec secure session
  --- a/wpa_supplicant/wpa_supplicant.c
  +++ b/wpa_supplicant/wpa_supplicant.c
 -@@ -1623,15 +1623,24 @@ void wpa_supplicant_associate(struct wpa
@@ -1811,7 +2058,7 @@ index 544151e..5656970 100644
 -+		if (ssid->frequency > 0 && params.freq == 0)
 -+			/* Initial channel for IBSS */
 -+			params.freq = ssid->frequency;
-+@@ -1791,6 +1791,13 @@ static void wpas_start_assoc_cb(struct w
++@@ -1806,6 +1806,13 @@ static void wpas_start_assoc_cb(struct w
 + 			params.beacon_int = ssid->beacon_int;
 + 		else
 + 			params.beacon_int = wpa_s->conf->beacon_int;
@@ -1831,7 +2078,7 @@ index 544151e..5656970 100644
 - 	params.wpa_ie_len = wpa_ie_len;
 - 	params.pairwise_suite = cipher_pairwise;
 diff --git a/package/hostapd/patches/501-driver_nl80211-use-new-parameters-during-ibss-join.patch b/package/hostapd/patches/501-driver_nl80211-use-new-parameters-during-ibss-join.patch
-index 565bbc9..c774682 100644
+index 565bbc9..e7484d9 100644
 --- a/package/hostapd/patches/501-driver_nl80211-use-new-parameters-during-ibss-join.patch
 +++ b/package/hostapd/patches/501-driver_nl80211-use-new-parameters-during-ibss-join.patch
 @@ -10,7 +10,7 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
@@ -1839,7 +2086,7 @@ index 565bbc9..c774682 100644
  --- a/src/drivers/driver_nl80211.c
  +++ b/src/drivers/driver_nl80211.c
 -@@ -7903,7 +7903,7 @@ static int wpa_driver_nl80211_ibss(struc
-+@@ -8455,7 +8455,7 @@ static int wpa_driver_nl80211_ibss(struc
++@@ -8581,7 +8581,7 @@ static int wpa_driver_nl80211_ibss(struc
   				   struct wpa_driver_associate_params *params)
   {
   	struct nl_msg *msg;
@@ -1850,14 +2097,14 @@ index 565bbc9..c774682 100644
 -@@ -7936,6 +7936,37 @@ retry:
 - 	wpa_printf(MSG_DEBUG, "  * freq=%d", params->freq);
 - 	NLA_PUT_U32(msg, NL80211_ATTR_WIPHY_FREQ, params->freq);
-+@@ -8494,6 +8494,37 @@ retry:
++@@ -8620,6 +8620,37 @@ retry:
 + 			    params->beacon_int);
 + 	}
   
  +	if (params->fixed_freq) {
  +		wpa_printf(MSG_DEBUG, "  * fixed_freq");
 diff --git a/package/hostapd/patches/502-wpa_s-support-htmode-param.patch b/package/hostapd/patches/502-wpa_s-support-htmode-param.patch
-index adb20a2..fdba6d7 100644
+index adb20a2..b4c4034 100644
 --- a/package/hostapd/patches/502-wpa_s-support-htmode-param.patch
 +++ b/package/hostapd/patches/502-wpa_s-support-htmode-param.patch
 @@ -16,7 +16,7 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
@@ -1878,7 +2125,7 @@ index adb20a2..fdba6d7 100644
  --- a/src/drivers/driver_nl80211.c
  +++ b/src/drivers/driver_nl80211.c
 -@@ -7967,6 +7967,22 @@ retry:
-+@@ -8525,6 +8525,22 @@ retry:
++@@ -8651,6 +8651,22 @@ retry:
   		NLA_PUT_U32(msg, NL80211_ATTR_MCAST_RATE, params->mcast_rate);
   	}
   
@@ -1891,7 +2138,7 @@ index adb20a2..fdba6d7 100644
   }
   #endif /* NO_CONFIG_WRITE */
   
-@@ -124,7 +124,7 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
+@@ -124,28 +124,28 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
   static int wpa_config_parse_rates(const struct parse_data *data,
   				  struct wpa_ssid *ssid, int line,
   				  const char *value)
@@ -1900,8 +2147,13 @@ index adb20a2..fdba6d7 100644
   	{ INT_RANGE(fixed_freq, 0, 1) },
   	{ FUNC(rates) },
   	{ FUNC(mcast_rate) },
-@@ -134,7 +134,7 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
-  #undef OFFSET
+ +	{ FUNC(htmode) },
+- };
+- 
+- #undef OFFSET
++ #ifdef CONFIG_MACSEC
++ 	{ INT_RANGE(macsec_policy, 0, 1) },
++ #endif /* CONFIG_MACSEC */
  --- a/wpa_supplicant/config_ssid.h
  +++ b/wpa_supplicant/config_ssid.h
 -@@ -625,6 +625,8 @@ struct wpa_ssid {
@@ -1909,12 +2161,17 @@ index adb20a2..fdba6d7 100644
   	int fixed_freq;
   	unsigned char rates[NL80211_MAX_SUPP_RATES];
   	double mcast_rate;
-@@ -145,7 +145,7 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
-  #endif /* CONFIG_SSID_H */
+ +	int ht_set;
+ +	unsigned int htmode;
+- };
+  
+- #endif /* CONFIG_SSID_H */
++ #ifdef CONFIG_MACSEC
++ 	/**
  --- a/wpa_supplicant/wpa_supplicant.c
  +++ b/wpa_supplicant/wpa_supplicant.c
 -@@ -1639,6 +1639,8 @@ void wpa_supplicant_associate(struct wpa
-+@@ -1798,6 +1798,8 @@ static void wpas_start_assoc_cb(struct w
++@@ -1813,6 +1813,8 @@ static void wpas_start_assoc_cb(struct w
   			i++;
   		}
   		params.mcast_rate = ssid->mcast_rate;
