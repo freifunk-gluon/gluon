@@ -95,8 +95,6 @@ manifest: FORCE
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
 	+@$(GLUONMAKE) $@
 
-cleanall: clean ;
-
 else
 
 TOPDIR=${CURDIR}
@@ -353,6 +351,6 @@ manifest: FORCE
 	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 
-.PHONY: all images prepare clean cleanall gluon-tools
+.PHONY: all images prepare clean gluon-tools
 
 endif

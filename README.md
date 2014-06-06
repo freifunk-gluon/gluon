@@ -29,8 +29,7 @@ will ensure all packages are rebuilt; this is what you normally want to do after
     make dirclean
 
 will clean the entire tree, so the toolchain will be rebuilt as well, which is
-not necessary in most cases, and will take a while. (`make cleanall` is a deprecated
-alias for `make clean`)
+not necessary in most cases, and will take a while.
 
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used:
 
