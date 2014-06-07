@@ -52,6 +52,7 @@ function action_reboot()
   local pubkey
   local uci = luci.model.uci.cursor()
   local meshvpn_enabled = uci:get("fastd", meshvpn_name, "enabled", "0")
+  local sysconfig = require 'gluon.sysconfig'
   if meshvpn_enabled == "1" then
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
@@ -64,7 +65,7 @@ function action_reboot()
 
   if nixio.fork() ~= 0 then
     luci.template.render("gluon-config-mode/reboot",
-      {luci=luci, pubkey=pubkey, hostname=hostname, site=site})
+      {luci=luci, pubkey=pubkey, hostname=hostname, site=site, sysconfig=sysconfig})
   else
     debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
     io.stdout:close()
