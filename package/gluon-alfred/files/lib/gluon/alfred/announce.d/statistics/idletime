@@ -1,0 +1,1 @@
+return tonumber(util.trim(util.exec("cut -d' ' -f2 /proc/uptime")))
