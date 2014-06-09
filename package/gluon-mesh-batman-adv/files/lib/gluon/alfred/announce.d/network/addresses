@@ -1,0 +1,8 @@
+local ip = util.exec('ip -o -6 addr show dev br-client')
+
+local addresses = {}
+for _, line in ipairs(util.split(ip)) do
+	table.insert(addresses, line:match('inet6 ([%x:]+)/'))
+end
+
+return addresses

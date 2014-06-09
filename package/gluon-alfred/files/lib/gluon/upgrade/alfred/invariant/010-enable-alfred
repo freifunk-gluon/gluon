@@ -1,14 +1,19 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/functions.sh
+local uci = require 'luci.model.uci'
+local c = uci.cursor()
 
-uci_remove alfred alfred
 
-uci_add alfred alfred alfred
-uci_set alfred alfred interface 'br-client'
-uci_set alfred alfred mode 'slave'
-uci_set alfred alfred batmanif 'bat0'
-uci_set alfred alfred start_vis '1'
-uci_set alfred alfred run_facters '0'
+c:delete('alfred', 'alfred')
+c:section('alfred', 'alfred', 'alfred',
+	  {
+		  interface = 'br-client',
+		  mode = 'slave',
+		  batmanif = 'bat0',
+		  start_vis = '1',
+		  run_facters = '0',
+	  }
+)
 
-uci_commit alfred
+c:save('alfred')
+c:commit('alfred')
