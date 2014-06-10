@@ -40,5 +40,5 @@ end
 
 
 encoder = json.Encoder(collect_dir(announce_dir))
-alfred = io.popen('alfred -s ' .. tostring(alfred_data_type), 'w')
+alfred = io.popen('gzip | alfred -s ' .. tostring(alfred_data_type), 'w')
 ltn12.pump.all(encoder:source(), ltn12.sink.file(alfred))
