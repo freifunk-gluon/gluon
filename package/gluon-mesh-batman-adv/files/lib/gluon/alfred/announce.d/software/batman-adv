@@ -1,3 +1,3 @@
-local version = util.exec('batctl -v'):match('%[batman%-adv: ([^%]]+)%]')
+local version = util.trim(fs.readfile('/sys/module/batman_adv/version'))
 
 return { version = version }

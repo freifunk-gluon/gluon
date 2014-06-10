@@ -7,10 +7,10 @@ end
 
 local traffic = {}
 for _, class in ipairs({'rx', 'tx', 'forward', 'mgmt_rx', 'mgmt_tx'}) do
-	traffic[class] =
-		{ bytes = fields[class .. '_bytes']
-		, packets = fields[class]
-		}
+	traffic[class] = {
+		bytes = fields[class .. '_bytes'],
+		packets = fields[class],
+	}
 end
 traffic['tx']['dropped'] = fields['tx_dropped']
 

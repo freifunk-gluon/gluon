@@ -1,1 +1,1 @@
-return tonumber(util.trim(util.exec("cut -d' ' -f1 /proc/uptime")))
+return tonumber(fs.readfile('/proc/uptime'):match('^([^ ]+) '))
