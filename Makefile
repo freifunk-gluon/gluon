@@ -149,6 +149,9 @@ gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
 include $(INCLUDE_DIR)/target.mk
 
 
+prereq: FORCE
+	+$(NO_TRACE_MAKE) prereq
+
 package/lua/host/install: tools/sed/install
 gluon-tools: package/lua/host/install
 
