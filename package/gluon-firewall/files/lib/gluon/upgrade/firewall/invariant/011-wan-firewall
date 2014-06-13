@@ -9,6 +9,7 @@ local c = uci.cursor()
 local function reject_input_on_wan(zone)
 	if zone.name == 'wan' then
 		c:set('firewall', zone['.name'], 'input', 'REJECT')
+		c:set('firewall', zone['.name'], 'conntrack', '1')
 	end
 
 	return true
