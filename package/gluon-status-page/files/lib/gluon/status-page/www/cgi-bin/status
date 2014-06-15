@@ -47,15 +47,15 @@ echo "</pre>"
 echo "<h2>Neighbours</h2>"
 
 
-iw dev | grep IBSS -B 4 | grep Interface | cut -d' ' -f2 | while read if
+iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2 | while read if
 do
   echo "<h3>$if</h3>"
   echo "<pre>"
-  
+
   iw dev $if link | escape_html
 
-  echo 
-  
+  echo
+
   iw dev $if station dump | escape_html | linknodes
 
   echo "</pre>"
