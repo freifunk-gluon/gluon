@@ -36,13 +36,13 @@ o:depends("_meshvpn", "1")
 o.default = uci:get_bool("gluon-simple-tc", meshvpn_name, "enabled") and o.enabled or o.disabled
 o.rmempty = false
 
-o = s:option(Value, "_limit_ingress", "Downstream")
+o = s:option(Value, "_limit_ingress", "Downstream (kbit/s)")
 o:depends("_limit_enabled", "1")
 o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_ingress")
 o.rmempty = false
 o.datatype = "integer"
 
-o = s:option(Value, "_limit_egress", "Upstream")
+o = s:option(Value, "_limit_egress", "Upstream (kbit/s)")
 o:depends("_limit_enabled", "1")
 o.value = uci:get("gluon-simple-tc", meshvpn_name, "limit_egress")
 o.rmempty = false
