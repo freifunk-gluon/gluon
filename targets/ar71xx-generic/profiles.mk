@@ -25,10 +25,7 @@ $(eval $(call GluonModel,TLWR841,tl-wr841n-v9-squashfs,tp-link-tl-wr841n-nd-v9))
 # TL-WR842N/ND v1, v2
 $(eval $(call GluonProfile,TLWR842))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v1-squashfs,tp-link-tl-wr842n-nd-v1))
-
-ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v2-squashfs,tp-link-tl-wr842n-nd-v2))
-endif
 
 # TL-WR941N/ND v2, v3, v4
 $(eval $(call GluonProfile,TLWR941))
@@ -65,10 +62,7 @@ $(eval $(call GluonModel,TLMR3220,tl-mr3220-v1-squashfs,tp-link-tl-mr3220-v1))
 # TL-MR3420 v1, v2
 $(eval $(call GluonProfile,TLMR3420))
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1-squashfs,tp-link-tl-mr3420-v1))
-
-ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2-squashfs,tp-link-tl-mr3420-v2))
-endif
 
 
 ## Ubiquiti (everything)
