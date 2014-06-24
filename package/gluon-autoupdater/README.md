@@ -5,7 +5,7 @@ Ubiquity
 --------
 
 ubiquity-nanostation-m (dual ethernet)
-ubiquity-bullet-m (single ethernet: Bullet M, Nanostation loco M)
+ubiquity-bullet-m (single ethernet: Bullet M, NanoStation Loco M, PicoStation M)
 
 TP-Link
 -------
