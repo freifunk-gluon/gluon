@@ -26,8 +26,8 @@ function collect_dir(dir)
 
 	for _, entry in ipairs(fs.dir(dir)) do
 		if entry:sub(1, 1) ~= '.' then
-			err, val = pcall(collect_entry, dir .. '/' .. entry)
-			if err then
+			local ok, val = pcall(collect_entry, dir .. '/' .. entry)
+			if ok then
 				ret[entry] = val
 			else
 				io.stderr:write(val, '\n')
