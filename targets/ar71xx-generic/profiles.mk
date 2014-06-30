@@ -87,7 +87,5 @@ $(eval $(call GluonModel,DIR825B1,dir-825-b1-squashfs,d-link-dir-825-rev-b1))
 ## Linksys by Cisco
 
 # WRT160NL
-ifeq ($(BROKEN),1)
 $(eval $(call GluonProfile,WRT160NL))
 $(eval $(call GluonModel,WRT160NL,wrt160nl-squashfs,linksys-wrt160nl))
-endif
