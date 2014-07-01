@@ -25,7 +25,8 @@ o.rmempty = false
 s = f:section(SimpleSection, nil, [[Falls du deinen Knoten über das Internet
 mit Freifunk verbinden möchtest, kannst du hier das Mesh-VPN aktivieren.
 Solltest du dich dafür entscheiden, hast du die Möglichkeit die dafür
-genutzte Bandbreite zu beschränken.]])
+genutzte Bandbreite zu beschränken. Lässt du das Mesh-VPN deaktiviert,
+verbindet sich dein Knoten nur per WLAN mit anderen Knoten in der Nähe.]])
 
 o = s:option(Flag, "_meshvpn", "Mesh-VPN aktivieren")
 o.default = uci:get_bool("fastd", meshvpn_name, "enabled") and o.enabled or o.disabled
