@@ -1,0 +1,25 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 2 Jul 2014 16:19:16 +0200
+Subject: hotplug2: use source hosted by OpenWrt as the original source is down
+
+diff --git a/package/hotplug2/Makefile b/package/hotplug2/Makefile
+index e8483dd..05134c2 100644
+--- a/package/hotplug2/Makefile
++++ b/package/hotplug2/Makefile
+@@ -12,13 +12,9 @@ PKG_REV:=201
+ PKG_VERSION:=$(PKG_REV)
+ PKG_RELEASE:=4
+ 
+-PKG_SOURCE_PROTO:=svn
+-PKG_SOURCE_VERSION:=$(PKG_REV)
+-PKG_SOURCE_SUBDIR:=hotplug2-$(PKG_VERSION)
+-PKG_SOURCE_URL:=http://svn.nomi.cz/svn/isteve/hotplug2
+-PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
+-#PKG_SOURCE_URL:=http://isteve.bofh.cz/~isteve/hotplug2
+-#PKG_MD5SUM:=ea2c01d027b4002e4e6b0ff266f51a51
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
++PKG_SOURCE_URL:=http://downloads.openwrt.org/sources/
++PKG_MD5SUM:=7bab8ba67555a8400424f3c92ec67579
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
