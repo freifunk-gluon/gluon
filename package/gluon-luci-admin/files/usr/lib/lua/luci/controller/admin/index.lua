@@ -29,8 +29,8 @@ function index()
 		root.target = alias("admin")
 		root.index = true
 	end
-	
-	local page	 = entry({"admin"}, alias("admin", "index"), "Expertmode", 10)
+
+	local page = entry({"admin"}, alias("admin", "index"), "Expert Mode", 10)
 	page.sysauth = "root"
 	if configmode then
 		-- force root to be logged in when running in configmode
@@ -39,7 +39,7 @@ function index()
 		page.sysauth_authenticator = "htmlauth"
 	end
 	page.index = true
-	
+
 	entry({"admin", "index"}, cbi("admin/remote"), "Remotezugriff", 1).ignoreindex = true
 
 	if not configmode then
