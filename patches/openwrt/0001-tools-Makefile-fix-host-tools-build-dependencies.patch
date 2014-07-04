@@ -3,10 +3,10 @@ Date: Wed, 7 May 2014 22:57:10 +0200
 Subject: tools/Makefile: fix host tools build dependencies
 
 diff --git a/tools/Makefile b/tools/Makefile
-index 2236373..1f45367 100644
+index 6658f8c..26a3fb1 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
-@@ -74,6 +74,7 @@ endif
+@@ -75,6 +75,7 @@ endif
  $(curdir)/builddirs := $(tools-y) $(tools-dep) $(tools-)
  $(curdir)/builddirs-default := $(tools-y)
  
@@ -14,7 +14,7 @@ index 2236373..1f45367 100644
  ifndef DUMP_TARGET_DB
  define PrepareStaging
  	@for dir in $(1); do ( \
-@@ -85,10 +86,16 @@ define PrepareStaging
+@@ -86,10 +87,16 @@ define PrepareStaging
  endef
  
  # preparatory work
@@ -31,7 +31,7 @@ index 2236373..1f45367 100644
  
  $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  	$(call PrepareStaging,$(STAGING_DIR_HOST))
-@@ -100,7 +107,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
+@@ -101,7 +108,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  
  
  define PrepareCommand
@@ -40,7 +40,7 @@ index 2236373..1f45367 100644
  	@mkdir -p "$$(dir $$@)"; rm -f "$$@"
  	@export FILE="$$$$(which $(2) 2>/dev/null | grep -v 'not found' | head -n1)"; [ -n "$$$$FILE" ] || { \
  		echo "Command $(1) not found."; false; \
-@@ -109,7 +116,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
+@@ -110,7 +117,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
  endef
  endif
  
@@ -49,7 +49,7 @@ index 2236373..1f45367 100644
  	@rm -f $@
  	@if stat --version > /dev/null 2>&1; then \
  		ln -s `which stat` $@; \
-@@ -127,8 +134,8 @@ $(eval $(call PrepareCommand,seq,gseq seq))
+@@ -128,8 +135,8 @@ $(eval $(call PrepareCommand,seq,gseq seq))
  $(eval $(call PrepareCommand,python,python2 python))
  
  $(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,find md5sum cp stat seq python)
