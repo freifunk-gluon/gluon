@@ -4,7 +4,7 @@ local site = require 'gluon.site_config'
 
 local ret = 1
 
-for _, file in pairs(site.legacy.version_files) do
+for _, file in ipairs(site.legacy.version_files) do
 	if os.remove(file) then
 		ret = 0
 	end
