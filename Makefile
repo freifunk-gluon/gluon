@@ -284,6 +284,7 @@ OPKG:= \
 	-f $(BOARD_BUILDDIR)/opkg.conf \
 	--cache $(TMP_DIR)/dl \
 	--offline-root $(TARGET_DIR) \
+	--force-postinstall \
 	--add-dest root:/ \
 	--add-arch all:100 \
 	--add-arch $(ARCH_PACKAGES):200
