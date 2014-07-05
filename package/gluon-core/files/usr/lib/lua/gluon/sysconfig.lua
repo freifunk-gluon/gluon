@@ -11,10 +11,13 @@ local function get(_, name)
 end
 
 local function set(_, name, val)
-	local ret = nil
-	local f = io.open(sysconfigdir .. name, 'w+')
-	f:write(val)
-	f:close()
+	if val then
+		local f = io.open(sysconfigdir .. name, 'w+')
+		f:write(val)
+		f:close()
+	else
+		os.remove(sysconfigdir .. name)
+	end
 end
 
 local setmetatable = setmetatable

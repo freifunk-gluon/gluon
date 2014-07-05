@@ -12,3 +12,7 @@ sysconfig_isset() {
 sysconfig_set() {
 	echo -n "$2" > "$SYSCONFIGDIR/$1"
 }
+
+sysconfig_unset() {
+	rm -f "$SYSCONFIGDIR/$1"
+}
