@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-next-node
-PKG_VERSION:=2
+PKG_VERSION:=3
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(GLUONDIR)/include/package.mk
 
 define Package/gluon-next-node
   SECTION:=gluon
@@ -30,6 +30,11 @@ endef
 
 define Package/gluon-next-node/install
 	$(CP) ./files/* $(1)/
+endef
+
+define Package/gluon-next-node/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
 endef
 
 $(eval $(call BuildPackage,gluon-next-node))
