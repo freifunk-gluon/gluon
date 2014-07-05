@@ -1,0 +1,20 @@
+#!/bin/sh
+
+. /lib/gluon/functions/sysconfig.sh
+. /lib/gluon/functions/model.sh
+
+
+sysconfig_isset setup_ifname && exit 0
+
+
+case "$(get_board_name)" in
+	nanostation-m)
+		sysconfig_set setup_ifname "$(sysconfig config_ifname || sysconfig wan_ifname || sysconfig lan_ifname)"
+		;;
+	*)
+		sysconfig_set setup_ifname "$(sysconfig config_ifname || sysconfig lan_ifname || sysconfig wan_ifname)"
+		;;
+esac
+
+# Remove the old sysconfig setting
+sysconfig_unset config_ifname

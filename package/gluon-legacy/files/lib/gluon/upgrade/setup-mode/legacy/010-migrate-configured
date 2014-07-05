@@ -9,11 +9,11 @@ local c = uci.cursor()
 for _, config in ipairs(site.legacy.config_mode_configs) do
 	local old = c:get_first(config, 'wizard', 'configured')
 	if old == '1' then
-		local wizard = c:get_first('gluon-config-mode', 'wizard')
-		c:set('gluon-config-mode', wizard, 'configured', '1')
+		local setup_mode = c:get_first('gluon-setup-mode', 'setup_mode')
+		c:set('gluon-setup-mode', setup_mode, 'configured', '1')
 
-		c:save('gluon-config-mode')
-		c:commit('gluon-config-mode')
+		c:save('gluon-setup-mode')
+		c:commit('gluon-setup-mode')
 
 		break
 	end

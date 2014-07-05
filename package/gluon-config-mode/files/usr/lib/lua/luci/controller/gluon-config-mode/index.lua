@@ -21,7 +21,7 @@ local meshvpn_name = "mesh_vpn"
 function index()
   local uci_state = luci.model.uci.cursor_state()
 
-  if uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1" then
+  if uci_state:get_first("gluon-setup-mode", "setup_mode", "running", "0") == "1" then
     local root = node()
     if not root.target then
       root.target = alias("gluon-config-mode")
@@ -57,9 +57,9 @@ function action_reboot()
     pubkey = configmode.get_fastd_pubkey(meshvpn_name)
   end
 
-  uci:set("gluon-config-mode", uci:get_first("gluon-config-mode", "wizard"), "configured", "1")
-  uci:save("gluon-config-mode")
-  uci:commit("gluon-config-mode")
+  uci:set("gluon-setup-mode", uci:get_first("gluon-setup-mode", "setup_mode"), "configured", "1")
+  uci:save("gluon-setup-mode")
+  uci:commit("gluon-setup-mode")
 
   local hostname = uci:get_first("system", "system", "hostname")
 

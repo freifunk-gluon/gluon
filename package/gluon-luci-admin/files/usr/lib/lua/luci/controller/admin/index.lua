@@ -17,10 +17,10 @@ module("luci.controller.admin.index", package.seeall)
 
 function index()
 	local uci_state = luci.model.uci.cursor_state()
-	local configmode = uci_state:get_first("gluon-config-mode", "wizard", "running", "0") == "1"
+	local setup_mode = uci_state:get_first("gluon-setup-mode", "setup_mode", "running", "0") == "1"
 
-	-- Disable gluon-luci-admin when configmode is not enabled
-	if not configmode then
+	-- Disable gluon-luci-admin when setup mode is not enabled
+	if not setup_mode then
 		return
 	end
 
@@ -32,8 +32,8 @@ function index()
 
 	local page = entry({"admin"}, alias("admin", "index"), "Expert Mode", 10)
 	page.sysauth = "root"
-	if configmode then
-		-- force root to be logged in when running in configmode
+	if setup_mode then
+		-- force root to be logged in when running in setup_mode
 		page.sysauth_authenticator = function() return "root" end
 	else
 		page.sysauth_authenticator = "htmlauth"
@@ -42,7 +42,7 @@ function index()
 
 	entry({"admin", "index"}, cbi("admin/remote"), "Remotezugriff", 1).ignoreindex = true
 
-	if not configmode then
+	if not setup_mode then
 		entry({"admin", "logout"}, call("action_logout"), "Logout")
 	end
 end
