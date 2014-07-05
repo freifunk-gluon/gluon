@@ -1,11 +1,14 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/functions.sh
-. /lib/gluon/functions/sysctl.sh
+local uci = require('luci.model.uci').cursor()
+local sysctl = require 'gluon.sysctl'
 
 
-uci_set network wan peerdns '0'
-uci_commit network
+uci:set('network', 'wan', 'peerdns', '0')
 
-sysctl_set net.ipv6.conf.all.accept_ra 0
-sysctl_set net.ipv6.conf.default.accept_ra 0
+uci:save('network')
+uci:commit('network')
+
+
+sysctl.set('net.ipv6.conf.all.accept_ra', 0)
+sysctl.set('net.ipv6.conf.default.accept_ra', 0)
