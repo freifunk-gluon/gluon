@@ -26,5 +26,16 @@ c:section('firewall', 'rule', 'wan_ssh',
 	  }
 )
 
+
+c:section('firewall', 'rule', 'client_dns',
+	  {
+		  name = 'client_dns',
+		  src = 'client',
+		  dest_port = '53',
+		  target = 'REJECT',
+	  }
+)
+
+
 c:save('firewall')
 c:commit('firewall')
