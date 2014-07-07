@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/gluon/functions/users.sh
+local users = require 'gluon.users'
 
-add_user gluon-radvd 801
+users.add_user('gluon-radvd', 801, 100)

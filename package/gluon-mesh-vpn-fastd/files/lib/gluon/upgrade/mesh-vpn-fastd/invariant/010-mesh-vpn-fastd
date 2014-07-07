@@ -2,13 +2,15 @@
 
 local site = require 'gluon.site_config'
 local sysconfig = require 'gluon.sysconfig'
+local users = require 'gluon.users'
+
 local nixio = require 'nixio'
 local uci = require 'luci.model.uci'
 
 local c = uci.cursor()
 
 
-os.execute('. /lib/gluon/functions/users.sh && add_user gluon-fastd 800')
+users.add_user('gluon-fastd', 800, 100)
 
 
 c:section('fastd', 'fastd', 'mesh_vpn',
