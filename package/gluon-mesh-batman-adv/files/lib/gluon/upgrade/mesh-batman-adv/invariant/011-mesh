@@ -1,45 +1,64 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/functions.sh
-. /lib/gluon/functions/sysconfig.sh
-. /lib/gluon/functions/sysctl.sh
-
-
-uci_remove batman-adv bat0
-uci_add batman-adv mesh bat0
-uci_set batman-adv bat0 orig_interval '5000'
-uci_set batman-adv bat0 gw_mode 'client'
-uci_commit batman-adv
-
-uci_set network client macaddr "$(sysconfig primary_mac)"
-uci_set network client peerdns '1'
-
-uci_remove network bat0
-uci_add network interface bat0
-uci_set network bat0 ifname 'bat0'
-uci_set network bat0 proto 'none'
-uci_set network bat0 macaddr "$(sysconfig primary_mac)"
-uci_commit network
-
-uci_remove firewall client
-uci_add firewall zone client
-uci_set firewall client name 'client'
-uci add_list firewall.client.network='client'
-uci_set firewall client input 'ACCEPT'
-uci_set firewall client output 'ACCEPT'
-uci_set firewall client forward 'REJECT'
-
-uci_commit firewall
-
-uci_set dhcp '@dnsmasq[0]' boguspriv '0'
-uci_set dhcp '@dnsmasq[0]' localise_queries '0'
-uci_set dhcp '@dnsmasq[0]' rebind_protection '0'
-
-uci_remove dhcp client
-uci_add dhcp dhcp client
-uci_set dhcp client interface 'client'
-uci_set dhcp client ignore '1'
-uci_commit dhcp
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+local uci = require('luci.model.uci').cursor()
 
 
-sysctl_set net.ipv6.conf.br-client.forwarding 0
+uci:delete('batman-adv', 'bat0')
+uci:section('batman-adv', 'mesh', 'bat0',
+	    {
+		    orig_interval = 5000,
+		    gw_mode = 'client',
+	    }
+)
+uci:save('batman-adv')
+uci:commit('batman-adv')
+
+
+uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
+uci:set('network', 'client', 'peerdns', 1)
+
+uci:delete('network', 'bat0')
+uci:section('network', 'interface', 'bat0',
+	    {
+		    ifname = 'bat0',
+		    proto = 'none',
+		    macaddr = sysconfig.primary_mac,
+	    }
+)
+
+uci:save('network')
+uci:commit('network')
+
+uci:delete('firewall', 'client')
+uci:section('firewall', 'zone', 'client',
+	    {
+		    name = 'client',
+		    network = {'client'},
+		    input = 'ACCEPT',
+		    output = 'ACCEPT',
+		    forward = 'REJECT',
+	    }
+)
+uci:save('firewall')
+uci:commit('firewall')
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', 0)
+uci:set('dhcp', dnsmasq, 'localise_queries', 0)
+uci:set('dhcp', dnsmasq, 'rebind_protection', 0)
+
+uci:delete('dhcp', 'client')
+uci:section('dhcp', 'dhcp', 'client',
+	    {
+		    interface = 'client',
+		    ignore = 1,
+	    }
+)
+
+uci:save('dhcp')
+uci:commit('dhcp')
+
+
+sysctl.set('net.ipv6.conf.br-client.forwarding', 0)
