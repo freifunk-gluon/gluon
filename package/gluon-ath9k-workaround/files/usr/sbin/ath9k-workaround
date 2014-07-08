@@ -1,0 +1,61 @@
+#!/bin/sh
+
+check_stopped_queue(){
+  local device=$1
+  grep -q -E 'stopped: 1$' "${device}/queues"
+}
+
+get_tx_pkts() {
+  local device=$1
+  grep 'TX-Pkts-All' "${device}/xmit" \
+    | sed -e 's/^TX-Pkts-All: *\([0-9]*\) .*$/\1/'
+}
+
+inc_fatal() {
+  local qs=$(cat /tmp/ath9k_workaround_trigger 2>/dev/null || echo 0)
+  expr ${qs} + 1 > /tmp/ath9k_workaround_trigger
+}
+
+check_ath9k_bug() {
+  local device=$1
+  check_stopped_queue $device && {
+    local tx_first=$(get_tx_pkts $device)
+    sleep 5
+    check_stopped_queue $device && {
+      local tx_second=$(get_tx_pkts $device)
+      test $tx_first == $tx_second && {
+        local hostname=$(uci get -q system.@system[0].hostname)
+        echo "Hostname: ${hostname}"
+        echo "------------ Trigger workaround: ${tx_first} -> ${tx_second} ----------------"
+        echo "Model:" 
+        cat /tmp/sysinfo/model
+        echo "Release:"
+        cat /lib/gluon/release
+        echo "Uptime:"
+        uptime
+        echo "Batctl Neighbours:"
+        batctl o | grep wlan0-1
+        echo "Queues:"
+        cat $device/queues
+        echo "Reset:"
+        cat $device/reset
+        echo "------------ Interupts #1 ---------------------------------------------------"
+        cat $device/interrupt
+        sleep 10
+        echo "------------ Interupts #2 ---------------------------------------------------"
+        cat $device/interrupt
+        echo "Batctl Neighbours:"
+        batctl o | grep wlan0-1
+
+        #BE queue hangs
+        inc_fatal
+        wifi
+        exit 1;
+      }
+    }
+  }
+}
+
+for device in /sys/kernel/debug/ieee80211/phy*/ath9k ; do
+  check_ath9k_bug $device
+done

@@ -1,0 +1,12 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+local f = io.open('/lib/gluon/cron/ath9k-workaround','w')
+if f and site.monitor ~= nil then
+  f:write('* * * * * /usr/sbin/ath9k-workaround | nc ' .. site.monitor)
+  f:close()
+end
