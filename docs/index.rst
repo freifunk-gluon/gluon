@@ -22,6 +22,7 @@ User Documentation
 
    user/getting_started
    user/features
+   user/site
    user/builds
    user/faq
    user/admin
