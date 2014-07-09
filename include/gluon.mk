@@ -60,7 +60,7 @@ endef
 
 regex-escape = $(shell echo '$(1)' | sed -e 's/[]\/()$*.^|[]/\\&/g')
 
-GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools
+GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools -kmod-usb-core -kmod-usb2 -kmod-ledtrig-usbdev
 
 override DEFAULT_PACKAGES.router :=
 
