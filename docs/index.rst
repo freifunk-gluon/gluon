@@ -48,7 +48,7 @@ Developer Documentation
 .. toctree::
    :maxdepth: 2
 
-   dev/contribute
+   dev/basics
    dev/architecture
    dev/repositories
    dev/packages
