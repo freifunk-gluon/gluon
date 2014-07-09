@@ -11,7 +11,7 @@ include $(GLUONDIR)/include/package.mk
 define Package/gluon-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-core +gluon-cron +opkg +ecdsautils +!BUSYBOX_CONFIG_SHA512SUM:coreutils-sha512sum
+  DEPENDS:=+gluon-core +gluon-cron +lua-platform-info +opkg +ecdsautils +!BUSYBOX_CONFIG_SHA512SUM:coreutils-sha512sum
   TITLE:=Automatically update firmware
 endef
 

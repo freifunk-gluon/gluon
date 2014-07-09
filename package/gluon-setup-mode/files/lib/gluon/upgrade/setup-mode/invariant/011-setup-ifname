@@ -1,20 +1,18 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/gluon/functions/sysconfig.sh
-. /lib/gluon/functions/model.sh
-
-
-sysconfig_isset setup_ifname && exit 0
+local platform_info = require 'platform_info'
+local sysconfig = require 'gluon.sysconfig'
 
 
-case "$(get_board_name)" in
-	nanostation-m)
-		sysconfig_set setup_ifname "$(sysconfig config_ifname || sysconfig wan_ifname || sysconfig lan_ifname)"
-		;;
-	*)
-		sysconfig_set setup_ifname "$(sysconfig config_ifname || sysconfig lan_ifname || sysconfig wan_ifname)"
-		;;
-esac
+if sysconfig.setup_ifname then
+   os.exit(0)
+end
 
-# Remove the old sysconfig setting
-sysconfig_unset config_ifname
+if platform_info.get_board_name() == 'nanostation-m' then
+   sysconfig.setup_ifname = sysconfig.config_ifname or sysconfig.wan_ifname or sysconfig.lan_ifname
+else
+   sysconfig.setup_ifname = sysconfig.config_ifname or sysconfig.lan_ifname or sysconfig.wan_ifname
+end
+
+-- Remove the old sysconfig setting
+sysconfig.config_ifname = nil

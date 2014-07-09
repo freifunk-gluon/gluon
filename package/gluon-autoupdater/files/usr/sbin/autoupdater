@@ -165,8 +165,7 @@ autoupdate() {
 
 trap 'echo Signal ignored.' INT TERM PIPE
 
-. /lib/gluon/functions/model.sh
-my_model="$(get_model | tr '[A-Z]' '[a-z]' | sed -r 's/[^a-z0-9]+/-/g;s/-$//')"
+my_model="$(lua -e 'print(require("platform_info").get_image_name())')"
 
 if [ ! -f "$VERSION_FILE" ]; then
   echo "Couldn't determine firmware version!" >&2
