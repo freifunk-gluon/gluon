@@ -1,22 +1,24 @@
-#!/bin/sh
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+local util = require 'luci.util'
+
+local nixio = require 'nixio'
+local platform_info = require 'platform_info'
 
 
-. /lib/functions.sh
-. /lib/gluon/functions/sysconfig.sh
+if util.contains({'tl-wr1043nd', 'tl-wdr3600', 'tl-wdr4300'}, platform_info.get_board_name()) then
+   -- fix up duplicate mac addresses
+   local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
+   m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
+   m4 = (tonumber(m4, 16)+1) % 0x100
+   m6 = (tonumber(m6, 16)+1) % 0x100
+   local wanaddr = string.format('%02x:%s:%s:%02x:%s:%02x', m1, m2, m3, m4, m5, m6)
 
+   uci:set('network', 'wan', 'macaddr', wanaddr)
+end
 
-case "$(ar71xx_board_name)" in
-tl-wr1043nd|\
-tl-wdr3600|\
-tl-wdr4300) # fix up duplicate mac addresses
-	local mainaddr=$(sysconfig primary_mac)
-	local oIFS="$IFS"; IFS=":"; set -- $mainaddr; IFS="$oIFS"
-	local b2mask=0x02
-
-	local wanaddr=$(printf "%02x:%s:%s:%02x:%s:%02x" $(( 0x$1 | $b2mask )) $2 $3 $(( (0x$4 + 1) % 0x100 )) $5 $(( (0x$6 + 1) % 0x100 )) )
-
-	uci_set network wan macaddr "$wanaddr"
-	;;
-esac
-
-uci_commit network
+uci:save('network')
+uci:commit('network')

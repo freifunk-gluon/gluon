@@ -1,42 +1,42 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/gluon/functions/sysconfig.sh
-. /lib/ar71xx.sh
+local sysconfig = require 'gluon.sysconfig'
+local gluon_util = require 'gluon.util'
+
+local fs = require 'luci.fs'
+local uci = require('luci.model.uci').cursor()
+local util = require 'luci.util'
+
+local platform_info = require 'platform_info'
 
 
-get_primary_mac() {
-	case "$(ar71xx_board_name)" in
-		tl-wdr3600|tl-wdr4300)
-			cat /sys/class/ieee80211/phy1/macaddress
-			;;
-		*)
-			cat /sys/class/ieee80211/phy0/macaddress
-			;;
-	esac
-}
+local board_name = platform_info.get_board_name()
 
-iface_exists() {
-	local name="$1"
-	ip link show dev "${name//.*/}" >/dev/null 2>&1
-}
 
-case "$(ar71xx_board_name)" in
-	nanostation-m)
-		# It's more convenient to swap the ports for these devices so WAN is the PoE port
-		lan_ifname="$(uci get network.wan.ifname)"
-		wan_ifname="$(uci get network.lan.ifname)"
-		;;
-	*)
-		lan_ifname="$(uci get network.lan.ifname)"
-		wan_ifname="$(uci get network.wan.ifname)"
-		;;
-esac
-
-if [ -n "$wan_ifname" ] && iface_exists "$wan_ifname"; then
-	[ -z "$lan_ifname" ] || sysconfig_set lan_ifname "$lan_ifname"
-	sysconfig_set wan_ifname "$wan_ifname"
+if board_name == 'tl-wdr3600' or board_name == 'tl-wdr4300' then
+   sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy1/macaddress'))
 else
-	sysconfig_set wan_ifname "$lan_ifname"
-fi
+   sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy0/macaddress'))
+end
 
-sysconfig_set primary_mac "$(get_primary_mac)"
+
+local function iface_exists(name)
+   return (gluon_util.exec('ip', 'link', 'show', 'dev', (name:gsub('%..*$', ''))) == 0)
+end
+
+
+local lan_ifname = uci:get('network', 'lan', 'ifname')
+local wan_ifname = uci:get('network', 'wan', 'ifname')
+
+
+if board_name == 'nanostation-m' then
+   lan_ifname, wan_ifname = wan_ifname, lan_ifname
+end
+
+
+if wan_ifname and iface_exists(wan_ifname) then
+   sysconfig.wan_ifname = wan_ifname
+   sysconfig.lan_ifname = lan_ifname
+else
+   sysconfig.wan_ifname = lan_ifname
+end

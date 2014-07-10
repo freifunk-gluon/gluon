@@ -1,18 +1,26 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/functions.sh
-. /lib/gluon/functions/sysconfig.sh
+local sysconfig = require 'gluon.sysconfig'
+local uci = require('luci.model.uci').cursor()
 
-lan_ifname="$(sysconfig lan_ifname)"
 
-uci_add network interface client
+local ifname
 
-if [ -n "$lan_ifname" ]; then
-	uci_set network client ifname "$lan_ifname bat0"
+if sysconfig.lan_ifname then
+   ifname = sysconfig.lan_ifname .. ' bat0'
 else
-	uci_set network client ifname "bat0"
-fi
+   ifname = 'bat0'
+end
 
-uci_set network client type 'bridge'
-uci_set network client proto 'dhcpv6'
-uci_set network client reqprefix 'no'
+
+uci:section('network', 'interface', 'client',
+	    {
+	       ifname = ifname,
+	       type = 'bridge',
+	       proto = 'dhcpv6',
+	       reqprefix = 'no',
+	    }
+)
+
+uci:save('network')
+uci:commit('network')

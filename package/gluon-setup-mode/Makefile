@@ -14,7 +14,7 @@ define Package/gluon-setup-mode
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Setup mode
-  DEPENDS:=+gluon-core +lua-platform-info +uhttpd +dnsmasq +ip
+  DEPENDS:=+gluon-core +uhttpd +dnsmasq +ip
 endef
 
 define Package/gluon-setup-mode/description

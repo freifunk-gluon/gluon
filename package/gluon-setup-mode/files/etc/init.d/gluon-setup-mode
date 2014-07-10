@@ -35,7 +35,7 @@ setup_network() {
 		config_foreach delete_interface interface
 
 		uci_add network interface setup
-		uci_set network setup ifname "$(sysconfig setup_ifname)"
+		uci_set network setup ifname "$(lua -e 'print(require("gluon.sysconfig").setup_ifname)')"
 		uci_set network setup type 'bridge'
 		uci_set network setup proto 'static'
 		uci_set network setup ipaddr "$SETUP_MODE_ADDR"
@@ -55,8 +55,6 @@ setup_network() {
 }
 
 start() {
-	. /lib/gluon/functions/sysconfig.sh
-
 	enable=0
 	config_load gluon-setup-mode
 	config_foreach check_enable setup_mode
