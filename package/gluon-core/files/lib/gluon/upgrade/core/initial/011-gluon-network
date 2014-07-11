@@ -1,12 +1,12 @@
 #!/usr/bin/lua
 
 local sysconfig = require 'gluon.sysconfig'
+local platform = require 'gluon.platform'
 
 local uci = require('luci.model.uci').cursor()
 local util = require 'luci.util'
 
 local nixio = require 'nixio'
-local platform_info = require 'platform_info'
 
 
 uci:delete('network', 'lan')
@@ -21,7 +21,7 @@ uci:section('network', 'interface', 'wan',
 )
 
 
-if util.contains({'tl-wr1043nd', 'tl-wdr3600', 'tl-wdr4300'}, platform_info.get_board_name()) then
+if platform.match('ar71xx', 'generic', {'tl-wr1043nd', 'tl-wdr3600', 'tl-wdr4300'}) then
    -- fix up duplicate mac addresses
    local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
    m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)

@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local platform_info = require 'platform_info'
+local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
 
 
@@ -8,7 +8,7 @@ if sysconfig.setup_ifname then
    os.exit(0)
 end
 
-if platform_info.get_board_name() == 'nanostation-m' then
+if platform.match('ar71xx', 'generic', {'nanostation-m'}) then
    sysconfig.setup_ifname = sysconfig.config_ifname or sysconfig.wan_ifname or sysconfig.lan_ifname
 else
    sysconfig.setup_ifname = sysconfig.config_ifname or sysconfig.lan_ifname or sysconfig.wan_ifname

@@ -2,19 +2,14 @@
 
 local sysconfig = require 'gluon.sysconfig'
 local gluon_util = require 'gluon.util'
-local site = require 'gluon.site_config'
+local platform = require 'gluon.platform'
 
 local fs = require 'luci.fs'
 local uci = require('luci.model.uci').cursor()
 local util = require 'luci.util'
 
-local platform_info = require 'platform_info'
 
-
-local board_name = platform_info.get_board_name()
-
-
-if board_name == 'tl-wdr3600' or board_name == 'tl-wdr4300' then
+if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300'}) then
    sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy1/macaddress'))
 else
    sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy0/macaddress'))
