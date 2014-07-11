@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
-local alfred_data_type = 158
-local announce_dir = '/lib/gluon/alfred/announce.d'
+local announce_dir = '/lib/gluon/announce/announce.d'
 
 
 fs = require 'luci.fs'
@@ -40,5 +39,4 @@ end
 
 
 encoder = json.Encoder(collect_dir(announce_dir))
-alfred = io.popen('gzip | alfred -s ' .. tostring(alfred_data_type), 'w')
-ltn12.pump.all(encoder:source(), ltn12.sink.file(alfred))
+ltn12.pump.all(encoder:source(), ltn12.sink.file(io.stdout))
