@@ -10,20 +10,22 @@ local uci = require 'luci.model.uci'
 local c = uci.cursor()
 
 
-users.add_user('gluon-fastd', 800, 100)
+-- The previously used user is removed, we need root privileges to use the packet_mark option
+users.remove_user('gluon-fastd')
 
 
 c:section('fastd', 'fastd', 'mesh_vpn',
 	  {
-		  user = 'gluon-fastd',
 		  syslog_level = 'verbose',
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
 		  secure_handshakes = '1',
 		  method = site.fastd_mesh_vpn.methods,
+		  packet_mark = 1,
 	  }
 )
+c:delete('fastd', 'mesh_vpn', 'user')
 
 c:delete('fastd', 'mesh_vpn_backbone')
 c:section('fastd', 'peer_group', 'mesh_vpn_backbone',

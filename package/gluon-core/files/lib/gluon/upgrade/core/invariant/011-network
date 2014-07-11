@@ -4,7 +4,39 @@ local uci = require('luci.model.uci').cursor()
 local sysctl = require 'gluon.sysctl'
 
 
+if not uci:get('network', 'interface', 'wan6') then
+   uci:section('network', 'interface', 'wan6',
+	       {
+		  ifname = 'br-wan',
+		  proto = 'dhcpv6',
+	       }
+   )
+end
+
+
 uci:set('network', 'wan', 'peerdns', '0')
+
+uci:set('network', 'wan6', 'peerdns', '0')
+uci:set('network', 'wan6', 'ip6table', '1')
+
+
+uci:section('network', 'rule6', 'wan6_lookup',
+	    {
+	       mark = '0x01/0x01',
+	       lookup = 1,
+	    }
+)
+
+uci:section('network', 'route6', 'wan6_unreachable',
+	    {
+	       type = 'unreachable',
+	       interface = 'loopback',
+	       target = '::/0',
+	       gateway = '::',
+	       table = 1,
+	       metric = 65535,
+	    }
+)
 
 uci:save('network')
 uci:commit('network')
