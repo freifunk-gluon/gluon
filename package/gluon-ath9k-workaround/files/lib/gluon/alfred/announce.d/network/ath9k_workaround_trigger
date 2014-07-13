@@ -1,0 +1,10 @@
+function trigger_count ()
+  return tonumber(fs.readfile('/tmp/ath9k_workaround_trigger'))
+end
+
+local ok, value = pcall(trigger_count)
+if ok then
+  return value
+else
+  return 0
+end
