@@ -31,6 +31,7 @@ uci:section('network', 'interface', 'bat0',
 uci:save('network')
 uci:commit('network')
 
+
 uci:delete('firewall', 'client')
 uci:section('firewall', 'zone', 'client',
 	    {
@@ -41,8 +42,19 @@ uci:section('firewall', 'zone', 'client',
 		    forward = 'REJECT',
 	    }
 )
+
+c:section('firewall', 'rule', 'client_dns',
+	  {
+		  name = 'client_dns',
+		  src = 'client',
+		  dest_port = '53',
+		  target = 'REJECT',
+	  }
+)
+
 uci:save('firewall')
 uci:commit('firewall')
+
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
 uci:set('dhcp', dnsmasq, 'boguspriv', 0)
