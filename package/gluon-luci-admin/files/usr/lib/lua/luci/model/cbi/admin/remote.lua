@@ -40,7 +40,7 @@ if fs.access("/etc/config/dropbear") then
   keys = s:option(TextValue, "_data", "")
   keys.wrap    = "off"
   keys.rows    = 5
-  keys.rmempty = false
+  keys.rmempty = true
 
   function keys.cfgvalue()
     return fs.readfile("/etc/dropbear/authorized_keys") or ""
@@ -50,6 +50,10 @@ if fs.access("/etc/config/dropbear") then
     if value then
       fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"))
     end
+  end
+
+  function keys.remove(self, section)
+    fs.remove("/etc/dropbear/authorized_keys")
   end
 end
 
