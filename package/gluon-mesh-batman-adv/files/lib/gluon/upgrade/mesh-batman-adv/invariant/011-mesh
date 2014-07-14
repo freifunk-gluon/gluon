@@ -43,7 +43,7 @@ uci:section('firewall', 'zone', 'client',
 	    }
 )
 
-c:section('firewall', 'rule', 'client_dns',
+uci:section('firewall', 'rule', 'client_dns',
 	  {
 		  name = 'client_dns',
 		  src = 'client',
