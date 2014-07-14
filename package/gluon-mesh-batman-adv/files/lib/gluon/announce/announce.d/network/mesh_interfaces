@@ -1,0 +1,15 @@
+require 'ubus'
+
+local conn = ubus.connect()
+local list = util.exec('batctl if')
+
+local interfaces = {}
+for _, line in ipairs(util.split(list)) do
+	local ifname = line:match('^(.-):')
+	if ifname ~= nil then
+		local status = conn:call("network.device", "status", { name = ifname })
+		table.insert(interfaces, status['macaddr'])
+	end
+end
+
+return interfaces
