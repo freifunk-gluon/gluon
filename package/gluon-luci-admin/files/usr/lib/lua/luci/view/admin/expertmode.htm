@@ -1,9 +1,3 @@
-<%- if self.message then %>
-	<p class="message success"><%=self.message%></p>
-<%- end %>
-<%- if self.errmessage then %>
-	<p class="message error"><%=self.errmessage%></p>
-<%- end %>
 <% if not self.embedded then %>
 <form method="post" enctype="multipart/form-data" action="<%=REQUEST_URI%>">
 	<div>
@@ -13,6 +7,12 @@
 <% end %>
 	<div class="cbi-map" id="cbi-<%=self.config%>">
 		<% if self.title and #self.title > 0 then %><h2><a id="content" name="content"><%=self.title%></a></h2><% end %>
+		<%- if self.message then %>
+			<p class="message success"><%=self.message%></p>
+		<%- end %>
+		<%- if self.errmessage then %>
+			<p class="message error"><%=self.errmessage%></p>
+		<%- end %>
 		<% if self.description and #self.description > 0 then %><div class="cbi-map-descr"><%=self.description%></div><% end %>
 		<% self:render_children() %>
 	</div>
