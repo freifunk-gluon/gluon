@@ -50,7 +50,7 @@ opkg_repo : optional
     during the build process.
 
 regdom
-    The wireless regulatory domain responsible for your area,e.g.:
+    The wireless regulatory domain responsible for your area, e.g.:
     ::
       regdom = 'DE'
 
@@ -141,7 +141,6 @@ config_mode : package
 legacy : package
     Configuration for the legacy upgrade path.
     This is only required in communities upgrading from Lübeck's LFF-0.3.x.
-
     ::
       legacy = {
              version_files = {'/etc/.freifunk_version_keep', '/etc/.eff_version_keep'},
