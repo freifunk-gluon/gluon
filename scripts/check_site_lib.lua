@@ -47,6 +47,18 @@ function need_number(varname, required)
    return var
 end
 
+function need_boolean(varname, required)
+   local var = loadvar(varname)
+
+   if required == false and var == nil then
+      return nil
+   end
+
+   assert_type(var, 'boolean', "site.conf error: expected `" .. varname .. "' to be a boolean")
+
+   return var
+end
+
 function need_array(varname, subcheck, required)
    local var = loadvar(varname)
 
