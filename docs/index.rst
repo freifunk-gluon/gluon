@@ -41,6 +41,7 @@ Features
    features/batman-adv
    features/alfred
    features/autoupdater
+   features/mesh-on-wan
 
 Developer Documentation
 -----------------------
