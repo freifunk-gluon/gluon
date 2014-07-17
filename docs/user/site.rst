@@ -132,7 +132,7 @@ simple_tc : package
       simple_tc = {
         mesh_vpn = {
           ifname = 'mesh-vpn',
-          enabled = 0,
+          enabled = false,
           limit_egress = 200,
           limit_ingress = 3000,
         },
