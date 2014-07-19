@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local nixio = require 'nixio'
+local sysconfig = require 'gluon.sysconfig'
+local uci = require('luci.model.uci').cursor()
+
+
+if sysconfig.wan_ifname:match('%.') and not uci:get('network', 'wan', 'macaddr') then
+  -- fix up duplicate mac addresses
+  local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
+  m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
+  m4 = (tonumber(m4, 16)+1) % 0x100
+  m6 = (tonumber(m6, 16)+1) % 0x100
+  local wanaddr = string.format('%02x:%s:%s:%02x:%s:%02x', m1, m2, m3, m4, m5, m6)
+
+  uci:set('network', 'wan', 'macaddr', wanaddr)
+end
+
+uci:save('network')
+uci:commit('network')
