@@ -632,13 +632,12 @@ table.cbi-section-table .cbi-section-table-cell {
 div.cbi-value {
   display: flex;
   flex-direction: row;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.8em;
 }
 
 .cbi-value-title {
   flex: 2;
   text-align: right;
-  padding-top: 0.39em;
   padding-right: 1em;
   font-weight: bold;
 }
