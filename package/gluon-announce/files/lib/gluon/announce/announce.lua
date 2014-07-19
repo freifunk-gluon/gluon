@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local announce_dir = '/lib/gluon/announce/announce.d'
+local announce_base = '/lib/gluon/announce/'
 
 
 fs = require 'luci.fs'
@@ -37,6 +37,7 @@ function collect_dir(dir)
 	return ret
 end
 
+local announce_dir  = announce_base .. arg[1] .. '.d/'
 
 encoder = json.Encoder(collect_dir(announce_dir))
 ltn12.pump.all(encoder:source(), ltn12.sink.file(io.stdout))
