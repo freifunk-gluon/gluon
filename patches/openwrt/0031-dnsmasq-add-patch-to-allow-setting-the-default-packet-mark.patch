@@ -1,0 +1,113 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 6 Jul 2014 08:12:35 +0200
+Subject: dnsmasq: add patch to allow setting the default packet mark
+
+diff --git a/package/dnsmasq/patches/901-packet-mark.patch b/package/dnsmasq/patches/901-packet-mark.patch
+new file mode 100644
+index 0000000..286af3a
+--- /dev/null
++++ b/package/dnsmasq/patches/901-packet-mark.patch
+@@ -0,0 +1,103 @@
++--- a/src/dnsmasq.h
+++++ b/src/dnsmasq.h
++@@ -802,6 +802,7 @@ extern struct daemon {
++   int cachesize, ftabsize;
++   int port, query_port, min_port;
++   unsigned long local_ttl, neg_ttl, max_ttl, max_cache_ttl, auth_ttl;
+++  unsigned int packet_mark;
++   struct hostsfile *addn_hosts;
++   struct dhcp_context *dhcp, *dhcp6;
++   struct dhcp_config *dhcp_conf;
++--- a/src/forward.c
+++++ b/src/forward.c
++@@ -366,17 +366,17 @@ static int forward_query(int udpfd, unio
++ 		      daemon->rfd_save = forward->rfd4;
++ 		      fd = forward->rfd4->fd;
++ 		    }
+++		}
+++
+++	      unsigned int mark = daemon->packet_mark;
++ 
++ #ifdef HAVE_CONNTRACK
++-		  /* Copy connection mark of incoming query to outgoing connection. */
++-		  if (option_bool(OPT_CONNTRACK))
++-		    {
++-		      unsigned int mark;
++-		      if (get_incoming_mark(udpaddr, dst_addr, 0, &mark))
++-			setsockopt(fd, SOL_SOCKET, SO_MARK, &mark, sizeof(unsigned int));
++-		    }
+++	      /* Copy connection mark of incoming query to outgoing connection. */
+++	      if (option_bool(OPT_CONNTRACK))
+++		get_incoming_mark(udpaddr, dst_addr, 0, &mark);
++ #endif
++-		}
+++
+++	      setsockopt(fd, SOL_SOCKET, SO_MARK, &mark, sizeof(unsigned int));
++ 	      
++ 	      if (sendto(fd, (char *)header, plen, 0,
++ 			 &start->addr.sa,
++@@ -1001,11 +1001,11 @@ unsigned char *tcp_request(int confd, ti
++ 			      continue;
++ 			    }
++ 			  
+++			  unsigned int mark = daemon->packet_mark;
++ #ifdef HAVE_CONNTRACK
++ 			  /* Copy connection mark of incoming query to outgoing connection. */
++ 			  if (option_bool(OPT_CONNTRACK))
++ 			    {
++-			      unsigned int mark;
++ 			      struct all_addr local;
++ #ifdef HAVE_IPV6		      
++ 			      if (local_addr->sa.sa_family == AF_INET6)
++@@ -1014,10 +1014,11 @@ unsigned char *tcp_request(int confd, ti
++ #endif
++ 				local.addr.addr4 = local_addr->in.sin_addr;
++ 			      
++-			      if (get_incoming_mark(&peer_addr, &local, 1, &mark))
++-				setsockopt(last_server->tcpfd, SOL_SOCKET, SO_MARK, &mark, sizeof(unsigned int));
+++			      get_incoming_mark(&peer_addr, &local, 1, &mark);
++ 			    }
++ #endif	
+++
+++			  setsockopt(last_server->tcpfd, SOL_SOCKET, SO_MARK, &mark, sizeof(unsigned int));
++ 			}
++ 		      
++ 		      c1 = size >> 8;
++--- a/src/option.c
+++++ b/src/option.c
++@@ -131,6 +131,7 @@ struct myoption {
++ #ifdef OPTION6_PREFIX_CLASS 
++ #define LOPT_PREF_CLSS 320
++ #endif
+++#define LOPT_PACKET_MARK 9001
++ 
++ #ifdef HAVE_GETOPT_LONG
++ static const struct option opts[] =  
++@@ -267,6 +268,7 @@ static const struct myoption opts[] =
++ #ifdef OPTION6_PREFIX_CLASS 
++     { "dhcp-prefix-class", 1, 0, LOPT_PREF_CLSS },
++ #endif
+++    { "packet-mark", 1, 0, LOPT_PACKET_MARK },
++     { NULL, 0, 0, 0 }
++   };
++ 
++@@ -409,6 +411,7 @@ static struct {
++ #ifdef OPTION6_PREFIX_CLASS 
++   { LOPT_PREF_CLSS, ARG_DUP, "set:tag,<class>", gettext_noop("Specify DHCPv6 prefix class"), NULL },
++ #endif
+++  { LOPT_PACKET_MARK, ARG_ONE, "<integer>", gettext_noop("Specify default packet mark for DNS queries."), NULL },
++   { 0, 0, NULL, NULL, NULL }
++ }; 
++ 
++@@ -2189,6 +2192,11 @@ static int one_opt(int option, char *arg
++ 	break;
++       }
++       
+++    case LOPT_PACKET_MARK: /* --packet-mark */
+++      if (!atoi_check(arg, (int*)&daemon->packet_mark))
+++	ret_err(gen_err);
+++      break;
+++
++ #ifdef HAVE_DHCP
++     case 'X': /* --dhcp-lease-max */
++       if (!atoi_check(arg, &daemon->dhcp_max))
