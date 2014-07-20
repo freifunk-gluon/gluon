@@ -90,7 +90,8 @@ toolchain/% package/% target/%: FORCE
 	+@$(GLUONMAKE) $@
 
 manifest: FORCE
-	[ -n "$(GLUON_BRANCH)" ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
+	[ -n '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
+	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	@$(CheckExternal)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
 	+@$(GLUONMAKE) $@
@@ -342,17 +343,23 @@ images: $(patsubst %,call_image/%,$(PROFILES)) ;
 
 manifest: FORCE
 	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
-	(cd $(GLUON_IMAGEDIR)/sysupgrade && echo 'BRANCH=$(GLUON_BRANCH)' && echo && ($(foreach profile,$(PROFILES), \
-		$(foreach model,$(GLUON_$(profile)_MODELS), \
-			for file in gluon-*-'$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin'; do \
-				[ -e "$$file" ] && echo \
-					'$(GLUON_$(profile)_MODEL_$(model))' \
-					"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(GLUON_$(profile)_MODEL_$(model)))-sysupgrade\.bin$$/\1/p')" \
-					"$$($(SHA512SUM) "$$file")" \
-					"$$file" && break; \
-			done; \
-		) \
-	) :)) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+	(cd $(GLUON_IMAGEDIR)/sysupgrade && \
+		echo 'BRANCH=$(GLUON_BRANCH)' && \
+		echo 'DATE=$(shell $(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
+		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
+		echo && \
+		($(foreach profile,$(PROFILES), \
+			$(foreach model,$(GLUON_$(profile)_MODELS), \
+				for file in gluon-*-'$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin'; do \
+					[ -e "$$file" ] && echo \
+						'$(GLUON_$(profile)_MODEL_$(model))' \
+						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(GLUON_$(profile)_MODEL_$(model)))-sysupgrade\.bin$$/\1/p')" \
+						"$$($(SHA512SUM) "$$file")" \
+						"$$file" && break; \
+				done; \
+			) \
+		) :) \
+	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 
 .PHONY: all images prepare clean gluon-tools
