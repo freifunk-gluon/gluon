@@ -38,5 +38,7 @@ if not c:get('autoupdater', 'settings') then
 	)
 end
 
+c:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
+
 c:save('autoupdater')
 c:commit('autoupdater')
