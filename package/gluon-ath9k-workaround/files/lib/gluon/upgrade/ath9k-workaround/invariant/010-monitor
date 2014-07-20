@@ -5,8 +5,10 @@ local uci = require 'luci.model.uci'
 
 local c = uci.cursor()
 
-local f = io.open('/lib/gluon/cron/ath9k-workaround','w')
-if f and site.monitor ~= nil then
-  f:write('* * * * * /usr/sbin/ath9k-workaround | nc ' .. site.monitor)
-  f:close()
+if site.monitor ~= nil then
+  local f = io.open('/lib/gluon/cron/ath9k-workaround','w')
+  if f ~= nil then
+    f:write('* * * * * /usr/sbin/ath9k-workaround | nc ' .. site.monitor)
+    f:close()
+  end
 end
