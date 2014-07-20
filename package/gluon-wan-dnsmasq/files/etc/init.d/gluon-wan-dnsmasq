@@ -1,0 +1,26 @@
+#!/bin/sh /etc/rc.common
+
+START=60
+
+SERVICE_NAME=gluon-wan-dnsmasq
+SERVICE_USE_PID=1
+SERVICE_PID_FILE=/var/run/gluon-wan-dnsmasq.pid
+
+
+PORT=54
+PACKET_MARK=1
+
+RESOLV_CONF_DIR=/var/gluon/wan-dnsmasq
+RESOLV_CONF=$RESOLV_CONF_DIR/resolv.conf
+
+
+start() {
+	mkdir -p $RESOLV_CONF_DIR
+	touch $RESOLV_CONF
+
+	service_start /usr/sbin/dnsmasq -x $SERVICE_PID_FILE -u root -i lo -p $PORT --packet-mark=$PACKET_MARK -h -r $RESOLV_CONF
+}
+
+stop() {
+	service_stop /usr/sbin/dnsmasq
+}
