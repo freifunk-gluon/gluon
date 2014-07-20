@@ -11,7 +11,7 @@ define Package/gluon-mesh-vpn-fastd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for connecting batman-adv meshes via fastd
-  DEPENDS:=+gluon-core +gluon-mesh-batman-adv +fastd
+  DEPENDS:=+gluon-core +gluon-mesh-batman-adv +gluon-wan-dnsmasq +fastd +iptables-mod-extra
 endef
 
 define Package/gluon-mesh-vpn-fastd/description

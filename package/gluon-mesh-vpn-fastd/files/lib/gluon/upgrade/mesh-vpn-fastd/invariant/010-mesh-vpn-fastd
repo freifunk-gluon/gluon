@@ -13,9 +13,13 @@ local c = uci.cursor()
 -- The previously used user is removed, we need root privileges to use the packet_mark option
 users.remove_user('gluon-fastd')
 
+-- Group for iptables rule
+users.add_group('gluon-fastd', 800)
+
 
 c:section('fastd', 'fastd', 'mesh_vpn',
 	  {
+		  group = 'gluon-fastd',
 		  syslog_level = 'verbose',
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
@@ -70,3 +74,15 @@ c:section('network', 'interface', 'mesh_vpn',
 
 c:save('network')
 c:commit('network')
+
+
+c:section('firewall', 'include', 'mesh_vpn_dns',
+	  {
+	    type = 'restore',
+	    path = '/lib/gluon/mesh-vpn-fastd/iptables.rules',
+	    family = 'ipv4',
+	  }
+)
+
+c:save('firewall')
+c:commit('firewall')
