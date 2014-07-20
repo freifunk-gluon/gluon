@@ -168,6 +168,10 @@ GLUON_SITE_PACKAGES
 GLUON_RELEASE
     The current release version Gluon should use.
 
+GLUON_PRIORITY
+    The default priority for the generated manifests (see the autoupdater documentation
+    for more information).
+
 Examples
 --------
 
