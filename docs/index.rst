@@ -39,9 +39,9 @@ Features
    features/ntp
    features/fastd
    features/batman-adv
-   features/alfred
    features/autoupdater
    features/mesh-on-wan
+   features/announce
 
 Developer Documentation
 -----------------------
