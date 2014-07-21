@@ -12,7 +12,6 @@ for name, config in pairs(site.autoupdater.branches) do
 		  {
 			  name = config.name,
 			  mirror = config.mirrors,
-			  probability = config.probability,
 			  good_signatures = config.good_signatures,
 			  pubkey = config.pubkeys,
 		  }
@@ -42,3 +41,13 @@ c:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
 
 c:save('autoupdater')
 c:commit('autoupdater')
+
+
+local autoupdater_util = require 'autoupdater.util'
+autoupdater_util.randomseed()
+
+
+-- Perform updates at a random time between 04:00 and 05:00
+local f = io.open('/lib/gluon/cron/autoupdater', 'w')
+f:write(string.format('%i 4 * * * /usr/sbin/autoupdater\n', math.random(0, 59)))
+f:close()
