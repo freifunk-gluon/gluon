@@ -17,7 +17,7 @@ be set on the command line, or it can be taken from the ``site.mk``.
 The priority defines the maximum number of days that may pass between releasing an update and installation
 of the images. The update probability with start at 0 after the release time mentioned in the manifest
 and then slowly rise to 1 after the number of days given by the priority has passed. (Note: The priority
-doesn't have an effect as the moment, this is yet to be implemented)
+doesn't have an effect at the moment, this is yet to be implemented)
 
 The priority may be an integer or a decimal fraction.
 
