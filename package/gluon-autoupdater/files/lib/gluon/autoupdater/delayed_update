@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# wait for 5 minutes after boot
+sleep 300
+exec /lib/gluon/autoupdater/autoupdate -o
