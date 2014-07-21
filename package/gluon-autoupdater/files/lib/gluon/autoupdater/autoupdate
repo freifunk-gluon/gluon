@@ -1,0 +1,5 @@
+#!/bin/sh
+
+lock /var/gluon/autoupdater.lock
+autoupdater "$@"
+lock -u /var/gluon/autoupdater.lock
