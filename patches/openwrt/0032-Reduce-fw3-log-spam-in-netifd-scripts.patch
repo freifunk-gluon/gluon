@@ -1,0 +1,30 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 26 Jul 2014 17:03:40 +0200
+Subject: Reduce fw3 log spam in netifd scripts
+
+diff --git a/package/netifd/files/lib/netifd/dhcp.script b/package/netifd/files/lib/netifd/dhcp.script
+index db3fc01..a7ce0d8 100755
+--- a/package/netifd/files/lib/netifd/dhcp.script
++++ b/package/netifd/files/lib/netifd/dhcp.script
+@@ -50,7 +50,7 @@ setup_interface () {
+ 		ip6rd="${ip6rd#* }"
+ 		local ip6rdbr="${ip6rd%% *}"
+ 
+-		[ -n "$ZONE" ] || ZONE=$(fw3 network $INTERFACE)
++		[ -n "$ZONE" ] || ZONE=$(fw3 network $INTERFACE 2>/dev/null)
+ 		[ -z "$IFACE6RD" -o "$IFACE6RD" = 1 ] && IFACE6RD=${INTERFACE}_6rd
+ 
+ 		json_init
+diff --git a/package/odhcp6c/files/dhcpv6.script b/package/odhcp6c/files/dhcpv6.script
+index 8c1ba18..146a966 100755
+--- a/package/odhcp6c/files/dhcpv6.script
++++ b/package/odhcp6c/files/dhcpv6.script
+@@ -97,7 +97,7 @@ setup_interface () {
+ 		MAPRULE="$LW4O6"
+ 	fi
+ 
+-	[ -n "$ZONE" ] || ZONE=$(fw3 network $INTERFACE)
++	[ -n "$ZONE" ] || ZONE=$(fw3 network $INTERFACE 2>/dev/null)
+ 
+ 	if [ "$IFACE_MAP" != 0 -a -n "$MAPTYPE" -a -n "$MAPRULE" ]; then
+ 		[ -z "$IFACE_MAP" -o "$IFACE_MAP" = 1 ] && IFACE_MAP=${INTERFACE}_map
