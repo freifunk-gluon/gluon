@@ -48,13 +48,13 @@ function index()
 end
 
 function action_reboot()
-  local configmode = require "luci.tools.gluon-config-mode"
+  local util = require "luci.util"
   local pubkey
   local uci = luci.model.uci.cursor()
   local meshvpn_enabled = uci:get("fastd", meshvpn_name, "enabled", "0")
   local sysconfig = require 'gluon.sysconfig'
   if meshvpn_enabled == "1" then
-    pubkey = configmode.get_fastd_pubkey(meshvpn_name)
+    pubkey = util.exec("/etc/init.d/fastd show_key " .. meshvpn_name)
   end
 
   uci:set("gluon-setup-mode", uci:get_first("gluon-setup-mode", "setup_mode"), "configured", "1")

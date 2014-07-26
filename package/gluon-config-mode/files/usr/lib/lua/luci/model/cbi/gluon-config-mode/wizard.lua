@@ -1,10 +1,6 @@
-local configmode = require "luci.tools.gluon-config-mode"
 local meshvpn_name = "mesh_vpn"
 local uci = luci.model.uci.cursor()
 local f, s, o
-
--- prepare fastd key as early as possible
-configmode.setup_fastd_secret(meshvpn_name)
 
 f = SimpleForm("wizard")
 f.reset = false
