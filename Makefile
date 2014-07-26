@@ -153,8 +153,9 @@ include $(INCLUDE_DIR)/target.mk
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
-package/lua/host/install: tools/sed/install
-gluon-tools: package/lua/host/install
+gluon-tools: FORCE
+	+$(GLUONMAKE_EARLY) tools/sed/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install
 
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
@@ -187,7 +188,7 @@ prepare-target: FORCE
 	for dir in build_dir dl staging_dir tmp; do \
 		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
 	done
-	for link in build_dir Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
+	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
 		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
 	done
 	+$(GLUONMAKE_EARLY) feeds

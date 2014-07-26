@@ -1,20 +1,12 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Wed, 7 May 2014 22:57:10 +0200
+Date: Sat, 26 Jul 2014 06:10:23 +0200
 Subject: tools/Makefile: fix host tools build dependencies
 
 diff --git a/tools/Makefile b/tools/Makefile
-index 6658f8c..26a3fb1 100644
+index 75d2b0d..ff1d299 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
-@@ -75,6 +75,7 @@ endif
- $(curdir)/builddirs := $(tools-y) $(tools-dep) $(tools-)
- $(curdir)/builddirs-default := $(tools-y)
- 
-+
- ifndef DUMP_TARGET_DB
- define PrepareStaging
- 	@for dir in $(1); do ( \
-@@ -86,10 +87,16 @@ define PrepareStaging
+@@ -95,10 +95,16 @@ define PrepareStaging
  endef
  
  # preparatory work
@@ -31,7 +23,7 @@ index 6658f8c..26a3fb1 100644
  
  $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  	$(call PrepareStaging,$(STAGING_DIR_HOST))
-@@ -101,7 +108,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
+@@ -110,7 +116,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  
  
  define PrepareCommand
@@ -40,7 +32,7 @@ index 6658f8c..26a3fb1 100644
  	@mkdir -p "$$(dir $$@)"; rm -f "$$@"
  	@export FILE="$$$$(which $(2) 2>/dev/null | grep -v 'not found' | head -n1)"; [ -n "$$$$FILE" ] || { \
  		echo "Command $(1) not found."; false; \
-@@ -110,7 +117,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
+@@ -119,7 +125,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
  endef
  endif
  
@@ -49,10 +41,10 @@ index 6658f8c..26a3fb1 100644
  	@rm -f $@
  	@if stat --version > /dev/null 2>&1; then \
  		ln -s `which stat` $@; \
-@@ -128,8 +135,8 @@ $(eval $(call PrepareCommand,seq,gseq seq))
- $(eval $(call PrepareCommand,python,python2 python))
+@@ -143,8 +149,8 @@ $(eval $(call PrepareCommand,tar,gtar tar))
+ $(eval $(call PrepareCommand,diff,gdiff diff))
  
- $(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,find md5sum cp stat seq python)
+ $(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,md5sum cp stat seq python awk getopt grep tar diff)
 -$(curdir)//prepare = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
 -$(curdir)//compile = $(STAGING_DIR)/.prepared $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
 +$(curdir)//prepare = $(staging_prepared) $(STAGING_DIR_HOST)/.prepared $($(curdir)/cmddeps)
