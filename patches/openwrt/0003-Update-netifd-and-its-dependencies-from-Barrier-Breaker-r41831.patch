@@ -1,9 +1,9 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Sat, 11 Jan 2014 11:47:31 +0100
-Subject: Update netifd and its dependencies from Barrier Breaker
+Subject: Update netifd and its dependencies from Barrier Breaker (r41831)
 
 diff --git a/package/libubox/Makefile b/package/libubox/Makefile
-index bcf4481..fc9834a 100644
+index bcf4481..6cbfc08 100644
 --- a/package/libubox/Makefile
 +++ b/package/libubox/Makefile
 @@ -1,13 +1,13 @@
@@ -11,7 +11,7 @@ index bcf4481..fc9834a 100644
  
  PKG_NAME:=libubox
 -PKG_VERSION:=2013-10-19
-+PKG_VERSION:=2014-03-18
++PKG_VERSION:=2014-07-16
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
@@ -19,7 +19,7 @@ index bcf4481..fc9834a 100644
 +PKG_SOURCE_URL:=http://git.openwrt.org/project/libubox.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=734d28eb1a46358743cf8837c91e5d46695c3b91
-+PKG_SOURCE_VERSION:=4f44401ae8d23465261cef80b87630ffccd5a864
++PKG_SOURCE_VERSION:=bd388d2b6c2c151bf513c1e449417d18ce02d10b
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
  PKG_MIRROR_MD5SUM:=
  CMAKE_INSTALL:=1
@@ -60,7 +60,7 @@ index bcf4481..fc9834a 100644
  $(eval $(call BuildPackage,libjson-script))
 +$(eval $(call BuildPackage,libubox-lua))
 diff --git a/package/netifd/Makefile b/package/netifd/Makefile
-index 5f2ee03..1d7f363 100644
+index 5f2ee03..62d64e5 100644
 --- a/package/netifd/Makefile
 +++ b/package/netifd/Makefile
 @@ -1,13 +1,13 @@
@@ -68,7 +68,7 @@ index 5f2ee03..1d7f363 100644
  
  PKG_NAME:=netifd
 -PKG_VERSION:=2013-07-16
-+PKG_VERSION:=2014-04-19
++PKG_VERSION:=2014-07-26
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
@@ -76,7 +76,7 @@ index 5f2ee03..1d7f363 100644
 +PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=2674941b06c1ec67f1aff1bff9212e1372106641
-+PKG_SOURCE_VERSION:=ede9739fe90f5da09f14481d10a4f11c000072de
++PKG_SOURCE_VERSION:=c430d3278b91369204c83cd135673a5d5cded699
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
  PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
  # PKG_MIRROR_MD5SUM:=
@@ -110,10 +110,27 @@ index c50cda6..023025c 100644
  		uci_toggle_state network "$INTERFACE" device "$(uci -q get network.$INTERFACE.ifname)"
  		uci_toggle_state network "$INTERFACE" ifname "$DEVICE"
 diff --git a/package/netifd/files/lib/netifd/dhcp.script b/package/netifd/files/lib/netifd/dhcp.script
-index 50163da..948c3cd 100755
+index 50163da..db3fc01 100755
 --- a/package/netifd/files/lib/netifd/dhcp.script
 +++ b/package/netifd/files/lib/netifd/dhcp.script
-@@ -44,19 +44,20 @@ setup_interface () {
+@@ -33,9 +33,15 @@ setup_interface () {
+ 	for domain in $domain; do
+ 		proto_add_dns_search "$domain"
+ 	done
++
++	proto_add_data
++	[ -n "$ZONE" ] && json_add_string zone "$ZONE"
++	proto_close_data
++
+ 	proto_send_update "$INTERFACE"
+ 
+-	if [ -n "$IFACE6RD" -a -n "$ip6rd" ]; then
++
++	if [ "$IFACE6RD" != 0 -a -n "$ip6rd" ]; then
+ 		local v4mask="${ip6rd%% *}"
+ 		ip6rd="${ip6rd#* }"
+ 		local ip6rdprefixlen="${ip6rd%% *}"
+@@ -44,19 +50,24 @@ setup_interface () {
  		ip6rd="${ip6rd#* }"
  		local ip6rdbr="${ip6rd%% *}"
  
@@ -126,6 +143,13 @@ index 50163da..948c3cd 100755
 -set network.$IFACE6RD.ip6prefixlen=$ip6rdprefixlen
 -commit network
 -EOF
+-
+-		ifdown "$IFACE6RD"
+-		/etc/init.d/network reload
+-		ifup "$IFACE6RD"
++		[ -n "$ZONE" ] || ZONE=$(fw3 network $INTERFACE)
++		[ -z "$IFACE6RD" -o "$IFACE6RD" = 1 ] && IFACE6RD=${INTERFACE}_6rd
++
 +		json_init
 +		json_add_string name "$IFACE6RD"
 +		json_add_string ifname "@$INTERFACE"
@@ -136,21 +160,19 @@ index 50163da..948c3cd 100755
 +		json_add_int ip6prefixlen "$ip6rdprefixlen"
 +		json_add_string tunlink "$INTERFACE"
 +		[ -n "$IFACE6RD_DELEGATE" ] && json_add_boolean delegate "$IFACE6RD_DELEGATE"
++		[ -n "$ZONE6RD" ] || ZONE6RD=$ZONE
 +		[ -n "$ZONE6RD" ] && json_add_string zone "$ZONE6RD"
 +		json_close_object
- 
--		ifdown "$IFACE6RD"
--		/etc/init.d/network reload
--		ifup "$IFACE6RD"
++
 +		ubus call network add_dynamic "$(json_dump)"
  	fi
  
  	# TODO
 diff --git a/package/netifd/files/lib/netifd/proto/dhcp.sh b/package/netifd/files/lib/netifd/proto/dhcp.sh
-index a270c68..2e58c19 100755
+index a270c68..b14f7be 100755
 --- a/package/netifd/files/lib/netifd/proto/dhcp.sh
 +++ b/package/netifd/files/lib/netifd/proto/dhcp.sh
-@@ -5,31 +5,42 @@
+@@ -5,31 +5,44 @@
  init_proto "$@"
  
  proto_dhcp_init_config() {
@@ -174,6 +196,7 @@ index a270c68..2e58c19 100755
 +	proto_config_add_string sendopts
 +	proto_config_add_boolean delegate
 +	proto_config_add_string zone6rd
++	proto_config_add_string zone
  }
  
  proto_dhcp_setup() {
@@ -182,8 +205,8 @@ index a270c68..2e58c19 100755
  
 -	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd
 -	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd
-+	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd
-+	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd
++	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd zone
++	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd zone
  
  	local opt dhcpopts
  	for opt in $reqopts; do
@@ -199,11 +222,12 @@ index a270c68..2e58c19 100755
  	[ -n "$iface6rd" ] && proto_export "IFACE6RD=$iface6rd"
 +	[ -n "$iface6rd" ] && append dhcpopts "-O 212"
 +	[ -n "$zone6rd" ] && proto_export "ZONE6RD=$zone6rd"
++	[ -n "$zone" ] && proto_export "ZONE=$zone"
 +	[ "$delegate" = "0" ] && proto_export "IFACE6RD_DELEGATE=0"
  
  	proto_export "INTERFACE=$config"
  	proto_run_command "$config" udhcpc \
-@@ -42,6 +53,13 @@ proto_dhcp_setup() {
+@@ -42,10 +55,16 @@ proto_dhcp_setup() {
  		$clientid $broadcast $dhcpopts
  }
  
@@ -217,6 +241,10 @@ index a270c68..2e58c19 100755
  proto_dhcp_teardown() {
  	local interface="$1"
  	proto_kill_command "$interface"
+ }
+ 
+ add_protocol dhcp
+-
 diff --git a/package/netifd/patches/001-musl_af_inet_include.patch b/package/netifd/patches/001-musl_af_inet_include.patch
 new file mode 100644
 index 0000000..510ee05
@@ -234,8 +262,48 @@ index 0000000..510ee05
 + 
 + void
 + __vlist_simple_init(struct vlist_simple_tree *tree, int offset)
+diff --git a/package/netifd/patches/002-fix_compile_with_old_includes.patch b/package/netifd/patches/002-fix_compile_with_old_includes.patch
+new file mode 100644
+index 0000000..361b2d1
+--- /dev/null
++++ b/package/netifd/patches/002-fix_compile_with_old_includes.patch
+@@ -0,0 +1,34 @@
++--- a/system-linux.c
+++++ b/system-linux.c
++@@ -43,6 +43,31 @@
++ #define RTN_FAILED_POLICY 12
++ #endif
++ 
+++
+++#ifndef IFLA_IPTUN_MAX
+++enum {
+++        IFLA_IPTUN_UNSPEC,
+++        IFLA_IPTUN_LINK,
+++        IFLA_IPTUN_LOCAL,
+++        IFLA_IPTUN_REMOTE,
+++        IFLA_IPTUN_TTL,
+++        IFLA_IPTUN_TOS,
+++        IFLA_IPTUN_ENCAP_LIMIT,
+++        IFLA_IPTUN_FLOWINFO,
+++        IFLA_IPTUN_FLAGS,
+++        IFLA_IPTUN_PROTO,
+++        IFLA_IPTUN_PMTUDISC,
+++        IFLA_IPTUN_6RD_PREFIX,
+++        IFLA_IPTUN_6RD_RELAY_PREFIX,
+++        IFLA_IPTUN_6RD_PREFIXLEN,
+++        IFLA_IPTUN_6RD_RELAY_PREFIXLEN,
+++        __IFLA_IPTUN_MAX,
+++};
+++#define IFLA_IPTUN_MAX  (__IFLA_IPTUN_MAX - 1)
+++#endif
+++
+++
+++
++ #include <string.h>
++ #include <fcntl.h>
++ #include <glob.h>
 diff --git a/package/ubus/Makefile b/package/ubus/Makefile
-index be18fb5..53fb586 100644
+index be18fb5..ba96b3b 100644
 --- a/package/ubus/Makefile
 +++ b/package/ubus/Makefile
 @@ -1,13 +1,13 @@
@@ -243,14 +311,14 @@ index be18fb5..53fb586 100644
  
  PKG_NAME:=ubus
 -PKG_VERSION:=2013-08-08
-+PKG_VERSION:=2014-03-18
++PKG_VERSION:=2014-07-03
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
  PKG_SOURCE_URL:=git://nbd.name/luci2/ubus.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=b20a8a01c7faea5bcc9d34d10dcf7736589021b8
-+PKG_SOURCE_VERSION:=1d5ac421a5b3dca60562e876ba70d0c2fe46b3d2
++PKG_SOURCE_VERSION:=f688c7ad0b2435a89bfd13f5496cabf596b54c8f
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
  PKG_MIRROR_MD5SUM:=
  CMAKE_INSTALL:=1
