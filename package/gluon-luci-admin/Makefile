@@ -15,7 +15,7 @@ define Package/gluon-luci-admin
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based simple administration interface for mesh nodes
-  DEPENDS:=+gluon-luci-core +gluon-config-mode
+  DEPENDS:=+gluon-luci-core +gluon-config-mode-core
 endef
 
 define Package/gluon-luci-admin/description
