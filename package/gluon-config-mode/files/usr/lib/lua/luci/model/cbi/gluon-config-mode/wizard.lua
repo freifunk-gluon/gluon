@@ -5,7 +5,7 @@ local f, s, o
 f = SimpleForm("wizard")
 f.reset = false
 f.template = "gluon-config-mode/cbi/wizard"
-f.submit = "Fertig"
+f.submit = "Speichern &amp; Neustarten"
 
 s = f:section(SimpleSection, nil, nil)
 
