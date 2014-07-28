@@ -47,3 +47,17 @@ will also call ``make clean`` on the OpenWRT tree, and
     make dirclean
 
 will do all this, and call ``make dirclean`` on the OpenWRT tree.
+
+Environment variables
+---------------------
+
+Gluon's build process can be controlled by various environment variables.
+
+GLUON_SITEDIR
+  Path to the site configuration. Defaults to ``site/``.
+
+GLUON_IMAGEDIR
+  Path where images will be stored. Defaults to ``images/``.
+
+GLUON_BUILDDIR ?= $(GLUONDIR)/build
+  Working directory during build. Defaults to ``build/``.
