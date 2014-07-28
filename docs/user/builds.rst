@@ -59,5 +59,5 @@ GLUON_SITEDIR
 GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``images/``.
 
-GLUON_BUILDDIR ?= $(GLUONDIR)/build
+GLUON_BUILDDIR
   Working directory during build. Defaults to ``build/``.
