@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-simple-tc
-PKG_VERSION:=3
+PKG_VERSION:=4
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -11,7 +11,7 @@ define Package/gluon-simple-tc
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Bandwidth limit support
-  DEPENDS:=+gluon-core +tc +kmod-sched
+  DEPENDS:=+gluon-core +kmod-sched +libnl-tiny
 endef
 
 define Package/gluon-simple-tc/description
@@ -20,16 +20,23 @@ endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Configure
 endef
 
+
+TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/libnl-tiny
+
 define Build/Compile
+	CFLAGS="$(TARGET_CFLAGS)" CPPFLAGS="$(TARGET_CPPFLAGS)" $(MAKE) -C $(PKG_BUILD_DIR) $(TARGET_CONFIGURE_OPTS)
 endef
 
 define Package/gluon-simple-tc/install
 	$(CP) ./files/* $(1)/
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/gluon-simple-tc $(1)/usr/sbin/
 endef
 
 define Package/gluon-simple-tc/postinst

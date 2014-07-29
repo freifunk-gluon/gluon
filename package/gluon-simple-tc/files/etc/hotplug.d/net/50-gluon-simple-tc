@@ -14,17 +14,13 @@ tc_interface() {
 
 	[ "$enabled" -eq 1 ] || return
 
-	config_get limit_egress "$iface" limit_egress
 	config_get limit_ingress "$iface" limit_ingress
+	config_get limit_egress "$iface" limit_egress
 
-	if [ "$limit_egress" ]; then
-		tc qdisc add dev "$INTERFACE" root tbf rate "${limit_egress}kbit" latency 50ms burst 2k
-	fi
+	[ "$limit_ingress" ] || limit_ingress=-
+	[ "$limit_egress" ] || limit_egress=-
 
-	if [ "$limit_ingress" ]; then
-		tc qdisc add dev "$INTERFACE" handle ffff: ingress
-		tc filter add dev "$INTERFACE" parent ffff: u32 match u8 00 00 at 0 police rate "${limit_ingress}kbit" burst 10k drop flowid :1
-	fi
+	gluon-simple-tc "$INTERFACE" "$limit_ingress" "$limit_egress"
 }
 
 config_foreach tc_interface 'interface'

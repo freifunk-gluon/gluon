@@ -1,4 +1,4 @@
 sch_ingress
 sch_tbf
-cls_u32
+cls_basic
 act_police
