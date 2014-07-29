@@ -2,24 +2,14 @@
 
 START=50
 
-SERVICE_USE_PID=1
-SERVICE_NAME=gluon-radvd
-SERVICE_PID_DIR=/var/run/gluon-radvd
-SERVICE_PID_FILE="$SERVICE_PID_DIR"/gluon-radvd.pid
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
 
-radvd_conf=/var/gluon/radvd/radvd.conf
 
 start() {
-	mkdir -p "$SERVICE_PID_DIR"
-	chown gluon-radvd "$SERVICE_PID_DIR"
-
-	mkdir -p "$(dirname "$radvd_conf")"
-	/lib/gluon/radvd/generate_config > "$radvd_conf"
-
-	service_start /usr/sbin/radvd -C "$radvd_conf" -m stderr_syslog -u gluon-radvd -p "$SERVICE_PID_FILE"
+	service_start /usr/sbin/gluon-radvd -i br-client -p $(lua -e 'print(require("gluon.site_config").prefix6)')
 }
 
 stop() {
-	service_stop /usr/sbin/radvd
-	rm "$radvd_conf"
+	service_stop /usr/sbin/gluon-radvd
 }

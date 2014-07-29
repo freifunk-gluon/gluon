@@ -2,4 +2,4 @@
 
 local users = require 'gluon.users'
 
-users.add_user('gluon-radvd', 801, 100)
+users.remove_user('gluon-radvd')
