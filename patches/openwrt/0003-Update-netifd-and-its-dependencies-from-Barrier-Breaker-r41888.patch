@@ -1,6 +1,6 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Sat, 11 Jan 2014 11:47:31 +0100
-Subject: Update netifd and its dependencies from Barrier Breaker (41836)
+Subject: Update netifd and its dependencies from Barrier Breaker (r41888)
 
 diff --git a/package/libubox/Makefile b/package/libubox/Makefile
 index bcf4481..6cbfc08 100644
@@ -60,7 +60,7 @@ index bcf4481..6cbfc08 100644
  $(eval $(call BuildPackage,libjson-script))
 +$(eval $(call BuildPackage,libubox-lua))
 diff --git a/package/netifd/Makefile b/package/netifd/Makefile
-index 5f2ee03..af43b65 100644
+index 5f2ee03..faf3e09 100644
 --- a/package/netifd/Makefile
 +++ b/package/netifd/Makefile
 @@ -1,13 +1,13 @@
@@ -68,7 +68,7 @@ index 5f2ee03..af43b65 100644
  
  PKG_NAME:=netifd
 -PKG_VERSION:=2013-07-16
-+PKG_VERSION:=2014-07-26
++PKG_VERSION:=2014-07-29
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
@@ -76,7 +76,7 @@ index 5f2ee03..af43b65 100644
 +PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=2674941b06c1ec67f1aff1bff9212e1372106641
-+PKG_SOURCE_VERSION:=bb1077aaf9f68dba09224803dd89d7316dc24648
++PKG_SOURCE_VERSION:=4bf89afc22b43d5bd155d32d3998348a77179c1a
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
  PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
  # PKG_MIRROR_MD5SUM:=
