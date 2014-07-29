@@ -1,7 +1,5 @@
 #!/bin/sh
 
-export GLUON_SITE_CONFIG="$GLUONDIR/site/site.conf"
-
 SITE_CONFIG_LUA=packages/gluon/gluon/gluon-core/files/usr/lib/lua/gluon/site_config.lua
 CHECK_SITE_LIB=scripts/check_site_lib.lua
 
