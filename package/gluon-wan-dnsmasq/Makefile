@@ -11,7 +11,7 @@ define Package/gluon-wan-dnsmasq
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for a secondary DNS server using the WAN interface
-  DEPENDS:=+gluon-core +dnsmasq
+  DEPENDS:=+gluon-core +dnsmasq +libpacketmark
 endef
 
 define Package/gluon-wan-dnsmasq/description

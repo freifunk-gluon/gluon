@@ -18,7 +18,7 @@ start() {
 	mkdir -p $RESOLV_CONF_DIR
 	touch $RESOLV_CONF
 
-	service_start /usr/sbin/dnsmasq -x $SERVICE_PID_FILE -u root -i lo -p $PORT --packet-mark=$PACKET_MARK -h -r $RESOLV_CONF
+	LD_PRELOAD=libpacketmark.so LIBPACKETMARK_MARK=$PACKET_MARK service_start /usr/sbin/dnsmasq -x $SERVICE_PID_FILE -u root -i lo -p $PORT -h -r $RESOLV_CONF
 }
 
 stop() {
