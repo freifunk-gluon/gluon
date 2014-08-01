@@ -19,6 +19,7 @@ List oft Tested devices:
 	TP-Link-TL-WR841N/ND-v7
 	TP-Link-TL-WR841N/ND-v8
 	TP-Link-TL-WR841N/ND-v9
+	TP-Link-TL-WR1043N/ND-v1
 
 License
 -------
