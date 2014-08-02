@@ -11,6 +11,16 @@ Features
 Supported Devices
 -----------------
 
+List oft Tested devices:
+	TP-Link-TL-mr3020-v1
+	TP-Link-TL-WDR3600-v1
+	TP-Link-TL-WR740N/ND-v1
+	TP-Link-TL-WR741N/ND-v4
+	TP-Link-TL-WR841N/ND-v7
+	TP-Link-TL-WR841N/ND-v8
+	TP-Link-TL-WR841N/ND-v9
+	TP-Link-TL-WR1043N/ND-v1
+
 License
 -------
 
