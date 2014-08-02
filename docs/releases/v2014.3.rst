@@ -1,0 +1,131 @@
+Gluon 2014.3
+============
+
+New hardware support
+~~~~~~~~~~~~~~~~~~~~
+* Linksys WRT160NL
+
+New features
+~~~~~~~~~~~~
+
+New autoupdater
+---------------
+The autoupdater has been rewritten and now limits the time in which updates are
+performed normally to the span from 04:00 to 05:00.
+
+The manifest now has two new fields: DATE specifies the time the update was released
+and is set automatically by ``make manifest``. PRIORITY specifies the maximum number of
+days until the update should be performed (thus lower numbers mean the priority is higher). It must
+be set either in ``site.mk`` or on the ``make manifest`` command line.
+
+During the days specified by PRIORITY the update probability will start at 0 and slowly rise to 1
+after all PRIORITY days have passed. If more than PRIORITY+1 days have passed, the updater will fall back
+to hourly update attempts so nodes which are never active between 04:00 and 05:00 also get an update eventually.
+
+**Note:** For the new update logic to work, a valid NTP server reachable over the mesh (over IPv6) must
+be configured in the ``site.mk``. When the updater can't determine the correct time, it will fall back to
+a behavior similar to the old implementation.
+
+Seperation of announced data
+----------------------------
+The data announced by alfred has been split into two data types:
+
+* *nodeinfo* (type 158) contains all static information about a node
+* *statistics* (type 159) contains all dynamic information about a node
+
+Both types also contain a new field ``node_id`` which contains an arbitrary unique ID
+(currently the primary MAC address) which can be used to correlate the *nodeinfo*
+and *statistics* information.
+
+gluon-announced
+---------------
+A new daemon has been added in a new package ``gluon-announced``. This daemon can be
+used for querying the *nodeinfo* data of a node via link-local multicast on the ad-hoc
+interfaces.
+
+At the moment, this daemon is not used, but we recommend including it in ``site.mk`` nevertheless
+as we plan to implement a new status page showing some information about the neighbor nodes in
+the next version of Gluon.
+
+VPN over IPv6
+-------------
+Using fastd over IPv6 should now work fine (although it hasn't been tested extensively).
+
+Please note that the MTU 1426 used by many communities for VPN over IPv4 is too big for IPv6 as
+the IPv6 header is 20 bytes longer (fastd over IPv4 has an overhead of 66 bytes,
+fastd over IPv6 has an overhead of 86 bytes).
+
+More modular Config Mode
+------------------------
+The package ``gluon-config-mode`` has been split up into multiple packages to simplify the development of own
+extensions. The low-level logic (handling of the button, starting the services for the config mode) has been moved
+into a new package ``gluon-setup-mode``, while ``gluon-config-mode`` only contains the frontend now.
+
+Extended Expert Mode
+--------------------
+The Expert Mode how has a nice info page. In addition, the new package ``gluon-luci-portconfig`` has been added
+which allows simple configuration of batman-adv on the WAN interface.
+
+Site validators
+---------------
+The content of the ``site.conf`` is now validated when the images are built to make it less likely to accidentially
+build broken images.
+
+gluon-firewall
+--------------
+The package ``gluon-firewall`` has been removed, its features are now part of the packages ``gluon-core`` and
+``gluon-mesh-batman-adv``.
+
+gluon-ath9k-workaround
+----------------------
+This package installs a cron job which tries to recognize ath9k hangs and restart the WLAN while recording some information.
+It is very rudimentary and we can't really recommend using it on "production" nodes.
+
+Bugfixes
+~~~~~~~~
+
+Improved ath9k stability
+------------------------
+Multiple bugs in the WLAN driver ath9k were fixed upstream, which should greatly improve the WLAN stability.
+
+odhcp6c 50d-Bug
+---------------
+An important update for odhcp6c fixes a bug which caused Gluon nodes to lose their IPv6 addresses on br-client after an uptime
+of 50 days, making the nodes unable perform an automated update (besides other issues).
+
+IPv6 preference
+---------------
+Commands like ``wget`` now prefer IPv6 for domains with both AAAA and A records, allowing to use such domains for the autoupdater URLs
+and as NTP servers in the ``site.conf``.
+
+Site changes
+~~~~~~~~~~~~
+* ``site.conf``
+
+  - The ``probability`` fields for the autoupdater branches can be dropped as they aren't used anymore
+  - The type of the ``enabled`` options of the ``gluon-simple-tc`` configuration has been changed to boolean, so ``true`` and ``false`` must be used instead of 1 and 0 now
+
+* ``site.mk``
+
+  - Obsolete packages:
+
+    + ``gluon-firewall``
+
+  - Recommended new packages:
+
+    + ``gluon-announced``
+    + ``gluon-luci-portconfig``
+
+  - GLUON_PRIORITY must be set in ``site.mk`` or on the ``make manifest`` commandline. Use ``GLUON_PRIORITY ?= 0`` in ``site.mk`` to allow overriding it on the commandline.
+
+Internals
+~~~~~~~~~
+Some internal changes not mentioned before which are interesting for developers:
+
+* Many more shell scripts have been converted to Lua
+* ``gluon-mesh-vpn-fastd`` now uses the new package ``gluon-wan-dnsmasq``, which provides a secondary DNS server on port 54
+  that is only reachable from *localhost* and uses the DNS servers on the WAN interface for everything. This allowed us to
+  remove some ugly hacks which were making the DNS servers used depend on the domain being resolved.
+
+  For IPv6, the default route is now controlled via packet marks, so the secondary DNS server and fastd set the packet mark
+  so they use the default route provided on the WAN interface instead of the mesh.

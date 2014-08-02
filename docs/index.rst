@@ -72,6 +72,15 @@ Supported Devices
 
   - WRT160NL
 
+Releases
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   releases/v2014.3
+
+
 License
 -------
 
