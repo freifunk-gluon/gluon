@@ -12,7 +12,7 @@ New autoupdater
 ---------------
 The autoupdater has been rewritten.
 
-Two now fields have been added to the manifest:
+Two new fields have been added to the manifest:
 
 ``DATE``
     Specifies the time and date the update was released. ``make manifest`` will take care of setting it to the correct value.
