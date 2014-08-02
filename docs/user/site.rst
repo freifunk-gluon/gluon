@@ -24,34 +24,41 @@ site_code
 prefix4
     The IPv4 Subnet of your community mesh network in CIDR notation, e.g.
     ::
+
        prefix4 = '10.111.111.0/18'
 
 prefix6
     The IPv6 subnet of your community mesh network, e.g.
     ::
+
        prefix6 = 'fdca::ffee:babe:1::/64'
 
 timezone
     The timezone of your community live in, e.g.
     ::
+
       -- Europe/Berlin
       timezone = 'CET-1CEST,M3.5.0,M10.5.0/3'
 
 ntp_server
     List of NTP servers available in your community or used by your community, e.g.:
     ::
+
        ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'}
 
 opkg_repo : optional
     Overwrite the default ``opkg`` repository server, e.g.:
     ::
+
       opkg_repo = 'http://opkg.services.ffeh/attitude_adjustment/12.09/%S/packages'
+
     The `%S` is a variable, which is replaced with the platform of an device
     during the build process.
 
 regdom
     The wireless regulatory domain responsible for your area, e.g.:
     ::
+
       regdom = 'DE'
 
 wifi24
@@ -61,6 +68,7 @@ wifi24
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
     Combined in an dictionary, e.g.:
     ::
+
        wifi24 = {
          ssid = 'http://kiel.freifunk.net/',
          channel = 11,
@@ -76,6 +84,7 @@ wifi5
 next_node : package
     Configuration of the local node feature of Gluon
     ::
+
       next_node = {
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
@@ -86,6 +95,7 @@ next_node : package
 fastd_mesh_vpn
     Remote server setup for vpn.
     ::
+
       fastd_mesh_vpn = {
         methods = {'salsa2012+gmac'},
         mtu = 1426,
@@ -106,6 +116,7 @@ mesh_on_wan : optional
 autoupdater : package
     Configuration for the autoupdater feature of Gluon.
     ::
+
       autoupdater = {
         enabled = 1,
         branch = 'experimental',
@@ -129,6 +140,7 @@ autoupdater : package
 simple_tc : package
     Uplink traffic control
     ::
+
       simple_tc = {
         mesh_vpn = {
           ifname = 'mesh-vpn',
@@ -145,6 +157,7 @@ legacy : package
     Configuration for the legacy upgrade path.
     This is only required in communities upgrading from Lübeck's LFF-0.3.x.
     ::
+
       legacy = {
              version_files = {'/etc/.freifunk_version_keep', '/etc/.eff_version_keep'},
              old_files = {'/etc/config/config_mode', '/etc/config/ffeh', '/etc/config/freifunk'},

@@ -21,11 +21,9 @@ User Documentation
    :maxdepth: 2
 
    user/getting_started
-   user/features
    user/site
    user/builds
    user/faq
-   user/admin
 
 Features
 --------
@@ -33,12 +31,7 @@ Features
 .. toctree::
    :maxdepth: 2
 
-   features/site-repo
    features/configmode
-   features/dns
-   features/ntp
-   features/fastd
-   features/batman-adv
    features/autoupdater
    features/mesh-on-wan
    features/announce
@@ -50,9 +43,6 @@ Developer Documentation
    :maxdepth: 2
 
    dev/basics
-   dev/architecture
-   dev/repositories
-   dev/packages
 
 Indices and tables
 ==================

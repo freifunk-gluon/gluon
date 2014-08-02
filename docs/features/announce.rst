@@ -29,7 +29,7 @@ There are two packages responsible for distribution of the information. For
 one, information is distributed across the mesh using alfred_. Information
 between neighbouring nodes is exchanged using `gluon-announced`.
 
-.. alfred: http://www.open-mesh.org/projects/alfred
+.. _alfred: http://www.open-mesh.org/projects/alfred
 
 alfred (mesh bound)
 ~~~~~~~~~~~~~~~~~~~
@@ -41,7 +41,7 @@ retrieve the data you'll need both a local alfred daemon and alfred-json_
 installed. Please note that at least one alfred daemon is required to run as
 `master`.
 
-.. alfred-json: https://github.com/tcatm/alfred-json
+.. _alfred-json: https://github.com/tcatm/alfred-json
 
 `nodeinfo` is distributed as alfred datatype `158`, while `statistics` uses
 `159`. Both are compressed using GZip (alfred-json can handle the decompression).
@@ -84,11 +84,11 @@ In order to retrieve statistics data you could run:
       "node_id": "90f6523eb950",
       "loadavg": 0.34000000000000002
     }
-  }                                    
+  }
 
 You can find more information about alfred in its README_.
 
-.. README_: http://www.open-mesh.org/projects/alfred/repository/revisions/master/entry/README
+.. _README: http://www.open-mesh.org/projects/alfred/repository/revisions/master/entry/README
 
 gluon-announced
 ~~~~~~~~~~~~~~~
