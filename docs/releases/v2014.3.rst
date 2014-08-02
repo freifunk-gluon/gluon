@@ -10,25 +10,26 @@ New features
 
 New autoupdater
 ---------------
-The autoupdater has been rewritten and now limits the time in which updates are
-performed normally to the span from 04:00 to 05:00.
+The autoupdater has been rewritten.
 
-The manifest now has two new fields:
+Two now fields have been added to the manifest:
 
 ``DATE``
-    Specifies the time the update was released and is set automatically by ``make manifest``.
+    Specifies the time and date the update was released. ``make manifest`` will take care of setting it to the correct value.
 
 ``PRIORITY``
-    Specifies the maximum number of days until the update should be performed (thus lower numbers
+    Specifies the maximum number of days until the update should be attempted (thus lower numbers
     mean the priority is higher). It must be set either in ``site.mk`` or on the ``make manifest`` command line.
 
-During the days specified by ``PRIORITY`` the update probability will start at 0 and slowly rise to 1
-after all ``PRIORITY`` days have passed. If more than ``PRIORITY+1`` days have passed, the updater will fall back
-to hourly update attempts so nodes which are never active between 04:00 and 05:00 also get an update eventually.
 
-**Note:** For the new update logic to work, a valid NTP server reachable over the mesh (over IPv6) must
-be configured in the ``site.mk``. When the updater can't determine the correct time, it will fall back to
-a behavior similar to the old implementation.
+Updates will be attempted at night, between 04:00 and 5:00, with a specific probability.
+When less than ``PRIORITY`` days have passed (calculated using ``DATE`` and the current time),
+the probability will proportional to the time passed. I.e. the update probability will start at 0
+and slowly increase to 1 until ``PRIORITY`` days have passed. From then, the probability will be fixed at 1.
+
+**Note:** For the new update logic to work, a valid NTP server reachable over the mesh (using IPv6) must
+be configured in ``site.mk``. If the autoupdater is unable to determine the correct time, it will fall back to
+a behavior similar to the old implementation (i.e. hourly update attempts).
 
 Seperation of announced data
 ----------------------------
@@ -38,8 +39,8 @@ The data announced by alfred has been split into two data types:
 * *statistics* (type 159) contains all dynamic information about a node
 
 Both types also contain a new field ``node_id`` which contains an arbitrary unique ID
-(currently the primary MAC address) which can be used to correlate the *nodeinfo*
-and *statistics* information.
+(currently the primary MAC address, sans colons) which can be used to match the *nodeinfo*
+with *statistics* information.
 
 gluon-announced
 ---------------
@@ -48,26 +49,26 @@ used for querying the *nodeinfo* data of a node via link-local multicast on the 
 interfaces.
 
 At the moment, this daemon is not used, but we recommend including it in ``site.mk`` nevertheless
-as we plan to implement a new status page showing some information about the neighbor nodes in
+as we plan to implement a new status page showing some information about neighbor nodes in
 the next version of Gluon.
 
 VPN over IPv6
 -------------
-Using fastd over IPv6 should now work fine (although it hasn't been tested extensively).
+It is now possible to use fastd in IPv6 WAN networks. This still needs testing, but it should work well.
 
-Please note that the MTU 1426 used by many communities for VPN over IPv4 is too big for IPv6 as
+Please note that the MTU of 1426 used by many communities for VPN over IPv4 is too big for IPv6 as
 the IPv6 header is 20 bytes longer (fastd over IPv4 has an overhead of 66 bytes,
 fastd over IPv6 has an overhead of 86 bytes).
 
 More modular Config Mode
 ------------------------
-The package ``gluon-config-mode`` has been split up into multiple packages to simplify the development of own
+The package ``gluon-config-mode`` has been split into multiple packages to simplify the development of
 extensions. The low-level logic (handling of the button, starting the services for the config mode) has been moved
 into a new package ``gluon-setup-mode``, while ``gluon-config-mode`` only contains the frontend now.
 
 Extended Expert Mode
 --------------------
-The Expert Mode how has a nice info page. In addition, the new package ``gluon-luci-portconfig`` has been added
+The Expert Mode now has a nice info page. In addition, the new package ``gluon-luci-portconfig`` has been added
 which allows simple configuration of batman-adv on the WAN interface.
 
 Site validators
@@ -77,7 +78,7 @@ build broken images.
 
 gluon-firewall
 --------------
-The package ``gluon-firewall`` has been removed, its features are now part of the packages ``gluon-core`` and
+The package ``gluon-firewall`` has been removed. Its features are now part of the packages ``gluon-core`` and
 ``gluon-mesh-batman-adv``.
 
 gluon-ath9k-workaround
@@ -90,17 +91,17 @@ Bugfixes
 
 Improved ath9k stability
 ------------------------
-Multiple bugs in the WLAN driver ath9k were fixed upstream, which should greatly improve the WLAN stability.
+Multiple bugs in the WLAN driver ath9k have been fixed upstream. This should greatly improve the WLAN stability.
 
-odhcp6c 50d-Bug
+odhcp6c 50 day bug
 ---------------
 An important update for odhcp6c fixes a bug which caused Gluon nodes to lose their IPv6 addresses on br-client after an uptime
-of 50 days, making the nodes unable perform an automated update (besides other issues).
+of 50 days, making the nodes unable perform automated updates (besides other issues).
 
 IPv6 preference
 ---------------
 Commands like ``wget`` now prefer IPv6 for domains with both AAAA and A records, allowing to use such domains for the autoupdater URLs
-and as NTP servers in the ``site.conf``.
+and as NTP servers in ``site.conf``.
 
 Site changes
 ~~~~~~~~~~~~
@@ -120,7 +121,7 @@ Site changes
     + ``gluon-announced``
     + ``gluon-luci-portconfig``
 
-  - GLUON_PRIORITY must be set in ``site.mk`` or on the ``make manifest`` commandline. Use ``GLUON_PRIORITY ?= 0`` in ``site.mk`` to allow overriding it on the commandline.
+  - GLUON_PRIORITY must be set in ``site.mk`` or on the ``make manifest`` commandline. Use ``GLUON_PRIORITY ?= 0`` in ``site.mk`` to allow overriding from the commandline.
 
 Internals
 ~~~~~~~~~
