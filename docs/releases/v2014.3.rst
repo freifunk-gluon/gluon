@@ -13,13 +13,17 @@ New autoupdater
 The autoupdater has been rewritten and now limits the time in which updates are
 performed normally to the span from 04:00 to 05:00.
 
-The manifest now has two new fields: DATE specifies the time the update was released
-and is set automatically by ``make manifest``. PRIORITY specifies the maximum number of
-days until the update should be performed (thus lower numbers mean the priority is higher). It must
-be set either in ``site.mk`` or on the ``make manifest`` command line.
+The manifest now has two new fields:
 
-During the days specified by PRIORITY the update probability will start at 0 and slowly rise to 1
-after all PRIORITY days have passed. If more than PRIORITY+1 days have passed, the updater will fall back
+``DATE``
+    Specifies the time the update was released and is set automatically by ``make manifest``.
+
+``PRIORITY``
+    Specifies the maximum number of days until the update should be performed (thus lower numbers
+    mean the priority is higher). It must be set either in ``site.mk`` or on the ``make manifest`` command line.
+
+During the days specified by ``PRIORITY`` the update probability will start at 0 and slowly rise to 1
+after all ``PRIORITY`` days have passed. If more than ``PRIORITY+1`` days have passed, the updater will fall back
 to hourly update attempts so nodes which are never active between 04:00 and 05:00 also get an update eventually.
 
 **Note:** For the new update logic to work, a valid NTP server reachable over the mesh (over IPv6) must
