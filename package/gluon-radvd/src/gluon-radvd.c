@@ -266,7 +266,7 @@ static void update_interface(void) {
 	memset(&G.iface.ifaddr, 0, sizeof(G.iface.ifaddr));
 
 	for (addr = addrs; addr; addr = addr->ifa_next) {
-		if (addr->ifa_addr->sa_family != AF_INET6)
+		if (!addr->ifa_addr || addr->ifa_addr->sa_family != AF_INET6)
 			continue;
 
 		const struct sockaddr_in6 *in6 = (const struct sockaddr_in6 *)addr->ifa_addr;
