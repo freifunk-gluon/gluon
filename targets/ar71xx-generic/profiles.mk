@@ -2,6 +2,12 @@
 
 ## TP-Link
 
+# TL-WR703N v1
+ifeq ($(BROKEN),1)
+$(eval $(call GluonProfile,TLWR703))
+$(eval $(call GluonModel,TLWR703,tl-wr703n-v1-squashfs,tp-link-tl-wr703n-v1))
+endif
+
 # TL-WR740N v1, v3, v4
 $(eval $(call GluonProfile,TLWR740))
 $(eval $(call GluonModel,TLWR740,tl-wr740n-v1-squashfs,tp-link-tl-wr740n-nd-v1))
