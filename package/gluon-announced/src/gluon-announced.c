@@ -187,14 +187,8 @@ int main(int argc, char **argv) {
         group_set = 1;
         break;
       case 's':
-        free(script); // in case -s is given multiple times
+        script = optarg;
 
-        script = strdup(optarg);
-
-        if (script == NULL) {
-          perror("Couldn't duplicate string");
-          exit(EXIT_FAILURE);
-        }
         break;
       case 'i':
         if (!group_set) {
@@ -222,8 +216,6 @@ int main(int argc, char **argv) {
   }
 
   serve(sock, script);
-
-  free(script);
 
   return EXIT_FAILURE;
 }
