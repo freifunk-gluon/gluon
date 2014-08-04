@@ -89,3 +89,9 @@ $(eval $(call GluonModel,DIR825B1,dir-825-b1-squashfs,d-link-dir-825-rev-b1))
 # WRT160NL
 $(eval $(call GluonProfile,WRT160NL))
 $(eval $(call GluonModel,WRT160NL,wrt160nl-squashfs,linksys-wrt160nl))
+
+## Buffalo
+
+# WZR-HP-G450H
+$(eval $(call GluonProfile,WZRHPG450H))
+$(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h-squashfs,buffalo-wzr-hp-g450h))
