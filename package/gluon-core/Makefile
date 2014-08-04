@@ -12,7 +12,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
-  DEPENDS:=+gluon-config +lua-platform-info +luci-lib-core +odhcp6c +firewall
+  DEPENDS:=+gluon-config +lua-platform-info +luci-lib-nixio +odhcp6c +firewall
 endef
 
 define Package/gluon-core/description
