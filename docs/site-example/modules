@@ -1,0 +1,28 @@
+##	gluon site modules example
+#		this file allows to define additional
+#		package feeds to be used.
+#		packages from this feeds can then be included
+#		via site.mk
+
+
+##	GLUON_SITE_FEEDS
+#		feeds to include, note that this is not called
+#		GLUON_FEEDS as in the Gluon modules file.
+#
+#		for each feed name given, there have to be
+#		two variables given in the following.
+
+GLUON_SITE_FEEDS='ffhh_packages'
+
+
+##	PACKAGES_$feedname_REPO
+#		the  git repository from where to clone the package feed
+
+PACKAGES_FFHH_PACKAGES_REPO=git://github.com/freifunkhamburg/ffhh-packages.git
+
+
+##	PACKAGES_$feedname_COMMIT
+#		the version/commit of the git repository to clone
+
+PACKAGES_FFHH_PACKAGES_COMMIT=0fc9d44e95000c61a69b04278e4d38f2a3f57e49
+

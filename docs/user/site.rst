@@ -188,4 +188,21 @@ GLUON_PRIORITY
 Examples
 --------
 
-An example configuration is maintained at https://github.com/freifunk-gluon/site-example.
+site.mk
+^^^^^^^
+
+.. literalinclude:: ../site-example/site.mk
+  :language: makefile
+
+site.conf
+^^^^^^^^^
+
+.. literalinclude:: ../site-example/site.conf
+  :language: lua
+
+modules
+^^^^^^^
+
+.. literalinclude:: ../site-example/modules
+  :language: makefile
+
