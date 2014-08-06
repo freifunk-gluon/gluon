@@ -2,10 +2,10 @@ From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Fri, 16 May 2014 10:57:26 +0200
 Subject: libs/web: rename template_parser field "mmap" to the more generic "data"
 
-diff --git a/libs/web/src/template_parser.c b/libs/web/src/template_parser.c
+diff --git a/modules/base/src/template_parser.c b/modules/base/src/template_parser.c
 index 6054451..fc8607b 100644
---- a/libs/web/src/template_parser.c
-+++ b/libs/web/src/template_parser.c
+--- a/modules/base/src/template_parser.c
++++ b/modules/base/src/template_parser.c
 @@ -82,15 +82,15 @@ struct template_parser * template_open(const char *file)
  		goto err;
  
@@ -91,10 +91,10 @@ index 6054451..fc8607b 100644
  		if (*ptr == '\n')
  			line++;
  
-diff --git a/libs/web/src/template_parser.h b/libs/web/src/template_parser.h
+diff --git a/modules/base/src/template_parser.h b/modules/base/src/template_parser.h
 index d1c6062..ad03cbc 100644
---- a/libs/web/src/template_parser.h
-+++ b/libs/web/src/template_parser.h
+--- a/modules/base/src/template_parser.h
++++ b/modules/base/src/template_parser.h
 @@ -58,7 +58,7 @@ struct template_chunk {
  struct template_parser {
  	int fd;

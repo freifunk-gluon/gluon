@@ -2,10 +2,10 @@ From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Fri, 16 May 2014 11:37:21 +0200
 Subject: libs/web: add support for string templates to the template parser
 
-diff --git a/libs/web/src/template_lualib.c b/libs/web/src/template_lualib.c
+diff --git a/modules/base/src/template_lualib.c b/modules/base/src/template_lualib.c
 index 0d43641..1035611 100644
---- a/libs/web/src/template_lualib.c
-+++ b/libs/web/src/template_lualib.c
+--- a/modules/base/src/template_lualib.c
++++ b/modules/base/src/template_lualib.c
 @@ -18,10 +18,8 @@
  
  #include "template_lualib.h"
@@ -59,10 +59,10 @@ index 0d43641..1035611 100644
  	{ "utf8",				template_L_utf8 },
  	{ "pcdata",				template_L_pcdata },
  	{ "striptags",			template_L_striptags },
-diff --git a/libs/web/src/template_parser.c b/libs/web/src/template_parser.c
+diff --git a/modules/base/src/template_parser.c b/modules/base/src/template_parser.c
 index 1aa5131..c263fbf 100644
---- a/libs/web/src/template_parser.c
-+++ b/libs/web/src/template_parser.c
+--- a/modules/base/src/template_parser.c
++++ b/modules/base/src/template_parser.c
 @@ -100,6 +100,36 @@ err:
  	return NULL;
  }
@@ -128,10 +128,10 @@ index 1aa5131..c263fbf 100644
  
  	lua_pushnil(L);
  	lua_pushinteger(L, line + chunkline);
-diff --git a/libs/web/src/template_parser.h b/libs/web/src/template_parser.h
+diff --git a/modules/base/src/template_parser.h b/modules/base/src/template_parser.h
 index ad03cbc..a3200a2 100644
---- a/libs/web/src/template_parser.h
-+++ b/libs/web/src/template_parser.h
+--- a/modules/base/src/template_parser.h
++++ b/modules/base/src/template_parser.h
 @@ -71,6 +71,7 @@ struct template_parser {
  };
  

@@ -2,10 +2,10 @@ From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Fri, 16 May 2014 11:48:42 +0200
 Subject: libs/web: add support for string templates to luci.template module
 
-diff --git a/libs/web/luasrc/template.lua b/libs/web/luasrc/template.lua
+diff --git a/modules/base/luasrc/template.lua b/modules/base/luasrc/template.lua
 index 72127d1..ea01d3c 100644
---- a/libs/web/luasrc/template.lua
-+++ b/libs/web/luasrc/template.lua
+--- a/modules/base/luasrc/template.lua
++++ b/modules/base/luasrc/template.lua
 @@ -50,6 +50,13 @@ function render(name, scope)
  	return Template(name):render(scope or getfenv(2))
  end
