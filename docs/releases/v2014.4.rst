@@ -1,0 +1,35 @@
+Gluon 2014.4 (In development)
+=============================
+
+New hardware support
+~~~~~~~~~~~~~~~~~~~~
+
+New features
+~~~~~~~~~~~~
+
+Modular config mode
+-------------------
+
+Bugfixes
+~~~~~~~~
+
+Site changes
+~~~~~~~~~~~~
+* ``site.conf``
+
+* ``site.mk``
+
+  - Obsolete packages:
+
+    + ``gluon-config-mode``
+
+  - Recommended new packages:
+
+    + ``gluon-config-mode-autoupdater``
+    + ``gluon-config-mode-hostname``
+    + ``gluon-config-mode-mesh-vpn``
+    + ``gluon-config-mode-geo-location``
+    + ``gluon-config-mode-contact-info``
+
+Internals
+~~~~~~~~~
