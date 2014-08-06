@@ -24,6 +24,7 @@ Features
 
    features/configmode
    features/autoupdater
+   features/private-wlan
    features/mesh-on-wan
    features/announce
 
