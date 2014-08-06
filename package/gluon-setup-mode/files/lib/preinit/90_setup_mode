@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+check_enable() {
+	local enabled
+	local configured
+
+        config_get enabled "$1" enabled
+        config_get configured "$1" configured
+
+        if [ "$enabled" = 1 -o "$configured" != 1 ]; then
+		echo '/lib/gluon/setup-mode/rc.d' > /tmp/rc_d_path
+        fi
+}
+
+
+setup_mode_enable() {
+        config_load gluon-setup-mode
+        config_foreach check_enable setup_mode
+}
+
+boot_hook_add preinit_main setup_mode_enable

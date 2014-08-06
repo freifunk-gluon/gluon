@@ -1,0 +1,10 @@
+#!/bin/sh /etc/rc.common
+
+START=15
+
+
+boot() {
+	lua -luci -e 'require "luci.model.uci"; uci_state=luci.model.uci.cursor_state(); uci_state:section("gluon-setup-mode", "setup_mode", nil, { running = "1" }); uci_state:save("gluon-setup-mode")'
+	uci set 'gluon-setup-mode.@setup_mode[0].enabled=0'
+	uci commit gluon-setup-mode
+}
