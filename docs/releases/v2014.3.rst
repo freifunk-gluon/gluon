@@ -94,7 +94,7 @@ Improved ath9k stability
 Multiple bugs in the WLAN driver ath9k have been fixed upstream. This should greatly improve the WLAN stability.
 
 odhcp6c 50 day bug
----------------
+------------------
 An important update for odhcp6c fixes a bug which caused Gluon nodes to lose their IPv6 addresses on br-client after an uptime
 of 50 days, making the nodes unable perform automated updates (besides other issues).
 
