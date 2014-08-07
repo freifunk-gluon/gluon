@@ -28,7 +28,7 @@ the probability will proportional to the time passed. I.e. the update probabilit
 and slowly increase to 1 until ``PRIORITY`` days have passed. From then, the probability will be fixed at 1.
 
 **Note:** For the new update logic to work, a valid NTP server reachable over the mesh (using IPv6) must
-be configured in ``site.mk``. If the autoupdater is unable to determine the correct time, it will fall back to
+be configured in ``site.conf``. If the autoupdater is unable to determine the correct time, it will fall back to
 a behavior similar to the old implementation (i.e. hourly update attempts).
 
 Seperation of announced data
