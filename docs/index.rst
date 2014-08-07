@@ -46,7 +46,7 @@ Supported Devices
   - TL-WR841N/ND (v3, v5, v7, v8, v9)
   - TL-WR842N/ND (v1, v2)
   - TL-WR941N/ND (v2, v3, v4)
-  - TL-WR1043N/ND (v1)
+  - TL-WR1043N/ND (v1, v2)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
