@@ -1,0 +1,32 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 7 Aug 2014 15:07:15 +0200
+Subject: ar71xx: TL-WR1043N/ND v2: Fix MAC address of WMAC
+
+This sets the MAC address of the WLAN interface to the "official" primary MAC
+address (the one on the label under the devices, and the one used with the stock
+firmware). The MAC address used so far (primary-1) isn't even used at all with
+the stock firmware, which sets (primary) on LAN and WLAN and (primary+1) on the
+WAN interface (like OpenWrt does with this patch).
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
+index 4f873e2..3e79ee1 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v2.c
+@@ -168,7 +168,6 @@ static void __init tl_wr1043nd_v2_setup(void)
+ {
+ 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
+ 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+-	u8 tmpmac[ETH_ALEN];
+ 
+ 	ath79_register_m25p80(&wr1043nd_v2_flash_data);
+ 
+@@ -178,8 +177,7 @@ static void __init tl_wr1043nd_v2_setup(void)
+ 					ARRAY_SIZE(tl_wr1043_v2_gpio_keys),
+ 					tl_wr1043_v2_gpio_keys);
+ 
+-	ath79_init_mac(tmpmac, mac, -1);
+-	ath79_register_wmac(art + TL_WR1043_V2_WMAC_CALDATA_OFFSET, tmpmac);
++	ath79_register_wmac(art + TL_WR1043_V2_WMAC_CALDATA_OFFSET, mac);
+ 
+ 	mdiobus_register_board_info(wr1043nd_v2_mdio0_info,
+ 				    ARRAY_SIZE(wr1043nd_v2_mdio0_info));
