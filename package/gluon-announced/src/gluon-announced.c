@@ -34,8 +34,8 @@
 #include <string.h>
 
 void usage() {
-  puts("Usage: gluon-announced [-h] -m <group> -p <port> -i <if0> [-i <if1> ..] -s <script>");
-  puts("  -m <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
+  puts("Usage: gluon-announced [-h] -g <group> -p <port> -i <if0> [-i <if1> ..] -s <script>");
+  puts("  -g <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
   puts("  -p <int>         port number to listen on");
   puts("  -i <string>      interface on which the group is joined");
   puts("  -s <string>      script to be executed for each request");
