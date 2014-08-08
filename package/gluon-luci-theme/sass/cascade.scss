@@ -96,9 +96,12 @@ html {
   position:relative;
 }
 
-body {
+body, input, select, option {
   font-family: 'Open Sans', Arial, sans-serif;
   font-size: 12pt;
+}
+
+body {
   color: rgb(77, 78, 83);
   line-height: 1.5em;
   margin: 0;
@@ -387,7 +390,7 @@ input[type=checkbox] {
       position: absolute;
       top: 50%;
       left: 0;
-      margin-top: -0.5em;
+      margin-top: -0.6em;
       width: 100%;
       text-align: center;
       font-size: 1.7em;
@@ -638,13 +641,17 @@ div.cbi-value {
 .cbi-value-title {
   flex: 2;
   text-align: right;
-  padding-top: 0.39em;
   padding-right: 1em;
   font-weight: bold;
 }
 
 div.cbi-value-field {
   flex: 3;
+
+  input, select {
+    position: relative;
+    top: -0.39em;
+  }
 }
 
 div.cbi-value-description {
