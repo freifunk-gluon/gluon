@@ -2,8 +2,10 @@
 
 ##	GLUON_SITE_PACKAGES
 #		specify gluon/openwrt packages to include here
+#		The gluon-mesh-batman-adv-* package must come first because of the dependency resolution
 
 GLUON_SITE_PACKAGES := \
+	gluon-mesh-batman-adv-15 \
 	gluon-alfred \
 	gluon-announced \
 	gluon-autoupdater \
@@ -18,7 +20,6 @@ GLUON_SITE_PACKAGES := \
 	gluon-luci-autoupdater \
 	gluon-luci-portconfig \
 	gluon-next-node \
-	gluon-mesh-batman-adv \
 	gluon-mesh-vpn-fastd \
 	gluon-radvd \
 	gluon-status-page \
