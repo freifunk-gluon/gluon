@@ -16,6 +16,25 @@ uci:save('batman-adv')
 uci:commit('batman-adv')
 
 
+if not uci:get('network', 'client') then
+  local ifname
+
+  if sysconfig.lan_ifname then
+    ifname = sysconfig.lan_ifname .. ' bat0'
+  else
+    ifname = 'bat0'
+  end
+
+  uci:section('network', 'interface', 'client',
+	      {
+		ifname = ifname,
+		type = 'bridge',
+		proto = 'dhcpv6',
+		reqprefix = 'no',
+	      }
+  )
+end
+
 uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
 uci:set('network', 'client', 'peerdns', 1)
 
