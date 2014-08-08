@@ -121,12 +121,11 @@ PROFILE_PACKAGES :=
 define Profile
   $(eval $(call Profile/Default))
   $(eval $(call Profile/$(1)))
-  $(1)_PACKAGES := $(PACKAGES)
 endef
 
 define GluonProfile
 PROFILES += $(1)
-PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
+PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 GLUON_$(1)_MODELS :=
 endef
@@ -303,7 +302,7 @@ enable_initscripts: FORCE
 
 
 # Generate package list
-$(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
+$(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 package_install: FORCE
 	$(OPKG) update
