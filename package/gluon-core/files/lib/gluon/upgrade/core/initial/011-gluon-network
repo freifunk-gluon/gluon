@@ -1,19 +1,9 @@
 #!/usr/bin/lua
 
-local sysconfig = require 'gluon.sysconfig'
 local uci = require('luci.model.uci').cursor()
-
 
 uci:delete('network', 'lan')
 uci:delete('network', 'wan')
-
-uci:section('network', 'interface', 'wan',
-	    {
-	       ifname = sysconfig.wan_ifname,
-	       type = 'bridge',
-	       proto = 'dhcp',
-	    }
-)
 
 uci:save('network')
 uci:commit('network')

@@ -2,22 +2,34 @@
 
 local uci = require('luci.model.uci').cursor()
 local sysctl = require 'gluon.sysctl'
+local sysconfig = require 'gluon.sysconfig'
 
 
-if not uci:get('network', 'interface', 'wan6') then
-   uci:section('network', 'interface', 'wan6',
-	       {
-		  ifname = 'br-wan',
-		  proto = 'dhcpv6',
-	       }
-   )
+uci:section('network', 'interface', 'wan',
+	    {
+	      ifname = sysconfig.wan_ifname,
+	      type = 'bridge',
+	      peerdns = 0,
+	      auto = 1,
+	    }
+)
+
+if not uci:get('network', 'wan', 'proto') then
+  uci:set('network', 'wan', 'proto', 'dhcp')
 end
 
 
-uci:set('network', 'wan', 'peerdns', '0')
+uci:section('network', 'interface', 'wan6',
+	    {
+	      ifname = 'br-wan',
+	      peerdns = 0,
+	      ip6table = 1,
+	    }
+)
 
-uci:set('network', 'wan6', 'peerdns', '0')
-uci:set('network', 'wan6', 'ip6table', '1')
+if not uci:get('network', 'wan6', 'proto') then
+  uci:set('network', 'wan6', 'proto', 'dhcpv6')
+end
 
 
 uci:section('network', 'rule6', 'wan6_lookup',
