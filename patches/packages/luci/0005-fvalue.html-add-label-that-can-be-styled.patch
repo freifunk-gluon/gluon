@@ -1,0 +1,14 @@
+From: Nils Schneider <nils@nilsschneider.net>
+Date: Sat, 9 Aug 2014 09:33:21 +0200
+Subject: fvalue.html: add label that can be styled
+
+diff --git a/modules/base/luasrc/view/cbi/fvalue.htm b/modules/base/luasrc/view/cbi/fvalue.htm
+index a1e0808..a324ab2 100644
+--- a/modules/base/luasrc/view/cbi/fvalue.htm
++++ b/modules/base/luasrc/view/cbi/fvalue.htm
+@@ -6,4 +6,5 @@
+ 		attr("id", cbid) .. attr("name", cbid) .. attr("value", self.enabled or 1) ..
+ 		ifattr((self:cfgvalue(section) or self.default) == self.enabled, "checked", "checked")
+ 	%> />
++	<label<%= attr("for", cbid)%>></label>
+ <%+cbi/valuefooter%>
