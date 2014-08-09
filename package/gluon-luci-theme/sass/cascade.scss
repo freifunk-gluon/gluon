@@ -372,29 +372,26 @@ input:-ms-input-placeholder {
 }
 
 input[type=checkbox] {
-  -moz-appearance:none;
-  -webkit-appearance:none;
-  -o-appearance:none;
-  appearance: none;
-  width: 2em;
-  height: 2em;
-  margin: 0;
+  display: none;
 
-  &:checked {
-    position: relative;
+  & + label {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin: 0;
+  }
 
-    &::after {
-      content: '✔';
-      color: $ffmagenta;
-      vertical-align: middle;
-      position: absolute;
-      top: 50%;
-      left: 0;
-      margin-top: -0.6em;
-      width: 100%;
-      text-align: center;
-      font-size: 1.7em;
-    }
+  &:checked + label:after {
+    content: '✔';
+    color: $ffmagenta;
+    vertical-align: middle;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -0.5em;
+    width: 100%;
+    text-align: center;
+    font-size: 1.7em;
   }
 }
 
@@ -407,7 +404,8 @@ input[type=button] {
 
 select,
 input,
-textarea {
+textarea,
+input[type=checkbox] + label {
   color: darken($ffzusatz, 30);
   border: none;
   background: lighten($ffyellow, 30);
@@ -647,8 +645,9 @@ div.cbi-value {
 
 div.cbi-value-field {
   flex: 3;
+  position: relative;
 
-  input, select {
+  input, select, input + label {
     position: relative;
     top: -0.39em;
   }
