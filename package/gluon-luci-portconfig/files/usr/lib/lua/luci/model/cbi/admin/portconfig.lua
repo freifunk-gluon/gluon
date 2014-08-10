@@ -116,10 +116,10 @@ function f.handle(self, state, data)
     uci:commit("network")
 
     if dns then
-      if data.dns then
-	uci:set("gluon-wan-dnsmasq", dns, "server", data.dns)
+      if #data.dns > 0 then
+        uci:set("gluon-wan-dnsmasq", dns, "server", data.dns)
       else
-	uci:delete("gluon-wan-dnsmasq", dns, "server")
+        uci:delete("gluon-wan-dnsmasq", dns, "server")
       end
 
       uci:save("gluon-wan-dnsmasq")
