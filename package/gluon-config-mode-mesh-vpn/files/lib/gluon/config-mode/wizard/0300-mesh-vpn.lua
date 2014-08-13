@@ -5,20 +5,20 @@ local M = {}
 
 function M.section(form)
   local s = form:section(cbi.SimpleSection, nil,
-    [[Falls du deinen Knoten über das Internet mit Freifunk verbinden
-    möchtest, kannst du hier das Mesh-VPN aktivieren.  Solltest du dich
-    dafür entscheiden, hast du die Möglichkeit die dafür genutzte
-    Bandbreite zu beschränken. Lässt du das Mesh-VPN deaktiviert,
-    verbindet sich dein Knoten nur per WLAN mit anderen Knoten in der
-    Nähe.]])
+    [[Dein Knoten kann deine Internetverbindung nutzen um darüber 
+    eine verschlüsselte Verbindung zu anderen Freifunkknoten aufzubauen. 
+    Die dafür genutzte Bandbreite kannst du beschränken.
+    Aktiviere die Option, falls keine per WLAN erreichbaren 
+    Nachbarknoten in deiner Nähe sind oder du deine Internetverbindung 
+    für Freifunk zur Verfügung stellen möchtest.]])
 
   local o
 
-  o = s:option(cbi.Flag, "_meshvpn", "Mesh-VPN aktivieren")
+  o = s:option(cbi.Flag, "_meshvpn", "Internetverbindung nutzen (Mesh-VPN)")
   o.default = uci:get_bool("fastd", "mesh_vpn", "enabled") and o.enabled or o.disabled
   o.rmempty = false
 
-  o = s:option(cbi.Flag, "_limit_enabled", "Mesh-VPN Bandbreite begrenzen")
+  o = s:option(cbi.Flag, "_limit_enabled", "Bandbreite begrenzen")
   o:depends("_meshvpn", "1")
   o.default = uci:get_bool("gluon-simple-tc", "mesh_vpn", "enabled") and o.enabled or o.disabled
   o.rmempty = false
