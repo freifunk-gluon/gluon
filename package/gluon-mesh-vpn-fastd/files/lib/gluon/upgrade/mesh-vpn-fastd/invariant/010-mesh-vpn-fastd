@@ -40,8 +40,15 @@ c:section('fastd', 'peer_group', 'mesh_vpn_backbone',
 	  }
 )
 
+c:foreach('fastd', 'peer',
+  function(peer)
+    if peer.net == 'mesh_vpn' and peer.group == 'mesh_vpn_backbone' then
+      c:delete('fastd', peer['.name'])
+    end
+  end
+)
+
 for name, config in pairs(site.fastd_mesh_vpn.backbone.peers) do
-	c:delete('fastd', 'mesh_vpn_backbone_peer_' .. name)
 	c:section('fastd', 'peer', 'mesh_vpn_backbone_peer_' .. name,
 		  {
 			  enabled = 1,
