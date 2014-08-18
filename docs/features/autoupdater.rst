@@ -69,7 +69,7 @@ These commands can be used on a node.
 ::
 
    # Update with some probability
-   autoupdate
+   autoupdater
 
 ::
 
