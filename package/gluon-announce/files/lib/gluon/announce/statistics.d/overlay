@@ -1,0 +1,7 @@
+local fs = require "nixio.fs"
+local opkg = require "luci.model.ipkg"
+
+local st = fs.statvfs(opkg.overlay_root())
+local used = 100*((st.blocks - st.bfree) / st.blocks) or 0
+
+return math.floor(used * 1000 + 0.5) / 1000
