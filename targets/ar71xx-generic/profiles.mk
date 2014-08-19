@@ -60,9 +60,10 @@ $(eval $(call GluonModel,TLWA901,tl-wa901nd-v2-squashfs,tp-link-tl-wa901n-nd-v2)
 $(eval $(call GluonProfile,TLMR3020))
 $(eval $(call GluonModel,TLMR3020,tl-mr3020-v1-squashfs,tp-link-tl-mr3020-v1))
 
-# TL-MR3040 v1
+# TL-MR3040 v1, v2
 $(eval $(call GluonProfile,TLMR3040))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v1-squashfs,tp-link-tl-mr3040-v1))
+$(eval $(call GluonModel,TLMR3040,tl-mr3040-v2-squashfs,tp-link-tl-mr3040-v2))
 
 # TL-MR3220 v1
 $(eval $(call GluonProfile,TLMR3220))
