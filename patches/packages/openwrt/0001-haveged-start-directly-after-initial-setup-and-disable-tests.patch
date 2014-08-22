@@ -3,10 +3,10 @@ Date: Sat, 26 Jul 2014 18:06:07 +0200
 Subject: haveged: start directly after initial setup and disable tests
 
 diff --git a/utils/haveged/Makefile b/utils/haveged/Makefile
-index 12a6237..e9ff3f1 100644
+index aff998d..94c8c34 100644
 --- a/utils/haveged/Makefile
 +++ b/utils/haveged/Makefile
-@@ -41,8 +41,9 @@ define Package/libhavege
+@@ -42,8 +42,9 @@ define Package/libhavege
  endef
  
  CONFIGURE_ARGS+= \
