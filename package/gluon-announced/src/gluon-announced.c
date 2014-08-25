@@ -51,9 +51,6 @@ void usage() {
 
 char *run_script(size_t *length, const char *script) {
   FILE *f;
-
-  f = popen(script, "r");
-
   char *buffer;
 
   buffer = calloc(BUFFER, sizeof(char));
@@ -63,6 +60,7 @@ char *run_script(size_t *length, const char *script) {
     return NULL;
   }
 
+  f = popen(script, "r");
 
   size_t read_bytes = 0;
   while (1) {
@@ -74,8 +72,10 @@ char *run_script(size_t *length, const char *script) {
     read_bytes += ret;
   }
 
-  if (fclose(f) != 0)
-    fprintf(stderr, "fclose on script failed\n");
+  int ret = pclose(f);
+
+  if (ret != 0)
+    fprintf(stderr, "script exited with status %d\n", ret);
 
   *length = read_bytes;
 
