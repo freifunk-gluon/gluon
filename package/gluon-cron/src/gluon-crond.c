@@ -94,7 +94,7 @@ static uint64_t parse_strings(const char *input, const char *const *strings, siz
 	return 0;
 }
 
-static uint64_t parse_times(char *input, unsigned min, unsigned n) {
+static uint64_t parse_times(char *input, int min, int n) {
 	uint64_t ret = 0;
 	int step = 1;
 
