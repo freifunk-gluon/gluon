@@ -16,50 +16,15 @@ $Id$
 module("luci.controller.admin.upgrade", package.seeall)
 
 function index()
-	entry({"admin", "upgrade"}, call("action_upgrade"), "Firmware aktualisieren", 90)
+	local has_platform = nixio.fs.access("/lib/upgrade/platform.sh")
+	if has_platform then
+		entry({"admin", "upgrade"}, call("action_upgrade"), "Firmware aktualisieren", 90)
+		entry({"admin", "upgrade", "reboot"}, template("admin/upgrade_reboot"), nil, nil)
+	end
 end
 
 function action_upgrade()
-	require("luci.model.uci")
-
 	local tmpfile = "/tmp/firmware.img"
-
-	local function image_supported()
-		-- XXX: yay...
-		return ( 0 == os.execute(
-			". /lib/functions.sh; " ..
-			"include /lib/upgrade; " ..
-			"platform_check_image %q >/dev/null"
-				% tmpfile
-		) )
-	end
-
-	local function image_checksum()
-		return (luci.sys.exec("md5sum %q" % tmpfile):match("^([^%s]+)"))
-	end
-
-	local function storage_size()
-		local size = 0
-		if nixio.fs.access("/proc/mtd") then
-			for l in io.lines("/proc/mtd") do
-				local d, s, e, n = l:match('^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s+"([^%s]+)"')
-				if n == "linux" then
-					size = tonumber(s, 16)
-					break
-				end
-			end
-		elseif nixio.fs.access("/proc/partitions") then
-			for l in io.lines("/proc/partitions") do
-				local x, y, b, n = l:match('^%s*(%d+)%s+(%d+)%s+([^%s]+)%s+([^%s]+)')
-				if b and n and not n:match('[0-9]') then
-					size = tonumber(b) * 1024
-					break
-				end
-			end
-		end
-		return size
-	end
-
 
 	-- Install upload handler
 	local file
@@ -77,19 +42,10 @@ function action_upgrade()
 		end
 	)
 
-
 	-- Determine state
-	local keep_avail   = true
 	local step         = tonumber(luci.http.formvalue("step") or 1)
 	local has_image    = nixio.fs.access(tmpfile)
-	local has_support  = image_supported()
-	local has_platform = nixio.fs.access("/lib/upgrade/platform.sh")
-	local has_upload   = luci.http.formvalue("image")
-
-	--
-	-- This is step 1-3, which does the user interaction and
-	-- image upload.
-	--
+	local has_support  = image_supported(tmpfile)
 
 	-- Step 1: file upload, error on unsupported image format
 	if not has_image or not has_support or step == 1 then
@@ -100,33 +56,21 @@ function action_upgrade()
 		end
 
 		luci.template.render("admin/upgrade", {
-			step=1,
-			bad_image=(has_image and not has_support or false),
-			keepavail=keep_avail,
-			supported=has_platform
+			bad_image=(has_image and not has_support or false)
 		} )
 
 	-- Step 2: present uploaded file, show checksum, confirmation
 	elseif step == 2 then
-		luci.template.render("admin/upgrade", {
-			step=2,
-			checksum=image_checksum(),
+		luci.template.render("admin/upgrade_confirm", {
+			checksum=image_checksum(tmpfile),
 			filesize=nixio.fs.stat(tmpfile).size,
 			flashsize=storage_size(),
-			keepconfig=(keep_avail and luci.http.formvalue("keepcfg") == "1")
+			keepconfig=luci.http.formvalue("keepcfg") == "1"
 		} )
-
-	-- Step 3: load iframe which calls the actual flash procedure
 	elseif step == 3 then
-		-- invoke sysupgrade
-		local keepcfg = keep_avail and luci.http.formvalue("keepcfg") == "1"
-		fork_exec("/sbin/sysupgrade %s %q" %
-				{ keepcfg and "" or "-n"
-				, tmpfile
-				}
-			)
-
-		luci.template.render("admin/upgrade", { step=3 } )
+		local keepcfg = luci.http.formvalue("keepcfg") == "1"
+		fork_exec("/sbin/sysupgrade %s %q" % { keepcfg and "" or "-n", tmpfile })
+		luci.http.redirect(luci.dispatcher.build_url("admin", "upgrade", "reboot"))
 	end
 end
 
@@ -152,4 +96,40 @@ function fork_exec(command)
 		-- replace with target command
 		nixio.exec("/bin/sh", "-c", command)
 	end
+end
+
+function image_supported(tmpfile)
+	-- XXX: yay...
+	return ( 0 == os.execute(
+		". /lib/functions.sh; " ..
+		"include /lib/upgrade; " ..
+		"platform_check_image %q >/dev/null"
+			% tmpfile
+	) )
+end
+
+function storage_size()
+	local size = 0
+	if nixio.fs.access("/proc/mtd") then
+		for l in io.lines("/proc/mtd") do
+			local d, s, e, n = l:match('^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s+"([^%s]+)"')
+			if n == "linux" then
+				size = tonumber(s, 16)
+				break
+			end
+		end
+	elseif nixio.fs.access("/proc/partitions") then
+		for l in io.lines("/proc/partitions") do
+			local x, y, b, n = l:match('^%s*(%d+)%s+(%d+)%s+([^%s]+)%s+([^%s]+)')
+			if b and n and not n:match('[0-9]') then
+				size = tonumber(b) * 1024
+				break
+			end
+		end
+	end
+	return size
+end
+
+function image_checksum(tmpfile)
+	return (luci.sys.exec("md5sum %q" % tmpfile):match("^([^%s]+)"))
 end

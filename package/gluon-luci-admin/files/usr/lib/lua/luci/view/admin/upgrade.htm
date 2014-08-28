@@ -17,89 +17,39 @@ $Id$
 
 <h2>Firmware aktualisieren</h2>
 
-<% if step == 1 then %>
-	<% if supported then %>
-	<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
-	<p>
-		Hier kannst du ein manuelles Firmwareupdate durchführen.
-	</p>
-	<% if bad_image then %>
-	<p class="error">Die übermittelte Firmwaredatei kann nicht verwendet werden.</p>
-	<% end %>
-	<div>
-		<h3>Firmware image</h3>
-		<input type="hidden" name="step" value="2" />
-		<input type="file" size="30" name="image" />
-		<% if keepavail then -%>
-		<br/>
-		<input type="checkbox" name="keepcfg" value="1" checked="checked" />
-		<label for="keepcfg">Einstellungen beibehalten</label>
-		<% end -%>
-
-		<div class="cbi-page-actions right">
-			<input class="cbi-button cbi-button-apply" type="submit" value="Upload image" />
-		</div>
-	</div>
-	</form>
-	<% else %>
-		<p class="error">Auf diesem Gerät kann kein Upgrade durchgeführt werden.
-			Bitte führe das Upgrade manuell durch.</p>
-	<% end %>
-<% elseif step == 2 then %>
-	<p>
-			Die Firmwaredatei wurde übermittelt. Bitte vergleiche MD5-Checksumme
-			und Dateigröße und klicke anschließend auf "Fortfahren".
-	</p>
-
-	<% if flashsize > 0 and filesize > flashsize then %>
-	<p class="error">Die Firmware passt nicht in den Speicher des Gerätes.</p>
-	<% end %>
-
-	<p>
-		<ul>
-			<li>md5sum: <code><%=checksum%></code></li>
-			<li>Größe: <%
-				function byte_format(byte)
-					local suff = {"B", "KB", "MB", "GB", "TB"}
-					for i=1, 5 do
-						if byte > 1024 and i < 5 then
-							byte = byte / 1024
-						else
-							return string.format("%.2f %s", byte, suff[i])
-						end
-					end
-				end
-
-				write(byte_format(filesize))
-	
-				if flashsize > 0 then
-					write(luci.i18n.translatef(
-						" (%s available)",
-						w.byte_format(flashsize)
-					))
-				end
-			%></li>
-		</ul>
-	</p>
-	<div class="cbi-page-actions right">
-		<form style="display:inline">
-			<input type="hidden" name="step" value="3" />
-			<input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-			<input class="cbi-button cbi-button-apply" type="submit" value="Fortfahren" />	
-		</form>
-		<form style="display:inline">
-			<input type="hidden" name="step" value="1" />
-			<input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-			<input class="cbi-button cbi-button-reset" type="submit" value="Abbrechen" />
-		</form>
-	</div>
-<% elseif step == 3 then %>
-	<p>
-		Die Firmware wird jetzt aktualisiert.
-		<strong>UNTERBRICH AUF KEINEN FALL DIE STROMVERSORGUNG!</strong>
-		Dieser Vorgang wird einige Minuten dauern. Anschließend startet
-		das Gerät automatisch neu.
-	</p>
+<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
+<p>
+  Hier kannst du ein manuelles Firmwareupdate durchführen.
+</p>
+<% if bad_image then %>
+<p class="error">Die übermittelte Firmwaredatei kann nicht verwendet werden.</p>
 <% end %>
+<div class="cbi-section-node">
+  <div class="cbi-value">
+    <label class="cbi-value-title">
+      Firmware-Datei
+    </label>
+    <div class="cbi-value-field">
+      <input class="cbi-input-file" type="file" name="image" />
+    </div>
+  </div>
+
+  <div class="cbi-value cbi-value-last">
+    <label class="cbi-value-title">
+      Einstellungen beibehalten
+    </label>
+
+    <div class="cbi-value-field">
+      <input id="keepcfg" class="cbi-input-checkbox" type="checkbox" name="keepcfg" value="1" checked="checked" />
+      <label for="keepcfg"></label>
+    </div>
+  </div>
+</div>
+
+<div class="cbi-page-actions right">
+  <input type="hidden" name="step" value="2" />
+  <input class="cbi-button cbi-button-apply" type="submit" value="Upload image" />
+</div>
+</form>
 <%+footer%>
 
