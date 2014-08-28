@@ -6,6 +6,12 @@
 $(eval $(call GluonProfile,TLWR703))
 $(eval $(call GluonModel,TLWR703,tl-wr703n-v1-squashfs,tp-link-tl-wr703n-v1))
 
+ifeq ($(BROKEN),1)
+# TL-WR710N v1
+$(eval $(call GluonProfile,TLWR710))
+$(eval $(call GluonModel,TLWR710,tl-wr710n-v1-squashfs,tp-link-tl-wr710n-v1))
+endif
+
 # TL-WR740N v1, v3, v4
 $(eval $(call GluonProfile,TLWR740))
 $(eval $(call GluonModel,TLWR740,tl-wr740n-v1-squashfs,tp-link-tl-wr740n-nd-v1))
