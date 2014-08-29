@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tunneldigger
 PKG_VERSION:=0.3
-PKG_RELEASE:=4
+PKG_RELEASE:=5
 PKG_REV:=7b23f649db053c1cf624000be8b6b54eb7d683b8
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
@@ -38,6 +38,10 @@ define Package/tunneldigger/install
 	$(INSTALL_BIN) ./files/tunneldigger.init $(1)/etc/init.d/tunneldigger
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/config.default $(1)/etc/config/tunneldigger
+endef
+
+define Package/tunneldigger/conffiles
+/etc/config/tunneldigger
 endef
 
 $(eval $(call BuildPackage,tunneldigger))
