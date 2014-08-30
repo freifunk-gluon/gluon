@@ -11,10 +11,6 @@ else
 	HAS_LEGACY=
 fi
 
-
-# Temporary fix for broken upgrades (happened between 20140225 and 20140226, remove next week)
-if [ -f "$VERSION_DIR" ]; then rm "$VERSION_DIR"; fi
-
 mkdir -p "$VERSION_DIR"
 
 
