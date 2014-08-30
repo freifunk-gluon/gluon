@@ -42,6 +42,22 @@ will ensure all packages are rebuilt; this is what you normally want to do after
 will clean the entire tree, so the toolchain will be rebuilt as well, which is
 not necessary in most cases, and will take a while.
 
+
+Environment variables
+---------------------
+
+Gluon's build process can be controlled by various environment variables.
+
+GLUON_SITEDIR
+  Path to the site configuration. Defaults to ``site/``.
+
+GLUON_IMAGEDIR
+  Path where images will be stored. Defaults to ``images/``.
+
+GLUON_BUILDDIR
+  Working directory during build. Defaults to ``build/``.
+
+
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used:
 
 ::
@@ -51,5 +67,3 @@ So all in all, to update and rebuild a Gluon build tree, the following commands 
     make update
     make clean
     make
-
-
