@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+local c = uci.cursor()
+
+c:section('fastd', 'fastd', 'mesh_vpn',
+	  {
+		  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
+	  }
+)
+
+c:save('fastd')
+c:commit('fastd')
