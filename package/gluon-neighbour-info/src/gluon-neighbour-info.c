@@ -34,14 +34,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-/*
- * a destination address with interface identifier
- * a port
- * a requeststring
- * a timeout
- * a filter
- */
-
 void usage() {
   puts("Usage: gluon-neighbour-info [-h] [-s] -d <dest> -p <port> -i <if0> -r <request>");
   puts("  -p <int>         UDP port");
@@ -54,8 +46,6 @@ void usage() {
 
 int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse) {
   ssize_t ret;
-  struct sockaddr_in6 node_addr;
-  socklen_t nodelen;
   char buffer[8192];
 
   ret = sendto(sock, request, strlen(request), 0, (struct sockaddr *)client_addr, sizeof(struct sockaddr_in6));
@@ -65,8 +55,6 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
     exit(EXIT_FAILURE);
   }
 
-  nodelen = sizeof(client_addr);
-
   struct timeval tv;
   tv.tv_sec = 2;
   tv.tv_usec = 0;
@@ -75,7 +63,7 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
   }
 
   while (1) {
-    ret = recvfrom(sock, buffer, sizeof(buffer), 0, (struct sockaddr *)&node_addr, &nodelen);
+    ret = recv(sock, buffer, sizeof(buffer), 0);
     if (ret < 0)
       break;
 
