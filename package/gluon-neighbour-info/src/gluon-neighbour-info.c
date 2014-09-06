@@ -33,18 +33,52 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <time.h>
 
 void usage() {
-  puts("Usage: gluon-neighbour-info [-h] [-s] -d <dest> -p <port> -i <if0> -r <request>");
+  puts("Usage: gluon-neighbour-info [-h] [-s] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
   puts("  -p <int>         UDP port");
   puts("  -d <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
   puts("  -i <string>      interface, e.g. eth0 ");
   puts("  -r <string>      request, e.g. nodeinfo");
+  puts("  -t <sec>         timeout in seconds (default: 3)");
   puts("  -s               output as server-sent events");
   puts("  -h               this help\n");
 }
 
-int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse) {
+void getclock(struct timeval *tv) {
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  tv->tv_sec = ts.tv_sec;
+  tv->tv_usec = ts.tv_nsec / 1000;
+}
+
+/* Assumes a and b are normalized */
+void tv_subtract (struct timeval *r, struct timeval *a, struct timeval *b) {
+  r->tv_usec = a->tv_usec - b->tv_usec;
+  r->tv_sec = a->tv_sec - b->tv_sec;
+
+  if (r->tv_usec < 0) {
+    r->tv_usec += 1000000;
+    r->tv_sec -= 1;
+  }
+}
+
+ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, struct timeval *timeout, struct timeval *offset) {
+  struct timeval now, delta;
+  ssize_t ret;
+
+  setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, timeout, sizeof(*timeout));
+  ret = recv(socket, buffer, length, flags);
+
+  getclock(&now);
+  tv_subtract(&delta, &now, offset);
+  tv_subtract(timeout, timeout, &delta);
+
+  return ret;
+}
+
+int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse, int timeout) {
   ssize_t ret;
   char buffer[8192];
 
@@ -55,15 +89,15 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
     exit(EXIT_FAILURE);
   }
 
-  struct timeval tv;
-  tv.tv_sec = 2;
-  tv.tv_usec = 0;
-  if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
-      perror("Error");
-  }
+  struct timeval tv_timeout, tv_offset;
+  tv_timeout.tv_sec = timeout;
+  tv_timeout.tv_usec = 0;
+
+  getclock(&tv_offset);
 
   while (1) {
-    ret = recv(sock, buffer, sizeof(buffer), 0);
+    ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout, &tv_offset);
+
     if (ret < 0)
       break;
 
@@ -103,10 +137,11 @@ int main(int argc, char **argv) {
 
   int port_set = 0;
   int destination_set = 0;
+  int timeout = 3;
   bool sse = false;
 
   int c;
-  while ((c = getopt(argc, argv, "p:d:r:i:sh")) != -1)
+  while ((c = getopt(argc, argv, "p:d:r:i:t:sh")) != -1)
     switch (c) {
       case 'p':
         client_addr.sin6_port = htons(atoi(optarg));
@@ -127,6 +162,9 @@ int main(int argc, char **argv) {
       case 'r':
         request_string = optarg;
         break;
+      case 't':
+        timeout = atoi(optarg);
+        break;
       case 's':
         sse = true;
         break;
@@ -144,7 +182,7 @@ int main(int argc, char **argv) {
   if (sse)
     fputs("Content-Type: text/event-stream\n\n", stdout);
 
-  request(sock, &client_addr, request_string, sse);
+  request(sock, &client_addr, request_string, sse, timeout);
 
   if (sse)
     fputs("event: eot\ndata: null\n\n", stdout);
