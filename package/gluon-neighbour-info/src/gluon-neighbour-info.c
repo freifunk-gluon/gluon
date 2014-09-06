@@ -74,6 +74,8 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
 
     if (sse)
       fputs("\n\n", stdout);
+    else
+      fputs("\n", stdout);
 
     fflush(stdout);
   }
