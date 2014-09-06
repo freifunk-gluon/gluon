@@ -11,3 +11,4 @@ local function check_peer(k, _)
 end
 
 need_table('fastd_mesh_vpn.backbone.peers', check_peer)
+need_boolean('fastd_mesh_vpn.enabled', false)
