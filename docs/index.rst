@@ -34,6 +34,7 @@ Developer Documentation
    :maxdepth: 2
 
    dev/basics
+   dev/hardware
 
 Supported Devices
 -----------------
