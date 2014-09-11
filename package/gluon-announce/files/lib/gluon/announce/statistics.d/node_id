@@ -1,1 +1,1 @@
-return require('gluon.sysconfig').primary_mac:gsub(':', '')
+return require('gluon.util').node_id()

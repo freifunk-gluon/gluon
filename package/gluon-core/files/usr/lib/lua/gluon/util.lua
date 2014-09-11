@@ -25,6 +25,7 @@ end
 
 local os = os
 local string = string
+local require = require
 
 module 'gluon.util'
 
@@ -49,4 +50,9 @@ end
 
 function unlock(file)
 	exec('lock', '-u', file)
+end
+
+function node_id()
+  local sysconfig = require 'gluon.sysconfig'
+  return string.gsub(sysconfig.primary_mac, ':', '')
 end
