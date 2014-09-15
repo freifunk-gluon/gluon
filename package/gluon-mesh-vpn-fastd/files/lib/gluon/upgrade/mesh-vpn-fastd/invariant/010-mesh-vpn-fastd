@@ -1,10 +1,9 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site_config'
-local sysconfig = require 'gluon.sysconfig'
 local users = require 'gluon.users'
+local util = require 'gluon.util'
 
-local nixio = require 'nixio'
 local uci = require 'luci.model.uci'
 
 local c = uci.cursor()
@@ -64,18 +63,13 @@ c:save('fastd')
 c:commit('fastd')
 
 
-local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
-m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
-m4 = (tonumber(m4, 16)+1) % 0x100
-local vpnaddr = string.format('%02x:%s:%s:%02x:%s:%s', m1, m2, m3, m4, m5, m6)
-
 c:section('network', 'interface', 'mesh_vpn',
 	  {
 		  ifname = 'mesh-vpn',
 		  proto = 'batadv',
 		  mesh = 'bat0',
 		  mesh_no_rebroadcast = 1,
-		  macaddr = vpnaddr,
+		  macaddr = util.generate_mac(4, 0),
 	  }
 )
 

@@ -25,7 +25,11 @@ end
 
 local os = os
 local string = string
-local require = require
+local tonumber = tonumber
+
+local nixio = require 'nixio'
+local sysconfig = require 'gluon.sysconfig'
+
 
 module 'gluon.util'
 
@@ -53,6 +57,23 @@ function unlock(file)
 end
 
 function node_id()
-  local sysconfig = require 'gluon.sysconfig'
   return string.gsub(sysconfig.primary_mac, ':', '')
+end
+
+-- Generates a (hopefully) unique MAC address
+-- The first parameter defines the function and the second
+-- parameter an ID to add to the MAC address
+-- Functions and IDs defined so far:
+-- (1, 0): WAN (for mesh-on-WAN)
+-- (1, 1): LAN (for mesh-on-LAN)
+-- (2, X): client interface for radioX
+-- (3, X): adhoc interface for radioX
+-- (4, 0): mesh VPN
+function generate_mac(f, i)
+  local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
+  m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
+  m2 = (tonumber(m2, 16)+f) % 0x100
+  m3 = (tonumber(m3, 16)+i) % 0x100
+
+  return string.format('%02x:%02x:%02x:%s:%s:%s', m1, m2, m3, m4, m5, m6)
 end
