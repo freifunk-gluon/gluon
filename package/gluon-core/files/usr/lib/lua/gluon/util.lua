@@ -66,8 +66,8 @@ end
 -- Functions and IDs defined so far:
 -- (1, 0): WAN (for mesh-on-WAN)
 -- (1, 1): LAN (for mesh-on-LAN)
--- (2, X): client interface for radioX
--- (3, X): adhoc interface for radioX
+-- (2, n): client interface for the n'th radio
+-- (3, n): adhoc interface for n'th radio
 -- (4, 0): mesh VPN
 function generate_mac(f, i)
   local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
