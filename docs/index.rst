@@ -26,6 +26,7 @@ Features
    features/private-wlan
    features/mesh-on-wan
    features/announce
+   features/authorized-keys
 
 Developer Documentation
 -----------------------
