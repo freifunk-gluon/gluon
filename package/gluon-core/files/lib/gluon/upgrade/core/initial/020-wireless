@@ -1,14 +1,7 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-. /lib/functions.sh
+local uci = require('luci.model.uci').cursor()
 
-config_load wireless
-
-delete_iface() {
-	local iface="$1"
-
-	uci_remove wireless "$iface"
-}
-
-config_foreach delete_iface 'wifi-iface'
-uci_commit wireless
+uci:delete_all('wireless', 'wifi-iface')
+uci:save('wireless')
+uci:commit('wireless')
