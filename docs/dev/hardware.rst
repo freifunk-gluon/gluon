@@ -45,7 +45,7 @@ The final image name must be the same that is returned by the following command.
     lua -e 'print(require("platform_info").get_image_name())'
 
 
-This is so the autoupdater can work. On targets with aren't supported by the autoupdater,
+This is so the autoupdater can work. On targets which aren't supported by the autoupdater,
 ``require("platform_info").get_image_name()`` will just return ``nil`` and the final image name
 may be defined arbitrarily.
 
