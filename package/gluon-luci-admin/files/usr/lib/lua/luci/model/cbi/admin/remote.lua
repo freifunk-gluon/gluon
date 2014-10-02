@@ -51,7 +51,9 @@ if fs.access("/etc/config/dropbear") then
   end
 
   function keys.remove(self, section)
-    fs.remove("/etc/dropbear/authorized_keys")
+    if keys:formvalue("_keys") then
+      fs.remove("/etc/dropbear/authorized_keys")
+    end
   end
 end
 
