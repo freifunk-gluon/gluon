@@ -217,7 +217,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
 * `site-ffhl <https://github.com/freifunk-gluon/site-ffhl>`_ (Lübeck)
 * `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
-* `site-ffmz <https://github.com/Freifunk-Mainz/site-ffmz>`_ (Mainz & Wiesbaden)
+* `site-ffmz <https://github.com/freifunk-mwu/site-ffmz>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
 * `siteconf-ffol <https://ticket.freifunk-ol.de/projects/siteconf-ffol/repository>`_ (Oldenburg)
 * `site-ffpb <https://git.c3pb.de/freifunk-pb/site-ffpb>`_ (Paderborn)
