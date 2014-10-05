@@ -117,3 +117,7 @@ $(eval $(call GluonModel,WRT160NL,wrt160nl-squashfs,linksys-wrt160nl))
 # WZR-HP-G450H
 $(eval $(call GluonProfile,WZRHPG450H))
 $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h-squashfs,buffalo-wzr-hp-g450h))
+
+# WZR-HP-AG300H
+$(eval $(call GluonProfile,WZRHPAG300H))
+$(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h-squashfs,buffalo-wzr-hp-ag300h))
