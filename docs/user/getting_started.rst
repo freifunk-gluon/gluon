@@ -1,7 +1,18 @@
 Getting Started
 ===============
 
-To build Gluon, after checking out the repository change to the source root directory
+To build Gluon, first check out the repository:
+
+::
+
+    git clone git://github.com/freifunk-gluon gluon              # Get the gluon repo
+
+after that change to the source root directory:
+
+::
+
+    cd gluon                                                     # go to the recently created directory
+
 to  perform the following commands:
 
 ::
@@ -10,8 +21,9 @@ to  perform the following commands:
     make update                                                  # Get other repositories used by Gluon
     make                                                         # Build Gluon
 
-When calling make, the OpenWRT build environment is prepared/updated. To rebuild
-the images only, just use:
+When calling make, the OpenWRT build environment is prepared/updated.
+In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
+To rebuild the images only, just use:
 
 ::
 
