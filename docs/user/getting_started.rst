@@ -8,9 +8,8 @@ The versions of gluon are managed with tags and branches. Every tag is a stable 
 
 ::
 
- git clone https://github.com/freifunk-gluon/gluon.git gluon
+ git clone -b v2014.3 https://github.com/freifunk-gluon/gluon.git gluon
  cd gluon
- git checkout v2014.3
 
 Please keep in mind that you need the appropriate site configuration for that gluon version.
 
