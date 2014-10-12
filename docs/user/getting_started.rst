@@ -1,8 +1,23 @@
 Getting Started
 ===============
 
-To build Gluon, after checking out the repository change to the source root directory
-to  perform the following commands:
+Selecting the right version
+---------------------------
+
+The versions of gluon are managed with tags and branches. Every tag is a stable release (like v2014.2 or v2014.3.1), every branch is a development branch, where 2014.3.x is a branch for 2014.3 bugfix releases and master is the unstable branch for the upcoming release. Branches should be used for development purposes, while tags can be used for productive releases. To check out a tag do:
+
+::
+
+ git clone https://github.com/freifunk-gluon/gluon.git gluon
+ cd gluon
+ git checkout v2014.3
+
+Please keep in mind that you need the appropriate site configuration for that gluon version.
+
+Building the image
+------------------
+
+To build Gluon, after checking out the repository change to the source root directory as shown above and perform the following commands:
 
 ::
 
