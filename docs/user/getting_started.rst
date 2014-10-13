@@ -28,11 +28,12 @@ Building the image
 
 .. _Git identity: http://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup#Your-Identity
 
-To build Gluon, first check out the repository:
+To build Gluon, first check out the repository. Replace *RELEASE* with the
+version you'd like to checkout, e.g. *v2014.3*.
 
 ::
 
-    git clone https://github.com/freifunk-gluon/gluon.git gluon -b v2014.3 
+    git clone https://github.com/freifunk-gluon/gluon.git gluon -b RELEASE
 
 This command will create a directory named *gluon/*.
 It might also tell a scary message about being in a *detached state*.
