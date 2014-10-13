@@ -4,29 +4,75 @@ Getting Started
 Selecting the right version
 ---------------------------
 
-The versions of gluon are managed with tags and branches. Every tag is a stable release (like v2014.2 or v2014.3.1), every branch is a development branch, where 2014.3.x is a branch for 2014.3 bugfix releases and master is the unstable branch for the upcoming release. Branches should be used for development purposes, while tags can be used for productive releases. To check out a tag do:
+Gluon's releases are managed using `Git tags`_. If you're a community getting
+started with Gluon we recommend to use the latest stable release if Gluon.
 
-::
+Take a look at the `list of gluon releases`_ and notice the latest release,
+e.g. *v2014.3*.
 
- git clone https://github.com/freifunk-gluon/gluon.git gluon
- cd gluon
- git checkout v2014.3
+Please keep in mind that a matching site configuration for your community
+is required. Due to new features being added (or sometimes being removed)
+the format of the site configuration changes slightly between releases.
 
-Please keep in mind that you need the appropriate site configuration for that gluon version.
+Recent releases (starting with *v2014.3.1*) will come with an example
+configuration located in *docs/site-example/*.
+
+.. _Git tags: http://git-scm.com/book/en/Git-Basics-Tagging
+.. _list of gluon releases: https://github.com/freifunk-gluon/gluon/releases
 
 Building the image
 ------------------
 
-To build Gluon, after checking out the repository change to the source root directory as shown above and perform the following commands:
+.. note:: Make sure you have configured your `Git identity`_.
+          If you neglect this, you'll get strange error messages.
+
+.. _Git identity: http://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup#Your-Identity
+
+To build Gluon, first check out the repository:
 
 ::
 
-    git clone git://github.com/freifunk-gluon/site-ffhl.git site # Get the Freifunk Lübeck site repository - or use your own!
-    make update                                                  # Get other repositories used by Gluon
-    make                                                         # Build Gluon
+    git clone https://github.com/freifunk-gluon/gluon.git gluon -b v2014.3 
 
-When calling make, the OpenWRT build environment is prepared/updated. To rebuild
-the images only, just use:
+This command will create a directory named *gluon/*.
+It might also tell a scary message about being in a *detached state*.
+**Don't panic!** Everything's fine.
+Now, enter the freshly created directory:
+
+::
+
+    cd gluon
+
+It's time to add (or create) your site configuration.
+So let's create the directory *site/*:
+
+::
+
+    mkdir site
+    cd site
+
+Copy *site.conf* and *site.mk* from *docs/site-example*:
+
+::
+
+    cp ../docs/site-example/site.conf .
+    cp ../docs/site-example/site.mk .
+
+.. note:: On **v2014.3**, take both files from
+          https://github.com/freifunk-gluon/gluon/tree/2014.3.x/docs/site-example
+
+Edit both files to match your community, then go back to the top-level Gluon
+directory and build Gluon:
+
+::
+
+    cd ..
+    make update  # Get other repositories used by Gluon
+    make         # Build Gluon
+
+When calling make, the OpenWRT build environment is prepared/updated.
+In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
+To rebuild the images only, just use:
 
 ::
 
