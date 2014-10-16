@@ -314,12 +314,25 @@ package_install: FORCE
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
+ifeq ($(GLUON_OPKG_CONFIG),1)
+include $(INCLUDE_DIR)/version.mk
+endif
+
+opkg_config: FORCE
+	cp $(GLUON_OPENWRTDIR)/package/system/opkg/files/opkg.conf $(TARGET_DIR)/etc/opkg.conf
+	for d in base luci packages routing telephony management oldpackages; do \
+		echo "src/gz %n_$$d %U/$$d" >> $(TARGET_DIR)/etc/opkg.conf; \
+	done
+	$(VERSION_SED) $(TARGET_DIR)/etc/opkg.conf
+
+
 image: FORCE
 	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
 	+$(GLUONMAKE) package_install
+	+$(GLUONMAKE) opkg_config GLUON_OPKG_CONFIG=1
 
 	$(call Image/mkfs/prepare)
 	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX=gluon \
