@@ -1,0 +1,27 @@
+Gluon 2014.3.1
+==============
+
+This is a bugfix release.
+
+Bug fixes
+~~~~~~~~~
+
+* a bug (zombie processes) in gluon-announced has been fixed
+* fastd peers removed from site.conf will be removed from fastd's config
+* mesh-vpn-fastd can now be enabled by default from site.conf
+* expertmode: setting a password will not remove SSH keys anymore
+* expertmode: WAN can be configured statically (instead of DHCP/RA)
+
+Minor Changes
+~~~~~~~~~~~~~
+
+* alfred has been updated to 2014.3.0
+* OpenWrt has been updated
+
+Site changes
+~~~~~~~~~~~~
+
+* ``site.conf``
+
+  - New option ``fastd_mesh_vpn.enabled`` (boolean, optional).
+

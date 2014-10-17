@@ -81,6 +81,7 @@ Releases
    :maxdepth: 1
 
    releases/v2014.4
+   releases/v2014.3.1
    releases/v2014.3
 
 
