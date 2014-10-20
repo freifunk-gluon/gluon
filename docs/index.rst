@@ -78,6 +78,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2014.3.1
    releases/v2014.3
 
 

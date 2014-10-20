@@ -1,0 +1,40 @@
+Gluon 2014.3.1
+==============
+
+This is a bugfix release.
+
+Bugfixes
+~~~~~~~~
+
+* gluon-announced zombie process bug
+
+  gluon-announced was creating zombie processes when answering requests, causing issues
+  with the new status page which is currently in development.
+
+* fastd peers removed from ``site.conf`` weren't removed correctly from the fastd configuration
+  on firmware upgrades
+* Expert Mode: setting a password will not remove SSH keys anymore
+* alfred has been updated to 2014.3.0
+
+  We hope this solves the alfred stability issues noted by several people.
+
+* ``gluon-ebtables-filter-ra-dhcp`` and ``gluon-ebtables-filter-multicast`` have been fixed
+  to allow DHCPv6 to work
+
+* Another ath9k patch has been added, which might further improve WLAN stability and performance
+
+New features
+~~~~~~~~~~~~
+
+* Support for static WAN setups instead of (DHCP/Router Advertisement) has been added;
+  configuration is possible on the port config page of the Expert Mode.
+
+Site changes
+~~~~~~~~~~~~
+
+* ``site.conf``
+
+  - The new boolean option ``fastd_mesh_vpn.enabled`` allows
+    enabling the mesh VPN by default. This value is optional;
+    if it isn't specified, the mesh VPN will be disabled.
+
