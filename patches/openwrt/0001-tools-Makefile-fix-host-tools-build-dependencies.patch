@@ -3,10 +3,10 @@ Date: Sat, 26 Jul 2014 06:10:23 +0200
 Subject: tools/Makefile: fix host tools build dependencies
 
 diff --git a/tools/Makefile b/tools/Makefile
-index 9595d62..b8eef3f 100644
+index 13bb028..137ad61 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
-@@ -96,10 +96,16 @@ define PrepareStaging
+@@ -97,10 +97,16 @@ define PrepareStaging
  endef
  
  # preparatory work
@@ -23,7 +23,7 @@ index 9595d62..b8eef3f 100644
  
  $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  	$(call PrepareStaging,$(STAGING_DIR_HOST))
-@@ -111,7 +117,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
+@@ -112,7 +118,7 @@ $(STAGING_DIR_HOST)/.prepared: $(TMP_DIR)/.build
  
  
  define PrepareCommand
@@ -32,7 +32,7 @@ index 9595d62..b8eef3f 100644
  	@mkdir -p "$$(dir $$@)"; rm -f "$$@"
  	@export FILE="$$$$(which $(2) 2>/dev/null | grep -v 'not found' | head -n1)"; [ -n "$$$$FILE" ] || { \
  		echo "Command $(1) not found."; false; \
-@@ -120,7 +126,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
+@@ -121,7 +127,7 @@ $(STAGING_DIR_HOST)/bin/$(1): $(STAGING_DIR)/.prepared
  endef
  endif
  
@@ -41,7 +41,7 @@ index 9595d62..b8eef3f 100644
  	@rm -f $@
  	@if stat --version > /dev/null 2>&1; then \
  		ln -s `which stat` $@; \
-@@ -144,8 +150,8 @@ $(eval $(call PrepareCommand,tar,gtar tar))
+@@ -145,8 +151,8 @@ $(eval $(call PrepareCommand,tar,gtar tar))
  $(eval $(call PrepareCommand,diff,gdiff diff))
  
  $(curdir)/cmddeps = $(patsubst %,$(STAGING_DIR_HOST)/bin/%,md5sum cp stat seq python awk getopt grep tar diff)
