@@ -45,7 +45,7 @@ The final image name must be the same that is returned by the following command.
     lua -e 'print(require("platform_info").get_image_name())'
 
 
-This is so the autoupdater can work. On targets which aren't supported by the autoupdater,
+This is just for the autoupdater can work. The command has to be executed _on_ the target (eg. the hardware router with a flashed image). So you'll first have to build an image with a guessed name, and afterwards build a new, correctly named image. On targets which aren't supported by the autoupdater,
 ``require("platform_info").get_image_name()`` will just return ``nil`` and the final image name
 may be defined arbitrarily.
 
