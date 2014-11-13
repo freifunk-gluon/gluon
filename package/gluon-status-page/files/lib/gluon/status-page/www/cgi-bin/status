@@ -10,6 +10,10 @@ local hostname = sys.hostname()
 local model = platform_info.get_model()
 local release = util.trim(fs.readfile("/lib/gluon/release") or "")
 
+function escape_html(s)
+  return (s:gsub('&', '&amp;'):gsub('<', '&lt;'):gsub('>', '&gt;'):gsub('"', '&quot;'))
+end
+
 function neighbours(ifname)
   local info = util.exec("gluon-neighbour-info -d ff02::2:1001 -p 1001 -r nodeinfo -t 3 -i " .. ifname)
   local macs = {}
@@ -32,20 +36,20 @@ io.write("<!DOCTYPE html>\n")
 io.write("<html>")
 io.write("<head>")
 io.write("<script src=\"/status.js\"></script>")
-io.write("<title>" .. hostname .. "</title>")
+io.write("<title>" .. escape_html(hostname) .. "</title>")
 io.write("</head>")
 io.write("<body>")
 
-io.write("<h1>" .. hostname .. "</h1>")
+io.write("<h1>" .. escape_html(hostname) .. "</h1>")
 io.write("<pre>")
 
-io.write("Model: " .. model .. "\n")
-io.write("Firmware release: " .. release .. "\n\n")
+io.write("Model: " .. escape_html(model) .. "\n")
+io.write("Firmware release: " .. escape_html(release) .. "\n\n")
 
-io.write(util.trim(sys.exec("uptime | sed 's/^ \+//'")) .. "\n\n")
-io.write(sys.exec("ip address show dev br-client") .. "\n")
-io.write(sys.exec("free -m") .. "\n")
-io.write(sys.exec("df /rom /overlay"))
+io.write(escape_html(util.trim(sys.exec("uptime | sed 's/^ \+//'"))) .. "\n\n")
+io.write(escape_html(sys.exec("ip address show dev br-client")) .. "\n")
+io.write(escape_html(sys.exec("free -m")) .. "\n")
+io.write(escape_html(sys.exec("df /rom /overlay")))
 io.write("</pre>")
 
 io.write("<h2>Neighbours</h2>")
@@ -53,24 +57,23 @@ io.write("<h2>Neighbours</h2>")
 local interfaces = util.split(util.trim(util.exec("iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2")))
 
 for _, ifname in ipairs(interfaces) do
-  io.write("<h3>" .. ifname .. "</h3>")
+  io.write("<h3>" .. escape_html(ifname) .. "</h3>")
   io.write("<pre>")
 
-  io.write(sys.exec("iw dev " .. ifname .. " link") .. "\n")
+  io.write(escape_html(sys.exec("iw dev " .. ifname .. " link")) .. "\n")
 
   for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
     local mac = line:match("^Station (.*) %(on ")
     if mac then
-      io.write("Station <a id=\"" .. ifname .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. ifname .. ")\n")
+      io.write("Station <a id=\"" .. escape_html(ifname) .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. escape_html(ifname) .. ")\n")
     else
-      io.write(line .. "\n")
+      io.write(escape_html(line) .. "\n")
     end
   end
 
   io.write("</pre>")
 end
 
-io.write("</body>")
 io.write("<script>")
 for _, ifname in ipairs(interfaces) do
   local macs = neighbours(ifname)
@@ -86,9 +89,11 @@ for _, ifname in ipairs(interfaces) do
     end
 
     if ip and hostname then
-      io.write("update_node(\"" .. ifname .. "-" .. mac .. "\", \"" .. ip .. "\", \"" .. hostname .. "\");")
+      io.write("update_node(\"" .. escape_html(ifname) .. "-" .. mac .. "\", \"" .. escape_html(ip) .. "\", \"" .. escape_html(hostname) .. "\");")
     end
   end
 end
+
 io.write("</script>")
+io.write("</body>")
 io.write("</html>")
