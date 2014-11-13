@@ -1,67 +1,99 @@
-#!/bin/sh
+#!/usr/bin/lua
 
-model="$(lua -e 'print(require("platform_info").get_model())')"
+local util = require("luci.util")
+local fs = require("luci.fs")
+local sys = require("luci.sys")
+local json = require("luci.json")
+local platform_info = require("platform_info")
 
-escape_html() {
-  sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
-}
+local hostname = sys.hostname()
+local model = platform_info.get_model()
+local release = util.trim(fs.readfile("/lib/gluon/release") or "")
 
-linknodes() {
-  PREFIX=$(uci get network.local_node_route6.target | cut -d: -f 1-4)
-  sed 's#\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\):\([0-9a-f]\{2\}\)#<a href="http://['$PREFIX':\1\2:\3ff:fe\4:\5\6]/">&</a>#g'
-}
+function escape_html(s)
+  return (s:gsub('&', '&amp;'):gsub('<', '&lt;'):gsub('>', '&gt;'):gsub('"', '&quot;'))
+end
 
-echo Content-type: text/html
-echo ""
+function neighbours(ifname)
+  local info = util.exec("gluon-neighbour-info -d ff02::2:1001 -p 1001 -r nodeinfo -t 3 -i " .. ifname)
+  local macs = {}
+  for _, line in ipairs(util.split(info)) do
+    local data = json.decode(line)
+    if data then
+      if data["network"] and data["network"]["mesh_interfaces"] then
+        for _, mac in ipairs(data["network"]["mesh_interfaces"]) do
+          macs[mac] = data
+        end
+      end
+    end
+  end
 
-cat <<EOF
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>$(cat /proc/sys/kernel/hostname)</title>
-  </head>
-  <body>
-EOF
+  return macs
+end
 
-echo "<h1>$(cat /proc/sys/kernel/hostname)</h1>"
+io.write("Content-type: text/html\n\n")
+io.write("<!DOCTYPE html>\n")
+io.write("<html>")
+io.write("<head>")
+io.write("<script src=\"/status.js\"></script>")
+io.write("<title>" .. escape_html(hostname) .. "</title>")
+io.write("</head>")
+io.write("<body>")
 
-echo "<pre>"
+io.write("<h1>" .. escape_html(hostname) .. "</h1>")
+io.write("<pre>")
 
-echo "Model: $model" | escape_html
-echo "Firmware release: $(cat /lib/gluon/release | escape_html)"
-echo
+io.write("Model: " .. escape_html(model) .. "\n")
+io.write("Firmware release: " .. escape_html(release) .. "\n\n")
 
-uptime | sed 's/^ \+//' | escape_html
-echo
+io.write(escape_html(util.trim(sys.exec("uptime | sed 's/^ \+//'"))) .. "\n\n")
+io.write(escape_html(sys.exec("ip address show dev br-client")) .. "\n")
+io.write(escape_html(sys.exec("free -m")) .. "\n")
+io.write(escape_html(sys.exec("df /rom /overlay")))
+io.write("</pre>")
 
-ip address show dev br-client | escape_html
-echo
+io.write("<h2>Neighbours</h2>")
 
-free -m | escape_html
-echo
+local interfaces = util.split(util.trim(util.exec("iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2")))
 
-df /rom /overlay | escape_html
+for _, ifname in ipairs(interfaces) do
+  io.write("<h3>" .. escape_html(ifname) .. "</h3>")
+  io.write("<pre>")
 
-echo "</pre>"
+  io.write(escape_html(sys.exec("iw dev " .. ifname .. " link")) .. "\n")
 
-echo "<h2>Neighbours</h2>"
+  for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
+    local mac = line:match("^Station (.*) %(on ")
+    if mac then
+      io.write("Station <a id=\"" .. escape_html(ifname) .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. escape_html(ifname) .. ")\n")
+    else
+      io.write(escape_html(line) .. "\n")
+    end
+  end
 
+  io.write("</pre>")
+end
 
-iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2 | while read if
-do
-  echo "<h3>$if</h3>"
-  echo "<pre>"
+io.write("<script>")
+for _, ifname in ipairs(interfaces) do
+  local macs = neighbours(ifname)
+  for mac, node in pairs(macs) do
+    local hostname = node["hostname"]
+    local ip
+    if node["network"] and node["network"]["addresses"] then
+      for _, myip in ipairs(node["network"]["addresses"]) do
+        if ip == nil and myip:sub(1, 5) ~= "fe80:" then
+          ip = myip
+        end
+      end
+    end
 
-  iw dev $if link | escape_html
+    if ip and hostname then
+      io.write("update_node(\"" .. escape_html(ifname) .. "-" .. mac .. "\", \"" .. escape_html(ip) .. "\", \"" .. escape_html(hostname) .. "\");")
+    end
+  end
+end
 
-  echo
-
-  iw dev $if station dump | escape_html | linknodes
-
-  echo "</pre>"
-done
-
-cat <<EOF
-  </body>
-</html>
-EOF
+io.write("</script>")
+io.write("</body>")
+io.write("</html>")

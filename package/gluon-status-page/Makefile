@@ -12,7 +12,7 @@ define Package/gluon-status-page
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Adds a status page showing information about the node.
-  DEPENDS:=+gluon-core +uhttpd
+  DEPENDS:=+gluon-core +gluon-neighbour-info +uhttpd
 endef
 
 define Package/gluon-status-page/description
