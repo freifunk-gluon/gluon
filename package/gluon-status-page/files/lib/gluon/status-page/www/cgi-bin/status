@@ -2,8 +2,10 @@
 
 local util = require("luci.util")
 local fs = require("luci.fs")
+local ltn12 = require 'luci.ltn12'
 local sys = require("luci.sys")
 local json = require("luci.json")
+local nixio = require 'nixio'
 local platform_info = require("platform_info")
 
 local hostname = sys.hostname()
@@ -73,6 +75,65 @@ for _, ifname in ipairs(interfaces) do
 
   io.write("</pre>")
 end
+
+local err, fastd_status = pcall(
+  function()
+    local fastd_sock = nixio.socket('unix', 'stream')
+    assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
+
+    -- Stop as soon as we see an empty chunk
+    local function guard_source(src)
+      return function()
+	local chunk, err = src()
+	if not chunk then return nil, err end
+	if chunk:len() == 0 then return nil end
+	return chunk
+      end
+    end
+
+    source = guard_source(ltn12.source.file(fastd_sock))
+    decoder = json.Decoder()
+    ltn12.pump.all(source, decoder:sink())
+    fastd_sock:close()
+
+    return decoder:get()
+  end
+)
+
+io.write("<h2>VPN status</h2>")
+io.write("<pre>")
+
+if fastd_status then
+  io.write(string.format("fastd running for %.3f seconds\n", fastd_status.uptime/1000))
+
+  local peers = 0
+  local connections = 0
+
+  for key, peer in pairs(fastd_status.peers) do
+    peers = peers+1
+
+    if peer.connection then
+      connections = connections+1
+    end
+  end
+
+  io.write(string.format("There are %i peers configured, of which %i are connected:\n\n", peers, connections))
+
+  for key, peer in pairs(fastd_status.peers) do
+    io.write(string.format("%s: ", escape_html(peer.name)))
+
+    if peer.connection then
+      io.write(string.format("connected for %.3f seconds\n", peer.connection.established/1000))
+    else
+      io.write("not connected\n")
+    end
+  end
+
+else
+  io.write("fastd not running")
+end
+
+io.write("</pre>")
 
 io.write("<script>")
 for _, ifname in ipairs(interfaces) do
