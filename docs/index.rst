@@ -36,6 +36,7 @@ Developer Documentation
 
    dev/basics
    dev/hardware
+   dev/configmode
 
 Supported Devices
 -----------------
