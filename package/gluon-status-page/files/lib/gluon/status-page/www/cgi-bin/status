@@ -76,26 +76,13 @@ for _, ifname in ipairs(interfaces) do
   io.write("</pre>")
 end
 
-local err, fastd_status = pcall(
+local stat, fastd_status = pcall(
   function()
     local fastd_sock = nixio.socket('unix', 'stream')
     assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
 
-    -- Stop as soon as we see an empty chunk
-    local function guard_source(src)
-      return function()
-	local chunk, err = src()
-	if not chunk then return nil, err end
-	if chunk:len() == 0 then return nil end
-	return chunk
-      end
-    end
-
-    source = guard_source(ltn12.source.file(fastd_sock))
     decoder = json.Decoder()
-    ltn12.pump.all(source, decoder:sink())
-    fastd_sock:close()
-
+    ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
     return decoder:get()
   end
 )
@@ -103,7 +90,7 @@ local err, fastd_status = pcall(
 io.write("<h2>VPN status</h2>")
 io.write("<pre>")
 
-if fastd_status then
+if stat then
   io.write(string.format("fastd running for %.3f seconds\n", fastd_status.uptime/1000))
 
   local peers = 0
