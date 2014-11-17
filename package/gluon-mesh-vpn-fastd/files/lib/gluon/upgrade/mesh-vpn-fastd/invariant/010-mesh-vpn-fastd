@@ -26,6 +26,7 @@ c:section('fastd', 'fastd', 'mesh_vpn',
 		  secure_handshakes = '1',
 		  method = site.fastd_mesh_vpn.methods,
 		  packet_mark = 1,
+		  status_socket = '/var/run/fastd.mesh_vpn.socket',
 	  }
 )
 c:delete('fastd', 'mesh_vpn', 'user')
