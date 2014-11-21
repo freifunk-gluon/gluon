@@ -131,8 +131,8 @@ GLUON_$(1)_MODELS :=
 endef
 
 define GluonModel
-GLUON_$(1)_MODELS += $(2)
-GLUON_$(1)_MODEL_$(2) := $(3)
+GLUON_$(1)_MODELS += $(3)
+GLUON_$(1)_MODEL_$(3) := $(2)
 endef
 
 
@@ -339,11 +339,11 @@ image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
-		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
+		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model).bin && \
+		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade.bin && \
 		\
-		cp $(BIN_DIR)/gluon-$(model)-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model)).bin && \
-		cp $(BIN_DIR)/gluon-$(model)-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin && \
+		cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model).bin && \
+		cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade.bin && \
 	) :
 
 image/%: $(gluon_prepared_stamp)
@@ -363,10 +363,10 @@ manifest: FORCE
 		echo && \
 		($(foreach profile,$(PROFILES), \
 			$(foreach model,$(GLUON_$(profile)_MODELS), \
-				for file in gluon-*-'$(GLUON_$(profile)_MODEL_$(model))-sysupgrade.bin'; do \
+				for file in gluon-*-'$(model)-sysupgrade.bin'; do \
 					[ -e "$$file" ] && echo \
-						'$(GLUON_$(profile)_MODEL_$(model))' \
-						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(GLUON_$(profile)_MODEL_$(model)))-sysupgrade\.bin$$/\1/p')" \
+						'$(model)' \
+						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(model))-sysupgrade\.bin$$/\1/p')" \
 						"$$($(SHA512SUM) "$$file")" \
 						"$$file" && break; \
 				done; \
