@@ -25,7 +25,7 @@ local lan_ifname = uci:get('network', 'lan', 'ifname')
 local wan_ifname = uci:get('network', 'wan', 'ifname')
 
 
-if platform.match('ar71xx', 'generic', {'nanostation-m'}) then
+if platform.match('ar71xx', 'generic', {'nanostation-m', 'cpe510'}) then
    lan_ifname, wan_ifname = wan_ifname, lan_ifname
 end
 
