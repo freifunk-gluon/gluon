@@ -1,0 +1,107 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 6 Aug 2014 19:12:00 +0200
+Subject: procd: add support for alternative rc.d directories
+
+diff --git a/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
+new file mode 100644
+index 0000000..bc24342
+--- /dev/null
++++ b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
+@@ -0,0 +1,97 @@
++From 03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d Mon Sep 17 00:00:00 2001
++Message-Id: <03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d.1407329621.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Wed, 6 Aug 2014 14:51:49 +0200
++Subject: [PATCH] Add support for alternative rc.d directories
++
++---
++ initd/preinit.c | 38 ++++++++++++++++++++++++++++++++++++++
++ rcS.c           |  2 +-
++ 2 files changed, 39 insertions(+), 1 deletion(-)
++
++diff --git a/initd/preinit.c b/initd/preinit.c
++index fb94527..8b832a7 100644
++--- a/initd/preinit.c
+++++ b/initd/preinit.c
++@@ -12,6 +12,8 @@
++  * GNU General Public License for more details.
++  */
++ 
+++#define _GNU_SOURCE
+++
++ #include <sys/stat.h>
++ #include <sys/types.h>
++ #include <sys/mount.h>
++@@ -46,6 +48,35 @@ check_dbglvl(void)
++ 		debug = lvl;
++ }
++ 
+++static char*
+++get_rc_d(void)
+++{
+++	size_t n = 0;
+++	ssize_t len;
+++	char *ret = NULL;
+++
+++	FILE *fp = fopen("/tmp/rc_d_path", "r");
+++
+++	if (!fp)
+++		return NULL;
+++
+++	len = getline(&ret, &n, fp);
+++
+++	fclose(fp);
+++
+++	unlink("/tmp/rc_d_path");
+++
+++	if (len <= 0) {
+++		free(ret);
+++		return NULL;
+++	}
+++
+++	if (ret[len-1] == '\n')
+++		ret[len-1] = 0;
+++
+++	return ret;
+++}
+++
++ static void
++ spawn_procd(struct uloop_process *proc, int ret)
++ {
++@@ -53,6 +84,7 @@ spawn_procd(struct uloop_process *proc, int ret)
++ 	char *argv[] = { "/sbin/procd", NULL};
++ 	struct stat s;
++ 	char dbg[2];
+++	char *rc_d_path;
++ 
++ 	if (plugd_proc.pid > 0)
++ 		kill(plugd_proc.pid, SIGKILL);
++@@ -72,6 +104,12 @@ spawn_procd(struct uloop_process *proc, int ret)
++ 		setenv("DBGLVL", dbg, 1);
++ 	}
++ 
+++	rc_d_path = get_rc_d();
+++	if (rc_d_path) {
+++		setenv("RC_D_PATH", rc_d_path, 1);
+++		free(rc_d_path);
+++	}
+++
++ 	execvp(argv[0], argv);
++ }
++ 
++diff --git a/rcS.c b/rcS.c
++index 0e1b0ba..1b00831 100644
++--- a/rcS.c
+++++ b/rcS.c
++@@ -150,7 +150,7 @@ int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
++ 	q.empty_cb = q_empty;
++ 	q.max_running_tasks = 1;
++ 
++-	return _rc(&q, "/etc/rc.d", pattern, "*", param);
+++	return _rc(&q, getenv("RC_D_PATH") ?: "/etc/rc.d", pattern, "*", param);
++ }
++ 
++ int rc(const char *file, char *param)
++-- 
++2.0.4
++

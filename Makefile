@@ -121,12 +121,11 @@ PROFILE_PACKAGES :=
 define Profile
   $(eval $(call Profile/Default))
   $(eval $(call Profile/$(1)))
-  $(1)_PACKAGES := $(PACKAGES)
 endef
 
 define GluonProfile
 PROFILES += $(1)
-PROFILE_PACKAGES += $(filter-out -%,$($(1)_PACKAGES) $(2) $(GLUON_$(1)_SITE_PACKAGES))
+PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 GLUON_$(1)_MODELS :=
 endef
@@ -153,8 +152,9 @@ include $(INCLUDE_DIR)/target.mk
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
-package/lua/host/install: tools/sed/install
-gluon-tools: package/lua/host/install
+gluon-tools: FORCE
+	+$(GLUONMAKE_EARLY) tools/sed/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install
 
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
@@ -187,7 +187,7 @@ prepare-target: FORCE
 	for dir in build_dir dl staging_dir tmp; do \
 		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
 	done
-	for link in build_dir Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
+	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
 		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
 	done
 	+$(GLUONMAKE_EARLY) feeds
@@ -302,7 +302,7 @@ enable_initscripts: FORCE
 
 
 # Generate package list
-$(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES $(PROFILE)_PACKAGES GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
+$(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES GLUON_DEFAULT_PACKAGES GLUON_SITE_PACKAGES GLUON_$(PROFILE)_DEFAULT_PACKAGES GLUON_$(PROFILE)_SITE_PACKAGES))
 
 package_install: FORCE
 	$(OPKG) update
@@ -314,12 +314,25 @@ package_install: FORCE
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
 
+ifeq ($(GLUON_OPKG_CONFIG),1)
+include $(INCLUDE_DIR)/version.mk
+endif
+
+opkg_config: FORCE
+	cp $(GLUON_OPENWRTDIR)/package/system/opkg/files/opkg.conf $(TARGET_DIR)/etc/opkg.conf
+	for d in base luci packages routing telephony management oldpackages; do \
+		echo "src/gz %n_$$d %U/$$d" >> $(TARGET_DIR)/etc/opkg.conf; \
+	done
+	$(VERSION_SED) $(TARGET_DIR)/etc/opkg.conf
+
+
 image: FORCE
 	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
 	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
 	+$(GLUONMAKE) package_install
+	+$(GLUONMAKE) opkg_config GLUON_OPKG_CONFIG=1
 
 	$(call Image/mkfs/prepare)
 	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 IMG_PREFIX=gluon \

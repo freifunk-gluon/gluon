@@ -13,7 +13,6 @@ User Documentation
 
    user/getting_started
    user/site
-   user/builds
    user/faq
 
 Features
@@ -24,8 +23,10 @@ Features
 
    features/configmode
    features/autoupdater
+   features/private-wlan
    features/mesh-on-wan
    features/announce
+   features/authorized-keys
 
 Developer Documentation
 -----------------------
@@ -34,6 +35,8 @@ Developer Documentation
    :maxdepth: 2
 
    dev/basics
+   dev/hardware
+   dev/configmode
 
 Supported Devices
 -----------------
@@ -45,7 +48,7 @@ Supported Devices
   - TL-WR841N/ND (v3, v5, v7, v8, v9)
   - TL-WR842N/ND (v1, v2)
   - TL-WR941N/ND (v2, v3, v4)
-  - TL-WR1043N/ND (v1)
+  - TL-WR1043N/ND (v1, v2)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -78,6 +81,8 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2014.4
+   releases/v2014.3.1
    releases/v2014.3
 
 

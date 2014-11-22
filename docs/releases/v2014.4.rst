@@ -1,0 +1,39 @@
+Gluon 2014.4 (In development)
+=============================
+
+New hardware support
+~~~~~~~~~~~~~~~~~~~~
+* TP-Link TL-WR1043N/ND v2
+
+New features
+~~~~~~~~~~~~
+
+Modular config mode
+-------------------
+
+Bugfixes
+~~~~~~~~
+
+Site changes
+~~~~~~~~~~~~
+* ``site.conf``
+
+* ``site.mk``
+
+  - Obsolete packages:
+
+    + ``gluon-config-mode``
+    + ``gluon-mesh-batman-adv``
+
+  - Recommended new packages:
+
+    + ``gluon-config-mode-autoupdater``
+    + ``gluon-config-mode-hostname``
+    + ``gluon-config-mode-mesh-vpn``
+    + ``gluon-config-mode-geo-location``
+    + ``gluon-config-mode-contact-info``
+    + ``gluon-mesh-batman-adv-14`` or ``gluon-mesh-batman-adv-15`` (specify this before all other packages in the list)
+
+Internals
+~~~~~~~~~
+* We're on Barrier Breaker now!
