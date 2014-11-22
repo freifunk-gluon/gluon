@@ -223,4 +223,5 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffpb <https://git.c3pb.de/freifunk-pb/site-ffpb>`_ (Paderborn)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
 * `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)
+* `site-ffrg <https://github.com/ffruhr/site-ffruhr>`_ (Ruhrgebiet)
 * `site-ffs <https://github.com/freifunk-stuttgart/site-ffs>`_ (Stuttgart)
