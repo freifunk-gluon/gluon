@@ -2,6 +2,13 @@
 
 ## TP-Link
 
+# CPE210/220/510/520
+$(eval $(call GluonProfile,CPE510,rssileds))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe210-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe220-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe510-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe520-v1.0))
+
 # TL-WR703N v1
 $(eval $(call GluonProfile,TLWR703))
 $(eval $(call GluonModel,TLWR703,tl-wr703n-v1-squashfs,tp-link-tl-wr703n-v1))

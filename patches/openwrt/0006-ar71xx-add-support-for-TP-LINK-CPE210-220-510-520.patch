@@ -1,0 +1,471 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 26 Nov 2014 19:57:50 +0100
+Subject: ar71xx: add support for TP-LINK CPE210/220/510/520
+
+This adds support for the TP-LINK CPE210/220/510/520 (Pharos series). These
+devices are very similar to the Ubiquiti NanoStations, but with better specs:
+faster CPU, more RAM, 2x2 MIMO.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 1864b11..4b510dd 100755
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -43,6 +43,9 @@ get_status_led() {
+ 	cap4200ag)
+ 		status_led="senao:green:pwr"
+ 		;;
++	cpe510)
++		status_led="tp-link:green:link4"
++		;;
+ 	db120)
+ 		status_led="db120:green:status"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index d3b766d..fb8df40 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -61,6 +61,16 @@ carambola2)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "carambola2:green:wlan" "phy0tpt"
+ 	;;
+ 
++cpe510)
++	ucidef_set_led_switch "lan0" "LAN0" "tp-link:green:lan0" "switch0" "0x20"
++	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x10"
++	ucidef_set_rssimon "wlan0" "40000" "1"
++	ucidef_set_led_rssi "rssilow" "RSSILOW" "tp-link:green:link1" "wlan0" "1" "100" "0" "13"
++	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "tp-link:green:link2" "wlan0" "26" "100" "-25" "13"
++	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "tp-link:green:link3" "wlan0" "51" "100" "-50" "13"
++	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "tp-link:green:link4" "wlan0" "76" "100" "-75" "13"
++	;;
++
+ db120)
+ 	ucidef_set_led_usbdev "usb" "USB" "db120:green:usb" "1-1"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index c5cfd67..a9f00fa 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -62,6 +62,13 @@ tl-wdr4900-v2)
+ 	ucidef_add_switch_vlan "switch0" "2" "1 6"
+ 	;;
+ 
++cpe510)
++	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
++	ucidef_add_switch "switch0" "1" "1"
++	ucidef_add_switch_vlan "switch0" "1" "0t 5"
++	ucidef_add_switch_vlan "switch0" "2" "0t 4"
++	;;
++
+ db120 |\
+ rb-2011l | \
+ rb-2011uas |\
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 5aceaee..0b0a8d6 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -229,6 +229,39 @@ tplink_board_detect() {
+ 	AR71XX_MODEL="$model $hwver"
+ }
+ 
++tplink_pharos_get_model_string() {
++	local part
++	part=$(find_mtd_part 'product-info')
++	[ -z "$part" ] && return 1
++
++	# The returned string will end with \r\n, but we don't remove it here
++	# to simplify matching against it in the sysupgrade image check
++	dd if=$part bs=1 skip=4360 2>/dev/null | head -n 1
++}
++
++tplink_pharos_board_detect() {
++	local model_string="$(tplink_pharos_get_model_string | tr -d '\r')"
++	local oIFS="$IFS"; IFS=":"; set -- $model_string; IFS="$oIFS"
++	local model
++
++	case "$1" in
++	'CPE210(TP-LINK|UN|N300-2)')
++		model='TP-Link CPE210'
++		;;
++	'CPE220(TP-LINK|UN|N300-2)')
++		model='TP-Link CPE220'
++		;;
++	'CPE510(TP-LINK|UN|N300-5)')
++		model='TP-Link CPE510'
++		;;
++	'CPE520(TP-LINK|UN|N300-5)')
++		model='TP-Link CPE520'
++		;;
++	esac
++
++	[ -n "$model" ] && AR71XX_MODEL="$model v$2"
++}
++
+ ar71xx_board_detect() {
+ 	local machine
+ 	local name
+@@ -302,6 +335,10 @@ ar71xx_board_detect() {
+ 	*CAP4200AG)
+ 		name="cap4200ag"
+ 		;;
++	*"CPE210/220/510/520")
++		name="cpe510"
++		tplink_pharos_board_detect
++		;;
+ 	*"DB120 reference board")
+ 		name="db120"
+ 		;;
+@@ -751,11 +788,8 @@ ar71xx_board_detect() {
+ 		;;
+ 	esac
+ 
+-	case "$machine" in
+-	*TL-WR* | *TL-WA* | *TL-MR* | *TL-WD* | *Archer*)
++	[ -z "$AR71XX_MODEL" ] && [ "${machine:0:8}" = 'TP-LINK ' ] && \
+ 		tplink_board_detect "$machine"
+-		;;
+-	esac
+ 
+ 	[ -z "$name" ] && name="unknown"
+ 
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 846954c..15e998c 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -70,6 +70,33 @@ tplink_get_image_boot_size() {
+ 	get_image "$@" | dd bs=4 count=1 skip=37 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
+ }
+ 
++tplink_pharos_check_image() {
++	local magic_long="$(get_magic_long "$1")"
++	[ "$magic_long" != "7f454c46" ] && {
++		echo "Invalid image magic '$magic_long'"
++		return 1
++	}
++
++	local model_string="$(tplink_pharos_get_model_string)"
++	local line
++
++	# Here $1 is given to dd directly instead of get_image as otherwise the skip
++	# will take almost a second (as dd can't seek then)
++	#
++	# This will fail if the image isn't local, but that's fine: as the
++	# read loop won't be executed at all, it will return true, so the image
++	# is accepted (loading the first 1.5M of a remote image for this check seems
++	# a bit extreme)
++	dd if="$1" bs=1 skip=1511432 count=1024 2>/dev/null | while read line; do
++		[ "$line" == "$model_string" ] && break
++	done || {
++		echo "Unsupported image (model not in support-list)"
++		return 1
++	}
++
++	return 0
++}
++
+ seama_get_type_magic() {
+ 	get_image "$@" | dd bs=1 count=4 skip=53 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
+ }
+@@ -214,6 +241,11 @@ platform_check_image() {
+ 		return 0
+ 		;;
+ 
++	cpe510)
++		tplink_pharos_check_image "$1" && return 0
++		return 1
++		;;
++
+ 	dir-825-b1 | \
+ 	tew-673gru)
+ 		dir825b_check_image "$1" && return 0
+diff --git a/target/linux/ar71xx/config-3.10 b/target/linux/ar71xx/config-3.10
+index 9a8378a..2f05ec6 100644
+--- a/target/linux/ar71xx/config-3.10
++++ b/target/linux/ar71xx/config-3.10
+@@ -39,6 +39,7 @@ CONFIG_ATH79_MACH_AW_NR580=y
+ CONFIG_ATH79_MACH_BHU_BXU2000N2_A=y
+ CONFIG_ATH79_MACH_CAP4200AG=y
+ CONFIG_ATH79_MACH_CARAMBOLA2=y
++CONFIG_ATH79_MACH_CPE510=y
+ CONFIG_ATH79_MACH_DB120=y
+ CONFIG_ATH79_MACH_DIR_505_A1=y
+ CONFIG_ATH79_MACH_DIR_600_A1=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+new file mode 100644
+index 0000000..8bf5c0f
+--- /dev/null
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+@@ -0,0 +1,107 @@
++/*
++ *  TP-LINK CPE210/220/510/520 board support
++ *
++ *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++
++#include <asm/mach-ath79/ath79.h>
++#include <asm/mach-ath79/ar71xx_regs.h>
++
++#include "common.h"
++#include "dev-eth.h"
++#include "dev-gpio-buttons.h"
++#include "dev-leds-gpio.h"
++#include "dev-m25p80.h"
++#include "dev-wmac.h"
++#include "machtypes.h"
++
++
++#define CPE510_GPIO_LED_LAN0	11
++#define CPE510_GPIO_LED_LAN1	12
++#define CPE510_GPIO_LED_L1	13
++#define CPE510_GPIO_LED_L2	14
++#define CPE510_GPIO_LED_L3	15
++#define CPE510_GPIO_LED_L4	16
++
++#define CPE510_GPIO_BTN_RESET	4
++
++#define CPE510_KEYS_POLL_INTERVAL	20 /* msecs */
++#define CPE510_KEYS_DEBOUNCE_INTERVAL	(3 * CPE510_KEYS_POLL_INTERVAL)
++
++
++static struct gpio_led cpe510_leds_gpio[] __initdata = {
++	{
++		.name		= "tp-link:green:lan0",
++		.gpio		= CPE510_GPIO_LED_LAN0,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:lan1",
++		.gpio		= CPE510_GPIO_LED_LAN1,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:link1",
++		.gpio		= CPE510_GPIO_LED_L1,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:link2",
++		.gpio		= CPE510_GPIO_LED_L2,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:link3",
++		.gpio		= CPE510_GPIO_LED_L3,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:link4",
++		.gpio		= CPE510_GPIO_LED_L4,
++		.active_low	= 1,
++	},
++};
++
++static struct gpio_keys_button cpe510_gpio_keys[] __initdata = {
++	{
++		.desc		= "Reset button",
++		.type		= EV_KEY,
++		.code		= KEY_RESTART,
++		.debounce_interval = CPE510_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= CPE510_GPIO_BTN_RESET,
++		.active_low	= 1,
++	}
++};
++
++
++static void __init cpe510_setup(void)
++{
++	u8 *mac = (u8 *) KSEG1ADDR(0x1f830008);
++	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
++
++	/* Disable JTAG, enabling GPIOs 0-3 */
++	/* Configure OBS4 line, for GPIO 4*/
++	ath79_gpio_function_setup(AR934X_GPIO_FUNC_JTAG_DISABLE,
++				  AR934X_GPIO_FUNC_CLK_OBS4_EN);
++
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(cpe510_leds_gpio),
++				 cpe510_leds_gpio);
++
++	ath79_register_gpio_keys_polled(1, CPE510_KEYS_POLL_INTERVAL,
++					ARRAY_SIZE(cpe510_gpio_keys),
++					cpe510_gpio_keys);
++
++	ath79_register_m25p80(NULL);
++
++	ath79_register_mdio(1, 0);
++	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
++	ath79_eth1_data.phy_if_mode = PHY_INTERFACE_MODE_GMII;
++	ath79_register_eth(1);
++
++	ath79_register_wmac(ee, mac);
++}
++
++MIPS_MACHINE(ATH79_MACH_CPE510, "CPE510", "TP-LINK CPE210/220/510/520",
++	     cpe510_setup);
+diff --git a/target/linux/ar71xx/generic/profiles/tp-link.mk b/target/linux/ar71xx/generic/profiles/tp-link.mk
+index 78333be..a9d170c 100644
+--- a/target/linux/ar71xx/generic/profiles/tp-link.mk
++++ b/target/linux/ar71xx/generic/profiles/tp-link.mk
+@@ -16,6 +16,17 @@ endef
+ $(eval $(call Profile,ARCHERC7))
+ 
+ 
++define Profile/CPE510
++	NAME:=TP-LINK CPE210/220/510/520
++	PACKAGES:=rssileds
++endef
++
++define Profile/CPE510/Description
++	Package set optimized for the TP-LINK CPE210/220/510/520.
++endef
++$(eval $(call Profile,CPE510))
++
++
+ define Profile/TLMR10U
+ 	NAME:=TP-LINK TL-MR10U
+ 	PACKAGES:=kmod-usb-core kmod-usb2
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 683c238..5ff7f35 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -261,6 +261,7 @@ cameo_ap121_mtdlayout_8M=mtdparts=spi0.0:64k(u-boot)ro,64k(art)ro,64k(mac)ro,64k
+ cameo_db120_mtdlayout=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,15936k(firmware),192k(lang)ro,64k(mac)ro,64k(art)ro
+ cameo_db120_mtdlayout_8M=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,7872k(firmware),128k(lang)ro,64k(art)ro
+ cap4200ag_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),320k(custom)ro,1536k(kernel),12096k(rootfs),2048k(failsafe),64k(art),13632k@0xa0000(firmware)
++cpe510_mtdlayout=mtdparts=spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
+ eap300v2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),13632k(firmware),2048k(failsafe),64k(art)ro
+ db120_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
+ cameo_ap94_mtdlayout=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,6208k(firmware),64k(caldata)ro,1600k(unknown)ro,64k@0x7f0000(caldata_copy)
+@@ -811,6 +812,32 @@ define Image/Build/TPLINK-LZMA/initramfs
+ endef
+ 
+ 
++Image/Build/TPLINK-SAFELOADER/buildkernel=$(call PatchKernelLzma,$(2),$(3) $(4))
++
++define Image/Build/TPLINK-SAFELOADER
++	-rm -rf $(KDIR)/lzma-loader
++	$(LOADER_MAKE) LOADER=loader-$(2).elf\
++		LZMA_TEXT_START=0x80a00000 LOADADDR=0x80060000 \
++		LOADER_DATA="$(KDIR_TMP)/vmlinux-$(2).bin.lzma" BOARD="$(2)" \
++		compile loader.elf
++
++	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
++		-B $(5) \
++		-k $(KDIR)/loader-$(2).elf \
++		-r $(KDIR)/root.$(1) \
++		-V $(REVISION) \
++		-j \
++		-o $(call factoryname,$(1),$(2))
++	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
++		-B $(5) \
++		-k $(KDIR)/loader-$(2).elf \
++		-r $(KDIR)/root.$(1) \
++		-V $(REVISION) \
++		-j -S \
++		-o $(call sysupname,$(1),$(2))
++endef
++
++
+ define Image/Build/CyberTAN
+ 	echo -n '' > $(KDIR_TMP)/empty.bin
+ 	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/image.tmp \
+@@ -1226,6 +1253,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,ttyS0,115200,0x45300001,1,8Mlzma))
+ 
++$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
++
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,SMART-300,smart-300,SMART-300,ttyS0,115200,0x93410001,1,8Mlzma))
+ 
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,OOLITE,oolite,GS-OOLITE,ttyATH0,115200,0x3C000101,1,16Mlzma))
+diff --git a/target/linux/ar71xx/patches-3.10/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.10/610-MIPS-ath79-openwrt-machines.patch
+index 3669f26..516d52d 100644
+--- a/target/linux/ar71xx/patches-3.10/610-MIPS-ath79-openwrt-machines.patch
++++ b/target/linux/ar71xx/patches-3.10/610-MIPS-ath79-openwrt-machines.patch
+@@ -1,6 +1,6 @@
+ --- a/arch/mips/ath79/machtypes.h
+ +++ b/arch/mips/ath79/machtypes.h
+-@@ -16,22 +16,144 @@
++@@ -16,22 +16,145 @@
+  
+  enum ath79_mach_type {
+  	ATH79_MACH_GENERIC = 0,
+@@ -24,6 +24,7 @@
+ +	ATH79_MACH_BHU_BXU2000N2_A1,	/* BHU BXU2000n-2 A1 */
+ +	ATH79_MACH_CAP4200AG,		/* Senao CAP4200AG */
+ +	ATH79_MACH_CARAMBOLA2,		/* 8devices Carambola2 */
+++	ATH79_MACH_CPE510,		/* TP-LINK CPE510 */
+  	ATH79_MACH_DB120,		/* Atheros DB120 reference board */
+  	ATH79_MACH_PB44,		/* Atheros PB44 reference board */
+ +	ATH79_MACH_DIR_505_A1,		/* D-Link DIR-505 rev. A1 */
+@@ -209,7 +210,7 @@
+  config ATH79_MACH_AP121
+  	bool "Atheros AP121 reference board"
+  	select SOC_AR933X
+-@@ -9,64 +64,736 @@ config ATH79_MACH_AP121
++@@ -9,64 +64,745 @@ config ATH79_MACH_AP121
+  	select ATH79_DEV_GPIO_BUTTONS
+  	select ATH79_DEV_LEDS_GPIO
+  	select ATH79_DEV_M25P80
+@@ -709,6 +710,15 @@
+  
+ -config ATH79_MACH_AP81
+ -	bool "Atheros AP81 reference board"
+++config ATH79_MACH_CPE510
+++       bool "TP-LINK CPE510 support"
+++       select SOC_AR934X
+++       select ATH79_DEV_ETH
+++       select ATH79_DEV_GPIO_BUTTONS
+++       select ATH79_DEV_LEDS_GPIO
+++       select ATH79_DEV_M25P80
+++       select ATH79_DEV_WMAC
+++
+ +config ATH79_MACH_TL_MR11U
+ +	bool "TP-LINK TL-MR11U/TL-MR3040 support"
+ +	select SOC_AR933X
+@@ -972,7 +982,7 @@
+  
+  config ATH79_MACH_UBNT_XM
+  	bool "Ubiquiti Networks XM/UniFi boards"
+-@@ -83,6 +810,65 @@ config ATH79_MACH_UBNT_XM
++@@ -83,6 +819,65 @@ config ATH79_MACH_UBNT_XM
+  	  Say 'Y' here if you want your kernel to support the
+  	  Ubiquiti Networks XM (rev 1.0) board.
+  
+@@ -1038,7 +1048,7 @@
+  endmenu
+  
+  config SOC_AR71XX
+-@@ -132,7 +918,10 @@ config ATH79_DEV_DSA
++@@ -132,7 +927,10 @@ config ATH79_DEV_DSA
+  config ATH79_DEV_ETH
+  	def_bool n
+  
+@@ -1050,7 +1060,7 @@
+  	def_bool n
+  
+  config ATH79_DEV_GPIO_BUTTONS
+-@@ -164,4 +953,7 @@ config ATH79_PCI_ATH9K_FIXUP
++@@ -164,4 +962,7 @@ config ATH79_PCI_ATH9K_FIXUP
+  config ATH79_ROUTERBOOT
+  	def_bool n
+  
+@@ -1060,7 +1070,7 @@
+  endif
+ --- a/arch/mips/ath79/Makefile
+ +++ b/arch/mips/ath79/Makefile
+-@@ -38,9 +38,90 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
++@@ -38,9 +38,91 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
+  #
+  # Machines
+  #
+@@ -1079,6 +1089,7 @@
+ +obj-$(CONFIG_ATH79_MACH_AW_NR580)	+= mach-aw-nr580.o
+ +obj-$(CONFIG_ATH79_MACH_BHU_BXU2000N2_A)+= mach-bhu-bxu2000n2-a.o
+ +obj-$(CONFIG_ATH79_MACH_CAP4200AG)	+= mach-cap4200ag.o
+++obj-$(CONFIG_ATH79_MACH_CPE510)		+= mach-cpe510.o
+  obj-$(CONFIG_ATH79_MACH_DB120)		+= mach-db120.o
+ +obj-$(CONFIG_ATH79_MACH_DIR_505_A1)	+= mach-dir-505-a1.o
+ +obj-$(CONFIG_ATH79_MACH_DIR_600_A1)	+= mach-dir-600-a1.o
