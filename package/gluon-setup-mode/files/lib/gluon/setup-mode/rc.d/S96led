@@ -3,6 +3,8 @@
 START=96
 
 start() {
+	/etc/init.d/led start
+
 	. /etc/diag.sh
 	get_status_led
 	status_led_set_timer 1000 300
