@@ -1,0 +1,24 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 15 Dec 2014 00:17:38 +0100
+Subject: ar71xx: add workaround patch for WDR3600/4300 reboot
+
+While it isn't clear why this patch helps, it doesn't seem to have any negative
+effects, so let's include it for now...
+
+diff --git a/target/linux/ar71xx/patches-3.10/903-MIPS-ath79-fix-restart.patch b/target/linux/ar71xx/patches-3.10/903-MIPS-ath79-fix-restart.patch
+new file mode 100644
+index 0000000..86f33f3
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.10/903-MIPS-ath79-fix-restart.patch
+@@ -0,0 +1,11 @@
++--- a/arch/mips/ath79/common.c
+++++ b/arch/mips/ath79/common.c
++@@ -83,6 +83,8 @@ void ath79_device_reset_set(u32 mask)
++ 	spin_lock_irqsave(&ath79_device_reset_lock, flags);
++ 	t = ath79_reset_rr(reg);
++ 	ath79_reset_wr(reg, t | mask);
+++	if (mask == AR71XX_RESET_FULL_CHIP)
+++		for(;;);
++ 	spin_unlock_irqrestore(&ath79_device_reset_lock, flags);
++ }
++ EXPORT_SYMBOL_GPL(ath79_device_reset_set);
