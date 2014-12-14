@@ -114,10 +114,6 @@ endif
 
 ## D-Link
 
-# D-Link DIR-615 rev. E1
-#$(eval $(call GluonProfile,DIR615E1))
-#$(eval $(call GluonModel,DIR615E1,dir-615-e1-squashfs,d-link-dir-615-rev-e1))
-
 # D-Link DIR-825 rev. B1
 $(eval $(call GluonProfile,DIR825B1))
 $(eval $(call GluonModel,DIR825B1,dir-825-b1-squashfs,d-link-dir-825-rev-b1))
