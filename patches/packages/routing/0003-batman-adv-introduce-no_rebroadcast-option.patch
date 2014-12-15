@@ -4,12 +4,12 @@ Subject: batman-adv: introduce 'no_rebroadcast' option
 
 diff --git a/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
 new file mode 100644
-index 0000000..4f2da9a
+index 0000000..cb5c633
 --- /dev/null
 +++ b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
 @@ -0,0 +1,185 @@
-+From 382460a7114b734581970076d4dfe3011381e339 Mon Sep 17 00:00:00 2001
-+Message-Id: <382460a7114b734581970076d4dfe3011381e339.1408708010.git.mschiffer@universe-factory.net>
++From 0c8001036a191efd3aa30493ba7e31f9eceb21e1 Mon Sep 17 00:00:00 2001
++Message-Id: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@web.de>
 +Date: Tue, 24 Sep 2013 04:36:27 +0200
 +Subject: [PATCH] batman-adv: introduce 'no_rebroadcast' option
@@ -45,7 +45,7 @@ index 0000000..4f2da9a
 + 5 files changed, 76 insertions(+)
 +
 +diff --git a/hard-interface.c b/hard-interface.c
-+index b851cc5..b222d82 100644
++index fbda6b5..3997f9c 100644
 +--- a/hard-interface.c
 ++++ b/hard-interface.c
 +@@ -591,6 +591,8 @@ batadv_hardif_add_interface(struct net_device *net_dev)
@@ -91,12 +91,12 @@ index 0000000..4f2da9a
 ++                or wired links. Using this option wrongly is going to
 ++                break your mesh network, use at your own risk!
 +diff --git a/sysfs.c b/sysfs.c
-+index 1ebb0d9..780c52e 100644
++index fc47baa..adaeca4 100644
 +--- a/sysfs.c
 ++++ b/sysfs.c
-+@@ -108,6 +108,17 @@ struct batadv_attribute batadv_attr_vlan_##_name = {	\
++@@ -110,6 +110,17 @@ struct batadv_attribute batadv_attr_vlan_##_name = {	\
 + 	.store  = _store,				\
-+ };
++ }
 + 
 ++/* Use this, if you have customized show and store functions
 ++ * for hard interface attrs
@@ -112,7 +112,7 @@ index 0000000..4f2da9a
 + /* Use this, if you have customized show and store functions */
 + #define BATADV_ATTR(_name, _mode, _show, _store)	\
 + struct batadv_attribute batadv_attr_##_name = {		\
-+@@ -213,6 +224,52 @@ ssize_t batadv_show_vlan_##_name(struct kobject *kobj,			\
++@@ -221,6 +232,52 @@ ssize_t batadv_show_vlan_##_name(struct kobject *kobj,			\
 + 	static BATADV_ATTR_VLAN(_name, _mode, batadv_show_vlan_##_name,	\
 + 				batadv_store_vlan_##_name)
 + 
@@ -165,7 +165,7 @@ index 0000000..4f2da9a
 + static int batadv_store_bool_attr(char *buff, size_t count,
 + 				  struct net_device *net_dev,
 + 				  const char *attr_name, atomic_t *attr)
-+@@ -834,10 +891,12 @@ static ssize_t batadv_show_iface_status(struct kobject *kobj,
++@@ -844,10 +901,12 @@ static ssize_t batadv_show_iface_status(struct kobject *kobj,
 + static BATADV_ATTR(mesh_iface, S_IRUGO | S_IWUSR, batadv_show_mesh_iface,
 + 		   batadv_store_mesh_iface);
 + static BATADV_ATTR(iface_status, S_IRUGO, batadv_show_iface_status, NULL);
@@ -191,5 +191,5 @@ index 0000000..4f2da9a
 + 
 + /**
 +-- 
-+2.1.0
++2.1.3
 +
