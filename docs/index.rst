@@ -43,6 +43,8 @@ Supported Devices
 
 * TP-Link
 
+  - CPE210
+  - CPE510
   - TL-WR740N (v1, v3, v4)
   - TL-WR741N/ND (v1, v2, v4)
   - TL-WR841N/ND (v3, v5, v7, v8, v9)
@@ -68,7 +70,6 @@ Supported Devices
 
 * D-Link
 
-  - DIR-615 (E1)
   - DIR-825 (B1)
 
 * Linksys
