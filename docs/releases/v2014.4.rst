@@ -66,6 +66,14 @@ Private WLAN
 The new package ``gluon-luci-private-wifi`` allows to configure a private WLAN
 with WPA-PSK in the expert mode which is bridged with the WAN uplink.
 
+Embedding SSH keys
+------------------
+
+Using ``gluon-authorized-keys`` it is possible to embed predefined SSH
+public keys to firmware images. If ``gluon-config-mode-*`` is left out
+images will be ready to mesh after the first boot with SSH running for
+further configuration.
+
 Bugfixes
 ~~~~~~~~
 
