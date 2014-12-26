@@ -102,3 +102,42 @@ The switch to Barrier Breaker has led to a multitude of changes all over Gluon:
   - ethtool has been replaced by our minimal Lua library *lua-ethtool-stats*
   - tc has been replaced by our minimal implementation *gluon-simple-tc*
   - radvd has been replaced by our minimal implementation *gluon-radvd*
+
+Known Issues
+~~~~~~~~~~~~
+
+Alfred crashes
+--------------
+
+https://github.com/freifunk-gluon/gluon/issues/177
+
+Alfred may still crash unconditionally. Some measures have been taken
+to aid but the core problem hasn't been analyzed yet.Some measures have
+been taken to aid but the core problem hasn't been tackled yet.
+
+WDR4300 stuck after reboot
+--------------------------
+
+https://github.com/freifunk-gluon/gluon/issues/185
+
+The device may still fail to reboot properly.
+
+Out of memory / batman-adv memory leaks
+---------------------------------------
+
+https://github.com/freifunk-gluon/gluon/issues/216
+
+In some (hopefully rare!) cases batman-adv may still leak memory
+associated with global TT entries. This may result in kernel panics or
+out-of-memory conditions.
+
+
+Ignored tx-power offset on Ubiquiti AirMax devices
+--------------------------------------------------
+
+https://github.com/freifunk-gluon/gluon/issues/94
+
+There is still no OpenWRT support for determining the transmission
+power offsets on Ubiquiti AirMax devices (Bullet M2, Picostation
+M2, Nanostation (loco) M2, ...). Use Gluon with caution on these
+devices! Manual adjustment may be required.
