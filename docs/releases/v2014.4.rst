@@ -74,6 +74,15 @@ public keys to firmware images. If ``gluon-config-mode-*`` is left out
 images will be ready to mesh after the first boot with SSH running for
 further configuration.
 
+Statuspage resolves nodenames
+-----------------------------
+
+The tools ``gluon-announced`` and ``gluon-neighbour-info`` are now
+available. Using them enables the status page to resolve hostnames and
+IPs of a nodes' neighbours.
+
+This will also work on devices with multiple wireless interfaces.
+
 Bugfixes
 ~~~~~~~~
 
@@ -122,13 +131,6 @@ https://github.com/freifunk-gluon/gluon/issues/177
 Alfred may still crash unconditionally. Some measures have been taken
 to aid but the core problem hasn't been analyzed yet.Some measures have
 been taken to aid but the core problem hasn't been tackled yet.
-
-WDR4300 stuck after reboot
---------------------------
-
-https://github.com/freifunk-gluon/gluon/issues/185
-
-The device may still fail to reboot properly.
 
 Out of memory / batman-adv memory leaks
 ---------------------------------------
