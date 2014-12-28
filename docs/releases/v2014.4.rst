@@ -74,8 +74,8 @@ public keys to firmware images. If ``gluon-config-mode-*`` is left out
 images will be ready to mesh after the first boot with SSH running for
 further configuration.
 
-Statuspage resolves nodenames
------------------------------
+Status page resolves nodenames
+------------------------------
 
 The tools ``gluon-announced`` and ``gluon-neighbour-info`` are now
 available. Using them enables the status page to resolve hostnames and
@@ -129,8 +129,7 @@ Alfred crashes
 https://github.com/freifunk-gluon/gluon/issues/177
 
 Alfred may still crash unconditionally. Some measures have been taken
-to aid but the core problem hasn't been analyzed yet.Some measures have
-been taken to aid but the core problem hasn't been tackled yet.
+to aid but the core problem hasn't been analyzed yet.
 
 Out of memory / batman-adv memory leaks
 ---------------------------------------
