@@ -38,3 +38,4 @@ do
     fi
 done
 echo "[Failure]"
+exit 1
