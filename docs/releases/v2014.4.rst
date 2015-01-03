@@ -1,23 +1,98 @@
-Gluon 2014.4 (In development)
-=============================
+Gluon 2014.4
+============
 
-New hardware support
-~~~~~~~~~~~~~~~~~~~~
-* TP-Link TL-WR1043N/ND v2
+Added (and removed) hardware support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Buffalo
+
+  - WZR-HP-AG300H / WZR-600DHP
+  - WZR-HP-G450H
+
+* D-Link
+
+  - DIR-615 (E1) support had to be dropped
+
+* TP-LINK
+
+  - CPE210/220/510/520 (v1)
+  - TL-MR3040 (v2
+  - TL-WA750RE (v1)
+  - TL-WA801N/ND (v2)
+  - TL-WA850RE (v1)
+  - TL-WR703N (v1)
+  - TL-WR710N (v1)
+  - TL-WR1043N/ND (v2)
+
 
 New features
 ~~~~~~~~~~~~
+OpenWrt Barrier Breaker
+-----------------------
+Switching to the new OpenWrt release 14.09 ("Barrier Breaker") has yielded
+lots of updates for both the kernel and most packages. Besides better
+performance, this has also greatly improved stability (far less out-of-memory
+issues!).
 
 Modular config mode
 -------------------
+The old ``gluon-config-mode`` package has been split into five
+small packages, each providing a single section of the config
+mode form. This simplifies removing or replacing parts of the wizard.
+
+See the *Site changes* section for details.
+
+Experimental support for batman-adv compat 15
+---------------------------------------------
+As batman-adv has broken compatiblity starting with batman-adv 2014.0
+(bumping the "compat level" to 15), Gluon users must decide which
+batman-adv version to use. The package for the old batman-adv version
+``gluon-mesh-batman-adv`` has been renamed to ``gluon-mesh-batman-adv-14``,
+the new version can be used with ``gluon-mesh-batman-adv-15``.
+
+Please note that batman-adv compat 15 still isn't tested very well
+(and there are known bugs in the current release 2014.3), so for now
+we still recommend using compat 14 in "production" environments.
+
+fastd v16
+---------
+Besides other new features and bugfixes, fastd v16 support the new
+authentication method "UMAC". We recommend switching from the old
+``salsa2012+gmac`` and ``null+salsa2012+gmac`` methods to the new
+``salsa2012+umac`` and ``null+salsa2012+umac`` as UMAC is
+much faster and even more secure than GMAC.
+
+Private WLAN
+------------
+The new package ``gluon-luci-private-wifi`` allows to configure a private WLAN
+with WPA-PSK in the expert mode which is bridged with the WAN uplink.
+
+Embedding SSH keys
+------------------
+
+Using ``gluon-authorized-keys`` it is possible to embed predefined SSH
+public keys to firmware images. If ``gluon-config-mode-*`` is left out
+images will be ready to mesh after the first boot with SSH running for
+further configuration.
+
+Status page resolves nodenames
+------------------------------
+
+The tools ``gluon-announced`` and ``gluon-neighbour-info`` are now
+available. Using them enables the status page to resolve hostnames and
+IPs of a nodes' neighbours.
+
+This will also work on devices with multiple wireless interfaces.
 
 Bugfixes
 ~~~~~~~~
 
+* Expert Mode: Fixed all SSH keys being removed when a password was set
+* ``gluon-mesh-vpn-fastd``: Fixed VPN peers removed from the ``site.conf`` not being removed from ``/etc/config/fastd``
+* TL-LINK TL-WDR3600/4300: Added workaround for reboot issues
+* Improved stability (due to switch to OpenWrt Barrier Breaker)
+
 Site changes
 ~~~~~~~~~~~~
-* ``site.conf``
-
 * ``site.mk``
 
   - Obsolete packages:
@@ -32,8 +107,46 @@ Site changes
     + ``gluon-config-mode-mesh-vpn``
     + ``gluon-config-mode-geo-location``
     + ``gluon-config-mode-contact-info``
-    + ``gluon-mesh-batman-adv-14`` or ``gluon-mesh-batman-adv-15`` (specify this before all other packages in the list)
+    + ``gluon-mesh-batman-adv-14`` (specify this before all other packages in the ``site.mk``!)
 
 Internals
 ~~~~~~~~~
-* We're on Barrier Breaker now!
+The switch to Barrier Breaker has led to a multitude of changes all over Gluon:
+
+* The config mode/setup mode is now started by an own set of init scripts in ``/lib/gluon/setup-mode/rc.d`` run by procd
+* Many tools and services used by Gluon have been replaced by our own implementations to reduce the size of the images:
+
+  - ethtool has been replaced by our minimal Lua library *lua-ethtool-stats*
+  - tc has been replaced by our minimal implementation *gluon-simple-tc*
+  - radvd has been replaced by our minimal implementation *gluon-radvd*
+
+Known Issues
+~~~~~~~~~~~~
+
+Alfred crashes
+--------------
+
+https://github.com/freifunk-gluon/gluon/issues/177
+
+Alfred may still crash unconditionally. Some measures have been taken
+to aid but the core problem hasn't been analyzed yet.
+
+Out of memory / batman-adv memory leaks
+---------------------------------------
+
+https://github.com/freifunk-gluon/gluon/issues/216
+
+In some (hopefully rare!) cases batman-adv may still leak memory
+associated with global TT entries. This may result in kernel panics or
+out-of-memory conditions.
+
+
+Ignored tx-power offset on Ubiquiti AirMax devices
+--------------------------------------------------
+
+https://github.com/freifunk-gluon/gluon/issues/94
+
+There is still no OpenWRT support for determining the transmission
+power offsets on Ubiquiti AirMax devices (Bullet M2, Picostation
+M2, Nanostation (loco) M2, ...). Use Gluon with caution on these
+devices! Manual adjustment may be required.

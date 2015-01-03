@@ -3,6 +3,18 @@
 if [ $# -eq 0 -o "-h" = "$1" -o "-help" = "$1" -o "--help" = "$1" ]; then
 	cat <<EOHELP
 Usage: $0 <secret> <manifest>
+
+sign.sh adds lines to a manifest to indicate the approval
+of the integrity of the firmware as required for automated
+updates. The first argument <secret> references a file harboring
+the private key of a public-private key pair of a developer
+that referenced by its public key in the site configuration.
+The script may be performed multiple times to the same document
+to indicate an approval by multiple developers.
+
+See also
+ * edcsautils on https://github.com/tcatm/ecdsautils
+
 EOHELP
 	exit 1
 fi

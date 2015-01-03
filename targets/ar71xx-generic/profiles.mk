@@ -2,6 +2,13 @@
 
 ## TP-Link
 
+# CPE210/220/510/520
+$(eval $(call GluonProfile,CPE510,rssileds))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe210-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe220-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe510-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe520-v1.0))
+
 # TL-WR703N v1
 $(eval $(call GluonProfile,TLWR703))
 $(eval $(call GluonModel,TLWR703,tl-wr703n-v1-squashfs,tp-link-tl-wr703n-v1))
@@ -100,14 +107,12 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-squashfs,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdoor))
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,UBNT,ubnt-uap-pro-squashfs,ubiquiti-unifi-ap-pro))
+$(eval $(call GluonModel,UBNT,ubnt-nano-m-xw-squashfs,ubiquiti-nanostation-m-xw))
+$(eval $(call GluonModel,UBNT,ubnt-loco-m-xw-squashfs,ubiquiti-loco-m-xw))
 endif
 
 
 ## D-Link
-
-# D-Link DIR-615 rev. E1
-#$(eval $(call GluonProfile,DIR615E1))
-#$(eval $(call GluonModel,DIR615E1,dir-615-e1-squashfs,d-link-dir-615-rev-e1))
 
 # D-Link DIR-825 rev. B1
 $(eval $(call GluonProfile,DIR825B1))

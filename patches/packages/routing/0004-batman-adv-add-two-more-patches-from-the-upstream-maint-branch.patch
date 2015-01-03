@@ -1,0 +1,126 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 15 Dec 2014 01:44:23 +0100
+Subject: batman-adv: add two more patches from the upstream 'maint' branch
+
+diff --git a/batman-adv/patches/0002-batman-adv-Fix-double-fetch-in-RCU-version-of-hlist_.patch b/batman-adv/patches/0002-batman-adv-Fix-double-fetch-in-RCU-version-of-hlist_.patch
+new file mode 100644
+index 0000000..6fb2e63
+--- /dev/null
++++ b/batman-adv/patches/0002-batman-adv-Fix-double-fetch-in-RCU-version-of-hlist_.patch
+@@ -0,0 +1,54 @@
++From 2cbadf647c3836ad1cf62ec5554fbeee7b3d6ecd Mon Sep 17 00:00:00 2001
++Message-Id: <2cbadf647c3836ad1cf62ec5554fbeee7b3d6ecd.1418604208.git.mschiffer@universe-factory.net>
++In-Reply-To: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
++References: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
++From: Sven Eckelmann <sven@narfation.org>
++Date: Mon, 3 Nov 2014 23:16:19 +0100
++Subject: [PATCH] batman-adv: Fix double fetch in RCU version of hlist_*entry*
++
++The backported (<3.9) version of hlist_for_each_entry_rcu and
++hlist_for_each_entry_safe uses the new macro hlist_entry_safe. It is called
++with an ACCESS_ONCE parameter for the first parameter ptr. This disallows
++merging of the two loads which the current version of the macro uses.
++
++This is problematic because this macro must only generate one load. Otherwise
++with two contexts (or CPUs) following could happen:
++
++1. context 1 fetches the ptr to the last entry in hlist_entry_safe() and
++   accepts this non-NULL ptr
++
++2. context 2 deletes the last entry and terminates the list with NULL
++
++3. context 1 re-fetches the pointer, doesn't check for zero, calculates the
++   entry based on a NULL pointer
++
++4. context 1 crashes because it tries to load/write data from/to the invalid
++   address
++
++Instead use a single load to a temporary variable and do the NULL-check and
++calculation based on that one.
++
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
++---
++ compat.h | 4 +++-
++ 1 file changed, 3 insertions(+), 1 deletion(-)
++
++diff --git a/compat.h b/compat.h
++index 5eb5fe6..79ba39b 100644
++--- a/compat.h
+++++ b/compat.h
++@@ -345,7 +345,9 @@ static int __batadv_interface_tx(struct sk_buff *skb, \
++ 	dev->master;\
++ })
++ #define hlist_entry_safe(ptr, type, member) \
++-	(ptr) ? hlist_entry(ptr, type, member) : NULL
+++	({ typeof(ptr) ____ptr = (ptr); \
+++	   ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+++	})
++ 
++ #undef hlist_for_each_entry
++ #define hlist_for_each_entry(pos, head, member) \
++-- 
++2.1.3
++
+diff --git a/batman-adv/patches/0003-batman-adv-fix-delayed-foreign-originator-recognitio.patch b/batman-adv/patches/0003-batman-adv-fix-delayed-foreign-originator-recognitio.patch
+new file mode 100644
+index 0000000..2748f76
+--- /dev/null
++++ b/batman-adv/patches/0003-batman-adv-fix-delayed-foreign-originator-recognitio.patch
+@@ -0,0 +1,56 @@
++From 207d13673fd25e5ae1bc8bb42d1efd4ec4c2dc4d Mon Sep 17 00:00:00 2001
++Message-Id: <207d13673fd25e5ae1bc8bb42d1efd4ec4c2dc4d.1418604208.git.mschiffer@universe-factory.net>
++In-Reply-To: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
++References: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 30 Oct 2014 06:23:40 +0100
++Subject: [PATCH] batman-adv: fix delayed foreign originator recognition
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Currently it can happen that the reception of an OGM from a new
++originator is not being accepted. More precisely it can happen that
++an originator struct gets allocated and initialized
++(batadv_orig_node_new()), even the TQ gets calculated and set correctly
++(batadv_iv_ogm_calc_tq()) but still the periodic orig_node purging
++thread will decide to delete it if it has a chance to jump between
++these two function calls.
++
++This is because batadv_orig_node_new() initializes the last_seen value
++to zero and its caller (batadv_iv_ogm_orig_get()) makes it visible to
++other threads by adding it to the hash table already.
++batadv_iv_ogm_calc_tq() will set the last_seen variable to the correct,
++current time a few lines later but if the purging thread jumps in between
++that it will think that the orig_node timed out and will wrongly
++schedule it for deletion already.
++
++If the purging interval is the same as the originator interval (which is
++the default: 1 second), then this game can continue for several rounds
++until the random OGM jitter added enough difference between these
++two (in tests, two to about four rounds seemed common).
++
++Fixing this by initializing the last_seen variable of an orig_node
++to the current time before adding it to the hash table.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
++---
++ originator.c | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/originator.c b/originator.c
++index 6a48451..648bdba 100644
++--- a/originator.c
+++++ b/originator.c
++@@ -678,6 +678,7 @@ struct batadv_orig_node *batadv_orig_node_new(struct batadv_priv *bat_priv,
++ 	atomic_set(&orig_node->last_ttvn, 0);
++ 	orig_node->tt_buff = NULL;
++ 	orig_node->tt_buff_len = 0;
+++	orig_node->last_seen = jiffies;
++ 	reset_time = jiffies - 1 - msecs_to_jiffies(BATADV_RESET_PROTECTION_MS);
++ 	orig_node->bcast_seqno_reset = reset_time;
++ #ifdef CONFIG_BATMAN_ADV_MCAST
++-- 
++2.1.3
++

@@ -36,26 +36,49 @@ Developer Documentation
 
    dev/basics
    dev/hardware
+   dev/configmode
 
 Supported Devices
 -----------------
 
+* Buffalo
+
+  - WZR-HP-AG300H / WZR-600DHP
+  - WZR-HP-G450H
+
+* D-Link
+
+  - DIR-825 (B1)
+
+* Linksys
+
+  - WRT160NL
+
 * TP-Link
 
+  - CPE210 (v1)
+  - CPE220 (v1)
+  - CPE510 (v1)
+  - CPE520 (v1)
+  - TL-MR3020 (v1)
+  - TL-MR3040 (v1, v2)
+  - TL-MR3220 (v1)
+  - TL-MR3420 (v1, v2)
+  - TL-WA750RE (v1)
+  - TL-WA801N/ND (v2)
+  - TL-WA850RE (v1)
+  - TL-WA901N/ND (v2)
+  - TL-WDR3500 (v1)
+  - TL-WDR3600 (v1)
+  - TL-WDR4300 (v1)
+  - TL-WR1043N/ND (v1, v2)
+  - TL-WR703N (v1)
+  - TL-WR710N (v1)
   - TL-WR740N (v1, v3, v4)
   - TL-WR741N/ND (v1, v2, v4)
   - TL-WR841N/ND (v3, v5, v7, v8, v9)
   - TL-WR842N/ND (v1, v2)
   - TL-WR941N/ND (v2, v3, v4)
-  - TL-WR1043N/ND (v1, v2)
-  - TL-WDR3500 (v1)
-  - TL-WDR3600 (v1)
-  - TL-WDR4300 (v1)
-  - TL-WA901N/ND (v2)
-  - TL-MR3020 (v1)
-  - TL-MR3040 (v1)
-  - TL-MR3220 (v1)
-  - TL-MR3420 (v1, v2)
 
 * Ubiquiti
 
@@ -65,14 +88,6 @@ Supported Devices
   - UniFi AP
   - UniFi AP Outdoor
 
-* D-Link
-
-  - DIR-615 (E1)
-  - DIR-825 (B1)
-
-* Linksys
-
-  - WRT160NL
 
 Releases
 --------
