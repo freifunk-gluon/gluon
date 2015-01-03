@@ -57,6 +57,9 @@ image/$(1): FORCE
 	+@$$(GLUONMAKE) $$@
 endef
 
+define GluonProfileFactorySuffix
+endef
+
 define GluonModel
 endef
 
@@ -127,7 +130,12 @@ define GluonProfile
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
+GLUON_$(1)_FACTORY_SUFFIX := .bin
 GLUON_$(1)_MODELS :=
+endef
+
+define GluonProfileFactorySuffix
+GLUON_$(1)_FACTORY_SUFFIX := $(2)
 endef
 
 define GluonModel
@@ -339,11 +347,13 @@ image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model).bin && \
 		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade.bin && \
-		\
-		cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory.bin $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model).bin && \
 		cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade.bin && \
+		\
+		$(if $(GLUON_$(PROFILE)_FACTORY_SUFFIX), \
+			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory$(GLUON_$(PROFILE)_FACTORY_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
+		) \
 	) :
 
 image/%: $(gluon_prepared_stamp)
