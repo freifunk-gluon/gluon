@@ -13,6 +13,7 @@ User Documentation
 
    user/getting_started
    user/site
+   user/accessing-nodes
    user/faq
 
 Features
