@@ -95,17 +95,21 @@ gluon-announced
 
 `gluon-announced` allows querying neighbouring nodes for their `nodeinfo`.
 It is a daemon listening on the multicast address ``ff02::2:1001`` on
-UDP port 1001 on the bare mesh interfaces. There is no client yet (but it's
-being developed), but you can query the information using tools like ``socat``:
+UDP port 1001 on the bare mesh interfaces.
+
+gluon-neighbour-info
+~~~~~~~~~~~~~~~~~~~~
+
+A programm called `gluon-neighbour-info` has been developed to retrieve
+information from neighbours.
 
 ::
 
-  # socat - UDP6-DATAGRAM:[ff02::2:1001%wlan0-1]:1001
-  nodeinfo
+  gluon-neighbour-info -i wlan0 \
+  -p 1001 -d ff02:0:0:0:0:0:2:1001 \
+  -r nodeinfo
 
-This output is not compressed, but that is likely to change in the future. If
-you intent to use ``gluon-announced``, please contact `tcatm` in Gluon's IRC
-channel.
+On optional timeout may be specified, e.g. `-t 5` (default: 3 seconds).
 
 Adding a fact
 -------------
