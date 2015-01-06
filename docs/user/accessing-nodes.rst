@@ -8,8 +8,8 @@ for customized setups, or to just look what is going on when a node does not per
 as expected.
 
 **Access** may mean a mere ``ping``/``traceroute`` to determine if a host can be reached.
-To truly enter a machine, one will use SSH. How to prepare the Nodes for this either
-via password or a SSH public key is described in :doc:`/user/authentication`.
+To truly enter a machine, one will use SSH. See :doc:`/user/authentication` for information
+how to set it up.
 
 How to find the IPv6 address of a desired node
 ----------------------------------------------
@@ -19,18 +19,18 @@ Consequently, one needs to determine the IPv6 address only once per device.
 
 To find the IPv6 address one can:
 
-    * Look at the bottom of the device and find the MAC address there
-    * Directly connect via LAN-Cable and use the **next_node** addresses (if configured)
+    * Look at the bottom of the device and find the MAC address there.
+    * Directly connect via LAN-Cable and use the **next_node** addresses (if configured).
     *
         There are rules for an automated transcription of MAC addresses into IPv6
-        addresses, you can find one implementation with some description at
-        `ben.akrin.com <http://ben.akrin.com/?p=1347>`_
+        addresses.
+        You can find one implementation with some description at `ben.akrin.com <http://ben.akrin.com/?p=1347>`_.
 
-        The procedure is basically an insertion of ff:ef in the middle, some bit
-        swapping and adding fe80:: as prefix.
+        The procedure is basically an insertion of ``ff:ef`` in the middle, some bit
+        swapping and adding ``fe80::`` as prefix.
     *
-        If you know the IPv4 address of a client accessing the network through desired
-        node and perform ``batctl traceroute`` to that device from any other Node
+        You can find a node address if you know the IPv4 address of a client connected
+        to it. If you perform a ``batctl traceroute`` to that client from any other Node
         in the mesh, the MAC address can be found in the last hub::
 
             $ batctl traceroute 10.135.17.193
@@ -39,7 +39,8 @@ To find the IPv6 address one can:
             1: 12:fe:ed:3b:3f:cb  22.418 ms  23.008 ms  24.980 ms
             2: 26:a4:3c:f0:b5:0a  28.733 ms  26.018 ms  22.403 ms
     *
-        check response times - the nodes answering first are the ones connected the query host::
+        Check response times - the nodes answering first are those connected directly
+        to the querying host::
 
             $ ping6 -I bat0 ff02::2 | head -n 5
 
@@ -52,8 +53,9 @@ To find the IPv6 address one can:
         These addresses are local-link IPv6 addresses and can be contacted directly.
 
 .. note::
-        Since WLAN and Ethernet are different devices, each with it's own MAC address,
-        it is expected that these MAC addresses are not always exactly the same as
+        WLAN and Ethernet are different devices, each with it's own MAC address.
+
+        It is expected that these MAC addresses are not always exactly the same as
         the ones seen underneath the device. Only one of either devices is depicted.
 
 Contacting the device
