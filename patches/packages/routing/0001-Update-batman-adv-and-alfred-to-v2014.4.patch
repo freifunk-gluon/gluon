@@ -1,0 +1,52 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 7 Jan 2015 16:40:43 +0100
+Subject: Update batman-adv and alfred to v2014.4
+
+diff --git a/alfred/Makefile b/alfred/Makefile
+index 648a5ef..0a5fcac 100644
+--- a/alfred/Makefile
++++ b/alfred/Makefile
+@@ -11,9 +11,9 @@ include $(TOPDIR)/rules.mk
+ # The latest alfred git hash in PKG_REV can be obtained from http://git.open-mesh.org/alfred.git
+ #
+ PKG_NAME:=alfred
+-PKG_VERSION:=2014.3.0
++PKG_VERSION:=2014.4.0
+ PKG_RELEASE:=0
+-PKG_MD5SUM:=b8ab5677ed73d817b02b0e4fae10357a
++PKG_MD5SUM:=053cb5d9e7ca9384598e82944343dea2
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+diff --git a/batctl/Makefile b/batctl/Makefile
+index ae22286..1009b03 100644
+--- a/batctl/Makefile
++++ b/batctl/Makefile
+@@ -9,9 +9,9 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=batctl
+ 
+-PKG_VERSION:=2014.2.0
++PKG_VERSION:=2014.4.0
+ PKG_RELEASE:=1
+-PKG_MD5SUM:=c196cf95b7324d9123b701a56b06b31d
++PKG_MD5SUM:=f3a14565699313258ee6ba3de783eb0a
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index 889dea7..0d5ed33 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -10,9 +10,9 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=batman-adv
+ 
+-PKG_VERSION:=2014.2.0
++PKG_VERSION:=2014.4.0
+ PKG_RELEASE:=1
+-PKG_MD5SUM:=1243029b3a3e2f4fa721d1a59c2faaf5
++PKG_MD5SUM:=b1518e84ce530883d224c6ca4c673ce8
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)

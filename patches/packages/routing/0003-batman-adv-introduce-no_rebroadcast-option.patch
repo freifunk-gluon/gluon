@@ -1,15 +1,15 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Fri, 22 Aug 2014 13:52:42 +0200
+Date: Wed, 7 Jan 2015 16:48:06 +0100
 Subject: batman-adv: introduce 'no_rebroadcast' option
 
 diff --git a/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
 new file mode 100644
-index 0000000..cb5c633
+index 0000000..cd79917
 --- /dev/null
 +++ b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
 @@ -0,0 +1,185 @@
-+From 0c8001036a191efd3aa30493ba7e31f9eceb21e1 Mon Sep 17 00:00:00 2001
-+Message-Id: <0c8001036a191efd3aa30493ba7e31f9eceb21e1.1418604208.git.mschiffer@universe-factory.net>
++From 5ba3f1eac041857deabe39432fdfe1a584bbdd81 Mon Sep 17 00:00:00 2001
++Message-Id: <5ba3f1eac041857deabe39432fdfe1a584bbdd81.1420645650.git.mschiffer@universe-factory.net>
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@web.de>
 +Date: Tue, 24 Sep 2013 04:36:27 +0200
 +Subject: [PATCH] batman-adv: introduce 'no_rebroadcast' option
@@ -191,5 +191,5 @@ index 0000000..cb5c633
 + 
 + /**
 +-- 
-+2.1.3
++2.2.1
 +
