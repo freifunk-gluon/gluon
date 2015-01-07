@@ -134,3 +134,11 @@ $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h-squashfs,buffalo-wzr-hp-g450h))
 # WZR-HP-AG300H/WZR-600DHP
 $(eval $(call GluonProfile,WZRHPAG300H))
 $(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h-squashfs,buffalo-wzr-hp-ag300h-wzr-600dhp))
+
+## Netgear
+
+# WNDR3700v2/3800
+$(eval $(call GluonProfile,WNDR3700))
+$(eval $(call GluonProfileFactorySuffix,WNDR3700,.img))
+$(eval $(call GluonModel,WNDR3700,wndr3700v2-squashfs,netgear-wndr3700v2))
+$(eval $(call GluonModel,WNDR3700,wndr3800-squashfs,netgear-wndr3800))
