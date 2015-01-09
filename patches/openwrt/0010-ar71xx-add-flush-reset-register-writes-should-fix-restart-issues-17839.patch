@@ -1,0 +1,24 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 9 Jan 2015 09:27:39 +0100
+Subject: ar71xx: add flush reset register writes, should fix restart issues (#17839)
+
+Backport of r43777
+
+diff --git a/target/linux/ar71xx/patches-3.10/728-MIPS-ath79-fix-restart.patch b/target/linux/ar71xx/patches-3.10/728-MIPS-ath79-fix-restart.patch
+index 0027c59..612078c 100644
+--- a/target/linux/ar71xx/patches-3.10/728-MIPS-ath79-fix-restart.patch
++++ b/target/linux/ar71xx/patches-3.10/728-MIPS-ath79-fix-restart.patch
+@@ -8,3 +8,13 @@
+  	ath79_device_reset_set(AR71XX_RESET_FULL_CHIP);
+  	for (;;)
+  		if (cpu_wait)
++--- a/arch/mips/include/asm/mach-ath79/ath79.h
+++++ b/arch/mips/include/asm/mach-ath79/ath79.h
++@@ -144,6 +144,7 @@ static inline u32 ath79_pll_rr(unsigned
++ static inline void ath79_reset_wr(unsigned reg, u32 val)
++ {
++ 	__raw_writel(val, ath79_reset_base + reg);
+++	(void) __raw_readl(ath79_reset_base + reg); /* flush */
++ }
++ 
++ static inline u32 ath79_reset_rr(unsigned reg)
