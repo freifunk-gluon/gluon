@@ -25,19 +25,19 @@ export GLUON_TARGET
 
 
 update: FORCE
-	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
-	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/update.sh
+	$(GLUONDIR)/scripts/patch.sh
 
 patch: FORCE
-	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/patch.sh
 
 unpatch: FORCE
-	$(GLUONDIR)/scripts/unpatch.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/unpatch.sh
 
 update-patches: FORCE
-	$(GLUONDIR)/scripts/update.sh $(GLUONDIR)
-	$(GLUONDIR)/scripts/update-patches.sh $(GLUONDIR)
-	$(GLUONDIR)/scripts/patch.sh $(GLUONDIR)
+	$(GLUONDIR)/scripts/update.sh
+	$(GLUONDIR)/scripts/update-patches.sh
+	$(GLUONDIR)/scripts/patch.sh
 
 -include $(TOPDIR)/include/host.mk
 

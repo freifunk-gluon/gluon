@@ -2,9 +2,9 @@
 
 set -e
 
-. "$1"/scripts/modules.sh
+. "$GLUONDIR"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
-	cd "$1"/$module
+	cd "$GLUONDIR"/$module
 	git checkout base
 done

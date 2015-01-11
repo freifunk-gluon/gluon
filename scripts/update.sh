@@ -2,7 +2,7 @@
 
 set -e
 
-. "$1"/scripts/modules.sh
+. "$GLUONDIR"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
 	var=$(echo $module | tr '[:lower:]/' '[:upper:]_')
@@ -10,8 +10,8 @@ for module in $GLUON_MODULES; do
 	eval branch=\${${var}_BRANCH}
 	eval commit=\${${var}_COMMIT}
 
-	mkdir -p "$1"/$module
-	cd "$1"/$module
+	mkdir -p "$GLUONDIR"/$module
+	cd "$GLUONDIR"/$module
 	git init
 
 	git checkout $commit 2>/dev/null || git fetch $repo $branch

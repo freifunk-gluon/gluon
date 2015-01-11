@@ -3,14 +3,14 @@
 set -e
 shopt -s nullglob
 
-. "$1"/scripts/modules.sh
+. "$GLUONDIR"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
-	cd "$1"/$module
+	cd "$GLUONDIR"/$module
 	git checkout -B patching base
 
-	if [ "$(echo "$1"/patches/$module/*.patch)" ]; then
-		git am --whitespace=nowarn "$1"/patches/$module/*.patch || (
+	if [ "$(echo "$GLUONDIR"/patches/$module/*.patch)" ]; then
+		git am --whitespace=nowarn "$GLUONDIR"/patches/$module/*.patch || (
 			git am --abort
 			git checkout patched
 			git branch -D patching
