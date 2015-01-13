@@ -1,5 +1,5 @@
 . "$GLUONDIR"/modules
-[ ! -f "$GLUON_SITEDIR"/site/modules ] || . "$GLUON_SITEDIR"/site/modules
+[ ! -f "$GLUON_SITEDIR"/modules ] || . "$GLUON_SITEDIR"/modules
 
 GLUON_MODULES=openwrt
 
