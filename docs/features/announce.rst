@@ -19,7 +19,7 @@ Information to be announced is currently split into two categories:
     This category holds fast changing data, like traffic counters, uptime,
     system load or the selected gateway.
 
-Both categories will have a ``node_id`` key be default. It should be used to
+Both categories will have a ``node_id`` key by default. It should be used to
 match data from *statistics* to *nodeinfo*.
 
 Accessing Node Information
