@@ -3,7 +3,7 @@
 . /usr/share/libubox/jshn.sh
 . /lib/functions/service.sh
 
-DEVLIST=/var/run/gluon-announce.devs
+DEVLIST=/var/run/gluon-announced.devs
 DAEMON=/usr/bin/gluon-announced
 
 ifname_to_dev () {
