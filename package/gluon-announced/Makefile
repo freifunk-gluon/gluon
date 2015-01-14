@@ -12,7 +12,7 @@ define Package/gluon-announced
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=announced support
-  DEPENDS:=
+  DEPENDS:=+gluon-announce
 endef
 
 define Package/gluon-announced/description
