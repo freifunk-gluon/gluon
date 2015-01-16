@@ -71,6 +71,10 @@ $(eval $(call GluonModel,TLWA750,tl-wa750re-v1-squashfs,tp-link-tl-wa750re-v1))
 $(eval $(call GluonProfile,TLWA850))
 $(eval $(call GluonModel,TLWA850,tl-wa850re-v1-squashfs,tp-link-tl-wa850re-v1))
 
+# TL-WA860RE v1
+$(eval $(call GluonProfile,TLWA860))
+$(eval $(call GluonModel,TLWA860,tl-wa860re-v1-squashfs,tp-link-tl-wa860re-v1))
+
 # TL-WA901N/ND v2
 $(eval $(call GluonProfile,TLWA901))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v2-squashfs,tp-link-tl-wa901n-nd-v2))
