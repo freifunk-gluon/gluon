@@ -124,8 +124,8 @@ autoupdater : package
           stable = {
             name = 'stable',
             mirrors = {
-              'http://{fdca:ffee:babe:1::fec1}/firmware/stable/sysupgrade/',
-              'http://{fdca:ffee:babe:1::fec2}/firmware/stable/sysupgrade/',
+              'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
+              'http://[fdca:ffee:babe:1::fec2]/firmware/stable/sysupgrade/',
             },
             probability = 0.08,
             good_signatures = 2,
