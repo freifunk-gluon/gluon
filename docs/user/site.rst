@@ -66,6 +66,8 @@ wifi24
     of ``ssid`` of your client network, the ``channel`` your community is using,
     ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
+    Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
+    ad-hoc interface.
     Combined in an dictionary, e.g.:
     ::
 
