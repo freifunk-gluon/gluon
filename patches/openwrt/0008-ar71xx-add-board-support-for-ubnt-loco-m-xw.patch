@@ -5,7 +5,7 @@ Subject: ar71xx: add board support for ubnt loco m xw
 Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 4b510dd..6e63343 100755
+index d9c7328..924766d 100755
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -34,7 +34,7 @@ get_status_led() {
@@ -18,7 +18,7 @@ index 4b510dd..6e63343 100755
  		;;
  	bxu2000n-2-a1)
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index fb8df40..8f845a0 100755
+index a6e6721..2676b48 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -38,7 +38,8 @@ ap113)
@@ -32,7 +32,7 @@ index fb8df40..8f845a0 100755
  	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "ubnt:orange:link2" "wlan0" "26" "100" "-25" "13"
  	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "ubnt:green:link3" "wlan0" "51" "100" "-50" "13"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index a9f00fa..5641a86 100755
+index 78f4992..c494310 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -293,6 +293,7 @@ bullet-m |\
@@ -44,7 +44,7 @@ index a9f00fa..5641a86 100755
  mr600v2 |\
  rb-411 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 0b0a8d6..4e58efe 100755
+index c13a8eb..19cd1a7 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -396,6 +396,9 @@ ar71xx_board_detect() {
@@ -58,7 +58,7 @@ index 0b0a8d6..4e58efe 100755
  		name="nanostation-m"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 15e998c..7f02089 100755
+index c583215..a566b62 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -217,6 +217,7 @@ platform_check_image() {
@@ -70,10 +70,10 @@ index 15e998c..7f02089 100755
  	rocket-m | \
  	nanostation-m-xw | \
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 5ff7f35..0d88ea5 100644
+index 55f11dc..3fdaf47 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
-@@ -1275,6 +1275,7 @@ $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTNANOM,ubnt-nano-m,UBNT-NM,ttyS0,11
+@@ -1276,6 +1276,7 @@ $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTNANOM,ubnt-nano-m,UBNT-NM,ttyS0,11
  $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFI,ubnt-unifi,UBNT-UF,ttyS0,115200,XM,BZ,ar7240))
  $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTUNIFIOUTDOOR,ubnt-unifi-outdoor,UBNT-U20,ttyS0,115200,XM,BZ,ar7240))
  $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTNANOMXW,ubnt-nano-m-xw,UBNT-NM-XW,ttyS0,115200,XM,XW,ar934x))
@@ -81,7 +81,7 @@ index 5ff7f35..0d88ea5 100644
  $(eval $(call SingleProfile,UBNTXM,64kraw,UBNTAIRGW,ubnt-air-gateway,UBNT-AGW,ttyATH0,115200,XM,AirGW,ar933x))
  
  $(eval $(call SingleProfile,WHRHPG300N,64kraw,WHRG301N,whr-g301n,WHR-G301N,ttyS0,115200,$$(whrhpg300n_mtdlayout),WHR-G301N))
-@@ -1320,7 +1321,7 @@ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV6))
+@@ -1322,7 +1323,7 @@ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV6))
  $(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2))
  $(eval $(call MultiProfile,TLWDR4300,TLWDR3500V1 TLWDR3600V1 TLWDR4300V1 TLWDR4300V1IL TLWDR4310V1 MW4530RV1))
  $(eval $(call MultiProfile,TUBE2H,TUBE2H8M TUBE2H16M))

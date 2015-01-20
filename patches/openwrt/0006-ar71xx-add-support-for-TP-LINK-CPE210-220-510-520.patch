@@ -9,7 +9,7 @@ faster CPU, more RAM, 2x2 MIMO.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 1864b11..4b510dd 100755
+index eb96338..d9c7328 100755
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -43,6 +43,9 @@ get_status_led() {
@@ -23,7 +23,7 @@ index 1864b11..4b510dd 100755
  		status_led="db120:green:status"
  		;;
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index d3b766d..fb8df40 100755
+index 0d085be..a6e6721 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -61,6 +61,16 @@ carambola2)
@@ -44,7 +44,7 @@ index d3b766d..fb8df40 100755
  	ucidef_set_led_usbdev "usb" "USB" "db120:green:usb" "1-1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index c5cfd67..a9f00fa 100755
+index 4be30b8..78f4992 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -62,6 +62,13 @@ tl-wdr4900-v2)
@@ -62,7 +62,7 @@ index c5cfd67..a9f00fa 100755
  rb-2011l | \
  rb-2011uas |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 5aceaee..0b0a8d6 100755
+index 6694839..c13a8eb 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -229,6 +229,39 @@ tplink_board_detect() {
@@ -116,7 +116,7 @@ index 5aceaee..0b0a8d6 100755
  	*"DB120 reference board")
  		name="db120"
  		;;
-@@ -751,11 +788,8 @@ ar71xx_board_detect() {
+@@ -754,11 +791,8 @@ ar71xx_board_detect() {
  		;;
  	esac
  
@@ -130,7 +130,7 @@ index 5aceaee..0b0a8d6 100755
  	[ -z "$name" ] && name="unknown"
  
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 846954c..15e998c 100755
+index eeaac6a..c583215 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -70,6 +70,33 @@ tplink_get_image_boot_size() {
@@ -180,7 +180,7 @@ index 846954c..15e998c 100755
  	tew-673gru)
  		dir825b_check_image "$1" && return 0
 diff --git a/target/linux/ar71xx/config-3.10 b/target/linux/ar71xx/config-3.10
-index 9a8378a..2f05ec6 100644
+index 482914a..14b59f7 100644
 --- a/target/linux/ar71xx/config-3.10
 +++ b/target/linux/ar71xx/config-3.10
 @@ -39,6 +39,7 @@ CONFIG_ATH79_MACH_AW_NR580=y
@@ -327,7 +327,7 @@ index 78333be..a9d170c 100644
  	NAME:=TP-LINK TL-MR10U
  	PACKAGES:=kmod-usb-core kmod-usb2
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 683c238..5ff7f35 100644
+index 425fcc5..55f11dc 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -261,6 +261,7 @@ cameo_ap121_mtdlayout_8M=mtdparts=spi0.0:64k(u-boot)ro,64k(art)ro,64k(mac)ro,64k
@@ -371,7 +371,7 @@ index 683c238..5ff7f35 100644
  define Image/Build/CyberTAN
  	echo -n '' > $(KDIR_TMP)/empty.bin
  	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/image.tmp \
-@@ -1226,6 +1253,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4
+@@ -1227,6 +1254,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4310V1,tl-wdr4310-v1,TL-WDR4
  $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWDR4900V2,tl-wdr4900-v2,TL-WDR4900-v2,ttyS0,115200,0x49000002,1,8Mlzma))
  $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,MW4530RV1,mw4530r-v1,TL-WDR4300,ttyS0,115200,0x45300001,1,8Mlzma))
  
