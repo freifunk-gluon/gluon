@@ -10,7 +10,7 @@ for module in $GLUON_MODULES; do
 	git checkout -B patching base
 
 	if [ "$(echo "$GLUONDIR"/patches/$module/*.patch)" ]; then
-		git am --whitespace=nowarn "$GLUONDIR"/patches/$module/*.patch || (
+		git -c user.name='Gluon Patch Manager' -c user.email='gluon@void.example.com' am --whitespace=nowarn "$GLUONDIR"/patches/$module/*.patch || (
 			git am --abort
 			git checkout patched
 			git branch -D patching
