@@ -23,11 +23,6 @@ configuration located in *docs/site-example/*.
 Building the image
 ------------------
 
-.. note:: Make sure you have configured your `Git identity`_.
-          If you neglect this, you'll get strange error messages.
-
-.. _Git identity: http://git-scm.com/book/en/Getting-Started-First-Time-Git-Setup#Your-Identity
-
 To build Gluon, first check out the repository. Replace *RELEASE* with the
 version you'd like to checkout, e.g. *v2014.3*.
 
