@@ -15,6 +15,7 @@ boot() {
 	else
 		# This can happen after an upgrade from a version before the config file was called gluon-setup-mode
 		# We'll just reboot to return to the normal mode...
+		/etc/init.d/done boot
 		reboot
 	fi
 }
