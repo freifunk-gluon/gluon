@@ -104,8 +104,9 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1-squashfs,tp-link-tl-mr3420-v1))
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2-squashfs,tp-link-tl-mr3420-v2))
 
 ifeq ($(BROKEN),1)
-# Archer C7 v2
+# Archer C5 v1, C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k))
+$(eval $(call GluonModel,ARCHERC7,archer-c5-squashfs,tp-link-archer-c5-v1))
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2-squashfs,tp-link-archer-c7-v2))
 endif
 
