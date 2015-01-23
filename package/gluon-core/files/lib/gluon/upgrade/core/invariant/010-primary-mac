@@ -1,0 +1,16 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local platform = require 'gluon.platform'
+
+local fs = require 'luci.fs'
+local util = require 'luci.util'
+
+
+if not sysconfig.primary_mac then
+  if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300'}) then
+    sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy1/macaddress'))
+  else
+    sysconfig.primary_mac = util.trim(fs.readfile('/sys/class/ieee80211/phy0/macaddress'))
+  end
+end

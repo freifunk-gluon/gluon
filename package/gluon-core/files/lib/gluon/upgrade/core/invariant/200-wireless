@@ -1,0 +1,12 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+
+-- Initial
+if not sysconfig.gluon_version then
+  local uci = require('luci.model.uci').cursor()
+
+  uci:delete_all('wireless', 'wifi-iface')
+  uci:save('wireless')
+  uci:commit('wireless')
+end

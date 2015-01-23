@@ -1,9 +1,0 @@
-#!/usr/bin/lua
-
-local uci = require('luci.model.uci').cursor()
-
-uci:delete('network', 'lan')
-uci:delete('network', 'wan')
-
-uci:save('network')
-uci:commit('network')
