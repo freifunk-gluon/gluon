@@ -4,9 +4,7 @@ local site = require 'gluon.site_config'
 local users = require 'gluon.users'
 local util = require 'gluon.util'
 
-local uci = require 'luci.model.uci'
-
-local c = uci.cursor()
+local uci = require('luci.model.uci').cursor()
 
 
 -- The previously used user is removed, we need root privileges to use the packet_mark option
@@ -16,23 +14,30 @@ users.remove_user('gluon-fastd')
 users.add_group('gluon-fastd', 800)
 
 
-c:section('fastd', 'fastd', 'mesh_vpn',
+local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
+if not enabled then
+  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
+end
+
+
+uci:section('fastd', 'fastd', 'mesh_vpn',
 	  {
+		  enabled = enabled,
 		  group = 'gluon-fastd',
 		  syslog_level = 'verbose',
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
-		  secure_handshakes = '1',
+		  secure_handshakes = 1,
 		  method = site.fastd_mesh_vpn.methods,
 		  packet_mark = 1,
 		  status_socket = '/var/run/fastd.mesh_vpn.socket',
 	  }
 )
-c:delete('fastd', 'mesh_vpn', 'user')
+uci:delete('fastd', 'mesh_vpn', 'user')
 
-c:delete('fastd', 'mesh_vpn_backbone')
-c:section('fastd', 'peer_group', 'mesh_vpn_backbone',
+uci:delete('fastd', 'mesh_vpn_backbone')
+uci:section('fastd', 'peer_group', 'mesh_vpn_backbone',
 	  {
 		  enabled = 1,
 		  net = 'mesh_vpn',
@@ -40,14 +45,14 @@ c:section('fastd', 'peer_group', 'mesh_vpn_backbone',
 	  }
 )
 
-c:delete_all('fastd', 'peer',
+uci:delete_all('fastd', 'peer',
 	     function(peer)
 	       return peer.net == 'mesh_vpn' and peer.group == 'mesh_vpn_backbone'
 	     end
 )
 
 for name, config in pairs(site.fastd_mesh_vpn.backbone.peers) do
-	c:section('fastd', 'peer', 'mesh_vpn_backbone_peer_' .. name,
+	uci:section('fastd', 'peer', 'mesh_vpn_backbone_peer_' .. name,
 		  {
 			  enabled = 1,
 			  net = 'mesh_vpn',
@@ -58,11 +63,11 @@ for name, config in pairs(site.fastd_mesh_vpn.backbone.peers) do
 	)
 end
 
-c:save('fastd')
-c:commit('fastd')
+uci:save('fastd')
+uci:commit('fastd')
 
 
-c:section('network', 'interface', 'mesh_vpn',
+uci:section('network', 'interface', 'mesh_vpn',
 	  {
 		  ifname = 'mesh-vpn',
 		  proto = 'batadv',
@@ -72,11 +77,11 @@ c:section('network', 'interface', 'mesh_vpn',
 	  }
 )
 
-c:save('network')
-c:commit('network')
+uci:save('network')
+uci:commit('network')
 
 
-c:section('firewall', 'include', 'mesh_vpn_dns',
+uci:section('firewall', 'include', 'mesh_vpn_dns',
 	  {
 	    type = 'restore',
 	    path = '/lib/gluon/mesh-vpn-fastd/iptables.rules',
@@ -84,5 +89,5 @@ c:section('firewall', 'include', 'mesh_vpn_dns',
 	  }
 )
 
-c:save('firewall')
-c:commit('firewall')
+uci:save('firewall')
+uci:commit('firewall')
