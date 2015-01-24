@@ -150,6 +150,15 @@ simple_tc : package
         },
       },
 
+setup_mode : package
+    Allows skipping setup mode (config mode) at first boot when attribute
+    ``skip`` is set to ``true``. This is optional and may be left out.
+    ::
+
+      setup_mode {
+        skip = true,
+      },
+
 config_mode : package
     Configuration Mode text blocks
 
