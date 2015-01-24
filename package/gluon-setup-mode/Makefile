@@ -35,4 +35,9 @@ define Package/gluon-setup-mode/install
 	$(CP) ./files/* $(1)/
 endef
 
+define Package/gluon-setup-mode/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
+endef
+
 $(eval $(call BuildPackage,gluon-setup-mode))
