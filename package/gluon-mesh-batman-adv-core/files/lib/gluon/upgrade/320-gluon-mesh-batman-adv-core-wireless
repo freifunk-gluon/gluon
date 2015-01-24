@@ -33,14 +33,12 @@ local function configure_radio(radio, index, config)
 	uci:section('network', 'interface', mesh,
 	      {
 		proto = 'none',
-		mtu = '1532',
 	      }
 	)
 	uci:section('network', 'interface', mesh .. '_vlan',
 	      {
 		ifname = '@' .. mesh .. '.' .. config.mesh_vlan,
 		proto = 'batadv',
-		mtu = '1528',
 		mesh = 'bat0',
 	      }
 	)
@@ -48,7 +46,6 @@ local function configure_radio(radio, index, config)
 	uci:section('network', 'interface', mesh,
 	      {
 		proto = 'batadv',
-		mtu = '1528',
 		mesh = 'bat0',
 	      }
 	)
