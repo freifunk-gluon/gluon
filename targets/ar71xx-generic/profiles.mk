@@ -104,6 +104,10 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v1-squashfs,tp-link-tl-mr3420-v1))
 $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2-squashfs,tp-link-tl-mr3420-v2))
 
 ifeq ($(BROKEN),1)
+# TL-WR2543N/ND v1
+$(eval $(call GluonProfile,TLWR2543))
+$(eval $(call GluonModel,TLWR2543,tl-wr2543-v1-squashfs,tp-link-tl-wr2543n-nd-v1))
+
 # Archer C5 v1, C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k))
 $(eval $(call GluonModel,ARCHERC7,archer-c5-squashfs,tp-link-archer-c5-v1))
