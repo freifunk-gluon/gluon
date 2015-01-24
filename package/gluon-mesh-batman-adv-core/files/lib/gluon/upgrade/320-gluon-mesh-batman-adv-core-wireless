@@ -14,6 +14,16 @@ local function configure_radio(radio, index, config)
   uci:set('wireless', radio, 'country', site.regdom)
 
   local client = 'client_' .. radio
+  local mesh = 'mesh_' .. radio
+
+  local client_ifname
+  local mesh_ifname
+  local radio_suffix = radio:match('^radio(%d+)$')
+  if radio_suffix then
+    client_ifname = 'client' .. radio_suffix
+    mesh_ifname = 'mesh' .. radio_suffix
+  end
+
   uci:delete('wireless', client)
   uci:section('wireless', 'wifi-iface', client,
 	      {
@@ -22,10 +32,10 @@ local function configure_radio(radio, index, config)
 		mode = 'ap',
 		ssid = config.ssid,
 		macaddr = util.generate_mac(2, index),
+		ifname = client_ifname,
 	      }
   )
 
-  local mesh = 'mesh_' .. radio
   uci:delete('network', mesh)
   uci:delete('network', mesh .. '_vlan')
 
@@ -61,6 +71,7 @@ local function configure_radio(radio, index, config)
 		bssid = config.mesh_bssid,
 		macaddr = util.generate_mac(3, index),
 		mcast_rate = config.mesh_mcast_rate,
+		ifname = mesh_ifname,
 	      }
   )
 end
