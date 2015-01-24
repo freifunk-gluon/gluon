@@ -106,12 +106,12 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2-squashfs,tp-link-tl-mr3420-v2))
 ifeq ($(BROKEN),1)
 # TL-WR2543N/ND v1
 $(eval $(call GluonProfile,TLWR2543))
-$(eval $(call GluonModel,TLWR2543,tl-wr2543-v1-squashfs,tp-link-tl-wr2543n-nd-v1))
+$(eval $(call GluonModel,TLWR2543,tl-wr2543-v1-squashfs,tp-link-tl-wr2543n-nd-v1)) # BROKEN: untested
 
 # Archer C5 v1, C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k))
-$(eval $(call GluonModel,ARCHERC7,archer-c5-squashfs,tp-link-archer-c5-v1))
-$(eval $(call GluonModel,ARCHERC7,archer-c7-v2-squashfs,tp-link-archer-c7-v2))
+$(eval $(call GluonModel,ARCHERC7,archer-c5-squashfs,tp-link-archer-c5-v1)) # BROKEN: ath10k
+$(eval $(call GluonModel,ARCHERC7,archer-c7-v2-squashfs,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
 
 ## Ubiquiti (everything)
@@ -123,7 +123,7 @@ $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw-squashfs,ubiquiti-nanostation-m-xw)
 $(eval $(call GluonModel,UBNT,ubnt-unifi-squashfs,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdoor))
 ifeq ($(BROKEN),1)
-$(eval $(call GluonModel,UBNT,ubnt-uap-pro-squashfs,ubiquiti-unifi-ap-pro))
+$(eval $(call GluonModel,UBNT,ubnt-uap-pro-squashfs,ubiquiti-unifi-ap-pro)) # BROKEN: not properly tested; probably issues with WLAN adapter detection
 endif
 
 
