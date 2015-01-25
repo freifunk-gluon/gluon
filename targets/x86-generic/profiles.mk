@@ -1,1 +1,11 @@
-$(eval $(call GluonProfile,Generic))
+$(eval $(call GluonProfile,VDI,kmod-pcnet32))
+$(eval $(call GluonProfileFactorySuffix,VDI))
+$(eval $(call GluonProfileSysupgradeSuffix,VDI))
+$(eval $(call GluonProfileExtraSuffix,VDI,.vdi))
+$(eval $(call GluonModel,VDI,combined-squashfs,x86-virtualbox))
+
+$(eval $(call GluonProfile,VMDK,kmod-pcnet32))
+$(eval $(call GluonProfileFactorySuffix,VMDK))
+$(eval $(call GluonProfileSysupgradeSuffix,VMDK))
+$(eval $(call GluonProfileExtraSuffix,VMDK,.vmdk))
+$(eval $(call GluonModel,VMDK,combined-squashfs,x86-vmware))
