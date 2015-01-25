@@ -60,6 +60,12 @@ endef
 define GluonProfileFactorySuffix
 endef
 
+define GluonProfileSysupgradeSuffix
+endef
+
+define GluonProfileExtraSuffix
+endef
+
 define GluonModel
 endef
 
@@ -131,11 +137,21 @@ PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 GLUON_$(1)_FACTORY_SUFFIX := .bin
+GLUON_$(1)_SYSUPGRADE_SUFFIX := .bin
+GLUON_$(1)_EXTRA_SUFFIX :=
 GLUON_$(1)_MODELS :=
 endef
 
 define GluonProfileFactorySuffix
 GLUON_$(1)_FACTORY_SUFFIX := $(2)
+endef
+
+define GluonProfileSysupgradeSuffix
+GLUON_$(1)_SYSUPGRADE_SUFFIX := $(2)
+endef
+
+define GluonProfileExtraSuffix
+GLUON_$(1)_EXTRA_SUFFIX := $(2)
 endef
 
 define GluonModel
@@ -347,12 +363,17 @@ image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade.bin && \
-		cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade.bin $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade.bin && \
-		\
+		$(if $(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX), \
+			rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) && \
+		) \
 		$(if $(GLUON_$(PROFILE)_FACTORY_SUFFIX), \
 			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
 			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory$(GLUON_$(PROFILE)_FACTORY_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
+		) \
+		$(if $(GLUON_$(PROFILE)_EXTRA_SUFFIX), \
+			rm -f $(GLUON_IMAGEDIR)/gluon-*-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_EXTRA_SUFFIX) $(GLUON_IMAGEDIR)/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
 		) \
 	) :
 
