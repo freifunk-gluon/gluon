@@ -372,8 +372,8 @@ image: FORCE
 			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory$(GLUON_$(PROFILE)_FACTORY_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
 		) \
 		$(if $(GLUON_$(PROFILE)_EXTRA_SUFFIX), \
-			rm -f $(GLUON_IMAGEDIR)/gluon-*-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
-			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_EXTRA_SUFFIX) $(GLUON_IMAGEDIR)/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
+			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_EXTRA_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
 		) \
 	) :
 
