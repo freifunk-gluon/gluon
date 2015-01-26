@@ -1,13 +1,13 @@
 local sysconfigdir = '/lib/gluon/core/sysconfig/'
 
 local function get(_, name)
-	local ret = nil
 	local f = io.open(sysconfigdir .. name)
 	if f then
-		ret = f:read('*line')
+		local ret = f:read('*line')
 		f:close()
+		return (ret or '')
 	end
-	return ret
+	return nil
 end
 
 local function set(_, name, val)
