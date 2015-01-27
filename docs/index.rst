@@ -38,6 +38,7 @@ Developer Documentation
    dev/hardware
    dev/upgrade
    dev/configmode
+   dev/wan
 
 Supported Devices
 -----------------
