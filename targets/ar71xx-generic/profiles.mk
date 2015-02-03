@@ -46,11 +46,15 @@ $(eval $(call GluonProfile,TLWR842))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v1-squashfs,tp-link-tl-wr842n-nd-v1))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v2-squashfs,tp-link-tl-wr842n-nd-v2))
 
-# TL-WR941N/ND v2, v3, v4
+# TL-WR941N/ND v2, v3, v4, v5, v6
 $(eval $(call GluonProfile,TLWR941))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v2-squashfs,tp-link-tl-wr941n-nd-v2))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v3-squashfs,tp-link-tl-wr941n-nd-v3))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v4-squashfs,tp-link-tl-wr941n-nd-v4))
+$(eval $(call GluonModel,TLWR941,tl-wr941nd-v5-squashfs,tp-link-tl-wr941n-nd-v5))
+ifeq ($(BROKEN),1)
+$(eval $(call GluonModel,TLWR941,tl-wr941nd-v6-squashfs,tp-link-tl-wr941n-nd-v6)) # BROKEN: untested
+endif
 
 # TL-WR1043N/ND v1, v2
 $(eval $(call GluonProfile,TLWR1043))
