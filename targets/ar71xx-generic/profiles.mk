@@ -130,6 +130,7 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-squashfs,ubiquiti-unifiap-outdo
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71-squashfs,ubiquiti-ls-sr71)) # BROKEN: Untested
 $(eval $(call GluonModel,UBNT,ubnt-uap-pro-squashfs,ubiquiti-unifi-ap-pro)) # BROKEN: not properly tested; probably issues with WLAN adapter detection
+$(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus-squashfs,ubiquiti-unifiap-outdoor+)) # BROKEN: WLAN doesn't work correctly (high packet loss)
 endif
 
 
