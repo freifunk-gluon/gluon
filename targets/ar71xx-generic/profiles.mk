@@ -169,3 +169,10 @@ $(eval $(call GluonProfileFactorySuffix,WNDR3700,.img))
 $(eval $(call GluonModel,WNDR3700,wndr3700-squashfs,netgear-wndr3700))
 $(eval $(call GluonModel,WNDR3700,wndr3700v2-squashfs,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800-squashfs,netgear-wndr3800))
++
++## Allnet
++
++# ALL0315N
++$(eval $(call GluonProfile,ALL0315N,uboot-envtools,rssileds))
++$(eval $(call GluonProfileFactorySuffix,ALL0315N,))
++$(eval $(call GluonModel,ALL0315N,all0315n-squashfs,allnet-all0315n))
