@@ -129,3 +129,10 @@ $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h-squashfs,buffalo-wzr-hp-g450h))
 # WZR-HP-AG300H/WZR-600DHP
 $(eval $(call GluonProfile,WZRHPAG300H))
 $(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h-squashfs,buffalo-wzr-hp-ag300h-wzr-600dhp))
+
+## Allnet
+
+# ALL0315N
+$(eval $(call GluonProfile,ALL0315N,uboot-envtools,rssileds))
+$(eval $(call GluonProfileFactorySuffix,ALL0315N,))
+$(eval $(call GluonModel,ALL0315N,all0315n-squashfs,allnet-all0315n))
