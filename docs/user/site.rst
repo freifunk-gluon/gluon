@@ -240,3 +240,4 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)
 * `site-ffrg <https://github.com/ffruhr/site-ffruhr>`_ (Ruhrgebiet)
 * `site-ffs <https://github.com/freifunk-stuttgart/site-ffs>`_ (Stuttgart)
+* `site-fftr <https://github.com/freifunktrier/site-fftr>`_ (Trier)
