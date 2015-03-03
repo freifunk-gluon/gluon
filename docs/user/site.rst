@@ -25,32 +25,32 @@ prefix4
     The IPv4 Subnet of your community mesh network in CIDR notation, e.g.
     ::
 
-       prefix4 = '10.111.111.0/18'
+       prefix4 = '10.111.111.0/18',
 
 prefix6
     The IPv6 subnet of your community mesh network, e.g.
     ::
 
-       prefix6 = 'fdca::ffee:babe:1::/64'
+       prefix6 = 'fdca::ffee:babe:1::/64',
 
 timezone
     The timezone of your community live in, e.g.
     ::
 
       -- Europe/Berlin
-      timezone = 'CET-1CEST,M3.5.0,M10.5.0/3'
+      timezone = 'CET-1CEST,M3.5.0,M10.5.0/3',
 
 ntp_server
     List of NTP servers available in your community or used by your community, e.g.:
     ::
 
-       ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'}
+       ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'},
 
 opkg_repo : optional
     Overwrite the default ``opkg`` repository server, e.g.:
     ::
 
-      opkg_repo = 'http://opkg.services.ffeh/attitude_adjustment/12.09/%S/packages'
+      opkg_repo = 'http://opkg.services.ffeh/attitude_adjustment/12.09/%S/packages',
 
     The `%S` is a variable, which is replaced with the platform of an device
     during the build process.
@@ -59,7 +59,7 @@ regdom
     The wireless regulatory domain responsible for your area, e.g.:
     ::
 
-      regdom = 'DE'
+      regdom = 'DE',
 
 wifi24
     WLAN Configuration of your community in the 2.4Ghz radio. Consisting
@@ -90,8 +90,8 @@ next_node : package
       next_node = {
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
-        mac = 'ca:ff:ee:ba:be'
-      }
+        mac = 'ca:ff:ee:ba:be',
+      },
 
 
 fastd_mesh_vpn
@@ -108,9 +108,9 @@ fastd_mesh_vpn
               key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
               remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
             },
-          }
-        }
-      }
+          },
+        },
+      },
 
 mesh_on_wan : optional
     Enables the mesh on the WAN port (``true`` or ``false``).
@@ -134,10 +134,10 @@ autoupdater : package
             pubkeys = {
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someother
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
 
 roles : optional
     Optional role definitions. With this nodes will announce their role inside the mesh.
@@ -197,7 +197,7 @@ legacy : package
              mesh_ifname = 'freifunk',
              tc_configs = {'ffki', 'freifunk'},
              wifi_names = {'wifi_freifunk', 'wifi_freifunk5', 'wifi_mesh', 'wifi_mesh5'},
-      }
+      },
 
 Packages
 --------
