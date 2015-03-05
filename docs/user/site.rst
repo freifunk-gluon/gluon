@@ -120,7 +120,6 @@ autoupdater : package
     ::
 
       autoupdater = {
-        enabled = 1,
         branch = 'experimental',
         branches = {
           stable = {
