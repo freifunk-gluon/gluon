@@ -4,7 +4,7 @@
 
 # GL-iNet 1.0 ; BB is the 8MB version, works on 16M too
 $(eval $(call GluonProfile,GLINET))
-$(eval $(call GluonModel,GLINET,gl-inet-v1-squashfs,gl-inet-v1.0))
+$(eval $(call GluonModel,GLINET,gl-inet-v1-squashfs,gl-inet-v1))
 
 
 ## TP-Link
