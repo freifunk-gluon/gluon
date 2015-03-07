@@ -9,6 +9,13 @@ $(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe220-v1.0)
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe510-v1.0))
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520-squashfs,tp-link-cpe520-v1.0))
 
+ifeq ($(BROKEN),1)
+# TL-WA701N/ND v1, v2
+$(eval $(call GluonProfile,TLWA701))
+$(eval $(call GluonModel,TLWA701,tl-wa701n-v1-squashfs,tp-link-tl-wa701n-nd-v1)) # BROKEN: untested
+$(eval $(call GluonModel,TLWA701,tl-wa701nd-v2-squashfs,tp-link-tl-wa701n-nd-v2)) # BROKEN: untested
+endif
+
 # TL-WR703N v1
 $(eval $(call GluonProfile,TLWR703))
 $(eval $(call GluonModel,TLWR703,tl-wr703n-v1-squashfs,tp-link-tl-wr703n-v1))
