@@ -1,0 +1,5 @@
+$(eval $(call GluonProfile,KVM,kmod-virtio-balloon kmod-virtio-net kmod-virtio-random))
+$(eval $(call GluonProfileFactorySuffix,KVM))
+$(eval $(call GluonProfileSysupgradeSuffix,KVM))
+$(eval $(call GluonProfileExtraSuffix,KVM,.img.gz))
+$(eval $(call GluonModel,KVM,combined-ext4,x86-kvm))
