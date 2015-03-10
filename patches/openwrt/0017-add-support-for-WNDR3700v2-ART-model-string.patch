@@ -1,0 +1,31 @@
+From 5d8589abac67c0ca470b9ddad337946e98fa944b Mon Sep 17 00:00:00 2001
+From: alexander eickhoff <alex@artbanause.de>
+Date: Tue, 10 Mar 2015 14:05:14 +0100
+Subject: [PATCH 17/17] add support for WNDR3700v2 ART model string
+
+- https://github.com/freifunk-gluon/gluon/issues/294
+- https://dev.openwrt.org/ticket/18992
+
+-not test completely
+---
+ target/linux/ar71xx/base-files/lib/ar71xx.sh |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 9e70397..a620db9 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -46,6 +46,10 @@ wndr3700_board_detect() {
+ 		else
+ 			machine="NETGEAR $model"
+ 		fi
++		if [ -z "$model" ] || [ "$model" = "NDR3700v2" ]; then
++			machine="NETGEAR WNDR3700v2"
++		fi
++		                                                    
+ 		;;
+ 	esac
+ 
+-- 
+1.7.10.4
+
