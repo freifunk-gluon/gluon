@@ -186,6 +186,12 @@ $(eval $(call GluonModel,WNDR3700,wndrmac-squashfs,netgear-wndrmac)) # BROKEN: u
 $(eval $(call GluonModel,WNDR3700,wndrmacv2-squashfs,netgear-wndrmacv2)) # BROKEN: untested
 endif
 
+# WNR2200
+$(eval $(call GluonProfile,WNR2200))
+$(eval $(call GluonModel,WNR2200,wnr2200-squashfs,netgear-wnr2200))
+$(eval $(call GluonProfileFactorySuffix,WNR2200,.img))
+
+
 ## Allnet
 
 # ALL0315N
