@@ -1,0 +1,81 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 10 Mar 2015 13:17:14 +0100
+Subject: ath10k: add Candelatech community firmware as an additional choice
+
+diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
+index 629692d..d77842a 100644
+--- a/package/kernel/mac80211/Makefile
++++ b/package/kernel/mac80211/Makefile
+@@ -605,6 +605,14 @@ This module adds support for wireless adapters based on
+ Atheros USB AR9271 and AR7010 family of chipsets.
+ endef
+ 
++ATH10K_CT_COMMUNITY_FW:=firmware-2-ct-full-community-13.bin
++define Download/ath10k-firmware-ct-community
++  FILE:=$(ATH10K_CT_COMMUNITY_FW)
++  URL:=http://www.candelatech.com/downloads/
++  MD5SUM:=a3decc529b0171ae9ec4495089ab354a
++endef
++$(eval $(call Download,ath10k-firmware-ct-community))
++
+ define KernelPackage/ath10k
+   $(call KernelPackage/mac80211/Default)
+   TITLE:=Atheros 802.11ac wireless cards support
+@@ -625,13 +633,31 @@ endef
+ define KernelPackage/ath10k/config
+   if PACKAGE_kmod-ath10k
+ 
++	choice
++		prompt "ath10k firmware flavour"
++		default ATH10K_AP_FW
++		help
++		  This option allows you to choose between different ath10k firmwares.
++
++	config ATH10K_AP_FW
++		bool "Firmware optimized for AP operation"
++		help
++		  Use the ath10k firmware optimized for access point operation.
++		  Supports only AP mode, will crash in IBSS (ad-hoc) mode.
++
+ 	config ATH10K_STA_FW
+ 		bool "Firmware optimized for STA operation"
+-		default n
+ 		help
+ 		  Use the ath10k firmware optimized for wireless client instead
+-		  of access point operation.
++		  of access point operation. Might be unstable in AP mode.
++
++	config ATH10K_CT_COMMUNITY_FW
++		bool "Firmware by Candela Technologies (community version)"
++		help
++		  Supports both AP and IBSS (ad-hoc) mode. Doesn't support
++		  encryption when using multiple VIFs.
+ 
++	endchoice
+   endif
+ endef
+ 
+@@ -1824,14 +1850,20 @@ define KernelPackage/ath10k/install
+ 	$(INSTALL_DATA) \
+ 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
++ifeq ($(CONFIG_ATH10K_AP_FW),y)
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2/firmware-3.bin_10.2-00082-4-2 \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-3.bin
++endif
+ ifeq ($(CONFIG_ATH10K_STA_FW),y)
+ 	$(INSTALL_DATA) \
+ 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/main/firmware-2.bin_999.999.0.636 \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
+-else
++endif
++ifeq ($(CONFIG_ATH10K_CT_COMMUNITY_FW),y)
+ 	$(INSTALL_DATA) \
+-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2/firmware-3.bin_10.2-00082-4-2 \
+-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-3.bin
++		$(DL_DIR)/$(ATH10K_CT_COMMUNITY_FW) \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
+ endif
+ endef
+ 
