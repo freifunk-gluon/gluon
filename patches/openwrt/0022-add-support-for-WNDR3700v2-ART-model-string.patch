@@ -1,12 +1,12 @@
 From 5d8589abac67c0ca470b9ddad337946e98fa944b Mon Sep 17 00:00:00 2001
 From: alexander eickhoff <alex@artbanause.de>
 Date: Tue, 10 Mar 2015 14:05:14 +0100
-Subject: [PATCH 17/17] add support for WNDR3700v2 ART model string
+Subject: add support for WNDR3700v2 ART model string
 
 - https://github.com/freifunk-gluon/gluon/issues/294
 - https://dev.openwrt.org/ticket/18992
 
--not test completely
+- not completely tested
 ---
  target/linux/ar71xx/base-files/lib/ar71xx.sh |    4 ++++
  1 file changed, 4 insertions(+)
