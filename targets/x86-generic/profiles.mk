@@ -1,10 +1,10 @@
-$(eval $(call GluonProfile,GENERIC))
+$(eval $(call GluonProfile,GENERIC,kmod-3c59x kmod-e100 kmod-e1000 kmod-natsemi kmod-ne2k-pci kmod-pcnet32 kmod-8139too kmod-r8169 kmod-sis900 kmod-tg3 kmod-via-rhine kmod-via-velocity))
 $(eval $(call GluonProfileFactorySuffix,GENERIC))
 $(eval $(call GluonProfileSysupgradeSuffix,GENERIC))
 $(eval $(call GluonProfileExtraSuffix,GENERIC,.img.gz))
 $(eval $(call GluonModel,GENERIC,combined-ext4,x86-generic))
 
-$(eval $(call GluonProfile,VDI,kmod-pcnet32))
+$(eval $(call GluonProfile,VDI,kmod-pcnet32 kmod-e1000))
 $(eval $(call GluonProfileFactorySuffix,VDI))
 $(eval $(call GluonProfileSysupgradeSuffix,VDI))
 $(eval $(call GluonProfileExtraSuffix,VDI,.vdi))

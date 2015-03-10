@@ -199,6 +199,7 @@ feeds: FORCE
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 config: FORCE
+	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
@@ -207,13 +208,16 @@ config: FORCE
 	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
 
 prepare-target: FORCE
-	mkdir -p $(GLUON_OPENWRTDIR)
-	for dir in build_dir dl staging_dir tmp; do \
+	rm $(GLUON_OPENWRTDIR)/tmp || true
+	mkdir -p $(GLUON_OPENWRTDIR)/tmp
+
+	for dir in build_dir dl staging_dir; do \
 		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
 	done
-	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target tmp toolchain tools; do \
+	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target toolchain tools; do \
 		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
 	done
+
 	+$(GLUONMAKE_EARLY) feeds
 	+$(GLUONMAKE_EARLY) gluon-tools
 	+$(GLUONMAKE) config
@@ -237,7 +241,9 @@ clean: FORCE
 	rm -f $(gluon_prepared_stamp)
 
 dirclean: FORCE
-	+$(SUBMAKE) dirclean
+	for dir in build_dir dl staging_dir tmp; do \
+		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
 	rm -rf $(GLUON_BUILDDIR)
 
 

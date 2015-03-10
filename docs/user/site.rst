@@ -120,7 +120,6 @@ autoupdater : package
     ::
 
       autoupdater = {
-        enabled = 1,
         branch = 'experimental',
         branches = {
           stable = {
@@ -138,6 +137,26 @@ autoupdater : package
           }
         }
       }
+
+roles : optional
+    Optional role definitions. With this nodes will announce their role inside the mesh.
+    In the backend this adds the facility to distinguish between normal, backbone and
+    service nodes or even gateways (if they advertise the role, also). It is up to
+    the community which roles to define. See the section below as an example.
+    ``default`` takes the default role which is set initially. This value should be
+    part of ``list``. If you want node owners to change the role via config mode add
+    the package ``gluon-luci-node-role`` to ``site.mk``.
+    ::
+
+      roles = {
+        default = 'node',
+        list = {
+          node = 'Normal Node',
+          test = 'Test Node',
+          backbone = 'Backbone Node',
+          service = 'Service Node',
+        },
+      },
 
 simple_tc : package
     Uplink traffic control

@@ -27,6 +27,7 @@ Features
    features/mesh-on-wan
    features/announce
    features/authorized-keys
+   features/roles
 
 Developer Documentation
 -----------------------

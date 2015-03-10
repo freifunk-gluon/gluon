@@ -6,6 +6,12 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 
 **Gluon IRC channel: `#gluon` in [hackint](http://hackint.org/)**
 
+## Issues & Feature requests
+
+Before opening an issue make sure to read check whether any existing issues
+(open or closed) match. If you're suggesting a new feature, drop by on IRC or
+our mailinglist to discuss it first.
+
 ## Use a release!
 
 Please refrain from using the master branch for anything else but development purposes!
@@ -15,15 +21,7 @@ and switch to one by running `git checkout v2014.3;make update`.
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
 If you upgrade using random master commits the nodes *will break* eventually.
 
-## Mailinglist (mostly for announcements)
-
-I can handle administrative requests automatically. Please
-do not send them to the list address! Instead, send
-your message to the correct command address:
-
-For help and a description of available commands, send a message to:
-
-    gluon-help@luebeck.freifunk.net
+## Mailinglist
 
 To subscribe to the list, send a message to:
 
@@ -35,15 +33,3 @@ message. If you haven't changed addresses since subscribing,
 you can also send a message to:
 
     gluon-unsubscribe@luebeck.freifunk.net
-
-or for the digest to:
-
-    gluon-digest-unsubscribe@luebeck.freifunk.net
-
-If you need to get in touch with the human owner of this list,
-please send a message to:
-
-     gluon-owner@luebeck.freifunk.net
-
-Please include a FORWARDED list message with ALL HEADERS intact
-to make it easier to help you.
