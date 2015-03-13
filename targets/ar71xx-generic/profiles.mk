@@ -192,3 +192,12 @@ endif
 $(eval $(call GluonProfile,ALL0315N,uboot-envtools rssileds))
 $(eval $(call GluonProfileFactorySuffix,ALL0315N,))
 $(eval $(call GluonModel,ALL0315N,all0315n-squashfs,allnet-all0315n))
+
+## GL-iNet
+
+ifeq ($(BROKEN),1)
+# GL-iNet 1.0
+$(eval $(call GluonProfile,GLINET))
+$(eval $(call GluonModel,GLINET,gl-inet-6408A-v1-squashfs,gl-inet-6408a-v1)) # BROKEN: untested
+$(eval $(call GluonModel,GLINET,gl-inet-6416A-v1-squashfs,gl-inet-6416a-v1)) # BROKEN: untested
+endif

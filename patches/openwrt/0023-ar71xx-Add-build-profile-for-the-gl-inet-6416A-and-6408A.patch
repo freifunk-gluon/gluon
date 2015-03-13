@@ -1,0 +1,35 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 12 Mar 2015 16:57:32 +0100
+Subject: ar71xx: Add build profile for the gl-inet 6416A and 6408A
+
+Patch to add the buildprofile for the GL-Init-6408A-v1 and the GL-Inet-6416A-v1
+Both devices are identical, only difference is one comes with 8MB flash and
+the other with 16MB flash
+
+Official website: http://www.gl-inet.com/w/?page_id=241&lang=en
+Comprehensive list of specs: https://revspace.nl/GL-Inet
+
+Signed-off-by: Martijn Zilverschoon <martijn@friedzombie.com>
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 8505ac4..fc59c33 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -1216,7 +1216,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,ARCHERC7V1,archer-c7-v1,ARCHER-C7
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,ARCHERC7V2,archer-c7-v2,ARCHER-C7,ttyS0,115200,0xc7000002,1,16Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,ELM150,el-m150,EL-M150,ttyATH0,115200,0x01500101,1,8Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,ELMINI,el-mini,EL-MINI,ttyATH0,115200,0x01530001,1,8Mlzma))
+-$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,GLINET,gl-inet-v1,GL-INET,ttyATH0,115200,0x08000001,1,8Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,GLINET6408A,gl-inet-6408A-v1,GL-INET,ttyATH0,115200,0x08000001,1,8Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,GLINET6416A,gl-inet-6416A-v1,GL-INET,ttyATH0,115200,0x08000001,1,16Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLMR10U,tl-mr10u-v1,TL-MR10U,ttyATH0,115200,0x00100101,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLMR11UV1,tl-mr11u-v1,TL-MR11U,ttyATH0,115200,0x00110101,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLMR11UV2,tl-mr11u-v2,TL-MR11U,ttyATH0,115200,0x00110102,1,4Mlzma))
+@@ -1304,6 +1305,7 @@ $(eval $(call MultiProfile,AP136,AP136_010 AP136_020))
+ $(eval $(call MultiProfile,ARCHERC7, ARCHERC5 ARCHERC7V1 ARCHERC7V2))
+ $(eval $(call MultiProfile,EWDORIN, EWDORINAP EWDORINRT EWDORIN16M))
+ $(eval $(call MultiProfile,OPENMESH,OM2P OM5P MR600))
++$(eval $(call MultiProfile,GLINET,GLINET6408A GLINET6416A))
+ $(eval $(call MultiProfile,TEW652BRP,TEW652BRP_FW TEW652BRP_RECOVERY))
+ $(eval $(call MultiProfile,TLMR11U,TLMR11UV1 TLMR11UV2))
+ $(eval $(call MultiProfile,TLMR3040,TLMR3040V1 TLMR3040V2))
