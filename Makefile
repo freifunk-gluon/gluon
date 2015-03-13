@@ -63,9 +63,6 @@ endef
 define GluonProfileSysupgradeSuffix
 endef
 
-define GluonProfileExtraSuffix
-endef
-
 define GluonModel
 endef
 
@@ -136,22 +133,21 @@ define GluonProfile
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
-GLUON_$(1)_FACTORY_SUFFIX := .bin
-GLUON_$(1)_SYSUPGRADE_SUFFIX := .bin
-GLUON_$(1)_EXTRA_SUFFIX :=
+GLUON_$(1)_FACTORY_SUFFIX := -squashfs-factory
+GLUON_$(1)_SYSUPGRADE_SUFFIX := -squashfs-sysupgrade
+GLUON_$(1)_FACTORY_EXT := .bin
+GLUON_$(1)_SYSUPGRADE_EXT := .bin
 GLUON_$(1)_MODELS :=
 endef
 
 define GluonProfileFactorySuffix
 GLUON_$(1)_FACTORY_SUFFIX := $(2)
+GLUON_$(1)_FACTORY_EXT := $(3)
 endef
 
 define GluonProfileSysupgradeSuffix
 GLUON_$(1)_SYSUPGRADE_SUFFIX := $(2)
-endef
-
-define GluonProfileExtraSuffix
-GLUON_$(1)_EXTRA_SUFFIX := $(2)
+GLUON_$(1)_SYSUPGRADE_EXT := $(3)
 endef
 
 define GluonModel
@@ -369,17 +365,13 @@ image: FORCE
 		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
-		$(if $(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX), \
-			rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) && \
-			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX) && \
+		$(if $(GLUON_$(PROFILE)_SYSUPGRADE_EXT), \
+			rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_SYSUPGRADE_SUFFIX)$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) && \
 		) \
-		$(if $(GLUON_$(PROFILE)_FACTORY_SUFFIX), \
-			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
-			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))-factory$(GLUON_$(PROFILE)_FACTORY_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_SUFFIX) && \
-		) \
-		$(if $(GLUON_$(PROFILE)_EXTRA_SUFFIX), \
-			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
-			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_EXTRA_SUFFIX) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_EXTRA_SUFFIX) && \
+		$(if $(GLUON_$(PROFILE)_FACTORY_EXT), \
+			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
+			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_FACTORY_SUFFIX)$(GLUON_$(PROFILE)_FACTORY_EXT) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
 		) \
 	) :
 
@@ -400,10 +392,10 @@ manifest: FORCE
 		echo && \
 		($(foreach profile,$(PROFILES), \
 			$(foreach model,$(GLUON_$(profile)_MODELS), \
-				for file in gluon-*-'$(model)-sysupgrade.bin'; do \
+				for file in gluon-*-'$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)'; do \
 					[ -e "$$file" ] && echo \
 						'$(model)' \
-						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(model))-sysupgrade\.bin$$/\1/p')" \
+						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT))$$/\1/p')" \
 						"$$($(SHA512SUM) "$$file")" \
 						"$$file" && break; \
 				done; \
