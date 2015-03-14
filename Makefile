@@ -300,7 +300,8 @@ BIN_DIR = $(PROFILE_BUILDDIR)/images
 TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
 
-IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$$(cat $(gluon_prepared_stamp))
+PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
 
 OPKG:= \
   IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
@@ -392,13 +393,8 @@ manifest: FORCE
 		echo && \
 		($(foreach profile,$(PROFILES), \
 			$(foreach model,$(GLUON_$(profile)_MODELS), \
-				for file in gluon-*-'$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)'; do \
-					[ -e "$$file" ] && echo \
-						'$(model)' \
-						"$$(echo "$$file" | sed -n -r -e 's/^gluon-$(call regex-escape,$(GLUON_SITE_CODE))-(.*)-$(call regex-escape,$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT))$$/\1/p')" \
-						"$$($(SHA512SUM) "$$file")" \
-						"$$file" && break; \
-				done; \
+				file="$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
+				[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
 			) \
 		) :) \
 	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
