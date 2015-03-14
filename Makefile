@@ -93,7 +93,7 @@ manifest: FORCE
 
 	@( \
 		echo 'BRANCH=$(GLUON_BRANCH)' && \
-		echo 'DATE=$(shell $(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
+		echo 'DATE=$(shell $(GLUON_ORIGOPENWRTDIR)/staging_dir/host/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
 		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
 		echo \
 	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
