@@ -99,7 +99,7 @@ manifest: FORCE
 	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
-		( [ ! -e $(BOARD_BUILDDIR)/target-prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' ) ) && \
+		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' ) ) && \
 	) :)
 
 else
