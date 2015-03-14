@@ -72,7 +72,7 @@ all: prepare-target
 prepare: prepare-target
 	+@$(GLUONMAKE) $@
 
-clean dirclean download images: FORCE
+clean download images: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
@@ -101,6 +101,12 @@ manifest: FORCE
 	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
 		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' ) ) && \
 	) :)
+
+dirclean : FORCE
+	@for dir in build_dir dl staging_dir tmp; do \
+		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
+	@rm -rf $(GLUON_BUILDDIR) $(GLUON_IMAGEDIR)
 
 else
 
@@ -235,12 +241,6 @@ $(package/stamp-compile): $(package/stamp-cleanup)
 clean: FORCE
 	+$(SUBMAKE) clean
 	rm -f $(gluon_prepared_stamp)
-
-dirclean: FORCE
-	for dir in build_dir dl staging_dir tmp; do \
-		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
-	done
-	rm -rf $(GLUON_BUILDDIR)
 
 
 export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
