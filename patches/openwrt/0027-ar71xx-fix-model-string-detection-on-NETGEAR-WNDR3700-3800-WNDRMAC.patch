@@ -1,0 +1,52 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 15 Mar 2015 19:51:15 +0100
+Subject: ar71xx: fix model string detection on NETGEAR WNDR3700/3800/WNDRMAC
+
+There were a few issues with the existing code to detect the model string:
+* Always using the string starting with byte 56 would cut off the W of WNDR when
+  the ID starts with 29763654+16+128 instead of 29763654+16+64
+* The string contained garbage after the zero byte instead of cutting it off
+  after the zero (which wasn't always visible using busybox tools, but could
+  confuse other scripts)
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index ac7f787..f50a236 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -37,16 +37,28 @@ wndr3700_board_detect() {
+ 		machine="NETGEAR WNDR3700"
+ 		;;
+ 	"33373031")
+-		local model
+-		model=$(ar71xx_get_mtd_offset_size_format art 56 10 %c)
+-		if [ -z "$model" ] || [ "$model" = $'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff' ]; then
++		case "$(ar71xx_get_mtd_offset_size_format art 56 10 %c)" in
++		$'\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff')
+ 			machine="NETGEAR WNDR3700v2"
+-		elif [ -z "$model" ] || [ "$model" = $'\xff\xff\xff\xff\xff\xff\xff\xff\xffN' ]; then
++			;;
++		$'\xff\xff\xff\xff\xff\xff\xff\xff\xffN')
+ 			machine="NETGEAR WNDRMAC"
+-		else
+-			machine="NETGEAR $model"
+-		fi
+-		;;
++			;;
++		*)
++			# Use awk to remove everything after the first zero byte
++			model="$(ar71xx_get_mtd_offset_size_format art 41 32 %c | awk 'BEGIN{FS="[[:cntrl:]]"} {print $1; exit}')"
++			case $model in
++			'29763654+16+64'*)
++				machine="NETGEAR ${model:14}"
++				;;
++			'29763654+16+128'*)
++				machine="NETGEAR ${model:15}"
++				;;
++			*)
++				# Unknown ID
++				machine="NETGEAR $model"
++			esac
++		esac
+ 	esac
+ 
+ 	AR71XX_BOARD_NAME="$name"
