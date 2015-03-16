@@ -195,9 +195,7 @@ $(eval $(call GluonModel,ALL0315N,all0315n,allnet-all0315n))
 
 ## GL-iNet
 
-ifeq ($(BROKEN),1)
 # GL-iNet 1.0
 $(eval $(call GluonProfile,GLINET))
-$(eval $(call GluonModel,GLINET,gl-inet-6408A-v1,gl-inet-6408a-v1)) # BROKEN: untested
-$(eval $(call GluonModel,GLINET,gl-inet-6416A-v1,gl-inet-6416a-v1)) # BROKEN: untested
-endif
+$(eval $(call GluonModel,GLINET,gl-inet-6408A-v1,gl-inet-6408a-v1))
+$(eval $(call GluonModel,GLINET,gl-inet-6416A-v1,gl-inet-6416a-v1))
