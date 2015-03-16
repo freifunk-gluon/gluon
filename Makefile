@@ -85,13 +85,13 @@ toolchain/% package/% target/% image/%: FORCE
 	+@$(GLUONMAKE) $@
 
 manifest: FORCE
-	[ -n '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
-	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
+	@[ -n '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
+	@echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	@$(CheckExternal)
 
-	@mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
+	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
 
-	@( \
+	( \
 		echo 'BRANCH=$(GLUON_BRANCH)' && \
 		echo 'DATE=$(shell $(GLUON_ORIGOPENWRTDIR)/staging_dir/host/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
 		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
@@ -99,14 +99,14 @@ manifest: FORCE
 	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
-		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' ) ) && \
+		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) ) ) && \
 	) :)
 
 dirclean : FORCE
-	@for dir in build_dir dl staging_dir tmp; do \
+	for dir in build_dir dl staging_dir tmp; do \
 		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
 	done
-	@rm -rf $(GLUON_BUILDDIR) $(GLUON_IMAGEDIR)
+	rm -rf $(GLUON_BUILDDIR) $(GLUON_IMAGEDIR)
 
 else
 
