@@ -1,0 +1,22 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 15 Mar 2015 21:03:25 +0100
+Subject: ar71xx: fix TP-LINK TL-WDR3600/4300 RFKILL switch positions
+
+While the switch positions aren't explicitly labeled as on and off, we've heard
+complaints about them being wrong. This patch changes the handling to match the
+stock firmware.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wdr4300.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wdr4300.c
+index 99ae80d..3afc714 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wdr4300.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wdr4300.c
+@@ -103,6 +103,7 @@ static struct gpio_keys_button wdr4300_gpio_keys[] __initdata = {
+ 		.code		= KEY_RFKILL,
+ 		.debounce_interval = WDR4300_KEYS_DEBOUNCE_INTERVAL,
+ 		.gpio		= WDR4300_GPIO_BTN_RFKILL,
++		.active_low	= 1,
+ 	},
+ };
+ 

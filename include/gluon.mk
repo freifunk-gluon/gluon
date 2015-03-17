@@ -8,12 +8,14 @@ GLUON_BUILDDIR ?= $(GLUONDIR)/build
 GLUON_ORIGOPENWRTDIR := $(GLUONDIR)/openwrt
 GLUON_SITE_CONFIG := $(GLUON_SITEDIR)/site.conf
 
-GLUON_OPENWRTDIR = $(GLUON_BUILDDIR)/$(GLUON_TARGET)/openwrt
+export GLUONDIR GLUON_SITEDIR GLUON_SITE_CONFIG GLUON_IMAGEDIR GLUON_BUILDDIR
 
-BOARD_BUILDDIR = $(GLUON_BUILDDIR)/$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+
+BOARD_BUILDDIR = $(GLUON_BUILDDIR)/$(GLUON_TARGET)
 BOARD_KDIR = $(BOARD_BUILDDIR)/kernel
 
-export GLUONDIR GLUON_SITEDIR GLUON_SITE_CONFIG GLUON_IMAGEDIR GLUON_OPENWRTDIR GLUON_BUILDDIR
+GLUON_OPENWRTDIR = $(BOARD_BUILDDIR)/openwrt
+
 
 $(GLUON_SITEDIR)/site.mk:
 	$(error There was no site configuration found. Please check out a site configuration to $(GLUON_SITEDIR))
@@ -57,8 +59,6 @@ GLUON_TARGETS += $$(gluon_target)
 GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
 GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
 endef
-
-regex-escape = $(shell echo '$(1)' | sed -e 's/[]\/()$*.^|[]/\\&/g')
 
 GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools
 

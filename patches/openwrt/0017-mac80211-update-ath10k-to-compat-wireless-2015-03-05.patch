@@ -481,10 +481,10 @@ index 0000000..d0c1bbd
 ++#endif /* SPECTRAL_COMMON_H */
 diff --git a/package/kernel/mac80211/patches/919-update-ath10k.patch b/package/kernel/mac80211/patches/919-update-ath10k.patch
 new file mode 100644
-index 0000000..0f5d87a
+index 0000000..45fccb8
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/919-update-ath10k.patch
-@@ -0,0 +1,32869 @@
+@@ -0,0 +1,33023 @@
 +--- a/drivers/net/wireless/ath/ath10k/Kconfig
 ++++ b/drivers/net/wireless/ath/ath10k/Kconfig
 +@@ -26,13 +26,15 @@ config ATH10K_DEBUG
@@ -27862,7 +27862,7 @@ index 0000000..0f5d87a
 ++
 ++	/* Avoid linking error on devm_hwmon_device_register_with_groups, I
 ++	 * guess linux/hwmon.h is missing proper stubs. */
-++	if (!config_enabled(CONFIG_HWMON))
+++	if (!config_enabled(CPTCFG_HWMON))
 ++		return 0;
 ++
 ++	hwmon_dev = devm_hwmon_device_register_with_groups(ar->dev,
@@ -33354,6 +33354,160 @@ index 0000000..0f5d87a
 ++} __packed;
 ++
 + #endif /* SPECTRAL_COMMON_H */
++--- a/compat/backport-3.13.c
+++++ b/compat/backport-3.13.c
++@@ -12,6 +12,10 @@
++ #include <linux/version.h>
++ #include <linux/kernel.h>
++ #include <net/genetlink.h>
+++#include <linux/delay.h>
+++#include <linux/pci.h>
+++#include <linux/device.h>
+++#include <linux/hwmon.h>
++ 
++ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,5,0))
++ #ifdef CPTCFG_REGULATOR
++@@ -200,3 +204,103 @@ bool __net_get_random_once(void *buf, in
++ }
++ EXPORT_SYMBOL_GPL(__net_get_random_once);
++ #endif /* __BACKPORT_NET_GET_RANDOM_ONCE */
+++
+++#ifdef CPTCFG_PCI
+++#define pci_bus_read_dev_vendor_id LINUX_BACKPORT(pci_bus_read_dev_vendor_id)
+++static bool pci_bus_read_dev_vendor_id(struct pci_bus *bus, int devfn, u32 *l,
+++				int crs_timeout)
+++{
+++	int delay = 1;
+++
+++	if (pci_bus_read_config_dword(bus, devfn, PCI_VENDOR_ID, l))
+++		return false;
+++
+++	/* some broken boards return 0 or ~0 if a slot is empty: */
+++	if (*l == 0xffffffff || *l == 0x00000000 ||
+++	    *l == 0x0000ffff || *l == 0xffff0000)
+++		return false;
+++
+++	/*
+++	 * Configuration Request Retry Status.  Some root ports return the
+++	 * actual device ID instead of the synthetic ID (0xFFFF) required
+++	 * by the PCIe spec.  Ignore the device ID and only check for
+++	 * (vendor id == 1).
+++	 */
+++	while ((*l & 0xffff) == 0x0001) {
+++		if (!crs_timeout)
+++			return false;
+++
+++		msleep(delay);
+++		delay *= 2;
+++		if (pci_bus_read_config_dword(bus, devfn, PCI_VENDOR_ID, l))
+++			return false;
+++		/* Card hasn't responded in 60 seconds?  Must be stuck. */
+++		if (delay > crs_timeout) {
+++			printk(KERN_WARNING "pci %04x:%02x:%02x.%d: not responding\n",
+++			       pci_domain_nr(bus), bus->number, PCI_SLOT(devfn),
+++			       PCI_FUNC(devfn));
+++			return false;
+++		}
+++	}
+++
+++	return true;
+++}
+++
+++bool pci_device_is_present(struct pci_dev *pdev)
+++{
+++	u32 v;
+++
+++	return pci_bus_read_dev_vendor_id(pdev->bus, pdev->devfn, &v, 0);
+++}
+++EXPORT_SYMBOL_GPL(pci_device_is_present);
+++#endif /* CPTCFG_PCI */
+++
+++#ifdef CPTCFG_HWMON
+++struct device*
+++hwmon_device_register_with_groups(struct device *dev, const char *name,
+++				  void *drvdata,
+++				  const struct attribute_group **groups)
+++{
+++	struct device *hwdev;
+++
+++	hwdev = hwmon_device_register(dev);
+++	hwdev->groups = groups;
+++	dev_set_drvdata(hwdev, drvdata);
+++	return hwdev;
+++}
+++
+++static void devm_hwmon_release(struct device *dev, void *res)
+++{
+++	struct device *hwdev = *(struct device **)res;
+++
+++	hwmon_device_unregister(hwdev);
+++}
+++
+++struct device *
+++devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
+++				       void *drvdata,
+++				       const struct attribute_group **groups)
+++{
+++	struct device **ptr, *hwdev;
+++
+++	if (!dev)
+++		return ERR_PTR(-EINVAL);
+++
+++	ptr = devres_alloc(devm_hwmon_release, sizeof(*ptr), GFP_KERNEL);
+++	if (!ptr)
+++		return ERR_PTR(-ENOMEM);
+++
+++	hwdev = hwmon_device_register_with_groups(dev, name, drvdata, groups);
+++	if (IS_ERR(hwdev))
+++		goto error;
+++
+++	*ptr = hwdev;
+++	devres_add(dev, ptr);
+++	return hwdev;
+++
+++error:
+++	devres_free(ptr);
+++	return hwdev;
+++}
+++EXPORT_SYMBOL_GPL(devm_hwmon_device_register_with_groups);
+++#endif
++--- /dev/null
+++++ b/backport-include/linux/hwmon.h
++@@ -0,0 +1,34 @@
+++#ifndef __BACKPORT_LINUX_HWMON_H
+++#define __BACKPORT_LINUX_HWMON_H
+++#include_next <linux/hwmon.h>
+++#include <linux/version.h>
+++
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0)
+++/*
+++ * Backports
+++ *
+++ * commit bab2243ce1897865e31ea6d59b0478391f51812b
+++ * Author: Guenter Roeck <linux@roeck-us.net>
+++ * Date:   Sat Jul 6 13:57:23 2013 -0700
+++ *
+++ *     hwmon: Introduce hwmon_device_register_with_groups
+++ *
+++ *     hwmon_device_register_with_groups() lets callers register a hwmon device
+++ *     together with all sysfs attributes in a single call.
+++ *
+++ *     When using hwmon_device_register_with_groups(), hwmon attributes are attached
+++ *     to the hwmon device directly and no longer with its parent device.
+++ *
+++ * Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+++ */
+++struct device *
+++hwmon_device_register_with_groups(struct device *dev, const char *name,
+++				  void *drvdata,
+++				  const struct attribute_group **groups);
+++struct device *
+++devm_hwmon_device_register_with_groups(struct device *dev, const char *name,
+++				       void *drvdata,
+++				       const struct attribute_group **groups);
+++#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(3,13,0) */
+++
+++#endif /* __BACKPORT_LINUX_HWMON_H */
 diff --git a/package/kernel/mac80211/patches/920-ath10k_allow_fallback_to_board_bin_on_empty_otp_stream.patch b/package/kernel/mac80211/patches/920-ath10k_allow_fallback_to_board_bin_on_empty_otp_stream.patch
 index 6a5c766..6a3d2a4 100644
 --- a/package/kernel/mac80211/patches/920-ath10k_allow_fallback_to_board_bin_on_empty_otp_stream.patch

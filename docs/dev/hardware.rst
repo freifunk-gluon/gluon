@@ -73,30 +73,23 @@ won't run correctly without some adjustments, so better double check that everyt
 Add support to the build system
 '''''''''''''''''''''''''''''''
 A directory for the new target must be created under ``targets``, and it must be added
-to ``targets/targets.mk``. In the new target directory, four files must be created:
+to ``targets/targets.mk``. In the new target directory, three files must be created:
 
 * config
-* kernel-config
-* kernel-vermagic
 * profiles.mk
+* vermagic
 
-The file ``config`` can be used to add additional, target-specific options to the OpenWrt config. If such options
-aren't necessary, it can be left empty. For ``profiles.mk``, see :ref:`hardware-adding-profiles`.
+The file ``config`` can be used to add additional, target-specific options to the OpenWrt config. It
+must at least select the correct target and subtarget. For ``profiles.mk``, see :ref:`hardware-adding-profiles`.
 
-The files ``kernel-config`` and ``kernel-vermagic`` must have the correct content so kernel modules from the upstream repositories
-can be easily installed. The OpenWrt version a Gluon release is based on is defined by the upstream package repo URL in ``include/gluon.mk``
-(in the variable ``CONFIG_VERSION_REPO``); at the time this documentation was written, this was ``barrier_breaker/14.07-rc3``; whenever
-the package repo is updated, all ``kernel-config`` and ``kernel-vermagic`` files must be updated as well.
+The files ``vermagic`` must have the correct content so kernel modules from the upstream repositories
+can be installed without dependency issues. The OpenWrt version a Gluon release is based on is defined by the upstream package repo URL in ``include/gluon.mk``
+(in the variable ``CONFIG_VERSION_REPO``); at the time this documentation was written, this was ``barrier_breaker/14.07``; whenever
+the package repo is updated, all ``vermagic`` files must be updated as well.
 
-The file ``kernel-vermagic`` just contains a hash which is part of the version number of the kernel package. So in the case of ``ar71xx-generic`` on
-``barrier_breaker/14.07-rc3``, we look in the directory ``https://downloads.openwrt.org/barrier_breaker/14.07-rc3/ar71xx/generic/packages/`` and
-find that the kernel package is called ``kernel_3.10.49-1-94831e5bcf361d1c03e87a15e152b0e8_ar71xx.ipk``. This makes the ``kernel-vermagic`` the
-string ``94831e5bcf361d1c03e87a15e152b0e8``.
-
-For ``kernel-config``, the OpenWrt image builder must be downloaded. Again, for ``ar71xx-generic`` on
-``barrier_breaker/14.07-rc3``, we download ``OpenWrt-SDK-ar71xx-for-linux-x86_64-gcc-4.8-linaro_uClibc-0.9.33.2.tar.bz2``
-from ``https://downloads.openwrt.org/barrier_breaker/14.07-rc3/ar71xx/generic/``. After unpacking it, we use the file
-``OpenWrt-ImageBuilder-ar71xx_generic-for-linux-x86_64/build_dir/target-mips_34kc_uClibc-0.9.33.2/linux-ar71xx_generic/linux-3.10.49/.config``
-as our ``kernel-config``.
+The content is a hash which is part of the version number of the kernel package. So in the case of ``ar71xx-generic`` on
+``barrier_breaker``, we look for the kernel package in the directory ``https://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/base/``.
+As the kernel package is called ``kernel_3.10.49-1-0114c71ed85677c9c1e4911437af4743_ar71xx.ipk``, the correct ``vermagic`` string
+is ``0114c71ed85677c9c1e4911437af4743``.
 
 After this, is should be sufficient to call ``make GLUON_TARGET=<target>-<subtarget>`` to build the images for the new target.

@@ -63,16 +63,14 @@ directory and build Gluon:
 ::
 
     cd ..
-    make update  # Get other repositories used by Gluon
-    make         # Build Gluon
+    make update                        # Get other repositories used by Gluon
+    make GLUON_TARGET=ar71xx-generic   # Build Gluon
 
-When calling make, the OpenWRT build environment is prepared/updated.
+When calling make, the OpenWrt build environment is prepared/updated.
 In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
-To rebuild the images only, just use:
 
-::
-
-    make images
+``ar71xx-generic`` is the most common target and will generated images for most of the supported hardware.
+To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
 The built images can be found in the directory `images`. Of these, the factory
 images are to be used when flashing from the original firmware a device came with,
@@ -88,9 +86,9 @@ There are two levels of `make clean`:
 
 ::
 
-    make clean
+    make clean GLUON_TARGET=ar71xx-generic
 
-will ensure all packages are rebuilt; this is what you normally want to do after an update.
+will ensure all packages are rebuilt for a single target; this is what you normally want to do after an update.
 
 ::
 
@@ -115,12 +113,13 @@ GLUON_BUILDDIR
   Working directory during build. Defaults to ``build/``.
 
 
-So all in all, to update and rebuild a Gluon build tree, the following commands should be used:
+So all in all, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
+``make clean`` and ``make`` for all targets you want to build):
 
 ::
 
     git pull
     (cd site && git pull)
     make update
-    make clean
-    make
+    make clean GLUON_TARGET=ar71xx-generic
+    make GLUON_TARGET=ar71xx-generic

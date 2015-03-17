@@ -1,0 +1,57 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 16 Mar 2015 13:23:34 +0100
+Subject: buildroot: make it easier to build all kmods
+
+Split out kmods from ALL to make it easier to create local builds that
+are compatible kmod-wise with releases.
+
+Signed-off-by: Jonas Gorski <jogo@openwrt.org>
+
+diff --git a/config/Config-build.in b/config/Config-build.in
+index 371ae76..8b0ebbf 100644
+--- a/config/Config-build.in
++++ b/config/Config-build.in
+@@ -6,8 +6,12 @@
+ 
+ menu "Global build settings"
+ 
++	config ALL_KMODS
++		bool "Select all kernel module packages by default"
++		default ALL
++
+ 	config ALL
+-		bool "Select all packages by default"
++		bool "Select all userspace packages by default"
+ 		default n
+ 
+ 	comment "General build options"
+diff --git a/include/version.mk b/include/version.mk
+index 2fd605f..f6c0fe2 100644
+--- a/include/version.mk
++++ b/include/version.mk
+@@ -50,7 +50,7 @@ $(lastword $(subst :, ,$(1)))
+ endef
+ 
+ VERSION_TAINT_SPECS := \
+-	-ALL:no-all \
++	-ALL_KMODS:no-all \
+ 	-IPV6:no-ipv6 \
+ 	+USE_EGLIBC:eglibc \
+ 	+USE_MKLIBS:mklibs \
+diff --git a/scripts/metadata.pl b/scripts/metadata.pl
+index 79f930c..4eecb0c 100755
+--- a/scripts/metadata.pl
++++ b/scripts/metadata.pl
+@@ -574,7 +574,11 @@ sub print_package_config_category($) {
+ 			print "\t\t".($pkg->{tristate} ? 'tristate' : 'bool')." $title\n";
+ 			print "\t\tdefault y if DEFAULT_".$pkg->{name}."\n";
+ 			unless ($pkg->{hidden}) {
+-				$pkg->{default} ||= "m if ALL";
++				if ($pkg->{name} =~ /^kmod-/) {
++					$pkg->{default} ||= "m if ALL_KMODS";
++				} else {
++					$pkg->{default} ||= "m if ALL";
++				}
+ 			}
+ 			if ($pkg->{default}) {
+ 				foreach my $default (split /\s*,\s*/, $pkg->{default}) {
