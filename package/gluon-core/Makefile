@@ -15,6 +15,21 @@ define Package/gluon-core
   DEPENDS:=+gluon-config +lua-platform-info +luci-lib-nixio +odhcp6c +firewall
 endef
 
+
+define LangConfig
+config GLUON_LANG_$(1)
+	bool "$(GLUON_LANG_$(1)) language support"
+	depends on PACKAGE_gluon-core
+	default n
+
+endef
+
+
+define Package/gluon-core/config
+$(foreach lang,$(GLUON_SUPPORTED_LANGS),$(call LangConfig,$(lang)))
+endef
+
+
 define Package/gluon-core/description
 	Gluon community wifi mesh firmware framework: core
 endef
