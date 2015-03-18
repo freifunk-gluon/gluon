@@ -1,6 +1,9 @@
 local site = require 'gluon.site_config'
 local next_node = site.next_node
 
+rule('FORWARD --logical-in br-client -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
+rule('FORWARD --logical-in br-client -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
+
 rule('FORWARD --logical-out br-client -o bat0 -d ' .. next_node.mac .. ' -j DROP')
 rule('OUTPUT --logical-out br-client -o bat0 -d ' .. next_node.mac .. ' -j DROP')
 rule('FORWARD --logical-out br-client -o bat0 -s ' .. next_node.mac .. ' -j DROP')

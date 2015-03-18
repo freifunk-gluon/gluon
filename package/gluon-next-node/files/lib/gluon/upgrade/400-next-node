@@ -17,25 +17,15 @@ c:section('network', 'device', 'local_node_dev',
 	  }
 )
 
+local prefix4 = ip.IPv4(site.prefix4)
 c:delete('network', 'local_node')
 c:section('network', 'interface', 'local_node',
 	  {
 		  ifname = 'local-node',
 		  proto = 'static',
 		  ipaddr = site.next_node.ip4,
-		  netmask = '255.255.255.255',
-		  ip6addr = site.next_node.ip6 .. '/128',
-	  }
-)
-
-local prefix4 = ip.IPv4(site.prefix4)
-c:delete('network', 'local_node_route4')
-c:section('network', 'route', 'local_node_route4',
-	  {
-		  interface = 'client',
-		  target = prefix4:network():string(),
 		  netmask = prefix4:mask():string(),
-		  gateway = '0.0.0.0',
+		  ip6addr = site.next_node.ip6 .. '/128',
 	  }
 )
 
