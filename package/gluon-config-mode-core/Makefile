@@ -10,11 +10,14 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(GLUONDIR)/include/package.mk
 
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
+
 define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based config mode for user friendly setup of new mesh nodes
-  DEPENDS:=+gluon-setup-mode +gluon-luci-theme +gluon-lock-password
+  DEPENDS:=+gluon-setup-mode +gluon-luci-theme +gluon-lock-password $(GLUON_I18N_PACKAGES)
 endef
 
 define Build/Prepare
