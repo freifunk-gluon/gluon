@@ -7,6 +7,9 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(GLUONDIR)/include/package.mk
 
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
+
 define Package/gluon-config-mode-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -26,10 +29,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-config-mode-autoupdater)
 endef
 
 define Package/gluon-config-mode-autoupdater/install
 	$(CP) ./files/* $(1)/
+	$(call GluonInstallI18N,gluon-config-mode-autoupdater,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-config-mode-autoupdater))
