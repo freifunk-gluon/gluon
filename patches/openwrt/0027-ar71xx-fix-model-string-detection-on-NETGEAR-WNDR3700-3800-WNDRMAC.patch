@@ -10,7 +10,7 @@ There were a few issues with the existing code to detect the model string:
   confuse other scripts)
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index ac7f787..f50a236 100755
+index a698ce5..0f9be69 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -37,16 +37,28 @@ wndr3700_board_detect() {

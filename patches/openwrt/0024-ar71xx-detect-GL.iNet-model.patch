@@ -6,7 +6,7 @@ There are two versions of the GL.iNet, the 6408A and the 6416A. The only
 difference is the flash size.
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 9e70397..ac7f787 100755
+index 61a7936..a698ce5 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -262,6 +262,19 @@ tplink_pharos_board_detect() {

@@ -19,7 +19,7 @@ index f0d5d70..6aac86a 100755
  		status_led="ubnt:white:status"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index c03fe72..9e70397 100755
+index 5fbca92..61a7936 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -723,6 +723,9 @@ ar71xx_board_detect() {

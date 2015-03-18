@@ -44,7 +44,7 @@ index 78f4992..c494310 100755
  mr600v2 |\
  rb-411 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index c13a8eb..19cd1a7 100755
+index 9fb4102..79b6073 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -396,6 +396,9 @@ ar71xx_board_detect() {
