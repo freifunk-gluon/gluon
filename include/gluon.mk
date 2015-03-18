@@ -26,6 +26,9 @@ $(GLUON_SITEDIR)/site.mk:
 GLUON_VERSION := $(shell cd $(GLUONDIR) && git describe --always 2>/dev/null || echo unknown)
 export GLUON_VERSION
 
+GLUON_LANGS ?= en
+export GLUON_LANGS
+
 
 ifeq ($(OPENWRT_BUILD),1)
 ifeq ($(GLUON_TOOLS),1)
