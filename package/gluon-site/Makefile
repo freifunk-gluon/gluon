@@ -5,19 +5,19 @@ PKG_VERSION:=$(GLUON_SITE_CODE)
 PKG_RELEASE:=0.$(GLUON_RELEASE)
 
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/
+PKG_BUILD_DEPENDS := luci
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(GLUONDIR)/include/package.mk
+
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
 
 define Package/gluon-site
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=Site-specific config files of Gluon
-endef
-
-define Package/gluon-site/description
-	Gluon community wifi mesh firmware framework: site configuration
+  TITLE:=Site-specific files of Gluon
 endef
 
 define Build/Prepare
@@ -28,12 +28,15 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
 	$(CP) $(GLUON_SITEDIR)/site.conf $(1)/lib/gluon/site.conf
 	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
+
+	$(call GluonInstallI18N,gluon-site,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-site))
