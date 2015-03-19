@@ -1,3 +1,3 @@
-local site = require 'gluon.site_config'
+local i18n = require 'luci.i18n'
 
-return function () luci.template.render_string(site.config_mode.msg_reboot) end
+return function () luci.template.render_string(i18n.translate('gluon-config-mode:reboot')) end

@@ -36,9 +36,4 @@ define Package/gluon-config-mode-core/install
 	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
 endef
 
-define Package/gluon-config-mode-core/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
 $(eval $(call BuildPackage,gluon-config-mode-core))
