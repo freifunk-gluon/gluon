@@ -29,7 +29,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-autoupdater)
+	$(call GluonBuildI18N,gluon-config-mode-autoupdater,i18n)
 endef
 
 define Package/gluon-config-mode-autoupdater/install

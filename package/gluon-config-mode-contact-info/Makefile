@@ -25,7 +25,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-contact-info)
+	$(call GluonBuildI18N,gluon-config-mode-contact-info,i18n)
 endef
 
 define Package/gluon-config-mode-contact-info/install
