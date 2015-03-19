@@ -25,12 +25,12 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-geo-contact-info)
+	$(call GluonBuildI18N,gluon-config-mode-contact-info)
 endef
 
 define Package/gluon-config-mode-contact-info/install
 	$(CP) ./files/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-geo-contact-info,$(1))
+	$(call GluonInstallI18N,gluon-config-mode-contact-info,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-config-mode-contact-info))
