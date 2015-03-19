@@ -43,9 +43,9 @@ GLUON_PO2LMO := $(BUILD_DIR)/luci/build/po2lmo
 define GluonBuildI18N
 	mkdir -p $$(PKG_BUILD_DIR)/i18n
 	for lang in $$(GLUON_ENABLED_LANGS); do \
-		if [ -e i18n/$$$$lang.po ]; then \
+		if [ -e $(2)/$$$$lang.po ]; then \
 			rm -f $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo; \
-			$(GLUON_PO2LMO) i18n/$$$$lang.po $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo; \
+			$(GLUON_PO2LMO) $(2)/$$$$lang.po $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo; \
 		fi; \
 	done
 endef
