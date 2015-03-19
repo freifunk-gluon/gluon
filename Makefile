@@ -89,18 +89,19 @@ manifest: FORCE
 	@echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	@$(CheckExternal)
 
-	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
-
 	( \
 		echo 'BRANCH=$(GLUON_BRANCH)' && \
 		echo 'DATE=$(shell $(GLUON_ORIGOPENWRTDIR)/staging_dir/host/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
 		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
 		echo \
-	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+	) > $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
 	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
 		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) ) ) && \
 	) :)
+
+	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
+	mv $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 dirclean : FORCE
 	for dir in build_dir dl staging_dir tmp; do \
@@ -394,7 +395,7 @@ manifest: FORCE
 				[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
 			) \
 		) : \
-	) >> $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
 
 .PHONY: all images prepare clean gluon-tools manifest
