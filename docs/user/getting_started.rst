@@ -47,17 +47,15 @@ So let's create the directory *site/*:
     mkdir site
     cd site
 
-Copy *site.conf* and *site.mk* from *docs/site-example*:
+Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*:
 
 ::
 
     cp ../docs/site-example/site.conf .
     cp ../docs/site-example/site.mk .
+    cp -r ../docs/site-example/i18n .
 
-.. note:: On **v2014.3**, take both files from
-          https://github.com/freifunk-gluon/gluon/tree/2014.3.x/docs/site-example
-
-Edit both files to match your community, then go back to the top-level Gluon
+Edit these files to match your community, then go back to the top-level Gluon
 directory and build Gluon:
 
 ::
