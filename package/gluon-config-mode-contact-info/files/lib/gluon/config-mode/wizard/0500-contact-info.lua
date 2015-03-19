@@ -1,20 +1,23 @@
 local cbi = require "luci.cbi"
+local i18n = require "luci.i18n"
 local uci = luci.model.uci.cursor()
 
 local M = {}
 
 function M.section(form)
-  local s = form:section(cbi.SimpleSection, nil,
-    [[Hier kannst du einen <em>öffentlichen</em> Hinweis hinterlegen um
-    anderen Freifunkern zu ermöglichen Kontakt mit dir aufzunehmen. Bitte
-    beachte, dass dieser Hinweis auch öffentlich im Internet, zusammen mit
-    den Koordinaten deines Knotens, einsehbar sein wird.]])
+  local s = form:section(cbi.SimpleSection, nil, i18n.translate(
+    'You can provide your contact information here to '
+      .. 'allow others to contact you. Please note that '
+      .. 'this information will be visible <em>publicly</em> '
+      .. 'on the internet together with your node\'s coordinates.'
+    )
+  )
 
-  local o = s:option(cbi.Value, "_contact", "Kontakt")
+  local o = s:option(cbi.Value, "_contact", i18n.translate("Contact info"))
   o.default = uci:get_first("gluon-node-info", "owner", "contact", "")
   o.rmempty = true
   o.datatype = "string"
-  o.description = "z.B. E-Mail oder Telefonnummer"
+  o.description = "e.g. E-mail or phone number"
   o.maxlen = 140
 end
 
