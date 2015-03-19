@@ -1,4 +1,5 @@
 local wizard_dir = "/lib/gluon/config-mode/wizard/"
+local i18n = luci.i18n
 local uci = luci.model.uci.cursor()
 local fs = require "luci.fs"
 local f, s
@@ -17,7 +18,6 @@ end
 f = SimpleForm("wizard")
 f.reset = false
 f.template = "gluon-config-mode/cbi/wizard"
-f.submit = "Speichern &amp; Neustarten"
 
 for _, s in ipairs(wizard) do
   s.section(f)

@@ -28,10 +28,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-config-mode-core)
 endef
 
 define Package/gluon-config-mode-core/install
 	$(CP) ./files/* $(1)/
+	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
 endef
 
 define Package/gluon-config-mode-core/postinst

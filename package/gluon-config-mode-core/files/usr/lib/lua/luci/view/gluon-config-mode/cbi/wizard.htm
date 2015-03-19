@@ -4,7 +4,7 @@
 	local template = require 'luci.template'
 -%>
 
-<h2>Willkommen!</h2>
+<h2><%:Welcome!%></h2>
 <p>
 	<%= template.render_string(site.config_mode.msg_welcome, {hostname=hostname, sysconfig=sysconfig}) %>
 </p>
@@ -31,37 +31,15 @@
 <% if not self.embedded then %>
 	<div class="cbi-page-actions">
 <%-
-	if type(self.hidden) == "table" then
-		for k, v in pairs(self.hidden) do
+		if type(self.hidden) == "table" then
+		  for k, v in pairs(self.hidden) do
 -%>
-	<input type="hidden" id="<%=k%>" name="<%=k%>" value="<%=pcdata(v)%>" />
+		<input type="hidden" id="<%=k%>" name="<%=k%>" value="<%=pcdata(v)%>" />
 <%-
+		  end
 		end
-	end
 %>
-<% if redirect then %>
-	<div style="float:left">
-		<input class="cbi-button cbi-button-link" type="button" value="<%:Back to Overview%>" onclick="location.href='<%=pcdata(redirect)%>'" />
-	</div>
-<% end %>
-<%- if self.flow and self.flow.skip then %>
-	<input class="cbi-button cbi-button-skip" type="submit" name="cbi.skip" value="<%:Skip%>" />
-<% end %>
-<%- if self.submit ~= false then %>
-	<input class="cbi-button cbi-button-save" type="submit" value="
-		<%- if not self.submit then -%><%-:Submit-%><%-else-%><%=self.submit%><%end-%>
-	" />
-<% end %>
-<%- if self.reset ~= false then %>
-	<input class="cbi-button cbi-button-reset" type="reset" value="
-		<%- if not self.reset then -%><%-:Reset-%><%-else-%><%=self.reset%><%end-%>
-	" />
-<% end %>
-<%- if self.cancel ~= false and self.on_cancel then %>
-	<input class="cbi-button cbi-button-reset" type="submit" name="cbi.cancel" value="
-		<%- if not self.cancel then -%><%-:Cancel-%><%-else-%><%=self.cancel%><%end-%>
-	" />
-<% end %>
+		<input class="cbi-button cbi-button-save" type="submit" value="<%:Save & restart%>" />
 		<script type="text/javascript">cbi_d_update();</script>
 	</div>
 </form>
