@@ -17,7 +17,7 @@ function M.section(form)
   o.default = uci:get_first("gluon-node-info", "owner", "contact", "")
   o.rmempty = true
   o.datatype = "string"
-  o.description = "e.g. E-mail or phone number"
+  o.description = i18n.translate("e.g. E-mail or phone number")
   o.maxlen = 140
 end
 
