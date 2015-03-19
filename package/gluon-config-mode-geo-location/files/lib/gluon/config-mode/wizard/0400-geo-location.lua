@@ -1,33 +1,32 @@
 local cbi = require "luci.cbi"
+local i18n = require "luci.i18n"
 local uci = luci.model.uci.cursor()
 
 local M = {}
 
 function M.section(form)
   local s = form:section(cbi.SimpleSection, nil,
-    [[Um deinen Knoten auf der Karte anzeigen zu können, benötigen
-    wir seine Koordinaten. Hier hast du die Möglichkeit, diese zu
-    hinterlegen.]])
+    i18n.translate("If you want your node to be displayed on the map, you can enter its coodinates here."))
 
   local o
 
-  o = s:option(cbi.Flag, "_location", "Knoten auf der Karte anzeigen")
+  o = s:option(cbi.Flag, "_location", i18n.translate("Show node on the map"))
   o.default = uci:get_first("gluon-node-info", "location", "share_location", o.disabled)
   o.rmempty = false
 
-  o = s:option(cbi.Value, "_latitude", "Breitengrad")
+  o = s:option(cbi.Value, "_latitude", i18n.translate("Latitude"))
   o.default = uci:get_first("gluon-node-info", "location", "latitude")
   o:depends("_location", "1")
   o.rmempty = false
   o.datatype = "float"
-  o.description = "z.B. 53.873621"
+  o.description = i18n.translatef("e.g. %s", "53.873621")
 
-  o = s:option(cbi.Value, "_longitude", "Längengrad")
+  o = s:option(cbi.Value, "_longitude", i18n.translate("Longitude"))
   o.default = uci:get_first("gluon-node-info", "location", "longitude")
   o:depends("_location", "1")
   o.rmempty = false
   o.datatype = "float"
-  o.description = "z.B. 10.689901"
+  o.description = i18n.translatef("e.g. %s", "10.689901")
 end
 
 function M.handle(data)
