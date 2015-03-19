@@ -7,6 +7,9 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(GLUONDIR)/include/package.mk
 
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
+
 define Package/gluon-config-mode-mesh-vpn
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -22,15 +25,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-config-mode-mesh-vpn,i18n)
 endef
 
 define Package/gluon-config-mode-mesh-vpn/install
 	$(CP) ./files/* $(1)/
-endef
-
-define Package/gluon-config-mode-mesh-vpn/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
+	$(call GluonInstallI18N,gluon-config-mode-mesh-vpn,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-config-mode-mesh-vpn))
