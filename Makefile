@@ -245,7 +245,6 @@ clean: FORCE
 	rm -f $(gluon_prepared_stamp)
 
 
-export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
 export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
 
 
