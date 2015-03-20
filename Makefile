@@ -183,6 +183,9 @@ gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) tools/sed/install
 	+$(GLUONMAKE_EARLY) package/lua/host/install
 
+scripts/config/conf:
+	@$(_SINGLE)$(SUBMAKE) -s -C scripts/config conf CC="$(HOSTCC_WRAPPER)"
+
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="packageinfo" SCAN_DIR="package" SCAN_NAME="package" SCAN_DEPS="$(TOPDIR)/include/package*.mk $(TOPDIR)/overlay/*/*.mk" SCAN_EXTRA=""
@@ -191,7 +194,9 @@ prepare-tmpinfo: FORCE
 		f=tmp/.$${type}info; t=tmp/.config-$${type}.in; \
 		[ "$$t" -nt "$$f" ] || ./scripts/metadata.pl $${type}_config "$$f" > "$$t" || { rm -f "$$t"; echo "Failed to build $$t"; false; break; }; \
 	done
+	[ tmp/.config-feeds.in -nt tmp/.packagefeeds ] || ./scripts/feeds feed_config > tmp/.config-feeds.in
 	./scripts/metadata.pl package_mk tmp/.packageinfo > tmp/.packagedeps || { rm -f tmp/.packagedeps; false; }
+	./scripts/metadata.pl package_feeds tmp/.packageinfo > tmp/.packagefeeds || { rm -f tmp/.packagefeeds; false; }
 	touch $(TOPDIR)/tmp/.build
 
 feeds: FORCE
@@ -201,7 +206,7 @@ feeds: FORCE
 	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
-config: FORCE
+config: scripts/config/conf FORCE
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
@@ -209,8 +214,15 @@ config: FORCE
 			| sed -e 's/ /\n/g'; \
 		echo '$(patsubst %,CONFIG_GLUON_LANG_%=y,$(GLUON_LANGS))' \
 			| sed -e 's/ /\n/g'; \
-	) > .config
-	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
+	) > $(BOARD_BUILDDIR)/config.tmp
+	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
+	mv .config $(BOARD_BUILDDIR)/config
+
+	echo 'CONFIG_ALL_KMODS=y' >> $(BOARD_BUILDDIR)/config.tmp
+	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
+	mv .config $(BOARD_BUILDDIR)/config-allmods
+
+	cp $(BOARD_BUILDDIR)/config .config
 
 prepare-target: FORCE
 	rm $(GLUON_OPENWRTDIR)/tmp || true
@@ -299,7 +311,6 @@ PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/$(PROFILE)
 PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
 BIN_DIR = $(PROFILE_BUILDDIR)/images
 
-TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
 
 PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
