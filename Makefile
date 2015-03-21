@@ -183,9 +183,6 @@ gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) tools/sed/install
 	+$(GLUONMAKE_EARLY) package/lua/host/install
 
-scripts/config/conf:
-	@$(_SINGLE)$(SUBMAKE) -s -C scripts/config conf CC="$(HOSTCC_WRAPPER)"
-
 prepare-tmpinfo: FORCE
 	mkdir -p tmp/info
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="packageinfo" SCAN_DIR="package" SCAN_NAME="package" SCAN_DEPS="$(TOPDIR)/include/package*.mk $(TOPDIR)/overlay/*/*.mk" SCAN_EXTRA=""
@@ -206,7 +203,8 @@ feeds: FORCE
 	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
-config: scripts/config/conf FORCE
+config: FORCE
+	+$(NO_TRACE_MAKE) scripts/config/conf
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
