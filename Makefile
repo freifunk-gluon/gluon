@@ -204,7 +204,7 @@ feeds: FORCE
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 config: FORCE
-	+$(NO_TRACE_MAKE) scripts/config/conf
+	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD=0
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
