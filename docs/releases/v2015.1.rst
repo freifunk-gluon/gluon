@@ -1,0 +1,30 @@
+Gluon 2015.1 (in development)
+=============================
+
+Added (and removed) hardware support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+New features
+~~~~~~~~~~~~
+
+
+Bugfixes
+~~~~~~~~
+
+
+Site changes
+~~~~~~~~~~~~
+* ``site.conf``
+
+  - ``hostname_prefix`` is now optional, and is concatenated directly with the
+    generated node ID, in particular no hyphen is inserted anymore. If you want
+    to keep the old behaviour, you have to append the hyphen to the
+    ``hostname_prefix`` field of your ``site.conf``.
+
+Internals
+~~~~~~~~~
+
+
+Known Issues
+~~~~~~~~~~~~
