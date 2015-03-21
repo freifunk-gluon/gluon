@@ -1,7 +1,7 @@
 need_string 'site_code'
 need_string 'site_name'
 
-need_string 'hostname_prefix'
+need_string('hostname_prefix', false)
 need_string 'timezone'
 
 need_string_array('ntp_servers', false)

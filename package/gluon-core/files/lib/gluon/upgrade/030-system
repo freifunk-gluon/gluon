@@ -10,7 +10,7 @@ if not sysconfig.gluon_version then
 
   local system = uci:get_first('system', 'system')
 
-  uci:set('system', system, 'hostname', site.hostname_prefix .. '-' .. util.node_id())
+  uci:set('system', system, 'hostname', (site.hostname_prefix or '') .. util.node_id())
   uci:set('system', system, 'timezone', site.timezone)
 
   uci:save('system')
