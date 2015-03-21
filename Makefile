@@ -305,7 +305,7 @@ include $(INCLUDE_DIR)/package-ipkg.mk
 # override variables from rules.mk
 PACKAGE_DIR = $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
 
-PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/$(PROFILE)
+PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/profiles/$(PROFILE)
 PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
 BIN_DIR = $(PROFILE_BUILDDIR)/images
 
