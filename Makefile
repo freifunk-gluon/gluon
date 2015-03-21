@@ -365,8 +365,8 @@ opkg_config: FORCE
 
 
 image: FORCE
-	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
+	rm -rf $(TARGET_DIR) $(BIN_DIR) $(PROFILE_KDIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
 	+$(GLUONMAKE) package_install
