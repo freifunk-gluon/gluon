@@ -5,8 +5,11 @@ local uci = luci.model.uci.cursor()
 local M = {}
 
 function M.section(form)
-  local s = form:section(cbi.SimpleSection, nil,
-    i18n.translate("If you want your node to be displayed on the map, you can enter its coodinates here."))
+  local s = form:section(cbi.SimpleSection, nil, i18n.translate(
+    'If you want the location of your node to be displayed on the map, '
+      .. 'you can enter its coordinates here. Specifying the altitude '
+      .. 'is optional and should only be done if a proper value is known.'))
+
 
   local o
 
@@ -27,6 +30,14 @@ function M.section(form)
   o.rmempty = false
   o.datatype = "float"
   o.description = i18n.translatef("e.g. %s", "10.689901")
+
+  o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
+  o.default = uci:get_first("gluon-node-info", "location", "altitude")
+  o:depends("_location", "1")
+  o.rmempty = true
+  o.datatype = "float"
+  o.description = i18n.translatef("e.g. %s", "11.51")
+
 end
 
 function M.handle(data)
@@ -36,6 +47,11 @@ function M.handle(data)
   if data._location and data._latitude ~= nil and data._longitude ~= nil then
     uci:set("gluon-node-info", sname, "latitude", data._latitude)
     uci:set("gluon-node-info", sname, "longitude", data._longitude)
+    if data._altitude ~= nil then
+      uci:set("gluon-node-info", sname, "altitude", data._altitude)
+    else
+      uci:delete("gluon-node-info", sname, "altitude")
+    end
   end
   uci:save("gluon-node-info")
   uci:commit("gluon-node-info")
