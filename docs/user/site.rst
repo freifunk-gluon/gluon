@@ -138,7 +138,7 @@ autoupdater : package
       }
 
 simple_tc : package
-    Uplink traffic control
+    Uplink traffic control, ingress and egress values are specified in kbit/s.
     ::
 
       simple_tc = {
