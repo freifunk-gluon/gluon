@@ -107,7 +107,7 @@ Site changes
     + ``gluon-config-mode-mesh-vpn``
     + ``gluon-config-mode-geo-location``
     + ``gluon-config-mode-contact-info``
-    + ``gluon-mesh-batman-adv-14`` (specify this before all other packages in the ``site.mk``!)
+    + ``gluon-mesh-batman-adv-15`` (specify this before all other packages in the ``site.mk``!)
 
 Internals
 ~~~~~~~~~
