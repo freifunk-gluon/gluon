@@ -11,7 +11,7 @@ define Package/gluon-mesh-batman-adv-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing (core)
-  DEPENDS:=+gluon-core +firewall +kmod-ipt-nathelper
+  DEPENDS:=+gluon-core +firewall +kmod-ipt-nathelper +libiwinfo-lua
 endef
 
 define Build/Prepare
