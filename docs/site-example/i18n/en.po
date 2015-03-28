@@ -20,7 +20,7 @@ msgstr ""
 "This is the public key of your Freifunk node. "
 "Your node may either connect to nearby nodes through wifi "
 "or to gateway servers via Mesh-VPN. "
-"Last option is only possible after the key has been added to the Server. "
+"Connecting via Mesh-VPN requires the key to be enabled by your community. "
 "To register the key send it together with your node's name (<em><%=hostname%></em>) to "
 "<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
 
