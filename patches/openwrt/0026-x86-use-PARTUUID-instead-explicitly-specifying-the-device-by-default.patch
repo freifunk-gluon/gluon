@@ -1,5 +1,5 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Sun, 15 Mar 2015 17:01:32 +0100
+Date: Mon, 23 Mar 2015 21:11:41 +0100
 Subject: x86: use PARTUUID instead explicitly specifying the device by default
 
 This changes the x86 image generation to match x86_64, using the PARTUUID for
@@ -143,14 +143,14 @@ index a2dd20a..73ab5ef 100644
 +	fi
  }
 diff --git a/target/linux/x86/image/Makefile b/target/linux/x86/image/Makefile
-index 5983718..a0045a7 100644
+index 5983718..1f91b9f 100644
 --- a/target/linux/x86/image/Makefile
 +++ b/target/linux/x86/image/Makefile
 @@ -40,7 +40,9 @@ ifneq ($(GRUB_TERMINALS),)
    GRUB_TERMINAL_CONFIG := terminal_input $(GRUB_TERMINALS); terminal_output $(GRUB_TERMINALS)
  endif
  
-+SIGNATURE:=$(shell dd if=/dev/urandom bs=4 count=1 2>/dev/null | hexdump -v -e '"%02x"')
++SIGNATURE:=$(shell dd if=/dev/urandom bs=4 count=1 2>/dev/null | hexdump -v -e '"%08x"')
  ROOTPART:=$(call qstrip,$(CONFIG_TARGET_ROOTFS_PARTNAME))
 +ROOTPART:=$(if $(ROOTPART),$(ROOTPART),PARTUUID=$(SIGNATURE)-02)
  

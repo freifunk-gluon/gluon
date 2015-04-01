@@ -89,18 +89,19 @@ manifest: FORCE
 	@echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	@$(CheckExternal)
 
-	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
-
 	( \
 		echo 'BRANCH=$(GLUON_BRANCH)' && \
 		echo 'DATE=$(shell $(GLUON_ORIGOPENWRTDIR)/staging_dir/host/bin/lua $(GLUONDIR)/scripts/rfc3339date.lua)' && \
 		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
 		echo \
-	) > $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+	) > $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
 	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
 		( [ ! -e $(BOARD_BUILDDIR)/prepared ] || ( $(GLUONMAKE) manifest GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) ) ) && \
 	) :)
+
+	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
+	mv $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
 dirclean : FORCE
 	for dir in build_dir dl staging_dir tmp; do \
@@ -190,7 +191,9 @@ prepare-tmpinfo: FORCE
 		f=tmp/.$${type}info; t=tmp/.config-$${type}.in; \
 		[ "$$t" -nt "$$f" ] || ./scripts/metadata.pl $${type}_config "$$f" > "$$t" || { rm -f "$$t"; echo "Failed to build $$t"; false; break; }; \
 	done
+	[ tmp/.config-feeds.in -nt tmp/.packagefeeds ] || ./scripts/feeds feed_config > tmp/.config-feeds.in
 	./scripts/metadata.pl package_mk tmp/.packageinfo > tmp/.packagedeps || { rm -f tmp/.packagedeps; false; }
+	./scripts/metadata.pl package_feeds tmp/.packageinfo > tmp/.packagefeeds || { rm -f tmp/.packagefeeds; false; }
 	touch $(TOPDIR)/tmp/.build
 
 feeds: FORCE
@@ -201,13 +204,24 @@ feeds: FORCE
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 config: FORCE
+	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD=0
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
+		echo 'CONFIG_BUILD_SUFFIX="gluon-$(GLUON_TARGET)"'; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
-	) > .config
-	+$(NO_TRACE_MAKE) defconfig OPENWRT_BUILD=0
+		echo '$(patsubst %,CONFIG_GLUON_LANG_%=y,$(GLUON_LANGS))' \
+			| sed -e 's/ /\n/g'; \
+	) > $(BOARD_BUILDDIR)/config.tmp
+	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
+	mv .config $(BOARD_BUILDDIR)/config
+
+	echo 'CONFIG_ALL_KMODS=y' >> $(BOARD_BUILDDIR)/config.tmp
+	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
+	mv .config $(BOARD_BUILDDIR)/config-allmods
+
+	cp $(BOARD_BUILDDIR)/config .config
 
 prepare-target: FORCE
 	rm $(GLUON_OPENWRTDIR)/tmp || true
@@ -243,7 +257,6 @@ clean: FORCE
 	rm -f $(gluon_prepared_stamp)
 
 
-export MD5SUM := $(GLUONDIR)/scripts/md5sum.sh
 export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
 
 
@@ -293,11 +306,10 @@ include $(INCLUDE_DIR)/package-ipkg.mk
 # override variables from rules.mk
 PACKAGE_DIR = $(GLUON_OPENWRTDIR)/bin/$(BOARD)/packages
 
-PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/$(PROFILE)
+PROFILE_BUILDDIR = $(BOARD_BUILDDIR)/profiles/$(PROFILE)
 PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
 BIN_DIR = $(PROFILE_BUILDDIR)/images
 
-TMP_DIR = $(PROFILE_BUILDDIR)/tmp
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
 
 PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
@@ -354,8 +366,8 @@ opkg_config: FORCE
 
 
 image: FORCE
-	rm -rf $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(PROFILE_KDIR)
-	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TMP_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
+	rm -rf $(TARGET_DIR) $(BIN_DIR) $(PROFILE_KDIR)
+	mkdir -p $(TARGET_DIR) $(BIN_DIR) $(TARGET_DIR)/tmp $(GLUON_IMAGEDIR)/factory $(GLUON_IMAGEDIR)/sysupgrade
 	cp -r $(BOARD_KDIR) $(PROFILE_KDIR)
 
 	+$(GLUONMAKE) package_install
@@ -393,7 +405,7 @@ manifest: FORCE
 				[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
 			) \
 		) : \
-	) >> $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
+	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
 
 .PHONY: all images prepare clean gluon-tools manifest

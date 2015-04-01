@@ -20,11 +20,25 @@ configuration located in *docs/site-example/*.
 .. _Git tags: http://git-scm.com/book/en/Git-Basics-Tagging
 .. _list of gluon releases: https://github.com/freifunk-gluon/gluon/releases
 
-Building the image
-------------------
+Dependencies
+------------
+To build Gluon, several packages need to be installed on the system. On a
+freshly installed Debian Wheezy system the following packages are required:
+
+* `git` (to get Gluon and other dependencies)
+* `subversion`
+* `build-essential`
+* `gawk`
+* `unzip`
+* `libncurses-dev` (actually `libncurses5-dev`)
+* `libz-dev` (actually `zlib1g-dev`)
+
+
+Building the images
+-------------------
 
 To build Gluon, first check out the repository. Replace *RELEASE* with the
-version you'd like to checkout, e.g. *v2014.3*.
+version you'd like to checkout, e.g. *v2014.4*.
 
 ::
 
@@ -47,17 +61,15 @@ So let's create the directory *site/*:
     mkdir site
     cd site
 
-Copy *site.conf* and *site.mk* from *docs/site-example*:
+Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*:
 
 ::
 
     cp ../docs/site-example/site.conf .
     cp ../docs/site-example/site.mk .
+    cp -r ../docs/site-example/i18n .
 
-.. note:: On **v2014.3**, take both files from
-          https://github.com/freifunk-gluon/gluon/tree/2014.3.x/docs/site-example
-
-Edit both files to match your community, then go back to the top-level Gluon
+Edit these files to match your community, then go back to the top-level Gluon
 directory and build Gluon:
 
 ::
@@ -77,10 +89,7 @@ images are to be used when flashing from the original firmware a device came wit
 and sysupgrade is to upgrade from other versions of Gluon or any other OpenWRT-based
 system.
 
-For the build reserve 6GB of disk space. The build requires packages
-for `subversion`, ncurses headers (`libncurses-dev`) and zlib headers
-(`libz-dev`).
-
+You should reserve about 10GB of disk space for each `GLUON_TARGET`.
 
 There are two levels of `make clean`:
 

@@ -159,7 +159,7 @@ roles : optional
       },
 
 simple_tc : package
-    Uplink traffic control
+    Uplink traffic control, ingress and egress values are specified in kbit/s.
     ::
 
       simple_tc = {
@@ -179,9 +179,6 @@ setup_mode : package
       setup_mode {
         skip = true,
       },
-
-config_mode : package
-    Configuration Mode text blocks
 
 legacy : package
     Configuration for the legacy upgrade path.
@@ -215,6 +212,30 @@ GLUON_PRIORITY
     The default priority for the generated manifests (see the autoupdater documentation
     for more information).
 
+GLUON_LANGS
+    List of languages (as two-letter-codes) to include for the web interface. Should always contain
+    ``en``.
+
+Config mode texts
+-----------------
+
+The community-defined texts in the config mode are configured in PO files in the ``i18n`` subdirectory
+of the site configuration. The message IDs currently defined are:
+
+gluon-config-mode:welcome
+    Welcome text on the top of the config wizard page.
+
+gluon-config-mode:pubkey
+    Information about the public VPN key on the reboot page.
+
+gluon-config-mode:reboot
+    General information about the reboot page.
+
+There is a POT file in the site example directory which can be used to create templates
+for the language files. The command ``msginit -l en -i ../../docs/site-example/i18n/gluon-site.pot``
+can be used from the ``i18n`` directory to create an initial PO file called ``en.po`` if the ``gettext``
+utilities are installed.
+
 Examples
 --------
 
@@ -229,6 +250,18 @@ site.conf
 
 .. literalinclude:: ../site-example/site.conf
   :language: lua
+
+i18n/en.po
+^^^^^^^^^^
+
+.. literalinclude:: ../site-example/i18n/en.po
+  :language: po
+
+i18n/de.po
+^^^^^^^^^^
+
+.. literalinclude:: ../site-example/i18n/de.po
+  :language: po
 
 modules
 ^^^^^^^

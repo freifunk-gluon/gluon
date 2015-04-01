@@ -62,7 +62,7 @@ index 4be30b8..78f4992 100755
  rb-2011l | \
  rb-2011uas |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 6694839..c13a8eb 100755
+index 1709356..9fb4102 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -229,6 +229,39 @@ tplink_board_detect() {

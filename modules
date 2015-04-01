@@ -1,14 +1,14 @@
 GLUON_FEEDS='openwrt gluon routing luci'
 
 OPENWRT_REPO=git://git.openwrt.org/14.07/openwrt.git
-OPENWRT_COMMIT=878af3117f68c2f8d6b3d6582e50c6cef521f6f7
+OPENWRT_COMMIT=64ae631f20eb349b47dae30c461ab33b5c4ac5c2
 
 PACKAGES_OPENWRT_REPO=git://github.com/openwrt/packages.git
 PACKAGES_OPENWRT_COMMIT=01fcd1f29174a56d6ddb59901ed8c67ea42c3a8f
 PACKAGES_OPENWRT_BRANCH=for-14.07
 
 PACKAGES_GLUON_REPO=git://github.com/freifunk-gluon/packages.git
-PACKAGES_GLUON_COMMIT=2d0f8b38dbf6b01f77c780c7c80a995116e3eca8
+PACKAGES_GLUON_COMMIT=f5c0865d5025a7e6ad3ff6c21ca5206ac972ba75
 
 PACKAGES_ROUTING_REPO=git://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_COMMIT=5d4ad63897b435d5df0f39a49bd58962c22c33b8
