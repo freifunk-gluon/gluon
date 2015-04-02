@@ -1,0 +1,36 @@
+From 1174bf3e6f3cbcbffa7ef705b1eb5ae4f441cb29 Mon Sep 17 00:00:00 2001
+From: RubenKelevra <ruben@vfn-nrw.de>
+Date: Thu, 2 Apr 2015 02:12:14 +0200
+Subject: [PATCH] add config-parsing for no_rebroadcast-option
+
+
+diff --git a/batman-adv/files/lib/netifd/proto/batadv.sh b/batman-adv/files/lib/netifd/proto/batadv.sh
+index 632a209..4dd3b22 100644
+--- a/batman-adv/files/lib/netifd/proto/batadv.sh
++++ b/batman-adv/files/lib/netifd/proto/batadv.sh
+@@ -6,16 +6,20 @@ init_proto "$@"
+ 
+ proto_batadv_init_config() {
+ 	proto_config_add_string "mesh"
++	proto_config_add_string "mesh_no_rebroadcast"
+ }
+ 
+ proto_batadv_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local mesh
+-	json_get_vars mesh
++	local mesh mesh_no_rebroadcast
++	json_get_vars mesh mesh_no_rebroadcast
+ 
+ 	echo "$mesh" > "/sys/class/net/$iface/batman_adv/mesh_iface"
++	[ -n "$mesh_no_rebroadcast" ] && echo "$mesh_no_rebroadcast" > 
++"/sys/class/net/$iface/batman_adv/no_rebroadcast"
++
+ 	proto_init_update "$iface" 1
+ 	proto_send_update "$config"
+ }
+-- 
+2.3.4
+
