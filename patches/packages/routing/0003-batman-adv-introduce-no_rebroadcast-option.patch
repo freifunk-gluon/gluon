@@ -1,7 +1,33 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Wed, 7 Jan 2015 16:48:06 +0100
+Date: Thu, 2 Apr 2015 20:24:14 +0200
 Subject: batman-adv: introduce 'no_rebroadcast' option
 
+diff --git a/batman-adv/files/lib/netifd/proto/batadv.sh b/batman-adv/files/lib/netifd/proto/batadv.sh
+index 632a209..01f567f 100644
+--- a/batman-adv/files/lib/netifd/proto/batadv.sh
++++ b/batman-adv/files/lib/netifd/proto/batadv.sh
+@@ -6,16 +6,19 @@ init_proto "$@"
+ 
+ proto_batadv_init_config() {
+ 	proto_config_add_string "mesh"
++	proto_config_add_string "mesh_no_rebroadcast"
+ }
+ 
+ proto_batadv_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local mesh
+-	json_get_vars mesh
++	local mesh mesh_no_rebroadcast
++	json_get_vars mesh mesh_no_rebroadcast
+ 
+ 	echo "$mesh" > "/sys/class/net/$iface/batman_adv/mesh_iface"
++	[ -n "$mesh_no_rebroadcast" ] && echo "$mesh_no_rebroadcast" > "/sys/class/net/$iface/batman_adv/no_rebroadcast"
++
+ 	proto_init_update "$iface" 1
+ 	proto_send_update "$config"
+ }
 diff --git a/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
 new file mode 100644
 index 0000000..cd79917
