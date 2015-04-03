@@ -10,7 +10,7 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 
 Please refrain from using the master branch for anything else but development purposes!
 Use the most recent release instead. You can list all relaseses by running `git branch -a`
-and switch to one by running `git checkout v2014.3;make update`.
+and switch to one by running `git checkout v2014.4;make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
 If you upgrade using random master commits the nodes *will break* eventually.
