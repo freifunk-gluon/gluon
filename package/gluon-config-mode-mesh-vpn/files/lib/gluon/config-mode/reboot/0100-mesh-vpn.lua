@@ -9,7 +9,7 @@ else
   local site = require 'gluon.site_config'
   local sysconfig = require 'gluon.sysconfig'
 
-  local pubkey = util.exec("/etc/init.d/fastd show_key " .. "mesh_vpn")
+  local pubkey = util.trim(util.exec("/etc/init.d/fastd show_key " .. "mesh_vpn"))
   local hostname = uci:get_first("system", "system", "hostname")
 
   local msg = [[<p>]] .. i18n.translate('gluon-config-mode:pubkey') .. [[</p>
