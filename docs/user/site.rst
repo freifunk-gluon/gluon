@@ -176,7 +176,7 @@ setup_mode : package
     ``skip`` is set to ``true``. This is optional and may be left out.
     ::
 
-      setup_mode {
+      setup_mode = {
         skip = true,
       },
 
