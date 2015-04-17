@@ -17,7 +17,7 @@ To select one of our sites, use first `./get-sites` and select one out of `sites
 To make a stable-build for e.g. leverkusen run:  
 `git clone https://github.com/VfN-NRW/gluon.git vfnnrw-gluon`  
 `cd vfnnrw-gluon`  
-`git checkout v0.6.1beta1`  
+`git checkout v0.6.3beta3`  
 `./set-site vfnnrw/leverkusen`  
 `make update`  
 `make -j4 GLUON_BRANCH=stable`  
