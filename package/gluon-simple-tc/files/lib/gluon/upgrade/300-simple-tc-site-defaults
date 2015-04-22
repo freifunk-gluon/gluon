@@ -1,0 +1,23 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for name, config in pairs(site.simple_tc) do
+  if not c:get('gluon-simple-tc', name) then
+    c:section('gluon-simple-tc', 'interface', name,
+	      {
+		ifname = config.ifname,
+		enabled = config.enabled and 1 or 0,
+		limit_egress = config.limit_egress,
+		limit_ingress = config.limit_ingress,
+	      }
+    )
+  end
+end
+
+c:save('gluon-simple-tc')
+c:commit('gluon-simple-tc')

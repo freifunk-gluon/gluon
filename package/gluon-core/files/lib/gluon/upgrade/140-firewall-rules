@@ -1,0 +1,30 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+local function reject_input_on_wan(zone)
+	if zone.name == 'wan' then
+		c:set('firewall', zone['.name'], 'input', 'REJECT')
+		c:set('firewall', zone['.name'], 'conntrack', '1')
+	end
+
+	return true
+end
+c:foreach('firewall', 'zone', reject_input_on_wan)
+
+c:section('firewall', 'rule', 'wan_ssh',
+	  {
+		  name = 'wan_ssh',
+		  src = 'wan',
+		  dest_port = '22',
+		  proto = 'tcp',
+		  target = 'ACCEPT',
+	  }
+)
+
+c:save('firewall')
+c:commit('firewall')

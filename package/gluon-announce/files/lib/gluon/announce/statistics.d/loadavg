@@ -1,0 +1,1 @@
+return tonumber(fs.readfile('/proc/loadavg'):match('^([^ ]+) '))

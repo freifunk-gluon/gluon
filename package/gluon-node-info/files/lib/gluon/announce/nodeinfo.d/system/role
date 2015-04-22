@@ -1,0 +1,4 @@
+local role = uci:get_first('gluon-node-info', 'system', 'role', '')
+if role ~= '' then
+        return role
+end

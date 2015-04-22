@@ -1,0 +1,73 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2013 Project Gluon
+#
+# Firewall script for inserting and removing ebtables rules.
+#
+# Example format, for filtering any IPv4 multicast packets to the SSDP UDP port:
+# rule FORWARD --logical-out br-client -d Multicast -p IPv4 --ip-protocol udp --ip-destination-port 5355 -j DROP
+#
+# Removing all rules:
+# $ ./firewall-ebtables stop
+# Inserting all rules:
+# $ ./firewall-ebtables start
+# Inserting a specific rule file:
+# $ ./firewall-ebtables start /lib/gluon/ebtables/100-mcast-chain
+# Removing a specific rule file:
+# $ ./firewall-ebtables stop /lib/gluon/ebtables/100-mcast-chain
+
+
+START=19
+STOP=91
+
+
+exec_file() {
+	local file="$1"
+
+	/usr/bin/lua -e "
+		function rule(command)
+			os.execute($EBTABLES_RULE)
+		end
+		function chain(name, policy)
+			os.execute($EBTABLES_CHAIN)
+		end
+	" "$file"
+}
+
+exec_all() {
+	local sort_arg="$1"
+
+	local old_ifs="$IFS"
+	IFS='
+'
+	for file in `find /lib/gluon/ebtables -type f | sort $sort_arg`; do
+		exec_file "$file"
+	done
+	IFS="$old_ifs"
+}
+
+
+start() {
+	(
+		export EBTABLES_RULE='"ebtables -A " .. command'
+		export EBTABLES_CHAIN='"ebtables -N " .. name .. " -P " .. policy'
+
+		if [ -z "$1" ]; then
+			exec_all ''
+		else
+			exec_file "$1"
+		fi
+	)
+}
+
+stop() {
+	(
+		export EBTABLES_RULE='"ebtables -D " .. command'
+		export EBTABLES_CHAIN='"ebtables -X " .. name'
+
+		if [ -z "$1" ]; then
+			exec_all '-r'
+		else
+			exec_file "$1"
+		fi
+	)
+}

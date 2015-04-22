@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+local config = 'gluon-node-info'
+
+if not uci:get_first(config, 'system') then
+  uci:section(config, 'system')
+  uci:save(config)
+  uci:commit(config)
+end
