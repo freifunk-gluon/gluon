@@ -4,7 +4,7 @@
 . /lib/functions/service.sh
 
 DEVLIST=/var/run/gluon-announced.devs
-DAEMON=/usr/bin/gluon-announced
+DAEMON=/usr/bin/respondd
 
 ifname_to_dev () {
 	json_load "$(ubus call network.interface.$1 status)"
@@ -18,10 +18,10 @@ restart_announced () {
 	SERVICE_WRITE_PID=1
 	SERVICE_DAEMONIZE=1
 
-	DEVS=$(cat $DEVLIST | while read dev iface;do echo -n " -i $dev";done)
+	DEVS=$(cat $DEVLIST | while read dev iface; do echo -n " -i $dev"; done)
 
 	service_stop $DAEMON
-	service_start $DAEMON -g ff02:0:0:0:0:0:2:1001 -p 1001 -s '/lib/gluon/announce/collect.lua nodeinfo' $DEVS
+	service_start $DAEMON -g ff02::2:1001 -p 1001 -c 'return require("gluon.announced").handle_request' $DEVS
 }
 
 case "$ACTION" in
@@ -29,14 +29,14 @@ case "$ACTION" in
 		sed -i "/$INTERFACE/d" $DEVLIST
 		;;
 	ifup)
-		DEVICE=$(ifname_to_dev $INTERFACE)
-		MESH=$(cat /sys/class/net/$DEVICE/batman_adv/mesh_iface)
+		DEVICE="$(ifname_to_dev "$INTERFACE")"
+		MESH="$(cat "/sys/class/net/$DEVICE/batman_adv/mesh_iface" 2>/dev/null)"
 
-		[ $MESH = "bat0" ] || exit 0
+		[ "$MESH" = "bat0" -o "$INTERFACE" = "client" ] || exit 0
 
-		DEVS="$(cat $DEVLIST; echo $DEVICE $INTERFACE)"
+		DEVS=$(cat $DEVLIST; echo $DEVICE $INTERFACE)
 
-		echo "$DEVS" | sort | uniq > $DEVLIST
+		echo "$DEVS" | sort -u > $DEVLIST
 
 		restart_announced
 
