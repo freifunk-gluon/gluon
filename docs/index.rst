@@ -40,6 +40,7 @@ Developer Documentation
    dev/upgrade
    dev/configmode
    dev/wan
+   dev/i18n
 
 Supported Devices
 -----------------
