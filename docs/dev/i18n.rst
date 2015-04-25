@@ -38,8 +38,15 @@ The entries in the template can be reordered after the generation if desirable. 
 translations like "Cancel" are already available in the LuCI base translation file (see
 ``packages/luci/po/templates/base.pot``) and can be removed from the template.
 
-In addition, the i18n files must be installed in the package's Makefile::
+In addition, some additions to the Makefile must be made. Instead of OpenWrt's default package.mk,
+the Gluon version ``$(GLUONDIR)/include/package.mk`` must be used. The i18n files must be installed
+and PKG_CONFIG_DEPENDS must be added::
 
+  ...
+  include $(GLUONDIR)/include/package.mk
+
+  PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+  ...
   define Build/Compile
     $(call GluonBuildI18N,gluon-config-mode-geo-location,i18n)
   endef
@@ -48,6 +55,7 @@ In addition, the i18n files must be installed in the package's Makefile::
     ...
     $(call GluonInstallI18N,gluon-config-mode-geo-location,$(1))
   endef
+  ...
 
 
 Adding translations
