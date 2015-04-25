@@ -16,6 +16,21 @@ local function configure_radio(radio, index, config)
   local client = 'client_' .. radio
   local mesh = 'mesh_' .. radio
 
+  local disable_state_client = false
+  local disable_state_mesh = false
+
+  if uci:get('wireless', client) then
+    disable_state_client = uci:get_bool('wireless', client, "disabled")
+  elseif config.client_disabled then
+    disable_state_client = true
+  end
+
+  if uci:get('wireless', mesh) then
+    disable_state_mesh = uci:get_bool('wireless', mesh, "disabled")
+  elseif config.mesh_disabled then
+    disable_state_mesh = true
+  end
+
   local client_ifname
   local mesh_ifname
   local radio_suffix = radio:match('^radio(%d+)$')
@@ -33,6 +48,7 @@ local function configure_radio(radio, index, config)
 		ssid = config.ssid,
 		macaddr = util.generate_mac(2, index),
 		ifname = client_ifname,
+		disabled = disable_state_client and 1 or 0,
 	      }
   )
 
@@ -72,6 +88,7 @@ local function configure_radio(radio, index, config)
 		macaddr = util.generate_mac(3, index),
 		mcast_rate = config.mesh_mcast_rate,
 		ifname = mesh_ifname,
+		disabled = disable_state_mesh and 1 or 0,
 	      }
   )
 end
