@@ -14,7 +14,7 @@ define Package/gluon-config-mode-contact-info
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Set a custom string that will be distributed in the mesh.
-  DEPENDS:=+gluon-config-mode-core +gluon-node-info
+  DEPENDS:=gluon-config-mode-core-virtual +gluon-node-info
 endef
 
 define Build/Prepare

@@ -17,7 +17,8 @@ define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based config mode for user friendly setup of new mesh nodes
-  DEPENDS:=+gluon-setup-mode +gluon-luci-theme +gluon-lock-password $(GLUON_I18N_PACKAGES)
+  DEPENDS:=gluon-setup-mode-virtual +gluon-luci-theme +gluon-lock-password $(GLUON_I18N_PACKAGES)
+  PROVIDES:=gluon-config-mode-core-virtual
 endef
 
 define Build/Prepare

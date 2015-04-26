@@ -14,7 +14,7 @@ define Package/gluon-config-mode-hostname
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Set the hostname
-  DEPENDS:=+gluon-config-mode-core
+  DEPENDS:=gluon-config-mode-core-virtual
 endef
 
 define Build/Prepare

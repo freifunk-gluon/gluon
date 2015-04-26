@@ -14,7 +14,7 @@ define Package/gluon-config-mode-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Let the user know whether the autoupdater is enabled or not.
-  DEPENDS:=+gluon-config-mode-core +gluon-autoupdater
+  DEPENDS:=gluon-config-mode-core-virtual +gluon-autoupdater
 endef
 
 define Package/gluon-config-mode-autoupdater/description
