@@ -1,0 +1,41 @@
+local json = require 'luci.json'
+local util = require 'luci.util'
+local fs = require 'nixio.fs'
+
+local ifname_address_cache = {}
+
+function ifname2address(ifname)
+  local ifaddress
+  if ifname_address_cache[ifname] ~= nil then
+    ifaddress = ifname_address_cache[ifname]
+  else
+    ifaddress = util.trim(fs.readfile("/sys/class/net/" .. ifname .. "/address"))
+    ifname_address_cache[ifname] = ifaddress
+  end
+
+  return ifaddress
+end
+
+function batadv()
+  local interfaces = {}
+  local list = io.lines("/sys/kernel/debug/batman_adv/bat0/originators")
+  for line in list do
+    local mac1, lastseen, tq, mac2, ifname =
+      line:match("^([0-9a-f:]+) +(%d+%.%d+)s +%( *(%d+)%) +([0-9a-f:]+) +%[ *(.-)%]")
+
+    if mac1 ~= nil and mac1 == mac2 then
+      ifaddress = ifname2address(ifname)
+      if interfaces[ifaddress] == nil then
+        interfaces[ifaddress] = { neighbours = {} }
+      end
+
+      interfaces[ifaddress].neighbours[mac1] = { tq = tonumber(tq)
+                                               , lastseen = tonumber(lastseen)
+                                               }
+    end
+  end
+
+  return interfaces
+end
+
+return batadv()

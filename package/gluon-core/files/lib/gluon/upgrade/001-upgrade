@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local fs = require 'luci.fs'
+local sysconfig = require 'gluon.sysconfig'
+
+
+if fs.isfile('/lib/gluon/version/core') and not sysconfig.gluon_version then
+  -- This isn't an initial upgrade, so set gluon_version
+  sysconfig.gluon_version = ''
+end

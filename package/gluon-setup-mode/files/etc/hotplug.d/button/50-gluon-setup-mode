@@ -1,0 +1,29 @@
+#!/bin/sh
+
+
+wait=3
+
+
+wait_setup_mode() {
+	sleep $wait
+	uci set 'gluon-setup-mode.@setup_mode[0].enabled=1'
+	uci commit gluon-setup-mode
+	reboot
+}
+
+
+if [ "$BUTTON" = wps -o "$BUTTON" = reset ]; then
+	case "$ACTION" in
+		pressed)
+			wait_setup_mode &
+			PID=$!
+			echo $PID > /tmp/.wait_setup_mode
+			;;
+		released)
+			if [ -r /tmp/.wait_setup_mode ]; then
+				kill $(cat /tmp/.wait_setup_mode)
+				rm /tmp/.wait_setup_mode
+			fi
+			;;
+	esac
+fi

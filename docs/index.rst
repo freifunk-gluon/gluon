@@ -40,6 +40,7 @@ Developer Documentation
    dev/upgrade
    dev/configmode
    dev/wan
+   dev/i18n
 
 Supported Devices
 -----------------
@@ -88,6 +89,7 @@ Supported Devices
   - Bullet M2
   - Nanostation M2
   - Picostation M2
+  - Rocket M2
   - UniFi AP
   - UniFi AP Outdoor
 

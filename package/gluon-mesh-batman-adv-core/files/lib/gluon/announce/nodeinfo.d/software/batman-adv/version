@@ -1,0 +1,1 @@
+return util.trim(fs.readfile('/sys/module/batman_adv/version'))

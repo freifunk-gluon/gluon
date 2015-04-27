@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+
+start() {
+	service_start /usr/sbin/gluon-radvd -i br-client -p $(lua -e 'print(require("gluon.site_config").prefix6)')
+}
+
+stop() {
+	service_stop /usr/sbin/gluon-radvd
+}

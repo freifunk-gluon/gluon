@@ -1,0 +1,14 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+USE_PROCD=1
+
+UHTTPD_BIN="/usr/sbin/uhttpd"
+
+start_service() {
+	procd_open_instance
+	procd_set_param respawn
+	procd_set_param command "$UHTTPD_BIN" -f -h /lib/gluon/setup-mode/www -x /cgi-bin -A 1 -R -p 0.0.0.0:80
+	procd_close_instance
+}

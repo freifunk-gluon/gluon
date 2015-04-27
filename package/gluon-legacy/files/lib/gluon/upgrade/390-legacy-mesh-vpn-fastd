@@ -1,0 +1,37 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+
+
+if sysconfig.gluon_version == 'legacy' then
+  local secret
+  local enabled
+
+
+  for _, config in ipairs(site.legacy.fastd_configs) do
+    if not secret then
+      local s = uci:get_all('fastd', config)
+      if s then
+	secret = s.secret
+	enabled = s.enabled
+      end
+    end
+
+    uci:delete('fastd', config)
+  end
+
+  if secret then
+    uci:section('fastd', 'fastd', 'mesh_vpn',
+		{
+		  secret = secret,
+		  enabled = enabled,
+		}
+    )
+  end
+
+  uci:save('fastd')
+  uci:commit('fastd')
+end

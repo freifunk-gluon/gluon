@@ -1,0 +1,24 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+
+
+if sysconfig.gluon_version == 'legacy' then
+  function delete_legacy_iface(iface)
+    for _, wifi in pairs(site.legacy.wifi_names) do
+      if wifi == iface['.name'] then
+	return true
+      end
+    end
+
+    return false
+  end
+
+  uci:delete_all('wireless', 'wifi-iface', delete_legacy_iface)
+
+  uci:save('wireless')
+  uci:commit('wireless')
+end

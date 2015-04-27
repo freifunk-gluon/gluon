@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+for _, file in ipairs(site.legacy.version_files) do
+  if os.remove(file) then
+    -- Set version being upgraded from to 'legacy'
+    sysconfig.gluon_version = 'legacy'
+  end
+end
