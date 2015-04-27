@@ -1,0 +1,12 @@
+local ip = require 'luci.ip'
+
+local addresses = {}
+
+for line in io.lines('/proc/net/if_inet6') do
+  local matches = { line:match('^' .. string.rep('(%x%x%x%x)', 8) .. string.rep(' %x%x', 4) .. '%s+([^%s]+)$') }
+  if matches[9] == 'br-client' then
+    table.insert(addresses, ip.IPv6(string.format('%s:%s:%s:%s:%s:%s:%s:%s', unpack(matches))):string():lower())
+  end
+end
+
+return addresses

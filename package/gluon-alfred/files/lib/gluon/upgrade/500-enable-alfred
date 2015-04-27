@@ -1,0 +1,19 @@
+#!/usr/bin/lua
+
+local uci = require 'luci.model.uci'
+local c = uci.cursor()
+
+
+c:delete('alfred', 'alfred')
+c:section('alfred', 'alfred', 'alfred',
+	  {
+		  interface = 'br-client',
+		  mode = 'slave',
+		  batmanif = 'bat0',
+		  start_vis = '1',
+		  run_facters = '0',
+	  }
+)
+
+c:save('alfred')
+c:commit('alfred')

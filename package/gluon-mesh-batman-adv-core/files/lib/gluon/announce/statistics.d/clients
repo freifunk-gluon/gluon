@@ -1,0 +1,20 @@
+local list = io.lines("/sys/kernel/debug/batman_adv/bat0/transtable_local")
+
+local count = 0
+local wifi = 0
+for line in list do
+  local mac, _, flags, lastseen = line:match("^ %* ([0-9a-f:]+) *(.- )%[(.-)%] +(%d+%.%d+)")
+  if mac then
+    if not flags:match('P') then
+      count = count + 1
+
+      if flags:match('W') then
+        wifi = wifi +1
+      end
+    end
+  end
+end
+
+return { total = count
+       , wifi  = wifi
+       }

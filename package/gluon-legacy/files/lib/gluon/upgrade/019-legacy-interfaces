@@ -1,0 +1,40 @@
+#!/usr/bin/lua
+
+local gluon_util = require 'gluon.util'
+local platform = require 'gluon.platform'
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+local util = require 'luci.util'
+
+
+if sysconfig.gluon_version == 'legacy' then
+  local function iface_exists(name)
+    return (gluon_util.exec('ip', 'link', 'show', 'dev', (name:gsub('%..*$', ''))) == 0)
+  end
+
+  local function remove_bat0(iface)
+    return util.trim(string.gsub(' ' .. iface .. ' ', ' bat0 ', ' '))
+  end
+
+
+  local lan_ifname = remove_bat0(uci:get('network', site.legacy.mesh_ifname, 'ifname'))
+  local wan_ifname = uci:get('network', 'wan', 'ifname')
+
+  if wan_ifname and iface_exists(wan_ifname) then
+    sysconfig.wan_ifname = wan_ifname
+    sysconfig.lan_ifname = lan_ifname
+  else
+    sysconfig.wan_ifname = lan_ifname
+  end
+
+
+  uci:delete('network', site.legacy.mesh_ifname)
+  uci:delete('network', 'wan')
+
+  uci:save('network')
+  uci:commit('network')
+end
+
+

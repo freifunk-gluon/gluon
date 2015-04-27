@@ -1,0 +1,7 @@
+local autoupdater = uci:get_all('autoupdater', 'settings')
+if autoupdater then
+	return {
+		branch = autoupdater['branch'],
+		enabled = uci:get_bool('autoupdater', 'settings', 'enabled'),
+	}
+end

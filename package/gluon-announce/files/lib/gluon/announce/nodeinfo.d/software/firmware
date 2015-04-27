@@ -1,0 +1,4 @@
+return {
+	base = 'gluon-' .. util.trim(fs.readfile('/lib/gluon/gluon-version')),
+	release = util.trim(fs.readfile('/lib/gluon/release')),
+}

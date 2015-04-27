@@ -1,0 +1,4 @@
+local fs = require "nixio.fs"
+
+local st = fs.statvfs("/")
+return 1 - st.bfree / st.blocks

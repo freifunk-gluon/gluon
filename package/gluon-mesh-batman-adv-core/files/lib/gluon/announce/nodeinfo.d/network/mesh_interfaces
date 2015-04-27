@@ -1,0 +1,15 @@
+local list = util.exec('batctl if')
+
+local interfaces = {}
+for _, line in ipairs(util.split(list)) do
+  local ifname = line:match('^(.-):')
+  if ifname ~= nil then
+    pcall(
+      function()
+	table.insert(interfaces, util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address')))
+      end
+    )
+  end
+end
+
+return interfaces
