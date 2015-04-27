@@ -1,0 +1,1 @@
+return require('platform_info').get_model()

@@ -1,0 +1,57 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+for name, config in pairs(site.autoupdater.branches) do
+	c:delete('autoupdater', name)
+	c:section('autoupdater', 'branch', name,
+		  {
+			  name = config.name,
+			  mirror = config.mirrors,
+			  good_signatures = config.good_signatures,
+			  pubkey = config.pubkeys,
+		  }
+	)
+end
+
+if not c:get('autoupdater', 'settings') then
+	local enabled = 0
+	local branch = site.autoupdater.branch
+
+	local f = io.open('/lib/gluon/autoupdater/default_branch')
+	if f then
+		enabled = 1
+		branch = f:read('*line')
+		f:close()
+	end
+
+	c:section('autoupdater', 'autoupdater', 'settings',
+		  {
+			  enabled = enabled,
+			  branch = branch,
+		  }
+	)
+end
+
+c:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
+
+c:save('autoupdater')
+c:commit('autoupdater')
+
+
+local autoupdater_util = require 'autoupdater.util'
+autoupdater_util.randomseed()
+
+
+-- Perform updates at a random time between 04:00 and 05:00, and once an hour
+-- a fallback update (used after the regular updates haven't
+local minute = math.random(0, 59)
+
+local f = io.open('/lib/gluon/cron/autoupdater', 'w')
+f:write(string.format('%i 4 * * * /usr/sbin/autoupdater\n', minute))
+f:write(string.format('%i 0-3,5-23 * * * /usr/sbin/autoupdater --fallback\n', minute))
+f:close()

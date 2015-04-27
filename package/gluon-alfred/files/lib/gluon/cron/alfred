@@ -1,0 +1,1 @@
+* * * * * /lib/gluon/announce/collect.lua nodeinfo | gzip | alfred -s 158; /lib/gluon/announce/collect.lua statistics | gzip | alfred -s 159; /lib/gluon/announce/collect.lua neighbours | gzip | alfred -s 160

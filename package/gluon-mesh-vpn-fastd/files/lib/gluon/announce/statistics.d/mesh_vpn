@@ -1,0 +1,32 @@
+local nixio = require('nixio')
+local ltn12 = require('luci.ltn12')
+local json = require('luci.json')
+local uci = require('luci.model.uci').cursor()
+
+local socket_path = uci:get('fastd', 'mesh_vpn', 'status_socket')
+local fastd_sock = nixio.socket('unix', 'stream')
+
+if not fastd_sock:connect(socket_path) then
+  return nil
+end
+
+decoder = json.Decoder()
+ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
+
+local status = decoder:get()
+
+local output = {}
+
+for key, peer in pairs(status.peers) do
+  local name, valid = peer.name:gsub('^mesh_vpn_backbone_peer_', '')
+  if valid == 1 then
+    if peer.connection then
+      output[name] = {}
+      output[name].established = peer.connection.established/1000
+    else
+      output[name] = json.null
+    end
+  end
+end
+
+return output

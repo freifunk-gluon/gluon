@@ -1,0 +1,119 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
+
+local function configure_radio(radio, index, config)
+  uci:delete('wireless', radio, 'disabled')
+
+  uci:set('wireless', radio, 'channel', config.channel)
+  uci:set('wireless', radio, 'htmode', config.htmode)
+  uci:set('wireless', radio, 'country', site.regdom)
+
+  local client = 'client_' .. radio
+  local mesh = 'mesh_' .. radio
+
+  local disable_state_client = false
+  local disable_state_mesh = false
+
+  if uci:get('wireless', client) then
+    disable_state_client = uci:get_bool('wireless', client, "disabled")
+  elseif config.client_disabled then
+    disable_state_client = true
+  end
+
+  if uci:get('wireless', mesh) then
+    disable_state_mesh = uci:get_bool('wireless', mesh, "disabled")
+  elseif config.mesh_disabled then
+    disable_state_mesh = true
+  end
+
+  local client_ifname
+  local mesh_ifname
+  local radio_suffix = radio:match('^radio(%d+)$')
+  if radio_suffix then
+    client_ifname = 'client' .. radio_suffix
+    mesh_ifname = 'mesh' .. radio_suffix
+  end
+
+  uci:delete('wireless', client)
+  uci:section('wireless', 'wifi-iface', client,
+	      {
+		device = radio,
+		network = 'client',
+		mode = 'ap',
+		ssid = config.ssid,
+		macaddr = util.generate_mac(2, index),
+		ifname = client_ifname,
+		disabled = disable_state_client and 1 or 0,
+	      }
+  )
+
+  uci:delete('network', mesh)
+  uci:delete('network', mesh .. '_vlan')
+
+  if config.mesh_vlan then
+	uci:section('network', 'interface', mesh,
+	      {
+		proto = 'none',
+	      }
+	)
+	uci:section('network', 'interface', mesh .. '_vlan',
+	      {
+		ifname = '@' .. mesh .. '.' .. config.mesh_vlan,
+		proto = 'batadv',
+		mesh = 'bat0',
+	      }
+	)
+  else
+	uci:section('network', 'interface', mesh,
+	      {
+		proto = 'batadv',
+		mesh = 'bat0',
+	      }
+	)
+  end
+
+  uci:delete('wireless', mesh)
+  uci:section('wireless', 'wifi-iface', mesh,
+	      {
+		device = radio,
+		network = mesh,
+		mode = 'adhoc',
+		ssid = config.mesh_ssid,
+		bssid = config.mesh_bssid,
+		macaddr = util.generate_mac(3, index),
+		mcast_rate = config.mesh_mcast_rate,
+		ifname = mesh_ifname,
+		disabled = disable_state_mesh and 1 or 0,
+	      }
+  )
+end
+
+
+local radios = {}
+
+uci:foreach('wireless', 'wifi-device',
+	    function(s)
+	      table.insert(radios, s['.name'])
+	    end
+)
+
+for index, radio in ipairs(radios) do
+	local hwmode = uci:get('wireless', radio, 'hwmode')
+
+	if hwmode == '11g' or hwmode == '11ng' then
+	  configure_radio(radio, index, site.wifi24)
+	elseif hwmode == '11a' or hwmode == '11na' then
+	  configure_radio(radio, index, site.wifi5)
+	end
+end
+
+
+uci:save('wireless')
+uci:save('network')
+uci:commit('wireless')
+uci:commit('network')

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+if [ -e /etc/dnsmasq.conf ]; then
+	sed -i -e '/^conf-dir=\/lib\/gluon\/dnsmasq\.d$/d' -e '/^conf-dir=\/var\/gluon\/dnsmasq\.d$/d' /etc/dnsmasq.conf
+fi

@@ -1,0 +1,22 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local file = '/etc/dropbear/authorized_keys'
+
+local keys = {}
+
+function load_keys()
+  for line in io.lines(file) do
+    keys[line] = true
+  end
+end
+
+pcall(load_keys)
+
+local f = io.open(file, 'a')
+for _, key in ipairs(site.authorized_keys) do
+  if not keys[key] then
+    f:write(key .. '\n')
+  end
+end
+f:close()

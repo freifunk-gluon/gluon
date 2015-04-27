@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+SETUP_MODE_DHCP_RANGE=192.168.1.2,192.168.1.254
+
+
+START=60
+
+USE_PROCD=1
+PROG=/usr/sbin/dnsmasq
+
+
+start_service() {
+	procd_open_instance
+	procd_set_param command $PROG -k -p 0 -F $SETUP_MODE_DHCP_RANGE -l /tmp/dhcp.leases -O option:router
+	procd_set_param respawn
+	procd_close_instance
+}
