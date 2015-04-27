@@ -1,7 +1,0 @@
-if uci:get_first('gluon-node-info', 'location', 'share_location', false) then
-	return {
-		latitude = tonumber(uci:get_first('gluon-node-info', 'location', 'latitude')),
-		longitude = tonumber(uci:get_first('gluon-node-info', 'location', 'longitude')),
-		altitude = tonumber(uci:get_first('gluon-node-info', 'location', 'altitude')),
-	}
-end

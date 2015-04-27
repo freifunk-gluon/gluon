@@ -26,7 +26,7 @@ fi
 
 pushd "$(dirname "$0")/.." >/dev/null
 
-find package packages -name Makefile | while read makefile; do
+find packages -name Makefile | while read makefile; do
 	dir="$(dirname "$makefile")"
 
 	pushd "$dir" >/dev/null

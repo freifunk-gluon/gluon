@@ -200,8 +200,7 @@ feeds: FORCE
 	rm -rf $(TOPDIR)/package/feeds
 	mkdir $(TOPDIR)/package/feeds
 	[ ! -f $(GLUON_SITEDIR)/modules ] || . $(GLUON_SITEDIR)/modules && for feed in $$GLUON_SITE_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
-	ln -s ../../../package $(TOPDIR)/package/feeds/gluon
-	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/module_$$feed; done
+	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/$$feed; done
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 config: FORCE
@@ -285,7 +284,7 @@ prepare-image: FORCE
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
-	@$(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/package/gluon-core/files/usr/lib/lua/gluon/site_config.lua \
+	@$(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/packages/gluon/gluon/gluon-core/files/usr/lib/lua/gluon/site_config.lua \
 		|| (echo 'Your site configuration did not pass validation.'; false)
 
 	mkdir -p $(GLUON_IMAGEDIR) $(BOARD_BUILDDIR)

@@ -1,3 +1,0 @@
-rule 'MULTICAST_OUT -p ARP --arp-opcode Reply --arp-ip-src 0.0.0.0 -j DROP'
-rule 'MULTICAST_OUT -p ARP --arp-opcode Request --arp-ip-dst 0.0.0.0 -j DROP'
-rule 'MULTICAST_OUT -p ARP -j RETURN'

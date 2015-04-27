@@ -1,1 +1,0 @@
-return uci:get_first('system', 'system', 'hostname')

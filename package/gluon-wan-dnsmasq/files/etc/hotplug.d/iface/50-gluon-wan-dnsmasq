@@ -1,3 +1,0 @@
-if [ "$INTERFACE" = 'wan' -o "$INTERFACE" = 'wan6' ]; then
-   /lib/gluon/wan-dnsmasq/update.lua
-fi

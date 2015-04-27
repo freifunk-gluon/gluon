@@ -1,5 +1,0 @@
-#!/bin/sh
-
-for script in /lib/gluon/upgrade/*; do
-	"$script"
-done

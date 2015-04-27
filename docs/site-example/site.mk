@@ -11,7 +11,6 @@ GLUON_SITE_PACKAGES := \
 	gluon-autoupdater \
 	gluon-config-mode-autoupdater \
 	gluon-config-mode-contact-info \
-	gluon-config-mode-core \
 	gluon-config-mode-geo-location \
 	gluon-config-mode-hostname \
 	gluon-config-mode-mesh-vpn \
@@ -23,7 +22,6 @@ GLUON_SITE_PACKAGES := \
 	gluon-next-node \
 	gluon-mesh-vpn-fastd \
 	gluon-radvd \
-	gluon-setup-mode \
 	gluon-status-page \
 	haveged \
 	iptables \

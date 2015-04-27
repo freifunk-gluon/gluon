@@ -67,9 +67,7 @@ wifi24
     ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
     Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
-    ad-hoc interface. The options``mesh_disabled`` and ``client_disabled``
-    are optional, too. They allow to disable the SSID by default, e.g. for
-    preconfigured node. This only affects first configuraton.
+    ad-hoc interface.
     Combined in an dictionary, e.g.:
     ::
 
@@ -80,8 +78,6 @@ wifi24
          mesh_ssid = 'ff:ff:ff:ee:ba:be',
          mesh_bssid = 'ff:ff:ff:ee:ba:be',
          mesh_mcast_rate = 12000,
-         client_disabled = true,
-         mesh_disabled = false,
        },
 
 wifi5
@@ -180,7 +176,7 @@ setup_mode : package
     ``skip`` is set to ``true``. This is optional and may be left out.
     ::
 
-      setup_mode = {
+      setup_mode {
         skip = true,
       },
 

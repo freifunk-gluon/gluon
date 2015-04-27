@@ -111,10 +111,9 @@ $(eval $(call GluonProfile,TLMR3040))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v1,tp-link-tl-mr3040-v1))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v2,tp-link-tl-mr3040-v2))
 
-# TL-MR3220 v1, v2
+# TL-MR3220 v1
 $(eval $(call GluonProfile,TLMR3220))
 $(eval $(call GluonModel,TLMR3220,tl-mr3220-v1,tp-link-tl-mr3220-v1))
-$(eval $(call GluonModel,TLMR3220,tl-mr3220-v2,tp-link-tl-mr3220-v2))
 
 # TL-MR3420 v1, v2
 $(eval $(call GluonProfile,TLMR3420))
@@ -138,11 +137,11 @@ $(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-bullet-m))
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m,ubiquiti-nanostation-m))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw,ubiquiti-nanostation-m-xw))
-$(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro))
 $(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor,ubiquiti-unifiap-outdoor))
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
+$(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro)) # BROKEN: not properly tested; probably issues with WLAN adapter detection
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+)) # BROKEN: WLAN doesn't work correctly (high packet loss)
 endif
 
@@ -184,8 +183,8 @@ $(eval $(call GluonModel,WNDR3700,wndr3700v2,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800,netgear-wndr3800))
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,WNDR3700,wndrmac,netgear-wndrmac)) # BROKEN: untested
+$(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2)) # BROKEN: untested
 endif
-$(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2))
 
 ## Allnet
 
