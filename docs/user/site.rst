@@ -67,21 +67,19 @@ wifi24
     ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
     Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
-    ad-hoc interface. The options``mesh_disabled`` and ``client_disabled``
+    ad-hoc interface. The options ``mesh_disabled`` and ``client_disabled``
     are optional, too. They allow to disable the SSID by default, e.g. for
     preconfigured node. This only affects first configuraton.
     Combined in an dictionary, e.g.:
     ::
 
        wifi24 = {
-         ssid = 'http://kiel.freifunk.net/',
+         ssid = 'entenhausen.freifunk.net',
          channel = 11,
          htmode = 'HT40-',
          mesh_ssid = 'ff:ff:ff:ee:ba:be',
          mesh_bssid = 'ff:ff:ff:ee:ba:be',
          mesh_mcast_rate = 12000,
-         client_disabled = true,
-         mesh_disabled = false,
        },
 
 wifi5
@@ -94,7 +92,7 @@ next_node : package
       next_node = {
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
-        mac = 'ca:ff:ee:ba:be'
+        mac = 'ca:ff:ee:ba:be:00'
       }
 
 
@@ -103,12 +101,12 @@ fastd_mesh_vpn
     ::
 
       fastd_mesh_vpn = {
-        methods = {'salsa2012+gmac'},
+        methods = {'salsa2012+umac'},
         mtu = 1426,
         backbone = {
           limit = 2,
           peers = {
-            ffki_rz = {
+            peer1 = {
               key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
               remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
             },
