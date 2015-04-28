@@ -8,7 +8,6 @@ local config = 'gluon-node-info'
 local role = uci:get(config, uci:get_first(config, "system"), "role")
 
 f = SimpleForm("role", i18n.translate("Node role"))
-f.reset = false
 f.template = "admin/expertmode"
 
 s = f:section(SimpleSection, nil, i18n.translate(
