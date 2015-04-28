@@ -10,14 +10,14 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 
 Please refrain from using the master branch for anything else but development purposes!
 Use the most recent release instead. You can list all relaseses by running `git branch -a`
-and switch to one by running `git checkout v0.6.5beta5`.
+and switch to one by running `git checkout stable`.
 
 To select one of our sites, use first `./get-sites` and select one out of `sites-repo` with e.g. `./set-site vfnnrw/leverkusen`.
 
 To make a stable-build for e.g. leverkusen run:  
 `git clone https://github.com/VfN-NRW/gluon.git vfnnrw-gluon`  
 `cd vfnnrw-gluon`  
-`git checkout v0.6.5beta5`  
+`git checkout stable`  
 `./set-site vfnnrw/leverkusen`  
 `make update`  
 `make -j4 GLUON_BRANCH=stable`  
