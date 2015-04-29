@@ -22,6 +22,12 @@ Site changes
     to keep the old behaviour, you have to append the hyphen to the
     ``hostname_prefix`` field of your ``site.conf``.
 
+* ``site.mk``
+
+  - The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now be
+    added to ``GLUON_SITE_PACKAGES`` explicitly (to allow replacing them with
+    community-specific implementations).
+
 Internals
 ~~~~~~~~~
 
