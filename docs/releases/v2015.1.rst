@@ -22,6 +22,24 @@ Site changes
     to keep the old behaviour, you have to append the hyphen to the
     ``hostname_prefix`` field of your ``site.conf``.
 
+  - ``mesh_vpn_fastd``: The default peer group name ``backbone`` isn't hardcoded anymore, any
+    group name can be used. Instead, the ``fastd_mesh_vpn`` table must now contain an element ``groups``,
+    for example::
+
+      fastd_mesh_vpn = {
+          methods = {'salsa2012+umac'},
+          mtu = 1426,
+          groups = {
+              backbone = {
+                  limit = 2,
+                  peers = {
+                      -- ...
+                  }
+              }
+          }
+      }
+
+
 * ``site.mk``
 
   - The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now be
