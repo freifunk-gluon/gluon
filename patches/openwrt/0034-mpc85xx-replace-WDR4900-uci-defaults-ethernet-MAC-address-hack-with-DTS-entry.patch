@@ -1,0 +1,41 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 30 Apr 2015 02:12:18 +0200
+Subject: mpc85xx: replace WDR4900 uci-defaults ethernet MAC address hack with DTS entry
+
+This also changes the MAC address to one of the adresses actually used by the
+stock firmware on one of the ethernet interfaces.
+
+diff --git a/target/linux/mpc85xx/base-files/etc/uci-defaults/02_network b/target/linux/mpc85xx/base-files/etc/uci-defaults/02_network
+index e4e3566..525a552 100755
+--- a/target/linux/mpc85xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/mpc85xx/base-files/etc/uci-defaults/02_network
+@@ -20,8 +20,6 @@ tl-wdr4900-v1)
+ 	ucidef_add_switch "switch0" "1" "1"
+ 	ucidef_add_switch_vlan "switch0" "1" "0t 2 3 4 5"
+ 	ucidef_add_switch_vlan "switch0" "2" "0t 1"
+-	ucidef_set_interface_macaddr lan "$(mtd_get_mac_binary config 338)"
+-	ucidef_set_interface_macaddr wan "$(mtd_get_mac_binary config 344)"
+ 	;;
+ *)
+ 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
+diff --git a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
+index 49e516c..7e48e23 100644
+--- a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
++++ b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
+@@ -63,7 +63,7 @@
+ 					label = "rootfs";
+ 				};
+ 
+-				config@fe0000 {
++				config: config@fe0000 {
+ 					reg = <0x00fe0000 0x00010000>;
+ 					label = "config";
+ 					read-only;
+@@ -118,6 +118,7 @@
+ 		enet0: ethernet@b0000 {
+ 			phy-handle = <&phy0>;
+ 			phy-connection-type = "rgmii-id";
++			mtd-mac-address = <&config 0x14c>;
+ 		};
+ 
+ 		enet1: ethernet@b1000 {
