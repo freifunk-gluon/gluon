@@ -18,8 +18,8 @@ s = f:section(SimpleSection, nil, i18n.translate(
 o = s:option(ListValue, "role", i18n.translate("Role"))
 o.default = role
 o.rmempty = false
-for role, prettyname in pairs(site.roles.list) do
-  o:value(role, prettyname)
+for _, role in ipairs(site.roles.list) do
+  o:value(role, i18n.translate('gluon-luci-node-role:role:' .. role))
 end
 
 function f.handle(self, state, data)

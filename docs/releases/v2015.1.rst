@@ -39,6 +39,19 @@ Site changes
           }
       }
 
+  - ``roles``: The display strings for the node roles aren't configured in the ``site.conf`` anymore, but
+    in the site i18n files. The ``site.conf`` section becomes::
+
+      roles = {
+          default = 'foo',
+          list = {
+              'foo',
+              'bar',
+          }
+      }
+
+    The display string use i18n message IDs like ``gluon-luci-node-role:role:foo`` and ``gluon-luci-node-role:role:bar``.
+
 
 * ``site.mk``
 

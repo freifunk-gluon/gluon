@@ -150,15 +150,19 @@ roles : optional
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
     the package ``gluon-luci-node-role`` to ``site.mk``.
+
+    The strings to display in the LuCI interface can be configured per language in the
+    ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository using message IDs like
+    ``gluon-luci-node-role:role:node`` and ``gluon-luci-node-role:role:backbone``.
     ::
 
       roles = {
         default = 'node',
         list = {
-          node = 'Normal Node',
-          test = 'Test Node',
-          backbone = 'Backbone Node',
-          service = 'Service Node',
+          'node',
+          'test',
+          'backbone',
+          'service',
         },
       },
 
