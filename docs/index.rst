@@ -61,6 +61,7 @@ ar71xx-generic
 ^^^^^^^^^^^^^^
 
 * Allnet
+
   - ALL0315N
 
 * Buffalo
@@ -74,6 +75,7 @@ ar71xx-generic
   - DIR-615 (C1)
 
 * GL-Inet
+
   - 6408A (v1)
   - 6416a (v1)
 
@@ -82,6 +84,7 @@ ar71xx-generic
   - WRT160NL
 
 * Netgear
+
   - WNDR3700 (v1, v2)
   - WNDR3800
 
@@ -131,6 +134,7 @@ ar71xx-nand
 ^^^^^^^^^^^
 
 * Netgear
+
   - WNDR3700 (v4)
   - WNDR3700 (v1)
 
@@ -138,6 +142,7 @@ mpc85xx-generic
 ^^^^^^^^^^^^^^^
 
 * TP-Link
+
   - TL-WDR4900 (v1)
 
 x86-generic
