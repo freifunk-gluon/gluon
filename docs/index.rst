@@ -42,6 +42,18 @@ Developer Documentation
    dev/wan
    dev/i18n
 
+Releases
+--------
+
+.. toctree::
+   :maxdepth: 1
+
+   releases/v2015.1
+   releases/v2014.4
+   releases/v2014.3.1
+   releases/v2014.3
+
+
 Supported Devices & Architectures
 ---------------------------------
 
@@ -137,18 +149,6 @@ x86-generic
 x86-kvm_guest
 ^^^^^^^^^^^^^
 * x86-kvm
-
-Releases
---------
-
-.. toctree::
-   :maxdepth: 1
-
-   releases/v2015.1
-   releases/v2014.4
-   releases/v2014.3.1
-   releases/v2014.3
-
 
 License
 -------
