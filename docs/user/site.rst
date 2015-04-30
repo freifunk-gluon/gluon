@@ -103,13 +103,15 @@ fastd_mesh_vpn
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
         mtu = 1426,
-        backbone = {
-          limit = 2,
-          peers = {
-            peer1 = {
-              key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-              remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
-            },
+        groups = {
+          backbone = {
+            limit = 2,
+            peers = {
+              peer1 = {
+                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+              },
+            }
           }
         }
       }
