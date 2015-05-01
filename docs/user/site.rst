@@ -288,7 +288,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
 * `site-ffhh <https://github.com/freifunkhamburg/site-ffhh>`_ (Hamburg)
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
-* `site-ffhl <https://github.com/freifunk-gluon/site-ffhl>`_ (Lübeck)
+* `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
 * `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
 * `site-ffmwu <https://github.com/freifunk-mwu/site-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
