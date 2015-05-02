@@ -69,7 +69,7 @@ function action_reboot()
 
     local hostname = uci:get_first("system", "system", "hostname")
 
-    luci.template.render("gluon-config-mode/reboot", { parts=parts
+    luci.template.render("gluon/config-mode/reboot", { parts=parts
                                                      , hostname=hostname
                                                      })
   else

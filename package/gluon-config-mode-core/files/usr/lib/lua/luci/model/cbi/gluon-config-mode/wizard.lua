@@ -17,7 +17,7 @@ end
 
 f = SimpleForm("wizard")
 f.reset = false
-f.template = "gluon-config-mode/cbi/wizard"
+f.template = "gluon/cbi/config-mode"
 
 for _, s in ipairs(wizard) do
   s.section(f)
