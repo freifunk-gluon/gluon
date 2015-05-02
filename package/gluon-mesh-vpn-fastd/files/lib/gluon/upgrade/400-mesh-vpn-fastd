@@ -5,6 +5,7 @@ local users = require 'gluon.users'
 local util = require 'gluon.util'
 
 local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
 
 
 -- The previously used user is removed, we need root privileges to use the packet_mark option
@@ -20,6 +21,33 @@ if not enabled then
 end
 
 
+local methods
+
+if site.fastd_mesh_vpn.configurable then
+  local has_null = lutil.contains(site.fastd_mesh_vpn.methods, 'null')
+
+  local old_methods = uci:get('fastd', 'mesh_vpn', 'method')
+  if old_methods then
+    has_null = lutil.contains(old_methods, 'null')
+  end
+
+
+  methods = {}
+  if has_null then
+    table.insert(methods, 'null')
+  end
+
+  for _, method in ipairs(site.fastd_mesh_vpn.methods) do
+    if method ~= 'null' then
+      table.insert(methods, method)
+    end
+  end
+
+else
+  methods = site.fastd_mesh_vpn.methods
+end
+
+
 uci:section('fastd', 'fastd', 'mesh_vpn',
 	  {
 		  enabled = enabled,
@@ -29,7 +57,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
 		  secure_handshakes = 1,
-		  method = site.fastd_mesh_vpn.methods,
+		  method = methods,
 		  packet_mark = 1,
 		  status_socket = '/var/run/fastd.mesh_vpn.socket',
 	  }
