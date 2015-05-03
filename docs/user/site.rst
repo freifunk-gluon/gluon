@@ -97,11 +97,22 @@ next_node : package
 
 
 fastd_mesh_vpn
-    Remote server setup for vpn.
+    Remote server setup for the fastd-based mesh VPN.
+
+    If `configurable` is false or unset, the method list will be replaced on updates
+    with the list in the site configuration. Setting `configurable` to `true` will allow the user to
+    add the method ``null`` to the front of the method list or remove ``null`` from it,
+    and make this change survive updates. Settings configurable is necessary for the
+    package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
+
+    In any case, the ``null`` method should always be the first method in the list
+    if it is supported at all. You should only set `configurable` to `true` if the
+    configured peers support both the ``null`` method and methods with encryption.
     ::
 
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
+	-- configurable = true,
         mtu = 1426,
         groups = {
           backbone = {
