@@ -55,6 +55,8 @@ Site changes
 
 * ``site.mk``
 
+  - ``gluon-mesh-batman-adv-15`` is now the recommended batman-adv version for new Gluon deployments.
+
   - The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now be
     added to ``GLUON_SITE_PACKAGES`` explicitly (to allow replacing them with
     community-specific implementations).
