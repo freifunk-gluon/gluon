@@ -18,7 +18,7 @@ module("luci.controller.admin.upgrade", package.seeall)
 function index()
 	local has_platform = nixio.fs.access("/lib/upgrade/platform.sh")
 	if has_platform then
-		entry({"admin", "upgrade"}, call("action_upgrade"), "Firmware aktualisieren", 90)
+		entry({"admin", "upgrade"}, call("action_upgrade"), _("Upgrade firmware"), 90)
 		entry({"admin", "upgrade", "reboot"}, template("admin/upgrade_reboot"), nil, nil)
 	end
 end
