@@ -438,6 +438,7 @@ img.cbi-image-button {
 input.cbi-button {
   @include button;
 
+  margin-left: 0.5em;
   background-repeat: no-repeat;
 }
 
@@ -563,11 +564,6 @@ div.cbi-section-remove input {
 textarea {
   margin-left: -1px;
   margin-bottom: 0.5em;
-}
-
-form > div > input[type=submit],
-form > div > input[type=reset] {
-  margin-left: 0.5em;
 }
 
 table td,
