@@ -648,6 +648,21 @@ div.cbi-value-field {
   }
 }
 
+div.cbi-value-field-long {
+  flex: 10;
+  position: relative;
+
+
+  input, select, input + label {
+    position: relative;
+    top: -0.39em;
+  }
+}
+
+div.cbi-value-field-long-after {
+  flex: 2;
+}
+
 div.cbi-value-description {
   font-size: 8pt;
 }
