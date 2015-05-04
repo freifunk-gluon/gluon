@@ -13,6 +13,7 @@ $Id$
 ]]--
 
 local uci = luci.model.uci.cursor()
+local sysconfig = require 'gluon.sysconfig'
 
 local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
@@ -86,6 +87,13 @@ o = s:option(Flag, "mesh_wan", translate("Enable meshing on the WAN interface"))
 o.default = uci:get_bool("network", "mesh_wan", "auto") and o.enabled or o.disabled
 o.rmempty = false
 
+if sysconfig.lan_ifname then
+  o = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
+  o.default = uci:get_bool("network", "mesh_lan", "auto") and o.enabled or o.disabled
+  o.rmempty = false
+end
+
+
 function f.handle(self, state, data)
   if state == FORM_VALID then
     uci:set("network", "wan", "proto", data.ipv4)
@@ -109,6 +117,16 @@ function f.handle(self, state, data)
     end
 
     uci:set("network", "mesh_wan", "auto", data.mesh_wan)
+
+    if sysconfig.lan_ifname then
+      uci:set("network", "mesh_lan", "auto", data.mesh_lan)
+
+      if data.mesh_lan == '1' then
+        uci:set("network", "client", "ifname", "bat0")
+      else
+        uci:set("network", "client", "ifname", sysconfig.lan_ifname .. " bat0")
+      end
+    end
 
     uci:save("network")
     uci:commit("network")
