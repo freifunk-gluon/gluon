@@ -1,12 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-luci-wifi-config
-PKG_VERSION:=0.1
+PKG_VERSION:=1
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(GLUONDIR)/include/package.mk
+
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 define Package/gluon-luci-wifi-config
   SECTION:=gluon
@@ -23,10 +25,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-luci-wifi-config,i18n)
 endef
 
 define Package/gluon-luci-wifi-config/install
 	$(CP) ./files/* $(1)/
+	$(call GluonInstallI18N,gluon-luci-wifi-config,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-luci-wifi-config))

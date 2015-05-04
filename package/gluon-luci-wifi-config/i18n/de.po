@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-05-04 02:54+0200\n"
+"Last-Translator:  <mschiffer@universe-factory.net>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "2.4GHz WLAN"
+msgstr "2,4GHz-WLAN"
+
+msgid "5GHz WLAN"
+msgstr "5GHz-WLAN"
+
+msgid "Enable client network"
+msgstr "Client-Netz aktivieren"
+
+msgid "Enable mesh network"
+msgstr "Mesh-Netz aktivieren"
+
+msgid ""
+"You can enable or disable your node's client and mesh network SSIDs here. "
+"Please don't disable the mesh network without a good reason, so other nodes "
+"can mesh with yours."
+msgstr ""
+"In diesem Abschnitt hast du die Möglichkeit, die SSIDs des Client- und des "
+"Mesh-Netzes zu aktivieren bzw. deaktivieren. Bitte lass die SSID des Mesh-"
+"Netzes aktiviert, damit sich andere Knoten mit deinem verbinden können."
