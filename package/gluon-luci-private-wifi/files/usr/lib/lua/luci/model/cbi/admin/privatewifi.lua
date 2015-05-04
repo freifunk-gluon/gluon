@@ -21,9 +21,11 @@ o.default = (ssid and not uci:get_bool(config, primary_iface, "disabled")) and o
 o.rmempty = false
 
 o = s:option(Value, "ssid", translate("Name (SSID)"))
+o:depends("enabled", '1')
 o.default = ssid
 
 o = s:option(Value, "key", translate("Key"), translate("8-63 characters"))
+o:depends("enabled", '1')
 o.datatype = "wpakey"
 o.default = uci:get(config, primary_iface, "key")
 
@@ -36,20 +38,20 @@ function f.handle(self, state, data)
 
         if data.enabled == '1' then
           -- set up WAN wifi-iface
-          local t      = uci:get_all(config, name) or {}
-
-          t.device     = device
-          t.network    = "wan"
-          t.mode       = 'ap'
-          t.encryption = 'psk2'
-          t.ssid       = data.ssid
-          t.key        = data.key
-          t.disabled   = "false"
-
-          uci:section(config, "wifi-iface", name, t)
+          uci:section(config, "wifi-iface", name,
+                      {
+                        device     = device,
+                        network    = "wan",
+                        mode       = 'ap',
+                        encryption = 'psk2',
+                        ssid       = data.ssid,
+                        key        = data.key,
+                        disabled   = 0,
+                      }
+          )
         else
           -- disable WAN wifi-iface
-          uci:set(config, name, "disabled", "true")
+          uci:set(config, name, "disabled", 1)
         end
     end)
 
