@@ -13,7 +13,7 @@ PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 define Package/gluon-luci-wifi-config
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-luci-admin
+  DEPENDS:=+gluon-luci-admin +libiwinfo-lua
   TITLE:=UI for Wifi Settings
 endef
 
