@@ -22,9 +22,23 @@ function neighbours(ifname)
   for _, line in ipairs(util.split(info)) do
     local data = json.decode(line)
     if data then
-      if data["network"] and data["network"]["mesh_interfaces"] then
-        for _, mac in ipairs(data["network"]["mesh_interfaces"]) do
-          macs[mac] = data
+      local function add_macs(list)
+        if list then
+          for _, mac in ipairs(list) do
+            macs[mac] = data
+          end
+        end
+      end
+
+      if data["network"] then
+        add_macs(data["network"]["mesh_interfaces"])
+
+        if data["network"]["mesh"] and data["network"]["mesh"]["bat0"] and
+           data["network"]["mesh"]["bat0"]["interfaces"] then
+          local interfaces = data["network"]["mesh"]["bat0"]["interfaces"]
+          add_macs(interfaces["other"])
+          add_macs(interfaces["wireless"])
+          add_macs(interfaces["tunnel"])
         end
       end
     end
