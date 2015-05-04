@@ -2,6 +2,7 @@
 
 local sysconfig = require 'gluon.sysconfig'
 local sysctl = require 'gluon.sysctl'
+local site = require 'gluon.site_config'
 local uci = require('luci.model.uci').cursor()
 
 
@@ -20,7 +21,7 @@ uci:commit('batman-adv')
 if not uci:get('network', 'client') then
   local ifname
 
-  if sysconfig.lan_ifname then
+  if sysconfig.lan_ifname and not site.mesh_on_lan then
     ifname = sysconfig.lan_ifname .. ' bat0'
   else
     ifname = 'bat0'

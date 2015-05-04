@@ -13,3 +13,4 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 end
 
 need_boolean('mesh_on_wan', false)
+need_boolean('mesh_on_lan', false)
