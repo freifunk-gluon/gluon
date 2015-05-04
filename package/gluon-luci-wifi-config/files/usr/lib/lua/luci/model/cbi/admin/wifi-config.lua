@@ -1,5 +1,6 @@
 local uci = luci.model.uci.cursor()
 local fs = require 'nixio.fs'
+local iwinfo = require 'iwinfo'
 
 
 local function find_phy_by_path(path)
@@ -17,9 +18,9 @@ local function find_phy_by_macaddr(macaddr)
   end
 end
 
-local function txpower_list(iw)
-  local list = iw.txpwrlist or { }
-  local off  = tonumber(iw.txpower_offset) or 0
+local function txpower_list(phy)
+  local list = iwinfo.nl80211.txpwrlist(phy) or { }
+  local off  = tonumber(iwinfo.nl80211.txpower_offset(phy)) or 0
   local new  = { }
   local prev = -1
   local _, val
@@ -93,22 +94,19 @@ for _, radio in ipairs(radios) do
     end
 
     if phy then
-      local iw = luci.sys.wifi.getiwinfo(phy)
-      if iw then
-        local txpowers = txpower_list(iw)
+      local txpowers = txpower_list(phy)
 
-        if #txpowers > 1 then
-          local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power"))
-          tp.rmempty = true
-          tp.default = uci:get('wireless', radio, 'txpower') or 'default'
+      if #txpowers > 1 then
+        local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power"))
+        tp.rmempty = true
+        tp.default = uci:get('wireless', radio, 'txpower') or 'default'
 
-          tp:value('default', translate("(default)"))
+        tp:value('default', translate("(default)"))
 
-          table.sort(txpowers, function(a, b) return a.driver_dbm > b.driver_dbm end)
+        table.sort(txpowers, function(a, b) return a.driver_dbm > b.driver_dbm end)
 
-          for _, entry in ipairs(txpowers) do
-            tp:value(entry.driver_dbm, "%i dBm (%i mW)" % {entry.display_dbm, entry.display_mw})
-          end
+        for _, entry in ipairs(txpowers) do
+          tp:value(entry.driver_dbm, "%i dBm (%i mW)" % {entry.display_dbm, entry.display_mw})
         end
       end
     end
