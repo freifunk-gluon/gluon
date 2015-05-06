@@ -130,6 +130,9 @@ fastd_mesh_vpn
 mesh_on_wan : optional
     Enables the mesh on the WAN port (``true`` or ``false``).
 
+mesh_on_lan : optional
+    Enables the mesh on the LAN port (``true`` or ``false``).
+
 autoupdater : package
     Configuration for the autoupdater feature of Gluon.
     ::

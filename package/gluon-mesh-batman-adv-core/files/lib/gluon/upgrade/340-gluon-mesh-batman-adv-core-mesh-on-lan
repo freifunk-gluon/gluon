@@ -1,0 +1,23 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+local util = require 'gluon.util'
+local sysconfig = require 'gluon.sysconfig'
+
+local c = uci.cursor()
+
+if sysconfig.lan_ifname then
+  if not c:get('network', 'mesh_lan') then
+    c:section('network', 'interface', 'mesh_lan',
+              { ifname  = sysconfig.lan_ifname
+              , proto   = 'batadv'
+              , mesh    = 'bat0'
+              , macaddr = util.generate_mac(1, 1)
+              , auto    = site.mesh_on_lan and 1 or 0
+              })
+  end
+end
+
+c:save('network')
+c:commit('network')
