@@ -1,0 +1,161 @@
+#!/usr/bin/lua
+
+local util = require("luci.util")
+local fs = require("luci.fs")
+local ltn12 = require 'luci.ltn12'
+local sys = require("luci.sys")
+local json = require("luci.json")
+local nixio = require 'nixio'
+local platform_info = require("platform_info")
+
+local hostname = sys.hostname()
+local model = platform_info.get_model()
+local release = util.trim(fs.readfile("/lib/gluon/release") or "")
+
+function escape_html(s)
+  return (s:gsub('&', '&amp;'):gsub('<', '&lt;'):gsub('>', '&gt;'):gsub('"', '&quot;'))
+end
+
+function neighbours(ifname)
+  local info = util.exec("gluon-neighbour-info -d ff02::2:1001 -p 1001 -r nodeinfo -t 3 -i " .. ifname)
+  local macs = {}
+  for _, line in ipairs(util.split(info)) do
+    local data = json.decode(line)
+    if data then
+      local function add_macs(list)
+        if list then
+          for _, mac in ipairs(list) do
+            macs[mac] = data
+          end
+        end
+      end
+
+      if data["network"] then
+        add_macs(data["network"]["mesh_interfaces"])
+
+        if data["network"]["mesh"] and data["network"]["mesh"]["bat0"] and
+           data["network"]["mesh"]["bat0"]["interfaces"] then
+          local interfaces = data["network"]["mesh"]["bat0"]["interfaces"]
+          add_macs(interfaces["other"])
+          add_macs(interfaces["wireless"])
+          add_macs(interfaces["tunnel"])
+        end
+      end
+    end
+  end
+
+  return macs
+end
+
+io.write("Content-type: text/html\n\n")
+io.write("<!DOCTYPE html>\n")
+io.write("<html>")
+io.write("<head>")
+io.write("<script src=\"/status.js\"></script>")
+io.write("<title>" .. escape_html(hostname) .. "</title>")
+io.write("</head>")
+io.write("<body>")
+
+io.write("<h1>" .. escape_html(hostname) .. "</h1>")
+io.write("<pre>")
+
+io.write("Model: " .. escape_html(model) .. "\n")
+io.write("Firmware release: " .. escape_html(release) .. "\n\n")
+
+io.write(escape_html(util.trim(sys.exec("uptime | sed 's/^ \+//'"))) .. "\n\n")
+io.write(escape_html(sys.exec("ip address show dev br-client")) .. "\n")
+io.write(escape_html(sys.exec("free -m")) .. "\n")
+io.write(escape_html(sys.exec("df /rom /overlay")))
+io.write("</pre>")
+
+io.write("<h2>Neighbours</h2>")
+
+local interfaces = util.split(util.trim(util.exec("iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2")))
+
+for _, ifname in ipairs(interfaces) do
+  io.write("<h3>" .. escape_html(ifname) .. "</h3>")
+  io.write("<pre>")
+
+  io.write(escape_html(sys.exec("iw dev " .. ifname .. " link")) .. "\n")
+
+  for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
+    local mac = line:match("^Station (.*) %(on ")
+    if mac then
+      io.write("Station <a id=\"" .. escape_html(ifname) .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. escape_html(ifname) .. ")\n")
+    else
+      io.write(escape_html(line) .. "\n")
+    end
+  end
+
+  io.write("</pre>")
+end
+
+local stat, fastd_status = pcall(
+  function()
+    local fastd_sock = nixio.socket('unix', 'stream')
+    assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
+
+    decoder = json.Decoder()
+    ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
+    return decoder:get()
+  end
+)
+
+io.write("<h2>VPN status</h2>")
+io.write("<pre>")
+
+if stat then
+  io.write(string.format("fastd running for %.3f seconds\n", fastd_status.uptime/1000))
+
+  local peers = 0
+  local connections = 0
+
+  for key, peer in pairs(fastd_status.peers) do
+    peers = peers+1
+
+    if peer.connection then
+      connections = connections+1
+    end
+  end
+
+  io.write(string.format("There are %i peers configured, of which %i are connected:\n\n", peers, connections))
+
+  for key, peer in pairs(fastd_status.peers) do
+    io.write(string.format("%s: ", escape_html(peer.name)))
+
+    if peer.connection then
+      io.write(string.format("connected for %.3f seconds\n", peer.connection.established/1000))
+    else
+      io.write("not connected\n")
+    end
+  end
+
+else
+  io.write("fastd not running")
+end
+
+io.write("</pre>")
+
+io.write("<script>")
+for _, ifname in ipairs(interfaces) do
+  local macs = neighbours(ifname)
+  for mac, node in pairs(macs) do
+    local hostname = node["hostname"]
+    local ip
+    if node["network"] and node["network"]["addresses"] then
+      for _, myip in ipairs(node["network"]["addresses"]) do
+        if ip == nil and myip:sub(1, 5) ~= "fe80:" then
+          ip = myip
+        end
+      end
+    end
+
+    if ip and hostname then
+      io.write("update_node(\"" .. escape_html(ifname) .. "-" .. mac .. "\", \"" .. escape_html(ip) .. "\", \"" .. escape_html(hostname) .. "\");")
+    end
+  end
+end
+
+io.write("</script>")
+io.write("</body>")
+io.write("</html>")

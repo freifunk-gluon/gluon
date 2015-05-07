@@ -26,7 +26,7 @@ fi
 
 pushd "$(dirname "$0")/.." >/dev/null
 
-find packages -name Makefile | while read makefile; do
+find ./package packages -name Makefile | while read makefile; do
 	dir="$(dirname "$makefile")"
 
 	pushd "$dir" >/dev/null
@@ -36,7 +36,7 @@ find packages -name Makefile | while read makefile; do
 	package="$(basename "$dir")"
 
 	for file in "${SUFFIX}"/*; do
-		echo "${GREEN}$(basename "${file}")${RESET}" "(${BLUE}${repo}${RESET}/${dirname}/${RED}${package}${RESET}/${SUFFIX})"
+		echo "${GREEN}$(basename "${file}")${RESET}" "(${BLUE}${repo}${RESET}/${dirname}${dirname:+/}${RED}${package}${RESET}/${SUFFIX})"
 	done
 	popd >/dev/null
 done | sort

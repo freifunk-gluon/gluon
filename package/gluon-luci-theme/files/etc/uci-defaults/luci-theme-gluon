@@ -1,0 +1,6 @@
+#!/bin/sh
+uci batch <<-EOF
+	set luci.themes.Gluon=/luci-static/gluon
+        commit luci
+EOF
+	

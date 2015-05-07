@@ -1,0 +1,55 @@
+<%#
+LuCI - Lua Configuration Interface
+Copyright 2008 Steven Barth <steven@midlink.org>
+Copyright 2008-2009 Jo-Philipp Wich <xm@subsignal.org>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+$Id$
+
+-%>
+
+<%+header%>
+
+<h2><%:Upgrade firmware%></h2>
+
+<form method="post" action="<%=REQUEST_URI%>" enctype="multipart/form-data">
+  <p>
+    <%:You can manually upgrade your firmware here.%>
+  </p>
+  <% if bad_image then %>
+  <p class="error"><%:The provided firmware image is not valid for this device.%></p>
+  <% end %>
+  <div class="cbi-section-node">
+    <div class="cbi-value">
+      <label class="cbi-value-title">
+	<%:Firmware image%>
+      </label>
+      <div class="cbi-value-field">
+	<input class="cbi-input-file" type="file" name="image" />
+      </div>
+    </div>
+
+    <div class="cbi-value cbi-value-last">
+      <label class="cbi-value-title">
+	<%:Keep settings%>
+      </label>
+
+      <div class="cbi-value-field">
+	<input id="keepcfg" class="cbi-input-checkbox" type="checkbox" name="keepcfg" value="1" checked="checked" />
+	<label for="keepcfg"></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="cbi-page-actions right">
+    <input type="hidden" name="step" value="2" />
+    <input class="cbi-button cbi-button-apply" type="submit" value="<%:Upload image%>" />
+  </div>
+</form>
+<%+footer%>
+

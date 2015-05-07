@@ -1,0 +1,40 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+
+local uci = require('luci.model.uci').cursor()
+
+
+local function configure_mtu(radio, config)
+  local mesh = 'mesh_' .. radio
+
+  if config.mesh_vlan then
+    uci:set('network', mesh, 'mtu', 1532)
+    uci:set('network', mesh .. '_vlan', 'mtu', 1528)
+  else
+    uci:set('network', mesh, 'mtu', 1528)
+  end
+end
+
+
+local radios = {}
+
+uci:foreach('wireless', 'wifi-device',
+	    function(s)
+	      table.insert(radios, s['.name'])
+	    end
+)
+
+for _, radio in ipairs(radios) do
+	local hwmode = uci:get('wireless', radio, 'hwmode')
+
+	if hwmode == '11g' or hwmode == '11ng' then
+	  configure_mtu(radio, site.wifi24)
+	elseif hwmode == '11a' or hwmode == '11na' then
+	  configure_mtu(radio, site.wifi5)
+	end
+end
+
+
+uci:save('network')
+uci:commit('network')

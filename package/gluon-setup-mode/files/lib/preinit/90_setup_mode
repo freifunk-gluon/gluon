@@ -1,0 +1,13 @@
+#!/bin/sh
+
+
+setup_mode_enable() {
+	local enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
+	local configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
+
+	if [ "$enabled" = 1 -o "$configured" != 1 ]; then
+		echo '/lib/gluon/setup-mode/rc.d' > /tmp/rc_d_path
+	fi
+}
+
+boot_hook_add preinit_main setup_mode_enable

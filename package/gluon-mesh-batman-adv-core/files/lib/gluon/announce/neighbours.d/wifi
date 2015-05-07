@@ -1,0 +1,41 @@
+local json = require 'luci.json'
+local util = require 'luci.util'
+local fs = require 'nixio.fs'
+local iwinfo = require 'iwinfo'
+
+function neighbours(iface)
+  local stations = {}
+  for k, v in pairs(iface.iw.assoclist(iface.ifname)) do
+    stations[k:lower()] = { signal = v.signal
+                          , noise = v.noise
+                          , inactive = v.inactive
+                          }
+  end
+
+  return stations
+end
+
+function interfaces()
+  local interfaces = {}
+  for _, line in ipairs(util.split(util.exec('batctl if'))) do
+    ifname = line:match('^(.-): active')
+    if ifname ~= nil then
+      pcall(function()
+        local address = util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address'))
+        local wifitype = iwinfo.type(ifname)
+        if wifitype ~= nil then
+          interfaces[address] = { ifname = ifname, iw = iwinfo[wifitype] }
+        end
+      end)
+    end
+  end
+
+  return interfaces
+end
+
+local wifi = {}
+for address, iface in pairs(interfaces()) do
+  wifi[address] = { neighbours = neighbours(iface) }
+end
+
+return wifi

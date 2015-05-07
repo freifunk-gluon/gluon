@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+
+if sysconfig.gluon_version == 'legacy' then
+  for _, file in ipairs(site.legacy.old_files) do
+    os.remove(file)
+  end
+end

@@ -1,0 +1,36 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local gluon_util = require 'gluon.util'
+local platform = require 'gluon.platform'
+
+local uci = require('luci.model.uci').cursor()
+
+
+if not (sysconfig.lan_ifname or sysconfig.wan_ifname) then
+  local function iface_exists(name)
+    return (gluon_util.exec('ip', 'link', 'show', 'dev', (name:gsub('%..*$', ''))) == 0)
+  end
+
+
+  local lan_ifname = uci:get('network', 'lan', 'ifname')
+  local wan_ifname = uci:get('network', 'wan', 'ifname')
+
+  if platform.match('ar71xx', 'generic', {'cpe510', 'nanostation-m', 'nanostation-m-xw', 'unifi-outdoor-plus'}) then
+    lan_ifname, wan_ifname = wan_ifname, lan_ifname
+  end
+
+  if wan_ifname and iface_exists(wan_ifname) then
+    sysconfig.wan_ifname = wan_ifname
+    sysconfig.lan_ifname = lan_ifname
+  else
+    sysconfig.wan_ifname = lan_ifname
+  end
+
+
+  uci:delete('network', 'lan')
+  uci:delete('network', 'wan')
+
+  uci:save('network')
+  uci:commit('network')
+end

@@ -1,0 +1,4 @@
+return {
+	enabled = uci:get_bool('fastd', 'mesh_vpn', 'enabled'),
+	version = util.exec('fastd -v'):match('^[^%s]+%s+([^\n]+)'),
+}

@@ -22,6 +22,45 @@ Site changes
     to keep the old behaviour, you have to append the hyphen to the
     ``hostname_prefix`` field of your ``site.conf``.
 
+  - ``mesh_vpn_fastd``: The default peer group name ``backbone`` isn't hardcoded anymore, any
+    group name can be used. Instead, the ``fastd_mesh_vpn`` table must now contain an element ``groups``,
+    for example::
+
+      fastd_mesh_vpn = {
+          methods = {'salsa2012+umac'},
+          mtu = 1426,
+          groups = {
+              backbone = {
+                  limit = 2,
+                  peers = {
+                      -- ...
+                  }
+              }
+          }
+      }
+
+  - ``roles``: The display strings for the node roles aren't configured in the ``site.conf`` anymore, but
+    in the site i18n files. The ``site.conf`` section becomes::
+
+      roles = {
+          default = 'foo',
+          list = {
+              'foo',
+              'bar',
+          }
+      }
+
+    The display string use i18n message IDs like ``gluon-luci-node-role:role:foo`` and ``gluon-luci-node-role:role:bar``.
+
+
+* ``site.mk``
+
+  - ``gluon-mesh-batman-adv-15`` is now the recommended batman-adv version for new Gluon deployments.
+
+  - The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now be
+    added to ``GLUON_SITE_PACKAGES`` explicitly (to allow replacing them with
+    community-specific implementations).
+
 Internals
 ~~~~~~~~~
 
