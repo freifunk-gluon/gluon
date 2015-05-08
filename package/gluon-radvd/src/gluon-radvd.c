@@ -100,6 +100,7 @@ static struct global {
 
 	size_t n_prefixes;
 	struct in6_addr prefixes[MAX_PREFIXES];
+	bool prefixes_onlink[MAX_PREFIXES];
 } G = {
 	.rtnl_sock = -1,
 	.icmp_sock = -1,
@@ -483,11 +484,16 @@ static void send_advert(void) {
 
 	size_t i;
 	for (i = 0; i < G.n_prefixes; i++) {
+		uint8_t flags = ND_OPT_PI_FLAG_AUTO;
+
+		if (G.prefixes_onlink[i])
+			flags |= ND_OPT_PI_FLAG_ONLINK;
+
 		prefixes[i] = (struct nd_opt_prefix_info){
 			.nd_opt_pi_type = ND_OPT_PREFIX_INFORMATION,
 			.nd_opt_pi_len = 4,
 			.nd_opt_pi_prefix_len = 64,
-			.nd_opt_pi_flags_reserved = ND_OPT_PI_FLAG_AUTO|ND_OPT_PI_FLAG_ONLINK,
+			.nd_opt_pi_flags_reserved = flags,
 			.nd_opt_pi_valid_time = htonl(AdvValidLifetime),
 			.nd_opt_pi_preferred_time = htonl(AdvPreferredLifetime),
 			.nd_opt_pi_prefix = G.prefixes[i],
@@ -541,10 +547,10 @@ static void send_advert(void) {
 
 
 static void usage(void) {
-	fprintf(stderr, "Usage: gluon-radvd [-h] -i <interface> -p <prefix> [ -p <prefix> ... ]\n");
+	fprintf(stderr, "Usage: gluon-radvd [-h] -i <interface> -a/-p <prefix> [ -a/-p <prefix> ... ]\n");
 }
 
-static void add_prefix(const char *prefix) {
+static void add_prefix(const char *prefix, bool adv_onlink) {
 	if (G.n_prefixes == MAX_PREFIXES)
 		error(1, 0, "maximum number of prefixes is %i.", MAX_PREFIXES);
 
@@ -566,6 +572,8 @@ static void add_prefix(const char *prefix) {
 	if (memcmp(G.prefixes[G.n_prefixes].s6_addr + 8, zero, 8) != 0)
 		goto error;
 
+	G.prefixes_onlink[G.n_prefixes] = adv_onlink;
+
 	G.n_prefixes++;
 	return;
 
@@ -575,7 +583,7 @@ static void add_prefix(const char *prefix) {
 
 static void parse_cmdline(int argc, char *argv[]) {
 	int c;
-	while ((c = getopt(argc, argv, "i:p:h")) != -1) {
+	while ((c = getopt(argc, argv, "i:a:p:h")) != -1) {
 		switch(c) {
 		case 'i':
 			if (G.ifname)
@@ -585,8 +593,12 @@ static void parse_cmdline(int argc, char *argv[]) {
 
 			break;
 
+		case 'a':
+			add_prefix(optarg, false);
+			break;
+
 		case 'p':
-			add_prefix(optarg);
+			add_prefix(optarg, true);
 			break;
 
 		case 'h':
