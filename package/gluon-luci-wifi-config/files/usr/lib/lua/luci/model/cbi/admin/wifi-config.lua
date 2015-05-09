@@ -127,7 +127,7 @@ function f.handle(self, state, data)
       uci:set('wireless', 'client_' .. radio, "disabled", clientdisabled)
 
       local meshdisabled = 0
-      if data[radio .. '_client_enabled'] == '0' then
+      if data[radio .. '_mesh_enabled'] == '0' then
         meshdisabled = 1
       end
       uci:set('wireless', 'mesh_' .. radio, "disabled", meshdisabled)
