@@ -87,6 +87,7 @@ ar71xx-generic
 
   - WNDR3700 (v1, v2)
   - WNDR3800
+  - WNDRMAC (v2)
 
 * TP-Link
 
