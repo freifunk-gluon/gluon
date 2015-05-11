@@ -54,7 +54,7 @@ We suggest to have following directory tree accessible via http:
                     sysupgrade/
                     factory/
 
-The server should be available via IPv6.
+The server must be available via IPv6.
 
 Command Line
 ------------
