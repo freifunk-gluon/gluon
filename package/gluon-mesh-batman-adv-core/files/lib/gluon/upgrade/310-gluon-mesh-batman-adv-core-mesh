@@ -11,7 +11,7 @@ uci:section('batman-adv', 'mesh', 'bat0',
 	    {
 		    orig_interval = 5000,
 		    gw_mode = 'client',
-		    multicast_mode = 0,
+		    multicast_mode = 1,
 	    }
 )
 uci:save('batman-adv')
