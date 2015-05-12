@@ -1,0 +1,43 @@
+From 431594c451d853353d035df47a36657a7d707ef7 Mon Sep 17 00:00:00 2001
+From: RubenKelevra <ruben@freifunk-nrw.de>
+Date: Fri, 3 Apr 2015 13:17:27 +0200
+Subject: [PATCH] add patch which resets hop_penalty to previous rating
+
+---
+ ...enalty-to-previous-rating-which-is-well-t.patch | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 batman-adv/patches/0002-reset-hop_penalty-to-previous-rating-which-is-well-t.patch
+
+diff --git a/batman-adv/patches/0002-reset-hop_penalty-to-previous-rating-which-is-well-t.patch b/batman-adv/patches/0002-reset-hop_penalty-to-previous-rating-which-is-well-t.patch
+new file mode 100644
+index 0000000..e07dd14
+--- /dev/null
++++ b/batman-adv/patches/0002-reset-hop_penalty-to-previous-rating-which-is-well-t.patch
+@@ -0,0 +1,25 @@
++From e287d3f29fddd35d3a82598670b208028c430bb4 Mon Sep 17 00:00:00 2001
++From: RubenKelevra <ruben@freifunk-nrw.de>
++Date: Fri, 3 Apr 2015 13:12:03 +0200
++Subject: [PATCH] reset hop_penalty to previous rating, which is well tested
++
++---
++ soft-interface.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/soft-interface.c b/soft-interface.c
++index cfc2cd2..e76ce2e 100644
++--- a/soft-interface.c
+++++ b/soft-interface.c
++@@ -757,7 +757,7 @@ static int batadv_softif_init_late(struct net_device *dev)
++ 	atomic_set(&bat_priv->gw.bandwidth_down, 100);
++ 	atomic_set(&bat_priv->gw.bandwidth_up, 20);
++ 	atomic_set(&bat_priv->orig_interval, 1000);
++-	atomic_set(&bat_priv->hop_penalty, 30);
+++	atomic_set(&bat_priv->hop_penalty, 15);
++ #ifdef CONFIG_BATMAN_ADV_DEBUG
++ 	atomic_set(&bat_priv->log_level, 0);
++ #endif
++-- 
++2.3.5
++
+-- 
+2.3.5
