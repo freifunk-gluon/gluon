@@ -99,7 +99,9 @@ next_node : package
 fastd_mesh_vpn
     Remote server setup for the fastd-based mesh VPN.
 
-    If `configurable` is false or unset, the method list will be replaced on updates
+    The `enabled` option can be set to true to enable the VPN by default.
+
+    If `configurable` is `false` or unset, the method list will be replaced on updates
     with the list in the site configuration. Setting `configurable` to `true` will allow the user to
     add the method ``null`` to the front of the method list or remove ``null`` from it,
     and make this change survive updates. Settings configurable is necessary for the
@@ -112,6 +114,7 @@ fastd_mesh_vpn
 
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
+	-- enabled = true,
 	-- configurable = true,
         mtu = 1426,
         groups = {
