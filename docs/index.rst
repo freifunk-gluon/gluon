@@ -77,7 +77,7 @@ ar71xx-generic
 * GL-Inet
 
   - 6408A (v1)
-  - 6416a (v1)
+  - 6416A (v1)
 
 * Linksys
 
@@ -137,7 +137,7 @@ ar71xx-nand
 * Netgear
 
   - WNDR3700 (v4)
-  - WNDR3700 (v1)
+  - WNDR4300 (v1)
 
 mpc85xx-generic
 ^^^^^^^^^^^^^^^
