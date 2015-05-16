@@ -239,12 +239,14 @@ we suspect that respondd, which gluon-announced is based on, is affected
 in the same way.
 
 
-Ignored tx-power offset on Ubiquiti AirMax devices
+Ignored TX power offset on Ubiquiti AirMax devices
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 https://github.com/freifunk-gluon/gluon/issues/94
 
-There is still no OpenWRT support for determining the transmission
-power offsets on Ubiquiti AirMax devices (Bullet M2, Picostation
-M2, Nanostation (loco) M2, ...). Use Gluon with caution on these
-devices! Manual adjustment may be required.
+The default transmission power setting on many of these devices
+is too high. It may be necessary to make manual adjustments, for example
+using the ``gluon-luci-wifi-config`` package. The values shown by
+``gluon-luci-wifi-config`` generally include the TX power offset
+(amplifier and antenna gain) where available, but on many devices
+the offset is inaccurate or unavailable.
