@@ -241,6 +241,8 @@ GLUON_LANGS
     List of languages (as two-letter-codes) to include for the web interface. Should always contain
     ``en``.
 
+.. _site-config-mode-texts:
+
 Config mode texts
 -----------------
 
