@@ -1,8 +1,8 @@
 Gluon 2015.1 (in development)
 =============================
 
-Added (and removed) hardware support
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
 Gluon v2015.1 is the first release to officially support hardware
 that is not handled by the `ar71xx-generic` OpenWrt target. This also
 means that `ar71xx-generic` isn't the default target anymore, the ``GLUON_TARGET``
