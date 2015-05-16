@@ -13,6 +13,7 @@ User Documentation
 
    user/getting_started
    user/site
+   user/x86
    user/faq
 
 Features
@@ -152,9 +153,13 @@ x86-generic
 * x86-virtualbox
 * x86-vmware
 
+See also: :doc:`user/x86`
+
 x86-kvm_guest
 ^^^^^^^^^^^^^
 * x86-kvm
+
+See also: :doc:`user/x86`
 
 License
 -------
