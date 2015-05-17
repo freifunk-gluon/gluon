@@ -1,0 +1,18 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+local e = uci:get('fastd', 'mesh_vpn', 'enabled')
+if not e then
+  e = '0'
+end
+
+uci:section('fastd', 'peer_group', 'p2p_vpn',
+  {
+    enabled = e,
+    net = 'mesh_vpn',
+  } 
+)
+
+uci:save('fastd')
+uci:commit('fastd')
