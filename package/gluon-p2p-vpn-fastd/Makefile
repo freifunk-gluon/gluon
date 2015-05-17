@@ -33,8 +33,6 @@ define Package/gluon-p2p-vpn-fastd/install
 endef
 
 define Package/gluon-p2p-vpn-fastd/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
 endef
 
 $(eval $(call BuildPackage,gluon-p2p-vpn-fastd))
