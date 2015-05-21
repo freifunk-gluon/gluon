@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 20 May 2015 21:56:14 +0200
+Subject: ncurses: fix host build with GCC 5.1
+
+diff --git a/package/libs/ncurses/Makefile b/package/libs/ncurses/Makefile
+index 13c7962..39851a6 100644
+--- a/package/libs/ncurses/Makefile
++++ b/package/libs/ncurses/Makefile
+@@ -82,6 +82,12 @@ HOST_CONFIGURE_ARGS += \
+ 	--without-tests \
+ 	--without-curses-h
+ 
++HOST_CONFIGURE_VARS = \
++        CC="$(HOSTCC)" \
++        CFLAGS="$(HOST_CFLAGS)" \
++        CPPFLAGS="$(HOST_CPPFLAGS) -P" \
++        LDFLAGS="$(HOST_LDFLAGS)" \
++        SHELL="$(SHELL)"
+ 
+ ifeq ($(HOST_OS),FreeBSD)
+ 	CONFIGURE_ARGS +=

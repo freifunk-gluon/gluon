@@ -3,10 +3,10 @@ Date: Tue, 10 Mar 2015 13:17:14 +0100
 Subject: ath10k: add Candelatech community firmware as an additional choice
 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 629692d..d77842a 100644
+index 2a40bb1..17dbe03 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
-@@ -605,6 +605,14 @@ This module adds support for wireless adapters based on
+@@ -604,6 +604,14 @@ This module adds support for wireless adapters based on
  Atheros USB AR9271 and AR7010 family of chipsets.
  endef
  
@@ -21,7 +21,7 @@ index 629692d..d77842a 100644
  define KernelPackage/ath10k
    $(call KernelPackage/mac80211/Default)
    TITLE:=Atheros 802.11ac wireless cards support
-@@ -625,13 +633,31 @@ endef
+@@ -624,13 +632,31 @@ endef
  define KernelPackage/ath10k/config
    if PACKAGE_kmod-ath10k
  
@@ -55,14 +55,14 @@ index 629692d..d77842a 100644
    endif
  endef
  
-@@ -1824,14 +1850,20 @@ define KernelPackage/ath10k/install
+@@ -1858,14 +1884,20 @@ define KernelPackage/ath10k/install
  	$(INSTALL_DATA) \
  		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
  		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
 +ifeq ($(CONFIG_ATH10K_AP_FW),y)
 +	$(INSTALL_DATA) \
-+		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2/firmware-3.bin_10.2-00082-4-2 \
-+		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-3.bin
++		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/firmware-4.bin_10.2.4.45 \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
 +endif
  ifeq ($(CONFIG_ATH10K_STA_FW),y)
  	$(INSTALL_DATA) \
@@ -72,8 +72,8 @@ index 629692d..d77842a 100644
 +endif
 +ifeq ($(CONFIG_ATH10K_CT_COMMUNITY_FW),y)
  	$(INSTALL_DATA) \
--		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2/firmware-3.bin_10.2-00082-4-2 \
--		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-3.bin
+-		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.2.4/firmware-4.bin_10.2.4.45 \
+-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-4.bin
 +		$(DL_DIR)/$(ATH10K_CT_COMMUNITY_FW) \
 +		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
  endif

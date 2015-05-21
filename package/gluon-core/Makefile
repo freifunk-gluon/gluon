@@ -12,21 +12,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
-  DEPENDS:=+gluon-site +lua-platform-info +luci-lib-nixio +odhcp6c +firewall
-endef
-
-
-define LangConfig
-config GLUON_LANG_$(1)
-	bool "$(GLUON_LANG_$(1)) language support"
-	depends on PACKAGE_gluon-core
-	default n
-
-endef
-
-
-define Package/gluon-core/config
-$(foreach lang,$(GLUON_SUPPORTED_LANGS),$(call LangConfig,$(lang)))
+  DEPENDS:=+gluon-site +lua-platform-info +luci-base +odhcp6c +firewall
 endef
 
 
