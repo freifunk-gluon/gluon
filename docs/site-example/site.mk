@@ -5,7 +5,7 @@
 #		The gluon-mesh-batman-adv-* package must come first because of the dependency resolution
 
 GLUON_SITE_PACKAGES := \
-	gluon-mesh-batman-adv-14 \
+	gluon-mesh-batman-adv-15 \
 	gluon-alfred \
 	gluon-announced \
 	gluon-autoupdater \
@@ -20,6 +20,7 @@ GLUON_SITE_PACKAGES := \
 	gluon-luci-admin \
 	gluon-luci-autoupdater \
 	gluon-luci-portconfig \
+	gluon-luci-wifi-config \
 	gluon-next-node \
 	gluon-mesh-vpn-fastd \
 	gluon-radvd \

@@ -80,9 +80,9 @@ instead).
 Adding support for new languages
 --------------------------------
 
-A list of all languages supported by LuCI can be found in the ``include/package.mk`` file of
-the Gluon repository. Adding translations for these languages is straightforward using the ``msginit``
-command.
+A list of all languages supported by LuCI can be found in the ``packages/luci/luci.mk`` file after
+Gluon's dependencies have been downloaded using ``make update``. Adding translations for these
+languages is straightforward using the ``msginit`` command.
 
 For other languages, support must be added tu LuCI first, which constitutes completely translating
 the ``base.pot``. Please contact the upstream LuCI maintainers if you'd like to do this.

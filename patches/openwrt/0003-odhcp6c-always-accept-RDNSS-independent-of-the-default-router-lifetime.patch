@@ -1,0 +1,31 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 13 Nov 2014 01:17:24 +0100
+Subject: odhcp6c: always accept RDNSS, independent of the default router lifetime
+
+diff --git a/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch b/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch
+new file mode 100644
+index 0000000..cb694ca
+--- /dev/null
++++ b/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch
+@@ -0,0 +1,21 @@
++--- a/src/ra.c
+++++ b/src/ra.c
++@@ -438,18 +438,6 @@ bool ra_process(void)
++ 				}
++ 			}
++ 		}
++-
++-		int states[2] = {STATE_RA_DNS, STATE_RA_SEARCH};
++-		for (size_t i = 0; i < 2; ++i) {
++-			size_t ra_dns_len;
++-			uint8_t *start = odhcp6c_get_state(states[i], &ra_dns_len);
++-			for (struct odhcp6c_entry *c = (struct odhcp6c_entry*)start;
++-						(uint8_t*)c < &start[ra_dns_len] && &c->auxtarget[c->auxlen] <= &start[ra_dns_len];
++-						c = (struct odhcp6c_entry*)(&c->auxtarget[c->auxlen]))
++-				if (IN6_ARE_ADDR_EQUAL(&c->router, &from.sin6_addr) &&
++-						c->valid > router_valid)
++-					c->valid = router_valid;
++-		}
++ 	}
++ 
++ 	if (found)

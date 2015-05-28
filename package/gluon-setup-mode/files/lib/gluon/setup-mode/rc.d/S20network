@@ -26,6 +26,7 @@ prepare_config() {
 
 	uci_add network interface setup
 	uci_set network setup ifname "$(lua -e 'print(require("gluon.sysconfig").setup_ifname)')"
+	uci_set network setup macaddr "$(lua -e 'print(require("gluon.sysconfig").primary_mac)')"
 	uci_set network setup type 'bridge'
 	uci_set network setup proto 'static'
 	uci_set network setup ipaddr "$SETUP_MODE_ADDR"
@@ -45,6 +46,7 @@ init_switch() {
 start_service() {
 	prepare_config
 	init_switch
+	iw reg set "$(lua -e 'print(require("gluon.site_config").regdom)')"
 
 	procd_open_instance
 	procd_set_param command /sbin/netifd -c /var/gluon/setup-mode/config

@@ -179,11 +179,8 @@ include $(INCLUDE_DIR)/target.mk
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
-gluon-tools: FORCE
-	+$(GLUONMAKE_EARLY) tools/sed/install
-	+$(GLUONMAKE_EARLY) package/lua/host/install
-
 prepare-tmpinfo: FORCE
+	@+$(MAKE) -r -s staging_dir/host/.prereq-build OPENWRT_BUILD= QUIET=0
 	mkdir -p tmp/info
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="packageinfo" SCAN_DIR="package" SCAN_NAME="package" SCAN_DEPS="$(TOPDIR)/include/package*.mk $(TOPDIR)/overlay/*/*.mk" SCAN_EXTRA=""
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="targetinfo" SCAN_DIR="target/linux" SCAN_NAME="target" SCAN_DEPS="profiles/*.mk $(TOPDIR)/include/kernel*.mk $(TOPDIR)/include/target.mk" SCAN_DEPTH=2 SCAN_EXTRA="" SCAN_MAKEOPTS="TARGET_BUILD=1"
@@ -204,15 +201,19 @@ feeds: FORCE
 	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/module_$$feed; done
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
+gluon-tools: FORCE
+	+$(GLUONMAKE_EARLY) tools/sed/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install
+
 config: FORCE
-	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD=0
+	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
 		echo 'CONFIG_BUILD_SUFFIX="gluon-$(GLUON_TARGET)"'; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
-		echo '$(patsubst %,CONFIG_GLUON_LANG_%=y,$(GLUON_LANGS))' \
+		echo '$(patsubst %,CONFIG_LUCI_LANG_%=y,$(GLUON_LANGS))' \
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
@@ -281,8 +282,11 @@ packages: $(package/stamp-compile)
 prepare-image: FORCE
 	rm -rf $(BOARD_KDIR)
 	mkdir -p $(BOARD_KDIR)
-	cp $(KERNEL_BUILD_DIR)/vmlinux $(KERNEL_BUILD_DIR)/vmlinux.elf $(BOARD_KDIR)/
-	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image -f $(GLUONDIR)/include/Makefile.image prepare KDIR="$(BOARD_KDIR)"
+	$(foreach k, vmlinux vmlinux.elf \
+		$(if $(KERNEL_IMAGES),$(KERNEL_IMAGES),$(filter-out dtbs,$(KERNELNAME))), \
+		$(CP) $(KERNEL_BUILD_DIR)/$(k) $(BOARD_KDIR)/$(k); \
+	)
+	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image image_prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
 	@$(STAGING_DIR_HOST)/bin/lua $(GLUONDIR)/package/gluon-core/files/usr/lib/lua/gluon/site_config.lua \
@@ -346,13 +350,17 @@ $(eval $(call merge-lists,INSTALL_PACKAGES,DEFAULT_PACKAGES GLUON_DEFAULT_PACKAG
 
 package_install: FORCE
 	$(OPKG) update
-	$(OPKG) install $(PACKAGE_DIR)/libc_*.ipk
+	$(OPKG) install $(PACKAGE_DIR)/base-files_*.ipk $(PACKAGE_DIR)/libc_*.ipk
 	$(OPKG) install $(PACKAGE_DIR)/kernel_*.ipk
 
 	$(OPKG) install $(INSTALL_PACKAGES)
 	+$(GLUONMAKE) enable_initscripts
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
+
+# Remove opkg database when opkg is not intalled
+	if [ ! -x $(TARGET_DIR)/bin/opkg ]; then rm -rf $(TARGET_DIR)/usr/lib/opkg; fi
+
 
 ifeq ($(GLUON_OPKG_CONFIG),1)
 include $(INCLUDE_DIR)/version.mk

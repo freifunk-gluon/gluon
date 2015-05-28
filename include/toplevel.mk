@@ -48,10 +48,6 @@ else
   export HOSTCC_WRAPPER:=$(HOSTCC)
 endif
 
-ifeq ($(FORCE),)
-  .config scripts/config/conf scripts/config/mconf: tmp/.prereq-build
-endif
-
 SCAN_COOKIE?=$(shell echo $$$$)
 export SCAN_COOKIE
 

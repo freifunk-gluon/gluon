@@ -1,0 +1,17 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 21 May 2015 02:34:01 +0200
+Subject: luci-base: depend on libubus-lua
+
+diff --git a/modules/luci-base/Makefile b/modules/luci-base/Makefile
+index 80bbda1..55c21eb 100644
+--- a/modules/luci-base/Makefile
++++ b/modules/luci-base/Makefile
+@@ -12,7 +12,7 @@ LUCI_TYPE:=mod
+ LUCI_BASENAME:=base
+ 
+ LUCI_TITLE:=LuCI core libraries
+-LUCI_DEPENDS:=+lua +libuci-lua +luci-lib-nixio +luci-lib-ip +rpcd
++LUCI_DEPENDS:=+lua +libuci-lua +libubus-lua +luci-lib-nixio +luci-lib-ip +rpcd
+ 
+ PKG_SOURCE:=LuaSrcDiet-0.12.1.tar.bz2
+ PKG_SOURCE_URL:=https://luasrcdiet.googlecode.com/files
