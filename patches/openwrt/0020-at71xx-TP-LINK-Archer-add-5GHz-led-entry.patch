@@ -1,0 +1,20 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 10 Mar 2015 13:17:23 +0100
+Subject: at71xx: TP-LINK Archer: add 5GHz led entry
+
+Add 5GHz led entry after r44033.
+
+Signed-off-by: Cezary Jackiewicz <cezary.jackiewicz@gmail.com>
+
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index a74b8f4..36fe028 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -326,6 +326,7 @@ tl-wdr4900-v2)
+ 	ucidef_set_led_usbdev "usb1" "USB1" "tp-link:green:usb1" "1-1"
+ 	ucidef_set_led_usbdev "usb2" "USB2" "tp-link:green:usb2" "2-1"
+ 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "tp-link:blue:wlan2g" "phy0tpt"
++	ucidef_set_led_wlan "wlan5g" "WLAN5G" "tp-link:blue:wlan5g" "phy1tpt"
+ 	;;
+ 
+ tl-wr741nd)

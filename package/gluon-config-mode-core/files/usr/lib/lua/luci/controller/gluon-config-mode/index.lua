@@ -49,11 +49,10 @@ function action_reboot()
   uci:commit("gluon-setup-mode")
 
   if nixio.fork() ~= 0 then
-    local fs = require "nixio.fs"
-    local util = require "nixio.util"
+    local fs = require "luci.fs"
 
     local parts_dir = "/lib/gluon/config-mode/reboot/"
-    local files = util.consume(fs.dir(parts_dir))
+    local files = fs.dir(parts_dir)
 
     table.sort(files)
 
@@ -70,7 +69,7 @@ function action_reboot()
 
     local hostname = uci:get_first("system", "system", "hostname")
 
-    luci.template.render("gluon/config-mode/reboot", { parts=parts
+    luci.template.render("gluon-config-mode/reboot", { parts=parts
                                                      , hostname=hostname
                                                      })
   else

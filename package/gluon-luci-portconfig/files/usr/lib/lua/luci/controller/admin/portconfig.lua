@@ -15,5 +15,6 @@ $Id$
 module("luci.controller.admin.portconfig", package.seeall)
 
 function index()
-        entry({"admin", "portconfig"}, cbi("admin/portconfig"), _("Network"), 20)
+        entry({"admin", "portconfig"}, cbi("admin/portconfig"), _("Schnittstellen"), 20)
 end
+

@@ -1,0 +1,20 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 16 Jan 2015 19:56:39 +0100
+Subject: ar71xx: fix board detection for TP-LINK TL-WA860RE
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 79b6073..13c5bf2 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -630,6 +630,9 @@ ar71xx_board_detect() {
+ 	*TL-WA850RE)
+ 		name="tl-wa850re"
+ 		;;
++	*TL-WA860RE)
++		name="tl-wa860re"
++		;;
+ 	*"TL-WA830RE v2")
+ 		name="tl-wa830re-v2"
+ 		;;

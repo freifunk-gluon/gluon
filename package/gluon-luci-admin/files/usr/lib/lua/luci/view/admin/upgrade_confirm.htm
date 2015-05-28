@@ -15,20 +15,20 @@ $Id$
 
 <%+header%>
 
-<h2><%:Upgrade firmware%></h2>
-
+<h2>Firmware aktualisieren</h2>
 <p>
-  <%:The firmware image has been transmitted. Please ensure the MD5 checksum and image size are correct and click "continue".%>
+    Die Firmwaredatei wurde übermittelt. Bitte vergleiche MD5-Checksumme
+    und Dateigröße und klicke anschließend auf "Fortfahren".
 </p>
 
 <% if flashsize > 0 and filesize > flashsize then %>
-<p class="error"><%:The firmware is too big for your device's storage.%></p>
+<p class="error">Die Firmware passt nicht in den Speicher des Gerätes.</p>
 <% end %>
 
 <p>
   <ul>
     <li>md5sum: <code><%=checksum%></code></li>
-    <li><%:Size%>: <%
+    <li>Größe: <%
       function byte_format(byte)
         local suff = {"B", "KB", "MB", "GB", "TB"}
         for i=1, 5 do
@@ -51,16 +51,16 @@ $Id$
     %></li>
   </ul>
 </p>
-<div class="cbi-page-actions">
+<div class="cbi-page-actions right">
   <form style="display:inline">
     <input type="hidden" name="step" value="3" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-    <input class="cbi-button cbi-button-apply" type="submit" value="<%:Continue%>" />
+    <input class="cbi-button cbi-button-apply" type="submit" value="Fortfahren" />	
   </form>
   <form style="display:inline">
     <input type="hidden" name="step" value="1" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-    <input class="cbi-button cbi-button-reset" type="submit" value="<%:Cancel%>" />
+    <input class="cbi-button cbi-button-reset" type="submit" value="Abbrechen" />
   </form>
 </div>
 <%+footer%>

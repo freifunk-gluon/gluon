@@ -15,5 +15,6 @@ $Id$
 module("luci.controller.admin.autoupdater", package.seeall)
 
 function index()
-        entry({"admin", "autoupdater"}, cbi("admin/autoupdater"), _("Automatic updates"), 80)
+        entry({"admin", "autoupdater"}, cbi("admin/autoupdater"), _("Autoupdater"), 20)
 end
+

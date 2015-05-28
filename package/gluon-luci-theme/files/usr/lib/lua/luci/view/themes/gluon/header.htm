@@ -20,6 +20,7 @@ $Id$
 
 	local hostname = sys.hostname()
 	local release = fs.readfile("/lib/gluon/release")
+	local load1, load5, load15 = sys.loadavg()
 
 	local request  = disp.context.path
 	local request2 = disp.context.request

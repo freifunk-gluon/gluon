@@ -1,0 +1,180 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 23 Mar 2015 21:11:41 +0100
+Subject: x86: use PARTUUID instead explicitly specifying the device by default
+
+This changes the x86 image generation to match x86_64, using the PARTUUID for
+the rootfs instead of explicitly configuring the device.
+
+It unbreaks KVM with VirtIO, which uses /dev/vda2 instead of /dev/sda2.
+
+Tested in QEMU/KVM with VirtIO, VirtualBox and VMware.
+
+diff --git a/config/Config-images.in b/config/Config-images.in
+index 39e51e4..f44ec73 100644
+--- a/config/Config-images.in
++++ b/config/Config-images.in
+@@ -267,8 +267,6 @@ menu "Target Images"
+ 	config TARGET_ROOTFS_PARTNAME
+ 		string "Root partition on target device"
+ 		depends on OLPC_BOOTSCRIPT_IMAGES || GRUB_IMAGES
+-		default "/dev/xvda2" if TARGET_x86_xen_domu
+-		default "/dev/sda2" if ! TARGET_x86_xen_domu
+ 		help
+ 		  The root partition on the final device.  If you don't know,
+ 		  you probably want the default (/dev/sda2).
+diff --git a/target/linux/x86/base-files/lib/preinit/79_move_config b/target/linux/x86/base-files/lib/preinit/79_move_config
+index 0bffbab..1d4873d 100644
+--- a/target/linux/x86/base-files/lib/preinit/79_move_config
++++ b/target/linux/x86/base-files/lib/preinit/79_move_config
+@@ -1,21 +1,14 @@
+ #!/bin/sh
+-# Copyright (C) 2012 OpenWrt.org
++# Copyright (C) 2012-2015 OpenWrt.org
+ 
+ move_config() {
+-	local rootfsdev
+-	local rootfstype
+-	
+-	rootfstype="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "rootfstype") { print $2 }' < /proc/cmdline)"
+-	case "$rootfstype" in
+-		squashfs|jffs2)
+-			rootfsdev="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "block2mtd.block2mtd") { print substr($2,1,index($2, ",")-1) }' < /proc/cmdline)";;
+-		ext4)
+-			rootfsdev="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "root") { print $2 }' < /proc/cmdline)";;
+-	esac
++	. /lib/upgrade/platform.sh
+ 
+-	mount -t ext4 -o rw,noatime "${rootfsdev%[0-9]}1" /mnt
+-	mv -f /mnt/sysupgrade.tgz /
+-	umount /mnt
++	if platform_export_bootpart; then
++		mount -t ext4 -o rw,noatime "$BOOTPART" /mnt
++		mv -f /mnt/sysupgrade.tgz /
++		umount /mnt
++	fi
+ }
+ 
+ boot_hook_add preinit_mount_root move_config
+diff --git a/target/linux/x86/base-files/lib/upgrade/platform.sh b/target/linux/x86/base-files/lib/upgrade/platform.sh
+index a2dd20a..73ab5ef 100644
+--- a/target/linux/x86/base-files/lib/upgrade/platform.sh
++++ b/target/linux/x86/base-files/lib/upgrade/platform.sh
+@@ -1,16 +1,38 @@
+-x86_get_rootfs() {
+-	local rootfsdev
+-	local rootfstype
+-	
+-	rootfstype="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "rootfstype") { print $2 }' < /proc/cmdline)"
+-	case "$rootfstype" in
+-		squashfs|jffs2)
+-			rootfsdev="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "block2mtd.block2mtd") { print substr($2,1,index($2, ",")-1) }' < /proc/cmdline)";;
+-		ext4)
+-			rootfsdev="$(awk 'BEGIN { RS=" "; FS="="; } ($1 == "root") { print $2 }' < /proc/cmdline)";;
+-	esac
+-		
+-	echo "$rootfstype:$rootfsdev"
++platform_export_bootpart() {
++	local cmdline uuid disk
++
++	if read cmdline < /proc/cmdline; then
++		case "$cmdline" in
++			*block2mtd=*)
++				disk="${cmdline##*block2mtd=}"
++				disk="${disk%%,*}"
++			;;
++			*root=*)
++				disk="${cmdline##*root=}"
++				disk="${disk%% *}"
++			;;
++		esac
++
++		case "$disk" in
++			PARTUUID=[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]-02)
++				uuid="${disk#PARTUUID=}"
++				uuid="${uuid%-02}"
++				for disk in /dev/[hsv]d[a-z]; do
++					set -- $(dd if=$disk bs=1 skip=440 count=4 2>/dev/null | hexdump -v -e '4/1 "%02x "')
++					if [ "$4$3$2$1" = "$uuid" ]; then
++						export BOOTPART="${disk}1"
++						return 0
++					fi
++				done
++			;;
++			/dev/*)
++				export BOOTPART="${disk%[0-9]}1"
++				return 0
++			;;
++		esac
++	fi
++
++	return 1
+ }
+ 
+ platform_check_image() {
+@@ -26,19 +48,19 @@ platform_check_image() {
+ }
+ 
+ platform_copy_config() {
+-	local rootfs="$(x86_get_rootfs)"
+-	local rootfsdev="${rootfs##*:}"
+-	
+-	mount -t ext4 -o rw,noatime "${rootfsdev%[0-9]}1" /mnt
+-	cp -af "$CONF_TAR" /mnt/
+-	umount /mnt
++	if [ -b "$BOOTPART" ]; then
++		mount -t ext4 -o rw,noatime "$BOOTPART" /mnt
++		cp -af "$CONF_TAR" /mnt/
++		umount /mnt
++	fi
+ }
+ 
+ platform_do_upgrade() {
+-	local rootfs="$(x86_get_rootfs)"
+-	local rootfsdev="${rootfs##*:}"
++	platform_export_bootpart
+ 
+-	sync
+-	[ -b ${rootfsdev%[0-9]} ] && get_image "$@" | dd of=${rootfsdev%[0-9]} bs=4096 conv=fsync
+-	sleep 1
++	if [ -b "${BOOTPART%[0-9]}" ]; then
++		sync
++		get_image "$@" | dd of="${BOOTPART%[0-9]}" bs=4096 conv=fsync
++		sleep 1
++	fi
+ }
+diff --git a/target/linux/x86/image/Makefile b/target/linux/x86/image/Makefile
+index 5983718..1f91b9f 100644
+--- a/target/linux/x86/image/Makefile
++++ b/target/linux/x86/image/Makefile
+@@ -40,7 +40,9 @@ ifneq ($(GRUB_TERMINALS),)
+   GRUB_TERMINAL_CONFIG := terminal_input $(GRUB_TERMINALS); terminal_output $(GRUB_TERMINALS)
+ endif
+ 
++SIGNATURE:=$(shell dd if=/dev/urandom bs=4 count=1 2>/dev/null | hexdump -v -e '"%08x"')
+ ROOTPART:=$(call qstrip,$(CONFIG_TARGET_ROOTFS_PARTNAME))
++ROOTPART:=$(if $(ROOTPART),$(ROOTPART),PARTUUID=$(SIGNATURE)-02)
+ 
+ GRUB_TIMEOUT:=$(call qstrip,$(CONFIG_GRUB_TIMEOUT))
+ 
+@@ -82,7 +84,7 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
+ 		-e 's#@CMDLINE@#$(strip $(call Image/cmdline/$(1)) $(BOOTOPTS) $(GRUB_CONSOLE_CMDLINE))#g' \
+ 		-e 's#@TIMEOUT@#$(GRUB_TIMEOUT)#g' \
+ 		./grub.cfg > $(KDIR)/root.grub/boot/grub/grub.cfg
+-	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
++	PADDING="$(CONFIG_TARGET_IMAGES_PAD)" SIGNATURE="$(SIGNATURE)" PATH="$(TARGET_PATH)" ./gen_image_generic.sh \
+ 		$(BIN_DIR)/$(IMG_PREFIX)-combined-$(1).img \
+ 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $(KDIR)/root.grub \
+ 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(KDIR)/root.$(1) \
+diff --git a/target/linux/x86/image/gen_image_generic.sh b/target/linux/x86/image/gen_image_generic.sh
+index 9d11efb..3fb31f6 100755
+--- a/target/linux/x86/image/gen_image_generic.sh
++++ b/target/linux/x86/image/gen_image_generic.sh
+@@ -20,7 +20,7 @@ sect=63
+ cyl=$(( ($KERNELSIZE + $ROOTFSSIZE) * 1024 * 1024 / ($head * $sect * 512)))
+ 
+ # create partition table
+-set `ptgen -o "$OUTPUT" -h $head -s $sect -p ${KERNELSIZE}m -p ${ROOTFSSIZE}m ${ALIGN:+-l $ALIGN}`
++set `ptgen -o "$OUTPUT" -h $head -s $sect -p ${KERNELSIZE}m -p ${ROOTFSSIZE}m ${ALIGN:+-l $ALIGN} ${SIGNATURE:+-S 0x$SIGNATURE}`
+ 
+ KERNELOFFSET="$(($1 / 512))"
+ KERNELSIZE="$(($2 / 512))"

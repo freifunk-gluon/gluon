@@ -4,20 +4,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-luci-autoupdater
-PKG_VERSION:=1
+PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
-
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+include $(INCLUDE_DIR)/package.mk
 
 define Package/gluon-luci-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci module for gluon-autoupdater
   DEPENDS:=+gluon-luci-admin +gluon-autoupdater
+endef
+
+define Package/gluon-luci-autoupdater/description
+	Luci module for gluon-autoupdater
 endef
 
 define Build/Prepare
@@ -28,12 +30,10 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(call GluonBuildI18N,gluon-luci-autoupdater,i18n)
 endef
 
 define Package/gluon-luci-autoupdater/install
 	$(CP) ./files/* $(1)/
-	$(call GluonInstallI18N,gluon-luci-autoupdater,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-luci-autoupdater))

@@ -83,10 +83,9 @@ $(eval $(call GluonModel,TLWDR4300,tl-wdr4300-v1,tp-link-tl-wdr4300-v1))
 $(eval $(call GluonProfile,TLWA750))
 $(eval $(call GluonModel,TLWA750,tl-wa750re-v1,tp-link-tl-wa750re-v1))
 
-# TL-WA830RE v1.0, v2
-$(eval $(call GluonProfile,TLWA830))
-$(eval $(call GluonModel,TLWA830,tl-wa830re-v1,tp-link-tl-wa830re-v10))
 ifeq ($(BROKEN),1)
+# TL-WA830RE v2
+$(eval $(call GluonProfile,TLWA830))
 $(eval $(call GluonModel,TLWA830,tl-wa830re-v2,tp-link-tl-wa830re-v2))
 endif
 
@@ -112,13 +111,10 @@ $(eval $(call GluonProfile,TLMR3040))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v1,tp-link-tl-mr3040-v1))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v2,tp-link-tl-mr3040-v2))
 
-# TL-MR3220 v1
-$(eval $(call GluonProfile,TLMR3220V1))
-$(eval $(call GluonModel,TLMR3220V1,tl-mr3220-v1,tp-link-tl-mr3220-v1))
-
-# TL-MR3220 v2
-$(eval $(call GluonProfile,TLMR3220V2))
-$(eval $(call GluonModel,TLMR3220V2,tl-mr3220-v2,tp-link-tl-mr3220-v2))
+# TL-MR3220 v1, v2
+$(eval $(call GluonProfile,TLMR3220))
+$(eval $(call GluonModel,TLMR3220,tl-mr3220-v1,tp-link-tl-mr3220-v1))
+$(eval $(call GluonModel,TLMR3220,tl-mr3220-v2,tp-link-tl-mr3220-v2))
 
 # TL-MR3420 v1, v2
 $(eval $(call GluonProfile,TLMR3420))

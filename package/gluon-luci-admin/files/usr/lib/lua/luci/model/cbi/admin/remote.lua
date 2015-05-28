@@ -16,13 +16,15 @@ $Id$
 
 local fs = require "nixio.fs"
 
-local m = Map("system", translate("SSH keys"))
+local m = Map("system", "SSH-Keys")
+m.submit = "Speichern"
+m.reset = "Zurücksetzen"
 m.pageaction = false
 m.template = "admin/expertmode"
 
 if fs.access("/etc/config/dropbear") then
   local s = m:section(TypedSection, "_dummy1", nil,
-                      translate("You can provide your SSH keys here (one per line):"))
+    "Hier hast du die Möglichkeit SSH-Keys (einen pro Zeile) zu hinterlegen:")
 
   s.addremove = false
   s.anonymous = true
@@ -55,22 +57,23 @@ if fs.access("/etc/config/dropbear") then
   end
 end
 
-local m2 = Map("system", translate("Password"))
+local m2 = Map("system", "Passwort")
+m2.submit = "Speichern"
 m2.reset = false
 m2.pageaction = false
 m2.template = "admin/expertmode"
 
-local s = m2:section(TypedSection, "_dummy2", nil, translate(
-                       "Alternatively, you can set a password to access you node. Please choose a secure password you don't use anywhere else.<br /><br />"
-                         .. "If you set an empty password, login via password will be disabled. This is the default."))
+local s = m2:section(TypedSection, "_dummy2", nil,
+[[Alternativ kannst du auch ein Passwort setzen. Wähle bitte ein sicheres Passwort, das du nirgendwo anders verwendest.<br /><br />
+Beim Setzen eines leeren Passworts wird der Login per Passwort gesperrt (dies ist die Standard-Einstellung).]])
 
 s.addremove = false
 s.anonymous = true
 
-local pw1 = s:option(Value, "pw1", translate("Password"))
+local pw1 = s:option(Value, "pw1", "Passwort")
 pw1.password = true
 
-local pw2 = s:option(Value, "pw2", translate("Confirmation"))
+local pw2 = s:option(Value, "pw2", "Wiederholung")
 pw2.password = true
 
 function s.cfgsections()
@@ -84,18 +87,18 @@ function m2.on_commit(map)
   if v1 and v2 then
     if v1 == v2 then
       if #v1 > 0 then
-        if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
-          m2.message = translate("Password changed.")
-        else
-          m2.errmessage = translate("Unable to change the password.")
-        end
+	if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
+          m2.message = "Passwort geändert."
+	else
+          m2.errmessage = "Das Passwort konnte nicht geändert werden."
+	end
       else
         -- We don't check the return code here as the error 'password for root is already locked' is normal...
         os.execute('passwd -l root >/dev/null')
-        m2.message = translate("Password removed.")
+        m2.message = "Passwort gelöscht."
       end
     else
-      m2.errmessage = translate("The password and the confirmation differ.")
+      m2.errmessage = "Die beiden Passwörter stimmen nicht überein."
     end
   end
 end

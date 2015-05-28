@@ -2,7 +2,7 @@
 
 local sysconfig = require 'gluon.sysconfig'
 
-local fs = require 'nixio.fs'
+local fs = require 'luci.fs'
 local util = require 'luci.util'
 
 
