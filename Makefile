@@ -179,11 +179,8 @@ include $(INCLUDE_DIR)/target.mk
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
-gluon-tools: FORCE
-	+$(GLUONMAKE_EARLY) tools/sed/install
-	+$(GLUONMAKE_EARLY) package/lua/host/install
-
 prepare-tmpinfo: FORCE
+	@+$(MAKE) -r -s staging_dir/host/.prereq-build OPENWRT_BUILD= QUIET=0
 	mkdir -p tmp/info
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="packageinfo" SCAN_DIR="package" SCAN_NAME="package" SCAN_DEPS="$(TOPDIR)/include/package*.mk $(TOPDIR)/overlay/*/*.mk" SCAN_EXTRA=""
 	$(_SINGLE)$(NO_TRACE_MAKE) -j1 -r -s -f include/scan.mk SCAN_TARGET="targetinfo" SCAN_DIR="target/linux" SCAN_NAME="target" SCAN_DEPS="profiles/*.mk $(TOPDIR)/include/kernel*.mk $(TOPDIR)/include/target.mk" SCAN_DEPTH=2 SCAN_EXTRA="" SCAN_MAKEOPTS="TARGET_BUILD=1"
@@ -204,8 +201,12 @@ feeds: FORCE
 	. $(GLUONDIR)/modules && for feed in $$GLUON_FEEDS; do ln -s ../../../packages/$$feed $(TOPDIR)/package/feeds/module_$$feed; done
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
+gluon-tools: FORCE
+	+$(GLUONMAKE_EARLY) tools/sed/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install
+
 config: FORCE
-	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD=0
+	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
 		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
