@@ -1,16 +1,159 @@
-Gluon 2015.1 (in development)
-=============================
+Gluon 2015.1
+============
 
-Added (and removed) hardware support
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+Gluon v2015.1 is the first release to officially support hardware
+that is not handled by the `ar71xx-generic` OpenWrt target. This also
+means that `ar71xx-generic` isn't the default target anymore, the ``GLUON_TARGET``
+variable must be set for all runs of ``make`` and ``make clean`` now.
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* Allnet
+
+  - ALL0315N
+
+* D-Link
+
+  - DIR-615 (C1)
+
+* GL-Inet
+
+  - 6408A (v1)
+  - 6416A (v1)
+
+  - WRT160NL
+
+* Netgear
+
+  - WNDR3700 (v1, v2)
+  - WNDR3800
+  - WNDRMAC (v2)
+
+* TP-Link
+
+  - TL-MR3220 (v2)
+  - TL-WA701N/ND (v1)
+  - TL-WA860RE (v1)
+  - TL-WA901N/ND (v2, v3)
+  - TL-WR743N/ND (v1, v2)
+  - TL-WR941N/ND (v5)
+  - TL-WR2543N/ND (v1)
+
+* Ubiquiti
+
+  - Nanostation M XW
+  - Loco M XW
+  - UniFi AP Pro
+
+ar71xx-nand
+^^^^^^^^^^^
+
+* Netgear
+
+  - WNDR3700 (v4)
+  - WNDR4300 (v1)
+
+mpc85xx-generic
+^^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TL-WDR4900 (v1)
+
+x86-generic
+^^^^^^^^^^^
+* x86-generic
+* x86-virtualbox
+* x86-vmware
+
+x86-kvm_guest
+^^^^^^^^^^^^^
+* x86-kvm
 
 
 New features
 ~~~~~~~~~~~~
+Multilingual config mode
+^^^^^^^^^^^^^^^^^^^^^^^^
+All config and expert mode modules contain both English and German texts now. The English
+locale should always be enabled in ``site.mk`` (as English is the fallback language),
+German can be enabled in addition using the ``GLUON_LANGS`` setting.
 
+The language shown is autmatically determined from the headers sent by the user's
+browser.
+
+Mesh-on-LAN
+^^^^^^^^^^^
+Gluon now supports meshing using a node's LAN ports. It can be enabled by
+default in `site.conf`, and configured by the user using the `gluon-luci-portconfig`
+expert mode package.
+
+Please note that nodes without the `mesh-on-lan` feature enabled must never be connected
+via their LAN ports.
+
+Extended WLAN configuration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The new ``client_disabled`` and ``mesh_disabled`` keys in the ``wifi24`` and ``wifi5`` sections allow
+to disable the client and mesh networks by default, which may make sense for images for
+special installations.
+
+The new package `gluon-luci-wifi-config` allows the user to change these settings; in addition,
+the WLAN adapters' transmission power can be changed in this package.
+
+fastd "performance mode"
+^^^^^^^^^^^^^^^^^^^^^^^^
+The new package `gluon-luci-mesh-vpn-fastd` allows the user to switch between the `security` and
+`performance` VPN settions. In `performance mode`, the method `null` will be prepended to the
+method list.
+
+The new option ``configurable`` in the ``fastd_mesh_vpn`` section of ``site.conf`` must be set to `true`
+so firmware upgrades don't overwrite the method list completely (non-`null` methods will still
+be overwritten). Adding the `gluon-luci-mesh-vpn-fastd` package enforces this setting.
+
+Altitude setting in `gluon-config-mode-geo-location`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The `gluon-config-mode-geo-location` config mode module
+now contains an optional altitude field.
+
+`gluon-announced` rework
+^^^^^^^^^^^^^^^^^^^^^^^^
+The `gluon-announced` package has been reworked to allow querying it from anywhere in the mesh.
+In contrast to `gluon-alfred`, it is based on a query-response model (the master multicasts a query,
+the nodes respond), while `gluon-alfred` uses periodic announcements.
+
+For now, we recommend including both `gluon-alfred` and `gluon-announced` in Gluon-based firmwares,
+until `gluon-announced` is ready to replace `gluon-alfred` completely, and software like the
+ffmap backend has been adjusted accordingly.
+
+Nested peer groups
+^^^^^^^^^^^^^^^^^^
+Nested peer groups for the `fastd-mesh-vpn-fastd` package can now be configured in ``site.conf``,
+each with its own peer limit. This allows to add additional constaints, for example to connect
+to 2 peers altogether, but only 1 peer in each data center.
+
+Autoupdater manual branch override
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When running the updater manually on the command line, the branch to use can now be
+overridden using the ``-b`` option.
 
 Bugfixes
 ~~~~~~~~
+Accidental factory reset fix
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pressing a node's reset button for more than 5 seconds would completely reset a node's
+configuration under certain conditions.
+
+WAN IPv6 issues
+^^^^^^^^^^^^^^^
+The WAN port would stop to respond to IPv6 packets sometimes, also breaking IPv6 VPN connectivity.
+
+WDR4900 WAN MAC address
+^^^^^^^^^^^^^^^^^^^^^^^
+The MAC address on the WAN port of the WDR4900 was broken, making this device unusable for `mesh-on-wan`
+configurations.
 
 
 Site changes
@@ -22,9 +165,88 @@ Site changes
     to keep the old behaviour, you have to append the hyphen to the
     ``hostname_prefix`` field of your ``site.conf``.
 
+  - ``mesh_vpn_fastd``: The default peer group name ``backbone`` isn't hardcoded anymore, any
+    group name can be used. Instead, the ``fastd_mesh_vpn`` table must now contain an element ``groups``,
+    for example::
+
+      fastd_mesh_vpn = {
+          methods = {'salsa2012+umac'},
+          mtu = 1426,
+          groups = {
+              backbone = {
+                  limit = 2,
+                  peers = {
+                      -- ...
+                  }
+              }
+          }
+      }
+
+  - ``config_mode``: The config mode messages aren't configured in ``site.conf`` anymore. Instead, they are
+    defined language-specific gettext files in the ``i18n`` subdirectory of the site configuration (see
+    :ref:`site-config-mode-texts`).
+
+  - ``roles``: The display strings for the node roles aren't configured in the ``site.conf`` anymore, but
+    in the site i18n files. The ``site.conf`` section becomes::
+
+      roles = {
+          default = 'foo',
+          list = {
+              'foo',
+              'bar',
+          }
+      }
+
+    The display string use i18n message IDs like ``gluon-luci-node-role:role:foo`` and ``gluon-luci-node-role:role:bar``.
+
+* ``site.mk``
+
+  - ``gluon-mesh-batman-adv-15`` is now the recommended batman-adv version for new Gluon deployments.
+
+  - The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now be
+    added to ``GLUON_SITE_PACKAGES`` explicitly (to allow replacing them with
+    community-specific implementations).
+
+  - The new ``GLUON_LANGS`` variable selects the config mode languages to include. It defaults to ``en``,
+    setting it to ``en de`` will select both the English and German locales. ``en`` must always be
+    included.
+
 Internals
 ~~~~~~~~~
+New upgrade script directory
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The distinction between `initial` and `invariant` scripts has been removed,
+all scripts are now run on each upgrade. Instead of having one script directory
+per package, all upgrade scripts lie in ``/lib/gluon/upgrade`` now, so it is
+possible to define the run order across packages.
 
+Merged package repository
+^^^^^^^^^^^^^^^^^^^^^^^^^
+The Gluon-specific packages have been moved to the ``package`` directory of the Gluon
+main repository. The ``packages`` repository now only contains packages that will be
+submitted to the OpenWrt upstream eventually.
 
 Known Issues
 ~~~~~~~~~~~~
+
+Alfred/respondd crashes
+^^^^^^^^^^^^^^^^^^^^^^^
+
+https://github.com/freifunk-gluon/gluon/issues/177
+
+Occasional alfred crashes may still occur. As this is caused by a kernel issue,
+we suspect that respondd, which gluon-announced is based on, is affected
+in the same way.
+
+
+Ignored TX power offset on Ubiquiti AirMax devices
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+https://github.com/freifunk-gluon/gluon/issues/94
+
+The default transmission power setting on many of these devices
+is too high. It may be necessary to make manual adjustments, for example
+using the ``gluon-luci-wifi-config`` package. The values shown by
+``gluon-luci-wifi-config`` generally include the TX power offset
+(amplifier and antenna gain) where available, but on many devices
+the offset is inaccurate or unavailable.

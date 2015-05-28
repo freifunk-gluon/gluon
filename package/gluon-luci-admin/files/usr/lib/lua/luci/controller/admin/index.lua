@@ -29,11 +29,11 @@ function index()
 		root.index = true
 	end
 
-	local page = entry({"admin"}, alias("admin", "index"), "Expert Mode", 10)
+	local page = entry({"admin"}, alias("admin", "index"), _("Expert Mode"), 10)
 	page.sysauth = "root"
 	page.sysauth_authenticator = function() return "root" end
 	page.index = true
 
-	entry({"admin", "index"}, cbi("admin/info"), _("Info"), 1).ignoreindex = true
-	entry({"admin", "remote"}, cbi("admin/remote"), _("Remotezugriff"), 10)
+	entry({"admin", "index"}, cbi("admin/info"), _("Information"), 1).ignoreindex = true
+	entry({"admin", "remote"}, cbi("admin/remote"), _("Remote access"), 10)
 end

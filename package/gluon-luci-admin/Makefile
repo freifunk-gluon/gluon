@@ -4,22 +4,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-luci-admin
-PKG_VERSION:=0.1
+PKG_VERSION:=1
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include $(GLUONDIR)/include/package.mk
+
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 define Package/gluon-luci-admin
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based simple administration interface for mesh nodes
   DEPENDS:=gluon-config-mode-core-virtual
-endef
-
-define Package/gluon-luci-admin/description
-	Luci based config mode
 endef
 
 define Build/Prepare
@@ -30,10 +28,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-luci-admin,i18n)
 endef
 
 define Package/gluon-luci-admin/install
 	$(CP) ./files/* $(1)/
+	$(call GluonInstallI18N,gluon-luci-admin,$(1))
 endef
 
 $(eval $(call BuildPackage,gluon-luci-admin))

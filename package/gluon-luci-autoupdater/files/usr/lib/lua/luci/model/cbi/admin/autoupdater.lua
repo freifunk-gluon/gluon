@@ -12,9 +12,7 @@ You may obtain a copy of the License at
 $Id$
 ]]--
 
-m = Map("autoupdater", "Autoupdater")
-m.submit = "Speichern"
-m.reset = "Zurücksetzen"
+m = Map("autoupdater", translate("Automatic updates"))
 m.pageaction = false
 m.template = "admin/expertmode"
 
@@ -22,8 +20,8 @@ s = m:section(TypedSection, "autoupdater", nil)
 s.addremove = false
 s.anonymous = true
 
-s:option(Flag, "enabled", "Aktivieren")
-f = s:option(ListValue, "branch", "Branch")
+s:option(Flag, "enabled", translate("Enable"))
+f = s:option(ListValue, "branch", translate("Branch"))
 
 uci.cursor():foreach("autoupdater", "branch", function (section) f:value(section[".name"]) end)
 

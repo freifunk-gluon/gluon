@@ -1,0 +1,29 @@
+x86 support
+===========
+
+Gluon can run on normal x86 systems, for example virtual machines
+and VPN boxes. There is no WLAN support on x86 though.
+
+Targets
+^^^^^^^
+
+There are two targets for x86 images:
+
+`x86-generic`
+    Generic x86 support with many different ethernet drivers; should run on
+    most x86 systems.
+
+    There are three images:
+
+    * `generic` (compressed "raw" image, can written to a disk directly or booted with qemu)
+    * `virtualbox` (VDI image)
+    * `vmware` (VMDK image)
+
+    These images only differ in the image file format, the content is the same. Therefore there is
+    only a single `x86-generic` sysupgrade image instead of three.
+
+    Please note that the `x86-generic` image doesn't include VirtIO support, so another virtual NIC
+    like `pcnet32` must be chosen when using VirtualBox.
+
+`x86-kvm`
+    The `x86-kvm` image uses VirtIO as its harddisk and network driver.

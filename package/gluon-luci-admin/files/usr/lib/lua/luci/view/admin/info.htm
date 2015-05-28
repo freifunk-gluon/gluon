@@ -1,7 +1,8 @@
 <%-
-   local fs = require 'luci.fs'
+   local fs = require 'nixio.fs'
    local uci = require('luci.model.uci').cursor()
    local util = require 'luci.util'
+   local i18n = require 'luci.i18n'
 
    local site = require 'gluon.site_config'
    local sysconfig = require 'gluon.sysconfig'
@@ -9,13 +10,13 @@
 
 
    local keys = {
-     hostname = 'Hostname',
-     primary_mac = 'MAC-Adresse',
-     model = 'Hardware-Modell',
-     version = 'Gluon-Version',
-     release = 'Firmware-Release',
-     site = 'Site',
-     pubkey = 'Öffentlicher VPN-Schlüssel',
+     hostname = i18n.translate('Hostname'),
+     primary_mac = i18n.translate('MAC address'),
+     model = i18n.translate('Hardware model'),
+     version = i18n.translate('Gluon version'),
+     release = i18n.translate('Firmware release'),
+     site = i18n.translate('Site'),
+     pubkey = i18n.translate('Public VPN key'),
    }
 
    local values = {
@@ -36,7 +37,7 @@
      end
    end
 -%>
-<h2>Info</h2>
+<h2><%:Information%></h2>
 <% for _, key in ipairs({'hostname', 'primary_mac', 'model', 'version', 'release', 'site', 'pubkey'}) do %>
 <div class="cbi-value">
   <div class="cbi-value-title"><%=keys[key]%></div><div class="cbi-value-field"><%=values[key] or 'n/a'%></div>

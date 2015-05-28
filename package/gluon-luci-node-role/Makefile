@@ -8,6 +8,8 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(GLUONDIR)/include/package.mk
 
+PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+
 define Package/gluon-luci-node-role
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -23,10 +25,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonBuildI18N,gluon-luci-node-role,i18n)
 endef
 
 define Package/gluon-luci-node-role/install
 	$(CP) ./files/* $(1)/
+	$(call GluonInstallI18N,gluon-luci-node-role,$(1))
 endef
 
 define Package/gluon-luci-node-role/postinst

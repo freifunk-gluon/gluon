@@ -2,12 +2,12 @@
 
 module('gluon.announce', package.seeall)
 
-fs = require 'luci.fs'
+fs = require 'nixio.fs'
 uci = require('luci.model.uci').cursor()
 util = require 'luci.util'
 
 local function collect_entry(entry)
-	if fs.isdirectory(entry) then
+	if fs.stat(entry, 'type') == 'dir' then
 		return collect_dir(entry)
 	else
 		return setfenv(loadfile(entry), _M)()
@@ -17,7 +17,7 @@ end
 function collect_dir(dir)
 	local ret = {}
 
-	for _, entry in ipairs(fs.dir(dir)) do
+	for entry in fs.dir(dir) do
 		if entry:sub(1, 1) ~= '.' then
 			local ok, val = pcall(collect_entry, dir .. '/' .. entry)
 			if ok then

@@ -6,26 +6,26 @@ local config = 'wireless'
 local primary_iface = 'wan_radio0'
 local ssid = uci:get(config, primary_iface, "ssid")
 
-f = SimpleForm("wifi", "Privates WLAN")
-f.reset = false
+f = SimpleForm("wifi", translate("Private WLAN"))
 f.template = "admin/expertmode"
-f.submit = "Fertig"
 
-s = f:section(SimpleSection, nil, [[
-Dein Freifunk-Router kann ebenfalls die Reichweite deines privaten Netzes erweitern.
-Hierfür wird der WAN-Port mit einem seperaten WLAN gebridged.
-Diese Funktionalität ist völlig unabhängig von Freifunk.
-Beachte, dass du nicht gleichzeitig das Meshen über den WAN Port aktiviert haben solltest.
-]])
+s = f:section(SimpleSection, nil, translate(
+                'Your node can additionally extend your private network by bridging the WAN interface '
+                  .. 'with a seperate WLAN. This feature is completely independent of the mesh functionality. '
+                  .. 'Please note that the private WLAN and meshing on the WAN interface should not be enabled '
+                  .. 'at the same time.'
+))
 
-o = s:option(Flag, "enabled", "Aktiviert")
+o = s:option(Flag, "enabled", translate("Enabled"))
 o.default = (ssid and not uci:get_bool(config, primary_iface, "disabled")) and o.enabled or o.disabled
 o.rmempty = false
 
-o = s:option(Value, "ssid", "Name (SSID)")
+o = s:option(Value, "ssid", translate("Name (SSID)"))
+o:depends("enabled", '1')
 o.default = ssid
 
-o = s:option(Value, "key", "Schlüssel", "8-63 Zeichen")
+o = s:option(Value, "key", translate("Key"), translate("8-63 characters"))
+o:depends("enabled", '1')
 o.datatype = "wpakey"
 o.default = uci:get(config, primary_iface, "key")
 
@@ -38,20 +38,20 @@ function f.handle(self, state, data)
 
         if data.enabled == '1' then
           -- set up WAN wifi-iface
-          local t      = uci:get_all(config, name) or {}
-
-          t.device     = device
-          t.network    = "wan"
-          t.mode       = 'ap'
-          t.encryption = 'psk2'
-          t.ssid       = data.ssid
-          t.key        = data.key
-          t.disabled   = "false"
-
-          uci:section(config, "wifi-iface", name, t)
+          uci:section(config, "wifi-iface", name,
+                      {
+                        device     = device,
+                        network    = "wan",
+                        mode       = 'ap',
+                        encryption = 'psk2',
+                        ssid       = data.ssid,
+                        key        = data.key,
+                        disabled   = 0,
+                      }
+          )
         else
           -- disable WAN wifi-iface
-          uci:set(config, name, "disabled", "true")
+          uci:set(config, name, "disabled", 1)
         end
     end)
 

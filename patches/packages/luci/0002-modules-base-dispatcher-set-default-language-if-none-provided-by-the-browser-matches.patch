@@ -2,11 +2,11 @@ From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Thu, 19 Mar 2015 18:44:52 +0100
 Subject: modules/base: dispatcher: set default language if none provided by the browser matches
 
-diff --git a/modules/base/luasrc/dispatcher.lua b/modules/base/luasrc/dispatcher.lua
-index f7e16e7..479ac54 100644
---- a/modules/base/luasrc/dispatcher.lua
-+++ b/modules/base/luasrc/dispatcher.lua
-@@ -211,6 +211,7 @@ function dispatch(request)
+diff --git a/modules/luci-base/luasrc/dispatcher.lua b/modules/luci-base/luasrc/dispatcher.lua
+index 8b8d1fa..27f9a15 100644
+--- a/modules/luci-base/luasrc/dispatcher.lua
++++ b/modules/luci-base/luasrc/dispatcher.lua
+@@ -182,6 +182,7 @@ function dispatch(request)
  	assert(conf.main,
  		"/etc/config/luci seems to be corrupt, unable to find section 'main'")
  
@@ -14,7 +14,7 @@ index f7e16e7..479ac54 100644
  	local lang = conf.main.lang or "auto"
  	if lang == "auto" then
  		local aclang = http.getenv("HTTP_ACCEPT_LANGUAGE") or ""
-@@ -222,7 +223,10 @@ function dispatch(request)
+@@ -193,7 +194,10 @@ function dispatch(request)
  			end
  		end
  	end

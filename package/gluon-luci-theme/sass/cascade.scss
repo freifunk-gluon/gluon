@@ -325,7 +325,6 @@ textarea#syslog {
 .cbi-section legend {
   font-size: 1.4em;
   font-weight: bold;
-  color: $ffmagenta; 
   position: relative;
   padding: 0;
   margin-bottom: 0.5em;
@@ -438,6 +437,7 @@ img.cbi-image-button {
 input.cbi-button {
   @include button;
 
+  margin-left: 0.5em;
   background-repeat: no-repeat;
 }
 
@@ -565,11 +565,6 @@ textarea {
   margin-bottom: 0.5em;
 }
 
-form > div > input[type=submit],
-form > div > input[type=reset] {
-  margin-left: 0.5em;
-}
-
 table td,
 table th {
   color: #000000;
@@ -651,6 +646,21 @@ div.cbi-value-field {
     position: relative;
     top: -0.39em;
   }
+}
+
+div.cbi-value-field-long {
+  flex: 10;
+  position: relative;
+
+
+  input, select, input + label {
+    position: relative;
+    top: -0.39em;
+  }
+}
+
+div.cbi-value-field-long-after {
+  flex: 2;
 }
 
 div.cbi-value-description {
