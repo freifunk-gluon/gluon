@@ -14,8 +14,8 @@ else
 
   local msg = [[<p>]] .. i18n.translate('gluon-config-mode:pubkey') .. [[</p>
                <div class="the-key">
-                 # <%= hostname %>
-                 # <%=sysconfig.primary_mac%>
+                 # NAME: <%= hostname %><br />
+                 # MAC: <%=sysconfig.primary_mac%>
                  <br/>
                key "<%= pubkey %>";
                </div>]]
