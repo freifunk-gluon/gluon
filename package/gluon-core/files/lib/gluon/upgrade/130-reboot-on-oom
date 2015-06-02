@@ -1,0 +1,5 @@
+#!/usr/bin/lua
+
+local sysctl = require 'gluon.sysctl'
+
+sysctl.set('vm.panic_on_oom', 1)

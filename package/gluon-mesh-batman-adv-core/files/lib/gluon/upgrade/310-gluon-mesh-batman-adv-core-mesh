@@ -1,0 +1,99 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
+
+
+uci:delete('batman-adv', 'bat0')
+uci:section('batman-adv', 'mesh', 'bat0',
+	    {
+		    orig_interval = 5000,
+		    gw_mode = 'client',
+		    hop_penalty = 15,
+		    multicast_mode = 0,
+	    }
+)
+uci:save('batman-adv')
+uci:commit('batman-adv')
+
+
+if not uci:get('network', 'client') then
+  local ifname
+
+  if sysconfig.lan_ifname and not site.mesh_on_lan then
+    ifname = sysconfig.lan_ifname .. ' bat0'
+  else
+    ifname = 'bat0'
+  end
+
+  uci:section('network', 'interface', 'client',
+	      {
+		ifname = ifname,
+		type = 'bridge',
+		proto = 'dhcpv6',
+		reqprefix = 'no',
+	      }
+  )
+end
+
+uci:set('network', 'client', 'igmp_snooping', 0)
+uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
+uci:set('network', 'client', 'peerdns', 1)
+
+uci:delete('network', 'bat0')
+uci:section('network', 'interface', 'bat0',
+	    {
+		    ifname = 'bat0',
+		    proto = 'none',
+		    macaddr = sysconfig.primary_mac,
+	    }
+)
+
+uci:save('network')
+uci:commit('network')
+
+
+uci:delete('firewall', 'client')
+uci:section('firewall', 'zone', 'client',
+	    {
+		    name = 'client',
+		    network = {'client'},
+		    input = 'ACCEPT',
+		    output = 'ACCEPT',
+		    forward = 'REJECT',
+	    }
+)
+
+uci:section('firewall', 'rule', 'client_dns',
+	  {
+		  name = 'client_dns',
+		  src = 'client',
+		  dest_port = '53',
+		  target = 'REJECT',
+	  }
+)
+
+uci:save('firewall')
+uci:commit('firewall')
+
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', 0)
+uci:set('dhcp', dnsmasq, 'localise_queries', 0)
+uci:set('dhcp', dnsmasq, 'rebind_protection', 0)
+
+uci:delete('dhcp', 'client')
+uci:section('dhcp', 'dhcp', 'client',
+	    {
+		    interface = 'client',
+		    ignore = 1,
+	    }
+)
+
+uci:save('dhcp')
+uci:commit('dhcp')
+
+
+sysctl.set('net.ipv6.conf.br-client.forwarding', 0)

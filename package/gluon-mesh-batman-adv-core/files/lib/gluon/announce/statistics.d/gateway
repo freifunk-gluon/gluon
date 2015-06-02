@@ -1,0 +1,5 @@
+local gateway = util.trim(util.exec("batctl -m bat0 gateways | awk '/^=>/ { print $2 }'"))
+
+if gateway ~= '' then
+	return gateway
+end

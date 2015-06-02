@@ -1,0 +1,22 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+
+
+if sysconfig.gluon_version == 'legacy' then
+  for _, config in ipairs(site.legacy.config_mode_configs) do
+    local old = uci:get_first(config, 'wizard', 'configured')
+    if old == '1' then
+      local setup_mode = uci:get_first('gluon-setup-mode', 'setup_mode')
+      uci:set('gluon-setup-mode', setup_mode, 'configured', '1')
+
+      uci:save('gluon-setup-mode')
+      uci:commit('gluon-setup-mode')
+
+      break
+    end
+  end
+end

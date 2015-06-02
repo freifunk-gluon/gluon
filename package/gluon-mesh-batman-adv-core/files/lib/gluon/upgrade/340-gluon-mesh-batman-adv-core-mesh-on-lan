@@ -1,0 +1,32 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
+
+if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
+  local enable = site.mesh_on_lan
+
+  if enable then
+    local interfaces = uci:get('network', 'client', 'ifname')
+
+    if interfaces and lutil.contains(interfaces:split(' '), sysconfig.lan_ifname) then
+      enable = false
+    end
+  end
+
+  uci:section('network', 'interface', 'mesh_lan',
+              { ifname  = sysconfig.lan_ifname
+              , proto   = 'batadv'
+              , mesh    = 'bat0'
+              , macaddr = util.generate_mac(1, 1)
+              , auto    = enable and 1 or 0
+  })
+
+  uci:save('network')
+  uci:commit('network')
+end
+

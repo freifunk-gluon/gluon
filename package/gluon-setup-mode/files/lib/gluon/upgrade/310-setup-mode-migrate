@@ -1,0 +1,18 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require 'luci.model.uci'
+
+local c = uci.cursor()
+
+
+local old = c:get_first('gluon-config-mode', 'wizard', 'configured')
+if old == '1' then
+	local setup_mode = c:get_first('gluon-setup-mode', 'setup_mode')
+	c:set('gluon-setup-mode', setup_mode, 'configured', '1')
+
+	c:save('gluon-setup-mode')
+	c:commit('gluon-setup-mode')
+end
+
+os.remove('/etc/config/gluon-config-mode')

@@ -1,0 +1,111 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-05-04 00:34+0200\n"
+"Last-Translator:  <mschiffer@universe-factory.net>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid ""
+"Alternatively, you can set a password to access you node. Please choose a "
+"secure password you don't use anywhere else.<br /><br />If you set an empty "
+"password, login via password will be disabled. This is the default."
+msgstr ""
+"Alternativ kannst du auch ein Passwort setzen. Wähle bitte ein sicheres "
+"Passwort, das du nirgendwo anders verwendest.<br /><br />Beim Setzen eines "
+"leeren Passworts wird der Login per Passwort gesperrt (dies ist die Standard-"
+"Einstellung)."
+
+msgid "Continue"
+msgstr "Fortfahren"
+
+msgid "Don't switch off the device in any circumstance!"
+msgstr "Unterbrich auf keinen Fall die Stromversorgung!"
+
+msgid "Expert Mode"
+msgstr "Expert Mode"
+
+msgid "Firmware image"
+msgstr "Firmware-Datei"
+
+msgid "Firmware release"
+msgstr "Firmware-Release"
+
+msgid "Gluon version"
+msgstr "Gluon-Version"
+
+msgid "Hardware model"
+msgstr "Hardware-Modell"
+
+msgid "Information"
+msgstr "Info"
+
+msgid "MAC address"
+msgstr "MAC-Adresse"
+
+msgid "Password changed."
+msgstr "Passwort geändert."
+
+msgid "Password removed."
+msgstr "Passwort gelöscht."
+
+msgid "Public VPN key"
+msgstr "Öffentlicher VPN-Schlüssel"
+
+msgid "Remote access"
+msgstr "Remotezugriff"
+
+msgid "SSH keys"
+msgstr "SSH-Schlüssel"
+
+msgid "Site"
+msgstr "Site"
+
+msgid ""
+"The firmware image has been transmitted. Please ensure the MD5 checksum and "
+"image size are correct and click \"continue\"."
+msgstr ""
+"Die Firmwaredatei wurde übermittelt. Bitte vergleiche MD5-Checksumme und "
+"Dateigröße und klicke anschließend auf \"fortfahren\"."
+
+msgid "The firmware is currently being upgraded."
+msgstr "Die Firmware wird jetzt aktualisiert."
+
+msgid "The firmware is too big for your device's storage."
+msgstr "Die Firmware passt nicht in den Speicher des Gerätes."
+
+msgid "The password and the confirmation differ."
+msgstr "Die beiden Passwörter stimmen nicht überein."
+
+msgid "The provided firmware image is not valid for this device."
+msgstr "Die übermittelte Datei ist keine gültige Firmware für dieses Gerät."
+
+msgid ""
+"The upgrade will take a few minutes. When it is finished, your node will "
+"reboot automatically."
+msgstr ""
+"Dieser Vorgang wird einige Minuten dauern. Anschließend startet das Gerät "
+"automatisch neu."
+
+msgid "Unable to change the password."
+msgstr "Das Passwort konnte nicht geändert werden."
+
+msgid "Upgrade firmware"
+msgstr "Firmware aktualisieren"
+
+msgid "Upgrading firmware"
+msgstr "Firmware wird aktualisiert"
+
+msgid "Upload image"
+msgstr "Datei hochladen"
+
+msgid "You can manually upgrade your firmware here."
+msgstr "Hier kannst du ein manuelles Firmwareupdate durchführen."
+
+msgid "You can provide your SSH keys here (one per line):"
+msgstr ""
+"Hier hast du die Möglichkeit, SSH-Keys zu hinterlegen (einen pro Zeile):"

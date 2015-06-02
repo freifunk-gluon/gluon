@@ -1,0 +1,24 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 20 May 2015 23:15:20 +0200
+Subject: iwinfo: update NanoStation (Loco) txpower offsets
+
+diff --git a/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch b/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch
+new file mode 100644
+index 0000000..1e13570
+--- /dev/null
++++ b/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch
+@@ -0,0 +1,14 @@
++--- a/hardware.txt
+++++ b/hardware.txt
++@@ -42,8 +42,9 @@
++ 0x168c 0x0027 0x0777 0x4082    7      0  "Ubiquiti" "SR71"
++ 0x168c 0x0029 0x0777 0x4005    7      0  "Ubiquiti" "SR71-15"
++ 0x168c 0x002a 0x0777 0xe302   12      0  "Ubiquiti" "PicoStation M2" /* ToDo: confirm offset */
++-0x168c 0x002a 0x0777 0xe012   12      0  "Ubiquiti" "NanoStation M2" /* ToDo: confirm offset */
++-0x168c 0x002a 0x0777 0xe005    5      0  "Ubiquiti" "NanoStation M5" /* ToDo: confirm offset */
+++0x168c 0x002a 0x0777 0xe012   11      0  "Ubiquiti" "NanoStation M2"
+++0x168c 0x002e 0x0777 0xe0a2    8      0  "Ubiquiti" "NanoStation Loco M2"
+++0x168c 0x002a 0x0777 0xe005   16      0  "Ubiquiti" "NanoStation M5"
++ 0x168c 0x002a 0x0777 0xe202   12      0  "Ubiquiti" "Bullet M2"
++ 0x168c 0x002a 0x0777 0xe805    5      0  "Ubiquiti" "Bullet M5"
++ 0x168c 0x002a 0x0777 0xe345    0      0  "Ubiquiti" "WispStation M5" /* ToDo: confirm offset */

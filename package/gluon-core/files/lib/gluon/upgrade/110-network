@@ -1,0 +1,59 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+local sysctl = require 'gluon.sysctl'
+local sysconfig = require 'gluon.sysconfig'
+
+
+uci:section('network', 'interface', 'wan',
+	    {
+	      ifname = sysconfig.wan_ifname,
+	      type = 'bridge',
+	      igmp_snooping = 0,
+	      peerdns = 0,
+	      auto = 1,
+	    }
+)
+
+if not uci:get('network', 'wan', 'proto') then
+  uci:set('network', 'wan', 'proto', 'dhcp')
+end
+
+
+uci:section('network', 'interface', 'wan6',
+	    {
+	      ifname = 'br-wan',
+	      peerdns = 0,
+	      ip6table = 1,
+	    }
+)
+
+if not uci:get('network', 'wan6', 'proto') then
+  uci:set('network', 'wan6', 'proto', 'dhcpv6')
+end
+
+
+uci:section('network', 'rule6', 'wan6_lookup',
+	    {
+	       mark = '0x01/0x01',
+	       lookup = 1,
+	    }
+)
+
+uci:section('network', 'route6', 'wan6_unreachable',
+	    {
+	       type = 'unreachable',
+	       interface = 'loopback',
+	       target = '::/0',
+	       gateway = '::',
+	       table = 1,
+	       metric = 65535,
+	    }
+)
+
+uci:save('network')
+uci:commit('network')
+
+
+sysctl.set('net.ipv6.conf.all.accept_ra', 0)
+sysctl.set('net.ipv6.conf.default.accept_ra', 0)

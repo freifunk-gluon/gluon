@@ -67,12 +67,14 @@ wifi24
     ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
     bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
     Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
-    ad-hoc interface.
+    ad-hoc interface. The options ``mesh_disabled`` and ``client_disabled``
+    are optional, too. They allow to disable the SSID by default, e.g. for
+    preconfigured node. This only affects first configuraton.
     Combined in an dictionary, e.g.:
     ::
 
        wifi24 = {
-         ssid = 'http://kiel.freifunk.net/',
+         ssid = 'entenhausen.freifunk.net',
          channel = 11,
          htmode = 'HT40-',
          mesh_ssid = 'ff:ff:ff:ee:ba:be',
@@ -90,30 +92,49 @@ next_node : package
       next_node = {
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
-        mac = 'ca:ff:ee:ba:be'
+        mac = 'ca:ff:ee:ba:be:00'
       }
 
 
 fastd_mesh_vpn
-    Remote server setup for vpn.
+    Remote server setup for the fastd-based mesh VPN.
+
+    The `enabled` option can be set to true to enable the VPN by default.
+
+    If `configurable` is `false` or unset, the method list will be replaced on updates
+    with the list in the site configuration. Setting `configurable` to `true` will allow the user to
+    add the method ``null`` to the front of the method list or remove ``null`` from it,
+    and make this change survive updates. Settings configurable is necessary for the
+    package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
+
+    In any case, the ``null`` method should always be the first method in the list
+    if it is supported at all. You should only set `configurable` to `true` if the
+    configured peers support both the ``null`` method and methods with encryption.
     ::
 
       fastd_mesh_vpn = {
-        methods = {'salsa2012+gmac'},
+        methods = {'salsa2012+umac'},
+	-- enabled = true,
+	-- configurable = true,
         mtu = 1426,
-        backbone = {
-          limit = 2,
-          peers = {
-            ffki_rz = {
-              key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-              remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
-            },
+        groups = {
+          backbone = {
+            limit = 2,
+            peers = {
+              peer1 = {
+                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+              },
+            }
           }
         }
       }
 
 mesh_on_wan : optional
     Enables the mesh on the WAN port (``true`` or ``false``).
+
+mesh_on_lan : optional
+    Enables the mesh on the LAN port (``true`` or ``false``).
 
 autoupdater : package
     Configuration for the autoupdater feature of Gluon.
@@ -146,15 +167,19 @@ roles : optional
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
     the package ``gluon-luci-node-role`` to ``site.mk``.
+
+    The strings to display in the LuCI interface can be configured per language in the
+    ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository using message IDs like
+    ``gluon-luci-node-role:role:node`` and ``gluon-luci-node-role:role:backbone``.
     ::
 
       roles = {
         default = 'node',
         list = {
-          node = 'Normal Node',
-          test = 'Test Node',
-          backbone = 'Backbone Node',
-          service = 'Service Node',
+          'node',
+          'test',
+          'backbone',
+          'service',
         },
       },
 
@@ -176,7 +201,7 @@ setup_mode : package
     ``skip`` is set to ``true``. This is optional and may be left out.
     ::
 
-      setup_mode {
+      setup_mode = {
         skip = true,
       },
 
@@ -215,6 +240,8 @@ GLUON_PRIORITY
 GLUON_LANGS
     List of languages (as two-letter-codes) to include for the web interface. Should always contain
     ``en``.
+
+.. _site-config-mode-texts:
 
 Config mode texts
 -----------------
@@ -280,7 +307,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
 * `site-ffhh <https://github.com/freifunkhamburg/site-ffhh>`_ (Hamburg)
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
-* `site-ffhl <https://github.com/freifunk-gluon/site-ffhl>`_ (Lübeck)
+* `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
 * `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
 * `site-ffmwu <https://github.com/freifunk-mwu/site-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
