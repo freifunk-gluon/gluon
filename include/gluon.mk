@@ -35,7 +35,7 @@ export GLUON_LANGS
 ifeq ($(OPENWRT_BUILD),1)
 ifeq ($(GLUON_TOOLS),1)
 
-CONFIG_VERSION_REPO := $(shell $(GLUONDIR)/scripts/site.sh opkg_repo || echo http://downloads.openwrt.org/chaos_calmer/15.05-rc1/%S/packages)
+CONFIG_VERSION_REPO := $(shell $(GLUONDIR)/scripts/site.sh opkg_repo || echo http://downloads.openwrt.org/chaos_calmer/15.05-rc2/%S/packages)
 export CONFIG_VERSION_REPO
 
 GLUON_SITE_CODE := $(shell $(GLUONDIR)/scripts/site.sh site_code)
