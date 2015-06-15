@@ -49,6 +49,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2015.1.1
    releases/v2015.1
    releases/v2014.4
    releases/v2014.3.1
