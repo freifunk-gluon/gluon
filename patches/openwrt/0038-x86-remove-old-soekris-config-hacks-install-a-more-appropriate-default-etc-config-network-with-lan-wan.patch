@@ -1,0 +1,137 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 16 Jun 2015 01:07:41 +0200
+Subject: x86: remove old soekris config hacks, install a more appropriate default /etc/config/network with lan+wan
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+diff --git a/target/linux/x86/base-files/etc/config/network b/target/linux/x86/base-files/etc/config/network
+new file mode 100644
+index 0000000..c9953a0
+--- /dev/null
++++ b/target/linux/x86/base-files/etc/config/network
+@@ -0,0 +1,26 @@
++# Copyright (C) 2006 OpenWrt.org
++
++config interface loopback
++	option ifname	lo
++	option proto	static
++	option ipaddr	127.0.0.1
++	option netmask	255.0.0.0
++
++config interface lan
++	option ifname	eth0
++	option type 	bridge
++	option proto	static
++	option ipaddr	192.168.1.1
++	option netmask	255.255.255.0
++	option ip6assign 60
++
++config interface wan
++	option ifname	eth1
++	option proto	dhcp
++
++config interface wan6
++	option ifname	eth1
++	option proto	dhcpv6
++
++config globals globals
++	option ula_prefix auto
+diff --git a/target/linux/x86/base-files/etc/defconfig/net4801/network b/target/linux/x86/base-files/etc/defconfig/net4801/network
+deleted file mode 100644
+index 172d513..0000000
+--- a/target/linux/x86/base-files/etc/defconfig/net4801/network
++++ /dev/null
+@@ -1,24 +0,0 @@
+-config interface loopback
+-	option ifname	lo
+-	option proto	static
+-	option ipaddr	127.0.0.1
+-	option netmask	255.0.0.0
+-
+-config interface lan
+-	option ifname	eth1
+-	option type	bridge
+-	option proto	static
+-	option ipaddr	192.168.1.1
+-	option netmask	255.255.255.0
+-	option ip6assign 60
+-
+-config interface wan
+-	option ifname	eth0
+-	option proto	dhcp
+-
+-config interface wan6
+-	option ifname   @wan
+-	option proto    dhcpv6
+-
+-config globals globals
+-	option ula_prefix auto
+diff --git a/target/linux/x86/base-files/etc/defconfig/net4826/network b/target/linux/x86/base-files/etc/defconfig/net4826/network
+deleted file mode 100644
+index 7c9fb63..0000000
+--- a/target/linux/x86/base-files/etc/defconfig/net4826/network
++++ /dev/null
+@@ -1,12 +0,0 @@
+-config interface loopback
+-	option ifname	lo
+-	option proto	static
+-	option ipaddr	127.0.0.1
+-	option netmask	255.0.0.0
+-
+-config interface lan
+-	option ifname	eth0
+-	option type	bridge
+-	option proto	static
+-	option ipaddr	192.168.1.1
+-	option netmask	255.255.255.0
+diff --git a/target/linux/x86/base-files/etc/init.d/defconfig b/target/linux/x86/base-files/etc/init.d/defconfig
+deleted file mode 100755
+index 4b4f28f..0000000
+--- a/target/linux/x86/base-files/etc/init.d/defconfig
++++ /dev/null
+@@ -1,20 +0,0 @@
+-#!/bin/sh /etc/rc.common
+-#
+-# Copyright (C) 2010 Thinktube Inc.
+-#
+-
+-START=05
+-
+-start() {
+-	. /lib/soekris.sh
+-
+-	local board=$(net48xx_board_name)
+-
+-	[ ! -d /etc/defconfig/$board ] && board="net4826"
+-
+-	for f in $( ls /etc/defconfig/$board ); do
+-		if [ ! -e /etc/config/$f ]; then
+-			cp /etc/defconfig/$board/$f /etc/config/
+-		fi
+-	done
+-}
+diff --git a/target/linux/x86/base-files/lib/soekris.sh b/target/linux/x86/base-files/lib/soekris.sh
+deleted file mode 100755
+index e416ad3..0000000
+--- a/target/linux/x86/base-files/lib/soekris.sh
++++ /dev/null
+@@ -1,19 +0,0 @@
+-#!/bin/sh
+-
+-net48xx_board_name () {
+-    local name
+-    local pci=`wc -l /proc/bus/pci/devices`
+-
+-    case "$pci" in
+-	*"8"*)
+-	    name="net4826"
+-	    ;;
+-	*1[0-4]*)
+-	    name="net4801"
+-	    ;;
+-	*)
+-	    name="net4826"
+-	    ;;
+-    esac
+-    echo $name
+-}
