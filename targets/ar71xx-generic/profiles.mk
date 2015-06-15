@@ -83,9 +83,10 @@ $(eval $(call GluonModel,TLWDR4300,tl-wdr4300-v1,tp-link-tl-wdr4300-v1))
 $(eval $(call GluonProfile,TLWA750))
 $(eval $(call GluonModel,TLWA750,tl-wa750re-v1,tp-link-tl-wa750re-v1))
 
-ifeq ($(BROKEN),1)
-# TL-WA830RE v2
+# TL-WA830RE v1, v2
 $(eval $(call GluonProfile,TLWA830))
+$(eval $(call GluonModel,TLWA830,tl-wa830re-v1,tp-link-tl-wa830re-v1))
+ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,TLWA830,tl-wa830re-v2,tp-link-tl-wa830re-v2))
 endif
 

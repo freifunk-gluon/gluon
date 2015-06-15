@@ -1,0 +1,24 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 15 Jun 2015 21:28:06 +0200
+Subject: ar71xx: fix AR71XX_MODEL for TP-Link TL-WA830RE v1
+
+The v1 identifies as v10 internally. As there is no TL-WA830RE v10, add a
+workaround to avoid confusing users.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 1838cb4..d79776b 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -145,6 +145,10 @@ tplink_board_detect() {
+ 		;;
+ 	"083000"*)
+ 		model="TP-Link TL-WA830RE"
++
++		if [ "$hwver" = 'v10' ]; then
++			hwver='v1'
++		fi
+ 		;;
+ 	"084100"*)
+ 		model="TP-Link TL-WR841N/ND"
