@@ -1,0 +1,20 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 17 Jun 2015 00:03:39 +0200
+Subject: Revert netns_ct ABI change introduced in r44874
+
+diff --git a/target/linux/generic/patches-3.10/617-netfilter_skip_filter_compat.patch b/target/linux/generic/patches-3.10/617-netfilter_skip_filter_compat.patch
+new file mode 100644
+index 0000000..dce0cd0
+--- /dev/null
++++ b/target/linux/generic/patches-3.10/617-netfilter_skip_filter_compat.patch
+@@ -0,0 +1,10 @@
++--- a/include/net/netns/conntrack.h
+++++ b/include/net/netns/conntrack.h
++@@ -80,6 +80,7 @@ struct netns_ct {
++ 	int			sysctl_acct;
++ 	int			sysctl_tstamp;
++ 	int			sysctl_checksum;
+++	int			skip_filter;
++ 	unsigned int		sysctl_log_invalid; /* Log invalid packets */
++ 	int			sysctl_auto_assign_helper;
++ 	bool			auto_assign_helper_warned;
