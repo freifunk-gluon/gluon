@@ -3,6 +3,7 @@
 module('gluon.announce', package.seeall)
 
 fs = require 'luci.fs'
+json = require 'luci.json'
 uci = require('luci.model.uci').cursor()
 util = require 'luci.util'
 
@@ -15,7 +16,7 @@ local function collect_entry(entry)
 end
 
 function collect_dir(dir)
-	local ret = {}
+	local ret = { [json.null] = true }
 
 	for _, entry in ipairs(fs.dir(dir)) do
 		if entry:sub(1, 1) ~= '.' then

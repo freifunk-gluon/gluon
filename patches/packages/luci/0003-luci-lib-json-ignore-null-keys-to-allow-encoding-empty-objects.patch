@@ -1,0 +1,36 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 4 Jun 2015 21:03:24 +0200
+Subject: luci-lib-json: ignore null keys to allow encoding empty objects
+
+There is currently no way to encode an empty object {}, as empty tables are
+encoded as empty lists [].
+
+With this patch, encode() will ignore table fields with the key json.null (which
+doesn't make sense anyways). This allows adding a field with key json.null to
+force encoding it as an object.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/libs/json/luasrc/json.lua b/libs/json/luasrc/json.lua
+index 8dbaf91..11a5608 100644
+--- a/libs/json/luasrc/json.lua
++++ b/libs/json/luasrc/json.lua
+@@ -205,11 +205,13 @@ function Encoder.parse_iter(self, obj)
+ 		local first = true
+ 
+ 		for key, entry in pairs(obj) do
+-			first = first or self:put(",")
+-			first = first and false
+-			self:parse_string(tostring(key))
+-			self:put(":")
+-			self:dispatch(entry)
++			if key ~= null then
++				first = first or self:put(",")
++				first = first and false
++				self:parse_string(tostring(key))
++				self:put(":")
++				self:dispatch(entry)
++			end
+ 		end
+ 
+ 		self:put("}")
