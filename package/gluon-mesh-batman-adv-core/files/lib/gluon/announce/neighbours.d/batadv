@@ -1,7 +1,3 @@
-local json = require 'luci.json'
-local util = require 'luci.util'
-local fs = require 'nixio.fs'
-
 local ifname_address_cache = {}
 
 function ifname2address(ifname)
@@ -26,7 +22,7 @@ function batadv()
     if mac1 ~= nil and mac1 == mac2 then
       ifaddress = ifname2address(ifname)
       if interfaces[ifaddress] == nil then
-        interfaces[ifaddress] = { neighbours = {} }
+        interfaces[ifaddress] = { neighbours = { [json.null] = true } }
       end
 
       interfaces[ifaddress].neighbours[mac1] = { tq = tonumber(tq)
@@ -35,7 +31,9 @@ function batadv()
     end
   end
 
-  return interfaces
+  if next(interfaces) then
+    return interfaces
+  end
 end
 
 return batadv()

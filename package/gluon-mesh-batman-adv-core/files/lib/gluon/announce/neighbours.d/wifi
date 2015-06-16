@@ -1,6 +1,3 @@
-local json = require 'luci.json'
-local util = require 'luci.util'
-local fs = require 'nixio.fs'
 local iwinfo = require 'iwinfo'
 
 function neighbours(iface)
@@ -12,7 +9,9 @@ function neighbours(iface)
                           }
   end
 
-  return stations
+  if next(stations) then
+    return stations
+  end
 end
 
 function interfaces()
@@ -38,4 +37,6 @@ for address, iface in pairs(interfaces()) do
   wifi[address] = { neighbours = neighbours(iface) }
 end
 
-return wifi
+if next(wifi) then
+  return wifi
+end
