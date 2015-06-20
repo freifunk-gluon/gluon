@@ -368,7 +368,7 @@ endif
 
 opkg_config: FORCE
 	cp $(GLUON_OPENWRTDIR)/package/system/opkg/files/opkg.conf $(TARGET_DIR)/etc/opkg.conf
-	for d in base luci packages routing telephony management oldpackages; do \
+	for d in base packages luci routing telephony management; do \
 		echo "src/gz %n_$$d %U/$$d" >> $(TARGET_DIR)/etc/opkg.conf; \
 	done
 	$(VERSION_SED) $(TARGET_DIR)/etc/opkg.conf
