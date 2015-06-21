@@ -1,0 +1,18 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 21 Jun 2015 05:48:01 +0200
+Subject: Revert "6rd: Remove sourcerouting parameter registration"
+
+This reverts commit cedaf068bf920099483adfad2e106e35737c964f.
+
+diff --git a/package/network/ipv6/6rd/files/6rd.sh b/package/network/ipv6/6rd/files/6rd.sh
+index 62d35b6..6c68b3b 100644
+--- a/package/network/ipv6/6rd/files/6rd.sh
++++ b/package/network/ipv6/6rd/files/6rd.sh
+@@ -94,6 +94,7 @@ proto_6rd_init_config() {
+ 	proto_config_add_string "ip6prefixlen"
+ 	proto_config_add_string "ip4prefixlen"
+ 	proto_config_add_string "tunlink"
++	proto_config_add_boolean "sourcerouting"
+ 	proto_config_add_string "zone"
+ }
+ 

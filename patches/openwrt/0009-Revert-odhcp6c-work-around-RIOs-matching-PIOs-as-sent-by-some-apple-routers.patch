@@ -1,0 +1,34 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 21 Jun 2015 05:47:46 +0200
+Subject: Revert "odhcp6c: work around RIOs matching PIOs as sent by some apple routers"
+
+This reverts commit c46402e106ee924e3861f9685d6187552e7f8f2b.
+
+diff --git a/package/network/ipv6/odhcp6c/Makefile b/package/network/ipv6/odhcp6c/Makefile
+index d0935eb..a90f5ce 100644
+--- a/package/network/ipv6/odhcp6c/Makefile
++++ b/package/network/ipv6/odhcp6c/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=odhcp6c
+-PKG_VERSION:=2015-06-10
++PKG_VERSION:=2015-06-09
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+diff --git a/package/network/ipv6/odhcp6c/files/dhcpv6.script b/package/network/ipv6/odhcp6c/files/dhcpv6.script
+index 84eb706..650c9b2 100755
+--- a/package/network/ipv6/odhcp6c/files/dhcpv6.script
++++ b/package/network/ipv6/odhcp6c/files/dhcpv6.script
+@@ -88,10 +88,6 @@ setup_interface () {
+ 
+ 		if [ -z "$gw" ]; then
+ 			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
+-
+-			# work around if there is a PIO matching a RIO
+-			# Linux seems to prefer source-dest over dest-only even if metric is higher
+-			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$addr/$mask"
+ 		else
+ 			for prefix in $PREFIXES $ADDRESSES; do
+ 				local paddr="${prefix%%,*}"

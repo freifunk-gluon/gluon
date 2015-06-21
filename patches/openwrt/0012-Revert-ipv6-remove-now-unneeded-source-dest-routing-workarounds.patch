@@ -1,0 +1,214 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 21 Jun 2015 05:48:45 +0200
+Subject: Revert "ipv6: remove now unneeded source-dest-routing workarounds"
+
+This reverts commit 31214c38c8dd0f70366b523f9b0335145b9386bd.
+
+diff --git a/package/network/ipv6/6in4/Makefile b/package/network/ipv6/6in4/Makefile
+index b7c2da7..21e69e6 100644
+--- a/package/network/ipv6/6in4/Makefile
++++ b/package/network/ipv6/6in4/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=6in4
+ PKG_VERSION:=21
+-PKG_RELEASE:=2
++PKG_RELEASE:=1
+ PKG_LICENSE:=GPL-2.0
+ 
+ include $(INCLUDE_DIR)/package.mk
+diff --git a/package/network/ipv6/6in4/files/6in4.sh b/package/network/ipv6/6in4/files/6in4.sh
+index af2ddca..0289df3 100755
+--- a/package/network/ipv6/6in4/files/6in4.sh
++++ b/package/network/ipv6/6in4/files/6in4.sh
+@@ -27,8 +27,8 @@ proto_6in4_setup() {
+ 	local iface="$2"
+ 	local link="6in4-$cfg"
+ 
+-	local mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey
+-	json_get_vars mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey
++	local mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey sourcerouting
++	json_get_vars mtu ttl tos ipaddr peeraddr ip6addr ip6prefix tunnelid username password updatekey sourcerouting
+ 
+ 	[ -z "$peeraddr" ] && {
+ 		proto_notify_error "$cfg" "MISSING_ADDRESS"
+@@ -48,17 +48,21 @@ proto_6in4_setup() {
+ 
+ 	proto_init_update "$link" 1
+ 
++	local source=""
++	[ "$sourcerouting" != "0" ] && source="::/128"
++	proto_add_ipv6_route "::" 0 "" "" "" "$source"
++
+ 	[ -n "$ip6addr" ] && {
+ 		local local6="${ip6addr%%/*}"
+ 		local mask6="${ip6addr##*/}"
+ 		[[ "$local6" = "$mask6" ]] && mask6=
+ 		proto_add_ipv6_address "$local6" "$mask6"
+-		proto_add_ipv6_route "::" 0 "" "" "" "$local6/$mask6"
++		[ "$sourcerouting" != "0" ] && proto_add_ipv6_route "::" 0 "" "" "" "$local6/$mask6"
+ 	}
+ 
+ 	[ -n "$ip6prefix" ] && {
+ 		proto_add_ipv6_prefix "$ip6prefix"
+-		proto_add_ipv6_route "::" 0 "" "" "" "$ip6prefix"
++		[ "$sourcerouting" != "0" ] && proto_add_ipv6_route "::" 0 "" "" "" "$ip6prefix"
+ 	}
+ 
+ 	proto_add_tunnel
+@@ -142,6 +146,7 @@ proto_6in4_init_config() {
+ 	proto_config_add_int "mtu"
+ 	proto_config_add_int "ttl"
+ 	proto_config_add_string "tos"
++	proto_config_add_boolean "sourcerouting"
+ }
+ 
+ [ -n "$INCLUDE_ONLY" ] || {
+diff --git a/package/network/ipv6/6rd/Makefile b/package/network/ipv6/6rd/Makefile
+index cde7117..f9b7eae 100644
+--- a/package/network/ipv6/6rd/Makefile
++++ b/package/network/ipv6/6rd/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=6rd
+ PKG_VERSION:=9
+-PKG_RELEASE:=2
++PKG_RELEASE:=1
+ PKG_LICENSE:=GPL-2.0
+ 
+ include $(INCLUDE_DIR)/package.mk
+diff --git a/package/network/ipv6/6rd/files/6rd.sh b/package/network/ipv6/6rd/files/6rd.sh
+index 6c68b3b..b485136 100644
+--- a/package/network/ipv6/6rd/files/6rd.sh
++++ b/package/network/ipv6/6rd/files/6rd.sh
+@@ -14,8 +14,8 @@ proto_6rd_setup() {
+ 	local iface="$2"
+ 	local link="6rd-$cfg"
+ 
+-	local mtu df ttl tos ipaddr peeraddr ip6prefix ip6prefixlen ip4prefixlen tunlink zone
+-	json_get_vars mtu df ttl tos ipaddr peeraddr ip6prefix ip6prefixlen ip4prefixlen tunlink zone
++	local mtu df ttl tos ipaddr peeraddr ip6prefix ip6prefixlen ip4prefixlen tunlink sourcerouting zone
++	json_get_vars mtu df ttl tos ipaddr peeraddr ip6prefix ip6prefixlen ip4prefixlen tunlink sourcerouting zone
+ 
+ 	[ -z "$ip6prefix" -o -z "$peeraddr" ] && {
+ 		proto_notify_error "$cfg" "MISSING_ADDRESS"
+@@ -54,8 +54,13 @@ proto_6rd_setup() {
+ 	proto_add_ipv6_address "$ip6addr" "$ip6prefixlen"
+ 	proto_add_ipv6_prefix "$ip6lanprefix"
+ 
+-	proto_add_ipv6_route "::" 0 "::$peeraddr" 4096 "" "$ip6addr/$ip6prefixlen"
+-	proto_add_ipv6_route "::" 0 "::$peeraddr" 4096 "" "$ip6lanprefix"
++	if [ "$sourcerouting" != "0" ]; then
++		proto_add_ipv6_route "::" 0 "::$peeraddr" 4096 "" "::/128"
++		proto_add_ipv6_route "::" 0 "::$peeraddr" 4096 "" "$ip6addr/$ip6prefixlen"
++		proto_add_ipv6_route "::" 0 "::$peeraddr" 4096 "" "$ip6lanprefix"
++	else
++		proto_add_ipv6_route "::" 0 "::$peeraddr" 4096
++	fi
+ 
+ 	proto_add_tunnel
+ 	json_add_string mode sit
+diff --git a/package/network/ipv6/6to4/Makefile b/package/network/ipv6/6to4/Makefile
+index fcec90d..6be2cc5 100644
+--- a/package/network/ipv6/6to4/Makefile
++++ b/package/network/ipv6/6to4/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=6to4
+ PKG_VERSION:=12
+-PKG_RELEASE:=2
++PKG_RELEASE:=1
+ PKG_LICENSE:=GPL-2.0
+ 
+ include $(INCLUDE_DIR)/package.mk
+diff --git a/package/network/ipv6/6to4/files/6to4.sh b/package/network/ipv6/6to4/files/6to4.sh
+index 57efc52..ce1de53 100755
+--- a/package/network/ipv6/6to4/files/6to4.sh
++++ b/package/network/ipv6/6to4/files/6to4.sh
+@@ -34,8 +34,8 @@ proto_6to4_setup() {
+ 	local iface="$2"
+ 	local link="6to4-$cfg"
+ 
+-	local mtu ttl tos ipaddr
+-	json_get_vars mtu ttl tos ipaddr
++	local mtu ttl tos ipaddr sourcerouting
++	json_get_vars mtu ttl tos ipaddr sourcerouting
+ 
+ 	( proto_add_host_dependency "$cfg" 0.0.0.0 )
+ 
+@@ -65,8 +65,13 @@ proto_6to4_setup() {
+ 	proto_add_ipv6_address "$local6" 16
+ 	proto_add_ipv6_prefix "$prefix6::/48"
+ 
+-	proto_add_ipv6_route "::" 0 "::192.88.99.1" "" "" "$local6/16"
+-	proto_add_ipv6_route "::" 0 "::192.88.99.1" "" "" "$prefix6::/48"
++	if [ "$sourcerouting" != "0" ]; then
++		proto_add_ipv6_route "::" 0 "::192.88.99.1" "" "" "::/128"
++		proto_add_ipv6_route "::" 0 "::192.88.99.1" "" "" "$local6/16"
++		proto_add_ipv6_route "::" 0 "::192.88.99.1" "" "" "$prefix6::/48"
++	else
++		proto_add_ipv6_route "::" 0 "::192.88.99.1"
++	fi
+ 
+ 	proto_add_tunnel
+ 	json_add_string mode sit
+diff --git a/package/network/ipv6/odhcp6c/Makefile b/package/network/ipv6/odhcp6c/Makefile
+index a90f5ce..ddd6917 100644
+--- a/package/network/ipv6/odhcp6c/Makefile
++++ b/package/network/ipv6/odhcp6c/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=odhcp6c
+-PKG_VERSION:=2015-06-09
++PKG_VERSION:=2015-05-16
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+diff --git a/package/network/ipv6/odhcp6c/files/dhcpv6.script b/package/network/ipv6/odhcp6c/files/dhcpv6.script
+index 650c9b2..6cd59fa 100755
+--- a/package/network/ipv6/odhcp6c/files/dhcpv6.script
++++ b/package/network/ipv6/odhcp6c/files/dhcpv6.script
+@@ -86,9 +86,10 @@ setup_interface () {
+ 		entry="${entry#*,}"
+ 		local metric="${entry%%,*}"
+ 
+-		if [ -z "$gw" ]; then
++		if [ -z "$SOURCE_ROUTING" -o -z "$gw" ]; then
+ 			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid"
+ 		else
++			proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "::/128"
+ 			for prefix in $PREFIXES $ADDRESSES; do
+ 				local paddr="${prefix%%,*}"
+ 				proto_add_ipv6_route "$addr" "$mask" "$gw" "$metric" "$valid" "$paddr"
+diff --git a/package/network/ipv6/odhcp6c/files/dhcpv6.sh b/package/network/ipv6/odhcp6c/files/dhcpv6.sh
+index adcb100..9fb6fa3 100755
+--- a/package/network/ipv6/odhcp6c/files/dhcpv6.sh
++++ b/package/network/ipv6/odhcp6c/files/dhcpv6.sh
+@@ -23,6 +23,7 @@ proto_dhcpv6_init_config() {
+ 	proto_config_add_string zone_464xlat
+ 	proto_config_add_string zone
+ 	proto_config_add_string 'ifaceid:ip6addr'
++	proto_config_add_string 'sourcerouting:bool'
+ 	proto_config_add_string "userclass"
+ 	proto_config_add_string "vendorclass"
+ 	proto_config_add_boolean delegate
+@@ -34,8 +35,8 @@ proto_dhcpv6_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite iface_map iface_464xlat ifaceid userclass vendorclass delegate zone_dslite zone_map zone_464xlat zone soltimeout fakeroutes
+-	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite iface_map iface_464xlat ifaceid userclass vendorclass delegate zone_dslite zone_map zone_464xlat zone soltimeout fakeroutes
++	local reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite iface_map iface_464xlat ifaceid sourcerouting userclass vendorclass delegate zone_dslite zone_map zone_464xlat zone soltimeout fakeroutes
++	json_get_vars reqaddress reqprefix clientid reqopts noslaaconly forceprefix norelease ip6prefix iface_dslite iface_map iface_464xlat ifaceid sourcerouting userclass vendorclass delegate zone_dslite zone_map zone_464xlat zone soltimeout fakeroutes
+ 
+ 
+ 	# Configure
+@@ -69,6 +70,7 @@ proto_dhcpv6_setup() {
+ 	[ -n "$iface_dslite" ] && proto_export "IFACE_DSLITE=$iface_dslite"
+ 	[ -n "$iface_map" ] && proto_export "IFACE_MAP=$iface_map"
+ 	[ -n "$iface_464xlat" ] && proto_export "IFACE_464XLAT=$iface_464xlat"
++	[ "$sourcerouting" != "0" ] && proto_export "SOURCE_ROUTING=1"
+ 	[ "$delegate" = "0" ] && proto_export "IFACE_DSLITE_DELEGATE=0"
+ 	[ "$delegate" = "0" ] && proto_export "IFACE_MAP_DELEGATE=0"
+ 	[ -n "$zone_dslite" ] && proto_export "ZONE_DSLITE=$zone_dslite"
