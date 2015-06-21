@@ -1,0 +1,28 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 22 Jun 2015 00:50:09 +0200
+Subject: ar71xx: add support for TP-LINK TL-WR740N/TL-WR741ND
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index fc59c33..53ae3f6 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -1233,6 +1233,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR710,tl-wr710n-v1,TL-WR710N,tt
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR720NV3,tl-wr720n-v3,TL-WR720N-v3,ttyATH0,115200,0x07200103,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR740NV4,tl-wr740n-v4,TL-WR741ND-v4,ttyATH0,115200,0x07400004,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR741NV4,tl-wr741nd-v4,TL-WR741ND-v4,ttyATH0,115200,0x07410004,1,4Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR740NV5,tl-wr740n-v5,TL-WR741ND-v4,ttyATH0,115200,0x07400005,1,4Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR741NV5,tl-wr741nd-v5,TL-WR741ND-v4,ttyATH0,115200,0x07400005,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR743NV2,tl-wr743nd-v2,TL-WR741ND-v4,ttyATH0,115200,0x07430002,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWA750,tl-wa750re-v1,TL-WA750RE,ttyS0,115200,0x07500001,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR841NV8,tl-wr841n-v8,TL-WR841N-v8,ttyS0,115200,0x08410008,1,4Mlzma))
+@@ -1318,8 +1320,8 @@ $(eval $(call MultiProfile,TLWA830,TLWA830RV1 TLWA830RV2))
+ $(eval $(call MultiProfile,TLWA901,TLWA901NV1 TLWA901NV2 TLWA901NV3))
+ $(eval $(call MultiProfile,TLWA7510,TLWA7510NV1))
+ $(eval $(call MultiProfile,TLWR720,TLWR720NV3))
+-$(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3 TLWR740NV4))
+-$(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2 TLWR741NV4))
++$(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3 TLWR740NV4 TLWR740NV5))
++$(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2 TLWR741NV4 TLWR741NV5))
+ $(eval $(call MultiProfile,TLWR743,TLWR743NV1 TLWR743NV2))
+ $(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9))
+ $(eval $(call MultiProfile,TLWR842,TLWR842V1 TLWR842V2))
