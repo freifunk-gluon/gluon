@@ -1,0 +1,32 @@
+#!/usr/bin/lua
+
+local json = require 'luci.json'
+local nixio = require 'nixio'
+
+function neighbours()
+  local neighbours = {}
+  local list = io.lines("/sys/kernel/debug/batman_adv/bat0/originators")
+  for line in list do
+    local mac1, lastseen, tq, mac2, ifname =
+      line:match("^([0-9a-f:]+) +(%d+%.%d+)s +%( *(%d+)%) +([0-9a-f:]+) +%[ *(.-)%]")
+
+    if mac1 ~= nil and mac1 == mac2 then
+      neighbours[mac1] = { tq = tonumber(tq)
+                         , lastseen = tonumber(lastseen)
+                         , ifname = ifname
+                         }
+    end
+  end
+
+  return neighbours
+end
+
+io.write("Access-Control-Allow-Origin: *\n")
+io.write("Content-type: text/event-stream\n\n")
+
+while true do
+  local neighbours = json.encode(neighbours())
+  io.write("data: " .. neighbours .. "\n\n")
+  io.flush()
+  nixio.nanosleep(1, 0)
+end
