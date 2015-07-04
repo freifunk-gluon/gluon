@@ -89,9 +89,7 @@ $(eval $(call GluonModel,TLWA750,tl-wa750re-v1,tp-link-tl-wa750re-v1))
 # TL-WA830RE v1, v2
 $(eval $(call GluonProfile,TLWA830))
 $(eval $(call GluonModel,TLWA830,tl-wa830re-v1,tp-link-tl-wa830re-v1))
-ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,TLWA830,tl-wa830re-v2,tp-link-tl-wa830re-v2))
-endif
 
 # TL-WA850RE v1
 $(eval $(call GluonProfile,TLWA850))
