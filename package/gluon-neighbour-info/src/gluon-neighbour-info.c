@@ -176,8 +176,10 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Invalid parameter %c ignored.\n", c);
     }
 
-  if (request_string == NULL)
-    error(EXIT_FAILURE, 0, "No request string supplied");
+  if (request_string == NULL) {
+    fprintf(stderr, "No request string supplied");
+    exit(EXIT_FAILURE);
+  }
 
   if (sse)
     fputs("Content-Type: text/event-stream\n\n", stdout);
