@@ -15,19 +15,18 @@ local util = require 'luci.util'
 
 
 local try_files = {
-  '/sys/class/ieee80211/phy0/macaddress',
-  '/sys/class/net/eth0/address',
+  '/sys/class/net/eth0/address'
 }
+
+if not util.contains({'x86', 'brcm2708'}, platform.get_target()) then
+  table.insert(try_files, 1, '/sys/class/ieee80211/phy0/macaddress')
+end
 
 if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300'}) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
-end
-
-if platform.match('ar71xx', 'generic', {'unifi-outdoor-plus'}) then
+elseif platform.match('ar71xx', 'generic', {'unifi-outdoor-plus'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
-end
-
-if platform.match('ar71xx', 'generic', {'archer-c5', 'archer-c7'}) then
+elseif platform.match('ar71xx', 'generic', {'archer-c5', 'archer-c7'}) then
   table.insert(try_files, 1, '/sys/class/net/eth1/address')
 end
 
