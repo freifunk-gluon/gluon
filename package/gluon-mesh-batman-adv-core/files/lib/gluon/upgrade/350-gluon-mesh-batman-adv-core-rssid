@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+if uci:get('system', 'rssid_wlan0') then
+  uci:set('system', 'rssid_wlan0', 'dev', 'mesh0')
+
+  uci:save('system')
+  uci:commit('system')
+end
