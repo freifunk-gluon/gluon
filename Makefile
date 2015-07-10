@@ -282,10 +282,7 @@ packages: $(package/stamp-compile)
 prepare-image: FORCE
 	rm -rf $(BOARD_KDIR)
 	mkdir -p $(BOARD_KDIR)
-	$(foreach k, vmlinux vmlinux.elf \
-		$(if $(KERNEL_IMAGES),$(KERNEL_IMAGES),$(filter-out dtbs,$(KERNELNAME))), \
-		$(CP) $(KERNEL_BUILD_DIR)/$(k) $(BOARD_KDIR)/$(k); \
-	)
+	-cp $(KERNEL_BUILD_DIR)/* $(BOARD_KDIR)/
 	+$(SUBMAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image image_prepare KDIR="$(BOARD_KDIR)"
 
 prepare: FORCE
