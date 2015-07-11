@@ -1,14 +1,11 @@
 #!/usr/bin/lua
 
-local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 local uci = require('luci.model.uci').cursor()
 
 
-if sysconfig.wan_ifname:match('%.') then
-  -- fix up duplicate mac addresses (for mesh-on-WAN)
-  uci:set('network', 'wan', 'macaddr', util.generate_mac(1, 0))
-  uci:save('network')
-  uci:commit('network')
-end
+-- fix up duplicate mac addresses (for mesh-on-WAN)
+uci:set('network', 'wan', 'macaddr', util.generate_mac(1, 0))
+uci:save('network')
+uci:commit('network')
 
