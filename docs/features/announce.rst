@@ -8,7 +8,8 @@ IP addresses, location, software versions and various other information.
 Format of collected data
 ------------------------
 
-Information to be announced is currently split into two categories:
+Data is collected by lua scripts in the `gluon-collect-data` package.
+The data is currently grouped in two categories:
 
   nodeinfo
     In this category (mostly) static information is collected. If
@@ -114,8 +115,8 @@ On optional timeout may be specified, e.g. `-t 5` (default: 3 seconds).
 Adding a fact
 -------------
 
-To add a fact just add a file to either ``/lib/gluon/announce/nodeinfo.d/`` or
-``/lib/gluon/announce/statistics.d/``.
+To add a fact just add a file to either ``/lib/gluon/collect-data/nodeinfo.d/`` or
+``/lib/gluon/collect-data/statistics.d/``.
 
 The file must contain a lua script and its name will become the key for the
 resulting JSON object. A simple script adding a ``hostname`` field might look
@@ -144,7 +145,7 @@ the resulting JSON would become:
 
 ::
 
-  # /lib/gluon/announce/announce.lua nodeinfo
+  # /lib/gluon/collect-data/generate_json.lua nodeinfo
   {
      "hardware" : {
         "model" : "TP-Link TL-MR3420 v1"
