@@ -82,7 +82,7 @@ All config and expert mode modules contain both English and German texts now. Th
 locale should always be enabled in ``site.mk`` (as English is the fallback language),
 German can be enabled in addition using the ``GLUON_LANGS`` setting.
 
-The language shown is autmatically determined from the headers sent by the user's
+The language shown is automatically determined from the headers sent by the user's
 browser.
 
 Mesh-on-LAN
