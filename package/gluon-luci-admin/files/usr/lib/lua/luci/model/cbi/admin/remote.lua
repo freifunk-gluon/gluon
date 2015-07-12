@@ -84,7 +84,7 @@ function m2.on_commit(map)
   if v1 and v2 then
     if v1 == v2 then
       if #v1 > 0 then
-        if luci.sys.user.setpasswd(luci.dispatcher.context.authuser, v1) == 0 then
+        if luci.sys.user.setpasswd('root', v1) == 0 then
           m2.message = translate("Password changed.")
         else
           m2.errmessage = translate("Unable to change the password.")
