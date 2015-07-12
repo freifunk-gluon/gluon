@@ -78,7 +78,7 @@ ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, struct t
   return ret;
 }
 
-int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse, int timeout) {
+int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse, double timeout) {
   ssize_t ret;
   char buffer[8192];
 
@@ -90,8 +90,8 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
   }
 
   struct timeval tv_timeout, tv_offset;
-  tv_timeout.tv_sec = timeout;
-  tv_timeout.tv_usec = 0;
+  tv_timeout.tv_sec = (int) timeout;
+  tv_timeout.tv_usec = ((int) (timeout * 1000000)) % 1000000;
 
   getclock(&tv_offset);
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
 
   int port_set = 0;
   int destination_set = 0;
-  int timeout = 3;
+  double timeout = 3.0;
   bool sse = false;
 
   int c;
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
         request_string = optarg;
         break;
       case 't':
-        timeout = atoi(optarg);
+        timeout = atof(optarg);
         break;
       case 's':
         sse = true;
