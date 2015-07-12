@@ -73,14 +73,14 @@ won't run correctly without some adjustments, so better double check that everyt
 Add support to the build system
 '''''''''''''''''''''''''''''''
 A directory for the new target must be created under ``targets``, and it must be added
-to ``targets/targets.mk``. In the new target directory, three files must be created:
+to ``targets/targets.mk``. In the new target directory, the following files must be created:
 
-* config
 * profiles.mk
 * vermagic
+* config (optional)
 
-The file ``config`` can be used to add additional, target-specific options to the OpenWrt config. It
-must at least select the correct target and subtarget. For ``profiles.mk``, see :ref:`hardware-adding-profiles`.
+For ``profiles.mk``, see :ref:`hardware-adding-profiles`.
+The file ``config`` can be used to add additional, target-specific options to the OpenWrt config.
 
 The files ``vermagic`` must have the correct content so kernel modules from the upstream repositories
 can be installed without dependency issues. The OpenWrt version a Gluon release is based on is defined by the upstream package repo URL in ``include/gluon.mk``
@@ -92,4 +92,4 @@ The content is a hash which is part of the version number of the kernel package.
 As the kernel package is called ``kernel_3.10.49-1-0114c71ed85677c9c1e4911437af4743_ar71xx.ipk``, the correct ``vermagic`` string
 is ``0114c71ed85677c9c1e4911437af4743``.
 
-After this, is should be sufficient to call ``make GLUON_TARGET=<target>-<subtarget>`` to build the images for the new target.
+After this, is should be sufficient to call ``make GLUON_TARGET=<target>`` to build the images for the new target.

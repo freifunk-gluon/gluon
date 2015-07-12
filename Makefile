@@ -52,7 +52,7 @@ include $(GLUONDIR)/include/toplevel.mk
 include $(GLUONDIR)/targets/targets.mk
 
 
-CheckTarget := [ -n '$(GLUON_TARGET)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_BOARD)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)' ] \
+CheckTarget := [ -n '$(GLUON_TARGET)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_BOARD)' ] \
 	|| (echo -e 'Please set GLUON_TARGET to a valid target. Gluon supports the following targets:$(subst $(space),\n * ,$(GLUON_TARGETS))'; false)
 
 
@@ -209,7 +209,12 @@ config: FORCE
 	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
 	+$(GLUONMAKE) prepare-tmpinfo
 	( \
-		cat $(GLUONDIR)/include/config $(GLUONDIR)/targets/$(GLUON_TARGET)/config; \
+		cat $(GLUONDIR)/include/config; \
+		echo 'CONFIG_TARGET_$(GLUON_TARGET_$(GLUON_TARGET)_BOARD)=y'; \
+		$(if $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET), \
+			echo 'CONFIG_TARGET_$(GLUON_TARGET_$(GLUON_TARGET)_BOARD)_$(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)=y'; \
+		) \
+		cat $(GLUONDIR)/targets/$(GLUON_TARGET)/config 2>/dev/null; \
 		echo 'CONFIG_BUILD_SUFFIX="gluon-$(GLUON_TARGET)"'; \
 		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
