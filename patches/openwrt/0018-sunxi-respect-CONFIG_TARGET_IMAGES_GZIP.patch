@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 16 Jul 2015 22:13:59 +0200
+Subject: sunxi: respect CONFIG_TARGET_IMAGES_GZIP
+
+The ext4 images are huge uncompressed.
+
+diff --git a/target/linux/sunxi/image/Makefile b/target/linux/sunxi/image/Makefile
+index 19ab935..d3f4409 100644
+--- a/target/linux/sunxi/image/Makefile
++++ b/target/linux/sunxi/image/Makefile
+@@ -43,6 +43,10 @@ define Image/Build/SDCard
+ 		$(CONFIG_SUNXI_SD_BOOT_PARTSIZE) \
+ 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) \
+ 		$(KDIR)/uboot-sunxi-$(PROFILE)-u-boot-with-spl.bin
++
++  ifneq ($(CONFIG_TARGET_IMAGES_GZIP),)
++	gzip -f9n $(BIN_DIR)/$(IMG_PREFIX)-$(PROFILE)-sdcard-vfat-$(1).img
++  endif
+ endef
+ 
+ define Image/Build/Profile/A10-OLinuXino-Lime

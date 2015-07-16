@@ -9,4 +9,5 @@ ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,brcm2708,bcm2708)) # BROKEN: Needs more testing
 $(eval $(call GluonTarget,brcm2708,bcm2709)) # BROKEN: Needs more testing
+$(eval $(call GluonTarget,sunxi)) # BROKEN: Untested, no sysupgrade support
 endif

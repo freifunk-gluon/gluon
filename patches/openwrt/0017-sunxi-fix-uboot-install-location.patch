@@ -1,0 +1,131 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 16 Jul 2015 22:01:02 +0200
+Subject: sunxi: fix uboot install location
+
+Install uboot files to KERNEL_BUILD_DIR instead of BIN_DIR to fix the
+ImageBuilder. Similar fixes are necessary for many (all?) other uboot
+targets.
+
+Also remove the DTS copy command, BIN_DIR was unnecessarily cluttered with
+DTS files unrelated to the chosen profile.
+
+diff --git a/package/boot/uboot-sunxi/Makefile b/package/boot/uboot-sunxi/Makefile
+index 14ba922..9032600 100644
+--- a/package/boot/uboot-sunxi/Makefile
++++ b/package/boot/uboot-sunxi/Makefile
+@@ -6,6 +6,7 @@
+ #
+ 
+ include $(TOPDIR)/rules.mk
++include $(INCLUDE_DIR)/kernel.mk
+ 
+ PKG_NAME:=u-boot
+ PKG_VERSION:=2015.01
+@@ -16,7 +17,7 @@ PKG_SOURCE_URL:= \
+ 
+ PKG_MD5SUM:=7f08dc9e98a71652bd6968888ed6ec95
+ 
+-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
++PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
+ 
+ PKG_LICENSE:=GPL-2.0 GPL-2.0+
+ PKG_LICENSE_FILES:=Licenses/README
+@@ -136,16 +137,16 @@ define Build/Compile
+ endef
+ 
+ define Package/uboot/install/default
+-	$(INSTALL_DIR) $(BIN_DIR)/uboot-$(BOARD)-$(1)
+ 	$(CP) $(PKG_BUILD_DIR)/u-boot.bin \
+-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-u-boot.bin
++		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-u-boot.bin
+ 	$(CP) $(PKG_BUILD_DIR)/spl/sunxi-spl.bin \
+-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-spl.bin
++		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-spl.bin
+ 	$(CP) $(PKG_BUILD_DIR)/u-boot-sunxi-with-spl.bin \
+-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-u-boot-with-spl.bin
++		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-u-boot-with-spl.bin
+ 	$(CP) uEnv.txt \
+-		$(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-uEnv.txt
+-	mkimage -C none -A arm -T script -d $(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-uEnv.txt $(BIN_DIR)/uboot-$(BOARD)-$(1)/openwrt-$(BOARD)-$(1)-boot.scr
++		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-uEnv.txt
++	mkimage -C none -A arm -T script -d $(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-uEnv.txt \
++		$(KERNEL_BUILD_DIR)/uboot-$(BOARD)-$(1)-boot.scr
+ endef
+ 
+ define Package/uboot/install/template
+diff --git a/target/linux/sunxi/image/Makefile b/target/linux/sunxi/image/Makefile
+index 6fcd61f..19ab935 100644
+--- a/target/linux/sunxi/image/Makefile
++++ b/target/linux/sunxi/image/Makefile
+@@ -11,28 +11,12 @@ include $(INCLUDE_DIR)/host.mk
+ FAT32_BLOCK_SIZE=1024
+ FAT32_BLOCKS=$(shell echo $$(($(CONFIG_SUNXI_SD_BOOT_PARTSIZE)*1024*1024/$(FAT32_BLOCK_SIZE))))
+ 
+-BOARDS:= \
+-	sun4i-a10-cubieboard \
+-	sun4i-a10-olinuxino-lime \
+-	sun4i-a10-pcduino \
+-	sun5i-a13-olinuxino \
+-	sun6i-a31-colombus \
+-	sun6i-a31-m9 \
+-	sun7i-a20-bananapi \
+-	sun7i-a20-bananapro \
+-	sun7i-a20-cubieboard2 \
+-	sun7i-a20-cubietruck \
+-	sun7i-a20-olinuxino-lime \
+-	sun7i-a20-olinuxino-micro \
+-	sun7i-a20-pcduino3 \
+-	sun7i-a20-lamobo-r1
+-
+ define Image/BuildKernel
+ 	mkimage -A arm -O linux -T kernel -C none \
+ 		-a 0x40008000 -e 0x40008000 \
+ 		-n 'ARM OpenWrt Linux-$(LINUX_VERSION)' \
+ 		-d $(KDIR)/zImage $(BIN_DIR)/$(IMG_PREFIX)-uImage
+-	
++
+     ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
+ 	$(CP) $(KDIR)/zImage-initramfs $(BIN_DIR)/$(IMG_PREFIX)-zImage-initramfs
+ 	echo -ne '\x00\x00\x00\x00' >> $(BIN_DIR)/$(IMG_PREFIX)-zImage-initramfs
+@@ -42,27 +26,23 @@ define Image/BuildKernel
+ 		$(BIN_DIR)/$(IMG_PREFIX)-uImage-initramfs \
+ 	)
+     endif
+-
+-	$(foreach board,$(BOARDS),
+-		$(CP) $(DTS_DIR)/$(board).dtb $(BIN_DIR)/
+-	)
+ endef
+ 
+ define Image/Build/SDCard
+ 	rm -f $(KDIR)/boot.img
+ 	mkdosfs $(KDIR)/boot.img -C $(FAT32_BLOCKS)
+-	
+-	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/uboot-sunxi-$(PROFILE)/$(IMG_PREFIX)-$(PROFILE)-boot.scr ::boot.scr
+-	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/$(2).dtb ::dtb
++
++	mcopy -i $(KDIR)/boot.img $(KDIR)/uboot-sunxi-$(PROFILE)-boot.scr ::boot.scr
++	mcopy -i $(KDIR)/boot.img $(DTS_DIR)/$(2).dtb ::dtb
+ 	mcopy -i $(KDIR)/boot.img $(BIN_DIR)/$(IMG_PREFIX)-uImage ::uImage
+-	
++
+ 	./gen_sunxi_sdcard_img.sh \
+ 		$(BIN_DIR)/$(IMG_PREFIX)-$(PROFILE)-sdcard-vfat-$(1).img \
+ 		$(KDIR)/boot.img \
+ 		$(KDIR)/root.$(1) \
+ 		$(CONFIG_SUNXI_SD_BOOT_PARTSIZE) \
+ 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) \
+-		$(BIN_DIR)/uboot-sunxi-$(PROFILE)/$(IMG_PREFIX)-$(PROFILE)-u-boot-with-spl.bin
++		$(KDIR)/uboot-sunxi-$(PROFILE)-u-boot-with-spl.bin
+ endef
+ 
+ define Image/Build/Profile/A10-OLinuXino-Lime
+@@ -124,7 +104,7 @@ endef
+ define Image/Build
+ 	$(call Image/Build/$(1),$(1))
+ 	$(call Image/Build/Profile/$(PROFILE),$(1))
+-	
++
+ 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-root.$(1) bs=128k conv=sync
+ endef
+ 
