@@ -1,5 +1,5 @@
-From: blogic <blogic@3c298f89-4303-0410-b956-a3cf2f4a3e73>
-Date: Tue, 14 Jul 2015 07:39:10 +0000
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 17 Jul 2015 20:51:23 +0200
 Subject: brcm2708: Implement sysupgrade
 
 Implement sysupgrade for Raspberry Pi, similar to the way it is done on x86:
@@ -10,8 +10,6 @@ Also add optional gzip compression for the SD card image, since this can save
 a lot of space (76M vs 6M), also similar to x86.
 
 Signed-off-by: Bruno Randolf <br1@einfach.org>
-
-git-svn-id: svn://svn.openwrt.org/openwrt/trunk@46347 3c298f89-4303-0410-b956-a3cf2f4a3e73
 
 diff --git a/target/linux/brcm2708/Makefile b/target/linux/brcm2708/Makefile
 index 30f6e1d..015aa9c 100644
@@ -74,7 +72,7 @@ index 0000000..3e1ee00
 +	umount /mnt
 +}
 diff --git a/target/linux/brcm2708/image/Makefile b/target/linux/brcm2708/image/Makefile
-index e70bdd0..0dd7b7d 100644
+index e70bdd0..2c18baf 100644
 --- a/target/linux/brcm2708/image/Makefile
 +++ b/target/linux/brcm2708/image/Makefile
 @@ -28,6 +28,9 @@ define Image/Build/RaspberryPi
@@ -82,7 +80,7 @@ index e70bdd0..0dd7b7d 100644
  	./gen_rpi_sdcard_img.sh $(BIN_DIR)/$(IMG_PREFIX)-sdcard-vfat-$(1).img $(KDIR)/boot.img $(KDIR)/root.$(1) \
  		$(CONFIG_BRCM2708_SD_BOOT_PARTSIZE) $(CONFIG_TARGET_ROOTFS_PARTSIZE)
 +  ifneq ($(CONFIG_TARGET_IMAGES_GZIP),)
-+	gzip -k -f9 $(BIN_DIR)/$(IMG_PREFIX)-sdcard-vfat-$(1).img
++	gzip -f9n $(BIN_DIR)/$(IMG_PREFIX)-sdcard-vfat-$(1).img
 +  endif
  endef
  
