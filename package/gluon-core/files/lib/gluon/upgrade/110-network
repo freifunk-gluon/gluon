@@ -25,6 +25,7 @@ uci:section('network', 'interface', 'wan6',
 	      ifname = 'br-wan',
 	      peerdns = 0,
 	      ip6table = 1,
+	      sourcefilter = 0,
 	    }
 )
 

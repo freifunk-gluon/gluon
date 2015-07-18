@@ -41,6 +41,7 @@ end
 uci:set('network', 'client', 'igmp_snooping', 0)
 uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
 uci:set('network', 'client', 'peerdns', 1)
+uci:set('network', 'client', 'sourcefilter', 0)
 
 uci:delete('network', 'bat0')
 uci:section('network', 'interface', 'bat0',
