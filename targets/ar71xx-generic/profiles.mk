@@ -144,6 +144,10 @@ endif
 ## Ubiquiti (everything)
 $(eval $(call GluonProfile,UBNT))
 $(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-bullet-m))
+$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-loco-m))
+$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-picostation-m))
+$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-rocket-m))
+
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m,ubiquiti-nanostation-m))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw,ubiquiti-nanostation-m-xw))
