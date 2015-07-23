@@ -3,18 +3,18 @@ Date: Tue, 10 Mar 2015 13:17:14 +0100
 Subject: ath10k: add Candelatech community firmware as an additional choice
 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 2af5d39..2d90aef 100644
+index 2af5d39..5b85971 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -604,6 +604,14 @@ This module adds support for wireless adapters based on
  Atheros USB AR9271 and AR7010 family of chipsets.
  endef
  
-+ATH10K_CT_COMMUNITY_FW:=firmware-2-ct-full-community-13.bin
++ATH10K_CT_COMMUNITY_FW:=firmware-2-ct-full-community-14.bin
 +define Download/ath10k-firmware-ct-community
 +  FILE:=$(ATH10K_CT_COMMUNITY_FW)
 +  URL:=http://www.candelatech.com/downloads/
-+  MD5SUM:=a3decc529b0171ae9ec4495089ab354a
++  MD5SUM:=800799459c20c1683138c74b3ba58f25
 +endef
 +$(eval $(call Download,ath10k-firmware-ct-community))
 +
