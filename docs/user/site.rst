@@ -62,24 +62,46 @@ regdom
       regdom = 'DE'
 
 wifi24
-    WLAN Configuration of your community in the 2.4Ghz radio. Consisting
-    of ``ssid`` of your client network, the ``channel`` your community is using,
-    ``htmode``, the adhoc ssid ``mesh_ssid`` used between devices, the adhoc
-    bssid ``mesh_bssid`` and the adhoc multicast rate ``mesh_mcast_rate``.
-    Optionally ``mesh_vlan`` can be used to setup VLAN on top of the 802.11
-    ad-hoc interface. The options ``mesh_disabled`` and ``client_disabled``
-    are optional, too. They allow to disable the SSID by default, e.g. for
-    preconfigured node. This only affects first configuraton.
-    Combined in an dictionary, e.g.:
+    WLAN configuration for 2.4 GHz devices.
+    ``channel`` must be set to a valid wireless channel for your radio.
+    ``htmode`` selects the desired htmode (e.g. HT20, HT40- or HT40+).
+
+    There are currently three interface types available. You many choose to
+    configure any subset of them:
+
+    - ``ap`` creates a master interface where clients may connect
+    - ``mesh`` creates an 802.11s mesh interface with forwarding disabled
+    - ``ibss`` creates an ad-hoc interface
+
+    Each interface may be disabled by setting ``disabled`` to ``true``.
+    This will only affect new installations.
+    Upgrades will not changed the disabled state.
+
+    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the interface's ESSID.
+
+    ``mesh`` requires a single parameter, a string, named ``id`` which sets the mesh id.
+
+    ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
+    An optional parameter ``vlan`` (integer) is supported.
+
+    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for setting the default multicast datarate.
     ::
 
        wifi24 = {
-         ssid = 'entenhausen.freifunk.net',
          channel = 11,
-         htmode = 'HT40-',
-         mesh_ssid = 'ff:ff:ff:ee:ba:be',
-         mesh_bssid = 'ff:ff:ff:ee:ba:be',
-         mesh_mcast_rate = 12000,
+         htmode = 'HT20',
+         ap = {
+           ssid = 'entenhausen.freifunk.net',
+         },
+         mesh = {
+           id = 'entenhausen-mesh',
+           mcast_rate = 12000,
+         },
+         ibss = {
+           ssid = 'ff:ff:ff:ee:ba:be',
+           bssid = 'ff:ff:ff:ee:ba:be',
+           mcast_rate = 12000,
+         },
        },
 
 wifi5
