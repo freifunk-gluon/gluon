@@ -12,9 +12,7 @@ $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe520-v1.0))
 # TL-WA701N/ND v1, v2
 $(eval $(call GluonProfile,TLWA701))
 $(eval $(call GluonModel,TLWA701,tl-wa701n-v1,tp-link-tl-wa701n-nd-v1))
-ifeq ($(BROKEN),1)
-$(eval $(call GluonModel,TLWA701,tl-wa701nd-v2,tp-link-tl-wa701n-nd-v2)) # BROKEN: untested
-endif
+$(eval $(call GluonModel,TLWA701,tl-wa701nd-v2,tp-link-tl-wa701n-nd-v2))
 
 # TL-WR703N v1
 $(eval $(call GluonProfile,TLWR703))
