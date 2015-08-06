@@ -30,13 +30,12 @@ Bugfixes
 * Fix the model name string on some NETGEAR WNDR3700v2
 * Fix 5GHz WLAN switching channels and losing connectivity when other WLANs using the same channel are detected (including other Gluon nodes...); see https://github.com/freifunk-gluon/gluon/issues/386
 * Fix DNS resolution for mesh VPN on IPv6-only WAN; see https://github.com/freifunk-gluon/gluon/issues/397
+* gluon-mesh-batman-adv-15: update batman-adv to 2015.0 with additional bugfixes (fixes various minor bugs)
+* gluon-mesh-batman-adv-15: fix forwarding of fragmented frames over multiple links with different MTUs
 
-Known issues
-~~~~~~~~~~~~
-
-* gluon-mesh-batman-adv-15: batman-adv compat 15 doesn't handle fragmentation correctly when there are multiple different MTUs involved. In particular,
-  this breaks transmission of large packets which are first fragmented for mesh-on-lan/wan and are then sent over the mesh VPN, which has an even smaller MTU.
-
-  We hope this will be fixed in batman-adv soon, until then we can't really recommend anything but to avoid mesh-on-lan/wan with gluon-mesh-batman-adv-15.
+  batman-adv compat 15 doesn't re-fragment frames that are fragmented already. In particular,
+  this breaks transmission of large packets which are first fragmented for mesh-on-lan/wan and are then sent
+  over the mesh VPN, which has an even smaller MTU. Work around this limitation by decreasing the maximum fragment
+  size to 1280, so they can always be forwarded as long there's no link with a MTU smaller than 1280.
 
   See https://github.com/freifunk-gluon/gluon/issues/435
