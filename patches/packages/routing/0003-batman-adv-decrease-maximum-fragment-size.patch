@@ -4,12 +4,24 @@ Subject: batman-adv: decrease maximum fragment size
 
 diff --git a/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 new file mode 100644
-index 0000000..a93b9fa
+index 0000000..16cb023
 --- /dev/null
 +++ b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
-@@ -0,0 +1,11 @@
-+--- a/main.h
-++++ b/main.h
+@@ -0,0 +1,23 @@
++From 02c861b6aa334dff1ce8031ffc328924c78beec1 Mon Sep 17 00:00:00 2001
++Message-Id: <02c861b6aa334dff1ce8031ffc328924c78beec1.1438892883.git.mschiffer@universe-factory.net>
++In-Reply-To: <a20c87779270f509227feecc4487e36a7d850c0f.1438892883.git.mschiffer@universe-factory.net>
++References: <a20c87779270f509227feecc4487e36a7d850c0f.1438892883.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 6 Aug 2015 22:27:01 +0200
++Subject: [PATCH 2/2] batman-adv: decrease maximum fragment size
++
++---
++ net/batman-adv/main.h | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++--- a/net/batman-adv/main.h
+++++ b/net/batman-adv/main.h
 +@@ -148,7 +148,7 @@ enum batadv_uev_type {
 + /* Maximum number of fragments for one packet */
 + #define BATADV_FRAG_MAX_FRAGMENTS 16
