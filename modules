@@ -4,7 +4,7 @@ OPENWRT_REPO=git://git.openwrt.org/15.05/openwrt.git
 OPENWRT_COMMIT=48e7befbddb933d6cb046ec074470bbccdb060da
 
 PACKAGES_OPENWRT_REPO=git://github.com/openwrt/packages.git
-PACKAGES_OPENWRT_COMMIT=bc424ae8577ec10808cc5645eea700ebddf5183f
+PACKAGES_OPENWRT_COMMIT=1ee31bdfd26c53e41199c3d28cadca731d3bd372
 PACKAGES_OPENWRT_BRANCH=for-15.05
 
 PACKAGES_GLUON_REPO=git://github.com/freifunk-gluon/packages.git
@@ -14,5 +14,5 @@ PACKAGES_ROUTING_REPO=git://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_COMMIT=7d4e4fe21d6a7315c86fb070f2aac422f3334920
 
 PACKAGES_LUCI_REPO=git://github.com/openwrt/luci.git
-PACKAGES_LUCI_COMMIT=69fd4f14eef783076b69315c71fe57baad1f8925
+PACKAGES_LUCI_COMMIT=3a7d738e2776e2ddaf6c127dbd9e2b90a77181d8
 PACKAGES_LUCI_BRANCH=for-15.05
