@@ -28,11 +28,11 @@ index 632a209..01f567f 100644
  	proto_init_update "$iface" 1
  	proto_send_update "$config"
  }
-diff --git a/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
+diff --git a/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch
 new file mode 100644
 index 0000000..9fc9426
 --- /dev/null
-+++ b/batman-adv/patches/0001-batman-adv-introduce-no_rebroadcast-option.patch
++++ b/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch
 @@ -0,0 +1,172 @@
 +From 5ba3f1eac041857deabe39432fdfe1a584bbdd81 Mon Sep 17 00:00:00 2001
 +Message-Id: <5ba3f1eac041857deabe39432fdfe1a584bbdd81.1420645650.git.mschiffer@universe-factory.net>

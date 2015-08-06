@@ -2,11 +2,11 @@ From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Thu, 6 Aug 2015 21:29:47 +0200
 Subject: batman-adv: decrease maximum fragment size
 
-diff --git a/batman-adv/patches/1000-batman-adv-decrease-maximum-fragment-size.patch b/batman-adv/patches/1000-batman-adv-decrease-maximum-fragment-size.patch
+diff --git a/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 new file mode 100644
 index 0000000..a93b9fa
 --- /dev/null
-+++ b/batman-adv/patches/1000-batman-adv-decrease-maximum-fragment-size.patch
++++ b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 @@ -0,0 +1,11 @@
 +--- a/main.h
 ++++ b/main.h
