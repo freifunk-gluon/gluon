@@ -3,7 +3,7 @@ Date: Tue, 10 Mar 2015 13:17:14 +0100
 Subject: ath10k: add Candelatech community firmware as an additional choice
 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 2af5d39..5b85971 100644
+index 1f15b40..c9cd289 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -604,6 +604,14 @@ This module adds support for wireless adapters based on
@@ -21,7 +21,7 @@ index 2af5d39..5b85971 100644
  define KernelPackage/ath10k
    $(call KernelPackage/mac80211/Default)
    TITLE:=Atheros 802.11ac wireless cards support
-@@ -624,13 +632,31 @@ endef
+@@ -624,21 +632,37 @@ endef
  define KernelPackage/ath10k/config
    if PACKAGE_kmod-ath10k
  
@@ -51,11 +51,19 @@ index 2af5d39..5b85971 100644
 +		  Supports both AP and IBSS (ad-hoc) mode. Doesn't support
 +		  encryption when using multiple VIFs.
  
+ 	config ATH10K_API2_FW
+ 		bool "Firmware optimized for AP operation (v10.1 / API v2)"
+-		default n
+-		depends on !ATH10K_STA_FW
+ 		help
+ 		  Use the ath10k firmware from the 10.1 SDK using API v2 optimized
+ 		  for access point operation if the default firmware keeps crashing.
+ 
 +	endchoice
    endif
  endef
  
-@@ -1858,14 +1884,20 @@ define KernelPackage/ath10k/install
+@@ -1866,18 +1890,25 @@ define KernelPackage/ath10k/install
  	$(INSTALL_DATA) \
  		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/ath10k/QCA988X/hw2.0/board.bin \
  		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
@@ -67,6 +75,12 @@ index 2af5d39..5b85971 100644
  ifeq ($(CONFIG_ATH10K_STA_FW),y)
  	$(INSTALL_DATA) \
  		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/main/firmware-2.bin_999.999.0.636 \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
+-else ifeq ($(CONFIG_ATH10K_API2_FW),y)
++endif
++ifeq ($(CONFIG_ATH10K_API2_FW),y)
+ 	$(INSTALL_DATA) \
+ 		$(PKG_BUILD_DIR)/$(PKG_ATH10K_LINUX_FIRMWARE_SUBDIR)/10.1/firmware-2.bin_10.1.467.2-1 \
  		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
 -else
 +endif
