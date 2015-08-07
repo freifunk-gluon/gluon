@@ -84,8 +84,10 @@ function need_table(varname, subcheck, required)
 
    assert_type(var, 'table', "site.conf error: expected `" .. varname .. "' to be a table")
 
-   for k, v in pairs(var) do
-      subcheck(k, v)
+   if subcheck then
+      for k, v in pairs(var) do
+         subcheck(k, v)
+      end
    end
 
    return var
