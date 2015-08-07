@@ -75,15 +75,23 @@ for _, radio in ipairs(radios) do
   if p then
     local o
 
-    --box for the client network
-    o = p:option(Flag, radio .. '_client_enabled', translate("Enable client network"))
-    o.default = uci:get_bool('wireless', 'client_' .. radio, "disabled") and o.disabled or o.enabled
-    o.rmempty = false
+    if uci:get('wireless', 'client_' .. radio) then
+      o = p:option(Flag, radio .. '_client_enabled', translate("Enable client network (access point)"))
+      o.default = uci:get_bool('wireless', 'client_' .. radio, "disabled") and o.disabled or o.enabled
+      o.rmempty = false
+    end
 
-    --box for the mesh network
-    o = p:option(Flag, radio .. '_mesh_enabled', translate("Enable mesh network"))
-    o.default = uci:get_bool('wireless', 'mesh_' .. radio, "disabled") and o.disabled or o.enabled
-    o.rmempty = false
+    if uci:get('wireless', 'mesh_' .. radio) then
+      o = p:option(Flag, radio .. '_mesh_enabled', translate("Enable mesh network (802.11s)"))
+      o.default = uci:get_bool('wireless', 'mesh_' .. radio, "disabled") and o.disabled or o.enabled
+      o.rmempty = false
+    end
+
+    if uci:get('wireless', 'ibss_' .. radio) then
+      o = p:option(Flag, radio .. '_ibss_enabled', translate("Enable mesh network (IBSS)"))
+      o.default = uci:get_bool('wireless', 'ibss_' .. radio, "disabled") and o.disabled or o.enabled
+      o.rmempty = false
+    end
 
     local phy
 
@@ -120,17 +128,29 @@ function f.handle(self, state, data)
 
     for _, radio in ipairs(radios) do
 
-      local clientdisabled = 0
-      if data[radio .. '_client_enabled'] == '0' then
-        clientdisabled = 1
+      if uci:get('wireless', 'client_' .. radio) then
+	local disabled = 0
+	if data[radio .. '_client_enabled'] == '0' then
+	  disabled = 1
+	end
+	uci:set('wireless', 'client_' .. radio, "disabled", disabled)
       end
-      uci:set('wireless', 'client_' .. radio, "disabled", clientdisabled)
 
-      local meshdisabled = 0
-      if data[radio .. '_mesh_enabled'] == '0' then
-        meshdisabled = 1
+      if uci:get('wireless', 'mesh_' .. radio) then
+	local disabled = 0
+	if data[radio .. '_mesh_enabled'] == '0' then
+	  disabled = 1
+	end
+	uci:set('wireless', 'mesh_' .. radio, "disabled", disabled)
       end
-      uci:set('wireless', 'mesh_' .. radio, "disabled", meshdisabled)
+
+      if uci:get('wireless', 'ibss_' .. radio) then
+	local disabled = 0
+	if data[radio .. '_ibss_enabled'] == '0' then
+	  disabled = 1
+	end
+	uci:set('wireless', 'ibss_' .. radio, "disabled", disabled)
+      end
 
       if data[radio .. '_txpower'] then
         if data[radio .. '_txpower'] == 'default' then
