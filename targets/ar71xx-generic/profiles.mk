@@ -116,13 +116,10 @@ $(eval $(call GluonProfile,TLMR3040))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v1,tp-link-tl-mr3040-v1))
 $(eval $(call GluonModel,TLMR3040,tl-mr3040-v2,tp-link-tl-mr3040-v2))
 
-# TL-MR3220 v1
-$(eval $(call GluonProfile,TLMR3220V1))
-$(eval $(call GluonModel,TLMR3220V1,tl-mr3220-v1,tp-link-tl-mr3220-v1))
-
-# TL-MR3220 v2
-$(eval $(call GluonProfile,TLMR3220V2))
-$(eval $(call GluonModel,TLMR3220V2,tl-mr3220-v2,tp-link-tl-mr3220-v2))
+# TL-MR3220 v1, v2
+$(eval $(call GluonProfile,TLMR3220))
+$(eval $(call GluonModel,TLMR3220,tl-mr3220-v1,tp-link-tl-mr3220-v1))
+$(eval $(call GluonModel,TLMR3220,tl-mr3220-v2,tp-link-tl-mr3220-v2))
 
 # TL-MR3420 v1, v2
 $(eval $(call GluonProfile,TLMR3420))
