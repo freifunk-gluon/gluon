@@ -1,0 +1,44 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 7 Aug 2015 18:45:42 +0200
+Subject: base-files: default_postinst: propagate the real postinst return code
+
+Using the postinst script for sanity checks and expecting opkg to fail
+if the postinst didn't return 0 was possible in Barrier Breaker, propagate
+the real postinst return code through default_postinst to restore this
+behaviour.
+
+diff --git a/package/base-files/files/lib/functions.sh b/package/base-files/files/lib/functions.sh
+index 8d045fa..2f78d67 100755
+--- a/package/base-files/files/lib/functions.sh
++++ b/package/base-files/files/lib/functions.sh
+@@ -174,7 +174,8 @@ default_prerm() {
+ }
+ 
+ default_postinst() {
+-	local pkgname rusers
++	local pkgname rusers ret
++	ret=0
+ 	pkgname=$(basename ${1%.*})
+ 	rusers=$(grep "Require-User:" ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.control)
+ 	[ -n "$rusers" ] && {
+@@ -215,7 +216,10 @@ default_postinst() {
+ 		done
+ 	}
+ 
+-	[ -f ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.postinst-pkg ] && ( . ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.postinst-pkg )
++	if [ -f ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.postinst-pkg ]; then
++		( . ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.postinst-pkg )
++		ret=$?
++	fi
+ 	[ -n "${IPKG_INSTROOT}" ] || rm -f /tmp/luci-indexcache 2>/dev/null
+ 
+ 	[ "$PKG_UPGRADE" = "1" ] || for i in `cat ${IPKG_INSTROOT}/usr/lib/opkg/info/${pkgname}.list | grep "^/etc/init.d/"`; do
+@@ -225,7 +229,7 @@ default_postinst() {
+ 			$i start
+ 		}
+ 	done
+-	return 0
++	return $ret
+ }
+ 
+ include() {
