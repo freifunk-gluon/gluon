@@ -49,6 +49,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2015.1.2
    releases/v2015.1.1
    releases/v2015.1
    releases/v2014.4
@@ -101,9 +102,10 @@ ar71xx-generic
   - TL-MR3040 (v1, v2)
   - TL-MR3220 (v1, v2)
   - TL-MR3420 (v1, v2)
-  - TL-WA701N/ND (v1)
+  - TL-WA701N/ND (v1, v2)
   - TL-WA750RE (v1)
-  - TL-WA801N/ND (v2)
+  - TL-WA801N/ND (v1, v2)
+  - TL-WA830RE (v1, v2)
   - TL-WA850RE (v1)
   - TL-WA860RE (v1)
   - TL-WA901N/ND (v2, v3)
@@ -113,8 +115,8 @@ ar71xx-generic
   - TL-WR1043N/ND (v1, v2)
   - TL-WR703N (v1)
   - TL-WR710N (v1)
-  - TL-WR740N (v1, v3, v4)
-  - TL-WR741N/ND (v1, v2, v4)
+  - TL-WR740N (v1, v3, v4, v5)
+  - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9)
   - TL-WR842N/ND (v1, v2)
