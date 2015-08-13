@@ -6,10 +6,10 @@ This conflicts with our reset button usage.
 
 diff --git a/package/base-files/files/etc/rc.button/reset b/package/base-files/files/etc/rc.button/reset
 deleted file mode 100755
-index 229b503..0000000
+index 3e24146..0000000
 --- a/package/base-files/files/etc/rc.button/reset
 +++ /dev/null
-@@ -1,18 +0,0 @@
+@@ -1,20 +0,0 @@
 -#!/bin/sh
 -
 -[ "${ACTION}" = "released" ] || exit 0
@@ -28,3 +28,5 @@ index 229b503..0000000
 -	echo "FACTORY RESET" > /dev/console
 -	jffs2reset -y && reboot &
 -fi
+-
+-return 0
