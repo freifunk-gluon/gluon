@@ -28,9 +28,4 @@ define Package/gluon-next-node-batman-adv/install
 	$(CP) ./files/* $(1)/
 endef
 
-define Package/gluon-next-node-batman-adv/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
 $(eval $(call BuildPackage,gluon-next-node-batman-adv))

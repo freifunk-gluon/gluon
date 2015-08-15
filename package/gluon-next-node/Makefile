@@ -11,7 +11,7 @@ define Package/gluon-next-node
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Next-node anycast address
-  DEPENDS:=+gluon-core +gluon-client-bridge +kmod-macvlan +PACKAGE_gluon-mesh-batman-adv-core:gluon-next-node-batman-adv
+  DEPENDS:=+gluon-core +gluon-client-bridge +kmod-macvlan
 endef
 
 define Package/gluon-next-node/description
