@@ -26,9 +26,13 @@ end
 local os = os
 local string = string
 local tonumber = tonumber
+local ipairs = ipairs
+local table = table
 
 local nixio = require 'nixio'
 local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
 
 
 module 'gluon.util'
@@ -76,4 +80,27 @@ function generate_mac(f, i)
   m3 = (tonumber(m3, 16)+i) % 0x100
 
   return string.format('%02x:%02x:%02x:%s:%s:%s', m1, m2, m3, m4, m5, m6)
+end
+
+-- Iterate over all radios defined in UCI calling
+-- f(radio, index, site.wifiX) for each radio found while passing
+--  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
+function iterate_radios(f)
+  local radios = {}
+
+  uci:foreach('wireless', 'wifi-device',
+    function(s)
+      table.insert(radios, s['.name'])
+    end
+  )
+
+  for index, radio in ipairs(radios) do
+    local hwmode = uci:get('wireless', radio, 'hwmode')
+
+    if hwmode == '11g' or hwmode == '11ng' then
+      f(radio, index, site.wifi24)
+    elseif hwmode == '11a' or hwmode == '11na' then
+      f(radio, index, site.wifi5)
+    end
+  end
 end
