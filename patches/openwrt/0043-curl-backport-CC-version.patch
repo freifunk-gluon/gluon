@@ -1,0 +1,875 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 16 Aug 2015 10:50:20 +0200
+Subject: curl: backport CC version
+
+diff --git a/package/network/utils/curl/Config.in b/package/network/utils/curl/Config.in
+index 086f5c2..11cfa39 100644
+--- a/package/network/utils/curl/Config.in
++++ b/package/network/utils/curl/Config.in
+@@ -1,112 +1,154 @@
+-menu "Configuration"
+-	depends on PACKAGE_libcurl
++if PACKAGE_libcurl
++
++comment "SSL support"
+ 
+ choice
+-	prompt "SSL library"
++	prompt "Selected SSL library"
+ 	default LIBCURL_POLARSSL
+ 
+-config LIBCURL_POLARSSL
+-	bool "PolarSSL"
++	config LIBCURL_POLARSSL
++		bool "PolarSSL"
+ 
+-config LIBCURL_CYASSL
+-	bool "CyaSSL"
++	config LIBCURL_CYASSL
++		bool "CyaSSL"
+ 
+-config LIBCURL_AXTLS
+-	bool "axTLS"
++	config LIBCURL_AXTLS
++		bool "axTLS"
+ 
+-config LIBCURL_OPENSSL
+-	bool "OpenSSL"
++	config LIBCURL_OPENSSL
++		bool "OpenSSL"
+ 
+-config LIBCURL_GNUTLS
+-	bool "GNUTLS"
++	config LIBCURL_GNUTLS
++		bool "GNUTLS"
+ 
+-config LIBCURL_NOSSL
+-	bool "No SSL support"
++	config LIBCURL_NOSSL
++		bool "No SSL support"
+ 
+ endchoice
+ 
+-config LIBCURL_COOKIES
+-	bool "Enable cookies support"
+-	default y
+-
+-config LIBCURL_CRYPTO_AUTH
+-	bool "Enable cryptographic authentication"
+-	default n
++comment "Supported protocols"
+ 
+ config LIBCURL_DICT
+-	bool "Enable DICT support"
++	bool "DICT protocol"
+ 	default n
+ 
+ config LIBCURL_FILE
+-	bool "Enable FILE support"
++	bool "FILE protocol"
+ 	default y
+ 
+ config LIBCURL_FTP
+-	bool "Enable FTP support"
++	bool "FTP / FTPS protocol"
+ 	default y
+ 
+ config LIBCURL_GOPHER
+-	bool "Enable Gopher support"
++	bool "Gopher protocol"
+ 	default n
+ 
+ config LIBCURL_HTTP
+-	bool "Enable HTTP support"
++	bool "HTTP / HTTPS protocol"
++	default y
++
++config LIBCURL_COOKIES
++	bool "Enable Cookies support"
++	depends on LIBCURL_HTTP
+ 	default y
+ 
+ config LIBCURL_IMAP
+-	bool "Enable IMAP support"
++	bool "IMAP / IMAPS protocol"
+ 	default n
+ 
+ config LIBCURL_LDAP
+-	bool "Enable LDAP support"
++	bool "LDAP protocol"
+ 	default n
+ 
+ config LIBCURL_LDAPS
+ 	bool "Enable LDAPS support"
+-	default n
+-
+-config LIBCURL_LIBCURL_OPTION
+-	bool "Enable --libcurl C code generation support"
+-	default n
++	depends on LIBCURL_LDAP && !LIBCURL_NOSSL
++	default y
+ 
+ config LIBCURL_POP3
+-	bool "Enable POP3 support"
++	bool "POP3 / POP3S protocol"
+ 	default n
+ 
+-config LIBCURL_PROXY
+-	bool "Enable proxy support"
++config LIBCURL_RTSP
++	bool "RTSP protocol"
++	depends on LIBCURL_HTTP
+ 	default n
++config LIBCURL_NO_RTSP
++	string "RTSP require HTTP protocol"
++	depends on !LIBCURL_HTTP
++	default "!"
+ 
+-config LIBCURL_RTSP
+-	bool "Enable RTSP support"
++config LIBCURL_SSH2
++	bool "SCP / SFTP protocol"
+ 	default n
+ 
+-config LIBCURL_SMTP
+-	bool "Enable SMTP support"
++config LIBCURL_SMB
++	bool "SMB protocol (CIFS)"
++	depends on LIBCURL_CRYPTO_AUTH && (LIBCURL_GNUTLS || LIBCURL_OPENSSL)
+ 	default n
++config LIBCURL_NO_SMB
++	string "SMB require 'cryptographic authentication' and either 'GnuTLS' or 'OpenSSL'"
++	depends on !LIBCURL_CRYPTO_AUTH || (!LIBCURL_GNUTLS && !LIBCURL_OPENSSL)
++	default "!"
+ 
+-config LIBCURL_SSPI
+-	bool "Enable SSPI"
++config LIBCURL_SMTP
++	bool "SMTP / SMTPS protocol"
+ 	default n
+ 
+ config LIBCURL_TELNET
+-	bool "Enable TELNET support"
++	bool "TELNET protocol"
+ 	default n
+ 
+ config LIBCURL_TFTP
+-	bool "Enable TFTP support"
++	bool "TFTP protocol"
+ 	default n
+ 
+-config LIBCURL_THREADED_RESOLVER
+-	bool "Enable threaded resolver"
++comment "Miscellaneous"
++
++config LIBCURL_PROXY
++	bool "Enable proxy support"
++	default y
++
++config LIBCURL_CRYPTO_AUTH
++	bool "Enable cryptographic authentication"
+ 	default n
+ 
+-config LIBCURL_TLS-SRP
++config LIBCURL_TLS_SRP
+ 	bool "Enable TLS-SRP authentication"
+ 	default n
+ 
++config LIBCURL_LIBIDN
++	bool "Enable IDN support"
++	default n
++
++config LIBCURL_THREADED_RESOLVER
++	bool "Enable threaded DNS resolver"
++	default n
++	help
++		Enable POSIX threaded asynchronous DNS resolution
++
+ config LIBCURL_ZLIB
+-	bool "Use zlib"
++	bool "Enable zlib support"
++	default n
++
++config LIBCURL_UNIX_SOCKETS
++	bool "Enable unix domain socket support"
++	default n
++	help
++		Enable HTTP over unix domain sockets.
++		To use this with the curl command line, you specify the socket path to the new --unix-domain option.
++		This feature is actually not limited to HTTP, you can do all the TCP-based protocols 
++		except FTP over the unix domain socket, but it is only HTTP that is regularly used this way. 
++		The reason FTP isn't supported is of course its use of two connections 
++		which would be even weirder to do like this.
++
++config LIBCURL_LIBCURL_OPTION
++	bool "Enable generation of C code"
++	default n
++
++config LIBCURL_VERBOSE
++	bool "Enable verbose error strings"
+ 	default n
+ 
+-endmenu
++endif
+diff --git a/package/network/utils/curl/Makefile b/package/network/utils/curl/Makefile
+index 0bb8323..7f6d355 100644
+--- a/package/network/utils/curl/Makefile
++++ b/package/network/utils/curl/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2007-2014 OpenWrt.org
++# Copyright (C) 2007-2015 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=curl
+-PKG_VERSION:=7.38.0
+-PKG_RELEASE:=1
++PKG_VERSION:=7.40.0
++PKG_RELEASE:=3
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_URL:=http://curl.haxx.se/download/ \
+@@ -18,7 +18,7 @@ PKG_SOURCE_URL:=http://curl.haxx.se/download/ \
+ 	ftp://ftp.planetmirror.com/pub/curl/ \
+ 	http://www.mirrormonster.com/curl/download/ \
+ 	http://curl.mirrors.cyberservers.net/download/
+-PKG_MD5SUM:=af6b3c299bd891f43cb5f76c4091b7b4
++PKG_MD5SUM:=8d30594212e65657a5c32030f0998fa9
+ 
+ PKG_LICENSE:=MIT
+ PKG_LICENSE_FILES:=COPYING
+@@ -26,34 +26,45 @@ PKG_LICENSE_FILES:=COPYING
+ PKG_FIXUP:=autoreconf
+ PKG_BUILD_PARALLEL:=1
+ 
+-PKG_CONFIG_DEPENDS := \
+-  LIBCURL_AXTLS \
+-  LIBCURL_COOKIES \
+-  LIBCURL_CRYPTO_AUTH \
+-  LIBCURL_CYASSL \
+-  LIBCURL_DICT \
+-  LIBCURL_FILE \
+-  LIBCURL_FTP \
+-  LIBCURL_GNUTLS \
+-  LIBCURL_GOPHER \
+-  LIBCURL_HTTP \
+-  LIBCURL_IMAP \
+-  LIBCURL_LDAP \
+-  LIBCURL_LDAPS \
+-  LIBCURL_LIBCURL_OPTION \
+-  LIBCURL_NOSSL \
+-  LIBCURL_OPENSSL \
+-  LIBCURL_POLARSSL \
+-  LIBCURL_POP3 \
+-  LIBCURL_PROXY \
+-  LIBCURL_RTSP \
+-  LIBCURL_SMTP \
+-  LIBCURL_SSPI \
+-  LIBCURL_TELNET \
+-  LIBCURL_TFTP \
+-  LIBCURL_THREADED_RESOLVER \
+-  LIBCURL_TLS-SRP \
+-  LIBCURL_ZLIB
++PKG_CONFIG_DEPENDS:= \
++  CONFIG_IPV6 \
++  \
++  CONFIG_LIBCURL_AXTLS \
++  CONFIG_LIBCURL_CYASSL \
++  CONFIG_LIBCURL_GNUTLS \
++  CONFIG_LIBCURL_OPENSSL \
++  CONFIG_LIBCURL_POLARSSL \
++  CONFIG_LIBCURL_NOSSL \
++  \
++  CONFIG_LIBCURL_LIBIDN \
++  CONFIG_LIBCURL_SSH2 \
++  CONFIG_LIBCURL_ZLIB \
++  \
++  CONFIG_LIBCURL_DICT \
++  CONFIG_LIBCURL_FILE \
++  CONFIG_LIBCURL_FTP \
++  CONFIG_LIBCURL_GOPHER \
++  CONFIG_LIBCURL_HTTP \
++  CONFIG_LIBCURL_IMAP \
++  CONFIG_LIBCURL_LDAP \
++  CONFIG_LIBCURL_LDAPS \
++  CONFIG_LIBCURL_POP3 \
++  CONFIG_LIBCURL_RTSP \
++  CONFIG_LIBCURL_NO_RTSP \
++  CONFIG_LIBCURL_SMB \
++  CONFIG_LIBCURL_NO_SMB \
++  CONFIG_LIBCURL_SMTP \
++  CONFIG_LIBCURL_TELNET \
++  CONFIG_LIBCURL_TFTP \
++  \
++  CONFIG_LIBCURL_COOKIES \
++  CONFIG_LIBCURL_CRYPTO_AUTH \
++  CONFIG_LIBCURL_LIBCURL_OPTION \
++  CONFIG_LIBCURL_PROXY \
++  CONFIG_LIBCURL_THREADED_RESOLVER \
++  CONFIG_LIBCURL_TLS_SRP \
++  CONFIG_LIBCURL_UNIX_SOCKETS \
++  CONFIG_LIBCURL_VERBOSE
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+@@ -75,8 +86,9 @@ define Package/libcurl
+   $(call Package/curl/Default)
+   SECTION:=libs
+   CATEGORY:=Libraries
+-  DEPENDS:=+LIBCURL_POLARSSL:libpolarssl +LIBCURL_CYASSL:libcyassl +LIBCURL_AXTLS:libaxtls +LIBCURL_OPENSSL:libopenssl +LIBCURL_GNUTLS:libgnutls +LIBCURL_ZLIB:zlib +LIBCURL_THREADED_RESOLVER:libpthread
+-  TITLE:=A client-side URL transfer library using $(if $(CONFIG_LIBCURL_POLARSSL),PolarSSL)$(if $(CONFIG_LIBCURL_OPENSSL),OpenSSL)$(if $(CONFIG_LIBCURL_GNUTLS),GNUTLS)$(if $(CONFIG_LIBCURL_NOSSL),no SSL)
++  DEPENDS:=+LIBCURL_POLARSSL:libpolarssl +LIBCURL_CYASSL:libcyassl +LIBCURL_AXTLS:libaxtls +LIBCURL_OPENSSL:libopenssl +LIBCURL_GNUTLS:libgnutls 
++  DEPENDS += +LIBCURL_ZLIB:zlib +LIBCURL_THREADED_RESOLVER:libpthread +LIBCURL_LDAP:libopenldap +LIBCURL_LIBIDN:libidn +LIBCURL_SSH2:libssh2
++  TITLE:=A client-side URL transfer library
+   MENU:=1
+ endef
+ 
+@@ -88,46 +100,51 @@ endef
+ TARGET_CFLAGS += $(FPIC)
+ 
+ CONFIGURE_ARGS += \
++	--disable-debug \
++	--disable-ares \
+ 	--enable-shared \
+ 	--enable-static \
+-	--disable-thread \
+-	--enable-nonblocking \
+-	--disable-ares \
+-	--disable-debug \
+ 	--disable-manual \
+-	--disable-verbose \
+ 	--without-ca-bundle \
+-	--without-krb4 \
+-	--without-libidn \
+ 	--without-nss \
+-	--without-libssh2 \
++	--without-libmetalink \
++	--without-librtmp \
++	\
+ 	$(call autoconf_bool,CONFIG_IPV6,ipv6) \
+-	$(if $(CONFIG_LIBCURL_AXTLS),--with-axtls="$(STAGING_DIR)/usr",--without-axtls) \
+-	$(if $(CONFIG_LIBCURL_COOKIES),--enable,--disable)-cookies \
+-	$(if $(CONFIG_LIBCURL_CRYPTO-AUTH),--enable,--disable)-crypto-auth \
+-	$(if $(CONFIG_LIBCURL_CYASSL),--with-cyassl="$(STAGING_DIR)/usr",--without-cyassl) \
+-	$(if $(CONFIG_LIBCURL_DICT),--enable,--disable)-dict \
+-	$(if $(CONFIG_LIBCURL_FILE),--enable,--disable)-file \
+-	$(if $(CONFIG_LIBCURL_FTP),--enable,--disable)-ftp \
+-	$(if $(CONFIG_LIBCURL_GOPHER),--enable,--disable)-gopher \
+-	$(if $(CONFIG_LIBCURL_GNUTLS),--with-gnutls="$(STAGING_DIR)/usr",--without-gnutls) \
+-	$(if $(CONFIG_LIBCURL_HTTP),--enable,--disable)-http \
+-	$(if $(CONFIG_LIBCURL_IMAP),--enable,--disable)-imap \
+-	$(if $(CONFIG_LIBCURL_LDAP),--enable,--disable)-ldap \
+-	$(if $(CONFIG_LIBCURL_LDAPS),--enable,--disable)-ldaps \
+-	$(if $(CONFIG_LIBCURL_LIBCURL-OPTION),--enable,--disable)-libcurl-option \
+-	$(if $(CONFIG_LIBCURL_OPENSSL),--with-ssl="$(STAGING_DIR)/usr",--without-ssl) \
+-	$(if $(CONFIG_LIBCURL_POLARSSL),--with-polarssl="$(STAGING_DIR)/usr",--without-polarssl) \
+-	$(if $(CONFIG_LIBCURL_POP3),--enable,--disable)-pop3 \
+-	$(if $(CONFIG_LIBCURL_PROXY),--enable,--disable)-proxy \
+-	$(if $(CONFIG_LIBCURL_RTSP),--enable,--disable)-rtsp \
+-	$(if $(CONFIG_LIBCURL_TELNET),--enable,--disable)-telnet \
+-	$(if $(CONFIG_LIBCURL_TFTP),--enable,--disable)-tftp \
+-	$(if $(CONFIG_LIBCURL_SMTP),--enable,--disable)-smtp \
+-	$(if $(CONFIG_LIBCURL_SSPI),--enable,--disable)-sspi \
+-	$(if $(CONFIG_LIBCURL_THREADED_RESOLVER),--enable,--disable)-threaded-resolver \
+-	$(if $(CONFIG_LIBCURL_TLS-SRP),--enable,--disable)-tls-srp \
++	\
++	$(if $(CONFIG_LIBCURL_AXTLS),--with-axtls="$(STAGING_DIR)/usr" --without-ca-path,--without-axtls) \
++	$(if $(CONFIG_LIBCURL_CYASSL),--with-cyassl="$(STAGING_DIR)/usr" --without-ca-path,--without-cyassl) \
++	$(if $(CONFIG_LIBCURL_GNUTLS),--with-gnutls="$(STAGING_DIR)/usr" --without-ca-path,--without-gnutls) \
++	$(if $(CONFIG_LIBCURL_OPENSSL),--with-ssl="$(STAGING_DIR)/usr" --with-ca-path=/etc/ssl/certs,--without-ssl) \
++	$(if $(CONFIG_LIBCURL_POLARSSL),--with-polarssl="$(STAGING_DIR)/usr" --with-ca-path=/etc/ssl/certs,--without-polarssl) \
++	\
++	$(if $(CONFIG_LIBCURL_LIBIDN),--with-libidn="$(STAGING_DIR)/usr",--without-libidn) \
++	$(if $(CONFIG_LIBCURL_SSH2),--with-libssh2="$(STAGING_DIR)/usr",--without-libssh2) \
+ 	$(if $(CONFIG_LIBCURL_ZLIB),--with-zlib="$(STAGING_DIR)/usr",--without-zlib) \
++	\
++	$(call autoconf_bool,CONFIG_LIBCURL_DICT,dict) \
++	$(call autoconf_bool,CONFIG_LIBCURL_FILE,file) \
++	$(call autoconf_bool,CONFIG_LIBCURL_FTP,ftp) \
++	$(call autoconf_bool,CONFIG_LIBCURL_GOPHER,gopher) \
++	$(call autoconf_bool,CONFIG_LIBCURL_HTTP,http) \
++	$(call autoconf_bool,CONFIG_LIBCURL_IMAP,imap) \
++	$(call autoconf_bool,CONFIG_LIBCURL_LDAP,ldap) \
++	$(call autoconf_bool,CONFIG_LIBCURL_LDAPS,ldaps) \
++	$(call autoconf_bool,CONFIG_LIBCURL_POP3,pop3) \
++	$(call autoconf_bool,CONFIG_LIBCURL_RTSP,rtsp) \
++	$(call autoconf_bool,CONFIG_LIBCURL_SMB,smb) \
++	$(call autoconf_bool,CONFIG_LIBCURL_SMTP,smtp) \
++	$(call autoconf_bool,CONFIG_LIBCURL_TELNET,telnet) \
++	$(call autoconf_bool,CONFIG_LIBCURL_TFTP,tftp) \
++	\
++	$(call autoconf_bool,CONFIG_LIBCURL_COOKIES,cookies) \
++	$(call autoconf_bool,CONFIG_LIBCURL_CRYPTO_AUTH,crypto-auth) \
++	$(call autoconf_bool,CONFIG_LIBCURL_LIBCURL_OPTION,libcurl-option) \
++	$(call autoconf_bool,CONFIG_LIBCURL_PROXY,proxy) \
++	$(call autoconf_bool,CONFIG_LIBCURL_THREADED_RESOLVER,threaded-resolver) \
++	$(call autoconf_bool,CONFIG_LIBCURL_TLS_SRP,tls-srp) \
++	$(call autoconf_bool,CONFIG_LIBCURL_UNIX_SOCKETS,unix-sockets) \
++	$(call autoconf_bool,CONFIG_LIBCURL_VERBOSE,verbose) \
+ 
+ define Build/Compile
+ 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
+@@ -144,7 +161,7 @@ define Build/InstallDev
+ 	$(CP) $(PKG_BUILD_DIR)/libcurl.pc $(1)/usr/lib/pkgconfig/
+ 	$(SED) 's,-L$$$${exec_prefix}/lib,,g' $(1)/usr/bin/curl-config
+ 	[ -n "$(TARGET_LDFLAGS)" ] && $(SED) 's#$(TARGET_LDFLAGS)##g' $(1)/usr/lib/pkgconfig/libcurl.pc || true
+-	ln -sf $(STAGING_DIR)/usr/bin/curl-config $(2)/bin/
++	$(LN) $(STAGING_DIR)/usr/bin/curl-config $(2)/bin/
+ endef
+ 
+ define Package/curl/install
+diff --git a/package/network/utils/curl/patches/010-CVE-2015-3143.patch b/package/network/utils/curl/patches/010-CVE-2015-3143.patch
+new file mode 100644
+index 0000000..697c9c9
+--- /dev/null
++++ b/package/network/utils/curl/patches/010-CVE-2015-3143.patch
+@@ -0,0 +1,28 @@
++From d7d1bc8f08eea1a85ab0d794bc1561659462d937 Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Thu, 16 Apr 2015 13:26:46 +0200
++Subject: [PATCH] ConnectionExists: for NTLM re-use, require credentials to
++ match
++
++CVE-2015-3143
++
++Bug: http://curl.haxx.se/docs/adv_20150422A.html
++Reported-by: Paras Sethia
++---
++ lib/url.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++--- a/lib/url.c
+++++ b/lib/url.c
++@@ -3184,7 +3184,11 @@ ConnectionExists(struct SessionHandle *d
++       }
++ 
++       if((!(needle->handler->flags & PROTOPT_CREDSPERREQUEST)) ||
+++#if defined(USE_NTLM)
+++         (wantNTLMhttp || check->ntlm.state != NTLMSTATE_NONE)) {
+++#else
++          wantNTLMhttp) {
+++#endif
++         /* This protocol requires credentials per connection or is HTTP+NTLM,
++            so verify that we're using the same name and password as well */
++         if(!strequal(needle->user, check->user) ||
+diff --git a/package/network/utils/curl/patches/011-CVE-2015-3144.patch b/package/network/utils/curl/patches/011-CVE-2015-3144.patch
+new file mode 100644
+index 0000000..7da9489
+--- /dev/null
++++ b/package/network/utils/curl/patches/011-CVE-2015-3144.patch
+@@ -0,0 +1,32 @@
++From 6218ded6001ea330e589f92b6b2fa12777752b5d Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Thu, 16 Apr 2015 23:52:04 +0200
++Subject: [PATCH] fix_hostname: zero length host name caused -1 index offset
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++If a URL is given with a zero-length host name, like in "http://:80" or
++just ":80", `fix_hostname()` will index the host name pointer with a -1
++offset (as it blindly assumes a non-zero length) and both read and
++assign that address.
++
++CVE-2015-3144
++
++Bug: http://curl.haxx.se/docs/adv_20150422D.html
++Reported-by: Hanno Böck
++---
++ lib/url.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++--- a/lib/url.c
+++++ b/lib/url.c
++@@ -3606,7 +3606,7 @@ static void fix_hostname(struct SessionH
++   host->dispname = host->name;
++ 
++   len = strlen(host->name);
++-  if(host->name[len-1] == '.')
+++  if(len && (host->name[len-1] == '.'))
++     /* strip off a single trailing dot if present, primarily for SNI but
++        there's no use for it */
++     host->name[len-1]=0;
+diff --git a/package/network/utils/curl/patches/012-CVE-2015-3145.patch b/package/network/utils/curl/patches/012-CVE-2015-3145.patch
+new file mode 100644
+index 0000000..c7ecbe9
+--- /dev/null
++++ b/package/network/utils/curl/patches/012-CVE-2015-3145.patch
+@@ -0,0 +1,53 @@
++From ea595c516bc936a514753597aa6c59fd6eb0765e Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Thu, 16 Apr 2015 16:37:40 +0200
++Subject: [PATCH] cookie: cookie parser out of boundary memory access
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++The internal libcurl function called sanitize_cookie_path() that cleans
++up the path element as given to it from a remote site or when read from
++a file, did not properly validate the input. If given a path that
++consisted of a single double-quote, libcurl would index a newly
++allocated memory area with index -1 and assign a zero to it, thus
++destroying heap memory it wasn't supposed to.
++
++CVE-2015-3145
++
++Bug: http://curl.haxx.se/docs/adv_20150422C.html
++Reported-by: Hanno Böck
++---
++ lib/cookie.c | 12 +++++++-----
++ 1 file changed, 7 insertions(+), 5 deletions(-)
++
++--- a/lib/cookie.c
+++++ b/lib/cookie.c
++@@ -236,11 +236,14 @@ static char *sanitize_cookie_path(const
++     return NULL;
++ 
++   /* some stupid site sends path attribute with '"'. */
+++  len = strlen(new_path);
++   if(new_path[0] == '\"') {
++-    memmove((void *)new_path, (const void *)(new_path + 1), strlen(new_path));
+++    memmove((void *)new_path, (const void *)(new_path + 1), len);
+++    len--;
++   }
++-  if(new_path[strlen(new_path) - 1] == '\"') {
++-    new_path[strlen(new_path) - 1] = 0x0;
+++  if(len && (new_path[len - 1] == '\"')) {
+++    new_path[len - 1] = 0x0;
+++    len--;
++   }
++ 
++   /* RFC6265 5.2.4 The Path Attribute */
++@@ -252,8 +255,7 @@ static char *sanitize_cookie_path(const
++   }
++ 
++   /* convert /hoge/ to /hoge */
++-  len = strlen(new_path);
++-  if(1 < len && new_path[len - 1] == '/') {
+++  if(len && new_path[len - 1] == '/') {
++     new_path[len - 1] = 0x0;
++   }
++ 
+diff --git a/package/network/utils/curl/patches/013-CVE-2015-3148.patch b/package/network/utils/curl/patches/013-CVE-2015-3148.patch
+new file mode 100644
+index 0000000..ed52160
+--- /dev/null
++++ b/package/network/utils/curl/patches/013-CVE-2015-3148.patch
+@@ -0,0 +1,37 @@
++From 6abfb512ed22c2de891a4398616d81a2a0690b5a Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Sat, 18 Apr 2015 23:50:16 +0200
++Subject: [PATCH] http_done: close Negotiate connections when done
++
++When doing HTTP requests Negotiate authenticated, the entire connnection
++may become authenticated and not just the specific HTTP request which is
++otherwise how HTTP works, as Negotiate can basically use NTLM under the
++hood. curl was not adhering to this fact but would assume that such
++requests would also be authenticated per request.
++
++CVE-2015-3148
++
++Bug: http://curl.haxx.se/docs/adv_20150422B.html
++Reported-by: Isaac Boukris
++---
++ lib/http.c | 8 +++++++-
++ 1 file changed, 7 insertions(+), 1 deletion(-)
++
++--- a/lib/http.c
+++++ b/lib/http.c
++@@ -1493,8 +1493,14 @@ CURLcode Curl_http_done(struct connectda
++ 
++ #ifdef USE_SPNEGO
++   if(data->state.proxyneg.state == GSS_AUTHSENT ||
++-      data->state.negotiate.state == GSS_AUTHSENT)
+++      data->state.negotiate.state == GSS_AUTHSENT) {
+++    /* add forbid re-use if http-code != 401 as a WA
+++     * only needed for 401 that failed handling
+++     * otherwie state will be RECV with current code */
+++    if((data->req.httpcode != 401) && (data->req.httpcode != 407))
+++      connclose(conn, "Negotiate transfer completed");
++     Curl_cleanup_negotiate(data);
+++  }
++ #endif
++ 
++   /* set the proper values (possibly modified on POST) */
+diff --git a/package/network/utils/curl/patches/014-CVE-2015-3153.patch b/package/network/utils/curl/patches/014-CVE-2015-3153.patch
+new file mode 100644
+index 0000000..f6d37d4
+--- /dev/null
++++ b/package/network/utils/curl/patches/014-CVE-2015-3153.patch
+@@ -0,0 +1,95 @@
++From 69a2e8d7ec581695a62527cb2252e7350f314ffa Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Thu, 23 Apr 2015 15:58:21 +0200
++Subject: [PATCH] CURLOPT_HEADEROPT: default to separate
++
++Make the HTTP headers separated by default for improved security and
++reduced risk for information leakage.
++
++Bug: http://curl.haxx.se/docs/adv_20150429.html
++Reported-by: Yehezkel Horowitz, Oren Souroujon
++---
++ docs/libcurl/opts/CURLOPT_HEADEROPT.3 | 12 ++++++------
++ lib/url.c                             |  1 +
++ tests/data/test1527                   |  2 +-
++ tests/data/test287                    |  2 +-
++ tests/libtest/lib1527.c               |  1 +
++ 5 files changed, 10 insertions(+), 8 deletions(-)
++
++--- a/docs/libcurl/opts/CURLOPT_HEADEROPT.3
+++++ b/docs/libcurl/opts/CURLOPT_HEADEROPT.3
++@@ -5,7 +5,7 @@
++ .\" *                            | (__| |_| |  _ <| |___
++ .\" *                             \___|\___/|_| \_\_____|
++ .\" *
++-.\" * Copyright (C) 1998 - 2014, Daniel Stenberg, <daniel@haxx.se>, et al.
+++.\" * Copyright (C) 1998 - 2015, Daniel Stenberg, <daniel@haxx.se>, et al.
++ .\" *
++ .\" * This software is licensed as described in the file COPYING, which
++ .\" * you should have received as part of this distribution. The terms
++@@ -31,10 +31,10 @@ CURLcode curl_easy_setopt(CURL *handle,
++ Pass a long that is a bitmask of options of how to deal with headers. The two
++ mutually exclusive options are:
++ 
++-\fBCURLHEADER_UNIFIED\fP - keep working as before. This means
++-\fICURLOPT_HTTPHEADER(3)\fP headers will be used in requests both to servers
++-and proxies. With this option enabled, \fICURLOPT_PROXYHEADER(3)\fP will not
++-have any effect.
+++\fBCURLHEADER_UNIFIED\fP - the headers specified in
+++\fICURLOPT_HTTPHEADER(3)\fP will be used in requests both to servers and
+++proxies. With this option enabled, \fICURLOPT_PROXYHEADER(3)\fP will not have
+++any effect.
++ 
++ \fBCURLHEADER_SEPARATE\fP - makes \fICURLOPT_HTTPHEADER(3)\fP headers only get
++ sent to a server and not to a proxy. Proxy headers must be set with
++@@ -44,7 +44,7 @@ headers. When doing CONNECT, libcurl wil
++ headers only to the proxy and then \fICURLOPT_HTTPHEADER(3)\fP headers only to
++ the server.
++ .SH DEFAULT
++-CURLHEADER_UNIFIED
+++CURLHEADER_SEPARATE (changed in 7.42.1, ased CURLHEADER_UNIFIED before then)
++ .SH PROTOCOLS
++ HTTP
++ .SH EXAMPLE
++--- a/lib/url.c
+++++ b/lib/url.c
++@@ -605,6 +605,7 @@ CURLcode Curl_init_userdefined(struct Us
++   set->ssl_enable_alpn = TRUE;
++ 
++   set->expect_100_timeout = 1000L; /* Wait for a second by default. */
+++  set->sep_headers = TRUE; /* separated header lists by default */
++   return result;
++ }
++ 
++--- a/tests/data/test1527
+++++ b/tests/data/test1527
++@@ -45,7 +45,7 @@ http-proxy
++ lib1527
++ </tool>
++  <name>
++-Check same headers are generated without CURLOPT_PROXYHEADER
+++Check same headers are generated with CURLOPT_HEADEROPT == CURLHEADER_UNIFIED
++  </name>
++  <command>
++  http://the.old.moo.1527:%HTTPPORT/1527 %HOSTIP:%PROXYPORT
++--- a/tests/data/test287
+++++ b/tests/data/test287
++@@ -28,7 +28,7 @@ http
++ HTTP proxy CONNECT with custom User-Agent header
++  </name>
++  <command>
++-http://test.remote.example.com.287:%HTTPPORT/path/287 -H "User-Agent: looser/2007" --proxy http://%HOSTIP:%HTTPPORT --proxytunnel
+++http://test.remote.example.com.287:%HTTPPORT/path/287 -H "User-Agent: looser/2015" --proxy http://%HOSTIP:%HTTPPORT --proxytunnel --proxy-header "User-Agent: looser/2007"
++ </command>
++ </client>
++ 
++--- a/tests/libtest/lib1527.c
+++++ b/tests/libtest/lib1527.c
++@@ -83,6 +83,7 @@ int test(char *URL)
++   test_setopt(curl, CURLOPT_READFUNCTION, read_callback);
++   test_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 1L);
++   test_setopt(curl, CURLOPT_INFILESIZE, strlen(data));
+++  test_setopt(curl, CURLOPT_HEADEROPT, CURLHEADER_UNIFIED);
++ 
++   res = curl_easy_perform(curl);
++ 
+diff --git a/package/network/utils/curl/patches/015-CVE-2015-3236.patch b/package/network/utils/curl/patches/015-CVE-2015-3236.patch
+new file mode 100644
+index 0000000..720fb94
+--- /dev/null
++++ b/package/network/utils/curl/patches/015-CVE-2015-3236.patch
+@@ -0,0 +1,42 @@
++From e6d7c30734487246e83b95520e81bc1ccf0a2376 Mon Sep 17 00:00:00 2001
++From: Kamil Dudka <kdudka@redhat.com>
++Date: Thu, 28 May 2015 20:04:35 +0200
++Subject: [PATCH] http: do not leak basic auth credentials on re-used
++ connections
++
++CVE-2015-3236
++
++This partially reverts commit curl-7_39_0-237-g87c4abb
++
++Bug: http://curl.haxx.se/docs/adv_20150617A.html
++---
++ lib/http.c | 16 ++++------------
++ 1 file changed, 4 insertions(+), 12 deletions(-)
++
++--- a/lib/http.c
+++++ b/lib/http.c
++@@ -2333,20 +2333,12 @@ CURLcode Curl_http(struct connectdata *c
++                      te
++       );
++ 
++-  /*
++-   * Free userpwd for Negotiate/NTLM. Cannot reuse as it is associated with
++-   * the connection and shouldn't be repeated over it either.
++-   */
++-  switch (data->state.authhost.picked) {
++-  case CURLAUTH_NEGOTIATE:
++-  case CURLAUTH_NTLM:
++-  case CURLAUTH_NTLM_WB:
++-    Curl_safefree(conn->allocptr.userpwd);
++-    break;
++-  }
+++  /* clear userpwd to avoid re-using credentials from re-used connections */
+++  Curl_safefree(conn->allocptr.userpwd);
++ 
++   /*
++-   * Same for proxyuserpwd
+++   * Free proxyuserpwd for Negotiate/NTLM. Cannot reuse as it is associated
+++   * with the connection and shouldn't be repeated over it either.
++    */
++   switch (data->state.authproxy.picked) {
++   case CURLAUTH_NEGOTIATE:
+diff --git a/package/network/utils/curl/patches/016-CVE-2015-3237.patch b/package/network/utils/curl/patches/016-CVE-2015-3237.patch
+new file mode 100644
+index 0000000..6942a04
+--- /dev/null
++++ b/package/network/utils/curl/patches/016-CVE-2015-3237.patch
+@@ -0,0 +1,35 @@
++From d2f1a8bdce9d77a277d05adae025d369c1bdd9e6 Mon Sep 17 00:00:00 2001
++From: Daniel Stenberg <daniel@haxx.se>
++Date: Fri, 22 May 2015 10:28:21 +0200
++Subject: [PATCH] SMB: rangecheck values read off incoming packet
++
++CVE-2015-3237
++
++Detected by Coverity. CID 1299430.
++
++Bug: http://curl.haxx.se/docs/adv_20150617B.html
++---
++ lib/smb.c | 12 +++++++++---
++ 1 file changed, 9 insertions(+), 3 deletions(-)
++
++--- a/lib/smb.c
+++++ b/lib/smb.c
++@@ -783,9 +783,15 @@ static CURLcode smb_request_state(struct
++     off = Curl_read16_le(((unsigned char *) msg) +
++                          sizeof(struct smb_header) + 13);
++     if(len > 0) {
++-      result = Curl_client_write(conn, CLIENTWRITE_BODY,
++-                                 (char *)msg + off + sizeof(unsigned int),
++-                                 len);
+++      struct smb_conn *smbc = &conn->proto.smbc;
+++      if(off + sizeof(unsigned int) + len > smbc->got) {
+++        failf(conn->data, "Invalid input packet");
+++        result = CURLE_RECV_ERROR;
+++      }
+++      else
+++        result = Curl_client_write(conn, CLIENTWRITE_BODY,
+++                                   (char *)msg + off + sizeof(unsigned int),
+++                                   len);
++       if(result) {
++         req->result = result;
++         next_state = SMB_CLOSE;
+diff --git a/package/network/utils/curl/patches/100-check_long_long.patch b/package/network/utils/curl/patches/100-check_long_long.patch
+index 05fb1bf..2dd8cc7 100644
+--- a/package/network/utils/curl/patches/100-check_long_long.patch
++++ b/package/network/utils/curl/patches/100-check_long_long.patch
+@@ -1,6 +1,6 @@
+ --- a/configure.ac
+ +++ b/configure.ac
+-@@ -2877,6 +2877,7 @@ CURL_VERIFY_RUNTIMELIBS
++@@ -2885,6 +2885,7 @@ CURL_VERIFY_RUNTIMELIBS
+  
+  AC_CHECK_SIZEOF(size_t)
+  AC_CHECK_SIZEOF(long)
+diff --git a/package/network/utils/curl/patches/200-no_docs_tests.patch b/package/network/utils/curl/patches/200-no_docs_tests.patch
+index 42619a3..2845577 100644
+--- a/package/network/utils/curl/patches/200-no_docs_tests.patch
++++ b/package/network/utils/curl/patches/200-no_docs_tests.patch
+@@ -1,6 +1,6 @@
+ --- a/Makefile.am
+ +++ b/Makefile.am
+-@@ -128,7 +128,7 @@ CLEANFILES = $(VC6_LIBDSP) $(VC6_SRCDSP)
++@@ -129,7 +129,7 @@ CLEANFILES = $(VC6_LIBDSP) $(VC6_SRCDSP)
+  bin_SCRIPTS = curl-config
+  
+  SUBDIRS = lib src include
+@@ -11,7 +11,7 @@
+  pkgconfig_DATA = libcurl.pc
+ --- a/Makefile.in
+ +++ b/Makefile.in
+-@@ -574,7 +574,7 @@ CLEANFILES = $(VC6_LIBDSP) $(VC6_SRCDSP)
++@@ -577,7 +577,7 @@ CLEANFILES = $(VC6_LIBDSP) $(VC6_SRCDSP)
+  
+  bin_SCRIPTS = curl-config
+  SUBDIRS = lib src include
+@@ -19,4 +19,4 @@
+ +DIST_SUBDIRS = $(SUBDIRS) packages
+  pkgconfigdir = $(libdir)/pkgconfig
+  pkgconfig_DATA = libcurl.pc
+- LIB_VTLS_CFILES = vtls/openssl.c vtls/gtls.c vtls/vtls.c vtls/nss.c	\
++ LIB_VTLS_CFILES = vtls/openssl.c vtls/gtls.c vtls/vtls.c vtls/nss.c     \
+diff --git a/package/network/utils/curl/patches/300-fix-disable-crypto-auth.patch b/package/network/utils/curl/patches/300-fix-disable-crypto-auth.patch
+new file mode 100644
+index 0000000..3f88861
+--- /dev/null
++++ b/package/network/utils/curl/patches/300-fix-disable-crypto-auth.patch
+@@ -0,0 +1,25 @@
++--- a/lib/curl_ntlm_msgs.c
+++++ b/lib/curl_ntlm_msgs.c
++@@ -571,7 +571,7 @@ CURLcode Curl_sasl_create_ntlm_type3_mes
++   else
++ #endif
++ 
++-#if USE_NTRESPONSES && USE_NTLM2SESSION
+++#if USE_NTRESPONSES && USE_NTLM2SESSION && !defined(CURL_DISABLE_CRYPTO_AUTH)
++   /* We don't support NTLM2 if we don't have USE_NTRESPONSES */
++   if(ntlm->flags & NTLMFLAG_NEGOTIATE_NTLM2_KEY) {
++     unsigned char ntbuffer[0x18];
++--- a/lib/vtls/vtls.c
+++++ b/lib/vtls/vtls.c
++@@ -835,9 +835,9 @@ void Curl_ssl_md5sum(unsigned char *tmp,
++                      unsigned char *md5sum, /* output */
++                      size_t md5len)
++ {
++-#ifdef curlssl_md5sum
+++#if defined(curlssl_md5sum)
++   curlssl_md5sum(tmp, tmplen, md5sum, md5len);
++-#else
+++#elif !defined(CURL_DISABLE_CRYPTO_AUTH)
++   MD5_context *MD5pw;
++ 
++   (void) md5len;
+diff --git a/package/network/utils/curl/patches/310-polarssl-disable-runtime-version-check.patch b/package/network/utils/curl/patches/310-polarssl-disable-runtime-version-check.patch
+new file mode 100644
+index 0000000..d008227
+--- /dev/null
++++ b/package/network/utils/curl/patches/310-polarssl-disable-runtime-version-check.patch
+@@ -0,0 +1,11 @@
++--- a/lib/vtls/polarssl.c
+++++ b/lib/vtls/polarssl.c
++@@ -591,7 +591,7 @@ void Curl_polarssl_session_free(void *pt
++ 
++ size_t Curl_polarssl_version(char *buffer, size_t size)
++ {
++-  unsigned int version = version_get_number();
+++  unsigned int version = POLARSSL_VERSION_NUMBER;
++   return snprintf(buffer, size, "PolarSSL/%d.%d.%d", version>>24,
++                   (version>>16)&0xff, (version>>8)&0xff);
++ }
