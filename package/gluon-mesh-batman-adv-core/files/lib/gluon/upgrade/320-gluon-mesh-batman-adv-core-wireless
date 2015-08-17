@@ -15,27 +15,6 @@ local function is_disabled(config, name)
   return disabled and 1 or 0
 end
 
-local function configure_client(config, radio, index, suffix)
-  local name = 'client_' .. radio
-  local disabled = is_disabled(config, name)
-
-  uci:delete('wireless', name)
-
-  if config then
-    uci:section('wireless', 'wifi-iface', name,
-      {
-        device = radio,
-        network = 'client',
-        mode = 'ap',
-        ssid = config.ssid,
-        macaddr = util.generate_mac(2, index),
-        ifname = suffix and 'client' .. suffix,
-        disabled = disabled,
-      }
-    )
-  end
-end
-
 local function configure_ibss(config, radio, index, suffix)
   local name = 'ibss_' .. radio
   local disabled = is_disabled(config, name)
@@ -118,7 +97,6 @@ end
 local function configure_radio(radio, index, config)
   local suffix = radio:match('^radio(%d+)$')
 
-  configure_client(config.ap, radio, index, suffix)
   configure_ibss(config.ibss, radio, index, suffix)
   configure_mesh(config.mesh, radio, index, suffix)
 end

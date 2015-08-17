@@ -1,0 +1,48 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
+
+local function is_disabled(config, name)
+  local disabled = config and config.disabled
+  if uci:get('wireless', name) then
+    disabled = uci:get_bool('wireless', name, 'disabled')
+  end
+
+  return disabled and 1 or 0
+end
+
+local function configure_client(config, radio, index, suffix)
+  local name = 'client_' .. radio
+  local disabled = is_disabled(config, name)
+
+  uci:delete('wireless', name)
+
+  if config then
+    uci:section('wireless', 'wifi-iface', name,
+      {
+        device = radio,
+        network = 'client',
+        mode = 'ap',
+        ssid = config.ssid,
+        macaddr = util.generate_mac(2, index),
+        ifname = suffix and 'client' .. suffix,
+        disabled = disabled,
+      }
+    )
+  end
+end
+
+local function configure_radio(radio, index, config)
+  local suffix = radio:match('^radio(%d+)$')
+
+  configure_client(config.ap, radio, index, suffix)
+end
+
+util.iterate_radios(configure_radio)
+
+uci:save('wireless')
+uci:commit('wireless')
