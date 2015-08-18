@@ -53,6 +53,9 @@ Packages
    package/gluon-client-bridge
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
+   package/gluon-radio-config
+   package/gluon-next-node
+   package/gluon-next-node-batman-adv
 
 Releases
 --------

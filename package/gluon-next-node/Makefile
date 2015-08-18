@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-next-node
-PKG_VERSION:=3
+PKG_VERSION:=4
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -11,7 +11,7 @@ define Package/gluon-next-node
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Next-node anycast address
-  DEPENDS:=+gluon-core +gluon-ebtables +gluon-mesh-batman-adv +kmod-macvlan
+  DEPENDS:=+gluon-core +gluon-client-bridge +kmod-macvlan +PACKAGE_gluon-mesh-batman-adv-core:gluon-next-node-batman-adv
 endef
 
 define Package/gluon-next-node/description

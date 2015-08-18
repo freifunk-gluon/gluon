@@ -2,7 +2,6 @@
 
 local site = require 'gluon.site_config'
 local uci = require 'luci.model.uci'
-local ip = require 'luci.ip'
 
 local c = uci.cursor()
 
@@ -17,39 +16,15 @@ c:section('network', 'device', 'local_node_dev',
 	  }
 )
 
-local prefix4 = ip.IPv4(site.prefix4)
 c:delete('network', 'local_node')
 c:section('network', 'interface', 'local_node',
 	  {
 		  ifname = 'local-node',
 		  proto = 'static',
-		  ipaddr = site.next_node.ip4,
-		  netmask = prefix4:mask():string(),
+		  ipaddr = site.next_node.ip4 .. '/32',
 		  ip6addr = site.next_node.ip6 .. '/128',
-	  }
-)
-
-c:delete('network', 'local_node_route6')
-c:section('network', 'route6', 'local_node_route6',
-	  {
-		  interface = 'client',
-		  target = site.prefix6,
-		  gateway = '::',
 	  }
 )
 
 c:save('network')
 c:commit('network')
-
-c:delete('firewall', 'local_node')
-c:section('firewall', 'zone', 'local_node',
-	  {
-		  name = 'local_node',
-		  network = {'local_node'},
-		  input = 'ACCEPT',
-		  output = 'ACCEPT',
-		  forward = 'REJECT',
-	  }
-)
-c:save('firewall')
-c:commit('firewall')
