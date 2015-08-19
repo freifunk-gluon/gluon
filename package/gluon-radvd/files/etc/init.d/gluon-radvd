@@ -7,9 +7,9 @@ SERVICE_DAEMONIZE=1
 
 
 start() {
-	service_start /usr/sbin/gluon-radvd -i br-client -p $(lua -e 'print(require("gluon.site_config").prefix6)')
+	service_start /usr/sbin/uradvd -i br-client -p $(lua -e 'print(require("gluon.site_config").prefix6)')
 }
 
 stop() {
-	service_stop /usr/sbin/gluon-radvd
+	service_stop /usr/sbin/uradvd
 }
