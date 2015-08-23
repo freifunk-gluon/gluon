@@ -70,13 +70,11 @@ io.write("</pre>")
 
 io.write("<h2>Neighbours</h2>")
 
-local interfaces = util.split(util.trim(util.exec("iw dev | grep IBSS -B 5 | grep Interface | cut -d' ' -f2")))
+local interfaces = util.split(util.trim(util.exec("iw dev | egrep 'type IBSS|type mesh' -B 5 | grep Interface | cut -d' ' -f2")))
 
 for _, ifname in ipairs(interfaces) do
   io.write("<h3>" .. escape_html(ifname) .. "</h3>")
   io.write("<pre>")
-
-  io.write(escape_html(sys.exec("iw dev " .. ifname .. " link")) .. "\n")
 
   for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
     local mac = line:match("^Station (.*) %(on ")
