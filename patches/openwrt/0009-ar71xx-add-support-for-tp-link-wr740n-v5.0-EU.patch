@@ -10,10 +10,10 @@ tested it on my own v5.0 router and it works.
 Signed-off-by: Daniel Petre <daniel.petre@posteo.net>
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 3c77465..8fc9f4c 100644
+index bb5de17..1d5f4c0 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
-@@ -476,6 +476,14 @@ define Device/tl-wr740n-v4
+@@ -484,6 +484,14 @@ define Device/tl-wr740n-v4
      CONSOLE := ttyATH0,115200
  endef
  
@@ -28,7 +28,7 @@ index 3c77465..8fc9f4c 100644
  define Device/tl-wr741nd-v1
      $(Device/tplink-4m)
      BOARDNAME := TL-WR741ND
-@@ -505,7 +513,7 @@ define Device/tl-wr743nd-v2
+@@ -513,7 +521,7 @@ define Device/tl-wr743nd-v2
      TPLINK_HWID := 0x07430002
      CONSOLE := ttyATH0,115200
  endef

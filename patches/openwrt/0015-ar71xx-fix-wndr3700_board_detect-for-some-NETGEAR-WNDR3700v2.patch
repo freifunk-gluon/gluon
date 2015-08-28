@@ -12,7 +12,7 @@ setting LC_CTYPE=C (probably not strictly necessary on OpenWrt, but will
 definitely work like this, even when awk supports locales and LANG is set).
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 4c10ab2..5617aa6 100755
+index cacf362..e1d03ea 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -38,7 +38,7 @@ wndr3700_board_detect() {

@@ -3,7 +3,7 @@ Date: Tue, 10 Mar 2015 13:17:14 +0100
 Subject: ath10k: add Candelatech community firmware as an additional choice
 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 1f15b40..c9cd289 100644
+index a1eedce..1c0aebe 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -604,6 +604,14 @@ This module adds support for wireless adapters based on
