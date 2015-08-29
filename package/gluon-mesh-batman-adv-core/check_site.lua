@@ -1,9 +1,4 @@
-need_string('regdom')
-
 for _, config in ipairs({'wifi24', 'wifi5'}) do
-   need_number(config .. '.channel')
-   need_string(config .. '.htmode')
-
    if need_table(config .. '.ap', nil, false) then
       need_string(config .. '.ap.ssid')
       need_boolean(config .. '.ap.disabled', false)

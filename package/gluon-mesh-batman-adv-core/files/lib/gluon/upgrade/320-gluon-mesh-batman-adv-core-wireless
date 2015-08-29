@@ -118,36 +118,12 @@ end
 local function configure_radio(radio, index, config)
   local suffix = radio:match('^radio(%d+)$')
 
-  uci:delete('wireless', radio, 'disabled')
-
-  uci:set('wireless', radio, 'channel', config.channel)
-  uci:set('wireless', radio, 'htmode', config.htmode)
-  uci:set('wireless', radio, 'country', site.regdom)
-
   configure_client(config.ap, radio, index, suffix)
   configure_ibss(config.ibss, radio, index, suffix)
   configure_mesh(config.mesh, radio, index, suffix)
 end
 
-
-local radios = {}
-
-uci:foreach('wireless', 'wifi-device',
-  function(s)
-    table.insert(radios, s['.name'])
-  end
-)
-
-for index, radio in ipairs(radios) do
-  local hwmode = uci:get('wireless', radio, 'hwmode')
-
-  if hwmode == '11g' or hwmode == '11ng' then
-    configure_radio(radio, index, site.wifi24)
-  elseif hwmode == '11a' or hwmode == '11na' then
-    configure_radio(radio, index, site.wifi5)
-  end
-end
-
+util.iterate_radios(configure_radio)
 
 uci:save('wireless')
 uci:save('network')

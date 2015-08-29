@@ -49,6 +49,8 @@ Packages
 .. toctree::
    :maxdepth: 1
 
+   package/gluon-radio-config
+
 Releases
 --------
 
