@@ -23,7 +23,7 @@ msgstr ""
 "kann sich dein Knoten mit dem Entenhausener Mesh-VPN zu verbinden. Bitte "
 "schicke dazu diesen Schlüssel und den Namen deines Knotens "
 "(<em><%=hostname%></em>) an "
-"<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
+"<a href=\"mailto:keys@entenhausen.freifunk.net?subject=Bitte+den+Schlüssel+für+<%=hostname%>+eintragen&body=Bitte+tragt+den+schlüssel+für+meinen+neuen+Knoten+<%=hostname%>+ein:<%=key%>\">keys@entenhausen.freifunk.net</a>."
 
 msgid "gluon-config-mode:reboot"
 msgstr ""
