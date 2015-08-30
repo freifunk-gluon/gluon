@@ -284,6 +284,15 @@ for the language files. The command ``msginit -l en -i ../../docs/site-example/i
 can be used from the ``i18n`` directory to create an initial PO file called ``en.po`` if the ``gettext``
 utilities are installed.
 
+.. note::
+
+   An empty ``msgstr``, as is the default after running ``msginit``, leads to
+   the ``msgid`` being printed as-is. It does *not* hide the whole text, as
+   might be expected.
+
+   Depending on the context, you might be able to use comments like
+   ``<!-- empty -->`` as translations to effectively hide the text.
+
 Examples
 --------
 
