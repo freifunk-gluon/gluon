@@ -1,4 +1,4 @@
-local json = require 'luci.json'
+local json = require 'luci.jsonc'
 local ltn12 = require 'luci.ltn12'
 local nixio = require 'nixio'
 local site = require 'gluon.site_config'
@@ -11,8 +11,8 @@ if not fastd_sock:connect(socket_path) then
   return nil
 end
 
-local decoder = json.Decoder()
-ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
+local decoder = json.new()
+ltn12.pump.all(ltn12.source.file(fastd_sock), function(chunk) decoder:parse(chunk) end)
 
 local status = decoder:get()
 
@@ -27,7 +27,7 @@ local function peer_connection(config)
         established = peer.connection.established/1000
       }
     else
-      return json.null
+      return function()end -- nil
     end
   end
 end

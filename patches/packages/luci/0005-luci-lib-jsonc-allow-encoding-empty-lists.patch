@@ -1,0 +1,38 @@
+From: Jan-Philipp Litza <janphilipp@litza.de>
+Date: Sun, 30 Aug 2015 15:45:49 +0200
+Subject: luci-lib-jsonc: allow encoding empty lists
+
+To be consistent with the behavior of luci-lib-json, an empty Lua table
+should be encoded to an empty JSON list, not an empty JSON object.
+
+To still allow encoding empty JSON objects, the usage of anything other
+than a number or a string as a key (for example an empty table or a
+function) can be used to force encoding as an object:
+
+    json.stringify({})                  -- "[]"
+    json.stringify({[{}] = true})       -- "{}"
+
+Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
+
+diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
+index 827fde8..971fb12 100644
+--- a/libs/luci-lib-jsonc/src/jsonc.c
++++ b/libs/luci-lib-jsonc/src/jsonc.c
+@@ -222,7 +222,7 @@ static int _lua_test_array(lua_State *L, int index)
+ 
+ out:
+ 		lua_pop(L, 2);
+-		return 0;
++		return -1;
+ 	}
+ 
+ 	/* check for holes */
+@@ -254,7 +254,7 @@ static struct json_object * _lua_to_json(lua_State *L, int index)
+ 	case LUA_TTABLE:
+ 		max = _lua_test_array(L, index);
+ 
+-		if (max > 0)
++		if (max >= 0)
+ 		{
+ 			obj = json_object_new_array();
+ 

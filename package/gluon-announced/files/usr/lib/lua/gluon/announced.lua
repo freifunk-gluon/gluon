@@ -1,6 +1,6 @@
 local announce = require 'gluon.announce'
 local deflate = require 'deflate'
-local json = require 'luci.json'
+local json = require 'luci.jsonc'
 
 
 local function collect(type)
@@ -12,7 +12,7 @@ module('gluon.announced', package.seeall)
 
 function handle_request(query)
   if query:match('^nodeinfo$') then
-    return json.encode(collect('nodeinfo'))
+    return json.stringify(collect('nodeinfo'))
   end
 
   local m = query:match('^GET ([a-z ]+)$')
@@ -27,7 +27,7 @@ function handle_request(query)
     end
 
     if next(data) then
-      return deflate.compress(json.encode(data))
+      return deflate.compress(json.stringify(data))
     end
   end
 end

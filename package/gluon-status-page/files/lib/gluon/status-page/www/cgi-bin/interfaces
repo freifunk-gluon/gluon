@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 util = require 'luci.util'
-json = require 'luci.json'
+json = require 'luci.jsonc'
 fs = require 'nixio.fs'
 
 io.write("Access-Control-Allow-Origin: *\n")
@@ -21,4 +21,4 @@ for _, line in ipairs(util.split(list)) do
   end
 end
 
-io.write(json.encode(interfaces))
+io.write(json.stringify(interfaces))

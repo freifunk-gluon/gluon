@@ -4,7 +4,7 @@ local util = require("luci.util")
 local fs = require("nixio.fs")
 local ltn12 = require 'luci.ltn12'
 local sys = require("luci.sys")
-local json = require("luci.json")
+local json = require("luci.jsonc")
 local nixio = require 'nixio'
 local platform_info = require("platform_info")
 
@@ -20,7 +20,7 @@ function neighbours(ifname)
   local info = util.exec("gluon-neighbour-info -d ff02::2:1001 -p 1001 -r nodeinfo -t 3 -i " .. ifname)
   local macs = {}
   for _, line in ipairs(util.split(info)) do
-    local data = json.decode(line)
+    local data = json.parse(line)
     if data then
       local function add_macs(list)
         if list then
@@ -93,8 +93,8 @@ local stat, fastd_status = pcall(
     local fastd_sock = nixio.socket('unix', 'stream')
     assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
 
-    decoder = json.Decoder()
-    ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
+    decoder = json.new()
+    ltn12.pump.all(ltn12.source.file(fastd_sock), function(chunk) decoder:parse(chunk) end)
     return decoder:get()
   end
 )

@@ -49,5 +49,5 @@ return {
   wireless = nil_table(wireless),
   tunnel = nil_table(tunnel),
   other = nil_table(other),
-  [json.null] = true
+  [{}] = true
 }

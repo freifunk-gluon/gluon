@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 util = require 'luci.util'
-json = require 'luci.json'
+json = require 'luci.jsonc'
 nixio = require 'nixio'
 iwinfo = require 'iwinfo'
 
@@ -45,7 +45,7 @@ io.write("Access-Control-Allow-Origin: *\n")
 io.write("Content-type: text/event-stream\n\n")
 
 while true do
-  local stations = json.encode(get_stations(iw, ifname))
+  local stations = json.stringify(get_stations(iw, ifname))
   io.write("data: " .. stations .. "\n\n")
   io.flush()
   nixio.nanosleep(0, 150e6)

@@ -1,0 +1,32 @@
+From: Jan-Philipp Litza <janphilipp@litza.de>
+Date: Sun, 30 Aug 2015 15:42:52 +0200
+Subject: luci-lib-jsonc: Ignore non-string-or-number keys in tables
+
+Previously, the following caused a segmentation fault:
+
+    json.stringify({[{}] = true})
+
+This was caused by lua_tostring() returning NULL for anything but
+strings and numbers, letting json_object_object_add crash.
+
+This patch makes jsonc ignore all keys which have no string
+representation altogether.
+
+Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
+
+diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
+index 49cb21f..827fde8 100644
+--- a/libs/luci-lib-jsonc/src/jsonc.c
++++ b/libs/luci-lib-jsonc/src/jsonc.c
+@@ -286,8 +286,9 @@ static struct json_object * _lua_to_json(lua_State *L, int index)
+ 			lua_pushvalue(L, -2);
+ 			key = lua_tostring(L, -1);
+ 
+-			json_object_object_add(obj, key,
+-								   _lua_to_json(L, lua_gettop(L) - 1));
++			if (key)
++				json_object_object_add(obj, key,
++				                       _lua_to_json(L, lua_gettop(L) - 1));
+ 
+ 			lua_pop(L, 2);
+ 		}

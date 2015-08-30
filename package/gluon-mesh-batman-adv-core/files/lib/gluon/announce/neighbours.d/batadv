@@ -22,7 +22,7 @@ function batadv()
     if mac1 ~= nil and mac1 == mac2 then
       ifaddress = ifname2address(ifname)
       if interfaces[ifaddress] == nil then
-        interfaces[ifaddress] = { neighbours = { [json.null] = true } }
+        interfaces[ifaddress] = { neighbours = { [{}] = true } }
       end
 
       interfaces[ifaddress].neighbours[mac1] = { tq = tonumber(tq)
