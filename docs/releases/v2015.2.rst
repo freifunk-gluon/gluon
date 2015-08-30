@@ -1,0 +1,37 @@
+Gluon 2015.2 (in development)
+=============================
+
+Added (and removed) hardware support
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+New features
+~~~~~~~~~~~~
+
+
+Bugfixes
+~~~~~~~~
+
+
+Site changes
+~~~~~~~~~~~~
+* ``i18n/``
+
+  - The translations of ``gluon-config-mode:pubkey`` now have to show the fastd
+    public key itself if desired, making its format and whether it is shown at
+    all configurable. To retain the old format, add ``<p>`` to the beginning of
+    your translations and append::
+
+    "</p>"
+    "<div class=\"the-key\">"
+    " # <%= hostname %>"
+    " <br/>"
+    "<%= pubkey %>"
+    "</div>"
+
+Internals
+~~~~~~~~~
+
+
+Known Issues
+~~~~~~~~~~~~
