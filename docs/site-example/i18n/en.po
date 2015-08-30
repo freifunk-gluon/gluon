@@ -17,11 +17,17 @@ msgstr ""
 
 msgid "gluon-config-mode:pubkey"
 msgstr ""
-"This is your Freifunk node's public key. The node won't be able to "
+"<p>This is your Freifunk node's public key. The node won't be able to "
 "connect to the mesh VPN until the key has been registered on the Freifunk "
 "Duckburg servers. "
 "To register the key send it together with your node's name (<em><%=hostname%></em>) to "
 "<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
+"</p>"
+"<div class=\"the-key\">"
+" # <%= hostname %>"
+" <br/>"
+"<%= pubkey %>"
+"</div>"
 
 
 msgid "gluon-config-mode:reboot"
