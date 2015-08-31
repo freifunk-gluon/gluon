@@ -36,13 +36,17 @@
 #include <time.h>
 
 void usage() {
-  puts("Usage: gluon-neighbour-info [-h] [-s] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
+  puts("Usage: gluon-neighbour-info [-h] [-s] [-l] [-c <count>] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
   puts("  -p <int>         UDP port");
   puts("  -d <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
   puts("  -i <string>      interface, e.g. eth0 ");
   puts("  -r <string>      request, e.g. nodeinfo");
   puts("  -t <sec>         timeout in seconds (default: 3)");
-  puts("  -s               output as server-sent events");
+  puts("  -s <event>       output as server-sent events of type <event>");
+  puts("                   or without type if <event> is the empty string");
+  puts("  -c <count>       only wait for at most <count> replies");
+  puts("  -l               after timeout (or <count> replies if -c is given),");
+  puts("                   send another request and loop forever");
   puts("  -h               this help\n");
 }
 
@@ -78,9 +82,10 @@ ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, struct t
   return ret;
 }
 
-int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse, double timeout) {
+int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, const char *sse, double timeout, unsigned int max_count) {
   ssize_t ret;
   char buffer[8192];
+  unsigned int count = 0;
 
   ret = sendto(sock, request, strlen(request), 0, (struct sockaddr *)client_addr, sizeof(struct sockaddr_in6));
 
@@ -95,14 +100,17 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
 
   getclock(&tv_offset);
 
-  while (1) {
+  do {
     ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout, &tv_offset);
 
     if (ret < 0)
       break;
 
-    if (sse)
-      fputs("event: neighbour\ndata: ", stdout);
+    if (sse) {
+      if (sse[0] != '\0')
+        fprintf(stdout, "event: %s\n", sse);
+      fputs("data: ", stdout);
+    }
 
     fwrite(buffer, sizeof(char), ret, stdout);
 
@@ -112,9 +120,13 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
       fputs("\n", stdout);
 
     fflush(stdout);
-  }
+    count++;
+  } while (max_count == 0 || count < max_count);
 
-  return 0;
+  if ((max_count == 0 && count == 0) || count < max_count)
+    return EXIT_FAILURE;
+  else
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv) {
@@ -137,11 +149,14 @@ int main(int argc, char **argv) {
 
   int port_set = 0;
   int destination_set = 0;
+  unsigned int max_count = 0;
   double timeout = 3.0;
-  bool sse = false;
+  char *sse = NULL;
+  bool loop = false;
+  int ret = false;
 
   int c;
-  while ((c = getopt(argc, argv, "p:d:r:i:t:sh")) != -1)
+  while ((c = getopt(argc, argv, "p:d:r:i:t:s:c:lh")) != -1)
     switch (c) {
       case 'p':
         client_addr.sin6_port = htons(atoi(optarg));
@@ -166,7 +181,17 @@ int main(int argc, char **argv) {
         timeout = atof(optarg);
         break;
       case 's':
-        sse = true;
+        sse = optarg;
+        break;
+      case 'l':
+        loop = true;
+        break;
+      case 'c':
+        max_count = atoi(optarg);
+        if (max_count < 0) {
+          perror("Negative count not supported");
+          exit(EXIT_FAILURE);
+        }
         break;
       case 'h':
         usage();
@@ -184,10 +209,12 @@ int main(int argc, char **argv) {
   if (sse)
     fputs("Content-Type: text/event-stream\n\n", stdout);
 
-  request(sock, &client_addr, request_string, sse, timeout);
+  do {
+    ret = request(sock, &client_addr, request_string, sse, timeout, max_count);
+  } while(loop);
 
   if (sse)
     fputs("event: eot\ndata: null\n\n", stdout);
 
-  return EXIT_SUCCESS;
+  return ret;
 }
