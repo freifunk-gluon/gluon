@@ -4,7 +4,7 @@ module('gluon.announce', package.seeall)
 
 fs = require 'nixio.fs'
 uci = require('luci.model.uci').cursor()
-util = require 'luci.util'
+util = require 'gluon.util'
 
 local function collect_entry(entry)
 	if fs.stat(entry, 'type') == 'dir' then

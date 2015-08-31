@@ -1,4 +1,4 @@
-local data = fs.readfile('/proc/meminfo')
+local data = io.open('/proc/meminfo'):read('*a')
 
 local fields = {}
 for k, v in data:gmatch('([^\n:]+):%s*(%d+) kB') do

@@ -1,1 +1,1 @@
-return tonumber(fs.readfile('/proc/loadavg'):match('^([^ ]+) '))
+return tonumber(util.readline(io.open('/proc/loadavg')):match('^([^ ]+) '))
