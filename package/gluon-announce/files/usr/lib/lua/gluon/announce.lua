@@ -10,24 +10,36 @@ local function collect_entry(entry)
 	if fs.stat(entry, 'type') == 'dir' then
 		return collect_dir(entry)
 	else
-		return setfenv(loadfile(entry), _M)()
+		return loadfile(entry)
 	end
 end
 
 function collect_dir(dir)
-	local ret = { [{}] = true }
+	local fns = {}
 
 	for entry in fs.dir(dir) do
 		if entry:sub(1, 1) ~= '.' then
-			local ok, val = pcall(collect_entry, dir .. '/' .. entry)
-			if ok then
-				ret[entry] = val
+			local fn, err = collect_entry(dir .. '/' .. entry)
+			if fn then
+				fns[entry] = fn
 			else
-				io.stderr:write(val, '\n')
+				io.stderr:write(err, '\n')
 			end
 		end
 	end
 
-	return ret
-end
+	return function ()
+		local ret = { [{}] = true }
 
+		for k, v in pairs(fns) do
+			local ok, val = pcall(setfenv(v, _M))
+			if ok then
+				ret[k] = val
+			else
+				io.stderr:write(val, '\n')
+			end
+		end
+
+		return ret
+	end
+end

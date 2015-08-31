@@ -2,9 +2,14 @@ local announce = require 'gluon.announce'
 local deflate = require 'deflate'
 local json = require 'luci.jsonc'
 
+local memoize = {}
 
 local function collect(type)
-  return announce.collect_dir('/lib/gluon/announce/' .. type .. '.d')
+  if not memoize[type] then
+    memoize[type] = announce.collect_dir('/lib/gluon/announce/' .. type .. '.d')
+  end
+
+  return memoize[type]()
 end
 
 
