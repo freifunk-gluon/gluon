@@ -1,0 +1,16 @@
+From: Jan-Philipp Litza <janphilipp@litza.de>
+Date: Mon, 31 Aug 2015 19:52:36 +0200
+Subject: luci-lib-jsonc: Fix memory leak in stringify()
+
+diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
+index 971fb12..b857c97 100644
+--- a/libs/luci-lib-jsonc/src/jsonc.c
++++ b/libs/luci-lib-jsonc/src/jsonc.c
+@@ -106,6 +106,7 @@ static int json_stringify(lua_State *L)
+ 		flags |= JSON_C_TO_STRING_PRETTY | JSON_C_TO_STRING_SPACED;
+ 
+ 	lua_pushstring(L, json_object_to_json_string_ext(obj, flags));
++	json_object_put(obj);
+ 	return 1;
+ }
+ 
