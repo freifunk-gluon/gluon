@@ -1,0 +1,307 @@
+From: Nils Schneider <nils@nilsschneider.net>
+Date: Sat, 4 Apr 2015 17:23:39 +0200
+Subject: ar71xx: support for Meraki MR12 and MR62
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 6aac86a..cd9b53c 100755
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -100,6 +100,9 @@ get_status_led() {
+ 	ls-sr71)
+ 		status_led="ubnt:green:d22"
+ 		;;
++	mr12)
++		status_led="mr12:green:power"
++		;;
+ 	mr600)
+ 		status_led="mr600:orange:power"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index 315a9fd..b7101af 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -158,6 +158,15 @@ hornet-ub)
+ 	ucidef_set_led_usbdev "usb" "USB" "alfa:blue:usb" "1-1"
+ 	;;
+ 
++mr12)
++	ucidef_set_led_netdev "wan" "WAN" "mr12:green:wan" "eth0"
++	ucidef_set_rssimon "wlan0" "40000" "1"
++	ucidef_set_led_rssi "rssilow" "RSSILOW" "mr12:green:wifi1" "wlan0" "1" "100" "0" "13"
++	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "mr12:green:wifi2" "wlan0" "26" "100" "-25" "13"
++	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "mr12:green:wifi3" "wlan0" "51" "100" "-50" "13"
++	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "mr12:green:wifi4" "wlan0" "76" "100" "-75" "13"
++	;;
++
+ mr600)
+ 	ucidef_set_led_wlan "wlan58" "WLAN58" "mr600:green:wlan58" "phy0tpt"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 1838cb4..b79fbf5 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -447,6 +447,9 @@ ar71xx_board_detect() {
+ 	*LS-SR71)
+ 		name="ls-sr71"
+ 		;;
++	*MR12/MR62)
++		name="mr12"
++		;;
+ 	*MR600v2)
+ 		name="mr600v2"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 49746c4..cf3f462 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -183,6 +183,7 @@ platform_check_image() {
+ 	db120 | \
+ 	hornet-ub | \
+ 	bxu2000n-2-a1 | \
++	mr12 | \
+ 	zcn-1523h-2 | \
+ 	zcn-1523h-5)
+ 		[ "$magic_long" != "68737173" -a "$magic_long" != "19852003" ] && {
+diff --git a/target/linux/ar71xx/config-3.10 b/target/linux/ar71xx/config-3.10
+index 14b59f7..b800e46 100644
+--- a/target/linux/ar71xx/config-3.10
++++ b/target/linux/ar71xx/config-3.10
+@@ -60,6 +60,7 @@ CONFIG_ATH79_MACH_HIWIFI_HC6361=y
+ CONFIG_ATH79_MACH_HORNET_UB=y
+ CONFIG_ATH79_MACH_JA76PF=y
+ CONFIG_ATH79_MACH_JWAP003=y
++CONFIG_ATH79_MACH_MR12=y
+ CONFIG_ATH79_MACH_MR600=y
+ CONFIG_ATH79_MACH_MYNET_N600=y
+ CONFIG_ATH79_MACH_MYNET_N750=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-mr12.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-mr12.c
+new file mode 100644
+index 0000000..a792db4
+--- /dev/null
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-mr12.c
+@@ -0,0 +1,137 @@
++/*
++ *  Cisco Meraki MR12/MR62 board support
++ *
++ *  Copyright (C) 2014-2015 Chris Blake <chrisrblake93@gmail.com>
++ *
++ *  Based on Atheros AP96 board support configuration
++ *
++ *  Copyright (C) 2009 Marco Porsch
++ *  Copyright (C) 2009-2012 Gabor Juhos <juhosg@openwrt.org>
++ *  Copyright (C) 2010 Atheros Communications
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++#include <linux/platform_device.h>
++#include <linux/delay.h>
++
++#include <asm/mach-ath79/ath79.h>
++
++#include "dev-ap9x-pci.h"
++#include "dev-eth.h"
++#include "dev-gpio-buttons.h"
++#include "dev-leds-gpio.h"
++#include "dev-m25p80.h"
++#include "machtypes.h"
++
++/* Wi-Fi Signal LEDs */
++#define MR12_GPIO_LED_W4_GREEN		14
++#define MR12_GPIO_LED_W3_GREEN		13
++#define MR12_GPIO_LED_W2_GREEN		12
++#define MR12_GPIO_LED_W1_GREEN		11
++
++/* WAN Link LED */
++#define MR12_GPIO_LED_WAN		15
++
++/* Power LEDs */
++#define MR12_GPIO_LED_POWER_ORANGE		16
++#define MR12_GPIO_LED_POWER_GREEN		17
++
++/* Reset button */
++#define MR12_GPIO_BTN_RESET		8
++#define MR12_KEYS_POLL_INTERVAL		20	/* msecs */
++#define MR12_KEYS_DEBOUNCE_INTERVAL	(3 * MR12_KEYS_POLL_INTERVAL)
++
++/* NIC PHYs */
++#define MR12_WAN_PHYMASK    BIT(4)
++#define MR12_LAN_PHYMASK	BIT(0) // not correct
++
++/* WIFI/MAC offset */
++#define MR12_WMAC0_MAC_OFFSET           0x120c
++#define MR12_CALDATA0_OFFSET            0x1000
++
++static struct gpio_led MR12_leds_gpio[] __initdata = {
++	{
++		.name		= "mr12:green:wan",
++		.gpio		= MR12_GPIO_LED_WAN,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:orange:power",
++		.gpio		= MR12_GPIO_LED_POWER_ORANGE,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:green:power",
++		.gpio		= MR12_GPIO_LED_POWER_GREEN,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:green:wifi4",
++		.gpio		= MR12_GPIO_LED_W4_GREEN,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:green:wifi3",
++		.gpio		= MR12_GPIO_LED_W3_GREEN,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:green:wifi2",
++		.gpio		= MR12_GPIO_LED_W2_GREEN,
++		.active_low	= 1,
++	}, {
++		.name		= "mr12:green:wifi1",
++		.gpio		= MR12_GPIO_LED_W1_GREEN,
++		.active_low	= 1,
++	}
++};
++
++static struct gpio_keys_button MR12_gpio_keys[] __initdata = {
++	{
++		.desc		= "reset",
++		.type		= EV_KEY,
++		.code		= KEY_RESTART,
++		.debounce_interval = MR12_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= MR12_GPIO_BTN_RESET,
++		.active_low	= 1,
++	}
++};
++
++static void __init MR12_setup(void)
++{
++	u8 *mac = (u8 *) KSEG1ADDR(0xbfff0000);
++
++	/* Bring up MDIO */
++	ath79_register_mdio(0,0x0);
++
++	/* 1GB POE Port */
++	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
++	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_RGMII;
++	ath79_eth0_data.phy_mask = MR12_WAN_PHYMASK;
++
++	/* 100MB Opt Port */
++	//ath79_init_mac(ath79_eth1_data.mac_addr, mac, 1);
++	//ath79_eth1_data.phy_if_mode = PHY_INTERFACE_MODE_MII;
++	//ath79_eth1_data.phy_mask = MR12_LAN_PHYMASK; // will not function until fixed
++	//ath79_eth1_data.speed = SPEED_100;
++	//ath79_eth1_data.duplex = DUPLEX_FULL;
++
++	/* Bringup eth ints */
++	ath79_register_eth(0);
++	//ath79_register_eth(1);
++
++	/* SPI Storage */
++	ath79_register_m25p80(NULL);
++
++	/* GPIO */
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(MR12_leds_gpio),
++					MR12_leds_gpio);
++	ath79_register_gpio_keys_polled(-1, MR12_KEYS_POLL_INTERVAL,
++					ARRAY_SIZE(MR12_gpio_keys),
++					MR12_gpio_keys);
++
++	/* Wi-Fi Int */
++	ap91_pci_init(mac + MR12_CALDATA0_OFFSET,
++				mac + MR12_WMAC0_MAC_OFFSET);
++}
++
++MIPS_MACHINE(ATH79_MACH_MR12, "MR12", "Meraki MR12/MR62", MR12_setup);
++
+diff --git a/target/linux/ar71xx/generic/profiles/meraki.mk b/target/linux/ar71xx/generic/profiles/meraki.mk
+new file mode 100644
+index 0000000..9dfd087
+--- /dev/null
++++ b/target/linux/ar71xx/generic/profiles/meraki.mk
+@@ -0,0 +1,17 @@
++#
++# Copyright (C) 2014-2015 Chris Blake (chrisrblake93@gmail.com)
++#
++# This is free software, licensed under the GNU General Public License v2.
++# See /LICENSE for more information.
++#
++
++define Profile/MR12
++	NAME:=Meraki MR12/MR62
++	PACKAGES:=kmod-spi-gpio kmod-ath9k
++endef
++
++define Profile/MR12/description
++	Package set optimized for the Cisco Meraki MR12/MR62 Access Point.
++endef
++
++$(eval $(call Profile,MR12))
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index fc59c33..9adf071 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -274,6 +274,7 @@ dlrtdev_mtdlayout=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,6208k(firmware),64
+ dlrtdev_mtdlayout_fat=mtdparts=spi0.0:256k(uboot)ro,64k(config)ro,7168k(firmware),640k(certs),64k(caldata)ro,64k@0x660000(caldata_orig),6208k@0x50000(firmware_orig)
+ dragino2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,16000k(firmware),64k(config)ro,64k(art)ro
+ hiwifi_hc6361_mtdlayout=mtdparts=spi0.0:64k(u-boot)ro,64k(bdinfo)ro,1280k(kernel),14848k(rootfs),64k(backup)ro,64k(art)ro,16128k@0x20000(firmware)
++mr12_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,256k(u-boot-env)ro,13440k(rootfs),2304k(kernel),128k(art)ro,15744k@0x80000(firmware)
+ pb92_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,2752k(rootfs),896k(kernel),64k(nvram),64k(art)ro,3648k@0x50000(firmware)
+ planex_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7744k(firmware),128k(art)ro
+ ubntxm_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7552k(firmware),256k(cfg)ro,64k(EEPROM)ro
+@@ -1107,6 +1108,7 @@ $(eval $(call SingleProfile,AthLzma,64k,EWDORINAP,ew-dorin,EW-DORIN,ttyATH0,1152
+ $(eval $(call SingleProfile,AthLzma,64k,EWDORINRT,ew-dorin-router,EW-DORIN-ROUTER,ttyATH0,115200,$$(ew-dorin_mtdlayout_4M),KRuImage,65536))
+ $(eval $(call SingleProfile,AthLzma,64k,EWDORIN16M,ew-dorin-16M,EW-DORIN,ttyATH0,115200,$$(ew-dorin_mtdlayout_16M),KRuImage,65536))
+ $(eval $(call SingleProfile,AthLzma,64k,HORNETUBx2,hornet-ub-x2,HORNET-UB,ttyATH0,115200,$$(alfa_mtdlayout_16M),KRuImage,65536))
++$(eval $(call SingleProfile,AthLzma,64k,MR12,mr12,MR12,ttyS0,115200,$$(mr12_mtdlayout),RKuImage))
+ $(eval $(call SingleProfile,AthLzma,64k,PB92,pb92,PB92,ttyS0,115200,$$(pb92_mtdlayout),KRuImage))
+ $(eval $(call SingleProfile,AthLzma,64k,TUBE2H16M,tube2h-16M,TUBE2H,ttyATH0,115200,$$(alfa_mtdlayout_16M),KRuImage,65536))
+ $(eval $(call SingleProfile,AthLzma,64k,WLR8100,wlr8100,WLR8100,ttyS0,115200,$$(wlr8100_mtdlayout),KRuImage))
+diff --git a/target/linux/ar71xx/patches-3.10/738-MIPS-ath79-add-meraki-mr12-mr62-support.patch b/target/linux/ar71xx/patches-3.10/738-MIPS-ath79-add-meraki-mr12-mr62-support.patch
+new file mode 100644
+index 0000000..b8a1eb1
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.10/738-MIPS-ath79-add-meraki-mr12-mr62-support.patch
+@@ -0,0 +1,39 @@
++--- a/arch/mips/ath79/Kconfig
+++++ b/arch/mips/ath79/Kconfig
++@@ -605,6 +605,16 @@ config ATH79_MACH_OM5P
++ 	select ATH79_DEV_M25P80
++ 	select ATH79_DEV_WMAC
++ 
+++config ATH79_MACH_MR12
+++	bool "Meraki MR12/MR62 board support"
+++	select SOC_AR724X
+++	select ATH79_DEV_AP9X_PCI if PCI
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_WMAC
+++
++ config ATH79_MACH_MR600
++ 	bool "OpenMesh MR600 board support"
++ 	select SOC_AR934X
++--- a/arch/mips/ath79/Makefile
+++++ b/arch/mips/ath79/Makefile
++@@ -74,6 +74,7 @@ obj-$(CONFIG_ATH79_MACH_HIWIFI_HC6361)	+
++ obj-$(CONFIG_ATH79_MACH_JA76PF)		+= mach-ja76pf.o
++ obj-$(CONFIG_ATH79_MACH_JWAP003)	+= mach-jwap003.o
++ obj-$(CONFIG_ATH79_MACH_HORNET_UB)	+= mach-hornet-ub.o
+++obj-$(CONFIG_ATH79_MACH_MR12)		+= mach-mr12.o
++ obj-$(CONFIG_ATH79_MACH_MR600)		+= mach-mr600.o
++ obj-$(CONFIG_ATH79_MACH_MYNET_N600)	+= mach-mynet-n600.o
++ obj-$(CONFIG_ATH79_MACH_MYNET_N750)	+= mach-mynet-n750.o
++--- a/arch/mips/ath79/machtypes.h
+++++ b/arch/mips/ath79/machtypes.h
++@@ -64,6 +64,7 @@ enum ath79_mach_type {
++ 	ATH79_MACH_JA76PF2,		/* jjPlus JA76PF2 */
++ 	ATH79_MACH_JWAP003,		/* jjPlus JWAP003 */
++ 	ATH79_MACH_HORNET_UB,		/* ALFA Networks Hornet-UB */
+++	ATH79_MACH_MR12,		/* Cisco Meraki MR12/MR62 */
++ 	ATH79_MACH_MR600V2,		/* OpenMesh MR600v2 */
++ 	ATH79_MACH_MR600,		/* OpenMesh MR600 */
++ 	ATH79_MACH_MYNET_N600,		/* WD My Net N600 */

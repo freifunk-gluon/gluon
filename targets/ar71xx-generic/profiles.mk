@@ -209,3 +209,10 @@ $(eval $(call GluonModel,ALL0315N,all0315n,allnet-all0315n))
 $(eval $(call GluonProfile,GLINET))
 $(eval $(call GluonModel,GLINET,gl-inet-6408A-v1,gl-inet-6408a-v1))
 $(eval $(call GluonModel,GLINET,gl-inet-6416A-v1,gl-inet-6416a-v1))
+
+## Meraki
+
+# Meraki MR12/MR62
+$(eval $(call GluonProfile,MR12,rssileds))
+$(eval $(call GluonProfileFactorySuffix,MR12))
+$(eval $(call GluonModel,MR12,mr12,meraki-mr12-mr62))
