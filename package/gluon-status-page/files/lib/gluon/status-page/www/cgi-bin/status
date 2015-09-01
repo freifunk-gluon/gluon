@@ -94,7 +94,7 @@ local stat, fastd_status = pcall(
     assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
 
     decoder = json.new()
-    ltn12.pump.all(ltn12.source.file(fastd_sock), function(chunk) decoder:parse(chunk) end)
+    ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
     return decoder:get()
   end
 )

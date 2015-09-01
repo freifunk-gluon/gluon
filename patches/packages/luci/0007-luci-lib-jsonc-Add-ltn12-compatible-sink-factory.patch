@@ -1,0 +1,133 @@
+From: Jan-Philipp Litza <janphilipp@litza.de>
+Date: Tue, 1 Sep 2015 16:17:23 +0200
+Subject: luci-lib-jsonc: Add ltn12-compatible sink factory
+
+To use the luci-lib-jsonc parser as sink for an ltn12 pump (for example
+from stdin), the following code will now do:
+
+    require 'luci.ltn12'
+    require 'luci.jsonc'
+
+    local parser = luci.jsonc.new()
+    luci.ltn12.pump.all(luci.ltn12.source.file(io.input()), parser:sink())
+    print(parser:get())
+
+Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
+
+diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
+index b857c97..ef11101 100644
+--- a/libs/luci-lib-jsonc/src/jsonc.c
++++ b/libs/luci-lib-jsonc/src/jsonc.c
+@@ -328,6 +328,76 @@ static int json_parse_set(lua_State *L)
+ 	return 0;
+ }
+ 
++static int json_parse_sink_closure(lua_State *L)
++{
++	bool finished = lua_toboolean(L, lua_upvalueindex(2));
++	if (lua_isnil(L, 1))
++	{
++		// no more data available
++		if (finished)
++		{
++			// we were finished parsing
++			lua_pushboolean(L, true);
++			return 1;
++		}
++		else
++		{
++			lua_pushnil(L);
++			lua_pushstring(L, "Incomplete JSON data");
++			return 2;
++		}
++	}
++	else
++	{
++		if (finished)
++		{
++			lua_pushnil(L);
++			lua_pushstring(L, "Unexpected data after complete JSON object");
++			return 2;
++		}
++		else
++		{
++			// luci.jsonc.parser.chunk()
++			lua_pushcfunction(L, json_parse_chunk);
++			// parser object from closure
++			lua_pushvalue(L, lua_upvalueindex(1));
++			// chunk
++			lua_pushvalue(L, 1);
++			lua_call(L, 2, 2);
++
++			if (lua_isnil(L, -2))
++			{
++				// an error occurred, leave (nil, errmsg) on the stack and return it
++				return 2;
++			}
++			else if (lua_toboolean(L, -2))
++			{
++				// finished reading, set finished=true and return nil to prevent further input
++				lua_pop(L, 2);
++				lua_pushboolean(L, true);
++				lua_replace(L, lua_upvalueindex(2));
++				lua_pushnil(L);
++				return 1;
++			}
++			else
++			{
++				// not finished reading, return true
++				lua_pop(L, 2);
++				lua_pushboolean(L, true);
++				return 1;
++			}
++		}
++	}
++}
++
++static int json_parse_sink(lua_State *L)
++{
++	luaL_checkudata(L, 1, LUCI_JSONC_PARSER);
++	lua_pushboolean(L, false);
++	lua_pushcclosure(L, json_parse_sink_closure, 2);
++	return 1;
++}
++
+ static int json_tostring(lua_State *L)
+ {
+ 	struct json_state *s = luaL_checkudata(L, 1, LUCI_JSONC_PARSER);
+@@ -367,6 +437,7 @@ static const luaL_reg jsonc_parser_methods[] = {
+ 	{ "parse",			json_parse_chunk  },
+ 	{ "get",			json_parse_get    },
+ 	{ "set",			json_parse_set    },
++	{ "sink",			json_parse_sink   },
+ 	{ "stringify",		json_tostring     },
+ 
+ 	{ "__gc",			json_gc           },
+diff --git a/libs/luci-lib-jsonc/src/jsonc.luadoc b/libs/luci-lib-jsonc/src/jsonc.luadoc
+index 2ee9ceb..720b17d 100644
+--- a/libs/luci-lib-jsonc/src/jsonc.luadoc
++++ b/libs/luci-lib-jsonc/src/jsonc.luadoc
+@@ -121,10 +121,22 @@ parser:set({ "some", "data" })`
+ ]]
+ 
+ ---[[
+-Serialize current parser state as JSON.
++Generate an ltn12-compatible sink.
+ 
+ @class function
+ @sort 4
++@name parser.sink
++@return Returns a function that can be used as an ltn12 sink.
++@usage `parser = luci.jsonc.new()
++ltn12.pump.all(ltn12.source.file(io.input()), parser:sink())
++print(parser:get())`
++]]
++
++---[[
++Serialize current parser state as JSON.
++
++@class function
++@sort 5
+ @name parser.stringify
+ @param pretty A boolean value indicating whether the resulting JSON should be pretty printed.
+ @return Returns the serialized JSON data of this parser instance.
