@@ -19,7 +19,9 @@ function collect_dir(dir)
 
 	for entry in fs.dir(dir) do
 		if entry:sub(1, 1) ~= '.' then
+			collectgarbage()
 			local fn, err = collect_entry(dir .. '/' .. entry)
+
 			if fn then
 				fns[entry] = fn
 			else
@@ -32,13 +34,17 @@ function collect_dir(dir)
 		local ret = { [{}] = true }
 
 		for k, v in pairs(fns) do
+			collectgarbage()
 			local ok, val = pcall(setfenv(v, _M))
+
 			if ok then
 				ret[k] = val
 			else
 				io.stderr:write(val, '\n')
 			end
 		end
+
+		collectgarbage()
 
 		return ret
 	end
