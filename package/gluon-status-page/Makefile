@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-status-page
-PKG_VERSION:=1
+PKG_VERSION:=2
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
@@ -12,7 +12,7 @@ define Package/gluon-status-page
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Adds a status page showing information about the node.
-  DEPENDS:=+gluon-core +uhttpd +gluon-neighbour-info +gluon-announce +libiwinfo-lua +luci-lib-jsonc
+  DEPENDS:=+gluon-status-page-api
 endef
 
 define Package/gluon-status-page/description
