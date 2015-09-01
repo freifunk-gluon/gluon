@@ -10,6 +10,7 @@ local function configure_radio(radio, index, config)
   uci:set('wireless', radio, 'channel', config.channel)
   uci:set('wireless', radio, 'htmode', config.htmode)
   uci:set('wireless', radio, 'country', site.regdom)
+  uci:set('wireless', radio, 'noscan', 1)
 end
 
 util.iterate_radios(configure_radio)
