@@ -1,1 +1,1 @@
-return tonumber(fs.readfile('/proc/uptime'):match('^([^ ]+) '))
+return tonumber(util.readline(io.open('/proc/uptime')):match('^([^ ]+) '))

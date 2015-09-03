@@ -38,7 +38,7 @@ local uci = require('luci.model.uci').cursor()
 module 'gluon.util'
 
 function exec(...)
-	return os.execute(escape_args('', ...))
+	return os.execute(escape_args('', 'exec', ...))
 end
 
 -- Removes all lines starting with a prefix from a file, optionally adding a new one
@@ -50,6 +50,12 @@ function replace_prefix(file, prefix, add)
 	end
 	f:close()
 	os.rename(tmp, file)
+end
+
+function readline(fd)
+	local line = fd:read('*l')
+	fd:close()
+	return line
 end
 
 function lock(file)

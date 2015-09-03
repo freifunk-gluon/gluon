@@ -5,7 +5,7 @@ function ifname2address(ifname)
   if ifname_address_cache[ifname] ~= nil then
     ifaddress = ifname_address_cache[ifname]
   else
-    ifaddress = util.trim(fs.readfile("/sys/class/net/" .. ifname .. "/address"))
+    ifaddress = util.readline(io.open("/sys/class/net/" .. ifname .. "/address"))
     ifname_address_cache[ifname] = ifaddress
   end
 

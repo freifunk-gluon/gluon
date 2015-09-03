@@ -1,4 +1,4 @@
 return {
-	base = 'gluon-' .. util.trim(fs.readfile('/lib/gluon/gluon-version')),
-	release = util.trim(fs.readfile('/lib/gluon/release')),
+	base = 'gluon-' .. util.readline(io.open('/lib/gluon/gluon-version')),
+	release = util.readline(io.open('/lib/gluon/release')),
 }

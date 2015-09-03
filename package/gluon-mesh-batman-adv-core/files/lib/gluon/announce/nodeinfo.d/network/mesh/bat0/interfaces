@@ -1,5 +1,3 @@
-local list = util.exec('batctl if')
-
 local wireless = {}
 local tunnel = {}
 local other = {}
@@ -7,21 +5,27 @@ local other = {}
 local function get_address(t, ifname)
   pcall(
     function()
-      table.insert(t, util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address')))
+      table.insert(t, util.readline(io.open('/sys/class/net/' .. ifname .. '/address')))
     end
   )
 end
 
-local function is_wireless(ifname)
-  local type = fs.stat('/sys/class/net/' .. ifname .. '/wireless', 'type')
+local function file_exists(filename)
+  local f = io.open(filename)
+  if f == nil then
+    return false
+  else
+    f:close()
+    return true
+  end
+end
 
-  return type == 'directory'
+local function is_wireless(ifname)
+  return file_exists('/sys/class/net/' .. ifname .. '/wireless')
 end
 
 local function is_tuntap(ifname)
-  local type = fs.stat('/sys/class/net/' .. ifname .. '/tun_flags', 'type')
-
-  return type == 'regular'
+  return file_exists('/sys/class/net/' .. ifname .. '/tun_flags')
 end
 
 local function nil_table(t)
@@ -32,18 +36,17 @@ local function nil_table(t)
   end
 end
 
-for _, line in ipairs(util.split(list)) do
-  local ifname = line:match('^(.-):')
-  if ifname ~= nil then
-    if is_wireless(ifname) then
-      get_address(wireless, ifname)
-    elseif is_tuntap(ifname) then
-      get_address(tunnel, ifname)
-    else
-      get_address(other, ifname)
-    end
+local popen = io.popen('exec batctl if')
+for ifname in popen:read('*a'):gmatch('([^%s]+): active') do
+  if is_wireless(ifname) then
+    get_address(wireless, ifname)
+  elseif is_tuntap(ifname) then
+    get_address(tunnel, ifname)
+  else
+    get_address(other, ifname)
   end
 end
+popen:close()
 
 return {
   wireless = nil_table(wireless),
