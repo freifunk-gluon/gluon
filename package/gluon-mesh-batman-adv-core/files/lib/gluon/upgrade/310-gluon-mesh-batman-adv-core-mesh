@@ -20,22 +20,28 @@ uci:commit('batman-adv')
 
 
 if not uci:get('network', 'client') then
-  local ifname
+  uci:section('network', 'interface', 'client',
+    {
+      type = 'bridge',
+      proto = 'dhcpv6',
+      reqprefix = 'no',
+    }
+  )
+
+  uci:add_to_set('network', 'client', 'ifname', 'bat0')
 
   if sysconfig.lan_ifname and not site.mesh_on_lan then
-    ifname = sysconfig.lan_ifname .. ' bat0'
-  else
-    ifname = 'bat0'
+    uci:add_to_set('network', 'client', 'ifname', sysconfig.lan_ifname)
   end
+end
 
-  uci:section('network', 'interface', 'client',
-	      {
-		ifname = ifname,
-		type = 'bridge',
-		proto = 'dhcpv6',
-		reqprefix = 'no',
-	      }
-  )
+local ifname = uci:get('network', 'client', 'ifname')
+
+if type(ifname) == 'string' then
+  uci:delete('network', 'client', 'ifname')
+  for x in ifname:gmatch("[^%s]+") do
+    uci:add_to_set('network', 'client', 'ifname', x)
+  end
 end
 
 uci:set('network', 'client', 'igmp_snooping', 0)

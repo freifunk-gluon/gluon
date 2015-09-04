@@ -11,9 +11,9 @@ if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
   local enable = site.mesh_on_lan
 
   if enable then
-    local interfaces = uci:get('network', 'client', 'ifname')
+    local interfaces = uci:get_list('network', 'client', 'ifname')
 
-    if interfaces and lutil.contains(interfaces:split(' '), sysconfig.lan_ifname) then
+    if interfaces and lutil.contains(interfaces, sysconfig.lan_ifname) then
       enable = false
     end
   end

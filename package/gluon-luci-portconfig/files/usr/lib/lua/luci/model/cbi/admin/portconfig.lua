@@ -122,9 +122,9 @@ function f.handle(self, state, data)
       uci:set("network", "mesh_lan", "auto", data.mesh_lan)
 
       if data.mesh_lan == '1' then
-        uci:set("network", "client", "ifname", "bat0")
+        uci:remove_from_set("network", "client", "ifname", sysconfig.lan_ifname)
       else
-        uci:set("network", "client", "ifname", sysconfig.lan_ifname .. " bat0")
+        uci:add_to_set("network", "client", "ifname", sysconfig.lan_ifname)
       end
     end
 

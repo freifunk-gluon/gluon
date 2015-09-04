@@ -1,0 +1,103 @@
+From: Nils Schneider <nils@nilsschneider.net>
+Date: Mon, 17 Aug 2015 20:39:58 +0200
+Subject: model.uci: add add_to_set / remove_from_set
+
+Adds two functions to simplify working with UCI lists:
+
+- add_to_set, which ensures a given value will be present in a list, and
+- remove_from_set, which removes a value from list.
+
+I've called these methods "set" because they treat the list as a set,
+i.e. duplicated values will be removed. Also, order is not preserved.
+
+Signed-off-by: Nils Schneider <nils@nilsschneider.net>
+
+diff --git a/modules/luci-base/luasrc/model/uci.lua b/modules/luci-base/luasrc/model/uci.lua
+index 1659137..d35b9d7 100644
+--- a/modules/luci-base/luasrc/model/uci.lua
++++ b/modules/luci-base/luasrc/model/uci.lua
+@@ -9,7 +9,7 @@ local table = require "table"
+ 
+ local setmetatable, rawget, rawset = setmetatable, rawget, rawset
+ local require, getmetatable = require, getmetatable
+-local error, pairs, ipairs = error, pairs, ipairs
++local error, pairs, ipairs, next = error, pairs, ipairs, next
+ local type, tostring, tonumber, unpack = type, tostring, tonumber, unpack
+ 
+ -- The typical workflow for UCI is:  Get a cursor instance from the
+@@ -147,6 +147,40 @@ function Cursor.set_list(self, config, section, option, value)
+ 	return false
+ end
+ 
++function Cursor.add_to_set(self, config, section, option, value, remove)
++	local list = self:get_list(config, section, option)
++
++	if not list then
++		return false
++	end
++
++	local set = {}
++	for _, l in ipairs(list) do
++		set[l] = true
++	end
++
++	if remove then
++		set[value] = nil
++	else
++		set[value] = true
++	end
++
++	list = {}
++	for k, _ in pairs(set) do
++		table.insert(list, k)
++	end
++
++	if next(list) == nil then
++		return self:delete(config, section, option)
++	else
++		return self:set(config, section, option, list)
++	end
++end
++
++function Cursor.remove_from_set(self, config, section, option, value)
++	self:add_to_set(config, section, option, value, true)
++end
++
+ -- Return a list of initscripts affected by configuration changes.
+ function Cursor._affected(self, configlist)
+ 	configlist = type(configlist) == "table" and configlist or {configlist}
+diff --git a/modules/luci-base/luasrc/model/uci.luadoc b/modules/luci-base/luasrc/model/uci.luadoc
+index 1c20866..281bdb2 100644
+--- a/modules/luci-base/luasrc/model/uci.luadoc
++++ b/modules/luci-base/luasrc/model/uci.luadoc
+@@ -116,6 +116,30 @@ Set given values as list.
+ ]]
+ 
+ ---[[
++Add a given value to a list of unique values.
++
++@class function
++@name Cursor.add_to_set
++@param config	UCI config
++@param section	UCI section name
++@param option	UCI option
++@param value		UCI value
++@return			Boolean whether operation succeeded
++]]
++
++---[[
++Remove a given value from a list of unique values.
++
++@class function
++@name Cursor.add_to_set
++@param config	UCI config
++@param section	UCI section name
++@param option	UCI option
++@param value		UCI value
++@return			Boolean whether operation succeeded
++]]
++
++---[[
+ Create a sub-state of this cursor. The sub-state is tied to the parent
+ 
+ curser, means it the parent unloads or loads configs, the sub state will
