@@ -11,7 +11,7 @@ if not fastd_sock:connect(socket_path) then
 end
 
 local decoder = json.new()
-ltn12.pump.all(ltn12.source.file(fastd_sock), function(chunk) decoder:parse(chunk) end)
+ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
 
 local status = decoder:get()
 
