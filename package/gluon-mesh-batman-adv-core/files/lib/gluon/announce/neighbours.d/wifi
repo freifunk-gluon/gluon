@@ -1,3 +1,4 @@
+local batman_adv = require 'gluon.batman_adv'
 local iwinfo = require 'iwinfo'
 
 function neighbours(iface)
@@ -16,8 +17,7 @@ end
 
 function interfaces()
   local interfaces = {}
-  local popen = io.popen('exec batctl if')
-  for ifname in popen:read('*a'):gmatch('([^%s]+): active') do
+  for ifname in batman_adv.interfaces('bat0') do
     pcall(function()
       local address = util.readline(io.open('/sys/class/net/' .. ifname .. '/address'))
       local wifitype = iwinfo.type(ifname)
@@ -26,7 +26,6 @@ function interfaces()
       end
     end)
   end
-  popen:close()
 
   return interfaces
 end
