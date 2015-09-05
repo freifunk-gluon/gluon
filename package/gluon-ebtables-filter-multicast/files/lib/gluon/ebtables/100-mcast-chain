@@ -1,1 +1,2 @@
 chain('MULTICAST_OUT', 'DROP')
+chain('MULTICAST_IN', 'ACCEPT', 'nat')
