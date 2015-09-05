@@ -1,0 +1,33 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 6 Sep 2015 01:27:06 +0200
+Subject: Move rpcd dependency from luci-base to luci-mode-rpc
+
+LuCI's authentication won't work without rpcd, but we aren't using the
+authentication anyways. Users who need it can just install rpcd explicitly.
+
+diff --git a/modules/luci-base/Makefile b/modules/luci-base/Makefile
+index 55c21eb..7a1009c 100644
+--- a/modules/luci-base/Makefile
++++ b/modules/luci-base/Makefile
+@@ -12,7 +12,7 @@ LUCI_TYPE:=mod
+ LUCI_BASENAME:=base
+ 
+ LUCI_TITLE:=LuCI core libraries
+-LUCI_DEPENDS:=+lua +libuci-lua +libubus-lua +luci-lib-nixio +luci-lib-ip +rpcd
++LUCI_DEPENDS:=+lua +libuci-lua +libubus-lua +luci-lib-nixio +luci-lib-ip
+ 
+ PKG_SOURCE:=LuaSrcDiet-0.12.1.tar.bz2
+ PKG_SOURCE_URL:=https://luasrcdiet.googlecode.com/files
+diff --git a/modules/luci-mod-rpc/Makefile b/modules/luci-mod-rpc/Makefile
+index e64c86c..5f64a14 100644
+--- a/modules/luci-mod-rpc/Makefile
++++ b/modules/luci-mod-rpc/Makefile
+@@ -7,7 +7,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ LUCI_TITLE:=LuCI RPC - JSON-RPC API
+-LUCI_DEPENDS:=+luci-lib-json
++LUCI_DEPENDS:=+luci-lib-json +rpcd
+ 
+ include ../../luci.mk
+ 
