@@ -44,7 +44,7 @@ if type(ifname) == 'string' then
   end
 end
 
-uci:set('network', 'client', 'igmp_snooping', 0)
+uci:delete('network', 'client', 'igmp_snooping')
 uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
 uci:set('network', 'client', 'peerdns', 1)
 uci:set('network', 'client', 'sourcefilter', 0)
