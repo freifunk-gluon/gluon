@@ -25,6 +25,7 @@ Dependencies
 To build Gluon, several packages need to be installed on the system. On a
 freshly installed Debian Wheezy system the following packages are required:
 
+* `python2` (Python 3 will not work)
 * `git` (to get Gluon and other dependencies)
 * `subversion`
 * `build-essential`
