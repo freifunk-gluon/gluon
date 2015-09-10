@@ -27,11 +27,13 @@ freshly installed Debian Wheezy system the following packages are required:
 
 * `git` (to get Gluon and other dependencies)
 * `subversion`
+* `python` (Python 3 doesn't work)
 * `build-essential`
 * `gawk`
 * `unzip`
 * `libncurses-dev` (actually `libncurses5-dev`)
 * `libz-dev` (actually `zlib1g-dev`)
+* `libssl-dev`
 
 
 Building the images
