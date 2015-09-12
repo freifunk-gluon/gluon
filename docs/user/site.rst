@@ -141,7 +141,7 @@ fastd_mesh_vpn
         mtu = 1426,
         groups = {
           backbone = {
-            limit = 2,
+            limit = 1,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
