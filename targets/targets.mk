@@ -4,6 +4,7 @@ $(eval $(call GluonTarget,mpc85xx,generic))
 $(eval $(call GluonTarget,x86,generic))
 $(eval $(call GluonTarget,x86,kvm_guest))
 $(eval $(call GluonTarget,x86,64))
+$(eval $(call GluonTarget,x86,xen_domu))
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
