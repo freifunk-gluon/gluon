@@ -9,7 +9,7 @@ uci batch <<-EOF
 
 	set uhttpd.main.home=/lib/gluon/status-page/www
 
-	set uhttpd.main.max_requests=12
+	set uhttpd.main.max_requests=32
 
 	commit uhttpd
 EOF
