@@ -88,7 +88,7 @@ wifi24
     ::
 
        wifi24 = {
-         channel = 11,
+         channel = 6,
          htmode = 'HT20',
          ap = {
            ssid = 'entenhausen.freifunk.net',
