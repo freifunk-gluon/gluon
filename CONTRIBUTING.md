@@ -56,7 +56,7 @@ If you developed your change in multiple smaller commits, you can easily
 [squash] those before opening the pull request. While discussing, it is okay to
 do your changes using `git commit --amend` and force-push them to your head of
 the pull request. This way, your change always consists of only one commit and
-can be merged in the instant everybode is content with the whole thing.
+can be merged in the instant everybody is content with the whole thing.
 
 
 [community repositories]: http://gluon.readthedocs.org/en/latest/user/site.html#packages
