@@ -1,0 +1,33 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-08-19 23:30+0100\n"
+"Last-Translator:Tobias Bernot <tqbs@airmail.cc>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+
+msgid "Automatic (DHCP)"
+msgstr "Automatique (DHCP)"
+
+msgid "Automatic (RA/DHCPv6)"
+msgstr "Automatique (RA/DHCPv6)"
+
+msgid "Enable meshing on the WAN interface"
+msgstr "Activer le réseau MESH sur les ports WAN"
+
+msgid "Enable meshing on the LAN interface"
+msgstr "Activer le réseau MESH sur le port LAN"
+
+msgid "Static"
+msgstr "Statique"
+
+msgid "Static DNS servers"
+msgstr "Adresse DNS statique"
+
+msgid "WAN connection"
+msgstr "Connexion WAN"
