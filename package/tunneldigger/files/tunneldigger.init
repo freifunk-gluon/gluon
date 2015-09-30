@@ -1,5 +1,7 @@
 #!/bin/sh /etc/rc.common
 
+. $IPKG_INSTROOT/lib/functions/network.sh
+
 START=90
 
 PIDPATH=/var/run
@@ -31,7 +33,12 @@ config_cb() {
 
 			[ ! -z "${limit_bw_down}" ] && append broker_opts "-L ${limit_bw_down}"
 			[ ! -z "${hook_script}" ] && append broker_opts "-s ${hook_script}"
-			[ ! -z "${bind_interface}" ] && append broker_opts "-I ${bind_interface}"
+			[ ! -z "${bind_interface}" ] && {
+				# Resolve logical interface name.
+				unset _bind_interface
+				network_get_device _bind_interface "${bind_interface}" || _bind_interface="${bind_interface}"
+				append broker_opts "-I ${_bind_interface}"
+			}
 
 			if [ -z "$uuid" ]; then
 				missing uuid
