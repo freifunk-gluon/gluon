@@ -20,6 +20,7 @@ config_cb() {
 			config_get interface "$cfg" interface
 			config_get limit_bw_down "$cfg" limit_bw_down
 			config_get hook_script "$cfg" hook_script
+			config_get bind_interface "$cfg" bind_interface
 			
 			[ $enabled -eq 0 ] && return
 
@@ -30,6 +31,7 @@ config_cb() {
 
 			[ ! -z "${limit_bw_down}" ] && append broker_opts "-L ${limit_bw_down}"
 			[ ! -z "${hook_script}" ] && append broker_opts "-s ${hook_script}"
+			[ ! -z "${bind_interface}" ] && append broker_opts "-I ${bind_interface}"
 
 			if [ -z "$uuid" ]; then
 				missing uuid
