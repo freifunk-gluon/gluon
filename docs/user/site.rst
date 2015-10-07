@@ -12,7 +12,9 @@ Configuration
 The ``site.conf`` is a lua dictionary with the following defined keys.
 
 hostname_prefix
-    A string which shall prefix the default hostname of a device.
+    An optional string which would prefix the generated default hostname of a device.
+    If you want to force the user to think about a unique name enter an invalid prefix
+    with spaces like 'Enter a name for your node'
 
 site_name
     The name of your community.
@@ -52,7 +54,7 @@ opkg_repo : optional
 
       opkg_repo = 'http://opkg.services.ffeh/attitude_adjustment/12.09/%S/packages'
 
-    The `%S` is a variable, which is replaced with the platform of an device
+    The `%S` is a variable, which is replaced with the platform of a device
     during the build process.
 
 regdom
@@ -77,24 +79,26 @@ wifi24
     This will only affect new installations.
     Upgrades will not changed the disabled state.
 
-    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the interface's ESSID.
+    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the 
+    interface's ESSID.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the mesh id.
 
     ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
     An optional parameter ``vlan`` (integer) is supported.
 
-    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for setting the default multicast datarate.
+    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for 
+    setting the default multicast datarate.
     ::
 
        wifi24 = {
-         channel = 11,
+         channel = 6,
          htmode = 'HT20',
          ap = {
-           ssid = 'entenhausen.freifunk.net',
+           ssid = 'gothamcity.freifunk.net',
          },
          mesh = {
-           id = 'entenhausen-mesh',
+           id = 'gothamcity-mesh',
            mcast_rate = 12000,
          },
          ibss = {
@@ -123,10 +127,10 @@ fastd_mesh_vpn
 
     The `enabled` option can be set to true to enable the VPN by default.
 
-    If `configurable` is `false` or unset, the method list will be replaced on updates
-    with the list in the site configuration. Setting `configurable` to `true` will allow the user to
-    add the method ``null`` to the front of the method list or remove ``null`` from it,
-    and make this change survive updates. Settings configurable is necessary for the
+    If `configurable` is set to `false` or unset, the method list will be replaced on updates
+    with the list from the site configuration. Setting `configurable` to `true` will allow the user to
+    add the method ``null`` to the beginning of the method list or remove ``null`` from it,
+    and make this change survive updates. The settings `configurable` is necessary for the
     package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
 
     In any case, the ``null`` method should always be the first method in the list
@@ -136,20 +140,43 @@ fastd_mesh_vpn
 
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
-	-- enabled = true,
-	-- configurable = true,
+      	-- enabled = true,
+      	-- configurable = true,
         mtu = 1280,
         groups = {
           backbone = {
+            -- Limit number of connected peers to reduce bandwidth.
             limit = 1,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+                -- you might add multiple entries.
+                remotes = {
+                  'ipv4 "gw0.gothamcity.freifunk.net" port 10000',
+                  'ipv6 "gw0.gothamcity.freifunk.net" port 10000', 
+                },
               },
-            }
+              peer2 = {
+                key = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
+                remotes = {
+                  '"gw1.gothamcity.freifunk.net" port 10000',
+                },
+              },
+            },
           }
-        }
+          -- Optional: nested peer groups
+          -- groups = {
+          --   backbone_sub = {
+          --     ...
+          --   },
+          --   ...
+          -- },
+        },
+        -- Optional: additional peer groups, possibly with other limits
+        -- backbone2 = {
+        --   ...
+        -- },
       }
 
 mesh_on_wan : optional
@@ -163,15 +190,24 @@ autoupdater : package
     ::
 
       autoupdater = {
-        branch = 'experimental',
+        branch = 'stable',
         branches = {
           stable = {
             name = 'stable',
+            
+            -- List of mirrors to fetch images from. IPv6 required!
             mirrors = {
               'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-              'http://[fdca:ffee:babe:1::fec2]/firmware/stable/sysupgrade/',
+              'http://services.gothamcity.freifunk.net/firmware/stable/sysupgrade/',
             },
-            good_signatures = 2,
+            
+            -- Number of good signatures required.
+      	    -- Have multiple maintainers sign your build and only
+      	    -- accept it when a sufficient number of them have
+      	    -- signed it, for ex. 3 for stable and 1 for experimental
+      	    good_signatures = 3,
+      	    
+      	    -- List of public keys of maintainers.
             pubkeys = {
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someother
@@ -181,9 +217,9 @@ autoupdater : package
       }
 
 roles : optional
-    Optional role definitions. With this nodes will announce their role inside the mesh.
-    In the backend this adds the facility to distinguish between normal, backbone and
-    service nodes or even gateways (if they advertise the role, also). It is up to
+    Optional role definitions. Nodes will announce their role inside the mesh.
+    This will allow in the backend to distinguish between normal, backbone and
+    service nodes or even gateways (if they advertise that role). It is up to
     the community which roles to define. See the section below as an example.
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
@@ -205,21 +241,25 @@ roles : optional
       },
 
 simple_tc : package
-    Uplink traffic control, ingress and egress values are specified in kbit/s.
+    Uplink Bandwidth limiting
     ::
 
       simple_tc = {
         mesh_vpn = {
           ifname = 'mesh-vpn',
+          -- You may enable it by default here.
           enabled = false,
-          limit_egress = 200,
-          limit_ingress = 3000,
+          -- Default upload limit (kbit/s).
+          limit_egress = 500,
+          -- Default download limit (kbit/s).
+          limit_ingress = 4000,
         },
       },
 
 setup_mode : package
     Allows skipping setup mode (config mode) at first boot when attribute
-    ``skip`` is set to ``true``. This is optional and may be left out.
+    ``skip`` is set to ``true``. This is optional and may be left out. If set to `true`,
+    make sure that you enter a valid `hostname_prefix`.
     ::
 
       setup_mode = {
@@ -248,7 +288,7 @@ The ``site.mk`` is a Makefile which should define constants
 involved in the build process of Gluon.
 
 GLUON_SITE_PACKAGES
-    Defines a list of packages which should installed additional
+    Defines a list of packages which should be installed additionally
     to the ``gluon_core`` package.
 
 GLUON_RELEASE
@@ -259,7 +299,7 @@ GLUON_PRIORITY
     for more information).
 
 GLUON_LANGS
-    List of languages (as two-letter-codes) to include for the web interface. Should always contain
+    List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
 
 .. _site-config-mode-texts:
