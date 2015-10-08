@@ -1,0 +1,3 @@
+return {
+	enabled = uci:get_bool('tunneldigger', 'broker', 'enabled'),
+}
