@@ -1,4 +1,4 @@
-X86_GENERIC_NETWORK_MODULES := kmod-3c59x kmod-e100 kmod-e1000 kmod-e1000e kmod-natsemi kmod-ne2k-pci kmod-pcnet32 kmod-8139too kmod-r8169 kmod-sis900 kmod-tg3 kmod-via-rhine kmod-via-velocity
+X86_GENERIC_NETWORK_MODULES := kmod-3c59x kmod-e100 kmod-e1000 kmod-e1000e kmod-natsemi kmod-ne2k-pci kmod-pcnet32 kmod-8139too kmod-r8169 kmod-sis900 kmod-tg3 kmod-via-rhine kmod-via-velocity kmod-forcedeth
 
 
 $(eval $(call GluonProfile,GENERIC,$(X86_GENERIC_NETWORK_MODULES)))
