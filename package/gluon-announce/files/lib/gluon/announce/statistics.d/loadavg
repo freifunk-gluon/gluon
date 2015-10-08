@@ -1,1 +1,10 @@
-return tonumber(util.readline(io.open('/proc/loadavg')):match('^([^ ]+) '))
+local info = fs.readfile('/proc/loadavg')
+local loadavg = {}
+local a, b, c
+a, b, c = info:match('^([^ ]+) ([^ ]+) ([^ ]+)')
+
+loadavg['1'] = tonumber(a)
+loadavg['5'] = tonumber(b)
+loadavg['15'] = tonumber(c)
+
+return loadavg
