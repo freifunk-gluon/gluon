@@ -10,22 +10,26 @@ local lutil = require 'luci.util'
 -- Group for iptables rule
 users.add_group('gluon-tunneldigger', 900)
 
-local enabled = uci:get('tunneldigger', 'broker', 'enabled')
+local enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
 if not enabled then
   enabled = site.tunneldigger_mesh_vpn.enabled and 1 or 0
 end
 
-uci:section('tunneldigger', 'broker',
+-- Delete old broker config section       
+uci:delete_all('tunneldigger', 'broker')
+
+section = uci:add('tunneldigger', 'broker')
+
+uci:section('tunneldigger', 'broker', section,
 	  {
 		  enabled = enabled,
 		  uuid = util.node_id(),
 		  interface = 'mesh-vpn',
 		  bind_interface = 'br-wan',
 		  group = 'gluon-tunneldigger',
+		  address = site.tunneldigger_mesh_vpn.brokers,
 	  }
 )
-
-uci:set("tunneldigger", "broker", "address", site.mesh_vpn_tunneldigger.brokers)
 
 uci:save('tunneldigger')
 uci:commit('tunneldigger')
@@ -36,13 +40,7 @@ uci:section('network', 'interface', 'mesh_vpn',
 		  proto = 'batadv',
 		  mesh = 'bat0',
 		  mesh_no_rebroadcast = 1,
-	  }
-)
-
-uci:section('network', 'device', 'mesh_vpn_dev',
-	  {
-		  ifname = 'mesh-vpn',
-		  mtu = site.mesh_vpn_tunneldigger.mtu,
+		  mtu = site.tunneldigger_mesh_vpn.mtu,
 	  }
 )
 
