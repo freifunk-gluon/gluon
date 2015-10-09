@@ -12,11 +12,11 @@ function M.section(form)
                              'your connection\'s bandwidth available for the network. You can limit how ' ..
                              'much bandwidth the node will use at most.')
   local s = form:section(cbi.SimpleSection, nil, msg)
-
+  
   local o
 
-  o = s:option(cbi.Flag, "_meshvpn", i18n.translate("Use internet connection (mesh VPN via L2TP")"))
-  o.default = uci:get_bool("tunneldigger", "broker", "enabled") and o.enabled or o.disabled
+  o = s:option(cbi.Flag, "_meshvpn", i18n.translate("Use internet connection (mesh VPN via L2TP)"))
+  o.default = uci:get_bool("tunneldigger", uci:get_first("tunneldigger", "broker"), "enabled") and o.enabled or o.disabled
   o.rmempty = false
 
   o = s:option(cbi.Flag, "_limit_enabled", i18n.translate("Limit bandwidth"))
@@ -38,7 +38,7 @@ function M.section(form)
 end
 
 function M.handle(data)
-  uci:set("tunneldigger", "broker", "enabled", data._meshvpn)
+  uci:set("tunneldigger", uci:get_first("tunneldigger", "broker"), "enabled", data._meshvpn)
   uci:save("tunneldigger")
   uci:commit("tunneldigger")
 
