@@ -183,6 +183,10 @@ $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h,buffalo-wzr-hp-g450h))
 $(eval $(call GluonProfile,WZRHPAG300H))
 $(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h,buffalo-wzr-hp-ag300h-wzr-600dhp))
 
+# WHR-HP-G300N
+$(eval $(call GluonProfile,WHRHPG300N))
+$(eval $(call GluonModel,WHRHPG300N,whr-hp-g300n,buffalo-whr-hp-g300n))
+
 ## Netgear
 
 # WNDR3700 (v1, v2) / WNDR3800 / WNDRMAC (v1, v2)
