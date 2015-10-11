@@ -6,6 +6,8 @@ need_boolean('fastd_mesh_vpn.configurable', false)
 
 local function check_peer(prefix)
   return function(k, _)
+    assert_uci_name(k)
+
     local table = string.format('%s[%q].', prefix, k)
 
     need_string(table .. 'key')
@@ -15,6 +17,8 @@ end
 
 local function check_group(prefix)
   return function(k, _)
+    assert_uci_name(k)
+
     local table = string.format('%s[%q].', prefix, k)
 
     need_number(table .. 'limit', false)

@@ -1,4 +1,6 @@
 local function check_entry(k, _)
+   assert_uci_name(k)
+
    local prefix = string.format('simple_tc[%q].', k)
 
    need_string(prefix .. 'ifname')

@@ -1,6 +1,8 @@
 need_string 'autoupdater.branch'
 
 local function check_branch(k, _)
+   assert_uci_name(k)
+
    local prefix = string.format('autoupdater.branches[%q].', k)
 
    need_string(prefix .. 'name')
