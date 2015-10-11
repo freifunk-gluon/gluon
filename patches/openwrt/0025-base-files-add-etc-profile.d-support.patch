@@ -1,0 +1,29 @@
+From: Hendrik Lüth <hendrik@linux-nerds.de>
+Date: Wed, 10 Jun 2015 07:47:58 +0200
+Subject: base-files: add /etc/profile.d support
+
+OpenWrt should support an optinal /etc/profile.d directory like most other Linux
+distributions. This allows packages to install their own scripts into
+/etc/profile.d/.
+
+Signed-off-by: Hendrik Lüth <hendrik@linux-nerds.de>
+
+diff --git a/package/base-files/files/etc/profile b/package/base-files/files/etc/profile
+index 3dd58e1..c9e805f 100644
+--- a/package/base-files/files/etc/profile
++++ b/package/base-files/files/etc/profile
+@@ -14,3 +14,12 @@ export PS1='\u@\h:\w\$ '
+ 
+ [ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
+ [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
++
++[ -z "$FAILSAFE" ] && {
++  if [ -d /etc/profile.d ]; then
++    for i in /etc/profile.d/*.sh ; do
++      if [ -r $i ]; then
++        . $i
++      fi
++    done
++  fi
++}
+
