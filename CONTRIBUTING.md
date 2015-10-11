@@ -25,7 +25,10 @@ after merging the changes, too.
 
 The preferred way to discuss in the IRC channel ([#gluon] on irc.hackint.org)
 or on the [mailing list], however, you can also open a new issue on Github to
-discuss there.
+discuss there. We maintain a [list of rejected
+features](https://github.com/freifunk-gluon/gluon/issues?q=label%3Arejected)
+and we'd like to kindly ask you to review it first. In general, looking for
+duplicates may save you some time.
 
 Develop on top of master
 ------------------------
