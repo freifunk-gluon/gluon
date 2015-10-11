@@ -183,9 +183,20 @@ $(eval $(call GluonModel,WRT160NL,wrt160nl,linksys-wrt160nl))
 $(eval $(call GluonProfile,WZRHPG450H))
 $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h,buffalo-wzr-hp-g450h))
 
-# WZR-HP-AG300H/WZR-600DHP
+# WZR-HP-AG300H (factory)
 $(eval $(call GluonProfile,WZRHPAG300H))
-$(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h,buffalo-wzr-hp-ag300h-wzr-600dhp))
+$(eval $(call GluonProfileSysupgradeSuffix,WZRHPAG300H))
+$(eval $(call GluonModel,WZRHPAG300H,wzr-hp-ag300h,buffalo-wzr-hp-ag300h))
+
+# WZR-600DHP (factory)
+$(eval $(call GluonProfile,WZR600DHP))
+$(eval $(call GluonProfileSysupgradeSuffix,WZR600DHP))
+$(eval $(call GluonModel,WZR600DHP,wzr-600dhp,buffalo-wzr-600dhp))
+
+# WZR-HP-AG300H/WZR-600DHP (sysupgrade)
+$(eval $(call GluonProfile,WZRHPAG300H_WZR600DHP,,WZRHPAG300H))
+$(eval $(call GluonProfileFactorySuffix,WZRHPAG300H_WZR600DHP))
+$(eval $(call GluonModel,WZRHPAG300H_WZR600DHP,wzr-hp-ag300h,buffalo-wzr-hp-ag300h-wzr-600dhp))
 
 # WHR-HP-G300N
 $(eval $(call GluonProfile,WHRHPG300N))
