@@ -6,9 +6,12 @@ local util = require "nixio.util"
 local f, s
 
 local wizard = {}
-local files = util.consume(fs.dir(wizard_dir))
+local files = {}
 
-table.sort(files)
+if fs.access(wizard_dir) then
+  files = util.consume(fs.dir(wizard_dir))
+  table.sort(files)
+end
 
 for _, entry in ipairs(files) do
   if entry:sub(1, 1) ~= '.' then
