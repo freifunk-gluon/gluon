@@ -87,6 +87,8 @@ end
 local function configure_mesh(config, radio, index, suffix)
   local name = 'mesh_' .. radio
   local disabled = is_disabled(config, name)
+  local macfilter = uci:get('wireless', name, 'macfilter')
+  local maclist = uci:get('wireless', name, 'maclist')
 
   uci:delete('network', name)
   uci:delete('wireless', name)
@@ -110,6 +112,8 @@ local function configure_mesh(config, radio, index, suffix)
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'mesh' .. suffix,
         disabled = disabled,
+        macfilter = macfilter,
+        maclist = maclist,
       }
     )
   end
