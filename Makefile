@@ -146,6 +146,7 @@ endef
 define GluonProfile
 PROFILES += $(1)
 PROFILE_PACKAGES += $(filter-out -%,$(2) $(GLUON_$(1)_SITE_PACKAGES))
+GLUON_$(1)_PROFILE := $(if $(3),$(3),$(1))
 GLUON_$(1)_DEFAULT_PACKAGES := $(2)
 GLUON_$(1)_FACTORY_SUFFIX := -squashfs-factory
 GLUON_$(1)_SYSUPGRADE_SUFFIX := -squashfs-sysupgrade
@@ -391,7 +392,7 @@ image: FORCE
 
 	$(call Image/mkfs/prepare)
 	$(_SINGLE)$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD)/image install TARGET_BUILD=1 IMG_PREFIX=gluon \
-		PROFILE="$(PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
+		PROFILE="$(GLUON_$(PROFILE)_PROFILE)" KDIR="$(PROFILE_KDIR)" TARGET_DIR="$(TARGET_DIR)" BIN_DIR="$(BIN_DIR)" TMP_DIR="$(TMP_DIR)"
 
 	$(foreach model,$(GLUON_$(PROFILE)_MODELS), \
 		$(if $(GLUON_$(PROFILE)_SYSUPGRADE_EXT), \
