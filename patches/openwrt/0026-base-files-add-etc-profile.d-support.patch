@@ -1,0 +1,40 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 11 Oct 2015 18:13:35 +0200
+Subject: base-files: add /etc/profile.d support
+
+OpenWrt should support an optional /etc/profile.d directory like
+most other Linux distributions. This allows packages to install
+their own scripts into /etc/profile.d/ directory.
+
+The file suffix should make clear, that these scripts
+are (sourced) shell-snippets. If the user needs e.g. php or lua,
+one must make sure that the interpreter is called.
+The reverse failsafe test makes sure, that the effective returncode is 0.
+
+A typcal usecase is the inclusion of private helpers,
+special variables or aliases, which at the moment needs
+patching the sourcecode and is not well maintainable.
+Now the builder can simply add there files.
+
+v1 initial work of Hendrik Lüth <hendrik@linux-nerds.de>
+v2 changes regarding RFC (e.g. thomas.langer@lantiq.com)
+v3 changes regarding RFC (e.g. mschiffer@universe-factory.net)
+v4 keep it simple and mimic OpenWrt style
+
+Signed-off-by: Bastian Bittorf <bittorf@bluebottle.com>
+
+diff --git a/package/base-files/files/etc/profile b/package/base-files/files/etc/profile
+index 3dd58e1..577b63b 100644
+--- a/package/base-files/files/etc/profile
++++ b/package/base-files/files/etc/profile
+@@ -14,3 +14,10 @@ export PS1='\u@\h:\w\$ '
+ 
+ [ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
+ [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
++
++[ -n "$FAILSAFE" ] || {
++	for FILE in /etc/profile.d/*.sh; do
++		[ -e "$FILE" ] && . "$FILE"
++	done
++	unset FILE
++}
