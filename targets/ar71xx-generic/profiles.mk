@@ -199,8 +199,8 @@ $(eval $(call GluonProfileFactorySuffix,WZRHPAG300H_WZR600DHP))
 $(eval $(call GluonModel,WZRHPAG300H_WZR600DHP,wzr-hp-ag300h,buffalo-wzr-hp-ag300h-wzr-600dhp))
 
 # WHR-HP-G300N
-$(eval $(call GluonProfile,WHRHPG300N))
-$(eval $(call GluonModel,WHRHPG300N,whr-hp-g300n,buffalo-whr-hp-g300n))
+#$(eval $(call GluonProfile,WHRHPG300N))
+#$(eval $(call GluonModel,WHRHPG300N,whr-hp-g300n,buffalo-whr-hp-g300n))
 
 ## Netgear
 
