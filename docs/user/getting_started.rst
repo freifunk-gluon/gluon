@@ -86,7 +86,7 @@ In case of errors read the messages carefully and try to fix the stated issues (
 ``ar71xx-generic`` is the most common target and will generated images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
-The built images can be found in the directory `images`. Of these, the factory
+The built images can be found in the directory `output/images`. Of these, the factory
 images are to be used when flashing from the original firmware a device came with,
 and sysupgrade is to upgrade from other versions of Gluon or any other OpenWRT-based
 system.
@@ -117,11 +117,14 @@ Gluon's build process can be controlled by various environment variables.
 GLUON_SITEDIR
   Path to the site configuration. Defaults to ``site/``.
 
-GLUON_IMAGEDIR
-  Path where images will be stored. Defaults to ``images/``.
-
 GLUON_BUILDDIR
   Working directory during build. Defaults to ``build/``.
+
+GLUON_OUTPUTDIR
+  Path where output files will be stored. Defaults to ``output/``.
+
+GLUON_IMAGEDIR
+  Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images/``.
 
 
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
