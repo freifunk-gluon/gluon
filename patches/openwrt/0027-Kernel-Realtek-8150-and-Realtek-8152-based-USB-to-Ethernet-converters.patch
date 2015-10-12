@@ -1,0 +1,49 @@
+From: Andre Kasper <andre.kasper@gmx.de>
+Date: Mon, 12 Oct 2015 02:31:05 +0200
+Subject: Kernel: Realtek 8150 and Realtek 8152 based USB-to-Ethernet converters
+
+This patch adds the kernel modules to for the very common Realtek RTL8150 and Realtek 8152 based USB-to-Ethernet converters.
+After this patch the following packages can be added to targets (or site.mk):
+kmod-usb-net-rtl8150
+kmod-usb-net-rtl8152
+
+The modules are already available in openwrt trunk, but not in Chaos Calmer. This patch is just a temporary backport.
+The modules are needed for Futros with additional USB-Ethernet-Interface and VMs with dedicated USB-NIC
+
+diff --git a/package/kernel/linux/modules/usb.mk b/package/kernel/linux/modules/usb.mk
+index d1ff455..86f452e 100644
+--- a/package/kernel/linux/modules/usb.mk
++++ b/package/kernel/linux/modules/usb.mk
+@@ -1554,3 +1554,32 @@ define KernelPackage/usb3/description
+ endef
+ 
+ $(eval $(call KernelPackage,usb3))
++
++define KernelPackage/usb-net-rtl8150
++  TITLE:=Kernel module for USB-to-Ethernet Realtek convertors
++  KCONFIG:=CONFIG_USB_RTL8150
++  FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/rtl8150.ko
++  AUTOLOAD:=$(call AutoProbe,rtl8150)
++  $(call AddDepends/usb-net)
++endef
++
++define KernelPackage/usb-net-rtl8150/description
++ Kernel module for USB-to-Ethernet Realtek 8150 convertors
++endef
++
++$(eval $(call KernelPackage,usb-net-rtl8150))
++
++
++define KernelPackage/usb-net-rtl8152
++  TITLE:=Kernel module for USB-to-Ethernet Realtek convertors
++  KCONFIG:=CONFIG_USB_RTL8152
++  FILES:=$(LINUX_DIR)/drivers/$(USBNET_DIR)/r8152.ko
++  AUTOLOAD:=$(call AutoProbe,r8152)
++  $(call AddDepends/usb-net)
++endef
++
++define KernelPackage/usb-net-rtl8152/description
++ Kernel module for USB-to-Ethernet Realtek 8152 USB2.0/3.0 convertors
++endef
++
++$(eval $(call KernelPackage,usb-net-rtl8152))
