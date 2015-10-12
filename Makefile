@@ -103,13 +103,6 @@ manifest: FORCE
 	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
 	mv $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
 
-update-vermagic: FORCE
-	@$(CheckExternal)
-	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
-		$(GLUONMAKE_EARLY) maybe-prepare-target GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) && \
-		$(GLUONMAKE) update-vermagic GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) && \
-	) :)
-
 dirclean : FORCE
 	for dir in build_dir dl staging_dir tmp; do \
 		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
@@ -447,15 +440,6 @@ manifest: FORCE
 		) : \
 	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
-update-vermagic: FORCE
-	mkdir -p '$(BOARD_BUILDDIR)'
-	echo '$(DEFAULT_OPKG_REPO)' > '$(BOARD_BUILDDIR)/default_opkg_repo'
-	$(VERSION_SED) '$(BOARD_BUILDDIR)/default_opkg_repo'
-	wget -q -O- "$$(cat '$(BOARD_BUILDDIR)/default_opkg_repo')/base/Packages.gz" \
-		| gzip -d \
-		| awk '/Depends: kernel / { match($$3,/[[:xdigit:]]{32}/,m); print m[0]; exit }' \
-		> $(GLUONDIR)/targets/$(GLUON_TARGET)/vermagic
-
-.PHONY: all images prepare clean gluon-tools manifest update-vermagic
+.PHONY: all images prepare clean gluon-tools manifest
 
 endif

@@ -76,21 +76,9 @@ A directory for the new target must be created under ``targets``, and it must be
 to ``targets/targets.mk``. In the new target directory, the following files must be created:
 
 * profiles.mk
-* vermagic
 * config (optional)
 
 For ``profiles.mk``, see :ref:`hardware-adding-profiles`.
 The file ``config`` can be used to add additional, target-specific options to the OpenWrt config.
-
-The files ``vermagic`` must have the correct content so kernel modules from the upstream repositories
-can be installed without dependency issues. The OpenWrt version a Gluon release is based on is defined by the upstream package repo URL in ``include/gluon.mk``
-(in the variable ``DEFAULT_OPKG_REPO``); at the time this documentation was written, this was ``barrier_breaker/14.07``; whenever
-the package repo is updated, all ``vermagic`` files must be updated as well. The command ``make update-vermagic`` can be used to get the correct
-vermagic, or update the values when ``DEFAULT_OPKG_REPO`` has changed.
-
-The content is a hash which is part of the version number of the kernel package. So in the case of ``ar71xx-generic`` on
-``barrier_breaker``, we look for the kernel package in the directory ``https://downloads.openwrt.org/barrier_breaker/14.07/ar71xx/generic/packages/base/``.
-As the kernel package is called ``kernel_3.10.49-1-0114c71ed85677c9c1e4911437af4743_ar71xx.ipk``, the correct ``vermagic`` string
-is ``0114c71ed85677c9c1e4911437af4743``.
 
 After this, is should be sufficient to call ``make GLUON_TARGET=<target>`` to build the images for the new target.
