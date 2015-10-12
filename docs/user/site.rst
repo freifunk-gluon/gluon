@@ -117,6 +117,22 @@ next_node : package
         mac = 'ca:ff:ee:ba:be:00'
       }
 
+mesh : optional
+    Options specific to routing protocols.
+
+    At the moment, only the ``batman_adv`` routing protocol has such options:
+
+    The optional value ``gw_sel_class`` sets the gateway selection class. The default
+    class 20 is based on the link quality (TQ) only, class 1 is calculated from
+    both the TQ and the announced bandwidth.
+    ::
+
+       mesh = {
+         batman_adv = {
+           gw_sel_class = 1,
+	 },
+       }
+
 
 fastd_mesh_vpn
     Remote server setup for the fastd-based mesh VPN.
