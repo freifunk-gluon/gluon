@@ -375,11 +375,10 @@ package_install: FORCE
 include $(INCLUDE_DIR)/version.mk
 
 opkg_config: FORCE
-	cp $(GLUON_OPENWRTDIR)/package/system/opkg/files/opkg.conf $(TARGET_DIR)/etc/opkg.conf
 	for d in base packages luci routing telephony management; do \
-		echo "src/gz %n_$$d %U/$$d" >> $(TARGET_DIR)/etc/opkg.conf; \
-	done
-	$(VERSION_SED) $(TARGET_DIR)/etc/opkg.conf
+		echo "src/gz %n_$$d %U/$$d"; \
+	done > $(TARGET_DIR)/etc/opkg/distfeeds.conf
+	$(VERSION_SED) $(TARGET_DIR)/etc/opkg/distfeeds.conf
 
 
 image: FORCE
