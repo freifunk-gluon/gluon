@@ -126,6 +126,9 @@ GLUON_OUTPUTDIR
 GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images/``.
 
+GLUON_MODULEDIR
+  Path where the kernel module opkg repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/modules``.
+
 
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
 ``make clean`` and ``make`` for all targets you want to build):
