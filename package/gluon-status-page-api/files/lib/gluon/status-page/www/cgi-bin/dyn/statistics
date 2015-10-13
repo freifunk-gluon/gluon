@@ -1,18 +1,5 @@
-#!/usr/bin/lua
+#!/bin/sh
 
-local announce = require 'gluon.announce'
-local json = require 'luci.jsonc'
-local util = require 'luci.util'
-local nixio = require 'nixio'
+echo "Access-Control-Allow-Origin: *"
 
-local announce_dir = '/lib/gluon/announce/statistics.d/'
-
-io.write("Access-Control-Allow-Origin: *\n")
-io.write("Content-type: text/event-stream\n\n")
-
-while true do
-  local data = json.stringify(announce.collect_dir(announce_dir))
-  io.write("data: " .. data .. "\n\n")
-  io.flush()
-  nixio.nanosleep(1, 0)
-end
+exec gluon-neighbour-info -s "" -l -d ::1 -p 1001 -t 1 -r statistics

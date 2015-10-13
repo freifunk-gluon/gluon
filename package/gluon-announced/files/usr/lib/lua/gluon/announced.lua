@@ -11,10 +11,6 @@ end
 module('gluon.announced', package.seeall)
 
 function handle_request(query)
-  if query:match('^nodeinfo$') then
-    return json.stringify(collect('nodeinfo'))
-  end
-
   local m = query:match('^GET ([a-z ]+)$')
   if m then
     local data = {}
@@ -28,6 +24,11 @@ function handle_request(query)
 
     if next(data) then
       return deflate.compress(json.stringify(data))
+    end
+  elseif query:match('^[a-z]+$') then
+    local ok, data = pcall(collect, query)
+    if ok then
+      return json.stringify(data)
     end
   end
 end
