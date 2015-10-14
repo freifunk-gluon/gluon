@@ -11,7 +11,7 @@ if sysconfig.gluon_version == 'legacy' then
     local s = uci:get_first(config, 'bandwidth')
     if s then
       old = uci:get_all(config, s)
-      uci:section('gluon-simple-tc', 'interface', 'mesh_vpn',
+      uci:section('simple-tc', 'interface', 'mesh_vpn',
 		{
 		  ifname = 'mesh-vpn',
 		  enabled = old.enabled,
@@ -20,8 +20,8 @@ if sysconfig.gluon_version == 'legacy' then
 		}
       )
 
-      uci:save('gluon-simple-tc')
-      uci:commit('gluon-simple-tc')
+      uci:save('simple-tc')
+      uci:commit('simple-tc')
 
       break
     end
