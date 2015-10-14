@@ -59,30 +59,37 @@ CheckTarget := [ -n '$(GLUON_TARGET)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_BOAR
 CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 
+create-key: FORCE
+	@$(CheckExternal)
+	+@$(GLUONMAKE_EARLY) create-key
+
 prepare-target: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) prepare-target
 
-
 all: prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
 	+@$(GLUONMAKE) modules
 
 prepare: prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
 clean download images modules: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
 toolchain/% package/% target/% image/%: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
 manifest: FORCE
@@ -170,23 +177,6 @@ GLUON_$(1)_MODEL_$(2)_ALIASES += $(3)
 endef
 
 
-include $(GLUONDIR)/targets/targets.mk
-include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
-
-BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
-override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
-
-target_prepared_stamp := $(BOARD_BUILDDIR)/target-prepared
-gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
-
-PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
-IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
-MODULE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
-
-
-include $(INCLUDE_DIR)/target.mk
-
-
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
@@ -214,7 +204,43 @@ feeds: FORCE
 
 gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) tools/sed/install
-	+$(GLUONMAKE_EARLY) package/lua/host/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install package/usign/host/install
+
+
+prepare-early: FORCE
+	for dir in build_dir dl staging_dir; do \
+		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
+
+	+$(GLUONMAKE_EARLY) feeds
+	+$(GLUONMAKE_EARLY) gluon-tools
+
+create-key: prepare-early
+	[ -s $(GLUON_OPKG_KEY) -a -s $(GLUON_OPKG_KEY).pub ] || \
+		$(STAGING_DIR_HOST)/bin/usign -G -s $(GLUON_OPKG_KEY) -p $(GLUON_OPKG_KEY).pub -c "Gluon opkg key"
+
+include $(GLUONDIR)/targets/targets.mk
+
+ifneq ($(GLUON_TARGET),)
+
+include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
+
+BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
+override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
+
+target_prepared_stamp := $(BOARD_BUILDDIR)/target-prepared
+gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
+
+PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
+MODULE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
+
+
+include $(INCLUDE_DIR)/target.mk
+
+build-key: FORCE
+	ln -sf $(GLUON_OPKG_KEY) $(BUILD_KEY)
+	ln -sf $(GLUON_OPKG_KEY).pub $(BUILD_KEY).pub
 
 config: FORCE
 	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
@@ -234,23 +260,18 @@ config: FORCE
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
 
-prepare-target: FORCE
+prepare-target: create-key
 	rm $(GLUON_OPENWRTDIR)/tmp || true
 	mkdir -p $(GLUON_OPENWRTDIR)/tmp
 
-	for dir in build_dir dl staging_dir; do \
-		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
-	done
 	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target toolchain tools; do \
 		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
 	done
 
-	+$(GLUONMAKE_EARLY) feeds
-	+$(GLUONMAKE_EARLY) gluon-tools
 	+$(GLUONMAKE) config
 	touch $(target_prepared_stamp)
 
-$(target_prepared_stamp):
+$(target_prepared_stamp): create-key
 	+$(GLUONMAKE_EARLY) prepare-target
 
 maybe-prepare-target: $(target_prepared_stamp)
@@ -443,6 +464,7 @@ manifest: FORCE
 		) : \
 	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
-.PHONY: all images prepare modules clean gluon-tools manifest
+.PHONY: all create-key prepare images modules clean gluon-tools manifest
 
+endif
 endif
