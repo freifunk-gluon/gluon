@@ -46,14 +46,31 @@ ntp_server
 
        ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'}
 
-opkg_repo : optional
-    Overwrite the default ``opkg`` repository server, e.g.:
+opkg : optional
+    ``opkg`` package manager configuration.
+
+    There are two optional fields in the ``opkg`` section:
+
+    - ``openwrt`` overrides the default OpenWrt repository URL
+    - ``extra`` specifies a table of additional repositories (with arbitrary keys)
+
     ::
 
-      opkg_repo = 'http://opkg.services.ffeh/attitude_adjustment/12.09/%S/packages'
+      opkg = {
+        openwrt = 'http://opkg.services.ffeh/openwrt/%n/%v/%S/packages',
+        extra = {
+          modules = 'http://opkg.services.ffeh/modules/gluon-%GS-%GR/%S',
+        },
+      }
 
-    The `%S` is a variable, which is replaced with the platform of an device
-    during the build process.
+    There are various patterns which can be used in the URLs:
+
+    - ``%n`` is replaced by the OpenWrt version codename (e.g. "chaos_calmer")
+    - ``%v`` is replaced by the OpenWrt version number (e.g. "15.05")
+    - ``%S`` is replaced by the target architecture (e.g. "ar71xx/generic")
+    - ``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)
+    - ``%GV`` is replaced by the Gluon version
+    - ``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)
 
 regdom
     The wireless regulatory domain responsible for your area, e.g.:

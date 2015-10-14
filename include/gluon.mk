@@ -35,10 +35,8 @@ export GLUON_LANGS
 ifeq ($(OPENWRT_BUILD),1)
 ifeq ($(GLUON_TOOLS),1)
 
-DEFAULT_OPKG_REPO := http://downloads.openwrt.org/chaos_calmer/15.05/%S/packages
-
-CONFIG_VERSION_REPO := $(shell $(GLUONDIR)/scripts/site.sh opkg_repo || echo '$(DEFAULT_OPKG_REPO)')
-export CONFIG_VERSION_REPO
+GLUON_OPENWRT_FEEDS := base packages luci routing telephony management
+export GLUON_OPENWRT_FEEDS
 
 GLUON_SITE_CODE := $(shell $(GLUONDIR)/scripts/site.sh site_code)
 export GLUON_SITE_CODE

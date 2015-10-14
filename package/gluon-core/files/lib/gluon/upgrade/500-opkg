@@ -1,0 +1,49 @@
+#!/usr/bin/lua
+
+local fs = require 'nixio.fs'
+local site = require 'gluon.site_config'
+local util = require 'luci.util'
+
+
+local subst = {}
+
+subst['%%v'] = util.trim(fs.readfile('/etc/openwrt_version'))
+subst['%%n'], subst['%%S'] = util.exec('. /etc/openwrt_release; echo $DISTRIB_CODENAME; echo $DISTRIB_TARGET'):match('([^\n]*)\n([^\n]*)')
+subst['%%GS'] = site.site_code
+subst['%%GV'] = util.trim(fs.readfile('/lib/gluon/gluon-version'))
+subst['%%GR'] = util.trim(fs.readfile('/lib/gluon/release'))
+
+function replace_patterns(url)
+  for k, v in pairs(subst) do
+    url = url:gsub(k, v)
+  end
+
+  return url
+end
+
+
+if site.opkg then
+  if site.opkg.openwrt then
+    local url = replace_patterns(site.opkg.openwrt)
+    local f = io.open('/etc/opkg/distfeeds.conf', 'w')
+
+    for _, v in ipairs(__GLUON_OPENWRT_FEEDS__) do
+      f:write(replace_patterns(string.format('src/gz %%n_%s %s/%s\n', v, site.opkg.openwrt, v)))
+    end
+
+    f:close()
+  end
+
+  if site.opkg.extra and next(site.opkg.extra) then
+    local f = io.open('/etc/opkg/gluon.conf', 'w')
+
+    for k, v in pairs(site.opkg.extra) do
+      f:write(string.format('src/gz %s %s\n', k, replace_patterns(v)))
+    end
+
+    f:close()
+
+  else
+    os.remove('/etc/opkg/gluon.conf')
+  end
+end
