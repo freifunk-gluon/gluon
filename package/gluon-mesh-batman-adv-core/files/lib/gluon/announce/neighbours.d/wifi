@@ -32,7 +32,7 @@ end
 
 local wifi = {}
 for address, iface in pairs(interfaces()) do
-  wifi[address] = { neighbours = neighbours(iface) }
+  wifi[address] = { [{}] = true, neighbours = neighbours(iface) }
 end
 
 if next(wifi) then
