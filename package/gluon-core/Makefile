@@ -32,6 +32,7 @@ endef
 
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
+	$(SED) 's/__GLUON_OPENWRT_FEEDS__/{$(GLUON_OPENWRT_FEEDS:%="%",)}/' $(1)/lib/gluon/upgrade/500-opkg
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version

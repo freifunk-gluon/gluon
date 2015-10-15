@@ -1,6 +1,19 @@
 need_string 'site_code'
 need_string 'site_name'
 
+if need_table('opkg', nil, false) then
+  need_string('opkg.openwrt', false)
+
+  function check_repo(k, _)
+    -- this is not actually a uci name, but using the same naming rules here is fine
+    assert_uci_name(k)
+
+    need_string(string.format('opkg.extra[%q]', k))
+  end
+
+  need_table('opkg.extra', check_repo, false)
+end
+
 need_string('hostname_prefix', false)
 need_string 'timezone'
 
