@@ -1,0 +1,60 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 15 Oct 2015 21:01:25 +0200
+Subject: tools/firmware-utils: tplink-safeloader: fix support-list format
+
+The first 4 bytes of the support-list image partition are supposed to
+contain the size of the hardware support list.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 4607a1d..719ed4a 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -133,14 +133,13 @@ static const struct flash_partition_entry cpe510_partitions[] = {
+    The stock images also contain strings for two more devices: BS510 and BS210.
+    At the moment, there exists no public information about these devices.
+ */
+-static const unsigned char cpe510_support_list[] =
+-	"\x00\x00\x00\xc8\x00\x00\x00\x00"
++static const char cpe510_support_list[] =
+ 	"SupportList:\r\n"
+ 	"CPE510(TP-LINK|UN|N300-5):1.0\r\n"
+ 	"CPE520(TP-LINK|UN|N300-5):1.0\r\n"
+ 	"CPE210(TP-LINK|UN|N300-2):1.0\r\n"
+ 	"CPE220(TP-LINK|UN|N300-2):1.0\r\n"
+-	"\r\n\xff";
++	"\r\n";
+ 
+ #define error(_ret, _errno, _str, ...)				\
+ 	do {							\
+@@ -233,9 +232,17 @@ static struct image_partition_entry make_soft_version(uint32_t rev) {
+ }
+ 
+ /** Generates the support-list partition */
+-static struct image_partition_entry make_support_list(const unsigned char *support_list, size_t len) {
+-	struct image_partition_entry entry = alloc_image_partition("support-list", len);
+-	memcpy(entry.data, support_list, len);
++static struct image_partition_entry make_support_list(const char *support_list) {
++	size_t len = strlen(support_list);
++	struct image_partition_entry entry = alloc_image_partition("support-list", len + 9);
++
++	uint32_t len32 = htonl(len);
++
++	memcpy(entry.data, &len32, 4);
++	memset(entry.data+4, 0, 4);
++	memcpy(entry.data+8, support_list, len);
++	entry.data[len+8] = '\xff';
++
+ 	return entry;
+ }
+ 
+@@ -430,7 +437,7 @@ static void do_cpe510(const char *output, const char *kernel_image, const char *
+ 
+ 	parts[0] = make_partition_table(cpe510_partitions);
+ 	parts[1] = make_soft_version(rev);
+-	parts[2] = make_support_list(cpe510_support_list, sizeof(cpe510_support_list)-1);
++	parts[2] = make_support_list(cpe510_support_list);
+ 	parts[3] = read_file("os-image", kernel_image, false);
+ 	parts[4] = read_file("file-system", rootfs_image, add_jffs2_eof);
+ 
