@@ -165,7 +165,18 @@ fastd_mesh_vpn
               },
             }
           }
-        }
+        },
+
+        bandwidth_limit = {
+          -- The bandwidth limit can be enabled by default here.
+          enabled = false,
+
+          -- Default upload limit (kbit/s).
+          egress = 200,
+
+          -- Default download limit (kbit/s).
+          ingress = 3000,
+        },
       }
 
 mesh_on_wan : optional
@@ -217,19 +228,6 @@ roles : optional
           'test',
           'backbone',
           'service',
-        },
-      },
-
-simple_tc : package
-    Uplink traffic control, ingress and egress values are specified in kbit/s.
-    ::
-
-      simple_tc = {
-        mesh_vpn = {
-          ifname = 'mesh-vpn',
-          enabled = false,
-          limit_egress = 200,
-          limit_ingress = 3000,
         },
       },
 

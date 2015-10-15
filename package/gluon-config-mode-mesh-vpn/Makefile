@@ -14,7 +14,7 @@ define Package/gluon-config-mode-mesh-vpn
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Toggle mesh-vpn and bandwidth limit
-  DEPENDS:=gluon-config-mode-core-virtual +gluon-mesh-vpn-fastd +gluon-simple-tc
+  DEPENDS:=gluon-config-mode-core-virtual +gluon-mesh-vpn-fastd
 endef
 
 define Build/Prepare

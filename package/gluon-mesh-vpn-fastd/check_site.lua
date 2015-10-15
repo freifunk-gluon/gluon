@@ -28,3 +28,10 @@ local function check_group(prefix)
 end
 
 need_table('fastd_mesh_vpn.groups', check_group('fastd_mesh_vpn.groups'))
+
+
+if need_table('fastd_mesh_vpn.bandwidth_limit', nil, false) then
+  need_boolean('fastd_mesh_vpn.bandwidth_limit.enabled', false)
+  need_number('fastd_mesh_vpn.bandwidth_limit.ingress', false)
+  need_number('fastd_mesh_vpn.bandwidth_limit.egress', false)
+end
