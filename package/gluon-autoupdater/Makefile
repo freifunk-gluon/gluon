@@ -11,7 +11,7 @@ include $(GLUONDIR)/include/package.mk
 define Package/gluon-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-core +gluon-cron +autoupdater
+  DEPENDS:=+gluon-core +micrond +autoupdater
   TITLE:=Automatically update firmware
 endef
 

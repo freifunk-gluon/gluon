@@ -51,7 +51,7 @@ autoupdater_util.randomseed()
 -- a fallback update (used after the regular updates haven't
 local minute = math.random(0, 59)
 
-local f = io.open('/lib/gluon/cron/autoupdater', 'w')
+local f = io.open('/usr/lib/micron.d/autoupdater', 'w')
 f:write(string.format('%i 4 * * * /usr/sbin/autoupdater\n', minute))
 f:write(string.format('%i 0-3,5-23 * * * /usr/sbin/autoupdater --fallback\n', minute))
 f:close()
