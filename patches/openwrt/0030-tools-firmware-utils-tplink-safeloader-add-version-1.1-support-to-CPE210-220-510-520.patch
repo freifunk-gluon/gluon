@@ -11,7 +11,7 @@ stock images don't have it either.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
-index 719ed4a..27daacc 100644
+index 66658aa..77a894b 100644
 --- a/tools/firmware-utils/src/tplink-safeloader.c
 +++ b/tools/firmware-utils/src/tplink-safeloader.c
 @@ -129,17 +129,17 @@ static const struct flash_partition_entry cpe510_partitions[] = {
