@@ -4,15 +4,16 @@
 
 # CPE210/220/510/520
 $(eval $(call GluonProfile,CPE510,rssileds))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe210-v1.0))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe220-v1.0))
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.0))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe520-v1.0))
+
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
 ifeq ($(BROKEN),1)
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe210-v1.1))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe220-v1.1))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.1))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe520-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe510-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 endif
 
 # TL-WA701N/ND v1, v2
@@ -76,9 +77,9 @@ $(eval $(call GluonModel,TLWR941,tl-wr941nd-v5,tp-link-tl-wr941n-nd-v5))
 ifeq ($(BROKEN),1)
 # $(eval $(call GluonModel,TLWR941,tl-wr941nd-v6,tp-link-tl-wr941n-nd-v6)) # BROKEN: needs mac80211 update
 
-$(eval $(call GluonModel,TLWR941,tl-wr941nd-v4,tp-link-tl-wr940n-nd-v1)) # BROKEN: untested
-$(eval $(call GluonModel,TLWR941,tl-wr941nd-v5,tp-link-tl-wr940n-nd-v2)) # BROKEN: untested
-# $(eval $(call GluonModel,TLWR941,tl-wr941nd-v6,tp-link-tl-wr940n-nd-v3)) # BROKEN: needs mac80211 update
+$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v4,tp-link-tl-wr940n-nd-v1)) # BROKEN: untested
+$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v5,tp-link-tl-wr940n-nd-v2)) # BROKEN: untested
+# $(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v6,tp-link-tl-wr940n-nd-v3)) # BROKEN: needs mac80211 update
 endif
 
 # TL-WR1043N/ND v1, v2
@@ -150,9 +151,9 @@ $(eval $(call GluonProfile,UBNT))
 $(eval $(call GluonModel,UBNT,ubnt-air-gateway,ubiquiti-airgateway))
 
 $(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-bullet-m))
-$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-loco-m))
-$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-picostation-m))
-$(eval $(call GluonModel,UBNT,ubnt-bullet-m,ubiquiti-rocket-m))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-bullet-m,ubiquiti-loco-m))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-bullet-m,ubiquiti-picostation-m))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-bullet-m,ubiquiti-rocket-m))
 
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m,ubiquiti-nanostation-m))

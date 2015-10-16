@@ -168,6 +168,11 @@ endef
 define GluonModel
 GLUON_$(1)_MODELS += $(3)
 GLUON_$(1)_MODEL_$(3) := $(2)
+GLUON_$(1)_MODEL_$(3)_ALIASES :=
+endef
+
+define GluonModelAlias
+GLUON_$(1)_MODEL_$(2)_ALIASES += $(3)
 endef
 
 
@@ -402,7 +407,19 @@ image: FORCE
 			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
 			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_FACTORY_SUFFIX)$(GLUON_$(PROFILE)_FACTORY_EXT) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
 		) \
+		\
+		$(foreach alias,$(GLUON_$(PROFILE)_MODEL_$(model)_ALIASES), \
+			$(if $(GLUON_$(PROFILE)_SYSUPGRADE_EXT), \
+				rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(alias)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) && \
+				ln -s $(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(alias)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXT) && \
+			) \
+			$(if $(GLUON_$(PROFILE)_FACTORY_EXT), \
+				rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(alias)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
+				ln -s $(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(alias)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
+			) \
+		) \
 	) :
+
 
 image/%: $(gluon_prepared_stamp)
 	+$(GLUONMAKE) image PROFILE="$(patsubst image/%,%,$@)" V=s$(OPENWRT_VERBOSE)
