@@ -1,0 +1,549 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Sat, 5 Sep 2015 02:22:27 +0200
+Subject: netifd: bridge related fixes + config options
+
+This commit backports upstream patches in netifd / OpenWRT trunk,
+regarding bridges:
+
+* bridge: Fix multicast_to_unicast feature by hairpin+isolate
+* bridge: Allow setting multicast_to_unicast option
+* bridge: Allow setting multicast_router option
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/package/network/config/netifd/patches/0001-bridge-Fix-multicast_to_unicast-feature-by-hairpin-i.patch b/package/network/config/netifd/patches/0001-bridge-Fix-multicast_to_unicast-feature-by-hairpin-i.patch
+new file mode 100644
+index 0000000..3e4cbc5
+--- /dev/null
++++ b/package/network/config/netifd/patches/0001-bridge-Fix-multicast_to_unicast-feature-by-hairpin-i.patch
+@@ -0,0 +1,201 @@
++From 484614cf607e2a1220e39111468c525d3ae96497 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Sun, 23 Aug 2015 17:19:26 +0200
++Subject: [PATCH 1/3] bridge: Fix multicast_to_unicast feature by
++ hairpin+isolate
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++All IGMP and MLD versions suffer from a specific limitation (from a
++snooping switch perspective): Report suppression.
++
++Once a listener hears an IGMPv2/3 or MLDv1 report for the same group
++itself participates in then it might (if this listener is an IGMPv3 or
++MLDv2 listener) or will (if this is an IGMPv1/2 or MLDv1 listener)
++refrain from sending its own report.
++
++Therefore we might currently miss such surpressing listeners as they
++won't receive the multicast packet with the mangled, unicasted
++destination.
++
++Fixing this by first isolating the STAs and giving the bridge more
++control over traffic forwarding. E.g. refraining to forward listener
++reports to other STAs.
++
++For broadcast and unicast traffic to an STA on the same AP, the hairpin
++feature of the bridge will reflect such traffic back to the AP
++interface. However, if the AP interface is actually configured to
++isolate STAs, then hairpin is kept disabled.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ device.h                   |    1 +
++ scripts/netifd-wireless.sh |   15 +++++++++++++++
++ system-linux.c             |   26 ++++++++++++++++++++------
++ wireless.c                 |   12 +++++++++++-
++ wireless.h                 |    1 +
++ 5 files changed, 48 insertions(+), 7 deletions(-)
++
++diff --git a/device.h b/device.h
++index 3001f10..47ef77b 100644
++--- a/device.h
+++++ b/device.h
++@@ -167,6 +167,7 @@ struct device {
++ 	bool iface_config;
++ 	bool default_config;
++ 	bool wireless;
+++	bool wireless_isolate;
++ 
++ 	struct interface *config_iface;
++ 
++diff --git a/scripts/netifd-wireless.sh b/scripts/netifd-wireless.sh
++index c5d8a96..f981f1b 100644
++--- a/scripts/netifd-wireless.sh
+++++ b/scripts/netifd-wireless.sh
++@@ -248,12 +248,26 @@ wireless_vif_parse_encryption() {
++ 	esac
++ }
++ 
+++_wireless_set_brsnoop_isolation() {
+++	local multicast_to_unicast="$1"
+++	local isolate
+++
+++	json_get_var isolate isolate
+++
+++	[ $isolate -gt 0 -o -z "$network_bridge" ] && return
+++
+++	[ -z "$multicast_to_unicast" ] && multicast_to_unicast=1
+++	[ $multicast_to_unicast -gt 0 ] && json_add_boolean isolate 1
+++}
+++
++ for_each_interface() {
++ 	local _w_types="$1"; shift
++ 	local _w_ifaces _w_iface
++ 	local _w_type
++ 	local _w_found
++ 
+++	local multicast_to_unicast
+++
++ 	json_get_keys _w_ifaces interfaces
++ 	json_select interfaces
++ 	for _w_iface in $_w_ifaces; do
++@@ -261,6 +275,7 @@ for_each_interface() {
++ 		if [ -n "$_w_types" ]; then
++ 			json_get_var network_bridge bridge
++ 			json_select config
+++			_wireless_set_brsnoop_isolation "$multicast_to_unicast"
++ 			json_get_var _w_type mode
++ 			json_select ..
++ 			_w_types=" $_w_types "
++diff --git a/system-linux.c b/system-linux.c
++index 6dc9acd..ff25259 100644
++--- a/system-linux.c
+++++ b/system-linux.c
++@@ -310,6 +310,16 @@ static void system_set_neigh6reachabletime(struct device *dev, const char *val)
++ 	system_set_dev_sysctl("/proc/sys/net/ipv6/neigh/%s/base_reachable_time_ms", dev->ifname, val);
++ }
++ 
+++static void system_bridge_set_multicast_to_unicast(struct device *dev, const char *val)
+++{
+++	system_set_dev_sysctl("/sys/class/net/%s/brport/multicast_to_unicast", dev->ifname, val);
+++}
+++
+++static void system_bridge_set_hairpin_mode(struct device *dev, const char *val)
+++{
+++	system_set_dev_sysctl("/sys/class/net/%s/brport/hairpin_mode", dev->ifname, val);
+++}
+++
++ static int system_get_sysctl(const char *path, char *buf, const size_t buf_sz)
++ {
++ 	int fd = -1, ret = -1;
++@@ -545,12 +555,16 @@ static char *system_get_bridge(const char *name, char *buf, int buflen)
++ 	return path + 1;
++ }
++ 
++-static void system_bridge_set_wireless(const char *bridge, const char *dev)
+++static void
+++system_bridge_set_wireless(struct device *dev)
++ {
++-	snprintf(dev_buf, sizeof(dev_buf),
++-		 "/sys/devices/virtual/net/%s/brif/%s/multicast_to_unicast",
++-		 bridge, dev);
++-	system_set_sysctl(dev_buf, "1");
+++	bool hairpin = true;
+++
+++	if (dev->wireless_isolate)
+++		hairpin = false;
+++
+++	system_bridge_set_multicast_to_unicast(dev, "1");
+++	system_bridge_set_hairpin_mode(dev, hairpin ? "1" : "0");
++ }
++ 
++ int system_bridge_addif(struct device *bridge, struct device *dev)
++@@ -563,7 +577,7 @@ int system_bridge_addif(struct device *bridge, struct device *dev)
++ 		ret = system_bridge_if(bridge->ifname, dev, SIOCBRADDIF, NULL);
++ 
++ 	if (dev->wireless)
++-		system_bridge_set_wireless(bridge->ifname, dev->ifname);
+++		system_bridge_set_wireless(dev);
++ 
++ 	return ret;
++ }
++diff --git a/wireless.c b/wireless.c
++index fbd6191..337f563 100644
++--- a/wireless.c
+++++ b/wireless.c
++@@ -35,12 +35,14 @@ static const struct uci_blob_param_list wdev_param = {
++ enum {
++ 	VIF_ATTR_DISABLED,
++ 	VIF_ATTR_NETWORK,
+++	VIF_ATTR_ISOLATE,
++ 	__VIF_ATTR_MAX,
++ };
++ 
++ static const struct blobmsg_policy vif_policy[__VIF_ATTR_MAX] = {
++ 	[VIF_ATTR_DISABLED] = { .name = "disabled", .type = BLOBMSG_TYPE_BOOL },
++ 	[VIF_ATTR_NETWORK] = { .name = "network", .type = BLOBMSG_TYPE_ARRAY },
+++	[VIF_ATTR_ISOLATE] = { .name = "isolate", .type = BLOBMSG_TYPE_BOOL },
++ };
++ 
++ static const struct uci_blob_param_list vif_param = {
++@@ -204,8 +206,10 @@ static void wireless_interface_handle_link(struct wireless_interface *vif, bool
++ 
++ 	if (up) {
++ 		struct device *dev = device_get(vif->ifname, 2);
++-		if (dev)
+++		if (dev) {
+++			dev->wireless_isolate = vif->isolate;
++ 			dev->wireless = true;
+++		}
++ 	}
++ 
++ 	blobmsg_for_each_attr(cur, vif->network, rem) {
++@@ -700,6 +704,12 @@ void wireless_interface_create(struct wireless_device *wdev, struct blob_attr *d
++ 	vif->wdev = wdev;
++ 	vif->config = data;
++ 	vif->section = section;
+++	vif->isolate = false;
+++
+++	cur = tb[VIF_ATTR_ISOLATE];
+++	if (cur && blobmsg_get_bool(cur))
+++		vif->isolate = blobmsg_get_bool(cur);
+++
++ 	vlist_add(&wdev->interfaces, &vif->node, vif->name);
++ }
++ 
++diff --git a/wireless.h b/wireless.h
++index c5dbb88..476c63e 100644
++--- a/wireless.h
+++++ b/wireless.h
++@@ -77,6 +77,7 @@ struct wireless_interface {
++ 
++ 	const char *ifname;
++ 	struct blob_attr *network;
+++	bool isolate;
++ };
++ 
++ struct wireless_process {
++-- 
++1.7.10.4
++
+diff --git a/package/network/config/netifd/patches/0002-bridge-Allow-setting-multicast_to_unicast-option.patch b/package/network/config/netifd/patches/0002-bridge-Allow-setting-multicast_to_unicast-option.patch
+new file mode 100644
+index 0000000..d199a97
+--- /dev/null
++++ b/package/network/config/netifd/patches/0002-bridge-Allow-setting-multicast_to_unicast-option.patch
+@@ -0,0 +1,159 @@
++From 2adcda7967a652547202f18fadc2efca0f290625 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Sun, 23 Aug 2015 17:19:27 +0200
++Subject: [PATCH 2/3] bridge: Allow setting multicast_to_unicast option
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++With this patch the multicast_to_unicast feature can be disabled for all
++wireless interfaces via an according option on the uci bridge interface.
++
++This patch also exports the setting information to wireless handler
++scripts. The hostapd script will need that information to determine
++whether to enable or disable ap-isolation, for instance.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ device.c                   |    9 +++++++++
++ device.h                   |    3 +++
++ scripts/netifd-wireless.sh |    1 +
++ system-linux.c             |   13 +++++++++----
++ wireless.c                 |    4 ++++
++ 5 files changed, 26 insertions(+), 4 deletions(-)
++
++diff --git a/device.c b/device.c
++index dd2823d..776829d 100644
++--- a/device.c
+++++ b/device.c
++@@ -46,6 +46,7 @@ static const struct blobmsg_policy dev_attrs[__DEV_ATTR_MAX] = {
++ 	[DEV_ATTR_NEIGHREACHABLETIME] = { .name = "neighreachabletime", .type = BLOBMSG_TYPE_INT32 },
++ 	[DEV_ATTR_RPS] = { .name = "rps", .type = BLOBMSG_TYPE_BOOL },
++ 	[DEV_ATTR_XPS] = { .name = "xps", .type = BLOBMSG_TYPE_BOOL },
+++	[DEV_ATTR_MULTICAST_TO_UNICAST] = { .name = "multicast_to_unicast", .type = BLOBMSG_TYPE_BOOL },
++ };
++ 
++ const struct uci_blob_param_list device_attr_list = {
++@@ -169,6 +170,7 @@ device_merge_settings(struct device *dev, struct device_settings *n)
++ 		s->neigh4reachabletime : os->neigh4reachabletime;
++ 	n->neigh6reachabletime = s->flags & DEV_OPT_NEIGHREACHABLETIME ?
++ 			s->neigh6reachabletime : os->neigh6reachabletime;
+++	n->multicast_to_unicast = s->multicast_to_unicast;
++ 	n->flags = s->flags | os->flags;
++ }
++ 
++@@ -259,6 +261,11 @@ device_init_settings(struct device *dev, struct blob_attr **tb)
++ 	else
++ 		s->xps = default_ps;
++ 
+++	if ((cur = tb[DEV_ATTR_MULTICAST_TO_UNICAST])) {
+++		s->multicast_to_unicast = blobmsg_get_bool(cur);
+++		s->flags |= DEV_OPT_MULTICAST_TO_UNICAST;
+++	}
+++
++ 	device_set_disabled(dev, disabled);
++ }
++ 
++@@ -863,6 +870,8 @@ device_dump_status(struct blob_buf *b, struct device *dev)
++ 			blobmsg_add_u32(b, "neigh4reachabletime", st.neigh4reachabletime);
++ 			blobmsg_add_u32(b, "neigh6reachabletime", st.neigh6reachabletime);
++ 		}
+++		if (st.flags & DEV_OPT_MULTICAST_TO_UNICAST)
+++			blobmsg_add_u8(b, "multicast_to_unicast", st.multicast_to_unicast);
++ 	}
++ 
++ 	s = blobmsg_open_table(b, "statistics");
++diff --git a/device.h b/device.h
++index 47ef77b..55ef1cf 100644
++--- a/device.h
+++++ b/device.h
++@@ -40,6 +40,7 @@ enum {
++ 	DEV_ATTR_NEIGHREACHABLETIME,
++ 	DEV_ATTR_RPS,
++ 	DEV_ATTR_XPS,
+++	DEV_ATTR_MULTICAST_TO_UNICAST,
++ 	__DEV_ATTR_MAX,
++ };
++ 
++@@ -80,6 +81,7 @@ enum {
++ 	DEV_OPT_NEIGHREACHABLETIME	= (1 << 9),
++ 	DEV_OPT_RPS			= (1 << 10),
++ 	DEV_OPT_XPS			= (1 << 11),
+++	DEV_OPT_MULTICAST_TO_UNICAST	= (1 << 12),
++ };
++ 
++ /* events broadcasted to all users of a device */
++@@ -135,6 +137,7 @@ struct device_settings {
++ 	unsigned int neigh6reachabletime;
++ 	bool rps;
++ 	bool xps;
+++	bool multicast_to_unicast;
++ };
++ 
++ /*
++diff --git a/scripts/netifd-wireless.sh b/scripts/netifd-wireless.sh
++index f981f1b..83a8223 100644
++--- a/scripts/netifd-wireless.sh
+++++ b/scripts/netifd-wireless.sh
++@@ -274,6 +274,7 @@ for_each_interface() {
++ 		json_select "$_w_iface"
++ 		if [ -n "$_w_types" ]; then
++ 			json_get_var network_bridge bridge
+++			json_get_var multicast_to_unicast multicast_to_unicast
++ 			json_select config
++ 			_wireless_set_brsnoop_isolation "$multicast_to_unicast"
++ 			json_get_var _w_type mode
++diff --git a/system-linux.c b/system-linux.c
++index ff25259..549d9c0 100644
++--- a/system-linux.c
+++++ b/system-linux.c
++@@ -556,14 +556,19 @@ static char *system_get_bridge(const char *name, char *buf, int buflen)
++ }
++ 
++ static void
++-system_bridge_set_wireless(struct device *dev)
+++system_bridge_set_wireless(struct device *bridge, struct device *dev)
++ {
+++	bool mcast_to_ucast = true;
++ 	bool hairpin = true;
++ 
++-	if (dev->wireless_isolate)
+++	if (bridge->settings.flags & DEV_OPT_MULTICAST_TO_UNICAST &&
+++	    !bridge->settings.multicast_to_unicast)
+++		mcast_to_ucast = false;
+++
+++	if (!mcast_to_ucast || dev->wireless_isolate)
++ 		hairpin = false;
++ 
++-	system_bridge_set_multicast_to_unicast(dev, "1");
+++	system_bridge_set_multicast_to_unicast(dev, mcast_to_ucast ? "1" : "0");
++ 	system_bridge_set_hairpin_mode(dev, hairpin ? "1" : "0");
++ }
++ 
++@@ -577,7 +582,7 @@ int system_bridge_addif(struct device *bridge, struct device *dev)
++ 		ret = system_bridge_if(bridge->ifname, dev, SIOCBRADDIF, NULL);
++ 
++ 	if (dev->wireless)
++-		system_bridge_set_wireless(dev);
+++		system_bridge_set_wireless(bridge, dev);
++ 
++ 	return ret;
++ }
++diff --git a/wireless.c b/wireless.c
++index 337f563..d0d2942 100644
++--- a/wireless.c
+++++ b/wireless.c
++@@ -92,6 +92,10 @@ vif_config_add_bridge(struct blob_buf *buf, struct blob_attr *networks, bool pre
++ 		dev->hotplug_ops->prepare(dev);
++ 
++ 	blobmsg_add_string(buf, "bridge", dev->ifname);
+++
+++	if (dev->settings.flags & DEV_OPT_MULTICAST_TO_UNICAST)
+++		blobmsg_add_u8(buf, "multicast_to_unicast",
+++			       dev->settings.multicast_to_unicast);
++ }
++ 
++ static void
++-- 
++1.7.10.4
++
+diff --git a/package/network/config/netifd/patches/0003-bridge-Allow-setting-multicast_router-option.patch b/package/network/config/netifd/patches/0003-bridge-Allow-setting-multicast_router-option.patch
+new file mode 100644
+index 0000000..e4b3b9c
+--- /dev/null
++++ b/package/network/config/netifd/patches/0003-bridge-Allow-setting-multicast_router-option.patch
+@@ -0,0 +1,158 @@
++From 4c467dffae6b9f540cc2242a5e872e49807f310d Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Sun, 23 Aug 2015 17:19:28 +0200
++Subject: [PATCH 3/3] bridge: Allow setting multicast_router option
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++The multicast_router option of a bridge allows to control the forwarding
++behaviour of multicast packets independant of the listener state:
++
++* 0: Only forward if specific listener is present
++* 1 (default): Forward if specific listener or a multicast router
++  was detected (currently only learned via query messages, no MRD
++  support yet)
++* 2: Always forward any multicast traffic on this port
++
++Since MRD is not mandated you might end up with silent multicast routers
++(e.g. if your link has more than one multicast router; only one can
++become the selected, "noisy" querier). Here you might need a manual
++configuration option like the "multicast_router" option.
++
++Other scenarios where this can be useful are for instance:
++* Segmentation of IGMP/MLD domains together with ebtables
++* Dedicated bridge port for monitoring/debugging purposes
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ device.c       |   12 ++++++++++++
++ device.h       |    3 +++
++ system-linux.c |   18 ++++++++++++++++++
++ 3 files changed, 33 insertions(+)
++
++diff --git a/device.c b/device.c
++index 776829d..75edc07 100644
++--- a/device.c
+++++ b/device.c
++@@ -47,6 +47,7 @@ static const struct blobmsg_policy dev_attrs[__DEV_ATTR_MAX] = {
++ 	[DEV_ATTR_RPS] = { .name = "rps", .type = BLOBMSG_TYPE_BOOL },
++ 	[DEV_ATTR_XPS] = { .name = "xps", .type = BLOBMSG_TYPE_BOOL },
++ 	[DEV_ATTR_MULTICAST_TO_UNICAST] = { .name = "multicast_to_unicast", .type = BLOBMSG_TYPE_BOOL },
+++	[DEV_ATTR_MULTICAST_ROUTER] = { .name = "multicast_router", .type = BLOBMSG_TYPE_INT32 },
++ };
++ 
++ const struct uci_blob_param_list device_attr_list = {
++@@ -171,6 +172,7 @@ device_merge_settings(struct device *dev, struct device_settings *n)
++ 	n->neigh6reachabletime = s->flags & DEV_OPT_NEIGHREACHABLETIME ?
++ 			s->neigh6reachabletime : os->neigh6reachabletime;
++ 	n->multicast_to_unicast = s->multicast_to_unicast;
+++	n->multicast_router = s->multicast_router;
++ 	n->flags = s->flags | os->flags;
++ }
++ 
++@@ -266,6 +268,14 @@ device_init_settings(struct device *dev, struct blob_attr **tb)
++ 		s->flags |= DEV_OPT_MULTICAST_TO_UNICAST;
++ 	}
++ 
+++	if ((cur = tb[DEV_ATTR_MULTICAST_ROUTER])) {
+++		s->multicast_router = blobmsg_get_u32(cur);
+++		if (s->multicast_router <= 2)
+++			s->flags |= DEV_OPT_MULTICAST_ROUTER;
+++		else
+++			DPRINTF("Invalid value: %d - (Use 0: never, 1: learn, 2: always)\n", blobmsg_get_u32(cur));
+++	}
+++
++ 	device_set_disabled(dev, disabled);
++ }
++ 
++@@ -872,6 +882,8 @@ device_dump_status(struct blob_buf *b, struct device *dev)
++ 		}
++ 		if (st.flags & DEV_OPT_MULTICAST_TO_UNICAST)
++ 			blobmsg_add_u8(b, "multicast_to_unicast", st.multicast_to_unicast);
+++		if (st.flags & DEV_OPT_MULTICAST_ROUTER)
+++			blobmsg_add_u32(b, "multicast_router", st.multicast_router);
++ 	}
++ 
++ 	s = blobmsg_open_table(b, "statistics");
++diff --git a/device.h b/device.h
++index 55ef1cf..a487466 100644
++--- a/device.h
+++++ b/device.h
++@@ -41,6 +41,7 @@ enum {
++ 	DEV_ATTR_RPS,
++ 	DEV_ATTR_XPS,
++ 	DEV_ATTR_MULTICAST_TO_UNICAST,
+++	DEV_ATTR_MULTICAST_ROUTER,
++ 	__DEV_ATTR_MAX,
++ };
++ 
++@@ -82,6 +83,7 @@ enum {
++ 	DEV_OPT_RPS			= (1 << 10),
++ 	DEV_OPT_XPS			= (1 << 11),
++ 	DEV_OPT_MULTICAST_TO_UNICAST	= (1 << 12),
+++	DEV_OPT_MULTICAST_ROUTER	= (1 << 13),
++ };
++ 
++ /* events broadcasted to all users of a device */
++@@ -138,6 +140,7 @@ struct device_settings {
++ 	bool rps;
++ 	bool xps;
++ 	bool multicast_to_unicast;
+++	unsigned int multicast_router;
++ };
++ 
++ /*
++diff --git a/system-linux.c b/system-linux.c
++index 549d9c0..9061f25 100644
++--- a/system-linux.c
+++++ b/system-linux.c
++@@ -320,6 +320,13 @@ static void system_bridge_set_hairpin_mode(struct device *dev, const char *val)
++ 	system_set_dev_sysctl("/sys/class/net/%s/brport/hairpin_mode", dev->ifname, val);
++ }
++ 
+++static void system_bridge_set_multicast_router(struct device *dev, const char *val, bool bridge)
+++{
+++	system_set_dev_sysctl(bridge ? "/sys/class/net/%s/bridge/multicast_router" :
+++				       "/sys/class/net/%s/brport/multicast_router",
+++			      dev->ifname, val);
+++}
+++
++ static int system_get_sysctl(const char *path, char *buf, const size_t buf_sz)
++ {
++ 	int fd = -1, ret = -1;
++@@ -574,6 +581,7 @@ system_bridge_set_wireless(struct device *bridge, struct device *dev)
++ 
++ int system_bridge_addif(struct device *bridge, struct device *dev)
++ {
+++	char buf[64];
++ 	char *oldbr;
++ 	int ret = 0;
++ 
++@@ -584,6 +592,11 @@ int system_bridge_addif(struct device *bridge, struct device *dev)
++ 	if (dev->wireless)
++ 		system_bridge_set_wireless(bridge, dev);
++ 
+++	if (dev->settings.flags & DEV_OPT_MULTICAST_ROUTER) {
+++		snprintf(buf, sizeof(buf), "%i", dev->settings.multicast_router);
+++		system_bridge_set_multicast_router(dev, buf, false);
+++	}
+++
++ 	return ret;
++ }
++ 
++@@ -834,6 +847,11 @@ int system_bridge_addbr(struct device *bridge, struct bridge_config *cfg)
++ 	system_set_dev_sysctl("/sys/devices/virtual/net/%s/bridge/hash_max",
++ 		bridge->ifname, buf);
++ 
+++	if (bridge->settings.flags & DEV_OPT_MULTICAST_ROUTER) {
+++		snprintf(buf, sizeof(buf), "%i", bridge->settings.multicast_router);
+++		system_bridge_set_multicast_router(bridge, buf, true);
+++	}
+++
++ 	args[0] = BRCTL_SET_BRIDGE_PRIORITY;
++ 	args[1] = cfg->priority;
++ 	system_bridge_if(bridge->ifname, NULL, SIOCDEVPRIVATE, &args);
++-- 
++1.7.10.4
++

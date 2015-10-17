@@ -1,2 +1,4 @@
 rule 'FORWARD --logical-out br-client -o bat0 -d Multicast -j MULTICAST_OUT'
 rule 'OUTPUT --logical-out br-client -o bat0 -d Multicast -j MULTICAST_OUT'
+
+rule('PREROUTING --logical-in br-client -i bat0 -d Multicast -j MULTICAST_IN', 'nat')

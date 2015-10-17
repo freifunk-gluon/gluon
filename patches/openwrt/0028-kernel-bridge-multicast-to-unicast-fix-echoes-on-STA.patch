@@ -1,0 +1,70 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Sat, 5 Sep 2015 03:18:28 +0200
+Subject: kernel: bridge, multicast-to-unicast: fix echoes on STA
+
+Currently, multicast packets from an STA are sent to any according
+multicast listener directly through the bridge multicast-to-unicast
+feature. Unfortunately, so far this includes the originating STA, too,
+resulting in multicast packets being echo'ed back to the originating STA
+if it itself is a multicast listener for that group.
+
+This behaviour breaks IPv6 duplicate address detection: An IPv6 Neighbor
+Solicitation for IPv6 Duplicate Address Detection is being echo'ed back,
+resulting in the host falsely detecting an address collision, which
+makes the node unable to claim an IPv6 address and use IPv6 in general.
+
+Mac80211 unfortunately only prevents the echoes for us for multicast
+frames. For the multicast frames cast to a unicast destination we'll
+need to take care of excluding the originator ourselves.
+
+Signed-off-by: Linus LÃ¼ssing <linus.luessing@c0d3.blue>
+
+git-svn-id: svn://svn.openwrt.org/openwrt/trunk@46765 3c298f89-4303-0410-b956-a3cf2f4a3e73
+
+diff --git a/target/linux/generic/patches-3.18/645-bridge_multicast_to_unicast.patch b/target/linux/generic/patches-3.18/645-bridge_multicast_to_unicast.patch
+index 6707b03..399f5c6 100644
+--- a/target/linux/generic/patches-3.18/645-bridge_multicast_to_unicast.patch
++++ b/target/linux/generic/patches-3.18/645-bridge_multicast_to_unicast.patch
+@@ -297,7 +297,7 @@
+  	rcu_assign_pointer(*pp, p);
+ --- a/net/bridge/br_forward.c
+ +++ b/net/bridge/br_forward.c
+-@@ -168,6 +168,29 @@ out:
++@@ -168,6 +168,34 @@ out:
+  	return p;
+  }
+  
+@@ -308,10 +308,15 @@
+ +			      struct sk_buff *skb))
+ +{
+ +	struct net_device *dev = BR_INPUT_SKB_CB(skb)->brdev;
+++	const unsigned char *src = eth_hdr(skb)->h_source;
+ +
+ +	if (!should_deliver(p, skb))
+ +		return prev;
+ +
+++	/* Even with hairpin, no soliloquies - prevent breaking IPv6 DAD */
+++	if (skb->dev == p->dev && ether_addr_equal(src, addr))
+++		return prev;
+++
+ +	skb = skb_copy(skb, GFP_ATOMIC);
+ +	if (!skb) {
+ +		dev->stats.tx_dropped++;
+@@ -327,7 +332,7 @@
+  /* called under bridge lock */
+  static void br_flood(struct net_bridge *br, struct sk_buff *skb,
+  		     struct sk_buff *skb0,
+-@@ -232,6 +255,7 @@ static void br_multicast_flood(struct ne
++@@ -232,6 +260,7 @@ static void br_multicast_flood(struct ne
+  	struct net_bridge_port *prev = NULL;
+  	struct net_bridge_port_group *p;
+  	struct hlist_node *rp;
+@@ -335,7 +340,7 @@
+  
+  	rp = rcu_dereference(hlist_first_rcu(&br->router_list));
+  	p = mdst ? rcu_dereference(mdst->ports) : NULL;
+-@@ -242,10 +266,19 @@ static void br_multicast_flood(struct ne
++@@ -242,10 +271,19 @@ static void br_multicast_flood(struct ne
+  		rport = rp ? hlist_entry(rp, struct net_bridge_port, rlist) :
+  			     NULL;
+  

@@ -9,11 +9,12 @@ uci:section('network', 'interface', 'wan',
 	    {
 	      ifname = sysconfig.wan_ifname,
 	      type = 'bridge',
-	      igmp_snooping = 0,
 	      peerdns = 0,
 	      auto = 1,
 	    }
 )
+uci:delete('network', 'wan', 'igmp_snooping')
+uci:delete('network', 'wan', 'multicast_querier')
 
 if not uci:get('network', 'wan', 'proto') then
   uci:set('network', 'wan', 'proto', 'dhcp')
@@ -54,6 +55,32 @@ uci:section('network', 'route6', 'wan6_unreachable',
 
 uci:save('network')
 uci:commit('network')
+
+
+uci:section('firewall', 'rule', 'wan_igmp',
+	    {
+	       name = 'Allow-IGMP',
+	       src = 'wan',
+	       proto = 'igmp',
+	       family = 'ipv4',
+	       target = 'ACCEPT',
+	    }
+)
+
+uci:section('firewall', 'rule', 'wan_mld',
+	    {
+	       name = 'Allow-MLD',
+	       src = 'wan',
+	       proto = 'icmp',
+	       src_ip = 'fe80::/10',
+	       icmp_type = { '130/0', '131/0', '143/0', },
+	       family = 'ipv6',
+	       target = 'ACCEPT',
+	    }
+)
+
+uci:save('firewall')
+uci:commit('firewall')
 
 
 sysctl.set('net.ipv6.conf.all.accept_ra', 0)

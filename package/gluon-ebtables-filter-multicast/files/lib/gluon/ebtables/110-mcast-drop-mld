@@ -1,0 +1,3 @@
+rule('MULTICAST_IN -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 130 -j DROP', 'nat') -- MLD query
+rule('MULTICAST_IN -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j DROP', 'nat') -- MLDv1 report
+rule('MULTICAST_IN -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP', 'nat') -- MLDv2 report
