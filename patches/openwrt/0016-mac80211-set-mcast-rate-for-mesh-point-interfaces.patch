@@ -14,7 +14,7 @@ later in mac80211_setup_vif() by starting authsae.
 Signed-off-by: Nils Schneider <nils@nilsschneider.net>
 
 diff --git a/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh b/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
-index c9bc3d6..8137b24 100644
+index 2a8d2f9..8d31a80 100644
 --- a/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
 +++ b/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
 @@ -455,12 +455,7 @@ mac80211_prepare_vif() {

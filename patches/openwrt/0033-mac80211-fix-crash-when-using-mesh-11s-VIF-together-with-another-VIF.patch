@@ -1,0 +1,82 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 24 Oct 2015 21:53:10 +0200
+Subject: mac80211: fix crash when using mesh (11s) VIF together with another VIF
+
+Using a 802.11s mesh VIF together with a different VIF (e.g. IBSS) led to
+a panic.
+
+Steps to reproduce:
+
+    rmmod mac80211_hwsim
+    insmod /lib/modules/3.18.21/mac80211_hwsim.ko channels=2
+    iw phy phy2 interface add ibss2 type ibss
+    iw phy phy2 interface add mesh2 type mp
+    iw phy phy3 interface add ibss3 type ibss
+    iw phy phy3 interface add mesh3 type mp
+    ip link set ibss2 up
+    ip link set mesh2 up
+    ip link set ibss3 up
+    ip link set mesh3 up
+    iw dev ibss2 ibss join foo 2412
+    iw dev ibss3 ibss join foo 2412
+    # Ensure that ibss2 and ibss3 are associated, otherwise leave and join
+    # on ibss3 again
+    iw dev mesh2 mesh join bar
+    iw dev mesh3 mesh join bar
+
+The patch has also been submitted upstream.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/kernel/mac80211/patches/339-mac80211-fix-crash-on-mesh-local-link-ID-generation-.patch b/package/kernel/mac80211/patches/339-mac80211-fix-crash-on-mesh-local-link-ID-generation-.patch
+new file mode 100644
+index 0000000..5784b98
+--- /dev/null
++++ b/package/kernel/mac80211/patches/339-mac80211-fix-crash-on-mesh-local-link-ID-generation-.patch
+@@ -0,0 +1,46 @@
++From 604f8b1964b8380eddf1f03dbdafa7a1c13d80d6 Mon Sep 17 00:00:00 2001
++Message-Id: <604f8b1964b8380eddf1f03dbdafa7a1c13d80d6.1445716231.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sat, 24 Oct 2015 21:25:51 +0200
++Subject: [PATCH] mac80211: fix crash on mesh local link ID generation with
++ VIFs
++
++llid_in_use needs to be limited to stations of the same VIF, otherwise it
++will cause a NULL deref as the sta_info of non-mesh-VIFs don't have
++sta->mesh set.
++
++Steps to reproduce:
++
++   modprobe mac80211_hwsim channels=2
++   iw phy phy0 interface add ibss0 type ibss
++   iw phy phy0 interface add mesh0 type mp
++   iw phy phy1 interface add ibss1 type ibss
++   iw phy phy1 interface add mesh1 type mp
++   ip link set ibss0 up
++   ip link set mesh0 up
++   ip link set ibss1 up
++   ip link set mesh1 up
++   iw dev ibss0 ibss join foo 2412
++   iw dev ibss1 ibss join foo 2412
++   # Ensure that ibss0 and ibss1 are actually associated; I often need to
++   # leave and join the cell on ibss1 a second time.
++   iw dev mesh0 mesh join bar
++   iw dev mesh1 mesh join bar # crash
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ net/mac80211/mesh_plink.c | 3 +++
++ 1 file changed, 3 insertions(+)
++
++--- a/net/mac80211/mesh_plink.c
+++++ b/net/mac80211/mesh_plink.c
++@@ -646,6 +646,9 @@ static bool llid_in_use(struct ieee80211
++ 
++ 	rcu_read_lock();
++ 	list_for_each_entry_rcu(sta, &local->sta_list, list) {
+++		if (sdata != sta->sdata)
+++			continue;
+++
++ 		if (!memcmp(&sta->mesh->llid, &llid, sizeof(llid))) {
++ 			in_use = true;
++ 			break;
