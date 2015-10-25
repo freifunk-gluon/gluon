@@ -1,0 +1,17 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 25 Oct 2015 18:05:18 +0100
+Subject: toolchain/gdb: update source URL
+
+diff --git a/toolchain/gdb/Makefile b/toolchain/gdb/Makefile
+index 10de1f8..d437c9a 100644
+--- a/toolchain/gdb/Makefile
++++ b/toolchain/gdb/Makefile
+@@ -13,7 +13,7 @@ PKG_VERSION:=linaro-$(PKG_REV)
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_MD5SUM:=816290b91cff03912320089d353e8a12
+-PKG_SOURCE_URL:=https://releases.linaro.org/13.05/components/toolchain/gdb-linaro/
++PKG_SOURCE_URL:=https://releases.linaro.org/archive/13.05/components/toolchain/gdb-linaro/
+ 
+ HOST_BUILD_PARALLEL:=1
+ 
