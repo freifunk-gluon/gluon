@@ -21,3 +21,13 @@ need_string_array('ntp_servers', false)
 
 need_string_match('prefix4', '^%d+.%d+.%d+.%d+/%d+$')
 need_string_match('prefix6', '^[%x:]+/%d+$')
+
+
+for _, config in ipairs({'wifi24', 'wifi5'}) do
+  if need_table(config, nil, false) then
+    need_string('regdom') -- regdom is only required when wifi24 or wifi5 is configured
+
+    need_number(config .. '.channel')
+    need_string(config .. '.htmode')
+  end
+end

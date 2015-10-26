@@ -43,14 +43,6 @@ Developer Documentation
    dev/wan
    dev/i18n
 
-Packages
---------
-
-.. toctree::
-   :maxdepth: 1
-
-   package/gluon-radio-config
-
 Releases
 --------
 

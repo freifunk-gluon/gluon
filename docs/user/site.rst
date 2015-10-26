@@ -72,13 +72,15 @@ opkg : optional
     - ``%GV`` is replaced by the Gluon version
     - ``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)
 
-regdom
+regdom : optional
     The wireless regulatory domain responsible for your area, e.g.:
     ::
 
       regdom = 'DE'
 
-wifi24
+    Setting ``regdom`` in mandatory if ``wifi24`` or ``wifi5`` is defined.
+
+wifi24 : optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
     ``htmode`` selects the desired htmode (e.g. HT20, HT40- or HT40+).
@@ -121,7 +123,7 @@ wifi24
          },
        },
 
-wifi5
+wifi5 : optional
     Same as `wifi24` but for the 5Ghz radio.
 
 next_node : package
