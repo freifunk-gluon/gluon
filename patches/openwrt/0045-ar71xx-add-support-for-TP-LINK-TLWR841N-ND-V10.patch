@@ -1,3 +1,7 @@
+From: Heiko Wundram <modelnine@modelnine.org>
+Date: Mon, Oct 26 2015 14:48:26 +0100
+Subject: backport patches for TP-LINK WR841N/ND v10
+
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
 index 6aac86a..9b172a5 100755
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
