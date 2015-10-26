@@ -13,8 +13,13 @@ if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
   if enable then
     local interfaces = uci:get_list('network', 'client', 'ifname')
 
-    if interfaces and lutil.contains(interfaces, sysconfig.lan_ifname) then
-      enable = false
+    if interfaces then
+      for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+	if lutil.contains(interfaces, lanif) then
+	  enable = false
+	  break
+        end
+      end
     end
   end
 
