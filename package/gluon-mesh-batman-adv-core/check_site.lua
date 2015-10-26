@@ -1,9 +1,4 @@
 for _, config in ipairs({'wifi24', 'wifi5'}) do
-   if need_table(config .. '.ap', nil, false) then
-      need_string(config .. '.ap.ssid')
-      need_boolean(config .. '.ap.disabled', false)
-   end
-
    if need_table(config .. '.ibss', nil, false) then
       need_string(config .. '.ibss.ssid')
       need_string_match(config .. '.ibss.bssid', '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
