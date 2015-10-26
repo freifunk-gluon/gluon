@@ -1,0 +1,171 @@
+@import "reset.css";
+@import "font.css";
+@import "menu.css";
+@import "animation.css";
+
+body {
+  background: rgba(0, 0, 0, 0.12);
+  font-family: Roboto, Lucida Grande, sans, Arial;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 14px;
+}
+
+
+a {
+  color: rgba(220, 0, 103, 0.87);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+header {
+  display: flex;
+  padding: 0 14px;
+  background: #dc0067;
+  color: rgba(255, 255, 255, 0.98);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  box-sizing: border-box;
+  height: 20vh;
+  z-index: -1;
+  box-shadow: 0px 5px 6px rgba(0, 0, 0, 0.16), 0px 1.5px 3px rgba(0, 0, 0, 0.23);
+  white-space: nowrap;
+}
+
+header h1, header .icons {
+  font-size: 24px;
+  margin: 10px 0;
+  padding: 6px 0;
+}
+
+header h1 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: 1;
+}
+
+header h1:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+h1 {
+  font-weight: bold;
+}
+
+h2, h3 {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+h2 {
+  padding: 16px 16px;
+}
+
+h3 {
+  padding: 16px 16px 8px;
+}
+
+.container {
+  max-width: 90vw;
+  margin: 64px auto 24px auto;
+  background: rgb(253, 253, 253);
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.19), 0px 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.container .frame {
+  box-sizing: border-box;
+}
+
+.vertical-split {
+  display: flex;
+}
+
+.vertical-split > .frame {
+  flex: 1;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.vertical-split > .frame + .frame {
+  border-width: 0 0 0 1px;
+}
+
+dl, pre {
+  padding: 0 16px 16px;
+}
+
+table {
+  margin: 0 16px;
+}
+
+dt, th {
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+dt {
+  margin-bottom: 4px;
+}
+
+th {
+  text-align: left;
+  padding: 4px 16px 4px 0;
+}
+
+dd, td {
+  font-weight: normal;
+  font-size: 0.9em;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+dd {
+  padding-bottom: 16px;
+}
+
+table.datatable {
+  width: calc(100% - 32px);
+}
+
+table.datatable td {
+  font-size: 1em;
+  padding: 4px 0;
+}
+
+table.datatable tr.inactive {
+  opacity: 0.33;
+}
+
+table.datatable tr.highlight {
+  background: rgba(255, 180, 0, 0.25);
+}
+
+div.signalgraph {
+  margin: 16px;
+}
+
+@media only screen and (max-width: 1250px) {
+  .container {
+    max-width: none;
+    margin: 56px 0 0;
+  }
+
+  header {
+    height: 56px;
+    z-index: 1;
+    position: fixed;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .vertical-split {
+    display: block;
+  }
+
+  .vertical-split > .frame + .frame {
+    border-width: 1px 0 0 0;
+  }
+}
