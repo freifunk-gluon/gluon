@@ -8,7 +8,7 @@ not only opkg-smime. Fix this by applying the same workaround as in
 ustream-ssl.
 
 diff --git a/package/system/opkg/Makefile b/package/system/opkg/Makefile
-index 32bcf2b..4da4d46 100644
+index 76688f5..3e39cf8 100644
 --- a/package/system/opkg/Makefile
 +++ b/package/system/opkg/Makefile
 @@ -72,7 +72,7 @@ endef
