@@ -1,0 +1,431 @@
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 6aac86a..9b172a5 100755
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -229,7 +229,8 @@ get_status_led() {
+ 	tl-wr720n-v3)
+ 		status_led="tp-link:blue:system"
+ 		;;
+-	tl-wr841n-v9)
++	tl-wr841n-v9 | \
++	tl-wr841n-v10)
+ 		status_led="tp-link:green:qss"
+ 		;;
+ 	tl-wr2543n)
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index 315a9fd..fa03d46 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -367,7 +367,8 @@ tl-wa830re-v2)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+ 
+-tl-wr841n-v9)
++tl-wr841n-v9 | \
++tl-wr841n-v10)
+ 	ucidef_set_led_netdev "wan" "WAN" "tp-link:green:wan" "eth1"
+ 	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x10"
+ 	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x08"
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index 3ccb917..32976b8 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -368,6 +368,7 @@ tl-wr741nd |\
+ tl-wr741nd-v4 |\
+ tl-wr841n-v7 |\
+ tl-wr841n-v9 |\
++tl-wr841n-v10 |\
+ whr-g301n |\
+ whr-hp-g300n |\
+ whr-hp-gn |\
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 6ba40aa..afd90dd 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -703,6 +703,9 @@ ar71xx_board_detect() {
+ 	*"TL-WR841N/ND v9")
+ 		name="tl-wr841n-v9"
+ 		;;
++	*"TL-WR841N/ND v10")
++		name="tl-wr841n-v10"
++		;;
+ 	*"TL-WR842N/ND v2")
+ 		name="tl-wr842n-v2"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 49746c4..4169770 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -324,6 +324,7 @@ platform_check_image() {
+ 	tl-wr841n-v7 | \
+ 	tl-wr841n-v8 | \
+ 	tl-wr841n-v9 | \
++	tl-wr841n-v10 | \
+ 	tl-wr842n-v2 | \
+ 	tl-wr941nd | \
+ 	tl-wr941nd-v5 | \
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 53ae3f6..5611617 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -1240,6 +1240,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWA750,tl-wa750re-v1,TL-WA750RE,
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR841NV8,tl-wr841n-v8,TL-WR841N-v8,ttyS0,115200,0x08410008,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWA830RV2,tl-wa830re-v2,TL-WA830RE-v2,ttyS0,115200,0x08300002,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR841NV9,tl-wr841n-v9,TL-WR841N-v9,ttyS0,115200,0x08410009,1,4Mlzma))
++$(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR841NV10,tl-wr841n-v10,TL-WR841N-v10,ttyS0,115200,0x08410010,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR842V2,tl-wr842n-v2,TL-WR842N-v2,ttyS0,115200,0x8420002,1,8Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWA801NV2,tl-wa801nd-v2,TL-WA801ND-v2,ttyS0,115200,0x08010002,1,4Mlzma))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWA850,tl-wa850re-v1,TL-WA850RE,ttyS0,115200,0x08500001,1,4Mlzma))
+@@ -1323,7 +1324,7 @@ $(eval $(call MultiProfile,TLWR720,TLWR720NV3))
+ $(eval $(call MultiProfile,TLWR740,TLWR740NV1 TLWR740NV3 TLWR740NV4 TLWR740NV5))
+ $(eval $(call MultiProfile,TLWR741,TLWR741NV1 TLWR741NV2 TLWR741NV4 TLWR741NV5))
+ $(eval $(call MultiProfile,TLWR743,TLWR743NV1 TLWR743NV2))
+-$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9))
++$(eval $(call MultiProfile,TLWR841,TLWR841NV15 TLWR841NV3 TLWR841NV5 TLWR841NV7 TLWR841NV8 TLWR841NV9 TLWR841NV10))
+ $(eval $(call MultiProfile,TLWR842,TLWR842V1 TLWR842V2))
+ $(eval $(call MultiProfile,TLWR941,TLWR941NV2 TLWR941NV3 TLWR941NV4 TLWR941NV5 TLWR941NV6))
+ $(eval $(call MultiProfile,TLWR1043,TLWR1043V1 TLWR1043V2))
+diff --git a/target/linux/ar71xx/patches-3.10/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch b/target/linux/ar71xx/patches-3.10/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
+index 00458d2..f45c4c6 100644
+--- a/target/linux/ar71xx/patches-3.10/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
++++ b/target/linux/ar71xx/patches-3.10/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
+@@ -1,50 +1,7 @@
+-From 5300a7cd7ed2f88488ddba62947b9c6bb9663777 Mon Sep 17 00:00:00 2001
+-Message-Id: <5300a7cd7ed2f88488ddba62947b9c6bb9663777.1396122227.git.mschiffer@universe-factory.net>
+-From: Matthias Schiffer <mschiffer@universe-factory.net>
+-Date: Sat, 29 Mar 2014 20:26:08 +0100
+-Subject: [PATCH 1/2] MIPS: ath79: add support for QCA953x SoC
+-
+-Note that the clock calculation looks very similar to the QCA955x, but the
+-meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+----
+- arch/mips/ath79/Kconfig                        |  6 +-
+- arch/mips/ath79/clock.c                        | 78 ++++++++++++++++++++++++++
+- arch/mips/ath79/common.c                       |  4 ++
+- arch/mips/ath79/dev-common.c                   |  1 +
+- arch/mips/ath79/dev-wmac.c                     | 20 +++++++
+- arch/mips/ath79/early_printk.c                 |  1 +
+- arch/mips/ath79/gpio.c                         |  4 +-
+- arch/mips/ath79/irq.c                          |  4 ++
+- arch/mips/ath79/setup.c                        |  8 ++-
+- arch/mips/include/asm/mach-ath79/ar71xx_regs.h | 48 ++++++++++++++++
+- arch/mips/include/asm/mach-ath79/ath79.h       | 11 ++++
+- 11 files changed, 182 insertions(+), 3 deletions(-)
+-
+---- a/arch/mips/ath79/Kconfig
+-+++ b/arch/mips/ath79/Kconfig
+-@@ -929,6 +929,10 @@ config SOC_AR934X
+- 	select PCI_AR724X if PCI
+- 	def_bool n
+- 
+-+config SOC_QCA953X
+-+	select USB_ARCH_HAS_EHCI
+-+	def_bool n
+-+
+- config SOC_QCA955X
+- 	select USB_ARCH_HAS_EHCI
+- 	select HW_HAS_PCI
+-@@ -972,7 +976,7 @@ config ATH79_DEV_USB
+- 	def_bool n
+- 
+- config ATH79_DEV_WMAC
+--	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA955X)
+-+	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA953X || SOC_QCA955X)
+- 	def_bool n
+- 
+- config ATH79_NVRAM
+---- a/arch/mips/ath79/clock.c
+-+++ b/arch/mips/ath79/clock.c
+-@@ -295,6 +295,82 @@ static void __init ar934x_clocks_init(vo
++diff -urN a/arch/mips/ath79/clock.c b/arch/mips/ath79/clock.c
++--- a/arch/mips/ath79/clock.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/clock.c	2015-09-18 16:40:33.076000000 +0200
++@@ -295,6 +295,82 @@
+  	iounmap(dpll_base);
+  }
+  
+@@ -127,7 +84,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  static void __init qca955x_clocks_init(void)
+  {
+  	u32 pll, out_div, ref_div, nint, frac, clk_ctrl, postdiv;
+-@@ -383,6 +459,8 @@ void __init ath79_clocks_init(void)
++@@ -383,6 +459,8 @@
+  		ar933x_clocks_init();
+  	else if (soc_is_ar934x())
+  		ar934x_clocks_init();
+@@ -136,9 +93,10 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	else if (soc_is_qca955x())
+  		qca955x_clocks_init();
+  	else
+---- a/arch/mips/ath79/common.c
+-+++ b/arch/mips/ath79/common.c
+-@@ -73,6 +73,8 @@ void ath79_device_reset_set(u32 mask)
++diff -urN a/arch/mips/ath79/common.c b/arch/mips/ath79/common.c
++--- a/arch/mips/ath79/common.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/common.c	2015-09-18 16:40:33.076000000 +0200
++@@ -73,6 +73,8 @@
+  		reg = AR933X_RESET_REG_RESET_MODULE;
+  	else if (soc_is_ar934x())
+  		reg = AR934X_RESET_REG_RESET_MODULE;
+@@ -147,7 +105,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	else if (soc_is_qca955x())
+  		reg = QCA955X_RESET_REG_RESET_MODULE;
+  	else
+-@@ -101,6 +103,8 @@ void ath79_device_reset_clear(u32 mask)
++@@ -101,6 +103,8 @@
+  		reg = AR933X_RESET_REG_RESET_MODULE;
+  	else if (soc_is_ar934x())
+  		reg = AR934X_RESET_REG_RESET_MODULE;
+@@ -156,9 +114,10 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	else if (soc_is_qca955x())
+  		reg = QCA955X_RESET_REG_RESET_MODULE;
+  	else
+---- a/arch/mips/ath79/dev-common.c
+-+++ b/arch/mips/ath79/dev-common.c
+-@@ -100,6 +100,7 @@ void __init ath79_register_uart(void)
++diff -urN a/arch/mips/ath79/dev-common.c b/arch/mips/ath79/dev-common.c
++--- a/arch/mips/ath79/dev-common.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/dev-common.c	2015-09-18 16:40:33.076000000 +0200
++@@ -100,6 +100,7 @@
+  	    soc_is_ar724x() ||
+  	    soc_is_ar913x() ||
+  	    soc_is_ar934x() ||
+@@ -166,9 +125,10 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	    soc_is_qca955x()) {
+  		ath79_uart_data[0].uartclk = clk_get_rate(clk);
+  		platform_device_register(&ath79_uart_device);
+---- a/arch/mips/ath79/dev-wmac.c
+-+++ b/arch/mips/ath79/dev-wmac.c
+-@@ -101,7 +101,7 @@ static int ar933x_wmac_reset(void)
++diff -urN a/arch/mips/ath79/dev-wmac.c b/arch/mips/ath79/dev-wmac.c
++--- a/arch/mips/ath79/dev-wmac.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/dev-wmac.c	2015-09-18 16:40:33.076000000 +0200
++@@ -101,7 +101,7 @@
+  	return -ETIMEDOUT;
+  }
+  
+@@ -177,7 +137,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  {
+  	return ath79_soc_rev;
+  }
+-@@ -126,7 +126,7 @@ static void __init ar933x_wmac_setup(voi
++@@ -126,7 +126,7 @@
+  		ath79_wmac_data.is_clk_25mhz = true;
+  
+  	if (ath79_soc_rev == 1)
+@@ -186,7 +146,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  
+  	ath79_wmac_data.external_reset = ar933x_wmac_reset;
+  }
+-@@ -149,6 +149,26 @@ static void ar934x_wmac_setup(void)
++@@ -149,6 +149,26 @@
+  		ath79_wmac_data.is_clk_25mhz = true;
+  }
+  
+@@ -213,7 +173,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  static void qca955x_wmac_setup(void)
+  {
+  	u32 t;
+-@@ -366,6 +386,8 @@ void __init ath79_register_wmac(u8 *cal_
++@@ -366,6 +386,8 @@
+  		ar933x_wmac_setup();
+  	else if (soc_is_ar934x())
+  		ar934x_wmac_setup();
+@@ -222,19 +182,22 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	else if (soc_is_qca955x())
+  		qca955x_wmac_setup();
+  	else
+---- a/arch/mips/ath79/early_printk.c
+-+++ b/arch/mips/ath79/early_printk.c
+-@@ -114,6 +114,7 @@ static void prom_putchar_init(void)
++diff -urN a/arch/mips/ath79/early_printk.c b/arch/mips/ath79/early_printk.c
++--- a/arch/mips/ath79/early_printk.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/early_printk.c	2015-10-26 12:13:33.768007483 +0100
++@@ -114,6 +114,8 @@
+  	case REV_ID_MAJOR_AR9341:
+  	case REV_ID_MAJOR_AR9342:
+  	case REV_ID_MAJOR_AR9344:
+ +	case REV_ID_MAJOR_QCA9533:
+++	case REV_ID_MAJOR_QCA9533_V2:
+  	case REV_ID_MAJOR_QCA9556:
+  	case REV_ID_MAJOR_QCA9558:
+  		_prom_putchar = prom_putchar_ar71xx;
+---- a/arch/mips/ath79/gpio.c
+-+++ b/arch/mips/ath79/gpio.c
+-@@ -224,6 +224,8 @@ void __init ath79_gpio_init(void)
++diff -urN a/arch/mips/ath79/gpio.c b/arch/mips/ath79/gpio.c
++--- a/arch/mips/ath79/gpio.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/gpio.c	2015-09-18 16:40:33.076000000 +0200
++@@ -224,6 +224,8 @@
+  		ath79_gpio_count = AR933X_GPIO_COUNT;
+  	else if (soc_is_ar934x())
+  		ath79_gpio_count = AR934X_GPIO_COUNT;
+@@ -243,7 +206,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	else if (soc_is_qca955x())
+  		ath79_gpio_count = QCA955X_GPIO_COUNT;
+  	else
+-@@ -231,7 +233,7 @@ void __init ath79_gpio_init(void)
++@@ -231,7 +233,7 @@
+  
+  	ath79_gpio_base = ioremap_nocache(AR71XX_GPIO_BASE, AR71XX_GPIO_SIZE);
+  	ath79_gpio_chip.ngpio = ath79_gpio_count;
+@@ -252,9 +215,10 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  		ath79_gpio_chip.direction_input = ar934x_gpio_direction_input;
+  		ath79_gpio_chip.direction_output = ar934x_gpio_direction_output;
+  	}
+---- a/arch/mips/ath79/irq.c
+-+++ b/arch/mips/ath79/irq.c
+-@@ -106,6 +106,7 @@ static void __init ath79_misc_irq_init(v
++diff -urN a/arch/mips/ath79/irq.c b/arch/mips/ath79/irq.c
++--- a/arch/mips/ath79/irq.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/irq.c	2015-09-18 16:40:33.076000000 +0200
++@@ -106,6 +106,7 @@
+  	else if (soc_is_ar724x() ||
+  		 soc_is_ar933x() ||
+  		 soc_is_ar934x() ||
+@@ -262,7 +226,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  		 soc_is_qca955x())
+  		ath79_misc_irq_chip.irq_ack = ar724x_misc_irq_ack;
+  	else
+-@@ -352,6 +353,9 @@ void __init arch_init_irq(void)
++@@ -352,6 +353,9 @@
+  	} else if (soc_is_ar934x()) {
+  		ath79_ip2_handler = ath79_default_ip2_handler;
+  		ath79_ip3_handler = ar934x_ip3_handler;
+@@ -272,12 +236,49 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	} else if (soc_is_qca955x()) {
+  		ath79_ip2_handler = ath79_default_ip2_handler;
+  		ath79_ip3_handler = ath79_default_ip3_handler;
+---- a/arch/mips/ath79/setup.c
+-+++ b/arch/mips/ath79/setup.c
+-@@ -151,6 +151,12 @@ static void __init ath79_detect_sys_type
++diff -urN a/arch/mips/ath79/Kconfig b/arch/mips/ath79/Kconfig
++--- a/arch/mips/ath79/Kconfig	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/Kconfig	2015-09-18 16:40:33.356000000 +0200
++@@ -1082,6 +1082,10 @@
++ 	select PCI_AR724X if PCI
++ 	def_bool n
++ 
+++config SOC_QCA953X
+++	select USB_ARCH_HAS_EHCI
+++	def_bool n
+++
++ config SOC_QCA955X
++ 	select USB_ARCH_HAS_EHCI
++ 	select HW_HAS_PCI
++@@ -1125,7 +1129,7 @@
++ 	def_bool n
++ 
++ config ATH79_DEV_WMAC
++-	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA955X)
+++	depends on (SOC_AR913X || SOC_AR933X || SOC_AR934X || SOC_QCA953X || SOC_QCA955X)
++ 	def_bool n
++ 
++ config ATH79_NVRAM
++diff -urN a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
++--- a/arch/mips/ath79/setup.c	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/ath79/setup.c	2015-10-26 12:25:45.015568505 +0100
++@@ -60,6 +60,7 @@
++ 	u32 major;
++ 	u32 minor;
++ 	u32 rev = 0;
+++	u32 ver = 1;
++ 
++ 	id = ath79_reset_rr(AR71XX_RESET_REG_REV_ID);
++ 	major = id & REV_ID_MAJOR_MASK;
++@@ -152,6 +153,17 @@
+  		rev = id & AR934X_REV_ID_REVISION_MASK;
+  		break;
+  
+++	case REV_ID_MAJOR_QCA9533_V2:
+++		ver = 2;
+++		ath79_soc_rev = 2;
+++		/* fall through. */
+++
+ +	case REV_ID_MAJOR_QCA9533:
+ +		ath79_soc = ATH79_SOC_QCA9533;
+ +		chip = "9533";
+@@ -287,17 +288,26 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	case REV_ID_MAJOR_QCA9556:
+  		ath79_soc = ATH79_SOC_QCA9556;
+  		chip = "9556";
+-@@ -169,7 +175,7 @@ static void __init ath79_detect_sys_type
++@@ -168,11 +180,12 @@
++ 		panic("ath79: unknown SoC, id:0x%08x", id);
++ 	}
+  
+- 	ath79_soc_rev = rev;
++-	ath79_soc_rev = rev;
+++	if (ver == 1)
+++		ath79_soc_rev = rev;
+  
+ -	if (soc_is_qca955x())
++-		sprintf(ath79_sys_type, "Qualcomm Atheros QCA%s rev %u",
++-			chip, rev);
+ +	if (soc_is_qca953x() || soc_is_qca955x())
+- 		sprintf(ath79_sys_type, "Qualcomm Atheros QCA%s rev %u",
+- 			chip, rev);
+++		sprintf(ath79_sys_type, "Qualcomm Atheros QCA%s ver %u rev %u",
+++			chip, ver, rev);
+  	else
+---- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+-+++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++ 		sprintf(ath79_sys_type, "Atheros AR%s rev %u", chip, rev);
++ 	pr_info("SoC: %s\n", ath79_sys_type);
++diff -urN a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h	2015-10-26 12:04:30.109198158 +0100
+++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h	2015-10-26 12:09:44.119890545 +0100
+ @@ -106,6 +106,9 @@
+  #define AR934X_SRIF_BASE	(AR71XX_APB_BASE + 0x00116000)
+  #define AR934X_SRIF_SIZE	0x1000
+@@ -372,15 +382,16 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  #define QCA955X_BOOTSTRAP_REF_CLK_40	BIT(4)
+  
+  #define AR934X_PCIE_WMAC_INT_WMAC_MISC		BIT(0)
+-@@ -566,6 +612,7 @@
++@@ -566,6 +612,8 @@
+  #define REV_ID_MAJOR_AR9341		0x0120
+  #define REV_ID_MAJOR_AR9342		0x1120
+  #define REV_ID_MAJOR_AR9344		0x2120
+ +#define REV_ID_MAJOR_QCA9533		0x0140
+++#define REV_ID_MAJOR_QCA9533_V2		0x0160
+  #define REV_ID_MAJOR_QCA9556		0x0130
+  #define REV_ID_MAJOR_QCA9558		0x1130
+  
+-@@ -588,6 +635,8 @@
++@@ -588,6 +636,8 @@
+  
+  #define AR934X_REV_ID_REVISION_MASK	0xf
+  
+@@ -389,7 +400,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  #define QCA955X_REV_ID_REVISION_MASK	0xf
+  
+  /*
+-@@ -641,6 +690,7 @@
++@@ -641,6 +691,7 @@
+  #define AR913X_GPIO_COUNT		22
+  #define AR933X_GPIO_COUNT		30
+  #define AR934X_GPIO_COUNT		23
+@@ -397,9 +408,10 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  #define QCA955X_GPIO_COUNT		24
+  
+  /*
+---- a/arch/mips/include/asm/mach-ath79/ath79.h
+-+++ b/arch/mips/include/asm/mach-ath79/ath79.h
+-@@ -32,6 +32,7 @@ enum ath79_soc_type {
++diff -urN a/arch/mips/include/asm/mach-ath79/ath79.h b/arch/mips/include/asm/mach-ath79/ath79.h
++--- a/arch/mips/include/asm/mach-ath79/ath79.h	2015-10-26 12:04:30.113198090 +0100
+++++ b/arch/mips/include/asm/mach-ath79/ath79.h	2015-09-18 16:40:33.344000000 +0200
++@@ -32,6 +32,7 @@
+  	ATH79_SOC_AR9341,
+  	ATH79_SOC_AR9342,
+  	ATH79_SOC_AR9344,
+@@ -407,7 +419,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  	ATH79_SOC_QCA9556,
+  	ATH79_SOC_QCA9558,
+  };
+-@@ -100,6 +101,16 @@ static inline int soc_is_ar934x(void)
++@@ -100,6 +101,16 @@
+  	return soc_is_ar9341() || soc_is_ar9342() || soc_is_ar9344();
+  }
+  
