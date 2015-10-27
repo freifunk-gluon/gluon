@@ -433,9 +433,16 @@ manifest: FORCE
 	( \
 		cd $(GLUON_IMAGEDIR)/sysupgrade; \
 		$(foreach profile,$(PROFILES), \
-			$(foreach model,$(GLUON_$(profile)_MODELS), \
-				file="$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
-				[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+			$(if $(GLUON_$(profile)_SYSUPGRADE_EXT), \
+				$(foreach model,$(GLUON_$(profile)_MODELS), \
+					file="$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
+					[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+					\
+					$(foreach alias,$(GLUON_$(profile)_MODEL_$(model)_ALIASES), \
+						file="$(IMAGE_PREFIX)-$(alias)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
+						[ -e "$$file" ] && echo '$(alias)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+					) \
+				) \
 			) \
 		) : \
 	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
