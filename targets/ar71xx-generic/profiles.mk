@@ -8,6 +8,10 @@ $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe210-v1.0))
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe220-v1.0))
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.0))
 $(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe520-v1.0))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe210-v1.1))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe220-v1.1))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.1))
+$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe520-v1.1))
 
 # TL-WA701N/ND v1, v2
 $(eval $(call GluonProfile,TLWA701))

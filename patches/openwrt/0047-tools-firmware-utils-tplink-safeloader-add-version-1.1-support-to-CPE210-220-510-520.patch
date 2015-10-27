@@ -1,0 +1,38 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 15 Oct 2015 21:56:40 +0200
+Subject: tools/firmware-utils: tplink-safeloader: add version 1.1 support to CPE210/220/510/520
+
+The hardware is identical to version 1.0, add the new models to the support
+list.
+
+Also remove the empty line at the end of the support list, the current
+stock images don't have it either.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 66658aa..77a894b 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -129,17 +129,17 @@ static const struct flash_partition_entry cpe510_partitions[] = {
+ 
+ /**
+    The support list for CPE210/220/510/520
+-
+-   The stock images also contain strings for two more devices: BS510 and BS210.
+-   At the moment, there exists no public information about these devices.
+ */
+ static const char cpe510_support_list[] =
+ 	"SupportList:\r\n"
+ 	"CPE510(TP-LINK|UN|N300-5):1.0\r\n"
++	"CPE510(TP-LINK|UN|N300-5):1.1\r\n"
+ 	"CPE520(TP-LINK|UN|N300-5):1.0\r\n"
++	"CPE520(TP-LINK|UN|N300-5):1.1\r\n"
+ 	"CPE210(TP-LINK|UN|N300-2):1.0\r\n"
++	"CPE210(TP-LINK|UN|N300-2):1.1\r\n"
+ 	"CPE220(TP-LINK|UN|N300-2):1.0\r\n"
+-	"\r\n";
++	"CPE220(TP-LINK|UN|N300-2):1.1\r\n";
+ 
+ #define error(_ret, _errno, _str, ...)				\
+ 	do {							\
