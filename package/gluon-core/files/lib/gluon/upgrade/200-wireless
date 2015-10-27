@@ -17,7 +17,7 @@ local function configure_radio(radio, index, config)
     uci:delete('wireless', radio, 'disabled')
 
     uci:set('wireless', radio, 'channel', config.channel)
-    uci:set('wireless', radio, 'htmode', config.htmode)
+    uci:set('wireless', radio, 'htmode', 'HT20')
     uci:set('wireless', radio, 'country', site.regdom)
   end
 end

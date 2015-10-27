@@ -83,7 +83,6 @@ regdom : optional
 wifi24 : optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
-    ``htmode`` selects the desired htmode (e.g. HT20, HT40- or HT40+).
 
     There are currently three interface types available. You many choose to
     configure any subset of them:
@@ -108,7 +107,6 @@ wifi24 : optional
 
        wifi24 = {
          channel = 11,
-         htmode = 'HT20',
          ap = {
            ssid = 'entenhausen.freifunk.net',
          },
