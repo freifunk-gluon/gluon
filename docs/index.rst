@@ -25,7 +25,7 @@ Features
    features/configmode
    features/autoupdater
    features/private-wlan
-   features/mesh-on-wan
+   features/wired-mesh
    features/announce
    features/authorized-keys
    features/roles
