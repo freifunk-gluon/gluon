@@ -133,7 +133,7 @@ The Gluon images will contain two public keys: the official OpenWrt signing key
 to sign the generated module repository).
 
 By default, Gluon will handle the generation and handling of the keys itself.
-When making firmware releases based on Gluon, it might make sense to store the
+When making firmware releases based on Gluon, it might make sense to store
 the keypair, so updating the module repository later is possible.
 
 The location the keys are stored at and read from can be changed
