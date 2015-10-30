@@ -30,10 +30,10 @@ A fully automated nightly build could use the following commands:
     make clean
     make -j5 GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
     make manifest GLUON_BRANCH=experimental
-    contrib/sign.sh $SECRETKEY images/sysupgrade/experimental.manifest
+    contrib/sign.sh $SECRETKEY output/images/sysupgrade/experimental.manifest
 
     rm -rf /where/to/put/this/experimental
-    cp -r images /where/to/put/this/experimental
+    cp -r output/images /where/to/put/this/experimental
 
 
 Infrastructure

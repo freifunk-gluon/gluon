@@ -59,29 +59,37 @@ CheckTarget := [ -n '$(GLUON_TARGET)' -a -n '$(GLUON_TARGET_$(GLUON_TARGET)_BOAR
 CheckExternal := test -d $(GLUON_ORIGOPENWRTDIR) || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 
+create-key: FORCE
+	@$(CheckExternal)
+	+@$(GLUONMAKE_EARLY) create-key
+
 prepare-target: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) prepare-target
 
-
 all: prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) prepare
 	+@$(GLUONMAKE) images
+	+@$(GLUONMAKE) modules
 
 prepare: prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
-clean download images: FORCE
+clean download images modules: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
 toolchain/% package/% target/% image/%: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 	+@$(GLUONMAKE_EARLY) maybe-prepare-target
+	+@$(GLUONMAKE) build-key
 	+@$(GLUONMAKE) $@
 
 manifest: FORCE
@@ -102,13 +110,6 @@ manifest: FORCE
 
 	mkdir -p $(GLUON_IMAGEDIR)/sysupgrade
 	mv $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp $(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest
-
-update-vermagic: FORCE
-	@$(CheckExternal)
-	+($(foreach GLUON_TARGET,$(GLUON_TARGETS), \
-		$(GLUONMAKE_EARLY) maybe-prepare-target GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) && \
-		$(GLUONMAKE) update-vermagic GLUON_TARGET='$(GLUON_TARGET)' V=s$(OPENWRT_VERBOSE) && \
-	) :)
 
 dirclean : FORCE
 	for dir in build_dir dl staging_dir tmp; do \
@@ -176,19 +177,6 @@ GLUON_$(1)_MODEL_$(2)_ALIASES += $(3)
 endef
 
 
-include $(GLUONDIR)/targets/targets.mk
-include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
-
-BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
-override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
-
-target_prepared_stamp := $(BOARD_BUILDDIR)/target-prepared
-gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
-
-
-include $(INCLUDE_DIR)/target.mk
-
-
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
@@ -216,7 +204,43 @@ feeds: FORCE
 
 gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) tools/sed/install
-	+$(GLUONMAKE_EARLY) package/lua/host/install
+	+$(GLUONMAKE_EARLY) package/lua/host/install package/usign/host/install
+
+
+prepare-early: FORCE
+	for dir in build_dir dl staging_dir; do \
+		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
+	done
+
+	+$(GLUONMAKE_EARLY) feeds
+	+$(GLUONMAKE_EARLY) gluon-tools
+
+create-key: prepare-early
+	[ -s $(GLUON_OPKG_KEY) -a -s $(GLUON_OPKG_KEY).pub ] || \
+		$(STAGING_DIR_HOST)/bin/usign -G -s $(GLUON_OPKG_KEY) -p $(GLUON_OPKG_KEY).pub -c "Gluon opkg key"
+
+include $(GLUONDIR)/targets/targets.mk
+
+ifneq ($(GLUON_TARGET),)
+
+include $(GLUONDIR)/targets/$(GLUON_TARGET)/profiles.mk
+
+BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
+override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
+
+target_prepared_stamp := $(BOARD_BUILDDIR)/target-prepared
+gluon_prepared_stamp := $(BOARD_BUILDDIR)/prepared
+
+PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
+IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
+MODULE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
+
+
+include $(INCLUDE_DIR)/target.mk
+
+build-key: FORCE
+	ln -sf $(GLUON_OPKG_KEY) $(BUILD_KEY)
+	ln -sf $(GLUON_OPKG_KEY).pub $(BUILD_KEY).pub
 
 config: FORCE
 	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
@@ -235,31 +259,19 @@ config: FORCE
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
-	mv .config $(BOARD_BUILDDIR)/config
 
-	echo 'CONFIG_ALL_KMODS=y' >> $(BOARD_BUILDDIR)/config.tmp
-	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
-	mv .config $(BOARD_BUILDDIR)/config-allmods
-
-	cp $(BOARD_BUILDDIR)/config .config
-
-prepare-target: FORCE
+prepare-target: create-key
 	rm $(GLUON_OPENWRTDIR)/tmp || true
 	mkdir -p $(GLUON_OPENWRTDIR)/tmp
 
-	for dir in build_dir dl staging_dir; do \
-		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
-	done
 	for link in build_dir config Config.in dl include Makefile package rules.mk scripts staging_dir target toolchain tools; do \
 		ln -sf $(GLUON_ORIGOPENWRTDIR)/$$link $(GLUON_OPENWRTDIR); \
 	done
 
-	+$(GLUONMAKE_EARLY) feeds
-	+$(GLUONMAKE_EARLY) gluon-tools
 	+$(GLUONMAKE) config
 	touch $(target_prepared_stamp)
 
-$(target_prepared_stamp):
+$(target_prepared_stamp): create-key
 	+$(GLUONMAKE_EARLY) prepare-target
 
 maybe-prepare-target: $(target_prepared_stamp)
@@ -291,8 +303,8 @@ toolchain: $(toolchain/stamp-install) $(tools/stamp-install)
 include $(INCLUDE_DIR)/kernel.mk
 
 kernel: FORCE
-	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.image TARGET_BUILD=1
-	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) -f $(GLUONDIR)/include/Makefile.target $(LINUX_DIR)/.modules TARGET_BUILD=1
+	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) $(LINUX_DIR)/.image TARGET_BUILD=1
+	+$(NO_TRACE_MAKE) -C $(TOPDIR)/target/linux/$(BOARD) $(LINUX_DIR)/.modules TARGET_BUILD=1
 
 packages: $(package/stamp-compile)
 	$(_SINGLE)$(SUBMAKE) -r package/index
@@ -320,6 +332,14 @@ prepare: FORCE
 $(gluon_prepared_stamp):
 	+$(GLUONMAKE) prepare
 
+modules: FORCE $(gluon_prepared_stamp)
+	-rm -f $(GLUON_MODULEDIR)/*/$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic)/*
+	-rmdir -p $(GLUON_MODULEDIR)/*/$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic)
+	mkdir -p $(GLUON_MODULEDIR)/$(MODULE_PREFIX)/$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic)
+	cp $(PACKAGE_DIR)/kmod-*.ipk $(GLUON_MODULEDIR)/$(MODULE_PREFIX)/$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic)
+
+	$(_SINGLE)$(SUBMAKE) -r package/index PACKAGE_DIR=$(GLUON_MODULEDIR)/$(MODULE_PREFIX)/$(BOARD)/$(if $(SUBTARGET),$(SUBTARGET),generic)
+
 
 include $(INCLUDE_DIR)/package-ipkg.mk
 
@@ -331,9 +351,6 @@ PROFILE_KDIR = $(PROFILE_BUILDDIR)/kernel
 BIN_DIR = $(PROFILE_BUILDDIR)/images
 
 TARGET_DIR = $(PROFILE_BUILDDIR)/root
-
-PREPARED_RELEASE = $$(cat $(gluon_prepared_stamp))
-IMAGE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
 
 OPKG:= \
   IPKG_TMP="$(TMP_DIR)/ipkgtmp" \
@@ -447,15 +464,7 @@ manifest: FORCE
 		) : \
 	) >> $(GLUON_BUILDDIR)/$(GLUON_BRANCH).manifest.tmp
 
-update-vermagic: FORCE
-	mkdir -p '$(BOARD_BUILDDIR)'
-	echo '$(DEFAULT_OPKG_REPO)' > '$(BOARD_BUILDDIR)/default_opkg_repo'
-	$(VERSION_SED) '$(BOARD_BUILDDIR)/default_opkg_repo'
-	wget -q -O- "$$(cat '$(BOARD_BUILDDIR)/default_opkg_repo')/base/Packages.gz" \
-		| gzip -d \
-		| awk '/Depends: kernel / { match($$3,/[[:xdigit:]]{32}/,m); print m[0]; exit }' \
-		> $(GLUONDIR)/targets/$(GLUON_TARGET)/vermagic
+.PHONY: all create-key prepare images modules clean gluon-tools manifest
 
-.PHONY: all images prepare clean gluon-tools manifest update-vermagic
-
+endif
 endif
