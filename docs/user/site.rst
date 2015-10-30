@@ -373,7 +373,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffmwu <https://github.com/freifunk-mwu/site-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
-* `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münster)
+* `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
 * `site-ffnw <https://git.freifunk-ol.de/root/siteconf.git>`_ (Nordwest)
 * `site-ffpb <https://git.c3pb.de/freifunk-pb/site-ffpb>`_ (Paderborn)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
