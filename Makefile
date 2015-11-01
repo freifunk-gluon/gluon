@@ -115,7 +115,7 @@ dirclean : FORCE
 	for dir in build_dir dl staging_dir tmp; do \
 		rm -rf $(GLUON_ORIGOPENWRTDIR)/$$dir; \
 	done
-	rm -rf $(GLUON_BUILDDIR) $(GLUON_IMAGEDIR)
+	rm -rf $(GLUON_BUILDDIR) $(GLUON_OUTPUTDIR)
 
 else
 
