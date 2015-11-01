@@ -10,7 +10,7 @@ As ath79_soc_rev is only used to get the revision number to ath9k on the
 QCA9533, just set it to the expected value on the ver. 2.
 
 diff --git a/target/linux/ar71xx/patches-3.18/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch b/target/linux/ar71xx/patches-3.18/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
-index d541939..be53a5a 100644
+index 403897a..cf10af3 100644
 --- a/target/linux/ar71xx/patches-3.18/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/707-MIPS-ath79-add-support-for-QCA953x-SoC.patch
 @@ -44,7 +44,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
@@ -140,26 +140,9 @@ index d541939..be53a5a 100644
  +++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
  @@ -105,6 +105,21 @@
 diff --git a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
-index 027163f..6e0b536 100644
+index 2bdc744..eecccdc 100644
 --- a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
-@@ -1,6 +1,6 @@
- --- a/arch/mips/ath79/Kconfig
- +++ b/arch/mips/ath79/Kconfig
--@@ -1213,6 +1213,12 @@ config SOC_QCA955X
-+@@ -1248,6 +1248,12 @@ config SOC_QCA955X
-  	select PCI_AR724X if PCI
-  	def_bool n
-  
-@@ -13,7 +13,7 @@
-  config ATH79_DEV_M25P80
-  	select ATH79_DEV_SPI
-  	def_bool n
--@@ -1250,7 +1256,7 @@ config ATH79_DEV_USB
-+@@ -1285,7 +1291,7 @@ config ATH79_DEV_USB
-  	def_bool n
-  
-  config ATH79_DEV_WMAC
 @@ -452,7 +452,7 @@
   		return -ENODEV;
  --- a/arch/mips/ath79/setup.c
