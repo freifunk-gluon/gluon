@@ -207,6 +207,8 @@ gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) package/lua/host/install package/usign/host/install
 
 
+early_prepared_stamp := $(GLUON_BUILDDIR)/prepared
+
 prepare-early: FORCE
 	for dir in build_dir dl staging_dir; do \
 		mkdir -p $(GLUON_ORIGOPENWRTDIR)/$$dir; \
@@ -215,9 +217,19 @@ prepare-early: FORCE
 	+$(GLUONMAKE_EARLY) feeds
 	+$(GLUONMAKE_EARLY) gluon-tools
 
-create-key: prepare-early
+	mkdir -p $$(dirname $(early_prepared_stamp))
+	touch $(early_prepared_stamp)
+
+$(early_prepared_stamp):
+	+$(GLUONMAKE_EARLY) prepare-early
+
+$(GLUON_OPKG_KEY): $(early_prepared_stamp) FORCE
 	[ -s $(GLUON_OPKG_KEY) -a -s $(GLUON_OPKG_KEY).pub ] || \
 		mkdir -p $$(dirname $(GLUON_OPKG_KEY)) && $(STAGING_DIR_HOST)/bin/usign -G -s $(GLUON_OPKG_KEY) -p $(GLUON_OPKG_KEY).pub -c "Gluon opkg key"
+
+$(GLUON_OPKG_KEY).pub: $(GLUON_OPKG_KEY)
+
+create-key: $(GLUON_OPKG_KEY).pub
 
 include $(GLUONDIR)/targets/targets.mk
 
@@ -259,8 +271,9 @@ config: FORCE
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
+	+$(NO_TRACE_MAKE) tools/prepare
 
-prepare-target: create-key
+prepare-target: $(GLUON_OPKG_KEY).pub
 	rm $(GLUON_OPENWRTDIR)/tmp || true
 	mkdir -p $(GLUON_OPENWRTDIR)/tmp
 
@@ -271,10 +284,10 @@ prepare-target: create-key
 	+$(GLUONMAKE) config
 	touch $(target_prepared_stamp)
 
-$(target_prepared_stamp): create-key
+$(target_prepared_stamp):
 	+$(GLUONMAKE_EARLY) prepare-target
 
-maybe-prepare-target: $(target_prepared_stamp)
+maybe-prepare-target: $(GLUON_OPKG_KEY).pub $(target_prepared_stamp)
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
