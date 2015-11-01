@@ -27,7 +27,7 @@ index 5ce06c0..8e1f11d 100755
 +	local iface="$1"
 +	local timeout
 +
-+	timeout=30
++	timeout=60
 +	echo "${initscript}: waiting $timeout secs for $iface address..."
 +	for i in $(seq $timeout); do
 +		# We look for
