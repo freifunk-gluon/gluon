@@ -273,7 +273,7 @@ config: FORCE
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
-	+$(NO_TRACE_MAKE) tools/install
+	+$(SUBMAKE) tools/install
 
 prepare-target: $(GLUON_OPKG_KEY).pub
 	rm $(GLUON_OPENWRTDIR)/tmp || true
