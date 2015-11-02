@@ -1,0 +1,57 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 2 Nov 2015 02:02:02 +0100
+Subject: ipv6: fix crash on ICMPv6 redirects with prohibited/blackholed source
+
+There are other error values besides ip6_null_entry that can be returned by
+ip6_route_redirect(): fib6_rule_action() can also result in
+ip6_blk_hole_entry and ip6_prohibit_entry if such ip rules are installed.
+
+Only checking for ip6_null_entry in rt6_do_redirect() causes ip6_ins_rt()
+to be called with rt->rt6i_table == NULL in these cases, making the kernel
+crash.
+
+diff --git a/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch b/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch
+new file mode 100644
+index 0000000..6e4b3da
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch
+@@ -0,0 +1,39 @@
++From 7426eb388ade0f1ad800c408d7efa227d4f41408 Mon Sep 17 00:00:00 2001
++Message-Id: <7426eb388ade0f1ad800c408d7efa227d4f41408.1446425986.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Mon, 2 Nov 2015 01:05:15 +0100
++Subject: [PATCH] ipv6: fix crash on ICMPv6 redirects with
++ prohibited/blackholed source
++
++There are other error values besides ip6_null_entry that can be returned by
++ip6_route_redirect(): fib6_rule_action() can also result in
++ip6_blk_hole_entry and ip6_prohibit_entry if such ip rules are installed.
++
++Only checking for ip6_null_entry in rt6_do_redirect() causes ip6_ins_rt()
++to be called with rt->rt6i_table == NULL in these cases, making the kernel
++crash.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ net/ipv6/route.c | 3 +--
++ 1 file changed, 1 insertion(+), 2 deletions(-)
++
++--- a/net/ipv6/route.c
+++++ b/net/ipv6/route.c
++@@ -1766,7 +1766,6 @@ static int ip6_route_del(struct fib6_con
++ 
++ static void rt6_do_redirect(struct dst_entry *dst, struct sock *sk, struct sk_buff *skb)
++ {
++-	struct net *net = dev_net(skb->dev);
++ 	struct netevent_redirect netevent;
++ 	struct rt6_info *rt, *nrt = NULL;
++ 	struct ndisc_options ndopts;
++@@ -1827,7 +1826,7 @@ static void rt6_do_redirect(struct dst_e
++ 	}
++ 
++ 	rt = (struct rt6_info *) dst;
++-	if (rt == net->ipv6.ip6_null_entry) {
+++	if (rt->rt6i_flags & RTF_REJECT) {
++ 		net_dbg_ratelimited("rt6_redirect: source isn't a valid nexthop for redirect target\n");
++ 		return;
++ 	}
