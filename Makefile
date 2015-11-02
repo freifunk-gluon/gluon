@@ -203,7 +203,9 @@ feeds: FORCE
 	+$(GLUONMAKE_EARLY) prepare-tmpinfo
 
 gluon-tools: FORCE
+	+$(GLUONMAKE_EARLY) tools/patch/install
 	+$(GLUONMAKE_EARLY) tools/sed/install
+	+$(GLUONMAKE_EARLY) tools/cmake/install
 	+$(GLUONMAKE_EARLY) package/lua/host/install package/usign/host/install
 
 
@@ -271,7 +273,7 @@ config: FORCE
 			| sed -e 's/ /\n/g'; \
 	) > $(BOARD_BUILDDIR)/config.tmp
 	scripts/config/conf --defconfig=$(BOARD_BUILDDIR)/config.tmp Config.in
-	+$(NO_TRACE_MAKE) tools/prepare
+	+$(NO_TRACE_MAKE) tools/install
 
 prepare-target: $(GLUON_OPKG_KEY).pub
 	rm $(GLUON_OPENWRTDIR)/tmp || true
