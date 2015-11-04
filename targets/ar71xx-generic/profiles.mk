@@ -74,10 +74,8 @@ $(eval $(call GluonModel,TLWR941,tl-wr941nd-v4,tp-link-tl-wr941n-nd-v4))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v5,tp-link-tl-wr941n-nd-v5))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v6,tp-link-tl-wr941n-nd-v6))
 
-ifeq ($(BROKEN),1)
-$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v4,tp-link-tl-wr940n-nd-v1)) # BROKEN: untested
-$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v5,tp-link-tl-wr940n-nd-v2)) # BROKEN: untested
-endif
+$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v4,tp-link-tl-wr940n-nd-v1))
+$(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v5,tp-link-tl-wr940n-nd-v2))
 $(eval $(call GluonModelAlias,TLWR941,tp-link-tl-wr941n-nd-v6,tp-link-tl-wr940n-nd-v3))
 
 # TL-WR1043N/ND v1, v2
