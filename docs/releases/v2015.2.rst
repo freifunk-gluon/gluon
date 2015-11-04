@@ -1,17 +1,31 @@
 Gluon 2015.2 (in development)
 =============================
 
-Added (and removed) hardware support
+Added hardware support
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ar71xx-generic
+^^^^^^^^^^^^^^
 
+* TP-Link
+
+  - CPE 210/220/510/520 (v1.1)
+  - TL-WR841N/ND (v10)
+  - TL-WR901ND (v1)
+  - TL-WR940N (v3)
+  - TL-WR941N (v6)
+  
+* Ubiquity
+
+  - Air Gateway
 
 New features
 ~~~~~~~~~~~~
-
+802.11s can now be used as an alternative to IBSS mode (ad-hoc). The statuspage has been reworked completely. French language support has been added. The numbers of clients connected are announced per band now (2.4/5GHz).
 
 Bugfixes
 ~~~~~~~~
-
+* Fix MTU/max fragmentation size to prevent issues with several ISPs like Kabel Deutschland
+* Fix alfred: wait for a link-local address to prevent crashing
 
 Site changes
 ~~~~~~~~~~~~
@@ -37,6 +51,7 @@ Site changes
 
       {
         channel = 1,
+        htmode = 'HT20',
         ap = {
           ssid = 'entenhausen.freifunk.net',
         },
@@ -47,14 +62,12 @@ Site changes
         },
       }
 
-    The ``htmode`` option has been dropped, the channel width is now always set to 20MHz
-    (see https://github.com/freifunk-gluon/gluon/issues/487 for a discussion of this change).
-
     In addition to the old IBSS (Adhoc) based meshing, 802.11s-based meshing can be configured
     using the ``mesh`` section. Example::
 
       {
         channel = 1,
+        htmode = 'HT20',
         ap = {
           ssid = 'entenhausen.freifunk.net',
         },
@@ -143,3 +156,4 @@ Internals
 
 Known Issues
 ~~~~~~~~~~~~
+* site.conf HT-mode option has been disabled in this release (defaults to HT20 - see https://github.com/freifunk-gluon/gluon/issues/487)
