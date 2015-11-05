@@ -54,7 +54,7 @@ Configuring Mesh-on-LAN is a bit more complicated::
 
 It may be disabled by running::
 
-  uci set network.mesh_wan.auto=0
+  uci set network.mesh_lan.auto=0
   for ifname in $(cat /lib/gluon/core/sysconfig/lan_ifname); do
     uci add_list network.client.ifname=$ifname
   done
