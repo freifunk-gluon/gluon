@@ -1,5 +1,5 @@
-Site
-====
+Site configuration
+==================
 
 The ``site`` consists of the files ``site.conf`` and ``site.mk``.
 In the first community based values are defined, which both are processed
@@ -279,8 +279,8 @@ The ``site.mk`` is a Makefile which should define constants
 involved in the build process of Gluon.
 
 GLUON_SITE_PACKAGES
-    Defines a list of packages which should installed additional
-    to the ``gluon_core`` package.
+    Defines a list of packages which should installed in addition
+    to the ``gluon-core`` package.
 
 GLUON_RELEASE
     The current release version Gluon should use.
@@ -308,7 +308,7 @@ gluon-config-mode:pubkey
     Information about the public VPN key on the reboot page.
 
 gluon-config-mode:reboot
-    General information about the reboot page.
+    General information shown on the reboot page.
 
 There is a POT file in the site example directory which can be used to create templates
 for the language files. The command ``msginit -l en -i ../../docs/site-example/i18n/gluon-site.pot``
