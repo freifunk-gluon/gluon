@@ -6,18 +6,24 @@ local util = require 'gluon.util'
 local uci = require('luci.model.uci').cursor()
 
 
-local function is_disabled(config, name)
-  local disabled = config and config.disabled
+local function is_disabled(name)
   if uci:get('wireless', name) then
-    disabled = uci:get_bool('wireless', name, 'disabled')
+    return uci:get_bool('wireless', name, 'disabled')
   end
-
-  return disabled and 1 or 0
 end
 
-local function configure_ibss(config, radio, index, suffix)
+-- Returns the first argument that is not nil; don't call without any non-nil arguments!
+local function first_non_nil(first, ...)
+  if first ~= nil then
+    return first
+  else
+    return first_non_nil(...)
+  end
+end
+
+
+local function configure_ibss(config, radio, index, suffix, disabled)
   local name = 'ibss_' .. radio
-  local disabled = is_disabled(config, name)
 
   uci:delete('network', name)
   uci:delete('network', name .. '_vlan')
@@ -57,15 +63,14 @@ local function configure_ibss(config, radio, index, suffix)
         macaddr = util.generate_mac(3, index),
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'ibss' .. suffix,
-        disabled = disabled,
+        disabled = disabled and 1 or 0,
       }
     )
   end
 end
 
-local function configure_mesh(config, radio, index, suffix)
+local function configure_mesh(config, radio, index, suffix, disabled)
   local name = 'mesh_' .. radio
-  local disabled = is_disabled(config, name)
   local macfilter = uci:get('wireless', name, 'macfilter')
   local maclist = uci:get('wireless', name, 'maclist')
 
@@ -90,7 +95,7 @@ local function configure_mesh(config, radio, index, suffix)
         macaddr = util.generate_mac(5, index),
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'mesh' .. suffix,
-        disabled = disabled,
+        disabled = disabled and 1 or 0,
         macfilter = macfilter,
         maclist = maclist,
       }
@@ -101,8 +106,25 @@ end
 local function configure_radio(radio, index, config)
   local suffix = radio:match('^radio(%d+)$')
 
-  configure_ibss(config.ibss, radio, index, suffix)
-  configure_mesh(config.mesh, radio, index, suffix)
+  local ibss_disabled = is_disabled('ibss_' .. radio)
+  local mesh_disabled = is_disabled('mesh_' .. radio)
+
+  configure_ibss(config.ibss, radio, index, suffix,
+                 first_non_nil(
+                   ibss_disabled,
+                   mesh_disabled,
+                   (config.ibss or {}).disabled, -- will be nil if config.ibss or config.ibss.disabled is unset
+                   false
+                 )
+  )
+  configure_mesh(config.mesh, radio, index, suffix,
+                 first_non_nil(
+                   mesh_disabled,
+                   ibss_disabled,
+                   (config.mesh or {}).disabled, -- will be nil if config.mesh or config.mesh.disabled is unset
+                   false
+                 )
+  )
 end
 
 util.iterate_radios(configure_radio)
