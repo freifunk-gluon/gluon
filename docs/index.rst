@@ -81,6 +81,7 @@ ar71xx-generic
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G450H
 
+
 * D-Link
 
   - DIR-825 (B1)
@@ -103,10 +104,10 @@ ar71xx-generic
 
 * TP-Link
 
-  - CPE210 (v1)
-  - CPE220 (v1)
-  - CPE510 (v1)
-  - CPE520 (v1)
+  - CPE210 (v1, v1.1)
+  - CPE220 (v1, v1.1)
+  - CPE510 (v1, v1.1)
+  - CPE520 (v1, v1.1)
   - TL-MR3020 (v1)
   - TL-MR3040 (v1, v2)
   - TL-MR3220 (v1, v2)
@@ -123,17 +124,20 @@ ar71xx-generic
   - TL-WDR4300 (v1)
   - TL-WR1043N/ND (v1, v2)
   - TL-WR703N (v1)
-  - TL-WR710N (v1)
+  - TL-WR710N (v1, v2)
   - TL-WR740N (v1, v3, v4, v5)
-  - TL-WR741N/ND (v1, v2, v4, v5)
+  - TL-WR741ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10)
   - TL-WR842N/ND (v1, v2)
-  - TL-WR941N/ND (v2, v3, v4, v5)
+  - TL-WR901ND (v1)
+  - TL-WR940N (v1, v2, v3)
+  - TL-WR941ND (v2, v3, v4, v5, v6)
   - TL-WR2543N/ND (v1)
 
 * Ubiquiti
 
+  - Air Gateway
   - Bullet M2
   - Nanostation M2
   - Nanostation M XW
