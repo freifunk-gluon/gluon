@@ -4,18 +4,20 @@ Getting Started
 Selecting the right version
 ---------------------------
 
-Gluon's releases are managed using `Git tags`_. If you're a community getting
+Gluon's releases are managed using `Git tags`_. If you are just getting
 started with Gluon we recommend to use the latest stable release of Gluon.
 
 Take a look at the `list of gluon releases`_ and notice the latest release,
-e.g. *v2014.3*.
+e.g. *v2014.3*. Always get Gluon using git and don't try to download it
+as a Zip archive as the archive will be missing version information.
 
-Please keep in mind that a matching site configuration for your community
-is required. Due to new features being added (or sometimes being removed)
-the format of the site configuration changes slightly between releases.
+Please keep in mind that there is no "default Gluon" build; a site configuration
+is required to adjust Gluon to your needs. Due to new features being added (or
+sometimes being removed) the format of the site configuration changes slightly
+between releases. Please refer to our release notes for instructions to update
+an old site configuration to a newer release of Gluon.
 
-Recent releases (starting with *v2014.3.1*) will come with an example
-configuration located in *docs/site-example/*.
+An example configuration can be found in the Gluon repository at *docs/site-example/*.
 
 .. _Git tags: http://git-scm.com/book/en/Git-Basics-Tagging
 .. _list of gluon releases: https://github.com/freifunk-gluon/gluon/releases
@@ -49,32 +51,34 @@ version you'd like to checkout, e.g. *v2015.1*.
 This command will create a directory named *gluon/*.
 It might also tell a scary message about being in a *detached state*.
 **Don't panic!** Everything's fine.
-Now, enter the freshly created directory:
-
-::
+Now, enter the freshly created directory::
 
     cd gluon
 
-It's time to add (or create) your site configuration.
-So let's create the directory *site/*:
+It's time to add (or create) your site configuration. If you already
+have a site repository, just clone it::
 
-::
+   git clone https://github.com/freifunk-duckburg/site-ffdb.git site
+
+If you want to build a new site, create a new git repository *site/*::
 
     mkdir site
     cd site
+    git init
 
-Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*:
-
-::
+Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*::
 
     cp ../docs/site-example/site.conf .
     cp ../docs/site-example/site.mk .
     cp -r ../docs/site-example/i18n .
 
-Edit these files to match your community, then go back to the top-level Gluon
-directory and build Gluon:
+Edit these files as you see fit and commit them into the site repository.
+Extensive documentation about the site configuration can be found at:
+:doc:`site`. The
+site directory should always be a git repository by itself; committing site-specific files
+to the Gluon main repository should be avoided, as it will make updates more complicated.
 
-::
+Next go back to the top-level Gluon directory and build Gluon::
 
     cd ..
     make update                        # Get other repositories used by Gluon
@@ -83,7 +87,7 @@ directory and build Gluon:
 When calling make, the OpenWrt build environment is prepared/updated.
 In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
 
-``ar71xx-generic`` is the most common target and will generated images for most of the supported hardware.
+``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
 The built images can be found in the directory `output/images`. Of these, the factory
@@ -93,9 +97,7 @@ system.
 
 You should reserve about 10GB of disk space for each `GLUON_TARGET`.
 
-There are two levels of `make clean`:
-
-::
+There are two levels of `make clean`::
 
     make clean GLUON_TARGET=ar71xx-generic
 
