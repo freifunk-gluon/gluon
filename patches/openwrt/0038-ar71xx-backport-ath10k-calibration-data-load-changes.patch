@@ -1,0 +1,197 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 18 Nov 2015 02:01:55 +0100
+Subject: ar71xx: backport ath10k calibration data load changes
+
+The mac80211 update makes is necessary to backport this change as well for
+ath10k to load.
+
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index dd3f546..7111630 100644
+--- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -8,50 +8,83 @@ ath10kcal_die() {
+ ath10kcal_from_file() {
+ 	local source=$1
+ 	local offset=$2
+-	local target=$3
++	local count=$3
+ 
+-	dd if=$source of=$target bs=1 skip=$offset count=2116 2>/dev/null || \
++	dd if=$source of=/lib/firmware/$FIRMWARE bs=1 skip=$offset count=$count 2>/dev/null || \
+ 		ath10kcal_die "failed to extract calibration data from $source"
+ }
+ 
++ath10kcal_extract() {
++	local part=$1
++	local offset=$2
++	local count=$3
++	local mtd
++
++	mtd=$(find_mtd_chardev $part)
++	[ -n "$mtd" ] || \
++		ath10kcal_die "no mtd device found for partition $part"
++
++	dd if=$mtd of=/lib/firmware/$FIRMWARE bs=1 skip=$offset count=$count 2>/dev/null || \
++		ath10kcal_die "failed to extract calibration data from $mtd"
++}
++
++ath10kcal_patch_mac() {
++	local mac=$1
++
++	[ -z "$mac" ] && return
++
++	macaddr_2bin $mac | dd of=/lib/firmware/$FIRMWARE conv=notrunc bs=1 seek=6 count=6
++}
++
+ [ -e /lib/firmware/$FIRMWARE ] && exit 0
+ 
+ . /lib/ar71xx.sh
+ . /lib/functions.sh
+ . /lib/functions/system.sh
+ 
+-ath10kcal_mac=""
+-ath10kcal_tmp="/tmp/ath10k-caldata.bin"
+-
+ board=$(ar71xx_board_name)
+ 
+ case "$FIRMWARE" in
+-"ath10k/cal-pci-0000:01:00.0.bin")
+-	case $board in
+-	rb-911g-5hpacd)
+-		ath10kcal_from_file "/sys/firmware/routerboot/ext_wlan_data" 20480 $ath10kcal_tmp
+-		;;
+-	esac
+-	;;
+-
+ "ath10k/cal-pci-0000:00:00.0.bin")
+ 	case $board in
+ 	dlan-pro-1200-ac)
+-		ath10kcal_from_file $(find_mtd_part "art") 20480 $ath10kcal_tmp
++		ath10kcal_extract "art" 20480 2116
++		;;
++	mc-mac1200r)
++		ath10kcal_extract "art" 20480 2116
++		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) -1)
++		;;
++	r6100)
++		ath10kcal_extract "caldata" 20480 2116
++		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) +2)
++		;;
++	qihoo-c301)
++		ath10kcal_extract "radiocfg" 20480 2116
++		ath10kcal_patch_mac $(mtd_get_mac_ascii devdata wlan5mac)
+ 		;;
+ 	esr1750 | \
+ 	epg5000)
+-		ath10kcal_from_file $(find_mtd_part "caldata") 20480 $ath10kcal_tmp
++		ath10kcal_extract "caldata" 20480 2116
++		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +1)
++		;;
++	esac
++	;;
++"ath10k/cal-pci-0000:01:00.0.bin")
++	case $board in
++	archer-c5 | \
++	archer-c7)
++		ath10kcal_extract "art" 20480 2116
++		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) -2)
++		;;
++	nbg6716)
++		ath10kcal_extract "RFdata" 20480 2116
++		;;
++	rb-911g-5hpacd)
++		ath10kcal_from_file "/sys/firmware/routerboot/ext_wlan_data" 20480 2116
+ 		;;
+ 	esac
+ 	;;
+-
+ *)
+ 	exit 1
+ 	;;
+ esac
+-
+-[ -f $ath10kcal_tmp ] && {
+-	cp $ath10kcal_tmp /lib/firmware/$FIRMWARE
+-	rm -f $ath10kcal_tmp
+-}
+diff --git a/target/linux/ar71xx/base-files/lib/preinit/81_load_ath10k_board_bin b/target/linux/ar71xx/base-files/lib/preinit/81_load_ath10k_board_bin
+deleted file mode 100644
+index 9a32dfc..0000000
+--- a/target/linux/ar71xx/base-files/lib/preinit/81_load_ath10k_board_bin
++++ /dev/null
+@@ -1,75 +0,0 @@
+-#!/bin/sh
+-
+-. /lib/functions/system.sh
+-. /lib/ar71xx.sh
+-
+-do_load_ath10k_board_bin() {
+-	# load board.bin
+-	case $(ar71xx_board_name) in
+-		nbg6716)
+-			dd if=/dev/mtdblock2 \
+-				bs=1 skip=20480 count=2116 \
+-				of=/tmp/ath10k-board.bin
+-		;;
+-		archer-c5 | \
+-		archer-c7)
+-			local mac
+-			mac=$(macaddr_add $(cat /sys/class/net/eth1/address) -2)
+-
+-			dd if=/dev/mtdblock4 \
+-				bs=1 skip=20480 count=6 \
+-				of=/tmp/ath10k-board.bin
+-			macaddr_2bin $mac >> /tmp/ath10k-board.bin
+-			dd if=/dev/mtdblock4 \
+-				bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
+-		;;
+-		mc-mac1200r)
+-			local mac
+-			mac=$(macaddr_add $(cat /sys/class/net/eth1/address) -1)
+-
+-			dd if=/dev/mtdblock4 \
+-				bs=1 skip=20480 count=6 \
+-				of=/tmp/ath10k-board.bin
+-			macaddr_2bin $mac >> /tmp/ath10k-board.bin
+-			dd if=/dev/mtdblock4 \
+-				bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
+-		;;
+-		r6100)
+-			local mac
+-			mac=$(macaddr_add $(cat /sys/class/net/eth1/address) +2)
+-
+-			dd if=/dev/mtdblock2 \
+-				bs=1 skip=20480 count=6 \
+-				of=/tmp/ath10k-board.bin
+-			macaddr_2bin $mac >> /tmp/ath10k-board.bin
+-			dd if=/dev/mtdblock2 \
+-				bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
+-		;;
+-		qihoo-c301)
+-			local mac
+-
+-			mac=$(mtd_get_mac_ascii devdata wlan5mac)
+-
+-			if [ -z "$mac" ]; then
+-				mac=$(macaddr_add $(cat /sys/class/net/eth0/address) -2)
+-			fi
+-
+-			dd if=/dev/mtdblock10 \
+-				bs=1 skip=20480 count=6 \
+-				of=/tmp/ath10k-board.bin
+-			macaddr_2bin $mac >> /tmp/ath10k-board.bin
+-			dd if=/dev/mtdblock10 \
+-				bs=1 skip=20492 count=2104 >> /tmp/ath10k-board.bin
+-
+-		;;
+-	esac
+-	[ -f /tmp/ath10k-board.bin ] || {
+-		return
+-	}
+-	cmp -s /tmp/ath10k-board.bin /lib/firmware/ath10k/QCA988X/hw2.0/board.bin || {
+-		cp /tmp/ath10k-board.bin /lib/firmware/ath10k/QCA988X/hw2.0/board.bin
+-		rm /tmp/ath10k-board.bin
+-	}
+-}
+-
+-boot_hook_add preinit_main do_load_ath10k_board_bin
