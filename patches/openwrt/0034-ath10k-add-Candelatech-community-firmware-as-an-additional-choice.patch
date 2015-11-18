@@ -3,7 +3,7 @@ Date: Tue, 10 Mar 2015 13:17:14 +0100
 Subject: ath10k: add Candelatech community firmware as an additional choice
 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index f332cbd..28f40c8 100644
+index 566e156..1dc1816 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -270,6 +270,29 @@ Atheros IEEE 802.11ac family of chipsets. For now only
