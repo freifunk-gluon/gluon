@@ -1,0 +1,22 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 19 Nov 2015 23:29:17 +0100
+Subject: ar71xx: fix AR71XX_MODEL on TP-Link TL-WR703N
+
+The hwid check was wrong, causing the AR71XX_MODEL value to end with a
+space (as $hwver was unset).
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 6ba40aa..329f558 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -110,7 +110,7 @@ tplink_board_detect() {
+ 	"3C0001"*)
+ 		model="OOLITE"
+ 		;;
+-	"070300"*)
++	"070301"*)
+ 		model="TP-Link TL-WR703N"
+ 		;;
+ 	"071000"*)
