@@ -205,3 +205,13 @@ $(eval $(call GluonModel,ALL0315N,all0315n,allnet-all0315n))
 $(eval $(call GluonProfile,GLINET))
 $(eval $(call GluonModel,GLINET,gl-inet-6408A-v1,gl-inet-6408a-v1))
 $(eval $(call GluonModel,GLINET,gl-inet-6416A-v1,gl-inet-6416a-v1))
+
+## Western Digital
+
+# WD MyNet N600
+$(eval $(call GluonProfile,MYNETN600))
+$(eval $(call GluonModel,MYNETN600,mynet-n600-squashfs,wd-mynet-n600))
+
+# WD MyNet N750
+$(eval $(call GluonProfile,MYNETN750))
+$(eval $(call GluonModel,MYNETN750,mynet-n750-squashfs,wd-mynet-n750))
