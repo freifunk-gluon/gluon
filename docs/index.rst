@@ -50,6 +50,8 @@ Packages
    :maxdepth: 1
 
    package/gluon-client-bridge
+   package/gluon-ebtables-filter-multicast
+   package/gluon-ebtables-filter-ra-dhcp
 
 Releases
 --------
