@@ -27,7 +27,7 @@ manifest="$2"
 upper="$(mktemp)"
 lower="$(mktemp)"
 
-trap 'echo rm -f "$upper" "$lower"; rm -f "$upper" "$lower"' EXIT
+trap 'rm -f "$upper" "$lower"' EXIT
 
 awk 'BEGIN    { sep=0 }
      /^---$/ { sep=1; next }
