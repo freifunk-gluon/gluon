@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ $# -eq 0 -o "-h" = "$1" -o "-help" = "$1" -o "--help" = "$1" ]; then
 	cat <<EOHELP
 Usage: $0 <secret> <manifest>
