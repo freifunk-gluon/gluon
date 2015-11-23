@@ -107,7 +107,7 @@ $(eval $(call GluonModel,TLWA850,tl-wa850re-v1,tp-link-tl-wa850re-v1))
 $(eval $(call GluonProfile,TLWA860))
 $(eval $(call GluonModel,TLWA860,tl-wa860re-v1,tp-link-tl-wa860re-v1))
 
-# TL-WA901N/ND v2
+# TL-WA901N/ND v1, v2, v3
 $(eval $(call GluonProfile,TLWA901))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v1,tp-link-tl-wa901n-nd-v1))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v2,tp-link-tl-wa901n-nd-v2))

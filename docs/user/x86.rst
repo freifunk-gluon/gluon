@@ -2,12 +2,12 @@ x86 support
 ===========
 
 Gluon can run on normal x86 systems, for example virtual machines
-and VPN boxes. There is no WLAN support on x86 though.
+and VPN boxes. By default, there is no WLAN support on x86 though.
 
 Targets
 ^^^^^^^
 
-There are two targets for x86 images:
+The following targets for x86 images exist:
 
 `x86-generic`
     Generic x86 support with many different ethernet drivers; should run on
@@ -27,3 +27,10 @@ There are two targets for x86 images:
 
 `x86-kvm`
     The `x86-kvm` image uses VirtIO as its harddisk and network driver.
+
+`x86-xen_domu`
+    The `x86-xen_domu` target contains the necessary drivers for use in Xen.
+
+`x86-64`
+    64bit version of `x86-generic`. Also has VirtIO support, so there's no need for an
+    `x86-64-kvm` target.
