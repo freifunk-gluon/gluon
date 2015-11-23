@@ -5,7 +5,7 @@ The *gluon-ebtables-filter-multicast* package filters out various kinds of
 non-essential multicast traffic, as this traffic often constitutes a
 disproportionate burden on the mesh network. Unfortunately, this breaks many useful services
 (Avahi, Bonjour chat, ...), but this seems unavoidable, as the current Avahi implementation is
-optimized for small local networks and causes too much traffic in lange mesh networks.
+optimized for small local networks and causes too much traffic in large mesh networks.
 
 The multicast packets are filtered between the nodes' client bridge (*br-client*) and mesh
 interface (*bat0*) on output.
