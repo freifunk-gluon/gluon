@@ -150,6 +150,11 @@ ar71xx-generic
   - UniFi AP Pro
   - UniFi AP Outdoor
 
+* Western Digital
+
+  - My Net N600
+  - My Net N750
+
 ar71xx-nand
 ^^^^^^^^^^^
 
