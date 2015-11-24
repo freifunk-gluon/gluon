@@ -35,7 +35,7 @@ awk 'BEGIN    { sep=0 }
                 else       print > "'"$lower"'"}' \
     "$manifest"
 
-ecdsasign "$upper" < "$SECRET" >> "$lower"
+ecdsautil sign "$upper" < "$SECRET" >> "$lower"
 
 (
 	cat  "$upper"
