@@ -35,7 +35,13 @@ awk 'BEGIN    { sep=0 }
                 else       print > "'"$lower"'"}' \
     "$manifest"
 
-ecdsautil sign "$upper" < "$SECRET" >> "$lower"
+if [ -e '/usr/local/bin/ecdsautil' ]; then
+        ECMD='/usr/local/bin/ecdsautil sign'
+elif [ -e '/usr/local/bin/ecdsasign' ]; then
+        ECMD='/usr/local/bin/ecdsasign'
+fi
+
+$ECMD "$upper" < "$SECRET" >> "$lower"
 
 (
 	cat  "$upper"
