@@ -177,6 +177,9 @@ GLUON_$(1)_MODEL_$(2)_ALIASES += $(3)
 endef
 
 
+export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
+
+
 prereq: FORCE
 	+$(NO_TRACE_MAKE) prereq
 
@@ -209,7 +212,12 @@ gluon-tools: FORCE
 	+$(GLUONMAKE_EARLY) package/lua/host/install package/usign/host/install
 
 
-early_prepared_stamp := $(GLUON_BUILDDIR)/prepared
+
+early_prepared_stamp := $(GLUON_BUILDDIR)/prepared_$(shell \
+	( \
+		$(SHA512SUM) $(GLUONDIR)/modules; \
+		[ ! -r $(GLUON_SITEDIR)/modules ] || $(SHA512SUM) $(GLUON_SITEDIR)/modules \
+	) | $(SHA512SUM) )
 
 prepare-early: FORCE
 	for dir in build_dir dl staging_dir; do \
@@ -222,7 +230,7 @@ prepare-early: FORCE
 	mkdir -p $$(dirname $(early_prepared_stamp))
 	touch $(early_prepared_stamp)
 
-$(early_prepared_stamp):
+$(early_prepared_stamp): $(GLUONDIR)/modules $(wildcard $(GLUON_SITEDIR)/modules)
 	+$(GLUONMAKE_EARLY) prepare-early
 
 $(GLUON_OPKG_KEY): $(early_prepared_stamp) FORCE
@@ -302,9 +310,6 @@ $(package/stamp-compile): $(package/stamp-cleanup)
 clean: FORCE
 	+$(SUBMAKE) clean
 	rm -f $(gluon_prepared_stamp)
-
-
-export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
 
 
 download: FORCE
