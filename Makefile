@@ -230,7 +230,8 @@ prepare-early: FORCE
 	mkdir -p $$(dirname $(early_prepared_stamp))
 	touch $(early_prepared_stamp)
 
-$(early_prepared_stamp): $(GLUONDIR)/modules $(wildcard $(GLUON_SITEDIR)/modules)
+$(early_prepared_stamp):
+	rm -f $(GLUON_BUILDDIR)/prepared_*
 	+$(GLUONMAKE_EARLY) prepare-early
 
 $(GLUON_OPKG_KEY): $(early_prepared_stamp) FORCE
