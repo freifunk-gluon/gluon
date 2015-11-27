@@ -21,18 +21,18 @@ function M.section(form)
 
   o = s:option(cbi.Flag, "_limit_enabled", i18n.translate("Limit bandwidth"))
   o:depends("_meshvpn", "1")
-  o.default = uci:get_bool("gluon-simple-tc", "mesh_vpn", "enabled") and o.enabled or o.disabled
+  o.default = uci:get_bool("simple-tc", "mesh_vpn", "enabled") and o.enabled or o.disabled
   o.rmempty = false
 
   o = s:option(cbi.Value, "_limit_ingress", i18n.translate("Downstream (kbit/s)"))
   o:depends("_limit_enabled", "1")
-  o.value = uci:get("gluon-simple-tc", "mesh_vpn", "limit_ingress")
+  o.value = uci:get("simple-tc", "mesh_vpn", "limit_ingress")
   o.rmempty = false
   o.datatype = "integer"
 
   o = s:option(cbi.Value, "_limit_egress", i18n.translate("Upstream (kbit/s)"))
   o:depends("_limit_enabled", "1")
-  o.value = uci:get("gluon-simple-tc", "mesh_vpn", "limit_egress")
+  o.value = uci:get("simple-tc", "mesh_vpn", "limit_egress")
   o.rmempty = false
   o.datatype = "integer"
 end
@@ -44,20 +44,20 @@ function M.handle(data)
 
   -- checks for nil needed due to o:depends(...)
   if data._limit_enabled ~= nil then
-    uci:set("gluon-simple-tc", "mesh_vpn", "interface")
-    uci:set("gluon-simple-tc", "mesh_vpn", "enabled", data._limit_enabled)
-    uci:set("gluon-simple-tc", "mesh_vpn", "ifname", "mesh-vpn")
+    uci:set("simple-tc", "mesh_vpn", "interface")
+    uci:set("simple-tc", "mesh_vpn", "enabled", data._limit_enabled)
+    uci:set("simple-tc", "mesh_vpn", "ifname", "mesh-vpn")
 
     if data._limit_ingress ~= nil then
-      uci:set("gluon-simple-tc", "mesh_vpn", "limit_ingress", data._limit_ingress)
+      uci:set("simple-tc", "mesh_vpn", "limit_ingress", data._limit_ingress)
     end
 
     if data._limit_egress ~= nil then
-      uci:set("gluon-simple-tc", "mesh_vpn", "limit_egress", data._limit_egress)
+      uci:set("simple-tc", "mesh_vpn", "limit_egress", data._limit_egress)
     end
 
-    uci:commit("gluon-simple-tc")
-    uci:commit("gluon-simple-tc")
+    uci:commit("simple-tc")
+    uci:commit("simple-tc")
   end
 end
 
