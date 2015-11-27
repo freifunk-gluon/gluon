@@ -1,3 +1,8 @@
 return {
-	enabled = uci:get_bool('tunneldigger', 'broker', 'enabled'),
+    local tunneldigger_enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+    if (tonumber(tunneldigger_enable) == 1) then
+      enabled = true
+    else
+      enabled = false
+    end
 }
