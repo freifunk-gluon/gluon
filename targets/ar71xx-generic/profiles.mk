@@ -187,6 +187,10 @@ $(eval $(call GluonModel,WRT160NL,wrt160nl,linksys-wrt160nl))
 $(eval $(call GluonProfile,WZRHPG450H))
 $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h,buffalo-wzr-hp-g450h))
 
+# WZR-HP-G300NH
+$(eval $(call GluonProfile,WZRHPG300NH))
+$(eval $(call GluonModel,WZRHPG300NH,wzr-hp-g300nh,buffalo-wzr-hp-g300nh))
+
 # WZR-HP-AG300H (factory)
 $(eval $(call GluonProfile,WZRHPAG300H))
 $(eval $(call GluonProfileSysupgradeSuffix,WZRHPAG300H))
