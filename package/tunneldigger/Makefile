@@ -1,9 +1,9 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tunneldigger
-PKG_VERSION:=0.4.3
-PKG_RELEASE:=3
-PKG_REV:=4e4f13cdc630c46909d47441093a5bdaffa0d67f
+PKG_VERSION:=0.4.4
+PKG_RELEASE:=2
+PKG_REV:=909656ed7908c51b7f42844ba26e3a41ac7ab8bb
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=git://github.com/wlanslovenija/tunneldigger.git
