@@ -262,8 +262,9 @@ MODULE_PREFIX = gluon-$(GLUON_SITE_CODE)-$(PREPARED_RELEASE)
 include $(INCLUDE_DIR)/target.mk
 
 build-key: FORCE
-	ln -sf $(GLUON_OPKG_KEY) $(BUILD_KEY)
-	ln -sf $(GLUON_OPKG_KEY).pub $(BUILD_KEY).pub
+	rm -f $(BUILD_KEY) $(BUILD_KEY).pub
+	cp $(GLUON_OPKG_KEY) $(BUILD_KEY)
+	cp $(GLUON_OPKG_KEY).pub $(BUILD_KEY).pub
 
 config: FORCE
 	+$(NO_TRACE_MAKE) scripts/config/conf OPENWRT_BUILD= QUIET=0
