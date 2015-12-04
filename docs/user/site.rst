@@ -95,14 +95,16 @@ wifi24 : optional
     This will only affect new installations.
     Upgrades will not changed the disabled state.
 
-    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the interface's ESSID.
+    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the 
+    interface's ESSID.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the mesh id.
 
     ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
     An optional parameter ``vlan`` (integer) is supported.
 
-    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for setting the default multicast datarate.
+    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for 
+    setting the default multicast datarate.
     ::
 
        wifi24 = {
@@ -156,10 +158,10 @@ fastd_mesh_vpn
 
     The `enabled` option can be set to true to enable the VPN by default.
 
-    If `configurable` is `false` or unset, the method list will be replaced on updates
-    with the list in the site configuration. Setting `configurable` to `true` will allow the user to
-    add the method ``null`` to the front of the method list or remove ``null`` from it,
-    and make this change survive updates. Settings configurable is necessary for the
+    If `configurable` is set to `false` or unset, the method list will be replaced on updates
+    with the list from the site configuration. Setting `configurable` to `true` will allow the user to
+    add the method ``null`` to the beginning of the method list or remove ``null`` from it,
+    and make this change survive updates. The settings `configurable` is necessary for the
     package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
 
     In any case, the ``null`` method should always be the first method in the list
@@ -169,8 +171,8 @@ fastd_mesh_vpn
 
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
-	-- enabled = true,
-	-- configurable = true,
+      	-- enabled = true,
+      	-- configurable = true,
         mtu = 1280,
         groups = {
           backbone = {
@@ -225,9 +227,9 @@ autoupdater : package
       }
 
 roles : optional
-    Optional role definitions. With this nodes will announce their role inside the mesh.
-    In the backend this adds the facility to distinguish between normal, backbone and
-    service nodes or even gateways (if they advertise the role, also). It is up to
+    Optional role definitions. Nodes will announce their role inside the mesh.
+    This will allow in the backend to distinguish between normal, backbone and
+    service nodes or even gateways (if they advertise that role). It is up to
     the community which roles to define. See the section below as an example.
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
@@ -279,7 +281,7 @@ The ``site.mk`` is a Makefile which should define constants
 involved in the build process of Gluon.
 
 GLUON_SITE_PACKAGES
-    Defines a list of packages which should installed in addition
+    Defines a list of packages which should be installed additionally
     to the ``gluon-core`` package.
 
 GLUON_RELEASE
@@ -290,7 +292,7 @@ GLUON_PRIORITY
     for more information).
 
 GLUON_LANGS
-    List of languages (as two-letter-codes) to include for the web interface. Should always contain
+    List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
 
 .. _site-config-mode-texts:
