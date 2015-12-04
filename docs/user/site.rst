@@ -211,10 +211,10 @@ fastd_mesh_vpn
           enabled = false,
 
           -- Default upload limit (kbit/s).
-          egress = 200,
+          egress = 800,
 
           -- Default download limit (kbit/s).
-          ingress = 3000,
+          ingress = 4000,
         },
         -- Optional: additional peer groups, possibly with other limits
         -- backbone2 = {
