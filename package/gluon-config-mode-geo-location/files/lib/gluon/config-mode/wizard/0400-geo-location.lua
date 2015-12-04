@@ -31,7 +31,7 @@ function M.section(form)
   o.datatype = "float"
   o.description = i18n.translatef("e.g. %s", "10.689901")
 
-  o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
+  o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude above street level"))
   o.default = uci:get_first("gluon-node-info", "location", "altitude")
   o:depends("_location", "1")
   o.rmempty = true
