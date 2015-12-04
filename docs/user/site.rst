@@ -112,10 +112,10 @@ wifi24 : optional
        wifi24 = {
          channel = 11,
          ap = {
-           ssid = 'entenhausen.freifunk.net',
+           ssid = 'gothamcity.freifunk.net',
          },
          mesh = {
-           id = 'entenhausen-mesh',
+           id = 'gothamcity-mesh',
            mcast_rate = 12000,
          },
          ibss = {
@@ -182,7 +182,7 @@ fastd_mesh_vpn
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+                remotes = {'ipv4 "gw0.gothamcity.freifunk.net" port 10000'},
               },
             }
           }
