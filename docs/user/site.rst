@@ -178,16 +178,34 @@ fastd_mesh_vpn
         mtu = 1280,
         groups = {
           backbone = {
+            -- Limit number of connected peers to reduce bandwidth.
             limit = 1,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                remotes = {'ipv4 "gw0.gothamcity.freifunk.net" port 10000'},
+                -- you might add multiple entries.
+                remotes = {
+                  'ipv4 "gw0.gothamcity.freifunk.net" port 10000',
+                  'ipv6 "gw0.gothamcity.freifunk.net" port 10000', 
+                },
               },
-            }
+              peer2 = {
+                key = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
+                remotes = {
+                  '"gw1.gothamcity.freifunk.net" port 10000',
+                },
+              },
+            },
           }
-        },
-
+          -- Optional: nested peer groups
+          -- groups = {
+          --   backbone_sub = {
+          --     ...
+          --   },
+          --   ...
+          -- },
+          
         bandwidth_limit = {
           -- The bandwidth limit can be enabled by default here.
           enabled = false,
@@ -198,6 +216,10 @@ fastd_mesh_vpn
           -- Default download limit (kbit/s).
           ingress = 3000,
         },
+        -- Optional: additional peer groups, possibly with other limits
+        -- backbone2 = {
+        --   ...
+        -- },
       }
 
 mesh_on_wan : optional
@@ -211,15 +233,24 @@ autoupdater : package
     ::
 
       autoupdater = {
-        branch = 'experimental',
+        branch = 'stable',
         branches = {
           stable = {
             name = 'stable',
+            
+            -- List of mirrors to fetch images from. IPv6 required!
             mirrors = {
               'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-              'http://[fdca:ffee:babe:1::fec2]/firmware/stable/sysupgrade/',
+              'http://services.gothamcity.freifunk.net/firmware/stable/sysupgrade/',
             },
-            good_signatures = 2,
+            
+            -- Number of good signatures required.
+      	    -- Have multiple maintainers sign your build and only
+      	    -- accept it when a sufficient number of them have
+      	    -- signed it, for ex. 3 for stable and 1 for experimental
+      	    good_signatures = 3,
+      	    
+      	    -- List of public keys of maintainers.
             pubkeys = {
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someother
