@@ -12,7 +12,9 @@ Configuration
 The ``site.conf`` is a lua dictionary with the following defined keys.
 
 hostname_prefix
-    A string which shall prefix the default hostname of a device.
+    An optional string which would prefix the generated default hostname of a device.
+    If you want to force the user to think about a unique name enter an invalid prefix
+    with spaces like 'Enter a name for your node'
 
 site_name
     The name of your community.
@@ -252,7 +254,8 @@ roles : optional
 
 setup_mode : package
     Allows skipping setup mode (config mode) at first boot when attribute
-    ``skip`` is set to ``true``. This is optional and may be left out.
+    ``skip`` is set to ``true``. This is optional and may be left out. If set to `true`,
+    make sure that you enter a valid `hostname_prefix`.
     ::
 
       setup_mode = {
