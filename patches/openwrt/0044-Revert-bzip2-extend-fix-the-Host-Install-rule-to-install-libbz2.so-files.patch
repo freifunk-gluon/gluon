@@ -1,0 +1,23 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 8 Dec 2015 19:51:05 +0100
+Subject: Revert "bzip2: extend/fix the Host/Install rule to install libbz2.so files"
+
+This reverts commit f5ebfb02fc5f539e89393b8186f7ecd768402f12.
+
+diff --git a/package/utils/bzip2/Makefile b/package/utils/bzip2/Makefile
+index ba47cfb..e1c7b97 100644
+--- a/package/utils/bzip2/Makefile
++++ b/package/utils/bzip2/Makefile
+@@ -97,10 +97,9 @@ HOST_CONFIGURE_ARGS+= \
+ 	--prefix=$(STAGING_DIR_HOST)
+ 
+ define Host/Install
+-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin/ $(STAGING_DIR_HOST)/usr/lib
++	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin/
+ 	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR_HOST)/usr/ install
+-	$(CP) $(HOST_BUILD_DIR)/libbz2.so* $(STAGING_DIR_HOST)/usr/lib/
+-	$(CP) $(HOST_BUILD_DIR)/libbz2.so.1.0 $(STAGING_DIR_HOST)/usr/lib/libbz2.so
++#	$(INSTALL_BIN) $(HOST_BUILD_DIR)/Parser/pgen $(STAGING_DIR_HOST)/bin/pgen2
+ endef
+ 
+ $(eval $(call HostBuild))
