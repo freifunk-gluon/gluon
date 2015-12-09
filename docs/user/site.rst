@@ -176,14 +176,36 @@ fastd_mesh_vpn
         mtu = 1280,
         groups = {
           backbone = {
-            limit = 1,
+            -- Limit number of connected peers from this group
+            limit = 2,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+                -- Having multiple domains prevents SPOF in freifunk.net
+                remotes = {
+                  'ipv4 "vpn1.entenhausen.freifunk.net" port 10000',
+                  'ipv4 "vpn1.entenhausener-freifunk.de" port 10000',
+                },
               },
-            }
-          }
+              peer2 = {
+                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
+                remotes = {'"vpn2.entenhausen.freifunk.net" port 10000'},
+              },
+            },
+            -- Optional: nested peer groups
+            -- groups = {
+            --   lowend_backbone = {
+            --     limit = 1,
+            --     peers = ...
+            --   },
+            -- },
+          },
+          -- Optional: additional peer groups, possibly with other limits
+          -- peertopeer = {
+          --   limit = 10,
+          --   peers = { ... },
+          -- },
         },
 
         bandwidth_limit = {
@@ -209,14 +231,15 @@ autoupdater : package
     ::
 
       autoupdater = {
-        branch = 'experimental',
+        branch = 'stable',
         branches = {
           stable = {
             name = 'stable',
             mirrors = {
               'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-              'http://[fdca:ffee:babe:1::fec2]/firmware/stable/sysupgrade/',
+              'http://autoupdate.entenhausen.freifunk.net/firmware/stable/sysupgrade/',
             },
+            -- Number of good signatures required
             good_signatures = 2,
             pubkeys = {
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
