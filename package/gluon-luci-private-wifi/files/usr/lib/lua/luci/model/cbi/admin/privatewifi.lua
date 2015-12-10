@@ -11,7 +11,7 @@ f.template = "admin/expertmode"
 
 s = f:section(SimpleSection, nil, translate(
                 'Your node can additionally extend your private network by bridging the WAN interface '
-                  .. 'with a seperate WLAN. This feature is completely independent of the mesh functionality. '
+                  .. 'with a separate WLAN. This feature is completely independent of the mesh functionality. '
                   .. 'Please note that the private WLAN and meshing on the WAN interface should not be enabled '
                   .. 'at the same time.'
 ))
