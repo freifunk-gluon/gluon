@@ -2,4 +2,4 @@
 
 echo "Access-Control-Allow-Origin: *"
 
-exec gluon-neighbour-info -s "" -l -d ::1 -p 1001 -t 1 -r statistics
+exec gluon-neighbour-info -s "" -l -d ::1 -p 1001 -t 3 -r statistics
