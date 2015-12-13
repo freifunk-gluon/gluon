@@ -2,6 +2,6 @@
 
 echo 'Access-Control-Allow-Origin: *'
 
-CMD='exec gluon-neighbour-info -s "" -l -d ::1 -p 1001 -t 3 -r statistics'
+CMD='exec /lib/gluon/status-page/providers/neighbours-batadv'
 
 exec /usr/sbin/sse-multiplex "$CMD"

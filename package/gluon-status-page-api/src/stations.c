@@ -1,15 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <json-c/json.h>
 #include <iwinfo.h>
 #include <net/if.h>
 
-#define STR(x) #x
-#define XSTR(x) STR(x)
-
-#define BATIF_PREFIX "/sys/class/net/bat0/lower_"
 
 static struct json_object *get_stations(const struct iwinfo_ops *iw, const char *ifname) {
   int len;
@@ -45,34 +40,16 @@ static void badrequest() {
   exit(1);
 }
 
-bool interface_is_valid(const char *ifname) {
-  if (strlen(ifname) > IF_NAMESIZE)
-    return false;
-
-  if (strchr(ifname, '/') != NULL)
-    return false;
-
-  char *path = alloca(1 + strlen(BATIF_PREFIX) + strlen(ifname));
-  sprintf(path, "%s%s", BATIF_PREFIX, ifname);
-
-  return access(path, F_OK) == 0;
-}
-
-int main(void) {
-  char *ifname = getenv("QUERY_STRING");
-
-  if (ifname == NULL)
+int main(int argc, char *argv[]) {
+  if (argc != 2)
     badrequest();
 
-  if (!interface_is_valid(ifname))
-    badrequest();
-
+  const char *ifname = argv[1];
   const struct iwinfo_ops *iw = iwinfo_backend(ifname);
 
   if (iw == NULL)
     badrequest();
 
-  printf("Access-Control-Allow-Origin: *\n");
   printf("Content-type: text/event-stream\n\n");
 
   while (true) {

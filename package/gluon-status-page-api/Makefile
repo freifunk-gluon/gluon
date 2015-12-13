@@ -12,7 +12,7 @@ define Package/gluon-status-page-api
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=API for gluon-status-page
-  DEPENDS:=+gluon-core +uhttpd +gluon-neighbour-info +gluon-announced +libiwinfo +libjson-c
+  DEPENDS:=+gluon-core +uhttpd +sse-multiplex +gluon-neighbour-info +gluon-announced +libiwinfo +libjson-c
 endef
 
 define Build/Prepare
@@ -21,9 +21,9 @@ define Build/Prepare
 endef
 
 define Package/gluon-status-page-api/install
-	$(INSTALL_DIR) $(1)/lib/gluon/status-page/www/cgi-bin/dyn
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-batadv $(1)/lib/gluon/status-page/www/cgi-bin/dyn/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/stations $(1)/lib/gluon/status-page/www/cgi-bin/dyn/
+	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-batadv $(1)/lib/gluon/status-page/providers/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/stations $(1)/lib/gluon/status-page/providers/
 	$(CP) ./files/* $(1)/
 endef
 

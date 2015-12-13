@@ -50,8 +50,8 @@ static json_object *neighbours(void) {
 int main(void) {
   struct json_object *obj;
 
-  printf("Access-Control-Allow-Origin: *\n");
   printf("Content-type: text/event-stream\n\n");
+  fflush(stdout);
 
   while (1) {
     obj = neighbours();
