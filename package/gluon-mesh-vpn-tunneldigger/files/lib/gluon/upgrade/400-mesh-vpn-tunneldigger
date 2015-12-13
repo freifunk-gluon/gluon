@@ -27,6 +27,7 @@ uci:section('tunneldigger', 'broker', section,
 		  interface = 'mesh-vpn',
 		  bind_interface = 'br-wan',
 		  group = 'gluon-tunneldigger',
+		  broker_selection = 'usage',
 		  address = site.tunneldigger_mesh_vpn.brokers,
 	  }
 )

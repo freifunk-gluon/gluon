@@ -6,4 +6,5 @@ config broker
 	option group 'root'
 	option interface 'l2tp0'
 	option limit_bw_down '1024'
+	option broker_selection 'usage'
 	option enabled '0'

@@ -24,6 +24,7 @@ config_cb() {
 			config_get limit_bw_down "$cfg" limit_bw_down
 			config_get hook_script "$cfg" hook_script
 			config_get bind_interface "$cfg" bind_interface
+			config_get broker_selection "$cfg" broker_selection
 			
 			[ $enabled -eq 0 ] && return
 
@@ -39,6 +40,20 @@ config_cb() {
 				unset _bind_interface
 				network_get_device _bind_interface "${bind_interface}" || _bind_interface="${bind_interface}"
 				append broker_opts "-I ${_bind_interface}"
+			}
+			[ ! -z "${broker_selection}" ] && {
+				# Set broker selection.
+				case "${broker_selection}" in
+					usage)
+						append broker_opts "-a"
+					;;
+					first)
+						append broker_opts "-g"
+					;;
+					random)
+						append broker_opts "-r"
+					;;
+				esac
 			}
 
 			if [ -z "$uuid" ]; then
