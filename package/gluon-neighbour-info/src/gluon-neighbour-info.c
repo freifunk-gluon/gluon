@@ -133,7 +133,6 @@ int main(int argc, char **argv) {
   int sock;
   struct sockaddr_in6 client_addr = {};
   char *request_string = NULL;
-  struct in6_addr mgroup_addr;
 
   sock = socket(PF_INET6, SOCK_DGRAM, 0);
 
@@ -147,9 +146,7 @@ int main(int argc, char **argv) {
 
   opterr = 0;
 
-  int port_set = 0;
-  int destination_set = 0;
-  unsigned int max_count = 0;
+  int max_count = 0;
   double timeout = 3.0;
   char *sse = NULL;
   bool loop = false;
