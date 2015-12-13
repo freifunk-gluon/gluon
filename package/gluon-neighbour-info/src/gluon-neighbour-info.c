@@ -206,8 +206,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  if (sse)
+  if (sse) {
     fputs("Content-Type: text/event-stream\n\n", stdout);
+    fflush(stdout);
+  }
 
   do {
     ret = request(sock, &client_addr, request_string, sse, timeout, max_count);
