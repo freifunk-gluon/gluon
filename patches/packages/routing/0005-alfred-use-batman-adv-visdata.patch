@@ -1,0 +1,83 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 14 Dec 2015 03:08:42 +0100
+Subject: alfred: use batman-adv-visdata
+
+diff --git a/alfred/Makefile b/alfred/Makefile
+index 8f49b5a..f1d7c6e 100644
+--- a/alfred/Makefile
++++ b/alfred/Makefile
+@@ -28,7 +28,7 @@ define Package/alfred
+   SECTION:=net
+   CATEGORY:=Network
+   TITLE:=A.L.F.R.E.D. - Almighty Lightweight Fact Remote Exchange Daemon
+-  DEPENDS:= +libc +kmod-ipv6 +librt \
++  DEPENDS:= +libc +kmod-ipv6 +librt +batman-adv-visdata \
+ 	  +ALFRED_NEEDS_lua:lua \
+ 	  +ALFRED_NEEDS_libgps:libgps
+ endef
+diff --git a/alfred/patches/0002-alfred-use-batman-adv-visdata.patch b/alfred/patches/0002-alfred-use-batman-adv-visdata.patch
+new file mode 100644
+index 0000000..a28b6a4
+--- /dev/null
++++ b/alfred/patches/0002-alfred-use-batman-adv-visdata.patch
+@@ -0,0 +1,60 @@
++--- a/batadv_query.c
+++++ b/batadv_query.c
++@@ -91,8 +91,10 @@ int ipv6_to_mac(const struct in6_addr *a
++ int batadv_interface_check(const char *mesh_iface)
++ {
++ 	char *debugfs_mnt;
+++#if 0
++ 	char full_path[MAX_PATH + 1];
++ 	FILE *f;
+++#endif
++ 
++ 	debugfs_mnt = debugfs_mount(NULL);
++ 	if (!debugfs_mnt) {
++@@ -100,6 +102,7 @@ int batadv_interface_check(const char *m
++ 		return -1;
++ 	}
++ 
+++#if 0
++ 	debugfs_make_path(DEBUG_BATIF_PATH_FMT "/" DEBUG_TRANSTABLE_GLOBAL,
++ 			  mesh_iface, full_path, sizeof(full_path));
++ 	f = fopen(full_path, "r");
++@@ -121,6 +124,7 @@ int batadv_interface_check(const char *m
++ 		return -1;
++ 	}
++ 	fclose(f);
+++#endif
++ 
++ 	return 0;
++ }
++@@ -150,8 +154,7 @@ struct ether_addr *translate_mac(const c
++ 	if (!debugfs_mnt)
++ 		goto out;
++ 
++-	debugfs_make_path(DEBUG_BATIF_PATH_FMT "/" DEBUG_TRANSTABLE_GLOBAL,
++-			  mesh_iface, full_path, sizeof(full_path));
+++	snprintf(full_path, sizeof(full_path), "/tmp/batman-adv-visdata/%s/transtable_global", mesh_iface);
++ 
++ 	f = fopen(full_path, "r");
++ 	if (!f)
++@@ -232,8 +235,7 @@ uint8_t get_tq(const char *mesh_iface, s
++ 	if (!debugfs_mnt)
++ 		goto out;
++ 
++-	debugfs_make_path(DEBUG_BATIF_PATH_FMT "/" DEBUG_ORIGINATORS,
++-			  mesh_iface, full_path, sizeof(full_path));
+++	snprintf(full_path, sizeof(full_path), "/tmp/batman-adv-visdata/%s/originators", mesh_iface);
++ 
++ 	f = fopen(full_path, "r");
++ 	if (!f)
++--- a/vis/vis.c
+++++ b/vis/vis.c
++@@ -325,7 +325,7 @@ static int parse_orig_list(struct global
++ 	char path[1024];
++ 	struct vis_list_entry *v_entry;
++ 
++-	snprintf(path, sizeof(path), "/sys/kernel/debug/batman_adv/%s/originators", globals->interface);
+++	snprintf(path, sizeof(path), "/tmp/batman-adv-visdata/%s/originators", globals->interface);
++ 	fbuf = read_file(path);
++ 	if (!fbuf)
++ 		return -1;
