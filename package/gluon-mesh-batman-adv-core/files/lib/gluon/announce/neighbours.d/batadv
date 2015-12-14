@@ -14,7 +14,7 @@ end
 
 function batadv()
   local interfaces = {}
-  local list = io.lines("/sys/kernel/debug/batman_adv/bat0/originators")
+  local list = io.lines("/tmp/batman-adv-visdata/bat0/originators")
   for line in list do
     local mac1, lastseen, tq, mac2, ifname =
       line:match("^([0-9a-f:]+) +(%d+%.%d+)s +%( *(%d+)%) +([0-9a-f:]+) +%[ *(.-)%]")
