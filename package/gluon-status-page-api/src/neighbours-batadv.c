@@ -12,12 +12,10 @@ static json_object *neighbours(void) {
 
   FILE *f;
 
-  f = fopen("/sys/kernel/debug/batman_adv/bat0/originators" , "r");
+  f = fopen("/tmp/batman-adv-visdata/bat0/originators" , "r");
 
-  if (f == NULL) {
-    perror("Can not open bat0/originators");
-    exit(1);
-  }
+  if (f == NULL)
+    return NULL;
 
   while (!feof(f)) {
     char mac1[18];
@@ -55,10 +53,12 @@ int main(void) {
 
   while (1) {
     obj = neighbours();
-    printf("data: %s\n\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PLAIN));
-    fflush(stdout);
-    json_object_put(obj);
-    sleep(1);
+    if (obj) {
+      printf("data: %s\n\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PLAIN));
+      fflush(stdout);
+      json_object_put(obj);
+    }
+    sleep(10);
   }
 
   return 0;
