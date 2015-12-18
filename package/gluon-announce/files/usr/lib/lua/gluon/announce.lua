@@ -3,8 +3,11 @@
 module('gluon.announce', package.seeall)
 
 fs = require 'nixio.fs'
-uci = require('luci.model.uci').cursor()
 util = require 'gluon.util'
+model_uci = require 'luci.model.uci'
+
+
+local collect_dir
 
 local function collect_entry(entry)
 	if fs.stat(entry, 'type') == 'dir' then
@@ -43,6 +46,20 @@ function collect_dir(dir)
 				io.stderr:write(val, '\n')
 			end
 		end
+
+		collectgarbage()
+
+		return ret
+	end
+end
+
+function collect(dir)
+	local f = collect_dir(dir)
+
+	return function ()
+		_M.uci = model_uci.cursor()
+		ret = f()
+		_M.uci = nil
 
 		collectgarbage()
 

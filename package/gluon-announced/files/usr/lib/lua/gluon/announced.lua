@@ -12,7 +12,7 @@ nixio.chdir('/lib/gluon/announce/')
 for dir in fs.glob('*.d') do
   local name = dir:sub(1, -3)
   memoize[name] = {
-    collect = announce.collect_dir(dir),
+    collect = announce.collect(dir),
     -- tonumber will return 0 for invalid inputs
     cache_time = tonumber(util.trim(fs.readfile(name .. '.cache') or ''))
   }
