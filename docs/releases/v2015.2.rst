@@ -215,7 +215,7 @@ Site changes
 * ``i18n/``
 
   - The translations of ``gluon-config-mode:pubkey`` now have to show the fastd
-    public key itself if desired, making the formatting of the key and whether it is shown at
+    public key themselves if desired, making the formatting of the key and whether it is shown at
     all configurable. To retain the old format, add ``<p>`` to the beginning of
     your translations and append::
 
