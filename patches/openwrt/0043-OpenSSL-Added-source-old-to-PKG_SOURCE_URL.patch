@@ -3,22 +3,36 @@ Date: Sun, 6 Dec 2015 16:12:55 +0100
 Subject: OpenSSL: Added source/old to PKG_SOURCE_URL
 
 OpenSSL moves old versions of the library from http://www.openssl.org/source/
-to http://www.openssl.org/source/old/1.0.2/ breaking the old links. That
+to http://www.openssl.org/source/old/$version/ breaking the old links. That
 behavior breaks the OpenWRT-build every time OpenSSL releases a new version.
 
-This patch adds http://www.openssl.org/source/old/1.0.2/ to the PKG_SOURCE_URL
+This patch adds http://www.openssl.org/source/old/$version/ to the PKG_SOURCE_URL
 of OpenSSL to avoid breaking the build whenever OpenSSL releases a new
 version.
 
+Signed-off-by: Kevin Kirsch <ranlvor@…>
+Reviewed-by: Alexander Dahl <post@…>
+
 diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
-index 7f0da8b..039e1ab 100644
+index 7f0da8b..4cee738 100644
 --- a/package/libs/openssl/Makefile
 +++ b/package/libs/openssl/Makefile
-@@ -16,6 +16,7 @@ PKG_BUILD_PARALLEL:=1
+@@ -8,7 +8,9 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=openssl
+-PKG_VERSION:=1.0.2d
++PKG_BASE:=1.0.2
++PKG_BUGFIX:=d
++PKG_VERSION:=$(PKG_BASE)$(PKG_BUGFIX)
+ PKG_RELEASE:=1
+ PKG_USE_MIPS16:=0
+ 
+@@ -16,6 +18,7 @@ PKG_BUILD_PARALLEL:=1
  
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
  PKG_SOURCE_URL:=http://www.openssl.org/source/ \
-+	http://www.openssl.org/source/old/1.0.2/ \
++	http://www.openssl.org/source/old/$(PKG_BASE)/ \
  	ftp://ftp.funet.fi/pub/crypt/mirrors/ftp.openssl.org/source \
  	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/
  PKG_MD5SUM:=38dd619b2e77cbac69b99f52a053d25a
