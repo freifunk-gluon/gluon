@@ -226,6 +226,12 @@ Site changes
     "<%= pubkey %>"
     "</div>"
 
+
+  - There are often problems when you have to send the pubkey via Email to the community and have no internet connection. Now you can display a QR-Code to register the Node via you phone:  
+    "<div id=\"qrdiv\" value=\"mailto:keys@entenhausen.freifunk.net?&amp;subject=<%=hostname%>&amp;body=Hostname%3A%20<%=hostname%>%0D%0AKey%3A%20<%=pubkey%>\">"
+    "<canvas id=\"qrcanv\" }=\"\"></canvas>"
+    "</div>"
+
 Internals
 ~~~~~~~~~
 

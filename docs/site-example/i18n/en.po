@@ -28,7 +28,9 @@ msgstr ""
 " <br/>"
 "<%= pubkey %>"
 "</div>"
-
+"<div id=\"qrdiv\" value=\"mailto:keys@entenhausen.freifunk.net?&amp;subject=<%=hostname%>&amp;body=Hostname%3A%20<%=hostname%>%0D%0AKey%3A%20<%=pubkey%>\">"
+"<canvas id=\"qrcanv\" }=\"\"></canvas>"
+"</div>"
 
 msgid "gluon-config-mode:reboot"
 msgstr ""
