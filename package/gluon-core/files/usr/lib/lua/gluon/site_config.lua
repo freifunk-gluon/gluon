@@ -1,12 +1,18 @@
-local config = os.getenv('GLUON_SITE_CONFIG') or '/lib/gluon/site.conf'
+local function get_site_config()
+  local config = '/lib/gluon/site.json'
 
-local function loader()
-   coroutine.yield('return ')
-   coroutine.yield(io.open(config):read('*a'))
+  local json = require 'luci.jsonc'
+  local ltn12 = require 'luci.ltn12'
+
+  local file = assert(io.open(config))
+
+  local decoder = json.new()
+  ltn12.pump.all(ltn12.source.file(io.open(config)), decoder:sink())
+
+  file:close()
+
+  return assert(decoder:get())
 end
-
--- setfenv doesn't work with Lua 5.2 anymore, but we're using 5.1
-local site_config = setfenv(assert(load(coroutine.wrap(loader), 'site.conf')), {})()
 
 local setmetatable = setmetatable
 
@@ -14,7 +20,7 @@ module 'gluon.site_config'
 
 setmetatable(_M,
 	{
-		__index = site_config,
+		__index = get_site_config(),
 	}
 )
 

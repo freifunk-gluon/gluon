@@ -5,7 +5,7 @@ PKG_VERSION:=$(if $(GLUON_SITE_CODE),$(GLUON_SITE_CODE),1)
 PKG_RELEASE:=$(GLUON_RELEASE)
 
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/i18n/
-PKG_BUILD_DEPENDS := luci-base/host
+PKG_BUILD_DEPENDS := luci-base/host lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -33,7 +33,7 @@ endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
-	$(CP) $(GLUON_SITEDIR)/site.conf $(1)/lib/gluon/site.conf
+	lua -e 'print(require("cjson").encode(assert(dofile("$(GLUONDIR)/scripts/site_config.lua"))))' > $(1)/lib/gluon/site.json
 	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 
 	$(call GluonInstallI18N,gluon-site,$(1))
