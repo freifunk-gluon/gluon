@@ -81,13 +81,14 @@ ar71xx-generic
 * Buffalo
 
   - WZR-HP-AG300H / WZR-600DHP
-  - WZR-HP-G300N
+  - WZR-HP-G300NH
   - WZR-HP-G450H
 
 * D-Link
 
-  - DIR-825 (B1)
+  - DIR-505 (A1)
   - DIR-615 (C1)
+  - DIR-825 (B1)
 
 * GL-Inet
 
