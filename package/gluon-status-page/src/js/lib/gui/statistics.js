@@ -192,7 +192,7 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyBytes(d) {
-    return prettyPrefix([ "B", "kB", "MB", "GB" ], 1024, d)
+    return prettyPrefix([ "B", "kB", "MB", "GB", "TB" ], 1024, d)
   }
 
   function prettyUptime(seconds) {
