@@ -70,10 +70,11 @@ $(eval $(call GluonModel,TLWR941,tl-wr941nd-v3,tp-link-tl-wr941n-nd-v3))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v4,tp-link-tl-wr941n-nd-v4))
 $(eval $(call GluonModel,TLWR941,tl-wr941nd-v5,tp-link-tl-wr941n-nd-v5))
 
-# TL-WR1043N/ND v1, v2
+# TL-WR1043N/ND v1, v2, v3
 $(eval $(call GluonProfile,TLWR1043))
 $(eval $(call GluonModel,TLWR1043,tl-wr1043nd-v1,tp-link-tl-wr1043n-nd-v1))
 $(eval $(call GluonModel,TLWR1043,tl-wr1043nd-v2,tp-link-tl-wr1043n-nd-v2))
+$(eval $(call GluonModel,TLWR1043,tl-wr1043nd-v3,tp-link-tl-wr1043n-nd-v3))
 
 # TL-WDR3500/3600/4300 v1
 $(eval $(call GluonProfile,TLWDR4300))
