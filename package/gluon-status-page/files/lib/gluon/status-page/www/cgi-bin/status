@@ -73,20 +73,22 @@ io.write("<h2>Neighbours</h2>")
 
 local interfaces = util.split(util.trim(util.exec("iw dev | egrep 'type IBSS|type mesh' -B 5 | grep Interface | cut -d' ' -f2")))
 
-for _, ifname in ipairs(interfaces) do
-  io.write("<h3>" .. escape_html(ifname) .. "</h3>")
-  io.write("<pre>")
+if interfaces ~= {} then
+  for _, ifname in ipairs(interfaces) do
+    io.write("<h3>" .. escape_html(ifname) .. "</h3>")
+    io.write("<pre>")
 
-  for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
-    local mac = line:match("^Station (.*) %(on ")
-    if mac then
-      io.write("Station <a id=\"" .. escape_html(ifname) .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. escape_html(ifname) .. ")\n")
-    else
-      io.write(escape_html(line) .. "\n")
+    for _, line in ipairs(util.split(util.exec("iw dev " .. ifname .. " station dump"))) do
+      local mac = line:match("^Station (.*) %(on ")
+      if mac then
+        io.write("Station <a id=\"" .. escape_html(ifname) .. "-" .. mac .. "\">" .. mac .. "</a> (on " .. escape_html(ifname) .. ")\n")
+      else
+        io.write(escape_html(line) .. "\n")
+      end
     end
-  end
 
-  io.write("</pre>")
+    io.write("</pre>")
+  end
 end
 
 local stat, fastd_status = pcall(
