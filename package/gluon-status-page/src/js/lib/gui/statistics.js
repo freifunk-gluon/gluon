@@ -252,8 +252,8 @@ define(["lib/helper"], function (Helper) {
 
     table = document.createElement("table")
 
-    mkTrafficRow(table, children, "Gesendet", stream, ".traffic.tx")
-    mkTrafficRow(table, children, "Empfangen", stream, ".traffic.rx")
+    mkTrafficRow(table, children, "Empfangen", stream, ".traffic.tx")
+    mkTrafficRow(table, children, "Gesendet", stream, ".traffic.rx")
     mkTrafficRow(table, children, "Weitergeleitet", stream, ".traffic.forward")
 
     el.appendChild(table)
