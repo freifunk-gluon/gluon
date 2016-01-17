@@ -6,10 +6,10 @@ Patch-by: Stefan Rompf <stefan@loplof.de>
 
 diff --git a/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch b/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch
 new file mode 100644
-index 0000000..4cd6faf
+index 0000000..4533335
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch
-@@ -0,0 +1,353 @@
+@@ -0,0 +1,346 @@
 +--- a/drivers/net/wireless/ath/ath9k/channel.c
 ++++ b/drivers/net/wireless/ath/ath9k/channel.c
 +@@ -15,6 +15,8 @@
@@ -266,7 +266,7 @@ index 0000000..4cd6faf
 ++
 +--- /dev/null
 ++++ b/drivers/net/wireless/ath/ath9k/hsr.h
-+@@ -0,0 +1,40 @@
++@@ -0,0 +1,33 @@
 ++/*
 ++ * The MIT License (MIT)
 ++ *
@@ -294,17 +294,10 @@ index 0000000..4cd6faf
 ++#ifndef HSR_H_
 ++#define HSR_H_
 ++
-++#ifdef CPTCFG_ATH9K_UBNTHSR
 ++void hsr_init(struct ath_hw* ah);
 ++int hsr_disable(struct ath_hw* ah);
 ++int hsr_enable(struct ath_hw* ah, int bw, int fq);
 ++int hsr_status(struct ath_hw* ah);
-++#else
-++static inline void hsr_init(struct ath_hw* ah) {}
-++static inline int hsr_disable(struct ath_hw* ah) { return 0; }
-++static inline int hsr_enable(struct ath_hw* ah, int bw, int fq) { return 0; }
-++static inline int hsr_status(struct ath_hw* ah) { return 0; }
-++#endif
 ++
 ++#endif /* HSR_H_ */
 +--- a/drivers/net/wireless/ath/ath9k/main.c
