@@ -141,6 +141,7 @@ ar71xx-generic
 * Ubiquiti
 
   - Air Gateway
+  - Air Router
   - Bullet M
   - Nanostation M
   - Nanostation M XW
