@@ -151,6 +151,7 @@ ar71xx-generic
   - UniFi AP
   - UniFi AP Pro
   - UniFi AP Outdoor
+  - UniFi AP Outdoor+
 
 * Western Digital
 
