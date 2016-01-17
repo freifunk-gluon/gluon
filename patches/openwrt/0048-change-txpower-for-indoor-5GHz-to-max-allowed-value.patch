@@ -1,0 +1,36 @@
+From d8061780e153fa0d0b0f7b91d3ab93fe713f4d85 Mon Sep 17 00:00:00 2001
+From: Neal Oakey <neal.oakey@bingo-ev.de>
+Date: Sun, 17 Jan 2016 14:29:07 +0100
+Subject: [PATCH] change txpower for indoor 5GHz to max allowed value
+
+---
+ package/kernel/mac80211/files/regdb.txt | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/package/kernel/mac80211/files/regdb.txt b/package/kernel/mac80211/files/regdb.txt
+index 84413fd..5c87ed8 100644
+--- a/package/kernel/mac80211/files/regdb.txt
++++ b/package/kernel/mac80211/files/regdb.txt
+@@ -307,17 +307,13 @@ country CZ: DFS-ETSI
+ # http://www.bundesnetzagentur.de/cae/servlet/contentblob/38216/publicationFile/6579/WLAN5GHzVfg7_2010_28042010pdf.pdf
+ # The values have been reduced by a factor of 2 (3db) for non TPC devices
+ # (in other words: devices with TPC can use twice the tx power of this table).
+-# Note that the docs do not require TPC for 5150--5250; the reduction to
+-# 100mW thus is not strictly required -- however the conservative 100mW
+-# limit is used here as the non-interference with radar and satellite
+-# apps relies on the attenuation by the building walls only in the
+-# absence of DFS; the neighbour countries have 100mW limit here as well.
++# Note that the docs do not require TPC for 5150--5250
+ 
+ country DE: DFS-ETSI
+ 	# entries 279004 and 280006
+ 	(2400 - 2483.5 @ 40), (100 mW)
+ 	# entry 303005
+-	(5150 - 5250 @ 80), (100 mW), NO-OUTDOOR, AUTO-BW
++	(5150 - 5250 @ 80), (200 mW), NO-OUTDOOR, AUTO-BW
+ 	# entries 304002 and 305002
+ 	(5250 - 5350 @ 80), (100 mW), NO-OUTDOOR, DFS, AUTO-BW
+ 	# entries 308002, 309001 and 310003
+-- 
+2.7.0
+
