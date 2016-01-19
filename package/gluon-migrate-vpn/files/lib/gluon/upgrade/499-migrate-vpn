@@ -15,7 +15,7 @@ local fastd_installed = util.exec('sh' , '-c', 'opkg list-installed | grep -e \'
 
 local enabled = 0
 
-if (tonumber(tunneldigger_enable) == 1 or tonumber(fastd_enabled) == 1) then
+if (tonumber(tunneldigger_enabled) == 1 or tonumber(fastd_enabled) == 1) then
   enabled = 1
 end
 
