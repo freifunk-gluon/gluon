@@ -1,0 +1,7 @@
+#!/bin/sh
+PIDFILE=/var/run/tunneldigger.mesh-vpn.pid
+
+if [ "$(pgrep tunneldigger)" != "$(cat $PIDFILE)" ] && [ "$(uci get tunneldigger.@broker[0].enabled)" == "1" ]; then
+    /etc/init.d/tunneldigger restart
+    logger -t tunneldiger-watchdog "Restarted Tunneldigger"
+fi
