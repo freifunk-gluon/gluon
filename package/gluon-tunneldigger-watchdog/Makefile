@@ -11,7 +11,7 @@ define Package/gluon-tunneldigger-watchdog
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Automatically restarts tunneldigger if the client crashed
-  DEPENDS:=gluon-tunneldigger
+  DEPENDS:=+gluon-mesh-vpn-tunneldigger
 endef
 
 define Package/gluon-tunneldigger-watchdog/description
