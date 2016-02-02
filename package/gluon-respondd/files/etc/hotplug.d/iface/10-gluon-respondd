@@ -4,7 +4,6 @@
 . /lib/functions/service.sh
 
 DEVLIST=/var/run/gluon-respondd.devs
-DAEMON=/usr/bin/respondd
 
 ifname_to_dev () {
 	json_load "$(ubus call network.interface.$1 status)"
@@ -13,20 +12,10 @@ ifname_to_dev () {
 	echo "$dev"
 }
 
-restart_respondd () {
-	SERVICE_USE_PID=1
-	SERVICE_WRITE_PID=1
-	SERVICE_DAEMONIZE=1
-
-	DEVS=$(cat $DEVLIST | while read dev iface; do echo -n " -i $dev"; done)
-
-	service_stop $DAEMON
-	service_start $DAEMON -g ff02::2:1001 -p 1001 -d /lib/gluon/respondd $DEVS
-}
-
 case "$ACTION" in
 	ifdown)
-		sed -i "/$INTERFACE/d" $DEVLIST
+		sed "/ $INTERFACE$/d" $DEVLIST > $DEVLIST.new
+		mv $DEVLIST.new $DEVLIST
 		;;
 	ifup)
 		DEVICE="$(ifname_to_dev "$INTERFACE")"
@@ -34,11 +23,12 @@ case "$ACTION" in
 
 		[ "$MESH" = "bat0" -o "$INTERFACE" = "client" ] || exit 0
 
-		DEVS=$(cat $DEVLIST; echo $DEVICE $INTERFACE)
+		DEVS=$(cat $DEVLIST 2>/dev/null; echo $DEVICE $INTERFACE)
 
-		echo "$DEVS" | sort -u > $DEVLIST
+		echo "$DEVS" | sort -u > $DEVLIST.new
+		mv $DEVLIST.new $DEVLIST
 
-		restart_respondd
+		/etc/init.d/gluon-respondd restart_if_running &
 
 		;;
 esac
