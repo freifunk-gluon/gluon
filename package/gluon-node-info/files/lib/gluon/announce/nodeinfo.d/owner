@@ -1,4 +1,0 @@
-local contact = uci:get_first('gluon-node-info', 'owner', 'contact', '')
-if contact ~= '' then
-	return { contact = contact }
-end

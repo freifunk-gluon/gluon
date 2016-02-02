@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+uci:delete('firewall', 'wan_announced')
+
+-- Allow respondd port on WAN to allow resolving neighbours over mesh-on-wan
+uci:section('firewall', 'rule', 'wan_respondd',
+  {
+    name = 'wan_respondd',
+    src = 'wan',
+    src_ip = 'fe80::/64',
+    dest_port = '1001',
+    proto = 'udp',
+    target = 'ACCEPT',
+  }
+)
+
+uci:save('firewall')
+uci:commit('firewall')

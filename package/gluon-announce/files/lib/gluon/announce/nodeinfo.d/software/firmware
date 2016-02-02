@@ -1,4 +1,0 @@
-return {
-	base = 'gluon-' .. util.readline(io.open('/lib/gluon/gluon-version')),
-	release = util.readline(io.open('/lib/gluon/release')),
-}

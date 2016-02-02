@@ -1,1 +1,0 @@
-return tonumber(util.readline(io.open('/proc/uptime')):match('^([^ ]+) '))
