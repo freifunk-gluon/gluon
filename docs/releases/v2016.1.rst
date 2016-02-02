@@ -219,6 +219,13 @@ Site changes
     - ``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)
 
 
+* ``site.mk``
+
+  - The packages `gluon-announce` and `gluon-announced` were merged into
+    the package `gluon-respondd`. If you had any of them (probably
+    `gluon-announced`) in your package list, you have to replace them.
+
+
 * ``i18n/``
 
   - The translations of ``gluon-config-mode:pubkey`` now have to show the fastd
@@ -248,6 +255,8 @@ Internals
 * Some of the Gluon-specific i18n support code in the build system has been removed, as LuCI now provides
   similar facilities
 * The C-based `luci-lib-jsonc` library is now used for JSON encoding/decoding instead of the pure Lua `luci-lib-json`
+* The site config is now stored as JSON on the node. The Lua interface via ``gluon.site_config`` is still available, and a C interface via the newly added `libgluonutil` was added.
+* The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage.
 
 Known Issues
 ~~~~~~~~~~~~
