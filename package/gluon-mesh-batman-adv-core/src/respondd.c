@@ -407,9 +407,9 @@ static struct json_object * get_clients(void) {
 	size_t len = 0;
 
 	while (getline(&line, &len, f) >= 0) {
-		char addr[18], flags[16];
+		char flags[16];
 
-		if (sscanf(line, " * %17[0-9a-fA-F:] [%15[^]]]", addr, flags) != 2)
+		if (sscanf(line, " * %*[^[] [%15[^]]]", flags) != 1)
 			continue;
 
 		if (strchr(flags, 'P'))
