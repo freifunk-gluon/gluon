@@ -32,6 +32,8 @@ define Build/Compile
 endef
 
 define Package/gluon-neighbour-info/install
+	$(CP) ./files/* $(1)/
+
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/gluon-neighbour-info $(1)/usr/bin/
 endef
