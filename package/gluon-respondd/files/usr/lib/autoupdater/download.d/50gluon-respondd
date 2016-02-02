@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /lib/gluon/autoupdater/lib.sh
+
+
+stop gluon-respondd
+stop batman-adv-visdata
