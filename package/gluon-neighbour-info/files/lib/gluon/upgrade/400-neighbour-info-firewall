@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+-- Allow incoming respondd replies to queries on WAN
+-- If the query was via multicast, the response isn't matched by --state RELATED
+uci:section('firewall', 'rule', 'wan_respondd_reply',
+  {
+    name = 'wan_respondd_reply',
+    src = 'wan',
+    src_ip = 'fe80::/64',
+    src_port = '1001',
+    dest_port = '32768:61000', -- see /proc/sys/net/ipv4/ip_local_port_range
+    proto = 'udp',
+    target = 'ACCEPT',
+  }
+)
+
+uci:save('firewall')
+uci:commit('firewall')
