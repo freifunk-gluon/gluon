@@ -95,6 +95,12 @@ images are to be used when flashing from the original firmware a device came wit
 and sysupgrade is to upgrade from other versions of Gluon or any other OpenWrt-based
 system.
 
+Some images in the output/images directory are symbolic links to identical other 
+images. If you don't want them (e.g. for your webserver), you can copy the folder 
+with e.g.::
+
+    cp output/images /var/www -RL
+
 You should reserve about 10GB of disk space for each `GLUON_TARGET`.
 
 There are two levels of `make clean`::
