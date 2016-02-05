@@ -92,7 +92,7 @@ To see a complete list of supported targets, call ``make`` without setting ``GLU
 
 The built images can be found in the directory `output/images`. Of these, the factory
 images are to be used when flashing from the original firmware a device came with,
-and sysupgrade is to upgrade from other versions of Gluon or any other OpenWRT-based
+and sysupgrade is to upgrade from other versions of Gluon or any other OpenWrt-based
 system.
 
 You should reserve about 10GB of disk space for each `GLUON_TARGET`.
