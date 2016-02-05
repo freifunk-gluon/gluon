@@ -44,7 +44,7 @@ if fs.access("/etc/config/dropbear") then
 
   function keys.write(self, section, value)
     if value then
-      fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"))
+      fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"):trim() .. "\n")
     end
   end
 
