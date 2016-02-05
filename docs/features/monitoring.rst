@@ -1,5 +1,5 @@
-Announcing Node Information
-===========================
+Node monitoring
+===============
 
 Gluon is capable of announcing information about each node to the mesh
 and to neighbouring nodes. This allows nodes to learn each others hostname,
@@ -8,7 +8,7 @@ IP addresses, location, software versions and various other information.
 Format of collected data
 ------------------------
 
-Information to be announced is currently split into two categories:
+Information to be announced is currently split into three categories:
 
   nodeinfo
     In this category (mostly) static information is collected. If
@@ -19,8 +19,12 @@ Information to be announced is currently split into two categories:
     This category holds fast changing data, like traffic counters, uptime,
     system load or the selected gateway.
 
-Both categories will have a ``node_id`` key by default. It should be used to
-match data from *statistics* to *nodeinfo*.
+  neighbours
+    `neighbours` contains information about all neighbouring nodes of all
+    interfaces. This data can be used to determine the network topology.
+
+All categories will have a ``node_id`` key. It should be used to
+relate data of different catagories.
 
 Accessing Node Information
 --------------------------
@@ -43,8 +47,13 @@ installed. Please note that at least one alfred daemon is required to run as
 
 .. _alfred-json: https://github.com/tcatm/alfred-json
 
-`nodeinfo` is distributed as alfred datatype `158`, while `statistics` uses
-`159`. Both are compressed using GZip (alfred-json can handle the decompression).
+The following datatypes are used:
+
+* `nodeinfo`: 158
+* `statistics`: 159
+* `neighbours`: 160
+
+All data is compressed using GZip (alfred-json can handle the decompression).
 
 In order to retrieve statistics data you could run:
 
@@ -90,18 +99,26 @@ You can find more information about alfred in its README_.
 
 .. _README: http://www.open-mesh.org/projects/alfred/repository/revisions/master/entry/README
 
-gluon-announced
-~~~~~~~~~~~~~~~
+gluon-respondd
+~~~~~~~~~~~~~~
 
-`gluon-announced` allows querying neighbouring nodes for their `nodeinfo`.
+`gluon-respondd` allows querying neighbouring nodes for their information.
 It is a daemon listening on the multicast address ``ff02::2:1001`` on
-UDP port 1001 on the bare mesh interfaces.
+UDP port 1001 on both the bare mesh interfaces and `br-client`. Unicast
+requests are supported as well.
+
+The supported requests are:
+
+* ``nodeinfo``, ``statistics``, ``neighbours``: Returns the data of single category uncompressed.
+* ``GET nodeinfo``, ...: Returns the data of one or multiple categories (separated by spaces)
+  compressed using the `deflate` algorithm (without a gzip header). The data may
+  be decompressed using zlib and many zlib bindings using -15 as the window size parameter.
 
 gluon-neighbour-info
 ~~~~~~~~~~~~~~~~~~~~
 
-A programm called `gluon-neighbour-info` has been developed to retrieve
-information from neighbours.
+The programm `gluon-neighbour-info` can be used to retrieve
+information from other nodes.
 
 ::
 
@@ -109,55 +126,13 @@ information from neighbours.
   -p 1001 -d ff02:0:0:0:0:0:2:1001 \
   -r nodeinfo
 
-On optional timeout may be specified, e.g. `-t 5` (default: 3 seconds).
+An optional timeout may be specified, e.g. `-t 5` (default: 3 seconds). See
+the usage information printed by ``gluon-neighbour-info -h`` for more information
+about the supported arguments.
 
-Adding a fact
--------------
+Adding a data provider
+----------------------
 
-To add a fact just add a file to either ``/lib/gluon/announce/nodeinfo.d/`` or
-``/lib/gluon/announce/statistics.d/``.
-
-The file must contain a lua script and its name will become the key for the
-resulting JSON object. A simple script adding a ``hostname`` field might look
-like this:
-
-::
-
-  return uci:get_first('system', 'system', 'hostname')
-
-The directory structure will be converted to a JSON object, i.e. you may
-create subdirectories. So, if the directories look like this
-
-::
-
-  .
-  ├── hardware
-  │   └── model
-  ├── hostname
-  ├── network
-  │   └── mac
-  ├── node_id
-  └── software
-      └── firmware
-
-the resulting JSON would become:
-
-::
-
-  # /lib/gluon/announce/announce.lua nodeinfo
-  {
-     "hardware" : {
-        "model" : "TP-Link TL-MR3420 v1"
-     },
-     "hostname" : "mr3420-test",
-     "network" : {
-        "mac" : "90:f6:52:82:06:02"
-     },
-     "node_id" : "90f652820602",
-     "software" : {
-        "firmware" : {
-           "base" : "gluon-v2014.2-32-ge831099",
-           "release" : "0.4.1+0-exp20140720"
-        }
-     }
-  }
+To add a provider, you need to install a shared object into ``/lib/gluon/respondd``.
+For more information, refer to the `respondd README <https://github.com/freifunk-gluon/packages/blob/master/net/respondd/README.md>`_
+and have a look the existing providers.
