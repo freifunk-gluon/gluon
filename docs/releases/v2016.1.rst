@@ -55,7 +55,7 @@ Kernel module opkg repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We've not been able to keep ABI compatiblity with the kernel of the official OpenWrt images.
-Therefore, Gluon now generates a opkg repository with modules itself.
+Therefore, Gluon now generates an opkg repository with modules itself.
 
 The repository can be found at `output/modules/` by default, the image output directory has
 been moved from `images/` to `output/images/`. See the updated :doc:`../user/getting_started` guide
@@ -74,7 +74,7 @@ nodes to aid with the alignment of antennas.
 ^^^^^^^^^^^^^^^^^^^^
 
 Gluon now supports using 802.11s for its mesh links instead of IBSS (Adhoc). This will allow supporting
-WLAN hardware which can't to AP and IBSS mode simultaneously in the future (like Ralink/Mediatek).
+more WLAN hardware in the future (like Ralink/Mediatek, which don't support AP and IBSS mode simultaneously).
 
 Note that batman-adv is still used on top of 802.11s (and 802.11s forwarding is disabled), the mesh routing protocol
 provided by 802.11s is not used.
@@ -252,11 +252,13 @@ Internals
   - gluon-cron -> micrond (the crontabs are now read from ``/usr/lib/micron.d`` instead of ``/lib/gluon/cron``)
   - gluon-radvd -> uradvd
   - gluon-simple-tc -> simple-tc (the config file has been renamed as well)
+
 * Some of the Gluon-specific i18n support code in the build system has been removed, as LuCI now provides
   similar facilities
 * The C-based `luci-lib-jsonc` library is now used for JSON encoding/decoding instead of the pure Lua `luci-lib-json`
-* The site config is now stored as JSON on the node. The Lua interface via ``gluon.site_config`` is still available, and a C interface via the newly added `libgluonutil` was added.
-* The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage.
+* The site config is now stored as JSON on the node. The Lua interface``gluon.site_config`` is still available, and a C interface was added as part of the new package `libgluonutil`.
+* The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage. The Gluon integration package has
+  been renamed from `gluon-announced` to `gluon-respondd`.
 
 Known Issues
 ~~~~~~~~~~~~
