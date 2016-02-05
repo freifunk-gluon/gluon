@@ -10,11 +10,21 @@ if not sysconfig.gluon_version then
   uci:delete_all('wireless', 'wifi-iface')
 end
 
+local function get_channel(radio, config)
+  if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
+    return uci:get('wireless', radio, 'channel') or config.channel
+  else
+    return config.channel
+  end
+end
+
 local function configure_radio(radio, index, config)
   if config then
+    local channel = get_channel(radio, config)
+
     uci:delete('wireless', radio, 'disabled')
 
-    uci:set('wireless', radio, 'channel', config.channel)
+    uci:set('wireless', radio, 'channel', channel)
     uci:set('wireless', radio, 'htmode', 'HT20')
     uci:set('wireless', radio, 'country', site.regdom)
   end
