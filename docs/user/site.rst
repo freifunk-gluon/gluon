@@ -177,7 +177,7 @@ fastd_mesh_vpn
         groups = {
           backbone = {
             -- Limit number of connected peers from this group
-            limit = 2,
+            limit = 1,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
