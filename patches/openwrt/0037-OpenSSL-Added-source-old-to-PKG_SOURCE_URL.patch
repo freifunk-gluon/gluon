@@ -11,7 +11,7 @@ of OpenSSL to avoid breaking the build whenever OpenSSL releases a new
 version.
 
 diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
-index 7f0da8b..039e1ab 100644
+index ad93678..9a16599 100644
 --- a/package/libs/openssl/Makefile
 +++ b/package/libs/openssl/Makefile
 @@ -16,6 +16,7 @@ PKG_BUILD_PARALLEL:=1
@@ -21,4 +21,4 @@ index 7f0da8b..039e1ab 100644
 +	http://www.openssl.org/source/old/1.0.2/ \
  	ftp://ftp.funet.fi/pub/crypt/mirrors/ftp.openssl.org/source \
  	ftp://ftp.sunet.se/pub/security/tools/net/openssl/source/
- PKG_MD5SUM:=38dd619b2e77cbac69b99f52a053d25a
+ PKG_MD5SUM:=b3bf73f507172be9292ea2a8c28b659d

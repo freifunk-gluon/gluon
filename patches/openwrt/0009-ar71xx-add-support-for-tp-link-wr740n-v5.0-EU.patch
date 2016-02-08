@@ -10,7 +10,7 @@ tested it on my own v5.0 router and it works.
 Signed-off-by: Daniel Petre <daniel.petre@posteo.net>
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 013a215..37ce8a4 100644
+index 4336697..1fe88d5 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -501,6 +501,14 @@ define Device/tl-wr740n-v4

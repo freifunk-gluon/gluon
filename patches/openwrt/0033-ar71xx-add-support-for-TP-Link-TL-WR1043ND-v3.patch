@@ -3,7 +3,7 @@ Date: Thu, 5 Nov 2015 15:48:09 +0100
 Subject: ar71xx: add support for TP-Link TL-WR1043ND v3
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index cc25be7..4b29d9c 100644
+index 11fb568..dd224d4 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -2023,6 +2023,7 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWR941NV4,tl-wr941nd-v4,TL-WR741ND,tt

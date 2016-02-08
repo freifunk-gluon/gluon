@@ -37,7 +37,7 @@ index 5241db2..11b3fa0 100644
  	ucidef_set_led_netdev "lan" "LAN" "tp-link:green:lan" "eth0"
  	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index 5c38c54..2f0855c 100755
+index 8143d2d..5a74461 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -226,6 +226,7 @@ tl-mr3420-v2 |\
@@ -49,10 +49,10 @@ index 5c38c54..2f0855c 100755
  wnr2000-v4 |\
  wnr2200 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index af92b01..9c7c139 100755
+index 0b2857d..46af69a 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -799,6 +799,9 @@ ar71xx_board_detect() {
+@@ -800,6 +800,9 @@ ar71xx_board_detect() {
  	*"TL-WR941N/ND v5")
  		name="tl-wr941nd-v5"
  		;;
@@ -75,7 +75,7 @@ index f11ea8c..fd337e1 100644
  	wnr2200 |\
  	wnr612-v2 |\
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index ab69e4f..f181a63 100755
+index 8dea48f..2fc1d10 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -354,6 +354,7 @@ platform_check_image() {
@@ -254,7 +254,7 @@ index 0000000..8c788e2
 +MIPS_MACHINE(ATH79_MACH_TL_WR941ND_V6, "TL-WR941ND-v6", "TP-LINK TL-WR941N/ND v6",
 +	     tl_wr941nd_v6_setup);
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 3a17420..cc25be7 100644
+index 78d35e1..11fb568 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -600,7 +600,7 @@ endef

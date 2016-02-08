@@ -6,10 +6,10 @@ The hwid check was wrong, causing the AR71XX_MODEL value to end with a
 space (as $hwver was unset).
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 9c7c139..388cf38 100755
+index 46af69a..d0abf42 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -122,7 +122,7 @@ tplink_board_detect() {
+@@ -123,7 +123,7 @@ tplink_board_detect() {
  	"3C0002"*)
  		model="MINIBOX_V1"
  		;;

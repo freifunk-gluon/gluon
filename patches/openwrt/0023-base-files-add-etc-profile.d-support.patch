@@ -24,7 +24,7 @@ v4 keep it simple and mimic OpenWrt style
 Signed-off-by: Bastian Bittorf <bittorf@bluebottle.com>
 
 diff --git a/package/base-files/files/etc/profile b/package/base-files/files/etc/profile
-index 3dd58e1..577b63b 100644
+index 170f487..bd008a8 100644
 --- a/package/base-files/files/etc/profile
 +++ b/package/base-files/files/etc/profile
 @@ -14,3 +14,10 @@ export PS1='\u@\h:\w\$ '
