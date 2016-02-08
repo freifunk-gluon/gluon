@@ -1,0 +1,22 @@
+From: Felix Kaechele <felix@kaechele.ca>
+Date: Tue, 17 Nov 2015 05:00:51 +0100
+Subject: x86/generic: enable pata_atiixp driver
+
+This enables booting from devices that use an ATI PATA controller for
+the boot device, such as the embedded CF cards in Fujitsu-Siemens Futro
+thin-clients.
+
+Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+
+diff --git a/target/linux/x86/generic/config-default b/target/linux/x86/generic/config-default
+index e077ebd..666a985 100644
+--- a/target/linux/x86/generic/config-default
++++ b/target/linux/x86/generic/config-default
+@@ -150,6 +150,7 @@ CONFIG_NLS=y
+ CONFIG_NO_HZ=y
+ # CONFIG_PANASONIC_LAPTOP is not set
+ CONFIG_PATA_AMD=y
++CONFIG_PATA_ATIIXP=y
+ CONFIG_PATA_LEGACY=y
+ CONFIG_PATA_MPIIX=y
+ CONFIG_PATA_OLDPIIX=y
