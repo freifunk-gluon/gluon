@@ -256,7 +256,7 @@ Internals
 * Some of the Gluon-specific i18n support code in the build system has been removed, as LuCI now provides
   similar facilities
 * The C-based `luci-lib-jsonc` library is now used for JSON encoding/decoding instead of the pure Lua `luci-lib-json`
-* The site config is now stored as JSON on the node. The Lua interface``gluon.site_config`` is still available, and a C interface was added as part of the new package `libgluonutil`.
+* The site config is now stored as JSON on the node. The Lua interface ``gluon.site_config`` is still available, and a C interface was added as part of the new package `libgluonutil`.
 * The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage. The Gluon integration package has
   been renamed from `gluon-announced` to `gluon-respondd`.
 
