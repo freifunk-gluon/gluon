@@ -142,7 +142,7 @@ $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
 ifeq ($(BROKEN),1)
 # Archer C5 v1, C7 v2
-$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k))
+$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
