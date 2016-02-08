@@ -12,7 +12,7 @@ static json_object *neighbours(void) {
 
   FILE *f;
 
-  f = fopen("/tmp/batman-adv-visdata/bat0/originators" , "r");
+  f = fopen("/sys/kernel/debug/batman_adv/bat0/originators" , "r");
 
   if (f == NULL)
     return NULL;

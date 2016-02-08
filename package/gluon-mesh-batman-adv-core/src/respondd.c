@@ -468,7 +468,7 @@ static struct json_object * ifnames2addrs(struct json_object *interfaces) {
 }
 
 static struct json_object * get_batadv(void) {
-	FILE *f = fopen("/tmp/batman-adv-visdata/bat0/originators", "r");
+	FILE *f = fopen("/sys/kernel/debug/batman_adv/bat0/originators", "r");
 	if (!f)
 		return NULL;
 

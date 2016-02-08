@@ -13,7 +13,7 @@ define Package/gluon-status-page-api
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=API for gluon-status-page
-  DEPENDS:=+gluon-core +uhttpd +sse-multiplex +batman-adv-visdata +gluon-neighbour-info +gluon-respondd +libiwinfo +libjson-c
+  DEPENDS:=+gluon-core +uhttpd +sse-multiplex +gluon-neighbour-info +gluon-respondd +libiwinfo +libjson-c
 endef
 
 define Build/Prepare
