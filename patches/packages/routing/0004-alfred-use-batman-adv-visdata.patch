@@ -3,7 +3,7 @@ Date: Mon, 14 Dec 2015 03:08:42 +0100
 Subject: alfred: use batman-adv-visdata
 
 diff --git a/alfred/Makefile b/alfred/Makefile
-index 8f49b5a..f1d7c6e 100644
+index 504fddd..f356f55 100644
 --- a/alfred/Makefile
 +++ b/alfred/Makefile
 @@ -28,7 +28,7 @@ define Package/alfred
