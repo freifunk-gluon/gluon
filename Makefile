@@ -236,7 +236,7 @@ $(early_prepared_stamp):
 
 $(GLUON_OPKG_KEY): $(early_prepared_stamp) FORCE
 	[ -s $(GLUON_OPKG_KEY) -a -s $(GLUON_OPKG_KEY).pub ] || \
-		mkdir -p $$(dirname $(GLUON_OPKG_KEY)) && $(STAGING_DIR_HOST)/bin/usign -G -s $(GLUON_OPKG_KEY) -p $(GLUON_OPKG_KEY).pub -c "Gluon opkg key"
+		( mkdir -p $$(dirname $(GLUON_OPKG_KEY)) && $(STAGING_DIR_HOST)/bin/usign -G -s $(GLUON_OPKG_KEY) -p $(GLUON_OPKG_KEY).pub -c "Gluon opkg key" )
 
 $(GLUON_OPKG_KEY).pub: $(GLUON_OPKG_KEY)
 
