@@ -8,7 +8,7 @@ Gluon's releases are managed using `Git tags`_. If you are just getting
 started with Gluon we recommend to use the latest stable release of Gluon.
 
 Take a look at the `list of gluon releases`_ and notice the latest release,
-e.g. *v2014.3*. Always get Gluon using git and don't try to download it
+e.g. *v2016.1*. Always get Gluon using git and don't try to download it
 as a Zip archive as the archive will be missing version information.
 
 Please keep in mind that there is no "default Gluon" build; a site configuration
@@ -42,7 +42,7 @@ Building the images
 -------------------
 
 To build Gluon, first check out the repository. Replace *RELEASE* with the
-version you'd like to checkout, e.g. *v2015.1*.
+version you'd like to checkout, e.g. *v2016.1*.
 
 ::
 
@@ -90,12 +90,21 @@ In case of errors read the messages carefully and try to fix the stated issues (
 ``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
-The built images can be found in the directory `output/images`. Of these, the factory
+You should reserve about 10GB of disk space for each `GLUON_TARGET`.
+
+The built images can be found in the directory `output/images`. Of these, the `factory`
 images are to be used when flashing from the original firmware a device came with,
-and sysupgrade is to upgrade from other versions of Gluon or any other OpenWRT-based
+and `sysupgrade` is to upgrade from other versions of Gluon or any other OpenWrt-based
 system.
 
-You should reserve about 10GB of disk space for each `GLUON_TARGET`.
+**Note:** The images for some models are identical; to save disk space, symlinks are generated instead
+of multiple copies of the same image. If your webserver's configuration prohibits following
+symlinks, you can use the following command to resolve these links while copying the images::
+
+    cp -rL output/images /var/www
+
+Cleaning the build tree
+.......................
 
 There are two levels of `make clean`::
 

@@ -95,14 +95,16 @@ wifi24 : optional
     This will only affect new installations.
     Upgrades will not changed the disabled state.
 
-    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the interface's ESSID.
+    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the
+    interface's ESSID.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the mesh id.
 
     ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
     An optional parameter ``vlan`` (integer) is supported.
 
-    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for setting the default multicast datarate.
+    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for
+    setting the default multicast datarate.
     ::
 
        wifi24 = {
@@ -156,10 +158,10 @@ fastd_mesh_vpn
 
     The `enabled` option can be set to true to enable the VPN by default.
 
-    If `configurable` is `false` or unset, the method list will be replaced on updates
-    with the list in the site configuration. Setting `configurable` to `true` will allow the user to
-    add the method ``null`` to the front of the method list or remove ``null`` from it,
-    and make this change survive updates. Settings configurable is necessary for the
+    If `configurable` is set to `false` or unset, the method list will be replaced on updates
+    with the list from the site configuration. Setting `configurable` to `true` will allow the user to
+    add the method ``null`` to the beginning of the method list or remove ``null`` from it,
+    and make this change survive updates. Setting `configurable` is necessary for the
     package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
 
     In any case, the ``null`` method should always be the first method in the list
@@ -169,19 +171,41 @@ fastd_mesh_vpn
 
       fastd_mesh_vpn = {
         methods = {'salsa2012+umac'},
-	-- enabled = true,
-	-- configurable = true,
+      	-- enabled = true,
+      	-- configurable = true,
         mtu = 1280,
         groups = {
           backbone = {
+            -- Limit number of connected peers from this group
             limit = 1,
             peers = {
               peer1 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                remotes = {'ipv4 "vpn1.entenhausen.freifunk.net" port 10000'},
+                -- Having multiple domains prevents SPOF in freifunk.net
+                remotes = {
+                  'ipv4 "vpn1.entenhausen.freifunk.net" port 10000',
+                  'ipv4 "vpn1.entenhausener-freifunk.de" port 10000',
+                },
               },
-            }
-          }
+              peer2 = {
+                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
+                remotes = {'"vpn2.entenhausen.freifunk.net" port 10000'},
+              },
+            },
+            -- Optional: nested peer groups
+            -- groups = {
+            --   lowend_backbone = {
+            --     limit = 1,
+            --     peers = ...
+            --   },
+            -- },
+          },
+          -- Optional: additional peer groups, possibly with other limits
+          -- peertopeer = {
+          --   limit = 10,
+          --   peers = { ... },
+          -- },
         },
 
         bandwidth_limit = {
@@ -207,14 +231,15 @@ autoupdater : package
     ::
 
       autoupdater = {
-        branch = 'experimental',
+        branch = 'stable',
         branches = {
           stable = {
             name = 'stable',
             mirrors = {
               'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-              'http://[fdca:ffee:babe:1::fec2]/firmware/stable/sysupgrade/',
+              'http://autoupdate.entenhausen.freifunk.net/firmware/stable/sysupgrade/',
             },
+            -- Number of good signatures required
             good_signatures = 2,
             pubkeys = {
               'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', -- someguy
@@ -225,9 +250,9 @@ autoupdater : package
       }
 
 roles : optional
-    Optional role definitions. With this nodes will announce their role inside the mesh.
-    In the backend this adds the facility to distinguish between normal, backbone and
-    service nodes or even gateways (if they advertise the role, also). It is up to
+    Optional role definitions. Nodes will announce their role inside the mesh.
+    This will allow in the backend to distinguish between normal, backbone and
+    service nodes or even gateways (if they advertise that role). It is up to
     the community which roles to define. See the section below as an example.
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
@@ -279,7 +304,7 @@ The ``site.mk`` is a Makefile which should define constants
 involved in the build process of Gluon.
 
 GLUON_SITE_PACKAGES
-    Defines a list of packages which should installed in addition
+    Defines a list of packages which should be installed additionally
     to the ``gluon-core`` package.
 
 GLUON_RELEASE
@@ -290,7 +315,7 @@ GLUON_PRIORITY
     for more information).
 
 GLUON_LANGS
-    List of languages (as two-letter-codes) to include for the web interface. Should always contain
+    List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
 
 .. _site-config-mode-texts:
@@ -362,6 +387,7 @@ site-repos in the wild
 
 This is a non-exhaustive list of site-repos from various communities:
 
+* `site-ffa <https://github.com/tecff/site-ffa>`_ (Altdorf, Landshut & Umgebung)
 * `site-ffbs <https://github.com/ffbs/site-ffbs>`_ (Braunschweig)
 * `site-ffhb <https://github.com/FreifunkBremen/gluon-site-ffhb>`_ (Bremen)
 * `site-ffda <https://github.com/freifunk-darmstadt/site-ffda>`_ (Darmstadt)
@@ -374,7 +400,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
 * `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
-* `site-ffnw <https://git.freifunk-ol.de/root/siteconf.git>`_ (Nordwest)
+* `site-ffnw <https://git.nordwest.freifunk.net/ffnw/siteconf/tree/master>`_ (Nordwest)
 * `site-ffpb <https://git.c3pb.de/freifunk-pb/site-ffpb>`_ (Paderborn)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
 * `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)

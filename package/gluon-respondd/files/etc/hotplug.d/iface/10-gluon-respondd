@@ -1,0 +1,34 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+. /lib/functions/service.sh
+
+DEVLIST=/var/run/gluon-respondd.devs
+
+ifname_to_dev () {
+	json_load "$(ubus call network.interface.$1 status)"
+	json_get_var dev device
+
+	echo "$dev"
+}
+
+case "$ACTION" in
+	ifdown)
+		sed "/ $INTERFACE$/d" $DEVLIST > $DEVLIST.new
+		mv $DEVLIST.new $DEVLIST
+		;;
+	ifup)
+		DEVICE="$(ifname_to_dev "$INTERFACE")"
+		MESH="$(cat "/sys/class/net/$DEVICE/batman_adv/mesh_iface" 2>/dev/null)"
+
+		[ "$MESH" = "bat0" -o "$INTERFACE" = "client" ] || exit 0
+
+		DEVS=$(cat $DEVLIST 2>/dev/null; echo $DEVICE $INTERFACE)
+
+		echo "$DEVS" | sort -u > $DEVLIST.new
+		mv $DEVLIST.new $DEVLIST
+
+		/etc/init.d/gluon-respondd restart_if_running &
+
+		;;
+esac

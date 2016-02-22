@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <json-c/json.h>
 #include <iwinfo.h>
 #include <net/if.h>
+#include <glob.h>
+#include <alloca.h>
 
-#define STR(x) #x
-#define XSTR(x) STR(x)
-
-#define BATIF_PREFIX "/sys/class/net/bat0/lower_"
+#define NETIF_PREFIX "/sys/class/net/"
+#define VIRTIF_PREFIX "/sys/devices/virtual/net/"
+#define LOWERGLOB_SUFFIX "/lower_*"
 
 static struct json_object *get_stations(const struct iwinfo_ops *iw, const char *ifname) {
   int len;
@@ -45,39 +45,77 @@ static void badrequest() {
   exit(1);
 }
 
-bool interface_is_valid(const char *ifname) {
-  if (strlen(ifname) > IF_NAMESIZE)
-    return false;
+// recurse down to the lowest layer-2 interface
+static int interface_get_lowest(const char *ifname, char *hwifname);
+static int interface_get_lowest(const char *ifname, char *hwifname) {
+  glob_t globbuf;
+  char *fnamebuf = alloca(1 + strlen(VIRTIF_PREFIX) + IF_NAMESIZE +
+                          strlen(LOWERGLOB_SUFFIX));
+  char *lowentry = NULL;
 
-  if (strchr(ifname, '/') != NULL)
-    return false;
 
-  char *path = alloca(1 + strlen(BATIF_PREFIX) + strlen(ifname));
-  sprintf(path, "%s%s", BATIF_PREFIX, ifname);
+  sprintf(fnamebuf, "%s%s%s", VIRTIF_PREFIX, ifname, LOWERGLOB_SUFFIX);
+  glob(fnamebuf, GLOB_NOSORT | GLOB_NOESCAPE, NULL, &globbuf);
 
-  return access(path, F_OK) == 0;
+  if (globbuf.gl_pathc == 1) {
+    lowentry = alloca(1 + strlen(globbuf.gl_pathv[0]));
+    strncpy(lowentry, globbuf.gl_pathv[0], 1 + strlen(globbuf.gl_pathv[0]));
+  }
+
+  globfree(&globbuf);
+
+  if (!lowentry) {
+    char *path = alloca(1 + strlen(NETIF_PREFIX) + strlen(ifname));
+    sprintf(path, "%s%s", NETIF_PREFIX, ifname);
+
+    if(access(path, F_OK) != 0)
+      return false;
+
+    strncpy(hwifname, ifname, IF_NAMESIZE - 1);
+    return true;
+  } else {
+    char buf[PATH_MAX];
+    ssize_t len;
+
+    if ((len = readlink(lowentry, buf, sizeof(buf)-1)) != -1)
+      buf[len] = '\0';
+    else
+      return false;
+
+    if (strncmp(buf, "../", 3) == 0) {
+      return interface_get_lowest(strrchr(buf, '/') + 1, hwifname);
+    } else {
+      return false;
+    }
+  }
 }
 
-int main(void) {
-  char *ifname = getenv("QUERY_STRING");
-
-  if (ifname == NULL)
+int main(int argc, char *argv[]) {
+  if (argc != 2)
     badrequest();
 
-  if (!interface_is_valid(ifname))
+  const char *ifname = argv[1];
+  char hwifname[IF_NAMESIZE] = "";
+
+  if (strlen(ifname) >= IF_NAMESIZE)
     badrequest();
 
-  const struct iwinfo_ops *iw = iwinfo_backend(ifname);
+  if (strcspn(ifname, "/\\[]{}*?") != strlen(ifname))
+    badrequest();
+
+  if (!interface_get_lowest(ifname, hwifname))
+    badrequest();
+
+  const struct iwinfo_ops *iw = iwinfo_backend(hwifname);
 
   if (iw == NULL)
     badrequest();
 
-  printf("Access-Control-Allow-Origin: *\n");
   printf("Content-type: text/event-stream\n\n");
 
   while (true) {
     struct json_object *obj;
-    obj = get_stations(iw, ifname);
+    obj = get_stations(iw, hwifname);
     printf("data: %s\n\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PLAIN));
     fflush(stdout);
     json_object_put(obj);

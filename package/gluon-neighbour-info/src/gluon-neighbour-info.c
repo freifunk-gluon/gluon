@@ -58,7 +58,7 @@ void getclock(struct timeval *tv) {
 }
 
 /* Assumes a and b are normalized */
-void tv_subtract (struct timeval *r, struct timeval *a, struct timeval *b) {
+void tv_subtract (struct timeval *r, const struct timeval *a, const struct timeval *b) {
   r->tv_usec = a->tv_usec - b->tv_usec;
   r->tv_sec = a->tv_sec - b->tv_sec;
 
@@ -68,18 +68,17 @@ void tv_subtract (struct timeval *r, struct timeval *a, struct timeval *b) {
   }
 }
 
-ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, struct timeval *timeout, struct timeval *offset) {
-  struct timeval now, delta;
-  ssize_t ret;
-
-  setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, timeout, sizeof(*timeout));
-  ret = recv(socket, buffer, length, flags);
+ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, const struct timeval *timeout) {
+  struct timeval now, timeout_left;
 
   getclock(&now);
-  tv_subtract(&delta, &now, offset);
-  tv_subtract(timeout, timeout, &delta);
+  tv_subtract(&timeout_left, timeout, &now);
 
-  return ret;
+  if (timeout_left.tv_sec < 0)
+    return -1;
+
+  setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout_left, sizeof(timeout_left));
+  return recv(socket, buffer, length, flags);
 }
 
 int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, const char *sse, double timeout, unsigned int max_count) {
@@ -94,14 +93,18 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
     exit(EXIT_FAILURE);
   }
 
-  struct timeval tv_timeout, tv_offset;
-  tv_timeout.tv_sec = (int) timeout;
-  tv_timeout.tv_usec = ((int) (timeout * 1000000)) % 1000000;
+  struct timeval tv_timeout;
+  getclock(&tv_timeout);
 
-  getclock(&tv_offset);
+  tv_timeout.tv_sec += (int) timeout;
+  tv_timeout.tv_usec += ((int) (timeout * 1000000)) % 1000000;
+  if (tv_timeout.tv_usec >= 1000000) {
+    tv_timeout.tv_usec -= 1000000;
+    tv_timeout.tv_sec += 1;
+  }
 
   do {
-    ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout, &tv_offset);
+    ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout);
 
     if (ret < 0)
       break;
@@ -133,7 +136,6 @@ int main(int argc, char **argv) {
   int sock;
   struct sockaddr_in6 client_addr = {};
   char *request_string = NULL;
-  struct in6_addr mgroup_addr;
 
   sock = socket(PF_INET6, SOCK_DGRAM, 0);
 
@@ -147,9 +149,7 @@ int main(int argc, char **argv) {
 
   opterr = 0;
 
-  int port_set = 0;
-  int destination_set = 0;
-  unsigned int max_count = 0;
+  int max_count = 0;
   double timeout = 3.0;
   char *sse = NULL;
   bool loop = false;
@@ -179,6 +179,10 @@ int main(int argc, char **argv) {
         break;
       case 't':
         timeout = atof(optarg);
+        if (timeout < 0) {
+          perror("Negative timeout not supported");
+          exit(EXIT_FAILURE);
+        }
         break;
       case 's':
         sse = optarg;
@@ -206,8 +210,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  if (sse)
+  if (sse) {
     fputs("Content-Type: text/event-stream\n\n", stdout);
+    fflush(stdout);
+  }
 
   do {
     ret = request(sock, &client_addr, request_string, sse, timeout, max_count);

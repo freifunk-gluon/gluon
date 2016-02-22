@@ -1,0 +1,45 @@
+#!/bin/sh /etc/rc.common
+
+EXTRA_COMMANDS='restart_if_running'
+
+START=50
+
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+DEVLIST=/var/run/gluon-respondd.devs
+DAEMON=/usr/bin/respondd
+LOCK=/var/run/gluon-respondd.lock
+
+
+do_start() {
+	DEVS=$(cat $DEVLIST 2>/dev/null | while read dev iface; do echo -n " -i $dev"; done)
+	service_start $DAEMON -g ff02::2:1001 -p 1001 -d /lib/gluon/respondd $DEVS
+}
+
+do_stop() {
+	service_stop $DAEMON
+}
+
+start() {
+	lock $LOCK
+	do_start
+	lock -u $LOCK
+}
+
+stop() {
+	lock $LOCK
+	do_stop
+	lock -u $LOCK
+}
+
+restart_if_running() {
+	lock $LOCK
+
+	if service_check $DAEMON; then
+		do_stop
+		do_start
+	fi
+
+	lock -u $LOCK
+}

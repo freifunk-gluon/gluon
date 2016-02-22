@@ -1,2 +1,5 @@
-rule 'MULTICAST_OUT -p IPv6 --ip6-protocol 0 -j RETURN' -- hop-by-hop
+rule 'MULTICAST_OUT -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type echo-request -j DROP'
+rule 'MULTICAST_OUT -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 139 -j DROP'
 rule 'MULTICAST_OUT -p IPv6 --ip6-protocol ipv6-icmp -j RETURN'
+
+rule 'MULTICAST_OUT -p IPv6 --ip6-protocol 0 -j RETURN' -- hop-by-hop

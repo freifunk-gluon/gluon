@@ -1,0 +1,59 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 9 Feb 2016 18:22:29 +0100
+Subject: ath10k-firmware: add Candela Technologies firmware for QCA988X
+
+diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
+index 882294c..c6e6f2d 100644
+--- a/package/firmware/ath10k-firmware/Makefile
++++ b/package/firmware/ath10k-firmware/Makefile
+@@ -46,6 +46,26 @@ define Download/ath10k-firmware-qca988x
+ endef
+ $(eval $(call Download,ath10k-firmware-qca988x))
+ 
++
++define Package/ath10k-firmware-qca988x-ct
++$(Package/ath10k-firmware-default)
++  TITLE:=ath10k firmware for QCA988x devices (Candela Technologies version)
++  CONFLICTS:=ath10k-firmware-qca988x
++endef
++
++QCA988X_CT_FIRMWARE_FILE:=firmware-5-ct-full-community.bin
++
++define Download/ath10k-firmware-qca988x-ct
++  # See http://www.candelatech.com/ath10k.php
++  #URL:=http://www.candelatech.com/downloads/ath10k-10-2/
++  # Update to beta version (will switch back to official URL after v2 release)
++  URL:=https://home.universe-factory.net/neoraider/
++  FILE:=$(QCA988X_CT_FIRMWARE_FILE)
++  MD5SUM:=9aa205cfd6b98e695ca8e9ae6d1bcb6b
++endef
++$(eval $(call Download,ath10k-firmware-qca988x-ct))
++
++
+ define Package/ath10k-firmware-qca99x0
+ $(Package/ath10k-firmware-default)
+   TITLE:=ath10k firmware for QCA99x0 devices
+@@ -81,6 +101,16 @@ define Package/ath10k-firmware-qca988x/install
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
+ endef
+ 
++define Package/ath10k-firmware-qca988x-ct/install
++	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA988X/hw2.0
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/QCA988X/board.bin \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
++	$(INSTALL_DATA) \
++		$(DL_DIR)/$(QCA988X_CT_FIRMWARE_FILE) \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
++endef
++
+ define Package/ath10k-firmware-qca6174/install
+ 	$(INSTALL_DIR) $(1)/lib/firmware/ath10k
+ 	$(CP) $(PKG_BUILD_DIR)/QCA6174 $(1)/lib/firmware/ath10k/
+@@ -100,5 +130,6 @@ define Package/ath10k-firmware-qca99x0/install
+ endef
+ 
+ $(eval $(call BuildPackage,ath10k-firmware-qca988x))
++$(eval $(call BuildPackage,ath10k-firmware-qca988x-ct))
+ $(eval $(call BuildPackage,ath10k-firmware-qca99x0))
+ $(eval $(call BuildPackage,ath10k-firmware-qca6174))

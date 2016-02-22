@@ -24,9 +24,10 @@ Features
 
    features/configmode
    features/autoupdater
+   features/wlan-configuration
    features/private-wlan
    features/wired-mesh
-   features/announce
+   features/monitoring
    features/authorized-keys
    features/roles
 
@@ -50,6 +51,8 @@ Packages
    :maxdepth: 1
 
    package/gluon-client-bridge
+   package/gluon-ebtables-filter-multicast
+   package/gluon-ebtables-filter-ra-dhcp
 
 Releases
 --------
@@ -57,7 +60,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
-   releases/v2015.2
+   releases/v2016.1
    releases/v2015.1.2
    releases/v2015.1.1
    releases/v2015.1
@@ -79,12 +82,14 @@ ar71xx-generic
 * Buffalo
 
   - WZR-HP-AG300H / WZR-600DHP
+  - WZR-HP-G300NH
   - WZR-HP-G450H
 
 * D-Link
 
-  - DIR-825 (B1)
+  - DIR-505 (A1)
   - DIR-615 (C1)
+  - DIR-825 (B1)
 
 * GL-Inet
 
@@ -103,10 +108,10 @@ ar71xx-generic
 
 * TP-Link
 
-  - CPE210 (v1)
-  - CPE220 (v1)
-  - CPE510 (v1)
-  - CPE520 (v1)
+  - CPE210 (v1.0, v1.1)
+  - CPE220 (v1.0, v1.1)
+  - CPE510 (v1.0, v1.1)
+  - CPE520 (v1.0, v1.1)
   - TL-MR3020 (v1)
   - TL-MR3040 (v1, v2)
   - TL-MR3220 (v1, v2)
@@ -117,32 +122,43 @@ ar71xx-generic
   - TL-WA830RE (v1, v2)
   - TL-WA850RE (v1)
   - TL-WA860RE (v1)
-  - TL-WA901N/ND (v2, v3)
+  - TL-WA901N/ND (v1, v2, v3)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
-  - TL-WR1043N/ND (v1, v2)
   - TL-WR703N (v1)
-  - TL-WR710N (v1)
+  - TL-WR710N (v1, v2)
   - TL-WR740N (v1, v3, v4, v5)
   - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
+  - TL-WR801N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10)
   - TL-WR842N/ND (v1, v2)
-  - TL-WR941N/ND (v2, v3, v4, v5)
+  - TL-WR843N/ND (v1)
+  - TL-WR940N (v1, v2, v3)
+  - TL-WR941ND (v2, v3, v4, v5, v6)
+  - TL-WR1043N/ND (v1, v2, v3)
   - TL-WR2543N/ND (v1)
 
 * Ubiquiti
 
-  - Bullet M2
-  - Nanostation M2
+  - Air Gateway
+  - Air Router
+  - Bullet M
+  - Nanostation M
   - Nanostation M XW
   - Loco M XW
-  - Picostation M2
-  - Rocket M2
+  - Picostation M
+  - Rocket M
   - UniFi AP
   - UniFi AP Pro
   - UniFi AP Outdoor
+  - UniFi AP Outdoor+
+
+* Western Digital
+
+  - My Net N600
+  - My Net N750
 
 ar71xx-nand
 ^^^^^^^^^^^
@@ -170,6 +186,20 @@ See also: :doc:`user/x86`
 x86-kvm_guest
 ^^^^^^^^^^^^^
 * x86-kvm
+
+See also: :doc:`user/x86`
+
+x86-xen_domu
+^^^^^^^^^^^^
+* x86-xen
+
+See also: :doc:`user/x86`
+
+x86-64
+^^^^^^
+* x86-64-generic
+* x86-64-virtualbox
+* x86-64-vmware
 
 See also: :doc:`user/x86`
 

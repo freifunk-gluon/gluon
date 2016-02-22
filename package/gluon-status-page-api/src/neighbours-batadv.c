@@ -14,10 +14,8 @@ static json_object *neighbours(void) {
 
   f = fopen("/sys/kernel/debug/batman_adv/bat0/originators" , "r");
 
-  if (f == NULL) {
-    perror("Can not open bat0/originators");
-    exit(1);
-  }
+  if (f == NULL)
+    return NULL;
 
   while (!feof(f)) {
     char mac1[18];
@@ -50,15 +48,17 @@ static json_object *neighbours(void) {
 int main(void) {
   struct json_object *obj;
 
-  printf("Access-Control-Allow-Origin: *\n");
   printf("Content-type: text/event-stream\n\n");
+  fflush(stdout);
 
   while (1) {
     obj = neighbours();
-    printf("data: %s\n\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PLAIN));
-    fflush(stdout);
-    json_object_put(obj);
-    sleep(1);
+    if (obj) {
+      printf("data: %s\n\n", json_object_to_json_string_ext(obj, JSON_C_TO_STRING_PLAIN));
+      fflush(stdout);
+      json_object_put(obj);
+    }
+    sleep(10);
   }
 
   return 0;

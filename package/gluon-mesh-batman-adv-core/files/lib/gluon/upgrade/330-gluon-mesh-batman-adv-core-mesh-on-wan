@@ -10,6 +10,7 @@ if not c:get('network', 'mesh_wan') then
             { ifname = 'br-wan'
             , proto  = 'batadv'
             , mesh   = 'bat0'
+            , mesh_no_rebroadcast = '1'
             , auto   = site.mesh_on_wan and 1 or 0
             })
 end

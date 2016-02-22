@@ -1,5 +1,0 @@
-local ret = {
-	enabled = uci:get('fastd', 'mesh_vpn', 'enabled') ~= 0,
-	version = util.readline(io.popen('exec fastd -v')):match('^[^%s]+%s+(.+)'),
-}
-return ret

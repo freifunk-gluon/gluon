@@ -1,0 +1,276 @@
+Gluon 2016.1
+============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* Buffalo
+
+  - WZR-HP-G300NH
+
+* D-Link
+
+  - DIR-505 (A1)
+
+* TP-Link
+
+  - CPE210/220/510/520 v1.1
+  - TL-WA901N/ND v1
+  - TL-WR710N v2
+  - TL-WR801N/ND v1, v2
+  - TL-WR841N/ND v10
+  - TL-WR843N/ND v1
+  - TL-WR940N v1, v2, v3
+  - TL-WR941ND v6
+  - TL-WR1043N/ND v3
+
+* Ubiquiti
+
+  - airGateway
+  - airRouter
+  - UniFi AP Outdoor+
+
+* Western Digital
+
+  - My Net N600
+  - My Net N750
+
+x86-xen_domu
+^^^^^^^^^^^^
+
+New target containing the necessary drivers for use in Xen.
+
+x86-64
+^^^^^^
+
+64bit version of `x86-generic`. The generic image can also be used in KVM with VirtIO.
+
+New features
+~~~~~~~~~~~~
+
+Kernel module opkg repository
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We've not been able to keep ABI compatiblity with the kernel of the official OpenWrt images.
+Therefore, Gluon now generates an opkg repository with modules itself.
+
+The repository can be found at `output/modules/` by default, the image output directory has
+been moved from `images/` to `output/images/`. See the updated :doc:`../user/getting_started` guide
+for information on the handling of the signing keys for this repository.
+
+The `opkg_repo` site.conf option has been replaced to allow specifying this and other additional repositories.
+
+New status page
+^^^^^^^^^^^^^^^
+
+The new status page provides a visually pleasing experience, and displays all important information
+on a node in a clear manner. It also contains a real-time signal strength graph for all neighbouring
+nodes to aid with the alignment of antennas.
+
+802.11s mesh support
+^^^^^^^^^^^^^^^^^^^^
+
+Gluon now supports using 802.11s for its mesh links instead of IBSS (Adhoc). This will allow supporting
+more WLAN hardware in the future (like Ralink/Mediatek, which don't support AP and IBSS mode simultaneously).
+
+Note that batman-adv is still used on top of 802.11s (and 802.11s forwarding is disabled), the mesh routing protocol
+provided by 802.11s is not used.
+
+Multicast filter extension
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The `gluon-ebtables-filter-multicast` package has been extended to filter out multicast
+ICMP and ICMPv6 Echo Requests (ping) and Node Information Queries (RFC4620). This prevents
+pings to multicast addresses like ff02::1 to cause traffic peaks
+(as all nodes and clients would answer such a ping).
+
+French translation
+^^^^^^^^^^^^^^^^^^
+
+A French translation for the Config Mode/Expert Mode has been added.
+
+Bugfixes
+~~~~~~~~
+
+* Update kernel code for the QCA953x
+
+  Might improve stability of the TP-Link TL-WR841N/ND v9.
+* Fix model detection on some Netgear WNDR3700v2
+
+  The broken devices will identify as "NETGEAR ".
+  This also breaks the autoupdater, making a manual upgrade necessary.
+* Ensure that `odhcp6c` doesn't spawn multiple instances of ``dhcpv6.script``
+* Fix support for Buffalo WZR-600DHP
+
+  A flashable factory image is generated now. The sysupgrade image is still shared
+  with the WZR-HP-AG300H.
+
+Site changes
+~~~~~~~~~~~~
+
+* ``site.conf``
+
+  - New WLAN configuration
+
+    ``wifi24`` and ``wifi5`` need to be updated to a new more flexible format.
+    A configuration using the old format
+
+    ::
+
+      {
+        channel = 1,
+        htmode = 'HT20'
+        ssid = 'entenhausen.freifunk.net',
+        mesh_ssid = 'xe:xx:xx:xx:xx:xx',
+        mesh_bssid = 'xe:xx:xx:xx:xx:xx',
+        mesh_mcast_rate = 12000,
+      }
+
+    would look like this in the new format::
+
+      {
+        channel = 1,
+        ap = {
+          ssid = 'entenhausen.freifunk.net',
+        },
+        ibss = {
+          ssid = 'xe:xx:xx:xx:xx:xx',
+          bssid = 'xe:xx:xx:xx:xx:xx',
+          mcast_rate = 12000,
+        },
+      }
+
+    The ``htmode`` option has been dropped, the channel width is now always set to 20MHz
+    (see https://github.com/freifunk-gluon/gluon/issues/487 for a discussion of this change).
+
+    In addition to the old IBSS (Adhoc) based meshing, 802.11s-based meshing can be configured
+    using the ``mesh`` section. Example::
+
+      {
+        channel = 1,
+        ap = {
+          ssid = 'entenhausen.freifunk.net',
+        },
+        mesh = {
+          id = 'mesh.entenhausen.freifunk.net', -- can by any string, human-readable or random
+          mcast_rate = 12000,
+        },
+      }
+
+    While using ``ibss`` and ``mesh`` at the same time is possible, is causes high load in
+    very active meshes, so it is advisable to avoid such configurations.
+
+  - Bandwidth limitation defaults
+
+    The old section ``simple_tc.mesh_vpn`` has been moved to ``fastd_mesh_vpn.bandwidth_limit`` and the ``ifname``
+    field isn't used anymore. What looked like this
+    before
+
+    ::
+
+      simple_tc = {
+        mesh_vpn = {
+          ifname = 'mesh-vpn',
+          enabled = false,
+          limit_ingress = 3000,
+          limit_egress = 200,
+        }
+      }
+
+    needs to be changed to
+
+    ::
+
+      fastd_mesh_vpn = {
+        -- ...
+
+        bandwidth_limit = {
+          enabled = false,
+          ingress = 3000,
+          egress = 200,
+        },
+      }
+
+  - opkg repository configuration
+
+    The opkg configuration has been changed to be more flexible and allow specifying custom repositories.
+    Example::
+
+      opkg = {
+        openwrt = 'http://opkg.services.ffeh/openwrt/%n/%v/%S/packages',
+        extra = {
+          modules = 'http://opkg.services.ffeh/modules/gluon-%GS-%GR/%S',
+        },
+      }
+
+    The keys of the ``extra`` table (like ``modules`` in this example) can be chosen arbitrarily.
+
+    Instead of explicitly specifying the whole URL, using patterns is recommended. The following
+    patterns are understood:
+
+    - ``%n`` is replaced by the OpenWrt version codename (e.g. "chaos_calmer")
+    - ``%v`` is replaced by the OpenWrt version number (e.g. "15.05")
+    - ``%S`` is replaced by the target architecture (e.g. "ar71xx/generic")
+    - ``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)
+    - ``%GV`` is replaced by the Gluon version
+    - ``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)
+
+
+* ``site.mk``
+
+  - The packages `gluon-announce` and `gluon-announced` were merged into
+    the package `gluon-respondd`. If you had any of them (probably
+    `gluon-announced`) in your package list, you have to replace them.
+
+
+* ``i18n/``
+
+  - The translations of ``gluon-config-mode:pubkey`` now have to show the fastd
+    public key themselves if desired, making the formatting of the key and whether it is shown at
+    all configurable. To retain the old format, add ``<p>`` to the beginning of
+    your translations and append::
+
+    "</p>"
+    "<div class=\"the-key\">"
+    " # <%= hostname %>"
+    " <br/>"
+    "<%= pubkey %>"
+    "</div>"
+
+Internals
+~~~~~~~~~
+
+* OpenWrt has been updated to Chaos Calmer
+* mac80211 has been backported from OpenWrt trunk r47249 (wireless-testing 2015-07-21)
+
+  This allows us to support the TL-WR940N v3/TL-WR941ND v6, which uses a TP9343 (QCA956x) SoC.
+* Several packages have been moved from the Gluon repo to the packages repo, removing references to Gluon:
+
+  - gluon-cron -> micrond (the crontabs are now read from ``/usr/lib/micron.d`` instead of ``/lib/gluon/cron``)
+  - gluon-radvd -> uradvd
+  - gluon-simple-tc -> simple-tc (the config file has been renamed as well)
+
+* Some of the Gluon-specific i18n support code in the build system has been removed, as LuCI now provides
+  similar facilities
+* The C-based `luci-lib-jsonc` library is now used for JSON encoding/decoding instead of the pure Lua `luci-lib-json`
+* The site config is now stored as JSON on the node. The Lua interface ``gluon.site_config`` is still available, and a C interface was added as part of the new package `libgluonutil`.
+* The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage. The Gluon integration package has
+  been renamed from `gluon-announced` to `gluon-respondd`.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Expert Mode is recommended.
+* batman-adv causes stability issues for both alfred and respondd/announced (`#177 <https://github.com/freifunk-gluon/gluon/issues/177>`_)
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd/announced API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced in the next release. The old API will still be supported for a while.

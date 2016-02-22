@@ -1,0 +1,63 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 4 Jan 2016 10:22:52 +0100
+Subject: kernel: fs, seq_file: fallback to vmalloc instead of oom kill processes
+
+diff --git a/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch b/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch
+new file mode 100644
+index 0000000..cad56f4
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch
+@@ -0,0 +1,53 @@
++From 5cec38ac866bfb8775638e71a86e4d8cac30caae Mon Sep 17 00:00:00 2001
++Message-Id: <5cec38ac866bfb8775638e71a86e4d8cac30caae.1451899087.git.mschiffer@universe-factory.net>
++From: David Rientjes <rientjes@google.com>
++Date: Fri, 12 Dec 2014 16:56:16 -0800
++Subject: [PATCH] fs, seq_file: fallback to vmalloc instead of oom kill
++ processes
++
++Since commit 058504edd026 ("fs/seq_file: fallback to vmalloc allocation"),
++seq_buf_alloc() falls back to vmalloc() when the kmalloc() for contiguous
++memory fails.  This was done to address order-4 slab allocations for
++reading /proc/stat on large machines and noticed because
++PAGE_ALLOC_COSTLY_ORDER < 4, so there is no infinite loop in the page
++allocator when allocating new slab for such high-order allocations.
++
++Contiguous memory isn't necessary for caller of seq_buf_alloc(), however.
++Other GFP_KERNEL high-order allocations that are <=
++PAGE_ALLOC_COSTLY_ORDER will simply loop forever in the page allocator and
++oom kill processes as a result.
++
++We don't want to kill processes so that we can allocate contiguous memory
++in situations when contiguous memory isn't necessary.
++
++This patch does the kmalloc() allocation with __GFP_NORETRY for high-order
++allocations.  This still utilizes memory compaction and direct reclaim in
++the allocation path, the only difference is that it will fail immediately
++instead of oom kill processes when out of memory.
++
++[akpm@linux-foundation.org: add comment]
++Signed-off-by: David Rientjes <rientjes@google.com>
++Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
++Cc: Christoph Hellwig <hch@infradead.org>
++Cc: Al Viro <viro@zeniv.linux.org.uk>
++Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
++Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
++---
++ fs/seq_file.c | 6 +++++-
++ 1 file changed, 5 insertions(+), 1 deletion(-)
++
++--- a/fs/seq_file.c
+++++ b/fs/seq_file.c
++@@ -36,7 +36,11 @@ static void *seq_buf_alloc(unsigned long
++ {
++ 	void *buf;
++ 
++-	buf = kmalloc(size, GFP_KERNEL | __GFP_NOWARN);
+++	/*
+++	 * __GFP_NORETRY to avoid oom-killings with high-order allocations -
+++	 * it's better to fall back to vmalloc() than to kill things.
+++	 */
+++	buf = kmalloc(size, GFP_KERNEL | __GFP_NORETRY | __GFP_NOWARN);
++ 	if (!buf && size > PAGE_SIZE)
++ 		buf = vmalloc(size);
++ 	return buf;

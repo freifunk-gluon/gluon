@@ -60,6 +60,6 @@ It may be disabled by running::
   done
   uci commit
 
-Please note that this configuration has changed in Gluon v2015.2. Using
-the old commands on v2015.2 will break the corresponding Export Mode
+Please note that this configuration has changed in Gluon v2016.1. Using
+the old commands on v2016.1 will break the corresponding Expert Mode
 settings.

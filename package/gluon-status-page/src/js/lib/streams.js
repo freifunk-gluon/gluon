@@ -55,7 +55,7 @@ define(["bacon", "lib/helper"], function(Bacon, Helper) {
 
   function statistics(ip) {
     var url = Helper.buildUrl(ip, "dyn/statistics")
-    return simpleStream(url)
+    return simpleStream(url).skipDuplicates(function (a, b) {return (a.uptime === b.uptime)})
   }
 
   return { nodeInfo: nodeInfo

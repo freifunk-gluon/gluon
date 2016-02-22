@@ -225,6 +225,12 @@ function (Helper, SignalGraph, Signal) {
     return !(a < b || a > b)
   }
 
+  function getter(k) {
+    return function(obj) {
+      return obj[k]
+    }
+  }
+
   return function (nodeInfo, stream, mgmtBus) {
     var stopStream, div
 
@@ -252,9 +258,10 @@ function (Helper, SignalGraph, Signal) {
 
         remove.forEach(function (d) { div.removeChild(d) })
 
-        for (var k in d)
+        for (var k in d) {
           if (!(k in have))
-            new Interface(div, nodeInfo, k, stream.map("." + k), mgmtBus)
+            new Interface(div, nodeInfo, k, stream.map(getter(k)), mgmtBus)
+        }
       }
     }
 

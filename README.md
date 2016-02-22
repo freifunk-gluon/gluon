@@ -1,5 +1,5 @@
 Documentation (incomplete at this time, contribute if you can!) may be found at
-http://gluon.readthedocs.org/
+http://gluon.readthedocs.org/.
 
 If you're new to Gluon and ready to get your feet wet, have a look at the
 [Getting Started Guide](http://gluon.readthedocs.org/en/latest/user/getting_started.html).
@@ -8,15 +8,15 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 
 ## Issues & Feature requests
 
-Before opening an issue make sure to read check whether any existing issues
+Before opening an issue, make sure to check whether any existing issues
 (open or closed) match. If you're suggesting a new feature, drop by on IRC or
 our mailinglist to discuss it first.
 
 ## Use a release!
 
-Please refrain from using the master branch for anything else but development purposes!
+Please refrain from using the `master` branch for anything else but development purposes!
 Use the most recent release instead. You can list all relaseses by running `git branch -a`
-and switch to one by running `git checkout v2015.1 && make update`.
+and switch to one by running `git checkout v2016.1 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
 If you upgrade using random master commits the nodes *will break* eventually.

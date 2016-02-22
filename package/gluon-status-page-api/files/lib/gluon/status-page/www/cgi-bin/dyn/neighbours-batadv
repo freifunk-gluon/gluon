@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo 'Access-Control-Allow-Origin: *'
+
+CMD='exec /lib/gluon/status-page/providers/neighbours-batadv'
+
+exec /usr/sbin/sse-multiplex "$CMD"
