@@ -171,7 +171,7 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyPackets(d) {
-    var v = new Intl.NumberFormat("de-DE", {maximumFractionDigits: 0}).format(d)
+    var v = Helper.formatNumberFixed(d, 0)
     return v + " Pakete/s"
   }
 
@@ -183,7 +183,7 @@ define(["lib/helper"], function (Helper) {
       prefix++
     }
 
-    d = new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(d)
+    d = Helper.formatNumber(d, 3)
     return d + " " + prefixes[prefix]
   }
 
@@ -220,11 +220,11 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyNVRAM(usage) {
-    return new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(usage * 100) + "% belegt"
+    return Helper.formatNumber(usage * 100, 3) + "% belegt"
   }
 
   function prettyLoad(load) {
-    return new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(load)
+    return Helper.formatNumberFixed(load, 2)
   }
 
   function prettyRAM(memory) {
