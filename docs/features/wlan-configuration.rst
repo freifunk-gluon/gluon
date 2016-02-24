@@ -24,3 +24,11 @@ existing configuration will also be set for the new configuration.
 This allows upgrades to change from IBSS to 11s and vice-versa while retaining the
 "wireless meshing is enabled/disabled" property configured by the user regardless
 of the used mode.
+
+During upgrades the wifi channel of the 2.4GHz and 5GHz radio will be restored to the channel
+configured in the site.conf. If you need to preserve a user defined wifi channel during upgrades
+you can configure this via the uci section ``gluon-core.wireless``::
+
+  uci set gluon-core.@wireless[0].preserve_channels='1'
+
+Keep in mind that nodes running wifi interfaces on custom channels can't mesh with default nodes anymore!
