@@ -51,6 +51,25 @@ define([ "bacon" ], function (Bacon) {
     return dictGet(dict[k], key)
   }
 
+  function localizeNumber(d) {
+    var sep = ','
+    return d.replace('.', sep)
+  }
+
+  function formatNumberFixed(d, digits) {
+    return localizeNumber(d.toFixed(digits))
+  }
+
+  function formatNumber(d, digits) {
+    digits--
+
+    for (var v = d; v >= 10 && digits > 0; v /= 10)
+      digits--
+
+    // avoid toPrecision as it might produce strings in exponential notation
+    return formatNumberFixed(d, digits)
+  }
+
   function haversine() {
     var radians = Array.prototype.map.call(arguments, function(deg) { return deg / 180.0 * Math.PI })
     var lat1 = radians[0], lon1 = radians[1], lat2 = radians[2], lon2 = radians[3]
@@ -66,6 +85,8 @@ define([ "bacon" ], function (Bacon) {
          , request: request
          , getJSON: getJSON
          , dictGet: dictGet
+         , formatNumber: formatNumber
+         , formatNumberFixed: formatNumberFixed
          , haversine: haversine
          }
 })
