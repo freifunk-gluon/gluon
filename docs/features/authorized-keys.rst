@@ -8,7 +8,7 @@ If you select this package, add a list of authorized keys to ``site.conf`` like 
 
   {
     authorized_keys = { 'ssh-rsa AAA.... user1@host',
-                        'ssh-rsa AAA.... user2@host },
+                        'ssh-rsa AAA.... user2@host' },
     hostname_prefix = ...
     ...
 
