@@ -178,7 +178,7 @@ define(["lib/helper"], function (Helper) {
   function prettyPrefix(prefixes, step, d) {
     var prefix = 0
 
-    while (d > step && prefix < 4) {
+    while (d > step && prefix < prefixes.length - 1) {
       d /= step
       prefix++
     }
@@ -187,12 +187,16 @@ define(["lib/helper"], function (Helper) {
     return d + " " + prefixes[prefix]
   }
 
+  function prettySize(d) {
+    return prettyPrefix([ "", "k", "M", "G", "T" ], 1024, d)
+  }
+
   function prettyBits(d) {
-    return prettyPrefix([ "bps", "kbps", "Mbps", "Gbps" ], 1024, d * 8)
+    return prettySize(d * 8) + "bps"
   }
 
   function prettyBytes(d) {
-    return prettyPrefix([ "B", "kB", "MB", "GB", "TB" ], 1024, d)
+    return prettySize(d) + "B"
   }
 
   function prettyUptime(seconds) {
