@@ -1,0 +1,39 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 25 Feb 2016 21:40:19 +0100
+Subject: ar71xx, firmware-utils: split ubdev01 flash layout from XM
+
+The ubdev01 profile defines its own MTDPARTS with smaller firmware
+partition, so give it its own UBNT_BOARD in mkfwimage.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 4b29d9c..0806f15 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -2031,7 +2031,7 @@ $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,C
+ $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))
+ $(eval $(call SingleProfile,UAPPRO,64k,UBNTUNIFIOUTDOORPLUS,ubnt-unifi-outdoor-plus,UBNT-UOP,ttyS0,115200,BZ,BZ,ar7240))
+ 
+-$(eval $(call SingleProfile,UBDEV,64kraw,UBDEV01,ubdev01,UBNT-UF,ttyS0,115200,XM,XM,ar7240))
++$(eval $(call SingleProfile,UBDEV,64kraw,UBDEV01,ubdev01,UBNT-UF,ttyS0,115200,UBDEV01,XM,ar7240))
+ 
+ $(eval $(call SingleProfile,UBNT,64k,UBNTRS,ubnt-rs,UBNT-RS,ttyS0,115200,RS,RSx,ar7100))
+ $(eval $(call SingleProfile,UBNT,64k,UBNTRSPRO,ubnt-rspro,UBNT-RSPRO,ttyS0,115200,RSPRO,RSPRO,ar7100pro))
+diff --git a/tools/firmware-utils/src/mkfwimage.c b/tools/firmware-utils/src/mkfwimage.c
+index 00bf439..5dae284 100644
+--- a/tools/firmware-utils/src/mkfwimage.c
++++ b/tools/firmware-utils/src/mkfwimage.c
+@@ -81,6 +81,12 @@ fw_layout_t fw_layout_data[] = {
+ 		.kern_entry	=	0x80002000,
+ 		.firmware_max_length=	0x006A0000,
+ 	},
++	{
++		.name		=	"UBDEV01",
++		.kern_start	=	0x9f050000,
++		.kern_entry	=	0x80002000,
++		.firmware_max_length=	0x006A0000,
++	},
+ 	{	.name		=	"",
+ 	},
+ };
