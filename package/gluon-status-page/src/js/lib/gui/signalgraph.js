@@ -110,7 +110,7 @@ define(function () {
     function resize() {
       var newWidth = canvas.parentNode.clientWidth
 
-      if (newWidth === 0)
+      if (newWidth === 0 || newWidth === canvas.width)
         return
 
       var lastImage = ctx.getImageData(0, 0, newWidth, canvas.height)
