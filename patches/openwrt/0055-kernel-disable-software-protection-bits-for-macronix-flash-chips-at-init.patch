@@ -1,0 +1,22 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 26 Feb 2016 04:24:06 +0100
+Subject: kernel: disable software protection bits for macronix flash chips at init
+
+Backport of r47626
+
+diff --git a/target/linux/generic/patches-3.18/465-m25p80-mx-disable-software-protection.patch b/target/linux/generic/patches-3.18/465-m25p80-mx-disable-software-protection.patch
+new file mode 100644
+index 0000000..d7d7eec
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/465-m25p80-mx-disable-software-protection.patch
+@@ -0,0 +1,10 @@
++--- a/drivers/mtd/spi-nor/spi-nor.c
+++++ b/drivers/mtd/spi-nor/spi-nor.c
++@@ -962,6 +962,7 @@ int spi_nor_scan(struct spi_nor *nor, co
++ 
++ 	if (JEDEC_MFR(info->jedec_id) == CFI_MFR_ATMEL ||
++ 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_INTEL ||
+++	    JEDEC_MFR(info->jedec_id) == CFI_MFR_MACRONIX ||
++ 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST) {
++ 		write_enable(nor);
++ 		write_sr(nor, 0);
