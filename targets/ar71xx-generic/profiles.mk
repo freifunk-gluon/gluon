@@ -264,3 +264,9 @@ $(eval $(call GluonModel,MYNETN600,mynet-n600,wd-my-net-n600))
 # WD MyNet N750
 $(eval $(call GluonProfile,MYNETN750))
 $(eval $(call GluonModel,MYNETN750,mynet-n750,wd-my-net-n750))
+
+## Onion
+
+# Omega
+$(eval $(call GluonProfile,OMEGA))
+$(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
