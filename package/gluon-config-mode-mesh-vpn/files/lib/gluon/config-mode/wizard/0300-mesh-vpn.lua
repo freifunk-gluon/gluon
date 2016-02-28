@@ -28,13 +28,13 @@ function M.section(form)
   o:depends("_limit_enabled", "1")
   o.value = uci:get("simple-tc", "mesh_vpn", "limit_ingress")
   o.rmempty = false
-  o.datatype = "integer"
+  o.datatype = "uinteger"
 
   o = s:option(cbi.Value, "_limit_egress", i18n.translate("Upstream (kbit/s)"))
   o:depends("_limit_enabled", "1")
   o.value = uci:get("simple-tc", "mesh_vpn", "limit_egress")
   o.rmempty = false
-  o.datatype = "integer"
+  o.datatype = "uinteger"
 end
 
 function M.handle(data)
@@ -49,11 +49,11 @@ function M.handle(data)
     uci:set("simple-tc", "mesh_vpn", "ifname", "mesh-vpn")
 
     if data._limit_ingress ~= nil then
-      uci:set("simple-tc", "mesh_vpn", "limit_ingress", data._limit_ingress)
+      uci:set("simple-tc", "mesh_vpn", "limit_ingress", data._limit_ingress:trim())
     end
 
     if data._limit_egress ~= nil then
-      uci:set("simple-tc", "mesh_vpn", "limit_egress", data._limit_egress)
+      uci:set("simple-tc", "mesh_vpn", "limit_egress", data._limit_egress:trim())
     end
 
     uci:commit("simple-tc")
