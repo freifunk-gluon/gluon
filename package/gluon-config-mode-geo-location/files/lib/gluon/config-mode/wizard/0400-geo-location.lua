@@ -45,10 +45,10 @@ function M.handle(data)
 
   uci:set("gluon-node-info", sname, "share_location", data._location)
   if data._location and data._latitude ~= nil and data._longitude ~= nil then
-    uci:set("gluon-node-info", sname, "latitude", data._latitude)
-    uci:set("gluon-node-info", sname, "longitude", data._longitude)
+    uci:set("gluon-node-info", sname, "latitude", data._latitude:trim())
+    uci:set("gluon-node-info", sname, "longitude", data._longitude:trim())
     if data._altitude ~= nil then
-      uci:set("gluon-node-info", sname, "altitude", data._altitude)
+      uci:set("gluon-node-info", sname, "altitude", data._altitude:trim())
     else
       uci:delete("gluon-node-info", sname, "altitude")
     end

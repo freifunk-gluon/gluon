@@ -99,9 +99,9 @@ function f.handle(self, state, data)
   if state == FORM_VALID then
     uci:set("network", "wan", "proto", data.ipv4)
     if data.ipv4 == "static" then
-      uci:set("network", "wan", "ipaddr", data.ipv4_addr)
-      uci:set("network", "wan", "netmask", data.ipv4_netmask)
-      uci:set("network", "wan", "gateway", data.ipv4_gateway)
+      uci:set("network", "wan", "ipaddr", data.ipv4_addr:trim())
+      uci:set("network", "wan", "netmask", data.ipv4_netmask:trim())
+      uci:set("network", "wan", "gateway", data.ipv4_gateway:trim())
     else
       uci:delete("network", "wan", "ipaddr")
       uci:delete("network", "wan", "netmask")
@@ -110,8 +110,8 @@ function f.handle(self, state, data)
 
     uci:set("network", "wan6", "proto", data.ipv6)
     if data.ipv6 == "static" then
-      uci:set("network", "wan6", "ip6addr", data.ipv6_addr)
-      uci:set("network", "wan6", "ip6gw", data.ipv6_gateway)
+      uci:set("network", "wan6", "ip6addr", data.ipv6_addr:trim())
+      uci:set("network", "wan6", "ip6gw", data.ipv6_gateway:trim())
     else
       uci:delete("network", "wan6", "ip6addr")
       uci:delete("network", "wan6", "ip6gw")
