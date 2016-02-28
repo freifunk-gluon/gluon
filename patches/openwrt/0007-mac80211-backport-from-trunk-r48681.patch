@@ -32234,69 +32234,14 @@ index 0000000..7ae8b1d
 ++#endif
 ++
 ++#endif /* __BCM47XX_NVRAM_H */
-diff --git a/target/linux/generic/patches-3.18/031-bcma-from-4.5.patch b/target/linux/generic/patches-3.18/031-bcma-from-4.5.patch
-new file mode 100644
-index 0000000..171395d
---- /dev/null
-+++ b/target/linux/generic/patches-3.18/031-bcma-from-4.5.patch
-@@ -0,0 +1,49 @@
-+--- a/drivers/bcma/main.c
-++++ b/drivers/bcma/main.c
-+@@ -637,11 +637,36 @@ static int bcma_device_uevent(struct dev
-+ 			      core->id.rev, core->id.class);
-+ }
-+ 
-+-static int __init bcma_modinit(void)
-++static unsigned int bcma_bus_registered;
-++
-++/*
-++ * If built-in, bus has to be registered early, before any driver calls
-++ * bcma_driver_register.
-++ * Otherwise registering driver would trigger BUG in driver_register.
-++ */
-++static int __init bcma_init_bus_register(void)
-+ {
-+ 	int err;
-+ 
-++	if (bcma_bus_registered)
-++		return 0;
-++
-+ 	err = bus_register(&bcma_bus_type);
-++	if (!err)
-++		bcma_bus_registered = 1;
-++
-++	return err;
-++}
-++#ifndef MODULE
-++fs_initcall(bcma_init_bus_register);
-++#endif
-++
-++/* Main initialization has to be done with SPI/mtd/NAND/SPROM available */
-++static int __init bcma_modinit(void)
-++{
-++	int err;
-++
-++	err = bcma_init_bus_register();
-+ 	if (err)
-+ 		return err;
-+ 
-+@@ -660,7 +685,7 @@ static int __init bcma_modinit(void)
-+ 
-+ 	return err;
-+ }
-+-fs_initcall(bcma_modinit);
-++module_init(bcma_modinit);
-+ 
-+ static void __exit bcma_modexit(void)
-+ {
 diff --git a/target/linux/generic/patches-3.18/032-bcma-from-4.6.patch b/target/linux/generic/patches-3.18/032-bcma-from-4.6.patch
-new file mode 100644
-index 0000000..a74d9ee
---- /dev/null
+index 8ec73d9..a74d9ee 100644
+--- a/target/linux/generic/patches-3.18/032-bcma-from-4.6.patch
 +++ b/target/linux/generic/patches-3.18/032-bcma-from-4.6.patch
-@@ -0,0 +1,444 @@
-+--- a/drivers/bcma/driver_chipcommon.c
-++++ b/drivers/bcma/driver_chipcommon.c
+@@ -1,6 +1,40 @@
+ --- a/drivers/bcma/driver_chipcommon.c
+ +++ b/drivers/bcma/driver_chipcommon.c
+-@@ -190,6 +190,7 @@ u32 bcma_chipco_watchdog_timer_set(struc
 +@@ -15,6 +15,8 @@
 + #include <linux/platform_device.h>
 + #include <linux/bcma/bcma.h>
@@ -32332,13 +32277,13 @@ index 0000000..a74d9ee
 +-		bcma_cc_write32(cc, BCMA_CC_PMU_WATCHDOG, ticks);
 ++		bcma_pmu_write32(cc, BCMA_CC_PMU_WATCHDOG, ticks);
 + 	} else {
-+ 		struct bcma_bus *bus = cc->core->bus;
-+ 
-+ 		if (bus->chipinfo.id != BCMA_CHIP_ID_BCM4707 &&
-++		    bus->chipinfo.id != BCMA_CHIP_ID_BCM47094 &&
-+ 		    bus->chipinfo.id != BCMA_CHIP_ID_BCM53018)
-+ 			bcma_core_set_clockmode(cc->core,
-+ 						ticks ? BCMA_CLKMODE_FAST : BCMA_CLKMODE_DYNAMIC);
+  		struct bcma_bus *bus = cc->core->bus;
+  
+  		if (bus->chipinfo.id != BCMA_CHIP_ID_BCM4707 &&
+@@ -8,6 +42,232 @@
+  		    bus->chipinfo.id != BCMA_CHIP_ID_BCM53018)
+  			bcma_core_set_clockmode(cc->core,
+  						ticks ? BCMA_CLKMODE_FAST : BCMA_CLKMODE_DYNAMIC);
 +@@ -314,9 +322,9 @@ u32 bcma_chipco_gpio_pulldown(struct bcm
 + 	return res;
 + }
@@ -32565,28 +32510,41 @@ index 0000000..a74d9ee
 ++	bcma_pmu_write32(cc, BCMA_CC_PMU_CTL, tmp);
 + }
 + EXPORT_SYMBOL_GPL(bcma_pmu_spuravoid_pllupdate);
-+--- a/drivers/bcma/driver_chipcommon_sflash.c
-++++ b/drivers/bcma/driver_chipcommon_sflash.c
-+@@ -38,6 +38,7 @@ static const struct bcma_sflash_tbl_e bc
-+ 	{ "M25P32", 0x15, 0x10000, 64, },
-+ 	{ "M25P64", 0x16, 0x10000, 128, },
-+ 	{ "M25FL128", 0x17, 0x10000, 256, },
-++	{ "MX25L25635F", 0x18, 0x10000, 512, },
-+ 	{ NULL },
-+ };
-+ 
-+--- a/drivers/bcma/scan.c
-++++ b/drivers/bcma/scan.c
-+@@ -98,6 +98,9 @@ static const struct bcma_device_id_name
-+ 	{ BCMA_CORE_SHIM, "SHIM" },
-+ 	{ BCMA_CORE_PCIE2, "PCIe Gen2" },
-+ 	{ BCMA_CORE_ARM_CR4, "ARM CR4" },
-++	{ BCMA_CORE_GCI, "GCI" },
-++	{ BCMA_CORE_CMEM, "CNDS DDR2/3 memory controller" },
-++	{ BCMA_CORE_ARM_CA7, "ARM CA7" },
-+ 	{ BCMA_CORE_DEFAULT, "Default" },
-+ };
-+ 
+ --- a/drivers/bcma/driver_chipcommon_sflash.c
+ +++ b/drivers/bcma/driver_chipcommon_sflash.c
+ @@ -38,6 +38,7 @@ static const struct bcma_sflash_tbl_e bc
+@@ -18,27 +278,6 @@
+  	{ NULL },
+  };
+  
+---- a/drivers/bcma/driver_gpio.c
+-+++ b/drivers/bcma/driver_gpio.c
+-@@ -229,6 +229,7 @@ int bcma_gpio_init(struct bcma_drv_cc *c
+- 	case BCMA_CHIP_ID_BCM4707:
+- 	case BCMA_CHIP_ID_BCM5357:
+- 	case BCMA_CHIP_ID_BCM53572:
+-+	case BCMA_CHIP_ID_BCM47094:
+- 		chip->ngpio	= 32;
+- 		break;
+- 	default:
+---- a/drivers/bcma/host_pci.c
+-+++ b/drivers/bcma/host_pci.c
+-@@ -294,7 +294,7 @@ static const struct pci_device_id bcma_p
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4358) },
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4359) },
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4360) },
+--	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x4365) },
+-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_BROADCOM, 0x4365, PCI_VENDOR_ID_DELL, 0x0016) },
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a0) },
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43a9) },
+- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROADCOM, 0x43aa) },
+ --- a/drivers/bcma/scan.c
+ +++ b/drivers/bcma/scan.c
+ @@ -98,6 +98,9 @@ static const struct bcma_device_id_name
+@@ -51,6 +290,32 @@
+  	{ BCMA_CORE_DEFAULT, "Default" },
+  };
+  
 +@@ -315,6 +318,8 @@ static int bcma_get_next_core(struct bcm
 + 		switch (core->id.id) {
 + 		case BCMA_CORE_4706_MAC_GBIT_COMMON:
@@ -32613,25 +32571,13 @@ index 0000000..a74d9ee
 + 		break;
 + #endif
 + #ifdef CONFIG_B43_SSB
-+--- a/include/linux/bcma/bcma.h
-++++ b/include/linux/bcma/bcma.h
-+@@ -151,6 +151,8 @@ struct bcma_host_ops {
-+ #define BCMA_CORE_PCIE2			0x83C	/* PCI Express Gen2 */
-+ #define BCMA_CORE_USB30_DEV		0x83D
-+ #define BCMA_CORE_ARM_CR4		0x83E
-++#define BCMA_CORE_GCI			0x840
-++#define BCMA_CORE_CMEM			0x846	/* CNDS DDR2/3 memory controller */
-+ #define BCMA_CORE_ARM_CA7		0x847
-+ #define BCMA_CORE_SYS_MEM		0x849
-+ #define BCMA_CORE_DEFAULT		0xFFF
-+@@ -199,6 +201,7 @@ struct bcma_host_ops {
-+ #define  BCMA_PKG_ID_BCM4707	1
-+ #define  BCMA_PKG_ID_BCM4708	2
-+ #define  BCMA_PKG_ID_BCM4709	0
-++#define BCMA_CHIP_ID_BCM47094	53030
-+ #define BCMA_CHIP_ID_BCM53018	53018
-+ 
-+ /* Board types (on PCI usually equals to the subsystem dev id) */
+ --- a/include/linux/bcma/bcma.h
+ +++ b/include/linux/bcma/bcma.h
+ @@ -151,6 +151,8 @@ struct bcma_host_ops {
+@@ -70,3 +335,110 @@
+  #define BCMA_CHIP_ID_BCM53018	53018
+  
+  /* Board types (on PCI usually equals to the subsystem dev id) */
 +--- a/include/linux/bcma/bcma_driver_chipcommon.h
 ++++ b/include/linux/bcma/bcma_driver_chipcommon.h
 +@@ -217,6 +217,11 @@
