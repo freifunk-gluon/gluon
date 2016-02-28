@@ -1,6 +1,6 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Tue, 23 Dec 2014 18:57:16 +0100
-Subject: mac80211: backport from trunk r48681
+Date: Sun, 28 Feb 2016 03:14:24 +0100
+Subject: mac80211: backport from trunk r48810
 
 Backport mac80211 and dependent drivers/firmwares from OpenWrt trunk.
 
@@ -630,10 +630,10 @@ index 0000000..f5adfaf
 +$(eval $(call BuildPackage,iwlwifi-firmware))
 diff --git a/package/firmware/linux-firmware/marvell.mk b/package/firmware/linux-firmware/marvell.mk
 new file mode 100644
-index 0000000..86c0e6f
+index 0000000..752a8e0
 --- /dev/null
 +++ b/package/firmware/linux-firmware/marvell.mk
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,56 @@
 +Package/mwl8k-firmware = $(call Package/firmware-default,Marvell 8366/8687 firmware)
 +define Package/mwl8k-firmware/install
 +	$(INSTALL_DIR) $(1)/lib/firmware/mwl8k
@@ -679,6 +679,16 @@ index 0000000..86c0e6f
 +		$(1)/lib/firmware/libertas
 +endef
 +$(eval $(call BuildPackage,libertas-sdio-firmware))
++
++Package/libertas-spi-firmware = $(call Package/firmware-default,Marvell 8686 SPI firmware)
++define Package/libertas-spi-firmware/install
++	$(INSTALL_DIR) $(1)/lib/firmware/libertas
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/libertas/gspi8686_v9_helper.bin \
++		$(PKG_BUILD_DIR)/libertas/gspi8686_v9.bin \
++		$(1)/lib/firmware/libertas
++endef
++$(eval $(call BuildPackage,libertas-spi-firmware))
 +
 diff --git a/package/firmware/linux-firmware/mediatek.mk b/package/firmware/linux-firmware/mediatek.mk
 new file mode 100644
@@ -1150,7 +1160,7 @@ index 0000000..ee92b94
 + int acx_recover_hw(acx_device_t *adev);
 + 
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index a1eedce..156ea01 100644
+index a1eedce..525537c 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -10,11 +10,11 @@ include $(INCLUDE_DIR)/kernel.mk
@@ -1187,7 +1197,7 @@ index a1eedce..156ea01 100644
 +	iwl-legacy iwl3945 iwl4965 iwlwifi \
 +	lib80211 \
 +	libipw ipw2100 ipw2200 \
-+	libertas-sdio libertas-usb \
++	libertas-sdio libertas-usb libertas-spi \
 +	mac80211-hwsim \
 +	mt7601u \
 +	mwl8k mwifiex-pcie \
@@ -2623,7 +2633,7 @@ index a1eedce..156ea01 100644
    AUTOLOAD:=$(call AutoProbe,iwl4965)
  endef
  
-@@ -975,557 +867,562 @@ define KernelPackage/iwl4965/description
+@@ -975,557 +867,576 @@ define KernelPackage/iwl4965/description
  endef
  
  
@@ -2764,13 +2774,6 @@ index a1eedce..156ea01 100644
 -  FILE:=$(PKG_B43_FWV4_SOURCE)
 -  URL:=$(PKG_B43_FWV4_SOURCE_URL)
 -  MD5SUM:=$(PKG_B43_FWV4_MD5SUM)
--endef
--$(eval $(call Download,b43))
--
--define Download/b43legacy
--  FILE:=$(PKG_B43_FWV3_SOURCE)
--  URL:=$(PKG_B43_FWV3_SOURCE_URL)
--  MD5SUM:=$(PKG_B43_FWV3_MD5SUM)
 +	$(PKG_BUILD_DIR)/net/wireless/lib80211.ko \
 +	$(PKG_BUILD_DIR)/net/wireless/lib80211_crypt_wep.ko \
 +	$(PKG_BUILD_DIR)/net/wireless/lib80211_crypt_ccmp.ko \
@@ -2782,11 +2785,26 @@ index a1eedce..156ea01 100644
 +	lib80211_crypt_tkip \
 +  )
  endef
+-$(eval $(call Download,b43))
+ 
+-define Download/b43legacy
+-  FILE:=$(PKG_B43_FWV3_SOURCE)
+-  URL:=$(PKG_B43_FWV3_SOURCE_URL)
+-  MD5SUM:=$(PKG_B43_FWV3_MD5SUM)
++define KernelPackage/lib80211/description
++ Kernel modules for 802.11 Networking stack
++ Includes:
++ - lib80211
++ - lib80211_crypt_wep
++ - lib80211_crypt_tkip
++ - lib80211_crytp_ccmp
+ endef
 -$(eval $(call Download,b43legacy))
  
--
+ 
 -define KernelPackage/b43
--  $(call KernelPackage/mac80211/Default)
++define KernelPackage/libipw
+   $(call KernelPackage/mac80211/Default)
 -  TITLE:=Broadcom 43xx wireless support
 -  URL:=https://wireless.wiki.kernel.org/en/users/drivers/b43
 -  KCONFIG:= \
@@ -2799,15 +2817,8 @@ index a1eedce..156ea01 100644
 -  FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/b43/b43.ko
 -  AUTOLOAD:=$(call AutoProbe,b43)
 -  MENU:=1
-+define KernelPackage/lib80211/description
-+ Kernel modules for 802.11 Networking stack
-+ Includes:
-+ - lib80211
-+ - lib80211_crypt_wep
-+ - lib80211_crypt_tkip
-+ - lib80211_crytp_ccmp
- endef
- 
+-endef
+-
 -define KernelPackage/b43/config
 -
 -config PACKAGE_B43_USE_SSB
@@ -2825,36 +2836,29 @@ index a1eedce..156ea01 100644
 -	default PACKAGE_kmod-b43 if PACKAGE_B43_BUSES_BCMA
 -
 -  if PACKAGE_kmod-b43
- 
--	choice
--		prompt "b43 firmware version"
--		default B43_FW_5_100_138
--		help
--		  This option allows you to select the version of the b43 firmware.
-+define KernelPackage/libipw
-+  $(call KernelPackage/mac80211/Default)
 +  TITLE:=libipw for ipw2100 and ipw2200
 +  DEPENDS:=@PCI_SUPPORT +kmod-crypto-michael-mic +kmod-lib80211 +kmod-cfg80211 +@DRIVER_WEXT_SUPPORT @!BIG_ENDIAN
 +  FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/intel/ipw2x00/libipw.ko
 +  AUTOLOAD:=$(call AutoProbe,libipw)
 +endef
  
--	config B43_FW_4_150
--		bool "Firmware 410.2160 from driver 4.150.10.5 (old stable)"
+-	choice
+-		prompt "b43 firmware version"
+-		default B43_FW_5_100_138
 -		help
--		  Old stable firmware for BCM43xx devices.
+-		  This option allows you to select the version of the b43 firmware.
 +define KernelPackage/libipw/description
 + Hardware independent IEEE 802.11 networking stack for ipw2100 and ipw2200.
 +endef
  
--		  If unsure, select this.
+-	config B43_FW_4_150
+-		bool "Firmware 410.2160 from driver 4.150.10.5 (old stable)"
+-		help
+-		  Old stable firmware for BCM43xx devices.
 +IPW2100_NAME:=ipw2100-fw
 +IPW2100_VERSION:=1.3
  
--	config B43_FW_4_178
--		bool "Firmware 478.104 from driver 4.178.10.4"
--		help
--		  Older firmware for BCM43xx devices.
+-		  If unsure, select this.
 +define Download/ipw2100
 +  URL:=http://bughost.org/firmware/
 +  FILE:=$(IPW2100_NAME)-$(IPW2100_VERSION).tgz
@@ -2862,7 +2866,10 @@ index a1eedce..156ea01 100644
 +endef
 +$(eval $(call Download,ipw2100))
  
--		  If unsure, select the "stable" firmware.
+-	config B43_FW_4_178
+-		bool "Firmware 478.104 from driver 4.178.10.4"
+-		help
+-		  Older firmware for BCM43xx devices.
 +define KernelPackage/ipw2100
 +  $(call KernelPackage/mac80211/Default)
 +  TITLE:=Intel IPW2100 driver
@@ -2871,24 +2878,21 @@ index a1eedce..156ea01 100644
 +  AUTOLOAD:=$(call AutoProbe,ipw2100)
 +endef
  
--	config B43_FW_5_10
--		bool "Firmware 508.1084 from driver 5.10.56.27"
--		help
--		  Older firmware for BCM43xx devices.
+-		  If unsure, select the "stable" firmware.
 +define KernelPackage/ipw2100/description
 + Kernel support for Intel IPW2100
 + Includes:
 + - ipw2100
 +endef
  
--		  If unsure, select the "stable" firmware.
+-	config B43_FW_5_10
+-		bool "Firmware 508.1084 from driver 5.10.56.27"
+-		help
+-		  Older firmware for BCM43xx devices.
 +IPW2200_NAME:=ipw2200-fw
 +IPW2200_VERSION:=3.1
  
--	config B43_FW_5_100_138
--		bool "Firmware 666.2 from driver 5.100.138 (stable)"
--		help
--		  The currently default firmware for BCM43xx devices.
+-		  If unsure, select the "stable" firmware.
 +define Download/ipw2200
 +  URL:=http://bughost.org/firmware/
 +  FILE:=$(IPW2200_NAME)-$(IPW2200_VERSION).tgz
@@ -2896,7 +2900,10 @@ index a1eedce..156ea01 100644
 +endef
 +$(eval $(call Download,ipw2200))
  
--		  This firmware currently gets most of the testing and is needed for some N-PHY devices.
+-	config B43_FW_5_100_138
+-		bool "Firmware 666.2 from driver 5.100.138 (stable)"
+-		help
+-		  The currently default firmware for BCM43xx devices.
 +define KernelPackage/ipw2200
 +  $(call KernelPackage/mac80211/Default)
 +  TITLE:=Intel IPW2200 driver
@@ -2905,19 +2912,19 @@ index a1eedce..156ea01 100644
 +  AUTOLOAD:=$(call AutoProbe,ipw2200)
 +endef
  
--		  If unsure, select the this firmware.
+-		  This firmware currently gets most of the testing and is needed for some N-PHY devices.
 +define KernelPackage/ipw2200/description
 + Kernel support for Intel IPW2200
 + Includes:
 + - ipw2200
 +endef
  
+-		  If unsure, select the this firmware.
+ 
 -	config B43_FW_6_30
 -		bool "Firmware 784.2 from driver 6.30.163.46 (experimental)"
 -		help
 -		  Newer experimental firmware for BCM43xx devices.
- 
--		  This firmware is mostly untested.
 +define KernelPackage/libertas-usb
 +  $(call KernelPackage/mac80211/Default)
 +  DEPENDS+= @USB_SUPPORT +kmod-cfg80211 +kmod-usb-core +kmod-lib80211 +@DRIVER_WEXT_SUPPORT +libertas-usb-firmware
@@ -2928,7 +2935,7 @@ index a1eedce..156ea01 100644
 +  AUTOLOAD:=$(call AutoProbe,libertas usb8xxx)
 +endef
  
--		  If unsure, select the "stable" firmware.
+-		  This firmware is mostly untested.
 +define KernelPackage/libertas-sdio
 +  $(call KernelPackage/mac80211/Default)
 +  DEPENDS+= +kmod-cfg80211 +kmod-lib80211 +kmod-mmc +@DRIVER_WEXT_SUPPORT @!TARGET_uml +libertas-sdio-firmware
@@ -2937,6 +2944,21 @@ index a1eedce..156ea01 100644
 +	$(PKG_BUILD_DIR)/drivers/net/wireless/marvell/libertas/libertas.ko \
 +	$(PKG_BUILD_DIR)/drivers/net/wireless/marvell/libertas/libertas_sdio.ko
 +  AUTOLOAD:=$(call AutoProbe,libertas libertas_sdio)
++endef
+ 
+-		  If unsure, select the "stable" firmware.
++define KernelPackage/libertas-spi
++  $(call KernelPackage/mac80211/Default)
++  SUBMENU:=Wireless Drivers
++  DEPENDS+= +kmod-cfg80211 +kmod-lib80211 +@DRIVER_WEXT_SUPPORT +libertas-spi-firmware
++  KCONFIG := \
++	CONFIG_SPI=y \
++	CONFIG_SPI_MASTER=y
++  TITLE:=Marvell 88W8686 SPI Wireless Driver
++  FILES:= \
++	$(PKG_BUILD_DIR)/drivers/net/wireless/marvell/libertas/libertas.ko \
++	$(PKG_BUILD_DIR)/drivers/net/wireless/marvell/libertas/libertas_spi.ko
++  AUTOLOAD:=$(call AutoProbe,libertas libertas_spi)
 +endef
  
 -	config B43_OPENFIRMWARE
@@ -3632,7 +3654,7 @@ index a1eedce..156ea01 100644
  config_package=$(if $(CONFIG_PACKAGE_kmod-$(1)),m)
  
  config-y:= \
-@@ -1538,6 +1435,20 @@ config-y:= \
+@@ -1538,6 +1449,20 @@ config-y:= \
  	MAC80211_RC_MINSTREL_HT \
  	MAC80211_RC_MINSTREL_VHT \
  	MAC80211_RC_DEFAULT_MINSTREL \
@@ -3653,7 +3675,7 @@ index a1eedce..156ea01 100644
  
  config-$(call config_package,cfg80211) += CFG80211
  
-@@ -1554,6 +1465,16 @@ ifdef CONFIG_PACKAGE_MAC80211_DEBUGFS
+@@ -1554,6 +1479,16 @@ ifdef CONFIG_PACKAGE_MAC80211_DEBUGFS
  	ATH5K_DEBUG
  endif
  
@@ -3670,7 +3692,7 @@ index a1eedce..156ea01 100644
  config-$(call config_package,lib80211) += LIB80211 LIB80211_CRYPT_WEP LIB80211_CRYPT_CCMP LIB80211_CRYPT_TKIP
  
  config-$(call config_package,ath) += ATH_CARDS ATH_COMMON
-@@ -1602,6 +1523,8 @@ config-$(CONFIG_BRCMFMAC_PCIE) += BRCMFMAC_PCIE
+@@ -1602,6 +1537,8 @@ config-$(CONFIG_BRCMFMAC_PCIE) += BRCMFMAC_PCIE
  config-$(CONFIG_PACKAGE_BRCM80211_DEBUG) += BRCMDBG
  
  config-$(call config_package,mac80211-hwsim) += MAC80211_HWSIM
@@ -3679,7 +3701,7 @@ index a1eedce..156ea01 100644
  
  config-$(call config_package,rt2x00-lib) += RT2X00 RT2X00_LIB
  config-$(call config_package,rt2x00-pci) += RT2X00_LIB_PCI
-@@ -1623,26 +1546,28 @@ config-$(call config_package,rt2800-pci) += RT2800PCI
+@@ -1623,31 +1560,34 @@ config-$(call config_package,rt2800-pci) += RT2800PCI
  config-y += RT2800PCI_RT33XX RT2800PCI_RT35XX RT2800PCI_RT53XX RT2800PCI_RT3290
  
  config-$(call config_package,rt2800-usb) += RT2800USB
@@ -3717,7 +3739,13 @@ index a1eedce..156ea01 100644
  config-y += HERMES_PRISM
  
  config-$(call config_package,adm8211) += ADM8211
-@@ -1668,12 +1593,15 @@ config-$(call config_package,rtl8192de) += RTL8192DE
+ config-$(call config_package,libertas-sdio) += LIBERTAS LIBERTAS_SDIO
+ config-$(call config_package,libertas-usb) += LIBERTAS LIBERTAS_USB
++config-$(call config_package,libertas-spi) += LIBERTAS LIBERTAS_SPI
+ config-$(call config_package,mwl8k) += MWL8K
+ config-$(call config_package,mwifiex-pcie) += MWIFIEX MWIFIEX_PCIE
+ config-$(call config_package,rtl8180) += RTL8180
+@@ -1668,12 +1608,15 @@ config-$(call config_package,rtl8192de) += RTL8192DE
  config-$(call config_package,rtl8192cu) += RTL8192CU
  config-$(CONFIG_PACKAGE_RTLWIFI_DEBUG) += RTLWIFI_DEBUG
  
@@ -3734,7 +3762,7 @@ index a1eedce..156ea01 100644
  	KLIB_BUILD="$(LINUX_DIR)" \
  	MODPROBE=true \
  	KLIB=$(TARGET_MODULES_DIR) \
-@@ -1702,8 +1630,6 @@ define Build/Prepare
+@@ -1702,8 +1645,6 @@ define Build/Prepare
  	$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(IPW2100_NAME)-$(IPW2100_VERSION).tgz
  	$(TAR) -C $(PKG_BUILD_DIR) -xzf $(DL_DIR)/$(IPW2200_NAME)-$(IPW2200_VERSION).tgz
  	$(TAR) -C $(PKG_BUILD_DIR) -xjf $(DL_DIR)/$(ZD1211FW_NAME)-$(ZD1211FW_VERSION).tar.bz2
@@ -3743,7 +3771,7 @@ index a1eedce..156ea01 100644
  	rm -rf \
  		$(PKG_BUILD_DIR)/include/linux/ssb \
  		$(PKG_BUILD_DIR)/include/linux/bcma \
-@@ -1715,7 +1641,8 @@ define Build/Prepare
+@@ -1715,7 +1656,8 @@ define Build/Prepare
  		$(PKG_BUILD_DIR)/include/linux/eeprom_93cx6.h \
  		$(PKG_BUILD_DIR)/include/linux/wl12xx.h \
  		$(PKG_BUILD_DIR)/include/linux/spi/libertas_spi.h \
@@ -3753,7 +3781,7 @@ index a1eedce..156ea01 100644
  
  	echo 'compat-wireless-$(PKG_VERSION)-$(PKG_RELEASE)-$(REVISION)' > $(PKG_BUILD_DIR)/compat_version
  	$(CP) ./files/regdb.txt $(PKG_BUILD_DIR)/net/wireless/db.txt
-@@ -1753,220 +1680,6 @@ define Build/InstallDev
+@@ -1753,220 +1695,6 @@ define Build/InstallDev
  	rm -f $(1)/usr/include/mac80211-backport/linux/module.h
  endef
  
@@ -3974,7 +4002,7 @@ index a1eedce..156ea01 100644
  
  define KernelPackage/b43/install
  	rm -rf $(1)/lib/firmware/
-@@ -1990,51 +1703,84 @@ ifneq ($(CONFIG_B43_FW_SQUASH),)
+@@ -1990,51 +1718,85 @@ ifneq ($(CONFIG_B43_FW_SQUASH),)
  endif
  endef
  
@@ -4077,6 +4105,7 @@ index a1eedce..156ea01 100644
  $(eval $(call KernelPackage,libertas-usb))
  $(eval $(call KernelPackage,libertas-sdio))
 -$(eval $(call KernelPackage,cfg80211))
++$(eval $(call KernelPackage,libertas-spi))
 +$(eval $(call KernelPackage,libipw))
 +$(eval $(call KernelPackage,ipw2100))
 +$(eval $(call KernelPackage,ipw2200))
@@ -4088,7 +4117,7 @@ index a1eedce..156ea01 100644
  $(eval $(call KernelPackage,p54-common))
  $(eval $(call KernelPackage,p54-pci))
  $(eval $(call KernelPackage,p54-usb))
-@@ -2047,12 +1793,12 @@ $(eval $(call KernelPackage,rt2800-lib))
+@@ -2047,12 +1809,12 @@ $(eval $(call KernelPackage,rt2800-lib))
  $(eval $(call KernelPackage,rt2400-pci))
  $(eval $(call KernelPackage,rt2500-pci))
  $(eval $(call KernelPackage,rt2500-usb))
@@ -4103,7 +4132,7 @@ index a1eedce..156ea01 100644
  $(eval $(call KernelPackage,rtl8180))
  $(eval $(call KernelPackage,rtl8187))
  $(eval $(call KernelPackage,rtlwifi))
-@@ -2063,32 +1809,8 @@ $(eval $(call KernelPackage,rtl8192ce))
+@@ -2063,32 +1825,8 @@ $(eval $(call KernelPackage,rtl8192ce))
  $(eval $(call KernelPackage,rtl8192se))
  $(eval $(call KernelPackage,rtl8192de))
  $(eval $(call KernelPackage,rtl8192cu))
@@ -9606,6 +9635,155 @@ index d132636..0000000
 - 
 - #define BW_20			0
 - #define BW_40			1
+diff --git a/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch b/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch
+new file mode 100644
+index 0000000..d9511c8
+--- /dev/null
++++ b/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch
+@@ -0,0 +1,19 @@
++From: Felix Fietkau <nbd@openwrt.org>
++Date: Fri, 15 Jan 2016 15:59:45 +0100
++Subject: [PATCH] brcmfmac: add missing include
++
++linux/module.h is required for defining module parameters
++
++Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++---
++
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
++@@ -17,6 +17,7 @@
++ #include <linux/kernel.h>
++ #include <linux/string.h>
++ #include <linux/netdevice.h>
+++#include <linux/module.h>
++ #include <brcmu_wifi.h>
++ #include <brcmu_utils.h>
++ #include "core.h"
+diff --git a/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch b/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch
+new file mode 100644
+index 0000000..711e019
+--- /dev/null
++++ b/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch
+@@ -0,0 +1,118 @@
++From: Hante Meuleman <meuleman@broadcom.com>
++Date: Tue, 19 Jan 2016 12:39:24 +0100
++Subject: [PATCH] brcmfmac: fix sdio sg table alloc crash
++
++With commit 7d34b0560567 ("brcmfmac: Move all module parameters to
++one place") a bug was introduced causing a null pointer exception.
++This patch fixes the bug by initializing the sg table till after
++the settings have been initialized.
++
++Fixes: 7d34b0560567 ("brcmfmac: Move all module parameters to one place")
++Reported-by: Marc Zyngier <marc.zyngier@arm.com>
++Tested-by: Marc Zyngier <marc.zyngier@arm.com>
++Reviewed-by: Arend Van Spriel <arend@broadcom.com>
++Reviewed-by: Franky (Zhenhui) Lin <frankyl@broadcom.com>
++Reviewed-by: Pieter-Paul Giesberts <pieterpg@broadcom.com>
++Signed-off-by: Hante Meuleman <meuleman@broadcom.com>
++Signed-off-by: Arend van Spriel <arend@broadcom.com>
++Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
++---
++
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
++@@ -879,11 +879,24 @@ int brcmf_sdiod_abort(struct brcmf_sdio_
++ 	return 0;
++ }
++ 
++-static void brcmf_sdiod_sgtable_alloc(struct brcmf_sdio_dev *sdiodev)
+++void brcmf_sdiod_sgtable_alloc(struct brcmf_sdio_dev *sdiodev)
++ {
+++	struct sdio_func *func;
+++	struct mmc_host *host;
+++	uint max_blocks;
++ 	uint nents;
++ 	int err;
++ 
+++	func = sdiodev->func[2];
+++	host = func->card->host;
+++	sdiodev->sg_support = host->max_segs > 1;
+++	max_blocks = min_t(uint, host->max_blk_count, 511u);
+++	sdiodev->max_request_size = min_t(uint, host->max_req_size,
+++					  max_blocks * func->cur_blksize);
+++	sdiodev->max_segment_count = min_t(uint, host->max_segs,
+++					   SG_MAX_SINGLE_ALLOC);
+++	sdiodev->max_segment_size = host->max_seg_size;
+++
++ 	if (!sdiodev->sg_support)
++ 		return;
++ 
++@@ -1021,9 +1034,6 @@ static void brcmf_sdiod_host_fixup(struc
++ 
++ static int brcmf_sdiod_probe(struct brcmf_sdio_dev *sdiodev)
++ {
++-	struct sdio_func *func;
++-	struct mmc_host *host;
++-	uint max_blocks;
++ 	int ret = 0;
++ 
++ 	sdiodev->num_funcs = 2;
++@@ -1054,26 +1064,6 @@ static int brcmf_sdiod_probe(struct brcm
++ 		goto out;
++ 	}
++ 
++-	/*
++-	 * determine host related variables after brcmf_sdiod_probe()
++-	 * as func->cur_blksize is properly set and F2 init has been
++-	 * completed successfully.
++-	 */
++-	func = sdiodev->func[2];
++-	host = func->card->host;
++-	sdiodev->sg_support = host->max_segs > 1;
++-	max_blocks = min_t(uint, host->max_blk_count, 511u);
++-	sdiodev->max_request_size = min_t(uint, host->max_req_size,
++-					  max_blocks * func->cur_blksize);
++-	sdiodev->max_segment_count = min_t(uint, host->max_segs,
++-					   SG_MAX_SINGLE_ALLOC);
++-	sdiodev->max_segment_size = host->max_seg_size;
++-
++-	/* allocate scatter-gather table. sg support
++-	 * will be disabled upon allocation failure.
++-	 */
++-	brcmf_sdiod_sgtable_alloc(sdiodev);
++-
++ 	ret = brcmf_sdiod_freezer_attach(sdiodev);
++ 	if (ret)
++ 		goto out;
++@@ -1084,7 +1074,7 @@ static int brcmf_sdiod_probe(struct brcm
++ 		ret = -ENODEV;
++ 		goto out;
++ 	}
++-	brcmf_sdiod_host_fixup(host);
+++	brcmf_sdiod_host_fixup(sdiodev->func[2]->card->host);
++ out:
++ 	if (ret)
++ 		brcmf_sdiod_remove(sdiodev);
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c
++@@ -4114,6 +4114,11 @@ struct brcmf_sdio *brcmf_sdio_probe(stru
++ 		goto fail;
++ 	}
++ 
+++	/* allocate scatter-gather table. sg support
+++	 * will be disabled upon allocation failure.
+++	 */
+++	brcmf_sdiod_sgtable_alloc(bus->sdiodev);
+++
++ 	/* Query the F2 block size, set roundup accordingly */
++ 	bus->blocksize = bus->sdiodev->func[2]->cur_blksize;
++ 	bus->roundup = min(max_roundup, bus->blocksize);
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.h
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.h
++@@ -342,6 +342,7 @@ int brcmf_sdiod_ramrw(struct brcmf_sdio_
++ 
++ /* Issue an abort to the specified function */
++ int brcmf_sdiod_abort(struct brcmf_sdio_dev *sdiodev, uint fn);
+++void brcmf_sdiod_sgtable_alloc(struct brcmf_sdio_dev *sdiodev);
++ void brcmf_sdiod_change_state(struct brcmf_sdio_dev *sdiodev,
++ 			      enum brcmf_sdiod_state state);
++ #ifdef CONFIG_PM_SLEEP
 diff --git a/package/kernel/mac80211/patches/309-ath9k-disable-TPC-support-again-for-now.patch b/package/kernel/mac80211/patches/309-ath9k-disable-TPC-support-again-for-now.patch
 deleted file mode 100644
 index 945fbce..0000000
@@ -9634,31 +9812,6 @@ index 945fbce..0000000
 - 
 - 	ah->ani_function = ATH9K_ANI_ALL;
 - 	if (!AR_SREV_9300_20_OR_LATER(ah))
-diff --git a/package/kernel/mac80211/patches/309-brcmfmac-add-missing-include.patch b/package/kernel/mac80211/patches/309-brcmfmac-add-missing-include.patch
-new file mode 100644
-index 0000000..d9511c8
---- /dev/null
-+++ b/package/kernel/mac80211/patches/309-brcmfmac-add-missing-include.patch
-@@ -0,0 +1,19 @@
-+From: Felix Fietkau <nbd@openwrt.org>
-+Date: Fri, 15 Jan 2016 15:59:45 +0100
-+Subject: [PATCH] brcmfmac: add missing include
-+
-+linux/module.h is required for defining module parameters
-+
-+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
-+---
-+
-+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
-+@@ -17,6 +17,7 @@
-+ #include <linux/kernel.h>
-+ #include <linux/string.h>
-+ #include <linux/netdevice.h>
-++#include <linux/module.h>
-+ #include <brcmu_wifi.h>
-+ #include <brcmu_utils.h>
-+ #include "core.h"
 diff --git a/package/kernel/mac80211/patches/310-ath9k_hw-ignore-eeprom-magic-mismatch-on-flash-based.patch b/package/kernel/mac80211/patches/310-ath9k_hw-ignore-eeprom-magic-mismatch-on-flash-based.patch
 new file mode 100644
 index 0000000..287d6e1
@@ -11953,10 +12106,10 @@ index 7247369..0000000
 - 	for (i = 0; i < ARRAY_SIZE(regList); i++)
 diff --git a/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch b/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch
 new file mode 100644
-index 0000000..d55f772
+index 0000000..e7bfb9c
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch
-@@ -0,0 +1,292 @@
+@@ -0,0 +1,317 @@
 +From: Felix Fietkau <nbd@openwrt.org>
 +Date: Fri, 5 Feb 2016 01:38:51 +0100
 +Subject: [PATCH] mac80211: add A-MSDU tx support
@@ -11985,12 +12138,31 @@ index 0000000..d55f772
 + };
 + 
 + /*
-+@@ -1961,6 +1963,12 @@ struct ieee80211_txq {
++@@ -1728,6 +1730,7 @@ struct ieee80211_sta_rates {
++  *		  size is min(max_amsdu_len, 7935) bytes.
++  *	Both additional HT limits must be enforced by the low level driver.
++  *	This is defined by the spec (IEEE 802.11-2012 section 8.3.2.2 NOTE 2).
+++ * @max_rc_amsdu_len: Maximum A-MSDU size in bytes recommended by rate control.
++  * @txq: per-TID data TX queues (if driver uses the TXQ abstraction)
++  */
++ struct ieee80211_sta {
++@@ -1748,6 +1751,7 @@ struct ieee80211_sta {
++ 	bool mfp;
++ 	u8 max_amsdu_subframes;
++ 	u16 max_amsdu_len;
+++	u16 max_rc_amsdu_len;
++ 
++ 	struct ieee80211_txq *txq[IEEE80211_NUM_TIDS];
++ 
++@@ -1961,6 +1965,15 @@ struct ieee80211_txq {
 +  *	order and does not need to manage its own reorder buffer or BA session
 +  *	timeout.
 +  *
 ++ * @IEEE80211_HW_TX_AMSDU: Hardware (or driver) supports software aggregated
-++ *	A-MSDU frames. Requires software tx queueing support.
+++ *	A-MSDU frames. Requires software tx queueing and fast-xmit support.
+++ *	When not using minstrel/minstrel_ht rate control, the driver should
+++ *	limit the maximum A-MSDU size based on the current tx rate by setting
+++ *	max_rc_amsdu_len in struct ieee80211_sta.
 ++ *
 ++ * @IEEE80211_HW_TX_FRAG_LIST: Hardware (or driver) supports sending frag_list
 ++ *	skbs, needed for zero-copy software A-MSDU.
@@ -11998,7 +12170,7 @@ index 0000000..d55f772
 +  * @NUM_IEEE80211_HW_FLAGS: number of hardware flags, used for sizing arrays
 +  */
 + enum ieee80211_hw_flags {
-+@@ -1998,6 +2006,8 @@ enum ieee80211_hw_flags {
++@@ -1998,6 +2011,8 @@ enum ieee80211_hw_flags {
 + 	IEEE80211_HW_BEACON_TX_STATUS,
 + 	IEEE80211_HW_NEEDS_UNIQUE_STA_ADDR,
 + 	IEEE80211_HW_SUPPORTS_REORDERING_BUFFER,
@@ -12007,16 +12179,17 @@ index 0000000..d55f772
 + 
 + 	/* keep last, obviously */
 + 	NUM_IEEE80211_HW_FLAGS
-+@@ -2070,6 +2080,8 @@ enum ieee80211_hw_flags {
++@@ -2070,6 +2085,9 @@ enum ieee80211_hw_flags {
 +  *	size is smaller (an example is LinkSys WRT120N with FW v1.0.07
 +  *	build 002 Jun 18 2012).
 +  *
-++ * @max_tx_fragments: maximum fragments per (A-)MSDU.
+++ * @max_tx_fragments: maximum number of tx buffers per (A)-MSDU, sum
+++ *	of 1 + skb_shinfo(skb)->nr_frags for each skb in the frag_list.
 ++ *
 +  * @offchannel_tx_hw_queue: HW queue ID to use for offchannel TX
 +  *	(if %IEEE80211_HW_QUEUE_CONTROL is set)
 +  *
-+@@ -2124,6 +2136,7 @@ struct ieee80211_hw {
++@@ -2124,6 +2142,7 @@ struct ieee80211_hw {
 + 	u8 max_rate_tries;
 + 	u8 max_rx_aggregation_subframes;
 + 	u8 max_tx_aggregation_subframes;
@@ -12079,19 +12252,33 @@ index 0000000..d55f772
 + 	return skb;
 + }
 + EXPORT_SYMBOL(ieee80211_tx_dequeue);
-+@@ -2757,6 +2761,158 @@ void ieee80211_clear_fast_xmit(struct st
++@@ -2757,6 +2761,163 @@ void ieee80211_clear_fast_xmit(struct st
 + 		kfree_rcu(fast_tx, rcu_head);
 + }
 + 
-++static int ieee80211_amsdu_pad(struct sk_buff *skb, int subframe_len)
+++static bool ieee80211_amsdu_realloc_pad(struct ieee80211_local *local,
+++					struct sk_buff *skb, int headroom,
+++					int *subframe_len)
 ++{
-++	int amsdu_len = subframe_len + sizeof(struct ethhdr);
+++	int amsdu_len = *subframe_len + sizeof(struct ethhdr);
 ++	int padding = (4 - amsdu_len) & 3;
 ++
-++	if (padding)
-++		memset(skb_put(skb, padding), 0, padding);
+++	if (skb_headroom(skb) < headroom || skb_tailroom(skb) < padding) {
+++		I802_DEBUG_INC(local->tx_expand_skb_head);
 ++
-++	return padding;
+++		if (pskb_expand_head(skb, headroom, padding, GFP_ATOMIC)) {
+++			wiphy_debug(local->hw.wiphy,
+++				    "failed to reallocate TX buffer\n");
+++			return false;
+++		}
+++	}
+++
+++	if (padding) {
+++		*subframe_len += padding;
+++		memset(skb_put(skb, padding), 0, padding);
+++	}
+++
+++	return true;
 ++}
 ++
 ++static bool ieee80211_amsdu_prepare_head(struct ieee80211_sub_if_data *sdata,
@@ -12107,20 +12294,15 @@ index 0000000..d55f772
 ++	void *data;
 ++	u8 *qc;
 ++
+++	if (info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE)
+++		return false;
+++
 ++	if (info->control.flags & IEEE80211_TX_CTRL_AMSDU)
 ++		return true;
 ++
-++	if (skb_headroom(skb) < sizeof(amsdu_hdr) || skb_tailroom(skb) < 3) {
-++		I802_DEBUG_INC(local->tx_expand_skb_head);
-++
-++		if (pskb_expand_head(skb, sizeof(amsdu_hdr), 3, GFP_ATOMIC)) {
-++			wiphy_debug(local->hw.wiphy,
-++				    "failed to reallocate TX buffer\n");
-++			return false;
-++		}
-++	}
-++
-++	subframe_len += ieee80211_amsdu_pad(skb, subframe_len);
+++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(amsdu_hdr),
+++					 &subframe_len))
+++		return false;
 ++
 ++	amsdu_hdr.h_proto = cpu_to_be16(subframe_len);
 ++	memcpy(amsdu_hdr.h_source, skb->data + fast_tx->sa_offs, ETH_ALEN);
@@ -12152,7 +12334,7 @@ index 0000000..d55f772
 ++	int subframe_len = skb->len - ETH_ALEN;
 ++	u8 max_subframes = sta->sta.max_amsdu_subframes;
 ++	int max_frags = local->hw.max_tx_fragments;
-++	int max_amsdu_len;
+++	int max_amsdu_len = sta->sta.max_amsdu_len;
 ++	__be16 len;
 ++	void *data;
 ++	bool ret = false;
@@ -12167,6 +12349,10 @@ index 0000000..d55f772
 ++	txqi = to_txq_info(txq);
 ++	if (test_bit(IEEE80211_TXQ_NO_AMSDU, &txqi->flags))
 ++		return false;
+++
+++	if (sta->sta.max_rc_amsdu_len)
+++		max_amsdu_len = min_t(int, max_amsdu_len,
+++				      sta->sta.max_rc_amsdu_len);
 ++
 ++	spin_lock_bh(&txqi->queue.lock);
 ++
@@ -12204,17 +12390,9 @@ index 0000000..d55f772
 ++	if (max_frags && nfrags > max_frags)
 ++		goto out;
 ++
-++	if (skb_headroom(skb) < 8 || skb_tailroom(skb) < 3) {
-++		I802_DEBUG_INC(local->tx_expand_skb_head);
-++
-++		if (pskb_expand_head(skb, 8, 3, GFP_ATOMIC)) {
-++			wiphy_debug(local->hw.wiphy,
-++				    "failed to reallocate TX buffer\n");
-++			goto out;
-++		}
-++	}
-++
-++	subframe_len += ieee80211_amsdu_pad(skb, subframe_len);
+++	if (!ieee80211_amsdu_realloc_pad(local, skb, sizeof(rfc1042_header) + 2,
+++					 &subframe_len))
+++		return false;
 ++
 ++	ret = true;
 ++	data = skb_push(skb, ETH_ALEN + 2);
@@ -12223,7 +12401,7 @@ index 0000000..d55f772
 ++	data += 2 * ETH_ALEN;
 ++	len = cpu_to_be16(subframe_len);
 ++	memcpy(data, &len, 2);
-++	memcpy(data + 2, rfc1042_header, ETH_ALEN);
+++	memcpy(data + 2, rfc1042_header, sizeof(rfc1042_header));
 ++
 ++	head->len += skb->len;
 ++	head->data_len += skb->len;
@@ -12238,7 +12416,7 @@ index 0000000..d55f772
 + static bool ieee80211_xmit_fast(struct ieee80211_sub_if_data *sdata,
 + 				struct net_device *dev, struct sta_info *sta,
 + 				struct ieee80211_fast_tx *fast_tx,
-+@@ -2811,6 +2967,10 @@ static bool ieee80211_xmit_fast(struct i
++@@ -2811,6 +2972,10 @@ static bool ieee80211_xmit_fast(struct i
 + 
 + 	ieee80211_tx_stats(dev, skb->len + extra_head);
 + 
@@ -12249,6 +12427,76 @@ index 0000000..d55f772
 + 	/* will not be crypto-handled beyond what we do here, so use false
 + 	 * as the may-encrypt argument for the resize to not account for
 + 	 * more room than we already have in 'extra_head'
+diff --git a/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch b/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch
+new file mode 100644
+index 0000000..9277b2c
+--- /dev/null
++++ b/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch
+@@ -0,0 +1,64 @@
++From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
++Date: Wed, 20 Jan 2016 16:46:04 +0100
++Subject: [PATCH] brcmfmac: fix setting primary channel for 80 MHz width
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++First of all it changes the way we calculate primary channel offset. If
++we use e.g. 80 MHz channel with primary frequency 5180 MHz (which means
++center frequency is 5210 MHz) it makes sense to calculate primary offset
++as -30 MHz.
++Then it fixes values we compare primary_offset with. We were comparing
++offset in MHz against -2 or 2 which was resulting in picking a wrong
++primary channel.
++
++Signed-off-by: Rafał Miłecki <zajec5@gmail.com>
++Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
++---
++
++--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++@@ -247,7 +247,7 @@ static u16 chandef_to_chanspec(struct br
++ 	brcmf_dbg(TRACE, "chandef: control %d center %d width %d\n",
++ 		  ch->chan->center_freq, ch->center_freq1, ch->width);
++ 	ch_inf.chnum = ieee80211_frequency_to_channel(ch->center_freq1);
++-	primary_offset = ch->center_freq1 - ch->chan->center_freq;
+++	primary_offset = ch->chan->center_freq - ch->center_freq1;
++ 	switch (ch->width) {
++ 	case NL80211_CHAN_WIDTH_20:
++ 	case NL80211_CHAN_WIDTH_20_NOHT:
++@@ -256,24 +256,21 @@ static u16 chandef_to_chanspec(struct br
++ 		break;
++ 	case NL80211_CHAN_WIDTH_40:
++ 		ch_inf.bw = BRCMU_CHAN_BW_40;
++-		if (primary_offset < 0)
+++		if (primary_offset > 0)
++ 			ch_inf.sb = BRCMU_CHAN_SB_U;
++ 		else
++ 			ch_inf.sb = BRCMU_CHAN_SB_L;
++ 		break;
++ 	case NL80211_CHAN_WIDTH_80:
++ 		ch_inf.bw = BRCMU_CHAN_BW_80;
++-		if (primary_offset < 0) {
++-			if (primary_offset < -CH_10MHZ_APART)
++-				ch_inf.sb = BRCMU_CHAN_SB_UU;
++-			else
++-				ch_inf.sb = BRCMU_CHAN_SB_UL;
++-		} else {
++-			if (primary_offset > CH_10MHZ_APART)
++-				ch_inf.sb = BRCMU_CHAN_SB_LL;
++-			else
++-				ch_inf.sb = BRCMU_CHAN_SB_LU;
++-		}
+++		if (primary_offset == -30)
+++			ch_inf.sb = BRCMU_CHAN_SB_LL;
+++		else if (primary_offset == -10)
+++			ch_inf.sb = BRCMU_CHAN_SB_LU;
+++		else if (primary_offset == 10)
+++			ch_inf.sb = BRCMU_CHAN_SB_UL;
+++		else
+++			ch_inf.sb = BRCMU_CHAN_SB_UU;
++ 		break;
++ 	case NL80211_CHAN_WIDTH_80P80:
++ 	case NL80211_CHAN_WIDTH_160:
 diff --git a/package/kernel/mac80211/patches/323-0001-brcmfmac-analyze-descriptors-of-current-component-on.patch b/package/kernel/mac80211/patches/323-0001-brcmfmac-analyze-descriptors-of-current-component-on.patch
 new file mode 100644
 index 0000000..d7018da
@@ -14193,6 +14441,48 @@ index f26e059..0000000
 - }
 - 
 - static void ath9k_hw_def_set_board_values(struct ath_hw *ah,
+diff --git a/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch b/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch
+new file mode 100644
+index 0000000..f8f4f09
+--- /dev/null
++++ b/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch
+@@ -0,0 +1,36 @@
++From: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
++Date: Wed, 10 Feb 2016 16:08:17 +0100
++Subject: [PATCH] mac80211: fix wiphy supported_band access
++
++Fix wiphy supported_band access in tx radiotap parsing. In particular,
++info->band is always set to 0 (IEEE80211_BAND_2GHZ) since it has not
++assigned yet. This cause a kernel crash on 5GHz only devices.
++Move ieee80211_parse_tx_radiotap() after info->band assignment
++
++Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>
++---
++
++--- a/net/mac80211/tx.c
+++++ b/net/mac80211/tx.c
++@@ -1890,10 +1890,6 @@ netdev_tx_t ieee80211_monitor_start_xmit
++ 	info->flags = IEEE80211_TX_CTL_REQ_TX_STATUS |
++ 		      IEEE80211_TX_CTL_INJECTED;
++ 
++-	/* process and remove the injection radiotap header */
++-	if (!ieee80211_parse_tx_radiotap(local, skb))
++-		goto fail;
++-
++ 	rcu_read_lock();
++ 
++ 	/*
++@@ -1955,6 +1951,10 @@ netdev_tx_t ieee80211_monitor_start_xmit
++ 		goto fail_rcu;
++ 
++ 	info->band = chandef->chan->band;
+++	/* process and remove the injection radiotap header */
+++	if (!ieee80211_parse_tx_radiotap(local, skb))
+++		goto fail_rcu;
+++
++ 	ieee80211_xmit(sdata, NULL, skb);
++ 	rcu_read_unlock();
++ 
 diff --git a/package/kernel/mac80211/patches/335-0001-brcmfmac-Fix-oops-when-SDIO-device-is-removed.patch b/package/kernel/mac80211/patches/335-0001-brcmfmac-Fix-oops-when-SDIO-device-is-removed.patch
 deleted file mode 100644
 index 5e63a80..0000000
@@ -14587,6 +14877,73 @@ index c9eb900..0000000
 - #define SDIO_DEVICE_ID_BROADCOM_4354		0x4354
 - 
 - #define SDIO_VENDOR_ID_INTEL			0x0089
+diff --git a/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch b/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch
+new file mode 100644
+index 0000000..acaacf7
+--- /dev/null
++++ b/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch
+@@ -0,0 +1,61 @@
++From: Felix Fietkau <nbd@openwrt.org>
++Date: Thu, 18 Feb 2016 19:30:05 +0100
++Subject: [PATCH] mac80211: minstrel_ht: set A-MSDU tx limits based on selected
++ max_prob_rate
++
++Prevents excessive A-MSDU aggregation at low data rates or bad
++conditions.
++
++Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++---
++
++--- a/net/mac80211/rc80211_minstrel_ht.c
+++++ b/net/mac80211/rc80211_minstrel_ht.c
++@@ -883,6 +883,39 @@ minstrel_ht_set_rate(struct minstrel_pri
++ 	ratetbl->rate[offset].flags = flags;
++ }
++ 
+++static int
+++minstrel_ht_get_max_amsdu_len(struct minstrel_ht_sta *mi)
+++{
+++	int group = mi->max_prob_rate / MCS_GROUP_RATES;
+++	const struct mcs_group *g = &minstrel_mcs_groups[group];
+++	int rate = mi->max_prob_rate % MCS_GROUP_RATES;
+++
+++	/* Disable A-MSDU if max_prob_rate is bad */
+++	if (mi->groups[group].rates[rate].prob_ewma < MINSTREL_FRAC(50, 100))
+++		return 1;
+++
+++	/* If the rate is slower than single-stream MCS1, make A-MSDU limit small */
+++	if (g->duration[rate] > MCS_DURATION(1, 0, 52))
+++		return 500;
+++
+++	/*
+++	 * If the rate is slower than single-stream MCS4, limit A-MSDU to usual
+++	 * data packet size
+++	 */
+++	if (g->duration[rate] > MCS_DURATION(1, 0, 104))
+++		return 1500;
+++
+++	/*
+++	 * If the rate is slower than single-stream MCS7, limit A-MSDU to twice
+++	 * the usual data packet size
+++	 */
+++	if (g->duration[rate] > MCS_DURATION(1, 0, 260))
+++		return 3000;
+++
+++	/* unlimited */
+++	return 0;
+++}
+++
++ static void
++ minstrel_ht_update_rates(struct minstrel_priv *mp, struct minstrel_ht_sta *mi)
++ {
++@@ -907,6 +940,7 @@ minstrel_ht_update_rates(struct minstrel
++ 		minstrel_ht_set_rate(mp, mi, rates, i++, mi->max_prob_rate);
++ 	}
++ 
+++	mi->sta->max_rc_amsdu_len = minstrel_ht_get_max_amsdu_len(mi);
++ 	rates->rate[i].idx = -1;
++ 	rate_control_set_rates(mp->hw, mi->sta, rates);
++ }
 diff --git a/package/kernel/mac80211/patches/336-0001-brcmfmac-remove-duplication-of-ramsize-info.patch b/package/kernel/mac80211/patches/336-0001-brcmfmac-remove-duplication-of-ramsize-info.patch
 deleted file mode 100644
 index 7a688c4..0000000
@@ -15574,6 +15931,43 @@ index 1b10dbb..0000000
 - 				brcmf_sdio_clkctl(bus, CLK_AVAIL, false);
 - 				/* Leave the device in state where it is
 - 				 * 'passive'. This is done by resetting all
+diff --git a/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch b/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch
+new file mode 100644
+index 0000000..32a2ad6
+--- /dev/null
++++ b/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch
+@@ -0,0 +1,31 @@
++From: Felix Fietkau <nbd@openwrt.org>
++Date: Thu, 18 Feb 2016 19:45:33 +0100
++Subject: [PATCH] mac80211: minstrel_ht: set default tx aggregation timeout to
++ 0
++
++The value 5000 was put here with the addition of the timeout field to
++ieee80211_start_tx_ba_session. It was originally added in mac80211 to
++save resources for drivers like iwlwifi, which only supports a limited
++number of concurrent aggregation sessions.
++
++Since iwlwifi does not use minstrel_ht and other drivers don't need
++this, 0 is a better default - especially since there have been
++recent reports of aggregation setup related issues reproduced with
++ath9k. This should improve stability without causing any adverse
++effects.
++
++Cc: stable@vger.kernel.org
++Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++---
++
++--- a/net/mac80211/rc80211_minstrel_ht.c
+++++ b/net/mac80211/rc80211_minstrel_ht.c
++@@ -692,7 +692,7 @@ minstrel_aggr_check(struct ieee80211_sta
++ 	if (likely(sta->ampdu_mlme.tid_tx[tid]))
++ 		return;
++ 
++-	ieee80211_start_tx_ba_session(pubsta, tid, 5000);
+++	ieee80211_start_tx_ba_session(pubsta, tid, 0);
++ }
++ 
++ static void
 diff --git a/package/kernel/mac80211/patches/337-0001-brcmfmac-avoid-runtime-pm-for-sdio-host-controller.patch b/package/kernel/mac80211/patches/337-0001-brcmfmac-avoid-runtime-pm-for-sdio-host-controller.patch
 deleted file mode 100644
 index af76f13..0000000
@@ -16123,6 +16517,38 @@ index a62cfdf..0000000
 - 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4356_DEVICE_ID),
 - 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43567_DEVICE_ID),
 - 	BRCMF_PCIE_DEVICE(BRCM_PCIE_43570_DEVICE_ID),
+diff --git a/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch b/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch
+new file mode 100644
+index 0000000..229351b
+--- /dev/null
++++ b/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch
+@@ -0,0 +1,26 @@
++From: Felix Fietkau <nbd@openwrt.org>
++Date: Wed, 24 Feb 2016 12:03:13 +0100
++Subject: [PATCH] mac80211: minstrel_ht: fix a logic error in RTS/CTS handling
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++RTS/CTS needs to be enabled if the rate is a fallback rate *or* if it's
++a dual-stream rate and the sta is in dynamic SMPS mode.
++
++Fixes: a3ebb4e1b763 ("mac80211: minstrel_ht: handle peers in dynamic SMPS")
++Reported-by: Matías Richart <mrichart@fing.edu.uy>
++Signed-off-by: Felix Fietkau <nbd@openwrt.org>
++---
++
++--- a/net/mac80211/rc80211_minstrel_ht.c
+++++ b/net/mac80211/rc80211_minstrel_ht.c
++@@ -872,7 +872,7 @@ minstrel_ht_set_rate(struct minstrel_pri
++ 	 *  - if station is in dynamic SMPS (and streams > 1)
++ 	 *  - for fallback rates, to increase chances of getting through
++ 	 */
++-	if (offset > 0 &&
+++	if (offset > 0 ||
++ 	    (mi->sta->smps_mode == IEEE80211_SMPS_DYNAMIC &&
++ 	     group->streams > 1)) {
++ 		ratetbl->rate[offset].count = ratetbl->rate[offset].count_rts;
 diff --git a/package/kernel/mac80211/patches/338-brcmfmac-disable-MBSS-feature-for-BCM43362.patch b/package/kernel/mac80211/patches/338-brcmfmac-disable-MBSS-feature-for-BCM43362.patch
 deleted file mode 100644
 index 366ff85..0000000
@@ -31431,7 +31857,7 @@ index 14f8a00..95d93ae 100644
   	fwctx->bus_nr = bus_nr;
   
 diff --git a/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch b/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
-index 32c4a6f..9aeb97e 100644
+index 32c4a6f..4295b4b 100644
 --- a/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 +++ b/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 @@ -8,9 +8,9 @@ Content-Transfer-Encoding: 8bit
@@ -31443,7 +31869,7 @@ index 32c4a6f..9aeb97e 100644
 -@@ -608,9 +608,37 @@ static struct wireless_dev *brcmf_cfg802
 +--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
 ++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
-+@@ -618,9 +618,37 @@ static struct wireless_dev *brcmf_cfg802
++@@ -615,9 +615,37 @@ static struct wireless_dev *brcmf_cfg802
   						     u32 *flags,
   						     struct vif_params *params)
   {
