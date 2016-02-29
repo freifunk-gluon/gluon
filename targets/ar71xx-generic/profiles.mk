@@ -130,6 +130,10 @@ endif
 $(eval $(call GluonProfile,TLMR13U))
 $(eval $(call GluonModel,TLMR13U,tl-mr13u-v1,tp-link-tl-mr13u-v1))
 
+# TL-MR13U v1
+$(eval $(call GluonProfile,TLMR13U))
+$(eval $(call GluonModel,TLMR13U,tl-mr13u-v1,tp-link-tl-mr13u-v1))
+
 # TL-MR3020 v1
 $(eval $(call GluonProfile,TLMR3020))
 $(eval $(call GluonModel,TLMR3020,tl-mr3020-v1,tp-link-tl-mr3020-v1))
