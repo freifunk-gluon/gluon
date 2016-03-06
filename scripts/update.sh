@@ -16,4 +16,5 @@ for module in $GLUON_MODULES; do
 
 	git checkout $commit 2>/dev/null || git fetch $repo $branch
 	git checkout -B base $commit
+	git submodule update --init --recursive
 done
