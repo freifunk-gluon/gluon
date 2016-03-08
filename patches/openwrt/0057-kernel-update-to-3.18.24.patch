@@ -1,0 +1,20 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 8 Mar 2016 04:13:13 +0100
+Subject: kernel: update to 3.18.24
+
+diff --git a/include/kernel-version.mk b/include/kernel-version.mk
+index 6060776..647fbc5 100644
+--- a/include/kernel-version.mk
++++ b/include/kernel-version.mk
+@@ -2,9 +2,9 @@
+ 
+ LINUX_RELEASE?=1
+ 
+-LINUX_VERSION-3.18 = .23
++LINUX_VERSION-3.18 = .24
+ 
+-LINUX_KERNEL_MD5SUM-3.18.23 = dc6d265ab38716be3676ac294b481ad8
++LINUX_KERNEL_MD5SUM-3.18.24 = ceb97aed20611aff4b177d52ffca3b5c
+ 
+ ifdef KERNEL_PATCHVER
+   LINUX_VERSION:=$(KERNEL_PATCHVER)$(strip $(LINUX_VERSION-$(KERNEL_PATCHVER)))
