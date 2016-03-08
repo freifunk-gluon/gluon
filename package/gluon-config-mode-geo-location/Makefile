@@ -33,4 +33,9 @@ define Package/gluon-config-mode-geo-location/install
 	$(call GluonInstallI18N,gluon-config-mode-geo-location,$(1))
 endef
 
+define Package/gluon-config-mode-geo-location/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
+endef
+
 $(eval $(call BuildPackage,gluon-config-mode-geo-location))
