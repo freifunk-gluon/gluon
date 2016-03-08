@@ -1,0 +1,9 @@
+rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 130 -j DROP') -- MLD Query
+rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j DROP') -- MLDv1 Report
+rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j DROP') -- MLDv1 Done
+rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP') -- MLDv2 Report
+
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 130 -j DROP', 'nat') -- MLD Query
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j DROP', 'nat') -- MLDv1 Report
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j DROP', 'nat') -- MLDv1 Done
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP', 'nat') -- MLDv2 Report
