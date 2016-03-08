@@ -1,0 +1,29 @@
+Gluon 2016.1.2
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+The *x86-generic* images now contain the ATIIXP PATA driver, adding support for
+FUTRO Thin Clients.
+
+Bugfixes
+~~~~~~~~
+
+A nondeterministic boot hang (`#669 <https://github.com/freifunk-gluon/gluon/issues/669>`_) has been fixed.
+The TL-WR841N v5 seems to be affected in particular, but the kernel bug is not hardware-specific per se.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Expert Mode is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
