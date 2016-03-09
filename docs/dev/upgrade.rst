@@ -23,7 +23,7 @@ Best practices
   This allows using the same code to create the initial configuration and upgrade configurations on upgrades.
 
 * If it is unavoidable to run different code during the initial installation, the ``sysconfig.gluon_version`` variable
-  can be checked. This variable in ``nil`` during the initial installation and contains the previously install Gluon
+  can be checked. This variable is ``nil`` during the initial installation and contains the previously install Gluon
   version otherwise. The package ``gluon-legacy`` (which is responsible for upgrades from the old firmwares of
   Hamburg/Kiel/Lübeck) uses the special value ``legacy``; other packages should handle this value just as any other
   string.
