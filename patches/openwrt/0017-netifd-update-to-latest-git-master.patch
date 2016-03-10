@@ -1,0 +1,55 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 9 Mar 2016 06:46:44 +0100
+Subject: netifd: update to latest git master
+
+diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
+index 619024b..f7563d5 100644
+--- a/package/network/config/netifd/Makefile
++++ b/package/network/config/netifd/Makefile
+@@ -1,13 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=netifd
+-PKG_VERSION:=2015-12-16
++PKG_VERSION:=2016-03-07
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
++PKG_SOURCE_URL=$(OPENWRT_GIT)/project/netifd.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=245527193e90906451be35c2b8e972b8712ea6ab
++PKG_SOURCE_VERSION:=bd1ee3efb46ae013d81b1aec51668e7595274e69
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+ # PKG_MIRROR_MD5SUM:=
+diff --git a/package/network/config/netifd/files/etc/init.d/network b/package/network/config/netifd/files/etc/init.d/network
+index 542fc08..bdadbbc 100755
+--- a/package/network/config/netifd/files/etc/init.d/network
++++ b/package/network/config/netifd/files/etc/init.d/network
+@@ -21,7 +21,6 @@ start_service() {
+ 	procd_set_param watch network.interface
+ 	[ -e /proc/sys/kernel/core_pattern ] && {
+ 		procd_set_param limits core="unlimited"
+-		echo '/tmp/%e.%p.%s.%t.core' > /proc/sys/kernel/core_pattern
+ 	}
+ 	procd_close_instance
+ }
+diff --git a/package/network/config/netifd/files/sbin/ifup b/package/network/config/netifd/files/sbin/ifup
+index af3aaa8..5515b91 100755
+--- a/package/network/config/netifd/files/sbin/ifup
++++ b/package/network/config/netifd/files/sbin/ifup
+@@ -67,12 +67,10 @@ if [ -n "$setup_wifi" ] && grep -sq config /etc/config/wireless; then
+ 		fi
+ 	}
+ 
+-	local radio_devs
+-	local network="$1"
++	network="$1"
+ 	config_load wireless
+ 	config_foreach find_related_radios wifi-iface
+ 
+-	local dev
+ 	for dev in $(echo "$radio_devs" | sort -u); do
+ 		/sbin/wifi up "$dev"
+ 	done

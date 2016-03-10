@@ -1,0 +1,74 @@
+From: Neal Oakey <neal.oakey@bingo-ev.de>
+Date: Sun, 14 Feb 2016 20:58:20 +0100
+Subject: fix UBNT XM model detection
+
+Signed-off-by: Neal Oakey <neal.oakey@bingo-ev.de>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index d0abf42..f345fae 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -64,6 +64,40 @@ wndr3700_board_detect() {
+ 	AR71XX_MODEL="$machine"
+ }
+ 
++ubnt_get_mtd_part_magic() {
++	ar71xx_get_mtd_offset_size_format EEPROM 4118 2 %02x
++}
++
++ubnt_xm_board_detect() {
++	local model
++	local magic
++
++	magic="$(ubnt_get_mtd_part_magic)"
++	case ${magic:0:3} in
++		"e00"|\
++		"e01"|\
++		"e80") # It seams that there are different Versions of the Nanostation
++			model="Ubiquiti NanoStation M"
++			;;
++		"e0a")
++			model="Ubiquiti NanoStation loco M"
++			;;
++		"e1b") # Note: the M5 has not been tested!
++		       #       and the Ti Versions are still missing
++			model="Ubiquiti Rocket M"
++			;;
++		"e20"|\
++		"e2d") # Bullet Ti M
++			model="Ubiquiti Bullet M"
++			;;
++		"e30")
++			model="Ubiquiti PicoStation M"
++			;;
++	esac
++
++	[ ! -z "$model" ] && AR71XX_MODEL="${model}${magic:3:1}"
++}
++
+ cybertan_get_hw_magic() {
+ 	local part
+ 
+@@ -472,12 +506,14 @@ ar71xx_board_detect() {
+ 		;;
+ 	*"Bullet M")
+ 		name="bullet-m"
++		ubnt_xm_board_detect
+ 		;;
+ 	*"Loco M XW")
+ 		name="loco-m-xw"
+ 		;;
+ 	*"Nanostation M")
+ 		name="nanostation-m"
++		ubnt_xm_board_detect
+ 		;;
+ 	*"Nanostation M XW")
+ 		name="nanostation-m-xw"
+@@ -664,6 +700,7 @@ ar71xx_board_detect() {
+ 		;;
+ 	*"Rocket M")
+ 		name="rocket-m"
++		ubnt_xm_board_detect
+ 		;;
+ 	*"Rocket M XW")
+ 		name="rocket-m-xw"

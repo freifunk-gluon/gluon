@@ -29,6 +29,7 @@
 #include <iwinfo.h>
 #include <json-c/json.h>
 #include <libgluonutil.h>
+#include <uci.h>
 
 #include <alloca.h>
 #include <glob.h>

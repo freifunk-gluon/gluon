@@ -171,28 +171,32 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyPackets(d) {
-    var v = new Intl.NumberFormat("de-DE", {maximumFractionDigits: 0}).format(d)
+    var v = Helper.formatNumberFixed(d, 0)
     return v + " Pakete/s"
   }
 
   function prettyPrefix(prefixes, step, d) {
     var prefix = 0
 
-    while (d > step && prefix < 4) {
+    while (d > step && prefix < prefixes.length - 1) {
       d /= step
       prefix++
     }
 
-    d = new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(d)
+    d = Helper.formatNumber(d, 3)
     return d + " " + prefixes[prefix]
   }
 
+  function prettySize(d) {
+    return prettyPrefix([ "", "k", "M", "G", "T" ], 1024, d)
+  }
+
   function prettyBits(d) {
-    return prettyPrefix([ "bps", "kbps", "Mbps", "Gbps" ], 1024, d * 8)
+    return prettySize(d * 8) + "bps"
   }
 
   function prettyBytes(d) {
-    return prettyPrefix([ "B", "kB", "MB", "GB", "TB" ], 1024, d)
+    return prettySize(d) + "B"
   }
 
   function prettyUptime(seconds) {
@@ -220,11 +224,11 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyNVRAM(usage) {
-    return new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(usage * 100) + "% belegt"
+    return Helper.formatNumber(usage * 100, 3) + "% belegt"
   }
 
   function prettyLoad(load) {
-    return new Intl.NumberFormat("de-DE", {maximumSignificantDigits: 3}).format(load)
+    return Helper.formatNumberFixed(load, 2)
   }
 
   function prettyRAM(memory) {

@@ -1,0 +1,32 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 7 Mar 2016 06:07:59 +0100
+Subject: ar71xx: assign proper GPIO pin for Ubiquiti Nanostation models
+
+The GPIO pins for "POE passthrough" of Ubiquiti Nanostation models are the
+following:
+* Ubiquiti Nanostation M XM: Pin 8
+* Ubiquiti Nanostation M XW: Pin 2
+
+The previous definition of the pins was mixed up between XM and XW model.
+
+Signed-off-by: Lars Kruse <lists@sumpfralle.de>
+
+Backport of r46922
+
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
+index 81d3982..b41f275 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
+@@ -10,10 +10,10 @@ board=$(ar71xx_board_name)
+ 
+ case "$board" in
+ nanostation-m)
+-	ucidef_set_gpio_switch "poe_passthrough" "PoE Passthrough" "2"
++	ucidef_set_gpio_switch "poe_passthrough" "PoE Passthrough" "8"
+ 	;;
+ nanostation-m-xw)
+-	ucidef_set_gpio_switch "poe_passthrough" "PoE Passthrough" "8"
++	ucidef_set_gpio_switch "poe_passthrough" "PoE Passthrough" "2"
+ 	;;
+ cpe510)
+ 	ucidef_set_gpio_switch "poe_passthrough" "PoE Passthrough" "20"
