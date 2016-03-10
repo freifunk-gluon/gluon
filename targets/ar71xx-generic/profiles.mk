@@ -19,6 +19,10 @@ $(eval $(call GluonProfile,TLWA701))
 $(eval $(call GluonModel,TLWA701,tl-wa701n-v1,tp-link-tl-wa701n-nd-v1))
 $(eval $(call GluonModel,TLWA701,tl-wa701nd-v2,tp-link-tl-wa701n-nd-v2))
 
+# TL-WA7510 v1
+$(eval $(call GluonProfile,TLWA7510))
+$(eval $(call GluonModel,TLWA7510,tl-wa7510n,tp-link-tl-wa7510n-v1))
+
 # TL-WR703N v1
 $(eval $(call GluonProfile,TLWR703))
 $(eval $(call GluonModel,TLWR703,tl-wr703n-v1,tp-link-tl-wr703n-v1))
