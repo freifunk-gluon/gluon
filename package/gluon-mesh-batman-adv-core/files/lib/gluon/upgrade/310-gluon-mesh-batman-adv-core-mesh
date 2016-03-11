@@ -48,6 +48,7 @@ uci:section('network', 'interface', 'bat0',
 		    ifname = 'bat0',
 		    proto = 'none',
 		    macaddr = sysconfig.primary_mac,
+		    multicast_router = 2,
 	    }
 )
 
