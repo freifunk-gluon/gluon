@@ -271,3 +271,12 @@ $(eval $(call GluonModel,MYNETN750,mynet-n750,wd-my-net-n750))
 # Omega
 $(eval $(call GluonProfile,OMEGA))
 $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
+
+## ALFA
+
+# Hornet-UB
+$(eval $(call GluonProfile,HORNETUB))
+$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-hornet-ub))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121u))
+

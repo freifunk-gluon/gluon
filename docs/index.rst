@@ -77,6 +77,12 @@ Supported Devices & Architectures
 ar71xx-generic
 ^^^^^^^^^^^^^^
 
+* ALFA Network
+
+  - AP121
+  - AP121U
+  - Hornet-UB
+
 * Allnet
 
   - ALL0315N
