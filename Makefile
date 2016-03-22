@@ -4,6 +4,8 @@ LC_ALL:=C
 LANG:=C
 export LC_ALL LANG
 
+export SHELL:=/usr/bin/env bash
+
 empty:=
 space:= $(empty) $(empty)
 
