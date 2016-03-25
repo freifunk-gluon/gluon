@@ -6,6 +6,8 @@ shopt -s nullglob
 . "$GLUONDIR"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
+	echo "--- Patching module '$module' ---"
+
 	cd "$GLUONDIR"/$module
 	git checkout -B patching base
 

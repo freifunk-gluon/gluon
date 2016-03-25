@@ -6,6 +6,8 @@ shopt -s nullglob
 . "$GLUONDIR"/scripts/modules.sh
 
 for module in $GLUON_MODULES; do
+	echo "--- Updating patches for module '$module' ---"
+
 	rm -f "$GLUONDIR"/patches/$module/*.patch
 	mkdir -p "$GLUONDIR"/patches/$module
 
