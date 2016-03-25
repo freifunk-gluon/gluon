@@ -29,12 +29,6 @@ update: FORCE
 	$(GLUONDIR)/scripts/update.sh
 	$(GLUONDIR)/scripts/patch.sh
 
-patch: FORCE
-	$(GLUONDIR)/scripts/patch.sh
-
-unpatch: FORCE
-	$(GLUONDIR)/scripts/unpatch.sh
-
 update-patches: FORCE
 	$(GLUONDIR)/scripts/update.sh
 	$(GLUONDIR)/scripts/update-patches.sh
