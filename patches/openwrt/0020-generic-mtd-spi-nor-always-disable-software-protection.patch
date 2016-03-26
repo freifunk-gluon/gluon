@@ -1,0 +1,50 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 26 Mar 2016 13:20:41 +0100
+Subject: generic: mtd: spi-nor: always disable software protection
+
+Fixes unwriteable flash when the bootloader leaves it protected.
+
+diff --git a/target/linux/generic/patches-3.18/462-m25p80-always-disable-software-protection.patch b/target/linux/generic/patches-3.18/462-m25p80-always-disable-software-protection.patch
+new file mode 100644
+index 0000000..7be7d0f
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/462-m25p80-always-disable-software-protection.patch
+@@ -0,0 +1,22 @@
++--- a/drivers/mtd/spi-nor/spi-nor.c
+++++ b/drivers/mtd/spi-nor/spi-nor.c
++@@ -957,15 +957,11 @@ int spi_nor_scan(struct spi_nor *nor, co
++ 
++ 	/*
++ 	 * Atmel, SST and Intel/Numonyx serial nor tend to power
++-	 * up with the software protection bits set
+++	 * up with the software protection bits set;
+++	 * others may be left protected by the bootloader
++ 	 */
++-
++-	if (JEDEC_MFR(info->jedec_id) == CFI_MFR_ATMEL ||
++-	    JEDEC_MFR(info->jedec_id) == CFI_MFR_INTEL ||
++-	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST) {
++-		write_enable(nor);
++-		write_sr(nor, 0);
++-	}
+++	write_enable(nor);
+++	write_sr(nor, 0);
++ 
++ 	if (!mtd->name)
++ 		mtd->name = dev_name(dev);
+diff --git a/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch b/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch
+deleted file mode 100644
+index d7d7eec..0000000
+--- a/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch
++++ /dev/null
+@@ -1,10 +0,0 @@
+---- a/drivers/mtd/spi-nor/spi-nor.c
+-+++ b/drivers/mtd/spi-nor/spi-nor.c
+-@@ -962,6 +962,7 @@ int spi_nor_scan(struct spi_nor *nor, co
+- 
+- 	if (JEDEC_MFR(info->jedec_id) == CFI_MFR_ATMEL ||
+- 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_INTEL ||
+-+	    JEDEC_MFR(info->jedec_id) == CFI_MFR_MACRONIX ||
+- 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST) {
+- 		write_enable(nor);
+- 		write_sr(nor, 0);
