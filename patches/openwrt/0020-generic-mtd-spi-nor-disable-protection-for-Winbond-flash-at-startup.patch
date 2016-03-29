@@ -1,0 +1,94 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 29 Mar 2016 21:58:53 +0200
+Subject: generic: mtd: spi-nor: disable protection for Winbond flash at startup
+
+diff --git a/target/linux/generic/patches-3.18/463-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch b/target/linux/generic/patches-3.18/463-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch
+new file mode 100644
+index 0000000..c906425
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/463-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch
+@@ -0,0 +1,47 @@
++From 26e4790ddad59038ece16c8b89ad856bee946d75 Mon Sep 17 00:00:00 2001
++Message-Id: <26e4790ddad59038ece16c8b89ad856bee946d75.1459281384.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 29 Mar 2016 21:51:10 +0200
++Subject: [PATCH 1/2] mtd: spi-nor: wait until lock/unlock operations are ready
++
++Upstream commits:
++
++32321e950d8a237d7e8f3a9b76220007dfa87544
++edf891ef9ab773363f8e58022a26d7d31604aed6
++---
++ drivers/mtd/spi-nor/spi-nor.c | 5 +++++
++ 1 file changed, 5 insertions(+)
++
++diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
++index ef783a4..1ab6e24 100644
++--- a/drivers/mtd/spi-nor/spi-nor.c
+++++ b/drivers/mtd/spi-nor/spi-nor.c
++@@ -370,6 +370,8 @@ static int spi_nor_lock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
++ 		ret = write_sr(nor, status_new);
++ 		if (ret)
++ 			goto err;
+++
+++		ret = wait_till_ready(nor);
++ 	}
++ 
++ err:
++@@ -417,6 +419,8 @@ static int spi_nor_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
++ 		ret = write_sr(nor, status_new);
++ 		if (ret)
++ 			goto err;
+++
+++		ret = wait_till_ready(nor);
++ 	}
++ 
++ err:
++@@ -966,6 +970,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name, enum read_mode mode)
++ 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST) {
++ 		write_enable(nor);
++ 		write_sr(nor, 0);
+++		wait_till_ready(nor);
++ 	}
++ 
++ 	if (!mtd->name)
++-- 
++2.7.4
++
+diff --git a/target/linux/generic/patches-3.18/464-mtd-spi-nor-disable-protection-for-Winbond-flash-at-.patch b/target/linux/generic/patches-3.18/464-mtd-spi-nor-disable-protection-for-Winbond-flash-at-.patch
+new file mode 100644
+index 0000000..7b45666
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/464-mtd-spi-nor-disable-protection-for-Winbond-flash-at-.patch
+@@ -0,0 +1,31 @@
++From 03485b7e91a8f6e69e4945f937f266c59c1376d0 Mon Sep 17 00:00:00 2001
++Message-Id: <03485b7e91a8f6e69e4945f937f266c59c1376d0.1459281384.git.mschiffer@universe-factory.net>
++In-Reply-To: <26e4790ddad59038ece16c8b89ad856bee946d75.1459281384.git.mschiffer@universe-factory.net>
++References: <26e4790ddad59038ece16c8b89ad856bee946d75.1459281384.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 29 Mar 2016 21:55:55 +0200
++Subject: [PATCH 2/2] mtd: spi-nor: disable protection for Winbond flash at
++ startup
++
++Upstream commit: c6fc2171b249e73745c497b578b417a2946f1b2f
++---
++ drivers/mtd/spi-nor/spi-nor.c | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
++
++diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
++index 1ab6e24..ea7fa30 100644
++--- a/drivers/mtd/spi-nor/spi-nor.c
+++++ b/drivers/mtd/spi-nor/spi-nor.c
++@@ -967,7 +967,8 @@ int spi_nor_scan(struct spi_nor *nor, const char *name, enum read_mode mode)
++ 	if (JEDEC_MFR(info->jedec_id) == CFI_MFR_ATMEL ||
++ 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_INTEL ||
++ 	    JEDEC_MFR(info->jedec_id) == CFI_MFR_MACRONIX ||
++-	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST) {
+++	    JEDEC_MFR(info->jedec_id) == CFI_MFR_SST ||
+++	    JEDEC_MFR(info->jedec_id) == CFI_MFR_WINBOND) {
++ 		write_enable(nor);
++ 		write_sr(nor, 0);
++ 		wait_till_ready(nor);
++-- 
++2.7.4
++
