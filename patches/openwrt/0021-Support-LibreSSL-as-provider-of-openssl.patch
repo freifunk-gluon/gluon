@@ -1,0 +1,27 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 30 Mar 2016 02:59:19 +0200
+Subject: Support LibreSSL as provider of openssl
+
+The build scripts check for openssl by grepping the string "OpenSSL" in
+the output of openssl version command. LibreSSL fails this test as it
+outputs something like "LibreSSL 2.2.4". This patch fix the
+prereq-bulid.mk file so that it accepts LibreSSL as openssl provider as
+well.
+
+Signed-off-by: Marek Behun <kabel@blackhole.sk>
+
+Backport of r48267
+
+diff --git a/include/prereq-build.mk b/include/prereq-build.mk
+index 32c4ada..f36d57c 100644
+--- a/include/prereq-build.mk
++++ b/include/prereq-build.mk
+@@ -151,7 +151,7 @@ $(eval $(call SetupHostCommand,file,Please install the 'file' package, \
+ 	file --version 2>&1 | grep file))
+ 
+ $(eval $(call SetupHostCommand,openssl,Please install the 'openssl' utility, \
+-	openssl version | grep OpenSSL))
++	openssl version | grep '\(OpenSSL\|LibreSSL\)'))
+ 
+ 
+ # Install ldconfig stub
