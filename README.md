@@ -16,7 +16,7 @@ our mailinglist to discuss it first.
 
 Please refrain from using the `master` branch for anything else but development purposes!
 Use the most recent release instead. You can list all relaseses by running `git branch -a`
-and switch to one by running `git checkout v2016.1.2 && make update`.
+and switch to one by running `git checkout v2016.1.3 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
 If you upgrade using random master commits the nodes *will break* eventually.

@@ -1,0 +1,43 @@
+Gluon 2016.1.3
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* ALFA Hornet UB / AP121 / AP121U
+* TP-Link TL-WA7510N
+
+Bugfixes
+~~~~~~~~
+
+* The nondeterministic boot hang (`#669 <https://github.com/freifunk-gluon/gluon/issues/669>`_) that was thought to
+  be fixed in Gluon v2016.1.2 has resurfaced on other hardware. We believe it is now fixed properly.
+* Sysupgrades on the Xen DomU have been fixed.
+* Gluon can now be built on systems that use LibreSSL instead of OpenSSL.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Expert Mode is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_)
+
+  Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS first before
+  flashing Gluon. It was discovered that on Ubiquiti PicoStations, this downgrade is still necessary, as the
+  flash is not correctly unlocked, leaving the device unable to leave Config Mode and making regular sysupgrades
+  impossible.
+
+  TFTP recovery can be used in this state to flash a new firmware.
