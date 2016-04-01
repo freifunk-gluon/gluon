@@ -1,0 +1,45 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 1 Apr 2016 23:19:16 +0200
+Subject: ar71xx: avoid AR71XX_MODEL ending with a space on some TP-LINK-like devices
+
+Instead of adding the space when combining $model and $hwver, add the space
+to the beginning of $hwver, so the resulting string won't end with a space
+when $hwver is set to the empty string.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of r49106
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 7f50d8a..9d650a1 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -133,7 +133,7 @@ tplink_board_detect() {
+ 	hwid=$(tplink_get_hwid)
+ 	mid=$(tplink_get_mid)
+ 	hwver=${hwid:6:2}
+-	hwver="v${hwver#0}"
++	hwver=" v${hwver#0}"
+ 
+ 	case "$hwid" in
+ 	"015000"*)
+@@ -196,8 +196,8 @@ tplink_board_detect() {
+ 	"083000"*)
+ 		model="TP-Link TL-WA830RE"
+ 
+-		if [ "$hwver" = 'v10' ]; then
+-			hwver='v1'
++		if [ "$hwver" = ' v10' ]; then
++			hwver=' v1'
+ 		fi
+ 		;;
+ 	"084100"*)
+@@ -296,7 +296,7 @@ tplink_board_detect() {
+ 		;;
+ 	esac
+ 
+-	AR71XX_MODEL="$model $hwver"
++	AR71XX_MODEL="$model$hwver"
+ }
+ 
+ tplink_pharos_get_model_string() {
