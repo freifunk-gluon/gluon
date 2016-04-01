@@ -5,7 +5,7 @@ Subject: fix UBNT XM model detection
 Signed-off-by: Neal Oakey <neal.oakey@bingo-ev.de>
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index d0abf42..f345fae 100755
+index 5768286..7f50d8a 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -64,6 +64,40 @@ wndr3700_board_detect() {
@@ -49,7 +49,7 @@ index d0abf42..f345fae 100755
  cybertan_get_hw_magic() {
  	local part
  
-@@ -472,12 +506,14 @@ ar71xx_board_detect() {
+@@ -475,12 +509,14 @@ ar71xx_board_detect() {
  		;;
  	*"Bullet M")
  		name="bullet-m"
@@ -64,7 +64,7 @@ index d0abf42..f345fae 100755
  		;;
  	*"Nanostation M XW")
  		name="nanostation-m-xw"
-@@ -664,6 +700,7 @@ ar71xx_board_detect() {
+@@ -667,6 +703,7 @@ ar71xx_board_detect() {
  		;;
  	*"Rocket M")
  		name="rocket-m"
