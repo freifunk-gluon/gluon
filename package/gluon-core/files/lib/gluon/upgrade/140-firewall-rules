@@ -27,4 +27,3 @@ c:section('firewall', 'rule', 'wan_ssh',
 )
 
 c:save('firewall')
-c:commit('firewall')

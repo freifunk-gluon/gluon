@@ -53,7 +53,6 @@ uci:section('network', 'route6', 'wan6_unreachable',
 )
 
 uci:save('network')
-uci:commit('network')
 
 
 uci:section('firewall', 'rule', 'wan_igmp',
@@ -79,7 +78,6 @@ uci:section('firewall', 'rule', 'wan_mld',
 )
 
 uci:save('firewall')
-uci:commit('firewall')
 
 
 sysctl.set('net.ipv6.conf.all.accept_ra', 0)

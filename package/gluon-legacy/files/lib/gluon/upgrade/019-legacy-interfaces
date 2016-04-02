@@ -34,7 +34,6 @@ if sysconfig.gluon_version == 'legacy' then
   uci:delete('network', 'wan')
 
   uci:save('network')
-  uci:commit('network')
 end
 
 

@@ -17,4 +17,3 @@ uci:section('firewall', 'rule', 'wan_respondd_reply',
 )
 
 uci:save('firewall')
-uci:commit('firewall')

@@ -14,5 +14,4 @@ if not sysconfig.gluon_version then
   uci:set('system', system, 'timezone', site.timezone)
 
   uci:save('system')
-  uci:commit('system')
 end

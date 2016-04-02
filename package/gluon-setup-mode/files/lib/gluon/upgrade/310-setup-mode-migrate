@@ -12,7 +12,6 @@ if old == '1' then
 	c:set('gluon-setup-mode', setup_mode, 'configured', '1')
 
 	c:save('gluon-setup-mode')
-	c:commit('gluon-setup-mode')
 end
 
 os.remove('/etc/config/gluon-config-mode')

@@ -40,7 +40,6 @@ end
 c:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
 
 c:save('autoupdater')
-c:commit('autoupdater')
 
 
 local autoupdater_util = require 'autoupdater.util'

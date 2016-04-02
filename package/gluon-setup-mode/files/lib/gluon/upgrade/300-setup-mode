@@ -11,6 +11,5 @@ if site.setup_mode
      local name = c:get_first("gluon-setup-mode", "setup_mode")
      c:set("gluon-setup-mode", name, "configured", 1)
      c:save('gluon-setup-mode')
-     c:commit('gluon-setup-mode')
 end
 

@@ -16,4 +16,3 @@ if not c:get('network', 'mesh_wan') then
 end
 
 c:save('network')
-c:commit('network')

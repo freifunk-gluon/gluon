@@ -21,7 +21,6 @@ if sysconfig.gluon_version == 'legacy' then
       )
 
       uci:save('simple-tc')
-      uci:commit('simple-tc')
 
       break
     end

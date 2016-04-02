@@ -29,4 +29,3 @@ uci:section('firewall', 'rule', 'client_respondd',
 )
 
 uci:save('firewall')
-uci:commit('firewall')

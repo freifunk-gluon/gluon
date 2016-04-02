@@ -20,5 +20,4 @@ if sysconfig.gluon_version == 'legacy' then
   uci:delete_all('wireless', 'wifi-iface', delete_legacy_iface)
 
   uci:save('wireless')
-  uci:commit('wireless')
 end
