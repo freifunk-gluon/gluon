@@ -32,5 +32,4 @@ if not (sysconfig.lan_ifname or sysconfig.wan_ifname) then
   uci:delete('network', 'wan')
 
   uci:save('network')
-  uci:commit('network')
 end

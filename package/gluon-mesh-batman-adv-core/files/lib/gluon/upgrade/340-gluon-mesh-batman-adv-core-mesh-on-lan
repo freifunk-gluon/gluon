@@ -32,6 +32,5 @@ if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
   })
 
   uci:save('network')
-  uci:commit('network')
 end
 

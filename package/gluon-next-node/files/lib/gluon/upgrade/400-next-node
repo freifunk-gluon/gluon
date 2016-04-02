@@ -39,7 +39,6 @@ c:section('network', 'route6', 'local_node_route6',
 )
 
 c:save('network')
-c:commit('network')
 
 c:delete('firewall', 'local_node')
 c:section('firewall', 'zone', 'local_node',
@@ -52,4 +51,3 @@ c:section('firewall', 'zone', 'local_node',
 	  }
 )
 c:save('firewall')
-c:commit('firewall')

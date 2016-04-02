@@ -12,9 +12,7 @@ if sysconfig.gluon_version == 'legacy' then
     if old == '1' then
       local setup_mode = uci:get_first('gluon-setup-mode', 'setup_mode')
       uci:set('gluon-setup-mode', setup_mode, 'configured', '1')
-
       uci:save('gluon-setup-mode')
-      uci:commit('gluon-setup-mode')
 
       break
     end

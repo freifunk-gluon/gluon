@@ -24,7 +24,6 @@ uci:section('batman-adv', 'mesh', 'bat0',
 	    }
 )
 uci:save('batman-adv')
-uci:commit('batman-adv')
 
 if not uci:get('network', 'client', 'ifname') then
   uci:add_to_set('network', 'client', 'ifname', 'bat0')
@@ -52,7 +51,6 @@ uci:section('network', 'interface', 'bat0',
 )
 
 uci:save('network')
-uci:commit('network')
 
 
 uci:delete('firewall', 'client')
@@ -76,7 +74,6 @@ uci:section('firewall', 'rule', 'client_dns',
 )
 
 uci:save('firewall')
-uci:commit('firewall')
 
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
@@ -93,7 +90,6 @@ uci:section('dhcp', 'dhcp', 'client',
 )
 
 uci:save('dhcp')
-uci:commit('dhcp')
 
 
 sysctl.set('net.ipv6.conf.br-client.forwarding', 0)
