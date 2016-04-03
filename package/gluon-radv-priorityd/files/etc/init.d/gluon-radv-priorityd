@@ -1,0 +1,17 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+SERVICE_WRITE_PID=1
+SERVICE_DAEMONIZE=1
+
+DAEMON=/usr/sbin/gluon-radv-priorityd
+
+
+start() {
+    service_start $DAEMON
+}
+
+stop() {
+    service_stop $DAEMON
+}

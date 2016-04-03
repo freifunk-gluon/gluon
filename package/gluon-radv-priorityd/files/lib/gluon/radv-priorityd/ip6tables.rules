@@ -1,0 +1,6 @@
+*raw
+-I PREROUTING -m physdev --physdev-is-in -p icmpv6 --icmpv6-type router-advertisement -j NFQUEUE --queue-num 0 --queue-bypass
+COMMIT
+*filter
+-I FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+COMMIT
