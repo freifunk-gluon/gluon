@@ -11,7 +11,7 @@ define Package/gluon-mesh-babel
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Babel mesh
-  DEPENDS:=+gluon-core +gluon-radio-config +babeld
+  DEPENDS:=+gluon-core +babeld
 endef
 
 define Build/Prepare
