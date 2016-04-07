@@ -183,6 +183,7 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+)
 
 ifeq ($(BROKEN),1)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
+$(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw)) # BROKEN: Untested
 endif
 
 
