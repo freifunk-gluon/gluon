@@ -1,0 +1,23 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+local site = require 'gluon.site_config'
+
+if site.mesh_on_wan then
+  uci:section('babeld', 'interface', 'mesh_wan',
+    {
+      ifname = 'br-wan',
+    }
+  )
+
+  uci:add_to_set('firewall', 'mesh_babel', 'network', 'wan')
+end
+
+uci:add_to_set('firewall', 'mesh_babel', 'network', 'client')
+uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node4')
+uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node6')
+
+uci:save('babeld')
+uci:save('firewall')
+uci:commit('babeld')
+uci:commit('firewall')
