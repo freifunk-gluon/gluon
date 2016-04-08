@@ -55,6 +55,10 @@ Packages
    package/gluon-config-mode-geo-location
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
+<<<<<<< HEAD
+=======
+   package/gluon-ebtables-segment-mld
+>>>>>>> gluon-next-node: mark local-node ip6 as deprecated
    package/gluon-next-node
 
 Releases
