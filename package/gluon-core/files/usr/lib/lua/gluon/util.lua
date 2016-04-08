@@ -30,6 +30,7 @@ local ipairs = ipairs
 local table = table
 
 local nixio = require 'nixio'
+local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local platform = require 'gluon.platform'
 local site = require 'gluon.site_config'
@@ -82,36 +83,25 @@ end
 -- (4, 0): mesh VPN
 -- (5, n): mesh interface for n'th radio (802.11s)
 function generate_mac(f, i)
-  local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
-  m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
-  m2 = tonumber(m2, 16)
-  m3 = (tonumber(m3, 16)+i) % 0x100
+  local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
+  local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
+
+  m1 = tonumber(m1, 16)
+  m3 = tonumber(m3, 16)
   m6 = tonumber(m6, 16)
 
-  if platform.match('ramips', 'rt305x', {'vocore'}) then
-    -- We need to iterate in the last byte, since the vocore does
-    -- hardware mac filtering on the wlan interface.
-    m6 = (m6+f) % 0x100
-  else
-    m2 = (m2+f) % 0x100
-  end
+  m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
+  m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
+  m3 = (m3+i) % 0x100           -- add interface identifier
 
-  return string.format('%02x:%02x:%02x:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
-end
-
--- Generates a mac hashed from the original
--- The last three bits will be zeroed, since these bits are
--- iterated on some devices for the VIF.
-function hash_mac(original)
-  local hashed = string.sub(sys.exec('echo -n "' .. original .. '" | sha512sum'),0,12)
-  local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
-  local m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
-  local m6 = nixio.bit.band(tonumber(m6, 16), 0xF8) -- zero the last three bits
-  -- It's necessary that the upper bits of the mac do
-  -- not vary on a single interface, since they are using
+  -- It's necessary that the last bits of the mac do
+  -- not vary on a single interface, since some chips are using
   -- a hardware mac filter. (e.g 'ramips-rt305x')
 
-  return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+  m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
+  m6 = (m6+f) % 0x100           -- add virtual interface id
+
+  return string.format('%02x:%s:%02x:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 -- Iterate over all radios defined in UCI calling

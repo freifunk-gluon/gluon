@@ -10,9 +10,8 @@ end
 
 local platform = require 'gluon.platform'
 
-local sys = require 'luci.sys'
+local fs = require 'nixio.fs'
 local util = require 'luci.util'
-local nixio = require 'nixio'
 
 
 local try_files = {
@@ -33,15 +32,9 @@ end
 
 
 for _, file in ipairs(try_files) do
-  local addr = nixio.fs.readfile(file)
+  local addr = fs.readfile(file)
 
   if addr then
-    if platform.match('ramips', 'rt305x', {'vocore'}) then
-      -- Hash the mac address since we need to iterate in the last bits for
-      -- the VIF. (This chip uses a hardware mac filter)
-      addr = util.hash_mac(addr)
-    end
-
     sysconfig.primary_mac = util.trim(addr)
     break
   end
