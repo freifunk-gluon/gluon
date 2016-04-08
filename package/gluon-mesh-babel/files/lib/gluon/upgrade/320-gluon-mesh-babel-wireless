@@ -1,0 +1,79 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+
+
+local function is_disabled(config, name)
+  local disabled = config and config.disabled
+  if uci:get('wireless', name) then
+    disabled = uci:get_bool('wireless', name, 'disabled')
+  end
+
+  return disabled and 1 or 0
+end
+
+local function configure_mesh(config, radio, index, suffix)
+  local name = 'mesh_' .. radio
+  local disabled = is_disabled(config, name)
+
+  uci:delete('network', name)
+  uci:delete('wireless', name)
+  uci:delete('babeld', name)
+
+  if config then
+    uci:section('network', 'interface', name,
+      {
+        proto = 'none',
+      }
+    )
+
+    local ifname = 'mesh' .. suffix
+
+    uci:section('wireless', 'wifi-iface', name,
+      {
+        device = radio,
+        network = name,
+        mode = 'mesh',
+        mesh_id = config.id,
+        mesh_fwding = 0,
+        mcast_rate = config.mcast_rate,
+        ifname = ifname,
+        disabled = disabled,
+      }
+    )
+
+    uci:section('babeld', 'interface', name,
+      {
+        ifname = ifname,
+      }
+    )
+
+    local networks = uci:get_list('firewall', 'mesh_babel', 'network')
+    local set = {}
+    for _, l in ipairs(networks) do set[l] = true end
+    set[name] = true
+    networks = {}
+    for k, _ in pairs(set) do table.insert(networks, k) end
+    uci:set_list('firewall', 'mesh_babel', 'network', networks)
+  end
+end
+
+local function configure_radio(radio, index, config)
+  local suffix = radio:match('^radio(%d+)$')
+
+  configure_mesh(config.mesh, radio, index, suffix)
+end
+
+util.iterate_radios(configure_radio)
+
+uci:save('wireless')
+uci:save('network')
+uci:save('babeld')
+uci:save('firewall')
+uci:commit('wireless')
+uci:commit('network')
+uci:commit('babeld')
+uci:commit('firewall')
