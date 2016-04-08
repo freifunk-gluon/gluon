@@ -1,0 +1,52 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+local site = require 'gluon.site_config'
+
+uci:section('babeld', 'filter', 'mesh_prefix',
+  {
+    type = 'redistribute',
+    ip = site.babel_mesh.prefix,
+    eq = 128,
+    action = 'allow',
+  }
+)
+
+uci:section('babeld', 'filter', 'client_prefix',
+  {
+    type = 'redistribute',
+    ip = site.prefix6,
+    eq = 128,
+    action = 'allow',
+  }
+)
+
+uci:section('babeld', 'filter', 'client_prefix',
+  {
+    type = 'redistribute',
+    ip = site.prefix6,
+    eq = 128,
+    action = 'allow',
+  }
+)
+
+uci:section('babeld', 'filter', 'local_deny',
+  {
+    type = 'redistribute',
+    ['local'] = 1, -- local is a keyword
+    action = 'deny',
+  }
+)
+
+uci:section('babeld', 'filter', 'defaultroute',
+  {
+    type = 'redistribute',
+    ip = '::/0',
+    eq = 0,
+    action = 'allow',
+  }
+)
+
+uci:save('babeld')
+uci:commit('babeld')
+
