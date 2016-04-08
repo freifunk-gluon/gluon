@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+
+START=50
+
+USE_PROCD=1
+PROG=/usr/bin/l3roamd
+
+start_service () {
+        procd_open_instance
+        procd_set_param stdout 1
+        procd_set_param stderr 1
+        procd_set_param command "$PROG" -p $(lua -e 'print(require("gluon.site_config").prefix6)') -i br-client -m mesh0 -m br-wan -t 11
+
+        procd_close_instance
+}
+
