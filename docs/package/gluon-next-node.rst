@@ -5,7 +5,7 @@ This package provides a virtual interface (tied to *br-client*) called *local-no
 using the same MAC, IP4 and IP6 across all nodes in a mesh. Thus, the node that
 the client is currently connected to, can always be reached under a known address.
 
-The IP6 is marked es deprecated to prevent it from being used as a source
+The IP6 is marked as deprecated to prevent it from being used as a source
 address for packages originating from a node.
 
 site.conf
