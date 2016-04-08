@@ -22,18 +22,27 @@ define(["lib/helper"], function (Helper) {
     return el
   }
 
-  function mkRow(table, label, stream) {
-    var tr = document.createElement("tr")
+  function mkRow(table, label, stream, sorted) {
+
+    var i = -1
+
+    if (sorted) {
+      for (i = 0; i < table.rows.length; i++) {
+        if (label < table.rows[i].firstChild.textContent)
+           break
+      }
+    }
+
+    var tr = table.insertRow(i)
     var th = document.createElement("th")
     var td = streamElement("td", stream)
     th.textContent = label
     tr.appendChild(th)
     tr.appendChild(td)
-    table.appendChild(tr)
 
     tr.destroy = function () {
       td.destroy()
-      table.removeChild(tr)
+      table.tBodies[0].removeChild(tr)
     }
 
     return tr
@@ -127,7 +136,7 @@ define(["lib/helper"], function (Helper) {
                                         stream.startWith(d)
                                         .map(peer.path)
                                         .filter(function (d) { return d !== undefined })
-                                        .map(prettyPeer))
+                                        .map(prettyPeer), true)
         })
       }
     })
