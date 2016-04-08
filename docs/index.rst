@@ -53,6 +53,7 @@ Packages
    package/gluon-client-bridge
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
+   package/gluon-next-node
 
 Releases
 --------
