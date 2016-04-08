@@ -32,7 +32,6 @@ local table = table
 local nixio = require 'nixio'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
-local platform = require 'gluon.platform'
 local site = require 'gluon.site_config'
 local uci = require('luci.model.uci').cursor()
 
