@@ -44,7 +44,7 @@ ntp_server
     List of NTP servers available in your community or used by your community, e.g.:
     ::
 
-       ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'}
+       ntp_servers = {'1.ntp.services.ffeh','2.ntp.services.ffeh'}
 
 opkg : optional
     ``opkg`` package manager configuration.
