@@ -1,0 +1,31 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
+local fs = require 'nixio.fs'
+
+
+if fs.access('/etc/config/gluon-simple-tc') then
+  os.rename('/etc/config/gluon-simple-tc', '/etc/config/simple-tc')
+end
+
+
+if not uci:get('simple-tc', 'mesh_vpn') then
+  local config = {
+    ifname = 'mesh-vpn',
+    enabled = 0,
+  }
+
+
+  if site.fastd_mesh_vpn.bandwidth_limit then
+    if site.fastd_mesh_vpn.bandwidth_limit.enabled then
+      config.enabled = 1
+    end
+
+    config.limit_ingress = site.fastd_mesh_vpn.bandwidth_limit.ingress
+    config.limit_egress = site.fastd_mesh_vpn.bandwidth_limit.egress
+  end
+
+  uci:section('simple-tc', 'interface', 'mesh_vpn', config)
+  uci:save('simple-tc')
+end
