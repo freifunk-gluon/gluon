@@ -46,6 +46,9 @@ ntp_server
 
        ntp_servers = {'1.ntp.services.ffeh','2.ntp.services.ffeh'}
 
+    This NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
+    explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
+
 opkg : optional
     ``opkg`` package manager configuration.
 
@@ -248,6 +251,9 @@ autoupdater : package
           }
         }
       }
+
+    All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
+    explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
 roles : optional
     Optional role definitions. Nodes will announce their role inside the mesh.
