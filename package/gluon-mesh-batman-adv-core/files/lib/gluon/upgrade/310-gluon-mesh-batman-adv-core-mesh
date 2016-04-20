@@ -38,6 +38,9 @@ end
 uci:set('network', 'client', 'proto', 'dhcpv6')
 uci:set('network', 'client', 'reqprefix', 'no')
 uci:set('network', 'client', 'igmp_snooping', 0)
+uci:set('network', 'client', 'robustness', 3)
+uci:set('network', 'client', 'query_interval', 2000)
+uci:set('network', 'client', 'query_response_interval', 500)
 uci:set('network', 'client', 'peerdns', 1)
 uci:set('network', 'client', 'sourcefilter', 0)
 
