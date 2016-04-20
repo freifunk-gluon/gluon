@@ -78,6 +78,10 @@ Supported Devices & Architectures
 ar71xx-generic
 ^^^^^^^^^^^^^^
 
+* 8devices
+
+  - Carambola 2
+
 * ALFA Network
 
   - AP121
