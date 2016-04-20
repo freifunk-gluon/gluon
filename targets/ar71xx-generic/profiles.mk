@@ -302,3 +302,10 @@ $(eval $(call GluonProfile,MR16,rssileds))
 $(eval $(call GluonProfileFactorySuffix,MR16))
 $(eval $(call GluonModel,MR16,mr16,meraki-mr16))
 $(eval $(call GluonModelAlias,MR16,meraki-mr16,meraki-mr66))
+
+## 8devices
+
+# Carambola 2
+$(eval $(call GluonProfile,CARAMBOLA2))
+$(eval $(call GluonModel,CARAMBOLA2,carambola2,8devices-carambola2-board))
+$(eval $(call GluonProfileFactorySuffix,CARAMBOLA2))
