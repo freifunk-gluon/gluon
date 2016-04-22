@@ -6,7 +6,7 @@ Frequently Asked Questions
 DNS does not work on the nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Gluon nodes will ignore the DNS server on the WAN port for evenything except
+Gluon nodes will ignore the DNS server on the WAN port for everything except
 the mesh VPN, which can lead to confusion.
 
 All normal services on the nodes exclusively use the DNS server on the mesh
