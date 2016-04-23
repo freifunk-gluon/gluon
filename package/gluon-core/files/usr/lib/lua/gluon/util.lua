@@ -72,35 +72,36 @@ function node_id()
 end
 
 -- Generates a (hopefully) unique MAC address
--- The first parameter defines the function and the second
--- parameter an ID to add to the MAC address
--- Functions and IDs defined so far:
--- (1, 0): WAN (for mesh-on-WAN)
--- (1, 1): LAN (for mesh-on-LAN)
--- (2, n): client interface for the n'th radio
--- (3, n): adhoc interface for n'th radio
--- (4, 0): mesh VPN
--- (5, n): mesh interface for n'th radio (802.11s)
-function generate_mac(f, i)
+-- The parameter defines the ID to add to the mac addr
+--
+-- IDs defined so far:
+-- 0: client0; mesh-vpn
+-- 1: mesh0
+-- 2: ibss0
+-- 3: client1; mesh-on-wan
+-- 4: mesh1
+-- 5: ibss1
+-- 6: mesh-on-lan
+-- 7: unused
+function generate_mac(i)
   local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
   local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
 
   m1 = tonumber(m1, 16)
-  m3 = tonumber(m3, 16)
   m6 = tonumber(m6, 16)
 
   m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
   m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
-  m3 = (m3+i) % 0x100           -- add interface identifier
 
   -- It's necessary that the last bits of the mac do
   -- not vary on a single interface, since some chips are using
   -- a hardware mac filter. (e.g 'ramips-rt305x')
 
+  i = i % 0x08                  -- max allowed value is 0x07
   m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
-  m6 = (m6+f) % 0x100           -- add virtual interface id
+  m6 = m6 + i                   -- add virtual interface id
 
-  return string.format('%02x:%s:%02x:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+  return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 -- Iterate over all radios defined in UCI calling

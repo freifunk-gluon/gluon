@@ -53,6 +53,12 @@ local function configure_ibss(config, radio, index, suffix, disabled)
       )
     end
 
+    if index == 0 then
+      macaddr = util.generate_mac(2)
+    elseif index == 1 then
+      macaddr = util.generate_mac(5)
+    end
+
     uci:section('wireless', 'wifi-iface', name,
       {
         device = radio,
@@ -60,7 +66,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
         mode = 'adhoc',
         ssid = config.ssid,
         bssid = config.bssid,
-        macaddr = util.generate_mac(3, index),
+        macaddr = macaddr,
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'ibss' .. suffix,
         disabled = disabled and 1 or 0,
@@ -85,6 +91,12 @@ local function configure_mesh(config, radio, index, suffix, disabled)
       }
     )
 
+    if index == 0 then
+      macaddr = util.generate_mac(1)
+    elseif index == 1 then
+      macaddr = util.generate_mac(4)
+    end
+
     uci:section('wireless', 'wifi-iface', name,
       {
         device = radio,
@@ -92,7 +104,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
         mode = 'mesh',
         mesh_id = config.id,
         mesh_fwding = 0,
-        macaddr = util.generate_mac(5, index),
+        macaddr = macaddr,
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'mesh' .. suffix,
         disabled = disabled and 1 or 0,
