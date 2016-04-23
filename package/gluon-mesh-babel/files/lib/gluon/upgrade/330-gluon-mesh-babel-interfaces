@@ -13,6 +13,28 @@ if site.mesh_on_wan then
   uci:add_to_set('firewall', 'mesh_babel', 'network', 'wan')
 end
 
+
+local interfaces='/lib/gluon/core/dynamic/interfaces' 
+function interfaces_exists(file) 
+  local f = io.open(file, "rb") 
+  if f then f:close() end 
+  return f ~= nil 
+end 
+
+function lines_from(file) 
+  if not interfaces_exists(file) then return {} end 
+  lines = {} 
+  for line in io.lines(file) do 
+    lines[#lines + 1] = line 
+  end 
+  return lines 
+end 
+
+local lines = lines_from(interfaces) 
+for line,interface in pairs(lines) do 
+  uci:section('babeld', 'interface', line, { ifname = interface }) 
+end 
+
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'client')
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node4')
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node6')
