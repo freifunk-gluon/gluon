@@ -16,11 +16,11 @@ end
 
 uci:delete_all('babeld', 'interface')
 
-pcall( function() 
-for interface in io.lines(interfaces) do 
-  int = string.gsub(interface,'[.-]','_')
-  uci:section('babeld', 'interface', 'interface_' .. int, { ifname = interface })
-end
+pcall(function() 
+  for interface in io.lines(interfaces) do 
+    int = string.gsub(interface,'[.-]','_')
+    uci:section('babeld', 'interface', 'interface_' .. int, { ifname = interface })
+  end
 end)
 
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'client')
