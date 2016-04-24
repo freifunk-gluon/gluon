@@ -84,6 +84,8 @@ end
 -- 6: mesh-on-lan
 -- 7: unused
 function generate_mac(i)
+  if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
+
   local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
   local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
 
@@ -96,8 +98,6 @@ function generate_mac(i)
   -- It's necessary that the first 45 bits of the mac do
   -- not vary on a single hardware interface, since some chips are using
   -- a hardware mac filter. (e.g 'ramips-rt305x')
-
-  if i > 7 then return nil end  -- max allowed id (0b111)
 
   m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
   m6 = m6 + i                   -- add virtual interface id
