@@ -93,11 +93,12 @@ function generate_mac(i)
   m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
   m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
 
-  -- It's necessary that the last bits of the mac do
-  -- not vary on a single interface, since some chips are using
+  -- It's necessary that the first 45 bits of the mac do
+  -- not vary on a single hardware interface, since some chips are using
   -- a hardware mac filter. (e.g 'ramips-rt305x')
 
-  i = i % 0x08                  -- max allowed value is 0x07
+  if i > 7 then return nil end  -- max allowed id (0b111)
+
   m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
   m6 = m6 + i                   -- add virtual interface id
 
