@@ -16,10 +16,10 @@ end
 
 uci:delete_all('babeld', 'interface')
 
-pcall(function() 
+pcall( function() 
   for interface in io.lines(interfaces) do 
-    int = string.gsub(interface,'[.-]','_')
-    uci:section('babeld', 'interface', 'interface_' .. int, { ifname = interface })
+    local section = interface:gsub('[^%w_]','_')
+    uci:section('babeld', 'interface', 'interface_' .. section, { ifname = interface })
   end
 end)
 
