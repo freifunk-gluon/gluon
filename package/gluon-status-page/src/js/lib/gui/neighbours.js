@@ -31,20 +31,13 @@ function (Helper, SignalGraph, Signal) {
   }
 
   function TableEntry(parent, nodeInfo, color, stream, mgmtBus, signal) {
-    var el = document.createElement("tr")
-    parent.appendChild(el)
+    var el = parent.insertRow()
 
-    var tdHostname = document.createElement("td")
-    var tdTQ = document.createElement("td")
-    var tdSignal = document.createElement("td")
-    var tdDistance = document.createElement("td")
-    var tdInactive = document.createElement("td")
-
-    el.appendChild(tdHostname)
-    el.appendChild(tdTQ)
-    el.appendChild(tdSignal)
-    el.appendChild(tdDistance)
-    el.appendChild(tdInactive)
+    var tdHostname = el.insertCell()
+    var tdTQ = el.insertCell()
+    var tdSignal = el.insertCell()
+    var tdDistance = el.insertCell()
+    var tdInactive = el.insertCell()
 
     var marker = document.createElement("span")
     marker.textContent = "⬤ "
@@ -69,7 +62,7 @@ function (Helper, SignalGraph, Signal) {
 
     el.destroy = function () {
       unsubscribe()
-      parent.removeChild(el)
+      parent.tBodies[0].removeChild(el)
     }
 
     return el
@@ -135,8 +128,7 @@ function (Helper, SignalGraph, Signal) {
     el.appendChild(h)
 
     var table = document.createElement("table")
-    var tr = document.createElement("tr")
-    table.appendChild(tr)
+    var tr = table.insertRow()
     table.classList.add("datatable")
 
     var th = document.createElement("th")

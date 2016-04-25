@@ -49,10 +49,11 @@ define(["lib/helper"], function (Helper) {
   }
 
   function mkTrafficRow(table, children, label, stream, selector) {
-    var tr = document.createElement("tr")
+    var tr = table.insertRow()
     var th = document.createElement("th")
-    var td = document.createElement("td")
     th.textContent = label
+    tr.appendChild(th)
+    var td = tr.insertCell()
 
     var traffic = stream.slidingWindow(2, 2)
     var pkts = streamNode(traffic.map(deltaUptime(selector + ".packets")).map(prettyPackets))
@@ -64,10 +65,6 @@ define(["lib/helper"], function (Helper) {
     td.appendChild(bw)
     td.appendChild(document.createElement("br"))
     td.appendChild(bytes)
-
-    tr.appendChild(th)
-    tr.appendChild(td)
-    table.appendChild(tr)
 
     children.push(pkts)
     children.push(bw)
