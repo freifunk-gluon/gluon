@@ -1,0 +1,43 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 25 Apr 2016 18:07:13 +0200
+Subject: ar71xx: Add TL-WR841N/ND v11 support
+
+This patch adds support for the TP-Link TL-WR841N/ND to trunk. It is
+similar to the already supported v10 - see [1]. I have added support
+based on that topic; in the meantime it has been confirmed working
+(see the forum thread, and also [2]).
+
+Signed-off by Stijn Segers <francesco.borromini@inventati.org>
+
+[1]: https://forum.openwrt.org/viewtopic.php?id=61309
+[2]: https://forum.openwrt.org/viewtopic.php?id=63657
+
+Backport of r49099
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 9ac405c..1b4e6db 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -578,6 +578,13 @@ define Device/tl-wr841-v10
+     TPLINK_HWID := 0x08410010
+ endef
+ 
++define Device/tl-wr841-v11
++   $(Device/tplink-4mlzma)
++   BOARDNAME := TL-WR841N-v9
++   DEVICE_PROFILE := TLWR841
++   TPLINK_HWID := 0x08410011
++endef
++
+ define Device/tl-wr842n-v2
+     $(Device/tplink-8mlzma)
+     BOARDNAME := TL-WR842N-v2
+@@ -598,7 +605,7 @@ define Device/tl-wr847n-v8
+     DEVICE_PROFILE := TLWR841
+     TPLINK_HWID := 0x08470008
+ endef
+-TARGET_DEVICES += tl-wr841-v8 tl-wr841-v9 tl-wr841-v10 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
++TARGET_DEVICES += tl-wr841-v8 tl-wr841-v9 tl-wr841-v10 tl-wr841-v11 tl-wr842n-v2 tl-wr843nd-v1 tl-wr847n-v8
+ 
+ define Device/tl-wr941nd-v5
+     $(Device/tplink-4mlzma)
