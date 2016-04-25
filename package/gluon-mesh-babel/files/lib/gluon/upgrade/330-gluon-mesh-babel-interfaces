@@ -2,39 +2,12 @@
 
 local uci = require('luci.model.uci').cursor()
 local site = require 'gluon.site_config'
-local interfaces='/lib/gluon/core/mesh_interfaces' 
-local babelconf='/var/etc/gluon-babel.conf'
+--local gmesh = require 'gluon.mesh'
 
+-- TODO: do we need settings for more interfaces in the firewall?
 if site.mesh_on_wan then
-  uci:section('babeld', 'interface', 'mesh_wan',
-    {
-      ifname = 'br-wan',
-    }
-  )
-
   uci:add_to_set('firewall', 'mesh_babel', 'network', 'wan')
 end
-
-file = io.open(babelconf, "w")
-file:write("ipv6-subtrees true\n")
-file:write("export-table 10\n")
-file:write("import-table 255\n")
-file:write("import-table 11\n")
-
-pcall( function() 
-  for interface in io.lines(interfaces) do 
-    local section = interface:gsub('[^%w_]','_')
-    file:write("interface " .. interface .. "\n")
-  end
-end)
-
-file:write(" redistribute ip " .. site.prefix6 .. " eq 128  allow\n")
-file:write(" redistribute ip " .. site.babel_mesh.prefix .. " eq 128  allow\n")
-file:write(" redistribute local  deny\n")
-file:write(" redistribute ip ::/0 eq 0  allow\n")
-file:close()
-
-
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'client')
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node4')
 uci:add_to_set('firewall', 'mesh_babel', 'network', 'local_node6')

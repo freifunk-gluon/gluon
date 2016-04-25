@@ -1,0 +1,28 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local gmesh = require 'gluon.mesh'
+
+--local interfaces='/lib/gluon/core/mesh_interfaces' 
+local babelconf='/var/etc/gluon-babel.conf'
+
+file = io.open(babelconf, "w")
+file:write("ipv6-subtrees true\n")
+file:write("export-table 10\n")
+file:write("import-table 255\n")
+file:write("import-table 11\n")
+
+for interface in gmesh.interfaces() do 
+	file:write("interface " .. interface .. "\n")
+end
+if site.mesh_on_wan then
+	file:write("interface  br-wan\n")
+end
+
+file:write(" redistribute ip " .. site.prefix6 .. " eq 128  allow\n")
+file:write(" redistribute ip " .. site.babel_mesh.prefix .. " eq 128  allow\n")
+file:write(" redistribute local  deny\n")
+file:write(" redistribute ip ::/0 eq 0  allow\n")
+file:close()
+
+
