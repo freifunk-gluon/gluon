@@ -15,9 +15,6 @@ file:write("import-table 11\n")
 for interface, _ in pairs(gmesh.interfaces()) do
 	file:write("interface " .. interface .. "\n")
 end
-if site.mesh_on_wan then
-	file:write("interface  br-wan\n")
-end
 
 file:write(" redistribute ip " .. site.prefix6 .. " eq 128  allow\n")
 file:write(" redistribute ip " .. site.babel_mesh.prefix .. " eq 128  allow\n")
