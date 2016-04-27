@@ -304,7 +304,8 @@ prepare-target: $(GLUON_OPKG_KEY).pub
 $(target_prepared_stamp):
 	+$(GLUONMAKE_EARLY) prepare-target
 
-maybe-prepare-target: $(GLUON_OPKG_KEY).pub $(target_prepared_stamp)
+maybe-prepare-target: $(target_prepared_stamp)
+	+$(GLUONMAKE_EARLY) $(GLUON_OPKG_KEY).pub
 
 $(BUILD_DIR)/.prepared: Makefile
 	@mkdir -p $$(dirname $@)
