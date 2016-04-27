@@ -1,5 +1,6 @@
 #!/usr/bin/lua
 
+local network = require 'gluon.network'
 local site = require 'gluon.site_config'
 local uci = require 'luci.model.uci'
 
@@ -16,3 +17,5 @@ if not c:get('network', 'mesh_wan') then
 end
 
 c:save('network')
+
+network.update_mesh_on_wan()

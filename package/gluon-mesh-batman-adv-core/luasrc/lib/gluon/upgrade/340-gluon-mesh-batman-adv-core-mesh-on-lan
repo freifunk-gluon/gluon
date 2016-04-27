@@ -1,5 +1,6 @@
 #!/usr/bin/lua
 
+local mesh = require 'gluon.mesh'
 local site = require 'gluon.site_config'
 local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
@@ -41,3 +42,9 @@ if uci:get('network', 'mesh_lan', 'auto') == nil then
 end
 
 uci:save('network')
+
+if uci:get_bool('network', 'mesh_lan', 'auto') then
+  mesh.register_interface('br-mesh_lan', {transitive = true})
+else
+  mesh.unregister_interface('br-mesh_lan')
+end
