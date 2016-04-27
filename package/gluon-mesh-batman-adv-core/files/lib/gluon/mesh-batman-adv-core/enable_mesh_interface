@@ -1,0 +1,38 @@
+#!/usr/bin/lua
+
+local mesh = require 'gluon.mesh'
+local util = require 'gluon.util'
+
+local fs = require 'nixio.fs'
+
+
+local ifname = arg[1]
+local mtu = tonumber(arg[2])
+
+local interfaces = mesh.interfaces()
+local interface = interfaces[ifname]
+
+if not interface then
+	os.exit(0)
+end
+
+if not interface.fixed_mtu then
+	-- If we have a VLAN on a wireless interface, we need to adjust the MTU of the real interface...
+	local lower = fs.glob('/sys/class/net/' .. ifname .. '/lower_*')()
+	if lower then
+		lower = lower:match('/lower_([^/]+)$')
+		if fs.access('/sys/class/net/' .. lower .. '/wireless') then
+			util.exec('ip', 'link', 'set', 'dev', lower, 'mtu', tostring(mtu+4))
+		end
+	end
+
+	util.exec('ip', 'link', 'set', 'dev', ifname, 'mtu', tostring(mtu))
+end
+
+local file = assert(io.open('/sys/class/net/' .. ifname .. '/batman_adv/mesh_iface', 'w'))
+file:write('bat0')
+file:close()
+
+file = assert(io.open('/sys/class/net/' .. ifname .. '/batman_adv/no_rebroadcast', 'w'))
+file:write(interface.transitive and '1' or '0')
+file:close()

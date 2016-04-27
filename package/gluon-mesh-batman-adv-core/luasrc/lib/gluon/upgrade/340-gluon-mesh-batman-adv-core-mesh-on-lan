@@ -16,9 +16,7 @@ uci:section('network', 'interface', 'mesh_lan', {
   ifname  = sysconfig.lan_ifname,
   type    = 'bridge',
   igmp_snooping = 0,
-  proto   = 'batadv',
-  mesh    = 'bat0',
-  mesh_no_rebroadcast = '1',
+  proto   = 'none',
   macaddr = util.get_mac(3),
 })
 
@@ -43,8 +41,4 @@ end
 
 uci:save('network')
 
-if uci:get_bool('network', 'mesh_lan', 'auto') then
-  mesh.register_interface('br-mesh_lan', {transitive = true})
-else
-  mesh.unregister_interface('br-mesh_lan')
-end
+mesh.register_interface('br-mesh_lan', {transitive = true})
