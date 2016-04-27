@@ -1,14 +1,28 @@
 local cbi = require "luci.cbi"
 local i18n = require "luci.i18n"
 local uci = luci.model.uci.cursor()
+local site = require 'gluon.site_config'
 
 local M = {}
 
+local function show_altitude()
+  if ((site.config_mode or {}).geo_location or {}).show_altitude ~= false then
+    return true
+  end
+  if uci:get_first("gluon-node-info", "location", "altitude") then
+    return true
+  end
+  return false
+end
+
 function M.section(form)
-  local s = form:section(cbi.SimpleSection, nil, i18n.translate(
-    'If you want the location of your node to be displayed on the map, '
-      .. 'you can enter its coordinates here. Specifying the altitude '
-      .. 'is optional and should only be done if a proper value is known.'))
+  local text = i18n.translate('If you want the location of your node to '
+    .. 'be displayed on the map, you can enter its coordinates here.')
+  if show_altitude() then
+    text = text .. ' ' .. i18n.translate('Specifying the altitude is '
+      .. 'optional and should only be done if a proper value is known.')
+  end
+  local s = form:section(cbi.SimpleSection, nil, text)
 
 
   local o
@@ -31,12 +45,14 @@ function M.section(form)
   o.datatype = "float"
   o.description = i18n.translatef("e.g. %s", "10.689901")
 
-  o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
-  o.default = uci:get_first("gluon-node-info", "location", "altitude")
-  o:depends("_location", "1")
-  o.rmempty = true
-  o.datatype = "float"
-  o.description = i18n.translatef("e.g. %s", "11.51")
+  if show_altitude() then
+    o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
+    o.default = uci:get_first("gluon-node-info", "location", "altitude")
+    o:depends("_location", "1")
+    o.rmempty = true
+    o.datatype = "float"
+    o.description = i18n.translatef("e.g. %s", "11.51")
+  end
 
 end
 
