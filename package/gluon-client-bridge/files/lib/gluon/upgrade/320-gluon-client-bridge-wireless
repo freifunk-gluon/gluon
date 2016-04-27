@@ -21,14 +21,16 @@ local function configure_client(config, radio, index, suffix)
 
   uci:delete('wireless', name)
 
-  if config then
+  macaddr = util.generate_mac(3*index)
+
+  if config and macaddr then
     uci:section('wireless', 'wifi-iface', name,
       {
         device = radio,
         network = 'client',
         mode = 'ap',
         ssid = config.ssid,
-        macaddr = util.generate_mac(2, index),
+        macaddr = macaddr,
         ifname = suffix and 'client' .. suffix,
         disabled = disabled,
       }

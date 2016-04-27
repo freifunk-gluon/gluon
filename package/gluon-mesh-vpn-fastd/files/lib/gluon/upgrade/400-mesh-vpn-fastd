@@ -127,7 +127,7 @@ uci:section('network', 'interface', 'mesh_vpn',
 		  proto = 'batadv',
 		  mesh = 'bat0',
 		  mesh_no_rebroadcast = 1,
-		  macaddr = util.generate_mac(4, 0),
+		  macaddr = util.generate_mac(0),
 	  }
 )
 

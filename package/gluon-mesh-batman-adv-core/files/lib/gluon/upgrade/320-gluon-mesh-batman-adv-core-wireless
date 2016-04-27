@@ -29,7 +29,9 @@ local function configure_ibss(config, radio, index, suffix, disabled)
   uci:delete('network', name .. '_vlan')
   uci:delete('wireless', name)
 
-  if config then
+  macaddr = util.generate_mac(3*index+2)
+
+  if config and macaddr then
     if config.vlan then
       uci:section('network', 'interface', name,
         {
@@ -60,7 +62,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
         mode = 'adhoc',
         ssid = config.ssid,
         bssid = config.bssid,
-        macaddr = util.generate_mac(3, index),
+        macaddr = macaddr,
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'ibss' .. suffix,
         disabled = disabled and 1 or 0,
@@ -77,7 +79,9 @@ local function configure_mesh(config, radio, index, suffix, disabled)
   uci:delete('network', name)
   uci:delete('wireless', name)
 
-  if config then
+  macaddr = util.generate_mac(3*index+1)
+
+  if config and macaddr then
     uci:section('network', 'interface', name,
       {
         proto = 'batadv',
@@ -92,7 +96,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
         mode = 'mesh',
         mesh_id = config.id,
         mesh_fwding = 0,
-        macaddr = util.generate_mac(5, index),
+        macaddr = macaddr,
         mcast_rate = config.mcast_rate,
         ifname = suffix and 'mesh' .. suffix,
         disabled = disabled and 1 or 0,
