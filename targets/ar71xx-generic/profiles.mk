@@ -65,7 +65,7 @@ $(eval $(call GluonModel,TLWR841,tl-wr841-v7,tp-link-tl-wr841n-nd-v7))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v8,tp-link-tl-wr841n-nd-v8))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v9,tp-link-tl-wr841n-nd-v9))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v10,tp-link-tl-wr841n-nd-v10))
-ifeq ($(BROKEN),1)
+ifneq ($(BROKEN),)
 $(eval $(call GluonModel,TLWR841,tl-wr841-v11,tp-link-tl-wr841n-nd-v11)) # BROKEN: untested
 endif
 
@@ -152,7 +152,7 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2,tp-link-tl-mr3420-v2))
 $(eval $(call GluonProfile,TLWR2543))
 $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
-ifeq ($(BROKEN),1)
+ifneq ($(BROKEN),)
 # Archer C5 v1, C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
@@ -184,7 +184,7 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor,ubiquiti-unifiap-outdoor))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+))
 
-ifeq ($(BROKEN),1)
+ifneq ($(BROKEN),)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
 $(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw)) # BROKEN: Untested
 endif
@@ -249,7 +249,7 @@ $(eval $(call GluonProfileFactorySuffix,WNDR3700,-squashfs-factory,.img))
 $(eval $(call GluonModel,WNDR3700,wndr3700,netgear-wndr3700))
 $(eval $(call GluonModel,WNDR3700,wndr3700v2,netgear-wndr3700v2))
 $(eval $(call GluonModel,WNDR3700,wndr3800,netgear-wndr3800))
-ifeq ($(BROKEN),1)
+ifneq ($(BROKEN),)
 $(eval $(call GluonModel,WNDR3700,wndrmac,netgear-wndrmac)) # BROKEN: untested
 endif
 $(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2))
