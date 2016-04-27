@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+local sname = uci:get_first('gluon-node-info', 'location')
+if sname then
+  local latitude = uci:get('gluon-node-info', sname, 'latitude')
+  if latitude then
+    uci:set('gluon-node-info', sname, 'latitude', latitude:trim())
+  end
+  local longitude = uci:get('gluon-node-info', sname, 'longitude')
+  if longitude then
+    uci:set('gluon-node-info', sname, 'longitude', longitude:trim())
+  end
+  local altitude = uci:get('gluon-node-info', sname, 'altitude')
+  if altitude then
+    uci:set('gluon-node-info', sname, 'altitude', altitude:trim())
+  end
+  uci:save('gluon-node-info')
+end
