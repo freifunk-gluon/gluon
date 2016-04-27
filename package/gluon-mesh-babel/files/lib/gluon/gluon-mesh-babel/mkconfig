@@ -4,7 +4,7 @@ local site = require 'gluon.site_config'
 local gmesh = require 'gluon.mesh'
 
 --local interfaces='/lib/gluon/core/mesh_interfaces' 
-local babelconf='/var/etc/gluon-babel.conf'
+local babelconf=arg[1]
 
 file = io.open(babelconf, "w")
 file:write("ipv6-subtrees true\n")
