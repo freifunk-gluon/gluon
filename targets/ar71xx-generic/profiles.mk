@@ -117,11 +117,14 @@ $(eval $(call GluonModel,TLWA850,tl-wa850re-v1,tp-link-tl-wa850re-v1))
 $(eval $(call GluonProfile,TLWA860))
 $(eval $(call GluonModel,TLWA860,tl-wa860re-v1,tp-link-tl-wa860re-v1))
 
-# TL-WA901N/ND v1, v2, v3
+# TL-WA901N/ND v1, v2, v3, v4
 $(eval $(call GluonProfile,TLWA901))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v1,tp-link-tl-wa901n-nd-v1))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v2,tp-link-tl-wa901n-nd-v2))
 $(eval $(call GluonModel,TLWA901,tl-wa901nd-v3,tp-link-tl-wa901n-nd-v3))
+ifneq ($(BROKEN),)
+$(eval $(call GluonModel,TLWA901,tl-wa901nd-v4,tp-link-tl-wa901n-nd-v4)) # BROKEN: untested
+endif
 
 # TL-MR13U v1
 $(eval $(call GluonProfile,TLMR13U))
