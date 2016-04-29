@@ -16,7 +16,7 @@ $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 
 # TL-WA701N/ND v1, v2
 $(eval $(call GluonProfile,TLWA701))
-$(eval $(call GluonModel,TLWA701,tl-wa701nd-v1,tp-link-tl-wa701n-nd-v1))
+$(eval $(call GluonModel,TLWA701,tl-wa701n-v1,tp-link-tl-wa701n-nd-v1))
 $(eval $(call GluonModel,TLWA701,tl-wa701nd-v2,tp-link-tl-wa701n-nd-v2))
 
 # TL-WA7510 v1
@@ -58,13 +58,13 @@ $(eval $(call GluonModel,TLWA801,tl-wa801nd-v2,tp-link-tl-wa801n-nd-v2))
 
 # TL-WR841N/ND v3, v5, v7, v8, v9, v10, v11
 $(eval $(call GluonProfile,TLWR841))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v3,tp-link-tl-wr841n-nd-v3))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v5,tp-link-tl-wr841n-nd-v5))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v7,tp-link-tl-wr841n-nd-v7))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v8,tp-link-tl-wr841n-nd-v8))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v9,tp-link-tl-wr841n-nd-v9))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v10,tp-link-tl-wr841n-nd-v10))
-$(eval $(call GluonModel,TLWR841,tl-wr841-v11,tp-link-tl-wr841n-nd-v11))
+$(eval $(call GluonModel,TLWR841,tl-wr841nd-v3,tp-link-tl-wr841n-nd-v3))
+$(eval $(call GluonModel,TLWR841,tl-wr841nd-v5,tp-link-tl-wr841n-nd-v5))
+$(eval $(call GluonModel,TLWR841,tl-wr841nd-v7,tp-link-tl-wr841n-nd-v7))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v8,tp-link-tl-wr841n-nd-v8))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v9,tp-link-tl-wr841n-nd-v9))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v10,tp-link-tl-wr841n-nd-v10))
+$(eval $(call GluonModel,TLWR841,tl-wr841n-v11,tp-link-tl-wr841n-nd-v11))
 
 # TL-WR842N/ND v1, v2
 $(eval $(call GluonProfile,TLWR842))
