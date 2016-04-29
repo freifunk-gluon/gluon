@@ -65,9 +65,7 @@ $(eval $(call GluonModel,TLWR841,tl-wr841-v7,tp-link-tl-wr841n-nd-v7))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v8,tp-link-tl-wr841n-nd-v8))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v9,tp-link-tl-wr841n-nd-v9))
 $(eval $(call GluonModel,TLWR841,tl-wr841-v10,tp-link-tl-wr841n-nd-v10))
-ifneq ($(BROKEN),)
-$(eval $(call GluonModel,TLWR841,tl-wr841-v11,tp-link-tl-wr841n-nd-v11)) # BROKEN: untested
-endif
+$(eval $(call GluonModel,TLWR841,tl-wr841-v11,tp-link-tl-wr841n-nd-v11))
 
 # TL-WR842N/ND v1, v2
 $(eval $(call GluonProfile,TLWR842))
