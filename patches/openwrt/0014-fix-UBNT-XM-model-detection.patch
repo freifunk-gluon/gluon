@@ -5,7 +5,7 @@ Subject: fix UBNT XM model detection
 Signed-off-by: Neal Oakey <neal.oakey@bingo-ev.de>
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 5768286..7f50d8a 100755
+index dab4d2c..e7b3cd2 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -64,6 +64,40 @@ wndr3700_board_detect() {

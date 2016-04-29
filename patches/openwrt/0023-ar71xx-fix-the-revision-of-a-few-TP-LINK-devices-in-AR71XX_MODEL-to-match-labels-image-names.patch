@@ -12,7 +12,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of r49107
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 9d650a1..52ca255 100755
+index 180a075..ddd6611 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -162,6 +162,10 @@ tplink_board_detect() {
