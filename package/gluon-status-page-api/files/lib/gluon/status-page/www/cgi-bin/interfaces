@@ -8,8 +8,6 @@ mesh = require 'gluon.mesh'
 io.write("Access-Control-Allow-Origin: *\n")
 io.write("Content-type: application/json\n\n")
 
--- list = util.exec('batctl if')
-
 interfaces = {}
 
 for interface, _ in ipairs(mesh.interfaces()) do

@@ -8,7 +8,6 @@ badrequest() {
 
 echo 'Access-Control-Allow-Origin: *'
 
-#batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" || badrequest
 lua -e 'mesh = require(gluon.mesh); for interface, _ in ipairs(mesh.interfaces()) do print(interface .. "\n"); end;' | grep -qxF "$QUERY_STRING" || badrequest
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
