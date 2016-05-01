@@ -2,7 +2,6 @@
 
 local mesh = require 'gluon.mesh'
 local site = require 'gluon.site_config'
-local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('luci.model.uci').cursor()
@@ -17,7 +16,6 @@ uci:section('network', 'interface', 'mesh_lan', {
   type    = 'bridge',
   igmp_snooping = 0,
   proto   = 'none',
-  macaddr = util.get_mac(3),
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then

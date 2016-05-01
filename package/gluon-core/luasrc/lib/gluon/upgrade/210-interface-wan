@@ -1,0 +1,17 @@
+#!/usr/bin/lua
+
+local network = require 'gluon.network'
+local site = require 'gluon.site_config'
+local uci = require('luci.model.uci').cursor()
+
+if not uci:get('network', 'mesh_wan') then
+  uci:section('network', 'interface', 'mesh_wan', {
+    ifname = 'br-wan',
+    proto  = 'none',
+    auto   = site.mesh_on_wan and 1 or 0,
+  })
+end
+
+c:save('network')
+
+network.update_mesh_on_wan()
