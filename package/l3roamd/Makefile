@@ -12,6 +12,7 @@ PKG_SOURCE_VERSION:=master
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 #PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+CMAKE_OPTIONS +=  I-DCMAKE_BUILD_TYPE:STRING=MINSIZEREL 
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -20,12 +21,12 @@ define Package/l3roamd
   SECTION:=net
   CATEGORY:=Network
   TITLE:=The layer 3 roaming daemon
-  DEPENDS:=+libnl-tiny
+  DEPENDS:=+libnl-tiny +kmod-tun +librt +libpthread
 endef
 
 define Package/l3roamd/install
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/l3roamd $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/l3roamd $(1)/usr/bin/
 endef
 
 $(eval $(call BuildPackage,l3roamd))
