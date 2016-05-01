@@ -1,6 +1,0 @@
-#!/bin/sh
-
-. /lib/gluon/autoupdater/lib.sh
-
-
-stop gluon-radvd
