@@ -7,14 +7,14 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/gluon-radvd
+define Package/gluon-radvd-batman
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Advertise an IPv6 prefix from the node
   DEPENDS:=+gluon-core +gluon-ebtables +gluon-mesh-batman-adv +uradvd
 endef
 
-define Package/gluon-radvd/description
+define Package/gluon-radvd-batman/description
 	Gluon community wifi mesh firmware framework: Advertise an IPv6 prefix from the node
 endef
 
@@ -28,8 +28,8 @@ endef
 define Build/Compile
 endef
 
-define Package/gluon-radvd/install
+define Package/gluon-radvd-batman/install
 	$(CP) ./files/* $(1)/
 endef
 
-$(eval $(call BuildPackage,gluon-radvd))
+$(eval $(call BuildPackage,gluon-radvd-batman))
