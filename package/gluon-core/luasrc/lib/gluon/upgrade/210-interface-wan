@@ -1,12 +1,10 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site_config'
-local uci = require 'luci.model.uci'
+local uci = require('luci.model.uci').cursor()
 
-local c = uci.cursor()
-
-if not c:get('network', 'mesh_wan') then
-  c:section('network', 'interface', 'mesh_wan', {
+if not uci:get('network', 'mesh_wan') then
+  uci:section('network', 'interface', 'mesh_wan', {
     ifname     = 'br-wan',
     proto      = 'gluon_mesh',
     transitive = 1,
@@ -15,4 +13,4 @@ if not c:get('network', 'mesh_wan') then
   })
 end
 
-c:save('network')
+uci:save('network')

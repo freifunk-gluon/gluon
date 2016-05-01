@@ -4,6 +4,7 @@ local util = require 'gluon.util'
 local uci = require('luci.model.uci').cursor()
 
 
--- fix up duplicate mac addresses (for mesh-on-WAN)
+-- fix up duplicate mac addresses (for meshing)
 uci:set('network', 'wan', 'macaddr', util.get_mac(1))
+uci:set('network', 'mesh_lan', 'macaddr', util.get_mac(2))
 uci:save('network')

@@ -18,7 +18,6 @@ uci:section('network', 'interface', 'mesh_lan', {
   proto         = 'gluon_mesh',
   transitive    = 1,
   fixed_mtu     = 1,
-  macaddr       = util.get_mac(2),
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
