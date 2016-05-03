@@ -12,6 +12,9 @@ Before opening an issue, make sure to check whether any existing issues
 (open or closed) match. If you're suggesting a new feature, drop by on IRC or
 our mailinglist to discuss it first.
 
+We maintain a [Roadmap](https://github.com/freifunk-gluon/gluon/wiki/Roadmap) for
+the future development of Gluon.
+
 ## Use a release!
 
 Please refrain from using the `master` branch for anything else but development purposes!
