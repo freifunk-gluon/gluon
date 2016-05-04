@@ -1,15 +1,20 @@
-#!/bin/sh
+#!/usr/bin/lua 
+local mesh = require 'gluon.mesh' 
+local querystring = os.getenv("QUERY_STRING") 
 
-badrequest() {
-        echo 'Status: 400 Bad Request'
-        echo
-        exit 1
-}
+print('Access-Control-Allow-Origin: *\n') 
 
-echo 'Access-Control-Allow-Origin: *'
+for interface, _ in pairs(mesh.interfaces()) do 
+  if querystring 
+  then 
+    if string.find(interface, querystring) 
+    then 
+      os.execute("/usr/sbin/sse-multiplex /lib/gluon/status-page/providers/stations " .. querystring ); 
+      os.exit(0) 
+    end 
+  end 
+end 
 
-lua -e 'mesh = require(gluon.mesh); for interface, _ in ipairs(mesh.interfaces()) do print(interface .. "\n"); end;' | grep -qxF "$QUERY_STRING" || badrequest
 
-CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
-
-exec /usr/sbin/sse-multiplex "$CMD"
+print("Status: 400 Bad Request\n") 
+os.exit(1) 
