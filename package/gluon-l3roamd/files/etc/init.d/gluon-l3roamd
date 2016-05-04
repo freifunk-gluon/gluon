@@ -9,8 +9,8 @@ start_service () {
         procd_open_instance
         procd_set_param stdout 1
         procd_set_param stderr 1
-        procd_set_param command "$PROG" -p $(lua -e 'print(require("gluon.site_config").prefix6)') -i br-client -m mesh0 -t 11 -a $(uci get network.loopback.ip6addr | cut -d/ -f1)
-
+        meshinterfaces=$(lua -e 'mesh = require("gluon.mesh");for interface, _ in pairs(mesh.interfaces())  do print(" -m " .. interface);end')
+        procd_set_param command "$PROG" -p $(lua -e 'print(require("gluon.site_config").prefix6)') -i br-client $meshinterfaces  -t 11 -a $(uci get network.loopback.ip6addr | cut -d/ -f1)
         procd_close_instance
 }
 
