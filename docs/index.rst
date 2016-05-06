@@ -172,11 +172,13 @@ ar71xx-generic
   - Air Gateway
   - Air Router
   - Bullet M
+  - Loco M
+  - Loco M XW
   - Nanostation M
   - Nanostation M XW
-  - Loco M XW
   - Picostation M
   - Rocket M
+  - Rocket M XW
   - UniFi AP
   - UniFi AP Pro
   - UniFi AP Outdoor
