@@ -64,7 +64,9 @@ static struct json_object * get_number(struct uci_context *ctx, struct uci_secti
 	if (*end)
 		return NULL;
 
-	return json_object_new_double(d);
+	struct json_object *jso = json_object_new_double(d);
+	json_object_set_serializer(jso, json_object_double_to_json_string, "%.8f", NULL);
+	return jso;
 }
 
 static struct json_object * get_location(struct uci_context *ctx, struct uci_package *p) {
