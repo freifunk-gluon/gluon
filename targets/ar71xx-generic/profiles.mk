@@ -180,6 +180,7 @@ $(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m,ubiquiti-nanostation-m
 
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw,ubiquiti-nanostation-m-xw))
+$(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro))
 $(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor,ubiquiti-unifiap-outdoor))
@@ -187,7 +188,6 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+)
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
-$(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw)) # BROKEN: Untested
 endif
 
 
