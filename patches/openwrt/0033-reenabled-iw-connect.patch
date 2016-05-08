@@ -1,0 +1,21 @@
+From: Georg von Zengen <vonzengen@ibr.cs.tu-bs.de>
+Date: Sun, 8 May 2016 18:55:28 +0200
+Subject: reenabled iw connect
+
+diff --git a/package/network/utils/iw/patches/304-reinsert_connect.patch b/package/network/utils/iw/patches/304-reinsert_connect.patch
+new file mode 100644
+index 0000000..4641775
+--- /dev/null
++++ b/package/network/utils/iw/patches/304-reinsert_connect.patch
+@@ -0,0 +1,11 @@
++--- a/Makefile
+++++ b/Makefile
++@@ -16,7 +16,7 @@ OBJS = iw.o genl.o event.o info.o phy.o
++ 	interface.o ibss.o station.o survey.o util.o ocb.o \
++ 	mesh.o mpath.o mpp.o scan.o reg.o version.o \
++ 	reason.o status.o link.o offch.o ps.o cqm.o \
++-	bitrate.o vendor.o
+++	bitrate.o vendor.o connect.o
++ OBJS += sections.o
++ 
++ OBJS-$(HWSIM) += hwsim.o
