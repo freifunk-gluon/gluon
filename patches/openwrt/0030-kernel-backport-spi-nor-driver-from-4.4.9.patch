@@ -1901,6 +1901,19 @@ index 203eb94..0000000
 - 
 - 	/* For some (historical?) reason many platforms provide two different
 - 	 * names in flash_platform_data: "name" and "type". Quite often name is
+diff --git a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
+index 2beb39c..21f823d 100644
+--- a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
++++ b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
+@@ -37,7 +37,7 @@
+ 			flash@0 {
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+-				compatible = "spansion,s25fl129p1";
++				compatible = "jedec,spi-nor";
+ 				reg = <0>;
+ 				spi-max-frequency = <25000000>;
+ 
 diff --git a/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch b/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch
 deleted file mode 100644
 index 1716e1c..0000000
