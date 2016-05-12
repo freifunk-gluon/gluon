@@ -1,5 +1,3 @@
 #!/usr/bin/lua
 local site = require "gluon.site_config"
 print("-i local-node --default-leasetime 900  -a " .. site.prefix6)
-
-
