@@ -13,6 +13,7 @@ define Package/gluon-mesh-batman-adv-core
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing (core)
   DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +firewall +libiwinfo
+  PROVIDES:=gluon-radvd-provider
 endef
 
 define Build/Prepare
