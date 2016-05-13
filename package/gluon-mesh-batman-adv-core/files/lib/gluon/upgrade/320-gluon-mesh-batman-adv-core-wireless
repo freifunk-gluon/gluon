@@ -29,7 +29,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
   uci:delete('network', name .. '_vlan')
   uci:delete('wireless', name)
 
-  macaddr = util.generate_mac(3*index+2)
+  macaddr = util.generate_mac(3*(index-1)+2)
 
   if config and macaddr then
     if config.vlan then
@@ -79,7 +79,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
   uci:delete('network', name)
   uci:delete('wireless', name)
 
-  macaddr = util.generate_mac(3*index+1)
+  macaddr = util.generate_mac(3*(index-1)+1)
 
   if config and macaddr then
     uci:section('network', 'interface', name,

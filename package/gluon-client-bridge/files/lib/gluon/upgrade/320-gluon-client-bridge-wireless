@@ -21,7 +21,7 @@ local function configure_client(config, radio, index, suffix)
 
   uci:delete('wireless', name)
 
-  macaddr = util.generate_mac(3*index)
+  macaddr = util.generate_mac(3*(index-1))
 
   if config and macaddr then
     uci:section('wireless', 'wifi-iface', name,
