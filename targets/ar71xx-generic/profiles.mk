@@ -160,7 +160,7 @@ $(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
 
-## Ubiquiti (everything)
+## Ubiquiti (almost everything)
 $(eval $(call GluonProfile,UBNT))
 $(eval $(call GluonModel,UBNT,ubnt-air-gateway,ubiquiti-airgateway))
 $(eval $(call GluonModel,UBNT,ubnt-airrouter,ubiquiti-airrouter))
@@ -190,6 +190,16 @@ ifneq ($(BROKEN),)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
 endif
 
+# Ubiquiti (ath10k)
+ifneq ($(BROKEN),)
+$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACLITE))
+$(eval $(call GluonModel,UBNTUNIFIACLITE,ubnt-unifiac-lite,ubiquiti-unifi-ac-lite)) # BROKEN: untested, ath10k
+
+$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACPRO))
+$(eval $(call GluonModel,UBNTUNIFIACPRO,ubnt-unifiac-pro,ubiquiti-unifi-ac-pro)) # BROKEN: ath10k
+endif
 
 ## D-Link
 

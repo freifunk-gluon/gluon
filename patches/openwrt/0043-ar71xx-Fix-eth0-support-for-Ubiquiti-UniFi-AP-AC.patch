@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 13 May 2016 21:02:55 +0200
+Subject: ar71xx: Fix eth0 support for Ubiquiti UniFi AP AC
+
+Fix eth0 support for the Ubiquiti UniFi AP AC
+Signed-off-by: Paul Wassi <p.wassi at gmx.at>
+
+Backport of OpenWrt r49277
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
+index 3617ca7..072cf12 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
+@@ -84,6 +84,7 @@ static void __init ubnt_unifiac_setup(void)
+ 		       eeprom + UNIFIAC_MAC0_OFFSET, 0);
+ 
+ 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_SGMII;
++	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
+ 	ath79_eth0_data.phy_mask = BIT(4);
+ 	ath79_eth0_pll_data.pll_10 = 0x00001313;
+ 
