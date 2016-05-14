@@ -131,6 +131,16 @@ ar71xx-generic
 
   - Omega
 
+* OpenMesh
+
+ - MR600 (v1, v2)
+ - MR900 (v1, v2)
+ - OM2P (v1, v2)
+ - OM2P-HS (v1, v2)
+ - OM2P-LC
+ - OM5P
+ - OM5P-AN
+
 * TP-Link
 
   - CPE210 (v1.0, v1.1)
