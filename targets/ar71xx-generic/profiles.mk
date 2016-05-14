@@ -295,6 +295,35 @@ $(eval $(call GluonModel,MYNETN750,mynet-n750,wd-my-net-n750))
 $(eval $(call GluonProfile,OMEGA))
 $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 
+## OpenMesh
+
+# MR600
+$(eval $(call GluonProfile,MR600,om-watchdog uboot-envtools))
+$(eval $(call GluonProfileSysupgradeSuffix,MR600,-squashfs-factory,.bin))
+$(eval $(call GluonModel,MR600,mr600,openmesh-mr600))
+$(eval $(call GluonModelAlias,MR600,openmesh-mr600,openmesh-mr600-v2))
+
+# MR900
+$(eval $(call GluonProfile,MR900,om-watchdog uboot-envtools))
+$(eval $(call GluonProfileSysupgradeSuffix,MR900,-squashfs-factory,.bin))
+$(eval $(call GluonModel,MR900,mr900,openmesh-mr900))
+$(eval $(call GluonModelAlias,MR900,openmesh-mr900,openmesh-mr900-v2))
+
+# OM2P
+$(eval $(call GluonProfile,OM2P,om-watchdog uboot-envtools))
+$(eval $(call GluonProfileSysupgradeSuffix,OM2P,-squashfs-factory,.bin))
+$(eval $(call GluonModel,OM2P,om2p,openmesh-om2p))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-v2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs-v2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-lc))
+
+# OM5P
+$(eval $(call GluonProfile,OM5P,om-watchdog uboot-envtools))
+$(eval $(call GluonProfileSysupgradeSuffix,OM5P,-squashfs-factory,.bin))
+$(eval $(call GluonModel,OM5P,om5p,openmesh-om5p))
+$(eval $(call GluonModelAlias,OM5P,openmesh-om5p,openmesh-om5p-an))
+
 ## ALFA
 
 # Hornet-UB
