@@ -12,7 +12,7 @@ define Package/gluon-mesh-babel
   CATEGORY:=Gluon
   TITLE:=Babel mesh
   DEPENDS:=+gluon-core +babeld
-  PROVIDES:=gluon-mesh-provider
+  PROVIDES:=gluon-mesh-provider gluon-mesh-babel
 endef
 
 define Build/Prepare
