@@ -101,9 +101,7 @@ end
 function image_supported(tmpfile)
 	-- XXX: yay...
 	return ( 0 == os.execute(
-		". /lib/functions.sh; " ..
-		"include /lib/upgrade; " ..
-		"platform_check_image %q >/dev/null"
+		"/sbin/sysupgrade -T %q >/dev/null"
 			% tmpfile
 	) )
 end
