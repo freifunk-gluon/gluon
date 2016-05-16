@@ -12,7 +12,7 @@ define Package/gluon-mesh-batman-adv-14
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing (compat level 14)
   DEPENDS:=+gluon-mesh-batman-adv-core +kmod-batman-adv-legacy
-  PROVIDES:=gluon-mesh-batman-adv
+  PROVIDES:=gluon-mesh-batman-adv gluon-mesh-provider
 endef
 
 define Build/Prepare

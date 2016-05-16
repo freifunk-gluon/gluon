@@ -1,0 +1,27 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+uci:section('firewall', 'rule', 'wan_babel',
+  {
+    name = 'wan_babel',
+    src = 'wan',
+    src_ip = 'fe80::/64',
+    dest_port = '6696',
+    proto = 'udp',
+    target = 'ACCEPT',
+  }
+)
+
+uci:section('firewall', 'zone', 'mesh_babel',
+  {
+    name = 'mesh_babel',
+    input = 'ACCEPT',
+    output = 'ACCEPT',
+    forward = 'ACCEPT',
+  }
+)
+
+uci:save('firewall')
+uci:commit('firewall')
+

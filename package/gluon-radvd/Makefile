@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-radvd
-PKG_VERSION:=3
+PKG_VERSION:=4
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -11,7 +11,7 @@ define Package/gluon-radvd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Advertise an IPv6 prefix from the node
-  DEPENDS:=+gluon-core +gluon-ebtables +gluon-mesh-batman-adv +uradvd
+  DEPENDS:=+gluon-core +uradvd
 endef
 
 define Package/gluon-radvd/description
