@@ -11,7 +11,8 @@ define Package/gluon-radvd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Advertise an IPv6 prefix from the node
-  DEPENDS:=+gluon-core +gluon-mesh-batman-adv +uradvd +gluon-radvd-provider
+  DEPENDS:=+gluon-core +uradvd +gluon-radvd-provider
+  # TODO: this ought to depend on gluon-mesh-provider
 endef
 
 define Package/gluon-radvd/description
