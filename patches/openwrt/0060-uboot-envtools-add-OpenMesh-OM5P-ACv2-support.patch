@@ -1,0 +1,22 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Sat, 9 Apr 2016 10:26:28 +0000
+Subject: uboot-envtools: add OpenMesh OM5P-ACv2 support
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r49153
+
+Forwarded: https://patchwork.ozlabs.org/patch/624203/
+
+diff --git a/package/boot/uboot-envtools/files/ar71xx b/package/boot/uboot-envtools/files/ar71xx
+index 657b25f..9071c11 100644
+--- a/package/boot/uboot-envtools/files/ar71xx
++++ b/package/boot/uboot-envtools/files/ar71xx
+@@ -29,6 +29,7 @@ mr900v2 | \
+ nbg6716 | \
+ om5p-an | \
+ om5p-ac | \
++om5p-acv2 | \
+ om5p | \
+ tube2h | \
+ wndr3700)

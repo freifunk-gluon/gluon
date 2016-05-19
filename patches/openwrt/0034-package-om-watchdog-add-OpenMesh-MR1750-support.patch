@@ -1,0 +1,23 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Mon, 14 Sep 2015 20:11:35 +0000
+Subject: package/om-watchdog: add OpenMesh MR1750 support
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r46930
+
+Forwarded: https://patchwork.ozlabs.org/patch/624177/
+
+diff --git a/package/kernel/om-watchdog/files/om-watchdog.init b/package/kernel/om-watchdog/files/om-watchdog.init
+index 135fef7..c792968 100644
+--- a/package/kernel/om-watchdog/files/om-watchdog.init
++++ b/package/kernel/om-watchdog/files/om-watchdog.init
+@@ -25,7 +25,7 @@ boot() {
+ 			"mr600v2")
+ 				service_start /sbin/om-watchdog 15
+ 				;;
+-			"mr900"|"mr900v2")
++			"mr900"|"mr900v2"|"mr1750")
+ 				service_start /sbin/om-watchdog 16
+ 				;;
+ 		esac

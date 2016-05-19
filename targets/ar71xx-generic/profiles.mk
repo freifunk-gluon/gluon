@@ -276,6 +276,10 @@ $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 
 ## OpenMesh
 
+# MR1750
+$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750))
+
 # MR600
 $(eval $(call GluonProfile,MR600,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,MR600,mr600,openmesh-mr600))
@@ -298,6 +302,11 @@ $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-lc))
 $(eval $(call GluonProfile,OM5P,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,OM5P,om5p,openmesh-om5p))
 $(eval $(call GluonModelAlias,OM5P,openmesh-om5p,openmesh-om5p-an))
+
+# OM5P-AC
+$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac))
+$(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2))
 
 ## ALFA
 
