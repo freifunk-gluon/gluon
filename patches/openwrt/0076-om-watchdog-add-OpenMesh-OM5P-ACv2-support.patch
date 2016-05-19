@@ -1,0 +1,23 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Sat, 9 Apr 2016 10:26:25 +0000
+Subject: om-watchdog: add OpenMesh OM5P-ACv2 support
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r49152
+
+Forwarded: https://patchwork.ozlabs.org/patch/624202/
+
+diff --git a/package/kernel/om-watchdog/files/om-watchdog.init b/package/kernel/om-watchdog/files/om-watchdog.init
+index 8cec13b..6b96966 100644
+--- a/package/kernel/om-watchdog/files/om-watchdog.init
++++ b/package/kernel/om-watchdog/files/om-watchdog.init
+@@ -13,7 +13,7 @@ boot() {
+ 		local board=$(ar71xx_board_name)
+ 
+ 		case "$board" in
+-			"om2p"|"om2p-hs"|"om2p-hsv2")
++			"om2p"|"om2p-hs"|"om2p-hsv2"|"om5p-acv2")
+ 				service_start /sbin/om-watchdog 12
+ 				;;
+ 			"om2pv2"|"om2p-lc")

@@ -1,0 +1,32 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Wed, 23 Mar 2016 12:52:27 +0000
+Subject: ar71xx: Add support for ath79_gpio_function_* on QCA955X
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r49074
+
+Forwarded: https://patchwork.ozlabs.org/patch/624183/
+
+diff --git a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
+index e71b6e2..0e87357 100644
+--- a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
++++ b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
+@@ -1,6 +1,16 @@
+ --- a/arch/mips/ath79/gpio.c
+ +++ b/arch/mips/ath79/gpio.c
+-@@ -187,15 +187,30 @@ void __init ath79_gpio_output_select(uns
++@@ -146,7 +146,8 @@ static void __iomem *ath79_gpio_get_func
++ 	if (soc_is_ar71xx() ||
++ 	    soc_is_ar724x() ||
++ 	    soc_is_ar913x() ||
++-	    soc_is_ar933x())
+++	    soc_is_ar933x() ||
+++	    soc_is_qca955x())
++ 		reg = AR71XX_GPIO_REG_FUNC;
++ 	else if (soc_is_ar934x() ||
++ 		 soc_is_qca953x() ||
++@@ -187,15 +188,30 @@ void __init ath79_gpio_output_select(uns
+  {
+  	void __iomem *base = ath79_gpio_base;
+  	unsigned long flags;
