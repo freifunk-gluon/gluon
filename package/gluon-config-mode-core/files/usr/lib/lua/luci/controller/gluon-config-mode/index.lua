@@ -48,43 +48,42 @@ function action_reboot()
   uci:save("gluon-setup-mode")
   uci:commit("gluon-setup-mode")
 
-  if nixio.fork() ~= 0 then
-    local fs = require "nixio.fs"
-    local util = require "nixio.util"
+  local fs = require "nixio.fs"
+  local util = require "nixio.util"
 
-    local parts_dir = "/lib/gluon/config-mode/reboot/"
-    local files = util.consume(fs.dir(parts_dir))
+  local parts_dir = "/lib/gluon/config-mode/reboot/"
+  local files = util.consume(fs.dir(parts_dir))
 
-    table.sort(files)
+  table.sort(files)
 
-    local parts = {}
+  local parts = {}
 
-    for _, entry in ipairs(files) do
-      if entry:sub(1, 1) ~= '.' then
-        local f = dofile(parts_dir .. '/' .. entry)
-        if f ~= nil then
-          table.insert(parts, f)
-        end
+  for _, entry in ipairs(files) do
+    if entry:sub(1, 1) ~= '.' then
+      local f = dofile(parts_dir .. '/' .. entry)
+      if f ~= nil then
+        table.insert(parts, f)
       end
     end
+  end
 
-    local hostname = uci:get_first("system", "system", "hostname")
+  local hostname = uci:get_first("system", "system", "hostname")
 
-    luci.template.render("gluon/config-mode/reboot", { parts=parts
-                                                     , hostname=hostname
-                                                     })
-  else
-    debug.setfenv(io.stdout, debug.getfenv(io.open '/dev/null'))
-    io.stdout:close()
+  luci.template.render("gluon/config-mode/reboot",
+    {
+      parts = parts,
+      hostname = hostname,
+    }
+  )
+
+  if nixio.fork() == 0 then
+    -- Replace stdout with /dev/null
+    nixio.dup(nixio.open('/dev/null', 'w'), nixio.stdout)
 
     -- Sleep a little so the browser can fetch everything required to
     -- display the reboot page, then reboot the device.
-    nixio.nanosleep(2)
+    nixio.nanosleep(1)
 
-    -- Run reboot with popen so it gets its own std filehandles.
-    io.popen("reboot")
-
-    -- Prevent any further execution in this child.
-    os.exit()
+    nixio.execp("reboot")
   end
 end
