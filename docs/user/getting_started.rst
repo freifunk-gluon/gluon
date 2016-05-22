@@ -130,7 +130,7 @@ not support IPv6.
 
 This is not true for kernel modules; the Gluon kernel is incompatible with the
 kernel of the default OpenWrt images. Therefore, Gluon will not only generate images,
-but also an opkg repositoy containing all kernel modules provided by OpenWrt/Gluon
+but also an opkg repository containing all kernel modules provided by OpenWrt/Gluon
 for the kernel of the generated images.
 
 Signing keys
