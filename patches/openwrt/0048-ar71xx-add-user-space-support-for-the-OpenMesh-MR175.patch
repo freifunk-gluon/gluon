@@ -1,0 +1,67 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Mon, 14 Sep 2015 20:11:01 +0000
+Subject: ar71xx: add user-space support for the OpenMesh MR1750 board
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r46927
+
+Forwarded: https://patchwork.ozlabs.org/patch/624174/
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 775aac6..44d2ddf 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -143,6 +143,9 @@ get_status_led() {
+ 	mr600v2)
+ 		status_led="mr600:blue:power"
+ 		;;
++	mr1750)
++		status_led="mr1750:blue:power"
++		;;
+ 	mr900 | \
+ 	mr900v2)
+ 		status_led="mr900:blue:power"
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index a4b355a..c451124 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -239,6 +239,12 @@ mr600)
+ 	ucidef_set_led_wlan "wlan58" "WLAN58" "mr600:green:wlan58" "phy0tpt"
+ 	;;
+ 
++mr1750)
++	ucidef_set_led_netdev "lan" "LAN" "mr1750:blue:wan" "eth0"
++	ucidef_set_led_wlan "wlan58" "WLAN58" "mr1750:blue:wlan58" "phy0tpt"
++	ucidef_set_led_wlan "wlan24" "WLAN24" "mr1750:blue:wlan24" "phy1tpt"
++	;;
++
+ mr900 | \
+ mr900v2)
+ 	ucidef_set_led_netdev "lan" "LAN" "mr900:blue:wan" "eth0"
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index 0a23756..4066506 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -334,6 +334,7 @@ eap300v2 |\
+ eap7660d |\
+ el-mini |\
+ loco-m-xw |\
++mr1750 |\
+ mr600 |\
+ mr600v2 |\
+ mr900 |\
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 7fc951a..587d029 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -562,6 +562,9 @@ ar71xx_board_detect() {
+ 	*MR600v2)
+ 		name="mr600v2"
+ 		;;
++	*MR1750)
++		name="mr1750"
++		;;
+ 	*MR600)
+ 		name="mr600"
+ 		;;

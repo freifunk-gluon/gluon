@@ -1,0 +1,55 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Mon, 14 Sep 2015 20:11:24 +0000
+Subject: ar71xx: enable sysupgrade for the OpenMesh MR1750
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r46929
+
+Forwarded: https://patchwork.ozlabs.org/patch/624176/
+
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh b/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
+index 547116e..9ca0f5b 100644
+--- a/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
+@@ -72,6 +72,11 @@ platform_check_image_openmesh()
+ 			echo "Invalid image board target ($img_board_target) for this platform: $board. Use the correct image for this platform"
+ 			return 1
+ 			;;
++		MR1750)
++			[ "$board" = "mr1750" ] && break
++			echo "Invalid image board target ($img_board_target) for this platform: $board. Use the correct image for this platform"
++			return 1
++			;;
+ 		MR600)
+ 			[ "$board" = "mr600" ] && break
+ 			[ "$board" = "mr600v2" ] && break
+@@ -157,7 +162,7 @@ platform_do_upgrade_openmesh()
+ 			kernel_start_addr1=0x9f1c0000
+ 			kernel_start_addr2=0x9f8c0000
+ 			;;
+-		OM5P|MR600|MR900)
++		OM5P|MR600|MR900|MR1750)
+ 			block_size=$((64 * 1024))
+ 			total_size=7995392
+ 			kernel_start_addr1=0x9f0b0000
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 0e9833d..ac060ea 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -296,6 +296,7 @@ platform_check_image() {
+ 
+ 		return 0;
+ 		;;
++	mr1750 | \
+ 	mr600 | \
+ 	mr600v2 | \
+ 	mr900 | \
+@@ -528,6 +529,7 @@ platform_do_upgrade() {
+ 	tew-673gru)
+ 		platform_do_upgrade_dir825b "$ARGV"
+ 		;;
++	mr1750 | \
+ 	mr600 | \
+ 	mr600v2 | \
+ 	mr900 | \
