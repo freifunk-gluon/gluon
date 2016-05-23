@@ -51,7 +51,7 @@ may be defined arbitrarily.
 
 On devices with multiple WLAN adapters, care must also be taken that the primary MAC address is
 configured correctly. ``/lib/gluon/core/sysconfig/primary_mac`` should contain the MAC address which
-can be found on a label on most hardware; if it does not, ``/lib/gluon/upgrade/core/initial/001-sysconfig``
+can be found on a label on most hardware; if it does not, ``/lib/gluon/upgrade/010-primary-mac``
 in ``gluon-core`` might need a fix. (There have also been cases in which the address was incorrect
 even on devices with only one WLAN adapter, in these cases an OpenWrt bug was the cause).
 
