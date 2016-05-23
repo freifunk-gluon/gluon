@@ -308,19 +308,19 @@ $(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750))
 # MR600
 $(eval $(call GluonProfile,MR600,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,MR600,mr600,openmesh-mr600))
-$(eval $(call GluonModelAlias,MR600,openmesh-mr600,openmesh-mr600-v2))
+$(eval $(call GluonModelAlias,MR600,openmesh-mr600,openmesh-mr600v2))
 
 # MR900
 $(eval $(call GluonProfile,MR900,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,MR900,mr900,openmesh-mr900))
-$(eval $(call GluonModelAlias,MR900,openmesh-mr900,openmesh-mr900-v2))
+$(eval $(call GluonModelAlias,MR900,openmesh-mr900,openmesh-mr900v2))
 
 # OM2P
 $(eval $(call GluonProfile,OM2P,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,OM2P,om2p,openmesh-om2p))
-$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-v2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2pv2))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs))
-$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs-v2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hsv2))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-lc))
 
 # OM5P
