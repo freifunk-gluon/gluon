@@ -402,7 +402,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
 * `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
-* `site-ffnw <https://git.nordwest.freifunk.net/ffnw/siteconf/tree/master>`_ (Nordwest)
+* `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
 * `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)
 * `site-ffrg <https://github.com/ffruhr/site-ffruhr>`_ (Ruhrgebiet)
