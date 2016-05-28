@@ -56,7 +56,7 @@ function M.handle(data)
       uci:set("simple-tc", "mesh_vpn", "limit_egress", data._limit_egress:trim())
     end
 
-    uci:commit("simple-tc")
+    uci:save("simple-tc")
     uci:commit("simple-tc")
   end
 end

@@ -22,28 +22,38 @@ define(["lib/helper"], function (Helper) {
     return el
   }
 
-  function mkRow(table, label, stream) {
-    var tr = document.createElement("tr")
+  function mkRow(table, label, stream, sorted) {
+
+    var i = -1
+
+    if (sorted) {
+      for (i = 0; i < table.rows.length; i++) {
+        if (label < table.rows[i].firstChild.textContent)
+           break
+      }
+    }
+
+    var tr = table.insertRow(i)
     var th = document.createElement("th")
     var td = streamElement("td", stream)
     th.textContent = label
     tr.appendChild(th)
     tr.appendChild(td)
-    table.appendChild(tr)
 
     tr.destroy = function () {
       td.destroy()
-      table.removeChild(tr)
+      table.tBodies[0].removeChild(tr)
     }
 
     return tr
   }
 
   function mkTrafficRow(table, children, label, stream, selector) {
-    var tr = document.createElement("tr")
+    var tr = table.insertRow()
     var th = document.createElement("th")
-    var td = document.createElement("td")
     th.textContent = label
+    tr.appendChild(th)
+    var td = tr.insertCell()
 
     var traffic = stream.slidingWindow(2, 2)
     var pkts = streamNode(traffic.map(deltaUptime(selector + ".packets")).map(prettyPackets))
@@ -55,10 +65,6 @@ define(["lib/helper"], function (Helper) {
     td.appendChild(bw)
     td.appendChild(document.createElement("br"))
     td.appendChild(bytes)
-
-    tr.appendChild(th)
-    tr.appendChild(td)
-    table.appendChild(tr)
 
     children.push(pkts)
     children.push(bw)
@@ -127,7 +133,7 @@ define(["lib/helper"], function (Helper) {
                                         stream.startWith(d)
                                         .map(peer.path)
                                         .filter(function (d) { return d !== undefined })
-                                        .map(prettyPeer))
+                                        .map(prettyPeer), true)
         })
       }
     })

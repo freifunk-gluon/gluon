@@ -30,6 +30,7 @@ local ipairs = ipairs
 local table = table
 
 local nixio = require 'nixio'
+local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
 local uci = require('luci.model.uci').cursor()
@@ -71,22 +72,37 @@ function node_id()
 end
 
 -- Generates a (hopefully) unique MAC address
--- The first parameter defines the function and the second
--- parameter an ID to add to the MAC address
--- Functions and IDs defined so far:
--- (1, 0): WAN (for mesh-on-WAN)
--- (1, 1): LAN (for mesh-on-LAN)
--- (2, n): client interface for the n'th radio
--- (3, n): adhoc interface for n'th radio
--- (4, 0): mesh VPN
--- (5, n): mesh interface for n'th radio (802.11s)
-function generate_mac(f, i)
-  local m1, m2, m3, m4, m5, m6 = string.match(sysconfig.primary_mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
-  m1 = nixio.bit.bor(tonumber(m1, 16), 0x02)
-  m2 = (tonumber(m2, 16)+f) % 0x100
-  m3 = (tonumber(m3, 16)+i) % 0x100
+-- The parameter defines the ID to add to the mac addr
+--
+-- IDs defined so far:
+-- 0: client0; mesh-vpn
+-- 1: mesh0
+-- 2: ibss0
+-- 3: client1; mesh-on-wan
+-- 4: mesh1
+-- 5: ibss1
+-- 6: mesh-on-lan
+-- 7: unused
+function generate_mac(i)
+  if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
 
-  return string.format('%02x:%02x:%02x:%s:%s:%s', m1, m2, m3, m4, m5, m6)
+  local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
+  local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
+
+  m1 = tonumber(m1, 16)
+  m6 = tonumber(m6, 16)
+
+  m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
+  m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
+
+  -- It's necessary that the first 45 bits of the mac do
+  -- not vary on a single hardware interface, since some chips are using
+  -- a hardware mac filter. (e.g 'ramips-rt305x')
+
+  m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
+  m6 = m6 + i                   -- add virtual interface id
+
+  return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 -- Iterate over all radios defined in UCI calling

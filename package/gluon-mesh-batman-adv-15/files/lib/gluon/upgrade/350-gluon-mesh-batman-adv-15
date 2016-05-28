@@ -45,4 +45,3 @@ end
 
 
 uci:save('network')
-uci:commit('network')

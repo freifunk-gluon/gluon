@@ -1,0 +1,46 @@
+Gluon 2016.1.4
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* 8devices Carambola 2
+* Meraki MR12/MR62/MR16/MR66
+
+Bugfixes
+~~~~~~~~
+
+* Major update of all WLAN drivers
+
+  We've taken the unusual step of updating the WLAN drivers ("wireless-backports") to a much newer version, as
+  it was reported that the new version fixes unstable WLAN seen in many setups
+* Build fix: a race condition causing parallel builds to fail has been fixed
+* Build fix: the Gluon tree could get into a state in which all commands fail with "Too many levels of symbolic links"
+* Build fix: allow building Gluon on systems with certain versions of *dash* as */bin/sh*
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Expert Mode is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_)
+
+  Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS first before
+  flashing Gluon. It was discovered that on Ubiquiti PicoStations, this downgrade is still necessary, as the
+  flash is not correctly unlocked, leaving the device unable to leave Config Mode and making regular sysupgrades
+  impossible.
+
+  TFTP recovery can be used in this state to flash a new firmware.

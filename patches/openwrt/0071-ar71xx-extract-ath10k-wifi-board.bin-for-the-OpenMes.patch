@@ -1,0 +1,25 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Sat, 9 Apr 2016 10:26:08 +0000
+Subject: ar71xx: extract ath10k wifi board.bin for the OpenMesh OM5P-AC board
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Backport of r49147
+
+Forwarded: https://patchwork.ozlabs.org/patch/624197/
+
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index cde7aaf..c1f4b85 100644
+--- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -96,6 +96,10 @@ case "$FIRMWARE" in
+ 	rb-911g-5hpacd)
+ 		ath10kcal_from_file "/sys/firmware/routerboot/ext_wlan_data" 20480 2116
+ 		;;
++	om5p-ac)
++		ath10kcal_extract "ART" 20480 2116
++		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +16)
++		;;
+ 	esac
+ 	;;
+ *)

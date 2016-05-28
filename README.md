@@ -12,11 +12,14 @@ Before opening an issue, make sure to check whether any existing issues
 (open or closed) match. If you're suggesting a new feature, drop by on IRC or
 our mailinglist to discuss it first.
 
+We maintain a [Roadmap](https://github.com/freifunk-gluon/gluon/wiki/Roadmap) for
+the future development of Gluon.
+
 ## Use a release!
 
 Please refrain from using the `master` branch for anything else but development purposes!
 Use the most recent release instead. You can list all relaseses by running `git branch -a`
-and switch to one by running `git checkout v2016.1.2 && make update`.
+and switch to one by running `git checkout v2016.1.5 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
 If you upgrade using random master commits the nodes *will break* eventually.

@@ -24,4 +24,3 @@ end
 uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
 
 uci:save('network')
-uci:commit('network')

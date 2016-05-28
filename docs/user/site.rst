@@ -44,9 +44,12 @@ ntp_server
     List of NTP servers available in your community or used by your community, e.g.:
     ::
 
-       ntp_servers = {'1.ntp.services.ffeh','2.tnp.services.ffeh'}
+       ntp_servers = {'1.ntp.services.ffeh','2.ntp.services.ffeh'}
 
-opkg : optional
+    This NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
+    explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
+
+opkg \: optional
     ``opkg`` package manager configuration.
 
     There are two optional fields in the ``opkg`` section:
@@ -72,7 +75,7 @@ opkg : optional
     - ``%GV`` is replaced by the Gluon version
     - ``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)
 
-regdom : optional
+regdom \: optional
     The wireless regulatory domain responsible for your area, e.g.:
     ::
 
@@ -80,7 +83,7 @@ regdom : optional
 
     Setting ``regdom`` in mandatory if ``wifi24`` or ``wifi5`` is defined.
 
-wifi24 : optional
+wifi24 \: optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
 
@@ -123,10 +126,10 @@ wifi24 : optional
          },
        },
 
-wifi5 : optional
+wifi5 \: optional
     Same as `wifi24` but for the 5Ghz radio.
 
-next_node : package
+next_node \: package
     Configuration of the local node feature of Gluon
     ::
 
@@ -136,7 +139,7 @@ next_node : package
         mac = 'ca:ff:ee:ba:be:00'
       }
 
-mesh : optional
+mesh \: optional
     Options specific to routing protocols.
 
     At the moment, only the ``batman_adv`` routing protocol has such options:
@@ -220,13 +223,13 @@ fastd_mesh_vpn
         },
       }
 
-mesh_on_wan : optional
+mesh_on_wan \: optional
     Enables the mesh on the WAN port (``true`` or ``false``).
 
-mesh_on_lan : optional
+mesh_on_lan \: optional
     Enables the mesh on the LAN port (``true`` or ``false``).
 
-autoupdater : package
+autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
     ::
 
@@ -249,7 +252,10 @@ autoupdater : package
         }
       }
 
-roles : optional
+    All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
+    explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
+
+roles \: optional
     Optional role definitions. Nodes will announce their role inside the mesh.
     This will allow in the backend to distinguish between normal, backbone and
     service nodes or even gateways (if they advertise that role). It is up to
@@ -273,7 +279,7 @@ roles : optional
         },
       },
 
-setup_mode : package
+setup_mode \: package
     Allows skipping setup mode (config mode) at first boot when attribute
     ``skip`` is set to ``true``. This is optional and may be left out.
     ::
@@ -282,7 +288,7 @@ setup_mode : package
         skip = true,
       },
 
-legacy : package
+legacy \: package
     Configuration for the legacy upgrade path.
     This is only required in communities upgrading from Lübeck's LFF-0.3.x.
     ::
@@ -393,15 +399,16 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffda <https://github.com/freifunk-darmstadt/site-ffda>`_ (Darmstadt)
 * `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
 * `site-ffhh <https://github.com/freifunkhamburg/site-ffhh>`_ (Hamburg)
+* `site-ffho <https://git.c3pb.de/freifunk-pb/site-ffho>`_ (Hochstift)
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
+* `site-ffl <https://github.com/freifunk-leipzig/freifunk-gluon-leipzig>`_ (Leipzig)
 * `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
 * `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
 * `site-ffmwu <https://github.com/freifunk-mwu/site-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
 * `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
-* `site-ffnw <https://git.nordwest.freifunk.net/ffnw/siteconf/tree/master>`_ (Nordwest)
-* `site-ffpb <https://git.c3pb.de/freifunk-pb/site-ffpb>`_ (Paderborn)
+* `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
 * `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)
 * `site-ffrg <https://github.com/ffruhr/site-ffruhr>`_ (Ruhrgebiet)

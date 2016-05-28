@@ -7,7 +7,7 @@ local function get_site_config()
   local file = assert(io.open(config))
 
   local decoder = json.new()
-  ltn12.pump.all(ltn12.source.file(io.open(config)), decoder:sink())
+  ltn12.pump.all(ltn12.source.file(file), decoder:sink())
 
   file:close()
 

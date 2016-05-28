@@ -24,7 +24,6 @@ uci:section('batman-adv', 'mesh', 'bat0',
 	    }
 )
 uci:save('batman-adv')
-uci:commit('batman-adv')
 
 if not uci:get('network', 'client', 'ifname') then
   uci:add_to_set('network', 'client', 'ifname', 'bat0')
@@ -39,6 +38,9 @@ end
 uci:set('network', 'client', 'proto', 'dhcpv6')
 uci:set('network', 'client', 'reqprefix', 'no')
 uci:set('network', 'client', 'igmp_snooping', 0)
+uci:set('network', 'client', 'robustness', 3)
+uci:set('network', 'client', 'query_interval', 2000)
+uci:set('network', 'client', 'query_response_interval', 500)
 uci:set('network', 'client', 'peerdns', 1)
 uci:set('network', 'client', 'sourcefilter', 0)
 
@@ -48,11 +50,11 @@ uci:section('network', 'interface', 'bat0',
 		    ifname = 'bat0',
 		    proto = 'none',
 		    macaddr = sysconfig.primary_mac,
+		    multicast_router = 2,
 	    }
 )
 
 uci:save('network')
-uci:commit('network')
 
 
 uci:delete('firewall', 'client')
@@ -76,7 +78,6 @@ uci:section('firewall', 'rule', 'client_dns',
 )
 
 uci:save('firewall')
-uci:commit('firewall')
 
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
@@ -93,7 +94,6 @@ uci:section('dhcp', 'dhcp', 'client',
 )
 
 uci:save('dhcp')
-uci:commit('dhcp')
 
 
 sysctl.set('net.ipv6.conf.br-client.forwarding', 0)

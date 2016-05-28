@@ -64,7 +64,15 @@ static struct json_object * get_number(struct uci_context *ctx, struct uci_secti
 	if (*end)
 		return NULL;
 
-	return json_object_new_double(d);
+	struct json_object *jso = json_object_new_double(d);
+	json_object_set_serializer(jso, json_object_double_to_json_string, "%.8f", NULL);
+	return jso;
+}
+
+static void maybe_add_number(struct uci_context *ctx, struct uci_section *s, const char *name, struct json_object *parent) {
+	struct json_object *jso = get_number(ctx, s, name);
+	if (jso)
+		json_object_object_add(parent, name, jso);
 }
 
 static struct json_object * get_location(struct uci_context *ctx, struct uci_package *p) {
@@ -78,17 +86,9 @@ static struct json_object * get_location(struct uci_context *ctx, struct uci_pac
 
 	struct json_object *ret = json_object_new_object();
 
-	struct json_object *latitude = get_number(ctx, s, "latitude");
-	if (latitude)
-		json_object_object_add(ret, "latitude", latitude);
-
-	struct json_object *longitude = get_number(ctx, s, "longitude");
-	if (longitude)
-		json_object_object_add(ret, "longitude", longitude);
-
-	struct json_object *altitude = get_number(ctx, s, "altitude");
-	if (altitude)
-		json_object_object_add(ret, "altitude", altitude);
+	maybe_add_number(ctx, s, "latitude", ret);
+	maybe_add_number(ctx, s, "longitude", ret);
+	maybe_add_number(ctx, s, "altitude", ret);
 
 	return ret;
 }

@@ -1,0 +1,39 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 1 Apr 2016 23:21:32 +0200
+Subject: ar71xx: fix the revision of a few TP-LINK devices in AR71XX_MODEL to match labels/image names
+
+Let's not confuse users about the revisions of their devices when we can
+easily avoid it.
+
+Not tested on real hardware.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of r49107
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 180a075..ddd6611 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -162,6 +162,10 @@ tplink_board_detect() {
+ 		;;
+ 	"071000"*)
+ 		model="TP-Link TL-WR710N"
++
++		if [ "$hwid" = '07100002' -a "$mid" = '00000002' ]; then
++			hwver=' v2.1'
++		fi
+ 		;;
+ 	"072001"*)
+ 		model="TP-Link TL-WR720N"
+@@ -202,6 +206,10 @@ tplink_board_detect() {
+ 		;;
+ 	"084100"*)
+ 		model="TP-Link TL-WR841N/ND"
++
++		if [ "$hwid" = '08410002' -a "$mid" = '00000002' ]; then
++			hwver=' v1.5'
++		fi
+ 		;;
+ 	"084200"*)
+ 		model="TP-Link TL-WR842N/ND"

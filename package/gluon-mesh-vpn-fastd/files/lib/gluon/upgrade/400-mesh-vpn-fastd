@@ -119,7 +119,6 @@ add_groups('mesh_vpn', site.fastd_mesh_vpn.groups)
 
 
 uci:save('fastd')
-uci:commit('fastd')
 
 
 uci:section('network', 'interface', 'mesh_vpn',
@@ -128,12 +127,11 @@ uci:section('network', 'interface', 'mesh_vpn',
 		  proto = 'batadv',
 		  mesh = 'bat0',
 		  mesh_no_rebroadcast = 1,
-		  macaddr = util.generate_mac(4, 0),
+		  macaddr = util.generate_mac(0),
 	  }
 )
 
 uci:save('network')
-uci:commit('network')
 
 
 uci:section('firewall', 'include', 'mesh_vpn_dns',
@@ -145,4 +143,3 @@ uci:section('firewall', 'include', 'mesh_vpn_dns',
 )
 
 uci:save('firewall')
-uci:commit('firewall')

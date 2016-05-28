@@ -33,5 +33,4 @@ if sysconfig.gluon_version == 'legacy' then
   end
 
   uci:save('fastd')
-  uci:commit('fastd')
 end

@@ -1,0 +1,48 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 1 Apr 2016 23:16:13 +0200
+Subject: ar71xx: check both HWID and HWREV on upgrades of TP-LINK devices
+
+There's no reason for us to be more lenient than the stock firmware, so
+better check the HWREV as well to avoid bricked devices.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of r49105
+
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index d025632..c5c1871 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -66,6 +66,10 @@ tplink_get_image_hwid() {
+ 	get_image "$@" | dd bs=4 count=1 skip=16 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
+ }
+ 
++tplink_get_image_mid() {
++	get_image "$@" | dd bs=4 count=1 skip=17 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
++}
++
+ tplink_get_image_boot_size() {
+ 	get_image "$@" | dd bs=4 count=1 skip=37 2>/dev/null | hexdump -v -n 4 -e '1/1 "%02x"'
+ }
+@@ -366,13 +370,17 @@ platform_check_image() {
+ 		}
+ 
+ 		local hwid
+-		local imageid
++		local mid
++		local imagehwid
++		local imagemid
+ 
+ 		hwid=$(tplink_get_hwid)
+-		imageid=$(tplink_get_image_hwid "$1")
++		mid=$(tplink_get_mid)
++		imagehwid=$(tplink_get_image_hwid "$1")
++		imagemid=$(tplink_get_image_mid "$1")
+ 
+-		[ "$hwid" != "$imageid" ] && {
+-			echo "Invalid image, hardware ID mismatch, hw:$hwid image:$imageid."
++		[ "$hwid" != "$imagehwid" -o "$mid" != "$imagemid" ] && {
++			echo "Invalid image, hardware ID mismatch, hw:$hwid $mid image:$imagehwid $imagemid."
+ 			return 1
+ 		}
+ 

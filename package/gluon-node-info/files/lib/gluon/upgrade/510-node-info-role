@@ -15,5 +15,4 @@ end
 if not role then
   uci:set(config, uci:get_first(config, 'system'), 'role', default_role)
   uci:save(config)
-  uci:commit(config)
 end

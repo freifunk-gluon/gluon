@@ -7,7 +7,21 @@ local sysconfig = require 'gluon.sysconfig'
 local uci = require('luci.model.uci').cursor()
 local lutil = require 'luci.util'
 
-if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
+if not sysconfig.lan_ifname then
+  os.exit(0)
+end
+
+uci:section('network', 'interface', 'mesh_lan', {
+  ifname  = sysconfig.lan_ifname,
+  type    = 'bridge',
+  igmp_snooping = 0,
+  proto   = 'batadv',
+  mesh    = 'bat0',
+  mesh_no_rebroadcast = '1',
+  macaddr = util.generate_mac(6),
+})
+
+if uci:get('network', 'mesh_lan', 'auto') == nil then
   local enable = site.mesh_on_lan
 
   if enable then
@@ -15,23 +29,15 @@ if sysconfig.lan_ifname and not uci:get('network', 'mesh_lan') then
 
     if interfaces then
       for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-	if lutil.contains(interfaces, lanif) then
-	  enable = false
-	  break
+        if lutil.contains(interfaces, lanif) then
+          enable = false
+          break
         end
       end
     end
   end
 
-  uci:section('network', 'interface', 'mesh_lan',
-              { ifname  = sysconfig.lan_ifname
-              , proto   = 'batadv'
-              , mesh    = 'bat0'
-              , mesh_no_rebroadcast = '1'
-              , macaddr = util.generate_mac(1, 1)
-              , auto    = enable and 1 or 0
-  })
-
-  uci:save('network')
-  uci:commit('network')
+  uci:set('network', 'mesh_lan', 'auto', enable and 1 or 0)
 end
+
+uci:save('network')

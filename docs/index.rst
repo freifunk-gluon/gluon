@@ -51,6 +51,7 @@ Packages
    :maxdepth: 1
 
    package/gluon-client-bridge
+   package/gluon-config-mode-geo-location
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
 
@@ -60,6 +61,9 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2016.1.5
+   releases/v2016.1.4
+   releases/v2016.1.3
    releases/v2016.1.2
    releases/v2016.1.1
    releases/v2016.1
@@ -77,6 +81,16 @@ Supported Devices & Architectures
 ar71xx-generic
 ^^^^^^^^^^^^^^
 
+* 8devices
+
+  - Carambola 2
+
+* ALFA Network
+
+  - AP121
+  - AP121U
+  - Hornet-UB
+
 * Allnet
 
   - ALL0315N
@@ -86,6 +100,11 @@ ar71xx-generic
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G300NH
   - WZR-HP-G450H
+
+* Cisco Meraki
+
+  - MR12 / MR62
+  - MR16 / MR66
 
 * D-Link
 
@@ -111,6 +130,18 @@ ar71xx-generic
 * Onion
 
   - Omega
+
+* OpenMesh
+
+ - MR1750
+ - MR600 (v1, v2)
+ - MR900 (v1, v2)
+ - OM2P (v1, v2)
+ - OM2P-HS (v1, v2)
+ - OM2P-LC
+ - OM5P
+ - OM5P-AC (v1, v2)
+ - OM5P-AN
 
 * TP-Link
 
@@ -140,7 +171,7 @@ ar71xx-generic
   - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
   - TL-WR801N/ND (v1, v2)
-  - TL-WR841N/ND (v3, v5, v7, v8, v9, v10)
+  - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11)
   - TL-WR842N/ND (v1, v2)
   - TL-WR843N/ND (v1)
   - TL-WR940N (v1, v2, v3)
@@ -153,11 +184,13 @@ ar71xx-generic
   - Air Gateway
   - Air Router
   - Bullet M
+  - Loco M
+  - Loco M XW
   - Nanostation M
   - Nanostation M XW
-  - Loco M XW
   - Picostation M
   - Rocket M
+  - Rocket M XW
   - UniFi AP
   - UniFi AP Pro
   - UniFi AP Outdoor
