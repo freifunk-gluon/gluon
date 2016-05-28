@@ -192,7 +192,9 @@ static bool get_peer_connection(struct json_object **ret, struct json_object *co
 		int64_t established_time = json_object_get_int64(established);
 
 		*ret = json_object_new_object();
-		json_object_object_add(*ret, "established", json_object_new_double(established_time/1000.0));
+		struct json_object *jso = json_object_new_double(established_time/1000.0);
+		json_object_set_serializer(jso, json_object_double_to_json_string, "%.3f", NULL);
+		json_object_object_add(*ret, "established", jso);
 	}
 	else {
 		*ret = NULL;
