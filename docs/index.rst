@@ -108,7 +108,7 @@ ar71xx-generic
 
 * D-Link
 
-  - DIR-505 (A1)
+  - DIR-505 (A1, A2)
   - DIR-615 (C1)
   - DIR-825 (B1)
 

@@ -203,10 +203,12 @@ endif
 
 ## D-Link
 
-# D-Link DIR-505 rev. A1
+# D-Link DIR-505 rev. A1/A2
 
 $(eval $(call GluonProfile,DIR505A1))
-$(eval $(call GluonModel,DIR505A1,dir-505-a1,d-link-dir-505-rev-a1))
+$(eval $(call GluonModel,DIR505A1,dir-505-a1-a2,d-link-dir-505-rev-a1))
+
+$(eval $(call GluonModelAlias,DIR505A1,d-link-dir-505-rev-a1,d-link-dir-505-rev-a2))
 
 # D-Link DIR-615 rev. C1
 $(eval $(call GluonProfile,DIR615C1))
