@@ -265,6 +265,14 @@ $(eval $(call GluonModel,WNDR3700,wndrmac,netgear-wndrmac)) # BROKEN: untested
 endif
 $(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2))
 
+ifneq ($(BROKEN),)
+# WNR2200
+$(eval $(call GluonProfile,WNR2200)) # BROKEN: untested
+$(eval $(call GluonModel,WNR2200,wnr2200,netgear-wnr2200))
+$(eval $(call GluonProfileFactorySuffix,WNR2200,.img))
+endif
+
+
 ## Allnet
 
 # ALL0315N
