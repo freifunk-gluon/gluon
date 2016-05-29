@@ -1,0 +1,121 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 29 May 2016 12:56:43 +0200
+Subject: mac80211: ath9k: enable platform WLAN LED name
+
+Enable platform-supplied WLAN LED name for ath9k device.
+
+Signed-off-by: Michal Cieslakiewicz <michal.cieslakiewicz@wp.pl>
+Acked-by: Hartmut Knaack <knaack.h@gmx.de>
+
+Backport of r48879
+
+diff --git a/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch b/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch
+new file mode 100644
+index 0000000..8d2d899
+--- /dev/null
++++ b/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch
+@@ -0,0 +1,48 @@
++From: Michal Cieslakiewicz <michal.cieslakiewicz@wp.pl>
++Date: Sun, 31 Jan 2016 20:45:57 +0100
++Subject: [PATCH v4 1/8] mac80211: ath9k: enable platform WLAN LED name
++
++Enable platform-supplied WLAN LED name for ath9k device. It replaces generic
++'ath9k-phy*' label with string set during platform initialization.
++
++Signed-off-by: Michal Cieslakiewicz <michal.cieslakiewicz@wp.pl>
++---
++ drivers/net/wireless/ath/ath9k/gpio.c |   10 +++++++---
++ include/linux/ath9k_platform.h        |    1 +
++ 2 files changed, 8 insertions(+), 3 deletions(-)
++
++--- a/drivers/net/wireless/ath/ath9k/gpio.c
+++++ b/drivers/net/wireless/ath/ath9k/gpio.c
++@@ -132,15 +132,19 @@ void ath_init_leds(struct ath_softc *sc)
++ 	if (AR_SREV_9100(sc->sc_ah))
++ 		return;
++ 
++-	snprintf(led_name, sizeof(led_name), "ath9k-%s",
++-		 wiphy_name(sc->hw->wiphy));
+++	if (pdata && pdata->led_name)
+++		strncpy(led_name, pdata->led_name, sizeof(led_name));
+++	else
+++		snprintf(led_name, sizeof(led_name), "ath9k-%s",
+++		 	 wiphy_name(sc->hw->wiphy));
++ 
++ 	if (ath9k_led_blink)
++ 		trigger = sc->led_default_trigger;
++ 	else
++ 		trigger = ieee80211_get_radio_led_name(sc->hw);
++ 
++-	ath_create_gpio_led(sc, sc->sc_ah->led_pin, led_name, trigger, !sc->sc_ah->config.led_active_high);
+++	ath_create_gpio_led(sc, sc->sc_ah->led_pin, led_name, trigger,
+++			    !sc->sc_ah->config.led_active_high);
++ 
++ 	if (!pdata)
++ 		return;
++--- a/include/linux/ath9k_platform.h
+++++ b/include/linux/ath9k_platform.h
++@@ -45,6 +45,7 @@ struct ath9k_platform_data {
++ 
++ 	int num_leds;
++ 	const struct gpio_led *leds;
+++	const char *led_name;
++ };
++ 
++ #endif /* _LINUX_ATH9K_PLATFORM_H */
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
+index d382453..bf80d4d 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
+@@ -39,6 +39,18 @@ __init void ap9x_pci_setup_wmac_led_pin(unsigned wmac, int pin)
+ 	}
+ }
+ 
++__init void ap9x_pci_setup_wmac_led_name(unsigned wmac, const char *led_name)
++{
++	switch (wmac) {
++	case 0:
++		ap9x_wmac0_data.led_name = led_name;
++		break;
++	case 1:
++		ap9x_wmac1_data.led_name = led_name;
++		break;
++	}
++}
++
+ __init struct ath9k_platform_data *ap9x_pci_get_wmac_data(unsigned wmac)
+ {
+ 	switch (wmac) {
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
+index ad288cb..dcfe541 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
+@@ -19,6 +19,7 @@ void ap9x_pci_setup_wmac_led_pin(unsigned wmac, int pin);
+ void ap9x_pci_setup_wmac_gpio(unsigned wmac, u32 mask, u32 val);
+ void ap9x_pci_setup_wmac_leds(unsigned wmac, struct gpio_led *leds,
+ 			      int num_leds);
++void ap9x_pci_setup_wmac_led_name(unsigned wmac, const char *led_name);
+ struct ath9k_platform_data *ap9x_pci_get_wmac_data(unsigned wmac);
+ 
+ void ap91_pci_init(u8 *cal_data, u8 *mac_addr);
+@@ -33,6 +34,8 @@ static inline void ap9x_pci_setup_wmac_gpio(unsigned wmac,
+ static inline void ap9x_pci_setup_wmac_leds(unsigned wmac,
+ 					    struct gpio_led *leds,
+ 					    int num_leds) {}
++static inline void ap9x_pci_setup_wmac_led_name(unsigned wmac,
++						const char *led_name) {}
+ static inline struct ath9k_platform_data *ap9x_pci_get_wmac_data(unsigned wmac)
+ {
+ 	return NULL;
+diff --git a/target/linux/generic/files/include/linux/ath9k_platform.h b/target/linux/generic/files/include/linux/ath9k_platform.h
+index 30ce216..823e5ac 100644
+--- a/target/linux/generic/files/include/linux/ath9k_platform.h
++++ b/target/linux/generic/files/include/linux/ath9k_platform.h
+@@ -45,6 +45,7 @@ struct ath9k_platform_data {
+ 
+ 	int num_leds;
+ 	const struct gpio_led *leds;
++	const char *led_name;
+ };
+ 
+ #endif /* _LINUX_ATH9K_PLATFORM_H */
