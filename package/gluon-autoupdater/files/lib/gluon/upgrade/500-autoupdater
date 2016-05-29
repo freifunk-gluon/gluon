@@ -1,17 +1,38 @@
 #!/usr/bin/lua
 
+local fs = require 'nixio.fs'
 local site = require 'gluon.site_config'
 local uci = require 'luci.model.uci'
+local util = require 'luci.util'
 
 local c = uci.cursor()
 
+local subst = {}
+
+subst['%%v'] = util.trim(fs.readfile('/etc/openwrt_version'))
+subst['%%n'], subst['%%S'] = util.exec('. /etc/openwrt_release; echo $DISTRIB_CODENAME; echo $DISTRIB_TARGET'):match('([^\n]*)\n([^\n]*)')
+subst['%%GS'] = site.site_code
+subst['%%GV'] = util.trim(fs.readfile('/lib/gluon/gluon-version'))
+subst['%%GR'] = util.trim(fs.readfile('/lib/gluon/release'))
+
+function replace_patterns(url)
+  for k, v in pairs(subst) do
+    url = url:gsub(k, v)
+  end
+
+  return url
+end
 
 for name, config in pairs(site.autoupdater.branches) do
 	c:delete('autoupdater', name)
+	mirrors = {}
+	for i, v in ipairs(config.mirrors) do
+		mirrors[i]=replace_patterns(v)
+	end
 	c:section('autoupdater', 'branch', name,
 		  {
 			  name = config.name,
-			  mirror = config.mirrors,
+			  mirror = mirrors,
 			  good_signatures = config.good_signatures,
 			  pubkey = config.pubkeys,
 		  }
