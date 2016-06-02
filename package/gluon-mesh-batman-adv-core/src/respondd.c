@@ -212,11 +212,13 @@ static void add_gateway(struct json_object *obj) {
 
 	while (getline(&line, &len, f) >= 0) {
 		char addr[18];
+		char nexthop[18];
 
-		if (sscanf(line, "=> %17[0-9a-fA-F:]", addr) != 1)
+		if (sscanf(line, "=> %17[0-9a-fA-F:] ( %*u) %17[0-9a-fA-F:]", addr, nexthop) != 2)
 			continue;
 
 		json_object_object_add(obj, "gateway", json_object_new_string(addr));
+		json_object_object_add(obj, "gateway_nexthop", json_object_new_string(nexthop));
 		break;
 	}
 
