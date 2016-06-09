@@ -1,0 +1,24 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 9 Jun 2016 04:57:24 +0200
+Subject: ar71xx/cpe510: use second wifi calibration table
+
+The cpe510 has two calibration tables. The first calibration
+table requires to modify ath9k driver to work (patched tx gain table).
+
+Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+
+Backport of LEDE bf27ac019c137e7baf90ca6ef0e40945ae871797
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+index 74daf43..875589d 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+@@ -117,7 +117,7 @@ static void __init cpe210_setup(void)
+ static void __init cpe510_setup(void)
+ {
+ 	u8 *mac = (u8 *) KSEG1ADDR(0x1f830008);
+-	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
++	u8 *ee = (u8 *) KSEG1ADDR(0x1fff5000);
+ 
+ 	cpe_setup(mac);
+ 
