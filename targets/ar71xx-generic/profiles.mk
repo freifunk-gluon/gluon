@@ -4,14 +4,15 @@
 
 # CPE210/220/510/520
 $(eval $(call GluonProfile,CPE510,rssileds))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.0))
 
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.1))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.1))
+$(eval $(call GluonModel,CPE510,cpe210-220,tp-link-cpe210-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe210-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe220-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe220-v1.1))
+
+$(eval $(call GluonModel,CPE510,cpe510-520,tp-link-cpe510-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe510-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 
 # TL-WA701N/ND v1, v2
