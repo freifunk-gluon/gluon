@@ -7,7 +7,9 @@ SERVICE_DAEMONIZE=1
 
 
 start() {
+  [ -x /lib/gluon/radvd/arguments ] && {
 	service_start /usr/sbin/uradvd $(/lib/gluon/radvd/arguments)
+  }
 }
 
 stop() {
