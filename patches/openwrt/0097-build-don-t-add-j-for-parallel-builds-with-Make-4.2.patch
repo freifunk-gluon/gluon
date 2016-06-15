@@ -1,0 +1,48 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 15 Jun 2016 19:31:34 +0200
+Subject: build: don't add -j for parallel builds with Make 4.2+
+
+Make usually passes -j and jobserver arguments as part of MAKEFLAGS. LEDE
+removes MAKEFLAGS to have better control of the build, and re-adds the
+jobserver arguments with -j to the Make commandline where desired.
+
+Make 4.2+ behave differently with these arguments passed on the commandline
+than in MAKEFLAGS: -j will override the jobserver argument and the job
+count will be unlimited.
+
+Moving the flags to MAKEFLAGS will need many packages to be changed and
+tested; therefore, we opt for a less invasive change for now and just
+remove -j for Make 4.2+, as the jobserver argument alone is enough to
+enable parallel builds for these Make versions.
+
+Signed-off-by: Jo-Philipp Wich <jo@mein.io>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE 6fb212f2933bbbdf2935124205717c9d0ca72b32
+
+diff --git a/include/host-build.mk b/include/host-build.mk
+index e2b5f2f..44401b8 100644
+--- a/include/host-build.mk
++++ b/include/host-build.mk
+@@ -10,7 +10,7 @@ HOST_INSTALL_DIR ?= $(HOST_BUILD_DIR)/host-install
+ HOST_BUILD_PARALLEL ?=
+ 
+ ifneq ($(CONFIG_PKG_BUILD_USE_JOBSERVER),)
+-  HOST_MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) -j)
++  HOST_MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) $(if $(filter 3.% 4.0 4.1,$(MAKE_VERSION)),-j))
+ else
+   HOST_MAKE_J:=-j$(CONFIG_PKG_BUILD_JOBS)
+ endif
+diff --git a/include/package.mk b/include/package.mk
+index c69d928..a99cdc6 100644
+--- a/include/package.mk
++++ b/include/package.mk
+@@ -23,7 +23,7 @@ PKG_RELRO_PARTIAL ?= 1
+ PKG_RELRO_FULL ?= 1
+ 
+ ifneq ($(CONFIG_PKG_BUILD_USE_JOBSERVER),)
+-  MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) -j)
++  MAKE_J:=$(if $(MAKE_JOBSERVER),$(MAKE_JOBSERVER) $(if $(filter 3.% 4.0 4.1,$(MAKE_VERSION)),-j))
+ else
+   MAKE_J:=-j$(CONFIG_PKG_BUILD_JOBS)
+ endif
