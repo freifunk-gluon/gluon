@@ -1,0 +1,143 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 16 Jun 2016 00:51:07 +0200
+Subject: linux: make IPv6 builtin if selected (saves >30KB)
+
+Signed-off-by: Steven Barth <steven@midlink.org>
+
+Backport of OpenWrt r46834
+
+kmod-ipv6 is added to the PROVIDES of the kernel package, so we don't have
+to adjust all packages depending on kmod-ipv6.
+
+diff --git a/config/Config-build.in b/config/Config-build.in
+index 4674d84..cd50290 100644
+--- a/config/Config-build.in
++++ b/config/Config-build.in
+@@ -83,7 +83,7 @@ menu "Global build settings"
+ 		prompt "Enable IPv6 support in packages"
+ 		default y
+ 		help
+-		  Enable IPv6 support in packages (passes --enable-ipv6 to configure scripts).
++		  Enables IPv6 support in kernel (builtin) and packages.
+ 
+ 	config PKG_BUILD_PARALLEL
+ 		bool
+diff --git a/package/kernel/linux/Makefile b/package/kernel/linux/Makefile
+index 45ca9fa..b06c49a 100644
+--- a/package/kernel/linux/Makefile
++++ b/package/kernel/linux/Makefile
+@@ -49,6 +49,7 @@ define Package/kernel
+   TITLE:=Virtual kernel package
+   VERSION:=$(LINUX_VERSION)-$(LINUX_RELEASE)-$(LINUX_VERMAGIC)
+   URL:=http://www.kernel.org/
++  PROVIDES:=$(if $(CONFIG_IPV6),kmod-ipv6)
+ endef
+ 
+ define Package/kernel/install
+diff --git a/package/kernel/linux/modules/netsupport.mk b/package/kernel/linux/modules/netsupport.mk
+index cea8e47..8a2760d 100644
+--- a/package/kernel/linux/modules/netsupport.mk
++++ b/package/kernel/linux/modules/netsupport.mk
+@@ -439,7 +439,7 @@ $(eval $(call KernelPackage,iptunnel4))
+ define KernelPackage/iptunnel6
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=IPv6 tunneling
+-  DEPENDS:= +kmod-ipv6
++  DEPENDS:=@IPV6
+   KCONFIG:= \
+ 	CONFIG_INET6_TUNNEL
+   FILES:=$(LINUX_DIR)/net/ipv6/tunnel6.ko
+@@ -456,15 +456,16 @@ $(eval $(call KernelPackage,iptunnel6))
+ define KernelPackage/ipv6
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=IPv6 support
++  DEPENDS:=@IPV6
++  HIDDEN:=1
++  DEFAULT:=y
+   KCONFIG:= \
+-	CONFIG_IPV6 \
++	CONFIG_IPV6=y \
+ 	CONFIG_IPV6_PRIVACY=y \
+ 	CONFIG_IPV6_MULTIPLE_TABLES=y \
+ 	CONFIG_IPV6_MROUTE=y \
+ 	CONFIG_IPV6_PIMSM_V2=n \
+ 	CONFIG_IPV6_SUBTREES=y
+-  FILES:=$(LINUX_DIR)/net/ipv6/ipv6.ko
+-  AUTOLOAD:=$(call AutoLoad,20,ipv6)
+ endef
+ 
+ define KernelPackage/ipv6/description
+@@ -476,7 +477,7 @@ $(eval $(call KernelPackage,ipv6))
+ 
+ define KernelPackage/sit
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+-  DEPENDS:=+kmod-ipv6 +kmod-iptunnel +kmod-iptunnel4
++  DEPENDS:=@IPV6 +kmod-iptunnel +kmod-iptunnel4
+   TITLE:=IPv6-in-IPv4 tunnel
+   KCONFIG:=CONFIG_IPV6_SIT \
+ 	CONFIG_IPV6_SIT_6RD=y
+@@ -494,7 +495,7 @@ $(eval $(call KernelPackage,sit))
+ define KernelPackage/ip6-tunnel
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=IP-in-IPv6 tunnelling
+-  DEPENDS:= +kmod-ipv6 +kmod-iptunnel6
++  DEPENDS:=@IPV6 +kmod-iptunnel6
+   KCONFIG:= CONFIG_IPV6_TUNNEL
+   FILES:=$(LINUX_DIR)/net/ipv6/ip6_tunnel.ko
+   AUTOLOAD:=$(call AutoLoad,32,ip6_tunnel)
+@@ -510,7 +511,7 @@ $(eval $(call KernelPackage,ip6-tunnel))
+ define KernelPackage/gre
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=GRE support
+-  DEPENDS:=+PACKAGE_kmod-ipv6:kmod-ipv6 +kmod-iptunnel
++  DEPENDS:=+kmod-iptunnel
+   KCONFIG:=CONFIG_NET_IPGRE CONFIG_NET_IPGRE_DEMUX
+   FILES:=$(LINUX_DIR)/net/ipv4/ip_gre.ko $(LINUX_DIR)/net/ipv4/gre.ko
+   AUTOLOAD:=$(call AutoLoad,39,gre ip_gre)
+@@ -526,7 +527,7 @@ $(eval $(call KernelPackage,gre))
+ define KernelPackage/gre6
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=GRE support over IPV6
+-  DEPENDS:=+kmod-ipv6 +kmod-iptunnel +kmod-ip6-tunnel
++  DEPENDS:=@IPV6 +kmod-iptunnel +kmod-ip6-tunnel
+   KCONFIG:=CONFIG_IPV6_GRE
+   FILES:=$(LINUX_DIR)/net/ipv6/ip6_gre.ko
+   AUTOLOAD:=$(call AutoLoad,39,ip6_gre)
+@@ -862,7 +863,6 @@ define KernelPackage/l2tp
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=Layer Two Tunneling Protocol (L2TP)
+   DEPENDS:= \
+-	+IPV6:kmod-ipv6 \
+ 	+kmod-udptunnel4 \
+ 	+IPV6:kmod-udptunnel6
+   KCONFIG:=CONFIG_L2TP \
+@@ -898,7 +898,7 @@ $(eval $(call KernelPackage,l2tp-eth))
+ define KernelPackage/l2tp-ip
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=L2TP IP encapsulation for L2TPv3
+-  DEPENDS:=+kmod-l2tp +IPV6:kmod-ipv6
++  DEPENDS:=+kmod-l2tp
+   KCONFIG:=CONFIG_L2TP_IP
+   FILES:= \
+ 	$(LINUX_DIR)/net/l2tp/l2tp_ip.ko \
+@@ -930,7 +930,7 @@ define KernelPackage/sctp
+      CONFIG_SCTP_DEFAULT_COOKIE_HMAC_MD5=y
+   FILES:= $(LINUX_DIR)/net/sctp/sctp.ko
+   AUTOLOAD:= $(call AutoLoad,32,sctp)
+-  DEPENDS:=+kmod-lib-crc32c +kmod-crypto-md5 +kmod-crypto-hmac +IPV6:kmod-ipv6
++  DEPENDS:=+kmod-lib-crc32c +kmod-crypto-md5 +kmod-crypto-hmac
+ endef
+ 
+ define KernelPackage/sctp/description
+diff --git a/package/network/services/dnsmasq/Makefile b/package/network/services/dnsmasq/Makefile
+index 19a8df9..8fd51fe 100644
+--- a/package/network/services/dnsmasq/Makefile
++++ b/package/network/services/dnsmasq/Makefile
+@@ -52,7 +52,6 @@ define Package/dnsmasq-full
+ $(call Package/dnsmasq/Default)
+   TITLE += (with DNSSEC, DHCPv6, Auth DNS, IPset enabled by default)
+   DEPENDS:=+PACKAGE_dnsmasq_full_dnssec:libnettle \
+-	+PACKAGE_dnsmasq_full_dhcpv6:kmod-ipv6 \
+ 	+PACKAGE_dnsmasq_full_ipset:kmod-ipt-ipset
+   VARIANT:=full
+ endef
