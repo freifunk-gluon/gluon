@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 16 Jun 2016 04:28:44 +0200
+Subject: package-ipkg.mk: fix Provides for packages with multiple PROVIDES entries
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE 3ee6c17cd14ec1fed0b0491542c499c03fc6d211
+
+diff --git a/include/package-ipkg.mk b/include/package-ipkg.mk
+index eb4c874..1830d64 100644
+--- a/include/package-ipkg.mk
++++ b/include/package-ipkg.mk
+@@ -154,7 +154,7 @@ Package: $(1)
+ Version: $(VERSION)
+ $$(call addfield,Depends,$$(Package/$(1)/DEPENDS)
+ )$$(call addfield,Conflicts,$$(call mergelist,$(CONFLICTS))
+-)$$(call addfield,Provides,$(PROVIDES)
++)$$(call addfield,Provides,$$(call mergelist,$(PROVIDES))
+ )$$(call addfield,Source,$(SOURCE)
+ )$$(call addfield,License,$$(PKG_LICENSE)
+ )$$(call addfield,LicenseFiles,$$(PKG_LICENSE_FILES)
