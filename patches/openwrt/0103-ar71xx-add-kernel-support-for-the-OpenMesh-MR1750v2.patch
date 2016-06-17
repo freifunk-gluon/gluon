@@ -1,0 +1,33 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:54 +0200
+Subject: ar71xx: add kernel support for the OpenMesh MR1750v2
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637058/
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-mr1750.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-mr1750.c
+index e3c04e7..18101ce 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-mr1750.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-mr1750.c
+@@ -168,3 +168,4 @@ static void __init mr1750_setup(void)
+ }
+ 
+ MIPS_MACHINE(ATH79_MACH_MR1750, "MR1750", "OpenMesh MR1750", mr1750_setup);
++MIPS_MACHINE(ATH79_MACH_MR1750V2, "MR1750v2", "OpenMesh MR1750v2", mr1750_setup);
+diff --git a/target/linux/ar71xx/patches-3.18/818-MIPS-ath79-add-mr1750v2-support.patch b/target/linux/ar71xx/patches-3.18/818-MIPS-ath79-add-mr1750v2-support.patch
+new file mode 100644
+index 0000000..de732ec
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.18/818-MIPS-ath79-add-mr1750v2-support.patch
+@@ -0,0 +1,10 @@
++--- a/arch/mips/ath79/machtypes.h
+++++ b/arch/mips/ath79/machtypes.h
++@@ -76,6 +76,7 @@ enum ath79_mach_type {
++ 	ATH79_MACH_MR12,		/* Cisco Meraki MR12 */
++ 	ATH79_MACH_MR16,		/* Cisco Meraki MR16 */
++ 	ATH79_MACH_MR1750,		/* OpenMesh MR1750 */
+++	ATH79_MACH_MR1750V2,		/* OpenMesh MR1750v2 */
++ 	ATH79_MACH_MR600V2,		/* OpenMesh MR600v2 */
++ 	ATH79_MACH_MR600,		/* OpenMesh MR600 */
++ 	ATH79_MACH_MR900,		/* OpenMesh MR900 */
