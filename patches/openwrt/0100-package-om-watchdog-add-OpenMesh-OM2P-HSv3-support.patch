@@ -1,0 +1,21 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:51 +0200
+Subject: package/om-watchdog: add OpenMesh OM2P-HSv3 support
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637055/
+
+diff --git a/package/kernel/om-watchdog/files/om-watchdog.init b/package/kernel/om-watchdog/files/om-watchdog.init
+index 6b96966..bf8a124 100644
+--- a/package/kernel/om-watchdog/files/om-watchdog.init
++++ b/package/kernel/om-watchdog/files/om-watchdog.init
+@@ -13,7 +13,7 @@ boot() {
+ 		local board=$(ar71xx_board_name)
+ 
+ 		case "$board" in
+-			"om2p"|"om2p-hs"|"om2p-hsv2"|"om5p-acv2")
++			"om2p"|"om2p-hs"|"om2p-hsv2"|"om2p-hsv3"|"om5p-acv2")
+ 				service_start /sbin/om-watchdog 12
+ 				;;
+ 			"om2pv2"|"om2p-lc")
