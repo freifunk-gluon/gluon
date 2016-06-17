@@ -1,0 +1,27 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:04:00 +0200
+Subject: ar71xx: add MR1750v2 to the MR1750 profile
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637065/
+
+diff --git a/target/linux/ar71xx/generic/profiles/openmesh.mk b/target/linux/ar71xx/generic/profiles/openmesh.mk
+index ddd3f8d..e245e6c 100644
+--- a/target/linux/ar71xx/generic/profiles/openmesh.mk
++++ b/target/linux/ar71xx/generic/profiles/openmesh.mk
+@@ -61,12 +61,12 @@ endef
+ $(eval $(call Profile,MR900))
+ 
+ define Profile/MR1750
+-        NAME:=OpenMesh MR1750
++        NAME:=OpenMesh MR1750/MR1750v2
+         PACKAGES:=kmod-ath9k kmod-ath10k ath10k-firmware-qca988x
+ endef
+ 
+ define Profile/MR1750/Description
+-        Package set optimized for the OpenMesh MR1750.
++        Package set optimized for the OpenMesh MR1750/MR1750v2.
+ endef
+ 
+ $(eval $(call Profile,MR1750))

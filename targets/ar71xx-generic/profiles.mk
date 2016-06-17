@@ -317,6 +317,7 @@ $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 # MR1750
 $(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750))
+$(eval $(call GluonModelAlias,MR1750,openmesh-mr1750,openmesh-mr1750v2))
 
 # MR600
 $(eval $(call GluonProfile,MR600,om-watchdog uboot-envtools))
