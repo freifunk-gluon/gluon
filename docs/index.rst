@@ -137,7 +137,7 @@ ar71xx-generic
   - MR600 (v1, v2)
   - MR900 (v1, v2)
   - OM2P (v1, v2)
-  - OM2P-HS (v1, v2)
+  - OM2P-HS (v1, v2, v3)
   - OM2P-LC
   - OM5P
   - OM5P-AC (v1, v2)

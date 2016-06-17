@@ -1,0 +1,46 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:49 +0200
+Subject: ar71xx: add user-space support for the OpenMesh OM2P-HSv3
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637053/
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index d4d8b4e..aa02212 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -171,6 +171,7 @@ get_status_led() {
+ 	om2pv2 | \
+ 	om2p-hs | \
+ 	om2p-hsv2 | \
++	om2p-hsv3 | \
+ 	om2p-lc)
+ 		status_led="om2p:blue:power"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index dc8b8d6..5767f48 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -297,6 +297,7 @@ om2p | \
+ om2pv2 | \
+ om2p-hs | \
+ om2p-hsv2 | \
++om2p-hsv3 | \
+ om2p-lc)
+ 	ucidef_set_led_netdev "port1" "port1" "om2p:blue:wan" "eth0"
+ 	ucidef_set_led_netdev "port2" "port2" "om2p:blue:lan" "eth1"
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index db908f9..dc51b03 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -610,6 +610,9 @@ ar71xx_board_detect() {
+ 	*"OM2P HSv2")
+ 		name="om2p-hsv2"
+ 		;;
++	*"OM2P HSv3")
++		name="om2p-hsv3"
++		;;
+ 	*"OM2P LC")
+ 		name="om2p-lc"
+ 		;;

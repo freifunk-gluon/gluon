@@ -29,7 +29,7 @@ elseif platform.match('ar71xx', 'generic', {'unifi-outdoor-plus', 'carambola2',
                                             'mr900', 'mr900v2',
                                             'mr1750',
                                             'om2p', 'om2pv2',
-                                            'om2p-hs', 'om2p-hsv2',
+                                            'om2p-hs', 'om2p-hsv2', 'om2p-hsv3',
                                             'om2p-lc',
                                             'om5p', 'om5p-an',
                                             'om5p-ac', 'om5p-acv2'}) then

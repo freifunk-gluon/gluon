@@ -330,6 +330,7 @@ $(eval $(call GluonModel,OM2P,om2p,openmesh-om2p))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2pv2))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hsv2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hsv3))
 $(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-lc))
 
 # OM5P
