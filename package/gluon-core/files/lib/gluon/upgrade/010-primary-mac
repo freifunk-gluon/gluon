@@ -18,7 +18,10 @@ local try_files = {
   '/sys/class/net/eth0/address'
 }
 
-if not util.contains({'x86', 'brcm2708'}, platform.get_target()) then
+if not (
+  util.contains({'x86', 'brcm2708'}, platform.get_target()) or
+  platform.match('ar71xx', 'mikrotik')
+) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy0/macaddress')
 end
 

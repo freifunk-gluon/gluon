@@ -7,6 +7,7 @@ $(eval $(call GluonTarget,x86,64))
 $(eval $(call GluonTarget,x86,xen_domu))
 
 ifneq ($(BROKEN),)
+$(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
 $(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,brcm2708,bcm2708)) # BROKEN: Needs more testing
 $(eval $(call GluonTarget,brcm2708,bcm2709)) # BROKEN: Needs more testing
