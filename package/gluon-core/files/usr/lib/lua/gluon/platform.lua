@@ -21,7 +21,7 @@ function match(target, subtarget, boards)
       return false
    end
 
-   if not util.contains(boards, get_board_name()) then
+   if boards and not util.contains(boards, get_board_name()) then
       return false
    end
 
