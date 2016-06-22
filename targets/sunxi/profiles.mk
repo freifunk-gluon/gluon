@@ -9,3 +9,9 @@ $(eval $(call GluonProfile,Lamobo_R1,uboot-sunxi-Lamobo_R1 kmod-ata-sunxi kmod-r
 $(eval $(call GluonProfileFactorySuffix,Lamobo_R1,-sdcard-vfat-ext4,.img.gz))
 $(eval $(call GluonProfileSysupgradeSuffix,Lamobo_R1))
 $(eval $(call GluonModel,Lamobo_R1,Lamobo_R1,lemaker-lamobo-r1))
+
+# Banana Pro
+$(eval $(call GluonProfile,Bananapro,uboot-sunxi-Bananapro kmod-rtc-sunxi kmod-brcmfmac))
+$(eval $(call GluonProfileFactorySuffix,Bananapro,-sdcard-vfat-ext4,.img.gz))
+$(eval $(call GluonProfileSysupgradeSuffix,Bananapro))
+$(eval $(call GluonModel,Bananapro,Bananapro,lemaker-banana-pro))
