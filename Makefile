@@ -152,17 +152,21 @@ GLUON_$(1)_FACTORY_SUFFIX := -squashfs-factory
 GLUON_$(1)_SYSUPGRADE_SUFFIX := -squashfs-sysupgrade
 GLUON_$(1)_FACTORY_EXT := .bin
 GLUON_$(1)_SYSUPGRADE_EXT := .bin
+GLUON_$(1)_FACTORY_EXTRA :=
+GLUON_$(1)_SYSUPGRADE_EXTRA :=
 GLUON_$(1)_MODELS :=
 endef
 
 define GluonProfileFactorySuffix
 GLUON_$(1)_FACTORY_SUFFIX := $(2)
 GLUON_$(1)_FACTORY_EXT := $(3)
+GLUON_$(1)_FACTORY_EXTRA := $(4)
 endef
 
 define GluonProfileSysupgradeSuffix
 GLUON_$(1)_SYSUPGRADE_SUFFIX := $(2)
 GLUON_$(1)_SYSUPGRADE_EXT := $(3)
+GLUON_$(1)_SYSUPGRADE_EXTRA := $(4)
 endef
 
 define GluonModel
@@ -445,6 +449,15 @@ image: FORCE
 		$(if $(GLUON_$(PROFILE)_FACTORY_EXT), \
 			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
 			cp $(BIN_DIR)/gluon-$(GLUON_$(PROFILE)_MODEL_$(model))$(GLUON_$(PROFILE)_FACTORY_SUFFIX)$(GLUON_$(PROFILE)_FACTORY_EXT) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_EXT) && \
+		) \
+		\
+		$(if $(GLUON_$(PROFILE)_SYSUPGRADE_EXTRA), \
+			rm -f $(GLUON_IMAGEDIR)/sysupgrade/gluon-*-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXTRA) && \
+			cp $(BIN_DIR)/gluon$(GLUON_$(PROFILE)_SYSUPGRADE_EXTRA) $(GLUON_IMAGEDIR)/sysupgrade/$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(PROFILE)_SYSUPGRADE_EXTRA) && \
+		) \
+		$(if $(GLUON_$(PROFILE)_FACTORY_EXTRA), \
+			rm -f $(GLUON_IMAGEDIR)/factory/gluon-*-$(model)$(GLUON_$(PROFILE)_FACTORY_EXTRA) && \
+			cp $(BIN_DIR)/gluon$(GLUON_$(PROFILE)_FACTORY_EXTRA) $(GLUON_IMAGEDIR)/factory/$(IMAGE_PREFIX)-$(model)$(GLUON_$(PROFILE)_FACTORY_EXTRA) && \
 		) \
 		\
 		$(foreach alias,$(GLUON_$(PROFILE)_MODEL_$(model)_ALIASES), \
