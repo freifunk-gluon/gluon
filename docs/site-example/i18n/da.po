@@ -17,11 +17,17 @@ msgstr ""
 
 msgid "gluon-config-mode:pubkey"
 msgstr ""
-"Dette er den offentlige nøgle af din Freifunk node. Noden vil ikke kunne "
+<p>"Dette er den offentlige nøgle af din Freifunk node. Noden vil ikke kunne "
 "forbinde sig med mesh VPNen, indtil nøglen er registreret på Freifunk "
 "Andeby serveren. "
 "For at registrere nøglen, send den samt dit node navn (<em><%=hostname%></em>) til "
 "<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
+"</p>"
+"<div class=\"the-key\">"
+" # <%= hostname %>"
+" <br/>"
+"<%= pubkey %>"
+"</div>"
 
 
 msgid "gluon-config-mode:reboot"
