@@ -11,7 +11,7 @@ local lutil = require 'luci.util'
 users.add_group('gluon-tunneldigger', 900)
 
 local enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
-if not enabled then
+if (tonumber(enabled) == 0) then
   enabled = site.tunneldigger_mesh_vpn.enabled and 1 or 0
 end
 
