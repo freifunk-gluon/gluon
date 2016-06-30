@@ -107,19 +107,6 @@ index 8a2760d..ab76946 100644
  endef
  
  define KernelPackage/rxrpc/description
-diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index cd8d670..e82bdb0 100644
---- a/package/kernel/mac80211/Makefile
-+++ b/package/kernel/mac80211/Makefile
-@@ -92,7 +92,7 @@ endef
- define KernelPackage/mac80211
-   $(call KernelPackage/mac80211/Default)
-   TITLE:=Linux 802.11 Wireless Networking Stack
--  DEPENDS+= +kmod-cfg80211 +hostapd-common +kmod-crypto-core +kmod-crypto-arc4
-+  DEPENDS+= +kmod-cfg80211 +hostapd-common
-   KCONFIG:=\
- 	CONFIG_AVERAGE=y
-   FILES:= $(PKG_BUILD_DIR)/net/mac80211/mac80211.ko
 diff --git a/target/linux/generic/config-3.18 b/target/linux/generic/config-3.18
 index 6038692..a0dc3c9 100644
 --- a/target/linux/generic/config-3.18
