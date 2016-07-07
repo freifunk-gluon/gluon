@@ -1,3 +1,6 @@
+# Dependencies for LuaSrcDiet
+PKG_BUILD_DEPENDS += luci-base/host lua/host
+
 include $(INCLUDE_DIR)/package.mk
 
 # Annoyingly, make's shell function replaces all newlines with spaces, so we have to do some escaping work. Yuck.
@@ -31,5 +34,18 @@ define GluonInstallI18N
 		if [ -e $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo ]; then \
 			$$(INSTALL_DATA) $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo $(2)/usr/lib/lua/luci/i18n/$(1).$$$$lang.lmo; \
 		fi; \
+	done
+endef
+
+define GluonSrcDiet
+	rm -rf $(2)
+	$(CP) $(1) $(2)
+	$(FIND) $(2) -type f | while read src; do \
+	if $(STAGING_DIR_HOST)/bin/lua $(STAGING_DIR_HOST)/bin/LuaSrcDiet \
+		--noopt-binequiv -o "$$$$src.o" "$$$$src"; \
+	then \
+		chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
+		mv "$$$$src.o" "$$$$src"; \
+	fi; \
 	done
 endef
