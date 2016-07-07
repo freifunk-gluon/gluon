@@ -3,16 +3,14 @@
 util = require 'luci.util'
 json = require 'luci.jsonc'
 fs = require 'nixio.fs'
+mesh = require 'gluon.mesh'
 
 io.write("Access-Control-Allow-Origin: *\n")
 io.write("Content-type: application/json\n\n")
 
-list = util.exec('batctl if')
-
 interfaces = {}
 
-for _, line in ipairs(util.split(list)) do
-  ifname = line:match('^(.-):')
+for interface, _ in ipairs(mesh.interfaces()) do
   if ifname ~= nil then
     pcall(function()
       local address = util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address'))
