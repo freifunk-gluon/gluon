@@ -98,7 +98,7 @@ for _, radio in ipairs(radios) do
     if config.path then
       phy = find_phy_by_path(config.path)
     elseif config.macaddr then
-      phy = find_phy_by_path(config.macaddr)
+      phy = find_phy_by_macaddr(config.macaddr)
     end
 
     if phy then
