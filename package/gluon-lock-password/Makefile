@@ -8,6 +8,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
+
 define Package/gluon-lock-password
   SECTION:=gluon
   CATEGORY:=Gluon

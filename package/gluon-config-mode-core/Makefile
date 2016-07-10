@@ -30,10 +30,12 @@ endef
 
 define Build/Compile
 	$(call GluonBuildI18N,gluon-config-mode-core,i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-config-mode-core/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
 endef
 

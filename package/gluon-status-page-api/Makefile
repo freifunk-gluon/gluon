@@ -7,7 +7,8 @@ PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
-include $(INCLUDE_DIR)/package.mk
+include $(GLUONDIR)/include/package.mk
+
 
 define Package/gluon-status-page-api
   SECTION:=gluon
@@ -21,6 +22,11 @@ define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
+define Build/Compile
+	$(call Build/Compile/Default)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
+endef
+
 define Package/gluon-status-page-api/install
 	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-batadv $(1)/lib/gluon/status-page/providers/
@@ -30,6 +36,7 @@ define Package/gluon-status-page-api/install
 	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/status-page-api.so
 
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-status-page-api))

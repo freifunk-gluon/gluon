@@ -7,6 +7,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include $(GLUONDIR)/include/package.mk
 
+
 define Package/gluon-next-node
   SECTION:=gluon
   CATEGORY:=Gluon

@@ -9,6 +9,7 @@ PKG_BUILD_DEPENDS := respondd
 
 include $(GLUONDIR)/include/package.mk
 
+
 define Package/gluon-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -21,8 +22,14 @@ define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
+define Build/Compile
+	$(call Build/Compile/Default)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
+endef
+
 define Package/gluon-autoupdater/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon/respondd
 	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/autoupdater.so
