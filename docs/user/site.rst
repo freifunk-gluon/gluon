@@ -231,6 +231,9 @@ mesh_on_lan \: optional
 
 autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
+
+    The mirrors are checked in random order until the manifest could be downloaded
+    successfully or all mirrors have been tried.
     ::
 
       autoupdater = {
