@@ -8,6 +8,7 @@ PKG_BUILD_DEPENDS := respondd
 
 include $(GLUONDIR)/include/package.mk
 
+
 define Package/gluon-mesh-batman-adv-core
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -20,9 +21,13 @@ define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
-define Package/gluon-mesh-batman-adv-core/install
-	$(CP) ./files/* $(1)/
+define Build/Compile
+	$(call Build/Compile/Default)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
+endef
 
+define Package/gluon-mesh-batman-adv-core/install
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(INSTALL_DIR) $(1)/lib/gluon/respondd
 	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-batman-adv-core.so
 endef

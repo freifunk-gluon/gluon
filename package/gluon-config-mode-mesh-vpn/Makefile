@@ -26,10 +26,11 @@ endef
 
 define Build/Compile
 	$(call GluonBuildI18N,gluon-config-mode-mesh-vpn,i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-config-mode-mesh-vpn/install
-	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(call GluonInstallI18N,gluon-config-mode-mesh-vpn,$(1))
 endef
 
