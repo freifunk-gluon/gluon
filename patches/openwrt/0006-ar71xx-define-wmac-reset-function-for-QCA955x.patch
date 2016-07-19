@@ -1,0 +1,85 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 19 Jul 2016 17:48:53 +0200
+Subject: ar71xx: define wmac reset function for QCA955x
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+Backport of LEDE a176168a85477caa44eef7e979567d1d52868fde
+
+diff --git a/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch b/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+new file mode 100644
+index 0000000..4ac5acd
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+@@ -0,0 +1,71 @@
++--- a/arch/mips/ath79/common.h
+++++ b/arch/mips/ath79/common.h
++@@ -19,6 +19,8 @@
++ #define ATH79_MEM_SIZE_MIN	(2 * 1024 * 1024)
++ #define ATH79_MEM_SIZE_MAX	(128 * 1024 * 1024)
++ 
+++extern void __iomem *ath79_ddr_base;
+++
++ void ath79_clocks_init(void);
++ unsigned long ath79_get_sys_clk_rate(const char *id);
++ 
++--- a/arch/mips/ath79/dev-wmac.c
+++++ b/arch/mips/ath79/dev-wmac.c
++@@ -149,6 +149,27 @@ static void ar934x_wmac_setup(void)
++ 		ath79_wmac_data.is_clk_25mhz = true;
++ }
++ 
+++static int ar955x_wmac_reset(void)
+++{
+++	int i;
+++
+++	/* Try to wait for WMAC DDR activity to stop */
+++	for (i = 0; i < 10; i++) {
+++		if (!(__raw_readl(ath79_ddr_base + QCA955X_DDR_CTL_CONFIG) &
+++		      QCA955X_DDR_CTL_CONFIG_ACT_WMAC))
+++			break;
+++
+++		udelay(10);
+++	}
+++
+++	ath79_device_reset_set(QCA955X_RESET_RTC);
+++	udelay(10);
+++	ath79_device_reset_clear(QCA955X_RESET_RTC);
+++	udelay(10);
+++
+++	return 0;
+++}
+++
++ static void qca955x_wmac_setup(void)
++ {
++ 	u32 t;
++@@ -165,6 +186,8 @@ static void qca955x_wmac_setup(void)
++ 		ath79_wmac_data.is_clk_25mhz = false;
++ 	else
++ 		ath79_wmac_data.is_clk_25mhz = true;
+++
+++	ath79_wmac_data.external_reset = ar955x_wmac_reset;
++ }
++ 
++ static bool __init
++--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++@@ -32,7 +32,7 @@
++ #define AR71XX_SPI_SIZE		0x01000000
++ 
++ #define AR71XX_DDR_CTRL_BASE	(AR71XX_APB_BASE + 0x00000000)
++-#define AR71XX_DDR_CTRL_SIZE	0x100
+++#define AR71XX_DDR_CTRL_SIZE	0x200
++ #define AR71XX_UART_BASE	(AR71XX_APB_BASE + 0x00020000)
++ #define AR71XX_UART_SIZE	0x100
++ #define AR71XX_USB_CTRL_BASE	(AR71XX_APB_BASE + 0x00030000)
++@@ -173,6 +173,9 @@
++ #define AR934X_DDR_REG_FLUSH_PCIE	0xa8
++ #define AR934X_DDR_REG_FLUSH_WMAC	0xac
++ 
+++#define QCA955X_DDR_CTL_CONFIG		0x108
+++#define QCA955X_DDR_CTL_CONFIG_ACT_WMAC	BIT(23)
+++
++ /*
++  * PLL block
++  */
