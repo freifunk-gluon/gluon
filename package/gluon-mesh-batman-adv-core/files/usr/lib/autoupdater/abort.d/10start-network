@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /lib/gluon/autoupdater/lib.sh
+
+pidof netifd >/dev/null || start_enabled network
