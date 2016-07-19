@@ -158,7 +158,7 @@ $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
 ifneq ($(BROKEN),)
 # Archer C5 v1, C7 v2
-$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
@@ -195,11 +195,11 @@ endif
 
 # Ubiquiti (ath10k)
 ifneq ($(BROKEN),)
-$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
 $(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACLITE))
 $(eval $(call GluonModel,UBNTUNIFIACLITE,ubnt-unifiac-lite,ubiquiti-unifi-ac-lite)) # BROKEN: untested, ath10k
 
-$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
 $(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACPRO))
 $(eval $(call GluonModel,UBNTUNIFIACPRO,ubnt-unifiac-pro,ubiquiti-unifi-ac-pro)) # BROKEN: ath10k
 endif
@@ -314,7 +314,7 @@ $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 ## OpenMesh
 
 # MR1750
-$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750))
 $(eval $(call GluonModelAlias,MR1750,openmesh-mr1750,openmesh-mr1750v2))
 
@@ -343,7 +343,7 @@ $(eval $(call GluonModel,OM5P,om5p,openmesh-om5p))
 $(eval $(call GluonModelAlias,OM5P,openmesh-om5p,openmesh-om5p-an))
 
 # OM5P-AC
-$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
 $(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac))
 $(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2))
 

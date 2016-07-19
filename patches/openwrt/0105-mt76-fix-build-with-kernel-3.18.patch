@@ -20,7 +20,7 @@ index 0000000..ea389cd
 + 
 + /*
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index 0f832e4..801188f 100644
+index 90430b9..47f41da 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/package.mk
