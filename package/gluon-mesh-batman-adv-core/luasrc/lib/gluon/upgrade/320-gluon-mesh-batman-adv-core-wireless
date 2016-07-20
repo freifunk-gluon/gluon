@@ -29,46 +29,51 @@ local function configure_ibss(config, radio, index, suffix, disabled)
   uci:delete('network', name .. '_vlan')
   uci:delete('wireless', name)
 
+  if not config then
+    return
+  end
+
   macaddr = util.generate_mac(3*(index-1)+2)
+  if not macaddr then
+    return
+  end
 
-  if config and macaddr then
-    if config.vlan then
-      uci:section('network', 'interface', name,
-        {
-          proto = 'none',
-        }
-      )
-
-      uci:section('network', 'interface', name .. '_vlan',
-        {
-          ifname = '@' .. name .. '.' .. config.vlan,
-          proto = 'batadv',
-          mesh = 'bat0',
-        }
-      )
-    else
-      uci:section('network', 'interface', name,
-        {
-          proto = 'batadv',
-          mesh = 'bat0',
-        }
-      )
-    end
-
-    uci:section('wireless', 'wifi-iface', name,
+  if config.vlan then
+    uci:section('network', 'interface', name,
       {
-        device = radio,
-        network = name,
-        mode = 'adhoc',
-        ssid = config.ssid,
-        bssid = config.bssid,
-        macaddr = macaddr,
-        mcast_rate = config.mcast_rate,
-        ifname = suffix and 'ibss' .. suffix,
-        disabled = disabled and 1 or 0,
+        proto = 'none',
+      }
+    )
+
+    uci:section('network', 'interface', name .. '_vlan',
+      {
+        ifname = '@' .. name .. '.' .. config.vlan,
+        proto = 'batadv',
+        mesh = 'bat0',
+      }
+    )
+  else
+    uci:section('network', 'interface', name,
+      {
+        proto = 'batadv',
+        mesh = 'bat0',
       }
     )
   end
+
+  uci:section('wireless', 'wifi-iface', name,
+    {
+      device = radio,
+      network = name,
+      mode = 'adhoc',
+      ssid = config.ssid,
+      bssid = config.bssid,
+      macaddr = macaddr,
+      mcast_rate = config.mcast_rate,
+      ifname = suffix and 'ibss' .. suffix,
+      disabled = disabled and 1 or 0,
+    }
+  )
 end
 
 local function configure_mesh(config, radio, index, suffix, disabled)
@@ -79,32 +84,37 @@ local function configure_mesh(config, radio, index, suffix, disabled)
   uci:delete('network', name)
   uci:delete('wireless', name)
 
-  macaddr = util.generate_mac(3*(index-1)+1)
-
-  if config and macaddr then
-    uci:section('network', 'interface', name,
-      {
-        proto = 'batadv',
-        mesh = 'bat0',
-      }
-    )
-
-    uci:section('wireless', 'wifi-iface', name,
-      {
-        device = radio,
-        network = name,
-        mode = 'mesh',
-        mesh_id = config.id,
-        mesh_fwding = 0,
-        macaddr = macaddr,
-        mcast_rate = config.mcast_rate,
-        ifname = suffix and 'mesh' .. suffix,
-        disabled = disabled and 1 or 0,
-        macfilter = macfilter,
-        maclist = maclist,
-      }
-    )
+  if not config then
+    return
   end
+
+  macaddr = util.generate_mac(3*(index-1)+1)
+  if not macaddr then
+    return
+  end
+
+  uci:section('network', 'interface', name,
+    {
+      proto = 'batadv',
+      mesh = 'bat0',
+    }
+  )
+
+  uci:section('wireless', 'wifi-iface', name,
+    {
+      device = radio,
+      network = name,
+      mode = 'mesh',
+      mesh_id = config.id,
+      mesh_fwding = 0,
+      macaddr = macaddr,
+      mcast_rate = config.mcast_rate,
+      ifname = suffix and 'mesh' .. suffix,
+      disabled = disabled and 1 or 0,
+      macfilter = macfilter,
+      maclist = maclist,
+    }
+  )
 end
 
 local function configure_radio(radio, index, config)
