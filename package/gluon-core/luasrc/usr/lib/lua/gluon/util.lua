@@ -23,6 +23,7 @@ local function escape_args(ret, arg0, ...)
 end
 
 
+local io = io
 local os = os
 local string = string
 local tonumber = tonumber
@@ -34,6 +35,8 @@ local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
 local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
+local fs = require 'nixio.fs'
 
 
 module 'gluon.util'
@@ -71,6 +74,45 @@ function node_id()
   return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
+
+local function find_phy_by_path(path)
+  for phy in fs.glob('/sys/devices/' .. path .. '/ieee80211/phy*') do
+    return phy:match('([^/]+)$')
+  end
+end
+
+local function find_phy_by_macaddr(macaddr)
+  local addr = macaddr:lower()
+  for file in fs.glob('/sys/class/ieee80211/*/macaddress') do
+    if lutil.trim(fs.readfile(file)) == addr then
+      return file:match('([^/]+)/macaddress$')
+    end
+  end
+end
+
+local function find_phy(radio)
+  local config = uci:get_all('wireless', radio)
+
+  if not config or config.type ~= 'mac80211' then
+    return nil
+  elseif config.path then
+    return find_phy_by_path(config.path)
+  elseif config.macaddr then
+    return find_phy_by_macaddr(config.macaddr)
+  else
+    return nil
+  end
+end
+
+local function get_addresses(radio)
+  local phy = find_phy(radio)
+  if not phy then
+    return function() end
+  end
+
+  return io.lines('/sys/class/ieee80211/' .. phy .. '/addresses')
+end
+
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the mac addr
 --
@@ -83,7 +125,7 @@ end
 -- 5: ibss1
 -- 6: mesh-on-lan
 -- 7: unused
-function generate_mac(i)
+local function generate_mac(i)
   if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
 
   local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
@@ -103,6 +145,27 @@ function generate_mac(i)
   m6 = m6 + i                   -- add virtual interface id
 
   return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+end
+
+function get_mac(index)
+  return generate_mac(3*(index-1))
+end
+
+function get_wlan_mac(radio, index, vif)
+  local primary = sysconfig.primary_mac:lower()
+
+  local i = 1
+  for addr in get_addresses(radio) do
+    if addr:lower() ~= primary then
+      if i == vif then
+        return addr
+      end
+
+      i = i + 1
+    end
+  end
+
+  return generate_mac(3*(index-1) + (vif-1))
 end
 
 -- Iterate over all radios defined in UCI calling

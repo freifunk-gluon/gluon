@@ -18,7 +18,7 @@ uci:section('network', 'interface', 'mesh_lan', {
   proto   = 'batadv',
   mesh    = 'bat0',
   mesh_no_rebroadcast = '1',
-  macaddr = util.generate_mac(6),
+  macaddr = util.get_mac(3),
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
