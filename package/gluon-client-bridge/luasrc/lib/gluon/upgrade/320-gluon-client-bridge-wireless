@@ -21,21 +21,26 @@ local function configure_client(config, radio, index, suffix)
 
   uci:delete('wireless', name)
 
-  macaddr = util.generate_mac(3*(index-1))
-
-  if config and macaddr then
-    uci:section('wireless', 'wifi-iface', name,
-      {
-        device = radio,
-        network = 'client',
-        mode = 'ap',
-        ssid = config.ssid,
-        macaddr = macaddr,
-        ifname = suffix and 'client' .. suffix,
-        disabled = disabled,
-      }
-    )
+  if not config then
+    return
   end
+
+  macaddr = util.generate_mac(3*(index-1))
+  if not macaddr then
+    return
+  end
+
+  uci:section('wireless', 'wifi-iface', name,
+    {
+      device = radio,
+      network = 'client',
+      mode = 'ap',
+      ssid = config.ssid,
+      macaddr = macaddr,
+      ifname = suffix and 'client' .. suffix,
+      disabled = disabled,
+    }
+  )
 end
 
 local function configure_radio(radio, index, config)
