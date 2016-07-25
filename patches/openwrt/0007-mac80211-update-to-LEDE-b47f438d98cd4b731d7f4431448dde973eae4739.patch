@@ -1,9 +1,9 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Tue, 7 Jun 2016 14:06:23 +0200
-Subject: mac80211: update to LEDE 6c2651566cce8f5b3a3d3b976439dee2bac5e07e
+Subject: mac80211: update to LEDE b47f438d98cd4b731d7f4431448dde973eae4739
 
 diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
-index b03d644..170a6c9 100644
+index b03d644..e2cf92e 100644
 --- a/package/firmware/ath10k-firmware/Makefile
 +++ b/package/firmware/ath10k-firmware/Makefile
 @@ -8,7 +8,7 @@
@@ -24,7 +24,7 @@ index b03d644..170a6c9 100644
  
  include $(INCLUDE_DIR)/package.mk
  
-@@ -28,14 +28,18 @@ define Package/ath10k-firmware-default
+@@ -28,14 +28,19 @@ define Package/ath10k-firmware-default
    CATEGORY:=Kernel modules
    SUBMENU:=$(WMENU)
    URL:=$(PKG_SOURCE_URL)
@@ -38,19 +38,20 @@ index b03d644..170a6c9 100644
  endef
  
  QCA988X_FIRMWARE_FILE:=firmware-5.bin_10.2.4.97-1
-+QCA988X_FIRMWARE_FILE_CT:=firmware-2-ct-full-community-16.bin-lede
++QCA988X_FIRMWARE_FILE_CT:=firmware-2-ct-full-community-16.1.bin-lede
 +QCA99X0_FIRMWARE_FILE_CT:=firmware-5-ct-full-community-7.bin-lede.001
++QCA9984_FIRMWARE_FILE_CT:=firmware-5-ct-full-community-7.bin-lede.001
  
  define Download/ath10k-firmware-qca988x
    URL:=https://www.codeaurora.org/cgit/quic/qsdk/oss/firmware/ath10k-firmware/plain/10.2.4/
-@@ -44,11 +48,63 @@ define Download/ath10k-firmware-qca988x
+@@ -44,11 +49,83 @@ define Download/ath10k-firmware-qca988x
  endef
  $(eval $(call Download,ath10k-firmware-qca988x))
  
 +define Download/ath10k-firmware-qca988x-ct
 +  URL:=https://www.candelatech.com/downloads/
 +  FILE:=$(QCA988X_FIRMWARE_FILE_CT)
-+  MD5SUM:=5b651c0458bcf5c20701308b5e519976
++  MD5SUM:=d7e081e9782936ed544b78994c9133fb
 +endef
 +$(eval $(call Download,ath10k-firmware-qca988x-ct))
 +
@@ -60,6 +61,13 @@ index b03d644..170a6c9 100644
 +  MD5SUM:=eb710949ff79142954aadae24616169c
 +endef
 +$(eval $(call Download,ath10k-firmware-qca99x0-ct))
++
++define Download/ath10k-firmware-qca9984-ct
++  URL:=https://www.candelatech.com/downloads/ath10k-9984-10-4/
++  FILE:=$(QCA9984_FIRMWARE_FILE_CT)
++  MD5SUM:=747cc1394f15aef97b5ea15e4c208e58
++endef
++$(eval $(call Download,ath10k-firmware-qca9984-ct))
 +
  define Package/ath10k-firmware-qca99x0
  $(Package/ath10k-firmware-default)
@@ -88,6 +96,14 @@ index b03d644..170a6c9 100644
 +one.
 +endef
 +
++define Package/ath10k-firmware-qca9984-ct/description
++Alternative ath10k firmware for QCA9984 from Candela Technologies.
++Enables IBSS and other features.  See:
++http://www.candelatech.com/ath10k-10.4-9984.php
++This firmware conflicts with the standard 9984 firmware, so select only
++one.
++endef
++
 +define Package/ath10k-firmware-qca99x0/description
 +Standard ath10k firmware for QCA99x0 from QCA
 +This firmware conflicts with the CT 99x0 firmware, so select only
@@ -99,6 +115,11 @@ index b03d644..170a6c9 100644
 +  TITLE:=ath10k CT 10.4.3 firmware for QCA99x0 devices
 +endef
 +
++define Package/ath10k-firmware-qca9984-ct
++$(Package/ath10k-firmware-default)
++  TITLE:=ath10k CT 10.4.3 firmware for QCA9984 devices
++endef
++
 +define Package/ath10k-firmware-qca9984
 +$(Package/ath10k-firmware-default)
 +  TITLE:=ath10k firmware for QCA9984 devices
@@ -107,7 +128,7 @@ index b03d644..170a6c9 100644
  define Package/ath10k-firmware-qca6174
  $(Package/ath10k-firmware-default)
    TITLE:=ath10k firmware for QCA6174 devices
-@@ -58,8 +114,8 @@ QCA99X0_BOARD_REV:=ddcec9efd245da9365c474f513a855a55f3ac7fe
+@@ -58,8 +135,8 @@ QCA99X0_BOARD_REV:=ddcec9efd245da9365c474f513a855a55f3ac7fe
  QCA99X0_BOARD_FILE:=board-2.bin.$(QCA99X0_BOARD_REV)
  
  define Download/qca99x0-board
@@ -118,7 +139,7 @@ index b03d644..170a6c9 100644
    FILE:=$(QCA99X0_BOARD_FILE)
    MD5SUM:=a2b3c653c2363a5641200051d6333d0a
  endef
-@@ -79,6 +135,16 @@ define Package/ath10k-firmware-qca988x/install
+@@ -79,6 +156,16 @@ define Package/ath10k-firmware-qca988x/install
  		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
  endef
  
@@ -135,7 +156,7 @@ index b03d644..170a6c9 100644
  define Package/ath10k-firmware-qca6174/install
  	$(INSTALL_DIR) $(1)/lib/firmware/ath10k
  	$(CP) $(PKG_BUILD_DIR)/QCA6174 $(1)/lib/firmware/ath10k/
-@@ -97,6 +163,36 @@ define Package/ath10k-firmware-qca99x0/install
+@@ -97,6 +184,50 @@ define Package/ath10k-firmware-qca99x0/install
  		$(1)/lib/firmware/ath10k/QCA99X0/hw2.0/firmware-5.bin
  endef
  
@@ -165,6 +186,19 @@ index b03d644..170a6c9 100644
 +		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/firmware-5.bin
 +endef
 +
++define Package/ath10k-firmware-qca9984-ct/install
++	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA9984/hw1.0
++	ln -s \
++		../../cal-pci-0000:01:00.0.bin \
++		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/board.bin
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/QCA9984/hw1.0/board-2.bin \
++		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/board-2.bin
++	$(INSTALL_DATA) \
++		$(DL_DIR)/$(QCA9984_FIRMWARE_FILE_CT) \
++		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/firmware-5.bin
++endef
++
  $(eval $(call BuildPackage,ath10k-firmware-qca988x))
  $(eval $(call BuildPackage,ath10k-firmware-qca99x0))
  $(eval $(call BuildPackage,ath10k-firmware-qca6174))
@@ -172,6 +206,7 @@ index b03d644..170a6c9 100644
 +
 +$(eval $(call BuildPackage,ath10k-firmware-qca988x-ct))
 +$(eval $(call BuildPackage,ath10k-firmware-qca99x0-ct))
++$(eval $(call BuildPackage,ath10k-firmware-qca9984-ct))
 diff --git a/package/firmware/linux-firmware/Makefile b/package/firmware/linux-firmware/Makefile
 index 2fcd93b..7a2e977 100644
 --- a/package/firmware/linux-firmware/Makefile
@@ -531,14 +566,14 @@ index 0000000..94d6135
 + 
 diff --git a/package/kernel/ath10k-ct/Makefile b/package/kernel/ath10k-ct/Makefile
 new file mode 100644
-index 0000000..adda03c
+index 0000000..7a025aa
 --- /dev/null
 +++ b/package/kernel/ath10k-ct/Makefile
 @@ -0,0 +1,80 @@
 +include $(TOPDIR)/rules.mk
 +
 +PKG_NAME:=ath10k-ct
-+PKG_VERSION:=2016-07-09
++PKG_VERSION:=2016-07-21
 +PKG_RELEASE=1
 +
 +PKG_LICENSE:=GPLv2
@@ -547,7 +582,7 @@ index 0000000..adda03c
 +PKG_SOURCE_URL:=https://github.com/greearb/ath10k-ct.git
 +PKG_SOURCE_PROTO:=git
 +PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-+PKG_SOURCE_VERSION:=0241aa1d2797ef564bf36fa67888e62289d71e8f
++PKG_SOURCE_VERSION:=a142524abc8eef3ba30b12f9b5ac74385c8ddc39
 +PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
 +
 +PKG_MAINTAINER:=Ben Greear <greearb@candelatech.com>
@@ -5190,883 +5225,6 @@ index b646ab3..0000000
 - EXPORT_SYMBOL(ieee80211_data_to_8023);
 - 
 - int ieee80211_data_from_8023(struct sk_buff *skb, const u8 *addr,
-diff --git a/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch b/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
-new file mode 100644
-index 0000000..f8b8f86
---- /dev/null
-+++ b/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
-@@ -0,0 +1,871 @@
-+From: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-+Date: Wed, 6 Jul 2016 21:34:17 +0200
-+Subject: [PATCH] ath9k: Switch to using mac80211 intermediate software queues.
-+MIME-Version: 1.0
-+Content-Type: text/plain; charset=UTF-8
-+Content-Transfer-Encoding: 8bit
-+
-+This switches ath9k over to using the mac80211 intermediate software
-+queueing mechanism for data packets. It removes the queueing inside the
-+driver, except for the retry queue, and instead pulls from mac80211 when
-+a packet is needed. The retry queue is used to store a packet that was
-+pulled but can't be sent immediately.
-+
-+The old code path in ath_tx_start that would queue packets has been
-+removed completely, as has the qlen limit tunables (since there's no
-+longer a queue in the driver to limit).
-+
-+Based on Tim's original patch set, but reworked quite thoroughly.
-+
-+Cc: Tim Shepard <shep@alum.mit.edu>
-+Cc: Felix Fietkau <nbd@nbd.name>
-+Signed-off-by: Toke HÃ¸iland-JÃ¸rgensen <toke@toke.dk>
-+---
-+
-+--- a/drivers/net/wireless/ath/ath9k/ath9k.h
-++++ b/drivers/net/wireless/ath/ath9k/ath9k.h
-+@@ -91,7 +91,6 @@ int ath_descdma_setup(struct ath_softc *
-+ #define ATH_RXBUF               512
-+ #define ATH_TXBUF               512
-+ #define ATH_TXBUF_RESERVE       5
-+-#define ATH_MAX_QDEPTH          (ATH_TXBUF / 4 - ATH_TXBUF_RESERVE)
-+ #define ATH_TXMAXTRY            13
-+ #define ATH_MAX_SW_RETRIES      30
-+ 
-+@@ -145,7 +144,9 @@ int ath_descdma_setup(struct ath_softc *
-+ #define BAW_WITHIN(_start, _bawsz, _seqno) \
-+ 	((((_seqno) - (_start)) & 4095) < (_bawsz))
-+ 
-+-#define ATH_AN_2_TID(_an, _tidno)  (&(_an)->tid[(_tidno)])
-++#define ATH_STA_2_TID(_sta, _tidno) ((struct ath_atx_tid *)(_sta)->txq[_tidno]->drv_priv)
-++#define ATH_VIF_2_TID(_vif) ((struct ath_atx_tid *)(_vif)->txq->drv_priv)
-++#define ATH_AN_2_TID(_an, _tidno) ((_an)->sta ? ATH_STA_2_TID((_an)->sta, _tidno) : ATH_VIF_2_TID((_an)->vif))
-+ 
-+ #define IS_HT_RATE(rate)   (rate & 0x80)
-+ #define IS_CCK_RATE(rate)  ((rate >= 0x18) && (rate <= 0x1e))
-+@@ -164,7 +165,6 @@ struct ath_txq {
-+ 	spinlock_t axq_lock;
-+ 	u32 axq_depth;
-+ 	u32 axq_ampdu_depth;
-+-	bool stopped;
-+ 	bool axq_tx_inprogress;
-+ 	struct list_head txq_fifo[ATH_TXFIFO_DEPTH];
-+ 	u8 txq_headidx;
-+@@ -232,7 +232,6 @@ struct ath_buf {
-+ 
-+ struct ath_atx_tid {
-+ 	struct list_head list;
-+-	struct sk_buff_head buf_q;
-+ 	struct sk_buff_head retry_q;
-+ 	struct ath_node *an;
-+ 	struct ath_txq *txq;
-+@@ -247,13 +246,13 @@ struct ath_atx_tid {
-+ 	s8 bar_index;
-+ 	bool active;
-+ 	bool clear_ps_filter;
-++	bool has_queued;
-+ };
-+ 
-+ struct ath_node {
-+ 	struct ath_softc *sc;
-+ 	struct ieee80211_sta *sta; /* station struct we're part of */
-+ 	struct ieee80211_vif *vif; /* interface with which we're associated */
-+-	struct ath_atx_tid tid[IEEE80211_NUM_TIDS];
-+ 
-+ 	u16 maxampdu;
-+ 	u8 mpdudensity;
-+@@ -276,7 +275,6 @@ struct ath_tx_control {
-+ 	struct ath_node *an;
-+ 	struct ieee80211_sta *sta;
-+ 	u8 paprd;
-+-	bool force_channel;
-+ };
-+ 
-+ 
-+@@ -293,7 +291,6 @@ struct ath_tx {
-+ 	struct ath_descdma txdma;
-+ 	struct ath_txq *txq_map[IEEE80211_NUM_ACS];
-+ 	struct ath_txq *uapsdq;
-+-	u32 txq_max_pending[IEEE80211_NUM_ACS];
-+ 	u16 max_aggr_framelen[IEEE80211_NUM_ACS][4][32];
-+ };
-+ 
-+@@ -585,6 +582,7 @@ void ath9k_release_buffered_frames(struc
-+ 				   u16 tids, int nframes,
-+ 				   enum ieee80211_frame_release_type reason,
-+ 				   bool more_data);
-++void ath9k_wake_tx_queue(struct ieee80211_hw *hw, struct ieee80211_txq *queue);
-+ 
-+ /********/
-+ /* VIFs */
-+--- a/drivers/net/wireless/ath/ath9k/channel.c
-++++ b/drivers/net/wireless/ath/ath9k/channel.c
-+@@ -1007,7 +1007,6 @@ static void ath_scan_send_probe(struct a
-+ 		goto error;
-+ 
-+ 	txctl.txq = sc->tx.txq_map[IEEE80211_AC_VO];
-+-	txctl.force_channel = true;
-+ 	if (ath_tx_start(sc->hw, skb, &txctl))
-+ 		goto error;
-+ 
-+@@ -1130,7 +1129,6 @@ ath_chanctx_send_vif_ps_frame(struct ath
-+ 	memset(&txctl, 0, sizeof(txctl));
-+ 	txctl.txq = sc->tx.txq_map[IEEE80211_AC_VO];
-+ 	txctl.sta = sta;
-+-	txctl.force_channel = true;
-+ 	if (ath_tx_start(sc->hw, skb, &txctl)) {
-+ 		ieee80211_free_txskb(sc->hw, skb);
-+ 		return false;
-+--- a/drivers/net/wireless/ath/ath9k/debug.c
-++++ b/drivers/net/wireless/ath/ath9k/debug.c
-+@@ -600,7 +600,6 @@ static int read_file_xmit(struct seq_fil
-+ 	PR("MPDUs XRetried:  ", xretries);
-+ 	PR("Aggregates:      ", a_aggr);
-+ 	PR("AMPDUs Queued HW:", a_queued_hw);
-+-	PR("AMPDUs Queued SW:", a_queued_sw);
-+ 	PR("AMPDUs Completed:", a_completed);
-+ 	PR("AMPDUs Retried:  ", a_retries);
-+ 	PR("AMPDUs XRetried: ", a_xretries);
-+@@ -629,8 +628,7 @@ static void print_queue(struct ath_softc
-+ 	seq_printf(file, "%s: %d ", "qnum", txq->axq_qnum);
-+ 	seq_printf(file, "%s: %2d ", "qdepth", txq->axq_depth);
-+ 	seq_printf(file, "%s: %2d ", "ampdu-depth", txq->axq_ampdu_depth);
-+-	seq_printf(file, "%s: %3d ", "pending", txq->pending_frames);
-+-	seq_printf(file, "%s: %d\n", "stopped", txq->stopped);
-++	seq_printf(file, "%s: %3d\n", "pending", txq->pending_frames);
-+ 
-+ 	ath_txq_unlock(sc, txq);
-+ }
-+@@ -1208,7 +1206,6 @@ static const char ath9k_gstrings_stats[]
-+ 	AMKSTR(d_tx_mpdu_xretries),
-+ 	AMKSTR(d_tx_aggregates),
-+ 	AMKSTR(d_tx_ampdus_queued_hw),
-+-	AMKSTR(d_tx_ampdus_queued_sw),
-+ 	AMKSTR(d_tx_ampdus_completed),
-+ 	AMKSTR(d_tx_ampdu_retries),
-+ 	AMKSTR(d_tx_ampdu_xretries),
-+@@ -1288,7 +1285,6 @@ void ath9k_get_et_stats(struct ieee80211
-+ 	AWDATA(xretries);
-+ 	AWDATA(a_aggr);
-+ 	AWDATA(a_queued_hw);
-+-	AWDATA(a_queued_sw);
-+ 	AWDATA(a_completed);
-+ 	AWDATA(a_retries);
-+ 	AWDATA(a_xretries);
-+@@ -1346,14 +1342,6 @@ int ath9k_init_debug(struct ath_hw *ah)
-+ 				    read_file_xmit);
-+ 	debugfs_create_devm_seqfile(sc->dev, "queues", sc->debug.debugfs_phy,
-+ 				    read_file_queues);
-+-	debugfs_create_u32("qlen_bk", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
-+-			   &sc->tx.txq_max_pending[IEEE80211_AC_BK]);
-+-	debugfs_create_u32("qlen_be", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
-+-			   &sc->tx.txq_max_pending[IEEE80211_AC_BE]);
-+-	debugfs_create_u32("qlen_vi", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
-+-			   &sc->tx.txq_max_pending[IEEE80211_AC_VI]);
-+-	debugfs_create_u32("qlen_vo", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
-+-			   &sc->tx.txq_max_pending[IEEE80211_AC_VO]);
-+ 	debugfs_create_devm_seqfile(sc->dev, "misc", sc->debug.debugfs_phy,
-+ 				    read_file_misc);
-+ 	debugfs_create_devm_seqfile(sc->dev, "reset", sc->debug.debugfs_phy,
-+--- a/drivers/net/wireless/ath/ath9k/debug.h
-++++ b/drivers/net/wireless/ath/ath9k/debug.h
-+@@ -147,7 +147,6 @@ struct ath_interrupt_stats {
-+  * @completed: Total MPDUs (non-aggr) completed
-+  * @a_aggr: Total no. of aggregates queued
-+  * @a_queued_hw: Total AMPDUs queued to hardware
-+- * @a_queued_sw: Total AMPDUs queued to software queues
-+  * @a_completed: Total AMPDUs completed
-+  * @a_retries: No. of AMPDUs retried (SW)
-+  * @a_xretries: No. of AMPDUs dropped due to xretries
-+@@ -174,7 +173,6 @@ struct ath_tx_stats {
-+ 	u32 xretries;
-+ 	u32 a_aggr;
-+ 	u32 a_queued_hw;
-+-	u32 a_queued_sw;
-+ 	u32 a_completed;
-+ 	u32 a_retries;
-+ 	u32 a_xretries;
-+--- a/drivers/net/wireless/ath/ath9k/debug_sta.c
-++++ b/drivers/net/wireless/ath/ath9k/debug_sta.c
-+@@ -52,8 +52,8 @@ static ssize_t read_file_node_aggr(struc
-+ 			 "TID", "SEQ_START", "SEQ_NEXT", "BAW_SIZE",
-+ 			 "BAW_HEAD", "BAW_TAIL", "BAR_IDX", "SCHED", "PAUSED");
-+ 
-+-	for (tidno = 0, tid = &an->tid[tidno];
-+-	     tidno < IEEE80211_NUM_TIDS; tidno++, tid++) {
-++	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
-++		tid = ATH_STA_2_TID(an->sta, tidno);
-+ 		txq = tid->txq;
-+ 		ath_txq_lock(sc, txq);
-+ 		if (tid->active) {
-+--- a/drivers/net/wireless/ath/ath9k/init.c
-++++ b/drivers/net/wireless/ath/ath9k/init.c
-+@@ -358,7 +358,6 @@ static int ath9k_init_queues(struct ath_
-+ 	for (i = 0; i < IEEE80211_NUM_ACS; i++) {
-+ 		sc->tx.txq_map[i] = ath_txq_setup(sc, ATH9K_TX_QUEUE_DATA, i);
-+ 		sc->tx.txq_map[i]->mac80211_qnum = i;
-+-		sc->tx.txq_max_pending[i] = ATH_MAX_QDEPTH;
-+ 	}
-+ 	return 0;
-+ }
-+@@ -873,6 +872,7 @@ static void ath9k_set_hw_capab(struct at
-+ 	hw->max_rate_tries = 10;
-+ 	hw->sta_data_size = sizeof(struct ath_node);
-+ 	hw->vif_data_size = sizeof(struct ath_vif);
-++	hw->txq_data_size = sizeof(struct ath_atx_tid);
-+ 	hw->extra_tx_headroom = 4;
-+ 
-+ 	hw->wiphy->available_antennas_rx = BIT(ah->caps.max_rxchains) - 1;
-+--- a/drivers/net/wireless/ath/ath9k/main.c
-++++ b/drivers/net/wireless/ath/ath9k/main.c
-+@@ -2695,4 +2695,5 @@ struct ieee80211_ops ath9k_ops = {
-+ 	.sw_scan_start	    = ath9k_sw_scan_start,
-+ 	.sw_scan_complete   = ath9k_sw_scan_complete,
-+ 	.get_txpower        = ath9k_get_txpower,
-++	.wake_tx_queue      = ath9k_wake_tx_queue,
-+ };
-+--- a/drivers/net/wireless/ath/ath9k/xmit.c
-++++ b/drivers/net/wireless/ath/ath9k/xmit.c
-+@@ -65,6 +65,8 @@ static struct ath_buf *ath_tx_setup_buff
-+ 					   struct ath_txq *txq,
-+ 					   struct ath_atx_tid *tid,
-+ 					   struct sk_buff *skb);
-++static int ath_tx_prepare(struct ieee80211_hw *hw, struct sk_buff *skb,
-++			  struct ath_tx_control *txctl);
-+ 
-+ enum {
-+ 	MCS_HT20,
-+@@ -118,6 +120,26 @@ static void ath_tx_queue_tid(struct ath_
-+ 		list_add_tail(&tid->list, list);
-+ }
-+ 
-++void ath9k_wake_tx_queue(struct ieee80211_hw *hw, struct ieee80211_txq *queue)
-++{
-++	struct ath_softc *sc = hw->priv;
-++	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
-++	struct ath_atx_tid *tid = (struct ath_atx_tid *) queue->drv_priv;
-++	struct ath_txq *txq = tid->txq;
-++
-++	ath_dbg(common, QUEUE, "Waking TX queue: %pM (%d)\n",
-++		queue->sta ? queue->sta->addr : queue->vif->addr,
-++		tid->tidno);
-++
-++	ath_txq_lock(sc, txq);
-++
-++	tid->has_queued = true;
-++	ath_tx_queue_tid(sc, txq, tid);
-++	ath_txq_schedule(sc, txq);
-++
-++	ath_txq_unlock(sc, txq);
-++}
-++
-+ static struct ath_frame_info *get_frame_info(struct sk_buff *skb)
-+ {
-+ 	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(skb);
-+@@ -160,7 +182,6 @@ static void ath_set_rates(struct ieee802
-+ static void ath_txq_skb_done(struct ath_softc *sc, struct ath_txq *txq,
-+ 			     struct sk_buff *skb)
-+ {
-+-	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
-+ 	struct ath_frame_info *fi = get_frame_info(skb);
-+ 	int q = fi->txq;
-+ 
-+@@ -171,14 +192,6 @@ static void ath_txq_skb_done(struct ath_
-+ 	if (WARN_ON(--txq->pending_frames < 0))
-+ 		txq->pending_frames = 0;
-+ 
-+-	if (txq->stopped &&
-+-	    txq->pending_frames < sc->tx.txq_max_pending[q]) {
-+-		if (ath9k_is_chanctx_enabled())
-+-			ieee80211_wake_queue(sc->hw, info->hw_queue);
-+-		else
-+-			ieee80211_wake_queue(sc->hw, q);
-+-		txq->stopped = false;
-+-	}
-+ }
-+ 
-+ static struct ath_atx_tid *
-+@@ -188,9 +201,47 @@ ath_get_skb_tid(struct ath_softc *sc, st
-+ 	return ATH_AN_2_TID(an, tidno);
-+ }
-+ 
-++static struct sk_buff *
-++ath_tid_pull(struct ath_atx_tid *tid)
-++{
-++	struct ath_softc *sc = tid->an->sc;
-++	struct ieee80211_hw *hw = sc->hw;
-++	struct ath_tx_control txctl = {
-++		.txq = tid->txq,
-++		.sta = tid->an->sta,
-++	};
-++	struct sk_buff *skb;
-++	struct ath_frame_info *fi;
-++	int q;
-++
-++	if (!tid->has_queued)
-++		return NULL;
-++
-++	skb = ieee80211_tx_dequeue(hw, container_of((void*)tid, struct ieee80211_txq, drv_priv));
-++	if (!skb) {
-++		tid->has_queued = false;
-++		return NULL;
-++	}
-++
-++	if (ath_tx_prepare(hw, skb, &txctl)) {
-++		ieee80211_free_txskb(hw, skb);
-++		return NULL;
-++	}
-++
-++	q = skb_get_queue_mapping(skb);
-++	if (tid->txq == sc->tx.txq_map[q]) {
-++		fi = get_frame_info(skb);
-++		fi->txq = q;
-++		++tid->txq->pending_frames;
-++	}
-++
-++	return skb;
-++ }
-++
-++
-+ static bool ath_tid_has_buffered(struct ath_atx_tid *tid)
-+ {
-+-	return !skb_queue_empty(&tid->buf_q) || !skb_queue_empty(&tid->retry_q);
-++	return !skb_queue_empty(&tid->retry_q) || tid->has_queued;
-+ }
-+ 
-+ static struct sk_buff *ath_tid_dequeue(struct ath_atx_tid *tid)
-+@@ -199,46 +250,11 @@ static struct sk_buff *ath_tid_dequeue(s
-+ 
-+ 	skb = __skb_dequeue(&tid->retry_q);
-+ 	if (!skb)
-+-		skb = __skb_dequeue(&tid->buf_q);
-++		skb = ath_tid_pull(tid);
-+ 
-+ 	return skb;
-+ }
-+ 
-+-/*
-+- * ath_tx_tid_change_state:
-+- * - clears a-mpdu flag of previous session
-+- * - force sequence number allocation to fix next BlockAck Window
-+- */
-+-static void
-+-ath_tx_tid_change_state(struct ath_softc *sc, struct ath_atx_tid *tid)
-+-{
-+-	struct ath_txq *txq = tid->txq;
-+-	struct ieee80211_tx_info *tx_info;
-+-	struct sk_buff *skb, *tskb;
-+-	struct ath_buf *bf;
-+-	struct ath_frame_info *fi;
-+-
-+-	skb_queue_walk_safe(&tid->buf_q, skb, tskb) {
-+-		fi = get_frame_info(skb);
-+-		bf = fi->bf;
-+-
-+-		tx_info = IEEE80211_SKB_CB(skb);
-+-		tx_info->flags &= ~IEEE80211_TX_CTL_AMPDU;
-+-
-+-		if (bf)
-+-			continue;
-+-
-+-		bf = ath_tx_setup_buffer(sc, txq, tid, skb);
-+-		if (!bf) {
-+-			__skb_unlink(skb, &tid->buf_q);
-+-			ath_txq_skb_done(sc, txq, skb);
-+-			ieee80211_free_txskb(sc->hw, skb);
-+-			continue;
-+-		}
-+-	}
-+-
-+-}
-+-
-+ static void ath_tx_flush_tid(struct ath_softc *sc, struct ath_atx_tid *tid)
-+ {
-+ 	struct ath_txq *txq = tid->txq;
-+@@ -873,20 +889,16 @@ static int ath_compute_num_delims(struct
-+ 
-+ static struct ath_buf *
-+ ath_tx_get_tid_subframe(struct ath_softc *sc, struct ath_txq *txq,
-+-			struct ath_atx_tid *tid, struct sk_buff_head **q)
-++			struct ath_atx_tid *tid)
-+ {
-+ 	struct ieee80211_tx_info *tx_info;
-+ 	struct ath_frame_info *fi;
-+-	struct sk_buff *skb;
-++	struct sk_buff *skb, *first_skb = NULL;
-+ 	struct ath_buf *bf;
-+ 	u16 seqno;
-+ 
-+ 	while (1) {
-+-		*q = &tid->retry_q;
-+-		if (skb_queue_empty(*q))
-+-			*q = &tid->buf_q;
-+-
-+-		skb = skb_peek(*q);
-++		skb = ath_tid_dequeue(tid);
-+ 		if (!skb)
-+ 			break;
-+ 
-+@@ -898,7 +910,6 @@ ath_tx_get_tid_subframe(struct ath_softc
-+ 			bf->bf_state.stale = false;
-+ 
-+ 		if (!bf) {
-+-			__skb_unlink(skb, *q);
-+ 			ath_txq_skb_done(sc, txq, skb);
-+ 			ieee80211_free_txskb(sc->hw, skb);
-+ 			continue;
-+@@ -927,8 +938,19 @@ ath_tx_get_tid_subframe(struct ath_softc
-+ 		seqno = bf->bf_state.seqno;
-+ 
-+ 		/* do not step over block-ack window */
-+-		if (!BAW_WITHIN(tid->seq_start, tid->baw_size, seqno))
-++		if (!BAW_WITHIN(tid->seq_start, tid->baw_size, seqno)) {
-++			__skb_queue_tail(&tid->retry_q, skb);
-++
-++			/* If there are other skbs in the retry q, they are
-++			 * probably within the BAW, so loop immediately to get
-++			 * one of them. Otherwise the queue can get stuck. */
-++			if (!skb_queue_is_first(&tid->retry_q, skb) && skb != first_skb) {
-++				if(!first_skb) /* infinite loop prevention */
-++					first_skb = skb;
-++				continue;
-++			}
-+ 			break;
-++		}
-+ 
-+ 		if (tid->bar_index > ATH_BA_INDEX(tid->seq_start, seqno)) {
-+ 			struct ath_tx_status ts = {};
-+@@ -936,7 +958,6 @@ ath_tx_get_tid_subframe(struct ath_softc
-+ 
-+ 			INIT_LIST_HEAD(&bf_head);
-+ 			list_add(&bf->list, &bf_head);
-+-			__skb_unlink(skb, *q);
-+ 			ath_tx_update_baw(sc, tid, seqno);
-+ 			ath_tx_complete_buf(sc, bf, txq, &bf_head, &ts, 0);
-+ 			continue;
-+@@ -948,11 +969,10 @@ ath_tx_get_tid_subframe(struct ath_softc
-+ 	return NULL;
-+ }
-+ 
-+-static bool
-++static int
-+ ath_tx_form_aggr(struct ath_softc *sc, struct ath_txq *txq,
-+ 		 struct ath_atx_tid *tid, struct list_head *bf_q,
-+-		 struct ath_buf *bf_first, struct sk_buff_head *tid_q,
-+-		 int *aggr_len)
-++		 struct ath_buf *bf_first)
-+ {
-+ #define PADBYTES(_len) ((4 - ((_len) % 4)) % 4)
-+ 	struct ath_buf *bf = bf_first, *bf_prev = NULL;
-+@@ -962,12 +982,13 @@ ath_tx_form_aggr(struct ath_softc *sc, s
-+ 	struct ieee80211_tx_info *tx_info;
-+ 	struct ath_frame_info *fi;
-+ 	struct sk_buff *skb;
-+-	bool closed = false;
-++
-+ 
-+ 	bf = bf_first;
-+ 	aggr_limit = ath_lookup_rate(sc, bf, tid);
-+ 
-+-	do {
-++	while (bf)
-++	{
-+ 		skb = bf->bf_mpdu;
-+ 		fi = get_frame_info(skb);
-+ 
-+@@ -976,12 +997,12 @@ ath_tx_form_aggr(struct ath_softc *sc, s
-+ 		if (nframes) {
-+ 			if (aggr_limit < al + bpad + al_delta ||
-+ 			    ath_lookup_legacy(bf) || nframes >= h_baw)
-+-				break;
-++				goto stop;
-+ 
-+ 			tx_info = IEEE80211_SKB_CB(bf->bf_mpdu);
-+ 			if ((tx_info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE) ||
-+ 			    !(tx_info->flags & IEEE80211_TX_CTL_AMPDU))
-+-				break;
-++				goto stop;
-+ 		}
-+ 
-+ 		/* add padding for previous frame to aggregation length */
-+@@ -1003,20 +1024,18 @@ ath_tx_form_aggr(struct ath_softc *sc, s
-+ 			ath_tx_addto_baw(sc, tid, bf);
-+ 		bf->bf_state.ndelim = ndelim;
-+ 
-+-		__skb_unlink(skb, tid_q);
-+ 		list_add_tail(&bf->list, bf_q);
-+ 		if (bf_prev)
-+ 			bf_prev->bf_next = bf;
-+ 
-+ 		bf_prev = bf;
-+ 
-+-		bf = ath_tx_get_tid_subframe(sc, txq, tid, &tid_q);
-+-		if (!bf) {
-+-			closed = true;
-+-			break;
-+-		}
-+-	} while (ath_tid_has_buffered(tid));
-+-
-++		bf = ath_tx_get_tid_subframe(sc, txq, tid);
-++	}
-++	goto finish;
-++stop:
-++	__skb_queue_tail(&tid->retry_q, bf->bf_mpdu);
-++finish:
-+ 	bf = bf_first;
-+ 	bf->bf_lastbf = bf_prev;
-+ 
-+@@ -1027,9 +1046,7 @@ ath_tx_form_aggr(struct ath_softc *sc, s
-+ 		TX_STAT_INC(txq->axq_qnum, a_aggr);
-+ 	}
-+ 
-+-	*aggr_len = al;
-+-
-+-	return closed;
-++	return al;
-+ #undef PADBYTES
-+ }
-+ 
-+@@ -1406,18 +1423,15 @@ static void ath_tx_fill_desc(struct ath_
-+ static void
-+ ath_tx_form_burst(struct ath_softc *sc, struct ath_txq *txq,
-+ 		  struct ath_atx_tid *tid, struct list_head *bf_q,
-+-		  struct ath_buf *bf_first, struct sk_buff_head *tid_q)
-++		  struct ath_buf *bf_first)
-+ {
-+ 	struct ath_buf *bf = bf_first, *bf_prev = NULL;
-+-	struct sk_buff *skb;
-+ 	int nframes = 0;
-+ 
-+ 	do {
-+ 		struct ieee80211_tx_info *tx_info;
-+-		skb = bf->bf_mpdu;
-+ 
-+ 		nframes++;
-+-		__skb_unlink(skb, tid_q);
-+ 		list_add_tail(&bf->list, bf_q);
-+ 		if (bf_prev)
-+ 			bf_prev->bf_next = bf;
-+@@ -1426,13 +1440,15 @@ ath_tx_form_burst(struct ath_softc *sc,
-+ 		if (nframes >= 2)
-+ 			break;
-+ 
-+-		bf = ath_tx_get_tid_subframe(sc, txq, tid, &tid_q);
-++		bf = ath_tx_get_tid_subframe(sc, txq, tid);
-+ 		if (!bf)
-+ 			break;
-+ 
-+ 		tx_info = IEEE80211_SKB_CB(bf->bf_mpdu);
-+-		if (tx_info->flags & IEEE80211_TX_CTL_AMPDU)
-++		if (tx_info->flags & IEEE80211_TX_CTL_AMPDU) {
-++			__skb_queue_tail(&tid->retry_q, bf->bf_mpdu);
-+ 			break;
-++		}
-+ 
-+ 		ath_set_rates(tid->an->vif, tid->an->sta, bf, false);
-+ 	} while (1);
-+@@ -1443,34 +1459,33 @@ static bool ath_tx_sched_aggr(struct ath
-+ {
-+ 	struct ath_buf *bf;
-+ 	struct ieee80211_tx_info *tx_info;
-+-	struct sk_buff_head *tid_q;
-+ 	struct list_head bf_q;
-+ 	int aggr_len = 0;
-+-	bool aggr, last = true;
-++	bool aggr;
-+ 
-+ 	if (!ath_tid_has_buffered(tid))
-+ 		return false;
-+ 
-+ 	INIT_LIST_HEAD(&bf_q);
-+ 
-+-	bf = ath_tx_get_tid_subframe(sc, txq, tid, &tid_q);
-++	bf = ath_tx_get_tid_subframe(sc, txq, tid);
-+ 	if (!bf)
-+ 		return false;
-+ 
-+ 	tx_info = IEEE80211_SKB_CB(bf->bf_mpdu);
-+ 	aggr = !!(tx_info->flags & IEEE80211_TX_CTL_AMPDU);
-+ 	if ((aggr && txq->axq_ampdu_depth >= ATH_AGGR_MIN_QDEPTH) ||
-+-		(!aggr && txq->axq_depth >= ATH_NON_AGGR_MIN_QDEPTH)) {
-++	    (!aggr && txq->axq_depth >= ATH_NON_AGGR_MIN_QDEPTH)) {
-++		__skb_queue_tail(&tid->retry_q, bf->bf_mpdu);
-+ 		*stop = true;
-+ 		return false;
-+ 	}
-+ 
-+ 	ath_set_rates(tid->an->vif, tid->an->sta, bf, false);
-+ 	if (aggr)
-+-		last = ath_tx_form_aggr(sc, txq, tid, &bf_q, bf,
-+-					tid_q, &aggr_len);
-++		aggr_len = ath_tx_form_aggr(sc, txq, tid, &bf_q, bf);
-+ 	else
-+-		ath_tx_form_burst(sc, txq, tid, &bf_q, bf, tid_q);
-++		ath_tx_form_burst(sc, txq, tid, &bf_q, bf);
-+ 
-+ 	if (list_empty(&bf_q))
-+ 		return false;
-+@@ -1513,9 +1528,6 @@ int ath_tx_aggr_start(struct ath_softc *
-+ 		an->mpdudensity = density;
-+ 	}
-+ 
-+-	/* force sequence number allocation for pending frames */
-+-	ath_tx_tid_change_state(sc, txtid);
-+-
-+ 	txtid->active = true;
-+ 	*ssn = txtid->seq_start = txtid->seq_next;
-+ 	txtid->bar_index = -1;
-+@@ -1540,7 +1552,6 @@ void ath_tx_aggr_stop(struct ath_softc *
-+ 	ath_txq_lock(sc, txq);
-+ 	txtid->active = false;
-+ 	ath_tx_flush_tid(sc, txtid);
-+-	ath_tx_tid_change_state(sc, txtid);
-+ 	ath_txq_unlock_complete(sc, txq);
-+ }
-+ 
-+@@ -1550,14 +1561,12 @@ void ath_tx_aggr_sleep(struct ieee80211_
-+ 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
-+ 	struct ath_atx_tid *tid;
-+ 	struct ath_txq *txq;
-+-	bool buffered;
-+ 	int tidno;
-+ 
-+ 	ath_dbg(common, XMIT, "%s called\n", __func__);
-+ 
-+-	for (tidno = 0, tid = &an->tid[tidno];
-+-	     tidno < IEEE80211_NUM_TIDS; tidno++, tid++) {
-+-
-++	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
-++		tid = ATH_AN_2_TID(an, tidno);
-+ 		txq = tid->txq;
-+ 
-+ 		ath_txq_lock(sc, txq);
-+@@ -1567,13 +1576,12 @@ void ath_tx_aggr_sleep(struct ieee80211_
-+ 			continue;
-+ 		}
-+ 
-+-		buffered = ath_tid_has_buffered(tid);
-++		if (!skb_queue_empty(&tid->retry_q))
-++			ieee80211_sta_set_buffered(sta, tid->tidno, true);
-+ 
-+ 		list_del_init(&tid->list);
-+ 
-+ 		ath_txq_unlock(sc, txq);
-+-
-+-		ieee80211_sta_set_buffered(sta, tidno, buffered);
-+ 	}
-+ }
-+ 
-+@@ -1586,19 +1594,16 @@ void ath_tx_aggr_wakeup(struct ath_softc
-+ 
-+ 	ath_dbg(common, XMIT, "%s called\n", __func__);
-+ 
-+-	for (tidno = 0, tid = &an->tid[tidno];
-+-	     tidno < IEEE80211_NUM_TIDS; tidno++, tid++) {
-+-
-++	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
-++		tid = ATH_AN_2_TID(an, tidno);
-+ 		txq = tid->txq;
-+ 
-+ 		ath_txq_lock(sc, txq);
-+ 		tid->clear_ps_filter = true;
-+-
-+ 		if (ath_tid_has_buffered(tid)) {
-+ 			ath_tx_queue_tid(sc, txq, tid);
-+ 			ath_txq_schedule(sc, txq);
-+ 		}
-+-
-+ 		ath_txq_unlock_complete(sc, txq);
-+ 	}
-+ }
-+@@ -1621,11 +1626,6 @@ void ath_tx_aggr_resume(struct ath_softc
-+ 
-+ 	tid->baw_size = IEEE80211_MIN_AMPDU_BUF << sta->ht_cap.ampdu_factor;
-+ 
-+-	if (ath_tid_has_buffered(tid)) {
-+-		ath_tx_queue_tid(sc, txq, tid);
-+-		ath_txq_schedule(sc, txq);
-+-	}
-+-
-+ 	ath_txq_unlock_complete(sc, txq);
-+ }
-+ 
-+@@ -1641,7 +1641,6 @@ void ath9k_release_buffered_frames(struc
-+ 	struct ieee80211_tx_info *info;
-+ 	struct list_head bf_q;
-+ 	struct ath_buf *bf_tail = NULL, *bf;
-+-	struct sk_buff_head *tid_q;
-+ 	int sent = 0;
-+ 	int i;
-+ 
-+@@ -1656,11 +1655,10 @@ void ath9k_release_buffered_frames(struc
-+ 
-+ 		ath_txq_lock(sc, tid->txq);
-+ 		while (nframes > 0) {
-+-			bf = ath_tx_get_tid_subframe(sc, sc->tx.uapsdq, tid, &tid_q);
-++			bf = ath_tx_get_tid_subframe(sc, sc->tx.uapsdq, tid);
-+ 			if (!bf)
-+ 				break;
-+ 
-+-			__skb_unlink(bf->bf_mpdu, tid_q);
-+ 			list_add_tail(&bf->list, &bf_q);
-+ 			ath_set_rates(tid->an->vif, tid->an->sta, bf, true);
-+ 			if (bf_isampdu(bf)) {
-+@@ -1675,7 +1673,7 @@ void ath9k_release_buffered_frames(struc
-+ 			sent++;
-+ 			TX_STAT_INC(txq->axq_qnum, a_queued_hw);
-+ 
-+-			if (an->sta && !ath_tid_has_buffered(tid))
-++			if (an->sta && skb_queue_empty(&tid->retry_q))
-+ 				ieee80211_sta_set_buffered(an->sta, i, false);
-+ 		}
-+ 		ath_txq_unlock_complete(sc, tid->txq);
-+@@ -1902,13 +1900,7 @@ bool ath_drain_all_txq(struct ath_softc
-+ 		if (!ATH_TXQ_SETUP(sc, i))
-+ 			continue;
-+ 
-+-		/*
-+-		 * The caller will resume queues with ieee80211_wake_queues.
-+-		 * Mark the queue as not stopped to prevent ath_tx_complete
-+-		 * from waking the queue too early.
-+-		 */
-+ 		txq = &sc->tx.txq[i];
-+-		txq->stopped = false;
-+ 		ath_draintxq(sc, txq);
-+ 	}
-+ 
-+@@ -2308,15 +2300,12 @@ int ath_tx_start(struct ieee80211_hw *hw
-+ 	struct ath_txq *txq = txctl->txq;
-+ 	struct ath_atx_tid *tid = NULL;
-+ 	struct ath_buf *bf;
-+-	bool queue, ps_resp;
-++	bool ps_resp;
-+ 	int q, ret;
-+ 
-+ 	if (vif)
-+ 		avp = (void *)vif->drv_priv;
-+ 
-+-	if (info->flags & IEEE80211_TX_CTL_TX_OFFCHAN)
-+-		txctl->force_channel = true;
-+-
-+ 	ps_resp = !!(info->control.flags & IEEE80211_TX_CTRL_PS_RESPONSE);
-+ 
-+ 	ret = ath_tx_prepare(hw, skb, txctl);
-+@@ -2331,63 +2320,13 @@ int ath_tx_start(struct ieee80211_hw *hw
-+ 
-+ 	q = skb_get_queue_mapping(skb);
-+ 
-++	if (ps_resp)
-++		txq = sc->tx.uapsdq;
-++
-+ 	ath_txq_lock(sc, txq);
-+ 	if (txq == sc->tx.txq_map[q]) {
-+ 		fi->txq = q;
-+-		if (++txq->pending_frames > sc->tx.txq_max_pending[q] &&
-+-		    !txq->stopped) {
-+-			if (ath9k_is_chanctx_enabled())
-+-				ieee80211_stop_queue(sc->hw, info->hw_queue);
-+-			else
-+-				ieee80211_stop_queue(sc->hw, q);
-+-			txq->stopped = true;
-+-		}
-+-	}
-+-
-+-	queue = ieee80211_is_data_present(hdr->frame_control);
-+-
-+-	/* If chanctx, queue all null frames while NOA could be there */
-+-	if (ath9k_is_chanctx_enabled() &&
-+-	    ieee80211_is_nullfunc(hdr->frame_control) &&
-+-	    !txctl->force_channel)
-+-		queue = true;
-+-
-+-	/* Force queueing of all frames that belong to a virtual interface on
-+-	 * a different channel context, to ensure that they are sent on the
-+-	 * correct channel.
-+-	 */
-+-	if (((avp && avp->chanctx != sc->cur_chan) ||
-+-	     sc->cur_chan->stopped) && !txctl->force_channel) {
-+-		if (!txctl->an)
-+-			txctl->an = &avp->mcast_node;
-+-		queue = true;
-+-		ps_resp = false;
-+-	}
-+-
-+-	if (txctl->an && queue)
-+-		tid = ath_get_skb_tid(sc, txctl->an, skb);
-+-
-+-	if (ps_resp) {
-+-		ath_txq_unlock(sc, txq);
-+-		txq = sc->tx.uapsdq;
-+-		ath_txq_lock(sc, txq);
-+-	} else if (txctl->an && queue) {
-+-		WARN_ON(tid->txq != txctl->txq);
-+-
-+-		if (info->flags & IEEE80211_TX_CTL_CLEAR_PS_FILT)
-+-			tid->clear_ps_filter = true;
-+-
-+-		/*
-+-		 * Add this frame to software queue for scheduling later
-+-		 * for aggregation.
-+-		 */
-+-		TX_STAT_INC(txq->axq_qnum, a_queued_sw);
-+-		__skb_queue_tail(&tid->buf_q, skb);
-+-		if (!txctl->an->sleeping)
-+-			ath_tx_queue_tid(sc, txq, tid);
-+-
-+-		ath_txq_schedule(sc, txq);
-+-		goto out;
-++		++txq->pending_frames;
-+ 	}
-+ 
-+ 	bf = ath_tx_setup_buffer(sc, txq, tid, skb);
-+@@ -2871,9 +2810,8 @@ void ath_tx_node_init(struct ath_softc *
-+ 	struct ath_atx_tid *tid;
-+ 	int tidno, acno;
-+ 
-+-	for (tidno = 0, tid = &an->tid[tidno];
-+-	     tidno < IEEE80211_NUM_TIDS;
-+-	     tidno++, tid++) {
-++	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
-++		tid = ATH_AN_2_TID(an, tidno);
-+ 		tid->an        = an;
-+ 		tid->tidno     = tidno;
-+ 		tid->seq_start = tid->seq_next = 0;
-+@@ -2881,11 +2819,14 @@ void ath_tx_node_init(struct ath_softc *
-+ 		tid->baw_head  = tid->baw_tail = 0;
-+ 		tid->active	   = false;
-+ 		tid->clear_ps_filter = true;
-+-		__skb_queue_head_init(&tid->buf_q);
-++		tid->has_queued  = false;
-+ 		__skb_queue_head_init(&tid->retry_q);
-+ 		INIT_LIST_HEAD(&tid->list);
-+ 		acno = TID_TO_WME_AC(tidno);
-+ 		tid->txq = sc->tx.txq_map[acno];
-++
-++		if (!an->sta)
-++			break; /* just one multicast ath_atx_tid */
-+ 	}
-+ }
-+ 
-+@@ -2895,9 +2836,8 @@ void ath_tx_node_cleanup(struct ath_soft
-+ 	struct ath_txq *txq;
-+ 	int tidno;
-+ 
-+-	for (tidno = 0, tid = &an->tid[tidno];
-+-	     tidno < IEEE80211_NUM_TIDS; tidno++, tid++) {
-+-
-++	for (tidno = 0; tidno < IEEE80211_NUM_TIDS; tidno++) {
-++		tid = ATH_AN_2_TID(an, tidno);
-+ 		txq = tid->txq;
-+ 
-+ 		ath_txq_lock(sc, txq);
-+@@ -2909,6 +2849,9 @@ void ath_tx_node_cleanup(struct ath_soft
-+ 		tid->active = false;
-+ 
-+ 		ath_txq_unlock(sc, txq);
-++
-++		if (!an->sta)
-++			break; /* just one multicast ath_atx_tid */
-+ 	}
-+ }
-+ 
 diff --git a/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch b/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch
 deleted file mode 100644
 index 2eeed22..0000000
@@ -8706,6 +7864,702 @@ index 1fd016f..0000000
 - int brcmf_proto_msgbuf_attach(struct brcmf_pub *drvr);
 - void brcmf_proto_msgbuf_detach(struct brcmf_pub *drvr);
 - #else
+diff --git a/package/kernel/mac80211/patches/331-mac80211-End-the-MPSP-even-if-EOSP-frame-was-not-rec.patch b/package/kernel/mac80211/patches/331-mac80211-End-the-MPSP-even-if-EOSP-frame-was-not-rec.patch
+new file mode 100644
+index 0000000..5d8a8fb
+--- /dev/null
++++ b/package/kernel/mac80211/patches/331-mac80211-End-the-MPSP-even-if-EOSP-frame-was-not-rec.patch
+@@ -0,0 +1,42 @@
++From: Masashi Honma <masashi.honma@gmail.com>
++Date: Wed, 13 Jul 2016 16:04:35 +0900
++Subject: [PATCH] mac80211: End the MPSP even if EOSP frame was not received
++
++The mesh STA sends QoS frame with EOSP (end of service period)
++subfiled=1 to end the MPSP(mesh peer service period). Previously, if
++the frame was not acked by peer, the mesh STA did not end the MPSP.
++This patch ends the MPSP even if the QoS frame was no acked.
++
++Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
++---
++
++--- a/net/mac80211/status.c
+++++ b/net/mac80211/status.c
++@@ -784,6 +784,13 @@ void ieee80211_tx_status(struct ieee8021
++ 			clear_sta_flag(sta, WLAN_STA_SP);
++ 
++ 		acked = !!(info->flags & IEEE80211_TX_STAT_ACK);
+++
+++		/* mesh Peer Service Period support */
+++		if (ieee80211_vif_is_mesh(&sta->sdata->vif) &&
+++		    ieee80211_is_data_qos(fc))
+++			ieee80211_mpsp_trigger_process(
+++				ieee80211_get_qos_ctl(hdr), sta, true, acked);
+++
++ 		if (!acked && test_sta_flag(sta, WLAN_STA_PS_STA)) {
++ 			/*
++ 			 * The STA is in power save mode, so assume
++@@ -794,13 +801,6 @@ void ieee80211_tx_status(struct ieee8021
++ 			return;
++ 		}
++ 
++-		/* mesh Peer Service Period support */
++-		if (ieee80211_vif_is_mesh(&sta->sdata->vif) &&
++-		    ieee80211_is_data_qos(fc))
++-			ieee80211_mpsp_trigger_process(
++-					ieee80211_get_qos_ctl(hdr),
++-					sta, true, acked);
++-
++ 		if (ieee80211_hw_check(&local->hw, HAS_RATE_CONTROL) &&
++ 		    (ieee80211_is_data(hdr->frame_control)) &&
++ 		    (rates_idx != -1))
+diff --git a/package/kernel/mac80211/patches/332-ath10k-implement-NAPI-support.patch b/package/kernel/mac80211/patches/332-ath10k-implement-NAPI-support.patch
+new file mode 100644
+index 0000000..c6cc145
+--- /dev/null
++++ b/package/kernel/mac80211/patches/332-ath10k-implement-NAPI-support.patch
+@@ -0,0 +1,642 @@
++From: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++Date: Thu, 21 Jul 2016 11:50:00 +0530
++Subject: [PATCH] ath10k: implement NAPI support
++
++Add NAPI support for rx and tx completion. NAPI poll is scheduled
++from interrupt handler. The design is as below
++
++ - on interrupt
++     - schedule napi and mask interrupts
++ - on poll
++   - process all pipes (no actual Tx/Rx)
++   - process Rx within budget
++   - if quota exceeds budget reschedule napi poll by returning budget
++   - process Tx completions and update budget if necessary
++   - process Tx fetch indications (pull-push)
++   - push any other pending Tx (if possible)
++   - before resched or napi completion replenish htt rx ring buffer
++   - if work done < budget, complete napi poll and unmask interrupts
++
++This change also get rid of two tasklets (intr_tq and txrx_compl_task).
++
++Measured peak throughput with NAPI on IPQ4019 platform in controlled
++environment. No noticeable reduction in throughput is seen and also
++observed improvements in CPU usage. Approx. 15% CPU usage got reduced
++in UDP uplink case.
++
++DL: AP DUT Tx
++UL: AP DUT Rx
++
++IPQ4019 (avg. cpu usage %)
++========
++                TOT              +NAPI
++              ===========      =============
++TCP DL       644 Mbps (42%)    645 Mbps (36%)
++TCP UL       673 Mbps (30%)    675 Mbps (26%)
++UDP DL       682 Mbps (49%)    680 Mbps (49%)
++UDP UL       720 Mbps (28%)    717 Mbps (11%)
++
++Signed-off-by: Rajkumar Manoharan <rmanohar@qti.qualcomm.com>
++---
++
++--- a/drivers/net/wireless/ath/ath10k/ahb.c
+++++ b/drivers/net/wireless/ath/ath10k/ahb.c
++@@ -462,13 +462,13 @@ static void ath10k_ahb_halt_chip(struct
++ static irqreturn_t ath10k_ahb_interrupt_handler(int irq, void *arg)
++ {
++ 	struct ath10k *ar = arg;
++-	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
++ 
++ 	if (!ath10k_pci_irq_pending(ar))
++ 		return IRQ_NONE;
++ 
++ 	ath10k_pci_disable_and_clear_legacy_irq(ar);
++-	tasklet_schedule(&ar_pci->intr_tq);
+++	ath10k_pci_irq_msi_fw_mask(ar);
+++	napi_schedule(&ar->napi);
++ 
++ 	return IRQ_HANDLED;
++ }
++@@ -831,7 +831,7 @@ static int ath10k_ahb_probe(struct platf
++ 		goto err_resource_deinit;
++ 	}
++ 
++-	ath10k_pci_init_irq_tasklets(ar);
+++	ath10k_pci_init_napi(ar);
++ 
++ 	ret = ath10k_ahb_request_irq_legacy(ar);
++ 	if (ret)
++--- a/drivers/net/wireless/ath/ath10k/core.c
+++++ b/drivers/net/wireless/ath/ath10k/core.c
++@@ -2226,6 +2226,8 @@ struct ath10k *ath10k_core_create(size_t
++ 	INIT_WORK(&ar->register_work, ath10k_core_register_work);
++ 	INIT_WORK(&ar->restart_work, ath10k_core_restart);
++ 
+++	init_dummy_netdev(&ar->napi_dev);
+++
++ 	ret = ath10k_debug_create(ar);
++ 	if (ret)
++ 		goto err_free_aux_wq;
++--- a/drivers/net/wireless/ath/ath10k/core.h
+++++ b/drivers/net/wireless/ath/ath10k/core.h
++@@ -65,6 +65,10 @@
++ #define ATH10K_KEEPALIVE_MAX_IDLE 3895
++ #define ATH10K_KEEPALIVE_MAX_UNRESPONSIVE 3900
++ 
+++/* NAPI poll budget */
+++#define ATH10K_NAPI_BUDGET      64
+++#define ATH10K_NAPI_QUOTA_LIMIT 60
+++
++ struct ath10k;
++ 
++ enum ath10k_bus {
++@@ -933,6 +937,10 @@ struct ath10k {
++ 	struct ath10k_thermal thermal;
++ 	struct ath10k_wow wow;
++ 
+++	/* NAPI */
+++	struct net_device napi_dev;
+++	struct napi_struct napi;
+++
++ 	/* must be last */
++ 	u8 drv_priv[0] __aligned(sizeof(void *));
++ };
++--- a/drivers/net/wireless/ath/ath10k/htt.h
+++++ b/drivers/net/wireless/ath/ath10k/htt.h
++@@ -1666,7 +1666,6 @@ struct ath10k_htt {
++ 
++ 	/* This is used to group tx/rx completions separately and process them
++ 	 * in batches to reduce cache stalls */
++-	struct tasklet_struct txrx_compl_task;
++ 	struct sk_buff_head rx_compl_q;
++ 	struct sk_buff_head rx_in_ord_compl_q;
++ 	struct sk_buff_head tx_fetch_ind_q;
++@@ -1799,5 +1798,6 @@ int ath10k_htt_tx(struct ath10k_htt *htt
++ 		  struct sk_buff *msdu);
++ void ath10k_htt_rx_pktlog_completion_handler(struct ath10k *ar,
++ 					     struct sk_buff *skb);
+++int ath10k_htt_txrx_compl_task(struct ath10k *ar, int budget);
++ 
++ #endif
++--- a/drivers/net/wireless/ath/ath10k/htt_rx.c
+++++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
++@@ -34,7 +34,6 @@
++ #define HTT_RX_RING_REFILL_RESCHED_MS 5
++ 
++ static int ath10k_htt_rx_get_csum_state(struct sk_buff *skb);
++-static void ath10k_htt_txrx_compl_task(unsigned long ptr);
++ 
++ static struct sk_buff *
++ ath10k_htt_rx_find_skb_paddr(struct ath10k *ar, u32 paddr)
++@@ -226,7 +225,6 @@ int ath10k_htt_rx_ring_refill(struct ath
++ void ath10k_htt_rx_free(struct ath10k_htt *htt)
++ {
++ 	del_timer_sync(&htt->rx_ring.refill_retry_timer);
++-	tasklet_kill(&htt->txrx_compl_task);
++ 
++ 	skb_queue_purge(&htt->rx_compl_q);
++ 	skb_queue_purge(&htt->rx_in_ord_compl_q);
++@@ -520,9 +518,6 @@ int ath10k_htt_rx_alloc(struct ath10k_ht
++ 	skb_queue_head_init(&htt->tx_fetch_ind_q);
++ 	atomic_set(&htt->num_mpdus_ready, 0);
++ 
++-	tasklet_init(&htt->txrx_compl_task, ath10k_htt_txrx_compl_task,
++-		     (unsigned long)htt);
++-
++ 	ath10k_dbg(ar, ATH10K_DBG_BOOT, "htt rx ring size %d fill_level %d\n",
++ 		   htt->rx_ring.size, htt->rx_ring.fill_level);
++ 	return 0;
++@@ -958,7 +953,7 @@ static void ath10k_process_rx(struct ath
++ 	trace_ath10k_rx_hdr(ar, skb->data, skb->len);
++ 	trace_ath10k_rx_payload(ar, skb->data, skb->len);
++ 
++-	ieee80211_rx(ar->hw, skb);
+++	ieee80211_rx_napi(ar->hw, NULL, skb, &ar->napi);
++ }
++ 
++ static int ath10k_htt_rx_nwifi_hdrlen(struct ath10k *ar,
++@@ -1527,7 +1522,7 @@ static int ath10k_htt_rx_handle_amsdu(st
++ 	struct ath10k *ar = htt->ar;
++ 	struct ieee80211_rx_status *rx_status = &htt->rx_status;
++ 	struct sk_buff_head amsdu;
++-	int ret;
+++	int ret, num_msdus;
++ 
++ 	__skb_queue_head_init(&amsdu);
++ 
++@@ -1549,13 +1544,14 @@ static int ath10k_htt_rx_handle_amsdu(st
++ 		return ret;
++ 	}
++ 
+++	num_msdus = skb_queue_len(&amsdu);
++ 	ath10k_htt_rx_h_ppdu(ar, &amsdu, rx_status, 0xffff);
++ 	ath10k_htt_rx_h_unchain(ar, &amsdu, ret > 0);
++ 	ath10k_htt_rx_h_filter(ar, &amsdu, rx_status);
++ 	ath10k_htt_rx_h_mpdu(ar, &amsdu, rx_status);
++ 	ath10k_htt_rx_h_deliver(ar, &amsdu, rx_status);
++ 
++-	return 0;
+++	return num_msdus;
++ }
++ 
++ static void ath10k_htt_rx_proc_rx_ind(struct ath10k_htt *htt,
++@@ -1579,15 +1575,6 @@ static void ath10k_htt_rx_proc_rx_ind(st
++ 		mpdu_count += mpdu_ranges[i].mpdu_count;
++ 
++ 	atomic_add(mpdu_count, &htt->num_mpdus_ready);
++-
++-	tasklet_schedule(&htt->txrx_compl_task);
++-}
++-
++-static void ath10k_htt_rx_frag_handler(struct ath10k_htt *htt)
++-{
++-	atomic_inc(&htt->num_mpdus_ready);
++-
++-	tasklet_schedule(&htt->txrx_compl_task);
++ }
++ 
++ static void ath10k_htt_rx_tx_compl_ind(struct ath10k *ar,
++@@ -1772,14 +1759,15 @@ static void ath10k_htt_rx_h_rx_offload_p
++ 			RX_FLAG_MMIC_STRIPPED;
++ }
++ 
++-static void ath10k_htt_rx_h_rx_offload(struct ath10k *ar,
++-				       struct sk_buff_head *list)
+++static int ath10k_htt_rx_h_rx_offload(struct ath10k *ar,
+++				      struct sk_buff_head *list)
++ {
++ 	struct ath10k_htt *htt = &ar->htt;
++ 	struct ieee80211_rx_status *status = &htt->rx_status;
++ 	struct htt_rx_offload_msdu *rx;
++ 	struct sk_buff *msdu;
++ 	size_t offset;
+++	int num_msdu = 0;
++ 
++ 	while ((msdu = __skb_dequeue(list))) {
++ 		/* Offloaded frames don't have Rx descriptor. Instead they have
++@@ -1819,10 +1807,12 @@ static void ath10k_htt_rx_h_rx_offload(s
++ 		ath10k_htt_rx_h_rx_offload_prot(status, msdu);
++ 		ath10k_htt_rx_h_channel(ar, status, NULL, rx->vdev_id);
++ 		ath10k_process_rx(ar, status, msdu);
+++		num_msdu++;
++ 	}
+++	return num_msdu;
++ }
++ 
++-static void ath10k_htt_rx_in_ord_ind(struct ath10k *ar, struct sk_buff *skb)
+++static int ath10k_htt_rx_in_ord_ind(struct ath10k *ar, struct sk_buff *skb)
++ {
++ 	struct ath10k_htt *htt = &ar->htt;
++ 	struct htt_resp *resp = (void *)skb->data;
++@@ -1835,12 +1825,12 @@ static void ath10k_htt_rx_in_ord_ind(str
++ 	u8 tid;
++ 	bool offload;
++ 	bool frag;
++-	int ret;
+++	int ret, num_msdus = 0;
++ 
++ 	lockdep_assert_held(&htt->rx_ring.lock);
++ 
++ 	if (htt->rx_confused)
++-		return;
+++		return -EIO;
++ 
++ 	skb_pull(skb, sizeof(resp->hdr));
++ 	skb_pull(skb, sizeof(resp->rx_in_ord_ind));
++@@ -1859,7 +1849,7 @@ static void ath10k_htt_rx_in_ord_ind(str
++ 
++ 	if (skb->len < msdu_count * sizeof(*resp->rx_in_ord_ind.msdu_descs)) {
++ 		ath10k_warn(ar, "dropping invalid in order rx indication\n");
++-		return;
+++		return -EINVAL;
++ 	}
++ 
++ 	/* The event can deliver more than 1 A-MSDU. Each A-MSDU is later
++@@ -1870,14 +1860,14 @@ static void ath10k_htt_rx_in_ord_ind(str
++ 	if (ret < 0) {
++ 		ath10k_warn(ar, "failed to pop paddr list: %d\n", ret);
++ 		htt->rx_confused = true;
++-		return;
+++		return -EIO;
++ 	}
++ 
++ 	/* Offloaded frames are very different and need to be handled
++ 	 * separately.
++ 	 */
++ 	if (offload)
++-		ath10k_htt_rx_h_rx_offload(ar, &list);
+++		num_msdus = ath10k_htt_rx_h_rx_offload(ar, &list);
++ 
++ 	while (!skb_queue_empty(&list)) {
++ 		__skb_queue_head_init(&amsdu);
++@@ -1890,6 +1880,7 @@ static void ath10k_htt_rx_in_ord_ind(str
++ 			 * better to report something than nothing though. This
++ 			 * should still give an idea about rx rate to the user.
++ 			 */
+++			num_msdus += skb_queue_len(&amsdu);
++ 			ath10k_htt_rx_h_ppdu(ar, &amsdu, status, vdev_id);
++ 			ath10k_htt_rx_h_filter(ar, &amsdu, status);
++ 			ath10k_htt_rx_h_mpdu(ar, &amsdu, status);
++@@ -1902,9 +1893,10 @@ static void ath10k_htt_rx_in_ord_ind(str
++ 			ath10k_warn(ar, "failed to extract amsdu: %d\n", ret);
++ 			htt->rx_confused = true;
++ 			__skb_queue_purge(&list);
++-			return;
+++			return -EIO;
++ 		}
++ 	}
+++	return num_msdus;
++ }
++ 
++ static void ath10k_htt_rx_tx_fetch_resp_id_confirm(struct ath10k *ar,
++@@ -2267,7 +2259,6 @@ bool ath10k_htt_t2h_msg_handler(struct a
++ 	}
++ 	case HTT_T2H_MSG_TYPE_TX_COMPL_IND:
++ 		ath10k_htt_rx_tx_compl_ind(htt->ar, skb);
++-		tasklet_schedule(&htt->txrx_compl_task);
++ 		break;
++ 	case HTT_T2H_MSG_TYPE_SEC_IND: {
++ 		struct ath10k *ar = htt->ar;
++@@ -2284,7 +2275,7 @@ bool ath10k_htt_t2h_msg_handler(struct a
++ 	case HTT_T2H_MSG_TYPE_RX_FRAG_IND: {
++ 		ath10k_dbg_dump(ar, ATH10K_DBG_HTT_DUMP, NULL, "htt event: ",
++ 				skb->data, skb->len);
++-		ath10k_htt_rx_frag_handler(htt);
+++		atomic_inc(&htt->num_mpdus_ready);
++ 		break;
++ 	}
++ 	case HTT_T2H_MSG_TYPE_TEST:
++@@ -2322,8 +2313,7 @@ bool ath10k_htt_t2h_msg_handler(struct a
++ 		break;
++ 	}
++ 	case HTT_T2H_MSG_TYPE_RX_IN_ORD_PADDR_IND: {
++-		skb_queue_tail(&htt->rx_in_ord_compl_q, skb);
++-		tasklet_schedule(&htt->txrx_compl_task);
+++		__skb_queue_tail(&htt->rx_in_ord_compl_q, skb);
++ 		return false;
++ 	}
++ 	case HTT_T2H_MSG_TYPE_TX_CREDIT_UPDATE_IND:
++@@ -2349,7 +2339,6 @@ bool ath10k_htt_t2h_msg_handler(struct a
++ 			break;
++ 		}
++ 		skb_queue_tail(&htt->tx_fetch_ind_q, tx_fetch_ind);
++-		tasklet_schedule(&htt->txrx_compl_task);
++ 		break;
++ 	}
++ 	case HTT_T2H_MSG_TYPE_TX_FETCH_CONFIRM:
++@@ -2378,27 +2367,77 @@ void ath10k_htt_rx_pktlog_completion_han
++ }
++ EXPORT_SYMBOL(ath10k_htt_rx_pktlog_completion_handler);
++ 
++-static void ath10k_htt_txrx_compl_task(unsigned long ptr)
+++int ath10k_htt_txrx_compl_task(struct ath10k *ar, int budget)
++ {
++-	struct ath10k_htt *htt = (struct ath10k_htt *)ptr;
++-	struct ath10k *ar = htt->ar;
+++	struct ath10k_htt *htt = &ar->htt;
++ 	struct htt_tx_done tx_done = {};
++-	struct sk_buff_head rx_ind_q;
++ 	struct sk_buff_head tx_ind_q;
++ 	struct sk_buff *skb;
++ 	unsigned long flags;
++-	int num_mpdus;
+++	int quota = 0, done, num_rx_msdus;
+++	bool resched_napi = false;
++ 
++-	__skb_queue_head_init(&rx_ind_q);
++ 	__skb_queue_head_init(&tx_ind_q);
++ 
++-	spin_lock_irqsave(&htt->rx_in_ord_compl_q.lock, flags);
++-	skb_queue_splice_init(&htt->rx_in_ord_compl_q, &rx_ind_q);
++-	spin_unlock_irqrestore(&htt->rx_in_ord_compl_q.lock, flags);
+++	/* Since in-ord-ind can deliver more than 1 A-MSDU in single event,
+++	 * process it first to utilize full available quota.
+++	 */
+++	while (quota < budget) {
+++		if (skb_queue_empty(&htt->rx_in_ord_compl_q))
+++			break;
++ 
++-	spin_lock_irqsave(&htt->tx_fetch_ind_q.lock, flags);
++-	skb_queue_splice_init(&htt->tx_fetch_ind_q, &tx_ind_q);
++-	spin_unlock_irqrestore(&htt->tx_fetch_ind_q.lock, flags);
+++		skb = __skb_dequeue(&htt->rx_in_ord_compl_q);
+++		if (!skb) {
+++			resched_napi = true;
+++			goto exit;
+++		}
+++
+++		spin_lock_bh(&htt->rx_ring.lock);
+++		num_rx_msdus = ath10k_htt_rx_in_ord_ind(ar, skb);
+++		spin_unlock_bh(&htt->rx_ring.lock);
+++		if (num_rx_msdus < 0) {
+++			resched_napi = true;
+++			goto exit;
+++		}
+++
+++		dev_kfree_skb_any(skb);
+++		if (num_rx_msdus > 0)
+++			quota += num_rx_msdus;
+++
+++		if ((quota > ATH10K_NAPI_QUOTA_LIMIT) &&
+++		    !skb_queue_empty(&htt->rx_in_ord_compl_q)) {
+++			resched_napi = true;
+++			goto exit;
+++		}
+++	}
+++
+++	while (quota < budget) {
+++		/* no more data to receive */
+++		if (!atomic_read(&htt->num_mpdus_ready))
+++			break;
+++
+++		num_rx_msdus = ath10k_htt_rx_handle_amsdu(htt);
+++		if (num_rx_msdus < 0) {
+++			resched_napi = true;
+++			goto exit;
+++		}
+++
+++		quota += num_rx_msdus;
+++		atomic_dec(&htt->num_mpdus_ready);
+++		if ((quota > ATH10K_NAPI_QUOTA_LIMIT) &&
+++		    atomic_read(&htt->num_mpdus_ready)) {
+++			resched_napi = true;
+++			goto exit;
+++		}
+++	}
+++
+++	/* From NAPI documentation:
+++	 *  The napi poll() function may also process TX completions, in which
+++	 *  case if it processes the entire TX ring then it should count that
+++	 *  work as the rest of the budget.
+++	 */
+++	if ((quota < budget) && !kfifo_is_empty(&htt->txdone_fifo))
+++		quota = budget;
++ 
++ 	/* kfifo_get: called only within txrx_tasklet so it's neatly serialized.
++ 	 * From kfifo_get() documentation:
++@@ -2408,27 +2447,22 @@ static void ath10k_htt_txrx_compl_task(u
++ 	while (kfifo_get(&htt->txdone_fifo, &tx_done))
++ 		ath10k_txrx_tx_unref(htt, &tx_done);
++ 
+++	spin_lock_irqsave(&htt->tx_fetch_ind_q.lock, flags);
+++	skb_queue_splice_init(&htt->tx_fetch_ind_q, &tx_ind_q);
+++	spin_unlock_irqrestore(&htt->tx_fetch_ind_q.lock, flags);
+++
++ 	while ((skb = __skb_dequeue(&tx_ind_q))) {
++ 		ath10k_htt_rx_tx_fetch_ind(ar, skb);
++ 		dev_kfree_skb_any(skb);
++ 	}
++ 
++-	num_mpdus = atomic_read(&htt->num_mpdus_ready);
++-
++-	while (num_mpdus) {
++-		if (ath10k_htt_rx_handle_amsdu(htt))
++-			break;
++-
++-		num_mpdus--;
++-		atomic_dec(&htt->num_mpdus_ready);
++-	}
++-
++-	while ((skb = __skb_dequeue(&rx_ind_q))) {
++-		spin_lock_bh(&htt->rx_ring.lock);
++-		ath10k_htt_rx_in_ord_ind(ar, skb);
++-		spin_unlock_bh(&htt->rx_ring.lock);
++-		dev_kfree_skb_any(skb);
++-	}
++-
+++exit:
++ 	ath10k_htt_rx_msdu_buff_replenish(htt);
+++	/* In case of rx failure or more data to read, report budget
+++	 * to reschedule NAPI poll
+++	 */
+++	done = resched_napi ? budget : quota;
+++
+++	return done;
++ }
+++EXPORT_SYMBOL(ath10k_htt_txrx_compl_task);
++--- a/drivers/net/wireless/ath/ath10k/htt_tx.c
+++++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
++@@ -388,8 +388,6 @@ void ath10k_htt_tx_free(struct ath10k_ht
++ {
++ 	int size;
++ 
++-	tasklet_kill(&htt->txrx_compl_task);
++-
++ 	idr_for_each(&htt->pending_tx, ath10k_htt_tx_clean_up_pending, htt->ar);
++ 	idr_destroy(&htt->pending_tx);
++ 
++--- a/drivers/net/wireless/ath/ath10k/pci.c
+++++ b/drivers/net/wireless/ath/ath10k/pci.c
++@@ -1502,12 +1502,10 @@ void ath10k_pci_hif_send_complete_check(
++ 	ath10k_ce_per_engine_service(ar, pipe);
++ }
++ 
++-void ath10k_pci_kill_tasklet(struct ath10k *ar)
+++static void ath10k_pci_rx_retry_sync(struct ath10k *ar)
++ {
++ 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
++ 
++-	tasklet_kill(&ar_pci->intr_tq);
++-
++ 	del_timer_sync(&ar_pci->rx_post_retry);
++ }
++ 
++@@ -1566,7 +1564,7 @@ void ath10k_pci_hif_get_default_pipe(str
++ 						 ul_pipe, dl_pipe);
++ }
++ 
++-static void ath10k_pci_irq_msi_fw_mask(struct ath10k *ar)
+++void ath10k_pci_irq_msi_fw_mask(struct ath10k *ar)
++ {
++ 	u32 val;
++ 
++@@ -1747,7 +1745,7 @@ void ath10k_pci_ce_deinit(struct ath10k
++ 
++ void ath10k_pci_flush(struct ath10k *ar)
++ {
++-	ath10k_pci_kill_tasklet(ar);
+++	ath10k_pci_rx_retry_sync(ar);
++ 	ath10k_pci_buffer_cleanup(ar);
++ }
++ 
++@@ -2754,35 +2752,53 @@ static irqreturn_t ath10k_pci_interrupt_
++ 		return IRQ_NONE;
++ 	}
++ 
++-	if (ar_pci->oper_irq_mode == ATH10K_PCI_IRQ_LEGACY) {
++-		if (!ath10k_pci_irq_pending(ar))
++-			return IRQ_NONE;
++-
++-		ath10k_pci_disable_and_clear_legacy_irq(ar);
++-	}
+++	if ((ar_pci->oper_irq_mode == ATH10K_PCI_IRQ_LEGACY) &&
+++	    !ath10k_pci_irq_pending(ar))
+++		return IRQ_NONE;
++ 
++-	tasklet_schedule(&ar_pci->intr_tq);
+++	ath10k_pci_disable_and_clear_legacy_irq(ar);
+++	ath10k_pci_irq_msi_fw_mask(ar);
+++	napi_schedule(&ar->napi);
++ 
++ 	return IRQ_HANDLED;
++ }
++ 
++-static void ath10k_pci_tasklet(unsigned long data)
+++static int ath10k_pci_napi_poll(struct napi_struct *ctx, int budget)
++ {
++-	struct ath10k *ar = (struct ath10k *)data;
++-	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
+++	struct ath10k *ar = container_of(ctx, struct ath10k, napi);
+++	int done = 0;
++ 
++ 	if (ath10k_pci_has_fw_crashed(ar)) {
++-		ath10k_pci_irq_disable(ar);
++ 		ath10k_pci_fw_crashed_clear(ar);
++ 		ath10k_pci_fw_crashed_dump(ar);
++-		return;
+++		napi_complete(ctx);
+++		return done;
++ 	}
++ 
++ 	ath10k_ce_per_engine_service_any(ar);
++ 
++-	/* Re-enable legacy irq that was disabled in the irq handler */
++-	if (ar_pci->oper_irq_mode == ATH10K_PCI_IRQ_LEGACY)
+++	done = ath10k_htt_txrx_compl_task(ar, budget);
+++
+++	if (done < budget) {
+++		napi_complete(ctx);
+++		/* In case of MSI, it is possible that interrupts are received
+++		 * while NAPI poll is inprogress. So pending interrupts that are
+++		 * received after processing all copy engine pipes by NAPI poll
+++		 * will not be handled again. This is causing failure to
+++		 * complete boot sequence in x86 platform. So before enabling
+++		 * interrupts safer to check for pending interrupts for
+++		 * immediate servicing.
+++		 */
+++		if (CE_INTERRUPT_SUMMARY(ar)) {
+++			napi_reschedule(&ar->napi);
+++			goto out;
+++		}
++ 		ath10k_pci_enable_legacy_irq(ar);
+++		ath10k_pci_irq_msi_fw_unmask(ar);
+++	}
+++
+++out:
+++	return done;
++ }
++ 
++ static int ath10k_pci_request_irq_msi(struct ath10k *ar)
++@@ -2840,11 +2856,11 @@ static void ath10k_pci_free_irq(struct a
++ 	free_irq(ar_pci->pdev->irq, ar);
++ }
++ 
++-void ath10k_pci_init_irq_tasklets(struct ath10k *ar)
+++void ath10k_pci_init_napi(struct ath10k *ar)
++ {
++-	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
++-
++-	tasklet_init(&ar_pci->intr_tq, ath10k_pci_tasklet, (unsigned long)ar);
+++	netif_napi_add(&ar->napi_dev, &ar->napi, ath10k_pci_napi_poll,
+++		       ATH10K_NAPI_BUDGET);
+++	napi_enable(&ar->napi);
++ }
++ 
++ static int ath10k_pci_init_irq(struct ath10k *ar)
++@@ -2852,7 +2868,7 @@ static int ath10k_pci_init_irq(struct at
++ 	struct ath10k_pci *ar_pci = ath10k_pci_priv(ar);
++ 	int ret;
++ 
++-	ath10k_pci_init_irq_tasklets(ar);
+++	ath10k_pci_init_napi(ar);
++ 
++ 	if (ath10k_pci_irq_mode != ATH10K_PCI_IRQ_AUTO)
++ 		ath10k_info(ar, "limiting irq mode to: %d\n",
++@@ -3113,7 +3129,8 @@ int ath10k_pci_setup_resource(struct ath
++ 
++ void ath10k_pci_release_resource(struct ath10k *ar)
++ {
++-	ath10k_pci_kill_tasklet(ar);
+++	ath10k_pci_rx_retry_sync(ar);
+++	netif_napi_del(&ar->napi);
++ 	ath10k_pci_ce_deinit(ar);
++ 	ath10k_pci_free_pipes(ar);
++ }
++@@ -3274,7 +3291,7 @@ static int ath10k_pci_probe(struct pci_d
++ 
++ err_free_irq:
++ 	ath10k_pci_free_irq(ar);
++-	ath10k_pci_kill_tasklet(ar);
+++	ath10k_pci_rx_retry_sync(ar);
++ 
++ err_deinit_irq:
++ 	ath10k_pci_deinit_irq(ar);
++--- a/drivers/net/wireless/ath/ath10k/pci.h
+++++ b/drivers/net/wireless/ath/ath10k/pci.h
++@@ -177,8 +177,6 @@ struct ath10k_pci {
++ 	/* Operating interrupt mode */
++ 	enum ath10k_pci_irq_mode oper_irq_mode;
++ 
++-	struct tasklet_struct intr_tq;
++-
++ 	struct ath10k_pci_pipe pipe_info[CE_COUNT_MAX];
++ 
++ 	/* Copy Engine used for Diagnostic Accesses */
++@@ -294,8 +292,7 @@ void ath10k_pci_free_pipes(struct ath10k
++ void ath10k_pci_free_pipes(struct ath10k *ar);
++ void ath10k_pci_rx_replenish_retry(unsigned long ptr);
++ void ath10k_pci_ce_deinit(struct ath10k *ar);
++-void ath10k_pci_init_irq_tasklets(struct ath10k *ar);
++-void ath10k_pci_kill_tasklet(struct ath10k *ar);
+++void ath10k_pci_init_napi(struct ath10k *ar);
++ int ath10k_pci_init_pipes(struct ath10k *ar);
++ int ath10k_pci_init_config(struct ath10k *ar);
++ void ath10k_pci_rx_post(struct ath10k *ar);
++@@ -303,6 +300,7 @@ void ath10k_pci_flush(struct ath10k *ar)
++ void ath10k_pci_enable_legacy_irq(struct ath10k *ar);
++ bool ath10k_pci_irq_pending(struct ath10k *ar);
++ void ath10k_pci_disable_and_clear_legacy_irq(struct ath10k *ar);
+++void ath10k_pci_irq_msi_fw_mask(struct ath10k *ar);
++ int ath10k_pci_wait_for_target_init(struct ath10k *ar);
++ int ath10k_pci_setup_resource(struct ath10k *ar);
++ void ath10k_pci_release_resource(struct ath10k *ar);
 diff --git a/package/kernel/mac80211/patches/332-cfg80211-fix-faulty-variable-initialization-in-ieee8.patch b/package/kernel/mac80211/patches/332-cfg80211-fix-faulty-variable-initialization-in-ieee8.patch
 deleted file mode 100644
 index e414f23..0000000
