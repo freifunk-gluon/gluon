@@ -153,7 +153,6 @@ int main(int argc, char **argv) {
   char *sse = NULL;
   bool loop = false;
   int ret = false;
-  bool destination_set = false;
 
   int c;
   while ((c = getopt(argc, argv, "p:d:r:i:t:s:c:lh")) != -1)
@@ -165,8 +164,6 @@ int main(int argc, char **argv) {
         if (!inet_pton(AF_INET6, optarg, &client_addr.sin6_addr)) {
           perror("Invalid IPv6 address. This message will probably confuse you");
           exit(EXIT_FAILURE);
-        } else {
-          destination_set = true;
         }
         break;
       case 'i':
@@ -217,7 +214,7 @@ int main(int argc, char **argv) {
 	exit(EXIT_FAILURE);
   }
 
-  if (!destination_set) {
+  if (IN6_IS_ADDR_UNSPECIFIED(&client_addr.sin6_addr)) {
 	fprintf(stderr, "No destination address supplied\n");
 	exit(EXIT_FAILURE);
   }
