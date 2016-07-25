@@ -38,7 +38,7 @@
 void usage() {
   puts("Usage: gluon-neighbour-info [-h] [-s] [-l] [-c <count>] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
   puts("  -p <int>         UDP port");
-  puts("  -d <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
+  puts("  -d <ip6>         destination address (unicast ip6 or multicast group, e.g. ff02:0:0:0:0:0:2:1001)");
   puts("  -i <string>      interface, e.g. eth0 ");
   puts("  -r <string>      request, e.g. nodeinfo");
   puts("  -t <sec>         timeout in seconds (default: 3)");
@@ -145,7 +145,6 @@ int main(int argc, char **argv) {
   }
 
   client_addr.sin6_family = AF_INET6;
-  client_addr.sin6_addr = in6addr_any;
 
   opterr = 0;
 
@@ -206,8 +205,18 @@ int main(int argc, char **argv) {
     }
 
   if (request_string == NULL) {
-    fprintf(stderr, "No request string supplied");
+    fprintf(stderr, "No request string supplied\n");
     exit(EXIT_FAILURE);
+  }
+
+  if (client_addr.sin6_port == htons(0)) {
+	fprintf(stderr, "No port supplied\n");
+	exit(EXIT_FAILURE);
+  }
+
+  if (IN6_IS_ADDR_UNSPECIFIED(&client_addr.sin6_addr)) {
+	fprintf(stderr, "No destination address supplied\n");
+	exit(EXIT_FAILURE);
   }
 
   if (sse) {
