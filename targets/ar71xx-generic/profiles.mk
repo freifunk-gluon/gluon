@@ -355,6 +355,13 @@ $(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-hornet-ub))
 $(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121))
 $(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121u))
 
+ifneq ($(BROKEN),)
+# Tube2H
+$(eval $(call GluonProfile,TUBE2H))
+$(eval $(call GluonModel,TUBE2H8M,tube2h-8m,alfa-tube2h-8m)) # BROKEN: working, only generic bgn
+$(eval $(call GluonModel,TUBE2H16M,tube2h-16m,alfa-tube2h-16m)) # BROKEN: untested
+endif
+
 ## Meraki
 
 # Meraki MR12/MR62
