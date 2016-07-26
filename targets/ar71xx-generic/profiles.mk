@@ -351,19 +351,19 @@ $(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k-ct ath1
 $(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac))
 $(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2))
 
-## ALFA
+## ALFA NETWORK
 
 # Hornet-UB
 $(eval $(call GluonProfile,HORNETUB))
-$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-hornet-ub))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121u))
+$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-network-hornet-ub))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121u))
 
 ifneq ($(BROKEN),)
 # Tube2H
-$(eval $(call GluonProfile,TUBE2H))
-$(eval $(call GluonModel,TUBE2H8M,tube2h-8m,alfa-tube2h-8m)) # BROKEN: working, only generic bgn
-$(eval $(call GluonModel,TUBE2H16M,tube2h-16m,alfa-tube2h-16m)) # BROKEN: untested
+$(eval $(call GluonProfile,TUBE2H)) # Autoupdater broken (OpenWrt code doesn't distinguish 8M and 16M versions)
+$(eval $(call GluonModel,TUBE2H8M,tube2h-8m,alfa-network-tube2h-8m)) # BROKEN: working, only generic bgn
+$(eval $(call GluonModel,TUBE2H16M,tube2h-16m,alfa-network-tube2h-16m)) # BROKEN: untested
 endif
 
 ## Meraki
