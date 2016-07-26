@@ -7,7 +7,9 @@ SERVICE_DAEMONIZE=1
 
 
 start() {
-	service_start /usr/sbin/uradvd -i local-node -a $(lua -e 'print(require("gluon.site_config").prefix6)') --default-lifetime 900
+  [ -x /lib/gluon/radvd/arguments ] && {
+	service_start /usr/sbin/uradvd $(/lib/gluon/radvd/arguments)
+  }
 }
 
 stop() {
