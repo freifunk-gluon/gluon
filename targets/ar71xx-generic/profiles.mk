@@ -351,9 +351,9 @@ $(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2))
 
 # Hornet-UB
 $(eval $(call GluonProfile,HORNETUB))
-$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-hornet-ub))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121u))
+$(eval $(call GluonModel,HORNETUB,alfa-hornet-ub,alfa-network-hornet-ub))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-ap121,alfa-network-ap121))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-ap121u,alfa-network-ap121u))
 
 ifneq ($(BROKEN),)
 # Tube2H
