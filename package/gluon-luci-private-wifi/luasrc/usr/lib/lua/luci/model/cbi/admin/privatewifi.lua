@@ -1,5 +1,7 @@
-local f, s, o, ssid
 local uci = luci.model.uci.cursor()
+local util = require 'gluon.util'
+
+local f, s, o, ssid
 local config = 'wireless'
 
 -- where to read the configuration from
@@ -33,19 +35,24 @@ function f.handle(self, state, data)
   if state == FORM_VALID then
     uci:foreach(config, "wifi-device",
       function(s)
-        local device = s['.name']
-        local name   = "wan_" .. device
+        local radio = s['.name']
+        local name   = "wan_" .. radio
 
         if data.enabled == '1' then
+          -- get_wlan_mac_from_driver will return nil (and thus leave the
+          -- MAC address unset) if the driver doesn't provide enough addresses
+          local macaddr = util.get_wlan_mac_from_driver(radio, 4)
+
           -- set up WAN wifi-iface
           uci:section(config, "wifi-iface", name,
                       {
-                        device     = device,
+                        device     = radio,
                         network    = "wan",
                         mode       = 'ap',
                         encryption = 'psk2',
                         ssid       = data.ssid,
                         key        = data.key,
+                        macaddr    = macaddr,
                         disabled   = 0,
                       }
           )
