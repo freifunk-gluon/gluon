@@ -151,7 +151,7 @@ function get_mac(index)
   return generate_mac(3*(index-1))
 end
 
-function get_wlan_mac(radio, index, vif)
+function get_wlan_mac_from_driver(radio, vif)
   local primary = sysconfig.primary_mac:lower()
 
   local i = 1
@@ -163,6 +163,13 @@ function get_wlan_mac(radio, index, vif)
 
       i = i + 1
     end
+  end
+end
+
+function get_wlan_mac(radio, index, vif)
+  local addr = get_wlan_mac_from_driver(radio, vif)
+  if addr then
+    return addr
   end
 
   return generate_mac(3*(index-1) + (vif-1))
