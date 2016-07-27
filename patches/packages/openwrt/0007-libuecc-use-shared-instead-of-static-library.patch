@@ -1,0 +1,68 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 3 May 2016 21:33:34 +0200
+Subject: libuecc: use shared instead of static library
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/libs/libuecc/Makefile b/libs/libuecc/Makefile
+index c1ba53f..8111062 100644
+--- a/libs/libuecc/Makefile
++++ b/libs/libuecc/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=libuecc
+ PKG_VERSION:=7
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+@@ -35,11 +35,16 @@ CMAKE_OPTIONS += \
+ 	-DCMAKE_BUILD_TYPE:String="MINSIZEREL"
+ 
+ 
++define Package/libuecc/install
++	$(INSTALL_DIR) $(1)/usr/lib
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libuecc.so* $(1)/usr/lib/
++endef
++
+ define Build/InstallDev
+ 	$(INSTALL_DIR) $(1)/usr/include
+ 	$(CP) $(PKG_INSTALL_DIR)/usr/include/libuecc-$(PKG_VERSION) $(1)/usr/include/
+ 	$(INSTALL_DIR) $(1)/usr/lib
+-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libuecc.a $(1)/usr/lib/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libuecc.so* $(1)/usr/lib/
+ 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+ 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libuecc.pc $(1)/usr/lib/pkgconfig/
+ endef
+diff --git a/net/fastd/Makefile b/net/fastd/Makefile
+index 5c550d8..aeaa1df 100644
+--- a/net/fastd/Makefile
++++ b/net/fastd/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=fastd
+ PKG_VERSION:=18
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+@@ -43,7 +43,7 @@ PKG_CONFIG_DEPENDS:=\
+ 	CONFIG_FASTD_WITH_STATUS_SOCKET
+ 
+ 
+-PKG_BUILD_DEPENDS:=nacl libuecc
++PKG_BUILD_DEPENDS:=nacl
+ 
+ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/cmake.mk
+@@ -51,7 +51,7 @@ include $(INCLUDE_DIR)/cmake.mk
+ define Package/fastd
+   SECTION:=net
+   CATEGORY:=Network
+-  DEPENDS:=+kmod-tun +librt +libpthread +FASTD_WITH_STATUS_SOCKET:libjson-c +FASTD_WITH_CAPABILITIES:libcap
++  DEPENDS:=+kmod-tun +librt +libpthread +libuecc +FASTD_WITH_STATUS_SOCKET:libjson-c +FASTD_WITH_CAPABILITIES:libcap
+   TITLE:=Fast and Secure Tunneling Daemon
+   URL:=https://projects.universe-factory.net/projects/fastd
+   SUBMENU:=VPN
