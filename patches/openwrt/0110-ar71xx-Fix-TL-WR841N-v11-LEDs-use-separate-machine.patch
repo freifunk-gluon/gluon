@@ -175,7 +175,7 @@ index 0209603..f806568 100644
  {
  	tl_ap143_setup();
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 392dec4..6d46c1e 100644
+index e074f8a..f99ea2b 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -595,7 +595,7 @@ endef

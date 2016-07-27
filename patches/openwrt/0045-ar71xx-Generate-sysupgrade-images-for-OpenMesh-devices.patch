@@ -15,7 +15,7 @@ Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
 Forwarded: https://patchwork.ozlabs.org/patch/624172/
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 916d4e2..f91e20e 100644
+index 58118f2..7aee0c8 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -1877,6 +1877,9 @@ define Image/Build/OpenMesh

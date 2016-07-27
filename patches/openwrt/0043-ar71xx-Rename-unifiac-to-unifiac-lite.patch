@@ -143,7 +143,7 @@ index 94eff18..eac0240 100644
  define Profile/UBNTUNIFIOUTDOOR
  	NAME:=Ubiquiti UniFiAP Outdoor
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index dd59f2d..31aff78 100644
+index dd59f2d..3efa2e1 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -741,14 +741,19 @@ endef
@@ -156,14 +156,15 @@ index dd59f2d..31aff78 100644
    MTDPARTS = spi0.0:384k(u-boot)ro,64k(u-boot-env)ro,7744k(firmware),7744k(ubnt-airos)ro,128k(bs)ro,256k(cfg)ro,64k(EEPROM)ro
    IMAGES := sysupgrade.bin
    IMAGE/sysupgrade.bin = append-kernel $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
-+endef
+-  BOARDNAME := UBNT-UF-AC
+ endef
+-TARGET_DEVICES += ubnt-unifiac
 +
 +define Device/ubnt-unifiac-lite
 +  $(Device/ubnt-unifiac)
 +  DEVICE_PROFILE := UBNT UBNTUNIFIACLITE
-   BOARDNAME := UBNT-UF-AC
- endef
--TARGET_DEVICES += ubnt-unifiac
++  BOARDNAME := UBNT-UF-AC-LITE
++endef
 +TARGET_DEVICES += ubnt-unifiac-lite
  
  rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
