@@ -29,7 +29,7 @@ function index()
 		root.index = true
 	end
 
-	local page = entry({"admin"}, alias("admin", "index"), _("Expert Mode"), 10)
+	local page = entry({"admin"}, alias("admin", "index"), _("Advanced settings"), 10)
 	page.sysauth = "root"
 	page.sysauth_authenticator = function() return "root" end
 	page.index = true
