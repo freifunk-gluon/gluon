@@ -33,7 +33,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
     return
   end
 
-  macaddr = util.get_wlan_mac(radio, index, 3)
+  local macaddr = util.get_wlan_mac(radio, index, 3)
   if not macaddr then
     return
   end
@@ -88,7 +88,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
     return
   end
 
-  macaddr = util.get_wlan_mac(radio, index, 2)
+  local macaddr = util.get_wlan_mac(radio, index, 2)
   if not macaddr then
     return
   end
