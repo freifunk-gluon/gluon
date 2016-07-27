@@ -3,7 +3,7 @@ Date: Wed, 9 Mar 2016 06:46:44 +0100
 Subject: netifd: update to latest version from LEDE
 
 diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
-index 619024b..d9c63eb 100644
+index 619024b..4297810 100644
 --- a/package/network/config/netifd/Makefile
 +++ b/package/network/config/netifd/Makefile
 @@ -1,15 +1,15 @@
@@ -15,8 +15,7 @@ index 619024b..d9c63eb 100644
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
--PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
-+PKG_SOURCE_URL=$(LEDE_GIT)/project/netifd.git
+ PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=245527193e90906451be35c2b8e972b8712ea6ab
 +PKG_SOURCE_VERSION:=99e6dc68bbac5a57a0ebca810a9dc36e38667821
