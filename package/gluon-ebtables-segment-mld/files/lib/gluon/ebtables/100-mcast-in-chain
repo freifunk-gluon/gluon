@@ -1,0 +1,2 @@
+chain('MULTICAST_IN', 'RETURN', 'nat')
+chain('MULTICAST_IN_ICMPV6', 'RETURN', 'nat')
