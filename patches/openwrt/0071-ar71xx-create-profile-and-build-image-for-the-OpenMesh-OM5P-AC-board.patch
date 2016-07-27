@@ -31,7 +31,7 @@ index 06cf135..64aaa24 100644
          NAME:=OpenMesh MR600
          PACKAGES:=kmod-ath9k om-watchdog
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index b74aa45..06dbb77 100644
+index 0ebb7dc..0cf1df1 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -2043,6 +2043,7 @@ $(eval $(call SingleProfile,Netgear,64kraw,WPN824N,wpn824n,WPN824N,ttyS0,115200,

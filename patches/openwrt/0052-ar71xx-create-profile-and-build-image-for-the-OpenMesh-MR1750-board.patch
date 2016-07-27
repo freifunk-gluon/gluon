@@ -35,7 +35,7 @@ index 41b462e..06cf135 100644
  
  define Profile/OPENMESH/Description
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index f91e20e..b74aa45 100644
+index 7aee0c8..0ebb7dc 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -2045,6 +2045,7 @@ $(eval $(call SingleProfile,OpenMesh,squashfs-only,OM2P,om2p,,,,OM2P))

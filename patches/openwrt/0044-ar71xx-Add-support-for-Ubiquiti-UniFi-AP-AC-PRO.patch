@@ -193,12 +193,12 @@ index eac0240..69b8398 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 31aff78..916d4e2 100644
+index 3efa2e1..58118f2 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -753,7 +753,13 @@ define Device/ubnt-unifiac-lite
    DEVICE_PROFILE := UBNT UBNTUNIFIACLITE
-   BOARDNAME := UBNT-UF-AC
+   BOARDNAME := UBNT-UF-AC-LITE
  endef
 -TARGET_DEVICES += ubnt-unifiac-lite
 +

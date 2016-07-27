@@ -218,7 +218,7 @@ index 3e5c2a2..0209603 100644
 +MIPS_MACHINE(ATH79_MACH_TL_WR842N_V3, "TL-WR842N-v3", "TP-LINK TL-WR842N/ND v3",
 +	     tl_wr842n_v3_setup);
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index a35ded9..392dec4 100644
+index b790610..e074f8a 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -607,6 +607,13 @@ define Device/tl-wr842n-v2
