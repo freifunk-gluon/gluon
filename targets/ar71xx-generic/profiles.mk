@@ -357,9 +357,8 @@ $(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121
 
 ifneq ($(BROKEN),)
 # Tube2H
-$(eval $(call GluonProfile,TUBE2H)) # Autoupdater broken (OpenWrt code doesn't distinguish 8M and 16M versions)
-$(eval $(call GluonModel,TUBE2H8M,tube2h-8m,alfa-network-tube2h-8m)) # BROKEN: working, only generic bgn
-$(eval $(call GluonModel,TUBE2H16M,tube2h-16m,alfa-network-tube2h-16m)) # BROKEN: untested
+$(eval $(call GluonProfile,TUBE2H))
+$(eval $(call GluonModel,TUBE2H,tube2h-8M,alfa-network-tube2h)) # BROKEN: needs more testing
 endif
 
 ## Meraki
