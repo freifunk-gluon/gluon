@@ -1,0 +1,28 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 28 Jul 2016 15:59:04 +0200
+Subject: ar71xx: don't use D-Link DIR-505 status LED as ethernet indicator
+
+The stock firmware uses the single LED as status indicator only. Using the
+same LED both for status and as ethernet indicator is uncommon, and has
+been confusing users who were using the device as a WLAN mesh node (so the
+LED was just off, as no ethernet was connected).
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE adbbfb7ff900c489e6be34b2ec2834172dff7943
+
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index 9a0d7eb..7c18346 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -132,10 +132,6 @@ dhp-1565-a1)
+ 	ucidef_set_led_switch "wan" "WAN" "d-link:green:planet" "switch0" "0x20"
+ 	;;
+ 
+-dir-505-a1)
+-	ucidef_set_led_netdev "lan" "LAN" "d-link:green:power" "eth1"
+-	;;
+-
+ dir-600-a1|\
+ dir-615-e1|\
+ dir-615-e4)
