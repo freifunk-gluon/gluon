@@ -8,15 +8,15 @@ adapter (they would lose their configuration).
 
 As a temporary fix, disable this channel switch function.
 
-diff --git a/package/network/services/hostapd/patches/470-no_channel_switch.patch b/package/network/services/hostapd/patches/470-no_channel_switch.patch
+diff --git a/package/network/services/hostapd/patches/900-no_channel_switch.patch b/package/network/services/hostapd/patches/900-no_channel_switch.patch
 new file mode 100644
-index 0000000..2eb1d7e
+index 0000000..c614515
 --- /dev/null
-+++ b/package/network/services/hostapd/patches/470-no_channel_switch.patch
++++ b/package/network/services/hostapd/patches/900-no_channel_switch.patch
 @@ -0,0 +1,68 @@
 +--- a/src/common/hw_features_common.c
 ++++ b/src/common/hw_features_common.c
-+@@ -172,7 +172,6 @@ int check_40mhz_5g(struct hostapd_hw_mod
++@@ -171,7 +171,6 @@ int check_40mhz_5g(struct hostapd_hw_mod
 + 		   struct wpa_scan_results *scan_res, int pri_chan,
 + 		   int sec_chan)
 + {
@@ -24,8 +24,8 @@ index 0000000..2eb1d7e
 + 	int bss_pri_chan, bss_sec_chan;
 + 	size_t i;
 + 	int match;
-+@@ -183,57 +182,6 @@ int check_40mhz_5g(struct hostapd_hw_mod
-+ 	if (pri_chan == sec_chan)
++@@ -180,57 +179,6 @@ int check_40mhz_5g(struct hostapd_hw_mod
++ 	    pri_chan == sec_chan)
 + 		return 0;
 + 
 +-	pri_freq = hw_get_freq(mode, pri_chan);
