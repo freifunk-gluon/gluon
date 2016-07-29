@@ -237,6 +237,10 @@ $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h,buffalo-wzr-hp-g450h))
 $(eval $(call GluonProfile,WZRHPG300NH))
 $(eval $(call GluonModel,WZRHPG300NH,wzr-hp-g300nh,buffalo-wzr-hp-g300nh))
 
+# WZR-HP-G300NH2
+$(eval $(call GluonProfile,WZRHPG300NH2))
+$(eval $(call GluonModel,WZRHPG300NH2,wzr-hp-g300nh2,buffalo-wzr-hp-g300nh2))
+
 # WZR-HP-AG300H (factory)
 $(eval $(call GluonProfile,WZRHPAG300H))
 $(eval $(call GluonProfileSysupgradeSuffix,WZRHPAG300H))
