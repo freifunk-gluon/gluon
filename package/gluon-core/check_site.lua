@@ -30,3 +30,5 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
     need_number(config .. '.channel')
   end
 end
+
+need_boolean('poe_passthrough', false)
