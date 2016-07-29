@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = (require 'luci.model.uci').cursor()
+
+if site.radv_filterd and site.radv_filterd.threshold then
+    uci:foreach('gluon-radv-filterd', 'filterd', function(section)
+        uci:set('gluon-radv-filterd', section['.name'], 'threshold', site.radv_filterd.threshold)
+    end)
+    uci:save('gluon-radv-filterd')
+end

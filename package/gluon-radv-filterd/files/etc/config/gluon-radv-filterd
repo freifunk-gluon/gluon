@@ -1,0 +1,4 @@
+config filterd
+	option iface 'br-client'
+	option chain 'RADV_FILTER'
+	option threshold '20'
