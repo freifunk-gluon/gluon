@@ -229,6 +229,9 @@ mesh_on_wan \: optional
 mesh_on_lan \: optional
     Enables the mesh on the LAN port (``true`` or ``false``).
 
+poe_passthrough \: optional
+    Enable PoE passthrough by default on hardware with such a feature.
+
 autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
 
