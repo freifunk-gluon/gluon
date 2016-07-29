@@ -1,9 +1,9 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Wed, 9 Mar 2016 06:46:44 +0100
-Subject: netifd: update to latest version from LEDE
+Date: Fri, 29 Jul 2016 21:28:24 +0200
+Subject: netifd: update to latest version
 
 diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
-index 619024b..4297810 100644
+index 619024b..dc83ca6 100644
 --- a/package/network/config/netifd/Makefile
 +++ b/package/network/config/netifd/Makefile
 @@ -1,15 +1,15 @@
@@ -11,14 +11,14 @@ index 619024b..4297810 100644
  
  PKG_NAME:=netifd
 -PKG_VERSION:=2015-12-16
-+PKG_VERSION:=2016-06-06
++PKG_VERSION:=2016-07-29
  PKG_RELEASE=$(PKG_SOURCE_VERSION)
  
  PKG_SOURCE_PROTO:=git
  PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
  PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 -PKG_SOURCE_VERSION:=245527193e90906451be35c2b8e972b8712ea6ab
-+PKG_SOURCE_VERSION:=99e6dc68bbac5a57a0ebca810a9dc36e38667821
++PKG_SOURCE_VERSION:=656c387974879105c2aaec6b62478d0195067f2d
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 -PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
 +PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
@@ -38,7 +38,7 @@ index 542fc08..bdadbbc 100755
  	procd_close_instance
  }
 diff --git a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
-index 0e88af9..abfdaaf 100755
+index 0e88af9..1d3a209 100755
 --- a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
 +++ b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
 @@ -12,6 +12,7 @@ proto_dhcp_init_config() {
@@ -75,7 +75,7 @@ index 0e88af9..abfdaaf 100755
 -		${hostname:+-H $hostname} \
 -		${vendorid:+-V $vendorid} \
 -		$clientid $broadcast $dhcpopts
-+		${hostname:+-H "$hostname"} \
++		${hostname:+-x "hostname:$hostname"} \
 +		${vendorid:+-V "$vendorid"} \
 +		$clientid $broadcast $release $dhcpopts
  }
