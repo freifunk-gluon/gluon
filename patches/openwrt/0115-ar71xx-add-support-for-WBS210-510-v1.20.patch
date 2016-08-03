@@ -1,0 +1,58 @@
+From: kb-light <freifunk@kb-light.de>
+Date: Wed, 3 Aug 2016 20:05:29 +0200
+Subject: ar71xx: add support for WBS210/510 v1.20
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 480cf93..90ff05b 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -344,6 +344,12 @@ tplink_pharos_board_detect() {
+ 	'CPE520(TP-LINK|UN|N300-5)')
+ 		model='TP-Link CPE520'
+ 		;;
++	'WBS210(TP-LINK|UN|N300-2)')
++		model='TP-Link WBS210'
++		;;
++	'WBS510(TP-LINK|UN|N300-5)')
++		model='TP-Link WBS510'
++		;;
+ 	esac
+ 
+ 	[ -n "$model" ] && AR71XX_MODEL="$model v$2"
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+index 8bf5c0f..f120ff9 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+@@ -28,7 +28,7 @@
+ #define CPE510_GPIO_LED_L1	13
+ #define CPE510_GPIO_LED_L2	14
+ #define CPE510_GPIO_LED_L3	15
+-#define CPE510_GPIO_LED_L4	16
++#define CPE510_GPIO_LED_L4	2
+ 
+ #define CPE510_GPIO_BTN_RESET	4
+ 
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 77a894b..4c1b763 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -128,7 +128,7 @@ static const struct flash_partition_entry cpe510_partitions[] = {
+ };
+ 
+ /**
+-   The support list for CPE210/220/510/520
++   The support list for CPE210/220/510/520 and WBS210/510
+ */
+ static const char cpe510_support_list[] =
+ 	"SupportList:\r\n"
+@@ -139,7 +139,9 @@ static const char cpe510_support_list[] =
+ 	"CPE210(TP-LINK|UN|N300-2):1.0\r\n"
+ 	"CPE210(TP-LINK|UN|N300-2):1.1\r\n"
+ 	"CPE220(TP-LINK|UN|N300-2):1.0\r\n"
+-	"CPE220(TP-LINK|UN|N300-2):1.1\r\n";
++	"CPE220(TP-LINK|UN|N300-2):1.1\r\n"
++	"WBS510(TP-LINK|UN|N300-5):1.20\r\n"
++	"WBS210(TP-LINK|UN|N300-2):1.20\r\n";
+ 
+ #define error(_ret, _errno, _str, ...)				\
+ 	do {							\
