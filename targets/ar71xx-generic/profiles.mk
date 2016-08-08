@@ -359,11 +359,9 @@ $(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-network-hornet-ub))
 $(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121))
 $(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121u))
 
-ifneq ($(BROKEN),)
 # Tube2H
 $(eval $(call GluonProfile,TUBE2H))
-$(eval $(call GluonModel,TUBE2H,tube2h-8M,alfa-network-tube2h)) # BROKEN: needs more testing
-endif
+$(eval $(call GluonModel,TUBE2H,tube2h-8M,alfa-network-tube2h))
 
 ## Meraki
 
