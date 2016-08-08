@@ -24,6 +24,7 @@ o.rmempty = false
 
 o = s:option(Value, "ssid", translate("Name (SSID)"))
 o:depends("enabled", '1')
+o.datatype = "maxlength(32)"
 o.default = ssid
 
 o = s:option(Value, "key", translate("Key"), translate("8-63 characters"))
