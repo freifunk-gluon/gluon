@@ -1,6 +1,6 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
 Date: Fri, 29 Jul 2016 21:36:45 +0200
-Subject: mac80211, hostapd, iw, ...: update to LEDE b2ddfbc1c7b935cf931b4c336969b65947270ce9
+Subject: mac80211, hostapd, iw, ...: update to LEDE 27dffa0b0c53a1a817a9a37d1647c7e70672273f
 
 diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
 index b03d644..e2cf92e 100644
@@ -1089,6 +1089,151 @@ index ea229d6..06f3b8b 100644
  			dev_id="	option path	'$path'"
  		else
  			dev_id="	option macaddr	$(cat /sys/class/ieee80211/${dev}/macaddress)"
+diff --git a/package/kernel/mac80211/files/regdb.txt b/package/kernel/mac80211/files/regdb.txt
+index 463ace3..c4a9b2d 100644
+--- a/package/kernel/mac80211/files/regdb.txt
++++ b/package/kernel/mac80211/files/regdb.txt
+@@ -136,19 +136,35 @@ country BF: DFS-FCC
+ 	(5490 - 5730 @ 160), (24), DFS
+ 	(5735 - 5835 @ 80), (30)
+ 
++# Bulgarian rules as defined by the Communications Regulation Commission in the
++# following documents:
++#
++# Rules for carrying out electronic communications through radio equipment using
++# radio spectrum, which does not need to be individually assigned (the Rules):
++# http://www.crc.bg/files/_bg/Pravila_09_06_2015.pdf
++#
++# List of radio equipment that uses harmonized within the European Union bands
++# and electronic communications terminal equipment (the List):
++# http://www.crc.bg/files/_bg/Spisak_2015.pdf
++#
++# Note: The transmit power limits in the 5250-5350 MHz and 5470-5725 MHz bands
++# can be raised by 3 dBm if TPC is enabled. Refer to BDS EN 301 893 for details.
+ country BG: DFS-ETSI
++	# Wideband data transmission systems (WDTS) in the 2.4GHz ISM band, ref:
++	# I.22 of the List, BDS EN 300 328
+ 	(2402 - 2482 @ 40), (20)
+-	(5170 - 5250 @ 80), (20), AUTO-BW
++	# 5 GHz Radio Local Area Networks (RLANs), ref:
++	# II.H01 of the List, BDS EN 301 893
++	(5170 - 5250 @ 80), (23), AUTO-BW
+ 	(5250 - 5330 @ 80), (20), DFS, AUTO-BW
++	# II.H01 of the List, I.54 from the List, BDS EN 301 893
+ 	(5490 - 5710 @ 160), (27), DFS
+-	# 5 GHz Short Range Devices, ref:
+-	# Etsi EN 300 440-1
+-	# Etsi EN 300 440-2
+-	# http://crc.bg/files/_bg/Spisak_2015.pdf
+-	# http://crc.bg/files/_bg/Pravila_2015_resh24.pdf
++	# Short range devices (SRDs) in the 5725-5875 MHz frequency range, ref:
++	# I.43 of the List, BDS EN 300 440-2, BDS EN 300 440-1
+ 	(5725 - 5875 @ 80), (14)
+-	# 60 GHz band channels 1-4, ref: Etsi En 302 567
+-	(57000 - 66000 @ 2160), (40)
++	# 60 GHz Multiple-Gigabit RLAN Systems, ref:
++	# II.H03 of the List, BDS EN 302 567-2
++	(57000 - 66000 @ 2160), (40), NO-OUTDOOR
+ 
+ country BH: DFS-JP
+ 	(2402 - 2482 @ 40), (20)
+@@ -275,6 +291,12 @@ country CR: DFS-FCC
+ 	(5490 - 5730 @ 20), (24), DFS
+ 	(5735 - 5835 @ 20), (30)
+ 
++# http://www.mincom.gob.cu/?q=marcoregulatorio
++# - Redes Informáticas
++# Resolución 127, 2011 - Reglamento Banda 2,4 GHz.
++country CU: DFS-FCC
++	(2400 - 2483.5 @ 40), (200 mW)
++
+ country CX: DFS-FCC
+ 	(2402 - 2482 @ 40), (20)
+ 	(5170 - 5250 @ 80), (24), AUTO-BW
+@@ -302,28 +324,41 @@ country CZ: DFS-ETSI
+ 	# 60 GHz band channels 1-4, ref: Etsi En 302 567
+ 	(57000 - 66000 @ 2160), (40)
+ 
+-# Data from "Frequenznutzungsplan" (as published in April 2008), downloaded from
+-# http://www.bundesnetzagentur.de/cae/servlet/contentblob/38448/publicationFile/2659/Frequenznutzungsplan2008_Id17448pdf.pdf
+-# For the 5GHz range also see
+-# http://www.bundesnetzagentur.de/cae/servlet/contentblob/38216/publicationFile/6579/WLAN5GHzVfg7_2010_28042010pdf.pdf
+-# The values have been reduced by a factor of 2 (3db) for non TPC devices
+-# (in other words: devices with TPC can use twice the tx power of this table).
+-# Note that the docs do not require TPC for 5150--5250; the reduction to
+-# 100mW thus is not strictly required -- however the conservative 100mW
++# Allocation for the 2.4 GHz band (Vfg 10 / 2013, Allgemeinzuteilung von
++# Frequenzen für die Nutzung in lokalen Netzwerken; Wireless Local Area
++# Networks (WLAN-Funkanwendungen).
++# https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Allgemeinzuteilungen/2013_10_WLAN_2,4GHz_pdf.pdf
++#
++# Allocation for the 5 GHz band (Vfg. 7 / 2010, Allgemeinzuteilung von
++# Frequenzen in den Bereichen 5150 MHz - 5350 MHz und 5470 MHz - 5725 MHz für
++# Funkanwendungen zur breitbandigen Datenübertragung, WAS/WLAN („Wireless
++# Access Systems including Wireless Local Area Networks“).
++# https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Allgemeinzuteilungen/2010_07_WLAN_5GHz_pdf.pdf
++# The values for the 5 GHz have been reduced by a factor of 2 (3db) for non TPC
++# devices (in other words: devices with TPC can use twice the tx power of this
++# table). Note that the docs do not require TPC for 5150--5250; the reduction
++# to 100mW thus is not strictly required -- however the conservative 100mW
+ # limit is used here as the non-interference with radar and satellite
+ # apps relies on the attenuation by the building walls only in the
+ # absence of DFS; the neighbour countries have 100mW limit here as well.
++#
++# The ETSI EN 300 440-1 standard for short range devices in the 5 GHz band has
++# been implemented in Germany:
++# https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Allgemeinzuteilungen/2014_69_SRD_pdf.pdf
++#
++# Allocation for the 60 GHz band (Allgemeinzuteilung von Frequenzen im
++# Bereich 57 GHz - 66 GHz für Funkanwendungen für weitbandige
++# Datenübertragungssysteme; „Multiple Gigabit WAS/RLAN Systems (MGWS)“).
++# https://www.bundesnetzagentur.de/SharedDocs/Downloads/DE/Sachgebiete/Telekommunikation/Unternehmen_Institutionen/Frequenzen/Allgemeinzuteilungen/2011_08_MGWS_pdf.pdf
+ 
+ country DE: DFS-ETSI
+-	# entries 279004 and 280006
+ 	(2400 - 2483.5 @ 40), (100 mW)
+-	# entry 303005
+ 	(5150 - 5250 @ 80), (100 mW), NO-OUTDOOR, AUTO-BW
+-	# entries 304002 and 305002
+ 	(5250 - 5350 @ 80), (100 mW), NO-OUTDOOR, DFS, AUTO-BW
+-	# entries 308002, 309001 and 310003
+ 	(5470 - 5725 @ 160), (500 mW), DFS
+-	# 60 GHz band channels 1-4, ref: Etsi En 302 567
++	# short range devices (ETSI EN 300 440-1)
++	(5725 - 5875 @ 80), (25 mW)
++	# 60 GHz band channels 1-4 (ETSI EN 302 567)
+ 	(57000 - 66000 @ 2160), (40)
+ 
+ country DK: DFS-ETSI
+@@ -629,6 +664,9 @@ country KR: DFS-JP
+ 	(5250 - 5330 @ 80), (20), DFS, AUTO-BW
+ 	(5490 - 5710 @ 160), (30), DFS
+ 	(5735 - 5835 @ 80), (30)
++	# 60 GHz band channels 1-4,
++	# ref: http://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EB%AC%B4%EC%84%A0%EC%84%A4%EB%B9%84%EA%B7%9C%EC%B9%99
++	(57000 - 66000 @ 2160), (43)
+ 
+ country KW: DFS-ETSI
+ 	(2402 - 2482 @ 40), (20)
+@@ -844,11 +882,18 @@ country NI: DFS-FCC
+ 	(5490 - 5730 @ 160), (24), DFS
+ 	(5735 - 5835 @ 80), (30)
+ 
++# Regulation on the use of frequency space without a license and
++# without notification 2015
++#
++# http://wetten.overheid.nl/BWBR0036378/2015-03-05
++
+ country NL: DFS-ETSI
+ 	(2402 - 2482 @ 40), (20)
+ 	(5170 - 5250 @ 80), (20), NO-OUTDOOR, AUTO-BW
+ 	(5250 - 5330 @ 80), (20), NO-OUTDOOR, DFS, AUTO-BW
+ 	(5490 - 5710 @ 160), (27), DFS
++	# short range devices (ETSI EN 300 440-1)
++	(5725 - 5875 @ 80), (25 mW)
+ 	# 60 GHz band channels 1-4, ref: Etsi En 302 567
+ 	(57000 - 66000 @ 2160), (40)
+ 
 diff --git a/package/kernel/mac80211/patches/004-backports-add-skb_free_frag.patch b/package/kernel/mac80211/patches/004-backports-add-skb_free_frag.patch
 deleted file mode 100644
 index 9adfd8f..0000000
@@ -5225,6 +5370,45 @@ index b646ab3..0000000
 - EXPORT_SYMBOL(ieee80211_data_to_8023);
 - 
 - int ieee80211_data_from_8023(struct sk_buff *skb, const u8 *addr,
+diff --git a/package/kernel/mac80211/patches/320-ath9k-fix-using-sta-drv_priv-before-initializing-it.patch b/package/kernel/mac80211/patches/320-ath9k-fix-using-sta-drv_priv-before-initializing-it.patch
+new file mode 100644
+index 0000000..aaa6706
+--- /dev/null
++++ b/package/kernel/mac80211/patches/320-ath9k-fix-using-sta-drv_priv-before-initializing-it.patch
+@@ -0,0 +1,33 @@
++From: Felix Fietkau <nbd@nbd.name>
++Date: Tue, 2 Aug 2016 13:00:01 +0200
++Subject: [PATCH] ath9k: fix using sta->drv_priv before initializing it
++
++A station pointer can be passed to the driver on tx, before it has been
++marked as associated. Since ath9k_sta_state was initializing the entry
++too late, it resulted in some spurious crashes.
++
++Fixes: df3c6eb34da5 ("ath9k: Use sta_state() callback")
++Cc: stable@vger.kernel.org
++Signed-off-by: Felix Fietkau <nbd@nbd.name>
++---
++
++--- a/drivers/net/wireless/ath/ath9k/main.c
+++++ b/drivers/net/wireless/ath/ath9k/main.c
++@@ -1563,13 +1563,13 @@ static int ath9k_sta_state(struct ieee80
++ 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
++ 	int ret = 0;
++ 
++-	if (old_state == IEEE80211_STA_AUTH &&
++-	    new_state == IEEE80211_STA_ASSOC) {
+++	if (old_state == IEEE80211_STA_NOTEXIST &&
+++	    new_state == IEEE80211_STA_NONE) {
++ 		ret = ath9k_sta_add(hw, vif, sta);
++ 		ath_dbg(common, CONFIG,
++ 			"Add station: %pM\n", sta->addr);
++-	} else if (old_state == IEEE80211_STA_ASSOC &&
++-		   new_state == IEEE80211_STA_AUTH) {
+++	} else if (old_state == IEEE80211_STA_NONE &&
+++		   new_state == IEEE80211_STA_NOTEXIST) {
++ 		ret = ath9k_sta_remove(hw, vif, sta);
++ 		ath_dbg(common, CONFIG,
++ 			"Remove station: %pM\n", sta->addr);
 diff --git a/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch b/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch
 deleted file mode 100644
 index 2eeed22..0000000
@@ -8801,6 +8985,66 @@ index 6e2d0cf..0000000
 - 			if (!frame)
 - 				goto purge;
 - 
+diff --git a/package/kernel/mac80211/patches/334-mac80211-fix-purging-multicast-PS-buffer-queue.patch b/package/kernel/mac80211/patches/334-mac80211-fix-purging-multicast-PS-buffer-queue.patch
+new file mode 100644
+index 0000000..dfcc6e4
+--- /dev/null
++++ b/package/kernel/mac80211/patches/334-mac80211-fix-purging-multicast-PS-buffer-queue.patch
+@@ -0,0 +1,54 @@
++From: Felix Fietkau <nbd@nbd.name>
++Date: Tue, 2 Aug 2016 11:11:13 +0200
++Subject: [PATCH] mac80211: fix purging multicast PS buffer queue
++
++The code currently assumes that buffered multicast PS frames don't have
++a pending ACK frame for tx status reporting.
++However, hostapd sends a broadcast deauth frame on teardown for which tx
++status is requested. This can lead to the "Have pending ack frames"
++warning on module reload.
++Fix this by using ieee80211_free_txskb/ieee80211_purge_tx_queue.
++
++Signed-off-by: Felix Fietkau <nbd@nbd.name>
++---
++
++--- a/net/mac80211/cfg.c
+++++ b/net/mac80211/cfg.c
++@@ -868,7 +868,7 @@ static int ieee80211_stop_ap(struct wiph
++ 
++ 	/* free all potentially still buffered bcast frames */
++ 	local->total_ps_buffered -= skb_queue_len(&sdata->u.ap.ps.bc_buf);
++-	skb_queue_purge(&sdata->u.ap.ps.bc_buf);
+++	ieee80211_purge_tx_queue(&local->hw, &sdata->u.ap.ps.bc_buf);
++ 
++ 	mutex_lock(&local->mtx);
++ 	ieee80211_vif_copy_chanctx_to_vlans(sdata, true);
++--- a/net/mac80211/tx.c
+++++ b/net/mac80211/tx.c
++@@ -368,7 +368,7 @@ static void purge_old_ps_buffers(struct
++ 		skb = skb_dequeue(&ps->bc_buf);
++ 		if (skb) {
++ 			purged++;
++-			dev_kfree_skb(skb);
+++			ieee80211_free_txskb(&local->hw, skb);
++ 		}
++ 		total += skb_queue_len(&ps->bc_buf);
++ 	}
++@@ -451,7 +451,7 @@ ieee80211_tx_h_multicast_ps_buf(struct i
++ 	if (skb_queue_len(&ps->bc_buf) >= AP_MAX_BC_BUFFER) {
++ 		ps_dbg(tx->sdata,
++ 		       "BC TX buffer full - dropping the oldest frame\n");
++-		dev_kfree_skb(skb_dequeue(&ps->bc_buf));
+++		ieee80211_free_txskb(&tx->local->hw, skb_dequeue(&ps->bc_buf));
++ 	} else
++ 		tx->local->total_ps_buffered++;
++ 
++@@ -4276,7 +4276,7 @@ ieee80211_get_buffered_bc(struct ieee802
++ 			sdata = IEEE80211_DEV_TO_SUB_IF(skb->dev);
++ 		if (!ieee80211_tx_prepare(sdata, &tx, NULL, skb))
++ 			break;
++-		dev_kfree_skb_any(skb);
+++		ieee80211_free_txskb(hw, skb);
++ 	}
++ 
++ 	info = IEEE80211_SKB_CB(skb);
 diff --git a/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch b/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch
 deleted file mode 100644
 index f8f4f09..0000000
@@ -8843,6 +9087,317 @@ index f8f4f09..0000000
 - 	ieee80211_xmit(sdata, NULL, skb);
 - 	rcu_read_unlock();
 - 
+diff --git a/package/kernel/mac80211/patches/335-ath9k-use-ieee80211_tx_status_noskb-where-possible.patch b/package/kernel/mac80211/patches/335-ath9k-use-ieee80211_tx_status_noskb-where-possible.patch
+new file mode 100644
+index 0000000..dbb5b90
+--- /dev/null
++++ b/package/kernel/mac80211/patches/335-ath9k-use-ieee80211_tx_status_noskb-where-possible.patch
+@@ -0,0 +1,305 @@
++From: Felix Fietkau <nbd@nbd.name>
++Date: Tue, 2 Aug 2016 12:12:18 +0200
++Subject: [PATCH] ath9k: use ieee80211_tx_status_noskb where possible
++
++It removes the need for undoing the padding changes to skb->data and it
++improves performance by eliminating one tx status lookup per MPDU in the
++status path. It is also useful for preparing a follow-up fix to better
++handle powersave filtering.
++
++Signed-off-by: Felix Fietkau <nbd@nbd.name>
++---
++
++--- a/drivers/net/wireless/ath/ath9k/xmit.c
+++++ b/drivers/net/wireless/ath/ath9k/xmit.c
++@@ -50,9 +50,11 @@ static u16 bits_per_symbol[][2] = {
++ static void ath_tx_send_normal(struct ath_softc *sc, struct ath_txq *txq,
++ 			       struct ath_atx_tid *tid, struct sk_buff *skb);
++ static void ath_tx_complete(struct ath_softc *sc, struct sk_buff *skb,
++-			    int tx_flags, struct ath_txq *txq);
+++			    int tx_flags, struct ath_txq *txq,
+++			    struct ieee80211_sta *sta);
++ static void ath_tx_complete_buf(struct ath_softc *sc, struct ath_buf *bf,
++ 				struct ath_txq *txq, struct list_head *bf_q,
+++				struct ieee80211_sta *sta,
++ 				struct ath_tx_status *ts, int txok);
++ static void ath_tx_txqaddbuf(struct ath_softc *sc, struct ath_txq *txq,
++ 			     struct list_head *head, bool internal);
++@@ -77,6 +79,22 @@ enum {
++ /* Aggregation logic */
++ /*********************/
++ 
+++static void ath_tx_status(struct ieee80211_hw *hw, struct sk_buff *skb)
+++{
+++	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+++	struct ieee80211_sta *sta = info->status.status_driver_data[0];
+++
+++	if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
+++		ieee80211_tx_status(hw, skb);
+++		return;
+++	}
+++
+++	if (sta)
+++		ieee80211_tx_status_noskb(hw, sta, info);
+++
+++	dev_kfree_skb(skb);
+++}
+++
++ void ath_txq_lock(struct ath_softc *sc, struct ath_txq *txq)
++ 	__acquires(&txq->axq_lock)
++ {
++@@ -92,6 +110,7 @@ void ath_txq_unlock(struct ath_softc *sc
++ void ath_txq_unlock_complete(struct ath_softc *sc, struct ath_txq *txq)
++ 	__releases(&txq->axq_lock)
++ {
+++	struct ieee80211_hw *hw = sc->hw;
++ 	struct sk_buff_head q;
++ 	struct sk_buff *skb;
++ 
++@@ -100,7 +119,7 @@ void ath_txq_unlock_complete(struct ath_
++ 	spin_unlock_bh(&txq->axq_lock);
++ 
++ 	while ((skb = __skb_dequeue(&q)))
++-		ieee80211_tx_status(sc->hw, skb);
+++		ath_tx_status(hw, skb);
++ }
++ 
++ static void ath_tx_queue_tid(struct ath_softc *sc, struct ath_txq *txq,
++@@ -268,7 +287,7 @@ static void ath_tx_flush_tid(struct ath_
++ 		}
++ 
++ 		list_add_tail(&bf->list, &bf_head);
++-		ath_tx_complete_buf(sc, bf, txq, &bf_head, &ts, 0);
+++		ath_tx_complete_buf(sc, bf, txq, &bf_head, NULL, &ts, 0);
++ 	}
++ 
++ 	if (sendbar) {
++@@ -333,12 +352,12 @@ static void ath_tid_drain(struct ath_sof
++ 		bf = fi->bf;
++ 
++ 		if (!bf) {
++-			ath_tx_complete(sc, skb, ATH_TX_ERROR, txq);
+++			ath_tx_complete(sc, skb, ATH_TX_ERROR, txq, NULL);
++ 			continue;
++ 		}
++ 
++ 		list_add_tail(&bf->list, &bf_head);
++-		ath_tx_complete_buf(sc, bf, txq, &bf_head, &ts, 0);
+++		ath_tx_complete_buf(sc, bf, txq, &bf_head, NULL, &ts, 0);
++ 	}
++ }
++ 
++@@ -441,12 +460,11 @@ static void ath_tx_count_frames(struct a
++ 
++ static void ath_tx_complete_aggr(struct ath_softc *sc, struct ath_txq *txq,
++ 				 struct ath_buf *bf, struct list_head *bf_q,
+++				 struct ieee80211_sta *sta,
++ 				 struct ath_tx_status *ts, int txok)
++ {
++ 	struct ath_node *an = NULL;
++ 	struct sk_buff *skb;
++-	struct ieee80211_sta *sta;
++-	struct ieee80211_hw *hw = sc->hw;
++ 	struct ieee80211_hdr *hdr;
++ 	struct ieee80211_tx_info *tx_info;
++ 	struct ath_atx_tid *tid = NULL;
++@@ -475,12 +493,7 @@ static void ath_tx_complete_aggr(struct
++ 	for (i = 0; i < ts->ts_rateindex; i++)
++ 		retries += rates[i].count;
++ 
++-	rcu_read_lock();
++-
++-	sta = ieee80211_find_sta_by_ifaddr(hw, hdr->addr1, hdr->addr2);
++ 	if (!sta) {
++-		rcu_read_unlock();
++-
++ 		INIT_LIST_HEAD(&bf_head);
++ 		while (bf) {
++ 			bf_next = bf->bf_next;
++@@ -488,7 +501,7 @@ static void ath_tx_complete_aggr(struct
++ 			if (!bf->bf_state.stale || bf_next != NULL)
++ 				list_move_tail(&bf->list, &bf_head);
++ 
++-			ath_tx_complete_buf(sc, bf, txq, &bf_head, ts, 0);
+++			ath_tx_complete_buf(sc, bf, txq, &bf_head, NULL, ts, 0);
++ 
++ 			bf = bf_next;
++ 		}
++@@ -598,7 +611,7 @@ static void ath_tx_complete_aggr(struct
++ 								ts);
++ 			}
++ 
++-			ath_tx_complete_buf(sc, bf, txq, &bf_head, ts,
+++			ath_tx_complete_buf(sc, bf, txq, &bf_head, sta, ts,
++ 				!txfail);
++ 		} else {
++ 			if (tx_info->flags & IEEE80211_TX_STATUS_EOSP) {
++@@ -619,7 +632,8 @@ static void ath_tx_complete_aggr(struct
++ 					ath_tx_update_baw(sc, tid, seqno);
++ 
++ 					ath_tx_complete_buf(sc, bf, txq,
++-							    &bf_head, ts, 0);
+++							    &bf_head, NULL, ts,
+++							    0);
++ 					bar_index = max_t(int, bar_index,
++ 						ATH_BA_INDEX(seq_first, seqno));
++ 					break;
++@@ -663,8 +677,6 @@ static void ath_tx_complete_aggr(struct
++ 		ath_txq_lock(sc, txq);
++ 	}
++ 
++-	rcu_read_unlock();
++-
++ 	if (needreset)
++ 		ath9k_queue_reset(sc, RESET_TYPE_TX_ERROR);
++ }
++@@ -679,7 +691,10 @@ static void ath_tx_process_buffer(struct
++ 				  struct ath_tx_status *ts, struct ath_buf *bf,
++ 				  struct list_head *bf_head)
++ {
+++	struct ieee80211_hw *hw = sc->hw;
++ 	struct ieee80211_tx_info *info;
+++	struct ieee80211_sta *sta;
+++	struct ieee80211_hdr *hdr;
++ 	bool txok, flush;
++ 
++ 	txok = !(ts->ts_status & ATH9K_TXERR_MASK);
++@@ -692,6 +707,10 @@ static void ath_tx_process_buffer(struct
++ 
++ 	ts->duration = ath9k_hw_get_duration(sc->sc_ah, bf->bf_desc,
++ 					     ts->ts_rateindex);
+++
+++	hdr = (struct ieee80211_hdr *) bf->bf_mpdu->data;
+++	sta = ieee80211_find_sta_by_ifaddr(hw, hdr->addr1, hdr->addr2);
+++
++ 	if (!bf_isampdu(bf)) {
++ 		if (!flush) {
++ 			info = IEEE80211_SKB_CB(bf->bf_mpdu);
++@@ -700,9 +719,9 @@ static void ath_tx_process_buffer(struct
++ 			ath_tx_rc_status(sc, bf, ts, 1, txok ? 0 : 1, txok);
++ 			ath_dynack_sample_tx_ts(sc->sc_ah, bf->bf_mpdu, ts);
++ 		}
++-		ath_tx_complete_buf(sc, bf, txq, bf_head, ts, txok);
+++		ath_tx_complete_buf(sc, bf, txq, bf_head, sta, ts, txok);
++ 	} else
++-		ath_tx_complete_aggr(sc, txq, bf, bf_head, ts, txok);
+++		ath_tx_complete_aggr(sc, txq, bf, bf_head, sta, ts, txok);
++ 
++ 	if (!flush)
++ 		ath_txq_schedule(sc, txq);
++@@ -938,7 +957,7 @@ ath_tx_get_tid_subframe(struct ath_softc
++ 			list_add(&bf->list, &bf_head);
++ 			__skb_unlink(skb, *q);
++ 			ath_tx_update_baw(sc, tid, seqno);
++-			ath_tx_complete_buf(sc, bf, txq, &bf_head, &ts, 0);
+++			ath_tx_complete_buf(sc, bf, txq, &bf_head, NULL, &ts, 0);
++ 			continue;
++ 		}
++ 
++@@ -1847,6 +1866,7 @@ static void ath_drain_txq_list(struct at
++  */
++ void ath_draintxq(struct ath_softc *sc, struct ath_txq *txq)
++ {
+++	rcu_read_lock();
++ 	ath_txq_lock(sc, txq);
++ 
++ 	if (sc->sc_ah->caps.hw_caps & ATH9K_HW_CAP_EDMA) {
++@@ -1865,6 +1885,7 @@ void ath_draintxq(struct ath_softc *sc,
++ 	ath_drain_txq_list(sc, txq, &txq->axq_q);
++ 
++ 	ath_txq_unlock_complete(sc, txq);
+++	rcu_read_unlock();
++ }
++ 
++ bool ath_drain_all_txq(struct ath_softc *sc)
++@@ -2487,7 +2508,8 @@ void ath_tx_cabq(struct ieee80211_hw *hw
++ /*****************/
++ 
++ static void ath_tx_complete(struct ath_softc *sc, struct sk_buff *skb,
++-			    int tx_flags, struct ath_txq *txq)
+++			    int tx_flags, struct ath_txq *txq,
+++			    struct ieee80211_sta *sta)
++ {
++ 	struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(skb);
++ 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
++@@ -2507,15 +2529,17 @@ static void ath_tx_complete(struct ath_s
++ 			tx_info->flags |= IEEE80211_TX_STAT_ACK;
++ 	}
++ 
++-	padpos = ieee80211_hdrlen(hdr->frame_control);
++-	padsize = padpos & 3;
++-	if (padsize && skb->len>padpos+padsize) {
++-		/*
++-		 * Remove MAC header padding before giving the frame back to
++-		 * mac80211.
++-		 */
++-		memmove(skb->data + padsize, skb->data, padpos);
++-		skb_pull(skb, padsize);
+++	if (tx_info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
+++		padpos = ieee80211_hdrlen(hdr->frame_control);
+++		padsize = padpos & 3;
+++		if (padsize && skb->len>padpos+padsize) {
+++			/*
+++			 * Remove MAC header padding before giving the frame back to
+++			 * mac80211.
+++			 */
+++			memmove(skb->data + padsize, skb->data, padpos);
+++			skb_pull(skb, padsize);
+++		}
++ 	}
++ 
++ 	spin_lock_irqsave(&sc->sc_pm_lock, flags);
++@@ -2530,12 +2554,14 @@ static void ath_tx_complete(struct ath_s
++ 	}
++ 	spin_unlock_irqrestore(&sc->sc_pm_lock, flags);
++ 
++-	__skb_queue_tail(&txq->complete_q, skb);
++ 	ath_txq_skb_done(sc, txq, skb);
+++	tx_info->status.status_driver_data[0] = sta;
+++	__skb_queue_tail(&txq->complete_q, skb);
++ }
++ 
++ static void ath_tx_complete_buf(struct ath_softc *sc, struct ath_buf *bf,
++ 				struct ath_txq *txq, struct list_head *bf_q,
+++				struct ieee80211_sta *sta,
++ 				struct ath_tx_status *ts, int txok)
++ {
++ 	struct sk_buff *skb = bf->bf_mpdu;
++@@ -2563,7 +2589,7 @@ static void ath_tx_complete_buf(struct a
++ 			complete(&sc->paprd_complete);
++ 	} else {
++ 		ath_debug_stat_tx(sc, bf, ts, txq, tx_flags);
++-		ath_tx_complete(sc, skb, tx_flags, txq);
+++		ath_tx_complete(sc, skb, tx_flags, txq, sta);
++ 	}
++ skip_tx_complete:
++ 	/* At this point, skb (bf->bf_mpdu) is consumed...make sure we don't
++@@ -2715,10 +2741,12 @@ void ath_tx_tasklet(struct ath_softc *sc
++ 	u32 qcumask = ((1 << ATH9K_NUM_TX_QUEUES) - 1) & ah->intr_txqs;
++ 	int i;
++ 
+++	rcu_read_lock();
++ 	for (i = 0; i < ATH9K_NUM_TX_QUEUES; i++) {
++ 		if (ATH_TXQ_SETUP(sc, i) && (qcumask & (1 << i)))
++ 			ath_tx_processq(sc, &sc->tx.txq[i]);
++ 	}
+++	rcu_read_unlock();
++ }
++ 
++ void ath_tx_edma_tasklet(struct ath_softc *sc)
++@@ -2732,6 +2760,7 @@ void ath_tx_edma_tasklet(struct ath_soft
++ 	struct list_head *fifo_list;
++ 	int status;
++ 
+++	rcu_read_lock();
++ 	for (;;) {
++ 		if (test_bit(ATH_OP_HW_RESET, &common->op_flags))
++ 			break;
++@@ -2802,6 +2831,7 @@ void ath_tx_edma_tasklet(struct ath_soft
++ 		ath_tx_process_buffer(sc, txq, &ts, bf, &bf_head);
++ 		ath_txq_unlock_complete(sc, txq);
++ 	}
+++	rcu_read_unlock();
++ }
++ 
++ /*****************/
 diff --git a/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch b/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch
 deleted file mode 100644
 index acaacf7..0000000
@@ -8910,6 +9465,82 @@ index acaacf7..0000000
 - 	rates->rate[i].idx = -1;
 - 	rate_control_set_rates(mp->hw, mi->sta, rates);
 - }
+diff --git a/package/kernel/mac80211/patches/336-ath9k-improve-powersave-filter-handling.patch b/package/kernel/mac80211/patches/336-ath9k-improve-powersave-filter-handling.patch
+new file mode 100644
+index 0000000..67a6c63
+--- /dev/null
++++ b/package/kernel/mac80211/patches/336-ath9k-improve-powersave-filter-handling.patch
+@@ -0,0 +1,70 @@
++From: Felix Fietkau <nbd@nbd.name>
++Date: Tue, 2 Aug 2016 12:13:35 +0200
++Subject: [PATCH] ath9k: improve powersave filter handling
++
++For non-aggregated frames, ath9k was leaving handling of powersave
++filtered packets to mac80211. This can be too slow if the intermediate
++queue is already filled with packets and mac80211 does not immediately
++send a new packet via drv_tx().
++
++Improve response time with filtered frames by triggering clearing the
++powersave filter internally.
++
++Signed-off-by: Felix Fietkau <nbd@nbd.name>
++---
++
++--- a/drivers/net/wireless/ath/ath9k/xmit.c
+++++ b/drivers/net/wireless/ath/ath9k/xmit.c
++@@ -461,13 +461,13 @@ static void ath_tx_count_frames(struct a
++ static void ath_tx_complete_aggr(struct ath_softc *sc, struct ath_txq *txq,
++ 				 struct ath_buf *bf, struct list_head *bf_q,
++ 				 struct ieee80211_sta *sta,
+++				 struct ath_atx_tid *tid,
++ 				 struct ath_tx_status *ts, int txok)
++ {
++ 	struct ath_node *an = NULL;
++ 	struct sk_buff *skb;
++ 	struct ieee80211_hdr *hdr;
++ 	struct ieee80211_tx_info *tx_info;
++-	struct ath_atx_tid *tid = NULL;
++ 	struct ath_buf *bf_next, *bf_last = bf->bf_lastbf;
++ 	struct list_head bf_head;
++ 	struct sk_buff_head bf_pending;
++@@ -509,7 +509,6 @@ static void ath_tx_complete_aggr(struct
++ 	}
++ 
++ 	an = (struct ath_node *)sta->drv_priv;
++-	tid = ath_get_skb_tid(sc, an, skb);
++ 	seq_first = tid->seq_start;
++ 	isba = ts->ts_flags & ATH9K_TX_BA;
++ 
++@@ -695,6 +694,7 @@ static void ath_tx_process_buffer(struct
++ 	struct ieee80211_tx_info *info;
++ 	struct ieee80211_sta *sta;
++ 	struct ieee80211_hdr *hdr;
+++	struct ath_atx_tid *tid = NULL;
++ 	bool txok, flush;
++ 
++ 	txok = !(ts->ts_status & ATH9K_TXERR_MASK);
++@@ -710,6 +710,12 @@ static void ath_tx_process_buffer(struct
++ 
++ 	hdr = (struct ieee80211_hdr *) bf->bf_mpdu->data;
++ 	sta = ieee80211_find_sta_by_ifaddr(hw, hdr->addr1, hdr->addr2);
+++	if (sta) {
+++		struct ath_node *an = (struct ath_node *)sta->drv_priv;
+++		tid = ath_get_skb_tid(sc, an, bf->bf_mpdu);
+++		if (ts->ts_status & (ATH9K_TXERR_FILT | ATH9K_TXERR_XRETRY))
+++			tid->clear_ps_filter = true;
+++	}
++ 
++ 	if (!bf_isampdu(bf)) {
++ 		if (!flush) {
++@@ -721,7 +727,7 @@ static void ath_tx_process_buffer(struct
++ 		}
++ 		ath_tx_complete_buf(sc, bf, txq, bf_head, sta, ts, txok);
++ 	} else
++-		ath_tx_complete_aggr(sc, txq, bf, bf_head, sta, ts, txok);
+++		ath_tx_complete_aggr(sc, txq, bf, bf_head, sta, tid, ts, txok);
++ 
++ 	if (!flush)
++ 		ath_txq_schedule(sc, txq);
 diff --git a/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch b/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch
 deleted file mode 100644
 index 32a2ad6..0000000
@@ -12026,7 +12657,7 @@ index aee2a15..645888e 100644
  config WPA_SUPPLICANT_OPENSSL
  	bool "openssl"
 diff --git a/package/network/services/hostapd/Makefile b/package/network/services/hostapd/Makefile
-index 8e706dc..88f7627 100644
+index 8e706dc..5caf3e3 100644
 --- a/package/network/services/hostapd/Makefile
 +++ b/package/network/services/hostapd/Makefile
 @@ -7,18 +7,18 @@
@@ -12052,7 +12683,15 @@ index 8e706dc..88f7627 100644
  PKG_LICENSE:=BSD-3-Clause
  
  PKG_BUILD_PARALLEL:=1
-@@ -40,6 +40,10 @@ LOCAL_TYPE=$(strip \
+@@ -29,7 +29,6 @@ PKG_CONFIG_DEPENDS:= \
+ 	CONFIG_PACKAGE_kmod-cfg80211 \
+ 	CONFIG_PACKAGE_hostapd \
+ 	CONFIG_PACKAGE_hostapd-mini \
+-	CONFIG_PACKAGE_kmod-hostap \
+ 	CONFIG_WPA_RFKILL_SUPPORT \
+ 	CONFIG_DRIVER_WEXT_SUPPORT \
+ 	CONFIG_DRIVER_11N_SUPPORT
+@@ -40,6 +39,10 @@ LOCAL_TYPE=$(strip \
  		hostapd \
  	)))
  LOCAL_VARIANT=$(patsubst wpad-%,%,$(patsubst supplicant-%,%,$(BUILD_VARIANT)))
@@ -12063,7 +12702,7 @@ index 8e706dc..88f7627 100644
  
  ifeq ($(LOCAL_TYPE),supplicant)
    ifeq ($(LOCAL_VARIANT),full)
-@@ -47,10 +51,6 @@ ifeq ($(LOCAL_TYPE),supplicant)
+@@ -47,10 +50,6 @@ ifeq ($(LOCAL_TYPE),supplicant)
  		CONFIG_WPA_SUPPLICANT_INTERNAL \
  		CONFIG_WPA_SUPPLICANT_OPENSSL
    endif
@@ -12074,7 +12713,15 @@ index 8e706dc..88f7627 100644
  endif
  
  PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
-@@ -82,7 +82,7 @@ ifneq ($(LOCAL_TYPE),hostapd)
+@@ -66,7 +65,6 @@ endif
+ DRIVER_MAKEOPTS= \
+ 	CONFIG_ACS=$(CONFIG_PACKAGE_kmod-cfg80211) \
+ 	CONFIG_DRIVER_NL80211=$(CONFIG_PACKAGE_kmod-cfg80211) \
+-	CONFIG_DRIVER_HOSTAP=$(CONFIG_PACKAGE_kmod-hostap) \
+ 	CONFIG_IEEE80211N=$(HOSTAPD_IEEE80211N) \
+ 	CONFIG_DRIVER_WEXT=$(CONFIG_DRIVER_WEXT_SUPPORT) \
+ 
+@@ -82,7 +80,7 @@ ifneq ($(LOCAL_TYPE),hostapd)
      endif
    endif
    ifeq ($(LOCAL_VARIANT),mesh)
@@ -12083,7 +12730,7 @@ index 8e706dc..88f7627 100644
      TARGET_LDFLAGS += -lcrypto -lssl
    endif
    ifdef CONFIG_WPA_SUPPLICANT_NO_TIMESTAMP_CHECK
-@@ -177,8 +177,7 @@ endef
+@@ -177,8 +175,7 @@ endef
  define Package/wpad-mesh
  $(call Package/wpad/Default)
    TITLE+= (with 802.11s mesh and SAE support)
@@ -12093,7 +12740,20 @@ index 8e706dc..88f7627 100644
    VARIANT:=wpad-mesh
  endef
  
-@@ -284,10 +283,10 @@ endif
+@@ -257,12 +254,6 @@ define Package/hostapd-common
+   CATEGORY:=Network
+ endef
+ 
+-define Package/hostapd-common-old
+-  TITLE:=hostapd/wpa_supplicant common support files (legacy drivers)
+-  SECTION:=net
+-  CATEGORY:=Network
+-endef
+-
+ define Package/eapol-test
+   TITLE:=802.1x authentication test utility
+   SECTION:=net
+@@ -284,10 +275,10 @@ endif
  
  define Build/Configure
  	$(Build/Configure/rebuild)
@@ -12107,10 +12767,38 @@ index 8e706dc..88f7627 100644
  endef
  
  TARGET_CPPFLAGS := \
+@@ -379,12 +370,6 @@ define Package/hostapd-common/install
+ 	$(INSTALL_DATA) ./files/netifd.sh $(1)/lib/netifd/hostapd.sh
+ endef
+ 
+-define Package/hostapd-common-old/install
+-	$(INSTALL_DIR) $(1)/lib/wifi
+-	$(INSTALL_DATA) ./files/hostapd.sh $(1)/lib/wifi/hostapd.sh
+-	$(INSTALL_DATA) ./files/wpa_supplicant.sh $(1)/lib/wifi/wpa_supplicant.sh
+-endef
+-
+ define Package/hostapd/install
+ 	$(call Install/hostapd,$(1))
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hostapd/hostapd $(1)/usr/sbin/
+@@ -442,5 +427,4 @@ $(eval $(call BuildPackage,wpa-supplicant-p2p))
+ $(eval $(call BuildPackage,wpa-cli))
+ $(eval $(call BuildPackage,hostapd-utils))
+ $(eval $(call BuildPackage,hostapd-common))
+-$(eval $(call BuildPackage,hostapd-common-old))
+ $(eval $(call BuildPackage,eapol-test))
 diff --git a/package/network/services/hostapd/files/hostapd-full.config b/package/network/services/hostapd/files/hostapd-full.config
-index f1b2655..681e9df 100644
+index f1b2655..e388109 100644
 --- a/package/network/services/hostapd/files/hostapd-full.config
 +++ b/package/network/services/hostapd/files/hostapd-full.config
+@@ -10,7 +10,7 @@
+ # to override previous values of the variables.
+ 
+ # Driver interface for Host AP driver
+-CONFIG_DRIVER_HOSTAP=y
++#CONFIG_DRIVER_HOSTAP=y
+ 
+ # Driver interface for wired authenticator
+ CONFIG_DRIVER_WIRED=y
 @@ -53,6 +53,9 @@ CONFIG_PEERKEY=y
  # Integrated EAP server
  CONFIG_EAP=y
@@ -12121,44 +12809,418 @@ index f1b2655..681e9df 100644
  # EAP-MD5 for the integrated EAP server
  CONFIG_EAP_MD5=y
  
-diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
-index 7aec7ad..9c1ba0f 100644
---- a/package/network/services/hostapd/files/hostapd.sh
-+++ b/package/network/services/hostapd/files/hostapd.sh
-@@ -1,3 +1,5 @@
-+. /lib/functions/network.sh
-+
- hostapd_set_bss_options() {
- 	local var="$1"
- 	local vif="$2"
-@@ -193,8 +195,8 @@ hostapd_set_bss_options() {
+diff --git a/package/network/services/hostapd/files/hostapd-mini.config b/package/network/services/hostapd/files/hostapd-mini.config
+index 118d97c..8baff18 100644
+--- a/package/network/services/hostapd/files/hostapd-mini.config
++++ b/package/network/services/hostapd/files/hostapd-mini.config
+@@ -10,7 +10,7 @@
+ # to override previous values of the variables.
  
- 	[ -n "$wps_possible" -a -n "$config_methods" ] && {
- 		config_get device_type "$vif" wps_device_type "6-0050F204-1"
+ # Driver interface for Host AP driver
+-CONFIG_DRIVER_HOSTAP=y
++#CONFIG_DRIVER_HOSTAP=y
+ 
+ # Driver interface for wired authenticator
+ CONFIG_DRIVER_WIRED=y
+diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
+deleted file mode 100644
+index 7aec7ad..0000000
+--- a/package/network/services/hostapd/files/hostapd.sh
++++ /dev/null
+@@ -1,394 +0,0 @@
+-hostapd_set_bss_options() {
+-	local var="$1"
+-	local vif="$2"
+-	local enc wep_rekey wpa_group_rekey wpa_pair_rekey wpa_master_rekey wps_possible wpa_key_mgmt
+-
+-	config_get enc "$vif" encryption "none"
+-	config_get wep_rekey        "$vif" wep_rekey        # 300
+-	config_get wpa_group_rekey  "$vif" wpa_group_rekey  # 300
+-	config_get wpa_pair_rekey   "$vif" wpa_pair_rekey   # 300
+-	config_get wpa_master_rekey "$vif" wpa_master_rekey # 640
+-	config_get_bool ap_isolate "$vif" isolate 0
+-	config_get_bool disassoc_low_ack "$vif" disassoc_low_ack 1
+-	config_get max_num_sta "$vif" max_num_sta 0
+-	config_get max_inactivity "$vif" max_inactivity 0
+-	config_get_bool preamble "$vif" short_preamble 1
+-
+-	config_get device "$vif" device
+-	config_get hwmode "$device" hwmode
+-	config_get phy "$device" phy
+-
+-	append "$var" "ctrl_interface=/var/run/hostapd-$phy" "$N"
+-
+-	if [ "$ap_isolate" -gt 0 ]; then
+-		append "$var" "ap_isolate=$ap_isolate" "$N"
+-	fi
+-	if [ "$max_num_sta" -gt 0 ]; then
+-		append "$var" "max_num_sta=$max_num_sta" "$N"
+-	fi
+-	if [ "$max_inactivity" -gt 0 ]; then
+-		append "$var" "ap_max_inactivity=$max_inactivity" "$N"
+-	fi
+-	append "$var" "disassoc_low_ack=$disassoc_low_ack" "$N"
+-	if [ "$preamble" -gt 0 ]; then
+-		append "$var" "preamble=$preamble" "$N"
+-	fi
+-
+-	# Examples:
+-	# psk-mixed/tkip 	=> WPA1+2 PSK, TKIP
+-	# wpa-psk2/tkip+aes	=> WPA2 PSK, CCMP+TKIP
+-	# wpa2/tkip+aes 	=> WPA2 RADIUS, CCMP+TKIP
+-	# ...
+-
+-	# TODO: move this parsing function somewhere generic, so that
+-	# later it can be reused by drivers that don't use hostapd
+-
+-	# crypto defaults: WPA2 vs WPA1
+-	case "$enc" in
+-		wpa2*|*psk2*)
+-			wpa=2
+-			crypto="CCMP"
+-		;;
+-		*mixed*)
+-			wpa=3
+-			crypto="CCMP TKIP"
+-		;;
+-		*)
+-			wpa=1
+-			crypto="TKIP"
+-		;;
+-	esac
+-
+-	# explicit override for crypto setting
+-	case "$enc" in
+-		*tkip+aes|*tkip+ccmp|*aes+tkip|*ccmp+tkip) crypto="CCMP TKIP";;
+-		*aes|*ccmp) crypto="CCMP";;
+-		*tkip) crypto="TKIP";;
+-	esac
+-
+-	# enforce CCMP for 11ng and 11na
+-	case "$hwmode:$crypto" in
+-		*ng:TKIP|*na:TKIP) crypto="CCMP TKIP";;
+-	esac
+-
+-	# use crypto/auth settings for building the hostapd config
+-	case "$enc" in
+-		none)
+-			wps_possible=1
+-			wpa=0
+-			crypto=
+-			# Here we make the assumption that if we're in open mode
+-			# with WPS enabled, we got to be in unconfigured state.
+-			wps_not_configured=1
+-		;;
+-		*psk*)
+-			config_get psk "$vif" key
+-			if [ ${#psk} -eq 64 ]; then
+-				append "$var" "wpa_psk=$psk" "$N"
+-			else
+-				append "$var" "wpa_passphrase=$psk" "$N"
+-			fi
+-			wps_possible=1
+-			[ -n "$wpa_group_rekey"  ] && append "$var" "wpa_group_rekey=$wpa_group_rekey" "$N"
+-			[ -n "$wpa_pair_rekey"   ] && append "$var" "wpa_ptk_rekey=$wpa_pair_rekey"    "$N"
+-			[ -n "$wpa_master_rekey" ] && append "$var" "wpa_gmk_rekey=$wpa_master_rekey"  "$N"
+-			append wpa_key_mgmt "WPA-PSK"
+-		;;
+-		*wpa*|*8021x*)
+-			# required fields? formats?
+-			# hostapd is particular, maybe a default configuration for failures
+-			config_get auth_server "$vif" auth_server
+-			[ -z "$auth_server" ] && config_get auth_server "$vif" server
+-			append "$var" "auth_server_addr=$auth_server" "$N"
+-			config_get auth_port "$vif" auth_port
+-			[ -z "$auth_port" ] && config_get auth_port "$vif" port
+-			auth_port=${auth_port:-1812}
+-			append "$var" "auth_server_port=$auth_port" "$N"
+-			config_get auth_secret "$vif" auth_secret
+-			[ -z "$auth_secret" ] && config_get auth_secret "$vif" key
+-			append "$var" "auth_server_shared_secret=$auth_secret" "$N"
+-			# You don't really want to enable this unless you are doing
+-			# some corner case testing or are using OpenWrt as a work around
+-			# for some systematic issues.
+-			config_get_bool auth_cache "$vif" auth_cache 0
+-			config_get rsn_preauth "$vif" rsn_preauth
+-			[ "$auth_cache" -gt 0 ] || [[ "$rsn_preauth" = 1 ]] || append "$var" "disable_pmksa_caching=1" "$N"
+-			[ "$auth_cache" -gt 0 ] || [[ "$rsn_preauth" = 1 ]] || append "$var" "okc=0" "$N"
+-			config_get acct_server "$vif" acct_server
+-			[ -n "$acct_server" ] && append "$var" "acct_server_addr=$acct_server" "$N"
+-			config_get acct_port "$vif" acct_port
+-			[ -n "$acct_port" ] && acct_port=${acct_port:-1813}
+-			[ -n "$acct_port" ] && append "$var" "acct_server_port=$acct_port" "$N"
+-			config_get acct_secret "$vif" acct_secret
+-			[ -n "$acct_secret" ] && append "$var" "acct_server_shared_secret=$acct_secret" "$N"
+-			config_get eap_reauth_period "$vif" eap_reauth_period
+-			[ -n "$eap_reauth_period" ] && append "$var" "eap_reauth_period=$eap_reauth_period" "$N"
+-			config_get dae_client "$vif" dae_client
+-			config_get dae_secret "$vif" dae_secret
+-			[ -n "$dae_client" -a -n "$dae_secret" ] && {
+-				config_get dae_port  "$vif" dae_port
+-				append "$var" "radius_das_port=${dae_port:-3799}" "$N"
+-				append "$var" "radius_das_client=$dae_client $dae_secret" "$N"
+-			}
+-			config_get ownip "$vif" ownip
+-			append "$var" "own_ip_addr=$ownip" "$N"
+-			append "$var" "eapol_key_index_workaround=1" "$N"
+-			append "$var" "ieee8021x=1" "$N"
+-			append wpa_key_mgmt "WPA-EAP"
+-			[ -n "$wpa_group_rekey"  ] && append "$var" "wpa_group_rekey=$wpa_group_rekey" "$N"
+-			[ -n "$wpa_pair_rekey"   ] && append "$var" "wpa_ptk_rekey=$wpa_pair_rekey"    "$N"
+-			[ -n "$wpa_master_rekey" ] && append "$var" "wpa_gmk_rekey=$wpa_master_rekey"  "$N"
+-		;;
+-		*wep*)
+-			config_get key "$vif" key
+-			key="${key:-1}"
+-			case "$key" in
+-				[1234])
+-					for idx in 1 2 3 4; do
+-						local zidx
+-						zidx=$(($idx - 1))
+-						config_get ckey "$vif" "key${idx}"
+-						[ -n "$ckey" ] && \
+-							append "$var" "wep_key${zidx}=$(prepare_key_wep "$ckey")" "$N"
+-					done
+-					append "$var" "wep_default_key=$((key - 1))"  "$N"
+-				;;
+-				*)
+-					append "$var" "wep_key0=$(prepare_key_wep "$key")" "$N"
+-					append "$var" "wep_default_key=0" "$N"
+-					[ -n "$wep_rekey" ] && append "$var" "wep_rekey_period=$wep_rekey" "$N"
+-				;;
+-			esac
+-			case "$enc" in
+-				*shared*)
+-					auth_algs=2
+-				;;
+-				*mixed*)
+-					auth_algs=3
+-				;;
+-			esac
+-			wpa=0
+-			crypto=
+-		;;
+-		*)
+-			wpa=0
+-			crypto=
+-		;;
+-	esac
+-	append "$var" "auth_algs=${auth_algs:-1}" "$N"
+-	append "$var" "wpa=$wpa" "$N"
+-	[ -n "$crypto" ] && append "$var" "wpa_pairwise=$crypto" "$N"
+-	[ -n "$wpa_group_rekey" ] && append "$var" "wpa_group_rekey=$wpa_group_rekey" "$N"
+-
+-	config_get ssid "$vif" ssid
+-	config_get bridge "$vif" bridge
+-	config_get ieee80211d "$vif" ieee80211d
+-	config_get iapp_interface "$vif" iapp_interface
+-
+-	config_get_bool wps_pbc "$vif" wps_pushbutton 0
+-	config_get_bool wps_label "$vif" wps_label 0
+-
+-	config_get config_methods "$vif" wps_config
+-	[ "$wps_pbc" -gt 0 ] && append config_methods push_button
+-
+-	[ -n "$wps_possible" -a -n "$config_methods" ] && {
+-		config_get device_type "$vif" wps_device_type "6-0050F204-1"
 -		config_get device_name "$vif" wps_device_name "OpenWrt AP"
 -		config_get manufacturer "$vif" wps_manufacturer "openwrt.org"
-+		config_get device_name "$vif" wps_device_name "Lede AP"
-+		config_get manufacturer "$vif" wps_manufacturer "www.lede-project.org"
- 		config_get wps_pin "$vif" wps_pin
- 
- 		config_get_bool ext_registrar "$vif" ext_registrar 0
-@@ -213,7 +215,11 @@ hostapd_set_bss_options() {
- 	append "$var" "ssid=$ssid" "$N"
- 	[ -n "$bridge" ] && append "$var" "bridge=$bridge" "$N"
- 	[ -n "$ieee80211d" ] && append "$var" "ieee80211d=$ieee80211d" "$N"
+-		config_get wps_pin "$vif" wps_pin
+-
+-		config_get_bool ext_registrar "$vif" ext_registrar 0
+-		[ "$ext_registrar" -gt 0 -a -n "$bridge" ] && append "$var" "upnp_iface=$bridge" "$N"
+-
+-		append "$var" "eap_server=1" "$N"
+-		[ -n "$wps_pin" ] && append "$var" "ap_pin=$wps_pin" "$N"
+-		append "$var" "wps_state=${wps_not_configured:-2}" "$N"
+-		append "$var" "ap_setup_locked=0" "$N"
+-		append "$var" "device_type=$device_type" "$N"
+-		append "$var" "device_name=$device_name" "$N"
+-		append "$var" "manufacturer=$manufacturer" "$N"
+-		append "$var" "config_methods=$config_methods" "$N"
+-	}
+-
+-	append "$var" "ssid=$ssid" "$N"
+-	[ -n "$bridge" ] && append "$var" "bridge=$bridge" "$N"
+-	[ -n "$ieee80211d" ] && append "$var" "ieee80211d=$ieee80211d" "$N"
 -	[ -n "$iapp_interface" ] && append "$var" iapp_interface=$(uci_get_state network "$iapp_interface" ifname "$iapp_interface") "$N"
-+	[ -n "$iapp_interface" ] && {
-+		local ifname
-+		network_get_device ifname "$iapp_interface" || ifname = "$iapp_interface"
-+		append bss_conf "iapp_interface=$ifname" "$N"
-+	}
- 
- 	if [ "$wpa" -ge "1" ]
- 	then
-@@ -391,4 +397,3 @@ $hostapd_cfg
- EOF
- 	hostapd -P /var/run/wifi-$ifname.pid -B /var/run/hostapd-$ifname.conf
- }
+-
+-	if [ "$wpa" -ge "1" ]
+-	then
+-		config_get nasid "$vif" nasid
+-		[ -n "$nasid" ] && append "$var" "nas_identifier=$nasid" "$N"
+-
+-		config_get_bool ieee80211r "$vif" ieee80211r 0
+-		if [ "$ieee80211r" -gt 0 ]
+-		then
+-			config_get mobility_domain "$vif" mobility_domain "4f57"
+-			config_get r0_key_lifetime "$vif" r0_key_lifetime "10000"
+-			config_get r1_key_holder "$vif" r1_key_holder "00004f577274"
+-			config_get reassociation_deadline "$vif" reassociation_deadline "1000"
+-			config_get r0kh "$vif" r0kh
+-			config_get r1kh "$vif" r1kh
+-			config_get_bool pmk_r1_push "$vif" pmk_r1_push 0
+-
+-			append "$var" "mobility_domain=$mobility_domain" "$N"
+-			append "$var" "r0_key_lifetime=$r0_key_lifetime" "$N"
+-			append "$var" "r1_key_holder=$r1_key_holder" "$N"
+-			append "$var" "reassociation_deadline=$reassociation_deadline" "$N"
+-			append "$var" "pmk_r1_push=$pmk_r1_push" "$N"
+-
+-			for kh in $r0kh; do
+-				"$var" "r0kh=${kh//,/ }" "$N"
+-			done
+-			for kh in $r1kh; do
+-				"$var" "r1kh=${kh//,/ }" "$N"
+-			done
+-
+-			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/EAP/}" ] && append wpa_key_mgmt "FT-EAP"
+-			[ "$wpa_key_mgmt" != "${wpa_key_mgmt/PSK/}" ] && append wpa_key_mgmt "FT-PSK"
+-		fi
+-
+-		[ -n "wpa_key_mgmt" ] && append "$var" "wpa_key_mgmt=$wpa_key_mgmt"
+-	fi
+-
+-	if [ "$wpa" -ge "2" ]
+-	then
+-		# RSN -> allow preauthentication. You have two
+-		# options, rsn_preauth for production or rsn_preauth_testing
+-		# for validation / testing.
+-		if [ -n "$bridge" -a "$rsn_preauth" = 1 ]
+-		then
+-			append "$var" "rsn_preauth=1" "$N"
+-			append "$var" "rsn_preauth_interfaces=$bridge" "$N"
+-			append "$var" "okc=1" "$N"
+-		else
+-			# RSN preauthentication testings hould disable
+-			# Opportunistic Key Caching (okc) as otherwise the PMKSA
+-			# entry for a test could come from the Opportunistic Key Caching
+-			config_get rsn_preauth_testing "$vif" rsn_preauth_testing
+-			if [ -n "$bridge" -a "$rsn_preauth_testing" = 1 ]
+-			then
+-				append "$var" "rsn_preauth=1" "$N"
+-				append "$var" "rsn_preauth_interfaces=$bridge" "$N"
+-				append "$var" "okc=0" "$N"
+-			fi
+-		fi
+-
+-		# RSN -> allow management frame protection
+-		config_get ieee80211w "$vif" ieee80211w
+-		case "$ieee80211w" in
+-			[012])
+-				append "$var" "ieee80211w=$ieee80211w" "$N"
+-				[ "$ieee80211w" -gt "0" ] && {
+-					config_get ieee80211w_max_timeout "$vif" ieee80211w_max_timeout
+-					config_get ieee80211w_retry_timeout "$vif" ieee80211w_retry_timeout
+-					[ -n "$ieee80211w_max_timeout" ] && \
+-						append "$var" "assoc_sa_query_max_timeout=$ieee80211w_max_timeout" "$N"
+-					[ -n "$ieee80211w_retry_timeout" ] && \
+-						append "$var" "assoc_sa_query_retry_timeout=$ieee80211w_retry_timeout" "$N"
+-				}
+-			;;
+-		esac
+-	fi
+-
+-	config_get macfile "$vif" macfile
+-	config_get maclist "$vif" maclist
+-	if [ -z "$macfile" ]
+-	then
+-		# if no macfile has been specified, fallback to the default name
+-		# and truncate file to avoid aggregating entries over time
+-		macfile="/var/run/hostapd-$ifname.maclist"
+-		echo "" > "$macfile"
+-	else
+-		if [ -n "$maclist" ]
+-		then
+-			# to avoid to overwrite the original file, make a copy
+-			# before appending the entries specified by the maclist
+-			# option
+-			cp $macfile $macfile.maclist
+-			macfile=$macfile.maclist
+-		fi
+-	fi
+-
+-	if [ -n "$maclist" ]
+-	then
+-		for mac in $maclist; do
+-			echo "$mac" >> $macfile
+-		done
+-	fi
+-
+-	config_get macfilter "$vif" macfilter
+-	case "$macfilter" in
+-		allow)
+-			append "$var" "macaddr_acl=1" "$N"
+-			append "$var" "accept_mac_file=$macfile" "$N"
+-			;;
+-		deny)
+-			append "$var" "macaddr_acl=0" "$N"
+-			append "$var" "deny_mac_file=$macfile" "$N"
+-			;;
+-	esac
+-}
+-
+-hostapd_set_log_options() {
+-	local var="$1"
+-	local cfg="$2"
+-	local log_level log_80211 log_8021x log_radius log_wpa log_driver log_iapp log_mlme
+-
+-	config_get log_level "$cfg" log_level 2
+-
+-	config_get_bool log_80211  "$cfg" log_80211  1
+-	config_get_bool log_8021x  "$cfg" log_8021x  1
+-	config_get_bool log_radius "$cfg" log_radius 1
+-	config_get_bool log_wpa    "$cfg" log_wpa    1
+-	config_get_bool log_driver "$cfg" log_driver 1
+-	config_get_bool log_iapp   "$cfg" log_iapp   1
+-	config_get_bool log_mlme   "$cfg" log_mlme   1
+-
+-	local log_mask=$((       \
+-		($log_80211  << 0) | \
+-		($log_8021x  << 1) | \
+-		($log_radius << 2) | \
+-		($log_wpa    << 3) | \
+-		($log_driver << 4) | \
+-		($log_iapp   << 5) | \
+-		($log_mlme   << 6)   \
+-	))
+-
+-	append "$var" "logger_syslog=$log_mask" "$N"
+-	append "$var" "logger_syslog_level=$log_level" "$N"
+-	append "$var" "logger_stdout=$log_mask" "$N"
+-	append "$var" "logger_stdout_level=$log_level" "$N"
+-}
+-
+-hostapd_setup_vif() {
+-	local vif="$1"
+-	local driver="$2"
+-	local ifname device channel hwmode
+-
+-	hostapd_cfg=
+-
+-	config_get ifname "$vif" ifname
+-	config_get device "$vif" device
+-	config_get channel "$device" channel
+-	config_get hwmode "$device" hwmode
+-
+-	hostapd_set_log_options hostapd_cfg "$device"
+-	hostapd_set_bss_options hostapd_cfg "$vif"
+-
+-	case "$hwmode" in
+-		*bg|*gdt|*gst|*fh) hwmode=g;;
+-		*adt|*ast) hwmode=a;;
+-	esac
+-	[ "$channel" = auto ] && channel=
+-	[ -n "$channel" -a -z "$hwmode" ] && wifi_fixup_hwmode "$device"
+-	cat > /var/run/hostapd-$ifname.conf <<EOF
+-driver=$driver
+-interface=$ifname
+-${hwmode:+hw_mode=${hwmode#11}}
+-${channel:+channel=$channel}
+-$hostapd_cfg
+-EOF
+-	hostapd -P /var/run/wifi-$ifname.pid -B /var/run/hostapd-$ifname.conf
+-}
 -
 diff --git a/package/network/services/hostapd/files/netifd.sh b/package/network/services/hostapd/files/netifd.sh
 index 23d2e7e..af72e7a 100644
@@ -12361,9 +13423,18 @@ index 23d2e7e..af72e7a 100644
  			esac
  			append network_data "eap=$(echo $eap_type | tr 'a-z' 'A-Z')" "$N$T"
 diff --git a/package/network/services/hostapd/files/wpa_supplicant-full.config b/package/network/services/hostapd/files/wpa_supplicant-full.config
-index a9d04ab..53c0762 100644
+index a9d04ab..18c3f9a 100644
 --- a/package/network/services/hostapd/files/wpa_supplicant-full.config
 +++ b/package/network/services/hostapd/files/wpa_supplicant-full.config
+@@ -41,7 +41,7 @@
+ 
+ 
+ # Driver interface for Host AP driver
+-CONFIG_DRIVER_HOSTAP=y
++#CONFIG_DRIVER_HOSTAP=y
+ 
+ # Driver interface for Agere driver
+ #CONFIG_DRIVER_HERMES=y
 @@ -121,6 +121,9 @@ CONFIG_DRIVER_WIRED=y
  # included)
  CONFIG_IEEE8021X_EAPOL=y
@@ -12796,6 +13867,232 @@ index 36e2908..0000000
 -CONFIG_MESH=y
 -CONFIG_SAE=y
 -CONFIG_AP=y
+diff --git a/package/network/services/hostapd/files/wpa_supplicant-mini.config b/package/network/services/hostapd/files/wpa_supplicant-mini.config
+index a8d334d..c272153 100644
+--- a/package/network/services/hostapd/files/wpa_supplicant-mini.config
++++ b/package/network/services/hostapd/files/wpa_supplicant-mini.config
+@@ -41,7 +41,7 @@
+ 
+ 
+ # Driver interface for Host AP driver
+-CONFIG_DRIVER_HOSTAP=y
++#CONFIG_DRIVER_HOSTAP=y
+ 
+ # Driver interface for Agere driver
+ #CONFIG_DRIVER_HERMES=y
+diff --git a/package/network/services/hostapd/files/wpa_supplicant-p2p.config b/package/network/services/hostapd/files/wpa_supplicant-p2p.config
+index 1c307d0..563dace 100644
+--- a/package/network/services/hostapd/files/wpa_supplicant-p2p.config
++++ b/package/network/services/hostapd/files/wpa_supplicant-p2p.config
+@@ -41,7 +41,7 @@
+ 
+ 
+ # Driver interface for Host AP driver
+-CONFIG_DRIVER_HOSTAP=y
++#CONFIG_DRIVER_HOSTAP=y
+ 
+ # Driver interface for Agere driver
+ #CONFIG_DRIVER_HERMES=y
+diff --git a/package/network/services/hostapd/files/wpa_supplicant.sh b/package/network/services/hostapd/files/wpa_supplicant.sh
+deleted file mode 100644
+index b678484..0000000
+--- a/package/network/services/hostapd/files/wpa_supplicant.sh
++++ /dev/null
+@@ -1,194 +0,0 @@
+-wpa_supplicant_setup_vif() {
+-	local vif="$1"
+-	local driver="$2"
+-	local key="$key"
+-	local options="$3"
+-	local freq=""
+-	local ht="$5"
+-	local ap_scan=""
+-	local scan_ssid="1"
+-	[ -n "$4" ] && freq="frequency=$4"
+-
+-	config_get enc "$vif" encryption
+-	config_get key "$vif" key
+-
+-	local net_cfg bridge
+-	config_get bridge "$vif" bridge
+-	[ -z "$bridge" ] && {
+-		net_cfg="$(find_net_config "$vif")"
+-		[ -z "$net_cfg" ] || bridge="$(bridge_interface "$net_cfg")"
+-		config_set "$vif" bridge "$bridge"
+-	}
+-
+-	local mode ifname wds modestr=""
+-	config_get mode "$vif" mode
+-	config_get ifname "$vif" ifname
+-	config_get_bool wds "$vif" wds 0
+-	[ -z "$bridge" ] || [ "$mode" = ap ] || [ "$mode" = sta -a $wds -eq 1 ] || {
+-		echo "wpa_supplicant_setup_vif($ifname): Refusing to bridge $mode mode interface"
+-		return 1
+-	}
+-	[ "$mode" = "adhoc" ] && {
+-		modestr="mode=1"
+-		scan_ssid="0"
+-		ap_scan="ap_scan=2"
+-	}
+-
+-	key_mgmt='NONE'
+-	case "$enc" in
+-		*none*) ;;
+-		*wep*)
+-			config_get key "$vif" key
+-			key="${key:-1}"
+-			case "$key" in
+-				[1234])
+-					for idx in 1 2 3 4; do
+-						local zidx
+-						zidx=$(($idx - 1))
+-						config_get ckey "$vif" "key${idx}"
+-						[ -n "$ckey" ] && \
+-							append "wep_key${zidx}" "wep_key${zidx}=$(prepare_key_wep "$ckey")"
+-					done
+-					wep_tx_keyidx="wep_tx_keyidx=$((key - 1))"
+-				;;
+-				*)
+-					wep_key0="wep_key0=$(prepare_key_wep "$key")"
+-					wep_tx_keyidx="wep_tx_keyidx=0"
+-				;;
+-			esac
+-		;;
+-		*psk*)
+-			key_mgmt='WPA-PSK'
+-			# if you want to use PSK with a non-nl80211 driver you
+-			# have to use WPA-NONE and wext driver for wpa_s
+-			[ "$mode" = "adhoc" -a "$driver" != "nl80211" ] && {
+-				key_mgmt='WPA-NONE'
+-				driver='wext'
+-			}
+-			if [ ${#key} -eq 64 ]; then
+-				passphrase="psk=${key}"
+-			else
+-				passphrase="psk=\"${key}\""
+-			fi
+-			case "$enc" in
+-				*psk2*)
+-					proto='proto=RSN'
+-					config_get ieee80211w "$vif" ieee80211w
+-				;;
+-				*psk*)
+-					proto='proto=WPA'
+-				;;
+-			esac
+-		;;
+-		*wpa*|*8021x*)
+-			proto='proto=WPA2'
+-			key_mgmt='WPA-EAP'
+-			config_get ieee80211w "$vif" ieee80211w
+-			config_get ca_cert "$vif" ca_cert
+-			config_get eap_type "$vif" eap_type
+-			ca_cert=${ca_cert:+"ca_cert=\"$ca_cert\""}
+-			case "$eap_type" in
+-				tls)
+-					pairwise='pairwise=CCMP'
+-					group='group=CCMP'
+-					config_get identity "$vif" identity
+-					config_get client_cert "$vif" client_cert
+-					config_get priv_key "$vif" priv_key
+-					config_get priv_key_pwd "$vif" priv_key_pwd
+-					identity="identity=\"$identity\""
+-					client_cert="client_cert=\"$client_cert\""
+-					priv_key="private_key=\"$priv_key\""
+-					priv_key_pwd="private_key_passwd=\"$priv_key_pwd\""
+-				;;
+-				peap|ttls)
+-					config_get auth "$vif" auth
+-					config_get identity "$vif" identity
+-					config_get password "$vif" password
+-					phase2="phase2=\"auth=${auth:-MSCHAPV2}\""
+-					identity="identity=\"$identity\""
+-					password="${password:+password=\"$password\"}"
+-				;;
+-			esac
+-			eap_type="eap=$(echo $eap_type | tr 'a-z' 'A-Z')"
+-		;;
+-	esac
+-
+-	case "$ieee80211w" in
+-		[012])
+-			ieee80211w="ieee80211w=$ieee80211w"
+-		;;
+-	esac
+-
+-	local fixed_freq bssid1 beacon_int brates mrate
+-	config_get ifname "$vif" ifname
+-	config_get bridge "$vif" bridge
+-	config_get ssid "$vif" ssid
+-	config_get bssid "$vif" bssid
+-	bssid1=${bssid:+"bssid=$bssid"}
+-	beacon_int=${beacon_int:+"beacon_int=$beacon_int"}
+-
+-	local br brval brsub brstr
+-	[ -n "$basic_rate_list" ] && {
+-		for br in $basic_rate_list; do
+-			brval="$(($br / 1000))"
+-			brsub="$((($br / 100) % 10))"
+-			[ "$brsub" -gt 0 ] && brval="$brval.$brsub"
+-			[ -n "$brstr" ] && brstr="$brstr,"
+-			brstr="$brstr$brval"
+-		done
+-		brates=${basic_rate_list:+"rates=$brstr"}
+-	}
+-
+-	local mcval=""
+-	[ -n "$mcast_rate" ] && {
+-		mcval="$(($mcast_rate / 1000))"
+-		mcsub="$(( ($mcast_rate / 100) % 10 ))"
+-		[ "$mcsub" -gt 0 ] && mcval="$mcval.$mcsub"
+-		mrate=${mcast_rate:+"mcast_rate=$mcval"}
+-	}
+-
+-	local ht_str
+-	[ -n "$ht" ] && ht_str="htmode=$ht"
+-
+-	rm -rf /var/run/wpa_supplicant-$ifname
+-	cat > /var/run/wpa_supplicant-$ifname.conf <<EOF
+-ctrl_interface=/var/run/wpa_supplicant-$ifname
+-$ap_scan
+-network={
+-	$modestr
+-	scan_ssid=$scan_ssid
+-	ssid="$ssid"
+-	$bssid1
+-	key_mgmt=$key_mgmt
+-	$proto
+-	$freq
+-	${fixed:+"fixed_freq=1"}
+-	$beacon_int
+-	$brates
+-	$mrate
+-	$ht_str
+-	$ieee80211w
+-	$passphrase
+-	$pairwise
+-	$group
+-	$eap_type
+-	$ca_cert
+-	$client_cert
+-	$priv_key
+-	$priv_key_pwd
+-	$phase2
+-	$identity
+-	$password
+-	$wep_key0
+-	$wep_key1
+-	$wep_key2
+-	$wep_key3
+-	$wep_tx_keyidx
+-}
+-EOF
+-	if [ -n "$proto" -o "$key_mgmt" = "NONE" ]; then
+-		wpa_supplicant ${bridge:+ -b $bridge} -B -P "/var/run/wifi-${ifname}.pid" -D ${driver:-wext} -i "$ifname" -c /var/run/wpa_supplicant-$ifname.conf $options
+-	else
+-		return 0
+-	fi
+-}
 diff --git a/package/network/services/hostapd/patches/001-4addr-fix-reconnecting-client-on-connection-lost.patch b/package/network/services/hostapd/patches/001-4addr-fix-reconnecting-client-on-connection-lost.patch
 new file mode 100644
 index 0000000..5c8b662
