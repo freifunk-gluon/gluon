@@ -14,8 +14,7 @@ for module in $GLUON_MODULES; do
 	mkdir -p "$GLUONDIR"/$module
 	cd "$GLUONDIR"/$module
 	git init
+	git config commit.gpgsign false
 
-	git checkout $commit 2>/dev/null || git fetch $repo $branch
-	git checkout -B base $commit
-	git submodule update --init --recursive
+	git branch -f base $commit 2>/dev/null || git fetch -f $repo $branch:base
 done
