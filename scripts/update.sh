@@ -16,5 +16,8 @@ for module in $GLUON_MODULES; do
 	git init
 	git config commit.gpgsign false
 
-	git branch -f base $commit 2>/dev/null || git fetch -f $repo $branch:base
+	if ! git branch -f base $commit 2>/dev/null; then
+		git fetch $repo $branch
+		git branch -f base $commit 2>/dev/null
+	fi
 done
