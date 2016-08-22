@@ -1,0 +1,102 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 9 Jun 2016 05:03:35 +0200
+Subject: tools/tplink-safeloader: split CPE210 from CPE510 profile
+
+The CPE210 was still described for the OEM upgrade as compatible,
+even the wireless configuration isn't compatible anymore between
+both series (2ghz and 5ghz).
+Update the CPE210 image profile to use the new profile.
+
+Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+
+Backport of LEDE 824147960569f2c1cd22140c9074c62c3df911a5
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 33a2da5..b288a1d 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -2109,7 +2109,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR10
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V3,tl-wr1043nd-v3,TL-WR1043ND-v2,ttyS0,115200,0x10430003,1,8M))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
+ 
+-$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE210_220,cpe210-220,CPE210,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
++$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE210_220,cpe210-220,CPE210,ttyS0,115200,$$(cpe510_mtdlayout),CPE210))
+ $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510_520,cpe510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
+ 
+ $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 2e204aa..4938f74 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -163,6 +163,15 @@ static const struct flash_partition_entry c2600_partitions[] = {
+ };
+ 
+ /**
++   The support list for CPE210/220
++*/
++static const char cpe210_support_list[] =
++	"SupportList:\r\n"
++	"CPE210(TP-LINK|UN|N300-2):1.0\r\n"
++	"CPE210(TP-LINK|UN|N300-2):1.1\r\n"
++	"CPE220(TP-LINK|UN|N300-2):1.0\r\n"
++	"CPE220(TP-LINK|UN|N300-2):1.1\r\n";
++/**
+    The support list for CPE210/220/510/520
+ */
+ static const char cpe510_support_list[] =
+@@ -170,11 +179,7 @@ static const char cpe510_support_list[] =
+ 	"CPE510(TP-LINK|UN|N300-5):1.0\r\n"
+ 	"CPE510(TP-LINK|UN|N300-5):1.1\r\n"
+ 	"CPE520(TP-LINK|UN|N300-5):1.0\r\n"
+-	"CPE520(TP-LINK|UN|N300-5):1.1\r\n"
+-	"CPE210(TP-LINK|UN|N300-2):1.0\r\n"
+-	"CPE210(TP-LINK|UN|N300-2):1.1\r\n"
+-	"CPE220(TP-LINK|UN|N300-2):1.0\r\n"
+-	"CPE220(TP-LINK|UN|N300-2):1.1\r\n";
++	"CPE520(TP-LINK|UN|N300-5):1.1\r\n";
+ 
+ /**
+    The support list for C2600
+@@ -511,12 +516,18 @@ static void * generate_sysupgrade_image_c2600(const struct flash_partition_entry
+ }
+ 
+ /** Generates an image for CPE210/220/510/520 and writes it to a file */
+-static void do_cpe510(const char *output, const char *kernel_image, const char *rootfs_image, uint32_t rev, bool add_jffs2_eof, bool sysupgrade) {
++static void do_cpe(const char *output,
++		const char *kernel_image,
++		const char *rootfs_image,
++		uint32_t rev,
++		bool add_jffs2_eof,
++		bool sysupgrade,
++		const char *support_list) {
+ 	struct image_partition_entry parts[6] = {};
+ 
+ 	parts[0] = make_partition_table(cpe510_partitions);
+ 	parts[1] = make_soft_version(rev);
+-	parts[2] = make_support_list(cpe510_support_list,false);
++	parts[2] = make_support_list(support_list, false);
+ 	parts[3] = read_file("os-image", kernel_image, false);
+ 	parts[4] = read_file("file-system", rootfs_image, add_jffs2_eof);
+ 
+@@ -549,7 +560,7 @@ static void do_c2600(const char *output, const char *kernel_image, const char *r
+ 
+ 	parts[0] = make_partition_table(c2600_partitions);
+ 	parts[1] = make_soft_version(rev);
+-	parts[2] = make_support_list(c2600_support_list,true);
++	parts[2] = make_support_list(c2600_support_list, true);
+ 	parts[3] = read_file("os-image", kernel_image, false);
+ 	parts[4] = read_file("file-system", rootfs_image, add_jffs2_eof);
+ 
+@@ -656,8 +667,10 @@ int main(int argc, char *argv[]) {
+ 	if (!output)
+ 		error(1, 0, "no output filename has been specified");
+ 
+-	if (strcmp(board, "CPE510") == 0)
+-		do_cpe510(output, kernel_image, rootfs_image, rev, add_jffs2_eof, sysupgrade);
++	if (strcmp(board, "CPE210") == 0)
++		do_cpe(output, kernel_image, rootfs_image, rev, add_jffs2_eof, sysupgrade, cpe210_support_list);
++	else if (strcmp(board, "CPE510") == 0)
++		do_cpe(output, kernel_image, rootfs_image, rev, add_jffs2_eof, sysupgrade, cpe510_support_list);
+ 	else if (strcmp(board, "C2600") == 0)
+ 		do_c2600(output, kernel_image, rootfs_image, rev, add_jffs2_eof, sysupgrade);
+ 	else
