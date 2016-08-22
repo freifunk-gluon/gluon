@@ -1,0 +1,437 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 22 Aug 2016 19:14:52 +0200
+Subject: dropbear: update to LEDE 277f85c21ae0ede4e15e66cbd801b9fb502531df
+
+Includes a few security updates and enables Curve25519 support.
+
+The patches 600-allow-blank-root-password.patch and
+610-skip-default-keys-in-custom-runs.patch are left out for now to avoid
+allowing password-less root login.
+
+diff --git a/package/network/services/dropbear/Config.in b/package/network/services/dropbear/Config.in
+index e2a7610..7c2edd7 100644
+--- a/package/network/services/dropbear/Config.in
++++ b/package/network/services/dropbear/Config.in
+@@ -1,6 +1,15 @@
+ menu "Configuration"
+ 	depends on PACKAGE_dropbear
+ 
++config DROPBEAR_CURVE25519
++	bool "Curve25519 support"
++	default y
++	help
++		This enables the following key exchange algorithm:
++		  curve25519-sha256@libssh.org
++
++		Increases binary size by about 13 kB uncompressed (MIPS).
++
+ config DROPBEAR_ECC
+ 	bool "Elliptic curve cryptography (ECC)"
+ 	default n
+@@ -12,7 +21,6 @@ config DROPBEAR_ECC
+ 		  ecdh-sha2-nistp256
+ 		  ecdh-sha2-nistp384
+ 		  ecdh-sha2-nistp521
+-		  curve25519-sha256@libssh.org
+ 
+ 		Public key algorithms:
+ 		  ecdsa-sha2-nistp256
+@@ -22,6 +30,21 @@ config DROPBEAR_ECC
+ 		Does not generate ECC host keys by default (ECC key exchange will not be used,
+ 		only ECC public key auth).
+ 
+-		Increases binary size by about 36 kB (MIPS).
++		Increases binary size by about 23 kB (MIPS).
++
++config DROPBEAR_UTMP
++	bool "Utmp support"
++	default n
++	depends on BUSYBOX_CONFIG_FEATURE_UTMP
++	help
++		This enables dropbear utmp support, the file /var/run/utmp is used to
++		track who is currently logged in.
++
++config DROPBEAR_PUTUTLINE
++	bool "Pututline support"
++	default n
++	depends on DROPBEAR_UTMP
++	help
++		Dropbear will use pututline() to write the utmp structure into the utmp file.
+ 
+ endmenu
+diff --git a/package/network/services/dropbear/Makefile b/package/network/services/dropbear/Makefile
+index 35958d3..36bcb4a 100644
+--- a/package/network/services/dropbear/Makefile
++++ b/package/network/services/dropbear/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2006-2014 OpenWrt.org
++# Copyright (C) 2006-2016 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -8,14 +8,14 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=dropbear
+-PKG_VERSION:=2015.67
++PKG_VERSION:=2016.74
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_URL:= \
+ 	http://matt.ucc.asn.au/dropbear/releases/ \
+ 	https://dropbear.nl/mirror/releases/
+-PKG_MD5SUM:=e967e320344cd4bfebe321e3ab8514d6
++PKG_MD5SUM:=9ad0172731e0f16623937804643b5bd8
+ 
+ PKG_LICENSE:=MIT
+ PKG_LICENSE_FILES:=LICENSE libtomcrypt/LICENSE libtommath/LICENSE
+@@ -23,10 +23,14 @@ PKG_LICENSE_FILES:=LICENSE libtomcrypt/LICENSE libtommath/LICENSE
+ PKG_BUILD_PARALLEL:=1
+ PKG_USE_MIPS16:=0
+ 
+-PKG_CONFIG_DEPENDS:=CONFIG_DROPBEAR_ECC
++PKG_CONFIG_DEPENDS:=CONFIG_TARGET_INIT_PATH CONFIG_DROPBEAR_ECC CONFIG_DROPBEAR_CURVE25519
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
++ifneq ($(DUMP),1)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell $(SH_FUNC) echo $(CONFIG_TARGET_INIT_PATH) | md5s)
++endif
++
+ define Package/dropbear/Default
+   URL:=http://matt.ucc.asn.au/dropbear/
+ endef
+@@ -48,7 +52,6 @@ endef
+ 
+ define Package/dropbear/conffiles
+ /etc/dropbear/dropbear_rsa_host_key
+-/etc/dropbear/dropbear_dss_host_key 
+ /etc/config/dropbear 
+ endef
+ 
+@@ -65,25 +68,35 @@ CONFIGURE_ARGS += \
+ 	--enable-syslog \
+ 	$(if $(CONFIG_SHADOW_PASSWORDS),,--disable-shadow) \
+ 	--disable-lastlog \
+-	--disable-utmp \
+ 	--disable-utmpx \
++	$(if $(CONFIG_DROPBEAR_UTMP),,--disable-utmp) \
+ 	--disable-wtmp \
+ 	--disable-wtmpx \
+ 	--disable-loginfunc \
+-	--disable-pututline \
++	$(if $(CONFIG_DROPBEAR_PUTUTLINE),,--disable-pututline) \
+ 	--disable-pututxline \
+ 	--disable-zlib \
+ 	--enable-bundled-libtom
+ 
+-TARGET_CFLAGS += -DARGTYPE=3 -ffunction-sections -fdata-sections
++TARGET_CFLAGS += -DDEFAULT_PATH=\\\"$(CONFIG_TARGET_INIT_PATH)\\\" -DARGTYPE=3 -ffunction-sections -fdata-sections
+ TARGET_LDFLAGS += -Wl,--gc-sections
+ 
+ define Build/Configure
+ 	$(Build/Configure/Default)
+ 
++	$(SED) 's,^#define DEFAULT_PATH .*$$$$,#define DEFAULT_PATH "$(CONFIG_TARGET_INIT_PATH)",g' \
++		$(PKG_BUILD_DIR)/options.h
++
++	awk 'BEGIN { rc = 1 } \
++	     /'DROPBEAR_CURVE25519'/ { $$$$0 = "$(if $(CONFIG_DROPBEAR_CURVE25519),,// )#define 'DROPBEAR_CURVE25519'"; rc = 0 } \
++	     { print } \
++	     END { exit(rc) }' $(PKG_BUILD_DIR)/options.h \
++	     >$(PKG_BUILD_DIR)/options.h.new && \
++	mv $(PKG_BUILD_DIR)/options.h.new $(PKG_BUILD_DIR)/options.h
++
+ 	# Enforce that all replacements are made, otherwise options.h has changed
+ 	# format and this logic is broken.
+-	for OPTION in DROPBEAR_ECDSA DROPBEAR_ECDH DROPBEAR_CURVE25519; do \
++	for OPTION in DROPBEAR_ECDSA DROPBEAR_ECDH; do \
+ 	  awk 'BEGIN { rc = 1 } \
+ 	       /'$$$$OPTION'/ { $$$$0 = "$(if $(CONFIG_DROPBEAR_ECC),,// )#define '$$$$OPTION'"; rc = 0 } \
+ 	       { print } \
+@@ -91,6 +104,9 @@ define Build/Configure
+ 	       >$(PKG_BUILD_DIR)/options.h.new && \
+ 	  mv $(PKG_BUILD_DIR)/options.h.new $(PKG_BUILD_DIR)/options.h || exit 1; \
+ 	done
++
++	# Enforce rebuild of svr-chansession.c
++	rm -f $(PKG_BUILD_DIR)/svr-chansession.o
+ endef
+ 
+ define Build/Compile
+@@ -118,7 +134,6 @@ define Package/dropbear/install
+ 	$(INSTALL_DIR) $(1)/usr/lib/opkg/info
+ 	$(INSTALL_DIR) $(1)/etc/dropbear
+ 	touch $(1)/etc/dropbear/dropbear_rsa_host_key
+-	touch $(1)/etc/dropbear/dropbear_dss_host_key
+ endef
+ 
+ define Package/dropbearconvert/install
+diff --git a/package/network/services/dropbear/files/dropbear.init b/package/network/services/dropbear/files/dropbear.init
+index 6de0142..1653efb 100755
+--- a/package/network/services/dropbear/files/dropbear.init
++++ b/package/network/services/dropbear/files/dropbear.init
+@@ -37,7 +37,6 @@ validate_section_dropbear()
+ 		'RootPasswordAuth:bool:1' \
+ 		'RootLogin:bool:1' \
+ 		'rsakeyfile:file' \
+-		'dsskeyfile:file' \
+ 		'BannerFile:file' \
+ 		'Port:list(port):22' \
+ 		'SSHKeepAlive:uinteger:300' \
+@@ -49,7 +48,7 @@ dropbear_instance()
+ {
+ 	local PasswordAuth enable Interface GatewayPorts \
+ 		RootPasswordAuth RootLogin rsakeyfile \
+-		dsskeyfile BannerFile Port SSHKeepAlive IdleTimeout \
++		BannerFile Port SSHKeepAlive IdleTimeout \
+ 		mdns ipaddrs
+ 
+ 	validate_section_dropbear "${1}" || {
+@@ -75,18 +74,18 @@ dropbear_instance()
+ 	[ "${RootPasswordAuth}" -eq 0 ] && procd_append_param command -g
+ 	[ "${RootLogin}" -eq 0 ] && procd_append_param command -w
+ 	[ -n "${rsakeyfile}" ] && procd_append_param command -r "${rsakeyfile}"
+-	[ -n "${dsskeyfile}" ] && procd_append_param command -d "${dsskeyfile}"
+ 	[ -n "${BannerFile}" ] && procd_append_param command -b "${BannerFile}"
+ 	append_ports "${ipaddrs}" "${Port}"
+ 	[ "${IdleTimeout}" -ne 0 ] && procd_append_param command -I "${IdleTimeout}"
+ 	[ "${SSHKeepAlive}" -ne 0 ] && procd_append_param command -K "${SSHKeepAlive}"
+ 	[ "${mdns}" -ne 0 ] && procd_add_mdns "ssh" "tcp" "$Port" "daemon=dropbear"
++	procd_set_param respawn
+ 	procd_close_instance
+ }
+ 
+ keygen()
+ {
+-	for keytype in rsa dss; do
++	for keytype in rsa; do
+ 		# check for keys
+ 		key=dropbear/dropbear_${keytype}_host_key
+ 		[ -f /tmp/$key -o -s /etc/$key ] || {
+@@ -107,10 +106,15 @@ keygen()
+ 	chmod 0700 /etc/dropbear
+ }
+ 
++load_interfaces()
++{
++	config_get interface "$1" Interface
++	interfaces=" ${interface} ${interfaces}"
++}
++
+ start_service()
+ {
+-	[ -s /etc/dropbear/dropbear_rsa_host_key -a \
+-	  -s /etc/dropbear/dropbear_dss_host_key ] || keygen
++	[ -s /etc/dropbear/dropbear_rsa_host_key ] || keygen
+ 
+ 	. /lib/functions.sh
+ 	. /lib/functions/network.sh
+@@ -121,7 +125,19 @@ start_service()
+ 
+ service_triggers()
+ {
+-	procd_add_reload_trigger "dropbear"
++	local interfaces
++
++	procd_add_config_trigger "config.change" "dropbear" /etc/init.d/dropbear reload
++
++	config_load "${NAME}"
++	config_foreach load_interfaces dropbear
++
++	[ -n "${interfaces}" ] & {
++		for n in $interfaces ; do
++			procd_add_interface_trigger "interface.*" $n /etc/init.d/dropbear reload
++		done
++	}
++
+ 	procd_add_validation validate_section_dropbear
+ }
+ 
+diff --git a/package/network/services/dropbear/patches/100-pubkey_path.patch b/package/network/services/dropbear/patches/100-pubkey_path.patch
+index 456874b..41fdc1a 100644
+--- a/package/network/services/dropbear/patches/100-pubkey_path.patch
++++ b/package/network/services/dropbear/patches/100-pubkey_path.patch
+@@ -1,6 +1,6 @@
+ --- a/svr-authpubkey.c
+ +++ b/svr-authpubkey.c
+-@@ -208,17 +208,21 @@ static int checkpubkey(unsigned char* al
++@@ -218,17 +218,21 @@ static int checkpubkey(char* algo, unsig
+  		goto out;
+  	}
+  
+@@ -33,7 +33,7 @@
+  	if (authfile == NULL) {
+  		goto out;
+  	}
+-@@ -371,26 +375,35 @@ static int checkpubkeyperms() {
++@@ -381,26 +385,35 @@ static int checkpubkeyperms() {
+  		goto out;
+  	}
+  
+diff --git a/package/network/services/dropbear/patches/110-change_user.patch b/package/network/services/dropbear/patches/110-change_user.patch
+index 7982af6..4b5c1cb 100644
+--- a/package/network/services/dropbear/patches/110-change_user.patch
++++ b/package/network/services/dropbear/patches/110-change_user.patch
+@@ -1,6 +1,6 @@
+ --- a/svr-chansession.c
+ +++ b/svr-chansession.c
+-@@ -920,12 +920,12 @@ static void execchild(void *user_data) {
++@@ -922,12 +922,12 @@ static void execchild(void *user_data) {
+  	/* We can only change uid/gid as root ... */
+  	if (getuid() == 0) {
+  
+diff --git a/package/network/services/dropbear/patches/120-openwrt_options.patch b/package/network/services/dropbear/patches/120-openwrt_options.patch
+index 48dae73..f16aaf0 100644
+--- a/package/network/services/dropbear/patches/120-openwrt_options.patch
++++ b/package/network/services/dropbear/patches/120-openwrt_options.patch
+@@ -18,7 +18,28 @@
+  
+  /* Whether to support "-c" and "-m" flags to choose ciphers/MACs at runtime */
+  #define ENABLE_USER_ALGO_LIST
+-@@ -126,9 +126,9 @@ much traffic. */
++@@ -91,16 +91,16 @@ much traffic. */
++  * Including multiple keysize variants the same cipher 
++  * (eg AES256 as well as AES128) will result in a minimal size increase.*/
++ #define DROPBEAR_AES128
++-#define DROPBEAR_3DES
+++/*#define DROPBEAR_3DES*/
++ #define DROPBEAR_AES256
++ /* Compiling in Blowfish will add ~6kB to runtime heap memory usage */
++ /*#define DROPBEAR_BLOWFISH*/
++-#define DROPBEAR_TWOFISH256
++-#define DROPBEAR_TWOFISH128
+++/*#define DROPBEAR_TWOFISH256*/
+++/*#define DROPBEAR_TWOFISH128*/
++ 
++ /* Enable CBC mode for ciphers. This has security issues though
++  * is the most compatible with older SSH implementations */
++-#define DROPBEAR_ENABLE_CBC_MODE
+++/*#define DROPBEAR_ENABLE_CBC_MODE*/
++ 
++ /* Enable "Counter Mode" for ciphers. This is more secure than normal
++  * CBC mode against certain attacks. It is recommended for security
++@@ -131,9 +131,9 @@ If you test it please contact the Dropbe
+   * If you disable MD5, Dropbear will fall back to SHA1 fingerprints,
+   * which are not the standard form. */
+  #define DROPBEAR_SHA1_HMAC
+@@ -31,7 +52,16 @@
+  #define DROPBEAR_MD5_HMAC
+  
+  /* You can also disable integrity. Don't bother disabling this if you're
+-@@ -184,7 +184,7 @@ much traffic. */
++@@ -146,7 +146,7 @@ If you test it please contact the Dropbe
++  * Removing either of these won't save very much space.
++  * SSH2 RFC Draft requires dss, recommends rsa */
++ #define DROPBEAR_RSA
++-#define DROPBEAR_DSS
+++/*#define DROPBEAR_DSS*/
++ /* ECDSA is significantly faster than RSA or DSS. Compiling in ECC
++  * code (either ECDSA or ECDH) increases binary size - around 30kB
++  * on x86-64 */
++@@ -194,7 +194,7 @@ If you test it please contact the Dropbe
+  
+  /* Whether to print the message of the day (MOTD). This doesn't add much code
+   * size */
+@@ -40,7 +70,7 @@
+  
+  /* The MOTD file path */
+  #ifndef MOTD_FILENAME
+-@@ -226,7 +226,7 @@ much traffic. */
++@@ -242,7 +242,7 @@ Homedir is prepended unless path begins
+   * note that it will be provided for all "hidden" client-interactive
+   * style prompts - if you want something more sophisticated, use 
+   * SSH_ASKPASS instead. Comment out this var to remove this functionality.*/
+diff --git a/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch b/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch
+deleted file mode 100644
+index edb2909..0000000
+--- a/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch
++++ /dev/null
+@@ -1,21 +0,0 @@
+---- a/cli-runopts.c
+-+++ b/cli-runopts.c
+-@@ -315,6 +315,10 @@ void cli_getopts(int argc, char ** argv)
+- 					debug_trace = 1;
+- 					break;
+- #endif
+-+				case 'o':
+-+					next = &dummy;
+-+				case 'x':
+-+					break;
+- 				case 'F':
+- 				case 'e':
+- #ifndef ENABLE_USER_ALGO_LIST
+-@@ -332,7 +336,6 @@ void cli_getopts(int argc, char ** argv)
+- 					print_version();
+- 					exit(EXIT_SUCCESS);
+- 					break;
+--				case 'o':
+- 				case 'b':
+- 					next = &dummy;
+- 				default:
+diff --git a/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch b/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch
+new file mode 100644
+index 0000000..ab09c2f
+--- /dev/null
++++ b/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch
+@@ -0,0 +1,11 @@
++--- a/cli-runopts.c
+++++ b/cli-runopts.c
++@@ -296,6 +296,8 @@ void cli_getopts(int argc, char ** argv)
++ 					debug_trace = 1;
++ 					break;
++ #endif
+++				case 'x':
+++					break;
++ 				case 'F':
++ 				case 'e':
++ #ifndef ENABLE_USER_ALGO_LIST
+diff --git a/package/network/services/dropbear/patches/140-disable_assert.patch b/package/network/services/dropbear/patches/140-disable_assert.patch
+index 0717228..78b54ac 100644
+--- a/package/network/services/dropbear/patches/140-disable_assert.patch
++++ b/package/network/services/dropbear/patches/140-disable_assert.patch
+@@ -1,6 +1,6 @@
+ --- a/dbutil.h
+ +++ b/dbutil.h
+-@@ -101,7 +101,11 @@ int m_str_to_uint(const char* str, unsig
++@@ -78,7 +78,11 @@ int m_str_to_uint(const char* str, unsig
+  #define DEF_MP_INT(X) mp_int X = {0, 0, 0, NULL}
+  
+  /* Dropbear assertion */
+diff --git a/package/network/services/dropbear/patches/150-dbconvert_standalone.patch b/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
+index 367dc2c..ccc2cb7 100644
+--- a/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
++++ b/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
+@@ -1,8 +1,8 @@
+ --- a/options.h
+ +++ b/options.h
+ @@ -5,6 +5,11 @@
+- #ifndef _OPTIONS_H_
+- #define _OPTIONS_H_
++ #ifndef DROPBEAR_OPTIONS_H_
++ #define DROPBEAR_OPTIONS_H_
+  
+ +#if !defined(DROPBEAR_CLIENT) && !defined(DROPBEAR_SERVER)
+ +#define DROPBEAR_SERVER
+diff --git a/package/network/services/dropbear/patches/500-set-default-path.patch b/package/network/services/dropbear/patches/500-set-default-path.patch
+index e2add94..da6b9ae 100644
+--- a/package/network/services/dropbear/patches/500-set-default-path.patch
++++ b/package/network/services/dropbear/patches/500-set-default-path.patch
+@@ -1,11 +1,12 @@
+ --- a/options.h
+ +++ b/options.h
+-@@ -336,7 +336,7 @@ be overridden at runtime with -I. 0 disa
++@@ -352,7 +352,9 @@ be overridden at runtime with -I. 0 disa
+  #define DEFAULT_IDLE_TIMEOUT 0
+  
+  /* The default path. This will often get replaced by the shell */
+--#define DEFAULT_PATH "/usr/bin:/bin"
+-+#define DEFAULT_PATH "/bin:/sbin:/usr/bin:/usr/sbin"
+++#ifndef DEFAULT_PATH
++ #define DEFAULT_PATH "/usr/bin:/bin"
+++#endif
+  
+  /* Some other defines (that mostly should be left alone) are defined
+   * in sysoptions.h */
