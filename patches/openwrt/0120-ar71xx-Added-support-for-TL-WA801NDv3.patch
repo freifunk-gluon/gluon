@@ -1,0 +1,567 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 22 Aug 2016 23:55:22 +0200
+Subject: ar71xx: Added support for TL-WA801NDv3
+
+Signed-off-by: Tiziano Bacocco <tizbac2@gmail.com>
+
+Backport of OpenWrt r48705
+
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index dd6ca98..e6b129a 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -376,6 +376,7 @@ wp543)
+ 	ucidef_set_interface_lan "eth0"
+ 	;;
+ 
++tl-wa801nd-v3 |\
+ dir-505-a1)
+ 	ucidef_set_interface_lan "eth1"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 47ddd56..7641e63 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -835,6 +835,9 @@ ar71xx_board_detect() {
+ 	*"TL-WA801ND v2")
+ 		name="tl-wa801nd-v2"
+ 		;;
++	*"TL-WA801ND v3")
++		name="tl-wa801nd-v3"
++		;;
+ 	*TL-WA901ND)
+ 		name="tl-wa901nd"
+ 		;;
+diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
+index 0903ee9..c75833d 100644
+--- a/target/linux/ar71xx/config-3.18
++++ b/target/linux/ar71xx/config-3.18
+@@ -119,6 +119,7 @@ CONFIG_ATH79_MACH_TL_MR3020=y
+ CONFIG_ATH79_MACH_TL_MR3X20=y
+ CONFIG_ATH79_MACH_TL_WA701ND_V2=y
+ CONFIG_ATH79_MACH_TL_WA7210N_V2=y
++CONFIG_ATH79_MACH_TL_WA801ND_V3=y
+ CONFIG_ATH79_MACH_TL_WA830RE_V2=y
+ CONFIG_ATH79_MACH_TL_WA901ND=y
+ CONFIG_ATH79_MACH_TL_WA901ND_V2=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
+new file mode 100644
+index 0000000..39cdb10
+--- /dev/null
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
+@@ -0,0 +1,136 @@
++/*
++ *  TP-LINK TL-WA801ND v3 adapted from TP-LINK TL-WR841N/ND v9
++ *
++ *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
++ *  Copyright (C) 2016 Tiziano Bacocco <tizbac2@gmail.com>
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++
++#include <asm/mach-ath79/ath79.h>
++#include <asm/mach-ath79/ar71xx_regs.h>
++
++#include "common.h"
++#include "dev-eth.h"
++#include "dev-gpio-buttons.h"
++#include "dev-leds-gpio.h"
++#include "dev-m25p80.h"
++#include "dev-wmac.h"
++#include "machtypes.h"
++
++#define TL_WA801NDV3_GPIO_LED_WLAN	12
++#define TL_WA801NDV3_GPIO_LED_QSS	13
++#define TL_WA801NDV3_GPIO_LED_SECURITY_RED 11
++#define TL_WA801NDV3_GPIO_LED_SECURITY_GREEN 15
++#define TL_WA801NDV3_GPIO_LED_LAN 3
++
++#define TL_WA801NDV3_GPIO_BTN_RESET	2
++#define TL_WA801NDV3_GPIO_BTN_WIFI	1
++
++#define TL_WA801NDV3_KEYS_POLL_INTERVAL	20	/* msecs */
++#define TL_WA801NDV3_KEYS_DEBOUNCE_INTERVAL (3 * TL_WA801NDV3_KEYS_POLL_INTERVAL)
++
++static const char *tl_wa801n_v3_part_probes[] = {
++	"tp-link",
++	NULL,
++};
++
++static struct flash_platform_data tl_wa801n_v3_flash_data = {
++	.part_probes	= tl_wa801n_v3_part_probes,
++};
++
++static struct gpio_led tl_wa801n_v3_leds_gpio[] __initdata = {
++  {
++		.name		= "tp-link:green:qss",
++		.gpio		= TL_WA801NDV3_GPIO_LED_QSS,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:lan",
++		.gpio		= TL_WA801NDV3_GPIO_LED_LAN,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:green:wlan",
++		.gpio		= TL_WA801NDV3_GPIO_LED_WLAN,
++		.active_low	= 1,
++	}, {
++		.name		= "tp-link:red:security",
++		.gpio		= TL_WA801NDV3_GPIO_LED_SECURITY_RED,
++		.active_low	= 0,
++	}, {
++		.name		= "tp-link:green:security",
++		.gpio		= TL_WA801NDV3_GPIO_LED_SECURITY_GREEN,
++		.active_low	= 0,
++	}
++
++};
++
++static struct gpio_keys_button tl_wa801n_v3_gpio_keys[] __initdata = {
++	{
++		.desc		= "Reset button",
++		.type		= EV_KEY,
++		.code		= KEY_RESTART,
++		.debounce_interval = TL_WA801NDV3_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WA801NDV3_GPIO_BTN_RESET,
++		.active_low	= 1,
++	}, {
++		.desc		= "WIFI button",
++		.type		= EV_KEY,
++		.code		= KEY_RFKILL,
++		.debounce_interval = TL_WA801NDV3_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WA801NDV3_GPIO_BTN_WIFI,
++		.active_low	= 1,
++	}
++};
++
++
++static void __init tl_ap143_setup(void)
++{
++	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
++	u8 *ee = (u8 *) KSEG1ADDR(0x1fff1000);
++	u8 tmpmac[ETH_ALEN];
++
++	ath79_register_m25p80(&tl_wa801n_v3_flash_data);
++
++	ath79_setup_ar933x_phy4_switch(false, false);
++
++	ath79_register_mdio(0, 0x0);
++
++	/* LAN */
++	ath79_eth1_data.phy_if_mode = PHY_INTERFACE_MODE_GMII;
++	ath79_eth1_data.duplex = DUPLEX_FULL;
++	ath79_switch_data.phy_poll_mask |= BIT(4);
++	ath79_init_mac(ath79_eth1_data.mac_addr, mac, 0);
++	ath79_register_eth(1);
++
++	/* WAN */
++	ath79_switch_data.phy4_mii_en = 1;
++	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_MII;
++	ath79_eth0_data.duplex = DUPLEX_FULL;
++	ath79_eth0_data.speed = SPEED_100;
++	ath79_eth0_data.phy_mask = BIT(4);
++	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 1);
++	ath79_register_eth(0);
++
++	ath79_init_mac(tmpmac, mac, 0);
++	ath79_register_wmac(ee, tmpmac);
++}
++
++static void __init tl_wa801n_v3_setup(void)
++{
++	tl_ap143_setup();
++
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wa801n_v3_leds_gpio),
++				 tl_wa801n_v3_leds_gpio);
++
++	ath79_register_gpio_keys_polled(1, TL_WA801NDV3_KEYS_POLL_INTERVAL,
++					ARRAY_SIZE(tl_wa801n_v3_gpio_keys),
++					tl_wa801n_v3_gpio_keys);
++}
++
++MIPS_MACHINE(ATH79_MACH_TL_WA801ND_V3, "TL-WA801ND-v3", "TP-LINK TL-WA801ND v3",
++	     tl_wa801n_v3_setup);
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index b288a1d..dfc0d71 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -691,6 +691,13 @@ define Device/tl-wa801nd-v2
+     TPLINK_HWID := 0x08010002
+ endef
+ 
++define Device/tl-wa801nd-v3
++    $(Device/tplink-4mlzma)
++    BOARDNAME := TL-WA801ND-v3
++    DEVICE_PROFILE := TLWA801
++    TPLINK_HWID := 0x08010003
++endef
++
+ define Device/tl-wa830re-v2
+     $(Device/tplink-4mlzma)
+     BOARDNAME := TL-WA830RE-v2
+@@ -711,7 +718,7 @@ define Device/tl-wa860re-v1
+     DEVICE_PROFILE := TLWA860
+     TPLINK_HWID := 0x08600001
+ endef
+-TARGET_DEVICES += tl-wa801nd-v2 tl-wa830re-v2 tl-wa850re-v1 tl-wa860re-v1
++TARGET_DEVICES += tl-wa801nd-v2 tl-wa801nd-v3 tl-wa830re-v2 tl-wa850re-v1 tl-wa860re-v1
+ 
+ define Device/tl-wa901nd-v3
+     $(Device/tplink-4mlzma)
+diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
+index c83ac2e..d23f0cf 100644
+--- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
++++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
+@@ -1,6 +1,6 @@
+ --- a/arch/mips/ath79/machtypes.h
+ +++ b/arch/mips/ath79/machtypes.h
+-@@ -16,22 +16,204 @@
++@@ -16,22 +16,205 @@
+  
+  enum ath79_mach_type {
+  	ATH79_MACH_GENERIC = 0,
+@@ -127,6 +127,7 @@
+ +	ATH79_MACH_TL_WA850RE,		/* TP-LINK TL-WA850RE */
+ +	ATH79_MACH_TL_WA860RE,		/* TP-LINK TL-WA860RE */
+ +	ATH79_MACH_TL_WA801ND_V2,	/* TP-LINK TL-WA801ND v2 */
+++	ATH79_MACH_TL_WA801ND_V3,	/* TP-LINK TL-WA801ND v3 */
+ +	ATH79_MACH_TL_WA830RE_V2,	/* TP-LINK TL-WA830RE v2 */
+ +	ATH79_MACH_TL_WA901ND,		/* TP-LINK TL-WA901ND */
+ +	ATH79_MACH_TL_WA901ND_V2,	/* TP-LINK TL-WA901ND v2 */
+@@ -287,17 +288,10 @@
+  config ATH79_MACH_AP121
+  	bool "Atheros AP121 reference board"
+  	select SOC_AR933X
+-@@ -11,62 +84,1051 @@ config ATH79_MACH_AP121
+- 	select ATH79_DEV_M25P80
+- 	select ATH79_DEV_USB
+- 	select ATH79_DEV_WMAC
+--	help
+--	  Say 'Y' here if you want your kernel to support the
+--	  Atheros AP121 reference board.
+-+	help
+-+	  Say 'Y' here if you want your kernel to support the
+-+	  Atheros AP121 reference board.
+-+
++@@ -15,13 +88,25 @@ config ATH79_MACH_AP121
++ 	  Say 'Y' here if you want your kernel to support the
++ 	  Atheros AP121 reference board.
++ 
+ +config ATH79_MACH_AP132
+ +	bool "Atheros AP132 reference board"
+ +	select SOC_QCA955X
+@@ -310,32 +304,21 @@
+ +	  Say 'Y' here if you want your kernel to support the
+ +	  Atheros AP132 reference boards.
+ +
+-+config ATH79_MACH_AP136
+-+	bool "Atheros AP136/AP135 reference board"
+-+	select SOC_QCA955X
+-+	select ATH79_DEV_GPIO_BUTTONS
+-+	select ATH79_DEV_LEDS_GPIO
+-+	select ATH79_DEV_NFC
+-+	select ATH79_DEV_M25P80
+-+	select ATH79_DEV_USB
+-+	select ATH79_DEV_WMAC
+-+	help
+-+	  Say 'Y' here if you want your kernel to support the
+-+	  Atheros AP136 or AP135 reference boards.
+-+
+-+config ATH79_MACH_AP81
+-+	bool "Atheros AP81 reference board"
+-+	select SOC_AR913X
+-+	select ATH79_DEV_ETH
+-+	select ATH79_DEV_GPIO_BUTTONS
+-+	select ATH79_DEV_LEDS_GPIO
++ config ATH79_MACH_AP136
++ 	bool "Atheros AP136/AP135 reference board"
++ 	select SOC_QCA955X
++ 	select ATH79_DEV_GPIO_BUTTONS
++ 	select ATH79_DEV_LEDS_GPIO
++ 	select ATH79_DEV_NFC
++-	select ATH79_DEV_SPI
+ +	select ATH79_DEV_M25P80
+-+	select ATH79_DEV_USB
+-+	select ATH79_DEV_WMAC
+-+	help
+-+	  Say 'Y' here if you want your kernel to support the
+-+	  Atheros AP81 reference board.
+-+
++ 	select ATH79_DEV_USB
++ 	select ATH79_DEV_WMAC
++ 	help
++@@ -41,6 +126,24 @@ config ATH79_MACH_AP81
++ 	  Say 'Y' here if you want your kernel to support the
++ 	  Atheros AP81 reference board.
++ 
+ +config ATH79_MACH_AP83
+ +	bool "Atheros AP83 board support"
+ +	select SOC_AR913X
+@@ -354,21 +337,13 @@
+ +	select ATH79_DEV_M25P80
+ +	select ATH79_DEV_USB
+ +
+-+config ATH79_MACH_DB120
+-+	bool "Atheros DB120 reference board"
+-+	select SOC_AR934X
+-+	select ATH79_DEV_AP9X_PCI if PCI
+-+	select ATH79_DEV_ETH
+-+	select ATH79_DEV_GPIO_BUTTONS
+-+	select ATH79_DEV_LEDS_GPIO
+-+	select ATH79_DEV_M25P80
+-+	select ATH79_DEV_NFC
+-+	select ATH79_DEV_USB
+-+	select ATH79_DEV_WMAC
+-+	help
+-+	  Say 'Y' here if you want your kernel to support the
+-+	  Atheros DB120 reference board.
+-+
++ config ATH79_MACH_DB120
++ 	bool "Atheros DB120 reference board"
++ 	select SOC_AR934X
++@@ -56,6 +159,13 @@ config ATH79_MACH_DB120
++ 	  Say 'Y' here if you want your kernel to support the
++ 	  Atheros DB120 reference board.
++ 
+ +config ATH79_MACH_PB42
+ +	bool "Atheros PB42 board support"
+ +	select SOC_AR71XX
+@@ -376,18 +351,13 @@
+ +	select ATH79_DEV_GPIO_BUTTONS
+ +	select ATH79_DEV_M25P80
+ +
+-+config ATH79_MACH_PB44
+-+	bool "Atheros PB44 reference board"
+-+	select SOC_AR71XX
+-+	select ATH79_DEV_ETH
+-+	select ATH79_DEV_GPIO_BUTTONS
+-+	select ATH79_DEV_LEDS_GPIO
+-+	select ATH79_DEV_SPI
+-+	select ATH79_DEV_USB
+-+	help
+-+	  Say 'Y' here if you want your kernel to support the
+-+	  Atheros PB44 reference board.
+-+
++ config ATH79_MACH_PB44
++ 	bool "Atheros PB44 reference board"
++ 	select SOC_AR71XX
++@@ -68,6 +178,967 @@ config ATH79_MACH_PB44
++ 	  Say 'Y' here if you want your kernel to support the
++ 	  Atheros PB44 reference board.
++ 
+ +config ATH79_MACH_PB92
+ +	bool "Atheros PB92 board support"
+ +	select SOC_AR724X
+@@ -1113,6 +1083,15 @@
+ +       select ATH79_DEV_M25P80
+ +       select ATH79_DEV_WMAC
+ +
+++config ATH79_MACH_TL_WA801ND_V3
+++	bool "TP-LINK TL-WA801ND v3 support"
+++	select SOC_QCA953X
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_WMAC
+++
+ +config ATH79_MACH_TL_WA830RE_V2
+ +	bool "TP-LINK TL-WA830RE v2 support"
+ +	select SOC_AR934X
+@@ -1172,28 +1151,17 @@
+ +	select ATH79_DEV_M25P80
+ +	select ATH79_DEV_USB
+ +	select ATH79_DEV_WMAC
+- 
+--config ATH79_MACH_AP136
+--	bool "Atheros AP136/AP135 reference board"
+--	select SOC_QCA955X
+++
+ +config ATH79_MACH_TL_WR720N_V3
+ +	bool "TP-LINK TL-WR720N v3/v4 support"
+ +	select SOC_AR933X
+ +	select ATH79_DEV_ETH
+- 	select ATH79_DEV_GPIO_BUTTONS
+- 	select ATH79_DEV_LEDS_GPIO
+--	select ATH79_DEV_NFC
+--	select ATH79_DEV_SPI
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+ +	select ATH79_DEV_M25P80
+- 	select ATH79_DEV_USB
+- 	select ATH79_DEV_WMAC
+--	help
+--	  Say 'Y' here if you want your kernel to support the
+--	  Atheros AP136 or AP135 reference boards.
+- 
+--config ATH79_MACH_AP81
+--	bool "Atheros AP81 reference board"
+--	select SOC_AR913X
+++	select ATH79_DEV_USB
+++	select ATH79_DEV_WMAC
+++
+ +config ATH79_MACH_TL_WR741ND
+ +	bool "TP-LINK TL-WR741ND support"
+ +	select SOC_AR724X
+@@ -1206,18 +1174,13 @@
+ +config ATH79_MACH_TL_WR741ND_V4
+ +	bool "TP-LINK TL-WR741ND v4/TL-MR3220 v2 support"
+ +	select SOC_AR933X
+- 	select ATH79_DEV_ETH
+- 	select ATH79_DEV_GPIO_BUTTONS
+- 	select ATH79_DEV_LEDS_GPIO
+- 	select ATH79_DEV_M25P80
+- 	select ATH79_DEV_USB
+- 	select ATH79_DEV_WMAC
+--	help
+--	  Say 'Y' here if you want your kernel to support the
+--	  Atheros AP81 reference board.
+- 
+--config ATH79_MACH_DB120
+--	bool "Atheros DB120 reference board"
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_USB
+++	select ATH79_DEV_WMAC
+++
+ +config ATH79_MACH_TL_WR841N_V1
+ +	bool "TP-LINK TL-WR841N v1 support"
+ +	select SOC_AR71XX
+@@ -1268,21 +1231,15 @@
+ +
+ +config ATH79_MACH_TL_WR1041N_V2
+ +	bool "TP-LINK TL-WR1041N v2 support"
+- 	select SOC_AR934X
+- 	select ATH79_DEV_AP9X_PCI if PCI
+- 	select ATH79_DEV_ETH
+- 	select ATH79_DEV_GPIO_BUTTONS
+- 	select ATH79_DEV_LEDS_GPIO
+- 	select ATH79_DEV_M25P80
+--	select ATH79_DEV_NFC
+- 	select ATH79_DEV_USB
+- 	select ATH79_DEV_WMAC
+--	help
+--	  Say 'Y' here if you want your kernel to support the
+--	  Atheros DB120 reference board.
+- 
+--config ATH79_MACH_PB44
+--	bool "Atheros PB44 reference board"
+++	select SOC_AR934X
+++	select ATH79_DEV_AP9X_PCI if PCI
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_USB
+++	select ATH79_DEV_WMAC
+++
+ +config ATH79_MACH_TL_WR1043ND
+ +	bool "TP-LINK TL-WR1043ND support"
+ +	select SOC_AR913X
+@@ -1325,12 +1282,11 @@
+ +
+ +config ATH79_MACH_TEW_673GRU
+ +	bool "TRENDnet TEW-673GRU support"
+- 	select SOC_AR71XX
+++	select SOC_AR71XX
+ +	select ATH79_DEV_AP9X_PCI if PCI
+- 	select ATH79_DEV_ETH
+- 	select ATH79_DEV_GPIO_BUTTONS
+- 	select ATH79_DEV_LEDS_GPIO
+--	select ATH79_DEV_SPI
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+ +	select ATH79_DEV_M25P80
+ +	select ATH79_DEV_USB
+ +	select ATH79_NVRAM
+@@ -1361,14 +1317,12 @@
+ +	select ATH79_DEV_GPIO_BUTTONS
+ +	select ATH79_DEV_LEDS_GPIO
+ +	select ATH79_DEV_M25P80
+- 	select ATH79_DEV_USB
+--	help
+--	  Say 'Y' here if you want your kernel to support the
+--	  Atheros PB44 reference board.
+- 
+++	select ATH79_DEV_USB
+++
+  config ATH79_MACH_UBNT_XM
+  	bool "Ubiquiti Networks XM/UniFi boards"
+-@@ -83,6 +1145,117 @@ config ATH79_MACH_UBNT_XM
++ 	select SOC_AR724X
++@@ -83,6 +1154,117 @@ config ATH79_MACH_UBNT_XM
+  	  Say 'Y' here if you want your kernel to support the
+  	  Ubiquiti Networks XM (rev 1.0) board.
+  
+@@ -1486,7 +1440,7 @@
+  endmenu
+  
+  config SOC_AR71XX
+-@@ -124,7 +1297,10 @@ config ATH79_DEV_DSA
++@@ -124,7 +1306,10 @@ config ATH79_DEV_DSA
+  config ATH79_DEV_ETH
+  	def_bool n
+  
+@@ -1498,7 +1452,7 @@
+  	def_bool n
+  
+  config ATH79_DEV_GPIO_BUTTONS
+-@@ -154,6 +1330,11 @@ config ATH79_PCI_ATH9K_FIXUP
++@@ -154,6 +1339,11 @@ config ATH79_PCI_ATH9K_FIXUP
+  	def_bool n
+  
+  config ATH79_ROUTERBOOT
+@@ -1512,7 +1466,7 @@
+  endif
+ --- a/arch/mips/ath79/Makefile
+ +++ b/arch/mips/ath79/Makefile
+-@@ -38,9 +38,129 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
++@@ -38,9 +38,130 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
+  #
+  # Machines
+  #
+@@ -1595,6 +1549,7 @@
+ +obj-$(CONFIG_ATH79_MACH_TL_WA701ND_V2)	+= mach-tl-wa701nd-v2.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WA7210N_V2)	+= mach-tl-wa7210n-v2.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WA830RE_V2)	+= mach-tl-wa830re-v2.o
+++obj-$(CONFIG_ATH79_MACH_TL_WA801ND_V3)	+= mach-tl-wa801nd-v3.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WA901ND)	+= mach-tl-wa901nd.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WA901ND_V2)	+= mach-tl-wa901nd-v2.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WDR3500)     += mach-tl-wdr3500.o
+diff --git a/tools/firmware-utils/src/mktplinkfw.c b/tools/firmware-utils/src/mktplinkfw.c
+index 6df869d..9785a3f 100644
+--- a/tools/firmware-utils/src/mktplinkfw.c
++++ b/tools/firmware-utils/src/mktplinkfw.c
+@@ -50,6 +50,7 @@
+ #define HWID_TL_WA830RE_V1	0x08300010
+ #define HWID_TL_WA830RE_V2	0x08300002
+ #define HWID_TL_WA801ND_V2	0x08010002
++#define HWID_TL_WA801ND_V3	0x08010003
+ #define HWID_TL_WA901ND_V1	0x09010001
+ #define HWID_TL_WA901ND_V2	0x09010002
+ #define HWID_TL_WA901ND_V4	0x09010004
+@@ -296,6 +297,11 @@ static struct board_info boards[] = {
+ 		.hw_id          = HWID_TL_WA801ND_V2,
+ 		.hw_rev         = 1,
+ 		.layout_id	= "4Mlzma",
++	},{
++		.id							= "TL-WA801NDv3",
++		.hw_id          = HWID_TL_WA801ND_V3,
++		.hw_rev         = 1,
++		.layout_id  = "4Mlzma",
+ 	}, {
+ 		.id		= "TL-WA901NDv1",
+ 		.hw_id		= HWID_TL_WA901ND_V1,
+@@ -1207,4 +1213,3 @@ int main(int argc, char *argv[])
+  out:
+ 	return ret;
+ }
+-
