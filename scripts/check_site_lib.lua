@@ -133,8 +133,9 @@ function need_one_of(varname, array, required)
 end
 
 function need_string_array(varname, required)
-   return assert(pcall(need_array, varname, function(e) assert_type(e, 'string') end, required),
-		 "site.conf error: expected `" .. varname .. "' to be a string array")
+   local ok, var = pcall(need_array, varname, function(e) assert_type(e, 'string') end, required)
+   assert(ok, "site.conf error: expected `" .. varname .. "' to be a string array")
+   return var
 end
 
 function need_array_of(varname, array, required)
