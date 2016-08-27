@@ -48,6 +48,7 @@ function action_reboot()
   uci:save("gluon-setup-mode")
   uci:commit("gluon-setup-mode")
 
+  local gluon_luci = require "gluon.luci"
   local fs = require "nixio.fs"
   local util = require "nixio.util"
 
@@ -73,6 +74,8 @@ function action_reboot()
     {
       parts = parts,
       hostname = hostname,
+      escape = gluon_luci.escape,
+      urlescape = gluon_luci.urlescape,
     }
   )
 
