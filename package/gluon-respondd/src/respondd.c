@@ -29,12 +29,12 @@
 #include <json-c/json.h>
 #include <libgluonutil.h>
 #include <libplatforminfo.h>
+#include <uci.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/utsname.h>
 #include <sys/vfs.h>
 
 
@@ -67,12 +67,29 @@ static struct json_object * get_site_code(void) {
 }
 
 static struct json_object * get_hostname(void) {
-	struct utsname utsname;
+	struct json_object *ret = NULL;
 
-	if (uname(&utsname))
-		return NULL;
+	struct uci_context *ctx = uci_alloc_context();
+	ctx->flags &= ~UCI_FLAG_STRICT;
 
-	return gluonutil_wrap_string(utsname.nodename);
+	char section[] = "system.@system[0]";
+	struct uci_ptr ptr;
+	if (uci_lookup_ptr(ctx, &ptr, section, true))
+		goto error;
+
+	struct uci_section *s = ptr.s;
+
+	const char *hostname = uci_lookup_option_string(ctx, s, "pretty_hostname");
+
+	if (!hostname)
+		hostname = uci_lookup_option_string(ctx, s, "hostname");
+
+	ret = gluonutil_wrap_string(hostname);
+
+error:
+	uci_free_context(ctx);
+
+	return ret;
 }
 
 static struct json_object * respondd_provider_nodeinfo(void) {
