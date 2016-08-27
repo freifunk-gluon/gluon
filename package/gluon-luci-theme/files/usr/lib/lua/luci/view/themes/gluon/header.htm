@@ -17,6 +17,7 @@ $Id$
 	local http = require "luci.http"
 	local disp = require "luci.dispatcher"
 	local fs   = require "nixio.fs"
+	local gluon_luci = require "gluon.luci"
 
 	local hostname = sys.hostname()
 	local release = fs.readfile("/lib/gluon/release")
@@ -110,15 +111,15 @@ $Id$
 </style>
 <% end -%>
 <script type="text/javascript" src="<%=resource%>/xhr.js"></script>
-<title><%=striptags( hostname .. ( (node and node.title) and ' - ' .. translate(node.title) or '')) %> - LuCI</title>
+<title><%=gluon_luci.escape( hostname .. ( (node and node.title) and ' - ' .. translate(node.title) or '')) %> - LuCI</title>
 </head>
 <body class="lang_<%=luci.i18n.context.lang%>">
 
 <div id="menubar">
 <div class="hostinfo">
-	<%=hostname%>
+	<%=gluon_luci.escape(hostname)%>
 	<% if release then %>
-	/ <%=release%>
+	/ <%=gluon_luci.escape(release)%>
 	<% end %>
 	<span id="xhr_poll_status" style="display:none" onclick="XHR.running() ? XHR.halt() : XHR.run()">
 		| <%:Auto Refresh%>:
