@@ -6,6 +6,8 @@ if meshvpn_enabled ~= "1" then
 else
   local i18n = require "luci.i18n"
   local util = require "luci.util"
+
+  local gluon_luci = require 'gluon.luci'
   local site = require 'gluon.site_config'
   local sysconfig = require 'gluon.sysconfig'
 
@@ -16,11 +18,14 @@ else
   local msg = i18n.translate('gluon-config-mode:pubkey')
 
   return function ()
-           luci.template.render_string(msg, { pubkey=pubkey
-                                            , hostname=hostname
-                                            , site=site
-                                            , sysconfig=sysconfig
-                                            , contact=contact
-                                            })
-         end
+    luci.template.render_string(msg, {
+      pubkey = pubkey,
+      hostname = hostname,
+      site = site,
+      sysconfig = sysconfig,
+      contact = contact,
+      escape = gluon_luci.escape,
+      urlescape = gluon_luci.urlescape,
+    })
+  end
 end
