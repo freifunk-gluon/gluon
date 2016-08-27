@@ -14,7 +14,6 @@ for module in $GLUON_MODULES; do
 	mkdir -p "$GLUONDIR"/$module
 	cd "$GLUONDIR"/$module
 	git init
-	git config commit.gpgsign false
 
 	if ! git branch -f base $commit 2>/dev/null; then
 		git fetch $repo $branch
