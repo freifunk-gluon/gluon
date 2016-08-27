@@ -18,7 +18,7 @@ define Package/gluon-luci-admin
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based simple administration interface for mesh nodes
-  DEPENDS:=gluon-config-mode-core-virtual
+  DEPENDS:=gluon-config-mode-core-virtual +pretty-hostname
 endef
 
 define Build/Prepare

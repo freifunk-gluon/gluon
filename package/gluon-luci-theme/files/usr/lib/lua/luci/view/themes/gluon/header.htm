@@ -16,10 +16,12 @@ $Id$
 	local sys  = require "luci.sys"
 	local http = require "luci.http"
 	local disp = require "luci.dispatcher"
+	local uci  = require("luci.model.uci").cursor()
 	local fs   = require "nixio.fs"
 	local gluon_luci = require "gluon.luci"
+	local pretty_hostname = require "pretty_hostname"
 
-	local hostname = sys.hostname()
+	local hostname = pretty_hostname.get(uci)
 	local release = fs.readfile("/lib/gluon/release")
 
 	local request  = disp.context.path

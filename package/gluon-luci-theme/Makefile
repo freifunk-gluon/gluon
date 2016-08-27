@@ -16,7 +16,7 @@ define Package/gluon-luci-theme
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci theme for Gluon
-  DEPENDS:=
+  DEPENDS:=+pretty-hostname
 endef
 
 define Package/gluon-luci-theme/description

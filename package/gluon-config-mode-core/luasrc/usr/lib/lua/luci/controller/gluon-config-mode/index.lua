@@ -51,6 +51,7 @@ function action_reboot()
   local gluon_luci = require "gluon.luci"
   local fs = require "nixio.fs"
   local util = require "nixio.util"
+  local pretty_hostname = require "pretty_hostname"
 
   local parts_dir = "/lib/gluon/config-mode/reboot/"
   local files = util.consume(fs.dir(parts_dir))
@@ -68,7 +69,7 @@ function action_reboot()
     end
   end
 
-  local hostname = uci:get_first("system", "system", "hostname")
+  local hostname = pretty_hostname.get(uci)
 
   luci.template.render("gluon/config-mode/reboot",
     {
