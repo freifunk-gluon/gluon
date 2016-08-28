@@ -12,14 +12,20 @@ local fs = require 'nixio.fs'
 local new_servers = ''
 
 
-local function append_servers(servers)
+local function handle_interface(status)
+  local ifname = status.device
+  local servers = status.inactive['dns-server']
+
   for _, server in ipairs(servers) do
+    if server:match('^fe80:') then
+      server = server .. '%' .. ifname
+    end
     new_servers = new_servers .. 'nameserver ' .. server .. '\n'
   end
 end
 
 local function append_interface_servers(iface)
-  append_servers(ubus:call('network.interface.' .. iface, 'status', {}).inactive['dns-server'])
+  handle_interface(ubus:call('network.interface.' .. iface, 'status', {}))
 end
 
 
