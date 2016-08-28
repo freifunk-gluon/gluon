@@ -314,6 +314,10 @@ GLUON_PRIORITY
     The default priority for the generated manifests (see the autoupdater documentation
     for more information).
 
+GLUON_REGION
+    Region code to build into images where necessary. Valid values are the empty string,
+    ``us`` and ``eu``.
+
 GLUON_LANGS
     List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.

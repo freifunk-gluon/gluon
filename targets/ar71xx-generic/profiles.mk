@@ -149,10 +149,14 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2,tp-link-tl-mr3420-v2))
 $(eval $(call GluonProfile,TLWR2543))
 $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
-ifeq ($(BROKEN),1)
-# Archer C5 v1, C7 v2
+ifneq ($(BROKEN),)
+# Archer C5 v1
+$(eval $(call GluonProfile,ARCHERC5,kmod-ath10k ath10k-firmware-qca988x-ct,ARCHERC7))
+$(eval $(call GluonModel,ARCHERC5,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
+
+# Archer C7 v2
 $(eval $(call GluonProfile,ARCHERC7,kmod-ath10k ath10k-firmware-qca988x-ct))
-$(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
+$(eval $(call GluonProfileFactorySuffix,ARCHERC7,-squashfs-factory$(if $(GLUON_REGION),-$(GLUON_REGION)),.bin))
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
 
