@@ -5,7 +5,10 @@ General guidelines
 ------------------
 
 * All config mode packages must be fully translatable, with complete English and German texts.
-* All new expert mode packages be fully translatable. English texts are required, German texts recommended.
+* All new expert mode packages must be fully translatable. English texts are required.
+* German translations are recommended. Other supported languages, especially French, are
+  nice-to-have, but not required. If you don't know a language well, rather leave the translation
+  blank, so it is obvious that there is no proper translation yet.
 * Existing expert mode packages should be made translatable as soon as possible.
 * The "message IDs" (which are the arguments to the ``translate`` function) should be the
   English texts.
@@ -38,7 +41,7 @@ The entries in the template can be reordered after the generation if desirable. 
 translations like "Cancel" are already available in the LuCI base translation file (see
 ``packages/luci/po/templates/base.pot``) and can be removed from the template.
 
-In addition, some additions to the Makefile must be made. Instead of OpenWrt's default package.mk,
+In addition, some additions to the Makefile must be made. Instead of OpenWrt's default ``package.mk``,
 the Gluon version ``$(GLUONDIR)/include/package.mk`` must be used. The i18n files must be installed
 and PKG_CONFIG_DEPENDS must be added::
 
@@ -73,7 +76,7 @@ The translation file can be updated to a new template version using the ``msgmer
   msgmerge -U de.po gluon-config-mode-geo-location.pot
 
 After the merge, the translation file should be checked for "fuzzy matched" entries where
-the original English texts have changed. All entries from the the translation file should be
+the original English texts have changed. All entries from the translation file should be
 translated in the ``.po`` file (or removed from it, so the original English texts are displayed
 instead).
 
@@ -84,5 +87,6 @@ A list of all languages supported by LuCI can be found in the ``packages/luci/lu
 Gluon's dependencies have been downloaded using ``make update``. Adding translations for these
 languages is straightforward using the ``msginit`` command.
 
-For other languages, support must be added tu LuCI first, which constitutes completely translating
-the ``base.pot``. Please contact the upstream LuCI maintainers if you'd like to do this.
+For other languages, support must be added to LuCI first, which constitutes completely translating
+the ``base.pot``. Please contact the upstream LuCI maintainers at https://github.com/openwrt/luci/
+if you'd like to do this.
