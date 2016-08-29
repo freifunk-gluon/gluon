@@ -12,13 +12,13 @@ if not sysconfig.lan_ifname then
 end
 
 uci:section('network', 'interface', 'mesh_lan', {
-  ifname  = sysconfig.lan_ifname,
-  type    = 'bridge',
+  ifname        = sysconfig.lan_ifname,
+  type          = 'bridge',
   igmp_snooping = 0,
-  proto   = 'batadv',
-  mesh    = 'bat0',
-  mesh_no_rebroadcast = '1',
-  macaddr = util.get_mac(2),
+  proto         = 'gluon_mesh',
+  transitive    = 1,
+  fixed_mtu     = 1,
+  macaddr       = util.get_mac(2),
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
