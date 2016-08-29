@@ -48,15 +48,13 @@ local function configure_ibss(config, radio, index, suffix, disabled)
     uci:section('network', 'interface', name .. '_vlan',
       {
         ifname = '@' .. name .. '.' .. config.vlan,
-        proto = 'batadv',
-        mesh = 'bat0',
+        proto = 'gluon_mesh',
       }
     )
   else
     uci:section('network', 'interface', name,
       {
-        proto = 'batadv',
-        mesh = 'bat0',
+        proto = 'gluon_mesh',
       }
     )
   end
@@ -95,8 +93,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 
   uci:section('network', 'interface', name,
     {
-      proto = 'batadv',
-      mesh = 'bat0',
+      proto = 'gluon_mesh',
     }
   )
 

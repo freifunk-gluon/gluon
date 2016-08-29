@@ -122,13 +122,13 @@ uci:save('fastd')
 
 
 uci:section('network', 'interface', 'mesh_vpn',
-	  {
-		  ifname = 'mesh-vpn',
-		  proto = 'batadv',
-		  mesh = 'bat0',
-		  mesh_no_rebroadcast = 1,
-		  macaddr = util.get_mac(3),
-	  }
+  {
+    ifname = 'mesh-vpn',
+    proto = 'gluon_mesh',
+    transitive = 1,
+    fixed_mtu = 1,
+    macaddr = util.get_mac(3),
+  }
 )
 
 uci:save('network')
