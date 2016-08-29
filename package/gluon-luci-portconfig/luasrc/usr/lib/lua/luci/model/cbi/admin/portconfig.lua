@@ -14,6 +14,7 @@ $Id$
 
 local uci = luci.model.uci.cursor()
 local lutil = require 'luci.util'
+local network = require 'gluon.network'
 local sysconfig = require 'gluon.sysconfig'
 
 local wan = uci:get_all("network", "wan")
@@ -149,6 +150,8 @@ function f.handle(self, state, data)
         uci:save('system')
         uci:commit('system')
     end
+
+    network.update_mesh_on_wan()
 
     if dns then
       if #data.dns > 0 then

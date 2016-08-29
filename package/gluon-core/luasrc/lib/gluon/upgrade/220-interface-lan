@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
+local mesh = require 'gluon.mesh'
 local site = require 'gluon.site_config'
-local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('luci.model.uci').cursor()
@@ -15,10 +15,7 @@ uci:section('network', 'interface', 'mesh_lan', {
   ifname  = sysconfig.lan_ifname,
   type    = 'bridge',
   igmp_snooping = 0,
-  proto   = 'batadv',
-  mesh    = 'bat0',
-  mesh_no_rebroadcast = '1',
-  macaddr = util.get_mac(3),
+  proto   = 'none',
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
@@ -41,3 +38,5 @@ if uci:get('network', 'mesh_lan', 'auto') == nil then
 end
 
 uci:save('network')
+
+mesh.register_interface('br-mesh_lan', {transitive = true})

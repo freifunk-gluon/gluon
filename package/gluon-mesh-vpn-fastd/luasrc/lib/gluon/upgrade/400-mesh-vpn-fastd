@@ -1,5 +1,6 @@
 #!/usr/bin/lua
 
+local mesh = require 'gluon.mesh'
 local site = require 'gluon.site_config'
 local users = require 'gluon.users'
 local util = require 'gluon.util'
@@ -64,6 +65,8 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 )
 uci:delete('fastd', 'mesh_vpn', 'user')
 
+mesh.register_interface('mesh-vpn', {fixed_mtu = true, transitive = true})
+
 
 local add_groups
 
@@ -124,9 +127,8 @@ uci:save('fastd')
 uci:section('network', 'interface', 'mesh_vpn',
 	  {
 		  ifname = 'mesh-vpn',
-		  proto = 'batadv',
-		  mesh = 'bat0',
-		  mesh_no_rebroadcast = 1,
+		  proto = 'none',
+		  auto = 1,
 		  macaddr = util.get_mac(1),
 	  }
 )

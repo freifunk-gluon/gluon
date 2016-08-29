@@ -23,12 +23,15 @@ local function escape_args(ret, arg0, ...)
 end
 
 
+local error = error
 local io = io
+local ipairs = ipairs
 local os = os
+local pcall = pcall
 local string = string
 local tonumber = tonumber
-local ipairs = ipairs
 local table = table
+local unpack = unpack
 
 local nixio = require 'nixio'
 local hash = require 'hash'
@@ -68,6 +71,19 @@ end
 
 function unlock(file)
   exec('lock', '-u', file)
+end
+
+function locked(file, f, ...)
+	lock(file)
+	local ret = {pcall(f, ...)}
+	unlock(file)
+
+	if ret[1] then
+		table.remove(ret, 1)
+		return unpack(ret)
+	else
+		error(ret[2])
+	end
 end
 
 function node_id()

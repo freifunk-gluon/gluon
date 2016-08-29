@@ -5,7 +5,6 @@ local sysctl = require 'gluon.sysctl'
 local site = require 'gluon.site_config'
 
 local uci = require('luci.model.uci').cursor()
-local lutil = require 'luci.util'
 
 
 local gw_sel_class
@@ -25,15 +24,8 @@ uci:section('batman-adv', 'mesh', 'bat0',
 )
 uci:save('batman-adv')
 
-if not uci:get('network', 'client', 'ifname') then
-  uci:add_to_set('network', 'client', 'ifname', 'bat0')
 
-  if sysconfig.lan_ifname and not site.mesh_on_lan then
-    for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-      uci:add_to_set('network', 'client', 'ifname', lanif)
-    end
-  end
-end
+uci:add_to_set('network', 'client', 'ifname', 'bat0')
 
 uci:set('network', 'client', 'proto', 'dhcpv6')
 uci:set('network', 'client', 'reqprefix', 'no')

@@ -1,0 +1,6 @@
+[ "$ACTION" = 'add' ] || exit 0
+
+# Exit if we're in setup mode
+[ $(lua -e 'uci_state=require("luci.model.uci").cursor_state(); print(uci_state:get_first("gluon-setup-mode", "setup_mode", "running", "0"))') = 0 ] || exit 0
+
+exec /lib/gluon/mesh-batman-adv-core/enable_mesh_interface "$INTERFACE" 1532
