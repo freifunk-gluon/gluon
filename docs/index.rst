@@ -54,6 +54,7 @@ Packages
    package/gluon-config-mode-geo-location
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
+   package/gluon-ebtables-segment-mld
 
 Releases
 --------
