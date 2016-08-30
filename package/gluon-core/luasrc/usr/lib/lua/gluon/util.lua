@@ -114,18 +114,18 @@ local function get_addresses(radio)
 end
 
 -- Generates a (hopefully) unique MAC address
--- The parameter defines the ID to add to the mac addr
+-- The parameter defines the ID to add to the MAC address
 --
 -- IDs defined so far:
--- 0: client0; mesh-vpn
+-- 0: client0; WAN
 -- 1: mesh0
 -- 2: ibss0
--- 3: client1; mesh-on-wan
--- 4: mesh1
--- 5: ibss1
--- 6: mesh-on-lan
--- 7: unused
-local function generate_mac(i)
+-- 3: wan_radio0 (private WLAN); batman-adv primary address
+-- 4: client1; LAN
+-- 5: mesh1
+-- 6: ibss1
+-- 7: wan_radio1 (private WLAN); mesh VPN
+function generate_mac(i)
   if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
 
   local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
@@ -137,9 +137,9 @@ local function generate_mac(i)
   m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
   m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
 
-  -- It's necessary that the first 45 bits of the mac do
-  -- not vary on a single hardware interface, since some chips are using
-  -- a hardware mac filter. (e.g 'ramips-rt305x')
+  -- It's necessary that the first 45 bits of the MAC address don't
+  -- vary on a single hardware interface, since some chips are using
+  -- a hardware MAC filter. (e.g 'rt305x')
 
   m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
   m6 = m6 + i                   -- add virtual interface id
@@ -147,11 +147,7 @@ local function generate_mac(i)
   return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
-function get_mac(index)
-  return generate_mac(3*(index-1))
-end
-
-function get_wlan_mac_from_driver(radio, vif)
+local function get_wlan_mac_from_driver(radio, vif)
   local primary = sysconfig.primary_mac:lower()
 
   local i = 1
@@ -172,7 +168,7 @@ function get_wlan_mac(radio, index, vif)
     return addr
   end
 
-  return generate_mac(3*(index-1) + (vif-1))
+  return generate_mac(4*(index-1) + (vif-1))
 end
 
 -- Iterate over all radios defined in UCI calling

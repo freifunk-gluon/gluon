@@ -127,6 +127,21 @@ local function configure_mesh(config, radio, index, suffix, disabled)
   )
 end
 
+local function fixup_wan(radio, index)
+  local name = 'wan_' .. radio
+
+  if not uci:get('wireless', name) then
+    return
+  end
+
+  local macaddr = util.get_wlan_mac(radio, index, 4)
+  if not macaddr then
+    return
+  end
+
+  uci:set('wireless', name, 'macaddr', macaddr)
+end
+
 local function configure_radio(radio, index, config)
   if not config then
     return
@@ -177,6 +192,8 @@ local function configure_radio(radio, index, config)
       false
     )
   )
+
+  fixup_wan(radio, index)
 end
 
 util.iterate_radios(configure_radio)
