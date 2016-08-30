@@ -127,7 +127,7 @@ uci:section('network', 'interface', 'mesh_vpn',
     proto = 'gluon_mesh',
     transitive = 1,
     fixed_mtu = 1,
-    macaddr = util.get_mac(3),
+    macaddr = util.generate_mac(7),
   }
 )
 
