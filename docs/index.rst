@@ -91,6 +91,9 @@ ar71xx-generic
   - AP121
   - AP121U
   - Hornet-UB
+  - Tube2H
+  - N2
+  - N5
 
 * Allnet
 

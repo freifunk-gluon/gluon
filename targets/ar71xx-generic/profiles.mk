@@ -373,6 +373,10 @@ $(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121
 $(eval $(call GluonProfile,TUBE2H))
 $(eval $(call GluonModel,TUBE2H,tube2h-8M,alfa-network-tube2h))
 
+# N2/N5
+$(eval $(call GluonProfile,ALFANX))
+$(eval $(call GluonModel,ALFANX,alfa-nx,alfa-network-n2-n5))
+
 ## Meraki
 
 # Meraki MR12/MR62
