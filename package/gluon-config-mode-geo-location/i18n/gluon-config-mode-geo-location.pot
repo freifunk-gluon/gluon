@@ -3,8 +3,8 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 
 msgid ""
 "If you want the location of your node to be displayed on the map, you can "
-"enter its coordinates here. Specifying the altitude is optional and should "
-"only be done if a proper value is known."
+"enter its coordinates here. Specifying the storey is optional and can be "
+"aproximated by an imaginary storey with 3m per storey."
 msgstr ""
 
 msgid "Latitude"
@@ -13,7 +13,7 @@ msgstr ""
 msgid "Longitude"
 msgstr ""
 
-msgid "Altitude"
+msgid "Storey"
 msgstr ""
 
 msgid "Show node on the map"
