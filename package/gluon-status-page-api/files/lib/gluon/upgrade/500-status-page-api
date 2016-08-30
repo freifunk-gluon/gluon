@@ -1,6 +1,6 @@
 #!/bin/sh
 
-uci batch <<-EOF
+uci -q batch <<-EOF
 	delete uhttpd.main.listen_http
 	add_list uhttpd.main.listen_http=0.0.0.0:80
 	add_list uhttpd.main.listen_http=[::]:80
