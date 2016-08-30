@@ -5,5 +5,5 @@ local uci = require('luci.model.uci').cursor()
 
 
 -- fix up duplicate mac addresses (for mesh-on-WAN)
-uci:set('network', 'wan', 'macaddr', util.get_mac(2))
+uci:set('network', 'wan', 'macaddr', util.get_mac(1))
 uci:save('network')
