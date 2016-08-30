@@ -15,6 +15,15 @@ if cmd == 'setup' then
 
 	local mtu = tonumber(arg[2])
 
+	if os.execute('ip link show primary0 >/dev/null 2>&1') ~= 0 then
+		os.execute([[
+			ip link add primary0 type dummy
+			echo 1 > /proc/sys/net/ipv6/conf/primary0/disable_ipv6
+			ip link set primary0 address ]] .. util.generate_mac(3) .. [[ mtu ]] .. mtu .. [[ up
+			echo 'bat0' > /sys/class/net/primary0/batman_adv/mesh_iface
+		]])
+	end
+
 	if fixed_mtu == 0 then
 		local lower = fs.glob('/sys/class/net/' .. ifname .. '/lower_*/wireless')()
 		if lower then
@@ -41,4 +50,15 @@ elseif cmd == 'teardown' then
 		file:close()
 	end
 
+	local other = false
+	for lower in fs.glob('/sys/class/net/bat0/lower_*') do
+		if lower ~= '/sys/class/net/bat0/lower_primary0' then
+			other = true
+			break
+		end
+	end
+
+	if not other then
+		os.execute('ip link del primary0')
+	end
 end
