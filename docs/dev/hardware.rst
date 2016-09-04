@@ -62,9 +62,10 @@ required for adding a new target:
 
 Adjust packages
 '''''''''''''''
-One package that definitely needs adjustments for every new target added is ``lua-platform-info``. Just
-start with a copy of an existing platform info script, adjust it for the new target, and add the new target
-to the list of supported targets in the package Makefile.
+One package that definitely needs adjustments for every new target added is ``libplatforminfo`` (to be found in
+`packages/gluon/libs/libplatforminfo <https://github.com/freifunk-gluon/packages/tree/master/libs/libplatforminfo>`_).
+Start with a copy of an existing platform info source file and adjust it for the new target (or just add a symlink if
+there is nothing to adjust). Then add the new target to the DEPENDS variable in the ``libplatforminfo`` package Makefile.
 
 On many targets, Gluon's network setup scripts (mainly in the packages ``gluon-core`` and ``gluon-mesh-batman-adv-core``)
 won't run correctly without some adjustments, so better double check that everything is fine there (and the files
