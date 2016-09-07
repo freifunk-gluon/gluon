@@ -1,0 +1,24 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+
+local function migrate_iface(iface)
+	if iface.proto ~= 'batadv' or iface.mesh ~= 'bat0' then
+		return
+	end
+
+	local s = iface['.name']
+
+	uci:set('network', s, 'proto', 'gluon_mesh')
+	uci:set('network', s, 'fixed_mtu', '1')
+
+	if iface.mesh_no_rebroadcast then
+		uci:set('network', s, 'transitive', iface.mesh_no_rebroadcast)
+	end
+
+	uci:delete('network', s, 'mesh')
+	uci:delete('network', s, 'mesh_no_rebroadcast')
+end
+
+uci:foreach('network', 'interface', migrate_iface)
+uci:save('network')

@@ -2,11 +2,10 @@ local uci = luci.model.uci.cursor()
 local util = require 'gluon.util'
 
 local f, s, o, ssid
-local config = 'wireless'
 
 -- where to read the configuration from
 local primary_iface = 'wan_radio0'
-local ssid = uci:get(config, primary_iface, "ssid")
+local ssid = uci:get('wireless', primary_iface, "ssid")
 
 f = SimpleForm("wifi", translate("Private WLAN"))
 f.template = "admin/expertmode"
@@ -19,7 +18,7 @@ s = f:section(SimpleSection, nil, translate(
 ))
 
 o = s:option(Flag, "enabled", translate("Enabled"))
-o.default = (ssid and not uci:get_bool(config, primary_iface, "disabled")) and o.enabled or o.disabled
+o.default = (ssid and not uci:get_bool('wireless', primary_iface, "disabled")) and o.enabled or o.disabled
 o.rmempty = false
 
 o = s:option(Value, "ssid", translate("Name (SSID)"))
@@ -30,22 +29,19 @@ o.default = ssid
 o = s:option(Value, "key", translate("Key"), translate("8-63 characters"))
 o:depends("enabled", '1')
 o.datatype = "wpakey"
-o.default = uci:get(config, primary_iface, "key")
+o.default = uci:get('wireless', primary_iface, "key")
 
 function f.handle(self, state, data)
   if state == FORM_VALID then
-    uci:foreach(config, "wifi-device",
-      function(s)
-        local radio = s['.name']
+    util.iterate_radios(
+      function(radio, index)
         local name   = "wan_" .. radio
 
         if data.enabled == '1' then
-          -- get_wlan_mac_from_driver will return nil (and thus leave the
-          -- MAC address unset) if the driver doesn't provide enough addresses
-          local macaddr = util.get_wlan_mac_from_driver(radio, 4)
+          local macaddr = util.get_wlan_mac(radio, index, 4)
 
           -- set up WAN wifi-iface
-          uci:section(config, "wifi-iface", name,
+          uci:section('wireless', "wifi-iface", name,
                       {
                         device     = radio,
                         network    = "wan",
@@ -59,12 +55,13 @@ function f.handle(self, state, data)
           )
         else
           -- disable WAN wifi-iface
-          uci:set(config, name, "disabled", 1)
+          uci:set('wireless', name, "disabled", 1)
         end
-    end)
+      end
+    )
 
-    uci:save(config)
-    uci:commit(config)
+    uci:save('wireless')
+    uci:commit('wireless')
   end
 end
 

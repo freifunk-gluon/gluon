@@ -43,6 +43,7 @@ Developer Documentation
    dev/configmode
    dev/wan
    dev/i18n
+   dev/mac_addresses
 
 Packages
 --------
