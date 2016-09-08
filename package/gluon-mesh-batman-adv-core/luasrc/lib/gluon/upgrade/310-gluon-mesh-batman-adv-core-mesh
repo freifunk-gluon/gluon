@@ -1,0 +1,102 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+local site = require 'gluon.site_config'
+
+local uci = require('luci.model.uci').cursor()
+
+
+local gw_sel_class
+if site.mesh and site.mesh.batman_adv then
+  gw_sel_class = site.mesh.batman_adv.gw_sel_class
+end
+
+uci:delete('batman-adv', 'bat0')
+uci:section('batman-adv', 'mesh', 'bat0',
+	    {
+		    orig_interval = 5000,
+		    gw_mode = 'client',
+		    gw_sel_class = gw_sel_class,
+		    hop_penalty = 15,
+		    multicast_mode = 0,
+	    }
+)
+uci:save('batman-adv')
+
+
+uci:add_to_set('network', 'client', 'ifname', 'bat0')
+
+uci:set('network', 'client', 'proto', 'dhcpv6')
+uci:set('network', 'client', 'reqprefix', 'no')
+uci:delete('network', 'client', 'igmp_snooping')
+uci:set('network', 'client', 'robustness', 3)
+uci:set('network', 'client', 'query_interval', 2000)
+uci:set('network', 'client', 'query_response_interval', 500)
+uci:set('network', 'client', 'peerdns', 1)
+uci:set('network', 'client', 'sourcefilter', 0)
+
+uci:delete('network', 'bat0')
+uci:section('network', 'interface', 'bat0',
+	    {
+		    ifname = 'bat0',
+		    proto = 'none',
+		    macaddr = sysconfig.primary_mac,
+		    multicast_router = 2,
+		    learning = 0,
+	    }
+)
+
+uci:delete('network', 'client_lan')
+if sysconfig.lan_ifname then
+	uci:section('network', 'interface', 'client_lan',
+		    {
+			    unicast_flood = 0,
+		    }
+	)
+	uci:set('network', 'client_lan', 'ifname', sysconfig.lan_ifname)
+end
+
+uci:save('network')
+
+
+uci:delete('firewall', 'client')
+uci:section('firewall', 'zone', 'client',
+	    {
+		    name = 'client',
+		    network = {'client'},
+		    input = 'ACCEPT',
+		    output = 'ACCEPT',
+		    forward = 'REJECT',
+	    }
+)
+
+uci:section('firewall', 'rule', 'client_dns',
+	  {
+		  name = 'client_dns',
+		  src = 'client',
+		  dest_port = '53',
+		  target = 'REJECT',
+	  }
+)
+
+uci:save('firewall')
+
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', 0)
+uci:set('dhcp', dnsmasq, 'localise_queries', 0)
+uci:set('dhcp', dnsmasq, 'rebind_protection', 0)
+
+uci:delete('dhcp', 'client')
+uci:section('dhcp', 'dhcp', 'client',
+	    {
+		    interface = 'client',
+		    ignore = 1,
+	    }
+)
+
+uci:save('dhcp')
+
+
+sysctl.set('net.ipv6.conf.br-client.forwarding', 0)

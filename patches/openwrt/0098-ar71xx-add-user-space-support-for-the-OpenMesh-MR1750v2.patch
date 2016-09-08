@@ -1,0 +1,62 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:55 +0200
+Subject: ar71xx: add user-space support for the OpenMesh MR1750v2
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637059/
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index aa02212..f182d60 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -143,7 +143,8 @@ get_status_led() {
+ 	mr600v2)
+ 		status_led="mr600:blue:power"
+ 		;;
+-	mr1750)
++	mr1750 | \
++	mr1750v2)
+ 		status_led="mr1750:blue:power"
+ 		;;
+ 	mr900 | \
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index 5767f48..032acc9 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -243,7 +243,8 @@ mr600)
+ 	ucidef_set_led_wlan "wlan58" "WLAN58" "mr600:green:wlan58" "phy0tpt"
+ 	;;
+ 
+-mr1750)
++mr1750 | \
++mr1750v2)
+ 	ucidef_set_led_netdev "lan" "LAN" "mr1750:blue:wan" "eth0"
+ 	ucidef_set_led_wlan "wlan58" "WLAN58" "mr1750:blue:wlan58" "phy0tpt"
+ 	ucidef_set_led_wlan "wlan24" "WLAN24" "mr1750:blue:wlan24" "phy1tpt"
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index 89a2184..b8ae576 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -335,6 +335,7 @@ eap7660d |\
+ el-mini |\
+ loco-m-xw |\
+ mr1750 |\
++mr1750v2 |\
+ mr600 |\
+ mr600v2 |\
+ mr900 |\
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index dc51b03..5119b36 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -568,6 +568,9 @@ ar71xx_board_detect() {
+ 	*MR1750)
+ 		name="mr1750"
+ 		;;
++	*MR1750v2)
++		name="mr1750v2"
++		;;
+ 	*MR600)
+ 		name="mr600"
+ 		;;

@@ -13,11 +13,12 @@ include $(GLUONDIR)/include/package.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
+
 define Package/gluon-luci-portconfig
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci module for advanced ethernet port configuration
-  DEPENDS:=+gluon-luci-admin +gluon-mesh-batman-adv
+  DEPENDS:=+gluon-luci-admin +gluon-client-bridge
 endef
 
 define Build/Prepare
@@ -29,10 +30,11 @@ endef
 
 define Build/Compile
 	$(call GluonBuildI18N,gluon-luci-portconfig,i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-luci-portconfig/install
-	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(call GluonInstallI18N,gluon-luci-portconfig,$(1))
 endef
 

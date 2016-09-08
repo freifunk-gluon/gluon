@@ -75,7 +75,7 @@ GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
 GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
 endef
 
-GLUON_DEFAULT_PACKAGES := gluon-core kmod-ipv6 firewall ip6tables -uboot-envtools -wpad-mini hostapd-mini
+GLUON_DEFAULT_PACKAGES := gluon-core firewall ip6tables -uboot-envtools -wpad-mini hostapd-mini
 
 override DEFAULT_PACKAGES.router :=
 

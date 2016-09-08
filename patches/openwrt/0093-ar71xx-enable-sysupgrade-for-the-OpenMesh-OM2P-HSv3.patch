@@ -1,0 +1,40 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:50 +0200
+Subject: ar71xx: enable sysupgrade for the OpenMesh OM2P-HSv3
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637054/
+
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh b/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
+index 209cdaa..0e8ea27 100644
+--- a/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/openmesh.sh
+@@ -63,6 +63,7 @@ platform_check_image_openmesh()
+ 			[ "$board" = "om2p-lc" ] && break
+ 			[ "$board" = "om2p-hs" ] && break
+ 			[ "$board" = "om2p-hsv2" ] && break
++			[ "$board" = "om2p-hsv3" ] && break
+ 			echo "Invalid image board target ($img_board_target) for this platform: $board. Use the correct image for this platform"
+ 			return 1
+ 			;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index aeb4577..9b26e73 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -306,6 +306,7 @@ platform_check_image() {
+ 	om2pv2 | \
+ 	om2p-hs | \
+ 	om2p-hsv2 | \
++	om2p-hsv3 | \
+ 	om2p-lc | \
+ 	om5p | \
+ 	om5p-an | \
+@@ -541,6 +542,7 @@ platform_do_upgrade() {
+ 	om2pv2 | \
+ 	om2p-hs | \
+ 	om2p-hsv2 | \
++	om2p-hsv3 | \
+ 	om2p-lc | \
+ 	om5p | \
+ 	om5p-an | \

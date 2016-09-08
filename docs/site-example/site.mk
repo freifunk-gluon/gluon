@@ -52,5 +52,8 @@ GLUON_RELEASE ?= $(DEFAULT_GLUON_RELEASE)
 # Default priority for updates.
 GLUON_PRIORITY ?= 0
 
+# Region code required for some images; supported values: us eu
+GLUON_REGION ?= eu
+
 # Languages to include
 GLUON_LANGS ?= en de

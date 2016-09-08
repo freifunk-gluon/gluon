@@ -29,12 +29,12 @@
 #include <json-c/json.h>
 #include <libgluonutil.h>
 #include <libplatforminfo.h>
+#include <uci.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/utsname.h>
 #include <sys/vfs.h>
 
 
@@ -67,12 +67,29 @@ static struct json_object * get_site_code(void) {
 }
 
 static struct json_object * get_hostname(void) {
-	struct utsname utsname;
+	struct json_object *ret = NULL;
 
-	if (uname(&utsname))
-		return NULL;
+	struct uci_context *ctx = uci_alloc_context();
+	ctx->flags &= ~UCI_FLAG_STRICT;
 
-	return gluonutil_wrap_string(utsname.nodename);
+	char section[] = "system.@system[0]";
+	struct uci_ptr ptr;
+	if (uci_lookup_ptr(ctx, &ptr, section, true))
+		goto error;
+
+	struct uci_section *s = ptr.s;
+
+	const char *hostname = uci_lookup_option_string(ctx, s, "pretty_hostname");
+
+	if (!hostname)
+		hostname = uci_lookup_option_string(ctx, s, "hostname");
+
+	ret = gluonutil_wrap_string(hostname);
+
+error:
+	uci_free_context(ctx);
+
+	return ret;
 }
 
 static struct json_object * respondd_provider_nodeinfo(void) {
@@ -107,13 +124,18 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 static void add_uptime(struct json_object *obj) {
 	FILE *f = fopen("/proc/uptime", "r");
+	struct json_object* jso;
 	if (!f)
 		return;
 
 	double uptime, idletime;
 	if (fscanf(f, "%lf %lf", &uptime, &idletime) == 2) {
-		json_object_object_add(obj, "uptime", json_object_new_double(uptime));
-		json_object_object_add(obj, "idletime", json_object_new_double(idletime));
+		jso = json_object_new_double(uptime);
+		json_object_set_serializer(jso, json_object_double_to_json_string, "%.2f", NULL);
+		json_object_object_add(obj, "uptime", jso);
+		jso = json_object_new_double(idletime);
+		json_object_set_serializer(jso, json_object_double_to_json_string, "%.2f", NULL);
+		json_object_object_add(obj, "idletime", jso);
 	}
 
 	fclose(f);
@@ -127,7 +149,9 @@ static void add_loadavg(struct json_object *obj) {
 	double loadavg;
 	unsigned proc_running, proc_total;
 	if (fscanf(f, "%lf %*f %*f %u/%u", &loadavg, &proc_running, &proc_total) == 3) {
-		json_object_object_add(obj, "loadavg", json_object_new_double(loadavg));
+		struct json_object *jso = json_object_new_double(loadavg);
+		json_object_set_serializer(jso, json_object_double_to_json_string, "%.2f", NULL);
+		json_object_object_add(obj, "loadavg", jso);
 
 		struct json_object *processes = json_object_new_object();
 		json_object_object_add(processes, "running", json_object_new_int(proc_running));
@@ -176,7 +200,9 @@ static struct json_object * get_rootfs_usage(void) {
 	if (statfs("/", &s))
 		return NULL;
 
-	return json_object_new_double(1 - (double)s.f_bfree / s.f_blocks);
+	struct json_object *jso = json_object_new_double(1 - (double)s.f_bfree / s.f_blocks);
+	json_object_set_serializer(jso, json_object_double_to_json_string, "%.4f", NULL);
+	return jso;
 }
 
 static struct json_object * respondd_provider_statistics(void) {

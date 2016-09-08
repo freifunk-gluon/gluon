@@ -15,7 +15,8 @@ for module in $GLUON_MODULES; do
 	cd "$GLUONDIR"/$module
 	git init
 
-	git checkout $commit 2>/dev/null || git fetch $repo $branch
-	git checkout -B base $commit
-	git submodule update --init --recursive
+	if ! git branch -f base $commit 2>/dev/null; then
+		git fetch $repo $branch
+		git branch -f base $commit 2>/dev/null
+	fi
 done

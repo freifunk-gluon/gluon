@@ -13,11 +13,12 @@ include $(GLUONDIR)/include/package.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
+
 define Package/gluon-luci-admin
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Luci based simple administration interface for mesh nodes
-  DEPENDS:=gluon-config-mode-core-virtual
+  DEPENDS:=gluon-config-mode-core-virtual +pretty-hostname
 endef
 
 define Build/Prepare
@@ -29,10 +30,12 @@ endef
 
 define Build/Compile
 	$(call GluonBuildI18N,gluon-luci-admin,i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-luci-admin/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(call GluonInstallI18N,gluon-luci-admin,$(1))
 endef
 

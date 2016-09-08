@@ -1,45 +1,47 @@
 <%-
-   local fs = require 'nixio.fs'
-   local uci = require('luci.model.uci').cursor()
-   local util = require 'luci.util'
-   local i18n = require 'luci.i18n'
+  local fs = require 'nixio.fs'
+  local uci = require('luci.model.uci').cursor()
+  local util = require 'luci.util'
+  local i18n = require 'luci.i18n'
+  local pretty_hostname = require 'pretty_hostname'
 
-   local site = require 'gluon.site_config'
-   local sysconfig = require 'gluon.sysconfig'
-   local platform = require 'gluon.platform'
+  local gluon_luci = require "gluon.luci"
+  local site = require 'gluon.site_config'
+  local sysconfig = require 'gluon.sysconfig'
+  local platform = require 'gluon.platform'
 
 
-   local keys = {
-     hostname = i18n.translate('Hostname'),
-     primary_mac = i18n.translate('MAC address'),
-     model = i18n.translate('Hardware model'),
-     version = i18n.translate('Gluon version'),
-     release = i18n.translate('Firmware release'),
-     site = i18n.translate('Site'),
-     pubkey = i18n.translate('Public VPN key'),
-   }
+  local keys = {
+    hostname = i18n.translate('Hostname'),
+    primary_mac = i18n.translate('MAC address'),
+    model = i18n.translate('Hardware model'),
+    version = i18n.translate('Gluon version'),
+    release = i18n.translate('Firmware release'),
+    site = i18n.translate('Site'),
+    pubkey = i18n.translate('Public VPN key'),
+  }
 
-   local values = {
-     hostname = uci:get_first('system', 'system', 'hostname'),
-     primary_mac = sysconfig.primary_mac,
-     model = platform.get_model(),
-     version = util.trim(fs.readfile('/lib/gluon/gluon-version')),
-     release = util.trim(fs.readfile('/lib/gluon/release')),
-     site = site.site_name,
-     pubkey = 'n/a',
-   }
+  local values = {
+    hostname = pretty_hostname.get(uci),
+    primary_mac = sysconfig.primary_mac,
+    model = platform.get_model(),
+    version = util.trim(fs.readfile('/lib/gluon/gluon-version')),
+    release = util.trim(fs.readfile('/lib/gluon/release')),
+    site = site.site_name,
+    pubkey = 'n/a',
+  }
 
-   local meshvpn_enabled = uci:get("fastd", "mesh_vpn", "enabled", "0")
-   if meshvpn_enabled == "1" then
-     local pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
-     if pubkey ~= '' then
-       values.pubkey = pubkey
-     end
-   end
+  local meshvpn_enabled = uci:get("fastd", "mesh_vpn", "enabled", "0")
+  if meshvpn_enabled == "1" then
+    local pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
+    if pubkey ~= '' then
+      values.pubkey = pubkey
+    end
+  end
 -%>
 <h2><%:Information%></h2>
 <% for _, key in ipairs({'hostname', 'primary_mac', 'model', 'version', 'release', 'site', 'pubkey'}) do %>
 <div class="cbi-value">
-  <div class="cbi-value-title"><%=keys[key]%></div><div class="cbi-value-field"><%=values[key] or 'n/a'%></div>
+  <div class="cbi-value-title"><%=keys[key]%></div><div class="cbi-value-field"><%=gluon_luci.escape(values[key] or 'n/a')%></div>
 </div>
 <% end %>

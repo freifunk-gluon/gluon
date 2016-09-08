@@ -1,0 +1,4 @@
+rule 'OUTPUT -d Multicast --logical-out br-client -o bat0 -j MULTICAST_OUT'
+rule 'FORWARD -d Multicast --logical-out br-client -o bat0 -j MULTICAST_OUT'
+
+rule 'MULTICAST_OUT -p IPv6 --ip6-protocol ipv6-icmp -j MULTICAST_OUT_ICMPV6'

@@ -43,6 +43,7 @@ Developer Documentation
    dev/configmode
    dev/wan
    dev/i18n
+   dev/mac_addresses
 
 Packages
 --------
@@ -54,6 +55,10 @@ Packages
    package/gluon-config-mode-geo-location
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
+<<<<<<< HEAD
+=======
+   package/gluon-ebtables-segment-mld
+>>>>>>> gluon-next-node: mark local-node ip6 as deprecated
    package/gluon-next-node
 
 Releases
@@ -62,6 +67,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2016.1.5
    releases/v2016.1.4
    releases/v2016.1.3
    releases/v2016.1.2
@@ -90,6 +96,9 @@ ar71xx-generic
   - AP121
   - AP121U
   - Hornet-UB
+  - Tube2H
+  - N2
+  - N5
 
 * Allnet
 
@@ -108,7 +117,7 @@ ar71xx-generic
 
 * D-Link
 
-  - DIR-505 (A1)
+  - DIR-505 (A1, A2)
   - DIR-615 (C1)
   - DIR-825 (B1)
 
@@ -130,6 +139,16 @@ ar71xx-generic
 * Onion
 
   - Omega
+
+* OpenMesh
+
+  - MR600 (v1, v2)
+  - MR900 (v1, v2)
+  - OM2P (v1, v2)
+  - OM2P-HS (v1, v2, v3)
+  - OM2P-LC
+  - OM5P
+  - OM5P-AN
 
 * TP-Link
 
@@ -172,11 +191,13 @@ ar71xx-generic
   - Air Gateway
   - Air Router
   - Bullet M
+  - Loco M
+  - Loco M XW
   - Nanostation M
   - Nanostation M XW
-  - Loco M XW
   - Picostation M
   - Rocket M
+  - Rocket M XW
   - UniFi AP
   - UniFi AP Pro
   - UniFi AP Outdoor

@@ -4,7 +4,7 @@ PKG_NAME:=gluon-mesh-babel
 PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
+PROVIDES := gluon-radvd-provider
 include $(GLUONDIR)/include/package.mk
 
 define Package/gluon-mesh-babel
@@ -12,6 +12,7 @@ define Package/gluon-mesh-babel
   CATEGORY:=Gluon
   TITLE:=Babel mesh
   DEPENDS:=+gluon-core +babeld
+  PROVIDES:=gluon-mesh-provider gluon-mesh-babel
 endef
 
 define Build/Prepare

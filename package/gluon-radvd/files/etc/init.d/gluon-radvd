@@ -1,5 +1,6 @@
 #!/bin/sh /etc/rc.common
 
+USE_PROCD=1
 START=50
 
 SERVICE_WRITE_PID=1
@@ -7,7 +8,7 @@ SERVICE_DAEMONIZE=1
 
 
 start() {
-	service_start /usr/sbin/uradvd -i local-node -a $(lua -e 'print(require("gluon.site_config").prefix6)') --default-lifetime 900
+	service_start /usr/sbin/uradvd -i local-node -a $(lua -e 'print(require("gluon.site_config").prefix6)')
 }
 
 stop() {

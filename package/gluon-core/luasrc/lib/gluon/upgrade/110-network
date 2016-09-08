@@ -1,0 +1,85 @@
+#!/usr/bin/lua
+
+local uci = require('luci.model.uci').cursor()
+local sysctl = require 'gluon.sysctl'
+local sysconfig = require 'gluon.sysconfig'
+
+
+uci:section('network', 'interface', 'wan',
+	    {
+	      ifname = sysconfig.wan_ifname,
+	      type = 'bridge',
+	      multicast_querier = 0,
+	      peerdns = 0,
+	      auto = 1,
+	    }
+)
+uci:delete('network', 'wan', 'igmp_snooping')
+
+if not uci:get('network', 'wan', 'proto') then
+  uci:set('network', 'wan', 'proto', 'dhcp')
+end
+
+
+uci:section('network', 'interface', 'wan6',
+	    {
+	      ifname = 'br-wan',
+	      peerdns = 0,
+	      ip6table = 1,
+	      sourcefilter = 0,
+	    }
+)
+
+if not uci:get('network', 'wan6', 'proto') then
+  uci:set('network', 'wan6', 'proto', 'dhcpv6')
+end
+
+
+uci:section('network', 'rule6', 'wan6_lookup',
+	    {
+	       mark = '0x01/0x01',
+	       lookup = 1,
+	    }
+)
+
+uci:section('network', 'route6', 'wan6_unreachable',
+	    {
+	       type = 'unreachable',
+	       interface = 'loopback',
+	       target = '::/0',
+	       gateway = '::',
+	       table = 1,
+	       metric = 65535,
+	    }
+)
+
+uci:save('network')
+
+
+uci:section('firewall', 'rule', 'wan_igmp',
+	    {
+	       name = 'Allow-IGMP',
+	       src = 'wan',
+	       proto = 'igmp',
+	       family = 'ipv4',
+	       target = 'ACCEPT',
+	    }
+)
+
+uci:section('firewall', 'rule', 'wan_mld',
+	    {
+	       name = 'Allow-MLD',
+	       src = 'wan',
+	       proto = 'icmp',
+	       src_ip = 'fe80::/10',
+	       icmp_type = { '130/0', '131/0', '132/0', '143/0', },
+	       family = 'ipv6',
+	       target = 'ACCEPT',
+	    }
+)
+
+uci:save('firewall')
+
+
+sysctl.set('net.ipv6.conf.all.accept_ra', 0)
+sysctl.set('net.ipv6.conf.default.accept_ra', 0)

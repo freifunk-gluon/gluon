@@ -1,0 +1,34 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 30 Jun 2016 21:52:02 +0200
+Subject: mt76: fix build with kernel 3.18
+
+diff --git a/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch b/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch
+new file mode 100644
+index 0000000..ea389cd
+--- /dev/null
++++ b/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch
+@@ -0,0 +1,11 @@
++--- a/backport-include/linux/netdevice.h
+++++ b/backport-include/linux/netdevice.h
++@@ -233,7 +233,7 @@ static inline void backport_unregister_n
++ #endif
++ 
++ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,19,0)
++-#define napi_alloc_frag(fragsz) netdev_alloc_frag(fragsz)
+++#define napi_alloc_frag netdev_alloc_frag
++ #endif
++ 
++ /*
+diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
+index bd851e6..989ba0c 100644
+--- a/package/kernel/mt76/Makefile
++++ b/package/kernel/mt76/Makefile
+@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/package.mk
+ define KernelPackage/mt76
+   SUBMENU:=Wireless Drivers
+   TITLE:=MediaTek MT76x2/MT7603 wireless driver
+-  DEPENDS:=+kmod-mac80211 +@DRIVER_11N_SUPPORT @PCI_SUPPORT @!LINUX_3_18
++  DEPENDS:=+kmod-mac80211 +@DRIVER_11N_SUPPORT @PCI_SUPPORT
+   FILES:=\
+ 	$(PKG_BUILD_DIR)/mt76.ko \
+ 	$(PKG_BUILD_DIR)/mt76x2e.ko \

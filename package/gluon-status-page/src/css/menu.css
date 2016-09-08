@@ -21,20 +21,10 @@
   max-height: 80vh;
 
   transform-origin: top left;
-  -webkit-animation: new-menu-animation .08s ease-out forwards;
-  -moz-animation: new-menu-animation .08s ease-out forwards;
+  animation: new-menu-animation .08s ease-out forwards;
 }
 
-@-webkit-keyframes new-menu-animation {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@-moz-keyframes new-menu-animation {
+@keyframes new-menu-animation {
   from {
     transform: scaleY(0);
   }

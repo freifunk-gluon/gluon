@@ -1,0 +1,145 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local users = require 'gluon.users'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
+
+
+-- The previously used user is removed, we need root privileges to use the packet_mark option
+users.remove_user('gluon-fastd')
+
+-- Group for iptables rule
+users.add_group('gluon-fastd', 800)
+
+
+local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
+if not enabled then
+  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
+end
+
+
+local methods
+
+if site.fastd_mesh_vpn.configurable then
+  local has_null = lutil.contains(site.fastd_mesh_vpn.methods, 'null')
+
+  local old_methods = uci:get('fastd', 'mesh_vpn', 'method')
+  if old_methods then
+    has_null = lutil.contains(old_methods, 'null')
+  end
+
+
+  methods = {}
+  if has_null then
+    table.insert(methods, 'null')
+  end
+
+  for _, method in ipairs(site.fastd_mesh_vpn.methods) do
+    if method ~= 'null' then
+      table.insert(methods, method)
+    end
+  end
+
+else
+  methods = site.fastd_mesh_vpn.methods
+end
+
+
+uci:section('fastd', 'fastd', 'mesh_vpn',
+	  {
+		  enabled = enabled,
+		  group = 'gluon-fastd',
+		  syslog_level = 'verbose',
+		  interface = 'mesh-vpn',
+		  mode = 'tap',
+		  mtu = site.fastd_mesh_vpn.mtu,
+		  secure_handshakes = 1,
+		  method = methods,
+		  packet_mark = 1,
+		  status_socket = '/var/run/fastd.mesh_vpn.socket',
+	  }
+)
+uci:delete('fastd', 'mesh_vpn', 'user')
+
+
+local add_groups
+
+local function add_peer(group, name, config)
+  uci:section('fastd', 'peer', group .. '_peer_' .. name,
+    {
+      enabled = 1,
+      net = 'mesh_vpn',
+      group = group,
+      key = config.key,
+      remote = config.remotes,
+    }
+  )
+end
+
+local function add_group(name, config, parent)
+  uci:delete('fastd', name)
+  uci:delete_all('fastd', 'peer',
+    function(peer)
+      return (peer.net == 'mesh_vpn' and peer.group == name)
+    end
+  )
+
+
+  uci:section('fastd', 'peer_group', name,
+    {
+      enabled = 1,
+      net = 'mesh_vpn',
+      parent = parent,
+      peer_limit = config.limit,
+    }
+  )
+
+  if config.peers then
+    for peername, peerconfig in pairs(config.peers) do
+      add_peer(name, peername, peerconfig)
+    end
+  end
+
+  add_groups(name, config.groups, name)
+end
+
+-- declared local above
+function add_groups(prefix, groups, parent)
+  if groups then
+    for name, group in pairs(groups) do
+      add_group(prefix .. '_' .. name, group, parent)
+    end
+  end
+end
+
+add_groups('mesh_vpn', site.fastd_mesh_vpn.groups)
+
+
+uci:save('fastd')
+
+
+uci:section('network', 'interface', 'mesh_vpn',
+  {
+    ifname = 'mesh-vpn',
+    proto = 'gluon_mesh',
+    transitive = 1,
+    fixed_mtu = 1,
+    macaddr = util.generate_mac(7),
+  }
+)
+
+uci:save('network')
+
+
+uci:section('firewall', 'include', 'mesh_vpn_dns',
+	  {
+	    type = 'restore',
+	    path = '/lib/gluon/mesh-vpn-fastd/iptables.rules',
+	    family = 'ipv4',
+	  }
+)
+
+uci:save('firewall')

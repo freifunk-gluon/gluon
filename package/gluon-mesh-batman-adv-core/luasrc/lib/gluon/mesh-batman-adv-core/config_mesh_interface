@@ -1,0 +1,64 @@
+#!/usr/bin/lua
+
+local util = require 'gluon.util'
+local fs = require 'nixio.fs'
+
+
+local ifname = os.getenv('IFNAME')
+local cmd = arg[1]
+
+
+if cmd == 'setup' then
+
+	local fixed_mtu = tonumber(os.getenv('FIXED_MTU')) or 0
+	local transitive = tonumber(os.getenv('TRANSITIVE')) or 0
+
+	local mtu = tonumber(arg[2])
+
+	if os.execute('ip link show primary0 >/dev/null 2>&1') ~= 0 then
+		os.execute([[
+			ip link add primary0 type dummy
+			echo 1 > /proc/sys/net/ipv6/conf/primary0/disable_ipv6
+			ip link set primary0 address ]] .. util.generate_mac(3) .. [[ mtu ]] .. mtu .. [[ up
+			echo 'bat0' > /sys/class/net/primary0/batman_adv/mesh_iface
+		]])
+	end
+
+	if fixed_mtu == 0 then
+		local lower = fs.glob('/sys/class/net/' .. ifname .. '/lower_*/wireless')()
+		if lower then
+			lower = lower:match('/lower_([^/]+)/wireless$')
+			util.exec('ip', 'link', 'set', 'dev', lower, 'mtu', tostring(mtu+4))
+		end
+
+		util.exec('ip', 'link', 'set', 'dev', ifname, 'mtu', tostring(mtu))
+	end
+
+	local file = assert(io.open('/sys/class/net/' .. ifname .. '/batman_adv/mesh_iface', 'w'))
+	file:write('bat0')
+	file:close()
+
+	file = assert(io.open('/sys/class/net/' .. ifname .. '/batman_adv/no_rebroadcast', 'w'))
+	file:write(tostring(transitive))
+	file:close()
+
+elseif cmd == 'teardown' then
+
+	local file = io.open('/sys/class/net/' .. ifname .. '/batman_adv/mesh_iface', 'w')
+	if file then
+		file:write('none')
+		file:close()
+	end
+
+	local other = false
+	for lower in fs.glob('/sys/class/net/bat0/lower_*') do
+		if lower ~= '/sys/class/net/bat0/lower_primary0' then
+			other = true
+			break
+		end
+	end
+
+	if not other then
+		os.execute('ip link del primary0')
+	end
+end

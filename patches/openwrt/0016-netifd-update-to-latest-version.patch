@@ -1,0 +1,101 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 29 Jul 2016 21:28:24 +0200
+Subject: netifd: update to latest version
+
+diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
+index 619024b..dc83ca6 100644
+--- a/package/network/config/netifd/Makefile
++++ b/package/network/config/netifd/Makefile
+@@ -1,15 +1,15 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=netifd
+-PKG_VERSION:=2015-12-16
++PKG_VERSION:=2016-07-29
+ PKG_RELEASE=$(PKG_SOURCE_VERSION)
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=http://git.openwrt.org/project/netifd.git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=245527193e90906451be35c2b8e972b8712ea6ab
++PKG_SOURCE_VERSION:=656c387974879105c2aaec6b62478d0195067f2d
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
++PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ # PKG_MIRROR_MD5SUM:=
+ # CMAKE_INSTALL:=1
+ 
+diff --git a/package/network/config/netifd/files/etc/init.d/network b/package/network/config/netifd/files/etc/init.d/network
+index 542fc08..bdadbbc 100755
+--- a/package/network/config/netifd/files/etc/init.d/network
++++ b/package/network/config/netifd/files/etc/init.d/network
+@@ -21,7 +21,6 @@ start_service() {
+ 	procd_set_param watch network.interface
+ 	[ -e /proc/sys/kernel/core_pattern ] && {
+ 		procd_set_param limits core="unlimited"
+-		echo '/tmp/%e.%p.%s.%t.core' > /proc/sys/kernel/core_pattern
+ 	}
+ 	procd_close_instance
+ }
+diff --git a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
+index 0e88af9..1d3a209 100755
+--- a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
++++ b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
+@@ -12,6 +12,7 @@ proto_dhcp_init_config() {
+ 	proto_config_add_string clientid
+ 	proto_config_add_string vendorid
+ 	proto_config_add_boolean 'broadcast:bool'
++	proto_config_add_boolean 'release:bool'
+ 	proto_config_add_string 'reqopts:list(string)'
+ 	proto_config_add_string iface6rd
+ 	proto_config_add_string sendopts
+@@ -26,8 +27,8 @@ proto_dhcp_setup() {
+ 	local config="$1"
+ 	local iface="$2"
+ 
+-	local ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd zone mtu6rd customroutes
+-	json_get_vars ipaddr hostname clientid vendorid broadcast reqopts iface6rd sendopts delegate zone6rd zone mtu6rd customroutes
++	local ipaddr hostname clientid vendorid broadcast release reqopts iface6rd sendopts delegate zone6rd zone mtu6rd customroutes
++	json_get_vars ipaddr hostname clientid vendorid broadcast release reqopts iface6rd sendopts delegate zone6rd zone mtu6rd customroutes
+ 
+ 	local opt dhcpopts
+ 	for opt in $reqopts; do
+@@ -39,6 +40,7 @@ proto_dhcp_setup() {
+ 	done
+ 
+ 	[ "$broadcast" = 1 ] && broadcast="-B" || broadcast=
++	[ "$release" = 1 ] && release="-R" || release=
+ 	[ -n "$clientid" ] && clientid="-x 0x3d:${clientid//:/}" || clientid="-C"
+ 	[ -n "$iface6rd" ] && proto_export "IFACE6RD=$iface6rd"
+ 	[ "$iface6rd" != 0 -a -f /lib/netifd/proto/6rd.sh ] && append dhcpopts "-O 212"
+@@ -54,9 +56,9 @@ proto_dhcp_setup() {
+ 		-s /lib/netifd/dhcp.script \
+ 		-f -t 0 -i "$iface" \
+ 		${ipaddr:+-r $ipaddr} \
+-		${hostname:+-H $hostname} \
+-		${vendorid:+-V $vendorid} \
+-		$clientid $broadcast $dhcpopts
++		${hostname:+-x "hostname:$hostname"} \
++		${vendorid:+-V "$vendorid"} \
++		$clientid $broadcast $release $dhcpopts
+ }
+ 
+ proto_dhcp_renew() {
+diff --git a/package/network/config/netifd/files/sbin/ifup b/package/network/config/netifd/files/sbin/ifup
+index af3aaa8..5515b91 100755
+--- a/package/network/config/netifd/files/sbin/ifup
++++ b/package/network/config/netifd/files/sbin/ifup
+@@ -67,12 +67,10 @@ if [ -n "$setup_wifi" ] && grep -sq config /etc/config/wireless; then
+ 		fi
+ 	}
+ 
+-	local radio_devs
+-	local network="$1"
++	network="$1"
+ 	config_load wireless
+ 	config_foreach find_related_radios wifi-iface
+ 
+-	local dev
+ 	for dev in $(echo "$radio_devs" | sort -u); do
+ 		/sbin/wifi up "$dev"
+ 	done

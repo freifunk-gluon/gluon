@@ -1,0 +1,154 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 16 Jun 2016 03:42:03 +0200
+Subject: kernel: remove packaging of kmod-crypto-core and kmod-crypto-arc4
+
+Everything except for blkcipher was already built-in, so make blkcipher
+built-in as well.
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+Backport of OpenWrt r46820
+
+The packages kmod-crypto-{core,arc4} are added to kernel PROVIDES to
+satisfy dependencies of CC packages.
+
+diff --git a/package/kernel/linux/Makefile b/package/kernel/linux/Makefile
+index b06c49a..19bcbd5 100644
+--- a/package/kernel/linux/Makefile
++++ b/package/kernel/linux/Makefile
+@@ -49,7 +49,7 @@ define Package/kernel
+   TITLE:=Virtual kernel package
+   VERSION:=$(LINUX_VERSION)-$(LINUX_RELEASE)-$(LINUX_VERMAGIC)
+   URL:=http://www.kernel.org/
+-  PROVIDES:=$(if $(CONFIG_IPV6),kmod-ipv6)
++  PROVIDES:=kmod-crypto-core kmod-crypto-arc4 $(if $(CONFIG_IPV6),kmod-ipv6)
+ endef
+ 
+ define Package/kernel/install
+diff --git a/package/kernel/linux/modules/crypto.mk b/package/kernel/linux/modules/crypto.mk
+index c8e0fbb..926dab0 100644
+--- a/package/kernel/linux/modules/crypto.mk
++++ b/package/kernel/linux/modules/crypto.mk
+@@ -15,24 +15,9 @@ crypto_confvar=CONFIG_CRYPTO_$(word 1,$(subst =,$(space),$(1)))
+ crypto_file=$(LINUX_DIR)/crypto/$(word 2,$(subst =,$(space),$(1))).ko
+ crypto_name=$(if $(findstring y,$($(call crypto_confvar,$(1)))),,$(word 2,$(subst =,$(space),$(1))))
+ 
+-define KernelPackage/crypto-core
+-  SUBMENU:=$(CRYPTO_MENU)
+-  TITLE:=Core CryptoAPI modules
+-  KCONFIG:= \
+-	CONFIG_CRYPTO=y \
+-	CONFIG_CRYPTO_HW=y \
+-	CONFIG_CRYPTO_BLKCIPHER \
+-	CONFIG_CRYPTO_ALGAPI \
+-	$(foreach mod,$(CRYPTO_MODULES),$(call crypto_confvar,$(mod)))
+-  FILES:=$(foreach mod,$(CRYPTO_MODULES),$(call crypto_file,$(mod)))
+-endef
+-
+-$(eval $(call KernelPackage,crypto-core))
+-
+-
+ define AddDepends/crypto
+   SUBMENU:=$(CRYPTO_MENU)
+-  DEPENDS+=+kmod-crypto-core $(1)
++  DEPENDS+= $(1)
+ endef
+ 
+ define KernelPackage/crypto-aead
+@@ -272,17 +257,6 @@ endif
+ $(eval $(call KernelPackage,crypto-aes))
+ 
+ 
+-define KernelPackage/crypto-arc4
+-  TITLE:=ARC4 (RC4) cipher CryptoAPI module
+-  KCONFIG:=CONFIG_CRYPTO_ARC4
+-  FILES:=$(LINUX_DIR)/crypto/arc4.ko
+-  AUTOLOAD:=$(call AutoLoad,09,arc4)
+-  $(call AddDepends/crypto)
+-endef
+-
+-$(eval $(call KernelPackage,crypto-arc4))
+-
+-
+ define KernelPackage/crypto-authenc
+   TITLE:=Combined mode wrapper for IPsec
+   DEPENDS:=+kmod-crypto-manager
+diff --git a/package/kernel/linux/modules/fs.mk b/package/kernel/linux/modules/fs.mk
+index fa18237..cc87a45 100644
+--- a/package/kernel/linux/modules/fs.mk
++++ b/package/kernel/linux/modules/fs.mk
+@@ -91,7 +91,6 @@ define KernelPackage/fs-cifs
+   AUTOLOAD:=$(call AutoLoad,30,cifs)
+   $(call AddDepends/nls)
+   DEPENDS+= \
+-    +kmod-crypto-arc4 \
+     +kmod-crypto-hmac \
+     +kmod-crypto-md5 \
+     +kmod-crypto-md4 \
+diff --git a/package/kernel/linux/modules/netsupport.mk b/package/kernel/linux/modules/netsupport.mk
+index 8a2760d..ab76946 100644
+--- a/package/kernel/linux/modules/netsupport.mk
++++ b/package/kernel/linux/modules/netsupport.mk
+@@ -714,7 +714,7 @@ $(eval $(call KernelPackage,ipoa))
+ define KernelPackage/mppe
+   SUBMENU:=$(NETWORK_SUPPORT_MENU)
+   TITLE:=Microsoft PPP compression/encryption
+-  DEPENDS:=kmod-ppp +kmod-crypto-core +kmod-crypto-arc4 +kmod-crypto-sha1 +kmod-crypto-ecb
++  DEPENDS:=kmod-ppp +kmod-crypto-sha1 +kmod-crypto-ecb
+   KCONFIG:= \
+ 	CONFIG_PPP_MPPE_MPPC \
+ 	CONFIG_PPP_MPPE
+@@ -998,7 +998,7 @@ define KernelPackage/rxrpc
+ 	$(LINUX_DIR)/net/rxrpc/af-rxrpc.ko \
+ 	$(LINUX_DIR)/net/rxrpc/rxkad.ko
+   AUTOLOAD:=$(call AutoLoad,30,rxkad af-rxrpc)
+-  DEPENDS:=+kmod-crypto-core +kmod-crypto-manager +kmod-crypto-pcbc +kmod-crypto-fcrypt
++  DEPENDS:= +kmod-crypto-manager +kmod-crypto-pcbc +kmod-crypto-fcrypt
+ endef
+ 
+ define KernelPackage/rxrpc/description
+diff --git a/target/linux/generic/config-3.18 b/target/linux/generic/config-3.18
+index 6038692..a0dc3c9 100644
+--- a/target/linux/generic/config-3.18
++++ b/target/linux/generic/config-3.18
+@@ -700,9 +700,10 @@ CONFIG_CRYPTO_ALGAPI=y
+ CONFIG_CRYPTO_ALGAPI2=y
+ # CONFIG_CRYPTO_ANSI_CPRNG is not set
+ # CONFIG_CRYPTO_ANUBIS is not set
+-# CONFIG_CRYPTO_ARC4 is not set
++CONFIG_CRYPTO_ARC4=y
+ # CONFIG_CRYPTO_AUTHENC is not set
+-# CONFIG_CRYPTO_BLKCIPHER is not set
++CONFIG_CRYPTO_BLKCIPHER=y
++CONFIG_CRYPTO_BLKCIPHER2=y
+ # CONFIG_CRYPTO_BLOWFISH is not set
+ # CONFIG_CRYPTO_CAMELLIA is not set
+ # CONFIG_CRYPTO_CAST5 is not set
+diff --git a/target/linux/omap/config-3.18 b/target/linux/omap/config-3.18
+index a06a350..d5003c2 100644
+--- a/target/linux/omap/config-3.18
++++ b/target/linux/omap/config-3.18
+@@ -114,9 +114,6 @@ CONFIG_CPU_V7=y
+ CONFIG_CRC16=y
+ CONFIG_CRYPTO_AEAD=m
+ CONFIG_CRYPTO_AEAD2=m
+-CONFIG_CRYPTO_ARC4=m
+-CONFIG_CRYPTO_BLKCIPHER=m
+-CONFIG_CRYPTO_BLKCIPHER2=m
+ CONFIG_CRYPTO_CCM=m
+ CONFIG_CRYPTO_CRC32C=y
+ CONFIG_CRYPTO_CTR=m
+diff --git a/target/linux/sunxi/config-3.18 b/target/linux/sunxi/config-3.18
+index ddc3f7a..57651bb 100644
+--- a/target/linux/sunxi/config-3.18
++++ b/target/linux/sunxi/config-3.18
+@@ -110,9 +110,6 @@ CONFIG_CPU_TLB_V7=y
+ CONFIG_CPU_V7=y
+ CONFIG_CRC16=y
+ CONFIG_CRC_T10DIF=y
+-CONFIG_CRYPTO_ARC4=y
+-CONFIG_CRYPTO_BLKCIPHER=y
+-CONFIG_CRYPTO_BLKCIPHER2=y
+ CONFIG_CRYPTO_CRC32C=y
+ CONFIG_CRYPTO_CRCT10DIF=y
+ CONFIG_CRYPTO_DES=y

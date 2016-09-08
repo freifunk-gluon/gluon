@@ -1,0 +1,20 @@
+From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+Date: Fri, 20 May 2016 18:03:58 +0200
+Subject: package/uboot-envtools: add OpenMesh MR1750v2 support
+
+Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
+
+Forwarded: https://patchwork.ozlabs.org/patch/637064/
+
+diff --git a/package/boot/uboot-envtools/files/ar71xx b/package/boot/uboot-envtools/files/ar71xx
+index 81c6481..459e73d 100644
+--- a/package/boot/uboot-envtools/files/ar71xx
++++ b/package/boot/uboot-envtools/files/ar71xx
+@@ -22,6 +22,7 @@ eap300v2 | \
+ hornet-ub | \
+ hornet-ub-x2 | \
+ mr1750 | \
++mr1750v2 | \
+ mr600 | \
+ mr600v2 | \
+ mr900 | \

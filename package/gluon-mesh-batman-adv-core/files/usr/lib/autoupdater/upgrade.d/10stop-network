@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. /lib/gluon/autoupdater/lib.sh
+
+wifi down
+sleep 1
+stop network
+ip link del bat0

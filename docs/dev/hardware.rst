@@ -51,7 +51,7 @@ may be defined arbitrarily.
 
 On devices with multiple WLAN adapters, care must also be taken that the primary MAC address is
 configured correctly. ``/lib/gluon/core/sysconfig/primary_mac`` should contain the MAC address which
-can be found on a label on most hardware; if it does not, ``/lib/gluon/upgrade/core/initial/001-sysconfig``
+can be found on a label on most hardware; if it does not, ``/lib/gluon/upgrade/010-primary-mac``
 in ``gluon-core`` might need a fix. (There have also been cases in which the address was incorrect
 even on devices with only one WLAN adapter, in these cases an OpenWrt bug was the cause).
 
@@ -62,9 +62,10 @@ required for adding a new target:
 
 Adjust packages
 '''''''''''''''
-One package that definitely needs adjustments for every new target added is ``lua-platform-info``. Just
-start with a copy of an existing platform info script, adjust it for the new target, and add the new target
-to the list of supported targets in the package Makefile.
+One package that definitely needs adjustments for every new target added is ``libplatforminfo`` (to be found in
+`packages/gluon/libs/libplatforminfo <https://github.com/freifunk-gluon/packages/tree/master/libs/libplatforminfo>`_).
+Start with a copy of an existing platform info source file and adjust it for the new target (or just add a symlink if
+there is nothing to adjust). Then add the new target to the DEPENDS variable in the ``libplatforminfo`` package Makefile.
 
 On many targets, Gluon's network setup scripts (mainly in the packages ``gluon-core`` and ``gluon-mesh-batman-adv-core``)
 won't run correctly without some adjustments, so better double check that everything is fine there (and the files

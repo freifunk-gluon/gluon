@@ -1,0 +1,33 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+
+local lutil = require 'luci.util'
+local uci = require('luci.model.uci').cursor()
+
+
+uci:section('network', 'interface', 'client',
+  {
+    type = 'bridge',
+  }
+)
+
+local ifname = uci:get('network', 'client', 'ifname')
+
+if type(ifname) == 'string' then
+  uci:delete('network', 'client', 'ifname')
+  for x in ifname:gmatch("[^%s]+") do
+    uci:add_to_set('network', 'client', 'ifname', x)
+  end
+end
+
+if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan', 'auto') then
+  for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+    uci:add_to_set('network', 'client', 'ifname', lanif)
+  end
+end
+
+
+uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
+
+uci:save('network')

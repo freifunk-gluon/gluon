@@ -38,6 +38,14 @@ c:section('network', 'interface', 'local_node6',
          }
 )
 
+c:section('network', 'interface', 'local_node6',
+         {
+           ifname = 'local-node',
+           proto = 'static_deprecated',
+           ip6addr = site.next_node.ip6,
+         }
+)
+
 c:save('network')
 
 c:delete('firewall', 'local_node')

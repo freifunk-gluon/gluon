@@ -98,6 +98,12 @@ wifi24 \: optional
     This will only affect new installations.
     Upgrades will not changed the disabled state.
 
+    Additionally it is possible to configure the ``supported_rates`` and ``basic_rate``
+    of each radio. Both are optional, by default hostapd/driver dictate the rates.
+    If ``supported_rates`` is set, ``basic_rate`` is required, because ``basic_rate``
+    has to be a subset of ``supported_rates``.
+    The example below disables 802.11b rates.
+
     ``ap`` requires a single parameter, a string, named ``ssid`` which sets the
     interface's ESSID.
 
@@ -112,6 +118,8 @@ wifi24 \: optional
 
        wifi24 = {
          channel = 11,
+         supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
+         basic_rate = {6000, 9000, 18000, 36000, 54000},
          ap = {
            ssid = 'entenhausen.freifunk.net',
          },
@@ -229,8 +237,14 @@ mesh_on_wan \: optional
 mesh_on_lan \: optional
     Enables the mesh on the LAN port (``true`` or ``false``).
 
+poe_passthrough \: optional
+    Enable PoE passthrough by default on hardware with such a feature.
+
 autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
+
+    The mirrors are checked in random order until the manifest could be downloaded
+    successfully or all mirrors have been tried.
     ::
 
       autoupdater = {
@@ -320,6 +334,10 @@ GLUON_PRIORITY
     The default priority for the generated manifests (see the autoupdater documentation
     for more information).
 
+GLUON_REGION
+    Region code to build into images where necessary. Valid values are the empty string,
+    ``us`` and ``eu``.
+
 GLUON_LANGS
     List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
@@ -354,6 +372,41 @@ utilities are installed.
 
    Depending on the context, you might be able to use comments like
    ``<!-- empty -->`` as translations to effectively hide the text.
+
+Site modules
+------------
+
+The file ``modules`` in the site repository is completely optional and can be used
+to supply additional package feeds from which packages are built. The git repositories
+specified here are retrieved in addition to the default feeds when ``make update``
+it called.
+
+This file's format is very similar to the toplevel ``modules`` file of the Gluon
+tree, with the important different that the list of feeds must be assigned to
+the variable ``GLUON_SITE_FEEDS``. Multiple feed names must be separated by spaces,
+for example::
+
+    GLUON_SITE_FEEDS='foo bar'
+
+The feed names may only contain alphanumerical characters, underscores and slashes.
+For each of the feeds, the following variables are used to specify how to update
+the feed:
+
+PACKAGES_${feed}_REPO
+    The URL of the git repository to clone (usually ``git://`` or ``http(s)://``)
+
+PACKAGES_${feed}_COMMIT
+    The commit ID of the repository to use
+
+PACKAGES_${feed}_BRANCH
+    Optional: The branch of the repository the given commit ID can be found in.
+    Defaults to the default branch of the repository (usually ``master``)
+
+These variables are always all uppercase, so for an entry ``foo`` in GLUON_SITE_FEEDS,
+the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
+``PACKAGES_FOO_COMMIT`` and ``PACKAGES_FOO_BRANCH``. Slashes in feed names are
+replaced by underscores to get valid shell variable identifiers.
+
 
 Examples
 --------
@@ -394,23 +447,35 @@ site-repos in the wild
 This is a non-exhaustive list of site-repos from various communities:
 
 * `site-ffa <https://github.com/tecff/site-ffa>`_ (Altdorf, Landshut & Umgebung)
+* `site-ffac <https://github.com/ffac/site>`_ (Regio Aachen)
 * `site-ffbs <https://github.com/ffbs/site-ffbs>`_ (Braunschweig)
 * `site-ffhb <https://github.com/FreifunkBremen/gluon-site-ffhb>`_ (Bremen)
 * `site-ffda <https://github.com/freifunk-darmstadt/site-ffda>`_ (Darmstadt)
+* `site-ffeh <https://github.com/freifunk-ehingen/site-ffeh>`_ (Ehingen)
+* `site-fffl <https://github.com/freifunk-flensburg/site-fffl>`_ (Flensburg)
 * `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
+* `site-ffgt-rhw <https://github.com/ffgtso/site-ffgt-rhw>`_ (Guetersloh)
 * `site-ffhh <https://github.com/freifunkhamburg/site-ffhh>`_ (Hamburg)
 * `site-ffho <https://git.c3pb.de/freifunk-pb/site-ffho>`_ (Hochstift)
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
+* `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
+* `site-ffki <http://git.freifunk.in-kiel.de/ffki-site/>`_ (Kiel)
+* `site-fflz <https://github.com/freifunk-lausitz/site-fflz>`_ (Lausitz)
 * `site-ffl <https://github.com/freifunk-leipzig/freifunk-gluon-leipzig>`_ (Leipzig)
 * `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
+* `site-fflg <https://github.com/kartenkarsten/site-fflg>`_ (Lüneburg)
 * `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
 * `site-ffmwu <https://github.com/freifunk-mwu/site-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
 * `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
+* `site-ffmo <https://github.com/ffruhr/site-ffmo>`_ (Moers)
+* `site-ffmg <https://github.com/ffruhr/site-ffmg>`_ (Mönchengladbach)
 * `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
+* `site-ffhmue <https://github.com/Freifunk-Muenden/site-conf>`_ (Münden)
 * `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
-* `site-ffnw <https://git.nordwest.freifunk.net/ffnw/siteconf/tree/master>`_ (Nordwest)
-* `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
-* `site-ffrl <https://github.com/ffrl/sites-ffrl>`_ (Rheinland)
-* `site-ffrg <https://github.com/ffruhr/site-ffruhr>`_ (Ruhrgebiet)
+* `site-neuss <https://github.com/ffne/site-neuss>`_ (Neuss)
+* `site-ffniers <https://github.com/ffruhr/site-ffniers>`_ (Niersufer)
+* `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
+* `site-ffrgb <https://github.com/ffrgb/site-ffrgb>`_ (Regensburg)
+* `site-ffruhr <https://github.com/ffruhr?utf8=✓&query=site>`_ (Ruhrgebiet, Multi-Communities)
 * `site-ffs <https://github.com/freifunk-stuttgart/site-ffs>`_ (Stuttgart)
 * `site-fftr <https://github.com/freifunktrier/site-fftr>`_ (Trier)

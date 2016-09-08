@@ -1,4 +1,5 @@
 <%-
+	local gluon_luci = require 'gluon.luci'
 	local sysconfig = require 'gluon.sysconfig'
 	local i18n = require 'luci.i18n'
 	local template = require 'luci.template'
@@ -6,7 +7,12 @@
 
 <h2><%:Welcome!%></h2>
 <p>
-	<%= template.render_string(i18n.translate('gluon-config-mode:welcome'), {hostname=hostname, sysconfig=sysconfig}) %>
+	<%= template.render_string(i18n.translate('gluon-config-mode:welcome'), {
+		hostname = hostname,
+		sysconfig = sysconfig,
+		escape = gluon_luci.escape,
+		urlescape = gluon_luci.urlescape,
+	}) %>
 </p>
 
 <% if not self.embedded then %>

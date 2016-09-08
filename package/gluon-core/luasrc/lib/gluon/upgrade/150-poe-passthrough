@@ -1,0 +1,13 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site_config'
+
+if (not sysconfig.gluon_version) and (site.poe_passthrough == true) then
+	local uci = require('luci.model.uci').cursor()
+
+  if uci:get('system', 'gpio_switch_poe_passthrough') then
+    uci:set('system', 'gpio_switch_poe_passthrough', 'value', 1)
+    uci:save('system')
+  end
+end

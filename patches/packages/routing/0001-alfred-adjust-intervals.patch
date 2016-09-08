@@ -4,13 +4,13 @@ Subject: alfred: adjust intervals
 
 diff --git a/alfred/patches/0001-alfred-adjust-intervals.patch b/alfred/patches/0001-alfred-adjust-intervals.patch
 new file mode 100644
-index 0000000..df70eea
+index 0000000..a5860db
 --- /dev/null
 +++ b/alfred/patches/0001-alfred-adjust-intervals.patch
 @@ -0,0 +1,15 @@
 +--- a/alfred.h
 ++++ b/alfred.h
-+@@ -33,10 +33,10 @@
++@@ -34,10 +34,10 @@
 + #include "list.h"
 + #include "packet.h"
 + 

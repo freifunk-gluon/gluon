@@ -4,14 +4,15 @@
 
 # CPE210/220/510/520
 $(eval $(call GluonProfile,CPE510,rssileds))
-$(eval $(call GluonModel,CPE510,cpe210-220-510-520,tp-link-cpe510-v1.0))
 
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe210-v1.1))
-$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe220-v1.1))
+$(eval $(call GluonModel,CPE510,cpe210-220,tp-link-cpe210-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe210-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe220-v1.0))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe210-v1.0,tp-link-cpe220-v1.1))
+
+$(eval $(call GluonModel,CPE510,cpe510-520,tp-link-cpe510-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe510-v1.1))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 
 # TL-WA701N/ND v1, v2
@@ -52,10 +53,13 @@ $(eval $(call GluonProfile,TLWR743))
 $(eval $(call GluonModel,TLWR743,tl-wr743nd-v1,tp-link-tl-wr743n-nd-v1))
 $(eval $(call GluonModel,TLWR743,tl-wr743nd-v2,tp-link-tl-wr743n-nd-v2))
 
-# TL-WR801N/ND v1, v2
+# TL-WR801N/ND v1, v2, v3
 $(eval $(call GluonProfile,TLWA801))
 $(eval $(call GluonModel,TLWA801,tl-wa801nd-v1,tp-link-tl-wa801n-nd-v1))
 $(eval $(call GluonModel,TLWA801,tl-wa801nd-v2,tp-link-tl-wa801n-nd-v2))
+ifneq ($(BROKEN),)
+$(eval $(call GluonModel,TLWA801,tl-wa801nd-v3,tp-link-tl-wa801n-nd-v3)) # BROKEN: untested
+endif
 
 # TL-WR841N/ND v3, v5, v7, v8, v9, v10, v11
 $(eval $(call GluonProfile,TLWR841))
@@ -71,6 +75,7 @@ $(eval $(call GluonModel,TLWR841,tl-wr841n-v11,tp-link-tl-wr841n-nd-v11))
 $(eval $(call GluonProfile,TLWR842))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v1,tp-link-tl-wr842n-nd-v1))
 $(eval $(call GluonModel,TLWR842,tl-wr842n-v2,tp-link-tl-wr842n-nd-v2))
+$(eval $(call GluonModel,TLWR842,tl-wr842n-v3,tp-link-tl-wr842n-nd-v3))
 
 # TL-WR843N/ND v1
 $(eval $(call GluonProfile,TLWR843))
@@ -130,6 +135,10 @@ endif
 $(eval $(call GluonProfile,TLMR13U))
 $(eval $(call GluonModel,TLMR13U,tl-mr13u-v1,tp-link-tl-mr13u-v1))
 
+# TL-MR13U v1
+$(eval $(call GluonProfile,TLMR13U))
+$(eval $(call GluonModel,TLMR13U,tl-mr13u-v1,tp-link-tl-mr13u-v1))
+
 # TL-MR3020 v1
 $(eval $(call GluonProfile,TLMR3020))
 $(eval $(call GluonModel,TLMR3020,tl-mr3020-v1,tp-link-tl-mr3020-v1))
@@ -154,13 +163,17 @@ $(eval $(call GluonProfile,TLWR2543))
 $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
 ifneq ($(BROKEN),)
-# Archer C5 v1, C7 v2
-$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k ath10k-firmware-qca988x-ct))
-$(eval $(call GluonModel,ARCHERC7,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
+# Archer C5 v1
+$(eval $(call GluonProfile,ARCHERC5,kmod-ath10k-ct ath10k-firmware-qca988x-ct,ARCHERC7))
+$(eval $(call GluonModel,ARCHERC5,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
+
+# Archer C7 v2
+$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfileFactorySuffix,ARCHERC7,-squashfs-factory$(if $(GLUON_REGION),-$(GLUON_REGION)),.bin))
 $(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
 endif
 
-## Ubiquiti (everything)
+## Ubiquiti (almost everything)
 $(eval $(call GluonProfile,UBNT))
 $(eval $(call GluonModel,UBNT,ubnt-air-gateway,ubiquiti-airgateway))
 $(eval $(call GluonModel,UBNT,ubnt-airrouter,ubiquiti-airrouter))
@@ -180,6 +193,7 @@ $(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m,ubiquiti-nanostation-m
 
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw,ubiquiti-nanostation-m-xw))
+$(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw))
 $(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro))
 $(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor,ubiquiti-unifiap-outdoor))
@@ -187,16 +201,26 @@ $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+)
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
-$(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw)) # BROKEN: Untested
 endif
 
+# Ubiquiti (ath10k)
+ifneq ($(BROKEN),)
+$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACLITE))
+$(eval $(call GluonModel,UBNTUNIFIACLITE,ubnt-unifiac-lite,ubiquiti-unifi-ac-lite)) # BROKEN: untested, ath10k
+
+$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACPRO))
+$(eval $(call GluonModel,UBNTUNIFIACPRO,ubnt-unifiac-pro,ubiquiti-unifi-ac-pro)) # BROKEN: ath10k
+endif
 
 ## D-Link
 
-# D-Link DIR-505 rev. A1
+# D-Link DIR-505 rev. A1/A2
 
 $(eval $(call GluonProfile,DIR505A1))
 $(eval $(call GluonModel,DIR505A1,dir-505-a1,d-link-dir-505-rev-a1))
+$(eval $(call GluonModelAlias,DIR505A1,d-link-dir-505-rev-a1,d-link-dir-505-rev-a2))
 
 # D-Link DIR-615 rev. C1
 $(eval $(call GluonProfile,DIR615C1))
@@ -222,6 +246,10 @@ $(eval $(call GluonModel,WZRHPG450H,wzr-hp-g450h,buffalo-wzr-hp-g450h))
 # WZR-HP-G300NH
 $(eval $(call GluonProfile,WZRHPG300NH))
 $(eval $(call GluonModel,WZRHPG300NH,wzr-hp-g300nh,buffalo-wzr-hp-g300nh))
+
+# WZR-HP-G300NH2
+$(eval $(call GluonProfile,WZRHPG300NH2))
+$(eval $(call GluonModel,WZRHPG300NH2,wzr-hp-g300nh2,buffalo-wzr-hp-g300nh2))
 
 # WZR-HP-AG300H (factory)
 $(eval $(call GluonProfile,WZRHPAG300H))
@@ -255,6 +283,14 @@ $(eval $(call GluonModel,WNDR3700,wndrmac,netgear-wndrmac)) # BROKEN: untested
 endif
 $(eval $(call GluonModel,WNDR3700,wndrmacv2,netgear-wndrmacv2))
 
+ifneq ($(BROKEN),)
+# WNR2200
+$(eval $(call GluonProfile,WNR2200)) # BROKEN: untested
+$(eval $(call GluonModel,WNR2200,wnr2200,netgear-wnr2200))
+$(eval $(call GluonProfileFactorySuffix,WNR2200,.img))
+endif
+
+
 ## Allnet
 
 # ALL0315N
@@ -268,6 +304,10 @@ $(eval $(call GluonModel,ALL0315N,all0315n,allnet-all0315n))
 $(eval $(call GluonProfile,GLINET))
 $(eval $(call GluonModel,GLINET,gl-inet-6408A-v1,gl-inet-6408a-v1))
 $(eval $(call GluonModel,GLINET,gl-inet-6416A-v1,gl-inet-6416a-v1))
+
+$(eval $(call GluonProfile,GL-AR150))
+$(eval $(call GluonModel,GL-AR150,gl-ar150,gl-ar150))
+$(eval $(call GluonProfileFactorySuffix,GL-AR150))
 
 ## Western Digital
 
@@ -285,13 +325,61 @@ $(eval $(call GluonModel,MYNETN750,mynet-n750,wd-my-net-n750))
 $(eval $(call GluonProfile,OMEGA))
 $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 
-## ALFA
+## OpenMesh
+
+ifneq ($(BROKEN),)
+# MR1750
+$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750)) # BROKEN: ath10k
+$(eval $(call GluonModelAlias,MR1750,openmesh-mr1750,openmesh-mr1750v2)) # BROKEN: ath10k
+endif
+
+# MR600
+$(eval $(call GluonProfile,MR600,om-watchdog uboot-envtools))
+$(eval $(call GluonModel,MR600,mr600,openmesh-mr600))
+$(eval $(call GluonModelAlias,MR600,openmesh-mr600,openmesh-mr600v2))
+
+# MR900
+$(eval $(call GluonProfile,MR900,om-watchdog uboot-envtools))
+$(eval $(call GluonModel,MR900,mr900,openmesh-mr900))
+$(eval $(call GluonModelAlias,MR900,openmesh-mr900,openmesh-mr900v2))
+
+# OM2P
+$(eval $(call GluonProfile,OM2P,om-watchdog uboot-envtools))
+$(eval $(call GluonModel,OM2P,om2p,openmesh-om2p))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2pv2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hs))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hsv2))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-hsv3))
+$(eval $(call GluonModelAlias,OM2P,openmesh-om2p,openmesh-om2p-lc))
+
+# OM5P
+$(eval $(call GluonProfile,OM5P,om-watchdog uboot-envtools))
+$(eval $(call GluonModel,OM5P,om5p,openmesh-om5p))
+$(eval $(call GluonModelAlias,OM5P,openmesh-om5p,openmesh-om5p-an))
+
+ifneq ($(BROKEN),)
+# OM5P-AC
+$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac)) # BROKEN: ath10k
+$(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2)) # BROKEN: ath10k
+endif
+
+## ALFA NETWORK
 
 # Hornet-UB
 $(eval $(call GluonProfile,HORNETUB))
-$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-hornet-ub))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121))
-$(eval $(call GluonModelAlias,HORNETUB,alfa-hornet-ub,alfa-ap121u))
+$(eval $(call GluonModel,HORNETUB,hornet-ub,alfa-network-hornet-ub))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121))
+$(eval $(call GluonModelAlias,HORNETUB,alfa-network-hornet-ub,alfa-network-ap121u))
+
+# Tube2H
+$(eval $(call GluonProfile,TUBE2H))
+$(eval $(call GluonModel,TUBE2H,tube2h-8M,alfa-network-tube2h))
+
+# N2/N5
+$(eval $(call GluonProfile,ALFANX))
+$(eval $(call GluonModel,ALFANX,alfa-nx,alfa-network-n2-n5))
 
 ## Meraki
 

@@ -1,0 +1,45 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 21 Jul 2016 17:45:26 +0200
+Subject: libpcap: fix dependency of install-shared-so make target
+
+There seems to be a situation in which a rebuild of libpcap.so is triggered
+in the install step of the libpcap Makefile. libpcap.so is the wrong
+target, leading to the build failure reported in [1].
+
+Fix the dependency of install-shared-so to $(SHAREDLIB) so the build can
+succeed in this case.
+
+[1] https://dev.openwrt.org/ticket/19894
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE b82c8ddf8c15e91d6eecfd6d237606a4ce1f756f
+
+diff --git a/package/libs/libpcap/patches/100-debian_shared_lib.patch b/package/libs/libpcap/patches/100-debian_shared_lib.patch
+index b294e51..f8df7f3 100644
+--- a/package/libs/libpcap/patches/100-debian_shared_lib.patch
++++ b/package/libs/libpcap/patches/100-debian_shared_lib.patch
+@@ -97,7 +97,7 @@ build a shared library.
+  
+ +grammar_pic.o: grammar.c
+ +	@rm -f $@
+-+	$(CC) -fPIC $(FULL_CFLAGS) -Dyylval=pcap_lval -o $@ -c grammar.c 
+++	$(CC) -fPIC $(FULL_CFLAGS) -Dyylval=pcap_lval -o $@ -c grammar.c
+ +
+  version.o: version.c
+  	$(CC) $(FULL_CFLAGS) -c version.c
+@@ -118,8 +118,12 @@ build a shared library.
+  #
+  # Generate the pcap-config script.
+  #
+-@@ -618,11 +652,9 @@ install-shared: install-shared-$(DYEXT)
+- install-shared-so: libpcap.so
++@@ -615,14 +649,12 @@ install: install-shared install-archive
++ 		    $(DESTDIR)$(mandir)/man@MAN_MISC_INFO@/`echo $$i | sed 's/.manmisc.in/.@MAN_MISC_INFO@/'`; done
++ 
++ install-shared: install-shared-$(DYEXT)
++-install-shared-so: libpcap.so
+++install-shared-so: $(SHAREDLIB)
+  	[ -d $(DESTDIR)$(libdir) ] || \
+  	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
+ -	VER=`cat $(srcdir)/VERSION`; \

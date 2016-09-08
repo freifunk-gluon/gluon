@@ -1,0 +1,22 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 30 Jun 2016 16:16:30 +0200
+Subject: ramips: set correct LAN/WAN MAC addresses on DIR-860L B1
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
+index a78912d..4e6e507 100755
+--- a/target/linux/ramips/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/base-files/etc/board.d/02_network
+@@ -346,6 +346,11 @@ ramips_setup_macs()
+ 		wan_mac=$(mtd_get_mac_ascii nvram wanmac)
+ 		;;
+ 
++	dir-860l-b1)
++		lan_mac=$(mtd_get_mac_ascii factory lanmac)
++		wan_mac=$(mtd_get_mac_ascii factory wanmac)
++		;;
++
+ 	e1700)
+ 		wan_mac=$(mtd_get_mac_ascii config WAN_MAC_ADDR)
+ 		;;

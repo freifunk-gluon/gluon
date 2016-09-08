@@ -1,0 +1,54 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+
+
+if sysconfig.primary_mac then
+  os.exit(0)
+end
+
+
+local platform = require 'gluon.platform'
+
+local fs = require 'nixio.fs'
+local util = require 'luci.util'
+
+
+local try_files = {
+  '/sys/class/net/eth0/address'
+}
+
+if not (
+  util.contains({'x86', 'brcm2708'}, platform.get_target()) or
+  platform.match('ar71xx', 'mikrotik')
+) then
+  table.insert(try_files, 1, '/sys/class/ieee80211/phy0/macaddress')
+end
+
+if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300'}) then
+  table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
+elseif platform.match('ramips', 'mt7621', {'dir-860l-b1'}) then
+  table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
+elseif platform.match('ar71xx', 'generic', {'unifi-outdoor-plus', 'carambola2',
+                                            'mr600', 'mr600v2',
+                                            'mr900', 'mr900v2',
+                                            'mr1750', 'mr1750v2',
+                                            'om2p', 'om2pv2',
+                                            'om2p-hs', 'om2p-hsv2', 'om2p-hsv3',
+                                            'om2p-lc',
+                                            'om5p', 'om5p-an',
+                                            'om5p-ac', 'om5p-acv2'}) then
+  table.insert(try_files, 1, '/sys/class/net/eth0/address')
+elseif platform.match('ar71xx', 'generic', {'archer-c5', 'archer-c7'}) then
+  table.insert(try_files, 1, '/sys/class/net/eth1/address')
+end
+
+
+for _, file in ipairs(try_files) do
+  local addr = fs.readfile(file)
+
+  if addr then
+    sysconfig.primary_mac = util.trim(addr)
+    break
+  end
+end
