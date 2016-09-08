@@ -1,0 +1,68 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 9 Sep 2016 01:54:44 +0200
+Subject: ath10k-firmware: add ath10k-firmware-qca988x-11s
+
+diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
+index 624da6a..3a4f0c5 100644
+--- a/package/firmware/ath10k-firmware/Makefile
++++ b/package/firmware/ath10k-firmware/Makefile
+@@ -8,7 +8,7 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=ath10k-firmware
+-PKG_SOURCE_VERSION:=b00eb8d30fbebb6a5047ccacefa8c37e072fca9c
++PKG_SOURCE_VERSION:=307cb46b06661ebd3186723b5002de769c7add83
+ PKG_VERSION:=2014-11-13-$(PKG_SOURCE_VERSION)
+ PKG_RELEASE:=1
+ 
+@@ -104,6 +104,11 @@ $(Package/ath10k-firmware-default)
+   TITLE:=ath10k firmware for QCA99x0 devices
+ endef
+ 
++define Package/ath10k-firmware-qca988x-11s
++$(Package/ath10k-firmware-default)
++  TITLE:=ath10k firmware for QCA988x devices (with 11s support)
++endef
++
+ define Package/ath10k-firmware-qca988x-ct
+ $(Package/ath10k-firmware-default)
+   TITLE:=ath10k CT 10.1 firmware for QCA988x devices
+@@ -188,17 +193,27 @@ endef
+ define Package/ath10k-firmware-qca988x/install
+ 	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA988X/hw2.0
+ 	$(INSTALL_DATA) \
+-		$(PKG_BUILD_DIR)/QCA988X/board.bin \
++		$(PKG_BUILD_DIR)/QCA988X/hw2.0/board.bin \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
+ 	$(INSTALL_DATA) \
+ 		$(DL_DIR)/$(QCA988X_FIRMWARE_FILE) \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
+ endef
+ 
++define Package/ath10k-firmware-qca988x-11s/install
++	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA988X/hw2.0
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/QCA988X/hw2.0/board.bin \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
++	$(INSTALL_DATA) \
++		$(PKG_BUILD_DIR)/QCA988X/hw2.0/10.2.4.70/firmware-5.bin_10.2.4.70.54 \
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
++endef
++
+ define Package/ath10k-firmware-qca988x-ct/install
+ 	$(INSTALL_DIR) $(1)/lib/firmware/ath10k/QCA988X/hw2.0
+ 	$(INSTALL_DATA) \
+-		$(PKG_BUILD_DIR)/QCA988X/board.bin \
++		$(PKG_BUILD_DIR)/QCA988X/hw2.0/board.bin \
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
+ 	$(INSTALL_DATA) \
+ 		$(DL_DIR)/$(QCA988X_FIRMWARE_FILE_CT) \
+@@ -268,6 +283,8 @@ $(eval $(call BuildPackage,ath10k-firmware-qca99x0))
+ $(eval $(call BuildPackage,ath10k-firmware-qca6174))
+ $(eval $(call BuildPackage,ath10k-firmware-qca9984))
+ 
++$(eval $(call BuildPackage,ath10k-firmware-qca988x-11s))
++
+ $(eval $(call BuildPackage,ath10k-firmware-qca988x-ct))
+ $(eval $(call BuildPackage,ath10k-firmware-qca99x0-ct))
+ $(eval $(call BuildPackage,ath10k-firmware-qca9984-ct))
