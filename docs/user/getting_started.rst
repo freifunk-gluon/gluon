@@ -156,7 +156,8 @@ at the configured location without doing a full build, use ``make create-key``.
 Environment variables
 ---------------------
 
-Gluon's build process can be controlled by various environment variables.
+Gluon's build process can be controlled by various environment variables. These variables can
+usually be set on the command line or in ``site.mk``.
 
 GLUON_SITEDIR
   Path to the site configuration. Defaults to ``site``.
@@ -177,6 +178,14 @@ GLUON_IMAGEDIR
 
 GLUON_MODULEDIR
   Path where the kernel module opkg repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/modules``.
+
+GLUON_ATH10K_MESH
+  While Gluon does support some hardware with ath10k-based 5GHz WLAN, these WLAN adapters don't work
+  well for meshing at the moment, so building images for these models is disabled by default. In addition,
+  ath10k can't support IBSS and 11s meshing in the same image due to WLAN firmware restrictions.
+
+  Setting GLUON_ATH10K_MESH to ``11s`` or ``ibss`` will enable generation of images for ath10k devices
+  and install the firmware for the corresponding WLAN mode.
 
 
 So all in all, to update and rebuild a Gluon build tree, the following commands should be used (repeat the

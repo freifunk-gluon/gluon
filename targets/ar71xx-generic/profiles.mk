@@ -1,5 +1,14 @@
 # List of hardware profiles
 
+ATH10K_FIRMWARE :=
+
+ifeq ($(GLUON_ATH10K_MESH),11s)
+ATH10K_FIRMWARE := ath10k-firmware-qca988x-11s
+endif
+ifeq ($(GLUON_ATH10K_MESH),ibss)
+ATH10K_FIRMWARE := ath10k-firmware-qca988x-ct
+endif
+
 ## TP-Link
 
 # CPE210/220/510/520
@@ -158,15 +167,15 @@ $(eval $(call GluonModel,TLMR3420,tl-mr3420-v2,tp-link-tl-mr3420-v2))
 $(eval $(call GluonProfile,TLWR2543))
 $(eval $(call GluonModel,TLWR2543,tl-wr2543-v1,tp-link-tl-wr2543n-nd-v1))
 
-ifneq ($(BROKEN),)
+ifneq ($(ATH10K_FIRMWARE),)
 # Archer C5 v1
-$(eval $(call GluonProfile,ARCHERC5,kmod-ath10k-ct ath10k-firmware-qca988x-ct,ARCHERC7))
-$(eval $(call GluonModel,ARCHERC5,archer-c5,tp-link-archer-c5-v1)) # BROKEN: ath10k
+$(eval $(call GluonProfile,ARCHERC5,kmod-ath10k-ct $(ATH10K_FIRMWARE),ARCHERC7))
+$(eval $(call GluonModel,ARCHERC5,archer-c5,tp-link-archer-c5-v1))
 
 # Archer C7 v2
-$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,ARCHERC7,kmod-ath10k-ct $(ATH10K_FIRMWARE)))
 $(eval $(call GluonProfileFactorySuffix,ARCHERC7,-squashfs-factory$(if $(GLUON_REGION),-$(GLUON_REGION)),.bin))
-$(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2)) # BROKEN: ath10k
+$(eval $(call GluonModel,ARCHERC7,archer-c7-v2,tp-link-archer-c7-v2))
 endif
 
 ## Ubiquiti (almost everything)
@@ -200,14 +209,14 @@ $(eval $(call GluonModel,UBNT,ubnt-ls-sr71,ubiquiti-ls-sr71)) # BROKEN: Untested
 endif
 
 # Ubiquiti (ath10k)
-ifneq ($(BROKEN),)
-$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+ifneq ($(ATH10K_FIRMWARE),)
+$(eval $(call GluonProfile,UBNTUNIFIACLITE,kmod-ath10k-ct $(ATH10K_FIRMWARE)))
 $(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACLITE))
-$(eval $(call GluonModel,UBNTUNIFIACLITE,ubnt-unifiac-lite,ubiquiti-unifi-ac-lite)) # BROKEN: untested, ath10k
+$(eval $(call GluonModel,UBNTUNIFIACLITE,ubnt-unifiac-lite,ubiquiti-unifi-ac-lite))
 
-$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k-ct ath10k-firmware-qca988x-ct))
+$(eval $(call GluonProfile,UBNTUNIFIACPRO,kmod-ath10k-ct $(ATH10K_FIRMWARE)))
 $(eval $(call GluonProfileFactorySuffix,UBNTUNIFIACPRO))
-$(eval $(call GluonModel,UBNTUNIFIACPRO,ubnt-unifiac-pro,ubiquiti-unifi-ac-pro)) # BROKEN: ath10k
+$(eval $(call GluonModel,UBNTUNIFIACPRO,ubnt-unifiac-pro,ubiquiti-unifi-ac-pro))
 endif
 
 ## D-Link
@@ -323,11 +332,11 @@ $(eval $(call GluonModel,OMEGA,onion-omega,onion-omega))
 
 ## OpenMesh
 
-ifneq ($(BROKEN),)
+ifneq ($(ATH10K_FIRMWARE),)
 # MR1750
-$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
-$(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750)) # BROKEN: ath10k
-$(eval $(call GluonModelAlias,MR1750,openmesh-mr1750,openmesh-mr1750v2)) # BROKEN: ath10k
+$(eval $(call GluonProfile,MR1750,om-watchdog uboot-envtools kmod-ath10k-ct $(ATH10K_FIRMWARE)))
+$(eval $(call GluonModel,MR1750,mr1750,openmesh-mr1750))
+$(eval $(call GluonModelAlias,MR1750,openmesh-mr1750,openmesh-mr1750v2))
 endif
 
 # MR600
@@ -354,11 +363,11 @@ $(eval $(call GluonProfile,OM5P,om-watchdog uboot-envtools))
 $(eval $(call GluonModel,OM5P,om5p,openmesh-om5p))
 $(eval $(call GluonModelAlias,OM5P,openmesh-om5p,openmesh-om5p-an))
 
-ifneq ($(BROKEN),)
+ifneq ($(ATH10K_FIRMWARE),)
 # OM5P-AC
-$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k-ct ath10k-firmware-qca988x-ct))
-$(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac)) # BROKEN: ath10k
-$(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2)) # BROKEN: ath10k
+$(eval $(call GluonProfile,OM5PAC,om-watchdog uboot-envtools kmod-ath10k-ct $(ATH10K_FIRMWARE)))
+$(eval $(call GluonModel,OM5PAC,om5pac,openmesh-om5p-ac))
+$(eval $(call GluonModelAlias,OM5PAC,openmesh-om5p-ac,openmesh-om5p-acv2))
 endif
 
 ## ALFA NETWORK
