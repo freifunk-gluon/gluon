@@ -17,14 +17,20 @@ c:section('network', 'device', 'local_node_dev',
 	  }
 )
 
-local prefix4 = ip.IPv4(site.prefix4)
+local ip4, netmask
+
+if site.next_node.ip4 then
+	ip4 = site.next_node.ip4
+	netmask = ip.IPv4(site.prefix4):mask():string()
+end
+
 c:delete('network', 'local_node')
 c:section('network', 'interface', 'local_node',
 	  {
 		  ifname = 'local-node',
 		  proto = 'static',
-		  ipaddr = site.next_node.ip4,
-		  netmask = prefix4:mask():string(),
+		  ipaddr = ip4,
+		  netmask = netmask,
 		  ip6addr = site.next_node.ip6 .. '/128',
 	  }
 )
