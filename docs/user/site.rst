@@ -21,11 +21,13 @@ site_code
     The code of your community. It is good practice to use the TLD of
     your community here.
 
-prefix4
+prefix4 \: optional
     The IPv4 Subnet of your community mesh network in CIDR notation, e.g.
     ::
 
        prefix4 = '10.111.111.0/18'
+
+    Required if ``next_node.ip4`` is set.
 
 prefix6
     The IPv6 subnet of your community mesh network, e.g.
@@ -146,6 +148,8 @@ next_node \: package
         ip6 = 'fdca:ffee:babe:1::1',
         mac = 'ca:ff:ee:ba:be:00'
       }
+
+    The IPv4 next-node address is optional.
 
 mesh \: optional
     Options specific to routing protocols.
