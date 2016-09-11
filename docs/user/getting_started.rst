@@ -119,6 +119,17 @@ will ensure all packages are rebuilt for a single target; this is what you norma
 will clean the entire tree, so the toolchain will be rebuilt as well, which is
 not necessary in most cases, and will take a while.
 
+So in summary, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
+``make clean`` and ``make`` for all targets you want to build):
+
+::
+
+    git pull
+    (cd site && git pull)
+    make update
+    make clean GLUON_TARGET=ar71xx-generic
+    make GLUON_TARGET=ar71xx-generic
+
 
 opkg repositories
 -----------------
@@ -148,36 +159,19 @@ When making firmware releases based on Gluon, it might make sense to store
 the keypair, so updating the module repository later is possible.
 
 The location the keys are stored at and read from can be changed
-(see :ref:`getting-started-environment-variables`). To only generate the keypair
+(see :ref:`getting-started-make-variables`). To only generate the keypair
 at the configured location without doing a full build, use ``make create-key``.
 
-.. _getting-started-environment-variables:
+.. _getting-started-make-variables:
 
-Environment variables
----------------------
+Make variables
+--------------
 
-Gluon's build process can be controlled by various environment variables. These variables can
+Gluon's build process can be controlled by various variables. They can
 usually be set on the command line or in ``site.mk``.
 
-GLUON_SITEDIR
-  Path to the site configuration. Defaults to ``site``.
-
-GLUON_BUILDDIR
-  Working directory during build. Defaults to ``build``.
-
-GLUON_OPKG_KEY
-  Path key file used to sign the module opkg repository. Defaults to ``$(GLUON_BULDDIR)/gluon-opkg-key``.
-
-  The private key will be stored as ``$(GLUON_OPKG_KEY)``, the public key as ``$(GLUON_OPKG_KEY).pub``.
-
-GLUON_OUTPUTDIR
-  Path where output files will be stored. Defaults to ``output``.
-
-GLUON_IMAGEDIR
-  Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
-
-GLUON_MODULEDIR
-  Path where the kernel module opkg repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/modules``.
+Common variables
+................
 
 GLUON_ATH10K_MESH
   While Gluon does support some hardware with ath10k-based 5GHz WLAN, these WLAN adapters don't work
@@ -187,14 +181,51 @@ GLUON_ATH10K_MESH
   Setting GLUON_ATH10K_MESH to ``11s`` or ``ibss`` will enable generation of images for ath10k devices
   and install the firmware for the corresponding WLAN mode.
 
+GLUON_BRANCH
+  Sets the default branch of the autoupdater. If unset, the autoupdater is disabled
+  by default. For the ``make manifest`` command, GLUON_BRANCH defines the branch to
+  generate a manifest for.
 
-So all in all, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
-``make clean`` and ``make`` for all targets you want to build):
+GLUON_LANGS
+  Space-separated list of languages to include for the config mode/advanced settings. Defaults to ``en``.
+  ``en`` should always be included, other supported languages are ``de`` and ``fr``.
 
-::
+GLUON_PRIORITY
+  Defines the priority of an automatic update in ``make manifest``. See :doc:`../features/autoupdater` for
+  a detailed description of this value.
 
-    git pull
-    (cd site && git pull)
-    make update
-    make clean GLUON_TARGET=ar71xx-generic
-    make GLUON_TARGET=ar71xx-generic
+GLUON_REGION
+  Some devices (at the moment the TP-Link Archer C7) contain a region code that restricts
+  firmware installations. Set GLUON_REGION to ``eu`` or ``us`` to make the resulting
+  images installable from the respective stock firmwares.
+
+GLUON_RELEASE
+  Firmware release number: This string is displayed in the config mode, announced
+  via respondd/alfred and used by the autoupdater to decide if a newer version
+  is available.
+
+GLUON_TARGET
+  Target architecture to build.
+
+Special variables
+.................
+
+GLUON_BUILDDIR
+  Working directory during build. Defaults to ``build``.
+
+GLUON_IMAGEDIR
+  Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
+
+GLUON_MODULEDIR
+  Path where the kernel module opkg repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/modules``.
+
+GLUON_OPKG_KEY
+  Path key file used to sign the module opkg repository. Defaults to ``$(GLUON_BULDDIR)/gluon-opkg-key``.
+
+  The private key will be stored as ``$(GLUON_OPKG_KEY)``, the public key as ``$(GLUON_OPKG_KEY).pub``.
+
+GLUON_OUTPUTDIR
+  Path where output files will be stored. Defaults to ``output``.
+
+GLUON_SITEDIR
+  Path to the site configuration. Defaults to ``site``.

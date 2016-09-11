@@ -216,7 +216,7 @@ ar71xx-generic
 
 .. [#ath10k]
   Device uses the ath10k WLAN driver; no image is built unless GLUON_ATH10K_MESH
-  is set as described in :ref:`getting-started-environment-variables`
+  is set as described in :ref:`getting-started-make-variables`
 
 ar71xx-nand
 ^^^^^^^^^^^
