@@ -228,10 +228,12 @@ ar71xx-nand
 
 brcm2708-bcm2708
 ^^^^^^^^^^^^^^^^
+
 * RaspberryPi 1
 
 brcm2708-bcm2709
 ^^^^^^^^^^^^^^^^
+
 * RaspberryPi 2
 
 mpc85xx-generic
@@ -243,6 +245,7 @@ mpc85xx-generic
 
 x86-generic
 ^^^^^^^^^^^
+
 * x86-generic
 * x86-virtualbox
 * x86-vmware
@@ -251,18 +254,21 @@ See also: :doc:`user/x86`
 
 x86-kvm_guest
 ^^^^^^^^^^^^^
+
 * x86-kvm
 
 See also: :doc:`user/x86`
 
 x86-xen_domu
 ^^^^^^^^^^^^
+
 * x86-xen
 
 See also: :doc:`user/x86`
 
 x86-64
 ^^^^^^
+
 * x86-64-generic
 * x86-64-virtualbox
 * x86-64-vmware
