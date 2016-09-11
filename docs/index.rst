@@ -106,6 +106,7 @@ ar71xx-generic
 
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G300NH
+  - WZR-HP-G300NH2
   - WZR-HP-G450H
 
 * Cisco Meraki
@@ -119,10 +120,11 @@ ar71xx-generic
   - DIR-615 (C1)
   - DIR-825 (B1)
 
-* GL-Inet
+* GL Innovations
 
-  - 6408A (v1)
-  - 6416A (v1)
+  - GL-AR150
+  - GL-iNet 6408A (v1)
+  - GL-iNet 6416A (v1)
 
 * Linksys
 
@@ -142,14 +144,18 @@ ar71xx-generic
 
   - MR600 (v1, v2)
   - MR900 (v1, v2)
+  - MR1750 (v1, v2) [#ath10k]_
   - OM2P (v1, v2)
   - OM2P-HS (v1, v2, v3)
   - OM2P-LC
   - OM5P
   - OM5P-AN
+  - OM5P-AC (v1, v2) [#ath10k]_
 
 * TP-Link
 
+  - Archer C5 (v1) [#ath10k]_
+  - Archer C7 (v2) [#ath10k]_
   - CPE210 (v1.0, v1.1)
   - CPE220 (v1.0, v1.1)
   - CPE510 (v1.0, v1.1)
@@ -171,13 +177,13 @@ ar71xx-generic
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
   - TL-WR703N (v1)
-  - TL-WR710N (v1, v2)
+  - TL-WR710N (v1, v2, v2.1)
   - TL-WR740N (v1, v3, v4, v5)
   - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
   - TL-WR801N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11)
-  - TL-WR842N/ND (v1, v2)
+  - TL-WR842N/ND (v1, v2, v3)
   - TL-WR843N/ND (v1)
   - TL-WR940N (v1, v2, v3)
   - TL-WR941ND (v2, v3, v4, v5, v6)
@@ -188,15 +194,17 @@ ar71xx-generic
 
   - Air Gateway
   - Air Router
-  - Bullet M
-  - Loco M
-  - Loco M XW
-  - Nanostation M
-  - Nanostation M XW
-  - Picostation M
-  - Rocket M
-  - Rocket M XW
+  - Bullet M2/M5
+  - Loco M2/M5
+  - Loco M2/M5 XW
+  - Nanostation M2/M5
+  - Nanostation M2/M5 XW
+  - Picostation M2/M5
+  - Rocket M2/M5
+  - Rocket M2/M5 XW
   - UniFi AP
+  - UniFi AP AC Lite [#ath10k]_
+  - UniFi AP AC Pro [#ath10k]_
   - UniFi AP Pro
   - UniFi AP Outdoor
   - UniFi AP Outdoor+
@@ -206,6 +214,10 @@ ar71xx-generic
   - My Net N600
   - My Net N750
 
+.. [#ath10k]
+  Device uses the ath10k WLAN driver; no image is built unless GLUON_ATH10K_MESH
+  is set as described in :ref:`getting-started-environment-variables`
+
 ar71xx-nand
 ^^^^^^^^^^^
 
@@ -213,6 +225,14 @@ ar71xx-nand
 
   - WNDR3700 (v4)
   - WNDR4300 (v1)
+
+brcm2708-bcm2708
+^^^^^^^^^^^^^^^^
+* RaspberryPi 1
+
+brcm2708-bcm2709
+^^^^^^^^^^^^^^^^
+* RaspberryPi 2
 
 mpc85xx-generic
 ^^^^^^^^^^^^^^^
