@@ -29,7 +29,6 @@ msgstr ""
 "<%= pubkey %>"
 "</div>"
 
-
 msgid "gluon-config-mode:reboot"
 msgstr ""
 "<p>The node is currently rebooting and will try to connect to other "
@@ -40,3 +39,11 @@ msgstr ""
 "3 seconds during normal operation. The device will then reboot into config "
 "mode.</p>"
 "<p>Have fun with your node and exploring of the Freifunk network!</p>"
+
+msgid "gluon-config-mode:altitude-label"
+msgstr "Altitude"
+
+msgid "gluon-config-mode:altitude-help"
+msgstr ""
+"Specifying the altitude is optional and should only be done if a proper "
+"value is known."

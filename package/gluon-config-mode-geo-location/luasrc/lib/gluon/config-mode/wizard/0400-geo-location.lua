@@ -19,8 +19,7 @@ function M.section(form)
   local text = i18n.translate('If you want the location of your node to '
     .. 'be displayed on the map, you can enter its coordinates here.')
   if show_altitude() then
-    text = text .. ' ' .. i18n.translate('Specifying the altitude is '
-      .. 'optional and should only be done if a proper value is known.')
+    text = text .. ' ' .. i18n.translate("gluon-config-mode:altitude-help")
   end
   local s = form:section(cbi.SimpleSection, nil, text)
 
@@ -46,7 +45,7 @@ function M.section(form)
   o.description = i18n.translatef("e.g. %s", "10.689901")
 
   if show_altitude() then
-    o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
+    o = s:option(cbi.Value, "_altitude", i18n.translate("gluon-config-mode:altitude-label"))
     o.default = uci:get_first("gluon-node-info", "location", "altitude")
     o:depends("_location", "1")
     o.rmempty = true
