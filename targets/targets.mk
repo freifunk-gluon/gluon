@@ -5,6 +5,7 @@ $(eval $(call GluonTarget,brcm2708,bcm2708))
 $(eval $(call GluonTarget,brcm2708,bcm2709))
 $(eval $(call GluonTarget,mpc85xx,generic))
 $(eval $(call GluonTarget,x86,generic))
+$(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,64))
 $(eval $(call GluonTarget,x86,xen_domu))
 
