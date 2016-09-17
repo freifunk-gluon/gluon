@@ -85,24 +85,30 @@ New features
   site texts. They should always be used when including user-provided information like
   hostnames and contact information in HTML code or URLs.
 
-* Dropbear is updated to a newer version, enabling new SSH crytpo methods and removing
+* Dropbear has been updated to a newer version, enabling new SSH crypto methods and removing
   some old ones like DSA. This reduces the time needed for the first boot and makes
   SSH logins faster (`#223 <https://github.com/freifunk-gluon/gluon/issues/223>`_)
 
 * WLAN basic and supported rate sets have been made configurable, to allow disabling
   802.11b rates (`#810 <https://github.com/freifunk-gluon/gluon/pull/810>`_)
 
-* ath10k-based devices are now officially supported, it's possible to choose between
+* ath10k-based devices are now supported officially; it's possible to choose between
   IBSS- and 11s-capable firmwares in site.mk (`#864 <https://github.com/freifunk-gluon/gluon/pull/864>`_)
 
-* The ``prefix4`` and ``next_node.ip4`` site.conf options are now optional.
+* The ``prefix4`` and ``next_node.ip4`` site.conf options are optional now.
 
 Bugfixes
 ~~~~~~~~
 
+* The stability of the ath9k WLAN driver has been improved significantly
+  (`#605 <https://github.com/freifunk-gluon/gluon/issues/605>`_)
+
+  mac80211, hostapd and other related drivers and services have been backported from LEDE ``42f559e``.
+
 * Extremely slow downloads could lead to multiple instances of the autoupdater
-  running concurrently. Use lockfile to prevent this and add timeouts to download
-  processes. (`#582 <https://github.com/freifunk-gluon/gluon/pull/582>`_)
+  running concurrently (`#582 <https://github.com/freifunk-gluon/gluon/pull/582>`_)
+
+  A lockfile is used to prevent this and timeouts have been added to download processes.
 
 Other changes
 ~~~~~~~~~~~~~
@@ -140,8 +146,6 @@ Inside of URLs, ``urlescape`` must be used instead of ``escape``.
 
 Internals
 ~~~~~~~~~
-
-* mac80211, hostapd and other related drivers and services have been backported from LEDE ``42f559e``
 
 * Mesh interfaces are now configured in a protocol-independent way in UCI (`#870 <https://github.com/freifunk-gluon/gluon/pull/870>`_)
 
