@@ -110,6 +110,11 @@ Bugfixes
 
   A lockfile is used to prevent this and timeouts have been added to download processes.
 
+* Usage of static DNS servers on the WAN port has been fixed
+  (`#886 <https://github.com/freifunk-gluon/gluon/issues/886>`_)
+
+  This is a regression introduced in Gluon v2016.1.6.
+
 Other changes
 ~~~~~~~~~~~~~
 
