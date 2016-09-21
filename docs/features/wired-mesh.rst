@@ -61,5 +61,5 @@ It may be disabled by running::
   uci commit
 
 Please note that this configuration has changed in Gluon v2016.1. Using
-the old commands on v2016.1 will break the corresponding options in the
-*Advanced settings*.
+the old commands on v2016.1 and later will break the corresponding options
+in the *Advanced settings*.
