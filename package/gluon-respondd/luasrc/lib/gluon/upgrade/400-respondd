@@ -29,3 +29,9 @@ uci:section('firewall', 'rule', 'client_respondd',
 )
 
 uci:save('firewall')
+
+uci:foreach('respondd', 'respondd', function(section)
+    uci:set('respondd', section['.name'], 'iface_list_file', '/var/run/gluon-respondd.devs')
+    uci:set('respondd', section['.name'], 'data_dir', '/lib/gluon/respondd/')
+end)
+uci:save('respondd')
