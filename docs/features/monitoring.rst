@@ -133,6 +133,6 @@ about the supported arguments.
 Adding a data provider
 ----------------------
 
-To add a provider, you need to install a shared object into ``/lib/gluon/respondd``.
+To add a provider, you need to install a shared object into ``/lib/respondd``.
 For more information, refer to the `respondd README <https://github.com/freifunk-gluon/packages/blob/master/net/respondd/README.md>`_
 and have a look the existing providers.

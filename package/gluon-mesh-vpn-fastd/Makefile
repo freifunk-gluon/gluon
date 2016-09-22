@@ -29,8 +29,8 @@ endef
 define Package/gluon-mesh-vpn-fastd/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-vpn-fastd.so
+	$(INSTALL_DIR) $(1)/lib/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/respondd/mesh-vpn-fastd.so
 endef
 
 define Package/gluon-mesh-vpn-fastd/postinst
