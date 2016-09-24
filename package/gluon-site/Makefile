@@ -28,12 +28,13 @@ define Build/Configure
 endef
 
 define Build/Compile
+	lua -e 'print(require("cjson").encode(assert(dofile("$(GLUONDIR)/scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
-	lua -e 'print(require("cjson").encode(assert(dofile("$(GLUONDIR)/scripts/site_config.lua"))))' > $(1)/lib/gluon/site.json
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
 	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 
 	$(call GluonInstallI18N,gluon-site,$(1))
