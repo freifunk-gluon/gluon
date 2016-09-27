@@ -480,6 +480,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffniers <https://github.com/ffruhr/site-ffniers>`_ (Niersufer)
 * `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
 * `site-ffrgb <https://github.com/ffrgb/site-ffrgb>`_ (Regensburg)
+* `site-ffrn <https://github.com/Freifunk-Rhein-Neckar/site-ffrn>`_ (Rhein-Neckar)
 * `site-ffruhr <https://github.com/ffruhr?utf8=✓&query=site>`_ (Ruhrgebiet, Multi-Communities)
 * `site-ffs <https://github.com/freifunk-stuttgart/site-ffs>`_ (Stuttgart)
 * `site-fftr <https://github.com/freifunktrier/site-fftr>`_ (Trier)
