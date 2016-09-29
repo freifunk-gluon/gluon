@@ -76,7 +76,7 @@ New features
   the ``config_mode.owner.obligatory`` site.conf option
 
 * The *node name* setting in the config mode is no longer restricted to valid DNS
-  hostnames, but allows any UTF-8 string (`#414 <https://github.com/freifunk-gluon/gluon/issues/#414>`_)
+  hostnames, but allows any UTF-8 string (`#414 <https://github.com/freifunk-gluon/gluon/issues/414>`_)
 
 * Besides the hostname, public key, site config and primary MAC address, the contact
   information can now be accessed from config mode site texts
