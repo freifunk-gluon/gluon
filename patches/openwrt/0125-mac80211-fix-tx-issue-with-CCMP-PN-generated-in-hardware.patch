@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 30 Sep 2016 16:57:57 +0200
+Subject: mac80211: fix tx issue with CCMP PN generated in hardware
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+Backport of LEDE f3747020e202883a43729fc245986f9e36289d6c
+
+diff --git a/package/kernel/mac80211/patches/346-mac80211-Move-reorder-sensitive-TX-handlers-to-after.patch b/package/kernel/mac80211/patches/346-mac80211-Move-reorder-sensitive-TX-handlers-to-after.patch
+index 8ceed51..aba1ff4 100644
+--- a/package/kernel/mac80211/patches/346-mac80211-Move-reorder-sensitive-TX-handlers-to-after.patch
++++ b/package/kernel/mac80211/patches/346-mac80211-Move-reorder-sensitive-TX-handlers-to-after.patch
+@@ -404,7 +404,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
+  	sta->tx_stats.packets[skb_get_queue_mapping(skb)]++;
+  
+ -	if (fast_tx->pn_offs) {
+-+	if (pn_offs) {
+++	if (pn_offs && (key_conf->flags & IEEE80211_KEY_FLAG_GENERATE_IV)) {
+  		u64 pn;
+ -		u8 *crypto_hdr = skb->data + fast_tx->pn_offs;
+ +		u8 *crypto_hdr = skb->data + pn_offs;
