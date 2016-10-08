@@ -7,7 +7,7 @@ PKG_RELEASE:=$(GLUON_BRANCH)
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-autoupdater

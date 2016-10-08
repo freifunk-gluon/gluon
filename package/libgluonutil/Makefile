@@ -8,7 +8,7 @@ PKG_LICENSE:=BSD-2-Clause
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 

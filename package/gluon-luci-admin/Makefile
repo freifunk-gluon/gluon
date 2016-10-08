@@ -9,7 +9,7 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
