@@ -6,7 +6,7 @@ PKG_RELEASE:=$(GLUON_VERSION)
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-core

@@ -9,7 +9,7 @@ PKG_BUILD_DEPENDS := luci-base/host lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
@@ -28,7 +28,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	lua -e 'print(require("cjson").encode(assert(dofile("$(GLUONDIR)/scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
+	lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
