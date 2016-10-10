@@ -5,7 +5,7 @@ Subject: fix UBNT XM model detection
 Signed-off-by: Neal Oakey <neal.oakey@bingo-ev.de>
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index dab4d2c..e7b3cd2 100755
+index 2f4b112..b220aad 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -64,6 +64,40 @@ wndr3700_board_detect() {
@@ -64,7 +64,7 @@ index dab4d2c..e7b3cd2 100755
  		;;
  	*"Nanostation M XW")
  		name="nanostation-m-xw"
-@@ -667,6 +703,7 @@ ar71xx_board_detect() {
+@@ -682,6 +718,7 @@ ar71xx_board_detect() {
  		;;
  	*"Rocket M")
  		name="rocket-m"

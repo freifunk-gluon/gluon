@@ -8,10 +8,10 @@ Signed-off-by: P.Wassi <p.wassi at gmx.at>
 Backport of LEDE 8307c2fe686ded345c80318359d5b6679e581fa2
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 3d711ca..775aac6 100644
+index 23fd122..f182d60 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -297,7 +297,8 @@ get_status_led() {
+@@ -306,7 +306,8 @@ get_status_led() {
  		status_led="ubnt:green:dome"
  		;;
  	uap-pro | \
@@ -22,10 +22,10 @@ index 3d711ca..775aac6 100644
  		;;
  	unifi-outdoor-plus)
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index fa8a2c8..cde7aaf 100644
+index 6c6b27a..0e93feb 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -75,7 +75,8 @@ case "$FIRMWARE" in
+@@ -77,7 +77,8 @@ case "$FIRMWARE" in
  		ath10kcal_extract "ART" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +16)
  		;;
@@ -36,10 +36,10 @@ index fa8a2c8..cde7aaf 100644
  		;;
  	esac
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index 0269e6d..0a23756 100755
+index cb31c69..e5c64bb 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -398,6 +398,13 @@ wpj344)
+@@ -400,6 +400,13 @@ wpj344)
  	ucidef_add_switch_vlan "switch0" "2" "0t 2"
  	;;
  
@@ -54,10 +54,10 @@ index 0269e6d..0a23756 100755
  	ucidef_set_interfaces_lan_wan "eth0" "eth1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index d3e6db9..7fc951a 100755
+index f8dd719..348e0f6 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -884,6 +884,9 @@ ar71xx_board_detect() {
+@@ -899,6 +899,9 @@ ar71xx_board_detect() {
  	*"UniFi-AC-LITE")
  		name="unifiac-lite"
  		;;
@@ -68,7 +68,7 @@ index d3e6db9..7fc951a 100755
  		name="uap-pro"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index a1b65b7..0e9833d 100755
+index 5aa59fd..0f166eb 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -252,6 +252,7 @@ platform_check_image() {
@@ -193,7 +193,7 @@ index eac0240..69b8398 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 3efa2e1..58118f2 100644
+index c9d6ed1..0cf1df1 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -753,7 +753,13 @@ define Device/ubnt-unifiac-lite

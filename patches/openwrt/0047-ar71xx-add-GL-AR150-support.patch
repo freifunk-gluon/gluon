@@ -9,7 +9,7 @@ https://raw.githubusercontent.com/domino-team/OpenWrt-patches/master/AR150%2C%20
 (and fixed indentation in target/linux/ar71xx/base-files/lib/ar71xx.sh)
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index ae17853..dc8b8d6 100644
+index 337000c..032acc9 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -181,6 +181,10 @@ dlan-pro-1200-ac)
@@ -24,10 +24,10 @@ index ae17853..dc8b8d6 100644
  	ucidef_set_led_netdev "lan" "LAN" "gl-connect:green:lan" "eth1"
  	ucidef_set_led_wlan "wlan" "WLAN" "gl-connect:red:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index 4066506..89a2184 100755
+index e5c64bb..b8ae576 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -381,6 +381,7 @@ dir-505-a1)
+@@ -382,6 +382,7 @@ dir-505-a1)
  alfa-ap96 |\
  alfa-nx |\
  ap83 |\
@@ -36,7 +36,7 @@ index 4066506..89a2184 100755
  jwap003 |\
  pb42 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index fbf76c8..db908f9 100755
+index 348e0f6..5119b36 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -500,6 +500,9 @@ ar71xx_board_detect() {
@@ -50,7 +50,7 @@ index fbf76c8..db908f9 100755
  		name="epg5000"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 4a4c476..aeb4577 100755
+index 0f166eb..f33419f 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -215,6 +215,7 @@ platform_check_image() {

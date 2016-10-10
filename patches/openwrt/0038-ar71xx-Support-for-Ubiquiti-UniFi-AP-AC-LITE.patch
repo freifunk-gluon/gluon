@@ -8,10 +8,10 @@ Signed-off-by: P.Wassi <p.wassi at gmx.at>
 Backport of OpenWrt r48711
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 5a184cd..8c6ac9a 100644
+index c5e39d0..e36c581 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -296,7 +296,8 @@ get_status_led() {
+@@ -305,7 +305,8 @@ get_status_led() {
  	unifi)
  		status_led="ubnt:green:dome"
  		;;
@@ -22,10 +22,10 @@ index 5a184cd..8c6ac9a 100644
  		;;
  	unifi-outdoor-plus)
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index b2e15bb..e4a1473 100755
+index b2b182e..850eac9 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -366,6 +366,7 @@ tl-wa901nd-v3 |\
+@@ -368,6 +368,7 @@ tl-wa901nd-v3 |\
  tl-wa901nd-v4 |\
  tl-wr703n |\
  tube2h |\
@@ -34,10 +34,10 @@ index b2e15bb..e4a1473 100755
  mynet-rext |\
  wp543)
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index ddd6611..8670583 100755
+index 131364c..ac77934 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -881,6 +881,9 @@ ar71xx_board_detect() {
+@@ -896,6 +896,9 @@ ar71xx_board_detect() {
  	*UniFi)
  		name="unifi"
  		;;
@@ -48,7 +48,7 @@ index ddd6611..8670583 100755
  		name="uap-pro"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index c5c1871..4c43166 100755
+index ccccc17..4793fa9 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -251,6 +251,7 @@ platform_check_image() {
@@ -60,10 +60,10 @@ index c5c1871..4c43166 100755
  	carambola2 | \
  	weio )
 diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
-index e2ff826..9a81911 100644
+index e4bed08..514f7d5 100644
 --- a/target/linux/ar71xx/config-3.18
 +++ b/target/linux/ar71xx/config-3.18
-@@ -137,6 +137,7 @@ CONFIG_ATH79_MACH_TL_WR941ND=y
+@@ -140,6 +140,7 @@ CONFIG_ATH79_MACH_TL_WR941ND=y
  CONFIG_ATH79_MACH_TL_WR941ND_V6=y
  CONFIG_ATH79_MACH_TUBE2H=y
  CONFIG_ATH79_MACH_UBNT=y
@@ -71,7 +71,7 @@ index e2ff826..9a81911 100644
  CONFIG_ATH79_MACH_UBNT_XM=y
  CONFIG_ATH79_MACH_WEIO=y
  CONFIG_ATH79_MACH_WHR_HP_G300N=y
-@@ -320,7 +321,7 @@ CONFIG_SOC_AR933X=y
+@@ -323,7 +324,7 @@ CONFIG_SOC_AR933X=y
  CONFIG_SOC_AR934X=y
  CONFIG_SOC_QCA953X=y
  CONFIG_SOC_QCA955X=y
@@ -218,7 +218,7 @@ index d8e24d0..94eff18 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index d42ceef..dd59f2d 100644
+index 7184966..209eba4 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -740,6 +740,16 @@ define Device/oolite
