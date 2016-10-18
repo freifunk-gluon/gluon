@@ -36,6 +36,7 @@ freshly installed Debian Wheezy system the following packages are required:
 * `libncurses-dev` (actually `libncurses5-dev`)
 * `libz-dev` (actually `zlib1g-dev`)
 * `libssl-dev`
+* `wget`
 
 
 Building the images
