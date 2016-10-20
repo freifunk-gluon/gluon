@@ -28,7 +28,8 @@ A fully automated nightly build could use the following commands:
     (cd site && git pull)
     make update
     make clean
-    make -j5 GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
+    NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
+    make -j$NUM_CORES_PLUS_ONE GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
     make manifest GLUON_BRANCH=experimental
     contrib/sign.sh $SECRETKEY output/images/sysupgrade/experimental.manifest
 
