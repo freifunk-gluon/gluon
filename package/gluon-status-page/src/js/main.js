@@ -83,7 +83,17 @@ require([ "bacon"
     return a
   }
 
-  if (localStorage.nodes)
+  var lsavailable = false
+  try {
+    localStorage.setItem("t", "t")
+    localStorage.removeItem("t")
+    lsavailable = true
+  } catch(e) {
+    lsavailable = false
+  }
+
+
+  if ( lsavailable && localStorage.nodes)
     JSON.parse(localStorage.nodes).forEach(nodesBusIn.push)
 
   nodesBus.map(".nodes").onValue(function (nodes) {
@@ -92,7 +102,8 @@ require([ "bacon"
     for (var k in nodes)
       out.push(nodes[k])
 
-    localStorage.nodes = JSON.stringify(out)
+    if (lsavailable)
+      localStorage.nodes = JSON.stringify(out)
   })
 
   var bootstrap = Helper.getJSON(bootstrapUrl)
