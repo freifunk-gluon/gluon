@@ -5,6 +5,8 @@ require([ "bacon"
         , "lib/gui"
         ], function(Bacon, Helper, Streams, GUI) {
 
+  document.getElementById("jswarn").remove();
+
   var mgmtBus = new Bacon.Bus()
 
   mgmtBus.pushEvent = function (key, a) {
