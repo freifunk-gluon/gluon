@@ -13,6 +13,6 @@
     </script>
   </head>
   <body>
-	  <noscript>Bitte Javascript aktivieren.</noscript>
+    <noscript>Bitte Javascript aktivieren.</noscript>
   </body>
 </html>
