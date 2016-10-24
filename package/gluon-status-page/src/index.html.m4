@@ -13,6 +13,6 @@
     </script>
   </head>
   <body>
-	  <h1 id="jswarn">Bitte Javascript aktivieren.</h1>
+	  <noscript>Bitte Javascript aktivieren.</noscript>
   </body>
 </html>
