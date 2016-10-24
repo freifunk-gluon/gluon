@@ -13,5 +13,6 @@
     </script>
   </head>
   <body>
+    <noscript>Bitte Javascript aktivieren.</noscript>
   </body>
 </html>
