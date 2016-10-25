@@ -52,7 +52,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 	  {
 		  enabled = enabled,
 		  group = 'gluon-fastd',
-		  syslog_level = 'verbose',
+		  syslog_level = 'warn',
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
