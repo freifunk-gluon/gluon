@@ -21,6 +21,12 @@ if not enabled then
 end
 
 
+local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level')
+if not syslog_level then
+  syslog_level = 'verbose'
+end
+
+
 local methods
 
 if site.fastd_mesh_vpn.configurable then
@@ -52,7 +58,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 	  {
 		  enabled = enabled,
 		  group = 'gluon-fastd',
-		  syslog_level = 'warn',
+		  syslog_level = syslog_level,
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
