@@ -8,10 +8,10 @@ Signed-off-by: P.Wassi <p.wassi at gmx.at>
 Backport of LEDE 8307c2fe686ded345c80318359d5b6679e581fa2
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 23fd122..f182d60 100644
+index 924c116..cb92349 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -306,7 +306,8 @@ get_status_led() {
+@@ -310,7 +310,8 @@ get_status_led() {
  		status_led="ubnt:green:dome"
  		;;
  	uap-pro | \
@@ -22,10 +22,10 @@ index 23fd122..f182d60 100644
  		;;
  	unifi-outdoor-plus)
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 6c6b27a..0e93feb 100644
+index 7777734..5eb20bb 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -77,7 +77,8 @@ case "$FIRMWARE" in
+@@ -81,7 +81,8 @@ case "$FIRMWARE" in
  		ath10kcal_extract "ART" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +16)
  		;;
@@ -36,10 +36,10 @@ index 6c6b27a..0e93feb 100644
  		;;
  	esac
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index cb31c69..e5c64bb 100755
+index 2007042..b59844e 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -400,6 +400,13 @@ wpj344)
+@@ -401,6 +401,13 @@ wpj344)
  	ucidef_add_switch_vlan "switch0" "2" "0t 2"
  	;;
  
@@ -54,10 +54,10 @@ index cb31c69..e5c64bb 100755
  	ucidef_set_interfaces_lan_wan "eth0" "eth1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index f8dd719..348e0f6 100755
+index a8d8896..28f07b8 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -899,6 +899,9 @@ ar71xx_board_detect() {
+@@ -905,6 +905,9 @@ ar71xx_board_detect() {
  	*"UniFi-AC-LITE")
  		name="unifiac-lite"
  		;;
@@ -68,10 +68,10 @@ index f8dd719..348e0f6 100755
  		name="uap-pro"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 5aa59fd..0f166eb 100755
+index 90f961f..0228f14 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -252,6 +252,7 @@ platform_check_image() {
+@@ -253,6 +253,7 @@ platform_check_image() {
  	nbg460n_550n_550nh | \
  	unifi | \
  	unifiac-lite | \
@@ -193,7 +193,7 @@ index eac0240..69b8398 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index c9d6ed1..0cf1df1 100644
+index 42ffc69..7c648f2 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -753,7 +753,13 @@ define Device/ubnt-unifiac-lite
@@ -212,18 +212,18 @@ index c9d6ed1..0cf1df1 100644
  rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
  
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index 0ade403..dbd3fca 100644
+index 9a28f58..debde6e 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@
  --- a/arch/mips/ath79/machtypes.h
  +++ b/arch/mips/ath79/machtypes.h
--@@ -16,22 +16,200 @@
-+@@ -16,22 +16,201 @@
+-@@ -16,22 +16,201 @@
++@@ -16,22 +16,202 @@
   
   enum ath79_mach_type {
   	ATH79_MACH_GENERIC = 0,
-@@ -165,6 +165,7 @@
+@@ -166,6 +166,7 @@
   	ATH79_MACH_UBNT_UAP_PRO,	/* Ubiquiti UniFi AP Pro */
   	ATH79_MACH_UBNT_UNIFI, 		/* Ubiquiti Unifi */
  +	ATH79_MACH_UBNT_UNIFIAC_LITE,	/* Ubiquiti Unifi AC LITE/LR */
@@ -231,7 +231,7 @@ index 0ade403..dbd3fca 100644
   	ATH79_MACH_UBNT_UNIFI_OUTDOOR,	/* Ubiquiti UnifiAP Outdoor */
  +	ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS, /* Ubiquiti UnifiAP Outdoor+ */
   	ATH79_MACH_UBNT_XM,		/* Ubiquiti Networks XM board rev 1.0 */
-@@ -1363,12 +1364,12 @@
+@@ -1364,12 +1365,12 @@
   
   config ATH79_MACH_UBNT_XM
   	bool "Ubiquiti Networks XM/UniFi boards"
@@ -246,7 +246,7 @@ index 0ade403..dbd3fca 100644
  +	select SOC_QCA956X
  +	select ATH79_DEV_AP9X_PCI if PCI
  +	select ATH79_DEV_ETH
-@@ -1376,6 +1377,7 @@
+@@ -1377,6 +1378,7 @@
  +	select ATH79_DEV_LEDS_GPIO
  +	select ATH79_DEV_M25P80
  +	select ATH79_DEV_WMAC
@@ -254,7 +254,7 @@ index 0ade403..dbd3fca 100644
  +
  +config ATH79_MACH_WEIO
  +	bool "WeIO board"
-@@ -1480,7 +1482,7 @@
+@@ -1481,7 +1483,7 @@
   endmenu
   
   config SOC_AR71XX
@@ -263,7 +263,7 @@ index 0ade403..dbd3fca 100644
   config ATH79_DEV_ETH
   	def_bool n
   
-@@ -1492,7 +1494,7 @@
+@@ -1493,7 +1495,7 @@
   	def_bool n
   
   config ATH79_DEV_GPIO_BUTTONS

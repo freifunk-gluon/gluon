@@ -9,10 +9,10 @@ https://raw.githubusercontent.com/domino-team/OpenWrt-patches/master/AR150%2C%20
 (and fixed indentation in target/linux/ar71xx/base-files/lib/ar71xx.sh)
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index 337000c..032acc9 100644
+index b867796..d81358d 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-@@ -181,6 +181,10 @@ dlan-pro-1200-ac)
+@@ -188,6 +188,10 @@ dlan-pro-1200-ac)
  	ucidef_set_led_trigger_gpio "plcr" "dLAN" "devolo:error:dlan" "16" "0"
  	;;
  
@@ -24,10 +24,10 @@ index 337000c..032acc9 100644
  	ucidef_set_led_netdev "lan" "LAN" "gl-connect:green:lan" "eth1"
  	ucidef_set_led_wlan "wlan" "WLAN" "gl-connect:red:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index e5c64bb..b8ae576 100755
+index b59844e..ac3deb8 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -382,6 +382,7 @@ dir-505-a1)
+@@ -383,6 +383,7 @@ dir-505-a1)
  alfa-ap96 |\
  alfa-nx |\
  ap83 |\
@@ -36,10 +36,10 @@ index e5c64bb..b8ae576 100755
  jwap003 |\
  pb42 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 348e0f6..5119b36 100755
+index 28f07b8..3bd6aed 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -500,6 +500,9 @@ ar71xx_board_detect() {
+@@ -503,6 +503,9 @@ ar71xx_board_detect() {
  		name="gl-inet"
  		gl_inet_board_detect
  		;;
@@ -50,10 +50,10 @@ index 348e0f6..5119b36 100755
  		name="epg5000"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 0f166eb..f33419f 100755
+index 0228f14..d816f21 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -215,6 +215,7 @@ platform_check_image() {
+@@ -216,6 +216,7 @@ platform_check_image() {
  	dlan-pro-500-wp | \
  	dlan-pro-1200-ac | \
  	dragino2 | \
@@ -62,10 +62,10 @@ index 0f166eb..f33419f 100755
  	esr1750 | \
  	esr900 | \
 diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
-index 514f7d5..0903ee9 100644
+index a068cc5..d4d9273 100644
 --- a/target/linux/ar71xx/config-3.18
 +++ b/target/linux/ar71xx/config-3.18
-@@ -69,6 +69,7 @@ CONFIG_ATH79_MACH_ESR1750=y
+@@ -70,6 +70,7 @@ CONFIG_ATH79_MACH_ESR1750=y
  CONFIG_ATH79_MACH_ESR900=y
  CONFIG_ATH79_MACH_EW_DORIN=y
  CONFIG_ATH79_MACH_F9K1115V2=y
@@ -261,7 +261,7 @@ index 0000000..a6ad661
 +
 +$(eval $(call Profile,GL-AR150))
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 0cf1df1..b790610 100644
+index 7c648f2..05eea0b 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -144,6 +144,14 @@ define Device/weio

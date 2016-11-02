@@ -6,7 +6,7 @@ Generate flashable images for the Archer C7 v2 with current stock firmware
 again.
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index dfc0d71..cbd8a49 100644
+index 868a502..95f6d46 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -58,13 +58,14 @@ define Build/mktplinkfw
