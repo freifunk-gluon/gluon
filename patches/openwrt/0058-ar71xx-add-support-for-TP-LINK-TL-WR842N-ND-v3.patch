@@ -14,11 +14,11 @@ Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
 Backport of LEDE 0b45bec22c59cc6e6b2fa71dc9a88386c5587132
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index f182d60..c3aeffc 100644
+index cb92349..2c5d6af 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -276,6 +276,7 @@ get_status_led() {
- 	tl-wr841n-v8 | \
+@@ -280,6 +280,7 @@ get_status_led() {
+ 	tl-wr841n-v11 | \
  	tl-wa830re-v2 | \
  	tl-wr842n-v2 | \
 +	tl-wr842n-v3 | \
@@ -26,10 +26,10 @@ index f182d60..c3aeffc 100644
  	tl-wr941nd-v5)
  		status_led="tp-link:green:system"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index 032acc9..e118e0a 100644
+index d81358d..14aa7bc 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-@@ -515,6 +515,16 @@ tl-wr842n-v2)
+@@ -523,6 +523,16 @@ tl-wr842n-v2)
  	ucidef_set_led_usbdev "usb" "USB" "tp-link:green:3g" "1-1"
  	;;
  
@@ -47,22 +47,22 @@ index 032acc9..e118e0a 100644
  tl-wa901nd-v3)
  	ucidef_set_led_netdev "lan" "LAN" "tp-link:green:lan" "eth0"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index b8ae576..3c428ba 100755
+index ac3deb8..ca9c577 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -447,6 +447,7 @@ tl-wr741nd |\
- tl-wr741nd-v4 |\
+@@ -449,6 +449,7 @@ tl-wr741nd-v4 |\
  tl-wr841n-v7 |\
  tl-wr841n-v9 |\
+ tl-wr841n-v11 |\
 +tl-wr842n-v3 |\
  whr-g301n |\
  whr-hp-g300n |\
  whr-hp-gn |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 5119b36..e4a617e 100755
+index 3bd6aed..43ce7da 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -863,6 +863,9 @@ ar71xx_board_detect() {
+@@ -869,6 +869,9 @@ ar71xx_board_detect() {
  	*"TL-WR842N/ND v2")
  		name="tl-wr842n-v2"
  		;;
@@ -73,42 +73,41 @@ index 5119b36..e4a617e 100755
  		name="tl-wr941nd"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index f33419f..2a1abf3 100755
+index d816f21..53284df 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -365,6 +365,7 @@ platform_check_image() {
- 	tl-wr841n-v8 | \
+@@ -367,6 +367,7 @@ platform_check_image() {
  	tl-wr841n-v9 | \
+ 	tl-wr841n-v11 | \
  	tl-wr842n-v2 | \
 +	tl-wr842n-v3 | \
  	tl-wr941nd | \
  	tl-wr941nd-v5 | \
  	tl-wr941nd-v6 | \
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
-index 3e5c2a2..0209603 100644
+index 004f719..ebaed15 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
-@@ -1,7 +1,8 @@
+@@ -1,9 +1,16 @@
  /*
-- *  TP-LINK TL-WR841N/ND v9
-+ *  TP-LINK TL-WR841N/ND v9/TL-WR842N/ND v3
++<<<<<<< HEAD
+  *  TP-LINK TL-WR841N/ND v9/v11
   *
   *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
+  *  Copyright (C) 2016 Cezary Jackiewicz <cezary@eko.one.pl>
+  *  Copyright (C) 2016 Stijn Segers <francesco.borromini@gmail.com>
++=======
++ *  TP-LINK TL-WR841N/ND v9/TL-WR842N/ND v3
++ *
++ *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
 + *  Copyright (C) 2016 Cezary Jackiewicz <cezary@eko.one.pl>
++>>>>>>> ar71xx: add support for TP-LINK TL-WR842N/ND v3
   *
   *  This program is free software; you can redistribute it and/or modify it
   *  under the terms of the GNU General Public License version 2 as published
-@@ -19,6 +20,7 @@
- #include "dev-gpio-buttons.h"
- #include "dev-leds-gpio.h"
- #include "dev-m25p80.h"
-+#include "dev-usb.h"
- #include "dev-wmac.h"
- #include "machtypes.h"
- 
-@@ -33,6 +35,20 @@
- #define TL_WR841NV9_GPIO_BTN_RESET	12
- #define TL_WR841NV9_GPIO_BTN_WIFI	17
+@@ -49,6 +56,20 @@
+ #define TL_WR841NV11_GPIO_BTN_RESET	12
+ #define TL_WR841NV11_GPIO_BTN_WIFI	17
  
 +#define TL_WR842NV3_GPIO_LED_SYSTEM	2
 +#define TL_WR842NV3_GPIO_LED_WLAN	3
@@ -127,8 +126,8 @@ index 3e5c2a2..0209603 100644
  #define TL_WR841NV9_KEYS_POLL_INTERVAL	20	/* msecs */
  #define TL_WR841NV9_KEYS_DEBOUNCE_INTERVAL (3 * TL_WR841NV9_KEYS_POLL_INTERVAL)
  
-@@ -95,6 +111,68 @@ static struct gpio_keys_button tl_wr841n_v9_gpio_keys[] __initdata = {
- 	}
+@@ -151,6 +172,68 @@ static struct gpio_led tl_wr841n_v11_leds_gpio[] __initdata = {
+ 	},
  };
  
 +static struct gpio_led tl_wr842n_v3_leds_gpio[] __initdata = {
@@ -193,13 +192,13 @@ index 3e5c2a2..0209603 100644
 +	}
 +};
 +
- 
  static void __init tl_ap143_setup(void)
  {
-@@ -142,3 +220,20 @@ static void __init tl_wr841n_v9_setup(void)
+ 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
+@@ -212,3 +295,20 @@ static void __init tl_wr841n_v11_setup(void)
  
- MIPS_MACHINE(ATH79_MACH_TL_WR841N_V9, "TL-WR841N-v9", "TP-LINK TL-WR841N/ND v9",
- 	     tl_wr841n_v9_setup);
+ MIPS_MACHINE(ATH79_MACH_TL_WR841N_V11, "TL-WR841N-v11", "TP-LINK TL-WR841N/ND v11",
+ 	     tl_wr841n_v11_setup);
 +
 +static void __init tl_wr842n_v3_setup(void)
 +{
@@ -218,7 +217,7 @@ index 3e5c2a2..0209603 100644
 +MIPS_MACHINE(ATH79_MACH_TL_WR842N_V3, "TL-WR842N-v3", "TP-LINK TL-WR842N/ND v3",
 +	     tl_wr842n_v3_setup);
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index b790610..e074f8a 100644
+index 05eea0b..d66bd25 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -607,6 +607,13 @@ define Device/tl-wr842n-v2
@@ -245,26 +244,26 @@ index b790610..e074f8a 100644
  define Device/tl-wr941nd-v5
      $(Device/tplink-4mlzma)
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index dbd3fca..4a53355 100644
+index debde6e..d4b417b 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@
  --- a/arch/mips/ath79/machtypes.h
  +++ b/arch/mips/ath79/machtypes.h
--@@ -16,22 +16,201 @@
-+@@ -16,22 +16,202 @@
+-@@ -16,22 +16,202 @@
++@@ -16,22 +16,203 @@
   
   enum ath79_mach_type {
   	ATH79_MACH_GENERIC = 0,
-@@ -147,6 +147,7 @@
- +	ATH79_MACH_TL_WR841N_V8,	/* TP-LINK TL-WR841N/ND v8 */
+@@ -148,6 +148,7 @@
  +	ATH79_MACH_TL_WR841N_V9,	/* TP-LINK TL-WR841N/ND v9 */
+ +	ATH79_MACH_TL_WR841N_V11,	/* TP-LINK TL-WR841N/ND v11 */
  +	ATH79_MACH_TL_WR842N_V2,	/* TP-LINK TL-WR842N/ND v2 */
 ++	ATH79_MACH_TL_WR842N_V3,	/* TP-LINK TL-WR842N/ND v3 */
  +	ATH79_MACH_TL_WR941ND,		/* TP-LINK TL-WR941ND */
  +	ATH79_MACH_TL_WR941ND_V5,	/* TP-LINK TL-WR941ND v5 */
  +	ATH79_MACH_TL_WR941ND_V6,	/* TP-LINK TL-WR941ND v6 */
-@@ -284,7 +285,7 @@
+@@ -285,7 +286,7 @@
   config ATH79_MACH_AP121
   	bool "Atheros AP121 reference board"
   	select SOC_AR933X
@@ -273,7 +272,7 @@ index dbd3fca..4a53355 100644
   	select ATH79_DEV_M25P80
   	select ATH79_DEV_USB
   	select ATH79_DEV_WMAC
-@@ -1235,13 +1236,14 @@
+@@ -1236,13 +1237,14 @@
  +	select ATH79_DEV_WMAC
  +
  +config ATH79_MACH_TL_WR841N_V9
@@ -295,7 +294,7 @@ index dbd3fca..4a53355 100644
  +
  +config ATH79_MACH_TL_WR941ND
  +	bool "TP-LINK TL-WR941ND support"
-@@ -1364,7 +1366,7 @@
+@@ -1365,7 +1367,7 @@
   
   config ATH79_MACH_UBNT_XM
   	bool "Ubiquiti Networks XM/UniFi boards"
@@ -304,7 +303,7 @@ index dbd3fca..4a53355 100644
   	  Say 'Y' here if you want your kernel to support the
   	  Ubiquiti Networks XM (rev 1.0) board.
   
-@@ -1482,7 +1484,7 @@
+@@ -1483,7 +1485,7 @@
   endmenu
   
   config SOC_AR71XX
@@ -313,7 +312,7 @@ index dbd3fca..4a53355 100644
   config ATH79_DEV_ETH
   	def_bool n
   
-@@ -1494,7 +1496,7 @@
+@@ -1495,7 +1497,7 @@
   	def_bool n
   
   config ATH79_DEV_GPIO_BUTTONS

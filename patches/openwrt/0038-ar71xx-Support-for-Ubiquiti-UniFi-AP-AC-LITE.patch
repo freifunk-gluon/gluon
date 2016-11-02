@@ -8,10 +8,10 @@ Signed-off-by: P.Wassi <p.wassi at gmx.at>
 Backport of OpenWrt r48711
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index c5e39d0..e36c581 100644
+index 486879f..3adc449 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -305,7 +305,8 @@ get_status_led() {
+@@ -309,7 +309,8 @@ get_status_led() {
  	unifi)
  		status_led="ubnt:green:dome"
  		;;
@@ -22,10 +22,10 @@ index c5e39d0..e36c581 100644
  		;;
  	unifi-outdoor-plus)
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index b2b182e..850eac9 100755
+index 032c671..a79376a 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-@@ -368,6 +368,7 @@ tl-wa901nd-v3 |\
+@@ -369,6 +369,7 @@ tl-wa901nd-v3 |\
  tl-wa901nd-v4 |\
  tl-wr703n |\
  tube2h |\
@@ -34,10 +34,10 @@ index b2b182e..850eac9 100755
  mynet-rext |\
  wp543)
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 131364c..ac77934 100755
+index 4780e2f..0fd139c 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -896,6 +896,9 @@ ar71xx_board_detect() {
+@@ -902,6 +902,9 @@ ar71xx_board_detect() {
  	*UniFi)
  		name="unifi"
  		;;
@@ -48,10 +48,10 @@ index 131364c..ac77934 100755
  		name="uap-pro"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index ccccc17..4793fa9 100755
+index 024e493..fff1c3c 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -251,6 +251,7 @@ platform_check_image() {
+@@ -252,6 +252,7 @@ platform_check_image() {
  	wlae-ag300n | \
  	nbg460n_550n_550nh | \
  	unifi | \
@@ -60,10 +60,10 @@ index ccccc17..4793fa9 100755
  	carambola2 | \
  	weio )
 diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
-index e4bed08..514f7d5 100644
+index e0d52d9..a068cc5 100644
 --- a/target/linux/ar71xx/config-3.18
 +++ b/target/linux/ar71xx/config-3.18
-@@ -140,6 +140,7 @@ CONFIG_ATH79_MACH_TL_WR941ND=y
+@@ -141,6 +141,7 @@ CONFIG_ATH79_MACH_TL_WR941ND=y
  CONFIG_ATH79_MACH_TL_WR941ND_V6=y
  CONFIG_ATH79_MACH_TUBE2H=y
  CONFIG_ATH79_MACH_UBNT=y
@@ -71,7 +71,7 @@ index e4bed08..514f7d5 100644
  CONFIG_ATH79_MACH_UBNT_XM=y
  CONFIG_ATH79_MACH_WEIO=y
  CONFIG_ATH79_MACH_WHR_HP_G300N=y
-@@ -323,7 +324,7 @@ CONFIG_SOC_AR933X=y
+@@ -324,7 +325,7 @@ CONFIG_SOC_AR933X=y
  CONFIG_SOC_AR934X=y
  CONFIG_SOC_QCA953X=y
  CONFIG_SOC_QCA955X=y
@@ -218,7 +218,7 @@ index d8e24d0..94eff18 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 7184966..209eba4 100644
+index 0783381..aaaf89a 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -740,6 +740,16 @@ define Device/oolite
@@ -263,18 +263,18 @@ index 626d676..f62cf1a 100644
  # CONFIG_ATH79_MACH_WLAE_AG300N is not set
  # CONFIG_ATH79_MACH_WNDAP360 is not set
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index d6e786d..5a7a72c 100644
+index 76aeb94..27dc73f 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@
  --- a/arch/mips/ath79/machtypes.h
  +++ b/arch/mips/ath79/machtypes.h
--@@ -16,22 +16,199 @@
-+@@ -16,22 +16,200 @@
+-@@ -16,22 +16,200 @@
++@@ -16,22 +16,201 @@
   
   enum ath79_mach_type {
   	ATH79_MACH_GENERIC = 0,
-@@ -164,6 +164,7 @@
+@@ -165,6 +165,7 @@
  +	ATH79_MACH_UBNT_RS,		/* Ubiquiti RouterStation */
   	ATH79_MACH_UBNT_UAP_PRO,	/* Ubiquiti UniFi AP Pro */
   	ATH79_MACH_UBNT_UNIFI, 		/* Ubiquiti Unifi */
@@ -282,7 +282,7 @@ index d6e786d..5a7a72c 100644
   	ATH79_MACH_UBNT_UNIFI_OUTDOOR,	/* Ubiquiti UnifiAP Outdoor */
  +	ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS, /* Ubiquiti UnifiAP Outdoor+ */
   	ATH79_MACH_UBNT_XM,		/* Ubiquiti Networks XM board rev 1.0 */
-@@ -1097,10 +1098,7 @@
+@@ -1098,10 +1099,7 @@
  +	select ATH79_DEV_M25P80
  +	select ATH79_DEV_USB
  +	select ATH79_DEV_WMAC
@@ -294,7 +294,7 @@ index d6e786d..5a7a72c 100644
  +config ATH79_MACH_TL_WA7210N_V2
  +       bool "TP-LINK TL-WA7210N v2 support"
  +       select SOC_AR724X
-@@ -1115,19 +1113,12 @@
+@@ -1116,19 +1114,12 @@
  +	bool "TP-LINK TL-WA830RE v2 support"
  +	select SOC_AR934X
  +	select ATH79_DEV_ETH
@@ -319,7 +319,7 @@ index d6e786d..5a7a72c 100644
  +config ATH79_MACH_TL_WA901ND
  +	bool "TP-LINK TL-WA901ND/TL-WA7510N support"
  +	select SOC_AR724X
-@@ -1139,11 +1130,11 @@
+@@ -1140,11 +1131,11 @@
  +
  +config ATH79_MACH_TL_WA901ND_V2
  +	bool "TP-LINK TL-WA901ND v2 support"
@@ -336,7 +336,7 @@ index d6e786d..5a7a72c 100644
  +	select ATH79_DEV_WMAC
  +
  +config ATH79_MACH_TL_WDR3500
-@@ -1154,34 +1145,13 @@
+@@ -1155,34 +1146,13 @@
  +	select ATH79_DEV_GPIO_BUTTONS
  +	select ATH79_DEV_LEDS_GPIO
  +	select ATH79_DEV_M25P80
@@ -376,7 +376,7 @@ index d6e786d..5a7a72c 100644
  +	select ATH79_DEV_ETH
  +	select ATH79_DEV_GPIO_BUTTONS
  +	select ATH79_DEV_LEDS_GPIO
-@@ -1189,8 +1159,8 @@
+@@ -1190,8 +1160,8 @@
  +	select ATH79_DEV_USB
  +	select ATH79_DEV_WMAC
  +
@@ -387,7 +387,7 @@ index d6e786d..5a7a72c 100644
  +	select SOC_AR933X
  +	select ATH79_DEV_ETH
  +	select ATH79_DEV_GPIO_BUTTONS
-@@ -1198,7 +1168,28 @@
+@@ -1199,7 +1169,28 @@
  +	select ATH79_DEV_M25P80
  +	select ATH79_DEV_USB
  +	select ATH79_DEV_WMAC
@@ -417,7 +417,7 @@ index d6e786d..5a7a72c 100644
  +config ATH79_MACH_TL_WR741ND
  +	bool "TP-LINK TL-WR741ND support"
  +	select SOC_AR724X
-@@ -1211,21 +1202,25 @@
+@@ -1212,21 +1203,25 @@
  +config ATH79_MACH_TL_WR741ND_V4
  +	bool "TP-LINK TL-WR741ND v4/TL-MR3220 v2 support"
  +	select SOC_AR933X
@@ -455,7 +455,7 @@ index d6e786d..5a7a72c 100644
  +	select ATH79_DEV_M25P80
  +
  +config ATH79_MACH_TL_WR841N_V8
-@@ -1268,15 +1263,21 @@
+@@ -1269,15 +1264,21 @@
  +
  +config ATH79_MACH_TL_WR1041N_V2
  +	bool "TP-LINK TL-WR1041N v2 support"
@@ -486,7 +486,7 @@ index d6e786d..5a7a72c 100644
  +config ATH79_MACH_TL_WR1043ND
  +	bool "TP-LINK TL-WR1043ND support"
  +	select SOC_AR913X
-@@ -1319,11 +1320,12 @@
+@@ -1320,11 +1321,12 @@
  +
  +config ATH79_MACH_TEW_673GRU
  +	bool "TRENDnet TEW-673GRU support"
@@ -503,7 +503,7 @@ index d6e786d..5a7a72c 100644
  +	select ATH79_DEV_M25P80
  +	select ATH79_DEV_USB
  +	select ATH79_NVRAM
-@@ -1361,10 +1363,20 @@
+@@ -1362,10 +1364,20 @@
   
   config ATH79_MACH_UBNT_XM
   	bool "Ubiquiti Networks XM/UniFi boards"
@@ -525,7 +525,7 @@ index d6e786d..5a7a72c 100644
  +config ATH79_MACH_WEIO
  +	bool "WeIO board"
  +	select SOC_AR933X
-@@ -1468,7 +1480,7 @@
+@@ -1469,7 +1481,7 @@
   endmenu
   
   config SOC_AR71XX
@@ -534,7 +534,7 @@ index d6e786d..5a7a72c 100644
   config ATH79_DEV_ETH
   	def_bool n
   
-@@ -1480,7 +1492,7 @@
+@@ -1481,7 +1493,7 @@
   	def_bool n
   
   config ATH79_DEV_GPIO_BUTTONS
@@ -543,7 +543,7 @@ index d6e786d..5a7a72c 100644
   	def_bool n
   
   config ATH79_ROUTERBOOT
-@@ -1494,7 +1506,7 @@
+@@ -1495,7 +1507,7 @@
   endif
  --- a/arch/mips/ath79/Makefile
  +++ b/arch/mips/ath79/Makefile
@@ -552,7 +552,7 @@ index d6e786d..5a7a72c 100644
   #
   # Machines
   #
-@@ -1596,6 +1608,7 @@
+@@ -1597,6 +1609,7 @@
  +obj-$(CONFIG_ATH79_MACH_TL_WR720N_V3)	+= mach-tl-wr720n-v3.o
  +obj-$(CONFIG_ATH79_MACH_TUBE2H)		+= mach-tube2h.o
  +obj-$(CONFIG_ATH79_MACH_UBNT)		+= mach-ubnt.o
