@@ -1,0 +1,37 @@
+Gluon 2016.2.1
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TL-WA901ND v4
+
+Bugfixes
+~~~~~~~~
+
+* Make status page work with disabled cookies/local storage
+  (`#912 <https://github.com/freifunk-gluon/gluon/pull/912>`_)
+
+* Update kernel to 3.18.44
+
+  Fixes CVE-2016-5195 and CVE-2016-7117. It is unlikely that these issues pose
+  a threat to usual Gluon setups, but installing additional packages may make a
+  system vulnerable. In any case, updating is highly recommended.
+
+* Downgrade mac80211 to an earlier state
+
+  Unfortunately, a mac80211 update that was done shortly before the release of
+  Gluon v2016.2 (that seemed necessary to properly support ath10k devices) had
+  again caused severe ath9k stability issues that remained unreported until v2016.2
+  was out.
+
+  We have now reverted mac80211 to an earlier state that was reported to be very
+  stable (while keeping the ath10k-specific changes); in addition, some patches
+  that were reported to cause connection or performance issues with certain clients
+  have been reverted. While is it still not perfectly stable, is should be at least
+  as good as (and probably better than) the v2016.1.x release series.
