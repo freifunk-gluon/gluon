@@ -183,7 +183,7 @@ fastd_mesh_vpn
     if it is supported at all. You should only set `configurable` to `true` if the
     configured peers support both the ``null`` method and methods with encryption.
     
-    You can set syslog_level from verbose(default) to warn to reduce syslog output.
+    You can set syslog_level from verbose (default) to warn to reduce syslog output.
     ::
 
       fastd_mesh_vpn = {
