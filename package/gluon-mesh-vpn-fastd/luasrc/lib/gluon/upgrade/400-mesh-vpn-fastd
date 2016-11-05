@@ -15,17 +15,9 @@ users.remove_user('gluon-fastd')
 users.add_group('gluon-fastd', 800)
 
 
-local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
-if not enabled then
-  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
-end
+local enabled = uci:get('fastd', 'mesh_vpn', 'enabled') and 1 or 0
 
-
-local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level')
-if not syslog_level then
-  syslog_level = 'verbose'
-end
-
+local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 
 local methods
 
@@ -36,7 +28,6 @@ if site.fastd_mesh_vpn.configurable then
   if old_methods then
     has_null = lutil.contains(old_methods, 'null')
   end
-
 
   methods = {}
   if has_null then
