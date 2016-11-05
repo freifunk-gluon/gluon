@@ -28,11 +28,11 @@ If you upgrade using random master commits the nodes *will break* eventually.
 
 To subscribe to the list, send a message to:
 
-    gluon-subscribe@luebeck.freifunk.net
+    gluon+subscribe@luebeck.freifunk.net
 
 To remove your address from the list, just send a message to
 the address in the `List-Unsubscribe` header of any list
 message. If you haven't changed addresses since subscribing,
 you can also send a message to:
 
-    gluon-unsubscribe@luebeck.freifunk.net
+    gluon+unsubscribe@luebeck.freifunk.net
