@@ -15,7 +15,10 @@ users.remove_user('gluon-fastd')
 users.add_group('gluon-fastd', 800)
 
 
-local enabled = uci:get('fastd', 'mesh_vpn', 'enabled') and 1 or 0
+local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
+if not enabled then
+  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
+end
 
 local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 
