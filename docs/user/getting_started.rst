@@ -42,7 +42,7 @@ Building the images
 -------------------
 
 To build Gluon, first check out the repository. Replace *RELEASE* with the
-version you'd like to checkout, e.g. *v2016.2*.
+version you'd like to checkout, e.g. *v2016.2.x*.
 
 ::
 
