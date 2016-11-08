@@ -83,7 +83,7 @@ regdom \: optional
 
       regdom = 'DE'
 
-    Setting ``regdom`` in mandatory if ``wifi24`` or ``wifi5`` is defined.
+    Setting ``regdom`` is mandatory if ``wifi24`` or ``wifi5`` is defined.
 
 wifi24 \: optional
     WLAN configuration for 2.4 GHz devices.
