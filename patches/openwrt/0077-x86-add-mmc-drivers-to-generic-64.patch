@@ -1,0 +1,42 @@
+From: Andreas Ziegler <github@andreas-ziegler.de>
+Date: Wed, 9 Nov 2016 04:39:59 +0100
+Subject: x86: add mmc drivers to generic+64
+
+diff --git a/target/linux/x86/64/config-default b/target/linux/x86/64/config-default
+index 1fda585..9d2cfdb 100644
+--- a/target/linux/x86/64/config-default
++++ b/target/linux/x86/64/config-default
+@@ -117,6 +117,14 @@ CONFIG_LPC_ICH=y
+ CONFIG_MEMORY_BALLOON=y
+ # CONFIG_MEMORY_HOTPLUG is not set
+ CONFIG_MFD_CORE=y
++CONFIG_MMC=y
++CONFIG_MMC_BLOCK=y
++CONFIG_MMC_RICOH_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PCI=y
++# CONFIG_MMC_SDHCI_PLTFM is not set
++# CONFIG_MMC_TIFM_SD is not set
++# CONFIG_MMC_WBSD is not set
+ CONFIG_MODULES_USE_ELF_RELA=y
+ # CONFIG_MPSC is not set
+ CONFIG_MUTEX_SPIN_ON_OWNER=y
+diff --git a/target/linux/x86/generic/config-default b/target/linux/x86/generic/config-default
+index 4fc5131..1d72811 100644
+--- a/target/linux/x86/generic/config-default
++++ b/target/linux/x86/generic/config-default
+@@ -136,6 +136,14 @@ CONFIG_ISO9660_FS=y
+ # CONFIG_LEDS_CLEVO_MAIL is not set
+ # CONFIG_MDA_CONSOLE is not set
+ # CONFIG_MIXCOMWD is not set
++CONFIG_MMC=y
++CONFIG_MMC_BLOCK=y
++CONFIG_MMC_RICOH_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PCI=y
++# CONFIG_MMC_SDHCI_PLTFM is not set
++# CONFIG_MMC_TIFM_SD is not set
++# CONFIG_MMC_WBSD is not set
+ # CONFIG_MOUSE_BCM5974 is not set
+ # CONFIG_MOUSE_CYAPA is not set
+ CONFIG_MOUSE_PS2=y
