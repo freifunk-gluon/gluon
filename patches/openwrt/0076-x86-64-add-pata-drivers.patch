@@ -1,0 +1,23 @@
+From: Andreas Ziegler <github@andreas-ziegler.de>
+Date: Wed, 9 Nov 2016 04:39:16 +0100
+Subject: x86-64: add pata drivers
+
+diff --git a/target/linux/x86/64/config-default b/target/linux/x86/64/config-default
+index 1caad74..1fda585 100644
+--- a/target/linux/x86/64/config-default
++++ b/target/linux/x86/64/config-default
+@@ -131,6 +131,14 @@ CONFIG_PARAVIRT_CLOCK=y
+ # CONFIG_PARAVIRT_DEBUG is not set
+ # CONFIG_PARAVIRT_SPINLOCKS is not set
+ # CONFIG_PARAVIRT_TIME_ACCOUNTING is not set
++CONFIG_PATA_AMD=y
++CONFIG_PATA_ATIIXP=y
++CONFIG_PATA_LEGACY=y
++CONFIG_PATA_MPIIX=y
++CONFIG_PATA_OLDPIIX=y
++CONFIG_PATA_PLATFORM=y
++CONFIG_PATA_SC1200=y
++CONFIG_PATA_VIA=y
+ CONFIG_PCIEAER=y
+ CONFIG_PCIEPORTBUS=y
+ # CONFIG_PCI_IOAPIC is not set
