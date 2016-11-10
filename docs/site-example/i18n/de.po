@@ -31,6 +31,13 @@ msgstr ""
 "<%= pubkey %>"
 "</div>"
 
+msgid "gluon-config-mode:novpn"
+msgstr ""
+"<p><div class=\"the-key\">Du hast ausgewählt, <strong>kein Mesh-VPN</strong> "
+"zu nutzen. Dein Knoten kann also nur dann eine Verbindung zum Freifunk Netz "
+"aufbauen, wenn andere Freifunk-Router in WLAN-Reichweite sind."
+"</div></p>"
+
 msgid "gluon-config-mode:reboot"
 msgstr ""
 "<p>Dein Knoten startet gerade neu und wird anschließend versuchen, "
