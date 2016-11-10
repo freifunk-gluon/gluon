@@ -368,6 +368,9 @@ gluon-config-mode:welcome
 gluon-config-mode:pubkey
     Information about the public VPN key on the reboot page.
 
+gluon-config-mode:novpn
+    Information shown on the reboot page, if the mesh VPN was not selected.
+
 gluon-config-mode:altitude-label
     Label for the ``altitude`` field
 

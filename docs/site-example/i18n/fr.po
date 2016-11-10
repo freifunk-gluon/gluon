@@ -31,6 +31,12 @@ msgstr ""
 "<%= pubkey %>"
 "</div>"
 
+msgid "gluon-config-mode:novpn"
+msgstr ""
+"<p><div class=\"the-key\">Vous avez choisi de <strong>ne pas utiliser</strong> "
+"le réseau VPN. Votre nœud ne pourra se connecter au réseau Freifunk que si "
+"d'autres nœuds à portée ont déjà une connexion.</div></p>"
+
 msgid "gluon-config-mode:reboot"
 msgstr ""
 "<p>Votre nœud <em><%= pcdata(hostname) %></em> es en train de redémarrer et "
