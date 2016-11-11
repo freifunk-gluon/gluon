@@ -1,0 +1,26 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 11 Nov 2016 03:29:59 +0100
+Subject: ar71xx: generate region-coded factory images for TP-Link TL-WR841ND v11
+
+The latest stock firmwares for US and EU regions have started checking the
+region code.
+
+Tested-by: Andreas Ziegler <ml@andreas-ziegler.de>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE 9cac5e8be014b89326880ae5d7b885013614e0ca
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 9ac1d60..6346eb9 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -602,6 +602,9 @@ define Device/tl-wr841n-v11
+     BOARDNAME := TL-WR841N-v11
+     DEVICE_PROFILE := TLWR841
+     TPLINK_HWID := 0x08410011
++    IMAGES += factory-us.bin factory-eu.bin
++    IMAGE/factory-us.bin := append-rootfs | mktplinkfw factory -C US
++    IMAGE/factory-eu.bin := append-rootfs | mktplinkfw factory -C EU
+ endef
+ 
+ define Device/tl-wr842n-v2
