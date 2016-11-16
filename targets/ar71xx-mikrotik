@@ -1,0 +1,6 @@
+# Enable ath5k in addition to ath9k
+# ath5k cards are commonly used with Mikrotik hardware
+packages 'kmod-ath5k'
+
+factory_image mikrotik defaultnowifi -rootfs.tar.gz
+factory_image mikrotik -vmlinux-lzma.elf

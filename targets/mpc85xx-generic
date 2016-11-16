@@ -1,0 +1,7 @@
+# There is no per-device rootfs support on mpc85xx-generic yet
+config 'CONFIG_TARGET_mpc85xx_generic_TLWDR4900=y'
+
+
+# TP-Link
+
+device tp-link-tl-wdr4900-v1 tl-wdr4900-v1

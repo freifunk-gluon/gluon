@@ -24,10 +24,9 @@ end
 
 if site.opkg then
   if site.opkg.openwrt then
-    local url = replace_patterns(site.opkg.openwrt)
     local f = io.open('/etc/opkg/distfeeds.conf', 'w')
 
-    for _, v in ipairs(__GLUON_OPENWRT_FEEDS__) do
+    for _, v in ipairs("base", "packages", "luci", "routing", "telephony", "management") do
       f:write(replace_patterns(string.format('src/gz %%n_%s %s/%s\n', v, site.opkg.openwrt, v)))
     end
 

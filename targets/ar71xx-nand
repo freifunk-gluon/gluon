@@ -1,0 +1,9 @@
+# Netgear
+
+device netgear-wndr3700v4 wndr3700v4 WNDR3700V4
+factory -ubi-factory .img
+sysupgrade -squashfs-sysupgrade .tar
+
+device netgear-wndr4300 wndr4300 WNDR4300V1
+factory -ubi-factory .img
+sysupgrade -squashfs-sysupgrade .tar

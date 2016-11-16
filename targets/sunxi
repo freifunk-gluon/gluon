@@ -1,0 +1,5 @@
+device lemaker-banana-pi Bananapi
+device lemaker-banana-pro Bananapro
+device lemaker-lamobo-r1 Lamobo_R1
+#$(eval $(call GluonProfileFactorySuffix,Bananapi,-sdcard-vfat-ext4,.img.gz))
+#$(eval $(call GluonProfileSysupgradeSuffix,Bananapi))

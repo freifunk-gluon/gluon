@@ -2,10 +2,12 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-autoupdater
 PKG_VERSION:=4
-PKG_RELEASE:=$(GLUON_BRANCH)
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_BRANCH
 PKG_BUILD_DEPENDS := respondd
+
 
 include ../gluon.mk
 
@@ -15,6 +17,13 @@ define Package/gluon-autoupdater
   CATEGORY:=Gluon
   DEPENDS:=+gluon-core +libgluonutil +micrond +autoupdater
   TITLE:=Automatically update firmware
+endef
+
+define Package/gluon-autoupdater/config
+config GLUON_BRANCH
+        string "Gluon autoupdater branch"
+        depends on PACKAGE_gluon-autoupdater
+	default ""
 endef
 
 define Build/Prepare
@@ -34,10 +43,10 @@ define Package/gluon-autoupdater/install
 	$(INSTALL_DIR) $(1)/lib/gluon/respondd
 	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/autoupdater.so
 
-	if [ '$(GLUON_BRANCH)' ]; then \
-		$(INSTALL_DIR) $(1)/lib/gluon/autoupdater; \
-		echo '$(GLUON_BRANCH)' > $(1)/lib/gluon/autoupdater/default_branch; \
-	fi
+ifneq ($(CONFIG_GLUON_BRANCH),"")
+	$(INSTALL_DIR) $(1)/lib/gluon/autoupdater
+	echo '$(call qstrip,$(CONFIG_GLUON_BRANCH))' > $(1)/lib/gluon/autoupdater/default_branch
+endif
 endef
 
 define Package/gluon-autoupdater/postinst

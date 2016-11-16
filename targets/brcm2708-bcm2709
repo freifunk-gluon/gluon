@@ -1,0 +1,3 @@
+device raspberry-pi-2 rpi-2
+factory -ext4-sdcard .img.gz
+sysupgrade -ext4-sdcard .img.gz
