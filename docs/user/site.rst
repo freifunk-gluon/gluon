@@ -115,7 +115,8 @@ wifi24 \: optional
     An optional parameter ``vlan`` (integer) is supported.
 
     Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for
-    setting the default multicast datarate.
+    setting the multicast bitrate. Increasing the default value of 1000 to something
+    like 12000 is recommended.
     ::
 
        wifi24 = {
