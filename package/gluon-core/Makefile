@@ -38,6 +38,7 @@ define Package/gluon-core/install
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version
+	echo "$(GLUON_SITE_VERSION)" > $(1)/lib/gluon/site-version
 endef
 
 define Package/gluon-core/postinst
