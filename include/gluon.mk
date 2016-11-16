@@ -35,8 +35,11 @@ $(GLUON_SITEDIR)/site.mk:
 -include $(GLUON_SITEDIR)/site.mk
 
 
-GLUON_VERSION := $(shell cd $(GLUONDIR) && git describe --always 2>/dev/null || echo unknown)
+GLUON_VERSION := $(shell cd $(GLUONDIR) && git describe --always --dirty=+ 2>/dev/null || echo unknown)
 export GLUON_VERSION
+
+GLUON_SITE_VERSION := $(shell cd $(GLUON_SITEDIR) && git --git-dir=.git describe --always --dirty=+ 2>/dev/null || echo unknown)
+export GLUON_SITE_VERSION
 
 GLUON_LANGS ?= en
 export GLUON_LANGS
