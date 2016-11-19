@@ -34,21 +34,7 @@ rerun
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
 can be refered to by the branch `base`.
 
-::
-
-	make unpatch
-
-sets the repositories to the `base` branch,
-
-::
-
-	make patch
-
-re-applies the patches by resetting the `patched` branch to `base` and calling `git am`
-for the patch files. Calling `make` or a similar command after calling `make unpatch`
-is generally not a good idea.
-
-After new patches have been commited on top of the patched branch (or existing commits
+After new patches have been commited on top of the `patched` branch (or existing commits
 since the base commit have been edited or removed), the patch directories can be regenerated
 using
 
