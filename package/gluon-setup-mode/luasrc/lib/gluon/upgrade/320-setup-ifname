@@ -9,7 +9,7 @@ if sysconfig.setup_ifname then
 end
 
 if
-  platform.match('ar71xx', 'generic', {'cpe510', 'nanostation-m', 'nanostation-m-xw', 'unifi-outdoor-plus', 'uap-pro', 'unifiac-pro'}) or
+  platform.match('ar71xx', 'generic', {'cpe210', 'cpe510', 'nanostation-m', 'nanostation-m-xw', 'unifi-outdoor-plus', 'uap-pro', 'unifiac-pro'}) or
   platform.match('ar71xx', 'mikrotik')
 then
   sysconfig.setup_ifname = sysconfig.config_ifname or sysconfig.wan_ifname or sysconfig.lan_ifname
