@@ -415,6 +415,7 @@ package_install: FORCE
 	+$(GLUONMAKE) enable_initscripts
 
 	rm -f $(TARGET_DIR)/usr/lib/opkg/lists/* $(TARGET_DIR)/tmp/opkg.lock
+	rm -f $(TARGET_DIR)/usr/lib/opkg/info/*.postinst*
 
 # Remove opkg database when opkg is not intalled
 	if [ ! -x $(TARGET_DIR)/bin/opkg ]; then rm -rf $(TARGET_DIR)/usr/lib/opkg; fi
