@@ -16,7 +16,7 @@ if not (sysconfig.lan_ifname or sysconfig.wan_ifname) then
   local lan_ifname = uci:get('network', 'lan', 'ifname')
   local wan_ifname = uci:get('network', 'wan', 'ifname')
 
-  if platform.match('ar71xx', 'generic', {'cpe510', 'nanostation-m', 'nanostation-m-xw', 'unifi-outdoor-plus', 'uap-pro', 'unifiac-pro'}) then
+  if platform.match('ar71xx', 'generic', {'cpe210', 'cpe510', 'nanostation-m', 'nanostation-m-xw', 'unifi-outdoor-plus', 'uap-pro', 'unifiac-pro'}) then
     lan_ifname, wan_ifname = wan_ifname, lan_ifname
   end
 
