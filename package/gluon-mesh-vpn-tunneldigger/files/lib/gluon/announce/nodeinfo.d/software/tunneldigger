@@ -1,7 +1,0 @@
-local tunneldigger_enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
-
-if (tonumber(tunneldigger_enabled) == 1) then
-  return { enabled = true }
-else
-  return { enabled = false }
-end
