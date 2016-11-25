@@ -7,8 +7,9 @@ local M = {}
 function M.section(form)
   local s = form:section(cbi.SimpleSection, nil, i18n.translate(
     'If you want the location of your node to be displayed on the map, '
-      .. 'you can enter its coordinates here. Specifying the altitude '
-      .. 'is optional and should only be done if a proper value is known.'))
+      .. 'you can enter its coordinates here. Specifying the storey '
+      .. 'is optional and can be aproximated by an imaginary storey with '
+      .. '3m per storey.'))
 
 
   local o
@@ -31,8 +32,8 @@ function M.section(form)
   o.datatype = "float"
   o.description = i18n.translatef("e.g. %s", "10.689901")
 
-  o = s:option(cbi.Value, "_altitude", i18n.translate("Altitude"))
-  o.default = uci:get_first("gluon-node-info", "location", "altitude")
+  o = s:option(cbi.Value, "_storey", i18n.translate("Storey"))
+  o.default = uci:get_first("gluon-node-info", "location", "storey")
   o:depends("_location", "1")
   o.rmempty = true
   o.datatype = "float"
@@ -47,10 +48,10 @@ function M.handle(data)
   if data._location and data._latitude ~= nil and data._longitude ~= nil then
     uci:set("gluon-node-info", sname, "latitude", data._latitude:trim())
     uci:set("gluon-node-info", sname, "longitude", data._longitude:trim())
-    if data._altitude ~= nil then
-      uci:set("gluon-node-info", sname, "altitude", data._altitude:trim())
+    if data._storey ~= nil then
+      uci:set("gluon-node-info", sname, "storey", data._storey:trim())
     else
-      uci:delete("gluon-node-info", sname, "altitude")
+      uci:delete("gluon-node-info", sname, "storey")
     end
   end
   uci:save("gluon-node-info")

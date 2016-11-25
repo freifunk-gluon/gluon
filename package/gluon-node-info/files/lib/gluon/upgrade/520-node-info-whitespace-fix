@@ -3,7 +3,7 @@ local uci = require('luci.model.uci').cursor()
 
 local sname = uci:get_first('gluon-node-info', 'location')
 if sname then
-  local options = {'longitude', 'latitude', 'altitude'}
+  local options = {'longitude', 'latitude', 'storey'}
   for _, option in ipairs(options) do
     local value = uci:get('gluon-node-info', sname, option)
     if value then

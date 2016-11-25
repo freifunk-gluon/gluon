@@ -86,9 +86,9 @@ static struct json_object * get_location(struct uci_context *ctx, struct uci_pac
 	if (longitude)
 		json_object_object_add(ret, "longitude", longitude);
 
-	struct json_object *altitude = get_number(ctx, s, "altitude");
-	if (altitude)
-		json_object_object_add(ret, "altitude", altitude);
+	struct json_object *storey = get_number(ctx, s, "storey");
+	if (storey)
+		json_object_object_add(ret, "storey", storey);
 
 	return ret;
 }
