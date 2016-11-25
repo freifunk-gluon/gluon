@@ -1,0 +1,31 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local users = require 'gluon.users'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
+
+local tunneldigger_enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
+
+local tunneldigger_installed = util.exec('sh' , '-c', 'opkg list-installed | grep -e \'^tunneldigger\'')
+local fastd_installed = util.exec('sh' , '-c', 'opkg list-installed | grep -e \'^fastd\'')
+
+local enabled = 0
+
+if (tonumber(tunneldigger_enabled) == 1 or tonumber(fastd_enabled) == 1) then
+  enabled = 1
+end
+
+if (enabled == 1 and tunneldigger_installed == 0 and fastd_installed == 256) then
+  uci:set("tunneldigger", uci:get_first("tunneldigger", "broker"), "enabled", enabled)
+  uci:save("tunneldigger")
+  uci:commit("tunneldigger")
+elseif (enabled == 1 and tunneldigger_installed == 256 and fastd_installed == 0) then
+  uci:set("fastd", "mesh_vpn", "enabled", enabled)
+  uci:save("fastd")
+  uci:commit("fastd")
+end
+
