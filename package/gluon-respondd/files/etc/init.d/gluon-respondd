@@ -13,7 +13,7 @@ LOCK=/var/run/gluon-respondd.lock
 
 do_start() {
 	DEVS=""
-	for dev in "$( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device") br-wan br-client"
+	for dev in $( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device") br-wan br-client
 	do
 	  DEVS="$DEVS -i $dev"
 	done
