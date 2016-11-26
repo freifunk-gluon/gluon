@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -300,12 +301,18 @@ static void update_tqs() {
 	char *line = NULL;
 	size_t len = 0;
 	uint8_t tq;
+	bool update_originators = false;
+	int i;
 	macaddr_t mac_a, mac_b;
 
-	// reset values
+	// reset TQs
 	foreach(router, G.routers) {
 		router->tq = 0;
-		memset(router->originator, 0, sizeof(macaddr_t));
+		for (i = 0; i < 6; i++)
+			if (router->originator[i] != 0)
+				break;
+		if (i >= 6)
+			update_originators = true;
 	}
 
 	// TODO: Currently, we iterate over the whole list of routers all the
@@ -314,22 +321,24 @@ static void update_tqs() {
 	// could abort as soon as we hit the first router with the current
 	// information filled in.
 
-	// translate all router's MAC addresses to originators simultaneously
-	snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
-	f = fopen(path, "r");
-	while (getline(&line, &len, f) != -1) {
-		if (sscanf(line, " * " F_MAC " (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
-				F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12)
-			continue;
+	if (update_originators) {
+		// translate all router's MAC addresses to originators simultaneously
+		snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
+		f = fopen(path, "r");
+		while (getline(&line, &len, f) != -1) {
+			if (sscanf(line, " * " F_MAC " (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
+					F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12)
+				continue;
 
-		foreach(router, G.routers) {
-			if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
-				memcpy(router->originator, mac_b, sizeof(macaddr_t));
-				break; // foreach
+			foreach(router, G.routers) {
+				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
+					memcpy(router->originator, mac_b, sizeof(macaddr_t));
+					break; // foreach
+				}
 			}
 		}
+		fclose(f);
 	}
-	fclose(f);
 
 	// look up TQs of originators
 	G.max_tq = 0;
