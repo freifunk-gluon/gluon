@@ -326,7 +326,9 @@ static void update_tqs() {
 		snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
 		f = fopen(path, "r");
 		while (getline(&line, &len, f) != -1) {
-			if (sscanf(line, " * " F_MAC " (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
+			if (sscanf(line, " * " F_MAC " %*d (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
+					F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12
+				&& sscanf(line, " * " F_MAC " (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
 					F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12)
 				continue;
 
