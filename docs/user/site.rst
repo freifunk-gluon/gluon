@@ -367,6 +367,11 @@ gluon-config-mode:pubkey
 gluon-config-mode:reboot
     General information shown on the reboot page.
 
+But you can also change any of the default texts by adding the blocks to your PO files, for example::
+
+    msgid "Altitude"
+    msgstr "Höhe (3m pro Stock)"
+
 There is a POT file in the site example directory which can be used to create templates
 for the language files. The command ``msginit -l en -i ../../docs/site-example/i18n/gluon-site.pot``
 can be used from the ``i18n`` directory to create an initial PO file called ``en.po`` if the ``gettext``
