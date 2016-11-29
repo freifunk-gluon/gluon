@@ -29,8 +29,8 @@ endef
 define Package/gluon-mesh-batman-adv-core/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-batman-adv-core.so
+	$(INSTALL_DIR) $(1)/lib/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/respondd/mesh-batman-adv-core.so
 endef
 
 define Package/gluon-mesh-batman-adv-core/postinst
