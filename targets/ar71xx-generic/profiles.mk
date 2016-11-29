@@ -199,10 +199,22 @@ $(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m,ubiquiti-nanostation-m
 $(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m,ubiquiti-nanostation-m5))
 
 $(eval $(call GluonModel,UBNT,ubnt-loco-m-xw,ubiquiti-loco-m-xw))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-loco-m-xw,ubiquiti-nanostation-loco-m2-xw))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-loco-m-xw,ubiquiti-nanostation-loco-m5-xw))
+
 $(eval $(call GluonModel,UBNT,ubnt-nano-m-xw,ubiquiti-nanostation-m-xw))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m-xw,ubiquiti-nanostation-m2-xw))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-nanostation-m-xw,ubiquiti-nanostation-m5-xw))
+
 $(eval $(call GluonModel,UBNT,ubnt-rocket-m-xw,ubiquiti-rocket-m-xw))
-$(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-rocket-m-xw,ubiquiti-rocket-m2-xw))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-rocket-m-xw,ubiquiti-rocket-m5-xw))
+
 $(eval $(call GluonModel,UBNT,ubnt-unifi,ubiquiti-unifi))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-unifi,ubiquiti-unifi-ap))
+$(eval $(call GluonModelAlias,UBNT,ubiquiti-unifi,ubiquiti-unifi-ap-lr))
+
+$(eval $(call GluonModel,UBNT,ubnt-uap-pro,ubiquiti-unifi-ap-pro))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor,ubiquiti-unifiap-outdoor))
 $(eval $(call GluonModel,UBNT,ubnt-unifi-outdoor-plus,ubiquiti-unifiap-outdoor+))
 
