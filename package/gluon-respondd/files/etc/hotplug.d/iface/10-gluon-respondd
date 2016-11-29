@@ -3,7 +3,6 @@
 . /lib/functions/service.sh
 
 case "$ACTION" in
-	ifdown) ;;
 	ifup)
 		/etc/init.d/gluon-respondd restart_if_running &
 		;;
