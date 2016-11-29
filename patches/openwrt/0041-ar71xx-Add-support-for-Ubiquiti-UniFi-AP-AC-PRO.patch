@@ -54,7 +54,7 @@ index 2007042..b59844e 100755
  	ucidef_set_interfaces_lan_wan "eth0" "eth1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index a8d8896..28f07b8 100755
+index e4c6057..7434a93 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -905,6 +905,9 @@ ar71xx_board_detect() {
