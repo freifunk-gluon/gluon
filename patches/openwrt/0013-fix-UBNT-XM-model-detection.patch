@@ -5,7 +5,7 @@ Subject: fix UBNT XM model detection
 Signed-off-by: Neal Oakey <neal.oakey@bingo-ev.de>
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index a9dca58..7da8f54 100755
+index a9dca58..0aa1c86 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -64,6 +64,40 @@ wndr3700_board_detect() {
@@ -24,18 +24,18 @@ index a9dca58..7da8f54 100755
 +	case ${magic:0:3} in
 +		"e00"|\
 +		"e01"|\
-+		"e80") # It seams that there are different Versions of the Nanostation
++		"e80")
 +			model="Ubiquiti NanoStation M"
 +			;;
 +		"e0a")
 +			model="Ubiquiti NanoStation loco M"
 +			;;
-+		"e1b"|\ # Note: the M5 / M5 Ti haven't yet been verified!
-+		"e1d")  # Rocket Ti M
++		"e1b"|\
++		"e1d")
 +			model="Ubiquiti Rocket M"
 +			;;
 +		"e20"|\
-+		"e2d") # Bullet Ti M
++		"e2d")
 +			model="Ubiquiti Bullet M"
 +			;;
 +		"e30")

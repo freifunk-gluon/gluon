@@ -59,7 +59,7 @@ index ac3deb8..ca9c577 100755
  whr-hp-g300n |\
  whr-hp-gn |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index f689098..748b9c7 100755
+index f242980..fcd0bc3 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -869,6 +869,9 @@ ar71xx_board_detect() {
