@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title><%=escape(hostname)%> is rebooting</title>
     <link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
+    <script src="<%=media%>/qrcode.js"></script>
   </head>
   <body>
     <div id="maincontainer">
@@ -14,4 +15,5 @@
       </div>
     </div>
   </body>
+  <script> if(document.getElementById("qrdiv")) {doqr();}</script>
 </html>
