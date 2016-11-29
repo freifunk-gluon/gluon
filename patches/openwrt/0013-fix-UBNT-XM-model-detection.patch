@@ -30,8 +30,8 @@ index a9dca58..1985c88 100755
 +		"e0a")
 +			model="Ubiquiti NanoStation loco M"
 +			;;
-+		"e1b") # Note: the M5 has not been tested!
-+		       #       and the Ti Versions are still missing
++		"e1b"|\ # Note: the M5 / M5 Ti haven't yet been verified!
++		"e1d")  # Rocket Ti M
 +			model="Ubiquiti Rocket M"
 +			;;
 +		"e20"|\
