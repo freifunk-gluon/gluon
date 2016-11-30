@@ -1,0 +1,25 @@
+From 244c91fb9407a7e35f5bae8788f1896aa3f59be4 Mon Sep 17 00:00:00 2001
+From: RubenKelevra <ruben@vfn-nrw.de>
+Date: Sun, 17 Jul 2016 00:18:37 +0200
+Subject: [PATCH] add additional download url for busybox
+
+---
+ package/utils/busybox/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/package/utils/busybox/Makefile b/package/utils/busybox/Makefile
+index 9571d48..46e1d0e 100644
+--- a/package/utils/busybox/Makefile
++++ b/package/utils/busybox/Makefile
+@@ -14,7 +14,8 @@ PKG_FLAGS:=essential
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ PKG_SOURCE_URL:=http://www.busybox.net/downloads \
+-		http://distfiles.gentoo.org/distfiles/
++		http://distfiles.gentoo.org/distfiles/ \
++		http://sources.openelec.tv/mirror/busybox/
+ PKG_MD5SUM:=7925683d7dd105aabe9b6b618d48cc73
+ 
+ PKG_BUILD_DEPENDS:=BUSYBOX_USE_LIBRPC:librpc BUSYBOX_CONFIG_PAM:libpam
+-- 
+2.9.0
