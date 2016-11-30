@@ -16,7 +16,9 @@ if next_node.ip4 then
 	rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-source ' .. next_node.ip4 .. ' -j DROP')
 end
 
-rule('FORWARD --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
-rule('OUTPUT --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
-rule('FORWARD --logical-out br-client -o bat0 -p IPv6 --ip6-source ' .. next_node.ip6 .. ' -j DROP')
-rule('OUTPUT --logical-out br-client -o bat0 -p IPv6 --ip6-source ' .. next_node.ip6 .. ' -j DROP')
+if next_node.ip6 then
+	rule('FORWARD --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
+	rule('OUTPUT --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
+	rule('FORWARD --logical-out br-client -o bat0 -p IPv6 --ip6-source ' .. next_node.ip6 .. ' -j DROP')
+	rule('OUTPUT --logical-out br-client -o bat0 -p IPv6 --ip6-source ' .. next_node.ip6 .. ' -j DROP')
+end
