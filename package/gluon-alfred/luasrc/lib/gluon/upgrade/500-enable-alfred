@@ -7,7 +7,7 @@ local c = uci.cursor()
 c:delete('alfred', 'alfred')
 c:section('alfred', 'alfred', 'alfred',
 	  {
-		  interface = 'br-client',
+		  interface = 'local-node',
 		  mode = 'slave',
 		  batmanif = 'bat0',
 		  start_vis = '1',

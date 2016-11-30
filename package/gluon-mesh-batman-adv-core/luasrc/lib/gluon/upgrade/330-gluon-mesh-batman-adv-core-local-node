@@ -1,0 +1,77 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+
+local uci = require('luci.model.uci').cursor()
+
+
+uci:delete('network', 'local_node_dev')
+uci:section('network', 'device', 'local_node_dev',
+	{
+		name = 'local-node',
+		ifname = 'br-client',
+		type = 'macvlan',
+		macaddr = sysconfig.primary_mac,
+	}
+)
+
+uci:delete('network', 'local_node')
+uci:section('network', 'interface', 'local_node',
+	{
+		ifname = 'local-node',
+		proto = 'dhcpv6',
+		reqprefix = 'no',
+		peerdns = 1,
+		sourcefilter = 0,
+	}
+)
+
+uci:delete('network', 'local_node_route6')
+uci:section('network', 'route6', 'local_node_route6',
+	{
+		interface = 'local-node',
+		target = site.prefix6,
+		gateway = '::',
+	}
+)
+
+uci:save('network')
+
+
+uci:delete('firewall', 'local_node')
+uci:section('firewall', 'zone', 'local_node',
+	{
+		name = 'local_node',
+		network = {'local_node'},
+		input = 'ACCEPT',
+		output = 'ACCEPT',
+		forward = 'REJECT',
+	}
+)
+
+uci:section('firewall', 'rule', 'local_node_dns',
+	{
+		name = 'local_node_dns',
+		src = 'local_node',
+		dest_port = '53',
+		target = 'REJECT',
+	}
+)
+
+uci:save('firewall')
+
+
+uci:delete('dhcp', 'local_node')
+uci:section('dhcp', 'dhcp', 'local_node',
+	{
+		interface = 'local_node',
+		ignore = 1,
+	}
+)
+
+uci:save('dhcp')
+
+
+sysctl.set('net.ipv6.conf.local_node.forwarding', 0)

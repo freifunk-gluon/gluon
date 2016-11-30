@@ -23,11 +23,3 @@ need_boolean('mesh_on_lan', false)
 if need_table('mesh', nil, false) and  need_table('mesh.batman_adv', nil, false) then
   need_number('mesh.batman_adv.gw_sel_class', false)
 end
-
-need_string_match('next_node.mac', '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
-
-if need_string_match('next_node.ip4', '^%d+.%d+.%d+.%d+$', false) then
-  need_string_match('prefix4', '^%d+.%d+.%d+.%d+/%d+$')
-end
-
-need_string_match('next_node.ip6', '^[%x:]+$', false)

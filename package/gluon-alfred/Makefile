@@ -12,7 +12,7 @@ include $(GLUONDIR)/include/package.mk
 define Package/gluon-alfred
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info +micrond +alfred
+  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info gluon-mesh-batman-adv +micrond +alfred
   TITLE:=Configure alfred
 endef
 
