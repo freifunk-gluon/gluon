@@ -1,18 +1,20 @@
 local site = require 'gluon.site_config'
 local next_node = site.next_node
 
-rule('FORWARD --logical-in br-client -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
-rule('FORWARD --logical-in br-client -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
-
 rule('FORWARD --logical-out br-client -o bat0 -d ' .. next_node.mac .. ' -j DROP')
 rule('OUTPUT --logical-out br-client -o bat0 -d ' .. next_node.mac .. ' -j DROP')
 rule('FORWARD --logical-out br-client -o bat0 -s ' .. next_node.mac .. ' -j DROP')
 rule('OUTPUT --logical-out br-client -o bat0 -s ' .. next_node.mac .. ' -j DROP')
 
-rule('FORWARD --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
-rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
-rule('FORWARD --logical-out br-client -o bat0 -p IPv4 --ip-source ' .. next_node.ip4 .. ' -j DROP')
-rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-source ' .. next_node.ip4 .. ' -j DROP')
+if next_node.ip4 then
+	rule('FORWARD --logical-in br-client -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
+	rule('FORWARD --logical-in br-client -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
+
+	rule('FORWARD --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
+	rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
+	rule('FORWARD --logical-out br-client -o bat0 -p IPv4 --ip-source ' .. next_node.ip4 .. ' -j DROP')
+	rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-source ' .. next_node.ip4 .. ' -j DROP')
+end
 
 rule('FORWARD --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
 rule('OUTPUT --logical-out br-client -o bat0 -p IPv6 --ip6-destination ' .. next_node.ip6 .. ' -j DROP')
