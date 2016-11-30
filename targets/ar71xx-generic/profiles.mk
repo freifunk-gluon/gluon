@@ -310,6 +310,12 @@ $(eval $(call GluonProfileFactorySuffix,WNR2200,.img))
 endif
 
 
+# WNR2200
+$(eval $(call GluonProfile,WNR2200))
+$(eval $(call GluonModel,WNR2200,wnr2200-squashfs,netgear-wnr2200))
+$(eval $(call GluonProfileFactorySuffix,WNR2200,.img))
+
+
 ## Allnet
 
 # ALL0315N
