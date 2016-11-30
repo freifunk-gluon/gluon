@@ -46,7 +46,7 @@ ntp_server
     List of NTP servers available in your community or used by your community, e.g.:
     ::
 
-       ntp_servers = {'1.ntp.services.ffeh','2.ntp.services.ffeh'}
+       ntp_servers = {'1.ntp.services.ffac','2.ntp.services.ffac'}
 
     This NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
     explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
@@ -62,9 +62,9 @@ opkg \: optional
     ::
 
       opkg = {
-        openwrt = 'http://opkg.services.ffeh/openwrt/%n/%v/%S/packages',
+        openwrt = 'http://opkg.services.ffac/openwrt/%n/%v/%S/packages',
         extra = {
-          modules = 'http://opkg.services.ffeh/modules/gluon-%GS-%GR/%S',
+          modules = 'http://opkg.services.ffac/modules/gluon-%GS-%GR/%S',
         },
       }
 
@@ -124,10 +124,10 @@ wifi24 \: optional
          supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
          basic_rate = {6000, 9000, 18000, 36000, 54000},
          ap = {
-           ssid = 'entenhausen.freifunk.net',
+           ssid = 'alpha-centauri.freifunk.net',
          },
          mesh = {
-           id = 'entenhausen-mesh',
+           id = 'alpha-centauri-mesh',
            mcast_rate = 12000,
          },
          ibss = {
@@ -202,14 +202,14 @@ fastd_mesh_vpn
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
                 -- Having multiple domains prevents SPOF in freifunk.net
                 remotes = {
-                  'ipv4 "vpn1.entenhausen.freifunk.net" port 10000',
-                  'ipv4 "vpn1.entenhausener-freifunk.de" port 10000',
+                  'ipv4 "vpn1.alpha-centauri.freifunk.net" port 10000',
+                  'ipv4 "vpn1.alpha-centauri-freifunk.de" port 10000',
                 },
               },
               peer2 = {
                 key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
                 -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
-                remotes = {'"vpn2.entenhausen.freifunk.net" port 10000'},
+                remotes = {'"vpn2.alpha-centauri.freifunk.net" port 10000'},
               },
             },
             -- Optional: nested peer groups
@@ -262,7 +262,7 @@ autoupdater \: package
             name = 'stable',
             mirrors = {
               'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-              'http://autoupdate.entenhausen.freifunk.net/firmware/stable/sysupgrade/',
+              'http://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
             },
             -- Number of good signatures required
             good_signatures = 2,
@@ -317,9 +317,9 @@ legacy \: package
 
       legacy = {
              version_files = {'/etc/.freifunk_version_keep', '/etc/.eff_version_keep'},
-             old_files = {'/etc/config/config_mode', '/etc/config/ffeh', '/etc/config/freifunk'},
-             config_mode_configs = {'config_mode', 'ffeh', 'freifunk'},
-             fastd_configs = {'ffeh_mesh_vpn', 'mesh_vpn'},
+             old_files = {'/etc/config/config_mode', '/etc/config/ffac', '/etc/config/freifunk'},
+             config_mode_configs = {'config_mode', 'ffac', 'freifunk'},
+             fastd_configs = {'ffac_mesh_vpn', 'mesh_vpn'},
              mesh_ifname = 'freifunk',
              tc_configs = {'ffki', 'freifunk'},
              wifi_names = {'wifi_freifunk', 'wifi_freifunk5', 'wifi_mesh', 'wifi_mesh5'},
