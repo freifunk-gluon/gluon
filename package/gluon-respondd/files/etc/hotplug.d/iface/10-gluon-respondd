@@ -1,9 +1,0 @@
-#!/bin/sh
-
-. /lib/functions/service.sh
-
-case "$ACTION" in
-	ifup)
-		/etc/init.d/gluon-respondd restart_if_running &
-		;;
-esac
