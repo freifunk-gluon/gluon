@@ -364,6 +364,12 @@ gluon-config-mode:welcome
 gluon-config-mode:pubkey
     Information about the public VPN key on the reboot page.
 
+gluon-config-mode:altitude-label
+    Label for the ``altitude`` field
+    
+gluon-config-mode:altitude-help
+    Description for the usage of the ``altitude`` field
+
 gluon-config-mode:reboot
     General information shown on the reboot page.
 
