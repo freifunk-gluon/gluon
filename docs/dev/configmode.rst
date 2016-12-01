@@ -38,11 +38,11 @@ Config mode modules are located at `/lib/gluon/config-mode/wizard` and
 are executed in lexical order. If you take the standard set of modules, the
 order is, for wizard modules:
 
-  - 0050-autoupdater-info
   - 0100-hostname
   - 0300-mesh-vpn
   - 0400-geo-location
   - 0500-contact-info
+  - 0600-autoupdater-info
 
 While for reboot modules it is:
 
@@ -89,4 +89,3 @@ rendered or nil (i.e. the module is skipped)::
       luci.template.render_string("Hello World!")
     end
   end
-
