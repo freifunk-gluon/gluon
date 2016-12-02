@@ -1,0 +1,22 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+. /lib/functions/service.sh
+
+DEVLIST=/var/run/gluon-respondd.devs
+
+ifname_to_dev () {
+  json_load "$(ubus call network.interface.$1 status)"
+  json_get_var dev device
+
+  echo "$dev"
+}
+
+case "$ACTION" in
+  ifup)   
+    DEVICE="$(ifname_to_dev "$INTERFACE")"
+
+    [ "$DEVICE" == $(cat /lib/gluon/respondd/client.dev) ] && 
+      /etc/init.d/gluon-respondd restart_if_running &
+    ;;
+esac
