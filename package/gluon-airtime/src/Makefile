@@ -14,10 +14,10 @@ all: respondd.so
 %.c: %.h
 
 # sudo apt install libnl-3-dev
-airtime-test: airtime.c airtime-test.c
+airtime-test: airtime.c ifaces.c airtime-test.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ $^ $(LDLIBS)
 
-respondd.so: airtime.c respondd.c
+respondd.so: airtime.c ifaces.c respondd.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ $^ $(LDLIBS)
 
 clean:

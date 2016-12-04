@@ -1,19 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "airtime.h"
+#include "ifaces.h"
 
 void print_result(struct airtime_result *);
 
 int main(int argc, char *argv[]) {
-	struct airtime *a;
+	struct airtime_result a;
+	struct iface_list *ifaces;
+	void *freeptr;
 
-	if (argc != 3) {
-		fprintf(stderr,"Usage: %s <wifi1> <wifi2>\n", argv[0]);
-		return 1;
+	ifaces = get_ifaces();
+	while (ifaces != NULL) {
+		get_airtime(&a, ifaces->ifx);
+		print_result(&a);
+		freeptr = ifaces;
+		ifaces = ifaces->next;
+		free(freeptr);
 	}
-
-	a = get_airtime(argv[1], argv[2]);
-	print_result(&a->radio0);
-	print_result(&a->radio1);
 }
 
 void print_result(struct airtime_result *result){

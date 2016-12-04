@@ -11,9 +11,4 @@ struct airtime_result {
 	uint8_t  noise;
 };
 
-struct airtime {
-	struct airtime_result radio0;
-	struct airtime_result radio1;
-};
-
-struct airtime* get_airtime(const char *radio0, const char *radio1);
+int get_airtime(struct airtime_result *result, int ifx);

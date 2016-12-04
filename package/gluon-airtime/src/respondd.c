@@ -4,9 +4,7 @@
 #include <respondd.h>
 
 #include "airtime.h"
-
-static const char const *wifi_0_dev = "client0";
-static const char const *wifi_1_dev = "client1";
+#include "ifaces.h"
 
 void fill_airtime_json(struct airtime_result *air, struct json_object *wireless) {
 	struct json_object *obj = NULL;
@@ -26,12 +24,10 @@ void fill_airtime_json(struct airtime_result *air, struct json_object *wireless)
 }
 
 static struct json_object *respondd_provider_statistics(void) {
-	struct airtime *airtime = NULL;
+	struct airtime_result airtime;
 	struct json_object *result, *wireless;
-
-	airtime = get_airtime(wifi_0_dev, wifi_1_dev);
-	if (!airtime)
-		return NULL;
+	struct iface_list *ifaces;
+	void *freeptr;
 
 	result = json_object_new_object();
 	if (!result)
@@ -43,11 +39,14 @@ static struct json_object *respondd_provider_statistics(void) {
 		return NULL;
 	}
 
-	if (airtime->radio0.frequency)
-		fill_airtime_json(&airtime->radio0, wireless);
-
-	if (airtime->radio1.frequency)
-		fill_airtime_json(&airtime->radio1, wireless);
+	ifaces = get_ifaces();
+	while (ifaces != NULL) {
+		get_airtime(&airtime, ifaces->ifx);
+		fill_airtime_json(&airtime, wireless);
+		freeptr = ifaces;
+		ifaces = ifaces->next;
+		free(freeptr);
+	}
 
 	json_object_object_add(result, "wireless", wireless);
 	return result;

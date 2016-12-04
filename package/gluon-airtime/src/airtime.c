@@ -33,11 +33,6 @@
 
 #include "airtime.h"
 
-static struct airtime cur_airtime = {
-	{ .frequency = 0 },
-	{ .frequency = 0 },
-};
-
 /*
  * Excerpt from nl80211.h:
  * enum nl80211_survey_info - survey information
@@ -103,9 +98,9 @@ abort:
 	return NL_SKIP;
 }
 
-static int get_airtime_for_interface(struct airtime_result *result, const char *interface) {
+int get_airtime(struct airtime_result *result, int ifx) {
 	int error = 0;
-	int ctrl, ifx;
+	int ctrl;
 	struct nl_sock *sk = NULL;
 	struct nl_msg *msg = NULL;
 
@@ -117,12 +112,6 @@ static int get_airtime_for_interface(struct airtime_result *result, const char *
 	CHECK(ctrl = genl_ctrl_resolve(sk, NL80211_GENL_NAME));
 	CHECK(nl_socket_modify_cb(sk, NL_CB_VALID, NL_CB_CUSTOM, survey_airtime_handler, result) == 0);
 	CHECK(msg = nlmsg_alloc());
-
-	/* device does not exist */
-	if (!(ifx = if_nametoindex(interface))){
-		error = -1;
-		goto out;
-	}
 
 	/* TODO: check return? */
 	genlmsg_put(msg, 0, 0, ctrl, 0, NLM_F_DUMP, NL80211_CMD_GET_SURVEY, 0);
@@ -143,11 +132,4 @@ out:
 		nl_socket_free(sk);
 
 	return error;
-}
-
-struct airtime* get_airtime(const char *wifi_0_dev, const char *wifi_1_dev) {
-	get_airtime_for_interface(&cur_airtime.radio0, wifi_0_dev);
-	get_airtime_for_interface(&cur_airtime.radio1, wifi_1_dev);
-
-	return &cur_airtime;
 }
