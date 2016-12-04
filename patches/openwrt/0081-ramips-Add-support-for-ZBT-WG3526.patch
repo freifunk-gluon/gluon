@@ -1,0 +1,264 @@
+From: John Crispin <blogic@openwrt.org>
+Date: Thu, 21 Apr 2016 19:47:08 +0000
+Subject: ramips: Add support for ZBT WG3526
+
+The WG3526 is the follow-up to the 2626 and is mostly the same, with the
+excaption that the mt7602 has been replaced with the mt7603. The internal wifi
+setup has also changed slightly. Based on my tests, everything that worked on
+the 2626 works on the 3526 and with roughly the same performance.
+
+v1->v2:
+* Remove some references to 2626 that I had missed in the dts.
+
+v2->v3:
+* Update patch to match new file structure.
+* Removed SD driver to be consistent with other MT7621 targets.
+
+Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
+
+git-svn-id: svn://svn.openwrt.org/openwrt/trunk@49213 3c298f89-4303-0410-b956-a3cf2f4a3e73
+
+diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
+index 4e6e507..d287002 100755
+--- a/target/linux/ramips/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/base-files/etc/board.d/02_network
+@@ -147,7 +147,8 @@ ramips_setup_interfaces()
+ 	wt1520 | \
+ 	xiaomi-miwifi-mini |\
+ 	y1|\
+-	zbt-wg2626)
++	zbt-wg2626|\
++	zbt-wg3526)
+ 		ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+ 		ucidef_add_switch "switch0" "1" "1"
+ 		ucidef_add_switch_vlan "switch0" "1" "0 1 2 3 6t"
+diff --git a/target/linux/ramips/base-files/etc/diag.sh b/target/linux/ramips/base-files/etc/diag.sh
+index 37360a4..90e6561 100644
+--- a/target/linux/ramips/base-files/etc/diag.sh
++++ b/target/linux/ramips/base-files/etc/diag.sh
+@@ -15,6 +15,10 @@ get_status_led() {
+ 	ai-br100)
+ 		status_led="aigale:blue:wlan"
+ 		;;
++	zbt-wg2626|\
++	zbt-wg3526)
++		status_led="zbt:green:status"
++		;;
+ 	ar670w)
+ 		status_led="ar670w:green:power"
+ 		;;
+diff --git a/target/linux/ramips/base-files/lib/ramips.sh b/target/linux/ramips/base-files/lib/ramips.sh
+index 8dc05b0..8535785 100755
+--- a/target/linux/ramips/base-files/lib/ramips.sh
++++ b/target/linux/ramips/base-files/lib/ramips.sh
+@@ -427,6 +427,9 @@ ramips_board_detect() {
+ 	*"Mediatek MT7628AN evaluation board")
+ 		name="mt7628"
+ 		;;
++	*"ZBT-WG3526")
++		name="zbt-wg3526"
++		;;
+ 	*"MediaTek LinkIt Smart 7688")
+ 		linkit="$(dd bs=1 skip=1024 count=12 if=/dev/mtd2 2> /dev/null)"
+ 		if [ "${linkit}" = "LINKITS7688D" ]; then
+diff --git a/target/linux/ramips/base-files/lib/upgrade/platform.sh b/target/linux/ramips/base-files/lib/upgrade/platform.sh
+index a3d0175..084e72a 100755
+--- a/target/linux/ramips/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ramips/base-files/lib/upgrade/platform.sh
+@@ -14,6 +14,7 @@ platform_check_image() {
+ 	[ "$#" -gt 1 ] && return 1
+ 
+ 	case "$board" in
++<<<<<<< HEAD
+ 	3g-6200n | \
+ 	3g-6200nl | \
+ 	3g150b | \
+@@ -129,6 +130,8 @@ platform_check_image() {
+ 	y1s |\
+ 	zbt-wa05 |\
+ 	zbt-wg2626 |\
++	zbt-wg3526 |\
++	zbt-wr8305rt |\
+ 	zte-q7)
+ 		[ "$magic" != "27051956" ] && {
+ 			echo "Invalid image type."
+diff --git a/target/linux/ramips/dts/ZBT-WG3526.dts b/target/linux/ramips/dts/ZBT-WG3526.dts
+new file mode 100644
+index 0000000..b62471b
+--- /dev/null
++++ b/target/linux/ramips/dts/ZBT-WG3526.dts
+@@ -0,0 +1,127 @@
++/dts-v1/;
++
++/include/ "mt7621.dtsi"
++
++/ {
++	compatible = "mediatek,mt7621-eval-board", "mediatek,mt7621-soc";
++	model = "ZBT-WG3526";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x1c000000>, <0x20000000 0x4000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++	};
++
++	sdhci@10130000 {
++		status = "okay";
++	};
++
++	palmbus@1E000000 {
++		spi@b00 {
++			status = "okay";
++
++			m25p80@0 {
++				#address-cells = <1>;
++				#size-cells = <1>;
++				compatible = "jedec,spi-nor";
++				reg = <0 0>;
++				linux,modalias = "m25p80";
++				spi-max-frequency = <10000000>;
++
++				partition@0 {
++					label = "u-boot";
++					reg = <0x0 0x30000>;
++					read-only;
++				};
++
++				partition@30000 {
++					label = "u-boot-env";
++					reg = <0x30000 0x10000>;
++					read-only;
++				};
++
++				factory: partition@40000 {
++					label = "factory";
++					reg = <0x40000 0x10000>;
++					read-only;
++				};
++
++				partition@50000 {
++					label = "firmware";
++					reg = <0x50000 0xfb0000>;
++				};
++
++			};
++		};
++
++		i2c@900 {
++			compatible = "ralink,i2c-mt7621";
++			reg = <0x900 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c_pins>;
++			status = "okay";
++		};
++	};
++
++	pcie@1e140000 {
++		status = "okay";
++
++		pcie0 {
++			mt76@0,0 {
++				reg = <0x0000 0 0 0 0>;
++				device_type = "pci";
++				mediatek,mtd-eeprom = <&factory 0x0000>;
++				mediatek,5ghz = <0>;
++			};
++		};
++
++		pcie1 {
++			mt76@1,0 {
++				reg = <0x0000 0 0 0 0>;
++				device_type = "pci";
++				mediatek,mtd-eeprom = <&factory 0x8000>;
++				mediatek,2ghz = <0>;
++			};
++		};
++	};
++
++	ethernet@1e100000 {
++		mtd-mac-address = <&factory 0xe000>;
++	};
++
++	gpio-keys-polled {
++		compatible = "gpio-keys-polled";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		poll-interval = <20>;
++
++		reset {
++			label = "reset";
++			gpios = <&gpio0 18 1>;
++			linux,code = <0x198>;
++		};
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++
++		status {
++			label = "zbt-wg3526:green:status";
++			gpios = <&gpio0 24 1>;
++		};
++	};
++
++	pinctrl {
++		state_default: pinctrl0 {
++			gpio {
++				ralink,group = "wdt", "rgmii2", "wdt rst", "jtag", "mdio";
++				ralink,function = "gpio";
++			};
++		};
++	};
++};
+diff --git a/target/linux/ramips/image/Makefile b/target/linux/ramips/image/Makefile
+index c4f4028..80c2d8e 100644
+--- a/target/linux/ramips/image/Makefile
++++ b/target/linux/ramips/image/Makefile
+@@ -956,7 +956,7 @@ endif
+ #
+ 
+ ifeq ($(SUBTARGET),mt7621)
+-  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500 zbt-wg2626
++  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500 zbt-wg2626 zbt-wg3526
+ endif
+ 
+ define Device/mt7621
+@@ -1007,6 +1007,12 @@ define Device/zbt-wg2626
+   IMAGE_SIZE := $(ralink_default_fw_size_16M)
+ endef
+ 
++define Device/zbt-wg3526
++  DTS := ZBT-WG3526
++  IMAGE_SIZE := $(ralink_default_fw_size_16M)
++endef
++TARGET_DEVICES += zbt-wg3526
++
+ #
+ # MT7628 Profiles
+ #
+diff --git a/target/linux/ramips/mt7621/profiles/zbt.mk b/target/linux/ramips/mt7621/profiles/zbt.mk
+index cf9beff..0a8fe0c 100644
+--- a/target/linux/ramips/mt7621/profiles/zbt.mk
++++ b/target/linux/ramips/mt7621/profiles/zbt.mk
+@@ -17,3 +17,16 @@ define Profile/ZBT-WG2626/Description
+ 	Package set for ZBT-WG2626 device
+ endef
+ $(eval $(call Profile,ZBT-WG2626))
++
++
++define Profile/ZBT-WG3526
++	NAME:=ZBT-WG3526 Device
++	PACKAGES:=\
++		kmod-usb-core kmod-usb3 \
++		kmod-ledtrig-usbdev kmod-ata-core kmod-ata-ahci
++endef
++
++define Profile/ZBT-WG3526/Description
++	Package set for ZBT-WG3526 device
++endef
++$(eval $(call Profile,ZBT-WG3526))
