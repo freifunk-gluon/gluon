@@ -11,12 +11,14 @@ CFLAGS         += -pedantic
 
 all: respondd.so
 
-# sudo apt install libnl-3-dev
-airtime-test:	airtime-test.c airtime.c airtime.h
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ airtime.c airtime-test.c $(LDLIBS)
+%.c: %.h
 
-respondd.so: respondd.c airtime.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ airtime.c respondd.c $(LDLIBS)
+# sudo apt install libnl-3-dev
+airtime-test: airtime.c airtime-test.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ $^ $(LDLIBS)
+
+respondd.so: airtime.c respondd.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -lnl-tiny -o $@ $^ $(LDLIBS)
 
 clean:
 	rm -rf *.so airtime-test
