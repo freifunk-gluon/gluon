@@ -2,18 +2,13 @@
 
 #include <stdint.h>
 
-struct airtime_time {
-	uint64_t current;
-	uint64_t offset;
-};
-
 struct airtime_result {
+	uint64_t active_time;
+	uint64_t busy_time;
+	uint64_t rx_time;
+	uint64_t tx_time;
 	uint32_t frequency;
 	uint8_t  noise;
-	struct airtime_time active_time;
-	struct airtime_time busy_time;
-	struct airtime_time rx_time;
-	struct airtime_time tx_time;
 };
 
 struct airtime {

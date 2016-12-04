@@ -64,8 +64,7 @@ static struct airtime cur_airtime = {
  * @__NL80211_SURVEY_INFO_AFTER_LAST: internal use
  */
 
-static int survey_airtime_handler(struct nl_msg *msg, void *arg)
-{
+static int survey_airtime_handler(struct nl_msg *msg, void *arg) {
 	struct nlattr *tb[NL80211_ATTR_MAX + 1];
 	struct nlattr *sinfo[NL80211_SURVEY_INFO_MAX + 1];
 	static struct nla_policy survey_policy[NL80211_SURVEY_INFO_MAX + 1] = {
@@ -76,7 +75,7 @@ static int survey_airtime_handler(struct nl_msg *msg, void *arg)
 	struct genlmsghdr *gnlh = nlmsg_data(nlmsg_hdr(msg));
 	struct airtime_result *result = (struct airtime_result *) arg;
 
-	nla_parse(tb, NL80211_ATTR_MAX, genlmsg_attrdata(gnlh, 0),genlmsg_attrlen(gnlh, 0), NULL);
+	nla_parse(tb, NL80211_ATTR_MAX, genlmsg_attrdata(gnlh, 0), genlmsg_attrlen(gnlh, 0), NULL);
 
 	if (!tb[NL80211_ATTR_SURVEY_INFO]) {
 		fprintf(stderr, "survey data missing!\n");
@@ -93,27 +92,12 @@ static int survey_airtime_handler(struct nl_msg *msg, void *arg)
 		goto abort;
 	}
 
-	uint64_t frequency = nla_get_u32(sinfo[NL80211_SURVEY_INFO_FREQUENCY]);
-
-	if (frequency != result->frequency) {
-		// channel changed, restart at zero
-		result->frequency          = frequency;
-		result->active_time.offset = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME]);
-		result->busy_time.offset   = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_BUSY]);
-		result->rx_time.offset     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_RX]);
-		result->tx_time.offset     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_TX]);
-		result->active_time.current = 0;
-		result->busy_time.current   = 0;
-		result->rx_time.current     = 0;
-		result->tx_time.current     = 0;
-	} else {
-		result->active_time.current = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME]) - result->active_time.offset;
-		result->busy_time.current   = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_BUSY]) - result->busy_time.offset;
-		result->rx_time.current     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_RX]) - result->rx_time.offset;
-		result->tx_time.current     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_TX]) - result->tx_time.offset;
-	}
-
-	result->noise = nla_get_u8(sinfo[NL80211_SURVEY_INFO_NOISE]);
+	result->frequency   = nla_get_u32(sinfo[NL80211_SURVEY_INFO_FREQUENCY]);
+	result->active_time = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME]);
+	result->busy_time   = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_BUSY]);
+	result->rx_time     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_RX]);
+	result->tx_time     = nla_get_u64(sinfo[NL80211_SURVEY_INFO_CHANNEL_TIME_TX]);
+	result->noise       = nla_get_u8(sinfo[NL80211_SURVEY_INFO_NOISE]);
 
 abort:
 	return NL_SKIP;
@@ -121,10 +105,9 @@ abort:
 
 static int get_airtime_for_interface(struct airtime_result *result, const char *interface) {
 	int error = 0;
-	int ctrl, ifx, flags;
+	int ctrl, ifx;
 	struct nl_sock *sk = NULL;
 	struct nl_msg *msg = NULL;
-	enum nl80211_commands cmd;
 
 #define CHECK(x) { if (!(x)) { fprintf(stderr, "airtime.c: error on line %d\n",  __LINE__); error = 1; goto out; } }
 
@@ -141,12 +124,8 @@ static int get_airtime_for_interface(struct airtime_result *result, const char *
 		goto out;
 	}
 
-	cmd = NL80211_CMD_GET_SURVEY;
-	flags = 0;
-	flags |= NLM_F_DUMP;
-
 	/* TODO: check return? */
-	genlmsg_put(msg, 0, 0, ctrl, 0, flags, cmd, 0);
+	genlmsg_put(msg, 0, 0, ctrl, 0, NLM_F_DUMP, NL80211_CMD_GET_SURVEY, 0);
 
 	NLA_PUT_U32(msg, NL80211_ATTR_IFINDEX, ifx);
 

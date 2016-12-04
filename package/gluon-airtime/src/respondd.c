@@ -8,36 +8,26 @@
 static const char const *wifi_0_dev = "client0";
 static const char const *wifi_1_dev = "client1";
 
-void fill_airtime_json(struct airtime_result *air, struct json_object* wireless){
-	struct json_object *result = NULL, *obj = NULL;
+void fill_airtime_json(struct airtime_result *air, struct json_object *wireless) {
+	struct json_object *obj = NULL;
 
 	obj = json_object_new_object();
 	if(!obj)
-		goto error;
-#define JSON_ADD_INT64(value,key) {result = json_object_new_int64(value); json_object_object_add(obj,key,result);}
-	result = json_object_new_int(air->frequency);
-	if(!result)
-		goto error;
-	json_object_object_add(obj,"frequency",result);
+		return;
 
-	JSON_ADD_INT64(air->active_time.current,"active")
-	JSON_ADD_INT64(air->busy_time.current,"busy")
-	JSON_ADD_INT64(air->rx_time.current,"rx")
-	JSON_ADD_INT64(air->tx_time.current,"tx")
+	json_object_object_add(obj, "frequency", json_object_new_int(air->frequency));
+	json_object_object_add(obj, "active",    json_object_new_int64(air->active_time));
+	json_object_object_add(obj, "busy",      json_object_new_int64(air->busy_time));
+	json_object_object_add(obj, "rx",        json_object_new_int64(air->rx_time));
+	json_object_object_add(obj, "tx",        json_object_new_int64(air->tx_time));
+	json_object_object_add(obj, "noise",     json_object_new_int(air->noise));
 
-	result = json_object_new_int(air->noise);
-	json_object_object_add(obj,"noise",result);
-
-error:
-	if(air->frequency >= 2400  && air->frequency < 2500)
-		json_object_object_add(wireless, "airtime24", obj);
-	else if (air->frequency >= 5000 && air->frequency < 6000)
-		json_object_object_add(wireless, "airtime5", obj);
+	json_object_array_add(wireless, obj);
 }
 
 static struct json_object *respondd_provider_statistics(void) {
 	struct airtime *airtime = NULL;
-	struct json_object *result = NULL, *wireless = NULL;
+	struct json_object *result, *wireless;
 
 	airtime = get_airtime(wifi_0_dev, wifi_1_dev);
 	if (!airtime)
@@ -47,8 +37,8 @@ static struct json_object *respondd_provider_statistics(void) {
 	if (!result)
 		return NULL;
 
-	wireless = json_object_new_object();
-	if (!wireless){
+	wireless = json_object_new_array();
+	if (!wireless) {
 		json_object_put(result);
 		return NULL;
 	}
