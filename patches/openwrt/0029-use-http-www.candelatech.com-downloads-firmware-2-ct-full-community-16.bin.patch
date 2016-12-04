@@ -1,0 +1,36 @@
+From: Jan Niehusmann <jan@gondor.com>
+Date: Wed, 15 Jun 2016 18:01:53 +0200
+Subject: use http://www.candelatech.com/downloads/firmware-2-ct-full-community-16.bin
+
+diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
+index 7d4d449..5735ae1 100644
+--- a/package/firmware/ath10k-firmware/Makefile
++++ b/package/firmware/ath10k-firmware/Makefile
+@@ -51,15 +51,15 @@ $(Package/ath10k-firmware-default)
+   CONFLICTS:=ath10k-firmware-qca988x
+ endef
+ 
+-QCA988X_CT_FIRMWARE_FILE:=firmware-5-ct-full-community.bin
++QCA988X_CT_FIRMWARE_FILE:=firmware-2-ct-full-community-16.bin
+ 
+ define Download/ath10k-firmware-qca988x-ct
+   # See http://www.candelatech.com/ath10k.php
+   #URL:=http://www.candelatech.com/downloads/ath10k-10-2/
+   # Update to beta version (will switch back to official URL after v2 release)
+-  URL:=https://home.universe-factory.net/neoraider/
++  URL:=http://www.candelatech.com/downloads/
+   FILE:=$(QCA988X_CT_FIRMWARE_FILE)
+-  MD5SUM:=9aa205cfd6b98e695ca8e9ae6d1bcb6b
++  MD5SUM:=5b651c0458bcf5c20701308b5e519976
+ endef
+ $(eval $(call Download,ath10k-firmware-qca988x-ct))
+ 
+@@ -106,7 +106,7 @@ define Package/ath10k-firmware-qca988x-ct/install
+ 		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/
+ 	$(INSTALL_DATA) \
+ 		$(DL_DIR)/$(QCA988X_CT_FIRMWARE_FILE) \
+-		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-5.bin
++		$(1)/lib/firmware/ath10k/QCA988X/hw2.0/firmware-2.bin
+ endef
+ 
+ define Package/ath10k-firmware-qca6174/install
