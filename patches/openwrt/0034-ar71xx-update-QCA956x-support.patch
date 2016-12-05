@@ -380,7 +380,7 @@ index 2bb4286..61b8976 100644
  +
   extern void __iomem *ath79_ddr_base;
 diff --git a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
-index a36b8c3..fa4eba2 100644
+index a36b8c3..44c9c62 100644
 --- a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
 @@ -9,8 +9,8 @@
@@ -390,7 +390,7 @@ index a36b8c3..fa4eba2 100644
 - 		 soc_is_qca953x() || soc_is_qca956x())
 -@@ -185,15 +186,27 @@ void __init ath79_gpio_output_select(uns
 + 		 soc_is_qca953x() ||
-+@@ -187,15 +188,31 @@ void __init ath79_gpio_output_select(uns
++@@ -187,15 +188,30 @@ void __init ath79_gpio_output_select(uns
   {
   	void __iomem *base = ath79_gpio_base;
   	unsigned long flags;
@@ -399,7 +399,7 @@ index a36b8c3..fa4eba2 100644
   	u32 t, s;
   
 --	BUG_ON(!soc_is_ar934x() && !soc_is_qca953x());
-+ 	BUG_ON(!soc_is_ar934x() && !soc_is_qca953x() && !soc_is_qca956x());
++-	BUG_ON(!soc_is_ar934x() && !soc_is_qca953x() && !soc_is_qca956x());
  +	if (soc_is_ar934x()) {
  +		gpio_count = AR934X_GPIO_COUNT;
  +		reg_base = AR934X_GPIO_REG_OUT_FUNC0;
