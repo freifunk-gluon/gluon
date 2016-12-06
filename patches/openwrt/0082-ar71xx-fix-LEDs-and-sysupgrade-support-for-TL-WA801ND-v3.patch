@@ -1,0 +1,70 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 6 Dec 2016 16:18:49 +0100
+Subject: ar71xx: fix LEDs and sysupgrade support for TL-WA801ND v3
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 2c5d6af..6b0caa6 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -274,6 +274,7 @@ get_status_led() {
+ 	tl-wr1043nd-v2 | \
+ 	tl-wr741nd | \
+ 	tl-wr741nd-v4 | \
++	tl-wa801nd-v3 | \
+ 	tl-wr841n-v1 | \
+ 	tl-wr841n-v7 | \
+ 	tl-wr841n-v8 | \
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index 2a0f996..849755f 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -536,6 +536,11 @@ tl-wa901nd-v3)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+ 
++tl-wa801nd-v3)
++	ucidef_set_led_netdev "lan" "LAN" "tp-link:green:lan" "eth1"
++	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
++	;;
++
+ tl-wr941nd | \
+ tl-wr1041n-v2)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 4003b21..ee2e596 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -349,6 +349,7 @@ platform_check_image() {
+ 	tl-wa850re | \
+ 	tl-wa860re | \
+ 	tl-wa801nd-v2 | \
++	tl-wa801nd-v3 | \
+ 	tl-wa901nd | \
+ 	tl-wa901nd-v2 | \
+ 	tl-wa901nd-v3 | \
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
+index 39cdb10..054c14e 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
+@@ -24,7 +24,7 @@
+ #include "machtypes.h"
+ 
+ #define TL_WA801NDV3_GPIO_LED_WLAN	12
+-#define TL_WA801NDV3_GPIO_LED_QSS	13
++#define TL_WA801NDV3_GPIO_LED_SYSTEM	13
+ #define TL_WA801NDV3_GPIO_LED_SECURITY_RED 11
+ #define TL_WA801NDV3_GPIO_LED_SECURITY_GREEN 15
+ #define TL_WA801NDV3_GPIO_LED_LAN 3
+@@ -46,8 +46,8 @@ static struct flash_platform_data tl_wa801n_v3_flash_data = {
+ 
+ static struct gpio_led tl_wa801n_v3_leds_gpio[] __initdata = {
+   {
+-		.name		= "tp-link:green:qss",
+-		.gpio		= TL_WA801NDV3_GPIO_LED_QSS,
++		.name		= "tp-link:green:system",
++		.gpio		= TL_WA801NDV3_GPIO_LED_SYSTEM,
+ 		.active_low	= 1,
+ 	}, {
+ 		.name		= "tp-link:green:lan",
