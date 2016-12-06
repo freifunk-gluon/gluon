@@ -2,17 +2,15 @@
 
 . /lib/functions/service.sh
 
-DEVLIST=/var/run/gluon-respondd.devs
-
 ifname_to_dev () {
-  ifstatus client "$1"|jsonfilter -e "@.device"
+	ifstatus client "$1"|jsonfilter -e "@.device"
 }
 
 case "$ACTION" in
-  ifup)   
-    DEVICE="$(ifname_to_dev "$INTERFACE")"
+	ifup)   
+		DEVICE="$(ifname_to_dev "$INTERFACE")"
 
-    [ "$DEVICE" != "$(cat /lib/gluon/respondd/client.dev)" ] || 
-      /etc/init.d/gluon-respondd restart_if_running &
-    ;;
+		[ "$DEVICE" != "$(cat /lib/gluon/respondd/client.dev 2>/dev/null)" ] || 
+			/etc/init.d/gluon-respondd restart_if_running &
+		;;
 esac
