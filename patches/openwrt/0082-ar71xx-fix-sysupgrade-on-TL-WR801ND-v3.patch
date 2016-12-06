@@ -1,0 +1,18 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 6 Dec 2016 16:18:49 +0100
+Subject: ar71xx: fix sysupgrade on TL-WR801ND v3
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 4003b21..ee2e596 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -349,6 +349,7 @@ platform_check_image() {
+ 	tl-wa850re | \
+ 	tl-wa860re | \
+ 	tl-wa801nd-v2 | \
++	tl-wa801nd-v3 | \
+ 	tl-wa901nd | \
+ 	tl-wa901nd-v2 | \
+ 	tl-wa901nd-v3 | \
