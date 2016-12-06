@@ -59,7 +59,7 @@ Now, enter the freshly created directory::
 It's time to add (or create) your site configuration. If you already
 have a site repository, just clone it::
 
-   git clone https://github.com/freifunk-duckburg/site-ffdb.git site
+   git clone https://github.com/freifunk-alpha-centauri/site-ffac.git site
 
 If you want to build a new site, create a new git repository *site/*::
 
