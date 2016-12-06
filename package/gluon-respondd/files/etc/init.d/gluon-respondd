@@ -15,7 +15,7 @@ do_start() {
 	DEVS=""
 	for dev in $( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device") $(cat /lib/gluon/respondd/client.dev)
 	do
-	  DEVS="$DEVS -i $dev"
+		DEVS="$DEVS -i $dev"
 	done
 	service_start $DAEMON -g ff02::2:1001 -p 1001 -d /lib/gluon/respondd $DEVS
 }
