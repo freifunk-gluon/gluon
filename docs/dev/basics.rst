@@ -55,4 +55,11 @@ should be considered:
 
 - Is the script doing more than just executing external commands? if so, use lua
 - Is the script parsing/editing json-data? If so, use lua for speed
+- When using sh, use jsonfilter instead of json_* functions for speed
 
+Code formatting may sound like a topic for the pedantic, however it helps if
+the code in the project is formatted in the same way. The following rules
+apply:
+
+- use tabs instead of spaces
+- trailing whitespaces must be eliminated
