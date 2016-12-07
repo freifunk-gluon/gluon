@@ -98,7 +98,7 @@ wifi24 \: optional
 
     Each interface may be disabled by setting ``disabled`` to ``true``.
     This will only affect new installations.
-    Upgrades will not changed the disabled state.
+    Upgrades will not change the disabled state.
 
     Additionally it is possible to configure the ``supported_rates`` and ``basic_rate``
     of each radio. Both are optional, by default hostapd/driver dictate the rates.
