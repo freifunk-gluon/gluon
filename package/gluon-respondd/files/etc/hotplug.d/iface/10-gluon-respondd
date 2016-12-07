@@ -7,10 +7,10 @@ ifname_to_dev () {
 }
 
 case "$ACTION" in
-	ifup)   
+	ifup)
 		DEVICE="$(ifname_to_dev "$INTERFACE")"
 
-		[ "$DEVICE" != "$(cat /lib/gluon/respondd/client.dev 2>/dev/null)" ] || 
+		[ "$DEVICE" != "$(cat /lib/gluon/respondd/client.dev 2>/dev/null)" ] ||
 			/etc/init.d/gluon-respondd restart_if_running &
 		;;
 esac
