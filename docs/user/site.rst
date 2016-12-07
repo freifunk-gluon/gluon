@@ -283,7 +283,7 @@ roles \: optional
     part of ``list``. If you want node owners to change the role via config mode add
     the package ``gluon-luci-node-role`` to ``site.mk``.
 
-    The strings to display in the LuCI interface can be configured per language in the
+    The strings to display in the LuCI interface are configured per language in the
     ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository using message IDs like
     ``gluon-luci-node-role:role:node`` and ``gluon-luci-node-role:role:backbone``.
     ::
