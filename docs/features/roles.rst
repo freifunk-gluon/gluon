@@ -24,9 +24,7 @@ The strings to display in the LuCI interface are configured per language in the
 
 The value of ``default`` is the role every node will initially own. This value should be part of ``list`` as well.
 If you want node owners to change the defined roles via config-mode you can add the package
-``gluon-luci-node-role`` to your ``site.mk``. Then, you can select one of the defined roles from a dropdown list
-where the right-handed value is the one which is displayed and the left-handed key the one which is configured into
-the system.
+``gluon-luci-node-role`` to your ``site.mk``.
 
 The role is saved in ``gluon-node-info.system.role``. To change the role using command line do::
 
