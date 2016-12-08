@@ -53,8 +53,6 @@ struct iface_list *get_ifaces() {
 
 #undef CHECK
 
-	return ifaces;
-
 out:
 	if (msg)
 		nlmsg_free(msg);
@@ -62,5 +60,5 @@ out:
 	if (sk)
 		nl_socket_free(sk);
 
-	return NULL;
+	return ifaces;
 }

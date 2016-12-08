@@ -24,7 +24,7 @@ void fill_airtime_json(struct airtime_result *air, struct json_object *wireless)
 }
 
 static struct json_object *respondd_provider_statistics(void) {
-	struct airtime_result airtime;
+	struct airtime_result airtime = {};
 	struct json_object *result, *wireless;
 	struct iface_list *ifaces;
 	void *freeptr;
