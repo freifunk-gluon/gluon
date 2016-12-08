@@ -32,8 +32,8 @@ define Package/gluon-status-page-api/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-batadv $(1)/lib/gluon/status-page/providers/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/stations $(1)/lib/gluon/status-page/providers/
 
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/status-page-api.so
+	$(INSTALL_DIR) $(1)/lib/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/respondd/status-page-api.so
 
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/

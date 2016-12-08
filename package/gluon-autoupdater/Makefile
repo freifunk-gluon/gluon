@@ -31,8 +31,8 @@ define Package/gluon-autoupdater/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/autoupdater.so
+	$(INSTALL_DIR) $(1)/lib/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/respondd/autoupdater.so
 
 	if [ '$(GLUON_BRANCH)' ]; then \
 		$(INSTALL_DIR) $(1)/lib/gluon/autoupdater; \

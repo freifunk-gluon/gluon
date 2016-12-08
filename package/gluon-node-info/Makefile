@@ -25,8 +25,8 @@ endef
 define Package/gluon-node-info/install
 	$(CP) ./files/* $(1)/
 
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/node-info.so
+	$(INSTALL_DIR) $(1)/lib/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/respondd/node-info.so
 endef
 
 define Package/gluon-node-info/postinst
