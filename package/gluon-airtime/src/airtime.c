@@ -1,6 +1,7 @@
 /*
   Copyright (c) 2016, Julian Kornberger <jk+freifunk@digineo.de>
                       Martin Müller <geno+ffhb@fireorbit.de>
+                      Jan-Philipp Litza <janphilipp@litza.de>
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
