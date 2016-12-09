@@ -361,6 +361,7 @@ static void update_tqs() {
 
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
+					DEBUG_MSG("Found originator for " F_MAC ", it's " F_MAC, F_MAC_VAR(router->src), F_MAC_VAR(mac_b));
 					memcpy(router->originator, mac_b, sizeof(macaddr_t));
 					break; // foreach
 				}
@@ -380,6 +381,7 @@ static void update_tqs() {
 
 		foreach(router, G.routers) {
 			if (!memcmp(router->originator, mac_a, sizeof(macaddr_t))) {
+				DEBUG_MSG("Found TQ for router " F_MAC " (originator " F_MAC "), it's %d", F_MAC_VAR(router->src), F_MAC_VAR(router->originator), tq);
 				router->tq = tq;
 				if (tq > G.max_tq)
 					G.max_tq = tq;
@@ -404,6 +406,7 @@ static void update_tqs() {
 
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
+					DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d", F_MAC_VAR(router->src), LOCAL_TQ);
 					router->tq = LOCAL_TQ;
 					G.max_tq = LOCAL_TQ;
 					break; // foreach
@@ -415,7 +418,18 @@ static void update_tqs() {
 
 	foreach(router, G.routers) {
 		if (router->tq == 0) {
-			fprintf(stderr, "didn't find TQ for non-local " F_MAC "\n", F_MAC_VAR(router->src));
+			for (i = 0; i < 6; i++)
+				if (router->originator[i] != 0)
+					break;
+			if (i >= 6)
+				fprintf(stderr,
+					"Unable to find router " F_MAC " in transtable_{global,local}\n",
+					F_MAC_VAR(router->src));
+			else
+				fprintf(stderr,
+					"Unable to find TQ for originator " F_MAC " (router " F_MAC ")\n",
+					F_MAC_VAR(router->originator),
+					F_MAC_VAR(router->src));
 		}
 	}
 
