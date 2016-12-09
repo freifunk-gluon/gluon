@@ -57,10 +57,10 @@
 // Recheck TQs at most this often, even if new RAs were received (they won't
 // become the preferred routers until the TQs have been rechecked)
 // Also, the first update will take at least this long
-#define MIN_INTERVAL 5
+#define MIN_INTERVAL 15
 
 // max execution time of a single ebtables call in nanoseconds
-#define EBTABLES_TIMEOUT 1e8 // 100ms
+#define EBTABLES_TIMEOUT 5e8 // 500ms
 
 // TQ value assigned to local routers
 #define LOCAL_TQ 512
