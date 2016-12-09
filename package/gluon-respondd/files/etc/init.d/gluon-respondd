@@ -7,7 +7,9 @@ DAEMON=/usr/bin/respondd
 
 start_service() {
 	DEVS=""
-	for dev in $( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device") $(cat /lib/gluon/respondd/client.dev 2>/dev/null)
+	for dev in $( ubus call network.interface dump | jsonfilter \
+		-e "@.interface[@.proto='gluon_mesh' && @.up=true].device" \
+		-e "@.interface[@.interface='$(cat /lib/gluon/respondd/client.dev 2>/dev/null)' && @.up=true].device")
 	do
 		DEVS="$DEVS -i $dev"
 	done
