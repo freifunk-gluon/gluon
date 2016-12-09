@@ -517,7 +517,16 @@ static void update_ebtables() {
 			break;
 		}
 	}
-	DEBUG_MSG("Determined %s as new best router with TQ=%d", mac, G.max_tq);
+	if (G.best_router)
+		fprintf(stderr, "Switching from " F_MAC " (TQ=%d) to %s (TQ=%d)\n",
+			F_MAC_VAR(G.best_router->src),
+			G.best_router->tq,
+			mac,
+			G.max_tq);
+	else
+		fprintf(stderr, "Switching to %s (TQ=%d)\n",
+			mac,
+			G.max_tq);
 	G.best_router = router;
 
 	if (fork_execvp_timeout(&timeout, "ebtables", (const char *[])
