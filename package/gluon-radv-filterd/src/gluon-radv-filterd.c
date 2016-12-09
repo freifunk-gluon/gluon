@@ -352,12 +352,11 @@ static void update_tqs() {
 		// translate all router's MAC addresses to originators simultaneously
 		snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
 		f = fopen(path, "r");
-		while (getline(&line, &len, f) != -1) {
-			if (sscanf(line, " * " F_MAC " %*d (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
-					F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12
-				&& sscanf(line, " * " F_MAC " (%*3u) via " F_MAC " (%*3u) (0x%*4x) [%*3c]",
-					F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) != 12)
-				continue;
+		// skip header
+		while (fgetc(f) != '\n');
+		while (fgetc(f) != '\n');
+		while (fscanf(f, " %*[*+] " F_MAC "%*[0-9 -] (%*3u) via " F_MAC " %*[^]]]\n",
+				F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) == 12) {
 
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
@@ -367,6 +366,10 @@ static void update_tqs() {
 				}
 			}
 		}
+		if (!feof(f)) {
+			getline(&line, &len, f);
+			fprintf(stderr, "Parsing transtable_global aborted at this line: %s\n", line);
+		}
 		fclose(f);
 	}
 
@@ -374,10 +377,11 @@ static void update_tqs() {
 	G.max_tq = 0;
 	snprintf(path, PATH_MAX, ORIGINATORS, G.mesh_iface);
 	f = fopen(path, "r");
-	while (getline(&line, &len, f) != -1) {
-		if (sscanf(line, F_MAC " %*fs (%hhu) " F_MAC_IGN "[ %*s]: " F_MAC_IGN " (%*3u)",
-				F_MAC_VAR(&mac_a), &tq) != 7)
-			continue;
+	// skip header
+	while (fgetc(f) != '\n');
+	while (fgetc(f) != '\n');
+	while (fscanf(f, F_MAC " %*fs (%hhu) " F_MAC_IGN " [ %*[^]]]: " F_MAC_IGN " (%*3u)\n",
+			F_MAC_VAR(&mac_a), &tq) == 7) {
 
 		foreach(router, G.routers) {
 			if (!memcmp(router->originator, mac_a, sizeof(macaddr_t))) {
@@ -388,6 +392,10 @@ static void update_tqs() {
 				break; // foreach
 			}
 		}
+	}
+	if (!feof(f)) {
+		getline(&line, &len, f);
+		fprintf(stderr, "Parsing originators aborted at this line: %s\n", line);
 	}
 	fclose(f);
 
@@ -400,10 +408,10 @@ static void update_tqs() {
 		// rate local routers (if present) the highest
 		snprintf(path, PATH_MAX, TRANSTABLE_LOCAL, G.mesh_iface);
 		f = fopen(path, "r");
-		while (getline(&line, &len, f) != -1) {
-			if (sscanf(line, " * " F_MAC "[%*5s] %*f", F_MAC_VAR(&mac_a)) != 6)
-				continue;
-
+		// skip header
+		while (fgetc(f) != '\n');
+		while (fgetc(f) != '\n');
+		while (fscanf(f, " * " F_MAC " [%*5s] %*f", F_MAC_VAR(&mac_a)) == 6) {
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
 					DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d", F_MAC_VAR(router->src), LOCAL_TQ);
@@ -412,6 +420,10 @@ static void update_tqs() {
 					break; // foreach
 				}
 			}
+		}
+		if (!feof(f)) {
+			getline(&line, &len, f);
+			fprintf(stderr, "Parsing transtable_local aborted at this line: %s\n", line);
 		}
 		fclose(f);
 	}
