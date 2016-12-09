@@ -312,6 +312,8 @@ static void expire_routers() {
 		if (router->eol < now) {
 			DEBUG_MSG("router " F_MAC " expired", F_MAC_VAR(router->src));
 			*prev_ptr = router->next;
+			if (G.best_router == router)
+				G.best_router = NULL;
 			free(router);
 		} else {
 			prev_ptr = &router->next;
