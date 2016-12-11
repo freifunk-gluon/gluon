@@ -1,0 +1,40 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 11 Dec 2016 17:54:49 +0100
+Subject: ar71xx: simplify model detection for TP-Link Pharos devices
+
+This also makes the detection more flexible, as it doesn't need to check
+for each model explicitly.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 5928439..4a9a730 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -329,24 +329,10 @@ tplink_pharos_get_model_string() {
+ tplink_pharos_board_detect() {
+ 	local model_string="$(tplink_pharos_get_model_string | tr -d '\r')"
+ 	local oIFS="$IFS"; IFS=":"; set -- $model_string; IFS="$oIFS"
+-	local model
+ 
+-	case "$1" in
+-	'CPE210(TP-LINK|UN|N300-2)')
+-		model='TP-Link CPE210'
+-		;;
+-	'CPE220(TP-LINK|UN|N300-2)')
+-		model='TP-Link CPE220'
+-		;;
+-	'CPE510(TP-LINK|UN|N300-5)')
+-		model='TP-Link CPE510'
+-		;;
+-	'CPE520(TP-LINK|UN|N300-5)')
+-		model='TP-Link CPE520'
+-		;;
+-	esac
++	local model="${1%%\(*}"
+ 
+-	[ -n "$model" ] && AR71XX_MODEL="$model v$2"
++	AR71XX_MODEL="TP-Link $model v$2"
+ }
+ 
+ gl_inet_board_detect() {
