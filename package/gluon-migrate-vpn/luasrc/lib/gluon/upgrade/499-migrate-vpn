@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local fs = require 'nixio.fs'
+local uci = require("simple-uci").cursor()
+
+local tunneldigger_enabled = uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+local fastd_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+
+local enabled = false
+
+if (tunneldigger_enabled or fastd_enabled) then
+	enabled = true
+end
+
+if (enabled and fs.access("/usr/bin/tunneldigger") and not fs.access("/usr/bin/fastd")) then
+	uci:set("tunneldigger", "mesh_vpn", "enabled", enabled)
+	uci:save("tunneldigger")
+elseif (enabled and not fs.access("/usr/bin/tunneldigger") and fs.access("/usr/bin/fastd")) then
+	uci:set("fastd", "mesh_vpn", "enabled", enabled)
+	uci:save("fastd")
+end
