@@ -118,7 +118,7 @@ ar71xx-generic
   - TL-WR740N (v1, v3, v4, v5)
   - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
-  - TL-WR841N/ND (v3, v5, v7, v8, v9)
+  - TL-WR841N/ND (v3, v5, v7, v8, v9, v10)
   - TL-WR842N/ND (v1, v2)
   - TL-WR941N/ND (v2, v3, v4, v5)
   - TL-WR2543N/ND (v1)

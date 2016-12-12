@@ -1,0 +1,51 @@
+From: Heiko Wundram <modelnine@modelnine.org>
+Date: Mon, Oct 26 2015 14:48:26 +0100
+Subject: add machine type for WR841N v10
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
+index c28afc6..3b76f74 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
+@@ -1,5 +1,5 @@
+ /*
+- *  TP-LINK TL-WR841N/ND v9
++ *  TP-LINK TL-WR841N/ND v9/v10
+  *
+  *  Copyright (C) 2014 Matthias Schiffer <mschiffer@universe-factory.net>
+  *
+@@ -136,3 +136,18 @@ static void __init tl_wr841n_v9_setup(void)
+ 
+ MIPS_MACHINE(ATH79_MACH_TL_WR841N_V9, "TL-WR841N-v9", "TP-LINK TL-WR841N/ND v9",
+ 	     tl_wr841n_v9_setup);
++
++static void __init tl_wr841n_v10_setup(void)
++{
++	tl_ap143_setup();
++
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr841n_v9_leds_gpio),
++				 tl_wr841n_v9_leds_gpio);
++
++	ath79_register_gpio_keys_polled(1, TL_WR841NV9_KEYS_POLL_INTERVAL,
++					ARRAY_SIZE(tl_wr841n_v9_gpio_keys),
++					tl_wr841n_v9_gpio_keys);
++}
++
++MIPS_MACHINE(ATH79_MACH_TL_WR841N_V10, "TL-WR841N-v10", "TP-LINK TL-WR841N/ND v10",
++	     tl_wr841n_v10_setup);
+diff --git a/target/linux/ar71xx/patches-3.10/730-MIPS-ath79-add-WR841v10-support.patch b/target/linux/ar71xx/patches-3.10/730-MIPS-ath79-add-WR841v10-support.patch
+new file mode 100644
+index 0000000..c60b02c
+--- /dev/null
++++ b/target/linux/ar71xx/patches-3.10/730-MIPS-ath79-add-WR841v10-support.patch
+@@ -0,0 +1,11 @@
++diff -urN a/arch/mips/ath79/machtypes.h b/arch/mips/ath79/machtypes.h
++--- a/arch/mips/ath79/machtypes.h	2015-10-26 16:09:05.538327997 +0100
+++++ b/arch/mips/ath79/machtypes.h	2015-10-26 16:23:46.059923783 +0100
++@@ -145,6 +145,7 @@
++ 	ATH79_MACH_TL_WR841N_V7,	/* TP-LINK TL-WR841N/ND v7 */
++ 	ATH79_MACH_TL_WR841N_V8,	/* TP-LINK TL-WR841N/ND v8 */
++ 	ATH79_MACH_TL_WR841N_V9,	/* TP-LINK TL-WR841N/ND v9 */
+++	ATH79_MACH_TL_WR841N_V10,	/* TP-LINK TL-WR841N/ND v10 */
++ 	ATH79_MACH_TL_WR842N_V2,	/* TP-LINK TL-WR842N/ND v2 */
++ 	ATH79_MACH_TL_WR941ND,		/* TP-LINK TL-WR941ND */
++ 	ATH79_MACH_TL_WR941ND_V5,	/* TP-LINK TL-WR941ND v5 */
