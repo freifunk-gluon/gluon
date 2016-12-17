@@ -1,0 +1,78 @@
+Gluon 2016.2.2
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - CPE210/510 EU/US versions
+  - TL-WA801N/ND v3
+  - TL-WR841ND v11 EU/US versions
+
+Bugfixes
+~~~~~~~~
+
+* Fix boot on certain QCA955x-based devices (e.g. OpenMesh OM5P AC v2) (`#965 <https://github.com/freifunk-gluon/gluon/pull/965>`_)
+
+  This issue was a regression in Gluon v2016.2.1.
+
+* Build: Fix git downloads from git.kernel.org on Debian Wheezy (`#919 <https://github.com/freifunk-gluon/gluon/issues/919>`_)
+
+  We've switched back from HTTPS to the git protocol for now to avoid using
+  the old GnuTLS version of Debian Wheezy which can't establish a HTTPS connection
+  with git.kernel.org anymore.
+
+  This issue was a regression in Gluon v2016.2.
+
+* Fix RX filter of Ubiquiti UAP Outdoor+ (`d43147a8e03d <https://github.com/freifunk-gluon/gluon/commit/d43147a8e03dd17bc27e4ab203736f2151f9db3d>`_)
+
+  This issue was a regression in Gluon v2016.2.
+
+* Fix switched WAN/LAN interface assignment on CPE210 (`59deb2064d54 <https://github.com/freifunk-gluon/gluon/commit/59deb2064d54a37e27139b76a3b6064f5f10f364>`_)
+
+  This issue was a regression in Gluon v2016.2.
+
+* Significantly reduce CPU load used by signal strength LEDs (`#897 <https://github.com/freifunk-gluon/gluon/issues/897>`_)
+
+* Fix ethernet port of the Ubiquiti UAP AC Lite (`#911 <https://github.com/freifunk-gluon/gluon/issues/911>`_)
+
+* Build: Don't use host ``/tmp`` directory (`f9072a36411b <https://github.com/freifunk-gluon/gluon/commit/f9072a36411b92089c697b2c0a564155bfe10bd1>`_)
+
+  Fixes build when ``/tmp`` is mounted with *noexec*.
+
+* Fix mesh interface type respondd/alfred announcements when using VLANs over IBSS (`#941 <https://github.com/freifunk-gluon/gluon/issues/941>`_)
+
+* Fix next-node ebtables rules without *next_node.ip4* (`9dbe9f785d2b <https://github.com/freifunk-gluon/gluon/commit/9dbe9f785d2b439c3ebdae365b808ebf42b3cf03>`_)
+
+  Gluon v2016.2 added support for using the next-node feature without specifying an IPv4
+  address. Some scripts had not been adjusted, making the next-node unreliable when
+  no IPv4 address was specified.
+
+Other changes
+~~~~~~~~~~~~~
+
+* x86-generic and x86-64 images now have PATA and MMC support to allow using them
+  on various devices that were previously unsupported.
+
+* Clean up opkg postinst scripts up on image generation
+
+  OpenWrt does this by default to save a little space.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
