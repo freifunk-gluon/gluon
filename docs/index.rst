@@ -170,7 +170,7 @@ ar71xx-generic
   - TL-WA701N/ND (v1, v2)
   - TL-WA750RE (v1)
   - TL-WA7510N (v1)
-  - TL-WA801N/ND (v1, v2)
+  - TL-WA801N/ND (v1, v2, v3)
   - TL-WA830RE (v1, v2)
   - TL-WA850RE (v1)
   - TL-WA860RE (v1)
