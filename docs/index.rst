@@ -168,6 +168,7 @@ ar71xx-generic
   - TL-MR3220 (v1, v2)
   - TL-MR3420 (v1, v2)
   - TL-WA701N/ND (v1, v2)
+  - TL-WA7510N (v1)
   - TL-WA750RE (v1)
   - TL-WA7510N (v1)
   - TL-WA801N/ND (v1, v2, v3)
