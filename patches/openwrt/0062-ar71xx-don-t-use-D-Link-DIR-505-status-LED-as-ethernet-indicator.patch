@@ -12,7 +12,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE adbbfb7ff900c489e6be34b2ec2834172dff7943
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index 14aa7bc..3d240fb 100644
+index 14aa7bc5e56c0d7be435ba3a1803416075eccb58..3d240fb076bf40b07e7f0b5974d7b5fd4435a044 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -139,10 +139,6 @@ dhp-1565-a1)

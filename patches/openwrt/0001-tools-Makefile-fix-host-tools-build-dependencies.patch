@@ -3,7 +3,7 @@ Date: Sat, 26 Jul 2014 06:10:23 +0200
 Subject: tools/Makefile: fix host tools build dependencies
 
 diff --git a/tools/Makefile b/tools/Makefile
-index d2fe2ff..c6cded8 100644
+index d2fe2ffddf4b7207a937ca75efe1c2728e8067aa..c6cded8eccd81c422f99e7ee50754c4bc66decc7 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
 @@ -95,10 +95,16 @@ define PrepareStaging

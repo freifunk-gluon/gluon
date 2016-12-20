@@ -7,7 +7,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Backport of OpenWrt r48650
 
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
-index 31d2438..2efb9c7 100644
+index 31d24388d274b92e01642ad6d7f59d22f80dc2a6..2efb9c70ff31f5c11bcdff6c6326743e4d5b5a11 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
 @@ -198,7 +198,6 @@ void __init ath79_register_mdio(unsigned int id, u32 phy_mask)

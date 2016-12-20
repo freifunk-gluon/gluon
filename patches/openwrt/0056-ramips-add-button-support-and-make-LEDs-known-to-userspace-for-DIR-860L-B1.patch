@@ -5,7 +5,7 @@ Subject: ramips: add button support and make LEDs known to userspace for DIR-860
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ramips/base-files/etc/board.d/01_leds b/target/linux/ramips/base-files/etc/board.d/01_leds
-index 5327d00..5fb28a5 100755
+index 5327d006299ed94c645542f687e20962c83e842d..5fb28a52f7632bf09e7f62ff77dcd7254a2ebcc2 100755
 --- a/target/linux/ramips/base-files/etc/board.d/01_leds
 +++ b/target/linux/ramips/base-files/etc/board.d/01_leds
 @@ -114,6 +114,9 @@ case $board in
@@ -19,7 +19,7 @@ index 5327d00..5fb28a5 100755
  		ucidef_set_led_default "power_r" "POWER (red)" "ex2700:red:power" "0"
  		set_wifi_led "ex2700:green:router"
 diff --git a/target/linux/ramips/base-files/etc/diag.sh b/target/linux/ramips/base-files/etc/diag.sh
-index 6474ebd..37360a4 100644
+index 6474ebdde354b51648fcafd426e3256f0b6fe8b4..37360a417cb24eaedef24766510db7146c92e3cb 100644
 --- a/target/linux/ramips/base-files/etc/diag.sh
 +++ b/target/linux/ramips/base-files/etc/diag.sh
 @@ -54,6 +54,9 @@ get_status_led() {
@@ -33,7 +33,7 @@ index 6474ebd..37360a4 100644
  		status_led="d-link:blue:power"
  		;;
 diff --git a/target/linux/ramips/dts/DIR-860L-B1.dts b/target/linux/ramips/dts/DIR-860L-B1.dts
-index 2582b3d..c0bcc86 100644
+index 2582b3d4182d3a0fcee6e6ea6f97ab8007edf3a2..c0bcc86216cf4bd343b688aa7e717b5c45775c50 100644
 --- a/target/linux/ramips/dts/DIR-860L-B1.dts
 +++ b/target/linux/ramips/dts/DIR-860L-B1.dts
 @@ -124,5 +124,17 @@

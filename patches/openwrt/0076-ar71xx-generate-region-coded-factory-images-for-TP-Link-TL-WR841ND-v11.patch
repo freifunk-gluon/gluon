@@ -11,7 +11,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 9cac5e8be014b89326880ae5d7b885013614e0ca
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 9ac1d60..6346eb9 100644
+index 9ac1d60078cf108276d6f29c42bdb738fab6ad9d..6346eb9ffa6c9bbeb1eaa5de229cf69ce12c1f83 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -602,6 +602,9 @@ define Device/tl-wr841n-v11

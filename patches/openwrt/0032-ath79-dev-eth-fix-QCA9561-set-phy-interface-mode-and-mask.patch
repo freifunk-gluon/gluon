@@ -11,7 +11,7 @@ Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
 Backport of OpenWrt r46971
 
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
-index ff94e2e..31d2438 100644
+index ff94e2ec3733b9473c4c3191cb47bd4ba8ac784d..31d24388d274b92e01642ad6d7f59d22f80dc2a6 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
 @@ -633,7 +633,6 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,

@@ -6,7 +6,7 @@ Patch-by: Stefan Rompf <stefan@loplof.de>
 
 diff --git a/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch b/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch
 new file mode 100644
-index 0000000..8e09fee
+index 0000000000000000000000000000000000000000..8e09fee938951ab3636d23b5fe4dee3ab0e11c7a
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/931-ubnt-uap-plus-hsr.patch
 @@ -0,0 +1,349 @@
@@ -360,7 +360,7 @@ index 0000000..8e09fee
 + 
 + #endif /* _LINUX_ATH9K_PLATFORM_H */
 diff --git a/target/linux/ar71xx/patches-3.18/608-MIPS-ath79-ubnt-xm-add-more-boards.patch b/target/linux/ar71xx/patches-3.18/608-MIPS-ath79-ubnt-xm-add-more-boards.patch
-index 7803513..d865ed2 100644
+index 78035131db93f3e465585d7e96bfae9e88783d28..d865ed29ac268b6b49644c0841be6dfeace75038 100644
 --- a/target/linux/ar71xx/patches-3.18/608-MIPS-ath79-ubnt-xm-add-more-boards.patch
 +++ b/target/linux/ar71xx/patches-3.18/608-MIPS-ath79-ubnt-xm-add-more-boards.patch
 @@ -254,6 +254,7 @@
@@ -373,7 +373,7 @@ index 7803513..d865ed2 100644
  +	ath79_register_leds_gpio(-1, ARRAY_SIZE(ubnt_unifi_outdoor_plus_leds_gpio),
 diff --git a/target/linux/generic/patches-3.18/150-ath9k_ubnt_hsr_filter.patch b/target/linux/generic/patches-3.18/150-ath9k_ubnt_hsr_filter.patch
 new file mode 100644
-index 0000000..b8844f1
+index 0000000000000000000000000000000000000000..b8844f1341f9a8a478730ef6ac440833b84b3e98
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/150-ath9k_ubnt_hsr_filter.patch
 @@ -0,0 +1,16 @@

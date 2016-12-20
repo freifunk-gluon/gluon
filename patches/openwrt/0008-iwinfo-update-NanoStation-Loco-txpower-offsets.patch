@@ -4,7 +4,7 @@ Subject: iwinfo: update NanoStation (Loco) txpower offsets
 
 diff --git a/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch b/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch
 new file mode 100644
-index 0000000..1e13570
+index 0000000000000000000000000000000000000000..1e13570fc2b585a8e33275116370f5438c899633
 --- /dev/null
 +++ b/package/network/utils/iwinfo/patches/001-update_nanostation_offsets.patch
 @@ -0,0 +1,14 @@

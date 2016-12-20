@@ -8,7 +8,7 @@ Signed-off-by: P.Wassi <p.wassi at gmx.at>
 Backport of LEDE 8307c2fe686ded345c80318359d5b6679e581fa2
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 924c116..cb92349 100644
+index 924c1163e26eb84b71e4734b95221104674bfe3e..cb92349cab833179a87a195b94e2539cc5ce3e79 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -310,7 +310,8 @@ get_status_led() {
@@ -22,7 +22,7 @@ index 924c116..cb92349 100644
  		;;
  	unifi-outdoor-plus)
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 7777734..5eb20bb 100644
+index 7777734ae3899840c1c47e7b24373b4bceee0adc..5eb20bb26521258599898125d42f6b73b9c81f94 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 @@ -81,7 +81,8 @@ case "$FIRMWARE" in
@@ -36,7 +36,7 @@ index 7777734..5eb20bb 100644
  		;;
  	esac
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index 2007042..b59844e 100755
+index 20070426fd033e4ff2e904f9247deed9eb48c3c3..b59844eac49a1269edb88890d89b0b4d8a7121d0 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -401,6 +401,13 @@ wpj344)
@@ -54,7 +54,7 @@ index 2007042..b59844e 100755
  	ucidef_set_interfaces_lan_wan "eth0" "eth1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index a8d8896..28f07b8 100755
+index a8d889662c95aa87a262cb43efe2f70a0f211b76..28f07b8de66c8262a7d3fb6428b91f22593292c9 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -905,6 +905,9 @@ ar71xx_board_detect() {
@@ -68,7 +68,7 @@ index a8d8896..28f07b8 100755
  		name="uap-pro"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 90f961f..0228f14 100755
+index 90f961f3f0aaf3c76a0a8022258fbf5404165ca8..0228f14774d5873a52f19b60ed84389c7be86e51 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -253,6 +253,7 @@ platform_check_image() {
@@ -80,7 +80,7 @@ index 90f961f..0228f14 100755
  	carambola2 | \
  	weio )
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
-index 31cbe30..9194bc1 100644
+index 31cbe30d3ff9b323cb336c62d6fe0d7a0c67ba42..9194bc1c0799d83fca3f6fe76b2602d72e5f4ef8 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
 @@ -21,6 +21,7 @@
@@ -171,7 +171,7 @@ index 31cbe30..9194bc1 100644
 +MIPS_MACHINE(ATH79_MACH_UBNT_UNIFIAC_PRO, "UBNT-UF-AC-PRO", "Ubiquiti UniFi-AC-PRO",
 +	     ubnt_unifiac_pro_setup);
 diff --git a/target/linux/ar71xx/generic/profiles/ubnt.mk b/target/linux/ar71xx/generic/profiles/ubnt.mk
-index eac0240..69b8398 100644
+index eac02406bbbffebbcb20962929fb8254edba520e..69b83985bd6623c0d6732399d3e2cc8c0af9f9f1 100644
 --- a/target/linux/ar71xx/generic/profiles/ubnt.mk
 +++ b/target/linux/ar71xx/generic/profiles/ubnt.mk
 @@ -49,6 +49,17 @@ endef
@@ -193,7 +193,7 @@ index eac0240..69b8398 100644
  	NAME:=Ubiquiti UniFiAP Outdoor
  	PACKAGES:=
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 42ffc69..7c648f2 100644
+index 42ffc69ca3f9b1cffa542fc2d06ead2ef224d6b2..7c648f26e10c49000b848e9b300701b388410c04 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -753,7 +753,13 @@ define Device/ubnt-unifiac-lite
@@ -212,7 +212,7 @@ index 42ffc69..7c648f2 100644
  rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
  
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index 9a28f58..debde6e 100644
+index 9a28f58f67d5f98fcd4aa83dc09698705e2dfa3e..debde6e6a552e71b551d8c01ba06af03013407bf 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@

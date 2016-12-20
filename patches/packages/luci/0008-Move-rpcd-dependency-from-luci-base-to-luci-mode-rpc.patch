@@ -6,7 +6,7 @@ LuCI's authentication won't work without rpcd, but we aren't using the
 authentication anyways. Users who need it can just install rpcd explicitly.
 
 diff --git a/modules/luci-base/Makefile b/modules/luci-base/Makefile
-index 54506b0..4457034 100644
+index 54506b023a728e071b8fb4983ef614897363c0ec..4457034ada02972908a68f7c9c54352e7ac3c054 100644
 --- a/modules/luci-base/Makefile
 +++ b/modules/luci-base/Makefile
 @@ -12,7 +12,7 @@ LUCI_TYPE:=mod
@@ -19,7 +19,7 @@ index 54506b0..4457034 100644
  PKG_SOURCE:=LuaSrcDiet-0.12.1.tar.bz2
  PKG_SOURCE_URL:=https://luasrcdiet.googlecode.com/files
 diff --git a/modules/luci-mod-rpc/Makefile b/modules/luci-mod-rpc/Makefile
-index e64c86c..5f64a14 100644
+index e64c86c6283a5a7d1181816e9f148d78d15c7dd8..5f64a14d48ef1f74435e151bc03a2377239be1f8 100644
 --- a/modules/luci-mod-rpc/Makefile
 +++ b/modules/luci-mod-rpc/Makefile
 @@ -7,7 +7,7 @@

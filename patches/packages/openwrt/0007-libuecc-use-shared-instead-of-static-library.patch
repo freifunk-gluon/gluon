@@ -5,7 +5,7 @@ Subject: libuecc: use shared instead of static library
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/libs/libuecc/Makefile b/libs/libuecc/Makefile
-index c1ba53f..8111062 100644
+index c1ba53f854b5f0e29728f0a4d2e8f682ff8357a3..81110624212291d86631a7b56232208459b004da 100644
 --- a/libs/libuecc/Makefile
 +++ b/libs/libuecc/Makefile
 @@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
@@ -36,7 +36,7 @@ index c1ba53f..8111062 100644
  	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libuecc.pc $(1)/usr/lib/pkgconfig/
  endef
 diff --git a/net/fastd/Makefile b/net/fastd/Makefile
-index 5c550d8..aeaa1df 100644
+index 5c550d8a5f4669d4f018dde23b622376bc8d0b06..aeaa1dfcf682a5c2b048d636b549953035fdbf0d 100644
 --- a/net/fastd/Makefile
 +++ b/net/fastd/Makefile
 @@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk

@@ -3,7 +3,7 @@ Date: Fri, 9 Sep 2016 01:54:44 +0200
 Subject: ath10k-firmware: add ath10k-firmware-qca988x-11s
 
 diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
-index 624da6a..3a4f0c5 100644
+index 624da6a1ed43ea37bbb3409b3dbe4b3af01263b5..3a4f0c59eb89a32f78f0104d2420b921d6660ddc 100644
 --- a/package/firmware/ath10k-firmware/Makefile
 +++ b/package/firmware/ath10k-firmware/Makefile
 @@ -8,7 +8,7 @@

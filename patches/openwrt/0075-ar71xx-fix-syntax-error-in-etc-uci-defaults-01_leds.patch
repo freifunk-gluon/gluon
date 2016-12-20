@@ -7,7 +7,7 @@ Fixes f98117a "CC: ar71xx: backport LED fix for TL-WR841N-v11".
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index f1266d8..87d6fcc 100644
+index f1266d88f1b6a441e58b0a008ca915a4b5958928..87d6fcc4d74571ca98acc53ae76ea6f305d8c8c6 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -500,7 +500,7 @@ tl-wa830re-v2)

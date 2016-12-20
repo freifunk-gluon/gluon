@@ -4,7 +4,7 @@ Subject: xtables-addons: build: fix configure compatiblity with POSIX shells
 
 diff --git a/package/network/utils/xtables-addons/patches/001-build-fix-configure-compatiblity-with-POSIX-shells.patch b/package/network/utils/xtables-addons/patches/001-build-fix-configure-compatiblity-with-POSIX-shells.patch
 new file mode 100644
-index 0000000..e0b11b5
+index 0000000000000000000000000000000000000000..e0b11b5459e5e4cd49c80b76ed945eb96aa96e8d
 --- /dev/null
 +++ b/package/network/utils/xtables-addons/patches/001-build-fix-configure-compatiblity-with-POSIX-shells.patch
 @@ -0,0 +1,51 @@
@@ -60,7 +60,7 @@ index 0000000..e0b11b5
 +2.8.0
 +
 diff --git a/package/network/utils/xtables-addons/patches/002-fix-kernel-version-detection.patch b/package/network/utils/xtables-addons/patches/002-fix-kernel-version-detection.patch
-index d3b7caa..6a7a099 100644
+index d3b7caa634ba0cc33b01bbf795f1f70995cb3dc6..6a7a099fcc3aad162fc2aaba70dac54882c2b464 100644
 --- a/package/network/utils/xtables-addons/patches/002-fix-kernel-version-detection.patch
 +++ b/package/network/utils/xtables-addons/patches/002-fix-kernel-version-detection.patch
 @@ -1,1954 +1,11 @@

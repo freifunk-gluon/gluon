@@ -21,7 +21,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 6fb212f2933bbbdf2935124205717c9d0ca72b32
 
 diff --git a/include/host-build.mk b/include/host-build.mk
-index e2b5f2f..44401b8 100644
+index e2b5f2f8d1882207e11697df3df1302076adfaa3..44401b866a4d637648bb093470a5e66b4a3e38fc 100644
 --- a/include/host-build.mk
 +++ b/include/host-build.mk
 @@ -10,7 +10,7 @@ HOST_INSTALL_DIR ?= $(HOST_BUILD_DIR)/host-install
@@ -34,7 +34,7 @@ index e2b5f2f..44401b8 100644
    HOST_MAKE_J:=-j$(CONFIG_PKG_BUILD_JOBS)
  endif
 diff --git a/include/package.mk b/include/package.mk
-index c69d928..a99cdc6 100644
+index c69d92819779dd0ee92381620accd73ef2b80de6..a99cdc6990280d7ef83223861cd9f224c6eebc33 100644
 --- a/include/package.mk
 +++ b/include/package.mk
 @@ -23,7 +23,7 @@ PKG_RELRO_PARTIAL ?= 1

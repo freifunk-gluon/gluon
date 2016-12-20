@@ -3,7 +3,7 @@ Date: Sun, 28 Aug 2016 20:20:35 +0200
 Subject: firmware-utils: mktplinkfw: backport from LEDE a4fc62bc0ea4010ddbfbd738453c9db70988a57c
 
 diff --git a/tools/firmware-utils/Makefile b/tools/firmware-utils/Makefile
-index 0397845..aee8e87 100644
+index 03978456636ad50fc8128c0a5a51845135301a3d..aee8e87a1c0839f3220686e97cd8458516fc17cf 100644
 --- a/tools/firmware-utils/Makefile
 +++ b/tools/firmware-utils/Makefile
 @@ -40,7 +40,7 @@ define Host/Compile
@@ -16,7 +16,7 @@ index 0397845..aee8e87 100644
  	$(call cc,tplink-safeloader md5, -Wall)
  	$(call cc,pc1crypt)
 diff --git a/tools/firmware-utils/src/mktplinkfw.c b/tools/firmware-utils/src/mktplinkfw.c
-index 9785a3f..34e6546 100644
+index 9785a3f232ed4457e77aee249c0da86b4e99c532..34e6546a2d7db72748146ef233830c2e8de9ce97 100644
 --- a/tools/firmware-utils/src/mktplinkfw.c
 +++ b/tools/firmware-utils/src/mktplinkfw.c
 @@ -28,53 +28,10 @@

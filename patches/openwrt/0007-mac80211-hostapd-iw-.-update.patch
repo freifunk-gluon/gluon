@@ -18,7 +18,7 @@ LEDE 42f559ed70897a7b74dd3e6293b42e6d2e511eaa:
 * mt76
 
 diff --git a/package/firmware/ath10k-firmware/Makefile b/package/firmware/ath10k-firmware/Makefile
-index b03d644..624da6a 100644
+index b03d64491a554fafb72170eaa4fae171b5599835..624da6a1ed43ea37bbb3409b3dbe4b3af01263b5 100644
 --- a/package/firmware/ath10k-firmware/Makefile
 +++ b/package/firmware/ath10k-firmware/Makefile
 @@ -8,7 +8,7 @@
@@ -270,7 +270,7 @@ index b03d644..624da6a 100644
 +$(eval $(call BuildPackage,ath10k-firmware-qca99x0-ct))
 +$(eval $(call BuildPackage,ath10k-firmware-qca9984-ct))
 diff --git a/package/firmware/linux-firmware/Makefile b/package/firmware/linux-firmware/Makefile
-index 2fcd93b..ae5894c 100644
+index 2fcd93b2ef104647a61c3aa40e2cef4404b1e484..ae5894cc56ff28271dff8871d640cc213c5c0107 100644
 --- a/package/firmware/linux-firmware/Makefile
 +++ b/package/firmware/linux-firmware/Makefile
 @@ -17,9 +17,9 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
@@ -286,7 +286,7 @@ index 2fcd93b..ae5894c 100644
  SCAN_DEPS = *.mk
  
 diff --git a/package/firmware/linux-firmware/realtek.mk b/package/firmware/linux-firmware/realtek.mk
-index 0f8b1ce..4229ca0 100644
+index 0f8b1ce75053713b25ea601fd56ad02c410861b7..4229ca0ebbaa1fe55c3e30be5769c0cc492084d6 100644
 --- a/package/firmware/linux-firmware/realtek.mk
 +++ b/package/firmware/linux-firmware/realtek.mk
 @@ -43,8 +43,15 @@ endef
@@ -307,7 +307,7 @@ index 0f8b1ce..4229ca0 100644
 +endef
 +$(eval $(call BuildPackage,rtl8192su-firmware))
 diff --git a/package/kernel/acx-mac80211/Makefile b/package/kernel/acx-mac80211/Makefile
-index 1820e7a..8fce374 100644
+index 1820e7abb3ed5adbe74c1e9774b9c910d72d34eb..8fce374d2b99446d11e3bf56b2df014fdd9cbc9d 100644
 --- a/package/kernel/acx-mac80211/Makefile
 +++ b/package/kernel/acx-mac80211/Makefile
 @@ -9,12 +9,12 @@ include $(TOPDIR)/rules.mk
@@ -337,7 +337,7 @@ index 1820e7a..8fce374 100644
  			-I$(LINUX_DIR)/include -I$(LINUX_DIR)/include/$(LINUX_UAPI_DIR) \
 diff --git a/package/kernel/acx-mac80211/patches/001-pci-mem-Fix-3.8-build.patch b/package/kernel/acx-mac80211/patches/001-pci-mem-Fix-3.8-build.patch
 deleted file mode 100644
-index fa4a6be..0000000
+index fa4a6be6ab09ad9515ccc9595808a093aeac7ab2..0000000000000000000000000000000000000000
 --- a/package/kernel/acx-mac80211/patches/001-pci-mem-Fix-3.8-build.patch
 +++ /dev/null
 @@ -1,129 +0,0 @@
@@ -472,7 +472,7 @@ index fa4a6be..0000000
 - 
 diff --git a/package/kernel/acx-mac80211/patches/003-Fix-3.10-build.patch b/package/kernel/acx-mac80211/patches/003-Fix-3.10-build.patch
 deleted file mode 100644
-index c737844..0000000
+index c73784465e0729863aeba1c51a64ee8069bc99d1..0000000000000000000000000000000000000000
 --- a/package/kernel/acx-mac80211/patches/003-Fix-3.10-build.patch
 +++ /dev/null
 @@ -1,31 +0,0 @@
@@ -509,7 +509,7 @@ index c737844..0000000
 - 	}
 diff --git a/package/kernel/acx-mac80211/patches/004-Fix-3.14-build.patch b/package/kernel/acx-mac80211/patches/004-Fix-3.14-build.patch
 deleted file mode 100644
-index 847b573..0000000
+index 847b5731598caee82179813fcc9dea2d75ffdebd..0000000000000000000000000000000000000000
 --- a/package/kernel/acx-mac80211/patches/004-Fix-3.14-build.patch
 +++ /dev/null
 @@ -1,22 +0,0 @@
@@ -537,7 +537,7 @@ index 847b573..0000000
 - 
 diff --git a/package/kernel/acx-mac80211/patches/300-api_sync.patch b/package/kernel/acx-mac80211/patches/300-api_sync.patch
 new file mode 100644
-index 0000000..94d6135
+index 0000000000000000000000000000000000000000..94d61351aaaa530cc881448679219b28ab51888c
 --- /dev/null
 +++ b/package/kernel/acx-mac80211/patches/300-api_sync.patch
 @@ -0,0 +1,83 @@
@@ -626,7 +626,7 @@ index 0000000..94d6135
 + 
 diff --git a/package/kernel/ath10k-ct/Makefile b/package/kernel/ath10k-ct/Makefile
 new file mode 100644
-index 0000000..bbff8d8
+index 0000000000000000000000000000000000000000..bbff8d8042ade849e467196056ca4ae1828dc3fe
 --- /dev/null
 +++ b/package/kernel/ath10k-ct/Makefile
 @@ -0,0 +1,80 @@
@@ -711,7 +711,7 @@ index 0000000..bbff8d8
 +
 +$(eval $(call KernelPackage,ath10k-ct))
 diff --git a/package/kernel/mac80211/Makefile b/package/kernel/mac80211/Makefile
-index 30da1cf..f2839cd 100644
+index 30da1cfe250fd9cd630bf04e0c68cd7382355a2a..f2839cde2b1514f4342989b72e0baf1d79fddab2 100644
 --- a/package/kernel/mac80211/Makefile
 +++ b/package/kernel/mac80211/Makefile
 @@ -10,20 +10,21 @@ include $(INCLUDE_DIR)/kernel.mk
@@ -991,7 +991,7 @@ index 30da1cf..f2839cd 100644
  $(eval $(call KernelPackage,ath10k))
  $(eval $(call KernelPackage,ath5k))
 diff --git a/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh b/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
-index fb2f928..e3d612e 100644
+index fb2f928751a8c7dd282022d64be784cfcca4663b..e3d612e4b2f3d6dc1345bf71311fd31ee3649f1e 100644
 --- a/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
 +++ b/package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh
 @@ -23,6 +23,7 @@ drv_mac80211_init_device_config() {
@@ -1120,7 +1120,7 @@ index fb2f928..e3d612e 100644
  	done
  }
 diff --git a/package/kernel/mac80211/files/lib/wifi/mac80211.sh b/package/kernel/mac80211/files/lib/wifi/mac80211.sh
-index ea229d6..06f3b8b 100644
+index ea229d6c03393d4673c733c99ead4c24ff92817d..06f3b8b449fbf482d42123fd3d21f8c5b0d315bf 100644
 --- a/package/kernel/mac80211/files/lib/wifi/mac80211.sh
 +++ b/package/kernel/mac80211/files/lib/wifi/mac80211.sh
 @@ -9,11 +9,10 @@ lookup_phy() {
@@ -1151,7 +1151,7 @@ index ea229d6..06f3b8b 100644
  			dev_id="	option macaddr	$(cat /sys/class/ieee80211/${dev}/macaddress)"
 diff --git a/package/kernel/mac80211/patches/004-backports-add-skb_free_frag.patch b/package/kernel/mac80211/patches/004-backports-add-skb_free_frag.patch
 deleted file mode 100644
-index 9adfd8f..0000000
+index 9adfd8f719805961fb06d4fc3bc104b668e4fd41..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/004-backports-add-skb_free_frag.patch
 +++ /dev/null
 @@ -1,21 +0,0 @@
@@ -1178,7 +1178,7 @@ index 9adfd8f..0000000
 - #endif /* __BACKPORT_SKBUFF_H */
 diff --git a/package/kernel/mac80211/patches/004-fix_duplicate_skcipher_backport.patch b/package/kernel/mac80211/patches/004-fix_duplicate_skcipher_backport.patch
 new file mode 100644
-index 0000000..38b3179
+index 0000000000000000000000000000000000000000..38b31795a4ee0f3c5f0ad4895554117a63c2f037
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/004-fix_duplicate_skcipher_backport.patch
 @@ -0,0 +1,11 @@
@@ -1195,7 +1195,7 @@ index 0000000..38b3179
 + cordic-objs += lib-cordic.o
 diff --git a/package/kernel/mac80211/patches/005-backport_skb_get_hash_perturb.patch b/package/kernel/mac80211/patches/005-backport_skb_get_hash_perturb.patch
 new file mode 100644
-index 0000000..29bccc1
+index 0000000000000000000000000000000000000000..29bccc1e995f910ff6d1aeaf0829e9bdfe4f72d7
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/005-backport_skb_get_hash_perturb.patch
 @@ -0,0 +1,22 @@
@@ -1223,7 +1223,7 @@ index 0000000..29bccc1
 + #endif /* __BACKPORT_SKBUFF_H */
 diff --git a/package/kernel/mac80211/patches/005-backports-add-napi_alloc_frag.patch b/package/kernel/mac80211/patches/005-backports-add-napi_alloc_frag.patch
 deleted file mode 100644
-index 9b672a8..0000000
+index 9b672a8d14ec4e27c7d14bd6018059520ae8296c..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/005-backports-add-napi_alloc_frag.patch
 +++ /dev/null
 @@ -1,20 +0,0 @@
@@ -1248,7 +1248,7 @@ index 9b672a8..0000000
 -  * Complicated way of saying: We only backport netdev_rss_key stuff on kernels
 -  * that either already have net_get_random_once() (>= 3.13) or where we've been
 diff --git a/package/kernel/mac80211/patches/060-no_local_ssb_bcma.patch b/package/kernel/mac80211/patches/060-no_local_ssb_bcma.patch
-index fd1e1cf..8be5fa1 100644
+index fd1e1cff3020078b5529982d5868ec65b8b4c9da..8be5fa15e92b747bfeedb3360b62cb139ae5257a 100644
 --- a/package/kernel/mac80211/patches/060-no_local_ssb_bcma.patch
 +++ b/package/kernel/mac80211/patches/060-no_local_ssb_bcma.patch
 @@ -1,6 +1,6 @@
@@ -1278,7 +1278,7 @@ index fd1e1cf..8be5fa1 100644
   		hf |= B43_HF_DSCRQ; /* Disable slowclock requests from ucode. */
 diff --git a/package/kernel/mac80211/patches/080-disable_clk_backport.patch b/package/kernel/mac80211/patches/080-disable_clk_backport.patch
 deleted file mode 100644
-index 3765591..0000000
+index 3765591ebb8c5863e552417c3fb36275c711b118..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/080-disable_clk_backport.patch
 +++ /dev/null
 @@ -1,20 +0,0 @@
@@ -1303,7 +1303,7 @@ index 3765591..0000000
 --EXPORT_SYMBOL_GPL(clk_disable);
 --#endif
 diff --git a/package/kernel/mac80211/patches/100-remove-cryptoapi-dependencies.patch b/package/kernel/mac80211/patches/100-remove-cryptoapi-dependencies.patch
-index 02f46c7..fbe22e5 100644
+index 02f46c778d8cd704b96af062ea73c2cffbf2c19a..fbe22e51b71eb513e3612d021b7c8ab62415d583 100644
 --- a/package/kernel/mac80211/patches/100-remove-cryptoapi-dependencies.patch
 +++ b/package/kernel/mac80211/patches/100-remove-cryptoapi-dependencies.patch
 @@ -309,7 +309,7 @@
@@ -1361,7 +1361,7 @@ index 02f46c7..fbe22e5 100644
   			u8 b_0[AES_BLOCK_SIZE];
   			/* hardware didn't decrypt/verify MIC */
 diff --git a/package/kernel/mac80211/patches/110-mac80211_keep_keys_on_stop_ap.patch b/package/kernel/mac80211/patches/110-mac80211_keep_keys_on_stop_ap.patch
-index d1d9fbd..3ca166f 100644
+index d1d9fbd9b157c5b888797ab650db04064dfa7d31..3ca166ff45552c1c544e301fd2833b06ffd9f8a1 100644
 --- a/package/kernel/mac80211/patches/110-mac80211_keep_keys_on_stop_ap.patch
 +++ b/package/kernel/mac80211/patches/110-mac80211_keep_keys_on_stop_ap.patch
 @@ -2,7 +2,7 @@ Used for AP+STA support in OpenWrt - preserve AP mode keys across STA reconnects
@@ -1374,7 +1374,7 @@ index d1d9fbd..3ca166f 100644
   
   	__sta_info_flush(sdata, true);
 diff --git a/package/kernel/mac80211/patches/150-disable_addr_notifier.patch b/package/kernel/mac80211/patches/150-disable_addr_notifier.patch
-index 2855a88..16fab84 100644
+index 2855a88af7b4017f8dfeebeb34ea430a0ad51914..16fab845356343480dd706bfe558a08420a6be90 100644
 --- a/package/kernel/mac80211/patches/150-disable_addr_notifier.patch
 +++ b/package/kernel/mac80211/patches/150-disable_addr_notifier.patch
 @@ -18,9 +18,9 @@
@@ -1411,7 +1411,7 @@ index 2855a88..16fab84 100644
   	tasklet_kill(&local->tasklet);
   
 diff --git a/package/kernel/mac80211/patches/210-ap_scan.patch b/package/kernel/mac80211/patches/210-ap_scan.patch
-index a99cbd2..29f05c4 100644
+index a99cbd2bee913d292310e258c15c94050e90db71..29f05c44d6e205fe0a7f20009899f1de690ada5a 100644
 --- a/package/kernel/mac80211/patches/210-ap_scan.patch
 +++ b/package/kernel/mac80211/patches/210-ap_scan.patch
 @@ -1,6 +1,6 @@
@@ -1424,7 +1424,7 @@ index a99cbd2..29f05c4 100644
   		 */
 diff --git a/package/kernel/mac80211/patches/220-fq_disable_hack.patch b/package/kernel/mac80211/patches/220-fq_disable_hack.patch
 new file mode 100644
-index 0000000..7f420be
+index 0000000000000000000000000000000000000000..7f420beea56335d5043de6fd71b5febae3e9bd79
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/220-fq_disable_hack.patch
 @@ -0,0 +1,15 @@
@@ -1444,7 +1444,7 @@ index 0000000..7f420be
 + 	idx = reciprocal_scale(hash, fq->flows_cnt);
 + 	flow = &fq->flows[idx];
 diff --git a/package/kernel/mac80211/patches/300-ath9k-force-rx_clear-when-disabling-rx.patch b/package/kernel/mac80211/patches/300-ath9k-force-rx_clear-when-disabling-rx.patch
-index bddb15a..098bda7 100644
+index bddb15ad1a6bbcfcd0903c8b063c8289e5b6c43f..098bda7e93aa4453aa282eb170b2bc502bc85edd 100644
 --- a/package/kernel/mac80211/patches/300-ath9k-force-rx_clear-when-disabling-rx.patch
 +++ b/package/kernel/mac80211/patches/300-ath9k-force-rx_clear-when-disabling-rx.patch
 @@ -3,15 +3,16 @@ Date: Sun, 7 Jun 2015 13:53:35 +0200
@@ -1483,7 +1483,7 @@ index bddb15a..098bda7 100644
   }
 diff --git a/package/kernel/mac80211/patches/302-Revert-ath9k-interpret-requested-txpower-in-EIRP-dom.patch b/package/kernel/mac80211/patches/302-Revert-ath9k-interpret-requested-txpower-in-EIRP-dom.patch
 new file mode 100644
-index 0000000..7caa9be
+index 0000000000000000000000000000000000000000..7caa9be5a8b963b6199bf1a29cc370899d30b291
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/302-Revert-ath9k-interpret-requested-txpower-in-EIRP-dom.patch
 @@ -0,0 +1,37 @@
@@ -1526,7 +1526,7 @@ index 0000000..7caa9be
 + void ath9k_hw_set_txpowerlimit(struct ath_hw *ah, u32 limit, bool test)
 diff --git a/package/kernel/mac80211/patches/302-ath9k_hw-add-low-power-tx-gain-table-for-AR953x.patch b/package/kernel/mac80211/patches/302-ath9k_hw-add-low-power-tx-gain-table-for-AR953x.patch
 deleted file mode 100644
-index 22b987a..0000000
+index 22b987aa7aaae92f889adc938ca88042d3edfdf6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/302-ath9k_hw-add-low-power-tx-gain-table-for-AR953x.patch
 +++ /dev/null
 @@ -1,95 +0,0 @@
@@ -1627,7 +1627,7 @@ index 22b987a..0000000
 - 	{0x00009800, 0xafe68e30},
 diff --git a/package/kernel/mac80211/patches/303-ath10k-Ensure-txrx-compl-task-is-stopped-when-cleani.patch b/package/kernel/mac80211/patches/303-ath10k-Ensure-txrx-compl-task-is-stopped-when-cleani.patch
 new file mode 100644
-index 0000000..73accd8
+index 0000000000000000000000000000000000000000..73accd866b91e84bfc42684daa3804b0a3bbc563
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/303-ath10k-Ensure-txrx-compl-task-is-stopped-when-cleani.patch
 @@ -0,0 +1,21 @@
@@ -1654,7 +1654,7 @@ index 0000000..73accd8
 + 
 diff --git a/package/kernel/mac80211/patches/303-rt2x00-fix-monitor-mode-regression.patch b/package/kernel/mac80211/patches/303-rt2x00-fix-monitor-mode-regression.patch
 deleted file mode 100644
-index 7bb7435..0000000
+index 7bb74353eb128442bf26bc098d62a89c32cfc9d4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/303-rt2x00-fix-monitor-mode-regression.patch
 +++ /dev/null
 @@ -1,156 +0,0 @@
@@ -1816,7 +1816,7 @@ index 7bb7435..0000000
 - 	rt2x00_set_field32(&reg, TXRX_CSR0_DROP_MULTICAST,
 diff --git a/package/kernel/mac80211/patches/304-ath10k-Ensure-peer_map-references-are-cleaned-up.patch b/package/kernel/mac80211/patches/304-ath10k-Ensure-peer_map-references-are-cleaned-up.patch
 new file mode 100644
-index 0000000..7dec1fb
+index 0000000000000000000000000000000000000000..7dec1fb55ab64fed606c9162d39f90902a20d4e0
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/304-ath10k-Ensure-peer_map-references-are-cleaned-up.patch
 @@ -0,0 +1,60 @@
@@ -1882,7 +1882,7 @@ index 0000000..7dec1fb
 + 	ar->num_peers = 0;
 diff --git a/package/kernel/mac80211/patches/304-ath9k-avoid-ANI-restart-if-no-trigger.patch b/package/kernel/mac80211/patches/304-ath9k-avoid-ANI-restart-if-no-trigger.patch
 deleted file mode 100644
-index 049059a..0000000
+index 049059aa24b50e71636336e3928bc66e64c39ae1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/304-ath9k-avoid-ANI-restart-if-no-trigger.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -1920,7 +1920,7 @@ index 049059a..0000000
 - EXPORT_SYMBOL(ath9k_hw_ani_monitor);
 diff --git a/package/kernel/mac80211/patches/305-ath10k-Clean-up-peer-when-sta-goes-away.patch b/package/kernel/mac80211/patches/305-ath10k-Clean-up-peer-when-sta-goes-away.patch
 new file mode 100644
-index 0000000..7248a8c
+index 0000000000000000000000000000000000000000..7248a8cecf6b0798d354aa3fd44386f2e1f1b52d
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/305-ath10k-Clean-up-peer-when-sta-goes-away.patch
 @@ -0,0 +1,32 @@
@@ -1958,7 +1958,7 @@ index 0000000..7248a8c
 + 		spin_unlock_bh(&ar->data_lock);
 diff --git a/package/kernel/mac80211/patches/305-ath9k-clean-up-ANI-per-channel-pointer-checking.patch b/package/kernel/mac80211/patches/305-ath9k-clean-up-ANI-per-channel-pointer-checking.patch
 deleted file mode 100644
-index a1ac67c..0000000
+index a1ac67c828deb429af4ba4db0e8c18e87a3e12b6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/305-ath9k-clean-up-ANI-per-channel-pointer-checking.patch
 +++ /dev/null
 @@ -1,91 +0,0 @@
@@ -2055,7 +2055,7 @@ index a1ac67c..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/306-ath9k-do-not-reset-while-BB-panic-0x4000409-on-ar956.patch b/package/kernel/mac80211/patches/306-ath9k-do-not-reset-while-BB-panic-0x4000409-on-ar956.patch
 deleted file mode 100644
-index cf8194a..0000000
+index cf8194aa334c7b85e26404ec3a104dff5431d4e9..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/306-ath9k-do-not-reset-while-BB-panic-0x4000409-on-ar956.patch
 +++ /dev/null
 @@ -1,31 +0,0 @@
@@ -2092,7 +2092,7 @@ index cf8194a..0000000
 - 			return true;
 diff --git a/package/kernel/mac80211/patches/306-mac80211-add-hdrlen-to-ieee80211_tx_data.patch b/package/kernel/mac80211/patches/306-mac80211-add-hdrlen-to-ieee80211_tx_data.patch
 new file mode 100644
-index 0000000..4a8f143
+index 0000000000000000000000000000000000000000..4a8f14394640020ae7b32aa3e295cfb9494896df
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/306-mac80211-add-hdrlen-to-ieee80211_tx_data.patch
 @@ -0,0 +1,203 @@
@@ -2301,7 +2301,7 @@ index 0000000..4a8f143
 + 
 diff --git a/package/kernel/mac80211/patches/307-ath9k-fix-inconsistent-use-of-tab-and-space-in-inden.patch b/package/kernel/mac80211/patches/307-ath9k-fix-inconsistent-use-of-tab-and-space-in-inden.patch
 deleted file mode 100644
-index 80b781c..0000000
+index 80b781ca54dc8c217ffe5fa304bf2bc515cf1c90..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/307-ath9k-fix-inconsistent-use-of-tab-and-space-in-inden.patch
 +++ /dev/null
 @@ -1,27 +0,0 @@
@@ -2334,7 +2334,7 @@ index 80b781c..0000000
 - 				  AR9300_PAPRD_SCALE_1);
 diff --git a/package/kernel/mac80211/patches/307-mac80211-add-NEED_ALIGNED4_SKBS-hw-flag.patch b/package/kernel/mac80211/patches/307-mac80211-add-NEED_ALIGNED4_SKBS-hw-flag.patch
 new file mode 100644
-index 0000000..eeb881e
+index 0000000000000000000000000000000000000000..eeb881e03064fc7b0fdbcb5dbb5ffc2600c9754e
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/307-mac80211-add-NEED_ALIGNED4_SKBS-hw-flag.patch
 @@ -0,0 +1,235 @@
@@ -2575,7 +2575,7 @@ index 0000000..eeb881e
 + 					    key_len, key_idx);
 diff --git a/package/kernel/mac80211/patches/308-ath10k-Fix-sending-NULL-Qos-NULL-data-frames-for-QCA.patch b/package/kernel/mac80211/patches/308-ath10k-Fix-sending-NULL-Qos-NULL-data-frames-for-QCA.patch
 new file mode 100644
-index 0000000..8590aad
+index 0000000000000000000000000000000000000000..8590aadabe8d622a9691e13c17af23bd5d91886c
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/308-ath10k-Fix-sending-NULL-Qos-NULL-data-frames-for-QCA.patch
 @@ -0,0 +1,72 @@
@@ -2653,7 +2653,7 @@ index 0000000..8590aad
 + 		      ar->running_fw->fw_file.fw_features))
 diff --git a/package/kernel/mac80211/patches/308-ath9k-fix-data-bus-error-on-ar9300-and-ar9580.patch b/package/kernel/mac80211/patches/308-ath9k-fix-data-bus-error-on-ar9300-and-ar9580.patch
 deleted file mode 100644
-index d408866..0000000
+index d4088664bf68166ecf5c25a9ac727578805da176..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/308-ath9k-fix-data-bus-error-on-ar9300-and-ar9580.patch
 +++ /dev/null
 @@ -1,65 +0,0 @@
@@ -2724,7 +2724,7 @@ index d408866..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch b/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch
 deleted file mode 100644
-index d9511c8..0000000
+index d9511c8d5f5c8051bf2ed9c1cd408911c0ba02d9..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/309-01-brcmfmac-add-missing-include.patch
 +++ /dev/null
 @@ -1,19 +0,0 @@
@@ -2749,7 +2749,7 @@ index d9511c8..0000000
 - #include "core.h"
 diff --git a/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch b/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch
 deleted file mode 100644
-index 711e019..0000000
+index 711e019e2b6836c6907a614fc3a3b1c17693f2cf..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/309-02-brcmfmac-fix-sdio-sg-table-alloc-crash.patch
 +++ /dev/null
 @@ -1,118 +0,0 @@
@@ -2873,7 +2873,7 @@ index 711e019..0000000
 - #ifdef CONFIG_PM_SLEEP
 diff --git a/package/kernel/mac80211/patches/309-cfg80211-fix-proto-in-ieee80211_data_to_8023-for-fra.patch b/package/kernel/mac80211/patches/309-cfg80211-fix-proto-in-ieee80211_data_to_8023-for-fra.patch
 new file mode 100644
-index 0000000..41c27ca
+index 0000000000000000000000000000000000000000..41c27cac4129547e1e6df0f4ed96d61279c13a44
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/309-cfg80211-fix-proto-in-ieee80211_data_to_8023-for-fra.patch
 @@ -0,0 +1,37 @@
@@ -2916,7 +2916,7 @@ index 0000000..41c27ca
 + 
 diff --git a/package/kernel/mac80211/patches/310-ath9k_hw-ignore-eeprom-magic-mismatch-on-flash-based.patch b/package/kernel/mac80211/patches/310-ath9k_hw-ignore-eeprom-magic-mismatch-on-flash-based.patch
 deleted file mode 100644
-index 287d6e1..0000000
+index 287d6e13bd4a1dd4132cc2020a626e6bc60083fd..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/310-ath9k_hw-ignore-eeprom-magic-mismatch-on-flash-based.patch
 +++ /dev/null
 @@ -1,38 +0,0 @@
@@ -2960,7 +2960,7 @@ index 287d6e1..0000000
 - 		return -EINVAL;
 diff --git a/package/kernel/mac80211/patches/310-mac80211-minstrel-Enable-STBC-and-LDPC-for-VHT-Rates.patch b/package/kernel/mac80211/patches/310-mac80211-minstrel-Enable-STBC-and-LDPC-for-VHT-Rates.patch
 new file mode 100644
-index 0000000..25929c9
+index 0000000000000000000000000000000000000000..25929c98136c33e4e18be47c1a4c1f8c756220ba
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/310-mac80211-minstrel-Enable-STBC-and-LDPC-for-VHT-Rates.patch
 @@ -0,0 +1,81 @@
@@ -3047,7 +3047,7 @@ index 0000000..25929c9
 + 		}
 diff --git a/package/kernel/mac80211/patches/311-ath10k-disable-wake_tx_queue-for-older-devices.patch b/package/kernel/mac80211/patches/311-ath10k-disable-wake_tx_queue-for-older-devices.patch
 new file mode 100644
-index 0000000..4cf26a6
+index 0000000000000000000000000000000000000000..4cf26a631f4404b7b3a0c18ab8186203f405a50a
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/311-ath10k-disable-wake_tx_queue-for-older-devices.patch
 @@ -0,0 +1,73 @@
@@ -3126,7 +3126,7 @@ index 0000000..4cf26a6
 + 	if (ret) {
 diff --git a/package/kernel/mac80211/patches/311-ath9k-do-not-limit-the-number-of-DFS-interfaces-to-1.patch b/package/kernel/mac80211/patches/311-ath9k-do-not-limit-the-number-of-DFS-interfaces-to-1.patch
 deleted file mode 100644
-index 070efa9..0000000
+index 070efa98e834e0dfe2334fc0eb9bc433e0f037e8..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/311-ath9k-do-not-limit-the-number-of-DFS-interfaces-to-1.patch
 +++ /dev/null
 @@ -1,55 +0,0 @@
@@ -3187,7 +3187,7 @@ index 070efa9..0000000
 - #ifdef CPTCFG_ATH9K_CHANNEL_CONTEXT
 diff --git a/package/kernel/mac80211/patches/312-ath9k-Correct-TSF-adjustment-to-align-the-beacon-tim.patch b/package/kernel/mac80211/patches/312-ath9k-Correct-TSF-adjustment-to-align-the-beacon-tim.patch
 new file mode 100644
-index 0000000..df43105
+index 0000000000000000000000000000000000000000..df43105cb8233828bef396d500b391731c5c580a
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/312-ath9k-Correct-TSF-adjustment-to-align-the-beacon-tim.patch
 @@ -0,0 +1,45 @@
@@ -3238,7 +3238,7 @@ index 0000000..df43105
 + bool ath9k_csa_is_finished(struct ath_softc *sc, struct ieee80211_vif *vif)
 diff --git a/package/kernel/mac80211/patches/312-mac80211-fix-txq-queue-related-crashes.patch b/package/kernel/mac80211/patches/312-mac80211-fix-txq-queue-related-crashes.patch
 deleted file mode 100644
-index 61cafc7..0000000
+index 61cafc7625a8f8df5b67558a875794f5d20dbb99..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/312-mac80211-fix-txq-queue-related-crashes.patch
 +++ /dev/null
 @@ -1,27 +0,0 @@
@@ -3271,7 +3271,7 @@ index 61cafc7..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/313-ath9k-Handle-channel-context-in-get_-set_-reset_tsf.patch b/package/kernel/mac80211/patches/313-ath9k-Handle-channel-context-in-get_-set_-reset_tsf.patch
 new file mode 100644
-index 0000000..ef0afbe
+index 0000000000000000000000000000000000000000..ef0afbea9c60f69b6a55be1ce1f2dcd4c0d43928
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/313-ath9k-Handle-channel-context-in-get_-set_-reset_tsf.patch
 @@ -0,0 +1,70 @@
@@ -3347,7 +3347,7 @@ index 0000000..ef0afbe
 + 	mutex_unlock(&sc->mutex);
 diff --git a/package/kernel/mac80211/patches/313-mac80211-fix-unnecessary-frame-drops-in-mesh-fwding.patch b/package/kernel/mac80211/patches/313-mac80211-fix-unnecessary-frame-drops-in-mesh-fwding.patch
 deleted file mode 100644
-index 844d43b..0000000
+index 844d43bfc7875b937d8c67aba60f1204bcb7020a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/313-mac80211-fix-unnecessary-frame-drops-in-mesh-fwding.patch
 +++ /dev/null
 @@ -1,57 +0,0 @@
@@ -3410,7 +3410,7 @@ index 844d43b..0000000
 - 		return RX_DROP_MONITOR;
 diff --git a/package/kernel/mac80211/patches/314-ath9k-Use-tsf-offset-helper-in-ath9k_hw_reset.patch b/package/kernel/mac80211/patches/314-ath9k-Use-tsf-offset-helper-in-ath9k_hw_reset.patch
 new file mode 100644
-index 0000000..e725a8b
+index 0000000000000000000000000000000000000000..e725a8bd6099ad12d0151b90241489f063a5196d
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/314-ath9k-Use-tsf-offset-helper-in-ath9k_hw_reset.patch
 @@ -0,0 +1,65 @@
@@ -3481,7 +3481,7 @@ index 0000000..e725a8b
 + 	ath9k_hw_init_mfp(ah);
 diff --git a/package/kernel/mac80211/patches/314-mac80211-Requeue-work-after-scan-complete-for-all-VI.patch b/package/kernel/mac80211/patches/314-mac80211-Requeue-work-after-scan-complete-for-all-VI.patch
 deleted file mode 100644
-index 5b3efbd..0000000
+index 5b3efbdc5aff65de96b959fbc250f7ddde0c5459..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/314-mac80211-Requeue-work-after-scan-complete-for-all-VI.patch
 +++ /dev/null
 @@ -1,103 +0,0 @@
@@ -3590,7 +3590,7 @@ index 5b3efbd..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/315-ath9k-Expose-tsf_adjustment-in-mac80211-tsf-getters-.patch b/package/kernel/mac80211/patches/315-ath9k-Expose-tsf_adjustment-in-mac80211-tsf-getters-.patch
 new file mode 100644
-index 0000000..c95ab7e
+index 0000000000000000000000000000000000000000..c95ab7e644c4c932b619ae9b09a16a91347fc8da
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/315-ath9k-Expose-tsf_adjustment-in-mac80211-tsf-getters-.patch
 @@ -0,0 +1,32 @@
@@ -3628,7 +3628,7 @@ index 0000000..c95ab7e
 + 		ath9k_hw_settsf64(sc->sc_ah, tsf);
 diff --git a/package/kernel/mac80211/patches/315-mac80211-fix-ibss-scan-parameters.patch b/package/kernel/mac80211/patches/315-mac80211-fix-ibss-scan-parameters.patch
 deleted file mode 100644
-index 52fecb9..0000000
+index 52fecb96b002de8ed650e2155f846cbcc9ba0900..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/315-mac80211-fix-ibss-scan-parameters.patch
 +++ /dev/null
 @@ -1,57 +0,0 @@
@@ -3691,7 +3691,7 @@ index 52fecb9..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/316-ath9k-Remove-some-defined-constants-to-decrease-verb.patch b/package/kernel/mac80211/patches/316-ath9k-Remove-some-defined-constants-to-decrease-verb.patch
 new file mode 100644
-index 0000000..36aaa10
+index 0000000000000000000000000000000000000000..36aaa1030ea87569202cd109bb59479cbb0b64e5
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/316-ath9k-Remove-some-defined-constants-to-decrease-verb.patch
 @@ -0,0 +1,137 @@
@@ -3834,7 +3834,7 @@ index 0000000..36aaa10
 + 			 * Defer update, so that connected stations can adjust
 diff --git a/package/kernel/mac80211/patches/316-net-mac80211-agg-rx.c-fix-use-of-uninitialised-value.patch b/package/kernel/mac80211/patches/316-net-mac80211-agg-rx.c-fix-use-of-uninitialised-value.patch
 deleted file mode 100644
-index e78df36..0000000
+index e78df366003ee0d1cb5402e7c0760d96c45a40d7..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/316-net-mac80211-agg-rx.c-fix-use-of-uninitialised-value.patch
 +++ /dev/null
 @@ -1,50 +0,0 @@
@@ -3890,7 +3890,7 @@ index e78df36..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/317-ath9k-Fix-beacon-configuration-for-addition-removal-.patch b/package/kernel/mac80211/patches/317-ath9k-Fix-beacon-configuration-for-addition-removal-.patch
 new file mode 100644
-index 0000000..360dfbf
+index 0000000000000000000000000000000000000000..360dfbfafb9b2c98e4b679aa45db5c7a2e747a3b
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/317-ath9k-Fix-beacon-configuration-for-addition-removal-.patch
 @@ -0,0 +1,544 @@
@@ -4440,7 +4440,7 @@ index 0000000..360dfbf
 + 	if ((avp->chanctx == sc->cur_chan) &&
 diff --git a/package/kernel/mac80211/patches/317-mac80211-minstrel_ht-fix-out-of-bound-in-minstrel_ht.patch b/package/kernel/mac80211/patches/317-mac80211-minstrel_ht-fix-out-of-bound-in-minstrel_ht.patch
 deleted file mode 100644
-index 5bf53b9..0000000
+index 5bf53b918c4936c09f65ea8a02f9ac7e93cf686a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/317-mac80211-minstrel_ht-fix-out-of-bound-in-minstrel_ht.patch
 +++ /dev/null
 @@ -1,45 +0,0 @@
@@ -4491,7 +4491,7 @@ index 5bf53b9..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/318-brcmfmac-slightly-simplify-building-interface-combin.patch b/package/kernel/mac80211/patches/318-brcmfmac-slightly-simplify-building-interface-combin.patch
 new file mode 100644
-index 0000000..d946ecc
+index 0000000000000000000000000000000000000000..d946ecce19bf4e21355cc2563a58a02575d45f77
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/318-brcmfmac-slightly-simplify-building-interface-combin.patch
 @@ -0,0 +1,108 @@
@@ -4605,7 +4605,7 @@ index 0000000..d946ecc
 + 	return 0;
 diff --git a/package/kernel/mac80211/patches/318-mac80211-move-A-MSDU-skb_linearize-call-to-ieee80211.patch b/package/kernel/mac80211/patches/318-mac80211-move-A-MSDU-skb_linearize-call-to-ieee80211.patch
 deleted file mode 100644
-index 655dc4b..0000000
+index 655dc4bfa934ca34ac108e54a93626e7d73eeb6e..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/318-mac80211-move-A-MSDU-skb_linearize-call-to-ieee80211.patch
 +++ /dev/null
 @@ -1,35 +0,0 @@
@@ -4646,7 +4646,7 @@ index 655dc4b..0000000
 - 		if (err)
 diff --git a/package/kernel/mac80211/patches/319-0001-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch b/package/kernel/mac80211/patches/319-0001-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch
 new file mode 100644
-index 0000000..073d012
+index 0000000000000000000000000000000000000000..073d012dea37ebfc34ffac98797c5eebc48a6c6d
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0001-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch
 @@ -0,0 +1,154 @@
@@ -4806,7 +4806,7 @@ index 0000000..073d012
 + 	memset(p2p, 0, sizeof(*p2p));
 diff --git a/package/kernel/mac80211/patches/319-0002-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch b/package/kernel/mac80211/patches/319-0002-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch
 new file mode 100644
-index 0000000..6d3f3c6
+index 0000000000000000000000000000000000000000..6d3f3c640cc5667adbbf828eab28995e1fc5d88c
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0002-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch
 @@ -0,0 +1,40 @@
@@ -4852,7 +4852,7 @@ index 0000000..6d3f3c6
 + 			  enum brcmf_netif_stop_reason reason, bool state);
 diff --git a/package/kernel/mac80211/patches/319-0003-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch b/package/kernel/mac80211/patches/319-0003-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch
 new file mode 100644
-index 0000000..eeda766
+index 0000000000000000000000000000000000000000..eeda76661c30388ede4fd96a340af84e7f27d3b2
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0003-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch
 @@ -0,0 +1,33 @@
@@ -4891,7 +4891,7 @@ index 0000000..eeda766
 + 
 diff --git a/package/kernel/mac80211/patches/319-0004-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch b/package/kernel/mac80211/patches/319-0004-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch
 new file mode 100644
-index 0000000..3819248
+index 0000000000000000000000000000000000000000..3819248b0fe94da017e99fba61931703036ad15c
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0004-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch
 @@ -0,0 +1,27 @@
@@ -4924,7 +4924,7 @@ index 0000000..3819248
 + 	}
 diff --git a/package/kernel/mac80211/patches/319-0005-brcmfmac-delete-interface-directly-in-code-that-sent.patch b/package/kernel/mac80211/patches/319-0005-brcmfmac-delete-interface-directly-in-code-that-sent.patch
 new file mode 100644
-index 0000000..12d7eb4
+index 0000000000000000000000000000000000000000..12d7eb48877d8f9d9e2eb64c7cfd887c3d1634ae
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0005-brcmfmac-delete-interface-directly-in-code-that-sent.patch
 @@ -0,0 +1,75 @@
@@ -5005,7 +5005,7 @@ index 0000000..12d7eb4
 + 	if (vif->wdev.iftype != NL80211_IFTYPE_P2P_DEVICE)
 diff --git a/package/kernel/mac80211/patches/319-0006-brcmfmac-support-removing-AP-interfaces-with-interfa.patch b/package/kernel/mac80211/patches/319-0006-brcmfmac-support-removing-AP-interfaces-with-interfa.patch
 new file mode 100644
-index 0000000..2f7165e
+index 0000000000000000000000000000000000000000..2f7165eade7c6ffba2b1ed23e71b66e54d6a430b
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/319-0006-brcmfmac-support-removing-AP-interfaces-with-interfa.patch
 @@ -0,0 +1,84 @@
@@ -5095,7 +5095,7 @@ index 0000000..2f7165e
 + 	case NL80211_IFTYPE_P2P_DEVICE:
 diff --git a/package/kernel/mac80211/patches/319-cfg80211-add-function-for-802.3-conversion-with-sepa.patch b/package/kernel/mac80211/patches/319-cfg80211-add-function-for-802.3-conversion-with-sepa.patch
 deleted file mode 100644
-index b646ab3..0000000
+index b646ab36dd204205735338c394a71f3bb58bd46a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/319-cfg80211-add-function-for-802.3-conversion-with-sepa.patch
 +++ /dev/null
 @@ -1,186 +0,0 @@
@@ -5287,7 +5287,7 @@ index b646ab3..0000000
 - int ieee80211_data_from_8023(struct sk_buff *skb, const u8 *addr,
 diff --git a/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch b/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
 new file mode 100644
-index 0000000..f8b8f86
+index 0000000000000000000000000000000000000000..f8b8f86e03ba0786ef410db31d6de2ab691430bd
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
 @@ -0,0 +1,871 @@
@@ -6164,7 +6164,7 @@ index 0000000..f8b8f86
 + 
 diff --git a/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch b/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch
 deleted file mode 100644
-index 2eeed22..0000000
+index 2eeed22af0adb5e8386f5f5e75af725bbf71ec7b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/320-cfg80211-add-support-for-non-linear-skbs-in-ieee8021.patch
 +++ /dev/null
 @@ -1,159 +0,0 @@
@@ -6329,7 +6329,7 @@ index 2eeed22..0000000
 -  purge:
 diff --git a/package/kernel/mac80211/patches/321-ath9k_hw-reset-AHB-WMAC-interface-on-AR91xx.patch b/package/kernel/mac80211/patches/321-ath9k_hw-reset-AHB-WMAC-interface-on-AR91xx.patch
 new file mode 100644
-index 0000000..9caa76d
+index 0000000000000000000000000000000000000000..9caa76dc5d40a2fe2ce332e549bfba762a1431d5
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/321-ath9k_hw-reset-AHB-WMAC-interface-on-AR91xx.patch
 @@ -0,0 +1,25 @@
@@ -6360,7 +6360,7 @@ index 0000000..9caa76d
 + }
 diff --git a/package/kernel/mac80211/patches/321-mac80211-Parse-legacy-and-HT-rate-in-injected-frames.patch b/package/kernel/mac80211/patches/321-mac80211-Parse-legacy-and-HT-rate-in-injected-frames.patch
 deleted file mode 100644
-index c4155a1..0000000
+index c4155a118101fb910100de80f4ac7f6da1787a1c..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/321-mac80211-Parse-legacy-and-HT-rate-in-injected-frames.patch
 +++ /dev/null
 @@ -1,155 +0,0 @@
@@ -6521,7 +6521,7 @@ index c4155a1..0000000
 - 	rcu_read_lock();
 diff --git a/package/kernel/mac80211/patches/322-ath9k_hw-issue-external-reset-for-QCA9550.patch b/package/kernel/mac80211/patches/322-ath9k_hw-issue-external-reset-for-QCA9550.patch
 new file mode 100644
-index 0000000..5d4e849
+index 0000000000000000000000000000000000000000..5d4e849b7fd3e0cf1510e5759c150571864b3c89
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/322-ath9k_hw-issue-external-reset-for-QCA9550.patch
 @@ -0,0 +1,125 @@
@@ -6652,7 +6652,7 @@ index 0000000..5d4e849
 + 	REGWRITE_BUFFER_FLUSH(ah);
 diff --git a/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch b/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch
 deleted file mode 100644
-index e7bfb9c..0000000
+index e7bfb9c83dd406e41e523195fabd0a4611dc86b4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/322-mac80211-add-A-MSDU-tx-support.patch
 +++ /dev/null
 @@ -1,317 +0,0 @@
@@ -6975,7 +6975,7 @@ index e7bfb9c..0000000
 - 	 * more room than we already have in 'extra_head'
 diff --git a/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch b/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch
 deleted file mode 100644
-index 9277b2c..0000000
+index 9277b2cabcdf6a02fa285b7eef2391b7f575869a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0000-brcmfmac-fix-setting-primary-channel-for-80-MHz-widt.patch
 +++ /dev/null
 @@ -1,64 +0,0 @@
@@ -7045,7 +7045,7 @@ index 9277b2c..0000000
 - 	case NL80211_CHAN_WIDTH_160:
 diff --git a/package/kernel/mac80211/patches/323-0001-brcmfmac-analyze-descriptors-of-current-component-on.patch b/package/kernel/mac80211/patches/323-0001-brcmfmac-analyze-descriptors-of-current-component-on.patch
 deleted file mode 100644
-index d7018da..0000000
+index d7018dab3d230ab2e342824ff5067d0a24b586a1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0001-brcmfmac-analyze-descriptors-of-current-component-on.patch
 +++ /dev/null
 @@ -1,51 +0,0 @@
@@ -7102,7 +7102,7 @@ index d7018da..0000000
 - 		if (val & DMP_DESC_ADDRSIZE_GT32)
 diff --git a/package/kernel/mac80211/patches/323-0002-brcmfmac-allow-storing-PMU-core-without-wrapper-addr.patch b/package/kernel/mac80211/patches/323-0002-brcmfmac-allow-storing-PMU-core-without-wrapper-addr.patch
 deleted file mode 100644
-index 045ab49..0000000
+index 045ab4953bb9a43044435baa8e242b3f4794952a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0002-brcmfmac-allow-storing-PMU-core-without-wrapper-addr.patch
 +++ /dev/null
 @@ -1,28 +0,0 @@
@@ -7136,7 +7136,7 @@ index 045ab49..0000000
 - 		/* try to obtain register address info */
 diff --git a/package/kernel/mac80211/patches/323-0003-brcmfmac-read-extended-capabilities-of-ChipCommon-co.patch b/package/kernel/mac80211/patches/323-0003-brcmfmac-read-extended-capabilities-of-ChipCommon-co.patch
 deleted file mode 100644
-index 7b7ba4f..0000000
+index 7b7ba4f743b244c0d766efbce7045e00e13e27ed..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0003-brcmfmac-read-extended-capabilities-of-ChipCommon-co.patch
 +++ /dev/null
 @@ -1,43 +0,0 @@
@@ -7185,7 +7185,7 @@ index 7b7ba4f..0000000
 - 	u32 rambase;
 diff --git a/package/kernel/mac80211/patches/323-0004-brcmfmac-access-PMU-registers-using-standalone-PMU-c.patch b/package/kernel/mac80211/patches/323-0004-brcmfmac-access-PMU-registers-using-standalone-PMU-c.patch
 deleted file mode 100644
-index 2af6fd9..0000000
+index 2af6fd93bc06142b459144caf49489d51f7f6304..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0004-brcmfmac-access-PMU-registers-using-standalone-PMU-c.patch
 +++ /dev/null
 @@ -1,148 +0,0 @@
@@ -7339,7 +7339,7 @@ index 2af6fd9..0000000
 - 		goto fail;
 diff --git a/package/kernel/mac80211/patches/323-0005-brcmfmac-add-support-for-14e4-4365-PCI-ID-with-BCM43.patch b/package/kernel/mac80211/patches/323-0005-brcmfmac-add-support-for-14e4-4365-PCI-ID-with-BCM43.patch
 deleted file mode 100644
-index 35887fc..0000000
+index 35887fcb59219270e0aedd6c9466956f9ba318f4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/323-0005-brcmfmac-add-support-for-14e4-4365-PCI-ID-with-BCM43.patch
 +++ /dev/null
 @@ -1,38 +0,0 @@
@@ -7383,7 +7383,7 @@ index 35887fc..0000000
 - 	BRCMF_PCIE_DEVICE(BRCM_PCIE_4366_5G_DEVICE_ID),
 diff --git a/package/kernel/mac80211/patches/323-ath9k-Fix-programming-of-minCCA-power-threshold.patch b/package/kernel/mac80211/patches/323-ath9k-Fix-programming-of-minCCA-power-threshold.patch
 new file mode 100644
-index 0000000..59ac29b
+index 0000000000000000000000000000000000000000..59ac29b1cfd6fa5d6f6cbab595ca0da1508fd077
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/323-ath9k-Fix-programming-of-minCCA-power-threshold.patch
 @@ -0,0 +1,26 @@
@@ -7415,7 +7415,7 @@ index 0000000..59ac29b
 + 	ar9003_hw_thermo_cal_apply(ah);
 diff --git a/package/kernel/mac80211/patches/324-ath9k_hw-fix-spectral-scan-on-AR9285-and-newer.patch b/package/kernel/mac80211/patches/324-ath9k_hw-fix-spectral-scan-on-AR9285-and-newer.patch
 new file mode 100644
-index 0000000..b6f4868
+index 0000000000000000000000000000000000000000..b6f48680b7b1e2522c53c51834a8ec32638a3dec
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/324-ath9k_hw-fix-spectral-scan-on-AR9285-and-newer.patch
 @@ -0,0 +1,86 @@
@@ -7507,7 +7507,7 @@ index 0000000..b6f4868
 + #define AR_PHY_SEARCH_START_DELAY 0x9918
 diff --git a/package/kernel/mac80211/patches/324-brcmfmac-treat-NULL-character-in-NVRAM-as-separator.patch b/package/kernel/mac80211/patches/324-brcmfmac-treat-NULL-character-in-NVRAM-as-separator.patch
 deleted file mode 100644
-index 6ce60f1..0000000
+index 6ce60f19608abcc89a27c6cebfbb90806b58a503..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/324-brcmfmac-treat-NULL-character-in-NVRAM-as-separator.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -7545,7 +7545,7 @@ index 6ce60f1..0000000
 - 		return COMMENT;
 diff --git a/package/kernel/mac80211/patches/325-ath9k_hw-fix-duplicate-and-partially-wrong-definitio.patch b/package/kernel/mac80211/patches/325-ath9k_hw-fix-duplicate-and-partially-wrong-definitio.patch
 new file mode 100644
-index 0000000..6685f33
+index 0000000000000000000000000000000000000000..6685f33989dd9c872b817b32bcd5b1ce72f13089
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/325-ath9k_hw-fix-duplicate-and-partially-wrong-definitio.patch
 @@ -0,0 +1,57 @@
@@ -7608,7 +7608,7 @@ index 0000000..6685f33
 + 					(AR_SREV_9462(ah) ? 0x16290 : 0x16284))
 diff --git a/package/kernel/mac80211/patches/325-brcmfmac-sdio-Increase-the-default-timeouts-a-bit.patch b/package/kernel/mac80211/patches/325-brcmfmac-sdio-Increase-the-default-timeouts-a-bit.patch
 deleted file mode 100644
-index 012dea1..0000000
+index 012dea1e3a995d0118faea99f994da117e16293d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/325-brcmfmac-sdio-Increase-the-default-timeouts-a-bit.patch
 +++ /dev/null
 @@ -1,41 +0,0 @@
@@ -7655,7 +7655,7 @@ index 012dea1..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/326-ath9k-make-NF-load-complete-quickly-and-reliably.patch b/package/kernel/mac80211/patches/326-ath9k-make-NF-load-complete-quickly-and-reliably.patch
 deleted file mode 100644
-index 71f7a40..0000000
+index 71f7a4043304e4120bfb1fdfa3744a2ebd53ac54..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/326-ath9k-make-NF-load-complete-quickly-and-reliably.patch
 +++ /dev/null
 @@ -1,87 +0,0 @@
@@ -7748,7 +7748,7 @@ index 71f7a40..0000000
 - 			REG_READ(ah, AR_PHY_AGC_CONTROL));
 diff --git a/package/kernel/mac80211/patches/326-ath9k_hw-simplify-ar9003_hw_per_calibration.patch b/package/kernel/mac80211/patches/326-ath9k_hw-simplify-ar9003_hw_per_calibration.patch
 new file mode 100644
-index 0000000..999d993
+index 0000000000000000000000000000000000000000..999d9934cd47c41a53e296915139818ba10f9643
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/326-ath9k_hw-simplify-ar9003_hw_per_calibration.patch
 @@ -0,0 +1,88 @@
@@ -7842,7 +7842,7 @@ index 0000000..999d993
 + static int ar9003_hw_calibrate(struct ath_hw *ah, struct ath9k_channel *chan,
 diff --git a/package/kernel/mac80211/patches/327-ath9k_hw-get-rid-of-some-duplicate-code-in-calibrati.patch b/package/kernel/mac80211/patches/327-ath9k_hw-get-rid-of-some-duplicate-code-in-calibrati.patch
 new file mode 100644
-index 0000000..b7f3823
+index 0000000000000000000000000000000000000000..b7f3823ee625a7e77b84c4e293dbf6ac81fc3db1
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/327-ath9k_hw-get-rid-of-some-duplicate-code-in-calibrati.patch
 @@ -0,0 +1,94 @@
@@ -7942,7 +7942,7 @@ index 0000000..b7f3823
 + }
 diff --git a/package/kernel/mac80211/patches/327-mac80211-Remove-MPP-table-entries-with-MPath.patch b/package/kernel/mac80211/patches/327-mac80211-Remove-MPP-table-entries-with-MPath.patch
 deleted file mode 100644
-index f7f9df9..0000000
+index f7f9df946a462b5ede16dc61f49f2731ae444af6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/327-mac80211-Remove-MPP-table-entries-with-MPath.patch
 +++ /dev/null
 @@ -1,54 +0,0 @@
@@ -8002,7 +8002,7 @@ index f7f9df9..0000000
 - 	hash_idx = mesh_table_hash(addr, sdata, tbl);
 diff --git a/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch b/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch
 new file mode 100644
-index 0000000..cff32ad
+index 0000000000000000000000000000000000000000..cff32ad47cb0b905d9cfa4eb021258b644b2a47a
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch
 @@ -0,0 +1,97 @@
@@ -8105,7 +8105,7 @@ index 0000000..cff32ad
 + 	struct ath9k_cal_list *cal_list;
 diff --git a/package/kernel/mac80211/patches/328-mac80211-let-unused-MPP-table-entries-timeout.patch b/package/kernel/mac80211/patches/328-mac80211-let-unused-MPP-table-entries-timeout.patch
 deleted file mode 100644
-index 740993c..0000000
+index 740993c9e0284e5d03a9036ac87fd7548b22ab3b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/328-mac80211-let-unused-MPP-table-entries-timeout.patch
 +++ /dev/null
 @@ -1,104 +0,0 @@
@@ -8215,7 +8215,7 @@ index 740993c..0000000
 - 				mesh_path_del(mpath->sdata, mpath->dst);
 diff --git a/package/kernel/mac80211/patches/329-mac80211-Unify-mesh-and-mpp-path-removal-function.patch b/package/kernel/mac80211/patches/329-mac80211-Unify-mesh-and-mpp-path-removal-function.patch
 deleted file mode 100644
-index 0c36b1d..0000000
+index 0c36b1d5687447021eaa560d08b16580351b4a20..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/329-mac80211-Unify-mesh-and-mpp-path-removal-function.patch
 +++ /dev/null
 @@ -1,143 +0,0 @@
@@ -8364,7 +8364,7 @@ index 0c36b1d..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/329-mac80211-fix-check-for-buffered-powersave-frames-wit.patch b/package/kernel/mac80211/patches/329-mac80211-fix-check-for-buffered-powersave-frames-wit.patch
 new file mode 100644
-index 0000000..38e541c
+index 0000000000000000000000000000000000000000..38e541c7150aaf9b32eed89f8edfdf989d4677f7
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/329-mac80211-fix-check-for-buffered-powersave-frames-wit.patch
 @@ -0,0 +1,21 @@
@@ -8391,7 +8391,7 @@ index 0000000..38e541c
 + 			clear_bit(tid, &sta->txq_buffered_tids);
 diff --git a/package/kernel/mac80211/patches/330-ath10k-fix-rx-status-reporting-for-A-MSDU-subframes.patch b/package/kernel/mac80211/patches/330-ath10k-fix-rx-status-reporting-for-A-MSDU-subframes.patch
 new file mode 100644
-index 0000000..a6031b9
+index 0000000000000000000000000000000000000000..a6031b9c265d87656f04a7f7a639233949054818
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/330-ath10k-fix-rx-status-reporting-for-A-MSDU-subframes.patch
 @@ -0,0 +1,36 @@
@@ -8433,7 +8433,7 @@ index 0000000..a6031b9
 + }
 diff --git a/package/kernel/mac80211/patches/330-mac80211-minstrel-Change-expected-throughput-unit-ba.patch b/package/kernel/mac80211/patches/330-mac80211-minstrel-Change-expected-throughput-unit-ba.patch
 deleted file mode 100644
-index 4dc6d66..0000000
+index 4dc6d663ed7af432b5d26338ef74732abe6aa31c..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/330-mac80211-minstrel-Change-expected-throughput-unit-ba.patch
 +++ /dev/null
 @@ -1,51 +0,0 @@
@@ -8490,7 +8490,7 @@ index 4dc6d66..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/331-brcmfmac-Increase-nr-of-supported-flowrings.patch b/package/kernel/mac80211/patches/331-brcmfmac-Increase-nr-of-supported-flowrings.patch
 deleted file mode 100644
-index 1fd016f..0000000
+index 1fd016f7f6bc9ad7bd4265e16a439b4de33b8f9c..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/331-brcmfmac-Increase-nr-of-supported-flowrings.patch
 +++ /dev/null
 @@ -1,307 +0,0 @@
@@ -8803,7 +8803,7 @@ index 1fd016f..0000000
 - #else
 diff --git a/package/kernel/mac80211/patches/332-cfg80211-fix-faulty-variable-initialization-in-ieee8.patch b/package/kernel/mac80211/patches/332-cfg80211-fix-faulty-variable-initialization-in-ieee8.patch
 deleted file mode 100644
-index e414f23..0000000
+index e414f23784163abfeba59d9e523e3684643c038a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/332-cfg80211-fix-faulty-variable-initialization-in-ieee8.patch
 +++ /dev/null
 @@ -1,22 +0,0 @@
@@ -8831,7 +8831,7 @@ index e414f23..0000000
 - 	if (has_80211_header) {
 diff --git a/package/kernel/mac80211/patches/333-cfg80211-reuse-existing-page-fragments-in-A-MSDU-rx.patch b/package/kernel/mac80211/patches/333-cfg80211-reuse-existing-page-fragments-in-A-MSDU-rx.patch
 deleted file mode 100644
-index 6e2d0cf..0000000
+index 6e2d0cf5b0783860cb39264e33ecdef622fcc548..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/333-cfg80211-reuse-existing-page-fragments-in-A-MSDU-rx.patch
 +++ /dev/null
 @@ -1,132 +0,0 @@
@@ -8969,7 +8969,7 @@ index 6e2d0cf..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch b/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch
 deleted file mode 100644
-index f8f4f09..0000000
+index f8f4f0999dd2185090fdffef1d80629f15a67dd2..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/334-mac80211-fix-wiphy-supported_band-access.patch
 +++ /dev/null
 @@ -1,36 +0,0 @@
@@ -9011,7 +9011,7 @@ index f8f4f09..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch b/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch
 deleted file mode 100644
-index acaacf7..0000000
+index acaacf7cacc3ecf380dd69794aaa6b07b5403708..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/335-mac80211-minstrel_ht-set-A-MSDU-tx-limits-based-on-s.patch
 +++ /dev/null
 @@ -1,61 +0,0 @@
@@ -9078,7 +9078,7 @@ index acaacf7..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch b/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch
 deleted file mode 100644
-index 32a2ad6..0000000
+index 32a2ad6f0bcdafc499f257b6f925aaf0499e24c0..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/336-mac80211-minstrel_ht-set-default-tx-aggregation-time.patch
 +++ /dev/null
 @@ -1,31 +0,0 @@
@@ -9115,7 +9115,7 @@ index 32a2ad6..0000000
 - static void
 diff --git a/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch b/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch
 deleted file mode 100644
-index 229351b..0000000
+index 229351ba56802ef44fae5fe5f88a3ffbb0ada098..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/337-mac80211-minstrel_ht-fix-a-logic-error-in-RTS-CTS-ha.patch
 +++ /dev/null
 @@ -1,26 +0,0 @@
@@ -9147,7 +9147,7 @@ index 229351b..0000000
 - 		ratetbl->rate[offset].count = ratetbl->rate[offset].count_rts;
 diff --git a/package/kernel/mac80211/patches/338-mac80211-Fix-Public-Action-frame-RX-in-AP-mode.patch b/package/kernel/mac80211/patches/338-mac80211-Fix-Public-Action-frame-RX-in-AP-mode.patch
 deleted file mode 100644
-index 56cd94a..0000000
+index 56cd94aa152169fa4e98cd16dbf8a251dca4ca8a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/338-mac80211-Fix-Public-Action-frame-RX-in-AP-mode.patch
 +++ /dev/null
 @@ -1,35 +0,0 @@
@@ -9188,7 +9188,7 @@ index 56cd94a..0000000
 - 		}
 diff --git a/package/kernel/mac80211/patches/339-cfg80211-add-radiotap-VHT-info-to-rtap_namespace_siz.patch b/package/kernel/mac80211/patches/339-cfg80211-add-radiotap-VHT-info-to-rtap_namespace_siz.patch
 deleted file mode 100644
-index 15d6cd0..0000000
+index 15d6cd03eae1c5b2380cb718238762cbf5f5a5b6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/339-cfg80211-add-radiotap-VHT-info-to-rtap_namespace_siz.patch
 +++ /dev/null
 @@ -1,21 +0,0 @@
@@ -9215,7 +9215,7 @@ index 15d6cd0..0000000
 - 	 */
 diff --git a/package/kernel/mac80211/patches/340-mac80211-fix-parsing-of-40Mhz-in-injected-radiotap-h.patch b/package/kernel/mac80211/patches/340-mac80211-fix-parsing-of-40Mhz-in-injected-radiotap-h.patch
 deleted file mode 100644
-index de1b386..0000000
+index de1b38625c3845be51df0f34c2b82290651ca4be..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/340-mac80211-fix-parsing-of-40Mhz-in-injected-radiotap-h.patch
 +++ /dev/null
 @@ -1,36 +0,0 @@
@@ -9257,7 +9257,7 @@ index de1b386..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/341-mac80211-parse-VHT-info-in-injected-frames.patch b/package/kernel/mac80211/patches/341-mac80211-parse-VHT-info-in-injected-frames.patch
 deleted file mode 100644
-index ac1f251..0000000
+index ac1f2517f29973c74cdd32301b32d1be93fcefb1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/341-mac80211-parse-VHT-info-in-injected-frames.patch
 +++ /dev/null
 @@ -1,65 +0,0 @@
@@ -9328,7 +9328,7 @@ index ac1f251..0000000
 - 				if (rate * 5 != sband->bitrates[i].bitrate)
 diff --git a/package/kernel/mac80211/patches/342-mac80211-do-not-pass-injected-frames-without-a-valid.patch b/package/kernel/mac80211/patches/342-mac80211-do-not-pass-injected-frames-without-a-valid.patch
 deleted file mode 100644
-index d7452c2..0000000
+index d7452c29c1fad9ee170199c33b260161b603032a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/342-mac80211-do-not-pass-injected-frames-without-a-valid.patch
 +++ /dev/null
 @@ -1,23 +0,0 @@
@@ -9357,7 +9357,7 @@ index d7452c2..0000000
 - 						     local->hw.max_rate_tries);
 diff --git a/package/kernel/mac80211/patches/343-mac80211-minstrel_ht-improve-sample-rate-skip-logic.patch b/package/kernel/mac80211/patches/343-mac80211-minstrel_ht-improve-sample-rate-skip-logic.patch
 deleted file mode 100644
-index 55ff817..0000000
+index 55ff817009294fde4c61548f95a49ca506d15b4d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/343-mac80211-minstrel_ht-improve-sample-rate-skip-logic.patch
 +++ /dev/null
 @@ -1,77 +0,0 @@
@@ -9440,7 +9440,7 @@ index 55ff817..0000000
 - 	     sample_dur >= minstrel_get_duration(mi->max_prob_rate))) {
 diff --git a/package/kernel/mac80211/patches/344-0001-brcmfmac-change-function-name-for-brcmf_cfg80211_wai.patch b/package/kernel/mac80211/patches/344-0001-brcmfmac-change-function-name-for-brcmf_cfg80211_wai.patch
 deleted file mode 100644
-index e3427de..0000000
+index e3427de732787befec7f0f738efb3cc85a00aa0d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0001-brcmfmac-change-function-name-for-brcmf_cfg80211_wai.patch
 +++ /dev/null
 @@ -1,99 +0,0 @@
@@ -9545,7 +9545,7 @@ index e3427de..0000000
 - 		else
 diff --git a/package/kernel/mac80211/patches/344-0002-brcmfmac-Limit-memory-allocs-to-64K.patch b/package/kernel/mac80211/patches/344-0002-brcmfmac-Limit-memory-allocs-to-64K.patch
 deleted file mode 100644
-index 9c336f7..0000000
+index 9c336f774fd79a2306dae746d3622db22eee76eb..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0002-brcmfmac-Limit-memory-allocs-to-64K.patch
 +++ /dev/null
 @@ -1,127 +0,0 @@
@@ -9678,7 +9678,7 @@ index 9c336f7..0000000
 - 	struct completion vif_disabled;
 diff --git a/package/kernel/mac80211/patches/344-0003-brcmfmac-check-for-wowl-support-before-enumerating-f.patch b/package/kernel/mac80211/patches/344-0003-brcmfmac-check-for-wowl-support-before-enumerating-f.patch
 deleted file mode 100644
-index ee3d9f3..0000000
+index ee3d9f37a851cb1d31a53e341614bd7166c2e581..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0003-brcmfmac-check-for-wowl-support-before-enumerating-f.patch
 +++ /dev/null
 @@ -1,29 +0,0 @@
@@ -9713,7 +9713,7 @@ index ee3d9f3..0000000
 - 	}
 diff --git a/package/kernel/mac80211/patches/344-0004-brcmfmac-Configure-country-code-using-device-specifi.patch b/package/kernel/mac80211/patches/344-0004-brcmfmac-Configure-country-code-using-device-specifi.patch
 deleted file mode 100644
-index c52cac8..0000000
+index c52cac87b979e6da07d24f2e7e119261dceea2ce..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0004-brcmfmac-Configure-country-code-using-device-specifi.patch
 +++ /dev/null
 @@ -1,214 +0,0 @@
@@ -9933,7 +9933,7 @@ index c52cac8..0000000
 - 	__le32 ie_length;	/* byte length of Information Elements */
 diff --git a/package/kernel/mac80211/patches/344-0005-brcmfmac-Add-length-checks-on-firmware-events.patch b/package/kernel/mac80211/patches/344-0005-brcmfmac-Add-length-checks-on-firmware-events.patch
 deleted file mode 100644
-index 3e2e350..0000000
+index 3e2e3503b629dbdd6abba44a9c9b24e4a5aea792..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0005-brcmfmac-Add-length-checks-on-firmware-events.patch
 +++ /dev/null
 @@ -1,283 +0,0 @@
@@ -10222,7 +10222,7 @@ index 3e2e350..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/344-0006-brcmfmac-add-neighbor-discovery-offload-ip-address-t.patch b/package/kernel/mac80211/patches/344-0006-brcmfmac-add-neighbor-discovery-offload-ip-address-t.patch
 deleted file mode 100644
-index 888ad5b..0000000
+index 888ad5b05059f1d6712303671a1052f1cbdcf30c..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0006-brcmfmac-add-neighbor-discovery-offload-ip-address-t.patch
 +++ /dev/null
 @@ -1,333 +0,0 @@
@@ -10561,7 +10561,7 @@ index 888ad5b..0000000
 - struct brcmf_skb_reorder_data {
 diff --git a/package/kernel/mac80211/patches/344-0007-brcmfmac-check-return-for-ARP-ip-setting-iovar.patch b/package/kernel/mac80211/patches/344-0007-brcmfmac-check-return-for-ARP-ip-setting-iovar.patch
 deleted file mode 100644
-index 68de8ed..0000000
+index 68de8ed2a263a45c4d3e7c4d568801a6925b1a30..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0007-brcmfmac-check-return-for-ARP-ip-setting-iovar.patch
 +++ /dev/null
 @@ -1,38 +0,0 @@
@@ -10605,7 +10605,7 @@ index 68de8ed..0000000
 - 		break;
 diff --git a/package/kernel/mac80211/patches/344-0008-brcmfmac-use-device-memsize-config-from-fw-if-define.patch b/package/kernel/mac80211/patches/344-0008-brcmfmac-use-device-memsize-config-from-fw-if-define.patch
 deleted file mode 100644
-index 3de0f64..0000000
+index 3de0f64d560d8a64923f5227e95cbfa2cbfc72df..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0008-brcmfmac-use-device-memsize-config-from-fw-if-define.patch
 +++ /dev/null
 @@ -1,73 +0,0 @@
@@ -10684,7 +10684,7 @@ index 3de0f64..0000000
 - 		goto fail;
 diff --git a/package/kernel/mac80211/patches/344-0009-brcmfmac-use-bar1-window-size-as-provided-by-pci-sub.patch b/package/kernel/mac80211/patches/344-0009-brcmfmac-use-bar1-window-size-as-provided-by-pci-sub.patch
 deleted file mode 100644
-index ca03ffe..0000000
+index ca03ffe4b09a5b565b9da2ce4eb13949bb3623b4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0009-brcmfmac-use-bar1-window-size-as-provided-by-pci-sub.patch
 +++ /dev/null
 @@ -1,58 +0,0 @@
@@ -10748,7 +10748,7 @@ index ca03ffe..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/344-0010-brcmfmac-add-support-for-the-PCIE-4366c0-chip.patch b/package/kernel/mac80211/patches/344-0010-brcmfmac-add-support-for-the-PCIE-4366c0-chip.patch
 deleted file mode 100644
-index e4a8f30..0000000
+index e4a8f305cf5a8d9029ad5619ef8bcbc10a425ddd..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0010-brcmfmac-add-support-for-the-PCIE-4366c0-chip.patch
 +++ /dev/null
 @@ -1,34 +0,0 @@
@@ -10788,7 +10788,7 @@ index e4a8f30..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/344-0011-brcmfmac-remove-pcie-gen1-support.patch b/package/kernel/mac80211/patches/344-0011-brcmfmac-remove-pcie-gen1-support.patch
 deleted file mode 100644
-index f99f6db..0000000
+index f99f6dbf07660777a50fda006c049027ef88b16d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0011-brcmfmac-remove-pcie-gen1-support.patch
 +++ /dev/null
 @@ -1,221 +0,0 @@
@@ -11015,7 +11015,7 @@ index f99f6db..0000000
 - 	if (err)
 diff --git a/package/kernel/mac80211/patches/344-0012-brcmfmac-increase-timeout-for-tx-eapol.patch b/package/kernel/mac80211/patches/344-0012-brcmfmac-increase-timeout-for-tx-eapol.patch
 deleted file mode 100644
-index 4adfc2d..0000000
+index 4adfc2dc644ab901dae25abcbd2e3c4845802bb5..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0012-brcmfmac-increase-timeout-for-tx-eapol.patch
 +++ /dev/null
 @@ -1,30 +0,0 @@
@@ -11051,7 +11051,7 @@ index 4adfc2d..0000000
 - #define BRCMF_RXREORDER_FLOWID_OFFSET		0
 diff --git a/package/kernel/mac80211/patches/344-0013-brcmfmac-move-module-init-and-exit-to-common.patch b/package/kernel/mac80211/patches/344-0013-brcmfmac-move-module-init-and-exit-to-common.patch
 deleted file mode 100644
-index bd62781..0000000
+index bd62781188c37c339ab5eafb8434b6a5d07677bd..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0013-brcmfmac-move-module-init-and-exit-to-common.patch
 +++ /dev/null
 @@ -1,135 +0,0 @@
@@ -11192,7 +11192,7 @@ index bd62781..0000000
 - #endif /* BRCMFMAC_CORE_H */
 diff --git a/package/kernel/mac80211/patches/344-0014-brcmfmac-add-wowl-gtk-rekeying-offload-support.patch b/package/kernel/mac80211/patches/344-0014-brcmfmac-add-wowl-gtk-rekeying-offload-support.patch
 deleted file mode 100644
-index 577ca8e..0000000
+index 577ca8ed2837b3c480be022067e7b8389f13af01..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0014-brcmfmac-add-wowl-gtk-rekeying-offload-support.patch
 +++ /dev/null
 @@ -1,260 +0,0 @@
@@ -11458,7 +11458,7 @@ index 577ca8e..0000000
 - #endif /* FWIL_TYPES_H_ */
 diff --git a/package/kernel/mac80211/patches/344-0015-brcmfmac-move-platform-data-retrieval-code-to-common.patch b/package/kernel/mac80211/patches/344-0015-brcmfmac-move-platform-data-retrieval-code-to-common.patch
 deleted file mode 100644
-index 2685238..0000000
+index 2685238925444a4d76cfb14d5ec85e69b9b686f1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0015-brcmfmac-move-platform-data-retrieval-code-to-common.patch
 +++ /dev/null
 @@ -1,385 +0,0 @@
@@ -11849,7 +11849,7 @@ index 2685238..0000000
 - #endif /* CONFIG_OF */
 diff --git a/package/kernel/mac80211/patches/344-0016-brcmfmac-keep-ARP-and-ND-offload-enabled-during-WOWL.patch b/package/kernel/mac80211/patches/344-0016-brcmfmac-keep-ARP-and-ND-offload-enabled-during-WOWL.patch
 deleted file mode 100644
-index 4e789cf..0000000
+index 4e789cfc5a6cfc82c584bb59bd7dd4a7a058377b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0016-brcmfmac-keep-ARP-and-ND-offload-enabled-during-WOWL.patch
 +++ /dev/null
 @@ -1,69 +0,0 @@
@@ -11924,7 +11924,7 @@ index 4e789cf..0000000
 -  * Quirks:
 diff --git a/package/kernel/mac80211/patches/344-0017-brcmfmac-switch-to-new-platform-data.patch b/package/kernel/mac80211/patches/344-0017-brcmfmac-switch-to-new-platform-data.patch
 deleted file mode 100644
-index 37b6855..0000000
+index 37b68552cc8ce99d021930f5fc78692a7ba92f06..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0017-brcmfmac-switch-to-new-platform-data.patch
 +++ /dev/null
 @@ -1,734 +0,0 @@
@@ -12664,7 +12664,7 @@ index 37b6855..0000000
 -+#endif /* _LINUX_BRCMFMAC_PLATFORM_H */
 diff --git a/package/kernel/mac80211/patches/344-0018-brcmfmac-merge-platform-data-and-module-paramaters.patch b/package/kernel/mac80211/patches/344-0018-brcmfmac-merge-platform-data-and-module-paramaters.patch
 deleted file mode 100644
-index 34341d7..0000000
+index 34341d7f1866bde09e839f128d14a2b40e54453f..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0018-brcmfmac-merge-platform-data-and-module-paramaters.patch
 +++ /dev/null
 @@ -1,607 +0,0 @@
@@ -13277,7 +13277,7 @@ index 34341d7..0000000
 - 		if (ret)
 diff --git a/package/kernel/mac80211/patches/344-0019-brcmfmac-integrate-add_keyext-in-add_key.patch b/package/kernel/mac80211/patches/344-0019-brcmfmac-integrate-add_keyext-in-add_key.patch
 deleted file mode 100644
-index eb680fc..0000000
+index eb680fccfc4695e3c676ed39593e57ffd60d908f..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0019-brcmfmac-integrate-add_keyext-in-add_key.patch
 +++ /dev/null
 @@ -1,227 +0,0 @@
@@ -13510,7 +13510,7 @@ index eb680fc..0000000
 - brcmf_cfg80211_get_key(struct wiphy *wiphy, struct net_device *ndev,
 diff --git a/package/kernel/mac80211/patches/344-0020-brcmfmac-add-802.11w-management-frame-protection-sup.patch b/package/kernel/mac80211/patches/344-0020-brcmfmac-add-802.11w-management-frame-protection-sup.patch
 deleted file mode 100644
-index c20d40c..0000000
+index c20d40c049724d71cf65170872be9e3a0c3ff21a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/344-0020-brcmfmac-add-802.11w-management-frame-protection-sup.patch
 +++ /dev/null
 @@ -1,509 +0,0 @@
@@ -14025,7 +14025,7 @@ index c20d40c..0000000
 - #define DOT11_DEFAULT_FRAG_LEN		2346
 diff --git a/package/kernel/mac80211/patches/345-brcmfmac-Remove-waitqueue_active-check.patch b/package/kernel/mac80211/patches/345-brcmfmac-Remove-waitqueue_active-check.patch
 deleted file mode 100644
-index 39f4383..0000000
+index 39f438321e833984ef54d3f653f95c01ed041c47..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/345-brcmfmac-Remove-waitqueue_active-check.patch
 +++ /dev/null
 @@ -1,54 +0,0 @@
@@ -14085,7 +14085,7 @@ index 39f4383..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/346-brcmfmac-uninitialized-ret-variable.patch b/package/kernel/mac80211/patches/346-brcmfmac-uninitialized-ret-variable.patch
 deleted file mode 100644
-index 3c9ed42..0000000
+index 3c9ed425da0cb5140149f2c220d029e792ff41b7..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/346-brcmfmac-uninitialized-ret-variable.patch
 +++ /dev/null
 @@ -1,21 +0,0 @@
@@ -14112,7 +14112,7 @@ index 3c9ed42..0000000
 - 		  write, fn, addr, regsz);
 diff --git a/package/kernel/mac80211/patches/347-brcmfmac-sdio-remove-unused-variable-retry_limit.patch b/package/kernel/mac80211/patches/347-brcmfmac-sdio-remove-unused-variable-retry_limit.patch
 deleted file mode 100644
-index d1deb6e..0000000
+index d1deb6ee5ce73cb1a6ecc9775360c422113cd0b4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/347-brcmfmac-sdio-remove-unused-variable-retry_limit.patch
 +++ /dev/null
 @@ -1,24 +0,0 @@
@@ -14142,7 +14142,7 @@ index d1deb6e..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/348-brcmfmac-Delete-unnecessary-variable-initialisation.patch b/package/kernel/mac80211/patches/348-brcmfmac-Delete-unnecessary-variable-initialisation.patch
 deleted file mode 100644
-index d399b26..0000000
+index d399b264ea9d2ac0d1ba82d725707720b4c0693e..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/348-brcmfmac-Delete-unnecessary-variable-initialisation.patch
 +++ /dev/null
 @@ -1,26 +0,0 @@
@@ -14174,7 +14174,7 @@ index d399b26..0000000
 - 	sdio_claim_host(bus->sdiodev->func[1]);
 diff --git a/package/kernel/mac80211/patches/349-0001-brcmfmac-clear-eventmask-array-before-using-it.patch b/package/kernel/mac80211/patches/349-0001-brcmfmac-clear-eventmask-array-before-using-it.patch
 deleted file mode 100644
-index 0acb4fa..0000000
+index 0acb4faaf1acb27dd39d11bef81be070c556dcf0..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0001-brcmfmac-clear-eventmask-array-before-using-it.patch
 +++ /dev/null
 @@ -1,27 +0,0 @@
@@ -14207,7 +14207,7 @@ index 0acb4fa..0000000
 - 			brcmf_dbg(EVENT, "enable event %s\n",
 diff --git a/package/kernel/mac80211/patches/349-0002-brcmfmac-fix-clearing-wowl-wake-indicators.patch b/package/kernel/mac80211/patches/349-0002-brcmfmac-fix-clearing-wowl-wake-indicators.patch
 deleted file mode 100644
-index 8d30678..0000000
+index 8d3067890c2fe87f88547d151d3da6d7facd8ea0..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0002-brcmfmac-fix-clearing-wowl-wake-indicators.patch
 +++ /dev/null
 @@ -1,27 +0,0 @@
@@ -14240,7 +14240,7 @@ index 8d30678..0000000
 - 	brcmf_bus_wowl_config(cfg->pub->bus_if, true);
 diff --git a/package/kernel/mac80211/patches/349-0003-brcmfmac-insert-default-boardrev-in-nvram-data-if-mi.patch b/package/kernel/mac80211/patches/349-0003-brcmfmac-insert-default-boardrev-in-nvram-data-if-mi.patch
 deleted file mode 100644
-index f293401..0000000
+index f293401ca82d37e367600acf2676b18f6fad92ba..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0003-brcmfmac-insert-default-boardrev-in-nvram-data-if-mi.patch
 +++ /dev/null
 @@ -1,114 +0,0 @@
@@ -14360,7 +14360,7 @@ index f293401..0000000
 - 	while (pad != *new_length) {
 diff --git a/package/kernel/mac80211/patches/349-0004-brcmfmac-fix-p2p-scan-abort-null-pointer-exception.patch b/package/kernel/mac80211/patches/349-0004-brcmfmac-fix-p2p-scan-abort-null-pointer-exception.patch
 deleted file mode 100644
-index ed0c83f..0000000
+index ed0c83f9bbc9a2ce4741cfbe5a5cd7fde6938c7b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0004-brcmfmac-fix-p2p-scan-abort-null-pointer-exception.patch
 +++ /dev/null
 @@ -1,29 +0,0 @@
@@ -14395,7 +14395,7 @@ index ed0c83f..0000000
 - 	    (test_bit(BRCMF_P2P_STATUS_ACTION_TX_COMPLETED, &p2p->status) ||
 diff --git a/package/kernel/mac80211/patches/349-0005-brcmfmac-screening-firmware-event-packet.patch b/package/kernel/mac80211/patches/349-0005-brcmfmac-screening-firmware-event-packet.patch
 deleted file mode 100644
-index 4d26404..0000000
+index 4d26404f51951086da093df1073a2bfd09d14349..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0005-brcmfmac-screening-firmware-event-packet.patch
 +++ /dev/null
 @@ -1,297 +0,0 @@
@@ -14698,7 +14698,7 @@ index 4d26404..0000000
 - 		brcmu_pkt_buf_free_skb(skb);
 diff --git a/package/kernel/mac80211/patches/349-0006-brcmfmac-cleanup-ampdu-rx-host-reorder-code.patch b/package/kernel/mac80211/patches/349-0006-brcmfmac-cleanup-ampdu-rx-host-reorder-code.patch
 deleted file mode 100644
-index 33b263d..0000000
+index 33b263df3aefc1b00e99860b4b9450a6ff23ad83..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0006-brcmfmac-cleanup-ampdu-rx-host-reorder-code.patch
 +++ /dev/null
 @@ -1,585 +0,0 @@
@@ -15289,7 +15289,7 @@ index 33b263d..0000000
 - #endif /* BRCMFMAC_PROTO_H */
 diff --git a/package/kernel/mac80211/patches/349-0007-brcmfmac-revise-handling-events-in-receive-path.patch b/package/kernel/mac80211/patches/349-0007-brcmfmac-revise-handling-events-in-receive-path.patch
 deleted file mode 100644
-index a43feff..0000000
+index a43feffe1792c44e207908c21e314bfcf0378cf1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0007-brcmfmac-revise-handling-events-in-receive-path.patch
 +++ /dev/null
 @@ -1,139 +0,0 @@
@@ -15434,7 +15434,7 @@ index a43feff..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/349-0008-brcmfmac-create-common-function-for-handling-brcmf_p.patch b/package/kernel/mac80211/patches/349-0008-brcmfmac-create-common-function-for-handling-brcmf_p.patch
 deleted file mode 100644
-index 08ea235..0000000
+index 08ea235fddc7caf06eb4b196c51765cd4adbee2f..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/349-0008-brcmfmac-create-common-function-for-handling-brcmf_p.patch
 +++ /dev/null
 @@ -1,88 +0,0 @@
@@ -15528,7 +15528,7 @@ index 08ea235..0000000
 - 	brcmu_pkt_buf_free_skb(skb);
 diff --git a/package/kernel/mac80211/patches/351-0005-brcmfmac-rework-function-picking-free-BSS-index.patch b/package/kernel/mac80211/patches/351-0005-brcmfmac-rework-function-picking-free-BSS-index.patch
 deleted file mode 100644
-index c602f22..0000000
+index c602f2272a4a322d9e5246c517eecfc3a00e1db2..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0005-brcmfmac-rework-function-picking-free-BSS-index.patch
 +++ /dev/null
 @@ -1,119 +0,0 @@
@@ -15653,7 +15653,7 @@ index c602f22..0000000
 - void brcmf_txfinalize(struct brcmf_if *ifp, struct sk_buff *txp, bool success);
 diff --git a/package/kernel/mac80211/patches/351-0007-brcmutil-add-field-storing-control-channel-to-the-st.patch b/package/kernel/mac80211/patches/351-0007-brcmutil-add-field-storing-control-channel-to-the-st.patch
 deleted file mode 100644
-index a79c9a2..0000000
+index a79c9a2e93732d8c4c15af55387e378afd72001a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0007-brcmutil-add-field-storing-control-channel-to-the-st.patch
 +++ /dev/null
 @@ -1,244 +0,0 @@
@@ -15903,7 +15903,7 @@ index a79c9a2..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0008-brcmfmac-support-get_channel-cfg80211-callback.patch b/package/kernel/mac80211/patches/351-0008-brcmfmac-support-get_channel-cfg80211-callback.patch
 deleted file mode 100644
-index 2c536d1..0000000
+index 2c536d178d6746aca311d6ce16421a609061a3ad..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0008-brcmfmac-support-get_channel-cfg80211-callback.patch
 +++ /dev/null
 @@ -1,94 +0,0 @@
@@ -16003,7 +16003,7 @@ index 2c536d1..0000000
 - 	.crit_proto_start = brcmf_cfg80211_crit_proto_start,
 diff --git a/package/kernel/mac80211/patches/351-0009-brcmfmac-print-errors-if-creating-interface-fails.patch b/package/kernel/mac80211/patches/351-0009-brcmfmac-print-errors-if-creating-interface-fails.patch
 deleted file mode 100644
-index 1b119b2..0000000
+index 1b119b2c8599e26de399c7d0174b5ef0be02067d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0009-brcmfmac-print-errors-if-creating-interface-fails.patch
 +++ /dev/null
 @@ -1,59 +0,0 @@
@@ -16068,7 +16068,7 @@ index 1b119b2..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/351-0010-brcmfmac-fix-setting-AP-channel-with-new-firmwares.patch b/package/kernel/mac80211/patches/351-0010-brcmfmac-fix-setting-AP-channel-with-new-firmwares.patch
 deleted file mode 100644
-index a2e18a5..0000000
+index a2e18a5fe994ed40619f5f12e936765ffeec2314..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0010-brcmfmac-fix-setting-AP-channel-with-new-firmwares.patch
 +++ /dev/null
 @@ -1,114 +0,0 @@
@@ -16188,7 +16188,7 @@ index a2e18a5..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0011-brcmfmac-don-t-remove-interface-on-link-down-firmwar.patch b/package/kernel/mac80211/patches/351-0011-brcmfmac-don-t-remove-interface-on-link-down-firmwar.patch
 deleted file mode 100644
-index 167e434..0000000
+index 167e4347d5ff00cf87cf352058723bd58e1468ce..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0011-brcmfmac-don-t-remove-interface-on-link-down-firmwar.patch
 +++ /dev/null
 @@ -1,60 +0,0 @@
@@ -16254,7 +16254,7 @@ index 167e434..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0017-brcmfmac-drop-unused-pm_block-vif-attribute.patch b/package/kernel/mac80211/patches/351-0017-brcmfmac-drop-unused-pm_block-vif-attribute.patch
 deleted file mode 100644
-index 28ef3a6..0000000
+index 28ef3a65fd6b28749308521bceb6d150fc42688d..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0017-brcmfmac-drop-unused-pm_block-vif-attribute.patch
 +++ /dev/null
 @@ -1,103 +0,0 @@
@@ -16363,7 +16363,7 @@ index 28ef3a6..0000000
 - 	brcmf_cfg80211_arm_vif_event(cfg, vif);
 diff --git a/package/kernel/mac80211/patches/351-0018-brcmfmac-include-required-headers-in-cfg80211.h.patch b/package/kernel/mac80211/patches/351-0018-brcmfmac-include-required-headers-in-cfg80211.h.patch
 deleted file mode 100644
-index 09547d8..0000000
+index 09547d8d3b5b021d920963a6280fe80a0a561a59..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0018-brcmfmac-include-required-headers-in-cfg80211.h.patch
 +++ /dev/null
 @@ -1,37 +0,0 @@
@@ -16406,7 +16406,7 @@ index 09547d8..0000000
 - #define WL_BSS_INFO_MAX			2048
 diff --git a/package/kernel/mac80211/patches/351-0019-brcmfmac-slightly-simplify-building-interface-combin.patch b/package/kernel/mac80211/patches/351-0019-brcmfmac-slightly-simplify-building-interface-combin.patch
 deleted file mode 100644
-index 461e3db..0000000
+index 461e3dba5397f7b48f00ec984d4edfd108dbbbb6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0019-brcmfmac-slightly-simplify-building-interface-combin.patch
 +++ /dev/null
 @@ -1,108 +0,0 @@
@@ -16520,7 +16520,7 @@ index 461e3db..0000000
 - 	return 0;
 diff --git a/package/kernel/mac80211/patches/351-0020-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch b/package/kernel/mac80211/patches/351-0020-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch
 deleted file mode 100644
-index e991f32..0000000
+index e991f32327d5fdb7a796ab0f8f3059487b6ebbe1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0020-brcmfmac-fix-lockup-when-removing-P2P-interface-afte.patch
 +++ /dev/null
 @@ -1,160 +0,0 @@
@@ -16686,7 +16686,7 @@ index e991f32..0000000
 - 	memset(p2p, 0, sizeof(*p2p));
 diff --git a/package/kernel/mac80211/patches/351-0021-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch b/package/kernel/mac80211/patches/351-0021-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch
 deleted file mode 100644
-index ed65f4d..0000000
+index ed65f4dc885d936cd7776009b5b04a2376e16dc5..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0021-brcmfmac-use-const-char-for-interface-name-in-brcmf_.patch
 +++ /dev/null
 @@ -1,39 +0,0 @@
@@ -16731,7 +16731,7 @@ index ed65f4d..0000000
 - 			  enum brcmf_netif_stop_reason reason, bool state);
 diff --git a/package/kernel/mac80211/patches/351-0022-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch b/package/kernel/mac80211/patches/351-0022-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch
 deleted file mode 100644
-index ef35fab..0000000
+index ef35fab7d74b31ab2305ce881a4d45cba73337cc..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0022-brcmfmac-include-also-core.h-header-in-cfg80211.h.patch
 +++ /dev/null
 @@ -1,33 +0,0 @@
@@ -16770,7 +16770,7 @@ index ef35fab..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0023-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch b/package/kernel/mac80211/patches/351-0023-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch
 deleted file mode 100644
-index ab9a634..0000000
+index ab9a63443738dd8979cf415cd06b62ddb1a8d2cf..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0023-brcmfmac-add-missing-break-when-deleting-P2P_DEVICE.patch
 +++ /dev/null
 @@ -1,27 +0,0 @@
@@ -16803,7 +16803,7 @@ index ab9a634..0000000
 - 	}
 diff --git a/package/kernel/mac80211/patches/351-0024-brcmfmac-delete-interface-directly-in-code-that-sent.patch b/package/kernel/mac80211/patches/351-0024-brcmfmac-delete-interface-directly-in-code-that-sent.patch
 deleted file mode 100644
-index 6dd0c03..0000000
+index 6dd0c03e3dfe5c5ed3c310931040a14596de79f1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0024-brcmfmac-delete-interface-directly-in-code-that-sent.patch
 +++ /dev/null
 @@ -1,75 +0,0 @@
@@ -16884,7 +16884,7 @@ index 6dd0c03..0000000
 - 	if (vif->wdev.iftype != NL80211_IFTYPE_P2P_DEVICE)
 diff --git a/package/kernel/mac80211/patches/351-0025-brcmfmac-support-removing-AP-interfaces-with-interfa.patch b/package/kernel/mac80211/patches/351-0025-brcmfmac-support-removing-AP-interfaces-with-interfa.patch
 deleted file mode 100644
-index 1929f0b..0000000
+index 1929f0b8126ed8659d642019648c4b86cc85ecb6..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0025-brcmfmac-support-removing-AP-interfaces-with-interfa.patch
 +++ /dev/null
 @@ -1,84 +0,0 @@
@@ -16974,7 +16974,7 @@ index 1929f0b..0000000
 - 	case NL80211_IFTYPE_P2P_DEVICE:
 diff --git a/package/kernel/mac80211/patches/351-0026-brcmfmac-respect-hidden_ssid-for-AP-interfaces.patch b/package/kernel/mac80211/patches/351-0026-brcmfmac-respect-hidden_ssid-for-AP-interfaces.patch
 deleted file mode 100644
-index ae458e7..0000000
+index ae458e7a02608101799f072b4211a01d6d487f96..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0026-brcmfmac-respect-hidden_ssid-for-AP-interfaces.patch
 +++ /dev/null
 @@ -1,43 +0,0 @@
@@ -17023,7 +17023,7 @@ index ae458e7..0000000
 - 					     &join_params, sizeof(join_params));
 diff --git a/package/kernel/mac80211/patches/351-0027-brcmfmac-restore-stopping-netdev-queue-when-bus-clog.patch b/package/kernel/mac80211/patches/351-0027-brcmfmac-restore-stopping-netdev-queue-when-bus-clog.patch
 deleted file mode 100644
-index fcafa79..0000000
+index fcafa797ef02fa53c05fb5a1dde8f550f02bf9d8..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0027-brcmfmac-restore-stopping-netdev-queue-when-bus-clog.patch
 +++ /dev/null
 @@ -1,53 +0,0 @@
@@ -17082,7 +17082,7 @@ index fcafa79..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/351-0028-brcmfmac-defer-DPC-processing-during-probe.patch b/package/kernel/mac80211/patches/351-0028-brcmfmac-defer-DPC-processing-during-probe.patch
 deleted file mode 100644
-index a24c07f..0000000
+index a24c07f9731916f4bd3ff9bd3cb787d5982a1345..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0028-brcmfmac-defer-DPC-processing-during-probe.patch
 +++ /dev/null
 @@ -1,42 +0,0 @@
@@ -17130,7 +17130,7 @@ index a24c07f..0000000
 - 			brcmf_err("intr register failed:%d\n", err);
 diff --git a/package/kernel/mac80211/patches/351-0029-brcmfmac-Fix-glob_skb-leak-in-brcmf_sdiod_recv_chain.patch b/package/kernel/mac80211/patches/351-0029-brcmfmac-Fix-glob_skb-leak-in-brcmf_sdiod_recv_chain.patch
 deleted file mode 100644
-index ba9a349..0000000
+index ba9a349f0fd1874c5b038e4cc4d7f4cf2097ae47..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0029-brcmfmac-Fix-glob_skb-leak-in-brcmf_sdiod_recv_chain.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -17168,7 +17168,7 @@ index ba9a349..0000000
 - 			memcpy(skb->data, glom_skb->data, skb->len);
 diff --git a/package/kernel/mac80211/patches/351-0030-net-wireless-broadcom-brcm80211-brcmfmac-usb-don-t-p.patch b/package/kernel/mac80211/patches/351-0030-net-wireless-broadcom-brcm80211-brcmfmac-usb-don-t-p.patch
 deleted file mode 100644
-index 540b7f0..0000000
+index 540b7f08bf7c6b9c78f5b2ccfdae2a96dbaa4e6f..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0030-net-wireless-broadcom-brcm80211-brcmfmac-usb-don-t-p.patch
 +++ /dev/null
 @@ -1,34 +0,0 @@
@@ -17208,7 +17208,7 @@ index 540b7f0..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0031-brcmfmac-Check-rtnl_lock-is-locked-when-removing-int.patch b/package/kernel/mac80211/patches/351-0031-brcmfmac-Check-rtnl_lock-is-locked-when-removing-int.patch
 deleted file mode 100644
-index b98b68a..0000000
+index b98b68a88a23b85b69092979ac92ebf1e2b1a5d2..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0031-brcmfmac-Check-rtnl_lock-is-locked-when-removing-int.patch
 +++ /dev/null
 @@ -1,111 +0,0 @@
@@ -17325,7 +17325,7 @@ index b98b68a..0000000
 - int brcmf_p2p_scan_prep(struct wiphy *wiphy,
 diff --git a/package/kernel/mac80211/patches/351-0032-brcmfmac-Change-vif_event_lock-to-spinlock.patch b/package/kernel/mac80211/patches/351-0032-brcmfmac-Change-vif_event_lock-to-spinlock.patch
 deleted file mode 100644
-index 30ca258..0000000
+index 30ca25897d06fb2b26866255721377f5dbccfed0..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0032-brcmfmac-Change-vif_event_lock-to-spinlock.patch
 +++ /dev/null
 @@ -1,175 +0,0 @@
@@ -17506,7 +17506,7 @@ index 30ca258..0000000
 - };
 diff --git a/package/kernel/mac80211/patches/351-0033-brcmfmac-add-missing-header-dependencies.patch b/package/kernel/mac80211/patches/351-0033-brcmfmac-add-missing-header-dependencies.patch
 deleted file mode 100644
-index 1a7947b..0000000
+index 1a7947b39a5eca626d2c79fecb627c52868f713b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0033-brcmfmac-add-missing-header-dependencies.patch
 +++ /dev/null
 @@ -1,29 +0,0 @@
@@ -17541,7 +17541,7 @@ index 1a7947b..0000000
 - {
 diff --git a/package/kernel/mac80211/patches/351-0034-brcmfmac-Add-USB-ID-for-Cisco-Linksys-AE1200.patch b/package/kernel/mac80211/patches/351-0034-brcmfmac-Add-USB-ID-for-Cisco-Linksys-AE1200.patch
 deleted file mode 100644
-index 24cd92a..0000000
+index 24cd92a8bebfdffbb0e0d19b53a7c1cae4738ec1..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0034-brcmfmac-Add-USB-ID-for-Cisco-Linksys-AE1200.patch
 +++ /dev/null
 @@ -1,51 +0,0 @@
@@ -17598,7 +17598,7 @@ index 24cd92a..0000000
 - #define BRCM_USB_43242_LG_DEVICE_ID	0x3101
 diff --git a/package/kernel/mac80211/patches/351-0035-brcmfmac-fix-pmksa-bssid-usage.patch b/package/kernel/mac80211/patches/351-0035-brcmfmac-fix-pmksa-bssid-usage.patch
 deleted file mode 100644
-index b58a266..0000000
+index b58a266a2542d44cb626ad4eef93dc56130d5900..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0035-brcmfmac-fix-pmksa-bssid-usage.patch
 +++ /dev/null
 @@ -1,51 +0,0 @@
@@ -17655,7 +17655,7 @@ index b58a266..0000000
 - 	if ((npmk > 0) && (i < npmk)) {
 diff --git a/package/kernel/mac80211/patches/351-0036-brcmfmac-avoid-potential-stack-overflow-in-brcmf_cfg.patch b/package/kernel/mac80211/patches/351-0036-brcmfmac-avoid-potential-stack-overflow-in-brcmf_cfg.patch
 deleted file mode 100644
-index 760b6da..0000000
+index 760b6daf25ef57d3b777373b9695a909ec42b1d2..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0036-brcmfmac-avoid-potential-stack-overflow-in-brcmf_cfg.patch
 +++ /dev/null
 @@ -1,34 +0,0 @@
@@ -17695,7 +17695,7 @@ index 760b6da..0000000
 - 		memcpy(ssid_le.SSID, ssid_ie->data, ssid_ie->len);
 diff --git a/package/kernel/mac80211/patches/351-0037-brcmfmac-add-support-for-bcm4339-chip-with-modalias-.patch b/package/kernel/mac80211/patches/351-0037-brcmfmac-add-support-for-bcm4339-chip-with-modalias-.patch
 deleted file mode 100644
-index 1285b30..0000000
+index 1285b3096075e85a4c7c99592c73000244f75216..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0037-brcmfmac-add-support-for-bcm4339-chip-with-modalias-.patch
 +++ /dev/null
 @@ -1,55 +0,0 @@
@@ -17756,7 +17756,7 @@ index 1285b30..0000000
 - #define SDIO_DEVICE_ID_BROADCOM_4345		0x4345
 diff --git a/package/kernel/mac80211/patches/351-0038-brcmfmac-sdio-shorten-retry-loop-in-brcmf_sdio_kso_c.patch b/package/kernel/mac80211/patches/351-0038-brcmfmac-sdio-shorten-retry-loop-in-brcmf_sdio_kso_c.patch
 deleted file mode 100644
-index 1d5667e..0000000
+index 1d5667ee6ed705db4dab6175207a9b0284167181..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0038-brcmfmac-sdio-shorten-retry-loop-in-brcmf_sdio_kso_c.patch
 +++ /dev/null
 @@ -1,56 +0,0 @@
@@ -17818,7 +17818,7 @@ index 1d5667e..0000000
 - 				  wr_val, &err);
 diff --git a/package/kernel/mac80211/patches/351-0039-brcmfmac-ignore-11d-configuration-errors.patch b/package/kernel/mac80211/patches/351-0039-brcmfmac-ignore-11d-configuration-errors.patch
 deleted file mode 100644
-index 1620e00..0000000
+index 1620e0022bbe0093c658948ca0b1c70677f61984..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0039-brcmfmac-ignore-11d-configuration-errors.patch
 +++ /dev/null
 @@ -1,84 +0,0 @@
@@ -17908,7 +17908,7 @@ index 1620e00..0000000
 - 		if (err < 0)
 diff --git a/package/kernel/mac80211/patches/351-0040-brcmfmac-rework-pointer-trickery-in-brcmf_proto_bcdc.patch b/package/kernel/mac80211/patches/351-0040-brcmfmac-rework-pointer-trickery-in-brcmf_proto_bcdc.patch
 deleted file mode 100644
-index 9461164..0000000
+index 9461164523fcc05daa4873274eb7378777612338..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0040-brcmfmac-rework-pointer-trickery-in-brcmf_proto_bcdc.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -17946,7 +17946,7 @@ index 9461164..0000000
 - 	if (buf) {
 diff --git a/package/kernel/mac80211/patches/351-0041-brcmfmac-fix-memory-leak-in-brcmf_flowring_add_tdls_.patch b/package/kernel/mac80211/patches/351-0041-brcmfmac-fix-memory-leak-in-brcmf_flowring_add_tdls_.patch
 deleted file mode 100644
-index 2ececdf..0000000
+index 2ececdf1972d3e2769f4730bb846866d247d681f..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0041-brcmfmac-fix-memory-leak-in-brcmf_flowring_add_tdls_.patch
 +++ /dev/null
 @@ -1,39 +0,0 @@
@@ -17991,7 +17991,7 @@ index 2ececdf..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/351-0042-brcmfmac-initialize-variable-in-brcmf_sdiod_regrl.patch b/package/kernel/mac80211/patches/351-0042-brcmfmac-initialize-variable-in-brcmf_sdiod_regrl.patch
 deleted file mode 100644
-index 529cc8d..0000000
+index 529cc8df02771a6680f59382278f3d273f512457..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0042-brcmfmac-initialize-variable-in-brcmf_sdiod_regrl.patch
 +++ /dev/null
 @@ -1,28 +0,0 @@
@@ -18025,7 +18025,7 @@ index 529cc8d..0000000
 - 	brcmf_dbg(SDIO, "addr:0x%08x\n", addr);
 diff --git a/package/kernel/mac80211/patches/351-0043-brcmfmac-remove-worker-from-.ndo_set_mac_address-cal.patch b/package/kernel/mac80211/patches/351-0043-brcmfmac-remove-worker-from-.ndo_set_mac_address-cal.patch
 deleted file mode 100644
-index 67af30e..0000000
+index 67af30e4fd0684d57453e43b2751ac7e853066b5..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0043-brcmfmac-remove-worker-from-.ndo_set_mac_address-cal.patch
 +++ /dev/null
 @@ -1,107 +0,0 @@
@@ -18138,7 +18138,7 @@ index 67af30e..0000000
 - 	struct brcmf_fws_mac_descriptor *fws_desc;
 diff --git a/package/kernel/mac80211/patches/351-0044-brcmfmac-remove-unnecessary-null-pointer-check.patch b/package/kernel/mac80211/patches/351-0044-brcmfmac-remove-unnecessary-null-pointer-check.patch
 deleted file mode 100644
-index 5a08479..0000000
+index 5a0847932964cbbfec126aacc82cada1624d63f7..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0044-brcmfmac-remove-unnecessary-null-pointer-check.patch
 +++ /dev/null
 @@ -1,31 +0,0 @@
@@ -18175,7 +18175,7 @@ index 5a08479..0000000
 - 	drvr->iflist[0] = NULL;
 diff --git a/package/kernel/mac80211/patches/351-0045-brcmfmac-fix-clearing-entry-IPv6-address.patch b/package/kernel/mac80211/patches/351-0045-brcmfmac-fix-clearing-entry-IPv6-address.patch
 deleted file mode 100644
-index 0b3a23e..0000000
+index 0b3a23edc0839974750b3af21298b3fa20d7fc1b..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0045-brcmfmac-fix-clearing-entry-IPv6-address.patch
 +++ /dev/null
 @@ -1,37 +0,0 @@
@@ -18218,7 +18218,7 @@ index 0b3a23e..0000000
 - 		break;
 diff --git a/package/kernel/mac80211/patches/351-0046-brcmfmac-fix-out-of-bound-access-on-clearing-wowl-wa.patch b/package/kernel/mac80211/patches/351-0046-brcmfmac-fix-out-of-bound-access-on-clearing-wowl-wa.patch
 deleted file mode 100644
-index a47cb32..0000000
+index a47cb3266fe936dc8d1b30fae76cb54c8811e3e4..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0046-brcmfmac-fix-out-of-bound-access-on-clearing-wowl-wa.patch
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -18268,7 +18268,7 @@ index a47cb32..0000000
 - 	brcmf_bus_wowl_config(cfg->pub->bus_if, true);
 diff --git a/package/kernel/mac80211/patches/351-0047-brcmfmac-simplify-mapping-of-auth-type.patch b/package/kernel/mac80211/patches/351-0047-brcmfmac-simplify-mapping-of-auth-type.patch
 deleted file mode 100644
-index a652ae6..0000000
+index a652ae60b850540fb4f8996d912b0e8b6af06a9a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0047-brcmfmac-simplify-mapping-of-auth-type.patch
 +++ /dev/null
 @@ -1,39 +0,0 @@
@@ -18313,7 +18313,7 @@ index a652ae6..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/351-0048-brcmfmac-fix-memory-leak-in-brcmf_fill_bss_param.patch b/package/kernel/mac80211/patches/351-0048-brcmfmac-fix-memory-leak-in-brcmf_fill_bss_param.patch
 deleted file mode 100644
-index a6fae37..0000000
+index a6fae378038dff7b672b82a21c0ed59f663473df..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0048-brcmfmac-fix-memory-leak-in-brcmf_fill_bss_param.patch
 +++ /dev/null
 @@ -1,41 +0,0 @@
@@ -18360,7 +18360,7 @@ index a6fae37..0000000
 - static s32
 diff --git a/package/kernel/mac80211/patches/351-0049-brcmfmac-drop-unused-fields-from-struct-brcmf_pub.patch b/package/kernel/mac80211/patches/351-0049-brcmfmac-drop-unused-fields-from-struct-brcmf_pub.patch
 deleted file mode 100644
-index 47af73a..0000000
+index 47af73ad29115ab80fe22cde35c127b86db8b8f5..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0049-brcmfmac-drop-unused-fields-from-struct-brcmf_pub.patch
 +++ /dev/null
 @@ -1,60 +0,0 @@
@@ -18426,7 +18426,7 @@ index 47af73a..0000000
 - 		if (rc < 0)
 diff --git a/package/kernel/mac80211/patches/351-0050-brcmfmac-replace-WARNING-on-timeout-with-a-simple-er.patch b/package/kernel/mac80211/patches/351-0050-brcmfmac-replace-WARNING-on-timeout-with-a-simple-er.patch
 deleted file mode 100644
-index ca4863a..0000000
+index ca4863a19500ccc0d1f7f21b6ef032c48097aeba..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0050-brcmfmac-replace-WARNING-on-timeout-with-a-simple-er.patch
 +++ /dev/null
 @@ -1,38 +0,0 @@
@@ -18470,7 +18470,7 @@ index ca4863a..0000000
 - }
 diff --git a/package/kernel/mac80211/patches/351-0051-brcmfmac-use-correct-skb-freeing-helper-when-deletin.patch b/package/kernel/mac80211/patches/351-0051-brcmfmac-use-correct-skb-freeing-helper-when-deletin.patch
 deleted file mode 100644
-index 6976359..0000000
+index 697635941b6eb28bc99c89e589b4a530107d2fa3..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/351-0051-brcmfmac-use-correct-skb-freeing-helper-when-deletin.patch
 +++ /dev/null
 @@ -1,58 +0,0 @@
@@ -18533,7 +18533,7 @@ index 6976359..0000000
 - 	}
 - 
 diff --git a/package/kernel/mac80211/patches/402-ath_regd_optional.patch b/package/kernel/mac80211/patches/402-ath_regd_optional.patch
-index 7351353..4634283 100644
+index 735135307631290037afa6a00bab73a50fea78ba..463428371b4c96ee63b6eba1477023ff739c6129 100644
 --- a/package/kernel/mac80211/patches/402-ath_regd_optional.patch
 +++ b/package/kernel/mac80211/patches/402-ath_regd_optional.patch
 @@ -8,7 +8,7 @@
@@ -18573,7 +18573,7 @@ index 7351353..4634283 100644
   WLAN_VENDOR_ATH=
   ATH_DEBUG=
 diff --git a/package/kernel/mac80211/patches/410-ath9k_allow_adhoc_and_ap.patch b/package/kernel/mac80211/patches/410-ath9k_allow_adhoc_and_ap.patch
-index 1a62484..f2f52f9 100644
+index 1a624849546ca40db86f27a5edc3ffe860b2280d..f2f52f93afcd9501df5170dad99905c5baef06bc 100644
 --- a/package/kernel/mac80211/patches/410-ath9k_allow_adhoc_and_ap.patch
 +++ b/package/kernel/mac80211/patches/410-ath9k_allow_adhoc_and_ap.patch
 @@ -1,6 +1,6 @@
@@ -18585,7 +18585,7 @@ index 1a62484..f2f52f9 100644
   	{ .max = 1,	.types = BIT(NL80211_IFTYPE_P2P_CLIENT) |
   				 BIT(NL80211_IFTYPE_P2P_GO) },
 diff --git a/package/kernel/mac80211/patches/500-ath9k_eeprom_debugfs.patch b/package/kernel/mac80211/patches/500-ath9k_eeprom_debugfs.patch
-index a7f9d9f..f21eed1 100644
+index a7f9d9f8b9706b0c2d359e09e3d3ef396764b3d3..f21eed18c3f1ff0ec43f42632bda1fd4c1236faf 100644
 --- a/package/kernel/mac80211/patches/500-ath9k_eeprom_debugfs.patch
 +++ b/package/kernel/mac80211/patches/500-ath9k_eeprom_debugfs.patch
 @@ -1,6 +1,6 @@
@@ -18606,7 +18606,7 @@ index a7f9d9f..f21eed1 100644
   	ath9k_cmn_spectral_init_debug(&sc->spec_priv, sc->debug.debugfs_phy);
   
 diff --git a/package/kernel/mac80211/patches/501-ath9k_ahb_init.patch b/package/kernel/mac80211/patches/501-ath9k_ahb_init.patch
-index 5892c3e..1825d77 100644
+index 5892c3e17a65ae7eea33fd44906a6eb8cb511c70..1825d77b7f83e4a5cf5922ba6fd314a4c8704759 100644
 --- a/package/kernel/mac80211/patches/501-ath9k_ahb_init.patch
 +++ b/package/kernel/mac80211/patches/501-ath9k_ahb_init.patch
 @@ -1,6 +1,6 @@
@@ -18618,7 +18618,7 @@ index 5892c3e..1825d77 100644
   	int error;
   
 diff --git a/package/kernel/mac80211/patches/511-ath9k_reduce_rxbuf.patch b/package/kernel/mac80211/patches/511-ath9k_reduce_rxbuf.patch
-index 6766111..15b8d7b 100644
+index 6766111dfd3e43b2251a0248f256e97f8d5cbffa..15b8d7b86b137b9c5ba46ae5a7afc7ac5f455aaf 100644
 --- a/package/kernel/mac80211/patches/511-ath9k_reduce_rxbuf.patch
 +++ b/package/kernel/mac80211/patches/511-ath9k_reduce_rxbuf.patch
 @@ -8,4 +8,4 @@
@@ -18628,7 +18628,7 @@ index 6766111..15b8d7b 100644
 - #define ATH_MAX_QDEPTH          (ATH_TXBUF / 4 - ATH_TXBUF_RESERVE)
 + #define ATH_TXMAXTRY            13
 diff --git a/package/kernel/mac80211/patches/512-ath9k_channelbw_debugfs.patch b/package/kernel/mac80211/patches/512-ath9k_channelbw_debugfs.patch
-index 5ecf528..c98072b 100644
+index 5ecf528e598aff996c21b128d7fdcfecc6fa564f..c98072bac9cba922eac5031dede34116485ac435 100644
 --- a/package/kernel/mac80211/patches/512-ath9k_channelbw_debugfs.patch
 +++ b/package/kernel/mac80211/patches/512-ath9k_channelbw_debugfs.patch
 @@ -1,6 +1,6 @@
@@ -18658,7 +18658,7 @@ index 5ecf528..c98072b 100644
   
  -	switch (chandef->width) {
 diff --git a/package/kernel/mac80211/patches/513-ath9k_add_pci_ids.patch b/package/kernel/mac80211/patches/513-ath9k_add_pci_ids.patch
-index c84d1bc..167eeff 100644
+index c84d1bc8290e673d8366e3fcf9b97e84e634726a..167eeff2d2acfd98de87a8275bd56ef1c22928cd 100644
 --- a/package/kernel/mac80211/patches/513-ath9k_add_pci_ids.patch
 +++ b/package/kernel/mac80211/patches/513-ath9k_add_pci_ids.patch
 @@ -20,7 +20,7 @@
@@ -18671,7 +18671,7 @@ index c84d1bc..167eeff 100644
   #endif
   
 diff --git a/package/kernel/mac80211/patches/522-mac80211_configure_antenna_gain.patch b/package/kernel/mac80211/patches/522-mac80211_configure_antenna_gain.patch
-index e151a12..c40598d 100644
+index e151a12967ccf90d2de7cfde5728803b1069591c..c40598dde63b7c91cef9040e9927274cfd0c358a 100644
 --- a/package/kernel/mac80211/patches/522-mac80211_configure_antenna_gain.patch
 +++ b/package/kernel/mac80211/patches/522-mac80211_configure_antenna_gain.patch
 @@ -1,6 +1,6 @@
@@ -18793,7 +18793,7 @@ index e151a12..c40598d 100644
   			return result;
   	}
 diff --git a/package/kernel/mac80211/patches/530-ath9k_extra_leds.patch b/package/kernel/mac80211/patches/530-ath9k_extra_leds.patch
-index 5a5e464..0b25749 100644
+index 5a5e4643f5287e1426dd63a662b1f9b75cf22c80..0b257496082bab62ac43daf232f83628888e04ed 100644
 --- a/package/kernel/mac80211/patches/530-ath9k_extra_leds.patch
 +++ b/package/kernel/mac80211/patches/530-ath9k_extra_leds.patch
 @@ -1,16 +1,16 @@
@@ -18987,7 +18987,7 @@ index 5a5e464..0b25749 100644
   	debugfs_create_file("chanbw", S_IRUSR | S_IWUSR, sc->debug.debugfs_phy,
   			    sc, &fops_chanbw);
 diff --git a/package/kernel/mac80211/patches/531-ath9k_extra_platform_leds.patch b/package/kernel/mac80211/patches/531-ath9k_extra_platform_leds.patch
-index 7c10ea6..f656697 100644
+index 7c10ea6b0d042db76b703e12356f53bea36e90de..f656697a077a417c7993bd41880f65b7b261fc99 100644
 --- a/package/kernel/mac80211/patches/531-ath9k_extra_platform_leds.patch
 +++ b/package/kernel/mac80211/patches/531-ath9k_extra_platform_leds.patch
 @@ -1,6 +1,6 @@
@@ -19038,7 +19038,7 @@ index 7c10ea6..f656697 100644
   
 - void ath_fill_led_pin(struct ath_softc *sc)
 diff --git a/package/kernel/mac80211/patches/532-ath9k_get_led_polarity_from_platform_data.patch b/package/kernel/mac80211/patches/532-ath9k_get_led_polarity_from_platform_data.patch
-index 6d62a2b..50d8a7a 100644
+index 6d62a2b1c2cdb716c9e207e219cad96075b82bac..50d8a7abae686b6b25ad561c71176b5661dbc437 100644
 --- a/package/kernel/mac80211/patches/532-ath9k_get_led_polarity_from_platform_data.patch
 +++ b/package/kernel/mac80211/patches/532-ath9k_get_led_polarity_from_platform_data.patch
 @@ -1,6 +1,6 @@
@@ -19059,7 +19059,7 @@ index 6d62a2b..50d8a7a 100644
   		ah->disable_2ghz = pdata->disable_2ghz;
   		ah->disable_5ghz = pdata->disable_5ghz;
 diff --git a/package/kernel/mac80211/patches/541-ath9k_rx_dma_stop_check.patch b/package/kernel/mac80211/patches/541-ath9k_rx_dma_stop_check.patch
-index 3c5e9f5..c2d2781 100644
+index 3c5e9f5fcda6cc16bcdbfe1a757f8a5c352eed15..c2d27815592ba1e09251e1c581e634c985750c5e 100644
 --- a/package/kernel/mac80211/patches/541-ath9k_rx_dma_stop_check.patch
 +++ b/package/kernel/mac80211/patches/541-ath9k_rx_dma_stop_check.patch
 @@ -1,6 +1,6 @@
@@ -19080,7 +19080,7 @@ index 3c5e9f5..c2d2781 100644
   
   	if (i == 0) {
 diff --git a/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch b/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
-index e83c6bf..4615643 100644
+index e83c6bfbf90d18577398c50fca1fa46b46e7822c..461564350feb43410e5c702a8a67514cdfaa3961 100644
 --- a/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
 +++ b/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
 @@ -1,6 +1,6 @@
@@ -19146,7 +19146,7 @@ index e83c6bf..4615643 100644
   
   	ath9k_hw_apply_gpio_override(ah);
 diff --git a/package/kernel/mac80211/patches/543-ath9k_entropy_from_adc.patch b/package/kernel/mac80211/patches/543-ath9k_entropy_from_adc.patch
-index d7bb5a1..656ed43 100644
+index d7bb5a12ce6f4135cdb7eaa951321cec48d221b8..656ed439b9b8aebd554e91f9963c2f6521651960 100644
 --- a/package/kernel/mac80211/patches/543-ath9k_entropy_from_adc.patch
 +++ b/package/kernel/mac80211/patches/543-ath9k_entropy_from_adc.patch
 @@ -1,6 +1,6 @@
@@ -19242,7 +19242,7 @@ index d7bb5a1..656ed43 100644
   #define AR_PHY_RFBUS_GRANT_EN    0x00000001
   
 diff --git a/package/kernel/mac80211/patches/544-ath9k-ar933x-usb-hang-workaround.patch b/package/kernel/mac80211/patches/544-ath9k-ar933x-usb-hang-workaround.patch
-index 8768c5d..b9c962e 100644
+index 8768c5d89a7b38d0e0a3c07dc94bf52edb480732..b9c962e1b5d13338ab4f7ddf6f370dbffeda299a 100644
 --- a/package/kernel/mac80211/patches/544-ath9k-ar933x-usb-hang-workaround.patch
 +++ b/package/kernel/mac80211/patches/544-ath9k-ar933x-usb-hang-workaround.patch
 @@ -20,9 +20,9 @@
@@ -19285,7 +19285,7 @@ index 8768c5d..b9c962e 100644
   	}
   
 diff --git a/package/kernel/mac80211/patches/545-ath9k_ani_ws_detect.patch b/package/kernel/mac80211/patches/545-ath9k_ani_ws_detect.patch
-index 3d24ccd..b639f97 100644
+index 3d24ccda1f83daee789973c101bd650df4c1694b..b639f972d83b8966812b98c7b99f546b187001fc 100644
 --- a/package/kernel/mac80211/patches/545-ath9k_ani_ws_detect.patch
 +++ b/package/kernel/mac80211/patches/545-ath9k_ani_ws_detect.patch
 @@ -1,6 +1,6 @@
@@ -19325,7 +19325,7 @@ index 3d24ccd..b639f97 100644
   
 diff --git a/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch b/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch
 new file mode 100644
-index 0000000..ced72c6
+index 0000000000000000000000000000000000000000..ced72c6c69fe30ebbc1c416c5e60d95dc985d6db
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/546-ath9k_platform_led_name.patch
 @@ -0,0 +1,39 @@
@@ -19370,7 +19370,7 @@ index 0000000..ced72c6
 + #endif /* _LINUX_ATH9K_PLATFORM_H */
 diff --git a/package/kernel/mac80211/patches/547-ath9k_led_defstate_fix.patch b/package/kernel/mac80211/patches/547-ath9k_led_defstate_fix.patch
 new file mode 100644
-index 0000000..5d84cf0
+index 0000000000000000000000000000000000000000..5d84cf0c423a6138b0a48305006202f00e4bbdef
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/547-ath9k_led_defstate_fix.patch
 @@ -0,0 +1,29 @@
@@ -19405,7 +19405,7 @@ index 0000000..5d84cf0
 + }
 diff --git a/package/kernel/mac80211/patches/548-ath9k_enable_gpio_chip.patch b/package/kernel/mac80211/patches/548-ath9k_enable_gpio_chip.patch
 new file mode 100644
-index 0000000..de7c0ac
+index 0000000000000000000000000000000000000000..de7c0ac8f034402d6cae563ee3a6b1aafa184ab0
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/548-ath9k_enable_gpio_chip.patch
 @@ -0,0 +1,234 @@
@@ -19645,7 +19645,7 @@ index 0000000..de7c0ac
 + /*******************/
 diff --git a/package/kernel/mac80211/patches/549-ath9k_enable_gpio_buttons.patch b/package/kernel/mac80211/patches/549-ath9k_enable_gpio_buttons.patch
 new file mode 100644
-index 0000000..b9d1883
+index 0000000000000000000000000000000000000000..b9d18834393dca078e444950c77642095a83f401
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/549-ath9k_enable_gpio_buttons.patch
 @@ -0,0 +1,149 @@
@@ -19799,7 +19799,7 @@ index 0000000..b9d1883
 + 
 + #endif /* _LINUX_ATH9K_PLATFORM_H */
 diff --git a/package/kernel/mac80211/patches/600-0002-rt2x00-rt2800lib-introduce-RT2800_HAS_HIGH_SHARED_ME.patch b/package/kernel/mac80211/patches/600-0002-rt2x00-rt2800lib-introduce-RT2800_HAS_HIGH_SHARED_ME.patch
-index 8245909..db70a33 100644
+index 82459091fe47c8b2fb17c88ed9cef1c1b9502280..db70a334bde149dd28461161f69b4f36623a9db4 100644
 --- a/package/kernel/mac80211/patches/600-0002-rt2x00-rt2800lib-introduce-RT2800_HAS_HIGH_SHARED_ME.patch
 +++ b/package/kernel/mac80211/patches/600-0002-rt2x00-rt2800lib-introduce-RT2800_HAS_HIGH_SHARED_ME.patch
 @@ -24,7 +24,7 @@ Changes since v1:
@@ -19821,7 +19821,7 @@ index 8245909..db70a33 100644
   		return retval;
   
 diff --git a/package/kernel/mac80211/patches/600-0003-rt2x00-rt2800-serialize-shared-memory-access.patch b/package/kernel/mac80211/patches/600-0003-rt2x00-rt2800-serialize-shared-memory-access.patch
-index 7abfcd1..a3b62bc 100644
+index 7abfcd16f2e68354cb990b85d75c792fe9468fcb..a3b62bcc14d62f0930e264fc61c7d7668964db88 100644
 --- a/package/kernel/mac80211/patches/600-0003-rt2x00-rt2800-serialize-shared-memory-access.patch
 +++ b/package/kernel/mac80211/patches/600-0003-rt2x00-rt2800-serialize-shared-memory-access.patch
 @@ -239,7 +239,7 @@ Changes since v1: ---
@@ -19843,7 +19843,7 @@ index 7abfcd1..a3b62bc 100644
   
   	offset = MAC_IVEIV_ENTRY(key->hw_key_idx);
 diff --git a/package/kernel/mac80211/patches/600-0005-rt2x00-rt2800lib-add-hw_beacon_count-field-to-struct.patch b/package/kernel/mac80211/patches/600-0005-rt2x00-rt2800lib-add-hw_beacon_count-field-to-struct.patch
-index 02b2acf..f41a160 100644
+index 02b2acfeee4c40af3f4739362d12ca0ce7f5e587..f41a160d3f953fca0695d8dadfca589f810a24e6 100644
 --- a/package/kernel/mac80211/patches/600-0005-rt2x00-rt2800lib-add-hw_beacon_count-field-to-struct.patch
 +++ b/package/kernel/mac80211/patches/600-0005-rt2x00-rt2800lib-add-hw_beacon_count-field-to-struct.patch
 @@ -41,7 +41,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19856,7 +19856,7 @@ index 02b2acf..f41a160 100644
   		__set_bit(RT2800_HAS_HIGH_SHARED_MEM, &drv_data->rt2800_flags);
   
 diff --git a/package/kernel/mac80211/patches/600-0007-rt2x00-rt2800lib-fix-max-supported-beacon-count-for-.patch b/package/kernel/mac80211/patches/600-0007-rt2x00-rt2800lib-fix-max-supported-beacon-count-for-.patch
-index e909272..5099c64 100644
+index e90927271090fafef5f2e1b33be1a43f2a0eeba8..5099c64492e4f1c6f96657d4c738f094a919d7fc 100644
 --- a/package/kernel/mac80211/patches/600-0007-rt2x00-rt2800lib-fix-max-supported-beacon-count-for-.patch
 +++ b/package/kernel/mac80211/patches/600-0007-rt2x00-rt2800lib-fix-max-supported-beacon-count-for-.patch
 @@ -10,7 +10,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19869,7 +19869,7 @@ index e909272..5099c64 100644
   		__set_bit(RT2800_HAS_HIGH_SHARED_MEM, &drv_data->rt2800_flags);
   
 diff --git a/package/kernel/mac80211/patches/600-0009-rt2x00-rt2800lib-enable-support-for-RT3883.patch b/package/kernel/mac80211/patches/600-0009-rt2x00-rt2800lib-enable-support-for-RT3883.patch
-index 7fe38e0..a2e7015 100644
+index 7fe38e0958a170f6f127fedc3764a0df87163180..a2e701527b99a4e9f1f8beb3a0fffd48d07c0bef 100644
 --- a/package/kernel/mac80211/patches/600-0009-rt2x00-rt2800lib-enable-support-for-RT3883.patch
 +++ b/package/kernel/mac80211/patches/600-0009-rt2x00-rt2800lib-enable-support-for-RT3883.patch
 @@ -10,7 +10,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19882,7 +19882,7 @@ index 7fe38e0..a2e7015 100644
   	case RT3572:
   	case RT3593:
 diff --git a/package/kernel/mac80211/patches/600-0010-rt2x00-rt2800lib-add-rf_vals-for-RF3853.patch b/package/kernel/mac80211/patches/600-0010-rt2x00-rt2800lib-add-rf_vals-for-RF3853.patch
-index 253a0c0..89bd0ac 100644
+index 253a0c0c1e67def822917c469a41bea3b2d0c862..89bd0acb87a0599962efd1d82a61512d45890b4c 100644
 --- a/package/kernel/mac80211/patches/600-0010-rt2x00-rt2800lib-add-rf_vals-for-RF3853.patch
 +++ b/package/kernel/mac80211/patches/600-0010-rt2x00-rt2800lib-add-rf_vals-for-RF3853.patch
 @@ -98,7 +98,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19895,7 +19895,7 @@ index 253a0c0..89bd0ac 100644
   		break;
   
 diff --git a/package/kernel/mac80211/patches/600-0011-rt2x00-rt2800lib-enable-VCO-calibration-for-RF3853.patch b/package/kernel/mac80211/patches/600-0011-rt2x00-rt2800lib-enable-VCO-calibration-for-RF3853.patch
-index f15c22b..b7efc9f 100644
+index f15c22b30f8e517e10f71c64082e8bea3a2b1d63..b7efc9f31bed7a4afd9a52d9f05b2aa4ca46e320 100644
 --- a/package/kernel/mac80211/patches/600-0011-rt2x00-rt2800lib-enable-VCO-calibration-for-RF3853.patch
 +++ b/package/kernel/mac80211/patches/600-0011-rt2x00-rt2800lib-enable-VCO-calibration-for-RF3853.patch
 @@ -18,7 +18,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19908,7 +19908,7 @@ index f15c22b..b7efc9f 100644
   	case RF3070:
   	case RF3290:
 diff --git a/package/kernel/mac80211/patches/600-0026-rt2x00-rt2800lib-use-correct-beacon-count-for-RT3883.patch b/package/kernel/mac80211/patches/600-0026-rt2x00-rt2800lib-use-correct-beacon-count-for-RT3883.patch
-index 6ce224a..220e35f 100644
+index 6ce224aba27242f5e55030a396ea044d16528653..220e35fe4c201bed6678fb4a8e293563c41c1240 100644
 --- a/package/kernel/mac80211/patches/600-0026-rt2x00-rt2800lib-use-correct-beacon-count-for-RT3883.patch
 +++ b/package/kernel/mac80211/patches/600-0026-rt2x00-rt2800lib-use-correct-beacon-count-for-RT3883.patch
 @@ -10,7 +10,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19921,7 +19921,7 @@ index 6ce224a..220e35f 100644
   		__set_bit(RT2800_HAS_HIGH_SHARED_MEM, &drv_data->rt2800_flags);
   
 diff --git a/package/kernel/mac80211/patches/600-0032-rt2x00-rt2800lib-enable-RT2800_HAS_HIGH_SHARED_MEM-f.patch b/package/kernel/mac80211/patches/600-0032-rt2x00-rt2800lib-enable-RT2800_HAS_HIGH_SHARED_MEM-f.patch
-index 25753af..2ffa5a4 100644
+index 25753af81b2bf911fec969118e81c90a6c95e975..2ffa5a4162f65c0451e2462842c5801fade1c25d 100644
 --- a/package/kernel/mac80211/patches/600-0032-rt2x00-rt2800lib-enable-RT2800_HAS_HIGH_SHARED_MEM-f.patch
 +++ b/package/kernel/mac80211/patches/600-0032-rt2x00-rt2800lib-enable-RT2800_HAS_HIGH_SHARED_MEM-f.patch
 @@ -11,7 +11,7 @@ Signed-off-by: Gabor Juhos <juhosg@openwrt.org>
@@ -19934,7 +19934,7 @@ index 25753af..2ffa5a4 100644
   		return retval;
   
 diff --git a/package/kernel/mac80211/patches/602-rt2x00-introduce-rt2x00_platform_h.patch b/package/kernel/mac80211/patches/602-rt2x00-introduce-rt2x00_platform_h.patch
-index 7a183a4..daa5dc6 100644
+index 7a183a404bae73cdcc120b41e83910ab579974ea..daa5dc61f9db18ba73cc19ea908587bb868bf292 100644
 --- a/package/kernel/mac80211/patches/602-rt2x00-introduce-rt2x00_platform_h.patch
 +++ b/package/kernel/mac80211/patches/602-rt2x00-introduce-rt2x00_platform_h.patch
 @@ -22,10 +22,10 @@
@@ -19951,7 +19951,7 @@ index 7a183a4..daa5dc6 100644
   
   #include <net/mac80211.h>
 diff --git a/package/kernel/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch b/package/kernel/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
-index bc056cd..8ae5da3 100644
+index bc056cd7357f57570168e5c1a4dbd4b9acd9a3c3..8ae5da38797df39f8bc13e3eace5f2f9496cde9c 100644
 --- a/package/kernel/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
 +++ b/package/kernel/mac80211/patches/603-rt2x00-introduce-rt2x00eeprom.patch
 @@ -1,6 +1,6 @@
@@ -19990,7 +19990,7 @@ index bc056cd..8ae5da3 100644
   	 */
   	kfree(rt2x00dev->drv_data);
 diff --git a/package/kernel/mac80211/patches/607-rt2x00-allow_disabling_bands_through_platform_data.patch b/package/kernel/mac80211/patches/607-rt2x00-allow_disabling_bands_through_platform_data.patch
-index d923e05..a2e1faf 100644
+index d923e05c770f2f325d7b47a9a5c9bcdf63cbbbdc..a2e1faf9c3793b51f912c743a38f7a9afd3bd0a0 100644
 --- a/package/kernel/mac80211/patches/607-rt2x00-allow_disabling_bands_through_platform_data.patch
 +++ b/package/kernel/mac80211/patches/607-rt2x00-allow_disabling_bands_through_platform_data.patch
 @@ -37,7 +37,7 @@
@@ -20003,7 +20003,7 @@ index d923e05..a2e1faf 100644
   #define SUPPORT_BAND_2GHZ	0x00000001
   #define SUPPORT_BAND_5GHZ	0x00000002
 diff --git a/package/kernel/mac80211/patches/608-add_platform_data_mac_addr.patch b/package/kernel/mac80211/patches/608-add_platform_data_mac_addr.patch
-index a645ba1..6704ff8 100644
+index a645ba176e4ab17046945a87bb97359602b675c6..6704ff835c186b575b79c62ad6d83021fee3ee8a 100644
 --- a/package/kernel/mac80211/patches/608-add_platform_data_mac_addr.patch
 +++ b/package/kernel/mac80211/patches/608-add_platform_data_mac_addr.patch
 @@ -31,7 +31,7 @@
@@ -20016,7 +20016,7 @@ index a645ba1..6704ff8 100644
   u32 rt2x00lib_get_bssidx(struct rt2x00_dev *rt2x00dev,
   			 struct ieee80211_vif *vif);
 diff --git a/package/kernel/mac80211/patches/610-rt2x00-fix-rt3352-ext-pa.patch b/package/kernel/mac80211/patches/610-rt2x00-fix-rt3352-ext-pa.patch
-index c69d330..9f10fe3 100644
+index c69d33025d91dfb49ec411cbe2fc506ba67d03ff..9f10fe35c3a5c599bf3fb897583481a0971ef475 100644
 --- a/package/kernel/mac80211/patches/610-rt2x00-fix-rt3352-ext-pa.patch
 +++ b/package/kernel/mac80211/patches/610-rt2x00-fix-rt3352-ext-pa.patch
 @@ -200,7 +200,7 @@
@@ -20029,7 +20029,7 @@ index c69d330..9f10fe3 100644
   	CAPABILITY_BT_COEXIST,
   	CAPABILITY_VCO_RECALIBRATION,
 diff --git a/package/kernel/mac80211/patches/611-rt2x00-rf_vals-rt3352-xtal20.patch b/package/kernel/mac80211/patches/611-rt2x00-rf_vals-rt3352-xtal20.patch
-index b44fe90..860fdc0 100644
+index b44fe900d53f87580ab8c0e502bc7f94958e6109..860fdc07ede072fce1cd65b177115dfd4dc30c03 100644
 --- a/package/kernel/mac80211/patches/611-rt2x00-rf_vals-rt3352-xtal20.patch
 +++ b/package/kernel/mac80211/patches/611-rt2x00-rf_vals-rt3352-xtal20.patch
 @@ -28,7 +28,7 @@
@@ -20078,7 +20078,7 @@ index b44fe90..860fdc0 100644
   
   	struct ieee80211_sta_ht_cap ht;
 diff --git a/package/kernel/mac80211/patches/615-rt2x00-fix_20mhz_clk.patch b/package/kernel/mac80211/patches/615-rt2x00-fix_20mhz_clk.patch
-index 8e3bd2a..e7b2a8c 100644
+index 8e3bd2a3622c1954a01ed548c71e436be9e92d8e..e7b2a8ca896118d5733e81a44ffb3a37502aeb42 100644
 --- a/package/kernel/mac80211/patches/615-rt2x00-fix_20mhz_clk.patch
 +++ b/package/kernel/mac80211/patches/615-rt2x00-fix_20mhz_clk.patch
 @@ -8,7 +8,7 @@
@@ -20091,7 +20091,7 @@ index 8e3bd2a..e7b2a8c 100644
   int rt2800_probe_clk(struct rt2x00_dev *rt2x00dev)
   {
 diff --git a/package/kernel/mac80211/patches/616-rt2x00-support-rt5350.patch b/package/kernel/mac80211/patches/616-rt2x00-support-rt5350.patch
-index faa5879..44bd8a1 100644
+index faa5879de68b0ec27d0099b51e296cfd7ccf7416..44bd8a194b23f9ef807fb66e99f6695998fc844c 100644
 --- a/package/kernel/mac80211/patches/616-rt2x00-support-rt5350.patch
 +++ b/package/kernel/mac80211/patches/616-rt2x00-support-rt5350.patch
 @@ -240,7 +240,7 @@
@@ -20131,7 +20131,7 @@ index faa5879..44bd8a1 100644
   #define RT3593		0x3593
   #define RT3883		0x3883	/* WSOC */
 diff --git a/package/kernel/mac80211/patches/620-rt2x00-add-AP+STA-support.patch b/package/kernel/mac80211/patches/620-rt2x00-add-AP+STA-support.patch
-index 55452b9..dba6033 100644
+index 55452b9ebde82e716e9fbf557db07abdde07dce5..dba6033edb83aaec0943a523dc1bf2c8f3ba5b31 100644
 --- a/package/kernel/mac80211/patches/620-rt2x00-add-AP+STA-support.patch
 +++ b/package/kernel/mac80211/patches/620-rt2x00-add-AP+STA-support.patch
 @@ -1,6 +1,6 @@
@@ -20143,7 +20143,7 @@ index 55452b9..dba6033 100644
   	if_limit = &rt2x00dev->if_limits_ap;
   	if_limit->max = rt2x00dev->ops->max_ap_intf;
 diff --git a/package/kernel/mac80211/patches/801-libertas-configure-sysfs-links.patch b/package/kernel/mac80211/patches/801-libertas-configure-sysfs-links.patch
-index fd885cc..02f3053 100644
+index fd885cc002461dbdb4b21f3bc4c5ae97c6609ad3..02f3053b2f34305e5db0a953aee3378fc17f351f 100644
 --- a/package/kernel/mac80211/patches/801-libertas-configure-sysfs-links.patch
 +++ b/package/kernel/mac80211/patches/801-libertas-configure-sysfs-links.patch
 @@ -1,6 +1,6 @@
@@ -20155,7 +20155,7 @@ index fd885cc..02f3053 100644
   	}
   
 diff --git a/package/kernel/mac80211/patches/802-libertas-set-wireless-macaddr.patch b/package/kernel/mac80211/patches/802-libertas-set-wireless-macaddr.patch
-index b67a95f..ad30608 100644
+index b67a95f948b79b4430799beadbcb98fc6f05e0da..ad306083da6cddff80b36241689cfeb3ba77d072 100644
 --- a/package/kernel/mac80211/patches/802-libertas-set-wireless-macaddr.patch
 +++ b/package/kernel/mac80211/patches/802-libertas-set-wireless-macaddr.patch
 @@ -1,6 +1,6 @@
@@ -20168,7 +20168,7 @@ index b67a95f..ad30608 100644
   
 diff --git a/package/kernel/mac80211/patches/804-b43-sync-with-bcma.patch b/package/kernel/mac80211/patches/804-b43-sync-with-bcma.patch
 deleted file mode 100644
-index 74cd448..0000000
+index 74cd4489f15fb1b18a2157441011a4ff68bb60f8..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/804-b43-sync-with-bcma.patch
 +++ /dev/null
 @@ -1,17 +0,0 @@
@@ -20190,7 +20190,7 @@ index 74cd448..0000000
 - #endif
 - #ifdef CPTCFG_B43_SSB
 diff --git a/package/kernel/mac80211/patches/820-b43-add-antenna-control.patch b/package/kernel/mac80211/patches/820-b43-add-antenna-control.patch
-index 06c731f..f8f555f 100644
+index 06c731fce677f7ea4a29652916c678f6de4dfc7d..f8f555f3e6ec510c333a97e76f47cca92e96a774 100644
 --- a/package/kernel/mac80211/patches/820-b43-add-antenna-control.patch
 +++ b/package/kernel/mac80211/patches/820-b43-add-antenna-control.patch
 @@ -9,7 +9,7 @@
@@ -20258,7 +20258,7 @@ index 06c731f..f8f555f 100644
   
 diff --git a/package/kernel/mac80211/patches/860-brcmfmac-add-missing-eth_type_trans-call.patch b/package/kernel/mac80211/patches/860-brcmfmac-add-missing-eth_type_trans-call.patch
 deleted file mode 100644
-index e265354..0000000
+index e2653542def01a708c6b3399a78484a322919a57..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/860-brcmfmac-add-missing-eth_type_trans-call.patch
 +++ /dev/null
 @@ -1,26 +0,0 @@
@@ -20290,7 +20290,7 @@ index e265354..0000000
 - 
 diff --git a/package/kernel/mac80211/patches/860-brcmfmac-register-wiphy-s-during-module_init.patch b/package/kernel/mac80211/patches/860-brcmfmac-register-wiphy-s-during-module_init.patch
 new file mode 100644
-index 0000000..ae571c9
+index 0000000000000000000000000000000000000000..ae571c99ab151245355d0080a6475bcabbb9a2fb
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/860-brcmfmac-register-wiphy-s-during-module_init.patch
 @@ -0,0 +1,97 @@
@@ -20393,7 +20393,7 @@ index 0000000..ae571c9
 + int brcmf_fw_get_firmwares(struct device *dev, u16 flags,
 diff --git a/package/kernel/mac80211/patches/861-brcmfmac-register-wiphy-s-during-module_init.patch b/package/kernel/mac80211/patches/861-brcmfmac-register-wiphy-s-during-module_init.patch
 deleted file mode 100644
-index f7f44f5..0000000
+index f7f44f513f5e80f18f26c49073f916a435c6c534..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/861-brcmfmac-register-wiphy-s-during-module_init.patch
 +++ /dev/null
 @@ -1,97 +0,0 @@
@@ -20496,7 +20496,7 @@ index f7f44f5..0000000
 - int brcmf_fw_get_firmwares(struct device *dev, u16 flags,
 diff --git a/package/kernel/mac80211/patches/861-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch b/package/kernel/mac80211/patches/861-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 new file mode 100644
-index 0000000..8721155
+index 0000000000000000000000000000000000000000..87211550f77d6e06bef8f7124940ba30ac4222ef
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/861-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 @@ -0,0 +1,50 @@
@@ -20552,7 +20552,7 @@ index 0000000..8721155
 + 	if (err) {
 diff --git a/package/kernel/mac80211/patches/862-brcmfmac-Disable-power-management.patch b/package/kernel/mac80211/patches/862-brcmfmac-Disable-power-management.patch
 new file mode 100644
-index 0000000..f301fe1
+index 0000000000000000000000000000000000000000..f301fe1e4e7daa2cabd73aaf869327e2a0fb7d22
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/862-brcmfmac-Disable-power-management.patch
 @@ -0,0 +1,27 @@
@@ -20585,7 +20585,7 @@ index 0000000..f301fe1
 + 
 diff --git a/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch b/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 deleted file mode 100644
-index 1e440c0..0000000
+index 1e440c02f33ffa7389837442fde8bdcb21002d61..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/862-brcmfmac-workaround-bug-with-some-inconsistent-BSSes.patch
 +++ /dev/null
 @@ -1,50 +0,0 @@
@@ -20640,7 +20640,7 @@ index 1e440c0..0000000
 - 	err = brcmf_vif_add_validate(wiphy_to_cfg(wiphy), type);
 - 	if (err) {
 diff --git a/package/kernel/mac80211/patches/910-01-add-support-for-mt7620.patch b/package/kernel/mac80211/patches/910-01-add-support-for-mt7620.patch
-index f2e21ea..be210f2 100644
+index f2e21ea49feafaf060846d95746ea6132819536f..be210f2d4bfc22a20b7473012000338e22622bd9 100644
 --- a/package/kernel/mac80211/patches/910-01-add-support-for-mt7620.patch
 +++ b/package/kernel/mac80211/patches/910-01-add-support-for-mt7620.patch
 @@ -1184,7 +1184,7 @@
@@ -20662,7 +20662,7 @@ index f2e21ea..be210f2 100644
   	case RF5390:
   	case RF5392:
 diff --git a/package/kernel/mac80211/patches/921-ath10k_init_devices_synchronously.patch b/package/kernel/mac80211/patches/921-ath10k_init_devices_synchronously.patch
-index 8c6d720..e842d61 100644
+index 8c6d720a73cf73e007eeede2829ec9019d5a2d40..e842d612b7b55caaa557c20836ca84e3cd21f906 100644
 --- a/package/kernel/mac80211/patches/921-ath10k_init_devices_synchronously.patch
 +++ b/package/kernel/mac80211/patches/921-ath10k_init_devices_synchronously.patch
 @@ -14,7 +14,7 @@ Signed-off-by: Sven Eckelmann <sven@open-mesh.com>
@@ -20675,7 +20675,7 @@ index 8c6d720..e842d61 100644
   	queue_work(ar->workqueue, &ar->register_work);
   
 diff --git a/package/kernel/mac80211/patches/930-ath10k_add_tpt_led_trigger.patch b/package/kernel/mac80211/patches/930-ath10k_add_tpt_led_trigger.patch
-index 281b447..a501b99 100644
+index 281b4475ada3f4388292d930a9fd252b234ec0c5..a501b998d0f279eeac266df9a4cd03e5cb731f98 100644
 --- a/package/kernel/mac80211/patches/930-ath10k_add_tpt_led_trigger.patch
 +++ b/package/kernel/mac80211/patches/930-ath10k_add_tpt_led_trigger.patch
 @@ -1,6 +1,6 @@
@@ -20702,7 +20702,7 @@ index 281b447..a501b99 100644
  +		ARRAY_SIZE(ath10k_tpt_blink));
 diff --git a/package/kernel/mac80211/patches/936-ath10k_skip_otp_check.patch b/package/kernel/mac80211/patches/936-ath10k_skip_otp_check.patch
 new file mode 100644
-index 0000000..596ef98
+index 0000000000000000000000000000000000000000..596ef9863902ecbbd3cdb394c7ffde3ba509414f
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/936-ath10k_skip_otp_check.patch
 @@ -0,0 +1,51 @@
@@ -20758,7 +20758,7 @@ index 0000000..596ef98
 + 
 + 	ret = ath10k_core_fetch_board_file(ar);
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index e49dd48..bd851e6 100644
+index e49dd486d2c952f3bc985a02bb131fdc7a03ce4a..bd851e61910c9a57ca45a570855ca22329c9ae4b 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -1,7 +1,7 @@
@@ -20817,7 +20817,7 @@ index e49dd48..bd851e6 100644
  		$(PKG_BUILD_DIR)/firmware/mt7662.bin \
  		$(1)/lib/firmware
 diff --git a/package/network/services/hostapd/Config.in b/package/network/services/hostapd/Config.in
-index aee2a15..645888e 100644
+index aee2a15fd314479ba4d5e29a8bb4ec5855a78342..645888e74510c5c42c21a7208ee0dcc884fb0e2a 100644
 --- a/package/network/services/hostapd/Config.in
 +++ b/package/network/services/hostapd/Config.in
 @@ -10,11 +10,10 @@ config WPA_SUPPLICANT_NO_TIMESTAMP_CHECK
@@ -20834,7 +20834,7 @@ index aee2a15..645888e 100644
  config WPA_SUPPLICANT_OPENSSL
  	bool "openssl"
 diff --git a/package/network/services/hostapd/Makefile b/package/network/services/hostapd/Makefile
-index 8e706dc..5caf3e3 100644
+index 8e706dc5a3dac630076e32eafbffbee2ba7e2976..5caf3e33786890b9c06a21365356fb39a7b4341d 100644
 --- a/package/network/services/hostapd/Makefile
 +++ b/package/network/services/hostapd/Makefile
 @@ -7,18 +7,18 @@
@@ -20964,7 +20964,7 @@ index 8e706dc..5caf3e3 100644
 -$(eval $(call BuildPackage,hostapd-common-old))
  $(eval $(call BuildPackage,eapol-test))
 diff --git a/package/network/services/hostapd/files/hostapd-full.config b/package/network/services/hostapd/files/hostapd-full.config
-index f1b2655..e388109 100644
+index f1b2655cfcb7f8cbc61399eb3ffb886770b55a3f..e388109fbb6bac4b965e5fced6e2cc189f883255 100644
 --- a/package/network/services/hostapd/files/hostapd-full.config
 +++ b/package/network/services/hostapd/files/hostapd-full.config
 @@ -10,7 +10,7 @@
@@ -20987,7 +20987,7 @@ index f1b2655..e388109 100644
  CONFIG_EAP_MD5=y
  
 diff --git a/package/network/services/hostapd/files/hostapd-mini.config b/package/network/services/hostapd/files/hostapd-mini.config
-index 118d97c..8baff18 100644
+index 118d97cb3a21c195bc903fde2d4f885699b2425b..8baff18fe47a0322b2c6b3312581635ccf518143 100644
 --- a/package/network/services/hostapd/files/hostapd-mini.config
 +++ b/package/network/services/hostapd/files/hostapd-mini.config
 @@ -10,7 +10,7 @@
@@ -21001,7 +21001,7 @@ index 118d97c..8baff18 100644
  CONFIG_DRIVER_WIRED=y
 diff --git a/package/network/services/hostapd/files/hostapd.sh b/package/network/services/hostapd/files/hostapd.sh
 deleted file mode 100644
-index 7aec7ad..0000000
+index 7aec7ad8a40ae843453e2c3e8f812a93c9635320..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/files/hostapd.sh
 +++ /dev/null
 @@ -1,394 +0,0 @@
@@ -21400,7 +21400,7 @@ index 7aec7ad..0000000
 -}
 -
 diff --git a/package/network/services/hostapd/files/netifd.sh b/package/network/services/hostapd/files/netifd.sh
-index 23d2e7e..e6b0b0d 100644
+index 23d2e7e83ebe5ca744f40e300fdbfb1014c555c5..e6b0b0d769c6301f05696d4ca963241c3ac11620 100644
 --- a/package/network/services/hostapd/files/netifd.sh
 +++ b/package/network/services/hostapd/files/netifd.sh
 @@ -1,3 +1,5 @@
@@ -21641,7 +21641,7 @@ index 23d2e7e..e6b0b0d 100644
  			esac
  			append network_data "eap=$(echo $eap_type | tr 'a-z' 'A-Z')" "$N$T"
 diff --git a/package/network/services/hostapd/files/wpa_supplicant-full.config b/package/network/services/hostapd/files/wpa_supplicant-full.config
-index a9d04ab..18c3f9a 100644
+index a9d04ab1752bf8cd8a51d5d4a7cb0431463add57..18c3f9a5c142b2eda67ec3136c73114555c4d131 100644
 --- a/package/network/services/hostapd/files/wpa_supplicant-full.config
 +++ b/package/network/services/hostapd/files/wpa_supplicant-full.config
 @@ -41,7 +41,7 @@
@@ -21674,7 +21674,7 @@ index a9d04ab..18c3f9a 100644
  #CONFIG_DEBUG_FILE=y
 diff --git a/package/network/services/hostapd/files/wpa_supplicant-mesh.config b/package/network/services/hostapd/files/wpa_supplicant-mesh.config
 deleted file mode 100644
-index 36e2908..0000000
+index 36e29088c41ab819830e85f2fdadbcf700dc4071..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/files/wpa_supplicant-mesh.config
 +++ /dev/null
 @@ -1,407 +0,0 @@
@@ -22086,7 +22086,7 @@ index 36e2908..0000000
 -CONFIG_SAE=y
 -CONFIG_AP=y
 diff --git a/package/network/services/hostapd/files/wpa_supplicant-mini.config b/package/network/services/hostapd/files/wpa_supplicant-mini.config
-index a8d334d..c272153 100644
+index a8d334d942e0618eb1224d093bb5047b1b40577a..c272153b3a9ee52e3dd6370c533fd0d06fac9e20 100644
 --- a/package/network/services/hostapd/files/wpa_supplicant-mini.config
 +++ b/package/network/services/hostapd/files/wpa_supplicant-mini.config
 @@ -41,7 +41,7 @@
@@ -22099,7 +22099,7 @@ index a8d334d..c272153 100644
  # Driver interface for Agere driver
  #CONFIG_DRIVER_HERMES=y
 diff --git a/package/network/services/hostapd/files/wpa_supplicant-p2p.config b/package/network/services/hostapd/files/wpa_supplicant-p2p.config
-index 1c307d0..563dace 100644
+index 1c307d0e697b99036cafaed8b923cea0523114c2..563dace352f36e471374d40e37deee171d69094f 100644
 --- a/package/network/services/hostapd/files/wpa_supplicant-p2p.config
 +++ b/package/network/services/hostapd/files/wpa_supplicant-p2p.config
 @@ -41,7 +41,7 @@
@@ -22113,7 +22113,7 @@ index 1c307d0..563dace 100644
  #CONFIG_DRIVER_HERMES=y
 diff --git a/package/network/services/hostapd/files/wpa_supplicant.sh b/package/network/services/hostapd/files/wpa_supplicant.sh
 deleted file mode 100644
-index b678484..0000000
+index b6784843e8ea99763796d9bfe772b004468e7304..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/files/wpa_supplicant.sh
 +++ /dev/null
 @@ -1,194 +0,0 @@
@@ -22313,7 +22313,7 @@ index b678484..0000000
 -}
 diff --git a/package/network/services/hostapd/patches/001-4addr-fix-reconnecting-client-on-connection-lost.patch b/package/network/services/hostapd/patches/001-4addr-fix-reconnecting-client-on-connection-lost.patch
 new file mode 100644
-index 0000000..5c8b662
+index 0000000000000000000000000000000000000000..5c8b6622c9a257bee024de6c9db9e3da38312b6f
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/001-4addr-fix-reconnecting-client-on-connection-lost.patch
 @@ -0,0 +1,25 @@
@@ -22344,7 +22344,7 @@ index 0000000..5c8b662
 + 		/*
 diff --git a/package/network/services/hostapd/patches/001-P2P-Validate-SSID-element-length-before-copying-it-C.patch b/package/network/services/hostapd/patches/001-P2P-Validate-SSID-element-length-before-copying-it-C.patch
 deleted file mode 100644
-index e408fbe..0000000
+index e408fbe3839e07637f526a99cd83e9e7558bc4d2..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/001-P2P-Validate-SSID-element-length-before-copying-it-C.patch
 +++ /dev/null
 @@ -1,37 +0,0 @@
@@ -22387,7 +22387,7 @@ index e408fbe..0000000
 - 	     != 0)) {
 diff --git a/package/network/services/hostapd/patches/002-AP-WMM-Fix-integer-underflow-in-WMM-Action-frame-par.patch b/package/network/services/hostapd/patches/002-AP-WMM-Fix-integer-underflow-in-WMM-Action-frame-par.patch
 deleted file mode 100644
-index bc4d60f..0000000
+index bc4d60fcc18c165e11e3a322bc064b6b18eaffed..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/002-AP-WMM-Fix-integer-underflow-in-WMM-Action-frame-par.patch
 +++ /dev/null
 @@ -1,36 +0,0 @@
@@ -22429,7 +22429,7 @@ index bc4d60f..0000000
 - 		hostapd_logger(hapd, mgmt->sa, HOSTAPD_MODULE_IEEE80211,
 diff --git a/package/network/services/hostapd/patches/002-mesh-Set-correct-secondary-channel-offset-if-HT40-is.patch b/package/network/services/hostapd/patches/002-mesh-Set-correct-secondary-channel-offset-if-HT40-is.patch
 new file mode 100644
-index 0000000..2439220
+index 0000000000000000000000000000000000000000..243922002a856c1910bdccdaee62304d78f27868
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/002-mesh-Set-correct-secondary-channel-offset-if-HT40-is.patch
 @@ -0,0 +1,61 @@
@@ -22496,7 +22496,7 @@ index 0000000..2439220
 + 
 diff --git a/package/network/services/hostapd/patches/003-WPS-Fix-HTTP-chunked-transfer-encoding-parser.patch b/package/network/services/hostapd/patches/003-WPS-Fix-HTTP-chunked-transfer-encoding-parser.patch
 deleted file mode 100644
-index 36b4ca2..0000000
+index 36b4ca2946990108d1d294cb15540a6bc3207e99..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/003-WPS-Fix-HTTP-chunked-transfer-encoding-parser.patch
 +++ /dev/null
 @@ -1,49 +0,0 @@
@@ -22551,7 +22551,7 @@ index 36b4ca2..0000000
 -
 diff --git a/package/network/services/hostapd/patches/004-EAP-pwd-peer-Fix-payload-length-validation-for-Commi.patch b/package/network/services/hostapd/patches/004-EAP-pwd-peer-Fix-payload-length-validation-for-Commi.patch
 deleted file mode 100644
-index 91627fb..0000000
+index 91627fb7b7f6bf43b085290cbd135bba18325295..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/004-EAP-pwd-peer-Fix-payload-length-validation-for-Commi.patch
 +++ /dev/null
 @@ -1,73 +0,0 @@
@@ -22630,7 +22630,7 @@ index 91627fb..0000000
 -
 diff --git a/package/network/services/hostapd/patches/005-EAP-pwd-server-Fix-payload-length-validation-for-Com.patch b/package/network/services/hostapd/patches/005-EAP-pwd-server-Fix-payload-length-validation-for-Com.patch
 deleted file mode 100644
-index 5dca20b..0000000
+index 5dca20b2771b855ac724ce0b0bf4bee2e377f7bf..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/005-EAP-pwd-server-Fix-payload-length-validation-for-Com.patch
 +++ /dev/null
 @@ -1,66 +0,0 @@
@@ -22702,7 +22702,7 @@ index 5dca20b..0000000
 -
 diff --git a/package/network/services/hostapd/patches/006-EAP-pwd-peer-Fix-Total-Length-parsing-for-fragment-r.patch b/package/network/services/hostapd/patches/006-EAP-pwd-peer-Fix-Total-Length-parsing-for-fragment-r.patch
 deleted file mode 100644
-index 4d2f9d8..0000000
+index 4d2f9d8aefebd43813ba55e5f1152cd2120323ca..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/006-EAP-pwd-peer-Fix-Total-Length-parsing-for-fragment-r.patch
 +++ /dev/null
 @@ -1,52 +0,0 @@
@@ -22760,7 +22760,7 @@ index 4d2f9d8..0000000
 -
 diff --git a/package/network/services/hostapd/patches/007-EAP-pwd-server-Fix-Total-Length-parsing-for-fragment.patch b/package/network/services/hostapd/patches/007-EAP-pwd-server-Fix-Total-Length-parsing-for-fragment.patch
 deleted file mode 100644
-index 7edef09..0000000
+index 7edef099eb59e2dc92fed9ca10fd0479a965c51c..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/007-EAP-pwd-server-Fix-Total-Length-parsing-for-fragment.patch
 +++ /dev/null
 @@ -1,50 +0,0 @@
@@ -22816,7 +22816,7 @@ index 7edef09..0000000
 -
 diff --git a/package/network/services/hostapd/patches/008-EAP-pwd-peer-Fix-asymmetric-fragmentation-behavior.patch b/package/network/services/hostapd/patches/008-EAP-pwd-peer-Fix-asymmetric-fragmentation-behavior.patch
 deleted file mode 100644
-index a601323..0000000
+index a601323f14da8a98f08c6ee02367ac74890059f3..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/008-EAP-pwd-peer-Fix-asymmetric-fragmentation-behavior.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -22854,7 +22854,7 @@ index a601323..0000000
 -
 diff --git a/package/network/services/hostapd/patches/009-NFC-Fix-payload-length-validation-in-NDEF-record-par.patch b/package/network/services/hostapd/patches/009-NFC-Fix-payload-length-validation-in-NDEF-record-par.patch
 deleted file mode 100644
-index dd34624..0000000
+index dd3462465ea4ff460c5be5a10379da9b72973007..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/009-NFC-Fix-payload-length-validation-in-NDEF-record-par.patch
 +++ /dev/null
 @@ -1,61 +0,0 @@
@@ -22921,7 +22921,7 @@ index dd34624..0000000
 -
 diff --git a/package/network/services/hostapd/patches/010-WNM-Ignore-Key-Data-in-WNM-Sleep-Mode-Response-frame.patch b/package/network/services/hostapd/patches/010-WNM-Ignore-Key-Data-in-WNM-Sleep-Mode-Response-frame.patch
 deleted file mode 100644
-index 00e5b7c..0000000
+index 00e5b7c771df4c8aeec39aafc2b893297667038d..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/010-WNM-Ignore-Key-Data-in-WNM-Sleep-Mode-Response-frame.patch
 +++ /dev/null
 @@ -1,32 +0,0 @@
@@ -22959,7 +22959,7 @@ index 00e5b7c..0000000
 - 			wpa_printf(MSG_DEBUG, "WNM: Invalid Key Data element "
 diff --git a/package/network/services/hostapd/patches/011-EAP-pwd-peer-Fix-last-fragment-length-validation.patch b/package/network/services/hostapd/patches/011-EAP-pwd-peer-Fix-last-fragment-length-validation.patch
 deleted file mode 100644
-index 82c2639..0000000
+index 82c26398b69d4c7b32c4851fdba43630af172c28..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/011-EAP-pwd-peer-Fix-last-fragment-length-validation.patch
 +++ /dev/null
 @@ -1,54 +0,0 @@
@@ -23019,7 +23019,7 @@ index 82c2639..0000000
 -
 diff --git a/package/network/services/hostapd/patches/012-EAP-pwd-server-Fix-last-fragment-length-validation.patch b/package/network/services/hostapd/patches/012-EAP-pwd-server-Fix-last-fragment-length-validation.patch
 deleted file mode 100644
-index bfc4c74..0000000
+index bfc4c74e95cad7dae1afe5a315b9e4ff5ab5b920..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/012-EAP-pwd-server-Fix-last-fragment-length-validation.patch
 +++ /dev/null
 @@ -1,51 +0,0 @@
@@ -23076,7 +23076,7 @@ index bfc4c74..0000000
 -
 diff --git a/package/network/services/hostapd/patches/013-EAP-pwd-peer-Fix-error-path-for-unexpected-Confirm-m.patch b/package/network/services/hostapd/patches/013-EAP-pwd-peer-Fix-error-path-for-unexpected-Confirm-m.patch
 deleted file mode 100644
-index 3088f6a..0000000
+index 3088f6a6dcda38dd4d579f020607237780324dc4..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/013-EAP-pwd-peer-Fix-error-path-for-unexpected-Confirm-m.patch
 +++ /dev/null
 @@ -1,34 +0,0 @@
@@ -23116,7 +23116,7 @@ index 3088f6a..0000000
 -
 diff --git a/package/network/services/hostapd/patches/014-nl80211-Try-running-without-mgmt-frame-subscription-.patch b/package/network/services/hostapd/patches/014-nl80211-Try-running-without-mgmt-frame-subscription-.patch
 deleted file mode 100644
-index 25ba87d..0000000
+index 25ba87d8d140ee614253c1ef75921313130c88b2..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/014-nl80211-Try-running-without-mgmt-frame-subscription-.patch
 +++ /dev/null
 @@ -1,48 +0,0 @@
@@ -23170,7 +23170,7 @@ index 25ba87d..0000000
 - 	    nl80211_create_monitor_interface(drv) &&
 diff --git a/package/network/services/hostapd/patches/100-mesh_mode_fix.patch b/package/network/services/hostapd/patches/100-mesh_mode_fix.patch
 new file mode 100644
-index 0000000..ceb4c53
+index 0000000000000000000000000000000000000000..ceb4c53afacfb1dd5430a487147e73b3de4f7239
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/100-mesh_mode_fix.patch
 @@ -0,0 +1,12 @@
@@ -23188,7 +23188,7 @@ index 0000000..ceb4c53
 + 		nlmode = NL80211_IFTYPE_STATION;
 diff --git a/package/network/services/hostapd/patches/110-bool_fix.patch b/package/network/services/hostapd/patches/110-bool_fix.patch
 deleted file mode 100644
-index 865c014..0000000
+index 865c014ee311d3d9ae73575d211d8c8904b0e237..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/110-bool_fix.patch
 +++ /dev/null
 @@ -1,14 +0,0 @@
@@ -23208,7 +23208,7 @@ index 865c014..0000000
 - 
 diff --git a/package/network/services/hostapd/patches/110-fix_parse_das_client.patch b/package/network/services/hostapd/patches/110-fix_parse_das_client.patch
 new file mode 100644
-index 0000000..67fb899
+index 0000000000000000000000000000000000000000..67fb899f30a6f9dbd04b89da28a3ed9fd6263fa6
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/110-fix_parse_das_client.patch
 @@ -0,0 +1,10 @@
@@ -23223,7 +23223,7 @@ index 0000000..67fb899
 + 
 + 	if (hostapd_parse_ip_addr(val, &bss->radius_das_client_addr))
 diff --git a/package/network/services/hostapd/patches/120-daemonize_fix.patch b/package/network/services/hostapd/patches/120-daemonize_fix.patch
-index 032e207..0389406 100644
+index 032e2072a35770628f96831ab3b6c4bbebdb7cf2..0389406a98a11a9eb4d5df64a30896e57dea103b 100644
 --- a/package/network/services/hostapd/patches/120-daemonize_fix.patch
 +++ b/package/network/services/hostapd/patches/120-daemonize_fix.patch
 @@ -8,7 +8,7 @@
@@ -23252,7 +23252,7 @@ index 032e207..0389406 100644
  -int os_daemonize(const char *pid_file)
  -{
 diff --git a/package/network/services/hostapd/patches/130-no_eapol_fix.patch b/package/network/services/hostapd/patches/130-no_eapol_fix.patch
-index d23b47b..5aee3d0 100644
+index d23b47b03c7b652cd7fa7b5ca3937633638aac25..5aee3d07f16b1f5665fab1b2a31794c32e18cbac 100644
 --- a/package/network/services/hostapd/patches/130-no_eapol_fix.patch
 +++ b/package/network/services/hostapd/patches/130-no_eapol_fix.patch
 @@ -1,6 +1,6 @@
@@ -23264,7 +23264,7 @@ index d23b47b..5aee3d0 100644
   void wpa_supplicant_initiate_eapol(struct wpa_supplicant *wpa_s)
   {
 diff --git a/package/network/services/hostapd/patches/140-disable_bridge_packet_workaround.patch b/package/network/services/hostapd/patches/140-disable_bridge_packet_workaround.patch
-index 6337d8d..fdd5da9 100644
+index 6337d8d737bfa3c327d46b8843cbbe72efe4c14d..fdd5da9bf5e99cad1a998f80f435ac26097274cd 100644
 --- a/package/network/services/hostapd/patches/140-disable_bridge_packet_workaround.patch
 +++ b/package/network/services/hostapd/patches/140-disable_bridge_packet_workaround.patch
 @@ -1,6 +1,6 @@
@@ -23284,7 +23284,7 @@ index 6337d8d..fdd5da9 100644
 - 	 * The Linux packet socket behavior has changed over the years and there
 diff --git a/package/network/services/hostapd/patches/150-nl80211-Report-disassociated-STA-lost-peer-for-the-c.patch b/package/network/services/hostapd/patches/150-nl80211-Report-disassociated-STA-lost-peer-for-the-c.patch
 deleted file mode 100644
-index 66c682f..0000000
+index 66c682fbd39c4cad25590534236da3261743ab70..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/150-nl80211-Report-disassociated-STA-lost-peer-for-the-c.patch
 +++ /dev/null
 @@ -1,67 +0,0 @@
@@ -23356,7 +23356,7 @@ index 66c682f..0000000
 - 	case NL80211_CMD_SET_REKEY_OFFLOAD:
 - 		nl80211_rekey_offload_event(drv, tb);
 diff --git a/package/network/services/hostapd/patches/200-multicall.patch b/package/network/services/hostapd/patches/200-multicall.patch
-index de4a3a8..40bd733 100644
+index de4a3a8e7f1ac310bdbf49b84a212b2c2d024c70..40bd7336ec225df892858b2d4a45cd6a3f0debb1 100644
 --- a/package/network/services/hostapd/patches/200-multicall.patch
 +++ b/package/network/services/hostapd/patches/200-multicall.patch
 @@ -1,15 +1,25 @@
@@ -23718,7 +23718,7 @@ index de4a3a8..40bd733 100644
   
   	os_memset(&eapol_test, 0, sizeof(eapol_test));
 diff --git a/package/network/services/hostapd/patches/300-noscan.patch b/package/network/services/hostapd/patches/300-noscan.patch
-index 57d8fe2..21d6316 100644
+index 57d8fe27bf681638237e0e8452ec7fbdebe6d036..21d631603b1f4e0af8dc11c3a249fc7d247021f3 100644
 --- a/package/network/services/hostapd/patches/300-noscan.patch
 +++ b/package/network/services/hostapd/patches/300-noscan.patch
 @@ -1,6 +1,6 @@
@@ -23778,7 +23778,7 @@ index 57d8fe2..21d6316 100644
   		return;
   
 diff --git a/package/network/services/hostapd/patches/310-rescan_immediately.patch b/package/network/services/hostapd/patches/310-rescan_immediately.patch
-index 7be8c32..3f46cc4 100644
+index 7be8c32e3b17a183238177a5cb9601449382d224..3f46cc4ac1d2ea3a3450b1c70375bc7c37a1ec41 100644
 --- a/package/network/services/hostapd/patches/310-rescan_immediately.patch
 +++ b/package/network/services/hostapd/patches/310-rescan_immediately.patch
 @@ -1,6 +1,6 @@
@@ -23796,7 +23796,7 @@ index 7be8c32..3f46cc4 100644
 - 	wpa_s->sched_scanning = 0;
 + 	wpa_s->p2pdev = wpa_s->parent;
 diff --git a/package/network/services/hostapd/patches/320-optional_rfkill.patch b/package/network/services/hostapd/patches/320-optional_rfkill.patch
-index 75b4b07..cf2a2c1 100644
+index 75b4b07f82115e226fd2f29f2ed19682ed1346f3..cf2a2c108b0c58597c4a10ccd9c7be242a6ae649 100644
 --- a/package/network/services/hostapd/patches/320-optional_rfkill.patch
 +++ b/package/network/services/hostapd/patches/320-optional_rfkill.patch
 @@ -1,14 +1,14 @@
@@ -23844,7 +23844,7 @@ index 75b4b07..cf2a2c1 100644
  +++ b/src/drivers/rfkill.h
  @@ -18,8 +18,24 @@ struct rfkill_config {
 diff --git a/package/network/services/hostapd/patches/330-nl80211_fix_set_freq.patch b/package/network/services/hostapd/patches/330-nl80211_fix_set_freq.patch
-index dd90877..ca46012 100644
+index dd90877e90a2af68aa811e137fc7ccc89b01eff4..ca4601247b9c093a986e543d188726380301263e 100644
 --- a/package/network/services/hostapd/patches/330-nl80211_fix_set_freq.patch
 +++ b/package/network/services/hostapd/patches/330-nl80211_fix_set_freq.patch
 @@ -1,6 +1,6 @@
@@ -23856,7 +23856,7 @@ index dd90877..ca46012 100644
   		   freq->bandwidth, freq->center_freq1, freq->center_freq2);
   
 diff --git a/package/network/services/hostapd/patches/340-reload_freq_change.patch b/package/network/services/hostapd/patches/340-reload_freq_change.patch
-index 91b6196..086ade9 100644
+index 91b61964ddf618b245da12dfa11ade4747d66e56..086ade9cedec664ee566764f8f09bd2fd730ba53 100644
 --- a/package/network/services/hostapd/patches/340-reload_freq_change.patch
 +++ b/package/network/services/hostapd/patches/340-reload_freq_change.patch
 @@ -1,6 +1,6 @@
@@ -23877,7 +23877,7 @@ index 91b6196..086ade9 100644
   	iface->conf = newconf;
   
 diff --git a/package/network/services/hostapd/patches/350-nl80211_del_beacon_bss.patch b/package/network/services/hostapd/patches/350-nl80211_del_beacon_bss.patch
-index a14fa03..247f154 100644
+index a14fa03527525c03c07875db44fffdba557b0593..247f154e3059aaf25df321b496ff255b50b8ddf4 100644
 --- a/package/network/services/hostapd/patches/350-nl80211_del_beacon_bss.patch
 +++ b/package/network/services/hostapd/patches/350-nl80211_del_beacon_bss.patch
 @@ -1,6 +1,6 @@
@@ -23934,7 +23934,7 @@ index a14fa03..247f154 100644
   	if (!is_ap_interface(drv->nlmode))
   		return -1;
 diff --git a/package/network/services/hostapd/patches/360-ctrl_iface_reload.patch b/package/network/services/hostapd/patches/360-ctrl_iface_reload.patch
-index 06b005e..1e405cb 100644
+index 06b005ea3ac8e3a43d610c2719b4d53a6ceacd73..1e405cbf0edcda8604080f9c00f0eeb35c106218 100644
 --- a/package/network/services/hostapd/patches/360-ctrl_iface_reload.patch
 +++ b/package/network/services/hostapd/patches/360-ctrl_iface_reload.patch
 @@ -1,22 +1,22 @@
@@ -23994,7 +23994,7 @@ index 06b005e..1e405cb 100644
 + 
 + 
 diff --git a/package/network/services/hostapd/patches/370-ap_sta_support.patch b/package/network/services/hostapd/patches/370-ap_sta_support.patch
-index ea235e6..a77d4c9 100644
+index ea235e67780366b28dd8e811367d7cb45f2397de..a77d4c92e6d7fa7711338c82aba27b7e44248afe 100644
 --- a/package/network/services/hostapd/patches/370-ap_sta_support.patch
 +++ b/package/network/services/hostapd/patches/370-ap_sta_support.patch
 @@ -1,6 +1,6 @@
@@ -24158,7 +24158,7 @@ index ea235e6..a77d4c9 100644
  +	/* Five octets of HT Operation Information */
  +	u8 ht_param;
 diff --git a/package/network/services/hostapd/patches/380-disable_ctrl_iface_mib.patch b/package/network/services/hostapd/patches/380-disable_ctrl_iface_mib.patch
-index 3a41b82..9e815e9 100644
+index 3a41b8219ea83136b76ad59b0bf79b566d1e7b35..9e815e96a13b2978f4a75e0131e420150dbc7d00 100644
 --- a/package/network/services/hostapd/patches/380-disable_ctrl_iface_mib.patch
 +++ b/package/network/services/hostapd/patches/380-disable_ctrl_iface_mib.patch
 @@ -1,18 +1,18 @@
@@ -24342,7 +24342,7 @@ index 3a41b82..9e815e9 100644
   
   
 diff --git a/package/network/services/hostapd/patches/390-wpa_ie_cap_workaround.patch b/package/network/services/hostapd/patches/390-wpa_ie_cap_workaround.patch
-index 1065a7f..c9e7bf4 100644
+index 1065a7f125bd0dce8fbd5090afc71f73d2295f16..c9e7bf4209fcde62dd965cd12754e6876067ed01 100644
 --- a/package/network/services/hostapd/patches/390-wpa_ie_cap_workaround.patch
 +++ b/package/network/services/hostapd/patches/390-wpa_ie_cap_workaround.patch
 @@ -1,6 +1,6 @@
@@ -24363,7 +24363,7 @@ index 1065a7f..c9e7bf4 100644
   		return -1;
   
 diff --git a/package/network/services/hostapd/patches/400-wps_single_auth_enc_type.patch b/package/network/services/hostapd/patches/400-wps_single_auth_enc_type.patch
-index 083af5b..f5872cd 100644
+index 083af5b4508e968af5628ad959283dcef24ba41a..f5872cd5979e48aa0f918635af0852f2c1acb027 100644
 --- a/package/network/services/hostapd/patches/400-wps_single_auth_enc_type.patch
 +++ b/package/network/services/hostapd/patches/400-wps_single_auth_enc_type.patch
 @@ -1,25 +1,22 @@
@@ -24411,7 +24411,7 @@ index 083af5b..f5872cd 100644
 + 			wps->encr_types_rsn |= WPS_ENCR_TKIP;
 + 		}
 diff --git a/package/network/services/hostapd/patches/410-limit_debug_messages.patch b/package/network/services/hostapd/patches/410-limit_debug_messages.patch
-index da88732..a48b696 100644
+index da887321c6e96fb42f58e613c77f6501279df2b6..a48b6962ee3e420f4abc79e772b9bcb049559dee 100644
 --- a/package/network/services/hostapd/patches/410-limit_debug_messages.patch
 +++ b/package/network/services/hostapd/patches/410-limit_debug_messages.patch
 @@ -64,7 +64,7 @@
@@ -24451,7 +24451,7 @@ index da88732..a48b696 100644
    * events that do not need to be sent to syslog.
    */
 diff --git a/package/network/services/hostapd/patches/420-indicate-features.patch b/package/network/services/hostapd/patches/420-indicate-features.patch
-index 64c92df..335e71e 100644
+index 64c92df6bb58d07fb7f1d004b4ddc371e212291d..335e71eb519851305f813b4aa95ca5239b7e46f9 100644
 --- a/package/network/services/hostapd/patches/420-indicate-features.patch
 +++ b/package/network/services/hostapd/patches/420-indicate-features.patch
 @@ -8,16 +8,16 @@
@@ -24502,7 +24502,7 @@ index 64c92df..335e71e 100644
   #endif /* CONFIG_DBUS */
   		case 'v':
 diff --git a/package/network/services/hostapd/patches/430-hostapd_cli_ifdef.patch b/package/network/services/hostapd/patches/430-hostapd_cli_ifdef.patch
-index 85d2e16..d07b747 100644
+index 85d2e1603bfb56eb8f9b62c8ea602020c3170883..d07b747c3d299dd1561251fcfd5a89a41214edb5 100644
 --- a/package/network/services/hostapd/patches/430-hostapd_cli_ifdef.patch
 +++ b/package/network/services/hostapd/patches/430-hostapd_cli_ifdef.patch
 @@ -1,6 +1,6 @@
@@ -24559,7 +24559,7 @@ index 85d2e16..d07b747 100644
   	{ "wps_config", hostapd_cli_cmd_wps_config },
   	{ "wps_get_status", hostapd_cli_cmd_wps_get_status },
 diff --git a/package/network/services/hostapd/patches/431-wpa_cli_ifdef.patch b/package/network/services/hostapd/patches/431-wpa_cli_ifdef.patch
-index 874ff4b..256f6b5 100644
+index 874ff4bccc0b152ce5a2f2b9e3a0ba1097128126..256f6b5977323b00215927a0051738eda376eef7 100644
 --- a/package/network/services/hostapd/patches/431-wpa_cli_ifdef.patch
 +++ b/package/network/services/hostapd/patches/431-wpa_cli_ifdef.patch
 @@ -1,13 +1,12 @@
@@ -24582,7 +24582,7 @@ index 874ff4b..256f6b5 100644
 - "Copyright (c) 2004-2015, Jouni Malinen <j@w1.fi> and contributors";
 diff --git a/package/network/services/hostapd/patches/432-missing-typedef.patch b/package/network/services/hostapd/patches/432-missing-typedef.patch
 new file mode 100644
-index 0000000..7a100f1
+index 0000000000000000000000000000000000000000..7a100f1a0d25e4e1e63524025dcd36d532122843
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/432-missing-typedef.patch
 @@ -0,0 +1,10 @@
@@ -24598,7 +24598,7 @@ index 0000000..7a100f1
 + #endif /* __user */
 diff --git a/package/network/services/hostapd/patches/440-max_num_sta_probe.patch b/package/network/services/hostapd/patches/440-max_num_sta_probe.patch
 deleted file mode 100644
-index 74aef26..0000000
+index 74aef26d64fb82fad3826b64024e9500f2353542..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/440-max_num_sta_probe.patch
 +++ /dev/null
 @@ -1,13 +0,0 @@
@@ -24616,7 +24616,7 @@ index 74aef26..0000000
 - 	if (hapd->conf->interworking &&
 - 	    elems.interworking && elems.interworking_len >= 1) {
 diff --git a/package/network/services/hostapd/patches/450-scan_wait.patch b/package/network/services/hostapd/patches/450-scan_wait.patch
-index 87ebd45..78cf306 100644
+index 87ebd4552f4d22dfcb2c3bd9947e6c2f16e9e115..78cf3064fa6fbf5abf89d5c7388e8a99e8ba988e 100644
 --- a/package/network/services/hostapd/patches/450-scan_wait.patch
 +++ b/package/network/services/hostapd/patches/450-scan_wait.patch
 @@ -1,6 +1,6 @@
@@ -24687,7 +24687,7 @@ index 87ebd45..78cf306 100644
   	int ret = 1;
   	size_t i, j;
 diff --git a/package/network/services/hostapd/patches/460-wpa_supplicant-add-new-config-params-to-be-used-with.patch b/package/network/services/hostapd/patches/460-wpa_supplicant-add-new-config-params-to-be-used-with.patch
-index 217e701..6a5866e 100644
+index 217e7015010848fd441003776afcbae04038d02d..6a5866e17c0305e92c9ca20f7b09768d60dfafab 100644
 --- a/package/network/services/hostapd/patches/460-wpa_supplicant-add-new-config-params-to-be-used-with.patch
 +++ b/package/network/services/hostapd/patches/460-wpa_supplicant-add-new-config-params-to-be-used-with.patch
 @@ -18,15 +18,15 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
@@ -24822,7 +24822,7 @@ index 217e701..6a5866e 100644
  +			i++;
  +		}
 diff --git a/package/network/services/hostapd/patches/461-driver_nl80211-use-new-parameters-during-ibss-join.patch b/package/network/services/hostapd/patches/461-driver_nl80211-use-new-parameters-during-ibss-join.patch
-index 730cc31..459bdb9 100644
+index 730cc316503965639f87111b43be49ea3ee66f79..459bdb944ae2d5f6820594b261ccfc77b52ab5d3 100644
 --- a/package/network/services/hostapd/patches/461-driver_nl80211-use-new-parameters-during-ibss-join.patch
 +++ b/package/network/services/hostapd/patches/461-driver_nl80211-use-new-parameters-during-ibss-join.patch
 @@ -10,7 +10,7 @@ Signed-hostap: Antonio Quartulli <ordex@autistici.org>
@@ -24844,7 +24844,7 @@ index 730cc31..459bdb9 100644
   		goto fail;
   
 diff --git a/package/network/services/hostapd/patches/462-wpa_s-support-htmode-param.patch b/package/network/services/hostapd/patches/462-wpa_s-support-htmode-param.patch
-index 30bb2dc..80fe49c 100644
+index 30bb2dc14c44d7ee85df46b9f203f8ca2e26557d..80fe49ccb20f0e9caf5e690fe18f3c31fe351a8e 100644
 --- a/package/network/services/hostapd/patches/462-wpa_s-support-htmode-param.patch
 +++ b/package/network/services/hostapd/patches/462-wpa_s-support-htmode-param.patch
 @@ -16,9 +16,9 @@ Signed-off-by: Antonio Quartulli <ordex@autistici.org>
@@ -24909,7 +24909,7 @@ index 30bb2dc..80fe49c 100644
   		params.mcast_rate = ssid->mcast_rate;
 diff --git a/package/network/services/hostapd/patches/470-survey_data_fallback.patch b/package/network/services/hostapd/patches/470-survey_data_fallback.patch
 new file mode 100644
-index 0000000..4e40a87
+index 0000000000000000000000000000000000000000..4e40a87558949483954950f72d30ac30a17877e9
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/470-survey_data_fallback.patch
 @@ -0,0 +1,45 @@
@@ -24960,7 +24960,7 @@ index 0000000..4e40a87
 + 	return 1;
 diff --git a/package/network/services/hostapd/patches/470-wait-for-nullfunc-longer.patch b/package/network/services/hostapd/patches/470-wait-for-nullfunc-longer.patch
 deleted file mode 100644
-index e6bbddd..0000000
+index e6bbdddc50cc293f4feb0d91abbca597e02902dc..0000000000000000000000000000000000000000
 --- a/package/network/services/hostapd/patches/470-wait-for-nullfunc-longer.patch
 +++ /dev/null
 @@ -1,11 +0,0 @@
@@ -24976,7 +24976,7 @@ index e6bbddd..0000000
 - /* Number of seconds to keep STA entry with Authenticated flag after it has
 -  * been disassociated. */
 diff --git a/package/network/services/hostapd/patches/600-ubus_support.patch b/package/network/services/hostapd/patches/600-ubus_support.patch
-index df2eac8..feacdf2 100644
+index df2eac873c306728b05c8b96e2a464592944d181..feacdf2c08b07d5eba7c99efe629e64dd93f2c00 100644
 --- a/package/network/services/hostapd/patches/600-ubus_support.patch
 +++ b/package/network/services/hostapd/patches/600-ubus_support.patch
 @@ -1,6 +1,6 @@
@@ -25274,7 +25274,7 @@ index df2eac8..feacdf2 100644
  +	if (hostapd_ubus_handle_event(hapd, &req)) {
  +		wpa_printf(MSG_DEBUG, "Station " MACSTR " assoc rejected by ubus handler.\n",
 diff --git a/package/network/utils/iw/Makefile b/package/network/utils/iw/Makefile
-index ad82081..d17cbca 100644
+index ad82081570395bfba8d60428996194d834f73321..d17cbca0df391a287fb9d80a3d9c1ca1355c1774 100644
 --- a/package/network/utils/iw/Makefile
 +++ b/package/network/utils/iw/Makefile
 @@ -12,10 +12,10 @@ PKG_VERSION:=4.3
@@ -25291,7 +25291,7 @@ index ad82081..d17cbca 100644
  
  include $(INCLUDE_DIR)/package.mk
 diff --git a/package/network/utils/iw/patches/001-nl80211_h_sync.patch b/package/network/utils/iw/patches/001-nl80211_h_sync.patch
-index 7de2258..e5ea8f7 100644
+index 7de225859b71c2bb7627503b676aa7f2a122ccd9..e5ea8f7c8ad8eeb73f793ad6c536bb31d76d6868 100644
 --- a/package/network/utils/iw/patches/001-nl80211_h_sync.patch
 +++ b/package/network/utils/iw/patches/001-nl80211_h_sync.patch
 @@ -8,7 +8,17 @@
@@ -25629,7 +25629,7 @@ index 7de2258..e5ea8f7 100644
 ++
   #endif /* __LINUX_NL80211_H */
 diff --git a/package/network/utils/iw/patches/300-display_interface_TX_power.patch b/package/network/utils/iw/patches/300-display_interface_TX_power.patch
-index 574c490..2cdf360 100644
+index 574c490318d03d09f6c6762be892b0814718dbbe..2cdf360cc57a512680e7f9f0b2450055c2c81d35 100644
 --- a/package/network/utils/iw/patches/300-display_interface_TX_power.patch
 +++ b/package/network/utils/iw/patches/300-display_interface_TX_power.patch
 @@ -12,11 +12,9 @@ Signed-off-by: Johannes Berg <johannes.berg@intel.com>
@@ -25646,7 +25646,7 @@ index 574c490..2cdf360 100644
   	}
   
 diff --git a/package/network/utils/iw/patches/301-ibss_add_VHT80.patch b/package/network/utils/iw/patches/301-ibss_add_VHT80.patch
-index 709fbb2..0627bcc 100644
+index 709fbb29146b3fe80f7af240d04dec8f5e96795a..0627bccb468cd31f8357a4b0fe3f3bee879230c6 100644
 --- a/package/network/utils/iw/patches/301-ibss_add_VHT80.patch
 +++ b/package/network/utils/iw/patches/301-ibss_add_VHT80.patch
 @@ -14,8 +14,6 @@ Signed-off-by: Johannes Berg <johannes.berg@intel.com>
@@ -25686,7 +25686,7 @@ index 709fbb2..0627bcc 100644
   				    chanmode_selected->width);
   			NLA_PUT_U32(msg, NL80211_ATTR_CENTER_FREQ1,
 diff --git a/package/network/utils/iw/patches/302-ibss_use_MHz_instead_MHZ.patch b/package/network/utils/iw/patches/302-ibss_use_MHz_instead_MHZ.patch
-index fc44427..f96d5ea 100644
+index fc4442792d4e55d14cfd85823202755b3c4678c0..f96d5eafdac4942f5e418dfba15242c83659d572 100644
 --- a/package/network/utils/iw/patches/302-ibss_use_MHz_instead_MHZ.patch
 +++ b/package/network/utils/iw/patches/302-ibss_use_MHz_instead_MHZ.patch
 @@ -7,11 +7,9 @@ Signed-off-by: Johannes Berg <johannes.berg@intel.com>
@@ -25703,7 +25703,7 @@ index fc44427..f96d5ea 100644
   		  .freq1_diff = 0,
   		  .chantype = NL80211_CHAN_NO_HT },
 diff --git a/package/network/utils/iw/patches/303-mesh_add_VHT80.patch b/package/network/utils/iw/patches/303-mesh_add_VHT80.patch
-index fe8dc21..956b050 100644
+index fe8dc21a19db12b056efcaa79b30987d0c1f8e10..956b0505e662b29c24cbdf18c17b1d5c6ed106f8 100644
 --- a/package/network/utils/iw/patches/303-mesh_add_VHT80.patch
 +++ b/package/network/utils/iw/patches/303-mesh_add_VHT80.patch
 @@ -15,8 +15,6 @@ Signed-off-by: Sven Eckelmann <sven@open-mesh.com>
@@ -25787,7 +25787,7 @@ index fe8dc21..956b050 100644
   	printf("\n\n");
   }
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
-index d382453..20bb06e 100644
+index d382453b1918502240738b33c10cb08b113c7026..20bb06e4867a78aae60485d0c6c7a38e82c2997c 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.c
 @@ -39,6 +39,18 @@ __init void ap9x_pci_setup_wmac_led_pin(unsigned wmac, int pin)
@@ -25831,7 +25831,7 @@ index d382453..20bb06e 100644
  {
  	switch (PCI_SLOT(dev->devfn)) {
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
-index ad288cb..d7c0185 100644
+index ad288cbdf90e1a93f914ee7c4d5edbc10a2dbdd1..d7c018565ea9248fd69cd9ec37083c4d5887a6ca 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-ap9x-pci.h
 @@ -12,6 +12,7 @@
@@ -25866,7 +25866,7 @@ index ad288cb..d7c0185 100644
  {
  	return NULL;
 diff --git a/target/linux/generic/files/include/linux/ath9k_platform.h b/target/linux/generic/files/include/linux/ath9k_platform.h
-index 30ce216..2c19f3b 100644
+index 30ce2165cb4fbd8513ef045930f6a4a5dbb59a3a..2c19f3b494582144806e175783efbc2e124ca873 100644
 --- a/target/linux/generic/files/include/linux/ath9k_platform.h
 +++ b/target/linux/generic/files/include/linux/ath9k_platform.h
 @@ -31,6 +31,10 @@ struct ath9k_platform_data {

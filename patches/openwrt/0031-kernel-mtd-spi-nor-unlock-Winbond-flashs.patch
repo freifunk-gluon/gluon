@@ -4,7 +4,7 @@ Subject: kernel: mtd: spi-nor: unlock Winbond flashs
 
 diff --git a/target/linux/generic/patches-3.18/463-Revert-mtd-spi-nor-fix-Spansion-regressions-aliased-.patch b/target/linux/generic/patches-3.18/463-Revert-mtd-spi-nor-fix-Spansion-regressions-aliased-.patch
 new file mode 100644
-index 0000000..4682b7a
+index 0000000000000000000000000000000000000000..4682b7a77b160a0814012d26f0edf1a7bfaf5312
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/463-Revert-mtd-spi-nor-fix-Spansion-regressions-aliased-.patch
 @@ -0,0 +1,46 @@

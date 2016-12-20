@@ -15,7 +15,7 @@ from stdin), the following code will now do:
 Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
 
 diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
-index b857c97..ef11101 100644
+index b857c979e93bec395bca164a4f144c7c69005bec..ef1110166055a78bf32cf1a6fbbd3e356b2bce3f 100644
 --- a/libs/luci-lib-jsonc/src/jsonc.c
 +++ b/libs/luci-lib-jsonc/src/jsonc.c
 @@ -328,6 +328,76 @@ static int json_parse_set(lua_State *L)
@@ -104,7 +104,7 @@ index b857c97..ef11101 100644
  
  	{ "__gc",			json_gc           },
 diff --git a/libs/luci-lib-jsonc/src/jsonc.luadoc b/libs/luci-lib-jsonc/src/jsonc.luadoc
-index 2ee9ceb..720b17d 100644
+index 2ee9cebdc889242595f5281228783df15b9b8dcd..720b17d1eb76d8eb9a8b47939ac724891cfb3886 100644
 --- a/libs/luci-lib-jsonc/src/jsonc.luadoc
 +++ b/libs/luci-lib-jsonc/src/jsonc.luadoc
 @@ -121,10 +121,22 @@ parser:set({ "some", "data" })`

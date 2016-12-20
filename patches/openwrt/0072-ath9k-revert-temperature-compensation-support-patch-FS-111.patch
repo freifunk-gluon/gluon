@@ -8,7 +8,7 @@ Backport of LEDE 3e4d0e3e77dcf9b2116e5ed53f30e2bf53b1c6b7
 
 diff --git a/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch b/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch
 deleted file mode 100644
-index cff32ad..0000000
+index cff32ad47cb0b905d9cfa4eb021258b644b2a47a..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/328-ath9k_hw-implement-temperature-compensation-support-.patch
 +++ /dev/null
 @@ -1,97 +0,0 @@
@@ -110,7 +110,7 @@ index cff32ad..0000000
 - 	struct ath9k_cal_list adcdc_caldata;
 - 	struct ath9k_cal_list *cal_list;
 diff --git a/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch b/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
-index 4615643..6edef09 100644
+index 461564350feb43410e5c702a8a67514cdfaa3961..6edef0975431165285a7b937442b5d89b362c807 100644
 --- a/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
 +++ b/package/kernel/mac80211/patches/542-ath9k_debugfs_diag.patch
 @@ -84,7 +84,7 @@

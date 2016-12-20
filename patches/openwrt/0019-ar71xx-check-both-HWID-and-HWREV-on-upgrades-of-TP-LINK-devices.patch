@@ -10,7 +10,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of r49105
 
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 762cd76..024e493 100755
+index 762cd760ceb9ff3917903dfd26a5a7a42175abfe..024e4930949c927efd36c3ac67cd351dcaa4bf7b 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -66,6 +66,10 @@ tplink_get_image_hwid() {

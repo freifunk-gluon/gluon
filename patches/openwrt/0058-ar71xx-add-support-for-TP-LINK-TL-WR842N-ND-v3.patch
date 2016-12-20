@@ -14,7 +14,7 @@ Signed-off-by: Cezary Jackiewicz <cezary@eko.one.pl>
 Backport of LEDE 0b45bec22c59cc6e6b2fa71dc9a88386c5587132
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index cb92349..2c5d6af 100644
+index cb92349cab833179a87a195b94e2539cc5ce3e79..2c5d6af8f4e2c5ce71adc0b63d32b8506e01b6a2 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -280,6 +280,7 @@ get_status_led() {
@@ -26,7 +26,7 @@ index cb92349..2c5d6af 100644
  	tl-wr941nd-v5)
  		status_led="tp-link:green:system"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index d81358d..14aa7bc 100644
+index d81358d6bf9103ffeb2929b06d3ab01efffe931c..14aa7bc5e56c0d7be435ba3a1803416075eccb58 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -523,6 +523,16 @@ tl-wr842n-v2)
@@ -47,7 +47,7 @@ index d81358d..14aa7bc 100644
  tl-wa901nd-v3)
  	ucidef_set_led_netdev "lan" "LAN" "tp-link:green:lan" "eth0"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index ac3deb8..ca9c577 100755
+index ac3deb8aa2ed4717e2bd682cb4ffd7d32c50134f..ca9c5771d72681557f4139c0e58f4d7a656bd741 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -449,6 +449,7 @@ tl-wr741nd-v4 |\
@@ -59,7 +59,7 @@ index ac3deb8..ca9c577 100755
  whr-hp-g300n |\
  whr-hp-gn |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 3bd6aed..43ce7da 100755
+index 3bd6aed909efc84ab1657862b4bd36534a54f2c2..43ce7da90f682c5fb744401ba9ea1db58f7ebcf1 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -869,6 +869,9 @@ ar71xx_board_detect() {
@@ -73,7 +73,7 @@ index 3bd6aed..43ce7da 100755
  		name="tl-wr941nd"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index d816f21..53284df 100755
+index d816f211891d6a259930f2781574504ea62b4e16..53284df5e2da19d8012361e9560244af898d3c2c 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -367,6 +367,7 @@ platform_check_image() {
@@ -85,7 +85,7 @@ index d816f21..53284df 100755
  	tl-wr941nd-v5 | \
  	tl-wr941nd-v6 | \
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
-index 004f719..ebaed15 100644
+index 004f71961396cd33cfd381aca386706104a7b757..ebaed15a49113133f59f069325898a00f5612fef 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr841n-v9.c
 @@ -1,9 +1,16 @@
@@ -217,7 +217,7 @@ index 004f719..ebaed15 100644
 +MIPS_MACHINE(ATH79_MACH_TL_WR842N_V3, "TL-WR842N-v3", "TP-LINK TL-WR842N/ND v3",
 +	     tl_wr842n_v3_setup);
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 05eea0b..d66bd25 100644
+index 05eea0b16c362ba5f70c9f435dbe312087b319c2..d66bd25fe01544224a69e3f35f020f2e4130c8b3 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -607,6 +607,13 @@ define Device/tl-wr842n-v2
@@ -244,7 +244,7 @@ index 05eea0b..d66bd25 100644
  define Device/tl-wr941nd-v5
      $(Device/tplink-4mlzma)
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index debde6e..d4b417b 100644
+index debde6e6a552e71b551d8c01ba06af03013407bf..d4b417bfb78606ddb84076ad8c927952e65118c2 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@

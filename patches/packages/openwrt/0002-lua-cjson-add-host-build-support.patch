@@ -3,7 +3,7 @@ Date: Wed, 30 Dec 2015 01:00:49 +0100
 Subject: lua-cjson: add host build support
 
 diff --git a/lang/lua-cjson/Makefile b/lang/lua-cjson/Makefile
-index fbdcf17..1adfeb3 100644
+index fbdcf17d1f0be7afeb512705137e438f47687850..1adfeb3b537f8b38d81148d4a8266485d7a05ab4 100644
 --- a/lang/lua-cjson/Makefile
 +++ b/lang/lua-cjson/Makefile
 @@ -20,6 +20,7 @@ PKG_MD5SUM:=24f270663e9f6ca8ba2a02cef19f7963

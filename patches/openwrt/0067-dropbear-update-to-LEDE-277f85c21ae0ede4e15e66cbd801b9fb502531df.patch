@@ -9,7 +9,7 @@ The patches 600-allow-blank-root-password.patch and
 allowing password-less root login.
 
 diff --git a/package/network/services/dropbear/Config.in b/package/network/services/dropbear/Config.in
-index e2a7610..7c2edd7 100644
+index e2a761034fa64225439db4a18030dee75fb0775c..7c2edd79f23708f9ef01c6a62a54073b0c7a33ed 100644
 --- a/package/network/services/dropbear/Config.in
 +++ b/package/network/services/dropbear/Config.in
 @@ -1,6 +1,15 @@
@@ -60,7 +60,7 @@ index e2a7610..7c2edd7 100644
  
  endmenu
 diff --git a/package/network/services/dropbear/Makefile b/package/network/services/dropbear/Makefile
-index 35958d3..36bcb4a 100644
+index 35958d332cd0c9796ba50c433b13a3e24cd4441c..36bcb4ab7b6c57460cd15da1bcc130af62e32bc6 100644
 --- a/package/network/services/dropbear/Makefile
 +++ b/package/network/services/dropbear/Makefile
 @@ -1,5 +1,5 @@
@@ -170,7 +170,7 @@ index 35958d3..36bcb4a 100644
  
  define Package/dropbearconvert/install
 diff --git a/package/network/services/dropbear/files/dropbear.init b/package/network/services/dropbear/files/dropbear.init
-index 6de0142..1653efb 100755
+index 6de0142728dfa127652ecceef1d25080069d800a..1653efbdb38b1037c3630595b903c839887a4e52 100755
 --- a/package/network/services/dropbear/files/dropbear.init
 +++ b/package/network/services/dropbear/files/dropbear.init
 @@ -37,7 +37,6 @@ validate_section_dropbear()
@@ -251,7 +251,7 @@ index 6de0142..1653efb 100755
  }
  
 diff --git a/package/network/services/dropbear/patches/100-pubkey_path.patch b/package/network/services/dropbear/patches/100-pubkey_path.patch
-index 456874b..41fdc1a 100644
+index 456874b730272f157bd3f4b2e9f65e14eda49b0b..41fdc1adab96cf9efffa8593000336c504fdf6fb 100644
 --- a/package/network/services/dropbear/patches/100-pubkey_path.patch
 +++ b/package/network/services/dropbear/patches/100-pubkey_path.patch
 @@ -1,6 +1,6 @@
@@ -272,7 +272,7 @@ index 456874b..41fdc1a 100644
   	}
   
 diff --git a/package/network/services/dropbear/patches/110-change_user.patch b/package/network/services/dropbear/patches/110-change_user.patch
-index 7982af6..4b5c1cb 100644
+index 7982af631539e351d3d46f50541115f9311612db..4b5c1cb51bb16a7229c03b6298796769e5752f6b 100644
 --- a/package/network/services/dropbear/patches/110-change_user.patch
 +++ b/package/network/services/dropbear/patches/110-change_user.patch
 @@ -1,6 +1,6 @@
@@ -284,7 +284,7 @@ index 7982af6..4b5c1cb 100644
   	if (getuid() == 0) {
   
 diff --git a/package/network/services/dropbear/patches/120-openwrt_options.patch b/package/network/services/dropbear/patches/120-openwrt_options.patch
-index 48dae73..f16aaf0 100644
+index 48dae73b1f7bcb052172f0a8d22d06203c80f993..f16aaf001eee11811be81fa1db399cf117e66595 100644
 --- a/package/network/services/dropbear/patches/120-openwrt_options.patch
 +++ b/package/network/services/dropbear/patches/120-openwrt_options.patch
 @@ -18,7 +18,28 @@
@@ -346,7 +346,7 @@ index 48dae73..f16aaf0 100644
    * SSH_ASKPASS instead. Comment out this var to remove this functionality.*/
 diff --git a/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch b/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch
 deleted file mode 100644
-index edb2909..0000000
+index edb29093aece5423554ccd406e34b41466c25511..0000000000000000000000000000000000000000
 --- a/package/network/services/dropbear/patches/130-ssh_ignore_o_and_x_args.patch
 +++ /dev/null
 @@ -1,21 +0,0 @@
@@ -373,7 +373,7 @@ index edb2909..0000000
 - 				default:
 diff --git a/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch b/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch
 new file mode 100644
-index 0000000..ab09c2f
+index 0000000000000000000000000000000000000000..ab09c2f3dc3a253fd18acae8d7d3b4b0f668e3dd
 --- /dev/null
 +++ b/package/network/services/dropbear/patches/130-ssh_ignore_x_args.patch
 @@ -0,0 +1,11 @@
@@ -389,7 +389,7 @@ index 0000000..ab09c2f
 + 				case 'e':
 + #ifndef ENABLE_USER_ALGO_LIST
 diff --git a/package/network/services/dropbear/patches/140-disable_assert.patch b/package/network/services/dropbear/patches/140-disable_assert.patch
-index 0717228..78b54ac 100644
+index 0717228ef3de0576967b3824ca9709f95a326f61..78b54acfa0f52a4abbae497ed57a04cca7368c41 100644
 --- a/package/network/services/dropbear/patches/140-disable_assert.patch
 +++ b/package/network/services/dropbear/patches/140-disable_assert.patch
 @@ -1,6 +1,6 @@
@@ -401,7 +401,7 @@ index 0717228..78b54ac 100644
   
   /* Dropbear assertion */
 diff --git a/package/network/services/dropbear/patches/150-dbconvert_standalone.patch b/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
-index 367dc2c..ccc2cb7 100644
+index 367dc2c68122f382273464fc7bf570fde18386ab..ccc2cb792598de77b4db6aa7b7b46e8eb7bf93a5 100644
 --- a/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
 +++ b/package/network/services/dropbear/patches/150-dbconvert_standalone.patch
 @@ -1,8 +1,8 @@
@@ -416,7 +416,7 @@ index 367dc2c..ccc2cb7 100644
  +#if !defined(DROPBEAR_CLIENT) && !defined(DROPBEAR_SERVER)
  +#define DROPBEAR_SERVER
 diff --git a/package/network/services/dropbear/patches/500-set-default-path.patch b/package/network/services/dropbear/patches/500-set-default-path.patch
-index e2add94..da6b9ae 100644
+index e2add9415fd4e7884a007ce7337ee8026bcc62a7..da6b9ae0ce0ae6a270f8c7bc6152cf09efbee15d 100644
 --- a/package/network/services/dropbear/patches/500-set-default-path.patch
 +++ b/package/network/services/dropbear/patches/500-set-default-path.patch
 @@ -1,11 +1,12 @@

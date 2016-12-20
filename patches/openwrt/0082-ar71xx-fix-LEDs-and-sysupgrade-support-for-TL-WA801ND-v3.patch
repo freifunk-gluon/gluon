@@ -5,7 +5,7 @@ Subject: ar71xx: fix LEDs and sysupgrade support for TL-WA801ND v3
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 2c5d6af..6b0caa6 100644
+index 2c5d6af8f4e2c5ce71adc0b63d32b8506e01b6a2..6b0caa676e6fc23be94c5eae77ae72e76f07fec3 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -274,6 +274,7 @@ get_status_led() {
@@ -17,7 +17,7 @@ index 2c5d6af..6b0caa6 100644
  	tl-wr841n-v7 | \
  	tl-wr841n-v8 | \
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index 2a0f996..849755f 100644
+index 2a0f9969cd22543de6e54a484052a27414c5d093..849755fb752c62a6fabf0ec609381b5d22991f1a 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -536,6 +536,11 @@ tl-wa901nd-v3)
@@ -33,7 +33,7 @@ index 2a0f996..849755f 100644
  tl-wr1041n-v2)
  	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 4003b21..ee2e596 100755
+index 4003b21df26917a521ed96db82a970a82cdbc2cb..ee2e596e1f5e462e544a919ca8ebca525e43cec9 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -349,6 +349,7 @@ platform_check_image() {
@@ -45,7 +45,7 @@ index 4003b21..ee2e596 100755
  	tl-wa901nd-v2 | \
  	tl-wa901nd-v3 | \
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
-index 39cdb10..054c14e 100644
+index 39cdb10ee340650bc69e4f6054b06a4ae7421e57..054c14ee73faf629e1faf1efb19e804734602981 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
 @@ -24,7 +24,7 @@

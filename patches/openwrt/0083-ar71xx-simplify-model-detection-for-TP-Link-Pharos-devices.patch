@@ -8,7 +8,7 @@ for each model explicitly.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 5928439..4a9a730 100755
+index 83be32908027ce03269fbf382ef986eb91342016..5e93ba628e4644eedbad98cf7a7766775a088f14 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -329,24 +329,10 @@ tplink_pharos_get_model_string() {

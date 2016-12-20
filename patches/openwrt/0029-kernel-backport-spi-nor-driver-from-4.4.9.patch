@@ -3,7 +3,7 @@ Date: Sat, 7 May 2016 00:07:51 +0200
 Subject: kernel: backport spi-nor driver from 4.4.9
 
 diff --git a/target/linux/ar71xx/patches-3.18/407-mtd-m25p80-allow-to-pass-probe-types-via-platform-data.patch b/target/linux/ar71xx/patches-3.18/407-mtd-m25p80-allow-to-pass-probe-types-via-platform-data.patch
-index 568f516..6a91320 100644
+index 568f5161b1e4639c005577ea46c2e0411f95ec7c..6a9132032ff1cefae213464d3212ef0d4e4b8011 100644
 --- a/target/linux/ar71xx/patches-3.18/407-mtd-m25p80-allow-to-pass-probe-types-via-platform-data.patch
 +++ b/target/linux/ar71xx/patches-3.18/407-mtd-m25p80-allow-to-pass-probe-types-via-platform-data.patch
 @@ -1,11 +1,11 @@
@@ -22,7 +22,7 @@ index 568f516..6a91320 100644
  +			&ppdata,
   			data ? data->parts : NULL,
 diff --git a/target/linux/ar71xx/patches-3.18/412-mtd-m25p80-zero-partition-parser-data.patch b/target/linux/ar71xx/patches-3.18/412-mtd-m25p80-zero-partition-parser-data.patch
-index d51694d..175acf6 100644
+index d51694d9fd2d6fa5a519ce27108c964b1b6f32f8..175acf630e0d0437936066b51ea086cf39740b30 100644
 --- a/target/linux/ar71xx/patches-3.18/412-mtd-m25p80-zero-partition-parser-data.patch
 +++ b/target/linux/ar71xx/patches-3.18/412-mtd-m25p80-zero-partition-parser-data.patch
 @@ -1,10 +1,10 @@
@@ -39,7 +39,7 @@ index d51694d..175acf6 100644
 - 	return mtd_device_parse_register(&flash->mtd,
 + 	return mtd_device_parse_register(&nor->mtd,
 diff --git a/target/linux/ar71xx/patches-3.18/462-mtd-m25p80-set-spi-transfer-type.patch b/target/linux/ar71xx/patches-3.18/462-mtd-m25p80-set-spi-transfer-type.patch
-index 3320e5b..11bf9ff 100644
+index 3320e5b845bdf2843f32e52b5b620ce880fd4e96..11bf9ff71b609b03239179bcd8977c2202f5c8cf 100644
 --- a/target/linux/ar71xx/patches-3.18/462-mtd-m25p80-set-spi-transfer-type.patch
 +++ b/target/linux/ar71xx/patches-3.18/462-mtd-m25p80-set-spi-transfer-type.patch
 @@ -1,6 +1,6 @@
@@ -51,7 +51,7 @@ index 3320e5b..11bf9ff 100644
   	m25p_addr2cmd(nor, from, flash->command);
   
 diff --git a/target/linux/ar71xx/patches-3.18/464-spi-ath79-fix-fast-flash-read.patch b/target/linux/ar71xx/patches-3.18/464-spi-ath79-fix-fast-flash-read.patch
-index e48665d..758d231 100644
+index e48665d6a09fdcc77d027274016c24fe78e8d95a..758d23181d49eff6afeb35b1fbbd8f36efa2cfca 100644
 --- a/target/linux/ar71xx/patches-3.18/464-spi-ath79-fix-fast-flash-read.patch
 +++ b/target/linux/ar71xx/patches-3.18/464-spi-ath79-fix-fast-flash-read.patch
 @@ -1,6 +1,6 @@
@@ -72,7 +72,7 @@ index e48665d..758d231 100644
   	u32		speed_hz;
   	enum spi_transfer_type type;
 diff --git a/target/linux/brcm63xx/patches-3.18/202-MTD-DEVICES-m25p80-use-parsers-if-provided-in-flash-.patch b/target/linux/brcm63xx/patches-3.18/202-MTD-DEVICES-m25p80-use-parsers-if-provided-in-flash-.patch
-index b949694..be62e67 100644
+index b94969406deed4d6b8d51789235cd3e63e432c7c..be62e6789c883a5854a7bc9fae6dcc882090800f 100644
 --- a/target/linux/brcm63xx/patches-3.18/202-MTD-DEVICES-m25p80-use-parsers-if-provided-in-flash-.patch
 +++ b/target/linux/brcm63xx/patches-3.18/202-MTD-DEVICES-m25p80-use-parsers-if-provided-in-flash-.patch
 @@ -11,12 +11,12 @@ Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
@@ -92,7 +92,7 @@ index b949694..be62e67 100644
   			data ? data->parts : NULL,
   			data ? data->nr_parts : 0);
 diff --git a/target/linux/brcm63xx/patches-3.18/203-MTD-DEVICES-m25p80-add-support-for-limiting-reads.patch b/target/linux/brcm63xx/patches-3.18/203-MTD-DEVICES-m25p80-add-support-for-limiting-reads.patch
-index 740fb2d..3877442 100644
+index 740fb2dafc4ece9e0c88630a1ad2b800f763ed59..3877442d21eb8f6a9fdacc415c60be78d61b3c5f 100644
 --- a/target/linux/brcm63xx/patches-3.18/203-MTD-DEVICES-m25p80-add-support-for-limiting-reads.patch
 +++ b/target/linux/brcm63xx/patches-3.18/203-MTD-DEVICES-m25p80-add-support-for-limiting-reads.patch
 @@ -11,15 +11,15 @@ Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
@@ -133,7 +133,7 @@ index 740fb2d..3877442 100644
   		flash_name = spi->modalias;
   
 diff --git a/target/linux/brcm63xx/patches-3.18/414-MTD-m25p80-allow-passing-pp_data.patch b/target/linux/brcm63xx/patches-3.18/414-MTD-m25p80-allow-passing-pp_data.patch
-index b7bf57f..e421e9a 100644
+index b7bf57f697961a06d1ccef93ce4474f34f5e03e4..e421e9adbefb45fa837f686e253636781842fa7e 100644
 --- a/target/linux/brcm63xx/patches-3.18/414-MTD-m25p80-allow-passing-pp_data.patch
 +++ b/target/linux/brcm63xx/patches-3.18/414-MTD-m25p80-allow-passing-pp_data.patch
 @@ -10,7 +10,7 @@ Subject: [PATCH 64/79] MTD: m25p80: allow passing pp_data
@@ -147,7 +147,7 @@ index b7bf57f..e421e9a 100644
   
 diff --git a/target/linux/generic/patches-3.18/043-mtd_GD25Q128B_support_backport_from_3.19.patch b/target/linux/generic/patches-3.18/043-mtd_GD25Q128B_support_backport_from_3.19.patch
 deleted file mode 100644
-index 4d0403b..0000000
+index 4d0403bfd8a4a076cc9e91349463593adb79047c..0000000000000000000000000000000000000000
 --- a/target/linux/generic/patches-3.18/043-mtd_GD25Q128B_support_backport_from_3.19.patch
 +++ /dev/null
 @@ -1,10 +0,0 @@
@@ -163,7 +163,7 @@ index 4d0403b..0000000
 - 	{ "160s33b",  INFO(0x898911, 0, 64 * 1024,  32, 0) },
 diff --git a/target/linux/generic/patches-3.18/093-m25p80_spi-nor_update_to_4.4.9.patch b/target/linux/generic/patches-3.18/093-m25p80_spi-nor_update_to_4.4.9.patch
 new file mode 100644
-index 0000000..5f74d3a
+index 0000000000000000000000000000000000000000..5f74d3a07ba62c9e1da0a0b2aef8abe309efdbb9
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/093-m25p80_spi-nor_update_to_4.4.9.patch
 @@ -0,0 +1,1579 @@
@@ -1747,7 +1747,7 @@ index 0000000..5f74d3a
 + };
 + 
 diff --git a/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch b/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch
-index fef483a..eb99609 100644
+index fef483a67d0f7c3f25a105f5f1d0faef4dfd1a38..eb99609fe29b136a2283ef347af6b1db97ad4978 100644
 --- a/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch
 +++ b/target/linux/generic/patches-3.18/462-m25p80-mx-disable-software-protection.patch
 @@ -1,10 +1,14 @@
@@ -1772,7 +1772,7 @@ index fef483a..eb99609 100644
   		write_sr(nor, 0);
 diff --git a/target/linux/generic/patches-3.18/472-mtd-m25p80-add-support-for-Winbond-W25X05-flash.patch b/target/linux/generic/patches-3.18/472-mtd-m25p80-add-support-for-Winbond-W25X05-flash.patch
 deleted file mode 100644
-index dca6895..0000000
+index dca6895c1448a302f829bcfdde4842f0a000061d..0000000000000000000000000000000000000000
 --- a/target/linux/generic/patches-3.18/472-mtd-m25p80-add-support-for-Winbond-W25X05-flash.patch
 +++ /dev/null
 @@ -1,20 +0,0 @@
@@ -1798,7 +1798,7 @@ index dca6895..0000000
 - 	{ "w25x40", INFO(0xef3013, 0, 64 * 1024,  8,  SECT_4K) },
 diff --git a/target/linux/generic/patches-3.18/473-mtd-spi-nor-add-support-for-the-Macronix-MX25L512E-S.patch b/target/linux/generic/patches-3.18/473-mtd-spi-nor-add-support-for-the-Macronix-MX25L512E-S.patch
 deleted file mode 100644
-index 9ba7a4a..0000000
+index 9ba7a4ab2f701440e78da0f9a2e2845f68652267..0000000000000000000000000000000000000000
 --- a/target/linux/generic/patches-3.18/473-mtd-spi-nor-add-support-for-the-Macronix-MX25L512E-S.patch
 +++ /dev/null
 @@ -1,21 +0,0 @@
@@ -1825,7 +1825,7 @@ index 9ba7a4a..0000000
 - 	{ "mx25l8005",   INFO(0xc22014, 0, 64 * 1024,  16, 0) },
 diff --git a/target/linux/generic/patches-3.18/474-mtd-spi-nor-add-support-for-the-ISSI-SI25CD512-SPI-f.patch b/target/linux/generic/patches-3.18/474-mtd-spi-nor-add-support-for-the-ISSI-SI25CD512-SPI-f.patch
 deleted file mode 100644
-index b06ac73..0000000
+index b06ac73fae3fac808067b8643ac939adc56d35cb..0000000000000000000000000000000000000000
 --- a/target/linux/generic/patches-3.18/474-mtd-spi-nor-add-support-for-the-ISSI-SI25CD512-SPI-f.patch
 +++ /dev/null
 @@ -1,22 +0,0 @@
@@ -1853,7 +1853,7 @@ index b06ac73..0000000
 - 	{ "mx25l2005a",  INFO(0xc22012, 0, 64 * 1024,   4, SECT_4K) },
 diff --git a/target/linux/lantiq/patches-3.18/0022-MTD-m25p80-allow-loading-mtd-name-from-OF.patch b/target/linux/lantiq/patches-3.18/0022-MTD-m25p80-allow-loading-mtd-name-from-OF.patch
 deleted file mode 100644
-index 203eb94..0000000
+index 203eb9495efe583abc1e7adc21f9c6d0e61e4e29..0000000000000000000000000000000000000000
 --- a/target/linux/lantiq/patches-3.18/0022-MTD-m25p80-allow-loading-mtd-name-from-OF.patch
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -1902,7 +1902,7 @@ index 203eb94..0000000
 - 	/* For some (historical?) reason many platforms provide two different
 - 	 * names in flash_platform_data: "name" and "type". Quite often name is
 diff --git a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
-index 2beb39c..21f823d 100644
+index 2beb39cf1f2b22d99207b2298bd550a71c8d7666..21f823d57ca1b7b072e060dd0460ffd4b251ec77 100644
 --- a/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
 +++ b/target/linux/mpc85xx/files/arch/powerpc/boot/dts/tl-wdr4900-v1.dts
 @@ -37,7 +37,7 @@
@@ -1915,7 +1915,7 @@ index 2beb39c..21f823d 100644
  				spi-max-frequency = <25000000>;
  
 diff --git a/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch b/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch
-index 1716e1c..8dc181a 100644
+index 1716e1cc499ede404c509a40370ff6fdeec0f1dc..8dc181afb84e4932b73b4a7a45daadb0da78ca20 100644
 --- a/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch
 +++ b/target/linux/ramips/patches-3.18/0044-mtd-add-chunked-read-io-to-m25p80.patch
 @@ -1,33 +1,18 @@

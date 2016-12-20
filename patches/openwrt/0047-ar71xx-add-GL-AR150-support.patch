@@ -9,7 +9,7 @@ https://raw.githubusercontent.com/domino-team/OpenWrt-patches/master/AR150%2C%20
 (and fixed indentation in target/linux/ar71xx/base-files/lib/ar71xx.sh)
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index b867796..d81358d 100644
+index b8677960249c1e05703570fdf2be4197bde5cac5..d81358d6bf9103ffeb2929b06d3ab01efffe931c 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -188,6 +188,10 @@ dlan-pro-1200-ac)
@@ -24,7 +24,7 @@ index b867796..d81358d 100644
  	ucidef_set_led_netdev "lan" "LAN" "gl-connect:green:lan" "eth1"
  	ucidef_set_led_wlan "wlan" "WLAN" "gl-connect:red:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index b59844e..ac3deb8 100755
+index b59844eac49a1269edb88890d89b0b4d8a7121d0..ac3deb8aa2ed4717e2bd682cb4ffd7d32c50134f 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -383,6 +383,7 @@ dir-505-a1)
@@ -36,7 +36,7 @@ index b59844e..ac3deb8 100755
  jwap003 |\
  pb42 |\
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 28f07b8..3bd6aed 100755
+index 28f07b8de66c8262a7d3fb6428b91f22593292c9..3bd6aed909efc84ab1657862b4bd36534a54f2c2 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -503,6 +503,9 @@ ar71xx_board_detect() {
@@ -50,7 +50,7 @@ index 28f07b8..3bd6aed 100755
  		name="epg5000"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 0228f14..d816f21 100755
+index 0228f14774d5873a52f19b60ed84389c7be86e51..d816f211891d6a259930f2781574504ea62b4e16 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -216,6 +216,7 @@ platform_check_image() {
@@ -62,7 +62,7 @@ index 0228f14..d816f21 100755
  	esr1750 | \
  	esr900 | \
 diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
-index a068cc5..d4d9273 100644
+index a068cc5768aed6f29a67de27d24f00dc57e0695a..d4d92738d0ab010e1d43ebed0baef34fd9bc3f9d 100644
 --- a/target/linux/ar71xx/config-3.18
 +++ b/target/linux/ar71xx/config-3.18
 @@ -70,6 +70,7 @@ CONFIG_ATH79_MACH_ESR1750=y
@@ -75,7 +75,7 @@ index a068cc5..d4d9273 100644
  CONFIG_ATH79_MACH_GS_OOLITE=y
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-gl-ar150.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-gl-ar150.c
 new file mode 100644
-index 0000000..310182c
+index 0000000000000000000000000000000000000000..310182cc8e9c22e2bfcb168996d4f01d117dc103
 --- /dev/null
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-gl-ar150.c
 @@ -0,0 +1,125 @@
@@ -206,7 +206,7 @@ index 0000000..310182c
 +MIPS_MACHINE(ATH79_MACH_GL_AR150, "GL-AR150", "GL AR150",gl_ar150_setup);
 diff --git a/target/linux/ar71xx/generic/profiles/gl-connect.mk b/target/linux/ar71xx/generic/profiles/gl-connect.mk
 deleted file mode 100644
-index e9377db..0000000
+index e9377dbbfa042f790f15817313c24b2700617f37..0000000000000000000000000000000000000000
 --- a/target/linux/ar71xx/generic/profiles/gl-connect.mk
 +++ /dev/null
 @@ -1,17 +0,0 @@
@@ -229,7 +229,7 @@ index e9377db..0000000
 -$(eval $(call Profile,GLINET))
 diff --git a/target/linux/ar71xx/generic/profiles/gli.mk b/target/linux/ar71xx/generic/profiles/gli.mk
 new file mode 100644
-index 0000000..a6ad661
+index 0000000000000000000000000000000000000000..a6ad661666a168a591319e74ef211277f8617fca
 --- /dev/null
 +++ b/target/linux/ar71xx/generic/profiles/gli.mk
 @@ -0,0 +1,27 @@
@@ -261,7 +261,7 @@ index 0000000..a6ad661
 +
 +$(eval $(call Profile,GL-AR150))
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 7c648f2..05eea0b 100644
+index 7c648f26e10c49000b848e9b300701b388410c04..05eea0b16c362ba5f70c9f435dbe312087b319c2 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -144,6 +144,14 @@ define Device/weio
@@ -281,7 +281,7 @@ index 7c648f2..05eea0b 100644
    NETGEAR_KERNEL_MAGIC = 0x33373030
 diff --git a/target/linux/ar71xx/patches-3.18/911-MIPS-ath79-add-gl_ar150.patch b/target/linux/ar71xx/patches-3.18/911-MIPS-ath79-add-gl_ar150.patch
 new file mode 100644
-index 0000000..31db581
+index 0000000000000000000000000000000000000000..31db5816caf5dc8076ceec349884cf9a47b2fc68
 --- /dev/null
 +++ b/target/linux/ar71xx/patches-3.18/911-MIPS-ath79-add-gl_ar150.patch
 @@ -0,0 +1,39 @@

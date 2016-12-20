@@ -14,7 +14,7 @@ Signed-off-by: Lars Kruse <lists@sumpfralle.de>
 Backport of r46922
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
-index 81d3982..b41f275 100644
+index 81d3982ed8bf98e01ce2e161017f088a1d0f60dc..b41f27554b1e3eac19c22af59731771631a1135b 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
 @@ -10,10 +10,10 @@ board=$(ar71xx_board_name)

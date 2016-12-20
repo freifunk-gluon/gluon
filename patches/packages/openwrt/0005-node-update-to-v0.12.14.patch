@@ -7,7 +7,7 @@ While we're at it, also enable parallel builds.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/lang/node/Makefile b/lang/node/Makefile
-index 243c8a5..ed35e17 100644
+index 243c8a5b69ae6bd12b84493de3b26992167f2c17..ed35e1729bb01bcbb89e43f975940e675d774cde 100644
 --- a/lang/node/Makefile
 +++ b/lang/node/Makefile
 @@ -8,17 +8,21 @@

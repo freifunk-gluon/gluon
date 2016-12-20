@@ -6,7 +6,7 @@ This conflicts with our reset button usage.
 
 diff --git a/package/base-files/files/etc/rc.button/reset b/package/base-files/files/etc/rc.button/reset
 deleted file mode 100755
-index 3e24146..0000000
+index 3e241460efbb08abaa775c1a7843b5fa3e237d44..0000000000000000000000000000000000000000
 --- a/package/base-files/files/etc/rc.button/reset
 +++ /dev/null
 @@ -1,20 +0,0 @@

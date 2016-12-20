@@ -10,7 +10,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Backport of OpenWrt r47363
 
 diff --git a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
-index 0da8142..2bb4286 100644
+index 0da81426ca7b1b1db46e869745f0ed00496bef78..2bb4286e5d805ff3c47486a1f091d2b5e6d78373 100644
 --- a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
 @@ -529,7 +529,7 @@

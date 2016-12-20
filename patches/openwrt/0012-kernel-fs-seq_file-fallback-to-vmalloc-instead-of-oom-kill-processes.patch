@@ -4,7 +4,7 @@ Subject: kernel: fs, seq_file: fallback to vmalloc instead of oom kill processes
 
 diff --git a/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch b/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch
 new file mode 100644
-index 0000000..cad56f4
+index 0000000000000000000000000000000000000000..cad56f4275287b73dd5e769ea34daee064ee8d69
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/089-fs-seq_file-fallback-to-vmalloc-instead-of-oom-kill-.patch
 @@ -0,0 +1,53 @@

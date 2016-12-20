@@ -5,7 +5,7 @@ Subject: ramips: set correct LAN/WAN MAC addresses on DIR-860L B1
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
-index a78912d..4e6e507 100755
+index a78912dbc9b5ecdc8a9fb0c583c1e47fdb579015..4e6e507625adf8c706e2311ee121769cadb2aeaf 100755
 --- a/target/linux/ramips/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/base-files/etc/board.d/02_network
 @@ -346,6 +346,11 @@ ramips_setup_macs()

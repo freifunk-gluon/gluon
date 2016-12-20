@@ -8,7 +8,7 @@ Signed-off-by: Paul Wassi <p.wassi at gmx.at>
 Backport of OpenWrt r49277
 
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
-index 3617ca7..072cf12 100644
+index 3617ca7d5fc0fff00fce9741b5d9169fac8c83c8..072cf12a31a0921a8e9b90689864f5d981cd2c32 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
 @@ -84,6 +84,7 @@ static void __init ubnt_unifiac_setup(void)

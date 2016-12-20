@@ -8,7 +8,7 @@ Backport of LEDE a176168a85477caa44eef7e979567d1d52868fde
 
 diff --git a/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch b/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
 new file mode 100644
-index 0000000..4ac5acd
+index 0000000000000000000000000000000000000000..4ac5acd618748fc9ad0f091d110d2503cdc39d53
 --- /dev/null
 +++ b/target/linux/ar71xx/patches-3.18/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
 @@ -0,0 +1,71 @@

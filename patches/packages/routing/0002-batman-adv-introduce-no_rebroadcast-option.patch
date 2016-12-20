@@ -3,7 +3,7 @@ Date: Thu, 2 Apr 2015 20:24:14 +0200
 Subject: batman-adv: introduce 'no_rebroadcast' option
 
 diff --git a/batman-adv/files/lib/netifd/proto/batadv.sh b/batman-adv/files/lib/netifd/proto/batadv.sh
-index 1e0c9d0..d0ab238 100644
+index 1e0c9d0fe24d44c7f7cc9bddaf8065c60f680862..d0ab238d2652c05a08c5f4bede428a36cdedf345 100644
 --- a/batman-adv/files/lib/netifd/proto/batadv.sh
 +++ b/batman-adv/files/lib/netifd/proto/batadv.sh
 @@ -7,19 +7,22 @@ init_proto "$@"
@@ -33,7 +33,7 @@ index 1e0c9d0..d0ab238 100644
  }
 diff --git a/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch b/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch
 new file mode 100644
-index 0000000..e9f5ffb
+index 0000000000000000000000000000000000000000..e9f5ffb4408fb07887aa5948e69e4db1ff05fb3b
 --- /dev/null
 +++ b/batman-adv/patches/1001-batman-adv-introduce-no_rebroadcast-option.patch
 @@ -0,0 +1,189 @@

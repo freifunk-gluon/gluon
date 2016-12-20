@@ -7,7 +7,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Backport of r48413
 
 diff --git a/tools/Makefile b/tools/Makefile
-index 98ce8c5..3402c08 100644
+index 98ce8c5f1577981136b277a800a3edd5edd4941e..3402c08d5c6729a510446a3e9cf586f2d8e15be4 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
 @@ -26,7 +26,7 @@ endif

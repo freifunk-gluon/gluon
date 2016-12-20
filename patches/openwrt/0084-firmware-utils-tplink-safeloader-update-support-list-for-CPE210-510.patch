@@ -8,7 +8,7 @@ never actually used and have been removed from the stock firmwares.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
-index 4938f74..4a38dff 100644
+index 4938f74eecd122265072390e1c6b8cadb09844d0..4a38dff10003825a3b72595d57f0e62ef233e9bc 100644
 --- a/tools/firmware-utils/src/tplink-safeloader.c
 +++ b/tools/firmware-utils/src/tplink-safeloader.c
 @@ -169,8 +169,13 @@ static const char cpe210_support_list[] =

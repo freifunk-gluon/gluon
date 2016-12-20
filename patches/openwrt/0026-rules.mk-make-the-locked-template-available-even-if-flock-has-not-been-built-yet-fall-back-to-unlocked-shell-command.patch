@@ -7,7 +7,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Backport of r48414
 
 diff --git a/rules.mk b/rules.mk
-index 9d0134d..ece5026 100644
+index 9d0134d2b26a52b74d30546cc3d51f7e71d1bc75..ece502609bd08af21be782a706f0bf6599895568 100644
 --- a/rules.mk
 +++ b/rules.mk
 @@ -310,12 +310,16 @@ endef

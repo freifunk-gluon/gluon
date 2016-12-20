@@ -9,7 +9,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 500a67a167a256002f8ab05171f49dfb86b03260
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 43ce7da..4bf484b 100755
+index 43ce7da90f682c5fb744401ba9ea1db58f7ebcf1..4bf484bf573fbc4177d48f7dc9b69d78eece0ca9 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -107,6 +107,15 @@ cybertan_get_hw_magic() {

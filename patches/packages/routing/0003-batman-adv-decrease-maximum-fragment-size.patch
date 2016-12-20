@@ -4,7 +4,7 @@ Subject: batman-adv: decrease maximum fragment size
 
 diff --git a/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 new file mode 100644
-index 0000000..a97146b
+index 0000000000000000000000000000000000000000..a97146beb82d473e8dec3252ea9ae6b4db6df1ff
 --- /dev/null
 +++ b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 @@ -0,0 +1,28 @@

@@ -3,7 +3,7 @@ Date: Wed, 9 Nov 2016 04:39:59 +0100
 Subject: x86: add mmc drivers to generic+64
 
 diff --git a/target/linux/x86/64/config-default b/target/linux/x86/64/config-default
-index 1fda585..9d2cfdb 100644
+index 1fda58562c6821e8524d00617ed040d11ee731d7..9d2cfdbd9f7c2006b543599d398f2d5966f6333e 100644
 --- a/target/linux/x86/64/config-default
 +++ b/target/linux/x86/64/config-default
 @@ -117,6 +117,14 @@ CONFIG_LPC_ICH=y
@@ -22,7 +22,7 @@ index 1fda585..9d2cfdb 100644
  # CONFIG_MPSC is not set
  CONFIG_MUTEX_SPIN_ON_OWNER=y
 diff --git a/target/linux/x86/generic/config-default b/target/linux/x86/generic/config-default
-index 4fc5131..1d72811 100644
+index 4fc513154bd566319d77e6e42622ef362baeb094..1d72811f4b67225043513dec9173a79969c49313 100644
 --- a/target/linux/x86/generic/config-default
 +++ b/target/linux/x86/generic/config-default
 @@ -136,6 +136,14 @@ CONFIG_ISO9660_FS=y

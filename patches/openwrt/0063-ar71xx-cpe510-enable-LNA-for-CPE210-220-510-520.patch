@@ -10,7 +10,7 @@ Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
 Backport of LEDE 94e23bf7409d6cc4c9efb55ed32aba8e5a497966
 
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
-index 8bf5c0f..5cb052a 100644
+index 8bf5c0f6226cbba10da10af4798b67b76db94e2b..5cb052a84aee451b9fbd449910acfde80dcf8aa7 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
 @@ -30,6 +30,9 @@

@@ -13,7 +13,7 @@ i.e. duplicated values will be removed. Also, order is not preserved.
 Signed-off-by: Nils Schneider <nils@nilsschneider.net>
 
 diff --git a/modules/luci-base/luasrc/model/uci.lua b/modules/luci-base/luasrc/model/uci.lua
-index 1659137..d35b9d7 100644
+index 1659137742940ea0621e2b57e98232f393dc7efa..d35b9d70e27913c9da302c6975a97888774de535 100644
 --- a/modules/luci-base/luasrc/model/uci.lua
 +++ b/modules/luci-base/luasrc/model/uci.lua
 @@ -9,7 +9,7 @@ local table = require "table"
@@ -67,7 +67,7 @@ index 1659137..d35b9d7 100644
  function Cursor._affected(self, configlist)
  	configlist = type(configlist) == "table" and configlist or {configlist}
 diff --git a/modules/luci-base/luasrc/model/uci.luadoc b/modules/luci-base/luasrc/model/uci.luadoc
-index 1c20866..281bdb2 100644
+index 1c208669d17f24d2d1de99bbbf1cefe878649014..281bdb2953ee1888ee41d8d0fb1cc40e9345b3e0 100644
 --- a/modules/luci-base/luasrc/model/uci.luadoc
 +++ b/modules/luci-base/luasrc/model/uci.luadoc
 @@ -116,6 +116,30 @@ Set given values as list.

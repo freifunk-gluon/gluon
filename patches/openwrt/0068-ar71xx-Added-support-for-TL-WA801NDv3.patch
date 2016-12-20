@@ -7,7 +7,7 @@ Signed-off-by: Tiziano Bacocco <tizbac2@gmail.com>
 Backport of OpenWrt r48705
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
-index 6c3ecf5..027a671 100755
+index 6c3ecf54dccd111231d93e539346f7839252794c..027a671215e5acd70cee06620c6648506ad6be47 100755
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
 @@ -377,6 +377,7 @@ wp543)
@@ -19,7 +19,7 @@ index 6c3ecf5..027a671 100755
  	ucidef_set_interface_lan "eth1"
  	;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 51102d6..83be329 100755
+index 51102d6ed7990cc36bf2e9e4a052ceb4c5d9ea36..83be32908027ce03269fbf382ef986eb91342016 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -838,6 +838,9 @@ ar71xx_board_detect() {
@@ -33,7 +33,7 @@ index 51102d6..83be329 100755
  		name="tl-wa901nd"
  		;;
 diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
-index d4d9273..d7cbe2e 100644
+index d4d92738d0ab010e1d43ebed0baef34fd9bc3f9d..d7cbe2e79af31a0ff88d946323e237f3215620a0 100644
 --- a/target/linux/ar71xx/config-3.18
 +++ b/target/linux/ar71xx/config-3.18
 @@ -120,6 +120,7 @@ CONFIG_ATH79_MACH_TL_MR3020=y
@@ -46,7 +46,7 @@ index d4d9273..d7cbe2e 100644
  CONFIG_ATH79_MACH_TL_WA901ND_V2=y
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
 new file mode 100644
-index 0000000..39cdb10
+index 0000000000000000000000000000000000000000..39cdb10ee340650bc69e4f6054b06a4ae7421e57
 --- /dev/null
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa801nd-v3.c
 @@ -0,0 +1,136 @@
@@ -187,7 +187,7 @@ index 0000000..39cdb10
 +MIPS_MACHINE(ATH79_MACH_TL_WA801ND_V3, "TL-WA801ND-v3", "TP-LINK TL-WA801ND v3",
 +	     tl_wa801n_v3_setup);
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index bb2bb94..868a502 100644
+index bb2bb94e04ee8f59db62907ace49952061b411dc..868a5021acb49878359497c90509de07faa3ca49 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -691,6 +691,13 @@ define Device/tl-wa801nd-v2
@@ -214,7 +214,7 @@ index bb2bb94..868a502 100644
  define Device/tl-wa901nd-v3
      $(Device/tplink-4mlzma)
 diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
-index c83ac2e..d23f0cf 100644
+index c83ac2e89324deda3135aab84e8c4f4112ea728d..d23f0cf33e50da891e7135861f1defda047ff2c8 100644
 --- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 +++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
 @@ -1,6 +1,6 @@
@@ -537,7 +537,7 @@ index c83ac2e..d23f0cf 100644
  +obj-$(CONFIG_ATH79_MACH_TL_WA901ND_V2)	+= mach-tl-wa901nd-v2.o
  +obj-$(CONFIG_ATH79_MACH_TL_WDR3500)     += mach-tl-wdr3500.o
 diff --git a/tools/firmware-utils/src/mktplinkfw.c b/tools/firmware-utils/src/mktplinkfw.c
-index 6df869d..9785a3f 100644
+index 6df869d59a6138d4c0dd1fbec5337a71c31eccd3..9785a3f232ed4457e77aee249c0da86b4e99c532 100644
 --- a/tools/firmware-utils/src/mktplinkfw.c
 +++ b/tools/firmware-utils/src/mktplinkfw.c
 @@ -50,6 +50,7 @@

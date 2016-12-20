@@ -12,7 +12,7 @@ crash.
 
 diff --git a/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch b/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch
 new file mode 100644
-index 0000000..6e4b3da
+index 0000000000000000000000000000000000000000..6e4b3da3ad820e789f57df71b33ccfc5eaead01e
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/672-ipv6-fix-crash-on-ICMPv6-redirects-with-prohibited-blackholed-source.patch
 @@ -0,0 +1,39 @@

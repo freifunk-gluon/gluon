@@ -3,7 +3,7 @@ Date: Sat, 9 Aug 2014 09:33:21 +0200
 Subject: fvalue.html: add label that can be styled
 
 diff --git a/modules/luci-base/luasrc/view/cbi/fvalue.htm b/modules/luci-base/luasrc/view/cbi/fvalue.htm
-index a1e0808..a324ab2 100644
+index a1e0808e8d3e8bf1845d4838b244ed6bb0b605f2..a324ab258a86b080f9bf285aa62ee4db43468a81 100644
 --- a/modules/luci-base/luasrc/view/cbi/fvalue.htm
 +++ b/modules/luci-base/luasrc/view/cbi/fvalue.htm
 @@ -6,4 +6,5 @@
