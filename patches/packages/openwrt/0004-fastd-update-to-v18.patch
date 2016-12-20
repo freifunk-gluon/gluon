@@ -5,7 +5,7 @@ Subject: fastd: update to v18
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/net/fastd/Config.in b/net/fastd/Config.in
-index 5820b97..3350eb3 100644
+index 5820b9796562cd11826f8bbefbb02806fe516c61..3350eb3099a26c870d70373c0712a8b59881ee5c 100644
 --- a/net/fastd/Config.in
 +++ b/net/fastd/Config.in
 @@ -74,6 +74,12 @@ config FASTD_ENABLE_MAC_UHASH
@@ -22,7 +22,7 @@ index 5820b97..3350eb3 100644
  	bool "Include support for setting user/group related options on the command line"
  	depends on PACKAGE_fastd
 diff --git a/net/fastd/Makefile b/net/fastd/Makefile
-index 027f549..5c550d8 100644
+index 027f5491d2f6b066affe08e846b1967900c391e1..5c550d8a5f4669d4f018dde23b622376bc8d0b06 100644
 --- a/net/fastd/Makefile
 +++ b/net/fastd/Makefile
 @@ -8,13 +8,13 @@

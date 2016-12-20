@@ -12,7 +12,7 @@ Signed-off-by: Jo-Philipp Wich <jow@openwrt.org>
 Backport of r48733
 
 diff --git a/include/download.mk b/include/download.mk
-index 9176b11..130bbc5 100644
+index 9176b11c836123a37533c3d6cbaa2650a4f7c73d..130bbc57ba89b4ad0b8e8600f45bf553ad6ecfa1 100644
 --- a/include/download.mk
 +++ b/include/download.mk
 @@ -48,7 +48,7 @@ define DownloadMethod/default

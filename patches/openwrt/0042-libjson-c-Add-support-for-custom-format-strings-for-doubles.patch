@@ -4,7 +4,7 @@ Subject: libjson-c: Add support for custom format strings for doubles
 
 diff --git a/package/libs/libjson-c/patches/002-custom-format-string.patch b/package/libs/libjson-c/patches/002-custom-format-string.patch
 new file mode 100644
-index 0000000..2f454c5
+index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e6299bd5e6f
 --- /dev/null
 +++ b/package/libs/libjson-c/patches/002-custom-format-string.patch
 @@ -0,0 +1,98 @@

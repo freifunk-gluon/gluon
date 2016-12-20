@@ -4,7 +4,7 @@ Subject: odhcp6c: always accept RDNSS, independent of the default router lifetim
 
 diff --git a/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch b/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch
 new file mode 100644
-index 0000000..cb694ca
+index 0000000000000000000000000000000000000000..cb694cadf4df4b487b3a4035eacca9c6a7798ecb
 --- /dev/null
 +++ b/package/network/ipv6/odhcp6c/patches/001-always_accept_rdnss.patch
 @@ -0,0 +1,21 @@

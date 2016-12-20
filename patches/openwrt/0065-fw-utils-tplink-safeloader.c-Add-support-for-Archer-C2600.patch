@@ -7,7 +7,7 @@ Signed-off-by: Ash Benz <ash.benz@bk.ru>
 Backport of LEDE 955c341d3bec0eb4971a03924e99156367255d7b
 
 diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
-index 77a894b..2e204aa 100644
+index 77a894b237281f6211dd1123ead4b5b0f2f58370..2e204aa2335e55515a60a1f5c08ca1b499eb9287 100644
 --- a/tools/firmware-utils/src/tplink-safeloader.c
 +++ b/tools/firmware-utils/src/tplink-safeloader.c
 @@ -105,6 +105,8 @@ static const uint8_t md5_salt[16] = {

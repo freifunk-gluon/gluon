@@ -5,7 +5,7 @@ Subject: libuecc: update to v7
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/libs/libuecc/Makefile b/libs/libuecc/Makefile
-index 63b6ebe..c1ba53f 100644
+index 63b6ebe217fc2ff105a1a223807c610c31158eb8..c1ba53f854b5f0e29728f0a4d2e8f682ff8357a3 100644
 --- a/libs/libuecc/Makefile
 +++ b/libs/libuecc/Makefile
 @@ -1,5 +1,5 @@

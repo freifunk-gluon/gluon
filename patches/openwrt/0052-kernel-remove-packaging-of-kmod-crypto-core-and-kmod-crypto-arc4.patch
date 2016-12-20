@@ -13,7 +13,7 @@ The packages kmod-crypto-{core,arc4} are added to kernel PROVIDES to
 satisfy dependencies of CC packages.
 
 diff --git a/package/kernel/linux/Makefile b/package/kernel/linux/Makefile
-index b06c49a..19bcbd5 100644
+index b06c49a92fd396e8edcb0ca7a7a94b74b05a87e0..19bcbd582ba06cb8cdb9ee869c50a67dbfd470bb 100644
 --- a/package/kernel/linux/Makefile
 +++ b/package/kernel/linux/Makefile
 @@ -49,7 +49,7 @@ define Package/kernel
@@ -26,7 +26,7 @@ index b06c49a..19bcbd5 100644
  
  define Package/kernel/install
 diff --git a/package/kernel/linux/modules/crypto.mk b/package/kernel/linux/modules/crypto.mk
-index c8e0fbb..926dab0 100644
+index c8e0fbb04397c9b1fa7ebde3579f663b5d756e1b..926dab0e3379efbc92aeac865b02673928c18644 100644
 --- a/package/kernel/linux/modules/crypto.mk
 +++ b/package/kernel/linux/modules/crypto.mk
 @@ -15,24 +15,9 @@ crypto_confvar=CONFIG_CRYPTO_$(word 1,$(subst =,$(space),$(1)))
@@ -74,7 +74,7 @@ index c8e0fbb..926dab0 100644
    TITLE:=Combined mode wrapper for IPsec
    DEPENDS:=+kmod-crypto-manager
 diff --git a/package/kernel/linux/modules/fs.mk b/package/kernel/linux/modules/fs.mk
-index fa18237..cc87a45 100644
+index fa182375ea8b0224753141620bd168328194ddf4..cc87a45961d04d93badce575530495f994deee86 100644
 --- a/package/kernel/linux/modules/fs.mk
 +++ b/package/kernel/linux/modules/fs.mk
 @@ -91,7 +91,6 @@ define KernelPackage/fs-cifs
@@ -86,7 +86,7 @@ index fa18237..cc87a45 100644
      +kmod-crypto-md5 \
      +kmod-crypto-md4 \
 diff --git a/package/kernel/linux/modules/netsupport.mk b/package/kernel/linux/modules/netsupport.mk
-index 8a2760d..ab76946 100644
+index 8a2760d8a4a429f206eba41a8c83432e5b6ddab7..ab76946d2ab30e748ea5bc69c24051dbfc411036 100644
 --- a/package/kernel/linux/modules/netsupport.mk
 +++ b/package/kernel/linux/modules/netsupport.mk
 @@ -714,7 +714,7 @@ $(eval $(call KernelPackage,ipoa))
@@ -108,7 +108,7 @@ index 8a2760d..ab76946 100644
  
  define KernelPackage/rxrpc/description
 diff --git a/target/linux/generic/config-3.18 b/target/linux/generic/config-3.18
-index 6038692..a0dc3c9 100644
+index 6038692b7e81334e4864d30453f734f4fe829aa0..a0dc3c9b607abe32c1ca021b7fad293a8f742ec1 100644
 --- a/target/linux/generic/config-3.18
 +++ b/target/linux/generic/config-3.18
 @@ -700,9 +700,10 @@ CONFIG_CRYPTO_ALGAPI=y
@@ -125,7 +125,7 @@ index 6038692..a0dc3c9 100644
  # CONFIG_CRYPTO_CAMELLIA is not set
  # CONFIG_CRYPTO_CAST5 is not set
 diff --git a/target/linux/omap/config-3.18 b/target/linux/omap/config-3.18
-index a06a350..d5003c2 100644
+index a06a350a37c035c66ec8d6242f28379e7992685e..d5003c275b2b2a167d4614f5e33269941a02173e 100644
 --- a/target/linux/omap/config-3.18
 +++ b/target/linux/omap/config-3.18
 @@ -114,9 +114,6 @@ CONFIG_CPU_V7=y
@@ -139,7 +139,7 @@ index a06a350..d5003c2 100644
  CONFIG_CRYPTO_CRC32C=y
  CONFIG_CRYPTO_CTR=m
 diff --git a/target/linux/sunxi/config-3.18 b/target/linux/sunxi/config-3.18
-index ddc3f7a..57651bb 100644
+index ddc3f7acb82064fb3be16f5111b0c4344b01c362..57651bbd65ebc61b14d45aefaaf20e5b8d59e27a 100644
 --- a/target/linux/sunxi/config-3.18
 +++ b/target/linux/sunxi/config-3.18
 @@ -110,9 +110,6 @@ CONFIG_CPU_TLB_V7=y

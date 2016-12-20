@@ -12,7 +12,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 5247ac2f805e39afe2e6e30980e439ea8b8ae7f8
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index 87d6fcc..2a0f996 100644
+index 87d6fcc4d74571ca98acc53ae76ea6f305d8c8c6..2a0f9969cd22543de6e54a484052a27414c5d093 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -18,14 +18,14 @@ alfa-nx)
@@ -87,7 +87,7 @@ index 87d6fcc..2a0f996 100644
  	ucidef_set_led_rssi "signal2" "SIGNAL2" "alfa:orange:signal2" "wlan0" "26" "100" "-25" "13"
  	ucidef_set_led_rssi "signal3" "SIGNAL3" "alfa:green:signal3" "wlan0" "51" "100" "-50" "13"
 diff --git a/target/linux/ramips/base-files/etc/board.d/01_leds b/target/linux/ramips/base-files/etc/board.d/01_leds
-index 5fb28a5..2b0341d 100755
+index 5fb28a52f7632bf09e7f62ff77dcd7254a2ebcc2..2b0341d3991e03e1f95376992b840ad10c41cdf4 100755
 --- a/target/linux/ramips/base-files/etc/board.d/01_leds
 +++ b/target/linux/ramips/base-files/etc/board.d/01_leds
 @@ -40,7 +40,7 @@ case $board in

@@ -11,7 +11,7 @@ Signed-off-by: Alexander Dahl <alex@netz39.de>
 Suggested-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/x86/base-files/lib/upgrade/platform.sh b/target/linux/x86/base-files/lib/upgrade/platform.sh
-index 73ab5ef..adc119c 100644
+index 73ab5ef0794c942495d18865fa2c2498b84e63e6..adc119c897ed840aef17c2041a48244d0922564e 100644
 --- a/target/linux/x86/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/x86/base-files/lib/upgrade/platform.sh
 @@ -17,7 +17,7 @@ platform_export_bootpart() {

@@ -11,7 +11,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of r49106
 
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 0aa1c86..96a37b4 100755
+index 0aa1c865cbdeb0624147d4117d289a640d20a5ef..96a37b4bec019d06c9283afc44b7961d150c05fb 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -133,7 +133,7 @@ tplink_board_detect() {

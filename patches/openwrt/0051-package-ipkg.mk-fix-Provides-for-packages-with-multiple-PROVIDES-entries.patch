@@ -7,7 +7,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 3ee6c17cd14ec1fed0b0491542c499c03fc6d211
 
 diff --git a/include/package-ipkg.mk b/include/package-ipkg.mk
-index eb4c874..1830d64 100644
+index eb4c874047e8a9e24a4d77b13f7ba66e1221cbb5..1830d644c36fa3dad342d3283529a18b8d70a377 100644
 --- a/include/package-ipkg.mk
 +++ b/include/package-ipkg.mk
 @@ -154,7 +154,7 @@ Package: $(1)

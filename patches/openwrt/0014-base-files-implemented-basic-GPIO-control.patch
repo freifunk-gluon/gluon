@@ -12,7 +12,7 @@ Backport of r46271
 
 diff --git a/package/base-files/files/etc/init.d/gpio_switch b/package/base-files/files/etc/init.d/gpio_switch
 new file mode 100755
-index 0000000..1f1b44b
+index 0000000000000000000000000000000000000000..1f1b44b2129ce2315943f6a10508eefb66412c48
 --- /dev/null
 +++ b/package/base-files/files/etc/init.d/gpio_switch
 @@ -0,0 +1,42 @@
@@ -59,7 +59,7 @@ index 0000000..1f1b44b
 +	}
 +}
 diff --git a/package/base-files/files/lib/functions/uci-defaults.sh b/package/base-files/files/lib/functions/uci-defaults.sh
-index 5a8809d..6577ecd 100644
+index 5a8809d68c89ac0431919f15dad5f5c33351bbf2..6577ecdcde0c856b3e6dd1b9337f23cb782ef2be 100644
 --- a/package/base-files/files/lib/functions/uci-defaults.sh
 +++ b/package/base-files/files/lib/functions/uci-defaults.sh
 @@ -2,6 +2,7 @@
@@ -102,7 +102,7 @@ index 5a8809d..6577ecd 100644
  set network.loopback='interface'
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
 new file mode 100644
-index 0000000..81d3982
+index 0000000000000000000000000000000000000000..81d3982ed8bf98e01ce2e161017f088a1d0f60dc
 --- /dev/null
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_gpio-switches
 @@ -0,0 +1,25 @@

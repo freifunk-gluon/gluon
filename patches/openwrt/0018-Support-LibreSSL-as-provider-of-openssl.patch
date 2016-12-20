@@ -13,7 +13,7 @@ Signed-off-by: Marek Behun <kabel@blackhole.sk>
 Backport of r48267
 
 diff --git a/include/prereq-build.mk b/include/prereq-build.mk
-index 32c4ada..f36d57c 100644
+index 32c4adabb748c4026d507d40769b3201e2ac5599..f36d57ce06c46be7ac33f3034ad08a3ce603089d 100644
 --- a/include/prereq-build.mk
 +++ b/include/prereq-build.mk
 @@ -151,7 +151,7 @@ $(eval $(call SetupHostCommand,file,Please install the 'file' package, \

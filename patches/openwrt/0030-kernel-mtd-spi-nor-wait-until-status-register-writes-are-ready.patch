@@ -4,7 +4,7 @@ Subject: kernel: mtd: spi-nor: wait until status register writes are ready
 
 diff --git a/target/linux/generic/patches-3.18/094-0001-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch b/target/linux/generic/patches-3.18/094-0001-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch
 new file mode 100644
-index 0000000..2c2e5f3
+index 0000000000000000000000000000000000000000..2c2e5f32259416f0cc7f342e420ffbd32c139d97
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/094-0001-mtd-spi-nor-wait-until-lock-unlock-operations-are-re.patch
 @@ -0,0 +1,66 @@
@@ -76,7 +76,7 @@ index 0000000..2c2e5f3
 + /*
 diff --git a/target/linux/generic/patches-3.18/094-0002-mtd-spi-nor-wait-for-SR_WIP-to-clear-on-initial-unlo.patch b/target/linux/generic/patches-3.18/094-0002-mtd-spi-nor-wait-for-SR_WIP-to-clear-on-initial-unlo.patch
 new file mode 100644
-index 0000000..a0573d5
+index 0000000000000000000000000000000000000000..a0573d5aea939c965cb44b2e72a2b7d498b0a5cd
 --- /dev/null
 +++ b/target/linux/generic/patches-3.18/094-0002-mtd-spi-nor-wait-for-SR_WIP-to-clear-on-initial-unlo.patch
 @@ -0,0 +1,33 @@

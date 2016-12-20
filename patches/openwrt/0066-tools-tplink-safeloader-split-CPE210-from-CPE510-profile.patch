@@ -12,7 +12,7 @@ Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
 Backport of LEDE 824147960569f2c1cd22140c9074c62c3df911a5
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 75083f9..bb2bb94 100644
+index 75083f9b698ba8a438256209a34369eb626a3b3d..bb2bb94e04ee8f59db62907ace49952061b411dc 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -2111,7 +2111,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR10
@@ -25,7 +25,7 @@ index 75083f9..bb2bb94 100644
  
  $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))
 diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
-index 2e204aa..4938f74 100644
+index 2e204aa2335e55515a60a1f5c08ca1b499eb9287..4938f74eecd122265072390e1c6b8cadb09844d0 100644
 --- a/tools/firmware-utils/src/tplink-safeloader.c
 +++ b/tools/firmware-utils/src/tplink-safeloader.c
 @@ -163,6 +163,15 @@ static const struct flash_partition_entry c2600_partitions[] = {

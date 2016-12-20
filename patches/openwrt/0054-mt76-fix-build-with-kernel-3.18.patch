@@ -4,7 +4,7 @@ Subject: mt76: fix build with kernel 3.18
 
 diff --git a/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch b/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch
 new file mode 100644
-index 0000000..ea389cd
+index 0000000000000000000000000000000000000000..ea389cd85cb15c7ecb20a1e0c934fcf8b58c0eda
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/945-netdev_alloc_frag.patch
 @@ -0,0 +1,11 @@
@@ -20,7 +20,7 @@ index 0000000..ea389cd
 + 
 + /*
 diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
-index bd851e6..989ba0c 100644
+index bd851e61910c9a57ca45a570855ca22329c9ae4b..989ba0c2e8d10f6e7bb8fbd31e7181efff19be7c 100644
 --- a/package/kernel/mt76/Makefile
 +++ b/package/kernel/mt76/Makefile
 @@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/package.mk

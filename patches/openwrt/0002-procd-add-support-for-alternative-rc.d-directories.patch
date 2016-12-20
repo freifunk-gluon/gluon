@@ -4,7 +4,7 @@ Subject: procd: add support for alternative rc.d directories
 
 diff --git a/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
 new file mode 100644
-index 0000000..bc24342
+index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b973844d5
 --- /dev/null
 +++ b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
 @@ -0,0 +1,97 @@

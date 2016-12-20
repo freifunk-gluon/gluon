@@ -3,7 +3,7 @@ Date: Wed, 9 Nov 2016 04:39:16 +0100
 Subject: x86-64: add pata drivers
 
 diff --git a/target/linux/x86/64/config-default b/target/linux/x86/64/config-default
-index 1caad74..1fda585 100644
+index 1caad741a623e9481907dff59c37de8c173bb7d7..1fda58562c6821e8524d00617ed040d11ee731d7 100644
 --- a/target/linux/x86/64/config-default
 +++ b/target/linux/x86/64/config-default
 @@ -131,6 +131,14 @@ CONFIG_PARAVIRT_CLOCK=y

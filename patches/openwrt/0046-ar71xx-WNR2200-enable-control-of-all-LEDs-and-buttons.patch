@@ -10,7 +10,7 @@ Signed-off-by: Michal Cieslakiewicz <michal.cieslakiewicz@wp.pl>
 Backport of r49101
 
 diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
-index f4d5234..b867796 100644
+index f4d523418c8d59e3c96dbe3d68eedd8d85e33546..b8677960249c1e05703570fdf2be4197bde5cac5 100644
 --- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
 @@ -600,6 +600,21 @@ wnr2000-v4)
@@ -36,7 +36,7 @@ index f4d5234..b867796 100644
  	ucidef_set_led_netdev "wan-amber" "WAN (amber)" "netgear:amber:wan" "eth0"
  	ucidef_set_led_wlan "wlan" "WLAN" "netgear:blue:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-wnr2200.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-wnr2200.c
-index 37ffc4c..258d254 100644
+index 37ffc4c56be33be96c43078117d7b123679378b3..258d254cf4abfc01a4d859f3f464b2a25aeec165 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-wnr2200.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-wnr2200.c
 @@ -15,6 +15,8 @@

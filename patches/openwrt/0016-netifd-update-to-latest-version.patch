@@ -3,7 +3,7 @@ Date: Fri, 29 Jul 2016 21:28:24 +0200
 Subject: netifd: update to latest version
 
 diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
-index 619024b..dc83ca6 100644
+index 619024bd708541dfb3bda28a963fc87a5d301a0d..dc83ca612bcd4c441e8fa0db77c98c8a1b97ad13 100644
 --- a/package/network/config/netifd/Makefile
 +++ b/package/network/config/netifd/Makefile
 @@ -1,15 +1,15 @@
@@ -26,7 +26,7 @@ index 619024b..dc83ca6 100644
  # CMAKE_INSTALL:=1
  
 diff --git a/package/network/config/netifd/files/etc/init.d/network b/package/network/config/netifd/files/etc/init.d/network
-index 542fc08..bdadbbc 100755
+index 542fc08958e001c2bfce7668ecd7d1c52a649e4e..bdadbbce6db6f9383a0e2c7fab25e7f5d8823091 100755
 --- a/package/network/config/netifd/files/etc/init.d/network
 +++ b/package/network/config/netifd/files/etc/init.d/network
 @@ -21,7 +21,6 @@ start_service() {
@@ -38,7 +38,7 @@ index 542fc08..bdadbbc 100755
  	procd_close_instance
  }
 diff --git a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
-index 0e88af9..1d3a209 100755
+index 0e88af9e96ad85e7c51ff0b497ce71342d2d1568..1d3a2091060aac6b89d8d10f915b11b251011a85 100755
 --- a/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
 +++ b/package/network/config/netifd/files/lib/netifd/proto/dhcp.sh
 @@ -12,6 +12,7 @@ proto_dhcp_init_config() {
@@ -82,7 +82,7 @@ index 0e88af9..1d3a209 100755
  
  proto_dhcp_renew() {
 diff --git a/package/network/config/netifd/files/sbin/ifup b/package/network/config/netifd/files/sbin/ifup
-index af3aaa8..5515b91 100755
+index af3aaa8453ce93f52c2b89e743f43f9c509ad696..5515b91f76df2b5c36d46ac4b86dfc9bdcd78b1d 100755
 --- a/package/network/config/netifd/files/sbin/ifup
 +++ b/package/network/config/netifd/files/sbin/ifup
 @@ -67,12 +67,10 @@ if [ -n "$setup_wifi" ] && grep -sq config /etc/config/wireless; then

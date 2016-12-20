@@ -5,7 +5,7 @@ Subject: node: add python/host to HOST_BUILD_DEPENDS as well
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/lang/node/Makefile b/lang/node/Makefile
-index 65a5390..243c8a5 100644
+index 65a53900c7a907f41380469571fb5bd22028f62e..243c8a5b69ae6bd12b84493de3b26992167f2c17 100644
 --- a/lang/node/Makefile
 +++ b/lang/node/Makefile
 @@ -14,6 +14,7 @@ PKG_RELEASE:=1

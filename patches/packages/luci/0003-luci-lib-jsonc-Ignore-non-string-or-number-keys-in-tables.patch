@@ -15,7 +15,7 @@ representation altogether.
 Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
 
 diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
-index 49cb21f..827fde8 100644
+index 49cb21f5bcb2817792d0eef8dc5cd567bc6d86bc..827fde8843082e956b0c89b5855feeabd790e880 100644
 --- a/libs/luci-lib-jsonc/src/jsonc.c
 +++ b/libs/luci-lib-jsonc/src/jsonc.c
 @@ -286,8 +286,9 @@ static struct json_object * _lua_to_json(lua_State *L, int index)

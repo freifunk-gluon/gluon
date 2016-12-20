@@ -10,7 +10,7 @@ As a temporary fix, disable this channel switch function.
 
 diff --git a/package/network/services/hostapd/patches/900-no_channel_switch.patch b/package/network/services/hostapd/patches/900-no_channel_switch.patch
 new file mode 100644
-index 0000000..c614515
+index 0000000000000000000000000000000000000000..c6145156928ffa5a5195ca145b0655bb88c92091
 --- /dev/null
 +++ b/package/network/services/hostapd/patches/900-no_channel_switch.patch
 @@ -0,0 +1,68 @@

@@ -3,7 +3,7 @@ Date: Tue, 29 Dec 2015 22:48:52 +0100
 Subject: lua: fix installation of headers for host build
 
 diff --git a/package/utils/lua/Makefile b/package/utils/lua/Makefile
-index 72d5631..c37d99b 100644
+index 72d56316b45dc484888d219aebd98e651edbe415..c37d99b485d58d955b86a033ea776adb54cfa414 100644
 --- a/package/utils/lua/Makefile
 +++ b/package/utils/lua/Makefile
 @@ -140,6 +140,7 @@ define Host/Install

@@ -7,7 +7,7 @@ Signed-off-by: Felix Fietkau <nbd@openwrt.org>
 Backport of r46876
 
 diff --git a/tools/Makefile b/tools/Makefile
-index c6cded8..98ce8c5 100644
+index c6cded8eccd81c422f99e7ee50754c4bc66decc7..98ce8c5f1577981136b277a800a3edd5edd4941e 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
 @@ -81,6 +81,9 @@ endif
@@ -22,7 +22,7 @@ index c6cded8..98ce8c5 100644
  
 diff --git a/tools/tar/Makefile b/tools/tar/Makefile
 new file mode 100644
-index 0000000..975e783
+index 0000000000000000000000000000000000000000..975e7835ef09131326ef10a7951c3866d6050801
 --- /dev/null
 +++ b/tools/tar/Makefile
 @@ -0,0 +1,30 @@
@@ -58,7 +58,7 @@ index 0000000..975e783
 +$(eval $(call HostBuild))
 diff --git a/tools/tar/patches/100-fix_xattr_disable.patch b/tools/tar/patches/100-fix_xattr_disable.patch
 new file mode 100644
-index 0000000..5735bd2
+index 0000000000000000000000000000000000000000..5735bd2364a4f324b54a3a49826921ead905d06f
 --- /dev/null
 +++ b/tools/tar/patches/100-fix_xattr_disable.patch
 @@ -0,0 +1,17 @@

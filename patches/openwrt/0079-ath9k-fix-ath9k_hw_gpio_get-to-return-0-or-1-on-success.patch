@@ -8,7 +8,7 @@ Backport of LEDE a250556d27556ec94a8d800fd27be40c2de8139c
 
 diff --git a/package/kernel/mac80211/patches/331-ath9k-fix-ath9k_hw_gpio_get-to-return-0-or-1-on-succ.patch b/package/kernel/mac80211/patches/331-ath9k-fix-ath9k_hw_gpio_get-to-return-0-or-1-on-succ.patch
 new file mode 100644
-index 0000000..627b401
+index 0000000000000000000000000000000000000000..627b401300ad9fc0d5527ce9e7325c87b33e6313
 --- /dev/null
 +++ b/package/kernel/mac80211/patches/331-ath9k-fix-ath9k_hw_gpio_get-to-return-0-or-1-on-succ.patch
 @@ -0,0 +1,29 @@

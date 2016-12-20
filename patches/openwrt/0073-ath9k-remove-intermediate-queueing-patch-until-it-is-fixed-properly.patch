@@ -8,7 +8,7 @@ Backport of LEDE 04a69843198f2252992812e35ac05016db4a1a94
 
 diff --git a/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch b/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
 deleted file mode 100644
-index f8b8f86..0000000
+index f8b8f86e03ba0786ef410db31d6de2ab691430bd..0000000000000000000000000000000000000000
 --- a/package/kernel/mac80211/patches/320-ath9k-Switch-to-using-mac80211-intermediate-software.patch
 +++ /dev/null
 @@ -1,871 +0,0 @@

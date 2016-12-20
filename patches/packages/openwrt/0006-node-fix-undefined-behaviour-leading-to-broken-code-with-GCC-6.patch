@@ -10,7 +10,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/lang/node/patches/004-gcc6-undefined-behaviour.patch b/lang/node/patches/004-gcc6-undefined-behaviour.patch
 new file mode 100644
-index 0000000..dbbbcf0
+index 0000000000000000000000000000000000000000..dbbbcf0c54bb62f643521411668772531d42b89a
 --- /dev/null
 +++ b/lang/node/patches/004-gcc6-undefined-behaviour.patch
 @@ -0,0 +1,64 @@

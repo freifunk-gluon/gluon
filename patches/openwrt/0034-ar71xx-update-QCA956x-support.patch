@@ -12,7 +12,7 @@ Signed-off-by: Roman Yeryomin <roman@advem.lv>
 Backport of OpenWrt r47981
 
 diff --git a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
-index 2bb4286..61b8976 100644
+index 2bb4286e5d805ff3c47486a1f091d2b5e6d78373..61b897690a03fd46d2ea95451a09598b272266f9 100644
 --- a/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/735-MIPS-ath79-add-support-for-QCA956x-SoC.patch
 @@ -105,7 +105,7 @@
@@ -380,7 +380,7 @@ index 2bb4286..61b8976 100644
  +
   extern void __iomem *ath79_ddr_base;
 diff --git a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
-index a36b8c3..44c9c62 100644
+index a36b8c319f7d08fe5daab867a10edca4dfcd4706..44c9c6281e683792af37b6f9b32357b2a4ec2fd4 100644
 --- a/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
 +++ b/target/linux/ar71xx/patches-3.18/739-MIPS-ath79-add-gpio-func-register-for-QCA955x-SoC.patch
 @@ -9,8 +9,8 @@

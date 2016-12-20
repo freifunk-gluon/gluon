@@ -16,7 +16,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE 83f7ec31f8f9641ef842212c45db61b72682debf
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index 95f6d46..9ac1d60 100644
+index 95f6d46d15b43faabb0bbf9301476d3ea5bee470..9ac1d60078cf108276d6f29c42bdb738fab6ad9d 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -736,6 +736,7 @@ define Device/tl-wa901nd-v4

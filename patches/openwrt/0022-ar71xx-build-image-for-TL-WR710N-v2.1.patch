@@ -11,7 +11,7 @@ Signed off by: Norbert Wegener <nw@wegener-net.de>
 Backport of r47849
 
 diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
-index a8073f2..0783381 100644
+index a8073f2ecadce8404dde77278302202fe494cd75..0783381baeddef2064df8faff89c49c2bed6a28b 100644
 --- a/target/linux/ar71xx/image/Makefile
 +++ b/target/linux/ar71xx/image/Makefile
 @@ -476,6 +476,15 @@ define Device/tl-wr710n-v2

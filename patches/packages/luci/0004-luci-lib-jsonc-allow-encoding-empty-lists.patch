@@ -15,7 +15,7 @@ function) can be used to force encoding as an object:
 Signed-off-by: Jan-Philipp Litza <janphilipp@litza.de>
 
 diff --git a/libs/luci-lib-jsonc/src/jsonc.c b/libs/luci-lib-jsonc/src/jsonc.c
-index 827fde8..971fb12 100644
+index 827fde8843082e956b0c89b5855feeabd790e880..971fb122f7655b379e717ef78a5417032ead9a57 100644
 --- a/libs/luci-lib-jsonc/src/jsonc.c
 +++ b/libs/luci-lib-jsonc/src/jsonc.c
 @@ -222,7 +222,7 @@ static int _lua_test_array(lua_State *L, int index)

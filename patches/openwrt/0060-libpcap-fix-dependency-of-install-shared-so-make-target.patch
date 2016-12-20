@@ -16,7 +16,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 Backport of LEDE b82c8ddf8c15e91d6eecfd6d237606a4ce1f756f
 
 diff --git a/package/libs/libpcap/patches/100-debian_shared_lib.patch b/package/libs/libpcap/patches/100-debian_shared_lib.patch
-index b294e51..f8df7f3 100644
+index b294e51576f9b9f363fa0143bd0945f03f9d13cd..f8df7f3636cb62845930843a4b208fe4e91a54f2 100644
 --- a/package/libs/libpcap/patches/100-debian_shared_lib.patch
 +++ b/package/libs/libpcap/patches/100-debian_shared_lib.patch
 @@ -97,7 +97,7 @@ build a shared library.

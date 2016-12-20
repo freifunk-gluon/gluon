@@ -10,7 +10,7 @@ kmod-ipv6 is added to the PROVIDES of the kernel package, so we don't have
 to adjust all packages depending on kmod-ipv6.
 
 diff --git a/config/Config-build.in b/config/Config-build.in
-index 4674d84..cd50290 100644
+index 4674d8403539a3b209d709342ab71a6e6ff79de2..cd50290f812f73bc6886a789a456956fa4fb1e42 100644
 --- a/config/Config-build.in
 +++ b/config/Config-build.in
 @@ -83,7 +83,7 @@ menu "Global build settings"
@@ -23,7 +23,7 @@ index 4674d84..cd50290 100644
  	config PKG_BUILD_PARALLEL
  		bool
 diff --git a/package/kernel/linux/Makefile b/package/kernel/linux/Makefile
-index 45ca9fa..b06c49a 100644
+index 45ca9faa923eb1a1db97d94d0406a46223c59a8f..b06c49a92fd396e8edcb0ca7a7a94b74b05a87e0 100644
 --- a/package/kernel/linux/Makefile
 +++ b/package/kernel/linux/Makefile
 @@ -49,6 +49,7 @@ define Package/kernel
@@ -35,7 +35,7 @@ index 45ca9fa..b06c49a 100644
  
  define Package/kernel/install
 diff --git a/package/kernel/linux/modules/netsupport.mk b/package/kernel/linux/modules/netsupport.mk
-index cea8e47..8a2760d 100644
+index cea8e47a65b5283640a17ed6c311bd87c70373b2..8a2760d8a4a429f206eba41a8c83432e5b6ddab7 100644
 --- a/package/kernel/linux/modules/netsupport.mk
 +++ b/package/kernel/linux/modules/netsupport.mk
 @@ -439,7 +439,7 @@ $(eval $(call KernelPackage,iptunnel4))
@@ -130,7 +130,7 @@ index cea8e47..8a2760d 100644
  
  define KernelPackage/sctp/description
 diff --git a/package/network/services/dnsmasq/Makefile b/package/network/services/dnsmasq/Makefile
-index 19a8df9..8fd51fe 100644
+index 19a8df9009da7fee967b84f65248470db3b34150..8fd51fe8748082b072710b718300a706832b25be 100644
 --- a/package/network/services/dnsmasq/Makefile
 +++ b/package/network/services/dnsmasq/Makefile
 @@ -52,7 +52,6 @@ define Package/dnsmasq-full
