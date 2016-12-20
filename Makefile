@@ -280,7 +280,7 @@ config: FORCE
 		) \
 		cat $(GLUONDIR)/targets/$(GLUON_TARGET)/config 2>/dev/null; \
 		echo 'CONFIG_BUILD_SUFFIX="gluon-$(GLUON_TARGET)"'; \
-		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
+		echo '$(patsubst %,CONFIG_PACKAGE_%=m,$(sort $(filter-out -%,$(DEFAULT_PACKAGES) $(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES) $(PROFILE_PACKAGES))))' \
 			| sed -e 's/ /\n/g'; \
 		echo '$(patsubst %,CONFIG_LUCI_LANG_%=y,$(GLUON_LANGS))' \
 			| sed -e 's/ /\n/g'; \
