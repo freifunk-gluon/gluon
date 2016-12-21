@@ -1,0 +1,26 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 9 Jun 2016 05:03:35 +0200
+Subject: ar71xx: split CPE210 from CPE510 profile
+
+The CPE210 was still described for the OEM upgrade as compatible,
+even the wireless configuration isn't compatible anymore between
+both series (2ghz and 5ghz).
+Update the CPE210 image profile to use the new profile.
+
+Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+
+Backport of LEDE 824147960569f2c1cd22140c9074c62c3df911a5
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 75083f9b698ba8a438256209a34369eb626a3b3d..bb2bb94e04ee8f59db62907ace49952061b411dc 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -2111,7 +2111,7 @@ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR10
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V3,tl-wr1043nd-v3,TL-WR1043ND-v2,ttyS0,115200,0x10430003,1,8M))
+ $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
+ 
+-$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE210_220,cpe210-220,CPE210,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
++$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE210_220,cpe210-220,CPE210,ttyS0,115200,$$(cpe510_mtdlayout),CPE210))
+ $(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510_520,cpe510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
+ 
+ $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))

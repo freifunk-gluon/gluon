@@ -1,0 +1,464 @@
+From: Ludwig Thomeczek <ledesrc@wxorx.net>
+Date: Fri, 16 Dec 2016 12:50:34 +0100
+Subject: ar71xx: add support for TP-LINK WR1043ND v4
+
+Signed-off-by: Ludwig Thomeczek <ledesrc@wxorx.net>
+
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 67043d432cf7a469bf1ded14bc354274ab16e3e6..1b613dc6e8ee66f2d7ea32486c2b6ddd03bfba89 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -272,6 +272,7 @@ get_status_led() {
+ 	tl-wr1041n-v2 | \
+ 	tl-wr1043nd | \
+ 	tl-wr1043nd-v2 | \
++	tl-wr1043nd-v4 | \
+ 	tl-wr741nd | \
+ 	tl-wr741nd-v4 | \
+ 	tl-wa801nd-v3 | \
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+index e47cbb0b01ef4a335c059a74af66d9f8999b3b3d..fa38568fbc84aad4c85636c3894097c65e30eb9a 100644
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/01_leds
+@@ -553,6 +553,16 @@ tl-wr1043nd-v2)
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+ 
++tl-wr1043nd-v4)
++	ucidef_set_led_usbdev "usb" "USB" "tp-link:green:usb" "1-1"
++	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
++	ucidef_set_led_switch "wan" "WAN" "tp-link:green:wan" "switch0" "0x20"
++	ucidef_set_led_switch "lan1" "LAN1" "tp-link:green:lan1" "switch0" "0x10"
++	ucidef_set_led_switch "lan2" "LAN2" "tp-link:green:lan2" "switch0" "0x08"
++	ucidef_set_led_switch "lan3" "LAN3" "tp-link:green:lan3" "switch0" "0x04"
++	ucidef_set_led_switch "lan4" "LAN4" "tp-link:green:lan4" "switch0" "0x02"
++	;;
++
+ tl-wr2543n)
+ 	ucidef_set_led_usbdev "usb" "USB" "tp-link:green:usb" "1-1"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+index 878623ce3fd8b7c585da73c7bd72794a144096a3..4389bc894f8dd08a9231b35bbb4fba0e9e57560b 100755
+--- a/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
++++ b/target/linux/ar71xx/base-files/etc/uci-defaults/02_network
+@@ -208,6 +208,15 @@ tl-wr1043nd)
+ 	ucidef_add_switch_vlan "switch0" "2" "0 5t"
+ 	;;
+ 
++tl-wr1043nd-v4)
++	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
++	ucidef_add_switch "switch0" "1" "1"
++	ucidef_add_switch_vlan "switch0" "1" "0t 1 2 3 4"
++	ucidef_add_switch_vlan "switch0" "2" "0t 5"
++	mac=$(mtd_get_mac_binary config 0x1017c)
++	[ -n "$mac" ] && ucidef_set_interface_macaddr "wan" "$mac"
++	;;
++
+ tl-wr2543n)
+ 	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+ 	ucidef_add_switch "switch0" "1" "1"
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 63f8dc630bf8c10c6b6224f934a86e922e0bcc43..2238f1f6b87c1114a6d1a54267da13fa06ac0a7c 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -776,6 +776,9 @@ ar71xx_board_detect() {
+ 	*"TL-WR1043ND v2")
+ 		name="tl-wr1043nd-v2"
+ 		;;
++	*"TL-WR1043ND v4")
++		name="tl-wr1043nd-v4"
++		;;
+ 	*TL-WR2543N*)
+ 		name="tl-wr2543n"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 76c252ccb14db970aac63ea1d2eaddca3d867867..e61ebf7c2221fd56bb902f14d96cb25d174718ee 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -377,6 +377,7 @@ platform_check_image() {
+ 	tl-wr1041n-v2 | \
+ 	tl-wr1043nd | \
+ 	tl-wr1043nd-v2 | \
++	tl-wr1043nd-v4 | \
+ 	tl-wr2543n)
+ 		[ "$magic" != "0100" ] && {
+ 			echo "Invalid image type."
+diff --git a/target/linux/ar71xx/config-3.18 b/target/linux/ar71xx/config-3.18
+index 050362614a464b56d3740a7954686fe4e5b37803..ad0574f9ab67e78cd1359f8b45de5de51521718c 100644
+--- a/target/linux/ar71xx/config-3.18
++++ b/target/linux/ar71xx/config-3.18
+@@ -131,6 +131,7 @@ CONFIG_ATH79_MACH_TL_WDR4300=y
+ CONFIG_ATH79_MACH_TL_WR1041N_V2=y
+ CONFIG_ATH79_MACH_TL_WR1043ND=y
+ CONFIG_ATH79_MACH_TL_WR1043ND_V2=y
++CONFIG_ATH79_MACH_TL_WR1043ND_V4=y
+ CONFIG_ATH79_MACH_TL_WR2543N=y
+ CONFIG_ATH79_MACH_TL_WR703N=y
+ CONFIG_ATH79_MACH_TL_WR720N_V3=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v4.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v4.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb224f4611004aaaec6c3b2b737b3bb45c79d239
+--- /dev/null
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wr1043nd-v4.c
+@@ -0,0 +1,190 @@
++/*
++ *  TP-LINK WR1043 V4 support
++ *
++ *  Copyright (C) 2015-2016 P. Wassi <p.wassi at gmx.at>
++ *  Copyright (C) 2016 Matthias Schiffer <mschiffer@universe-factory.net>
++ *  Copyright (C) 2016 Andreas Ziegler <github@andreas-ziegler.de>
++ *  Copyright (C) 2016 Ludwig Thomeczek <ledesrc@wxorx.net>
++ *
++ *  Derived from: mach-dir-869-a1.c
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++
++#include <linux/gpio.h>
++#include <linux/init.h>
++#include <linux/pci.h>
++#include <linux/platform_device.h>
++#include <linux/ath9k_platform.h>
++
++#include <asm/mach-ath79/ath79.h>
++#include <asm/mach-ath79/irq.h>
++#include <asm/mach-ath79/ar71xx_regs.h>
++
++#include <linux/platform_data/phy-at803x.h>
++#include <linux/ar8216_platform.h>
++
++#include "common.h"
++#include "dev-ap9x-pci.h"
++#include "dev-eth.h"
++#include "dev-gpio-buttons.h"
++#include "dev-leds-gpio.h"
++#include "dev-m25p80.h"
++#include "dev-wmac.h"
++#include "dev-usb.h"
++#include "machtypes.h"
++#include "nvram.h"
++
++#define TL_WR1043_V4_GPIO_BTN_RESET		2
++#define TL_WR1043_V4_GPIO_BTN_RFKILL		5
++
++#define TL_WR1043_V4_GPIO_LED_WLAN		19
++#define TL_WR1043_V4_GPIO_LED_USB		7
++#define TL_WR1043_V4_GPIO_LED_WPS		1
++#define TL_WR1043_V4_GPIO_LED_SYSTEM		6
++
++#define TL_WR1043_V4_GPIO_USB_POWER		8
++
++#define TL_WR1043_V4_GPIO_LED_WAN		15
++#define TL_WR1043_V4_GPIO_LED_LAN1		9
++#define TL_WR1043_V4_GPIO_LED_LAN2		14
++#define TL_WR1043_V4_GPIO_LED_LAN3		21
++#define TL_WR1043_V4_GPIO_LED_LAN4		20
++
++#define TL_WR1043_V4_KEYS_POLL_INTERVAL		20 /* msecs */
++#define TL_WR1043_V4_KEYS_DEBOUNCE_INTERVAL	(3 * TL_WR1043_V4_KEYS_POLL_INTERVAL)
++
++#define TL_WR1043_V4_MAC_LOCATION		0x1ff80174
++
++#define TL_WR1043_V4_EEPROM_ADDR		0x1fff0000
++#define TL_WR1043_V4_WMAC_CALDATA_OFFSET	0x1000
++
++static struct gpio_led tl_wr1043nd_v4_leds_gpio[] __initdata = {
++	{
++		.name		= "tp-link:green:wps",
++		.gpio		= TL_WR1043_V4_GPIO_LED_WPS,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:system",
++		.gpio		= TL_WR1043_V4_GPIO_LED_SYSTEM,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:wlan",
++		.gpio		= TL_WR1043_V4_GPIO_LED_WLAN,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:usb",
++		.gpio		= TL_WR1043_V4_GPIO_LED_USB,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:wan",
++		.gpio		= TL_WR1043_V4_GPIO_LED_WAN,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:lan1",
++		.gpio		= TL_WR1043_V4_GPIO_LED_LAN1,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:lan2",
++		.gpio		= TL_WR1043_V4_GPIO_LED_LAN2,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:lan3",
++		.gpio		= TL_WR1043_V4_GPIO_LED_LAN3,
++		.active_low	= 1,
++	},
++	{
++		.name		= "tp-link:green:lan4",
++		.gpio		= TL_WR1043_V4_GPIO_LED_LAN4,
++		.active_low	= 1,
++	},
++};
++
++static struct gpio_keys_button tl_wr1043nd_v4_gpio_keys[] __initdata = {
++	{
++		.desc		= "Reset button",
++		.type		= EV_KEY,
++		.code		= KEY_RESTART,
++		.debounce_interval = TL_WR1043_V4_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WR1043_V4_GPIO_BTN_RESET,
++		.active_low	= 1,
++	},
++	{
++		.desc		= "RFKILL button",
++		.type		= EV_KEY,
++		.code		= KEY_RFKILL,
++		.debounce_interval = TL_WR1043_V4_KEYS_DEBOUNCE_INTERVAL,
++		.gpio		= TL_WR1043_V4_GPIO_BTN_RFKILL,
++		.active_low	= 1,
++	},
++};
++
++static struct ar8327_pad_cfg tl_wr1043nd_v4_ar8327_pad0_cfg = {
++	.mode = AR8327_PAD_MAC_SGMII,
++	.sgmii_delay_en = true,
++};
++
++static struct ar8327_platform_data tl_wr1043nd_v4_ar8327_data = {
++	.pad0_cfg = &tl_wr1043nd_v4_ar8327_pad0_cfg,
++	.port0_cfg = {
++		.force_link = 1,
++		.speed = AR8327_PORT_SPEED_1000,
++		.duplex = 1,
++		.txpause = 1,
++		.rxpause = 1,
++	},
++};
++
++static struct mdio_board_info tl_wr1043nd_v4_mdio0_info[] = {
++	{
++		.bus_id = "ag71xx-mdio.0",
++		.phy_addr = 0,
++		.platform_data = &tl_wr1043nd_v4_ar8327_data,
++	},
++};
++
++static void __init tl_wr1043nd_v4_setup(void)
++{
++	u8 *mac = (u8 *) KSEG1ADDR(TL_WR1043_V4_MAC_LOCATION);
++	u8 *eeprom = (u8 *) KSEG1ADDR(TL_WR1043_V4_EEPROM_ADDR);
++
++	ath79_register_m25p80(NULL);
++
++	ath79_init_mac(ath79_eth0_data.mac_addr, mac, 0);
++	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_SGMII;
++	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
++	ath79_eth0_data.phy_mask = BIT(0);
++
++	mdiobus_register_board_info(tl_wr1043nd_v4_mdio0_info,
++	                            ARRAY_SIZE(tl_wr1043nd_v4_mdio0_info));
++
++	ath79_register_usb();
++	ath79_register_mdio(0, 0);
++	ath79_register_eth(0);
++
++	ath79_register_wmac(eeprom + TL_WR1043_V4_WMAC_CALDATA_OFFSET, mac);
++
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr1043nd_v4_leds_gpio),
++	                         tl_wr1043nd_v4_leds_gpio);
++
++	ath79_register_gpio_keys_polled(-1, TL_WR1043_V4_KEYS_POLL_INTERVAL,
++	                                ARRAY_SIZE(tl_wr1043nd_v4_gpio_keys),
++	                                tl_wr1043nd_v4_gpio_keys);
++
++	gpio_request_one(TL_WR1043_V4_GPIO_USB_POWER,
++			 GPIOF_OUT_INIT_HIGH | GPIOF_EXPORT_DIR_FIXED,
++			 "USB power");
++}
++
++MIPS_MACHINE(ATH79_MACH_TL_WR1043ND_V4, "TL-WR1043ND-v4",
++	     "TP-LINK TL-WR1043ND v4", tl_wr1043nd_v4_setup);
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 638e97f088b5420cf4f2a3c706875677815240e1..61e221255f6742f9594da168b11af7716d6a720e 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -73,6 +73,18 @@ define Build/mktplinkfw-combined
+ 	@mv $@.new $@
+ endef
+ 
++define Build/tplink-safeloader
++       -$(STAGING_DIR_HOST)/bin/tplink-safeloader \
++		-B $(TPLINK_BOARD_NAME) \
++		-V $(REVISION) \
++		-k $(word 1,$^) \
++		-r $@ \
++		-o $@.new \
++		-j \
++		$(wordlist 2,$(words $(1)),$(1)) \
++		$(if $(findstring sysupgrade,$(word 1,$(1))),-S) && mv $@.new $@ || rm -f $@
++endef
++
+ define Build/loader-common
+ 	rm -rf $@.src
+ 	$(MAKE) -C lzma-loader \
+@@ -103,7 +115,7 @@ define Build/copy-file
+ 	cat "$(1)" > "$@"
+ endef
+ 
+-DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT
++DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT TPLINK_BOARD_NAME
+ 
+ define Device/Default
+   BOARDNAME :=
+@@ -677,6 +689,22 @@ define Device/tl-wr1041n-v2
+ endef
+ TARGET_DEVICES += tl-wr1041n-v2
+ 
++define Device/tl-wr1043nd-v4
++    $(Device/tplink)
++    BOARDNAME := TL-WR1043ND-v4
++    DEVICE_PROFILE := TLWR1043
++    TPLINK_HWID :=  0x10430004
++    TPLINK_FLASHLAYOUT := 16Msafeloader
++    MTDPARTS := spi0.0:128k(u-boot)ro,1536k(kernel),14016k(rootfs),128k(product-info)ro,320k(config)ro,64k(partition-table)ro,128k(logs)ro,64k(ART)ro,15552k@0x20000(firmware)
++    IMAGE_SIZE := 15552k
++    TPLINK_BOARD_NAME := TLWR1043NDV4
++    KERNEL := kernel-bin | patch-cmdline | lzma | mktplinkfw-combined
++    IMAGES := sysupgrade.bin factory.bin
++    IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
++    IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
++endef
++TARGET_DEVICES += tl-wr1043nd-v4
++
+ define Device/tl-wdr4900-v2
+     $(Device/tplink-8mlzma)
+     BOARDNAME := TL-WDR4900-v2
+diff --git a/target/linux/ar71xx/mikrotik/config-default b/target/linux/ar71xx/mikrotik/config-default
+index 75155b22489a60748b3b1357a1d9c549092255ba..06850dfd5ad9dc004e5e06605c642d0f934aad6f 100644
+--- a/target/linux/ar71xx/mikrotik/config-default
++++ b/target/linux/ar71xx/mikrotik/config-default
+@@ -85,6 +85,7 @@ CONFIG_ATH79_MACH_RBSXTLITE=y
+ # CONFIG_ATH79_MACH_TL_WR1041N_V2 is not set
+ # CONFIG_ATH79_MACH_TL_WR1043ND is not set
+ # CONFIG_ATH79_MACH_TL_WR1043ND_V2 is not set
++# CONFIG_ATH79_MACH_TL_WR1043ND_V4 is not set
+ # CONFIG_ATH79_MACH_TL_WR2543N is not set
+ # CONFIG_ATH79_MACH_TL_WR703N is not set
+ # CONFIG_ATH79_MACH_TL_WR720N_V3 is not set
+diff --git a/target/linux/ar71xx/nand/config-default b/target/linux/ar71xx/nand/config-default
+index 802d6e0502b51a4ecf2259c20e9b6667cd255680..6d69cdcd1cc7f911fbb68dc265ef3fa4c7f5bd78 100644
+--- a/target/linux/ar71xx/nand/config-default
++++ b/target/linux/ar71xx/nand/config-default
+@@ -49,6 +49,7 @@
+ # CONFIG_ATH79_MACH_TL_WDR4300 is not set
+ # CONFIG_ATH79_MACH_TL_WR1041N_V2 is not set
+ # CONFIG_ATH79_MACH_TL_WR1043ND is not set
++# CONFIG_ATH79_MACH_TL_WR1043ND_V4 is not set
+ # CONFIG_ATH79_MACH_TL_WR2543N is not set
+ # CONFIG_ATH79_MACH_TL_WR703N is not set
+ # CONFIG_ATH79_MACH_TL_WR720N_V3 is not set
+diff --git a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
+index b7517464742679b66c3bd916b9b2a2fcc34b65e1..fb69cf3b9ee51e39c32a9e98de913c1a84bed56a 100644
+--- a/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
++++ b/target/linux/ar71xx/patches-3.18/610-MIPS-ath79-openwrt-machines.patch
+@@ -1,6 +1,6 @@
+ --- a/arch/mips/ath79/machtypes.h
+ +++ b/arch/mips/ath79/machtypes.h
+-@@ -16,22 +16,206 @@
++@@ -16,22 +16,207 @@
+  
+  enum ath79_mach_type {
+  	ATH79_MACH_GENERIC = 0,
+@@ -138,6 +138,7 @@
+ +	ATH79_MACH_TL_WR1041N_V2,	/* TP-LINK TL-WR1041N v2 */
+ +	ATH79_MACH_TL_WR1043ND,		/* TP-LINK TL-WR1043ND */
+ +	ATH79_MACH_TL_WR1043ND_V2,	/* TP-LINK TL-WR1043ND v2 */
+++	ATH79_MACH_TL_WR1043ND_V4,	/* TP-LINK TL-WR1043ND v4 */
+ +	ATH79_MACH_TL_WR2543N,		/* TP-LINK TL-WR2543N/ND */
+ +	ATH79_MACH_TL_WR703N,		/* TP-LINK TL-WR703N */
+ +	ATH79_MACH_TL_WR710N,		/* TP-LINK TL-WR710N */
+@@ -355,7 +356,7 @@
+  config ATH79_MACH_PB44
+  	bool "Atheros PB44 reference board"
+  	select SOC_AR71XX
+-@@ -68,6 +178,976 @@ config ATH79_MACH_PB44
++@@ -68,6 +178,988 @@ config ATH79_MACH_PB44
+  	  Say 'Y' here if you want your kernel to support the
+  	  Atheros PB44 reference board.
+  
+@@ -1270,6 +1271,18 @@
+ +	select ATH79_DEV_USB
+ +	select ATH79_DEV_WMAC
+ +
+++config ATH79_MACH_TL_WR1043ND_V4
+++	bool "TP-LINK TL-WR1043ND v4 support"
+++	select SOC_QCA956X
+++	select ATH79_DEV_AP9X_PCI if PCI
+++	select ATH79_DEV_ETH
+++	select ATH79_DEV_GPIO_BUTTONS
+++	select ATH79_DEV_LEDS_GPIO
+++	select ATH79_DEV_M25P80
+++	select ATH79_DEV_USB
+++	select ATH79_DEV_WMAC
+++
+++
+ +config ATH79_MACH_TL_WR2543N
+ +	bool "TP-LINK TL-WR2543N/ND support"
+ +	select SOC_AR724X
+@@ -1332,7 +1345,7 @@
+  config ATH79_MACH_UBNT_XM
+  	bool "Ubiquiti Networks XM/UniFi boards"
+  	select SOC_AR724X
+-@@ -83,6 +1163,117 @@ config ATH79_MACH_UBNT_XM
++@@ -83,6 +1175,117 @@ config ATH79_MACH_UBNT_XM
+  	  Say 'Y' here if you want your kernel to support the
+  	  Ubiquiti Networks XM (rev 1.0) board.
+  
+@@ -1450,7 +1463,7 @@
+  endmenu
+  
+  config SOC_AR71XX
+-@@ -124,7 +1315,10 @@ config ATH79_DEV_DSA
++@@ -124,7 +1327,10 @@ config ATH79_DEV_DSA
+  config ATH79_DEV_ETH
+  	def_bool n
+  
+@@ -1462,7 +1475,7 @@
+  	def_bool n
+  
+  config ATH79_DEV_GPIO_BUTTONS
+-@@ -154,6 +1348,11 @@ config ATH79_PCI_ATH9K_FIXUP
++@@ -154,6 +1360,11 @@ config ATH79_PCI_ATH9K_FIXUP
+  	def_bool n
+  
+  config ATH79_ROUTERBOOT
+@@ -1476,7 +1489,7 @@
+  endif
+ --- a/arch/mips/ath79/Makefile
+ +++ b/arch/mips/ath79/Makefile
+-@@ -38,9 +47,131 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
++@@ -38,9 +38,132 @@ obj-$(CONFIG_ATH79_ROUTERBOOT)		+= route
+  #
+  # Machines
+  #
+@@ -1575,6 +1588,7 @@
+ +obj-$(CONFIG_ATH79_MACH_TL_WR1041N_V2)	+= mach-tl-wr1041n-v2.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WR1043ND)	+= mach-tl-wr1043nd.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WR1043ND_V2)	+= mach-tl-wr1043nd-v2.o
+++obj-$(CONFIG_ATH79_MACH_TL_WR1043ND_V4)	+= mach-tl-wr1043nd-v4.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WR2543N)	+= mach-tl-wr2543n.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WR703N)	+= mach-tl-wr703n.o
+ +obj-$(CONFIG_ATH79_MACH_TL_WR720N_V3)	+= mach-tl-wr720n-v3.o
