@@ -73,6 +73,16 @@ function node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
+function get_mesh_devices(uconn)
+	local dump = uconn:call("network.interface", "dump", {})
+	local devices = {}
+	for _, interface in ipairs(dump.interface) do
+	    if ( (interface.proto == "gluon_mesh") and interface.up ) then
+			table.insert(devices, interface.device)
+	    end
+	end
+	return devices
+end
 
 local function find_phy_by_path(path)
 	for phy in fs.glob('/sys/devices/' .. path .. '/ieee80211/phy*') do
