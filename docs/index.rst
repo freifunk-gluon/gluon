@@ -190,7 +190,7 @@ ar71xx-generic
   - TL-WR843N/ND (v1)
   - TL-WR940N (v1, v2, v3, v4)
   - TL-WR941ND (v2, v3, v4, v5, v6)
-  - TL-WR1043N/ND (v1, v2, v3)
+  - TL-WR1043N/ND (v1, v2, v3, v4)
   - TL-WR2543N/ND (v1)
 
 * Ubiquiti

@@ -1,0 +1,36 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 10 Dec 2016 20:45:50 +0100
+Subject: firmware-utils: add support for TL-WR1043ND v4 to mktplinkfw
+
+The TL-WR1043ND v4 uses a kernel image with a mktplinkfw header inside the
+os-image partition of a tplink-safeloader image.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE 51740990cd1d5375a566454e692b479986cba958
+
+diff --git a/tools/firmware-utils/src/mktplinkfw.c b/tools/firmware-utils/src/mktplinkfw.c
+index 34e6546a2d7db72748146ef233830c2e8de9ce97..fbf89609c22dd0fb50c4c8656141c8a8b9c29817 100644
+--- a/tools/firmware-utils/src/mktplinkfw.c
++++ b/tools/firmware-utils/src/mktplinkfw.c
+@@ -178,6 +178,20 @@ static struct flash_layout layouts[] = {
+ 		.kernel_ep	= 0xc0000000,
+ 		.rootfs_ofs	= 0x2a0000,
+ 	}, {
++		/*
++			Some devices (e.g. TL-WR1043 v4) use a mktplinkfw kernel image
++			embedded in a tplink-safeloader image as os-image partition.
++
++			We use a 1.5MB partition for the compressed kernel, which should
++			be sufficient, but not too wasteful (the flash of the TL-WR1043 v4
++			has 16MB in total).
++		*/
++		.id		= "16Msafeloader",
++		.fw_max_len	= 0x180000,
++		.kernel_la	= 0x80060000,
++		.kernel_ep	= 0x80060000,
++		.rootfs_ofs	= 0,
++	}, {
+ 		/* terminating entry */
+ 	}
+ };

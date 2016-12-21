@@ -1,0 +1,39 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 9 Dec 2016 13:08:51 +0100
+Subject: ar71xx: rename mktplinkfw-initramfs to more generic mktplinkfw-combined
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+Backport of LEDE 0495181529e6069af03704f4b5ae71883a2cd6b6
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index b35c713f3c92c3d02f26f4bf535aeec34fd71b12..638e97f088b5420cf4f2a3c706875677815240e1 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -63,7 +63,7 @@ define Build/mktplinkfw
+ endef
+ 
+ # -c combined image
+-define Build/mktplinkfw-initramfs
++define Build/mktplinkfw-combined
+ 	$(STAGING_DIR_HOST)/bin/mktplinkfw \
+ 		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) -F $(TPLINK_FLASHLAYOUT) -N OpenWrt -V $(REVISION) $(1) \
+ 		-k $@ \
+@@ -203,7 +203,7 @@ TARGET_DEVICES += wndr3700 wndr3700v2 wndr3800 wndr3800ch wndrmac wndrmacv2
+ define Device/tplink
+   TPLINK_HWREV := 0x1
+   KERNEL := kernel-bin | patch-cmdline | lzma
+-  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | mktplinkfw-initramfs
++  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | mktplinkfw-combined
+   IMAGES := sysupgrade.bin factory.bin
+   IMAGE/sysupgrade.bin := append-rootfs | mktplinkfw sysupgrade
+   IMAGE/factory.bin := append-rootfs | mktplinkfw factory
+@@ -215,7 +215,7 @@ $(Device/tplink)
+   COMPILE := loader-$(1).gz
+   COMPILE/loader-$(1).gz := loader-okli-compile
+   KERNEL := copy-file $(KDIR)/vmlinux.bin.lzma | uImage lzma -M 0x4f4b4c49 | loader-okli $(1)
+-  KERNEL_INITRAMFS := copy-file $(KDIR)/vmlinux-initramfs.bin.lzma | loader-kernel | mktplinkfw-initramfs
++  KERNEL_INITRAMFS := copy-file $(KDIR)/vmlinux-initramfs.bin.lzma | loader-kernel | mktplinkfw-combined
+ endef
+ 
+ define Device/tplink-4m
