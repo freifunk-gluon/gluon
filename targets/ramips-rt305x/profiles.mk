@@ -8,4 +8,4 @@ $(eval $(call GluonModel,VOCORE,vocore,vocore))
 # FON2303A
 $(eval $(call GluonProfile,FONERA20N))
 $(eval $(call GluonProfileFactorySuffix,FONERA20N))
-$(eval $(call GluonModel,FONERA20N,fonera20n,fon2303a))
+$(eval $(call GluonModel,FONERA20N,fonera20n,fonera-fon2303a))
