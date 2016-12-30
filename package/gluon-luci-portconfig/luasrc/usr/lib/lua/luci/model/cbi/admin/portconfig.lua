@@ -94,17 +94,12 @@ if sysconfig.lan_ifname then
 	o.rmempty = false
 end
 
-
-
-
-
 if uci:get('system', 'gpio_switch_poe_passthrough') then
 	s = f:section(SimpleSection, nil, nil)
 	o = s:option(Flag, "poe_passthrough", translate("Enable PoE passthrough"))
 	o.default = uci:get_bool("system", "gpio_switch_poe_passthrough", "value") and o.enabled or o.disabled
 	o.rmempty = false
 end
-
 
 function f.handle(self, state, data)
 	if state == FORM_VALID then
