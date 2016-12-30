@@ -84,6 +84,10 @@ end
 
 s = f:section(SimpleSection, nil, nil)
 
+o = s:option(Flag, "mesh_vxlan", translate("Encapsulate mesh into vxlan"))
+o.default = uci:get_bool("network", uci:get_first("network","vxlan") , "active") and o.enabled or o.disabled
+o.rmempty = false
+
 o = s:option(Flag, "mesh_wan", translate("Enable meshing on the WAN interface"))
 o.default = uci:get_bool("network", "mesh_wan", "auto") and o.enabled or o.disabled
 o.rmempty = false
