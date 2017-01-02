@@ -24,6 +24,12 @@ $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe510-v1.1))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 
+# WBS210/510
+ifeq ($(BROKEN),)
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-wbs510-v1.20))
+$(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-wbs210-v1.20)) # BROKEN: untested
+endif
+
 # TL-WA701N/ND v1, v2
 $(eval $(call GluonProfile,TLWA701))
 $(eval $(call GluonModel,TLWA701,tl-wa701n-v1,tp-link-tl-wa701n-nd-v1))
