@@ -7,7 +7,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-        http://www.apache.org/licenses/LICENSE-2.0
+http://www.apache.org/licenses/LICENSE-2.0
 
 $Id$
 ]]--
@@ -75,11 +75,11 @@ o.rmempty = false
 
 
 if dns then
-  s = f:section(SimpleSection, nil, nil)
+	s = f:section(SimpleSection, nil, nil)
 
-  o = s:option(DynamicList, "dns", translate("Static DNS servers"))
-  o:write(nil, uci:get("gluon-wan-dnsmasq", dns, "server"))
-  o.datatype = "ipaddr"
+	o = s:option(DynamicList, "dns", translate("Static DNS servers"))
+	o:write(nil, uci:get("gluon-wan-dnsmasq", dns, "server"))
+	o.datatype = "ipaddr"
 end
 
 s = f:section(SimpleSection, nil, nil)
@@ -89,80 +89,79 @@ o.default = uci:get_bool("network", "mesh_wan", "auto") and o.enabled or o.disab
 o.rmempty = false
 
 if sysconfig.lan_ifname then
-  o = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
-  o.default = uci:get_bool("network", "mesh_lan", "auto") and o.enabled or o.disabled
-  o.rmempty = false
+	o = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
+	o.default = uci:get_bool("network", "mesh_lan", "auto") and o.enabled or o.disabled
+	o.rmempty = false
 end
 
 if uci:get('system', 'gpio_switch_poe_passthrough') then
-  s = f:section(SimpleSection, nil, nil)
-  o = s:option(Flag, "poe_passthrough", translate("Enable PoE passthrough"))
-  o.default = uci:get_bool("system", "gpio_switch_poe_passthrough", "value") and o.enabled or o.disabled
-  o.rmempty = false
+	s = f:section(SimpleSection, nil, nil)
+	o = s:option(Flag, "poe_passthrough", translate("Enable PoE passthrough"))
+	o.default = uci:get_bool("system", "gpio_switch_poe_passthrough", "value") and o.enabled or o.disabled
+	o.rmempty = false
 end
 
-
 function f.handle(self, state, data)
-  if state == FORM_VALID then
-    uci:set("network", "wan", "proto", data.ipv4)
-    if data.ipv4 == "static" then
-      uci:set("network", "wan", "ipaddr", data.ipv4_addr:trim())
-      uci:set("network", "wan", "netmask", data.ipv4_netmask:trim())
-      uci:set("network", "wan", "gateway", data.ipv4_gateway:trim())
-    else
-      uci:delete("network", "wan", "ipaddr")
-      uci:delete("network", "wan", "netmask")
-      uci:delete("network", "wan", "gateway")
-    end
+	if state == FORM_VALID then
+	uci:set("network", "wan", "proto", data.ipv4)
+	if data.ipv4 == "static" then
+		uci:set("network", "wan", "ipaddr", data.ipv4_addr:trim())
+		uci:set("network", "wan", "netmask", data.ipv4_netmask:trim())
+		uci:set("network", "wan", "gateway", data.ipv4_gateway:trim())
+	else
+		uci:delete("network", "wan", "ipaddr")
+		uci:delete("network", "wan", "netmask")
+		uci:delete("network", "wan", "gateway")
+	end
 
-    uci:set("network", "wan6", "proto", data.ipv6)
-    if data.ipv6 == "static" then
-      uci:set("network", "wan6", "ip6addr", data.ipv6_addr:trim())
-      uci:set("network", "wan6", "ip6gw", data.ipv6_gateway:trim())
-    else
-      uci:delete("network", "wan6", "ip6addr")
-      uci:delete("network", "wan6", "ip6gw")
-    end
+	uci:set("network", "wan6", "proto", data.ipv6)
+	if data.ipv6 == "static" then
+		uci:set("network", "wan6", "ip6addr", data.ipv6_addr:trim())
+		uci:set("network", "wan6", "ip6gw", data.ipv6_gateway:trim())
+	else
+		uci:delete("network", "wan6", "ip6addr")
+		uci:delete("network", "wan6", "ip6gw")
+	end
 
-    uci:set("network", "mesh_wan", "auto", data.mesh_wan)
+	uci:set("network", "mesh_wan", "auto", data.mesh_wan)
 
-    if sysconfig.lan_ifname then
-      uci:set("network", "mesh_lan", "auto", data.mesh_lan)
+	if sysconfig.lan_ifname then
+		uci:set("network", "mesh_lan", "auto", data.mesh_lan)
 
-      local doit
-      if data.mesh_lan == '1' then
-        doit = uci.remove_from_set
-      else
-        doit = uci.add_to_set
-      end
+		local doit
+		if data.mesh_lan == '1' then
+		doit = uci.remove_from_set
+		else
+		doit = uci.add_to_set
+		end
 
-      for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-        doit(uci, "network", "client", "ifname", lanif)
-      end
-    end
+		for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+		doit(uci, "network", "client", "ifname", lanif)
+		end
+	end
 
-    uci:save("network")
-    uci:commit("network")
+	uci:save("network")
+	uci:commit("network")
 
-    if uci:get('system', 'gpio_switch_poe_passthrough') then
-        uci:set('system', 'gpio_switch_poe_passthrough', 'value', data.poe_passthrough)
-        uci:save('system')
-        uci:commit('system')
-    end
+	if uci:get('system', 'gpio_switch_poe_passthrough') then
+	uci:set('system', 'gpio_switch_poe_passthrough', 'value', data.poe_passthrough)
+	uci:save('system')
+	uci:commit('system')
+	end
 
-    if dns then
-      if #data.dns > 0 then
-        uci:set("gluon-wan-dnsmasq", dns, "server", data.dns)
-      else
-        uci:delete("gluon-wan-dnsmasq", dns, "server")
-      end
+	if dns then
+		if #data.dns > 0 then
+		uci:set("gluon-wan-dnsmasq", dns, "server", data.dns)
+		else
+		uci:delete("gluon-wan-dnsmasq", dns, "server")
+		end
 
-      uci:save("gluon-wan-dnsmasq")
-      uci:commit("gluon-wan-dnsmasq")
-    end
-  end
+		uci:save("gluon-wan-dnsmasq")
+		uci:commit("gluon-wan-dnsmasq")
+	end
+	end
 
-  return true
+	return true
 end
 
 return f
