@@ -112,11 +112,6 @@ ar71xx-generic
   - WZR-HP-G300NH2
   - WZR-HP-G450H
 
-* Cisco Meraki
-
-  - MR12 / MR62
-  - MR16 / MR66
-
 * D-Link
 
   - DIR-505 (A1, A2)
