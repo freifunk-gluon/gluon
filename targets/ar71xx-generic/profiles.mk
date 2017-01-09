@@ -11,7 +11,7 @@ endif
 
 ## TP-Link
 
-# CPE210/220/510/520
+# CPE210/220/510/520; WBS210/510
 $(eval $(call GluonProfile,CPE510,rssileds))
 
 $(eval $(call GluonModel,CPE510,cpe210-220,tp-link-cpe210-v1.0))
@@ -24,10 +24,8 @@ $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe510-v1.1))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.0))
 $(eval $(call GluonModelAlias,CPE510,tp-link-cpe510-v1.0,tp-link-cpe520-v1.1))
 
-ifneq ($(BROKEN),)
-$(eval $(call GluonModel,CPE510,wbs210,tp-link-wbs210-v1.20)) # BROKEN: untested
-$(eval $(call GluonModel,CPE510,wbs510,tp-link-wbs510-v1.20)) # BROKEN: untested
-endif
+$(eval $(call GluonModel,CPE510,wbs210,tp-link-wbs210-v1.20))
+$(eval $(call GluonModel,CPE510,wbs510,tp-link-wbs510-v1.20))
 
 # TL-WA701N/ND v1, v2
 $(eval $(call GluonProfile,TLWA701))
