@@ -393,6 +393,8 @@ $(eval $(call GluonModel,ALFANX,alfa-nx,alfa-network-n2-n5))
 
 ## Meraki
 
+# BROKEN: MAC address uniqueness issues
+ifneq ($(BROKEN),)
 # Meraki MR12/MR62
 $(eval $(call GluonProfile,MR12,rssileds))
 $(eval $(call GluonProfileFactorySuffix,MR12))
@@ -404,6 +406,7 @@ $(eval $(call GluonProfile,MR16,rssileds))
 $(eval $(call GluonProfileFactorySuffix,MR16))
 $(eval $(call GluonModel,MR16,mr16,meraki-mr16))
 $(eval $(call GluonModelAlias,MR16,meraki-mr16,meraki-mr66))
+endif
 
 ## 8devices
 
