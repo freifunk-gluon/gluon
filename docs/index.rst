@@ -192,6 +192,8 @@ ar71xx-generic
   - TL-WR941ND (v2, v3, v4, v5, v6)
   - TL-WR1043N/ND (v1, v2, v3, v4)
   - TL-WR2543N/ND (v1)
+  - WBS210 (v1.20)
+  - WBS510 (v1.20)
 
 * Ubiquiti
 
