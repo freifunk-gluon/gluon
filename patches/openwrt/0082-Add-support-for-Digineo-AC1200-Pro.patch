@@ -1,0 +1,253 @@
+From: Julian Kornberger <jk+github@digineo.de>
+Date: Sat, 17 Dec 2016 19:47:00 +0100
+Subject: Add support for Digineo AC1200 Pro
+
+diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
+index 4e6e507..453af2c 100755
+--- a/target/linux/ramips/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/base-files/etc/board.d/02_network
+@@ -128,6 +128,7 @@ ramips_setup_interfaces()
+ 		;;
+ 
+ 	3g-6200n | \
++	ac1200pro | \
+ 	ai-br100 | \
+ 	dir-610-a1 | \
+ 	dir-300-b7 | \
+@@ -365,6 +366,7 @@ ramips_setup_macs()
+ 		wan_mac=$(mtd_get_mac_binary factory 32772)
+ 		;;
+ 
++	ac1200pro | \
+ 	all0239-3g | \
+ 	carambola | \
+ 	freestation5 | \
+diff --git a/target/linux/ramips/base-files/etc/diag.sh b/target/linux/ramips/base-files/etc/diag.sh
+index 37360a4..7f93d3f 100644
+--- a/target/linux/ramips/base-files/etc/diag.sh
++++ b/target/linux/ramips/base-files/etc/diag.sh
+@@ -12,6 +12,9 @@ get_status_led() {
+ 	3g150b | 3g300m | w150m)
+ 		status_led="tenda:blue:ap"
+ 		;;
++	ac1200pro)
++		status_led="ac1200pro:green:status"
++		;;
+ 	ai-br100)
+ 		status_led="aigale:blue:wlan"
+ 		;;
+diff --git a/target/linux/ramips/base-files/lib/ramips.sh b/target/linux/ramips/base-files/lib/ramips.sh
+index 8dc05b0..090831e 100755
+--- a/target/linux/ramips/base-files/lib/ramips.sh
++++ b/target/linux/ramips/base-files/lib/ramips.sh
+@@ -109,6 +109,9 @@ ramips_board_detect() {
+ 	*"DCS-930L B1")
+ 		name="dcs-930l-b1"
+ 		;;
++	*"Digineo AC1200 Pro")
++		name="ac1200pro"
++		;;
+ 	*"DIR-300 B1")
+ 		name="dir-300-b1"
+ 		;;
+diff --git a/target/linux/ramips/base-files/lib/upgrade/platform.sh b/target/linux/ramips/base-files/lib/upgrade/platform.sh
+index a3d0175..8af8506 100755
+--- a/target/linux/ramips/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ramips/base-files/lib/upgrade/platform.sh
+@@ -19,6 +19,7 @@ platform_check_image() {
+ 	3g150b | \
+ 	3g300m | \
+ 	a5-v11 | \
++	ac1200pro | \
+ 	air3gii | \
+ 	ai-br100 |\
+ 	all0239-3g | \
+diff --git a/target/linux/ramips/dts/AC1200pro.dts b/target/linux/ramips/dts/AC1200pro.dts
+new file mode 100644
+index 0000000..18b60c6
+--- /dev/null
++++ b/target/linux/ramips/dts/AC1200pro.dts
+@@ -0,0 +1,127 @@
++/dts-v1/;
++
++/include/ "mt7621.dtsi"
++
++/ {
++	compatible = "mediatek,mt7621-eval-board", "mediatek,mt7621-soc";
++	model = "ZBT-WG3526";
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x1c000000>, <0x20000000 0x4000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++	};
++
++	sdhci@10130000 {
++		status = "okay";
++	};
++
++	palmbus@1E000000 {
++		spi@b00 {
++			status = "okay";
++
++			m25p80@0 {
++				#address-cells = <1>;
++				#size-cells = <1>;
++				compatible = "jedec,spi-nor";
++				reg = <0 0>;
++				linux,modalias = "m25p80";
++				spi-max-frequency = <10000000>;
++
++				partition@0 {
++					label = "u-boot";
++					reg = <0x0 0x30000>;
++					read-only;
++				};
++
++				partition@30000 {
++					label = "u-boot-env";
++					reg = <0x30000 0x10000>;
++					read-only;
++				};
++
++				factory: partition@40000 {
++					label = "factory";
++					reg = <0x40000 0x10000>;
++					read-only;
++				};
++
++				partition@50000 {
++					label = "firmware";
++					reg = <0x50000 0x1fb0000>;
++				};
++
++			};
++		};
++
++		i2c@900 {
++			compatible = "ralink,i2c-mt7621";
++			reg = <0x900 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&i2c_pins>;
++			status = "okay";
++		};
++	};
++
++	pcie@1e140000 {
++		status = "okay";
++
++		pcie0 {
++			mt76@0,0 {
++				reg = <0x0000 0 0 0 0>;
++				device_type = "pci";
++				mediatek,mtd-eeprom = <&factory 0x0000>;
++				mediatek,5ghz = <0>;
++			};
++		};
++
++		pcie1 {
++			mt76@1,0 {
++				reg = <0x0000 0 0 0 0>;
++				device_type = "pci";
++				mediatek,mtd-eeprom = <&factory 0x8000>;
++				mediatek,2ghz = <0>;
++			};
++		};
++	};
++
++	ethernet@1e100000 {
++		mtd-mac-address = <&factory 0xe000>;
++	};
++
++	gpio-keys-polled {
++		compatible = "gpio-keys-polled";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		poll-interval = <20>;
++
++		reset {
++			label = "reset";
++			gpios = <&gpio0 18 1>;
++			linux,code = <0x198>;
++		};
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++
++		status {
++			label = "ac1200pro:green:status";
++			gpios = <&gpio0 24 1>;
++		};
++	};
++
++	pinctrl {
++		state_default: pinctrl0 {
++			gpio {
++				ralink,group = "wdt", "rgmii2", "wdt rst", "jtag", "mdio";
++				ralink,function = "gpio";
++			};
++		};
++	};
++};
+diff --git a/target/linux/ramips/image/Makefile b/target/linux/ramips/image/Makefile
+index c4f4028..e28dcf3 100644
+--- a/target/linux/ramips/image/Makefile
++++ b/target/linux/ramips/image/Makefile
+@@ -616,7 +616,7 @@ Image/Build/Profile/WCR150GN=$(call BuildFirmware/Default4M/$(1),$(1),wcr150gn,W
+ buffalo_whrg300n_mtd_size=3801088
+ define BuildFirmware/WHRG300N/squashfs
+ 	$(call BuildFirmware/Default4M/$(1),$(1),whr-g300n,WHR-G300N)
+-	# the following line has a bad argument 3 ... the old Makefile was already broken	
++	# the following line has a bad argument 3 ... the old Makefile was already broken
+ 	$(call BuildFirmware/Buffalo,$(1),whr-g300n,whr-g300n)
+ 	if [ -e "$(call sysupname,$(1),$(2))" ]; then \
+ 		( \
+@@ -956,7 +956,7 @@ endif
+ #
+ 
+ ifeq ($(SUBTARGET),mt7621)
+-  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500 zbt-wg2626
++  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500 zbt-wg2626 ac1200pro
+ endif
+ 
+ define Device/mt7621
+@@ -1007,6 +1007,12 @@ define Device/zbt-wg2626
+   IMAGE_SIZE := $(ralink_default_fw_size_16M)
+ endef
+ 
++define Device/ac1200pro
++  DTS := AC1200pro
++  IMAGE_SIZE := $(ralink_default_fw_size_32M)
++endef
++TARGET_DEVICES += ac1200pro
++
+ #
+ # MT7628 Profiles
+ #
+diff --git a/target/linux/ramips/mt7621/profiles/zbt.mk b/target/linux/ramips/mt7621/profiles/zbt.mk
+index cf9beff..53b100c 100644
+--- a/target/linux/ramips/mt7621/profiles/zbt.mk
++++ b/target/linux/ramips/mt7621/profiles/zbt.mk
+@@ -17,3 +17,16 @@ define Profile/ZBT-WG2626/Description
+ 	Package set for ZBT-WG2626 device
+ endef
+ $(eval $(call Profile,ZBT-WG2626))
++
++
++define Profile/ac1200pro
++	NAME:=Digineo AC1200 Pro
++	PACKAGES:=\
++		kmod-usb-core kmod-usb3 \
++		kmod-ledtrig-usbdev kmod-ata-core kmod-ata-ahci
++endef
++
++define Profile/ac1200pro/Description
++	Package set for ac1200pro device
++endef
++$(eval $(call Profile,ac1200pro))
