@@ -12,7 +12,7 @@ function M.section(form)
   local msg = i18n.translate('gluon-config-mode:site-select')
   local s = form:section(cbi.SimpleSection, nil, msg)
 
-  local o = s:option(cbi.ListValue, "community", i18n.translate("Region"))
+  local o = s:option(cbi.ListValue, "community", i18n.translate("gluon-config-mode:site-label"))
   o.rmempty = false
   o.optional = false
 
