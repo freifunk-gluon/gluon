@@ -32,11 +32,11 @@ function index()
     page.title    = _("Wizard")
     page.target   = alias("gluon-config-mode", "wizard")
     page.order    = 5
-    page.setuser  = "root"
-    page.setgroup = "root"
+    page.sysauth = "root"
+    page.sysauth_authenticator = function() return "root" end
     page.index    = true
 
-    entry({"gluon-config-mode", "wizard"}, form("gluon-config-mode/wizard")).index = true
+    entry({"gluon-config-mode", "wizard"}, cbi("gluon-config-mode/wizard")).index = true
     entry({"gluon-config-mode", "reboot"}, call("action_reboot"))
   end
 end

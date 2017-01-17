@@ -14,7 +14,7 @@ $Id$
 
 m = Map("autoupdater", translate("Automatic updates"))
 m.pageaction = false
-m.template = "admin/expertmode"
+m.template = "cbi/simpleform"
 
 s = m:section(TypedSection, "autoupdater", nil)
 s.addremove = false

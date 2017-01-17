@@ -11,7 +11,7 @@ END__GLUON__CHECK__SITE
 endef
 
 # Languages supported by LuCi
-GLUON_SUPPORTED_LANGS := ca zh_cn en fr de el he hu it ja ms no pl pt_br pt ro ru es sv uk vi
+GLUON_SUPPORTED_LANGS := ca cs de el en es fr he hu it ja ms no pl pt-br pt ro ru sk sv tr uk vi zh-cn zh-tw
 
 GLUON_I18N_PACKAGES := $(foreach lang,$(GLUON_SUPPORTED_LANGS),+LUCI_LANG_$(lang):luci-i18n-base-$(lang))
 GLUON_I18N_CONFIG := $(foreach lang,$(GLUON_SUPPORTED_LANGS),CONFIG_LUCI_LANG_$(lang))

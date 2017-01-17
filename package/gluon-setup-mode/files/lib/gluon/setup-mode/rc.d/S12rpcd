@@ -1,0 +1,5 @@
+#!/bin/sh /etc/rc.common
+
+if [ -x /etc/init.d/rpcd ]; then
+	. /etc/init.d/rpcd
+fi

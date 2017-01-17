@@ -52,16 +52,17 @@ $Id$
   </ul>
 </p>
 <div class="cbi-page-actions">
-  <form style="display:inline">
+  <form method="post" action="<%=REQUEST_URI%>" style="display:inline">
     <input type="hidden" name="step" value="3" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
+    <input type="hidden" name="token" value="<%=token%>" />
     <input class="cbi-button cbi-button-apply" type="submit" value="<%:Continue%>" />
   </form>
-  <form style="display:inline">
+  <form method="post" action="<%=REQUEST_URI%>" style="display:inline">
     <input type="hidden" name="step" value="1" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
+    <input type="hidden" name="token" value="<%=token%>" />
     <input class="cbi-button cbi-button-reset" type="submit" value="<%:Cancel%>" />
   </form>
 </div>
 <%+footer%>
-

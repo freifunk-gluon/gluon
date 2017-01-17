@@ -41,7 +41,6 @@ end
 
 
 local f = SimpleForm("wifi", translate("WLAN"))
-f.template = "admin/expertmode"
 
 local s = f:section(SimpleSection, nil, translate(
                 "You can enable or disable your node's client and mesh network "

@@ -21,7 +21,6 @@ local wan6 = uci:get_all("network", "wan6")
 local dns = uci:get_first("gluon-wan-dnsmasq", "static")
 
 local f = SimpleForm("portconfig", translate("WAN connection"))
-f.template = "admin/expertmode"
 
 local s
 local o

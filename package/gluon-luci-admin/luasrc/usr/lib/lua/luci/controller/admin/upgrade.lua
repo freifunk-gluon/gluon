@@ -44,6 +44,12 @@ function action_upgrade()
 
 	-- Determine state
 	local step         = tonumber(luci.http.formvalue("step") or 1)
+
+        if step ~= 1 and not luci.dispatcher.test_post_security() then
+		nixio.fs.unlink(tmpfile)
+		return
+	end
+
 	local has_image    = nixio.fs.access(tmpfile)
 	local has_support  = image_supported(tmpfile)
 

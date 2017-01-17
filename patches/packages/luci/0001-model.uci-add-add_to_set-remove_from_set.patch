@@ -13,7 +13,7 @@ i.e. duplicated values will be removed. Also, order is not preserved.
 Signed-off-by: Nils Schneider <nils@nilsschneider.net>
 
 diff --git a/modules/luci-base/luasrc/model/uci.lua b/modules/luci-base/luasrc/model/uci.lua
-index 1659137742940ea0621e2b57e98232f393dc7efa..d35b9d70e27913c9da302c6975a97888774de535 100644
+index 577c6cde08eaa6e10887c97b26fed000f3289070..e77cacec5dfeb447085b13d6275edfe873beb3c4 100644
 --- a/modules/luci-base/luasrc/model/uci.lua
 +++ b/modules/luci-base/luasrc/model/uci.lua
 @@ -9,7 +9,7 @@ local table = require "table"
@@ -25,7 +25,7 @@ index 1659137742940ea0621e2b57e98232f393dc7efa..d35b9d70e27913c9da302c6975a97888
  local type, tostring, tonumber, unpack = type, tostring, tonumber, unpack
  
  -- The typical workflow for UCI is:  Get a cursor instance from the
-@@ -147,6 +147,40 @@ function Cursor.set_list(self, config, section, option, value)
+@@ -150,6 +150,40 @@ function Cursor.set_list(self, config, section, option, value)
  	return false
  end
  
@@ -67,10 +67,10 @@ index 1659137742940ea0621e2b57e98232f393dc7efa..d35b9d70e27913c9da302c6975a97888
  function Cursor._affected(self, configlist)
  	configlist = type(configlist) == "table" and configlist or {configlist}
 diff --git a/modules/luci-base/luasrc/model/uci.luadoc b/modules/luci-base/luasrc/model/uci.luadoc
-index 1c208669d17f24d2d1de99bbbf1cefe878649014..281bdb2953ee1888ee41d8d0fb1cc40e9345b3e0 100644
+index 49093c7930128f1e6de6f739662b96adcc43fe74..cfec9eea7922da551cb8d2a4f2c540d479b8ccbe 100644
 --- a/modules/luci-base/luasrc/model/uci.luadoc
 +++ b/modules/luci-base/luasrc/model/uci.luadoc
-@@ -116,6 +116,30 @@ Set given values as list.
+@@ -118,6 +118,30 @@ has the same effect as deleting the option.
  ]]
  
  ---[[

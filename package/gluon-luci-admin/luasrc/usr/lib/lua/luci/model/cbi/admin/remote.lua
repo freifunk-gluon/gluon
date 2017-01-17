@@ -18,7 +18,7 @@ local fs = require "nixio.fs"
 
 local m = Map("system", translate("SSH keys"))
 m.pageaction = false
-m.template = "admin/expertmode"
+m.template = "cbi/simpleform"
 
 if fs.access("/etc/config/dropbear") then
   local s = m:section(TypedSection, "_dummy1", nil,
@@ -58,7 +58,7 @@ end
 local m2 = Map("system", translate("Password"))
 m2.reset = false
 m2.pageaction = false
-m2.template = "admin/expertmode"
+m2.template = "cbi/simpleform"
 
 local s = m2:section(TypedSection, "_dummy2", nil, translate(
                        "Alternatively, you can set a password to access you node. Please choose a secure password you don't use anywhere else.<br /><br />"

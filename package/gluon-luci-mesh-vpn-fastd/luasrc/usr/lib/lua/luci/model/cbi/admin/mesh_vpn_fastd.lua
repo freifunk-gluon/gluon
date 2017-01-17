@@ -2,7 +2,6 @@ local uci = luci.model.uci.cursor()
 local util = luci.util
 
 local f = SimpleForm('mesh_vpn', translate('Mesh VPN'))
-f.template = "admin/expertmode"
 
 local s = f:section(SimpleSection)
 

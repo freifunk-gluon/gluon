@@ -1,0 +1,32 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Tue, 23 Aug 2016 10:58:00 +0200
+Subject: build: pass $(STAGING_DIR_HOST) to Host/Install
+
+makes it more consistent with package builds
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+Backport of LEDE 4170267f5a794eb3fa6bb1718a665e3395077434
+
+diff --git a/include/host-build.mk b/include/host-build.mk
+index 44401b866a4d637648bb093470a5e66b4a3e38fc..82d5361e30e897e18f5c9f9c57334c07bb74c490 100644
+--- a/include/host-build.mk
++++ b/include/host-build.mk
+@@ -110,7 +110,7 @@ define Host/Install/Default
+ endef
+ 
+ define Host/Install
+-  $(call Host/Install/Default)
++  $(call Host/Install/Default,$(STAGING_DIR_HOST))
+ endef
+ 
+ 
+@@ -171,7 +171,7 @@ ifndef DUMP
+ 		touch $$@
+ 
+   $(HOST_STAMP_INSTALLED): $(HOST_STAMP_BUILT) $(if $(FORCE_HOST_INSTALL),FORCE)
+-		$(call Host/Install)
++		$(call Host/Install,$(STAGING_DIR_HOST))
+ 		$(foreach hook,$(Hooks/HostInstall/Post),$(call $(hook))$(sep))
+ 		mkdir -p $$(shell dirname $$@)
+ 		touch $(HOST_STAMP_BUILT)
