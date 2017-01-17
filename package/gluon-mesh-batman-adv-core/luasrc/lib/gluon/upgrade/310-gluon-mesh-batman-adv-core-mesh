@@ -2,6 +2,7 @@
 
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
+local util = require 'gluon.util'
 
 local uci = require('luci.model.uci').cursor()
 
@@ -34,6 +35,8 @@ uci:section('network', 'interface', 'bat0',
 	}
 )
 
-uci:add_to_set('network', 'client', 'ifname', 'bat0')
+local interfaces = uci:get_list('network', 'client', 'ifname')
+util.add_to_set(interfaces, 'bat0')
+uci:set_list('network', 'client', 'ifname', interfaces)
 
 uci:save('network')

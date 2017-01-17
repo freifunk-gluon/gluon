@@ -15,6 +15,7 @@ $Id$
 local uci = luci.model.uci.cursor()
 local lutil = require 'luci.util'
 local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
@@ -127,16 +128,17 @@ function f.handle(self, state, data)
 	if sysconfig.lan_ifname then
 		uci:set("network", "mesh_lan", "auto", data.mesh_lan)
 
-		local doit
-		if data.mesh_lan == '1' then
-		doit = uci.remove_from_set
-		else
-		doit = uci.add_to_set
-		end
+		local interfaces = uci:get_list("network", "client", "ifname")
 
 		for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-		doit(uci, "network", "client", "ifname", lanif)
+			if data.mesh_lan == '1' then
+				util.remove_from_set(interfaces, lanif)
+			else
+				util.add_to_set(interfaces, lanif)
+			end
 		end
+
+		uci:set_list("network", "client", "ifname", interfaces)
 	end
 
 	uci:save("network")

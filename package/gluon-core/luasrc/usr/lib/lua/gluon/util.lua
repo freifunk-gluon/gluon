@@ -38,7 +38,31 @@ local uci = require('luci.model.uci').cursor()
 local lutil = require 'luci.util'
 local fs = require 'nixio.fs'
 
+
 module 'gluon.util'
+
+function add_to_set(t, itm)
+	for _,v in ipairs(t) do
+		if v == itm then return false end
+	end
+	table.insert(t, itm)
+	return true
+end
+
+function remove_from_set(t, itm)
+	local i = 1
+	local changed = false
+	while i <= #t do
+		if t[i] == itm then
+			table.remove(t, i)
+			changed = true
+		else
+			i = i + 1
+		end
+	end
+	return changed
+end
+
 
 function exec(...)
 	return os.execute(escape_args('', 'exec', ...))
