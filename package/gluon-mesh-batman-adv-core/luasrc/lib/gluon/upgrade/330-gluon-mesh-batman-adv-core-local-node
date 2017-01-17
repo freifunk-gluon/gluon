@@ -25,6 +25,7 @@ uci:section('network', 'interface', 'local_node',
 		reqprefix = 'no',
 		peerdns = 1,
 		sourcefilter = 0,
+		keep_ra_dnslifetime = 1,
 	}
 )
 
