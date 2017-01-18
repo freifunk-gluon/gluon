@@ -1,6 +1,7 @@
 ({
   paths: {
-    "bacon": "../Bacon"
+    "bacon": "../Bacon",
+    "eventsource": "../EventSource"
   },
   baseUrl: "js/",
   name: "../almond",
