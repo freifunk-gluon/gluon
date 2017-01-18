@@ -2,7 +2,7 @@ need_string 'site_code'
 need_string 'site_name'
 
 if need_table('opkg', nil, false) then
-  need_string('opkg.openwrt', false)
+  need_string('opkg.lede', false)
 
   function check_repo(k, _)
     -- this is not actually a uci name, but using the same naming rules here is fine

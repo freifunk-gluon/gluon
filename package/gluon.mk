@@ -5,8 +5,13 @@ include $(INCLUDE_DIR)/package.mk
 
 # Annoyingly, make's shell function replaces all newlines with spaces, so we have to do some escaping work. Yuck.
 define GluonCheckSite
-[ -z "$$GLUONDIR" ] || sed -e 's/-@/\n/g' -e 's/+@/@/g' <<'END__GLUON__CHECK__SITE' | "$$GLUONDIR"/scripts/check_site.sh
-$(shell cat $(1) | sed -ne '1h; 1!H; $$ {g; s/@/+@/g; s/\n/-@/g; p}')
+[ -z "$$IPKG_INSTROOT" ] || sed -e 's/-@/\n/g' -e 's/+@/@/g' <<'END__GLUON__CHECK__SITE' | "${TOPDIR}/staging_dir/hostpkg/bin/lua" -e 'dofile()'
+local f = assert(io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json'))
+local site_json = f:read('*a')
+f:close()
+
+site = require('cjson').decode(site_json)
+$(shell cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)' | sed -ne '1h; 1!H; $$ {g; s/@/+@/g; s/\n/-@/g; p}')
 END__GLUON__CHECK__SITE
 endef
 
@@ -41,11 +46,9 @@ define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
 	$(FIND) $(2) -type f | while read src; do \
-	if $(STAGING_DIR_HOST)/bin/lua $(STAGING_DIR_HOST)/bin/LuaSrcDiet \
-		--noopt-binequiv -o "$$$$src.o" "$$$$src"; \
-	then \
-		chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
-		mv "$$$$src.o" "$$$$src"; \
-	fi; \
+		if LuaSrcDiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
+			chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
+			mv "$$$$src.o" "$$$$src"; \
+		fi; \
 	done
 endef

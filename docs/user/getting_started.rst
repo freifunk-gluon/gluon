@@ -85,7 +85,6 @@ Next go back to the top-level Gluon directory and build Gluon::
     make update                        # Get other repositories used by Gluon
     make GLUON_TARGET=ar71xx-generic   # Build Gluon
 
-When calling make, the OpenWrt build environment is prepared/updated.
 In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
 
 ``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
@@ -95,7 +94,7 @@ You should reserve about 10GB of disk space for each `GLUON_TARGET`.
 
 The built images can be found in the directory `output/images`. Of these, the `factory`
 images are to be used when flashing from the original firmware a device came with,
-and `sysupgrade` is to upgrade from other versions of Gluon or any other OpenWrt-based
+and `sysupgrade` is to upgrade from other versions of Gluon or any other OpenWrt/LEDE-based
 system.
 
 **Note:** The images for some models are identical; to save disk space, symlinks are generated instead
@@ -111,39 +110,25 @@ There are two levels of `make clean`::
 
     make clean GLUON_TARGET=ar71xx-generic
 
-will ensure all packages are rebuilt for a single target; this is what you normally want to do after an update.
+will ensure all packages are rebuilt for a single target. This normally not
+necessary, but may fix certain kinds of build failures.
 
 ::
 
     make dirclean
 
-will clean the entire tree, so the toolchain will be rebuilt as well, which is
-not necessary in most cases, and will take a while.
-
-So in summary, to update and rebuild a Gluon build tree, the following commands should be used (repeat the
-``make clean`` and ``make`` for all targets you want to build):
-
-::
-
-    git pull
-    (cd site && git pull)
-    make update
-    make clean GLUON_TARGET=ar71xx-generic
-    make GLUON_TARGET=ar71xx-generic
-
+will clean the entire tree, so the toolchain will be rebuilt as well, which will take a while.
 
 opkg repositories
 -----------------
 
-Gluon is mostly compatible with OpenWrt, so the normal OpenWrt package repositories
-can be used for Gluon as well. It is advisable to setup a mirror or reverse proxy
-reachable over IPv6 and add it to ``site.conf`` as http://downloads.openwrt.org/ does
-not support IPv6.
+Gluon is mostly compatible with LEDE, so the normal LEDE package repositories
+can be used for Gluon as well.
 
 This is not true for kernel modules; the Gluon kernel is incompatible with the
-kernel of the default OpenWrt images. Therefore, Gluon will not only generate images,
-but also an opkg repository containing all kernel modules provided by OpenWrt/Gluon
-for the kernel of the generated images.
+kernel of the default LEDE images. Therefore, Gluon will not only generate images,
+but also an opkg repository containing all core packages provided by LEDE,
+including modules for the kernel of the generated images.
 
 Signing keys
 ............
@@ -151,17 +136,13 @@ Signing keys
 Gluon does not support HTTPS for downloading packages; fortunately, opkg deploys
 public-key cryptography to ensure package integrity.
 
-The Gluon images will contain two public keys: the official OpenWrt signing key
+The Gluon images will contain public keys from two sources: the official LEDE keyring
 (to allow installing userspace packages) and a Gluon-specific key (which is used
-to sign the generated module repository).
+to sign the generated package repository).
 
-By default, Gluon will handle the generation and handling of the keys itself.
+LEDE will handle the generation and handling of the keys itself.
 When making firmware releases based on Gluon, it might make sense to store
 the keypair, so updating the module repository later is possible.
-
-The location the keys are stored at and read from can be changed
-(see :ref:`getting-started-make-variables`). To only generate the keypair
-at the configured location without doing a full build, use ``make create-key``.
 
 .. _getting-started-make-variables:
 
@@ -217,13 +198,8 @@ GLUON_BUILDDIR
 GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
 
-GLUON_MODULEDIR
-  Path where the kernel module opkg repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/modules``.
-
-GLUON_OPKG_KEY
-  Path key file used to sign the module opkg repository. Defaults to ``$(GLUON_BULDDIR)/gluon-opkg-key``.
-
-  The private key will be stored as ``$(GLUON_OPKG_KEY)``, the public key as ``$(GLUON_OPKG_KEY).pub``.
+GLUON_PACKAGEDIR
+  Path where the opkg package repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/packages``.
 
 GLUON_OUTPUTDIR
   Path where output files will be stored. Defaults to ``output``.

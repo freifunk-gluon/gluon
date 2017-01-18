@@ -2,7 +2,10 @@
 
 set -e
 
-. "$GLUONDIR"/scripts/modules.sh
+. scripts/modules.sh
+
+
+GLUONDIR="$(pwd)"
 
 for module in $GLUON_MODULES; do
 	echo "--- Updating module '$module' ---"

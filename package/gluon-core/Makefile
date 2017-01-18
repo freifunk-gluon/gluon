@@ -1,8 +1,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
-PKG_VERSION:=3
-PKG_RELEASE:=$(GLUON_VERSION)
+
+GLUON_VERSION = $(shell git describe --always --dirty=+ 2>/dev/null || echo unknown)
+PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
+
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -20,10 +22,6 @@ define Package/gluon-core/description
 	Gluon community wifi mesh firmware framework: core
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
 define Build/Configure
 endef
 
@@ -34,11 +32,9 @@ endef
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(SED) 's/__GLUON_OPENWRT_FEEDS__/{$(GLUON_OPENWRT_FEEDS:%="%",)}/' $(1)/lib/gluon/upgrade/500-opkg
 
 	$(INSTALL_DIR) $(1)/lib/gluon
-	echo "$(GLUON_VERSION)" > $(1)/lib/gluon/gluon-version
-	echo "$(GLUON_SITE_VERSION)" > $(1)/lib/gluon/site-version
+	echo '$(GLUON_VERSION)' > $(1)/lib/gluon/gluon-version
 endef
 
 define Package/gluon-core/postinst
