@@ -30,17 +30,17 @@ export GLUON_RELEASE GLUON_ATH10K_MESH GLUON_REGION
 
 
 update: FORCE
-	@scripts/update.sh
-	@scripts/patch.sh
-	@scripts/feeds.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/feeds.sh
 
 update-patches: FORCE
-	@scripts/update.sh
-	@scripts/update-patches.sh
-	@scripts/patch.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update-patches.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/patch.sh
 
 update-feeds: FORCE
-	@scripts/feeds.sh
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/feeds.sh
 
 
 GLUON_TARGETS :=
