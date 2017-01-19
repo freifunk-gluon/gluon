@@ -5,7 +5,6 @@ local users = require 'gluon.users'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
-local lutil = require 'luci.util'
 
 
 -- The previously used user is removed, we need root privileges to use the packet_mark option
@@ -25,11 +24,11 @@ local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 local methods
 
 if site.fastd_mesh_vpn.configurable then
-  local has_null = lutil.contains(site.fastd_mesh_vpn.methods, 'null')
+  local has_null = util.contains(site.fastd_mesh_vpn.methods, 'null')
 
   local old_methods = uci:get('fastd', 'mesh_vpn', 'method')
   if old_methods then
-    has_null = lutil.contains(old_methods, 'null')
+    has_null = util.contains(old_methods, 'null')
   end
 
   methods = {}

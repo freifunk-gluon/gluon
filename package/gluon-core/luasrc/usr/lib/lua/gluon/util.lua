@@ -28,6 +28,7 @@ local os = os
 local string = string
 local tonumber = tonumber
 local ipairs = ipairs
+local pairs = pairs
 local table = table
 
 local nixio = require 'nixio'
@@ -35,11 +36,23 @@ local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
 local uci = require('simple-uci').cursor()
-local lutil = require 'luci.util'
 local fs = require 'nixio.fs'
 
 
 module 'gluon.util'
+
+function trim(str)
+	return str:gsub("^%s*(.-)%s*$", "%1")
+end
+
+function contains(table, value)
+	for k, v in pairs(table) do
+		if value == v then
+			return k
+		end
+	end
+	return false
+end
 
 function add_to_set(t, itm)
 	for _,v in ipairs(t) do
@@ -117,7 +130,7 @@ end
 local function find_phy_by_macaddr(macaddr)
 	local addr = macaddr:lower()
 	for file in fs.glob('/sys/class/ieee80211/*/macaddress') do
-		if lutil.trim(fs.readfile(file)) == addr then
+		if trim(fs.readfile(file)) == addr then
 			return file:match('([^/]+)/macaddress$')
 		end
 	end

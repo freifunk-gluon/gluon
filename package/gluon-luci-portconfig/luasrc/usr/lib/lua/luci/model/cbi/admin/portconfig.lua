@@ -13,7 +13,6 @@ $Id$
 ]]--
 
 local uci = require("simple-uci").cursor()
-local lutil = require 'luci.util'
 local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 
@@ -130,7 +129,7 @@ function f.handle(self, state, data)
 
 		local interfaces = uci:get_list("network", "client", "ifname")
 
-		for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+		for lanif in sysconfig.lan_ifname:gmatch('%S+') do
 			if data.mesh_lan == '1' then
 				util.remove_from_set(interfaces, lanif)
 			else

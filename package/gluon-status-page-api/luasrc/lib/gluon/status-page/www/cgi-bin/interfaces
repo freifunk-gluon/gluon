@@ -1,17 +1,18 @@
 #!/usr/bin/lua
 
-util = require 'luci.util'
-json = require 'luci.jsonc'
+util = require 'gluon.util'
+
 fs = require 'nixio.fs'
+json = require 'luci.jsonc'
 
 io.write("Access-Control-Allow-Origin: *\n")
 io.write("Content-type: application/json\n\n")
 
-list = util.exec('batctl if')
+f = io.popen('batctl if')
 
 interfaces = {}
 
-for _, line in ipairs(util.split(list)) do
+for line in f:lines() do
   ifname = line:match('^(.-):')
   if ifname ~= nil then
     pcall(function()
@@ -20,5 +21,7 @@ for _, line in ipairs(util.split(list)) do
     end)
   end
 end
+
+f:close()
 
 io.write(json.stringify(interfaces))

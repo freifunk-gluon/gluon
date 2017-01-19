@@ -3,7 +3,7 @@
 local sysconfig = require 'gluon.sysconfig'
 
 local fs = require 'nixio.fs'
-local util = require 'luci.util'
+local util = require 'gluon.util'
 
 
 -- Save the Gluon version in the sysconfig so we know which version we

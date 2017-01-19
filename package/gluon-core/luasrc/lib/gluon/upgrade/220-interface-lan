@@ -5,7 +5,6 @@ local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('simple-uci').cursor()
-local lutil = require 'luci.util'
 
 if not sysconfig.lan_ifname then
   os.exit(0)
@@ -27,8 +26,8 @@ if uci:get('network', 'mesh_lan', 'auto') == nil then
     local interfaces = uci:get_list('network', 'client', 'ifname')
 
     if interfaces then
-      for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-        if lutil.contains(interfaces, lanif) then
+      for lanif in sysconfig.lan_ifname:gmatch('%S+') do
+        if util.contains(interfaces, lanif) then
           enable = false
           break
         end

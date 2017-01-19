@@ -5,7 +5,6 @@ local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 
 local ip = require 'luci.ip'
-local lutil = require 'luci.util'
 local uci = require('simple-uci').cursor()
 
 
@@ -41,13 +40,13 @@ local interfaces = uci:get('network', 'client', 'ifname') or {}
 if type(interfaces) == 'string' then
 	local ifname = interfaces
 	interfaces = {}
-	for iface in ifname:gmatch("[^%s]+") do
+	for iface in ifname:gmatch('%S+') do
 		util.add_to_set(interfaces, iface)
 	end
 end
 
 if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan', 'auto') then
-	for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+	for lanif in sysconfig.lan_ifname:gmatch('%S+') do
 		util.add_to_set(interfaces, lanif)
 	end
 end

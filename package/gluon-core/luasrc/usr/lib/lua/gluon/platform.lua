@@ -1,5 +1,5 @@
 local platform_info = require 'platform_info'
-local util = require 'luci.util'
+local util = require 'gluon.util'
 
 local setmetatable = setmetatable
 
@@ -27,5 +27,3 @@ function match(target, subtarget, boards)
 
    return true
 end
-
-

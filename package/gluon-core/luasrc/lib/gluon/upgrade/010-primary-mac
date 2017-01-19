@@ -8,10 +8,10 @@ if sysconfig.primary_mac then
 end
 
 
+local util = require 'gluon.util'
 local platform = require 'gluon.platform'
 
 local fs = require 'nixio.fs'
-local util = require 'luci.util'
 
 
 local try_files = {
