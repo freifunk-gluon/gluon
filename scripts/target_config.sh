@@ -28,6 +28,8 @@ emit() {
 	[ "${output}" ] || return 0
 	want_device "${output}" || return 0
 
+	profile_packages="${profile_packages} $(site_packages "$output")"
+
 	for package in $profile_packages; do
 		[ "${package:0:1}" = '-' ] || echo "CONFIG_PACKAGE_${package}=m"
 	done
@@ -52,7 +54,7 @@ device() {
 		profile="$2"
 	fi
 
-	profile_packages="${default_packages} $(site_packages "$output")"
+	profile_packages="${default_packages}"
 }
 
 packages() {
