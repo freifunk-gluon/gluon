@@ -12,7 +12,7 @@ define Package/gluon-respondd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Provides node information to the network
-  DEPENDS:=+gluon-core +libplatforminfo +libgluonutil +libuci +respondd
+  DEPENDS:=+gluon-core +libplatforminfo +libgluonutil +libuci +ubus +respondd
 endef
 
 define Build/Prepare

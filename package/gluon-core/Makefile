@@ -15,7 +15,7 @@ define Package/gluon-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Base files of Gluon
-  DEPENDS:=+gluon-site +libgluonutil +lua-platform-info +lua-simple-uci +lua-hash +luci-base +luci-lib-jsonc +odhcp6c +firewall +pretty-hostname
+  DEPENDS:=+gluon-site +libgluonutil +lua-platform-info +lua-simple-uci +lua-hash +luci-lib-jsonc +luci-lib-nixio +odhcp6c +firewall +pretty-hostname
 endef
 
 define Package/gluon-core/description

@@ -15,7 +15,7 @@ define Package/gluon-setup-mode
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Setup mode
-  DEPENDS:=+gluon-core +uhttpd +dnsmasq
+  DEPENDS:=+gluon-core +luci-base +uhttpd +dnsmasq
   PROVIDES:=gluon-setup-mode-virtual
 endef
 
