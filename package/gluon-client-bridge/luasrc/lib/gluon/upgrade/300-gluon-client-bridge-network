@@ -4,15 +4,14 @@ local site = require 'gluon.site_config'
 local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 
-local ip = require 'luci.ip'
 local uci = require('simple-uci').cursor()
 
 
-local ip4, netmask, ip6
+local ip4, ip6
 
 if site.next_node.ip4 then
-	ip4 = site.next_node.ip4
-	netmask = ip.IPv4(site.prefix4):mask():string()
+	local plen = site.prefix4:match('/%d+$')
+	ip4 = site.next_node.ip4 .. plen
 end
 
 if site.next_node.ip6 then
@@ -25,7 +24,6 @@ uci:section('network', 'interface', 'client',
 		proto = 'static',
 		macaddr = site.next_node.mac,
 		ipaddr = ip4,
-		netmask = netmask,
 		ip6addr = ip6,
 	}
 )
@@ -33,6 +31,7 @@ uci:section('network', 'interface', 'client',
 uci:delete('network', 'client', 'reqprefix')
 uci:delete('network', 'client', 'peerdns')
 uci:delete('network', 'client', 'sourcefilter')
+uci:delete('network', 'client', 'netmask')
 
 
 local interfaces = uci:get('network', 'client', 'ifname') or {}
