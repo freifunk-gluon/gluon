@@ -24,35 +24,37 @@ end
 
 local prefix = subst['%%n'] .. '_'
 
-local distfeeds = {}
-for line in io.lines('/etc/opkg/distfeeds.conf') do
-	table.insert(distfeeds, line)
-end
-
-local f = io.open('/etc/opkg/distfeeds.conf', 'w')
-
-for _, line in ipairs(distfeeds) do
-	local name = line:match('^src/gz%s' .. prefix .. '(%S+)%s')
-	if name == 'core' then
-		f:write('# ' .. line .. '\n')
-	elseif name and site.opkg and site.opkg.lede then
-		f:write(string.format('src/gz %s %s/%s\n', prefix .. name, replace_patterns(site.opkg.lede), name))
-	else
-		f:write(line .. '\n')
+if fs.access('/etc/opkg/distfeeds.conf') then
+	local distfeeds = {}
+	for line in io.lines('/etc/opkg/distfeeds.conf') do
+		table.insert(distfeeds, line)
 	end
-end
 
-f:close()
+	local f = io.open('/etc/opkg/distfeeds.conf', 'w')
 
-if site.opkg and site.opkg.extra and next(site.opkg.extra) then
-	local f = io.open('/etc/opkg/gluon.conf', 'w')
-
-	for k, v in pairs(site.opkg.extra) do
-		f:write(string.format('src/gz %s %s\n', k, replace_patterns(v)))
+	for _, line in ipairs(distfeeds) do
+		local name = line:match('^src/gz%s' .. prefix .. '(%S+)%s')
+		if name == 'core' then
+			f:write('# ' .. line .. '\n')
+		elseif name and site.opkg and site.opkg.lede then
+			f:write(string.format('src/gz %s %s/%s\n', prefix .. name, replace_patterns(site.opkg.lede), name))
+		else
+			f:write(line .. '\n')
+		end
 	end
 
 	f:close()
 
-else
-	os.remove('/etc/opkg/gluon.conf')
+	if site.opkg and site.opkg.extra and next(site.opkg.extra) then
+		local f = io.open('/etc/opkg/gluon.conf', 'w')
+
+		for k, v in pairs(site.opkg.extra) do
+			f:write(string.format('src/gz %s %s\n', k, replace_patterns(v)))
+		end
+
+		f:close()
+
+	else
+		os.remove('/etc/opkg/gluon.conf')
+	end
 end
