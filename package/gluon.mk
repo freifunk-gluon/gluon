@@ -1,5 +1,5 @@
 # Dependencies for LuaSrcDiet
-PKG_BUILD_DEPENDS += luci-base/host lua/host
+PKG_BUILD_DEPENDS += luci-base/host
 
 include $(INCLUDE_DIR)/package.mk
 
