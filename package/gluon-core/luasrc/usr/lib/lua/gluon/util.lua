@@ -34,7 +34,7 @@ local nixio = require 'nixio'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 local lutil = require 'luci.util'
 local fs = require 'nixio.fs'
 

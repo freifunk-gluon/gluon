@@ -1,6 +1,6 @@
 local cbi = require "luci.cbi"
 local i18n = require "luci.i18n"
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 
 local M = {}
 

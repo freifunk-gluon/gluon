@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 -- Allow incoming respondd replies to queries on WAN
 -- If the query was via multicast, the response isn't matched by --state RELATED

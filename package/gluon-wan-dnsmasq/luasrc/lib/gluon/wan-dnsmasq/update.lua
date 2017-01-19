@@ -5,7 +5,7 @@ local RESOLV_CONF = RESOLV_CONF_DIR .. '/resolv.conf'
 
 
 local ubus = require('ubus').connect()
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 local fs = require 'nixio.fs'
 
 

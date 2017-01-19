@@ -7,7 +7,7 @@ local sysconfig = require 'gluon.sysconfig'
 if not sysconfig.gluon_version then
   local site = require 'gluon.site_config'
   local util = require 'gluon.util'
-  local uci = require('luci.model.uci').cursor()
+  local uci = require('simple-uci').cursor()
 
   local system = uci:get_first('system', 'system')
 

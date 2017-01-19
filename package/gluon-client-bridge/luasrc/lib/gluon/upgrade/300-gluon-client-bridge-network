@@ -6,7 +6,7 @@ local util = require 'gluon.util'
 
 local ip = require 'luci.ip'
 local lutil = require 'luci.util'
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 
 local ip4, netmask, ip6
@@ -58,15 +58,15 @@ uci:save('network')
 
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
-uci:set('dhcp', dnsmasq, 'boguspriv', 0)
-uci:set('dhcp', dnsmasq, 'localise_queries', 0)
-uci:set('dhcp', dnsmasq, 'rebind_protection', 0)
+uci:set('dhcp', dnsmasq, 'boguspriv', false)
+uci:set('dhcp', dnsmasq, 'localise_queries', false)
+uci:set('dhcp', dnsmasq, 'rebind_protection', false)
 
 uci:delete('dhcp', 'client')
 uci:section('dhcp', 'dhcp', 'client',
 	{
 		interface = 'client',
-		ignore = 1,
+		ignore = true,
 	}
 )
 

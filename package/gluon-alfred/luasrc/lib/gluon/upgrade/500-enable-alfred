@@ -1,18 +1,14 @@
 #!/usr/bin/lua
 
-local uci = require 'luci.model.uci'
-local c = uci.cursor()
+local uci = require('simple-uci').cursor()
 
+uci:delete('alfred', 'alfred')
+uci:section('alfred', 'alfred', 'alfred', {
+	interface = 'local-node',
+	mode = 'slave',
+	batmanif = 'bat0',
+	start_vis = true,
+	run_facters = false,
+})
 
-c:delete('alfred', 'alfred')
-c:section('alfred', 'alfred', 'alfred',
-	  {
-		  interface = 'local-node',
-		  mode = 'slave',
-		  batmanif = 'bat0',
-		  start_vis = '1',
-		  run_facters = '0',
-	  }
-)
-
-c:save('alfred')
+uci:save('alfred')

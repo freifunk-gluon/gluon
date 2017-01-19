@@ -1,7 +1,7 @@
 local f, s, o
 local site = require 'gluon.site_config'
 local i18n = require "luci.i18n"
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 local config = 'gluon-node-info'
 
 -- where to read the configuration from

@@ -1,4 +1,4 @@
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 local fs = require 'nixio.fs'
 local iwinfo = require 'iwinfo'
 

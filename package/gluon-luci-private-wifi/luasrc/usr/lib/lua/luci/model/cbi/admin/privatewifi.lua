@@ -1,4 +1,4 @@
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 local util = require 'gluon.util'
 
 local f, s, o, ssid
@@ -49,12 +49,12 @@ function f.handle(self, state, data)
                         ssid       = data.ssid,
                         key        = data.key,
                         macaddr    = macaddr,
-                        disabled   = 0,
+                        disabled   = false,
                       }
           )
         else
           -- disable WAN wifi-iface
-          uci:set('wireless', name, "disabled", 1)
+          uci:set('wireless', name, "disabled", true)
         end
       end
     )

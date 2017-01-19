@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site_config'
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 local config = 'gluon-node-info'
 local role = uci:get(config, uci:get_first(config, 'system'), 'role')

@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local util = require 'gluon.util'
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 
 -- fix up potentially duplicate MAC addresses (for meshing)

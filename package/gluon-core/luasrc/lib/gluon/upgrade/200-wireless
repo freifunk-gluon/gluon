@@ -4,7 +4,7 @@ local util = require 'gluon.util'
 local site = require 'gluon.site_config'
 local sysconfig = require 'gluon.sysconfig'
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 -- Initial
 if not sysconfig.gluon_version then
@@ -22,6 +22,8 @@ end
 local function is_disabled(name)
   if uci:get('wireless', name) then
     return uci:get_bool('wireless', name, 'disabled')
+  else
+    return false
   end
 end
 
@@ -82,7 +84,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
       macaddr = macaddr,
       mcast_rate = config.mcast_rate,
       ifname = suffix and 'ibss' .. suffix,
-      disabled = disabled and 1 or 0,
+      disabled = disabled,
     }
   )
 end
@@ -116,11 +118,11 @@ local function configure_mesh(config, radio, index, suffix, disabled)
       network = name,
       mode = 'mesh',
       mesh_id = config.id,
-      mesh_fwding = 0,
+      mesh_fwding = false,
       macaddr = macaddr,
       mcast_rate = config.mcast_rate,
       ifname = suffix and 'mesh' .. suffix,
-      disabled = disabled and 1 or 0,
+      disabled = disabled,
       macfilter = macfilter,
       maclist = maclist,
     }

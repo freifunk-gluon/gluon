@@ -4,7 +4,7 @@ local sysconfig = require 'gluon.sysconfig'
 local gluon_util = require 'gluon.util'
 local platform = require 'gluon.platform'
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 
 if not (sysconfig.lan_ifname or sysconfig.wan_ifname) then

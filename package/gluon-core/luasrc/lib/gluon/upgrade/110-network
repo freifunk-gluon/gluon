@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 local sysctl = require 'gluon.sysctl'
 local sysconfig = require 'gluon.sysconfig'
 
@@ -9,9 +9,9 @@ uci:section('network', 'interface', 'wan',
 	    {
 	      ifname = sysconfig.wan_ifname,
 	      type = 'bridge',
-	      multicast_querier = 0,
-	      peerdns = 0,
-	      auto = 1,
+	      multicast_querier = false,
+	      peerdns = false,
+	      auto = true,
 	    }
 )
 uci:delete('network', 'wan', 'igmp_snooping')
@@ -24,9 +24,9 @@ end
 uci:section('network', 'interface', 'wan6',
 	    {
 	      ifname = 'br-wan',
-	      peerdns = 0,
+	      peerdns = false,
 	      ip6table = 1,
-	      sourcefilter = 0,
+	      sourcefilter = false,
 	    }
 )
 

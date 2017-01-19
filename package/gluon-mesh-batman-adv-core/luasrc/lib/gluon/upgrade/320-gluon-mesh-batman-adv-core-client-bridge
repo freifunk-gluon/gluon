@@ -3,7 +3,7 @@
 local sysconfig = require 'gluon.sysconfig'
 local sysctl = require 'gluon.sysctl'
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 uci:section('network', 'interface', 'client',
 	{
@@ -18,7 +18,7 @@ uci:delete('network', 'client_lan')
 if sysconfig.lan_ifname then
 	uci:section('network', 'interface', 'client_lan',
 		{
-			unicast_flood = 0,
+			unicast_flood = false,
 		}
 	)
 	uci:set('network', 'client_lan', 'ifname', sysconfig.lan_ifname)

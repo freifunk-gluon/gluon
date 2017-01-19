@@ -1,6 +1,6 @@
 <%-
   local fs = require 'nixio.fs'
-  local uci = require('luci.model.uci').cursor()
+  local uci = require('simple-uci').cursor()
   local util = require 'luci.util'
   local i18n = require 'luci.i18n'
   local pretty_hostname = require 'pretty_hostname'
@@ -31,8 +31,8 @@
     pubkey = 'n/a',
   }
 
-  local meshvpn_enabled = uci:get("fastd", "mesh_vpn", "enabled", "0")
-  if meshvpn_enabled == "1" then
+  local meshvpn_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+  if meshvpn_enabled then
     local pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
     if pubkey ~= '' then
       values.pubkey = pubkey

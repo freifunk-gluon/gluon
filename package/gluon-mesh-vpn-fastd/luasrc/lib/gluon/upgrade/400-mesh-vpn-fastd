@@ -4,7 +4,7 @@ local site = require 'gluon.site_config'
 local users = require 'gluon.users'
 local util = require 'gluon.util'
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 local lutil = require 'luci.util'
 
 
@@ -17,7 +17,7 @@ users.add_group('gluon-fastd', 800)
 
 local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
 if not enabled then
-  enabled = site.fastd_mesh_vpn.enabled and 1 or 0
+  enabled = site.fastd_mesh_vpn.enabled or false
 end
 
 local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
@@ -56,7 +56,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,
-		  secure_handshakes = 1,
+		  secure_handshakes = true,
 		  method = methods,
 		  packet_mark = 1,
 		  status_socket = '/var/run/fastd.mesh_vpn.socket',
@@ -70,7 +70,7 @@ local add_groups
 local function add_peer(group, name, config)
   uci:section('fastd', 'peer', group .. '_peer_' .. name,
     {
-      enabled = 1,
+      enabled = true,
       net = 'mesh_vpn',
       group = group,
       key = config.key,
@@ -90,7 +90,7 @@ local function add_group(name, config, parent)
 
   uci:section('fastd', 'peer_group', name,
     {
-      enabled = 1,
+      enabled = true,
       net = 'mesh_vpn',
       parent = parent,
       peer_limit = config.limit,
@@ -125,8 +125,8 @@ uci:section('network', 'interface', 'mesh_vpn',
   {
     ifname = 'mesh-vpn',
     proto = 'gluon_mesh',
-    transitive = 1,
-    fixed_mtu = 1,
+    transitive = true,
+    fixed_mtu = true,
     macaddr = util.generate_mac(7),
   }
 )

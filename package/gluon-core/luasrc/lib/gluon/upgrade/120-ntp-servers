@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site_config'
-local uci = require 'luci.model.uci'
+local uci = require 'simple-uci'
 
 if not site.ntp_servers or #site.ntp_servers == 0 then
 	os.exit(0)

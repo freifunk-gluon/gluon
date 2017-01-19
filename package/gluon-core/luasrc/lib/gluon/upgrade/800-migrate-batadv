@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 local function migrate_iface(iface)
 	if iface.proto ~= 'batadv' or iface.mesh ~= 'bat0' then
@@ -10,7 +10,7 @@ local function migrate_iface(iface)
 	local s = iface['.name']
 
 	uci:set('network', s, 'proto', 'gluon_mesh')
-	uci:set('network', s, 'fixed_mtu', '1')
+	uci:set('network', s, 'fixed_mtu', true)
 
 	if iface.mesh_no_rebroadcast then
 		uci:set('network', s, 'transitive', iface.mesh_no_rebroadcast)

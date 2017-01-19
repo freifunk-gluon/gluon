@@ -1,5 +1,6 @@
 #!/usr/bin/lua
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
+require 'luci.util'
 
 local sname = uci:get_first('gluon-node-info', 'location')
 if sname then

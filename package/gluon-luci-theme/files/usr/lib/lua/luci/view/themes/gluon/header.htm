@@ -16,7 +16,7 @@ $Id$
 	local sys  = require "luci.sys"
 	local http = require "luci.http"
 	local disp = require "luci.dispatcher"
-	local uci  = require("luci.model.uci").cursor()
+	local uci  = require("simple-uci").cursor()
 	local fs   = require "nixio.fs"
 	local gluon_luci = require "gluon.luci"
 	local pretty_hostname = require "pretty_hostname"
@@ -141,7 +141,7 @@ $Id$
 <%
 if tree.nodes[category] and tree.nodes[category].ucidata then
 	local ucic = 0
-	for i, j in pairs(require("luci.model.uci").cursor():changes()) do
+	for i, j in pairs(require("simple-uci").cursor():changes()) do
 		for k, l in pairs(j) do
 			for m, n in pairs(l) do
 				ucic = ucic + 1;

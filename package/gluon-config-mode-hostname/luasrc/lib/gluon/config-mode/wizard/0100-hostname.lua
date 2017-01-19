@@ -1,7 +1,7 @@
 local cbi = require "luci.cbi"
 local i18n = require "luci.i18n"
 local pretty_hostname = require "pretty_hostname"
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 
 local M = {}
 

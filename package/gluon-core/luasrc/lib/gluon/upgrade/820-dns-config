@@ -1,11 +1,11 @@
 #!/usr/bin/lua
 local site = require 'gluon.site_config'
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 dnsmasq=uci:get_first("dhcp", "dnsmasq")
 
-uci:set('dhcp', dnsmasq, 'localise_queries', '1')
-uci:set('dhcp', dnsmasq, 'localservice', '0')
+uci:set('dhcp', dnsmasq, 'localise_queries', true)
+uci:set('dhcp', dnsmasq, 'localservice', false)
 
 if site.dns and site.dns.servers then
 	uci:set('dhcp', dnsmasq, 'server', site.dns.servers)

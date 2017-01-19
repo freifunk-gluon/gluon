@@ -1,4 +1,4 @@
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 local util = luci.util
 
 local f = SimpleForm('mesh_vpn', translate('Mesh VPN'))

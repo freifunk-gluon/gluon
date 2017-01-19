@@ -4,7 +4,7 @@ local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
 local util = require 'gluon.util'
 
-local uci = require('luci.model.uci').cursor()
+local uci = require('simple-uci').cursor()
 
 
 local gw_sel_class
@@ -19,7 +19,7 @@ uci:section('batman-adv', 'mesh', 'bat0',
 		gw_mode = 'client',
 		gw_sel_class = gw_sel_class,
 		hop_penalty = 15,
-		multicast_mode = 0,
+		multicast_mode = false,
 	}
 )
 uci:save('batman-adv')
@@ -31,7 +31,7 @@ uci:section('network', 'interface', 'bat0',
 		proto = 'none',
 		macaddr = sysconfig.primary_mac,
 		multicast_router = 2,
-		learning = 0,
+		learning = false,
 	}
 )
 

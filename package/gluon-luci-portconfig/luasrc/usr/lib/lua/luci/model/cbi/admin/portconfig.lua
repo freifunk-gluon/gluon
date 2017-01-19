@@ -12,7 +12,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 $Id$
 ]]--
 
-local uci = luci.model.uci.cursor()
+local uci = require("simple-uci").cursor()
 local lutil = require 'luci.util'
 local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
