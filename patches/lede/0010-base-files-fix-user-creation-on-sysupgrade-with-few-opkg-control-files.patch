@@ -1,0 +1,26 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 24 Jan 2017 18:55:13 +0100
+Subject: base-files: fix user creation on sysupgrade with few opkg control files
+
+If only a single opkg control file exists (which can happen with
+CONFIG_CLEAN_IPKG), grep would not print the file name by default. Instead
+of forcing it using -H, we just switch to -l (print only file names) and
+get rid of the cut.
+
+Add -s to suppress an error message when no control files exist.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/base-files/files/etc/uci-defaults/13_fix_group_user b/package/base-files/files/etc/uci-defaults/13_fix_group_user
+index deade5bbd1876cd3f009d4c0b18be258c3bf36d1..e6dae2419f65a830ebd039fbbfa0fd22d1a2d0a1 100644
+--- a/package/base-files/files/etc/uci-defaults/13_fix_group_user
++++ b/package/base-files/files/etc/uci-defaults/13_fix_group_user
+@@ -2,7 +2,7 @@
+ 
+ . /lib/functions.sh
+ 
+-for file in `grep Require-User /usr/lib/opkg/info/*.control | cut -d: -f1`; do
++for file in `grep -sl Require-User /usr/lib/opkg/info/*.control`; do
+ 	file="${file##*/}"
+ 	file="${file%.control}"
+ 	add_group_and_user "${file}"
