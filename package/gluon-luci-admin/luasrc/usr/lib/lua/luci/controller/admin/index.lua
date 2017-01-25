@@ -34,6 +34,6 @@ function index()
 	page.sysauth_authenticator = function() return "root" end
 	page.index = true
 
-	entry({"admin", "index"}, cbi("admin/info"), _("Information"), 1).ignoreindex = true
+	entry({"admin", "index"}, template("admin/info"), _("Information"), 1)
 	entry({"admin", "remote"}, cbi("admin/remote"), _("Remote access"), 10)
 end
