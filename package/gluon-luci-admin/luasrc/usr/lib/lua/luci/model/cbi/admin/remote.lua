@@ -84,6 +84,4 @@ function f_password:handle(state, data)
 	end
 end
 
-local c = Compound(f_keys, f_password)
-c.pageaction = false
-return c
+return f_keys, f_password
