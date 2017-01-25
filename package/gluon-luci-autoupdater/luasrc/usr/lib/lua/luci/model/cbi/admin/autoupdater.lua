@@ -12,18 +12,35 @@ You may obtain a copy of the License at
 $Id$
 ]]--
 
-m = Map("autoupdater", translate("Automatic updates"))
-m.pageaction = false
-m.template = "cbi/simpleform"
+local uci = require("simple-uci").cursor()
+local autoupdater = uci:get_first("autoupdater", "autoupdater")
 
-s = m:section(TypedSection, "autoupdater", nil)
-s.addremove = false
-s.anonymous = true
+local f = SimpleForm("autoupdater", translate("Automatic updates"))
+local s = f:section(SimpleSection, nil, nil)
+local o
 
-s:option(Flag, "enabled", translate("Enable"))
-f = s:option(ListValue, "branch", translate("Branch"))
+o = s:option(Flag, "enabled", translate("Enable"))
+o.default = uci:get_bool("autoupdater", autoupdater, "enabled") and o.enabled or o.disabled
+o.rmempty = false
 
-uci.cursor():foreach("autoupdater", "branch", function (section) f:value(section[".name"]) end)
+o = s:option(ListValue, "branch", translate("Branch"))
+uci:foreach("autoupdater", "branch",
+	function (section)
+		o:value(section[".name"])
+	end
+)
+o.default = uci:get("autoupdater", autoupdater, "branch")
 
-return m
+function f.handle(self, state, data)
+	if state ~= FORM_VALID then
+		return
+	end
 
+	uci:set("autoupdater", autoupdater, "enabled", data.enabled)
+	uci:set("autoupdater", autoupdater, "branch", data.branch)
+
+	uci:save("autoupdater")
+	uci:commit("autoupdater")
+end
+
+return f
