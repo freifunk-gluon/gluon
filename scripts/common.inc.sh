@@ -31,36 +31,32 @@ sysupgrade() {
 }
 
 
-if [ "$DEVICES" ]; then
-	has_devices=1
-else
-	has_devices=
-fi
+unknown_devices="$DEVICES"
 
 want_device() {
-	[ "$has_devices" ] || return 0
+	[ "$DEVICES" ] || return 0
 
 	local new_devices=''
-	local ret=1
 
-	for device in $DEVICES; do
-		if [ "$device" = "$1" ]; then
-			ret=0
-		else
+	for device in $unknown_devices; do
+		if [ "$device" != "$1" ]; then
 			new_devices="${new_devices:+${new_devices} }$device"
 		fi
 	done
+	unknown_devices=$new_devices
 
-	DEVICES=$new_devices
+	for device in $DEVICES; do
+		if [ "$device" = "$1" ]; then
+			return 0
+		fi
+	done
 
-	return $ret
+	return 1
 }
 
 check_devices() {
-	[ "$has_devices" ] || return 0
-
-	if [ "$DEVICES" ]; then
-		echo "Error: unknown devices given: $DEVICES" >&2
+	if [ "$unknown_devices" ]; then
+		echo "Error: unknown devices given: ${unknown_devices}" >&2
 		exit 1
 	fi
 }

@@ -17,4 +17,4 @@ fi
 rm -f "lede/bin/targets/${LEDE_BINDIR}"/* 2>/dev/null || true
 
 # Full builds will output the "packages" directory, so clean up first
-[ "$has_devices" ] || rm -rf "lede/bin/targets/${LEDE_BINDIR}/packages"
+[ "$DEVICES" ] || rm -rf "lede/bin/targets/${LEDE_BINDIR}/packages"

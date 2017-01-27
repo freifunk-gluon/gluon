@@ -67,6 +67,16 @@ device() {
 	done
 }
 
+factory_image() {
+	output="$1"
+	want_device "${output}" || return 0
+}
+
+sysupgrade_image() {
+	output="$1"
+	want_device "${output}" || return 0
+}
+
 packages() {
 	if [ "${output}" ]; then
 		want_device "${output}" || return 0

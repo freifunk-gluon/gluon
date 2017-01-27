@@ -149,7 +149,7 @@ sysupgrade() {
 . targets/"$1"; copy
 
 # Copy opkg repo
-if [ -z "$has_devices" ]; then
+if [ -z "$DEVICES" ]; then
 	rm -f "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR"/*
 	rmdir -p "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR" 2>/dev/null || true
 	mkdir -p "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${LEDE_BINDIR}"
