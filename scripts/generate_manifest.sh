@@ -30,7 +30,7 @@ generate() {
 		generate_line "$output" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-sysupgrade${sysupgrade_ext}"
 
 		for alias in $aliases; do
-			generate_line "$output" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-sysupgrade${sysupgrade_ext}"
+			generate_line "$alias" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-sysupgrade${sysupgrade_ext}"
 		done
 	fi
 }
