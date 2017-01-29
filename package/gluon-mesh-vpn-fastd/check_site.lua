@@ -1,4 +1,5 @@
-need_string_array('fastd_mesh_vpn.methods')
+local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac', 'null+salsa2012+umac', 'null'}
+need_array_of('fastd_mesh_vpn.methods', fastd_methods)
 need_number('fastd_mesh_vpn.mtu')
 need_boolean('fastd_mesh_vpn.enabled', false)
 need_boolean('fastd_mesh_vpn.configurable', false)
@@ -11,7 +12,7 @@ local function check_peer(prefix)
 
     local table = string.format('%s[%q].', prefix, k)
 
-    need_string(table .. 'key')
+    need_string_match(table .. 'key', '^%x+$')
     need_string_array(table .. 'remotes')
   end
 end
