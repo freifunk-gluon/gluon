@@ -51,10 +51,27 @@
 #include <linux/if_addr.h>
 #include <linux/sockios.h>
 
+#include "batadv-netlink.h"
 
 
 #define _STRINGIFY(s) #s
 #define STRINGIFY(s) _STRINGIFY(s)
+
+struct neigh_netlink_opts {
+	struct json_object *interfaces;
+	struct batadv_nlquery_opts query_opts;
+};
+
+struct gw_netlink_opts {
+	struct json_object *obj;
+	struct batadv_nlquery_opts query_opts;
+};
+
+struct clients_netlink_opts {
+	size_t total;
+	size_t wifi;
+	struct batadv_nlquery_opts query_opts;
+};
 
 
 static struct json_object * get_addresses(void) {
@@ -85,7 +102,7 @@ static struct json_object * get_addresses(void) {
 			   &flags, ifname) != 18)
 			continue;
 
-		if (strcmp(ifname, "br-client"))
+		if (strcmp(ifname, "local-node"))
 			continue;
 
 		if (flags & (IFA_F_TENTATIVE|IFA_F_DEPRECATED))
@@ -121,9 +138,31 @@ static void mesh_add_subif(const char *ifname, struct json_object *wireless,
 			   struct json_object *tunnel, struct json_object *other) {
 	struct json_object *address = gluonutil_wrap_and_free_string(gluonutil_get_interface_address(ifname));
 
-	if (interface_file_exists(ifname, "wireless"))
+	char lowername[IFNAMSIZ];
+	strncpy(lowername, ifname, sizeof(lowername)-1);
+	lowername[sizeof(lowername)-1] = 0;
+
+	const char *format = "/sys/class/net/%s/lower_*";
+	char pattern[strlen(format) + IFNAMSIZ];
+
+	/* In case of VLAN and bridge interfaces, we want the lower interface
+	 * to determine the interface type (but not for the interface address) */
+	while (true) {
+		snprintf(pattern, sizeof(pattern), format, lowername);
+		size_t pattern_len = strlen(pattern);
+
+		glob_t lower;
+		if (glob(pattern, GLOB_NOSORT, NULL, &lower))
+			break;
+
+		strncpy(lowername, lower.gl_pathv[0] + pattern_len - 1, sizeof(lowername)-1);
+
+		globfree(&lower);
+	}
+
+	if (interface_file_exists(lowername, "wireless"))
 		json_object_array_add(wireless, address);
-	else if (interface_file_exists(ifname, "tun_flags"))
+	else if (interface_file_exists(lowername, "tun_flags"))
 		json_object_array_add(tunnel, address);
 	else
 		json_object_array_add(other, address);
@@ -201,29 +240,70 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 	return ret;
 }
 
+static const enum batadv_nl_attrs gateways_mandatory[] = {
+	BATADV_ATTR_ORIG_ADDRESS,
+	BATADV_ATTR_ROUTER,
+};
+
+static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	uint8_t *orig;
+	uint8_t *router;
+	struct gw_netlink_opts *opts;
+	char addr[18];
+
+	opts = container_of(query_opts, struct gw_netlink_opts, query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_GATEWAYS)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_netlink_policy))
+		return NL_OK;
+
+	if (batadv_nl_missing_attrs(attrs, gateways_mandatory,
+				    ARRAY_SIZE(gateways_mandatory)))
+		return NL_OK;
+
+	if (!attrs[BATADV_ATTR_FLAG_BEST])
+		return NL_OK;
+
+	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	router = nla_data(attrs[BATADV_ATTR_ROUTER]);
+
+	sprintf(addr, "%02x:%02x:%02x:%02x:%02x:%02x",
+		orig[0], orig[1], orig[2], orig[3], orig[4], orig[5]);
+
+	json_object_object_add(opts->obj, "gateway", json_object_new_string(addr));
+
+	sprintf(addr, "%02x:%02x:%02x:%02x:%02x:%02x",
+		router[0], router[1], router[2], router[3], router[4], router[5]);
+
+	json_object_object_add(opts->obj, "gateway_nexthop", json_object_new_string(addr));
+
+	return NL_STOP;
+}
 
 static void add_gateway(struct json_object *obj) {
-	FILE *f = fopen("/sys/kernel/debug/batman_adv/bat0/gateways", "r");
-	if (!f)
-		return;
+	struct gw_netlink_opts opts = {
+		.obj = obj,
+		.query_opts = {
+			.err = 0,
+		},
+	};
 
-	char *line = NULL;
-	size_t len = 0;
-
-	while (getline(&line, &len, f) >= 0) {
-		char addr[18];
-		char nexthop[18];
-
-		if (sscanf(line, "=> %17[0-9a-fA-F:] ( %*u) %17[0-9a-fA-F:]", addr, nexthop) != 2)
-			continue;
-
-		json_object_object_add(obj, "gateway", json_object_new_string(addr));
-		json_object_object_add(obj, "gateway_nexthop", json_object_new_string(nexthop));
-		break;
-	}
-
-	free(line);
-	fclose(f);
+	batadv_nl_query_common("bat0", BATADV_CMD_GET_GATEWAYS,
+			       parse_gw_list_netlink_cb, NLM_F_DUMP,
+			       &opts.query_opts);
 }
 
 static inline bool ethtool_ioctl(int fd, struct ifreq *ifr, void *data) {
@@ -399,39 +479,69 @@ static void count_stations(size_t *wifi24, size_t *wifi5) {
 	uci_free_context(ctx);
 }
 
+static const enum batadv_nl_attrs clients_mandatory[] = {
+	BATADV_ATTR_TT_FLAGS,
+};
+
+static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	struct clients_netlink_opts *opts;
+	uint32_t flags;
+
+	opts = container_of(query_opts, struct clients_netlink_opts, query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_TRANSTABLE_LOCAL)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_netlink_policy))
+		return NL_OK;
+
+	if (batadv_nl_missing_attrs(attrs, clients_mandatory,
+				    ARRAY_SIZE(clients_mandatory)))
+		return NL_OK;
+
+	flags = nla_get_u32(attrs[BATADV_ATTR_TT_FLAGS]);
+
+	if (flags & BATADV_TT_CLIENT_NOPURGE)
+		return NL_OK;
+
+	if (flags & BATADV_TT_CLIENT_WIFI)
+		opts->wifi++;
+
+	opts->total++;
+
+	return NL_OK;
+}
+
 static struct json_object * get_clients(void) {
-	size_t total = 0, wifi = 0, wifi24 = 0, wifi5 = 0;
+	size_t wifi24 = 0, wifi5 = 0;
+	struct clients_netlink_opts opts = {
+		.total = 0,
+		.wifi = 0,
+		.query_opts = {
+			.err = 0,
+		},
+	};
 
-	FILE *f = fopen("/sys/kernel/debug/batman_adv/bat0/transtable_local", "r");
-	if (!f)
-		return NULL;
-
-	char *line = NULL;
-	size_t len = 0;
-
-	while (getline(&line, &len, f) >= 0) {
-		char flags[16];
-
-		if (sscanf(line, " * %*[^[] [%15[^]]]", flags) != 1)
-			continue;
-
-		if (strchr(flags, 'P'))
-			continue;
-
-		total++;
-
-		if (strchr(flags, 'W'))
-			wifi++;
-	}
-
-	free(line);
-	fclose(f);
+	batadv_nl_query_common("bat0", BATADV_CMD_GET_TRANSTABLE_LOCAL,
+			       parse_clients_list_netlink_cb, NLM_F_DUMP,
+			       &opts.query_opts);
 
 	count_stations(&wifi24, &wifi5);
 
 	struct json_object *ret = json_object_new_object();
-	json_object_object_add(ret, "total", json_object_new_int(total));
-	json_object_object_add(ret, "wifi", json_object_new_int(wifi));
+	json_object_object_add(ret, "total", json_object_new_int(opts.total));
+	json_object_object_add(ret, "wifi", json_object_new_int(opts.wifi));
 	json_object_object_add(ret, "wifi24", json_object_new_int(wifi24));
 	json_object_object_add(ret, "wifi5", json_object_new_int(wifi5));
 	return ret;
@@ -470,49 +580,104 @@ static struct json_object * ifnames2addrs(struct json_object *interfaces) {
 	return ret;
 }
 
-static struct json_object * get_batadv(void) {
-	FILE *f = fopen("/sys/kernel/debug/batman_adv/bat0/originators", "r");
-	if (!f)
-		return NULL;
+static const enum batadv_nl_attrs parse_orig_list_mandatory[] = {
+	BATADV_ATTR_ORIG_ADDRESS,
+	BATADV_ATTR_NEIGH_ADDRESS,
+	BATADV_ATTR_TQ,
+	BATADV_ATTR_HARD_IFINDEX,
+	BATADV_ATTR_LAST_SEEN_MSECS,
+};
 
-	char *line = NULL;
-	size_t len = 0;
+static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	uint8_t *orig;
+	uint8_t *dest;
+	uint8_t tq;
+	uint32_t hardif;
+	uint32_t lastseen;
+	char ifname_buf[IF_NAMESIZE], *ifname;
+	struct neigh_netlink_opts *opts;
+	char mac1[18];
 
-	struct json_object *interfaces = json_object_new_object();
+	opts = container_of(query_opts, struct neigh_netlink_opts, query_opts);
 
-	while (getline(&line, &len, f) >= 0) {
-		char mac1[18], mac2[18];
-		/* IF_NAMESIZE would be enough, but adding 1 here is simpler than subtracting 1 in the format string */
-		char ifname[IF_NAMESIZE+1];
-		double lastseen;
-		int tq;
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
 
-		if (sscanf(line,
-			   "%17[0-9a-fA-F:] %lfs ( %i ) %17[0-9a-fA-F:] [ %"STRINGIFY(IF_NAMESIZE)"[^]] ]",
-			   mac1, &lastseen, &tq, mac2, ifname) != 5)
-			continue;
+	ghdr = nlmsg_data(nlh);
 
-		if (strcmp(mac1, mac2))
-			continue;
+	if (ghdr->cmd != BATADV_CMD_GET_ORIGINATORS)
+		return NL_OK;
 
-		struct json_object *interface;
-		if (!json_object_object_get_ex(interfaces, ifname, &interface)) {
-			interface = json_object_new_object();
-			json_object_object_add(interfaces, ifname, interface);
-		}
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_netlink_policy))
+		return NL_OK;
 
-		struct json_object *obj = json_object_new_object();
-		json_object_object_add(obj, "tq", json_object_new_int(tq));
-		struct json_object *jso = json_object_new_double(lastseen);
-		json_object_set_serializer(jso, json_object_double_to_json_string, "%.3f", NULL);
-		json_object_object_add(obj, "lastseen", jso);
-		json_object_object_add(interface, mac1, obj);
+	if (batadv_nl_missing_attrs(attrs, parse_orig_list_mandatory,
+				    ARRAY_SIZE(parse_orig_list_mandatory)))
+		return NL_OK;
+
+	if (!attrs[BATADV_ATTR_FLAG_BEST])
+		return NL_OK;
+
+	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	dest = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
+	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
+	hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
+	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
+
+	if (memcmp(orig, dest, 6) != 0)
+		return NL_OK;
+
+	ifname = if_indextoname(hardif, ifname_buf);
+	if (!ifname)
+		return NL_OK;
+
+	sprintf(mac1, "%02x:%02x:%02x:%02x:%02x:%02x",
+		orig[0], orig[1], orig[2], orig[3], orig[4], orig[5]);
+
+	struct json_object *obj = json_object_new_object();
+	if (!obj)
+		return NL_OK;
+
+	struct json_object *interface;
+	if (!json_object_object_get_ex(opts->interfaces, ifname, &interface)) {
+		interface = json_object_new_object();
+		json_object_object_add(opts->interfaces, ifname, interface);
 	}
 
-	fclose(f);
-	free(line);
+	json_object_object_add(obj, "tq", json_object_new_int(tq));
+	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
+	json_object_object_add(interface, mac1, obj);
 
-	return ifnames2addrs(interfaces);
+	return NL_OK;
+}
+
+static struct json_object * get_batadv(void) {
+	struct neigh_netlink_opts opts = {
+		.query_opts = {
+			.err = 0,
+		},
+	};
+	int ret;
+
+	opts.interfaces = json_object_new_object();
+	if (!opts.interfaces)
+		return NULL;
+
+	ret = batadv_nl_query_common("bat0", BATADV_CMD_GET_ORIGINATORS,
+				     parse_orig_list_netlink_cb, NLM_F_DUMP,
+				     &opts.query_opts);
+	if (ret < 0) {
+		json_object_put(opts.interfaces);
+		return NULL;
+	}
+
+	return ifnames2addrs(opts.interfaces);
 }
 
 static struct json_object * get_wifi_neighbours(const char *ifname) {

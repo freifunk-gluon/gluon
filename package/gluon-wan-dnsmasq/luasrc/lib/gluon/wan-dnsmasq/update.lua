@@ -11,6 +11,10 @@ local fs = require 'nixio.fs'
 
 local new_servers = ''
 
+local function append_server(server)
+  new_servers = new_servers .. 'nameserver ' .. server .. '\n'
+end
+
 
 local function handle_interface(status)
   local ifname = status.device
@@ -18,9 +22,10 @@ local function handle_interface(status)
 
   for _, server in ipairs(servers) do
     if server:match('^fe80:') then
-      server = server .. '%' .. ifname
+      append_server(server .. '%' .. ifname)
+    else
+      append_server(server)
     end
-    new_servers = new_servers .. 'nameserver ' .. server .. '\n'
   end
 end
 
@@ -32,7 +37,9 @@ end
 local static = uci:get_first('gluon-wan-dnsmasq', 'static', 'server')
 
 if type(static) == 'table' and #static > 0 then
-  append_servers(static)
+  for _, server in ipairs(static) do
+    append_server(server)
+  end
 else
   pcall(append_interface_servers, 'wan6')
   pcall(append_interface_servers, 'wan')

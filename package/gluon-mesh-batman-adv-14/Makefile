@@ -5,7 +5,7 @@ PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-mesh-batman-adv-14

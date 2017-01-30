@@ -1,0 +1,59 @@
+Gluon 2016.2.1
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TL-WA901ND v4
+
+Bugfixes
+~~~~~~~~
+
+* Make status page work with disabled cookies/local storage
+  (`#912 <https://github.com/freifunk-gluon/gluon/pull/912>`_)
+
+* Update kernel to 3.18.44
+
+  Fixes CVE-2016-5195 and CVE-2016-7117. It is unlikely that these issues pose
+  a threat to usual Gluon setups, but installing additional packages may make a
+  system vulnerable. In any case, updating is highly recommended.
+
+* Downgrade mac80211 to an earlier state
+
+  Unfortunately, a mac80211 update that was done shortly before the release of
+  Gluon v2016.2 (that seemed necessary to properly support ath10k devices) had
+  again caused severe ath9k stability issues that remained unreported until v2016.2
+  was out.
+
+  We have now reverted mac80211 to an earlier state that was reported to be very
+  stable (while keeping the ath10k-specific changes); in addition, some patches
+  that were reported to cause connection or performance issues with certain clients
+  have been reverted. While is it still not perfectly stable, is should be at least
+  as good as (and probably better than) the v2016.1.x release series.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Git HTTPS downloads from git.kernel.org fail on Debian Wheezy (`#919 <https://github.com/freifunk-gluon/gluon/issues/919>`_)
+
+  The GnuTLS version on Debian Wheezy is too old and can't establish a connection with
+  git.kernel.org anymore. A newer GnuTLS version is available in wheezy-backports, but
+  as there is no libcurl3-gnutls package linked against the new version, installing the
+  new version has no effect.

@@ -34,21 +34,7 @@ rerun
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
 can be refered to by the branch `base`.
 
-::
-
-	make unpatch
-
-sets the repositories to the `base` branch,
-
-::
-
-	make patch
-
-re-applies the patches by resetting the `patched` branch to `base` and calling `git am`
-for the patch files. Calling `make` or a similar command after calling `make unpatch`
-is generally not a good idea.
-
-After new patches have been commited on top of the patched branch (or existing commits
+After new patches have been commited on top of the `patched` branch (or existing commits
 since the base commit have been edited or removed), the patch directories can be regenerated
 using
 
@@ -61,3 +47,19 @@ and you can try rebasing it onto the new `base` branch yourself and after that c
 
 Always call `make update-patches` after making changes to a module repository as `make update` will overwrite your
 commits, making `git reflog` the only way to recover them!
+
+Development Guidelines
+----------------------
+lua should be used instead of sh whenever sensible. The following criteria
+should be considered:
+
+- Is the script doing more than just executing external commands? if so, use lua
+- Is the script parsing/editing json-data? If so, use lua for speed
+- When using sh, use jsonfilter instead of json_* functions for speed
+
+Code formatting may sound like a topic for the pedantic, however it helps if
+the code in the project is formatted in the same way. The following rules
+apply:
+
+- use tabs instead of spaces
+- trailing whitespaces must be eliminated

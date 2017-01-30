@@ -64,6 +64,8 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2016.2.2
+   releases/v2016.2.1
    releases/v2016.2
    releases/v2016.1.6
    releases/v2016.1.5
@@ -109,11 +111,6 @@ ar71xx-generic
   - WZR-HP-G300NH
   - WZR-HP-G300NH2
   - WZR-HP-G450H
-
-* Cisco Meraki
-
-  - MR12 / MR62
-  - MR16 / MR66
 
 * D-Link
 
@@ -169,11 +166,11 @@ ar71xx-generic
   - TL-WA701N/ND (v1, v2)
   - TL-WA750RE (v1)
   - TL-WA7510N (v1)
-  - TL-WA801N/ND (v1, v2)
+  - TL-WA801N/ND (v1, v2, v3)
   - TL-WA830RE (v1, v2)
   - TL-WA850RE (v1)
   - TL-WA860RE (v1)
-  - TL-WA901N/ND (v1, v2, v3)
+  - TL-WA901N/ND (v1, v2, v3, v4)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -186,10 +183,12 @@ ar71xx-generic
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11)
   - TL-WR842N/ND (v1, v2, v3)
   - TL-WR843N/ND (v1)
-  - TL-WR940N (v1, v2, v3)
+  - TL-WR940N (v1, v2, v3, v4)
   - TL-WR941ND (v2, v3, v4, v5, v6)
-  - TL-WR1043N/ND (v1, v2, v3)
+  - TL-WR1043N/ND (v1, v2, v3, v4)
   - TL-WR2543N/ND (v1)
+  - WBS210 (v1.20)
+  - WBS510 (v1.20)
 
 * Ubiquiti
 

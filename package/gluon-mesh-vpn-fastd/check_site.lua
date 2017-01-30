@@ -3,6 +3,7 @@ need_number('fastd_mesh_vpn.mtu')
 need_boolean('fastd_mesh_vpn.enabled', false)
 need_boolean('fastd_mesh_vpn.configurable', false)
 
+need_one_of('fastd_mesh_vpn.syslog_level', {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
 
 local function check_peer(prefix)
   return function(k, _)

@@ -1,0 +1,45 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+
+local uci = require('luci.model.uci').cursor()
+
+uci:section('network', 'interface', 'client',
+	{
+		robustness = 3,
+		query_interval = 2000,
+		query_response_interval = 500,
+	}
+)
+uci:delete('network', 'client', 'igmp_snooping')
+
+uci:delete('network', 'client_lan')
+if sysconfig.lan_ifname then
+	uci:section('network', 'interface', 'client_lan',
+		{
+			unicast_flood = 0,
+		}
+	)
+	uci:set('network', 'client_lan', 'ifname', sysconfig.lan_ifname)
+end
+
+uci:save('network')
+
+
+uci:delete('firewall', 'client')
+uci:section('firewall', 'zone', 'client',
+	{
+		name = 'client',
+		network = {'client'},
+		input = 'ACCEPT',
+		output = 'ACCEPT',
+		forward = 'REJECT',
+	}
+)
+
+uci:delete('firewall', 'client_dns')
+
+uci:save('firewall')
+
+sysctl.set('net.ipv6.conf.br-client.forwarding')

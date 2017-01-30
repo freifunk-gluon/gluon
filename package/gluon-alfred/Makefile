@@ -6,13 +6,13 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-alfred
   SECTION:=gluon
   CATEGORY:=Gluon
-  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info +micrond +alfred
+  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info gluon-mesh-batman-adv +micrond +alfred
   TITLE:=Configure alfred
 endef
 

@@ -1,33 +1,73 @@
 #!/usr/bin/lua
 
+local site = require 'gluon.site_config'
 local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
+local ip = require 'luci.ip'
 local lutil = require 'luci.util'
 local uci = require('luci.model.uci').cursor()
 
 
+local ip4, netmask, ip6
+
+if site.next_node.ip4 then
+	ip4 = site.next_node.ip4
+	netmask = ip.IPv4(site.prefix4):mask():string()
+end
+
+if site.next_node.ip6 then
+	ip6 = site.next_node.ip6 .. '/128'
+end
+
 uci:section('network', 'interface', 'client',
-  {
-    type = 'bridge',
-  }
+	{
+		type = 'bridge',
+		proto = 'static',
+		macaddr = site.next_node.mac,
+		ipaddr = ip4,
+		netmask = netmask,
+		ip6addr = ip6,
+	}
 )
 
-local ifname = uci:get('network', 'client', 'ifname')
+uci:delete('network', 'client', 'reqprefix')
+uci:delete('network', 'client', 'peerdns')
+uci:delete('network', 'client', 'sourcefilter')
 
-if type(ifname) == 'string' then
-  uci:delete('network', 'client', 'ifname')
-  for x in ifname:gmatch("[^%s]+") do
-    uci:add_to_set('network', 'client', 'ifname', x)
-  end
+
+local interfaces = uci:get('network', 'client', 'ifname') or {}
+
+if type(interfaces) == 'string' then
+	local ifname = interfaces
+	interfaces = {}
+	for iface in ifname:gmatch("[^%s]+") do
+		util.add_to_set(interfaces, iface)
+	end
 end
 
 if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan', 'auto') then
-  for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
-    uci:add_to_set('network', 'client', 'ifname', lanif)
-  end
+	for _, lanif in ipairs(lutil.split(sysconfig.lan_ifname, ' ')) do
+		util.add_to_set(interfaces, lanif)
+	end
 end
 
-
-uci:set('network', 'client', 'macaddr', sysconfig.primary_mac)
+uci:set_list('network', 'client', 'ifname', interfaces)
 
 uci:save('network')
+
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', 0)
+uci:set('dhcp', dnsmasq, 'localise_queries', 0)
+uci:set('dhcp', dnsmasq, 'rebind_protection', 0)
+
+uci:delete('dhcp', 'client')
+uci:section('dhcp', 'dhcp', 'client',
+	{
+		interface = 'client',
+		ignore = 1,
+	}
+)
+
+uci:save('dhcp')

@@ -11,3 +11,5 @@ uci -q batch <<-EOF
 
 	set uhttpd.main.max_requests=32
 EOF
+
+/etc/init.d/rpcd disable

@@ -4,14 +4,14 @@ Subject: batman-adv: decrease maximum fragment size
 
 diff --git a/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 new file mode 100644
-index 0000000..a97146b
+index 0000000000000000000000000000000000000000..1a0b561d73cdd06117b8327945ed78ffe8951c52
 --- /dev/null
 +++ b/batman-adv/patches/1002-batman-adv-decrease-maximum-fragment-size.patch
 @@ -0,0 +1,28 @@
-+From 9e7384fde3c5a71f733221a137fdc4593a9638be Mon Sep 17 00:00:00 2001
-+Message-Id: <9e7384fde3c5a71f733221a137fdc4593a9638be.1466048916.git.mschiffer@universe-factory.net>
-+In-Reply-To: <8e4c2084bbf2a65ad663a2b1ba27144e5dadfd5f.1466048916.git.mschiffer@universe-factory.net>
-+References: <8e4c2084bbf2a65ad663a2b1ba27144e5dadfd5f.1466048916.git.mschiffer@universe-factory.net>
++From 32afa5d50ed6d5c3df288a0fb174ab512e9f9450 Mon Sep 17 00:00:00 2001
++Message-Id: <32afa5d50ed6d5c3df288a0fb174ab512e9f9450.1481414736.git.mschiffer@universe-factory.net>
++In-Reply-To: <eaeec9a5366d5e21fe07063ccede2edb7aa55e8e.1481414736.git.mschiffer@universe-factory.net>
++References: <eaeec9a5366d5e21fe07063ccede2edb7aa55e8e.1481414736.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Thu, 6 Aug 2015 22:27:01 +0200
 +Subject: [PATCH 2/2] batman-adv: decrease maximum fragment size
@@ -21,10 +21,10 @@ index 0000000..a97146b
 + 1 file changed, 1 insertion(+), 1 deletion(-)
 +
 +diff --git a/net/batman-adv/main.h b/net/batman-adv/main.h
-+index 7692526..d314e6c 100644
++index 09af21e..23ebb8e 100644
 +--- a/net/batman-adv/main.h
 ++++ b/net/batman-adv/main.h
-+@@ -159,7 +159,7 @@ enum batadv_uev_type {
++@@ -167,7 +167,7 @@ enum batadv_uev_type {
 + /* Maximum number of fragments for one packet */
 + #define BATADV_FRAG_MAX_FRAGMENTS 16
 + /* Maxumim size of each fragment */
@@ -34,5 +34,5 @@ index 0000000..a97146b
 + #define BATADV_FRAG_TIMEOUT 10000
 + 
 +-- 
-+2.8.3
++2.10.2
 +

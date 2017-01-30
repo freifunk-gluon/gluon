@@ -1,0 +1,44 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 27 Jan 2017 13:23:39 +0100
+Subject: batman-adv: use kernel-specific PKG_BUILD_DIR
+
+The batman-adv Makefile set a PKG_BUILD_DIR outside of KERNEL_BUILD_DIR;
+this could lead to batman-adv not being rebuilt when switching targets and
+thus kernel configurations. This resulted in ABI mismatches and
+occasionally broke the build with messages like the following:
+
+    Package kmod-batman-adv is missing dependencies for the following libraries:
+    crc16.ko
+
+Instead of setting a better PKG_BUILD_DIR ourselves, we can just remove
+the explicit PKG_BUILD_DIR definition and include kernel.mk before
+package.mk to get the default definition used by other kernel module
+packages.
+
+Reported-by: David Lutz <kpanic@hirnduenger.de>
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index 55f41fbfc222d4759bd008739ef0eff9e05b951a..ca34aa2241a979de836c7b6cd919416cf85225c3 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -11,17 +11,15 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=batman-adv
+ 
+ PKG_VERSION:=2016.4
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ PKG_MD5SUM:=1ed28d02ad86050d1518023e354737b6
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+ PKG_LICENSE:=GPL-2.0
+ 
+-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_NAME)-$(PKG_VERSION)
+-
+-include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/kernel.mk
++include $(INCLUDE_DIR)/package.mk
+ 
+ define KernelPackage/batman-adv
+   URL:=https://www.open-mesh.org/

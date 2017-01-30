@@ -6,14 +6,14 @@ PKG_VERSION:=1
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-mesh-batman-adv-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for batman-adv meshing (core)
-  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +firewall +libiwinfo +kmod-dummy
+  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +kmod-macvlan +libnl-tiny
 endef
 
 define Build/Prepare

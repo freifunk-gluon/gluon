@@ -20,6 +20,7 @@ if not enabled then
   enabled = site.fastd_mesh_vpn.enabled and 1 or 0
 end
 
+local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 
 local methods
 
@@ -30,7 +31,6 @@ if site.fastd_mesh_vpn.configurable then
   if old_methods then
     has_null = lutil.contains(old_methods, 'null')
   end
-
 
   methods = {}
   if has_null then
@@ -52,7 +52,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn',
 	  {
 		  enabled = enabled,
 		  group = 'gluon-fastd',
-		  syslog_level = 'verbose',
+		  syslog_level = syslog_level,
 		  interface = 'mesh-vpn',
 		  mode = 'tap',
 		  mtu = site.fastd_mesh_vpn.mtu,

@@ -16,90 +16,74 @@ $Id$
 
 local fs = require "nixio.fs"
 
-local m = Map("system", translate("SSH keys"))
-m.pageaction = false
-m.template = "admin/expertmode"
+local f_keys = SimpleForm('keys', translate("SSH keys"), translate("You can provide your SSH keys here (one per line):"))
+f_keys.hidden = { submit_keys = '1' }
 
-if fs.access("/etc/config/dropbear") then
-  local s = m:section(TypedSection, "_dummy1", nil,
-                      translate("You can provide your SSH keys here (one per line):"))
+local keys
 
-  s.addremove = false
-  s.anonymous = true
+keys = f_keys:field(TextValue, "keys", "")
+keys.wrap    = "off"
+keys.rows    = 5
+keys.rmempty = true
 
-  function s.cfgsections()
-    return { "_keys" }
-  end
-
-  local keys
-
-  keys = s:option(TextValue, "_data", "")
-  keys.wrap    = "off"
-  keys.rows    = 5
-  keys.rmempty = true
-
-  function keys.cfgvalue()
-    return fs.readfile("/etc/dropbear/authorized_keys") or ""
-  end
-
-  function keys.write(self, section, value)
-    if value then
-      fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"):trim() .. "\n")
-    end
-  end
-
-  function keys.remove(self, section)
-    if keys:formvalue("_keys") then
-      fs.remove("/etc/dropbear/authorized_keys")
-    end
-  end
+function keys.cfgvalue()
+	return fs.readfile("/etc/dropbear/authorized_keys") or ""
 end
 
-local m2 = Map("system", translate("Password"))
-m2.reset = false
-m2.pageaction = false
-m2.template = "admin/expertmode"
+function keys.write(self, section, value)
+	if not f_keys:formvalue('submit_keys') then return end
 
-local s = m2:section(TypedSection, "_dummy2", nil, translate(
-                       "Alternatively, you can set a password to access you node. Please choose a secure password you don't use anywhere else.<br /><br />"
-                         .. "If you set an empty password, login via password will be disabled. This is the default."))
+	fs.writefile("/etc/dropbear/authorized_keys", value:gsub("\r\n", "\n"):trim() .. "\n")
+end
 
-s.addremove = false
-s.anonymous = true
+function keys.remove(self, section)
+	if not f_keys:formvalue('submit_keys') then return end
 
-local pw1 = s:option(Value, "pw1", translate("Password"))
+	fs.remove("/etc/dropbear/authorized_keys")
+end
+
+local f_password = SimpleForm('password', translate("Password"),
+	translate(
+                "Alternatively, you can set a password to access you node. Please choose a secure password you don't use anywhere else.<br /><br />"
+                .. "If you set an empty password, login via password will be disabled. This is the default."
+	)
+)
+f_password.hidden = { submit_password = '1' }
+f_password.reset = false
+
+local pw1 = f_password:field(Value, "pw1", translate("Password"))
 pw1.password = true
+function pw1.cfgvalue()
+	return ''
+end
 
-local pw2 = s:option(Value, "pw2", translate("Confirmation"))
+local pw2 = f_password:field(Value, "pw2", translate("Confirmation"))
 pw2.password = true
-
-function s.cfgsections()
-  return { "_pass" }
+function pw2.cfgvalue()
+	return ''
 end
 
-function m2.on_commit(map)
-  local v1 = pw1:formvalue("_pass")
-  local v2 = pw2:formvalue("_pass")
+function f_password:handle(state, data)
+	if not f_password:formvalue('submit_password') then return end
 
-  if v1 and v2 then
-    if v1 == v2 then
-      if #v1 > 0 then
-        if luci.sys.user.setpasswd('root', v1) == 0 then
-          m2.message = translate("Password changed.")
-        else
-          m2.errmessage = translate("Unable to change the password.")
-        end
-      else
-        -- We don't check the return code here as the error 'password for root is already locked' is normal...
-        os.execute('passwd -l root >/dev/null')
-        m2.message = translate("Password removed.")
-      end
-    else
-      m2.errmessage = translate("The password and the confirmation differ.")
-    end
-  end
+	if data.pw1 ~= data.pw2 then
+		f_password.errmessage = translate("The password and the confirmation differ.")
+		return
+	end
+
+	if data.pw1 and #data.pw1 > 0 then
+		if luci.sys.user.setpasswd('root', data.pw1) == 0 then
+			f_password.message = translate("Password changed.")
+		else
+			f_password.errmessage = translate("Unable to change the password.")
+		end
+	else
+		-- We don't check the return code here as the error 'password for root is already locked' is normal...
+		os.execute('passwd -l root >/dev/null')
+		f_password.message = translate("Password removed.")
+	end
 end
 
-local c = Compound(m, m2)
+local c = Compound(f_keys, f_password)
 c.pageaction = false
 return c

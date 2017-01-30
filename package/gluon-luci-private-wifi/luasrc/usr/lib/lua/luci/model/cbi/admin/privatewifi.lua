@@ -8,7 +8,6 @@ local primary_iface = 'wan_radio0'
 local ssid = uci:get('wireless', primary_iface, "ssid")
 
 f = SimpleForm("wifi", translate("Private WLAN"))
-f.template = "admin/expertmode"
 
 s = f:section(SimpleSection, nil, translate(
                 'Your node can additionally extend your private network by bridging the WAN interface '

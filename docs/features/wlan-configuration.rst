@@ -13,7 +13,7 @@ Upgrade behaviour
 For each of these networks, the site configuration may define a `disabled` flag (by
 default, all configured networks are enabled). This flag is merely a default setting,
 on upgrades the existing setting is always retained (as this setting may have been changed
-by the user). This means that is is not possible to enable or disable an existing network
+by the user). This means that it is not possible to enable or disable an existing network
 configurations during upgrades.
 
 For the "mesh" and "ibss" networks, the default setting only has an effect if none

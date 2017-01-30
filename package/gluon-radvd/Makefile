@@ -5,7 +5,7 @@ PKG_VERSION:=3
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-radvd
