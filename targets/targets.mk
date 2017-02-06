@@ -13,6 +13,7 @@ ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
 $(eval $(call GluonTarget,mvebu)) # BROKEN: No AP+IBSS or 11s support
 $(eval $(call GluonTarget,ramips,mt7621)) # BROKEN: No AP+IBSS support, 11s has high packet loss
+$(eval $(call GluonTarget,ramips,mt7628)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,sunxi)) # BROKEN: Untested
 endif
