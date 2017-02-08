@@ -24,7 +24,6 @@
 */
 
 #define _GNU_SOURCE
-#include <error.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -122,6 +121,18 @@ struct global {
 	.mesh_iface = "bat0",
 };
 
+
+static void error(int status, int errnum, char *message, ...) {
+	va_list ap;
+	va_start(ap, message);
+	fflush(stdout);
+	vfprintf(stderr, message, ap);
+	if (errnum)
+		fprintf(stderr, ": %s", strerror(errnum));
+	fprintf(stderr, "\n");
+	if (status)
+		exit(status);
+}
 
 static void cleanup() {
 	struct router *router;
@@ -464,7 +475,7 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	if (ret == SIGCHLD) {
 		if (info.si_pid != child) {
 			cleanup();
-			error_at_line(1, 0, __FILE__, __LINE__,
+			error(1, 0,
 				"BUG: We received a SIGCHLD from a child we didn't spawn (expected PID %d, got %d)",
 				child, info.si_pid);
 		}
@@ -479,8 +490,8 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	else if (ret < 0)
 		warn_errno("sigtimedwait failed, killing child");
 	else
-		error_at_line(1, 0, __FILE__, __LINE__,
-				"BUG: sigtimedwait() return some other signal than SIGCHLD: %d",
+		error(1, 0,
+				"BUG: sigtimedwait() returned some other signal than SIGCHLD: %d",
 				ret);
 
 	kill(child, SIGKILL);
