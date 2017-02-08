@@ -1,0 +1,20 @@
+<div<%=
+	attr("data-prefix", id) ..
+	attr("data-dynlist", {
+		type = self.datatype,
+		optional = self.datatype and self.optional,
+	}) ..
+	attr("data-size", self.size) ..
+	attr("data-placeholder", self.placeholder)
+%>>
+<%
+	for i, val in ipairs(self:cfgvalue()) do
+%>
+	<input class="gluon-input-text" value="<%=pcdata(val)%>" data-update="change" type="text"<%=
+		attr("id", id .. "." .. i) ..
+		attr("name", id) ..
+		attr("size", self.size) ..
+		attr("placeholder", self.placeholder)
+	%> /><br />
+<% end %>
+</div>
