@@ -4,7 +4,7 @@ Private WLAN
 It is possible to set up a private WLAN that bridges the WAN port and is seperated from the mesh network.
 Please note that you should not enable ``mesh_on_wan`` simultaneously.
 
-The private WLAN can be enabled through the config mode if the package ``gluon-luci-private-wifi`` is installed.
+The private WLAN can be enabled through the config mode if the package ``gluon-web-private-wifi`` is installed.
 You may also enable a private WLAN using the command line::
 
   uci set wireless.wan_radio0=wifi-iface

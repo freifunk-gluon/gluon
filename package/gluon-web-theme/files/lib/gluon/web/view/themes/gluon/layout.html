@@ -1,0 +1,122 @@
+<%#
+Copyright 2008 Steven Barth <steven@midlink.org>
+Copyright 2008-2010 Jo-Philipp Wich <xm@subsignal.org>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+-%>
+<%
+	local uci  = require("simple-uci").cursor()
+	local disp = require "gluon.web.dispatcher"
+	local fs   = require "nixio.fs"
+	local pretty_hostname = require "pretty_hostname"
+
+	local hostname = pretty_hostname.get(uci)
+	local release = fs.readfile("/lib/gluon/release")
+
+	local root = node()
+	local rnode = node(unpack(request))
+
+	local category = request[1]
+	local cattree  = category and node(category)
+
+	local categories = disp.node_children(root)
+
+	http:prepare_content("application/xhtml+xml")
+
+	local function append(xs, x)
+		local r = {unpack(xs)}
+		r[#r+1] = x
+		return r
+	end
+
+	local function subtree(prefix, node, name, ...)
+		if not node then return end
+
+		local children = disp.node_children(node)
+		if #children == 0 then return end
+
+	%>
+	<div class="tabmenu<%=#prefix%>">
+		<ul class="tabmenu l<%=#prefix%>">
+			<%
+				for i, v in ipairs(children) do
+					local child = node.nodes[v]
+					local active = (v == name)
+			%>
+			<li class="tabmenu-item-<%=v%><% if active then %> active<% end %>">
+				<a href="<%=url(append(prefix, v))%>"><%=pcdata(translate(child.title))%></a>
+			</li>
+			<%
+				end
+			%>
+		</ul>
+		<br style="clear:both" />
+		<%
+			subtree(append(prefix, name), node.nodes[name], ...)
+		%>
+	</div>
+	<%
+	end
+
+	local function menutree(path, ...)
+		subtree({path}, root.nodes[category], ...)
+	end
+-%>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
+		<title><%=pcdata( hostname .. ( (rnode and rnode.title) and ' - ' .. translate(rnode.title) or '')) %></title>
+	</head>
+	<body>
+
+	<div id="menubar">
+		<div class="hostinfo">
+			<a href="<%=url({})%>">
+				<%=pcdata(hostname)%>
+				<% if release then %>
+				/ <%=pcdata(release)%>
+				<% end %>
+			</a>
+		</div>
+
+		<% if #categories > 1 and not hidenav then %>
+			<ul id="topmenu">
+				<% for i, r in ipairs(categories) do %>
+					<li><a class="topcat<% if request[1] == r then %> active<%end%>" href="<%=url({r})%>"><%=pcdata(translate(root.nodes[r].title))%></a></li>
+				<% end %>
+			</ul>
+		<% end %>
+	</div>
+
+	<div id="maincontainer">
+	  <%
+			if not hidenav then
+				menutree(unpack(request))
+			end
+		%>
+
+		<div id="maincontent">
+			<noscript>
+				<div class="errorbox">
+					<strong><%:JavaScript required!%></strong><br />
+					<%:You must enable JavaScript in your browser or the web interface will not work properly.%>
+				</div>
+			</noscript>
+
+			<%
+				ok, err = pcall(include, content)
+				if not ok then
+					renderer.render('error500', {message = err})
+				end
+			%>
+
+			</div>
+		</div>
+	</body>
+</html>

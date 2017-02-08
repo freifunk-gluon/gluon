@@ -99,7 +99,7 @@ config: FORCE
 		&& scripts/target_config.sh generic \
 		&& GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/target_config.sh '$(GLUON_TARGET)' \
 		$(foreach pkg,$(GLUON_PACKAGES_YES),&& echo 'CONFIG_PACKAGE_$(pkg)=y') \
-		$(foreach lang,$(GLUON_LANGS),&& echo 'CONFIG_LUCI_LANG_$(lang)=y') \
+		$(foreach lang,$(GLUON_LANGS),&& echo 'CONFIG_GLUON_WEB_LANG_$(lang)=y') \
 		&& echo 'CONFIG_GLUON_RELEASE="$(GLUON_RELEASE)"' \
 		&& echo 'CONFIG_GLUON_SITEDIR="$(GLUON_SITEDIR)"' \
 		&& echo 'CONFIG_GLUON_BRANCH="$(GLUON_BRANCH)"' \

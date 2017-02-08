@@ -18,13 +18,13 @@ For this the section ``roles`` in ``site.conf`` is needed::
     },
   },
 
-The strings to display in the LuCI interface are configured per language in the
+The strings to display in the web interface are configured per language in the
 ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository using message IDs like
-``gluon-luci-node-role:role:node`` and ``gluon-luci-node-role:role:backbone``.
+``gluon-web-node-role:role:node`` and ``gluon-web-node-role:role:backbone``.
 
 The value of ``default`` is the role every node will initially own. This value should be part of ``list`` as well.
 If you want node owners to change the defined roles via config-mode you can add the package
-``gluon-luci-node-role`` to your ``site.mk``.
+``gluon-web-node-role`` to your ``site.mk``.
 
 The role is saved in ``gluon-node-info.system.role``. To change the role using command line do::
 

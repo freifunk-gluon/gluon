@@ -1,19 +1,8 @@
-local cbi = require "luci.cbi"
-local i18n = require "luci.i18n"
-local uci = require("simple-uci").cursor()
-
-local M = {}
-
-function M.section(form)
-  local enabled = uci:get_bool("autoupdater", "settings", "enabled")
-  if enabled then
-    local s = form:section(cbi.SimpleSection, nil,
-      i18n.translate('This node will automatically update its firmware when a new version is available.'))
-  end
+return function(form, uci)
+	if uci:get_bool("autoupdater", "settings", "enabled") then
+		local s = form:section(
+			Section, nil,
+			translate('This node will automatically update its firmware when a new version is available.')
+		)
+	end
 end
-
-function M.handle(data)
-  return
-end
-
-return M

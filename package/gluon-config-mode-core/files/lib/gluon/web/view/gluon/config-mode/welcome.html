@@ -1,0 +1,11 @@
+<%-
+	local sysconfig = require 'gluon.sysconfig'
+-%>
+<p>
+	<%=
+		renderer.render_string(translate('gluon-config-mode:welcome'), {
+			hostname = hostname,
+			sysconfig = sysconfig,
+		})
+	%>
+</p>

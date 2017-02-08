@@ -182,7 +182,7 @@ fastd_mesh_vpn
     with the list from the site configuration. Setting `configurable` to `true` will allow the user to
     add the method ``null`` to the beginning of the method list or remove ``null`` from it,
     and make this change survive updates. Setting `configurable` is necessary for the
-    package `gluon-luci-mesh-vpn-fastd`, which adds a UI for this configuration.
+    package `gluon-web-mesh-vpn-fastd`, which adds a UI for this configuration.
 
     In any case, the ``null`` method should always be the first method in the list
     if it is supported at all. You should only set `configurable` to `true` if the
@@ -288,11 +288,11 @@ roles \: optional
     the community which roles to define. See the section below as an example.
     ``default`` takes the default role which is set initially. This value should be
     part of ``list``. If you want node owners to change the role via config mode add
-    the package ``gluon-luci-node-role`` to ``site.mk``.
+    the package ``gluon-web-node-role`` to ``site.mk``.
 
-    The strings to display in the LuCI interface are configured per language in the
+    The strings to display in the web interface are configured per language in the
     ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository using message IDs like
-    ``gluon-luci-node-role:role:node`` and ``gluon-luci-node-role:role:backbone``.
+    ``gluon-web-node-role:role:node`` and ``gluon-web-node-role:role:backbone``.
     ::
 
       roles = {

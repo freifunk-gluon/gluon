@@ -16,7 +16,7 @@ Best practices
 --------------
 
 * Most upgrade scripts are written in Lua. This allows using lots of helper functions provided
-  by LuCi and Gluon, e.g. to access the site configuration or edit UCI configuration files.
+  by Gluon, e.g. to access the site configuration or edit UCI configuration files.
 
 * Whenever possible, scripts shouldn't check if they are running for the first time, but just edit configuration
   files to achive a valid configuration (without overwriting configuration changes made by the user where desirable).

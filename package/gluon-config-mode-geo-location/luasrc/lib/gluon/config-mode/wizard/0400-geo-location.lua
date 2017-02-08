@@ -1,75 +1,64 @@
-local cbi = require "luci.cbi"
-local i18n = require "luci.i18n"
-local uci = require("simple-uci").cursor()
-local site = require 'gluon.site_config'
+return function(form, uci)
+	local site = require 'gluon.site_config'
 
-local M = {}
+	local location = uci:get_first("gluon-node-info", "location")
 
-local function show_altitude()
-  if ((site.config_mode or {}).geo_location or {}).show_altitude ~= false then
-    return true
-  end
-  if uci:get_first("gluon-node-info", "location", "altitude") then
-    return true
-  end
-  return false
+	local function show_altitude()
+		if ((site.config_mode or {}).geo_location or {}).show_altitude ~= false then
+			return true
+		end
+
+		return uci:get_bool("gluon-node-info", location, "altitude")
+	end
+
+	local text = translate(
+		'If you want the location of your node to ' ..
+		'be displayed on the map, you can enter its coordinates here.'
+	)
+	if show_altitude() then
+		text = text .. ' ' .. translate("gluon-config-mode:altitude-help")
+	end
+
+	local s = form:section(Section, nil, text)
+
+	local o
+
+	local share_location = s:option(Flag, "location", translate("Show node on the map"))
+	share_location.default = uci:get_bool("gluon-node-info", location, "share_location")
+	function share_location:write(data)
+		uci:set("gluon-node-info", location, "share_location", data)
+	end
+
+	o = s:option(Value, "latitude", translate("Latitude"), translatef("e.g. %s", "53.873621"))
+	o.default = uci:get("gluon-node-info", location, "latitude")
+	o:depends(share_location, true)
+	o.datatype = "float"
+	function o:write(data)
+		uci:set("gluon-node-info", location, "latitude", data)
+	end
+
+	o = s:option(Value, "longitude", translate("Longitude"), translatef("e.g. %s", "10.689901"))
+	o.default = uci:get("gluon-node-info", location, "longitude")
+	o:depends(share_location, true)
+	o.datatype = "float"
+	function o:write(data)
+		uci:set("gluon-node-info", location, "longitude", data)
+	end
+
+	if show_altitude() then
+		o = s:option(Value, "altitude", translate("gluon-config-mode:altitude-label"), translatef("e.g. %s", "11.51"))
+		o.default = uci:get("gluon-node-info", location, "altitude")
+		o:depends(share_location, true)
+		o.datatype = "float"
+		o.optional = true
+		function o:write(data)
+			if data then
+				uci:set("gluon-node-info", location, "altitude", data)
+			else
+				uci:delete("gluon-node-info", location, "altitude")
+			end
+		end
+	end
+
+	return {'gluon-node-info'}
 end
-
-function M.section(form)
-  local text = i18n.translate('If you want the location of your node to '
-    .. 'be displayed on the map, you can enter its coordinates here.')
-  if show_altitude() then
-    text = text .. ' ' .. i18n.translate("gluon-config-mode:altitude-help")
-  end
-  local s = form:section(cbi.SimpleSection, nil, text)
-
-
-  local o
-
-  o = s:option(cbi.Flag, "_location", i18n.translate("Show node on the map"))
-  o.default = uci:get_first("gluon-node-info", "location", "share_location", o.disabled)
-  o.rmempty = false
-
-  o = s:option(cbi.Value, "_latitude", i18n.translate("Latitude"))
-  o.default = uci:get_first("gluon-node-info", "location", "latitude")
-  o:depends("_location", "1")
-  o.rmempty = false
-  o.datatype = "float"
-  o.description = i18n.translatef("e.g. %s", "53.873621")
-
-  o = s:option(cbi.Value, "_longitude", i18n.translate("Longitude"))
-  o.default = uci:get_first("gluon-node-info", "location", "longitude")
-  o:depends("_location", "1")
-  o.rmempty = false
-  o.datatype = "float"
-  o.description = i18n.translatef("e.g. %s", "10.689901")
-
-  if show_altitude() then
-    o = s:option(cbi.Value, "_altitude", i18n.translate("gluon-config-mode:altitude-label"))
-    o.default = uci:get_first("gluon-node-info", "location", "altitude")
-    o:depends("_location", "1")
-    o.rmempty = true
-    o.datatype = "float"
-    o.description = i18n.translatef("e.g. %s", "11.51")
-  end
-
-end
-
-function M.handle(data)
-  local sname = uci:get_first("gluon-node-info", "location")
-
-  uci:set("gluon-node-info", sname, "share_location", data._location)
-  if data._location and data._latitude ~= nil and data._longitude ~= nil then
-    uci:set("gluon-node-info", sname, "latitude", data._latitude:trim())
-    uci:set("gluon-node-info", sname, "longitude", data._longitude:trim())
-    if data._altitude ~= nil then
-      uci:set("gluon-node-info", sname, "altitude", data._altitude:trim())
-    else
-      uci:delete("gluon-node-info", sname, "altitude")
-    end
-  end
-  uci:save("gluon-node-info")
-  uci:commit("gluon-node-info")
-end
-
-return M

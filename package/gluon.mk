@@ -15,14 +15,12 @@ $(shell cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)' | sed -ne '1h; 1!H;
 END__GLUON__CHECK__SITE
 endef
 
-# Languages supported by LuCi
-GLUON_SUPPORTED_LANGS := ca cs de el en es fr he hu it ja ms no pl pt-br pt ro ru sk sv tr uk vi zh-cn zh-tw
+GLUON_SUPPORTED_LANGS := de fr
 GLUON_LANG_de := German
 GLUON_LANG_fr := French
 
-GLUON_I18N_PACKAGES := $(foreach lang,$(GLUON_SUPPORTED_LANGS),+LUCI_LANG_$(lang):luci-i18n-base-$(lang))
-GLUON_I18N_CONFIG := $(foreach lang,$(GLUON_SUPPORTED_LANGS),CONFIG_LUCI_LANG_$(lang))
-GLUON_ENABLED_LANGS := $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(if $(CONFIG_LUCI_LANG_$(lang)),$(lang)))
+GLUON_I18N_CONFIG := $(foreach lang,$(GLUON_SUPPORTED_LANGS),CONFIG_GLUON_WEB_LANG_$(lang))
+GLUON_ENABLED_LANGS := en $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(if $(CONFIG_GLUON_WEB_LANG_$(lang)),$(lang)))
 
 
 define GluonBuildI18N
@@ -36,10 +34,10 @@ define GluonBuildI18N
 endef
 
 define GluonInstallI18N
-	$$(INSTALL_DIR) $(2)/usr/lib/lua/luci/i18n
+	$$(INSTALL_DIR) $(2)/lib/gluon/web/i18n
 	for lang in $$(GLUON_ENABLED_LANGS); do \
 		if [ -e $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo ]; then \
-			$$(INSTALL_DATA) $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo $(2)/usr/lib/lua/luci/i18n/$(1).$$$$lang.lmo; \
+			$$(INSTALL_DATA) $$(PKG_BUILD_DIR)/i18n/$(1).$$$$lang.lmo $(2)/lib/gluon/web/i18n/$(1).$$$$lang.lmo; \
 		fi; \
 	done
 endef
