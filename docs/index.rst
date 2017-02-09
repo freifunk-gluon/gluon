@@ -27,6 +27,7 @@ Features
    features/wlan-configuration
    features/private-wlan
    features/wired-mesh
+   features/dns-cache
    features/monitoring
    features/authorized-keys
    features/roles
