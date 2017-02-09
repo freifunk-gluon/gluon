@@ -175,9 +175,9 @@ Site changes
         mesh_vpn = {
           ifname = 'mesh-vpn',
           enabled = false,
-          limit_ingress = 3000,
           limit_egress = 200,
-        }
+          limit_ingress = 3000,
+        },
       }
 
     needs to be changed to
@@ -189,8 +189,8 @@ Site changes
 
         bandwidth_limit = {
           enabled = false,
-          ingress = 3000,
           egress = 200,
+          ingress = 3000,
         },
       }
 
