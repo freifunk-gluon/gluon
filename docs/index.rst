@@ -41,10 +41,20 @@ Developer Documentation
    dev/basics
    dev/hardware
    dev/upgrade
-   dev/configmode
    dev/wan
-   dev/i18n
    dev/mac_addresses
+
+gluon-web Reference
+^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   dev/web/controller
+   dev/web/model
+   dev/web/view
+   dev/web/i18n
+   dev/web/config-mode
 
 Packages
 --------
