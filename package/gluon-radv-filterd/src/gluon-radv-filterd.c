@@ -45,11 +45,12 @@
 
 #include <linux/filter.h>
 #include <linux/if_packet.h>
-#include <linux/if_ether.h>
 #include <linux/limits.h>
 
 #include <netinet/icmp6.h>
 #include <netinet/ip6.h>
+
+#include "mac.h"
 
 // Recheck TQs after this time even if no RA was received
 #define MAX_INTERVAL 60
@@ -72,10 +73,6 @@
 #define TRANSTABLE_GLOBAL DEBUGFS "transtable_global"
 #define TRANSTABLE_LOCAL DEBUGFS "transtable_local"
 
-#define F_MAC "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx"
-#define F_MAC_IGN "%*2x:%*2x:%*2x:%*2x:%*2x:%*2x"
-#define F_MAC_VAR(var) var[0], var[1], var[2], var[3], var[4], var[5]
-
 #ifdef DEBUG
 #define CHECK(stmt) \
     if(!(stmt)) { \
@@ -91,8 +88,6 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(A) (sizeof(A)/sizeof(A[0]))
 #endif
-
-typedef uint8_t macaddr_t[ETH_ALEN];
 
 struct list_item {
 	struct list *next;

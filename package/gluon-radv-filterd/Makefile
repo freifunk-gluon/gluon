@@ -12,11 +12,7 @@ define Package/gluon-radv-filterd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Filter IPv6 router advertisements
-  DEPENDS:=+gluon-ebtables
-endef
-
-define Package/gluon-radv-filterd/description
-	Gluon community wifi mesh firmware framework: filter IPv6 router advertisements
+  DEPENDS:=+gluon-ebtables +libgluonutil
 endef
 
 define Build/Prepare
@@ -38,6 +34,9 @@ define Package/gluon-radv-filterd/install
 
 	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/gluon-radv-filterd $(1)/usr/sbin/
+
+	$(INSTALL_DIR) $(1)/lib/gluon/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/radv-filterd.so
 endef
 
 define Package/gluon-radv-filterd/postinst
