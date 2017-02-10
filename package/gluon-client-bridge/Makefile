@@ -12,7 +12,7 @@ define Package/gluon-client-bridge
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Provides a bridge and a wireless interface for clients to connect to
-  DEPENDS:=+gluon-core
+  DEPENDS:=+gluon-core +kmod-macvlan
 endef
 
 define Build/Prepare
