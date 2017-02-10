@@ -13,13 +13,14 @@ local function do_filter_prefix(input, output, prefix)
 	return f
 end
 
-
-local function escape_args(ret, arg0, ...)
-	if not arg0 then
-		return ret
+local function close_stdio(stream, mode)
+	local null = nixio.open('/dev/null', mode)
+	if null then
+		nixio.dup(null, nixio[stream])
+		if null:fileno() > 2 then
+			null:close()
+		end
 	end
-
-	return escape_args(ret .. "'" .. string.gsub(arg0, "'", "'\\''") .. "' ", ...)
 end
 
 
@@ -76,9 +77,21 @@ function remove_from_set(t, itm)
 	return changed
 end
 
-
 function exec(...)
-	return os.execute(escape_args('', 'exec', ...))
+	local pid, errno, error = nixio.fork()
+	if pid == 0 then
+		close_stdio('stdin', 'r')
+		close_stdio('stdout', 'w')
+		close_stdio('stderr', 'w')
+
+		nixio.execp(...)
+		os.exit(127)
+	elseif pid > 0 then
+		local wpid, status, code = nixio.waitpid(pid)
+		return wpid and status == 'exited' and code
+	else
+		return nil, errno, error
+	end
 end
 
 -- Removes all lines starting with a prefix from a file, optionally adding a new one
