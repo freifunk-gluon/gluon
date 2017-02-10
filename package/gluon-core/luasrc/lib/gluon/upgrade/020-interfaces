@@ -10,17 +10,24 @@ end
 
 local util = require 'gluon.util'
 local platform = require 'gluon.platform'
+local site = require 'gluon.site_config'
 
 local uci = require('simple-uci').cursor()
 
 
-local function iface_exists(name)
-	return util.exec('ip', 'link', 'show', 'dev', (name:gsub('%..*$', ''))) == 0
+local function iface_exists(ifaces)
+	if not ifaces then return nil end
+
+	for iface in ifaces:gmatch('%S+') do
+		if util.exec('ip', 'link', 'show', 'dev', (iface:gsub('%..*$', ''))) == 0 then
+			return ifaces
+		end
+	end
 end
 
 
-local lan_ifname = uci:get('network', 'lan', 'ifname')
-local wan_ifname = uci:get('network', 'wan', 'ifname')
+local lan_ifname = iface_exists(uci:get('network', 'lan', 'ifname'))
+local wan_ifname = iface_exists(uci:get('network', 'wan', 'ifname'))
 
 if platform.match('ar71xx', 'generic', {
 	'cpe210',
@@ -36,11 +43,16 @@ if platform.match('ar71xx', 'generic', {
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
 end
 
-if wan_ifname and iface_exists(wan_ifname) then
+if wan_ifname and lan_ifname then
 	sysconfig.wan_ifname = wan_ifname
 	sysconfig.lan_ifname = lan_ifname
 else
-	sysconfig.wan_ifname = lan_ifname
+	local single_ifname = lan_ifname or wan_ifname
+	if site.single_as_lan then
+		sysconfig.lan_ifname = single_ifname
+	else
+		sysconfig.wan_ifname = single_ifname
+	end
 end
 
 

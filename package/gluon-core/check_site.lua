@@ -70,3 +70,4 @@ end
 
 need_boolean('mesh_on_wan', false)
 need_boolean('mesh_on_lan', false)
+need_boolean('single_as_lan', false)
