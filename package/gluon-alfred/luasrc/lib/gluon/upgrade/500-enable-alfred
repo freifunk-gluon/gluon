@@ -4,7 +4,7 @@ local uci = require('simple-uci').cursor()
 
 uci:delete('alfred', 'alfred')
 uci:section('alfred', 'alfred', 'alfred', {
-	interface = 'local-node',
+	interface = 'br-client',
 	mode = 'slave',
 	batmanif = 'bat0',
 	start_vis = true,

@@ -102,7 +102,7 @@ static struct json_object * get_addresses(void) {
 			   &flags, ifname) != 18)
 			continue;
 
-		if (strcmp(ifname, "local-node"))
+		if (strcmp(ifname, "br-client"))
 			continue;
 
 		if (flags & (IFA_F_TENTATIVE|IFA_F_DEPRECATED))

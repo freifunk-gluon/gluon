@@ -1,5 +1,6 @@
 #!/usr/bin/lua
 
+local site = require 'gluon.site_config'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('simple-uci').cursor()
@@ -10,14 +11,27 @@ uci:section('network', 'device', 'local_node_dev', {
 	name = 'local-node',
 	ifname = 'br-client',
 	type = 'macvlan',
-	macaddr = sysconfig.primary_mac,
+	macaddr = site.next_node.mac,
 })
+
+
+local ip4, ip6
+
+if site.next_node.ip4 then
+	local plen = site.prefix4:match('/%d+$')
+	ip4 = site.next_node.ip4 .. plen
+end
+
+if site.next_node.ip6 then
+	ip6 = site.next_node.ip6 .. '/128'
+end
 
 uci:delete('network', 'local_node')
 uci:section('network', 'interface', 'local_node', {
 	ifname = 'local-node',
-	proto = 'none',
-	auto = true,
+	proto = 'static',
+	ipaddr = ip4,
+	ip6addr = ip6,
 })
 
 uci:save('network')
