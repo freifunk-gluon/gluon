@@ -18,15 +18,13 @@ if site.next_node.ip6 then
 	ip6 = site.next_node.ip6 .. '/128'
 end
 
-uci:section('network', 'interface', 'client',
-	{
-		type = 'bridge',
-		proto = 'static',
-		macaddr = site.next_node.mac,
-		ipaddr = ip4,
-		ip6addr = ip6,
-	}
-)
+uci:section('network', 'interface', 'client', {
+	type = 'bridge',
+	proto = 'static',
+	macaddr = site.next_node.mac,
+	ipaddr = ip4,
+	ip6addr = ip6,
+})
 
 uci:delete('network', 'client', 'reqprefix')
 uci:delete('network', 'client', 'peerdns')
@@ -61,11 +59,9 @@ uci:set('dhcp', dnsmasq, 'localise_queries', false)
 uci:set('dhcp', dnsmasq, 'rebind_protection', false)
 
 uci:delete('dhcp', 'client')
-uci:section('dhcp', 'dhcp', 'client',
-	{
-		interface = 'client',
-		ignore = true,
-	}
-)
+uci:section('dhcp', 'dhcp', 'client', {
+	interface = 'client',
+	ignore = true,
+})
 
 uci:save('dhcp')

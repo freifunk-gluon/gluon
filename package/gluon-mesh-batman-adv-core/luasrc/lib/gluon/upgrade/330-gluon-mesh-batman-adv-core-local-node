@@ -8,73 +8,57 @@ local uci = require('simple-uci').cursor()
 
 
 uci:delete('network', 'local_node_dev')
-uci:section('network', 'device', 'local_node_dev',
-	{
-		name = 'local-node',
-		ifname = 'br-client',
-		type = 'macvlan',
-		macaddr = sysconfig.primary_mac,
-	}
-)
+uci:section('network', 'device', 'local_node_dev', {
+	name = 'local-node',
+	ifname = 'br-client',
+	type = 'macvlan',
+	macaddr = sysconfig.primary_mac,
+})
 
 uci:delete('network', 'local_node')
-uci:section('network', 'interface', 'local_node',
-	{
-		ifname = 'local-node',
-		proto = 'dhcpv6',
-		reqprefix = 'no',
-		peerdns = true,
-		sourcefilter = false,
-		keep_ra_dnslifetime = true,
-	}
-)
-
-if site.dns and site.dns.servers then
-	uci:set('network', 'local-node', 'peerdns','0')
-end
+uci:section('network', 'interface', 'local_node', {
+	ifname = 'local-node',
+	proto = 'dhcpv6',
+	reqprefix = 'no',
+	peerdns = not (site.dns and site.dns.servers),
+	sourcefilter = false,
+	keep_ra_dnslifetime = true,
+})
 
 uci:delete('network', 'local_node_route6')
-uci:section('network', 'route6', 'local_node_route6',
-	{
-		interface = 'local-node',
-		target = site.prefix6,
-		gateway = '::',
-	}
-)
+uci:section('network', 'route6', 'local_node_route6', {
+	interface = 'local-node',
+	target = site.prefix6,
+	gateway = '::',
+})
 
 uci:save('network')
 
 
 uci:delete('firewall', 'local_node')
-uci:section('firewall', 'zone', 'local_node',
-	{
-		name = 'local_node',
-		network = {'local_node'},
-		input = 'ACCEPT',
-		output = 'ACCEPT',
-		forward = 'REJECT',
-	}
-)
+uci:section('firewall', 'zone', 'local_node', {
+	name = 'local_node',
+	network = {'local_node'},
+	input = 'ACCEPT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
+})
 
-uci:section('firewall', 'rule', 'local_node_dns',
-	{
-		name = 'local_node_dns',
-		src = 'local_node',
-		dest_port = '53',
-		target = 'REJECT',
-	}
-)
+uci:section('firewall', 'rule', 'local_node_dns', {
+	name = 'local_node_dns',
+	src = 'local_node',
+	dest_port = '53',
+	target = 'REJECT',
+})
 
 uci:save('firewall')
 
 
 uci:delete('dhcp', 'local_node')
-uci:section('dhcp', 'dhcp', 'local_node',
-	{
-		interface = 'local_node',
-		ignore = true,
-	}
-)
+uci:section('dhcp', 'dhcp', 'local_node', {
+	interface = 'local_node',
+	ignore = true,
+})
 
 uci:save('dhcp')
 
