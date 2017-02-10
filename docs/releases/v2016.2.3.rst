@@ -1,0 +1,62 @@
+Gluon 2016.2.3
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link TL-WR940N v4
+* TP-Link TL-WR1043ND v4
+
+Removed hardware support
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Support for Meraki devices (MR12/16/62/66) has been removed for now because of
+severe problems (all devices were using the same MAC addresses). Support will return
+when the issues have been fixed.
+
+Bugfixes
+~~~~~~~~
+
+* Automatically restart respondd on failure (`#863 <https://github.com/freifunk-gluon/gluon/issues/863>`_)
+
+  There have been many reports of respondd processes disappearing; the exact cause is unclear,
+  but might be related to the batman-adv debugfs interface and/or out-of-memory conditions.
+
+  A new respondd initscript uses procd to automatically restart respondd when it dies.
+
+* Make autoupdater timeouts more robust (`#987 <https://github.com/freifunk-gluon/gluon/issues/987>`_)
+
+  It was reported that wget processes sometimes hang indefinitely during the autoupdater manifest
+  download. The autoupdater has been improved to ensure that wget can always be interrupted after
+  a timeout.
+
+  This issue, together with the recent addition of lock files to ensure that only one instance
+  of the autoupdater can run at a time, had caused the autoupdater to blocked completely
+  by hanging processes in some cases (till a node was rebooted).
+
+* Fix regulation domain switching in ath10k (`#1001 <https://github.com/freifunk-gluon/gluon/pull/1001>`_)
+
+  Prevents use of too high transmission power in some cases.
+
+* Ensure that *prefix6* in site.conf is always a /64 prefix (`6b62e2f <https://github.com/freifunk-gluon/gluon/commit/6b62e2fc788cd1f83f6634288a15724dfc42b0fd>`_)
+
+  Other prefix lengths were never supported and don't make sense in many places the prefix is used. Ensure
+  that such configurations will not pass validation.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
