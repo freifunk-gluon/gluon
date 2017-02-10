@@ -23,6 +23,9 @@ if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan
 	end
 end
 
+util.add_to_set(interfaces, 'local-port')
+
+
 uci:delete('network', 'client')
 uci:section('network', 'interface', 'client', {
 	type = 'bridge',
