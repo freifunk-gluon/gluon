@@ -99,11 +99,6 @@ config: FORCE
 		&& echo 'CONFIG_GLUON_RELEASE="$(GLUON_RELEASE)"' \
 		&& echo 'CONFIG_GLUON_SITEDIR="$(GLUON_SITEDIR)"' \
 		&& echo 'CONFIG_GLUON_BRANCH="$(GLUON_BRANCH)"' \
-		$(if $(DEBUG),&& echo 'CONFIG_DEBUG=y' \
-			&& echo 'CONFIG_NO_STRIP=y' \
-			&& echo '# CONFIG_USE_STRIP is not set' \
-			&& echo '# CONFIG_USE_SSTRIP is not set' \
-			&& echo '# CONFIG_STRIP_KERNEL_EXPORTS is not set') \
 	) > lede/.config
 	+@$(LEDEMAKE) defconfig
 
