@@ -15,10 +15,10 @@ list = util.get_mesh_devices(uconn)
 ubus.close(uconn)
 interfaces = {}
 for _,ifname in ipairs(list) do
-    pcall(function()
-      local address = util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address'))
-      interfaces[ifname] = { address = address }
-    end)
+	pcall(function()
+		local address = util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address'))
+		interfaces[ifname] = { address = address }
+	end)
 end
 
 io.write(json.stringify(interfaces))
