@@ -47,10 +47,10 @@ index 5f572e9d7475e807ea56713ee2069dc98f5c1f6b..80c1b05937410cb9fce20e7b75957748
  
  define Build/Configure/Default
 diff --git a/include/host-build.mk b/include/host-build.mk
-index 5cfbdeba5138c4362f82b7ae86b910a1f41f082a..fee7c6ce8fca6160a7055a8ccb9c0ebd0759032b 100644
+index 70bf6e5a399615edb91edfae3c43a93504d7b5d8..6c2f91581b895bda1ee9f2ee94afc2e5c06de380 100644
 --- a/include/host-build.mk
 +++ b/include/host-build.mk
-@@ -115,7 +115,7 @@ ifneq ($(if $(HOST_QUILT),,$(CONFIG_AUTOREBUILD)),)
+@@ -122,7 +122,7 @@ ifneq ($(if $(HOST_QUILT),,$(CONFIG_AUTOREBUILD)),)
  endif
  
  define Host/Exports/Default
