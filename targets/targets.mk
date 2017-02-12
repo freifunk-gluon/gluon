@@ -7,7 +7,6 @@ $(eval $(call GluonTarget,mpc85xx,generic))
 $(eval $(call GluonTarget,x86,generic))
 $(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,64))
-$(eval $(call GluonTarget,x86,xen_domu))
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
