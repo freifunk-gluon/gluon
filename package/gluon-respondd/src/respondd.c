@@ -99,7 +99,11 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 	json_object_object_add(ret, "hostname", get_hostname());
 
 	struct json_object *hardware = json_object_new_object();
-	json_object_object_add(hardware, "model", json_object_new_string(platforminfo_get_model()));
+
+	const char *model = platforminfo_get_model();
+	if (model)
+		json_object_object_add(hardware, "model", json_object_new_string(model));
+
 	json_object_object_add(hardware, "nproc", json_object_new_int(sysconf(_SC_NPROCESSORS_ONLN)));
 	json_object_object_add(ret, "hardware", hardware);
 
