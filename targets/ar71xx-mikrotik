@@ -2,5 +2,8 @@
 # ath5k cards are commonly used with Mikrotik hardware
 packages 'kmod-ath5k'
 
-factory_image mikrotik defaultnowifi -rootfs.tar.gz
-factory_image mikrotik -vmlinux-lzma.elf
+device mikrotik-nand-64m nand-64m
+factory
+
+device mikrotik-nand-large nand-large
+factory
