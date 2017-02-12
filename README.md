@@ -18,7 +18,7 @@ the future development of Gluon.
 ## Use a release!
 
 Please refrain from using the `master` branch for anything else but development purposes!
-Use the most recent release instead. You can list all relaseses by running `git branch -a`
+Use the most recent release instead. You can list all relaseses by running `git tag`
 and switch to one by running `git checkout v2016.2.2 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
