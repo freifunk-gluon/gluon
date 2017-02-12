@@ -20,6 +20,6 @@ for module in $GLUON_MODULES; do
 
 	if ! git branch -f base "$commit" 2>/dev/null; then
 		git fetch "$repo" "$branch"
-		git branch -f base "$commit" 2>/dev/null
+		git branch -f base "$commit"
 	fi
 done
