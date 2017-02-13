@@ -79,3 +79,8 @@ These commands can be used on a node:
    autoupdater --fallback
 
 
+::
+
+   # If fallback is true the updater will perform an update only if 
+   # the timespan given by the priority and another 24h have passed
+   autoupdater --fallback
