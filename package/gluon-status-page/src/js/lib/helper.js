@@ -82,9 +82,8 @@ define([ "bacon" ], function (Bacon) {
   }
 
   function _(s) {
-    var lang = navigator.language || navigator.userLanguage
-    var dict = {
-      "de-DE": {
+    var i, lang, langs, dict = {
+      "de": {
         "Node": "Knoten",
         "Distance": "Entfernung",
         "Inactive": "Inaktiv",
@@ -109,7 +108,7 @@ define([ "bacon" ], function (Bacon) {
         "Statistic": "Statistik",
         "Neighbors": "Nachbarknoten"
       },
-      "ru-RU": {
+      "ru": {
         "Node": "Узел",
         "Distance": "Дальность",
         "Inactive": "Не активен",
@@ -140,10 +139,18 @@ define([ "bacon" ], function (Bacon) {
         "Branch": "Ветка"
       }
     }
-    if (lang in dict && s in dict[lang])
-      return dict[lang][s]
+    if (navigator.userLanguage)
+        langs =  [ navigator.userLanguage ]
     else
-      return s
+        langs = navigator.languages
+    for (i=0; i<langs.length; i++) {
+      lang = langs[i].split('-')[0]
+      if (lang == "en")
+        return s
+      else if (lang in dict && s in dict[lang])
+        return dict[lang][s]
+    }
+    return s
   }
 
   return { buildUrl: buildUrl
