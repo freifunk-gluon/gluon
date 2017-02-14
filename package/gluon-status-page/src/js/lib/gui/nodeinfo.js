@@ -33,20 +33,20 @@ define(["lib/helper"], function (Helper) {
     function update(nodeInfo) {
       var list = document.createElement("dl")
 
-      dlEntry(list, nodeInfo, "hostname", "Knotenname")
-      dlEntry(list, nodeInfo, "owner.contact", "Kontakt")
-      dlEntry(list, nodeInfo, "hardware.model", "Modell")
-      dlEntry(list, nodeInfo, "network.mac", "Primäre MAC")
-      dlEntry(list, nodeInfo, "network.addresses", "IP-Adresse")
-      dlEntry(list, nodeInfo, "software.firmware.release", "Firmware")
+      dlEntry(list, nodeInfo, "hostname", Helper._("Node name"))
+      dlEntry(list, nodeInfo, "owner.contact", Helper._("Contact"))
+      dlEntry(list, nodeInfo, "hardware.model", Helper._("Model"))
+      dlEntry(list, nodeInfo, "network.mac", Helper._("Primary MAC"))
+      dlEntry(list, nodeInfo, "network.addresses", Helper._("IP Address"))
+      dlEntry(list, nodeInfo, "software.firmware.release", Helper._("Firmware"))
       dlEntry(list, nodeInfo, "software.fastd.enabled", "Mesh-VPN")
-      dlEntry(list, nodeInfo, "software.autoupdater.enabled", "Automatische Updates")
-      dlEntry(list, nodeInfo, "software.autoupdater.branch", "Branch")
+      dlEntry(list, nodeInfo, "software.autoupdater.enabled", Helper._("Automatic updates"))
+      dlEntry(list, nodeInfo, "software.autoupdater.branch", Helper._("Branch"))
 
       el.appendChild(list)
     }
 
-    return { title: document.createTextNode("Übersicht")
+    return { title: document.createTextNode(Helper._("Overview"))
            , render: function (d) { d.appendChild(el) }
            , destroy: function () {}
            }
