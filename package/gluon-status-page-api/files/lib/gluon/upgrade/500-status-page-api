@@ -8,6 +8,15 @@ uci -q batch <<-EOF
 	delete uhttpd.main.listen_https
 
 	set uhttpd.main.home=/lib/gluon/status-page/www
-
-	set uhttpd.main.max_requests=32
 EOF
+
+RAM=$(grep MemTotal /proc/meminfo |awk '{print $2}')
+if [ $RAM -lt $((48*1024)) ]; then
+	echo "set uhttpd.main.max_requests=16"
+else
+	echo "set uhttpd.main.max_requests=32"
+fi |uci -q batch
+
+if [ -x /etc/init.d/rpcd ]; then
+	/etc/init.d/rpcd disable
+fi
