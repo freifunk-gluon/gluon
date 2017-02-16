@@ -70,6 +70,10 @@ CheckTarget := [ '$(LEDE_TARGET)' ] \
 CheckExternal := test -d lede || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 
+list-targets: FORCE
+	@$(foreach target,$(GLUON_TARGETS),echo '$(target)';)
+
+
 GLUON_DEFAULT_PACKAGES := -odhcpd -ppp -ppp-mod-pppoe -wpad-mini gluon-core ip6tables hostapd-mini
 
 GLUON_PACKAGES :=
