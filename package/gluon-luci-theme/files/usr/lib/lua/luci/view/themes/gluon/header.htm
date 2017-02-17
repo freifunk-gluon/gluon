@@ -23,6 +23,8 @@ $Id$
 
 	local hostname = pretty_hostname.get(uci)
 	local release = fs.readfile("/lib/gluon/release")
+	local version = fs.readfile("/lib/gluon/gluon-version")
+	local commit = string.sub( version, -8, string.len(version))
 
 	local request  = disp.context.path
 	local request2 = disp.context.request
@@ -122,6 +124,9 @@ $Id$
 	<%=gluon_luci.escape(hostname)%>
 	<% if release then %>
 	/ <%=gluon_luci.escape(release)%>
+	<% end %>
+	<% if version then %>
+	/ <a style="display:inline" target="_blank" href="https://github.com/freifunk-gluon/gluon/commit/<%=gluon_luci.escape(commit)%>"><%=gluon_luci.escape(version)%></a>
 	<% end %>
 	<span id="xhr_poll_status" style="display:none" onclick="XHR.running() ? XHR.halt() : XHR.run()">
 		| <%:Auto Refresh%>:
