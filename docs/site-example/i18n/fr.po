@@ -28,7 +28,7 @@ msgstr ""
 "<div class=\"the-key\">"
 " # <%= escape(hostname) %>"
 " <br/>"
-"<%= pubkey %>"
+"<%= escape(pubkey) %>"
 "</div>"
 
 msgid "gluon-config-mode:reboot"
