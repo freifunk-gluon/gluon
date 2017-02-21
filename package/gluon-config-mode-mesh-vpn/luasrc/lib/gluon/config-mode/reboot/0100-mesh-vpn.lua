@@ -14,11 +14,12 @@ local pubkey = ""
 local hostname = pretty_hostname.get(uci)
 local contact = uci:get_first("gluon-node-info", "owner", "contact")
 
+local msg = ""
 if meshvpn_enabled ~= "1" then
-  local msg = i18n.translate('gluon-config-mode:novpn')
+  msg = i18n.translate('gluon-config-mode:novpn')
 else
   pubkey = util.trim(util.exec("/etc/init.d/fastd show_key " .. "mesh_vpn"))
-  local msg = i18n.translate('gluon-config-mode:pubkey')
+  msg = i18n.translate('gluon-config-mode:pubkey')
 end
 
 return function ()
