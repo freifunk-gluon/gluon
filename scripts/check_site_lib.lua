@@ -138,6 +138,12 @@ function need_string_array(varname, required)
    return var
 end
 
+function need_string_array_match(varname, pat, required)
+   local ok, var = pcall(need_array, varname, function(e) assert(e:match(pat)) end, required)
+   assert(ok, "site.conf error: expected `" .. varname .. "' to be a string array matching pattern `" .. pat .. "'")
+   return var
+end
+
 function need_array_of(varname, array, required)
    local ok, var = pcall(need_array, varname, function(e) assert_one_of(e, array) end,required)
    assert(ok, "site.conf error: expected `" .. varname .. "' to be a subset of given array: " .. array_to_string(array))
