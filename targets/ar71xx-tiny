@@ -59,7 +59,7 @@ alias tp-link-tl-wr940n-nd-v2
 device tp-link-tl-wr941n-nd-v6 tl-wr941nd-v6
 alias tp-link-tl-wr940n-nd-v3
 
-device tp-link-tl-wr940n-nd-v4 tl-wr940n-v4
+device tp-link-tl-wr940n-v4 tl-wr940n-v4
 factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 
 device tp-link-tl-wa750re-v1 tl-wa750re-v1
