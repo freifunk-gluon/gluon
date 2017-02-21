@@ -171,14 +171,14 @@ define(["lib/helper"], function (Helper) {
 
   function prettyPeer(d) {
     if (d === null)
-      return "nicht verbunden"
+      return Helper._("not connected")
     else
-      return "verbunden (" + prettyUptime(d.established) + ")"
+      return Helper._("connected") + " (" + prettyUptime(d.established) + ")"
   }
 
   function prettyPackets(d) {
     var v = Helper.formatNumberFixed(d, 0)
-    return v + " Pakete/s"
+    return v + " "+ Helper._("Packets/s")
   }
 
   function prettyPrefix(prefixes, step, d) {
@@ -215,9 +215,9 @@ define(["lib/helper"], function (Helper) {
     var out = ""
 
     if (days === 1)
-      out += "1 Tag, "
+      out += "1 " + Helper._("Day") + ", "
     else if (days > 1)
-      out += days + " Tage, "
+      out += days + " " + Helper._("Days") + ", "
 
     out += hours + ":"
 
@@ -230,7 +230,7 @@ define(["lib/helper"], function (Helper) {
   }
 
   function prettyNVRAM(usage) {
-    return Helper.formatNumber(usage * 100, 3) + "% belegt"
+    return Helper.formatNumber(usage * 100, 3) + "% " + Helper._("used")
   }
 
   function prettyLoad(load) {
@@ -247,24 +247,24 @@ define(["lib/helper"], function (Helper) {
     var el = document.createElement("div")
     var table = document.createElement("table")
 
-    children.push(mkRow(table, "Laufzeit", stream.map(".uptime").map(prettyUptime)))
-    children.push(mkRow(table, "Systemlast", stream.map(".loadavg").map(prettyLoad)))
+    children.push(mkRow(table, Helper._("Uptime"), stream.map(".uptime").map(prettyUptime)))
+    children.push(mkRow(table, Helper._("Load average"), stream.map(".loadavg").map(prettyLoad)))
     children.push(mkRow(table, "RAM", stream.map(".memory").map(prettyRAM)))
     children.push(mkRow(table, "NVRAM", stream.map(".rootfs_usage").map(prettyNVRAM)))
-    children.push(mkRow(table, "Gateway", stream.map(".gateway")))
-    children.push(mkRow(table, "Clients", stream.map(".clients.total")))
+    children.push(mkRow(table, Helper._("Gateway"), stream.map(".gateway")))
+    children.push(mkRow(table, Helper._("Clients"), stream.map(".clients.total")))
 
     el.appendChild(table)
 
     var h = document.createElement("h3")
-    h.textContent = "Traffic"
+    h.textContent = Helper._("Traffic")
     el.appendChild(h)
 
     table = document.createElement("table")
 
-    mkTrafficRow(table, children, "Gesendet", stream, ".traffic.tx")
-    mkTrafficRow(table, children, "Empfangen", stream, ".traffic.rx")
-    mkTrafficRow(table, children, "Weitergeleitet", stream, ".traffic.forward")
+    mkTrafficRow(table, children, Helper._("Transmitted"), stream, ".traffic.tx")
+    mkTrafficRow(table, children, Helper._("Received"), stream, ".traffic.rx")
+    mkTrafficRow(table, children, Helper._("Forwarded"), stream, ".traffic.forward")
 
     el.appendChild(table)
 
@@ -274,7 +274,7 @@ define(["lib/helper"], function (Helper) {
       children.forEach(function (d) {d.destroy()})
     }
 
-    return { title: document.createTextNode("Statistik")
+    return { title: document.createTextNode(Helper._("Statistic"))
            , render: function (d) { d.appendChild(el) }
            , destroy: destroy
            }

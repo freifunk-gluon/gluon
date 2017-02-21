@@ -81,6 +81,78 @@ define([ "bacon" ], function (Bacon) {
     return R * c
   }
 
+  function _(s) {
+    var i, lang, langs, dict = {
+      "de": {
+        "Node": "Knoten",
+        "Distance": "Entfernung",
+        "Inactive": "Inaktiv",
+        "Node name": "Knotenname",
+        "Contact": "Kontakt",
+        "Model": "Modell",
+        "Primary MAC": "Primäre MAC",
+        "IP Address": "IP-Adresse",
+        "Automatic updates": "Automatische Updates",
+        "Overview": "Übersicht",
+        "used": "belegt",
+        "Uptime": "Laufzeit",
+        "Load average": "Systemlast",
+        "Transmitted": "Gesendet",
+        "Received": "Empfangen",
+        "Forwarded": "Weitergeleitet",
+        "Day": "Tag",
+        "Days": "Tage",
+        "connected": "verbunden",
+        "not connected": "nicht verbunden",
+        "Packets/s": "Pakete/s",
+        "Statistic": "Statistik",
+        "Neighbors": "Nachbarknoten"
+      },
+      "ru": {
+        "Node": "Узел",
+        "Distance": "Дальность",
+        "Inactive": "Не активен",
+        "Node name": "Имя узла",
+        "Contact": "Контакт",
+        "Model": "Модель",
+        "Primary MAC": "Основной MAC",
+        "IP Address": "IP Адрес",
+        "Automatic updates": "Автоматические обновления",
+        "Overview": "Обзор",
+        "used": "используется",
+        "Uptime": "Время работы",
+        "Load average": "Загрузка системы",
+        "Gateway": "Шлюз",
+        "Clients": "Клиенты",
+        "Transmitted": "Передано",
+        "Received": "Получено",
+        "Forwarded": "Переправленно",
+        "Day": "День",
+        "Days": "Дней",
+        "connected": "подключено",
+        "not connected": "не подключено",
+        "Packets/s": "Пакетов/c",
+        "Statistic": "Статистика",
+        "Traffic": "Трафик",
+        "Neighbors": "Соседи",
+        "Firmware": "Прошивка",
+        "Branch": "Ветка"
+      }
+    }
+    if (navigator.userLanguage)
+        langs =  [ navigator.userLanguage ]
+    else
+        langs = navigator.languages
+    for (i=0; i<langs.length; i++) {
+      lang = langs[i].split('-')[0]
+      if (lang == "en")
+        return s
+      else if (lang in dict && s in dict[lang])
+        return dict[lang][s]
+    }
+    return s
+  }
+
   return { buildUrl: buildUrl
          , request: request
          , getJSON: getJSON
@@ -88,5 +160,6 @@ define([ "bacon" ], function (Bacon) {
          , formatNumber: formatNumber
          , formatNumberFixed: formatNumberFixed
          , haversine: haversine
+         , _: _
          }
 })
