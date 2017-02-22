@@ -18,13 +18,11 @@ export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 $(GLUON_SITEDIR)/site.mk:
 	$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
 
--include $(GLUON_SITEDIR)/site.mk
+include $(GLUON_SITEDIR)/site.mk
 
-ifeq ($(GLUON_RELEASE),)
-$(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line.)
-endif
 
-GLUON_LANGS ?= en
+GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
+
 
 export GLUON_RELEASE GLUON_ATH10K_MESH GLUON_REGION GLUON_DEBUG
 
