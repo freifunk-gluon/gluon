@@ -17,10 +17,11 @@ i18n support in Gluon
 ---------------------
 
 Internationalization support is available in all components (models, view and
-contrllers) of *gluon-web*-based packages. Strings are translated using the *translate*
-and *translatef* functions (*translate* for static strings, *translatef*
-for printf-like formatted string); in views, the special tags ``<%:...%>`` can
-be used to translate the contained string.
+contrllers) of *gluon-web*-based packages. Strings are translated using the *translate*,
+*_translate* and *translatef* functions (*translate* for static strings, *translatef*
+for printf-like formatted string; *_translate* works the same as *translate*, but
+will return *nil* instead of the original string when no translation is available)
+. In views, the special tags ``<%:...%>`` can be used to translate the contained string.
 
 Example from the *gluon-config-mode-geo-location* package:
 

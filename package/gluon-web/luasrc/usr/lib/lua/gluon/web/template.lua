@@ -25,6 +25,7 @@ function renderer(env)
 			renderer = ctx,
 			translate = ctx.translate,
 			translatef = ctx.translatef,
+			_translate = ctx._translate,
 			include = function(name)
 				ctx.render(name, scope)
 			end,
@@ -79,13 +80,19 @@ function renderer(env)
 		return tparser.load_catalog(lang, i18ndir)
 	end
 
+	-- Returns a translated string, or nil if none is found
+	function ctx._translate(key)
+		return (tparser.translate(key))
+	end
+
+	-- Returns a translated string, or the original string if none is found
 	function ctx.translate(key)
 		return tparser.translate(key) or key
 	end
 
 	function ctx.translatef(key, ...)
 		local t = ctx.translate(key)
-		return t and t:format(...)
+		return t:format(...)
 	end
 
 	return ctx
