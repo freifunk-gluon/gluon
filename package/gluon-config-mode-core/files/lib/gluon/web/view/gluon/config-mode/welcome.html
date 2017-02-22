@@ -1,9 +1,12 @@
 <%-
 	local sysconfig = require 'gluon.sysconfig'
+
+	local msg = _translate('gluon-config-mode:welcome')
+	if not msg then return end
 -%>
 <p>
-	<%=
-		renderer.render_string(translate('gluon-config-mode:welcome'), {
+	<%
+		renderer.render_string(msg, {
 			hostname = hostname,
 			sysconfig = sysconfig,
 		})
