@@ -212,6 +212,10 @@ device ubiquiti-rocket-m-xw ubnt-rocket-m-xw
 alias ubiquiti-rocket-m2-xw
 alias ubiquiti-rocket-m5-xw
 
+device ubiquiti-rocket-m-ti ubnt-rocket-m-ti
+alias ubiquiti-rocket-m2-ti
+alias ubiquiti-rocket-m5-ti
+
 device ubiquiti-unifi ubnt-unifi
 alias ubiquiti-unifi-ap
 alias ubiquiti-unifi-ap-lr
