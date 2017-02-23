@@ -34,7 +34,7 @@ index c6aa47e0bef311697b4def7a7183d1ac59dcf599..7bd400ab36d052b39fcb76a66873c867
  
  define patch_libtool_target
 diff --git a/include/cmake.mk b/include/cmake.mk
-index 5f572e9d7475e807ea56713ee2069dc98f5c1f6b..80c1b05937410cb9fce20e7b759577480cf390e7 100644
+index 5a403cbf41e2bbd6bdb843492639a01aff8cf75b..900dae1d4afc6007f8ac04179dd7f0922a07d4fa 100644
 --- a/include/cmake.mk
 +++ b/include/cmake.mk
 @@ -34,7 +34,7 @@ CMAKE_NM:=$(call cmake_tool,$(TARGET_NM))
