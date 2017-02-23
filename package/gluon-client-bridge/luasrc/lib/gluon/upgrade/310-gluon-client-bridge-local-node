@@ -33,6 +33,7 @@ uci:section('network', 'interface', 'local_node', {
 	proto = 'static',
 	ipaddr = ip4,
 	ip6addr = ip6,
+	ip6deprecated = true,
 })
 
 uci:save('network')
