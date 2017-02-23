@@ -27,9 +27,15 @@ awk "BEGIN    { sep=0 }
                 else       print > \"$lower\"}" \
     "$manifest"
 
+if [ -e '/usr/local/bin/ecdsautil' ]; then
+        ECMD='/usr/local/bin/ecdsautil verify'
+elif [ -e '/usr/local/bin/ecdsasign' ]; then
+        ECMD='/usr/local/bin/ecdsaverify -s'
+fi
+
 while read line
 do
-    if ecdsaverify -s "$line" -p "$public" "$upper"; then
+    if $ECMD "$line" -p "$public" "$upper"; then
         ret=0
         break
     fi
