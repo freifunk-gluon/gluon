@@ -20,6 +20,7 @@ generate_line() {
 	local model="$1"
 	local file="$2"
 
+	[ ! -e "${GLUON_IMAGEDIR}/sysupgrade/$file" ] || echo "$model" "$GLUON_RELEASE" "$(scripts/sha256sum.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" "$file"
 	[ ! -e "${GLUON_IMAGEDIR}/sysupgrade/$file" ] || echo "$model" "$GLUON_RELEASE" "$(scripts/sha512sum.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" "$file"
 }
 
