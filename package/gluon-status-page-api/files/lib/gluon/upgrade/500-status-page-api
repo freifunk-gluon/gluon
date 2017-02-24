@@ -8,6 +8,11 @@ uci -q batch <<-EOF
 	delete uhttpd.main.listen_https
 
 	set uhttpd.main.home=/lib/gluon/status-page/www
-
-	set uhttpd.main.max_requests=32
 EOF
+
+RAM=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+if [ $RAM -lt $((48*1024)) ]; then
+	uci set uhttpd.main.max_requests=16
+else
+	uci set uhttpd.main.max_requests=32
+fi
