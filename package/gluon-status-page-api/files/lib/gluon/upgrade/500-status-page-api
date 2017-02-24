@@ -16,7 +16,3 @@ if [ $RAM -lt $((48*1024)) ]; then
 else
 	uci set uhttpd.main.max_requests=32
 fi
-
-if [ -x /etc/init.d/rpcd ]; then
-	/etc/init.d/rpcd disable
-fi
