@@ -33,7 +33,7 @@ Variables and functions
 -----------------------
 
 Many call sites define additional variables (for example, model templates can
-access the model as *self* and an unique element ID as *id*), but the following
+access the model as *self* and a unique element ID as *id*), but the following
 variables and functions should always be available for the embedded Lua code:
 
   - *renderer*: :ref:`web-controller-template-renderer`
