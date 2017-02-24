@@ -180,6 +180,7 @@ GLUON_$(1)_MODEL_$(2)_ALIASES += $(3)
 endef
 
 
+export SHA256SUM := $(GLUONDIR)/scripts/sha256sum.sh
 export SHA512SUM := $(GLUONDIR)/scripts/sha512sum.sh
 
 
@@ -489,11 +490,16 @@ manifest: FORCE
 			$(if $(GLUON_$(profile)_SYSUPGRADE_EXT), \
 				$(foreach model,$(GLUON_$(profile)_MODELS), \
 					file="$(IMAGE_PREFIX)-$(model)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
-					[ -e "$$file" ] && echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
-					\
+					[ -e "$$file" ] && ( \
+						echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA256SUM) "$$file")" "$$file"; \
+						echo '$(model)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+					); \
 					$(foreach alias,$(GLUON_$(profile)_MODEL_$(model)_ALIASES), \
 						file="$(IMAGE_PREFIX)-$(alias)-sysupgrade$(GLUON_$(profile)_SYSUPGRADE_EXT)"; \
-						[ -e "$$file" ] && echo '$(alias)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+						[ -e "$$file" ] && ( \
+							echo '$(alias)' "$(PREPARED_RELEASE)" "$$($(SHA256SUM) "$$file")" "$$file"; \
+							echo '$(alias)' "$(PREPARED_RELEASE)" "$$($(SHA512SUM) "$$file")" "$$file"; \
+						); \
 					) \
 				) \
 			) \
