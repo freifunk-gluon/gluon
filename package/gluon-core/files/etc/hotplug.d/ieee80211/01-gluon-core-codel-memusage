@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "${ACTION}" = "add" ]; then
+
+	RAM=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+	if [ "$RAM" -lt $((48*1024)) ]; then
+		echo "fq_memory_limit 1048576" > "/sys/kernel/debug/ieee80211/$DEVICENAME/aqm"
+	fi
+fi
