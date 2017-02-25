@@ -28,6 +28,12 @@ define Download/almond
 	MD5SUM:=aa66c0c0cb55a4627bb706df73f3aff5
 endef
 
+define Download/EventSource
+	FILE:=eventsource.js
+	URL:=https://raw.githubusercontent.com/altima/EventSource/master/eventsource.js
+	MD5SUM:=9b5c81ca6ba306ac6aa11a61c9ab9891
+endef
+
 $(eval $(call Download,rjs))
 $(eval $(call Download,Bacon))
 $(eval $(call Download,almond))
@@ -46,7 +52,7 @@ endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) -t $(PKG_BUILD_DIR) $(DL_DIR)/r.js $(DL_DIR)/Bacon.js $(DL_DIR)/almond.js
+	$(CP) -t $(PKG_BUILD_DIR) $(DL_DIR)/r.js $(DL_DIR)/Bacon.js $(DL_DIR)/almond.js $(DL_DIR)/eventsource.js
 endef
 
 define Build/Configure
