@@ -10,26 +10,34 @@ PKG_BUILD_DEPENDS:=node/host
 include $(INCLUDE_DIR)/package.mk
 
 
+RJS_VERSION:=2.1.10
+RJS:=r-$(RJS_VERSION).js
 define Download/rjs
-	FILE:=r.js
-	URL:=http://requirejs.org/docs/release/2.1.10
-	MD5SUM:=270154b3f5d417c3a42f1e58d03e6607
+	FILE:=$(RJS)
+	URL:=http://requirejs.org/docs/release/$(RJS_VERSION)
+	URL_FILE:=r.js
+	HASH:=d0b7cfd962a7f8ac52a5d528df486341eed856609d9c75fa2566a32900f5b143
 endef
-
-define Download/Bacon
-	FILE:=Bacon.js
-	URL:=http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.7.71
-	MD5SUM:=4600a60e1d7ffdb2259dfcce97c860ed
-endef
-
-define Download/almond
-	FILE:=almond.js
-	URL:=https://raw.githubusercontent.com/jrburke/almond/0.3.1
-	MD5SUM:=aa66c0c0cb55a4627bb706df73f3aff5
-endef
-
 $(eval $(call Download,rjs))
+
+BACON_VERSION:=0.7.71
+BACON:=Bacon-$(BACON_VERSION).js
+define Download/Bacon
+	FILE:=$(BACON)
+	URL:=http://cdnjs.cloudflare.com/ajax/libs/bacon.js/$(BACON_VERSION)
+	URL_FILE:=Bacon.js
+	HASH:=93d840d2167964ced7c53598f7d07151c3bfb1d8a7c3e8cff44cadd7dea25f1d
+endef
 $(eval $(call Download,Bacon))
+
+ALMOND_VERSION:=0.3.1
+ALMOND:=almond-$(ALMOND_VERSION).js
+define Download/almond
+	FILE:=$(ALMOND)
+	URL:=https://raw.githubusercontent.com/jrburke/almond/$(ALMOND_VERSION)
+	URL_FILE:=almond.js
+	HASH:=3df2baac13da29dab646f9b9ddd2c5e09d91a49ae3a4f3befb40ce1dd60937f2
+endef
 $(eval $(call Download,almond))
 
 define Package/gluon-status-page
@@ -46,7 +54,9 @@ endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) -t $(PKG_BUILD_DIR) $(DL_DIR)/r.js $(DL_DIR)/Bacon.js $(DL_DIR)/almond.js
+	$(CP) $(DL_DIR)/$(RJS) $(PKG_BUILD_DIR)/r.js
+	$(CP) $(DL_DIR)/$(BACON) $(PKG_BUILD_DIR)/Bacon.js
+	$(CP) $(DL_DIR)/$(ALMOND) $(PKG_BUILD_DIR)/almond.js
 endef
 
 define Build/Configure
