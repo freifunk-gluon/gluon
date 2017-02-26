@@ -139,10 +139,12 @@ define([ "bacon" ], function (Bacon) {
         "Branch": "Ветка"
       }
     }
-    if (navigator.userLanguage)
-        langs =  [ navigator.userLanguage ]
+    if (navigator.languages)
+      langs = navigator.languages
+    else if (navigator.language)
+      langs = [navigator.language]
     else
-        langs = navigator.languages
+      langs = []
     for (i=0; i<langs.length; i++) {
       lang = langs[i].split('-')[0]
       if (lang == "en")
