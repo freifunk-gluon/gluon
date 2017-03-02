@@ -1,0 +1,46 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 25 Jan 2017 08:13:11 +0100
+Subject: x86: fix sysupgrades on disks with 4k block size
+
+Even when the disk uses 4k blocks, the partition table still uses units
+of 512 byte sectors. Always use ibs=512 for the offsets
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+Backport of LEDE e9ecb228c9d80605884058d7653e2eb56ba64051
+
+diff --git a/target/linux/x86/base-files/lib/upgrade/platform.sh b/target/linux/x86/base-files/lib/upgrade/platform.sh
+index 8850917062618985126b5086dccfe11506ed1fbb..d3e9f360aadedad0995da55205364940c9884ba4 100644
+--- a/target/linux/x86/base-files/lib/upgrade/platform.sh
++++ b/target/linux/x86/base-files/lib/upgrade/platform.sh
+@@ -21,20 +21,13 @@ platform_copy_config() {
+ }
+ 
+ platform_do_upgrade() {
+-	local diskdev partdev ibs diff
++	local diskdev partdev diff
+ 
+ 	if export_bootdevice && export_partdevice diskdev 0; then
+ 		sync
+ 		if [ "$SAVE_PARTITIONS" = "1" ]; then
+ 			get_partitions "/dev/$diskdev" bootdisk
+ 
+-			#get block size
+-			if [ -f "/sys/block/$diskdev/queue/physical_block_size" ]; then
+-				ibs="$(cat "/sys/block/$diskdev/queue/physical_block_size")"
+-			else
+-				ibs=512
+-			fi
+-
+ 			#extract the boot sector from the image
+ 			get_image "$@" | dd of=/tmp/image.bs count=1 bs=512b
+ 
+@@ -54,7 +47,7 @@ platform_do_upgrade() {
+ 			while read part start size; do
+ 				if export_partdevice partdev $part; then
+ 					echo "Writing image to /dev/$partdev..."
+-					get_image "$@" | dd of="/dev/$partdev" ibs="$ibs" obs=1M skip="$start" count="$size" conv=fsync
++					get_image "$@" | dd of="/dev/$partdev" ibs="512" obs=1M skip="$start" count="$size" conv=fsync
+ 				else
+ 					echo "Unable to find partition $part device, skipped."
+ 				fi

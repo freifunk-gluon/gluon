@@ -1,0 +1,32 @@
+From: Yousong Zhou <yszhou4tech@gmail.com>
+Date: Sun, 1 Jan 2017 01:06:29 +0800
+Subject: x86: move sysupgrade.tgz only if it exists
+
+To squash error messages at boot time
+
+    mv: can't rename '/mnt/sysupgrade.tgz': No such file or directory
+
+Signed-off-by: Yousong Zhou <yszhou4tech@gmail.com>
+
+Backport of LEDE fa37bdc05a3e8ebab7de293d059959b2efc99581
+
+diff --git a/target/linux/x86/base-files/lib/preinit/79_move_config b/target/linux/x86/base-files/lib/preinit/79_move_config
+index 5ac81cb90d1c15782a9c4f271720cfa66d6d03a9..37954f0236faafca657a05a3c1efc7df2e162bfc 100644
+--- a/target/linux/x86/base-files/lib/preinit/79_move_config
++++ b/target/linux/x86/base-files/lib/preinit/79_move_config
+@@ -7,9 +7,12 @@ move_config() {
+ 	. /lib/upgrade/platform.sh
+ 
+ 	if platform_export_bootdevice && platform_export_partdevice partdev 1; then
+-		mount -t ext4 -o rw,noatime "/dev/$partdev" /mnt
+-		mv -f /mnt/sysupgrade.tgz /
+-		umount /mnt
++		if mount -t ext4 -o rw,noatime "/dev/$partdev" /mnt; then
++			if [ -f /mnt/sysupgrade.tgz ]; then
++				mv -f /mnt/sysupgrade.tgz /
++			fi
++			umount /mnt
++		fi
+ 	fi
+ }
+ 
