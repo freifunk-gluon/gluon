@@ -14,7 +14,7 @@ local s = f:section(Section, nil, translate(
 ))
 
 local enabled = s:option(Flag, "enabled", translate("Enabled"))
-enabled.default = (ssid and not uci:get_bool('wireless', primary_iface, "disabled"))
+enabled.default = uci:get('wireless', primary_iface) and not uci:get_bool('wireless', primary_iface, "disabled")
 
 local ssid = s:option(Value, "ssid", translate("Name (SSID)"))
 ssid:depends(enabled, true)
