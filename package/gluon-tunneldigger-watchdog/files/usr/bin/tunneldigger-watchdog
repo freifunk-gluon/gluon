@@ -1,0 +1,12 @@
+#!/bin/sh
+PIDFILE=/var/run/tunneldigger.mesh-vpn.pid
+
+if [ "$(uci get tunneldigger.@broker[0].enabled)" == "1" ]; then
+    if [ "$(pgrep tunneldigger | head -n 1)" != "$(cat $PIDFILE)" ]; then
+        /etc/init.d/tunneldigger restart
+        logger -t tunneldiger-watchdog "Daemon not running, restarted tunneldigger."
+    elif [ "$(batctl o |grep mesh-vpn |wc -l)" == "0" ]; then
+        /etc/init.d/tunneldigger restart
+        logger -t tunneldiger-watchdog "No neighbours on mesh-vpn interface, restarted tunneldigger."
+    fi
+fi
