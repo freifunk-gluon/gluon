@@ -379,7 +379,7 @@ static void update_tqs() {
 	// skip header
 	while (fgetc(f) != '\n');
 	while (fgetc(f) != '\n');
-	while (fscanf(f, F_MAC " %*fs (%hhu) " F_MAC_IGN " [ %*[^]]]: " F_MAC_IGN " (%*3u)\n",
+	while (fscanf(f, F_MAC " %*fs (%hhu) %*[^\n]\n",
 			F_MAC_VAR(&mac_a), &tq) == 7) {
 
 		foreach(router, G.routers) {
