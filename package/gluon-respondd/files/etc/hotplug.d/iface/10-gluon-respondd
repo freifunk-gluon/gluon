@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$ACTION" = "ifupdate" ] && exit
+
+exec /etc/init.d/gluon-respondd reload
