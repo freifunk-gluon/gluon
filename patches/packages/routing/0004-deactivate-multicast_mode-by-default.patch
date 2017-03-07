@@ -1,0 +1,17 @@
+From: Tobias Hachmer <tobias@hachmer.de>
+Date: Sun, 5 Oct 2014 12:45:31 +0200
+Subject: deactivate multicast_mode by default
+
+diff --git a/batman-adv/Config.in b/batman-adv/Config.in
+index 86fc795..e76066c 100644
+--- a/batman-adv/Config.in
++++ b/batman-adv/Config.in
+@@ -17,7 +17,7 @@ config KMOD_BATMAN_ADV_DAT
+ config KMOD_BATMAN_ADV_MCAST
+ 	bool "enable multicast transmission optimization"
+ 	depends on PACKAGE_kmod-batman-adv
+-	default y
++	default n
+ 
+ config KMOD_BATMAN_ADV_NC
+ 	bool "enable network coding [requires promisc mode support]"
