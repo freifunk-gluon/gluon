@@ -1,0 +1,61 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local users = require 'gluon.users'
+local util = require 'gluon.util'
+
+local uci = require('luci.model.uci').cursor()
+local lutil = require 'luci.util'
+
+-- Group for iptables rule
+users.add_group('gluon-tunneldigger', 900)
+
+local enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+if (tonumber(enabled) == 0) then
+  enabled = site.tunneldigger_mesh_vpn.enabled and 1 or 0
+end
+
+-- Delete old broker config section       
+uci:delete_all('tunneldigger', 'broker')
+
+section = uci:add('tunneldigger', 'broker')
+
+uci:section('tunneldigger', 'broker', section,
+	  {
+		  enabled = enabled,
+		  uuid = util.node_id(),
+		  interface = 'mesh-vpn',
+		  bind_interface = 'br-wan',
+		  group = 'gluon-tunneldigger',
+		  broker_selection = 'usage',
+		  address = site.tunneldigger_mesh_vpn.brokers,
+	  }
+)
+
+uci:save('tunneldigger')
+uci:commit('tunneldigger')
+
+uci:section('network', 'interface', 'mesh_vpn',
+	  {
+		  ifname = 'mesh-vpn',
+		  proto = 'batadv',
+		  mesh = 'bat0',
+		  mesh_no_rebroadcast = 1,
+		  mtu = site.tunneldigger_mesh_vpn.mtu,
+	  }
+)
+
+uci:save('network')
+uci:commit('network')
+
+
+uci:section('firewall', 'include', 'mesh_vpn_dns',
+	  {
+	    type = 'restore',
+	    path = '/lib/gluon/mesh-vpn-tunneldigger/iptables.rules',
+	    family = 'ipv4',
+	  }
+)
+
+uci:save('firewall')
+uci:commit('firewall')
