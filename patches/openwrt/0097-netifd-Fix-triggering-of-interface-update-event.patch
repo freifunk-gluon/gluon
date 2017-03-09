@@ -1,0 +1,122 @@
+From: Jan-Philipp Litza <janphilipp@litza.de>
+Date: Fri, 10 Mar 2017 00:21:24 +0100
+Subject: netifd: Fix triggering of interface update event
+
+In case the keep flag is set in proto_shell_update_link no interface
+update event is triggered when IPv4/6 addresses/routes/... are updated
+as the proto_event callback is not called due to keep being set.
+
+Unconditionally call the proto_event callback handler in proto_shell_update_link
+but let the proto_event callback handler; in this case interface_proto_event_cb,
+decide which actions need to be taken dependant on the interface state.
+
+In case the interface is already in the up state trigger an update event
+only if the interface updated flag actually indicates either an IP address/
+route/data change; before interface update events were actually sent wihtout
+any parameter change.
+
+Signed-off-by: Hans Dedecker <dedeckeh@gmail.com>
+
+diff --git a/package/network/config/netifd/patches/001-interface-fix-triggering-of-interface-update-event.patch b/package/network/config/netifd/patches/001-interface-fix-triggering-of-interface-update-event.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9eda2f59ea016cbbd370ad5d3589891c1ac7d18b
+--- /dev/null
++++ b/package/network/config/netifd/patches/001-interface-fix-triggering-of-interface-update-event.patch
+@@ -0,0 +1,97 @@
++From b8ef742bd04ebef324ae11aee56c6e1d2cb7e0ad Mon Sep 17 00:00:00 2001
++From: Hans Dedecker <dedeckeh@gmail.com>
++Date: Wed, 2 Nov 2016 09:22:10 +0100
++Subject: [PATCH] interface: Fix triggering of interface update event
++
++In case the keep flag is set in proto_shell_update_link no interface
++update event is triggered when IPv4/6 addresses/routes/... are updated
++as the proto_event callback is not called due to keep being set.
++
++Unconditionally call the proto_event callback handler in proto_shell_update_link
++but let the proto_event callback handler; in this case interface_proto_event_cb,
++decide which actions need to be taken dependant on the interface state.
++
++In case the interface is already in the up state trigger an update event
++only if the interface updated flag actually indicates either an IP address/
++route/data change; before interface update events were actually sent wihtout
++any parameter change.
++
++Signed-off-by: Hans Dedecker <dedeckeh@gmail.com>
++---
++ interface.c   | 9 ++++++---
++ interface.h   | 2 +-
++ proto-shell.c | 7 +++----
++ 3 files changed, 10 insertions(+), 8 deletions(-)
++
++diff --git a/interface.c b/interface.c
++index 5870422..a014111 100644
++--- a/interface.c
+++++ b/interface.c
++@@ -693,7 +693,8 @@ interface_proto_event_cb(struct interface_proto_state *state, enum interface_pro
++ 	switch (ev) {
++ 	case IFPEV_UP:
++ 		if (iface->state != IFS_SETUP) {
++-			interface_event(iface, IFEV_UPDATE);
+++			if (iface->state == IFS_UP && iface->updated)
+++				interface_event(iface, IFEV_UPDATE);
++ 			return;
++ 		}
++ 
++@@ -1091,10 +1092,12 @@ set_config_state(struct interface *iface, enum interface_config_state s)
++ }
++ 
++ void
++-interface_update_start(struct interface *iface)
+++interface_update_start(struct interface *iface, const bool keep_old)
++ {
++ 	iface->updated = 0;
++-	interface_ip_update_start(&iface->proto_ip);
+++
+++	if (!keep_old)
+++		interface_ip_update_start(&iface->proto_ip);
++ }
++ 
++ void
++diff --git a/interface.h b/interface.h
++index aa2085d..7d5b309 100644
++--- a/interface.h
+++++ b/interface.h
++@@ -199,7 +199,7 @@ void interface_add_error(struct interface *iface, const char *subsystem,
++ int interface_add_data(struct interface *iface, const struct blob_attr *data);
++ int interface_parse_data(struct interface *iface, const struct blob_attr *attr);
++ 
++-void interface_update_start(struct interface *iface);
+++void interface_update_start(struct interface *iface, const bool keep_old);
++ void interface_update_complete(struct interface *iface);
++ 
++ void interface_start_pending(void);
++diff --git a/proto-shell.c b/proto-shell.c
++index 998a44c..ef56aa8 100644
++--- a/proto-shell.c
+++++ b/proto-shell.c
++@@ -538,10 +538,10 @@ proto_shell_update_link(struct proto_shell_state *state, struct blob_attr *data,
++ 			return UBUS_STATUS_UNKNOWN_ERROR;
++ 
++ 		device_set_present(dev, true);
++-
++-		interface_update_start(iface);
++ 	}
++ 
+++	interface_update_start(iface, keep);
+++
++ 	proto_apply_ip_settings(iface, data, addr_ext);
++ 
++ 	if ((cur = tb[NOTIFY_ROUTES]) != NULL)
++@@ -562,8 +562,7 @@ proto_shell_update_link(struct proto_shell_state *state, struct blob_attr *data,
++ 	interface_update_complete(state->proto.iface);
++ 
++ 	if ((state->sm != S_SETUP_ABORT) && (state->sm != S_TEARDOWN)) {
++-		if (!keep)
++-			state->proto.proto_event(&state->proto, IFPEV_UP);
+++		state->proto.proto_event(&state->proto, IFPEV_UP);
++ 		state->sm = S_IDLE;
++ 	}
++ 
++-- 
++2.1.4
++
