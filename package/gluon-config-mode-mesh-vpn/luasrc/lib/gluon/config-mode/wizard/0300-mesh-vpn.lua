@@ -1,7 +1,16 @@
+local fs = require "nixio.fs"
+
+local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
+local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+
 return function(form, uci)
+	if not (has_fastd or has_tunneldigger) then
+		return
+	end
+
 	local msg = translate(
-		'Your internet connection can be used to establish an ' ..
-	        'encrypted connection with other nodes. ' ..
+		'Your internet connection can be used to establish a ' ..
+	        'VPN connection with other nodes. ' ..
 	        'Enable this option if there are no other nodes reachable ' ..
 	        'over WLAN in your vicinity or you want to make a part of ' ..
 	        'your connection\'s bandwidth available for the network. You can limit how ' ..
@@ -13,9 +22,14 @@ return function(form, uci)
 	local o
 
 	local meshvpn = s:option(Flag, "meshvpn", translate("Use internet connection (mesh VPN)"))
-	meshvpn.default = uci:get_bool("fastd", "mesh_vpn", "enabled")
+	meshvpn.default = uci:get_bool("fastd", "mesh_vpn", "enabled") or uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
 	function meshvpn:write(data)
-		uci:set("fastd", "mesh_vpn", "enabled", data)
+		if has_fastd then
+			uci:set("fastd", "mesh_vpn", "enabled", data)
+		end
+		if has_tunneldigger then
+			uci:set("tunneldigger", "mesh_vpn", "enabled", data)
+		end
 	end
 
 	local limit = s:option(Flag, "limit_enabled", translate("Limit bandwidth"))
@@ -43,5 +57,5 @@ return function(form, uci)
 		uci:set("simple-tc", "mesh_vpn", "limit_egress", data)
 	end
 
-	return {'fastd', 'simple-tc'}
+	return {'fastd', 'tunneldigger', 'simple-tc'}
 end
