@@ -53,11 +53,12 @@
 		},
 
 		'ip4addr': function() {
-			if (this.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)) {
-				return (RegExp.$1 >= 0) && (RegExp.$1 <= 255) &&
-				       (RegExp.$2 >= 0) && (RegExp.$2 <= 255) &&
-				       (RegExp.$3 >= 0) && (RegExp.$3 <= 255) &&
-				       (RegExp.$4 >= 0) && (RegExp.$4 <= 255);
+			var match;
+			if ((match = this.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/))) {
+				return (match[1] >= 0) && (match[1] <= 255) &&
+				       (match[2] >= 0) && (match[2] <= 255) &&
+				       (match[3] >= 0) && (match[3] <= 255) &&
+				       (match[4] >= 0) && (match[4] <= 255);
 			}
 
 			return false;
@@ -128,14 +129,14 @@
 	};
 
 	function compile(type) {
-		var v;
-		if (type.match(/^([^\(]+)\(([^,]+),([^\)]+)\)$/) && (v = validators[RegExp.$1]) !== undefined) {
+		var v, match;
+		if ((match = type.match(/^([^\(]+)\(([^,]+),([^\)]+)\)$/)) && (v = validators[match[1]]) !== undefined) {
 			return function() {
-				return v(RegExp.$2, RegExp.$3);
+				return v.apply(this, [match[2], match[3]]);
 			}
-		} else if (type.match(/^([^\(]+)\(([^,\)]+)\)$/) && (v = validators[RegExp.$1]) !== undefined) {
+		} else if ((match = type.match(/^([^\(]+)\(([^,\)]+)\)$/)) && (v = validators[match[1]]) !== undefined) {
 			return function() {
-				return v(RegExp.$2);
+				return v.apply(this, [match[2]]);
 			}
 		} else {
 			return validators[type];
