@@ -1,2 +1,2 @@
-assert(need_boolean('fastd_mesh_vpn.configurable') == true,
-       "site.conf error: expected `fastd_mesh_vpn.configurable' to be true")
+assert(need_boolean('mesh_vpn.fastd.configurable') == true,
+       "site.conf error: expected `mesh_vpn.fastd.configurable' to be true")

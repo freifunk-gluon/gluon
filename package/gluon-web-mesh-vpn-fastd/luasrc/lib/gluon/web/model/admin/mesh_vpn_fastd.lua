@@ -23,7 +23,7 @@ function mode:write(data)
 		table.insert(methods, 'null')
 	end
 
-	for _, method in ipairs(site.fastd_mesh_vpn.methods) do
+	for _, method in ipairs(site.mesh_vpn.fastd.methods) do
 		if method ~= 'null' then
 			table.insert(methods, method)
 		end

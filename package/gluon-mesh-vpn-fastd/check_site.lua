@@ -1,39 +1,30 @@
 local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac', 'null+salsa2012+umac', 'null'}
-need_array_of('fastd_mesh_vpn.methods', fastd_methods)
-need_number('fastd_mesh_vpn.mtu')
-need_boolean('fastd_mesh_vpn.enabled', false)
-need_boolean('fastd_mesh_vpn.configurable', false)
+need_array_of('mesh_vpn.fastd.methods', fastd_methods)
+need_boolean('mesh_vpn.fastd.configurable', false)
 
-need_one_of('fastd_mesh_vpn.syslog_level', {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
+need_one_of('mesh_vpn.fastd.syslog_level', {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
 
 local function check_peer(prefix)
-  return function(k, _)
-    assert_uci_name(k)
+	return function(k, _)
+		assert_uci_name(k)
 
-    local table = string.format('%s[%q].', prefix, k)
+		local table = string.format('%s[%q].', prefix, k)
 
-    need_string_match(table .. 'key', '^%x+$')
-    need_string_array(table .. 'remotes')
-  end
+		need_string_match(table .. 'key', '^%x+$')
+		need_string_array(table .. 'remotes')
+	end
 end
 
 local function check_group(prefix)
-  return function(k, _)
-    assert_uci_name(k)
+	return function(k, _)
+		assert_uci_name(k)
 
-    local table = string.format('%s[%q].', prefix, k)
+		local table = string.format('%s[%q].', prefix, k)
 
-    need_number(table .. 'limit', false)
-    need_table(table .. 'peers', check_peer(table .. 'peers'), false)
-    need_table(table .. 'groups', check_group(table .. 'groups'), false)
-  end
+		need_number(table .. 'limit', false)
+		need_table(table .. 'peers', check_peer(table .. 'peers'), false)
+		need_table(table .. 'groups', check_group(table .. 'groups'), false)
+	end
 end
 
-need_table('fastd_mesh_vpn.groups', check_group('fastd_mesh_vpn.groups'))
-
-
-if need_table('fastd_mesh_vpn.bandwidth_limit', nil, false) then
-  need_boolean('fastd_mesh_vpn.bandwidth_limit.enabled', false)
-  need_number('fastd_mesh_vpn.bandwidth_limit.ingress', false)
-  need_number('fastd_mesh_vpn.bandwidth_limit.egress', false)
-end
+need_table('mesh_vpn.fastd.groups', check_group('mesh_vpn.fastd.groups'))

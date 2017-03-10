@@ -169,14 +169,18 @@ mesh \: optional
        mesh = {
          batman_adv = {
            gw_sel_class = 1,
-	 },
+         },
        }
 
 
-fastd_mesh_vpn
-    Remote server setup for the fastd-based mesh VPN.
+mesh_vpn
+    Remote server setup for the mesh VPN.
 
-    The `enabled` option can be set to true to enable the VPN by default.
+    The `enabled` option can be set to true to enable the VPN by default. `mtu`
+    defines the MTU of the VPN interface.
+
+    The `fastd` section configures settings specific to the *fastd* VPN
+    implementation.
 
     If `configurable` is set to `false` or unset, the method list will be replaced on updates
     with the list from the site configuration. Setting `configurable` to `true` will allow the user to
@@ -191,44 +195,47 @@ fastd_mesh_vpn
     You can set syslog_level from verbose (default) to warn to reduce syslog output.
     ::
 
-      fastd_mesh_vpn = {
-        methods = {'salsa2012+umac'},
-      	-- enabled = true,
-      	-- configurable = true,
-	-- syslog_level = 'warn',
+      mesh_vpn = {
+        -- enabled = true,
         mtu = 1280,
-        groups = {
-          backbone = {
-            -- Limit number of connected peers from this group
-            limit = 1,
-            peers = {
-              peer1 = {
-                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                -- Having multiple domains prevents SPOF in freifunk.net
-                remotes = {
-                  'ipv4 "vpn1.alpha-centauri.freifunk.net" port 10000',
-                  'ipv4 "vpn1.alpha-centauri-freifunk.de" port 10000',
+
+        fastd = {
+          methods = {'salsa2012+umac'},
+          -- configurable = true,
+          -- syslog_level = 'warn',
+          groups = {
+            backbone = {
+              -- Limit number of connected peers from this group
+              limit = 1,
+              peers = {
+                peer1 = {
+                  key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                  -- Having multiple domains prevents SPOF in freifunk.net
+                  remotes = {
+                    'ipv4 "vpn1.alpha-centauri.freifunk.net" port 10000',
+                    'ipv4 "vpn1.alpha-centauri-freifunk.de" port 10000',
+                  },
+                },
+                peer2 = {
+                  key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                  -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
+                  remotes = {'"vpn2.alpha-centauri.freifunk.net" port 10000'},
                 },
               },
-              peer2 = {
-                key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
-                -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
-                remotes = {'"vpn2.alpha-centauri.freifunk.net" port 10000'},
-              },
+              -- Optional: nested peer groups
+              -- groups = {
+              --   lowend_backbone = {
+              --     limit = 1,
+              --     peers = ...
+              --   },
+              -- },
             },
-            -- Optional: nested peer groups
-            -- groups = {
-            --   lowend_backbone = {
-            --     limit = 1,
-            --     peers = ...
-            --   },
+            -- Optional: additional peer groups, possibly with other limits
+            -- peertopeer = {
+            --   limit = 10,
+            --   peers = { ... },
             -- },
           },
-          -- Optional: additional peer groups, possibly with other limits
-          -- peertopeer = {
-          --   limit = 10,
-          --   peers = { ... },
-          -- },
         },
 
         bandwidth_limit = {
