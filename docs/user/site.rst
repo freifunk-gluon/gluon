@@ -193,6 +193,14 @@ mesh_vpn
     configured peers support both the ``null`` method and methods with encryption.
 
     You can set syslog_level from verbose (default) to warn to reduce syslog output.
+
+    The `tunneldigger` section is used to define the *tunneldigger* broker list.
+
+    **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
+    sections in the same configuration file, as only one of the packages *gluon-mesh-vpn-fastd*
+    and *gluon-mesh-vpn-tunneldigger* should be installed with the current
+    implementation.
+
     ::
 
       mesh_vpn = {
@@ -236,6 +244,10 @@ mesh_vpn
             --   peers = { ... },
             -- },
           },
+        },
+
+        tunneldigger = {
+          brokers = {'vpn1.alpha-centauri.freifunk.net'}
         },
 
         bandwidth_limit = {
