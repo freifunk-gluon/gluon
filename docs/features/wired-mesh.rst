@@ -2,7 +2,7 @@ Wired mesh (Mesh-on-WAN/LAN)
 ============================
 
 In addition to meshing over WLAN and VPN, it is also possible to
-configured wired meshing over the LAN or WAN ports. This allows
+configure wired meshing over the LAN or WAN ports. This allows
 nodes to be connected directly or over wireless bridges.
 
 Mesh-on-WAN can be enabled in addition to the mesh VPN, so multiple nodes
