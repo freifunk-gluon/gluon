@@ -17,7 +17,7 @@ i18n support in Gluon
 ---------------------
 
 Internationalization support is available in all components (models, view and
-contrllers) of *gluon-web*-based packages. Strings are translated using the *translate*,
+controllers) of *gluon-web*-based packages. Strings are translated using the *translate*,
 *_translate* and *translatef* functions (*translate* for static strings, *translatef*
 for printf-like formatted string; *_translate* works the same as *translate*, but
 will return *nil* instead of the original string when no translation is available)
