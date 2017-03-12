@@ -88,9 +88,14 @@ o.default = uci:get_bool("network", "mesh_wan", "auto") and o.enabled or o.disab
 o.rmempty = false
 
 if sysconfig.lan_ifname then
-  o = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
-  o.default = uci:get_bool("network", "mesh_lan", "auto") and o.enabled or o.disabled
-  o.rmempty = false
+  o = s:option(ListValue, "lan_option", translate("LAN interface"))
+  o:value("client", translate("Client network"))
+  o:value("mesh", translate("Mesh network"))
+  -- TODO: o:value("bridge", translate("Private network (Bridged)"))
+  o:value("nat", translate("Private network (NAT)"))
+  o.default = (uci:get_bool("network", "mesh_lan", "auto") and "mesh") or
+    (uci.get("network", "lan", "ifname") == sysconfig.lan_ifname and "nat") or
+    "client"
 end
 
 
@@ -119,12 +124,22 @@ function f.handle(self, state, data)
     uci:set("network", "mesh_wan", "auto", data.mesh_wan)
 
     if sysconfig.lan_ifname then
-      uci:set("network", "mesh_lan", "auto", data.mesh_lan)
-
-      if data.mesh_lan == '1' then
-        uci:set("network", "client", "ifname", "bat0")
-      else
+      if data.lan_option == 'client' then
         uci:set("network", "client", "ifname", sysconfig.lan_ifname .. " bat0")
+      else
+        uci:set("network", "client", "ifname", "bat0")
+      end
+
+      if data.lan_option == 'nat' then
+        uci:set("network", "lan", "ifname", sysconfig.lan_ifname)
+      else
+        uci:set("network", "lan", "ifname", '')
+      end
+
+      if data.lan_option == 'mesh' then
+        uci:set("network", "mesh_lan", "auto", '1')
+      else
+        uci:set("network", "mesh_lan", "auto", '0')
       end
     end
 

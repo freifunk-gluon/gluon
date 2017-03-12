@@ -29,6 +29,10 @@ o:depends("enabled", '1')
 o.datatype = "wpakey"
 o.default = uci:get(config, primary_iface, "key")
 
+o = s:option(Flag, "nat", translate("Use NAT"))
+o:depends("enabled", '1')
+o.default = uci:get(config, primary_iface, "network") == "lan" and o.enabled or o.disabled
+
 function f.handle(self, state, data)
   if state == FORM_VALID then
     uci:foreach(config, "wifi-device",
@@ -41,7 +45,7 @@ function f.handle(self, state, data)
           uci:section(config, "wifi-iface", name,
                       {
                         device     = device,
-                        network    = "wan",
+                        network    = data.nat == '1' and "lan" or "wan",
                         mode       = 'ap',
                         encryption = 'psk2',
                         ssid       = data.ssid,

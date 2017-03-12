@@ -10,7 +10,7 @@ uci:section('network', 'interface', 'wan',
 	      ifname = sysconfig.wan_ifname,
 	      type = 'bridge',
 	      igmp_snooping = 0,
-	      peerdns = 0,
+	      peerdns = 1,
 	      auto = 1,
 	    }
 )
@@ -48,6 +48,15 @@ uci:section('network', 'route6', 'wan6_unreachable',
 	       gateway = '::',
 	       table = 1,
 	       metric = 65535,
+	    }
+)
+
+uci:section('network', 'interface', 'lan',
+	    {
+	      type = 'bridge',
+	      proto = 'static',
+	      ipaddr = '192.168.0.1',
+	      netmask = '255.255.255.0',
 	    }
 )
 
