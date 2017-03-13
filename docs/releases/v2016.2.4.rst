@@ -7,7 +7,7 @@ Bugfixes
 * Fix batman-adv (compat 15) not being able to transmit packages of specific sizes (`b7eeef9 <https://github.com/freifunk-gluon/gluon/commit/b7eeef9b04b44a70b2a953c4efe35a3fdceba2db>`_)
 
   We suspect that this issue was also the reason for the autoupdater/wget hangs observed by many communities.
-  Non-Gluon-nodes like gateways should be updated to batman-adv 2017.0.1 to get the fix.
+  Non-Gluon nodes like gateways should be updated to batman-adv 2017.0.1 to get the fix.
 
 * Fix build after ftp.all.kernel.org discontinuation (`#1059 <https://github.com/freifunk-gluon/gluon/issues/1059>`_)
 
