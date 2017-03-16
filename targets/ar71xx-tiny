@@ -47,16 +47,16 @@ factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 
 device tp-link-tl-wr843n-nd-v1 tl-wr843nd-v1
 
-device tp-link-tl-wr941n-nd-v2 tl-wr941nd-v2
-device tp-link-tl-wr941n-nd-v3 tl-wr941nd-v3
+device tp-link-tl-wr941-nd-v2 tl-wr941nd-v2
+device tp-link-tl-wr941-nd-v3 tl-wr941nd-v3
 
-device tp-link-tl-wr941n-nd-v4 tl-wr941nd-v4
+device tp-link-tl-wr941-nd-v4 tl-wr941nd-v4
 alias tp-link-tl-wr940n-nd-v1
 
 device tp-link-tl-wr941n-nd-v5 tl-wr941nd-v5
 alias tp-link-tl-wr940n-nd-v2
 
-device tp-link-tl-wr941n-nd-v6 tl-wr941nd-v6
+device tp-link-tl-wr941-nd-v6 tl-wr941nd-v6
 alias tp-link-tl-wr940n-nd-v3
 
 device tp-link-tl-wr940n-v4 tl-wr940n-v4
