@@ -229,6 +229,16 @@ mesh_vpn
                   -- You can also omit the ipv4 to allow both connection via ipv4 and ipv6
                   remotes = {'"vpn2.alpha-centauri.freifunk.net" port 10000'},
                 },
+                peer3 = {
+                  key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+                  -- In addition to domains you can also add ip addresses, which provides
+                  -- resilience in case of dns outages
+                  remotes = {
+                    '"vpn3.alpha-centauri.freifunk.net" port 10000',
+                    '[2001:db8::3:1]:10000',
+                    '192.0.2.3:10000',
+                  },
+                },
               },
               -- Optional: nested peer groups
               -- groups = {
