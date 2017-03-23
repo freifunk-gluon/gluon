@@ -8,7 +8,9 @@ local uci = require('simple-uci').cursor()
 
 local enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
 if enabled == nil then
-	enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+	if uci:get_first('tunneldigger', 'broker', 'interface') == "mesh-vpn" then
+		enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+	end
 end
 if enabled == nil then
 	enabled = site.mesh_vpn.enabled or false
