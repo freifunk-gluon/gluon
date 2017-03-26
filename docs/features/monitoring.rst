@@ -45,7 +45,7 @@ retrieve the data you'll need both a local alfred daemon and alfred-json_
 installed. Please note that at least one alfred daemon is required to run as
 `master`.
 
-.. _alfred-json: https://github.com/tcatm/alfred-json
+.. _alfred-json: https://github.com/ffnord/alfred-json
 
 The following datatypes are used:
 
@@ -97,7 +97,7 @@ In order to retrieve statistics data you could run:
 
 You can find more information about alfred in its README_.
 
-.. _README: http://www.open-mesh.org/projects/alfred/repository/revisions/master/entry/README
+.. _README: https://git.open-mesh.org/alfred.git/blob_plain/refs/heads/master:/README
 
 gluon-respondd
 ~~~~~~~~~~~~~~
