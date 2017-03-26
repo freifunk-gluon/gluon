@@ -62,10 +62,10 @@ uci:save('firewall')
 
 -- VPN migration
 local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
-local fastd_enabled = has_fastd and uci:get_bool("fastd", "mesh_vpn", "enabled")
+local fastd_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
 
 local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
-local tunneldigger_enabled = has_fastd and uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+local tunneldigger_enabled = uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
 
 local enabled = fastd_enabled or tunneldigger_enabled or false
 
