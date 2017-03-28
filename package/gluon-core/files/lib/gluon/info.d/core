@@ -1,0 +1,9 @@
+#!/usr/bin/lua
+local util = require("luci.util")
+local sys = require("luci.sys")
+
+local hours = math.floor(sys.uptime() / 3600)
+local minutes = math.floor(sys.uptime() / 60) - (hours * 60)
+
+io.write(" your nodes uptime: " .. hours.. " hours, ".. minutes  .. " minutes\n")
+io.write(" " .. string.rep("-",53) .."\n")

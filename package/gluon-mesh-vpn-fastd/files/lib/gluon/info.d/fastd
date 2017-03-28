@@ -1,0 +1,64 @@
+#!/usr/bin/lua
+
+local util = require("luci.util")
+local fs = require("nixio.fs")
+local ltn12 = require 'luci.ltn12'
+local sys = require("luci.sys")
+local json = require("luci.json")
+local nixio = require 'nixio'
+local platform_info = require("platform_info")
+
+
+local stat, fastd_status = pcall(
+  function()
+    local fastd_sock = nixio.socket('unix', 'stream')
+    assert(fastd_sock:connect('/var/run/fastd.mesh_vpn.socket'))
+
+    decoder = json.Decoder()
+    ltn12.pump.all(ltn12.source.file(fastd_sock), decoder:sink())
+    return decoder:get()
+  end
+)
+
+io.write(" fastd")
+
+if stat then
+
+  local running_hours = math.floor((fastd_status.uptime/1000) / 3600)
+  local running_minutes = math.floor((fastd_status.uptime/1000) / 60) - (running_hours * 60)
+  io.write(string.format(" is running for %i hours and %i minutes.\n", running_hours, running_minutes))
+
+  local peers = 0
+  local connections = 0
+
+  for key, peer in pairs(fastd_status.peers) do
+    peers = peers+1
+
+    if peer.connection then
+      connections = connections+1
+    end
+  end
+
+  io.write(string.format(" Connected to %i out of %i peers\n", connections, peers))
+  local x = 0
+  for key, peer in pairs(fastd_status.peers) do
+    
+    if peer.connection then
+      local connection_hours = math.floor((peer.connection.established/1000) / 3600)
+      local connection_minutes = math.floor((peer.connection.established/1000) / 60) - (connection_hours * 60)
+      local peername = string.gsub(peer.name, "mesh_vpn_", " ")
+      peername = string.gsub(peername, "_", " ")
+
+      x = 1
+      io.write(string.format("%s: ",peername))
+      io.write(string.format("connected for %i:%i hours\n", connection_hours, connection_minutes))
+    end
+  end
+  if (x==0) then
+    io.write(" no Connections\n")
+  end
+else
+  io.write(" is not running\n")
+end
+
+io.write(" " .. string.rep("-",53) .."\n")
