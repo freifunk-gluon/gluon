@@ -1,0 +1,51 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 28 Mar 2017 14:39:48 +0200
+Subject: batman-adv: Fix double free during fragment merge error
+
+diff --git a/batman-adv/patches/1003-batman-adv-Fix-double-free-during-fragment-merge-err.patch b/batman-adv/patches/1003-batman-adv-Fix-double-free-during-fragment-merge-err.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..42748aac79d082e67a8552690b3aa6e7f5ec7d12
+--- /dev/null
++++ b/batman-adv/patches/1003-batman-adv-Fix-double-free-during-fragment-merge-err.patch
+@@ -0,0 +1,41 @@
++From ee1415285ddb56a3c15b5b70d7b403637486382c Mon Sep 17 00:00:00 2001
++Message-Id: <ee1415285ddb56a3c15b5b70d7b403637486382c.1490704674.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 28 Mar 2017 14:35:12 +0200
++Subject: [PATCH] batman-adv: Fix double free during fragment merge error
++
++The function batadv_frag_skb_buffer was supposed not to consume the skbuff
++on errors. This was followed in the helper function
++batadv_frag_insert_packet when the skb would potentially be inserted in the
++fragment queue. But it could happen that the next helper function
++batadv_frag_merge_packets would try to merge the fragments and fail. This
++results in a kfree_skb of all the enqueued fragments (including the just
++inserted one). batadv_recv_frag_packet would detect the error in
++batadv_frag_skb_buffer and try to free the skb again.
++
++The behavior of batadv_frag_skb_buffer must therefore be changed to return
++true when batadv_frag_merge_packets fails.
++
++Fixes: 9b3eab61754d ("batman-adv: Receive fragmented packets and merge")
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++[Matthias Schiffer: backport to batman-adv 2016.2]
++---
++ net/batman-adv/fragmentation.c | 2 --
++ 1 file changed, 2 deletions(-)
++
++diff --git a/net/batman-adv/fragmentation.c b/net/batman-adv/fragmentation.c
++index 65536db1..21e5b79f 100644
++--- a/net/batman-adv/fragmentation.c
+++++ b/net/batman-adv/fragmentation.c
++@@ -326,8 +326,6 @@ bool batadv_frag_skb_buffer(struct sk_buff **skb,
++ 		goto out;
++ 
++ 	skb_out = batadv_frag_merge_packets(&head);
++-	if (!skb_out)
++-		goto out_err;
++ 
++ out:
++ 	*skb = skb_out;
++-- 
++2.12.1
++
