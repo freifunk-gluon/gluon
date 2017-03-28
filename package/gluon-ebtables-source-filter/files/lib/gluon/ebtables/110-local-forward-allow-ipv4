@@ -1,0 +1,6 @@
+prefix4 = require('gluon.site_config').prefix4
+
+if prefix4 then
+	rule('LOCAL_FORWARD -p IPv4 --ip-protocol udp --ip-destination-port 67 -j RETURN')
+	rule('LOCAL_FORWARD -p IPv4 --ip-src ' .. prefix4 .. ' -j RETURN')
+end
