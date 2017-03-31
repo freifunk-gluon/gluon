@@ -62,7 +62,7 @@
 #define MIN_INTERVAL 15
 
 // max execution time of a single ebtables call in nanoseconds
-#define EBTABLES_TIMEOUT 5e8 // 500ms
+#define EBTABLES_TIMEOUT 500000000 // 500ms
 
 // TQ value assigned to local routers
 #define LOCAL_TQ 512
@@ -287,7 +287,7 @@ static void handle_ra(int sock) {
 	}
 	if (!router) {
 		router = malloc(sizeof(struct router));
-		memcpy(router->src, src.sll_addr, 8);
+		memcpy(router->src, src.sll_addr, sizeof(router->src));
 		router->next = G.routers;
 		G.routers = router;
 	}
@@ -325,14 +325,12 @@ static void update_tqs() {
 	bool update_originators = false;
 	int i;
 	macaddr_t mac_a, mac_b;
+	macaddr_t unspec = {};
 
 	// reset TQs
 	foreach(router, G.routers) {
 		router->tq = 0;
-		for (i = 0; i < 6; i++)
-			if (router->originator[i] != 0)
-				break;
-		if (i >= 6)
+		if (!memcmp(router->originator, unspec, sizeof(unspec)))
 			update_originators = true;
 	}
 
@@ -347,8 +345,8 @@ static void update_tqs() {
 		snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
 		f = fopen(path, "r");
 		// skip header
-		while (fgetc(f) != '\n');
-		while (fgetc(f) != '\n');
+		while (fgetc(f) != '\n') {}
+		while (fgetc(f) != '\n') {}
 		while (fscanf(f, " %*[*+] " F_MAC "%*[0-9 -] (%*3u) via " F_MAC " %*[^]]]\n",
 				F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) == 12) {
 
@@ -446,21 +444,26 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	int ret;
 	pid_t child;
 	siginfo_t info;
-	sigset_t signals;
+	sigset_t signals, oldsignals;
 	sigemptyset(&signals);
 	sigaddset(&signals, SIGCHLD);
 
 	child = fork();
-	if (!child) {
+	if (child == 0) {
 		// casting discards const, but should be safe
 		// (see http://stackoverflow.com/q/36925388)
 		execvp(file, (char**) argv);
-		error(1, errno, "can't execvp(\"%s\", ...)", file);
+		fprintf(stderr, "can't execvp(\"%s\", ...): %s\n", file, strerror(errno));
+		_exit(1);
+	}
+	else if (child < 0) {
+		perror("Failed to fork()");
+		return -1;
 	}
 
-	sigprocmask(SIG_BLOCK, &signals, NULL);
+	sigprocmask(SIG_BLOCK, &signals, &oldsignals);
 	ret = sigtimedwait(&signals, &info, timeout);
-	sigprocmask(SIG_UNBLOCK, &signals, NULL);
+	sigprocmask(SIG_SETMASK, &oldsignals, NULL);
 
 	if (ret == SIGCHLD) {
 		if (info.si_pid != child) {
@@ -494,7 +497,7 @@ static void update_ebtables() {
 	struct timespec timeout = {
 		.tv_nsec = EBTABLES_TIMEOUT,
 	};
-	char mac[18];
+	char mac[F_MAC_LEN + 1];
 	struct router *router;
 
 	if (G.best_router && G.best_router->tq >= G.max_tq - G.hysteresis_thresh) {

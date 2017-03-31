@@ -10,8 +10,9 @@ static struct json_object * get_radv_filter() {
 	FILE *f = popen("exec ebtables -L RADV_FILTER", "r");
 	char *line = NULL;
 	size_t len = 0;
-	macaddr_t mac = { 0 };
+	macaddr_t mac = {};
 	struct json_object *ret = NULL;
+	char macstr[F_MAC_LEN + 1] = "";
 
 	if (!f)
 		return NULL;
@@ -20,12 +21,12 @@ static struct json_object * get_radv_filter() {
 		if (sscanf(line, "-s " F_MAC " -j ACCEPT\n", F_MAC_VAR(&mac)) == ETH_ALEN)
 			break;
 	}
+	free(line);
 
 	pclose(f);
 
-	sprintf(line, F_MAC, F_MAC_VAR(mac));
-	ret = gluonutil_wrap_string(line);
-	free(line);
+	snprintf(macstr, sizeof(macstr), F_MAC, F_MAC_VAR(mac));
+	ret = gluonutil_wrap_string(macstr);
 	return ret;
 }
 
