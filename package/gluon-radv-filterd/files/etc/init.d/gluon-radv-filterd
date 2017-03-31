@@ -6,8 +6,6 @@ DAEMON=/usr/sbin/gluon-radv-filterd
 
 validate_filterd_section() {
     uci_validate_section gluon-radv-filterd filterd "${1}" \
-            'iface:string' \
-            'chain:string:RADV_FILTER' \
             'threshold:uinteger:20'
 }
 
@@ -21,7 +19,7 @@ start_filterd() {
     validate_filterd_section "$1"
 
     procd_open_instance
-    procd_set_param command $DAEMON -i "$iface" -c "$chain" -t $threshold
+    procd_set_param command $DAEMON -i br-client -c RADV_FILTER -t $threshold
     procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
     procd_set_param netdev br-client
     procd_set_param stderr 1
