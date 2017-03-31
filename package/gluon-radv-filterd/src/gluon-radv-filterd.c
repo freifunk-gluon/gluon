@@ -48,6 +48,7 @@
 #include <linux/limits.h>
 
 #include <netinet/icmp6.h>
+#include <netinet/in.h>
 #include <netinet/ip6.h>
 
 #include "mac.h"
@@ -181,10 +182,22 @@ static inline void warn_errno(const char *message) {
 
 static int init_packet_socket(unsigned int ifindex) {
 	struct sock_filter radv_filter_code[] = {
+		// check that this is an ICMPv6 packet
+		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, offsetof(struct ip6_hdr, ip6_nxt)),
+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, IPPROTO_ICMPV6, 0, 7),
+		// check that this is a router advertisement
 		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct icmp6_hdr, icmp6_type)),
-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, ND_ROUTER_ADVERT, 1, 0),
-		BPF_STMT(BPF_RET|BPF_K, 0),
+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, ND_ROUTER_ADVERT, 0, 5),
+		// check that the code field in the ICMPv6 header is 0
+		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct nd_router_advert, nd_ra_code)),
+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, 0, 0, 3),
+		// check that this is a default route (lifetime > 0)
+		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct nd_router_advert, nd_ra_router_lifetime)),
+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, 0, 1, 0),
+		// return true
 		BPF_STMT(BPF_RET|BPF_K, 0xffffffff),
+		// return false
+		BPF_STMT(BPF_RET|BPF_K, 0),
 	};
 
 	struct sock_fprog radv_filter = {
@@ -252,34 +265,16 @@ static void handle_ra(int sock) {
 	struct sockaddr_ll src;
 	unsigned int addr_size = sizeof(src);
 	size_t len;
-	uint8_t buffer[BUFSIZE] __attribute__((aligned(8)));
-	struct ip6_hdr *pkt;
-	struct ip6_ext *ext;
-	struct nd_router_advert *ra;
-	uint8_t ext_type;
+	struct {
+		struct ip6_hdr ip6;
+		struct nd_router_advert ra;
+	} pkt;
 
-	len = recvfrom(sock, buffer, BUFSIZE, 0, (struct sockaddr *)&src, &addr_size);
+	len = recvfrom(sock, &pkt, sizeof(pkt), 0, (struct sockaddr *)&src, &addr_size);
 
-	// skip IPv6 headers, ensuring packet is long enough
-	CHECK(len > sizeof(struct ip6_hdr));
-	pkt = (struct ip6_hdr *)buffer;
-	CHECK(len >= ntohs(pkt->ip6_plen) + sizeof(struct ip6_hdr));
-	ext_type = pkt->ip6_nxt;
-	ext = (void*)pkt + sizeof(struct ip6_hdr);
-	while (ext_type != IPPROTO_ICMPV6) {
-		CHECK((void*)ext < (void*)pkt + sizeof(struct ip6_hdr) + len);
-		CHECK(ext->ip6e_len > 0);
-		ext_type = ext->ip6e_nxt;
-		ext = (void*)ext + ext->ip6e_len;
-	}
-
-	// partially parse router advertisement
-	CHECK((void*)ext + sizeof(struct nd_router_advert) <= (void*)pkt + sizeof(struct ip6_hdr) + len);
-	ra = (struct nd_router_advert *) ext;
-	CHECK(ra->nd_ra_type == ND_ROUTER_ADVERT);
-	CHECK(ra->nd_ra_code == 0);
-	// we only want default routers
-	CHECK(ra->nd_ra_router_lifetime > 0);
+	// BPF already checked that this is an ICMPv6 RA of a default router
+	CHECK(len >= sizeof(pkt));
+	CHECK(ntohs(pkt.ip6.ip6_plen) + sizeof(struct ip6_hdr) >= sizeof(pkt));
 
 	DEBUG_MSG("received valid RA from " F_MAC, F_MAC_VAR(src.sll_addr));
 
@@ -296,7 +291,7 @@ static void handle_ra(int sock) {
 		router->next = G.routers;
 		G.routers = router;
 	}
-	router->eol = time(NULL) + ra->nd_ra_router_lifetime;
+	router->eol = time(NULL) + pkt.ra.nd_ra_router_lifetime;
 
 check_failed:
 	return;
