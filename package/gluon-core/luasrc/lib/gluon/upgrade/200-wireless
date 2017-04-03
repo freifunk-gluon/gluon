@@ -95,6 +95,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
   local maclist = uci:get('wireless', name, 'maclist')
 
   uci:delete('network', name)
+  uci:delete('network', name .. '_vlan')
   uci:delete('wireless', name)
 
   if not config then
