@@ -1,0 +1,9 @@
+site = require('gluon.site_config')
+
+rule('LOCAL_FORWARD -p IPv6 --ip6-src fe80::/64 -j RETURN')
+rule('LOCAL_FORWARD -p IPv6 --ip6-src ::/128 --ip6-proto ipv6-icmp -j RETURN')
+rule('LOCAL_FORWARD -p IPv6 --ip6-src ' .. site.prefix6 .. ' -j RETURN')
+
+for _, prefix in ipairs(site.extra_prefixes6 or {}) do
+	rule('LOCAL_FORWARD -p IPv6 --ip6-src ' .. prefix .. ' -j RETURN')
+end
