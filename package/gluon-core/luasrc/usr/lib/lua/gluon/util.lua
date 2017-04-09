@@ -153,7 +153,7 @@ local function find_phy_by_macaddr(macaddr)
 	end
 end
 
-local function find_phy(radio)
+function find_phy(radio)
 	local config = uci:get_all('wireless', radio)
 
 	if not config or config.type ~= 'mac80211' then
