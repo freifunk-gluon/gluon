@@ -138,6 +138,10 @@ local function find_phy_by_path(path)
 	for phy in fs.glob('/sys/devices/' .. path .. '/ieee80211/phy*') do
 		return phy:match('([^/]+)$')
 	end
+
+	for phy in fs.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*') do
+		return phy:match('([^/]+)$')
+	end
 end
 
 local function find_phy_by_macaddr(macaddr)
