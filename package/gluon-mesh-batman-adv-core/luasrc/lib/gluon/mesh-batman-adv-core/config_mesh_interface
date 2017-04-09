@@ -38,9 +38,11 @@ if cmd == 'setup' then
 	file:write('bat0')
 	file:close()
 
-	file = assert(io.open('/sys/class/net/' .. ifname .. '/batman_adv/no_rebroadcast', 'w'))
-	file:write(tostring(transitive))
-	file:close()
+	file = io.open('/sys/class/net/' .. ifname .. '/batman_adv/no_rebroadcast', 'w')
+	if file then
+		file:write(tostring(transitive))
+		file:close()
+	end
 
 elseif cmd == 'teardown' then
 
