@@ -4,21 +4,6 @@ local uci = require("simple-uci").cursor()
 local util = require 'gluon.util'
 
 
-local function find_phy_by_path(path)
-	for phy in fs.glob("/sys/devices/" .. path .. "/ieee80211/phy*") do
-		return phy:match("([^/]+)$")
-	end
-end
-
-local function find_phy_by_macaddr(macaddr)
-	local addr = macaddr:lower()
-	for file in fs.glob("/sys/class/ieee80211/*/macaddress") do
-		if util.trim(fs.readfile(file)) == addr then
-			return file:match("([^/]+)/macaddress$")
-		end
-	end
-end
-
 local function txpower_list(phy)
 	local list = iwinfo.nl80211.txpwrlist(phy) or { }
 	local off  = tonumber(iwinfo.nl80211.txpower_offset(phy)) or 0
@@ -84,12 +69,8 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	vif_option('mesh', translate("Enable mesh network (802.11s)"))
 	vif_option('ibss', translate("Enable mesh network (IBSS)"))
 
-	local phy
-	if config.path then
-		phy = find_phy_by_path(config.path)
-	elseif config.macaddr then
-		phy = find_phy_by_macaddr(config.macaddr)
-	else
+	local phy = util.find_phy(config)
+	if not phy then
 		return
 	end
 
