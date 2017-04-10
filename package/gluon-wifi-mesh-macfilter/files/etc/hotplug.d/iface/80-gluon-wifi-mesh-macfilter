@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[[ "$ACTION" != ifup ]] && exit 0;
+[[ "$( uci show wireless.$INTERFACE.mode 2>/dev/null | cut -d '=' -f2 | sed s/\'//g )" != mesh ]] && exit 0;
+
+local POLICY=$( uci show wireless.$INTERFACE.macfilter 2>/dev/null | cut -d '=' -f2 | sed s/\'//g )
+	
+case $POLICY in
+	deny)	local IW_POLICY="block";;
+	allow)	local IW_POLICY="open";;
+	*) 		exit 0;;
+esac
+
+for MAC in $( uci show wireless.$INTERFACE.maclist 2>/dev/null | cut -d '=' -f2 | sed s/\'//g ); do
+	iw dev $DEVICE station set $MAC plink_action $IW_POLICY
+done
