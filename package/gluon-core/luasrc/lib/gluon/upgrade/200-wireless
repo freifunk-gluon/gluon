@@ -199,7 +199,7 @@ local function configure_radio(radio, index, config)
   fixup_wan(radio, index)
 end
 
-util.iterate_radios(configure_radio)
+util.iterate_radios(uci, configure_radio)
 
 
 if uci:get('system', 'rssid_wlan0') then

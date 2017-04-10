@@ -27,7 +27,7 @@ key.datatype = "wpakey"
 key.default = uci:get('wireless', primary_iface, "key")
 
 function f:write()
-	util.iterate_radios(function(radio, index)
+	util.iterate_radios(uci, function(radio, index)
 		local name   = "wan_" .. radio
 
 		if enabled.data then

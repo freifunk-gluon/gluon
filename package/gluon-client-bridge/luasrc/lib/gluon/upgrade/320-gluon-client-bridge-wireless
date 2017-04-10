@@ -51,6 +51,6 @@ local function configure_radio(radio, index, config)
   configure_client(config.ap, radio, index, suffix)
 end
 
-util.iterate_radios(configure_radio)
+util.iterate_radios(uci, configure_radio)
 
 uci:save('wireless')

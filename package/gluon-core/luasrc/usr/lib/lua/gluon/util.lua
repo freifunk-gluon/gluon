@@ -235,7 +235,7 @@ end
 -- Iterate over all radios defined in UCI calling
 -- f(radio, index, site.wifiX) for each radio found while passing
 --  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
-function iterate_radios(f)
+function iterate_radios(uci, f)
 	local radios = {}
 
 	uci:foreach('wireless', 'wifi-device',
