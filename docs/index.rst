@@ -68,6 +68,7 @@ Packages
    package/gluon-ebtables-filter-multicast
    package/gluon-ebtables-filter-ra-dhcp
    package/gluon-ebtables-segment-mld
+   package/gluon-ebtables-source-filter
 
 Releases
 --------
