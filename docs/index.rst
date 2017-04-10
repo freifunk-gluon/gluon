@@ -5,10 +5,8 @@ Gluon is a modular framework for creating OpenWrt-based firmwares for wireless m
 Several Freifunk communities in Germany use Gluon as the foundation of their Freifunk firmwares.
 
 
-User Documentation
-------------------
-
 .. toctree::
+   :caption: User Documentation
    :maxdepth: 2
 
    user/getting_started
@@ -16,10 +14,8 @@ User Documentation
    user/x86
    user/faq
 
-Features
---------
-
 .. toctree::
+   :caption: Features
    :maxdepth: 2
 
    features/configmode
@@ -32,10 +28,8 @@ Features
    features/authorized-keys
    features/roles
 
-Developer Documentation
------------------------
-
 .. toctree::
+   :caption: Developer Documentation
    :maxdepth: 2
 
    dev/basics
@@ -44,10 +38,8 @@ Developer Documentation
    dev/wan
    dev/mac_addresses
 
-gluon-web Reference
-^^^^^^^^^^^^^^^^^^^
-
 .. toctree::
+   :caption: gluon-web Reference
    :maxdepth: 1
 
    dev/web/controller
@@ -56,10 +48,8 @@ gluon-web Reference
    dev/web/i18n
    dev/web/config-mode
 
-Packages
---------
-
 .. toctree::
+   :caption: Packages
    :maxdepth: 1
 
    package/gluon-client-bridge
@@ -70,10 +60,8 @@ Packages
    package/gluon-ebtables-segment-mld
    package/gluon-ebtables-source-filter
 
-Releases
---------
-
 .. toctree::
+   :caption: Releases
    :maxdepth: 1
 
    releases/v2016.2.5
