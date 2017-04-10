@@ -36,7 +36,6 @@ local nixio = require 'nixio'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site_config'
-local uci = require('simple-uci').cursor()
 local fs = require 'nixio.fs'
 
 
@@ -165,7 +164,7 @@ function find_phy(config)
 	end
 end
 
-local function get_addresses(radio)
+local function get_addresses(uci, radio)
 	local phy = find_phy(uci:get_all('wireless', radio))
 	if not phy then
 		return function() end
@@ -208,11 +207,11 @@ function generate_mac(i)
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
-local function get_wlan_mac_from_driver(radio, vif)
+local function get_wlan_mac_from_driver(uci, radio, vif)
 	local primary = sysconfig.primary_mac:lower()
 
 	local i = 1
-	for addr in get_addresses(radio) do
+	for addr in get_addresses(uci, radio) do
 		if addr:lower() ~= primary then
 			if i == vif then
 				return addr
@@ -223,8 +222,8 @@ local function get_wlan_mac_from_driver(radio, vif)
 	end
 end
 
-function get_wlan_mac(radio, index, vif)
-	local addr = get_wlan_mac_from_driver(radio, vif)
+function get_wlan_mac(uci, radio, index, vif)
+	local addr = get_wlan_mac_from_driver(uci, radio, vif)
 	if addr then
 		return addr
 	end

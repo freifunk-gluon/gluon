@@ -27,7 +27,7 @@ local function configure_client(config, radio, index, suffix)
     return
   end
 
-  local macaddr = util.get_wlan_mac(radio, index, 1)
+  local macaddr = util.get_wlan_mac(uci, radio, index, 1)
   if not macaddr then
     return
   end
