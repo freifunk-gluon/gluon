@@ -138,6 +138,10 @@ local function find_phy_by_path(path)
 	for phy in fs.glob('/sys/devices/' .. path .. '/ieee80211/phy*') do
 		return phy:match('([^/]+)$')
 	end
+
+	for phy in fs.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*') do
+		return phy:match('([^/]+)$')
+	end
 end
 
 local function find_phy_by_macaddr(macaddr)
@@ -149,7 +153,7 @@ local function find_phy_by_macaddr(macaddr)
 	end
 end
 
-local function find_phy(radio)
+function find_phy(radio)
 	local config = uci:get_all('wireless', radio)
 
 	if not config or config.type ~= 'mac80211' then
