@@ -12,6 +12,7 @@ local util = require 'gluon.util'
 local platform = require 'gluon.platform'
 local site = require 'gluon.site_config'
 
+local fs = require 'nixio.fs'
 local uci = require('simple-uci').cursor()
 
 
@@ -19,7 +20,7 @@ local function iface_exists(ifaces)
 	if not ifaces then return nil end
 
 	for iface in ifaces:gmatch('%S+') do
-		if util.exec('ip', 'link', 'show', 'dev', (iface:gsub('%..*$', ''))) == 0 then
+		if fs.access('/sys/class/net/' .. iface:gsub('%..*$', '')) then
 			return ifaces
 		end
 	end
