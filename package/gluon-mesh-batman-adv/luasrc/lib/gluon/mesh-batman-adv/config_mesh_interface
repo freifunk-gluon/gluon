@@ -13,7 +13,7 @@ if cmd == 'setup' then
 	local fixed_mtu = tonumber(os.getenv('FIXED_MTU')) or 0
 	local transitive = tonumber(os.getenv('TRANSITIVE')) or 0
 
-	local mtu = tonumber(arg[2])
+	local mtu = 1532
 
 	if not fs.access('/sys/class/net/primary0') then
 		os.execute([[

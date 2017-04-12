@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec /lib/gluon/mesh-batman-adv-core/config_mesh_interface teardown

@@ -207,7 +207,7 @@ static struct json_object * get_mesh(void) {
 }
 
 static struct json_object * get_batman_adv_compat(void) {
-	FILE *f = fopen("/lib/gluon/mesh-batman-adv-core/compat", "r");
+	FILE *f = fopen("/lib/gluon/mesh-batman-adv/compat", "r");
 	if (!f)
 		return NULL;
 

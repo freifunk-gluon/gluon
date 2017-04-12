@@ -125,7 +125,7 @@ If the new platform works fine with the definitions found in ``default.c``, noth
 create a definition for the added target or subtarget, either by symlinking one of the files in the ``templates``
 directory, or adding a new source file.
 
-On many targets, Gluon's network setup scripts (mainly in the packages ``gluon-core`` and ``gluon-mesh-batman-adv-core``)
+On many targets, Gluon's network setup scripts (mainly in the package ``gluon-core``)
 won't run correctly without some adjustments, so better double check that everything is fine there (and the files
 ``primary_mac``, ``lan_ifname`` and ``wan_ifname`` in ``/lib/gluon/core/sysconfig/`` contain sensible values).
 
