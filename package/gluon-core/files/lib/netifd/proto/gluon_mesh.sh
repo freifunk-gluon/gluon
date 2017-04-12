@@ -16,15 +16,25 @@ proto_gluon_mesh_setup() {
 	local fixed_mtu transitive
 	json_get_vars fixed_mtu transitive
 
-	export FIXED_MTU="$fixed_mtu"
-	export TRANSITIVE="$transitive"
+	export FIXED_MTU="${fixed_mtu:-0}"
+	export TRANSITIVE="${transitive:-0}"
 
 	for script in /lib/gluon/core/mesh/setup.d/*; do
 	        [ ! -x "$script" ] || "$script"
 	done
 
         proto_init_update "$IFNAME" 1
+
+	proto_add_data
+	json_add_boolean fixed_mtu "$FIXED_MTU"
+	json_add_boolean transitive "$TRANSITIVE"
+	proto_close_data
+
         proto_send_update "$CONFIG"
+
+	for script in /lib/gluon/core/mesh/post-setup.d/*; do
+	        [ ! -x "$script" ] || "$script"
+	done
 }
 
 proto_gluon_mesh_teardown() {
