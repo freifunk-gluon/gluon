@@ -180,6 +180,9 @@ packages $ATH10K_PACKAGES
 device tp-link-archer-c7-v2 archer-c7-v2
 packages $ATH10K_PACKAGES
 factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
+
+device tp-link-re450 re450
+packages $ATH10K_PACKAGES
 fi
 
 
