@@ -22,10 +22,16 @@ uci:section('batman-adv', 'mesh', 'bat0', {
 })
 uci:save('batman-adv')
 
+uci:delete('network', 'gluon_bat0')
+uci:section('network', 'interface', 'gluon_bat0', {
+	proto = 'gluon_bat0',
+})
+
 uci:delete('network', 'bat0')
 uci:section('network', 'interface', 'bat0', {
 	ifname = 'bat0',
 	proto = 'none',
+	auto = true,
 	macaddr = sysconfig.primary_mac,
 	multicast_router = 2,
 	learning = false,
