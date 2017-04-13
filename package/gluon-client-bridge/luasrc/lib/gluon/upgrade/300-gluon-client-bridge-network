@@ -34,6 +34,8 @@ uci:section('network', 'interface', 'client', {
 	auto = true,
 	ipv6 = false,
 	macaddr = sysconfig.primary_mac,
+	igmp_snooping = true,
+	multicast_querier = true,
 })
 
 uci:save('network')
