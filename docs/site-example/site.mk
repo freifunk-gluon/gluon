@@ -36,6 +36,7 @@ GLUON_SITE_PACKAGES := \
 
 DEFAULT_GLUON_RELEASE := 0.6+exp$(shell date '+%Y%m%d')
 
+# Variables set with ?= can be overwritten from the command line
 
 ##	GLUON_RELEASE
 #		call make with custom GLUON_RELEASE flag, to use your own release version scheme.
@@ -44,7 +45,6 @@ DEFAULT_GLUON_RELEASE := 0.6+exp$(shell date '+%Y%m%d')
 #		would generate images named like this:
 #			gluon-ff%site_code%-23.42+5-%router_model%.bin
 
-# Allow overriding the release number from the command line
 GLUON_RELEASE ?= $(DEFAULT_GLUON_RELEASE)
 
 # Default priority for updates.
