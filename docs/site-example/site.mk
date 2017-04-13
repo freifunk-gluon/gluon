@@ -36,7 +36,7 @@ GLUON_SITE_PACKAGES := \
 
 DEFAULT_GLUON_RELEASE := 0.6+exp$(shell date '+%Y%m%d')
 
-# Variables set with =? can be overwritten from the command line
+# Variables set with ?= can be overwritten from the command line
 
 ##	GLUON_RELEASE
 #		call make with custom GLUON_RELEASE flag, to use your own release version scheme.
