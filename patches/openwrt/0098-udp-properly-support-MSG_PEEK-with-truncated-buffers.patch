@@ -1,0 +1,109 @@
+From: Jan Niehusmann <jan@gondor.com>
+Date: Fri, 14 Apr 2017 21:26:27 +0200
+Subject: udp: properly support MSG_PEEK with truncated buffers
+
+Add upstream patch to fix CVE-2016-10229
+
+diff --git a/target/linux/generic/patches-3.18/001-udp-properly-support-MSG_PEEK-with-truncated-buffers.patch b/target/linux/generic/patches-3.18/001-udp-properly-support-MSG_PEEK-with-truncated-buffers.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..16edc8c8da4ce8edf3ce1b5c2a56d543f9658897
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/001-udp-properly-support-MSG_PEEK-with-truncated-buffers.patch
+@@ -0,0 +1,97 @@
++From 69335972b1c1c9bd7597fc6080b6eb1bd3fbf774 Mon Sep 17 00:00:00 2001
++From: Eric Dumazet <edumazet@google.com>
++Date: Wed, 30 Dec 2015 08:51:12 -0500
++Subject: [PATCH] udp: properly support MSG_PEEK with truncated buffers
++
++[ Upstream commit 197c949e7798fbf28cfadc69d9ca0c2abbf93191 ]
++
++Backport of this upstream commit into stable kernels :
++89c22d8c3b27 ("net: Fix skb csum races when peeking")
++exposed a bug in udp stack vs MSG_PEEK support, when user provides
++a buffer smaller than skb payload.
++
++In this case,
++skb_copy_and_csum_datagram_iovec(skb, sizeof(struct udphdr),
++                                 msg->msg_iov);
++returns -EFAULT.
++
++This bug does not happen in upstream kernels since Al Viro did a great
++job to replace this into :
++skb_copy_and_csum_datagram_msg(skb, sizeof(struct udphdr), msg);
++This variant is safe vs short buffers.
++
++For the time being, instead reverting Herbert Xu patch and add back
++skb->ip_summed invalid changes, simply store the result of
++udp_lib_checksum_complete() so that we avoid computing the checksum a
++second time, and avoid the problematic
++skb_copy_and_csum_datagram_iovec() call.
++
++This patch can be applied on recent kernels as it avoids a double
++checksumming, then backported to stable kernels as a bug fix.
++
++Signed-off-by: Eric Dumazet <edumazet@google.com>
++Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++Signed-off-by: Sasha Levin <alexander.levin@verizon.com>
++---
++ net/ipv4/udp.c | 6 ++++--
++ net/ipv6/udp.c | 6 ++++--
++ 2 files changed, 8 insertions(+), 4 deletions(-)
++
++diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
++index 2a5d388..ee26711 100644
++--- a/net/ipv4/udp.c
+++++ b/net/ipv4/udp.c
++@@ -1252,6 +1252,7 @@ int udp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
++ 	int peeked, off = 0;
++ 	int err;
++ 	int is_udplite = IS_UDPLITE(sk);
+++	bool checksum_valid = false;
++ 	bool slow;
++ 
++ 	if (flags & MSG_ERRQUEUE)
++@@ -1277,11 +1278,12 @@ try_again:
++ 	 */
++ 
++ 	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov) {
++-		if (udp_lib_checksum_complete(skb))
+++		checksum_valid = !udp_lib_checksum_complete(skb);
+++		if (!checksum_valid)
++ 			goto csum_copy_err;
++ 	}
++ 
++-	if (skb_csum_unnecessary(skb))
+++	if (checksum_valid || skb_csum_unnecessary(skb))
++ 		err = skb_copy_datagram_iovec(skb, sizeof(struct udphdr),
++ 					      msg->msg_iov, copied);
++ 	else {
++diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
++index 7d01116..143e6c7 100644
++--- a/net/ipv6/udp.c
+++++ b/net/ipv6/udp.c
++@@ -388,6 +388,7 @@ int udpv6_recvmsg(struct kiocb *iocb, struct sock *sk,
++ 	int peeked, off = 0;
++ 	int err;
++ 	int is_udplite = IS_UDPLITE(sk);
+++	bool checksum_valid = false;
++ 	int is_udp4;
++ 	bool slow;
++ 
++@@ -419,11 +420,12 @@ try_again:
++ 	 */
++ 
++ 	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov) {
++-		if (udp_lib_checksum_complete(skb))
+++		checksum_valid = !udp_lib_checksum_complete(skb);
+++		if (!checksum_valid)
++ 			goto csum_copy_err;
++ 	}
++ 
++-	if (skb_csum_unnecessary(skb))
+++	if (checksum_valid || skb_csum_unnecessary(skb))
++ 		err = skb_copy_datagram_iovec(skb, sizeof(struct udphdr),
++ 					      msg->msg_iov, copied);
++ 	else {
++-- 
++2.1.4
++
