@@ -1,0 +1,15 @@
+#!/usr/bin/lua
+
+local sysctl = require 'gluon.sysctl'
+local uci = require('luci.model.uci').cursor()
+
+uci:section('firewall', 'include', 'radv_priorityd',
+    {
+        type = 'restore',
+        path = '/lib/gluon/radv-priorityd/ip6tables.rules',
+        family = 'ipv6',
+    }
+)
+uci:save('firewall')
+
+sysctl.set('net.bridge.bridge-nf-call-ip6tables', 1)
