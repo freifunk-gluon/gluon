@@ -44,6 +44,8 @@ device tp-link-tl-wr841n-nd-v9 tl-wr841-v9
 device tp-link-tl-wr841n-nd-v10 tl-wr841-v10
 device tp-link-tl-wr841n-nd-v11 tl-wr841-v11
 factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
+device tp-link-tl-wr841n-nd-v12 tl-wr841-v12
+factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 
 device tp-link-tl-wr843n-nd-v1 tl-wr843nd-v1
 
