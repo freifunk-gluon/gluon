@@ -1,0 +1,38 @@
+From: Christian Breutkreutz <c.breutkreutz@freifunk-malente.de>
+Date: Wed, 3 May 2017 16:24:59 +0100
+Subject: ar71xx: add support for TP-Link TL-WR841ND v12
+
+Add support for TP-Link TL-WR841ND v12
+
+Signed-off-by: Christian Breutkreutz <c.breutkreutz@freifunk-malente.de>
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 61e221255f6742f9594da168b11af7716d6a720e..eeef08d3d612715c9c8e20606859009d6286cff5 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -619,6 +619,16 @@ define Device/tl-wr841n-v11
+     IMAGE/factory-eu.bin := append-rootfs | mktplinkfw factory -C EU
+ endef
+ 
++define Device/tl-wr841n-v12
++    $(Device/tplink-4mlzma)
++    BOARDNAME := TL-WR841N-v11
++    DEVICE_PROFILE := TLWR841
++    TPLINK_HWID := 0x08410012
++    IMAGES += factory-us.bin factory-eu.bin
++    IMAGE/factory-us.bin := append-rootfs | mktplinkfw factory -C US
++    IMAGE/factory-eu.bin := append-rootfs | mktplinkfw factory -C EU
++endef
++
+ define Device/tl-wr842n-v2
+     $(Device/tplink-8mlzma)
+     BOARDNAME := TL-WR842N-v2
+@@ -646,7 +656,7 @@ define Device/tl-wr847n-v8
+     DEVICE_PROFILE := TLWR841
+     TPLINK_HWID := 0x08470008
+ endef
+-TARGET_DEVICES += tl-wr841n-v8 tl-wr841n-v9 tl-wr841n-v10 tl-wr841n-v11 tl-wr842n-v2 tl-wr842n-v3 tl-wr843nd-v1 tl-wr847n-v8
++TARGET_DEVICES += tl-wr841n-v8 tl-wr841n-v9 tl-wr841n-v10 tl-wr841n-v11 tl-wr841n-v12 tl-wr842n-v2 tl-wr842n-v3 tl-wr843nd-v1 tl-wr847n-v8
+ 
+ define Device/tl-wr941nd-v5
+     $(Device/tplink-4mlzma)
