@@ -189,6 +189,10 @@ fi
 # Ubiquiti
 
 device ubiquiti-airgateway ubnt-air-gateway
+alias ubiquiti-airgateway-lr
+
+device ubiquiti-airgateway-pro ubnt-air-gateway-pro
+
 device ubiquiti-airrouter ubnt-airrouter
 
 device ubiquiti-bullet-m ubnt-bullet-m
