@@ -6,8 +6,10 @@ between node and gateway as small as possible. In order to do this, a
 dns-cache may be used on a node. The dnsmasq instance listening on port
 53 on the node will be reconfigured to answer requests, use a list of
 upstream servers and a specific cache size if the options listed below are
-added to site.conf. All settings are optional, though if no dns server is
-set, the configuration will not be altered by gluon-core.
+added to site.conf. Upstream servers normally are the community's gateways.
+If they are set the node will cache every DNS record in RAM. All settings 
+are optional, though if no dns server is set, the configuration will not 
+be altered by gluon-core.
 
 Besides caching dns requests from clients, the next_node-addresses are set to
 resolve to a configurable name that may optionally be placed in next_node.name.
