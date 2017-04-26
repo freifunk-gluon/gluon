@@ -8,12 +8,19 @@ dns-cache may be used on a node. The dnsmasq instance listening on port
 upstream servers and a specific cache size if the options listed below are
 added to site.conf. Upstream servers are the DNS servers which are normally
 used by the nodes to resolve hostnames (e.g. gateways/supernodes).
-If they are set the node will cache as much DNS records as set with 
-'cacheentries' in RAM. All settings are optional, though if no dns server 
-is set, the configuration will not be altered by gluon-core.
 
-Besides caching dns requests from clients, the next_node-addresses are set to
-resolve to a configurable name that may optionally be placed in next_node.name.
+There are the following settings:
+    servers
+    cacheentries
+    
+If both options are set the node will cache as much DNS records as set with 
+'cacheentries' in RAM. The 'servers' list will be used to resolve the received 
+DNS-queries if the request cannot be answered from cache.
+If these settings do not exist, the cache is not intialized and RAM-usage will not increase.
+
+When next_node.name is set, an A-record and an AAAA-record for the 
+next-node-IP are placed in the dnsmasq configuration. This means that the content 
+of next_node.name may be resolved even without upstream connectivity.
 
 ::
 
