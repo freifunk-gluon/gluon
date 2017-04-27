@@ -196,6 +196,8 @@ ar71xx-generic
 * Ubiquiti
 
   - Air Gateway
+  - Air Gateway LR
+  - Air Gateway PRO
   - Air Router
   - Bullet M2/M5
   - Loco M2/M5
