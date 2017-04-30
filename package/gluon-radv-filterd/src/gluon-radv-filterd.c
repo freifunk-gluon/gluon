@@ -348,7 +348,7 @@ static void update_tqs() {
 		while (fgetc(f) != '\n') {}
 		while (fgetc(f) != '\n') {}
 		while (fscanf(f, " %*[*+] " F_MAC "%*[0-9 -] (%*3u) via " F_MAC " %*[^]]]\n",
-				F_MAC_VAR(&mac_a), F_MAC_VAR(&mac_b)) == 12) {
+				F_MAC_VAR_REF(mac_a), F_MAC_VAR_REF(mac_b)) == 12) {
 
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
@@ -373,7 +373,7 @@ static void update_tqs() {
 	while (fgetc(f) != '\n');
 	while (fgetc(f) != '\n');
 	while (fscanf(f, F_MAC " %*fs (%hhu) %*[^\n]\n",
-			F_MAC_VAR(&mac_a), &tq) == 7) {
+			F_MAC_VAR_REF(mac_a), &tq) == 7) {
 
 		foreach(router, G.routers) {
 			if (!memcmp(router->originator, mac_a, sizeof(macaddr_t))) {
@@ -403,7 +403,7 @@ static void update_tqs() {
 		// skip header
 		while (fgetc(f) != '\n');
 		while (fgetc(f) != '\n');
-		while (fscanf(f, " * " F_MAC " [%*5s] %*f", F_MAC_VAR(&mac_a)) == 6) {
+		while (fscanf(f, " * " F_MAC " [%*5s] %*f", F_MAC_VAR_REF(mac_a)) == 6) {
 			foreach(router, G.routers) {
 				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
 					DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d", F_MAC_VAR(router->src), LOCAL_TQ);

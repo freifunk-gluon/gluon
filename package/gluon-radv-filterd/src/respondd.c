@@ -18,7 +18,7 @@ static struct json_object * get_radv_filter() {
 		return NULL;
 
 	while (getline(&line, &len, f) > 0) {
-		if (sscanf(line, "-s " F_MAC " -j ACCEPT\n", F_MAC_VAR(&mac)) == ETH_ALEN)
+		if (sscanf(line, "-s " F_MAC " -j ACCEPT\n", F_MAC_VAR_REF(mac)) == ETH_ALEN)
 			break;
 	}
 	free(line);
