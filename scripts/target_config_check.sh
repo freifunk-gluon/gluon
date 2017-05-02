@@ -9,6 +9,8 @@ packages=$2
 
 output=
 
+ret=0
+
 LEDE_CONFIG_TARGET="${LEDE_TARGET//-/_}"
 
 
@@ -22,6 +24,17 @@ END_MAKE
 }
 
 
+fail() {
+	local message="$1"
+
+	if [ $ret -eq 0 ]; then
+		ret=1
+		echo "Configuration failed:" >&2
+	fi
+
+	echo " * $message" >&2
+}
+
 check_config() {
 	grep -q "$1" lede/.config
 }
@@ -31,8 +44,7 @@ check_package() {
 	local value="$2"
 
 	if ! check_config "^CONFIG_PACKAGE_${package}=${value}"; then
-		echo "Configuration failed: unable to enable package '${package}'" >&2
-		exit 1
+		fail "unable to enable package '${package}'"
 	fi
 }
 
@@ -43,8 +55,7 @@ config() {
 	local config="$1"
 
 	if ! check_config "^${config}\$"; then
-		echo "Configuration failed: unable to set '${config}'" >&2
-		exit 1
+		fail "unable to set '${config}'"
 	fi
 }
 
@@ -58,8 +69,7 @@ device() {
 	fi
 
 	if ! check_config "CONFIG_TARGET_DEVICE_${LEDE_CONFIG_TARGET}_DEVICE_${profile}=y"; then
-		echo "Configuration failed: unable to enable device '${profile}'" >&2
-		exit 1
+		fail "unable to enable device '${profile}'"
 	fi
 
 	for package in $(site_packages "$output"); do
@@ -99,3 +109,5 @@ check_devices
 for package in $packages; do
 	check_package "$package" 'y'
 done
+
+exit $ret
