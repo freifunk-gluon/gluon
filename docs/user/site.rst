@@ -274,9 +274,15 @@ mesh_vpn
 
 mesh_on_wan \: optional
     Enables the mesh on the WAN port (``true`` or ``false``).
+    ::
+
+       mesh_on_wan = true,
 
 mesh_on_lan \: optional
     Enables the mesh on the LAN port (``true`` or ``false``).
+    ::
+    
+        mesh_on_lan = true,
 
 poe_passthrough \: optional
     Enable PoE passthrough by default on hardware with such a feature.
