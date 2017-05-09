@@ -1,0 +1,24 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 30 Nov 2016 20:24:31 +0100
+Subject: mkimage: fix openssl 1.1.x compat fix with libressl
+
+libressl sets OPENSSL_VERSION_NUMBER to 0x20000000L, which breaks API
+checks based on it.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+Backport of e678c9f764c37f963e6667777b6a05bddcf05ea5
+
+diff --git a/tools/mkimage/patches/210-openssl-1.1.x-compat.patch b/tools/mkimage/patches/210-openssl-1.1.x-compat.patch
+index fa7c99f39b0a65f0d784473ca9b8fde836e4fa6e..b1bc08856ea13b04d2aba58b551c3dcf2f1d2a0b 100644
+--- a/tools/mkimage/patches/210-openssl-1.1.x-compat.patch
++++ b/tools/mkimage/patches/210-openssl-1.1.x-compat.patch
+@@ -11,7 +11,7 @@
+  #define HAVE_ERR_REMOVE_THREAD_STATE
+  #endif
+  
+-+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+++#if (OPENSSL_VERSION_NUMBER < 0x10100005L) || defined(LIBRESSL_VERSION_NUMBER)
+ +static void RSA_get0_key(const RSA *r,
+ +                         const BIGNUM **n, const BIGNUM **e, const BIGNUM **d)
+ +{

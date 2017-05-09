@@ -1,0 +1,295 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 9 May 2017 18:37:17 +0200
+Subject: cmake: backport from LEDE 17.01 d1e0cc8cd5b460df47a2316653c273e27ebf93b1
+
+diff --git a/include/cmake.mk b/include/cmake.mk
+index 4207a4dcee8444ac1472b2b78a068e5ed811c7ae..5a403cbf41e2bbd6bdb843492639a01aff8cf75b 100644
+--- a/include/cmake.mk
++++ b/include/cmake.mk
+@@ -1,10 +1,15 @@
++cmake_bool = $(patsubst %,-D%:BOOL=$(if $($(1)),ON,OFF),$(2))
++
+ PKG_INSTALL:=1
+ 
+ ifneq ($(findstring c,$(OPENWRT_VERBOSE)),)
+   MAKE_FLAGS+=VERBOSE=1
+ endif
+ 
+-CMAKE_SOURCE_DIR:=.
++CMAKE_BINARY_DIR = $(PKG_BUILD_DIR)$(if $(CMAKE_BINARY_SUBDIR),/$(CMAKE_BINARY_SUBDIR))
++CMAKE_SOURCE_DIR = $(PKG_BUILD_DIR)
++HOST_CMAKE_SOURCE_DIR = $(HOST_BUILD_DIR)
++MAKE_PATH = $(firstword $(CMAKE_BINARY_SUBDIR) .)
+ 
+ ifeq ($(CONFIG_EXTERNAL_TOOLCHAIN),)
+   cmake_tool=$(TOOLCHAIN_DIR)/bin/$(1)
+@@ -18,10 +23,7 @@ ifeq ($(CONFIG_CCACHE),)
+  CMAKE_C_COMPILER_ARG1:=
+  CMAKE_CXX_COMPILER_ARG1:=
+ else
+-  CCACHE:=$(shell which ccache)
+-  ifeq ($(CCACHE),)
+-    CCACHE:=$(STAGING_DIR_HOST)/bin/ccache
+-  endif
++  CCACHE:=$(STAGING_DIR_HOST)/bin/ccache
+   CMAKE_C_COMPILER:=$(CCACHE)
+   CMAKE_C_COMPILER_ARG1:=$(TARGET_CC_NOCACHE)
+   CMAKE_CXX_COMPILER:=$(CCACHE)
+@@ -31,14 +33,15 @@ CMAKE_AR:=$(call cmake_tool,$(TARGET_AR))
+ CMAKE_NM:=$(call cmake_tool,$(TARGET_NM))
+ CMAKE_RANLIB:=$(call cmake_tool,$(TARGET_RANLIB))
+ 
+-CMAKE_FIND_ROOT_PATH:=$(STAGING_DIR);$(TOOLCHAIN_DIR)$(if $(CONFIG_EXTERNAL_TOOLCHAIN),;$(CONFIG_TOOLCHAIN_ROOT))
+-CMAKE_HOST_FIND_ROOT_PATH:=$(STAGING_DIR_HOST)
++CMAKE_FIND_ROOT_PATH:=$(STAGING_DIR)/usr;$(TOOLCHAIN_DIR)$(if $(CONFIG_EXTERNAL_TOOLCHAIN),;$(CONFIG_TOOLCHAIN_ROOT))
++CMAKE_HOST_FIND_ROOT_PATH:=$(STAGING_DIR)/host;$(STAGING_DIR_HOST)
+ CMAKE_SHARED_LDFLAGS:=-Wl,-Bsymbolic-functions
+ 
+ define Build/Configure/Default
+-	(cd $(PKG_BUILD_DIR); \
++	mkdir -p $(CMAKE_BINARY_DIR)
++	(cd $(CMAKE_BINARY_DIR); \
+ 		CFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS)" \
+-		CXXFLAGS="$(TARGET_CFLAGS) $(EXTRA_CFLAGS)" \
++		CXXFLAGS="$(TARGET_CXXFLAGS) $(EXTRA_CXXFLAGS)" \
+ 		LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
+ 		cmake \
+ 			-DCMAKE_SYSTEM_NAME=Linux \
+@@ -97,10 +100,14 @@ define Host/Configure/Default
+ 			-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
+ 			-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
+ 			-DCMAKE_STRIP=: \
+-			-DCMAKE_INSTALL_PREFIX=$(STAGING_DIR_HOST) \
+-			-DCMAKE_PREFIX_PATH=$(STAGING_DIR_HOST) \
++			-DCMAKE_INSTALL_PREFIX=$(HOST_BUILD_PREFIX) \
++			-DCMAKE_PREFIX_PATH=$(HOST_BUILD_PREFIX) \
+ 			-DCMAKE_SKIP_RPATH=TRUE  \
+ 			$(CMAKE_HOST_OPTIONS) \
+-		$(CMAKE_SOURCE_DIR) \
++		$(HOST_CMAKE_SOURCE_DIR) \
+ 	)
+ endef
++
++MAKE_FLAGS += \
++	CMAKE_COMMAND='$$(if $$(CMAKE_DISABLE_$$@),:,$(STAGING_DIR_HOST)/bin/cmake)' \
++	CMAKE_DISABLE_cmake_check_build_system=1
+diff --git a/tools/cmake/Makefile b/tools/cmake/Makefile
+index 08e2b028150dd4f496e3a8ebccf27bd49b6937c2..e14cd7c4b2d5bc92d50a66f1c95599b5049db10d 100644
+--- a/tools/cmake/Makefile
++++ b/tools/cmake/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2006-2014 OpenWrt.org
++# Copyright (C) 2006-2016 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -7,11 +7,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=cmake
+-PKG_VERSION:=2.8.12.2
++PKG_VERSION:=3.7.1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=http://www.cmake.org/files/v2.8/
+-PKG_MD5SUM:=17c6513483d23590cbce6957ec6d1e66
++PKG_SOURCE_URL:=https://cmake.org/files/v3.7/ \
++		https://fossies.org/linux/misc/
++PKG_MD5SUM:=d031d5a06e9f1c5367cdfc56fbd2a1c8
+ 
+ HOST_BUILD_PARALLEL:=1
+ HOST_CONFIGURE_PARALLEL:=1
+@@ -21,7 +22,11 @@ include $(INCLUDE_DIR)/host-build.mk
+ HOST_CONFIGURE_VARS :=
+ 
+ HOST_CONFIGURE_ARGS := \
+-	--prefix=$(STAGING_DIR_HOST) \
+-	$(if $(MAKE_JOBSERVER),--parallel="$(MAKE_JOBSERVER)")
++	$(if $(MAKE_JOBSERVER),--parallel="$(MAKE_JOBSERVER)") \
++	--prefix=$(STAGING_DIR_HOST)
++
++define Host/Configure
++  $(call Host/Configure/Default,$(1),$(2) MAKEFLAGS="$(HOST_JOBS)" CXXFLAGS="$(HOST_CFLAGS)",$(3))
++endef
+ 
+ $(eval $(call HostBuild))
+diff --git a/tools/cmake/patches/100-disable_qt_tests.patch b/tools/cmake/patches/100-disable_qt_tests.patch
+index 3d44dac53f27c5cf2b1c1c03689255c0825a65b9..6f28c435e018f53fedc3ba840298b6aaf8a07e9b 100644
+--- a/tools/cmake/patches/100-disable_qt_tests.patch
++++ b/tools/cmake/patches/100-disable_qt_tests.patch
+@@ -1,8 +1,8 @@
+ --- a/Tests/RunCMake/CMakeLists.txt
+ +++ b/Tests/RunCMake/CMakeLists.txt
+-@@ -101,16 +101,6 @@
+- add_RunCMake_test(TargetPolicies)
+- add_RunCMake_test(alias_targets)
++@@ -225,15 +225,6 @@ add_RunCMake_test(no_install_prefix)
++ add_RunCMake_test(configure_file)
++ add_RunCMake_test(CTestTimeoutAfterMatch)
+  
+ -find_package(Qt4 QUIET)
+ -find_package(Qt5Core QUIET)
+@@ -10,21 +10,20 @@
+ -  add_RunCMake_test(IncompatibleQt)
+ -endif()
+ -if (QT4_FOUND)
+--  set(ObsoleteQtMacros_ARGS -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE})
+--  add_RunCMake_test(ObsoleteQtMacros)
++-  add_RunCMake_test(ObsoleteQtMacros -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE})
+ -endif()
+ -
+- if("${CMAKE_TEST_GENERATOR}" MATCHES "Visual Studio [^6]")
+-   add_RunCMake_test(include_external_msproject)
+-   add_RunCMake_test(SolutionGlobalSections)
++ find_package(PkgConfig QUIET)
++ if(PKG_CONFIG_FOUND)
++   add_RunCMake_test(FindPkgConfig)
+ --- a/Tests/CMakeLists.txt
+ +++ b/Tests/CMakeLists.txt
+-@@ -262,10 +262,6 @@
++@@ -393,10 +393,6 @@ if(BUILD_TESTING)
+  
+    list(APPEND TEST_BUILD_DIRS ${CMake_TEST_INSTALL_PREFIX})
+  
+ -  if(NOT QT4_FOUND)
+--    find_package(Qt4)
++-    find_package(Qt4 QUIET)
+ -  endif()
+ -
+    if(QT4_FOUND)
+diff --git a/tools/cmake/patches/110-freebsd-compat.patch b/tools/cmake/patches/110-freebsd-compat.patch
+index d4133b9049059f1b1cfa0c63be1308b4c235c981..c1d4a274d61c3c0b81288ba4260abd34ce76063c 100644
+--- a/tools/cmake/patches/110-freebsd-compat.patch
++++ b/tools/cmake/patches/110-freebsd-compat.patch
+@@ -19,11 +19,9 @@ Change-Id: I3b91ed7ac0e6878035aee202b3336c536cc6d2ff
+  Source/kwsys/SystemInformation.cxx |    9 +++++++++
+  1 file changed, 9 insertions(+)
+ 
+-diff --git a/Source/kwsys/SystemInformation.cxx b/Source/kwsys/SystemInformation.cxx
+-index 7c31f3a..2672730 100644
+ --- a/Source/kwsys/SystemInformation.cxx
+ +++ b/Source/kwsys/SystemInformation.cxx
+-@@ -88,6 +88,15 @@ typedef int siginfo_t;
++@@ -89,6 +89,15 @@ typedef int siginfo_t;
+  #  include <ifaddrs.h>
+  #  define KWSYS_SYSTEMINFORMATION_IMPLEMENT_FQDN
+  # endif
+@@ -38,7 +36,4 @@ index 7c31f3a..2672730 100644
+ +# endif
+  #endif
+  
+- #if defined(__OpenBSD__) || defined(__NetBSD__)
+--- 
+-1.7.10.4
+-
++ #if defined(KWSYS_SYS_HAS_MACHINE_CPU_H)
+diff --git a/tools/cmake/patches/120-alpine_musl-compat.patch b/tools/cmake/patches/120-alpine_musl-compat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ae93201e53659514e2a63fc813622302bde5be59
+--- /dev/null
++++ b/tools/cmake/patches/120-alpine_musl-compat.patch
+@@ -0,0 +1,17 @@
++--- a/Utilities/cmjsoncpp/include/json/assertions.h
+++++ b/Utilities/cmjsoncpp/include/json/assertions.h
++@@ -6,12 +6,12 @@
++ #ifndef CPPTL_JSON_ASSERTIONS_H_INCLUDED
++ #define CPPTL_JSON_ASSERTIONS_H_INCLUDED
++ 
+++#include <stdlib.h>
+++
++ #if !defined(JSON_IS_AMALGAMATION)
++ #include "config.h"
++ #endif // if !defined(JSON_IS_AMALGAMATION)
++ 
++-#include <stdlib.h>
++-
++ #if JSON_USE_EXCEPTION
++ #include <stdexcept>
++ #define JSON_ASSERT(condition)                                                 \
+diff --git a/tools/cmake/patches/130-libarchive-fix-libressl-compat.patch b/tools/cmake/patches/130-libarchive-fix-libressl-compat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..a56ac2ed0c96dd90707e582e83320fd408f90dab
+--- /dev/null
++++ b/tools/cmake/patches/130-libarchive-fix-libressl-compat.patch
+@@ -0,0 +1,22 @@
++--- a/Utilities/cmlibarchive/libarchive/archive_openssl_evp_private.h
+++++ b/Utilities/cmlibarchive/libarchive/archive_openssl_evp_private.h
++@@ -28,7 +28,7 @@
++ #include <openssl/evp.h>
++ #include <openssl/opensslv.h>
++ 
++-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+++#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
++ #include <stdlib.h> /* malloc, free */
++ #include <string.h> /* memset */
++ static inline EVP_MD_CTX *EVP_MD_CTX_new(void)
++--- a/Utilities/cmlibarchive/libarchive/archive_openssl_hmac_private.h
+++++ b/Utilities/cmlibarchive/libarchive/archive_openssl_hmac_private.h
++@@ -28,7 +28,7 @@
++ #include <openssl/hmac.h>
++ #include <openssl/opensslv.h>
++ 
++-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+++#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
++ #include <stdlib.h> /* malloc, free */
++ #include <string.h> /* memset */
++ static inline HMAC_CTX *HMAC_CTX_new(void)
+diff --git a/tools/cmake/patches/140-curl-fix-libressl-linking.patch b/tools/cmake/patches/140-curl-fix-libressl-linking.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..5b57172eb4a147d25be01b105dd49599f1add4e6
+--- /dev/null
++++ b/tools/cmake/patches/140-curl-fix-libressl-linking.patch
+@@ -0,0 +1,32 @@
++From: Jo-Philipp Wich <jo@mein.io>
++Date: Wed, 11 Jan 2017 03:36:04 +0100
++Subject: [PATCH] cmcurl: link librt
++
++When cmake is linked against LibreSSL, there might be an indirect
++dependency on librt on certain systems if LibreSSL's libcrypto uses
++clock_gettime() from librt:
++
++    [ 28%] Linking C executable LIBCURL
++    .../lib/libcrypto.a(getentropy_linux.o): In function `getentropy_fallback':
++    getentropy_linux.c:(.text+0x16d): undefined reference to `clock_gettime'
++    getentropy_linux.c:(.text+0x412): undefined reference to `clock_gettime'
++    collect2: error: ld returned 1 exit status
++    make[5]: *** [Utilities/cmcurl/LIBCURL] Error 1
++
++Modify the cmcurl CMakeLists.txt to check for clock_gettime() in librt
++and unconditionally link the rt library when the symbol is found.
++
++Signed-off-by: Jo-Philipp Wich <jo@mein.io>
++--- a/Utilities/cmcurl/CMakeLists.txt
+++++ b/Utilities/cmcurl/CMakeLists.txt
++@@ -362,6 +362,10 @@ set(HAVE_LIBSSL OFF)
++ if(CMAKE_USE_OPENSSL)
++   find_package(OpenSSL)
++   if(OPENSSL_FOUND)
+++    check_library_exists("rt" clock_gettime "" HAVE_LIBRT)
+++    if(HAVE_LIBRT)
+++      list(APPEND OPENSSL_LIBRARIES rt)
+++    endif()
++     list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})
++     set(USE_OPENSSL ON)
++     set(HAVE_LIBCRYPTO ON)
+diff --git a/tools/cmake/patches/150-bootstrap_parallel_make_flag.patch b/tools/cmake/patches/150-bootstrap_parallel_make_flag.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6970b83b327c348d31d74dc5facba4fad46fe700
+--- /dev/null
++++ b/tools/cmake/patches/150-bootstrap_parallel_make_flag.patch
+@@ -0,0 +1,14 @@
++--- a/bootstrap
+++++ b/bootstrap
++@@ -958,7 +958,10 @@ int main(){ printf("1%c", (char)0x0a); r
++ ' > "test.c"
++ cmake_original_make_flags="${cmake_make_flags}"
++ if [ "x${cmake_parallel_make}" != "x" ]; then
++-  cmake_make_flags="${cmake_make_flags} -j ${cmake_parallel_make}"
+++  case "$cmake_paralle_make" in
+++    [0-9]*) cmake_parallel_make="-j ${cmake_parallel_make}";;
+++  esac
+++  cmake_make_flags="${cmake_make_flags} ${cmake_parallel_make}"
++ fi
++ for a in ${cmake_make_processors}; do
++   if [ -z "${cmake_make_processor}" ] && cmake_try_make "${a}" "${cmake_make_flags}" >> ../cmake_bootstrap.log 2>&1; then
