@@ -1,0 +1,94 @@
+From: Jo-Philipp Wich <jow@openwrt.org>
+Date: Mon, 26 Oct 2015 15:28:05 +0000
+Subject: tools: quilt: fix perl interpreter line (#20802)
+
+When using '/usr/bin/env' in a shebang it is not possible to specify
+additional flags for the interpreter. Remove '-w' switches and add
+'use warnings;' instead.
+
+Signed-off-by: Jo-Philipp Wich <jow@openwrt.org>
+
+Backport of OpenWrt r47278
+
+diff --git a/tools/quilt/patches/000-relocatable.patch b/tools/quilt/patches/000-relocatable.patch
+index 9309fc426a67bd42172a3628fb67efb6569a1b47..aedb914c2995401e8b6b6b4b7bea9d9553142fa8 100644
+--- a/tools/quilt/patches/000-relocatable.patch
++++ b/tools/quilt/patches/000-relocatable.patch
+@@ -28,7 +28,15 @@
+  	export QUILTRC
+ --- a/quilt/scripts/edmail.in
+ +++ b/quilt/scripts/edmail.in
+-@@ -29,7 +29,7 @@ BEGIN {
++@@ -1,4 +1,6 @@
++-#! @PERL@ -w
+++#! @PERL@
+++
+++use warnings;
++ 
++ # RFCs important for this script:
++ #
++@@ -29,7 +31,7 @@ BEGIN {
+  }
+  
+  setlocale(LC_MESSAGES, "");
+@@ -69,7 +77,15 @@
+  : ${LC_MESSAGES:=$LANG}
+ --- a/quilt/scripts/remove-trailing-ws.in
+ +++ b/quilt/scripts/remove-trailing-ws.in
+-@@ -31,7 +31,7 @@ BEGIN {
++@@ -1,4 +1,6 @@
++-#! @PERL@ -w
+++#! @PERL@
+++
+++use warnings;
++ 
++ # Remove trailing whitespace from modified lines in working files.
++ #
++@@ -31,7 +33,7 @@ BEGIN {
+  }
+  
+  setlocale(LC_MESSAGES, "");
+@@ -127,3 +143,43 @@
+  . $QUILT_DIR/scripts/utilfns
+  
+  ensure_nolinks()
++--- a/bin/guards.in
+++++ b/bin/guards.in
++@@ -1,4 +1,6 @@
++-#!@PERL@ -w
+++#!@PERL@
+++
+++use warnings;
++ 
++ #  This script is free software; you can redistribute it and/or modify
++ #  it under the terms of the GNU General Public License version 2 as
++--- a/compat/date.in
+++++ b/compat/date.in
++@@ -1,4 +1,6 @@
++-#! @PERL@ -w
+++#! @PERL@
+++
+++use warnings;
++ 
++ #  This script is free software; you can redistribute it and/or modify
++ #  it under the terms of the GNU General Public License version 2 as
++--- a/compat/getopt.in
+++++ b/compat/getopt.in
++@@ -1,4 +1,6 @@
++-#! @PERL@ -w
+++#! @PERL@
+++
+++use warnings;
++ 
++ #  This script is free software; you can redistribute it and/or modify
++ #  it under the terms of the GNU General Public License version 2 as
++--- a/quilt/scripts/dependency-graph.in
+++++ b/quilt/scripts/dependency-graph.in
++@@ -1,4 +1,6 @@
++-#!@PERL@ -w
+++#!@PERL@
+++
+++use warnings;
++ 
++ #  This script is free software; you can redistribute it and/or modify
++ #  it under the terms of the GNU General Public License version 2 as

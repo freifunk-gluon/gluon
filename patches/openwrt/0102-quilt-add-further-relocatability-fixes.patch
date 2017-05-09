@@ -1,0 +1,113 @@
+From: Jo-Philipp Wich <jow@openwrt.org>
+Date: Tue, 29 Sep 2015 11:37:27 +0000
+Subject: quilt: add further relocatability fixes
+
+Prevent quilt's build system from generating useless compat wrappers and
+hardcoded absolute utility paths to binaries in staging_dir/host/.
+
+Signed-off-by: Jo-Philipp Wich <jow@openwrt.org>
+
+Backport of OpenWrt r47070
+
+diff --git a/tools/quilt/Makefile b/tools/quilt/Makefile
+index 01b0bd298fa58c6586b54044366fd85574e77e11..c2dbc07c7929b464d404feea1883070f4ec783e7 100644
+--- a/tools/quilt/Makefile
++++ b/tools/quilt/Makefile
+@@ -15,9 +15,6 @@ PKG_MD5SUM:=c0ef4beb58a6fa72563b955e70624b6e
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+ 
+-HOST_CONFIGURE_ARGS += \
+-	--with-find=$(FIND)
+-
+ define Host/Configure
+ 	cd $(HOST_BUILD_DIR) && autoconf
+ 	$(call Host/Configure/Default)
+diff --git a/tools/quilt/patches/000-relocatable.patch b/tools/quilt/patches/000-relocatable.patch
+index 99d7af5771dc6250f5e22f27fe0e02b14443d180..9309fc426a67bd42172a3628fb67efb6569a1b47 100644
+--- a/tools/quilt/patches/000-relocatable.patch
++++ b/tools/quilt/patches/000-relocatable.patch
+@@ -1,6 +1,6 @@
+ --- a/bin/quilt.in
+ +++ b/bin/quilt.in
+-@@ -15,9 +15,15 @@
++@@ -15,14 +15,22 @@ unset POSIXLY_CORRECT
+  unset GREP_OPTIONS
+  
+  export TEXTDOMAIN=quilt
+@@ -10,14 +10,22 @@
+ +if test -n "$STAGING_DIR"; then
+ +	export TEXTDOMAINDIR="$STAGING_DIR/../host/share/locale"
+ +	: ${QUILT_DIR=$STAGING_DIR/../host/share/quilt} ${QUILT_LIB=$STAGING_DIR/../host/lib/quilt}
+++	: ${QUILT_ETC=$STAGING_DIR/../host/etc}
+ +else
+ +	export TEXTDOMAINDIR=@LOCALEDIR@
+ +	: ${QUILT_DIR=@QUILT_DIR@}
+++	: ${QUILT_ETC=@ETCDIR@}
+ +fi
+ +
+  export QUILT_DIR
+  
+  if [ -z "$QUILTRC" ]
++ then
++-	for QUILTRC in $HOME/.quiltrc @ETCDIR@/quilt.quiltrc; do
+++	for QUILTRC in $HOME/.quiltrc $QUILT_ETC/quilt.quiltrc; do
++ 		[ -e $QUILTRC ] && break
++ 	done
++ 	export QUILTRC
+ --- a/quilt/scripts/edmail.in
+ +++ b/quilt/scripts/edmail.in
+ @@ -29,7 +29,7 @@ BEGIN {
+@@ -70,3 +78,52 @@
+  textdomain("quilt");
+  
+  sub _($) {
++--- a/Makefile.in
+++++ b/Makefile.in
++@@ -21,8 +21,8 @@ COLUMN :=	@COLUMN@
++ GETOPT :=	@GETOPT@
++ CP :=		@CP@
++ DATE :=		@DATE@
++-PERL :=		@PERL@
++-BASH :=		@BASH@
+++PERL :=		/usr/bin/env perl
+++BASH :=		/usr/bin/env bash
++ SHELL:=		@BASH@ # It does not work if dash is used as a shell, for example
++ GREP :=		@GREP@
++ TAIL :=		@TAIL@
++@@ -32,7 +32,7 @@ AWK :=		@AWK@
++ FIND :=		@FIND@
++ XARGS :=	@XARGS@
++ DIFF :=		@DIFF@
++-PATCH :=	@PATCH@
+++PATCH :=	/usr/bin/env patch
++ MKTEMP :=	@MKTEMP@
++ MSGMERGE :=	@MSGMERGE@
++ MSGFMT :=	@MSGFMT@
++@@ -49,8 +49,8 @@ USE_NLS :=	@USE_NLS@
++ STAT_HARDLINK := @STAT_HARDLINK@
++ PATCH_WRAPPER := @PATCH_WRAPPER@
++ 
++-COMPAT_SYMLINKS	:= @COMPAT_SYMLINKS@
++-COMPAT_PROGRAMS	:= @COMPAT_PROGRAMS@
+++COMPAT_SYMLINKS	:=
+++COMPAT_PROGRAMS	:=
++ 
++ default: all
++ 
++--- a/quilt/scripts/backup-files.in
+++++ b/quilt/scripts/backup-files.in
++@@ -53,7 +53,12 @@ usage ()
++ "
++ }
++ 
++-: ${QUILT_DIR=@QUILT_DIR@}
+++if test -n "$STAGING_DIR"; then
+++	: ${QUILT_DIR="$STAGING_DIR/../host/share/quilt"}
+++else
+++	: ${QUILT_DIR=@QUILT_DIR@}
+++fi
+++
++ . $QUILT_DIR/scripts/utilfns
++ 
++ ensure_nolinks()
