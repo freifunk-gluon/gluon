@@ -3,7 +3,7 @@ Date: Tue, 9 May 2017 18:37:17 +0200
 Subject: cmake: backport from LEDE 17.01 d1e0cc8cd5b460df47a2316653c273e27ebf93b1
 
 diff --git a/include/cmake.mk b/include/cmake.mk
-index 4207a4dcee8444ac1472b2b78a068e5ed811c7ae..5a403cbf41e2bbd6bdb843492639a01aff8cf75b 100644
+index 4207a4dcee8444ac1472b2b78a068e5ed811c7ae..68dccc969f54e0d84e04404711dc2724120a23d3 100644
 --- a/include/cmake.mk
 +++ b/include/cmake.mk
 @@ -1,10 +1,15 @@
@@ -55,14 +55,8 @@ index 4207a4dcee8444ac1472b2b78a068e5ed811c7ae..5a403cbf41e2bbd6bdb843492639a01a
  		LDFLAGS="$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS)" \
  		cmake \
  			-DCMAKE_SYSTEM_NAME=Linux \
-@@ -97,10 +100,14 @@ define Host/Configure/Default
- 			-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY \
- 			-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY \
- 			-DCMAKE_STRIP=: \
--			-DCMAKE_INSTALL_PREFIX=$(STAGING_DIR_HOST) \
--			-DCMAKE_PREFIX_PATH=$(STAGING_DIR_HOST) \
-+			-DCMAKE_INSTALL_PREFIX=$(HOST_BUILD_PREFIX) \
-+			-DCMAKE_PREFIX_PATH=$(HOST_BUILD_PREFIX) \
+@@ -101,6 +104,10 @@ define Host/Configure/Default
+ 			-DCMAKE_PREFIX_PATH=$(STAGING_DIR_HOST) \
  			-DCMAKE_SKIP_RPATH=TRUE  \
  			$(CMAKE_HOST_OPTIONS) \
 -		$(CMAKE_SOURCE_DIR) \
