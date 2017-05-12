@@ -43,19 +43,11 @@ uci:section('network', 'interface', 'bat0',
 		    proto = 'none',
 		    macaddr = sysconfig.primary_mac,
 		    multicast_router = 2,
-		    learning = 0,
+		    learning = 1,
 	    }
 )
 
 uci:delete('network', 'client_lan')
-if sysconfig.lan_ifname then
-	uci:section('network', 'interface', 'client_lan',
-		    {
-			    unicast_flood = 0,
-		    }
-	)
-	uci:set('network', 'client_lan', 'ifname', sysconfig.lan_ifname)
-end
 
 uci:save('network')
 
