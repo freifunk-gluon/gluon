@@ -111,9 +111,12 @@ wifi24 \: optional
     The example below disables 802.11b rates.
 
     ``ap`` requires a single parameter, a string, named ``ssid`` which sets the
-    interface's ESSID.
+    interface's ESSID. This is the WiFi the clients connect to.
 
-    ``mesh`` requires a single parameter, a string, named ``id`` which sets the mesh id.
+    ``mesh`` requires a single parameter, a string, named ``id`` which sets the
+    mesh id, also visible as an open WiFi in some network managers. Usually you 
+    don't want users to connect to this mesh-SSID, so use a cryptic id that no
+    one will accidentally mistake for the client WiFi.
 
     ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
     An optional parameter ``vlan`` (integer) is supported.
@@ -131,7 +134,7 @@ wifi24 \: optional
            ssid = 'alpha-centauri.freifunk.net',
          },
          mesh = {
-           id = 'alpha-centauri-mesh',
+           id = 'ueH3uXjdp',
            mcast_rate = 12000,
          },
          ibss = {
