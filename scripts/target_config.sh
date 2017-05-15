@@ -14,16 +14,6 @@ profile_packages=
 LEDE_CONFIG_TARGET="${LEDE_TARGET//-/_}"
 
 
-site_packages() {
-	MAKEFLAGS= make PROFILE="$1" --no-print-directory -s -f - <<'END_MAKE'
-include $(GLUON_SITEDIR)/site.mk
-
-all:
-	echo '$(GLUON_$(PROFILE)_SITE_PACKAGES)'
-END_MAKE
-}
-
-
 emit() {
 	[ "${output}" ] || return 0
 	want_device "${output}" || return 0
@@ -39,7 +29,7 @@ emit() {
 }
 
 
-. scripts/common.inc.sh
+. scripts/target_config.inc.sh
 
 config() {
 	echo "$1"

@@ -14,16 +14,6 @@ ret=0
 LEDE_CONFIG_TARGET="${LEDE_TARGET//-/_}"
 
 
-site_packages() {
-	MAKEFLAGS= make PROFILE="$1" --no-print-directory -s -f - <<'END_MAKE'
-include $(GLUON_SITEDIR)/site.mk
-
-all:
-	echo '$(GLUON_$(PROFILE)_SITE_PACKAGES)'
-END_MAKE
-}
-
-
 fail() {
 	local message="$1"
 
@@ -49,7 +39,7 @@ check_package() {
 }
 
 
-. scripts/common.inc.sh
+. scripts/target_config.inc.sh
 
 config() {
 	local config="$1"

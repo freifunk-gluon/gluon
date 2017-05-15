@@ -30,6 +30,10 @@ sysupgrade() {
 	:
 }
 
+no_opkg() {
+	:
+}
+
 
 unknown_devices="$DEVICES"
 

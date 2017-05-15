@@ -19,6 +19,8 @@ factory_suffix=
 sysupgrade_ext=
 sysupgrade_suffix=
 
+no_opkg=
+
 
 mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade"
 
@@ -146,10 +148,15 @@ sysupgrade() {
 	fi
 }
 
+no_opkg() {
+	no_opkg=1
+}
+
+
 . targets/"$1"; copy
 
 # Copy opkg repo
-if [ -z "$DEVICES" ]; then
+if [ -z "$no_opkg" -a -z "$DEVICES" ]; then
 	rm -f "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR"/*
 	rmdir -p "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR" 2>/dev/null || true
 	mkdir -p "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${LEDE_BINDIR}"
