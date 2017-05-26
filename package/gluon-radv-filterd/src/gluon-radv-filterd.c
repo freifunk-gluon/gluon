@@ -192,7 +192,7 @@ static int init_packet_socket(unsigned int ifindex) {
 		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct nd_router_advert, nd_ra_code)),
 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, 0, 0, 3),
 		// check that this is a default route (lifetime > 0)
-		BPF_STMT(BPF_LD|BPF_B|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct nd_router_advert, nd_ra_router_lifetime)),
+		BPF_STMT(BPF_LD|BPF_H|BPF_ABS, sizeof(struct ip6_hdr) + offsetof(struct nd_router_advert, nd_ra_router_lifetime)),
 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, 0, 1, 0),
 		// return true
 		BPF_STMT(BPF_RET|BPF_K, 0xffffffff),
