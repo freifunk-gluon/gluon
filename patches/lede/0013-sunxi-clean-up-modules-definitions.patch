@@ -1,0 +1,128 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 4 May 2017 07:00:06 +0200
+Subject: sunxi: clean up modules definitions
+
+Module definitions for kmod-wdt-sunxi and kmod-eeprom-sunxi are removed
+(wdt-sunxi was builtin anyways; nvmem-sunxi, which is the new name of
+eeprom-sunxi is changed to builtin). As kmod-eeprom-sunxi was specified
+in DEFAULT_PACKAGES, but not available on kernel 4.4, it was breaking the
+image builder.
+
+Support for kmod-sunxi-ir is added for kernel 4.4 (it is unclear why it
+was disable before, it builds fine with with kernel 4.4).
+
+Condtionals only relevant for pre-4.4 kernels are removed from modules.mk,
+as sunxi does't support older kernels anymore.
+
+Fixes FS#755.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/sunxi/Makefile b/target/linux/sunxi/Makefile
+index b0bc1bab398af55b77909deccd8f059e17d96e67..3c2f14b8418e1d296a239027f6fdee9b5ba8f9b2 100644
+--- a/target/linux/sunxi/Makefile
++++ b/target/linux/sunxi/Makefile
+@@ -27,7 +27,7 @@ KERNELNAME:=zImage dtbs
+ 
+ include $(INCLUDE_DIR)/target.mk
+ 
+-DEFAULT_PACKAGES += uboot-envtools kmod-eeprom-sunxi kmod-wdt-sunxi
++DEFAULT_PACKAGES += uboot-envtools
+ DEFAULT_PACKAGES += mkf2fs e2fsprogs
+ 
+ $(eval $(call BuildTarget))
+diff --git a/target/linux/sunxi/config-4.4 b/target/linux/sunxi/config-4.4
+index 2253afa124ad6c3d6b9d6798dc29f68437455341..a978e9d15b8c358f69669d3afdbf4a14bba83d31 100644
+--- a/target/linux/sunxi/config-4.4
++++ b/target/linux/sunxi/config-4.4
+@@ -356,7 +356,7 @@ CONFIG_NO_HZ_COMMON=y
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_NR_CPUS=8
+ CONFIG_NVMEM=y
+-# CONFIG_NVMEM_SUNXI_SID is not set
++CONFIG_NVMEM_SUNXI_SID=y
+ CONFIG_OF=y
+ CONFIG_OF_ADDRESS=y
+ CONFIG_OF_EARLY_FLATTREE=y
+diff --git a/target/linux/sunxi/modules.mk b/target/linux/sunxi/modules.mk
+index 6f4991798decb4a65f615d3a7282270960a7555a..99b82a3b5f17348049458ced5823f7c90f784269 100644
+--- a/target/linux/sunxi/modules.mk
++++ b/target/linux/sunxi/modules.mk
+@@ -25,7 +25,7 @@ $(eval $(call KernelPackage,rtc-sunxi))
+ define KernelPackage/sunxi-ir
+     SUBMENU:=$(OTHER_MENU)
+     TITLE:=Sunxi SoC built-in IR support (A20)
+-    DEPENDS:=@TARGET_sunxi @!LINUX_4_4 +kmod-input-core 
++    DEPENDS:=@TARGET_sunxi +kmod-input-core
+     $(call AddDepends/rtc)
+     KCONFIG:= \
+ 	CONFIG_MEDIA_SUPPORT=y \
+@@ -42,22 +42,6 @@ endef
+ 
+ $(eval $(call KernelPackage,sunxi-ir))
+ 
+-define KernelPackage/eeprom-sunxi
+-    SUBMENU:=$(OTHER_MENU)
+-    TITLE:=AllWinner Security ID fuse support
+-    DEPENDS:=@TARGET_sunxi @!LINUX_4_4
+-    KCONFIG:= \
+-	CONFIG_EEPROM_SUNXI_SID
+-    FILES:=$(LINUX_DIR)/drivers/misc/eeprom/sunxi_sid.ko
+-    AUTOLOAD:=$(call AutoLoad,50,sunxi_sid)
+-endef
+-
+-define KernelPackage/eeprom-sunxi/description
+- Support for the AllWinner Security ID fuse support
+-endef
+-
+-$(eval $(call KernelPackage,eeprom-sunxi))
+-
+ define KernelPackage/ata-sunxi
+     TITLE:=AllWinner sunXi AHCI SATA support
+     SUBMENU:=$(BLOCK_MENU)
+@@ -76,7 +60,7 @@ $(eval $(call KernelPackage,ata-sunxi))
+ define KernelPackage/sun4i-emac
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=AllWinner EMAC Ethernet support
+-  DEPENDS:=@TARGET_sunxi +LINUX_4_4:kmod-of-mdio +LINUX_4_4:kmod-libphy
++  DEPENDS:=@TARGET_sunxi +kmod-of-mdio +kmod-libphy
+   KCONFIG:=CONFIG_SUN4I_EMAC
+   FILES:=$(LINUX_DIR)/drivers/net/ethernet/allwinner/sun4i-emac.ko
+   AUTOLOAD:=$(call AutoProbe,sun4i-emac)
+@@ -85,35 +69,11 @@ endef
+ $(eval $(call KernelPackage,sun4i-emac))
+ 
+ 
+-define KernelPackage/wdt-sunxi
+-    SUBMENU:=$(OTHER_MENU)
+-    TITLE:=AllWinner sunXi Watchdog timer
+-    DEPENDS:=@TARGET_sunxi
+-    KCONFIG:=CONFIG_SUNXI_WATCHDOG
+-    FILES:=$(LINUX_DIR)/drivers/$(WATCHDOG_DIR)/sunxi_wdt.ko
+-    AUTOLOAD:=$(call AutoLoad,51,sunxi_wdt)
+-endef
+-
+-define KernelPackage/wdt-sunxi/description
+-    Kernel module for AllWinner sunXi watchdog timer.
+-endef
+-
+-$(eval $(call KernelPackage,wdt-sunxi))
+-
+-
+ define KernelPackage/sound-soc-sunxi
+   TITLE:=AllWinner built-in SoC sound support
+-  KCONFIG:= \
+-	CONFIG_SND_SUNXI_SOC_CODEC \
+-	CONFIG_SND_SUN4I_CODEC
+-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),lt,4.4.0)),1)
+-  FILES+=$(LINUX_DIR)/sound/soc/sunxi/sunxi-codec.ko
+-  AUTOLOAD:=$(call AutoLoad,65,sunxi-codec)
+-endif
+-ifeq ($(strip $(call CompareKernelPatchVer,$(KERNEL_PATCHVER),ge,4.4.0)),1)
++  KCONFIG:=CONFIG_SND_SUN4I_CODEC
+   FILES:=$(LINUX_DIR)/sound/soc/sunxi/sun4i-codec.ko
+   AUTOLOAD:=$(call AutoLoad,65,sun4i-codec)
+-endif
+   DEPENDS:=@TARGET_sunxi +kmod-sound-soc-core
+   $(call AddDepends/sound)
+ endef
