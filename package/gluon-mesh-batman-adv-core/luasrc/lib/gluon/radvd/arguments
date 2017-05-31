@@ -1,0 +1,3 @@
+#!/usr/bin/lua
+local site = require "gluon.site_config"
+print("-i local-node -p " .. site.prefix6)
