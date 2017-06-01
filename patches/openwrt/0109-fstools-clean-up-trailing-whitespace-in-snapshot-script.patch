@@ -1,0 +1,19 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 3 May 2017 08:29:24 +0200
+Subject: fstools: clean up trailing whitespace in snapshot script
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/system/fstools/files/snapshot b/package/system/fstools/files/snapshot
+index a0e0ec0c334ca72086c3e30c62ae988c61ff1bde..eec7214032d1b147d5e989cd305c5c0cd1357a55 100644
+--- a/package/system/fstools/files/snapshot
++++ b/package/system/fstools/files/snapshot
+@@ -42,7 +42,7 @@ do_snapshot_upgrade() {
+ 
+ 	opkg list-upgradable
+ 	[ $? -eq 0 ] || exit 2
+-	
++
+ 	UPDATES=`opkg list-upgradable | cut -d" " -f1`
+ 	[ -z "${UPDATES}" ] && exit 0
+ 

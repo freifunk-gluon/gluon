@@ -1,0 +1,36 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 3 May 2017 08:29:55 +0200
+Subject: fstools: snapshot: handle jffs2 conversion using upgraded
+
+We can reuse the kill_remaining and run_ramfs facilities of the stage2 run
+by upgraded.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/system/fstools/files/snapshot b/package/system/fstools/files/snapshot
+index eec7214032d1b147d5e989cd305c5c0cd1357a55..79be0d24bb68cc9b4ea8ce5b5d6b7558b2f0b0c5 100644
+--- a/package/system/fstools/files/snapshot
++++ b/package/system/fstools/files/snapshot
+@@ -64,14 +64,16 @@ do_convert_jffs2() {
+ do_convert() {
+ 	. /lib/functions.sh
+ 	. /lib/upgrade/common.sh
+-	ubus call system upgrade
+-	touch /tmp/sysupgrade
++
+ 	cd /overlay
+ 	tar czf /tmp/snapshot.tar.gz *
+-	kill_remaining TERM
+-	sleep 3
+-	kill_remaining KILL
+-	run_ramfs '. /sbin/snapshot; do_convert_jffs2'
++
++	install_bin /sbin/upgraded
++	ubus call system sysupgrade "{
++		\"prefix\": \"$RAM_ROOT\",
++		\"path\": \"\",
++		\"command\": \". /sbin/snapshot; do_convert_jffs2\"
++	}"
+ }
+ 
+ [ -n "$(cat /proc/mounts|grep /overlay|grep jffs2)" ] && {

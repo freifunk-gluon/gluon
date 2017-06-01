@@ -1,0 +1,71 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 24 Apr 2017 01:31:04 +0200
+Subject: base-files: add support for staged sysupgrades from failsafe mode
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/base-files/files/lib/preinit/40_run_failsafe_hook b/package/base-files/files/lib/preinit/40_run_failsafe_hook
+index cb43ad39cbae07c533af63d7ff445d41a5b988df..fee0c8f0e19f2bf46771cd23ceaaff2db7af7611 100644
+--- a/package/base-files/files/lib/preinit/40_run_failsafe_hook
++++ b/package/base-files/files/lib/preinit/40_run_failsafe_hook
+@@ -4,8 +4,12 @@
+ 
+ run_failsafe_hook() {
+     if [ "$FAILSAFE" = "true" ]; then
++	lock /tmp/.failsafe
+ 	boot_run_hook failsafe
+-	lock -w /tmp/.failsafe
++	while [ ! -e /tmp/sysupgrade ]; do
++	    lock -w /tmp/.failsafe
++	done
++	exit
+     fi
+ }
+ 
+diff --git a/package/base-files/files/lib/preinit/99_10_failsafe_login b/package/base-files/files/lib/preinit/99_10_failsafe_login
+index 15dcbd884f1f2ec4fd84c92482a9b656d1a26dd7..96e95b1d99c631536c0b30ee5c2e19b3c63bbc64 100644
+--- a/package/base-files/files/lib/preinit/99_10_failsafe_login
++++ b/package/base-files/files/lib/preinit/99_10_failsafe_login
+@@ -7,9 +7,13 @@ failsafe_netlogin () {
+ }
+ 
+ failsafe_shell() {
+-	lock /tmp/.failsafe
+-	ash --login
+-	echo "Please reboot system when done with failsafe network logins"
++	local console="$(sed -e 's/ /\n/g' /proc/cmdline | grep '^console=' | head -1 | sed -e 's/^console=//' -e 's/,.*//')"
++	[ -n "$console" ] || console=console
++	[ -c "/dev/$console" ] || return 0
++	while true; do
++		ash --login <"/dev/$console" >"/dev/$console" 2>"/dev/$console"
++		sleep 1
++	done &
+ }
+ 
+ boot_hook_add failsafe failsafe_netlogin
+diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
+index 2060679e61948e4661a408df009ff3ef3c6faa91..853134a2cb8a2ef1d56671bfeee46704892909d8 100755
+--- a/package/base-files/files/sbin/sysupgrade
++++ b/package/base-files/files/sbin/sysupgrade
+@@ -249,8 +249,16 @@ run_hooks "" $sysupgrade_pre_upgrade
+ 
+ install_bin /sbin/upgraded
+ v "Commencing upgrade. All shell sessions will be closed now."
+-ubus call system sysupgrade "{
+-	\"prefix\": \"$RAM_ROOT\",
+-	\"path\": $(json_string "$IMAGE"),
+-	\"command\": \". /lib/functions.sh; include /lib/upgrade; do_upgrade_stage2\"
+-}"
++
++COMMAND='. /lib/functions.sh; include /lib/upgrade; do_upgrade_stage2'
++
++if [ -n "$FAILSAFE" ]; then
++	printf '%s\x00%s\x00%s' "$RAM_ROOT" "$IMAGE" "$COMMAND" >/tmp/sysupgrade
++	lock -u /tmp/.failsafe
++else
++	ubus call system sysupgrade "{
++		\"prefix\": $(json_string "$RAM_ROOT"),
++		\"path\": $(json_string "$IMAGE"),
++		\"command\": $(json_string "$COMMAND")
++	}"
++fi

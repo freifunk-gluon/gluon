@@ -1,0 +1,1116 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 1 Jun 2017 22:42:04 +0200
+Subject: procd: add universal staged sysupgrade patches
+
+diff --git a/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
+deleted file mode 100644
+index bc2434200364b46f1db4c2eec22c4e8b973844d5..0000000000000000000000000000000000000000
+--- a/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
++++ /dev/null
+@@ -1,97 +0,0 @@
+-From 03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d Mon Sep 17 00:00:00 2001
+-Message-Id: <03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d.1407329621.git.mschiffer@universe-factory.net>
+-From: Matthias Schiffer <mschiffer@universe-factory.net>
+-Date: Wed, 6 Aug 2014 14:51:49 +0200
+-Subject: [PATCH] Add support for alternative rc.d directories
+-
+----
+- initd/preinit.c | 38 ++++++++++++++++++++++++++++++++++++++
+- rcS.c           |  2 +-
+- 2 files changed, 39 insertions(+), 1 deletion(-)
+-
+-diff --git a/initd/preinit.c b/initd/preinit.c
+-index fb94527..8b832a7 100644
+---- a/initd/preinit.c
+-+++ b/initd/preinit.c
+-@@ -12,6 +12,8 @@
+-  * GNU General Public License for more details.
+-  */
+- 
+-+#define _GNU_SOURCE
+-+
+- #include <sys/stat.h>
+- #include <sys/types.h>
+- #include <sys/mount.h>
+-@@ -46,6 +48,35 @@ check_dbglvl(void)
+- 		debug = lvl;
+- }
+- 
+-+static char*
+-+get_rc_d(void)
+-+{
+-+	size_t n = 0;
+-+	ssize_t len;
+-+	char *ret = NULL;
+-+
+-+	FILE *fp = fopen("/tmp/rc_d_path", "r");
+-+
+-+	if (!fp)
+-+		return NULL;
+-+
+-+	len = getline(&ret, &n, fp);
+-+
+-+	fclose(fp);
+-+
+-+	unlink("/tmp/rc_d_path");
+-+
+-+	if (len <= 0) {
+-+		free(ret);
+-+		return NULL;
+-+	}
+-+
+-+	if (ret[len-1] == '\n')
+-+		ret[len-1] = 0;
+-+
+-+	return ret;
+-+}
+-+
+- static void
+- spawn_procd(struct uloop_process *proc, int ret)
+- {
+-@@ -53,6 +84,7 @@ spawn_procd(struct uloop_process *proc, int ret)
+- 	char *argv[] = { "/sbin/procd", NULL};
+- 	struct stat s;
+- 	char dbg[2];
+-+	char *rc_d_path;
+- 
+- 	if (plugd_proc.pid > 0)
+- 		kill(plugd_proc.pid, SIGKILL);
+-@@ -72,6 +104,12 @@ spawn_procd(struct uloop_process *proc, int ret)
+- 		setenv("DBGLVL", dbg, 1);
+- 	}
+- 
+-+	rc_d_path = get_rc_d();
+-+	if (rc_d_path) {
+-+		setenv("RC_D_PATH", rc_d_path, 1);
+-+		free(rc_d_path);
+-+	}
+-+
+- 	execvp(argv[0], argv);
+- }
+- 
+-diff --git a/rcS.c b/rcS.c
+-index 0e1b0ba..1b00831 100644
+---- a/rcS.c
+-+++ b/rcS.c
+-@@ -150,7 +150,7 @@ int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
+- 	q.empty_cb = q_empty;
+- 	q.max_running_tasks = 1;
+- 
+--	return _rc(&q, "/etc/rc.d", pattern, "*", param);
+-+	return _rc(&q, getenv("RC_D_PATH") ?: "/etc/rc.d", pattern, "*", param);
+- }
+- 
+- int rc(const char *file, char *param)
+--- 
+-2.0.4
+-
+diff --git a/package/system/procd/patches/1001-Add-support-for-alternative-rc.d-directories.patch b/package/system/procd/patches/1001-Add-support-for-alternative-rc.d-directories.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d3c24181cef32ae9e15401ff2e4772805ea9551
+--- /dev/null
++++ b/package/system/procd/patches/1001-Add-support-for-alternative-rc.d-directories.patch
+@@ -0,0 +1,97 @@
++From 36673c2a0e409d9c8ea9e1c15363e73bb21ae65b Mon Sep 17 00:00:00 2001
++Message-Id: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Wed, 6 Aug 2014 14:51:49 +0200
++Subject: [PATCH 1001/1007] Add support for alternative rc.d directories
++
++---
++ initd/preinit.c | 38 ++++++++++++++++++++++++++++++++++++++
++ rcS.c           |  2 +-
++ 2 files changed, 39 insertions(+), 1 deletion(-)
++
++diff --git a/initd/preinit.c b/initd/preinit.c
++index f38d8ef..acc64e7 100644
++--- a/initd/preinit.c
+++++ b/initd/preinit.c
++@@ -12,6 +12,8 @@
++  * GNU General Public License for more details.
++  */
++ 
+++#define _GNU_SOURCE
+++
++ #include <sys/stat.h>
++ #include <sys/types.h>
++ #include <sys/mount.h>
++@@ -47,6 +49,35 @@ check_dbglvl(void)
++ 		debug = lvl;
++ }
++ 
+++static char*
+++get_rc_d(void)
+++{
+++	size_t n = 0;
+++	ssize_t len;
+++	char *ret = NULL;
+++
+++	FILE *fp = fopen("/tmp/rc_d_path", "r");
+++
+++	if (!fp)
+++		return NULL;
+++
+++	len = getline(&ret, &n, fp);
+++
+++	fclose(fp);
+++
+++	unlink("/tmp/rc_d_path");
+++
+++	if (len <= 0) {
+++		free(ret);
+++		return NULL;
+++	}
+++
+++	if (ret[len-1] == '\n')
+++		ret[len-1] = 0;
+++
+++	return ret;
+++}
+++
++ static void
++ spawn_procd(struct uloop_process *proc, int ret)
++ {
++@@ -54,6 +85,7 @@ spawn_procd(struct uloop_process *proc, int ret)
++ 	char *argv[] = { "/sbin/procd", NULL};
++ 	struct stat s;
++ 	char dbg[2];
+++	char *rc_d_path;
++ 
++ 	if (plugd_proc.pid > 0)
++ 		kill(plugd_proc.pid, SIGKILL);
++@@ -73,6 +105,12 @@ spawn_procd(struct uloop_process *proc, int ret)
++ 		setenv("DBGLVL", dbg, 1);
++ 	}
++ 
+++	rc_d_path = get_rc_d();
+++	if (rc_d_path) {
+++		setenv("RC_D_PATH", rc_d_path, 1);
+++		free(rc_d_path);
+++	}
+++
++ 	execvp(argv[0], argv);
++ }
++ 
++diff --git a/rcS.c b/rcS.c
++index b3e3c22..e231d71 100644
++--- a/rcS.c
+++++ b/rcS.c
++@@ -162,7 +162,7 @@ int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
++ 	q.empty_cb = q_empty;
++ 	q.max_running_tasks = 1;
++ 
++-	return _rc(&q, "/etc/rc.d", pattern, "*", param);
+++	return _rc(&q, getenv("RC_D_PATH") ?: "/etc/rc.d", pattern, "*", param);
++ }
++ 
++ int rc(const char *file, char *param)
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1002-system-always-support-staged-sysupgrade.patch b/package/system/procd/patches/1002-system-always-support-staged-sysupgrade.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f19a21aed1a5931d609684ff70784fe40b0d1406
+--- /dev/null
++++ b/package/system/procd/patches/1002-system-always-support-staged-sysupgrade.patch
+@@ -0,0 +1,114 @@
++From 7d2c86de79b6bd976f0e37f7c3cbc61a3b3c3bb7 Mon Sep 17 00:00:00 2001
++Message-Id: <7d2c86de79b6bd976f0e37f7c3cbc61a3b3c3bb7.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Fri, 21 Apr 2017 20:06:59 +0200
++Subject: [PATCH 1002/1007] system: always support staged sysupgrade
++
++In preparation for switching all targets to the staged sysupgrade
++mechanism, upgraded is always built, and the "nandupgrade" ubus method is
++renamed to "sysupgrade".
++
++To make the migration easier, support for the old name "nandupgrade" and
++the "upgrade" method that will become unused with the staged sysupgrade is
++retained for now.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ CMakeLists.txt |  4 +---
++ system.c       | 31 +++++++++++++------------------
++ 2 files changed, 14 insertions(+), 21 deletions(-)
++
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index cc1e4a5..9e378ae 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -32,9 +32,7 @@ IF(ZRAM_TMPFS)
++   SET(SOURCES_ZRAM initd/zram.c)
++ ENDIF()
++ 
++-IF(BUILD_UPGRADED)
++-  add_subdirectory(upgraded)
++-ENDIF()
+++add_subdirectory(upgraded)
++ 
++ ADD_EXECUTABLE(procd ${SOURCES})
++ TARGET_LINK_LIBRARIES(procd ${LIBS})
++diff --git a/system.c b/system.c
++index fb7fbe4..701ff35 100644
++--- a/system.c
+++++ b/system.c
++@@ -328,12 +328,12 @@ static int proc_signal(struct ubus_context *ctx, struct ubus_object *obj,
++ }
++ 
++ enum {
++-	NAND_PATH,
++-	__NAND_MAX
+++	SYSUPGRADE_PATH,
+++	__SYSUPGRADE_MAX
++ };
++ 
++-static const struct blobmsg_policy nand_policy[__NAND_MAX] = {
++-	[NAND_PATH] = { .name = "path", .type = BLOBMSG_TYPE_STRING },
+++static const struct blobmsg_policy sysupgrade_policy[__SYSUPGRADE_MAX] = {
+++	[SYSUPGRADE_PATH] = { .name = "path", .type = BLOBMSG_TYPE_STRING },
++ };
++ 
++ static void
++@@ -352,20 +352,20 @@ procd_spawn_upgraded(char *path)
++ 	execvp(argv[0], argv);
++ }
++ 
++-static int nand_set(struct ubus_context *ctx, struct ubus_object *obj,
++-			struct ubus_request_data *req, const char *method,
++-			struct blob_attr *msg)
+++static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
+++		      struct ubus_request_data *req, const char *method,
+++		      struct blob_attr *msg)
++ {
++-	struct blob_attr *tb[__NAND_MAX];
+++	struct blob_attr *tb[__SYSUPGRADE_MAX];
++ 
++ 	if (!msg)
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++-	blobmsg_parse(nand_policy, __NAND_MAX, tb, blob_data(msg), blob_len(msg));
++-	if (!tb[NAND_PATH])
+++	blobmsg_parse(sysupgrade_policy, __SYSUPGRADE_MAX, tb, blob_data(msg), blob_len(msg));
+++	if (!tb[SYSUPGRADE_PATH])
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++-	procd_spawn_upgraded(blobmsg_get_string(tb[NAND_PATH]));
+++	procd_spawn_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PATH]));
++ 	fprintf(stderr, "Yikees, something went wrong. no /sbin/upgraded ?\n");
++ 	return 0;
++ }
++@@ -383,9 +383,8 @@ static const struct ubus_method system_methods[] = {
++ 	UBUS_METHOD_NOARG("upgrade", system_upgrade),
++ 	UBUS_METHOD("watchdog", watchdog_set, watchdog_policy),
++ 	UBUS_METHOD("signal", proc_signal, signal_policy),
++-
++-	/* must remain at the end as it ia not always loaded */
++-	UBUS_METHOD("nandupgrade", nand_set, nand_policy),
+++	UBUS_METHOD("nandupgrade", sysupgrade, sysupgrade_policy),
+++	UBUS_METHOD("sysupgrade", sysupgrade, sysupgrade_policy),
++ };
++ 
++ static struct ubus_object_type system_object_type =
++@@ -414,12 +413,8 @@ procd_bcast_event(char *event, struct blob_attr *msg)
++ 
++ void ubus_init_system(struct ubus_context *ctx)
++ {
++-	struct stat s;
++ 	int ret;
++ 
++-	if (stat("/sbin/upgraded", &s))
++-		system_object.n_methods -= 1;
++-
++ 	_ctx = ctx;
++ 	ret = ubus_add_object(ctx, &system_object);
++ 	if (ret)
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1003-upgraded-link-dynamically-chroot-during-exec.patch b/package/system/procd/patches/1003-upgraded-link-dynamically-chroot-during-exec.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d57cb02fba42894e5d279d4aa4ab00e0619f66f4
+--- /dev/null
++++ b/package/system/procd/patches/1003-upgraded-link-dynamically-chroot-during-exec.patch
+@@ -0,0 +1,222 @@
++From a6f07873f2189dd7b6742c04064c7bbee2c9d28b Mon Sep 17 00:00:00 2001
++Message-Id: <a6f07873f2189dd7b6742c04064c7bbee2c9d28b.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sun, 23 Apr 2017 02:28:13 +0200
++Subject: [PATCH 1003/1007] upgraded: link dynamically, chroot during exec
++
++The chroot ensures we don't reference anything on the rootfs and is
++reverted after the upgraded exec. While we're at it, also improve error
++handling a bit.
++
++This change also required changes to sysupgrade, as the dynamically linked
++version is expected at a different location, and libraries need to be made
++available.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ system.c                | 25 +++++++++++++++++++------
++ upgraded/CMakeLists.txt | 10 +---------
++ upgraded/upgraded.c     | 26 +++++++++++++++++++++-----
++ watchdog.c              |  9 +++++++--
++ watchdog.h              |  2 +-
++ 5 files changed, 49 insertions(+), 23 deletions(-)
++
++diff --git a/system.c b/system.c
++index 701ff35..ad71956 100644
++--- a/system.c
+++++ b/system.c
++@@ -329,27 +329,40 @@ static int proc_signal(struct ubus_context *ctx, struct ubus_object *obj,
++ 
++ enum {
++ 	SYSUPGRADE_PATH,
+++	SYSUPGRADE_PREFIX,
++ 	__SYSUPGRADE_MAX
++ };
++ 
++ static const struct blobmsg_policy sysupgrade_policy[__SYSUPGRADE_MAX] = {
++ 	[SYSUPGRADE_PATH] = { .name = "path", .type = BLOBMSG_TYPE_STRING },
+++	[SYSUPGRADE_PREFIX] = { .name = "prefix", .type = BLOBMSG_TYPE_STRING },
++ };
++ 
++ static void
++-procd_spawn_upgraded(char *path)
+++procd_exec_upgraded(const char *prefix, char *path)
++ {
++ 	char *wdt_fd = watchdog_fd();
++-	char *argv[] = { "/tmp/upgraded", NULL, NULL};
+++	char *argv[] = { "/sbin/upgraded", NULL, NULL};
+++
+++	if (chroot(prefix)) {
+++		fprintf(stderr, "Failed to chroot for upgraded exec.\n");
+++		return;
+++	}
++ 
++ 	argv[1] = path;
++ 
++ 	DEBUG(2, "Exec to upgraded now\n");
++ 	if (wdt_fd) {
++-		watchdog_no_cloexec();
+++		watchdog_set_cloexec(false);
++ 		setenv("WDTFD", wdt_fd, 1);
++ 	}
++ 	execvp(argv[0], argv);
+++
+++	/* Cleanup on failure */
+++	fprintf(stderr, "Failed to exec upgraded.\n");
+++	unsetenv("WDTFD");
+++	watchdog_set_cloexec(true);
+++	chroot(".");
++ }
++ 
++ static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
++@@ -362,11 +375,11 @@ static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++ 	blobmsg_parse(sysupgrade_policy, __SYSUPGRADE_MAX, tb, blob_data(msg), blob_len(msg));
++-	if (!tb[SYSUPGRADE_PATH])
+++	if (!tb[SYSUPGRADE_PATH] || !tb[SYSUPGRADE_PREFIX])
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++-	procd_spawn_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PATH]));
++-	fprintf(stderr, "Yikees, something went wrong. no /sbin/upgraded ?\n");
+++	procd_exec_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PREFIX]),
+++			    blobmsg_get_string(tb[SYSUPGRADE_PATH]));
++ 	return 0;
++ }
++ 
++diff --git a/upgraded/CMakeLists.txt b/upgraded/CMakeLists.txt
++index 093dba2..00d8ce5 100644
++--- a/upgraded/CMakeLists.txt
+++++ b/upgraded/CMakeLists.txt
++@@ -2,16 +2,8 @@ cmake_minimum_required(VERSION 2.6)
++ 
++ PROJECT(upgraded C)
++ ADD_DEFINITIONS(-Os -ggdb -Wall -Werror --std=gnu99 -Wmissing-declarations)
++-set(CMAKE_EXE_LINKER_FLAGS "-static -fPIC")
++-set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
++-set(CMAKE_EXE_LINK_DYNAMIC_C_FLAGS)
++-set(CMAKE_EXE_LINK_DYNAMIC_CXX_FLAGS)
++-set(CMAKE_SHARED_LIBRARY_C_FLAGS)
++-set(CMAKE_SHARED_LIBRARY_CXX_FLAGS)
++-set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
++-set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
++ ADD_EXECUTABLE(upgraded upgraded.c ../watchdog.c)
++-TARGET_LINK_LIBRARIES(upgraded ubox rt -lc -lgcc_pic)
+++TARGET_LINK_LIBRARIES(upgraded ubox)
++ INSTALL(TARGETS upgraded
++ 	RUNTIME DESTINATION sbin
++ )
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index d7433e7..aa0b4ff 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -14,6 +14,7 @@
++ 
++ #include <sys/reboot.h>
++ 
+++#include <fcntl.h>
++ #include <stdio.h>
++ #include <stdlib.h>
++ #include <string.h>
++@@ -24,6 +25,10 @@
++ 
++ #include "../watchdog.h"
++ 
+++#ifndef O_PATH
+++#define O_PATH		010000000
+++#endif
+++
++ static struct uloop_process upgrade_proc;
++ unsigned int debug = 2;
++ 
++@@ -34,7 +39,7 @@ static void upgrade_proc_cb(struct uloop_process *proc, int ret)
++ 	uloop_end();
++ }
++ 
++-static void sysupgarde(char *folder)
+++static void sysupgrade(char *folder)
++ {
++ 	char *args[] = { "/sbin/sysupgrade", "nand", NULL, NULL };
++ 
++@@ -47,7 +52,7 @@ static void sysupgarde(char *folder)
++ 		exit(-1);
++ 	}
++ 	if (upgrade_proc.pid <= 0) {
++-		fprintf(stderr, "Failed to start sysupgarde\n");
+++		fprintf(stderr, "Failed to start sysupgrade\n");
++ 		uloop_end();
++ 	}
++ }
++@@ -60,10 +65,21 @@ int main(int argc, char **argv)
++ 		fprintf(stderr, "this tool needs to run as pid 1\n");
++ 		return -1;
++ 	}
++-	if (chdir("/tmp") == -1) {
++-		fprintf(stderr, "failed to chdir to /tmp: %s\n", strerror(errno));
+++
+++	int fd = open("/", O_DIRECTORY|O_PATH);
+++	if (fd < 0) {
+++		fprintf(stderr, "unable to open prefix directory: %s\n", strerror(errno));
++ 		return -1;
++ 	}
+++
+++	chroot(".");
+++
+++	if (fchdir(fd) == -1) {
+++		fprintf(stderr, "failed to chdir to prefix directory: %s\n", strerror(errno));
+++		return -1;
+++	}
+++	close(fd);
+++
++ 	if (argc != 2) {
++ 		fprintf(stderr, "sysupgrade stage 2 failed, no folder specified\n");
++ 		return -1;
++@@ -71,7 +87,7 @@ int main(int argc, char **argv)
++ 
++ 	uloop_init();
++ 	watchdog_init(0);
++-	sysupgarde(argv[1]);
+++	sysupgrade(argv[1]);
++ 	uloop_run();
++ 
++ 	reboot(RB_AUTOBOOT);
++diff --git a/watchdog.c b/watchdog.c
++index 592ae7e..780b321 100644
++--- a/watchdog.c
+++++ b/watchdog.c
++@@ -126,10 +126,15 @@ void watchdog_init(int preinit)
++ }
++ 
++ 
++-void watchdog_no_cloexec(void)
+++void watchdog_set_cloexec(bool val)
++ {
++ 	if (wdt_fd < 0)
++ 		return;
++ 
++-	fcntl(wdt_fd, F_SETFD, fcntl(wdt_fd, F_GETFD) & ~FD_CLOEXEC);
+++	int flags = fcntl(wdt_fd, F_GETFD);
+++	if (val)
+++		flags |= FD_CLOEXEC;
+++	else
+++		flags &= ~FD_CLOEXEC;
+++	fcntl(wdt_fd, F_SETFD,  flags);
++ }
++diff --git a/watchdog.h b/watchdog.h
++index 015fa93..e857010 100644
++--- a/watchdog.h
+++++ b/watchdog.h
++@@ -21,7 +21,7 @@ int watchdog_timeout(int timeout);
++ int watchdog_frequency(int frequency);
++ void watchdog_set_stopped(bool val);
++ bool watchdog_get_stopped(void);
++-void watchdog_no_cloexec(void);
+++void watchdog_set_cloexec(bool val);
++ void watchdog_ping(void);
++ 
++ #endif
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1004-upgraded-add-support-for-passing-a-command-argument-.patch b/package/system/procd/patches/1004-upgraded-add-support-for-passing-a-command-argument-.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ac8c3fe6ee15e773c973c9d340fbe52ce428d6ee
+--- /dev/null
++++ b/package/system/procd/patches/1004-upgraded-add-support-for-passing-a-command-argument-.patch
+@@ -0,0 +1,104 @@
++From af1e6d9839a9a8f2c579202597630df9b8f842e6 Mon Sep 17 00:00:00 2001
++Message-Id: <af1e6d9839a9a8f2c579202597630df9b8f842e6.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sun, 23 Apr 2017 19:04:25 +0200
++Subject: [PATCH 1004/1007] upgraded: add support for passing a "command"
++ argument to stage2
++
++This allows us to make use of upgraded in "snapshot convert" as well.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ system.c            | 10 +++++++---
++ upgraded/upgraded.c | 13 +++++++------
++ 2 files changed, 14 insertions(+), 9 deletions(-)
++
++diff --git a/system.c b/system.c
++index ad71956..1e8a06d 100644
++--- a/system.c
+++++ b/system.c
++@@ -330,19 +330,21 @@ static int proc_signal(struct ubus_context *ctx, struct ubus_object *obj,
++ enum {
++ 	SYSUPGRADE_PATH,
++ 	SYSUPGRADE_PREFIX,
+++	SYSUPGRADE_COMMAND,
++ 	__SYSUPGRADE_MAX
++ };
++ 
++ static const struct blobmsg_policy sysupgrade_policy[__SYSUPGRADE_MAX] = {
++ 	[SYSUPGRADE_PATH] = { .name = "path", .type = BLOBMSG_TYPE_STRING },
++ 	[SYSUPGRADE_PREFIX] = { .name = "prefix", .type = BLOBMSG_TYPE_STRING },
+++	[SYSUPGRADE_COMMAND] = { .name = "command", .type = BLOBMSG_TYPE_STRING },
++ };
++ 
++ static void
++-procd_exec_upgraded(const char *prefix, char *path)
+++procd_exec_upgraded(const char *prefix, char *path, char *command)
++ {
++ 	char *wdt_fd = watchdog_fd();
++-	char *argv[] = { "/sbin/upgraded", NULL, NULL};
+++	char *argv[] = { "/sbin/upgraded", NULL, NULL, NULL};
++ 
++ 	if (chroot(prefix)) {
++ 		fprintf(stderr, "Failed to chroot for upgraded exec.\n");
++@@ -350,6 +352,7 @@ procd_exec_upgraded(const char *prefix, char *path)
++ 	}
++ 
++ 	argv[1] = path;
+++	argv[2] = command;
++ 
++ 	DEBUG(2, "Exec to upgraded now\n");
++ 	if (wdt_fd) {
++@@ -379,7 +382,8 @@ static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++ 	procd_exec_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PREFIX]),
++-			    blobmsg_get_string(tb[SYSUPGRADE_PATH]));
+++			    blobmsg_get_string(tb[SYSUPGRADE_PATH]),
+++			    tb[SYSUPGRADE_COMMAND] ? blobmsg_get_string(tb[SYSUPGRADE_COMMAND]) : NULL);
++ 	return 0;
++ }
++ 
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index aa0b4ff..303edb7 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -39,11 +39,12 @@ static void upgrade_proc_cb(struct uloop_process *proc, int ret)
++ 	uloop_end();
++ }
++ 
++-static void sysupgrade(char *folder)
+++static void sysupgrade(char *path, char *command)
++ {
++-	char *args[] = { "/sbin/sysupgrade", "nand", NULL, NULL };
+++	char *args[] = { "/sbin/sysupgrade", "nand", NULL, NULL, NULL };
++ 
++-	args[2] = folder;
+++	args[2] = path;
+++	args[3] = command;
++ 	upgrade_proc.cb = upgrade_proc_cb;
++ 	upgrade_proc.pid = fork();
++ 	if (!upgrade_proc.pid) {
++@@ -80,14 +81,14 @@ int main(int argc, char **argv)
++ 	}
++ 	close(fd);
++ 
++-	if (argc != 2) {
++-		fprintf(stderr, "sysupgrade stage 2 failed, no folder specified\n");
+++	if (argc != 2 && argc != 3) {
+++		fprintf(stderr, "sysupgrade stage 2 failed, invalid command line\n");
++ 		return -1;
++ 	}
++ 
++ 	uloop_init();
++ 	watchdog_init(0);
++-	sysupgrade(argv[1]);
+++	sysupgrade(argv[1], (argc == 3) ? argv[2] : NULL);
++ 	uloop_run();
++ 
++ 	reboot(RB_AUTOBOOT);
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1005-Remove-code-that-has-become-unnecessary-after-sysupg.patch b/package/system/procd/patches/1005-Remove-code-that-has-become-unnecessary-after-sysupg.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0be544bce113b920556bc6a9889041227fc42e07
+--- /dev/null
++++ b/package/system/procd/patches/1005-Remove-code-that-has-become-unnecessary-after-sysupg.patch
+@@ -0,0 +1,119 @@
++From 45bd440ec30f777b3619dcd0e7db330cc29a7850 Mon Sep 17 00:00:00 2001
++Message-Id: <45bd440ec30f777b3619dcd0e7db330cc29a7850.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sun, 23 Apr 2017 19:06:12 +0200
++Subject: [PATCH 1005/1007] Remove code that has become unnecessary after
++ sysupgrade changes
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ procd.h             |  1 -
++ service/instance.c  |  2 --
++ system.c            | 12 ------------
++ upgraded/upgraded.c | 10 +++++-----
++ 4 files changed, 5 insertions(+), 20 deletions(-)
++
++diff --git a/procd.h b/procd.h
++index 66d183c..796e524 100644
++--- a/procd.h
+++++ b/procd.h
++@@ -27,7 +27,6 @@
++ #define __init __attribute__((constructor))
++ 
++ extern char *ubus_socket;
++-extern int upgrade_running;
++ 
++ void procd_connect_ubus(void);
++ void procd_reconnect_ubus(int reconnect);
++diff --git a/service/instance.c b/service/instance.c
++index 40ff021..f33eae9 100644
++--- a/service/instance.c
+++++ b/service/instance.c
++@@ -453,8 +453,6 @@ instance_exit(struct uloop_process *p, int ret)
++ 	runtime = tp.tv_sec - in->start.tv_sec;
++ 
++ 	DEBUG(2, "Instance %s::%s exit with error code %d after %ld seconds\n", in->srv->name, in->name, ret, runtime);
++-	if (upgrade_running)
++-		return;
++ 
++ 	uloop_timeout_cancel(&in->timeout);
++ 	if (in->halt) {
++diff --git a/system.c b/system.c
++index 1e8a06d..80205da 100644
++--- a/system.c
+++++ b/system.c
++@@ -31,8 +31,6 @@ static struct blob_buf b;
++ static int notify;
++ static struct ubus_context *_ctx;
++ 
++-int upgrade_running = 0;
++-
++ static int system_board(struct ubus_context *ctx, struct ubus_object *obj,
++                  struct ubus_request_data *req, const char *method,
++                  struct blob_attr *msg)
++@@ -227,14 +225,6 @@ static int system_info(struct ubus_context *ctx, struct ubus_object *obj,
++ 	return UBUS_STATUS_OK;
++ }
++ 
++-static int system_upgrade(struct ubus_context *ctx, struct ubus_object *obj,
++-			struct ubus_request_data *req, const char *method,
++-			struct blob_attr *msg)
++-{
++-	upgrade_running = 1;
++-	return 0;
++-}
++-
++ enum {
++ 	WDT_FREQUENCY,
++ 	WDT_TIMEOUT,
++@@ -397,10 +387,8 @@ procd_subscribe_cb(struct ubus_context *ctx, struct ubus_object *obj)
++ static const struct ubus_method system_methods[] = {
++ 	UBUS_METHOD_NOARG("board", system_board),
++ 	UBUS_METHOD_NOARG("info",  system_info),
++-	UBUS_METHOD_NOARG("upgrade", system_upgrade),
++ 	UBUS_METHOD("watchdog", watchdog_set, watchdog_policy),
++ 	UBUS_METHOD("signal", proc_signal, signal_policy),
++-	UBUS_METHOD("nandupgrade", sysupgrade, sysupgrade_policy),
++ 	UBUS_METHOD("sysupgrade", sysupgrade, sysupgrade_policy),
++ };
++ 
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index 303edb7..79ebd37 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -41,10 +41,10 @@ static void upgrade_proc_cb(struct uloop_process *proc, int ret)
++ 
++ static void sysupgrade(char *path, char *command)
++ {
++-	char *args[] = { "/sbin/sysupgrade", "nand", NULL, NULL, NULL };
+++	char *args[] = { "/lib/upgrade/stage2", NULL, NULL, NULL };
++ 
++-	args[2] = path;
++-	args[3] = command;
+++	args[1] = path;
+++	args[2] = command;
++ 	upgrade_proc.cb = upgrade_proc_cb;
++ 	upgrade_proc.pid = fork();
++ 	if (!upgrade_proc.pid) {
++@@ -81,14 +81,14 @@ int main(int argc, char **argv)
++ 	}
++ 	close(fd);
++ 
++-	if (argc != 2 && argc != 3) {
+++	if (argc != 3) {
++ 		fprintf(stderr, "sysupgrade stage 2 failed, invalid command line\n");
++ 		return -1;
++ 	}
++ 
++ 	uloop_init();
++ 	watchdog_init(0);
++-	sysupgrade(argv[1], (argc == 3) ? argv[2] : NULL);
+++	sysupgrade(argv[1], argv[2]);
++ 	uloop_run();
++ 
++ 	reboot(RB_AUTOBOOT);
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1006-init-add-support-for-sysupgrades-triggered-from-prei.patch b/package/system/procd/patches/1006-init-add-support-for-sysupgrades-triggered-from-prei.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..872846be3e3984f6177512a7adbf0886b78d2677
+--- /dev/null
++++ b/package/system/procd/patches/1006-init-add-support-for-sysupgrades-triggered-from-prei.patch
+@@ -0,0 +1,280 @@
++From f4e6df8848e54d83bac0ab7451312a9db5b59143 Mon Sep 17 00:00:00 2001
++Message-Id: <f4e6df8848e54d83bac0ab7451312a9db5b59143.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Mon, 24 Apr 2017 00:40:27 +0200
++Subject: [PATCH 1006/1007] init: add support for sysupgrades triggered from
++ preinit
++
++This will allow to add support for sysupgrades via upgraded from failsafe
++mode.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ CMakeLists.txt  |  4 ++--
++ initd/preinit.c | 46 +++++++++++++++++++++++++++++++++++++++++-----
++ system.c        | 35 ++++-------------------------------
++ sysupgrade.c    | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
++ sysupgrade.h    | 21 +++++++++++++++++++++
++ watchdog.h      |  2 ++
++ 6 files changed, 119 insertions(+), 38 deletions(-)
++ create mode 100644 sysupgrade.c
++ create mode 100644 sysupgrade.h
++
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 9e378ae..441216b 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -17,7 +17,7 @@ INSTALL(TARGETS setlbf
++ )
++ 
++ 
++-SET(SOURCES procd.c signal.c watchdog.c state.c	inittab.c rcS.c	ubus.c system.c
+++SET(SOURCES procd.c signal.c watchdog.c state.c	inittab.c rcS.c	ubus.c system.c sysupgrade.c
++ 	service/service.c service/instance.c service/validate.c service/trigger.c service/watch.c
++ 	plug/coldplug.c plug/hotplug.c utils/utils.c)
++ 
++@@ -41,7 +41,7 @@ INSTALL(TARGETS procd
++ )
++ 
++ 
++-ADD_EXECUTABLE(init initd/init.c initd/early.c initd/preinit.c initd/mkdev.c watchdog.c
+++ADD_EXECUTABLE(init initd/init.c initd/early.c initd/preinit.c initd/mkdev.c sysupgrade.c watchdog.c
++ 	utils/utils.c ${SOURCES_ZRAM})
++ TARGET_LINK_LIBRARIES(init ${LIBS})
++ INSTALL(TARGETS init
++diff --git a/initd/preinit.c b/initd/preinit.c
++index acc64e7..3a606e4 100644
++--- a/initd/preinit.c
+++++ b/initd/preinit.c
++@@ -28,6 +28,7 @@
++ 
++ #include "init.h"
++ #include "../watchdog.h"
+++#include "../sysupgrade.h"
++ 
++ static struct uloop_process preinit_proc;
++ static struct uloop_process plugd_proc;
++@@ -79,23 +80,58 @@ get_rc_d(void)
++ }
++ 
++ static void
+++check_sysupgrade(void)
+++{
+++	char *prefix = NULL, *path = NULL, *command = NULL;
+++	size_t n;
+++
+++	if (chdir("/"))
+++		return;
+++
+++	FILE *sysupgrade = fopen("/tmp/sysupgrade", "r");
+++	if (!sysupgrade)
+++		return;
+++
+++	n = 0;
+++	if (getdelim(&prefix, &n, 0, sysupgrade) < 0)
+++		goto fail;
+++	n = 0;
+++	if (getdelim(&path, &n, 0, sysupgrade) < 0)
+++		goto fail;
+++	n = 0;
+++	if (getdelim(&command, &n, 0, sysupgrade) < 0)
+++		goto fail;
+++
+++	fclose(sysupgrade);
+++
+++	sysupgrade_exec_upgraded(prefix, path, command);
+++
+++	while (true)
+++		sleep(1);
+++
+++fail:
+++	fclose(sysupgrade);
+++	free(prefix);
+++	free(path);
+++	free(command);
+++}
+++
+++static void
++ spawn_procd(struct uloop_process *proc, int ret)
++ {
++ 	char *wdt_fd = watchdog_fd();
++ 	char *argv[] = { "/sbin/procd", NULL};
++-	struct stat s;
++ 	char dbg[2];
++ 	char *rc_d_path;
++ 
++ 	if (plugd_proc.pid > 0)
++ 		kill(plugd_proc.pid, SIGKILL);
++ 
++-	if (!stat("/tmp/sysupgrade", &s))
++-		while (true)
++-			sleep(1);
++-
++ 	unsetenv("INITRAMFS");
++ 	unsetenv("PREINIT");
+++
+++	check_sysupgrade();
+++
++ 	DEBUG(2, "Exec to real procd now\n");
++ 	if (wdt_fd)
++ 		setenv("WDTFD", wdt_fd, 1);
++diff --git a/system.c b/system.c
++index 80205da..700530d 100644
++--- a/system.c
+++++ b/system.c
++@@ -25,6 +25,7 @@
++ #include <libubox/uloop.h>
++ 
++ #include "procd.h"
+++#include "sysupgrade.h"
++ #include "watchdog.h"
++ 
++ static struct blob_buf b;
++@@ -330,34 +331,6 @@ static const struct blobmsg_policy sysupgrade_policy[__SYSUPGRADE_MAX] = {
++ 	[SYSUPGRADE_COMMAND] = { .name = "command", .type = BLOBMSG_TYPE_STRING },
++ };
++ 
++-static void
++-procd_exec_upgraded(const char *prefix, char *path, char *command)
++-{
++-	char *wdt_fd = watchdog_fd();
++-	char *argv[] = { "/sbin/upgraded", NULL, NULL, NULL};
++-
++-	if (chroot(prefix)) {
++-		fprintf(stderr, "Failed to chroot for upgraded exec.\n");
++-		return;
++-	}
++-
++-	argv[1] = path;
++-	argv[2] = command;
++-
++-	DEBUG(2, "Exec to upgraded now\n");
++-	if (wdt_fd) {
++-		watchdog_set_cloexec(false);
++-		setenv("WDTFD", wdt_fd, 1);
++-	}
++-	execvp(argv[0], argv);
++-
++-	/* Cleanup on failure */
++-	fprintf(stderr, "Failed to exec upgraded.\n");
++-	unsetenv("WDTFD");
++-	watchdog_set_cloexec(true);
++-	chroot(".");
++-}
++-
++ static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
++ 		      struct ubus_request_data *req, const char *method,
++ 		      struct blob_attr *msg)
++@@ -371,9 +344,9 @@ static int sysupgrade(struct ubus_context *ctx, struct ubus_object *obj,
++ 	if (!tb[SYSUPGRADE_PATH] || !tb[SYSUPGRADE_PREFIX])
++ 		return UBUS_STATUS_INVALID_ARGUMENT;
++ 
++-	procd_exec_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PREFIX]),
++-			    blobmsg_get_string(tb[SYSUPGRADE_PATH]),
++-			    tb[SYSUPGRADE_COMMAND] ? blobmsg_get_string(tb[SYSUPGRADE_COMMAND]) : NULL);
+++	sysupgrade_exec_upgraded(blobmsg_get_string(tb[SYSUPGRADE_PREFIX]),
+++				 blobmsg_get_string(tb[SYSUPGRADE_PATH]),
+++				 tb[SYSUPGRADE_COMMAND] ? blobmsg_get_string(tb[SYSUPGRADE_COMMAND]) : NULL);
++ 	return 0;
++ }
++ 
++diff --git a/sysupgrade.c b/sysupgrade.c
++new file mode 100644
++index 0000000..30f1836
++--- /dev/null
+++++ b/sysupgrade.c
++@@ -0,0 +1,49 @@
+++/*
+++ * Copyright (C) 2013 Felix Fietkau <nbd@openwrt.org>
+++ * Copyright (C) 2013 John Crispin <blogic@openwrt.org>
+++ * Copyright (C) 2017 Matthias Schiffer <mschiffer@universe-factory.net>
+++ *
+++ * This program is free software; you can redistribute it and/or modify
+++ * it under the terms of the GNU Lesser General Public License version 2.1
+++ * as published by the Free Software Foundation
+++ *
+++ * This program is distributed in the hope that it will be useful,
+++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ * GNU General Public License for more details.
+++ */
+++
+++
+++#include "watchdog.h"
+++#include "sysupgrade.h"
+++
+++#include <stdio.h>
+++#include <stdlib.h>
+++#include <unistd.h>
+++
+++
+++void sysupgrade_exec_upgraded(const char *prefix, char *path, char *command)
+++{
+++	char *wdt_fd = watchdog_fd();
+++	char *argv[] = { "/sbin/upgraded", NULL, NULL, NULL};
+++
+++	if (chroot(prefix)) {
+++		fprintf(stderr, "Failed to chroot for upgraded exec.\n");
+++		return;
+++	}
+++
+++	argv[1] = path;
+++	argv[2] = command;
+++
+++	if (wdt_fd) {
+++		watchdog_set_cloexec(false);
+++		setenv("WDTFD", wdt_fd, 1);
+++	}
+++	execvp(argv[0], argv);
+++
+++	/* Cleanup on failure */
+++	fprintf(stderr, "Failed to exec upgraded.\n");
+++	unsetenv("WDTFD");
+++	watchdog_set_cloexec(true);
+++	chroot(".");
+++}
++diff --git a/sysupgrade.h b/sysupgrade.h
++new file mode 100644
++index 0000000..8c09fc9
++--- /dev/null
+++++ b/sysupgrade.h
++@@ -0,0 +1,21 @@
+++/*
+++ * Copyright (C) 2017 Matthias Schiffer <mschiffer@universe-factory.net>
+++ *
+++ * This program is free software; you can redistribute it and/or modify
+++ * it under the terms of the GNU Lesser General Public License version 2.1
+++ * as published by the Free Software Foundation
+++ *
+++ * This program is distributed in the hope that it will be useful,
+++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+++ * GNU General Public License for more details.
+++ */
+++
+++#ifndef __PROCD_SYSUPGRADE_H
+++#define __PROCD_SYSUPGRADE_H
+++
+++
+++void sysupgrade_exec_upgraded(const char *prefix, char *path, char *command);
+++
+++
+++#endif
++diff --git a/watchdog.h b/watchdog.h
++index e857010..06ce5e5 100644
++--- a/watchdog.h
+++++ b/watchdog.h
++@@ -15,6 +15,8 @@
++ #ifndef __PROCD_WATCHDOG_H
++ #define __PROCD_WATCHDOG_H
++ 
+++#include <stdbool.h>
+++
++ void watchdog_init(int preinit);
++ char* watchdog_fd(void);
++ int watchdog_timeout(int timeout);
++-- 
++2.13.0
++
+diff --git a/package/system/procd/patches/1007-upgraded-define-__GNU_SOURCE.patch b/package/system/procd/patches/1007-upgraded-define-__GNU_SOURCE.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c98cb9baa4371b64d6b1297fc0a9921d580947be
+--- /dev/null
++++ b/package/system/procd/patches/1007-upgraded-define-__GNU_SOURCE.patch
+@@ -0,0 +1,31 @@
++From 8137d283c7f858ca658fa556b95eb62e35ae980d Mon Sep 17 00:00:00 2001
++Message-Id: <8137d283c7f858ca658fa556b95eb62e35ae980d.1496349467.git.mschiffer@universe-factory.net>
++In-Reply-To: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++References: <36673c2a0e409d9c8ea9e1c15363e73bb21ae65b.1496349467.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 30 May 2017 07:23:57 +0200
++Subject: [PATCH 1007/1007] upgraded: define __GNU_SOURCE
++
++It is required on non-musl libcs for O_DIRECTORY.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ upgraded/upgraded.c | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index 79ebd37..e70f92d 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -12,6 +12,8 @@
++  * GNU General Public License for more details.
++  */
++ 
+++#define _GNU_SOURCE
+++
++ #include <sys/reboot.h>
++ 
++ #include <fcntl.h>
++-- 
++2.13.0
++
