@@ -276,11 +276,15 @@ static struct json_object * get_mesh_vpn(void) {
 	if (!site)
 		goto end;
 
-	struct json_object *fastd_mesh_vpn;
-	if (!json_object_object_get_ex(site, "fastd_mesh_vpn", &fastd_mesh_vpn))
+	struct json_object *mesh_vpn;
+	if (!json_object_object_get_ex(site, "mesh_vpn", &mesh_vpn))
 		goto end;
 
-	ret = get_peer_group(fastd_mesh_vpn, peers);
+	struct json_object *mesh_vpn_fastd;
+	if (!json_object_object_get_ex(mesh_vpn, "fastd", &mesh_vpn_fastd))
+		goto end;
+
+	ret = get_peer_group(mesh_vpn_fastd, peers);
 
  end:
 	json_object_put(site);
