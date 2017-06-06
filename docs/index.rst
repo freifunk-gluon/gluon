@@ -65,6 +65,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    :maxdepth: 1
 
    releases/v2017.1
+   releases/v2016.2.6
    releases/v2016.2.5
    releases/v2016.2.4
    releases/v2016.2.3
