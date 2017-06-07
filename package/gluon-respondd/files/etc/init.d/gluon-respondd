@@ -18,12 +18,3 @@ start_service() {
 	procd_set_param stderr 1
 	procd_close_instance
 }
-
-service_triggers() {
-	local script=$(readlink "$initscript")
-	local name=$(basename ${script:-$initscript})
-
-	procd_open_trigger
-	procd_add_raw_trigger "interface.*" 0 "/etc/init.d/$name" reload
-	procd_close_trigger
-}
