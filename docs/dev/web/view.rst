@@ -38,18 +38,18 @@ variables and functions should always be available for the embedded Lua code:
 
   - *renderer*: :ref:`web-controller-template-renderer`
   - *http*: :ref:`web-controller-http`
-  - *request*: Table containing the path components of the current page
+  - *request*: table containing the path components of the current page
   - *url* (*path*): returns the URL for the given path, which is passed as a table of path components.
-  - *attr* (*key*, *value*): Returns a string of the form ``key="value"``
+  - *attr* (*key*, *value*): returns a string of the form ``key="value"``
     (with a leading space character before the key).
 
     *value* is converted to a string (tables are serialized as JSON) and HTML entities
     are escaped. Returns an empty string when *value* is *nil* or *false*.
-  - *include* (*template*): Includes another template.
-  - *node* (*path*, ...): Returns the controller node for the given page (passed as
+  - *include* (*template*): includes another template.
+  - *node* (*path*, ...): ieturns the controller node for the given page (passed as
     one argument per path component).
 
     Use ``node(unpack(request))`` to get the node for the current page.
-  - *pcdata* (*str*): Escapes HTML entities in the passed string.
-  - *urlencode* (*str*): Escapes the passed string for use in an URL.
+  - *pcdata* (*str*): escapes HTML entities in the passed string.
+  - *urlencode* (*str*): escapes the passed string for use in a URL.
   - *translate*, *_translate* and *translatef*: see :doc:`i18n`
