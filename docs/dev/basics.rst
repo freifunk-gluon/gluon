@@ -62,7 +62,9 @@ Code formatting may sound like a topic for the pedantic, however it helps if
 the code in the project is formatted in the same way. The following rules
 apply:
 
-- use tabs instead of spaces (set your editor to show tabs as two spaces)
+- use tabs instead of spaces (set your editor to show tabs as two spaces.) Only
+  exceptions are Makefiles, that need spaces in some places (for example the
+  Package definition)
 - trailing whitespaces must be eliminated
 
 Developing Packages
