@@ -85,7 +85,9 @@ Next go back to the top-level Gluon directory and build Gluon::
     make GLUON_TARGET=ar71xx-generic   # Build Gluon
 
 When calling make, the OpenWrt build environment is prepared/updated.
-In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet).
+In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet). Since this yeat, the file ``linux-3.18.44.tar.xz`` is not availble any more. you can fix this by downloading it manually from another source:
+
+    wget https://openfreiburg.de/freifunk/firmware/gluon-downloads/linux-3.18.44.tar.xz -O build/openwrt/dl/linux-3.18.44.tar.xz
 
 ``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
