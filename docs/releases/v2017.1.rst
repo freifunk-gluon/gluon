@@ -193,7 +193,14 @@ Internals
   and development afterwards.
 
 * Target definitions have been migrated from a Make-based format to a simpler
-  Shell-based DSL
+  shell-based DSL
+
+* Gluon does not pass any custom variables into the LEDE build anymore, so things
+  like *GLUONDIR*, *GLUON_VERSION*, or *GLUON_SITEDIR* aren't available
+  to package Makefiles in Gluon 2017.1.
+
+  Instead of ``$(GLUONDIR)/package.mk``, ``$(TOPDIR)/../package/gluon.mk`` must
+  be included in custom packages now.
 
 Known issues
 ~~~~~~~~~~~~
