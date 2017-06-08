@@ -50,6 +50,7 @@ commits, making `git reflog` the only way to recover them!
 
 Development Guidelines
 ----------------------
+
 lua should be used instead of sh whenever sensible. The following criteria
 should be considered:
 
@@ -63,3 +64,32 @@ apply:
 
 - use tabs instead of spaces (set your editor to show tabs as two spaces)
 - trailing whitespaces must be eliminated
+
+Upgrading Packages from 2016.2.x
+--------------------------------
+
+The site.conf and external packages to be rewritten in some parts and Gluon now
+doesn't use LuCI for its Config Mode anymore, but our own fork
+"gluon-web", which is significantly smaller (as lots of features we don't
+need have been removed) for detailed changes see `/dev/web/`_.
+
+.. _/dev/web/:
+
+- the function ``gluon_luci.escape()`` must be replaced with ``pcdata()`` and ``urlescape()`` with ``urlencode()``
+- the dependencies in the ``Makefile`` must be adapted: replace ``DEPENDS:=gluon-luci-theme`` with ``DEPENDS:=gluon-web-theme``, ``luci-base`` with ``gluon-web`` and ``gluon-luci-admin`` with ``gluon-web-admin`` ...
+- ``i18n.translate()`` must be replaced with ``translate()``
+- ``luci.template.render_string()`` must be replaced with ``renderer.render_string()``
+- i.e. ``s:option(cbi.Value, "_altitude" ...`` must be replaced with ``o = s:option(Value, "altitude" ...``
+- ``o.rmempty`` must be replaced with ``o.optional``
+- adapt the paths: ``/lib/gluon/setup-mode/www`` must be replaced with ``/lib/gluon/web/www``
+- includes: ``require 'luci.util'`` must be replaced with ``require 'gluon.web.util'`` and 'luci.i18n', 'gluon.luci' with 'gluon.util'
+- In ``site.mk`` all pakages with ``-luci-`` in its name must be replaced with ``-web-`` (exception: ``gluon-luci-portconfig must be replaced with ``gluon-web-network``
+- the Makefile now has to reside in a subfolder within the repository, all files and folders needed for inclusion need to be in that same subfolder
+- the ``site.conf`` needs to be adjusted too. Refer to `site.html#configuration18`_ for the
+new format:
+	- The changes in short: the ``fastd_mesh_vpn`` section has been renamed to ``fastd``
+	and moved into a new section ``mesh_vpn``, with the exception of the options
+	``enabled``, ``mtu`` and ``bandwidth_limit``, which are set directly in the 
+	``mesh_vpn`` section.
+
+.. _site.html#configuration18:
