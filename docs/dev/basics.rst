@@ -65,6 +65,35 @@ apply:
 - use tabs instead of spaces (set your editor to show tabs as two spaces)
 - trailing whitespaces must be eliminated
 
+Developing Packages
+-------------------
+
+If you want to develop your own external Gluon package, the best way would be 
+to start with an existing package from the gluon repository and adapt it, for 
+example use the package ``gluon-web-mesh-vpn-fastd`` as a base
+
+- rename all occurrences of your example package
+- adapt the upgrade script to your needs
+- to create new config values that may be editable with ``uci`` create a file 
+  in ``/ect/config/your_new_config`` with just one section
+
+::
+
+	config main 'settings'	
+
+
+- to fill this section with values from the ``site.conf`` edit the upgrade 
+	script for your package and add the same section as the filename of the config
+	file in your ``site.conf``:
+
+::
+
+	your_new_config {
+		new_value = 'example'
+	}
+
+::
+
 Upgrading Packages from 2016.2.x
 --------------------------------
 
