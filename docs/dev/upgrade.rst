@@ -39,3 +39,5 @@ These are some guidelines for the script numbers:
 * ``5xx``: Miscellaneous (everything not fitting into any other category)
 * ``6xx`` .. ``8xx``: Currently unused
 * ``9xx``: Upgrade finalization
+
+Make sure all upgrade scripts are executable.
