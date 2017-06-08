@@ -12,7 +12,7 @@ as a separate package.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index 78c3dc9390cf58fde8483596563c2e6e5e500887..aeef3dbc12f0c5ffdef0e7034e5446bfe1a1c7c4 100644
+index ac3fe2f52b4863260a2e8efa58dac5da6bbb9ec1..4cc3e5079b9cf25909acef92526753945ba5f9de 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
 @@ -18,7 +18,9 @@ PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
