@@ -1,0 +1,24 @@
+From: Jan-Tarek Butt <tarek@ring0.de>
+Date: Wed, 22 Mar 2017 23:36:05 +0100
+Subject: package iw: enable scan output for IEEE802.11s
+
+Signed-off-by: Jan-Tarek Butt <tarek@ring0.de>
+
+diff --git a/package/network/utils/iw/patches/210-IEEE802.11s-enable-scan-output.patch b/package/network/utils/iw/patches/210-IEEE802.11s-enable-scan-output.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f6e2ddb2e112cff7b0b979eb0c0d1f4a224fce5f
+--- /dev/null
++++ b/package/network/utils/iw/patches/210-IEEE802.11s-enable-scan-output.patch
+@@ -0,0 +1,12 @@
++--- a/scan.c
+++++ b/scan.c
++@@ -1401,7 +1401,9 @@
++ 	[74] = { "Overlapping BSS scan params", print_obss_scan_params, 14, 255, BIT(PRINT_SCAN), },
++ 	[50] = { "Extended supported rates", print_supprates, 0, 255, BIT(PRINT_SCAN), },
++ 	[113] = { "MESH Configuration", print_mesh_conf, 7, 7, BIT(PRINT_SCAN), },
+++#endif
++ 	[114] = { "MESH ID", print_ssid, 0, 32, BIT(PRINT_SCAN) | BIT(PRINT_LINK), },
+++#if 0
++ 	[127] = { "Extended capabilities", print_capabilities, 0, 255, BIT(PRINT_SCAN), },
++ 	[107] = { "802.11u Interworking", print_interworking, 0, 255, BIT(PRINT_SCAN), },
++ 	[108] = { "802.11u Advertisement", print_11u_advert, 0, 255, BIT(PRINT_SCAN), },
