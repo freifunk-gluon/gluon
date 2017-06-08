@@ -79,7 +79,8 @@ New features
   (`#978 <https://github.com/freifunk-gluon/gluon/issues/978>`_)
 
   L2TP will usually give better performance than fastd as it runs in kernel
-  space, but it does not provide encryption.
+  space, but it does not provide encryption. Also, tunneling over IPv6 is
+  currently unsupported by tunneldigger.
 
   It is not possible to include both fastd and tunneldigger in the same
   firmware.
