@@ -61,5 +61,5 @@ Code formatting may sound like a topic for the pedantic, however it helps if
 the code in the project is formatted in the same way. The following rules
 apply:
 
-- use tabs instead of spaces
+- use tabs instead of spaces (set your editor to show tabs as two spaces)
 - trailing whitespaces must be eliminated
