@@ -19,6 +19,17 @@ lead to x86 systems losing their configuration when upgrading to Gluon 2017.1!**
 Older Gluon versions should be upgraded to 2016.2.6 first before switching to
 2017.1.
 
+Another potential issue mostly affects virtual machines: Gluon 2017.1 images are
+bigger than 2016.2.x images on x86. If your virtual harddisk is based on a
+2016.2.x image, it must be resized to 273MB or bigger before upgrading to Gluon
+2017.1. Using qemu, the command
+
+::
+
+  qemu-img resize $IMAGE 273MB
+
+can be used to do this.
+
 Added hardware support
 ~~~~~~~~~~~~~~~~~~~~~~
 
