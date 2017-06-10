@@ -25,7 +25,6 @@ GLUON_SITE_PACKAGES := \
 	gluon-setup-mode \
 	gluon-status-page \
 	haveged \
-	iptables \
 	iwinfo
 
 ##	DEFAULT_GLUON_RELEASE
