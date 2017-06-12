@@ -1,0 +1,76 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local users = require 'gluon.users'
+local util = require 'gluon.util'
+local fs = require 'nixio.fs'
+
+local uci = require('simple-uci').cursor()
+
+
+uci:section('network', 'interface', 'mesh_vpn', {
+	ifname = 'mesh-vpn',
+	proto = 'gluon_mesh',
+	transitive = true,
+	fixed_mtu = true,
+	macaddr = util.generate_mac(7),
+	mtu = site.mesh_vpn.mtu,
+})
+
+uci:save('network')
+
+
+if fs.access('/etc/config/gluon-simple-tc') then
+	os.rename('/etc/config/gluon-simple-tc', '/etc/config/simple-tc')
+end
+
+if not uci:get('simple-tc', 'mesh_vpn') then
+	local config = {
+		ifname = 'mesh-vpn',
+		enabled = false,
+	}
+
+
+	if site.mesh_vpn.bandwidth_limit then
+		if site.mesh_vpn.bandwidth_limit.enabled then
+			config.enabled = true
+		end
+
+		config.limit_ingress = site.mesh_vpn.bandwidth_limit.ingress
+		config.limit_egress = site.mesh_vpn.bandwidth_limit.egress
+	end
+
+	uci:section('simple-tc', 'interface', 'mesh_vpn', config)
+	uci:save('simple-tc')
+end
+
+
+-- The previously used user and group are removed, we now have a generic group
+users.remove_user('gluon-fastd')
+users.remove_group('gluon-fastd')
+
+users.add_group('gluon-mesh-vpn', 800)
+
+uci:section('firewall', 'include', 'mesh_vpn_dns', {
+	type = 'restore',
+	path = '/lib/gluon/mesh-vpn/iptables.rules',
+	family = 'ipv4',
+})
+
+uci:save('firewall')
+
+
+-- VPN migration
+local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
+local fastd_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+
+local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+local tunneldigger_enabled = uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+
+local enabled = fastd_enabled or tunneldigger_enabled or false
+
+uci:set("fastd", "mesh_vpn", "enabled", has_fastd and enabled)
+uci:save("fastd")
+
+uci:set("tunneldigger", "mesh_vpn", "enabled", has_tunneldigger and enabled)
+uci:save("tunneldigger")

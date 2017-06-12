@@ -1,0 +1,1 @@
+* * * * * gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r nodeinfo | gzip | alfred -s 158; gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r statistics | gzip | alfred -s 159; gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r neighbours | gzip | alfred -s 160

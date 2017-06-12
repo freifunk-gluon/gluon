@@ -1,3 +1,0 @@
-local site = require 'gluon.site_config'
-
-return site.site_code

@@ -5,7 +5,8 @@ PKG_VERSION:=2
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
+
 
 define Package/gluon-authorized-keys
   SECTION:=gluon
@@ -22,10 +23,11 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-authorized-keys/install
-	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 endef
 
 define Package/gluon-authorized-keys/postinst

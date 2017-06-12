@@ -1,0 +1,66 @@
+Gluon 2016.1.5
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* OpenMesh
+
+ - MR600 (v1, v2)
+ - MR900 (v1, v2)
+ - OM2P (v1, v2)
+ - OM2P-HS (v1, v2)
+ - OM2P-LC
+ - OM5P
+ - OM5P-AN
+
+* Ubiquiti
+
+ - Rocket M XW
+
+* TP-LINK
+
+ - TL-WR841N/ND v11
+
+Bugfixes
+~~~~~~~~
+
+* build: fix race condition caused by using certain make targets (like *clean*, *images* or *package/\**)
+  with parallel build options without doing a full build before
+* build: fix package dependency issue causing "recursive dependency" warning
+
+  This dependency issue could lead to broken configurations and reportedly caused failed builds in some cases
+  when additional (site-specific) packages were used.
+* build: Gluon will now build correctly with GCC 6 as host compiler
+* Fix configuration of batman-adv when VLANs are used on top of IBSS interfaces (regression due to netifd update in :doc:`v2016.1.4`)
+* Add back missing ath10k firmware (regression due to mac80211 update in :doc:`v2016.1.4`)
+* Gluon can now be used on all supported Ubiquiti AirMAX devices without downgrading to AirOS 5.5.x before
+
+  :doc:`v2016.1.1` added support for most Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS,
+  but left some devices (at least some PicoStations and Bullets) with unwritable flash. This issue has been
+  resolved (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_).
+* Add upgrade script to automatically remove whitespace from configured geolocation
+
+  The new respondd implementation included in :doc:`v2016.1` is stricter about the number format than the
+  old one and doesn't accept trailing whitespace (so one or both coordinates are missing from the output).
+
+  The Config Mode has been fixed to strip whitespace from numeric fields in new configurations since :doc:`v2016.1.1`.
+  This still left old configurations, which are now fixed by this script.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Expert Mode is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.

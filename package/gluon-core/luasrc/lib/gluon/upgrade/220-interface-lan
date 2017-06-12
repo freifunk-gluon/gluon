@@ -1,0 +1,41 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('simple-uci').cursor()
+
+if not sysconfig.lan_ifname then
+  os.exit(0)
+end
+
+uci:section('network', 'interface', 'mesh_lan', {
+  ifname        = sysconfig.lan_ifname,
+  type          = 'bridge',
+  igmp_snooping = false,
+  proto         = 'gluon_mesh',
+  transitive    = true,
+  fixed_mtu     = true,
+})
+
+if uci:get('network', 'mesh_lan', 'auto') == nil then
+  local enable = site.mesh_on_lan
+
+  if enable then
+    local interfaces = uci:get_list('network', 'client', 'ifname')
+
+    if interfaces then
+      for lanif in sysconfig.lan_ifname:gmatch('%S+') do
+        if util.contains(interfaces, lanif) then
+          enable = false
+          break
+        end
+      end
+    end
+  end
+
+  uci:set('network', 'mesh_lan', 'auto', enable or false)
+end
+
+uci:save('network')

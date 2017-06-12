@@ -1,0 +1,96 @@
+Internationalization support
+============================
+
+General guidelines
+------------------
+
+* All config mode packages must be fully translatable, with complete English and German texts.
+* All new expert mode packages must be fully translatable. English texts are required.
+* German translations are recommended. Other supported languages, especially French, are
+  nice-to-have, but not required. If you don't know a language well, rather leave the translation
+  blank, so it is obvious that there is no proper translation yet.
+* Existing expert mode packages should be made translatable as soon as possible.
+* The "message IDs" (which are the arguments to the *translate* function) should be the
+  English texts.
+
+i18n support in Gluon
+---------------------
+
+Internationalization support is available in all components (models, view and
+controllers) of *gluon-web*-based packages. Strings are translated using the *translate*,
+*_translate* and *translatef* functions (*translate* for static strings, *translatef*
+for printf-like formatted string; *_translate* works the same as *translate*, but
+will return *nil* instead of the original string when no translation is available)
+. In views, the special tags ``<%:...%>`` can be used to translate the contained string.
+
+Example from the *gluon-config-mode-geo-location* package:
+
+.. code-block:: lua
+
+  local share_location = s:option(Flag, "location", translate("Show node on the map"))
+
+Adding translation templates to Gluon packages
+----------------------------------------------
+
+The i18n support is based on the standard gettext system. For each translatable package,
+a translation template with extension ``.pot`` can be created using the *i18n-scan.pl*
+script in the ``contrib`` directory:
+
+.. code-block:: sh
+
+  cd package/gluon-web-mesh-vpn-fastd
+  mkdir i18n
+  cd i18n
+  ../../../contrib/i18n-scan.pl ../files ../luasrc > gluon-web-mesh-vpn-fastd.pot
+
+The same command can be run again to update the template.
+
+In addition, some additions to the Makefile must be made. Instead of LEDE's default *package.mk*,
+the Gluon version (``../gluon.mk`` for core packages) must be used. The i18n files must be installed
+and PKG_CONFIG_DEPENDS must be added::
+
+  ...
+  include ../gluon.mk
+
+  PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+  ...
+  define Build/Compile
+    $(call GluonBuildI18N,gluon-web-mesh-vpn-fastd,i18n)
+  endef
+
+  define Package/gluon-web-mesh-vpn-fastd/install
+    ...
+    $(call GluonInstallI18N,gluon-web-mesh-vpn-fastd,$(1))
+  endef
+  ...
+
+
+Adding translations
+-------------------
+
+A new translation file for a template can be added using the *msginit* command:
+
+.. code-block:: sh
+
+  cd package/gluon-web-mesh-vpn-fastd/i18n
+  msginit -l de
+
+This will create the file *de.po* in which the translations can be added.
+
+The translation file can be updated to a new template version using the *msgmerge* command:
+
+.. code-block:: sh
+
+  msgmerge -U de.po gluon-web-mesh-vpn-fastd.pot
+
+After the merge, the translation file should be checked for "fuzzy matched" entries where
+the original English texts have changed. All entries from the translation file should be
+translated in the *.po* file (or removed from it, so the original English texts are displayed
+instead).
+
+Adding support for new languages
+--------------------------------
+
+A list of all languages supported by *gluon-web* can be found in ``package/gluon.mk``.
+New languages just need to be added to *GLUON_SUPPORTED_LANGS*, after a human-readable
+language name has been defined in the same file.

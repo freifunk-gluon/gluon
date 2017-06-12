@@ -1,0 +1,5 @@
+<input class="gluon-input-checkbox" data-update="click change" type="checkbox" value="1"<%=
+	attr("id", id) .. attr("name", id) ..
+	attr("checked", self:cfgvalue() and "checked")
+%> />
+<label<%= attr("for", id)%>></label>

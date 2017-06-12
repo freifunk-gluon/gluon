@@ -1,0 +1,9 @@
+config 'CONFIG_VDI_IMAGES=y'
+config 'CONFIG_VMDK_IMAGES=y'
+packages 'kmod-3c59x' 'kmod-8139cp' 'kmod-8139too' 'kmod-e100' 'kmod-e1000' 'kmod-e1000e' 'kmod-forcedeth' 'kmod-igb' 'kmod-natsemi' 'kmod-ne2k-pci'
+packages 'kmod-pcnet32' 'kmod-r8169' 'kmod-sis900' 'kmod-sky2' 'kmod-tg3' 'kmod-tulip' 'kmod-via-rhine' 'kmod-via-velocity'
+
+factory_image x86-64 combined-ext4 .img.gz
+factory_image x86-64 combined-ext4 .vdi
+factory_image x86-64 combined-ext4 .vmdk
+sysupgrade_image x86-64 combined-ext4 .img.gz

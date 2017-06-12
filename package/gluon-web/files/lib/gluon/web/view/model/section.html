@@ -1,0 +1,28 @@
+<fieldset class="gluon-section">
+	<% if self.title and #self.title > 0 then -%>
+		<legend><%=self.title%></legend>
+	<%- end %>
+	<% if self.description and #self.description > 0 then -%>
+		<div class="gluon-section-descr"><%=self.description%></div>
+	<%- end %>
+	<div class="gluon-section-node">
+		<div id="section-<%=id%>">
+			<% self:render_children(renderer, scope) %>
+		</div>
+		<% if self.error and self.error[1] then -%>
+			<div class="gluon-section-error">
+				<ul><% for _, e in ipairs(self.error[1]) do -%>
+					<li>
+						<%- if e == "invalid" then -%>
+							<%:One or more fields contain invalid values!%>
+						<%- elseif e == "missing" then -%>
+							<%:One or more required fields have no value!%>
+						<%- else -%>
+							<%=pcdata(e)%>
+						<%- end -%>
+					</li>
+				<%- end %></ul>
+			</div>
+		<%- end %>
+	</div>
+</fieldset>

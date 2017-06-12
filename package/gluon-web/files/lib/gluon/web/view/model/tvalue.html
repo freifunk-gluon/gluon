@@ -1,0 +1,3 @@
+<textarea class="gluon-input-textarea" <% if not self.size then %> style="width: 100%"<% else %> cols="<%=self.size%>"<% end %> data-update="change"<%= attr("name", id) .. attr("id", id) .. attr("rows", self.rows) .. attr("wrap", self.wrap) %>>
+<%-=pcdata(self:cfgvalue())-%>
+</textarea>

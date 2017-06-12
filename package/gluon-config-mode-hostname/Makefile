@@ -5,7 +5,7 @@ PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
@@ -26,10 +26,11 @@ endef
 
 define Build/Compile
 	$(call GluonBuildI18N,gluon-config-mode-hostname,i18n)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-config-mode-hostname/install
-	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(call GluonInstallI18N,gluon-config-mode-hostname,$(1))
 endef
 

@@ -1,0 +1,9 @@
+# Enable ath5k in addition to ath9k
+# ath5k cards are commonly used with Mikrotik hardware
+packages 'kmod-ath5k'
+
+device mikrotik-nand-64m nand-64m
+factory
+
+device mikrotik-nand-large nand-large
+factory

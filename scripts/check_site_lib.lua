@@ -7,8 +7,35 @@ local function loadvar(varname)
    end
 end
 
+local function array_to_string(array)
+   local string = ''
+   for _, v in ipairs(array) do
+      if #string >= 1 then
+         string = string .. ', '
+      end
+      string = string .. v
+   end
+   return '[' .. string .. ']'
+end
+
+local function assert_one_of(var, array, msg)
+   for _, v in ipairs(array) do
+      if v == var then
+         return true
+      end
+   end
+
+   error(msg)
+end
+
 local function assert_type(var, t, msg)
    assert(type(var) == t, msg)
+end
+
+
+function assert_uci_name(var)
+   -- We don't use character classes like %w here to be independent of the locale
+   assert(var:match('^[0-9a-zA-Z_]+$'), "site.conf error: `" .. var .. "' is not a valid config section name (only alphanumeric characters and the underscore are allowed)")
 end
 
 
@@ -84,14 +111,41 @@ function need_table(varname, subcheck, required)
 
    assert_type(var, 'table', "site.conf error: expected `" .. varname .. "' to be a table")
 
-   for k, v in pairs(var) do
-      subcheck(k, v)
+   if subcheck then
+      for k, v in pairs(var) do
+         subcheck(k, v)
+      end
    end
 
    return var
 end
 
+function need_one_of(varname, array, required)
+   local var = loadvar(varname)
+
+   if required == false and var == nil then
+      return nil
+   end
+
+   assert_one_of(var, array, "site.conf error: expected `" .. varname .. "' to be one of given array: " .. array_to_string(array))
+
+   return var
+end
+
 function need_string_array(varname, required)
-   return assert(pcall(need_array, varname, function(e) assert_type(e, 'string') end, required),
-		 "site.conf error: expected `" .. varname .. "' to be a string array")
+   local ok, var = pcall(need_array, varname, function(e) assert_type(e, 'string') end, required)
+   assert(ok, "site.conf error: expected `" .. varname .. "' to be a string array")
+   return var
+end
+
+function need_string_array_match(varname, pat, required)
+   local ok, var = pcall(need_array, varname, function(e) assert(e:match(pat)) end, required)
+   assert(ok, "site.conf error: expected `" .. varname .. "' to be a string array matching pattern `" .. pat .. "'")
+   return var
+end
+
+function need_array_of(varname, array, required)
+   local ok, var = pcall(need_array, varname, function(e) assert_one_of(e, array) end,required)
+   assert(ok, "site.conf error: expected `" .. varname .. "' to be a subset of given array: " .. array_to_string(array))
+   return var
 end

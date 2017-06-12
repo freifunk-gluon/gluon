@@ -1,0 +1,44 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('simple-uci').cursor()
+
+
+local gw_sel_class
+if site.mesh and site.mesh.batman_adv then
+	gw_sel_class = site.mesh.batman_adv.gw_sel_class
+end
+
+uci:delete('batman-adv', 'bat0')
+uci:section('batman-adv', 'mesh', 'bat0', {
+	orig_interval = 5000,
+	gw_mode = 'client',
+	gw_sel_class = gw_sel_class,
+	hop_penalty = 15,
+	multicast_mode = false,
+})
+uci:save('batman-adv')
+
+uci:delete('network', 'gluon_bat0')
+uci:section('network', 'interface', 'gluon_bat0', {
+	proto = 'gluon_bat0',
+})
+
+uci:delete('network', 'bat0')
+uci:section('network', 'interface', 'bat0', {
+	ifname = 'bat0',
+	proto = 'none',
+	auto = true,
+	macaddr = sysconfig.primary_mac,
+	multicast_router = 2,
+	learning = true,
+})
+
+local interfaces = uci:get_list('network', 'client', 'ifname')
+util.add_to_set(interfaces, 'bat0')
+uci:set_list('network', 'client', 'ifname', interfaces)
+
+uci:save('network')

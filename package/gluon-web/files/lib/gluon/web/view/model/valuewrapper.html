@@ -1,0 +1,18 @@
+<div class="gluon-value<% if self.error then %> gluon-value-error<% end %>" id="value-<%=id%>" data-index="<%=self.index%>"<%= attr("data-depends", self:deplist()) %>>
+	<%- if self.title and #self.title > 0 then -%>
+		<label class="gluon-value-title"<%= attr("for", id) %>>
+			<%-=self.title-%>
+		</label>
+		<div class="gluon-value-field">
+	<%- end -%>
+	<% if self.subtemplate then include(self.subtemplate) end %>
+	<% if self.description and #self.description > 0 then -%>
+		<br />
+		<div class="gluon-value-description">
+			<%=self.description%>
+		</div>
+	<%- end %>
+	<%- if self.title and #self.title > 0 then -%>
+		</div>
+	<%- end -%>
+</div>

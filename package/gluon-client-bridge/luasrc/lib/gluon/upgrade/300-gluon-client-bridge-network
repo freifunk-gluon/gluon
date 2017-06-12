@@ -1,0 +1,70 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+local util = require 'gluon.util'
+
+local uci = require('simple-uci').cursor()
+
+
+local interfaces = uci:get('network', 'client', 'ifname') or {}
+
+if type(interfaces) == 'string' then
+	local ifname = interfaces
+	interfaces = {}
+	for iface in ifname:gmatch('%S+') do
+		util.add_to_set(interfaces, iface)
+	end
+end
+
+if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan', 'auto') then
+	for lanif in sysconfig.lan_ifname:gmatch('%S+') do
+		util.add_to_set(interfaces, lanif)
+	end
+end
+
+util.add_to_set(interfaces, 'local-port')
+
+
+uci:delete('network', 'client')
+uci:section('network', 'interface', 'client', {
+	type = 'bridge',
+	ifname = interfaces,
+	proto = 'none',
+	auto = true,
+	ipv6 = false,
+	macaddr = sysconfig.primary_mac,
+	igmp_snooping = true,
+	multicast_querier = true,
+})
+
+uci:save('network')
+
+
+uci:delete('firewall', 'client')
+uci:section('firewall', 'zone', 'client', {
+	name = 'client',
+	network = {'client'},
+	input = 'DROP',
+	output = 'DROP',
+	forward = 'DROP',
+})
+
+uci:save('firewall')
+
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', false)
+uci:set('dhcp', dnsmasq, 'localise_queries', false)
+uci:set('dhcp', dnsmasq, 'rebind_protection', false)
+
+uci:delete('dhcp', 'client')
+uci:section('dhcp', 'dhcp', 'client', {
+	interface = 'client',
+	ignore = true,
+})
+
+uci:save('dhcp')
+
+
+sysctl.set('net.ipv6.conf.br-client.forwarding', 0)

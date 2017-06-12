@@ -4,32 +4,33 @@ PKG_NAME:=gluon-mesh-vpn-fastd
 PKG_VERSION:=3
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_BUILD_DEPENDS := respondd
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
+
 
 define Package/gluon-mesh-vpn-fastd
   SECTION:=gluon
   CATEGORY:=Gluon
-  TITLE:=Support for connecting batman-adv meshes via fastd
-  DEPENDS:=+gluon-core gluon-mesh-batman-adv +gluon-wan-dnsmasq +fastd +iptables-mod-extra
-endef
-
-define Package/gluon-mesh-vpn-fastd/description
-	Gluon community wifi mesh firmware framework: fastd support
+  TITLE:=Support for connecting meshes via fastd
+  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +fastd
 endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
+	$(call Build/Compile/Default)
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-mesh-vpn-fastd/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
+	$(INSTALL_DIR) $(1)/lib/gluon/respondd
+	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-vpn-fastd.so
 endef
 
 define Package/gluon-mesh-vpn-fastd/postinst

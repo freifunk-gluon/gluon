@@ -8,13 +8,14 @@ PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
+
 
 define Package/gluon-setup-mode
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Setup mode
-  DEPENDS:=+gluon-core +uhttpd +dnsmasq
+  DEPENDS:=+gluon-core +gluon-web +ubus +uhttpd +dnsmasq
   PROVIDES:=gluon-setup-mode-virtual
 endef
 
@@ -30,10 +31,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-setup-mode/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 endef
 
 define Package/gluon-setup-mode/postinst

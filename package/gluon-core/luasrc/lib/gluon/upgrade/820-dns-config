@@ -1,0 +1,40 @@
+#!/usr/bin/lua
+local site = require 'gluon.site_config'
+local uci = require('simple-uci').cursor()
+
+dnsmasq=uci:get_first("dhcp", "dnsmasq")
+
+uci:set('dhcp', dnsmasq, 'localise_queries', true)
+uci:set('dhcp', dnsmasq, 'localservice', false)
+
+if site.dns and site.dns.servers then
+	uci:set('dhcp', dnsmasq, 'server', site.dns.servers)
+else
+	uci:delete('dhcp', dnsmasq, 'server')
+end
+
+if site.dns and site.dns.cacheentries then
+	uci:set('dhcp', dnsmasq, 'cachesize', site.dns.cacheentries)
+else
+	uci:delete('dhcp', dnsmasq, 'cachesize')
+end
+
+if site.next_node and site.next_node.name and site.next_node.ip4 then
+	uci:section('dhcp','domain','nextnode4',{
+		name=site.next_node.name,
+		ip=site.next_node.ip4,
+	})
+else
+	uci:delete('dhcp', 'domain', 'nextnode4')
+end
+
+if site.next_node and site.next_node.name and site.next_node.ip6 then
+	uci:section('dhcp','domain','nextnode6',{
+		name=site.next_node.name,
+		ip=site.next_node.ip6,
+	})
+else
+	uci:delete('dhcp', 'domain', 'nextnode6')
+end
+uci:save('dhcp')
+

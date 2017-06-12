@@ -1,0 +1,6 @@
+prefix4 = require('gluon.site_config').prefix4
+
+if prefix4 then
+	rule('LOCAL_FORWARD -p ARP --arp-ip-src ' .. prefix4 .. ' --arp-ip-dst ' .. prefix4 .. ' -j RETURN')
+	rule('LOCAL_FORWARD -p ARP --arp-ip-src 0.0.0.0 --arp-ip-dst ' .. prefix4 .. ' -j RETURN')
+end

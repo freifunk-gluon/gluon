@@ -1,0 +1,15 @@
+#!/usr/bin/lua
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+
+local sname = uci:get_first('gluon-node-info', 'location')
+if sname then
+  local options = {'longitude', 'latitude', 'altitude'}
+  for _, option in ipairs(options) do
+    local value = uci:get('gluon-node-info', sname, option)
+    if value then
+      uci:set('gluon-node-info', sname, option, util.trim(value))
+    end
+  end
+  uci:save('gluon-node-info')
+end

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cat <<EOF
+Access-Control-Allow-Origin: *
+Content-type: application/json
+
+EOF
+exec gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r nodeinfo

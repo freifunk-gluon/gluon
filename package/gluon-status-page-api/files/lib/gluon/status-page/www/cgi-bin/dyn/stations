@@ -1,0 +1,15 @@
+#!/bin/sh
+
+badrequest() {
+        echo 'Status: 400 Bad Request'
+        echo
+        exit 1
+}
+
+echo 'Access-Control-Allow-Origin: *'
+
+batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" || badrequest
+
+CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
+
+exec /usr/sbin/sse-multiplex "$CMD"

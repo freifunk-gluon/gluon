@@ -1,0 +1,2 @@
+rule ('PREROUTING -d Multicast --logical-in br-client -i bat0 -j MULTICAST_IN', 'nat')
+rule ('MULTICAST_IN -p IPv6 --ip6-protocol ipv6-icmp -j MULTICAST_IN_ICMPV6', 'nat')

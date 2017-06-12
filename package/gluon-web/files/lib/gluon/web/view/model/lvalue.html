@@ -1,0 +1,41 @@
+<%
+	local i, key
+	local br = self.orientation == "horizontal" and '&#160;' or '<br />'
+%>
+
+<% if self.widget == "select" then %>
+	<select class="gluon-input-select" data-update="change"<%=
+		attr("id", id) ..
+		attr("name", id) ..
+		attr("size", self.size)
+	%>>
+		<% for i, key in pairs(self.keylist) do -%>
+			<option<%=
+				attr("id", id.."."..key) ..
+				attr("value", key) ..
+				attr("data-index", i) ..
+				attr("data-depends", self:deplist(self.valdeps[i])) ..
+				attr("selected", (self:cfgvalue() == key) and "selected")
+			%>><%=pcdata(self.vallist[i])%></option>
+		<%- end %>
+	</select>
+<% elseif self.widget == "radio" then %>
+	<div>
+		<% for i, key in pairs(self.keylist) do %>
+			<label<%=
+				attr("data-index", i) ..
+				attr("data-depends", self:deplist(self.valdeps[i]))
+			%>>
+				<input class="gluon-input-radio" data-update="click change" type="radio"<%=
+					attr("id", id.."."..key) ..
+					attr("name", id) ..
+					attr("value", key) ..
+					attr("checked", (self:cfgvalue() == key) and "checked")
+				%> />
+				<label<%= attr("for", id.."-"..key)%>></label>
+				<%=pcdata(self.vallist[i])%>
+			</label>
+			<% if i == self.size then write(br) end %>
+		<% end %>
+	</div>
+<% end %>

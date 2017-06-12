@@ -1,0 +1,12 @@
+/*
+   Animation example, for spinners
+*/
+.animate-spin {
+  animation: spin 2s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

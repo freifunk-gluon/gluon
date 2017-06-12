@@ -1,0 +1,65 @@
+#!/usr/bin/lua
+
+-- This script must be ordered after 300-gluon-client-bridge-network, as
+-- it overrides parts of network.client
+
+
+local site = require 'gluon.site_config'
+local sysconfig = require 'gluon.sysconfig'
+local sysctl = require 'gluon.sysctl'
+
+local uci = require('simple-uci').cursor()
+
+
+uci:section('network', 'interface', 'client', {
+	ipv6 = true,
+	proto = 'dhcpv6',
+	reqprefix = 'no',
+	peerdns = not (site.dns and site.dns.servers),
+	sourcefilter = false,
+	keep_ra_dnslifetime = true,
+	robustness = 3,
+	query_interval = 2000,
+	query_response_interval = 500,
+})
+
+uci:delete('network', 'client_lan')
+
+uci:delete('network', 'local_node_route6')
+uci:section('network', 'route6', 'local_node_route6', {
+	interface = 'client',
+	target = site.prefix6,
+	gateway = '::',
+})
+
+uci:save('network')
+
+
+uci:section('firewall', 'zone', 'client', {
+	input = 'ACCEPT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
+})
+
+uci:section('firewall', 'rule', 'client_dns', {
+	name = 'client_dns',
+	src = 'client',
+	dest_port = '53',
+	target = 'REJECT',
+})
+
+uci:delete('firewall', 'local_node')
+uci:section('firewall', 'zone', 'local_node', {
+	name = 'local_node',
+	network = {'local_node'},
+	input = 'ACCEPT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
+})
+
+uci:delete('firewall', 'local_node_dns')
+
+uci:save('firewall')
+
+
+sysctl.set('net.ipv6.conf.local-node.forwarding', 0)

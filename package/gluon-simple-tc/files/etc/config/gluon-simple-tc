@@ -1,7 +1,0 @@
-# Example config
-
-config interface 'example'
-       option enabled '0'
-       option ifname 'eth0'
-       option limit_egress '1000' # 1000 Kbit/s
-       option limit_ingress '5000' # 5000 Kbit/s

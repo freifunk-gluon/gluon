@@ -1,0 +1,66 @@
+#!/usr/bin/lua
+
+local fs = require 'nixio.fs'
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+
+local subst = {}
+
+
+local f = io.popen('. /etc/openwrt_release; echo "$DISTRIB_CODENAME"; echo "$DISTRIB_RELEASE"; echo "$DISTRIB_TARGET"; echo "$DISTRIB_ARCH"')
+subst['%%n'] = f:read()
+subst['%%v'] = f:read():gsub('-SNAPSHOT', '')
+subst['%%S'] = f:read()
+subst['%%A'] = f:read()
+f:close()
+
+subst['%%GS'] = site.site_code
+subst['%%GV'] = util.trim(fs.readfile('/lib/gluon/gluon-version'))
+subst['%%GR'] = util.trim(fs.readfile('/lib/gluon/release'))
+
+function replace_patterns(url)
+	for k, v in pairs(subst) do
+		url = url:gsub(k, v)
+	end
+
+	return url
+end
+
+
+local prefix = subst['%%n'] .. '_'
+
+if fs.access('/etc/opkg/distfeeds.conf') then
+	local distfeeds = {}
+	for line in io.lines('/etc/opkg/distfeeds.conf') do
+		table.insert(distfeeds, line)
+	end
+
+	local f = io.open('/etc/opkg/distfeeds.conf', 'w')
+
+	for _, line in ipairs(distfeeds) do
+		local name = line:match('^src/gz%s' .. prefix .. '(%S+)%s')
+		if name == 'core' then
+			f:write('# ' .. line .. '\n')
+		elseif name and site.opkg and site.opkg.lede then
+			f:write(string.format('src/gz %s %s/%s\n', prefix .. name, replace_patterns(site.opkg.lede), name))
+		else
+			f:write(line .. '\n')
+		end
+	end
+
+	f:close()
+
+	if site.opkg and site.opkg.extra and next(site.opkg.extra) then
+		local f = io.open('/etc/opkg/gluon.conf', 'w')
+
+		for k, v in pairs(site.opkg.extra) do
+			f:write(string.format('src/gz %s %s\n', k, replace_patterns(v)))
+		end
+
+		f:close()
+
+	else
+		os.remove('/etc/opkg/gluon.conf')
+	end
+end

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$FIXED_MTU" -eq 0 ]; then
+	# In case on VLAN on IBSS, first set MTU of the underlying interface
+	for lower in /sys/class/net/"$IFNAME"/lower_*/wireless; do
+		lower="${lower%%\/wireless}"
+		lower="${lower##*\/lower_}"
+		ip link set dev "$lower" mtu 1536
+		break
+	done
+
+	ip link set dev "$IFNAME" mtu 1532
+fi

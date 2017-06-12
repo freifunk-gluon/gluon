@@ -1,0 +1,9 @@
+factory -ext4-sdcard .img.gz
+sysupgrade -ext4-sdcard .img.gz
+
+
+device lemaker-banana-pi sun7i-a20-bananapi
+device lemaker-banana-pro sun7i-a20-bananapro
+
+device lamobo-r1 sun7i-a20-lamobo-r1
+packages '-wpad-mini' # clashes with hostapd-mini

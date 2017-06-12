@@ -1,0 +1,5 @@
+packages 'kmod-3c59x' 'kmod-8139cp' 'kmod-8139too' 'kmod-e100' 'kmod-e1000' 'kmod-forcedeth' 'kmod-igb' 'kmod-natsemi' 'kmod-ne2k-pci'
+packages 'kmod-pcnet32' 'kmod-r8169' 'kmod-sis900' 'kmod-sky2' 'kmod-tg3' 'kmod-tulip' 'kmod-via-rhine' 'kmod-via-velocity'
+
+factory_image x86-geode combined-ext4 .img.gz
+sysupgrade_image x86-geode combined-ext4 .img.gz

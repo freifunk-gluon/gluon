@@ -1,0 +1,24 @@
+#!/usr/bin/lua
+util = require 'gluon.util'
+fs = require 'nixio.fs'
+json = require 'luci.jsonc'
+ubus = require 'ubus'
+
+io.write("Access-Control-Allow-Origin: *\n")
+io.write("Content-type: application/json\n\n")
+
+local uconn = ubus.connect()
+if not uconn then
+	error("Failed to connect to ubusd")
+end
+list = util.get_mesh_devices(uconn)
+ubus.close(uconn)
+interfaces = {}
+for _,ifname in ipairs(list) do
+	pcall(function()
+		local address = util.trim(fs.readfile('/sys/class/net/' .. ifname .. '/address'))
+		interfaces[ifname] = { address = address }
+	end)
+end
+
+io.write(json.stringify(interfaces))

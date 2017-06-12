@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-08-12 23:30+0100\n"
+"Last-Translator:Tobias Bernot <tqbs@airmail.cc>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Downstream (kbit/s)"
+msgstr "Débit déscendant (kbit/s)"
+
+msgid "Limit bandwidth"
+msgstr "Limiter la bande passante"
+
+msgid "Upstream (kbit/s)"
+msgstr "Débit ascendant (kbit/s)"
+
+msgid "Use internet connection (mesh VPN)"
+msgstr "Utiliser la connection internet (Mesh-VPN)"
+
+msgid ""
+"Your internet connection can be used to establish a VPN connection with "
+"other nodes. Enable this option if there are no other nodes reachable over "
+"WLAN in your vicinity or you want to make a part of your connection's "
+"bandwidth available for the network. You can limit how much bandwidth the "
+"node will use at most."
+msgstr ""

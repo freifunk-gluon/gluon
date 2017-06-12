@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-05-04 02:54+0200\n"
+"Last-Translator:  <mschiffer@universe-factory.net>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "(default)"
+msgstr "(Standard)"
+
+msgid "2.4GHz WLAN"
+msgstr "2,4GHz-WLAN"
+
+msgid "5GHz WLAN"
+msgstr "5GHz-WLAN"
+
+msgid "Enable client network (access point)"
+msgstr "Client-Netz aktivieren (Access Point)"
+
+msgid "Enable mesh network (802.11s)"
+msgstr "Mesh-Netz aktivieren (802.11s)"
+
+msgid "Enable mesh network (IBSS)"
+msgstr "Mesh-Netz aktivieren (IBSS)"
+
+msgid "Transmission power"
+msgstr "Sendeleistung"
+
+msgid "WLAN"
+msgstr "WLAN"
+
+msgid ""
+"You can enable or disable your node's client and mesh network SSIDs here. "
+"Please don't disable the mesh network without a good reason, so other nodes "
+"can mesh with yours.<br /><br />It is also possible to configure the WLAN "
+"adapters transmission power here. Please note that the transmission power "
+"values include the antenna gain where available, but there are many devices "
+"for which the gain is unavailable or inaccurate."
+msgstr ""
+"In diesem Abschnitt hast du die Möglichkeit, die SSIDs des Client- und des "
+"Mesh-Netzes zu aktivieren bzw. deaktivieren. Bitte lass die SSID des Mesh-"
+"Netzes aktiviert, damit sich andere Knoten mit deinem verbinden können.<br /"
+"><br />Außerdem kann hier die Sendeleistung des WLAN-Adapters konfiguriert "
+"werden. Wenn möglich, ist in den Werten der Sendeleistung der Antennengewinn "
+"enthalten; diese Werte sind allerdings für viele Geräte nicht verfügbar oder "
+"fehlerhaft."

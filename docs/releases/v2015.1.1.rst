@@ -1,0 +1,27 @@
+Gluon 2015.1.1
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TL-WA830RE (v1)
+
+New features
+~~~~~~~~~~~~
+The `x86-generic` and `x86-kvm_guest` images now support two ethernet interfaces by default. If two interfaces exist during
+the first boot, `eth0` will be used as LAN and `eth1` as WAN.
+
+Bugfixes
+~~~~~~~~
+
+* Fix German "Expert Mode" label (was "Export Mode")
+* Fix download of OpenSSL during build (because of broken OpenSSL download servers...)
+* Fix ABI break causing kernel panics when trying to use network-related modules from the official OpenWrt repository (like `kmod-pppoe`)
+* Fix race conditions breaking parallel build occasionally
+* A broken network configuration would be generated when an older Gluon version was updated to 2015.1 with
+  ``mesh_on_lan`` enabled in `site.conf`
+* Minor announced/alfred JSON format fixes (don't output empty lists where empty objects would be expected)

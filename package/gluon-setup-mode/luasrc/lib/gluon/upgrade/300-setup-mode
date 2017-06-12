@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require('simple-uci').cursor()
+
+
+if site.setup_mode
+   and site.setup_mode.skip
+   and not uci:get_first('gluon-setup-mode', 'setup_mode', 'configured', false) then
+     local name = uci:get_first("gluon-setup-mode", "setup_mode")
+     uci:set("gluon-setup-mode", name, "configured", true)
+     uci:save('gluon-setup-mode')
+end
+

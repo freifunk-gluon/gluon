@@ -36,13 +36,17 @@
 #include <time.h>
 
 void usage() {
-  puts("Usage: gluon-neighbour-info [-h] [-s] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
+  puts("Usage: gluon-neighbour-info [-h] [-s] [-l] [-c <count>] [-t <sec>] -d <dest> -p <port> -i <if0> -r <request>");
   puts("  -p <int>         UDP port");
-  puts("  -d <ip6>         multicast group, e.g. ff02:0:0:0:0:0:2:1001");
+  puts("  -d <ip6>         destination address (unicast ip6 or multicast group, e.g. ff02:0:0:0:0:0:2:1001)");
   puts("  -i <string>      interface, e.g. eth0 ");
   puts("  -r <string>      request, e.g. nodeinfo");
   puts("  -t <sec>         timeout in seconds (default: 3)");
-  puts("  -s               output as server-sent events");
+  puts("  -s <event>       output as server-sent events of type <event>");
+  puts("                   or without type if <event> is the empty string");
+  puts("  -c <count>       only wait for at most <count> replies");
+  puts("  -l               after timeout (or <count> replies if -c is given),");
+  puts("                   send another request and loop forever");
   puts("  -h               this help\n");
 }
 
@@ -54,7 +58,7 @@ void getclock(struct timeval *tv) {
 }
 
 /* Assumes a and b are normalized */
-void tv_subtract (struct timeval *r, struct timeval *a, struct timeval *b) {
+void tv_subtract (struct timeval *r, const struct timeval *a, const struct timeval *b) {
   r->tv_usec = a->tv_usec - b->tv_usec;
   r->tv_sec = a->tv_sec - b->tv_sec;
 
@@ -64,23 +68,23 @@ void tv_subtract (struct timeval *r, struct timeval *a, struct timeval *b) {
   }
 }
 
-ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, struct timeval *timeout, struct timeval *offset) {
-  struct timeval now, delta;
-  ssize_t ret;
-
-  setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, timeout, sizeof(*timeout));
-  ret = recv(socket, buffer, length, flags);
+ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, const struct timeval *timeout) {
+  struct timeval now, timeout_left;
 
   getclock(&now);
-  tv_subtract(&delta, &now, offset);
-  tv_subtract(timeout, timeout, &delta);
+  tv_subtract(&timeout_left, timeout, &now);
 
-  return ret;
+  if (timeout_left.tv_sec < 0)
+    return -1;
+
+  setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout_left, sizeof(timeout_left));
+  return recv(socket, buffer, length, flags);
 }
 
-int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, bool sse, int timeout) {
+int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, const char *sse, double timeout, unsigned int max_count) {
   ssize_t ret;
   char buffer[8192];
+  unsigned int count = 0;
 
   ret = sendto(sock, request, strlen(request), 0, (struct sockaddr *)client_addr, sizeof(struct sockaddr_in6));
 
@@ -89,20 +93,27 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
     exit(EXIT_FAILURE);
   }
 
-  struct timeval tv_timeout, tv_offset;
-  tv_timeout.tv_sec = timeout;
-  tv_timeout.tv_usec = 0;
+  struct timeval tv_timeout;
+  getclock(&tv_timeout);
 
-  getclock(&tv_offset);
+  tv_timeout.tv_sec += (int) timeout;
+  tv_timeout.tv_usec += ((int) (timeout * 1000000)) % 1000000;
+  if (tv_timeout.tv_usec >= 1000000) {
+    tv_timeout.tv_usec -= 1000000;
+    tv_timeout.tv_sec += 1;
+  }
 
-  while (1) {
-    ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout, &tv_offset);
+  do {
+    ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout);
 
     if (ret < 0)
       break;
 
-    if (sse)
-      fputs("event: neighbour\ndata: ", stdout);
+    if (sse) {
+      if (sse[0] != '\0')
+        fprintf(stdout, "event: %s\n", sse);
+      fputs("data: ", stdout);
+    }
 
     fwrite(buffer, sizeof(char), ret, stdout);
 
@@ -112,16 +123,19 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
       fputs("\n", stdout);
 
     fflush(stdout);
-  }
+    count++;
+  } while (max_count == 0 || count < max_count);
 
-  return 0;
+  if ((max_count == 0 && count == 0) || count < max_count)
+    return EXIT_FAILURE;
+  else
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv) {
   int sock;
   struct sockaddr_in6 client_addr = {};
   char *request_string = NULL;
-  struct in6_addr mgroup_addr;
 
   sock = socket(PF_INET6, SOCK_DGRAM, 0);
 
@@ -131,17 +145,17 @@ int main(int argc, char **argv) {
   }
 
   client_addr.sin6_family = AF_INET6;
-  client_addr.sin6_addr = in6addr_any;
 
   opterr = 0;
 
-  int port_set = 0;
-  int destination_set = 0;
-  int timeout = 3;
-  bool sse = false;
+  int max_count = 0;
+  double timeout = 3.0;
+  char *sse = NULL;
+  bool loop = false;
+  int ret = false;
 
   int c;
-  while ((c = getopt(argc, argv, "p:d:r:i:t:sh")) != -1)
+  while ((c = getopt(argc, argv, "p:d:r:i:t:s:c:lh")) != -1)
     switch (c) {
       case 'p':
         client_addr.sin6_port = htons(atoi(optarg));
@@ -163,10 +177,24 @@ int main(int argc, char **argv) {
         request_string = optarg;
         break;
       case 't':
-        timeout = atoi(optarg);
+        timeout = atof(optarg);
+        if (timeout < 0) {
+          perror("Negative timeout not supported");
+          exit(EXIT_FAILURE);
+        }
         break;
       case 's':
-        sse = true;
+        sse = optarg;
+        break;
+      case 'l':
+        loop = true;
+        break;
+      case 'c':
+        max_count = atoi(optarg);
+        if (max_count < 0) {
+          perror("Negative count not supported");
+          exit(EXIT_FAILURE);
+        }
         break;
       case 'h':
         usage();
@@ -176,16 +204,32 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Invalid parameter %c ignored.\n", c);
     }
 
-  if (request_string == NULL)
-    error(EXIT_FAILURE, 0, "No request string supplied");
+  if (request_string == NULL) {
+    fprintf(stderr, "No request string supplied\n");
+    exit(EXIT_FAILURE);
+  }
 
-  if (sse)
+  if (client_addr.sin6_port == htons(0)) {
+	fprintf(stderr, "No port supplied\n");
+	exit(EXIT_FAILURE);
+  }
+
+  if (IN6_IS_ADDR_UNSPECIFIED(&client_addr.sin6_addr)) {
+	fprintf(stderr, "No destination address supplied\n");
+	exit(EXIT_FAILURE);
+  }
+
+  if (sse) {
     fputs("Content-Type: text/event-stream\n\n", stdout);
+    fflush(stdout);
+  }
 
-  request(sock, &client_addr, request_string, sse, timeout);
+  do {
+    ret = request(sock, &client_addr, request_string, sse, timeout, max_count);
+  } while(loop);
 
   if (sse)
     fputs("event: eot\ndata: null\n\n", stdout);
 
-  return EXIT_SUCCESS;
+  return ret;
 }

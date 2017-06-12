@@ -1,0 +1,28 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 10 Mar 2017 01:58:42 +0100
+Subject: netifd: update to git HEAD version
+
+91810ec system-linux: add VXLAN support
+f107656 netifd: Add option to configure locktime for each device
+cdc0e80 interface: add prefix assignment priority support
+6397f5e device: add veth support
+6228d0f wireless: fix _wireless_add_process
+7cc2f10 treewide: fix white space errors
+
+diff --git a/package/network/config/netifd/Makefile b/package/network/config/netifd/Makefile
+index fb035864017df739a0d0b0c0451fe8488a40c77c..d6d91ba014c67f126176eba8acae5fd2c8b007ba 100644
+--- a/package/network/config/netifd/Makefile
++++ b/package/network/config/netifd/Makefile
+@@ -5,9 +5,9 @@ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(LEDE_GIT)/project/netifd.git
+-PKG_SOURCE_DATE:=2017-01-25
+-PKG_SOURCE_VERSION:=650758b16e5185505a3fbc1307949340af70b611
+-PKG_MIRROR_HASH:=d09c740bc1bf6269678bd75c9af52ecd4be3d1d59402a543ceb9d4459cecfa2b
++PKG_SOURCE_DATE:=2017-03-07
++PKG_SOURCE_VERSION:=91810ecc13239f3b18c8299de265b4f3531c0017
++PKG_MIRROR_HASH:=51d0a8866c6b004185f1fb83f37e7aed33fc94b72bd85954c773549a57c3c761
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ 
+ PKG_LICENSE:=GPL-2.0

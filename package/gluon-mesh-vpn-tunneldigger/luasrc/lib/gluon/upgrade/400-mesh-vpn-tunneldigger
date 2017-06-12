@@ -1,0 +1,34 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local util = require 'gluon.util'
+
+local uci = require('simple-uci').cursor()
+
+
+local enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
+if enabled == nil then
+	if uci:get_first('tunneldigger', 'broker', 'interface') == "mesh-vpn" then
+		enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
+	end
+end
+if enabled == nil then
+	enabled = site.mesh_vpn.enabled or false
+end
+
+-- Delete old broker config section
+if not uci:get('tunneldigger', 'mesh_vpn') then
+	uci:delete_all('tunneldigger', 'broker')
+end
+
+uci:section('tunneldigger', 'broker', 'mesh_vpn', {
+	enabled = enabled,
+	uuid = util.node_id(),
+	interface = 'mesh-vpn',
+	bind_interface = 'br-wan',
+	group = 'gluon-mesh-vpn',
+	broker_selection = 'usage',
+	address = site.mesh_vpn.tunneldigger.brokers,
+})
+
+uci:save('tunneldigger')

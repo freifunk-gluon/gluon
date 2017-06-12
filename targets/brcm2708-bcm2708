@@ -1,0 +1,4 @@
+device raspberry-pi rpi
+factory -ext4-sdcard .img.gz
+sysupgrade -ext4-sdcard .img.gz
+packages '-wpad-mini' # clashes with hostapd-mini

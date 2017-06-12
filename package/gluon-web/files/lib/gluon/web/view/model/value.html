@@ -1,0 +1,12 @@
+<input data-update="change"<%=
+	attr("id", id) ..
+	attr("name", id) ..
+	attr("type", self.password and "password" or "text") ..
+	attr("class", self.password and "gluon-input-password" or "gluon-input-text") ..
+	attr("value", self:cfgvalue()) ..
+	attr("size", self.size) ..
+	attr("placeholder", self.placeholder) ..
+	attr("maxlength", self.maxlength) ..
+	attr("data-type", self.datatype) ..
+	attr("data-optional", self.datatype and self.optional)
+%> />

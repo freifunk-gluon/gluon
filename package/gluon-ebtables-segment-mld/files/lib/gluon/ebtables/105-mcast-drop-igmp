@@ -1,0 +1,2 @@
+rule('MULTICAST_OUT -p IPv4 --ip-protocol igmp -j DROP')
+rule('MULTICAST_IN -p IPv4 --ip-protocol igmp -j DROP', 'nat')

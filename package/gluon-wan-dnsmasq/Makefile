@@ -5,13 +5,14 @@ PKG_VERSION:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include ../gluon.mk
+
 
 define Package/gluon-wan-dnsmasq
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for a secondary DNS server using the WAN interface
-  DEPENDS:=+gluon-core +dnsmasq +libpacketmark
+  DEPENDS:=+gluon-core +libubus-lua +dnsmasq +libpacketmark
 endef
 
 define Package/gluon-wan-dnsmasq/description
@@ -26,10 +27,12 @@ define Build/Configure
 endef
 
 define Build/Compile
+	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-wan-dnsmasq/install
 	$(CP) ./files/* $(1)/
+	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 endef
 
 $(eval $(call BuildPackage,gluon-wan-dnsmasq))

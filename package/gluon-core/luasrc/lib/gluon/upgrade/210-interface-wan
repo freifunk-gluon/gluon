@@ -1,0 +1,16 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local uci = require('simple-uci').cursor()
+
+if not uci:get('network', 'mesh_wan') then
+  uci:section('network', 'interface', 'mesh_wan', {
+    ifname     = 'br-wan',
+    proto      = 'gluon_mesh',
+    transitive = true,
+    fixed_mtu  = true,
+    auto       = site.mesh_on_wan or false,
+  })
+end
+
+uci:save('network')
