@@ -32,6 +32,7 @@ endef
 
 define Package/gluon-ebtables/install
 	$(CP) ./files/* $(1)/
+	./gluonShellDiet.sh $(1)/etc/init.d/*
 endef
 
 $(eval $(call BuildPackage,gluon-ebtables))
