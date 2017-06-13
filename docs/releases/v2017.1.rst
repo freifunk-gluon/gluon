@@ -13,6 +13,8 @@ many hacks that were required to make the build work with older OpenWrt releases
 The *output/modules* directory is now called *output/packages* and provides a
 replacement for the whole repository with target-specific packages of LEDE (in
 contrast to packages that are common for all targets of the same architecture).
+Another change to the build system makes it necessary that the same *GLUON_RELEASE*
+value that is used to build the images is also set for ``make manifest``.
 
 **Note: There is an issue in all Gluon versions before 2016.2.6 that will
 lead to x86 systems losing their configuration when upgrading to Gluon 2017.1!**
@@ -127,7 +129,8 @@ site.mk
 ^^^^^^^
 
 * The *gluon-legacy* package does not exist anymore
-* All *gluon-luci-* packages have been renamed to *gluon-web-*
+* All *gluon-luci-* packages have been renamed to *gluon-web-*;
+  *gluon-luci-portconfig* is now called *gluon-web-network*
 * The *gluon-next-node* package has been merged into the Gluon core and must not
   be specified in *site.mk* anymore
 
