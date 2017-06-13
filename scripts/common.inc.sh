@@ -18,6 +18,10 @@ alias() {
 	:
 }
 
+manifest_alias() {
+	:
+}
+
 packages() {
 	:
 }

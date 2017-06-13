@@ -9,6 +9,7 @@ default_sysupgrade_ext='.bin'
 
 output=
 aliases=
+manifest_aliases=
 
 sysupgrade_ext=
 
@@ -33,6 +34,10 @@ generate() {
 		for alias in $aliases; do
 			generate_line "$alias" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-sysupgrade${sysupgrade_ext}"
 		done
+
+		for alias in $manifest_aliases; do
+			generate_line "$alias" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-sysupgrade${sysupgrade_ext}"
+		done
 	fi
 }
 
@@ -44,6 +49,7 @@ device() {
 
 	output="$1"
 	aliases=
+	manifest_aliases=
 
 	sysupgrade_ext="$default_sysupgrade_ext"
 }
@@ -53,6 +59,7 @@ sysupgrade_image() {
 
 	output="$1"
 	aliases=
+	manifest_aliases=
 
 	if [ "$3" ]; then
 		sysupgrade_ext="$3"
@@ -63,6 +70,10 @@ sysupgrade_image() {
 
 alias() {
 	aliases="$aliases $1"
+}
+
+manifest_alias() {
+	manifest_aliases="$manifest_aliases $1"
 }
 
 sysupgrade() {
