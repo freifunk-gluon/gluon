@@ -12,7 +12,7 @@ start_service () {
 	procd_set_param respawn ${respawn_threshold:-3660} ${respawn_timeout:-5} ${respawn_retry:-0}
 	interfaces=$(for dev in $( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device");do echo " -m $dev"; done;
 	[ "$(ifstatus client | jsonfilter -e "@.up")" = "true" ] && echo " -i local-node")
-	procd_set_param command "$PROG" -p $(lua -e 'print(require("gluon.site").prefix6())') $interfaces -t 11 -a $(uci get network.loopback.ip6addr | cut -d/ -f1) -4 0:0:0:0:0:ffff::/96
+	procd_set_param command "$PROG" -s /var/run/l3roamd.sock -p $(lua -e 'print(require("gluon.site").prefix6())') $interfaces -t 254 -a $(uci get network.loopback.ip6addr | cut -d/ -f1) -4 0:0:0:0:0:ffff::/96 -b br-client
 	procd_close_instance
 }
 
