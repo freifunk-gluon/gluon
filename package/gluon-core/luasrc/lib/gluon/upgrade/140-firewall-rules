@@ -11,14 +11,50 @@ local function reject_input_on_wan(zone)
 
 	return true
 end
+
 uci:foreach('firewall', 'zone', reject_input_on_wan)
 
-uci:section('firewall', 'rule', 'wan_ssh', {
-	name = 'wan_ssh',
-	src = 'wan',
-	dest_port = '22',
-	proto = 'tcp',
-	target = 'ACCEPT',
+-- the client zone is set up by gluon-client-bridge
+--
+uci:section('firewall', 'zone', 'mesh', {
+	name = 'mesh',
+	network = {},
+	input = 'REJECT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
 })
+
+-- allow inbound ssh from anywhere
+for _, zone in ipairs({ 'wan', 'local_client', 'mesh' }) do
+	uci:section('firewall', 'rule', zone .. '_ssh', {
+		name =  zone .. '_ssh',
+		src = zone,
+		dest_port = '22',
+		proto = 'tcp',
+		target = 'ACCEPT',
+	})
+end
+
+
+-- allow icmp in/out/forward on all relevant zones
+for _, zone in ipairs ({ 'mesh', 'local_client' } ) do
+	uci:section('firewall', 'rule',  zone .. '_ICMPv6_in', {
+		src = zone,
+		proto = 'icmp',
+		icmp_type = {'echo-request', 'echo-reply', 'destination-unreachable', 'packet-too-big', 'time-exceeded', 'bad-header', 'unknown-header-type', 'router-solicitation', 'neighbour-solicitation', 'router-advertisement', 'neighbour-advertisement', },
+		limit = '1000/sec',
+		family = 'ipv6',
+		target = 'ACCEPT',
+	})
+
+	uci:section('firewall', 'rule', zone .. '_ICMPv6_out', {
+		dest = zone,
+		proto = 'icmp',
+		icmp_type = {'echo-request', 'echo-reply', 'destination-unreachable', 'packet-too-big', 'time-exceeded', 'bad-header', 'unknown-header-type', 'router-solicitation', 'neighbour-solicitation', 'router-advertisement', 'neighbour-advertisement' },
+		limit = '1000/sec',
+		family = 'ipv6',
+		target = 'ACCEPT',
+	})
+end
 
 uci:save('firewall')

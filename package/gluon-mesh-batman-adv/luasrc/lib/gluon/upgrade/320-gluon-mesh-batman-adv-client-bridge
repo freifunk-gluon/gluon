@@ -7,7 +7,7 @@
 local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 local sysctl = require 'gluon.sysctl'
-
+local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
@@ -34,28 +34,13 @@ uci:section('network', 'route6', 'local_node_route6', {
 
 uci:save('network')
 
+local networks = uci:get_list('firewall', 'mesh', 'network')
+util.add_to_set(networks, 'client')
+uci:set_list('firewall', 'mesh', 'network', networks)
 
-uci:section('firewall', 'zone', 'client', {
-	input = 'ACCEPT',
-	output = 'ACCEPT',
-	forward = 'REJECT',
-})
-
-uci:section('firewall', 'rule', 'client_dns', {
-	name = 'client_dns',
-	src = 'client',
-	dest_port = '53',
-	target = 'REJECT',
-})
-
-uci:delete('firewall', 'local_node')
-uci:section('firewall', 'zone', 'local_node', {
-	name = 'local_node',
-	network = {'local_node'},
-	input = 'ACCEPT',
-	output = 'ACCEPT',
-	forward = 'REJECT',
-})
+local networks = uci:get_list('firewall', 'drop', 'network')
+util.remove_from_set(networks, 'client')
+uci:set_list('firewall', 'drop', 'network', networks)
 
 uci:delete('firewall', 'local_node_dns')
 

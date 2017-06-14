@@ -40,17 +40,25 @@ uci:section('network', 'interface', 'client', {
 
 uci:save('network')
 
-
+-- TODO: remove this line and the next in 2019. Firewall zones have been renamed in 2017.
 uci:delete('firewall', 'client')
-uci:section('firewall', 'zone', 'client', {
-	name = 'client',
+
+uci:section('firewall', 'zone', 'drop', {
+	name = 'drop',
 	network = {'client'},
 	input = 'DROP',
 	output = 'DROP',
 	forward = 'DROP',
 })
 
-uci:save('firewall')
+uci:section('firewall', 'zone', 'local_client', {
+	name = 'local_client',
+	network = {'local_node'},
+	input = 'REJECT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
+})
+
 
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
@@ -58,13 +66,17 @@ uci:set('dhcp', dnsmasq, 'boguspriv', false)
 uci:set('dhcp', dnsmasq, 'localise_queries', false)
 uci:set('dhcp', dnsmasq, 'rebind_protection', false)
 
+-- TODO: remove this line and the next two in 2019 the zones were removed in 2017
 uci:delete('dhcp', 'client')
-uci:section('dhcp', 'dhcp', 'client', {
+uci:delete('firewall', 'local_node')
+
+uci:section('dhcp', 'dhcp', 'local_client', {
 	interface = 'client',
 	ignore = true,
 })
 
 uci:save('dhcp')
+uci:save('firewall')
 
 
 sysctl.set('net.ipv6.conf.br-client.forwarding', 0)
