@@ -14,7 +14,6 @@ uci:section('network', 'route6', 'l3roamd_client', {
 	interface = 'l3roam',
 	target = site.prefix6(),
 	gateway = '::',
-	table = '10',
 })
 
 uci:save('network')
