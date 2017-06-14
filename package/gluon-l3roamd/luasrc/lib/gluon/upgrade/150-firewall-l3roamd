@@ -1,0 +1,12 @@
+#!/usr/bin/lua
+local uci = require('simple-uci').cursor()
+
+uci:section('firewall', 'rule',  'mesh_l3roamd', {
+	name = 'mesh_l3roamd',
+	src = 'mesh',
+	dest_port = '5523',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:save('firewall')
