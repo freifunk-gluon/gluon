@@ -46,8 +46,8 @@ uci:section('firewall', 'zone', 'client', {
 	name = 'client',
 	network = {'client','local_node',},
 	conntrack = '1',
-	input = 'DROP',
-	output = 'DROP',
+	input = 'ACCEPT',
+	output = 'ACCEPT',
 	forward = 'DROP',
 })
 
