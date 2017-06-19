@@ -1,1 +1,1 @@
-entry({"admin", "network"}, model("admin/network"), _("Network"), 20)
+entry({"admin", "network"}, model("admin/network"), _("Network"), 40)
