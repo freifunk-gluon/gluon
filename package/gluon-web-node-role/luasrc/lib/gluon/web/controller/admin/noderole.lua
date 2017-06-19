@@ -1,1 +1,1 @@
-entry({"admin", "noderole"}, model("admin/noderole"), "Node role", 20)
+entry({"admin", "noderole"}, model("admin/noderole"), "Node role", 60)
