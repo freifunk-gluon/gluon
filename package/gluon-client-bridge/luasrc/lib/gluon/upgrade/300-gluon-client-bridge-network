@@ -44,9 +44,10 @@ uci:save('network')
 uci:delete('firewall', 'client')
 uci:section('firewall', 'zone', 'client', {
 	name = 'client',
-	network = {'client'},
-	input = 'DROP',
-	output = 'DROP',
+	network = {'client','local_node',},
+	conntrack = '1',
+	input = 'ACCEPT',
+	output = 'ACCEPT',
 	forward = 'DROP',
 })
 
