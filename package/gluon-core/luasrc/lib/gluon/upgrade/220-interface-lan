@@ -10,13 +10,15 @@ if not sysconfig.lan_ifname then
 	os.exit(0)
 end
 
+local old_proto = uci:get('network', 'mesh_lan', 'proto')
+
 uci:section('network', 'interface', 'mesh_lan', {
 	ifname        = sysconfig.lan_ifname,
 	type          = 'bridge',
 	igmp_snooping = false,
-	proto         = 'gluon_mesh',
-	transitive    = true,
-	fixed_mtu     = true,
+	proto         = 'gluon_wired',
+	index         = 4,
+	legacy        = old_proto == 'gluon_mesh',
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
@@ -37,5 +39,14 @@ if uci:get('network', 'mesh_lan', 'auto') == nil then
 
 	uci:set('network', 'mesh_lan', 'auto', enable or false)
 end
+
+if uci:get('network', 'mesh_lan', 'transitive') == nil then
+	uci:set('network', 'mesh_lan', 'transitive', true)
+end
+if uci:get('network', 'mesh_lan', 'legacy') == nil then
+	uci:set('network', 'mesh_lan', 'legacy', old_proto == 'gluon_mesh')
+end
+
+uci:delete('network', 'mesh_lan', 'fixed_mtu')
 
 uci:save('network')

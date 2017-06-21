@@ -3,14 +3,24 @@
 local site = require 'gluon.site_config'
 local uci = require('simple-uci').cursor()
 
-if not uci:get('network', 'mesh_wan') then
-	uci:section('network', 'interface', 'mesh_wan', {
-		ifname     = 'br-wan',
-		proto      = 'gluon_mesh',
-		transitive = true,
-		fixed_mtu  = true,
-		auto       = site.mesh_on_wan or false,
-	})
+local old_proto = uci:get('network', 'mesh_wan', 'proto')
+
+uci:section('network', 'interface', 'mesh_wan', {
+	ifname = 'br-wan',
+	proto  = 'gluon_wired',
+	index  = 0,
+})
+
+if uci:get('network', 'mesh_wan', 'auto') == nil then
+	uci:set('network', 'mesh_wan', 'auto', site.mesh_on_wan or false)
 end
+if uci:get('network', 'mesh_wan', 'transitive') == nil then
+	uci:set('network', 'mesh_wan', 'transitive', true)
+end
+if uci:get('network', 'mesh_wan', 'legacy') == nil then
+	uci:set('network', 'mesh_wan', 'legacy', old_proto == 'gluon_mesh')
+end
+
+uci:delete('network', 'mesh_wan', 'fixed_mtu')
 
 uci:save('network')
