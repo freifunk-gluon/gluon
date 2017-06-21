@@ -83,7 +83,17 @@ function mesh_wan:write(data)
 	uci:set("network", "mesh_wan", "auto", data)
 end
 
+local mesh_wan_legacy = s:option(Flag, "mesh_wan_legacy", translate("Use legacy mode for WAN meshing"))
+mesh_wan_legacy.default = mesh_wan.default and uci:get_bool("network", "mesh_wan_legacy", "auto")
+mesh_wan_legacy:depends(mesh_wan, true)
+
+function mesh_wan_legacy:write(data)
+	uci:set("network", "mesh_wan", "legacy", data)
+end
+
 if sysconfig.lan_ifname then
+	local s = f:section(Section)
+
 	local mesh_lan = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
 	mesh_lan.default = uci:get_bool("network", "mesh_lan", "auto")
 
@@ -101,6 +111,14 @@ if sysconfig.lan_ifname then
 		end
 
 		uci:set_list("network", "client", "ifname", interfaces)
+	end
+
+	local mesh_lan_legacy = s:option(Flag, "mesh_lan_legacy", translate("Use legacy mode for LAN meshing"))
+	mesh_lan_legacy.default = mesh_lan.default and uci:get_bool("network", "mesh_lan_legacy", "auto")
+	mesh_lan_legacy:depends(mesh_lan, true)
+
+	function mesh_lan_legacy:write(data)
+		uci:set("network", "mesh_lan", "legacy", data)
 	end
 end
 
