@@ -122,6 +122,22 @@ function node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
+function site_seed_bytes(key, length)
+	local ret = ''
+	local v = ''
+	local i = 0
+
+	-- Inspired by HKDF key expansion, but much simpler, as we don't need
+	-- cryptographic strength
+	while ret:len() < 2*length do
+		i = i + 1
+		v = hash.md5(v .. key .. site.site_seed .. i)
+		ret = ret .. v
+	end
+
+	return ret:sub(0, 2*length)
+end
+
 function get_mesh_devices(uconn)
 	local dump = uconn:call("network.interface", "dump", {})
 	local devices = {}

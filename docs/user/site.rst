@@ -21,6 +21,17 @@ site_code
     The code of your community. It is good practice to use the TLD of
     your community here.
 
+site_seed
+    32 bytes of random data, encoded in hexadecimal, used to seed other random
+    values specific to the mesh domain. It must be the same for all nodes of one
+    mesh, but should be different for firmwares that are not supposed to mesh with
+    each other.
+
+    The recommended way to generate a value for a new site is:
+    ::
+
+        echo $(hexdump -n 32 -e '1/1 "%02x"' </dev/urandom)
+
 prefix4 \: optional
     The IPv4 Subnet of your community mesh network in CIDR notation, e.g.
     ::

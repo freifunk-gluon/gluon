@@ -1,5 +1,6 @@
 need_string 'site_code'
 need_string 'site_name'
+need_string_match('site_seed', '^' .. ('%x'):rep(64) .. '$')
 
 if need_table('opkg', nil, false) then
 	need_string('opkg.lede', false)
