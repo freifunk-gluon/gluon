@@ -59,6 +59,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    package/gluon-ebtables-filter-ra-dhcp
    package/gluon-ebtables-segment-mld
    package/gluon-ebtables-source-filter
+   package/gluon-web-admin
 
 .. toctree::
    :caption: Releases

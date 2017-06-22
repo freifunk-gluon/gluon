@@ -13,12 +13,13 @@ You may obtain a copy of the License at
 local nixio = require "nixio"
 local fs = require "nixio.fs"
 local util = require "gluon.util"
+local site = require 'gluon.site_config'
 
 local f_keys = Form(translate("SSH keys"), translate("You can provide your SSH keys here (one per line):"), 'keys')
 local s = f_keys:section(Section)
 local keys = s:option(TextValue, "keys")
-keys.wrap    = "off"
-keys.rows    = 5
+keys.wrap = "off"
+keys.rows = 5
 keys.default = fs.readfile("/etc/dropbear/authorized_keys") or ""
 
 function keys:write(value)
@@ -30,11 +31,24 @@ function keys:write(value)
 	end
 end
 
+local config = (site.config_mode or {}).remote_login or {}
+if not config.show_password_form then
+	-- password login is disabled in site.conf
+	return f_keys
+end
 
-local f_password = Form(translate("Password"),
-	translate(
-                "Alternatively, you can set a password to access your node. Please choose a secure password you don't use anywhere else.<br /><br />"
-                .. "If you set an empty password, login via password will be disabled. This is the default."
+local min_password_length = config.min_password_length or 12
+local mintype = 'minlength(' .. min_password_length .. ')'
+local length_hint
+
+if min_password_length > 1 then
+	length_hint = translatef("%u characters min.", min_password_length)
+end
+
+local f_password = Form(translate("Password"), translate(
+	"Alternatively, you can set a password to access your node. Please choose a "
+	.. "secure password you don't use anywhere else.<br /><br />If you set an empty "
+	.. "password, login via password will be disabled. This is the default."
 	), 'password'
 )
 f_password.reset = false
@@ -43,12 +57,16 @@ local s = f_password:section(Section)
 
 local pw1 = s:option(Value, "pw1", translate("Password"))
 pw1.password = true
+pw1.optional = true
+pw1.datatype = mintype
 function pw1.cfgvalue()
 	return ''
 end
 
-local pw2 = s:option(Value, "pw2", translate("Confirmation"))
+local pw2 = s:option(Value, "pw2", translate("Confirmation"), length_hint)
 pw2.password = true
+pw2.optional = true
+pw2.datatype = mintype
 function pw2.cfgvalue()
 	return ''
 end
@@ -93,7 +111,7 @@ function f_password:write()
 
 	local pw = pw1.data
 
-	if #pw > 0 then
+	if pw ~= nil and #pw > 0 then
 		if set_password(pw) then
 			f_password.message = translate("Password changed.")
 		else
