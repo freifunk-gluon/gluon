@@ -39,4 +39,9 @@ define Package/gluon-web-admin/install
 	$(call GluonInstallI18N,gluon-web-admin,$(1))
 endef
 
+define Package/gluon-web-admin/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
+endef
+
 $(eval $(call BuildPackage,gluon-web-admin))
