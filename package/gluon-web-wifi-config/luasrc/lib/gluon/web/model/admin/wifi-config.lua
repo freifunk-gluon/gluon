@@ -28,7 +28,7 @@ end
 
 local f = Form(translate("WLAN"))
 
-local s = f:section(Section, nil, translate(
+f:section(Section, nil, translate(
 	"You can enable or disable your node's client and mesh network "
 	.. "SSIDs here. Please don't disable the mesh network without "
 	.. "a good reason, so other nodes can mesh with yours.<br /><br />"
