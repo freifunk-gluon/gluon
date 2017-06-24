@@ -50,7 +50,7 @@ Classes and methods
       is called last (after all options' *write* methods) and is usually used
       to commit changed UCI packages.
 
-      The default implementation of *write* doesn't to anything, but it can be
+      The default implementation of *write* doesn't do anything, but it can be
       overridden.
 
   - *Section* (usually instanciated through *Form:section*)
