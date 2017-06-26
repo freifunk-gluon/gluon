@@ -1,0 +1,26 @@
+From e9aa9dcfee258beffcbfba7284730ed7bdc56c2d Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Thu, 4 May 2017 15:45:35 +0200
+Subject: [PATCH] json-c: disable implicit fallthrough warning (gcc 7)
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ package/libs/libjson-c/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package/libs/libjson-c/Makefile b/package/libs/libjson-c/Makefile
+index 87dbc4708e..359a688f11 100644
+--- a/package/libs/libjson-c/Makefile
++++ b/package/libs/libjson-c/Makefile
+@@ -27,7 +27,7 @@ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+-TARGET_CFLAGS += $(FPIC)
++TARGET_CFLAGS += $(FPIC) -Wno-implicit-fallthrough
+ 
+ define Package/libjson-c
+   SECTION:=libs
+-- 
+2.13.1
+

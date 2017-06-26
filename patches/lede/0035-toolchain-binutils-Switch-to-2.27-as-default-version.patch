@@ -1,0 +1,46 @@
+From dfc3ed6cafeda14e6db732868878533ca335c172 Mon Sep 17 00:00:00 2001
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Sun, 29 Jan 2017 08:30:56 +0100
+Subject: [PATCH] toolchain/binutils: Switch to 2.27 as default version
+
+Use 2.27 as default which is the current relese.
+Makes it easier to get support and submit patches upstream if needed.
+
+Tested on ar71xx, mt7621, kirkwood (arm)
+
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+---
+ toolchain/binutils/Config.in      | 2 +-
+ toolchain/binutils/Config.version | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/toolchain/binutils/Config.in b/toolchain/binutils/Config.in
+index 9e535c4b99..5a22693c85 100644
+--- a/toolchain/binutils/Config.in
++++ b/toolchain/binutils/Config.in
+@@ -2,7 +2,7 @@
+ 
+ choice
+ 	prompt "Binutils Version" if TOOLCHAINOPTS
+-	default BINUTILS_USE_VERSION_2_25_1 if !arc
++	default BINUTILS_USE_VERSION_2_27 if !arc
+ 	default BINUTILS_USE_VERSION_2_26_ARC if arc
+ 	help
+ 	  Select the version of binutils you wish to use.
+diff --git a/toolchain/binutils/Config.version b/toolchain/binutils/Config.version
+index 5ef8df6085..21fd2cb9ba 100644
+--- a/toolchain/binutils/Config.version
++++ b/toolchain/binutils/Config.version
+@@ -1,8 +1,8 @@
+ config BINUTILS_VERSION_2_25_1
+-	default y if (!TOOLCHAINOPTS && !arc)
+ 	bool
+ 
+ config BINUTILS_VERSION_2_27
++	default y if (!TOOLCHAINOPTS && !arc)
+ 	bool
+ 
+ config BINUTILS_VERSION_2_26_ARC
+-- 
+2.13.1
+

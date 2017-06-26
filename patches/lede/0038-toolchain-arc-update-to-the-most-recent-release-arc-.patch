@@ -1,0 +1,1693 @@
+From 45e4c5c15ecc63e7918afa5baaa8d7c286dad6ce Mon Sep 17 00:00:00 2001
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Date: Mon, 27 Feb 2017 21:27:50 +0300
+Subject: [PATCH] toolchain/arc: update to the most recent release arc-2016.09
+
+arc-2016.09 is the most recent toolchain for ARC cores and
+it is based on top of upstream Binutils 2.27 and GCC 6.2.1.
+
+With updated major version of GCC we copied all GCC 6.x patches
+for ARC as well as Bintils 2.27 patches.
+
+Note that toochain sports ARCv4 ABI and so must be used
+with 4.8+ Linux kernels. Even though it will build v4.4 kernel
+perfectly fine on attempt to run user-space apps they won't
+work with older kernel. That said previuosly sent RFC patches with
+Linux kernel update are required:
+ [1] https://patchwork.ozlabs.org/patch/726686/
+ [2] https://patchwork.ozlabs.org/patch/726687/
+
+Signed-off-by: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+---
+ package/devel/gdb-arc/Makefile                     |   6 +-
+ toolchain/binutils/Config.in                       |   8 +-
+ toolchain/binutils/Config.version                  |   5 +-
+ toolchain/binutils/Makefile                        |  12 +-
+ .../arc-2016.03/200-arc-fix-target-mask.patch      |  13 --
+ .../300-001_ld_makefile_patch.patch                |  22 +++
+ .../300-012_check_ldrunpath_length.patch           |  20 +++
+ toolchain/gcc/Config.in                            |  11 +-
+ toolchain/gcc/Config.version                       |   8 +-
+ toolchain/gcc/common.mk                            |  10 +-
+ .../patches/arc-2016.03/002-weak_data_fix.patch    |  42 -----
+ .../arc-2016.03/003-universal_initializer.patch    |  94 -----------
+ .../patches/arc-2016.03/020-no-plt-backport.patch  |  28 ----
+ .../210-disable_libsanitizer_off_t_check.patch     |  11 --
+ .../arc-2016.03/800-arc-disablelibgmon.patch       |  18 --
+ .../gcc/patches/arc-2016.03/860-use_eh_frame.patch |  42 -----
+ .../arc-2016.03/920-specs_nonfatal_getenv.patch    |  14 --
+ .../arc-2016.03/950-fix-building-with-gcc6.patch   | 153 -----------------
+ .../001-revert_register_mode_search.patch          |   2 +-
+ .../002-case_insensitive.patch}                    |   0
+ .../010-documentation.patch                        |   2 +-
+ .../arc-2016.09-release/230-musl_libssp.patch      |  13 ++
+ .../280-musl-disable-ifunc-by-default.patch        |  36 ++++
+ .../300-mips_Os_cpu_rtx_cost_model.patch           |  11 ++
+ .../800-arm_v5te_no_ldrd_strd.patch                |  11 ++
+ .../810-arm-softfloat-libgcc.patch                 |  25 +++
+ .../820-libgcc_pic.patch                           |   8 +-
+ .../830-arm_unbreak_armv4t.patch                   |  13 ++
+ .../840-armv4_pass_fix-v4bx_to_ld.patch            |  19 +++
+ .../850-use_shared_libgcc.patch                    |  16 +-
+ .../851-libgcc_no_compat.patch                     |   0
+ .../870-ppc_no_crtsavres.patch                     |   2 +-
+ .../880-no_java_section.patch                      |   2 +-
+ .../arc-2016.09-release/881-no_tm_section.patch    |  11 ++
+ .../arc-2016.09-release/900-bad-mips16-crt.patch   |   9 +
+ .../910-mbsd_multi.patch                           |  83 +++-------
+ .../920-specs_nonfatal_getenv.patch                |  15 ++
+ .../930-fix-mips-noexecstack.patch                 | 111 +++++++++++++
+ .../940-no-clobber-stamp-bits.patch                |   2 +-
+ .../950-cpp_file_path_translation.patch            | 182 +++++++++++++++++++++
+ toolchain/gdb/Makefile                             |   6 +-
+ 41 files changed, 573 insertions(+), 523 deletions(-)
+ delete mode 100644 toolchain/binutils/patches/arc-2016.03/200-arc-fix-target-mask.patch
+ create mode 100644 toolchain/binutils/patches/arc-2016.09-release/300-001_ld_makefile_patch.patch
+ create mode 100644 toolchain/binutils/patches/arc-2016.09-release/300-012_check_ldrunpath_length.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/002-weak_data_fix.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/003-universal_initializer.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/020-no-plt-backport.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/210-disable_libsanitizer_off_t_check.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/800-arc-disablelibgmon.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/860-use_eh_frame.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/920-specs_nonfatal_getenv.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/950-fix-building-with-gcc6.patch
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/001-revert_register_mode_search.patch (97%)
+ rename toolchain/gcc/patches/{arc-2016.03/004-case_insensitive.patch => arc-2016.09-release/002-case_insensitive.patch} (100%)
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/010-documentation.patch (91%)
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/230-musl_libssp.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/280-musl-disable-ifunc-by-default.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/300-mips_Os_cpu_rtx_cost_model.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/800-arm_v5te_no_ldrd_strd.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/810-arm-softfloat-libgcc.patch
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/820-libgcc_pic.patch (84%)
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/830-arm_unbreak_armv4t.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/840-armv4_pass_fix-v4bx_to_ld.patch
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/850-use_shared_libgcc.patch (76%)
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/851-libgcc_no_compat.patch (100%)
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/870-ppc_no_crtsavres.patch (84%)
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/880-no_java_section.patch (86%)
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/881-no_tm_section.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/900-bad-mips16-crt.patch
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/910-mbsd_multi.patch (67%)
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/920-specs_nonfatal_getenv.patch
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/930-fix-mips-noexecstack.patch
+ rename toolchain/gcc/patches/{arc-2016.03 => arc-2016.09-release}/940-no-clobber-stamp-bits.patch (87%)
+ create mode 100644 toolchain/gcc/patches/arc-2016.09-release/950-cpp_file_path_translation.patch
+
+diff --git a/package/devel/gdb-arc/Makefile b/package/devel/gdb-arc/Makefile
+index b194437530..d5966c573d 100644
+--- a/package/devel/gdb-arc/Makefile
++++ b/package/devel/gdb-arc/Makefile
+@@ -8,14 +8,14 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=gdb-arc
+-PKG_VERSION:=arc-2016.03-gdb
++PKG_VERSION:=arc-2016.09-gdb
+ PKG_RELEASE:=1
+ 
+-PKG_SOURCE:=gdb-arc-2016.03-gdb.tar.gz
++PKG_SOURCE:=gdb-arc-2016.09-gdb.tar.gz
+ PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/$(PKG_VERSION)
+ PKG_HASH:=6a91f86cc487c1548d3f5d4f29f7226d2019c0db8a63633aeabd5914a340f3f9
+ 
+-PKG_BUILD_DIR:=$(BUILD_DIR)/binutils-gdb-arc-2016.03-gdb
++PKG_BUILD_DIR:=$(BUILD_DIR)/binutils-gdb-arc-2016.09-gdb
+ 
+ PKG_BUILD_PARALLEL:=1
+ PKG_INSTALL:=1
+diff --git a/toolchain/binutils/Config.in b/toolchain/binutils/Config.in
+index ccf096d3d8..318a13804f 100644
+--- a/toolchain/binutils/Config.in
++++ b/toolchain/binutils/Config.in
+@@ -3,7 +3,7 @@
+ choice
+ 	prompt "Binutils Version" if TOOLCHAINOPTS
+ 	default BINUTILS_USE_VERSION_2_27 if !arc
+-	default BINUTILS_USE_VERSION_2_26_ARC if arc
++	default BINUTILS_USE_VERSION_2_27_ARC if arc
+ 	help
+ 	  Select the version of binutils you wish to use.
+ 
+@@ -17,10 +17,10 @@ choice
+ 		bool "Binutils 2.28"
+ 		select BINUTILS_VERSION_2_28
+ 
+-	config BINUTILS_USE_VERSION_2_26_ARC
++	config BINUTILS_USE_VERSION_2_27_ARC
+ 		depends on arc
+-		bool "ARC binutils 2.26"
+-		select BINUTILS_VERSION_2_26_ARC
++		bool "ARC binutils 2.27"
++		select BINUTILS_VERSION_2_27_ARC
+ 
+ endchoice
+ 
+diff --git a/toolchain/binutils/Config.version b/toolchain/binutils/Config.version
+index 66e1ee2c78..8a166e1aa3 100644
+--- a/toolchain/binutils/Config.version
++++ b/toolchain/binutils/Config.version
+@@ -5,7 +5,7 @@ config BINUTILS_VERSION_2_27
+ config BINUTILS_VERSION_2_28
+ 	bool
+ 
+-config BINUTILS_VERSION_2_26_ARC
++config BINUTILS_VERSION_2_27_ARC
+ 	default y if (!TOOLCHAINOPTS && arc)
+ 	bool
+ 
+@@ -13,5 +13,4 @@ config BINUTILS_VERSION
+ 	string
+ 	default "2.27"		       if BINUTILS_VERSION_2_27
+ 	default "2.28"		       if BINUTILS_VERSION_2_28
+-	default "arc-2016.03"          if BINUTILS_VERSION_2_26_ARC
+-
++	default "arc-2016.09"          if BINUTILS_VERSION_2_27_ARC
+diff --git a/toolchain/binutils/Makefile b/toolchain/binutils/Makefile
+index 812a2ee1fb..9bdd68f6ac 100644
+--- a/toolchain/binutils/Makefile
++++ b/toolchain/binutils/Makefile
+@@ -21,12 +21,12 @@ ifeq ($(PKG_VERSION),2.28)
+   PKG_HASH:=6297433ee120b11b4b0a1c8f3512d7d73501753142ab9e2daa13c5a3edd32a72
+ endif
+ 
+-ifneq ($(CONFIG_BINUTILS_VERSION_2_26_ARC),)
+-  PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/arc-2016.03/
+-  PKG_REV:=2016.03
+-  PKG_SOURCE:=$(PKG_NAME)-arc-$(PKG_REV).tar.gz
+-  PKG_HASH:=6583a0cd5c7251dc895a47c797a9b011e466c23377d2ca7548a707fdb918fba1
+-  BINUTILS_DIR:=$(PKG_NAME)-gdb-arc-$(PKG_REV)
++ifneq ($(CONFIG_BINUTILS_VERSION_2_27_ARC),)
++  PKG_REV:=arc-2016.09-release
++  PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/$(PKG_REV)/
++  PKG_SOURCE:=$(PKG_NAME)-$(PKG_REV).tar.gz
++  PKG_HASH:=c6de8aedb7568406d784295476de9139a5e351e970e18b602e0037439b3a7b4b
++  BINUTILS_DIR:=$(PKG_NAME)-gdb-$(PKG_REV)
+   HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
+ endif
+ 
+diff --git a/toolchain/binutils/patches/arc-2016.03/200-arc-fix-target-mask.patch b/toolchain/binutils/patches/arc-2016.03/200-arc-fix-target-mask.patch
+deleted file mode 100644
+index 7e51d588ae..0000000000
+--- a/toolchain/binutils/patches/arc-2016.03/200-arc-fix-target-mask.patch
++++ /dev/null
+@@ -1,13 +0,0 @@
+-diff --git a/bfd/config.bfd b/bfd/config.bfd
+-index 5145d4a..a9c9c99 100644
+---- a/bfd/config.bfd
+-+++ b/bfd/config.bfd
+-@@ -275,7 +275,7 @@ case "${targ}" in
+-     targ_defvec=am33_elf32_linux_vec
+-     ;;
+- 
+--  arc*-*-elf* | arc*-*-linux-uclibc*)
+-+  arc*-*-elf* | arc*-*-linux-*)
+-     targ_defvec=arc_elf32_le_vec
+-     targ_selvecs=arc_elf32_be_vec
+-     ;;
+diff --git a/toolchain/binutils/patches/arc-2016.09-release/300-001_ld_makefile_patch.patch b/toolchain/binutils/patches/arc-2016.09-release/300-001_ld_makefile_patch.patch
+new file mode 100644
+index 0000000000..e4cec7f69e
+--- /dev/null
++++ b/toolchain/binutils/patches/arc-2016.09-release/300-001_ld_makefile_patch.patch
+@@ -0,0 +1,22 @@
++--- a/ld/Makefile.am
+++++ b/ld/Makefile.am
++@@ -57,7 +57,7 @@ endif
++ # We put the scripts in the directory $(scriptdir)/ldscripts.
++ # We can't put the scripts in $(datadir) because the SEARCH_DIR
++ # directives need to be different for native and cross linkers.
++-scriptdir = $(tooldir)/lib
+++scriptdir = $(libdir)
++ 
++ EMUL = @EMUL@
++ EMULATION_OFILES = @EMULATION_OFILES@
++--- a/ld/Makefile.in
+++++ b/ld/Makefile.in
++@@ -451,7 +451,7 @@ AM_CFLAGS = $(WARN_CFLAGS) $(ELF_CLFAGS)
++ # We put the scripts in the directory $(scriptdir)/ldscripts.
++ # We can't put the scripts in $(datadir) because the SEARCH_DIR
++ # directives need to be different for native and cross linkers.
++-scriptdir = $(tooldir)/lib
+++scriptdir = $(libdir)
++ BASEDIR = $(srcdir)/..
++ BFDDIR = $(BASEDIR)/bfd
++ INCDIR = $(BASEDIR)/include
+diff --git a/toolchain/binutils/patches/arc-2016.09-release/300-012_check_ldrunpath_length.patch b/toolchain/binutils/patches/arc-2016.09-release/300-012_check_ldrunpath_length.patch
+new file mode 100644
+index 0000000000..95d3f75b85
+--- /dev/null
++++ b/toolchain/binutils/patches/arc-2016.09-release/300-012_check_ldrunpath_length.patch
+@@ -0,0 +1,20 @@
++--- a/ld/emultempl/elf32.em
+++++ b/ld/emultempl/elf32.em
++@@ -1244,6 +1244,8 @@ fragment <<EOF
++ 	      && command_line.rpath == NULL)
++ 	    {
++ 	      lib_path = (const char *) getenv ("LD_RUN_PATH");
+++	      if ((lib_path) && (strlen (lib_path) == 0))
+++	      	lib_path = NULL;
++ 	      if (gld${EMULATION_NAME}_search_needed (lib_path, &n,
++ 						      force))
++ 		break;
++@@ -1525,6 +1527,8 @@ gld${EMULATION_NAME}_before_allocation (
++   rpath = command_line.rpath;
++   if (rpath == NULL)
++     rpath = (const char *) getenv ("LD_RUN_PATH");
+++  if ((rpath) && (strlen (rpath) == 0))
+++  	rpath = NULL;
++ 
++   for (abfd = link_info.input_bfds; abfd; abfd = abfd->link.next)
++     if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
+diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
+index 34c597c9e0..b8de2d4fb8 100644
+--- a/toolchain/gcc/Config.in
++++ b/toolchain/gcc/Config.in
+@@ -2,14 +2,14 @@
+ 
+ choice
+ 	prompt "GCC compiler Version" if TOOLCHAINOPTS
+-	default GCC_USE_VERSION_4_8_ARC if arc
++	default GCC_USE_VERSION_6_2_ARC if arc
+ 	default GCC_USE_VERSION_5
+ 	help
+ 	  Select the version of gcc you wish to use.
+ 
+-	config GCC_USE_VERSION_4_8_ARC
+-		select GCC_VERSION_4_8_ARC
+-		bool "gcc 4.8.x with support of ARC cores"
++	config GCC_USE_VERSION_6_2_ARC
++		select GCC_VERSION_6_2_ARC
++		bool "gcc 6.2.x with support of ARC cores"
+ 		depends on arc
+ 
+ 	config GCC_USE_VERSION_5
+@@ -23,7 +23,6 @@ choice
+ endchoice
+ 
+ config GCC_USE_GRAPHITE
+-	depends on !GCC_VERSION_4_8_ARC
+ 	bool
+ 	prompt "Compile in support for the new Graphite framework in GCC 4.4+" if TOOLCHAINOPTS
+ 
+@@ -69,7 +68,7 @@ config INSTALL_GFORTRAN
+ config INSTALL_GCCGO
+ 	bool
+ 	prompt "Build/install Go compiler?" if TOOLCHAINOPTS
+-	depends on !GCC_VERSION_4_8 && (USE_GLIBC || BROKEN)
++	depends on USE_GLIBC || BROKEN
+ 	default n
+ 	help
+ 	    Build/install GNU gccgo compiler ?
+diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
+index 2eefd37d5a..9ab736c695 100644
+--- a/toolchain/gcc/Config.version
++++ b/toolchain/gcc/Config.version
+@@ -1,13 +1,13 @@
+-config GCC_VERSION_4_8_ARC
++config GCC_VERSION_6_2_ARC
+ 	default y if (!TOOLCHAINOPTS && arc)
+ 	bool
+ 
+ config GCC_VERSION
+ 	string
+-	default "arc-2016.03"   if GCC_VERSION_4_8_ARC
++	default "arc-2016.09-release"   if GCC_VERSION_6_2_ARC
+ 	default "6.3.0"         if GCC_USE_VERSION_6
+ 	default "5.4.0"
+ 
+-config GCC_VERSION_4_8
++config GCC_VERSION_6_2
+ 	bool
+-	default y	if GCC_VERSION_4_8_ARC
++	default y	if GCC_VERSION_6_2_ARC
+diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
+index c6e01b5758..f457faf24c 100644
+--- a/toolchain/gcc/common.mk
++++ b/toolchain/gcc/common.mk
+@@ -36,12 +36,12 @@ ifeq ($(PKG_VERSION),6.3.0)
+   PKG_HASH:=f06ae7f3f790fbf0f018f6d40e844451e6bc3b7bc96e128e63b09825c1f8b29f
+ endif
+ 
+-ifneq ($(CONFIG_GCC_VERSION_4_8_ARC),)
+-    PKG_VERSION:=4.8.5
+-    PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/gcc/archive/arc-2016.03
++ifneq ($(CONFIG_GCC_VERSION_6_2_ARC),)
++    PKG_VERSION:=6.2.1
++    PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/gcc/archive/$(GCC_VERSION)
+     PKG_SOURCE:=$(PKG_NAME)-$(GCC_VERSION).tar.gz
+-    PKG_HASH:=6a5eb0c83dca16f228ac836677a1fbb42a53c30334487ac37c2c18db80a38f35
+-    PKG_REV:=2016.03
++    PKG_HASH:=d6f842dd266ccb0d5a53b51e2b2951503569f2ff3c84f81b2a1d9fea109ec077
++    PKG_REV:=2016.09
+     GCC_DIR:=gcc-arc-$(PKG_REV)
+     HOST_BUILD_DIR = $(BUILD_DIR_HOST)/$(PKG_NAME)-$(GCC_VERSION)
+ endif
+diff --git a/toolchain/gcc/patches/arc-2016.03/002-weak_data_fix.patch b/toolchain/gcc/patches/arc-2016.03/002-weak_data_fix.patch
+deleted file mode 100644
+index a740b4ce9e..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/002-weak_data_fix.patch
++++ /dev/null
+@@ -1,42 +0,0 @@
+---- /dev/null
+-+++ b/gcc/testsuite/gcc.dg/visibility-21.c
+-@@ -0,0 +1,14 @@
+-+/* PR target/32219 */
+-+/* { dg-do run } */
+-+/* { dg-require-visibility "" } */
+-+/* { dg-options "-fPIC" { target fpic } } */
+-+
+-+extern void f() __attribute__((weak,visibility("hidden")));
+-+extern int puts( char const* );
+-+int main()
+-+{
+-+	if (f)
+-+		f();
+-+	return 0;
+-+}
+-+
+---- a/gcc/varasm.c
+-+++ b/gcc/varasm.c
+-@@ -6677,6 +6677,10 @@ default_binds_local_p_1 (const_tree exp,
+-   /* Static variables are always local.  */
+-   else if (! TREE_PUBLIC (exp))
+-     local_p = true;
+-+  /* hidden weak can't be overridden by something non-local, all
+-+     that is possible is that it is not defined at all. */
+-+  else if (DECL_WEAK (exp))
+-+    local_p = false;
+-   /* A variable is local if the user has said explicitly that it will
+-      be.  */
+-   else if ((DECL_VISIBILITY_SPECIFIED (exp)
+-@@ -6690,11 +6694,6 @@ default_binds_local_p_1 (const_tree exp,
+-      local.  */
+-   else if (DECL_VISIBILITY (exp) != VISIBILITY_DEFAULT)
+-     local_p = true;
+--  /* Default visibility weak data can be overridden by a strong symbol
+--     in another module and so are not local.  */
+--  else if (DECL_WEAK (exp)
+--	   && !resolved_locally)
+--    local_p = false;
+-   /* If PIC, then assume that any global name can be overridden by
+-      symbols resolved from other modules.  */
+-   else if (shlib)
+diff --git a/toolchain/gcc/patches/arc-2016.03/003-universal_initializer.patch b/toolchain/gcc/patches/arc-2016.03/003-universal_initializer.patch
+deleted file mode 100644
+index 1b9a5b3081..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/003-universal_initializer.patch
++++ /dev/null
+@@ -1,94 +0,0 @@
+---- a/gcc/c/c-typeck.c
+-+++ b/gcc/c/c-typeck.c
+-@@ -62,9 +62,9 @@ int in_typeof;
+-    if expr.original_code == SIZEOF_EXPR.  */
+- tree c_last_sizeof_arg;
+- 
+--/* Nonzero if we've already printed a "missing braces around initializer"
+--   message within this initializer.  */
+--static int missing_braces_mentioned;
+-+/* Nonzero if we might need to print a "missing braces around
+-+   initializer" message within this initializer.  */
+-+static int found_missing_braces;
+- 
+- static int require_constant_value;
+- static int require_constant_elements;
+-@@ -6363,6 +6363,9 @@ static int constructor_nonconst;
+- /* 1 if this constructor is erroneous so far.  */
+- static int constructor_erroneous;
+- 
+-+/* 1 if this constructor is the universal zero initializer { 0 }.  */
+-+static int constructor_zeroinit;
+-+
+- /* Structure for managing pending initializer elements, organized as an
+-    AVL tree.  */
+- 
+-@@ -6524,7 +6527,7 @@ start_init (tree decl, tree asmspec_tree
+-   constructor_stack = 0;
+-   constructor_range_stack = 0;
+- 
+--  missing_braces_mentioned = 0;
+-+  found_missing_braces = 0;
+- 
+-   spelling_base = 0;
+-   spelling_size = 0;
+-@@ -6619,6 +6622,7 @@ really_start_incremental_init (tree type
+-   constructor_type = type;
+-   constructor_incremental = 1;
+-   constructor_designated = 0;
+-+  constructor_zeroinit = 1;
+-   designator_depth = 0;
+-   designator_erroneous = 0;
+- 
+-@@ -6816,11 +6820,8 @@ push_init_level (int implicit, struct ob
+- 	set_nonincremental_init (braced_init_obstack);
+-     }
+- 
+--  if (implicit == 1 && warn_missing_braces && !missing_braces_mentioned)
+--    {
+--      missing_braces_mentioned = 1;
+--      warning_init (OPT_Wmissing_braces, "missing braces around initializer");
+--    }
+-+  if (implicit == 1)
+-+    found_missing_braces = 1;
+- 
+-   if (TREE_CODE (constructor_type) == RECORD_TYPE
+- 	   || TREE_CODE (constructor_type) == UNION_TYPE)
+-@@ -6953,16 +6954,23 @@ pop_init_level (int implicit, struct obs
+- 	}
+-     }
+- 
+-+  if (vec_safe_length (constructor_elements) != 1)
+-+    constructor_zeroinit = 0;
+-+
+-+  /* Warn when some structs are initialized with direct aggregation.  */
+-+  if (!implicit && found_missing_braces && warn_missing_braces
+-+      && !constructor_zeroinit)
+-+    {
+-+      warning_init (OPT_Wmissing_braces,
+-+		    "missing braces around initializer");
+-+    }
+-+
+-   /* Warn when some struct elements are implicitly initialized to zero.  */
+-   if (warn_missing_field_initializers
+-       && constructor_type
+-       && TREE_CODE (constructor_type) == RECORD_TYPE
+-       && constructor_unfilled_fields)
+-     {
+--	bool constructor_zeroinit =
+--	 (vec_safe_length (constructor_elements) == 1
+--	  && integer_zerop ((*constructor_elements)[0].value));
+--
+- 	/* Do not warn for flexible array members or zero-length arrays.  */
+- 	while (constructor_unfilled_fields
+- 	       && (!DECL_SIZE (constructor_unfilled_fields)
+-@@ -8077,6 +8085,9 @@ process_init_element (struct c_expr valu
+-   designator_depth = 0;
+-   designator_erroneous = 0;
+- 
+-+  if (!implicit && value.value && !integer_zerop (value.value))
+-+    constructor_zeroinit = 0;
+-+
+-   /* Handle superfluous braces around string cst as in
+-      char x[] = {"foo"}; */
+-   if (string_flag
+diff --git a/toolchain/gcc/patches/arc-2016.03/020-no-plt-backport.patch b/toolchain/gcc/patches/arc-2016.03/020-no-plt-backport.patch
+deleted file mode 100644
+index b225376865..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/020-no-plt-backport.patch
++++ /dev/null
+@@ -1,28 +0,0 @@
+---- a/gcc/calls.c
+-+++ b/gcc/calls.c
+-@@ -176,6 +176,12 @@ prepare_call_address (tree fndecl, rtx f
+- 	       && targetm.small_register_classes_for_mode_p (FUNCTION_MODE))
+- 	      ? force_not_mem (memory_address (FUNCTION_MODE, funexp))
+- 	      : memory_address (FUNCTION_MODE, funexp));
+-+  else if (flag_pic && !flag_plt && fndecl
+-+	   && TREE_CODE (fndecl) == FUNCTION_DECL
+-+	   && !targetm.binds_local_p (fndecl))
+-+    {
+-+      funexp = force_reg (Pmode, funexp);
+-+    }
+-   else if (! sibcallp)
+-     {
+- #ifndef NO_FUNCTION_CSE
+---- a/gcc/common.opt
+-+++ b/gcc/common.opt
+-@@ -1617,6 +1617,10 @@ fpie
+- Common Report Var(flag_pie,1) Negative(fPIC)
+- Generate position-independent code for executables if possible (small mode)
+- 
+-+fplt
+-+Common Report Var(flag_plt) Init(1)
+-+Use PLT for PIC calls (-fno-plt: load the address from GOT at call site)
+-+
+- fplugin=
+- Common Joined RejectNegative Var(common_deferred_options) Defer
+- Specify a plugin to load
+diff --git a/toolchain/gcc/patches/arc-2016.03/210-disable_libsanitizer_off_t_check.patch b/toolchain/gcc/patches/arc-2016.03/210-disable_libsanitizer_off_t_check.patch
+deleted file mode 100644
+index 56084692a1..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/210-disable_libsanitizer_off_t_check.patch
++++ /dev/null
+@@ -1,11 +0,0 @@
+---- a/libsanitizer/interception/interception_type_test.cc
+-+++ b/libsanitizer/interception/interception_type_test.cc
+-@@ -31,7 +31,7 @@ COMPILER_CHECK(sizeof(OFF64_T) == sizeof
+- // rest (they depend on _FILE_OFFSET_BITS setting when building an application).
+- # if defined(__ANDROID__) || !defined _FILE_OFFSET_BITS || \
+-   _FILE_OFFSET_BITS != 64
+--COMPILER_CHECK(sizeof(OFF_T) == sizeof(off_t));
+-+// COMPILER_CHECK(sizeof(OFF_T) == sizeof(off_t));
+- # endif
+- 
+- #endif
+diff --git a/toolchain/gcc/patches/arc-2016.03/800-arc-disablelibgmon.patch b/toolchain/gcc/patches/arc-2016.03/800-arc-disablelibgmon.patch
+deleted file mode 100644
+index 612883c98c..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/800-arc-disablelibgmon.patch
++++ /dev/null
+@@ -1,18 +0,0 @@
+-diff --git a/libgcc/config.host b/libgcc/config.host
+-index e768389..aec10c7 100644
+---- a/libgcc/config.host
+-+++ b/libgcc/config.host
+-@@ -320,11 +320,11 @@ alpha*-dec-*vms*)
+- 	;;
+- arc*-*-elf*)
+- 	tmake_file="arc/t-arc-newlib arc/t-arc"
+--	extra_parts="crti.o crtn.o crtend.o crtbegin.o crtendS.o crtbeginS.o libgmon.a crtg.o crtgend.o crttls_r25.o crttls_r30.o"
+-+	extra_parts="crti.o crtn.o crtend.o crtbegin.o crtendS.o crtbeginS.o crtg.o crtgend.o crttls_r25.o crttls_r30.o"
+- 	;;
+- arc*-*-linux-uclibc*)
+- 	tmake_file="${tmake_file} t-slibgcc-libgcc t-slibgcc-nolc-override arc/t-arc700-uClibc arc/t-arc"
+--	extra_parts="crti.o crtn.o crtend.o crtbegin.o crtendS.o crtbeginS.o libgmon.a crtg.o crtgend.o"
+-+	extra_parts="crti.o crtn.o crtend.o crtbegin.o crtendS.o crtbeginS.o crtg.o crtgend.o"
+- 	;;
+- arm-wrs-vxworks)
+- 	tmake_file="$tmake_file arm/t-arm arm/t-vxworks t-softfp-sfdf t-softfp-excl arm/t-softfp t-softfp"
+diff --git a/toolchain/gcc/patches/arc-2016.03/860-use_eh_frame.patch b/toolchain/gcc/patches/arc-2016.03/860-use_eh_frame.patch
+deleted file mode 100644
+index 1ac83fe4dc..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/860-use_eh_frame.patch
++++ /dev/null
+@@ -1,42 +0,0 @@
+---- a/libgcc/unwind-dw2-fde-dip.c
+-+++ b/libgcc/unwind-dw2-fde-dip.c
+-@@ -46,33 +46,13 @@
+- #include "unwind-compat.h"
+- #include "gthr.h"
+- 
+--#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR) \
+--    && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 2) \
+--	|| (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG)))
+--# define USE_PT_GNU_EH_FRAME
+--#endif
+--
+--#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR) \
+--    && defined(__BIONIC__)
+--# define USE_PT_GNU_EH_FRAME
+--#endif
+--
+--#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR) \
+--    && defined(__FreeBSD__) && __FreeBSD__ >= 7
+--# define ElfW __ElfN
+--# define USE_PT_GNU_EH_FRAME
+--#endif
+--
+--#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR) \
+--    && defined(__OpenBSD__)
+--# define ElfW(type) Elf_##type
+--# define USE_PT_GNU_EH_FRAME
+--#endif
+--
+--#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR) \
+--    && defined(TARGET_DL_ITERATE_PHDR) \
+--    && defined(__sun__) && defined(__svr4__)
+-+#if !defined(inhibit_libc) && defined(HAVE_LD_EH_FRAME_HDR)
+- # define USE_PT_GNU_EH_FRAME
+-+# ifdef __OpenBSD__
+-+#  define ElfW(type) Elf_##type
+-+# elif defined(__FreeBSD__) && __FreeBSD__ >= 7
+-+#  define ElfW __ElfN
+-+# endif
+- #endif
+- 
+- #if defined(USE_PT_GNU_EH_FRAME)
+diff --git a/toolchain/gcc/patches/arc-2016.03/920-specs_nonfatal_getenv.patch b/toolchain/gcc/patches/arc-2016.03/920-specs_nonfatal_getenv.patch
+deleted file mode 100644
+index 09768f525b..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/920-specs_nonfatal_getenv.patch
++++ /dev/null
+@@ -1,14 +0,0 @@
+---- a/gcc/gcc.c
+-+++ b/gcc/gcc.c
+-@@ -8029,7 +8029,10 @@ getenv_spec_function (int argc, const ch
+- 
+-   value = getenv (argv[0]);
+-   if (!value)
+--    fatal_error ("environment variable %qs not defined", argv[0]);
+-+    {
+-+      warning (0, "environment variable %qs not defined", argv[0]);
+-+      value = "";
+-+    }
+- 
+-   /* We have to escape every character of the environment variable so
+-      they are not interpreted as active spec characters.  A
+diff --git a/toolchain/gcc/patches/arc-2016.03/950-fix-building-with-gcc6.patch b/toolchain/gcc/patches/arc-2016.03/950-fix-building-with-gcc6.patch
+deleted file mode 100644
+index e958380696..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/950-fix-building-with-gcc6.patch
++++ /dev/null
+@@ -1,153 +0,0 @@
+-From 5dce741e00f86a08a4c174fb3605d896f210ab52 Mon Sep 17 00:00:00 2001
+-From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+-Date: Wed, 27 Jul 2016 13:30:03 +0300
+-Subject: [PATCH] 2016-02-19  Jakub Jelinek  <jakub@redhat.com>  Bernd Edlinger
+-  <bernd.edlinger@hotmail.de>
+-
+-        * Make-lang.in: Invoke gperf with -L C++.
+-        * cfns.gperf: Remove prototypes for hash and libc_name_p
+-        inlines.
+-        * cfns.h: Regenerated.
+-        * except.c (nothrow_libfn_p): Adjust.
+-
+-git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@233572138bc75d-0d04-0410-961f-82ee72b054a4
+-
+-This patch fixes building of gcc-4.x by gcc-6.x, for more details see
+-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69959
+-
+-Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+----
+- gcc/cp/Make-lang.in |  2 +-
+- gcc/cp/cfns.gperf   | 10 ++--------
+- gcc/cp/cfns.h       | 41 ++++++++++++++---------------------------
+- gcc/cp/except.c     |  3 ++-
+- 4 files changed, 19 insertions(+), 37 deletions(-)
+-
+-diff --git a/gcc/cp/Make-lang.in b/gcc/cp/Make-lang.in
+-index dce523a..36a1a97 100644
+---- a/gcc/cp/Make-lang.in
+-+++ b/gcc/cp/Make-lang.in
+-@@ -115,7 +115,7 @@ else
+- # deleting the $(srcdir)/cp/cfns.h file.
+- $(srcdir)/cp/cfns.h:
+- endif
+--	gperf -o -C -E -k '1-6,$$' -j1 -D -N 'libc_name_p' -L ANSI-C \
+-+	gperf -o -C -E -k '1-6,$$' -j1 -D -N 'libc_name_p' -L C++ \
+- 		$(srcdir)/cp/cfns.gperf --output-file $(srcdir)/cp/cfns.h
+- 
+- #
+-diff --git a/gcc/cp/cfns.gperf b/gcc/cp/cfns.gperf
+-index c4c4e2a..5c40933 100644
+---- a/gcc/cp/cfns.gperf
+-+++ b/gcc/cp/cfns.gperf
+-@@ -1,3 +1,5 @@
+-+%language=C++
+-+%define class-name libc_name
+- %{
+- /* Copyright (C) 2000-2013 Free Software Foundation, Inc.
+- 
+-@@ -16,14 +18,6 @@ for more details.
+- You should have received a copy of the GNU General Public License
+- along with GCC; see the file COPYING3.  If not see
+- <http://www.gnu.org/licenses/>.  */
+--#ifdef __GNUC__
+--__inline
+--#endif
+--static unsigned int hash (const char *, unsigned int);
+--#ifdef __GNUC__
+--__inline
+--#endif
+--const char * libc_name_p (const char *, unsigned int);
+- %}
+- %%
+- # The standard C library functions, for feeding to gperf; the result is used
+-diff --git a/gcc/cp/cfns.h b/gcc/cp/cfns.h
+-index 42dd3cf..6c79864 100644
+---- a/gcc/cp/cfns.h
+-+++ b/gcc/cp/cfns.h
+-@@ -1,5 +1,5 @@
+--/* ANSI-C code produced by gperf version 3.0.3 */
+--/* Command-line: gperf -o -C -E -k '1-6,$' -j1 -D -N libc_name_p -L ANSI-C cfns.gperf  */
+-+/* C++ code produced by gperf version 3.0.4 */
+-+/* Command-line: gperf -o -C -E -k '1-6,$' -j1 -D -N libc_name_p -L C++ --output-file cfns.h cfns.gperf  */
+- 
+- #if !((' ' == 32) && ('!' == 33) && ('"' == 34) && ('#' == 35) \
+-       && ('%' == 37) && ('&' == 38) && ('\'' == 39) && ('(' == 40) \
+-@@ -28,7 +28,7 @@
+- #error "gperf generated tables don't work with this execution character set. Please report a bug to <bug-gnu-gperf@gnu.org>."
+- #endif
+- 
+--#line 1 "cfns.gperf"
+-+#line 3 "cfns.gperf"
+- 
+- /* Copyright (C) 2000-2013 Free Software Foundation, Inc.
+- 
+-@@ -47,25 +47,18 @@ for more details.
+- You should have received a copy of the GNU General Public License
+- along with GCC; see the file COPYING3.  If not see
+- <http://www.gnu.org/licenses/>.  */
+--#ifdef __GNUC__
+--__inline
+--#endif
+--static unsigned int hash (const char *, unsigned int);
+--#ifdef __GNUC__
+--__inline
+--#endif
+--const char * libc_name_p (const char *, unsigned int);
+- /* maximum key range = 391, duplicates = 0 */
+- 
+--#ifdef __GNUC__
+--__inline
+--#else
+--#ifdef __cplusplus
+--inline
+--#endif
+--#endif
+--static unsigned int
+--hash (register const char *str, register unsigned int len)
+-+class libc_name
+-+{
+-+private:
+-+  static inline unsigned int hash (const char *str, unsigned int len);
+-+public:
+-+  static const char *libc_name_p (const char *str, unsigned int len);
+-+};
+-+
+-+inline unsigned int
+-+libc_name::hash (register const char *str, register unsigned int len)
+- {
+-   static const unsigned short asso_values[] =
+-     {
+-@@ -122,14 +115,8 @@ hash (register const char *str, register unsigned int len)
+-   return hval + asso_values[(unsigned char)str[len - 1]];
+- }
+- 
+--#ifdef __GNUC__
+--__inline
+--#ifdef __GNUC_STDC_INLINE__
+--__attribute__ ((__gnu_inline__))
+--#endif
+--#endif
+- const char *
+--libc_name_p (register const char *str, register unsigned int len)
+-+libc_name::libc_name_p (register const char *str, register unsigned int len)
+- {
+-   enum
+-     {
+-diff --git a/gcc/cp/except.c b/gcc/cp/except.c
+-index 604f274..c3298cb 100644
+---- a/gcc/cp/except.c
+-+++ b/gcc/cp/except.c
+-@@ -1025,7 +1025,8 @@ nothrow_libfn_p (const_tree fn)
+-      unless the system headers are playing rename tricks, and if
+-      they are, we don't want to be confused by them.  */
+-   id = DECL_NAME (fn);
+--  return !!libc_name_p (IDENTIFIER_POINTER (id), IDENTIFIER_LENGTH (id));
+-+  return !!libc_name::libc_name_p (IDENTIFIER_POINTER (id),
+-+				   IDENTIFIER_LENGTH (id));
+- }
+- 
+- /* Returns nonzero if an exception of type FROM will be caught by a
+--- 
+-2.7.4
+-
+diff --git a/toolchain/gcc/patches/arc-2016.03/001-revert_register_mode_search.patch b/toolchain/gcc/patches/arc-2016.09-release/001-revert_register_mode_search.patch
+similarity index 97%
+rename from toolchain/gcc/patches/arc-2016.03/001-revert_register_mode_search.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/001-revert_register_mode_search.patch
+index 162d651394..bd6fbdb4a9 100644
+--- a/toolchain/gcc/patches/arc-2016.03/001-revert_register_mode_search.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/001-revert_register_mode_search.patch
+@@ -14,7 +14,7 @@ Date:   Thu Sep 5 14:09:07 2013 +0000
+ 
+ --- a/gcc/reginfo.c
+ +++ b/gcc/reginfo.c
+-@@ -620,35 +620,40 @@ choose_hard_reg_mode (unsigned int regno
++@@ -625,35 +625,40 @@ choose_hard_reg_mode (unsigned int regno
+         mode = GET_MODE_WIDER_MODE (mode))
+      if ((unsigned) hard_regno_nregs[regno][mode] == nregs
+  	&& HARD_REGNO_MODE_OK (regno, mode)
+diff --git a/toolchain/gcc/patches/arc-2016.03/004-case_insensitive.patch b/toolchain/gcc/patches/arc-2016.09-release/002-case_insensitive.patch
+similarity index 100%
+rename from toolchain/gcc/patches/arc-2016.03/004-case_insensitive.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/002-case_insensitive.patch
+diff --git a/toolchain/gcc/patches/arc-2016.03/010-documentation.patch b/toolchain/gcc/patches/arc-2016.09-release/010-documentation.patch
+similarity index 91%
+rename from toolchain/gcc/patches/arc-2016.03/010-documentation.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/010-documentation.patch
+index 5548069d1b..2adb28c83d 100644
+--- a/toolchain/gcc/patches/arc-2016.03/010-documentation.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/010-documentation.patch
+@@ -1,6 +1,6 @@
+ --- a/gcc/Makefile.in
+ +++ b/gcc/Makefile.in
+-@@ -4327,18 +4327,10 @@ doc/gcc.info: $(TEXI_GCC_FILES)
++@@ -3021,18 +3021,10 @@ doc/gcc.info: $(TEXI_GCC_FILES)
+  doc/gccint.info: $(TEXI_GCCINT_FILES)
+  doc/cppinternals.info: $(TEXI_CPPINT_FILES)
+  
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/230-musl_libssp.patch b/toolchain/gcc/patches/arc-2016.09-release/230-musl_libssp.patch
+new file mode 100644
+index 0000000000..8dfd1fc287
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/230-musl_libssp.patch
+@@ -0,0 +1,13 @@
++--- a/gcc/gcc.c
+++++ b/gcc/gcc.c
++@@ -858,7 +858,9 @@ proper position among the other output f
++ #endif
++ 
++ #ifndef LINK_SSP_SPEC
++-#ifdef TARGET_LIBC_PROVIDES_SSP
+++#if DEFAULT_LIBC == LIBC_MUSL
+++#define LINK_SSP_SPEC "-lssp_nonshared"
+++#elif defined(TARGET_LIBC_PROVIDES_SSP)
++ #define LINK_SSP_SPEC "%{fstack-protector|fstack-protector-all" \
++ 		       "|fstack-protector-strong|fstack-protector-explicit:}"
++ #else
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/280-musl-disable-ifunc-by-default.patch b/toolchain/gcc/patches/arc-2016.09-release/280-musl-disable-ifunc-by-default.patch
+new file mode 100644
+index 0000000000..df09e4f636
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/280-musl-disable-ifunc-by-default.patch
+@@ -0,0 +1,36 @@
++From 450fb05e2a7510d37744f044009f8237d902f65c Mon Sep 17 00:00:00 2001
++From: nsz <nsz@138bc75d-0d04-0410-961f-82ee72b054a4>
++Date: Tue, 30 Aug 2016 10:26:22 +0000
++Subject: [PATCH] disable ifunc on *-musl by default
++
++gcc/
++	* config.gcc (*-*-*musl*): Disable gnu-indirect-function.
++
++
++
++git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@239859 138bc75d-0d04-0410-961f-82ee72b054a4
++---
++ gcc/ChangeLog  | 4 ++++
++ gcc/config.gcc | 4 ++--
++ 2 files changed, 6 insertions(+), 2 deletions(-)
++
++--- a/gcc/config.gcc
+++++ b/gcc/config.gcc
++@@ -1495,7 +1495,7 @@ i[34567]86-*-linux* | i[34567]86-*-kfree
++ 		extra_options="${extra_options} linux-android.opt"
++ 		# Assume modern glibc if not targeting Android nor uclibc.
++ 		case ${target} in
++-		*-*-*android*|*-*-*uclibc*)
+++		*-*-*android*|*-*-*uclibc*|*-*-*musl*)
++ 		  ;;
++ 		*)
++ 		  default_gnu_indirect_function=yes
++@@ -1564,7 +1564,7 @@ x86_64-*-linux* | x86_64-*-kfreebsd*-gnu
++ 		extra_options="${extra_options} linux-android.opt"
++ 		# Assume modern glibc if not targeting Android nor uclibc.
++ 		case ${target} in
++-		*-*-*android*|*-*-*uclibc*)
+++		*-*-*android*|*-*-*uclibc*|*-*-*musl*)
++ 		  ;;
++ 		*)
++ 		  default_gnu_indirect_function=yes
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/300-mips_Os_cpu_rtx_cost_model.patch b/toolchain/gcc/patches/arc-2016.09-release/300-mips_Os_cpu_rtx_cost_model.patch
+new file mode 100644
+index 0000000000..d76bd8cb1d
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/300-mips_Os_cpu_rtx_cost_model.patch
+@@ -0,0 +1,11 @@
++--- a/gcc/config/mips/mips.c
+++++ b/gcc/config/mips/mips.c
++@@ -17928,7 +17928,7 @@ mips_option_override (void)
++     flag_pcc_struct_return = 0;
++ 
++   /* Decide which rtx_costs structure to use.  */
++-  if (optimize_size)
+++  if (0 && optimize_size)
++     mips_cost = &mips_rtx_cost_optimize_size;
++   else
++     mips_cost = &mips_rtx_cost_data[mips_tune];
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/800-arm_v5te_no_ldrd_strd.patch b/toolchain/gcc/patches/arc-2016.09-release/800-arm_v5te_no_ldrd_strd.patch
+new file mode 100644
+index 0000000000..2e7c23f851
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/800-arm_v5te_no_ldrd_strd.patch
+@@ -0,0 +1,11 @@
++--- a/gcc/config/arm/arm.h
+++++ b/gcc/config/arm/arm.h
++@@ -166,7 +166,7 @@ extern void (*arm_lang_output_object_att
++ /* Thumb-1 only.  */
++ #define TARGET_THUMB1_ONLY		(TARGET_THUMB1 && !arm_arch_notm)
++ 
++-#define TARGET_LDRD			(arm_arch5e && ARM_DOUBLEWORD_ALIGN \
+++#define TARGET_LDRD			(arm_arch6 && ARM_DOUBLEWORD_ALIGN \
++                                          && !TARGET_THUMB1)
++ 
++ #define TARGET_CRC32			(arm_arch_crc)
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/810-arm-softfloat-libgcc.patch b/toolchain/gcc/patches/arc-2016.09-release/810-arm-softfloat-libgcc.patch
+new file mode 100644
+index 0000000000..1d06f5b2ec
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/810-arm-softfloat-libgcc.patch
+@@ -0,0 +1,25 @@
++--- a/libgcc/config/arm/t-linux
+++++ b/libgcc/config/arm/t-linux
++@@ -1,6 +1,10 @@
++ LIB1ASMSRC = arm/lib1funcs.S
++ LIB1ASMFUNCS = _udivsi3 _divsi3 _umodsi3 _modsi3 _dvmd_lnx _clzsi2 _clzdi2 \
++-	_ctzsi2 _arm_addsubdf3 _arm_addsubsf3
+++	_ctzsi2 _arm_addsubdf3 _arm_addsubsf3 \
+++	_arm_negdf2 _arm_muldivdf3 _arm_cmpdf2 _arm_unorddf2 \
+++	_arm_fixdfsi _arm_fixunsdfsi _arm_truncdfsf2 \
+++	_arm_negsf2 _arm_muldivsf3 _arm_cmpsf2 _arm_unordsf2 \
+++	_arm_fixsfsi _arm_fixunssfsi
++ 
++ # Just for these, we omit the frame pointer since it makes such a big
++ # difference.
++--- a/gcc/config/arm/linux-elf.h
+++++ b/gcc/config/arm/linux-elf.h
++@@ -60,8 +60,6 @@
++    %{shared:-lc} \
++    %{!shared:%{profile:-lc_p}%{!profile:-lc}}"
++ 
++-#define LIBGCC_SPEC "%{mfloat-abi=soft*:-lfloat} -lgcc"
++-
++ #define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++ 
++ #define LINUX_TARGET_LINK_SPEC  "%{h*} \
+diff --git a/toolchain/gcc/patches/arc-2016.03/820-libgcc_pic.patch b/toolchain/gcc/patches/arc-2016.09-release/820-libgcc_pic.patch
+similarity index 84%
+rename from toolchain/gcc/patches/arc-2016.03/820-libgcc_pic.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/820-libgcc_pic.patch
+index 7a0ac7353e..f925d96f66 100644
+--- a/toolchain/gcc/patches/arc-2016.03/820-libgcc_pic.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/820-libgcc_pic.patch
+@@ -1,6 +1,6 @@
+ --- a/libgcc/Makefile.in
+ +++ b/libgcc/Makefile.in
+-@@ -865,11 +865,12 @@ $(libgcov-objects): %$(objext): $(srcdir
++@@ -888,11 +888,12 @@ $(libgcov-driver-objects): %$(objext): $
+  
+  # Static libraries.
+  libgcc.a: $(libgcc-objects)
+@@ -14,7 +14,7 @@
+  	-rm -f $@
+  
+  	objects="$(objects)";					\
+-@@ -891,7 +892,7 @@ libgcc_s$(SHLIB_EXT): libunwind$(SHLIB_E
++@@ -913,7 +914,7 @@ all: libunwind.a
+  endif
+  
+  ifeq ($(enable_shared),yes)
+@@ -22,8 +22,8 @@
+ +all: libgcc_eh.a libgcc_pic.a libgcc_s$(SHLIB_EXT)
+  ifneq ($(LIBUNWIND),)
+  all: libunwind$(SHLIB_EXT)
+- endif
+-@@ -1058,6 +1059,10 @@ install-shared:
++ libgcc_s$(SHLIB_EXT): libunwind$(SHLIB_EXT)
++@@ -1115,6 +1116,10 @@ install-shared:
+  	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_eh.a
+  	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_eh.a
+  
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/830-arm_unbreak_armv4t.patch b/toolchain/gcc/patches/arc-2016.09-release/830-arm_unbreak_armv4t.patch
+new file mode 100644
+index 0000000000..37f8f2a54d
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/830-arm_unbreak_armv4t.patch
+@@ -0,0 +1,13 @@
++http://sourceware.org/ml/crossgcc/2008-05/msg00009.html
++
++--- a/gcc/config/arm/linux-eabi.h
+++++ b/gcc/config/arm/linux-eabi.h
++@@ -45,7 +45,7 @@
++    The ARM10TDMI core is the default for armv5t, so set
++    SUBTARGET_CPU_DEFAULT to achieve this.  */
++ #undef  SUBTARGET_CPU_DEFAULT
++-#define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm10tdmi
+++#define SUBTARGET_CPU_DEFAULT TARGET_CPU_arm9tdmi
++ 
++ /* TARGET_BIG_ENDIAN_DEFAULT is set in
++    config.gcc for big endian configurations.  */
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/840-armv4_pass_fix-v4bx_to_ld.patch b/toolchain/gcc/patches/arc-2016.09-release/840-armv4_pass_fix-v4bx_to_ld.patch
+new file mode 100644
+index 0000000000..cb1fb98235
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/840-armv4_pass_fix-v4bx_to_ld.patch
+@@ -0,0 +1,19 @@
++--- a/gcc/config/arm/linux-eabi.h
+++++ b/gcc/config/arm/linux-eabi.h
++@@ -94,10 +94,15 @@
++ #define MUSL_DYNAMIC_LINKER \
++   "/lib/ld-musl-arm" MUSL_DYNAMIC_LINKER_E "%{mfloat-abi=hard:hf}.so.1"
++ 
+++/* For armv4 we pass --fix-v4bx to linker to support EABI */
+++#undef TARGET_FIX_V4BX_SPEC
+++#define TARGET_FIX_V4BX_SPEC " %{mcpu=arm8|mcpu=arm810|mcpu=strongarm*"\
+++  "|march=armv4|mcpu=fa526|mcpu=fa626:--fix-v4bx}"
+++
++ /* At this point, bpabi.h will have clobbered LINK_SPEC.  We want to
++    use the GNU/Linux version, not the generic BPABI version.  */
++ #undef  LINK_SPEC
++-#define LINK_SPEC EABI_LINK_SPEC					\
+++#define LINK_SPEC EABI_LINK_SPEC TARGET_FIX_V4BX_SPEC			\
++   LINUX_OR_ANDROID_LD (LINUX_TARGET_LINK_SPEC,				\
++ 		       LINUX_TARGET_LINK_SPEC " " ANDROID_LINK_SPEC)
++ 
+diff --git a/toolchain/gcc/patches/arc-2016.03/850-use_shared_libgcc.patch b/toolchain/gcc/patches/arc-2016.09-release/850-use_shared_libgcc.patch
+similarity index 76%
+rename from toolchain/gcc/patches/arc-2016.03/850-use_shared_libgcc.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/850-use_shared_libgcc.patch
+index 6934bc97f6..cd20244c69 100644
+--- a/toolchain/gcc/patches/arc-2016.03/850-use_shared_libgcc.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/850-use_shared_libgcc.patch
+@@ -1,7 +1,7 @@
+ --- a/gcc/config/arm/linux-eabi.h
+ +++ b/gcc/config/arm/linux-eabi.h
+-@@ -131,10 +131,6 @@
+- #define ENDFILE_SPEC \
++@@ -132,10 +132,6 @@
++   "%{Ofast|ffast-math|funsafe-math-optimizations:crtfastmath.o%s} "	\
+    LINUX_OR_ANDROID_LD (GNU_USER_TARGET_ENDFILE_SPEC, ANDROID_ENDFILE_SPEC)
+  
+ -/* Use the default LIBGCC_SPEC, not the version in linux-elf.h, as we
+@@ -13,7 +13,7 @@
+     is used.  */
+ --- a/gcc/config/linux.h
+ +++ b/gcc/config/linux.h
+-@@ -51,6 +51,10 @@ see the files COPYING3 and COPYING.RUNTI
++@@ -53,6 +53,10 @@ see the files COPYING3 and COPYING.RUNTI
+  	builtin_assert ("system=posix");			\
+      } while (0)
+  
+@@ -22,8 +22,8 @@
+ +#endif
+ +
+  /* Determine which dynamic linker to use depending on whether GLIBC or
+-    uClibc or Bionic is the default C library and whether
+-    -muclibc or -mglibc or -mbionic has been passed to change the default.  */
++    uClibc or Bionic or musl is the default C library and whether
++    -muclibc or -mglibc or -mbionic or -mmusl has been passed to change
+ --- a/libgcc/mkmap-symver.awk
+ +++ b/libgcc/mkmap-symver.awk
+ @@ -132,5 +132,5 @@ function output(lib) {
+@@ -35,9 +35,9 @@
+  }
+ --- a/gcc/config/rs6000/linux.h
+ +++ b/gcc/config/rs6000/linux.h
+-@@ -61,6 +61,9 @@
+- #undef  CPLUSPLUS_CPP_SPEC
+- #define CPLUSPLUS_CPP_SPEC "-D_GNU_SOURCE %(cpp)"
++@@ -60,6 +60,9 @@
++ #undef	CPP_OS_DEFAULT_SPEC
++ #define CPP_OS_DEFAULT_SPEC "%(cpp_os_linux)"
+  
+ +#undef LIBGCC_SPEC
+ +#define LIBGCC_SPEC "%{!static:%{!static-libgcc:-lgcc_s}} -lgcc"
+diff --git a/toolchain/gcc/patches/arc-2016.03/851-libgcc_no_compat.patch b/toolchain/gcc/patches/arc-2016.09-release/851-libgcc_no_compat.patch
+similarity index 100%
+rename from toolchain/gcc/patches/arc-2016.03/851-libgcc_no_compat.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/851-libgcc_no_compat.patch
+diff --git a/toolchain/gcc/patches/arc-2016.03/870-ppc_no_crtsavres.patch b/toolchain/gcc/patches/arc-2016.09-release/870-ppc_no_crtsavres.patch
+similarity index 84%
+rename from toolchain/gcc/patches/arc-2016.03/870-ppc_no_crtsavres.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/870-ppc_no_crtsavres.patch
+index 4b7fcbd5e1..9e543a0fc2 100644
+--- a/toolchain/gcc/patches/arc-2016.03/870-ppc_no_crtsavres.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/870-ppc_no_crtsavres.patch
+@@ -1,6 +1,6 @@
+ --- a/gcc/config/rs6000/rs6000.c
+ +++ b/gcc/config/rs6000/rs6000.c
+-@@ -17662,7 +17662,7 @@ rs6000_savres_strategy (rs6000_stack_t *
++@@ -24171,7 +24171,7 @@ rs6000_savres_strategy (rs6000_stack_t *
+    /* Define cutoff for using out-of-line functions to save registers.  */
+    if (DEFAULT_ABI == ABI_V4 || TARGET_ELF)
+      {
+diff --git a/toolchain/gcc/patches/arc-2016.03/880-no_java_section.patch b/toolchain/gcc/patches/arc-2016.09-release/880-no_java_section.patch
+similarity index 86%
+rename from toolchain/gcc/patches/arc-2016.03/880-no_java_section.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/880-no_java_section.patch
+index def6c9f4a0..0fa9e627c2 100644
+--- a/toolchain/gcc/patches/arc-2016.03/880-no_java_section.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/880-no_java_section.patch
+@@ -1,6 +1,6 @@
+ --- a/gcc/defaults.h
+ +++ b/gcc/defaults.h
+-@@ -380,7 +380,7 @@ see the files COPYING3 and COPYING.RUNTI
++@@ -395,7 +395,7 @@ see the files COPYING3 and COPYING.RUNTI
+  /* If we have named section and we support weak symbols, then use the
+     .jcr section for recording java classes which need to be registered
+     at program start-up time.  */
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/881-no_tm_section.patch b/toolchain/gcc/patches/arc-2016.09-release/881-no_tm_section.patch
+new file mode 100644
+index 0000000000..fab5db3be5
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/881-no_tm_section.patch
+@@ -0,0 +1,11 @@
++--- a/libgcc/crtstuff.c
+++++ b/libgcc/crtstuff.c
++@@ -152,7 +152,7 @@ call_ ## FUNC (void)					\
++ #endif
++ 
++ #if !defined(USE_TM_CLONE_REGISTRY) && defined(OBJECT_FORMAT_ELF)
++-# define USE_TM_CLONE_REGISTRY 1
+++# define USE_TM_CLONE_REGISTRY 0
++ #endif
++ 
++ /* We do not want to add the weak attribute to the declarations of these
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/900-bad-mips16-crt.patch b/toolchain/gcc/patches/arc-2016.09-release/900-bad-mips16-crt.patch
+new file mode 100644
+index 0000000000..dd6e9dc889
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/900-bad-mips16-crt.patch
+@@ -0,0 +1,9 @@
++--- a/libgcc/config/mips/t-mips16
+++++ b/libgcc/config/mips/t-mips16
++@@ -43,3 +43,6 @@ SYNC_CFLAGS = -mno-mips16
++ 
++ # Version these symbols if building libgcc.so.
++ SHLIB_MAPFILES += $(srcdir)/config/mips/libgcc-mips16.ver
+++
+++CRTSTUFF_T_CFLAGS += -mno-mips16
+++CRTSTUFF_T_CFLAGS_S += -mno-mips16
+diff --git a/toolchain/gcc/patches/arc-2016.03/910-mbsd_multi.patch b/toolchain/gcc/patches/arc-2016.09-release/910-mbsd_multi.patch
+similarity index 67%
+rename from toolchain/gcc/patches/arc-2016.03/910-mbsd_multi.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/910-mbsd_multi.patch
+index 5387f8e86f..62203dfcf6 100644
+--- a/toolchain/gcc/patches/arc-2016.03/910-mbsd_multi.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/910-mbsd_multi.patch
+@@ -10,16 +10,13 @@
+ 	  to be able to use -Werror in "make" but prevent
+ 	  GNU autoconf generated configure scripts from
+ 	  freaking out.
+-	* Make -fno-strict-aliasing and -fno-delete-null-pointer-checks
+-	  the default for -O2/-Os, because they trigger gcc bugs
+-	  and can delete code with security implications.
+ 
+ 	This patch was authored by Thorsten Glaser <tg at mirbsd.de>
+ 	with copyright assignment to the FSF in effect.
+ 
+ --- a/gcc/c-family/c-opts.c
+ +++ b/gcc/c-family/c-opts.c
+-@@ -104,6 +104,9 @@ static size_t include_cursor;
++@@ -107,6 +107,9 @@ static int class_dump_flags;
+  /* Whether any standard preincluded header has been preincluded.  */
+  static bool done_preinclude;
+  
+@@ -29,17 +26,7 @@
+  static void handle_OPT_d (const char *);
+  static void set_std_cxx98 (int);
+  static void set_std_cxx11 (int);
+-@@ -383,6 +386,9 @@ c_common_handle_option (size_t scode, co
+-       cpp_opts->warn_endif_labels = value;
+-       break;
+- 
+-+    case OPT_Werror_maybe_reset:
+-+      break;
+-+
+-     case OPT_Winvalid_pch:
+-       cpp_opts->warn_invalid_pch = value;
+-       break;
+-@@ -491,6 +497,12 @@ c_common_handle_option (size_t scode, co
++@@ -442,6 +445,12 @@ c_common_handle_option (size_t scode, co
+        flag_no_builtin = !value;
+        break;
+  
+@@ -52,7 +39,7 @@
+      case OPT_fconstant_string_class_:
+        constant_string_class_name = arg;
+        break;
+-@@ -1027,6 +1039,47 @@ c_common_init (void)
++@@ -1041,6 +1050,47 @@ c_common_init (void)
+        return false;
+      }
+  
+@@ -102,9 +89,9 @@
+  
+ --- a/gcc/c-family/c.opt
+ +++ b/gcc/c-family/c.opt
+-@@ -379,6 +379,10 @@ Werror-implicit-function-declaration
+- C ObjC RejectNegative Warning Alias(Werror=, implicit-function-declaration)
+- This switch is deprecated; use -Werror=implicit-function-declaration instead
++@@ -438,6 +438,10 @@ Wfloat-conversion
++ C ObjC C++ ObjC++ Var(warn_float_conversion) Warning LangEnabledBy(C ObjC C++ ObjC++,Wconversion)
++ Warn for implicit type conversions that cause loss of floating point precision.
+  
+ +Werror-maybe-reset
+ +C ObjC C++ ObjC++
+@@ -112,8 +99,8 @@
+ +
+  Wfloat-equal
+  C ObjC C++ ObjC++ Var(warn_float_equal) Warning
+- Warn if testing floating point numbers for equality
+-@@ -949,6 +953,9 @@ C++ ObjC++ Optimization Alias(fexception
++ Warn if testing floating point numbers for equality.
++@@ -1252,6 +1256,9 @@ C++ ObjC++ Optimization Alias(fexception
+  fhonor-std
+  C++ ObjC++ Ignore Warn(switch %qs is no longer supported)
+  
+@@ -122,12 +109,12 @@
+ +
+  fhosted
+  C ObjC
+- Assume normal C execution environment
++ Assume normal C execution environment.
+ --- a/gcc/common.opt
+ +++ b/gcc/common.opt
+-@@ -541,6 +541,10 @@ Werror=
++@@ -581,6 +581,10 @@ Werror=
+  Common Joined
+- Treat specified warning as error
++ Treat specified warning as error.
+  
+ +Werror-maybe-reset
+ +Common
+@@ -135,10 +122,10 @@
+ +
+  Wextra
+  Common Var(extra_warnings) Warning
+- Print extra (possibly unwanted) warnings
+-@@ -1242,6 +1246,9 @@ fguess-branch-probability
++ Print extra (possibly unwanted) warnings.
++@@ -1432,6 +1436,9 @@ fguess-branch-probability
+  Common Report Var(flag_guess_branch_prob) Optimization
+- Enable guessing of branch probabilities
++ Enable guessing of branch probabilities.
+  
+ +fhonour-copts
+ +Common RejectNegative
+@@ -148,25 +135,7 @@
+  ; On SVR4 targets, it also controls whether or not to emit a
+ --- a/gcc/opts.c
+ +++ b/gcc/opts.c
+-@@ -468,8 +468,6 @@ static const struct default_options defa
+-     { OPT_LEVELS_2_PLUS, OPT_fschedule_insns2, NULL, 1 },
+- #endif
+-     { OPT_LEVELS_2_PLUS, OPT_fregmove, NULL, 1 },
+--    { OPT_LEVELS_2_PLUS, OPT_fstrict_aliasing, NULL, 1 },
+--    { OPT_LEVELS_2_PLUS, OPT_fstrict_overflow, NULL, 1 },
+-     { OPT_LEVELS_2_PLUS, OPT_freorder_blocks, NULL, 1 },
+-     { OPT_LEVELS_2_PLUS, OPT_freorder_functions, NULL, 1 },
+-     { OPT_LEVELS_2_PLUS, OPT_ftree_vrp, NULL, 1 },
+-@@ -489,6 +487,8 @@ static const struct default_options defa
+-     { OPT_LEVELS_2_PLUS, OPT_fhoist_adjacent_loads, NULL, 1 },
+- 
+-     /* -O3 optimizations.  */
+-+    { OPT_LEVELS_3_PLUS, OPT_fstrict_aliasing, NULL, 1 },
+-+    { OPT_LEVELS_3_PLUS, OPT_fstrict_overflow, NULL, 1 },
+-     { OPT_LEVELS_3_PLUS, OPT_ftree_loop_distribute_patterns, NULL, 1 },
+-     { OPT_LEVELS_3_PLUS, OPT_fpredictive_commoning, NULL, 1 },
+-     /* Inlining of functions reducing size is a good idea with -Os
+-@@ -1435,6 +1435,17 @@ common_handle_option (struct gcc_options
++@@ -1783,6 +1783,17 @@ common_handle_option (struct gcc_options
+  			       opts, opts_set, loc, dc);
+        break;
+  
+@@ -200,16 +169,16 @@
+  Issue warnings for code in system headers.  These are normally unhelpful
+ --- a/gcc/doc/invoke.texi
+ +++ b/gcc/doc/invoke.texi
+-@@ -240,7 +240,7 @@ Objective-C and Objective-C++ Dialects}.
+- -Wconversion  -Wcoverage-mismatch  -Wno-cpp  -Wno-deprecated  @gol
+- -Wno-deprecated-declarations -Wdisabled-optimization  @gol
+- -Wno-div-by-zero -Wdouble-promotion -Wempty-body  -Wenum-compare @gol
+---Wno-endif-labels -Werror  -Werror=* @gol
+-+-Wno-endif-labels -Werror  -Werror=* -Werror-maybe-reset @gol
+- -Wfatal-errors  -Wfloat-equal  -Wformat  -Wformat=2 @gol
++@@ -263,7 +263,7 @@ Objective-C and Objective-C++ Dialects}.
++ -Wno-discarded-qualifiers -Wno-discarded-array-qualifiers @gol
++ -Wno-div-by-zero -Wdouble-promotion -Wduplicated-cond @gol
++ -Wempty-body  -Wenum-compare -Wno-endif-labels @gol
++--Werror  -Werror=* -Wfatal-errors -Wfloat-equal  -Wformat  -Wformat=2 @gol
+++-Werror  -Werror=* -Werror-maybe-reset -Wfatal-errors -Wfloat-equal  -Wformat  -Wformat=2 @gol
+  -Wno-format-contains-nul -Wno-format-extra-args -Wformat-nonliteral @gol
+- -Wformat-security  -Wformat-y2k @gol
+-@@ -4817,6 +4817,22 @@ This option is only supported for C and 
++ -Wformat-security  -Wformat-signedness  -Wformat-y2k -Wframe-address @gol
++ -Wframe-larger-than=@var{len} -Wno-free-nonheap-object -Wjump-misses-init @gol
++@@ -5737,6 +5737,22 @@ This option is only supported for C and
+  @option{-Wall} and by @option{-Wpedantic}, which can be disabled with
+  @option{-Wno-pointer-sign}.
+  
+@@ -232,7 +201,7 @@
+  @item -Wstack-protector
+  @opindex Wstack-protector
+  @opindex Wno-stack-protector
+-@@ -6928,7 +6944,7 @@ so, the first branch is redirected to ei
++@@ -6605,7 +6621,7 @@ so, the first branch is redirected to ei
+  second branch or a point immediately following it, depending on whether
+  the condition is known to be true or false.
+  
+@@ -243,7 +212,7 @@
+  @opindex fsplit-wide-types
+ --- a/gcc/java/jvspec.c
+ +++ b/gcc/java/jvspec.c
+-@@ -626,6 +626,7 @@ lang_specific_pre_link (void)
++@@ -629,6 +629,7 @@ lang_specific_pre_link (void)
+       class name.  Append dummy `.c' that can be stripped by set_input so %b
+       is correct.  */ 
+    set_input (concat (main_class_name, "main.c", NULL));
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/920-specs_nonfatal_getenv.patch b/toolchain/gcc/patches/arc-2016.09-release/920-specs_nonfatal_getenv.patch
+new file mode 100644
+index 0000000000..dc0acb95a8
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/920-specs_nonfatal_getenv.patch
+@@ -0,0 +1,15 @@
++--- a/gcc/gcc.c
+++++ b/gcc/gcc.c
++@@ -9198,8 +9198,10 @@ getenv_spec_function (int argc, const ch
++     value = varname;
++ 
++   if (!value)
++-    fatal_error (input_location,
++-		 "environment variable %qs not defined", varname);
+++    {
+++      warning (input_location, "environment variable %qs not defined", varname);
+++      value = "";
+++    }
++ 
++   /* We have to escape every character of the environment variable so
++      they are not interpreted as active spec characters.  A
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/930-fix-mips-noexecstack.patch b/toolchain/gcc/patches/arc-2016.09-release/930-fix-mips-noexecstack.patch
+new file mode 100644
+index 0000000000..2a99840b63
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/930-fix-mips-noexecstack.patch
+@@ -0,0 +1,111 @@
++From da45b3fde60095756f5f6030f6012c23a3d34429 Mon Sep 17 00:00:00 2001
++From: Andrew McDonnell <bugs@andrewmcdonnell.net>
++Date: Fri, 3 Oct 2014 19:09:00 +0930
++Subject: Add .note.GNU-stack section
++
++See http://lists.busybox.net/pipermail/uclibc/2014-October/048671.html
++Below copied from https://gcc.gnu.org/ml/gcc-patches/2014-09/msg02430.html
++
++Re: [Patch, MIPS] Add .note.GNU-stack section
++
++    From: Steve Ellcey <sellcey at mips dot com>
++
++On Wed, 2014-09-10 at 10:15 -0700, Eric Christopher wrote:
++>
++>
++> On Wed, Sep 10, 2014 at 9:27 AM, <pinskia@gmail.com> wrote:
++
++>         This works except you did not update the assembly files in
++>         libgcc or glibc. We (Cavium) have the same patch in our tree
++>         for a few released versions.
++
++> Mind just checking yours in then Andrew?
++
++> Thanks!
++> -eric
++
++I talked to Andrew about what files he changed in GCC and created and
++tested this new patch.  Andrew also mentioned changing some assembly
++files in glibc but I don't see any use of '.section .note.GNU-stack' in
++any assembly files in glibc (for any platform) so I wasn't planning on
++creating a glibc to add them to mips glibc assembly language files.
++
++OK to check in this patch?
++
++Steve Ellcey
++sellcey@mips.com
++
++
++
++2014-09-26  Steve Ellcey  <sellcey@mips.com>
++---
++ gcc/config/mips/mips.c          | 3 +++
++ libgcc/config/mips/crti.S       | 4 ++++
++ libgcc/config/mips/crtn.S       | 3 +++
++ libgcc/config/mips/mips16.S     | 4 ++++
++ libgcc/config/mips/vr4120-div.S | 4 ++++
++ 5 files changed, 18 insertions(+)
++
++--- a/gcc/config/mips/mips.c
+++++ b/gcc/config/mips/mips.c
++@@ -20228,6 +20228,9 @@ mips_promote_function_mode (const_tree t
++ #undef TARGET_HARD_REGNO_SCRATCH_OK
++ #define TARGET_HARD_REGNO_SCRATCH_OK mips_hard_regno_scratch_ok
++ 
+++#undef TARGET_ASM_FILE_END
+++#define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+++
++ struct gcc_target targetm = TARGET_INITIALIZER;
++ 
++ #include "gt-mips.h"
++--- a/libgcc/config/mips/crti.S
+++++ b/libgcc/config/mips/crti.S
++@@ -21,6 +21,10 @@ a copy of the GCC Runtime Library Except
++ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++ <http://www.gnu.org/licenses/>.  */
++ 
+++
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++
++ /* 4 slots for argument spill area.  1 for cpreturn, 1 for stack.
++    Return spill offset of 40 and 20.  Aligned to 16 bytes for n32.  */
++ 
++--- a/libgcc/config/mips/crtn.S
+++++ b/libgcc/config/mips/crtn.S
++@@ -21,6 +21,9 @@ a copy of the GCC Runtime Library Except
++ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++ <http://www.gnu.org/licenses/>.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++
++ /* 4 slots for argument spill area.  1 for cpreturn, 1 for stack.
++    Return spill offset of 40 and 20.  Aligned to 16 bytes for n32.  */
++ 
++--- a/libgcc/config/mips/mips16.S
+++++ b/libgcc/config/mips/mips16.S
++@@ -48,6 +48,10 @@ see the files COPYING3 and COPYING.RUNTI
++    values using the soft-float calling convention, but do the actual
++    operation using the hard floating point instructions.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++	.previous
+++
++ #if defined _MIPS_SIM && (_MIPS_SIM == _ABIO32 || _MIPS_SIM == _ABIO64)
++ 
++ /* This file contains 32-bit assembly code.  */
++--- a/libgcc/config/mips/vr4120-div.S
+++++ b/libgcc/config/mips/vr4120-div.S
++@@ -26,6 +26,10 @@ see the files COPYING3 and COPYING.RUNTI
++    -mfix-vr4120.  div and ddiv do not give the correct result when one
++    of the operands is negative.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++	.previous
+++
++ 	.set	nomips16
++ 
++ #define DIV								\
+diff --git a/toolchain/gcc/patches/arc-2016.03/940-no-clobber-stamp-bits.patch b/toolchain/gcc/patches/arc-2016.09-release/940-no-clobber-stamp-bits.patch
+similarity index 87%
+rename from toolchain/gcc/patches/arc-2016.03/940-no-clobber-stamp-bits.patch
+rename to toolchain/gcc/patches/arc-2016.09-release/940-no-clobber-stamp-bits.patch
+index dbecef2d57..68e62865b1 100644
+--- a/toolchain/gcc/patches/arc-2016.03/940-no-clobber-stamp-bits.patch
++++ b/toolchain/gcc/patches/arc-2016.09-release/940-no-clobber-stamp-bits.patch
+@@ -1,6 +1,6 @@
+ --- a/libstdc++-v3/include/Makefile.in
+ +++ b/libstdc++-v3/include/Makefile.in
+-@@ -1342,7 +1342,7 @@
++@@ -1459,7 +1459,7 @@ stamp-bits: ${bits_headers}
+  	@$(STAMP) stamp-bits
+  
+  stamp-bits-sup: stamp-bits ${bits_sup_headers}
+diff --git a/toolchain/gcc/patches/arc-2016.09-release/950-cpp_file_path_translation.patch b/toolchain/gcc/patches/arc-2016.09-release/950-cpp_file_path_translation.patch
+new file mode 100644
+index 0000000000..d467eb7c9a
+--- /dev/null
++++ b/toolchain/gcc/patches/arc-2016.09-release/950-cpp_file_path_translation.patch
+@@ -0,0 +1,182 @@
++Forward ported from attachment to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47047
++
++--- a/gcc/c-family/c-opts.c
+++++ b/gcc/c-family/c-opts.c
++@@ -574,6 +574,10 @@ c_common_handle_option (size_t scode, co
++       add_path (xstrdup (arg), SYSTEM, 0, true);
++       break;
++ 
+++    case OPT_iremap:
+++      add_cpp_remap_path (arg);
+++      break;
+++
++     case OPT_iwithprefix:
++       add_prefixed_path (arg, SYSTEM);
++       break;
++--- a/gcc/c-family/c.opt
+++++ b/gcc/c-family/c.opt
++@@ -1632,6 +1632,10 @@ iquote
++ C ObjC C++ ObjC++ Joined Separate MissingArgError(missing path after %qs)
++ -iquote <dir>	Add <dir> to the end of the quote include path.
++ 
+++iremap
+++C ObjC C++ ObjC++ Joined Separate
+++-iremap <src:dst>  Convert <src> to <dst> if it occurs as prefix in __FILE__.
+++
++ iwithprefix
++ C ObjC C++ ObjC++ Joined Separate
++ -iwithprefix <dir>	Add <dir> to the end of the system include path.
++--- a/gcc/doc/cpp.texi
+++++ b/gcc/doc/cpp.texi
++@@ -4444,6 +4444,7 @@ without notice.
++ @c man begin SYNOPSIS
++ cpp [@option{-D}@var{macro}[=@var{defn}]@dots{}] [@option{-U}@var{macro}]
++     [@option{-I}@var{dir}@dots{}] [@option{-iquote}@var{dir}@dots{}]
+++    [@option{-iremap}@var{src}:@var{dst}]
++     [@option{-W}@var{warn}@dots{}]
++     [@option{-M}|@option{-MM}] [@option{-MG}] [@option{-MF} @var{filename}]
++     [@option{-MP}] [@option{-MQ} @var{target}@dots{}]
++--- a/gcc/doc/cppopts.texi
+++++ b/gcc/doc/cppopts.texi
++@@ -532,6 +532,12 @@ Search @var{dir} only for header files r
++ If @var{dir} begins with @code{=}, then the @code{=} will be replaced
++ by the sysroot prefix; see @option{--sysroot} and @option{-isysroot}.
++ 
+++@item -iremap @var{src}:@var{dst}
+++@opindex iremap
+++Replace the prefix @var{src} in __FILE__ with @var{dst} at expansion time.
+++This option can be specified more than once.  Processing stops at the first
+++match.
+++
++ @item -fdirectives-only
++ @opindex fdirectives-only
++ When preprocessing, handle directives, but do not expand macros.
++--- a/gcc/doc/invoke.texi
+++++ b/gcc/doc/invoke.texi
++@@ -476,8 +476,8 @@ Objective-C and Objective-C++ Dialects}.
++ @item Directory Options
++ @xref{Directory Options,,Options for Directory Search}.
++ @gccoptlist{-B@var{prefix} -I@var{dir} -iplugindir=@var{dir} @gol
++--iquote@var{dir} -L@var{dir} -no-canonical-prefixes -I- @gol
++---sysroot=@var{dir} --no-sysroot-suffix}
+++-iquote@var{dir} -iremap@var{src}:@var{dst} -L@var{dir} -no-canonical-prefixes @gol
+++-I- --sysroot=@var{dir} --no-sysroot-suffix}
++ 
++ @item Code Generation Options
++ @xref{Code Gen Options,,Options for Code Generation Conventions}.
++@@ -10861,6 +10861,12 @@ be searched for header files only for th
++ "@var{file}"}; they are not searched for @code{#include <@var{file}>},
++ otherwise just like @option{-I}.
++ 
+++@item -iremap @var{src}:@var{dst}
+++@opindex iremap
+++Replace the prefix @var{src} in __FILE__ with @var{dst} at expansion time.
+++This option can be specified more than once.  Processing stops at the first
+++match.
+++
++ @item -L@var{dir}
++ @opindex L
++ Add directory @var{dir} to the list of directories to be searched
++--- a/libcpp/include/cpplib.h
+++++ b/libcpp/include/cpplib.h
++@@ -760,6 +760,9 @@ extern void cpp_set_lang (cpp_reader *,
++ /* Set the include paths.  */
++ extern void cpp_set_include_chains (cpp_reader *, cpp_dir *, cpp_dir *, int);
++ 
+++/* Provide src:dst pair for __FILE__ remapping.  */
+++extern void add_cpp_remap_path (const char *);
+++
++ /* Call these to get pointers to the options, callback, and deps
++    structures for a given reader.  These pointers are good until you
++    call cpp_finish on that reader.  You can either edit the callbacks
++--- a/libcpp/macro.c
+++++ b/libcpp/macro.c
++@@ -227,6 +227,64 @@ static const char * const monthnames[] =
++   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
++ };
++ 
+++static size_t remap_pairs;
+++static char **remap_src;
+++static char **remap_dst;
+++
+++void
+++add_cpp_remap_path (const char *arg)
+++{
+++  const char *arg_dst;
+++  size_t len;
+++
+++  arg_dst = strchr(arg, ':');
+++  if (arg_dst == NULL)
+++    {
+++      fprintf(stderr, "Invalid argument for -iremap\n");
+++      exit(1);
+++    }
+++
+++  len = arg_dst - arg;
+++  ++arg_dst;
+++
+++  remap_src = (char **) xrealloc(remap_src, sizeof(char *) * (remap_pairs + 1));
+++  remap_dst = (char **) xrealloc(remap_dst, sizeof(char *) * (remap_pairs + 1));
+++
+++  remap_src[remap_pairs] = (char *) xmalloc(len + 1);
+++  memcpy(remap_src[remap_pairs], arg, len);
+++  remap_src[remap_pairs][len] = '\0';
+++  remap_dst[remap_pairs] = xstrdup(arg_dst);
+++  ++remap_pairs;
+++}
+++
+++static const char *
+++cpp_remap_file (const char *arg, char **tmp_name)
+++{
+++  char *result;
+++  size_t i, len;
+++
+++  for (i = 0; i < remap_pairs; ++i)
+++    {
+++      len = strlen (remap_src[i]);
+++      if (strncmp (remap_src[i], arg, len))
+++	continue;
+++      if (arg[len] == '\0')
+++	return xstrdup (remap_dst[i]);
+++      if (arg[len] != '/')
+++	continue;
+++      arg += len;
+++      len = strlen (remap_dst[i]);
+++      result = (char *) xmalloc (len + strlen (arg) + 1);
+++      memcpy(result, remap_dst[i], len);
+++      strcpy(result + len, arg);
+++      *tmp_name = result;
+++
+++      return result;
+++    }
+++
+++   return arg;
+++}
+++
++ /* Helper function for builtin_macro.  Returns the text generated by
++    a builtin macro. */
++ const uchar *
++@@ -290,6 +348,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++       {
++ 	unsigned int len;
++ 	const char *name;
+++	char *tmp_name = NULL;
++ 	uchar *buf;
++ 	
++ 	if (node->value.builtin == BT_FILE)
++@@ -301,6 +360,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++ 	    if (!name)
++ 	      abort ();
++ 	  }
+++	name = cpp_remap_file (name, &tmp_name);
++ 	len = strlen (name);
++ 	buf = _cpp_unaligned_alloc (pfile, len * 2 + 3);
++ 	result = buf;
++@@ -308,6 +368,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++ 	buf = cpp_quote_string (buf + 1, (const unsigned char *) name, len);
++ 	*buf++ = '"';
++ 	*buf = '\0';
+++	free (tmp_name);
++       }
++       break;
++ 
+diff --git a/toolchain/gdb/Makefile b/toolchain/gdb/Makefile
+index 8a18d3ec07..72e1766c57 100644
+--- a/toolchain/gdb/Makefile
++++ b/toolchain/gdb/Makefile
+@@ -9,11 +9,11 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=gdb
+ 
+ ifeq ($(CONFIG_arc),y)
+-PKG_VERSION:=arc-2016.03-gdb
++PKG_VERSION:=arc-2016.09-gdb
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/arc-2016.03-gdb
+-PKG_HASH:=6a91f86cc487c1548d3f5d4f29f7226d2019c0db8a63633aeabd5914a340f3f9
++PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/arc-2016.09-gdb
++PKG_HASH:=b7601f8953055c6768304da7f7ee48abc0fc0ad2bec8f93bbefb29780467f21d
+ GDB_DIR:=binutils-$(PKG_NAME)-$(PKG_VERSION)
+ PATCH_DIR:=./patches-arc
+ else
+-- 
+2.13.1
+

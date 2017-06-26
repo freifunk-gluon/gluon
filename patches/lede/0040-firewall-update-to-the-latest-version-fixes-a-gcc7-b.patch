@@ -1,0 +1,31 @@
+From d2610e2e52311f67f4f57a2fbbf0d95283fc1838 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Thu, 4 May 2017 16:11:27 +0200
+Subject: [PATCH] firewall: update to the latest version, fixes a gcc7 build
+ error
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ package/network/config/firewall/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/package/network/config/firewall/Makefile b/package/network/config/firewall/Makefile
+index e5fcb8c916..0ba3414307 100644
+--- a/package/network/config/firewall/Makefile
++++ b/package/network/config/firewall/Makefile
+@@ -13,9 +13,9 @@ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(LEDE_GIT)/project/firewall3.git
+-PKG_SOURCE_DATE:=2017-05-27
+-PKG_SOURCE_VERSION:=a4d98aea373e04f3fdc3c492c1688ba52ce490a9
+-PKG_MIRROR_HASH:=55402b1e6bb471f6aed599c61c1c63b58212f5789f094d78247646fc0a7cf435
++PKG_SOURCE_DATE:=2017-05-09
++PKG_SOURCE_VERSION:=c328d1f6fe982888b5f5852423ee0a41cee3adb1
++PKG_MIRROR_HASH:=ca7d5aa038489afa9241ba36781c70237a41f8c4622612c933ea452b6d0c6ece
+ PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
+ PKG_LICENSE:=ISC
+ 
+-- 
+2.13.1
+
