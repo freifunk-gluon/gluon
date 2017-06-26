@@ -1,0 +1,120 @@
+From 6d24583734c3e7a7bdfa37d2a8dc4717bd8fff30 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 3 May 2017 15:01:03 +0200
+Subject: [PATCH] build: stop overriding STAGING_DIR_HOST for toolchain build
+
+This causes various issues in other places that assume that host
+binaries are staged in STAGING_DIR_HOST.
+Since all the right places use HOST_BUILD_PREFIX, override that instead.
+This fixes some issues with quilt on toolchain dirs
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ include/host-build.mk       | 2 +-
+ include/toolchain-build.mk  | 3 +--
+ toolchain/binutils/Makefile | 4 +---
+ toolchain/gcc/common.mk     | 8 ++++----
+ toolchain/insight/Makefile  | 5 +----
+ 5 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/include/host-build.mk b/include/host-build.mk
+index 70bf6e5a39..da30e62893 100644
+--- a/include/host-build.mk
++++ b/include/host-build.mk
+@@ -27,7 +27,7 @@ BUILD_TYPES += host
+ HOST_STAMP_PREPARED=$(HOST_BUILD_DIR)/.prepared$(if $(HOST_QUILT)$(DUMP),,$(shell $(call find_md5,${CURDIR} $(PKG_FILE_DEPENDS),)))
+ HOST_STAMP_CONFIGURED:=$(HOST_BUILD_DIR)/.configured
+ HOST_STAMP_BUILT:=$(HOST_BUILD_DIR)/.built
+-HOST_BUILD_PREFIX:=$(if $(IS_PACKAGE_BUILD),$(STAGING_DIR_HOSTPKG),$(STAGING_DIR_HOST))
++HOST_BUILD_PREFIX?=$(if $(IS_PACKAGE_BUILD),$(STAGING_DIR_HOSTPKG),$(STAGING_DIR_HOST))
+ HOST_STAMP_INSTALLED:=$(HOST_BUILD_PREFIX)/stamp/.$(PKG_NAME)_installed
+ 
+ override MAKEFLAGS=
+diff --git a/include/toolchain-build.mk b/include/toolchain-build.mk
+index 212923a1e6..3dddfafdcb 100644
+--- a/include/toolchain-build.mk
++++ b/include/toolchain-build.mk
+@@ -7,8 +7,7 @@
+ 
+ override CONFIG_AUTOREBUILD=
+ 
+-REAL_STAGING_DIR_HOST:=$(STAGING_DIR_HOST)
+-STAGING_DIR_HOST:=$(TOOLCHAIN_DIR)
++HOST_BUILD_PREFIX:=$(TOOLCHAIN_DIR)
+ BUILD_DIR_HOST:=$(BUILD_DIR_TOOLCHAIN)
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+diff --git a/toolchain/binutils/Makefile b/toolchain/binutils/Makefile
+index 9bdd68f6ac..459f54587b 100644
+--- a/toolchain/binutils/Makefile
++++ b/toolchain/binutils/Makefile
+@@ -34,8 +34,6 @@ HOST_BUILD_PARALLEL:=1
+ 
+ PATCH_DIR:=./patches/$(PKG_VERSION)
+ 
+-REAL_STAGING_DIR_HOST:=$(STAGING_DIR_HOST)
+-
+ include $(INCLUDE_DIR)/toolchain-build.mk
+ 
+ BINUTILS_CONFIGURE:= \
+@@ -96,7 +94,7 @@ define Host/Install
+ 		install
+ 	$(call FixupLibdir,$(TOOLCHAIN_DIR)/initial)
+ 	$(RM) $(TOOLCHAIN_DIR)/initial/lib/libiberty.a
+-	$(CP) $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-readelf $(REAL_STAGING_DIR_HOST)/bin/readelf
++	$(CP) $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-readelf $(HOST_BUILD_PREFIX)/bin/readelf
+ 	# ARC gcc requires extlib.
+ 	# If extlib is not available in "initial" folder
+ 	# initial gcc will fail to build libc.
+diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
+index 28360987f3..55ae1a2c09 100644
+--- a/toolchain/gcc/common.mk
++++ b/toolchain/gcc/common.mk
+@@ -70,7 +70,7 @@ endif
+ HOST_STAMP_PREPARED:=$(HOST_BUILD_DIR)/.prepared
+ HOST_STAMP_BUILT:=$(GCC_BUILD_DIR)/.built
+ HOST_STAMP_CONFIGURED:=$(GCC_BUILD_DIR)/.configured
+-HOST_STAMP_INSTALLED:=$(STAGING_DIR_HOST)/stamp/.gcc_$(GCC_VARIANT)_installed
++HOST_STAMP_INSTALLED:=$(HOST_BUILD_PREFIX)/stamp/.gcc_$(GCC_VARIANT)_installed
+ 
+ SEP:=,
+ TARGET_LANGUAGES:="c,c++$(if $(CONFIG_INSTALL_LIBGCJ),$(SEP)java)$(if $(CONFIG_INSTALL_GFORTRAN),$(SEP)fortran)$(if $(CONFIG_INSTALL_GCCGO),$(SEP)go)"
+@@ -91,7 +91,7 @@ ifdef CONFIG_INSTALL_GCCGO
+ endif
+ 
+ ifdef CONFIG_GCC_USE_GRAPHITE
+-  GRAPHITE_CONFIGURE=--with-isl=$(REAL_STAGING_DIR_HOST)
++  GRAPHITE_CONFIGURE=--with-isl=$(HOST_BUILD_PREFIX)
+ else
+   GRAPHITE_CONFIGURE=--without-isl --without-cloog
+ endif
+@@ -218,8 +218,8 @@ endef
+ 
+ define Host/Clean
+ 	rm -rf $(if $(GCC_PREPARE),$(HOST_SOURCE_DIR)) \
+-		$(STAGING_DIR_HOST)/stamp/.gcc_* \
+-		$(STAGING_DIR_HOST)/stamp/.binutils_* \
++		$(HOST_BUILD_PREFIX)/stamp/.gcc_* \
++		$(HOST_BUILD_PREFIX)/stamp/.binutils_* \
+ 		$(GCC_BUILD_DIR) \
+ 		$(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME) \
+ 		$(TOOLCHAIN_DIR)/$(REAL_GNU_TARGET_NAME) \
+diff --git a/toolchain/insight/Makefile b/toolchain/insight/Makefile
+index 60309ba094..63a0e27ced 100644
+--- a/toolchain/insight/Makefile
++++ b/toolchain/insight/Makefile
+@@ -14,10 +14,7 @@ PKG_HASH:=51216df73adc4f68c67b60356270d5073f0ff094c1b477ecd96560f49707ea2a
+ PKG_SOURCE_URL:=ftp://sourceware.org/pub/insight/releases
+ PKG_CAT:=bzcat
+ 
+-STAGING_DIR_HOST:=$(TOOLCHAIN_DIR)
+-BUILD_DIR_HOST:=$(BUILD_DIR_TOOLCHAIN)
+-
+-include $(INCLUDE_DIR)/host-build.mk
++include $(INCLUDE_DIR)/toolchain-build.mk
+ 
+ define Host/Configure
+ 	(cd $(HOST_BUILD_DIR); \
+-- 
+2.13.1
+

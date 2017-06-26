@@ -1,0 +1,991 @@
+From 0ab730020913adc63330a95ea8d01723037b6dc4 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Thu, 4 May 2017 15:18:13 +0200
+Subject: [PATCH] toolchain: add gcc 7.1.0 support
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ toolchain/gcc/Config.in                            |   4 +
+ toolchain/gcc/Config.version                       |   1 +
+ toolchain/gcc/common.mk                            |   7 +-
+ toolchain/gcc/exclude-testsuite                    |   9 ++
+ .../7.1.0/001-revert_register_mode_search.patch    |  65 ++++++++
+ .../gcc/patches/7.1.0/002-case_insensitive.patch   |  14 ++
+ .../gcc/patches/7.1.0/010-documentation.patch      |  23 +++
+ toolchain/gcc/patches/7.1.0/230-musl_libssp.patch  |  13 ++
+ .../7.1.0/300-mips_Os_cpu_rtx_cost_model.patch     |  11 ++
+ .../patches/7.1.0/800-arm_v5te_no_ldrd_strd.patch  |  11 ++
+ .../patches/7.1.0/810-arm-softfloat-libgcc.patch   |  25 +++
+ toolchain/gcc/patches/7.1.0/820-libgcc_pic.patch   |  36 +++++
+ .../7.1.0/840-armv4_pass_fix-v4bx_to_ld.patch      |  19 +++
+ .../gcc/patches/7.1.0/850-use_shared_libgcc.patch  |  47 ++++++
+ .../gcc/patches/7.1.0/851-libgcc_no_compat.patch   |  12 ++
+ .../gcc/patches/7.1.0/870-ppc_no_crtsavres.patch   |  11 ++
+ .../gcc/patches/7.1.0/881-no_tm_section.patch      |  11 ++
+ .../gcc/patches/7.1.0/900-bad-mips16-crt.patch     |   9 ++
+ toolchain/gcc/patches/7.1.0/910-mbsd_multi.patch   | 140 +++++++++++++++++
+ .../patches/7.1.0/920-specs_nonfatal_getenv.patch  |  15 ++
+ .../patches/7.1.0/930-fix-mips-noexecstack.patch   | 111 +++++++++++++
+ .../patches/7.1.0/940-no-clobber-stamp-bits.patch  |  11 ++
+ .../7.1.0/950-cpp_file_path_translation.patch      | 171 +++++++++++++++++++++
+ 23 files changed, 775 insertions(+), 1 deletion(-)
+ create mode 100644 toolchain/gcc/exclude-testsuite
+ create mode 100644 toolchain/gcc/patches/7.1.0/001-revert_register_mode_search.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/002-case_insensitive.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/010-documentation.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/230-musl_libssp.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/300-mips_Os_cpu_rtx_cost_model.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/800-arm_v5te_no_ldrd_strd.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/810-arm-softfloat-libgcc.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/820-libgcc_pic.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/840-armv4_pass_fix-v4bx_to_ld.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/850-use_shared_libgcc.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/851-libgcc_no_compat.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/870-ppc_no_crtsavres.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/881-no_tm_section.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/900-bad-mips16-crt.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/910-mbsd_multi.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/920-specs_nonfatal_getenv.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/930-fix-mips-noexecstack.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/940-no-clobber-stamp-bits.patch
+ create mode 100644 toolchain/gcc/patches/7.1.0/950-cpp_file_path_translation.patch
+
+diff --git a/toolchain/gcc/Config.in b/toolchain/gcc/Config.in
+index b8de2d4fb8..84f2b9675d 100644
+--- a/toolchain/gcc/Config.in
++++ b/toolchain/gcc/Config.in
+@@ -20,6 +20,10 @@ choice
+ 		bool "gcc 6.x"
+ 		depends on !arc
+ 
++	config GCC_USE_VERSION_7
++		bool "gcc 7.x"
++		depends on !arc
++
+ endchoice
+ 
+ config GCC_USE_GRAPHITE
+diff --git a/toolchain/gcc/Config.version b/toolchain/gcc/Config.version
+index 9ab736c695..167f4316b4 100644
+--- a/toolchain/gcc/Config.version
++++ b/toolchain/gcc/Config.version
+@@ -6,6 +6,7 @@ config GCC_VERSION
+ 	string
+ 	default "arc-2016.09-release"   if GCC_VERSION_6_2_ARC
+ 	default "6.3.0"         if GCC_USE_VERSION_6
++	default "7.1.0"         if GCC_USE_VERSION_7
+ 	default "5.4.0"
+ 
+ config GCC_VERSION_6_2
+diff --git a/toolchain/gcc/common.mk b/toolchain/gcc/common.mk
+index f457faf24c..28360987f3 100644
+--- a/toolchain/gcc/common.mk
++++ b/toolchain/gcc/common.mk
+@@ -36,6 +36,10 @@ ifeq ($(PKG_VERSION),6.3.0)
+   PKG_HASH:=f06ae7f3f790fbf0f018f6d40e844451e6bc3b7bc96e128e63b09825c1f8b29f
+ endif
+ 
++ifeq ($(PKG_VERSION),7.1.0)
++  PKG_HASH:=8a8136c235f64c6fef69cac0d73a46a1a09bb250776a050aec8f9fc880bebc17
++endif
++
+ ifneq ($(CONFIG_GCC_VERSION_6_2_ARC),)
+     PKG_VERSION:=6.2.1
+     PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/gcc/archive/$(GCC_VERSION)
+@@ -71,7 +75,8 @@ HOST_STAMP_INSTALLED:=$(STAGING_DIR_HOST)/stamp/.gcc_$(GCC_VARIANT)_installed
+ SEP:=,
+ TARGET_LANGUAGES:="c,c++$(if $(CONFIG_INSTALL_LIBGCJ),$(SEP)java)$(if $(CONFIG_INSTALL_GFORTRAN),$(SEP)fortran)$(if $(CONFIG_INSTALL_GCCGO),$(SEP)go)"
+ 
+-TAR_OPTIONS += --exclude='gcc/testsuite/*' --exclude=gcc/ada/*.ad*
++TAR_OPTIONS += \
++	--exclude-from='$(CURDIR)/../exclude-testsuite' --exclude=gcc/ada/*.ad* \
+ 
+ ifndef CONFIG_INSTALL_LIBGCJ
+   TAR_OPTIONS += --exclude=libjava
+diff --git a/toolchain/gcc/exclude-testsuite b/toolchain/gcc/exclude-testsuite
+new file mode 100644
+index 0000000000..37a8f2476e
+--- /dev/null
++++ b/toolchain/gcc/exclude-testsuite
+@@ -0,0 +1,9 @@
++gcc-*/gcc/testsuite/ada
++gcc-*/gcc/testsuite/brig.dg
++gcc-*/gcc/testsuite/c-c++-common
++gcc-*/gcc/testsuite/ChangeLog*
++gcc-*/gcc/testsuite/config
++gcc-*/gcc/testsuite/g*
++gcc-*/gcc/testsuite/jit.dg
++gcc-*/gcc/testsuite/lib
++gcc-*/gcc/testsuite/o*
+diff --git a/toolchain/gcc/patches/7.1.0/001-revert_register_mode_search.patch b/toolchain/gcc/patches/7.1.0/001-revert_register_mode_search.patch
+new file mode 100644
+index 0000000000..adcc7c3c54
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/001-revert_register_mode_search.patch
+@@ -0,0 +1,65 @@
++Revert of:
++
++commit 275035b56823b26d5fb7e90fad945b998648edf2
++Author: bergner <bergner@138bc75d-0d04-0410-961f-82ee72b054a4>
++Date:   Thu Sep 5 14:09:07 2013 +0000
++
++        PR target/58139
++        * reginfo.c (choose_hard_reg_mode): Scan through all mode classes
++        looking for widest mode.
++
++
++    git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@202286 138bc75d-0d04-0410-961f-82ee72b054a4
++
++
++--- a/gcc/reginfo.c
+++++ b/gcc/reginfo.c
++@@ -637,35 +637,40 @@ choose_hard_reg_mode (unsigned int regno
++        mode = GET_MODE_WIDER_MODE (mode))
++     if ((unsigned) hard_regno_nregs[regno][mode] == nregs
++ 	&& HARD_REGNO_MODE_OK (regno, mode)
++-	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode))
++-	&& GET_MODE_SIZE (mode) > GET_MODE_SIZE (found_mode))
+++	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode)))
++       found_mode = mode;
++ 
+++  if (found_mode != VOIDmode)
+++    return found_mode;
+++
++   for (mode = GET_CLASS_NARROWEST_MODE (MODE_FLOAT);
++        mode != VOIDmode;
++        mode = GET_MODE_WIDER_MODE (mode))
++     if ((unsigned) hard_regno_nregs[regno][mode] == nregs
++ 	&& HARD_REGNO_MODE_OK (regno, mode)
++-	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode))
++-	&& GET_MODE_SIZE (mode) > GET_MODE_SIZE (found_mode))
+++	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode)))
++       found_mode = mode;
++ 
+++  if (found_mode != VOIDmode)
+++    return found_mode;
+++
++   for (mode = GET_CLASS_NARROWEST_MODE (MODE_VECTOR_FLOAT);
++        mode != VOIDmode;
++        mode = GET_MODE_WIDER_MODE (mode))
++     if ((unsigned) hard_regno_nregs[regno][mode] == nregs
++ 	&& HARD_REGNO_MODE_OK (regno, mode)
++-	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode))
++-	&& GET_MODE_SIZE (mode) > GET_MODE_SIZE (found_mode))
+++	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode)))
++       found_mode = mode;
++ 
+++  if (found_mode != VOIDmode)
+++    return found_mode;
+++
++   for (mode = GET_CLASS_NARROWEST_MODE (MODE_VECTOR_INT);
++        mode != VOIDmode;
++        mode = GET_MODE_WIDER_MODE (mode))
++     if ((unsigned) hard_regno_nregs[regno][mode] == nregs
++ 	&& HARD_REGNO_MODE_OK (regno, mode)
++-	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode))
++-	&& GET_MODE_SIZE (mode) > GET_MODE_SIZE (found_mode))
+++	&& (! call_saved || ! HARD_REGNO_CALL_PART_CLOBBERED (regno, mode)))
++       found_mode = mode;
++ 
++   if (found_mode != VOIDmode)
+diff --git a/toolchain/gcc/patches/7.1.0/002-case_insensitive.patch b/toolchain/gcc/patches/7.1.0/002-case_insensitive.patch
+new file mode 100644
+index 0000000000..b3d2dbe291
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/002-case_insensitive.patch
+@@ -0,0 +1,14 @@
++--- a/include/filenames.h
+++++ b/include/filenames.h
++@@ -43,11 +43,6 @@ extern "C" {
++ #  define IS_DIR_SEPARATOR(c) IS_DOS_DIR_SEPARATOR (c)
++ #  define IS_ABSOLUTE_PATH(f) IS_DOS_ABSOLUTE_PATH (f)
++ #else /* not DOSish */
++-#  if defined(__APPLE__)
++-#    ifndef HAVE_CASE_INSENSITIVE_FILE_SYSTEM
++-#      define HAVE_CASE_INSENSITIVE_FILE_SYSTEM 1
++-#    endif
++-#  endif /* __APPLE__ */
++ #  define HAS_DRIVE_SPEC(f) (0)
++ #  define IS_DIR_SEPARATOR(c) IS_UNIX_DIR_SEPARATOR (c)
++ #  define IS_ABSOLUTE_PATH(f) IS_UNIX_ABSOLUTE_PATH (f)
+diff --git a/toolchain/gcc/patches/7.1.0/010-documentation.patch b/toolchain/gcc/patches/7.1.0/010-documentation.patch
+new file mode 100644
+index 0000000000..46fe81f129
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/010-documentation.patch
+@@ -0,0 +1,23 @@
++--- a/gcc/Makefile.in
+++++ b/gcc/Makefile.in
++@@ -3120,18 +3120,10 @@ doc/gcc.info: $(TEXI_GCC_FILES)
++ doc/gccint.info: $(TEXI_GCCINT_FILES)
++ doc/cppinternals.info: $(TEXI_CPPINT_FILES)
++ 
++-doc/%.info: %.texi
++-	if [ x$(BUILD_INFO) = xinfo ]; then \
++-		$(MAKEINFO) $(MAKEINFOFLAGS) -I . -I $(gcc_docdir) \
++-			-I $(gcc_docdir)/include -o $@ $<; \
++-	fi
+++doc/%.info:
++ 
++ # Duplicate entry to handle renaming of gccinstall.info
++-doc/gccinstall.info: $(TEXI_GCCINSTALL_FILES)
++-	if [ x$(BUILD_INFO) = xinfo ]; then \
++-		$(MAKEINFO) $(MAKEINFOFLAGS) -I $(gcc_docdir) \
++-			-I $(gcc_docdir)/include -o $@ $<; \
++-	fi
+++doc/gccinstall.info:
++ 
++ doc/cpp.dvi: $(TEXI_CPP_FILES)
++ doc/gcc.dvi: $(TEXI_GCC_FILES)
+diff --git a/toolchain/gcc/patches/7.1.0/230-musl_libssp.patch b/toolchain/gcc/patches/7.1.0/230-musl_libssp.patch
+new file mode 100644
+index 0000000000..65b5710d6f
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/230-musl_libssp.patch
+@@ -0,0 +1,13 @@
++--- a/gcc/gcc.c
+++++ b/gcc/gcc.c
++@@ -861,7 +861,9 @@ proper position among the other output f
++ #endif
++ 
++ #ifndef LINK_SSP_SPEC
++-#ifdef TARGET_LIBC_PROVIDES_SSP
+++#if DEFAULT_LIBC == LIBC_MUSL
+++#define LINK_SSP_SPEC "-lssp_nonshared"
+++#elif defined(TARGET_LIBC_PROVIDES_SSP)
++ #define LINK_SSP_SPEC "%{fstack-protector|fstack-protector-all" \
++ 		       "|fstack-protector-strong|fstack-protector-explicit:}"
++ #else
+diff --git a/toolchain/gcc/patches/7.1.0/300-mips_Os_cpu_rtx_cost_model.patch b/toolchain/gcc/patches/7.1.0/300-mips_Os_cpu_rtx_cost_model.patch
+new file mode 100644
+index 0000000000..21cff871c0
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/300-mips_Os_cpu_rtx_cost_model.patch
+@@ -0,0 +1,11 @@
++--- a/gcc/config/mips/mips.c
+++++ b/gcc/config/mips/mips.c
++@@ -19784,7 +19784,7 @@ mips_option_override (void)
++     flag_pcc_struct_return = 0;
++ 
++   /* Decide which rtx_costs structure to use.  */
++-  if (optimize_size)
+++  if (0 && optimize_size)
++     mips_cost = &mips_rtx_cost_optimize_size;
++   else
++     mips_cost = &mips_rtx_cost_data[mips_tune];
+diff --git a/toolchain/gcc/patches/7.1.0/800-arm_v5te_no_ldrd_strd.patch b/toolchain/gcc/patches/7.1.0/800-arm_v5te_no_ldrd_strd.patch
+new file mode 100644
+index 0000000000..435f5715b5
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/800-arm_v5te_no_ldrd_strd.patch
+@@ -0,0 +1,11 @@
++--- a/gcc/config/arm/arm.h
+++++ b/gcc/config/arm/arm.h
++@@ -150,7 +150,7 @@ extern tree arm_fp16_type_node;
++ /* Thumb-1 only.  */
++ #define TARGET_THUMB1_ONLY		(TARGET_THUMB1 && !arm_arch_notm)
++ 
++-#define TARGET_LDRD			(arm_arch5e && ARM_DOUBLEWORD_ALIGN \
+++#define TARGET_LDRD			(arm_arch6 && ARM_DOUBLEWORD_ALIGN \
++                                          && !TARGET_THUMB1)
++ 
++ #define TARGET_CRC32			(arm_arch_crc)
+diff --git a/toolchain/gcc/patches/7.1.0/810-arm-softfloat-libgcc.patch b/toolchain/gcc/patches/7.1.0/810-arm-softfloat-libgcc.patch
+new file mode 100644
+index 0000000000..a437d81511
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/810-arm-softfloat-libgcc.patch
+@@ -0,0 +1,25 @@
++--- a/libgcc/config/arm/t-linux
+++++ b/libgcc/config/arm/t-linux
++@@ -1,6 +1,10 @@
++ LIB1ASMSRC = arm/lib1funcs.S
++ LIB1ASMFUNCS = _udivsi3 _divsi3 _umodsi3 _modsi3 _dvmd_lnx _clzsi2 _clzdi2 \
++-	_ctzsi2 _arm_addsubdf3 _arm_addsubsf3
+++	_ctzsi2 _arm_addsubdf3 _arm_addsubsf3 \
+++	_arm_negdf2 _arm_muldivdf3 _arm_cmpdf2 _arm_unorddf2 \
+++	_arm_fixdfsi _arm_fixunsdfsi _arm_truncdfsf2 \
+++	_arm_negsf2 _arm_muldivsf3 _arm_cmpsf2 _arm_unordsf2 \
+++	_arm_fixsfsi _arm_fixunssfsi
++ 
++ # Just for these, we omit the frame pointer since it makes such a big
++ # difference.
++--- a/gcc/config/arm/linux-elf.h
+++++ b/gcc/config/arm/linux-elf.h
++@@ -58,8 +58,6 @@
++    %{shared:-lc} \
++    %{!shared:%{profile:-lc_p}%{!profile:-lc}}"
++ 
++-#define LIBGCC_SPEC "%{mfloat-abi=soft*:-lfloat} -lgcc"
++-
++ #define GLIBC_DYNAMIC_LINKER "/lib/ld-linux.so.2"
++ 
++ #define LINUX_TARGET_LINK_SPEC  "%{h*} \
+diff --git a/toolchain/gcc/patches/7.1.0/820-libgcc_pic.patch b/toolchain/gcc/patches/7.1.0/820-libgcc_pic.patch
+new file mode 100644
+index 0000000000..cd539d865c
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/820-libgcc_pic.patch
+@@ -0,0 +1,36 @@
++--- a/libgcc/Makefile.in
+++++ b/libgcc/Makefile.in
++@@ -920,11 +920,12 @@ $(libgcov-driver-objects): %$(objext): $
++ 
++ # Static libraries.
++ libgcc.a: $(libgcc-objects)
+++libgcc_pic.a: $(libgcc-s-objects)
++ libgcov.a: $(libgcov-objects)
++ libunwind.a: $(libunwind-objects)
++ libgcc_eh.a: $(libgcc-eh-objects)
++ 
++-libgcc.a libgcov.a libunwind.a libgcc_eh.a:
+++libgcc.a libgcov.a libunwind.a libgcc_eh.a libgcc_pic.a:
++ 	-rm -f $@
++ 
++ 	objects="$(objects)";					\
++@@ -945,7 +946,7 @@ all: libunwind.a
++ endif
++ 
++ ifeq ($(enable_shared),yes)
++-all: libgcc_eh.a libgcc_s$(SHLIB_EXT)
+++all: libgcc_eh.a libgcc_pic.a libgcc_s$(SHLIB_EXT)
++ ifneq ($(LIBUNWIND),)
++ all: libunwind$(SHLIB_EXT)
++ libgcc_s$(SHLIB_EXT): libunwind$(SHLIB_EXT)
++@@ -1151,6 +1152,10 @@ install-shared:
++ 	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_eh.a
++ 	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_eh.a
++ 
+++	$(INSTALL_DATA) libgcc_pic.a $(mapfile) $(DESTDIR)$(inst_libdir)/
+++	chmod 644 $(DESTDIR)$(inst_libdir)/libgcc_pic.a
+++	$(RANLIB) $(DESTDIR)$(inst_libdir)/libgcc_pic.a
+++
++ 	$(subst @multilib_dir@,$(MULTIDIR),$(subst \
++ 		@shlib_base_name@,libgcc_s,$(subst \
++ 		@shlib_slibdir_qual@,$(MULTIOSSUBDIR),$(SHLIB_INSTALL))))
+diff --git a/toolchain/gcc/patches/7.1.0/840-armv4_pass_fix-v4bx_to_ld.patch b/toolchain/gcc/patches/7.1.0/840-armv4_pass_fix-v4bx_to_ld.patch
+new file mode 100644
+index 0000000000..9cae1c9d1c
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/840-armv4_pass_fix-v4bx_to_ld.patch
+@@ -0,0 +1,19 @@
++--- a/gcc/config/arm/linux-eabi.h
+++++ b/gcc/config/arm/linux-eabi.h
++@@ -88,10 +88,15 @@
++ #define MUSL_DYNAMIC_LINKER \
++   "/lib/ld-musl-arm" MUSL_DYNAMIC_LINKER_E "%{mfloat-abi=hard:hf}.so.1"
++ 
+++/* For armv4 we pass --fix-v4bx to linker to support EABI */
+++#undef TARGET_FIX_V4BX_SPEC
+++#define TARGET_FIX_V4BX_SPEC " %{mcpu=arm8|mcpu=arm810|mcpu=strongarm*"\
+++  "|march=armv4|mcpu=fa526|mcpu=fa626:--fix-v4bx}"
+++
++ /* At this point, bpabi.h will have clobbered LINK_SPEC.  We want to
++    use the GNU/Linux version, not the generic BPABI version.  */
++ #undef  LINK_SPEC
++-#define LINK_SPEC EABI_LINK_SPEC					\
+++#define LINK_SPEC EABI_LINK_SPEC TARGET_FIX_V4BX_SPEC			\
++   LINUX_OR_ANDROID_LD (LINUX_TARGET_LINK_SPEC,				\
++ 		       LINUX_TARGET_LINK_SPEC " " ANDROID_LINK_SPEC)
++ 
+diff --git a/toolchain/gcc/patches/7.1.0/850-use_shared_libgcc.patch b/toolchain/gcc/patches/7.1.0/850-use_shared_libgcc.patch
+new file mode 100644
+index 0000000000..5d09d6e2d2
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/850-use_shared_libgcc.patch
+@@ -0,0 +1,47 @@
++--- a/gcc/config/arm/linux-eabi.h
+++++ b/gcc/config/arm/linux-eabi.h
++@@ -126,10 +126,6 @@
++   "%{Ofast|ffast-math|funsafe-math-optimizations:crtfastmath.o%s} "	\
++   LINUX_OR_ANDROID_LD (GNU_USER_TARGET_ENDFILE_SPEC, ANDROID_ENDFILE_SPEC)
++ 
++-/* Use the default LIBGCC_SPEC, not the version in linux-elf.h, as we
++-   do not use -lfloat.  */
++-#undef LIBGCC_SPEC
++-
++ /* Clear the instruction cache from `beg' to `end'.  This is
++    implemented in lib1funcs.S, so ensure an error if this definition
++    is used.  */
++--- a/gcc/config/linux.h
+++++ b/gcc/config/linux.h
++@@ -53,6 +53,10 @@ see the files COPYING3 and COPYING.RUNTI
++ 	builtin_assert ("system=posix");			\
++     } while (0)
++ 
+++#ifndef LIBGCC_SPEC
+++#define LIBGCC_SPEC "%{static|static-libgcc:-lgcc}%{!static:%{!static-libgcc:-lgcc_s}}"
+++#endif
+++
++ /* Determine which dynamic linker to use depending on whether GLIBC or
++    uClibc or Bionic or musl is the default C library and whether
++    -muclibc or -mglibc or -mbionic or -mmusl has been passed to change
++--- a/libgcc/mkmap-symver.awk
+++++ b/libgcc/mkmap-symver.awk
++@@ -136,5 +136,5 @@ function output(lib) {
++   else if (inherit[lib])
++     printf("} %s;\n", inherit[lib]);
++   else
++-    printf ("\n  local:\n\t*;\n};\n");
+++    printf ("\n\t*;\n};\n");
++ }
++--- a/gcc/config/rs6000/linux.h
+++++ b/gcc/config/rs6000/linux.h
++@@ -60,6 +60,9 @@
++ #undef	CPP_OS_DEFAULT_SPEC
++ #define CPP_OS_DEFAULT_SPEC "%(cpp_os_linux)"
++ 
+++#undef LIBGCC_SPEC
+++#define LIBGCC_SPEC "%{!static:%{!static-libgcc:-lgcc_s}} -lgcc"
+++
++ #undef  LINK_SHLIB_SPEC
++ #define LINK_SHLIB_SPEC "%{shared:-shared} %{!shared: %{static:-static}}"
++ 
+diff --git a/toolchain/gcc/patches/7.1.0/851-libgcc_no_compat.patch b/toolchain/gcc/patches/7.1.0/851-libgcc_no_compat.patch
+new file mode 100644
+index 0000000000..80c3476841
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/851-libgcc_no_compat.patch
+@@ -0,0 +1,12 @@
++--- a/libgcc/config/t-libunwind
+++++ b/libgcc/config/t-libunwind
++@@ -2,8 +2,7 @@
++ 
++ HOST_LIBGCC2_CFLAGS += -DUSE_GAS_SYMVER
++ 
++-LIB2ADDEH = $(srcdir)/unwind-sjlj.c $(srcdir)/unwind-c.c \
++-  $(srcdir)/unwind-compat.c $(srcdir)/unwind-dw2-fde-compat.c
+++LIB2ADDEH = $(srcdir)/unwind-sjlj.c $(srcdir)/unwind-c.c
++ LIB2ADDEHSTATIC = $(srcdir)/unwind-sjlj.c $(srcdir)/unwind-c.c
++ 
++ # Override the default value from t-slibgcc-elf-ver and mention -lunwind
+diff --git a/toolchain/gcc/patches/7.1.0/870-ppc_no_crtsavres.patch b/toolchain/gcc/patches/7.1.0/870-ppc_no_crtsavres.patch
+new file mode 100644
+index 0000000000..332b8b62a6
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/870-ppc_no_crtsavres.patch
+@@ -0,0 +1,11 @@
++--- a/gcc/config/rs6000/rs6000.c
+++++ b/gcc/config/rs6000/rs6000.c
++@@ -26889,7 +26889,7 @@ rs6000_savres_strategy (rs6000_stack_t *
++   /* Define cutoff for using out-of-line functions to save registers.  */
++   if (DEFAULT_ABI == ABI_V4 || TARGET_ELF)
++     {
++-      if (!optimize_size)
+++      if (1)
++ 	{
++ 	  strategy |= SAVE_INLINE_FPRS | REST_INLINE_FPRS;
++ 	  strategy |= SAVE_INLINE_GPRS | REST_INLINE_GPRS;
+diff --git a/toolchain/gcc/patches/7.1.0/881-no_tm_section.patch b/toolchain/gcc/patches/7.1.0/881-no_tm_section.patch
+new file mode 100644
+index 0000000000..fab5db3be5
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/881-no_tm_section.patch
+@@ -0,0 +1,11 @@
++--- a/libgcc/crtstuff.c
+++++ b/libgcc/crtstuff.c
++@@ -152,7 +152,7 @@ call_ ## FUNC (void)					\
++ #endif
++ 
++ #if !defined(USE_TM_CLONE_REGISTRY) && defined(OBJECT_FORMAT_ELF)
++-# define USE_TM_CLONE_REGISTRY 1
+++# define USE_TM_CLONE_REGISTRY 0
++ #endif
++ 
++ /* We do not want to add the weak attribute to the declarations of these
+diff --git a/toolchain/gcc/patches/7.1.0/900-bad-mips16-crt.patch b/toolchain/gcc/patches/7.1.0/900-bad-mips16-crt.patch
+new file mode 100644
+index 0000000000..dd6e9dc889
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/900-bad-mips16-crt.patch
+@@ -0,0 +1,9 @@
++--- a/libgcc/config/mips/t-mips16
+++++ b/libgcc/config/mips/t-mips16
++@@ -43,3 +43,6 @@ SYNC_CFLAGS = -mno-mips16
++ 
++ # Version these symbols if building libgcc.so.
++ SHLIB_MAPFILES += $(srcdir)/config/mips/libgcc-mips16.ver
+++
+++CRTSTUFF_T_CFLAGS += -mno-mips16
+++CRTSTUFF_T_CFLAGS_S += -mno-mips16
+diff --git a/toolchain/gcc/patches/7.1.0/910-mbsd_multi.patch b/toolchain/gcc/patches/7.1.0/910-mbsd_multi.patch
+new file mode 100644
+index 0000000000..5b664ff227
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/910-mbsd_multi.patch
+@@ -0,0 +1,140 @@
++
++	This patch brings over a feature from MirBSD:
++	* -fhonour-copts
++	  If this option is not given, it's warned (depending
++	  on environment variables). This is to catch errors
++	  of misbuilt packages which override CFLAGS themselves.
++
++	This patch was authored by Thorsten Glaser <tg at mirbsd.de>
++	with copyright assignment to the FSF in effect.
++
++--- a/gcc/c-family/c-opts.c
+++++ b/gcc/c-family/c-opts.c
++@@ -108,6 +108,9 @@ static int class_dump_flags;
++ /* Whether any standard preincluded header has been preincluded.  */
++ static bool done_preinclude;
++ 
+++/* Check if a port honours COPTS.  */
+++static int honour_copts = 0;
+++
++ static void handle_OPT_d (const char *);
++ static void set_std_cxx98 (int);
++ static void set_std_cxx11 (int);
++@@ -456,6 +459,12 @@ c_common_handle_option (size_t scode, co
++       flag_no_builtin = !value;
++       break;
++ 
+++    case OPT_fhonour_copts:
+++      if (c_language == clk_c) {
+++        honour_copts++;
+++      }
+++      break;
+++
++     case OPT_fconstant_string_class_:
++       constant_string_class_name = arg;
++       break;
++@@ -1084,6 +1093,47 @@ c_common_init (void)
++       return false;
++     }
++ 
+++  if (c_language == clk_c) {
+++    char *ev = getenv ("GCC_HONOUR_COPTS");
+++    int evv;
+++    if (ev == NULL)
+++      evv = -1;
+++    else if ((*ev == '0') || (*ev == '\0'))
+++      evv = 0;
+++    else if (*ev == '1')
+++      evv = 1;
+++    else if (*ev == '2')
+++      evv = 2;
+++    else if (*ev == 's')
+++      evv = -1;
+++    else {
+++      warning (0, "unknown GCC_HONOUR_COPTS value, assuming 1");
+++      evv = 1; /* maybe depend this on something like MIRBSD_NATIVE?  */
+++    }
+++    if (evv == 1) {
+++      if (honour_copts == 0) {
+++        error ("someone does not honour COPTS at all in lenient mode");
+++        return false;
+++      } else if (honour_copts != 1) {
+++        warning (0, "someone does not honour COPTS correctly, passed %d times",
+++         honour_copts);
+++      }
+++    } else if (evv == 2) {
+++      if (honour_copts == 0) {
+++        error ("someone does not honour COPTS at all in strict mode");
+++        return false;
+++      } else if (honour_copts != 1) {
+++        error ("someone does not honour COPTS correctly, passed %d times",
+++         honour_copts);
+++        return false;
+++      }
+++    } else if (evv == 0) {
+++      if (honour_copts != 1)
+++        inform (0, "someone does not honour COPTS correctly, passed %d times",
+++         honour_copts);
+++    }
+++  }
+++
++   return true;
++ }
++ 
++--- a/gcc/c-family/c.opt
+++++ b/gcc/c-family/c.opt
++@@ -1412,6 +1412,9 @@ C++ ObjC++ Optimization Alias(fexception
++ fhonor-std
++ C++ ObjC++ Ignore Warn(switch %qs is no longer supported)
++ 
+++fhonour-copts
+++C ObjC C++ ObjC++ RejectNegative
+++
++ fhosted
++ C ObjC
++ Assume normal C execution environment.
++--- a/gcc/common.opt
+++++ b/gcc/common.opt
++@@ -1510,6 +1510,9 @@ fguess-branch-probability
++ Common Report Var(flag_guess_branch_prob) Optimization
++ Enable guessing of branch probabilities.
++ 
+++fhonour-copts
+++Common RejectNegative
+++
++ ; Nonzero means ignore `#ident' directives.  0 means handle them.
++ ; Generate position-independent code for executables if possible
++ ; On SVR4 targets, it also controls whether or not to emit a
++--- a/gcc/opts.c
+++++ b/gcc/opts.c
++@@ -1921,6 +1921,9 @@ common_handle_option (struct gcc_options
++ 			       opts, opts_set, loc, dc);
++       break;
++ 
+++    case OPT_fhonour_copts:
+++      break;
+++
++     case OPT_Wlarger_than_:
++       opts->x_larger_than_size = value;
++       opts->x_warn_larger_than = value != -1;
++--- a/gcc/doc/invoke.texi
+++++ b/gcc/doc/invoke.texi
++@@ -6565,6 +6565,17 @@ This option is only supported for C and
++ @option{-Wall} and by @option{-Wpedantic}, which can be disabled with
++ @option{-Wno-pointer-sign}.
++ 
+++@item -fhonour-copts
+++@opindex fhonour-copts
+++If @env{GCC_HONOUR_COPTS} is set to 1, abort if this option is not
+++given at least once, and warn if it is given more than once.
+++If @env{GCC_HONOUR_COPTS} is set to 2, abort if this option is not
+++given exactly once.
+++If @env{GCC_HONOUR_COPTS} is set to 0 or unset, warn if this option
+++is not given exactly once.
+++The warning is quelled if @env{GCC_HONOUR_COPTS} is set to @samp{s}.
+++This flag and environment variable only affect the C language.
+++
++ @item -Wstack-protector
++ @opindex Wstack-protector
++ @opindex Wno-stack-protector
++
+diff --git a/toolchain/gcc/patches/7.1.0/920-specs_nonfatal_getenv.patch b/toolchain/gcc/patches/7.1.0/920-specs_nonfatal_getenv.patch
+new file mode 100644
+index 0000000000..56dbe33c39
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/920-specs_nonfatal_getenv.patch
+@@ -0,0 +1,15 @@
++--- a/gcc/gcc.c
+++++ b/gcc/gcc.c
++@@ -9277,8 +9277,10 @@ getenv_spec_function (int argc, const ch
++     value = varname;
++ 
++   if (!value)
++-    fatal_error (input_location,
++-		 "environment variable %qs not defined", varname);
+++    {
+++      warning (input_location, "environment variable %qs not defined", varname);
+++      value = "";
+++    }
++ 
++   /* We have to escape every character of the environment variable so
++      they are not interpreted as active spec characters.  A
+diff --git a/toolchain/gcc/patches/7.1.0/930-fix-mips-noexecstack.patch b/toolchain/gcc/patches/7.1.0/930-fix-mips-noexecstack.patch
+new file mode 100644
+index 0000000000..90d10f11e4
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/930-fix-mips-noexecstack.patch
+@@ -0,0 +1,111 @@
++From da45b3fde60095756f5f6030f6012c23a3d34429 Mon Sep 17 00:00:00 2001
++From: Andrew McDonnell <bugs@andrewmcdonnell.net>
++Date: Fri, 3 Oct 2014 19:09:00 +0930
++Subject: Add .note.GNU-stack section
++
++See http://lists.busybox.net/pipermail/uclibc/2014-October/048671.html
++Below copied from https://gcc.gnu.org/ml/gcc-patches/2014-09/msg02430.html
++
++Re: [Patch, MIPS] Add .note.GNU-stack section
++
++    From: Steve Ellcey <sellcey at mips dot com>
++
++On Wed, 2014-09-10 at 10:15 -0700, Eric Christopher wrote:
++>
++>
++> On Wed, Sep 10, 2014 at 9:27 AM, <pinskia@gmail.com> wrote:
++
++>         This works except you did not update the assembly files in
++>         libgcc or glibc. We (Cavium) have the same patch in our tree
++>         for a few released versions.
++
++> Mind just checking yours in then Andrew?
++
++> Thanks!
++> -eric
++
++I talked to Andrew about what files he changed in GCC and created and
++tested this new patch.  Andrew also mentioned changing some assembly
++files in glibc but I don't see any use of '.section .note.GNU-stack' in
++any assembly files in glibc (for any platform) so I wasn't planning on
++creating a glibc to add them to mips glibc assembly language files.
++
++OK to check in this patch?
++
++Steve Ellcey
++sellcey@mips.com
++
++
++
++2014-09-26  Steve Ellcey  <sellcey@mips.com>
++---
++ gcc/config/mips/mips.c          | 3 +++
++ libgcc/config/mips/crti.S       | 4 ++++
++ libgcc/config/mips/crtn.S       | 3 +++
++ libgcc/config/mips/mips16.S     | 4 ++++
++ libgcc/config/mips/vr4120-div.S | 4 ++++
++ 5 files changed, 18 insertions(+)
++
++--- a/gcc/config/mips/mips.c
+++++ b/gcc/config/mips/mips.c
++@@ -22561,6 +22561,9 @@ mips_promote_function_mode (const_tree t
++ #undef TARGET_CUSTOM_FUNCTION_DESCRIPTORS
++ #define TARGET_CUSTOM_FUNCTION_DESCRIPTORS 2
++ 
+++#undef TARGET_ASM_FILE_END
+++#define TARGET_ASM_FILE_END file_end_indicate_exec_stack
+++
++ struct gcc_target targetm = TARGET_INITIALIZER;
++ 
++ #include "gt-mips.h"
++--- a/libgcc/config/mips/crti.S
+++++ b/libgcc/config/mips/crti.S
++@@ -21,6 +21,10 @@ a copy of the GCC Runtime Library Except
++ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++ <http://www.gnu.org/licenses/>.  */
++ 
+++
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++
++ /* 4 slots for argument spill area.  1 for cpreturn, 1 for stack.
++    Return spill offset of 40 and 20.  Aligned to 16 bytes for n32.  */
++ 
++--- a/libgcc/config/mips/crtn.S
+++++ b/libgcc/config/mips/crtn.S
++@@ -21,6 +21,9 @@ a copy of the GCC Runtime Library Except
++ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++ <http://www.gnu.org/licenses/>.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++
++ /* 4 slots for argument spill area.  1 for cpreturn, 1 for stack.
++    Return spill offset of 40 and 20.  Aligned to 16 bytes for n32.  */
++ 
++--- a/libgcc/config/mips/mips16.S
+++++ b/libgcc/config/mips/mips16.S
++@@ -48,6 +48,10 @@ see the files COPYING3 and COPYING.RUNTI
++    values using the soft-float calling convention, but do the actual
++    operation using the hard floating point instructions.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++	.previous
+++
++ #if defined _MIPS_SIM && (_MIPS_SIM == _ABIO32 || _MIPS_SIM == _ABIO64)
++ 
++ /* This file contains 32-bit assembly code.  */
++--- a/libgcc/config/mips/vr4120-div.S
+++++ b/libgcc/config/mips/vr4120-div.S
++@@ -26,6 +26,10 @@ see the files COPYING3 and COPYING.RUNTI
++    -mfix-vr4120.  div and ddiv do not give the correct result when one
++    of the operands is negative.  */
++ 
+++/* An executable stack is *not* required for these functions.  */
+++	.section .note.GNU-stack,"",%progbits
+++	.previous
+++
++ 	.set	nomips16
++ 
++ #define DIV								\
+diff --git a/toolchain/gcc/patches/7.1.0/940-no-clobber-stamp-bits.patch b/toolchain/gcc/patches/7.1.0/940-no-clobber-stamp-bits.patch
+new file mode 100644
+index 0000000000..9e5e59970e
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/940-no-clobber-stamp-bits.patch
+@@ -0,0 +1,11 @@
++--- a/libstdc++-v3/include/Makefile.in
+++++ b/libstdc++-v3/include/Makefile.in
++@@ -1475,7 +1475,7 @@ stamp-bits: ${bits_headers}
++ 	@$(STAMP) stamp-bits
++ 
++ stamp-bits-sup: stamp-bits ${bits_sup_headers}
++-	@-cd ${bits_builddir} && $(LN_S) $? . 2>/dev/null
+++	@-cd ${bits_builddir} && $(LN_S) $(filter-out stamp-bits,$?) . 2>/dev/null
++ 	@$(STAMP) stamp-bits-sup
++ 
++ stamp-c_base: ${c_base_headers}
+diff --git a/toolchain/gcc/patches/7.1.0/950-cpp_file_path_translation.patch b/toolchain/gcc/patches/7.1.0/950-cpp_file_path_translation.patch
+new file mode 100644
+index 0000000000..ac85c1d6aa
+--- /dev/null
++++ b/toolchain/gcc/patches/7.1.0/950-cpp_file_path_translation.patch
+@@ -0,0 +1,171 @@
++Forward ported from attachment to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47047
++
++--- a/gcc/c-family/c-opts.c
+++++ b/gcc/c-family/c-opts.c
++@@ -588,6 +588,10 @@ c_common_handle_option (size_t scode, co
++       add_path (xstrdup (arg), SYSTEM, 0, true);
++       break;
++ 
+++    case OPT_iremap:
+++      add_cpp_remap_path (arg);
+++      break;
+++
++     case OPT_iwithprefix:
++       add_prefixed_path (arg, SYSTEM);
++       break;
++--- a/gcc/c-family/c.opt
+++++ b/gcc/c-family/c.opt
++@@ -1825,6 +1825,10 @@ iquote
++ C ObjC C++ ObjC++ Joined Separate MissingArgError(missing path after %qs)
++ -iquote <dir>	Add <dir> to the end of the quote include path.
++ 
+++iremap
+++C ObjC C++ ObjC++ Joined Separate
+++-iremap <src:dst>  Convert <src> to <dst> if it occurs as prefix in __FILE__.
+++
++ iwithprefix
++ C ObjC C++ ObjC++ Joined Separate
++ -iwithprefix <dir>	Add <dir> to the end of the system include path.
++--- a/gcc/doc/cpp.texi
+++++ b/gcc/doc/cpp.texi
++@@ -4272,6 +4272,7 @@ Refer to the GCC manual for full documen
++ @c man begin SYNOPSIS
++ cpp [@option{-D}@var{macro}[=@var{defn}]@dots{}] [@option{-U}@var{macro}]
++     [@option{-I}@var{dir}@dots{}] [@option{-iquote}@var{dir}@dots{}]
+++    [@option{-iremap}@var{src}:@var{dst}]
++     [@option{-M}|@option{-MM}] [@option{-MG}] [@option{-MF} @var{filename}]
++     [@option{-MP}] [@option{-MQ} @var{target}@dots{}]
++     [@option{-MT} @var{target}@dots{}]
++--- a/gcc/doc/cppopts.texi
+++++ b/gcc/doc/cppopts.texi
++@@ -220,6 +220,12 @@ extensions @samp{.i}, @samp{.ii} or @sam
++ extensions that GCC uses for preprocessed files created by
++ @option{-save-temps}.
++ 
+++@item -iremap @var{src}:@var{dst}
+++@opindex iremap
+++Replace the prefix @var{src} in __FILE__ with @var{dst} at expansion time.
+++This option can be specified more than once.  Processing stops at the first
+++match.
+++
++ @item -fdirectives-only
++ @opindex fdirectives-only
++ When preprocessing, handle directives, but do not expand macros.
++--- a/gcc/doc/invoke.texi
+++++ b/gcc/doc/invoke.texi
++@@ -11861,6 +11861,12 @@ by @option{-fplugin=@var{name}} instead
++ @option{-fplugin=@var{path}/@var{name}.so}.  This option is not meant
++ to be used by the user, but only passed by the driver.
++ 
+++@item -iremap @var{src}:@var{dst}
+++@opindex iremap
+++Replace the prefix @var{src} in __FILE__ with @var{dst} at expansion time.
+++This option can be specified more than once.  Processing stops at the first
+++match.
+++
++ @item -L@var{dir}
++ @opindex L
++ Add directory @var{dir} to the list of directories to be searched
++--- a/libcpp/include/cpplib.h
+++++ b/libcpp/include/cpplib.h
++@@ -820,6 +820,9 @@ extern void cpp_set_lang (cpp_reader *,
++ /* Set the include paths.  */
++ extern void cpp_set_include_chains (cpp_reader *, cpp_dir *, cpp_dir *, int);
++ 
+++/* Provide src:dst pair for __FILE__ remapping.  */
+++extern void add_cpp_remap_path (const char *);
+++
++ /* Call these to get pointers to the options, callback, and deps
++    structures for a given reader.  These pointers are good until you
++    call cpp_finish on that reader.  You can either edit the callbacks
++--- a/libcpp/macro.c
+++++ b/libcpp/macro.c
++@@ -227,6 +227,64 @@ static const char * const monthnames[] =
++   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
++ };
++ 
+++static size_t remap_pairs;
+++static char **remap_src;
+++static char **remap_dst;
+++
+++void
+++add_cpp_remap_path (const char *arg)
+++{
+++  const char *arg_dst;
+++  size_t len;
+++
+++  arg_dst = strchr(arg, ':');
+++  if (arg_dst == NULL)
+++    {
+++      fprintf(stderr, "Invalid argument for -iremap\n");
+++      exit(1);
+++    }
+++
+++  len = arg_dst - arg;
+++  ++arg_dst;
+++
+++  remap_src = (char **) xrealloc(remap_src, sizeof(char *) * (remap_pairs + 1));
+++  remap_dst = (char **) xrealloc(remap_dst, sizeof(char *) * (remap_pairs + 1));
+++
+++  remap_src[remap_pairs] = (char *) xmalloc(len + 1);
+++  memcpy(remap_src[remap_pairs], arg, len);
+++  remap_src[remap_pairs][len] = '\0';
+++  remap_dst[remap_pairs] = xstrdup(arg_dst);
+++  ++remap_pairs;
+++}
+++
+++static const char *
+++cpp_remap_file (const char *arg, char **tmp_name)
+++{
+++  char *result;
+++  size_t i, len;
+++
+++  for (i = 0; i < remap_pairs; ++i)
+++    {
+++      len = strlen (remap_src[i]);
+++      if (strncmp (remap_src[i], arg, len))
+++	continue;
+++      if (arg[len] == '\0')
+++	return xstrdup (remap_dst[i]);
+++      if (arg[len] != '/')
+++	continue;
+++      arg += len;
+++      len = strlen (remap_dst[i]);
+++      result = (char *) xmalloc (len + strlen (arg) + 1);
+++      memcpy(result, remap_dst[i], len);
+++      strcpy(result + len, arg);
+++      *tmp_name = result;
+++
+++      return result;
+++    }
+++
+++   return arg;
+++}
+++
++ /* Helper function for builtin_macro.  Returns the text generated by
++    a builtin macro. */
++ const uchar *
++@@ -290,6 +348,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++       {
++ 	unsigned int len;
++ 	const char *name;
+++	char *tmp_name = NULL;
++ 	uchar *buf;
++ 	
++ 	if (node->value.builtin == BT_FILE)
++@@ -301,6 +360,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++ 	    if (!name)
++ 	      abort ();
++ 	  }
+++	name = cpp_remap_file (name, &tmp_name);
++ 	len = strlen (name);
++ 	buf = _cpp_unaligned_alloc (pfile, len * 2 + 3);
++ 	result = buf;
++@@ -308,6 +368,7 @@ _cpp_builtin_macro_text (cpp_reader *pfi
++ 	buf = cpp_quote_string (buf + 1, (const unsigned char *) name, len);
++ 	*buf++ = '"';
++ 	*buf = '\0';
+++	free (tmp_name);
++       }
++       break;
++ 
+-- 
+2.13.1
+

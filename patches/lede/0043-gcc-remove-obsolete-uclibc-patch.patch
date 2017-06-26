@@ -1,0 +1,135 @@
+From 0d13a62ff4fc3ad37c76aadde1f16e4de1971f89 Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 1 Feb 2017 08:22:27 +0100
+Subject: [PATCH] gcc: remove obsolete uclibc patch
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ toolchain/gcc/patches/5.4.0/100-uclibc-conf.patch  | 33 ----------------------
+ toolchain/gcc/patches/6.3.0/100-uclibc-conf.patch  | 33 ----------------------
+ .../gcc/patches/arc-2016.03/100-uclibc-conf.patch  | 33 ----------------------
+ 3 files changed, 99 deletions(-)
+ delete mode 100644 toolchain/gcc/patches/5.4.0/100-uclibc-conf.patch
+ delete mode 100644 toolchain/gcc/patches/6.3.0/100-uclibc-conf.patch
+ delete mode 100644 toolchain/gcc/patches/arc-2016.03/100-uclibc-conf.patch
+
+diff --git a/toolchain/gcc/patches/5.4.0/100-uclibc-conf.patch b/toolchain/gcc/patches/5.4.0/100-uclibc-conf.patch
+deleted file mode 100644
+index ff9ad94f62..0000000000
+--- a/toolchain/gcc/patches/5.4.0/100-uclibc-conf.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+---- a/contrib/regression/objs-gcc.sh
+-+++ b/contrib/regression/objs-gcc.sh
+-@@ -106,6 +106,10 @@ if [ $H_REAL_TARGET = $H_REAL_HOST -a $H
+-  then
+-   make all-gdb all-dejagnu all-ld || exit 1
+-   make install-gdb install-dejagnu install-ld || exit 1
+-+elif [ $H_REAL_TARGET = $H_REAL_HOST -a $H_REAL_TARGET = i686-pc-linux-uclibc ]
+-+ then
+-+  make all-gdb all-dejagnu all-ld || exit 1
+-+  make install-gdb install-dejagnu install-ld || exit 1
+- elif [ $H_REAL_TARGET = $H_REAL_HOST ] ; then
+-   make bootstrap || exit 1
+-   make install || exit 1
+---- a/libjava/classpath/ltconfig
+-+++ b/libjava/classpath/ltconfig
+-@@ -603,7 +603,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-
+- 
+- # Transform linux* to *-*-linux-gnu*, to support old configure scripts.
+- case $host_os in
+--linux-gnu*) ;;
+-+linux-gnu*|linux-uclibc*) ;;
+- linux*) host=`echo $host | sed 's/^\(.*-.*-linux\)\(.*\)$/\1-gnu\2/'`
+- esac
+- 
+-@@ -1247,7 +1247,7 @@ linux-gnuoldld* | linux-gnuaout* | linux
+-   ;;
+- 
+- # This must be Linux ELF.
+--linux-gnu*)
+-+linux*)
+-   version_type=linux
+-   need_lib_prefix=no
+-   need_version=no
+diff --git a/toolchain/gcc/patches/6.3.0/100-uclibc-conf.patch b/toolchain/gcc/patches/6.3.0/100-uclibc-conf.patch
+deleted file mode 100644
+index ff9ad94f62..0000000000
+--- a/toolchain/gcc/patches/6.3.0/100-uclibc-conf.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+---- a/contrib/regression/objs-gcc.sh
+-+++ b/contrib/regression/objs-gcc.sh
+-@@ -106,6 +106,10 @@ if [ $H_REAL_TARGET = $H_REAL_HOST -a $H
+-  then
+-   make all-gdb all-dejagnu all-ld || exit 1
+-   make install-gdb install-dejagnu install-ld || exit 1
+-+elif [ $H_REAL_TARGET = $H_REAL_HOST -a $H_REAL_TARGET = i686-pc-linux-uclibc ]
+-+ then
+-+  make all-gdb all-dejagnu all-ld || exit 1
+-+  make install-gdb install-dejagnu install-ld || exit 1
+- elif [ $H_REAL_TARGET = $H_REAL_HOST ] ; then
+-   make bootstrap || exit 1
+-   make install || exit 1
+---- a/libjava/classpath/ltconfig
+-+++ b/libjava/classpath/ltconfig
+-@@ -603,7 +603,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-
+- 
+- # Transform linux* to *-*-linux-gnu*, to support old configure scripts.
+- case $host_os in
+--linux-gnu*) ;;
+-+linux-gnu*|linux-uclibc*) ;;
+- linux*) host=`echo $host | sed 's/^\(.*-.*-linux\)\(.*\)$/\1-gnu\2/'`
+- esac
+- 
+-@@ -1247,7 +1247,7 @@ linux-gnuoldld* | linux-gnuaout* | linux
+-   ;;
+- 
+- # This must be Linux ELF.
+--linux-gnu*)
+-+linux*)
+-   version_type=linux
+-   need_lib_prefix=no
+-   need_version=no
+diff --git a/toolchain/gcc/patches/arc-2016.03/100-uclibc-conf.patch b/toolchain/gcc/patches/arc-2016.03/100-uclibc-conf.patch
+deleted file mode 100644
+index ff9ad94f62..0000000000
+--- a/toolchain/gcc/patches/arc-2016.03/100-uclibc-conf.patch
++++ /dev/null
+@@ -1,33 +0,0 @@
+---- a/contrib/regression/objs-gcc.sh
+-+++ b/contrib/regression/objs-gcc.sh
+-@@ -106,6 +106,10 @@ if [ $H_REAL_TARGET = $H_REAL_HOST -a $H
+-  then
+-   make all-gdb all-dejagnu all-ld || exit 1
+-   make install-gdb install-dejagnu install-ld || exit 1
+-+elif [ $H_REAL_TARGET = $H_REAL_HOST -a $H_REAL_TARGET = i686-pc-linux-uclibc ]
+-+ then
+-+  make all-gdb all-dejagnu all-ld || exit 1
+-+  make install-gdb install-dejagnu install-ld || exit 1
+- elif [ $H_REAL_TARGET = $H_REAL_HOST ] ; then
+-   make bootstrap || exit 1
+-   make install || exit 1
+---- a/libjava/classpath/ltconfig
+-+++ b/libjava/classpath/ltconfig
+-@@ -603,7 +603,7 @@ host_os=`echo $host | sed 's/^\([^-]*\)-
+- 
+- # Transform linux* to *-*-linux-gnu*, to support old configure scripts.
+- case $host_os in
+--linux-gnu*) ;;
+-+linux-gnu*|linux-uclibc*) ;;
+- linux*) host=`echo $host | sed 's/^\(.*-.*-linux\)\(.*\)$/\1-gnu\2/'`
+- esac
+- 
+-@@ -1247,7 +1247,7 @@ linux-gnuoldld* | linux-gnuaout* | linux
+-   ;;
+- 
+- # This must be Linux ELF.
+--linux-gnu*)
+-+linux*)
+-   version_type=linux
+-   need_lib_prefix=no
+-   need_version=no
+-- 
+2.13.1
+

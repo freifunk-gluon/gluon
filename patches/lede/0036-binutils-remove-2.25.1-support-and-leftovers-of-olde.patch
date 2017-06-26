@@ -1,0 +1,212 @@
+From f636d6aa26621e2e4f86d65efa207a44fbc8a9ea Mon Sep 17 00:00:00 2001
+From: Felix Fietkau <nbd@nbd.name>
+Date: Mon, 6 Feb 2017 12:31:11 +0100
+Subject: [PATCH] binutils: remove 2.25.1 support and leftovers of older
+ versions
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+---
+ toolchain/binutils/Config.in                       |  5 ---
+ toolchain/binutils/Config.version                  |  4 ---
+ toolchain/binutils/Makefile                        | 17 ----------
+ .../patches/2.25.1/300-001_ld_makefile_patch.patch | 22 -------------
+ .../2.25.1/300-012_check_ldrunpath_length.patch    | 20 ------------
+ .../2.25.1/400-mips_no_dynamic_linking_sym.patch   | 18 -----------
+ ...Change-default-emulation-for-mips64-linux.patch | 37 ----------------------
+ 7 files changed, 123 deletions(-)
+ delete mode 100644 toolchain/binutils/patches/2.25.1/300-001_ld_makefile_patch.patch
+ delete mode 100644 toolchain/binutils/patches/2.25.1/300-012_check_ldrunpath_length.patch
+ delete mode 100644 toolchain/binutils/patches/2.25.1/400-mips_no_dynamic_linking_sym.patch
+ delete mode 100644 toolchain/binutils/patches/2.25.1/500-Change-default-emulation-for-mips64-linux.patch
+
+diff --git a/toolchain/binutils/Config.in b/toolchain/binutils/Config.in
+index 5a22693c85..44c7db0482 100644
+--- a/toolchain/binutils/Config.in
++++ b/toolchain/binutils/Config.in
+@@ -7,11 +7,6 @@ choice
+ 	help
+ 	  Select the version of binutils you wish to use.
+ 
+-	config BINUTILS_USE_VERSION_2_25_1
+-		depends on !arc
+-		bool "Binutils 2.25.1"
+-		select BINUTILS_VERSION_2_25_1
+-
+ 	config BINUTILS_USE_VERSION_2_27
+ 		depends on !arc
+ 		bool "Binutils 2.27"
+diff --git a/toolchain/binutils/Config.version b/toolchain/binutils/Config.version
+index 21fd2cb9ba..e23b35f6fa 100644
+--- a/toolchain/binutils/Config.version
++++ b/toolchain/binutils/Config.version
+@@ -1,6 +1,3 @@
+-config BINUTILS_VERSION_2_25_1
+-	bool
+-
+ config BINUTILS_VERSION_2_27
+ 	default y if (!TOOLCHAINOPTS && !arc)
+ 	bool
+@@ -11,7 +8,6 @@ config BINUTILS_VERSION_2_26_ARC
+ 
+ config BINUTILS_VERSION
+ 	string
+-	default "2.25.1"               if BINUTILS_VERSION_2_25_1
+ 	default "2.27"		       if BINUTILS_VERSION_2_27
+ 	default "arc-2016.03"          if BINUTILS_VERSION_2_26_ARC
+ 
+diff --git a/toolchain/binutils/Makefile b/toolchain/binutils/Makefile
+index c806950400..8b015a240a 100644
+--- a/toolchain/binutils/Makefile
++++ b/toolchain/binutils/Makefile
+@@ -13,27 +13,10 @@ BIN_VERSION:=$(PKG_VERSION)
+ PKG_SOURCE_URL:=@GNU/binutils/
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+ 
+-ifeq ($(PKG_VERSION),2.25.1)
+-  PKG_HASH:=b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22
+-endif
+-
+-ifeq ($(PKG_VERSION),2.26.1)
+-  PKG_HASH:=39c346c87aa4fb14b2f786560aec1d29411b6ec34dce3fe7309fe3dd56949fd8
+-endif
+-
+ ifeq ($(PKG_VERSION),2.27)
+   PKG_HASH:=369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88
+ endif
+ 
+-ifeq ($(findstring linaro, $(CONFIG_BINUTILS_VERSION)),linaro)
+-  PKG_SOURCE_URL:=https://releases.linaro.org/14.09/components/toolchain/binutils-linaro/
+-  PKG_REV:=2.24.0-2014.09
+-  PKG_SOURCE:=$(PKG_NAME)-linaro-$(PKG_REV).tar.xz
+-  PKG_HASH:=e8bdf80bd6a5f3fc7df53245dfc0a678803d4f19c1c7ba2af3f98c8249e612b0
+-  BINUTILS_DIR:=$(PKG_NAME)-linaro-$(PKG_REV)
+-  HOST_BUILD_DIR:=$(BUILD_DIR_TOOLCHAIN)/$(BINUTILS_DIR)
+-endif
+-
+ ifneq ($(CONFIG_BINUTILS_VERSION_2_26_ARC),)
+   PKG_SOURCE_URL:=https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb/archive/arc-2016.03/
+   PKG_REV:=2016.03
+diff --git a/toolchain/binutils/patches/2.25.1/300-001_ld_makefile_patch.patch b/toolchain/binutils/patches/2.25.1/300-001_ld_makefile_patch.patch
+deleted file mode 100644
+index c51fc003fd..0000000000
+--- a/toolchain/binutils/patches/2.25.1/300-001_ld_makefile_patch.patch
++++ /dev/null
+@@ -1,22 +0,0 @@
+---- a/ld/Makefile.am
+-+++ b/ld/Makefile.am
+-@@ -54,7 +54,7 @@ endif
+- # We put the scripts in the directory $(scriptdir)/ldscripts.
+- # We can't put the scripts in $(datadir) because the SEARCH_DIR
+- # directives need to be different for native and cross linkers.
+--scriptdir = $(tooldir)/lib
+-+scriptdir = $(libdir)
+- 
+- EMUL = @EMUL@
+- EMULATION_OFILES = @EMULATION_OFILES@
+---- a/ld/Makefile.in
+-+++ b/ld/Makefile.in
+-@@ -388,7 +388,7 @@ AM_CFLAGS = $(WARN_CFLAGS)
+- # We put the scripts in the directory $(scriptdir)/ldscripts.
+- # We can't put the scripts in $(datadir) because the SEARCH_DIR
+- # directives need to be different for native and cross linkers.
+--scriptdir = $(tooldir)/lib
+-+scriptdir = $(libdir)
+- BASEDIR = $(srcdir)/..
+- BFDDIR = $(BASEDIR)/bfd
+- INCDIR = $(BASEDIR)/include
+diff --git a/toolchain/binutils/patches/2.25.1/300-012_check_ldrunpath_length.patch b/toolchain/binutils/patches/2.25.1/300-012_check_ldrunpath_length.patch
+deleted file mode 100644
+index 2e24b38cad..0000000000
+--- a/toolchain/binutils/patches/2.25.1/300-012_check_ldrunpath_length.patch
++++ /dev/null
+@@ -1,20 +0,0 @@
+---- a/ld/emultempl/elf32.em
+-+++ b/ld/emultempl/elf32.em
+-@@ -1198,6 +1198,8 @@ fragment <<EOF
+- 	      && command_line.rpath == NULL)
+- 	    {
+- 	      lib_path = (const char *) getenv ("LD_RUN_PATH");
+-+	      if ((lib_path) && (strlen (lib_path) == 0))
+-+	      	lib_path = NULL;
+- 	      if (gld${EMULATION_NAME}_search_needed (lib_path, &n,
+- 						      force))
+- 		break;
+-@@ -1461,6 +1463,8 @@ gld${EMULATION_NAME}_before_allocation (
+-   rpath = command_line.rpath;
+-   if (rpath == NULL)
+-     rpath = (const char *) getenv ("LD_RUN_PATH");
+-+  if ((rpath) && (strlen (rpath) == 0))
+-+  	rpath = NULL;
+- 
+-   for (abfd = link_info.input_bfds; abfd; abfd = abfd->link.next)
+-     if (bfd_get_flavour (abfd) == bfd_target_elf_flavour)
+diff --git a/toolchain/binutils/patches/2.25.1/400-mips_no_dynamic_linking_sym.patch b/toolchain/binutils/patches/2.25.1/400-mips_no_dynamic_linking_sym.patch
+deleted file mode 100644
+index a63203d1cc..0000000000
+--- a/toolchain/binutils/patches/2.25.1/400-mips_no_dynamic_linking_sym.patch
++++ /dev/null
+@@ -1,18 +0,0 @@
+---- a/bfd/elfxx-mips.c
+-+++ b/bfd/elfxx-mips.c
+-@@ -7689,6 +7689,7 @@ _bfd_mips_elf_create_dynamic_sections (b
+- 
+-       name = SGI_COMPAT (abfd) ? "_DYNAMIC_LINK" : "_DYNAMIC_LINKING";
+-       bh = NULL;
+-+      if (0) {
+-       if (!(_bfd_generic_link_add_one_symbol
+- 	    (info, abfd, name, BSF_GLOBAL, bfd_abs_section_ptr, 0,
+- 	     NULL, FALSE, get_elf_backend_data (abfd)->collect, &bh)))
+-@@ -7701,6 +7702,7 @@ _bfd_mips_elf_create_dynamic_sections (b
+- 
+-       if (! bfd_elf_link_record_dynamic_symbol (info, h))
+- 	return FALSE;
+-+      }
+- 
+-       if (! mips_elf_hash_table (info)->use_rld_obj_head)
+- 	{
+diff --git a/toolchain/binutils/patches/2.25.1/500-Change-default-emulation-for-mips64-linux.patch b/toolchain/binutils/patches/2.25.1/500-Change-default-emulation-for-mips64-linux.patch
+deleted file mode 100644
+index 3343a85661..0000000000
+--- a/toolchain/binutils/patches/2.25.1/500-Change-default-emulation-for-mips64-linux.patch
++++ /dev/null
+@@ -1,37 +0,0 @@
+---- a/bfd/config.bfd
+-+++ b/bfd/config.bfd
+-@@ -1062,12 +1062,12 @@ case "${targ}" in
+-     targ_selvecs="mips_elf32_le_vec mips_elf64_be_vec mips_elf64_le_vec mips_ecoff_be_vec mips_ecoff_le_vec"
+-     ;;
+-   mips64*el-*-linux*)
+--    targ_defvec=mips_elf32_ntrad_le_vec
+--    targ_selvecs="mips_elf32_ntrad_be_vec mips_elf32_trad_le_vec mips_elf32_trad_be_vec mips_elf64_trad_le_vec mips_elf64_trad_be_vec"
+-+    targ_defvec=mips_elf64_trad_le_vec
+-+    targ_selvecs="mips_elf32_ntrad_le_vec mips_elf32_ntrad_be_vec mips_elf32_trad_le_vec mips_elf32_trad_be_vec mips_elf64_trad_be_vec"
+-     ;;
+-   mips64*-*-linux*)
+--    targ_defvec=mips_elf32_ntrad_be_vec
+--    targ_selvecs="mips_elf32_ntrad_le_vec mips_elf32_trad_be_vec mips_elf32_trad_le_vec mips_elf64_trad_be_vec mips_elf64_trad_le_vec"
+-+    targ_defvec=mips_elf64_trad_be_vec
+-+    targ_selvecs="mips_elf32_ntrad_be_vec mips_elf32_ntrad_le_vec mips_elf32_trad_be_vec mips_elf32_trad_le_vec mips_elf64_trad_le_vec"
+-     ;;
+-   mips*el-*-linux*)
+-     targ_defvec=mips_elf32_trad_le_vec
+---- a/ld/configure.tgt
+-+++ b/ld/configure.tgt
+-@@ -476,11 +476,11 @@ mips*el-*-vxworks*)	targ_emul=elf32elmip
+- mips*-*-vxworks*)	targ_emul=elf32ebmipvxworks
+- 		        targ_extra_emuls="elf32elmipvxworks" ;;
+- mips*-*-windiss)	targ_emul=elf32mipswindiss ;;
+--mips64*el-*-linux-*)	targ_emul=elf32ltsmipn32
+--			targ_extra_emuls="elf32btsmipn32 elf32ltsmip elf32btsmip elf64ltsmip elf64btsmip"
+-+mips64*el-*-linux-*)	targ_emul=elf64ltsmip
+-+			targ_extra_emuls="elf32btsmipn32 elf32ltsmipn32 elf32ltsmip elf32btsmip elf64btsmip"
+- 			targ_extra_libpath=$targ_extra_emuls ;;
+--mips64*-*-linux-*)	targ_emul=elf32btsmipn32
+--			targ_extra_emuls="elf32ltsmipn32 elf32btsmip elf32ltsmip elf64btsmip elf64ltsmip"
+-+mips64*-*-linux-*)	targ_emul=elf64btsmip
+-+			targ_extra_emuls="elf32btsmipn32 elf32ltsmipn32 elf32btsmip elf32ltsmip elf64ltsmip"
+- 			targ_extra_libpath=$targ_extra_emuls ;;
+- mips*el-*-linux-*)	targ_emul=elf32ltsmip
+- 			targ_extra_emuls="elf32btsmip elf32ltsmipn32 elf64ltsmip elf32btsmipn32 elf64btsmip"
+-- 
+2.13.1
+
