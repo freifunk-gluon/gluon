@@ -114,7 +114,7 @@ wifi24 \: optional
     interface's ESSID. This is the WiFi the clients connect to.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the
-    mesh id, also visible as an open WiFi in some network managers. Usually you 
+    mesh id, also visible as an open WiFi in some network managers. Usually you
     don't want users to connect to this mesh-SSID, so use a cryptic id that no
     one will accidentally mistake for the client WiFi.
 
@@ -154,10 +154,14 @@ next_node \: package
       next_node = {
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
-        mac = 'ca:ff:ee:ba:be:00'
+        mac = '16:41:95:40:f7:dc'
       }
 
-    The IPv4 next-node address is optional.
+    All values of this section are optional. If the IPv4 or IPv6 address is
+    omitted, there will be no IPv4 or IPv6 anycast address. The MAC address
+    defaults to ``16:41:95:40:f7:dc``; this value usually doesn't need to be
+    changed, but it can be adjusted to match existing deployments that use a
+    different value.
 
 mesh \: optional
     Options specific to routing protocols.
@@ -284,7 +288,7 @@ mesh_on_wan \: optional
 mesh_on_lan \: optional
     Enables the mesh on the LAN port (``true`` or ``false``).
     ::
-    
+
         mesh_on_lan = true,
 
 poe_passthrough \: optional
