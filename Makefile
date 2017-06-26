@@ -26,6 +26,9 @@ GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site
 
 export GLUON_RELEASE GLUON_ATH10K_MESH GLUON_REGION GLUON_DEBUG
 
+show-release:
+	@echo '$(GLUON_RELEASE)'
+
 
 update: FORCE
 	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/update.sh
