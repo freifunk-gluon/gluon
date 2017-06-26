@@ -1,0 +1,215 @@
+From f21bdc895f9728ff05a6243e4284fa0d2158c34f Mon Sep 17 00:00:00 2001
+From: Piotr Dymacz <pepe2k@gmail.com>
+Date: Wed, 31 May 2017 21:23:53 +0200
+Subject: [PATCH] ar71xx: image: cosmetic: drop redundant empty lines
+
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+---
+ target/linux/ar71xx/image/generic.mk  | 24 ++++++++++--------------
+ target/linux/ar71xx/image/mikrotik.mk |  2 +-
+ target/linux/ar71xx/image/nand.mk     |  2 --
+ target/linux/ar71xx/image/tp-link.mk  |  1 -
+ target/linux/ar71xx/image/ubnt.mk     |  3 ---
+ 5 files changed, 11 insertions(+), 21 deletions(-)
+
+diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
+index 28ed50972f..522f6d56a4 100644
+--- a/target/linux/ar71xx/image/generic.mk
++++ b/target/linux/ar71xx/image/generic.mk
+@@ -353,7 +353,6 @@ $(Device/wndr3800)
+   DEVICE_TITLE := NETGEAR WNDRMAC v2
+   NETGEAR_BOARD_ID = WNDRMACv2
+ endef
+-
+ TARGET_DEVICES += wndr3700 wndr3700v2 wndr3800 wndr3800ch wndrmac wndrmacv2
+ 
+ define Device/cap324
+@@ -363,7 +362,6 @@ define Device/cap324
+   IMAGE_SIZE = 15296k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,15296k(firmware),640k(certs),64k(nvram),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cap324
+ 
+ define Device/cap324-nocloud
+@@ -373,7 +371,6 @@ define Device/cap324-nocloud
+   IMAGE_SIZE = 16000k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,16000k(firmware),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cap324-nocloud
+ 
+ define Device/cr3000
+@@ -383,7 +380,6 @@ define Device/cr3000
+   IMAGE_SIZE = 7104k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7104k(firmware),640k(certs),64k(nvram),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cr3000
+ 
+ define Device/cr3000-nocloud
+@@ -393,7 +389,6 @@ define Device/cr3000-nocloud
+   IMAGE_SIZE = 7808k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7808k(firmware),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cr3000-nocloud
+ 
+ define Device/cr5000
+@@ -404,7 +399,6 @@ define Device/cr5000
+   IMAGE_SIZE = 7104k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7104k(firmware),640k(certs),64k(nvram),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cr5000
+ 
+ define Device/cr5000-nocloud
+@@ -415,9 +409,18 @@ define Device/cr5000-nocloud
+   IMAGE_SIZE = 7808k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7808k(firmware),64k(art)ro
+ endef
+-
+ TARGET_DEVICES += cr5000-nocloud
+ 
++define Device/pqi-air-pen
++  DEVICE_TITLE := PQI Air Pen
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-storage
++  BOARDNAME = PQI-AIR-PEN
++  IMAGE_SIZE = 7744k
++  CONSOLE = ttyATH0,115200
++  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(art)ro,64k(NVRAM)ro,7680k(firmware),64k(CONF)
++endef
++TARGET_DEVICES += pqi-air-pen
++
+ define Device/antminer-s1
+   $(Device/tplink-8mlzma)
+   DEVICE_TITLE := Antminer-S1
+@@ -646,7 +649,6 @@ define Device/oolite
+ endef
+ TARGET_DEVICES += oolite
+ 
+-
+ define Device/NBG6616
+   DEVICE_TITLE := ZyXEL NBG6616
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage kmod-rtc-pcf8563 kmod-ath10k ath10k-firmware-qca988x
+@@ -680,7 +682,6 @@ define Device/NBG6616
+   #
+   # The header is padded with 0xff to the erase block size of the device.
+ endef
+-
+ TARGET_DEVICES += NBG6616
+ 
+ define Device/c-55
+@@ -692,10 +693,8 @@ define Device/c-55
+   MTDPARTS = spi0.0:256k(u-boot)ro,128k(u-boot-env)ro,2048k(kernel),13824k(rootfs),13824k(opt)ro,2624k(failsafe)ro,64k(art)ro,15872k@0x60000(firmware)
+   IMAGE/sysupgrade.bin = append-kernel | pad-to $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+ endef
+-
+ TARGET_DEVICES += c-55
+ 
+-
+ define Build/uImageHiWiFi
+ 	# Field ih_name needs to start with "tw150v1"
+ 	mkimage -A $(LINUX_KARCH) \
+@@ -718,7 +717,6 @@ define Device/hiwifi-hc6361
+ endef
+ TARGET_DEVICES += hiwifi-hc6361
+ 
+-
+ define Build/seama
+ 	$(STAGING_DIR_HOST)/bin/seama -i $@ $(if $(1),$(1),-m "dev=/dev/mtdblock/1" -m "type=firmware")
+ 	mv $@.seama $@
+@@ -795,7 +793,6 @@ $(Device/seama)
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env),64k(devdata),64k(devconf),15744k(firmware),64k(warm_start),64k(action_image_config),64k(radiocfg)ro;spi0.1:15360k(upgrade2),1024k(privatedata)
+   SEAMA_SIGNATURE := wrgac26_qihoo360_360rg
+ endef
+-
+ TARGET_DEVICES += dir-869-a1 mynet-n600 mynet-n750 qihoo-c301
+ 
+ define Build/mkwrggimg
+@@ -824,7 +821,6 @@ define Device/dap-2695-a1
+   DAP_SIGNATURE := wapac02_dkbs_dap2695
+   DEVICE_VARS += DAP_SIGNATURE
+ endef
+-
+ TARGET_DEVICES += dap-2695-a1
+ 
+ define Build/mkbuffaloimg
+diff --git a/target/linux/ar71xx/image/mikrotik.mk b/target/linux/ar71xx/image/mikrotik.mk
+index bcfa64da62..7312ea58ae 100644
+--- a/target/linux/ar71xx/image/mikrotik.mk
++++ b/target/linux/ar71xx/image/mikrotik.mk
+@@ -21,7 +21,6 @@ define Device/nand-large
+ $(Device/mikrotik)
+   KERNEL := kernel-bin | kernel2minor -s 2048 -e -c
+ endef
+-
+ TARGET_DEVICES += nand-64m nand-large
+ 
+ define Device/rb-nor-flash-16M
+@@ -42,3 +41,4 @@ $(Device/rb-nor-flash-16M)
+   DEVICE_TITLE := hAP lite
+   BOARDNAME:= rb-941-2nd
+ endef
++TARGET_DEVICES += rb-nor-flash-16M rb-nor-flash-16M-ac
+diff --git a/target/linux/ar71xx/image/nand.mk b/target/linux/ar71xx/image/nand.mk
+index aef9fc3ec8..8c44cad605 100644
+--- a/target/linux/ar71xx/image/nand.mk
++++ b/target/linux/ar71xx/image/nand.mk
+@@ -10,7 +10,6 @@ define Device/c-60
+   KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma
+   IMAGE/sysupgrade.tar := sysupgrade-tar
+ endef
+-
+ TARGET_DEVICES += c-60
+ 
+ define Device/domywifi-dw33d
+@@ -66,7 +65,6 @@ define Device/z1
+   KERNEL_INITRAMFS := kernel-bin | patch-cmdline | MerakiNAND-old
+   IMAGE/sysupgrade.tar := sysupgrade-tar
+ endef
+-
+ TARGET_DEVICES += z1
+ 
+ define LegacyDevice/R6100
+diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
+index a84eefab70..561fae3533 100644
+--- a/target/linux/ar71xx/image/tp-link.mk
++++ b/target/linux/ar71xx/image/tp-link.mk
+@@ -1003,7 +1003,6 @@ define Device/tl-wa901nd-v4
+     TPLINK_HWID := 0x09010004
+     IMAGE/factory.bin := append-rootfs | mktplinkfw factory -C EU
+ endef
+-
+ TARGET_DEVICES += tl-wa901nd-v1 tl-wa901nd-v2 tl-wa901nd-v3 tl-wa901nd-v4
+ 
+ define Device/tl-wa7210n-v2
+diff --git a/target/linux/ar71xx/image/ubnt.mk b/target/linux/ar71xx/image/ubnt.mk
+index 31a9901d12..35d719fad7 100644
+--- a/target/linux/ar71xx/image/ubnt.mk
++++ b/target/linux/ar71xx/image/ubnt.mk
+@@ -206,7 +206,6 @@ define Device/ubdev01
+   UBNT_TYPE := XM
+   UBNT_CHIP := ar7240
+ endef
+-
+ TARGET_DEVICES += ubdev01
+ 
+ define Device/ubnt-routerstation
+@@ -248,7 +247,6 @@ $(Device/ubnt-routerstation)
+   UBNT_TYPE := LS-SR71
+   UBNT_CHIP := ar7100
+ endef
+-
+ TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
+ 
+ define Device/ubnt-uap-pro
+@@ -273,5 +271,4 @@ $(Device/ubnt-uap-pro)
+   BOARDNAME := UBNT-UOP
+   DEVICE_PROFILE := UBNT
+ endef
+-
+ TARGET_DEVICES += ubnt-uap-pro ubnt-unifi-outdoor-plus
+-- 
+2.13.1
+

@@ -181,6 +181,18 @@ factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 
 device tp-link-re450 re450
 packages $ATH10K_PACKAGES
+
+# BROKEN: Some troubles with IBSS on 5 GHz reported on early testing
+if [ "$BROKEN" ]; then
+device tp-link-archer-c25-v1 archer-c25-v1 # BROKEN: Untested
+packages $ATH10K_PACKAGES
+
+device tp-link-archer-c59-v1 archer-c59-v1 # BROKEN: Untested
+packages $ATH10K_PACKAGES
+
+device tp-link-archer-c60-v1 archer-c60-v1 # BROKEN: Untested
+packages $ATH10K_PACKAGES
+fi
 fi
 
 

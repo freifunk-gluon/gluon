@@ -1,0 +1,222 @@
+From b01164df0c4b505947053716924fc9156e4afe63 Mon Sep 17 00:00:00 2001
+From: Piotr Dymacz <pepe2k@gmail.com>
+Date: Wed, 31 May 2017 16:31:44 +0200
+Subject: [PATCH] ar71xx: image: keep custom Build/* functions in separate
+ files
+
+Most of the custom Build/* functions in ar71xx target are rarely used by
+image building code for devices from more than one subtarget. As they
+don't need to be always included, move them to corresponding *.mk files.
+
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+---
+ target/linux/ar71xx/image/Makefile   | 52 +---------------------
+ target/linux/ar71xx/image/generic.mk | 86 ++++++++++++++++++++++++++++++++++++
+ target/linux/ar71xx/image/tp-link.mk | 16 ++++++-
+ 3 files changed, 102 insertions(+), 52 deletions(-)
+
+diff --git a/target/linux/ar71xx/image/Makefile b/target/linux/ar71xx/image/Makefile
+index 8eac5fc997..16881bceda 100644
+--- a/target/linux/ar71xx/image/Makefile
++++ b/target/linux/ar71xx/image/Makefile
+@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/image.mk
+ 
+ KERNEL_LOADADDR = 0x80060000
+ 
+-DEVICE_VARS += NETGEAR_KERNEL_MAGIC NETGEAR_BOARD_ID NETGEAR_HW_ID CMDLINE CONSOLE IMAGE_SIZE BOARDNAME LOADER_FLASH_OFFS LOADER_TYPE
++DEVICE_VARS += BOARDNAME CMDLINE CONSOLE IMAGE_SIZE LOADER_TYPE
+ 
+ ifeq ($(SUBTARGET),generic)
+ include ./tp-link.mk
+@@ -26,29 +26,6 @@ include ./mikrotik.mk
+ endif
+ include ./legacy.mk
+ 
+-define Build/netgear-squashfs
+-	rm -rf $@.fs $@.squashfs
+-	mkdir -p $@.fs/image
+-	cp $@ $@.fs/image/uImage
+-	$(STAGING_DIR_HOST)/bin/mksquashfs-lzma \
+-		$@.fs $@.squashfs \
+-		-noappend -root-owned -be -b 65536 \
+-		$(if $(SOURCE_DATE_EPOCH),-fixed-time $(SOURCE_DATE_EPOCH))
+-
+-	dd if=/dev/zero bs=1k count=1 >> $@.squashfs
+-	mkimage \
+-		-A mips -O linux -T filesystem -C none \
+-		-M $(NETGEAR_KERNEL_MAGIC) \
+-		-a 0xbf070000 -e 0xbf070000 \
+-		-n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
+-		-d $@.squashfs $@
+-	rm -rf $@.squashfs $@.fs
+-endef
+-
+-define Build/netgear-uImage
+-	$(call Build/uImage,$(1) -M $(NETGEAR_KERNEL_MAGIC))
+-endef
+-
+ define Build/loader-common
+ 	rm -rf $@.src
+ 	$(MAKE) -C lzma-loader \
+@@ -61,10 +38,6 @@ define Build/loader-common
+ 	rm -rf $@.src
+ endef
+ 
+-define Build/loader-okli-compile
+-	$(call Build/loader-common,FLASH_OFFS=$(LOADER_FLASH_OFFS) FLASH_MAX=0 KERNEL_CMDLINE="$(CMDLINE)")
+-endef
+-
+ define Build/loader-kernel
+ 	$(call Build/loader-common,LOADER_DATA="$@")
+ endef
+@@ -73,29 +46,6 @@ define Build/loader-kernel-cmdline
+ 	$(call Build/loader-common,LOADER_DATA="$@" KERNEL_CMDLINE="$(CMDLINE)")
+ endef
+ 
+-define Build/loader-okli
+-	dd if=$(KDIR)/loader-$(1).gz bs=7680 conv=sync of="$@.new"
+-	cat "$@" >> "$@.new"
+-	mv "$@.new" "$@"
+-endef
+-
+-define Build/relocate-kernel
+-	rm -rf $@.relocate
+-	$(CP) ../../generic/image/relocate $@.relocate
+-	$(MAKE) -j1 -C $@.relocate KERNEL_ADDR=$(KERNEL_LOADADDR) CROSS_COMPILE=$(TARGET_CROSS)
+-	( \
+-		dd if=$@.relocate/loader.bin bs=32 conv=sync && \
+-		perl -e '@s = stat("$@"); print pack("N", @s[7])' && \
+-		cat "$@" \
+-	) > "$@.new"
+-	mv "$@.new" "$@"
+-	rm -rf $@.relocate
+-endef
+-
+-define Build/copy-file
+-	cat "$(1)" > "$@"
+-endef
+-
+ define Device/Default
+   BOARDNAME :=
+   DEVICE_PROFILE = $$(BOARDNAME)
+diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
+index 77fe70190c..74474fb4c9 100644
+--- a/target/linux/ar71xx/image/generic.mk
++++ b/target/linux/ar71xx/image/generic.mk
+@@ -1,3 +1,89 @@
++DEVICE_VARS += DAP_SIGNATURE NETGEAR_BOARD_ID NETGEAR_HW_ID NETGEAR_KERNEL_MAGIC SEAMA_SIGNATURE
++
++define Build/mkbuffaloimg
++	$(STAGING_DIR_HOST)/bin/mkbuffaloimg -B $(BOARDNAME) \
++		-R $$(($(subst k, * 1024,$(ROOTFS_SIZE)))) \
++		-K $$(($(subst k, * 1024,$(KERNEL_SIZE)))) \
++		-i $@ -o $@.new
++	mv $@.new $@
++endef
++
++define Build/mkwrggimg
++	$(STAGING_DIR_HOST)/bin/mkwrggimg -b \
++		-i $@ -o $@.imghdr -d /dev/mtdblock/1 \
++		-m $(BOARDNAME) -s $(DAP_SIGNATURE) \
++		-v LEDE -B $(REVISION)
++	mv $@.imghdr $@
++endef
++
++define Build/netgear-squashfs
++	rm -rf $@.fs $@.squashfs
++	mkdir -p $@.fs/image
++	cp $@ $@.fs/image/uImage
++	$(STAGING_DIR_HOST)/bin/mksquashfs-lzma \
++		$@.fs $@.squashfs \
++		-noappend -root-owned -be -b 65536 \
++		$(if $(SOURCE_DATE_EPOCH),-fixed-time $(SOURCE_DATE_EPOCH))
++
++	dd if=/dev/zero bs=1k count=1 >> $@.squashfs
++	mkimage \
++		-A mips -O linux -T filesystem -C none \
++		-M $(NETGEAR_KERNEL_MAGIC) \
++		-a 0xbf070000 -e 0xbf070000 \
++		-n 'MIPS OpenWrt Linux-$(LINUX_VERSION)' \
++		-d $@.squashfs $@
++	rm -rf $@.squashfs $@.fs
++endef
++
++define Build/netgear-uImage
++	$(call Build/uImage,$(1) -M $(NETGEAR_KERNEL_MAGIC))
++endef
++
++define Build/relocate-kernel
++	rm -rf $@.relocate
++	$(CP) ../../generic/image/relocate $@.relocate
++	$(MAKE) -j1 -C $@.relocate KERNEL_ADDR=$(KERNEL_LOADADDR) CROSS_COMPILE=$(TARGET_CROSS)
++	( \
++		dd if=$@.relocate/loader.bin bs=32 conv=sync && \
++		perl -e '@s = stat("$@"); print pack("N", @s[7])' && \
++		cat "$@" \
++	) > "$@.new"
++	mv "$@.new" "$@"
++	rm -rf $@.relocate
++endef
++
++define Build/seama
++	$(STAGING_DIR_HOST)/bin/seama -i $@ $(if $(1),$(1),-m "dev=/dev/mtdblock/1" -m "type=firmware")
++	mv $@.seama $@
++endef
++
++define Build/seama-seal
++	$(call Build/seama,-s $@.seama $(1))
++endef
++
++define Build/uImageHiWiFi
++	# Field ih_name needs to start with "tw150v1"
++	mkimage -A $(LINUX_KARCH) \
++		-O linux -T kernel \
++		-C $(1) -a $(KERNEL_LOADADDR) -e $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
++		-n 'tw150v1 $(call toupper,$(LINUX_KARCH)) LEDE Linux-$(LINUX_VERSION)' -d $@ $@.new
++	@mv $@.new $@
++endef
++
++define Build/wrgg-pad-rootfs
++	$(STAGING_DIR_HOST)/bin/padjffs2 $(IMAGE_ROOTFS) -c 64 >>$@
++endef
++
++
++define Device/ap531b0
++  DEVICE_TITLE := Rockeetech AP531B0
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
++  BOARDNAME = AP531B0
++  IMAGE_SIZE := 16000k
++  MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,16000k(firmware),64k(art)ro
++endef
++TARGET_DEVICES += ap531b0
++
+ define Device/ap90q
+   DEVICE_TITLE := YunCore AP90Q
+   BOARDNAME = AP90Q
+diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
+index 1c88f434a6..a84eefab70 100644
+--- a/target/linux/ar71xx/image/tp-link.mk
++++ b/target/linux/ar71xx/image/tp-link.mk
+@@ -1,4 +1,18 @@
+-DEVICE_VARS += TPLINK_HWID TPLINK_HWREV TPLINK_FLASHLAYOUT TPLINK_HEADER_VERSION TPLINK_BOARD_NAME
++DEVICE_VARS += LOADER_FLASH_OFFS TPLINK_BOARD_NAME TPLINK_FLASHLAYOUT TPLINK_HEADER_VERSION TPLINK_HWID TPLINK_HWREV
++
++define Build/copy-file
++	cat "$(1)" > "$@"
++endef
++
++define Build/loader-okli
++	dd if=$(KDIR)/loader-$(1).gz bs=7680 conv=sync of="$@.new"
++	cat "$@" >> "$@.new"
++	mv "$@.new" "$@"
++endef
++
++define Build/loader-okli-compile
++	$(call Build/loader-common,FLASH_OFFS=$(LOADER_FLASH_OFFS) FLASH_MAX=0 KERNEL_CMDLINE="$(CMDLINE)")
++endef
+ 
+ # combine kernel and rootfs into one image
+ # mktplinkfw <type> <optional extra arguments to mktplinkfw binary>
+-- 
+2.13.1
+

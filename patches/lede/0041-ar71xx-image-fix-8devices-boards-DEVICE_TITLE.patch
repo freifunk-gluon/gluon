@@ -1,0 +1,44 @@
+From b6249ea354645554c2c5cd5cc08cdfb4c3454b2c Mon Sep 17 00:00:00 2001
+From: Piotr Dymacz <pepe2k@gmail.com>
+Date: Wed, 31 May 2017 21:56:10 +0200
+Subject: [PATCH] ar71xx: image: fix 8devices boards DEVICE_TITLE
+
+Be consistent with DEVICE_TITLE syntax and use vendor + board names.
+
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+---
+ target/linux/ar71xx/image/generic.mk | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
+index 522f6d56a4..60fc2f7679 100644
+--- a/target/linux/ar71xx/image/generic.mk
++++ b/target/linux/ar71xx/image/generic.mk
+@@ -104,7 +104,7 @@ endef
+ TARGET_DEVICES += bsb
+ 
+ define Device/carambola2
+-  DEVICE_TITLE := Carambola2 board from 8Devices
++  DEVICE_TITLE := 8devices Carambola2
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = CARAMBOLA2
+   IMAGE_SIZE = 16000k
+@@ -254,6 +254,15 @@ define Device/gl-mifi
+ endef
+ TARGET_DEVICES += gl-mifi
+ 
++define Device/lima
++  DEVICE_TITLE := 8devices Lima
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
++  BOARDNAME = LIMA
++  IMAGE_SIZE = 15616k
++  MTDPARTS = spi0.0:256k(u-boot)ro,256k(u-boot-env)ro,256k(art)ro,-(firmware)
++endef
++TARGET_DEVICES += lima
++
+ define Device/mr12
+   DEVICE_TITLE := Meraki MR12
+   DEVICE_PACKAGES := kmod-spi-gpio
+-- 
+2.13.1
+
