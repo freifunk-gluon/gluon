@@ -1,0 +1,66 @@
+From 5627a13d1061a733d511bd29c2fdd5a68d383b45 Mon Sep 17 00:00:00 2001
+From: Piotr Dymacz <pepe2k@gmail.com>
+Date: Wed, 31 May 2017 22:12:51 +0200
+Subject: [PATCH] ar71xx: image: update GL.iNet boards DEVICE_TITLE
+
+Use "GL.iNet" as vendor name (based on information from the vendor, this
+is registered name of the company) and align model names with official
+website.
+
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+---
+ target/linux/ar71xx/image/generic.mk | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
+index 60fc2f7679..2bb75a0875 100644
+--- a/target/linux/ar71xx/image/generic.mk
++++ b/target/linux/ar71xx/image/generic.mk
+@@ -205,7 +205,7 @@ endef
+ TARGET_DEVICES += weio
+ 
+ define Device/gl-ar150
+-  DEVICE_TITLE := GL AR150
++  DEVICE_TITLE := GL.iNet GL-AR150
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = GL-AR150
+   IMAGE_SIZE = 16000k
+@@ -215,7 +215,7 @@ endef
+ TARGET_DEVICES += gl-ar150
+ 
+ define Device/gl-ar300
+-  DEVICE_TITLE := GL AR300
++  DEVICE_TITLE := GL.iNet GL-AR300
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = GL-AR300
+   IMAGE_SIZE = 16000k
+@@ -225,7 +225,7 @@ endef
+ TARGET_DEVICES += gl-ar300
+ 
+ define Device/gl-ar300m
+-  DEVICE_TITLE := GL AR300M
++  DEVICE_TITLE := GL.iNet GL-AR300M
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = GL-AR300M
+   IMAGE_SIZE = 16000k
+@@ -235,7 +235,7 @@ endef
+ TARGET_DEVICES += gl-ar300m
+ 
+ define Device/gl-domino
+-  DEVICE_TITLE := GL Domino Pi
++  DEVICE_TITLE := GL.iNet Domino Pi
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = DOMINO
+   IMAGE_SIZE = 16000k
+@@ -245,7 +245,7 @@ endef
+ TARGET_DEVICES += gl-domino
+ 
+ define Device/gl-mifi
+-  DEVICE_TITLE := GL MIFI
++  DEVICE_TITLE := GL.iNet GL-MiFi
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   BOARDNAME = GL-MIFI
+   IMAGE_SIZE = 16000k
+-- 
+2.13.1
+

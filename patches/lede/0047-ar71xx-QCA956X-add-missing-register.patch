@@ -1,0 +1,175 @@
+From caf2844a4a90ad035bd0720839427f9718527d4d Mon Sep 17 00:00:00 2001
+From: Henryk Heisig <hyniu@o2.pl>
+Date: Fri, 6 Jan 2017 21:21:11 +0100
+Subject: [PATCH] ar71xx: QCA956X: add missing register
+
+Signed-off-by: Henryk Heisig <hyniu@o2.pl>
+---
+ .../linux/ar71xx/files/arch/mips/ath79/dev-eth.c   | 23 ++++++++++++-
+ .../linux/ar71xx/files/arch/mips/ath79/dev-eth.h   |  1 +
+ .../mips/include/asm/mach-ath79/ag71xx_platform.h  |  2 ++
+ ...add-more-register-defines-for-QCA956x-SoC.patch | 38 ++++++++++++++++++++++
+ .../640-MIPS-ath79-add-QCA955x-wmac-reset.patch    |  2 +-
+ .../820-MIPS-ath79-add_gpio_function2_setup.patch  |  4 +--
+ 6 files changed, 66 insertions(+), 4 deletions(-)
+ create mode 100644 target/linux/ar71xx/patches-4.4/622-MIPS-ath79-add-more-register-defines-for-QCA956x-SoC.patch
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
+index 790c2d3396..a8b19b68b2 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
+@@ -686,7 +686,6 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
+ 		case ATH79_SOC_AR7241:
+ 		case ATH79_SOC_AR9330:
+ 		case ATH79_SOC_AR9331:
+-		case ATH79_SOC_QCA956X:
+ 		case ATH79_SOC_TP9343:
+ 			pdata->phy_if_mode = PHY_INTERFACE_MODE_GMII;
+ 			break;
+@@ -698,6 +697,7 @@ static int __init ath79_setup_phy_if_mode(unsigned int id,
+ 		case ATH79_SOC_AR9342:
+ 		case ATH79_SOC_AR9344:
+ 		case ATH79_SOC_QCA9533:
++		case ATH79_SOC_QCA956X:
+ 			switch (pdata->phy_if_mode) {
+ 			case PHY_INTERFACE_MODE_MII:
+ 			case PHY_INTERFACE_MODE_GMII:
+@@ -814,6 +814,27 @@ void __init ath79_setup_qca955x_eth_cfg(u32 mask)
+ 	iounmap(base);
+ }
+ 
++void __init ath79_setup_qca956x_eth_cfg(u32 mask)
++{
++	void __iomem *base;
++	u32 t;
++
++	base = ioremap(QCA956X_GMAC_BASE, QCA956X_GMAC_SIZE);
++
++	t = __raw_readl(base + QCA956X_GMAC_REG_ETH_CFG);
++
++	t &= ~(QCA956X_ETH_CFG_SW_ONLY_MODE |
++	       QCA956X_ETH_CFG_SW_PHY_SWAP);
++
++	t |= mask;
++
++	__raw_writel(t, base + QCA956X_GMAC_REG_ETH_CFG);
++	/* flush write */
++	__raw_readl(base + QCA956X_GMAC_REG_ETH_CFG);
++
++	iounmap(base);
++}
++
+ static int ath79_eth_instance __initdata;
+ void __init ath79_register_eth(unsigned int id)
+ {
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.h b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.h
+index 5a226e4028..fb9e4f63c6 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.h
+@@ -49,5 +49,6 @@ void ath79_setup_ar933x_phy4_switch(bool mac, bool mdio);
+ void ath79_setup_ar934x_eth_cfg(u32 mask);
+ void ath79_setup_ar934x_eth_rx_delay(unsigned int rxd, unsigned int rxdv);
+ void ath79_setup_qca955x_eth_cfg(u32 mask);
++void ath79_setup_qca956x_eth_cfg(u32 mask);
+ 
+ #endif /* _ATH79_DEV_ETH_H */
+diff --git a/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h b/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
+index 5fd352c638..078fa157f2 100644
+--- a/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
++++ b/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
+@@ -37,11 +37,13 @@ struct ag71xx_platform_data {
+ 	u8		is_ar724x:1;
+ 	u8		has_ar8216:1;
+ 	u8		use_flow_control:1;
++	u8		is_qca956x:1;
+ 
+ 	struct ag71xx_switch_platform_data *switch_data;
+ 
+ 	void		(*ddr_flush)(void);
+ 	void		(*set_speed)(int speed);
++	void		(*update_pll)(u32 pll_10, u32 pll_100, u32 pll_1000);
+ 
+ 	u32		fifo_cfg1;
+ 	u32		fifo_cfg2;
+diff --git a/target/linux/ar71xx/patches-4.4/622-MIPS-ath79-add-more-register-defines-for-QCA956x-SoC.patch b/target/linux/ar71xx/patches-4.4/622-MIPS-ath79-add-more-register-defines-for-QCA956x-SoC.patch
+new file mode 100644
+index 0000000000..dff354398c
+--- /dev/null
++++ b/target/linux/ar71xx/patches-4.4/622-MIPS-ath79-add-more-register-defines-for-QCA956x-SoC.patch
+@@ -0,0 +1,38 @@
++--- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+++++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
++@@ -157,6 +157,10 @@
++ #define QCA956X_EHCI0_BASE	0x1b000000
++ #define QCA956X_EHCI1_BASE	0x1b400000
++ #define QCA956X_EHCI_SIZE	0x200
+++#define QCA956X_GMAC_SGMII_BASE	(AR71XX_APB_BASE + 0x00070000)
+++#define QCA956X_GMAC_SGMII_SIZE	0x64
+++#define QCA956X_PLL_BASE	(AR71XX_APB_BASE + 0x00050000)
+++#define QCA956X_PLL_SIZE	0x50
++ #define QCA956X_GMAC_BASE	(AR71XX_APB_BASE + 0x00070000)
++ #define QCA956X_GMAC_SIZE	0x64
++ 
++@@ -404,6 +408,7 @@
++ #define QCA956X_PLL_DDR_CONFIG_REG			0x08
++ #define QCA956X_PLL_DDR_CONFIG1_REG			0x0c
++ #define QCA956X_PLL_CLK_CTRL_REG			0x10
+++#define QCA956X_PLL_ETH_XMII_CONTROL_REG		0x30
++ 
++ #define QCA956X_PLL_CPU_CONFIG_REFDIV_SHIFT		12
++ #define QCA956X_PLL_CPU_CONFIG_REFDIV_MASK		0x1f
++@@ -1186,4 +1191,16 @@
++ #define QCA955X_ETH_CFG_TXE_DELAY_MASK	0x3
++ #define QCA955X_ETH_CFG_TXE_DELAY_SHIFT	20
++ 
+++/*
+++ * QCA956X GMAC Interface
+++ */
+++
+++#define QCA956X_GMAC_REG_ETH_CFG		0x00
+++
+++#define QCA956X_ETH_CFG_SW_ONLY_MODE		BIT(7)
+++#define QCA956X_ETH_CFG_SW_PHY_SWAP		    BIT(8)
+++#define QCA956X_ETH_CFG_SW_PHY_ADDR_SWAP	BIT(9)
+++#define QCA956X_ETH_CFG_SW_APB_ACCESS		BIT(10)
+++#define QCA956X_ETH_CFG_SW_ACC_MSB_FIRST	BIT(13)
+++
++ #endif /* __ASM_MACH_AR71XX_REGS_H */
+diff --git a/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch b/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+index add2992186..8aa5957a71 100644
+--- a/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
++++ b/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+@@ -20,7 +20,7 @@
+  #define AR71XX_UART_BASE	(AR71XX_APB_BASE + 0x00020000)
+  #define AR71XX_UART_SIZE	0x100
+  #define AR71XX_USB_CTRL_BASE	(AR71XX_APB_BASE + 0x00030000)
+-@@ -218,6 +218,9 @@
++@@ -222,6 +222,9 @@
+  #define QCA953X_DDR_REG_FLUSH_PCIE	0xa8
+  #define QCA953X_DDR_REG_FLUSH_WMAC	0xac
+  
+diff --git a/target/linux/ar71xx/patches-4.4/820-MIPS-ath79-add_gpio_function2_setup.patch b/target/linux/ar71xx/patches-4.4/820-MIPS-ath79-add_gpio_function2_setup.patch
+index 7db6ad361f..6b331587d1 100644
+--- a/target/linux/ar71xx/patches-4.4/820-MIPS-ath79-add_gpio_function2_setup.patch
++++ b/target/linux/ar71xx/patches-4.4/820-MIPS-ath79-add_gpio_function2_setup.patch
+@@ -48,7 +48,7 @@ functions on the Arduino Yun.
+  	void __iomem *reg = ath79_gpio_get_function_reg();
+ --- a/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+ +++ b/arch/mips/include/asm/mach-ath79/ar71xx_regs.h
+-@@ -850,6 +850,7 @@
++@@ -855,6 +855,7 @@
+  #define AR71XX_GPIO_REG_INT_PENDING	0x20
+  #define AR71XX_GPIO_REG_INT_ENABLE	0x24
+  #define AR71XX_GPIO_REG_FUNC		0x28
+@@ -56,7 +56,7 @@ functions on the Arduino Yun.
+  
+  #define AR934X_GPIO_REG_OUT_FUNC0	0x2c
+  #define AR934X_GPIO_REG_OUT_FUNC1	0x30
+-@@ -974,6 +975,8 @@
++@@ -979,6 +980,8 @@
+  #define AR724X_GPIO_FUNC_UART_EN		BIT(1)
+  #define AR724X_GPIO_FUNC_JTAG_DISABLE		BIT(0)
+  
+-- 
+2.13.1
+

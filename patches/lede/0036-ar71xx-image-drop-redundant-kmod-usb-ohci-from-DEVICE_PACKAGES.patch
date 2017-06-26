@@ -1,0 +1,248 @@
+From 3ceeeea448d35004dafbd44c596dfe0535bb8db7 Mon Sep 17 00:00:00 2001
+From: Piotr Dymacz <pepe2k@gmail.com>
+Date: Tue, 30 May 2017 22:55:29 +0200
+Subject: [PATCH] ar71xx: image: drop redundant kmod-usb-ohci from
+ DEVICE_PACKAGES
+
+kmod-usb-ohci is needed only on devices with AR71xx and AR7240 SoCs.
+
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+---
+ target/linux/ar71xx/image/generic.mk        | 90 ++++++++++++++++++++++++++++-
+ target/linux/ar71xx/image/legacy-devices.mk |  8 +--
+ target/linux/ar71xx/image/nand.mk           |  6 +-
+ target/linux/ar71xx/image/ubnt.mk           |  8 +--
+ 4 files changed, 98 insertions(+), 14 deletions(-)
+
+diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
+index 29ed108d5d..b95ccac86d 100644
+--- a/target/linux/ar71xx/image/generic.mk
++++ b/target/linux/ar71xx/image/generic.mk
+@@ -101,7 +101,7 @@ TARGET_DEVICES += cpe870
+ define Device/dragino2
+   BOARDNAME := DRAGINO2
+   CONSOLE := ttyATH0,115200
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
+   DEVICE_TITLE := Dragino 2 (MS14)
+   IMAGE_SIZE := 16000k
+   MTDPARTS := spi0.0:256k(u-boot)ro,16000k(firmware),64k(config)ro,64k(art)ro
+@@ -299,7 +299,7 @@ TARGET_DEVICES += cr3000-nocloud
+ 
+ define Device/cr5000
+   DEVICE_TITLE := PowerCloud CR5000 Cloud Router
+-  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport kmod-usb-core
++  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-core
+   BOARDNAME := CR5000
+   DEVICE_PROFILE := CR5000
+   IMAGE_SIZE = 7104k
+@@ -310,7 +310,7 @@ TARGET_DEVICES += cr5000
+ 
+ define Device/cr5000-nocloud
+   DEVICE_TITLE := PowerCloud CR5000 (No-Cloud)
+-  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport kmod-usb-core
++  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-core
+   BOARDNAME := CR5000
+   DEVICE_PROFILE := CR5000
+   IMAGE_SIZE = 7808k
+@@ -460,6 +460,33 @@ define Device/onion-omega
+ endef
+ TARGET_DEVICES += onion-omega
+ 
++define Device/sc1750
++  DEVICE_TITLE := Abicom SC1750
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME = SC1750
++  IMAGE_SIZE = 15744k
++  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env),15744k(firmware),128k(APConfig),128k(kplog),64k(ART)
++endef
++TARGET_DEVICES += sc1750
++
++define Device/sc300m
++  DEVICE_TITLE := Abicom SC300M
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME = SC300M
++  IMAGE_SIZE = 15744k
++  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env),15744k(firmware),128k(APConfig),128k(kplog),64k(ART)
++endef
++TARGET_DEVICES += sc300m
++
++define Device/sc450
++  DEVICE_TITLE := Abicom SC450
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME = SC450
++  IMAGE_SIZE = 15744k
++  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env),15744k(firmware),128k(APConfig),128k(kplog),64k(ART)
++endef
++TARGET_DEVICES += sc450
++
+ define Device/smart-300
+   $(Device/tplink-8mlzma)
+   DEVICE_TITLE := NC-LINK SMART-300
+@@ -721,3 +748,60 @@ define Device/bhr-4grv2
+   IMAGE/factory.bin = append-kernel | pad-to $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | mkbuffaloimg
+ endef
+ TARGET_DEVICES += bhr-4grv2
++
++define Device/wpj342
++  DEVICE_TITLE := Compex WPJ342 (16MB flash)
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME := WPJ342
++  MTDPARTS := spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
++  IMAGE_SIZE := 16128k
++endef
++TARGET_DEVICES += wpj342
++
++define Device/wpj344
++  DEVICE_TITLE := Compex WPJ344 (16MB flash)
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME := WPJ344
++  MTDPARTS := spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
++  IMAGE_SIZE := 16128k
++endef
++TARGET_DEVICES += wpj344
++
++define Device/wpj531
++  DEVICE_TITLE := Compex WPJ531 (16MB flash)
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME := WPJ531
++  MTDPARTS := spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
++  IMAGE_SIZE := 16128k
++endef
++TARGET_DEVICES += wpj531
++
++define Device/wpj558
++  DEVICE_TITLE := Compex WPJ558 (16MB flash)
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME := WPJ558
++  MTDPARTS := spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
++  IMAGE_SIZE := 16128k
++endef
++TARGET_DEVICES += wpj558
++
++define Device/wpj563
++  DEVICE_TITLE := Compex WPJ563 (16MB flash)
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
++  BOARDNAME := WPJ563
++  MTDPARTS := spi0.0:192k(u-boot)ro,16128k(firmware),64k(art)ro
++  IMAGE_SIZE := 16128k
++endef
++TARGET_DEVICES += wpj563
++
++define Device/zbt-we1526
++  DEVICE_TITLE := Zbtlink ZBT-WE1526
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
++  BOARDNAME := ZBT-WE1526
++  IMAGE_SIZE := 16000k
++  KERNEL_SIZE := 1472k
++  ROOTFS_SIZE := 14528k
++  MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,14528k(rootfs),1472k(kernel),64k(art)ro,16000k@0x50000(firmware)
++  IMAGE/sysupgrade.bin = append-rootfs | pad-rootfs | pad-to $$$$(ROOTFS_SIZE) | append-kernel | check-size $$$$(IMAGE_SIZE)
++endef
++TARGET_DEVICES += zbt-we1526
+diff --git a/target/linux/ar71xx/image/legacy-devices.mk b/target/linux/ar71xx/image/legacy-devices.mk
+index 87423ce55c..6898079567 100644
+--- a/target/linux/ar71xx/image/legacy-devices.mk
++++ b/target/linux/ar71xx/image/legacy-devices.mk
+@@ -117,7 +117,7 @@ LEGACY_DEVICES += AP152_16M
+ 
+ define LegacyDevice/BXU2000N2
+   DEVICE_TITLE := BHU BXU2000n-2
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-storage
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-storage
+ endef
+ LEGACY_DEVICES += BXU2000N2
+ 
+@@ -134,19 +134,19 @@ LEGACY_DEVICES += DB120
+ 
+ define LegacyDevice/EWDORINAP
+   DEVICE_TITLE := Embedded Wireless Dorin Platform (4MB flash)
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
+ endef
+ LEGACY_DEVICES += EWDORINAP
+ 
+ define LegacyDevice/EWDORINRT
+   DEVICE_TITLE := Embedded Wireless Dorin Router
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
+ endef
+ LEGACY_DEVICES += EWDORINRT
+ 
+ define LegacyDevice/EWDORIN16M
+   DEVICE_TITLE := Embedded Wireless Dorin Platform (16MB flash)
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-usb-storage
+ endef
+ LEGACY_DEVICES += EWDORIN16M
+ 
+diff --git a/target/linux/ar71xx/image/nand.mk b/target/linux/ar71xx/image/nand.mk
+index ce1b067c55..aef9fc3ec8 100644
+--- a/target/linux/ar71xx/image/nand.mk
++++ b/target/linux/ar71xx/image/nand.mk
+@@ -71,19 +71,19 @@ TARGET_DEVICES += z1
+ 
+ define LegacyDevice/R6100
+   DEVICE_TITLE := NETGEAR R6100
+-  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport
++  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
+ endef
+ LEGACY_DEVICES += R6100
+ 
+ define LegacyDevice/WNDR3700V4
+   DEVICE_TITLE := NETGEAR WNDR3700v4
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
+ endef
+ LEGACY_DEVICES += WNDR3700V4
+ 
+ define LegacyDevice/WNDR4300V1
+   DEVICE_TITLE := NETGEAR WNDR4300v1
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport
+ endef
+ LEGACY_DEVICES += WNDR4300V1
+ 
+diff --git a/target/linux/ar71xx/image/ubnt.mk b/target/linux/ar71xx/image/ubnt.mk
+index 68fe8ad301..31a9901d12 100644
+--- a/target/linux/ar71xx/image/ubnt.mk
++++ b/target/linux/ar71xx/image/ubnt.mk
+@@ -53,7 +53,7 @@ define Device/ubnt-xm
+ endef
+ 
+ define Device/ubnt-xw
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   DEVICE_PROFILE := UBNT
+   IMAGE_SIZE := 7552k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7552k(firmware),256k(cfg)ro,64k(EEPROM)ro
+@@ -66,7 +66,7 @@ define Device/ubnt-xw
+ endef
+ 
+ define Device/ubnt-bz
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   DEVICE_PROFILE := UBNT
+   IMAGE_SIZE := 7552k
+   MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,7552k(firmware),256k(cfg)ro,64k(EEPROM)ro
+@@ -79,7 +79,7 @@ define Device/ubnt-bz
+ endef
+ 
+ define Device/ubnt-unifiac
+-  DEVICE_PACKAGES := kmod-usb-core kmod-usb-ohci kmod-usb2
++  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+   DEVICE_PROFILE := UBNT
+   IMAGE_SIZE := 7744k
+   MTDPARTS = spi0.0:384k(u-boot)ro,64k(u-boot-env)ro,7744k(firmware),7744k(ubnt-airos)ro,128k(bs)ro,256k(cfg)ro,64k(EEPROM)ro
+@@ -136,7 +136,7 @@ endef
+ define Device/ubnt-unifiac-pro
+   $(Device/ubnt-unifiac)
+   DEVICE_TITLE := Ubiquiti UniFi AC-Pro
+-  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x kmod-usb-core kmod-usb-ohci kmod-usb2
++  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x kmod-usb-core kmod-usb2
+   DEVICE_PROFILE := UBNT UBNTUNIFIACPRO
+   BOARDNAME := UBNT-UF-AC-PRO
+ endef
+-- 
+2.13.1
+
