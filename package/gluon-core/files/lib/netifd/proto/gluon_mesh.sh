@@ -28,6 +28,7 @@ proto_gluon_mesh_setup() {
 	proto_add_data
 	json_add_boolean fixed_mtu "$FIXED_MTU"
 	json_add_boolean transitive "$TRANSITIVE"
+	[ "$IFNAME" != 'br-wan' ] && json_add_string zone 'mesh'
 	proto_close_data
 	proto_send_update "$CONFIG"
 
