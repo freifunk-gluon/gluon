@@ -20,20 +20,23 @@ proto_gluon_mesh_setup() {
 	export TRANSITIVE="${transitive:-0}"
 
 	for script in /lib/gluon/core/mesh/setup.d/*; do
-	        [ ! -x "$script" ] || "$script"
+		[ ! -x "$script" ] || "$script"
 	done
 
-        proto_init_update "$IFNAME" 1
+	proto_init_update "$IFNAME" 1
 
-	proto_add_data
-	json_add_boolean fixed_mtu "$FIXED_MTU"
-	json_add_boolean transitive "$TRANSITIVE"
-	proto_close_data
-
-        proto_send_update "$CONFIG"
+	if [ "$IFNAME" != "br-wan" ]
+	then
+		proto_add_data
+		json_add_string zone mesh
+		json_add_boolean fixed_mtu "$FIXED_MTU"
+		json_add_boolean transitive "$TRANSITIVE"
+		proto_close_data
+	fi
+	proto_send_update "$CONFIG"
 
 	for script in /lib/gluon/core/mesh/post-setup.d/*; do
-	        [ ! -x "$script" ] || "$script"
+		[ ! -x "$script" ] || "$script"
 	done
 }
 
@@ -42,7 +45,7 @@ proto_gluon_mesh_teardown() {
 	export IFNAME="$2"
 
 	for script in /lib/gluon/core/mesh/teardown.d/*; do
-	        [ ! -x "$script" ] || "$script"
+		[ ! -x "$script" ] || "$script"
 	done
 }
 
