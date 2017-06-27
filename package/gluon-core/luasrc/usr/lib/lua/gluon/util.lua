@@ -131,7 +131,7 @@ function site_seed_bytes(key, length)
 	-- cryptographic strength
 	while ret:len() < 2*length do
 		i = i + 1
-		v = hash.md5(v .. key .. site.site_seed .. i)
+		v = hash.md5(v .. key .. site.site_seed:lower() .. i)
 		ret = ret .. v
 	end
 
