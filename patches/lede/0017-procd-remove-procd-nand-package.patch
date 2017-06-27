@@ -12,21 +12,21 @@ as a separate package.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index ac3fe2f52b4863260a2e8efa58dac5da6bbb9ec1..4cc3e5079b9cf25909acef92526753945ba5f9de 100644
+index 305d0bfd333fd17f0f7c57ee2298dbfd4b97fe29..fe4430d59092dae9ba2ffbea61f58ac7b4b41dc6 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
-@@ -18,7 +18,9 @@ PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
- PKG_BUILD_DEPENDS:=usign/host
+@@ -19,7 +19,9 @@ PKG_BUILD_DEPENDS:=usign/host
  PKG_LICENSE:=GPL-2.0
  
--PKG_CONFIG_DEPENDS := CONFIG_SIGNED_PACKAGES CONFIG_TARGET_INIT_PATH CONFIG_TARGET_PREINIT_DISABLE_FAILSAFE
-+PKG_CONFIG_DEPENDS := \
+ # Extend depends from version.mk
+-PKG_CONFIG_DEPENDS += CONFIG_SIGNED_PACKAGES CONFIG_TARGET_INIT_PATH CONFIG_TARGET_PREINIT_DISABLE_FAILSAFE
++PKG_CONFIG_DEPENDS += \
 +	CONFIG_SIGNED_PACKAGES CONFIG_TARGET_INIT_PATH CONFIG_TARGET_PREINIT_DISABLE_FAILSAFE \
 +	CONFIG_NAND_SUPPORT
  
  include $(INCLUDE_DIR)/package.mk
  
-@@ -30,7 +32,7 @@ endif
+@@ -31,7 +33,7 @@ endif
  define Package/base-files
    SECTION:=base
    CATEGORY:=Base system
@@ -35,7 +35,7 @@ index ac3fe2f52b4863260a2e8efa58dac5da6bbb9ec1..4cc3e5079b9cf25909acef9252675394
    TITLE:=Base filesystem for Lede
    URL:=http://openwrt.org/
    VERSION:=$(PKG_RELEASE)-$(REVISION)
-@@ -105,9 +107,16 @@ ifdef CONFIG_SIGNED_PACKAGES
+@@ -106,9 +108,16 @@ ifdef CONFIG_SIGNED_PACKAGES
    endef
  endif
  
