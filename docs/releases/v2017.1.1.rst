@@ -16,7 +16,7 @@ Bugfixes
   no regular sysupgrades are possible. TFTP recovery is necessary to make them
   work again.
 
-* Add workaround to reduce sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
+* Add workaround to prevent sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
   (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
 
 * Disable batman-adv multicast optimizations to work around issue causing large
@@ -39,8 +39,3 @@ Known issues
 * Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
 
   The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
-
-* Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
-
-  The issue has become very infrequent with Gluon v2017.1.1, but it may still lead
-  to out-of-memory on long-running nodes.
