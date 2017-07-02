@@ -1,0 +1,22 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 3 Jul 2017 01:40:32 +0200
+Subject: busybox: compile with debug information
+
+The added debug information is stripped of during packaging, so it does not
+increase the package size. It does however slightly change offsets in the
+code, preventing the weird ash segfaults we've been seeing. Also, if the
+issue returns, we'll have debug information matching the coredumps.
+
+diff --git a/package/utils/busybox/Makefile b/package/utils/busybox/Makefile
+index 40bddd6b58195828951d1e48c12848f4fbfc1430..bba1a40568d4bd0543e4768439a249c89779f29a 100644
+--- a/package/utils/busybox/Makefile
++++ b/package/utils/busybox/Makefile
+@@ -91,6 +91,8 @@ ifdef CONFIG_BUSYBOX_DEFAULT_NSLOOKUP_LEDE
+   endif
+ endif
+ 
++TARGET_CFLAGS += -g
++
+ define Build/Compile
+ 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
+ 		CC="$(TARGET_CC)" \
