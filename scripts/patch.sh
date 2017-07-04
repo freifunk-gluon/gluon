@@ -13,6 +13,10 @@ GLUONDIR="$(pwd)"
 PATCHDIR="$GLUON_TMPDIR"/patching
 trap 'rm -rf "$PATCHDIR"' EXIT
 
+if [ -d "$GLUONDIR/site/patches/" ]; then
+	cp -r "$GLUONDIR/site/patches/" "$GLUONDIR"
+fi
+
 for module in $GLUON_MODULES; do
 	echo "--- Patching module '$module' ---"
 
