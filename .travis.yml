@@ -1,0 +1,14 @@
+language: bash
+
+addons:
+  apt:
+    packages:
+    - lua5.1
+    - luarocks
+  
+install:
+  - eval $(luarocks path --bin)
+  - luarocks install --local lua-cjson
+
+script:
+  - bash tests/validate_site.sh
