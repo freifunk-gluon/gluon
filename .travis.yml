@@ -1,0 +1,26 @@
+language: bash
+
+addons:
+  apt:
+    packages:
+    - lua5.1
+    - luarocks
+    - git
+    - make
+    - gcc
+    - g++
+    - unzip
+    - libncurses5-dev
+    - zlib1g-dev
+    - subversion
+    - gawk
+    - bzip2
+    - libssl-dev
+    - wget
+
+install:
+  - eval $(luarocks path --bin)
+  - luarocks install --local lua-cjson
+
+script:
+  - bash tests/validate_site.sh
