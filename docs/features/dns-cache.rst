@@ -31,7 +31,7 @@ of next_node.name may be resolved even without upstream connectivity.
   },
 
   next_node = {
-    name = 'nextnode',
+    name = 'next.node',
     ip6 = '2001:db8:8::1',
     ip4 = '198.51.100.1',
   }
