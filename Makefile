@@ -77,13 +77,19 @@ list-targets: FORCE
 
 GLUON_DEFAULT_PACKAGES := -odhcpd -ppp -ppp-mod-pppoe -wpad-mini gluon-core ip6tables hostapd-mini
 
+GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)')
+ifneq ($(.SHELLSTATUS),0)
+$(error Error while evaluating GLUON_FEATURES)
+endif
+
+
 GLUON_PACKAGES :=
 define merge_packages
   $(foreach pkg,$(1),
     GLUON_PACKAGES := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(GLUON_PACKAGES)) $(pkg))
   )
 endef
-$(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES)))
+$(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
 
 GLUON_PACKAGES_YES := $(filter-out -%,$(GLUON_PACKAGES))
 GLUON_PACKAGES_NO := $(patsubst -%,%,$(filter -%,$(GLUON_PACKAGES)))

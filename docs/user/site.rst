@@ -382,15 +382,20 @@ legacy \: package
              wifi_names = {'wifi_freifunk', 'wifi_freifunk5', 'wifi_mesh', 'wifi_mesh5'},
       }
 
-Packages
---------
+Build configuration
+-------------------
 
-The ``site.mk`` is a Makefile which should define constants
+The ``site.mk`` is a Makefile which defines various values
 involved in the build process of Gluon.
 
+GLUON_FEATURES
+    Defines a list of features to include. The feature list is used to generate
+    the default package set.
+
 GLUON_SITE_PACKAGES
-    Defines a list of packages which should be installed additionally
-    to the ``gluon-core`` package.
+    Defines a list of packages which should be installed in addition to the
+    default package set. It is also possible to remove packages from the
+    default set by prepending a minus sign to the package name.
 
 GLUON_RELEASE
     The current release version Gluon should use.
@@ -406,6 +411,34 @@ GLUON_REGION
 GLUON_LANGS
     List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
+
+Features
+^^^^^^^^
+
+Most feature flags enable only a single package that is derived from the flag
+name; for example, the flag *mesh-batman-adv-15* will include the package
+*gluon-mesh-batman-adv-15*.
+
+The following flags will add multiple packages:
+
+* *web-wizard*
+
+  - *gluon-config-mode-hostname*
+  - *gluon-config-mode-geo-location*
+  - *gluon-config-mode-contact-info*
+  - *gluon-config-mode-autoupdater* (if the *autoupdater* feature is enabled)
+  - *gluon-config-mode-mesh-vpn* (if the *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* feature is enabled)
+
+* *web-advanced*
+
+  - *gluon-web-admin*
+  - *gluon-web-network*
+  - *gluon-web-wifi-config*
+  - *gluon-web-autoupdater* (if the *autoupdater* feature is enabled)
+  - *gluon-web-mesh-vpn-fastd* (if the *mesh-vpn-fastd* feature is enabled)
+
+Site-provided package feeds can define additional feature flags.
+
 
 .. _site-config-mode-texts:
 

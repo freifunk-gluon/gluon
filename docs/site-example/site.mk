@@ -1,29 +1,29 @@
 ##	gluon site.mk makefile example
 
 ##	GLUON_SITE_PACKAGES
-#		specify Gluon/LEDE packages to include here
+#		Specify Gluon features/packages to enable;
+#		Gluon will automatically enable a set of packages
+#		depending on the combination of features listed
 
-GLUON_SITE_PACKAGES := \
-	gluon-alfred \
-	gluon-respondd \
-	gluon-autoupdater \
-	gluon-config-mode-autoupdater \
-	gluon-config-mode-contact-info \
-	gluon-config-mode-geo-location \
-	gluon-config-mode-hostname \
-	gluon-config-mode-mesh-vpn \
-	gluon-ebtables-filter-multicast \
-	gluon-ebtables-filter-ra-dhcp \
-	gluon-web-admin \
-	gluon-web-autoupdater \
-	gluon-web-network \
-	gluon-web-wifi-config \
-	gluon-mesh-batman-adv-15 \
-	gluon-mesh-vpn-fastd \
-	gluon-radvd \
-	gluon-status-page \
-	haveged \
-	iwinfo
+GLUON_FEATURES :=
+	autoupdater \
+	ebtables-filter-multicast \
+	ebtables-filter-ra-dhcp \
+	mesh-batman-adv-15 \
+	mesh-vpn-fastd \
+	radvd \
+	respondd \
+	status-page \
+	web-advanced \
+	web-wizard
+
+##	GLUON_SITE_PACKAGES
+#		Specify additional Gluon/LEDE packages to include here;
+#		A minus sign may be prepended to remove a packages from the
+#		selection that would be enabled by default or due to the
+#		chosen feature flags
+
+GLUON_SITE_PACKAGES := haveged iwinfo
 
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images
