@@ -2,8 +2,9 @@ local uci = require('simple-uci').cursor()
 local system = uci:get_first('system', 'system')
 
 local f = Form(translate('Logging'), translate(
-	'If you want to use a remote syslog server, you can set it up here. '
-	.. 'Please keep in mind that the data is transmitted unencrypted.'
+	"If you want to use a remote syslog server, you can set it up here. "
+	.. "Please keep in mind that the data is not encrypted, which may cause "
+	.. "individual-related data to be transmitted unencrypted over the internet."
 ))
 local s = f:section(Section)
 
