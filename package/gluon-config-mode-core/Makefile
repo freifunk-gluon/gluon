@@ -17,8 +17,7 @@ define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Configuration wizard for user friendly setup of new mesh nodes
-  DEPENDS:=gluon-setup-mode-virtual +gluon-web-theme +gluon-lock-password +pretty-hostname
-  PROVIDES:=gluon-config-mode-core-virtual
+  DEPENDS:=+gluon-setup-mode +gluon-web-theme +gluon-lock-password +pretty-hostname
 endef
 
 define Build/Prepare

@@ -18,7 +18,7 @@ define Package/gluon-web-admin
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Web-based simple administration interface for mesh nodes
-  DEPENDS:=gluon-config-mode-core-virtual +pretty-hostname
+  DEPENDS:=+gluon-config-mode-core +pretty-hostname
 endef
 
 define Build/Prepare
