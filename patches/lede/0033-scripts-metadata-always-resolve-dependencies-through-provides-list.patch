@@ -95,7 +95,7 @@ index 8334f26d3179a0eb83aa1aa976778ff5828faf45..e7bdbab4568ddd7e10c10b2ca6a71838
  		};
  		/^Menu-Depends: \s*(.+)\s*$/ and $pkg->{mdepends} = [ split /\s+/, $1 ];
 diff --git a/scripts/package-metadata.pl b/scripts/package-metadata.pl
-index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fadf8a209b 100755
+index 2da32c770ef3333bfcc18922ede556f9734510c7..998d37dd415d89e7eccad2ddf73f855f6a9b017c 100755
 --- a/scripts/package-metadata.pl
 +++ b/scripts/package-metadata.pl
 @@ -101,14 +101,16 @@ my %dep_check;
@@ -121,27 +121,37 @@ index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fa
  	}
  	return 0;
  }
-@@ -173,9 +175,8 @@ sub mconf_depends {
+@@ -156,7 +158,6 @@ sub mconf_depends {
+ 		my $m = "depends on";
+ 		my $flags = "";
+ 		$depend =~ s/^([@\+]+)// and $flags = $1;
+-		my $vdep;
+ 		my $condition = $parent_condition;
+ 
+ 		next if $condition eq $depend;
+@@ -173,9 +174,9 @@ sub mconf_depends {
  			}
  			$depend = $2;
  		}
 -		next if $package{$depend} and $package{$depend}->{buildonly};
  		if ($flags =~ /\+/) {
 -			if ($vdep = $package{$depend}->{vdepends}) {
-+			if ($vdep = $vpackage{$depend}) {
++			my $vdep = $vpackage{$depend};
++			if ($vdep and @$vdep > 0) {
  				my @vdeps;
  				$depend = undef;
  
-@@ -209,7 +210,7 @@ sub mconf_depends {
+@@ -209,7 +210,8 @@ sub mconf_depends {
  
  			$flags =~ /@/ or $depend = "PACKAGE_$depend";
  		} else {
 -			if ($vdep = $package{$depend}->{vdepends}) {
-+			if ($vdep = $vpackage{$depend}) {
++			my $vdep = $vpackage{$depend};
++			if ($vdep and @$vdep > 0) {
  				$depend = join("||", map { "PACKAGE_".$_ } @$vdep);
  			} else {
  				$flags =~ /@/ or $depend = "PACKAGE_$depend";
-@@ -413,7 +414,6 @@ sub get_conditional_dep($$) {
+@@ -413,7 +415,6 @@ sub get_conditional_dep($$) {
  
  sub gen_package_mk() {
  	my %conf;
@@ -149,7 +159,7 @@ index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fa
  	my %done;
  	my $line;
  
-@@ -423,8 +423,6 @@ sub gen_package_mk() {
+@@ -423,8 +424,6 @@ sub gen_package_mk() {
  		my $pkg = $package{$name};
  		my @srcdeps;
  
@@ -158,7 +168,7 @@ index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fa
  		$config = "\$(CONFIG_PACKAGE_$name)";
  		if ($config) {
  			$pkg->{buildonly} and $config = "";
-@@ -445,16 +443,7 @@ sub gen_package_mk() {
+@@ -445,16 +444,7 @@ sub gen_package_mk() {
  			print "buildtypes-$pkg->{subdir}$pkg->{src} = ".join(' ', @{$pkg->{buildtypes}})."\n";
  		}
  
@@ -175,7 +185,7 @@ index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fa
  			my %deplines;
  
  			next unless $pkg->{"builddepends/$type"};
-@@ -492,63 +481,70 @@ sub gen_package_mk() {
+@@ -492,63 +482,70 @@ sub gen_package_mk() {
  			}
  		}
  
@@ -285,7 +295,7 @@ index 2da32c770ef3333bfcc18922ede556f9734510c7..bd795bfe58d86c0e48205042192751fa
  		my $depline = join(" ", sort keys %deplines);
  		if ($depline) {
  			$line .= "\$(curdir)/".$pkg->{subdir}."$pkg->{src}/compile += $depline\n";
-@@ -573,7 +569,7 @@ ifndef DUMP_TARGET_DB
+@@ -573,7 +570,7 @@ ifndef DUMP_TARGET_DB
  	( \\
  $cmds \\
  	) > \$@
