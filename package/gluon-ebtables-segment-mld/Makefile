@@ -12,7 +12,7 @@ define Package/gluon-ebtables-segment-mld
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Ebtables filters for IGMP/MLD packets
-  DEPENDS:=+gluon-core +gluon-ebtables
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-segment-mld/description

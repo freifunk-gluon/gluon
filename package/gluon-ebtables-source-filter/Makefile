@@ -13,7 +13,7 @@ define Package/gluon-ebtables-source-filter
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Ebtables rules to filter unreasonable L2 traffic.
-  DEPENDS:=+gluon-core +gluon-ebtables
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-source-filter/description

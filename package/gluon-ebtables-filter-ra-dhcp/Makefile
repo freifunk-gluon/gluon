@@ -13,7 +13,7 @@ define Package/gluon-ebtables-filter-ra-dhcp
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Ebtables filters for Router Advertisement and DHCP packets
-  DEPENDS:=+gluon-core +gluon-ebtables
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-filter-ra-dhcp/description
