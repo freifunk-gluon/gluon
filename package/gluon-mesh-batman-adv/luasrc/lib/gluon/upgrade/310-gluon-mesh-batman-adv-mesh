@@ -12,12 +12,18 @@ if site.mesh and site.mesh.batman_adv then
 	gw_sel_class = site.mesh.batman_adv.gw_sel_class
 end
 
+local routing_algo
+if site.mesh and site.mesh.batman_adv then
+	routing_algo = site.mesh.batman_adv.routing_algo
+end
+
 uci:delete('batman-adv', 'bat0')
 uci:section('batman-adv', 'mesh', 'bat0', {
 	orig_interval = 5000,
 	gw_mode = 'client',
 	gw_sel_class = gw_sel_class,
 	hop_penalty = 15,
+    routing_algo = routing_algo,
 	multicast_mode = false,
 })
 uci:save('batman-adv')
