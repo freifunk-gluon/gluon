@@ -41,6 +41,10 @@ proto_gluon_bat0_setup() {
 	ip link add primary0 type dummy
 	echo 1 > /proc/sys/net/ipv6/conf/primary0/disable_ipv6
 	ip link set primary0 address "$primary0_mac" mtu 1532 up
+
+	local routing_algo="$(uci -q get batman-adv.bat0.routing_algo || echo 'BATMAN_IV')"
+	(echo "$routing_algo" >/sys/module/batman_adv/parameters/routing_algo) 2>/dev/null
+
 	echo bat0 > /sys/class/net/primary0/batman_adv/mesh_iface
 
 	proto_init_update primary0 1
