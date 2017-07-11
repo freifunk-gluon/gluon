@@ -1,11 +1,11 @@
 ##	gluon site.mk makefile example
 
-##	GLUON_SITE_PACKAGES
+##	GLUON_FEATURES
 #		Specify Gluon features/packages to enable;
 #		Gluon will automatically enable a set of packages
 #		depending on the combination of features listed
 
-GLUON_FEATURES :=
+GLUON_FEATURES := \
 	autoupdater \
 	ebtables-filter-multicast \
 	ebtables-filter-ra-dhcp \
