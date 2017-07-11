@@ -77,8 +77,8 @@ list-targets: FORCE
 
 GLUON_DEFAULT_PACKAGES := -odhcpd -ppp -ppp-mod-pppoe -wpad-mini gluon-core ip6tables hostapd-mini
 
-GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)')
-ifneq ($(.SHELLSTATUS),0)
+GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)' || echo '__ERROR__')
+ifneq ($(filter __ERROR__,$(GLUON_FEATURE_PACKAGES)),)
 $(error Error while evaluating GLUON_FEATURES)
 endif
 
