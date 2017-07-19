@@ -14,6 +14,12 @@ proto_gluon_bat0_renew() {
 	local config="$1"
 
 	lock /var/lock/gluon_bat0.lock
+	
+	local routing_algo="$(uci get batman-adv.bat0.routing_algo)"
+	
+	echo "The algo is set to $routing_algo"
+	
+	echo $routing_algo > /sys/module/batman_adv/parameters/routing_algo	
 
 	local ifdump="$(ubus call network.interface dump)"
 
