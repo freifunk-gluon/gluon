@@ -3,16 +3,16 @@ Date: Thu, 13 Jul 2017 17:15:21 +0200
 Subject: procd: switch to latest master
 
 diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
-index 70515958cd5002841fd9698b7a7f4aec01ddfb3b..d78b4e0fe1b4cd12dd873ff55250ed833de50e05 100644
+index d195da32ab98163e6714f644a6c1e5117f657e2d..d78b4e0fe1b4cd12dd873ff55250ed833de50e05 100644
 --- a/package/system/procd/Makefile
 +++ b/package/system/procd/Makefile
 @@ -12,9 +12,9 @@ PKG_RELEASE:=1
  
  PKG_SOURCE_PROTO:=git
  PKG_SOURCE_URL=$(LEDE_GIT)/project/procd.git
--PKG_SOURCE_DATE:=2017-06-19
--PKG_SOURCE_VERSION:=89918c8cb78e651ee0922f13a96b7f25fc2f285a
--PKG_MIRROR_HASH:=fad1a37227f85070f6a49a37ea1e98c22c066c91f16ad26898152972eb0c6a91
+-PKG_SOURCE_DATE:=2017-07-12
+-PKG_SOURCE_VERSION:=4dbf57a63b99f7bcaaf40679140995f80d864004
+-PKG_MIRROR_HASH:=314519a40af6bda6987034b2e53f28cd2443d063aa69857bad7e8b7532f05c8d
 +PKG_SOURCE_DATE:=2017-07-13
 +PKG_SOURCE_VERSION:=76dcbee7fd3a90221619feb7e4c572e00b60af9b
 +PKG_MIRROR_HASH:=61460e267fbc1e3269caac4b98d7d351c6ccfa0b4f3493b37dad83a6faad4b2e
