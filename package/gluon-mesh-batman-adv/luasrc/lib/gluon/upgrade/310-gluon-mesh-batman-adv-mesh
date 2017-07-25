@@ -7,20 +7,20 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local gw_sel_class
+local gw_mode, gw_sel_class, routing_algo
+
+gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or 'client'
+
 if site.mesh and site.mesh.batman_adv then
 	gw_sel_class = site.mesh.batman_adv.gw_sel_class
-end
-
-local routing_algo
-if site.mesh and site.mesh.batman_adv then
 	routing_algo = site.mesh.batman_adv.routing_algo
 end
+
 
 uci:delete('batman-adv', 'bat0')
 uci:section('batman-adv', 'mesh', 'bat0', {
 	orig_interval = 5000,
-	gw_mode = 'client',
+	gw_mode = gw_mode,
 	gw_sel_class = gw_sel_class,
 	hop_penalty = 15,
 	routing_algo = routing_algo,
