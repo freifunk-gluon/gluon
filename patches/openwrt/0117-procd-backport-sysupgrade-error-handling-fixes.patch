@@ -1,0 +1,144 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 30 Jul 2017 20:53:22 +0200
+Subject: procd: backport sysupgrade error handling fixes
+
+diff --git a/package/system/procd/patches/1008-upgraded-register-stage2-process-in-uloop-as-intende.patch b/package/system/procd/patches/1008-upgraded-register-stage2-process-in-uloop-as-intende.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9acbb7beb188fb06a538d1dbd2e9a5e166728340
+--- /dev/null
++++ b/package/system/procd/patches/1008-upgraded-register-stage2-process-in-uloop-as-intende.patch
+@@ -0,0 +1,30 @@
++From cc3332d28e50e6fbc4f717f1232fb076c44176be Mon Sep 17 00:00:00 2001
++Message-Id: <cc3332d28e50e6fbc4f717f1232fb076c44176be.1501440704.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 13 Jul 2017 00:04:49 +0200
++Subject: [PATCH 1/2] upgraded: register stage2 process in uloop as intended
++
++Make the process callback effective, so an exit of state2 will trigger a
++reboot.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ upgraded/upgraded.c | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index e70f92d..6bc5ad8 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -58,6 +58,8 @@ static void sysupgrade(char *path, char *command)
++ 		fprintf(stderr, "Failed to start sysupgrade\n");
++ 		uloop_end();
++ 	}
+++
+++	uloop_process_add(&upgrade_proc);
++ }
++ 
++ int main(int argc, char **argv)
++-- 
++2.13.3
++
+diff --git a/package/system/procd/patches/1009-upgraded-improve-error-handling.patch b/package/system/procd/patches/1009-upgraded-improve-error-handling.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c8cd893c7874746d3c14db83acfd451bbc416803
+--- /dev/null
++++ b/package/system/procd/patches/1009-upgraded-improve-error-handling.patch
+@@ -0,0 +1,98 @@
++From 04d8a9b7f0c3d68133ae26009c55dce34dc28364 Mon Sep 17 00:00:00 2001
++Message-Id: <04d8a9b7f0c3d68133ae26009c55dce34dc28364.1501440704.git.mschiffer@universe-factory.net>
++In-Reply-To: <cc3332d28e50e6fbc4f717f1232fb076c44176be.1501440704.git.mschiffer@universe-factory.net>
++References: <cc3332d28e50e6fbc4f717f1232fb076c44176be.1501440704.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 13 Jul 2017 13:18:00 +0200
++Subject: [PATCH 2/2] upgraded: improve error handling
++
++* exit with code 1 instead of unusual -1 in the parent process
++* exit using _exit() when child exec fails
++* fix fork/exec error messages
++* only uloop_run() after successful child fork (uloop_end() before
++  uloop_run() doesn't have any effect, so uloop_run() would hang forever)
++* minor code cleanup
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ upgraded/upgraded.c | 28 ++++++++++++++--------------
++ 1 file changed, 14 insertions(+), 14 deletions(-)
++
++diff --git a/upgraded/upgraded.c b/upgraded/upgraded.c
++index 6bc5ad8..09c623c 100644
++--- a/upgraded/upgraded.c
+++++ b/upgraded/upgraded.c
++@@ -43,23 +43,24 @@ static void upgrade_proc_cb(struct uloop_process *proc, int ret)
++ 
++ static void sysupgrade(char *path, char *command)
++ {
++-	char *args[] = { "/lib/upgrade/stage2", NULL, NULL, NULL };
+++	char *args[] = { "/lib/upgrade/stage2", path, command, NULL };
++ 
++-	args[1] = path;
++-	args[2] = command;
++ 	upgrade_proc.cb = upgrade_proc_cb;
++ 	upgrade_proc.pid = fork();
++-	if (!upgrade_proc.pid) {
++-		execvp(args[0], args);
+++	if (upgrade_proc.pid < 0) {
++ 		fprintf(stderr, "Failed to fork sysupgrade\n");
++-		exit(-1);
+++		return;
++ 	}
++-	if (upgrade_proc.pid <= 0) {
++-		fprintf(stderr, "Failed to start sysupgrade\n");
++-		uloop_end();
+++
+++	if (!upgrade_proc.pid) {
+++		/* Child */
+++		execvp(args[0], args);
+++		fprintf(stderr, "Failed to exec sysupgrade\n");
+++		_exit(-1);
++ 	}
++ 
++ 	uloop_process_add(&upgrade_proc);
+++	uloop_run();
++ }
++ 
++ int main(int argc, char **argv)
++@@ -68,32 +69,31 @@ int main(int argc, char **argv)
++ 
++ 	if (p != 1) {
++ 		fprintf(stderr, "this tool needs to run as pid 1\n");
++-		return -1;
+++		return 1;
++ 	}
++ 
++ 	int fd = open("/", O_DIRECTORY|O_PATH);
++ 	if (fd < 0) {
++ 		fprintf(stderr, "unable to open prefix directory: %s\n", strerror(errno));
++-		return -1;
+++		return 1;
++ 	}
++ 
++ 	chroot(".");
++ 
++ 	if (fchdir(fd) == -1) {
++ 		fprintf(stderr, "failed to chdir to prefix directory: %s\n", strerror(errno));
++-		return -1;
+++		return 1;
++ 	}
++ 	close(fd);
++ 
++ 	if (argc != 3) {
++ 		fprintf(stderr, "sysupgrade stage 2 failed, invalid command line\n");
++-		return -1;
+++		return 1;
++ 	}
++ 
++ 	uloop_init();
++ 	watchdog_init(0);
++ 	sysupgrade(argv[1], argv[2]);
++-	uloop_run();
++ 
++ 	reboot(RB_AUTOBOOT);
++ 
++-- 
++2.13.3
++
