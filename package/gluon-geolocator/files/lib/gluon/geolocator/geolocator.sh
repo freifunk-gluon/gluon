@@ -6,7 +6,6 @@ GLC="geolocator.settings"
 
 PID_PART="/var/run/geolocator.pid"
 TIME_STAMP="/tmp/geolocator_timestamp"
-HOODS_F="/lib/ffnw/hoods/hoods.json"
 
 if [ -f $PID_PART ]; then
   echo "The geolocator is still running"; exit 0;
@@ -16,16 +15,16 @@ Clean_pid() { [ -f $PID_PART ] && rm $PID_PART; exit 0; }
 
 # get position
 Get_geolocation_info() {
-  # Get list of BSSID there should blacklisted
+  # Get list of BSSID there should ignored
   blacklist_bssid=""
-  for hood_bssid in $(< $HOODS_F grep -o '[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]' | awk '{print tolower($0)}' | sed 's/\://g'); do
-    blacklist_bssid="$blacklist_bssid,$hood_bssid"
+  for bl_bssid in $(uci get geolocator.settings.blacklist); do
+    blacklist_bssid="$blacklist_bssid,$( echo "$bl_bssid" | awk '{print toupper($0)}' )"
   done
   [ -z "$blacklist_bssid" ] || blacklist_bssid="${blacklist_bssid:1}"
   # Get list of BSSID without blacklisted and redundancy entrys.
   scaned_bssid=""
   for iface in $(uci show wireless | grep -E "ifname='" | awk -F\' '{print $2}'); do
-    for line in $(iw "$iface" scan dump | grep -Eo "^BSS .{0,17}" | awk '{ print $2}' | sed 's/\://g'); do
+    for line in $(iw "$iface" scan dump | grep -Eo "^BSS .{0,17}" | awk '{ print toupper($2)}' | sed 's/\://g'); do
       if ! printf -- '%s' "$scaned_bssid" | grep -Eq -- "$line" && ! printf -- '%s' "$blacklist_bssid" | grep -Eq -- "$line"; then
 	scaned_bssid="${scaned_bssid},${line}"
       fi
