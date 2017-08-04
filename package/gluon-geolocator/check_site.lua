@@ -1,2 +1,5 @@
-need_number('config_mode.geolocation.autolocation', false)
-need_number('config_mode.geolocation.interval', false)
+if need_table('geolocator', nil, false) then
+  need_number('geolocator.autolocation', false)
+  need_number('geolocator.interval', false)
+  need_string_array_match('geolocator.blacklist', '^%w+:%w+:%w+:%w+:%w+:%w+$', false)
+end
