@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+local site = require('gluon.site')
 
 uci:delete('firewall', 'wan_announced')
 
@@ -14,7 +15,7 @@ uci:section('firewall', 'rule', 'wan_respondd', {
 	target = 'ACCEPT',
 })
 
--- Restrict respondd queries to link-local addresses to prevent amplification attacks from outside
+-- Allow respondd-access on client_local
 uci:section('firewall', 'rule', 'client_respondd', {
 	name = 'client_respondd',
 	src = 'client_local',
@@ -28,6 +29,15 @@ uci:section('firewall', 'rule',  'mesh_respondd_ll', {
 	name = 'mesh_respondd_ll',
 	src = 'mesh',
 	src_ip = 'fe80::/64',
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mesh_respondd_siteprefix', {
+	name = 'mesh_respondd_siteprefix',
+	src = 'mesh',
+	src_ip = site.prefix6(),
 	dest_port = '1001',
 	proto = 'udp',
 	target = 'ACCEPT',
