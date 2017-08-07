@@ -6,18 +6,17 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
-if enabled == nil then
-	if uci:get_first('tunneldigger', 'broker', 'interface') == "mesh-vpn" then
+local enabled
+
+-- Delete old broker config section (remove in 2019)
+if not uci:get('tunneldigger', 'mesh_vpn') then
+	if uci:get_first('tunneldigger', 'broker', 'interface') == 'mesh-vpn' then
 		enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
 	end
-end
-if enabled == nil then
-	enabled = site.mesh_vpn.enabled or false
-end
 
--- Delete old broker config section
-if not uci:get('tunneldigger', 'mesh_vpn') then
+	-- In the usual case (no migration from old tunneldigger package), the
+	-- enabled state is set in the 500-mesh-vpn script
+
 	uci:delete_all('tunneldigger', 'broker')
 end
 
