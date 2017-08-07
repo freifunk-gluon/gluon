@@ -1,0 +1,23 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site_config'
+local users = require 'gluon.users'
+local util = require 'gluon.util'
+local fs = require 'nixio.fs'
+
+local uci = require('simple-uci').cursor()
+
+-- VPN migration
+local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
+local fastd_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+
+local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+local tunneldigger_enabled = uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+
+local enabled = fastd_enabled or tunneldigger_enabled or false
+
+uci:set("fastd", "mesh_vpn", "enabled", has_fastd and enabled)
+uci:save("fastd")
+
+uci:set("tunneldigger", "mesh_vpn", "enabled", has_tunneldigger and enabled)
+uci:save("tunneldigger")
