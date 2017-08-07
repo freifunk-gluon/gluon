@@ -64,6 +64,7 @@ Releases
 .. toctree::
    :maxdepth: 1
 
+   releases/v2016.2.7
    releases/v2016.2.6
    releases/v2016.2.5
    releases/v2016.2.4
