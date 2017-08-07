@@ -6,11 +6,6 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
-if enabled == nil then
-	enabled = site.mesh_vpn.enabled or false
-end
-
 local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 
 local methods
@@ -40,7 +35,6 @@ end
 
 
 uci:section('fastd', 'fastd', 'mesh_vpn', {
-	enabled = enabled,
 	group = 'gluon-mesh-vpn',
 	syslog_level = syslog_level,
 	interface = 'mesh-vpn',

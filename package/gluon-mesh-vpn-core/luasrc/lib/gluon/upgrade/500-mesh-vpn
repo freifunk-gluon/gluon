@@ -62,15 +62,36 @@ uci:save('firewall')
 
 -- VPN migration
 local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
-local fastd_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
 
 local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
-local tunneldigger_enabled = uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+local tunneldigger_enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
 
-local enabled = fastd_enabled or tunneldigger_enabled or false
+local enabled
 
-uci:set("fastd", "mesh_vpn", "enabled", has_fastd and enabled)
-uci:save("fastd")
+-- If the installed VPN package has its enabled state set, keep the value
+if has_fastd and fastd_enabled then
+	enabled = fastd_enabled == '1'
+elseif has_tunneldigger and tunneldigger_enabled then
+	enabled = tunneldigger_enabled == '1'
+-- Otherwise, migrate the other package's value if any is set
+elseif fastd_enabled or tunneldigger_enabled then
+	enabled = fastd_enabled == '1' or tunneldigger_enabled == '1'
+-- If nothing is set, use the default
+else
+	enabled = site.mesh_vpn.enabled or false
+end
 
-uci:set("tunneldigger", "mesh_vpn", "enabled", has_tunneldigger and enabled)
-uci:save("tunneldigger")
+if has_fastd then
+	uci:set('fastd', 'mesh_vpn', 'enabled', enabled)
+else
+	uci:delete('fastd', 'mesh_vpn')
+end
+uci:save('fastd')
+
+if has_tunneldigger then
+	uci:set('tunneldigger', 'mesh_vpn', 'enabled', enabled)
+else
+	uci:delete('tunneldigger', 'mesh_vpn')
+end
+uci:save('tunneldigger')
