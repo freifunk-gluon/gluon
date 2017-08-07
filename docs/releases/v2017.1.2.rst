@@ -1,0 +1,84 @@
+Gluon 2017.1.2
+==============
+
+New features
+~~~~~~~~~~~~
+
+* Preserve *gw_mode* on sysupgrades (`#1196 <https://github.com/freifunk-gluon/gluon/issues/1196>`_)
+
+  When a Gluon node is used as uplink (for example by connecting it to a router with
+  a DHCP server directly, instead of using non-Gluon servers for the internet uplink),
+  the *gw_mode* must be set to *server* on that node. The changed *gw_mode* is now
+  preserved on upgrades.
+
+* Allow configuring the batman-adv routing algorithm (*BATMAN IV* or *BATMAN V*)
+  in *site.conf* (`#1185 <https://github.com/freifunk-gluon/gluon/issues/1185>`_)
+
+  *BATMAN V* still hasn't received extensive testing (and is incompatible with *BATMAN IV*).
+  This new option allows to set up *BATMAN V*-based test meshes. If unset, the routing
+  algorithm will default to *BATMAN IV*.
+
+  Configuration:
+
+  .. code-block:: lua
+
+    mesh = {
+      batman_adv = {
+        routing_algo = 'BATMAN_V'
+      }
+    }
+
+* New *show-release* Make target
+
+  The command ``make show-release`` can be used to print the release number
+  defined by *GLUON_RELEASE* to the standard output. This can be useful for build scripts
+  when a ``$(shell ...)`` expression is used in *site.mk* to generate the release
+  number.
+
+Bugfixes
+~~~~~~~~
+
+* The image build code used for some devices has been fixed, solving multiple
+  issues (`#1193 <https://github.com/freifunk-gluon/gluon/issues/1193>`_)
+
+  Problems caused by this issue include:
+
+  - sysupgrade rejecting Allnet images
+  - OpenMesh devices losing their configuration on upgrades
+
+  This is a regression introduced in Gluon v2017.1.
+
+* Improve sysupgrade error handling (`#1160 <https://github.com/freifunk-gluon/gluon/issues/1160>`_)
+
+  If for some reason processes don't react to SIGKILL (usually because of a kernel bug),
+  a node could hang forever in sysupgrade, requiring a power cycle. This has been
+  fixed, triggering a reboot instead.
+
+* Also display *gluon-config-mode:novpn* message when Tunneldigger is installed, but disabled
+  (`#1172 <https://github.com/freifunk-gluon/gluon/issues/1172>`_)
+
+  It was only displayed on nodes with fastd before.
+
+* Fix migration of enabled/disabled state between fastd and Tunneldigger
+  (`#1187 <https://github.com/freifunk-gluon/gluon/issues/1187>`_)
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
+  (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
+
+  The workaround added in Gluon v2017.1.1 has greatly reduced the frequency of
+  segfaults, but did not make them disappear completely.
