@@ -7,14 +7,11 @@ local uci = require('simple-uci').cursor()
 
 
 local function is_disabled(config, name)
-	local disabled
 	if uci:get('wireless', name) then
-		disabled = uci:get_bool('wireless', name, 'disabled')
-	else
-		disabled = config and config.disabled
+		return uci:get_bool('wireless', name, 'disabled')
 	end
 
-	return disabled
+	return config.disabled(false)
 end
 
 local function configure_client(config, radio, index, suffix)
@@ -23,7 +20,7 @@ local function configure_client(config, radio, index, suffix)
 
 	uci:delete('wireless', name)
 
-	if not config then
+	if not config() then
 		return
 	end
 
@@ -36,7 +33,7 @@ local function configure_client(config, radio, index, suffix)
 		device = radio,
 		network = 'client',
 		mode = 'ap',
-		ssid = config.ssid,
+		ssid = config.ssid(),
 		macaddr = macaddr,
 		ifname = suffix and 'client' .. suffix,
 		disabled = disabled or false,

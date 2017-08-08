@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local util = require 'gluon.util'
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('simple-uci').cursor()
@@ -12,11 +12,12 @@ if not sysconfig.gluon_version then
 end
 
 local function get_channel(radio, config)
+	local channel
 	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
-		return uci:get('wireless', radio, 'channel') or config.channel
-	else
-		return config.channel
+		channel = uci:get('wireless', radio, 'channel')
 	end
+
+	return channel or config.channel()
 end
 
 local function is_disabled(name)
@@ -134,7 +135,7 @@ local function fixup_wan(radio, index)
 end
 
 local function configure_radio(radio, index, config)
-	if not config then
+	if not config() then
 		return
 	end
 
@@ -149,29 +150,27 @@ local function configure_radio(radio, index, config)
 
 	uci:set('wireless', radio, 'channel', channel)
 	uci:set('wireless', radio, 'htmode', 'HT20')
-	uci:set('wireless', radio, 'country', site.regdom)
+	uci:set('wireless', radio, 'country', site.regdom())
 
-	uci:set_list('wireless', radio, 'supported_rates', config.supported_rates)
-	uci:set_list('wireless', radio, 'basic_rate', config.basic_rate)
+	uci:set_list('wireless', radio, 'supported_rates', config.supported_rates())
+	uci:set_list('wireless', radio, 'basic_rate', config.basic_rate())
 
 
 	local ibss_disabled = is_disabled('ibss_' .. radio)
 	local mesh_disabled = is_disabled('mesh_' .. radio)
 
-	configure_ibss(config.ibss, radio, index, suffix,
+	configure_ibss(config.ibss(), radio, index, suffix,
 		first_non_nil(
 			ibss_disabled,
 			mesh_disabled,
-			(config.ibss or {}).disabled, -- will be nil if config.ibss or config.ibss.disabled is unset
-			false
+			config.ibss.disabled(false)
 		)
 	)
-	configure_mesh(config.mesh, radio, index, suffix,
+	configure_mesh(config.mesh(), radio, index, suffix,
 		first_non_nil(
 			mesh_disabled,
 			ibss_disabled,
-			(config.mesh or {}).disabled, -- will be nil if config.mesh or config.mesh.disabled is unset
-			false
+			config.mesh.disabled(false)
 		)
 	)
 

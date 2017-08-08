@@ -35,7 +35,7 @@ local table = table
 local nixio = require 'nixio'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local fs = require 'nixio.fs'
 
 
@@ -131,7 +131,7 @@ function site_seed_bytes(key, length)
 	-- cryptographic strength
 	while ret:len() < 2*length do
 		i = i + 1
-		v = hash.md5(v .. key .. site.site_seed:lower() .. i)
+		v = hash.md5(v .. key .. site.site_seed():lower() .. i)
 		ret = ret .. v
 	end
 
@@ -253,11 +253,9 @@ end
 function iterate_radios(uci, f)
 	local radios = {}
 
-	uci:foreach('wireless', 'wifi-device',
-	function(s)
+	uci:foreach('wireless', 'wifi-device', function(s)
 		table.insert(radios, s['.name'])
-	end
-	)
+	end)
 
 	for index, radio in ipairs(radios) do
 		local hwmode = uci:get('wireless', radio, 'hwmode')
