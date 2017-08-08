@@ -1,8 +1,8 @@
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 
 
 module 'gluon.client_bridge'
 
 function next_node_macaddr()
-	return (site.next_node or {}).mac or '16:41:95:40:f7:dc'
+	return site.next_node.mac('16:41:95:40:f7:dc')
 end

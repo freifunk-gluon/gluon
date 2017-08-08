@@ -1,13 +1,13 @@
 #!/usr/bin/lua
 
 local client_bridge = require 'gluon.client_bridge'
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('simple-uci').cursor()
 
 
-local next_node = site.next_node or {}
+local next_node = site.next_node({})
 
 
 uci:delete('network', 'local_node_dev')
@@ -23,7 +23,7 @@ uci:section('network', 'device', 'local_node_dev', {
 local ip4, ip6
 
 if next_node.ip4 then
-	local plen = site.prefix4:match('/%d+$')
+	local plen = site.prefix4():match('/%d+$')
 	ip4 = next_node.ip4 .. plen
 end
 
