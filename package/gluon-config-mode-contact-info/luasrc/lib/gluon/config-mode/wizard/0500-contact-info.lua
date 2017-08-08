@@ -1,5 +1,5 @@
 return function(form, uci)
-	local site = require 'gluon.site_config'
+	local site = require 'gluon.site'
 
 	local owner = uci:get_first("gluon-node-info", "owner")
 
@@ -12,7 +12,7 @@ return function(form, uci)
 
 	local o = s:option(Value, "contact", translate("Contact info"), translate("e.g. E-mail or phone number"))
 	o.default = uci:get("gluon-node-info", owner, "contact")
-	o.optional = not ((site.config_mode or {}).owner or {}).obligatory
+	o.optional = not site.config_mode.owner.obligatory(false)
 	-- without a minimal length, an empty string will be accepted even with "optional = false"
 	o.datatype = "minlength(1)"
 	function o:write(data)

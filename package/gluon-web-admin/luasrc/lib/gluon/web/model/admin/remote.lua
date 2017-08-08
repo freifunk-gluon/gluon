@@ -13,7 +13,7 @@ You may obtain a copy of the License at
 local nixio = require "nixio"
 local fs = require "nixio.fs"
 local util = require "gluon.util"
-local site = require 'gluon.site_config'
+local site = require "gluon.site"
 
 local f_keys = Form(translate("SSH keys"), translate("You can provide your SSH keys here (one per line):"), 'keys')
 local s = f_keys:section(Section)
@@ -31,13 +31,13 @@ function keys:write(value)
 	end
 end
 
-local config = (site.config_mode or {}).remote_login or {}
-if not config.show_password_form then
+local config = site.config_mode.remote_login
+if not config.show_password_form(false) then
 	-- password login is disabled in site.conf
 	return f_keys
 end
 
-local min_password_length = config.min_password_length or 12
+local min_password_length = config.min_password_length(12)
 local mintype = 'minlength(' .. min_password_length .. ')'
 local length_hint
 

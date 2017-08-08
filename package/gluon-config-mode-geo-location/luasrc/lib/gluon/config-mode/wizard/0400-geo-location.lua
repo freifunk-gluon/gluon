@@ -1,10 +1,10 @@
 return function(form, uci)
-	local site = require 'gluon.site_config'
+	local site = require 'gluon.site'
 
 	local location = uci:get_first("gluon-node-info", "location")
 
 	local function show_altitude()
-		if ((site.config_mode or {}).geo_location or {}).show_altitude ~= false then
+		if site.config_mode.geo_location.show_altitude(true) then
 			return true
 		end
 
