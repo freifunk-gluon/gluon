@@ -1,6 +1,6 @@
 local client_bridge = require 'gluon.client_bridge'
-local site = require 'gluon.site_config'
-local next_node = site.next_node or {}
+local site = require 'gluon.site'
+local next_node = site.next_node({})
 
 local macaddr = client_bridge.next_node_macaddr()
 
