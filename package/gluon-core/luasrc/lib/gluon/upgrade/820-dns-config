@@ -1,10 +1,10 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 
-local dns = site.dns or {}
-local next_node = site.next_node or {}
+local dns = site.dns({})
+local next_node = site.next_node({})
 
 local dnsmasq = uci:get_first("dhcp", "dnsmasq")
 
