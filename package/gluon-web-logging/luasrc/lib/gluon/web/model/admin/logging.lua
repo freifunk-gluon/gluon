@@ -31,11 +31,7 @@ port.optional = true
 port.placeholder = 514
 port.datatype = 'irange(1, 65535)'
 function port:write(data)
-	if data ~= nil then
-		uci:set('system', system, 'log_port', data)
-	else
-		uci:delete('system', system, 'log_port')
-	end
+	uci:set('system', system, 'log_port', data)
 end
 
 function f:write()
