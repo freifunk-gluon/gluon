@@ -92,10 +92,9 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	function tp:write(data)
 		if data == 'default' then
-			uci:delete('wireless', radio, 'txpower')
-		else
-			uci:set('wireless', radio, 'txpower', data)
+			data = nil
 		end
+		uci:set('wireless', radio, 'txpower', data)
 	end
 end)
 
