@@ -16,11 +16,7 @@ return function(form, uci)
 	-- without a minimal length, an empty string will be accepted even with "optional = false"
 	o.datatype = "minlength(1)"
 	function o:write(data)
-		if data then
-			uci:set("gluon-node-info", owner, "contact", data)
-		else
-			uci:delete("gluon-node-info", owner, "contact")
-		end
+		uci:set("gluon-node-info", owner, "contact", data)
 	end
 
 	return {'gluon-node-info'}
