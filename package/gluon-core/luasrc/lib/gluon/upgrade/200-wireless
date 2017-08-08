@@ -136,6 +136,7 @@ end
 
 local function configure_radio(radio, index, config)
 	if not config() then
+		uci:set('wireless', radio, 'disabled', true)
 		return
 	end
 
