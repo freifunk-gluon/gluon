@@ -52,11 +52,7 @@ return function(form, uci)
 		o.datatype = "float"
 		o.optional = true
 		function o:write(data)
-			if data then
-				uci:set("gluon-node-info", location, "altitude", data)
-			else
-				uci:delete("gluon-node-info", location, "altitude")
-			end
+			uci:set("gluon-node-info", location, "altitude", data)
 		end
 	end
 
