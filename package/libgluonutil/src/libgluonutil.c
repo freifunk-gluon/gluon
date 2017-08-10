@@ -27,7 +27,7 @@
 #include "libgluonutil.h"
 
 #include <json-c/json.h>
-
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -108,6 +108,38 @@ struct json_object * gluonutil_wrap_and_free_string(char *str) {
 	free(str);
 	return ret;
 }
+
+
+bool gluonutil_get_node_prefix6(struct in6_addr *prefix) {
+	struct json_object *site = gluonutil_load_site_config();
+	if (!site)
+		return false;
+
+	struct json_object *node_prefix = NULL;
+	if (!json_object_object_get_ex(site, "node_prefix6", &node_prefix)) {
+		json_object_put(site);
+		return false;
+	}
+
+	const char *str_prefix = json_object_get_string(node_prefix);
+	if (!str_prefix) {
+		json_object_put(site);
+		return false;
+	}
+
+	char *prefix_addr = strndup(str_prefix, strchrnul(str_prefix, '/')-str_prefix);
+
+	int ret = inet_pton(AF_INET6, prefix_addr, prefix);
+
+	free(prefix_addr);
+	json_object_put(site);
+
+	if (ret != 1)
+		return false;
+
+	return true;
+}
+
 
 struct json_object * gluonutil_load_site_config(void) {
 	return json_object_from_file("/lib/gluon/site.json");
