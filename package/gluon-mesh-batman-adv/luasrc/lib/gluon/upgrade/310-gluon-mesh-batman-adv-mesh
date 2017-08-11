@@ -1,20 +1,15 @@
 #!/usr/bin/lua
 
 local sysconfig = require 'gluon.sysconfig'
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
 
 
-local gw_mode, gw_sel_class, routing_algo
-
-gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or 'client'
-
-if site.mesh and site.mesh.batman_adv then
-	gw_sel_class = site.mesh.batman_adv.gw_sel_class
-	routing_algo = site.mesh.batman_adv.routing_algo
-end
+local gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or 'client'
+local gw_sel_class = site.mesh.batman_adv.gw_sel_class()
+local routing_algo = site.mesh.batman_adv.routing_algo()
 
 
 uci:delete('batman-adv', 'bat0')

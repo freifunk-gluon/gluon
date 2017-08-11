@@ -1,6 +1,5 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
 local uci = require('simple-uci').cursor()
 
 

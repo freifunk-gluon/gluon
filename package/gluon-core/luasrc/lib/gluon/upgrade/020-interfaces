@@ -10,7 +10,7 @@ end
 
 local util = require 'gluon.util'
 local platform = require 'gluon.platform'
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 
 local fs = require 'nixio.fs'
 local uci = require('simple-uci').cursor()
@@ -50,7 +50,7 @@ if wan_ifname and lan_ifname then
 	sysconfig.lan_ifname = lan_ifname
 else
 	local single_ifname = lan_ifname or wan_ifname
-	if site.single_as_lan then
+	if site.single_as_lan(false) then
 		sysconfig.lan_ifname = single_ifname
 	else
 		sysconfig.wan_ifname = single_ifname

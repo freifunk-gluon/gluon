@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
@@ -27,7 +27,7 @@ uci:section('tunneldigger', 'broker', 'mesh_vpn', {
 	bind_interface = 'br-wan',
 	group = 'gluon-mesh-vpn',
 	broker_selection = 'usage',
-	address = site.mesh_vpn.tunneldigger.brokers,
+	address = site.mesh_vpn.tunneldigger.brokers(),
 })
 
 uci:save('tunneldigger')

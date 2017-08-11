@@ -1,10 +1,10 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 
 
-for name, config in pairs(site.autoupdater.branches) do
+for name, config in pairs(site.autoupdater.branches()) do
 	uci:delete('autoupdater', name)
 	uci:section('autoupdater', 'branch', name, {
 		name = config.name,
@@ -16,7 +16,7 @@ end
 
 if not uci:get('autoupdater', 'settings') then
 	local enabled = false
-	local branch = site.autoupdater.branch
+	local branch = site.autoupdater.branch()
 
 	local f = io.open('/lib/gluon/autoupdater/default_branch')
 	if f then

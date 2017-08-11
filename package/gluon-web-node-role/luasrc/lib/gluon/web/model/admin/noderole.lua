@@ -1,5 +1,5 @@
 local f, s, o
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local uci = require("simple-uci").cursor()
 local config = 'gluon-node-info'
 
@@ -16,7 +16,7 @@ s = f:section(Section, nil, translate(
 
 o = s:option(ListValue, "role", translate("Role"))
 o.default = role
-for _, role in ipairs(site.roles.list) do
+for _, role in ipairs(site.roles.list()) do
 	o:value(role, translate('gluon-web-node-role:role:' .. role))
 end
 

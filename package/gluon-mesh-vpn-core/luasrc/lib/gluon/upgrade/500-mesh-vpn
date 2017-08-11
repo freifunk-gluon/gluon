@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local users = require 'gluon.users'
 local util = require 'gluon.util'
 local fs = require 'nixio.fs'
@@ -14,7 +14,7 @@ uci:section('network', 'interface', 'mesh_vpn', {
 	transitive = true,
 	fixed_mtu = true,
 	macaddr = util.generate_mac(7),
-	mtu = site.mesh_vpn.mtu,
+	mtu = site.mesh_vpn.mtu(),
 })
 
 uci:save('network')
@@ -25,22 +25,12 @@ if fs.access('/etc/config/gluon-simple-tc') then
 end
 
 if not uci:get('simple-tc', 'mesh_vpn') then
-	local config = {
+	uci:section('simple-tc', 'interface', 'mesh_vpn', {
 		ifname = 'mesh-vpn',
-		enabled = false,
-	}
-
-
-	if site.mesh_vpn.bandwidth_limit then
-		if site.mesh_vpn.bandwidth_limit.enabled then
-			config.enabled = true
-		end
-
-		config.limit_ingress = site.mesh_vpn.bandwidth_limit.ingress
-		config.limit_egress = site.mesh_vpn.bandwidth_limit.egress
-	end
-
-	uci:section('simple-tc', 'interface', 'mesh_vpn', config)
+		enabled = site.mesh_vpn.bandwidth_limit.enabled(false),
+		limit_ingress = site.mesh_vpn.bandwidth_limit.ingress(),
+		limit_egress = site.mesh_vpn.bandwidth_limit.egress(),
+	})
 	uci:save('simple-tc')
 end
 
@@ -79,7 +69,7 @@ elseif fastd_enabled or tunneldigger_enabled then
 	enabled = fastd_enabled == '1' or tunneldigger_enabled == '1'
 -- If nothing is set, use the default
 else
-	enabled = site.mesh_vpn.enabled or false
+	enabled = site.mesh_vpn.enabled(false)
 end
 
 if has_fastd then

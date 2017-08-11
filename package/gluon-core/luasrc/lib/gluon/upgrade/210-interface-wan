@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 
 local old_proto = uci:get('network', 'mesh_wan', 'proto')
@@ -12,7 +12,7 @@ uci:section('network', 'interface', 'mesh_wan', {
 })
 
 if uci:get('network', 'mesh_wan', 'auto') == nil then
-	uci:set('network', 'mesh_wan', 'auto', site.mesh_on_wan or false)
+	uci:set('network', 'mesh_wan', 'auto', site.mesh_on_wan(false))
 end
 if uci:get('network', 'mesh_wan', 'transitive') == nil then
 	uci:set('network', 'mesh_wan', 'transitive', true)

@@ -1,4 +1,4 @@
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 local pretty_hostname = require 'pretty_hostname'
 

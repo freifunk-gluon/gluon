@@ -4,7 +4,7 @@
 	local lutil = require 'gluon.web.util'
 	local pretty_hostname = require 'pretty_hostname'
 
-	local site = require 'gluon.site_config'
+	local site = require 'gluon.site'
 	local sysconfig = require 'gluon.sysconfig'
 	local platform = require 'gluon.platform'
 	local util = require "gluon.util"
@@ -26,7 +26,7 @@
 		model = platform.get_model(),
 		version = util.trim(fs.readfile('/lib/gluon/gluon-version')),
 		release = util.trim(fs.readfile('/lib/gluon/release')),
-		site = site.site_name,
+		site = site.site_name(),
 		pubkey = 'n/a',
 	}
 

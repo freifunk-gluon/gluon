@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
 
@@ -22,7 +22,7 @@ uci:section('network', 'interface', 'mesh_lan', {
 })
 
 if uci:get('network', 'mesh_lan', 'auto') == nil then
-	local enable = site.mesh_on_lan
+	local enable = site.mesh_on_lan(false)
 
 	if enable then
 		local interfaces = uci:get_list('network', 'client', 'ifname')
@@ -37,7 +37,7 @@ if uci:get('network', 'mesh_lan', 'auto') == nil then
 		end
 	end
 
-	uci:set('network', 'mesh_lan', 'auto', enable or false)
+	uci:set('network', 'mesh_lan', 'auto', enable)
 end
 
 if uci:get('network', 'mesh_lan', 'transitive') == nil then

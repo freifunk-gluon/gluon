@@ -16,14 +16,14 @@ else
 end
 
 function mode:write(data)
-	local site = require 'gluon.site_config'
+	local site = require 'gluon.site'
 
 	local methods = {}
 	if data == 'performance' then
 		table.insert(methods, 'null')
 	end
 
-	for _, method in ipairs(site.mesh_vpn.fastd.methods) do
+	for _, method in ipairs(site.mesh_vpn.fastd.methods()) do
 		if method ~= 'null' then
 			table.insert(methods, method)
 		end
