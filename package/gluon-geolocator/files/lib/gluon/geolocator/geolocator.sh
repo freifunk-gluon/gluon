@@ -55,11 +55,11 @@ if [ ! -f $TIME_STAMP ] || [ $(( $(date +%s) - $(cat $TIME_STAMP) )) -gt $(( $(u
 	Get_geolocation_info
 	[ $? -eq 1 ] && Clean_pid
 	#ceck if static location true or not
-	[ "$(uci get "${GLC}".static_location)" -eq 0 ] && {
+	if [ "$(uci get "${GLC}".static_location)" -eq 0 ]; then
 		uci set "${LOC}".latitude="$LAT"
 		uci set "${LOC}".longitude="$LON"
 		uci commit gluon-node-info
-	}
+	fi
 	date +%s > $TIME_STAMP
 fi
 Clean_pid
