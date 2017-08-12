@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local site = require 'gluon.site_config'
+local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 
 local config = 'geolocator'
