@@ -8,7 +8,7 @@ PID_PART="/var/run/geolocator.pid"
 TIME_STAMP="/tmp/geolocator_timestamp"
 
 if [ -f $PID_PART ]; then
-	echo "The geolocator is still running"; exit 0;
+	echo "The geolocator is still running"; exit 0
 else touch $PID_PART; fi
 
 Clean_pid() { [ -f $PID_PART ] && rm $PID_PART; exit 0; }
