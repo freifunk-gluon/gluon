@@ -9,25 +9,19 @@ local static_location = uci:get(config, 'settings', 'static_location')
 
 local auto_location = uci:get(config, 'settings', 'auto_location')
 if not auto_location then
-  auto_location = 0
-  if site.geolocator.autolocation then
-    auto_location = tonumber(site.geolocator.autolocation)
-  end
+	auto_location = site.geolocator.autolocation(false)
 end
 
 local refresh_interval = uci:get(config, 'settings', 'refresh_interval')
 if not refresh_interval then
-  refresh_interval = 43200 --12h
-  if site.geolocator.interval then
-    refresh_interval = tonumber(site.geolocator.interval)
-  end
+	refresh_interval = site.geolocator.interval(43200) -- default: 12h
 end
 
 uci:delete(config, 'settings')
 uci:section(config, config, 'settings', {
-  static_location = static_location,
-  refresh_interval = refresh_interval,
-  auto_location = auto_location,
-  blacklist = site.geolocator.blacklist,
+	static_location = static_location,
+	refresh_interval = refresh_interval,
+	auto_location = auto_location,
+	blacklist = site.geolocator.blacklist({}),
 })
 uci:save(config)
