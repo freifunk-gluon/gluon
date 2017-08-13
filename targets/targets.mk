@@ -10,6 +10,7 @@ $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
+$(eval $(call GluonTarget,brcm2708,bcm2710)) # BROKEN: Untested
 $(eval $(call GluonTarget,ipq806x)) # BROKEN: Untested
 $(eval $(call GluonTarget,mvebu)) # BROKEN: No AP+IBSS or 11s support
 $(eval $(call GluonTarget,ramips,mt7621)) # BROKEN: No AP+IBSS support, 11s has high packet loss
