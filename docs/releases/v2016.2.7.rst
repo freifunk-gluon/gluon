@@ -1,7 +1,8 @@
 Gluon 2016.2.7
 ==============
 
-This release only fixes a single regression introduced in Gluon v2016.1.6.
+This release only fixes a single regression introduced in Gluon v2016.2.6, and
+add support for building using Perl 5.26.
 
 Bugfixes
 ~~~~~~~~
@@ -11,6 +12,8 @@ Bugfixes
   If for some reason processes don't react to SIGKILL (usually because of a kernel bug),
   a node could hang forever in sysupgrade, requiring a power cycle. This has been
   fixed, triggering a reboot instead.
+
+* Backport fixes to support building with Perl 5.26 or newer (`76753ed <https://github.com/freifunk-gluon/gluon/commit/76753ede0da78e24208f10675fa288247deec961>`_)
 
 Known Issues
 ~~~~~~~~~~~~
