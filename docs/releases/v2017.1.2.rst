@@ -1,5 +1,5 @@
-Gluon 2017.1.2 (in development)
-===============================
+Gluon 2017.1.2
+==============
 
 New features
 ~~~~~~~~~~~~
@@ -46,7 +46,7 @@ Bugfixes
   - sysupgrade rejecting Allnet images
   - OpenMesh devices losing their configuration on upgrades
 
-  This is a regression in Gluon v2017.1.
+  This is a regression introduced in Gluon v2017.1.
 
 * Improve sysupgrade error handling (`#1160 <https://github.com/freifunk-gluon/gluon/issues/1160>`_)
 
@@ -58,6 +58,9 @@ Bugfixes
   (`#1172 <https://github.com/freifunk-gluon/gluon/issues/1172>`_)
 
   It was only displayed on nodes with fastd before.
+
+* Fix migration of enabled/disabled state between fastd and Tunneldigger
+  (`#1187 <https://github.com/freifunk-gluon/gluon/issues/1187>`_)
 
 Known issues
 ~~~~~~~~~~~~
