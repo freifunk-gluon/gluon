@@ -21,9 +21,9 @@ If these settings do not exist, the cache is not intialized and RAM usage will n
 
 When next_node.name is set, an A record and an AAAA record for the
 next-node IP address are placed in the dnsmasq configuration. This means that the content
-of next_node.name may be resolved even without upstream connectivity. It's suggested to use
+of next_node.name may be resolved even without upstream connectivity. It is suggested to use
 the same name as the DNS server provides: e.g nextnode.yourdomain.net (This way the name also 
-works if client uses static DNS Servers). Hint: If next_node.name doesn't contain a dot some 
+works if client uses static DNS Servers). Hint: If next_node.name does not contain a dot some 
 browsers would open the searchpage instead.
 
 ::
