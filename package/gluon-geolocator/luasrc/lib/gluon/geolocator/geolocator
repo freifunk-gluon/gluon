@@ -1,0 +1,115 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local json = require ("luci.jsonc")
+local iw = luci.sys.wifi.getiwinfo(luci.http.formvalue("device"))
+
+local LOC="gluon-node-info"
+local GLC="geolocator"
+
+if not uci:get(GLC, "stettings", "auto_location") then
+	os.exit(0)
+end
+
+-- PID file to ensure the geolocator isn't running parallel
+local PID_PART="/var/run/geolocator.pid"
+local TIME_STAMP="/tmp/geolocator_timestamp"
+
+local function file_exsist(file)
+	return io.open(file, "r") ~= nil
+end
+
+if file_exsist(PID_PART) then
+	io.stdout:write("The geolocator is still running")
+	os.exit(0)
+else
+	if io.open(PID_PART, "w") == nil then
+		io.stdout:write("Can`t create pid file on "..PID_PART)
+		os.exit(1)
+	end
+end
+
+-- Program terminating function including removing of PID file
+local function exit(exc)
+	if file_exsist(PID_PART) then
+		os.remove(PID_PART)
+	end
+	os.exit(tonumber(exc))
+end
+
+local function table_contains(tbl, prefix)
+	for _, entry in ipairs(tbl) do
+		if entry:match(prefix) then
+			return true
+		end
+	end
+	return false
+end
+
+-- Get position
+local function Get_geolocation_info()
+
+	-- Get list of BSSID there should ignored
+	local blacklist_bssid = { }
+	for bl_bssid in ipairs(uci:get(GLC, "stettings", "blacklist")) do
+		table.insert(blacklist_bssid,string.upper(bl_bssid))
+	end
+
+	-- Get list of BSSID without blacklisted and redundancy entrys.
+	local scaned_bssid = ""
+	local uniq = { }
+	for _, net in ipairs(iw.scanlist or { }) do
+		if not uniq[net.bssid] and not table_contains(blacklist_bssid, net.bssid) then
+		  scaned_bssid  = scaned_bssid .. "," .. net.bssid
+		  uniq[net.bssid] = true
+		end
+	end
+	if #scaned_bssid < 12 then
+		io.stdout:write("No surrounded BSSIDs found.")
+		return { }
+	end
+	scaned_bssid = scaned_bssid:gsub("^,(.-),*", "%1")
+
+	-- Request position
+	local req = io.popen("curl --connect-timeout 15 -s http://openwifi.su/api/v1/bssids/" .. scaned_bssid)
+	if not req then
+		io.stdout:write("connection failed.")
+		return { }
+	end
+
+	local jreq, _, err = json.parse(req:read("*a"), 1, nil)
+	req:close()
+	if err or jreq.lon == nil or jreq.lat == nil then
+		io.stdout:write("openwifi.su doesn't gif a location.")
+		return { }
+	end
+
+	return jreq
+end -- end Get_geolocation_info()
+
+-- Check if interval over or not exist
+if file_exsist(TIME_STAMP) then
+	if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "stettings", "refresh_interval") * 60 then
+		exit(0)
+	end
+end
+
+local pos = Get_geolocation_info()
+if not next(pos) then
+	exit(1)
+end
+if not uci:get(GLC, "stettings", "static_location") then
+	uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
+	uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
+	uci:save(LOC)
+	uci:commit(LOC)
+end
+local timestap = io.open(TIME_STAMP, "a")
+if timestap ~= nil then
+	timestap:write(os.time())
+else
+	io.stdout:write("Can`t create pid file on "..TIME_STAMP)
+	exit(1)
+end
+timestap:close()
+exit(0)
