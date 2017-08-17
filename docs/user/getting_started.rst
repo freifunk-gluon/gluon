@@ -184,7 +184,8 @@ GLUON_REGION
 GLUON_RELEASE
   Firmware release number: This string is displayed in the config mode, announced
   via respondd/alfred and used by the autoupdater to decide if a newer version
-  is available.
+  is available. The same GLUON_RELEASE has to be passed to ``make`` and ``make manifest``
+  to generate a correct manifest.
 
 GLUON_TARGET
   Target architecture to build.

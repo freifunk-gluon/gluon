@@ -22,6 +22,11 @@ for updates hourly (at a random minute of the hour), but usually only updates du
 
 ``GLUON_PRIORITY`` may be an integer or a decimal fraction.
 
+If ``GLUON_RELEASE`` is passed to ``make`` explicitly or it is generated dynamically
+in ``site.mk``, care must be taken to pass the same ``GLUON_RELEASE`` to ``make manifest``,
+as otherwise the generated manifest will be incomplete.
+
+
 Automated nightly builds
 ------------------------
 
