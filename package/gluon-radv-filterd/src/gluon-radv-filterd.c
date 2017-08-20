@@ -118,7 +118,7 @@ struct global {
 };
 
 
-static void error(int status, int errnum, char *message, ...) {
+static void error_message(int status, int errnum, char *message, ...) {
 	va_list ap;
 	va_start(ap, message);
 	fflush(stdout);
@@ -173,11 +173,11 @@ static void usage(const char *msg) {
 
 static inline void exit_errno(const char *message) {
 	cleanup();
-	error(1, errno, "error: %s", message);
+	error_message(1, errno, "error: %s", message);
 }
 
 static inline void warn_errno(const char *message) {
-	error(0, errno, "warning: %s", message);
+	error_message(0, errno, "warning: %s", message);
 }
 
 static int init_packet_socket(unsigned int ifindex) {
@@ -468,7 +468,7 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	if (ret == SIGCHLD) {
 		if (info.si_pid != child) {
 			cleanup();
-			error(1, 0,
+			error_message(1, 0,
 				"BUG: We received a SIGCHLD from a child we didn't spawn (expected PID %d, got %d)",
 				child, info.si_pid);
 		}
@@ -479,11 +479,11 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	}
 
 	if (ret < 0 && errno == EAGAIN)
-		error(0, 0, "warning: child %d took too long, killing", child);
+		error_message(0, 0, "warning: child %d took too long, killing", child);
 	else if (ret < 0)
 		warn_errno("sigtimedwait failed, killing child");
 	else
-		error(1, 0,
+		error_message(1, 0,
 				"BUG: sigtimedwait() returned some other signal than SIGCHLD: %d",
 				ret);
 
@@ -528,10 +528,10 @@ static void update_ebtables() {
 
 	if (fork_execvp_timeout(&timeout, "ebtables", (const char *[])
 			{ "ebtables", "-F", G.chain, NULL }))
-		error(0, 0, "warning: flushing ebtables chain %s failed, not adding a new rule", G.chain);
+		error_message(0, 0, "warning: flushing ebtables chain %s failed, not adding a new rule", G.chain);
 	else if (fork_execvp_timeout(&timeout, "ebtables", (const char *[])
 			{ "ebtables", "-A", G.chain, "-s", mac, "-j", "ACCEPT", NULL }))
-		error(0, 0, "warning: adding new rule to ebtables chain %s failed", G.chain);
+		error_message(0, 0, "warning: adding new rule to ebtables chain %s failed", G.chain);
 }
 
 int main(int argc, char *argv[]) {
