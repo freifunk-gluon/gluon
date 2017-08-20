@@ -52,7 +52,7 @@ int main() {
 #endif
   s << "\t\t'enter its coordinates here. ' .." << endl;
 #ifdef WITHMAP
-  s << "\t\t'If your PC is connected to the internet you can also click on the map displayed below.' .." << endl;
+  s << "\t\t'If your PC is connected to the internet you can also click on the map displayed below. ' .." << endl;
 #endif
   s << "\t\t'Please keep in mind setting a location can also enhance the network quallity.'" << endl;
   s << "\t)" << endl;
