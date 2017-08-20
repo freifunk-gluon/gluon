@@ -90,10 +90,6 @@
 #define ARRAY_SIZE(A) (sizeof(A)/sizeof(A[0]))
 #endif
 
-struct list_item {
-	struct list *next;
-};
-
 #define foreach(item, list) \
 	for(item = list; item != NULL; item = item->next)
 
@@ -422,10 +418,7 @@ static void update_tqs() {
 
 	foreach(router, G.routers) {
 		if (router->tq == 0) {
-			for (i = 0; i < 6; i++)
-				if (router->originator[i] != 0)
-					break;
-			if (i >= 6)
+			if (!memcmp(router->originator, unspec, sizeof(unspec)))
 				fprintf(stderr,
 					"Unable to find router " F_MAC " in transtable_{global,local}\n",
 					F_MAC_VAR(router->src));
@@ -448,8 +441,10 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	sigemptyset(&signals);
 	sigaddset(&signals, SIGCHLD);
 
+	sigprocmask(SIG_BLOCK, &signals, &oldsignals);
 	child = fork();
 	if (child == 0) {
+		sigprocmask(SIG_SETMASK, &oldsignals, NULL);
 		// casting discards const, but should be safe
 		// (see http://stackoverflow.com/q/36925388)
 		execvp(file, (char**) argv);
@@ -461,7 +456,6 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 		return -1;
 	}
 
-	sigprocmask(SIG_BLOCK, &signals, &oldsignals);
 	ret = sigtimedwait(&signals, &info, timeout);
 	sigprocmask(SIG_SETMASK, &oldsignals, NULL);
 
