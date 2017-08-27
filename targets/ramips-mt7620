@@ -1,0 +1,11 @@
+packages '-wpad-mini' # clashes with hostapd-mini
+
+# GL Innovations
+device gl-mt300a gl-mt300a
+factory
+
+device gl-mt300n gl-mt300n
+factory
+
+device gl-mt750 gl-mt750
+factory
