@@ -76,7 +76,6 @@ local function Get_geolocation_info()
 			local iw = iwinfo[api]
 
 			-- Get list of BSSID without blacklisted and redundancy entrys.
-			-- TODO: use scanlist dump insead of wasting airtime
 			for _, net in ipairs(iw.scanlist(ifname) or { }) do
 				if not uniq[net.bssid] and not table_contains(blacklist_bssid, net.bssid) then
 					scaned_bssid  = scaned_bssid .. "," .. net.bssid
