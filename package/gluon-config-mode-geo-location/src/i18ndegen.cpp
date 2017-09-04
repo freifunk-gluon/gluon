@@ -40,7 +40,7 @@ int main() {
 #ifdef WITHMAP
   s << "\"If your PC is connected to the internet you can also click on the map displayed below. \"" << endl;
 #endif
-  s << "\"Please keep in mind setting a location can also enhance the network quallity.\"" << endl;
+  s << "\"Please keep in mind setting a location can also enhance the network quality.\"" << endl;
   s << "msgstr \"\"" << endl;
   s << "\"Um Deinen Router auf der Karte anzeigen zu können, benötigen wir seine \"" << endl;
   s << "\"Koordinaten. Hier hast Du die Möglichkeit, ";
