@@ -54,7 +54,7 @@ int main() {
 #ifdef WITHMAP
   s << "\t\t'If your PC is connected to the internet you can also click on the map displayed below. ' .." << endl;
 #endif
-  s << "\t\t'Please keep in mind setting a location can also enhance the network quallity.'" << endl;
+  s << "\t\t'Please keep in mind setting a location can also enhance the network quality.'" << endl;
   s << "\t)" << endl;
   s << "\tif show_altitude() then" << endl;
   s << "\t\ttext = text .. ' ' .. translate(\"gluon-config-mode:altitude-help\")" << endl;
