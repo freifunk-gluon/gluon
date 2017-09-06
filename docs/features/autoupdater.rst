@@ -22,6 +22,11 @@ for updates hourly (at a random minute of the hour), but usually only updates du
 
 ``GLUON_PRIORITY`` may be an integer or a decimal fraction.
 
+If ``GLUON_RELEASE`` is used to override the release-string during ``make``
+the same value has to be passed to ``make manifest``. 
+Otherwise no checksums will be included in the manifest.
+
+
 Automated nightly builds
 ------------------------
 
