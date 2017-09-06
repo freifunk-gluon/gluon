@@ -11,7 +11,7 @@ during development), but it can be enabled by setting the variable GLUON_BRANCH 
 to override the default branch set in the set in the site configuration.
 
 A manifest file for the updater can be generated with `make manifest`. A signing script (using
-``ecdsautils``) can by found in the `contrib` directory. When creating the manifest, the 
+``ecdsautils``) can by found in the `contrib` directory. When creating the manifest, the
 ``PRIORITY`` value may be defined by setting ``GLUON_PRIORITY`` on the command line or in ``site.mk``.
 
 ``GLUON_PRIORITY`` defines the maximum number of days that may pass between releasing an update and installation
@@ -79,6 +79,6 @@ These commands can be used on a node:
 
 ::
 
-   # If fallback is true the updater will perform an update only if the timespan 
+   # If fallback is true the updater will perform an update only if the timespan
    # PRIORITY days (as defined in the manifest) and another 24h have passed
    autoupdater --fallback
