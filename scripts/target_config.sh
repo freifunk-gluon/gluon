@@ -35,6 +35,10 @@ config() {
 	echo "$1"
 }
 
+try_config() {
+	echo "$1"
+}
+
 device() {
 	emit
 
@@ -63,6 +67,7 @@ packages() {
 	fi
 }
 
+. targets/generic
 
 # The sort will not only remove duplicate entries,
 # but also magically make =y entries override =m ones

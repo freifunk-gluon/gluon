@@ -2,6 +2,10 @@ config() {
 	:
 }
 
+try_config() {
+	:
+}
+
 device() {
 	:
 }

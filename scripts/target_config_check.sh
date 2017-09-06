@@ -92,6 +92,7 @@ packages() {
 }
 
 
+. targets/generic
 . targets/"$target"
 check_devices
 

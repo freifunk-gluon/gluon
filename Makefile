@@ -103,7 +103,6 @@ config: FORCE
 		echo 'CONFIG_TARGET_$(BOARD)=y' \
 		$(if $(SUBTARGET),&& echo 'CONFIG_TARGET_$(BOARD)_$(SUBTARGET)=y') \
 		$(foreach pkg,$(GLUON_PACKAGES_NO),&& echo '# CONFIG_PACKAGE_$(pkg) is not set') \
-		&& scripts/target_config.sh generic \
 		&& GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/target_config.sh '$(GLUON_TARGET)' \
 		$(foreach pkg,$(GLUON_PACKAGES_YES),&& echo 'CONFIG_PACKAGE_$(pkg)=y') \
 		$(foreach lang,$(GLUON_LANGS),&& echo 'CONFIG_GLUON_WEB_LANG_$(lang)=y') \
