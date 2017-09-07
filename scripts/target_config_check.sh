@@ -93,12 +93,10 @@ packages() {
 
 
 . targets/generic
+packages $packages
+
 . targets/"$target"
 check_devices
 
-
-for package in $packages; do
-	check_package "$package" 'y'
-done
 
 exit $ret

@@ -60,6 +60,15 @@ LEDEMAKE = $(MAKE) -C lede
 
 BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
 SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
+
+GLUON_CONFIG_VARS := \
+	GLUON_SITEDIR='$(GLUON_SITEDIR)' \
+	GLUON_RELEASE='$(GLUON_RELEASE)' \
+	GLUON_BRANCH='$(GLUON_BRANCH)' \
+	GLUON_LANGS='$(GLUON_LANGS)' \
+	BOARD='$(BOARD)' \
+	SUBTARGET='$(SUBTARGET)'
+
 LEDE_TARGET := $(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
 export LEDE_TARGET
@@ -75,8 +84,6 @@ list-targets: FORCE
 	@$(foreach target,$(GLUON_TARGETS),echo '$(target)';)
 
 
-GLUON_DEFAULT_PACKAGES := -odhcpd -ppp -ppp-mod-pppoe -wpad-mini gluon-core ip6tables hostapd-mini
-
 GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)' || echo '__ERROR__')
 ifneq ($(filter __ERROR__,$(GLUON_FEATURE_PACKAGES)),)
 $(error Error while evaluating GLUON_FEATURES)
@@ -89,30 +96,19 @@ define merge_packages
     GLUON_PACKAGES := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(GLUON_PACKAGES)) $(pkg))
   )
 endef
-$(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
-
-GLUON_PACKAGES_YES := $(filter-out -%,$(GLUON_PACKAGES))
-GLUON_PACKAGES_NO := $(patsubst -%,%,$(filter -%,$(GLUON_PACKAGES)))
-
+$(eval $(call merge_packages,$(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
 
 config: FORCE
 	@$(CheckExternal)
 	@$(CheckTarget)
 
-	@( \
-		echo 'CONFIG_TARGET_$(BOARD)=y' \
-		$(if $(SUBTARGET),&& echo 'CONFIG_TARGET_$(BOARD)_$(SUBTARGET)=y') \
-		$(foreach pkg,$(GLUON_PACKAGES_NO),&& echo '# CONFIG_PACKAGE_$(pkg) is not set') \
-		&& GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/target_config.sh '$(GLUON_TARGET)' \
-		$(foreach pkg,$(GLUON_PACKAGES_YES),&& echo 'CONFIG_PACKAGE_$(pkg)=y') \
-		$(foreach lang,$(GLUON_LANGS),&& echo 'CONFIG_GLUON_WEB_LANG_$(lang)=y') \
-		&& echo 'CONFIG_GLUON_RELEASE="$(GLUON_RELEASE)"' \
-		&& echo 'CONFIG_GLUON_SITEDIR="$(GLUON_SITEDIR)"' \
-		&& echo 'CONFIG_GLUON_BRANCH="$(GLUON_BRANCH)"' \
-	) > lede/.config
+	@$(GLUON_CONFIG_VARS) \
+		scripts/target_config.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)' \
+		> lede/.config
 	+@$(LEDEMAKE) defconfig
 
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/target_config_check.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES_YES)'
+	@$(GLUON_CONFIG_VARS) \
+		scripts/target_config_check.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)'
 
 
 LUA := lede/staging_dir/hostpkg/bin/lua

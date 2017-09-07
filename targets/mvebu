@@ -1,3 +1,2 @@
 device linksys-wrt1200ac linksys-wrt1200ac
-packages '-wpad-mini' # clashes with hostapd-mini
 factory .img
