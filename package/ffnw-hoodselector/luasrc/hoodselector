@@ -1,0 +1,722 @@
+#!/usr/bin/lua
+
+-- This is the hoodselector. The hoodselector is one of the main components for
+-- splitting a layer 2 mesh network into seperated network segments (hoods).
+-- The job of the hoodselector is to automatically detect in which hood
+-- the router is located based on geo settings or by scanning its environment.
+-- Based on these informations the hoodselector should select a hood from a
+-- list of known hoods (hoodlist) and adjust vpn, wireless and mesh on lan
+-- configuration based on the settings given for the selected hood.
+--
+-- The hoodlist containing all hood settings is located in a seperate hoodfile
+-- in the hoods package.
+--
+-- The hoodselector depends on the folowing additional software:
+--  * fastd (vpn configuration) see getCurrentPeers(), setHoodVPN()
+--  * iw (wireless network scanning) see getNeigbourBssid()
+--  * batman-adv (mesh protocol) see directVPN(), getGwRange()
+--  * respondd (molwm) see molwm()
+--
+--  To detect the current hood the hoodselector knows 2 modes containing
+--  * 1. Default mode (VPN Router)
+--    - set real hood dependent on geo position.
+--    - set default hood dependent on geo position.
+--  * 2. Scan modes
+--   - Set wifi conf on scanned BSSID
+--   - Set vpn conf getting by BSSID (if no VPN conf exsist disable fastd)
+-- When selecting a hood, the hoodselector has the following priorities:
+--   1. Selecting a hood by geo position depending on direct VPN connection.
+--   2. force creating one mesh cloud with neigbour mesh routers
+--   3. if routers had only mesh setting vpn config depends on the BSSID
+--
+-- Resources
+--  * https://wireless.wiki.kernel.org/en/users/documentation/iw
+
+-- MOLWM respondd file
+local molwmFile="/tmp/.hoodselector"
+
+local molwmtable = {}
+molwmtable["md5hash"] = ""
+molwmtable["vpnrouter"] = ""
+molwmtable["hoodname"] = ""
+
+-- PID file to ensure the hoodselector isn't running parallel
+local pidPath="/var/run/hoodselector.pid"
+
+if io.open(pidPath, "r") ~=nil then
+  io.stderr:write("The hoodselector is still running.\n")
+  os.exit(1)
+else
+  io.close(io.open(pidPath, "w"))
+end
+
+local json = require ("luci.jsonc")
+local uci = require('luci.model.uci').cursor()
+local file = '/lib/ffnw/hoods/hoods.json'
+-- initialization done
+
+-- Read the full hoodfile. Return nil for wrong format or no such file
+local function readHoodfile(file)
+  local jhood = io.open(file, 'r')
+  if not jhood then return nil end
+  local obj, pos, err = json.parse (jhood:read('*a'), 1, nil)
+  if err then
+    return nil
+  else
+    return obj
+  end
+end
+
+local function mesh_on_wan_disable()
+  os.execute('ifdown mesh_wan')
+  io.stderr:write('Interface mesh_wan disabled.\n')
+end
+
+local function mesh_on_wan_enable()
+  os.execute('ifup mesh_wan')
+  io.stderr:write('Interface mesh_wan enabled.\n')
+end
+
+local function mesh_on_lan_disable()
+  os.execute('ifdown mesh_lan')
+  io.stderr:write('Interface mesh_lan disabled.\n')
+end
+
+local function mesh_on_lan_enable()
+  os.execute('ifup mesh_lan')
+  io.stderr:write('Interface mesh_lan enabled.\n')
+end
+
+local function molwm()
+  local mesh_en = true
+  local respondd = string.format("gluon-neighbour-info -i bat0 -p 1001 -d ff02::2 -r hoodselector -t 0.5")
+  for line in io.popen(respondd, 'r'):lines() do
+    local obj, pos, err = json.parse (line, 1, nil)
+    if err then
+      io.stderr:write("json parse error!\n")
+      mesh_en = false
+      break
+    else
+      if obj["hoodinfo"] ~= nil then
+        if not ( obj["hoodinfo"]["md5hash"] == molwmtable["md5hash"]:gsub('\"', '') ) then
+          io.stderr:write("hashes are not equals!\n")
+	  mesh_en = false
+	  break
+        end
+      end
+    end
+  end
+  if uci:get('network', 'mesh_wan') and not mesh_en then
+    mesh_on_wan_disable()
+  end
+  if uci:get('network', 'mesh_lan') and not mesh_en then
+    mesh_on_lan_disable()
+  end
+  if uci:get('network', 'mesh_wan') and mesh_en then
+    mesh_on_wan_enable()
+  end
+  if uci:get('network', 'mesh_lan') and mesh_en then
+    mesh_on_lan_enable()
+  end
+end
+
+-- Create md5 hash from currend hood
+local function molwm_md5hash(hood)
+  local file = io.open("/tmp/.hoodhash", "w")
+  if not file then
+    io.stderr:write('\"/tmp/.hoodhash\" can not created\n')
+  else
+    file:write(json.stringify(hood, { indent = true }))
+    file:close()
+    --part to create md5 hash of this file
+    for line in io.popen(string.format( "md5sum /tmp/.hoodhash")):lines() do
+      for i in string.gmatch(line, "%S+") do
+	if (string.len(i) == 32) then
+	  molwmtable["md5hash"] = "\"" .. string.format(i) .. "\""
+	  break
+	end
+      end
+    end
+    os.remove("/tmp/.hoodhash")
+  end
+end
+
+-- Write MOLWM content into file
+local function write_molwm(hood)
+  if hood ~= nil then
+    molwm_md5hash(hood)
+    molwmtable["hoodname"] = "\"" .. hood["name"] .. "\""
+  end
+  molwm()
+  local file = io.open(molwmFile, "w")
+  if not file then
+    io.stderr:write(molwmFile ..' not found or not createble!\n')
+  else
+      file:write("\"md5hash\": " .. molwmtable["md5hash"] .. "\n")
+      file:write("\"vpnrouter\": " .. molwmtable["vpnrouter"] .. "\n")
+      file:write("\"hoodname\": " .. molwmtable["hoodname"] .. "\n")
+    file:close()
+  end
+end
+
+-- Program terminating function including removing of PID file
+local function exit()
+  if io.open(pidPath, "r") ~=nil then
+    os.remove(pidPath)
+  end
+  os.exit(0)
+end
+
+local function trim(s)
+  -- from PiL2 20.4
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+local function sleep(n)
+  os.execute("sleep " .. tonumber(n))
+end
+
+local function brclient_restart()
+  os.execute('ifconfig br-client down')
+  os.execute('ifconfig br-client up')
+  io.stderr:write('Interface br-client restarted.\n')
+end
+
+local function vpn_stop()
+  os.execute('/etc/init.d/fastd stop')
+  io.stderr:write('VPN stopped.\n')
+end
+
+local function vpn_start()
+  os.execute('/etc/init.d/fastd start')
+  io.stderr:write('VPN started.\n')
+  brclient_restart()
+end
+
+local function vpn_disable()
+  -- disable VPN if not already disabled
+  os.execute('/etc/init.d/fastd disable')
+  io.stderr:write('VPN disabled.\n')
+end
+
+local function vpn_enable()
+  -- enable VPN if not already enabled
+  os.execute('/etc/init.d/fastd enable')
+  io.stderr:write('VPN enable.\n')
+end
+
+local function wireless_restart()
+  os.execute('wifi')
+  io.stderr:write('Wireless restarted.\n')
+end
+
+-- Get a list of wifi devices return an emty table for no divices
+local function getWifiDevices()
+  local radios = {}
+  uci:foreach('wireless', 'wifi-device',
+    function(s)
+      table.insert(radios, s['.name'])
+    end
+  )
+  return radios
+end
+
+-- Scans for wireless networks and returns a two dimensional array containing
+-- wireless mesh neigbour networks and their properties.
+-- The array is sorted descending by signal strength (strongest signal
+-- first, usually the local signal of the wireless chip of the router)
+local function wlan_list_sorted(radios)
+  local networks = {}
+  for index, radio in ipairs(radios) do
+    local ifname = uci:get('wireless', 'ibss_' .. radio, 'ifname')
+    local ssid = uci:get('wireless', 'ibss_' .. radio, 'ssid')
+    if (ifname ~= nil and ssid ~= nil) then
+      local wireless_scan = string.format( "iw %s scan", ifname)
+      local row = {}
+      row["radio"] = radio
+      -- loop through each line in the output of iw
+      for wifiscan in io.popen(wireless_scan, 'r'):lines() do
+        -- the following line matches a new network in the output of iw
+        if wifiscan:match("BSS (%w+:%w+:%w+:%w+:%w+:%w+)") then
+          if(row["bssid"] ~= nil and row["quality"] ~= nil
+            and row["ssid"] == ssid) then
+            table.insert(networks, row)
+            row = {}
+            row["radio"] = radio
+          end
+        end
+
+        -- get ssid
+        if wifiscan:match("SSID:") then
+          row["ssid"] = wifiscan:split(":")
+          row["ssid"] = row["ssid"][2]
+          if(row["ssid"] ~= nil) then
+            row["ssid"] = trim(row["ssid"])
+          end
+        end
+
+        -- get frequency
+        if wifiscan:match("freq:") then
+          row["frequency"] = wifiscan:split(":")
+          row["frequency"] = row["frequency"][2]
+          if(row["frequency"] ~= nil) then
+            row["frequency"] = trim(row["frequency"])
+          end
+        end
+
+        -- get bssid
+        if wifiscan:match("(%w+:%w+:%w+:%w+:%w+:%w+)") then
+          row["bssid"] = wifiscan:match("(%w+:%w+:%w+:%w+:%w+:%w+)"):upper()
+        end
+
+        -- get signal strength
+        if wifiscan:match("signal:") then
+          row["quality"] = wifiscan:split(" ")
+          row["quality"] = row["quality"][2]:split(".")
+          if row["quality"][1]:match("-") then
+            row["quality"] = row["quality"][1]:split("-")
+          end
+          row["quality"] = tonumber(row["quality"][2]:match("(%d%d)"))
+        end
+      end
+    else
+      io.stderr:write("wireless uci config broken! abort...\n")
+      exit();
+    end
+  end
+
+  table.sort(networks, function(a,b) return a["quality"] < b["quality"] end)
+  return networks
+end
+
+-- this method removes the wireless network of the router itself
+-- from the wlan_list
+local function filter_my_wlan_network(wlan_list)
+  local filtered_wlan_list = {}
+
+  for n,wlan in pairs(wlan_list) do
+    if(wlan.quality ~= 0) then
+      table.insert(filtered_wlan_list, wlan)
+    end
+  end
+
+  return filtered_wlan_list
+end
+
+local function filter_default_hood_wlan_networks(default_hood, wlan_list)
+  local filtered_wlan_list = {}
+
+  for n,wlan in pairs(wlan_list) do
+    if(default_hood.bssid ~= wlan.bssid) then
+      table.insert(filtered_wlan_list, wlan)
+    end
+  end
+
+  return filtered_wlan_list
+end
+
+-- bool if direct VPN. The detection is realaise by searching the fastd network interface inside the originator table
+local function directVPN()
+  -- escape special chars "[]-"
+  for outgoingIF in io.open("/sys/kernel/debug/batman_adv/bat0/originators", 'r'):lines() do
+    local vpnIface = uci:get('fastd', 'mesh_vpn_backbone', 'net')
+    if not vpnIface then
+      io.stderr:write("fastd uci config broken! abort...\n")
+      exit()
+    end
+    if outgoingIF:match(string.gsub("%[  " .. vpnIface .. "%]","%_",'-'):gsub("%-", "%%-")) then
+      molwmtable["vpnrouter"] = "\"true\""
+      return true
+    end
+  end
+  molwmtable["vpnrouter"] = "\"false\""
+  return false
+end
+
+-- Retun a table of current peers from /etc/config/fastd
+local function getCurrentPeers()
+  local configPeers = {}
+  local err = uci:foreach('fastd', 'peer',
+    function(s)
+      if s['.name'] then
+        for prefix,peer in pairs(s) do
+          local tmpPeer = {}
+          if prefix:match(".name") then
+            if peer:match("mesh_vpn_backbone_peer_") then
+              -- val tmpRemote does not need uci exception check because its already include by "uci:foreach"
+              local tmpRemote = uci:get('fastd', peer, 'remote')
+              tmpRemote = tmpRemote[1]:split(" ")
+              local remote = {}
+              remote['host'] = tmpRemote[1]
+              remote[tmpRemote[2]] = tmpRemote[3]
+              -- uci:get does not need uci exception check because its already include by "uci:foreach"
+              tmpPeer['key'] = tostring(uci:get('fastd', peer, 'key'))
+              tmpPeer['remote'] = remote
+              configPeers[peer] = tmpPeer
+            end
+          end
+        end
+      end
+    end
+  )
+  if not err then
+    io.stderr:write("fastd uci config broken! abort...\n")
+    exit()
+  end
+  return configPeers
+end
+
+
+-- Get Geoposition. Return nil for no position
+local function getGeolocation()
+  local ret = {}
+  table.insert(ret, tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'latitude')))
+  table.insert(ret, tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'longitude')))
+  return ret
+end
+
+-- Return hood from the hood file based on geo position or nil, no real hood could be determined
+local function getHoodByGeo(jhood,geo)
+  for n, h in pairs(jhood) do
+    for n, box in pairs(h.boxes) do
+      if ( geo[1] >= box[1][1] and geo[1] < box[2][1] and geo[2] >= box[1][2] and geo[2] < box[2][2] ) then
+        return h
+      end
+    end
+  end
+  return nil
+end
+
+-- This method checks if the VPN configuration needs to be rewritten from the
+-- hoodfile. Therefore the method performs 3 checks and returns false if all
+-- checks fail. If one of the checks results to true the method returns true:
+--   1. Check if the local VPN configuratin has a server that does not exist
+--      in the hoodfile.
+--   2. Check if a server that does exist in the local VPN configuration AND
+--      in the hoodfile has a configuration change.
+--   3. Check if the hoodfile contains a server that does not exist in the
+--      local VPN configuration.
+local function vpn_reconfiguration_needed(hood_serverlist,local_serverlist)
+  -- Checks 1. and 2.
+  for local_server_config_name, local_server in pairs(local_serverlist) do
+    local local_server_exists_in_hoodfile = false
+    for hood_server_index,hood_server in pairs(hood_serverlist) do
+      if (local_server_config_name == 'mesh_vpn_backbone_peer_'.. hood_server["host"]:split('.')[1]:gsub("%-", "%_")) then
+        local_server_exists_in_hoodfile = true
+        if ( local_server.key ~= hood_server['publickey'] ) then
+          return true
+        end
+        if ( local_server.remote.host ~= '\"'..hood_server["host"]..'\"' ) then
+          return true
+        end
+        if ( local_server.remote.port ~= hood_server['port'] ) then
+          return true
+        end
+      end
+    end
+    if not(local_server_exists_in_hoodfile) then return true end
+  end
+
+  -- Check 3.
+  for hood_server_index,hood_server in pairs(hood_serverlist) do
+    local hood_server_exists_locally = false
+    for local_server_config_name, local_server in pairs(local_serverlist) do
+      if (local_server_config_name == 'mesh_vpn_backbone_peer_'.. hood_server["host"]:split('.')[1]:gsub("%-", "%_")) then
+        hood_server_exists_locally = true
+      end
+    end
+    if not(hood_server_exists_locally) then return true end
+  end
+
+  return false
+end
+
+-- Reconfigure fastd
+local function vpn_reconfigure(hood_serverlist,local_serverlist)
+  -- remove all servers
+  for config_index, local_server in pairs(local_serverlist) do
+    uci:delete('fastd',config_index)
+  end
+
+  -- add servers from hoodfile
+  local group = 'mesh_vpn_backbone'
+  for i,hood_server in pairs(hood_serverlist) do
+    uci:section('fastd', 'peer', group .. '_peer_' .. hood_server.host:split('.')[1]:gsub("%-", "%_"),
+      {
+        enabled = 1,
+        net = 'mesh_vpn',
+        group = group,
+        key = hood_server.publickey,
+        remote = {'\"'..hood_server.host..'\"'..' port '..hood_server.port}
+      }
+    )
+  end
+
+  uci:save('fastd')
+  uci:commit('fastd')
+  io.stderr:write('Fastd needed reconfiguration. Stopped and applied new settings.\n')
+end
+
+-- Checks if wireless needs a reconfiguration. Returns true if any of the checks
+-- passes. Otherwise the method returns false.
+local function wireless_reconfiguration_needed(radios, hood_bssid)
+  for index, radio in ipairs(radios) do
+    if ( uci:get('wireless', 'ibss_' .. radio, 'bssid') ~= hood_bssid ) then
+      return true
+    end
+  end
+  return false
+end
+
+-- Reconfigure wireless
+local function wireless_reconfigure(radios, hood_bssid)
+  for index, radio in ipairs(radios) do
+    if not ( uci:get('wireless', 'ibss_' .. radio, 'bssid') == hood_bssid ) then
+      uci:section('wireless', 'wifi-iface', 'ibss_' .. radio, {
+          bssid = hood_bssid
+      })
+    end
+  end
+  uci:save('wireless')
+  uci:commit('wireless')
+end
+
+-- This method sets a new hoodconfig and takes care that services are only
+-- stopped or restarted if reconfiguration is needed.
+-- Process:
+--   * Check if wireless needs reconfiguration and prepare reconfiguration
+--   * Check if fastd needs reconfiguration and prepare reconfiguration
+--   * If fastd needs reconfiguration, stop fastd and apply new settings but
+--     dont restart it before wireless has been reconfigured
+--   * If wireless needs reconfiguration apply new settings and restart wireless
+--   * If fastd needed reconfiguration start fastd now
+local function set_hoodconfig(hood, radios)
+  local local_serverlist = getCurrentPeers()
+  -- Check if VPN needs reconfiguration because in case of reconfiguration we
+  -- need to stop VPN before we can reconfigure any other connection.
+  local vpn_reconfiguration_needed = vpn_reconfiguration_needed(hood["servers"],local_serverlist);
+  if(vpn_reconfiguration_needed) then
+    vpn_stop()
+  end
+
+  -- reconfigure wireless
+  if(wireless_reconfiguration_needed(radios, hood["bssid"])) then
+    wireless_reconfigure(radios, hood["bssid"])
+    wireless_restart()
+    io.stderr:write('Wireless needed reconfiguration. Applied new settings and restarted.\n')
+  end
+
+  -- reconfigure fastd
+  if (vpn_reconfiguration_needed) then
+    vpn_reconfigure(hood["servers"],local_serverlist)
+    -- scan mode can disable VPN so we need to make shure that VPN is enabled
+    -- if the router selects a hood
+    vpn_enable()
+    vpn_start()
+    io.stderr:write('VPN needed reconfiguration. Applied new settings and restarted.\n')
+  end
+  io.stderr:write("Set hood \""..hood["name"].."\"\n")
+  molwmtable["hoodname"] = "\"" .. hood["name"] .. "\""
+
+  return true
+end
+
+-- Return the default hood in the hood list.
+-- This method can return the following data:
+-- * default hood
+-- * nil if no default hood has been defined
+local function getDefaultHood(jhood)
+  for n, h in pairs(jhood) do
+    if h.defaulthood then
+      return h
+    end
+  end
+  return nil
+end
+
+-- boolean check if batman-adv has gateways
+local function batmanHasGateway()
+  for gw in io.open("/sys/kernel/debug/batman_adv/bat0/gateways", 'r'):lines() do
+    if gw:match("Bit") then
+      return true
+    end
+  end
+  return false
+end
+
+-- Return hood from the hood file based on a given BSSID. nil if no matching hood could be found
+local function gethoodByBssid(jhood, scan_bssid)
+  for n, h in pairs(jhood) do
+    if scan_bssid:match(h.bssid) then
+      return h
+    end
+  end
+  return nil
+end
+
+-- Return hood from hood file based on a peer address. nil if no matching hood could be found
+local function getCurrentHood(jhood)
+  for local_server_config_name, local_server in pairs(getCurrentPeers()) do
+    for n, h in pairs(jhood) do
+      for n, peer in pairs(h.servers) do
+	if ( peer["host"] == local_server.remote.host:gsub("\"", "") ) then
+	  return h
+	end
+      end
+    end
+  end
+  return nil
+end
+
+local function get_batman_mesh_network(sorted_wlan_list, defaultHood)
+  io.stderr:write('Testing neighboring adhoc networks for batman advanced gw connection.\n')
+  io.stderr:write('The following wireless networks have been found:\n')
+  for n, network in pairs(sorted_wlan_list) do
+    print(network["quality"].."\t"..network["frequency"].."\t"..network["bssid"].."\t"..network["ssid"])
+  end
+
+  -- we dont want to get tricked by our signal
+  sorted_wlan_list = filter_my_wlan_network(sorted_wlan_list)
+  -- we dont want to test the default hood because if there is no other
+  -- hood present we will connect to the default hood anyway
+  sorted_wlan_list = filter_default_hood_wlan_networks(defaultHood, sorted_wlan_list)
+
+  io.stderr:write('After filtering we will test the following wireless networks:\n')
+  for n, network in pairs(sorted_wlan_list) do
+    print(network["quality"].."\t"..network["frequency"].."\t"..network["bssid"].."\t"..network["ssid"])
+  end
+
+  local bssid = nil
+  if(next(sorted_wlan_list)) then
+    io.stderr:write("Prepare configuration for testing wireless networks...\n")
+    -- Notice:
+    -- we will use iw for testing the wireless networks because using iw does
+    -- not need any changes inside the uci config. This approach allows the
+    -- router to automatically reset to previous configuration in case
+    -- someone disconnects the router from power during test.
+
+    -- stop vpn to prevent two hoods from beeing connected in case
+    -- the router gets internet unexpectedly during test.
+    vpn_stop()
+    -- remove the ap network because we cannot change
+    -- the settings of the adhoc network if the ap network is still operating
+    os.execute("iw dev client0 del")
+    for n, wireless in pairs(sorted_wlan_list) do
+      io.stderr:write("Testing "..wireless["bssid"].."...")
+      -- leave the current adhoc network
+      os.execute("iw dev ibss0 ibss leave")
+      -- setup the adhoc network we want to test
+      os.execute("iw dev ibss0 ibss join "..wireless["ssid"].." "..wireless["frequency"].." "..wireless["bssid"])
+      -- sleep 30 seconds till the connection is fully setup
+      sleep(30)
+
+      if batmanHasGateway() then
+        bssid = wireless["bssid"]
+        break;
+      end
+    end
+    vpn_start()
+    wireless_restart()
+    io.stderr:write("Finished testing wireless networks, restored previous configuration\n")
+  end
+
+  return bssid
+end
+
+-- INITIALIZE AND PREPARE DATA --
+-- read hoodfile, exit if reading the hoodfile fails
+local jhood = readHoodfile(file)
+if jhood == nil then
+  io.stderr:write('There seems to have gone something wrong while reading hoodfile from ' .. file .. '\n')
+  exit()
+end
+
+-- check if a default hood has been defined and exit if none has been defined
+local defaultHood = getDefaultHood(jhood)
+if defaultHood == nil then
+  io.stderr:write('No defaulthood defined.\n')
+  exit()
+end
+
+-- Get list of wifi devices
+local radios = getWifiDevices()
+
+-- VPN MODE
+-- If we have a VPN connection then we will try to get the routers location and
+-- select the hood coresponding to our location.
+-- If no hood for the location has been defined, we will select
+-- the default hood.
+-- If we can not get our routers location, we will fallback to scan mode.
+if directVPN() then
+  io.stderr:write('VPN connection found.\n')
+  local geo = getGeolocation()
+  if geo[1] ~= nil and geo[2] ~= nil then
+    io.stderr:write('Position found.\n')
+    local geoHood = getHoodByGeo(jhood, geo)
+    if geoHood ~= nil then
+      set_hoodconfig(geoHood, radios)
+      io.stderr:write('Hood set by VPN mode.\n')
+      write_molwm(geoHood)
+      exit()
+    end
+    io.stderr:write('No hood has been defined for current position.\n')
+    set_hoodconfig(defaultHood, radios)
+    io.stderr:write('Defaulthood set.\n')
+    write_molwm(defaultHood)
+    exit()
+  end
+  io.stderr:write('No position found\n')
+else
+  io.stderr:write('No VPN connection found\n')
+end
+
+if batmanHasGateway() then
+  io.stderr:write('Batman gateways found, everything seems to be ok - doing nothing\n')
+  local currendHood = getCurrentHood(jhood)
+  if currendHood ~= nil then
+    write_molwm(currendHood)
+  end
+  exit()
+end
+
+-- SCAN MODE
+if next(radios) then
+  -- check if there exist a neighboring freifunk batman advanced mesh
+  -- network with an active connection to a batman advanced gateway
+  local sortedWlanList = wlan_list_sorted(radios)
+  local meshBSSID = get_batman_mesh_network(sortedWlanList, defaultHood)
+  if meshBSSID ~= nil then
+    io.stderr:write("Neighoring freifunk batman advanced mesh with BSSID "..meshBSSID.." found\n")
+    local bssidHood = gethoodByBssid(jhood, meshBSSID)
+    if bssidHood ~= nil then
+      set_hoodconfig(bssidHood, radios)
+      io.stderr:write('Hood set by scan mode\n')
+      write_molwm(bssidHood)
+      exit()
+    end
+
+    -- if the bssid does not corespond to any hood, we disable vpn and
+    -- just establish a wireless connection to the mesh without any vpn or
+    -- mesh on lan (TODO) connectivity
+    vpn_stop()
+    vpn_disable()
+    wireless_reconfigure(radios, meshBSSID)
+    wireless_restart()
+    io.stderr:write('Could not select a hood but established a connection via wireless mesh.\n')
+    io.stderr:write('Disabled all connections except connections via wireless mesh.\n')
+    local currendHood = getCurrentHood(jhood)
+    if currendHood ~= nil then
+      write_molwm(currendHood)
+    end
+    exit()
+  end
+  io.stderr:write('No neighboring freifunk batman advanced mesh found.\n')
+end
+
+-- DEFAULT-HOOD MODE
+-- If we do NOT have a VPN connection AND found no freifunk mesh network while
+-- scanning then we set the default hood
+set_hoodconfig(defaultHood, radios)
+io.stderr:write('Set defaulthood.\n')
+write_molwm(defaultHood)
+exit()

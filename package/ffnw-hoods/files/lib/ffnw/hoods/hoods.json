@@ -1,0 +1,64 @@
+[
+  {
+    "name": "default",
+    "bssid": "02:CA:FF:AA:BA:BF",
+    "defaulthood": true,
+    "servers": [
+      {
+        "host": "default02.entenhausen.de",
+        "port": "11111",
+        "publickey": "32a02dd5e6b9454734tt3r3ad30bcf269564546ewtrew5442533tgr258cb"
+      },
+      {
+        "host": "default03.entenhausen.de",
+        "port": "11111",
+        "publickey": "973732543523frea17cfa53d2b9e025202trwrtefacf9503737tf5a23204"
+      },
+      {
+        "host": "default04.entenhausen.de",
+        "port": "11111",
+        "publickey": "432534t2ewe9a10620d09402ca2frewfwdf364e6fwqfer4re669a2eb5e6f"
+      },
+      {
+        "host": "default05.entenhausen.de",
+        "port": "11111",
+        "publickey": "34rfewf4754tg3f54538236bae815ef2r4245f20c63aeregt452b183045d"
+      },
+      {
+        "host": "default06.entenhausen.de",
+        "port": "11111",
+        "publickey": "2245t42gvre0ff93a0rewferewfrewb00dd215arefewf4355e5eb16f0b69"
+      }
+    ],
+    "boxes": []
+  },
+  {
+    "name": "quackenbruek",
+    "bssid": "02:AA:0A:12:80:43",
+    "defaulthood": false,
+    "servers": [
+      {
+        "host": "quackenbruek01.sn.entenhausen.de",
+        "port": "10000",
+        "publickey": "c6485dsaqdwe33dbebdbweqrfqca4aewfc3453453224532434fr4f3d629d"
+      },
+      {
+        "host": "quackenbruek02.sn.entenhausen.de",
+        "port": "10001",
+        "publickey": "887c6c4e1ff435t4t42gt4aac03cd9494bd13d1221ea6cewqdq3431r4194"
+      }
+    ],
+    "boxes": [
+      [
+        [
+          52.18,
+          7.41
+        ],
+        [
+          52.35,
+          7.9
+        ]
+      ]
+    ]
+  }
+]
