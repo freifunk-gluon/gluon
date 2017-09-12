@@ -1,0 +1,53 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid ""
+"If you want the location of your node to be displayed on the map, you can "
+#ifdef WITHGELOC
+"set an automatically localization of your router or "
+#endif
+"enter its coordinates here. "
+#ifdef WITHMAP
+"If your PC is connected to the internet you can also click on the map displayed below. "
+#endif
+"Please keep in mind setting a location can also enhance the network quality."
+msgstr ""
+
+msgid "Geo-Location"
+msgstr ""
+
+#ifdef WITHGELOC
+msgid "Automatic (geolocator)"
+msgstr ""
+#endif
+
+msgid "Static location"
+msgstr ""
+
+#ifdef WITHGELOC
+msgid "Automatic & Static"
+msgstr ""
+#endif
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Share your location to see your router on the map"
+msgstr ""
+
+#ifdef WITHGELOC
+msgid "Interval in minutes"
+msgstr ""
+
+msgid "Set refresh interval, the default is once per day"
+msgstr ""
+#endif
+
+msgid "Latitude"
+msgstr ""
+
+msgid "Longitude"
+msgstr ""
+
+msgid "e.g. %s"
+msgstr ""
