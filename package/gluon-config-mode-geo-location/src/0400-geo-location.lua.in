@@ -1,0 +1,218 @@
+return function(form, uci)
+	local site = require 'gluon.site'
+
+	local location = uci:get_first("gluon-node-info", "location")
+	local uci_latitude = uci:get("gluon-node-info", location, "latitude")
+	local uci_longitude = uci:get("gluon-node-info", location, "longitude")
+
+#ifdef WITHMAP
+
+	local function show_lon()
+		if site.config_mode.geo_location.map_lon(false) then
+			return site.config_mode.geo_location.map_lon()
+		end
+		if uci_longitude ~= nil then
+			return uci_longitude
+		end
+		return 0.0
+	end
+
+	local function show_lat()
+		if site.config_mode.geo_location.map_lat(false) then
+			return site.config_mode.geo_location.map_lat()
+		end
+		if uci_latitude ~= nil then
+			return uci_latitude
+		end
+		return 0.0
+	end
+
+	local function show_olurl()
+		if site.config_mode.geo_location.olurl(false) then
+			return site.config_mode.geo_location.olurl()
+		end
+		return 'http://dev.openlayers.org/OpenLayers.js'
+	end
+
+#endif
+
+	local function show_altitude()
+		if site.config_mode.geo_location.show_altitude(true) then
+			return true
+		end
+		return uci:get_bool("gluon-node-info", location, "altitude")
+	end
+
+	local text = translate(
+		'If you want the location of your node to be displayed on the map, you can ' ..
+#ifdef WITHGELOC
+		'set an automatically localization of your router or ' ..
+#endif
+		'enter its coordinates here. ' ..
+
+#ifdef WITHMAP
+
+		'If your PC is connected to the internet you can also click on the map displayed below. ' ..
+
+#endif
+
+		'Please keep in mind setting a location can also enhance the network quality.'
+	)
+
+	if show_altitude() then
+		text = text .. ' ' .. translate("gluon-config-mode:altitude-help")
+	end
+
+#ifdef WITHMAP
+
+	text = text .. [[
+		<div id="locationPickerMap" style="width:100%; height:300px; display: none;"></div>
+		<script src="]] .. show_olurl() .. [["></script>
+		<script src="/static/gluon/osm.js"></script>
+		<script>
+			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. [[;
+			document.addEventListener("DOMContentLoaded", showMap, false);
+			setInterval(function() {
+				if(false !== findObj("longitude")) {
+					document.getElementById("locationPickerMap").style.display="block";
+				}else{
+					document.getElementById("locationPickerMap").style.display="none";
+				}
+			}, 1000);
+		</script>
+	]]
+
+#endif
+
+	local s = form:section(Section, nil, text)
+
+
+	local uci_share_location = uci:get_bool("gluon-node-info", location, "share_location")
+
+	local geolocation = s:option(ListValue, "geolocation", translate("Geo-Location"))
+#ifdef WITHGELOC
+	geolocation:value("automatic", translate("Automatic (geolocator)"))
+	geolocation:value("auto_static", translate("Automatic & Static"))
+#endif
+	geolocation:value("static", translate("Static location"))
+	geolocation:value("none", translate("Disabled"))
+#ifdef WITHGELOC
+	local auto_location = uci:get_bool("geolocator", "settings", "auto_location")
+	local static_location = uci:get_bool("geolocator", "settings", "static_location")
+	if auto_location == false and static_location == false then
+#else
+	if uci_latitude == nil and uci_longitude == nil and uci_share_location == false then
+#endif
+		geolocation.default = "none"
+#ifndef WITHGELOC
+	else
+		geolocation.default = "static"
+#endif
+	end
+#ifdef WITHGELOC
+	if auto_location == true and static_location == true then
+		geolocation.default = "auto_static"
+	end
+	if auto_location == false and static_location == true then
+		geolocation.default = "static"
+	end
+#endif
+
+	local share_location = s:option(Flag, "sharelocation", translate("Share your location to see your router on the map"))
+	share_location.default = uci_share_location
+#ifdef WITHGELOC
+	share_location:depends(geolocation, "automatic")
+	share_location:depends(geolocation, "auto_static")
+#endif
+	share_location:depends(geolocation, "static")
+
+#ifdef WITHGELOC
+	--[[ -- Currently not available
+        o = s:option(DummyValue, "automatic_disc", " ", translatef("Automaticaly location service over wifi."))
+        o:depends(geolocation, "automatic")
+        o.description = translatef("Automaticaly location service over wifi.")
+        --]]
+
+	local interval = s:option(Value, "interval", translate("Interval in minutes"), translatef("Set refresh interval, the default is once per day"))
+	interval.default = uci:get_first("geolocator", "settings", "refresh_interval")
+	interval:depends(geolocation, "automatic")
+	interval:depends(geolocation, "auto_static")
+	interval.datatype = "uinteger"
+#endif
+
+	local latitude = s:option(Value, "latitude", translate("Latitude"), translatef("e.g. %s", "50.364931"))
+	latitude.default = uci_latitude
+	latitude:depends(geolocation, "static")
+#ifdef WITHGELOC
+	latitude:depends(geolocation, "auto_static")
+#endif
+	latitude.datatype = "float"
+
+	local longitude = s:option(Value, "longitude", translate("Longitude"), translatef("e.g. %s", "7.606417"))
+	longitude.default = uci_longitude
+	longitude:depends(geolocation, "static")
+#ifdef WITHGELOC
+	longitude:depends(geolocation, "auto_static")
+#endif
+	longitude.datatype = "float"
+
+	local altitude;
+	if show_altitude() then
+		altitude = s:option(Value, "altitude", translate("gluon-config-mode:altitude-label"), translatef("e.g. %s", "11.51"))
+		altitude.default = uci:get("gluon-node-info", location, "altitude")
+		altitude:depends(geolocation, "static")
+#ifdef WITHGELOC
+		altitude:depends(geolocation, "auto_static")
+#endif
+		altitude.datatype = "float"
+		altitude.optional = true
+	end
+	function geolocation:write(data)
+#ifdef WITHGELOC
+		if data == "automatic" or data == "auto_static" then
+			uci:set("geolocator", "settings", "auto_location", 1)
+			if interval.data ~= nil and tonumber(interval.data) >= 1 and tonumber(interval.data) <= 43200 then
+				uci:set("geolocator", "settings", "refresh_interval", interval.data)
+			elseif tonumber(interval.data) > 43200 then
+				uci:set("geolocator", "settings", "refresh_interval", 43200)
+			end
+		else
+			uci:set("geolocator", "settings", "auto_location", 0)
+		end
+		if data == "static" or data == "auto_static" then
+			uci:set("geolocator", "settings", "static_location", 1)
+#else
+		if data == "static" then
+#endif
+			uci:set("gluon-node-info", location, "latitude", latitude.data)
+			uci:set("gluon-node-info", location, "longitude", longitude.data)
+			if show_altitude() then
+				if altitude.data then
+					uci:set("gluon-node-info", location, "altitude", altitude.data)
+				else
+					uci:delete("gluon-node-info", location, "altitude")
+				end
+			end
+#ifdef WITHGELOC
+		else
+			uci:set("geolocator", "settings", "static_location", 0)
+#endif
+		end
+		if data == "none" then
+			uci:delete("gluon-node-info", location, "altitude")
+			uci:delete("gluon-node-info", location, "latitude")
+			uci:delete("gluon-node-info", location, "longitude")
+			uci:set("gluon-node-info", location, "share_location", 0)
+#ifdef WITHGELOC
+			uci:set("geolocator", "settings", "auto_location", 0)
+#endif
+		else
+			uci:set("gluon-node-info", location, "share_location", share_location.data)
+		end
+	end
+#ifdef WITHGELOC
+	return {'gluon-node-info', 'geolocator'}
+#else
+	return {'gluon-node-info'}
+#endif
+end
