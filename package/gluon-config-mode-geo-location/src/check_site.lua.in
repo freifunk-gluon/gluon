@@ -1,0 +1,8 @@
+if need_table('config_mode', nil, false) and need_table('config_mode.geo_location', nil, false) then
+	need_boolean('config_mode.geo_location.show_altitude', false)
+#ifdef WITHMAP
+	need_string('config_mode.geo_location.olurl', false)
+	need_number('config_mode.geo_location.map_lon', false)
+	need_number('config_mode.geo_location.map_lat', false)
+#endif
+end
