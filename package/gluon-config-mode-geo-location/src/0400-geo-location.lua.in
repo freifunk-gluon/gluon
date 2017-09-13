@@ -8,21 +8,21 @@ return function(form, uci)
 #ifdef WITHMAP
 
 	local function show_lon()
+	  	if uci_longitude ~= nil then
+			return uci_longitude
+		end
 		if site.config_mode.geo_location.map_lon(false) then
 			return site.config_mode.geo_location.map_lon()
-		end
-		if uci_longitude ~= nil then
-			return uci_longitude
 		end
 		return 0.0
 	end
 
 	local function show_lat()
+	  	if uci_latitude ~= nil then
+			return uci_latitude
+		end
 		if site.config_mode.geo_location.map_lat(false) then
 			return site.config_mode.geo_location.map_lat()
-		end
-		if uci_latitude ~= nil then
-			return uci_latitude
 		end
 		return 0.0
 	end
