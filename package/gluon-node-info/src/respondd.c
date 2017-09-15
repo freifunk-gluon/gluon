@@ -117,6 +117,8 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 	struct json_object *ret = json_object_new_object();
 
 	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		return ret;
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 	struct uci_package *p;

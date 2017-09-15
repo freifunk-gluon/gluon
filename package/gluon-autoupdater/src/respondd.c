@@ -36,6 +36,8 @@
 
 static struct json_object * get_autoupdater(void) {
 	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		return NULL;
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 	struct uci_package *p;
