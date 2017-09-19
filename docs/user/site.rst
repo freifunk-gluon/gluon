@@ -195,7 +195,10 @@ mesh_vpn
     Remote server setup for the mesh VPN.
 
     The `enabled` option can be set to true to enable the VPN by default. `mtu`
-    defines the MTU of the VPN interface.
+    defines the MTU of the VPN interface, determining a proper MTU value is described
+    in the FAQ entry `"What is a good MTU on the mesh-vpn?"`_.
+
+    .. _"What is a good MTU on the mesh-vpn?": faq.rst
 
     The `fastd` section configures settings specific to the *fastd* VPN
     implementation.
