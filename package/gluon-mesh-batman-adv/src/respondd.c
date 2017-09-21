@@ -446,6 +446,8 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 
 static void count_stations(size_t *wifi24, size_t *wifi5) {
 	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		return;
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 

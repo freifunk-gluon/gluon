@@ -70,6 +70,8 @@ static struct json_object * get_hostname(void) {
 	struct json_object *ret = NULL;
 
 	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		return NULL;
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 	char section[] = "system.@system[0]";
