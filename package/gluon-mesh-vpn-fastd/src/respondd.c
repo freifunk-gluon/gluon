@@ -75,6 +75,7 @@ static struct json_object * get_fastd_version(void) {
 
 static struct json_object * get_fastd(void) {
 	bool enabled = false;
+	struct json_object *ret = json_object_new_object();
 
 	struct uci_context *ctx = uci_alloc_context();
 	if (!ctx)
@@ -93,11 +94,10 @@ static struct json_object * get_fastd(void) {
 	if (!enabled_str || !strcmp(enabled_str, "1"))
 		enabled = true;
 
- disabled:
+disabled:
 	uci_free_context(ctx);
- disabled_nofree:
 
-	struct json_object *ret = json_object_new_object();
+disabled_nofree:
 	json_object_object_add(ret, "version", get_fastd_version());
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled));
 	return ret;
