@@ -351,7 +351,7 @@ input[type=image] {
 select,
 input[type=text],
 input[type=password] {
-  width: 20em;
+  min-width: 20em;
 }
 
 input.gluon-button {
