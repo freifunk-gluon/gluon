@@ -1,0 +1,41 @@
+From: Nick Hainke <vincent@systemli.org>
+Date: Sat, 30 Sep 2017 10:35:19 +0200
+Subject: base-files: banner: replace openwrt banner with freifunk
+
+Replace openwrt banner with freifunk
+Signed-off-by: Nick Hainke <vincent@systemli.org>
+
+diff --git a/package/base-files/files/etc/banner b/package/base-files/files/etc/banner
+index 799f7e5..628447c 100644
+--- a/package/base-files/files/etc/banner
++++ b/package/base-files/files/etc/banner
+@@ -1,14 +1,17 @@
+-  _______                     ________        __
+- |       |.-----.-----.-----.|  |  |  |.----.|  |_
+- |   -   ||  _  |  -__|     ||  |  |  ||   _||   _|
+- |_______||   __|_____|__|__||________||__|  |____|
+-          |__| W I R E L E S S   F R E E D O M
++  _____        _  __             _
++ |  ___|      (_)/ _|           | |
++ | |_ _ __ ___ _| |_ _   _ _ __ | | __
++ |  _| '__/ _ \ |  _| | | | '_ \| |/ /
++ | | | | |  __/ | | | |_| | | | |   <
++ \_| |_|  \___|_|_|  \__,_|_| |_|_|\_\
+  -----------------------------------------------------
+- CHAOS CALMER (%C, %R)
+- -----------------------------------------------------
+-  * 1 1/2 oz Gin            Shake with a glassful
+-  * 1/4 oz Triple Sec       of broken ice and pour
+-  * 3/4 oz Lime Juice       unstrained into a goblet.
+-  * 1 1/2 oz Orange Juice
+-  * 1 tsp. Grenadine Syrup
++ Gluon Firmware (%N %V rev %C)
++ %P - %S
++ https://github.com/freifunk-gluon/gluon
++ https://freifunk.net/
+  -----------------------------------------------------
++
++ If you find bugs please report them at:
++
++   https://github.com/freifunk-gluon/gluon/issues
++
