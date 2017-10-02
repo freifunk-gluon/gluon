@@ -106,7 +106,10 @@ define([ "bacon" ], function (Bacon) {
         "not connected": "nicht verbunden",
         "Packets/s": "Pakete/s",
         "Statistic": "Statistik",
-        "Neighbors": "Nachbarknoten"
+        "Neighbors": "Nachbarknoten",
+        "Mesh VPN": "Mesh-VPN",
+        "enabled": "aktiviert",
+        "disabled": "deaktiviert"
       },
       "ru": {
         "Node": "Узел",
