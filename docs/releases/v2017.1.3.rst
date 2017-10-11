@@ -29,7 +29,7 @@ Bugfixes
   `LEDE commit log <https://git.lede-project.org/?p=source.git;a=shortlog;h=refs/heads/lede-17.01>`_
   for details.
 
-* Filtering of multicast packages between the mesh and the *local-node* interface
+* Filtering of multicast packets between the mesh and the *local-node* interface
   has been fixed (`#1230 <https://github.com/freifunk-gluon/gluon/issues/1230>`_)
 
   This issue was causing gluon-radvd to send a router advertisement to the local
