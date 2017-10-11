@@ -1,10 +1,12 @@
 ATH10K_PACKAGES=
+ATH10K_PACKAGES_QCA9887=
 
 if [ "$GLUON_ATH10K_MESH" = '11s' ]; then
 	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
 fi
 if [ "$GLUON_ATH10K_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca988x ath10k-firmware-qca988x-ct'
+	ATH10K_PACKAGES_QCA9887='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca9887 ath10k-firmware-qca9887-ct'
 fi
 
 
@@ -178,6 +180,11 @@ packages $ATH10K_PACKAGES
 device tp-link-archer-c7-v2 archer-c7-v2
 packages $ATH10K_PACKAGES
 factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
+
+if [ "$BROKEN" ]; then
+device tp-link-archer-c25-v1 archer-c25-v1 # instability with 5GHz mesh in some environments
+packages $ATH10K_PACKAGES_QCA9887
+fi
 
 device tp-link-re450 re450
 packages $ATH10K_PACKAGES
