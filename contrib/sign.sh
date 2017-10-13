@@ -15,7 +15,7 @@ The script may be performed multiple times to the same document
 to indicate an approval by multiple developers.
 
 See also
- * edcsautils on https://github.com/tcatm/ecdsautils
+ * ecdsautils on https://github.com/tcatm/ecdsautils
 
 EOHELP
 	exit 1
