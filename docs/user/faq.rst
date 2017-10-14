@@ -16,6 +16,7 @@ on *batman-adv*. If your mesh does not have global IPv6 connectivity, you can se
 your *radvd* not to announce a default route by setting the *default lifetime* to 0;
 in this case, the *radvd* is only used to announce the DNS server.
 
+.. _faq-mtu:
 
 What is a good MTU on the mesh-vpn
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +32,7 @@ Consider these key values:
   - and configure `MSS clamping`_ accordingly,
   - and announce your link MTU via Router Advertisments and DHCP
 
-  .. MSS clamping: http://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
+  .. _MSS clamping: http://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
 
 - Encapsulation: Account for the overhead created by the configured mesh protocol
   encapsulating the payload, which is
@@ -42,7 +43,7 @@ Consider these key values:
 
 For reference, the complete MTU stack looks like this:
 
-.. image:: https://cloud.hamburg.freifunk.net/thumbnail/de738ee3ac/1024/MTU%20within%20a%20batman-adv%20network%20v5.png
+.. image:: mtu-diagram_v5.png
 
 Minimum MTU
 -----------
