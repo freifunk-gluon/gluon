@@ -46,4 +46,4 @@ so the WAN DNS servers aren't leaked to the primary DNS daemon.
 *libpacketmark* is used to make the secondary DNS daemon send its requests over the WAN interface.
 
 The package ``gluon-mesh-vpn-fastd`` provides an iptables rule which will redirect all DNS requests from processes running
-with the primary group ``gluon-fastd`` to ``127.0.0.1:54``, thus making fastd use the secondary DNS daemon.
+with the primary group ``gluon-mesh-vpn`` to ``127.0.0.1:54``, thus making fastd use the secondary DNS daemon.
