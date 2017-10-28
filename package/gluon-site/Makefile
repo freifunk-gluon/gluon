@@ -49,7 +49,15 @@ define Build/Compile
 	ls $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/*.conf > /dev/null # at least one domain cfg has to exist
 	GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(assert(dofile("../../scripts/site_config.lua")).default_domain_code)' > $(PKG_BUILD_DIR)/default_domain_code
 	ls '$(call qstrip,$(CONFIG_GLUON_SITEDIR))'/domains/$$$$(cat $(PKG_BUILD_DIR)/default_domain_code).conf # ensure default_domain_code exists
-	for domain_cfg in `find $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/ -iname \*.conf -printf "%f\n"`; do dc=$$$${domain_cfg%.conf}; GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/domain_config.lua")("'$$$${dc}'"))))' > $(PKG_BUILD_DIR)/domains/$$$${dc}.json; done
+	rm -f $(PKG_BUILD_DIR)/domains/*.json
+	for domain_cfg in `find $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/ -iname \*.conf -printf "%f\n"`; do \
+		dc=$$$${domain_cfg%.conf}; \
+		GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/domain_config.lua")("'$$$${dc}'"))))' > $(PKG_BUILD_DIR)/domains/$$$${dc}.json; \
+		aliases=$$$$(GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'for alias_name, _  in pairs(dofile("../../scripts/domain_config.lua")("'$$$${dc}'")["domain_aliases"] or {}) do print(alias_name.." ") end'); \
+		for alias in $$$${aliases}; do \
+			ln -s $$$${dc}.json $(PKG_BUILD_DIR)/domains/$$$${alias}.json; \
+		done; \
+	done
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 

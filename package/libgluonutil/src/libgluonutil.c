@@ -281,7 +281,6 @@ struct json_object * gluonutil_load_site_config(void) {
 
 	snprintf(domain_path, sizeof domain_path, domain_path_fmt, domain_code);
 
-	free(domain_code);
 
 	struct json_object * domain = json_object_from_file(domain_path);
 
@@ -289,6 +288,24 @@ struct json_object * gluonutil_load_site_config(void) {
 		json_object_put(base);
 		return NULL;
 	}
+
+	json_object * aliases;
+
+	// it's okay to pass base == NULL to json_object_object_get_ex()
+	if (!json_object_object_get_ex(domain, "domain_aliases", &aliases))
+		goto skip_name_replacement;
+
+	json_object * aliased_domain_name;
+
+	if (!json_object_object_get_ex(aliases, domain_code, &aliased_domain_name))
+		goto skip_name_replacement;
+
+	// freeing of old value is done inside json_object_object_add()
+	json_object_object_add(domain, "domain_name", json_object_get(aliased_domain_name));
+
+skip_name_replacement:
+
+	free(domain_code);
 
 	// finally merge them
 	return merge_json(domain, base);
