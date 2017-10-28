@@ -8,3 +8,8 @@ device ubnt-erx ubnt-erx
 packages '-hostapd-mini'
 factory
 sysupgrade '.tar'
+
+device ubnt-erx-sfp ubnt-erx-sfp
+packages '-hostapd-mini'
+factory
+sysupgrade '.tar'
