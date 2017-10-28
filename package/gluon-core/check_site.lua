@@ -2,7 +2,6 @@ need_string(in_site('site_code'))
 need_string(in_site('site_name'))
 need_string_match(in_site('site_seed'), '^' .. ('%x'):rep(64) .. '$')
 
--- TODO: it should be checked for existance!
 need_string(in_site('default_domain_code'))
 
 if need_table('opkg', nil, false) then

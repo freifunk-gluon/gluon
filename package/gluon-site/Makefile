@@ -47,6 +47,8 @@ endef
 define Build/Compile
 	GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
 	ls $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/*.conf > /dev/null # at least one domain cfg has to exist
+	GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(assert(dofile("../../scripts/site_config.lua")).default_domain_code)' > $(PKG_BUILD_DIR)/default_domain_code
+	ls '$(call qstrip,$(CONFIG_GLUON_SITEDIR))'/domains/$$$$(cat $(PKG_BUILD_DIR)/default_domain_code).conf # ensure default_domain_code exists
 	for domain_cfg in `find $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/ -iname \*.conf -printf "%f\n"`; do dc=$$$${domain_cfg%.conf}; GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/domain_config.lua")("'$$$${dc}'"))))' > $(PKG_BUILD_DIR)/domains/$$$${dc}.json; done
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
