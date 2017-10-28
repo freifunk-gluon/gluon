@@ -16,7 +16,7 @@ define Package/libgluonutil
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Gluon utility library
-  DEPENDS:=+libjson-c
+  DEPENDS:=+libjson-c +libuci
 endef
 
 CMAKE_OPTIONS += \
