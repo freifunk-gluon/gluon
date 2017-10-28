@@ -21,7 +21,7 @@ site_code
     The code of your community. It is good practice to use the TLD of
     your community here.
 
-site_seed
+domain_seed
     32 bytes of random data, encoded in hexadecimal, used to seed other random
     values specific to the mesh domain. It must be the same for all nodes of one
     mesh, but should be different for firmwares that are not supposed to mesh with

@@ -44,7 +44,7 @@ proto_gluon_wired_setup() {
                 json_add_string tunlink "$config"
                 json_add_string ip6addr "$(interface_linklocal "$ifname")"
                 json_add_string peer6addr 'ff02::15c'
-                json_add_int vid "$(lua -lgluon.util -e 'print(tonumber(gluon.util.site_seed_bytes("gluon-mesh-vxlan", 3), 16))')"
+                json_add_int vid "$(lua -lgluon.util -e 'print(tonumber(gluon.util.domain_seed_bytes("gluon-mesh-vxlan", 3), 16))')"
                 json_close_object
                 ubus call network add_dynamic "$(json_dump)"
         fi
