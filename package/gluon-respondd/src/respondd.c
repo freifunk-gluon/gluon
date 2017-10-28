@@ -66,6 +66,11 @@ static struct json_object * get_site_code(void) {
 	return ret;
 }
 
+static struct json_object * get_domain_code(void) {
+	char * domain_code = gluonutil_get_selected_domain_code(NULL);
+	return gluonutil_wrap_and_free_string(domain_code);
+}
+
 static struct json_object * get_hostname(void) {
 	struct json_object *ret = NULL;
 
@@ -122,6 +127,7 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 	struct json_object *system = json_object_new_object();
 	json_object_object_add(system, "site_code", get_site_code());
+	json_object_object_add(system, "domain_code", get_domain_code());
 	json_object_object_add(ret, "system", system);
 
 	return ret;
