@@ -5,7 +5,7 @@ need_string_match(in_site('site_seed'), '^' .. ('%x'):rep(64) .. '$')
 if need_table('opkg', nil, false) then
 	need_string('opkg.lede', false)
 
-	function check_repo(k, _, conf_name)
+	function check_repo(k, conf_name)
 		-- this is not actually a uci name, but using the same naming rules here is fine
 		assert_uci_name(k, conf_name)
 

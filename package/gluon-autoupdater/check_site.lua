@@ -1,6 +1,6 @@
 need_string(in_site('autoupdater.branch'))
 
-local function check_branch(k, _, conf_name)
+local function check_branch(k, conf_name)
    assert_uci_name(k, conf_name)
 
    local prefix = string.format('autoupdater.branches[%q].', k)

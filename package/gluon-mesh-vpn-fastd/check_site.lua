@@ -5,7 +5,7 @@ need_boolean(in_site('mesh_vpn.fastd.configurable'), false)
 need_one_of(in_site('mesh_vpn.fastd.syslog_level'), {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
 
 local function check_peer(prefix)
-	return function(k, _, conf_name)
+	return function(k, conf_name)
 		assert_uci_name(k, conf_name)
 
 		local table = string.format('%s[%q].', prefix, k)
@@ -16,7 +16,7 @@ local function check_peer(prefix)
 end
 
 local function check_group(prefix)
-	return function(k, _, conf_name)
+	return function(k, conf_name)
 		assert_uci_name(k, conf_name)
 
 		local table = string.format('%s[%q].', prefix, k)
