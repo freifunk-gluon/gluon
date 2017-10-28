@@ -8,7 +8,7 @@ PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
 
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR
-PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/i18n/
+PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
@@ -38,6 +38,7 @@ endef
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
+	mkdir -p $(PKG_BUILD_DIR)/domains
 endef
 
 define Build/Configure
@@ -45,12 +46,16 @@ endef
 
 define Build/Compile
 	GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
+	ls $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/*.conf > /dev/null # at least one domain cfg has to exist
+	for domain_cfg in `find $(call qstrip,$(CONFIG_GLUON_SITEDIR))/domains/ -iname \*.conf -printf "%f\n"`; do dc=$$$${domain_cfg%.conf}; GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/domain_config.lua")("'$$$${dc}'"))))' > $(PKG_BUILD_DIR)/domains/$$$${dc}.json; done
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
+	$(INSTALL_DIR) $(1)/lib/gluon/domains
+	$(CP) $(PKG_BUILD_DIR)/domains/*.json $(1)/lib/gluon/domains/
 	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
 

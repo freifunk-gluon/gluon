@@ -11,7 +11,24 @@ local site_json = f:read('*a')
 f:close()
 
 site = require('cjson').decode(site_json)
-$(shell cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)' | sed -ne '1h; 1!H; $$ {g; s/@/+@/g; s/\n/-@/g; p}')
+
+function check_domain(domain_code, domain)
+	$(shell cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)' | sed -ne '1h; 1!H; $$ {g; s/@/+@/g; s/\n/-@/g; p}')
+end
+
+local dir = os.getenv('IPKG_INSTROOT') .. '/lib/gluon/domains/'
+local pfile = io.popen('find '..dir..' -iname \\*.json')
+for domain_path in pfile:lines() do
+	local domain_code = string.gmatch(domain_path, '([^/]+).json$$')()
+	local f = assert(io.open(domain_path))
+	local domain_json = f:read('*a')
+	f:close()
+
+	domain = require('cjson').decode(domain_json)
+
+	check_domain(domain_code, domain)
+end
+pfile:close()
 END__GLUON__CHECK__SITE
 endef
 
