@@ -14,6 +14,7 @@ FEEDS="$GLUON_SITE_FEEDS $GLUON_FEEDS"
 	done
 ) > lede/feeds.conf
 
+rm -rf lede/tmp
 rm -rf lede/feeds
 rm -rf lede/package/feeds
 
