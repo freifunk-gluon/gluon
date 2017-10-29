@@ -104,15 +104,20 @@ if sysconfig.lan_ifname then
 	end
 end
 
-if uci:get('system', 'gpio_switch_poe_passthrough') then
-	local s = f:section(Section)
-	local poe_passthrough = s:option(Flag, "poe_passthrough", translate("Enable PoE passthrough"))
-	poe_passthrough.default = uci:get_bool("system", "gpio_switch_poe_passthrough", "value")
+local section
+uci:foreach("system", "gpio_switch", function(s)
+	if s[".name"]:match("poe") then
+		if not section then
+			section = f:section(Section)
+		end
+		local poe = section:option(Flag, s[".name"], translate("Enable " .. s.name))
+		poe.default = uci:get_bool("system", s[".name"], "value")
 
-	function poe_passthrough:write(data)
-		uci:set('system', 'gpio_switch_poe_passthrough', 'value', data)
+		function poe:write(data)
+			uci:set("system", s[".name"], "value", data)
+		end
 	end
-end
+end)
 
 function f:write()
 	uci:set("network", "wan", "proto", ipv4.data)
