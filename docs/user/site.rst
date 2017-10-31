@@ -30,7 +30,7 @@ site_seed
     The recommended way to generate a value for a new site is:
     ::
 
-        echo $(hexdump -n 32 -e '1/1 "%02x"' </dev/urandom)
+        echo $(hexdump -v -n 32 -e '1/1 "%02x"' </dev/urandom)
 
 prefix4 \: optional
     The IPv4 Subnet of your community mesh network in CIDR notation, e.g.
