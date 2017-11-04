@@ -15,6 +15,15 @@ msgstr ""
 "Welcome to the setup wizard of your new Freifunk Alpha Centauri node. "
 "Please fill out the following form and submit it."
 
+msgid "gluon-config-mode:site-select"
+msgstr ""
+"Here you have the possibility of selecting the region in which "
+"your node is placed. Please keep in mind that your router "
+"connects only with the mesh of the selected region"
+
+msgid "gluon-config-mode:site-label"
+msgstr "Region"
+
 msgid "gluon-config-mode:pubkey"
 msgstr ""
 "<p>This is your Freifunk node's public key. The node won't be able to "
