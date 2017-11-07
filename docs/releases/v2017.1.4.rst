@@ -1,0 +1,56 @@
+Gluon 2017.1.4
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* GL Innovations GL-AR300M
+
+
+Bugfixes
+~~~~~~~~
+
+* LEDE has been updated to the latest stable commit, including various fixes for
+  the kernel (including security updates), and making opkg work again. This also
+  includes fixes for the KRACK issue (which is irrelevant for most Gluon
+  deployments, as Gluon nodes are rarely used as WLAN clients)
+  (`b62af904bbfd <https://github.com/freifunk-gluon/gluon/commit/b62af904bbfd6360ed728fc9ae69af3d8e8db1d7>`_,
+  `ba56b41ddaf6 <https://github.com/freifunk-gluon/gluon/commit/ba56b41ddaf6033e3cdef18d30da6b34cd438e8c>`_,
+  `ad0824136e5b <https://github.com/freifunk-gluon/gluon/commit/ad0824136e5b47482e11483c50e7bc88ba2c506e>`_,
+  `017fbe88bb8a <https://github.com/freifunk-gluon/gluon/commit/017fbe88bb8a89623464b02e09178696c1d077a6>`_)
+
+* Fix DNS resolution for mesh VPN (fastd / tunneldigger) on ARM-based targets
+  (`#1245 <https://github.com/freifunk-gluon/gluon/issues/1245>`_)
+
+* Fix a build issue in *kmod-jool*
+  (`06842728233a <https://github.com/freifunk-gluon/gluon/commit/06842728233a39784c437767eb9df4167ab07a87>`_)
+
+* Fix enabling/disabling PoE Passthrough in *site.conf* or in the
+  advanced settings
+  (`7268e49a301f <https://github.com/freifunk-gluon/gluon/commit/7268e49a301fcd643a49b329bd6097a0f85bdaBb>`_,
+  `7c2636d28264 <https://github.com/freifunk-gluon/gluon/commit/7c2636d28264df20b448b0160b69f5059c40b84a>`_)
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
+  (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
+
+  The workaround added in Gluon v2017.1.1 has greatly reduced the frequency of
+  segfaults, but it did not make them disappear completely.
