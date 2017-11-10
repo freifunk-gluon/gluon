@@ -213,6 +213,9 @@ mesh_vpn
 
     You can set syslog_level from verbose (default) to warn to reduce syslog output.
 
+    To make sure that old peer groups are not retained after sysupgrade (e.g. updating from firmware
+    from another community) set delete_old_peers to `true`.
+
     The `tunneldigger` section is used to define the *tunneldigger* broker list.
 
     **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
@@ -230,6 +233,7 @@ mesh_vpn
           methods = {'salsa2012+umac'},
           -- configurable = true,
           -- syslog_level = 'warn',
+          -- delete_old_peers = false,
           groups = {
             backbone = {
               -- Limit number of connected peers from this group
