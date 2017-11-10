@@ -92,6 +92,19 @@ function add_groups(prefix, groups, parent)
 	end
 end
 
+
+if site.mesh_vpn.fastd.delete_old_peers then
+	uci:delete_all('fastd', 'peer_group', function(group)
+		if group.net == 'mesh_vpn' then
+			uci:delete_all('fastd', 'peer',	function(peer)
+				return (peer.group == group)
+			end)
+
+			return true
+		end
+	end)
+end
+
 add_groups('mesh_vpn', site.mesh_vpn.fastd.groups())
 
 
