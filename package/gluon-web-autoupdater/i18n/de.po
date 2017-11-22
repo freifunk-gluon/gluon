@@ -18,3 +18,17 @@ msgstr "Branch"
 
 msgid "Enable"
 msgstr "Aktivieren"
+
+msgid "Minute"
+msgstr "Minute"
+
+msgid ""
+"This value forces the autoupdater to check for updates at the specified "
+"minute. Normally there is no need to set this value because it is selected "
+"automatically. You may want to set this to a specific value if you have "
+"multiple nodes which should not update at the same time."
+msgstr ""
+"Dieser Wert zwingt den Autoupdater, in der festgelegten Minute nach neuen "
+"Updates zu suchen. Normalerweise muss dieser Wert nicht gesetzt werden, da "
+"er automatisch gewählt wird. Wenn du jedoch mehrere Knoten betreibst und "
+"diese nicht zur gleichen Zeit updaten dürfen, könntest du diesen Wert setzen."
