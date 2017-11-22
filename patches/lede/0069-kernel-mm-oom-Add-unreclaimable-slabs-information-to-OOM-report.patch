@@ -1,0 +1,436 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 21 Nov 2017 19:49:19 +0100
+Subject: kernel: mm: oom: Add unreclaimable slabs information to OOM report
+
+diff --git a/target/linux/generic/patches-4.4/190-0001-tools-slabinfo-add-U-option-to-show-unreclaimable-sl.patch b/target/linux/generic/patches-4.4/190-0001-tools-slabinfo-add-U-option-to-show-unreclaimable-sl.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..01ef833553ac2e11d2ca387d5c1325648b127871
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/190-0001-tools-slabinfo-add-U-option-to-show-unreclaimable-sl.patch
+@@ -0,0 +1,78 @@
++From a99f847342900559037cd9c2081d710096365f71 Mon Sep 17 00:00:00 2001
++From: Yang Shi <yang.s@alibaba-inc.com>
++Date: Wed, 11 Oct 2017 01:25:01 +0800
++Subject: [PATCH 1/4] tools: slabinfo: add "-U" option to show unreclaimable
++ slabs only
++
++Add "-U" option to show unreclaimable slabs only.
++
++"-U" and "-S" together can tell us what unreclaimable slabs use the most
++memory to help debug huge unreclaimable slabs issue.
++
++Signed-off-by: Yang Shi <yang.s@alibaba-inc.com>
++Acked-by: Christoph Lameter <cl@linux.com>
++Acked-by: David Rientjes <rientjes@google.com>
++---
++ tools/vm/slabinfo.c | 11 ++++++++++-
++ 1 file changed, 10 insertions(+), 1 deletion(-)
++
++diff --git a/tools/vm/slabinfo.c b/tools/vm/slabinfo.c
++index 499b8819d4c6..85279b84ce1f 100644
++--- a/tools/vm/slabinfo.c
+++++ b/tools/vm/slabinfo.c
++@@ -83,6 +83,7 @@ int output_lines = -1;
++ int sort_loss;
++ int extended_totals;
++ int show_bytes;
+++int unreclaim_only;
++ 
++ /* Debug options */
++ int sanity;
++@@ -132,6 +133,7 @@ static void usage(void)
++ 		"-L|--Loss              Sort by loss\n"
++ 		"-X|--Xtotals           Show extended summary information\n"
++ 		"-B|--Bytes             Show size in bytes\n"
+++		"-U|--Unreclaim		Show unreclaimable slabs only\n"
++ 		"\nValid debug options (FZPUT may be combined)\n"
++ 		"a / A          Switch on all debug options (=FZUP)\n"
++ 		"-              Switch off all debug options\n"
++@@ -568,6 +570,9 @@ static void slabcache(struct slabinfo *s)
++ 	if (strcmp(s->name, "*") == 0)
++ 		return;
++ 
+++	if (unreclaim_only && s->reclaim_account)
+++		return;
+++
++ 	if (actual_slabs == 1) {
++ 		report(s);
++ 		return;
++@@ -1346,6 +1351,7 @@ struct option opts[] = {
++ 	{ "Loss", no_argument, NULL, 'L'},
++ 	{ "Xtotals", no_argument, NULL, 'X'},
++ 	{ "Bytes", no_argument, NULL, 'B'},
+++	{ "Unreclaim", no_argument, NULL, 'U'},
++ 	{ NULL, 0, NULL, 0 }
++ };
++ 
++@@ -1357,7 +1363,7 @@ int main(int argc, char *argv[])
++ 
++ 	page_size = getpagesize();
++ 
++-	while ((c = getopt_long(argc, argv, "aAd::Defhil1noprstvzTSN:LXB",
+++	while ((c = getopt_long(argc, argv, "aAd::Defhil1noprstvzTSN:LXBU",
++ 						opts, NULL)) != -1)
++ 		switch (c) {
++ 		case '1':
++@@ -1438,6 +1444,9 @@ int main(int argc, char *argv[])
++ 		case 'B':
++ 			show_bytes = 1;
++ 			break;
+++		case 'U':
+++			unreclaim_only = 1;
+++			break;
++ 		default:
++ 			fatal("%s: Invalid option '%c'\n", argv[0], optopt);
++ 
++-- 
++2.11.0
++
+diff --git a/target/linux/generic/patches-4.4/190-0002-mm-slabinfo-dump-CONFIG_SLABINFO.patch b/target/linux/generic/patches-4.4/190-0002-mm-slabinfo-dump-CONFIG_SLABINFO.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6a30f7377dc22cef1feeca776a228fa3e434e946
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/190-0002-mm-slabinfo-dump-CONFIG_SLABINFO.patch
+@@ -0,0 +1,117 @@
++From fafd343d946da6e8ae0faf16add55f86e95a54a9 Mon Sep 17 00:00:00 2001
++From: Yang Shi <yang.s@alibaba-inc.com>
++Date: Wed, 11 Oct 2017 01:25:02 +0800
++Subject: [PATCH 2/4] mm: slabinfo: dump CONFIG_SLABINFO
++
++According to the discussion with Christoph [1], it sounds it is pointless
++to keep CONFIG_SLABINFO around.
++
++This patch just remove CONFIG_SLABINFO config option, but /proc/slabinfo
++is still available.
++
++[1] https://marc.info/?l=linux-kernel&m=150695909709711&w=2
++
++Signed-off-by: Yang Shi <yang.s@alibaba-inc.com>
++Acked-by: David Rientjes <rientjes@google.com>
++---
++ init/Kconfig     | 6 ------
++ mm/memcontrol.c  | 2 +-
++ mm/slab.c        | 2 --
++ mm/slab_common.c | 4 ++--
++ mm/slub.c        | 4 ++--
++ 5 files changed, 5 insertions(+), 13 deletions(-)
++
++diff --git a/init/Kconfig b/init/Kconfig
++index 235c7a2c0d20..c1a2ef3a9a59 100644
++--- a/init/Kconfig
+++++ b/init/Kconfig
++@@ -1816,12 +1816,6 @@ config HAVE_GENERIC_DMA_COHERENT
++ 	bool
++ 	default n
++ 
++-config SLABINFO
++-	bool
++-	depends on PROC_FS
++-	depends on SLAB || SLUB_DEBUG
++-	default y
++-
++ config RT_MUTEXES
++ 	bool
++ 
++diff --git a/mm/memcontrol.c b/mm/memcontrol.c
++index e25b93a4267d..c28c8b3c6749 100644
++--- a/mm/memcontrol.c
+++++ b/mm/memcontrol.c
++@@ -4106,7 +4106,7 @@ static struct cftype mem_cgroup_legacy_files[] = {
++ 		.write = mem_cgroup_reset,
++ 		.read_u64 = mem_cgroup_read_u64,
++ 	},
++-#ifdef CONFIG_SLABINFO
+++#if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
++ 	{
++ 		.name = "kmem.slabinfo",
++ 		.seq_start = slab_start,
++diff --git a/mm/slab.c b/mm/slab.c
++index 4765c97ce690..94b102d7abf7 100644
++--- a/mm/slab.c
+++++ b/mm/slab.c
++@@ -3918,7 +3918,6 @@ out:
++ 	schedule_delayed_work(work, round_jiffies_relative(REAPTIMEOUT_AC));
++ }
++ 
++-#ifdef CONFIG_SLABINFO
++ void get_slabinfo(struct kmem_cache *cachep, struct slabinfo *sinfo)
++ {
++ 	struct page *page;
++@@ -4226,7 +4225,6 @@ static int __init slab_proc_init(void)
++ 	return 0;
++ }
++ module_init(slab_proc_init);
++-#endif
++ 
++ /**
++  * ksize - get the actual amount of memory allocated for a given object
++diff --git a/mm/slab_common.c b/mm/slab_common.c
++index bec2fce9fafc..5fcad12d1706 100644
++--- a/mm/slab_common.c
+++++ b/mm/slab_common.c
++@@ -1022,7 +1022,7 @@ void *kmalloc_order_trace(size_t size, gfp_t flags, unsigned int order)
++ EXPORT_SYMBOL(kmalloc_order_trace);
++ #endif
++ 
++-#ifdef CONFIG_SLABINFO
+++#if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
++ 
++ #ifdef CONFIG_SLAB
++ #define SLABINFO_RIGHTS (S_IWUSR | S_IRUSR)
++@@ -1176,7 +1176,7 @@ static int __init slab_proc_init(void)
++ 	return 0;
++ }
++ module_init(slab_proc_init);
++-#endif /* CONFIG_SLABINFO */
+++#endif /* CONFIG_SLAB || CONFIG_SLUB_DEBUG */
++ 
++ static __always_inline void *__do_krealloc(const void *p, size_t new_size,
++ 					   gfp_t flags)
++diff --git a/mm/slub.c b/mm/slub.c
++index 4cf3a9c768b1..65144e615bf1 100644
++--- a/mm/slub.c
+++++ b/mm/slub.c
++@@ -5524,7 +5524,7 @@ __initcall(slab_sysfs_init);
++ /*
++  * The /proc/slabinfo ABI
++  */
++-#ifdef CONFIG_SLABINFO
+++#ifdef CONFIG_SLUB_DEBUG
++ void get_slabinfo(struct kmem_cache *s, struct slabinfo *sinfo)
++ {
++ 	unsigned long nr_slabs = 0;
++@@ -5556,4 +5556,4 @@ ssize_t slabinfo_write(struct file *file, const char __user *buffer,
++ {
++ 	return -EIO;
++ }
++-#endif /* CONFIG_SLABINFO */
+++#endif /* CONFIG_SLUB_DEBUG */
++-- 
++2.11.0
++
+diff --git a/target/linux/generic/patches-4.4/190-0003-mm-oom-show-unreclaimable-slab-info-when-unreclaimab.patch b/target/linux/generic/patches-4.4/190-0003-mm-oom-show-unreclaimable-slab-info-when-unreclaimab.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9b8b00f9fccf8fdfe758328b7f6131d5f007216
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/190-0003-mm-oom-show-unreclaimable-slab-info-when-unreclaimab.patch
+@@ -0,0 +1,164 @@
++From 452c8b6b5629ad620ac3b5584eeba4f0558be144 Mon Sep 17 00:00:00 2001
++From: Yang Shi <yang.s@alibaba-inc.com>
++Date: Wed, 11 Oct 2017 01:25:03 +0800
++Subject: [PATCH 3/4] mm: oom: show unreclaimable slab info when unreclaimable
++ slabs > user memory
++
++Kernel may panic when oom happens without killable process sometimes it
++is caused by huge unreclaimable slabs used by kernel.
++
++Although kdump could help debug such problem, however, kdump is not
++available on all architectures and it might be malfunction sometime.
++And, since kernel already panic it is worthy capturing such information
++in dmesg to aid touble shooting.
++
++Print out unreclaimable slab info (used size and total size) which
++actual memory usage is not zero (num_objs * size != 0) when
++unreclaimable slabs amount is greater than total user memory (LRU
++pages).
++
++The output looks like:
++
++Unreclaimable slab info:
++Name                      Used          Total
++rpc_buffers               31KB         31KB
++rpc_tasks                  7KB          7KB
++ebitmap_node            1964KB       1964KB
++avtab_node              5024KB       5024KB
++xfs_buf                 1402KB       1402KB
++xfs_ili                  134KB        134KB
++xfs_efi_item             115KB        115KB
++xfs_efd_item             115KB        115KB
++xfs_buf_item             134KB        134KB
++xfs_log_item_desc        342KB        342KB
++xfs_trans               1412KB       1412KB
++xfs_ifork                212KB        212KB
++
++Signed-off-by: Yang Shi <yang.s@alibaba-inc.com>
++Acked-by: Michal Hocko <mhocko@suse.com>
++[linus.luessing@c0d3.blue: Backport to v4.4.74]
++---
++ mm/oom_kill.c    | 27 +++++++++++++++++++++++++--
++ mm/slab.h        |  8 ++++++++
++ mm/slab_common.c | 34 ++++++++++++++++++++++++++++++++++
++ 3 files changed, 67 insertions(+), 2 deletions(-)
++
++diff --git a/mm/oom_kill.c b/mm/oom_kill.c
++index c12680993ff3..701e4fa2b1e0 100644
++--- a/mm/oom_kill.c
+++++ b/mm/oom_kill.c
++@@ -35,6 +35,7 @@
++ #include <linux/freezer.h>
++ #include <linux/ftrace.h>
++ #include <linux/ratelimit.h>
+++#include "slab.h"
++ 
++ #define CREATE_TRACE_POINTS
++ #include <trace/events/oom.h>
++@@ -147,6 +148,25 @@ static bool oom_unkillable_task(struct task_struct *p,
++ 	return false;
++ }
++ 
+++/*
+++ * Print out unreclaimble slabs info when unreclaimable slabs amount is greater
+++ * than all user memory (LRU pages)
+++ */
+++static bool is_dump_unreclaim_slabs(void)
+++{
+++	unsigned long nr_lru;
+++
+++	nr_lru = global_page_state(NR_ACTIVE_ANON) +
+++		 global_page_state(NR_INACTIVE_ANON) +
+++		 global_page_state(NR_ACTIVE_FILE) +
+++		 global_page_state(NR_INACTIVE_FILE) +
+++		 global_page_state(NR_ISOLATED_ANON) +
+++		 global_page_state(NR_ISOLATED_FILE) +
+++		 global_page_state(NR_UNEVICTABLE);
+++
+++	return (global_page_state(NR_SLAB_UNRECLAIMABLE) > nr_lru);
+++}
+++
++ /**
++  * oom_badness - heuristic function to determine which candidate task to kill
++  * @p: task struct of which task we should calculate
++@@ -392,10 +412,13 @@ static void dump_header(struct oom_control *oc, struct task_struct *p,
++ 		current->signal->oom_score_adj);
++ 	cpuset_print_current_mems_allowed();
++ 	dump_stack();
++-	if (memcg)
+++	if (memcg) {
++ 		mem_cgroup_print_oom_info(memcg, p);
++-	else
+++	} else {
++ 		show_mem(SHOW_MEM_FILTER_NODES);
+++		if (is_dump_unreclaim_slabs())
+++			dump_unreclaimable_slab();
+++	}
++ 	if (sysctl_oom_dump_tasks)
++ 		dump_tasks(memcg, oc->nodemask);
++ }
++diff --git a/mm/slab.h b/mm/slab.h
++index 7b6087197997..9059ee868bdc 100644
++--- a/mm/slab.h
+++++ b/mm/slab.h
++@@ -371,4 +371,12 @@ void *slab_next(struct seq_file *m, void *p, loff_t *pos);
++ void slab_stop(struct seq_file *m, void *p);
++ int memcg_slab_show(struct seq_file *m, void *p);
++ 
+++#if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
+++void dump_unreclaimable_slab(void);
+++#else
+++static inline void dump_unreclaimable_slab(void)
+++{
+++}
+++#endif
+++
++ #endif /* MM_SLAB_H */
++diff --git a/mm/slab_common.c b/mm/slab_common.c
++index 5fcad12d1706..6486295fd887 100644
++--- a/mm/slab_common.c
+++++ b/mm/slab_common.c
++@@ -1122,6 +1122,40 @@ static int slab_show(struct seq_file *m, void *p)
++ 	return 0;
++ }
++ 
+++void dump_unreclaimable_slab(void)
+++{
+++	struct kmem_cache *s, *s2;
+++	struct slabinfo sinfo;
+++
+++	/*
+++	 * Here acquiring slab_mutex is risky since we don't prefer to get
+++	 * sleep in oom path. But, without mutex hold, it may introduce a
+++	 * risk of crash.
+++	 * Use mutex_trylock to protect the list traverse, dump nothing
+++	 * without acquiring the mutex.
+++	 */
+++	if (!mutex_trylock(&slab_mutex)) {
+++		pr_warn("excessive unreclaimable slab but cannot dump stats\n");
+++		return;
+++	}
+++
+++	pr_info("Unreclaimable slab info:\n");
+++	pr_info("Name                      Used          Total\n");
+++
+++	list_for_each_entry_safe(s, s2, &slab_caches, list) {
+++		if (!is_root_cache(s) || (s->flags & SLAB_RECLAIM_ACCOUNT))
+++			continue;
+++
+++		get_slabinfo(s, &sinfo);
+++
+++		if (sinfo.num_objs > 0)
+++			pr_info("%-17s %10luKB %10luKB\n", cache_name(s),
+++				(sinfo.active_objs * s->size) / 1024,
+++				(sinfo.num_objs * s->size) / 1024);
+++	}
+++	mutex_unlock(&slab_mutex);
+++}
+++
++ #ifdef CONFIG_MEMCG_KMEM
++ int memcg_slab_show(struct seq_file *m, void *p)
++ {
++-- 
++2.11.0
++
+diff --git a/target/linux/generic/patches-4.4/190-0004-mm-oom-make-OOM-slabinfo-dump-more-aggressive.patch b/target/linux/generic/patches-4.4/190-0004-mm-oom-make-OOM-slabinfo-dump-more-aggressive.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f4cee88841514c64f091f6448f76f014e52c68a8
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/190-0004-mm-oom-make-OOM-slabinfo-dump-more-aggressive.patch
+@@ -0,0 +1,49 @@
++From 10a7cca23324fbe6d219c02456888e3e4f48ee98 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 21 Nov 2017 18:16:42 +0100
++Subject: [PATCH 4/4] mm: oom: make OOM slabinfo dump more aggressive
++
++It seems that slabinfo is not dumped on OOM if there are still user
++processes left? It seems the author is assuming that memory will be
++freed through killing processes?
++
++This might not be the case if vm.panic_on_oom is set.
++---
++ mm/oom_kill.c | 13 ++++++++++++-
++ 1 file changed, 12 insertions(+), 1 deletion(-)
++
++diff --git a/mm/oom_kill.c b/mm/oom_kill.c
++index 701e4fa2b1e0..df4d43bbd126 100644
++--- a/mm/oom_kill.c
+++++ b/mm/oom_kill.c
++@@ -155,6 +155,7 @@ static bool oom_unkillable_task(struct task_struct *p,
++ static bool is_dump_unreclaim_slabs(void)
++ {
++ 	unsigned long nr_lru;
+++	unsigned long nr_unreclaimable;
++ 
++ 	nr_lru = global_page_state(NR_ACTIVE_ANON) +
++ 		 global_page_state(NR_INACTIVE_ANON) +
++@@ -163,8 +164,18 @@ static bool is_dump_unreclaim_slabs(void)
++ 		 global_page_state(NR_ISOLATED_ANON) +
++ 		 global_page_state(NR_ISOLATED_FILE) +
++ 		 global_page_state(NR_UNEVICTABLE);
+++	nr_unreclaimable = global_page_state(NR_SLAB_UNRECLAIMABLE);
++ 
++-	return (global_page_state(NR_SLAB_UNRECLAIMABLE) > nr_lru);
+++	if (nr_unreclaimable > nr_lru)
+++		pr_warning("Still user memory left? (LRU pages: %lu vs. unreclaimable pages: %lu)\n",
+++			   nr_lru, nr_unreclaimable);
+++	else
+++		pr_info("nr_unreclaimable <= nr_lru\n");
+++
+++	/* Always dump: The kernel might have panic on OOM configured, where
+++	 * this information would be handy, too
+++	 */
+++	return true;
++ }
++ 
++ /**
++-- 
++2.11.0
++

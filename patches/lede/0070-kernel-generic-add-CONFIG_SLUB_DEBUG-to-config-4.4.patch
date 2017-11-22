@@ -1,0 +1,20 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Wed, 22 Nov 2017 01:24:53 +0100
+Subject: kernel: generic: add CONFIG_SLUB_DEBUG to config 4.4
+
+With a recent patch, CONFIG_SLABINFO got deprecated. We need
+CONFIG_SLUB_DEBUG (or CONFIG_SLAB) to get a /proc/slabinfo.
+
+diff --git a/target/linux/generic/config-4.4 b/target/linux/generic/config-4.4
+index 4711fd7f5bff377a515b34629a5706839666884f..247bb318833780aee845386e6f885f6f309b3ca4 100644
+--- a/target/linux/generic/config-4.4
++++ b/target/linux/generic/config-4.4
+@@ -3664,7 +3664,7 @@ CONFIG_SLABINFO=y
+ # CONFIG_SLOB is not set
+ CONFIG_SLUB=y
+ CONFIG_SLUB_CPU_PARTIAL=y
+-# CONFIG_SLUB_DEBUG is not set
++CONFIG_SLUB_DEBUG=y
+ # CONFIG_SLUB_DEBUG_ON is not set
+ # CONFIG_SLUB_STATS is not set
+ # CONFIG_SMARTJOYPLUS_FF is not set
