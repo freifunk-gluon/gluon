@@ -8,3 +8,7 @@ device ubnt-erx ubnt-erx
 packages '-hostapd-mini'
 factory
 sysupgrade '.tar'
+
+# ZBT
+
+device zbt-wg3526 zbt-wg3526
