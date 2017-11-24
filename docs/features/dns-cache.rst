@@ -16,8 +16,11 @@ There are the following settings:
 
 If both options are set the node will cache as much DNS records as set with
 'cacheentries' in RAM. The 'servers' list will be used to resolve the received
-DNS queries if the request cannot be answered from cache.
-If these settings do not exist, the cache is not intialized and RAM usage will not increase.
+DNS queries if the request cannot be answered from cache.  If these settings do
+not exist, the cache is not intialized and RAM usage will not increase.  Note
+that not setting 'servers' here defeates the purpose; once the routers all
+announce the "next node" address for DNS, there is no way for nodes to
+automatically determine DNS servers.  They have to be baked into the firmware.
 
 When next_node.name is set, an A record and an AAAA record for the
 next-node IP address are placed in the dnsmasq configuration. This means that the content
