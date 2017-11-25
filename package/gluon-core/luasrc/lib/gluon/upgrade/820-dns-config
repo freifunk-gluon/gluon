@@ -14,6 +14,17 @@ uci:set('dhcp', dnsmasq, 'localservice', false)
 uci:set('dhcp', dnsmasq, 'server', dns.servers)
 uci:set('dhcp', dnsmasq, 'cachesize', dns.cacheentries)
 
+uci:delete('firewall', 'rule', 'client_dns')
+if dns.servers then
+	-- allow inbound traffic for dns from client zone
+	uci:section('firewall', 'rule', 'client_dns', {
+		src = 'local_client',
+		dest_port = '53',
+		proto = 'tcpudp',
+		target = 'ACCEPT',
+	})
+end
+
 if next_node.name and next_node.ip4 then
 	uci:section('dhcp', 'domain', 'nextnode4', {
 		name = next_node.name,
@@ -33,3 +44,4 @@ else
 end
 
 uci:save('dhcp')
+uci:save('firewall')

@@ -1,0 +1,12 @@
+#!/usr/bin/lua
+local uci = require('simple-uci').cursor()
+
+for _, zone in ipairs({'mesh', 'local_client'}) do
+	uci:section('firewall', 'rule', zone .. '_http', {
+		src = zone,
+		dest_port = '80',
+		proto = 'tcp',
+		target = 'ACCEPT',
+	})
+end
+uci:save('firewall')
