@@ -1,19 +1,6 @@
 #!/usr/bin/lua
 
-local uci = require('simple-uci').cursor()
-local site = require 'gluon.site'
-
 uci:delete('network', 'l3roam')
-uci:section('network', 'interface', 'l3roam', {
-	ifname = 'l3roam0',
-	proto = 'none',
-})
-
 uci:delete('network', 'l3roamd_client')
-uci:section('network', 'route6', 'l3roamd_client', {
-	interface = 'l3roam',
-	target = site.prefix6(),
-	gateway = '::',
-})
 
 uci:save('network')
