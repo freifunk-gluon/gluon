@@ -435,7 +435,7 @@ index 0000000000000000000000000000000000000000..6bd2005344c081df20e5a330a69e49e3
 +	nand_upgrade_stage1
 +}
 diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
-index 4598711c2252e2c0ffc322fa2d00508de3e5a775..5f2d21c102c7781ce047b166d61354f0f7430eb7 100644
+index ea014b5b3461e1ed55fb272592a1c2be6535c2c8..64a78cc24ee9caf58ea140d161cad2b5742c2ebd 100644
 --- a/package/system/procd/Makefile
 +++ b/package/system/procd/Makefile
 @@ -22,11 +22,9 @@ PKG_LICENSE_FILES:=
