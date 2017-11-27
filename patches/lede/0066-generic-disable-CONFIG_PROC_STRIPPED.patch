@@ -1,0 +1,19 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 27 Nov 2017 16:14:28 +0100
+Subject: generic: disable CONFIG_PROC_STRIPPED
+
+We want /proc/vmallocstat.
+
+diff --git a/target/linux/generic/config-4.4 b/target/linux/generic/config-4.4
+index 4711fd7f5bff377a515b34629a5706839666884f..9c6ef6631efd91cd2ef5546d4855242b9b79f185 100644
+--- a/target/linux/generic/config-4.4
++++ b/target/linux/generic/config-4.4
+@@ -3036,7 +3036,7 @@ CONFIG_PRINT_STACK_DEPTH=64
+ CONFIG_PROC_FS=y
+ # CONFIG_PROC_KCORE is not set
+ # CONFIG_PROC_PAGE_MONITOR is not set
+-CONFIG_PROC_STRIPPED=y
++# CONFIG_PROC_STRIPPED is not set
+ CONFIG_PROC_SYSCTL=y
+ # CONFIG_PROFILE_ALL_BRANCHES is not set
+ # CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
