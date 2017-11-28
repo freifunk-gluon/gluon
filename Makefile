@@ -5,12 +5,29 @@ LANG:=C
 export LC_ALL LANG
 
 
+# initialize (possibly already user set) folder vars
 GLUON_SITEDIR ?= $(CURDIR)/site
 GLUON_TMPDIR ?= $(CURDIR)/tmp
-
 GLUON_OUTPUTDIR ?= $(CURDIR)/output
 GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
 GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
+
+# resolve possibly relative paths or symlinks to make vars reusable in subfolder packages
+makeAbsolute = $(shell realpath -m "$(1)")
+override GLUON_SITEDIR := $(call makeAbsolute,$(GLUON_SITEDIR))
+override GLUON_TMPDIR := $(call makeAbsolute,$(GLUON_TMPDIR))
+override GLUON_OUTPUTDIR := $(call makeAbsolute,$(GLUON_OUTPUTDIR))
+override GLUON_IMAGEDIR := $(call makeAbsolute,$(GLUON_IMAGEDIR))
+override GLUON_PACKAGEDIR := $(call makeAbsolute,$(GLUON_PACKAGEDIR))
+
+ifeq ($(V),s)
+$(info GLUON_SITEDIR="$(GLUON_SITEDIR)")
+$(info GLUON_TMPDIR="$(GLUON_TMPDIR)")
+$(info GLUON_OUTPUTDIR="$(GLUON_OUTPUTDIR)")
+$(info GLUON_IMAGEDIR="$(GLUON_IMAGEDIR)")
+$(info GLUON_PACKAGEDIR="$(GLUON_PACKAGEDIR)")
+endif
+
 
 export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 
