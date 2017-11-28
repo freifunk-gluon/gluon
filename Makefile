@@ -5,12 +5,27 @@ LANG:=C
 export LC_ALL LANG
 
 
-GLUON_SITEDIR ?= $(CURDIR)/site
-GLUON_TMPDIR ?= $(CURDIR)/tmp
+# initialize (possibly already user set) directory variables
+GLUON_SITEDIR ?= site
+GLUON_TMPDIR ?= tmp
+GLUON_OUTPUTDIR ?= output
 
-GLUON_OUTPUTDIR ?= $(CURDIR)/output
 GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
 GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
+
+# check for spaces & resolve possibly relative paths
+define mkabspath
+ ifneq (1,$(words [$($(1))]))
+  $$(error $(1) must not contain spaces)
+ endif
+ override $(1) := $(abspath $($(1)))
+endef
+
+$(eval $(call mkabspath,GLUON_SITEDIR))
+$(eval $(call mkabspath,GLUON_TMPDIR))
+$(eval $(call mkabspath,GLUON_OUTPUTDIR))
+$(eval $(call mkabspath,GLUON_IMAGEDIR))
+$(eval $(call mkabspath,GLUON_PACKAGEDIR))
 
 export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 
