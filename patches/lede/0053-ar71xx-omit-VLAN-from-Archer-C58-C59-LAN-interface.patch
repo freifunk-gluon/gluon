@@ -1,0 +1,17 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Mon, 27 Nov 2017 04:33:40 +0100
+Subject: ar71xx: omit VLAN from Archer C58/C59 LAN interface
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
+index ae0f984dbb4b4481b6eec055a3cc4f9cd0ce2281..748ee94407f9e3be231fa3b7f50931eca4d1b0f4 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/02_network
++++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
+@@ -201,7 +201,7 @@ ar71xx_setup_interfaces()
+ 		;;
+ 	archer-c58-v1|\
+ 	archer-c59-v1)
+-		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
++		ucidef_set_interfaces_lan_wan "eth1" "eth0"
+ 		ucidef_add_switch "switch0" \
+ 			"0@eth1" "1:lan:1" "2:lan:4" "3:lan:3" "4:lan:2"
+ 		;;

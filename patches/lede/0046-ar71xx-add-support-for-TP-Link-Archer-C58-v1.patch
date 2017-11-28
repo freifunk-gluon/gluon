@@ -1,0 +1,413 @@
+From: Henryk Heisig <hyniu@o2.pl>
+Date: Fri, 16 Jun 2017 15:26:30 +0200
+Subject: ar71xx: add support for TP-Link Archer C58 v1
+
+TP-Link Archer C58 v1 is a dual-band AC1350 router, based on Qualcomm
+QCA9561 + QCA9886. It looks like Archer C59 v1 without USB port.
+
+Specification:
+
+- 775/650/258 MHz (CPU/DDR/AHB)
+- 64 MB of RAM (DDR2)
+- 8 MB of FLASH (SPI NOR)
+- 3T3R 2.4 GHz
+- 2T2R 5 GHz
+- 5x 10/100 Mbps Ethernet
+- 6x LED, 3x button
+- UART header on PCB, RX, TX at TP4+5 (backside)
+
+QCA9886 wlan needs pre_cal_data file and enable ieee80211 phy hotplug to
+patch macaddress.
+
+Flash instruction:
+
+Use "factory" image directly in vendor GUI.
+
+Recovery method:
+
+1. Set PC to fixed ip address 192.168.0.66/24.
+2. Download "lede-ar71xx-generic-archer-c58-v1-squashfs-factory.bin" and
+   rename it to "tp_recovery.bin".
+3. Start a tftp server with the file "tp_recovery.bin" in its root
+   directory.
+4. Turn off the router.
+5. Press and hold Reset button.
+6. Turn on router with the reset button pressed and wait ~15 seconds.
+7. Release the reset button and after a short time the firmware should
+   be transferred from the tftp server.
+8. Wait ~30 second to complete recovery.
+
+Flash instruction under U-Boot, using UART:
+
+tftp 0x81000000 lede-ar71xx-...-sysupgrade.bin
+erase 0x9f020000 +$filesize
+cp.b $fileaddr 0x9f020000 $filesize
+reset
+
+This commit is based on GitHub PR#1112
+
+Signed-off-by: Henryk Heisig <hyniu@o2.pl>
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+index 81348c5ed74d292691f1aec6db9459d3280e2d45..98dcbf35bca8533a99b8df9cfdd9676743bc6181 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+@@ -62,6 +62,7 @@ archer-c25-v1)
+ 	ucidef_set_led_switch "lan3" "LAN3" "$board:green:lan3" "switch0" "0x04"
+ 	ucidef_set_led_switch "lan4" "LAN4" "$board:green:lan4" "switch0" "0x02"
+ 	;;
++archer-c58-v1|\
+ archer-c59-v1|\
+ archer-c60-v1)
+ 	ucidef_set_led_switch "lan" "LAN" "$board:green:lan" "switch0" "0x1E"
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
+index 7ddda1d5c2b6426557f845b6c595aa6a0fd32802..ae0f984dbb4b4481b6eec055a3cc4f9cd0ce2281 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/02_network
++++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
+@@ -199,6 +199,7 @@ ar71xx_setup_interfaces()
+ 		ucidef_add_switch "switch0" \
+ 			"0@eth1" "2:lan" "3:lan" "4:lan" "5:lan" "6@eth0" "1:wan"
+ 		;;
++	archer-c58-v1|\
+ 	archer-c59-v1)
+ 		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
+ 		ucidef_add_switch "switch0" \
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 34d26c53b98d6ecc82f5cff967065fbc65fd7caa..7bcc8b6228869e127a39811f3ecf2140004a75f7 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -51,6 +51,7 @@ get_status_led() {
+ 		status_led="ap135:green:status"
+ 		;;
+ 	archer-c25-v1|\
++	archer-c58-v1|\
+ 	archer-c59-v1|\
+ 	archer-c60-v1|\
+ 	mr12|\
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 39cd6026270482866103c15885d913b48cea7e58..04d8bcca535fd341aa0af29cafc09c4f20980c3a 100644
+--- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -130,6 +130,13 @@ case "$FIRMWARE" in
+ 		;;
+ 	esac
+ 	;;
++"ath10k/pre-cal-pci-0000:00:00.0.bin")
++	case $board in
++	archer-c58-v1)
++		ath10kcal_extract "art" 20480 12064
++		;;
++	esac
++	;;
+ *)
+ 	exit 1
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ar71xx/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+new file mode 100644
+index 0000000000000000000000000000000000000000..7d2eca546d76b771b12026788510f73a293a9a93
+--- /dev/null
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+@@ -0,0 +1,21 @@
++#!/bin/ash
++
++[ "$ACTION" == "add" ] || exit 0
++
++PHYNBR=${DEVPATH##*/phy}
++
++[ -n $PHYNBR ] || exit 0
++
++. /lib/ar71xx.sh
++. /lib/functions/system.sh
++
++board=$(ar71xx_board_name)
++
++case "$board" in
++	archer-c58-v1)
++		echo $(macaddr_add $(mtd_get_mac_binary mac 8)  $(($PHYNBR - 1)) ) > /sys${DEVPATH}/macaddress
++		;;
++	*)
++		;;
++esac
++
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 948bb00d607c78ca1a5910e6d52f78a9486ebcc5..1c23198b868125738c22e45260ee63ff195aed2c 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -466,6 +466,9 @@ ar71xx_board_detect() {
+ 	*"Archer C5")
+ 		name="archer-c5"
+ 		;;
++	*"Archer C58 v1")
++		name="archer-c58-v1"
++		;;
+ 	*"Archer C59 v1")
+ 		name="archer-c59-v1"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index c294251f63489dbd2e859148cbceb3a4a625d1e7..0b2ac5f6ffe298f0ea0b180a90afdba893391f90 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -207,6 +207,7 @@ platform_check_image() {
+ 	ap132|\
+ 	ap90q|\
+ 	archer-c25-v1|\
++	archer-c58-v1|\
+ 	archer-c59-v1|\
+ 	archer-c60-v1|\
+ 	bullet-m|\
+diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
+index 1b6527113b888d4023ee9abc2cb8134f7d5f2867..844900051b8072a330354d938f503a71d7d6b7f1 100644
+--- a/target/linux/ar71xx/config-4.4
++++ b/target/linux/ar71xx/config-4.4
+@@ -52,6 +52,7 @@ CONFIG_ATH79_MACH_AP152=y
+ CONFIG_ATH79_MACH_AP90Q=y
+ CONFIG_ATH79_MACH_AP96=y
+ CONFIG_ATH79_MACH_ARCHER_C25_V1=y
++CONFIG_ATH79_MACH_ARCHER_C58_V1=y
+ CONFIG_ATH79_MACH_ARCHER_C59_V1=y
+ CONFIG_ATH79_MACH_ARCHER_C60_V1=y
+ CONFIG_ATH79_MACH_ARCHER_C7=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+index 970ce2dbd4484e1c556fc55c5f37755d14738105..cbe345dd40ff080bf8b43347eb4ffdfd2f0c8a2e 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+@@ -1244,6 +1244,16 @@ config ATH79_MACH_ARCHER_C25_V1
+ 	select ATH79_DEV_M25P80
+ 	select ATH79_DEV_WMAC
+ 
++config ATH79_MACH_ARCHER_C58_V1
++	bool "TP-LINK Archer C58 v1 support"
++	select SOC_QCA956X
++	select ATH79_DEV_AP9X_PCI if PCI
++	select ATH79_DEV_ETH
++	select ATH79_DEV_GPIO_BUTTONS
++	select ATH79_DEV_LEDS_GPIO
++	select ATH79_DEV_M25P80
++	select ATH79_DEV_WMAC
++
+ config ATH79_MACH_ARCHER_C59_V1
+ 	bool "TP-LINK Archer C59 v1 support"
+ 	select SOC_QCA956X
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Makefile b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
+index ab482671c24c39c2416e3e52644757447c0c6af7..2e665c38a00bb71c62fb252114005afd9e0d7d80 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Makefile
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_ATH79_MACH_AP152)			+= mach-ap152.o
+ obj-$(CONFIG_ATH79_MACH_AP90Q)			+= mach-ap90q.o
+ obj-$(CONFIG_ATH79_MACH_AP96)			+= mach-ap96.o
+ obj-$(CONFIG_ATH79_MACH_ARCHER_C25_V1)		+= mach-archer-c25-v1.o
++obj-$(CONFIG_ATH79_MACH_ARCHER_C58_V1)		+= mach-archer-c59-v1.o
+ obj-$(CONFIG_ATH79_MACH_ARCHER_C59_V1)		+= mach-archer-c59-v1.o
+ obj-$(CONFIG_ATH79_MACH_ARCHER_C60_V1)		+= mach-archer-c60-v1.o
+ obj-$(CONFIG_ATH79_MACH_ARCHER_C7)		+= mach-archer-c7.o
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-archer-c59-v1.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-archer-c59-v1.c
+index d55f9b9f75b38159ed7209aa5acd73ff31088b51..f385d4a5a3148b83ee01007145e0eda2c0ef670f 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-archer-c59-v1.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-archer-c59-v1.c
+@@ -1,7 +1,7 @@
+ /*
+- *  TP-Link Archer C59 v1 board support
++ *  TP-Link Archer C58/C59 v1 board support
+  *
+- *  Copyright (C) 2016 Henryk Heisig <hyniu@o2.pl>
++ *  Copyright (C) 2017 Henryk Heisig <hyniu@o2.pl>
+  *
+  *  This program is free software; you can redistribute it and/or modify it
+  *  under the terms of the GNU General Public License version 2 as published
+@@ -65,6 +65,44 @@
+ #define ARCHER_C59_V1_WMAC_CALDATA_OFFSET	0x1000
+ #define ARCHER_C59_V1_PCI_CALDATA_OFFSET	0x5000
+ 
++static struct gpio_led archer_c58_v1_leds_gpio[] __initdata = {
++	{
++		.name		= "archer-c58-v1:green:power",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_POWER,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:green:wlan2g",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_WLAN2,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:green:wlan5g",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_WLAN5,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:green:lan",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_LAN,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:green:wan",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_WAN_GREEN,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:amber:wan",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_WAN_AMBER,
++		.active_low	= 1,
++	},
++	{
++		.name		= "archer-c58-v1:green:wps",
++		.gpio		= ARCHER_C59_74HC_GPIO_LED_WPS,
++		.active_low	= 1,
++	},
++};
++
+ static struct gpio_led archer_c59_v1_leds_gpio[] __initdata = {
+ 	{
+ 		.name		= "archer-c59-v1:green:power",
+@@ -177,7 +215,7 @@ static struct spi_board_info archer_c59_v1_spi_info[] = {
+ 	},
+ };
+ 
+-static void __init archer_c59_v1_setup(void)
++static void __init archer_c5x_v1_setup(void)
+ {
+ 	u8 *mac = (u8 *) KSEG1ADDR(0x1f010008);
+ 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+@@ -187,9 +225,6 @@ static void __init archer_c59_v1_setup(void)
+ 			   ARRAY_SIZE(archer_c59_v1_spi_info));
+ 	platform_device_register(&archer_c59_v1_spi_device);
+ 
+-	ath79_register_leds_gpio(-1, ARRAY_SIZE(archer_c59_v1_leds_gpio),
+-				archer_c59_v1_leds_gpio);
+-
+ 	ath79_register_gpio_keys_polled(-1, ARCHER_C59_V1_KEYS_POLL_INTERVAL,
+ 					ARRAY_SIZE(archer_c59_v1_gpio_keys),
+ 					archer_c59_v1_gpio_keys);
+@@ -233,5 +268,22 @@ static void __init archer_c59_v1_setup(void)
+ 			 "LED reset");
+ }
+ 
++static void __init archer_c58_v1_setup(void)
++{
++	archer_c5x_v1_setup();
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(archer_c58_v1_leds_gpio),
++				archer_c58_v1_leds_gpio);
++}
++
++MIPS_MACHINE(ATH79_MACH_ARCHER_C58_V1, "ARCHER-C58-V1",
++	"TP-LINK Archer C58 v1", archer_c58_v1_setup);
++
++static void __init archer_c59_v1_setup(void)
++{
++	archer_c5x_v1_setup();
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(archer_c59_v1_leds_gpio),
++				archer_c59_v1_leds_gpio);
++}
++
+ MIPS_MACHINE(ATH79_MACH_ARCHER_C59_V1, "ARCHER-C59-V1",
+ 	"TP-LINK Archer C59 v1", archer_c59_v1_setup);
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index 03268700fd51c7fea4064abb7af9fb8bf6041f5d..b6f7602b0e44880d0b93d42213b77d12e8861741 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -42,6 +42,7 @@ enum ath79_mach_type {
+ 	ATH79_MACH_AP96,			/* Atheros AP96 */
+ 	ATH79_MACH_ARCHER_C25_V1,		/* TP-LINK Archer C25 V1 board */
+ 	ATH79_MACH_ARCHER_C5,			/* TP-LINK Archer C5 board */
++	ATH79_MACH_ARCHER_C58_V1,		/* TP-LINK Archer C58 V1 board */
+ 	ATH79_MACH_ARCHER_C59_V1,		/* TP-LINK Archer C59 V1 board */
+ 	ATH79_MACH_ARCHER_C60_V1,		/* TP-LINK Archer C60 V1 board */
+ 	ATH79_MACH_ARCHER_C7,			/* TP-LINK Archer C7 board */
+diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
+index 4718c9eaf25723ca77a6ec75043241a362100047..d639b3e0ddb8dfd68aca6cd0305da3559fbec1a8 100644
+--- a/target/linux/ar71xx/image/tp-link.mk
++++ b/target/linux/ar71xx/image/tp-link.mk
+@@ -119,6 +119,21 @@ define Device/archer-c25-v1
+ endef
+ TARGET_DEVICES += archer-c25-v1
+ 
++define Device/archer-c58-v1
++  DEVICE_TITLE := TP-LINK Archer C58 v1
++  DEVICE_PACKAGES := kmod-ath10k
++  BOARDNAME := ARCHER-C58-V1
++  TPLINK_BOARD_NAME := ARCHER-C58-V1
++  DEVICE_PROFILE := ARCHERC58V1
++  IMAGE_SIZE := 7936k
++  KERNEL := kernel-bin | patch-cmdline | lzma | uImageArcher lzma
++  IMAGES := sysupgrade.bin factory.bin
++  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
++  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
++  MTDPARTS := spi0.0:64k(u-boot)ro,64k(mac)ro,1344k(kernel),6592k(rootfs),64k(tplink)ro,64k(art)ro,7936k@0x20000(firmware)
++endef
++TARGET_DEVICES += archer-c58-v1
++
+ define Device/archer-c59-v1
+   DEVICE_TITLE := TP-LINK Archer C59 v1
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-ledtrig-usbport kmod-ath10k
+diff --git a/target/linux/ar71xx/mikrotik/config-default b/target/linux/ar71xx/mikrotik/config-default
+index a05f8b5ff903802d0de43c3b9aadcc6912852101..019a957da89034aab24b193bfc226cc0b68b3bd8 100644
+--- a/target/linux/ar71xx/mikrotik/config-default
++++ b/target/linux/ar71xx/mikrotik/config-default
+@@ -17,6 +17,7 @@
+ # CONFIG_ATH79_MACH_AP90Q is not set
+ # CONFIG_ATH79_MACH_AP96 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C25_V1 is not set
++# CONFIG_ATH79_MACH_ARCHER_C58_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C59_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C60_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C7 is not set
+diff --git a/target/linux/ar71xx/nand/config-default b/target/linux/ar71xx/nand/config-default
+index b277ad2498c77b729e4aabb998ace7642d4ecfad..1f49a976a17fd574c316dc3254993d184e37587f 100644
+--- a/target/linux/ar71xx/nand/config-default
++++ b/target/linux/ar71xx/nand/config-default
+@@ -10,6 +10,7 @@
+ # CONFIG_ATH79_MACH_AP147 is not set
+ # CONFIG_ATH79_MACH_AP96 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C25_V1 is not set
++# CONFIG_ATH79_MACH_ARCHER_C58_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C59_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C60_V1 is not set
+ # CONFIG_ATH79_MACH_ARCHER_C7 is not set
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index dac7a2c4523294b58fe3402e871fa9d73059ad05..1b2f51658d7720289b81187bbd53f7131c4ac103 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -340,7 +340,42 @@ static struct device_info boards[] = {
+ 		.first_sysupgrade_partition = "os-image",
+ 		.last_sysupgrade_partition = "file-system",
+ 	},
+-	
++
++	/** Firmware layout for the C58v1 */
++	{
++		.id	= "ARCHER-C58-V1",
++		.vendor	= "",
++		.support_list =
++			"SupportList:\r\n"
++			"{product_name:Archer C58,product_ver:1.0.0,special_id:00000000}\r\n"
++			"{product_name:Archer C58,product_ver:1.0.0,special_id:45550000}\r\n"
++			"{product_name:Archer C58,product_ver:1.0.0,special_id:55530000}\r\n",
++		.support_trail = '\x00',
++		.soft_ver = "soft_ver:1.0.0\n",
++
++		.partitions = {
++			{"fs-uboot", 0x00000, 0x10000},
++			{"default-mac", 0x10000, 0x00200},
++			{"pin", 0x10200, 0x00200},
++			{"product-info", 0x10400, 0x00100},
++			{"partition-table", 0x10500, 0x00800},
++			{"soft-version", 0x11300, 0x00200},
++			{"support-list", 0x11500, 0x00100},
++			{"device-id", 0x11600, 0x00100},
++			{"profile", 0x11700, 0x03900},
++			{"default-config", 0x15000, 0x04000},
++			{"user-config", 0x19000, 0x04000},
++			{"os-image", 0x20000, 0x150000},
++			{"file-system", 0x170000, 0x678000},
++			{"certyficate", 0x7e8000, 0x08000},
++			{"radio", 0x7f0000, 0x10000},
++			{NULL, 0, 0}
++		},
++
++		.first_sysupgrade_partition = "os-image",
++		.last_sysupgrade_partition = "file-system",
++	},
++
+ 	/** Firmware layout for the C59v1 */
+ 	{
+ 		.id	= "ARCHER-C59-V1",

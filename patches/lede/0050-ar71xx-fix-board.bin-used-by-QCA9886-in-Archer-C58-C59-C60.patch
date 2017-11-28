@@ -1,0 +1,19 @@
+From: Henryk Heisig <hyniu@o2.pl>
+Date: Thu, 29 Jun 2017 15:38:22 +0200
+Subject: ar71xx: fix board.bin used by QCA9886 in Archer C58/C59/C60
+
+Signed-off-by: Henryk Heisig <hyniu@o2.pl>
+
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 669b8d3387702201270d5a889ee7c23f5c925ff4..30f148655dd733aa33c1c5425a3b2735f44377da 100644
+--- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -136,6 +136,8 @@ case "$FIRMWARE" in
+ 	archer-c59-v1|\
+ 	archer-c60-v1)
+ 		ath10kcal_extract "art" 20480 12064
++		ln -sf /lib/firmware/ath10k/pre-cal-pci-0000\:00\:00.0.bin \
++			/lib/firmware/ath10k/QCA9888/hw2.0/board.bin
+ 		;;
+ 	esac
+ 	;;
