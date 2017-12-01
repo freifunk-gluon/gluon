@@ -12,13 +12,19 @@ GLUON_OUTPUTDIR ?= $(CURDIR)/output
 GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
 GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
 
-# resolve possibly relative paths or symlinks to make vars reusable in subfolder packages
-makeAbsolute = $(shell realpath -m "$(1)")
-override GLUON_SITEDIR := $(call makeAbsolute,$(GLUON_SITEDIR))
-override GLUON_TMPDIR := $(call makeAbsolute,$(GLUON_TMPDIR))
-override GLUON_OUTPUTDIR := $(call makeAbsolute,$(GLUON_OUTPUTDIR))
-override GLUON_IMAGEDIR := $(call makeAbsolute,$(GLUON_IMAGEDIR))
-override GLUON_PACKAGEDIR := $(call makeAbsolute,$(GLUON_PACKAGEDIR))
+# check for spaces & resolve possibly relative paths to make vars reusable in subfolder packages
+define Absolve
+ ifneq (1,$(words [$($(1))]))
+  $$(error $(1) must not contain spaces!)
+ endif
+ override $(1) = $(abspath $($(1)))
+endef
+
+$(eval $(call Absolve,GLUON_SITEDIR))
+$(eval $(call Absolve,GLUON_TMPDIR))
+$(eval $(call Absolve,GLUON_OUTPUTDIR))
+$(eval $(call Absolve,GLUON_IMAGEDIR))
+$(eval $(call Absolve,GLUON_PACKAGEDIR))
 
 ifeq ($(V),s)
 $(info GLUON_SITEDIR="$(GLUON_SITEDIR)")
@@ -27,7 +33,6 @@ $(info GLUON_OUTPUTDIR="$(GLUON_OUTPUTDIR)")
 $(info GLUON_IMAGEDIR="$(GLUON_IMAGEDIR)")
 $(info GLUON_PACKAGEDIR="$(GLUON_PACKAGEDIR)")
 endif
-
 
 export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 
