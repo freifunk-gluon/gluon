@@ -13,6 +13,21 @@ delete_interface() {
         [ "$1" = 'loopback' ] || uci_remove network "$1"
 }
 
+delete_wifi_iface() {
+	uci_remove wireless "$1"
+}
+
+add_wifi_iface() {
+	uci_add wireless wifi-iface "setup_$1"
+	uci_set wireless "setup_$1" ifname "setup${1#radio}"
+	uci_set wireless "setup_$1" network "setup"
+	uci_set wireless "setup_$1" device "$1"
+	uci_set wireless "setup_$1" mode 'ap'
+	uci_set wireless "setup_$1" ssid 'Gluon Setup'
+	uci_set wireless "setup_$1" encryption 'psk2'
+	uci_set wireless "setup_$1" key "$(lua -e 'print(require("gluon.sysconfig").primary_mac:gsub(":",""):lower())')"
+}
+
 prepare_config() {
 (
 	export UCI_CONFIG_DIR=/var/gluon/setup-mode/config
@@ -33,6 +48,14 @@ prepare_config() {
 	uci_set network setup netmask "$SETUP_MODE_NETMASK"
 
 	uci_commit network
+
+	cp /etc/config/wireless "$UCI_CONFIG_DIR"
+
+	config_load wireless
+	config_foreach delete_wifi_iface wifi-iface
+	config_foreach add_wifi_iface wifi-device
+
+	uci_commit wireless
 )
 }
 
