@@ -51,7 +51,7 @@
 #include <linux/if_addr.h>
 #include <linux/sockios.h>
 
-#include "batadv-netlink.h"
+#include <batadv-genl.h>
 
 
 #define _STRINGIFY(s) #s
@@ -256,7 +256,8 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct gw_netlink_opts *opts;
 	char addr[18];
 
-	opts = container_of(query_opts, struct gw_netlink_opts, query_opts);
+	opts = batadv_container_of(query_opts, struct gw_netlink_opts,
+				   query_opts);
 
 	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
@@ -267,11 +268,11 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-		      genlmsg_len(ghdr), batadv_netlink_policy))
+		      genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (batadv_nl_missing_attrs(attrs, gateways_mandatory,
-				    ARRAY_SIZE(gateways_mandatory)))
+	if (batadv_genl_missing_attrs(attrs, gateways_mandatory,
+				      BATADV_ARRAY_SIZE(gateways_mandatory)))
 		return NL_OK;
 
 	if (!attrs[BATADV_ATTR_FLAG_BEST])
@@ -301,9 +302,9 @@ static void add_gateway(struct json_object *obj) {
 		},
 	};
 
-	batadv_nl_query_common("bat0", BATADV_CMD_GET_GATEWAYS,
-			       parse_gw_list_netlink_cb, NLM_F_DUMP,
-			       &opts.query_opts);
+	batadv_genl_query("bat0", BATADV_CMD_GET_GATEWAYS,
+			  parse_gw_list_netlink_cb, NLM_F_DUMP,
+			  &opts.query_opts);
 }
 
 static inline bool ethtool_ioctl(int fd, struct ifreq *ifr, void *data) {
@@ -494,7 +495,8 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct clients_netlink_opts *opts;
 	uint32_t flags;
 
-	opts = container_of(query_opts, struct clients_netlink_opts, query_opts);
+	opts = batadv_container_of(query_opts, struct clients_netlink_opts,
+				   query_opts);
 
 	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
@@ -505,11 +507,11 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-		      genlmsg_len(ghdr), batadv_netlink_policy))
+		      genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (batadv_nl_missing_attrs(attrs, clients_mandatory,
-				    ARRAY_SIZE(clients_mandatory)))
+	if (batadv_genl_missing_attrs(attrs, clients_mandatory,
+				      BATADV_ARRAY_SIZE(clients_mandatory)))
 		return NL_OK;
 
 	flags = nla_get_u32(attrs[BATADV_ATTR_TT_FLAGS]);
@@ -535,9 +537,9 @@ static struct json_object * get_clients(void) {
 		},
 	};
 
-	batadv_nl_query_common("bat0", BATADV_CMD_GET_TRANSTABLE_LOCAL,
-			       parse_clients_list_netlink_cb, NLM_F_DUMP,
-			       &opts.query_opts);
+	batadv_genl_query("bat0", BATADV_CMD_GET_TRANSTABLE_LOCAL,
+			  parse_clients_list_netlink_cb, NLM_F_DUMP,
+			  &opts.query_opts);
 
 	count_stations(&wifi24, &wifi5);
 
@@ -605,7 +607,8 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct neigh_netlink_opts *opts;
 	char mac1[18];
 
-	opts = container_of(query_opts, struct neigh_netlink_opts, query_opts);
+	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
+				   query_opts);
 
 	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
@@ -616,11 +619,11 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-		      genlmsg_len(ghdr), batadv_netlink_policy))
+		      genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (batadv_nl_missing_attrs(attrs, parse_orig_list_mandatory,
-				    ARRAY_SIZE(parse_orig_list_mandatory)))
+	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory,
+				      BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
 		return NL_OK;
 
 	if (!attrs[BATADV_ATTR_FLAG_BEST])
@@ -671,9 +674,9 @@ static struct json_object * get_batadv(void) {
 	if (!opts.interfaces)
 		return NULL;
 
-	ret = batadv_nl_query_common("bat0", BATADV_CMD_GET_ORIGINATORS,
-				     parse_orig_list_netlink_cb, NLM_F_DUMP,
-				     &opts.query_opts);
+	ret = batadv_genl_query("bat0", BATADV_CMD_GET_ORIGINATORS,
+				parse_orig_list_netlink_cb, NLM_F_DUMP,
+				&opts.query_opts);
 	if (ret < 0) {
 		json_object_put(opts.interfaces);
 		return NULL;
