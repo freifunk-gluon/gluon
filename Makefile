@@ -5,12 +5,34 @@ LANG:=C
 export LC_ALL LANG
 
 
+# initialize (possibly already user set) folder vars
 GLUON_SITEDIR ?= $(CURDIR)/site
 GLUON_TMPDIR ?= $(CURDIR)/tmp
-
 GLUON_OUTPUTDIR ?= $(CURDIR)/output
 GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
 GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
+
+# check for spaces & resolve possibly relative paths to make vars reusable in subfolder packages
+define Absolve
+ ifneq (1,$(words [$($(1))]))
+  $$(error $(1) must not contain spaces!)
+ endif
+ override $(1) = $(abspath $($(1)))
+endef
+
+$(eval $(call Absolve,GLUON_SITEDIR))
+$(eval $(call Absolve,GLUON_TMPDIR))
+$(eval $(call Absolve,GLUON_OUTPUTDIR))
+$(eval $(call Absolve,GLUON_IMAGEDIR))
+$(eval $(call Absolve,GLUON_PACKAGEDIR))
+
+ifeq ($(V),s)
+$(info GLUON_SITEDIR="$(GLUON_SITEDIR)")
+$(info GLUON_TMPDIR="$(GLUON_TMPDIR)")
+$(info GLUON_OUTPUTDIR="$(GLUON_OUTPUTDIR)")
+$(info GLUON_IMAGEDIR="$(GLUON_IMAGEDIR)")
+$(info GLUON_PACKAGEDIR="$(GLUON_PACKAGEDIR)")
+endif
 
 export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 
