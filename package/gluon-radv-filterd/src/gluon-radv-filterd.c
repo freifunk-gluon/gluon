@@ -92,6 +92,11 @@
 #define foreach(item, list) \
 	for(item = list; item != NULL; item = item->next)
 
+#define foreach_safe(item, safe, list) \
+	for (item = (list); \
+	     (item) && (((safe) = item->next) || 1); \
+	     item = safe)
+
 struct router {
 	struct router *next;
 	macaddr_t src;
@@ -295,9 +300,10 @@ check_failed:
 static void expire_routers() {
 	struct router **prev_ptr = &G.routers;
 	struct router *router;
+	struct router *safe;
 	time_t now = time(NULL);
 
-	foreach(router, G.routers) {
+	foreach_safe(router, safe, G.routers) {
 		if (router->eol < now) {
 			DEBUG_MSG("router " F_MAC " expired", F_MAC_VAR(router->src));
 			*prev_ptr = router->next;
