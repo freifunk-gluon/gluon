@@ -318,7 +318,7 @@ static void router_update(const struct ether_addr *mac, uint16_t timeout) {
 static void handle_ra(int sock) {
 	struct sockaddr_ll src;
 	struct ether_addr mac;
-	unsigned int addr_size = sizeof(src);
+	socklen_t addr_size = sizeof(src);
 	ssize_t len;
 	struct {
 		struct ip6_hdr ip6;
