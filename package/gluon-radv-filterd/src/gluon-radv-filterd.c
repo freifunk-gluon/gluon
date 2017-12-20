@@ -40,6 +40,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <net/ethernet.h>
 #include <net/if.h>
 
 #include <linux/filter.h>
@@ -99,9 +100,9 @@
 
 struct router {
 	struct router *next;
-	macaddr_t src;
+	struct ether_addr src;
 	time_t eol;
-	macaddr_t originator;
+	struct ether_addr originator;
 	uint16_t tq;
 };
 
@@ -265,6 +266,7 @@ static void parse_cmdline(int argc, char *argv[]) {
 
 static void handle_ra(int sock) {
 	struct sockaddr_ll src;
+	struct ether_addr mac;
 	unsigned int addr_size = sizeof(src);
 	size_t len;
 	struct {
@@ -278,18 +280,19 @@ static void handle_ra(int sock) {
 	CHECK(len >= sizeof(pkt));
 	CHECK(ntohs(pkt.ip6.ip6_plen) + sizeof(struct ip6_hdr) >= sizeof(pkt));
 
-	DEBUG_MSG("received valid RA from " F_MAC, F_MAC_VAR(src.sll_addr));
+	memcpy(&mac, src.sll_addr, sizeof(mac));
+	DEBUG_MSG("received valid RA from " F_MAC, F_MAC_VAR(mac));
 
 	// update list of known routers
 	struct router *router;
 	foreach(router, G.routers) {
-		if (!memcmp(router->src, src.sll_addr, sizeof(macaddr_t))) {
+		if (!memcmp(&router->src, src.sll_addr, sizeof(struct ether_addr))) {
 			break;
 		}
 	}
 	if (!router) {
 		router = malloc(sizeof(struct router));
-		memcpy(router->src, src.sll_addr, sizeof(router->src));
+		memcpy(&router->src, src.sll_addr, sizeof(router->src));
 		router->next = G.routers;
 		G.routers = router;
 	}
@@ -326,13 +329,14 @@ static void update_tqs(void) {
 	size_t len = 0;
 	uint8_t tq;
 	bool update_originators = false;
-	macaddr_t mac_a, mac_b;
-	macaddr_t unspec = {};
+	struct ether_addr mac_a, mac_b;
+	struct ether_addr unspec;
 
 	// reset TQs
+	memset(&unspec, 0, sizeof(unspec));
 	foreach(router, G.routers) {
 		router->tq = 0;
-		if (!memcmp(router->originator, unspec, sizeof(unspec)))
+		if (ether_addr_equal(router->originator, unspec))
 			update_originators = true;
 	}
 
@@ -353,9 +357,9 @@ static void update_tqs(void) {
 				F_MAC_VAR_REF(mac_a), F_MAC_VAR_REF(mac_b)) == 12) {
 
 			foreach(router, G.routers) {
-				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
+				if (ether_addr_equal(router->src, mac_a)) {
 					DEBUG_MSG("Found originator for " F_MAC ", it's " F_MAC, F_MAC_VAR(router->src), F_MAC_VAR(mac_b));
-					memcpy(router->originator, mac_b, sizeof(macaddr_t));
+					router->originator = mac_b;
 					break; // foreach
 				}
 			}
@@ -378,7 +382,7 @@ static void update_tqs(void) {
 			F_MAC_VAR_REF(mac_a), &tq) == 7) {
 
 		foreach(router, G.routers) {
-			if (!memcmp(router->originator, mac_a, sizeof(macaddr_t))) {
+			if (ether_addr_equal(router->originator, mac_a)) {
 				DEBUG_MSG("Found TQ for router " F_MAC " (originator " F_MAC "), it's %d", F_MAC_VAR(router->src), F_MAC_VAR(router->originator), tq);
 				router->tq = tq;
 				if (tq > G.max_tq)
@@ -407,7 +411,7 @@ static void update_tqs(void) {
 		while (fgetc(f) != '\n');
 		while (fscanf(f, " * " F_MAC " [%*5s] %*f", F_MAC_VAR_REF(mac_a)) == 6) {
 			foreach(router, G.routers) {
-				if (!memcmp(router->src, mac_a, sizeof(macaddr_t))) {
+				if (ether_addr_equal(router->src, mac_a)) {
 					DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d", F_MAC_VAR(router->src), LOCAL_TQ);
 					router->tq = LOCAL_TQ;
 					G.max_tq = LOCAL_TQ;
@@ -424,7 +428,7 @@ static void update_tqs(void) {
 
 	foreach(router, G.routers) {
 		if (router->tq == 0) {
-			if (!memcmp(router->originator, unspec, sizeof(unspec)))
+			if (ether_addr_equal(router->originator, unspec))
 				fprintf(stderr,
 					"Unable to find router " F_MAC " in transtable_{global,local}\n",
 					F_MAC_VAR(router->src));

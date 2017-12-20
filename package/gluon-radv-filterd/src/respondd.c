@@ -2,6 +2,7 @@
 
 #include <json-c/json.h>
 #include <libgluonutil.h>
+#include <net/ethernet.h>
 #include <stdio.h>
 
 #include "mac.h"
@@ -10,7 +11,7 @@ static struct json_object * get_radv_filter() {
 	FILE *f = popen("exec ebtables -L RADV_FILTER", "r");
 	char *line = NULL;
 	size_t len = 0;
-	macaddr_t mac = {};
+	struct ether_addr mac = {};
 	struct json_object *ret = NULL;
 	char macstr[F_MAC_LEN + 1] = "";
 
