@@ -23,7 +23,6 @@
    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#define _GNU_SOURCE
 #include <errno.h>
 #include <signal.h>
 #include <stdarg.h>
