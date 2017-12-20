@@ -533,6 +533,14 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	return -1;
 }
 
+static bool election_required(void)
+{
+	if (!G.best_router)
+		return true;
+
+	return G.best_router->tq < G.max_tq - G.hysteresis_thresh;
+}
+
 static void update_ebtables(void) {
 	struct timespec timeout = {
 		.tv_nsec = EBTABLES_TIMEOUT,
@@ -540,7 +548,7 @@ static void update_ebtables(void) {
 	char mac[F_MAC_LEN + 1];
 	struct router *router;
 
-	if (G.best_router && G.best_router->tq >= G.max_tq - G.hysteresis_thresh) {
+	if (!election_required()) {
 		DEBUG_MSG(F_MAC " is still good enough with TQ=%d (max_tq=%d), not executing ebtables",
 			F_MAC_VAR(G.best_router->src),
 			G.best_router->tq,
