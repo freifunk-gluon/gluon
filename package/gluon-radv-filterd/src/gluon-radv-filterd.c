@@ -635,9 +635,10 @@ int main(int argc, char *argv[]) {
 		tv.tv_usec = 0;
 		retval = select(G.sock + 1, &rfds, NULL, NULL, &tv);
 
-		if (retval < 0)
-			exit_errno("select() failed");
-		else if (retval) {
+		if (retval < 0) {
+			if (errno != EINTR)
+				exit_errno("select() failed");
+		} else if (retval) {
 			if (FD_ISSET(G.sock, &rfds)) {
 				handle_ra(G.sock);
 			}
