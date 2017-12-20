@@ -101,7 +101,7 @@
 struct router {
 	struct router *next;
 	struct ether_addr src;
-	time_t eol;
+	struct timespec eol;
 	struct ether_addr originator;
 	uint16_t tq;
 };
@@ -131,6 +131,20 @@ static void error_message(int status, int errnum, char *message, ...) {
 	fprintf(stderr, "\n");
 	if (status)
 		exit(status);
+}
+
+static int timespec_diff(struct timespec *tv1, struct timespec *tv2,
+			 struct timespec *tvdiff)
+{
+	tvdiff->tv_sec = tv1->tv_sec - tv2->tv_sec;
+	if (tv1->tv_nsec < tv2->tv_nsec) {
+		tvdiff->tv_nsec = 1000000000 + tv1->tv_nsec - tv2->tv_nsec;
+		tvdiff->tv_sec -= 1;
+	} else {
+		tvdiff->tv_nsec = tv1->tv_nsec - tv2->tv_nsec;
+	}
+
+	return (tvdiff->tv_sec >= 0);
 }
 
 static void cleanup(void) {
@@ -298,7 +312,8 @@ static struct router *router_add(const struct ether_addr *mac) {
 	router->src = *mac;
 	router->next = G.routers;
 	G.routers = router;
-	router->eol = 0;
+	router->eol.tv_sec = 0;
+	router->eol.tv_nsec = 0;
 
 	return router;
 }
@@ -312,7 +327,8 @@ static void router_update(const struct ether_addr *mac, uint16_t timeout) {
 	if (!router)
 		return;
 
-	router->eol = time(NULL) + timeout;
+	clock_gettime(CLOCK_MONOTONIC, &router->eol);
+	router->eol.tv_sec += timeout;
 }
 
 static void handle_ra(int sock) {
@@ -345,10 +361,13 @@ static void expire_routers(void) {
 	struct router **prev_ptr = &G.routers;
 	struct router *router;
 	struct router *safe;
-	time_t now = time(NULL);
+	struct timespec now;
+	struct timespec diff;
+
+	clock_gettime(CLOCK_MONOTONIC, &now);
 
 	foreach_safe(router, safe, G.routers) {
-		if (router->eol < now) {
+		if (timespec_diff(&now, &router->eol, &diff)) {
 			DEBUG_MSG("router " F_MAC " expired", F_MAC_VAR(router->src));
 			*prev_ptr = router->next;
 			if (G.best_router == router)
@@ -593,7 +612,12 @@ int main(int argc, char *argv[]) {
 	int retval;
 	fd_set rfds;
 	struct timeval tv;
-	time_t last_update = time(NULL);
+	struct timespec next_update;
+	struct timespec now;
+	struct timespec diff;
+
+	clock_gettime(CLOCK_MONOTONIC, &next_update);
+	next_update.tv_sec += MIN_INTERVAL;
 
 	parse_cmdline(argc, argv);
 
@@ -621,14 +645,18 @@ int main(int argc, char *argv[]) {
 		else
 			DEBUG_MSG("select() timeout expired");
 
-		if (G.routers != NULL && last_update <= time(NULL) - MIN_INTERVAL) {
+		clock_gettime(CLOCK_MONOTONIC, &now);
+		if (G.routers != NULL &&
+		    timespec_diff(&now, &next_update, &diff)) {
 			expire_routers();
 
 			// all routers could have expired, check again
 			if (G.routers != NULL) {
 				update_tqs();
 				update_ebtables();
-				last_update = time(NULL);
+
+				next_update = now;
+				next_update.tv_sec += MIN_INTERVAL;
 			}
 		}
 	}
