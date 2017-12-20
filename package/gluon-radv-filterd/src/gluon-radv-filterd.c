@@ -118,6 +118,8 @@ static struct global {
 	.mesh_iface = "bat0",
 };
 
+static int fork_execvp_timeout(struct timespec *timeout, const char *file,
+			       const char *const argv[]);
 
 static void error_message(int status, int errnum, char *message, ...) {
 	va_list ap;
@@ -149,12 +151,27 @@ static int timespec_diff(struct timespec *tv1, struct timespec *tv2,
 
 static void cleanup(void) {
 	struct router *router;
+	struct timespec timeout = {
+		.tv_nsec = EBTABLES_TIMEOUT,
+	};
+
 	close(G.sock);
 
 	while (G.routers != NULL) {
 		router = G.routers;
 		G.routers = router->next;
 		free(router);
+	}
+
+	if (G.chain) {
+		/* Reset chain to accept everything again */
+		if (fork_execvp_timeout(&timeout, "ebtables", (const char *[])
+				{ "ebtables", "-F", G.chain, NULL }))
+			DEBUG_MSG("warning: flushing ebtables chain %s failed, not adding a new rule", G.chain);
+
+		if (fork_execvp_timeout(&timeout, "ebtables", (const char *[])
+				{ "ebtables", "-A", G.chain, "-j", "ACCEPT", NULL }))
+			DEBUG_MSG("warning: adding new rule to ebtables chain %s failed", G.chain);
 	}
 }
 
