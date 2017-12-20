@@ -538,7 +538,14 @@ static bool election_required(void)
 	if (!G.best_router)
 		return true;
 
-	return G.best_router->tq < G.max_tq - G.hysteresis_thresh;
+	/* should never happen. G.max_tq also contains G.best_router->tq */
+	if (G.max_tq < G.best_router->tq)
+		return false;
+
+	if ((G.max_tq - G.best_router->tq) <= G.hysteresis_thresh)
+		return false;
+
+	return true;
 }
 
 static void update_ebtables(void) {
