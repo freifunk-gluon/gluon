@@ -319,16 +319,17 @@ static void handle_ra(int sock) {
 	struct sockaddr_ll src;
 	struct ether_addr mac;
 	unsigned int addr_size = sizeof(src);
-	size_t len;
+	ssize_t len;
 	struct {
 		struct ip6_hdr ip6;
 		struct nd_router_advert ra;
 	} pkt;
 
 	len = recvfrom(sock, &pkt, sizeof(pkt), 0, (struct sockaddr *)&src, &addr_size);
+	CHECK(len >= 0);
 
 	// BPF already checked that this is an ICMPv6 RA of a default router
-	CHECK(len >= sizeof(pkt));
+	CHECK((size_t)len >= sizeof(pkt));
 	CHECK(ntohs(pkt.ip6.ip6_plen) + sizeof(struct ip6_hdr) >= sizeof(pkt));
 
 	memcpy(&mac, src.sll_addr, sizeof(mac));
