@@ -105,7 +105,7 @@ struct router {
 	uint16_t tq;
 };
 
-struct global {
+static struct global {
 	int sock;
 	struct router *routers;
 	const char *mesh_iface;
