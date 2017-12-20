@@ -12,8 +12,12 @@ define Package/gluon-radv-filterd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Filter IPv6 router advertisements
-  DEPENDS:=+gluon-ebtables +libgluonutil
+  DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv +libnl-tiny
 endef
+
+MAKE_VARS += \
+        LIBNL_NAME="libnl-tiny" \
+        LIBNL_GENL_NAME="libnl-tiny"
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)

@@ -1,5 +1,6 @@
 /*
    Copyright (c) 2016 Jan-Philipp Litza <janphilipp@litza.de>
+   Copyright (c) 2017 Sven Eckelmann <sven@narfation.org>
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
@@ -51,6 +52,11 @@
 #include <netinet/in.h>
 #include <netinet/ip6.h>
 
+#include <netlink/netlink.h>
+#include <netlink/genl/genl.h>
+#include <netlink/genl/ctrl.h>
+#include <batadv-genl.h>
+
 #include "mac.h"
 
 // Recheck TQs after this time even if no RA was received
@@ -68,11 +74,6 @@
 #define LOCAL_TQ 512
 
 #define BUFSIZE 1500
-
-#define DEBUGFS "/sys/kernel/debug/batman_adv/%s/"
-#define ORIGINATORS DEBUGFS "originators"
-#define TRANSTABLE_GLOBAL DEBUGFS "transtable_global"
-#define TRANSTABLE_LOCAL DEBUGFS "transtable_local"
 
 #ifdef DEBUG
 #define CHECK(stmt) \
@@ -397,16 +398,167 @@ static void expire_routers(void) {
 	}
 }
 
-static void update_tqs(void) {
-	FILE *f;
-	struct router *router;
-	char path[PATH_MAX];
-	char *line = NULL;
-	size_t len = 0;
-	uint8_t tq;
-	bool update_originators = false;
+static int parse_tt_global(struct nl_msg *msg,
+			   void *arg __attribute__((unused)))
+{
+	static const enum batadv_nl_attrs mandatory[] = {
+		BATADV_ATTR_TT_ADDRESS,
+		BATADV_ATTR_ORIG_ADDRESS,
+	};
+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
 	struct ether_addr mac_a, mac_b;
+	struct genlmsghdr *ghdr;
+	struct router *router;
+	uint8_t *addr;
+	uint8_t *orig;
+
+	// parse netlink entry
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_TRANSTABLE_GLOBAL)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_genl_policy)) {
+		return NL_OK;
+	}
+
+	if (batadv_genl_missing_attrs(attrs, mandatory, ARRAY_SIZE(mandatory)))
+		return NL_OK;
+
+	addr = nla_data(attrs[BATADV_ATTR_TT_ADDRESS]);
+	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+
+	if (!attrs[BATADV_ATTR_FLAG_BEST])
+		return NL_OK;
+
+	MAC2ETHER(mac_a, addr);
+	MAC2ETHER(mac_b, orig);
+
+	// update router
+	router = router_find_src(&mac_a);
+	if (!router)
+		return NL_OK;
+
+	DEBUG_MSG("Found originator for " F_MAC ", it's " F_MAC,
+		  F_MAC_VAR(router->src), F_MAC_VAR(mac_b));
+	router->originator = mac_b;
+
+	return NL_OK;
+}
+
+static int parse_originator(struct nl_msg *msg,
+			    void *arg __attribute__((unused)))
+{
+
+	static const enum batadv_nl_attrs mandatory[] = {
+		BATADV_ATTR_ORIG_ADDRESS,
+		BATADV_ATTR_TQ,
+	};
+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct ether_addr mac_a;
+	struct genlmsghdr *ghdr;
+	struct router *router;
+	uint8_t *orig;
+	uint8_t tq;
+
+	// parse netlink entry
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_ORIGINATORS)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_genl_policy)) {
+		return NL_OK;
+	}
+
+	if (batadv_genl_missing_attrs(attrs, mandatory, ARRAY_SIZE(mandatory)))
+		return NL_OK;
+
+	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
+
+	if (!attrs[BATADV_ATTR_FLAG_BEST])
+		return NL_OK;
+
+	MAC2ETHER(mac_a, orig);
+
+	// update router
+	router = router_find_orig(&mac_a);
+	if (!router)
+		return NL_OK;
+
+	DEBUG_MSG("Found TQ for router " F_MAC " (originator " F_MAC "), it's %d",
+		  F_MAC_VAR(router->src), F_MAC_VAR(router->originator), tq);
+	router->tq = tq;
+	if (router->tq > G.max_tq)
+		G.max_tq = router->tq;
+
+	return NL_OK;
+}
+
+static int parse_tt_local(struct nl_msg *msg,
+			  void *arg __attribute__((unused)))
+{
+	static const enum batadv_nl_attrs mandatory[] = {
+		BATADV_ATTR_TT_ADDRESS,
+	};
+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct ether_addr mac_a;
+	struct genlmsghdr *ghdr;
+	struct router *router;
+	uint8_t *addr;
+
+	// parse netlink entry
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_TRANSTABLE_LOCAL)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+		      genlmsg_len(ghdr), batadv_genl_policy)) {
+		return NL_OK;
+	}
+
+	if (batadv_genl_missing_attrs(attrs, mandatory, ARRAY_SIZE(mandatory)))
+		return NL_OK;
+
+	addr = nla_data(attrs[BATADV_ATTR_TT_ADDRESS]);
+	MAC2ETHER(mac_a, addr);
+
+	// update router
+	router = router_find_src(&mac_a);
+	if (!router)
+		return NL_OK;
+
+	DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d",
+		  F_MAC_VAR(router->src), LOCAL_TQ);
+	router->tq = LOCAL_TQ;
+	if (router->tq > G.max_tq)
+		G.max_tq = router->tq;
+
+	return NL_OK;
+}
+
+static void update_tqs(void) {
+	struct router *router;
+	bool update_originators = false;
 	struct ether_addr unspec;
+	struct batadv_nlquery_opts opts;
+	int ret;
 
 	// reset TQs
 	memset(&unspec, 0, sizeof(unspec));
@@ -416,60 +568,24 @@ static void update_tqs(void) {
 			update_originators = true;
 	}
 
-	// TODO: Currently, we iterate over the whole list of routers all the
-	// time. Maybe it would be a good idea to sort routers that already
-	// have the current piece of information to the back. That way, we
-	// could abort as soon as we hit the first router with the current
-	// information filled in.
-
+	// translate all router's MAC addresses to originators simultaneously
 	if (update_originators) {
-		// translate all router's MAC addresses to originators simultaneously
-		snprintf(path, PATH_MAX, TRANSTABLE_GLOBAL, G.mesh_iface);
-		f = fopen(path, "r");
-		// skip header
-		while (fgetc(f) != '\n') {}
-		while (fgetc(f) != '\n') {}
-		while (fscanf(f, " %*[*+] " F_MAC "%*[0-9 -] (%*3u) via " F_MAC " %*[^]]]\n",
-				F_MAC_VAR_REF(mac_a), F_MAC_VAR_REF(mac_b)) == 12) {
-
-			router = router_find_src(&mac_a);
-			if (!router)
-				continue;
-
-			DEBUG_MSG("Found originator for " F_MAC ", it's " F_MAC, F_MAC_VAR(router->src), F_MAC_VAR(mac_b));
-			router->originator = mac_b;
-		}
-		if (!feof(f)) {
-			getline(&line, &len, f);
-			fprintf(stderr, "Parsing transtable_global aborted at this line: %s\n", line);
-		}
-		fclose(f);
+		opts.err = 0;
+		ret = batadv_genl_query(G.mesh_iface,
+					BATADV_CMD_GET_TRANSTABLE_GLOBAL,
+					parse_tt_global, NLM_F_DUMP, &opts);
+		if (ret < 0)
+			fprintf(stderr, "Parsing of global translation table failed\n");
 	}
 
 	// look up TQs of originators
 	G.max_tq = 0;
-	snprintf(path, PATH_MAX, ORIGINATORS, G.mesh_iface);
-	f = fopen(path, "r");
-	// skip header
-	while (fgetc(f) != '\n');
-	while (fgetc(f) != '\n');
-	while (fscanf(f, F_MAC " %*fs (%hhu) %*[^\n]\n",
-			F_MAC_VAR_REF(mac_a), &tq) == 7) {
-
-		router = router_find_orig(&mac_a);
-		if (!router)
-			continue;
-
-		DEBUG_MSG("Found TQ for router " F_MAC " (originator " F_MAC "), it's %d", F_MAC_VAR(router->src), F_MAC_VAR(router->originator), tq);
-		router->tq = tq;
-		if (tq > G.max_tq)
-			G.max_tq = tq;
-	}
-	if (!feof(f)) {
-		getline(&line, &len, f);
-		fprintf(stderr, "Parsing originators aborted at this line: %s\n", line);
-	}
-	fclose(f);
+	opts.err = 0;
+	ret = batadv_genl_query(G.mesh_iface,
+				BATADV_CMD_GET_ORIGINATORS,
+				parse_originator, NLM_F_DUMP, &opts);
+	if (ret < 0)
+		fprintf(stderr, "Parsing of originators failed\n");
 
 	// if all routers have a TQ value, we don't need to check translocal
 	foreach(router, G.routers) {
@@ -477,26 +593,12 @@ static void update_tqs(void) {
 			break;
 	}
 	if (router != NULL) {
-		// rate local routers (if present) the highest
-		snprintf(path, PATH_MAX, TRANSTABLE_LOCAL, G.mesh_iface);
-		f = fopen(path, "r");
-		// skip header
-		while (fgetc(f) != '\n');
-		while (fgetc(f) != '\n');
-		while (fscanf(f, " * " F_MAC " [%*5s] %*f", F_MAC_VAR_REF(mac_a)) == 6) {
-			router = router_find_src(&mac_a);
-			if (!router)
-				continue;
-
-			DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d", F_MAC_VAR(router->src), LOCAL_TQ);
-			router->tq = LOCAL_TQ;
-			G.max_tq = LOCAL_TQ;
-		}
-		if (!feof(f)) {
-			getline(&line, &len, f);
-			fprintf(stderr, "Parsing transtable_local aborted at this line: %s\n", line);
-		}
-		fclose(f);
+		opts.err = 0;
+		ret = batadv_genl_query(G.mesh_iface,
+					BATADV_CMD_GET_TRANSTABLE_LOCAL,
+					parse_tt_local, NLM_F_DUMP, &opts);
+		if (ret < 0)
+			fprintf(stderr, "Parsing of global translation table failed\n");
 	}
 
 	foreach(router, G.routers) {
@@ -512,8 +614,6 @@ static void update_tqs(void) {
 					F_MAC_VAR(router->src));
 		}
 	}
-
-	free(line);
 }
 
 static int fork_execvp_timeout(struct timespec *timeout, const char *file, const char *const argv[]) {
