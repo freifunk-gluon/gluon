@@ -267,7 +267,7 @@ static void parse_cmdline(int argc, char *argv[]) {
 	while ((c = getopt(argc, argv, "c:hi:m:t:")) != -1) {
 		switch (c) {
 			case 'i':
-				if (G.sock != 0)
+				if (G.sock >= 0)
 					usage("-i given more than once");
 				ifindex = if_nametoindex(optarg);
 				if (ifindex == 0)
@@ -737,9 +737,10 @@ int main(int argc, char *argv[]) {
 	clock_gettime(CLOCK_MONOTONIC, &next_update);
 	next_update.tv_sec += MIN_INTERVAL;
 
+	G.sock = -1;
 	parse_cmdline(argc, argv);
 
-	if (G.sock == 0)
+	if (G.sock < 0)
 		usage("No interface set!");
 
 	if (G.chain == NULL)
