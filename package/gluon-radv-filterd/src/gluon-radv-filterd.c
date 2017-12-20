@@ -290,6 +290,9 @@ static struct router *router_add(const struct ether_addr *mac) {
 	struct router *router;
 
 	router = malloc(sizeof(*router));
+	if (!router)
+		return NULL;
+
 	router->src = *mac;
 	router->next = G.routers;
 	G.routers = router;
@@ -304,6 +307,8 @@ static void router_update(const struct ether_addr *mac, uint16_t timeout) {
 	router = router_find_src(mac);
 	if (!router)
 		router = router_add(mac);
+	if (!router)
+		return;
 
 	router->eol = time(NULL) + timeout;
 }
