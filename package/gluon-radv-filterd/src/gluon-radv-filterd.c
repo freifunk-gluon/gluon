@@ -331,6 +331,7 @@ static struct router *router_add(const struct ether_addr *mac) {
 	G.routers = router;
 	router->eol.tv_sec = 0;
 	router->eol.tv_nsec = 0;
+	memset(&router->originator, 0, sizeof(router->originator));
 
 	return router;
 }
