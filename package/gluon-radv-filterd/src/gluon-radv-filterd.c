@@ -332,7 +332,7 @@ static void handle_ra(int sock) {
 	memcpy(&mac, src.sll_addr, sizeof(mac));
 	DEBUG_MSG("received valid RA from " F_MAC, F_MAC_VAR(mac));
 
-	router_update(&mac, pkt.ra.nd_ra_router_lifetime);
+	router_update(&mac, ntohs(pkt.ra.nd_ra_router_lifetime));
 
 check_failed:
 	return;
