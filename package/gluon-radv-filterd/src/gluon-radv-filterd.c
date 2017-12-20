@@ -130,7 +130,7 @@ static void error_message(int status, int errnum, char *message, ...) {
 		exit(status);
 }
 
-static void cleanup() {
+static void cleanup(void) {
 	struct router *router;
 	close(G.sock);
 
@@ -217,7 +217,9 @@ static int init_packet_socket(unsigned int ifindex) {
 		.sll_protocol = htons(ETH_P_IPV6),
 		.sll_ifindex = ifindex,
 	};
-	bind(sock, (struct sockaddr *)&bind_iface, sizeof(bind_iface));
+	ret = bind(sock, (struct sockaddr *)&bind_iface, sizeof(bind_iface));
+	if (ret < 0)
+		exit_errno("can't bind socket");
 
 	return sock;
 }
@@ -297,7 +299,7 @@ check_failed:
 	return;
 }
 
-static void expire_routers() {
+static void expire_routers(void) {
 	struct router **prev_ptr = &G.routers;
 	struct router *router;
 	struct router *safe;
@@ -316,7 +318,7 @@ static void expire_routers() {
 	}
 }
 
-static void update_tqs() {
+static void update_tqs(void) {
 	FILE *f;
 	struct router *router;
 	char path[PATH_MAX];
@@ -491,7 +493,7 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	return -1;
 }
 
-static void update_ebtables() {
+static void update_ebtables(void) {
 	struct timespec timeout = {
 		.tv_nsec = EBTABLES_TIMEOUT,
 	};
