@@ -124,6 +124,8 @@ static void error_message(int status, int errnum, char *message, ...) {
 	va_start(ap, message);
 	fflush(stdout);
 	vfprintf(stderr, message, ap);
+	va_end(ap);
+
 	if (errnum)
 		fprintf(stderr, ": %s", strerror(errnum));
 	fprintf(stderr, "\n");
