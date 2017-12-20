@@ -324,7 +324,6 @@ static void update_tqs() {
 	size_t len = 0;
 	uint8_t tq;
 	bool update_originators = false;
-	int i;
 	macaddr_t mac_a, mac_b;
 	macaddr_t unspec = {};
 
