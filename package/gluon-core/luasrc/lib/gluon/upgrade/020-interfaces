@@ -32,6 +32,7 @@ local wan_ifname = iface_exists(uci:get('network', 'wan', 'ifname'))
 
 if platform.match('ar71xx', 'generic', {
 	'cpe210',
+	'cpe210v2',
 	'cpe510',
 	'wbs210',
 	'wbs510',
