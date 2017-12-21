@@ -32,6 +32,15 @@ function o:write(data)
 	uci:set("autoupdater", autoupdater, "branch", data)
 end
 
+o = s:option(Flag, "delay", translate("Delay"), translate(
+	"You can delay the regular autoupdate for about an hour. This may " ..
+	"be useful if using the PoE passthrough for powering another node."
+))
+o.default = uci:get_bool("autoupdater", autoupdater, "delay")
+function o:write(data)
+	uci:set("autoupdater", autoupdater, "delay", data)
+end
+
 function f:write()
 	uci:commit("autoupdater")
 end
