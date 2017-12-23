@@ -29,4 +29,5 @@ start_filterd() {
 service_triggers() {
     procd_add_reload_trigger "gluon-radv-filterd"
     procd_add_validation "validate_filterd_section"
+    procd_add_raw_trigger "interface.*" 1000 /etc/init.d/gluon-radv-filterd reload
 }
