@@ -42,6 +42,6 @@ if next_node.name and next_node.ip6 then
 else
 	uci:delete('dhcp', 'domain', 'nextnode6')
 end
-
+uci:save('firewall')
 uci:save('dhcp')
 uci:save('firewall')
