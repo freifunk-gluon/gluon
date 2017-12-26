@@ -22,11 +22,10 @@ end
 if file_exsist(PID_PART) then
 	io.stdout:write("The geolocator is still running.\n")
 	os.exit(0)
-else
-	if io.open(PID_PART, "w") == nil then
-		io.stdout:write("Can`t create pid file on " .. PID_PART .. "\n")
-		os.exit(1)
-	end
+end
+if io.open(PID_PART, "w") == nil then
+	io.stdout:write("Can`t create pid file on " .. PID_PART .. "\n")
+	os.exit(1)
 end
 
 -- Program terminating function including removing of PID file
@@ -126,9 +125,8 @@ end
 local timestap = io.open(TIME_STAMP, "w")
 if timestap ~= nil then
 	timestap:write(os.time())
-else
-	io.stdout:write("Can`t create pid file on " .. TIME_STAMP .. "\n")
-	exit(1)
+	timestap:close()
+	exit(0)
 end
-timestap:close()
-exit(0)
+io.stdout:write("Can`t create file on " .. TIME_STAMP .. "\n")
+exit(1)
