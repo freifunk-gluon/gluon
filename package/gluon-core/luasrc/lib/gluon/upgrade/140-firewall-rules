@@ -59,26 +59,8 @@ for _, zone in ipairs ({ 'mesh', 'local_client' } ) do
 		target = 'ACCEPT',
 	})
 
-	uci:section('firewall', 'rule', zone .. '_ICMPv6_out', {
-		dest = zone,
-		proto = 'icmp',
-		icmp_type = {
-			'echo-request',
-			'echo-reply',
-			'destination-unreachable',
-			'packet-too-big',
-			'time-exceeded',
-			'bad-header',
-			'unknown-header-type',
-			'router-solicitation',
-			'neighbour-solicitation',
-			'router-advertisement',
-			'neighbour-advertisement',
-		},
-		limit = '1000/sec',
-		family = 'ipv6',
-		target = 'ACCEPT',
-	})
+	-- Can be removed soon: was never in a release
+	uci:delete('firewall', zone .. '_ICMPv6_out')
 end
 
 uci:save('firewall')
