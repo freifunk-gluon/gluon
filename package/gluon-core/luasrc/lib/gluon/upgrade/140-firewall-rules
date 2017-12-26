@@ -36,7 +36,17 @@ for _, zone in ipairs({ 'wan', 'local_client', 'mesh' }) do
 end
 
 
--- allow icmp in/out/forward on all relevant zones
+-- allow icmp in/out on all relevant zones
+uci:section('firewall', 'rule',  'local_client_ICMPv4_in', {
+	src = 'local_client',
+	proto = 'icmp',
+	icmp_type = {
+		'echo-request',
+	},
+	family = 'ipv4',
+	target = 'ACCEPT',
+})
+
 for _, zone in ipairs ({ 'mesh', 'local_client' } ) do
 	uci:section('firewall', 'rule',  zone .. '_ICMPv6_in', {
 		src = zone,
