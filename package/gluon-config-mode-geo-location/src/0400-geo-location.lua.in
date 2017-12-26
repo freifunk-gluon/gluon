@@ -133,7 +133,7 @@ return function(form, uci)
         o.description = translatef("Automaticaly location service over wifi.")
         --]]
 
-	local interval = s:option(Value, "interval", translate("Interval in minutes"), translatef("Set refresh interval, the default is once per day"))
+	local interval = s:option(Value, "interval", translate("Interval in minutes"), translatef("Set refresh interval"))
 	interval.default = uci:get_first("geolocator", "settings", "refresh_interval")
 	interval:depends(geolocation, "automatic")
 	interval:depends(geolocation, "auto_static")
