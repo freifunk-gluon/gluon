@@ -53,6 +53,10 @@ for _, zone in ipairs ({ 'mesh', 'local_client' } ) do
 			'neighbour-solicitation',
 			'router-advertisement',
 			'neighbour-advertisement',
+			'130/0', -- Multicast Listener Query
+			'131/0', -- Multicast Listener Report
+			'132/0', -- Multicast Listener Done
+			'143/0', -- MLDv2
 		},
 		limit = '1000/sec',
 		family = 'ipv6',
