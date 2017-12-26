@@ -14,7 +14,7 @@ end
 
 local refresh_interval = uci:get(config, 'settings', 'refresh_interval')
 if not refresh_interval then
-	refresh_interval = site.geolocator.interval(43200) -- default: 12h
+	refresh_interval = site.geolocator.interval(720) -- default: 12h
 end
 
 uci:delete(config, 'settings')
