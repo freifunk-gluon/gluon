@@ -14,10 +14,17 @@ There are the following settings:
     servers
     cacheentries
 
-If both options are set the node will cache as much DNS records as set with
-'cacheentries' in RAM. The 'servers' list will be used to resolve the received
-DNS queries if the request cannot be answered from cache.
-If these settings do not exist, the cache is not intialized and RAM usage will not increase.
+To use the node's DNS server, both options should be set. The node will cache at
+most 'cacheentries' many DNS records in RAM. The 'servers' list will be used to
+resolve the received DNS queries if the request cannot be answered from
+cache. Gateways should announce the "next node" address via DHCP and RDNSS (if
+any). Note that not setting 'servers' here will lead to DNS not working: Once
+the gateways all announce the "next node" address for DNS, there is no way for
+nodes to automatically determine DNS servers. They have to be baked into the
+firmware.
+
+If these settings do not exist, the cache is not initialized and RAM usage will
+not increase.
 
 When next_node.name is set, an A record and an AAAA record for the
 next-node IP address are placed in the dnsmasq configuration. This means that the content

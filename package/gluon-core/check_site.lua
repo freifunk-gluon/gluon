@@ -42,7 +42,7 @@ end
 need_boolean('poe_passthrough', false)
 if need_table('dns', nil, false) then
 	need_number('dns.cacheentries', false)
-	need_string_array_match('dns.servers', '^[%x:]+$', false)
+	need_string_array_match('dns.servers', '^[%x:]+$', true)
 end
 
 if need_table('next_node', nil, false) then
