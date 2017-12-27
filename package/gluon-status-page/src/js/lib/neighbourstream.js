@@ -101,7 +101,7 @@ define([ "bacon"
       var out = {}
 
       ifnames.forEach(function (ifname) {
-        out[ifname] = combineWifiRoutingMetrics(wifi[ifname], routingMetrics[ifname])
+	out[ifname] = combineWifiRoutingMetrics(wifi[ifname], routingMetrics[ifname])
       })
 
       return out
@@ -112,10 +112,10 @@ define([ "bacon"
 	var out = {}
 
       for (station in routingMetrics) {
-        if (!(station in out))
-          out[station] = {}
+	if (!(station in out))
+	  out[station] = {}
 
-        out[station].routingMetrics = routingMetrics[station]
+	out[station].routingMetrics = routingMetrics[station]
       }
 
       for (station in wifi) {
