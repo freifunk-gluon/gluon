@@ -110,7 +110,15 @@ uci:foreach("system", "gpio_switch", function(s)
 		if not section then
 			section = f:section(Section)
 		end
-		local poe = section:option(Flag, s[".name"], translate("Enable " .. s.name))
+
+		local port = s.name:match("^PoE Power Port(%d*)$")
+		local name
+		if port then
+			name = translatef("Enable PoE Power Port %s", port)
+		else
+			name = translate("Enable " .. s.name)
+		end
+		local poe = section:option(Flag, s[".name"], name)
 		poe.default = uci:get_bool("system", s[".name"], "value")
 
 		function poe:write(data)
