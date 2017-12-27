@@ -9,15 +9,17 @@ password length must be.
 site.conf
 ---------
 
-config_mode.remote_login.show_password_form \: optional (defaults to ``false``)
-  If ``show_password_form`` is set to ``true``, the password section in
-  config mode is shown.
+config_mode.remote_login.show_password_form \: optional
+  - ``true`` the password section in config mode is shown
+  - ``false`` the password section in config mode is hidden
+  - defaults to ``false``
+  
+config_mode.remote_login.min_password_length \: optional
+  - sets the minimum allowed password length. Set this to ``1`` to disable the
+    length check.
+  - defaults to ``12``
 
-config_mode.remote_login.min_password_length \: optional (defaults to ``12``)
-  This sets the minimum allowed password length. Set this to ``1`` to
-  disable the length check.
-
-If you want to enable the password login you can use this example::
+Example::
 
   config_mode = {
     remote_login = {
