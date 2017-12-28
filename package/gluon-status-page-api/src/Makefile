@@ -20,10 +20,19 @@ endif
 CFLAGS_JSONC = $(shell pkg-config --cflags json-c)
 LDFLAGS_JSONC = $(shell pkg-config --libs json-c)
 
+ifeq ($(origin LIBBATADV_CFLAGS) $(origin LIBBATADV_LDLIBS), undefined undefined)
+  LIBBATADV_NAME ?= libbatadv
+  ifeq ($(shell $(PKG_CONFIG) --modversion $(LIBBATADV_NAME) 2>/dev/null),)
+    $(error No $(LIBBATADV_NAME) development libraries found!)
+  endif
+  LIBBATADV_CFLAGS += $(shell $(PKG_CONFIG) --cflags $(LIBBATADV_NAME))
+  LIBBATADV_LDLIBS += $(shell $(PKG_CONFIG) --libs $(LIBBATADV_NAME))
+endif
+
 all: neighbours-batadv stations respondd.so
 
-neighbours-batadv: neighbours-batadv.c batadv-netlink.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_JSONC) $(LIBNL_CFLAGS) $(LDFLAGS) $(LDFLAGS_JSONC) $(LIBNL_LDLIBS) -Wall -o $@ $^ $(LDLIBS)
+neighbours-batadv: neighbours-batadv.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_JSONC) $(LIBNL_CFLAGS) $(LIBBATADV_CFLAGS) $(LDFLAGS) $(LDFLAGS_JSONC) $(LIBNL_LDLIBS) $(LIBBATADV_LDLIBS) -Wall -o $@ $^ $(LDLIBS)
 
 stations: stations.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_JSONC) $(LDFLAGS) $(LDFLAGS_JSONC) -Wall -o $@ $^ $(LDLIBS) -liwinfo

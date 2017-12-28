@@ -20,5 +20,16 @@ endif
 CFLAGS += $(LIBNL_CFLAGS)
 LDLIBS += $(LIBNL_LDLIBS)
 
-respondd.so: respondd.c batadv-netlink.c
+ifeq ($(origin LIBBATADV_CFLAGS) $(origin LIBBATADV_LDLIBS), undefined undefined)
+  LIBBATADV_NAME ?= libbatadv
+  ifeq ($(shell $(PKG_CONFIG) --modversion $(LIBBATADV_NAME) 2>/dev/null),)
+    $(error No $(LIBBATADV_NAME) development libraries found!)
+  endif
+  LIBBATADV_CFLAGS += $(shell $(PKG_CONFIG) --cflags $(LIBBATADV_NAME))
+  LIBBATADV_LDLIBS += $(shell $(PKG_CONFIG) --libs $(LIBBATADV_NAME))
+endif
+CFLAGS += $(LIBBATADV_CFLAGS)
+LDLIBS += $(LIBBATADV_LDLIBS)
+
+respondd.so: respondd.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -o $@ $^ $(LDLIBS) -lgluonutil -liwinfo -luci

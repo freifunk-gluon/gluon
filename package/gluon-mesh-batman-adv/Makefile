@@ -13,7 +13,7 @@ define Package/gluon-mesh-batman-adv/common
   SECTION:=gluon
   CATEGORY:=Gluon
   PROVIDES:=gluon-mesh-batman-adv
-  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +libnl-tiny
+  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +libnl-tiny +libbatadv
 endef
 
 define Package/gluon-mesh-batman-adv-14
