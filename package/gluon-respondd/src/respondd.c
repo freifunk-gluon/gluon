@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <sys/vfs.h>
 
@@ -211,10 +212,23 @@ static struct json_object * get_rootfs_usage(void) {
 	return jso;
 }
 
+static struct json_object * get_time(void) {
+	struct timespec now;
+
+	if (clock_gettime(CLOCK_REALTIME, &now) != 0)
+		return NULL;
+
+	return json_object_new_int64(now.tv_sec);
+}
+
 static struct json_object * respondd_provider_statistics(void) {
 	struct json_object *ret = json_object_new_object();
 
 	json_object_object_add(ret, "node_id", gluonutil_wrap_and_free_string(gluonutil_get_node_id()));
+
+	json_object *time = get_time();
+	if (time != NULL)
+		json_object_object_add(ret, "time", time);
 
 	json_object_object_add(ret, "rootfs_usage", get_rootfs_usage());
 	json_object_object_add(ret, "memory", get_memory());
