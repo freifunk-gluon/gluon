@@ -8,6 +8,6 @@ badrequest() {
 
 echo 'Access-Control-Allow-Origin: *'
 
-batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" || badrequest
+ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"| grep -qxF "$QUERY_STRING" || badrequest
 
 exec /usr/bin/gluon-neighbour-info -s neighbour -i "$QUERY_STRING" -d ff02::2:1001 -p 1001 -r nodeinfo

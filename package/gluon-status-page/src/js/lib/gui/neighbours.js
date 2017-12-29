@@ -77,13 +77,17 @@ function (Helper, SignalGraph, Signal) {
         tdSignal.textContent = signal
         tdInactive.textContent = Math.round(inactive / 1000) + " s"
       }
+      if (d.routingMetrics.protocol == "batadv") {
+	      tdTQ.textContent = "TQ: " + Math.round(d.routingMetrics.tq / 2.55) + " %"
+      }
+      else if (d.routingMetrics.protocol == "babel") {
+	      tdTQ.textContent = "Cost: " + Math.round(d.routingMetrics.cost / 653.53) + " %"
+      }
+      else {
+	      tdTQ.textContent = "?PROTO? (" + d.routingMetrics.protocol + ")"
+      }
 
-      if ("batadv" in d)
-        tdTQ.textContent = Math.round(d.batadv.tq / 2.55) + " %"
-      else
-        tdTQ.textContent = "‒"
-
-      if (infoSet)
+    if (infoSet)
         return
 
       if ("nodeInfo" in d) {
@@ -111,8 +115,9 @@ function (Helper, SignalGraph, Signal) {
           } catch (e) {
             tdDistance.textContent = "‒"
           }
-      } else
+      } else {
         hostname.textContent = d.id
+      }
     }
   }
 
@@ -136,7 +141,7 @@ function (Helper, SignalGraph, Signal) {
     tr.appendChild(th)
 
     th = document.createElement("th")
-    th.textContent = "TQ"
+    th.textContent = "Metrik"
     tr.appendChild(th)
 
     th = document.createElement("th")

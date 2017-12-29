@@ -13,7 +13,7 @@ define Package/gluon-mesh-batman-adv/common
   SECTION:=gluon
   CATEGORY:=Gluon
   PROVIDES:=gluon-mesh-batman-adv
-  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +libnl-tiny +libbatadv
+  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +libnl-tiny +libbatadv +libjson-c
 endef
 
 define Package/gluon-mesh-batman-adv-14
@@ -43,6 +43,8 @@ define Package/gluon-mesh-batman-adv/common/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 	$(INSTALL_DIR) $(1)/lib/gluon/respondd
+	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-batadv $(1)/lib/gluon/status-page/providers/
 	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-batman-adv.so
 
 	$(INSTALL_DIR) $(1)/lib/gluon/mesh-batman-adv

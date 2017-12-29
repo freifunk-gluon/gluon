@@ -1,4 +1,7 @@
 "use strict"
+
+
+
 define(["bacon", "lib/helper"], function(Bacon, Helper) {
   function nodeInfo(ip, ifname) {
     return Bacon.fromBinder(function (sink) {
@@ -42,6 +45,11 @@ define(["bacon", "lib/helper"], function(Bacon, Helper) {
       return tearDown
     })
   }
+  
+  function babel(ip) {
+  var url = Helper.buildUrl(ip, "dyn/neighbours-babel")
+  return simpleStream(url)
+  }
 
   function batadv(ip) {
     var url = Helper.buildUrl(ip, "dyn/neighbours-batadv")
@@ -59,8 +67,9 @@ define(["bacon", "lib/helper"], function(Bacon, Helper) {
   }
 
   return { nodeInfo: nodeInfo
-         , Batadv: batadv
          , Stations: stations
+         , Batadv: batadv
+         , Babel: babel
          , Statistics: statistics
          }
 })

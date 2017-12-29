@@ -1,48 +1,48 @@
 "use strict"
 define([ "bacon"
-       , "lib/helper"
-       , "lib/streams"
-       ], function(Bacon, Helper, Streams) {
+    , "lib/helper"
+    , "lib/streams"
+], function(Bacon, Helper, Streams) {
 
   return function (mgmtBus, nodesBus, ip) {
     function nodeQuerier() {
       var asked = {}
       var timeout = 6000
 
-      return function (ifname) {
-        var now = new Date().getTime()
+	return function (ifname) {
+	  var now = new Date().getTime()
 
-        if (ifname in asked && now - asked[ifname] < timeout)
-          return Bacon.never()
+	    if (ifname in asked && now - asked[ifname] < timeout)
+	      return Bacon.never()
 
-        asked[ifname] = now
-        return Streams.nodeInfo(ip, ifname).map(function (d) {
-          return { "ifname": ifname
-                 , "nodeInfo": d
-                 }
-        })
-      }
+		asked[ifname] = now
+		return Streams.nodeInfo(ip, ifname).map(function (d) {
+		  return { "ifname": ifname
+		    , "nodeInfo": d
+		  }
+		})
+	}
     }
 
     var querierAsk = new Bacon.Bus()
-    var querier = querierAsk.flatMap(nodeQuerier())
-    querier.map(".nodeInfo").onValue(mgmtBus, "pushEvent", "nodeinfo")
+      var querier = querierAsk.flatMap(nodeQuerier())
+      querier.map(".nodeInfo").onValue(mgmtBus, "pushEvent", "nodeinfo")
 
-    function wrapIfname(ifname, d) {
-      return [ifname, d]
-    }
+      function wrapIfname(ifname, d) {
+	return [ifname, d]
+      }
 
     function extractIfname(d) {
       var r = {}
 
       for (var station in d) {
-        var ifname = d[station].ifname
-        delete d[station].ifname
+	var ifname = d[station].ifname
+	  delete d[station].ifname
 
-        if (!(ifname in r))
-          r[ifname] = {}
+	  if (!(ifname in r))
+	    r[ifname] = {}
 
-        r[ifname][station] = d[station]
+	r[ifname][station] = d[station]
       }
 
       return r
@@ -54,74 +54,75 @@ define([ "bacon"
 
     function magic(interfaces) {
       var ifnames = Object.keys(interfaces)
-      ifnames.forEach(querierAsk.push)
+	ifnames.forEach(querierAsk.push)
 
-      var wifiStream = Bacon.fromArray(ifnames)
-                            .flatMap(stationsStream)
-                            .scan({}, function (a, b) {
-                              a[b[0]] = b[1]
-                              return a
-                            })
+	var wifiStream = Bacon.fromArray(ifnames)
+	.flatMap(stationsStream)
+	.scan({}, function (a, b) {
+	  a[b[0]] = b[1]
+	    return a
+	})
 
       var batadvStream = new Streams.Batadv(ip).toProperty({})
+      var babelStream = new Streams.Babel(ip).toProperty({})
 
-      return Bacon.combineWith(combine, wifiStream
-                                      , batadvStream.map(extractIfname)
-                                      , nodesBus.map(".macs")
-                                      )
+	return Bacon.combineWith(combine, wifiStream
+	    , Bacon.combineWith(Object.assign, batadvStream, babelStream).map(extractIfname)
+	    , nodesBus.map(".macs")
+	    )
     }
 
-    function combine(wifi, batadv, macs) {
-      var interfaces = combineWithIfnames(wifi, batadv)
+    function combine(wifi, routingMetrics, macs) {
+      var interfaces = combineWithIfnames(wifi, routingMetrics)
 
-      for (var ifname in interfaces) {
-        var stations = interfaces[ifname]
-        for (var station in stations) {
-          stations[station].id = station
+	for (var ifname in interfaces) {
+	  var stations = interfaces[ifname]
+	    for (var station in stations) {
+	      stations[station].id = station
 
-          if (station in macs)
-            stations[station].nodeInfo = macs[station]
-          else
-            querierAsk.push(ifname)
-        }
-      }
+		if (station in macs)
+		  stations[station].nodeInfo = macs[station]
+		else
+		  querierAsk.push(ifname)
+	    }
+	}
 
       return interfaces
     }
 
-    function combineWithIfnames(wifi, batadv) {
-      var ifnames = Object.keys(wifi).concat(Object.keys(batadv))
+    function combineWithIfnames(wifi, routingMetrics) {
+      var ifnames = Object.keys(wifi).concat(Object.keys(routingMetrics))
 
-      // remove duplicates
-      ifnames.filter(function(e, i) {
-        return ifnames.indexOf(e) === i
-      })
+	// remove duplicates
+	ifnames.filter(function(e, i) {
+	  return ifnames.indexOf(e) === i
+	})
 
       var out = {}
 
       ifnames.forEach(function (ifname) {
-        out[ifname] = combineWifiBatadv(wifi[ifname], batadv[ifname])
+        out[ifname] = combineWifiRoutingMetrics(wifi[ifname], routingMetrics[ifname])
       })
 
       return out
     }
 
-    function combineWifiBatadv(wifi, batadv) {
+    function combineWifiRoutingMetrics(wifi, routingMetrics) {
       var station
-      var out = {}
+	var out = {}
 
-      for (station in batadv) {
+      for (station in routingMetrics) {
         if (!(station in out))
           out[station] = {}
 
-        out[station].batadv = batadv[station]
+        out[station].routingMetrics = routingMetrics[station]
       }
 
       for (station in wifi) {
-        if (!(station in out))
-          out[station] = {}
+	if (!(station in out))
+	  out[station] = {}
 
-        out[station].wifi = wifi[station]
+	out[station].wifi = wifi[station]
       }
 
       return out
