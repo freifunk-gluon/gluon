@@ -1,0 +1,71 @@
+From: Vittorio Gambaletta <openwrt@vittgam.net>
+Date: Sat, 25 Mar 2017 18:08:02 +0100
+Subject: ag71xx: Fix rx ring buffer stall on small packets flood on qca956x and qca953x.
+
+Backported from Code Aurora QSDK
+
+Signed-off-by: Vittorio Gambaletta <openwrt@vittgam.net>
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
+index a8b19b68b2a46545fdd3ed6bdf14006f8a741185..427de6a50d0fcbc9dae11f8e6921194c0a5b09ed 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/dev-eth.c
+@@ -996,6 +996,9 @@ void __init ath79_register_eth(unsigned int id)
+ 			pdata->reset_bit = AR934X_RESET_GE0_MAC |
+ 					   AR934X_RESET_GE0_MDIO;
+ 			pdata->set_speed = ar934x_set_speed_ge0;
++
++			if (ath79_soc == ATH79_SOC_QCA9533)
++				pdata->disable_inline_checksum_engine = 1;
+ 		} else {
+ 			pdata->reset_bit = AR934X_RESET_GE1_MAC |
+ 					   AR934X_RESET_GE1_MDIO;
+@@ -1097,6 +1100,8 @@ void __init ath79_register_eth(unsigned int id)
+ 				pdata->set_speed = qca956x_set_speed_sgmii;
+ 			else
+ 				pdata->set_speed = ar934x_set_speed_ge0;
++
++			pdata->disable_inline_checksum_engine = 1;
+ 		} else {
+ 			pdata->reset_bit = QCA955X_RESET_GE1_MAC |
+ 					   QCA955X_RESET_GE1_MDIO;
+diff --git a/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h b/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
+index 078fa157f242ce4350185d97a61ef5d1f3f16fc5..5fdc59c7b78b84670daefa9fd831b154ded84ddc 100644
+--- a/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
++++ b/target/linux/ar71xx/files/arch/mips/include/asm/mach-ath79/ag71xx_platform.h
+@@ -37,7 +37,7 @@ struct ag71xx_platform_data {
+ 	u8		is_ar724x:1;
+ 	u8		has_ar8216:1;
+ 	u8		use_flow_control:1;
+-	u8		is_qca956x:1;
++	u8		disable_inline_checksum_engine:1;
+ 
+ 	struct ag71xx_switch_platform_data *switch_data;
+ 
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+index 566e9513d8b7c6ef101902ae7d281dcc1c233893..72dd654a691355c881b15d796fad0d640e05fc15 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -629,6 +629,22 @@ __ag71xx_link_adjust(struct ag71xx *ag, bool update)
+ 	ag71xx_wr(ag, AG71XX_REG_MAC_CFG2, cfg2);
+ 	ag71xx_wr(ag, AG71XX_REG_FIFO_CFG5, fifo5);
+ 	ag71xx_wr(ag, AG71XX_REG_MAC_IFCTL, ifctl);
++
++	if (pdata->disable_inline_checksum_engine) {
++		/*
++		 * The rx ring buffer can stall on small packets on QCA953x and
++		 * QCA956x. Disabling the inline checksum engine fixes the stall.
++		 * The wr, rr functions cannot be used since this hidden register
++		 * is outside of the normal ag71xx register block.
++		 */
++		void __iomem *dam = ioremap_nocache(0xb90001bc, 0x4);
++		if (dam) {
++			__raw_writel(__raw_readl(dam) & ~BIT(27), dam);
++			(void)__raw_readl(dam);
++			iounmap(dam);
++		}
++	}
++
+ 	ag71xx_hw_start(ag);
+ 
+ 	netif_carrier_on(ag->dev);
