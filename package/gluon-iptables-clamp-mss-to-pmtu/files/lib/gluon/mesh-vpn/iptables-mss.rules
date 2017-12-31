@@ -1,0 +1,3 @@
+*mangle
+-A FORWARD -o mesh-vpn -p tcp -m tcp --tcp-flags SYN,RST SYN -d 64:ff9b::/96 -j TCPMSS --clamp-mss-to-pmtu
+COMMIT
