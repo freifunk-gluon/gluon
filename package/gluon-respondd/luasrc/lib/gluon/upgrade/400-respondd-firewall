@@ -15,10 +15,10 @@ uci:section('firewall', 'rule', 'wan_respondd', {
 	target = 'ACCEPT',
 })
 
--- Allow respondd-access on client_local
+-- Allow respondd-access for local clients
 uci:section('firewall', 'rule', 'client_respondd', {
 	name = 'client_respondd',
-	src = 'client_local',
+	src = 'local_client',
 	src_ip = 'fe80::/64',
 	dest_port = '1001',
 	proto = 'udp',
