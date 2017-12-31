@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+uci:section('firewall', 'include', 'vpn_clamp_mss', {
+	family = 'ipv6',
+	type = 'restore',
+	path = '/lib/gluon/mesh-vpn/iptables-mss.rules'
+})
+
+uci:save('firewall')
