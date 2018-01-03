@@ -90,12 +90,12 @@
 #endif
 
 #define foreach(item, list) \
-	for(item = list; item != NULL; item = item->next)
+	for((item) = (list); (item) != NULL; (item) = (item)->next)
 
 #define foreach_safe(item, safe, list) \
-	for (item = (list); \
+	for ((item) = (list); \
 	     (item) && (((safe) = item->next) || 1); \
-	     item = safe)
+	     (item) = (safe))
 
 struct router {
 	struct router *next;
