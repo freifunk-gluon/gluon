@@ -37,7 +37,8 @@ elseif platform.match('ar71xx', 'generic', {'unifi-outdoor-plus', 'carambola2',
                                             'om2p-hs', 'om2p-hsv2', 'om2p-hsv3',
                                             'om2p-lc',
                                             'om5p', 'om5p-an',
-                                            'om5p-ac', 'om5p-acv2'}) then
+                                            'om5p-ac', 'om5p-acv2',
+                                            'archer-c7-v4'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ar71xx', 'generic', {'archer-c5', 'archer-c7'}) then
   table.insert(try_files, 1, '/sys/class/net/eth1/address')
