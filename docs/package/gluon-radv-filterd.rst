@@ -38,3 +38,17 @@ selected router via the ``statistics.gateway6`` property using its interface MAC
 address. Note that this is different from the ``statistics.gateway`` property,
 which contains the MAC address of the main B.A.T.M.A.N. adv slave interface of
 the selected IPv4 gateway.
+
+site.conf
+---------
+
+radv_filterd.threshold : optional
+    - minimal difference in TQ value that another gateway has to be better than
+      the currently chosen gateway to become the new chosen gateway
+    - defaults to ``20``
+
+Example::
+
+  radv_filterd = {
+    threshold = 20,
+  }
