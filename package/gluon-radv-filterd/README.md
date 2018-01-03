@@ -26,3 +26,13 @@ However, if used together with the `gluon-ebtables-filter-ra-dhcp` package,
 these router advertisements are filtered anyway and reach neither the node nor
 any other client. You currently have to disable the package or insert custom
 ebtables rules in order to use local routers.
+
+respondd module
+---------------
+This package also contains a module for [respondd] that announces the currently
+selected router via the `statistics.gateway6` property using its interface MAC
+address. Note that this is different from the `statistics.gateway` property,
+which contains the MAC address of the main B.A.T.M.A.N. adv slave interface of
+the selected IPv4 gateway.
+
+[respondd]: https://github.com/freifunk-gluon/packages/tree/master/net/respondd
