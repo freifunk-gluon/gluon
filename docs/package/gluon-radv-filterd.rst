@@ -1,5 +1,6 @@
 gluon-radv-filterd
 ==================
+
 This package drops all incoming router advertisements except for the
 default router with the best metric according to B.A.T.M.A.N. advanced.
 
@@ -8,6 +9,7 @@ via gluon-radvd) are not affected and considered at all.
 
 "Best" router
 -------------
+
 The best router is determined by the TQ that is reported for its originator by
 B.A.T.M.A.N. advanced. If, for some reason, another gateway with a better TQ
 appears or an existing gateway increases its TQ above that of the chosen
@@ -19,20 +21,20 @@ B.A.T.M.A.N. advanced).
 
 "Local" routers
 ---------------
+
 The package has functionality to assign "local" routers, i.e. those connected
 via cable or WLAN instead of via the mesh (technically: appearing in the
-`transtable_local`), a fake TQ of 512 so that they are always preferred.
-However, if used together with the `gluon-ebtables-filter-ra-dhcp` package,
-these router advertisements are filtered anyway and reach neither the node nor
-any other client. You currently have to disable the package or insert custom
-ebtables rules in order to use local routers.
+``transtable_local``), a fake TQ of 512 so that they are always preferred.
+However, if used together with the :doc:`package/gluon-ebtables-filter-ra-dhcp`
+package, these router advertisements are filtered anyway and reach neither the
+node nor any other client. You currently have to disable the package or insert
+custom ebtables rules in order to use local routers.
 
 respondd module
 ---------------
-This package also contains a module for [respondd] that announces the currently
-selected router via the `statistics.gateway6` property using its interface MAC
-address. Note that this is different from the `statistics.gateway` property,
+
+This package also contains a module for respondd that announces the currently
+selected router via the ``statistics.gateway6`` property using its interface MAC
+address. Note that this is different from the ``statistics.gateway`` property,
 which contains the MAC address of the main B.A.T.M.A.N. adv slave interface of
 the selected IPv4 gateway.
-
-[respondd]: https://github.com/freifunk-gluon/packages/tree/master/net/respondd
