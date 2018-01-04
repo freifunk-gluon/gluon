@@ -1,15 +1,29 @@
-# D-Link
+# BROKEN: No AP+IBSS support, 11s has high packet loss
+if [ "$BROKEN" ]; then
+
+## D-Link
 
 device d-link-dir-860l-b1 dir-860l-b1
 
-# Ubiquiti
+
+## ZBT
+
+device zbt-wg3526 zbt-wg3526
+factory
+
+fi
+
+
+# Devices without WLAN
+
+## Ubiquiti
 
 device ubnt-erx ubnt-erx
 packages '-hostapd-mini'
 factory
 sysupgrade '.tar'
 
-# ZBT
-
-device zbt-wg3526 zbt-wg3526
+device ubnt-erx-sfp ubnt-erx-sfp
+packages '-hostapd-mini'
 factory
+sysupgrade '.tar'
