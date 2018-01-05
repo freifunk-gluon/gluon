@@ -7,22 +7,29 @@ default router with the best metric according to B.A.T.M.A.N. advanced.
 Note that advertisements originating from the node itself (for example
 via gluon-radvd) are not affected and considered at all.
 
-"Best" router
+Selected router
 -------------
 
-The best router is determined by the TQ that is reported for its originator by
-B.A.T.M.A.N. advanced. If, for some reason, another gateway with a better TQ
-appears or an existing gateway increases its TQ above that of the chosen
-gateway, the chosen gateway will remain selected until the better gateway has a
-TQ value at least X higher than the selected gateway. This is called
-hysteresis, and X can be specified on the commandline/via UCI/the site.conf and
-defaults to 20 (just as for the IPv4 gateway selection feature built into
-B.A.T.M.A.N. advanced).
+The router selection mechanism is independent from the batman-adv gateway mode.
+In contrast, the device originating the router advertisment could be any router
+or client connected to the mesh, as radv-filterd captures all router
+advertisements originating  from it. All nodes announcing router advertisement
+**with** a default lifetime greater than 0 are being considered as candidates.
+
+In case a router is not a batman-adv originator itself, its TQ is defined by
+the originator it is connected to. This lookup uses the batman-adv global
+translation table.
+
+Initially the router is the selected by choosing the candidate with the
+strongest TQ. When another candidate can provide a better TQ metric it is not
+picked up as the selected router until it will outperform the currently
+selected router by X metric units. The hysteresis threshold is configurable
+and prevents excessive flapping of the gateway.
 
 "Local" routers
 ---------------
 
-The package has functionality to assign "local" routers, i.e. those connected
+The package has functionality to select "local" routers, i.e. those connected
 via cable or WLAN instead of via the mesh (technically: appearing in the
 ``transtable_local``), a fake TQ of 512 so that they are always preferred.
 However, if used together with the :doc:`package/gluon-ebtables-filter-ra-dhcp`
