@@ -77,14 +77,14 @@ function (Helper, SignalGraph, Signal) {
         tdSignal.textContent = signal
         tdInactive.textContent = Math.round(inactive / 1000) + " s"
       }
-      if (d.routingMetrics.protocol == "batadv") {
+      if ("batman-adv" in nodeInfo.software) {
 	      tdTQ.textContent = "TQ: " + Math.round(d.routingMetrics.tq / 2.55) + " %"
       }
-      else if (d.routingMetrics.protocol == "babel") {
+      else if ("babeld" in nodeInfo.software) {
 	      tdTQ.textContent = "Cost: " + Math.round(d.routingMetrics.cost / 653.53) + " %"
       }
       else {
-	      tdTQ.textContent = "?PROTO? (" + d.routingMetrics.protocol + ")"
+	      tdTQ.textContent = "Unable to extract routing protocol from nodeInfo"
       }
 
     if (infoSet)
