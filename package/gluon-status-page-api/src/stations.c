@@ -27,6 +27,8 @@ static struct json_object *get_stations(const struct iwinfo_ops *iw, const char 
     json_object_object_add(station, "signal", json_object_new_int(entry->signal));
     json_object_object_add(station, "noise", json_object_new_int(entry->noise));
     json_object_object_add(station, "inactive", json_object_new_int(entry->inactive));
+    json_object_object_add(station, "rx_rate", json_object_new_int(entry->rx_rate.rate));
+    json_object_object_add(station, "tx_rate", json_object_new_int(entry->tx_rate.rate));
 
     char macstr[18];
 
