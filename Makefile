@@ -35,7 +35,7 @@ $(GLUON_SITEDIR)/site.mk:
 
 include $(GLUON_SITEDIR)/site.mk
 
-GLUON_WLAN_MESH ?=11s
+GLUON_WLAN_MESH ?= 11s
 
 GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
 
