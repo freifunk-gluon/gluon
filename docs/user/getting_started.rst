@@ -160,9 +160,9 @@ GLUON_WLAN_MESH
   meshing in the same image due to WLAN firmware restrictions.
 
   Setting GLUON_MESH_MESH to ``11s`` or ``ibss`` will enable generation of images for ath10k devices
-  and install the firmware for the corresponding WLAN mode. Especially setting to ``11s`` will also enable
-  the generation of images for targets they're able to run only AP with 11s, like ralink or mediatek.
-  Defaults to ``11s``.
+  and install the firmware for the corresponding WLAN mode. Specifically setting to ``11s`` will also
+  enable the generation of images for targets that are able to run only AP+11s but not AP+IBSS, like
+  ralink or mediatek. Defaults to ``11s``.
 
 GLUON_BRANCH
   Sets the default branch of the autoupdater. If unset, the autoupdater is disabled
