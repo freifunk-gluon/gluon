@@ -10,7 +10,7 @@ $(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(BROKEN),)
-  AP_11S=1
+GLUON_TARGET_11S_ONLY=1
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
 $(eval $(call GluonTarget,brcm2708,bcm2710)) # BROKEN: Untested
 $(eval $(call GluonTarget,ipq806x)) # BROKEN: Untested
@@ -19,10 +19,10 @@ $(eval $(call GluonTarget,sunxi)) # BROKEN: Untested
 endif
 
 ifeq ($(GLUON_WLAN_MESH),11s)
-  AP_11S=1
+GLUON_TARGET_11S_ONLY=1
 endif
 
-ifneq ($(AP_11S),)
+ifneq ($(GLUON_TARGET_11S_ONLY),)
 $(eval $(call GluonTarget,ramips,mt7620)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,ramips,mt7628)) # BROKEN: No AP+IBSS support
 $(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
