@@ -68,10 +68,10 @@ index e67b5e38561e841b88e486341950c52e1d454322..44b1c2837e8392596eed14b4bc0d7610
  arduino-yun)
  	ucidef_set_led_wlan "wlan" "WLAN" "arduino:blue:wlan" "phy0tpt"
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index 27a0266923743d4856919b9c8772a40e59febe83..b8452d79cb7f0f856f60ad3050cc9627d2536213 100755
+index 454abe6a5005621967dd96e0282e7bce2a0b127e..86ac949bca12561536ce2c8adb190eb004c162e4 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
-@@ -380,6 +380,7 @@ ar71xx_setup_interfaces()
+@@ -386,6 +386,7 @@ ar71xx_setup_interfaces()
  		ucidef_set_interface_wan "eth0"
  		ucidef_set_interface_raw "wlan" "wlan0" "dhcp"
  		;;

@@ -12,7 +12,7 @@ as a separate package.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index fdeda95a17cd463f0348bf0606ad40dde717d21f..54f752c802ae2125bf65415807e5b55b45d16190 100644
+index 3fcf20a84433eb1a41e970cd010cc414bb180fad..0813f2ae76e2a6b83b5d077b61010d13c1a50fee 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
 @@ -19,7 +19,9 @@ PKG_BUILD_DEPENDS:=usign/host
@@ -35,7 +35,7 @@ index fdeda95a17cd463f0348bf0606ad40dde717d21f..54f752c802ae2125bf65415807e5b55b
    TITLE:=Base filesystem for Lede
    URL:=http://openwrt.org/
    VERSION:=$(PKG_RELEASE)-$(REVISION)
-@@ -106,9 +108,16 @@ ifdef CONFIG_SIGNED_PACKAGES
+@@ -107,9 +109,16 @@ ifdef CONFIG_SIGNED_PACKAGES
    endef
  endif
  
@@ -435,7 +435,7 @@ index 0000000000000000000000000000000000000000..6bd2005344c081df20e5a330a69e49e3
 +	nand_upgrade_stage1
 +}
 diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
-index ea014b5b3461e1ed55fb272592a1c2be6535c2c8..64a78cc24ee9caf58ea140d161cad2b5742c2ebd 100644
+index 6c690e49f4a0312a8a6eed13ab36b8a67a485556..cf923618abbbbba475cb3599bfe66ef30b60cd48 100644
 --- a/package/system/procd/Makefile
 +++ b/package/system/procd/Makefile
 @@ -22,11 +22,9 @@ PKG_LICENSE_FILES:=
@@ -492,7 +492,7 @@ index ea014b5b3461e1ed55fb272592a1c2be6535c2c8..64a78cc24ee9caf58ea140d161cad2b5
  ifeq ($(CONFIG_PROCD_SHOW_BOOT),y)
    CMAKE_OPTIONS += -DSHOW_BOOT_ON_CONSOLE=1
  endif
-@@ -114,7 +94,7 @@ endif
+@@ -113,7 +93,7 @@ CMAKE_OPTIONS += -DSECCOMP_SUPPORT=$(SECCOMP) -DUTRACE_SUPPORT=$(SECCOMP)
  define Package/procd/install
  	$(INSTALL_DIR) $(1)/sbin $(1)/etc $(1)/lib/functions
  

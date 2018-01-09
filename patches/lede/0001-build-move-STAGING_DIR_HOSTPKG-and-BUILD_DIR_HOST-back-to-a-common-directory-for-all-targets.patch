@@ -47,7 +47,7 @@ index 5a403cbf41e2bbd6bdb843492639a01aff8cf75b..900dae1d4afc6007f8ac04179dd7f092
  
  define Build/Configure/Default
 diff --git a/include/host-build.mk b/include/host-build.mk
-index b5f1a6bfa79f5a2a7b442506d72b6192191018a2..cb0d60fd7c5930a3a71f00e70bf25340c98f5744 100644
+index 5fcec7ebf48361100d29c5925beaae4f36d5ac7b..485f09a6b71b881692b5ee575927397259bbac24 100644
 --- a/include/host-build.mk
 +++ b/include/host-build.mk
 @@ -126,7 +126,7 @@ ifneq ($(if $(HOST_QUILT),,$(CONFIG_AUTOREBUILD)),)
@@ -60,7 +60,7 @@ index b5f1a6bfa79f5a2a7b442506d72b6192191018a2..cb0d60fd7c5930a3a71f00e70bf25340
    $(1) : export PKG_CONFIG_PATH=$$(STAGING_DIR_HOST)/lib/pkgconfig:$$(HOST_BUILD_PREFIX)/lib/pkgconfig
    $(1) : export PKG_CONFIG_LIBDIR=$$(HOST_BUILD_PREFIX)/lib/pkgconfig
 diff --git a/include/package.mk b/include/package.mk
-index 32485176577b040f6e4a561c5d1144509877bcdf..ea801288eadb139cc0dd2412b4c927c6bd7330e0 100644
+index e9989ab13ec81a8751ee7245639ee0b82b9a87b2..7f77c4e99b1e9b79503963c497c4c87d7af9d71a 100644
 --- a/include/package.mk
 +++ b/include/package.mk
 @@ -130,7 +130,7 @@ ifdef USE_SOURCE_DIR
@@ -73,10 +73,10 @@ index 32485176577b040f6e4a561c5d1144509877bcdf..ea801288eadb139cc0dd2412b4c927c6
    $(1) : export PATH=$$(TARGET_PATH_PKG)
    $(1) : export CONFIG_SITE:=$$(CONFIG_SITE)
 diff --git a/rules.mk b/rules.mk
-index 04fd936660bef4af49de5500cd2d7c3601c1b9f6..95b18f9e5c69de479db54c5bdb740103140dcf74 100644
+index 5710a84fe7ad24e45acb2ef62ee29eab37e8de06..b678e9bea5bc146a3c515d93003415cd21882068 100644
 --- a/rules.mk
 +++ b/rules.mk
-@@ -145,9 +145,9 @@ STAGING_DIR_ROOT:=$(STAGING_DIR)/root-$(BOARD)
+@@ -147,9 +147,9 @@ STAGING_DIR_ROOT:=$(STAGING_DIR)/root-$(BOARD)
  BUILD_LOG_DIR:=$(TOPDIR)/logs
  PKG_INFO_DIR := $(STAGING_DIR)/pkginfo
  
@@ -88,7 +88,7 @@ index 04fd936660bef4af49de5500cd2d7c3601c1b9f6..95b18f9e5c69de479db54c5bdb740103
  
  TARGET_PATH:=$(subst $(space),:,$(filter-out .,$(filter-out ./,$(subst :,$(space),$(PATH)))))
  TARGET_INIT_PATH:=$(call qstrip,$(CONFIG_TARGET_INIT_PATH))
-@@ -206,7 +206,7 @@ ifndef DUMP
+@@ -208,7 +208,7 @@ ifndef DUMP
      endif
    endif
  endif
@@ -97,7 +97,7 @@ index 04fd936660bef4af49de5500cd2d7c3601c1b9f6..95b18f9e5c69de479db54c5bdb740103
  
  ifeq ($(CONFIG_SOFT_FLOAT),y)
    SOFT_FLOAT_CONFIG_OPTION:=--with-float=soft
-@@ -232,9 +232,9 @@ export PKG_CONFIG
+@@ -234,9 +234,9 @@ export PKG_CONFIG
  
  HOSTCC:=gcc
  HOSTCXX:=g++
