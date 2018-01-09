@@ -61,6 +61,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    package/gluon-ebtables-segment-mld
    package/gluon-ebtables-source-filter
    package/gluon-web-admin
+   package/gluon-web-logging
 
 .. toctree::
    :caption: Releases
