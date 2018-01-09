@@ -12,9 +12,9 @@ $(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(GLUON_WLAN_MESH_11s)$(BROKEN),)
-$(eval $(call GluonTarget,ramips,mt7620)) # BROKEN: No AP+IBSS support
-$(eval $(call GluonTarget,ramips,mt7628)) # BROKEN: No AP+IBSS support
-$(eval $(call GluonTarget,ramips,rt305x)) # BROKEN: No AP+IBSS support
+$(eval $(call GluonTarget,ramips,mt7620))
+$(eval $(call GluonTarget,ramips,mt7628))
+$(eval $(call GluonTarget,ramips,rt305x))
 endif
 
 ifneq ($(BROKEN),)
