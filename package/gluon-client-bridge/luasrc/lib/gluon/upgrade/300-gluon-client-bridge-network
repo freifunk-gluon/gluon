@@ -17,7 +17,7 @@ if type(interfaces) == 'string' then
 	end
 end
 
-if sysconfig.lan_ifname and not ifname and not uci:get_bool('network', 'mesh_lan', 'auto') then
+if sysconfig.lan_ifname and uci:get_bool('network', 'mesh_lan', 'disabled') then
 	for lanif in sysconfig.lan_ifname:gmatch('%S+') do
 		util.add_to_set(interfaces, lanif)
 	end

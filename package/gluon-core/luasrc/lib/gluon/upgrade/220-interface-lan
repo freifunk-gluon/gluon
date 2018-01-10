@@ -21,24 +21,27 @@ uci:section('network', 'interface', 'mesh_lan', {
 	legacy        = old_proto == 'gluon_mesh',
 })
 
-if uci:get('network', 'mesh_lan', 'auto') == nil then
-	local enable = site.mesh_on_lan(false)
+local enable = site.mesh_on_lan(false)
+local old_auto = uci:get('network', 'mesh_lan', 'auto')
+local old_disabled = uci:get('network', 'mesh_lan', 'disabled')
+if old_auto ~= nil or old_disabled ~= nil then
+	enable = old_auto ~= '0' and old_disabled ~= '1'
+end
 
-	if enable then
-		local interfaces = uci:get_list('network', 'client', 'ifname')
+if enable then
+	local interfaces = uci:get_list('network', 'client', 'ifname')
 
-		if interfaces then
-			for lanif in sysconfig.lan_ifname:gmatch('%S+') do
-				if util.contains(interfaces, lanif) then
-					enable = false
-					break
-				end
+	if interfaces then
+		for lanif in sysconfig.lan_ifname:gmatch('%S+') do
+			if util.contains(interfaces, lanif) then
+				enable = false
+				break
 			end
 		end
 	end
-
-	uci:set('network', 'mesh_lan', 'auto', enable)
 end
+
+uci:set('network', 'mesh_lan', 'disabled', not enable)
 
 if uci:get('network', 'mesh_lan', 'transitive') == nil then
 	uci:set('network', 'mesh_lan', 'transitive', true)
@@ -47,6 +50,7 @@ if uci:get('network', 'mesh_lan', 'legacy') == nil then
 	uci:set('network', 'mesh_lan', 'legacy', old_proto == 'gluon_mesh')
 end
 
+uci:delete('network', 'mesh_lan', 'auto')
 uci:delete('network', 'mesh_lan', 'fixed_mtu')
 
 uci:save('network')

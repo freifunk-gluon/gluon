@@ -32,12 +32,12 @@ Mesh-on-WAN
 
 It's possible to enable Mesh-on-WAN like this::
 
-  uci set network.mesh_wan.auto=1
+  uci set network.mesh_wan.disabled=0
   uci commit network
 
 It may be disabled by running::
 
-  uci set network.mesh_wan.auto=0
+  uci set network.mesh_wan.disabled=1
   uci commit network
 
 
@@ -46,7 +46,7 @@ Mesh-on-LAN
 
 Configuring Mesh-on-LAN is a bit more complicated::
 
-  uci set network.mesh_lan.auto=1
+  uci set network.mesh_lan.disabled=0
   for ifname in $(cat /lib/gluon/core/sysconfig/lan_ifname); do
     uci del_list network.client.ifname=$ifname
   done
@@ -54,7 +54,7 @@ Configuring Mesh-on-LAN is a bit more complicated::
 
 It may be disabled by running::
 
-  uci set network.mesh_lan.auto=0
+  uci set network.mesh_lan.disabled=1
   for ifname in $(cat /lib/gluon/core/sysconfig/lan_ifname); do
     uci add_list network.client.ifname=$ifname
   done

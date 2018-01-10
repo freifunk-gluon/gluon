@@ -11,9 +11,14 @@ uci:section('network', 'interface', 'mesh_wan', {
 	index  = 0,
 })
 
-if uci:get('network', 'mesh_wan', 'auto') == nil then
-	uci:set('network', 'mesh_wan', 'auto', site.mesh_on_wan(false))
+local enable = site.mesh_on_wan(false)
+local old_auto = uci:get('network', 'mesh_wan', 'auto')
+local old_disabled = uci:get('network', 'mesh_wan', 'disabled')
+if old_auto ~= nil or old_disabled ~= nil then
+	enable = old_auto ~= '0' and old_disabled ~= '1'
 end
+uci:set('network', 'mesh_wan', 'disabled', not enable)
+
 if uci:get('network', 'mesh_wan', 'transitive') == nil then
 	uci:set('network', 'mesh_wan', 'transitive', true)
 end
@@ -21,6 +26,7 @@ if uci:get('network', 'mesh_wan', 'legacy') == nil then
 	uci:set('network', 'mesh_wan', 'legacy', old_proto == 'gluon_mesh')
 end
 
+uci:delete('network', 'mesh_wan', 'auto')
 uci:delete('network', 'mesh_wan', 'fixed_mtu')
 
 uci:save('network')

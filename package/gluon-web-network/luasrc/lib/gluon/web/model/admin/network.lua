@@ -77,10 +77,10 @@ end
 local s = f:section(Section)
 
 local mesh_wan = s:option(Flag, "mesh_wan", translate("Enable meshing on the WAN interface"))
-mesh_wan.default = uci:get_bool("network", "mesh_wan", "auto")
+mesh_wan.default = not uci:get_bool("network", "mesh_wan", "disabled")
 
 function mesh_wan:write(data)
-	uci:set("network", "mesh_wan", "auto", data)
+	uci:set("network", "mesh_wan", "disabled", not data)
 end
 
 local mesh_wan_legacy = s:option(Flag, "mesh_wan_legacy", translate("Use legacy mode for WAN meshing"))
@@ -95,10 +95,10 @@ if sysconfig.lan_ifname then
 	local s = f:section(Section)
 
 	local mesh_lan = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
-	mesh_lan.default = uci:get_bool("network", "mesh_lan", "auto")
+	mesh_lan.default = not uci:get_bool("network", "mesh_lan", "disabled")
 
 	function mesh_lan:write(data)
-		uci:set("network", "mesh_lan", "auto", data)
+		uci:set("network", "mesh_lan", "disabled", not data)
 
 		local interfaces = uci:get_list("network", "client", "ifname")
 
