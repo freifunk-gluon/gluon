@@ -210,7 +210,7 @@ ar71xx-generic
   - My Net N750
 
 .. [#ath10k]
-  Device uses the ath10k WLAN driver; no image is built unless GLUON_ATH10K_MESH
+  Device uses the ath10k WLAN driver; images are built for 11s by default unless GLUON_WLAN_MESH
   is set as described in :ref:`getting-started-make-variables`
 
 ar71xx-nand

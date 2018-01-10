@@ -155,13 +155,14 @@ usually be set on the command line or in ``site.mk``.
 Common variables
 ................
 
-GLUON_ATH10K_MESH
-  While Gluon does support some hardware with ath10k-based 5GHz WLAN, these WLAN adapters don't work
-  well for meshing at the moment, so building images for these models is disabled by default. In addition,
-  ath10k can't support IBSS and 11s meshing in the same image due to WLAN firmware restrictions.
+GLUON_WLAN_MESH
+  While Gluon does support some hardware with ath10k-based 5GHz WLAN. ath10k can't support IBSS and 11s
+  meshing in the same image due to WLAN firmware restrictions.
 
-  Setting GLUON_ATH10K_MESH to ``11s`` or ``ibss`` will enable generation of images for ath10k devices
-  and install the firmware for the corresponding WLAN mode.
+  Setting GLUON_MESH_MESH to ``11s`` or ``ibss`` will enable generation of images for ath10k devices
+  and install the firmware for the corresponding WLAN mode. Specifically setting to ``11s`` will also
+  enable the generation of images for targets that are able to run only AP+11s but not AP+IBSS, like
+  ralink or mediatek. Defaults to ``11s``.
 
 GLUON_BRANCH
   Sets the default branch of the autoupdater. If unset, the autoupdater is disabled
