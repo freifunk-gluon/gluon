@@ -413,6 +413,11 @@ GLUON_LANGS
     List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
 
+GLUON_WLAN_MESH
+  Setting this to ``11s`` or ``ibss`` will enable generation of matching images for devices which don't
+  support both meshing modes, either at all (e.g. ralink and mediatek don't support AP+IBSS) or in the
+  same firmware (ath10k-based 5GHz). Defaults to ``11s``.
+
 Features
 ^^^^^^^^
 
