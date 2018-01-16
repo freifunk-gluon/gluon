@@ -192,6 +192,18 @@ device tp-link-archer-c25-v1 archer-c25-v1 # instability with 5GHz mesh in some 
 packages $ATH10K_PACKAGES_QCA9887
 fi
 
+if [ "$BROKEN" ]; then
+device tp-link-archer-c58-v1 archer-c58-v1
+fi
+
+if [ "$BROKEN" ] || [ "$GLUON_WLAN_MESH" = '11s' ]; then
+device tp-link-archer-c59-v1 archer-c59-v1 
+fi
+
+if [ "$BROKEN" ]; then
+device tp-link-archer-c60-v1 archer-c60-v1
+fi
+
 device tp-link-re450 re450
 packages $ATH10K_PACKAGES
 fi
