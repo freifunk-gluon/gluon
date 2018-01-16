@@ -40,11 +40,16 @@ local autoupdater_util = require 'autoupdater.util'
 autoupdater_util.randomseed()
 
 
--- Perform updates at a random time between 04:00 and 05:00, and once an hour
--- a fallback update (used after the regular updates haven't worked for
--- (priority+1) days after a firmware release, for example because the node
--- is always offline at night)
-local minute = math.random(0, 59)
+-- Perform updates at a random time between 04:00 and 05:00 in case no specific
+-- time is specified (gluon.autoupdater.minute), and once an hour a fallback
+-- update (used after the regular updates haven't worked for (priority+1) days
+-- after a firmware release, for example because the node is always offline at
+-- night)
+if not uci:get('gluon', 'autoupdater') then
+	uci:section('gluon', 'autoupdater', 'autoupdater')
+	uci:save('gluon')
+end
+local minute = uci:get('gluon', 'autoupdater', 'minute') or math.random(0, 59)
 
 local f = io.open('/usr/lib/micron.d/autoupdater', 'w')
 f:write(string.format('%i 4 * * * /usr/sbin/autoupdater\n', minute))
