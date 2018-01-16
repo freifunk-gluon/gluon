@@ -36,9 +36,10 @@ uci:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
 uci:save('autoupdater')
 
 
-local autoupdater_util = require 'autoupdater.util'
-autoupdater_util.randomseed()
-
+local urandom = io.open('/dev/urandom', 'r')
+local seed1, seed2 = urandom:read(2):byte(1, 2)
+math.randomseed(seed1*0x100 + seed2)
+urandom:close()
 
 -- Perform updates at a random time between 04:00 and 05:00, and once an hour
 -- a fallback update (used after the regular updates haven't worked for
