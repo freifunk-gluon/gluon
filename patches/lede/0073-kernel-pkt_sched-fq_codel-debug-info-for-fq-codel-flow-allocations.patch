@@ -1,0 +1,96 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 2 Jan 2018 19:32:58 +0100
+Subject: kernel: pkt_sched: fq_codel: debug info for fq codel flow allocations
+
+diff --git a/target/linux/generic/patches-4.4/665-0001-pkt_sched-fq_codel-debug-info-for-fq-codel-flow-allo.patch b/target/linux/generic/patches-4.4/665-0001-pkt_sched-fq_codel-debug-info-for-fq-codel-flow-allo.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f679b2bf226efa2250cf8f3b8be054c7aea3872c
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/665-0001-pkt_sched-fq_codel-debug-info-for-fq-codel-flow-allo.patch
+@@ -0,0 +1,86 @@
++From 55d3a297b281ba679aff86b8a3ad6f4f7cbc43a6 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 2 Jan 2018 19:29:17 +0100
++Subject: [PATCH 1/2] pkt_sched: fq_codel: debug info for fq codel flow
++ allocations
++
++This patch adds some debug output for fq codel flow allocations.
++It also prevents allocating them via vmalloc, only allowing kmalloc.
++---
++ net/sched/sch_fq_codel.c | 36 +++++++++++++++++++++++++++++++++---
++ 1 file changed, 33 insertions(+), 3 deletions(-)
++
++diff --git a/net/sched/sch_fq_codel.c b/net/sched/sch_fq_codel.c
++index 0e211d729d43..aac564433d40 100644
++--- a/net/sched/sch_fq_codel.c
+++++ b/net/sched/sch_fq_codel.c
++@@ -25,6 +25,15 @@
++ #include <net/pkt_sched.h>
++ #include <net/codel.h>
++ 
+++
+++static inline char *SCH_DEV_NAME(struct Qdisc *sch)
+++{
+++	if (sch && sch->dev_queue && sch->dev_queue->dev && sch->dev_queue->dev->name)
+++		return sch->dev_queue->dev->name;
+++	else
+++		return "<unknown>";
+++}
+++
++ /*	Fair Queue CoDel.
++  *
++  * Principles :
++@@ -443,15 +452,23 @@ static int fq_codel_change(struct Qdisc *sch, struct nlattr *opt)
++ 
++ static void *fq_codel_zalloc(size_t sz)
++ {
++-	void *ptr = kzalloc(sz, GFP_KERNEL | __GFP_NOWARN);
+++	void *ptr = kzalloc(sz, GFP_KERNEL);
+++//	void *ptr = kzalloc(sz, GFP_KERNEL | __GFP_NOWARN);
++ 
++-	if (!ptr)
++-		ptr = vzalloc(sz);
+++	printk("~~~ %s: Allocating, sz: %lu\n", __func__, sz);
+++	if (ptr)
+++                printk("~~~ %s: Allocated at: %p\n", __func__, ptr);
+++        else
+++                printk("~~~ %s: Allocation failed\n", __func__);
+++
+++//	if (!ptr)
+++//		ptr = vzalloc(sz);
++ 	return ptr;
++ }
++ 
++ static void fq_codel_free(void *addr)
++ {
+++	printk("~~~ %s: Freeing memory at %p\n", __func__, addr);
++ 	kvfree(addr);
++ }
++ 
++@@ -488,10 +505,23 @@ static int fq_codel_init(struct Qdisc *sch, struct nlattr *opt)
++ 	}
++ 
++ 	if (!q->flows) {
+++		printk("~~~ %s: %s: Calling fq_codel_zalloc() with sz: %lu (cnt: %u, szof(): %lu) for flows\n",
+++		       __func__,
+++		       SCH_DEV_NAME(sch),
+++		       q->flows_cnt * sizeof(struct fq_codel_flow),
+++		       q->flows_cnt, sizeof(struct fq_codel_flow));
+++
++ 		q->flows = fq_codel_zalloc(q->flows_cnt *
++ 					   sizeof(struct fq_codel_flow));
++ 		if (!q->flows)
++ 			return -ENOMEM;
+++
+++		printk("~~~ %s: %s: Calling fq_codel_zalloc() with sz: %lu (cnt: %u, szof(): %lu) for backlogs\n",
+++		       __func__,
+++		       SCH_DEV_NAME(sch),
+++		       q->flows_cnt * sizeof(u32),
+++		       q->flows_cnt, sizeof(u32));
+++
++ 		q->backlogs = fq_codel_zalloc(q->flows_cnt * sizeof(u32));
++ 		if (!q->backlogs) {
++ 			fq_codel_free(q->flows);
++-- 
++2.11.0
++

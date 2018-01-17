@@ -1,0 +1,91 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 2 Jan 2018 19:32:25 +0100
+Subject: kernel: pkt_sched: fq: debug info for fq hash maps
+
+diff --git a/target/linux/generic/patches-4.4/664-pkt_sched-fq-debug-info-for-fq-hash-maps.patch b/target/linux/generic/patches-4.4/664-pkt_sched-fq-debug-info-for-fq-hash-maps.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..e323590eacfdaeed886d6e39dc82250e089101cb
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/664-pkt_sched-fq-debug-info-for-fq-hash-maps.patch
+@@ -0,0 +1,81 @@
++From 9ce795f42a2f69cf60176b310052c256b678a94c Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 2 Jan 2018 00:51:19 +0100
++Subject: [PATCH] pkt_sched: fq: debug info for fq hash maps
++
++By default, the hash map itself (excluding any items) is
++allocated with 1024 entries of usually about 12 byte per entry
++on 32Bit architectures (rb_root/rb_node). The code dynamically
++resizes the hash maps and also up to 256*1024 entries, so usually
++~3MB on 32B.
++
++This patch addes some debug output for hash map resizing and
++allocations. It also prevents allocating the hash maps via vmalloc,
++only allowing kmalloc.
++---
++ net/sched/sch_fq.c | 21 ++++++++++++++++-----
++ 1 file changed, 16 insertions(+), 5 deletions(-)
++
++diff --git a/net/sched/sch_fq.c b/net/sched/sch_fq.c
++index 3c6a47d66a04..a476165fa347 100644
++--- a/net/sched/sch_fq.c
+++++ b/net/sched/sch_fq.c
++@@ -599,14 +599,20 @@ static void *fq_alloc_node(size_t sz, int node)
++ {
++ 	void *ptr;
++ 
++-	ptr = kmalloc_node(sz, GFP_KERNEL | __GFP_REPEAT | __GFP_NOWARN, node);
++-	if (!ptr)
++-		ptr = vmalloc_node(sz, node);
+++	printk("~~~ %s: Allocating, sz: %lu\n", __func__, sz);
+++	ptr = kmalloc_node(sz, GFP_KERNEL, node);
+++        if (ptr)
+++                printk("~~~ %s: Allocated at: %p\n", __func__, ptr);
+++        else
+++                printk("~~~ %s: Allocation failed\n", __func__);
+++//	if (!ptr)
+++//		ptr = vmalloc_node(sz, node);
++ 	return ptr;
++ }
++ 
++ static void fq_free(void *addr)
++ {
+++	printk("~~~ %s: Freeing memory at %p\n", __func__, addr);
++ 	kvfree(addr);
++ }
++ 
++@@ -620,6 +626,7 @@ static int fq_resize(struct Qdisc *sch, u32 log)
++ 	if (q->fq_root && log == q->fq_trees_log)
++ 		return 0;
++ 
+++	printk("~~~ %s: sizeof(struct rb_root): %lu, log: %u\n", __func__, sizeof(struct rb_root), log);
++ 	/* If XPS was setup, we can allocate memory on right NUMA node */
++ 	array = fq_alloc_node(sizeof(struct rb_root) << log,
++ 			      netdev_queue_numa_node_read(sch->dev_queue));
++@@ -729,6 +736,7 @@ static int fq_change(struct Qdisc *sch, struct nlattr *opt)
++ 
++ 	if (!err) {
++ 		sch_tree_unlock(sch);
+++		printk("~~~ %s: Calling fq_resize() with log %lu\n", __func__, fq_log);
++ 		err = fq_resize(sch, fq_log);
++ 		sch_tree_lock(sch);
++ 	}
++@@ -776,10 +784,13 @@ static int fq_init(struct Qdisc *sch, struct nlattr *opt)
++ 	q->orphan_mask		= 1024 - 1;
++ 	qdisc_watchdog_init(&q->watchdog, sch);
++ 
++-	if (opt)
+++	if (opt) {
+++		printk("~~~ %s: Calling fq_change\n", __func__);
++ 		err = fq_change(sch, opt);
++-	else
+++	} else {
+++		printk("~~~ %s: Calling fq_resize with log %lu\n", __func__, q->fq_trees_log);
++ 		err = fq_resize(sch, q->fq_trees_log);
+++	}
++ 
++ 	return err;
++ }
++-- 
++2.11.0
++
