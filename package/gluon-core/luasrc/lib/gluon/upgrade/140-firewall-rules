@@ -3,6 +3,10 @@
 local uci = require('simple-uci').cursor()
 
 
+local defaults = uci:get_first('firewall', 'defaults')
+uci:set('firewall', defaults, 'input', 'REJECT')
+
+
 local function reject_input_on_wan(zone)
 	if zone.name == 'wan' then
 		uci:set('firewall', zone['.name'], 'input', 'REJECT')
