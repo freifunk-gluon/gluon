@@ -42,4 +42,18 @@ struct json_object * gluonutil_wrap_and_free_string(char *str);
 
 struct json_object * gluonutil_load_site_config(void);
 
+/**
+ * Get selected domain code
+ *
+ * - If NULL is passed to the site parameter, internally only the base part
+ *   (without domain config) is loaded, which is more efficient than calling
+ *   gluonutil_load_site_config() for this job only. Nevertheless if you already
+ *   have an instance of a site object then you should pass it here.
+ * - Returned domain code string has to be freed after use
+ * - Returns NULL in case of error
+ * - If a domain code is returned, it's ensured that the corresponding config
+ *   in /lib/gluon/domains/ exists.
+ */
+char * gluonutil_get_selected_domain_code(struct json_object * site);
+
 #endif /* _LIBGLUON_LIBGLUON_H_ */

@@ -122,7 +122,7 @@ function node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
-function site_seed_bytes(key, length)
+function domain_seed_bytes(key, length)
 	local ret = ''
 	local v = ''
 	local i = 0
@@ -131,7 +131,7 @@ function site_seed_bytes(key, length)
 	-- cryptographic strength
 	while ret:len() < 2*length do
 		i = i + 1
-		v = hash.md5(v .. key .. site.site_seed():lower() .. i)
+		v = hash.md5(v .. key .. site.domain_seed():lower() .. i)
 		ret = ret .. v
 	end
 
