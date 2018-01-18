@@ -9,6 +9,7 @@ PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include ../gluon.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 
 define Package/gluon-core
@@ -24,16 +25,20 @@ define Package/gluon-core/description
 	Gluon community wifi mesh firmware framework: core
 endef
 
-define Build/Configure
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
+	$(call Build/Compile/Default,all)
 	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 endef
 
 define Package/gluon-core/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
+	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo '$(GLUON_VERSION)' > $(1)/lib/gluon/gluon-version
