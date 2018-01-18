@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 util = require 'gluon.util'
 fs = require 'nixio.fs'
-json = require 'luci.jsonc'
+json = require 'jsonc'
 ubus = require 'ubus'
 
 io.write("Access-Control-Allow-Origin: *\n")

@@ -16,7 +16,7 @@ define Package/gluon-web
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Minimal Lua web framework derived from LuCI
-  DEPENDS:=+luci-lib-jsonc +luci-lib-nixio
+  DEPENDS:=+lua-jsonc +luci-lib-nixio
 endef
 
 define lang-config

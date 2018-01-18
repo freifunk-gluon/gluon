@@ -4,7 +4,7 @@
 -- Licensed to the public under the Apache License 2.0.
 
 local fs = require "nixio.fs"
-local json = require "luci.jsonc"
+local json = require "jsonc"
 local tpl = require "gluon.web.template"
 local util = require "gluon.web.util"
 local proto = require "gluon.web.http.protocol"
