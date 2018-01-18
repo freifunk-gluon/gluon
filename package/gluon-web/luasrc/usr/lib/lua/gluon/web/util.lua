@@ -5,7 +5,6 @@
 local io = require "io"
 local table = require "table"
 local tparser = require "gluon.web.template.parser"
-local json = require "luci.jsonc"
 local nixio = require "nixio"
 local fs = require "nixio.fs"
 
@@ -92,8 +91,6 @@ function uniqueid(bytes)
 	local rand = fs.readfile("/dev/urandom", bytes)
 	return nixio.bin.hexlify(rand)
 end
-
-serialize_json = json.stringify
 
 function libpath()
 	return '/lib/gluon/web'

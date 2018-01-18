@@ -4,6 +4,7 @@
 -- Licensed to the public under the Apache License 2.0.
 
 local fs = require "nixio.fs"
+local json = require "luci.jsonc"
 local tpl = require "gluon.web.template"
 local util = require "gluon.web.util"
 local proto = require "gluon.web.http.protocol"
@@ -126,7 +127,7 @@ function dispatch(http, request)
 		end
 
 		if type(val) == "table" then
-			val = util.serialize_json(val)
+			val = json.stringify(val)
 		end
 
 		return string.format(' %s="%s"', key, util.pcdata(tostring(val)))
