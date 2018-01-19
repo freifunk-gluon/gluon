@@ -6,6 +6,11 @@ if [ "$BROKEN" ]; then
 device d-link-dir-860l-b1 dir-860l-b1
 
 
+## Netgear
+
+device netgear-wndr3700v5 wndr3700v5 # untested
+
+
 ## ZBT
 
 device zbt-wg3526 zbt-wg3526
