@@ -16,6 +16,10 @@ local function array_to_string(array)
 end
 
 local function var_error(path, val, msg)
+	if type(val) == 'string' then
+		val = string.format('%q', val)
+	end
+
 	print(string.format('*** site.conf error: expected %s to %s, but it is %s', path_to_string(path), msg, tostring(val)))
 	os.exit(1)
 end
