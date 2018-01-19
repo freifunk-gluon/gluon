@@ -3,15 +3,21 @@ PKG_BUILD_DEPENDS += luci-base/host
 
 include $(INCLUDE_DIR)/package.mk
 
+
 # Annoyingly, make's shell function replaces all newlines with spaces, so we have to do some escaping work. Yuck.
+shell-escape = $(shell $(1) | sed -ne '1h; 1!H; $$ {g; s/@/@1/g; s/\n/@2/g; p}')
+shell-unescape = $(subst @1,@,$(subst @2,$(newline),$(1)))
+shell-verbatim = $(call shell-unescape,$(call shell-escape,$(1)))
+
+
 define GluonCheckSite
-[ -z "$$IPKG_INSTROOT" ] || sed -e 's/-@/\n/g' -e 's/+@/@/g' <<'END__GLUON__CHECK__SITE' | "${TOPDIR}/staging_dir/hostpkg/bin/lua" -e 'dofile()'
+[ -z "$$IPKG_INSTROOT" ] || "${TOPDIR}/staging_dir/hostpkg/bin/lua" -e 'dofile()' <<'END__GLUON__CHECK__SITE'
 local f = assert(io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json'))
 local site_json = f:read('*a')
 f:close()
 
 site = require('cjson').decode(site_json)
-$(shell cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)' | sed -ne '1h; 1!H; $$ {g; s/@/+@/g; s/\n/-@/g; p}')
+$(call shell-verbatim,cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)')
 END__GLUON__CHECK__SITE
 endef
 
