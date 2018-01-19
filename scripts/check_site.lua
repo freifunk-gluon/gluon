@@ -1,3 +1,15 @@
+local cjson = require 'cjson'
+
+local function load_json(filename)
+	local f = assert(io.open(filename))
+	local json = cjson.decode(f:read('*a'))
+	f:close()
+	return json
+end
+
+local site = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json')
+
+
 function in_site(var)
 	return var
 end
@@ -170,3 +182,6 @@ end
 function need_array_of(path, array, required)
 	return need_array(path, function(e) need_one_of(e, array) end, required)
 end
+
+
+dofile()

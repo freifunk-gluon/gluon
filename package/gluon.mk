@@ -11,13 +11,8 @@ shell-verbatim = $(call shell-unescape,$(call shell-escape,$(1)))
 
 
 define GluonCheckSite
-[ -z "$$IPKG_INSTROOT" ] || "${TOPDIR}/staging_dir/hostpkg/bin/lua" -e 'dofile()' <<'END__GLUON__CHECK__SITE'
-local f = assert(io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json'))
-local site_json = f:read('*a')
-f:close()
-
-site = require('cjson').decode(site_json)
-$(call shell-verbatim,cat '$(TOPDIR)/../scripts/check_site_lib.lua' '$(1)')
+[ -z "$$IPKG_INSTROOT" ] || "${TOPDIR}/staging_dir/hostpkg/bin/lua" "${TOPDIR}/../scripts/check_site.lua" <<'END__GLUON__CHECK__SITE'
+$(call shell-verbatim,cat '$(1)')
 END__GLUON__CHECK__SITE
 endef
 
