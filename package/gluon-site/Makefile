@@ -2,13 +2,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-site
 
-GLUON_SITEDIR = '$(call qstrip,$(CONFIG_GLUON_SITEDIR))'
-GLUON_SITE_VERSION = $(shell ( cd $(GLUON_SITEDIR) && git --git-dir=.git describe --always --dirty=+ ) 2>/dev/null || echo unknown)
+GLUON_SITEDIR = $(call qstrip,$(CONFIG_GLUON_SITEDIR))
+GLUON_SITE_VERSION = $(shell ( cd '$(GLUON_SITEDIR)' && git --git-dir=.git describe --always --dirty=+ ) 2>/dev/null || echo unknown)
 PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
 
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR
-PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/i18n/
+PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
@@ -37,20 +37,21 @@ config GLUON_SITEDIR
 endef
 
 define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
+	mkdir -p $(PKG_BUILD_DIR)/domains
 endef
 
 define Build/Compile
-	GLUON_SITEDIR='$(call qstrip,$(CONFIG_GLUON_SITEDIR))' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > $(PKG_BUILD_DIR)/site.json
+	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
+		GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(conf).conf' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > '$(PKG_BUILD_DIR)/$(conf).json'
+	)
+
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
+	$(CP) $(PKG_BUILD_DIR)/domains $(1)/lib/gluon/
 	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
 

@@ -95,6 +95,11 @@ CheckTarget := [ '$(LEDE_TARGET)' ] \
 
 CheckExternal := test -d lede || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
+define CheckSite
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) scripts/site_config.lua \
+		|| (echo 'Your site configuration ($(1).conf) did not pass validation.'; false)
+
+endef
 
 list-targets: FORCE
 	@$(foreach target,$(GLUON_TARGETS),echo '$(target)';)
@@ -139,8 +144,7 @@ $(LUA):
 prepare-target: config $(LUA) ;
 
 all: prepare-target
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' $(LUA) scripts/site_config.lua \
-                || (echo 'Your site configuration did not pass validation.'; false)
+	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),$(call CheckSite,$(conf)))
 
 	@scripts/clean_output.sh
 	+@$(LEDEMAKE)
