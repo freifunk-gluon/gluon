@@ -36,6 +36,10 @@ device tp-link-tl-wa801n-nd-v1 tl-wa801nd-v1
 device tp-link-tl-wa801n-nd-v2 tl-wa801nd-v2
 device tp-link-tl-wa801n-nd-v3 tl-wa801nd-v3
 
+if [ "$BROKEN" ]; then
+device tp-link-tl-wr802n-v1 tl-wr802n-v1 # untested
+fi
+
 device tp-link-tl-wr841n-nd-v3 tl-wr841-v3
 device tp-link-tl-wr841n-nd-v5 tl-wr841-v5
 device tp-link-tl-wr841n-nd-v7 tl-wr841-v7
