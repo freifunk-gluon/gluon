@@ -1,5 +1,20 @@
 need_string(in_site({'site_code'}))
 need_string(in_site({'site_name'}))
+
+-- this_domain() returns nil when multidomain support is disabled
+if this_domain() then
+	function need_domain_name(path)
+		need_string(path)
+		need(path, function(default_domain)
+			local f = io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/domains/' .. default_domain .. '.json')
+			if not f then return false end
+			f:close()
+			return true
+		end, nil, 'be a valid domain name')
+	end
+	need_domain_name(in_site({'default_domain'}))
+end
+
 need_string_match(in_domain({'domain_seed'}), '^' .. ('%x'):rep(64) .. '$')
 
 need_string({'opkg', 'lede'}, false)

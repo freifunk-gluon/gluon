@@ -18,6 +18,10 @@ function in_domain(var)
 	return var
 end
 
+function this_domain()
+	return nil
+end
+
 
 local function path_to_string(path)
 	return table.concat(path, '/')
