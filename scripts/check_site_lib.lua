@@ -1,3 +1,12 @@
+function in_site(var)
+   return var
+end
+
+function in_domain(var)
+   return var
+end
+
+
 local function loadvar(varname)
    local ok, val = pcall(assert(loadstring('return site.' .. varname)))
    if ok then
