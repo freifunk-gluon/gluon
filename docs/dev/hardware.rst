@@ -7,21 +7,19 @@ Hardware requirements
 ---------------------
 Having an ath9k (or ath10k) based WLAN adapter is highly recommended,
 although other chipsets may also work. VAP (multiple SSID) support
-is a requirement. At the moment, Gluon's scripts can't handle devices
-without WLAN adapters (although such environments may also be interesting,
-e.g. for automated testing in virtual machines).
+is a requirement.
 
 
 .. _hardware-adding-profiles:
 
 Adding profiles
 ---------------
-The vast majority of devices with ath9k WLAN uses the ar71xx target of LEDE.
-If the hardware you want to add support for is also ar71xx, adding a new profile
-is enough.
+The vast majority of devices with ath9k WLAN is based on the ar71xx target of LEDE.
+If the hardware you want to add support for is ar71xx, adding a new profile
+is sufficient.
 
 Profiles are defined in ``targets/*`` in a shell-based DSL (so common shell
-commands syntax like ``if`` can be used.
+command syntax like ``if`` can be used).
 
 The ``device`` command is used to define an image build for a device. It takes
 two or three parameters.
