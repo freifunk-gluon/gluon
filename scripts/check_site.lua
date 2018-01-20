@@ -63,19 +63,6 @@ local function merge(a, b)
 end
 
 
-function in_site(var)
-	return var
-end
-
-function in_domain(var)
-	return var
-end
-
-function this_domain()
-	return domain_code
-end
-
-
 local function path_to_string(path)
 	return table.concat(path, '/')
 end
@@ -115,6 +102,27 @@ local function var_error(path, val, msg)
 	end
 
 	exit_error(src, 'expected %s to %s, but it is %s', path_to_string(path), msg, tostring(val))
+end
+
+
+function in_site(path)
+	if has_domains and loadpath(nil, domain, unpack(path)) ~= nil then
+		exit_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
+	end
+
+	return path
+end
+
+function in_domain(path)
+	if has_domains and loadpath(nil, site, unpack(path)) ~= nil then
+		exit_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
+	end
+
+	return path
+end
+
+function this_domain()
+	return domain_code
 end
 
 
