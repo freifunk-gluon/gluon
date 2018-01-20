@@ -238,6 +238,9 @@ alias ubiquiti-nanostation-m5
 device ubiquiti-loco-m-xw ubnt-loco-m-xw
 alias ubiquiti-nanostation-loco-m2-xw
 alias ubiquiti-nanostation-loco-m5-xw
+if [ "$BROKEN" ]; then
+alias ubiquiti-nanobeam-m5 # untested
+fi
 
 device ubiquiti-nanostation-m-xw ubnt-nano-m-xw
 alias ubiquiti-nanostation-m2-xw
