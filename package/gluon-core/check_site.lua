@@ -13,6 +13,12 @@ if this_domain() then
 		end, nil, 'be a valid domain name')
 	end
 	need_domain_name(in_site({'default_domain'}))
+
+	need_table(in_domain({'domain_names'}), function(domain)
+		need_alphanumeric_key(domain)
+		need_string(domain)
+	end)
+	need_string(in_domain({'domain_names', this_domain()}))
 end
 
 need_string_match(in_domain({'domain_seed'}), '^' .. ('%x'):rep(64) .. '$')

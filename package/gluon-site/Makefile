@@ -53,9 +53,15 @@ define Build/Compile
 	$(call GenerateJSON,site)
 
   ifdef CONFIG_GLUON_MULTIDOMAIN
+	rm -rf $(PKG_BUILD_DIR)/domains
 	mkdir -p $(PKG_BUILD_DIR)/domains
 	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
+		[ ! -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]
 		$(call GenerateJSON,domains/$(domain))
+		lua ../../scripts/domain_aliases.lua '$(PKG_BUILD_DIR)/domains/$(domain).json' | while read alias; do \
+			[ "$$$${alias}" != '$(domain)' ] || continue; \
+			ln -s '$(domain).json' $(PKG_BUILD_DIR)/domains/$$$${alias}.json || exit 1; \
+		done
 	)
   endif
 
