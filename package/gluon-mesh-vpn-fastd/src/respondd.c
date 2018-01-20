@@ -73,8 +73,37 @@ static struct json_object * get_fastd_version(void) {
 	return ret;
 }
 
+static struct json_object * get_fastd_public_key(void) {
+	FILE *f = popen("/etc/init.d/fastd show_key mesh_vpn", "r");
+	if (!f)
+		return NULL;
+
+	char *line = NULL;
+	size_t len = 0;
+
+	ssize_t r= getline(&line, &len, f);
+
+	pclose(f);
+
+	if (r >= 0) {
+		len = strlen(line); /* The len given by getline is the buffer size, not the string length */
+
+		if (len && line[len-1] == '\n')
+			line[len-1] = 0;
+	}
+	else {
+		free(line);
+		line = NULL;
+	}
+
+	struct json_objcet *ret = gluonutil_wrap_string(line);
+	free(line);
+	return ret;
+}
+
 static struct json_object * get_fastd(void) {
 	bool enabled = false;
+	bool pubkey_privacy = true;
 	struct json_object *ret = json_object_new_object();
 
 	struct uci_context *ctx = uci_alloc_context();
@@ -94,12 +123,18 @@ static struct json_object * get_fastd(void) {
 	if (!enabled_str || !strcmp(enabled_str, "1"))
 		enabled = true;
 
+	const char *pubkey_privacy_str = uci_lookup_option_string(ctx, s, "pubkey_privacy");
+	if (pubkey_privacy_str && !strcmp(pubkey_privacy_str, "0"))
+		pubkey_privacy = false;
+
 disabled:
 	uci_free_context(ctx);
 
 disabled_nofree:
 	json_object_object_add(ret, "version", get_fastd_version());
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled));
+	if (enabled && !pubkey_privacy)
+		json_object_object_add(ret, "public_key", get_fastd_public_key());
 	return ret;
 }
 

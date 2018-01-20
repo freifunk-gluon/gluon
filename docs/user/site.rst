@@ -198,6 +198,12 @@ mesh_vpn
     defines the MTU of the VPN interface, determining a proper MTU value is described
     in the :ref:`FAQ <faq-mtu>`.
 
+    By default information that could be used to associate client traffic with a nodes
+    IP address is not advertised to protect the nodes privacy. This usually requires
+    the attacker to be able to observe the link over which the tunnel flows.
+    If this is of no concern in your threat-model this behaviour can be disabled by
+    setting *pubkey_privacy* to `false`.
+
     The `fastd` section configures settings specific to the *fastd* VPN
     implementation.
 
