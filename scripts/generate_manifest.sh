@@ -17,42 +17,50 @@ sysupgrade_ext=
 SITE_CODE="$(scripts/site.sh site_code)"
 
 
+get_filename() {
+	local name="$1"
+	echo -n "gluon-${SITE_CODE}-${GLUON_RELEASE}-${name}-sysupgrade${sysupgrade_ext}"
+}
+
+get_filepath() {
+	local filename="$1"
+	echo -n "${GLUON_IMAGEDIR}/sysupgrade/${filename}"
+}
+
 generate_line() {
 	local model="$1"
-	local file="$2"
+	local filename="$2"
+	local filesize="$3"
 
-	[ ! -e "${GLUON_IMAGEDIR}/sysupgrade/$file" ] || echo \
-		"$model" \
-		"$GLUON_RELEASE" \
-		"$(scripts/sha256sum.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" \
-		"$(scripts/filesize.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" \
-		"$file"
-	[ ! -e "${GLUON_IMAGEDIR}/sysupgrade/$file" ] || echo \
-		"$model" \
-		"$GLUON_RELEASE" \
-		"$(scripts/sha256sum.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" \
-		"$file"
-	[ ! -e "${GLUON_IMAGEDIR}/sysupgrade/$file" ] || echo \
-		"$model" \
-		"$GLUON_RELEASE" \
-		"$(scripts/sha512sum.sh "${GLUON_IMAGEDIR}/sysupgrade/$file")" \
-		"$file"
+	local filepath="$(get_filepath "$filename")"
+	[ -e "$filepath" ] || return 0
+
+	local file256sum="$(scripts/sha256sum.sh "$filepath")"
+	local file512sum="$(scripts/sha512sum.sh "$filepath")"
+
+	echo "$model $GLUON_RELEASE $file256sum $filesize $filename"
+	echo "$model $GLUON_RELEASE $file256sum $filename"
+	echo "$model $GLUON_RELEASE $file512sum $filename"
 }
 
 generate() {
 	[ "${output}" ] || return 0
+	[ "$sysupgrade_ext" ] || return 0
 
-	if [ "$sysupgrade_ext" ]; then
-		generate_line "$output" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-sysupgrade${sysupgrade_ext}"
+	local filename="$(get_filename "$output")"
+	local filepath="$(get_filepath "$filename")"
+	[ -e "$filepath" ] || return 0
+	local filesize="$(scripts/filesize.sh "$filepath")"
 
-		for alias in $aliases; do
-			generate_line "$alias" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-sysupgrade${sysupgrade_ext}"
-		done
+	generate_line "$output" "$filename" "$filesize"
 
-		for alias in $manifest_aliases; do
-			generate_line "$alias" "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-sysupgrade${sysupgrade_ext}"
-		done
-	fi
+	for alias in $aliases; do
+		generate_line "$alias" "$(get_filename "$alias")" "$filesize"
+	done
+
+	for alias in $manifest_aliases; do
+		generate_line "$alias" "$filename" "$filesize"
+	done
 }
 
 
