@@ -14,12 +14,17 @@ local old_proto = uci:get('network', 'mesh_lan', 'proto')
 
 uci:section('network', 'interface', 'mesh_lan', {
 	ifname        = sysconfig.lan_ifname,
-	type          = 'bridge',
 	igmp_snooping = false,
 	proto         = 'gluon_wired',
 	index         = 4,
 	legacy        = old_proto == 'gluon_mesh',
 })
+
+if sysconfig.lan_ifname:match(' ') then
+	uci:set('network', 'mesh_lan', 'type', 'bridge')
+else
+	uci:delete('network', 'mesh_lan', 'type')
+end
 
 local enable = site.mesh_on_lan(false)
 local old_auto = uci:get('network', 'mesh_lan', 'auto')
