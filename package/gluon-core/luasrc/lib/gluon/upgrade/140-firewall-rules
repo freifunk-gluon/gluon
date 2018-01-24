@@ -95,6 +95,7 @@ for _, zone in ipairs({'wired_mesh', 'wan'}) do
 		dest_port = '4789',
 		target = 'ACCEPT',
 	})
+	uci:reorder('firewall', zone .. '_vxlan', 0)
 end
 
 
