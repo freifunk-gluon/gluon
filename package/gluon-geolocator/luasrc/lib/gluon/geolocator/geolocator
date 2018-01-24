@@ -33,7 +33,7 @@ local function exit(exc)
 	if file_exsist(PID_PART) then
 		os.remove(PID_PART)
 	end
-	os.exit(tonumber(exc))
+	os.exit(exc)
 end
 
 local function table_contains(tbl, prefix)
@@ -64,7 +64,8 @@ local function Get_geolocation_info()
 	-- Get list of BSSID there should ignored
 	local blacklist_bssid = { }
 	for _, bl_bssid in ipairs(uci:get(GLC, "settings", "blacklist")) do
-		table.insert(blacklist_bssid,string.upper(bl_bssid))
+		-- Ensure rm colons and uppercase
+		table.insert(blacklist_bssid,string.upper(bl_bssid):gsub(":", ""))
 	end
 
 	local scaned_bssid = ""
@@ -76,6 +77,8 @@ local function Get_geolocation_info()
 
 			-- Get list of BSSID without blacklisted and redundancy entrys.
 			for _, net in ipairs(iw.scanlist(ifname) or { }) do
+				-- Ensure rm colons and uppercase
+				net.bssid = string.upper(net.bssid:gsub(":", ""))
 				if not uniq[net.bssid] and not table_contains(blacklist_bssid, net.bssid) then
 					scaned_bssid  = scaned_bssid .. "," .. net.bssid
 					uniq[net.bssid] = true
