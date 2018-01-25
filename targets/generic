@@ -24,6 +24,10 @@ config 'CONFIG_PACKAGE_ATH_DEBUG=y'
 try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
 try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
+if [ "$GLUON_MULTIDOMAIN" = 1 ]; then
+	config 'CONFIG_GLUON_MULTIDOMAIN=y'
+fi
+
 if [ "$GLUON_DEBUG" = 1 ]; then
 	config 'CONFIG_DEBUG=y'
 	config 'CONFIG_NO_STRIP=y'

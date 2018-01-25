@@ -7,7 +7,7 @@ GLUON_SITE_VERSION = $(shell ( cd '$(GLUON_SITEDIR)' && git --git-dir=.git descr
 PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
 
-PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-cjson/host
 
@@ -34,24 +34,42 @@ config GLUON_SITEDIR
 	string "Gluon site configuration directory"
 	depends on PACKAGE_gluon-site
 	default ""
+
+config GLUON_MULTIDOMAIN
+	bool "Gluon site configuration directory"
+	depends on PACKAGE_gluon-site
+
 endef
 
 define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)/domains
+	mkdir -p $(PKG_BUILD_DIR)
+endef
+
+define GenerateJSON
+	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > '$$(PKG_BUILD_DIR)/$(1).json'
 endef
 
 define Build/Compile
-	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
-		GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(conf).conf' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > '$(PKG_BUILD_DIR)/$(conf).json'
+	$(call GenerateJSON,site)
+
+  ifdef CONFIG_GLUON_MULTIDOMAIN
+	mkdir -p $(PKG_BUILD_DIR)/domains
+	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
+		$(call GenerateJSON,domains/$(domain))
 	)
+  endif
 
 	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
+
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
+  ifdef CONFIG_GLUON_MULTIDOMAIN
 	$(CP) $(PKG_BUILD_DIR)/domains $(1)/lib/gluon/
+  endif
+
 	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
 
