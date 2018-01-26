@@ -1,8 +1,4 @@
-ATH10K_PACKAGES=
-
-if [ "$GLUON_WLAN_MESH" = '11s' ]; then
-	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
-fi
+ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
 if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca99x0 ath10k-firmware-qca99x0-ct'
 fi
@@ -10,7 +6,5 @@ fi
 
 # TP-Link
 
-if [ "$ATH10K_PACKAGES" ]; then
 device tp-link-archer-c2600 C2600
 packages $ATH10K_PACKAGES
-fi

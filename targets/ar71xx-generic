@@ -1,9 +1,5 @@
-ATH10K_PACKAGES=
+ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
 ATH10K_PACKAGES_QCA9887=
-
-if [ "$GLUON_WLAN_MESH" = '11s' ]; then
-	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
-fi
 if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca988x ath10k-firmware-qca988x-ct'
 	ATH10K_PACKAGES_QCA9887='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca9887 ath10k-firmware-qca9887-ct'
@@ -115,11 +111,9 @@ device onion-omega onion-omega
 
 # OpenMesh
 
-if [ "$ATH10K_PACKAGES" ]; then
 device openmesh-mr1750 mr1750 MR1750
 alias openmesh-mr1750v2
 packages $ATH10K_PACKAGES
-fi
 
 device openmesh-mr600 mr600 MR600
 alias openmesh-mr600v2
@@ -137,11 +131,9 @@ alias openmesh-om2p-lc
 device openmesh-om5p om5p OM5P
 alias openmesh-om5p-an
 
-if [ "$ATH10K_PACKAGES" ]; then
 device openmesh-om5p-ac om5pac OM5PAC
 alias openmesh-om5p-acv2
 packages $ATH10K_PACKAGES
-fi
 
 
 # TP-Link
@@ -180,7 +172,6 @@ device tp-link-tl-wdr4300-v1 tl-wdr4300-v1
 
 device tp-link-tl-wr2543n-nd-v1 tl-wr2543-v1
 
-if [ "$ATH10K_PACKAGES" ]; then
 device tp-link-archer-c5-v1 archer-c5-v1
 packages $ATH10K_PACKAGES
 
@@ -210,7 +201,6 @@ fi
 
 device tp-link-re450 re450
 packages $ATH10K_PACKAGES
-fi
 
 
 # Ubiquiti
@@ -266,7 +256,6 @@ if [ "$BROKEN" ]; then
 device ubiquiti-ls-sr71 ubnt-ls-sr71 # BROKEN: Untested
 fi
 
-if [ "$ATH10K_PACKAGES" ]; then
 device ubiquiti-unifi-ac-lite ubnt-unifiac-lite
 alias ubiquiti-unifi-ac-mesh
 packages $ATH10K_PACKAGES
@@ -275,7 +264,6 @@ factory
 device ubiquiti-unifi-ac-pro ubnt-unifiac-pro
 packages $ATH10K_PACKAGES
 factory
-fi
 
 
 # Western Digital
