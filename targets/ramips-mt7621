@@ -1,20 +1,20 @@
-# BROKEN: No AP+IBSS support, 11s has high packet loss
+# BROKEN: No AP+IBSS support (plus individual issues)
 if [ "$BROKEN" ]; then
 
 ## D-Link
 
-device d-link-dir-860l-b1 dir-860l-b1
+device d-link-dir-860l-b1 dir-860l-b1 # BROKEN: 2.4 GHz Mesh unreliable
 
 
 ## Netgear
 
-device netgear-wndr3700v5 wndr3700v5 # untested
+device netgear-wndr3700v5 wndr3700v5 # BROKEN: Untested
 factory
 
 
 ## ZBT
 
-device zbt-wg3526 zbt-wg3526
+device zbt-wg3526 zbt-wg3526 # BROKEN: Untested
 factory
 
 fi
