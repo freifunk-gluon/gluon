@@ -36,8 +36,7 @@ config GLUON_SITEDIR
 	default ""
 
 config GLUON_MULTIDOMAIN
-	bool "Gluon site configuration directory"
-	depends on PACKAGE_gluon-site
+	bool "Gluon multi-domain support"
 
 endef
 
