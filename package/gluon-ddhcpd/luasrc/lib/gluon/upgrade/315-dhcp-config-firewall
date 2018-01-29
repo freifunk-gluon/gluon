@@ -1,0 +1,22 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+uci:section('firewall', 'rule', 'local_node_dhcp', {
+	src = 'local_client',
+	name = 'allow_dhcp_local_client',
+	dest_port = '67',
+	proto = 'udp',
+	target = 'ACCEPT'
+})
+
+uci:section('firewall', 'rule', 'ddhcpd_mmfd', {
+	dest_port = '1234',
+	src = 'mmfd',
+	src_ip = 'fe80::/64',
+	name = 'allow_ddhcp_to_reserve_blocks',
+	proto = 'udp',
+	target = 'ACCEPT'
+})
+
+uci:save('firewall')

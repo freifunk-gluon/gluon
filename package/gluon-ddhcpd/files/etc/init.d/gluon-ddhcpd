@@ -1,0 +1,53 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+USE_PROCD=1
+NAME=ddhcpd
+DAEMON=/usr/sbin/ddhcpd
+MAXDELAY=10
+
+validate_section_ddhcpd() {
+	uci_validate_section "$NAME" ddhcpd settings \
+	'dhcp_interface:string:br-client' \
+	'server_interface:string:br-client' \
+	'block_size_pow:uinteger:2' \
+	'spare_blocks:uinteger:1' \
+	'timeout:uinteger:30' \
+	'block_network:cidr4' \
+	'dhcp_lease_time:uinteger:300'
+	server_interface=$(ubus call network.interface dump | jsonfilter -e "@.interface[@.interface='$(cat /lib/gluon/respondd/client.dev 2>/dev/null)' && @.up=true].device")
+}
+
+start_service() {
+	[ -x /lib/gluon/ddhcpd/arguments ] || exit 1
+
+	procd_open_instance
+	procd_set_param command $DAEMON -D
+
+	config_load "${NAME}"
+
+	validate_section_ddhcpd || {
+		echo "validation failed"
+		return 1
+	}
+
+	procd_append_param command -s "$spare_blocks"
+	procd_append_param command -b "$block_size_pow"
+	procd_append_param command -c "$dhcp_interface"
+	procd_append_param command -i "$server_interface"
+	procd_append_param command -N "$block_network"
+	procd_append_param command -o "51:4:0.0.1.44"
+	procd_append_param command -o "3:4:$(lua -e 'print(require("gluon.site").next_node.ip4())')"
+	procd_append_param command -o "6:4:$(lua -e 'print(require("gluon.site").next_node.ip4())')"
+	procd_append_param command $(/lib/gluon/ddhcpd/arguments)
+	procd_set_param respawn
+	procd_set_param netdev "$dhcp_interface"
+	[ "$dhcp_interface" == "$server_interface" ] || procd_append_param netdev "$server_interface"
+	procd_set_param stderr 1
+	procd_close_instance
+}
+
+service_triggers() {
+	procd_add_config_trigger "config.change" "ddhcpd" /etc/init.d/ddhcpd restart
+	procd_add_interface_trigger "interface.*" "$server_interface" /etc/init.d/ddhcpd restart
+}
