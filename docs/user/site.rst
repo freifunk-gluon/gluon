@@ -163,6 +163,7 @@ next_node \: package
     ::
 
       next_node = {
+        name = { 'nextnode.location.community.example.org', 'nextnode', 'nn' },
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
         mac = '16:41:95:40:f7:dc'
@@ -173,6 +174,13 @@ next_node \: package
     defaults to ``16:41:95:40:f7:dc``; this value usually doesn't need to be
     changed, but it can be adjusted to match existing deployments that use a
     different value.
+
+    When the nodes' next-node address is used as a DNS resolver by clients
+    (by passing it via DHCP or router advertisements), it may be useful to
+    allow resolving a next-node hostname without referring to an upstream DNS
+    server (e.g. to allow reaching the node using such a hostname via HTTP or SSH
+    in isolated mesh segments). This is possible by providing one or more names
+    in the ``name`` field.
 
 mesh \: optional
     Options specific to routing protocols.
