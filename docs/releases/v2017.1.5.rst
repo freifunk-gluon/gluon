@@ -12,6 +12,7 @@ ar71xx-generic
 ramips-mt7621
 ^^^^^^^^^^^^^
 
+* Ubiquiti EdgeRouter-X
 * Ubiquiti EdgeRouter-X SFP
 
 
@@ -26,6 +27,9 @@ Bugfixes
 
 * Update Tunneldigger to support connections with servers running newer kernel
   versions (`9ed6ff752eb7 <https://github.com/freifunk-gluon/gluon/commit/9ed6ff752eb7972d90b138197641f12eeb4572fb>`_)
+
+* Fix batman-adv Bridge Loop Avoidance (BLA) with *gluon-ebtables-filter-multicast*
+  (`#1198 <https://github.com/freifunk-gluon/gluon/issues/1198>`_)
 
 
 Known issues
