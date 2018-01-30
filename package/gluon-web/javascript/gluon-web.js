@@ -232,10 +232,8 @@
 		return obj;
 	}
 
-	function init_dynlist(parent, datatype, optional) {
-		var prefix = parent.getAttribute('data-prefix');
-		var holder = parent.getAttribute('data-placeholder');
-
+	function init_dynlist(parent, attr) {
+		var prefix = attr.prefix;
 
 		function dynlist_redraw(focus, add, del) {
 			var values = [];
@@ -257,7 +255,7 @@
 			if (add >= 0) {
 				focus = add + 1;
 				values.splice(add, 0, '');
-			} else if (!optional && values.length == 0) {
+			} else if (!attr.optional && values.length == 0) {
 				values.push('');
 			}
 
@@ -270,13 +268,15 @@
 					t.index = i;
 					t.className = 'gluon-input-text';
 
-				if (holder)
-					t.placeholder = holder;
+				if (attr.size)
+					t.size = attr.size;
+				if (attr.placeholder)
+					t.placeholder = attr.placeholder;
 
 				parent.appendChild(t);
 
-				if (datatype)
-					validate_field(t, false, datatype);
+				if (attr.type)
+					validate_field(t, false, attr.type);
 
 				bind(t, 'keydown',  dynlist_keydown);
 				bind(t, 'keypress', dynlist_keypress);
@@ -292,7 +292,7 @@
 					t.value = v;
 				}
 
-				if (optional || values.length > 1) {
+				if (attr.optional || values.length > 1) {
 					var b = document.createElement('span');
 						b.className = 'gluon-remove';
 
@@ -522,9 +522,9 @@
 		nodes = document.querySelectorAll('[data-dynlist]');
 
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
-			var list = JSON.parse(node.getAttribute('data-dynlist'));
+			var attr = JSON.parse(node.getAttribute('data-dynlist'));
 
-			init_dynlist(node, list.type, list.optional);
+			init_dynlist(node, attr);
 		}
 
 		update();

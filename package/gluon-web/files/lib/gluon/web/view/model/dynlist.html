@@ -1,11 +1,11 @@
 <div<%=
-	attr("data-prefix", id) ..
 	attr("data-dynlist", {
+		prefix = id,
 		type = self.datatype,
 		optional = self.datatype and self.optional,
-	}) ..
-	attr("data-size", self.size) ..
-	attr("data-placeholder", self.placeholder)
+		size = self.size,
+		placeholder = self.placeholder,
+	})
 %>>
 <%
 	for i, val in ipairs(self:cfgvalue()) do
