@@ -14,37 +14,37 @@ $Id$
 <h2><%:Upgrade firmware%></h2>
 
 <form method="post" enctype="multipart/form-data" action="<%=url(request)%>">
-  <p>
-    <%:You can manually upgrade your firmware here.%>
-  </p>
-  <% if bad_image then %>
-  <p class="error"><%:The provided firmware image is not valid for this device.%></p>
-  <% end %>
-  <div class="gluon-section-node">
-    <div class="gluon-value">
-      <label class="gluon-value-title">
-	<%:Firmware image%>
-      </label>
-      <div class="gluon-value-field">
-	<input class="gluon-input-file" type="file" name="image" />
-      </div>
-    </div>
+	<p>
+		<%:You can manually upgrade your firmware here.%>
+	</p>
+	<% if bad_image then %>
+	<p class="error"><%:The provided firmware image is not valid for this device.%></p>
+	<% end %>
+	<div class="gluon-section-node">
+		<div class="gluon-value">
+			<label class="gluon-value-title">
+				<%:Firmware image%>
+			</label>
+			<div class="gluon-value-field">
+				<input class="gluon-input-file" type="file" name="image" />
+			</div>
+		</div>
 
-    <div class="gluon-value gluon-value-last">
-      <label class="gluon-value-title">
-	<%:Keep settings%>
-      </label>
+		<div class="gluon-value gluon-value-last">
+			<label class="gluon-value-title">
+				<%:Keep settings%>
+			</label>
 
-      <div class="gluon-value-field">
-	<input id="keepcfg" class="gluon-input-checkbox" type="checkbox" name="keepcfg" value="1" checked="checked" />
-	<label for="keepcfg"></label>
-      </div>
-    </div>
-  </div>
+			<div class="gluon-value-field">
+				<input id="keepcfg" class="gluon-input-checkbox" type="checkbox" name="keepcfg" value="1" checked="checked" />
+				<label for="keepcfg"></label>
+			</div>
+		</div>
+	</div>
 
-  <div class="gluon-page-actions right">
-    <input type="hidden" name="step" value="2" />
-    <input type="hidden" name="token" value="<%=token%>" />
-    <input class="gluon-button gluon-button-submit" type="submit" value="<%:Upload image%>" />
-  </div>
+	<div class="gluon-page-actions right">
+		<input type="hidden" name="step" value="2" />
+		<input type="hidden" name="token" value="<%=token%>" />
+		<input class="gluon-button gluon-button-submit" type="submit" value="<%:Upload image%>" />
+	</div>
 </form>

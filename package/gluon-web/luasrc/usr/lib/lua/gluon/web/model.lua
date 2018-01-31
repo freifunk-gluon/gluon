@@ -366,8 +366,6 @@ Value = class(AbstractValue)
 function Value:__init__(...)
 	AbstractValue.__init__(self, ...)
 	self.subtemplate  = "model/value"
-	self.keylist = {}
-	self.vallist = {}
 end
 
 

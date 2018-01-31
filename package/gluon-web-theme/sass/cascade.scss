@@ -305,6 +305,7 @@ input[type=checkbox] {
 
   & + label {
     display: inline-block;
+    position: relative;
     width: 1em;
     height: 1em;
     margin: 0;
@@ -321,6 +322,36 @@ input[type=checkbox] {
     width: 100%;
     text-align: center;
     font-size: 1.7em;
+  }
+}
+
+input[type=radio] {
+  display: none;
+
+  & + label {
+    display: inline-block;
+    position: relative;
+    width: 0.8em;
+    height: 0.8em;
+    padding: 0.5em;
+    margin: 0.2em 0.2em 0.2em 0.1em;
+    border: none;
+    background: lighten($ffyellow, 30);
+    vertical-align: middle;
+    border-radius: 50%;
+  }
+
+  &:checked + label:after {
+    content: '•';
+    color: $ffmagenta;
+    vertical-align: middle;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    margin-top: -0.4em;
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
   }
 }
 
@@ -405,6 +436,7 @@ div.gluon-value {
 .gluon-value-title {
   flex: 2;
   text-align: right;
+  padding-top: 0.39em;
   padding-right: 1em;
   font-weight: bold;
 }
@@ -415,18 +447,21 @@ div.gluon-value-field {
 
   input, select, input + label {
     position: relative;
-    top: -0.39em;
   }
+}
+
+div.gluon-value-field-text {
+  flex: 3;
+  padding-top: 0.39em;
 }
 
 div.gluon-value-field-long {
   flex: 10;
   position: relative;
-
+  margin-top: 0.65em;
 
   input, select, input + label {
     position: relative;
-    top: -0.39em;
   }
 }
 
@@ -533,11 +568,11 @@ div.gluon-error {
 
   input + & {
     left: 0;
-    top: -0.35em;
+    top: 0.04em;
   }
 
   &:first-child {
-    top: 0.04em;
+    top: 0.53em;
     left: -0.08em;
   }
 
@@ -550,7 +585,7 @@ div.gluon-error {
   color: #800000;
 
   position: relative;
-  top: -0.42em;
+  top: -0.03em;
 
   &:after {
     content: '–';

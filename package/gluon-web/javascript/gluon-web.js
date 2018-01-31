@@ -154,11 +154,16 @@
 				value = t.value;
 			} else {
 				value = "";
-
 			}
+
+			return (value == ref);
+		} else {
+			t = document.getElementById(target + '.' + ref);
+			return (t.type == "radio" && t.checked);
 		}
 
-		return (value == ref)
+		return false;
+
 	}
 
 	function check(deps) {

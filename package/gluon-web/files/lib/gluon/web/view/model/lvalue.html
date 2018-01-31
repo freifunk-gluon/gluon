@@ -1,6 +1,5 @@
 <%
-	local i, key
-	local br = self.orientation == "horizontal" and '&#160;' or '<br />'
+	local br = self.orientation == "horizontal" and '&#160;&#160;&#160;' or '<br />'
 %>
 
 <% if self.widget == "select" then %>
@@ -32,10 +31,10 @@
 					attr("value", key) ..
 					attr("checked", (self:cfgvalue() == key) and "checked")
 				%> />
-				<label<%= attr("for", id.."-"..key)%>></label>
+				<label<%= attr("for", id.."."..key)%>></label>
 				<%=pcdata(self.vallist[i])%>
 			</label>
-			<% if i == self.size then write(br) end %>
+			<% if i ~= #self.keylist then write(br) end %>
 		<% end %>
 	</div>
 <% end %>
