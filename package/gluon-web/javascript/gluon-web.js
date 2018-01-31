@@ -471,7 +471,7 @@
 		bind(field, "blur",  validator);
 		bind(field, "keyup", validator);
 
-		if (field.nodeName == 'SELECT') {
+		if (field.nodeName.toLowerCase() == 'select') {
 			bind(field, "change", validator);
 			bind(field, "click",  validator);
 		}
@@ -497,7 +497,6 @@
 		var nodes;
 
 		nodes = document.querySelectorAll('[data-depends]');
-
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
 			var index = parseInt(node.getAttribute('data-index'), 10);
 			var depends = JSON.parse(node.getAttribute('data-depends'));
@@ -509,7 +508,6 @@
 		}
 
 		nodes = document.querySelectorAll('[data-update]');
-
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
 			var events = node.getAttribute('data-update').split(' ');
 			for (var j = 0, event; (event = events[j]) !== undefined; j++) {
@@ -518,14 +516,12 @@
 		}
 
 		nodes = document.querySelectorAll('[data-type]');
-
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
 			validate_field(node, node.getAttribute('data-optional') === 'true',
-			                   node.getAttribute('data-type'));
+				node.getAttribute('data-type'));
 		}
 
 		nodes = document.querySelectorAll('[data-dynlist]');
-
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
 			var attr = JSON.parse(node.getAttribute('data-dynlist'));
 

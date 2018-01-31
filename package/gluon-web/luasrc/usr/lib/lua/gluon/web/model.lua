@@ -396,24 +396,52 @@ function ListValue:__init__(...)
 	self.size = 1
 	self.widget = "select"
 
-	self.keylist = {}
-	self.vallist = {}
-	self.valdeps = {}
+	self.keys = {}
+	self.entry_list = {}
 end
 
 function ListValue:value(key, val, ...)
-	if util.contains(self.keylist, key) then
+	if self.keys[key] then
 		return
 	end
 
 	val = val or key
-	table.insert(self.keylist, tostring(key))
-	table.insert(self.vallist, tostring(val))
-	table.insert(self.valdeps, {...})
+	self.keys[key] = true
+	table.insert(self.entry_list, {
+		key = tostring(key),
+		value = tostring(val),
+		deps = {...},
+	})
+end
+
+function ListValue:entries()
+	local ret = {unpack(self.entry_list)}
+
+	if self:cfgvalue() == nil or self.optional then
+		table.insert(ret, 1, {
+			key = '',
+			value = '',
+			deps = {},
+		})
+	end
+
+	return ret
 end
 
 function ListValue:validate()
-	return util.contains(self.keylist, self.data)
+	if self.keys[self.data] then
+		return true
+	end
+
+	if type(self.data) == "string" and #self.data == 0 then
+		self.data = nil
+	end
+
+	if self.data == nil then
+		return self.optional
+	end
+
+	return false
 end
 
 
