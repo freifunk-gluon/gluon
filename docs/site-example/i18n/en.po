@@ -15,6 +15,15 @@ msgstr ""
 "Welcome to the setup wizard of your new Freifunk Alpha Centauri node. "
 "Please fill out the following form and submit it."
 
+msgid "gluon-config-mode:domain"
+msgstr "Domain"
+
+msgid "gluon-config-mode:domain-select"
+msgstr ""
+"Here you have the possibility of selecting the mesh domain in which your node "
+"is placed. Please keep in mind that your router only connects with the nodes "
+"of the selected domain"
+
 msgid "gluon-config-mode:pubkey"
 msgstr ""
 "<p>This is your Freifunk node's public key. The node won't be able to "
