@@ -41,10 +41,10 @@ via TFTP:
 Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
 
 diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
-index 1778dc93297136e3196ad3f74e4b3bea7535cee0..1f5c6429201ba05fc14ff09c6c562d2c114f2a63 100755
+index 17d25b1954e69d6d2a02ad94885cb54486fc904c..5a4042339c6761703578e014612062ac78babd9d 100755
 --- a/target/linux/ramips/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/base-files/etc/board.d/02_network
-@@ -146,6 +146,7 @@ ramips_setup_interfaces()
+@@ -145,6 +145,7 @@ ramips_setup_interfaces()
  	rb750gr3|\
  	rt-n14u|\
  	ubnt-erx|\

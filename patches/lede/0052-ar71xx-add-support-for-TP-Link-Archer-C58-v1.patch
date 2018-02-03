@@ -130,10 +130,10 @@ index 0000000000000000000000000000000000000000..7d2eca546d76b771b12026788510f73a
 +esac
 +
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 780eda30d04b9bae0bf8dcf47a9cc49b19b810ca..a6cce7f42b43863f5bddade8ab6a0631c919beb1 100755
+index d8e23d97e2cc20f8ba7b3b2fc516ce398c43a19b..59ede17653bbb1994ce9fa734c86c877aedf67e4 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -469,6 +469,9 @@ ar71xx_board_detect() {
+@@ -472,6 +472,9 @@ ar71xx_board_detect() {
  	*"Archer C7 v4")
  		name="archer-c7-v4"
  		;;

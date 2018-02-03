@@ -126,10 +126,10 @@ index 607bbd2c0ec4b59ba569550e9e0e87b80c7ddddb..5dd1d69e7e163c938759ce476846e4d9
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) -2)
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index ddb8f0db80ed6eab39c832bfd893182d9f591ad4..780eda30d04b9bae0bf8dcf47a9cc49b19b810ca 100755
+index c32894d95b6b09b4b8b59ba64057c23e71b9f656..d8e23d97e2cc20f8ba7b3b2fc516ce398c43a19b 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -469,6 +469,12 @@ ar71xx_board_detect() {
+@@ -472,6 +472,12 @@ ar71xx_board_detect() {
  	*"Archer C7 v4")
  		name="archer-c7-v4"
  		;;
