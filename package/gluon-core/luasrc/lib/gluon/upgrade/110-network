@@ -24,6 +24,7 @@ uci:section('network', 'interface', 'wan6', {
 	peerdns = false,
 	ip6table = 1,
 	sourcefilter = false,
+	reqprefix = 'no',
 })
 
 if not uci:get('network', 'wan6', 'proto') then
