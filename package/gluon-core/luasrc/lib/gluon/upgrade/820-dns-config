@@ -34,10 +34,8 @@ local function set_dns_record(name, ip, sectionname)
 end
 
 uci:foreach("dhcp", "domain", function(s)
-	for key, value in pairs(s) do
-		if (key == ".name" and string.gmatch(value, "^nextnode[46]")) then
-			uci:delete("dhcp", value)
-		end
+	if (s['.name'] and string.match(s['.name'], "^nextnode[46]_")) then
+		uci:delete("dhcp", s['.name'])
 	end
 end)
 
