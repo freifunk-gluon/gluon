@@ -73,6 +73,56 @@ static struct json_object * get_fastd_version(void) {
 	return ret;
 }
 
+static struct json_object * get_fastd_public_key(void) {
+	FILE *f = popen("/etc/init.d/fastd show_key mesh_vpn", "r");
+	if (!f)
+		return NULL;
+
+	char *line = NULL;
+	size_t len = 0;
+
+	ssize_t r= getline(&line, &len, f);
+
+	pclose(f);
+
+	if (r >= 0) {
+		len = strlen(line); /* The len given by getline is the buffer size, not the string length */
+
+		if (len && line[len-1] == '\n')
+			line[len-1] = 0;
+	}
+	else {
+		free(line);
+		line = NULL;
+	}
+
+	return gluonutil_wrap_and_free_string(line);
+}
+
+static bool get_pubkey_privacy(void) {
+	bool ret = true;
+	struct json_object *site = NULL;
+
+	site = gluonutil_load_site_config();
+	if (!site)
+		goto end;
+
+	struct json_object *mesh_vpn;
+	if (!json_object_object_get_ex(site, "mesh_vpn", &mesh_vpn))
+		goto end;
+
+	struct json_object *pubkey_privacy;
+	if (!json_object_object_get_ex(mesh_vpn, "pubkey_privacy", &pubkey_privacy))
+		goto end;
+
+	ret = json_object_get_boolean(pubkey_privacy);
+
+end:
+	json_object_put(site);
+
+	return ret;
+}
+
 static struct json_object * get_fastd(void) {
 	bool enabled = false;
 	struct json_object *ret = json_object_new_object();
@@ -100,6 +150,8 @@ disabled:
 disabled_nofree:
 	json_object_object_add(ret, "version", get_fastd_version());
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled));
+	if (enabled && !get_pubkey_privacy())
+		json_object_object_add(ret, "public_key", get_fastd_public_key());
 	return ret;
 }
 
