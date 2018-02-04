@@ -159,7 +159,8 @@
 			return (value == ref);
 		} else {
 			t = document.getElementById(target + '.' + ref);
-			return (t.type == "radio" && t.checked);
+			if (t)
+				return (t.type == "radio" && t.checked);
 		}
 
 		return false;
