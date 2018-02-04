@@ -1,17 +1,15 @@
 return function(form, uci)
-	local site = require 'gluon.site'
-	local path = '/lib/gluon/domains'
 	local fs = require 'nixio.fs'
 	local json = require 'jsonc'
 
 	local function get_domain_list()
 		local list = {}
-		for domain_path in fs.glob(path .. '/*.json') do
-			local domain_code = domain_path:match(path .. '/(.*)%.json$')
+		for domain_path in fs.glob('/lib/gluon/domains/*.json') do
+			local domain_code = domain_path:match('([^/]+)%.json$')
 			local domain = assert(json.load(domain_path))
 			table.insert(list, {
 				domain_code = domain_code,
-				domain_name = (domain.domain_names or {})[domain_code],
+				domain_name = domain.domain_names[domain_code],
 				hide_domain = domain.hide_domain or False,
 			})
 		end
