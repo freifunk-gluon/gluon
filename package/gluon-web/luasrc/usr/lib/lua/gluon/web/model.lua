@@ -401,14 +401,16 @@ function ListValue:__init__(...)
 end
 
 function ListValue:value(key, val, ...)
+	key = tostring(key)
+
 	if self.keys[key] then
 		return
 	end
+	self.keys[key] = true
 
 	val = val or key
-	self.keys[key] = true
 	table.insert(self.entry_list, {
-		key = tostring(key),
+		key = key,
 		value = tostring(val),
 		deps = {...},
 	})
