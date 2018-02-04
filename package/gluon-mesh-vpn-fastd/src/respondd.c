@@ -96,14 +96,35 @@ static struct json_object * get_fastd_public_key(void) {
 		line = NULL;
 	}
 
-	struct json_objcet *ret = gluonutil_wrap_string(line);
-	free(line);
+	return gluonutil_wrap_and_free_string(line);
+}
+
+static bool get_pubkey_privacy(void) {
+	bool ret = true;
+	struct json_object *site = NULL;
+
+	site = gluonutil_load_site_config();
+	if (!site)
+		goto end;
+
+	struct json_object *mesh_vpn;
+	if (!json_object_object_get_ex(site, "mesh_vpn", &mesh_vpn))
+		goto end;
+
+	struct json_object *pubkey_privacy;
+	if (!json_object_object_get_ex(mesh_vpn, "pubkey_privacy", &pubkey_privacy))
+		goto end;
+
+	ret = json_object_get_boolean(pubkey_privacy);
+
+end:
+	json_object_put(site);
+
 	return ret;
 }
 
 static struct json_object * get_fastd(void) {
 	bool enabled = false;
-	bool pubkey_privacy = true;
 	struct json_object *ret = json_object_new_object();
 
 	struct uci_context *ctx = uci_alloc_context();
@@ -123,17 +144,13 @@ static struct json_object * get_fastd(void) {
 	if (!enabled_str || !strcmp(enabled_str, "1"))
 		enabled = true;
 
-	const char *pubkey_privacy_str = uci_lookup_option_string(ctx, s, "pubkey_privacy");
-	if (pubkey_privacy_str && !strcmp(pubkey_privacy_str, "0"))
-		pubkey_privacy = false;
-
 disabled:
 	uci_free_context(ctx);
 
 disabled_nofree:
 	json_object_object_add(ret, "version", get_fastd_version());
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled));
-	if (enabled && !pubkey_privacy)
+	if (enabled && !get_pubkey_privacy())
 		json_object_object_add(ret, "public_key", get_fastd_public_key());
 	return ret;
 }

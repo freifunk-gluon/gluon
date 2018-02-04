@@ -44,7 +44,6 @@ uci:section('fastd', 'fastd', 'mesh_vpn', {
 	method = methods,
 	packet_mark = 1,
 	status_socket = '/var/run/fastd.mesh_vpn.socket',
-	pubkey_privacy = site.mesh_vpn.pubkey_privacy(true),
 })
 uci:delete('fastd', 'mesh_vpn', 'user')
 
