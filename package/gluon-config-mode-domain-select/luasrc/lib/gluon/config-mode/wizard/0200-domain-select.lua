@@ -1,6 +1,7 @@
 return function(form, uci)
 	local fs = require 'nixio.fs'
 	local json = require 'jsonc'
+	local site = require 'gluon.site'
 
 	local function get_domain_list()
 		local list = {}
@@ -19,13 +20,15 @@ return function(form, uci)
 
 	local s = form:section(Section, nil, translate('gluon-config-mode:domain-select'))
 	local o = s:option(ListValue, 'domain', translate('gluon-config-mode:domain'))
+	local domain_code = uci:get('gluon', 'core', 'domain')
+	local configured = uci:get_bool('gluon-setup-mode', uci:get_first('gluon-setup-mode','setup_mode'), 'configured') or (domain_code ~= site.default_domain())
 
-	if uci:get_bool('gluon-setup-mode', uci:get_first('gluon-setup-mode','setup_mode'), 'configured')  then
-		o.default = uci:get('gluon', 'core', 'domain')
+	if configured then
+		o.default = domain_code
 	end
 
 	for _, domain in pairs(get_domain_list()) do
-		if not domain.hide_domain then
+		if not domain.hide_domain or (configured and domain.domain_code == domain_code) then
 			o:value(domain.domain_code, domain.domain_name)
 		end
 	end
