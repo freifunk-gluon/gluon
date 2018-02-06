@@ -3,6 +3,13 @@ sysupgrade -ext4-sdcard .img.gz
 
 
 device lemaker-banana-pi sun7i-a20-bananapi
+
+if [ "$BROKEN" ]; then
+
+# WiFi chip not supported
 device lemaker-banana-pro sun7i-a20-bananapro
 
+# AP+IBSS or 11s not working
 device lamobo-r1 sun7i-a20-lamobo-r1
+
+fi
