@@ -17,7 +17,6 @@ uci:section('network', 'interface', 'mesh_lan', {
 	igmp_snooping = false,
 	proto         = 'gluon_wired',
 	index         = 4,
-	legacy        = old_proto == 'gluon_mesh',
 })
 
 if sysconfig.lan_ifname:match(' ') then
