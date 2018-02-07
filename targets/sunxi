@@ -6,10 +6,8 @@ device lemaker-banana-pi sun7i-a20-bananapi
 
 if [ "$BROKEN" ]; then
 
-# WiFi chip not supported
-device lemaker-banana-pro sun7i-a20-bananapro
+device lemaker-banana-pro sun7i-a20-bananapro # BROKEN: WiFi chip not supported
 
-# AP+IBSS or 11s not working
-device lamobo-r1 sun7i-a20-lamobo-r1
+device lamobo-r1 sun7i-a20-lamobo-r1 # BROKEN: AP+IBSS and AP+11s not working
 
 fi
