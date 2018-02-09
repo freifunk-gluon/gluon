@@ -3,6 +3,7 @@
 local util = require 'gluon.util'
 local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
+local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
@@ -18,6 +19,15 @@ local function get_channel(radio, config)
 	end
 
 	return channel or config.channel()
+end
+
+local function get_htmode(radio)
+       local phy = util.find_phy(radio)
+       if iwinfo.nl80211.hwmodelist(phy).ac then
+               return 'VHT20'
+       else
+               return 'HT20'
+       end
 end
 
 local function is_disabled(name)
@@ -152,11 +162,12 @@ util.foreach_radio(uci, function(radio, index, config)
 	end
 
 	local channel = get_channel(radio, config)
+	local htmode = get_htmode(radio)
 
 	uci:delete('wireless', radio_name, 'disabled')
 
 	uci:set('wireless', radio_name, 'channel', channel)
-	uci:set('wireless', radio_name, 'htmode', 'HT20')
+	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
 
 	uci:set_list('wireless', radio_name, 'supported_rates', config.supported_rates())
