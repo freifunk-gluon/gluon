@@ -34,6 +34,9 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
 
 		need_number({config, 'channel'})
+		if config == 'wifi5' then
+			need_string_match({config, 'outdoor_chanlist'}, '^[%d%s-]+$', false)
+		end
 
 		obsolete({config, 'supported_rates'}, '802.11b rates are disabled by default.')
 		obsolete({config, 'basic_rate'}, '802.11b rates are disabled by default.')
