@@ -65,7 +65,7 @@ local function Get_geolocation_info()
 	local blacklist_bssid = { }
 	for _, bl_bssid in ipairs(uci:get(GLC, "settings", "blacklist")) do
 		-- Ensure rm colons and uppercase
-		table.insert(blacklist_bssid,string.upper(bl_bssid):gsub(":", ""))
+		table.insert(blacklist_bssid,(string.upper(bl_bssid):gsub(":", "")))
 	end
 
 	local scaned_bssid = ""
