@@ -181,7 +181,7 @@ function find_phy(config)
 end
 
 local function get_addresses(uci, radio)
-	local phy = find_phy(uci:get_all('wireless', radio))
+	local phy = find_phy(radio)
 	if not phy then
 		return function() end
 	end
@@ -250,15 +250,15 @@ end
 -- Iterate over all radios defined in UCI calling
 -- f(radio, index, site.wifiX) for each radio found while passing
 --  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
-function iterate_radios(uci, f)
+function foreach_radio(uci, f)
 	local radios = {}
 
-	uci:foreach('wireless', 'wifi-device', function(s)
-		table.insert(radios, s['.name'])
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		table.insert(radios, radio)
 	end)
 
 	for index, radio in ipairs(radios) do
-		local hwmode = uci:get('wireless', radio, 'hwmode')
+		local hwmode = radio.hwmode
 
 		if hwmode == '11g' or hwmode == '11ng' then
 			f(radio, index, site.wifi24)

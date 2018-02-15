@@ -13,13 +13,18 @@ local function is_disabled(config, name)
 	return config.disabled(false)
 end
 
-local function configure_client(config, radio, index, suffix)
-	local name = 'client_' .. radio
-	local disabled = is_disabled(config, name)
+util.foreach_radio(uci, function(radio, index, config)
+	local radio_name = radio['.name']
+
+	local name = 'client_' .. radio_name
+	local suffix = radio_name:match('^radio(%d+)$')
+
+	local ap = config.ap
+	local disabled = is_disabled(ap, name)
 
 	uci:delete('wireless', name)
 
-	if not config() then
+	if not ap() then
 		return
 	end
 
@@ -29,22 +34,14 @@ local function configure_client(config, radio, index, suffix)
 	end
 
 	uci:section('wireless', 'wifi-iface', name, {
-		device = radio,
+		device = radio_name,
 		network = 'client',
 		mode = 'ap',
-		ssid = config.ssid(),
+		ssid = ap.ssid(),
 		macaddr = macaddr,
 		ifname = suffix and 'client' .. suffix,
 		disabled = disabled or false,
 	})
-end
-
-local function configure_radio(radio, index, config)
-	local suffix = radio:match('^radio(%d+)$')
-
-	configure_client(config.ap, radio, index, suffix)
-end
-
-util.iterate_radios(uci, configure_radio)
+end)
 
 uci:save('wireless')

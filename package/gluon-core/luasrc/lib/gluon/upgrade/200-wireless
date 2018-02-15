@@ -14,7 +14,7 @@ end
 local function get_channel(radio, config)
 	local channel
 	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
-		channel = uci:get('wireless', radio, 'channel')
+		channel = radio.channel
 	end
 
 	return channel or config.channel()
@@ -39,7 +39,8 @@ end
 
 
 local function configure_ibss(config, radio, index, suffix, disabled)
-	local name = 'ibss_' .. radio
+	local radio_name = radio['.name']
+	local name = 'ibss_' .. radio_name
 
 	uci:delete('network', name)
 	uci:delete('network', name .. '_vlan')
@@ -70,7 +71,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 	end
 
 	uci:section('wireless', 'wifi-iface', name, {
-		device = radio,
+		device = radio_name,
 		network = name,
 		mode = 'adhoc',
 		ssid = config.ssid,
@@ -83,7 +84,9 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 end
 
 local function configure_mesh(config, radio, index, suffix, disabled)
-	local name = 'mesh_' .. radio
+	local radio_name = radio['.name']
+	local name = 'mesh_' .. radio_name
+
 	local macfilter = uci:get('wireless', name, 'macfilter')
 	local maclist = uci:get('wireless', name, 'maclist')
 
@@ -105,7 +108,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
-		device = radio,
+		device = radio_name,
 		network = name,
 		mode = 'mesh',
 		mesh_id = config.id,
@@ -120,7 +123,8 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 end
 
 local function fixup_wan(radio, index)
-	local name = 'wan_' .. radio
+	local radio_name = radio['.name']
+	local name = 'wan_' .. radio_name
 
 	if not uci:get('wireless', name) then
 		return
@@ -134,31 +138,33 @@ local function fixup_wan(radio, index)
 	uci:set('wireless', name, 'macaddr', macaddr)
 end
 
-local function configure_radio(radio, index, config)
+util.foreach_radio(uci, function(radio, index, config)
+	local radio_name = radio['.name']
+
 	if not config() then
-		uci:set('wireless', radio, 'disabled', true)
+		uci:set('wireless', radio_name, 'disabled', true)
 		return
 	end
 
-	local suffix = radio:match('^radio(%d+)$')
+	local suffix = radio_name:match('^radio(%d+)$')
 	if not suffix then
 		return
 	end
 
 	local channel = get_channel(radio, config)
 
-	uci:delete('wireless', radio, 'disabled')
+	uci:delete('wireless', radio_name, 'disabled')
 
-	uci:set('wireless', radio, 'channel', channel)
-	uci:set('wireless', radio, 'htmode', 'HT20')
-	uci:set('wireless', radio, 'country', site.regdom())
+	uci:set('wireless', radio_name, 'channel', channel)
+	uci:set('wireless', radio_name, 'htmode', 'HT20')
+	uci:set('wireless', radio_name, 'country', site.regdom())
 
-	uci:set_list('wireless', radio, 'supported_rates', config.supported_rates())
-	uci:set_list('wireless', radio, 'basic_rate', config.basic_rate())
+	uci:set_list('wireless', radio_name, 'supported_rates', config.supported_rates())
+	uci:set_list('wireless', radio_name, 'basic_rate', config.basic_rate())
 
 
-	local ibss_disabled = is_disabled('ibss_' .. radio)
-	local mesh_disabled = is_disabled('mesh_' .. radio)
+	local ibss_disabled = is_disabled('ibss_' .. radio_name)
+	local mesh_disabled = is_disabled('mesh_' .. radio_name)
 
 	configure_ibss(config.ibss(), radio, index, suffix,
 		first_non_nil(
@@ -176,9 +182,7 @@ local function configure_radio(radio, index, config)
 	)
 
 	fixup_wan(radio, index)
-end
-
-util.iterate_radios(uci, configure_radio)
+end)
 
 
 if uci:get('system', 'rssid_wlan0') then

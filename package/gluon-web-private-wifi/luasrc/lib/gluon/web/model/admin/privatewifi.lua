@@ -27,14 +27,15 @@ key.datatype = "wpakey"
 key.default = uci:get('wireless', primary_iface, "key")
 
 function f:write()
-	util.iterate_radios(uci, function(radio, index)
-		local name   = "wan_" .. radio
+	util.foreach_radio(uci, function(radio, index)
+		local radio_name = radio['.name']
+		local name   = "wan_" .. radio_name
 
 		if enabled.data then
 			local macaddr = util.get_wlan_mac(uci, radio, index, 4)
 
 			uci:section('wireless', "wifi-iface", name, {
-				device     = radio,
+				device     = radio_name,
 				network    = "wan",
 				mode       = 'ap',
 				encryption = 'psk2',
