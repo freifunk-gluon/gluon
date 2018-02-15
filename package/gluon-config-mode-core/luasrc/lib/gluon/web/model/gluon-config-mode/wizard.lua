@@ -28,11 +28,18 @@ local s = f:section(Section)
 s.template = "gluon/config-mode/welcome"
 
 local commit = {'gluon-setup-mode'}
+local run = {}
 
 for _, w in ipairs(wizard) do
 	for _, c in ipairs(w(f, uci) or {}) do
-		if not util.contains(commit, c) then
-			table.insert(commit, c)
+		if type(c) == 'string' then
+			if not util.contains(commit, c) then
+				table.insert(commit, c)
+			end
+		elseif type(c) == 'function' then
+			table.insert(run, c)
+		else
+			error('invalid wizard module return')
 		end
 	end
 end
@@ -44,6 +51,9 @@ function f:write()
 
 	for _, c in ipairs(commit) do
 		uci:commit(c)
+	end
+	for _, r in ipairs(run) do
+		r()
 	end
 
 	f.template = "gluon/config-mode/reboot"
