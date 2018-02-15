@@ -174,12 +174,12 @@ next_node \: package
     defaults to ``16:41:95:40:f7:dc``; this value usually doesn't need to be
     changed, but it can be adjusted to match existing deployments that use a
     different value. Each entry in the ``name``-field will be resolved to the
-    ipv4 and ipv6-address.
+    IPv4 and IPv6-address.
     For this to work, clients must use the next-node as their resolver. In
-    batman-based networks this requires setting the central dhcp server to
-    deliver this address as DNS-server via DHCP-option. When running a radvd
+    batman-based networks this requires setting the central DHCP server to
+    deliver this address as DNS server via DHCP option. When running a radvd
     inside the network, this should be set to deliver the next-node
-    ipv6-address via rdnss.
+    IPv6-address via rdnss.
 
 mesh \: optional
     Options specific to routing protocols.
