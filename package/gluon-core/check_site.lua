@@ -70,6 +70,7 @@ if need_table({'dns'}, nil, false) then
 	need_number({'dns', 'cacheentries'}, false)
 end
 
+need_string_array(in_domain({'next_node', 'name'}), false)
 need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 need_string_match(in_domain({'next_node', 'ip4'}), '^%d+.%d+.%d+.%d+$', false)
 

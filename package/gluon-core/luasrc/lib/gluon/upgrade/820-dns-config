@@ -25,22 +25,21 @@ if dns.servers then
 	})
 end
 
-if next_node.name and next_node.ip4 then
-	uci:section('dhcp', 'domain', 'nextnode4', {
-		name = next_node.name,
-		ip = next_node.ip4,
+local function set_dns_record(name, ip, sectionname)
+	if not ip then return end
+	uci:section('dhcp', 'domain', sectionname, {
+		name = name,
+		ip = ip,
 	})
-else
-	uci:delete('dhcp', 'domain', 'nextnode4')
 end
 
-if next_node.name and next_node.ip6 then
-	uci:section('dhcp', 'domain', 'nextnode6', {
-		name = next_node.name,
-		ip = next_node.ip6,
-	})
-else
-	uci:delete('dhcp', 'domain', 'nextnode6')
+uci:delete_all('dhcp', 'domain', function(s)
+	return (s['.name'] and string.match(s['.name'], "^nextnode[46]"))
+end)
+
+for i, name in ipairs(next_node.name or {}) do
+	set_dns_record(name, next_node.ip4, 'nextnode4_' .. i)
+	set_dns_record(name, next_node.ip6, 'nextnode6_' .. i)
 end
 
 uci:save('dhcp')

@@ -163,6 +163,7 @@ next_node \: package
     ::
 
       next_node = {
+        name = { 'nextnode.location.community.example.org', 'nextnode', 'nn' },
         ip4 = '10.23.42.1',
         ip6 = 'fdca:ffee:babe:1::1',
         mac = '16:41:95:40:f7:dc'
@@ -172,7 +173,13 @@ next_node \: package
     omitted, there will be no IPv4 or IPv6 anycast address. The MAC address
     defaults to ``16:41:95:40:f7:dc``; this value usually doesn't need to be
     changed, but it can be adjusted to match existing deployments that use a
-    different value.
+    different value. Each entry in the ``name``-field will be resolved to the
+    IPv4 and IPv6-address.
+    For this to work, clients must use the next-node as their resolver. In
+    batman-based networks this requires setting the central DHCP server to
+    deliver this address as DNS server via DHCP option. When running a radvd
+    inside the network, this should be set to deliver the next-node
+    IPv6-address via rdnss.
 
 mesh \: optional
     Options specific to routing protocols.
