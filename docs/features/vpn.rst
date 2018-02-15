@@ -30,7 +30,7 @@ If you want to allow users to decide by themselves:
 
 - Be sure, the package ``gluon-web-mesh-vpn-fastd`` is enabled in ``site.mk``
 - Set the option ``mesh_vpn.fastd.configurable = true`` in ``site.conf``
-- On the server side, be sure that ``null`` cipher is allowed and preferred over ``salsa2012+umac``. You can ensure this by inserting the ``method "null";`` entry before the ``method "salsa2012+umac";`` in your site.conf.
+- On the server side, be sure that ``null`` cipher is allowed and preferred over ``salsa2012+umac``. You can ensure this by inserting the ``method "null";`` entry before the ``method "salsa2012+umac";`` in your fastd.conf.
 
 Users now should have the choice in expert mode to decide
 by themselves, which looks like this:
