@@ -13,7 +13,7 @@ end
 local function set(_, name, val)
 	if val then
 		local f = io.open(sysconfigdir .. name, 'w+')
-		f:write(val)
+		f:write(val, '\n')
 		f:close()
 	else
 		os.remove(sysconfigdir .. name)
