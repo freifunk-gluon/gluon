@@ -10,6 +10,8 @@ start_service () {
 		for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
 		[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
 	)
+	/sbin/sysctl -w net.ipv6.neigh.default.gc_thresh1=2
+	/sbin/sysctl -w net.ipv4.neigh.default.gc_thresh1=2
 
 	procd_open_instance
 	procd_set_param stdout 1
