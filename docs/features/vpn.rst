@@ -1,45 +1,54 @@
-VPN
-===
+Mesh-VPN
+========
 
-Gluon supports different options to establish vpn tunnels,
-which connect mesh clouds and provide internet access.
-Currently the available vpn protocols options are:
+Gluon integrates several OSI-Layer 2 tunneling protocols to
+enable interconnects between local meshes and provide
+internetwork access. Available protocols currently are:
 
 - fastd
-- L2TP (tunneldigger)
+- L2TPv3 (via tunneldigger)
 
-Fastd is a lightweight vpn daemon in userspace, which is
-especially designed for embedded hardware. It supports
-encryption and authentication.
+fastd is a lightweight userspace tunneling daemon, that
+implements cipher suites that are specifically designed
+to work well on embedded devices. It offers encryption
+and authentication. Its primary drawback are the necessary
+context-switches when forwarding packets.
 
-L2TP is implemented inside the linux kernel and has
-therefore performance advantages over fastd. The
-disadvantage of L2TP is, that it does not support any
-encryption. So everything is sent in plain.
+L2TPv3 is an in-kernel tunneling protocol that performs well,
+but offers no security properties by itself.
+The brokering of the tunnel happens through tunneldigger,
+its primary drawback being the lack of IPv6 support.
 
-Optional Encryption (fastd only):
----------------------------------
+fastd
+-----
 
-When using fastd, the firmware can allow the user to
-decide by itself, whether he want's to use encryption
-or not. If the firmware builder doesn't like this, he
-is also able to hide (or even forbid) the encryptionless
-option to the user.
+### Configurable Cipher
 
-If you want to allow users to decide by themselves:
 
-- Be sure, the package ``gluon-web-mesh-vpn-fastd`` is enabled in ``site.mk``
-- Set the option ``mesh_vpn.fastd.configurable = true`` in ``site.conf``
-- On the server side, be sure that ``null`` cipher is allowed and preferred over ``salsa2012+umac``. You can ensure this by inserting the ``method "null";`` entry before the ``method "salsa2012+umac";`` in your fastd.conf.
+From the site configuration fastd can be allowed to offer
+toggleable encryption in the config mode with the intent to
+increase throughput, although in practice the gain is minimal.
 
-Users now should have the choice in expert mode to decide
-by themselves, which looks like this:
+**Site configuration:**
+
+1) Install ``gluon-web-mesh-vpn-fastd`` in ``site.mk``
+2) Set ``mesh_vpn.fastd.configurable = true`` in ``site.conf``
+
+**Gateway configuration:**
+
+1) Prepend the ``none`` cipher in fastds method list
+
+
+**Config Mode:**
+The resulting firmware will allow users to choose between secure (encrypted) and fast (unencrypted) transport.
 
 .. image:: fastd_mode.gif
 
-If you want to ensure, that the correct chipher is chosen,
-you can use the following command on a router. You maybe
-have to install socat before.
+**Unix socket:**
+To confirm whether the correct cipher is being used, fastds unix
+socket can be interrogated, after installing for example `socat`.
 
+       opkg update
+       opkg install socat
        socat - UNIX-CONNECT:/var/run/fastd.mesh_vpn.socket
 
