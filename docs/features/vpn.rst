@@ -48,6 +48,8 @@ The resulting firmware will allow users to choose between secure (encrypted) and
 To confirm whether the correct cipher is being used, fastds unix
 socket can be interrogated, after installing for example `socat`.
 
+::
+
        opkg update
        opkg install socat
        socat - UNIX-CONNECT:/var/run/fastd.mesh_vpn.socket
