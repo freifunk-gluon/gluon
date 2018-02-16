@@ -22,7 +22,8 @@ its primary drawback being the lack of IPv6 support.
 fastd
 -----
 
-### Configurable Cipher
+Configurable Cipher
+^^^^^^^^^^^^^^^^^^^
 
 
 From the site configuration fastd can be allowed to offer
