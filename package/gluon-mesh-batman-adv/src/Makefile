@@ -1,4 +1,4 @@
-all: respondd.so
+all: neighbours-batadv respondd.so
 
 CFLAGS += -Wall
 
@@ -8,6 +8,17 @@ ifeq ($(origin PKG_CONFIG), undefined)
     $(error $(PKG_CONFIG) not found)
   endif
 endif
+
+ifeq ($(origin LIBJSONC_CFLAGS) $(origin LIBJSONC_LDLIBS), undefined undefined)
+	LIBJSONC_NAME ?= json-c
+  ifeq ($(shell $(PKG_CONFIG) --modversion $(LIBJSONC_NAME) 2>/dev/null),)
+    $(error No $(LIBJSONC_NAME) development libraries found!)
+  endif
+  LIBJSONC_CFLAGS += $(shell $(PkG_CONFIG) --cflags $(LIBJSONC_NAME))
+  LIBJSONC_LDLIBS +=  $(shell $(PKG_CONFIG) --libs $(LIBJSONC_NAME))
+endif
+CFLAGS += $(LIBJSONC_CFLAGS)
+LDLIBS += $(LIBJSONC_LDLIBS)
 
 ifeq ($(origin LIBNL_CFLAGS) $(origin LIBNL_LDLIBS), undefined undefined)
   LIBNL_NAME ?= libnl-tiny
@@ -33,3 +44,7 @@ LDLIBS += $(LIBBATADV_LDLIBS)
 
 respondd.so: respondd.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -o $@ $^ $(LDLIBS) -lgluonutil -liwinfo -luci
+
+neighbours-batadv: neighbours-batadv.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -D_GNU_SOURCE -o $@ $^ $(LDLIBS)
+

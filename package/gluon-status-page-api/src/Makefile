@@ -29,10 +29,7 @@ ifeq ($(origin LIBBATADV_CFLAGS) $(origin LIBBATADV_LDLIBS), undefined undefined
   LIBBATADV_LDLIBS += $(shell $(PKG_CONFIG) --libs $(LIBBATADV_NAME))
 endif
 
-all: neighbours-batadv stations respondd.so
-
-neighbours-batadv: neighbours-batadv.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_JSONC) $(LIBNL_CFLAGS) $(LIBBATADV_CFLAGS) $(LDFLAGS) $(LDFLAGS_JSONC) $(LIBNL_LDLIBS) $(LIBBATADV_LDLIBS) -Wall -o $@ $^ $(LDLIBS)
+all: stations respondd.so
 
 stations: stations.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(CFLAGS_JSONC) $(LDFLAGS) $(LDFLAGS_JSONC) -Wall -o $@ $^ $(LDLIBS) -liwinfo

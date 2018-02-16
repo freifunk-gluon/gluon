@@ -8,7 +8,7 @@ badrequest() {
 
 echo 'Access-Control-Allow-Origin: *'
 
-batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" || badrequest
+ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"| grep -qxF "$QUERY_STRING" || badrequest
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
 
