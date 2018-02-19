@@ -1,5 +1,3 @@
-if need_table('geolocator', nil, false) then
-	need_boolean('geolocator.autolocation', false)
-	need_number('geolocator.interval', false)
-	need_string_array_match('geolocator.blacklist', '^%w+:%w+:%w+:%w+:%w+:%w+$', false)
-end
+need_boolean(in_site({'geolocator', 'autolocation'}), false)
+need_number(in_site({'geolocator', 'interval'}), false)
+need_string_array_match(in_site({'geolocator', 'blacklist'}), '^%w+:%w+:%w+:%w+:%w+:%w+$')
