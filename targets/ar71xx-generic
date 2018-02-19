@@ -258,6 +258,7 @@ fi
 
 device ubiquiti-unifi-ac-lite ubnt-unifiac-lite
 alias ubiquiti-unifi-ac-mesh
+alias ubiquiti-unifi-ac-lr
 packages $ATH10K_PACKAGES
 factory
 
