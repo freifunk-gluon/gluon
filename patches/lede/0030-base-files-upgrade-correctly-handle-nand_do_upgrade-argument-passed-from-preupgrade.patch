@@ -6,10 +6,10 @@ Fixes: 30f61a34b4cf "base-files: always use staged sysupgrade"
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/files/lib/upgrade/common.sh b/package/base-files/files/lib/upgrade/common.sh
-index b18463f6b8e81d871b27146c00d061941ac6a2ec..f0443f8c495dc0c14a52e8b88b20a22c7620291b 100644
+index af7682c29e005c6ca47b91e9be2d60c359a90d05..6ccd84c5a95348124412adc8bf41d3fa4894435a 100644
 --- a/package/base-files/files/lib/upgrade/common.sh
 +++ b/package/base-files/files/lib/upgrade/common.sh
-@@ -219,7 +219,7 @@ default_do_upgrade() {
+@@ -222,7 +222,7 @@ default_do_upgrade() {
  do_upgrade_stage2() {
  	v "Performing system upgrade..."
  	if [ -n "$do_upgrade" ]; then
