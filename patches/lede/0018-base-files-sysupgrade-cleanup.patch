@@ -13,7 +13,7 @@ fixed eventually to use platform_do_upgrade for that purpose.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/files/lib/upgrade/common.sh b/package/base-files/files/lib/upgrade/common.sh
-index 6f8e408401906666db945a981100962139fc7d32..b18463f6b8e81d871b27146c00d061941ac6a2ec 100644
+index ef9aac709fc1619ba15eeb0aeb4a9a6a372369b2..af7682c29e005c6ca47b91e9be2d60c359a90d05 100644
 --- a/package/base-files/files/lib/upgrade/common.sh
 +++ b/package/base-files/files/lib/upgrade/common.sh
 @@ -30,106 +30,6 @@ install_bin() { # <file> [ <symlink> ... ]

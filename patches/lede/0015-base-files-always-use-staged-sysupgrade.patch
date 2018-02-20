@@ -12,7 +12,7 @@ are killed to allow unmounting the root filesystem.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/files/lib/upgrade/common.sh b/package/base-files/files/lib/upgrade/common.sh
-index 3ddd1e74657e0f9893533f917cb56ed0c2e3196c..6f8e408401906666db945a981100962139fc7d32 100644
+index 8c1b3b180e1ecfdd2c106dd3b8853cd487ff89b4..ef9aac709fc1619ba15eeb0aeb4a9a6a372369b2 100644
 --- a/package/base-files/files/lib/upgrade/common.sh
 +++ b/package/base-files/files/lib/upgrade/common.sh
 @@ -56,7 +56,6 @@ run_ramfs() { # <command> [...]
@@ -147,7 +147,7 @@ index 3ddd1e74657e0f9893533f917cb56ed0c2e3196c..6f8e408401906666db945a9811009621
  }
  
  get_magic_word() {
-@@ -328,12 +316,14 @@ default_do_upgrade() {
+@@ -331,12 +319,14 @@ default_do_upgrade() {
  	fi
  }
  
@@ -166,7 +166,7 @@ index 3ddd1e74657e0f9893533f917cb56ed0c2e3196c..6f8e408401906666db945a9811009621
  	fi
  
  	if [ "$SAVE_CONFIG" -eq 1 ] && type 'platform_copy_config' >/dev/null 2>/dev/null; then
-@@ -341,12 +331,11 @@ do_upgrade() {
+@@ -344,12 +334,11 @@ do_upgrade() {
  	fi
  
  	v "Upgrade completed"
