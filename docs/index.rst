@@ -27,6 +27,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    features/monitoring
    features/authorized-keys
    features/roles
+   features/vpn
 
 .. toctree::
    :caption: Developer Documentation
