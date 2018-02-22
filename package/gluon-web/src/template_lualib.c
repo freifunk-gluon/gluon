@@ -16,7 +16,12 @@
  *  limitations under the License.
  */
 
-#include "template_lualib.h"
+#include "template_parser.h"
+#include "template_utils.h"
+#include "template_lmo.h"
+
+#define TEMPLATE_LUALIB_META  "gluon.web.template.parser"
+
 
 static int template_L_do_parse(lua_State *L, struct template_parser *parser, const char *chunkname)
 {
