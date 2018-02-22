@@ -1,7 +1,8 @@
 /*
- * LuCI Template - Utility functions
+ * gluon-web Template - Utility functions
  *
  *   Copyright (C) 2010 Jo-Philipp Wich <jow@openwrt.org>
+ *   Copyright (C) 2018 Matthias Schiffer <mschiffer@universe-factory.net>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
