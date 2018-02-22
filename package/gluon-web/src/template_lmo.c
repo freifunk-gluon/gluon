@@ -74,18 +74,16 @@ static lmo_archive_t * lmo_open(const char *file)
 
 	lmo_archive_t *ar = NULL;
 
-	if (stat(file, &s) == -1)
+	if ((in = open(file, O_RDONLY|O_CLOEXEC)) == -1)
 		goto err;
 
-	if ((in = open(file, O_RDONLY)) == -1)
+	if (fstat(in, &s) == -1)
 		goto err;
 
 	if ((ar = calloc(1, sizeof(*ar))) != NULL) {
 
 		ar->fd     = in;
 		ar->size = s.st_size;
-
-		fcntl(ar->fd, F_SETFD, fcntl(ar->fd, F_GETFD) | FD_CLOEXEC);
 
 		if ((ar->mmap = mmap(NULL, ar->size, PROT_READ, MAP_SHARED, ar->fd, 0)) == MAP_FAILED)
 			goto err;

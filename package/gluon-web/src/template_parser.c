@@ -45,10 +45,10 @@ struct template_parser * template_open(const char *file)
 	parser->fd = -1;
 	parser->file = file;
 
-	if (stat(file, &s))
+	if ((parser->fd = open(file, O_RDONLY|O_CLOEXEC)) < 0)
 		goto err;
 
-	if ((parser->fd = open(file, O_RDONLY)) < 0)
+	if (fstat(parser->fd, &s))
 		goto err;
 
 	parser->size = s.st_size;
