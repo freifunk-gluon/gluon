@@ -34,13 +34,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-#if (defined(__GNUC__) && defined(__i386__))
-#define sfh_get16(d) (*((const uint16_t *) (d)))
-#else
-#define sfh_get16(d) ((((uint32_t)(((const uint8_t *)(d))[1])) << 8)\
-					   +(uint32_t)(((const uint8_t *)(d))[0]) )
-#endif
-
 
 struct lmo_entry {
 	uint32_t key_id;
