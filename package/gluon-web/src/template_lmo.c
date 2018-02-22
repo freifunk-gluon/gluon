@@ -19,19 +19,18 @@
 
 #include "template_lmo.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fnmatch.h>
 #include <dirent.h>
-#include <ctype.h>
+#include <fcntl.h>
+#include <fnmatch.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <limits.h>
 
 
@@ -46,12 +45,10 @@ typedef struct lmo_entry lmo_entry_t;
 
 
 struct lmo_archive {
-	int         fd;
-	int	    length;
-	uint32_t    size;
-	lmo_entry_t *index;
-	char        *mmap;
-	char        *end;
+	size_t length;
+	const lmo_entry_t *index;
+	char *data;
+	const char *end;
 	struct lmo_archive *next;
 };
 
@@ -66,14 +63,24 @@ struct lmo_catalog {
 
 typedef struct lmo_catalog lmo_catalog_t;
 
+
+static inline uint16_t get_le16(const void *data) {
+	const uint8_t *d = data;
+	return (((uint16_t)d[1]) << 8) | d[0];
+}
+
+static inline uint32_t get_be32(const void *data) {
+	const uint8_t *d = data;
+	return (((uint32_t)d[0]) << 24)
+	     | (((uint32_t)d[1]) << 16)
+	     | (((uint32_t)d[2]) << 8)
+	     | d[3];
+}
+
 /*
  * Hash function from http://www.azillionmonkeys.com/qed/hash.html
  * Copyright (C) 2004-2008 by Paul Hsieh
  */
-static inline uint16_t get_le16(const uint8_t *d) {
-	return (((uint16_t)d[1]) << 8) | d[0];
-}
-
 static uint32_t sfh_hash(const void *input, size_t len)
 {
 	const uint8_t *data = input;
@@ -117,47 +124,40 @@ static uint32_t sfh_hash(const void *input, size_t len)
 
 static lmo_archive_t * lmo_open(const char *file)
 {
-	int in = -1;
-	uint32_t idx_offset = 0;
+	int fd = -1;
+	lmo_archive_t *ar = NULL;
 	struct stat s;
 
-	lmo_archive_t *ar = NULL;
-
-	if ((in = open(file, O_RDONLY|O_CLOEXEC)) == -1)
+	if ((fd = open(file, O_RDONLY|O_CLOEXEC)) == -1)
 		goto err;
 
-	if (fstat(in, &s) == -1)
+	if (fstat(fd, &s) == -1)
 		goto err;
 
 	if ((ar = calloc(1, sizeof(*ar))) != NULL) {
-
-		ar->fd     = in;
-		ar->size = s.st_size;
-
-		if ((ar->mmap = mmap(NULL, ar->size, PROT_READ, MAP_SHARED, ar->fd, 0)) == MAP_FAILED)
+		if ((ar->data = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED)
 			goto err;
 
-		idx_offset = ntohl(*((const uint32_t *)
-		                     (ar->mmap + ar->size - sizeof(uint32_t))));
+		ar->end = ar->data + s.st_size;
 
-		if (idx_offset >= ar->size)
+		uint32_t idx_offset = get_be32(ar->end - sizeof(uint32_t));
+		ar->index  = (const lmo_entry_t *)(ar->data + idx_offset);
+
+		if ((const char *)ar->index > (ar->end - sizeof(uint32_t)))
 			goto err;
 
-		ar->index  = (lmo_entry_t *)(ar->mmap + idx_offset);
-		ar->length = (ar->size - idx_offset - sizeof(uint32_t)) / sizeof(lmo_entry_t);
-		ar->end    = ar->mmap + ar->size;
+		ar->length = (ar->end - sizeof(uint32_t) - (const char *)ar->index) / sizeof(lmo_entry_t);
 
 		return ar;
 	}
 
 err:
-	if (in > -1)
-		close(in);
+	if (fd >= 0)
+		close(fd);
 
-	if (ar != NULL)
-	{
-		if ((ar->mmap != NULL) && (ar->mmap != MAP_FAILED))
-			munmap(ar->mmap, ar->size);
+	if (ar != NULL) {
+		if ((ar->data != NULL) && (ar->data != MAP_FAILED))
+			munmap(ar->data, ar->end - ar->data);
 
 		free(ar);
 	}
@@ -166,10 +166,24 @@ err:
 }
 
 
-static lmo_catalog_t *_lmo_catalogs;
-static lmo_catalog_t *_lmo_active_catalog;
+static lmo_catalog_t *lmo_catalogs;
+static lmo_catalog_t *lmo_active_catalog;
 
-int lmo_load_catalog(const char *lang, const char *dir)
+bool lmo_change_catalog(const char *lang)
+{
+	lmo_catalog_t *cat;
+
+	for (cat = lmo_catalogs; cat; cat = cat->next) {
+		if (!strncmp(cat->lang, lang, sizeof(cat->lang))) {
+			lmo_active_catalog = cat;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool lmo_load_catalog(const char *lang, const char *dir)
 {
 	DIR *dh = NULL;
 	char pattern[16];
@@ -179,10 +193,10 @@ int lmo_load_catalog(const char *lang, const char *dir)
 	lmo_archive_t *ar = NULL;
 	lmo_catalog_t *cat = NULL;
 
-	if (!lmo_change_catalog(lang))
-		return 0;
+	if (lmo_change_catalog(lang))
+		return true;
 
-	if (!dir || !(dh = opendir(dir)))
+	if (!(dh = opendir(dir)))
 		goto err;
 
 	if (!(cat = calloc(1, sizeof(*cat))))
@@ -191,15 +205,12 @@ int lmo_load_catalog(const char *lang, const char *dir)
 	snprintf(cat->lang, sizeof(cat->lang), "%s", lang);
 	snprintf(pattern, sizeof(pattern), "*.%s.lmo", lang);
 
-	while ((de = readdir(dh)) != NULL)
-	{
-		if (!fnmatch(pattern, de->d_name, 0))
-		{
+	while ((de = readdir(dh)) != NULL) {
+		if (!fnmatch(pattern, de->d_name, 0)) {
 			snprintf(path, sizeof(path), "%s/%s", dir, de->d_name);
 			ar = lmo_open(path);
 
-			if (ar)
-			{
+			if (ar) {
 				ar->next = cat->archives;
 				cat->archives = ar;
 			}
@@ -208,93 +219,62 @@ int lmo_load_catalog(const char *lang, const char *dir)
 
 	closedir(dh);
 
-	cat->next = _lmo_catalogs;
-	_lmo_catalogs = cat;
+	cat->next = lmo_catalogs;
+	lmo_catalogs = cat;
 
-	if (!_lmo_active_catalog)
-		_lmo_active_catalog = cat;
+	lmo_active_catalog = cat;
 
-	return 0;
+	return true;
 
 err:
-	if (dh) closedir(dh);
-	if (cat) free(cat);
+	if (dh)
+		closedir(dh);
+	free(cat);
 
-	return -1;
+	return false;
 }
 
-int lmo_change_catalog(const char *lang)
+static int lmo_compare_entry(const void *a, const void *b)
 {
-	lmo_catalog_t *cat;
+	const lmo_entry_t *ea = a, *eb = b;
+	uint32_t ka = ntohl(ea->key_id), kb = ntohl(eb->key_id);
 
-	for (cat = _lmo_catalogs; cat; cat = cat->next)
-	{
-		if (!strncmp(cat->lang, lang, sizeof(cat->lang)))
-		{
-			_lmo_active_catalog = cat;
-			return 0;
-		}
-	}
-
-	return -1;
+	if (ka < kb)
+		return -1;
+	else if (ka > kb)
+		return 1;
+	else
+		return 0;
 }
 
-static lmo_entry_t * lmo_find_entry(lmo_archive_t *ar, uint32_t hash)
+static const lmo_entry_t * lmo_find_entry(const lmo_archive_t *ar, uint32_t hash)
 {
-	unsigned int m, l, r;
-	uint32_t k;
+	lmo_entry_t key;
+	key.key_id = htonl(hash);
 
-	l = 0;
-	r = ar->length - 1;
-
-	while (1)
-	{
-		m = l + ((r - l) / 2);
-
-		if (r < l)
-			break;
-
-		k = ntohl(ar->index[m].key_id);
-
-		if (k == hash)
-			return &ar->index[m];
-
-		if (k > hash)
-		{
-			if (!m)
-				break;
-
-			r = m - 1;
-		}
-		else
-		{
-			l = m + 1;
-		}
-	}
-
-	return NULL;
+	return bsearch(&key, ar->index, ar->length, sizeof(lmo_entry_t), lmo_compare_entry);
 }
 
-int lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen)
+bool lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen)
 {
-	uint32_t hash;
-	lmo_entry_t *e;
-	lmo_archive_t *ar;
+	if (!lmo_active_catalog)
+		return false;
 
-	if (!key || !_lmo_active_catalog)
-		return -2;
+	uint32_t hash = sfh_hash(key, keylen);
 
-	hash = sfh_hash(key, keylen);
+	for (const lmo_archive_t *ar = lmo_active_catalog->archives; ar; ar = ar->next) {
+		const lmo_entry_t *e = lmo_find_entry(ar, hash);
+		if (!e)
+			continue;
 
-	for (ar = _lmo_active_catalog->archives; ar; ar = ar->next)
-	{
-		if ((e = lmo_find_entry(ar, hash)) != NULL)
-		{
-			*out = ar->mmap + ntohl(e->offset);
-			*outlen = ntohl(e->length);
-			return 0;
-		}
+		*out = ar->data + ntohl(e->offset);
+		*outlen = ntohl(e->length);
+
+		if (*out + *outlen > ar->end)
+			continue;
+
+		return true;
 	}
 
-	return -1;
+	return false;
 }

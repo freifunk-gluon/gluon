@@ -20,11 +20,11 @@
 #ifndef _TEMPLATE_LMO_H_
 #define _TEMPLATE_LMO_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 
 
-int lmo_load_catalog(const char *lang, const char *dir);
-int lmo_change_catalog(const char *lang);
-int lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen);
+bool lmo_load_catalog(const char *lang, const char *dir);
+bool lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen);
 
 #endif

@@ -92,8 +92,8 @@ static int template_L_pcdata(lua_State *L)
 
 static int template_L_load_catalog(lua_State *L) {
 	const char *lang = luaL_optstring(L, 1, "en");
-	const char *dir  = luaL_optstring(L, 2, NULL);
-	lua_pushboolean(L, !lmo_load_catalog(lang, dir));
+	const char *dir  = luaL_checkstring(L, 2);
+	lua_pushboolean(L, lmo_load_catalog(lang, dir));
 	return 1;
 }
 
@@ -103,19 +103,12 @@ static int template_L_translate(lua_State *L) {
 	size_t trlen;
 	const char *key = luaL_checklstring(L, 1, &len);
 
-	switch (lmo_translate(key, len, &tr, &trlen))
-	{
-		case 0:
-			lua_pushlstring(L, tr, trlen);
-			return 1;
+	if (lmo_translate(key, len, &tr, &trlen))
+		lua_pushlstring(L, tr, trlen);
+	else
+		lua_pushnil(L);
 
-		case -1:
-			return 0;
-	}
-
-	lua_pushnil(L);
-	lua_pushstring(L, "no catalog loaded");
-	return 2;
+	return 1;
 }
 
 

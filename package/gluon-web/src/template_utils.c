@@ -359,7 +359,7 @@ void luastr_translate(struct template_buffer *out, const char *s, size_t l, bool
 	char *tr;
 	size_t trlen;
 
-	if (!lmo_translate(s, l, &tr, &trlen))
+	if (lmo_translate(s, l, &tr, &trlen))
 		luastr_escape(out, tr, trlen, escape_xml);
 	else
 		luastr_escape(out, s, l, escape_xml);
