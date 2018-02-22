@@ -200,7 +200,7 @@ static inline int mb_is_illegal(unsigned char *s, int n)
 
 /* scan given source string, validate UTF-8 sequence and store result
  * in given buffer object */
-static int validate_utf8(unsigned char **s, int l, struct template_buffer *buf)
+static int validate_utf8(unsigned char **s, unsigned int l, struct template_buffer *buf)
 {
 	unsigned char *ptr = *s;
 	unsigned int o = 0, v, n;
@@ -289,7 +289,7 @@ char * pcdata(const char *s, unsigned int l)
 	for (o = 0; o < l; o++)
 	{
 		/* Invalid XML bytes */
-		if (((*ptr >= 0x00) && (*ptr <= 0x08)) ||
+		if ((*ptr <= 0x08) ||
 		    ((*ptr >= 0x0B) && (*ptr <= 0x0C)) ||
 		    ((*ptr >= 0x0E) && (*ptr <= 0x1F)) ||
 		    (*ptr == 0x7F))

@@ -27,8 +27,9 @@ static inline uint16_t get_le16(const uint8_t *d) {
 	return (((uint16_t)d[1]) << 8) | d[0];
 }
 
-static uint32_t sfh_hash(const uint8_t *data, int len)
+static uint32_t sfh_hash(const void *input, int len)
 {
+	const uint8_t *data = input;
 	uint32_t hash = len, tmp;
 
 	/* Main loop */

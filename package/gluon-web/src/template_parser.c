@@ -291,7 +291,7 @@ template_format_chunk(struct template_parser *parser, size_t *sz)
 	return s;
 }
 
-const char *template_reader(lua_State *L, void *ud, size_t *sz)
+const char *template_reader(lua_State *L __attribute__((unused)), void *ud, size_t *sz)
 {
 	struct template_parser *parser = ud;
 	int rem = parser->size - (parser->off - parser->data);
