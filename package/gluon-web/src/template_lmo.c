@@ -69,34 +69,6 @@ static uint32_t sfh_hash(const char *data, int len)
 	return hash;
 }
 
-static uint32_t lmo_canon_hash(const char *str, int len)
-{
-	char res[4096];
-	char *ptr, prev;
-	int off;
-
-	if (!str || len >= sizeof(res))
-		return 0;
-
-	for (prev = ' ', ptr = res, off = 0; off < len; prev = *str, off++, str++)
-	{
-		if (isspace(*str))
-		{
-			if (!isspace(prev))
-				*ptr++ = ' ';
-		}
-		else
-		{
-			*ptr++ = *str;
-		}
-	}
-
-	if ((ptr > res) && isspace(*(ptr-1)))
-		ptr--;
-
-	return sfh_hash(res, ptr - res);
-}
-
 static lmo_archive_t * lmo_open(const char *file)
 {
 	int in = -1;
@@ -272,7 +244,7 @@ int lmo_translate(const char *key, int keylen, char **out, int *outlen)
 	if (!key || !_lmo_active_catalog)
 		return -2;
 
-	hash = lmo_canon_hash(key, keylen);
+	hash = sfh_hash(key, keylen);
 
 	for (ar = _lmo_active_catalog->archives; ar; ar = ar->next)
 	{
