@@ -39,10 +39,9 @@ struct template_parser * template_open(const char *file)
 	struct stat s;
 	struct template_parser *parser;
 
-	if (!(parser = malloc(sizeof(*parser))))
+	if (!(parser = calloc(1, sizeof(*parser))))
 		goto err;
 
-	memset(parser, 0, sizeof(*parser));
 	parser->fd = -1;
 	parser->file = file;
 
@@ -80,10 +79,9 @@ struct template_parser * template_string(const char *str, uint32_t len)
 		return NULL;
 	}
 
-	if (!(parser = malloc(sizeof(*parser))))
+	if (!(parser = calloc(1, sizeof(*parser))))
 		goto err;
 
-	memset(parser, 0, sizeof(*parser));
 	parser->fd = -1;
 
 	parser->size = len;

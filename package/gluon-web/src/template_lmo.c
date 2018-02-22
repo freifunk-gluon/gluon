@@ -80,9 +80,7 @@ static lmo_archive_t * lmo_open(const char *file)
 	if ((in = open(file, O_RDONLY)) == -1)
 		goto err;
 
-	if ((ar = (lmo_archive_t *)malloc(sizeof(*ar))) != NULL)
-	{
-		memset(ar, 0, sizeof(*ar));
+	if ((ar = calloc(1, sizeof(*ar))) != NULL) {
 
 		ar->fd     = in;
 		ar->size = s.st_size;
@@ -140,10 +138,8 @@ int lmo_load_catalog(const char *lang, const char *dir)
 	if (!dir || !(dh = opendir(dir)))
 		goto err;
 
-	if (!(cat = malloc(sizeof(*cat))))
+	if (!(cat = calloc(1, sizeof(*cat))))
 		goto err;
-
-	memset(cat, 0, sizeof(*cat));
 
 	snprintf(cat->lang, sizeof(cat->lang), "%s", lang);
 	snprintf(pattern, sizeof(pattern), "*.%s.lmo", lang);

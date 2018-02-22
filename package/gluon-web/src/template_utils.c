@@ -27,7 +27,7 @@ struct template_buffer * buf_init(int size)
 	if (size <= 0)
 		size = 1024;
 
-	buf = (struct template_buffer *)malloc(sizeof(struct template_buffer));
+	buf = malloc(sizeof(*buf));
 
 	if (buf != NULL)
 	{
