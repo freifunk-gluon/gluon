@@ -66,7 +66,7 @@ static bool buf_grow(struct template_buffer *buf, size_t len)
 }
 
 /* put one char into buffer object */
-static bool buf_putchar(struct template_buffer *buf, char c)
+bool buf_putchar(struct template_buffer *buf, char c)
 {
 	if (!buf_grow(buf, 1))
 		return false;
@@ -310,54 +310,4 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 
 	*outl = buf_length(buf);
 	return buf_destroy(buf);
-}
-
-void luastr_escape(struct template_buffer *out, const char *s, size_t l, bool escape_xml)
-{
-	int esl;
-	char esq[8];
-	const char *ptr;
-
-	for (ptr = s; ptr < (s + l); ptr++) {
-		switch (*ptr) {
-		case '\\':
-			buf_append(out, "\\\\", 2);
-			break;
-
-		case '\'':
-			if (escape_xml)
-				buf_append(out, "&#39;", 5);
-			else
-				buf_append(out, "\\\'", 2);
-			break;
-
-		case '\n':
-			buf_append(out, "\\n", 2);
-			break;
-
-		case '"':
-		case '&':
-		case '<':
-		case '>':
-			if (escape_xml) {
-				esl = snprintf(esq, sizeof(esq), "&#%i;", *ptr);
-				buf_append(out, esq, esl);
-				break;
-			}
-
-		default:
-			buf_putchar(out, *ptr);
-		}
-	}
-}
-
-void luastr_translate(struct template_buffer *out, const char *s, size_t l, bool escape_xml)
-{
-	char *tr;
-	size_t trlen;
-
-	if (lmo_translate(s, l, &tr, &trlen))
-		luastr_escape(out, tr, trlen, escape_xml);
-	else
-		luastr_escape(out, s, l, escape_xml);
 }

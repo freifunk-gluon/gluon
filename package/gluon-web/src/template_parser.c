@@ -72,15 +72,15 @@ struct template_parser {
 
 /* leading and trailing code for different types */
 static const char *const gen_code[][2] = {
-	[T_TYPE_INIT]     = {NULL,              NULL},
-	[T_TYPE_TEXT]     = {"write('",         "')"},
-	[T_TYPE_COMMENT]  = {NULL,              NULL},
-	[T_TYPE_EXPR]     = {"write(tostring(", " or ''))"},
-	[T_TYPE_INCLUDE]  = {"include('",       "')"},
-	[T_TYPE_I18N]     = {"write('",         "')"},
-	[T_TYPE_I18N_RAW] = {"write('",         "')"},
-	[T_TYPE_CODE]     = {NULL,              " "},
-	[T_TYPE_EOF]      = {NULL,              NULL},
+	[T_TYPE_INIT]     = {NULL,                        NULL},
+	[T_TYPE_TEXT]     = {"write('",                   "')"},
+	[T_TYPE_COMMENT]  = {NULL,                        NULL},
+	[T_TYPE_EXPR]     = {"write(tostring(",           " or ''))"},
+	[T_TYPE_INCLUDE]  = {"include('",                 "')"},
+	[T_TYPE_I18N]     = {"write(pcdata(translate('",  "')))"},
+	[T_TYPE_I18N_RAW] = {"write(translate('",         "'))"},
+	[T_TYPE_CODE]     = {NULL,                        " "},
+	[T_TYPE_EOF]      = {NULL,                        NULL},
 };
 
 static struct template_parser * template_init(struct template_parser *parser)
@@ -241,6 +241,28 @@ static void template_code(struct template_parser *parser, const char *e)
 	parser->cur_chunk.e = e;
 }
 
+static void luastr_escape(struct template_buffer *out, const char *s, const char *e)
+{
+	for (const char *ptr = s; ptr < e; ptr++) {
+		switch (*ptr) {
+		case '\\':
+			buf_append(out, "\\\\", 2);
+			break;
+
+		case '\'':
+			buf_append(out, "\\\'", 2);
+			break;
+
+		case '\n':
+			buf_append(out, "\\n", 2);
+			break;
+
+		default:
+			buf_putchar(out, *ptr);
+		}
+	}
+}
+
 static struct template_buffer * template_format_chunk(struct template_parser *parser)
 {
 	const char *p;
@@ -266,25 +288,16 @@ static struct template_buffer * template_format_chunk(struct template_parser *pa
 
 		switch (c->type) {
 		case T_TYPE_TEXT:
-			luastr_escape(buf, c->s, c->e - c->s, false);
+		case T_TYPE_INCLUDE:
+		case T_TYPE_I18N:
+		case T_TYPE_I18N_RAW:
+			luastr_escape(buf, c->s, c->e);
 			break;
 
 		case T_TYPE_EXPR:
 			buf_append(buf, c->s, c->e - c->s);
 			for (p = c->s; p < c->e; p++)
 				parser->line += (*p == '\n');
-			break;
-
-		case T_TYPE_INCLUDE:
-			luastr_escape(buf, c->s, c->e - c->s, false);
-			break;
-
-		case T_TYPE_I18N:
-			luastr_translate(buf, c->s, c->e - c->s, true);
-			break;
-
-		case T_TYPE_I18N_RAW:
-			luastr_translate(buf, c->s, c->e - c->s, false);
 			break;
 
 		case T_TYPE_CODE:
