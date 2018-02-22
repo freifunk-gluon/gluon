@@ -21,19 +21,78 @@
 #include "template_utils.h"
 #include "template_lmo.h"
 
+#include <lualib.h>
+#include <lauxlib.h>
+
+#include <sys/stat.h>
+#include <sys/mman.h>
+
+#include <ctype.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+
+/* code types */
+#define T_TYPE_INIT     0
+#define T_TYPE_TEXT     1
+#define T_TYPE_COMMENT  2
+#define T_TYPE_EXPR     3
+#define T_TYPE_INCLUDE  4
+#define T_TYPE_I18N     5
+#define T_TYPE_I18N_RAW 6
+#define T_TYPE_CODE     7
+#define T_TYPE_EOF      8
+
+
+struct template_chunk {
+	const char *s;
+	const char *e;
+	int type;
+	int line;
+};
+
+/* parser state */
+struct template_parser {
+	int fd;
+	size_t size;
+	char *data;
+	char *off;
+	char *lua_chunk;
+	int line;
+	int in_expr;
+	bool strip_before;
+	bool strip_after;
+	struct template_chunk prv_chunk;
+	struct template_chunk cur_chunk;
+	const char *file;
+};
+
 
 /* leading and trailing code for different types */
-static const char *const gen_code[9][2] = {
-	{NULL,              NULL},
-	{"write(\"",        "\")"},
-	{NULL,              NULL},
-	{"write(tostring(", " or \"\"))"},
-	{"include(\"",      "\")"},
-	{"write(\"",        "\")"},
-	{"write(\"",        "\")"},
-	{NULL,              " "},
-	{}
+static const char *const gen_code[][2] = {
+	[T_TYPE_INIT]     = {NULL,              NULL},
+	[T_TYPE_TEXT]     = {"write(\"",        "\")"},
+	[T_TYPE_COMMENT]  = {NULL,              NULL},
+	[T_TYPE_EXPR]     = {"write(tostring(", " or \"\"))"},
+	[T_TYPE_INCLUDE]  = {"include(\"",      "\")"},
+	[T_TYPE_I18N]     = {"write(\"",        "\")"},
+	[T_TYPE_I18N_RAW] = {"write(\"",        "\")"},
+	[T_TYPE_CODE]     = {NULL,              " "},
+	[T_TYPE_EOF]      = {NULL,              NULL},
 };
+
+static struct template_parser * template_init(struct template_parser *parser)
+{
+	parser->off = parser->data;
+	parser->cur_chunk.type = T_TYPE_INIT;
+	parser->cur_chunk.s    = parser->data;
+	parser->cur_chunk.e    = parser->data;
+
+	return parser;
+}
 
 struct template_parser * template_open(const char *file)
 {
@@ -56,29 +115,19 @@ struct template_parser * template_open(const char *file)
 	parser->data = mmap(NULL, parser->size, PROT_READ, MAP_PRIVATE,
 						parser->fd, 0);
 
-	if (parser->data != MAP_FAILED)
-	{
-		parser->off = parser->data;
-		parser->cur_chunk.type = T_TYPE_INIT;
-		parser->cur_chunk.s    = parser->data;
-		parser->cur_chunk.e    = parser->data;
+	if (parser->data == MAP_FAILED)
+		goto err;
 
-		return parser;
-	}
+	return template_init(parser);
 
 err:
 	template_close(parser);
 	return NULL;
 }
 
-struct template_parser * template_string(const char *str, uint32_t len)
+struct template_parser * template_string(const char *str, size_t len)
 {
 	struct template_parser *parser;
-
-	if (!str) {
-		errno = EINVAL;
-		return NULL;
-	}
 
 	if (!(parser = calloc(1, sizeof(*parser))))
 		goto err;
@@ -86,14 +135,9 @@ struct template_parser * template_string(const char *str, uint32_t len)
 	parser->fd = -1;
 
 	parser->size = len;
-	parser->data = (char*)str;
+	parser->data = (char *)str;
 
-	parser->off = parser->data;
-	parser->cur_chunk.type = T_TYPE_INIT;
-	parser->cur_chunk.s    = parser->data;
-	parser->cur_chunk.e    = parser->data;
-
-	return parser;
+	return template_init(parser);
 
 err:
 	template_close(parser);
@@ -105,8 +149,7 @@ void template_close(struct template_parser *parser)
 	if (!parser)
 		return;
 
-	if (parser->gc != NULL)
-		free(parser->gc);
+	free(parser->lua_chunk);
 
 	/* if file is not set, we were parsing a string */
 	if (parser->file) {
@@ -124,18 +167,14 @@ static void template_text(struct template_parser *parser, const char *e)
 {
 	const char *s = parser->off;
 
-	if (s < (parser->data + parser->size))
-	{
-		if (parser->strip_after)
-		{
-			while ((s <= e) && isspace(*s))
+	if (s < (parser->data + parser->size)) {
+		if (parser->strip_after) {
+			while ((s < e) && isspace(s[0]))
 				s++;
 		}
 
 		parser->cur_chunk.type = T_TYPE_TEXT;
-	}
-	else
-	{
+	} else {
 		parser->cur_chunk.type = T_TYPE_EOF;
 	}
 
@@ -148,57 +187,53 @@ static void template_code(struct template_parser *parser, const char *e)
 {
 	const char *s = parser->off;
 
-	parser->strip_before = 0;
-	parser->strip_after = 0;
+	parser->strip_before = false;
+	parser->strip_after = false;
 
-	if (*s == '-')
-	{
-		parser->strip_before = 1;
-		for (s++; (s <= e) && (*s == ' ' || *s == '\t'); s++);
+	if (s < e && s[0] == '-') {
+		parser->strip_before = true;
+		s++;
 	}
 
-	if (*(e-1) == '-')
-	{
-		parser->strip_after = 1;
-		for (e--; (e >= s) && (*e == ' ' || *e == '\t'); e--);
+	if (s < e && e[-1] == '-') {
+		parser->strip_after = true;
+		e--;
 	}
 
-	switch (*s)
-	{
-		/* comment */
-		case '#':
-			s++;
-			parser->cur_chunk.type = T_TYPE_COMMENT;
-			break;
+	switch (*s) {
+	/* comment */
+	case '#':
+		s++;
+		parser->cur_chunk.type = T_TYPE_COMMENT;
+		break;
 
-		/* include */
-		case '+':
-			s++;
-			parser->cur_chunk.type = T_TYPE_INCLUDE;
-			break;
+	/* include */
+	case '+':
+		s++;
+		parser->cur_chunk.type = T_TYPE_INCLUDE;
+		break;
 
-		/* translate */
-		case ':':
-			s++;
-			parser->cur_chunk.type = T_TYPE_I18N;
-			break;
+	/* translate */
+	case ':':
+		s++;
+		parser->cur_chunk.type = T_TYPE_I18N;
+		break;
 
-		/* translate raw */
-		case '_':
-			s++;
-			parser->cur_chunk.type = T_TYPE_I18N_RAW;
-			break;
+	/* translate raw */
+	case '_':
+		s++;
+		parser->cur_chunk.type = T_TYPE_I18N_RAW;
+		break;
 
-		/* expr */
-		case '=':
-			s++;
-			parser->cur_chunk.type = T_TYPE_EXPR;
-			break;
+	/* expr */
+	case '=':
+		s++;
+		parser->cur_chunk.type = T_TYPE_EXPR;
+		break;
 
-		/* code */
-		default:
-			parser->cur_chunk.type = T_TYPE_CODE;
-			break;
+	/* code */
+	default:
+		parser->cur_chunk.type = T_TYPE_CODE;
 	}
 
 	parser->cur_chunk.line = parser->line;
@@ -206,142 +241,117 @@ static void template_code(struct template_parser *parser, const char *e)
 	parser->cur_chunk.e = e;
 }
 
-static const char *
-template_format_chunk(struct template_parser *parser, size_t *sz)
+static struct template_buffer * template_format_chunk(struct template_parser *parser)
 {
-	const char *s, *p;
+	const char *p;
 	const char *head, *tail;
 	struct template_chunk *c = &parser->prv_chunk;
-	struct template_buffer *buf;
 
-	*sz = 0;
-	s = parser->gc = NULL;
-
-	if (parser->strip_before && c->type == T_TYPE_TEXT)
-	{
-		while ((c->e > c->s) && isspace(*(c->e - 1)))
+	if (parser->strip_before && c->type == T_TYPE_TEXT) {
+		while ((c->e > c->s) && isspace(c->e[-1]))
 			c->e--;
 	}
 
 	/* empty chunk */
-	if (c->s == c->e)
-	{
-		if (c->type == T_TYPE_EOF)
-		{
-			*sz = 0;
-			s = NULL;
-		}
-		else
-		{
-			*sz = 1;
-			s = " ";
-		}
-	}
+	if (c->type == T_TYPE_EOF)
+		return NULL;
 
-	/* format chunk */
-	else if ((buf = buf_init(c->e - c->s)) != NULL)
-	{
+	struct template_buffer *buf = buf_init(c->e - c->s);
+	if (!buf)
+		return NULL;
+
+	if (c->e > c->s) {
 		if ((head = gen_code[c->type][0]) != NULL)
 			buf_append(buf, head, strlen(head));
 
-		switch (c->type)
-		{
-			case T_TYPE_TEXT:
-				luastr_escape(buf, c->s, c->e - c->s, 0);
-				break;
+		switch (c->type) {
+		case T_TYPE_TEXT:
+			luastr_escape(buf, c->s, c->e - c->s, false);
+			break;
 
-			case T_TYPE_EXPR:
-				buf_append(buf, c->s, c->e - c->s);
-				for (p = c->s; p < c->e; p++)
-					parser->line += (*p == '\n');
-				break;
+		case T_TYPE_EXPR:
+			buf_append(buf, c->s, c->e - c->s);
+			for (p = c->s; p < c->e; p++)
+				parser->line += (*p == '\n');
+			break;
 
-			case T_TYPE_INCLUDE:
-				luastr_escape(buf, c->s, c->e - c->s, 0);
-				break;
+		case T_TYPE_INCLUDE:
+			luastr_escape(buf, c->s, c->e - c->s, false);
+			break;
 
-			case T_TYPE_I18N:
-				luastr_translate(buf, c->s, c->e - c->s, 1);
-				break;
+		case T_TYPE_I18N:
+			luastr_translate(buf, c->s, c->e - c->s, true);
+			break;
 
-			case T_TYPE_I18N_RAW:
-				luastr_translate(buf, c->s, c->e - c->s, 0);
-				break;
+		case T_TYPE_I18N_RAW:
+			luastr_translate(buf, c->s, c->e - c->s, false);
+			break;
 
-			case T_TYPE_CODE:
-				buf_append(buf, c->s, c->e - c->s);
-				for (p = c->s; p < c->e; p++)
-					parser->line += (*p == '\n');
-				break;
+		case T_TYPE_CODE:
+			buf_append(buf, c->s, c->e - c->s);
+			for (p = c->s; p < c->e; p++)
+				parser->line += (*p == '\n');
+			break;
 		}
 
 		if ((tail = gen_code[c->type][1]) != NULL)
 			buf_append(buf, tail, strlen(tail));
-
-		*sz = buf_length(buf);
-		s = parser->gc = buf_destroy(buf);
-
-		if (!*sz)
-		{
-			*sz = 1;
-			s = " ";
-		}
 	}
 
-	return s;
+	return buf;
 }
 
-const char *template_reader(lua_State *L __attribute__((unused)), void *ud, size_t *sz)
+const char * template_reader(lua_State *L __attribute__((unused)), void *ud, size_t *sz)
 {
 	struct template_parser *parser = ud;
-	int rem = parser->size - (parser->off - parser->data);
-	char *tag;
 
-	parser->prv_chunk = parser->cur_chunk;
+	/* free previous chunk */
+	free(parser->lua_chunk);
+	parser->lua_chunk = NULL;
 
-	/* free previous string */
-	if (parser->gc)
-	{
-		free(parser->gc);
-		parser->gc = NULL;
+	while (true) {
+		int rem = parser->size - (parser->off - parser->data);
+		char *tag;
+
+		parser->prv_chunk = parser->cur_chunk;
+
+		/* before tag */
+		if (!parser->in_expr) {
+			if ((tag = memmem(parser->off, rem, "<%", 2)) != NULL) {
+				template_text(parser, tag);
+				parser->off = tag + 2;
+				parser->in_expr = 1;
+			} else {
+				template_text(parser, parser->data + parser->size);
+				parser->off = parser->data + parser->size;
+			}
+		}
+
+		/* inside tag */
+		else {
+			if ((tag = memmem(parser->off, rem, "%>", 2)) != NULL) {
+				template_code(parser, tag);
+				parser->off = tag + 2;
+				parser->in_expr = 0;
+			} else {
+				/* unexpected EOF */
+				template_code(parser, parser->data + parser->size);
+
+				*sz = 1;
+				return "\033";
+			}
+		}
+
+		struct template_buffer *buf = template_format_chunk(parser);
+		if (!buf)
+			return NULL;
+
+		*sz = buf_length(buf);
+		if (*sz) {
+			parser->lua_chunk = buf_destroy(buf);
+			return parser->lua_chunk;
+		}
 	}
-
-	/* before tag */
-	if (!parser->in_expr)
-	{
-		if ((tag = memmem(parser->off, rem, "<%", 2)) != NULL)
-		{
-			template_text(parser, tag);
-			parser->off = tag + 2;
-			parser->in_expr = 1;
-		}
-		else
-		{
-			template_text(parser, parser->data + parser->size);
-			parser->off = parser->data + parser->size;
-		}
-	}
-
-	/* inside tag */
-	else
-	{
-		if ((tag = memmem(parser->off, rem, "%>", 2)) != NULL)
-		{
-			template_code(parser, tag);
-			parser->off = tag + 2;
-			parser->in_expr = 0;
-		}
-		else
-		{
-			/* unexpected EOF */
-			template_code(parser, parser->data + parser->size);
-
-			*sz = 1;
-			return "\033";
-		}
-	}
-
-	return template_format_chunk(parser, sz);
 }
 
 int template_error(lua_State *L, struct template_parser *parser)
@@ -353,33 +363,30 @@ int template_error(lua_State *L, struct template_parser *parser)
 	int line = 0;
 	int chunkline = 0;
 
-	if ((ptr = memmem(err, strlen(err), "]:", 2)) != NULL)
-	{
+	if ((ptr = memmem(err, strlen(err), "]:", 2)) != NULL) {
 		chunkline = atoi(ptr + 2) - parser->prv_chunk.line;
 
-		while (*ptr)
-		{
-			if (*ptr++ == ' ')
-			{
+		while (*ptr) {
+			if (*ptr++ == ' ') {
 				err = ptr;
 				break;
 			}
 		}
 	}
 
-	if (memmem(err, strlen(err), "'char(27)'", 10) != NULL)
-	{
+	if (memmem(err, strlen(err), "'char(27)'", 10) != NULL) {
 		off = parser->data + parser->size;
 		err = "'%>' expected before end of file";
 		chunkline = 0;
 	}
 
-	for (ptr = parser->data; ptr < off; ptr++)
+	for (ptr = parser->data; ptr < off; ptr++) {
 		if (*ptr == '\n')
 			line++;
+	}
 
 	snprintf(msg, sizeof(msg), "Syntax error in %s:%d: %s",
-			 parser->file ? parser->file : "[string]", line + chunkline, err ? err : "(unknown error)");
+			 parser->file ?: "[string]", line + chunkline, err ?: "(unknown error)");
 
 	lua_pushnil(L);
 	lua_pushinteger(L, line + chunkline);

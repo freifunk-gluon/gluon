@@ -21,6 +21,14 @@
 #include "template_utils.h"
 #include "template_lmo.h"
 
+#include <lualib.h>
+#include <lauxlib.h>
+
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 #define TEMPLATE_LUALIB_META  "gluon.web.template.parser"
 
 

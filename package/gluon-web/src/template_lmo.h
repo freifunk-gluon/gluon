@@ -20,52 +20,7 @@
 #ifndef _TEMPLATE_LMO_H_
 #define _TEMPLATE_LMO_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fnmatch.h>
-#include <dirent.h>
-#include <ctype.h>
-#include <limits.h>
-
-
-struct lmo_entry {
-	uint32_t key_id;
-	uint32_t val_id;
-	uint32_t offset;
-	uint32_t length;
-} __attribute__((packed));
-
-typedef struct lmo_entry lmo_entry_t;
-
-
-struct lmo_archive {
-	int         fd;
-	int	        length;
-	uint32_t    size;
-	lmo_entry_t *index;
-	char        *mmap;
-	char		*end;
-	struct lmo_archive *next;
-};
-
-typedef struct lmo_archive lmo_archive_t;
-
-
-struct lmo_catalog {
-	char lang[6];
-	struct lmo_archive *archives;
-	struct lmo_catalog *next;
-};
-
-typedef struct lmo_catalog lmo_catalog_t;
+#include <stddef.h>
 
 
 int lmo_load_catalog(const char *lang, const char *dir);

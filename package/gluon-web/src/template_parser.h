@@ -20,59 +20,14 @@
 #ifndef _TEMPLATE_PARSER_H_
 #define _TEMPLATE_PARSER_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-
 #include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
 
 
-/* code types */
-#define T_TYPE_INIT     0
-#define T_TYPE_TEXT     1
-#define T_TYPE_COMMENT  2
-#define T_TYPE_EXPR     3
-#define T_TYPE_INCLUDE  4
-#define T_TYPE_I18N     5
-#define T_TYPE_I18N_RAW 6
-#define T_TYPE_CODE     7
-#define T_TYPE_EOF      8
+struct template_parser;
 
-
-struct template_chunk {
-	const char *s;
-	const char *e;
-	int type;
-	int line;
-};
-
-/* parser state */
-struct template_parser {
-	int fd;
-	uint32_t size;
-	char *data;
-	char *off;
-	char *gc;
-	int line;
-	int in_expr;
-	int strip_before;
-	int strip_after;
-	struct template_chunk prv_chunk;
-	struct template_chunk cur_chunk;
-	const char *file;
-};
 
 struct template_parser * template_open(const char *file);
-struct template_parser * template_string(const char *str, uint32_t len);
+struct template_parser * template_string(const char *str, size_t len);
 void template_close(struct template_parser *parser);
 
 const char *template_reader(lua_State *L, void *ud, size_t *sz);

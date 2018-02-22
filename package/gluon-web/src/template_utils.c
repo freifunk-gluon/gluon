@@ -27,19 +27,15 @@
 /* initialize a buffer object */
 struct template_buffer * buf_init(size_t size)
 {
-	if (size < 1024)
-		size = 1024;
-
 	struct template_buffer *buf = malloc(sizeof(*buf));
 
 	if (buf != NULL) {
 		buf->size = size;
 		buf->data = malloc(buf->size);
+		buf->dptr = buf->data;
 
-		if (buf->data != NULL) {
-			buf->dptr = buf->data;
+		if (buf->data != NULL || size == 0)
 			return buf;
-		}
 
 		free(buf);
 	}
