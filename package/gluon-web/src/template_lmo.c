@@ -128,20 +128,26 @@ static lmo_archive_t * lmo_open(const char *file)
 	lmo_archive_t *ar = NULL;
 	struct stat s;
 
-	if ((fd = open(file, O_RDONLY|O_CLOEXEC)) == -1)
+	fd = open(file, O_RDONLY|O_CLOEXEC);
+	if (fd < 0)
 		goto err;
 
-	if (fstat(fd, &s) == -1)
+	if (fstat(fd, &s))
 		goto err;
 
 	if ((ar = calloc(1, sizeof(*ar))) != NULL) {
-		if ((ar->data = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED)
+		ar->data = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+		close(fd);
+		fd = -1;
+
+		if (ar->data == MAP_FAILED)
 			goto err;
 
 		ar->end = ar->data + s.st_size;
 
 		uint32_t idx_offset = get_be32(ar->end - sizeof(uint32_t));
-		ar->index  = (const lmo_entry_t *)(ar->data + idx_offset);
+		ar->index = (const lmo_entry_t *)(ar->data + idx_offset);
 
 		if ((const char *)ar->index > (ar->end - sizeof(uint32_t)))
 			goto err;

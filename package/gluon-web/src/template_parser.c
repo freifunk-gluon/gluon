@@ -56,7 +56,6 @@ struct template_chunk {
 
 /* parser state */
 struct template_parser {
-	int fd;
 	size_t size;
 	char *data;
 	char *off;
@@ -96,24 +95,28 @@ static struct template_parser * template_init(struct template_parser *parser)
 
 struct template_parser * template_open(const char *file)
 {
+	int fd = -1;
 	struct stat s;
 	struct template_parser *parser;
 
 	if (!(parser = calloc(1, sizeof(*parser))))
 		goto err;
 
-	parser->fd = -1;
 	parser->file = file;
 
-	if ((parser->fd = open(file, O_RDONLY|O_CLOEXEC)) < 0)
+	fd = open(file, O_RDONLY|O_CLOEXEC);
+	if (fd < 0)
 		goto err;
 
-	if (fstat(parser->fd, &s))
+	if (fstat(fd, &s))
 		goto err;
 
 	parser->size = s.st_size;
 	parser->data = mmap(NULL, parser->size, PROT_READ, MAP_PRIVATE,
-						parser->fd, 0);
+						fd, 0);
+
+	close(fd);
+	fd = -1;
 
 	if (parser->data == MAP_FAILED)
 		goto err;
@@ -121,6 +124,8 @@ struct template_parser * template_open(const char *file)
 	return template_init(parser);
 
 err:
+	if (fd >= 0)
+		close(fd);
 	template_close(parser);
 	return NULL;
 }
@@ -131,8 +136,6 @@ struct template_parser * template_string(const char *str, size_t len)
 
 	if (!(parser = calloc(1, sizeof(*parser))))
 		goto err;
-
-	parser->fd = -1;
 
 	parser->size = len;
 	parser->data = (char *)str;
@@ -155,9 +158,6 @@ void template_close(struct template_parser *parser)
 	if (parser->file) {
 		if ((parser->data != NULL) && (parser->data != MAP_FAILED))
 			munmap(parser->data, parser->size);
-
-		if (parser->fd >= 0)
-			close(parser->fd);
 	}
 
 	free(parser);
