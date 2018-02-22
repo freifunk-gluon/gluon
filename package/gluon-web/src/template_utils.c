@@ -267,8 +267,7 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 	if (!buf)
 		return NULL;
 
-	for (o = 0; o < l; o++)
-	{
+	for (o = 0; o < l; o++)	{
 		/* Invalid XML bytes */
 		if ((*ptr <= 0x08) ||
 		    ((*ptr >= 0x0B) && (*ptr <= 0x0C)) ||
@@ -279,11 +278,11 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 		}
 
 		/* Escapes */
-		else if ((*ptr == 0x26) ||
-		         (*ptr == 0x27) ||
-		         (*ptr == 0x22) ||
-		         (*ptr == 0x3C) ||
-		         (*ptr == 0x3E))
+		else if ((*ptr == '\'') ||
+		         (*ptr == '"') ||
+		         (*ptr == '&') ||
+		         (*ptr == '<') ||
+		         (*ptr == '>'))
 		{
 			esl = snprintf(esq, sizeof(esq), "&#%i;", *ptr);
 
@@ -319,26 +318,24 @@ void luastr_escape(struct template_buffer *out, const char *s, size_t l, bool es
 	char esq[8];
 	const char *ptr;
 
-	for (ptr = s; ptr < (s + l); ptr++)
-	{
-		switch (*ptr)
-		{
+	for (ptr = s; ptr < (s + l); ptr++) {
+		switch (*ptr) {
 		case '\\':
 			buf_append(out, "\\\\", 2);
 			break;
 
-		case '"':
+		case '\'':
 			if (escape_xml)
-				buf_append(out, "&#34;", 5);
+				buf_append(out, "&#39;", 5);
 			else
-				buf_append(out, "\\\"", 2);
+				buf_append(out, "\\\'", 2);
 			break;
 
 		case '\n':
 			buf_append(out, "\\n", 2);
 			break;
 
-		case '\'':
+		case '"':
 		case '&':
 		case '<':
 		case '>':

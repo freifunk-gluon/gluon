@@ -73,12 +73,12 @@ struct template_parser {
 /* leading and trailing code for different types */
 static const char *const gen_code[][2] = {
 	[T_TYPE_INIT]     = {NULL,              NULL},
-	[T_TYPE_TEXT]     = {"write(\"",        "\")"},
+	[T_TYPE_TEXT]     = {"write('",         "')"},
 	[T_TYPE_COMMENT]  = {NULL,              NULL},
-	[T_TYPE_EXPR]     = {"write(tostring(", " or \"\"))"},
-	[T_TYPE_INCLUDE]  = {"include(\"",      "\")"},
-	[T_TYPE_I18N]     = {"write(\"",        "\")"},
-	[T_TYPE_I18N_RAW] = {"write(\"",        "\")"},
+	[T_TYPE_EXPR]     = {"write(tostring(", " or ''))"},
+	[T_TYPE_INCLUDE]  = {"include('",       "')"},
+	[T_TYPE_I18N]     = {"write('",         "')"},
+	[T_TYPE_I18N_RAW] = {"write('",         "')"},
 	[T_TYPE_CODE]     = {NULL,              " "},
 	[T_TYPE_EOF]      = {NULL,              NULL},
 };
