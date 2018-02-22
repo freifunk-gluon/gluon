@@ -1,7 +1,7 @@
 all: compile
 
 %.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -fPIC -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_GNU_SOURCE -fPIC -c -o $@ $<
 
 clean:
 	rm -f parser.so *.o

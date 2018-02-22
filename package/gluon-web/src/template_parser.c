@@ -34,35 +34,6 @@ static const char *const gen_code[9][2] = {
 	{}
 };
 
-/* Simple strstr() like function that takes len arguments for both haystack and needle. */
-static char *strfind(char *haystack, int hslen, const char *needle, int ndlen)
-{
-	int match = 0;
-	int i, j;
-
-	for( i = 0; i < hslen; i++ )
-	{
-		if( haystack[i] == needle[0] )
-		{
-			match = ((ndlen == 1) || ((i + ndlen) <= hslen));
-
-			for( j = 1; (j < ndlen) && ((i + j) < hslen); j++ )
-			{
-				if( haystack[i+j] != needle[j] )
-				{
-					match = 0;
-					break;
-				}
-			}
-
-			if( match )
-				return &haystack[i];
-		}
-	}
-
-	return NULL;
-}
-
 struct template_parser * template_open(const char *file)
 {
 	struct stat s;
@@ -339,7 +310,7 @@ const char *template_reader(lua_State *L, void *ud, size_t *sz)
 	/* before tag */
 	if (!parser->in_expr)
 	{
-		if ((tag = strfind(parser->off, rem, "<%", 2)) != NULL)
+		if ((tag = memmem(parser->off, rem, "<%", 2)) != NULL)
 		{
 			template_text(parser, tag);
 			parser->off = tag + 2;
@@ -355,7 +326,7 @@ const char *template_reader(lua_State *L, void *ud, size_t *sz)
 	/* inside tag */
 	else
 	{
-		if ((tag = strfind(parser->off, rem, "%>", 2)) != NULL)
+		if ((tag = memmem(parser->off, rem, "%>", 2)) != NULL)
 		{
 			template_code(parser, tag);
 			parser->off = tag + 2;
@@ -383,7 +354,7 @@ int template_error(lua_State *L, struct template_parser *parser)
 	int line = 0;
 	int chunkline = 0;
 
-	if ((ptr = strfind((char *)err, strlen(err), "]:", 2)) != NULL)
+	if ((ptr = memmem(err, strlen(err), "]:", 2)) != NULL)
 	{
 		chunkline = atoi(ptr + 2) - parser->prv_chunk.line;
 
@@ -397,7 +368,7 @@ int template_error(lua_State *L, struct template_parser *parser)
 		}
 	}
 
-	if (strfind((char *)err, strlen(err), "'char(27)'", 10) != NULL)
+	if (memmem(err, strlen(err), "'char(27)'", 10) != NULL)
 	{
 		off = parser->data + parser->size;
 		err = "'%>' expected before end of file";
