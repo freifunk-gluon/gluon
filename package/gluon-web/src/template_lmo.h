@@ -70,6 +70,6 @@ typedef struct lmo_catalog lmo_catalog_t;
 
 int lmo_load_catalog(const char *lang, const char *dir);
 int lmo_change_catalog(const char *lang);
-int lmo_translate(const char *key, int keylen, char **out, int *outlen);
+int lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen);
 
 #endif

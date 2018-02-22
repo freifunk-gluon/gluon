@@ -27,7 +27,7 @@ static inline uint16_t get_le16(const uint8_t *d) {
 	return (((uint16_t)d[1]) << 8) | d[0];
 }
 
-static uint32_t sfh_hash(const void *input, int len)
+static uint32_t sfh_hash(const void *input, size_t len)
 {
 	const uint8_t *data = input;
 	uint32_t hash = len, tmp;
@@ -228,7 +228,7 @@ static lmo_entry_t * lmo_find_entry(lmo_archive_t *ar, uint32_t hash)
 	return NULL;
 }
 
-int lmo_translate(const char *key, int keylen, char **out, int *outlen)
+int lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen)
 {
 	uint32_t hash;
 	lmo_entry_t *e;

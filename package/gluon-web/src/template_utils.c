@@ -20,27 +20,24 @@
 #include "template_utils.h"
 #include "template_lmo.h"
 
-/* initialize a buffer object */
-struct template_buffer * buf_init(int size)
-{
-	struct template_buffer *buf;
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-	if (size <= 0)
+/* initialize a buffer object */
+struct template_buffer * buf_init(size_t size)
+{
+	if (size < 1024)
 		size = 1024;
 
-	buf = malloc(sizeof(*buf));
+	struct template_buffer *buf = malloc(sizeof(*buf));
 
-	if (buf != NULL)
-	{
-		buf->fill = 0;
+	if (buf != NULL) {
 		buf->size = size;
 		buf->data = malloc(buf->size);
 
-		if (buf->data != NULL)
-		{
+		if (buf->data != NULL) {
 			buf->dptr = buf->data;
-			buf->data[0] = 0;
-
 			return buf;
 		}
 
@@ -51,57 +48,48 @@ struct template_buffer * buf_init(int size)
 }
 
 /* grow buffer */
-static int buf_grow(struct template_buffer *buf, int size)
+static bool buf_grow(struct template_buffer *buf, size_t len)
 {
-	unsigned int off = (buf->dptr - buf->data);
-	char *data;
+	size_t off = buf->dptr - buf->data, left = buf->size - off;
+	if (len <= left)
+		return true;
 
-	if (size <= 0)
-		size = 1024;
+	size_t diff = len - left;
+	if (diff < 1024)
+		diff = 1024;
 
-	data = realloc(buf->data, buf->size + size);
+	char *data = realloc(buf->data, buf->size + diff);
+	if (data == NULL)
+		return false;
 
-	if (data != NULL)
-	{
-		buf->data  = data;
-		buf->dptr  = data + off;
-		buf->size += size;
+	buf->data  = data;
+	buf->dptr  = data + off;
+	buf->size += diff;
 
-		return buf->size;
-	}
-
-	return 0;
+	return true;
 }
 
 /* put one char into buffer object */
-static int buf_putchar(struct template_buffer *buf, char c)
+static bool buf_putchar(struct template_buffer *buf, char c)
 {
-	if( ((buf->fill + 1) >= buf->size) && !buf_grow(buf, 0) )
-		return 0;
+	if (!buf_grow(buf, 1))
+		return false;
 
 	*(buf->dptr++) = c;
-	*(buf->dptr) = 0;
 
-	buf->fill++;
-	return 1;
+	return true;
 }
 
 /* append data to buffer */
-int buf_append(struct template_buffer *buf, const char *s, int len)
+bool buf_append(struct template_buffer *buf, const char *s, size_t len)
 {
-	if ((buf->fill + len + 1) >= buf->size)
-	{
-		if (!buf_grow(buf, len + 1))
-			return 0;
-	}
+	if (!buf_grow(buf, len))
+		return false;
 
 	memcpy(buf->dptr, s, len);
-	buf->fill += len;
 	buf->dptr += len;
 
-	*(buf->dptr) = 0;
-
-	return len;
+	return true;
 }
 
 /* destroy buffer object and return pointer to data */
@@ -115,7 +103,7 @@ char * buf_destroy(struct template_buffer *buf)
 
 
 /* calculate the number of expected continuation chars */
-static inline int mb_num_chars(unsigned char c)
+static inline size_t mb_num_chars(unsigned char c)
 {
 	if ((c & 0xE0) == 0xC0)
 		return 2;
@@ -132,14 +120,14 @@ static inline int mb_num_chars(unsigned char c)
 }
 
 /* test whether the given byte is a valid continuation char */
-static inline int mb_is_cont(unsigned char c)
+static inline bool mb_is_cont(unsigned char c)
 {
 	return ((c >= 0x80) && (c <= 0xBF));
 }
 
 /* test whether the byte sequence at the given pointer with the given
  * length is the shortest possible representation of the code point */
-static inline int mb_is_shortest(unsigned char *s, int n)
+static inline bool mb_is_shortest(const unsigned char *s, size_t n)
 {
 	switch (n)
 	{
@@ -179,19 +167,19 @@ static inline int mb_is_shortest(unsigned char *s, int n)
 					 ((*(s+5) >> 6) == 0x02));
 	}
 
-	return 1;
+	return true;
 }
 
 /* test whether the byte sequence at the given pointer with the given
  * length is an UTF-16 surrogate */
-static inline int mb_is_surrogate(unsigned char *s, int n)
+static inline bool mb_is_surrogate(const unsigned char *s, size_t n)
 {
 	return ((n == 3) && (*s == 0xED) && (*(s+1) >= 0xA0) && (*(s+1) <= 0xBF));
 }
 
 /* test whether the byte sequence at the given pointer with the given
  * length is an illegal UTF-8 code point */
-static inline int mb_is_illegal(unsigned char *s, int n)
+static inline bool mb_is_illegal(const unsigned char *s, size_t n)
 {
 	return ((n == 3) && (*s == 0xEF) && (*(s+1) == 0xBF) &&
 			(*(s+2) >= 0xBE) && (*(s+2) <= 0xBF));
@@ -200,14 +188,13 @@ static inline int mb_is_illegal(unsigned char *s, int n)
 
 /* scan given source string, validate UTF-8 sequence and store result
  * in given buffer object */
-static int validate_utf8(unsigned char **s, unsigned int l, struct template_buffer *buf)
+static size_t validate_utf8(const unsigned char **s, size_t l, struct template_buffer *buf)
 {
-	unsigned char *ptr = *s;
-	unsigned int o = 0, v, n;
+	const unsigned char *ptr = *s;
+	size_t o = 0, v, n;
 
 	/* ascii byte without null */
-	if ((*(ptr+0) >= 0x01) && (*(ptr+0) <= 0x7F))
-	{
+	if ((*(ptr+0) >= 0x01) && (*(ptr+0) <= 0x7F)) {
 		if (!buf_putchar(buf, *ptr++))
 			return 0;
 
@@ -215,8 +202,7 @@ static int validate_utf8(unsigned char **s, unsigned int l, struct template_buff
 	}
 
 	/* multi byte sequence */
-	else if ((n = mb_num_chars(*ptr)) > 1)
-	{
+	else if ((n = mb_num_chars(*ptr)) > 1) {
 		/* count valid chars */
 		for (v = 1; (v <= n) && ((o+v) < l) && mb_is_cont(*(ptr+v)); v++);
 
@@ -238,7 +224,7 @@ static int validate_utf8(unsigned char **s, unsigned int l, struct template_buff
 					!mb_is_surrogate(ptr, n) && !mb_is_illegal(ptr, n))
 				{
 					/* copy sequence */
-					if (!buf_append(buf, (char *)ptr, n))
+					if (!buf_append(buf, (const char *)ptr, n))
 						return 0;
 				}
 
@@ -259,8 +245,7 @@ static int validate_utf8(unsigned char **s, unsigned int l, struct template_buff
 	}
 
 	/* invalid byte (0x00) */
-	else
-	{
+	else {
 		if (!buf_putchar(buf, '?')) /* or 0xEF, 0xBF, 0xBD */
 			return 0;
 
@@ -275,11 +260,11 @@ static int validate_utf8(unsigned char **s, unsigned int l, struct template_buff
 /* Sanitize given string and strip all invalid XML bytes
  * Validate UTF-8 sequences
  * Escape XML control chars */
-char * pcdata(const char *s, unsigned int l)
+char * pcdata(const char *s, size_t l, size_t *outl)
 {
 	struct template_buffer *buf = buf_init(l);
-	unsigned char *ptr = (unsigned char *)s;
-	unsigned int o, v;
+	const unsigned char *ptr = (const unsigned char *)s;
+	size_t o, v;
 	char esq[8];
 	int esl;
 
@@ -328,16 +313,17 @@ char * pcdata(const char *s, unsigned int l)
 		}
 	}
 
+	*outl = buf_length(buf);
 	return buf_destroy(buf);
 }
 
-void luastr_escape(struct template_buffer *out, const char *s, unsigned int l, int escape_xml)
+void luastr_escape(struct template_buffer *out, const char *s, size_t l, bool escape_xml)
 {
 	int esl;
 	char esq[8];
-	char *ptr;
+	const char *ptr;
 
-	for (ptr = (char *)s; ptr < (s + l); ptr++)
+	for (ptr = s; ptr < (s + l); ptr++)
 	{
 		switch (*ptr)
 		{
@@ -360,8 +346,7 @@ void luastr_escape(struct template_buffer *out, const char *s, unsigned int l, i
 		case '&':
 		case '<':
 		case '>':
-			if (escape_xml)
-			{
+			if (escape_xml) {
 				esl = snprintf(esq, sizeof(esq), "&#%i;", *ptr);
 				buf_append(out, esq, esl);
 				break;
@@ -373,10 +358,10 @@ void luastr_escape(struct template_buffer *out, const char *s, unsigned int l, i
 	}
 }
 
-void luastr_translate(struct template_buffer *out, const char *s, unsigned int l, int escape_xml)
+void luastr_translate(struct template_buffer *out, const char *s, size_t l, bool escape_xml)
 {
 	char *tr;
-	int trlen;
+	size_t trlen;
 
 	if (!lmo_translate(s, l, &tr, &trlen))
 		luastr_escape(out, tr, trlen, escape_xml);

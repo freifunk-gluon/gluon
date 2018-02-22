@@ -20,33 +20,31 @@
 #ifndef _TEMPLATE_UTILS_H_
 #define _TEMPLATE_UTILS_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 
 /* buffer object */
 struct template_buffer {
 	char *data;
 	char *dptr;
-	unsigned int size;
-	unsigned int fill;
+	size_t size;
 };
 
-struct template_buffer * buf_init(int size);
-int buf_append(struct template_buffer *buf, const char *s, int len);
+struct template_buffer * buf_init(size_t size);
+bool buf_append(struct template_buffer *buf, const char *s, size_t len);
 char * buf_destroy(struct template_buffer *buf);
 
 /* read buffer length */
-static inline int buf_length(struct template_buffer *buf)
+static inline size_t buf_length(struct template_buffer *buf)
 {
-	return buf->fill;
+	return buf->dptr - buf->data;
 }
 
 
-char * pcdata(const char *s, unsigned int l);
+char * pcdata(const char *s, size_t l, size_t *outl);
 
-void luastr_escape(struct template_buffer *out, const char *s, unsigned int l, int escape_xml);
-void luastr_translate(struct template_buffer *out, const char *s, unsigned int l, int escape_xml);
+void luastr_escape(struct template_buffer *out, const char *s, size_t l, bool escape_xml);
+void luastr_translate(struct template_buffer *out, const char *s, size_t l, bool escape_xml);
 
 #endif

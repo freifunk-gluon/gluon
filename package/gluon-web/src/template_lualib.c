@@ -67,13 +67,13 @@ static int template_L_parse_string(lua_State *L)
 
 static int template_L_pcdata(lua_State *L)
 {
-	size_t len = 0;
+	size_t len = 0, outlen;
 	const char *str = luaL_checklstring(L, 1, &len);
-	char *res = pcdata(str, len);
+	char *res = pcdata(str, len, &outlen);
 
 	if (res != NULL)
 	{
-		lua_pushstring(L, res);
+		lua_pushlstring(L, res, outlen);
 		free(res);
 
 		return 1;
@@ -92,7 +92,7 @@ static int template_L_load_catalog(lua_State *L) {
 static int template_L_translate(lua_State *L) {
 	size_t len;
 	char *tr;
-	int trlen;
+	size_t trlen;
 	const char *key = luaL_checklstring(L, 1, &len);
 
 	switch (lmo_translate(key, len, &tr, &trlen))
