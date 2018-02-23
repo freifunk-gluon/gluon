@@ -52,7 +52,7 @@ You may obtain a copy of the License at
 					local active = (v == name)
 			%>
 			<li class="tabmenu-item-<%=v%><% if active then %> active<% end %>">
-				<a href="<%=url(append(prefix, v))%>"><%=pcdata(title(child))%></a>
+				<a href="<%|url(append(prefix, v))%>"><%|title(child)%></a>
 			</li>
 			<%
 				end
@@ -74,17 +74,17 @@ You may obtain a copy of the License at
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
-		<title><%=pcdata( hostname .. ((rnode and rnode.title) and ' - ' .. title(rnode) or '')) %></title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%|media%>/cascade.css" />
+		<title><%| hostname .. ((rnode and rnode.title) and ' - ' .. title(rnode) or '') %></title>
 	</head>
 	<body>
 
 	<div id="menubar">
 		<div class="hostinfo">
-			<a href="<%=url({})%>">
-				<%=pcdata(hostname)%>
+			<a href="<%|url({})%>">
+				<%|hostname%>
 				<% if release then %>
-				/ <%=pcdata(release)%>
+				/ <%|release%>
 				<% end %>
 			</a>
 		</div>
@@ -92,7 +92,7 @@ You may obtain a copy of the License at
 		<% if #categories > 1 and not hidenav then %>
 			<ul id="topmenu">
 				<% for i, r in ipairs(categories) do %>
-					<li><a class="topcat<% if request[1] == r then %> active<%end%>" href="<%=url({r})%>"><%=pcdata(title(root.nodes[r]))%></a></li>
+					<li><a class="topcat<% if request[1] == r then %> active<%end%>" href="<%|url({r})%>"><%|title(root.nodes[r])%></a></li>
 				<% end %>
 			</ul>
 		<% end %>

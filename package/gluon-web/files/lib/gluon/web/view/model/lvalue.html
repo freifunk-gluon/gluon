@@ -18,7 +18,7 @@
 				attr("data-index", i) ..
 				attr("data-depends", self:deplist(entry.deps)) ..
 				attr("selected", (self:cfgvalue() == entry.key) and "selected")
-			%>><%=pcdata(entry.value)%></option>
+			%>><%|entry.value%></option>
 		<%- end %>
 	</select>
 <% elseif self.widget == "radio" then %>
@@ -35,7 +35,7 @@
 					attr("checked", (self:cfgvalue() == entry.key) and "checked")
 				%> />
 				<label<%= attr("for", id.."."..entry.key)%>></label>
-				<%=pcdata(entry.value)%>
+				<%|entry.value%>
 			</label>
 			<% if i ~= #entries then write(br) end %>
 		<% end %>
