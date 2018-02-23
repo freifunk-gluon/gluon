@@ -25,7 +25,7 @@ f.submit = translate('Save & restart')
 f.reset = false
 
 local s = f:section(Section)
-s.template = "gluon/config-mode/welcome"
+s.template = "config-mode/welcome"
 s.package = "gluon-config-mode-core"
 
 local commit = {'gluon-setup-mode'}
@@ -57,7 +57,7 @@ function f:write()
 		r()
 	end
 
-	f.template = "gluon/config-mode/reboot"
+	f.template = "config-mode/reboot"
 	f.package = "gluon-config-mode-core"
 	f.hidenav = true
 
