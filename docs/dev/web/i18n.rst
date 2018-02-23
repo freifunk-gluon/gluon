@@ -20,14 +20,27 @@ Internationalization support is available in all components (models, view and
 controllers) of *gluon-web*-based packages. Strings are translated using the *translate*,
 *_translate* and *translatef* functions (*translate* for static strings, *translatef*
 for printf-like formatted string; *_translate* works the same as *translate*, but
-will return *nil* instead of the original string when no translation is available)
-. In views, the special tags ``<%:...%>`` can be used to translate the contained string.
+will return *nil* instead of the original string when no translation is available).
+
+In views, the special tags ``<%:...%>`` can be used to translate the contained string.
 
 Example from the *gluon-config-mode-geo-location* package:
 
 .. code-block:: lua
 
   local share_location = s:option(Flag, "location", translate("Show node on the map"))
+
+Note that translations are *namespaced*: each package will only use its own
+translation strings by default. For this purpose, the package name must by
+specified in a package's controller. It is possible to access a different
+translation package using the *i18n* function from models and view, which is
+necessary when strings from the site configuration are used, or packages do not
+have their own controller (which is the case for config mode wizard components).
+
+.. code-block:: lua
+
+  local site_i18n = i18n 'gluon-site'
+  local msg = site_i18n._translate('gluon-config-mode:welcome')
 
 Adding translation templates to Gluon packages
 ----------------------------------------------
@@ -45,7 +58,7 @@ script in the ``contrib`` directory:
 
 The same command can be run again to update the template.
 
-In addition, some additions to the Makefile must be made. Instead of LEDE's default *package.mk*,
+In addition, the Makefile must be adjusted. Instead of LEDE's default *package.mk*,
 the Gluon version (``../gluon.mk`` for core packages) must be used. The i18n files must be installed
 and PKG_CONFIG_DEPENDS must be added::
 
@@ -92,5 +105,5 @@ Adding support for new languages
 --------------------------------
 
 A list of all languages supported by *gluon-web* can be found in ``package/gluon.mk``.
-New languages just need to be added to *GLUON_SUPPORTED_LANGS*, after a human-readable
-language name has been defined in the same file.
+New languages just need to be added to *GLUON_SUPPORTED_LANGS*, and a human-readable
+language name must be defined.

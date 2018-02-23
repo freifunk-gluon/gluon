@@ -52,4 +52,4 @@ variables and functions should always be available for the embedded Lua code:
     Use ``node(unpack(request))`` to get the node for the current page.
   - *pcdata* (*str*): Escapes HTML entities in the passed string.
   - *urlencode* (*str*): Escapes the passed string for use in an URL.
-  - *translate*, *_translate* and *translatef*: see :doc:`i18n`
+  - *translate*, *_translate*, *translatef* and *i18n*: see :doc:`i18n`

@@ -4,15 +4,19 @@ Controllers
 Controllers live in ``/lib/gluon/web/controller``. They define which pages ("routes")
 exist under the ``/cgi-bin/gluon`` path, and what code is run when these pages are requested.
 
-Controller scripts mostly consist of calls of the `entry` function, which each define
-one route:
+Controller scripts usually start with a *package* declaration, followed by calls
+to the *entry* function, which each define one route:
 
 .. code-block:: lua
+
+  package 'gluon-web-admin'
 
   entry({"admin"}, alias("admin", "info"), _("Advanced settings"), 10)
   entry({"admin", "info"}, template("admin/info"), _("Information"), 1)
 
-The entry function expects 4 arguments:
+*package* defines the translation namespace for the titles of the defined
+pages as well as the referenced views and models. The entry function expects 4
+arguments:
 
   - `path`: Components of the path to define a route for.
 
@@ -20,6 +24,7 @@ The entry function expects 4 arguments:
 
   - `target`: Dispatcher for the route. See the following section for details.
   - `title`: Page title (also used in navigation). The underscore function is used
+    to mark the strings as translatable for ``i18n-scan.pl``.
 
   - `order`: Sort index in navigation (defaults to 100)
 
@@ -88,9 +93,10 @@ The template renderer
 The template renderer allows to render templates (views). The most useful functions
 are:
 
-  - *render* (*view*, *scope*): Renders the given view, optionally passing a table
-    with additional variables to make available in the template.
-  - *render_string* (*str*, *scope*): Same as *render*, but the template is passed
+  - *render* (*view*, *scope*, *pkg*): Renders the given view, optionally passing a table
+    with additional variables to make available in the template. The passed package
+    defines the translation namespace.
+  - *render_string* (*str*, *scope*, *pkg*): Same as *render*, but the template is passed
     directly instead of being loaded from the view directory.
 
 The renderer functions are called in property syntax, for example:
