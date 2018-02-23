@@ -75,19 +75,16 @@ static int template_L_parse_string(lua_State *L)
 
 static int template_L_pcdata(lua_State *L)
 {
-	size_t len = 0, outlen;
-	const char *str = luaL_checklstring(L, 1, &len);
-	char *res = pcdata(str, len, &outlen);
+	size_t inlen, outlen;
+	char *out;
+	const char *in = luaL_checklstring(L, 1, &inlen);
+	if (!pcdata(in, inlen, &out, &outlen))
+		return 0;
 
-	if (res != NULL)
-	{
-		lua_pushlstring(L, res, outlen);
-		free(res);
+	lua_pushlstring(L, out, outlen);
+	free(out);
 
-		return 1;
-	}
-
-	return 0;
+	return 1;
 }
 
 static int template_L_load_catalog(lua_State *L) {

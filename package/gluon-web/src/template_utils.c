@@ -256,7 +256,7 @@ static size_t validate_utf8(const unsigned char **s, size_t l, struct template_b
 /* Sanitize given string and strip all invalid XML bytes
  * Validate UTF-8 sequences
  * Escape XML control chars */
-char * pcdata(const char *s, size_t l, size_t *outl)
+bool pcdata(const char *s, size_t l, char **out, size_t *outl)
 {
 	struct template_buffer *buf = buf_init(l);
 	const unsigned char *ptr = (const unsigned char *)s;
@@ -265,15 +265,14 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 	int esl;
 
 	if (!buf)
-		return NULL;
+		return false;
 
 	for (o = 0; o < l; o++)	{
 		/* Invalid XML bytes */
 		if ((*ptr <= 0x08) ||
 		    ((*ptr >= 0x0B) && (*ptr <= 0x0C)) ||
 		    ((*ptr >= 0x0E) && (*ptr <= 0x1F)) ||
-		    (*ptr == 0x7F))
-		{
+		    (*ptr == 0x7F)) {
 			ptr++;
 		}
 
@@ -282,8 +281,7 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 		         (*ptr == '"') ||
 		         (*ptr == '&') ||
 		         (*ptr == '<') ||
-		         (*ptr == '>'))
-		{
+		         (*ptr == '>')) {
 			esl = snprintf(esq, sizeof(esq), "&#%i;", *ptr);
 
 			if (!buf_append(buf, esq, esl))
@@ -293,14 +291,12 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 		}
 
 		/* ascii char */
-		else if (*ptr <= 0x7F)
-		{
+		else if (*ptr <= 0x7F) {
 			buf_putchar(buf, (char)*ptr++);
 		}
 
 		/* multi byte sequence */
-		else
-		{
+		else {
 			if (!(v = validate_utf8(&ptr, l - o, buf)))
 				break;
 
@@ -309,5 +305,6 @@ char * pcdata(const char *s, size_t l, size_t *outl)
 	}
 
 	*outl = buf_length(buf);
-	return buf_destroy(buf);
+	*out = buf_destroy(buf);
+	return true;
 }

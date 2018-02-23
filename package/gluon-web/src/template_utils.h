@@ -42,7 +42,6 @@ static inline size_t buf_length(const struct template_buffer *buf)
 	return buf->dptr - buf->data;
 }
 
-
-char * pcdata(const char *s, size_t l, size_t *outl);
+bool pcdata(const char *s, size_t l, char **out, size_t *outl);
 
 #endif
