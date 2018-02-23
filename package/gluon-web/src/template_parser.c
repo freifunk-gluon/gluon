@@ -35,22 +35,24 @@
 #include <unistd.h>
 
 
-/* code types */
-#define T_TYPE_INIT     0
-#define T_TYPE_TEXT     1
-#define T_TYPE_COMMENT  2
-#define T_TYPE_EXPR     3
-#define T_TYPE_INCLUDE  4
-#define T_TYPE_I18N     5
-#define T_TYPE_I18N_RAW 6
-#define T_TYPE_CODE     7
-#define T_TYPE_EOF      8
+typedef enum {
+	T_TYPE_INIT,
+	T_TYPE_TEXT,
+	T_TYPE_COMMENT,
+	T_TYPE_EXPR,
+	T_TYPE_EXPR_RAW,
+	T_TYPE_INCLUDE,
+	T_TYPE_I18N,
+	T_TYPE_I18N_RAW,
+	T_TYPE_CODE,
+	T_TYPE_EOF,
+} t_type_t;
 
 
 struct template_chunk {
 	const char *s;
 	const char *e;
-	int type;
+	t_type_t type;
 	int line;
 };
 
@@ -75,7 +77,8 @@ static const char *const gen_code[][2] = {
 	[T_TYPE_INIT]     = {NULL,                        NULL},
 	[T_TYPE_TEXT]     = {"write('",                   "')"},
 	[T_TYPE_COMMENT]  = {NULL,                        NULL},
-	[T_TYPE_EXPR]     = {"write(tostring(",           " or ''))"},
+	[T_TYPE_EXPR]     = {"write(pcdata(tostring(",    " or '')))"},
+	[T_TYPE_EXPR_RAW] = {"write(tostring(",           " or ''))"},
 	[T_TYPE_INCLUDE]  = {"include('",                 "')"},
 	[T_TYPE_I18N]     = {"write(pcdata(translate('",  "')))"},
 	[T_TYPE_I18N_RAW] = {"write(translate('",         "'))"},
@@ -226,9 +229,15 @@ static void template_code(struct template_parser *parser, const char *e)
 		break;
 
 	/* expr */
-	case '=':
+	case '|':
 		s++;
 		parser->cur_chunk.type = T_TYPE_EXPR;
+		break;
+
+	/* expr raw */
+	case '=':
+		s++;
+		parser->cur_chunk.type = T_TYPE_EXPR_RAW;
 		break;
 
 	/* code */
@@ -295,6 +304,7 @@ static struct template_buffer * template_format_chunk(struct template_parser *pa
 			break;
 
 		case T_TYPE_EXPR:
+		case T_TYPE_EXPR_RAW:
 			buf_append(buf, c->s, c->e - c->s);
 			for (p = c->s; p < c->e; p++)
 				parser->line += (*p == '\n');
@@ -304,6 +314,11 @@ static struct template_buffer * template_format_chunk(struct template_parser *pa
 			buf_append(buf, c->s, c->e - c->s);
 			for (p = c->s; p < c->e; p++)
 				parser->line += (*p == '\n');
+			break;
+
+		case T_TYPE_INIT:
+		case T_TYPE_COMMENT:
+		case T_TYPE_EOF:
 			break;
 		}
 
