@@ -122,6 +122,7 @@ static const luaL_reg R[] = {
 	{}
 };
 
+__attribute__ ((visibility("default")))
 LUALIB_API int luaopen_gluon_web_template_parser(lua_State *L) {
 	luaL_register(L, TEMPLATE_LUALIB_META, R);
 	return 1;

@@ -1,7 +1,7 @@
 all: compile
 
 %.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -D_GNU_SOURCE -std=c99 -Wall -Wextra -fPIC -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -D_GNU_SOURCE -std=c99 -Wall -Wextra -fPIC -fvisibility=hidden -c -o $@ $<
 
 clean:
 	rm -f parser.so *.o
