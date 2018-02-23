@@ -37,7 +37,7 @@ bool buf_append(struct template_buffer *buf, const char *s, size_t len);
 char * buf_destroy(struct template_buffer *buf);
 
 /* read buffer length */
-static inline size_t buf_length(struct template_buffer *buf)
+static inline size_t buf_length(const struct template_buffer *buf)
 {
 	return buf->dptr - buf->data;
 }
