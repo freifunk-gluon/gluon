@@ -7,8 +7,8 @@ the node will be placed in. If the selection has changed the upgrade scripts in
 Hiding domains could be useful for default or testing domains, which should not
 be accidentally selected by a node operater.
 
-domains/*.conf
----------------------
+domains/\*.conf
+---------------
 
 hide_domain \: optional (defaults to false)
     - ``false`` shows this domain in drop-down list
