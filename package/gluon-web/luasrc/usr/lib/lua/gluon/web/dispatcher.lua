@@ -1,6 +1,6 @@
 -- Copyright 2008 Steven Barth <steven@midlink.org>
 -- Copyright 2008-2015 Jo-Philipp Wich <jow@openwrt.org>
--- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
+-- Copyright 2017-2018 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
 local fs = require "nixio.fs"
@@ -77,7 +77,7 @@ local function set_language(renderer, accept)
 	end
 
 	for match in accept:gmatch("[^,]+") do
-		local lang = match:match('^%s*([^%s;-_]+)')
+		local lang = match:match('^%s*([^%s;_-]+)')
 		local q = tonumber(match:match(';q=(%S+)%s*$') or 1)
 
 		if lang == '*' then
@@ -93,11 +93,7 @@ local function set_language(renderer, accept)
 		return (weights[a] or 0) > (weights[b] or 0)
 	end)
 
-	for _, lang in ipairs(langs) do
-		if renderer.setlanguage(lang) then
-			return
-		end
-	end
+	renderer.set_language(langs)
 end
 
 
@@ -147,74 +143,86 @@ function dispatch(http, request)
 		url         = function(path) return build_url(http, path) end,
 	}, { __index = _G }))
 
-	local subdisp = setmetatable({
-		node = function(...)
-			return _node({...})
-		end,
-
-		entry = function(path, target, title, order)
-			local c = _node(path, true)
-
-			c.target = target
-			c.title  = title
-			c.order  = order
-
-			return c
-		end,
-
-		alias = function(...)
-			local req = {...}
-			return function()
-				http:redirect(build_url(http, req))
-			end
-		end,
-
-		call = function(func, ...)
-			local args = {...}
-			return function()
-				func(http, renderer, unpack(args))
-			end
-		end,
-
-		template = function(view)
-			return function()
-				renderer.render("layout", {content = view})
-			end
-		end,
-
-		model = function(name)
-			return function()
-				local hidenav = false
-
-				local model = require "gluon.web.model"
-				local maps = model.load(name, renderer)
-
-				for _, map in ipairs(maps) do
-					map:parse(http)
-				end
-				for _, map in ipairs(maps) do
-					map:handle()
-					hidenav = hidenav or map.hidenav
-				end
-
-				renderer.render("layout", {
-					content = "model/wrapper",
-					maps = maps,
-					hidenav = hidenav,
-				})
-			end
-		end,
-
-		_ = function(text)
-			return text
-		end,
-	}, { __index = _G })
 
 	local function createtree()
 		local base = util.libpath() .. "/controller/"
 
 		local function load_ctl(path)
 			local ctl = assert(loadfile(path))
+
+			local _pkg
+
+			local subdisp = setmetatable({
+				package = function(name)
+					_pkg = name
+				end,
+
+				node = function(...)
+					return _node({...})
+				end,
+
+				entry = function(path, target, title, order)
+					local c = _node(path, true)
+
+					c.target = target
+					c.title  = title
+					c.order  = order
+					c.pkg    = _pkg
+
+					return c
+				end,
+
+				alias = function(...)
+					local req = {...}
+					return function()
+						http:redirect(build_url(http, req))
+					end
+				end,
+
+				call = function(func, ...)
+					local args = {...}
+					return function()
+						func(http, renderer, unpack(args))
+					end
+				end,
+
+				template = function(view)
+					local pkg = _pkg
+					return function()
+						renderer.render("layout", {content = view, pkg = pkg})
+					end
+				end,
+
+				model = function(name)
+					local pkg = _pkg
+					return function()
+						local hidenav = false
+
+						local model = require "gluon.web.model"
+						local maps = model.load(name, renderer, pkg)
+
+						for _, map in ipairs(maps) do
+							map:parse(http)
+						end
+						for _, map in ipairs(maps) do
+							map:handle()
+							hidenav = hidenav or map.hidenav
+						end
+
+						renderer.render("layout", {
+							content = "model/wrapper",
+							env = {
+								maps = maps,
+							},
+							hidenav = hidenav,
+						})
+					end
+				end,
+
+				_ = function(text)
+					return text
+				end,
+			}, { __index = _G })
 
 			local env = setmetatable({}, { __index = subdisp })
 			setfenv(ctl, env)
@@ -239,9 +247,14 @@ function dispatch(http, request)
 
 	if not node or not node.target then
 		http:status(404, "Not Found")
-		renderer.render("layout", { content = "error404", message =
-			"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
-		        "If this URL belongs to an extension, make sure it is properly installed.\n"
+		renderer.render("layout", {
+			content = "error404",
+			env = {
+				message =
+					"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
+				        "If this URL belongs to an extension, make sure it is properly installed.\n",
+			},
+			pkg = 'gluon-web',
 		})
 		return
 	end
@@ -251,9 +264,14 @@ function dispatch(http, request)
 	local ok, err = pcall(node.target)
 	if not ok then
 		http:status(500, "Internal Server Error")
-		renderer.render("layout", { content = "error500", message =
-			"Failed to execute dispatcher target for entry '/" .. table.concat(request, "/") .. "'.\n" ..
-			"The called action terminated with an exception:\n" .. tostring(err or "(unknown)")
+		renderer.render("layout", {
+			content = "error500",
+			env = {
+				message =
+					"Failed to execute dispatcher target for entry '/" .. table.concat(request, "/") .. "'.\n" ..
+					"The called action terminated with an exception:\n" .. tostring(err or "(unknown)"),
+			},
+			pkg = 'gluon-web',
 		})
 	end
 end

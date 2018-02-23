@@ -1,3 +1,6 @@
+package 'gluon-web-admin'
+
+
 local root = node()
 if not root.target then
 	root.target = alias("admin")

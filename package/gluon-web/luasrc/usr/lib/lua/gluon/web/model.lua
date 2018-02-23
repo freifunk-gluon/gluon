@@ -4,11 +4,11 @@
 
 module("gluon.web.model", package.seeall)
 
-local util = require("gluon.web.util")
+local util = require "gluon.web.util"
 
-local fs         = require("nixio.fs")
-local datatypes  = require("gluon.web.model.datatypes")
-local dispatcher = require("gluon.web.dispatcher")
+local fs         = require "nixio.fs"
+local datatypes  = require "gluon.web.model.datatypes"
+local dispatcher = require "gluon.web.dispatcher"
 local class      = util.class
 local instanceof = util.instanceof
 
@@ -17,7 +17,7 @@ FORM_VALID   =  1
 FORM_INVALID = -1
 
 -- Loads a model from given file, creating an environment and returns it
-function load(name, renderer)
+function load(name, renderer, pkg)
 	local modeldir = util.libpath() .. "/model/"
 
 	if not fs.access(modeldir..name..".lua") then
@@ -26,14 +26,16 @@ function load(name, renderer)
 
 	local func = assert(loadfile(modeldir..name..".lua"))
 
-	local env = {
-		translate=renderer.translate,
-		translatef=renderer.translatef,
-	}
+	local i18n = setmetatable({
+		i18n = renderer.i18n
+	}, {
+		__index = renderer.i18n(pkg)
+	})
 
-	setfenv(func, setmetatable(env, {__index =
+
+	setfenv(func, setmetatable({}, {__index =
 		function(tbl, key)
-			return _M[key] or _G[key]
+			return _M[key] or i18n[key] or _G[key]
 		end
 	}))
 
@@ -85,6 +87,7 @@ function Node:__init__(title, description, name)
 	self.name = name
 	self.index = nil
 	self.parent = nil
+	self.package = 'gluon-web'
 end
 
 function Node:append(obj)
@@ -116,7 +119,7 @@ function Node:render(renderer, scope)
 			id  = self:id(),
 			scope = scope,
 		}, {__index = scope})
-		renderer.render(self.template, env)
+		renderer.render(self.template, env, self.package)
 	end
 end
 

@@ -29,7 +29,7 @@
 #include <string.h>
 
 
-#define TEMPLATE_LUALIB_META  "gluon.web.template.parser"
+#define TEMPLATE_CATALOG "gluon.web.template.parser.catalog"
 
 
 static int template_L_do_parse(lua_State *L, struct template_parser *parser, const char *chunkname)
@@ -87,40 +87,64 @@ static int template_L_pcdata(lua_State *L)
 	return 1;
 }
 
-static int template_L_load_catalog(lua_State *L) {
-	const char *lang = luaL_optstring(L, 1, "en");
-	const char *dir  = luaL_checkstring(L, 2);
-	lua_pushboolean(L, lmo_load_catalog(lang, dir));
-	return 1;
-}
+static int template_L_load_catalog(lua_State *L)
+{
+	const char *file = luaL_checkstring(L, 1);
 
-static int template_L_translate(lua_State *L) {
-	size_t len;
-	char *tr;
-	size_t trlen;
-	const char *key = luaL_checklstring(L, 1, &len);
+	lmo_catalog_t *cat = lua_newuserdata(L, sizeof(*cat));
+	if (!lmo_load(cat, file)) {
+		lua_pop(L, 1);
+		return 0;
+	}
 
-	if (lmo_translate(key, len, &tr, &trlen))
-		lua_pushlstring(L, tr, trlen);
-	else
-		lua_pushnil(L);
+        luaL_getmetatable(L, TEMPLATE_CATALOG);
+        lua_setmetatable(L, -2);
 
 	return 1;
 }
 
+static int template_catalog_call(lua_State *L)
+{
+	size_t inlen, outlen;
+        lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
+	const char *in = luaL_checklstring(L, 2, &inlen), *out;
+	if (!lmo_translate(cat, in, inlen, &out, &outlen))
+		return 0;
 
-/* module table */
+	lua_pushlstring(L, out, outlen);
+
+	return 1;
+}
+
+static int template_catalog_gc(lua_State *L)
+{
+        lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
+	lmo_unload(cat);
+
+	return 0;
+}
+
 static const luaL_reg R[] = {
 	{ "parse",          template_L_parse },
 	{ "parse_string",   template_L_parse_string },
 	{ "pcdata",         template_L_pcdata },
 	{ "load_catalog",   template_L_load_catalog },
-	{ "translate",      template_L_translate },
+	{}
+};
+
+static const luaL_reg template_catalog_methods[] = {
+        { "__call", template_catalog_call },
+        { "__gc", template_catalog_gc },
 	{}
 };
 
 __attribute__ ((visibility("default")))
 LUALIB_API int luaopen_gluon_web_template_parser(lua_State *L) {
-	luaL_register(L, TEMPLATE_LUALIB_META, R);
+	luaL_register(L, "gluon.web.template.parser", R);
+
+	luaL_newmetatable(L, TEMPLATE_CATALOG);
+	luaL_register(L, NULL, template_catalog_methods);
+	lua_pop(L, 1);
+
 	return 1;
 }

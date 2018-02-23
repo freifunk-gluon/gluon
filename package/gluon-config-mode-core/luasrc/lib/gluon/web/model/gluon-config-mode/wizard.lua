@@ -26,6 +26,7 @@ f.reset = false
 
 local s = f:section(Section)
 s.template = "gluon/config-mode/welcome"
+s.package = "gluon-config-mode-core"
 
 local commit = {'gluon-setup-mode'}
 local run = {}
@@ -57,6 +58,7 @@ function f:write()
 	end
 
 	f.template = "gluon/config-mode/reboot"
+	f.package = "gluon-config-mode-core"
 	f.hidenav = true
 
 	if nixio.fork() == 0 then

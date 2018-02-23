@@ -24,7 +24,21 @@
 #include <stddef.h>
 
 
-bool lmo_load_catalog(const char *lang, const char *dir);
-bool lmo_translate(const char *key, size_t keylen, char **out, size_t *outlen);
+typedef struct lmo_entry lmo_entry_t;
+
+
+struct lmo_catalog {
+	size_t length;
+	const lmo_entry_t *index;
+	char *data;
+	const char *end;
+};
+
+typedef struct lmo_catalog lmo_catalog_t;
+
+
+bool lmo_load(lmo_catalog_t *cat, const char *file);
+void lmo_unload(lmo_catalog_t *cat);
+bool lmo_translate(const lmo_catalog_t *cat, const char *key, size_t keylen, const char **out, size_t *outlen);
 
 #endif

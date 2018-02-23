@@ -6,6 +6,7 @@ local f = Form(translate('Mesh VPN'))
 local s = f:section(Section)
 
 local mode = s:option(Value, 'mode')
+mode.package = "gluon-web-mesh-vpn-fastd"
 mode.template = "gluon/model/mesh-vpn-fastd"
 
 local methods = uci:get('fastd', 'mesh_vpn', 'method')

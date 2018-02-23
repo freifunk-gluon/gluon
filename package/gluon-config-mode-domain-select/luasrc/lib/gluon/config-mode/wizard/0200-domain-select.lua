@@ -1,4 +1,6 @@
 return function(form, uci)
+	local site_i18n = i18n 'gluon-site'
+
 	local fs = require 'nixio.fs'
 	local json = require 'jsonc'
 	local site = require 'gluon.site'
@@ -24,8 +26,8 @@ return function(form, uci)
 		return list
 	end
 
-	local s = form:section(Section, nil, translate('gluon-config-mode:domain-select'))
-	local o = s:option(ListValue, 'domain', translate('gluon-config-mode:domain'))
+	local s = form:section(Section, nil, site_i18n.translate('gluon-config-mode:domain-select'))
+	local o = s:option(ListValue, 'domain', site_i18n.translate('gluon-config-mode:domain'))
 
 	if configured then
 		o.default = selected_domain

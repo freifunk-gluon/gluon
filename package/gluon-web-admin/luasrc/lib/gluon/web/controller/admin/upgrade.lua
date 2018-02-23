@@ -9,6 +9,9 @@ You may obtain a copy of the License at
 	http://www.apache.org/licenses/LICENSE-2.0
 ]]--
 
+package 'gluon-web-admin'
+
+
 local fs = require 'nixio.fs'
 
 local tmpfile = "/tmp/firmware.img"
@@ -106,17 +109,23 @@ local function action_upgrade(http, renderer)
 
 		renderer.render("layout", {
 			content = "admin/upgrade",
-			bad_image = has_image and not has_support,
+			env = {
+				bad_image = has_image and not has_support,
+			},
+			pkg = 'gluon-web-admin',
 		})
 
 	-- Step 2: present uploaded file, show checksum, confirmation
 	elseif step == 2 then
 		renderer.render("layout", {
 			content = "admin/upgrade_confirm",
-			checksum   = image_checksum(tmpfile),
-			filesize   = fs.stat(tmpfile).size,
-			flashsize  = storage_size(),
-			keepconfig = (http:formvalue("keepcfg") == "1"),
+			env = {
+				checksum   = image_checksum(tmpfile),
+				filesize   = fs.stat(tmpfile).size,
+				flashsize  = storage_size(),
+				keepconfig = (http:formvalue("keepcfg") == "1"),
+			},
+			pkg = 'gluon-web-admin',
 		})
 	elseif step == 3 then
 		if http:formvalue("keepcfg") == "1" then
@@ -127,6 +136,7 @@ local function action_upgrade(http, renderer)
 		renderer.render("layout", {
 			content = "admin/upgrade_reboot",
 			hidenav = true,
+			pkg = 'gluon-web-admin',
 		})
 	end
 end

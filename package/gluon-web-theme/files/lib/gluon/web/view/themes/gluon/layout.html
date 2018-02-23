@@ -33,6 +33,10 @@ You may obtain a copy of the License at
 		return r
 	end
 
+	local function title(node)
+		return i18n(node.pkg).translate(node.title)
+	end
+
 	local function subtree(prefix, node, name, ...)
 		if not node then return end
 
@@ -48,7 +52,7 @@ You may obtain a copy of the License at
 					local active = (v == name)
 			%>
 			<li class="tabmenu-item-<%=v%><% if active then %> active<% end %>">
-				<a href="<%=url(append(prefix, v))%>"><%=pcdata(translate(child.title))%></a>
+				<a href="<%=url(append(prefix, v))%>"><%=pcdata(title(child))%></a>
 			</li>
 			<%
 				end
@@ -71,7 +75,7 @@ You may obtain a copy of the License at
 	<head>
 		<meta charset="UTF-8" />
 		<link rel="stylesheet" type="text/css" media="screen" href="<%=media%>/cascade.css" />
-		<title><%=pcdata( hostname .. ( (rnode and rnode.title) and ' - ' .. translate(rnode.title) or '')) %></title>
+		<title><%=pcdata( hostname .. ((rnode and rnode.title) and ' - ' .. title(rnode) or '')) %></title>
 	</head>
 	<body>
 
@@ -88,7 +92,7 @@ You may obtain a copy of the License at
 		<% if #categories > 1 and not hidenav then %>
 			<ul id="topmenu">
 				<% for i, r in ipairs(categories) do %>
-					<li><a class="topcat<% if request[1] == r then %> active<%end%>" href="<%=url({r})%>"><%=pcdata(translate(root.nodes[r].title))%></a></li>
+					<li><a class="topcat<% if request[1] == r then %> active<%end%>" href="<%=url({r})%>"><%=pcdata(title(root.nodes[r]))%></a></li>
 				<% end %>
 			</ul>
 		<% end %>
@@ -110,9 +114,9 @@ You may obtain a copy of the License at
 			</noscript>
 
 			<%
-				ok, err = pcall(include, content)
+				ok, err = pcall(renderer.render, content, env, pkg)
 				if not ok then
-					renderer.render('error500', {message = err})
+					renderer.render('error500', {message = err}, 'gluon-web')
 				end
 			%>
 

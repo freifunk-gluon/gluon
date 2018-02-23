@@ -1,7 +1,9 @@
 <%-
+	local site_i18n = i18n 'gluon-site'
+
 	local sysconfig = require 'gluon.sysconfig'
 
-	local msg = _translate('gluon-config-mode:welcome')
+	local msg = site_i18n._translate('gluon-config-mode:welcome')
 	if not msg then return end
 -%>
 <p>
