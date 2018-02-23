@@ -48,7 +48,7 @@ if( open F, "find @ARGV -type f '(' -name '*.html' -o -name '*.lua' ')' |" )
 
 			my $text = $raw;
 
-			while( $text =~ s/ ^ .*? (?:translate|translatef|i18n|_) [\n\s]* \( /(/sgx )
+			while( $text =~ s/ ^ .*? (?:translate|translatef|_) [\n\s]* \( /(/sgx )
 			{
 				( my $code, $text ) = extract_bracketed($text, q{('")});
 
