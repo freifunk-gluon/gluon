@@ -208,6 +208,82 @@ static struct json_object * get_memory(void) {
 	return ret;
 }
 
+static struct json_object * get_stat(void) {
+	FILE *f = fopen("/proc/stat", "r");
+	if (!f)
+		return NULL;
+
+	struct json_object *stat = json_object_new_object();
+	struct json_object *ret = NULL;
+
+	char *line = NULL;
+	size_t len = 0;
+
+	while (getline(&line, &len, f) >= 0) {
+		char label[32];
+
+		if (sscanf(line, "%31s", label) != 1){
+			goto invalid_stat_format;
+		}
+
+		if (!strcmp(label, "cpu")) {
+			unsigned long long user, nice, system, idle, iowait, irq, softirq;
+			if(sscanf(line, "%*s %llu %llu %llu %llu %llu %llu %llu",
+			          &user, &nice, &system, &idle, &iowait, &irq, &softirq) != 7)
+				goto invalid_stat_format;
+
+			struct json_object *cpu = json_object_new_object();
+
+			json_object_object_add(cpu, "user", json_object_new_int64(user));
+			json_object_object_add(cpu, "nice", json_object_new_int64(nice));
+			json_object_object_add(cpu, "system", json_object_new_int64(system));
+			json_object_object_add(cpu, "idle", json_object_new_int64(idle));
+			json_object_object_add(cpu, "iowait", json_object_new_int64(iowait));
+			json_object_object_add(cpu, "irq", json_object_new_int64(irq));
+			json_object_object_add(cpu, "softirq", json_object_new_int64(softirq));
+
+			json_object_object_add(stat, "cpu", cpu);
+		} else if (!strcmp(label, "ctxt")) {
+			unsigned long long ctxt;
+			if(sscanf(line, "%*s %llu", &ctxt) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "ctxt", json_object_new_int64(ctxt));
+		} else if (!strcmp(label, "intr")) {
+			unsigned long long total_intr;
+			if(sscanf(line, "%*s %llu", &total_intr) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "intr", json_object_new_int64(total_intr));
+		} else if (!strcmp(label, "softirq")) {
+			unsigned long long total_softirq;
+			if(sscanf(line, "%*s %llu", &total_softirq) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "softirq", json_object_new_int64(total_softirq));
+		} else if (!strcmp(label, "processes")) {
+			unsigned long long processes;
+			if(sscanf(line, "%*s %llu", &processes) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "processes", json_object_new_int64(processes));
+		}
+
+	}
+
+	ret = stat;
+
+invalid_stat_format:
+	if (!ret)
+		json_object_put(stat);
+
+	free(line);
+	fclose(f);
+
+	return ret;
+}
+
+
 static struct json_object * get_rootfs_usage(void) {
 	struct statfs s;
 	if (statfs("/", &s))
@@ -238,6 +314,7 @@ static struct json_object * respondd_provider_statistics(void) {
 
 	json_object_object_add(ret, "rootfs_usage", get_rootfs_usage());
 	json_object_object_add(ret, "memory", get_memory());
+	json_object_object_add(ret, "stat", get_stat());
 
 	add_uptime(ret);
 	add_loadavg(ret);
