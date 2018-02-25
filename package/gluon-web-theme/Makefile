@@ -16,7 +16,7 @@ define Package/gluon-web-theme
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=gluon-web theme
-  DEPENDS:=+pretty-hostname
+  DEPENDS:=+gluon-core +gluon-web
 endef
 
 define Build/Prepare
