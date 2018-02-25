@@ -10,16 +10,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid "Form token mismatch"
-msgstr "Formular-Token ungültig"
-
-msgid ""
-"In order to prevent unauthorized access to the system, your request has been "
-"blocked."
-msgstr ""
-"Die Anfrage wurde blockiert, um unauthorisierten Zugriff aufs System zu "
-"verhindern."
-
 msgid "Internal Server Error"
 msgstr "Interner Serverfehler"
 
@@ -44,7 +34,3 @@ msgstr "Entschuldigung, das anfgeforderte Objekt wurde nicht gefunden."
 msgid "Sorry, the server encountered an unexpected error."
 msgstr ""
 "Entschuldigung, auf dem Server ist ein unerwarteter Fehler aufgetreten."
-
-msgid "The submitted security token is invalid or already expired!"
-msgstr ""
-"Das übermittelte Sicherheits-Token ist ungültig oder bereits abgelaufen!"
