@@ -83,6 +83,14 @@ function readline(fd)
 	return line
 end
 
+function exec(command)
+	local pp   = io.popen(command)
+	local data = pp:read("*a")
+	pp:close()
+
+	return data
+end
+
 function node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end

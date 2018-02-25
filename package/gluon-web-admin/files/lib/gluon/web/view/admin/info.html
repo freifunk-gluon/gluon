@@ -1,7 +1,6 @@
 <%-
 	local fs = require 'nixio.fs'
 	local uci = require('simple-uci').cursor()
-	local lutil = require 'gluon.web.util'
 	local pretty_hostname = require 'pretty_hostname'
 
 	local site = require 'gluon.site'
@@ -15,7 +14,7 @@
 	local pubkey
 	local meshvpn_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
 	if meshvpn_enabled then
-		pubkey = util.trim(lutil.exec('/etc/init.d/fastd show_key mesh_vpn'))
+		pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
 		if pubkey == '' then
 			pubkey = nil
 		end

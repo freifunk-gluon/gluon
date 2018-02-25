@@ -2,14 +2,10 @@
 -- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local io = require "io"
-local table = require "table"
 local tparser = require "gluon.web.template.parser"
-local nixio = require "nixio"
-local fs = require "nixio.fs"
 
 local getmetatable, setmetatable = getmetatable, setmetatable
-local tostring, pairs = tostring, pairs
+local tostring = tostring
 
 module "gluon.web.util"
 
@@ -62,27 +58,4 @@ end
 
 function pcdata(value)
 	return value and tparser.pcdata(tostring(value))
-end
-
-
-function contains(table, value)
-	for k, v in pairs(table) do
-		if value == v then
-			return k
-		end
-	end
-	return false
-end
-
-
---
--- System utility functions
---
-
-function exec(command)
-	local pp   = io.popen(command)
-	local data = pp:read("*a")
-	pp:close()
-
-	return data
 end

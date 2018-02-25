@@ -12,6 +12,7 @@ You may obtain a copy of the License at
 package 'gluon-web-admin'
 
 
+local util = require 'gluon.util'
 local fs = require 'nixio.fs'
 
 local tmpfile = "/tmp/firmware.img"
@@ -61,8 +62,7 @@ local function action_upgrade(http, renderer)
 	end
 
 	local function image_supported(tmpfile)
-		-- XXX: yay...
-		return (os.execute(string.format("/sbin/sysupgrade -T %q >/dev/null", tmpfile)) == 0)
+		return (os.execute(string.format("exec /sbin/sysupgrade -T %q >/dev/null", tmpfile)) == 0)
 	end
 
 	local function storage_size()
@@ -88,7 +88,7 @@ local function action_upgrade(http, renderer)
 	end
 
 	local function image_checksum(tmpfile)
-		return (gluon.web.util.exec(string.format("md5sum %q", tmpfile)):match("^([^%s]+)"))
+		return (util.exec(string.format("exec md5sum %q", tmpfile)):match("^([^%s]+)"))
 	end
 
 

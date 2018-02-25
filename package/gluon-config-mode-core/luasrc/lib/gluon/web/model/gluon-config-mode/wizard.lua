@@ -1,5 +1,5 @@
 local fs = require "nixio.fs"
-local util = require "gluon.web.util"
+local util = require "gluon.util"
 local nixio_util = require "nixio.util"
 
 local uci = require("simple-uci").cursor()
