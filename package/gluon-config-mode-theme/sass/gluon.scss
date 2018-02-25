@@ -1,10 +1,10 @@
 /*
    ATTENTION: This file is not compiled when building gluon.
-   The compiled version is at ../files/lib/gluon/web/www/static/gluon/cascade.css
+   The compiled version is at ../files/lib/gluon/config-mode/www/static/gluon.css
 
    Use sass like this to update it:
 
-   sass --sourcemap=none -C -t compressed sass/gluon.scss files/lib/gluon/web/www/static/gluon.css
+   sass --sourcemap=none -C -t compressed sass/gluon.scss files/lib/gluon/config-mode/www/static/gluon.css
 
    When commiting changes to this file make sure to commit the respective
    changes to the compilid version within the same commit!

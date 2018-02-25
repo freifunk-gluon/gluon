@@ -17,7 +17,7 @@ define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Configuration wizard for user friendly setup of new mesh nodes
-  DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-web-theme +uhttpd
+  DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-config-mode-theme +uhttpd
 endef
 
 define Build/Prepare
