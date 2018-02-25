@@ -17,7 +17,7 @@ define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Configuration wizard for user friendly setup of new mesh nodes
-  DEPENDS:=+gluon-setup-mode +gluon-web-theme +gluon-lock-password +pretty-hostname
+  DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-web-theme +uhttpd
 endef
 
 define Build/Prepare
@@ -35,6 +35,12 @@ endef
 define Package/gluon-config-mode-core/install
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
+
+	$(INSTALL_DIR) $(1)/lib/gluon/config-mode/view/ $(1)/lib/gluon/config-mode/www/static/
+	$(LN) /lib/gluon/web/i18n $(1)/lib/gluon/config-mode/
+	$(LN) /lib/gluon/web/view/{error,model} $(1)/lib/gluon/config-mode/view/
+	$(LN) /lib/gluon/web/www/static/gluon-web-model.js $(1)/lib/gluon/config-mode/www/static/
+
 	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
 endef
 
