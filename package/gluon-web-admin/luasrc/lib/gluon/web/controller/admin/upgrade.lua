@@ -106,36 +106,27 @@ local function action_upgrade(http, renderer)
 			fs.unlink(tmpfile)
 		end
 
-		renderer.render("layout", {
-			content = "admin/upgrade",
-			env = {
-				bad_image = has_image and not has_support,
-			},
-			pkg = 'gluon-web-admin',
-		})
+		renderer.render_layout('admin/upgrade', {
+			bad_image = has_image and not has_support,
+		}, 'gluon-web-admin')
 
 	-- Step 2: present uploaded file, show checksum, confirmation
 	elseif step == 2 then
-		renderer.render("layout", {
-			content = "admin/upgrade_confirm",
-			env = {
-				checksum   = image_checksum(tmpfile),
-				filesize   = fs.stat(tmpfile).size,
-				flashsize  = storage_size(),
-				keepconfig = (http:formvalue("keepcfg") == "1"),
-			},
-			pkg = 'gluon-web-admin',
-		})
+		renderer.render_layout('admin/upgrade_confirm', {
+			checksum   = image_checksum(tmpfile),
+			filesize   = fs.stat(tmpfile).size,
+			flashsize  = storage_size(),
+			keepconfig = (http:formvalue("keepcfg") == "1"),
+		}, 'gluon-web-admin')
+
 	elseif step == 3 then
 		if http:formvalue("keepcfg") == "1" then
 			fork_exec("/sbin/sysupgrade", tmpfile)
 		else
 			fork_exec("/sbin/sysupgrade", "-n", tmpfile)
 		end
-		renderer.render("layout", {
-			content = "admin/upgrade_reboot",
+		renderer.render_layout('admin/upgrade_reboot', nil, 'gluon-web-admin', {
 			hidenav = true,
-			pkg = 'gluon-web-admin',
 		})
 	end
 end

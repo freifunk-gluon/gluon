@@ -100,7 +100,7 @@ You may obtain a copy of the License at
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 	<head>
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" type="text/css" media="screen" href="<%|media%>/cascade.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="/static/gluon.css" />
 		<title><%| hostname .. ((rnode and rnode.title) and ' - ' .. title(rnode) or '') %></title>
 	</head>
 	<body>
@@ -140,7 +140,7 @@ You may obtain a copy of the License at
 			</noscript>
 
 			<%
-				ok, err = pcall(renderer.render, content, env, pkg)
+				ok, err = pcall(renderer.render, content, scope, pkg)
 				if not ok then
 					renderer.render('error/500', {message = err}, 'gluon-web')
 				end

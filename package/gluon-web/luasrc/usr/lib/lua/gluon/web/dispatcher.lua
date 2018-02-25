@@ -86,9 +86,6 @@ local function dispatch(config, http, request)
 		write       = function(...) return http:write(...) end,
 		pcdata      = util.pcdata,
 		urlencode   = proto.urlencode,
-		media       = '/static/gluon',
-		theme       = 'gluon',
-		resource    = '/static/resources',
 		attr        = attr,
 		url         = function(path) return build_url(http, path) end,
 	}, { __index = _G }))
@@ -136,10 +133,10 @@ local function dispatch(config, http, request)
 					end
 				end,
 
-				template = function(view)
+				template = function(view, scope)
 					local pkg = _pkg
 					return function()
-						renderer.render("layout", {content = view, pkg = pkg})
+						renderer.render_layout(view, scope, pkg)
 					end
 				end,
 
@@ -178,15 +175,11 @@ local function dispatch(config, http, request)
 
 	if not node or not node.target then
 		http:status(404, "Not Found")
-		renderer.render("layout", {
-			content = "error/404",
-			env = {
-				message =
-					"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
-				        "If this URL belongs to an extension, make sure it is properly installed.\n",
-			},
-			pkg = 'gluon-web',
-		})
+		renderer.render_layout("error/404", {
+			message =
+				"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
+			        "If this URL belongs to an extension, make sure it is properly installed.\n",
+		}, 'gluon-web')
 		return
 	end
 
@@ -195,15 +188,11 @@ local function dispatch(config, http, request)
 	local ok, err = pcall(node.target)
 	if not ok then
 		http:status(500, "Internal Server Error")
-		renderer.render("layout", {
-			content = "error/500",
-			env = {
-				message =
-					"Failed to execute dispatcher target for entry '/" .. table.concat(request, "/") .. "'.\n" ..
-					"The called action terminated with an exception:\n" .. tostring(err or "(unknown)"),
-			},
-			pkg = 'gluon-web',
-		})
+		renderer.render_layout("error/500", {
+			message =
+				"Failed to execute dispatcher target for entry '/" .. table.concat(request, "/") .. "'.\n" ..
+				"The called action terminated with an exception:\n" .. tostring(err or "(unknown)"),
+		}, 'gluon-web')
 	end
 end
 

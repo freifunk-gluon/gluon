@@ -4,7 +4,7 @@
 
    Use sass like this to update it:
 
-   sass --sourcemap=none -C -t compressed sass/cascade.scss files/lib/gluon/web/www/static/gluon/cascade.css
+   sass --sourcemap=none -C -t compressed sass/gluon.scss files/lib/gluon/web/www/static/gluon.css
 
    When commiting changes to this file make sure to commit the respective
    changes to the compilid version within the same commit!

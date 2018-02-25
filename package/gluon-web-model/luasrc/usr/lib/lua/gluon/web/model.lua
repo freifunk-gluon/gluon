@@ -58,11 +58,9 @@ return function(config, http, renderer, name, pkg)
 		hidenav = hidenav or map.hidenav
 	end
 
-	renderer.render('layout', {
-		content = 'model/wrapper',
-		env = {
-			maps = maps,
-		},
+	renderer.render_layout('model/wrapper', {
+		maps = maps,
+	}, nil, {
 		hidenav = hidenav,
 	})
 end

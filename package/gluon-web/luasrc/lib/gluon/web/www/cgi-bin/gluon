@@ -2,4 +2,7 @@
 
 require 'gluon.web.cgi' {
 	base_path = '/lib/gluon/web',
+
+	layout_package = 'gluon-web-theme',
+	layout_template = 'theme/layout',
 }

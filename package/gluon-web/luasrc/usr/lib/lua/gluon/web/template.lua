@@ -64,6 +64,7 @@ return function(config, env)
 	--- Render a certain template.
 	-- @param name		Template name
 	-- @param scope		Scope to assign to template (optional)
+	-- @param pkg		i18n namespace package (optional)
 	function ctx.render(name, scope, pkg)
 		local sourcefile = viewdir .. name .. ".html"
 		local template, _, err = tparser.parse(sourcefile)
@@ -78,6 +79,7 @@ return function(config, env)
 	--- Render a template from a string.
 	-- @param template	Template string
 	-- @param scope		Scope to assign to template (optional)
+	-- @param pkg		i18n namespace package (optional)
 	function ctx.render_string(str, scope, pkg)
 		local template, _, err = tparser.parse_string(str)
 
@@ -85,6 +87,21 @@ return function(config, env)
 			(err or "Unknown syntax error"))
 
 		render_template('(local)', template, scope, pkg)
+	end
+
+	--- Render a template, wrapped in the configured layout.
+	-- @param name		Template name
+	-- @param scope		Scope to assign to template (optional)
+	-- @param pkg		i18n namespace package (optional)
+	-- @param layout_scope  Additional variables to pass to the layout template
+	function ctx.render_layout(name, scope, pkg, layout_scope)
+		ctx.render(config.layout_template, setmetatable({
+			content = name,
+			scope = scope,
+			pkg = pkg,
+		}, {
+			__index = layout_scope
+		}), config.layout_package)
 	end
 
 	return ctx
