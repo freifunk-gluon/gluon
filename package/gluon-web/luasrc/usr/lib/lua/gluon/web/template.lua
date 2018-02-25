@@ -2,19 +2,17 @@
 -- Copyright 2017-2018 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local tparser = require "gluon.web.template.parser"
-local i18n = require "gluon.web.i18n"
-local util = require "gluon.web.util"
+local tparser = require 'gluon.web.template.parser'
 
 local tostring, ipairs, setmetatable, setfenv = tostring, ipairs, setmetatable, setfenv
 local pcall, assert = pcall, assert
 
 
-module "gluon.web.template"
+return function(config, env)
+	local i18n = require('gluon.web.i18n')(config)
 
-local viewdir = util.libpath() .. "/view/"
+	local viewdir = config.base_path .. '/view/'
 
-function renderer(env)
 	local ctx = {}
 
 	local language = 'en'

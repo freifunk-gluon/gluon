@@ -9,31 +9,9 @@ local tpl = require "gluon.web.template"
 local util = require "gluon.web.util"
 local proto = require "gluon.web.http.protocol"
 
-module("gluon.web.dispatcher", package.seeall)
 
-
-function build_url(http, path)
+local function build_url(http, path)
 	return (http:getenv("SCRIPT_NAME") or "") .. "/" .. table.concat(path, "/")
-end
-
-function redirect(http, ...)
-	http:redirect(build_url(http, {...}))
-end
-
-
-function httpdispatch(http)
-	local request = {}
-	local pathinfo = proto.urldecode(http:getenv("PATH_INFO") or "", true)
-	for node in pathinfo:gmatch("[^/]+") do
-		table.insert(request, node)
-	end
-
-	ok, err = pcall(dispatch, http, request)
-	if not ok then
-		http:status(500, "Internal Server Error")
-		http:prepare_content("text/plain")
-		http:write(err)
-	end
 end
 
 
@@ -69,8 +47,7 @@ local function set_language(renderer, accept)
 	renderer.set_language(langs)
 end
 
-
-function dispatch(http, request)
+local function dispatch(config, http, request)
 	local tree = {nodes={}}
 	local nodes = {[''] = tree}
 
@@ -102,7 +79,7 @@ function dispatch(http, request)
 		return string.format(' %s="%s"', key, util.pcdata(tostring(val)))
 	end
 
-	local renderer = tpl.renderer(setmetatable({
+	local renderer = tpl(config, setmetatable({
 		http        = http,
 		request     = request,
 		node        = function(path) return _node({path}) end,
@@ -118,7 +95,7 @@ function dispatch(http, request)
 
 
 	local function createtree()
-		local base = util.libpath() .. "/controller/"
+		local base = config.base_path .. "/controller/"
 
 		local function load_ctl(path)
 			local ctl = assert(loadfile(path))
@@ -172,7 +149,7 @@ function dispatch(http, request)
 						local hidenav = false
 
 						local model = require "gluon.web.model"
-						local maps = model.load(name, renderer, pkg)
+						local maps = model.load(config, name, renderer, pkg)
 
 						for _, map in ipairs(maps) do
 							map:parse(http)
@@ -246,5 +223,20 @@ function dispatch(http, request)
 			},
 			pkg = 'gluon-web',
 		})
+	end
+end
+
+return function(config, http)
+	local request = {}
+	local pathinfo = proto.urldecode(http:getenv("PATH_INFO") or "", true)
+	for node in pathinfo:gmatch("[^/]+") do
+		table.insert(request, node)
+	end
+
+	ok, err = pcall(dispatch, config, http, request)
+	if not ok then
+		http:status(500, "Internal Server Error")
+		http:prepare_content("text/plain")
+		http:write(err)
 	end
 end

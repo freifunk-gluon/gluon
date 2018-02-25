@@ -8,7 +8,6 @@ local util = require "gluon.web.util"
 
 local fs         = require "nixio.fs"
 local datatypes  = require "gluon.web.model.datatypes"
-local dispatcher = require "gluon.web.dispatcher"
 local class      = util.class
 local instanceof = util.instanceof
 
@@ -17,8 +16,8 @@ FORM_VALID   =  1
 FORM_INVALID = -1
 
 -- Loads a model from given file, creating an environment and returns it
-function load(name, renderer, pkg)
-	local modeldir = util.libpath() .. "/model/"
+function load(config, name, renderer, pkg)
+	local modeldir = config.base_path .. "/model/"
 
 	if not fs.access(modeldir..name..".lua") then
 		error("Model '" .. name .. "' not found!")

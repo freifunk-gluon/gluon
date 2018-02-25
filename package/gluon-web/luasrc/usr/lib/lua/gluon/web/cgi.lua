@@ -2,10 +2,9 @@
 -- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-module("gluon.web.cgi", package.seeall)
-local nixio = require("nixio")
-require("gluon.web.http")
-require("gluon.web.dispatcher")
+local nixio = require 'nixio'
+local http = require 'gluon.web.http'
+local dispatcher = require 'gluon.web.dispatcher'
 
 -- Limited source to avoid endless blocking
 local function limitsource(handle, limit)
@@ -27,12 +26,10 @@ local function limitsource(handle, limit)
 	end
 end
 
-function run()
-	local http = gluon.web.http.Http(
+return function(config)
+	dispatcher(config, http.Http(
 		nixio.getenv(),
 		limitsource(io.stdin, tonumber(nixio.getenv("CONTENT_LENGTH"))),
 		io.stdout
-	)
-
-	gluon.web.dispatcher.httpdispatch(http)
+	))
 end

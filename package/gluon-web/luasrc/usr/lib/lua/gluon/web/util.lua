@@ -86,12 +86,3 @@ function exec(command)
 
 	return data
 end
-
-function uniqueid(bytes)
-	local rand = fs.readfile("/dev/urandom", bytes)
-	return nixio.bin.hexlify(rand)
-end
-
-function libpath()
-	return '/lib/gluon/web'
-end
