@@ -13,16 +13,6 @@ local function do_filter_prefix(input, output, prefix)
 	return f
 end
 
-local function close_stdio(stream, mode)
-	local null = nixio.open('/dev/null', mode)
-	if null then
-		nixio.dup(null, nixio[stream])
-		if null:fileno() > 2 then
-			null:close()
-		end
-	end
-end
-
 
 local io = io
 local os = os
@@ -76,23 +66,6 @@ function remove_from_set(t, itm)
 	return changed
 end
 
-function exec(...)
-	local pid, errno, error = nixio.fork()
-	if pid == 0 then
-		close_stdio('stdin', 'r')
-		close_stdio('stdout', 'w')
-		close_stdio('stderr', 'w')
-
-		nixio.execp(...)
-		os.exit(127)
-	elseif pid > 0 then
-		local wpid, status, code = nixio.waitpid(pid)
-		return wpid and status == 'exited' and code
-	else
-		return nil, errno, error
-	end
-end
-
 -- Removes all lines starting with a prefix from a file, optionally adding a new one
 function replace_prefix(file, prefix, add)
 	local tmp = file .. '.tmp'
@@ -108,14 +81,6 @@ function readline(fd)
 	local line = fd:read('*l')
 	fd:close()
 	return line
-end
-
-function lock(file)
-	exec('lock', file)
-end
-
-function unlock(file)
-	exec('lock', '-u', file)
 end
 
 function node_id()
