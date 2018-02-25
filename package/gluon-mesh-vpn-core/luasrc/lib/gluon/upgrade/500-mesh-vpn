@@ -39,8 +39,6 @@ end
 users.remove_user('gluon-fastd')
 users.remove_group('gluon-fastd')
 
-users.add_group('gluon-mesh-vpn', 800)
-
 uci:section('firewall', 'include', 'mesh_vpn_dns', {
 	type = 'restore',
 	path = '/lib/gluon/mesh-vpn/iptables.rules',
