@@ -1,4 +1,3 @@
-local disp = require 'gluon.web.dispatcher'
 local fs = require "nixio.fs"
 local util = require "gluon.web.util"
 local nixio_util = require "nixio.util"

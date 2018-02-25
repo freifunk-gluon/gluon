@@ -10,7 +10,6 @@ You may obtain a copy of the License at
 -%>
 <%
 	local uci  = require("simple-uci").cursor()
-	local disp = require "gluon.web.dispatcher"
 	local fs   = require "nixio.fs"
 	local pretty_hostname = require "pretty_hostname"
 
@@ -23,9 +22,34 @@ You may obtain a copy of the License at
 	local category = request[1]
 	local cattree  = category and node(category)
 
-	local categories = disp.node_children(root)
+	local function node_visible(node)
+		return (
+			node.title and
+			node.target and
+			(not node.hidden)
+		)
+	end
 
-	http:prepare_content("application/xhtml+xml")
+	local function node_children(node)
+		if not node then return {} end
+
+		local ret = {}
+		for k, v in pairs(node.nodes) do
+			if node_visible(v) then
+				table.insert(ret, k)
+			end
+		end
+
+		table.sort(ret,
+			function(a, b)
+				return (node.nodes[a].order or 100)
+				     < (node.nodes[b].order or 100)
+			end
+		)
+		return ret
+	end
+
+	local categories = node_children(root)
 
 	local function append(xs, x)
 		local r = {unpack(xs)}
@@ -40,7 +64,7 @@ You may obtain a copy of the License at
 	local function subtree(prefix, node, name, ...)
 		if not node then return end
 
-		local children = disp.node_children(node)
+		local children = node_children(node)
 		if #children == 0 then return end
 
 	%>
@@ -69,6 +93,8 @@ You may obtain a copy of the License at
 	local function menutree(path, ...)
 		subtree({path}, root.nodes[category], ...)
 	end
+
+	http:prepare_content("application/xhtml+xml")
 -%>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">

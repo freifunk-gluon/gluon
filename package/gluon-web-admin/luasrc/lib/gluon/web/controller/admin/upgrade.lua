@@ -30,7 +30,6 @@ local function filehandler(meta, chunk, eof)
 end
 
 local function action_upgrade(http, renderer)
-	local disp = require 'gluon.web.dispatcher'
 	local nixio = require 'nixio'
 
 	local function fork_exec(...)

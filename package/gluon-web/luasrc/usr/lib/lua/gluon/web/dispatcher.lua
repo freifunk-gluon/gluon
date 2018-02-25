@@ -20,33 +20,6 @@ function redirect(http, ...)
 	http:redirect(build_url(http, {...}))
 end
 
-function node_visible(node)
-	return (
-		node.title and
-		node.target and
-		(not node.hidden)
-	)
-end
-
-function node_children(node)
-	if not node then return {} end
-
-	local ret = {}
-	for k, v in pairs(node.nodes) do
-		if node_visible(v) then
-			table.insert(ret, k)
-		end
-	end
-
-	table.sort(ret,
-		function(a, b)
-			return (node.nodes[a].order or 100)
-			     < (node.nodes[b].order or 100)
-		end
-	)
-	return ret
-end
-
 
 function httpdispatch(http)
 	local request = {}
