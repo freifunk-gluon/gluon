@@ -1,12 +1,11 @@
 -- Copyright 2008 Steven Barth <steven@midlink.org>
--- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
+-- Copyright 2017-2018 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-module("gluon.web.model", package.seeall)
+module("gluon.web.model.classes", package.seeall)
 
 local util = require "gluon.web.util"
 
-local fs         = require "nixio.fs"
 local datatypes  = require "gluon.web.model.datatypes"
 local class      = util.class
 local instanceof = util.instanceof
@@ -14,41 +13,6 @@ local instanceof = util.instanceof
 FORM_NODATA  =  0
 FORM_VALID   =  1
 FORM_INVALID = -1
-
--- Loads a model from given file, creating an environment and returns it
-function load(config, name, renderer, pkg)
-	local modeldir = config.base_path .. "/model/"
-
-	if not fs.access(modeldir..name..".lua") then
-		error("Model '" .. name .. "' not found!")
-	end
-
-	local func = assert(loadfile(modeldir..name..".lua"))
-
-	local i18n = setmetatable({
-		i18n = renderer.i18n
-	}, {
-		__index = renderer.i18n(pkg)
-	})
-
-
-	setfenv(func, setmetatable({}, {__index =
-		function(tbl, key)
-			return _M[key] or i18n[key] or _G[key]
-		end
-	}))
-
-	local models = { func() }
-
-	for k, model in ipairs(models) do
-		if not instanceof(model, Node) then
-			error("model definition returned an invalid model object")
-		end
-		model.index = k
-	end
-
-	return models
-end
 
 
 local function parse_datatype(code)
@@ -86,7 +50,7 @@ function Node:__init__(title, description, name)
 	self.name = name
 	self.index = nil
 	self.parent = nil
-	self.package = 'gluon-web'
+	self.package = 'gluon-web-model'
 end
 
 function Node:append(obj)

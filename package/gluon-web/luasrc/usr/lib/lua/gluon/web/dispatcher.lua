@@ -146,26 +146,7 @@ local function dispatch(config, http, request)
 				model = function(name)
 					local pkg = _pkg
 					return function()
-						local hidenav = false
-
-						local model = require "gluon.web.model"
-						local maps = model.load(config, name, renderer, pkg)
-
-						for _, map in ipairs(maps) do
-							map:parse(http)
-						end
-						for _, map in ipairs(maps) do
-							map:handle()
-							hidenav = hidenav or map.hidenav
-						end
-
-						renderer.render("layout", {
-							content = "model/wrapper",
-							env = {
-								maps = maps,
-							},
-							hidenav = hidenav,
-						})
+						require('gluon.web.model')(config, http, renderer, name, pkg)
 					end
 				end,
 
@@ -198,7 +179,7 @@ local function dispatch(config, http, request)
 	if not node or not node.target then
 		http:status(404, "Not Found")
 		renderer.render("layout", {
-			content = "error404",
+			content = "error/404",
 			env = {
 				message =
 					"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
@@ -215,7 +196,7 @@ local function dispatch(config, http, request)
 	if not ok then
 		http:status(500, "Internal Server Error")
 		renderer.render("layout", {
-			content = "error500",
+			content = "error/500",
 			env = {
 				message =
 					"Failed to execute dispatcher target for entry '/" .. table.concat(request, "/") .. "'.\n" ..

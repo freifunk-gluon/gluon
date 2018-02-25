@@ -142,7 +142,7 @@ You may obtain a copy of the License at
 			<%
 				ok, err = pcall(renderer.render, content, env, pkg)
 				if not ok then
-					renderer.render('error500', {message = err}, 'gluon-web')
+					renderer.render('error/500', {message = err}, 'gluon-web')
 				end
 			%>
 
