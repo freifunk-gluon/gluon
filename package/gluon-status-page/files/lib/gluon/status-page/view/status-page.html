@@ -1,6 +1,5 @@
 <%-
 	local fs = require 'nixio.fs'
-	local json = require 'jsonc'
 	local ubus = require 'ubus'
 	local util = require 'gluon.util'
 
@@ -43,8 +42,6 @@
 	end
 
 	local interfaces = get_interfaces()
-
-	local nodeinfo = json.parse(util.exec('exec gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r nodeinfo'))
 
 	local function sorted(t)
 		t = {unpack(t)}
