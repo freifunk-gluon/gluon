@@ -12,19 +12,20 @@ define Package/gluon-status-page
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Status page showing information about the node
-  DEPENDS:=+gluon-web +gluon-status-page-api
+  DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libbatadv
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
 
 define Build/Compile
+	$(call Build/Compile/Default)
 	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
 	$(call GluonBuildI18N,gluon-status-page,i18n)
 endef
 
 define Package/gluon-status-page/install
+	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/{neighbours-batadv,stations} $(1)/lib/gluon/status-page/providers/
+
 	$(CP) ./files/* $(1)/
 	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
 
