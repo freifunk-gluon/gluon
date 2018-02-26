@@ -1,0 +1,8 @@
+#!/usr/bin/lua
+
+require 'gluon.web.cgi' {
+	base_path = '/lib/gluon/status-page',
+
+	layout_package = 'gluon-status-page',
+	layout_template = 'layout', -- only used for error pages
+}

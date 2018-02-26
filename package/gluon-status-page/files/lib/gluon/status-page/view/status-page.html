@@ -1,0 +1,162 @@
+<%-
+	local fs = require 'nixio.fs'
+	local json = require 'jsonc'
+	local ubus = require 'ubus'
+	local util = require 'gluon.util'
+
+	local translations = {}
+
+	local function _(v)
+		translations[v] = translate(v)
+	end
+
+	-- i18n strings for JavaScript
+	_('.') -- decimal point
+	_('connected')
+	_('not connected')
+	_('1 day')
+	_('%s days')
+	_('%s used')
+	_('%s packets/s')
+
+	local function get_interfaces()
+		local uconn = ubus.connect()
+		if not uconn then
+			error('failed to connect to ubus')
+		end
+		local interfaces = util.get_mesh_devices(uconn)
+		ubus.close(uconn)
+		table.sort(interfaces)
+		return interfaces
+	end
+
+	local function is_wireless(iface)
+		while true do
+			local pattern = '/sys/class/net/' .. iface .. '/lower_*'
+			local lower = fs.glob(pattern)()
+			if not lower then break end
+
+			iface = lower:sub(pattern:len())
+		end
+
+		return fs.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
+	end
+
+	local interfaces = get_interfaces()
+
+	local nodeinfo = json.parse(util.exec('exec gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r nodeinfo'))
+
+	local function sorted(t)
+		t = {unpack(t)}
+		table.sort(t)
+		return t
+	end
+
+	local function enabled(v)
+		return v and translate('enabled') or translate('disabled')
+	end
+
+	local function statistics(key, format)
+		return string.format('<span data-statistics="%s" data-format="%s"></span>', pcdata(key), pcdata(format or 'id'))
+	end
+
+	local function statisticsTraffic(key)
+		return string.format('%s<br />%s<br />%s',
+			statistics(key .. '/packets', 'packetsDiff'),
+			statistics(key .. '/bytes', 'bytesDiff'),
+			statistics(key .. '/bytes', 'bytes')
+		)
+	end
+
+	http:prepare_content("application/xhtml+xml")
+-%>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+		<title><%| nodeinfo.hostname %> - <%:Status%></title>
+
+		<link rel="stylesheet" href="/static/status-page.css" type="text/css" />
+	</head>
+	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%= attr('data-translations', translations) .. attr('data-node-location', nodeinfo.location) %>>
+		<header>
+			<h1><%| nodeinfo.hostname %></h1>
+		</header>
+		<div class="container">
+			<div class="frame">
+				<h2><%:Overview%></h2>
+				<dl>
+					<dt><%:Node name%></dt><dd><%| nodeinfo.hostname %></dd>
+					<dt><%:Model%></dt><dd><%| nodeinfo.hardware.model %></dd>
+					<dt><%:Primary MAC address%></dt><dd><%| nodeinfo.network.mac %></dd>
+					<dt><%:IP address%></dt><dd><%= pcdata(table.concat(sorted(nodeinfo.network.addresses), '\n')):gsub('\n', '<br />') %></dd>
+					<dt><%:Firmware%></dt><dd><%| nodeinfo.software.firmware.release %></dd>
+					<% if nodeinfo.software.fastd then -%>
+						<dt><%:Mesh VPN%></dt><dd><%| enabled(nodeinfo.software.fastd.enabled) %></dd>
+					<%- end %>
+					<% if nodeinfo.software.autoupdater then -%>
+						<dt><%:Automatic updates%></dt><dd><%| enabled(nodeinfo.software.autoupdater.enabled) %><%|
+							nodeinfo.software.autoupdater.enabled and
+								string.format(' (%s)', nodeinfo.software.autoupdater.branch)
+						%></dd>
+					<%- end %>
+				</dl>
+			</div>
+			<div class="frame">
+				<h2><%:Monitoring%></h2>
+				<table>
+					<tr><th><%:Uptime%></th><td><%= statistics('uptime', 'time') %></td></tr>
+					<tr><th><%:Load average%></th><td><%= statistics('loadavg', 'decimal') %></td></tr>
+					<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
+					<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
+					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %></td></tr>
+					<tr><th><%:Clients%></th><td><%= statistics('clients/total') %></td></tr>
+				</table>
+
+				<h3><%:Traffic%></h3>
+				<table>
+					<tr><th><%:Transmitted%></th><td><%= statisticsTraffic('traffic/tx') %></td></tr>
+					<tr><th><%:Received%></th><td><%= statisticsTraffic('traffic/rx') %></td></tr>
+					<tr><th><%:Forwarded%></th><td><%= statisticsTraffic('traffic/forward') %></td></tr>
+				</table>
+
+				<div id="mesh-vpn" style="display: none">
+					<h3><%:Mesh VPN%></h3>
+					<table id="mesh-vpn-peers">
+					</table>
+				</div>
+			</div>
+			<div class="frame">
+				<h2><%:Neighbors%></h2>
+
+				<%
+					for _, iface in ipairs(interfaces) do
+						local wireless = is_wireless(iface)
+						local address = fs.readfile('/sys/class/net/' .. iface .. '/address')
+						if address then
+				%>
+					<h3><%| iface %></h3>
+					<div data-interface="<%| iface %>" data-interface-address="<%| util.trim(address) %>"<%= attr('data-interface-wireless', wireless) %>>
+						<table class="datatable">
+							<tr>
+								<th><%:Node%></th>
+								<th>TQ</th>
+								<% if wireless then %>
+									<th>dBm</th>
+									<th><%:Distance%></th>
+									<th><%:Last seen%></th>
+								<% end %>
+							</tr>
+						</table>
+					</div>
+				<%
+						end
+					end
+				%>
+			</div>
+		</div>
+		<script src="/static/status-page.js"></script>
+	</body>
+</html>
