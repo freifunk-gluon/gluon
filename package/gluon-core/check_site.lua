@@ -33,9 +33,17 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 	if need_table({config}, nil, false) then
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
 
-		need_number({config, 'channel'})
-		if config == 'wifi5' then
-			need_string_match({config, 'outdoor_chanlist'}, '^[%d%s-]+$', false)
+		if config == "wifi24" then
+			local channels = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+			need_one_of({config, 'channel'}, channels)
+		elseif config == 'wifi5' then
+			local channels = {
+				34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62,
+				64, 96, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 
+				120, 122, 124, 126, 128, 132, 134, 136, 138, 140, 142, 144, 
+				149, 151, 153, 155, 157, 159, 161, 165, 169, 173 }
+			need_one_of({config, 'channel'}, channels)
+			need_chanlist({config, 'outdoor_chanlist'}, channels, false)
 		end
 
 		obsolete({config, 'supported_rates'}, '802.11b rates are disabled by default.')
