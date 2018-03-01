@@ -172,6 +172,10 @@ wifi5 \: optional
     When set this offers the outdoor mode flag for 5 GHz radios in the config mode which
     reconfigures the AP to select its channel from outdoor chanlist, while respecting
     regulatory specifications, and  disables mesh on that radio.
+    The ``outdoors`` option in turn allows to configure when outdoor mode will be enabled.
+    When set to ``true`` all 5 GHz radios will use outdoor channels, while on ``false``
+    the outdoor mode will be completely disabled. The default setting is ``'preset'``,
+    which will enable outdoor mode automatically on outdoor-capable devices.
     ::
 
       wifi5 = {

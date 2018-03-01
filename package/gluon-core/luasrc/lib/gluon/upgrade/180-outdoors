@@ -1,0 +1,35 @@
+#!/usr/bin/lua
+
+-- This script needs to be sorted before 200-wireless as it affects
+-- wireless channel selection and wireless mesh configuration.
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+
+if uci:get('gluon', 'wireless', 'outdoor') ~= nil then
+	-- don't overwrite existing configuration
+	os.exit(0)
+end
+
+local sysconfig = require 'gluon.sysconfig'
+local platform_info = require 'platform_info'
+
+local config = site.wifi5.outdoor_preset('preset')
+local outdoor = false
+
+if sysconfig.gluon_version then
+	-- don't enable the outdoor mode after an upgrade
+	outdoor = false
+elseif config == 'preset' then
+	-- enable outdoor mode through presets on new installs
+	outdoor = platform_info.is_outdoor_device()
+else
+	-- enable/disable outdoor mode unconditionally on new installs
+	outdoor = config
+end
+
+uci:section('gluon', 'wireless', 'wireless', {
+	outdoor = outdoor
+})
+
+uci:save('gluon')
