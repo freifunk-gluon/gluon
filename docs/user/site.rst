@@ -183,20 +183,36 @@ next_node \: package
     in the ``name`` field.
 
 mesh \: optional
-    Options specific to routing protocols.
+    Configuration of general mesh functionality.
 
-    At the moment, only the ``batman_adv`` routing protocol has such options:
+    Gluon generally segments layer-2 meshes so that each node becomes IGMP/MLD
+    querier for its own local clients. This is necessary for reliable multicast
+    snooping. The segmentation is realized by preventing IGMP/MLD queries from
+    passing through the mesh.
 
-    The optional value ``gw_sel_class`` sets the gateway selection class. The default
-    class 20 is based on the link quality (TQ) only, class 1 is calculated from
-    both the TQ and the announced bandwidth.
+    By default, not only queries are filtered, but also membership report and
+    leave packets, as they add to the background noise of the mesh. As a
+    consequence, snooping switches outside the mesh that are connected to a
+    Gluon node need to be configured to forward all multicast traffic towards
+    the mesh; this is usually not a problem, as such setups are unusual. If
+    you run a special-purpose mesh that requires membership reports to be
+    working, this filtering can be disabled by setting the
+    *filter_membership_reports* option to ``false``.
+
+    In addition, options specific to the batman-adv routing protocol can be set
+    in the *batman_adv* section:
+
+    The optional value *gw_sel_class* sets the gateway selection class. The
+    default is class 20, which is based on the link quality (TQ) only; class 1
+    is calculated from both the TQ and the announced bandwidth.
     ::
 
-       mesh = {
-         batman_adv = {
-           gw_sel_class = 1,
-         },
-       }
+      mesh = {
+        filter_membership_reports = false,
+        batman_adv = {
+          gw_sel_class = 1,
+        },
+      }
 
 
 mesh_vpn

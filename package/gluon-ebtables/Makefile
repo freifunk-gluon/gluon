@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(INCLUDE_DIR)/package.mk
+include ../gluon.mk
 
 
 define Package/gluon-ebtables
@@ -32,6 +32,11 @@ endef
 
 define Package/gluon-ebtables/install
 	$(CP) ./files/* $(1)/
+endef
+
+define Package/gluon-ebtables/postinst
+#!/bin/sh
+$(call GluonCheckSite,check_site.lua)
 endef
 
 $(eval $(call BuildPackage,gluon-ebtables))
