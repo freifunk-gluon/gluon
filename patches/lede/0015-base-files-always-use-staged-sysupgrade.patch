@@ -325,7 +325,7 @@ index 0000000000000000000000000000000000000000..4e2aa3a23c3bab07a795762a30a4d4f7
 +	exec /bin/busybox ash -c "$COMMAND"
 +fi
 diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
-index c095ca81c50c71021af2dc04a561ac22f6b7442b..2d67371ef74b4b970076a069e97f4fd6a1e0bc95 100755
+index 71c7faa6dbc485ff33e776ff087e1aca58cfb0b0..fa08f4194daa0ee74758b9f49a23fe8dcb4b933d 100755
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
 @@ -1,4 +1,7 @@
@@ -374,7 +374,7 @@ index c095ca81c50c71021af2dc04a561ac22f6b7442b..2d67371ef74b4b970076a069e97f4fd6
  	cat <<-EOF
  		-b|--create-backup and -r|--restore-backup do not perform a firmware upgrade.
  		Do not specify both -b|-r and a firmware image.
-@@ -136,14 +136,13 @@ sysupgrade_pre_upgrade="fwtool_pre_upgrade"
+@@ -155,14 +155,13 @@ sysupgrade_pre_upgrade="fwtool_pre_upgrade"
  
  include /lib/upgrade
  
@@ -390,7 +390,7 @@ index c095ca81c50c71021af2dc04a561ac22f6b7442b..2d67371ef74b4b970076a069e97f4fd6
  		return 0
  	}
  	run_hooks "$CONFFILES" $sysupgrade_init_conffiles
-@@ -184,8 +183,33 @@ type platform_check_image >/dev/null 2>/dev/null || {
+@@ -203,8 +202,33 @@ type platform_check_image >/dev/null 2>/dev/null || {
  	exit 1
  }
  
@@ -425,7 +425,7 @@ index c095ca81c50c71021af2dc04a561ac22f6b7442b..2d67371ef74b4b970076a069e97f4fd6
  		if [ $FORCE -eq 1 ]; then
  			echo "Image check '$check' failed but --force given - will update anyway!"
  			break
-@@ -211,6 +235,7 @@ elif ask_bool $SAVE_CONFIG "Keep config files over reflash"; then
+@@ -230,6 +254,7 @@ elif ask_bool $SAVE_CONFIG "Keep config files over reflash"; then
  	[ $TEST -eq 1 ] || do_save_conffiles
  	export SAVE_CONFIG=1
  else
@@ -433,7 +433,7 @@ index c095ca81c50c71021af2dc04a561ac22f6b7442b..2d67371ef74b4b970076a069e97f4fd6
  	export SAVE_CONFIG=0
  fi
  
-@@ -218,28 +243,18 @@ if [ $TEST -eq 1 ]; then
+@@ -237,28 +262,18 @@ if [ $TEST -eq 1 ]; then
  	exit 0
  fi
  
