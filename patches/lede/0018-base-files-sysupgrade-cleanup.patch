@@ -245,7 +245,7 @@ index 4e2aa3a23c3bab07a795762a30a4d4f701081934..cc8047d988e39ca9ba27d2588744aad4
 +# Exec new shell from ramfs
 +exec /bin/busybox ash -c "$COMMAND"
 diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
-index 2d67371ef74b4b970076a069e97f4fd6a1e0bc95..200a0e520b5df8bcc208f4d8fd731756e94294fb 100755
+index fa08f4194daa0ee74758b9f49a23fe8dcb4b933d..347860d00af27a61152703320bb210d30726db83 100755
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
 @@ -1,7 +1,5 @@

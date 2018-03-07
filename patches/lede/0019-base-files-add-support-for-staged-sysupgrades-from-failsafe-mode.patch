@@ -45,10 +45,10 @@ index 3147cdc5a68a69cef6b1af6618a4e2367a143c2c..728c63b2e8aebf970cd7dff0d15518cc
  
  boot_hook_add failsafe failsafe_netlogin
 diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files/sbin/sysupgrade
-index 200a0e520b5df8bcc208f4d8fd731756e94294fb..809e789f9f436aaeb47a906d46c94d5952583e5a 100755
+index 347860d00af27a61152703320bb210d30726db83..4a133a65e0960619b9cd0d722b6c27ac7894de5b 100755
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
-@@ -251,8 +251,16 @@ run_hooks "" $sysupgrade_pre_upgrade
+@@ -270,8 +270,16 @@ run_hooks "" $sysupgrade_pre_upgrade
  
  install_bin /sbin/upgraded
  v "Commencing upgrade. All shell sessions will be closed now."
