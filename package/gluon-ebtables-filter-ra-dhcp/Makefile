@@ -4,10 +4,7 @@ PKG_NAME:=gluon-ebtables-filter-ra-dhcp
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include $(INCLUDE_DIR)/package.mk
-
 
 define Package/gluon-ebtables-filter-ra-dhcp
   SECTION:=gluon
@@ -21,13 +18,6 @@ define Package/gluon-ebtables-filter-ra-dhcp/description
 
 	These filters ensure that RA and DHCP packets are only forwarded from the mesh into the
 	client network, and not vice-versa.
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

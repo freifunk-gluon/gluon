@@ -6,7 +6,6 @@ GLUON_SITEDIR = $(call qstrip,$(CONFIG_GLUON_SITEDIR))
 GLUON_SITE_VERSION = $(shell ( cd '$(GLUON_SITEDIR)' && git --git-dir=.git describe --always --dirty=+ ) 2>/dev/null || echo unknown)
 PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
-
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-cjson/host
@@ -16,7 +15,6 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-site
   SECTION:=gluon
@@ -38,10 +36,6 @@ config GLUON_SITEDIR
 config GLUON_MULTIDOMAIN
 	bool "Gluon multi-domain support"
 
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
 endef
 
 define GenerateJSON

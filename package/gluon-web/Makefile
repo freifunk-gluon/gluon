@@ -3,13 +3,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-web
 PKG_VERSION:=1
 
-
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 PKG_INSTALL:=1
-
 
 define Package/gluon-web
   SECTION:=gluon
@@ -28,11 +26,6 @@ endef
 
 define Package/gluon-web/config
 $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(call lang-config,$(lang)))
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

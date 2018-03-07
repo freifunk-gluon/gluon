@@ -3,25 +3,15 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-config-mode-geo-location
 PKG_VERSION:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-config-mode-geo-location
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Set geographic location of a node
   DEPENDS:=+gluon-config-mode-core +gluon-node-info
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

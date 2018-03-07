@@ -3,14 +3,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-autoupdater
 PKG_VERSION:=4
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_BRANCH
 PKG_BUILD_DEPENDS := respondd
 
-
 include ../gluon.mk
-
 
 define Package/gluon-autoupdater
   SECTION:=gluon
@@ -24,11 +20,6 @@ config GLUON_BRANCH
 	string "Gluon autoupdater branch"
 	depends on PACKAGE_gluon-autoupdater
 	default ""
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

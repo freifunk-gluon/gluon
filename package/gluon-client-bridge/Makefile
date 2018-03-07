@@ -3,23 +3,13 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-client-bridge
 PKG_VERSION:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
-
 
 define Package/gluon-client-bridge
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Provides a bridge and a wireless interface for clients to connect to
   DEPENDS:=+gluon-core +kmod-veth
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

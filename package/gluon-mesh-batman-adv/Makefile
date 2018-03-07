@@ -3,11 +3,9 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-mesh-batman-adv
 PKG_VERSION:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
 include ../gluon.mk
-
 
 define Package/gluon-mesh-batman-adv/common
   SECTION:=gluon
@@ -27,11 +25,6 @@ define Package/gluon-mesh-batman-adv-15
 $(Package/gluon-mesh-batman-adv/common)
   TITLE:=Support for batman-adv meshing (compat level 15)
   DEPENDS+=+kmod-batman-adv +batctl
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

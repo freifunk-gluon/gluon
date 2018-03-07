@@ -5,12 +5,10 @@ PKG_NAME:=gluon-core
 GLUON_VERSION = $(shell git describe --always --dirty=+ 2>/dev/null || echo unknown)
 PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
 
-
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include ../gluon.mk
 include $(INCLUDE_DIR)/cmake.mk
-
 
 define Package/gluon-core
   SECTION:=gluon
@@ -23,11 +21,6 @@ endef
 
 define Package/gluon-core/description
 	Gluon community wifi mesh firmware framework: core
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

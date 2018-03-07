@@ -4,8 +4,6 @@ PKG_NAME:=gluon-radv-filterd
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 define Package/gluon-radv-filterd
@@ -18,11 +16,6 @@ endef
 MAKE_VARS += \
         LIBNL_NAME="libnl-tiny" \
         LIBNL_GENL_NAME="libnl-tiny"
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
 
 define Package/gluon-radv-filterd/install
 	$(CP) ./files/* $(1)/

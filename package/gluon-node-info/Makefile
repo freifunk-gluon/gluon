@@ -4,7 +4,6 @@ PKG_NAME:=gluon-node-info
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
 include ../gluon.mk
@@ -15,11 +14,6 @@ define Package/gluon-node-info
   CATEGORY:=Gluon
   TITLE:=Add /etc/config/gluon-node-info to uci
   DEPENDS:=+gluon-core +libgluonutil
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

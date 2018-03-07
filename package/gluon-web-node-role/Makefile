@@ -1,28 +1,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-web-node-role
-PKG_VERSION:=0.1
-PKG_RELEASE:=1
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_VERSION:=1
 
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-web-node-role
   SECTION:=gluon
   CATEGORY:=Gluon
   DEPENDS:=+gluon-web-admin +gluon-node-info
   TITLE:=UI for specifying node role
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

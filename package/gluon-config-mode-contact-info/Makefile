@@ -3,12 +3,9 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-config-mode-contact-info
 PKG_VERSION:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-config-mode-contact-info
   SECTION:=gluon
@@ -20,13 +17,6 @@ endef
 define Package/gluon-config-mode-contact-info/description
 	Allows the user to provide contact information to be distributed in the mesh.
 	Can be made obligatory in site.conf
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

@@ -4,8 +4,6 @@ PKG_NAME:=gluon-ebtables-limit-arp
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
@@ -36,18 +34,6 @@ define Package/gluon-ebtables-limit-arp/description
 	However it should mitigate the problem of curious people or
 	smart devices scanning the whole IP range. Which could create
 	a significant amount of overhead for all participants so far.
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-	$(call Build/Compile/Default)
 endef
 
 define Package/gluon-ebtables-limit-arp/install

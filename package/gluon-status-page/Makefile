@@ -7,14 +7,12 @@ include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
-
 define Package/gluon-status-page
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Status page showing information about the node
   DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua +libbatadv
 endef
-
 
 define Build/Compile
 	$(call Build/Compile/Default)

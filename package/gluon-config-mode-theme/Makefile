@@ -4,25 +4,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-config-mode-theme
-PKG_VERSION:=0.1
-PKG_RELEASE:=1
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_VERSION:=1
 
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-config-mode-theme
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Gluon config mode theme for gluon-web
   DEPENDS:=+gluon-core +gluon-web
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
 endef
 
 define Build/Compile

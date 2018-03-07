@@ -3,8 +3,6 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-mesh-vpn-tunneldigger
 PKG_VERSION:=3
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 define Package/gluon-mesh-vpn-tunneldigger
@@ -12,13 +10,6 @@ define Package/gluon-mesh-vpn-tunneldigger
   CATEGORY:=Gluon
   TITLE:=Support for connecting meshes via tunneltigger/L2TPv3 pseudowire
   DEPENDS:=+gluon-core +gluon-mesh-vpn-core +tunneldigger
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

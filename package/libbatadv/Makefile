@@ -28,7 +28,6 @@ PKG_NAME:=libbatadv
 PKG_VERSION:=1
 PKG_LICENSE:=MIT
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk

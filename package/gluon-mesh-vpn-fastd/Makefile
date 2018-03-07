@@ -3,22 +3,15 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-mesh-vpn-fastd
 PKG_VERSION:=3
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS := respondd
 
 include ../gluon.mk
-
 
 define Package/gluon-mesh-vpn-fastd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for connecting meshes via fastd
   DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +fastd
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile

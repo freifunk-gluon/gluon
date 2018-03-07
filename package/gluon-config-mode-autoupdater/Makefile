@@ -3,25 +3,15 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-config-mode-autoupdater
 PKG_VERSION:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 
 define Package/gluon-config-mode-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Config Mode: Let the user know whether the autoupdater is enabled or not
   DEPENDS:=+gluon-config-mode-core +gluon-autoupdater
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile

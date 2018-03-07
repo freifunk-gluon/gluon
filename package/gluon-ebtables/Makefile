@@ -4,10 +4,7 @@ PKG_NAME:=gluon-ebtables
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
-
 
 define Package/gluon-ebtables
   SECTION:=gluon
@@ -18,13 +15,6 @@ endef
 
 define Package/gluon-ebtables/description
 	Gluon community wifi mesh firmware framework: ebtables support
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
 endef
 
 define Build/Compile
