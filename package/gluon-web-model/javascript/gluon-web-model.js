@@ -93,6 +93,10 @@
 				return (v.length >= 8) && (v.length <= 63);
 		},
 
+		'hostname': function() {
+			return (this.match(/^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/i) != null);
+		},
+
 		'range': function(min, max)	{
 			var val = Dec(this);
 			return (val >= +min && val <= +max);
