@@ -1,0 +1,209 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Wed, 7 Mar 2018 10:05:41 +0100
+Subject: batman-adv: multicast TT fixes and cleanups
+
+The first one adds a fix that might potentially result in multicast packet
+loss once we would enable multicast_mode again.
+
+The second one avoids some small but unnecessary overhead. More
+importantly though, it is supposed to ease further multicast improvements
+later (e.g. no need for a multicast sending node to determine overlap
+between WANT_ALL_IPV4/6 flags and TT entries while on fast-path).
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/batman-adv/patches/0002-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch b/batman-adv/patches/0002-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..138ff7568548d87b9e31efd6c122527102ab2b48
+--- /dev/null
++++ b/batman-adv/patches/0002-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch
+@@ -0,0 +1,44 @@
++From 25b61cec1f45008040d8eb5a5e6c8a4ea027b138 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Sun, 4 Mar 2018 13:08:17 +0100
++Subject: [PATCH] batman-adv: Fix multicast packet loss with a single
++ WANT_ALL_IPV4/6 flag
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++As the kernel doc describes too the code is supposed to skip adding
++multicast TT entries if both the WANT_ALL_IPV4 and WANT_ALL_IPV6 flags
++are present.
++
++Unfortunately, the current code even skips adding multicast TT entries
++if only either the WANT_ALL_IPV4 or WANT_ALL_IPV6 is present.
++
++This could lead to IPv6 multicast packet loss if only an IGMP but not an
++MLD querier is present for instance or vice versa.
++
++Fixes: 391b59cdb111 ("batman-adv: Add multicast optimization support for bridged setups")
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++---
++ net/batman-adv/multicast.c | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/net/batman-adv/multicast.c b/net/batman-adv/multicast.c
++index 6eaffe50..15a7b314 100644
++--- a/net/batman-adv/multicast.c
+++++ b/net/batman-adv/multicast.c
++@@ -543,8 +543,8 @@ static bool batadv_mcast_mla_tvlv_update(struct batadv_priv *bat_priv)
++ 		bat_priv->mcast.enabled = true;
++ 	}
++ 
++-	return !(mcast_data.flags &
++-		 (BATADV_MCAST_WANT_ALL_IPV4 | BATADV_MCAST_WANT_ALL_IPV6));
+++	return !(mcast_data.flags & BATADV_MCAST_WANT_ALL_IPV4 &&
+++		 mcast_data.flags & BATADV_MCAST_WANT_ALL_IPV6);
++ }
++ 
++ /**
++-- 
++2.11.0
++
+diff --git a/batman-adv/patches/0003-batman-adv-Avoid-redundant-multicast-TT-entries.patch b/batman-adv/patches/0003-batman-adv-Avoid-redundant-multicast-TT-entries.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..b960052ac63c304454f1988cec76d10ac398d2ca
+--- /dev/null
++++ b/batman-adv/patches/0003-batman-adv-Avoid-redundant-multicast-TT-entries.patch
+@@ -0,0 +1,139 @@
++From e6a1e766956e66cbc5b2068896a8e55d4e49d894 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Sun, 4 Mar 2018 21:02:18 +0100
++Subject: [PATCH] batman-adv: Avoid redundant multicast TT entries
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++If a node signals that it wants all traffic for a specific protocol
++family then there is no need to announce individual multicast addresses
++via TT.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++---
++ net/batman-adv/multicast.c | 56 ++++++++++++++++++++++++++++++++++++++++++----
++ 1 file changed, 52 insertions(+), 4 deletions(-)
++
++diff --git a/net/batman-adv/multicast.c b/net/batman-adv/multicast.c
++index 15a7b314..17ad1933 100644
++--- a/net/batman-adv/multicast.c
+++++ b/net/batman-adv/multicast.c
++@@ -102,7 +102,36 @@ static struct net_device *batadv_mcast_get_bridge(struct net_device *soft_iface)
++ }
++ 
++ /**
+++ * batadv_mcast_addr_is_ipv4() - check if multicast MAC is IPv4
+++ * @addr: the MAC address to check
+++ *
+++ * Return: True, if MAC address is one reserved for IPv4 multicast, false
+++ * otherwise.
+++ */
+++static bool batadv_mcast_addr_is_ipv4(const u8 *addr)
+++{
+++	static const u8 prefix[] = {0x01, 0x00, 0x5E};
+++
+++	return memcmp(prefix, addr, sizeof(prefix)) == 0;
+++}
+++
+++/**
+++ * batadv_mcast_addr_is_ipv6() - check if multicast MAC is IPv6
+++ * @addr: the MAC address to check
+++ *
+++ * Return: True, if MAC address is one reserved for IPv6 multicast, false
+++ * otherwise.
+++ */
+++static bool batadv_mcast_addr_is_ipv6(const u8 *addr)
+++{
+++	static const u8 prefix[] = {0x33, 0x33};
+++
+++	return memcmp(prefix, addr, sizeof(prefix)) == 0;
+++}
+++
+++/**
++  * batadv_mcast_mla_softif_get() - get softif multicast listeners
+++ * @bat_priv: the bat priv with all the soft interface information
++  * @dev: the device to collect multicast addresses from
++  * @mcast_list: a list to put found addresses into
++  *
++@@ -119,9 +148,12 @@ static struct net_device *batadv_mcast_get_bridge(struct net_device *soft_iface)
++  * Return: -ENOMEM on memory allocation error or the number of
++  * items added to the mcast_list otherwise.
++  */
++-static int batadv_mcast_mla_softif_get(struct net_device *dev,
+++static int batadv_mcast_mla_softif_get(struct batadv_priv *bat_priv,
+++				       struct net_device *dev,
++ 				       struct hlist_head *mcast_list)
++ {
+++	bool all_ipv4 = bat_priv->mcast.flags & BATADV_MCAST_WANT_ALL_IPV4;
+++	bool all_ipv6 = bat_priv->mcast.flags & BATADV_MCAST_WANT_ALL_IPV6;
++ 	struct net_device *bridge = batadv_mcast_get_bridge(dev);
++ 	struct netdev_hw_addr *mc_list_entry;
++ 	struct batadv_hw_addr *new;
++@@ -129,6 +161,12 @@ static int batadv_mcast_mla_softif_get(struct net_device *dev,
++ 
++ 	netif_addr_lock_bh(bridge ? bridge : dev);
++ 	netdev_for_each_mc_addr(mc_list_entry, bridge ? bridge : dev) {
+++		if (all_ipv4 && batadv_mcast_addr_is_ipv4(mc_list_entry->addr))
+++			continue;
+++
+++		if (all_ipv6 && batadv_mcast_addr_is_ipv6(mc_list_entry->addr))
+++			continue;
+++
++ 		new = kmalloc(sizeof(*new), GFP_ATOMIC);
++ 		if (!new) {
++ 			ret = -ENOMEM;
++@@ -193,6 +231,7 @@ static void batadv_mcast_mla_br_addr_cpy(char *dst, const struct br_ip *src)
++ 
++ /**
++  * batadv_mcast_mla_bridge_get() - get bridged-in multicast listeners
+++ * @bat_priv: the bat priv with all the soft interface information
++  * @dev: a bridge slave whose bridge to collect multicast addresses from
++  * @mcast_list: a list to put found addresses into
++  *
++@@ -204,10 +243,13 @@ static void batadv_mcast_mla_br_addr_cpy(char *dst, const struct br_ip *src)
++  * Return: -ENOMEM on memory allocation error or the number of
++  * items added to the mcast_list otherwise.
++  */
++-static int batadv_mcast_mla_bridge_get(struct net_device *dev,
+++static int batadv_mcast_mla_bridge_get(struct batadv_priv *bat_priv,
+++				       struct net_device *dev,
++ 				       struct hlist_head *mcast_list)
++ {
++ 	struct list_head bridge_mcast_list = LIST_HEAD_INIT(bridge_mcast_list);
+++	bool all_ipv4 = bat_priv->mcast.flags & BATADV_MCAST_WANT_ALL_IPV4;
+++	bool all_ipv6 = bat_priv->mcast.flags & BATADV_MCAST_WANT_ALL_IPV6;
++ 	struct br_ip_list *br_ip_entry, *tmp;
++ 	struct batadv_hw_addr *new;
++ 	u8 mcast_addr[ETH_ALEN];
++@@ -221,6 +263,12 @@ static int batadv_mcast_mla_bridge_get(struct net_device *dev,
++ 		goto out;
++ 
++ 	list_for_each_entry(br_ip_entry, &bridge_mcast_list, list) {
+++		if (all_ipv4 && br_ip_entry->addr.proto == htons(ETH_P_IP))
+++			continue;
+++
+++		if (all_ipv6 && br_ip_entry->addr.proto == htons(ETH_P_IPV6))
+++			continue;
+++
++ 		batadv_mcast_mla_br_addr_cpy(mcast_addr, &br_ip_entry->addr);
++ 		if (batadv_mcast_mla_is_duplicate(mcast_addr, mcast_list))
++ 			continue;
++@@ -568,11 +616,11 @@ static void __batadv_mcast_mla_update(struct batadv_priv *bat_priv)
++ 	if (!batadv_mcast_mla_tvlv_update(bat_priv))
++ 		goto update;
++ 
++-	ret = batadv_mcast_mla_softif_get(soft_iface, &mcast_list);
+++	ret = batadv_mcast_mla_softif_get(bat_priv, soft_iface, &mcast_list);
++ 	if (ret < 0)
++ 		goto out;
++ 
++-	ret = batadv_mcast_mla_bridge_get(soft_iface, &mcast_list);
+++	ret = batadv_mcast_mla_bridge_get(bat_priv, soft_iface, &mcast_list);
++ 	if (ret < 0)
++ 		goto out;
++ 
++-- 
++2.11.0
++
