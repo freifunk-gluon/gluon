@@ -18,16 +18,4 @@ define Package/gluon-ebtables-source-filter/description
 	traffic entering the network via the nodes.
 endef
 
-define Build/Compile
-endef
-
-define Package/gluon-ebtables-source-filter/install
-	$(CP) ./files/* $(1)/
-endef
-
-define Package/gluon-ebtables-source-filter/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-ebtables-source-filter))
+$(eval $(call BuildPackageGluon,gluon-ebtables-source-filter))

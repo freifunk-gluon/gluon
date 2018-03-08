@@ -12,17 +12,4 @@ define Package/gluon-authorized-keys
   DEPENDS:=+gluon-core
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-authorized-keys/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-define Package/gluon-authorized-keys/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-authorized-keys))
+$(eval $(call BuildPackageGluon,gluon-authorized-keys))

@@ -3,8 +3,6 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-mesh-batman-adv
 PKG_VERSION:=1
 
-PKG_BUILD_DEPENDS := respondd
-
 include ../gluon.mk
 
 define Package/gluon-mesh-batman-adv/common
@@ -27,37 +25,19 @@ $(Package/gluon-mesh-batman-adv/common)
   DEPENDS+=+kmod-batman-adv +batctl
 endef
 
-define Build/Compile
-	$(call Build/Compile/Default)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-mesh-batman-adv/common/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-batman-adv.so
+define Package/gluon-mesh-batman-adv-14/install
+	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/lib/gluon/mesh-batman-adv
-endef
-
-define Package/gluon-mesh-batman-adv-14/install
-$(Package/gluon-mesh-batman-adv/common/install)
 	echo 14 > $(1)/lib/gluon/mesh-batman-adv/compat
 endef
 
 define Package/gluon-mesh-batman-adv-15/install
-$(Package/gluon-mesh-batman-adv/common/install)
+	$(Gluon/Build/Install)
+
+	$(INSTALL_DIR) $(1)/lib/gluon/mesh-batman-adv
 	echo 15 > $(1)/lib/gluon/mesh-batman-adv/compat
 endef
 
-define Package/gluon-mesh-batman-adv/common/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-Package/gluon-mesh-batman-adv-14/postinst := $(Package/gluon-mesh-batman-adv/common/postinst)
-Package/gluon-mesh-batman-adv-15/postinst := $(Package/gluon-mesh-batman-adv/common/postinst)
-
-
-$(eval $(call BuildPackage,gluon-mesh-batman-adv-14))
-$(eval $(call BuildPackage,gluon-mesh-batman-adv-15))
+$(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-14))
+$(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-15))

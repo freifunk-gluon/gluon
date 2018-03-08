@@ -3,11 +3,10 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-web
 PKG_VERSION:=1
 
-include ../gluon.mk
-
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
+GLUON_PKG_MAKE:=1
 PKG_INSTALL:=1
+
+include ../gluon.mk
 
 define Package/gluon-web
   SECTION:=gluon
@@ -28,18 +27,4 @@ define Package/gluon-web/config
 $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(call lang-config,$(lang)))
 endef
 
-define Build/Compile
-	$(call Build/Compile/Default)
-	$(call GluonBuildI18N,gluon-web,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_INSTALL_DIR)/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web,$(1))
-
-endef
-
-$(eval $(call BuildPackage,gluon-web))
+$(eval $(call BuildPackageGluon,gluon-web))

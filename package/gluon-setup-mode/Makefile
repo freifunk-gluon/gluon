@@ -19,18 +19,4 @@ define Package/gluon-setup-mode/description
 	Offline mode to perform basic setup in a secure manner.
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-setup-mode/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-define Package/gluon-setup-mode/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-setup-mode))
+$(eval $(call BuildPackageGluon,gluon-setup-mode))

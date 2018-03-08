@@ -9,8 +9,6 @@ PKG_RELEASE:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-web-admin
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -18,20 +16,4 @@ define Package/gluon-web-admin
   DEPENDS:=+gluon-config-mode-core +pretty-hostname
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-admin,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-admin/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-admin,$(1))
-endef
-
-define Package/gluon-web-admin/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-web-admin))
+$(eval $(call BuildPackageGluon,gluon-web-admin))

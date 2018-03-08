@@ -6,8 +6,6 @@ PKG_RELEASE:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-web-logging
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -15,14 +13,4 @@ define Package/gluon-web-logging
   TITLE:=UI for remote syslog configuration
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-logging,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-logging/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-logging,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-web-logging))
+$(eval $(call BuildPackageGluon,gluon-web-logging))

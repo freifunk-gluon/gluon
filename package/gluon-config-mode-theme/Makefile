@@ -8,8 +8,6 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-config-mode-theme
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -17,13 +15,4 @@ define Package/gluon-config-mode-theme
   DEPENDS:=+gluon-core +gluon-web
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-theme,i18n)
-endef
-
-define Package/gluon-config-mode-theme/install
-	$(CP) ./files/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-theme,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-config-mode-theme))
+$(eval $(call BuildPackageGluon,gluon-config-mode-theme))

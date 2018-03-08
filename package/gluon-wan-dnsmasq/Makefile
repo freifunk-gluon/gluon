@@ -16,13 +16,4 @@ define Package/gluon-wan-dnsmasq/description
 	Gluon community wifi mesh firmware framework: Support for a secondary DNS server using the WAN interface
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-wan-dnsmasq/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-$(eval $(call BuildPackage,gluon-wan-dnsmasq))
+$(eval $(call BuildPackageGluon,gluon-wan-dnsmasq))

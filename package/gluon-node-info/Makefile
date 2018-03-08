@@ -4,10 +4,7 @@ PKG_NAME:=gluon-node-info
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DEPENDS := respondd
-
 include ../gluon.mk
-
 
 define Package/gluon-node-info
   SECTION:=gluon
@@ -16,21 +13,4 @@ define Package/gluon-node-info
   DEPENDS:=+gluon-core +libgluonutil
 endef
 
-define Build/Compile
-	$(call Build/Compile/Default)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-node-info/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/node-info.so
-endef
-
-define Package/gluon-node-info/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-node-info))
+$(eval $(call BuildPackageGluon,gluon-node-info))

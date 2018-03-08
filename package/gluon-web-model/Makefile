@@ -12,16 +12,4 @@ define Package/gluon-web-model
   DEPENDS:=+gluon-web
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-model,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-model/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-model,$(1))
-
-endef
-
-$(eval $(call BuildPackage,gluon-web-model))
+$(eval $(call BuildPackageGluon,gluon-web-model))

@@ -58,7 +58,7 @@ define Build/Compile
 	)
   endif
 
-	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
+	$(call GluonBuildI18N,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
@@ -72,7 +72,7 @@ define Package/gluon-site/install
 	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
 
-	$(call GluonInstallI18N,gluon-site,$(1))
+	$(GluonInstallI18N)
 endef
 
 $(eval $(call BuildPackage,gluon-site))

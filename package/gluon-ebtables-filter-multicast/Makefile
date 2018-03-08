@@ -4,7 +4,7 @@ PKG_NAME:=gluon-ebtables-filter-multicast
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-include $(INCLUDE_DIR)/package.mk
+include ../gluon.mk
 
 define Package/gluon-ebtables-filter-multicast
   SECTION:=gluon
@@ -21,11 +21,4 @@ define Package/gluon-ebtables-filter-multicast/description
 	Allowed protocols are: DHCP, DHCPv6, ARP, ICMP, ICMPv6, BitTorrent local peer discovery, BABEL and OSPF
 endef
 
-define Build/Compile
-endef
-
-define Package/gluon-ebtables-filter-multicast/install
-	$(CP) ./files/* $(1)/
-endef
-
-$(eval $(call BuildPackage,gluon-ebtables-filter-multicast))
+$(eval $(call BuildPackageGluon,gluon-ebtables-filter-multicast))

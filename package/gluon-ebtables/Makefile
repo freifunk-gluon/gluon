@@ -17,16 +17,4 @@ define Package/gluon-ebtables/description
 	Gluon community wifi mesh firmware framework: ebtables support
 endef
 
-define Build/Compile
-endef
-
-define Package/gluon-ebtables/install
-	$(CP) ./files/* $(1)/
-endef
-
-define Package/gluon-ebtables/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-ebtables))
+$(eval $(call BuildPackageGluon,gluon-ebtables))

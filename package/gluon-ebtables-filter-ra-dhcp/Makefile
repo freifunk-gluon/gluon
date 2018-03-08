@@ -4,7 +4,7 @@ PKG_NAME:=gluon-ebtables-filter-ra-dhcp
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-include $(INCLUDE_DIR)/package.mk
+include ../gluon.mk
 
 define Package/gluon-ebtables-filter-ra-dhcp
   SECTION:=gluon
@@ -20,11 +20,4 @@ define Package/gluon-ebtables-filter-ra-dhcp/description
 	client network, and not vice-versa.
 endef
 
-define Build/Compile
-endef
-
-define Package/gluon-ebtables-filter-ra-dhcp/install
-	$(CP) ./files/* $(1)/
-endef
-
-$(eval $(call BuildPackage,gluon-ebtables-filter-ra-dhcp))
+$(eval $(call BuildPackageGluon,gluon-ebtables-filter-ra-dhcp))

@@ -5,8 +5,6 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-config-mode-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -14,14 +12,4 @@ define Package/gluon-config-mode-autoupdater
   DEPENDS:=+gluon-config-mode-core +gluon-autoupdater
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-autoupdater,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-config-mode-autoupdater/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-autoupdater,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-config-mode-autoupdater))
+$(eval $(call BuildPackageGluon,gluon-config-mode-autoupdater))

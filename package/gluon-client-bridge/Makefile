@@ -12,17 +12,4 @@ define Package/gluon-client-bridge
   DEPENDS:=+gluon-core +kmod-veth
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-client-bridge/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-define Package/gluon-client-bridge/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-client-bridge))
+$(eval $(call BuildPackageGluon,gluon-client-bridge))

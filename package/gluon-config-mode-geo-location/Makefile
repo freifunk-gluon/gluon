@@ -5,8 +5,6 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-config-mode-geo-location
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -14,19 +12,4 @@ define Package/gluon-config-mode-geo-location
   DEPENDS:=+gluon-config-mode-core +gluon-node-info
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-geo-location,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-config-mode-geo-location/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-geo-location,$(1))
-endef
-
-define Package/gluon-config-mode-geo-location/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-config-mode-geo-location))
+$(eval $(call BuildPackageGluon,gluon-config-mode-geo-location))

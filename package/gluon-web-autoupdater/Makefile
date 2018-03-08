@@ -9,8 +9,6 @@ PKG_RELEASE:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-web-autoupdater
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -18,14 +16,4 @@ define Package/gluon-web-autoupdater
   DEPENDS:=+gluon-web-admin +gluon-autoupdater
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-autoupdater,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-autoupdater/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-autoupdater,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-web-autoupdater))
+$(eval $(call BuildPackageGluon,gluon-web-autoupdater))

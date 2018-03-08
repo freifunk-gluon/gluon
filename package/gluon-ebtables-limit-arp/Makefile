@@ -4,6 +4,8 @@ PKG_NAME:=gluon-ebtables-limit-arp
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
+GLUON_PKG_MAKE:=1
+
 include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
@@ -37,9 +39,10 @@ define Package/gluon-ebtables-limit-arp/description
 endef
 
 define Package/gluon-ebtables-limit-arp/install
-	mkdir -p $(1)/usr/sbin/
+	$(Gluon/Build/Install)
+
+	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(CP) $(PKG_BUILD_DIR)/gluon-arp-limiter $(1)/usr/sbin/gluon-arp-limiter
-	$(CP) ./files/* $(1)/
 endef
 
-$(eval $(call BuildPackage,gluon-ebtables-limit-arp))
+$(eval $(call BuildPackageGluon,gluon-ebtables-limit-arp))

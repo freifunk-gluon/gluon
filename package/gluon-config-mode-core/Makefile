@@ -8,8 +8,6 @@ PKG_VERSION:=2
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-config-mode-core
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -17,21 +15,13 @@ define Package/gluon-config-mode-core
   DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-config-mode-theme +uhttpd
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-core,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
 define Package/gluon-config-mode-core/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
+	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/lib/gluon/config-mode/view/ $(1)/lib/gluon/config-mode/www/static/
 	$(LN) /lib/gluon/web/i18n $(1)/lib/gluon/config-mode/
 	$(LN) /lib/gluon/web/view/{error,model} $(1)/lib/gluon/config-mode/view/
 	$(LN) /lib/gluon/web/www/static/gluon-web-model.js $(1)/lib/gluon/config-mode/www/static/
-
-	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
 endef
 
-$(eval $(call BuildPackage,gluon-config-mode-core))
+$(eval $(call BuildPackageGluon,gluon-config-mode-core))

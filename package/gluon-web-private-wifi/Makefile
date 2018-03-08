@@ -6,8 +6,6 @@ PKG_RELEASE:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-web-private-wifi
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -15,14 +13,4 @@ define Package/gluon-web-private-wifi
   TITLE:=UI for activating a private WLAN
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-private-wifi,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-private-wifi/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-private-wifi,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-web-private-wifi))
+$(eval $(call BuildPackageGluon,gluon-web-private-wifi))

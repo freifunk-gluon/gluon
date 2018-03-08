@@ -13,13 +13,4 @@ define Package/gluon-alfred
   TITLE:=Configure alfred
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-alfred/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-$(eval $(call BuildPackage,gluon-alfred))
+$(eval $(call BuildPackageGluon,gluon-alfred))

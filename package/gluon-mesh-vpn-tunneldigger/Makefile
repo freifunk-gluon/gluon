@@ -12,18 +12,4 @@ define Package/gluon-mesh-vpn-tunneldigger
   DEPENDS:=+gluon-core +gluon-mesh-vpn-core +tunneldigger
 endef
 
-define Build/Compile
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-mesh-vpn-tunneldigger/install
-	$(CP) ./files/* $(1)/
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-endef
-
-define Package/gluon-mesh-vpn-tunneldigger/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-mesh-vpn-tunneldigger))
+$(eval $(call BuildPackageGluon,gluon-mesh-vpn-tunneldigger))

@@ -5,8 +5,6 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-config-mode-hostname
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -14,14 +12,4 @@ define Package/gluon-config-mode-hostname
   DEPENDS:=+gluon-config-mode-core
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-hostname,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-config-mode-hostname/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-hostname,$(1))
-endef
-
-$(eval $(call BuildPackage,gluon-config-mode-hostname))
+$(eval $(call BuildPackageGluon,gluon-config-mode-hostname))

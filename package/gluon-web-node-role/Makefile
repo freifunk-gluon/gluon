@@ -5,8 +5,6 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
 define Package/gluon-web-node-role
   SECTION:=gluon
   CATEGORY:=Gluon
@@ -14,19 +12,4 @@ define Package/gluon-web-node-role
   TITLE:=UI for specifying node role
 endef
 
-define Build/Compile
-	$(call GluonBuildI18N,gluon-web-node-role,i18n)
-	$(call GluonSrcDiet,./luasrc,$(PKG_BUILD_DIR)/luadest/)
-endef
-
-define Package/gluon-web-node-role/install
-	$(CP) $(PKG_BUILD_DIR)/luadest/* $(1)/
-	$(call GluonInstallI18N,gluon-web-node-role,$(1))
-endef
-
-define Package/gluon-web-node-role/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-web-node-role))
+$(eval $(call BuildPackageGluon,gluon-web-node-role))
