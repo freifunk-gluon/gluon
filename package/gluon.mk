@@ -92,8 +92,8 @@ define Gluon/Build/Install
 		$(CP) $(PKG_BUILD_DIR)/luadest/. $(1)/
 	)
 	$(if $(wildcard ./src/respondd.c),
-		$(INSTALL_DIR) $(1)/lib/gluon/respondd
-		$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/$(PKG_NAME).so
+		$(INSTALL_DIR) $(1)/usr/lib/respondd
+		$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/usr/lib/respondd/$(PKG_NAME).so
 	)
 	$(if $(wildcard ./i18n/.),
 		$(GluonInstallI18N)
