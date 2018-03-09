@@ -3,7 +3,6 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-web
 PKG_VERSION:=1
 
-GLUON_PKG_MAKE:=1
 PKG_INSTALL:=1
 
 include ../gluon.mk

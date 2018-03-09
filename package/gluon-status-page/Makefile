@@ -3,8 +3,6 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-status-page
 PKG_VERSION:=3
 
-GLUON_PKG_MAKE:=1
-
 include ../gluon.mk
 
 define Package/gluon-status-page

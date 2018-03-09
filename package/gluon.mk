@@ -6,7 +6,6 @@ PKG_BUILD_DEPENDS += luci-base/host
 
 ifneq ($(wildcard ./src/respondd.c),)
   PKG_BUILD_DEPENDS += respondd
-  GLUON_PKG_MAKE ?= 1
 endif
 
 include $(INCLUDE_DIR)/package.mk
@@ -67,10 +66,8 @@ define GluonSrcDiet
 endef
 
 
-GLUON_PKG_MAKE ?= 0
-
 define Gluon/Build/Compile
-	$(if $(findstring $(GLUON_PKG_MAKE),1),
+	$(if $(wildcard ./src/Makefile ./src/CMakeLists.txt),
 		$(Build/Compile/Default)
 	)
 	$(if $(wildcard ./luasrc/.),

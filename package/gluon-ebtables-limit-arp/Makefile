@@ -4,8 +4,6 @@ PKG_NAME:=gluon-ebtables-limit-arp
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-GLUON_PKG_MAKE:=1
-
 include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp

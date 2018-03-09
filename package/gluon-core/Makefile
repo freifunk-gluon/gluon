@@ -7,8 +7,6 @@ PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-GLUON_PKG_MAKE:=1
-
 include ../gluon.mk
 include $(INCLUDE_DIR)/cmake.mk
 
