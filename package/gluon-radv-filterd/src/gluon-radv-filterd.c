@@ -67,6 +67,10 @@
 // Also, the first update will take at least this long
 #define MIN_INTERVAL 15
 
+// Remember the originator of a router for at most this period of time (in
+// seconds). Re-read it from the transtable afterwards.
+#define ORIGINATOR_CACHE_TTL 300
+
 // max execution time of a single ebtables call in nanoseconds
 #define EBTABLES_TIMEOUT 500000000 // 500ms
 
@@ -727,6 +731,14 @@ static void update_ebtables(void) {
 		error_message(0, 0, "warning: adding new rule to ebtables chain %s failed", G.chain);
 }
 
+static void invalidate_originators(void)
+{
+	struct router *router;
+	foreach(router, G.routers) {
+		memset(&router->originator, 0, sizeof(router->originator));
+	}
+}
+
 static void sighandler(int sig __attribute__((unused)))
 {
 	G.stop_daemon = 1;
@@ -737,11 +749,15 @@ int main(int argc, char *argv[]) {
 	fd_set rfds;
 	struct timeval tv;
 	struct timespec next_update;
+	struct timespec next_invalidation;
 	struct timespec now;
 	struct timespec diff;
 
 	clock_gettime(CLOCK_MONOTONIC, &next_update);
 	next_update.tv_sec += MIN_INTERVAL;
+
+	clock_gettime(CLOCK_MONOTONIC, &next_invalidation);
+	next_invalidation.tv_sec += MIN_INTERVAL;
 
 	G.sock = -1;
 	parse_cmdline(argc, argv);
@@ -782,6 +798,13 @@ int main(int argc, char *argv[]) {
 
 			// all routers could have expired, check again
 			if (G.routers != NULL) {
+				if(timespec_diff(&now, &next_invalidation, &diff)) {
+					invalidate_originators();
+
+					next_invalidation = now;
+					next_invalidation.tv_sec += ORIGINATOR_CACHE_TTL;
+				}
+
 				update_tqs();
 				update_ebtables();
 
