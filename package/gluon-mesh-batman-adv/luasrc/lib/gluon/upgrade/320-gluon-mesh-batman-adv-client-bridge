@@ -18,7 +18,7 @@ uci:section('network', 'interface', 'client', {
 	peerdns = not (site.dns and site.dns.servers),
 	sourcefilter = false,
 	keep_ra_dnslifetime = true,
-	robustness = 3,
+	robustness = 9,
 	query_interval = 2000,
 	query_response_interval = 500,
 })
