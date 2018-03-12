@@ -21,6 +21,3 @@ packages 'web-advanced' \
 
 packages 'web-advanced & autoupdater' \
 	'gluon-web-autoupdater'
-
-packages 'web-advanced & mesh-vpn-fastd' \
-	'gluon-web-mesh-vpn-fastd'
