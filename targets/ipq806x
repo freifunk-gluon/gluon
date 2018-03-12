@@ -1,7 +1,4 @@
-ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
-if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
-	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca99x0 ath10k-firmware-qca99x0-ct'
-fi
+ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca99x0 ath10k-firmware-qca99x0-ct'
 
 
 # TP-Link
