@@ -27,11 +27,12 @@ If these settings do not exist, the cache is not initialized and RAM usage will
 not increase.
 
 When next_node.name is set, an A record and an AAAA record for the
-next-node IP address are placed in the dnsmasq configuration. This means that the content
-of next_node.name may be resolved even without upstream connectivity. It is suggested to use
-the same name as the DNS server provides: e.g nextnode.yourdomain.net (This way the name also 
-works if client uses static DNS Servers). Hint: If next_node.name does not contain a dot some 
-browsers would open the searchpage instead.
+next-node IP address are placed in the dnsmasq configuration. This means that
+the content of next_node.name may be resolved even without upstream connectivity.
+It is suggested to use the same name as the DNS server provides:
+e.g. nextnode.location.community.example.org (This way the name also works if a
+client uses static DNS Servers). Hint: If next_node.name does not contain a dot
+some browsers would open the searchpage instead.
 
 ::
 
@@ -41,7 +42,7 @@ browsers would open the searchpage instead.
   },
 
   next_node = {
-    name = 'nextnode.yourdomain.net',
+    name = { 'nextnode.location.community.example.org', 'nextnode', 'nn' },
     ip6 = '2001:db8:8::1',
     ip4 = '198.51.100.1',
   }
