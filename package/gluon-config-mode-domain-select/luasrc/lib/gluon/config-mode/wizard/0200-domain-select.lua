@@ -1,12 +1,24 @@
+
 return function(form, uci)
 	local site_i18n = i18n 'gluon-site'
 
 	local fs = require 'nixio.fs'
 	local json = require 'jsonc'
 	local site = require 'gluon.site'
+	local util = require 'gluon.util'
 
 	local selected_domain = uci:get('gluon', 'core', 'domain')
 	local configured = uci:get_first('gluon-setup-mode','setup_mode', 'configured') == '1' or (selected_domain ~= site.default_domain())
+
+	local function hide_domain_code(domain, code)
+		if configured and code == selected_domain then
+			return false
+		elseif type(domain.hide_domain) == 'table' then
+			return util.contains(domain.hide_domain, code)
+		else
+			return domain.hide_domain
+		end
+	end
 
 	local function get_domain_list()
 		local list = {}
@@ -14,7 +26,7 @@ return function(form, uci)
 			local domain_code = domain_path:match('([^/]+)%.json$')
 			local domain = assert(json.load(domain_path))
 
-			if not domain.hide_domain or (configured and domain.domain_code == selected_domain) then
+			if not hide_domain_code(domain, domain_code) then
 				table.insert(list, {
 					domain_code = domain_code,
 					domain_name = domain.domain_names[domain_code],
