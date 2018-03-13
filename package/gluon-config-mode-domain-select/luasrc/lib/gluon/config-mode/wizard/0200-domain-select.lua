@@ -9,12 +9,23 @@ return function(form, uci)
 	local configured = uci:get_first('gluon-setup-mode','setup_mode', 'configured') == '1' or (selected_domain ~= site.default_domain())
 
 	local function get_domain_list()
+		local function hidden_domain_code(domain, code)
+			if domain.hide_domain_codes ~= nil then
+				for _, hidden_code in ipairs(domain.hide_domain_codes) do
+					if code == hidden_code then
+						return true
+					end
+				end
+			end
+			return false
+		end
+
 		local list = {}
 		for domain_path in fs.glob('/lib/gluon/domains/*.json') do
 			local domain_code = domain_path:match('([^/]+)%.json$')
 			local domain = assert(json.load(domain_path))
 
-			if not domain.hide_domain or (configured and domain.domain_code == selected_domain) then
+			if (not domain.hide_domain and not hidden_domain_code(domain, domain_code)) or (configured and domain.domain_code == selected_domain) then
 				table.insert(list, {
 					domain_code = domain_code,
 					domain_name = domain.domain_names[domain_code],
