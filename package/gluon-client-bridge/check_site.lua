@@ -9,7 +9,7 @@ need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 
 for _, config in ipairs({'wifi24', 'wifi5'}) do
 	if need_table({config, 'ap'}, nil, false) then
-		need_string(in_domain({config, 'ap', 'ssid'}))
+		need_string_match(in_domain({config, 'ap', 'ssid'}), '^.' .. ('.?'):rep(31) .. '$')
 		need_boolean({config, 'ap', 'disabled'}, false)
 	end
 end
