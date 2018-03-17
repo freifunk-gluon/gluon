@@ -5,9 +5,9 @@ return function(form, uci)
 
 	form:section(Section, nil, pkg_i18n.translate(
 		"The node name is used solely for identification of your node, e.g. on a "
-		.. "nodemap. It has no influence on the name (SSID) of the broadcasted WLAN."
+		.. "node map. It does not affect the name (SSID) of the broadcasted WLAN."
 	))
-	
+
 	local s = form:section(Section)
 	local o = s:option(Value, "hostname", pkg_i18n.translate("Node name"))
 	o.default = pretty_hostname.get(uci)
