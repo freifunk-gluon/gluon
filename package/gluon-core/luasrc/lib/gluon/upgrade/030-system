@@ -15,7 +15,7 @@ local pretty_hostname = require 'pretty_hostname'
 
 local system = uci:get_first('system', 'system')
 
-pretty_hostname.set(uci, site.hostname_prefix('') .. util.node_id())
+pretty_hostname.set(uci, util.default_hostname())
 uci:set('system', system, 'timezone', site.timezone())
 
 uci:save('system')

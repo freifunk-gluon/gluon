@@ -95,6 +95,10 @@ function node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
+function default_hostname()
+	return site.hostname_prefix('') .. node_id()
+end
+
 function domain_seed_bytes(key, length)
 	local ret = ''
 	local v = ''
