@@ -48,7 +48,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 		need_array_of({config, 'basic_rate'}, supported_rates or rates, supported_rates ~= nil)
 
 		if need_table({config, 'ibss'}, nil, false) then
-			need_string_match(in_domain({config, 'ibss', 'ssid'}), '^.' .. ('.?'):rep(31) .. '$')
+			need_string_match(in_domain({config, 'ibss', 'ssid'}), '^' .. ('.?'):rep(32) .. '$')
 			need_string_match(in_domain({config, 'ibss', 'bssid'}), '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
 			need_one_of({config, 'ibss', 'mcast_rate'}, supported_rates or rates, false)
 			need_number({config, 'ibss', 'vlan'}, false)
@@ -56,7 +56,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 		end
 
 		if need_table({config, 'mesh'}, nil, false) then
-			need_string_match(in_domain({config, 'mesh', 'id'}), '^.' .. ('.?'):rep(31) .. '$')
+			need_string_match(in_domain({config, 'mesh', 'id'}), '^' .. ('.?'):rep(32) .. '$')
 			need_one_of({config, 'mesh', 'mcast_rate'}, supported_rates or rates, false)
 			need_boolean({config, 'mesh', 'disabled'}, false)
 		end
