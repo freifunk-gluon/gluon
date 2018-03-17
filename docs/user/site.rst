@@ -366,6 +366,38 @@ autoupdater \: package
     All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
     explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
+config_mode \: optional
+    Additional configuration for the configuration web interface. All values are
+    optional.
+
+    By default, no altitude fields are shown by the *gluon-config-mode-geo-location*
+    package. If *geo_location.show_altitude* is set to *true*, the *gluon-config-mode:altitude-label*
+    and *gluon-config-mode:altitude-help* strings must be provided in the site i18n
+    data as well.
+
+    The *owner.optional* option can be set to *false* to make the contact
+    information field mandatory.
+
+    The remote login page only shows SSH key configuration by default. A
+    password form can be displayed by setting *remote_login.show_password_form*
+    to true; in this case, *remote_login.min_password_length* defines the
+    minimum password length.
+    ::
+
+        config_mode = {
+          geo_location = {
+            show_altitude = true,
+          },
+          owner = {
+            optional = false,
+          },
+          remote_login = {
+            show_password_form = true,
+            min_password_length = 10,
+          },
+        },
+
+
 roles \: optional
     Optional role definitions. Nodes will announce their role inside the mesh.
     This will allow in the backend to distinguish between normal, backbone and
