@@ -399,21 +399,6 @@ setup_mode \: package
         skip = true,
       },
 
-legacy \: package
-    Configuration for the legacy upgrade path.
-    This is only required in communities upgrading from Lübeck's LFF-0.3.x.
-    ::
-
-      legacy = {
-             version_files = {'/etc/.freifunk_version_keep', '/etc/.eff_version_keep'},
-             old_files = {'/etc/config/config_mode', '/etc/config/ffac', '/etc/config/freifunk'},
-             config_mode_configs = {'config_mode', 'ffac', 'freifunk'},
-             fastd_configs = {'ffac_mesh_vpn', 'mesh_vpn'},
-             mesh_ifname = 'freifunk',
-             tc_configs = {'ffki', 'freifunk'},
-             wifi_names = {'wifi_freifunk', 'wifi_freifunk5', 'wifi_mesh', 'wifi_mesh5'},
-      }
-
 Build configuration
 -------------------
 
