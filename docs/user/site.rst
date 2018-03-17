@@ -370,6 +370,10 @@ config_mode \: optional
     Additional configuration for the configuration web interface. All values are
     optional.
 
+    When no hostname is specified, a default hostname based on the *hostname_prefix*
+    and the node's primary MAC address is assigned. Manually setting a hostname
+    can be enforced by setting *hostname.optional* to *false*.
+
     By default, no altitude fields are shown by the *gluon-config-mode-geo-location*
     package. If *geo_location.show_altitude* is set to *true*, the *gluon-config-mode:altitude-label*
     and *gluon-config-mode:altitude-help* strings must be provided in the site i18n
@@ -385,6 +389,9 @@ config_mode \: optional
     ::
 
         config_mode = {
+          hostname = {
+            optional = false,
+          },
           geo_location = {
             show_altitude = true,
           },
