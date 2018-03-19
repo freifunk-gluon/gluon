@@ -25,7 +25,7 @@ return function(form, uci)
 			local domain_code = domain_path:match('([^/]+)%.json$')
 			local domain = assert(json.load(domain_path))
 
-			if (not domain.hide_domain and not hidden_domain_code(domain, domain_code)) or (configured and domain.domain_code == selected_domain) then
+			if (not domain.hide_domain and not hidden_domain_code(domain, domain_code)) or (configured and domain_code == selected_domain) then
 				table.insert(list, {
 					domain_code = domain_code,
 					domain_name = domain.domain_names[domain_code],
