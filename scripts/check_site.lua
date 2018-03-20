@@ -71,6 +71,14 @@ local function array_to_string(array)
 	return '[' .. table.concat(array, ', ') .. ']'
 end
 
+function table_keys(tbl)
+	local keys = {}
+	for k, _ in pairs(tbl) do
+		keys[#keys + 1] = k
+	end
+	return keys
+end
+
 
 local loadpath
 
