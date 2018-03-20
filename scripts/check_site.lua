@@ -1,8 +1,7 @@
 local cjson = require 'cjson'
 
-local function exit_error(src, ...)
-	io.stderr:write(string.format('*** %s error: %s\n', src, string.format(...)))
-	os.exit(1)
+local function config_error(src, ...)
+	error(src .. ' error: ' .. string.format(...), 0)
 end
 
 
@@ -27,7 +26,7 @@ local function get_domains()
 	dirs:close()
 
 	if not next(domains) then
-		exit_error('site', 'no domain configurations found')
+		config_error('site', 'no domain configurations found')
 	end
 
 	return domains
@@ -101,13 +100,13 @@ local function var_error(path, val, msg)
 		src = site_src()
 	end
 
-	exit_error(src, 'expected %s to %s, but it is %s', path_to_string(path), msg, tostring(val))
+	config_error(src, 'expected %s to %s, but it is %s', path_to_string(path), msg, tostring(val))
 end
 
 
 function in_site(path)
 	if has_domains and loadpath(nil, domain, unpack(path)) ~= nil then
-		exit_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
+		config_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
 	end
 
 	return path
@@ -115,7 +114,7 @@ end
 
 function in_domain(path)
 	if has_domains and loadpath(nil, site, unpack(path)) ~= nil then
-		exit_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
+		config_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
 	end
 
 	return path
@@ -173,6 +172,21 @@ local function check_one_of(array)
 		return false
 	end
 end
+
+
+function alternatives(...)
+	local errs = {'All of the following alternatives have failed:'}
+	for i, f in ipairs({...}) do
+		local ok, err = pcall(f)
+		if ok then
+			return
+		end
+		errs[#errs+1] = string.format('%i) %s', i, err)
+	end
+
+	error(table.concat(errs, '\n        '), 0)
+end
+
 
 function need(path, check, required, msg)
 	local val = loadvar(path)
@@ -283,14 +297,21 @@ local check = assert(loadfile())
 
 site = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json')
 
-if has_domains then
-	for k, v in pairs(get_domains()) do
-		domain_code = k
-		domain = v
-		conf = merge(site, domain)
+local ok, err = pcall(function()
+	if has_domains then
+		for k, v in pairs(get_domains()) do
+			domain_code = k
+			domain = v
+			conf = merge(site, domain)
+			check()
+		end
+	else
+		conf = site
 		check()
 	end
-else
-	conf = site
-	check()
+end)
+
+if not ok then
+	io.stderr:write('*** ', err, '\n')
+	os.exit(1)
 end
