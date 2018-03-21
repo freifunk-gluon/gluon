@@ -1,0 +1,117 @@
+From: Vincent Wiemann <me@bibbl.com>
+Date: Tue, 2 Jan 2018 01:51:49 +0100
+Subject: mt76: bump to 2017-12-17
+
+Bumps mt76 to new version while keeping the old mac80211 API.
+This fixes LEDs and HT20 instabilities on ZBT-WG3526.
+
+Signed-off-by: Vincent Wiemann (me@bibbl.com)
+
+diff --git a/package/kernel/mt76/Makefile b/package/kernel/mt76/Makefile
+index e436e9de1790703b4f940b4082a5d84ba831212e..b14627e6c5415fdaf27fdadf0ee5d24c9dcb2ef2 100644
+--- a/package/kernel/mt76/Makefile
++++ b/package/kernel/mt76/Makefile
+@@ -8,9 +8,9 @@ PKG_LICENSE_FILES:=
+ 
+ PKG_SOURCE_URL:=https://github.com/openwrt/mt76
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_DATE:=2017-12-03
+-PKG_SOURCE_VERSION:=e326bc2ac4229220203c32e856dcb47d5ee5326d
+-PKG_MIRROR_HASH:=0efdde435cc82f3dff0d8cfc5a1de6121998d5ff521f1ba694b15cefd8b0c951
++PKG_SOURCE_DATE:=2017-12-17
++PKG_SOURCE_VERSION:=68b0cf17efe32623efd2a46d33b0b551bb78cbbe
++PKG_MIRROR_HASH:=855901e5e02249f53bb943d2d5da5bb3cb357f02e4c68c6291604867e250e9b
+ 
+ PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
+ PKG_BUILD_PARALLEL:=1
+diff --git a/package/kernel/mt76/patches/001-revert-mac80211-changes.patch b/package/kernel/mt76/patches/001-revert-mac80211-changes.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6ca333ac9b75cdd69c056731ea36c64dd46a446d
+--- /dev/null
++++ b/package/kernel/mt76/patches/001-revert-mac80211-changes.patch
+@@ -0,0 +1,85 @@
++--- a/mt7603_mac.c
+++++ b/mt7603_mac.c
++@@ -423,19 +423,19 @@ mt7603_mac_fill_rx(struct mt7603_dev *de
++ 			break;
++ 		case MT_PHY_TYPE_HT_GF:
++ 		case MT_PHY_TYPE_HT:
++-			status->encoding = RX_ENC_HT;
+++			status->flag |= RX_FLAG_HT;
++ 			break;
++ 		case MT_PHY_TYPE_VHT:
++-			status->encoding = RX_ENC_VHT;
+++			status->flag |= RX_FLAG_VHT;
++ 			break;
++ 		default:
++ 			return -EINVAL;
++ 		}
++ 
++ 		if (rxdg0 & MT_RXV1_HT_SHORT_GI)
++-			status->enc_flags |= RX_ENC_FLAG_SHORT_GI;
+++			status->flag |= RX_FLAG_SHORT_GI;
++ 
++-		status->enc_flags |= RX_ENC_FLAG_STBC_MASK *
+++		status->flag |= RX_FLAG_STBC_MASK *
++ 				    FIELD_GET(MT_RXV1_HT_STBC, rxdg0);
++ 
++ 		status->rate_idx = i;
++--- a/mt76x2_mac.c
+++++ b/mt76x2_mac.c
++@@ -59,7 +59,7 @@ mt76x2_mac_process_rate(struct ieee80211
++ 	case MT_PHY_TYPE_CCK:
++ 		if (idx >= 8) {
++ 			idx -= 8;
++-			status->enc_flags |= RX_ENC_FLAG_SHORTPRE;
+++			status->flag |= RX_FLAG_SHORTPRE;
++ 		}
++ 
++ 		if (idx >= 4)
++@@ -68,38 +68,38 @@ mt76x2_mac_process_rate(struct ieee80211
++ 		status->rate_idx = idx;
++ 		return 0;
++ 	case MT_PHY_TYPE_HT_GF:
++-		status->enc_flags |= RX_ENC_FLAG_HT_GF;
+++		status->flag |= RX_FLAG_HT_GF;
++ 		/* fall through */
++ 	case MT_PHY_TYPE_HT:
++-		status->encoding = RX_ENC_HT;
+++		status->flag |= RX_FLAG_HT;
++ 		status->rate_idx = idx;
++ 		break;
++ 	case MT_PHY_TYPE_VHT:
++-		status->encoding = RX_ENC_VHT;
+++		status->flag |= RX_FLAG_VHT;
++ 		status->rate_idx = FIELD_GET(MT_RATE_INDEX_VHT_IDX, idx);
++-		status->nss = FIELD_GET(MT_RATE_INDEX_VHT_NSS, idx) + 1;
+++		status->vht_nss = FIELD_GET(MT_RATE_INDEX_VHT_NSS, idx) + 1;
++ 		break;
++ 	default:
++ 		return -EINVAL;
++ 	}
++ 
++ 	if (rate & MT_RXWI_RATE_LDPC)
++-		status->enc_flags |= RX_ENC_FLAG_LDPC;
+++		status->flag |= RX_FLAG_LDPC;
++ 
++ 	if (rate & MT_RXWI_RATE_SGI)
++-		status->enc_flags |= RX_ENC_FLAG_SHORT_GI;
+++		status->flag |= RX_FLAG_SHORT_GI;
++ 
++ 	if (rate & MT_RXWI_RATE_STBC)
++-		status->enc_flags |= 1 << RX_ENC_FLAG_STBC_SHIFT;
+++		status->flag |= 1 << RX_FLAG_STBC_SHIFT;
++ 
++ 	switch (FIELD_GET(MT_RXWI_RATE_BW, rate)) {
++ 	case MT_PHY_BW_20:
++ 		break;
++ 	case MT_PHY_BW_40:
++-		status->bw = RATE_INFO_BW_40;
+++		status->flag |= RX_FLAG_40MHZ;
++ 		break;
++ 	case MT_PHY_BW_80:
++-		status->bw = RATE_INFO_BW_80;
+++		status->flag |= RX_FLAG_40MHZ;
++ 		break;
++ 	default:
++ 		break;
