@@ -1,0 +1,284 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 24 Mar 2018 18:32:33 +0100
+Subject: generic: add ftrace fixes
+
+diff --git a/target/linux/generic/patches-4.4/800-0001-ftrace-fix-stddev-calculation-in-function-profiler-a.patch b/target/linux/generic/patches-4.4/800-0001-ftrace-fix-stddev-calculation-in-function-profiler-a.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..58f109414596fb2407d9392313f57b43805ff6d0
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/800-0001-ftrace-fix-stddev-calculation-in-function-profiler-a.patch
+@@ -0,0 +1,123 @@
++From f208c5c360f1e86327b0adbb879d61f4779e8ddd Mon Sep 17 00:00:00 2001
++Message-Id: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521912248.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sat, 24 Mar 2018 16:54:16 +0100
++Subject: [PATCH 1/2] ftrace: fix stddev calculation in function profiler
++ (again)
++
++It is well-known that it is not possible to accurately calculate variances
++just by accumulating squared samples; in fact, such an approach can even
++result in negative numbers. An earlier attempt to fix the calculation
++referred to Welford's method, but did not implement it correctly, leading
++to meeaningless output like the following:
++
++  nf_conntrack_proto_fini     50    373.523 us    7.470 us    3234315951 us
++
++Welford's method uses one do_div() in the tracing path; this cannot be
++avoided. The average time is added to struct ftrace_profile, so only a
++single division is required. I also considered the following alternatives:
++
++1) Only keeping the avg field and removing the aggregated time would
++greatly lead to severe rounding errors in calculating the total time based
++on counter and avg.
++
++2) Calculating both the old and the new average in profile_graph_return()
++instead of storing it in struct ftrace_profile would require a second
++division.
++
++3) I managed to transform Welford's equations in a way that uses the total
++time instead of the average and requires only a single division.
++Unfortunately, the divisor is counter^3 in this case, easily overflowing
++even 64bit integers.
++
++Ruling out the above alternatives, I chose the present approach to fix the
++issue.
++
++Fixes: e330b3bcd831 ("tracing: Show sample std dev in function profiling")
++Fixes: 52d85d763086 ("ftrace: Fix stddev calculation in function profiler")
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ kernel/trace/ftrace.c | 33 +++++++++++++++++++--------------
++ 1 file changed, 19 insertions(+), 14 deletions(-)
++
++--- a/kernel/trace/ftrace.c
+++++ b/kernel/trace/ftrace.c
++@@ -504,7 +504,8 @@ struct ftrace_profile {
++ 	unsigned long			counter;
++ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
++ 	unsigned long long		time;
++-	unsigned long long		time_squared;
+++	unsigned long long		avg;
+++	unsigned long long		stddev;
++ #endif
++ };
++ 
++@@ -624,7 +625,6 @@ static int function_stat_show(struct seq
++ 	int ret = 0;
++ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
++ 	static struct trace_seq s;
++-	unsigned long long avg;
++ 	unsigned long long stddev;
++ #endif
++ 	mutex_lock(&ftrace_profile_lock);
++@@ -636,9 +636,7 @@ static int function_stat_show(struct seq
++ 	}
++ 
++ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
++-	avg = rec->time;
++-	do_div(avg, rec->counter);
++-	if (tracing_thresh && (avg < tracing_thresh))
+++	if (tracing_thresh && (rec->avg < tracing_thresh))
++ 		goto out;
++ #endif
++ 
++@@ -652,24 +650,19 @@ static int function_stat_show(struct seq
++ 	if (rec->counter <= 1)
++ 		stddev = 0;
++ 	else {
++-		/*
++-		 * Apply Welford's method:
++-		 * s^2 = 1 / (n * (n-1)) * (n * \Sum (x_i)^2 - (\Sum x_i)^2)
++-		 */
++-		stddev = rec->counter * rec->time_squared -
++-			 rec->time * rec->time;
+++		stddev = rec->stddev;
++ 
++ 		/*
++ 		 * Divide only 1000 for ns^2 -> us^2 conversion.
++ 		 * trace_print_graph_duration will divide 1000 again.
++ 		 */
++-		do_div(stddev, rec->counter * (rec->counter - 1) * 1000);
+++		do_div(stddev, 1000 * (rec->counter - 1));
++ 	}
++ 
++ 	trace_seq_init(&s);
++ 	trace_print_graph_duration(rec->time, &s);
++ 	trace_seq_puts(&s, "    ");
++-	trace_print_graph_duration(avg, &s);
+++	trace_print_graph_duration(rec->avg, &s);
++ 	trace_seq_puts(&s, "    ");
++ 	trace_print_graph_duration(stddev, &s);
++ 	trace_print_seq(m, &s);
++@@ -939,8 +932,20 @@ static void profile_graph_return(struct
++ 
++ 	rec = ftrace_find_profiled_func(stat, trace->func);
++ 	if (rec) {
+++		unsigned long long avg, delta1, delta2;
+++
++ 		rec->time += calltime;
++-		rec->time_squared += calltime * calltime;
+++
+++		/* Apply Welford's method */
+++		delta1 = calltime - rec->avg;
+++
+++		avg = rec->time;
+++		do_div(avg, rec->counter);
+++		rec->avg = avg;
+++
+++		delta2 = calltime - rec->avg;
+++
+++		rec->stddev += delta1 * delta2;
++ 	}
++ 
++  out:
+diff --git a/target/linux/generic/patches-4.4/800-0002-mips-ftrace-fix-static-function-graph-tracing.patch b/target/linux/generic/patches-4.4/800-0002-mips-ftrace-fix-static-function-graph-tracing.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..06c32b62cc4a7ccd05bff984c3e9646258a0cf8f
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/800-0002-mips-ftrace-fix-static-function-graph-tracing.patch
+@@ -0,0 +1,73 @@
++From 7dc2bb7f712c1e3cfeaafaefe3a3f97668dee549 Mon Sep 17 00:00:00 2001
++Message-Id: <7dc2bb7f712c1e3cfeaafaefe3a3f97668dee549.1521912248.git.mschiffer@universe-factory.net>
++In-Reply-To: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521912248.git.mschiffer@universe-factory.net>
++References: <f208c5c360f1e86327b0adbb879d61f4779e8ddd.1521912248.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sat, 24 Mar 2018 16:50:05 +0100
++Subject: [PATCH 2/2] mips: ftrace: fix static function graph tracing
++
++ftrace_graph_caller was never run after calling ftrace_trace_function,
++breaking the function graph tracer. Fix this to bring it in line with the
++x86 implementation.
++
++While we're at it, also streamline the control flow of _mcount a bit to
++reduce the number of branches.
++
++This issue was reported before:
++https://www.linux-mips.org/archives/linux-mips/2014-11/msg00295.html
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ arch/mips/kernel/mcount.S | 27 ++++++++++++---------------
++ 1 file changed, 12 insertions(+), 15 deletions(-)
++
++--- a/arch/mips/kernel/mcount.S
+++++ b/arch/mips/kernel/mcount.S
++@@ -116,10 +116,20 @@ ftrace_stub:
++ NESTED(_mcount, PT_SIZE, ra)
++ 	PTR_LA	t1, ftrace_stub
++ 	PTR_L	t2, ftrace_trace_function /* Prepare t2 for (1) */
++-	bne	t1, t2, static_trace
+++	beq	t1, t2, fgraph_trace
++ 	 nop
++ 
+++	MCOUNT_SAVE_REGS
+++
+++	move	a0, ra		/* arg1: self return address */
+++	jalr	t2		/* (1) call *ftrace_trace_function */
+++	 move	a1, AT		/* arg2: parent's return address */
+++
+++	MCOUNT_RESTORE_REGS
+++
+++fgraph_trace:
++ #ifdef	CONFIG_FUNCTION_GRAPH_TRACER
+++	PTR_LA	t1, ftrace_stub
++ 	PTR_L	t3, ftrace_graph_return
++ 	bne	t1, t3, ftrace_graph_caller
++ 	 nop
++@@ -128,24 +138,11 @@ NESTED(_mcount, PT_SIZE, ra)
++ 	bne	t1, t3, ftrace_graph_caller
++ 	 nop
++ #endif
++-	b	ftrace_stub
++-#ifdef CONFIG_32BIT
++-	 addiu sp, sp, 8
++-#else
++-	 nop
++-#endif
++-
++-static_trace:
++-	MCOUNT_SAVE_REGS
++-
++-	move	a0, ra		/* arg1: self return address */
++-	jalr	t2		/* (1) call *ftrace_trace_function */
++-	 move	a1, AT		/* arg2: parent's return address */
++ 
++-	MCOUNT_RESTORE_REGS
++ #ifdef CONFIG_32BIT
++ 	addiu sp, sp, 8
++ #endif
+++
++ 	.globl ftrace_stub
++ ftrace_stub:
++ 	RETURN_BACK
+diff --git a/target/linux/generic/patches-4.4/801-ftrace-fixes.patch b/target/linux/generic/patches-4.4/801-ftrace-fixes.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0390c0c70b3354d9f058dca96a985f499d506df5
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/801-ftrace-fixes.patch
+@@ -0,0 +1,66 @@
++--- a/kernel/trace/ftrace.c
+++++ b/kernel/trace/ftrace.c
++@@ -473,8 +473,9 @@ static void ftrace_update_pid_func(void)
++ struct ftrace_profile {
++ 	struct hlist_node		node;
++ 	unsigned long			ip;
++-	unsigned long			counter;
+++	unsigned long long		counter;
++ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+++	unsigned long long		returns;
++ 	unsigned long long		time;
++ 	unsigned long long		avg;
++ 	unsigned long long		stddev;
++@@ -613,7 +614,7 @@ static int function_stat_show(struct seq
++ #endif
++ 
++ 	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
++-	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
+++	seq_printf(m, "  %-30.30s  %10llu", str, rec->counter);
++ 
++ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
++ 	seq_puts(m, "    ");
++@@ -916,13 +917,15 @@ static void profile_graph_return(struct
++ 	if (rec) {
++ 		unsigned long long avg, delta1, delta2;
++ 
+++		rec->returns++;
+++
++ 		rec->time += calltime;
++ 
++ 		/* Apply Welford's method */
++ 		delta1 = calltime - rec->avg;
++ 
++ 		avg = rec->time;
++-		do_div(avg, rec->counter);
+++		do_div(avg, rec->returns);
++ 		rec->avg = avg;
++ 
++ 		delta2 = calltime - rec->avg;
++--- a/arch/mips/kernel/ftrace.c
+++++ b/arch/mips/kernel/ftrace.c
++@@ -338,7 +338,7 @@ void prepare_ftrace_return(unsigned long
++ 	struct ftrace_graph_ent trace;
++ 	unsigned long return_hooker = (unsigned long)
++ 	    &return_to_handler;
++-	int faulted, insns;
+++	int faulted;
++ 
++ 	if (unlikely(ftrace_graph_is_dead()))
++ 		return;
++@@ -388,14 +388,7 @@ void prepare_ftrace_return(unsigned long
++ 		return;
++ 	}
++ 
++-	/*
++-	 * Get the recorded ip of the current mcount calling site in the
++-	 * __mcount_loc section, which will be used to filter the function
++-	 * entries configured through the tracing/set_graph_function interface.
++-	 */
++-
++-	insns = in_kernel_space(self_ra) ? 2 : MCOUNT_OFFSET_INSNS + 1;
++-	trace.func = self_ra - (MCOUNT_INSN_SIZE * insns);
+++	trace.func = self_ra;
++ 
++ 	/* Only trace if the calling function expects to */
++ 	if (!ftrace_graph_entry(&trace)) {
