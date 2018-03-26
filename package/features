@@ -3,7 +3,8 @@ nodefault 'web-wizard'
 packages 'web-wizard' \
 	'gluon-config-mode-hostname' \
 	'gluon-config-mode-geo-location' \
-	'gluon-config-mode-contact-info'
+	'gluon-config-mode-contact-info' \
+	'gluon-config-mode-outdoor'
 
 packages 'web-wizard & autoupdater' \
 	'gluon-config-mode-autoupdater'
