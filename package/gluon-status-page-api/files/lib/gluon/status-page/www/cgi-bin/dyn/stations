@@ -8,7 +8,7 @@ badrequest() {
 
 echo 'Access-Control-Allow-Origin: *'
 
-batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" || badrequest
+( batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
 
