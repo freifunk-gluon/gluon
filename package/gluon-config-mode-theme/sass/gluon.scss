@@ -373,6 +373,13 @@ input[type=checkbox] + label {
   padding: 0.5em;
   margin-top: 1px;
   margin-bottom: 2px;
+  box-sizing: content-box;
+  outline: 0;
+}
+
+option {
+  color: darken($ffzusatz, 30);
+  background: lighten($ffyellow, 30);
 }
 
 input[type=image] {
