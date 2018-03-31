@@ -16,4 +16,9 @@ struct mac_addr {
 int mac_aton(const char *cp, struct  mac_addr *mac);
 char *mac_ntoa(struct mac_addr *mac);
 
+static inline int mac_is_multicast(struct mac_addr *addr)
+{
+	return addr->storage[0] & 0x01;
+}
+
 #endif /* _MAC_H_ */
