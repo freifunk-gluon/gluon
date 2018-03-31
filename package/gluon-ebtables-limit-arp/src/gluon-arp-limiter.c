@@ -248,6 +248,9 @@ static void ebt_tl_update(void)
 			break;
 		}
 
+		if (mac_is_multicast(&mac))
+			continue;
+
 		ebt_add_mac(&mac);
 	}
 
