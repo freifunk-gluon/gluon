@@ -217,8 +217,8 @@ end
 function need_alphanumeric_key(path)
 	local val = path[#path]
 	-- We don't use character classes like %w here to be independent of the locale
-	if not val:match('^[0-9a-zA-Z_]+$') then
-		var_error(path, val, 'have a key using only alphanumeric characters and underscores')
+	if type(val) ~= 'string' or not val:match('^[0-9a-zA-Z_]+$') then
+		var_error(path, val, 'have a string key using only alphanumeric characters and underscores')
 	end
 end
 
