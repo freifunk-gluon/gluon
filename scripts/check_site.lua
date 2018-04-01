@@ -108,7 +108,7 @@ local function var_error(path, val, msg)
 		src = site_src()
 	end
 
-	config_error(src, 'expected %s to %s, but it is %s', path_to_string(path), msg, tostring(val))
+	config_error(src, 'expected %s to %s, but it is %s (a %s value)', path_to_string(path), msg, tostring(val), type(val))
 end
 
 
