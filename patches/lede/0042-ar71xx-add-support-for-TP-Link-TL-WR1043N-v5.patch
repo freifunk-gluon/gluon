@@ -96,10 +96,10 @@ index fc7d862c2911e96f76622cbed23e99863814da63..8f8158bac8a28db4f4f15ce5c37f48a2
  		name="tl-wr2543n"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index e65f6e2f7594ba373fbc9a26620859b9005c8532..e748a2559cdb3a0ca6618429b0f613a656e39388 100755
+index 6258713dd0e3325ab109689f0ed3b51e27c41f89..774e3c8964ef724d1efbae56434aeaa9f1c298a4 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -261,6 +261,7 @@ platform_check_image() {
+@@ -269,6 +269,7 @@ platform_check_image() {
  	tew-712br|\
  	tew-732br|\
  	tew-823dru|\
