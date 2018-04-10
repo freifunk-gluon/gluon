@@ -143,10 +143,10 @@ index c32894d95b6b09b4b8b59ba64057c23e71b9f656..d8e23d97e2cc20f8ba7b3b2fc516ce39
  		name="archer-c7"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index d414af969912894574e73e286ed5a3998532d34e..31b293ca3c07d2f26ff96037fab5a51bbe9e834c 100755
+index d6650e7719d268e1a500638b7eda2e15b9251aea..f4ac73e40e1acb800433a0b1348c8264a4639c30 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -208,6 +208,8 @@ platform_check_image() {
+@@ -216,6 +216,8 @@ platform_check_image() {
  	ap90q|\
  	archer-c25-v1|\
  	archer-c7-v4|\
