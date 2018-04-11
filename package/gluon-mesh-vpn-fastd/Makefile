@@ -9,7 +9,7 @@ define Package/gluon-mesh-vpn-fastd
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Support for connecting meshes via fastd
-  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +fastd
+  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +fastd +@GLUON_SPECIALIZE_KERNEL:KERNEL_TUN
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-vpn-fastd))
