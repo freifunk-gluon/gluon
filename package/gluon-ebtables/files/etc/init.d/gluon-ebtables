@@ -7,13 +7,13 @@
 # rule FORWARD --logical-out br-client -d Multicast -p IPv4 --ip-protocol udp --ip-destination-port 5355 -j DROP
 #
 # Removing all rules:
-# $ ./firewall-ebtables stop
+# $ /etc/init.d/gluon-ebtables stop
 # Inserting all rules:
-# $ ./firewall-ebtables start
+# $ /etc/init.d/gluon-ebtables start
 # Inserting a specific rule file:
-# $ ./firewall-ebtables start /lib/gluon/ebtables/100-mcast-chain
+# $ /etc/init.d/gluon-ebtables start /lib/gluon/ebtables/100-mcast-chain
 # Removing a specific rule file:
-# $ ./firewall-ebtables stop /lib/gluon/ebtables/100-mcast-chain
+# $ /etc/init.d/gluon-ebtables stop /lib/gluon/ebtables/100-mcast-chain
 
 
 START=19
@@ -51,8 +51,8 @@ exec_all() {
 
 start() {
 	(
-		export EBTABLES_RULE='"ebtables --concurrent -t " .. table .. " -A " .. command'
-		export EBTABLES_CHAIN='"ebtables --concurrent -t " .. table .. "  -N " .. name .. " -P " .. policy'
+		export EBTABLES_RULE='"ebtables-tiny -t " .. table .. " -A " .. command'
+		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. "  -N " .. name .. " -P " .. policy'
 
 		# Contains /var/lib/ebtables/lock for '--concurrent'
 		[ ! -d "/var/lib/ebtables" ] && \
@@ -68,8 +68,8 @@ start() {
 
 stop() {
 	(
-		export EBTABLES_RULE='"ebtables --concurrent -t " ..	table .. " -D " .. command'
-		export EBTABLES_CHAIN='"ebtables --concurrent -t " .. table .. " -X " .. name'
+		export EBTABLES_RULE='"ebtables-tiny -t " ..	table .. " -D " .. command'
+		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. " -X " .. name'
 
 		if [ -z "$1" ]; then
 			exec_all '-r'
