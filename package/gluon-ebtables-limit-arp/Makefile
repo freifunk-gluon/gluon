@@ -10,7 +10,10 @@ define Package/gluon-ebtables-limit-arp
   SECTION:=gluon
   CATEGORY:=Gluon
   TITLE:=Ebtables limiter for ARP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_LIMIT \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_MARK \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_MARK_T
 endef
 
 define Package/gluon-ebtables-limit-arp/description

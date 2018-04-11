@@ -23,6 +23,10 @@ define Package/gluon-core/description
 	Gluon community wifi mesh firmware framework: core
 endef
 
+define Package/gluon-core/config
+        source "$(SOURCE)/Config.in"
+endef
+
 define Package/gluon-core/install
 	$(Gluon/Build/Install)
 
