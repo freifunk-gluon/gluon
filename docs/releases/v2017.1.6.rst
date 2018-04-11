@@ -25,6 +25,19 @@ Bugfixes
 * Reduce memory limit of WLAN packet queues to 256KB on devices with small RAM
   (`e63c6ca01f50 <https://github.com/freifunk-gluon/gluon/commit/e63c6ca01f50c96d76e5570faa290617a8a312b4>`_)
 
+  Will hopefully make out-of-memory crashes in busy meshes less likely.
+
+* Improve image validation for TP-Link CPE/WBS 210/510 and make it ready for
+  future images
+  (LEDE/`6577fe2198f5 <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=6577fe2198f5c75acb1dba789941d96a036f4dae>`_)
+
+  Future OpenWrt/Gluon images will move the image metadata ("support-list") of
+  the CPE/WBS 210/510 images to a different offset. Make sysupgrade ready
+  to allow installing such images.
+
+  This change was also backported to Gluon v2016.2.x to allow direct updates
+  to future Gluon master versions without installing v2017.1.x first.
+
 * Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
   have disappeared with the latest updates
   (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
