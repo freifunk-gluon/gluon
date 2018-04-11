@@ -14,6 +14,14 @@ Bugfixes
   (LEDE/`17c0362178ca <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=17c0362178caf837680a4631b8d0de94e5393448>`_,
   LEDE/`75be005e8bdc <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=75be005e8bdcbf86f9ad167a8737126dda98a444>`_)
 
+* Fix kernel crash in batman-adv-14
+  (`#1358 <https://github.com/freifunk-gluon/gluon/issues/1358>`_)
+
+  Starting with Gluon v2017.1, respondd could trigger a kernel crash caused by
+  a use-after-free in batman-adv-14, in particular after a gateway disappeared.
+
+  batman-adv-15 is not affected.
+
 * Increase bridge multicast querier timeout ("robustness") to avoid
   "querier appeared/disappeared" log spam by batman-adv in the presence of
   an external querier
