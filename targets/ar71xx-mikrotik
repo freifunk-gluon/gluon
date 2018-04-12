@@ -1,3 +1,5 @@
+config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+
 # Enable ath5k in addition to ath9k
 # ath5k cards are commonly used with Mikrotik hardware
 packages 'kmod-ath5k'
