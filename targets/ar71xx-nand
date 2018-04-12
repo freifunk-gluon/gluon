@@ -1,3 +1,5 @@
+config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+
 factory -ubi-factory .img
 sysupgrade -squashfs-sysupgrade .tar
 
