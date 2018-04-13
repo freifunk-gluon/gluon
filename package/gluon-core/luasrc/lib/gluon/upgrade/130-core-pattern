@@ -1,0 +1,5 @@
+#!/usr/bin/lua
+
+local sysctl = require 'gluon.sysctl'
+
+sysctl.set('kernel.core_pattern', '/tmp/%e.%t.%p.%s.core')
