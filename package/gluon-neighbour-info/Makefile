@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-neighbour-info
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=neighbour-info
   DEPENDS:=
 endef

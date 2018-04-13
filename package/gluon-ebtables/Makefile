@@ -9,8 +9,6 @@ PKG_CONFIG_DEPENDS := CONFIG_GLUON_SPECIALIZE_KERNEL
 include ../gluon.mk
 
 define Package/gluon-ebtables
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Ebtables support
   DEPENDS:=+gluon-core +ebtables-tiny \
 	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_T_FILTER \

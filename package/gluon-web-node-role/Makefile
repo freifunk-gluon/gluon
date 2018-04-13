@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-web-node-role
-  SECTION:=gluon
-  CATEGORY:=Gluon
   DEPENDS:=+gluon-web-admin +gluon-node-info
   TITLE:=UI for specifying node role
 endef

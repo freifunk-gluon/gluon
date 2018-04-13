@@ -17,8 +17,6 @@ include ../gluon.mk
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 define Package/gluon-site
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Site-specific files of Gluon
 endef
 
@@ -75,4 +73,4 @@ define Package/gluon-site/install
 	$(GluonInstallI18N)
 endef
 
-$(eval $(call BuildPackage,gluon-site))
+$(eval $(call BuildPackageGluon,gluon-site))

@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-ebtables-source-filter
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Ebtables rules to filter unreasonable L2 traffic.
   DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef

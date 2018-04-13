@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-node-info
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Add /etc/config/gluon-node-info to uci
   DEPENDS:=+gluon-core +libgluonutil
 endef

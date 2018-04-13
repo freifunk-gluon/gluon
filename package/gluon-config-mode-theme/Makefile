@@ -9,8 +9,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-config-mode-theme
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Gluon config mode theme for gluon-web
   DEPENDS:=+gluon-core +gluon-web
 endef

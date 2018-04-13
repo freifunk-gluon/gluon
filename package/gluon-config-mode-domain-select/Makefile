@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-config-mode-domain-select
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=UI for changing the node-config
   DEPENDS:=+gluon-config-mode-core @GLUON_MULTIDOMAIN
 endef

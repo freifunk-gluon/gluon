@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-radv-filterd
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Filter IPv6 router advertisements
   DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv +libnl-tiny
 endef

@@ -8,8 +8,6 @@ PKG_CONFIG_DEPENDS := CONFIG_GLUON_BRANCH
 include ../gluon.mk
 
 define Package/gluon-autoupdater
-  SECTION:=gluon
-  CATEGORY:=Gluon
   DEPENDS:=+gluon-core +libgluonutil +micrond +autoupdater
   TITLE:=Automatically update firmware
 endef

@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-l3roamd
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Configure l3roamd for babel
   DEPENDS:=+gluon-core +l3roamd
 endef

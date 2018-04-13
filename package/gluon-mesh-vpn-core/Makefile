@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-mesh-vpn-core
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Basic support for connecting meshes via VPN tunnels
   DEPENDS:=+gluon-core +gluon-wan-dnsmasq +iptables +iptables-mod-extra +simple-tc \
 	+@GLUON_SPECIALIZE_KERNEL:KERNEL_NETFILTER_XT_MATCH_ADDRTYPE \

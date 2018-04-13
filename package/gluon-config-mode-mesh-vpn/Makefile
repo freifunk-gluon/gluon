@@ -6,8 +6,6 @@ PKG_VERSION:=2
 include ../gluon.mk
 
 define Package/gluon-config-mode-mesh-vpn
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Toggle mesh-vpn and bandwidth limit
   DEPENDS:=+gluon-config-mode-core +gluon-mesh-vpn-core
 endef

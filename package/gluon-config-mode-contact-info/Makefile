@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-config-mode-contact-info
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Allows the user to provide contact information to be distributed in the mesh
   DEPENDS:=+gluon-config-mode-core +gluon-node-info
 endef
