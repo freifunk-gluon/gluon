@@ -13,11 +13,7 @@ else
 	uci:delete('dhcp', dnsmasq, 'server')
 end
 
-if site.dns and site.dns.cacheentries then
-	uci:set('dhcp', dnsmasq, 'cachesize', site.dns.cacheentries)
-else
-	uci:delete('dhcp', dnsmasq, 'cachesize')
-end
+uci:delete('dhcp', dnsmasq, 'cachesize')
 
 if site.next_node and site.next_node.name and site.next_node.ip4 then
 	uci:section('dhcp','domain','nextnode4',{

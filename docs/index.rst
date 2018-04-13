@@ -23,7 +23,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    features/wlan-configuration
    features/private-wlan
    features/wired-mesh
-   features/dns-cache
+   features/dns-forwarder
    features/monitoring
    features/authorized-keys
    features/roles
