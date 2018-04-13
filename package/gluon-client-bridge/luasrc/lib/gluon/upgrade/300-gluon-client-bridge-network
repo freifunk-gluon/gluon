@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
 local sysconfig = require 'gluon.sysconfig'
-local sysctl = require 'gluon.sysctl'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
@@ -72,6 +71,3 @@ uci:section('dhcp', 'dhcp', 'local_client', {
 
 uci:save('dhcp')
 uci:save('firewall')
-
-
-sysctl.set('net.ipv6.conf.br-client.forwarding', 0)

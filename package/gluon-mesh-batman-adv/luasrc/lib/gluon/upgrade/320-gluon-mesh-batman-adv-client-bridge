@@ -6,7 +6,6 @@
 
 local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
-local sysctl = require 'gluon.sysctl'
 local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
@@ -51,6 +50,3 @@ uci:set_list('firewall', 'drop', 'network', networks)
 uci:delete('firewall', 'local_node_dns')
 
 uci:save('firewall')
-
-
-sysctl.set('net.ipv6.conf.local-node.forwarding', 0)

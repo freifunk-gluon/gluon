@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local sysctl = require 'gluon.sysctl'
 local sysconfig = require 'gluon.sysconfig'
 
 
@@ -68,7 +67,3 @@ uci:section('firewall', 'rule', 'wan_mld', {
 })
 
 uci:save('firewall')
-
-
-sysctl.set('net.ipv6.conf.all.accept_ra', 0)
-sysctl.set('net.ipv6.conf.default.accept_ra', 0)
