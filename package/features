@@ -21,3 +21,6 @@ packages 'web-advanced' \
 
 packages 'web-advanced & autoupdater' \
 	'gluon-web-autoupdater'
+
+packages 'status-page & (mesh-batman-adv-14 | mesh-batman-adv-15)' \
+        'gluon-status-page-mesh-batman-adv'
