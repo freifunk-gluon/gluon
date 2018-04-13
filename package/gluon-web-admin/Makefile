@@ -10,8 +10,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-admin
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Web-based simple administration interface for mesh nodes
   DEPENDS:=+gluon-config-mode-core +pretty-hostname
 endef

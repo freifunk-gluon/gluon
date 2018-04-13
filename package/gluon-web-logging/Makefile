@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-logging
-  SECTION:=gluon
-  CATEGORY:=Gluon
   DEPENDS:=+gluon-web-admin
   TITLE:=UI for remote syslog configuration
 endef

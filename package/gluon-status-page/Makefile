@@ -6,8 +6,6 @@ PKG_VERSION:=3
 include ../gluon.mk
 
 define Package/gluon-status-page
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Status page showing information about the node
   DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua +libbatadv
 endef

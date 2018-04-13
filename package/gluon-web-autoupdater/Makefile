@@ -10,8 +10,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-autoupdater
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=gluon-web module for gluon-autoupdater
   DEPENDS:=+gluon-web-admin +gluon-autoupdater
 endef

@@ -6,8 +6,6 @@ PKG_VERSION:=3
 include ../gluon.mk
 
 define Package/gluon-radvd
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Advertise an IPv6 prefix from the node
   DEPENDS:=+gluon-core +uradvd
 endef

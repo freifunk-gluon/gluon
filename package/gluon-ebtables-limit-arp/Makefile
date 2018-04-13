@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Ebtables limiter for ARP packets
   DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv \
 	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_LIMIT \

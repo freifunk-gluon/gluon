@@ -100,6 +100,12 @@ endef
 Build/Compile=$(call Gluon/Build/Compile)
 
 define BuildPackageGluon
+  define Package/$(1) :=
+    SECTION:=gluon
+    CATEGORY:=Gluon
+    $$(Package/$(1))
+  endef
+
   Package/$(1)/install ?= $$(Gluon/Build/Install)
 
   ifneq ($(wildcard check_site.lua),)

@@ -10,8 +10,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-network
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=gluon-web module for network port configuration
   DEPENDS:=+gluon-web-admin +gluon-client-bridge
 endef

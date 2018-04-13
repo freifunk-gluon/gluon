@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-mesh-vpn-fastd
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=gluon-web module to enable and disable encryption for the mesh VPN
   DEPENDS:=+gluon-web-admin +gluon-mesh-vpn-fastd
 endef

@@ -7,8 +7,6 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-ebtables-filter-ra-dhcp
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Ebtables filters for Router Advertisement and DHCP packets
   DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef

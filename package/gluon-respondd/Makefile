@@ -6,8 +6,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-respondd
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Provides node information to the network
   DEPENDS:=+gluon-core +libplatforminfo +libgluonutil +libuci +ubus +respondd
 endef

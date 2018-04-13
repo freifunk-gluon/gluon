@@ -6,8 +6,6 @@ PKG_VERSION:=3
 include ../gluon.mk
 
 define Package/gluon-mesh-vpn-tunneldigger
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Support for connecting meshes via tunneltigger/L2TPv3 pseudowire
   DEPENDS:=+gluon-core +gluon-mesh-vpn-core +tunneldigger +@GLUON_SPECIALIZE_KERNEL:KERNEL_L2TP
 endef

@@ -9,8 +9,6 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-setup-mode
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Setup mode
   DEPENDS:=+gluon-core +gluon-lock-password +ubus +dnsmasq
 endef
