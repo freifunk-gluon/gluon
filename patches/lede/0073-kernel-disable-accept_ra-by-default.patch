@@ -1,0 +1,170 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Thu, 12 Apr 2018 22:14:56 +0200
+Subject: kernel: disable accept_ra by default
+
+Our script setting accept_ra to 0 on all interfaces got lost in the
+transition to procd. This remained unnoticed for a long time, as was also
+enable forwarding on all interfaces, which prevents RA handling by default.
+
+Providing a way to ensure net.ipv6.conf.default.accept_ra is set early
+enough is a nicer solution than fixing up interfaces in a script (given the
+patch is accepted upstream).
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/generic/config-3.18 b/target/linux/generic/config-3.18
+index 4c3215b594cea9f3d001f8a9f73bbdf78e30ceff..bf13cefde0c5dc45788da9dea57aca5def9b152b 100644
+--- a/target/linux/generic/config-3.18
++++ b/target/linux/generic/config-3.18
+@@ -1604,6 +1604,7 @@ CONFIG_IOSCHED_NOOP=y
+ # CONFIG_IPC_NS is not set
+ # CONFIG_IPMI_HANDLER is not set
+ # CONFIG_IPV6 is not set
++# CONFIG_IPV6_ACCEPT_RA_DEFAULT is not set
+ # CONFIG_IPV6_MIP6 is not set
+ # CONFIG_IPV6_MROUTE is not set
+ # CONFIG_IPV6_MROUTE_MULTIPLE_TABLES is not set
+diff --git a/target/linux/generic/config-4.4 b/target/linux/generic/config-4.4
+index a8fd15d1a4a40681d80da06ad7a826966287d8d8..e2d69426370a3e50703c48fb60c5b1b3aa601ef3 100644
+--- a/target/linux/generic/config-4.4
++++ b/target/linux/generic/config-4.4
+@@ -1671,6 +1671,7 @@ CONFIG_IOSCHED_NOOP=y
+ # CONFIG_IPC_NS is not set
+ # CONFIG_IPMI_HANDLER is not set
+ # CONFIG_IPV6 is not set
++# CONFIG_IPV6_ACCEPT_RA_DEFAULT is not set
+ # CONFIG_IPV6_ILA is not set
+ # CONFIG_IPV6_MIP6 is not set
+ # CONFIG_IPV6_MROUTE is not set
+diff --git a/target/linux/generic/patches-3.18/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch b/target/linux/generic/patches-3.18/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6067be31830f6cc788708632dba36f338eb67d39
+--- /dev/null
++++ b/target/linux/generic/patches-3.18/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch
+@@ -0,0 +1,60 @@
++From 782710d7f18a2c9999410cb7cfc92955463897d8 Mon Sep 17 00:00:00 2001
++Message-Id: <782710d7f18a2c9999410cb7cfc92955463897d8.1523559442.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 12 Apr 2018 20:08:05 +0200
++Subject: [PATCH net-next] ipv6: provide Kconfig switch to disable accept_ra by
++ default
++
++Many distributions and users prefer to handle router advertisements in
++userspace; one example is OpenWrt, which includes a combined RA and DHCPv6
++client. For such configurations, accept_ra should not be enabled by
++default.
++
++As setting net.ipv6.conf.default.accept_ra via sysctl.conf or similar
++facilities may be too late to catch all interfaces and common sysctl.conf
++tools do not allow setting an option for all existing interfaces, this
++patch provides a Kconfig option to control the default value of
++default.accept_ra.
++
++Using default.accept_ra is preferable to all.accept_ra for our usecase,
++as disabling all.accept_ra would preclude users from explicitly enabling
++accept_ra on individual interfaces.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ net/ipv6/Kconfig    | 12 ++++++++++++
++ net/ipv6/addrconf.c |  2 +-
++ 2 files changed, 13 insertions(+), 1 deletion(-)
++
++--- a/net/ipv6/Kconfig
+++++ b/net/ipv6/Kconfig
++@@ -21,6 +21,18 @@ menuconfig IPV6
++ 
++ if IPV6
++ 
+++config IPV6_ACCEPT_RA_DEFAULT
+++	bool "IPv6: Accept router advertisements by default"
+++	default y
+++	help
+++	  The kernel can internally handle IPv6 router advertisements for
+++	  stateless address autoconfiguration (SLAAC) and route configuration,
+++	  which can be configured in detail and per-interface using a number of
+++	  sysctl options. This option controls the default value of
+++	  net.ipv6.conf.default.accept_ra.
+++
+++	  If unsure, say Y.
+++
++ config IPV6_ROUTER_PREF
++ 	bool "IPv6: Router Preference (RFC 4191) support"
++ 	---help---
++--- a/net/ipv6/addrconf.c
+++++ b/net/ipv6/addrconf.c
++@@ -207,7 +207,7 @@ static struct ipv6_devconf ipv6_devconf_
++ 	.forwarding		= 0,
++ 	.hop_limit		= IPV6_DEFAULT_HOPLIMIT,
++ 	.mtu6			= IPV6_MIN_MTU,
++-	.accept_ra		= 1,
+++	.accept_ra		= IS_ENABLED(CONFIG_IPV6_ACCEPT_RA_DEFAULT),
++ 	.accept_redirects	= 1,
++ 	.autoconf		= 1,
++ 	.force_mld_version	= 0,
+diff --git a/target/linux/generic/patches-4.4/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch b/target/linux/generic/patches-4.4/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8184a27705348c609d09c39a6d90b810d28fdead
+--- /dev/null
++++ b/target/linux/generic/patches-4.4/690-ipv6-provide-Kconfig-switch-to-disable-accept_ra-by-.patch
+@@ -0,0 +1,60 @@
++From 782710d7f18a2c9999410cb7cfc92955463897d8 Mon Sep 17 00:00:00 2001
++Message-Id: <782710d7f18a2c9999410cb7cfc92955463897d8.1523559442.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Thu, 12 Apr 2018 20:08:05 +0200
++Subject: [PATCH net-next] ipv6: provide Kconfig switch to disable accept_ra by
++ default
++
++Many distributions and users prefer to handle router advertisements in
++userspace; one example is OpenWrt, which includes a combined RA and DHCPv6
++client. For such configurations, accept_ra should not be enabled by
++default.
++
++As setting net.ipv6.conf.default.accept_ra via sysctl.conf or similar
++facilities may be too late to catch all interfaces and common sysctl.conf
++tools do not allow setting an option for all existing interfaces, this
++patch provides a Kconfig option to control the default value of
++default.accept_ra.
++
++Using default.accept_ra is preferable to all.accept_ra for our usecase,
++as disabling all.accept_ra would preclude users from explicitly enabling
++accept_ra on individual interfaces.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ net/ipv6/Kconfig    | 12 ++++++++++++
++ net/ipv6/addrconf.c |  2 +-
++ 2 files changed, 13 insertions(+), 1 deletion(-)
++
++--- a/net/ipv6/Kconfig
+++++ b/net/ipv6/Kconfig
++@@ -20,6 +20,18 @@ menuconfig IPV6
++ 
++ if IPV6
++ 
+++config IPV6_ACCEPT_RA_DEFAULT
+++	bool "IPv6: Accept router advertisements by default"
+++	default y
+++	help
+++	  The kernel can internally handle IPv6 router advertisements for
+++	  stateless address autoconfiguration (SLAAC) and route configuration,
+++	  which can be configured in detail and per-interface using a number of
+++	  sysctl options. This option controls the default value of
+++	  net.ipv6.conf.default.accept_ra.
+++
+++	  If unsure, say Y.
+++
++ config IPV6_ROUTER_PREF
++ 	bool "IPv6: Router Preference (RFC 4191) support"
++ 	---help---
++--- a/net/ipv6/addrconf.c
+++++ b/net/ipv6/addrconf.c
++@@ -222,7 +222,7 @@ static struct ipv6_devconf ipv6_devconf_
++ 	.forwarding		= 0,
++ 	.hop_limit		= IPV6_DEFAULT_HOPLIMIT,
++ 	.mtu6			= IPV6_MIN_MTU,
++-	.accept_ra		= 1,
+++	.accept_ra		= IS_ENABLED(CONFIG_IPV6_ACCEPT_RA_DEFAULT),
++ 	.accept_redirects	= 1,
++ 	.autoconf		= 1,
++ 	.force_mld_version	= 0,

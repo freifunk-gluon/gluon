@@ -1,0 +1,32 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 13 Apr 2018 14:36:43 +0200
+Subject: base-files: remove /etc/sysctl.d/ from conffiles
+
+Let's use /etc/sysctl.d for package-provided snippets and leave
+/etc/sysctl.conf to the admin. Don't backup /etc/sysctl.d on upgrades, so
+old defaults get replaced properly.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/base-files/Makefile b/package/base-files/Makefile
+index 6ae4b9262e369f5e93f59133d1c0b61a0d6c2224..339528d3ba8a5ab40c2d8fa246c937d61fb4856d 100644
+--- a/package/base-files/Makefile
++++ b/package/base-files/Makefile
+@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/kernel.mk
+ include $(INCLUDE_DIR)/version.mk
+ 
+ PKG_NAME:=base-files
+-PKG_RELEASE:=173.5.1
++PKG_RELEASE:=173.5.2
+ PKG_FLAGS:=nonshared
+ 
+ PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
+@@ -59,8 +59,6 @@ define Package/base-files/conffiles
+ /etc/shadow
+ /etc/shells
+ /etc/sysctl.conf
+-/etc/sysctl.d/
+-/etc/sysctl.d/local.conf
+ /etc/sysupgrade.conf
+ $(call $(TARGET)/conffiles)
+ endef
