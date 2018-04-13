@@ -69,8 +69,7 @@ entry({}, call(function(http, renderer)
 			match(node_ip, parse_ip(site.next_node.ip6()), 8)
 	) then
 		-- The user has visited the status page via a next-node address
-		-- Redirect the user the a unique address to avoid switching
-		-- nodes
+		-- Redirect the user to a unique address to avoid switching nodes
 		local prefix = parse_ip(site.prefix6():match('^[^/]+'))
 		for _, addr in ipairs(nodeinfo.network.addresses) do
 			if match(prefix, parse_ip(addr), 4) then
