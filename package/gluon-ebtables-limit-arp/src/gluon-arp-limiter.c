@@ -18,7 +18,7 @@
 
 #define BATCTL_DC "/usr/sbin/batctl dc -H -n"
 #define BATCTL_TL "/usr/sbin/batctl tl -H -n"
-#define EBTABLES "/usr/sbin/ebtables --concurrent"
+#define EBTABLES "/usr/sbin/ebtables-tiny"
 
 #define BUILD_BUG_ON(check) ((void)sizeof(int[1-2*!!(check)]))
 
