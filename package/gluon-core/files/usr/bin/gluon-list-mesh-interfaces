@@ -1,0 +1,2 @@
+#!/bin/sh
+ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"
