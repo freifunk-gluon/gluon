@@ -6,7 +6,7 @@ badrequest() {
         exit 1
 }
 
-( ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"| grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
+( gluon-list-mesh-interfaces | grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
 
