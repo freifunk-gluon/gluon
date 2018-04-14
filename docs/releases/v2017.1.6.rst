@@ -4,6 +4,27 @@ Gluon 2017.1.6 (in development)
 Bugfixes
 ~~~~~~~~
 
+* Remove broken DNS cache feature
+  (`#1362 <https://github.com/freifunk-gluon/gluon/issues/1362>`_)
+
+  It was found that dnsmasq does not handle all answer records
+  equally. In particular, its cached answers are missing DNSKEY and DS
+  records, breaking DNSSEC validation on clients.
+
+  Nodes can still resolve the next-node hostname locally and will continue to
+  work as DNS forwarders. The DNS cache feature may return if dnsmasq is fixed
+  or if we switch to a different resolver.
+
+* Ensure that corefiles are stored in /tmp rather than cluttering the root
+  filesystem
+  (`00df8b76e54c <https://github.com/freifunk-gluon/gluon/commit/00df8b76e54c9bb89299df4b2ec49e972046d6b6>`_)
+
+  Nodes upgrades from Gluon v2016.2.x or earlier did not set kernel.core_pattern
+  correctly, leading to corefiles being stored in the current directory (usually
+  / for system services) in the case of crashes.
+
+  This is a regression introduced in Gluon v2017.1.
+
 * Only request a single IPv6 address instead of a prefix on the WAN interface
   (`5db54ba78c3 <https://github.com/freifunk-gluon/gluon/commit/5db54ba78c3e245f06e4a407371608f6cb247b49>`_)
 
