@@ -2,7 +2,7 @@ DNS forwarder
 =============
 
 A Gluon node can be configured to act as a DNS forwarder. Requests for the
-next-node hostname(s) can be answered locally, without querying the upstream
+next-node hostname can be answered locally, without querying the upstream
 resolver.
 
 **Note:** While this reduces answer time and allows to use the next-node
@@ -20,7 +20,7 @@ addresses are placed in the dnsmasq configuration.
   },
 
   next_node = {
-    name = { 'nextnode.location.community.example.org', 'nextnode', 'nn' },
+    name = 'nextnode',
     ip6 = '2001:db8:8::1',
     ip4 = '198.51.100.1',
   }
