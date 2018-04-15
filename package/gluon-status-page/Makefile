@@ -7,14 +7,14 @@ include ../gluon.mk
 
 define Package/gluon-status-page
   TITLE:=Status page showing information about the node
-  DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua +libbatadv
+  DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua
 endef
 
 define Package/gluon-status-page/install
 	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/{neighbours-batadv,stations} $(1)/lib/gluon/status-page/providers/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/stations $(1)/lib/gluon/status-page/providers/
 
 	$(INSTALL_DIR) $(1)/lib/gluon/status-page/view/
 	$(LN) /lib/gluon/web/i18n $(1)/lib/gluon/status-page/

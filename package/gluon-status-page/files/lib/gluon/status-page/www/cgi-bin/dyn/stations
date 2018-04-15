@@ -6,8 +6,8 @@ badrequest() {
         exit 1
 }
 
-( batctl if | cut -d: -f1 | grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
+( gluon-list-mesh-interfaces | grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
 
-exec /usr/sbin/sse-multiplex "$CMD"
+exec sse-multiplex "$CMD"
