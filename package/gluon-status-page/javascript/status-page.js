@@ -412,6 +412,7 @@
 	}
 
 	function Neighbour(iface, addr, color, destroy) {
+		var th = iface.table.firstElementChild;
 		var el = iface.table.insertRow();
 
 		var tdHostname = el.insertCell();
@@ -427,8 +428,26 @@
 		hostname.textContent = addr;
 		tdHostname.appendChild(hostname);
 
-		var tdTQ = el.insertCell();
-		tdTQ.textContent = '-';
+		var meshAttrs = {};
+
+		function add_attr(attr) {
+			var key = attr.getAttribute('data-key');
+			if (!key)
+				return;
+
+			var suffix = attr.getAttribute('data-suffix') || '';
+
+			var td = el.insertCell();
+			td.textContent = '-';
+
+			meshAttrs[key] = {
+				'td': td,
+				'suffix': suffix,
+			};
+		}
+
+		for (var i = 0; i < th.children.length; i++)
+			add_attr(th.children[i]);
 
 		var tdSignal;
 		var tdDistance;
@@ -585,7 +604,10 @@
 				updated();
 			},
 			'update_mesh': function(mesh) {
-				tdTQ.textContent = Math.round(mesh.tq / 2.55) + ' %';
+				Object.keys(meshAttrs).forEach(function(key) {
+					var attr = meshAttrs[key];
+					attr.td.textContent = mesh[key] + attr.suffix;
+				});
 
 				updated();
 			},
@@ -724,14 +746,17 @@
 		interfaces[ifname] = Interface(elem, ifname, wireless);
 	});
 
-	add_event_source('/cgi-bin/dyn/neighbours-batadv', function(data) {
-		Object.keys(data).forEach(function (addr) {
-			var mesh = data[addr];
-			var iface = interfaces[mesh.ifname];
-			if (!iface)
-				return;
+	var mesh_provider = document.body.getAttribute('data-mesh-provider');
+	if (mesh_provider) {
+		add_event_source(mesh_provider, function(data) {
+			Object.keys(data).forEach(function (addr) {
+				var mesh = data[addr];
+				var iface = interfaces[mesh.ifname];
+				if (!iface)
+					return;
 
-			iface.get_neigh(addr).update_mesh(mesh);
+				iface.get_neigh(addr).update_mesh(mesh);
+			});
 		});
-	});
+	}
 })();

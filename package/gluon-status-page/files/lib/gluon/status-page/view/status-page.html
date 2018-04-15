@@ -18,6 +18,16 @@
 	_('%s used')
 	_('%s packets/s')
 
+	local function get_mesh()
+		local f = loadfile('/lib/gluon/status-page/mesh.lua')
+		if f then
+			return f()
+		end
+		return {}
+	end
+
+	local mesh = get_mesh()
+
 	local function get_interfaces()
 		local uconn = ubus.connect()
 		if not uconn then
@@ -77,7 +87,11 @@
 
 		<link rel="stylesheet" href="/static/status-page.css" type="text/css" />
 	</head>
-	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%= attr('data-translations', translations) .. attr('data-node-location', nodeinfo.location) %>>
+	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%=
+		attr('data-translations', translations) ..
+		attr('data-node-location', nodeinfo.location) ..
+		attr('data-mesh-provider', mesh.provider)
+	%>>
 		<header>
 			<h1><%| nodeinfo.hostname %></h1>
 		</header>
@@ -139,7 +153,9 @@
 						<table class="datatable">
 							<tr>
 								<th><%:Node%></th>
-								<th>TQ</th>
+								<% for i, v in ipairs(mesh.attrs or {}) do %>
+									<th<%= attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
+								<% end %>
 								<% if wireless then %>
 									<th>dBm</th>
 									<th><%:Distance%></th>
