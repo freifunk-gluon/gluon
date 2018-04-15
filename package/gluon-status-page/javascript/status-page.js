@@ -9,7 +9,7 @@
 (function() {
 	var _ = JSON.parse(document.body.getAttribute('data-translations'));
 
-  String.prototype.sprintf = function() {
+	String.prototype.sprintf = function() {
 		var i = 0;
 		var args = arguments;
 
