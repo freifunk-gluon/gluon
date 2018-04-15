@@ -10,4 +10,4 @@ badrequest() {
 
 CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
 
-exec /usr/sbin/sse-multiplex "$CMD"
+exec sse-multiplex "$CMD"
