@@ -32,7 +32,6 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
   uint8_t *dest;
   uint8_t tq;
   uint32_t hardif;
-  uint32_t lastseen;
   char ifname_buf[IF_NAMESIZE], *ifname;
   struct neigh_netlink_opts *opts;
   char mac1[18];
@@ -62,7 +61,6 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
   dest = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
   tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
   hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
-  lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
 
   if (memcmp(orig, dest, 6) != 0)
     return NL_OK;
@@ -79,7 +77,6 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
     return NL_OK;
 
   json_object_object_add(neigh, "tq", json_object_new_int(tq));
-  json_object_object_add(neigh, "lastseen", json_object_new_double(lastseen / 1000.));
   json_object_object_add(neigh, "ifname", json_object_new_string(ifname));
 
   json_object_object_add(opts->obj, mac1, neigh);
