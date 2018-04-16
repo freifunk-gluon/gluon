@@ -39,6 +39,9 @@
 	function prettyPrefix(prefixes, step, d) {
 		var prefix = 0;
 
+		if (d === undefined)
+			return "- ";
+
 		while (d > step && prefix < prefixes.length - 1) {
 			d /= step;
 			prefix++;
