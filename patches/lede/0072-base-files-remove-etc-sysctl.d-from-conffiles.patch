@@ -9,18 +9,9 @@ old defaults get replaced properly.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index 6ae4b9262e369f5e93f59133d1c0b61a0d6c2224..339528d3ba8a5ab40c2d8fa246c937d61fb4856d 100644
+index f473ef732106eb8fa05e7c5b59df176fef33e42d..32b1ce0923cb984ff32e4444a18eccdad7572d70 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
-@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/kernel.mk
- include $(INCLUDE_DIR)/version.mk
- 
- PKG_NAME:=base-files
--PKG_RELEASE:=173.5.1
-+PKG_RELEASE:=173.5.2
- PKG_FLAGS:=nonshared
- 
- PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
 @@ -59,8 +59,6 @@ define Package/base-files/conffiles
  /etc/shadow
  /etc/shells

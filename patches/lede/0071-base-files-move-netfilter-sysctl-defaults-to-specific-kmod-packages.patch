@@ -7,19 +7,6 @@ FS#1073.
 
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
-diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index 685e3c4061528e2b28054cce53258889b48c05b2..6ae4b9262e369f5e93f59133d1c0b61a0d6c2224 100644
---- a/package/base-files/Makefile
-+++ b/package/base-files/Makefile
-@@ -11,7 +11,7 @@ include $(INCLUDE_DIR)/kernel.mk
- include $(INCLUDE_DIR)/version.mk
- 
- PKG_NAME:=base-files
--PKG_RELEASE:=173.5
-+PKG_RELEASE:=173.5.1
- PKG_FLAGS:=nonshared
- 
- PKG_FILE_DEPENDS:=$(PLATFORM_DIR)/ $(GENERIC_PLATFORM_DIR)/base-files/
 diff --git a/package/base-files/files/etc/sysctl.d/10-default.conf b/package/base-files/files/etc/sysctl.d/10-default.conf
 index 7c3344dba339514c023c3b13c592e9ce9ca1ff55..98867b7c7ba1d1ce181f721cdfd17517069fcdf2 100644
 --- a/package/base-files/files/etc/sysctl.d/10-default.conf
