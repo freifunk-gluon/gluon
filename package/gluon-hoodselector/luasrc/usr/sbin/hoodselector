@@ -1,0 +1,182 @@
+#!/usr/bin/lua
+
+-- PID file to ensure the hoodselector isn't running parallel
+local pidPath="/var/run/hoodselector.pid"
+
+local uci = require('simple-uci').cursor()
+local hoodutil = require("hoodselector.util")
+
+if io.open(pidPath, "r") ~=nil then
+  hoodutil.log("The hoodselector is still running.")
+  os.exit(1)
+else
+  if io.open(pidPath, "w") ==nil then
+    hoodutil.log("Can`t create pid file on "..pidPath)
+    os.exit(1)
+  end
+end
+
+-- Program terminating function including removing of PID file
+local function exit(exc)
+  if io.open(pidPath, "r") ~=nil then
+    os.remove(pidPath)
+  end
+  os.exit(tonumber(exc))
+end
+
+-- initialization done
+
+local function get_mesh_vpn_interface()
+  local ret = {}
+  if hoodutil.fastd_installed() then
+    local vpnifac = uci:get('fastd', 'mesh_vpn_backbone', 'net')
+    if vpnifac  ~= nil then
+      vpnifac = vpnifac:gsub("%_",'-')
+      table.insert(ret,vpnifac)
+    else
+      hoodutil.log("fastd uci config broken! abort...")
+      exit(1)
+    end
+  end
+  if hoodutil.tunneldigger_installed() then
+    local vpnifac = uci:get('tunneldigger', 'mesh_vpn', 'interface')
+    if vpnifac  ~= nil then
+      table.insert(ret,vpnifac)
+    else
+      hoodutil.log("tunneldigger uci config broken! abort...")
+      exit(1)
+    end
+  end
+  return ret
+end
+
+-- INITIALIZE AND PREPARE DATA --
+-- read hoodfile...
+local jhood = hoodutil.get_domains()
+
+-- get defaul hood
+local defaultHood = hoodutil.getDefaultHood(jhood)
+
+
+-- VPN MODE
+-- If we have a VPN connection then we will try to get the routers location and
+-- select the hood coresponding to our location.
+-- If no hood for the location has been defined, we will select
+-- the default hood.
+-- If we can not get our routers location, we will fallback to scan mode.
+if hoodutil.directVPN(get_mesh_vpn_interface()) then
+  io.stdout:write('VPN connection found.\n')
+  local geo = hoodutil.getGeolocation()
+  if geo.lat ~= nil and geo.lon ~= nil then
+    io.stdout:write('Position found.\n')
+    local geoHood = hoodutil.getHoodByGeo(jhood, geo)
+    if geoHood ~= nil then
+      if hoodutil.set_hoodconfig(geoHood) then
+        hoodutil.restart_services() -- TMP solution
+        io.stdout:write('Hood set by VPN mode.\n')
+      end
+      exit(0)
+    end
+    io.stdout:write('No hood has been defined for current position.\n')
+    if hoodutil.set_hoodconfig(defaultHood) then
+      hoodutil.restart_services() -- TMP solution
+      io.stdout:write('Hood set by VPN mode.\n')
+    end
+    exit(0)
+  else
+    io.stdout:write('No position found\n')
+  end
+else
+  io.stdout:write('No VPN connection found\n')
+end
+
+--[[
+
+if hoodutil.batmanHasGateway() then
+441   io.stdout:write('Batman gateways found\n')
+442   local gw_intf = {}
+443   table.insert(gw_intf,hoodutil.get_batman_GW_interface())
+444
+445   if next(gw_intf) then
+446     -- wifi interface
+447     local bssidHood = hoodutil.get_radio_to_bssid(radios,gw_intf[1], jhood)
+448     if bssidHood ~= nil then
+449       --check if hood inside geo pos
+450       local geo = hoodutil.getGeolocation()
+451       if geo.lat ~= nil and geo.lon ~= nil then
+452        io.stdout:write('Position found.\n')
+453        local geoHood = hoodutil.getHoodByGeo(jhood, geo)
+454        if geoHood ~= nil then
+455          if string.format(hash.md5(table.tostring(bssidHood))) ~=
+               string.format(hash.md5(table.tostring(geoHood))) then
+456            io.stdout:write('Geo hood and bssid hood are not equal, do wifi scan...\n')
+457            local sortedWlanList = hoodutil.wlan_list_sorted(radios, mesh_prefix)
+458            for i=#sortedWlanList,1,-1 do
+459              if(string.lower(geoHood.bssid) ~= string.lower(sortedWlanList[i].bssid)) then
+460               table.remove(sortedWlanList, i)
+461              end
+462            end
+463            if next(sortedWlanList) then
+464              io.stdout:write('Try to switch back in our real hood!\n')
+465              io.stdout:write('After filtering we will test the following wireless networks:\n')
+466              for _, network in pairs(sortedWlanList) do
+467               print(network["quality"].."\t"..network["frequency"].."\t"..network["bssid"].."\t"..network["ssid"])
+468              end
+469              io.stdout:write("Prepare configuration for testing wireless networks...\n")
+470              local bssid = hoodutil.test_batman_mesh_networks(sortedWlanList, mesh_prefix)
+471              hoodutil.wireless_restart()
+472              io.stdout:write("Finished testing wireless networks, restored previous configuration\n")
+473              if bssid ~= nil then
+474               set_hoodconfig(geoHood, mesh_prefix, radios)
+475               hoodutil.vpn_enable()
+476               hoodutil.vpn_start()
+477               io.stdout:write('Set Geo Hood by Gateway mode\n')
+478               write_molwm(geoHood, radios)
+479               exit(0)
+480              else
+481               io.stdout:write('No neighboring freifunk batman advanced mesh found.\n')
+482              end
+483            else
+484              io.stdout:write('No networks left after filtering!\n')
+485            end --end next(sortedWlanList)
+486          else
+487            io.stdout:write('Geo hood are equal to bssid hood no wifi scan necessary.\n')
+488          end --end bssidHood ~= geoHood
+489        else
+490          io.stdout:write('No hood has been defined for current position.\n')
+491        end --end geoHood ~= nil
+492       else
+493        io.stdout:write('No position found.\n')
+494       end --end geo.lat ~= nil and geo.lon ~= nil
+495       set_hoodconfig(bssidHood, mesh_prefix, radios)
+496       io.stdout:write('Hood set by batmanHasGateway mode, GW source is wifi\n')
+497       write_molwm(bssidHood,radios)
+498       exit(0)
+499     end --end bssidHood ~= nil
+500
+501     -- mesh lan or wan interface
+502     if hoodutil.mesh_lan_wan(gw_intf[1]) then
+503       -- if mesh_lan/wan try to get hood by selected bssid of neightbour vpnRouters
+504       local neighbourBssid = hoodutil.molw_get_bssid(gw_intf)
+505       if neighbourBssid ~= nil then
+506         bssidHood = hoodutil.gethoodByBssid(jhood, neighbourBssid)
+507         if bssidHood ~= nil then
+508           set_hoodconfig(bssidHood, mesh_prefix, radios)
+509           io.stdout:write('Hood set by batmanHasGateway mode, GW source is mesh on lan/wan\n')
+510           molwmtable["md5hash"] = "\"" .. string.format(hash.md5(table.tostring(bssidHood))) .. "\""
+511           molwmtable["hoodname"] = "\"" .. bssidHood["name"] .. "\""
+512           molwmtable["bssid"] = "\"" .. bssidHood["bssid"] .. "\""
+513           molwm_to_file()
+514           exit(0)
+515         end
+516       end
+517     end
+518   end --end next(gw_intf)
+519   local currendHood = hoodutil.getCurrentHood(jhood)
+520   if currendHood ~= nil then
+521     write_molwm(currendHood,radios)
+522   end
+523 end
+--]]
+
+exit(0) -- Debug
