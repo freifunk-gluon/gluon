@@ -1,0 +1,41 @@
+From: lemoer <git@irrelefant.net>
+Date: Mon, 23 Apr 2018 02:53:20 +0200
+Subject: batman-adv: add patch
+
+diff --git a/batman-adv/patches/1004-fix-bug-when-vlan-crc-00000000.patch b/batman-adv/patches/1004-fix-bug-when-vlan-crc-00000000.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9a2bf34fab5f760fd4ffea649c7c248012d5d13a
+--- /dev/null
++++ b/batman-adv/patches/1004-fix-bug-when-vlan-crc-00000000.patch
+@@ -0,0 +1,31 @@
++From f23a9d3f375dcf8e57197480ac260baf06738074 Mon Sep 17 00:00:00 2001
++From: root <root@sn07.s.ffh.zone>
++Date: Mon, 23 Apr 2018 02:24:43 +0200
++Subject: [PATCH] batman-adv: fix bug when vlan crc is 0x00000000
++
++---
++ net/batman-adv/translation-table.c | 8 ++++++--
++ 1 file changed, 6 insertions(+), 2 deletions(-)
++
++diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
++index 7615f237..677dc5eb 100644
++--- a/net/batman-adv/translation-table.c
+++++ b/net/batman-adv/translation-table.c
++@@ -3007,8 +3007,12 @@ static bool batadv_tt_global_check_crc(struct batadv_orig_node *orig_node,
++ 
++ 		vlan = batadv_orig_node_vlan_get(orig_node,
++ 						 ntohs(tt_vlan_tmp->vid));
++-		if (!vlan)
++-			return false;
+++		if (!vlan) {
+++			if (tt_vlan_tmp->crc == 0x00000000)
+++				continue;
+++			else
+++				return false;
+++		}
++ 
++ 		crc = vlan->tt.crc;
++ 		batadv_orig_node_vlan_put(vlan);
++-- 
++2.11.0
++
