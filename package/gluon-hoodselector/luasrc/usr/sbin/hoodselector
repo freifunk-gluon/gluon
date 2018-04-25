@@ -179,4 +179,12 @@ if hoodutil.batmanHasGateway() then
 523 end
 --]]
 
-exit(0) -- Debug
+-- DEFAULT-HOOD MODE
+-- If we do NOT have a VPN connection and no other freifunk mesh nodes found in our network ENV
+-- then we set the default hood.
+io.stdout:write("ENV does not give enough information\n")
+if hoodutil.set_hoodconfig(defaultHood) then
+  hoodutil.restart_services() -- TMP solution
+  io.stdout:write('Hood set by default-hood mode.\n')
+end
+exit(0)
