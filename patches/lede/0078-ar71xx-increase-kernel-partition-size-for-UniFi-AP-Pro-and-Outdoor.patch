@@ -7,10 +7,10 @@ Tested on UAP Outdoor+.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/image/ubnt.mk b/target/linux/ar71xx/image/ubnt.mk
-index 65ed708459e7e6026713437430fc248c692cd070..ef50aa99541b8220eac71b2f1b1a33419fdab987 100644
+index 899d5d030e44e64bc945f03babf8820d87451177..84bf13d2829c3e8cd250fe9a069245d0098b864d 100644
 --- a/target/linux/ar71xx/image/ubnt.mk
 +++ b/target/linux/ar71xx/image/ubnt.mk
-@@ -253,9 +253,9 @@ TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
+@@ -254,9 +254,9 @@ TARGET_DEVICES += ubnt-rs ubnt-rspro ubnt-ls-sr71
  
  define Device/ubnt-uap-pro
    DEVICE_TITLE := Ubiquiti UAP Pro
