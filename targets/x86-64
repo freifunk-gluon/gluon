@@ -12,7 +12,6 @@ packages 'kmod-ath9k'
 packages $ATH10K_PACKAGES
 packages 'kmod-gpio-button-hotplug' 'kmod-gpio-nct5104d' 'kmod-hwmon-core' 'kmod-hwmon-k10temp' 'kmod-leds-gpio' 'kmod-leds-apu2' 'kmod-sp5100_tco'
 packages 'kmod-usb-core' 'kmod-usb-ohci' 'kmod-usb2' 'kmod-usb3' 'kmod-usb-serial'
-packages 'bash' 'wget-nossl'
 
 factory_image x86-64 combined-ext4 .img.gz
 factory_image x86-64 combined-ext4 .vdi
