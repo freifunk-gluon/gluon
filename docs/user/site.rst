@@ -182,8 +182,15 @@ next_node \: package
     in isolated mesh segments). This is possible by providing one or more names
     in the ``name`` field.
 
-mesh \: optional
+mesh
     Configuration of general mesh functionality.
+
+    To avoid inter-mesh links, Gluon can encapsulate the mesh protocol in VXLAN
+    for Mesh-on-LAN/WAN. It is recommended to set *mesh.vxlan* to ``true`` to
+    enable VXLAN in new setups. Setting it to ``false`` disables this
+    encapsulation to allow meshing with other nodes that don't support VXLAN
+    (Gluon 2017.1.x and older). In multi-domain setups, *mesh.vxlan* is optional
+    and defaults to ``true``.
 
     Gluon generally segments layer-2 meshes so that each node becomes IGMP/MLD
     querier for its own local clients. This is necessary for reliable multicast
@@ -197,7 +204,7 @@ mesh \: optional
     the mesh; this is usually not a problem, as such setups are unusual. If
     you run a special-purpose mesh that requires membership reports to be
     working, this filtering can be disabled by setting the
-    *filter_membership_reports* option to ``false``.
+    optional *filter_membership_reports* value to ``false``.
 
     In addition, options specific to the batman-adv routing protocol can be set
     in the *batman_adv* section:
@@ -208,6 +215,7 @@ mesh \: optional
     ::
 
       mesh = {
+        vxlan = true,
         filter_membership_reports = false,
         batman_adv = {
           gw_sel_class = 1,

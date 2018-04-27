@@ -73,6 +73,8 @@ need_string_array(in_domain({'next_node', 'name'}), false)
 need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 need_string_match(in_domain({'next_node', 'ip4'}), '^%d+.%d+.%d+.%d+$', false)
 
+need_boolean(in_domain({'mesh', 'vxlan'}), false)
+
 need_boolean(in_site({'mesh_on_wan'}), false)
 need_boolean(in_site({'mesh_on_lan'}), false)
 need_boolean(in_site({'single_as_lan'}), false)

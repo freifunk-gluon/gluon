@@ -22,11 +22,9 @@ uci:set('network', 'mesh_wan', 'disabled', not enable)
 if uci:get('network', 'mesh_wan', 'transitive') == nil then
 	uci:set('network', 'mesh_wan', 'transitive', true)
 end
-if uci:get('network', 'mesh_wan', 'legacy') == nil then
-	uci:set('network', 'mesh_wan', 'legacy', old_proto == 'gluon_mesh')
-end
 
 uci:delete('network', 'mesh_wan', 'auto')
 uci:delete('network', 'mesh_wan', 'fixed_mtu')
+uci:delete('network', 'mesh_wan', 'legacy')
 
 uci:save('network')
