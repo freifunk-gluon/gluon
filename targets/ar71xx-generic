@@ -246,6 +246,7 @@ fi
 
 if [ "$ATH10K_PACKAGES" ]; then
 device ubiquiti-unifi-ac-lite ubnt-unifiac-lite
+alias ubiquiti-unifi-ac-mesh
 packages $ATH10K_PACKAGES
 factory
 
