@@ -65,6 +65,12 @@ factory
 device gl-ar300m gl-ar300m
 factory
 
+if [ "$ATH10K_PACKAGES" ]; then
+device gl-ar750 gl-ar750
+packages $ATH10K_PACKAGES
+factory
+fi
+
 
 # Linksys by Cisco
 
