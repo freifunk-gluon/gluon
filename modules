@@ -12,7 +12,7 @@ PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
 PACKAGES_GLUON_COMMIT=6c38a5dd639ee4649bc98401c5b3bb27ff99de4d
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
-PACKAGES_ROUTING_COMMIT=3aaa772ef520e5e02ddd6a3eecf67a81fad726f5
+PACKAGES_ROUTING_COMMIT=ba5d2fc76e1cee2cb656d955514c8aa526875a6a
 
 PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_BRANCH=lede-17.01
