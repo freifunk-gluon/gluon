@@ -34,6 +34,7 @@ factory
 sysupgrade '.tar'
 
 device ubnt-erx-sfp ubnt-erx-sfp
+alias ubnt-ep-r6
 packages '-hostapd-mini'
 factory
 sysupgrade '.tar'
