@@ -255,7 +255,7 @@ ar71xx-tiny
   - TL-WR743N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
   - TL-WR843N/ND (v1)
-  - TL-WR940N (v1, v2, v3, v4, v5)
+  - TL-WR940N (v1, v2, v3, v4, v5, v6)
   - TL-WR941ND (v2, v3, v4, v5, v6)
 
 brcm2708-bcm2708
