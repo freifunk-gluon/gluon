@@ -221,11 +221,13 @@ device ubiquiti-airrouter ubnt-airrouter
 device ubiquiti-bullet-m ubnt-bullet-m
 alias ubiquiti-nanostation-loco-m2
 alias ubiquiti-nanostation-loco-m5
-alias ubiquiti-rocket-m2
-alias ubiquiti-rocket-m5
 alias ubiquiti-bullet-m2
 alias ubiquiti-bullet-m5
 alias ubiquiti-picostation-m2
+
+device ubiquiti-rocket-m ubnt-rocket-m
+alias ubiquiti-rocket-m2
+alias ubiquiti-rocket-m5
 
 device ubiquiti-nanostation-m ubnt-nano-m
 alias ubiquiti-nanostation-m2
