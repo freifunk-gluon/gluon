@@ -121,6 +121,10 @@ ar71xx-generic
 
   - ALL0315N
 
+* AVM
+
+  - Fritz!Box 4020
+
 * Buffalo
 
   - WZR-HP-AG300H / WZR-600DHP
@@ -136,6 +140,7 @@ ar71xx-generic
 * GL Innovations
 
   - GL-AR150
+  - GL-AR300M
   - GL-iNet 6408A (v1)
   - GL-iNet 6416A (v1)
 
@@ -145,7 +150,7 @@ ar71xx-generic
 
 * Netgear
 
-  - WNDR3700 (v1, v2)
+  - WNDR3700 (v1, v2, v5)
   - WNDR3800
   - WNDRMAC (v2)
 
@@ -179,7 +184,7 @@ ar71xx-generic
   - TL-WDR4300 (v1)
   - TL-WR710N (v1, v2.1)
   - TL-WR842N/ND (v1, v2, v3)
-  - TL-WR1043N/ND (v1, v2, v3, v4)
+  - TL-WR1043N/ND (v1, v2, v3, v4, v5)
   - TL-WR2543N/ND (v1)
   - WBS210 (v1.20)
   - WBS510 (v1.20)
@@ -257,7 +262,7 @@ ar71xx-tiny
   - TL-WR743N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
   - TL-WR843N/ND (v1)
-  - TL-WR940N (v1, v2, v3, v4)
+  - TL-WR940N (v1, v2, v3, v4, v5)
   - TL-WR941ND (v2, v3, v4, v5, v6)
 
 brcm2708-bcm2708
@@ -276,6 +281,21 @@ mpc85xx-generic
 * TP-Link
 
   - TL-WDR4900 (v1)
+
+ramips-mt7621
+^^^^^^^^^^^^^
+
+* Ubiquiti
+
+  - EdgeRouter X
+  - EdgeRouter X-SFP
+
+sunxi
+^^^^^
+
+* LeMaker
+
+  - Banana Pi M1
 
 x86-generic
 ^^^^^^^^^^^
