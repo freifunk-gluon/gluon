@@ -484,29 +484,17 @@ GLUON_WLAN_MESH
 Features
 ^^^^^^^^
 
-Most feature flags enable only a single package that is derived from the flag
-name; for example, the flag *mesh-batman-adv-15* will include the package
-*gluon-mesh-batman-adv-15*.
+Each package starting with "gluon-" can be included as a feature _flag_ by
+omitting the prefix "gluon-"; for example, the flag *mesh-batman-adv-15* will
+include only the package *gluon-mesh-batman-adv-15*.
 
-The following flags will add multiple packages:
+Some flags are specially treated (for example `web-wizard` and `web-advanced`)
+and can contain more than one package. Those are defined in the config file
+`package/features`. Please read that file for more details.
 
-* *web-wizard*
-
-  - *gluon-config-mode-hostname*
-  - *gluon-config-mode-geo-location*
-  - *gluon-config-mode-contact-info*
-  - *gluon-config-mode-autoupdater* (if the *autoupdater* feature is enabled)
-  - *gluon-config-mode-mesh-vpn* (if the *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* feature is enabled)
-
-* *web-advanced*
-
-  - *gluon-web-admin*
-  - *gluon-web-network*
-  - *gluon-web-wifi-config*
-  - *gluon-web-autoupdater* (if the *autoupdater* feature is enabled)
-  - *gluon-web-mesh-vpn-fastd* (if the *mesh-vpn-fastd* feature is enabled)
-
-Site-provided package feeds can define additional feature flags.
+Site-provided package feeds can define additional feature flags. To use own
+package feeds to define your own features, add a file `gluon/features` to your
+site folder.
 
 
 .. _site-config-mode-texts:
