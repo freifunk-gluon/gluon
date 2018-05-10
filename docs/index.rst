@@ -134,6 +134,7 @@ ar71xx-generic
 * GL Innovations
 
   - GL-AR150
+  - GL-AR300M
   - GL-iNet 6408A (v1)
   - GL-iNet 6416A (v1)
 
@@ -171,13 +172,13 @@ ar71xx-generic
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
-  - RE450
+  - RE450 [#ath10k]_
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
   - TL-WR710N (v1, v2.1)
   - TL-WR842N/ND (v1, v2, v3)
-  - TL-WR1043N/ND (v1, v2, v3, v4)
+  - TL-WR1043N/ND (v1, v2, v3, v4, v5)
   - TL-WR2543N/ND (v1)
   - WBS210 (v1.20)
   - WBS510 (v1.20)
@@ -197,6 +198,7 @@ ar71xx-generic
   - Rocket M2/M5
   - Rocket M2/M5 Ti
   - Rocket M2/M5 XW
+  - UniFi AC Mesh [#ath10k]_
   - UniFi AP
   - UniFi AP AC Lite [#ath10k]_
   - UniFi AP AC Pro [#ath10k]_
@@ -253,7 +255,7 @@ ar71xx-tiny
   - TL-WR743N/ND (v1, v2)
   - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
   - TL-WR843N/ND (v1)
-  - TL-WR940N (v1, v2, v3, v4)
+  - TL-WR940N (v1, v2, v3, v4, v5)
   - TL-WR941ND (v2, v3, v4, v5, v6)
 
 brcm2708-bcm2708
