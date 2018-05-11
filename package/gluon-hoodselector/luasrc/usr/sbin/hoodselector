@@ -5,6 +5,7 @@ local pidPath="/var/run/hoodselector.pid"
 
 local uci = require('simple-uci').cursor()
 local hoodutil = require("hoodselector.util")
+local hash = require("hash")
 
 if io.open(pidPath, "r") ~=nil then
   hoodutil.log("The hoodselector is still running.")
@@ -50,6 +51,41 @@ local function get_mesh_vpn_interface()
   return ret
 end
 
+function table.val_to_str ( v )
+  if "string" == type( v ) then
+    v = string.gsub( v, "\n", "\\n" )
+    if string.match( string.gsub(v,"[^'\"]",""), '^"+$' ) then
+      return "'" .. v .. "'"
+    end
+    return '"' .. string.gsub(v,'"', '\\"' ) .. '"'
+  else
+    return "table" == type( v ) and table.tostring( v ) or tostring( v )
+  end
+end
+
+function table.key_to_str ( k )
+  if "string" == type( k ) and string.match( k, "^[_%a][_%a%d]*$" ) then
+    return k
+  else
+    return "[" .. table.val_to_str( k ) .. "]"
+  end
+end
+
+function table.tostring( tbl )
+  local result, done = {}, {}
+  for k, v in ipairs( tbl ) do
+    table.insert( result, table.val_to_str( v ) )
+    done[ k ] = true
+  end
+  for k, v in pairs( tbl ) do
+    if not done[ k ] then
+      table.insert( result, table.key_to_str( k ) .. "=" .. table.val_to_str( v ) )
+    end
+  end
+  return "{" .. table.concat( result, "," ) .. "}"
+end
+
+
 -- INITIALIZE AND PREPARE DATA --
 -- read hoodfile...
 local jhood = hoodutil.get_domains()
@@ -57,13 +93,12 @@ local jhood = hoodutil.get_domains()
 -- get defaul hood
 local defaultHood = hoodutil.getDefaultHood(jhood)
 
-
 -- VPN MODE
 -- If we have a VPN connection then we will try to get the routers location and
 -- select the hood coresponding to our location.
 -- If no hood for the location has been defined, we will select
 -- the default hood.
--- If we can not get our routers location, we will fallback to scan mode.
+-- If we can not get our routers location, we will continure to next mode.
 if hoodutil.directVPN(get_mesh_vpn_interface()) then
   io.stdout:write('VPN connection found.\n')
   local geo = hoodutil.getGeolocation()
@@ -84,6 +119,9 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
     end
     exit(0)
   else
+    -- The hoodselector should continure with next states because thier can be other
+    -- VPN routers in the local mesh network which provides a possition and therfore
+    -- have set a geo base hood.
     io.stdout:write('No position found\n')
   end
 else
@@ -91,21 +129,47 @@ else
 end
 
 --[[
+-- GATEWAY MODE
+-- If a node have batman-adv GWs ensure config is validate to current hood.
+-- Furthermore is a node is connected to a neigbour hood check if its geo base hood avalable.
+local gw_intf = hoodutil.get_batman_GW_interface()
+if gw_intf ~= nil then
+  io.stdout:write('Batman gateways found\n')
+  -- We have to verify if the currend applyed setting
+  -- return currend applyed hood if source gw_intf a wifi interface
+  -- we have to check the hood explecit bw wifi source besause the
+  -- scan mode can apply an unknown hood by adapting the mesh id or
+  -- bssid with deaktivated VPNs(in case if a router will get a VPN
+  -- connection afterwards).
+  local currentHood = hoodutil.getHoodByRadio(gw_intf, jhood)
+  if currentHood ~= nil then
+    print("DEBUG: currentHood ~= nil")
+    -- Now we need check if the current seclected hood our geo base hood, otherwise search for
+    -- our geo base hood in the local network ENV
+    --check if hood inside geo pos
+    local geo = hoodutil.getGeolocation()
+    if geo.lat ~= nil and geo.lon ~= nil then
+      io.stdout:write('Position found.\n')
+      local geoHood = hoodutil.getHoodByGeo(jhood, geo)
+      if geoHood ~= nil then
+        print("DEBUG: geoHood ~= nil")
+        if string.format(hash.md5(table.tostring(currentHood))) ~=
+        string.format(hash.md5(table.tostring(geoHood))) then
+          io.stdout:write('Geo hood and current applyed hood are not equal, do wifi scan...\n')
+          local sortedWlanList = hoodutil.wlan_list_sorted()
+          for i=#sortedWlanList,1,-1 do
+            -- Filter all wifis whicht does not match the geo base hood
+--            if h.domain.wifi24 ~= nil then
+--              if h.domain.wifi24.ibss ~= nil then
+               print("foo")
+--             end
+--           end
+         end
+        end
+      end
+    end
+  end
 
-if hoodutil.batmanHasGateway() then
-441   io.stdout:write('Batman gateways found\n')
-442   local gw_intf = {}
-443   table.insert(gw_intf,hoodutil.get_batman_GW_interface())
-444
-445   if next(gw_intf) then
-446     -- wifi interface
-447     local bssidHood = hoodutil.get_radio_to_bssid(radios,gw_intf[1], jhood)
-448     if bssidHood ~= nil then
-449       --check if hood inside geo pos
-450       local geo = hoodutil.getGeolocation()
-451       if geo.lat ~= nil and geo.lon ~= nil then
-452        io.stdout:write('Position found.\n')
-453        local geoHood = hoodutil.getHoodByGeo(jhood, geo)
 454        if geoHood ~= nil then
 455          if string.format(hash.md5(table.tostring(bssidHood))) ~=
                string.format(hash.md5(table.tostring(geoHood))) then
@@ -170,14 +234,50 @@ if hoodutil.batmanHasGateway() then
 514           exit(0)
 515         end
 516       end
-517     end
-518   end --end next(gw_intf)
-519   local currendHood = hoodutil.getCurrentHood(jhood)
-520   if currendHood ~= nil then
-521     write_molwm(currendHood,radios)
-522   end
-523 end
---]]
+517     end]]
+--end -- end gw_intf
+
+-- SCAN MODE
+if next(hoodutil.getWifiDevices()) then
+  print("Entering SCAN MODE ...")
+  -- check if there exist a neighbouring freifunk batman advanced mesh
+  -- network with an active connection to a batman advanced gateway
+  local sortedWlanList = hoodutil.wlan_list_sorted()
+  if next(sortedWlanList) then
+    local ID = hoodutil.get_batman_mesh_network(sortedWlanList, defaultHood)
+    if ID ~= nil then
+      local scanHood = nil
+      if ID.method == "ibss" then
+        io.stdout:write("Neighoring freifunk batman advanced mesh with Bssid: "..ID.bssid.." found\n")
+        scanHood = hoodutil.gethoodByBssid(jhood, ID.bssid)
+      end
+      if ID.method == "11s" then
+        io.stdout:write("Neighoring freifunk batman advanced mesh with meshid: "..ID.meshid.." found\n")
+        scanHood = hoodutil.gethoodByMeshID(jhood, ID.meshid)
+      end
+      if scanHood ~= nil then
+        if hoodutil.set_hoodconfig(scanHood) then
+          hoodutil.restart_services() -- TMP solution
+          io.stdout:write('Hood set by scan mode\n')
+        end
+        exit(0)
+      end
+
+    -- if the wifi ID does not corespond to any hood, we disable all VPN and
+    -- just establish a wireless connection to the coresponding mesh. Furthermore
+    -- we set a unknown VXLAN ID to signalisize neibouring mesh on LAN/WAN nodes
+    -- that we have a gateway conection but does not know to which hood it is coresponding.
+    io.stdout:write("No hood has been found for this mesh ID\n")
+    --hoodutil.vpn_stop()
+    --hoodutil.vpn_disable()
+    --TBD
+    -- some idea was to collect neigbouhood informations like VXLAN ID over respondd
+    end
+  end
+end
+
+--Radio less mode
+-- TBD
 
 -- DEFAULT-HOOD MODE
 -- If we do NOT have a VPN connection and no other freifunk mesh nodes found in our network ENV
