@@ -1,0 +1,56 @@
+#!/usr/bin/lua
+
+local bit = require('bit')
+local unistd = require('posix.unistd')
+local fcntl = require('posix.fcntl')
+local hoodutil = require('hoodselector.util')
+
+-- PID file to ensure the hoodselector isn't running parallel
+local lockfile = '/var/lock/hoodselector.lock'
+local lockfd, err = fcntl.open(lockfile, bit.bor(fcntl.O_WRONLY, fcntl.O_CREAT), 384) -- mode 0600
+
+if not lockfd then
+	hoodutil.log(err, '\n')
+	os.exit(1)
+end
+
+local ok, _ = fcntl.fcntl(lockfd, fcntl.F_SETLK, {
+	l_start = 0,
+	l_len = 0,
+	l_type = fcntl.F_WRLCK,
+	l_whence = unistd.SEEK_SET,
+})
+
+if not ok then
+	io.stderr:write(string.format(
+		"Unable to lock file %s. Make sure there is no other instance of the hoodselector running.\n",
+		lockfile
+	))
+	os.exit(1)
+end
+
+-- geolocation mode
+-- If we have a location we will try to select the domain corresponding to this location.
+-- If no domain for the location has been defined or if we can't determine the node's location,
+-- we will select the default domain as last fallback instance.
+local geo = hoodutil.get_geolocation()
+if geo.lat ~= nil and geo.lon ~= nil then
+	io.stdout:write('Position found. Enter "geolocation mode" ...\n')
+	local jdomains = hoodutil.get_domains()
+	local geo_base_domain = hoodutil.get_domain_by_geo(jdomains, geo)
+	if geo_base_domain ~= nil then
+		if hoodutil.set_domain_config(geo_base_domain) then
+			os.execute("gluon-reload")
+			hoodutil.log('Domain set by geolocation mode.\n')
+		end
+		return
+	end
+	io.stdout:write('No domain has been defined for the current position. Continue with default domain mode\n')
+else
+	io.stdout:write('No position found. Continue with default domain mode\n')
+end
+
+-- default domain mode
+if hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains())) then
+	os.execute("gluon-reload")
+end
