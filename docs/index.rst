@@ -173,6 +173,7 @@ ar71xx-generic
 * TP-Link
 
   - Archer C5 (v1) [#ath10k]_
+  - Archer C59 (v1) [#80211s]_
   - Archer C7 (v2, v4) [#ath10k]_
   - CPE210 (v1.0, v1.1)
   - CPE220 (v1.1)
@@ -218,10 +219,6 @@ ar71xx-generic
 
   - My Net N600
   - My Net N750
-
-.. [#ath10k]
-  Device uses the ath10k WLAN driver; images are built for 11s by default unless GLUON_WLAN_MESH
-  is set as described in :ref:`getting-started-make-variables`
 
 ar71xx-nand
 ^^^^^^^^^^^
@@ -275,12 +272,28 @@ brcm2708-bcm2709
 
 * RaspberryPi 2
 
+ipq806x
+^^^^^^^
+
+* TP-Link
+
+  - Archer C2600 [#80211s]_
+
 mpc85xx-generic
 ^^^^^^^^^^^^^^^
 
 * TP-Link
 
   - TL-WDR4900 (v1)
+
+ramips-mt7620
+^^^^^^^^^^^^^
+
+* GL Innovations
+
+  - GL-MT300A [#80211s]_
+  - GL-MT300N [#80211s]_
+  - GL-MT750 [#80211s]_
 
 ramips-mt7621
 ^^^^^^^^^^^^^
@@ -289,6 +302,27 @@ ramips-mt7621
 
   - EdgeRouter X
   - EdgeRouter X-SFP
+
+ramips-mt7628
+^^^^^^^^^^^^^
+
+* VoCore
+
+  - VoCore2 [#80211s]_
+
+ramips-rt305x
+^^^^^^^^^^^^^
+
+* A5-V11 [#80211s]_
+
+* D-Link
+
+  - DIR-615 (D1, D2, D3, D4, H1) [#80211s]_
+
+* VoCore
+
+  - VoCore (8M) [#80211s]_
+  - VoCore (16M) [#80211s]_
 
 sunxi
 ^^^^^
@@ -321,6 +355,17 @@ x86-64
 * x86-64-vmware
 
 See also: :doc:`user/x86`
+
+Footnotes
+^^^^^^^^^
+
+.. [#ath10k]
+  Device uses the ath10k WLAN driver; images are built for 11s by default unless GLUON_WLAN_MESH
+  is set as described in :ref:`getting-started-make-variables`
+
+.. [#80211s]
+  Device does not support IBSS; images are built by default unless GLUON_WLAN_MESH
+  is explicitly set to something other than *11s*
 
 License
 -------
