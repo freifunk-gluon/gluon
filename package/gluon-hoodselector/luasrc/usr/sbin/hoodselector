@@ -1,0 +1,95 @@
+#!/usr/bin/lua
+
+-- PID file to ensure the hoodselector isn't running parallel
+local pidPath="/var/run/hoodselector.pid"
+
+local uci = require('simple-uci').cursor()
+local hoodutil = require("hoodselector.util")
+
+if io.open(pidPath, "r") ~=nil then
+  hoodutil.log("The hoodselector is still running.")
+  os.exit(1)
+else
+  if io.open(pidPath, "w") ==nil then
+    hoodutil.log("Can`t create pid file on "..pidPath)
+    os.exit(1)
+  end
+end
+
+-- Program terminating function including removing of PID file
+local function exit(exc)
+  if io.open(pidPath, "r") ~=nil then
+    os.remove(pidPath)
+  end
+  os.exit(tonumber(exc))
+end
+
+-- initialization done
+--
+local function get_mesh_vpn_interface()
+  local ret = {}
+  if hoodutil.fastd_installed() then
+    local vpnifac = uci:get('fastd', 'mesh_vpn_backbone', 'net')
+    if vpnifac  ~= nil then
+      vpnifac = vpnifac:gsub("%_",'-')
+      table.insert(ret,vpnifac)
+    else
+      hoodutil.log("fastd uci config broken! abort...")
+      exit(1)
+    end
+  end
+  if hoodutil.tunneldigger_installed() then
+    local vpnifac = uci:get('tunneldigger', 'mesh_vpn', 'interface')
+    if vpnifac  ~= nil then
+      table.insert(ret,vpnifac)
+    else
+      hoodutil.log("tunneldigger uci config broken! abort...")
+      exit(1)
+    end
+  end
+  return ret
+end
+
+-- INITIALIZE AND PREPARE DATA --
+-- read hoodfile...
+local jhood = hoodutil.get_domains()
+
+-- get defaul hood
+local defaultHood = hoodutil.getDefaultHood(jhood)
+
+-- VPN MODE
+-- If we have a VPN connection then we will try to get the routers location and
+-- select the hood coresponding to our location.
+-- If no hood for the location has been defined, we will select
+-- the default hood.
+-- If we can not get our routers location, we will continure to next mode.
+if hoodutil.directVPN(get_mesh_vpn_interface()) then
+  io.stdout:write('VPN connection found.\n')
+  local geo = hoodutil.getGeolocation()
+  if geo.lat ~= nil and geo.lon ~= nil then
+    io.stdout:write('Position found.\n')
+    local geoHood = hoodutil.getHoodByGeo(jhood, geo)
+    if geoHood ~= nil then
+      if hoodutil.set_hoodconfig(geoHood) then
+        hoodutil.restart_services() -- TMP solution
+        io.stdout:write('Hood set by VPN mode.\n')
+      end
+      exit(0)
+    end
+    io.stdout:write('No hood has been defined for current position.\n')
+    if hoodutil.set_hoodconfig(defaultHood) then
+      hoodutil.restart_services() -- TMP solution
+      io.stdout:write('Hood set by VPN mode.\n')
+    end
+    exit(0)
+  else
+    -- The hoodselector should continure with next states because thier can be other
+    -- VPN routers in the local mesh network which provides a possition and therfore
+    -- have set a geo base hood.
+    io.stdout:write('No position found\n')
+  end
+else
+  io.stdout:write('No VPN connection found\n')
+end
+
+exit(0)
