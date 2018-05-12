@@ -182,6 +182,7 @@ ar71xx-generic
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
+  - RE355 [#ath10k]_ [#64_128MB]_
   - RE450 [#ath10k]_
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
@@ -369,6 +370,10 @@ Footnotes
 .. [#80211s]
   Device does not support IBSS; images are built by default unless GLUON_WLAN_MESH
   is explicitly set to something other than *11s*
+
+.. [#64_128MB]
+  This device is available with eighter 64MB or 128MB RAM. As the ath10k WLAN driver requires
+  more than 64MB RAM to run properly images are not built unless BROKEN is set to 1.
 
 License
 -------
