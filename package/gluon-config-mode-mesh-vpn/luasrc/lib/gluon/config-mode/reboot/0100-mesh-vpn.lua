@@ -3,6 +3,7 @@ local site_i18n = i18n 'gluon-site'
 local uci = require("simple-uci").cursor()
 local fs = require "nixio.fs"
 
+local platform = require 'gluon.platform'
 local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 local util = require "gluon.util"
@@ -42,6 +43,7 @@ renderer.render_string(msg, {
 	pubkey = pubkey,
 	hostname = hostname,
 	site = site,
+	platform = platform,
 	sysconfig = sysconfig,
 	contact = contact,
 })
