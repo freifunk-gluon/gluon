@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+uci:delete('network', 'mmfd')
+uci:section('network', 'interface', 'mmfd', {
+	proto = 'static',
+	ifname = 'mmfd0',
+	ip6addr = 'fe80::1/64'
+})
+uci:save('network')
