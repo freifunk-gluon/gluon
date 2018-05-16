@@ -1,4 +1,5 @@
 #!/usr/bin/lua
+local uci = require('simple-uci').cursor()
 
 uci:delete('network', 'l3roam')
 uci:delete('network', 'l3roamd_client')
