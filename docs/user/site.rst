@@ -46,6 +46,22 @@ prefix6
 
        prefix6 = 'fdca::ffee:babe:1::/64'
 
+node_prefix6
+    The ipv6 prefix from which the unique IP-addresses for nodes are selected
+    in babel-based networks. This may overlap with prefix6. e.g.
+    ::
+
+       node_prefix6 = 'fdca::ffee:babe:2::/64'
+
+node_client_prefix6
+    The ipv6 prefix from which the client-specific IP-address is calculated that
+    is assigned to each node by l3roamd to allow efficient communication when 
+    roaming. This is exclusively useful when running a routing mesh protocol
+    like babel. e.g.
+    ::
+
+       node_client_prefix6 = 'fdca::ffee:babe:3::/64'
+
 timezone
     The timezone of your community live in, e.g.
     ::
@@ -259,6 +275,9 @@ mesh_vpn
     sections in the same configuration file, as only one of the packages *gluon-mesh-vpn-fastd*
     and *gluon-mesh-vpn-tunneldigger* should be installed with the current
     implementation.
+
+    **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
+    in the build when using *gluon-mesh-babel* to work around icmp blackholes on the internet.
 
     ::
 
