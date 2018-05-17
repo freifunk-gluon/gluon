@@ -18,15 +18,15 @@ if this_domain() ~= need_string(in_site({'default_domain'})) then
     if #shape >= 2 then
       for _, pos in ipairs(shape) do
         if pos.lat == nil or not ( pos.lat < 90.0 and pos.lat > -90.0 ) then
-          need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "lat muss match a rage +/-90.0")
+          need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "lat must match a range +/-90.0")
         end
         if pos.lon == nil or not ( pos.lon < 180.0 and pos.lon > -180.0 ) then
-          need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "lon muss match a rage +/-180.0")
+          need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "lon must match a range +/-180.0")
         end
       end
     end
     if #shape < 2 then
-      need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "needs to have at lease 2 coordiantes for rectangular shapes.")
+      need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "needs to have at least 2 coordiantes for rectangular shapes.")
     end
   end
   if no_shapes then
