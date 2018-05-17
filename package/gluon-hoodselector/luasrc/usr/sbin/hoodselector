@@ -62,7 +62,7 @@ local defaultHood = hoodutil.getDefaultHood(jhood)
 -- select the hood coresponding to our location.
 -- If no hood for the location has been defined, we will select
 -- the default hood.
--- If we can not get our routers location, we will continure to next mode.
+-- If we can't get our router's location, we will continue to the next mode.
 if hoodutil.directVPN(get_mesh_vpn_interface()) then
   io.stdout:write('VPN connection found.\n')
   local geo = hoodutil.getGeolocation()
@@ -71,20 +71,20 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
     local geoHood = hoodutil.getHoodByGeo(jhood, geo)
     if geoHood ~= nil then
       if hoodutil.set_hoodconfig(geoHood) then
-        hoodutil.restart_services() -- TMP solution
+        hoodutil.restart_services() -- temporary solution
         io.stdout:write('Hood set by VPN mode.\n')
       end
       exit(0)
     end
-    io.stdout:write('No hood has been defined for current position.\n')
+    io.stdout:write('No hood has been defined for the current position.\n')
     if hoodutil.set_hoodconfig(defaultHood) then
       hoodutil.restart_services() -- TMP solution
       io.stdout:write('Hood set by VPN mode.\n')
     end
     exit(0)
   else
-    -- The hoodselector should continure with next states because thier can be other
-    -- VPN routers in the local mesh network which provides a possition and therfore
+    -- The hoodselector should continue with the next states because there can be other
+    -- VPN routers in the local mesh network which provide a position and therefore
     -- have set a geo base hood.
     io.stdout:write('No position found\n')
   end
