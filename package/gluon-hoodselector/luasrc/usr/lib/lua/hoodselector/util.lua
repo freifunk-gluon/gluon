@@ -60,7 +60,7 @@ function M.tunneldigger_installed()
   return false
 end
 
--- bool if direct VPN. The detection is realaise by searching the fastd network interface inside the originator table
+-- bool if direct VPN. The detection is realised by searching the fastd network interface inside the originator table
 function M.directVPN(vpnIfaceList)
   for _,vpnIface in ipairs(vpnIfaceList) do
     local file = io.open("/sys/kernel/debug/batman_adv/bat0/originators", 'r')
