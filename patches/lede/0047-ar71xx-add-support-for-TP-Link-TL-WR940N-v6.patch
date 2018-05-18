@@ -10,10 +10,10 @@ Installation: flash factory image through WEB UI or use TFTP.
 Signed-off-by: Robert Marko <robimarko@gmail.com>
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-index e67b5e38561e841b88e486341950c52e1d454322..3e8ed9982c9993055cd9ca487dab0993639314cf 100755
+index 47b90d9cb2f81936aed22cdf7d1f6d870d23c16e..47bd0998f9d3fc73c3f605ab3ffd8167b719036b 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-@@ -645,6 +645,9 @@ tl-wr941nd-v6)
+@@ -656,6 +656,9 @@ tl-wr941nd-v6)
  	ucidef_set_led_switch "lan4" "LAN4" "tp-link:blue:lan4" "switch0" "0x02"
  	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:blue:wlan" "phy0tpt"
  	;;
@@ -24,7 +24,7 @@ index e67b5e38561e841b88e486341950c52e1d454322..3e8ed9982c9993055cd9ca487dab0993
  tl-wr841n-v11|\
  tl-wr842n-v3)
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index 454abe6a5005621967dd96e0282e7bce2a0b127e..1c8c3e9ebb468beafa0946891628779d5f6648d1 100755
+index 86ac949bca12561536ce2c8adb190eb004c162e4..b769af63ca7b6c88e4df00782c512df95ee4c4a0 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
 @@ -285,6 +285,7 @@ ar71xx_setup_interfaces()
@@ -36,10 +36,10 @@ index 454abe6a5005621967dd96e0282e7bce2a0b127e..1c8c3e9ebb468beafa0946891628779d
  	tl-wr941nd-v6|\
  	wnr1000-v2|\
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 61db387c9ecefd7090c25a5f5d75fdbf65a44d65..7b4ab62f9c675c9ac8d35e71728fbe82dc7c9c5a 100644
+index 97372bed0ea2fadfab10f22916a1e0d6a9c65725..40717eb07e5227dab7603c42aa2af8daf9a59e2b 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -393,6 +393,9 @@ get_status_led() {
+@@ -394,6 +394,9 @@ get_status_led() {
  	tl-wr941nd-v6)
  		status_led="tp-link:blue:system"
  		;;
@@ -50,10 +50,10 @@ index 61db387c9ecefd7090c25a5f5d75fdbf65a44d65..7b4ab62f9c675c9ac8d35e71728fbe82
  		status_led="tp-link:green:qss"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 6282420da534542b26e375d4db7c4a9f4b515a1e..32123832ad023ffdd2416ba759b37c5541be1628 100755
+index b7d6e2fcdf2f3ba971141a5a6fc1d2f430350847..d02028278b6a2a98763ad8c605883c465cd7f3bd 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -1088,6 +1088,9 @@ ar71xx_board_detect() {
+@@ -1091,6 +1091,9 @@ ar71xx_board_detect() {
  	*TL-WR941ND)
  		name="tl-wr941nd"
  		;;
@@ -64,10 +64,10 @@ index 6282420da534542b26e375d4db7c4a9f4b515a1e..32123832ad023ffdd2416ba759b37c55
  		name="tl-wr941nd-v5"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 774e3c8964ef724d1efbae56434aeaa9f1c298a4..8fc61321b16d2d3d9f02f6d13980d2db4b519962 100755
+index d6650e7719d268e1a500638b7eda2e15b9251aea..9e6875dc3726fc6c98fb9e34978b2d13ac07fb30 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -439,6 +439,7 @@ platform_check_image() {
+@@ -440,6 +440,7 @@ platform_check_image() {
  	tl-wr941nd-v5|\
  	tl-wr941nd-v6|\
  	tl-wr940n-v4|\
@@ -201,10 +201,10 @@ index d693b947c843d2a74cd252503fa8bf68b20da4ab..b530622d9f00b8ce3b906ad5fe62de01
 +MIPS_MACHINE(ATH79_MACH_TL_WR940N_V6, "TL-WR940N-v6", "TP-LINK TL-WR940N v6",
 +	     tl_wr940n_v6_setup);
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-index 9cb4a7f2e1df641232289721b676a9b0149c76e5..880a45b02e259e770042650f74abe3e924c040a3 100644
+index e4623fd08836d59ad4e79e96f02e75e502a55ca6..c4a6eb6a898ca4400677cff9112950a34df671b2 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-@@ -237,6 +237,7 @@ enum ath79_mach_type {
+@@ -238,6 +238,7 @@ enum ath79_mach_type {
  	ATH79_MACH_TL_WR941ND_V5,		/* TP-LINK TL-WR941ND v5 */
  	ATH79_MACH_TL_WR941ND_V6,		/* TP-LINK TL-WR941ND v6 */
  	ATH79_MACH_TL_WR940N_V4,		/* TP-LINK TL-WR940N v4 */
@@ -213,10 +213,10 @@ index 9cb4a7f2e1df641232289721b676a9b0149c76e5..880a45b02e259e770042650f74abe3e9
  	ATH79_MACH_UBNT_AIRGW,			/* Ubiquiti AirGateway */
  	ATH79_MACH_UBNT_AIRGWP,			/* Ubiquiti AirGateway Pro */
 diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
-index 5be7cbfbd4ab7d73d679d52d2581459250e04302..c6545b8f5904f31d7b2b0e942f3dda74e2c1400b 100644
+index 27d6c73454aef96e5da47033ec664d2caffca1d5..13197be6325c7de2f0a77e44203cf387b87e3eb6 100644
 --- a/target/linux/ar71xx/image/tp-link.mk
 +++ b/target/linux/ar71xx/image/tp-link.mk
-@@ -796,6 +796,14 @@ define Device/tl-wr940n-v4
+@@ -812,6 +812,14 @@ define Device/tl-wr940n-v4
      IMAGE/factory-eu.bin := append-rootfs | mktplinkfw factory -C EU
  endef
  

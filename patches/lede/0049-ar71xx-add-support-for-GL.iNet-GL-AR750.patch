@@ -30,7 +30,7 @@ to flash OpenWrt/LEDE firmware.
 Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-index 49f27e9db40888ba8691014f2e70075114856978..54c4f009c2d722301cba7e8a3282c2102f4e5ad7 100755
+index 3d483066594bad403be04603ddbf3c452d321a0f..6007d41f869a40ef014866b54882ed1622336658 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -294,6 +294,10 @@ dlan-pro-1200-ac)
@@ -45,10 +45,10 @@ index 49f27e9db40888ba8691014f2e70075114856978..54c4f009c2d722301cba7e8a3282c210
  	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:wlan" "phy0tpt"
  	ucidef_set_led_netdev "wan" "WAN" "$board:green:wan" "eth0"
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index 454abe6a5005621967dd96e0282e7bce2a0b127e..e29c7049a02a2890ac4bbcfb3fa39110ae47cdf4 100755
+index b769af63ca7b6c88e4df00782c512df95ee4c4a0..92946e5014be335377ba0938cb312c16f206d244 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
-@@ -355,6 +355,7 @@ ar71xx_setup_interfaces()
+@@ -356,6 +356,7 @@ ar71xx_setup_interfaces()
  	onion-omega)
  		ucidef_set_interface_lan "wlan0"
  		;;
@@ -57,10 +57,10 @@ index 454abe6a5005621967dd96e0282e7bce2a0b127e..e29c7049a02a2890ac4bbcfb3fa39110
  		ucidef_set_interfaces_lan_wan "eth1" "eth0"
  		ucidef_add_switch "switch0" \
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 01dc7753ebce7079b789572393db7d4a87e4b98e..a7c87096dc9836298bde2bc8b812c58f947f3c85 100644
+index 5ae01b76daf7c6e5a76c1a5bc4531a22e0e640f6..47d435dbcba6de68e8489d5f3df5b54c4b96182f 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
-@@ -245,6 +245,7 @@ get_status_led() {
+@@ -246,6 +246,7 @@ get_status_led() {
  	nbg460n_550n_550nh)
  		status_led="nbg460n:green:power"
  		;;
@@ -68,7 +68,7 @@ index 01dc7753ebce7079b789572393db7d4a87e4b98e..a7c87096dc9836298bde2bc8b812c58f
  	nbg6716)
  		status_led="$board:white:power"
  		;;
-@@ -482,7 +483,8 @@ set_state() {
+@@ -486,7 +487,8 @@ set_state() {
  	done)
  		status_led_on
  		case $(ar71xx_board_name) in
@@ -79,10 +79,10 @@ index 01dc7753ebce7079b789572393db7d4a87e4b98e..a7c87096dc9836298bde2bc8b812c58f
  			;;
  		qihoo-c301)
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 68f90de802ddd18e09a1da39c0d56292eea9489c..88d0a9dfddb0a0073db98838bdfc9fcc29883439 100644
+index 607bbd2c0ec4b59ba569550e9e0e87b80c7ddddb..35612d86b9fd9a8a38a09777201f6ac1aa952784 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -97,6 +97,7 @@ case "$FIRMWARE" in
+@@ -101,6 +101,7 @@ case "$FIRMWARE" in
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) -2)
  		;;
@@ -91,10 +91,10 @@ index 68f90de802ddd18e09a1da39c0d56292eea9489c..88d0a9dfddb0a0073db98838bdfc9fcc
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +1)
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index 6282420da534542b26e375d4db7c4a9f4b515a1e..6145b73d066a6fe909dca66f034b1dc23dd29379 100755
+index d02028278b6a2a98763ad8c605883c465cd7f3bd..ae1e0373eaa98b9b423e328a53d1780d6b400539 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-@@ -656,6 +656,9 @@ ar71xx_board_detect() {
+@@ -659,6 +659,9 @@ ar71xx_board_detect() {
  	*"GL-AR300M")
  		name="gl-ar300m"
  		;;
@@ -117,10 +117,10 @@ index d677599d8c6380d9920e95abc9fb4b92cc0cec29..ba6e08b00d979bc73f7199756e22ca39
  	jwap003 |\
  	pb42 |\
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 774e3c8964ef724d1efbae56434aeaa9f1c298a4..9d31efd8724ee52d6871438a1ca7fd2e35fa8b78 100755
+index 9e6875dc3726fc6c98fb9e34978b2d13ac07fb30..203d910e02d8e482c9216675a280b7c3710c85c7 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-@@ -249,6 +249,7 @@ platform_check_image() {
+@@ -250,6 +250,7 @@ platform_check_image() {
  	gl-ar150|\
  	gl-ar300m|\
  	gl-ar300|\
@@ -141,7 +141,7 @@ index 57b6d2e541d7ef9dea8570ba8de72164d97b9775..9f3e9c4438d0df318d89d1057e98695e
  CONFIG_ATH79_MACH_GL_INET=y
  CONFIG_ATH79_MACH_GL_MIFI=y
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
-index 7ad5419f51ec9909d8b59f33178221a7d81ec184..6d5e24ce54cb7ea1c01116a99ef10bed23bddd70 100644
+index 0a25294c40b5e2d3be825554ec7246a50b9c029b..6e9d129e128f88bcfd2781104fa385cb939127b6 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
 @@ -691,6 +691,17 @@ config ATH79_MACH_GL_AR300M
@@ -163,10 +163,10 @@ index 7ad5419f51ec9909d8b59f33178221a7d81ec184..6d5e24ce54cb7ea1c01116a99ef10bed
  	bool "DOMINO support"
  	select SOC_AR933X
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Makefile b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
-index 3365a43ce16fc77b3212b39b92081efe678e8803..d092b937f6a2e2548c578ea49b00c26a33c02adf 100644
+index a0c73550eb0d5bf07ee731171be9e5ef9ff073e7..63a7b50c0c98492859e3c9735589b1d58ea43dae 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/Makefile
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
-@@ -110,6 +110,7 @@ obj-$(CONFIG_ATH79_MACH_F9K1115V2)		+= mach-f9k1115v2.o
+@@ -111,6 +111,7 @@ obj-$(CONFIG_ATH79_MACH_F9K1115V2)		+= mach-f9k1115v2.o
  obj-$(CONFIG_ATH79_MACH_GL_AR150)		+= mach-gl-ar150.o
  obj-$(CONFIG_ATH79_MACH_GL_AR300)		+= mach-gl-ar300.o
  obj-$(CONFIG_ATH79_MACH_GL_AR300M)		+= mach-gl-ar300m.o
@@ -327,10 +327,10 @@ index 0000000000000000000000000000000000000000..9ee6e29c02139b972a83a555fcd69376
 +MIPS_MACHINE(ATH79_MACH_GL_AR750, "GL-AR750", "GL.iNet GL-AR750",
 +	     gl_ar750_setup);
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-index 9cb4a7f2e1df641232289721b676a9b0149c76e5..af4f5784f041fb1ca4f885b075a9d1e2ec4ee9a2 100644
+index c4a6eb6a898ca4400677cff9112950a34df671b2..701608294fa462d06cc3ed421c2698d475e5061b 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-@@ -101,6 +101,7 @@ enum ath79_mach_type {
+@@ -102,6 +102,7 @@ enum ath79_mach_type {
  	ATH79_MACH_GL_AR150,			/* GL-AR150 support */
  	ATH79_MACH_GL_AR300,			/* GL-AR300 */
  	ATH79_MACH_GL_AR300M,			/* GL-AR300M */
