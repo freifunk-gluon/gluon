@@ -30,7 +30,7 @@ to flash OpenWrt/LEDE firmware.
 Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-index 5ab407ab0f46d4927dd5c2af545814bf265b84ba..fae773b65c2a5e604a61b845406340f88ec59637 100755
+index f4d83cee519406a188cc9dde355f509dd644625a..f94cc3c85b798458cc97c06bb0d44bdc426d057d 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -314,6 +314,10 @@ fritz4020)
@@ -45,10 +45,10 @@ index 5ab407ab0f46d4927dd5c2af545814bf265b84ba..fae773b65c2a5e604a61b845406340f8
  	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:wlan" "phy0tpt"
  	ucidef_set_led_netdev "wan" "WAN" "$board:green:wan" "eth0"
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index 1018ab4449f896d565b57ecbdc73b7e3d7fbe486..2f42862b8607fab814ed550b5d1841a572492923 100755
+index ae82cfe008169a8282ac51746cf2299eec8c81d8..c8990c60f504286d0fd28c7b17f54c9c3b5a891e 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
-@@ -368,6 +368,7 @@ ar71xx_setup_interfaces()
+@@ -369,6 +369,7 @@ ar71xx_setup_interfaces()
  	onion-omega)
  		ucidef_set_interface_lan "wlan0"
  		;;
@@ -57,7 +57,7 @@ index 1018ab4449f896d565b57ecbdc73b7e3d7fbe486..2f42862b8607fab814ed550b5d1841a5
  		ucidef_set_interfaces_lan_wan "eth1" "eth0"
  		ucidef_add_switch "switch0" \
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index a5ad6ea24cf51e7fb5e49e82856851851c7fdcdb..bfb11c105b1c6be16729145fce5f93e834c6ea8d 100644
+index 336d078f72a06073e3465c36ca98035c7d70282f..01d3b787bedcab82a5797c9a4801e8139887cc2c 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -249,6 +249,7 @@ get_status_led() {
@@ -68,7 +68,7 @@ index a5ad6ea24cf51e7fb5e49e82856851851c7fdcdb..bfb11c105b1c6be16729145fce5f93e8
  	nbg6716)
  		status_led="$board:white:power"
  		;;
-@@ -486,7 +487,8 @@ set_state() {
+@@ -489,7 +490,8 @@ set_state() {
  	done)
  		status_led_on
  		case $(ar71xx_board_name) in
@@ -91,7 +91,7 @@ index 91bdf0d3c591516f58030b165052b3dd2751314f..1626622a8e46484bbf2719f19843e61d
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) +1)
 diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
-index a815ffe07322c20cddaa3c4f97e3bf62a3cf15ec..6071f95fa7a9d74270cc1f07c0729884defced81 100755
+index 21b1c44404d383ef99860caf95a8e19b9cbf5087..35b742a5f1fee0bc24ab2d88e32f118c1df4e2b3 100755
 --- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
 +++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
 @@ -650,6 +650,9 @@ ar71xx_board_detect() {
@@ -117,7 +117,7 @@ index d677599d8c6380d9920e95abc9fb4b92cc0cec29..ba6e08b00d979bc73f7199756e22ca39
  	jwap003 |\
  	pb42 |\
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 491b5d5a98b44844f14441d4024f2ad9667186e0..113af2f1f87e9e8b7cb10ef3c8aa3513d06a7e89 100755
+index 03677ad1240c9a5af341354b95561f9d493a9cd8..236520b27c4d6d0b1b7e483d1100fb5ab156d475 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -253,6 +253,7 @@ platform_check_image() {
@@ -327,7 +327,7 @@ index 0000000000000000000000000000000000000000..9ee6e29c02139b972a83a555fcd69376
 +MIPS_MACHINE(ATH79_MACH_GL_AR750, "GL-AR750", "GL.iNet GL-AR750",
 +	     gl_ar750_setup);
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
-index 07f1877180e27ff189387c5f34a61702d0fa9bd2..a8a8df5e54473ecb827dda2f2c2154b1c056c426 100644
+index 89ddbbc976c9393608a80b9ce56e02a4d403ea2a..11ccdbb5083807ef137b8cd2d110de7a97a34e38 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
 @@ -106,6 +106,7 @@ enum ath79_mach_type {

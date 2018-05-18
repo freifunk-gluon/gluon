@@ -5,7 +5,7 @@ Subject: ar71xx: set status led for the gl-* boards
 Signed-off-by: Wojciech Jowsa <w.jowsa@radytek.com>
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-index e8b13af7c24dea86519c962fa6381fd75971e8b9..5ab407ab0f46d4927dd5c2af545814bf265b84ba 100755
+index 62d7f014be28782b9961551f2377a66ccadfb329..f4d83cee519406a188cc9dde355f509dd644625a 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -311,19 +311,18 @@ fritz4020)
@@ -39,7 +39,7 @@ index e8b13af7c24dea86519c962fa6381fd75971e8b9..5ab407ab0f46d4927dd5c2af545814bf
  gl-domino|\
  wrt160nl)
 diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
-index 382500b75ee6dc1fe1126fb3121f4ae205c901d4..a5ad6ea24cf51e7fb5e49e82856851851c7fdcdb 100644
+index 4d792e773c8efe0cb2e5e328d777db853cdd846b..336d078f72a06073e3465c36ca98035c7d70282f 100644
 --- a/target/linux/ar71xx/base-files/etc/diag.sh
 +++ b/target/linux/ar71xx/base-files/etc/diag.sh
 @@ -64,7 +64,9 @@ get_status_led() {
