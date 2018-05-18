@@ -252,7 +252,7 @@ ar71xx-tiny
   - TL-WA830RE (v1, v2)
   - TL-WA850RE (v1)
   - TL-WA860RE (v1)
-  - TL-WA901N/ND (v1, v2, v3, v4)
+  - TL-WA901N/ND (v1, v2, v3, v4, v5)
   - TL-WA7210N (v2)
   - TL-WA7510N (v1)
   - TL-WR703N (v1)

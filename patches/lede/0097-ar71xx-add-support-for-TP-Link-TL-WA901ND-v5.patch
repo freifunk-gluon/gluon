@@ -1,0 +1,123 @@
+From: Paul Wassi <p.wassi@gmx.at>
+Date: Sun, 22 Oct 2017 22:39:30 +0200
+Subject: ar71xx: add support for TP-Link TL-WA901ND v5
+
+The TL-WA901ND v5 has the same hardware as v4, although the PCB has
+a different layout. Installation from factory is done via TFTP.
+(rename -factory image to wa901ndv4_tp_recovery.bin for tftp)
+
+Signed-off-by: Paul Wassi <p.wassi@gmx.at>
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+index f94cc3c85b798458cc97c06bb0d44bdc426d057d..a742854bc9b0aa48c61b37e58288177bbb56d14d 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+@@ -606,7 +606,8 @@ tl-wa860re|\
+ tl-wa830re-v2|\
+ tl-wa801nd-v2|\
+ tl-wa901nd-v3|\
+-tl-wa901nd-v4)
++tl-wa901nd-v4|\
++tl-wa901nd-v5)
+ 	ucidef_set_led_netdev "lan" "LAN" "tp-link:green:lan" "eth0"
+ 	ucidef_set_led_wlan "wlan" "WLAN" "tp-link:green:wlan" "phy0tpt"
+ 	;;
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
+index c8990c60f504286d0fd28c7b17f54c9c3b5a891e..875a1a38ada9fb66503505d2f094310db1295a07 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/02_network
++++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
+@@ -110,6 +110,7 @@ ar71xx_setup_interfaces()
+ 	tl-wa901nd-v2|\
+ 	tl-wa901nd-v3|\
+ 	tl-wa901nd-v4|\
++	tl-wa901nd-v5|\
+ 	tl-wr703n|\
+ 	tl-wr802n-v1|\
+ 	tube2h|\
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 01d3b787bedcab82a5797c9a4801e8139887cc2c..f8d2eb314f7b57a1134b68c504c0dac202ed947c 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -363,6 +363,7 @@ get_status_led() {
+ 	tl-wa901nd-v2|\
+ 	tl-wa901nd-v3|\
+ 	tl-wa901nd-v4|\
++	tl-wa901nd-v5|\
+ 	tl-wdr3320-v2|\
+ 	tl-wdr3500|\
+ 	tl-wr1041n-v2|\
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 59c1899a588007d6a6a1860fcf95064b0ec35561..b365b6ae4aa6021960499b3889d846b5171eec0f 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -1058,6 +1058,9 @@ ar71xx_board_detect() {
+ 	*"TL-WA901ND v4")
+ 		name="tl-wa901nd-v4"
+ 		;;
++	*"TL-WA901ND v5")
++		name="tl-wa901nd-v5"
++		;;
+ 	*"TL-WDR3320 v2")
+ 		name="tl-wdr3320-v2"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 236520b27c4d6d0b1b7e483d1100fb5ab156d475..0b422d71c2639a31bc7e88a20976266b66ec4490 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -415,6 +415,7 @@ platform_check_image() {
+ 	tl-wa901nd-v2|\
+ 	tl-wa901nd-v3|\
+ 	tl-wa901nd-v4|\
++	tl-wa901nd-v5|\
+ 	tl-wa901nd|\
+ 	tl-wdr3320-v2|\
+ 	tl-wdr3500|\
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa901nd-v4.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa901nd-v4.c
+index 9c651bb1d256bc13a3fe31b664f2cd3590e8092f..ffbcd6fe42df9b7c0dd86ae23a21ab7c90917a8c 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa901nd-v4.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-tl-wa901nd-v4.c
+@@ -1,5 +1,5 @@
+ /*
+- *  TP-LINK TL-WA901ND v4 board
++ *  TP-LINK TL-WA901ND v4, v5 board
+  *
+  *  Copyright (C) 2015 Matthias Schiffer <mschiffer@universe-factory.net>
+  *  Copyright (C) 2016 Tiziano Bacocco <tizbac2@gmail.com>
+@@ -110,3 +110,6 @@ static void __init TL_WA901ND_V4_setup(void)
+ 
+ MIPS_MACHINE(ATH79_MACH_TL_WA901ND_V4, "TL-WA901ND-v4", "TP-LINK TL-WA901ND v4",
+ 	     TL_WA901ND_V4_setup);
++
++MIPS_MACHINE(ATH79_MACH_TL_WA901ND_V5, "TL-WA901ND-v5", "TP-LINK TL-WA901ND v5",
++	     TL_WA901ND_V4_setup);
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index 11ccdbb5083807ef137b8cd2d110de7a97a34e38..a4c7f52fe94e17bc48bebfb460f12f3e5ac35afe 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -213,6 +213,7 @@ enum ath79_mach_type {
+ 	ATH79_MACH_TL_WA901ND_V2,		/* TP-LINK TL-WA901ND v2 */
+ 	ATH79_MACH_TL_WA901ND_V3,		/* TP-LINK TL-WA901ND v3 */
+ 	ATH79_MACH_TL_WA901ND_V4,		/* TP-LINK TL-WA901ND v4 */
++	ATH79_MACH_TL_WA901ND_V5,		/* TP-LINK TL-WA901ND v5 */
+ 	ATH79_MACH_TL_WDR3320_V2,		/* TP-LINK TL-WDR3320 v2 */
+ 	ATH79_MACH_TL_WDR3500,			/* TP-LINK TL-WDR3500 */
+ 	ATH79_MACH_TL_WDR4300,			/* TP-LINK TL-WDR4300 */
+diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
+index 709b1558a5f8487c50e922ec4d27b643f080cbcc..6a3faef518ebfa4f36d3074ee9c102b801e04275 100644
+--- a/target/linux/ar71xx/image/tp-link.mk
++++ b/target/linux/ar71xx/image/tp-link.mk
+@@ -1103,7 +1103,13 @@ define Device/tl-wa901nd-v4
+     IMAGE/factory.bin := append-rootfs | mktplinkfw factory -C EU
+ endef
+ 
+-TARGET_DEVICES += tl-wa901nd-v1 tl-wa901nd-v2 tl-wa901nd-v3 tl-wa901nd-v4
++define Device/tl-wa901nd-v5
++  $(Device/tl-wa901nd-v4)
++  DEVICE_TITLE := TP-LINK TL-WA901N/ND v5
++  BOARDNAME := TL-WA901ND-v5
++  TPLINK_HWID := 0x09010005
++endef
++TARGET_DEVICES += tl-wa901nd-v1 tl-wa901nd-v2 tl-wa901nd-v3 tl-wa901nd-v4 tl-wa901nd-v5
+ 
+ define Device/tl-wa7210n-v2
+     $(Device/tplink-4mlzma)
