@@ -135,6 +135,7 @@ ar71xx-generic
 
   - GL-AR150
   - GL-AR300M
+  - GL-AR750 [#ath10k]_
   - GL-iNet 6408A (v1)
   - GL-iNet 6416A (v1)
 
