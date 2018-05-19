@@ -387,9 +387,6 @@ config_mode \: optional
     and *gluon-config-mode:altitude-help* strings must be provided in the site i18n
     data as well.
 
-    The *owner.optional* option can be set to *false* to make the contact
-    information field mandatory.
-
     The remote login page only shows SSH key configuration by default. A
     password form can be displayed by setting *remote_login.show_password_form*
     to true; in this case, *remote_login.min_password_length* defines the
@@ -402,9 +399,6 @@ config_mode \: optional
           },
           geo_location = {
             show_altitude = true,
-          },
-          owner = {
-            optional = false,
           },
           remote_login = {
             show_password_form = true,
