@@ -16,7 +16,7 @@ if not lockfd:lock('tlock') then
   os.exit(1)
 end
 
--- initialization done
+-- initialisation done
 --
 local function get_mesh_vpn_interface()
   local ret = {}
@@ -42,7 +42,7 @@ local function get_mesh_vpn_interface()
   return ret
 end
 
--- INITIALIZE AND PREPARE DATA --
+-- INITIALISE AND PREPARE DATA --
 -- read hoodfile...
 local jhood = hoodutil.get_domains()
 
@@ -50,11 +50,11 @@ local jhood = hoodutil.get_domains()
 local defaultHood = hoodutil.getDefaultHood(jhood)
 
 -- VPN MODE
--- If we have a VPN connection we will try to get the router's location and
--- select the hood coresponding to our location.
+-- If we have a VPN connection we will try to get the node's location and
+-- select the hood coresponding to this location.
 -- If no hood for the location has been defined, we will select
 -- the default hood.
--- If we can't get our router's location, we will continue to the next mode.
+-- If we can't determine the node's location, we will continue to the next mode.
 if hoodutil.directVPN(get_mesh_vpn_interface()) then
   io.stdout:write('VPN connection found.\n')
   local geo = hoodutil.getGeolocation()
@@ -76,7 +76,7 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
     os.exit(0)
   else
     -- The hoodselector should continue with the next states because there can be other
-    -- VPN routers in the local mesh network which provide a position and therefore
+    -- VPN nodes in the local mesh network which provide a position and therefore
     -- have set a geo base hood.
     io.stdout:write('No position found\n')
   end

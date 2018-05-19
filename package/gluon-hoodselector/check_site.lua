@@ -26,7 +26,7 @@ if this_domain() ~= need_string(in_site({'default_domain'})) then
       end
     end
     if #shape < 2 then
-      need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "needs to have at least 2 coordiantes for rectangular shapes.")
+      need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "needs to have at least 2 coordinates for rectangular shapes.")
     end
   end
   if no_shapes then
