@@ -1,27 +1,19 @@
 #!/usr/bin/lua
 
--- PID file to ensure the hoodselector isn't running parallel
-local pidPath="/var/run/hoodselector.pid"
-
+local nixio = require('nixio')
 local uci = require('simple-uci').cursor()
 local hoodutil = require("hoodselector.util")
 
-if io.open(pidPath, "r") ~=nil then
-  hoodutil.log("The hoodselector is still running.")
-  os.exit(1)
-else
-  if io.open(pidPath, "w") ==nil then
-    hoodutil.log("Can`t create pid file on "..pidPath)
-    os.exit(1)
-  end
-end
+-- PID file to ensure the hoodselector isn't running parallel
+local lockfile = '/var/lock/hoodselector.lock'
+local lockfd = nixio.open(lockfile, 'w', 'rw-------')
 
--- Program terminating function including removing of PID file
-local function exit(exc)
-  if io.open(pidPath, "r") ~=nil then
-    os.remove(pidPath)
-  end
-  os.exit(tonumber(exc))
+if not lockfd:lock('tlock') then
+  io.stderr:write(string.format(
+    "Unable to lock file %s. Make sure there is no other instance of the hoodselector running.\n",
+    lockfile
+  ))
+  os.exit(1)
 end
 
 -- initialization done
@@ -35,7 +27,7 @@ local function get_mesh_vpn_interface()
       table.insert(ret,vpnifac)
     else
       hoodutil.log("fastd uci config broken! abort...")
-      exit(1)
+      os.exit(1)
     end
   end
   if hoodutil.tunneldigger_installed() then
@@ -44,7 +36,7 @@ local function get_mesh_vpn_interface()
       table.insert(ret,vpnifac)
     else
       hoodutil.log("tunneldigger uci config broken! abort...")
-      exit(1)
+      os.exit(1)
     end
   end
   return ret
@@ -54,11 +46,11 @@ end
 -- read hoodfile...
 local jhood = hoodutil.get_domains()
 
--- get defaul hood
+-- get default hood
 local defaultHood = hoodutil.getDefaultHood(jhood)
 
 -- VPN MODE
--- If we have a VPN connection then we will try to get the routers location and
+-- If we have a VPN connection we will try to get the router's location and
 -- select the hood coresponding to our location.
 -- If no hood for the location has been defined, we will select
 -- the default hood.
@@ -74,14 +66,14 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
         hoodutil.restart_services() -- temporary solution
         io.stdout:write('Hood set by VPN mode.\n')
       end
-      exit(0)
+      os.exit(0)
     end
     io.stdout:write('No hood has been defined for the current position.\n')
     if hoodutil.set_hoodconfig(defaultHood) then
       hoodutil.restart_services() -- TMP solution
       io.stdout:write('Hood set by VPN mode.\n')
     end
-    exit(0)
+    os.exit(0)
   else
     -- The hoodselector should continue with the next states because there can be other
     -- VPN routers in the local mesh network which provide a position and therefore
@@ -92,4 +84,4 @@ else
   io.stdout:write('No VPN connection found\n')
 end
 
-exit(0)
+os.exit(0)

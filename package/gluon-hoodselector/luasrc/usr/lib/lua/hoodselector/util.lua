@@ -161,7 +161,7 @@ function M.set_hoodconfig(geoHood)
   if uci:get('gluon', 'core', 'domain') ~= geoHood.domain_code then
     uci:set('gluon', 'core', 'domain', geoHood.domain_code)
     uci:save('gluon')
-    uci:commit('gluon') -- necessary?
+    uci:commit('gluon')
     os.execute('gluon-reconfigure')
     io.stdout:write("Set hood \""..geoHood.domain.domain_names[geoHood.domain_code].."\"\n")
     return true
