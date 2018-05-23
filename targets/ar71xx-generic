@@ -16,6 +16,9 @@ factory
 
 # ALFA NETWORK
 
+device alfa-network-ap121f ap121f ap121f
+factory
+
 device alfa-network-hornet-ub hornet-ub HORNETUB
 alias alfa-network-ap121
 alias alfa-network-ap121u
