@@ -112,6 +112,7 @@ ar71xx-generic
 * ALFA Network
 
   - AP121
+  - AP121F
   - AP121U
   - Hornet-UB
   - Tube2H
