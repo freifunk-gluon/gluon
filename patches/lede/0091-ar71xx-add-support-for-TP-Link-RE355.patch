@@ -1,0 +1,338 @@
+From: Henryk Heisig <hyniu@o2.pl>
+Date: Tue, 6 Feb 2018 22:08:28 +0100
+Subject: ar71xx: add support for TP-Link RE355
+
+This device is identical as TP-Link RE450
+RE355 is a dual-band AC1200 router, based on Qualcomm/Atheros
+QCA9558+QCA9880.
+
+Specification:
+
+720/600/200 MHz (CPU/DDR/AHB)
+64/128 MB of RAM (DDR2)
+8 MB of FLASH (SPI NOR)
+3T3R 2.4 GHz
+3T3R 5 GHz
+1x 10/100/1000 Mbps Ethernet
+7x LED, 3x button
+UART header on PCB
+
+Flash instruction:
+Web:
+Download lede-ar71xx-generic-archer-c60-v2-squashfs-factory.bin
+and use OEM System Tools - Firmware Upgrade site.
+
+Signed-off-by: Henryk Heisig <hyniu@o2.pl>
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+index f94cc3c85b798458cc97c06bb0d44bdc426d057d..5c3f37dbaf444eeeda97f065482149eab221c6f3 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+@@ -482,6 +482,7 @@ omy-x1)
+ qihoo-c301)
+ 	ucidef_set_led_wlan "wlan2g" "WLAN2G" "qihoo:red:status" "phy1tpt"
+ 	;;
++re355|\
+ re450)
+ 	ucidef_set_led_netdev "lan_data" "LAN Data" "$board:green:lan_data" "eth0" "tx rx"
+ 	ucidef_set_led_netdev "lan_link" "LAN Link" "$board:green:lan_link" "eth0" "link"
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
+index c8990c60f504286d0fd28c7b17f54c9c3b5a891e..c9117db31fe0cddd0183c0263352f0ad15ffd5fe 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/02_network
++++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
+@@ -91,6 +91,7 @@ ar71xx_setup_interfaces()
+ 	rb-912uag-5hpnd|\
+ 	rb-sxt2n|\
+ 	rb-sxt5n|\
++	re355|\
+ 	re450|\
+ 	rocket-m-xw|\
+ 	tl-mr10u|\
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index 01d3b787bedcab82a5797c9a4801e8139887cc2c..401d978e2c4a8e84a6566f299e0f5d07c35bc3f4 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -314,6 +314,7 @@ get_status_led() {
+ 	rb-sxt5n)
+ 		status_led="rb:green:power"
+ 		;;
++	re355|\
+ 	re450)
+ 		status_led="$board:blue:power"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 1626622a8e46484bbf2719f19843e61d9cc92506..1a1d35ec6f9dc50f77bdd58a212c032767a2e91e 100644
+--- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -92,6 +92,7 @@ case "$FIRMWARE" in
+ 		ath10kcal_extract "caldata" 20480 2116
+ 		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) +2)
+ 		;;
++	re355|\
+ 	re450)
+ 		ath10kcal_extract "art" 20480 2116
+ 		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) -2)
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 59c1899a588007d6a6a1860fcf95064b0ec35561..7e95f14f08c807ad733c8f86d7ce40e58e5be3a2 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -838,6 +838,9 @@ ar71xx_board_detect() {
+ 	*"Qihoo 360 C301")
+ 		name="qihoo-c301"
+ 		;;
++	*"RE355")
++		name="re355"
++		;;
+ 	*"RE450")
+ 		name="re450"
+ 		;;
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index 236520b27c4d6d0b1b7e483d1100fb5ab156d475..a715cdb302e33cc680ca389c9496c5678379ec15 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -388,6 +388,7 @@ platform_check_image() {
+ 	omy-x1|\
+ 	onion-omega|\
+ 	oolite|\
++	re355|\
+ 	re450|\
+ 	smart-300|\
+ 	som9331|\
+diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
+index d96642b97c36187febb1f3843e7dd9acfab0e40d..5219b89a27616ab7d55dbd8e5d1161e464f89257 100644
+--- a/target/linux/ar71xx/config-4.4
++++ b/target/linux/ar71xx/config-4.4
+@@ -154,6 +154,7 @@ CONFIG_ATH79_MACH_R6100=y
+ # CONFIG_ATH79_MACH_RB941 is not set
+ # CONFIG_ATH79_MACH_RB95X is not set
+ # CONFIG_ATH79_MACH_RBSXTLITE is not set
++CONFIG_ATH79_MACH_RE355=y
+ CONFIG_ATH79_MACH_RE450=y
+ CONFIG_ATH79_MACH_RW2458N=y
+ CONFIG_ATH79_MACH_SMART_300=y
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+index 2449a8d6bce17f0a703d8fc4f82dd38e1f861ae3..e596a8969695193b48a23125a468fe11fba28584 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+@@ -1146,6 +1146,16 @@ config ATH79_MACH_MZK_W300NH
+ 	select ATH79_DEV_M25P80
+ 	select ATH79_DEV_WMAC
+ 
++config ATH79_MACH_RE355
++	bool "TP-LINK RE355 board support"
++	select SOC_QCA955X
++	select ATH79_DEV_AP9X_PCI if PCI
++	select ATH79_DEV_ETH
++	select ATH79_DEV_GPIO_BUTTONS
++	select ATH79_DEV_LEDS_GPIO
++	select ATH79_DEV_M25P80
++	select ATH79_DEV_WMAC
++
+ config ATH79_MACH_RE450
+ 	bool "TP-LINK RE450 board support"
+ 	select SOC_QCA955X
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Makefile b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
+index 98281db31a05713168713f3e0fd62f736a2e7614..c397e32088d8c880f57576fee0775745c38c710d 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Makefile
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Makefile
+@@ -159,6 +159,7 @@ obj-$(CONFIG_ATH79_MACH_RB922)			+= mach-rb922.o
+ obj-$(CONFIG_ATH79_MACH_RB941)			+= mach-rb941.o
+ obj-$(CONFIG_ATH79_MACH_RB95X)			+= mach-rb95x.o
+ obj-$(CONFIG_ATH79_MACH_RBSXTLITE)		+= mach-rbsxtlite.o
++obj-$(CONFIG_ATH79_MACH_RE355)			+= mach-re450.o
+ obj-$(CONFIG_ATH79_MACH_RE450)			+= mach-re450.o
+ obj-$(CONFIG_ATH79_MACH_RW2458N)		+= mach-rw2458n.o
+ obj-$(CONFIG_ATH79_MACH_SMART_300)		+= mach-smart-300.o
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-re450.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-re450.c
+index 25de6e729fe61d42b40d8ed8bdc0f5952c51ce21..991aa1c9a92ca4876190df8532a37f072b4ac846 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-re450.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-re450.c
+@@ -1,9 +1,10 @@
+ /*
+- * TP-LINK Archer RE450 board support
++ * TP-LINK RE355/RE450 board support
+  *
+  * Copyright (c) 2013 Gabor Juhos <juhosg@openwrt.org>
+  * Copyright (c) 2016 Tal Keren <kooolk@gmail.com>
+- *
++ * Copyright (c) 2018 Henryk Heisig <hyniu@o2.pl>
++ * 
+  * Based on the Qualcomm Atheros AP135/AP136 reference board support code
+  *   Copyright (c) 2012 Qualcomm Atheros
+  *
+@@ -72,6 +73,42 @@ static struct flash_platform_data tl_re450_flash_data = {
+ 	.part_probes	= tl_re450_part_probes,
+ };
+ 
++static struct gpio_led re355_leds_gpio[] __initdata = {
++	{
++		.name		= "re355:blue:power",
++		.gpio		= RE450_GPIO_LED_SYSTEM,
++		.active_low	= 1,
++	},
++	{
++		.name		= "re355:blue:wlan2g",
++		.gpio		= RE450_GPIO_LED_WLAN2G,
++		.active_low	= 1,
++	},
++	{
++		.name		= "re355:blue:wlan5g",
++		.gpio		= RE450_GPIO_LED_WLAN5G,
++		.active_low	= 1,
++	},
++	{
++		.name		= "re355:blue:wps",
++		.gpio		= RE450_GPIO_LED_JUMPSTART,
++	},
++	{
++		.name		= "re355:red:wps",
++		.gpio		= RE450_GPIO_LED_JUMPSTART_RED,
++	},
++	{
++		.name		= "re355:green:lan_data",
++		.gpio		= RE450_GPIO_LED_LAN_DATA,
++		.active_low	= 1,
++	},
++	{
++		.name		= "re355:green:lan_link",
++		.gpio		= RE450_GPIO_LED_LAN_LINK,
++		.active_low	= 1,
++	},
++};
++
+ static struct gpio_led re450_leds_gpio[] __initdata = {
+ 	{
+ 		.name		= "re450:blue:power",
+@@ -149,15 +186,13 @@ static struct platform_device re450_phy_device = {
+ 	},
+ };
+ 
+-static void __init re450_setup(void)
++static void __init rex5x_setup(void)
+ {
+ 	u8 *mac = (u8 *) KSEG1ADDR(0x1f610008);
+ 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
+ 	u8 tmpmac[ETH_ALEN];
+ 
+ 	ath79_register_m25p80(&tl_re450_flash_data);
+-	ath79_register_leds_gpio(-1, ARRAY_SIZE(re450_leds_gpio),
+-				 re450_leds_gpio);
+ 	ath79_register_gpio_keys_polled(-1, RE450_KEYS_POLL_INTERVAL,
+ 					ARRAY_SIZE(re450_gpio_keys),
+ 					re450_gpio_keys);
+@@ -183,5 +218,22 @@ static void __init re450_setup(void)
+ 	ath79_register_eth(0);
+ }
+ 
++static void __init re355_setup(void)
++{
++	rex5x_setup();
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(re355_leds_gpio),
++				 re355_leds_gpio);
++}
++
++MIPS_MACHINE(ATH79_MACH_RE355, "RE355", "TP-LINK RE355",
++	     re355_setup)
++
++static void __init re450_setup(void)
++{
++	rex5x_setup();
++	ath79_register_leds_gpio(-1, ARRAY_SIZE(re450_leds_gpio),
++				 re450_leds_gpio);
++}
++
+ MIPS_MACHINE(ATH79_MACH_RE450, "RE450", "TP-LINK RE450",
+ 	     re450_setup)
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index 11ccdbb5083807ef137b8cd2d110de7a97a34e38..1632dd01f8a68989d3d819d3590852053b2b55be 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -179,6 +179,7 @@ enum ath79_mach_type {
+ 	ATH79_MACH_RB_951U,			/* Mikrotik RouterBOARD 951Ui-2HnD */
+ 	ATH79_MACH_RB_SXTLITE2ND,		/* Mikrotik RouterBOARD SXT Lite 2nD */
+ 	ATH79_MACH_RB_SXTLITE5ND,		/* Mikrotik RouterBOARD SXT Lite 5nD */
++	ATH79_MACH_RE355,			/* TP-LINK RE355 */
+ 	ATH79_MACH_RE450,			/* TP-LINK RE450 */
+ 	ATH79_MACH_RW2458N,			/* Redwave RW2458N */
+ 	ATH79_MACH_SMART_300,			/* NC-LINK SMART-300 */
+diff --git a/target/linux/ar71xx/image/tp-link.mk b/target/linux/ar71xx/image/tp-link.mk
+index 1e40d943ac2aa43aea670fd86268708aea39a46c..2929754ed5ce1d1556ae4cdf8d6b127669f36d0b 100644
+--- a/target/linux/ar71xx/image/tp-link.mk
++++ b/target/linux/ar71xx/image/tp-link.mk
+@@ -204,6 +204,22 @@ $(Device/cpe510-520)
+ endef
+ TARGET_DEVICES += cpe210-220 cpe510-520 wbs210 wbs510
+ 
++define Device/re355-v1
++  DEVICE_TITLE := TP-LINK RE355 v1
++  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x
++  MTDPARTS := spi0.0:128k(u-boot)ro,6016k(firmware),64k(partition-table)ro,64k(product-info)ro,1856k(config)ro,64k(art)ro
++  IMAGE_SIZE := 7936k
++  BOARDNAME := RE355
++  TPLINK_BOARD_NAME := RE355
++  DEVICE_PROFILE := RE355
++  LOADER_TYPE := elf
++  KERNEL := kernel-bin | patch-cmdline | lzma | mktplinkfw-kernel
++  IMAGES := sysupgrade.bin factory.bin
++  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
++  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
++endef
++TARGET_DEVICES += re355-v1
++
+ define Device/re450
+   DEVICE_TITLE := TP-LINK RE450
+   DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca988x
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index 23b69f3bd0eb66aca650eb2ffd7d5cd2a7cb5194..204324f4f9b21e1e472e92cdb8d8fef3964be209 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -665,6 +665,49 @@ static struct device_info boards[] = {
+ 		.last_sysupgrade_partition = "file-system"
+ 	},
+ 
++	/** Firmware layout for the RE355 */
++	{
++		.id = "RE355",
++		.vendor = "",
++		.support_list =
++			"SupportList:\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:00000000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:55530000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:45550000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:4A500000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:43410000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:41550000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:4B520000}\r\n"
++			"{product_name:RE355,product_ver:1.0.0,special_id:55534100}\r\n",
++		.support_trail = '\x00',
++		.soft_ver = NULL,
++
++		/**
++		   The flash partition table for RE355;
++		   it is almost the same as the one used by the stock images,
++		   576KB were moved from file-system to os-image.
++		*/
++		.partitions = {
++			{"fs-uboot", 0x00000, 0x20000},
++			{"os-image", 0x20000, 0x180000},
++			{"file-system", 0x1a0000, 0x460000},
++			{"partition-table", 0x600000, 0x02000},
++			{"default-mac", 0x610000, 0x00020},
++			{"pin", 0x610100, 0x00020},
++			{"product-info", 0x611100, 0x01000},
++			{"soft-version", 0x620000, 0x01000},
++			{"support-list", 0x621000, 0x01000},
++			{"profile", 0x622000, 0x08000},
++			{"user-config", 0x630000, 0x10000},
++			{"default-config", 0x640000, 0x10000},
++			{"radio", 0x7f0000, 0x10000},
++			{NULL, 0, 0}
++		},
++
++		.first_sysupgrade_partition = "os-image",
++		.last_sysupgrade_partition = "file-system"
++	},
++
+ 	/** Firmware layout for the RE450 */
+ 	{
+ 		.id = "RE450",

@@ -211,6 +211,11 @@ if [ "$BROKEN" ]; then
 device tp-link-archer-c60-v1 archer-c60-v1 # BROKEN: OOM with 5GHz enabled in most environments
 fi
 
+if [ "$BROKEN" ]; then
+device tp-link-re355 re355-v1 # BROKEN: OOM with 5GHz enabled in most environments on 64MB RAM devices
+packages $ATH10K_PACKAGES
+fi
+
 device tp-link-re450 re450
 packages $ATH10K_PACKAGES
 
