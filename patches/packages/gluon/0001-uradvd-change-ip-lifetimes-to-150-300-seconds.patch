@@ -1,0 +1,27 @@
+From: lemoer <git@irrelefant.net>
+Date: Thu, 31 May 2018 23:51:30 +0200
+Subject: uradvd: change ip lifetimes to 150/300 seconds
+
+diff --git a/net/uradvd/src/uradvd.c b/net/uradvd/src/uradvd.c
+index f6549f249518714e3d9210708b54cc23d85b26df..8ca6cfa8f78b85f05cf64943bd1d28dbfc0c5e82 100644
+--- a/net/uradvd/src/uradvd.c
++++ b/net/uradvd/src/uradvd.c
+@@ -61,14 +61,14 @@
+ #define MAX_RDNSS 3
+ 
+ /* These are in seconds */
+-#define AdvValidLifetime 86400u
+-#define AdvPreferredLifetime 14400u
++#define AdvValidLifetime 300u
++#define AdvPreferredLifetime 150u
+ #define AdvDefaultLifetime 0u
+ #define AdvCurHopLimit 64u
+ #define AdvRDNSSLifetime 1200u
+ 
+-#define MinRtrAdvInterval 200u
+-#define MaxRtrAdvInterval 600u
++#define MinRtrAdvInterval 75u
++#define MaxRtrAdvInterval 150u
+ 
+ /* And these in milliseconds */
+ #define MAX_RA_DELAY_TIME 500u
