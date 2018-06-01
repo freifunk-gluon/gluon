@@ -7,7 +7,7 @@ return function(form, uci)
 
 	local s = form:section(Section, nil, translate("gluon-config-mode:contact-help"))
 
-	local o = s:option(Value, "contact", pkg_i18n.translate("Contact info"), pkg_i18n.translate("e.g. E-mail or phone number"))
+	local o = s:option(Value, "contact", pkg_i18n.translate("Contact info"), translate("gluon-config-mode:contact-note"))
 	o.default = uci:get("gluon-node-info", owner, "contact")
 	o.optional = true
 	function o:write(data)
