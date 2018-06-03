@@ -30,6 +30,12 @@ factory .img
 packages $ATH10K_PACKAGES_IPQ40XX
 
 
+# OpenMesh
+
+device openmesh-a42 openmesh_a42
+packages $ATH10K_PACKAGES_IPQ40XX
+
+
 # ZyXEL
 
 device zyxel-wre6606 zyxel_wre6606
