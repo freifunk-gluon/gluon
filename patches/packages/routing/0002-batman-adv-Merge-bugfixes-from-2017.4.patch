@@ -1,0 +1,209 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Tue, 26 Dec 2017 13:07:40 +0100
+Subject: batman-adv: Merge bugfixes from 2017.4
+
+* Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
+* Fix check of retrieved orig_gw in batadv_v_gw_is_eligible
+* Always initialize fragment header priority
+* Avoid spurious warnings from bat_v neigh_cmp implementation
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+
+Origin: backport, https://github.com/openwrt-routing/packages/commit/285c803c0a39d05d9a5906ba844981a10647b088
+
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index d51bc65bbdc9d1511d4f0bbc9d3a8a13ebc34201..d3d68160662894887eb9fa43c78fdd7479764b7c 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=batman-adv
+ 
+ PKG_VERSION:=2017.2
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ PKG_MD5SUM:=937b5f1d0188e3522d67ad45ee0a4f5a
+ PKG_HASH:=d487974e21cb53d39f139e93a2cf297807df5b7bf63ba6d810bad6d91537394f
+ 
+diff --git a/batman-adv/patches/0002-batman-adv-Avoid-spurious-warnings-from-bat_v-neigh_.patch b/batman-adv/patches/0002-batman-adv-Avoid-spurious-warnings-from-bat_v-neigh_.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3ccb9493ee82cb3ab8433d0d88b3871fad227061
+--- /dev/null
++++ b/batman-adv/patches/0002-batman-adv-Avoid-spurious-warnings-from-bat_v-neigh_.patch
+@@ -0,0 +1,56 @@
++From: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Date: Mon, 16 Oct 2017 09:48:03 +0200
++Subject: [PATCH] batman-adv: Avoid spurious warnings from bat_v neigh_cmp implementation
++
++The neighbor compare API implementation for B.A.T.M.A.N. V checks whether
++the neigh_ifinfo for this neighbor on a specific interface exists. A
++warning is printed when it isn't found.
++
++But it is not called inside a lock which would prevent that this
++information is lost right before batadv_neigh_ifinfo_get. It must therefore
++be expected that batadv_v_neigh_(cmp|is_sob) might not be able to get the
++requested neigh_ifinfo.
++
++A WARN_ON for such a situation seems not to be appropriate because this
++will only flood the kernel logs. The warnings must therefore be removed.
++
++Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Acked-by: Antonio Quartulli <a@unstable.cc>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/0dee8aba4702f82197ed3428ede6b3884fdff5ca
++---
++ net/batman-adv/bat_v.c | 8 ++++----
++ 1 file changed, 4 insertions(+), 4 deletions(-)
++
++diff --git a/net/batman-adv/bat_v.c b/net/batman-adv/bat_v.c
++index 4e2724c5b33d8bda27339ffe65fc7d76f91fd119..1a46382a6008d5b6ba4f2c71aa07df761d544457 100644
++--- a/net/batman-adv/bat_v.c
+++++ b/net/batman-adv/bat_v.c
++@@ -623,11 +623,11 @@ static int batadv_v_neigh_cmp(struct batadv_neigh_node *neigh1,
++ 	int ret = 0;
++ 
++ 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
++-	if (WARN_ON(!ifinfo1))
+++	if (!ifinfo1)
++ 		goto err_ifinfo1;
++ 
++ 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
++-	if (WARN_ON(!ifinfo2))
+++	if (!ifinfo2)
++ 		goto err_ifinfo2;
++ 
++ 	ret = ifinfo1->bat_v.throughput - ifinfo2->bat_v.throughput;
++@@ -649,11 +649,11 @@ static bool batadv_v_neigh_is_sob(struct batadv_neigh_node *neigh1,
++ 	bool ret = false;
++ 
++ 	ifinfo1 = batadv_neigh_ifinfo_get(neigh1, if_outgoing1);
++-	if (WARN_ON(!ifinfo1))
+++	if (!ifinfo1)
++ 		goto err_ifinfo1;
++ 
++ 	ifinfo2 = batadv_neigh_ifinfo_get(neigh2, if_outgoing2);
++-	if (WARN_ON(!ifinfo2))
+++	if (!ifinfo2)
++ 		goto err_ifinfo2;
++ 
++ 	threshold = ifinfo1->bat_v.throughput / 4;
+diff --git a/batman-adv/patches/0003-batman-adv-Always-initialize-fragment-header-priorit.patch b/batman-adv/patches/0003-batman-adv-Always-initialize-fragment-header-priorit.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0d30dbc520ba73bd6cb86ecbba02d8a5a96f0745
+--- /dev/null
++++ b/batman-adv/patches/0003-batman-adv-Always-initialize-fragment-header-priorit.patch
+@@ -0,0 +1,30 @@
++From: Sven Eckelmann <sven.eckelmann@open-mesh.com>
++Date: Wed, 29 Nov 2017 10:25:02 +0100
++Subject: [PATCH] batman-adv: Always initialize fragment header priority
++
++The batman-adv unuicast fragment header contains 3 bits for the priority of
++the packet. These bits will be initialized when the skb->priority contains
++a value between 256 and 263. But otherwise, the uninitialized bits from the
++stack will be used.
++
++Fixes: 4f241fcea704 ("batman-adv: Include frame priority in fragment header")
++Signed-off-by: Sven Eckelmann <sven.eckelmann@open-mesh.com>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/e45a75c82feae23a20d2744ccfde03780ccdafc7
++---
++ net/batman-adv/fragmentation.c | 2 ++
++ 1 file changed, 2 insertions(+)
++
++diff --git a/net/batman-adv/fragmentation.c b/net/batman-adv/fragmentation.c
++index a98cf1104a30a30e66fb6018bef59dea83dc4b7a..ebe6e38934e46ed5de4d30204e791dbe40285fcc 100644
++--- a/net/batman-adv/fragmentation.c
+++++ b/net/batman-adv/fragmentation.c
++@@ -499,6 +499,8 @@ int batadv_frag_send_packet(struct sk_buff *skb,
++ 	 */
++ 	if (skb->priority >= 256 && skb->priority <= 263)
++ 		frag_header.priority = skb->priority - 256;
+++	else
+++		frag_header.priority = 0;
++ 
++ 	ether_addr_copy(frag_header.orig, primary_if->net_dev->dev_addr);
++ 	ether_addr_copy(frag_header.dest, orig_node->orig);
+diff --git a/batman-adv/patches/0004-batman-adv-Fix-check-of-retrieved-orig_gw-in-batadv_.patch b/batman-adv/patches/0004-batman-adv-Fix-check-of-retrieved-orig_gw-in-batadv_.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..05b0f91d039b634f80022367b85674e168de8056
+--- /dev/null
++++ b/batman-adv/patches/0004-batman-adv-Fix-check-of-retrieved-orig_gw-in-batadv_.patch
+@@ -0,0 +1,31 @@
++From: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Date: Wed, 29 Nov 2017 10:50:42 +0100
++Subject: [PATCH] batman-adv: Fix check of retrieved orig_gw in batadv_v_gw_is_eligible
++
++The batadv_v_gw_is_eligible function already assumes that orig_node is not
++NULL. But batadv_gw_node_get may have failed to find the originator. It
++must therefore be checked whether the batadv_gw_node_get failed and not
++whether orig_node is NULL to detect this error.
++
++Fixes: 80b2d47be2c7 ("batman-adv: B.A.T.M.A.N. V - implement GW selection logic")
++Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Acked-by: Antonio Quartulli <a@unstable.cc>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/c7380677d6167f3798d3ea7a4f1a93663f3c7915
++---
++ net/batman-adv/bat_v.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/bat_v.c b/net/batman-adv/bat_v.c
++index 1a46382a6008d5b6ba4f2c71aa07df761d544457..cb227bcdc35c3a48b3fd85cd2749730bf857c704 100644
++--- a/net/batman-adv/bat_v.c
+++++ b/net/batman-adv/bat_v.c
++@@ -815,7 +815,7 @@ static bool batadv_v_gw_is_eligible(struct batadv_priv *bat_priv,
++ 	}
++ 
++ 	orig_gw = batadv_gw_node_get(bat_priv, orig_node);
++-	if (!orig_node)
+++	if (!orig_gw)
++ 		goto out;
++ 
++ 	if (batadv_v_gw_throughput_get(orig_gw, &orig_throughput) < 0)
+diff --git a/batman-adv/patches/0005-batman-adv-Fix-lock-for-ogm-cnt-access-in-batadv_iv_.patch b/batman-adv/patches/0005-batman-adv-Fix-lock-for-ogm-cnt-access-in-batadv_iv_.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4685faf23dd4e0fd4a7f46745f3f2f4ec82bffa
+--- /dev/null
++++ b/batman-adv/patches/0005-batman-adv-Fix-lock-for-ogm-cnt-access-in-batadv_iv_.patch
+@@ -0,0 +1,42 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Sun, 3 Dec 2017 11:26:45 +0100
++Subject: [PATCH] batman-adv: Fix lock for ogm cnt access in batadv_iv_ogm_calc_tq
++
++The originator node object orig_neigh_node is used to when accessing the
++bcast_own(_sum) and real_packet_count information. The access to them has
++to be protected with the spinlock in orig_neigh_node.
++
++But the function uses the lock in orig_node instead. This is incorrect
++because they could be two different originator node objects.
++
++Fixes: f14416760b62 ("batman-adv: protect bit operations to count OGMs with spinlock")
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/9a3b195410e5d2f285cdf0073fef721ff8d9474d
++---
++ net/batman-adv/bat_iv_ogm.c | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
++index 8769fa1b17c8486e68041ee15fae08178b75567f..0f9749c780056df271c1b1167299de75dbdbd770 100644
++--- a/net/batman-adv/bat_iv_ogm.c
+++++ b/net/batman-adv/bat_iv_ogm.c
++@@ -1214,7 +1214,7 @@ static bool batadv_iv_ogm_calc_tq(struct batadv_orig_node *orig_node,
++ 	orig_node->last_seen = jiffies;
++ 
++ 	/* find packet count of corresponding one hop neighbor */
++-	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
+++	spin_lock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
++ 	if_num = if_incoming->if_num;
++ 	orig_eq_count = orig_neigh_node->bat_iv.bcast_own_sum[if_num];
++ 	neigh_ifinfo = batadv_neigh_ifinfo_new(neigh_node, if_outgoing);
++@@ -1224,7 +1224,7 @@ static bool batadv_iv_ogm_calc_tq(struct batadv_orig_node *orig_node,
++ 	} else {
++ 		neigh_rq_count = 0;
++ 	}
++-	spin_unlock_bh(&orig_node->bat_iv.ogm_cnt_lock);
+++	spin_unlock_bh(&orig_neigh_node->bat_iv.ogm_cnt_lock);
++ 
++ 	/* pay attention to not get a value bigger than 100 % */
++ 	if (orig_eq_count > neigh_rq_count)

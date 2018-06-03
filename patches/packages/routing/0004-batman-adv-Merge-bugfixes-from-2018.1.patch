@@ -1,0 +1,456 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Wed, 25 Apr 2018 20:29:31 +0200
+Subject: batman-adv: Merge bugfixes from 2018.1
+
+* Fix skbuff rcsum on packet reroute
+* update data pointers after skb_cow()
+* fix header size check in batadv_dbg_arp()
+* Fix multicast packet loss with a single WANT_ALL_IPV4/6 flag
+* fix multicast-via-unicast transmission with AP isolation
+* fix packet loss for broadcasted DHCP packets to a server
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+
+Origin: backport, https://github.com/openwrt-routing/packages/commit/9b777e6b13a3f85ad0b6d2c872871b611ac5bf4f
+
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index 3765c0273e7fc3923a6234514e0478f80277d2e5..8904a0cb1a430126c524b608f5d6a1466a07c04a 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=batman-adv
+ 
+ PKG_VERSION:=2017.2
+-PKG_RELEASE:=3
++PKG_RELEASE:=4
+ PKG_MD5SUM:=937b5f1d0188e3522d67ad45ee0a4f5a
+ PKG_HASH:=d487974e21cb53d39f139e93a2cf297807df5b7bf63ba6d810bad6d91537394f
+ 
+diff --git a/batman-adv/patches/0013-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch b/batman-adv/patches/0013-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..4b28914e332622b46582a3143f251c6054db2f24
+--- /dev/null
++++ b/batman-adv/patches/0013-batman-adv-Fix-multicast-packet-loss-with-a-single-W.patch
+@@ -0,0 +1,38 @@
++From: Linus Lüssing <linus.luessing@c0d3.blue>
++Date: Sun, 4 Mar 2018 13:08:17 +0100
++Subject: [PATCH] batman-adv: Fix multicast packet loss with a single WANT_ALL_IPV4/6 flag
++
++As the kernel doc describes too the code is supposed to skip adding
++multicast TT entries if both the WANT_ALL_IPV4 and WANT_ALL_IPV6 flags
++are present.
++
++Unfortunately, the current code even skips adding multicast TT entries
++if only either the WANT_ALL_IPV4 or WANT_ALL_IPV6 is present.
++
++This could lead to IPv6 multicast packet loss if only an IGMP but not an
++MLD querier is present for instance or vice versa.
++
++Fixes: 391b59cdb111 ("batman-adv: Add multicast optimization support for bridged setups")
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/edba00d56efb1d55cdd40957e010fba80580b5e2
++---
++ net/batman-adv/multicast.c | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/net/batman-adv/multicast.c b/net/batman-adv/multicast.c
++index d327670641ac336a14f0ecc85dd848d4952e8e6e..df9e114d92d01ffe7fc3cf39a47e27074a85d189 100644
++--- a/net/batman-adv/multicast.c
+++++ b/net/batman-adv/multicast.c
++@@ -540,8 +540,8 @@ static bool batadv_mcast_mla_tvlv_update(struct batadv_priv *bat_priv)
++ 		bat_priv->mcast.enabled = true;
++ 	}
++ 
++-	return !(mcast_data.flags &
++-		 (BATADV_MCAST_WANT_ALL_IPV4 | BATADV_MCAST_WANT_ALL_IPV6));
+++	return !(mcast_data.flags & BATADV_MCAST_WANT_ALL_IPV4 &&
+++		 mcast_data.flags & BATADV_MCAST_WANT_ALL_IPV6);
++ }
++ 
++ /**
+diff --git a/batman-adv/patches/0014-batman-adv-update-data-pointers-after-skb_cow.patch b/batman-adv/patches/0014-batman-adv-update-data-pointers-after-skb_cow.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..993a27d95e57c602409f63e27c6afc46a248675b
+--- /dev/null
++++ b/batman-adv/patches/0014-batman-adv-update-data-pointers-after-skb_cow.patch
+@@ -0,0 +1,61 @@
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Fri, 16 Mar 2018 11:29:09 +0100
++Subject: [PATCH] batman-adv: update data pointers after skb_cow()
++
++batadv_check_unicast_ttvn() calls skb_cow(), so pointers into the SKB data
++must be (re)set after calling it. The ethhdr variable is dropped
++altogether.
++
++Fixes: 78fc6bbe0aca ("batman-adv: add UNICAST_4ADDR packet type")
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/64d22c76a207ed313b2496f0709b2567719452c4
++---
++ net/batman-adv/routing.c | 10 +++++-----
++ 1 file changed, 5 insertions(+), 5 deletions(-)
++
++diff --git a/net/batman-adv/routing.c b/net/batman-adv/routing.c
++index f10e3ff26f9dc8f565ecab012aaeb2b69d80d6ca..7740e08f7aa0e26ebc951b65b8d60049fc2ba658 100644
++--- a/net/batman-adv/routing.c
+++++ b/net/batman-adv/routing.c
++@@ -945,14 +945,10 @@ int batadv_recv_unicast_packet(struct sk_buff *skb,
++ 	struct batadv_orig_node *orig_node = NULL, *orig_node_gw = NULL;
++ 	int check, hdr_size = sizeof(*unicast_packet);
++ 	enum batadv_subtype subtype;
++-	struct ethhdr *ethhdr;
++ 	int ret = NET_RX_DROP;
++ 	bool is4addr, is_gw;
++ 
++ 	unicast_packet = (struct batadv_unicast_packet *)skb->data;
++-	unicast_4addr_packet = (struct batadv_unicast_4addr_packet *)skb->data;
++-	ethhdr = eth_hdr(skb);
++-
++ 	is4addr = unicast_packet->packet_type == BATADV_UNICAST_4ADDR;
++ 	/* the caller function should have already pulled 2 bytes */
++ 	if (is4addr)
++@@ -972,12 +968,14 @@ int batadv_recv_unicast_packet(struct sk_buff *skb,
++ 	if (!batadv_check_unicast_ttvn(bat_priv, skb, hdr_size))
++ 		goto free_skb;
++ 
+++	unicast_packet = (struct batadv_unicast_packet *)skb->data;
+++
++ 	/* packet for me */
++ 	if (batadv_is_my_mac(bat_priv, unicast_packet->dest)) {
++ 		/* If this is a unicast packet from another backgone gw,
++ 		 * drop it.
++ 		 */
++-		orig_addr_gw = ethhdr->h_source;
+++		orig_addr_gw = eth_hdr(skb)->h_source;
++ 		orig_node_gw = batadv_orig_hash_find(bat_priv, orig_addr_gw);
++ 		if (orig_node_gw) {
++ 			is_gw = batadv_bla_is_backbone_gw(skb, orig_node_gw,
++@@ -992,6 +990,8 @@ int batadv_recv_unicast_packet(struct sk_buff *skb,
++ 		}
++ 
++ 		if (is4addr) {
+++			unicast_4addr_packet =
+++				(struct batadv_unicast_4addr_packet *)skb->data;
++ 			subtype = unicast_4addr_packet->subtype;
++ 			batadv_dat_inc_counter(bat_priv, subtype);
++ 
+diff --git a/batman-adv/patches/0015-batman-adv-fix-header-size-check-in-batadv_dbg_arp.patch b/batman-adv/patches/0015-batman-adv-fix-header-size-check-in-batadv_dbg_arp.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..e1d6c2ecb8e005435a117bfea0b8fda598b38cd0
+--- /dev/null
++++ b/batman-adv/patches/0015-batman-adv-fix-header-size-check-in-batadv_dbg_arp.patch
+@@ -0,0 +1,30 @@
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Fri, 16 Mar 2018 11:29:10 +0100
++Subject: [PATCH] batman-adv: fix header size check in batadv_dbg_arp()
++
++Checking for 0 is insufficient: when an SKB without a batadv header, but
++with a VLAN header is received, hdr_size will be 4, making the following
++code interpret the Ethernet header as a batadv header.
++
++Fixes: 3e26722bc9f2 ("batman-adv: make the Distributed ARP Table vlan aware")
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/7dfe729b169b1217f47744edbd1616f473340fda
++---
++ net/batman-adv/distributed-arp-table.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/distributed-arp-table.c
++index b6cfa78e9381f5dca63e7a4a8d05f136d823c4db..4f0111bc6621e66c411bc929b3d18b3f543234cd 100644
++--- a/net/batman-adv/distributed-arp-table.c
+++++ b/net/batman-adv/distributed-arp-table.c
++@@ -391,7 +391,7 @@ static void batadv_dbg_arp(struct batadv_priv *bat_priv, struct sk_buff *skb,
++ 		   batadv_arp_hw_src(skb, hdr_size), &ip_src,
++ 		   batadv_arp_hw_dst(skb, hdr_size), &ip_dst);
++ 
++-	if (hdr_size == 0)
+++	if (hdr_size < sizeof(struct batadv_unicast_packet))
++ 		return;
++ 
++ 	unicast_4addr_packet = (struct batadv_unicast_4addr_packet *)skb->data;
+diff --git a/batman-adv/patches/0016-batman-adv-Fix-skbuff-rcsum-on-packet-reroute.patch b/batman-adv/patches/0016-batman-adv-Fix-skbuff-rcsum-on-packet-reroute.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..da18f796890b7948e96547573b8bd3d9512224d9
+--- /dev/null
++++ b/batman-adv/patches/0016-batman-adv-Fix-skbuff-rcsum-on-packet-reroute.patch
+@@ -0,0 +1,139 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Sun, 18 Mar 2018 13:12:01 +0100
++Subject: [PATCH] batman-adv: Fix skbuff rcsum on packet reroute
++
++batadv_check_unicast_ttvn may redirect a packet to itself or another
++originator. This involves rewriting the ttvn and the destination address in
++the batadv unicast header. These field were not yet pulled (with skb rcsum
++update) and thus any change to them also requires a change in the receive
++checksum.
++
++Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Fixes: cea194d90b11 ("batman-adv: improved client announcement mechanism")
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/fb91b0ef84738102807e5dd7ec0b3565415aff56
++---
++ compat-include/linux/skbuff.h    | 12 ++++++++++++
++ compat-sources/net/core/skbuff.c | 17 -----------------
++ net/batman-adv/routing.c         | 15 ++++++++++-----
++ 3 files changed, 22 insertions(+), 22 deletions(-)
++
++diff --git a/compat-include/linux/skbuff.h b/compat-include/linux/skbuff.h
++index 03765c62830683dad503578eaeaadac30d6d85cd..65486ca6aad1ec31533e0b4bfa0b52396c0e1ddf 100644
++--- a/compat-include/linux/skbuff.h
+++++ b/compat-include/linux/skbuff.h
++@@ -76,6 +76,18 @@ struct sk_buff *skb_checksum_trimmed(struct sk_buff *skb,
++ 
++ #endif /* < KERNEL_VERSION(4, 2, 0) */
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 5, 0)
+++
+++static inline void skb_postpush_rcsum(struct sk_buff *skb,
+++				      const void *start, unsigned int len)
+++{
+++	if (skb->ip_summed == CHECKSUM_COMPLETE)
+++		skb->csum = csum_block_add(skb->csum,
+++					   csum_partial(start, len, 0), 0);
+++}
+++
+++#endif /* < KERNEL_VERSION(4, 5, 0) */
+++
++ #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 13, 0)
++ 
++ static inline void *batadv_skb_put(struct sk_buff *skb, unsigned int len)
++diff --git a/compat-sources/net/core/skbuff.c b/compat-sources/net/core/skbuff.c
++index 40c9e8b92e4c6eedcc2f73c5717d71dabf7590e2..f8d76c6c8d3d05d03d24060f90e72ad34d53bf21 100644
++--- a/compat-sources/net/core/skbuff.c
+++++ b/compat-sources/net/core/skbuff.c
++@@ -92,23 +92,6 @@ skb_checksum_validate(struct sk_buff *skb, int proto,
++ 
++ #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 2, 0)
++ 
++-static inline void skb_postpush_rcsum(struct sk_buff *skb,
++-				      const void *start, unsigned int len)
++-{
++-	/* For performing the reverse operation to skb_postpull_rcsum(),
++-	 * we can instead of ...
++-	 *
++-	 *   skb->csum = csum_add(skb->csum, csum_partial(start, len, 0));
++-	 *
++-	 * ... just use this equivalent version here to save a few
++-	 * instructions. Feeding csum of 0 in csum_partial() and later
++-	 * on adding skb->csum is equivalent to feed skb->csum in the
++-	 * first place.
++-	 */
++-	if (skb->ip_summed == CHECKSUM_COMPLETE)
++-		skb->csum = csum_partial(start, len, skb->csum);
++-}
++-
++ /**
++  *	skb_push_rcsum - push skb and update receive checksum
++  *	@skb: buffer to update
++diff --git a/net/batman-adv/routing.c b/net/batman-adv/routing.c
++index 7740e08f7aa0e26ebc951b65b8d60049fc2ba658..f59aac06733e1a7c45f9bb08b48fbf9c42eb740a 100644
++--- a/net/batman-adv/routing.c
+++++ b/net/batman-adv/routing.c
++@@ -743,6 +743,7 @@ static int batadv_route_unicast_packet(struct sk_buff *skb,
++ /**
++  * batadv_reroute_unicast_packet - update the unicast header for re-routing
++  * @bat_priv: the bat priv with all the soft interface information
+++ * @skb: unicast packet to process
++  * @unicast_packet: the unicast header to be updated
++  * @dst_addr: the payload destination
++  * @vid: VLAN identifier
++@@ -754,7 +755,7 @@ static int batadv_route_unicast_packet(struct sk_buff *skb,
++  * Return: true if the packet header has been updated, false otherwise
++  */
++ static bool
++-batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
+++batadv_reroute_unicast_packet(struct batadv_priv *bat_priv, struct sk_buff *skb,
++ 			      struct batadv_unicast_packet *unicast_packet,
++ 			      u8 *dst_addr, unsigned short vid)
++ {
++@@ -783,8 +784,10 @@ batadv_reroute_unicast_packet(struct batadv_priv *bat_priv,
++ 	}
++ 
++ 	/* update the packet header */
+++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
++ 	ether_addr_copy(unicast_packet->dest, orig_addr);
++ 	unicast_packet->ttvn = orig_ttvn;
+++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
++ 
++ 	ret = true;
++ out:
++@@ -825,7 +828,7 @@ static bool batadv_check_unicast_ttvn(struct batadv_priv *bat_priv,
++ 	 * the packet to
++ 	 */
++ 	if (batadv_tt_local_client_is_roaming(bat_priv, ethhdr->h_dest, vid)) {
++-		if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
+++		if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
++ 						  ethhdr->h_dest, vid))
++ 			batadv_dbg_ratelimited(BATADV_DBG_TT,
++ 					       bat_priv,
++@@ -871,7 +874,7 @@ static bool batadv_check_unicast_ttvn(struct batadv_priv *bat_priv,
++ 	 * destination can possibly be updated and forwarded towards the new
++ 	 * target host
++ 	 */
++-	if (batadv_reroute_unicast_packet(bat_priv, unicast_packet,
+++	if (batadv_reroute_unicast_packet(bat_priv, skb, unicast_packet,
++ 					  ethhdr->h_dest, vid)) {
++ 		batadv_dbg_ratelimited(BATADV_DBG_TT, bat_priv,
++ 				       "Rerouting unicast packet to %pM (dst=%pM): TTVN mismatch old_ttvn=%u new_ttvn=%u\n",
++@@ -894,12 +897,14 @@ static bool batadv_check_unicast_ttvn(struct batadv_priv *bat_priv,
++ 	if (!primary_if)
++ 		return false;
++ 
+++	/* update the packet header */
+++	skb_postpull_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
++ 	ether_addr_copy(unicast_packet->dest, primary_if->net_dev->dev_addr);
+++	unicast_packet->ttvn = curr_ttvn;
+++	skb_postpush_rcsum(skb, unicast_packet, sizeof(*unicast_packet));
++ 
++ 	batadv_hardif_put(primary_if);
++ 
++-	unicast_packet->ttvn = curr_ttvn;
++-
++ 	return true;
++ }
++ 
+diff --git a/batman-adv/patches/0017-batman-adv-fix-multicast-via-unicast-transmission-wi.patch b/batman-adv/patches/0017-batman-adv-fix-multicast-via-unicast-transmission-wi.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..68c27ddade20ff586c8133d8104fa9caccd18e54
+--- /dev/null
++++ b/batman-adv/patches/0017-batman-adv-fix-multicast-via-unicast-transmission-wi.patch
+@@ -0,0 +1,42 @@
++From: Linus Lüssing <linus.luessing@c0d3.blue>
++Date: Tue, 20 Mar 2018 03:13:27 +0100
++Subject: [PATCH] batman-adv: fix multicast-via-unicast transmission with AP isolation
++
++For multicast frames AP isolation is only supposed to be checked on
++the receiving nodes and never on the originating one.
++
++Furthermore, the isolation or wifi flag bits should only be intepreted
++as such for unicast and never multicast TT entries.
++
++By injecting flags to the multicast TT entry claimed by a single
++target node it was verified in tests that this multicast address
++becomes unreachable, leading to packet loss.
++
++Omitting the "src" parameter to the batadv_transtable_search() call
++successfully skipped the AP isolation check and made the target
++reachable again.
++
++Fixes: 405cc1e5a81e ("batman-adv: Modified forwarding behaviour for multicast packets")
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/67a50c93bceb534937d6a188eded79272ff6d55d
++---
++ net/batman-adv/multicast.c | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++diff --git a/net/batman-adv/multicast.c b/net/batman-adv/multicast.c
++index df9e114d92d01ffe7fc3cf39a47e27074a85d189..fa02fb73367c9a7c505c08299b8079e01d42c680 100644
++--- a/net/batman-adv/multicast.c
+++++ b/net/batman-adv/multicast.c
++@@ -809,8 +809,8 @@ static struct batadv_orig_node *
++ batadv_mcast_forw_tt_node_get(struct batadv_priv *bat_priv,
++ 			      struct ethhdr *ethhdr)
++ {
++-	return batadv_transtable_search(bat_priv, ethhdr->h_source,
++-					ethhdr->h_dest, BATADV_NO_FLAGS);
+++	return batadv_transtable_search(bat_priv, NULL, ethhdr->h_dest,
+++					BATADV_NO_FLAGS);
++ }
++ 
++ /**
+diff --git a/batman-adv/patches/0018-batman-adv-fix-packet-loss-for-broadcasted-DHCP-pack.patch b/batman-adv/patches/0018-batman-adv-fix-packet-loss-for-broadcasted-DHCP-pack.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..7a135f119ad032a87de6fdb222f92ff521b4a318
+--- /dev/null
++++ b/batman-adv/patches/0018-batman-adv-fix-packet-loss-for-broadcasted-DHCP-pack.patch
+@@ -0,0 +1,82 @@
++From: Linus Lüssing <linus.luessing@c0d3.blue>
++Date: Thu, 22 Mar 2018 00:21:32 +0100
++Subject: [PATCH] batman-adv: fix packet loss for broadcasted DHCP packets to a server
++
++DHCP connectivity issues can currently occur if the following conditions
++are met:
++
++1) A DHCP packet from a client to a server
++2) This packet has a multicast destination
++3) This destination has a matching entry in the translation table
++   (FF:FF:FF:FF:FF:FF for IPv4, 33:33:00:01:00:02/33:33:00:01:00:03
++    for IPv6)
++4) The orig-node determined by TT for the multicast destination
++   does not match the orig-node determined by best-gateway-selection
++
++In this case the DHCP packet will be dropped.
++
++The "gateway-out-of-range" check is supposed to only be applied to
++unicasted DHCP packets to a specific DHCP server.
++
++In that case dropping the the unicasted frame forces the client to
++retry via a broadcasted one, but now directed to the new best
++gateway.
++
++A DHCP packet with broadcast/multicast destination is already ensured to
++always be delivered to the best gateway. Dropping a multicasted
++DHCP packet here will only prevent completing DHCP as there is no
++other fallback.
++
++So far, it seems the unicast check was implicitly performed by
++expecting the batadv_transtable_search() to return NULL for multicast
++destinations. However, a multicast address could have always ended up in
++the translation table and in fact is now common.
++
++To fix this potential loss of a DHCP client-to-server packet to a
++multicast address this patch adds an explicit multicast destination
++check to reliably bail out of the gateway-out-of-range check for such
++destinations.
++
++The issue and fix were tested in the following three node setup:
++
++- Line topology, A-B-C
++- A: gateway client, DHCP client
++- B: gateway server, hop-penalty increased: 30->60, DHCP server
++- C: gateway server, code modifications to announce FF:FF:FF:FF:FF:FF
++
++Without this patch, A would never transmit its DHCP Discover packet
++due to an always "out-of-range" condition. With this patch,
++a full DHCP handshake between A and B was possible again.
++
++Fixes: afae4e42aae6 ("batman-adv: refactoring gateway handling code")
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/49b2132f0fe2753a3b46103db9719898c5cd44aa
++---
++ net/batman-adv/gateway_client.c | 5 ++++-
++ 1 file changed, 4 insertions(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/gateway_client.c b/net/batman-adv/gateway_client.c
++index de9955d5224d258cdbd20c14a1758bf7b4af19f9..06276ae9f7529cbc19f870148bb205961143d4a6 100644
++--- a/net/batman-adv/gateway_client.c
+++++ b/net/batman-adv/gateway_client.c
++@@ -705,7 +705,7 @@ bool batadv_gw_out_of_range(struct batadv_priv *bat_priv,
++ {
++ 	struct batadv_neigh_node *neigh_curr = NULL;
++ 	struct batadv_neigh_node *neigh_old = NULL;
++-	struct batadv_orig_node *orig_dst_node;
+++	struct batadv_orig_node *orig_dst_node = NULL;
++ 	struct batadv_gw_node *gw_node = NULL;
++ 	struct batadv_gw_node *curr_gw = NULL;
++ 	struct batadv_neigh_ifinfo *curr_ifinfo, *old_ifinfo;
++@@ -716,6 +716,9 @@ bool batadv_gw_out_of_range(struct batadv_priv *bat_priv,
++ 
++ 	vid = batadv_get_vid(skb, 0);
++ 
+++	if (is_multicast_ether_addr(ethhdr->h_dest))
+++		goto out;
+++
++ 	orig_dst_node = batadv_transtable_search(bat_priv, ethhdr->h_source,
++ 						 ethhdr->h_dest, vid);
++ 	if (!orig_dst_node)

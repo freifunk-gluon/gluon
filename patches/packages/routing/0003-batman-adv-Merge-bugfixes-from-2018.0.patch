@@ -1,0 +1,584 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Tue, 27 Feb 2018 18:21:45 +0100
+Subject: batman-adv: Merge bugfixes from 2018.0
+
+* fix packet checksum in receive path
+* invalidate checksum on fragment reassembly
+* Ignore invalid batadv_iv_gw during netlink send
+* Ignore invalid batadv_v_gw during netlink send
+* Fix netlink dumping of BLA claims
+* Fix netlink dumping of BLA backbones
+* Fix internal interface indices types
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+
+Origin: backport, https://github.com/openwrt-routing/packages/commit/08935dfaa0844d3b544a1c7d0bb83260be07302e
+
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index d3d68160662894887eb9fa43c78fdd7479764b7c..3765c0273e7fc3923a6234514e0478f80277d2e5 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=batman-adv
+ 
+ PKG_VERSION:=2017.2
+-PKG_RELEASE:=2
++PKG_RELEASE:=3
+ PKG_MD5SUM:=937b5f1d0188e3522d67ad45ee0a4f5a
+ PKG_HASH:=d487974e21cb53d39f139e93a2cf297807df5b7bf63ba6d810bad6d91537394f
+ 
+diff --git a/batman-adv/patches/0006-batman-adv-fix-packet-checksum-in-receive-path.patch b/batman-adv/patches/0006-batman-adv-fix-packet-checksum-in-receive-path.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d37c7bb82eac3b790dccb72fb9233be2298b2aeb
+--- /dev/null
++++ b/batman-adv/patches/0006-batman-adv-fix-packet-checksum-in-receive-path.patch
+@@ -0,0 +1,43 @@
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 23 Jan 2018 10:59:49 +0100
++Subject: [PATCH] batman-adv: fix packet checksum in receive path
++
++eth_type_trans() internally calls skb_pull(), which does not adjust the
++skb checksum; skb_postpull_rcsum() is necessary to avoid log spam of the
++form "bat0: hw csum failure" when packets with CHECKSUM_COMPLETE are
++received.
++
++Note that in usual setups, packets don't reach batman-adv with
++CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
++batadv's ethtype?), which is why the log messages do not occur on every
++system using batman-adv. I could reproduce this issue by stacking
++batman-adv on top of a VXLAN interface.
++
++Fixes: fe28a94c01e1 ("batman-adv: receive packets directly using skbs")
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/798174b15153afd88268f2f87811602f68b3f2c6
++---
++ net/batman-adv/soft-interface.c | 8 +-------
++ 1 file changed, 1 insertion(+), 7 deletions(-)
++
++diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
++index 10f7edfb176ebd49c680ff4132db87aa00d3f04e..aa2c49fa31cec5ffd234204844a6874f0149a9ae 100644
++--- a/net/batman-adv/soft-interface.c
+++++ b/net/batman-adv/soft-interface.c
++@@ -451,13 +451,7 @@ void batadv_interface_rx(struct net_device *soft_iface,
++ 
++ 	/* skb->dev & skb->pkt_type are set here */
++ 	skb->protocol = eth_type_trans(skb, soft_iface);
++-
++-	/* should not be necessary anymore as we use skb_pull_rcsum()
++-	 * TODO: please verify this and remove this TODO
++-	 * -- Dec 21st 2009, Simon Wunderlich
++-	 */
++-
++-	/* skb->ip_summed = CHECKSUM_UNNECESSARY; */
+++	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
++ 
++ 	batadv_inc_counter(bat_priv, BATADV_CNT_RX);
++ 	batadv_add_counter(bat_priv, BATADV_CNT_RX_BYTES,
+diff --git a/batman-adv/patches/0007-batman-adv-invalidate-checksum-on-fragment-reassembl.patch b/batman-adv/patches/0007-batman-adv-invalidate-checksum-on-fragment-reassembl.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6babc190ecd0c105251eea68b8452b593600a3ba
+--- /dev/null
++++ b/batman-adv/patches/0007-batman-adv-invalidate-checksum-on-fragment-reassembl.patch
+@@ -0,0 +1,39 @@
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 23 Jan 2018 10:59:50 +0100
++Subject: [PATCH] batman-adv: invalidate checksum on fragment reassembly
++
++A more sophisticated implementation could try to combine fragment checksums
++when all fragments have CHECKSUM_COMPLETE and are split at even offsets.
++For now, we just set ip_summed to CHECKSUM_NONE to avoid "hw csum failure"
++warnings in the kernel log when fragmented frames are received. In
++consequence, skb_pull_rcsum() can be replaced with skb_pull().
++
++Note that in usual setups, packets don't reach batman-adv with
++CHECKSUM_COMPLETE (I assume NICs bail out of checksumming when they see
++batadv's ethtype?), which is why the log messages do not occur on every
++system using batman-adv. I could reproduce this issue by stacking
++batman-adv on top of a VXLAN interface.
++
++Fixes: 9b3eab61754d ("batman-adv: Receive fragmented packets and merge")
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/2c1bce065baa688bc1eca4116f83ca3b790432a5
++---
++ net/batman-adv/fragmentation.c | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/fragmentation.c b/net/batman-adv/fragmentation.c
++index ebe6e38934e46ed5de4d30204e791dbe40285fcc..1bb2b43f356af89a4231557de25dc2197b5c0177 100644
++--- a/net/batman-adv/fragmentation.c
+++++ b/net/batman-adv/fragmentation.c
++@@ -287,7 +287,8 @@ batadv_frag_merge_packets(struct hlist_head *chain)
++ 	/* Move the existing MAC header to just before the payload. (Override
++ 	 * the fragment header.)
++ 	 */
++-	skb_pull_rcsum(skb_out, hdr_size);
+++	skb_pull(skb_out, hdr_size);
+++	skb_out->ip_summed = CHECKSUM_NONE;
++ 	memmove(skb_out->data - ETH_HLEN, skb_mac_header(skb_out), ETH_HLEN);
++ 	skb_set_mac_header(skb_out, -ETH_HLEN);
++ 	skb_reset_network_header(skb_out);
+diff --git a/batman-adv/patches/0008-batman-adv-Ignore-invalid-batadv_iv_gw-during-netlin.patch b/batman-adv/patches/0008-batman-adv-Ignore-invalid-batadv_iv_gw-during-netlin.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec6b6b57ac61d3f283c99fe89d40cc984da14702
+--- /dev/null
++++ b/batman-adv/patches/0008-batman-adv-Ignore-invalid-batadv_iv_gw-during-netlin.patch
+@@ -0,0 +1,33 @@
++From: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Date: Mon, 19 Feb 2018 14:08:52 +0100
++Subject: [PATCH] batman-adv: Ignore invalid batadv_iv_gw during netlink send
++
++The function batadv_iv_gw_dump stops the processing loop when
++batadv_iv_gw_dump_entry returns a non-0 return code. This should only
++happen when the buffer is full. Otherwise, an empty message may be
++returned by batadv_gw_dump. This empty message will then stop the netlink
++dumping of gateway entries. At worst, not a single entry is returned to
++userspace even when plenty of possible gateways exist.
++
++Fixes: fa3228924152 ("batman-adv: add B.A.T.M.A.N. IV bat_gw_dump implementations")
++Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/c58f37c248bb4926cda82fd0463b6fecb3d3654f
++---
++ net/batman-adv/bat_iv_ogm.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
++index 0f9749c780056df271c1b1167299de75dbdbd770..bdcfec618ad57fa77b7c239ffdf5d3ca37593cc5 100644
++--- a/net/batman-adv/bat_iv_ogm.c
+++++ b/net/batman-adv/bat_iv_ogm.c
++@@ -2719,7 +2719,7 @@ static int batadv_iv_gw_dump_entry(struct sk_buff *msg, u32 portid, u32 seq,
++ 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
++ 	struct batadv_neigh_node *router;
++ 	struct batadv_gw_node *curr_gw;
++-	int ret = -EINVAL;
+++	int ret = 0;
++ 	void *hdr;
++ 
++ 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
+diff --git a/batman-adv/patches/0009-batman-adv-Ignore-invalid-batadv_v_gw-during-netlink.patch b/batman-adv/patches/0009-batman-adv-Ignore-invalid-batadv_v_gw-during-netlink.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9a1a907b34ad70b975c252f779eacbf48995ae14
+--- /dev/null
++++ b/batman-adv/patches/0009-batman-adv-Ignore-invalid-batadv_v_gw-during-netlink.patch
+@@ -0,0 +1,33 @@
++From: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Date: Mon, 19 Feb 2018 14:08:53 +0100
++Subject: [PATCH] batman-adv: Ignore invalid batadv_v_gw during netlink send
++
++The function batadv_v_gw_dump stops the processing loop when
++batadv_v_gw_dump_entry returns a non-0 return code. This should only
++happen when the buffer is full. Otherwise, an empty message may be
++returned by batadv_gw_dump. This empty message will then stop the netlink
++dumping of gateway entries. At worst, not a single entry is returned to
++userspace even when plenty of possible gateways exist.
++
++Fixes: 15315a94ad98 ("batman-adv: add B.A.T.M.A.N. V bat_gw_dump implementations")
++Signed-off-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/12f1d3a6bf4d157928fec509aab981e5243ee438
++---
++ net/batman-adv/bat_v.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++diff --git a/net/batman-adv/bat_v.c b/net/batman-adv/bat_v.c
++index cb227bcdc35c3a48b3fd85cd2749730bf857c704..73954b8be5dca6c72f34b3be236cac89562b3b74 100644
++--- a/net/batman-adv/bat_v.c
+++++ b/net/batman-adv/bat_v.c
++@@ -930,7 +930,7 @@ static int batadv_v_gw_dump_entry(struct sk_buff *msg, u32 portid, u32 seq,
++ 	struct batadv_neigh_ifinfo *router_ifinfo = NULL;
++ 	struct batadv_neigh_node *router;
++ 	struct batadv_gw_node *curr_gw;
++-	int ret = -EINVAL;
+++	int ret = 0;
++ 	void *hdr;
++ 
++ 	router = batadv_orig_router_get(gw_node->orig_node, BATADV_IF_DEFAULT);
+diff --git a/batman-adv/patches/0010-batman-adv-Fix-netlink-dumping-of-BLA-claims.patch b/batman-adv/patches/0010-batman-adv-Fix-netlink-dumping-of-BLA-claims.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c4bf85996dcc6513a1fd7906710db1a64d67935
+--- /dev/null
++++ b/batman-adv/patches/0010-batman-adv-Fix-netlink-dumping-of-BLA-claims.patch
+@@ -0,0 +1,62 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Sat, 24 Feb 2018 12:03:36 +0100
++Subject: [PATCH] batman-adv: Fix netlink dumping of BLA claims
++
++The function batadv_bla_claim_dump_bucket must be able to handle
++non-complete dumps of a single bucket. It tries to do that by saving the
++latest dumped index in *idx_skip to inform the caller about the current
++state.
++
++But the caller only assumes that buckets were not completely dumped when
++the return code is non-zero. This function must therefore also return a
++non-zero index when the dumping of an entry failed. Otherwise the caller
++will just skip all remaining buckets.
++
++And the function must also reset *idx_skip back to zero when it finished a
++bucket. Otherwise it will skip the same number of entries in the next
++bucket as the previous one had.
++
++Fixes: 3b7a63606020 ("batman-adv: add B.A.T.M.A.N. Dump BLA claims via netlink")
++Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/49197c00f82cfcfeef963ef9367841d38a6ff207
++---
++ net/batman-adv/bridge_loop_avoidance.c | 11 +++++++----
++ 1 file changed, 7 insertions(+), 4 deletions(-)
++
++diff --git a/net/batman-adv/bridge_loop_avoidance.c b/net/batman-adv/bridge_loop_avoidance.c
++index cdd8e8e4df0b382b21ff674b9aafcd19e9a581e7..60ce119e0b50edf8a4ecc22f54faeb4b720211b9 100644
++--- a/net/batman-adv/bridge_loop_avoidance.c
+++++ b/net/batman-adv/bridge_loop_avoidance.c
++@@ -2161,22 +2161,25 @@ batadv_bla_claim_dump_bucket(struct sk_buff *msg, u32 portid, u32 seq,
++ {
++ 	struct batadv_bla_claim *claim;
++ 	int idx = 0;
+++	int ret = 0;
++ 
++ 	rcu_read_lock();
++ 	hlist_for_each_entry_rcu(claim, head, hash_entry) {
++ 		if (idx++ < *idx_skip)
++ 			continue;
++-		if (batadv_bla_claim_dump_entry(msg, portid, seq,
++-						primary_if, claim)) {
+++
+++		ret = batadv_bla_claim_dump_entry(msg, portid, seq,
+++						  primary_if, claim);
+++		if (ret) {
++ 			*idx_skip = idx - 1;
++ 			goto unlock;
++ 		}
++ 	}
++ 
++-	*idx_skip = idx;
+++	*idx_skip = 0;
++ unlock:
++ 	rcu_read_unlock();
++-	return 0;
+++	return ret;
++ }
++ 
++ /**
+diff --git a/batman-adv/patches/0011-batman-adv-Fix-netlink-dumping-of-BLA-backbones.patch b/batman-adv/patches/0011-batman-adv-Fix-netlink-dumping-of-BLA-backbones.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8f6c473f6daf51015c37fe80cfacf6f30e80e7d6
+--- /dev/null
++++ b/batman-adv/patches/0011-batman-adv-Fix-netlink-dumping-of-BLA-backbones.patch
+@@ -0,0 +1,62 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Sat, 24 Feb 2018 12:03:37 +0100
++Subject: [PATCH] batman-adv: Fix netlink dumping of BLA backbones
++
++The function batadv_bla_backbone_dump_bucket must be able to handle
++non-complete dumps of a single bucket. It tries to do that by saving the
++latest dumped index in *idx_skip to inform the caller about the current
++state.
++
++But the caller only assumes that buckets were not completely dumped when
++the return code is non-zero. This function must therefore also return a
++non-zero index when the dumping of an entry failed. Otherwise the caller
++will just skip all remaining buckets.
++
++And the function must also reset *idx_skip back to zero when it finished a
++bucket. Otherwise it will skip the same number of entries in the next
++bucket as the previous one had.
++
++Fixes: 7f609cab5123 ("batman-adv: add backbone table netlink support")
++Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/29e4759e49f06014b84791397ebe1b22546edd2d
++---
++ net/batman-adv/bridge_loop_avoidance.c | 11 +++++++----
++ 1 file changed, 7 insertions(+), 4 deletions(-)
++
++diff --git a/net/batman-adv/bridge_loop_avoidance.c b/net/batman-adv/bridge_loop_avoidance.c
++index 60ce119e0b50edf8a4ecc22f54faeb4b720211b9..422ee16b7854de39259bd171584f8dd0301a2ab6 100644
++--- a/net/batman-adv/bridge_loop_avoidance.c
+++++ b/net/batman-adv/bridge_loop_avoidance.c
++@@ -2394,22 +2394,25 @@ batadv_bla_backbone_dump_bucket(struct sk_buff *msg, u32 portid, u32 seq,
++ {
++ 	struct batadv_bla_backbone_gw *backbone_gw;
++ 	int idx = 0;
+++	int ret = 0;
++ 
++ 	rcu_read_lock();
++ 	hlist_for_each_entry_rcu(backbone_gw, head, hash_entry) {
++ 		if (idx++ < *idx_skip)
++ 			continue;
++-		if (batadv_bla_backbone_dump_entry(msg, portid, seq,
++-						   primary_if, backbone_gw)) {
+++
+++		ret = batadv_bla_backbone_dump_entry(msg, portid, seq,
+++						     primary_if, backbone_gw);
+++		if (ret) {
++ 			*idx_skip = idx - 1;
++ 			goto unlock;
++ 		}
++ 	}
++ 
++-	*idx_skip = idx;
+++	*idx_skip = 0;
++ unlock:
++ 	rcu_read_unlock();
++-	return 0;
+++	return ret;
++ }
++ 
++ /**
+diff --git a/batman-adv/patches/0012-batman-adv-Fix-internal-interface-indices-types.patch b/batman-adv/patches/0012-batman-adv-Fix-internal-interface-indices-types.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..dca78fdf75fa614e3964c94ba1103a59f621986a
+--- /dev/null
++++ b/batman-adv/patches/0012-batman-adv-Fix-internal-interface-indices-types.patch
+@@ -0,0 +1,241 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Tue, 26 Dec 2017 15:14:01 +0100
++Subject: [PATCH] batman-adv: Fix internal interface indices types
++
++batman-adv uses internal indices for each enabled and active interface.
++It is currently used by the B.A.T.M.A.N. IV algorithm to identifify the
++correct position in the ogm_cnt bitmaps.
++
++The type for the number of enabled interfaces (which defines the next
++interface index) was set to char. This type can be (depending on the
++architecture) either signed (limiting batman-adv to 127 active slave
++interfaces) or unsigned (limiting batman-adv to 255 active slave
++interfaces).
++
++This limit was not correctly checked when an interface was enabled and thus
++an overflow happened. This was only catched on systems with the signed char
++type when the B.A.T.M.A.N. IV code tried to resize its counter arrays with
++a negative size.
++
++The if_num interface index was only a s16 and therefore significantly
++smaller than the ifindex (int) used by the code net code.
++
++Both &batadv_hard_iface->if_num and &batadv_priv->num_ifaces must be
++(unsigned) int to support the same number of slave interfaces as the net
++core code. And the interface activation code must check the number of
++active slave interfaces to avoid integer overflows.
++
++Fixes: d1fbb61d0534 ("raw socket operations added: create / destroy / bind / send broadcast of own OGMs implemented orig interval configurable via /proc/net/batman-adv/orig_interval")
++Fixes: ea6f8d42a595 ("batman-adv: move /proc interface handling to /sys")
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
++
++Origin: backport, https://git.open-mesh.org/batman-adv.git/commit/d5db560de1352d3ec6933bca25b3aaad7ddd15e1
++---
++ net/batman-adv/bat_iv_ogm.c     | 24 ++++++++++++++----------
++ net/batman-adv/hard-interface.c |  9 +++++++--
++ net/batman-adv/originator.c     |  4 ++--
++ net/batman-adv/originator.h     |  4 ++--
++ net/batman-adv/types.h          | 11 ++++++-----
++ 5 files changed, 31 insertions(+), 21 deletions(-)
++
++diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
++index bdcfec618ad57fa77b7c239ffdf5d3ca37593cc5..13b7da10114d26bacc3cd7af05a73ebdf0145ce7 100644
++--- a/net/batman-adv/bat_iv_ogm.c
+++++ b/net/batman-adv/bat_iv_ogm.c
++@@ -149,7 +149,7 @@ static void batadv_iv_ogm_orig_free(struct batadv_orig_node *orig_node)
++  * Return: 0 on success, a negative error code otherwise.
++  */
++ static int batadv_iv_ogm_orig_add_if(struct batadv_orig_node *orig_node,
++-				     int max_if_num)
+++				     unsigned int max_if_num)
++ {
++ 	void *data_ptr;
++ 	size_t old_size;
++@@ -193,7 +193,8 @@ static int batadv_iv_ogm_orig_add_if(struct batadv_orig_node *orig_node,
++  */
++ static void
++ batadv_iv_ogm_drop_bcast_own_entry(struct batadv_orig_node *orig_node,
++-				   int max_if_num, int del_if_num)
+++				   unsigned int max_if_num,
+++				   unsigned int del_if_num)
++ {
++ 	size_t chunk_size;
++ 	size_t if_offset;
++@@ -231,7 +232,8 @@ batadv_iv_ogm_drop_bcast_own_entry(struct batadv_orig_node *orig_node,
++  */
++ static void
++ batadv_iv_ogm_drop_bcast_own_sum_entry(struct batadv_orig_node *orig_node,
++-				       int max_if_num, int del_if_num)
+++				       unsigned int max_if_num,
+++				       unsigned int del_if_num)
++ {
++ 	size_t if_offset;
++ 	void *data_ptr;
++@@ -268,7 +270,8 @@ batadv_iv_ogm_drop_bcast_own_sum_entry(struct batadv_orig_node *orig_node,
++  * Return: 0 on success, a negative error code otherwise.
++  */
++ static int batadv_iv_ogm_orig_del_if(struct batadv_orig_node *orig_node,
++-				     int max_if_num, int del_if_num)
+++				     unsigned int max_if_num,
+++				     unsigned int del_if_num)
++ {
++ 	spin_lock_bh(&orig_node->bat_iv.ogm_cnt_lock);
++ 
++@@ -302,7 +305,8 @@ static struct batadv_orig_node *
++ batadv_iv_ogm_orig_get(struct batadv_priv *bat_priv, const u8 *addr)
++ {
++ 	struct batadv_orig_node *orig_node;
++-	int size, hash_added;
+++	int hash_added;
+++	size_t size;
++ 
++ 	orig_node = batadv_orig_hash_find(bat_priv, addr);
++ 	if (orig_node)
++@@ -884,7 +888,7 @@ batadv_iv_ogm_slide_own_bcast_window(struct batadv_hard_iface *hard_iface)
++ 	u32 i;
++ 	size_t word_index;
++ 	u8 *w;
++-	int if_num;
+++	unsigned int if_num;
++ 
++ 	for (i = 0; i < hash->size; i++) {
++ 		head = &hash->table[i];
++@@ -1014,7 +1018,7 @@ batadv_iv_ogm_orig_update(struct batadv_priv *bat_priv,
++ 	struct batadv_neigh_node *tmp_neigh_node = NULL;
++ 	struct batadv_neigh_node *router = NULL;
++ 	struct batadv_orig_node *orig_node_tmp;
++-	int if_num;
+++	unsigned int if_num;
++ 	u8 sum_orig, sum_neigh;
++ 	u8 *neigh_addr;
++ 	u8 tq_avg;
++@@ -1173,7 +1177,7 @@ static bool batadv_iv_ogm_calc_tq(struct batadv_orig_node *orig_node,
++ 	u8 total_count;
++ 	u8 orig_eq_count, neigh_rq_count, neigh_rq_inv, tq_own;
++ 	unsigned int neigh_rq_inv_cube, neigh_rq_max_cube;
++-	int if_num;
+++	unsigned int if_num;
++ 	unsigned int tq_asym_penalty, inv_asym_penalty;
++ 	unsigned int combined_tq;
++ 	unsigned int tq_iface_penalty;
++@@ -1692,9 +1696,9 @@ static void batadv_iv_ogm_process(const struct sk_buff *skb, int ogm_offset,
++ 
++ 	if (is_my_orig) {
++ 		unsigned long *word;
++-		int offset;
+++		size_t offset;
++ 		s32 bit_pos;
++-		s16 if_num;
+++		unsigned int if_num;
++ 		u8 *weight;
++ 
++ 		orig_neigh_node = batadv_iv_ogm_orig_get(bat_priv,
++diff --git a/net/batman-adv/hard-interface.c b/net/batman-adv/hard-interface.c
++index e348f76ea8c15c8901294598c02617028063bfd6..69f1704fcaa4e980dfadcbb943db43544763d469 100644
++--- a/net/batman-adv/hard-interface.c
+++++ b/net/batman-adv/hard-interface.c
++@@ -737,6 +737,11 @@ int batadv_hardif_enable_interface(struct batadv_hard_iface *hard_iface,
++ 	hard_iface->soft_iface = soft_iface;
++ 	bat_priv = netdev_priv(hard_iface->soft_iface);
++ 
+++	if (bat_priv->num_ifaces >= UINT_MAX) {
+++		ret = -ENOSPC;
+++		goto err_dev;
+++	}
+++
++ 	ret = netdev_master_upper_dev_link(hard_iface->net_dev,
++ 					   soft_iface, NULL, NULL);
++ 	if (ret)
++@@ -844,7 +849,7 @@ void batadv_hardif_disable_interface(struct batadv_hard_iface *hard_iface,
++ 	batadv_hardif_recalc_extra_skbroom(hard_iface->soft_iface);
++ 
++ 	/* nobody uses this interface anymore */
++-	if (!bat_priv->num_ifaces) {
+++	if (bat_priv->num_ifaces == 0) {
++ 		batadv_gw_check_client_stop(bat_priv);
++ 
++ 		if (autodel == BATADV_IF_CLEANUP_AUTO)
++@@ -880,7 +885,7 @@ batadv_hardif_add_interface(struct net_device *net_dev)
++ 	if (ret)
++ 		goto free_if;
++ 
++-	hard_iface->if_num = -1;
+++	hard_iface->if_num = 0;
++ 	hard_iface->net_dev = net_dev;
++ 	hard_iface->soft_iface = NULL;
++ 	hard_iface->if_status = BATADV_IF_NOT_IN_USE;
++diff --git a/net/batman-adv/originator.c b/net/batman-adv/originator.c
++index 8e2a4b205257929e9b64f157e8570972cf1383f9..653eaadcfefb4db23c73034c157e7c86fc1bcc06 100644
++--- a/net/batman-adv/originator.c
+++++ b/net/batman-adv/originator.c
++@@ -1500,7 +1500,7 @@ int batadv_orig_dump(struct sk_buff *msg, struct netlink_callback *cb)
++ }
++ 
++ int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
++-			    int max_if_num)
+++			    unsigned int max_if_num)
++ {
++ 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
++ 	struct batadv_algo_ops *bao = bat_priv->algo_ops;
++@@ -1535,7 +1535,7 @@ int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
++ }
++ 
++ int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
++-			    int max_if_num)
+++			    unsigned int max_if_num)
++ {
++ 	struct batadv_priv *bat_priv = netdev_priv(hard_iface->soft_iface);
++ 	struct batadv_hashtable *hash = bat_priv->orig_hash;
++diff --git a/net/batman-adv/originator.h b/net/batman-adv/originator.h
++index d94220a6d21acf58d55fcf7a179151c67392b055..d6ca52220ec066d8e82096b7487d6f5e9dfd57dc 100644
++--- a/net/batman-adv/originator.h
+++++ b/net/batman-adv/originator.h
++@@ -78,9 +78,9 @@ int batadv_orig_seq_print_text(struct seq_file *seq, void *offset);
++ int batadv_orig_dump(struct sk_buff *msg, struct netlink_callback *cb);
++ int batadv_orig_hardif_seq_print_text(struct seq_file *seq, void *offset);
++ int batadv_orig_hash_add_if(struct batadv_hard_iface *hard_iface,
++-			    int max_if_num);
+++			    unsigned int max_if_num);
++ int batadv_orig_hash_del_if(struct batadv_hard_iface *hard_iface,
++-			    int max_if_num);
+++			    unsigned int max_if_num);
++ struct batadv_orig_node_vlan *
++ batadv_orig_node_vlan_new(struct batadv_orig_node *orig_node,
++ 			  unsigned short vid);
++diff --git a/net/batman-adv/types.h b/net/batman-adv/types.h
++index a62795868794103d7e712ba91def5997dc3a5779..bb776a842870815582ca428d010a437a2606b175 100644
++--- a/net/batman-adv/types.h
+++++ b/net/batman-adv/types.h
++@@ -155,7 +155,7 @@ enum batadv_hard_iface_wifi_flags {
++  */
++ struct batadv_hard_iface {
++ 	struct list_head list;
++-	s16 if_num;
+++	unsigned int if_num;
++ 	char if_status;
++ 	u8 num_bcasts;
++ 	u32 wifi_flags;
++@@ -1079,7 +1079,7 @@ struct batadv_priv {
++ 	atomic_t bcast_seqno;
++ 	atomic_t bcast_queue_left;
++ 	atomic_t batman_queue_left;
++-	char num_ifaces;
+++	unsigned int num_ifaces;
++ 	struct kobject *mesh_obj;
++ 	struct dentry *debug_dir;
++ 	struct hlist_head forw_bat_list;
++@@ -1477,9 +1477,10 @@ struct batadv_algo_neigh_ops {
++  */
++ struct batadv_algo_orig_ops {
++ 	void (*free)(struct batadv_orig_node *orig_node);
++-	int (*add_if)(struct batadv_orig_node *orig_node, int max_if_num);
++-	int (*del_if)(struct batadv_orig_node *orig_node, int max_if_num,
++-		      int del_if_num);
+++	int (*add_if)(struct batadv_orig_node *orig_node,
+++		      unsigned int max_if_num);
+++	int (*del_if)(struct batadv_orig_node *orig_node,
+++		      unsigned int max_if_num, unsigned int del_if_num);
++ #ifdef CONFIG_BATMAN_ADV_DEBUGFS
++ 	void (*print)(struct batadv_priv *priv, struct seq_file *seq,
++ 		      struct batadv_hard_iface *hard_iface);
