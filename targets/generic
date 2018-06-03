@@ -23,6 +23,9 @@ config '# CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set'
 
 config 'CONFIG_PACKAGE_ATH_DEBUG=y'
 
+config '# CONFIG_KERNEL_IP_MROUTE is not set'
+config '# CONFIG_KERNEL_IPV6_MROUTE is not set'
+
 try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
 try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
@@ -38,5 +41,5 @@ if [ "$GLUON_DEBUG" = 1 ]; then
 fi
 
 
-packages '-odhcpd' '-ppp' '-ppp-mod-pppoe' '-wpad-mini'
+packages '-odhcpd-ipv6only' '-ppp' '-ppp-mod-pppoe' '-wpad-mini'
 packages 'gluon-core' 'ip6tables' 'hostapd-mini'

@@ -1,5 +1,1 @@
-# There is no per-device rootfs support on mpc85xx-generic yet,
-# so we can't use 'device'
-config 'CONFIG_TARGET_mpc85xx_generic_TLWDR4900=y'
-factory_image tp-link-tl-wdr4900-v1 tl-wdr4900-v1-squashfs-factory .bin
-sysupgrade_image tp-link-tl-wdr4900-v1 tl-wdr4900-v1-squashfs-sysupgrade .bin
+device tp-link-tl-wdr4900-v1 tl-wdr4900-v1

@@ -67,13 +67,13 @@ define GluonTarget
 gluon_target := $(1)$$(if $(2),-$(2))
 GLUON_TARGETS += $$(gluon_target)
 GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
-GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(if $(3),$(3),$(2))
+GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
 endef
 
 include targets/targets.mk
 
 
-LEDEMAKE = $(MAKE) -C lede
+OPENWRTMAKE = $(MAKE) -C openwrt
 
 BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
 SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
@@ -86,15 +86,15 @@ GLUON_CONFIG_VARS := \
 	BOARD='$(BOARD)' \
 	SUBTARGET='$(SUBTARGET)'
 
-LEDE_TARGET := $(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+OPENWRT_TARGET := $(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
-export LEDE_TARGET
+export OPENWRT_TARGET
 
 
-CheckTarget := [ '$(LEDE_TARGET)' ] \
+CheckTarget := [ '$(OPENWRT_TARGET)' ] \
 	|| (echo 'Please set GLUON_TARGET to a valid target. Gluon supports the following targets:'; $(foreach target,$(GLUON_TARGETS),echo ' * $(target)';) false)
 
-CheckExternal := test -d lede || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
+CheckExternal := test -d openwrt || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 define CheckSite
 	@GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) scripts/site_config.lua \
@@ -126,21 +126,21 @@ config: FORCE
 
 	@$(GLUON_CONFIG_VARS) \
 		scripts/target_config.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)' \
-		> lede/.config
-	+@$(LEDEMAKE) defconfig
+		> openwrt/.config
+	+@$(OPENWRTMAKE) defconfig
 
 	@$(GLUON_CONFIG_VARS) \
 		scripts/target_config_check.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)'
 
 
-LUA := lede/staging_dir/hostpkg/bin/lua
+LUA := openwrt/staging_dir/hostpkg/bin/lua
 
 $(LUA):
 	@$(CheckExternal)
 
-	+@[ -e lede/.config ] || $(LEDEMAKE) defconfig
-	+@$(LEDEMAKE) tools/install
-	+@$(LEDEMAKE) package/lua/host/install
+	+@[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
+	+@$(OPENWRTMAKE) tools/install
+	+@$(OPENWRTMAKE) package/lua/host/compile
 
 prepare-target: config $(LUA) ;
 
@@ -148,15 +148,15 @@ all: prepare-target
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),$(call CheckSite,$(conf)))
 
 	@scripts/clean_output.sh
-	+@$(LEDEMAKE)
+	+@$(OPENWRTMAKE)
 	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/copy_output.sh '$(GLUON_TARGET)'
 
 clean download: config
-	+@$(LEDEMAKE) $@
+	+@$(OPENWRTMAKE) $@
 
 dirclean: FORCE
-	+@[ -e lede/.config ] || $(LEDEMAKE) defconfig
-	+@$(LEDEMAKE) dirclean
+	+@[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
+	+@$(OPENWRTMAKE) dirclean
 	@rm -rf $(GLUON_TMPDIR) $(GLUON_OUTPUTDIR)
 
 manifest: $(LUA) FORCE

@@ -2,19 +2,19 @@
 
 set -e
 
-[ "$LEDE_TARGET" ] || exit 1
+[ "$OPENWRT_TARGET" ] || exit 1
 
 
 . scripts/common.inc.sh
 
 
-if [ "$(expr match "$LEDE_TARGET" '.*-.*')" -gt 0 ]; then
-	LEDE_BINDIR="${LEDE_TARGET//-/\/}"
+if [ "$(expr match "$OPENWRT_TARGET" '.*-.*')" -gt 0 ]; then
+	OPENWRT_BINDIR="${OPENWRT_TARGET//-/\/}"
 else
-	LEDE_BINDIR="${LEDE_TARGET}/generic"
+	OPENWRT_BINDIR="${OPENWRT_TARGET}/generic"
 fi
 
-rm -f "lede/bin/targets/${LEDE_BINDIR}"/* 2>/dev/null || true
+rm -f "openwrt/bin/targets/${OPENWRT_BINDIR}"/* 2>/dev/null || true
 
 # Full builds will output the "packages" directory, so clean up first
-[ "$DEVICES" ] || rm -rf "lede/bin/targets/${LEDE_BINDIR}/packages"
+[ "$DEVICES" ] || rm -rf "openwrt/bin/targets/${OPENWRT_BINDIR}/packages"
