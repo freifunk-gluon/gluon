@@ -281,6 +281,7 @@ ipq40xx
 * OpenMesh
 
   - A42
+  - A62
 
 ipq806x
 ^^^^^^^
