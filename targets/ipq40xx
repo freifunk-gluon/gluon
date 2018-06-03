@@ -1,6 +1,8 @@
 ATH10K_PACKAGES_IPQ40XX=
+ATH10K_PACKAGES_QCA9888='ath10k-firmware-qca9888'
 if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES_IPQ40XX='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca4019 ath10k-firmware-qca4019-ct'
+	ATH10K_PACKAGES_QCA9888='-ath10k-firmware-qca9888 ath10k-firmware-qca9888-ct'
 fi
 
 
@@ -34,6 +36,9 @@ packages $ATH10K_PACKAGES_IPQ40XX
 
 device openmesh-a42 openmesh_a42
 packages $ATH10K_PACKAGES_IPQ40XX
+
+device openmesh-a62 openmesh_a62
+packages $ATH10K_PACKAGES_IPQ40XX $ATH10K_PACKAGES_QCA9888
 
 
 # ZyXEL
