@@ -608,7 +608,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffac <https://github.com/ffac/site>`_ (Regio Aachen)
 * `site-ffbs <https://github.com/ffbs/site-ffbs>`_ (Braunschweig)
 * `site-ffhb <https://github.com/FreifunkBremen/gluon-site-ffhb>`_ (Bremen)
-* `site-ffda <https://github.com/freifunk-darmstadt/site-ffda>`_ (Darmstadt)
+* `site-ffda <https://git.darmstadt.ccc.de/ffda/site>`_ (Darmstadt)
 * `site-ffeh <https://github.com/freifunk-ehingen/site-ffeh>`_ (Ehingen)
 * `site-fffl <https://github.com/freifunk-flensburg/site-fffl>`_ (Flensburg)
 * `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
