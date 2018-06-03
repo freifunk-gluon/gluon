@@ -13,6 +13,7 @@ $(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(GLUON_WLAN_MESH_11s)$(BROKEN),)
+$(eval $(call GluonTarget,ipq40xx))
 $(eval $(call GluonTarget,ipq806x))
 $(eval $(call GluonTarget,ramips,mt7620))
 $(eval $(call GluonTarget,ramips,mt76x8))
