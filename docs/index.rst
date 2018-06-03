@@ -305,6 +305,7 @@ ipq40xx
 * OpenMesh
 
   - A42 [#80211s]_
+  - A62 [#80211s]_
 
 * ZyXEL
 
