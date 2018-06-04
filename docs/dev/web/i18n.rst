@@ -58,7 +58,7 @@ script in the ``contrib`` directory:
 
 The same command can be run again to update the template.
 
-In addition, the Makefile must be adjusted. Instead of LEDE's default *package.mk*,
+In addition, the Makefile must be adjusted. Instead of OpenWrt's default *package.mk*,
 the Gluon version (``../gluon.mk`` for core packages) must be used. The i18n files must be installed
 and PKG_CONFIG_DEPENDS must be added::
 
