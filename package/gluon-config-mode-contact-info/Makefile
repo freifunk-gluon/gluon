@@ -10,9 +10,4 @@ define Package/gluon-config-mode-contact-info
   DEPENDS:=+gluon-config-mode-core +gluon-node-info
 endef
 
-define Package/gluon-config-mode-contact-info/description
-	Allows the user to provide contact information to be distributed in the mesh.
-	Can be made obligatory in site.conf
-endef
-
 $(eval $(call BuildPackageGluon,gluon-config-mode-contact-info))
