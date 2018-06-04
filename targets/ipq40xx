@@ -1,0 +1,10 @@
+ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca4019 ath10k-firmware-qca4019-ct -ath10k-firmware-qca9888 ath10k-firmware-qca9888-ct'
+
+
+# OpenMesh
+
+device openmesh-a42 openmesh_a42
+packages $ATH10K_PACKAGES
+
+device openmesh-a62 openmesh_a62
+packages $ATH10K_PACKAGES

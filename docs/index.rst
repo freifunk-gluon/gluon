@@ -275,6 +275,14 @@ brcm2708-bcm2709
 
 * RaspberryPi 2
 
+ipq40xx
+^^^^^^^
+
+* OpenMesh
+
+  - A42
+  - A62
+
 ipq806x
 ^^^^^^^
 
