@@ -39,9 +39,4 @@ define Package/gluon-config-mode-contact-info/install
 	$(call GluonInstallI18N,gluon-config-mode-contact-info,$(1))
 endef
 
-define Package/gluon-config-mode-contact-info/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
 $(eval $(call BuildPackage,gluon-config-mode-contact-info))
