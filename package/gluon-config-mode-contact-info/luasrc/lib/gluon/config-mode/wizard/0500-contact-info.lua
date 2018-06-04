@@ -16,6 +16,7 @@ return function(form, uci)
 
 	local o = s:option(Value, "contact", pkg_i18n.translate("Contact info"), pkg_i18n.translate("e.g. E-mail or phone number"))
 	o.default = uci:get("gluon-node-info", owner, "contact")
+	o.datatype = 'minlength(1)'
 	o.optional = true
 	function o:write(data)
 		uci:set("gluon-node-info", owner, "contact", data)
