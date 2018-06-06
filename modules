@@ -2,7 +2,7 @@ GLUON_FEEDS='openwrt gluon routing luci'
 
 LEDE_REPO=https://git.openwrt.org/openwrt/openwrt.git
 LEDE_BRANCH=lede-17.01
-LEDE_COMMIT=2328977fed81cf2fc367d8eea2f9bf04e51a761f
+LEDE_COMMIT=b6a1f43075f96b0028e33ed1af1fe31068791d24
 
 PACKAGES_OPENWRT_REPO=https://github.com/openwrt/packages.git
 PACKAGES_OPENWRT_BRANCH=lede-17.01
