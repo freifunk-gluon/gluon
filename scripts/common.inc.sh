@@ -38,6 +38,10 @@ sysupgrade() {
 	:
 }
 
+other() {
+	:
+}
+
 no_opkg() {
 	:
 }

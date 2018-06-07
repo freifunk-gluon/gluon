@@ -7,6 +7,8 @@ set -e
 
 default_factory_ext='.bin'
 default_factory_suffix='-squashfs-factory'
+default_other_suffix_openwrt=
+default_other_suffix_gluon=
 default_sysupgrade_ext='.bin'
 default_sysupgrade_suffix='-squashfs-sysupgrade'
 
@@ -16,13 +18,15 @@ aliases=
 
 factory_ext=
 factory_suffix=
+other_suffix_openwrt=
+other_suffix_gluon=
 sysupgrade_ext=
 sysupgrade_suffix=
 
 no_opkg=
 
 
-mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade"
+mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/other" "${GLUON_IMAGEDIR}/sysupgrade"
 
 if [ "$(expr match "$OPENWRT_TARGET" '.*-.*')" -gt 0 ]; then
 	OPENWRT_BINDIR="${OPENWRT_TARGET//-/\/}"
@@ -46,6 +50,18 @@ copy() {
 			rm -f "${GLUON_IMAGEDIR}/factory/gluon-"*"-${alias}${factory_ext}"
 			ln -s "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}${factory_ext}" \
 				"${GLUON_IMAGEDIR}/factory/gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}${factory_ext}"
+		done
+	fi
+
+	if [ "$other_suffix_openwrt" ]; then
+		rm -f "${GLUON_IMAGEDIR}/other/gluon-"*"-${output}-${other_suffix_gluon}"
+		cp "openwrt/bin/targets/${OPENWRT_BINDIR}/openwrt-${OPENWRT_TARGET}${profile}${other_suffix_openwrt}" \
+			"${GLUON_IMAGEDIR}/other/gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-${other_suffix_gluon}"
+
+		for alias in $aliases; do
+			rm -f "${GLUON_IMAGEDIR}/other/gluon-"*"-${alias}-${other_suffix_gluon}"
+			ln -s "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-${other_suffix_gluon}" \
+				"${GLUON_IMAGEDIR}/other/gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-${other_suffix_gluon}"
 		done
 	fi
 
@@ -74,6 +90,8 @@ device() {
 
 	factory_ext="$default_factory_ext"
 	factory_suffix="$default_factory_suffix"
+	other_suffix_openwrt="$default_other_suffix_openwrt"
+	other_suffix_gluon="$default_other_suffix_gluon"
 	sysupgrade_ext="$default_sysupgrade_ext"
 	sysupgrade_suffix="$default_sysupgrade_suffix"
 }
@@ -146,6 +164,11 @@ sysupgrade() {
 		default_sysupgrade_ext="$sysupgrade_ext"
 		default_sysupgrade_suffix="$sysupgrade_suffix"
 	fi
+}
+
+other() {
+	other_suffix_openwrt="$1"
+	other_suffix_gluon="$2"
 }
 
 no_opkg() {
