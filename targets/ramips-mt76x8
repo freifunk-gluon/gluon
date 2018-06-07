@@ -1,3 +1,14 @@
+# TP-Link
+
+device tp-link-tl-wr841-v13 tl-wr841n-v13
+factory
+bootloader -squashfs-tftp-recovery .bin
+
+device tp-link-archer-c50-v3 tplink_c50-v3
+factory
+bootloader -squashfs-tftp-recovery .bin
+
+
 # VoCore 2
 
 device vocore2 vocore2
