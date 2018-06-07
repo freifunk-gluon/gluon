@@ -7,6 +7,8 @@ set -e
 
 default_factory_ext='.bin'
 default_factory_suffix='-squashfs-factory'
+default_bootloader_ext=
+default_bootloader_suffix=
 default_sysupgrade_ext='.bin'
 default_sysupgrade_suffix='-squashfs-sysupgrade'
 
@@ -16,13 +18,15 @@ aliases=
 
 factory_ext=
 factory_suffix=
+bootloader_ext=
+bootloader_suffix=
 sysupgrade_ext=
 sysupgrade_suffix=
 
 no_opkg=
 
 
-mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade"
+mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/bootloader" "${GLUON_IMAGEDIR}/sysupgrade"
 
 if [ "$(expr match "$OPENWRT_TARGET" '.*-.*')" -gt 0 ]; then
 	OPENWRT_BINDIR="${OPENWRT_TARGET//-/\/}"
@@ -46,6 +50,18 @@ copy() {
 			rm -f "${GLUON_IMAGEDIR}/factory/gluon-"*"-${alias}${factory_ext}"
 			ln -s "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}${factory_ext}" \
 				"${GLUON_IMAGEDIR}/factory/gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}${factory_ext}"
+		done
+	fi
+
+	if [ "$bootloader_ext" ]; then
+		rm -f "${GLUON_IMAGEDIR}/bootloader/gluon-"*"-${output}-bootloader${bootloader_ext}"
+		cp "openwrt/bin/targets/${OPENWRT_BINDIR}/openwrt-${OPENWRT_TARGET}${profile}${bootloader_suffix}${bootloader_ext}" \
+			"${GLUON_IMAGEDIR}/bootloader/gluon-${SITE_CODE}-${GLUON_RELEASE}${output}-bootloader${bootloader_ext}"
+
+		for alias in $aliases; do
+			rm -f "${GLUON_IMAGEDIR}/factory/gluon-"*"-${alias}-bootloader${bootloader_ext}"
+			ln -s "gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-bootloader${bootloader_ext}" \
+				"${GLUON_IMAGEDIR}/factory/gluon-${SITE_CODE}-${GLUON_RELEASE}-${alias}-bootloader${bootloader_ext}"
 		done
 	fi
 
@@ -74,6 +90,8 @@ device() {
 
 	factory_ext="$default_factory_ext"
 	factory_suffix="$default_factory_suffix"
+	bootloader_ext="$default_bootloader_ext"
+	bootloader_suffix="$default_bootloader_suffix"
 	sysupgrade_ext="$default_sysupgrade_ext"
 	sysupgrade_suffix="$default_sysupgrade_suffix"
 }
@@ -146,6 +164,11 @@ sysupgrade() {
 		default_sysupgrade_ext="$sysupgrade_ext"
 		default_sysupgrade_suffix="$sysupgrade_suffix"
 	fi
+}
+
+bootloader() {
+	bootloader_suffix="$1"
+	bootloader_ext="$2"
 }
 
 no_opkg() {

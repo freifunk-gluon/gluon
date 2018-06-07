@@ -38,6 +38,10 @@ sysupgrade() {
 	:
 }
 
+bootloader() {
+	:
+}
+
 no_opkg() {
 	:
 }
