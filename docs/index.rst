@@ -163,6 +163,8 @@ ar71xx-generic
 
 * OpenMesh
 
+  - A40
+  - A60
   - MR600 (v1, v2)
   - MR900 (v1, v2)
   - MR1750 (v1, v2) [#ath10k]_
