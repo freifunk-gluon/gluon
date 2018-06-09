@@ -617,7 +617,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffho <https://git.ffho.net/freifunkhochstift/ffho-site>`_ (Hochstift)
 * `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
 * `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
-* `site-ffki <http://git.freifunk.in-kiel.de/ffki-site/>`_ (Kiel)
+* `site-ffki <https://git.freifunk.in-kiel.de/ffki-site/>`_ (Kiel)
 * `site-fflz <https://github.com/freifunk-lausitz/site-fflz>`_ (Lausitz)
 * `site-ffl <https://github.com/freifunk-leipzig/freifunk-gluon-leipzig>`_ (Leipzig)
 * `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
