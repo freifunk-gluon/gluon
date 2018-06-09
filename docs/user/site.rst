@@ -633,6 +633,7 @@ This is a non-exhaustive list of site-repos from various communities:
 * `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
 * `site-neuss <https://github.com/ffne/site-neuss>`_ (Neuss)
 * `site-ffniers <https://github.com/ffruhr/site-ffniers>`_ (Niersufer)
+* `site-ffndh <https://github.com/freifunk-nordheide/ffnordheide/tree/ffnh-lede/ffndh-site>`_ (Nordheide)
 * `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
 * `site-ffrgb <https://github.com/ffrgb/site-ffrgb>`_ (Regensburg)
 * `site-ffrn <https://github.com/Freifunk-Rhein-Neckar/site-ffrn>`_ (Rhein-Neckar)
