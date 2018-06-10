@@ -1,0 +1,38 @@
+From: Vincent Wiemann <webmaster@codefetch.de>
+Date: Sun, 10 Jun 2018 02:01:08 +0200
+Subject: mips: fix dynamic ftrace
+
+The kernel patch *-mips_module_reloc.patch breaks dynamic ftrace as
+dynamic ftrace depends on -mlong-calls.
+See http://patchwork.linux-mips.org/patch/675/
+Thus we always set -mlong-calls if the kernel is being
+compiled with dynamic ftrace support.
+
+diff --git a/target/linux/generic/patches-4.4/305-mips_module_reloc.patch b/target/linux/generic/patches-4.4/305-mips_module_reloc.patch
+index 944921fff7a0d0d33515cb84a2cb81e9cca42d0e..c16005ff2169aad20fe32261841a6d07f4ac3bed 100644
+--- a/target/linux/generic/patches-4.4/305-mips_module_reloc.patch
++++ b/target/linux/generic/patches-4.4/305-mips_module_reloc.patch
+@@ -1,6 +1,6 @@
+ --- a/arch/mips/Makefile
+ +++ b/arch/mips/Makefile
+-@@ -90,8 +90,13 @@ all-$(CONFIG_SYS_SUPPORTS_ZBOOT)+= vmlin
++@@ -90,8 +90,18 @@ all-$(CONFIG_SYS_SUPPORTS_ZBOOT)+= vmlin
+  cflags-y			+= -G 0 -mno-abicalls -fno-pic -pipe -mno-branch-likely
+  cflags-y			+= -msoft-float
+  LDFLAGS_vmlinux			+= -G 0 -static -n -nostdlib --gc-sections
+@@ -8,8 +8,13 @@
+  KBUILD_AFLAGS_MODULE		+= -mlong-calls
+  KBUILD_CFLAGS_MODULE		+= -mlong-calls
+ +else
+-+KBUILD_AFLAGS_MODULE		+= -mno-long-calls
+-+KBUILD_CFLAGS_MODULE		+= -mno-long-calls
+++  ifdef CONFIG_DYNAMIC_FTRACE
+++    KBUILD_AFLAGS_MODULE		+= -mlong-calls
+++    KBUILD_CFLAGS_MODULE		+= -mlong-calls
+++  else
+++    KBUILD_AFLAGS_MODULE		+= -mno-long-calls
+++    KBUILD_CFLAGS_MODULE		+= -mno-long-calls
+++  endif
+ +endif
+  
+  ifndef CONFIG_FUNCTION_TRACER
