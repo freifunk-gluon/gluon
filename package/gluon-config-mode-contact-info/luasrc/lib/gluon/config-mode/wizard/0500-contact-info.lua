@@ -6,7 +6,16 @@ return function(form, uci)
 
 	local owner = uci:get_first("gluon-node-info", "owner")
 
-	local s = form:section(Section, nil, site_i18n.translate("gluon-config-mode:contact-help"))
+	local default_text = pkg_i18n.translate(
+		'Please provide your contact information here to allow others to contact '
+		.. 'you. Note that this information will be visible <em>publicly</em> on '
+		.. 'the internet together with your node\'s coordinates. This means it can '
+		.. 'be downloaded and processed by anyone. This information is '
+		.. 'not required to operate a node. If you chose to enter data, it will be '
+		.. 'stored on this node and can be deleted by yourself at any time.'
+	)
+	local s = form:section(Section, nil,
+		site_i18n._translate("gluon-config-mode:contact-help") or default_text)
 
 	local o = s:option(Value, "contact", pkg_i18n.translate("Contact info"),
 		site_i18n._translate("gluon-config-mode:contact-note") or pkg_i18n.translate("e.g. E-mail or phone number"))
