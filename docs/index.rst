@@ -25,6 +25,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    features/wired-mesh
    features/dns-forwarder
    features/monitoring
+   features/multidomain
    features/authorized-keys
    features/roles
    features/vpn
