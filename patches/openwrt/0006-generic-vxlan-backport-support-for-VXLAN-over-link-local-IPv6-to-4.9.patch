@@ -1,15 +1,17 @@
 From: Matthias Schiffer <mschiffer@universe-factory.net>
-Date: Wed, 21 Jun 2017 00:54:57 +0200
-Subject: generic: vxlan: backport support for VXLAN over link-local IPv6
+Date: Tue, 9 Jan 2018 22:38:19 +0100
+Subject: generic: vxlan: backport support for VXLAN over link-local IPv6 to 4.9
 
-diff --git a/target/linux/generic/patches-4.4/075-0001-vxlan-improve-validation-of-address-family-configura.patch b/target/linux/generic/patches-4.4/075-0001-vxlan-improve-validation-of-address-family-configura.patch
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/generic/backport-4.9/095-0001-vxlan-improve-validation-of-address-family-configura.patch b/target/linux/generic/backport-4.9/095-0001-vxlan-improve-validation-of-address-family-configura.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..439eb5d0f769f1cde23ff4deacc80728e82605f2
+index 0000000000000000000000000000000000000000..2114562536675cd59450928f591e70d66f8fc7b9
 --- /dev/null
-+++ b/target/linux/generic/patches-4.4/075-0001-vxlan-improve-validation-of-address-family-configura.patch
-@@ -0,0 +1,68 @@
-+From 434a1bb54b24b538f81d7945128b7ca25976d19b Mon Sep 17 00:00:00 2001
-+Message-Id: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
++++ b/target/linux/generic/backport-4.9/095-0001-vxlan-improve-validation-of-address-family-configura.patch
+@@ -0,0 +1,73 @@
++From f45ba82cd83d27b5d44d3dc417e0e480ba0d3703 Mon Sep 17 00:00:00 2001
++Message-Id: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Mon, 19 Jun 2017 10:03:57 +0200
 +Subject: [PATCH 1/4] vxlan: improve validation of address family configuration
@@ -22,14 +24,16 @@ index 0000000000000000000000000000000000000000..439eb5d0f769f1cde23ff4deacc80728
 +
 +Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 +Signed-off-by: David S. Miller <davem@davemloft.net>
-+[Matthias Schiffer: rebase to v4.4.y]
++[Matthias Schiffer: rebase to v4.9.y]
 +---
 + drivers/net/vxlan.c | 23 +++++++++++++++--------
 + 1 file changed, 15 insertions(+), 8 deletions(-)
 +
++diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
++index 983e941bdf29..fbe8da7fa296 100644
 +--- a/drivers/net/vxlan.c
 ++++ b/drivers/net/vxlan.c
-+@@ -2784,12 +2784,20 @@ static int vxlan_dev_configure(struct ne
++@@ -2867,12 +2867,20 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 + 
 + 	memcpy(&dst->remote_ip, &conf->remote_ip, sizeof(conf->remote_ip));
 + 
@@ -54,7 +58,7 @@ index 0000000000000000000000000000000000000000..439eb5d0f769f1cde23ff4deacc80728
 + 		if (!IS_ENABLED(CONFIG_IPV6))
 + 			return -EPFNOSUPPORT;
 + 		use_ipv6 = true;
-+@@ -2843,11 +2851,9 @@ static int vxlan_dev_configure(struct ne
++@@ -2938,11 +2946,9 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 + 
 + 	list_for_each_entry(tmp, &vn->vxlan_list, next) {
 + 		if (tmp->cfg.vni == conf->vni &&
@@ -62,13 +66,13 @@ index 0000000000000000000000000000000000000000..439eb5d0f769f1cde23ff4deacc80728
 +-		     tmp->cfg.saddr.sa.sa_family == AF_INET6) == use_ipv6 &&
 + 		    tmp->cfg.dst_port == vxlan->cfg.dst_port &&
 +-		    (tmp->flags & VXLAN_F_RCV_FLAGS) ==
-+-		    (vxlan->flags & VXLAN_F_RCV_FLAGS))
++-		    (vxlan->flags & VXLAN_F_RCV_FLAGS)) {
 ++		    (tmp->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)) ==
-++		    (vxlan->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)))
-+ 		return -EEXIST;
-+ 	}
-+ 
-+@@ -2915,6 +2921,7 @@ static int vxlan_newlink(struct net *src
+++		    (vxlan->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6))) {
++ 			pr_info("duplicate VNI %u\n", be32_to_cpu(conf->vni));
++ 			return -EEXIST;
++ 		}
++@@ -2987,6 +2993,7 @@ static int vxlan_newlink(struct net *src_net, struct net_device *dev,
 + 
 + 	if (data[IFLA_VXLAN_GROUP]) {
 + 		conf.remote_ip.sin.sin_addr.s_addr = nla_get_in_addr(data[IFLA_VXLAN_GROUP]);
@@ -76,16 +80,19 @@ index 0000000000000000000000000000000000000000..439eb5d0f769f1cde23ff4deacc80728
 + 	} else if (data[IFLA_VXLAN_GROUP6]) {
 + 		if (!IS_ENABLED(CONFIG_IPV6))
 + 			return -EPFNOSUPPORT;
-diff --git a/target/linux/generic/patches-4.4/075-0002-vxlan-check-valid-combinations-of-address-scopes.patch b/target/linux/generic/patches-4.4/075-0002-vxlan-check-valid-combinations-of-address-scopes.patch
++-- 
++2.15.1
++
+diff --git a/target/linux/generic/backport-4.9/095-0002-vxlan-check-valid-combinations-of-address-scopes.patch b/target/linux/generic/backport-4.9/095-0002-vxlan-check-valid-combinations-of-address-scopes.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..abf9b8a0eae88aa5a64be5cc82a6827d4d562c55
+index 0000000000000000000000000000000000000000..b38b9977bca192eafe9a0d9b8c36a120b3a2c590
 --- /dev/null
-+++ b/target/linux/generic/patches-4.4/075-0002-vxlan-check-valid-combinations-of-address-scopes.patch
-@@ -0,0 +1,84 @@
-+From 8956b9db43347a51e88dddc3c08fb88ff60dea54 Mon Sep 17 00:00:00 2001
-+Message-Id: <8956b9db43347a51e88dddc3c08fb88ff60dea54.1498005061.git.mschiffer@universe-factory.net>
-+In-Reply-To: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
-+References: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
++++ b/target/linux/generic/backport-4.9/095-0002-vxlan-check-valid-combinations-of-address-scopes.patch
+@@ -0,0 +1,91 @@
++From 0eb4ccfc77e07fb4bfc7b1778a7ecb136b47aba4 Mon Sep 17 00:00:00 2001
++Message-Id: <0eb4ccfc77e07fb4bfc7b1778a7ecb136b47aba4.1515533863.git.mschiffer@universe-factory.net>
++In-Reply-To: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
++References: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Mon, 19 Jun 2017 10:03:58 +0200
 +Subject: [PATCH 2/4] vxlan: check valid combinations of address scopes
@@ -100,15 +107,17 @@ index 0000000000000000000000000000000000000000..abf9b8a0eae88aa5a64be5cc82a6827d
 +
 +Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 +Signed-off-by: David S. Miller <davem@davemloft.net>
-+[Matthias Schiffer: rebase to v4.4.y]
++[Matthias Schiffer: rebase to v4.9.y]
 +---
 + drivers/net/vxlan.c | 29 +++++++++++++++++++++++++++++
 + include/net/vxlan.h |  1 +
 + 2 files changed, 30 insertions(+)
 +
++diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
++index fbe8da7fa296..863d9528b900 100644
 +--- a/drivers/net/vxlan.c
 ++++ b/drivers/net/vxlan.c
-+@@ -2797,11 +2797,35 @@ static int vxlan_dev_configure(struct ne
++@@ -2880,11 +2880,35 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 + 	if (conf->saddr.sa.sa_family != dst->remote_ip.sa.sa_family)
 + 		return -EINVAL;
 + 
@@ -143,11 +152,11 @@ index 0000000000000000000000000000000000000000..abf9b8a0eae88aa5a64be5cc82a6827d
 ++		}
 + 	}
 + 
-+ 	if (conf->remote_ifindex) {
-+@@ -2827,6 +2851,11 @@ static int vxlan_dev_configure(struct ne
-+ 			dev->mtu = lowerdev->mtu - (use_ipv6 ? VXLAN6_HEADROOM : VXLAN_HEADROOM);
-+ 
-+ 		needed_headroom = lowerdev->hard_header_len;
++ 	if (conf->label && !use_ipv6) {
++@@ -2918,6 +2942,11 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
++ 	} else if (vxlan_addr_multicast(&dst->remote_ip)) {
++ 		pr_info("multicast destination requires interface to be specified\n");
++ 		return -EINVAL;
 ++	} else {
 ++#if IS_ENABLED(CONFIG_IPV6)
 ++		if (vxlan->flags & VXLAN_F_IPV6_LINKLOCAL)
@@ -156,26 +165,31 @@ index 0000000000000000000000000000000000000000..abf9b8a0eae88aa5a64be5cc82a6827d
 + 	}
 + 
 + 	if (conf->mtu) {
++diff --git a/include/net/vxlan.h b/include/net/vxlan.h
++index 9fce47e3e13e..c1c0d03e3456 100644
 +--- a/include/net/vxlan.h
 ++++ b/include/net/vxlan.h
-+@@ -185,6 +185,7 @@ struct vxlan_dev {
-+ #define VXLAN_F_GBP			0x800
++@@ -267,6 +267,7 @@ struct vxlan_dev {
 + #define VXLAN_F_REMCSUM_NOPARTIAL	0x1000
 + #define VXLAN_F_COLLECT_METADATA	0x2000
++ #define VXLAN_F_GPE			0x4000
 ++#define VXLAN_F_IPV6_LINKLOCAL		0x8000
 + 
 + /* Flags that are used in the receive path. These flags must match in
 +  * order for a socket to be shareable
-diff --git a/target/linux/generic/patches-4.4/075-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch b/target/linux/generic/patches-4.4/075-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch
++-- 
++2.15.1
++
+diff --git a/target/linux/generic/backport-4.9/095-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch b/target/linux/generic/backport-4.9/095-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..5ebbce6e0682fff11b0d86c8df781a5c2fab5125
+index 0000000000000000000000000000000000000000..dcfd1ce7c2f015354d21a65f12f6ebd00331b629
 --- /dev/null
-+++ b/target/linux/generic/patches-4.4/075-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch
-@@ -0,0 +1,88 @@
-+From e3bdb4bc6c4020e90c1bbafd91645ff3ae8966b9 Mon Sep 17 00:00:00 2001
-+Message-Id: <e3bdb4bc6c4020e90c1bbafd91645ff3ae8966b9.1498005061.git.mschiffer@universe-factory.net>
-+In-Reply-To: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
-+References: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
++++ b/target/linux/generic/backport-4.9/095-0003-vxlan-fix-snooping-for-link-local-IPv6-addresses.patch
+@@ -0,0 +1,93 @@
++From 010b2b541d958e12d78ba1c79734c700f169610b Mon Sep 17 00:00:00 2001
++Message-Id: <010b2b541d958e12d78ba1c79734c700f169610b.1515533863.git.mschiffer@universe-factory.net>
++In-Reply-To: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
++References: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Mon, 19 Jun 2017 10:03:59 +0200
 +Subject: [PATCH 3/4] vxlan: fix snooping for link-local IPv6 addresses
@@ -190,14 +204,16 @@ index 0000000000000000000000000000000000000000..5ebbce6e0682fff11b0d86c8df781a5c
 +
 +Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 +Signed-off-by: David S. Miller <davem@davemloft.net>
-+[Matthias Schiffer: rebase to v4.4.y]
++[Matthias Schiffer: rebase to v4.9.y]
 +---
 + drivers/net/vxlan.c | 20 +++++++++++++++-----
 + 1 file changed, 15 insertions(+), 5 deletions(-)
 +
++diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
++index 863d9528b900..c28c6f34b3b3 100644
 +--- a/drivers/net/vxlan.c
 ++++ b/drivers/net/vxlan.c
-+@@ -947,16 +947,25 @@ out:
++@@ -917,16 +917,25 @@ static int vxlan_fdb_dump(struct sk_buff *skb, struct netlink_callback *cb,
 +  * Return true if packet is bogus and should be dropped.
 +  */
 + static bool vxlan_snoop(struct net_device *dev,
@@ -225,7 +241,7 @@ index 0000000000000000000000000000000000000000..5ebbce6e0682fff11b0d86c8df781a5c
 + 			return false;
 + 
 + 		/* Don't migrate static entries, drop packets */
-+@@ -982,7 +991,7 @@ static bool vxlan_snoop(struct net_devic
++@@ -952,7 +961,7 @@ static bool vxlan_snoop(struct net_device *dev,
 + 					 NLM_F_EXCL|NLM_F_CREATE,
 + 					 vxlan->cfg.dst_port,
 + 					 vxlan->default_dst.remote_vni,
@@ -234,24 +250,24 @@ index 0000000000000000000000000000000000000000..5ebbce6e0682fff11b0d86c8df781a5c
 + 		spin_unlock(&vxlan->hash_lock);
 + 	}
 + 
-+@@ -1157,6 +1166,7 @@ static void vxlan_rcv(struct vxlan_sock
-+ 	struct vxlan_dev *vxlan;
-+ 	struct pcpu_sw_netstats *stats;
++@@ -1223,6 +1232,7 @@ static bool vxlan_set_mac(struct vxlan_dev *vxlan,
++ 			  struct sk_buff *skb)
++ {
 + 	union vxlan_addr saddr;
 ++	u32 ifindex = skb->dev->ifindex;
-+ 	int err = 0;
 + 
-+ 	/* For flow based devices, map all packets to VNI 0 */
-+@@ -1196,7 +1206,7 @@ static void vxlan_rcv(struct vxlan_sock
++ 	skb_reset_mac_header(skb);
++ 	skb->protocol = eth_type_trans(skb, vxlan->dev);
++@@ -1244,7 +1254,7 @@ static bool vxlan_set_mac(struct vxlan_dev *vxlan,
 + 	}
 + 
 + 	if ((vxlan->flags & VXLAN_F_LEARN) &&
 +-	    vxlan_snoop(skb->dev, &saddr, eth_hdr(skb)->h_source))
 ++	    vxlan_snoop(skb->dev, &saddr, eth_hdr(skb)->h_source, ifindex))
-+ 		goto drop;
++ 		return false;
 + 
-+ 	skb_reset_network_header(skb);
-+@@ -1898,7 +1908,7 @@ static void vxlan_encap_bypass(struct sk
++ 	return true;
++@@ -1932,7 +1942,7 @@ static void vxlan_encap_bypass(struct sk_buff *skb, struct vxlan_dev *src_vxlan,
 + 	}
 + 
 + 	if (dst_vxlan->flags & VXLAN_F_LEARN)
@@ -260,16 +276,19 @@ index 0000000000000000000000000000000000000000..5ebbce6e0682fff11b0d86c8df781a5c
 + 
 + 	u64_stats_update_begin(&tx_stats->syncp);
 + 	tx_stats->tx_packets++;
-diff --git a/target/linux/generic/patches-4.4/075-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch b/target/linux/generic/patches-4.4/075-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch
++-- 
++2.15.1
++
+diff --git a/target/linux/generic/backport-4.9/095-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch b/target/linux/generic/backport-4.9/095-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..c184c32385e6c802f1bed7647ce720f0e429f4a5
+index 0000000000000000000000000000000000000000..18ae230a3b04d2b57184109fa14f9533f0fb7192
 --- /dev/null
-+++ b/target/linux/generic/patches-4.4/075-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch
-@@ -0,0 +1,168 @@
-+From 7a1fa05f8d460e2a81cb724f441f7346f950680a Mon Sep 17 00:00:00 2001
-+Message-Id: <7a1fa05f8d460e2a81cb724f441f7346f950680a.1498005061.git.mschiffer@universe-factory.net>
-+In-Reply-To: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
-+References: <434a1bb54b24b538f81d7945128b7ca25976d19b.1498005061.git.mschiffer@universe-factory.net>
++++ b/target/linux/generic/backport-4.9/095-0004-vxlan-allow-multiple-VXLANs-with-same-VNI-for-IPv6-l.patch
+@@ -0,0 +1,182 @@
++From 95583c75a95449dade713e1dad4ed0a8dcc1b391 Mon Sep 17 00:00:00 2001
++Message-Id: <95583c75a95449dade713e1dad4ed0a8dcc1b391.1515533863.git.mschiffer@universe-factory.net>
++In-Reply-To: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
++References: <f45ba82cd83d27b5d44d3dc417e0e480ba0d3703.1515533863.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Mon, 19 Jun 2017 10:04:00 +0200
 +Subject: [PATCH 4/4] vxlan: allow multiple VXLANs with same VNI for IPv6
@@ -286,105 +305,111 @@ index 0000000000000000000000000000000000000000..c184c32385e6c802f1bed7647ce720f0
 +
 +Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 +Signed-off-by: David S. Miller <davem@davemloft.net>
-+[Matthias Schiffer: rebase to v4.4.y]
++[Matthias Schiffer: rebase to v4.9.y]
 +---
-+ drivers/net/vxlan.c | 53 +++++++++++++++++++++++++++++++++++++----------------
-+ 1 file changed, 37 insertions(+), 16 deletions(-)
++ drivers/net/vxlan.c | 60 ++++++++++++++++++++++++++++++++++++-----------------
++ 1 file changed, 41 insertions(+), 19 deletions(-)
 +
++diff --git a/drivers/net/vxlan.c b/drivers/net/vxlan.c
++index c28c6f34b3b3..9208e3d9ec43 100644
 +--- a/drivers/net/vxlan.c
 ++++ b/drivers/net/vxlan.c
-+@@ -242,22 +242,33 @@ static struct vxlan_sock *vxlan_find_soc
++@@ -225,7 +225,8 @@ static struct vxlan_sock *vxlan_find_sock(struct net *net, sa_family_t family,
 + 	return NULL;
 + }
 + 
-+-static struct vxlan_dev *vxlan_vs_find_vni(struct vxlan_sock *vs, u32 id)
++-static struct vxlan_dev *vxlan_vs_find_vni(struct vxlan_sock *vs, __be32 vni)
 ++static struct vxlan_dev *vxlan_vs_find_vni(struct vxlan_sock *vs, int ifindex,
-++					   u32 id)
+++					   __be32 vni)
 + {
-+ 	struct vxlan_dev *vxlan;
++ 	struct vxlan_dev_node *node;
 + 
-+ 	hlist_for_each_entry_rcu(vxlan, vni_head(vs, id), hlist) {
-+-		if (vxlan->default_dst.remote_vni == id)
-+-			return vxlan;
-++		if (vxlan->default_dst.remote_vni != id)
++@@ -234,17 +235,27 @@ static struct vxlan_dev *vxlan_vs_find_vni(struct vxlan_sock *vs, __be32 vni)
++ 		vni = 0;
++ 
++ 	hlist_for_each_entry_rcu(node, vni_head(vs, vni), hlist) {
++-		if (node->vxlan->default_dst.remote_vni == vni)
++-			return node->vxlan;
+++		if (node->vxlan->default_dst.remote_vni != vni)
 ++			continue;
 ++
 ++		if (IS_ENABLED(CONFIG_IPV6)) {
-++			const struct vxlan_config *cfg = &vxlan->cfg;
+++			const struct vxlan_config *cfg = &node->vxlan->cfg;
 ++
-++			if ((vxlan->flags & VXLAN_F_IPV6_LINKLOCAL) &&
+++			if ((node->vxlan->flags & VXLAN_F_IPV6_LINKLOCAL) &&
 ++			    cfg->remote_ifindex != ifindex)
 ++				continue;
 ++		}
 ++
-++		return vxlan;
+++		return node->vxlan;
 + 	}
 + 
 + 	return NULL;
 + }
 + 
 + /* Look up VNI in a per net namespace table */
-+-static struct vxlan_dev *vxlan_find_vni(struct net *net, u32 id,
++-static struct vxlan_dev *vxlan_find_vni(struct net *net, __be32 vni,
 +-					sa_family_t family, __be16 port,
 +-					u32 flags)
 ++static struct vxlan_dev *vxlan_find_vni(struct net *net, int ifindex,
-++				        u32 id, sa_family_t family,
+++				        __be32 vni, sa_family_t family,
 ++					__be16 port, u32 flags)
 + {
 + 	struct vxlan_sock *vs;
 + 
-+@@ -265,7 +276,7 @@ static struct vxlan_dev *vxlan_find_vni(
++@@ -252,7 +263,7 @@ static struct vxlan_dev *vxlan_find_vni(struct net *net, __be32 vni,
 + 	if (!vs)
 + 		return NULL;
 + 
-+-	return vxlan_vs_find_vni(vs, id);
-++	return vxlan_vs_find_vni(vs, ifindex, id);
++-	return vxlan_vs_find_vni(vs, vni);
+++	return vxlan_vs_find_vni(vs, ifindex, vni);
 + }
 + 
 + /* Fill in neighbour message in skbuff. */
-+@@ -1174,7 +1185,7 @@ static void vxlan_rcv(struct vxlan_sock
-+ 		vni = 0;
++@@ -1317,7 +1328,8 @@ static int vxlan_rcv(struct sock *sk, struct sk_buff *skb)
++ 	if (!vs)
++ 		goto drop;
 + 
-+ 	/* Is this VNI defined? */
-+-	vxlan = vxlan_vs_find_vni(vs, vni);
-++	vxlan = vxlan_vs_find_vni(vs, skb->dev->ifindex, vni);
++-	vxlan = vxlan_vs_find_vni(vs, vxlan_vni(vxlan_hdr(skb)->vx_vni));
+++	vxlan = vxlan_vs_find_vni(vs, skb->dev->ifindex,
+++                                  vxlan_vni(vxlan_hdr(skb)->vx_vni));
 + 	if (!vxlan)
 + 		goto drop;
 + 
-+@@ -1942,6 +1953,7 @@ static void vxlan_xmit_one(struct sk_buf
-+ 	u32 vni;
++@@ -1976,6 +1988,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
++ 	__be32 vni, label;
 + 	__be16 df = 0;
 + 	__u8 tos, ttl;
 ++	int ifindex;
 + 	int err;
 + 	u32 flags = vxlan->flags;
-+ 
-+@@ -1950,6 +1962,7 @@ static void vxlan_xmit_one(struct sk_buf
++ 	bool udp_sum = false;
++@@ -1987,6 +2000,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 + 	if (rdst) {
 + 		dst_port = rdst->remote_port ? rdst->remote_port : vxlan->cfg.dst_port;
 + 		vni = rdst->remote_vni;
 ++		ifindex = rdst->remote_ifindex;
 + 		dst = &rdst->remote_ip;
-+ 	} else {
-+ 		if (!info) {
-+@@ -1959,6 +1972,7 @@ static void vxlan_xmit_one(struct sk_buf
++ 		local_ip = vxlan->cfg.saddr;
++ 		dst_cache = &rdst->dst_cache;
++@@ -1998,6 +2012,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 + 		}
 + 		dst_port = info->key.tp_dst ? : vxlan->cfg.dst_port;
-+ 		vni = be64_to_cpu(info->key.tun_id);
++ 		vni = tunnel_id_to_key32(info->key.tun_id);
 ++		ifindex = 0;
 + 		remote_ip.sa.sa_family = ip_tunnel_info_af(info);
-+ 		if (remote_ip.sa.sa_family == AF_INET)
++ 		if (remote_ip.sa.sa_family == AF_INET) {
 + 			remote_ip.sin.sin_addr.s_addr = info->key.u.ipv4.dst;
-+@@ -2015,7 +2029,7 @@ static void vxlan_xmit_one(struct sk_buf
-+ 		}
++@@ -2053,7 +2068,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
++ 		sk = sock4->sock->sk;
 + 
-+ 		memset(&fl4, 0, sizeof(fl4));
-+-		fl4.flowi4_oif = rdst ? rdst->remote_ifindex : 0;
-++		fl4.flowi4_oif = ifindex;
-+ 		fl4.flowi4_tos = RT_TOS(tos);
-+ 		fl4.flowi4_mark = skb->mark;
-+ 		fl4.flowi4_proto = IPPROTO_UDP;
-+@@ -2043,7 +2057,7 @@ static void vxlan_xmit_one(struct sk_buf
++ 		rt = vxlan_get_route(vxlan, skb,
++-				     rdst ? rdst->remote_ifindex : 0, tos,
+++				     ifindex, tos,
++ 				     dst->sin.sin_addr.s_addr,
++ 				     &local_ip.sin.sin_addr.s_addr,
++ 				     dst_cache, info);
++@@ -2077,7 +2092,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 + 			struct vxlan_dev *dst_vxlan;
 + 
 + 			ip_rt_put(rt);
@@ -393,17 +418,16 @@ index 0000000000000000000000000000000000000000..c184c32385e6c802f1bed7647ce720f0
 + 						   dst->sa.sa_family, dst_port,
 + 						   vxlan->flags);
 + 			if (!dst_vxlan)
-+@@ -2076,8 +2090,7 @@ static void vxlan_xmit_one(struct sk_buf
-+ 			goto drop;
-+ 		sk = vxlan->vn6_sock->sock->sk;
++@@ -2112,7 +2127,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
++ 		sk = sock6->sock->sk;
 + 
-+-		ndst = vxlan6_get_route(vxlan, skb,
-+-					rdst ? rdst->remote_ifindex : 0,
-++		ndst = vxlan6_get_route(vxlan, skb, ifindex,
-+ 					&dst->sin6.sin6_addr, &saddr);
-+ 		if (IS_ERR(ndst)) {
-+ 			netdev_dbg(dev, "no route to %pI6\n",
-+@@ -2101,7 +2114,7 @@ static void vxlan_xmit_one(struct sk_buf
++ 		ndst = vxlan6_get_route(vxlan, skb,
++-					rdst ? rdst->remote_ifindex : 0, tos,
+++					ifindex, tos,
++ 					label, &dst->sin6.sin6_addr,
++ 					&local_ip.sin6.sin6_addr,
++ 					dst_cache, info);
++@@ -2138,7 +2153,7 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 + 			struct vxlan_dev *dst_vxlan;
 + 
 + 			dst_release(ndst);
@@ -412,25 +436,34 @@ index 0000000000000000000000000000000000000000..c184c32385e6c802f1bed7647ce720f0
 + 						   dst->sa.sa_family, dst_port,
 + 						   vxlan->flags);
 + 			if (!dst_vxlan)
-+@@ -2889,10 +2902,18 @@ static int vxlan_dev_configure(struct ne
++@@ -2984,13 +2999,20 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 + 		vxlan->cfg.age_interval = FDB_AGE_DEFAULT;
 + 
 + 	list_for_each_entry(tmp, &vn->vxlan_list, next) {
 +-		if (tmp->cfg.vni == conf->vni &&
 +-		    tmp->cfg.dst_port == vxlan->cfg.dst_port &&
 +-		    (tmp->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)) ==
++-		    (vxlan->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6))) {
++-			pr_info("duplicate VNI %u\n", be32_to_cpu(conf->vni));
++-			return -EEXIST;
++-		}
 ++		if (tmp->cfg.vni != conf->vni)
 ++			continue;
 ++		if (tmp->cfg.dst_port != vxlan->cfg.dst_port)
 ++			continue;
 ++		if ((tmp->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)) !=
-+ 		    (vxlan->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)))
+++		    (vxlan->flags & (VXLAN_F_RCV_FLAGS | VXLAN_F_IPV6)))
 ++			continue;
 ++
 ++		if ((vxlan->flags & VXLAN_F_IPV6_LINKLOCAL) &&
 ++		    tmp->cfg.remote_ifindex != vxlan->cfg.remote_ifindex)
 ++			continue;
 ++
-+ 		return -EEXIST;
+++		pr_info("duplicate VNI %u\n", be32_to_cpu(conf->vni));
+++		return -EEXIST;
 + 	}
 + 
++ 	dev->ethtool_ops = &vxlan_ethtool_ops;
++-- 
++2.15.1
++

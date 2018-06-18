@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$LEDE_TARGET" ] || exit 1
+[ "$OPENWRT_TARGET" ] || exit 1
 
 target="$1"
 packages=$2
@@ -11,7 +11,7 @@ output=
 
 ret=0
 
-LEDE_CONFIG_TARGET="${LEDE_TARGET//-/_}"
+OPENWRT_CONFIG_TARGET="${OPENWRT_TARGET//-/_}"
 
 
 fail() {
@@ -26,7 +26,7 @@ fail() {
 }
 
 check_config() {
-	grep -q "$1" lede/.config
+	grep -q "$1" openwrt/.config
 }
 
 check_package() {
@@ -58,7 +58,7 @@ device() {
 		profile="$2"
 	fi
 
-	if ! check_config "CONFIG_TARGET_DEVICE_${LEDE_CONFIG_TARGET}_DEVICE_${profile}=y"; then
+	if ! check_config "CONFIG_TARGET_DEVICE_${OPENWRT_CONFIG_TARGET}_DEVICE_${profile}=y"; then
 		fail "unable to enable device '${profile}'"
 	fi
 

@@ -1,0 +1,21 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 18 Jun 2018 22:19:28 +0200
+Subject: dnsmasq: fix start on boot
+
+Fix this in Gluon until it is solved upstream.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/network/services/dnsmasq/files/dnsmasq.init b/package/network/services/dnsmasq/files/dnsmasq.init
+index 4906df9ce432781b930a735cd3ad4cad7748c0a8..1342a742d37dd6ede99d30386c9ca469a7d5f5fe 100644
+--- a/package/network/services/dnsmasq/files/dnsmasq.init
++++ b/package/network/services/dnsmasq/files/dnsmasq.init
+@@ -1071,8 +1071,6 @@ start_service() {
+ 	local instance="$1"
+ 	local instance_found=0
+ 
+-	[ -n "$BOOT" ] && return
+-
+ 	. /lib/functions/network.sh
+ 
+ 	config_cb() {

@@ -18,7 +18,7 @@ GLUON_FEATURES := \
 	web-wizard
 
 ##	GLUON_SITE_PACKAGES
-#		Specify additional Gluon/LEDE packages to include here;
+#		Specify additional Gluon/OpenWrt packages to include here;
 #		A minus sign may be prepended to remove a packages from the
 #		selection that would be enabled by default or due to the
 #		chosen feature flags
