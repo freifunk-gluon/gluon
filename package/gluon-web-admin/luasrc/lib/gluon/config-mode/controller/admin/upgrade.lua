@@ -88,7 +88,7 @@ local function action_upgrade(http, renderer)
 	end
 
 	local function image_checksum(tmpfile)
-		return (util.exec(string.format("exec md5sum %q", tmpfile)):match("^([^%s]+)"))
+		return (util.exec(string.format("exec sha256sum %q", tmpfile)):match("^([^%s]+)"))
 	end
 
 

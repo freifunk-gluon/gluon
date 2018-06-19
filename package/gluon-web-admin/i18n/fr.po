@@ -91,10 +91,10 @@ msgid "Size"
 msgstr "Taille"
 
 msgid ""
-"The firmware image has been transmitted. Please ensure the MD5 checksum and "
+"The firmware image has been transmitted. Please ensure the SHA-256 checksum and "
 "image size are correct and click \"continue\"."
 msgstr ""
-"L'image de firmware a été transmise. Vérifiez que la somme MD5 et la taille "
+"L'image de firmware a été transmise. Vérifiez que la somme SHA-256 et la taille "
 "de l'image correspondent, et appuiez ensuite sur \"continuer\"."
 
 msgid "The firmware is currently being upgraded."
