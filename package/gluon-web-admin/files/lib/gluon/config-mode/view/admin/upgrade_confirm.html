@@ -12,7 +12,7 @@ You may obtain a copy of the License at
 <h2><%:Upgrade firmware%></h2>
 
 <p>
-  <%:The firmware image has been transmitted. Please ensure the MD5 checksum and image size are correct and click "continue".%>
+  <%:The firmware image has been transmitted. Please ensure the SHA-256 checksum and image size are correct and click "continue".%>
 </p>
 
 <% if flashsize > 0 and filesize > flashsize then %>
@@ -21,7 +21,7 @@ You may obtain a copy of the License at
 
 <p>
   <ul>
-    <li>md5sum: <code><%=checksum%></code></li>
+    <li>sha256sum: <code><%=checksum%></code></li>
     <li><%:Size%>: <%
       function byte_format(byte)
         local suff = {"B", "KB", "MB", "GB", "TB"}
