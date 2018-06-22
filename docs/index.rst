@@ -235,6 +235,10 @@ ar71xx-nand
   - WNDR3700 (v4)
   - WNDR4300 (v1)
 
+* ZyXEL
+
+  - NBG6716 [#ath10k]_
+
 ar71xx-tiny
 ^^^^^^^^^^^
 
