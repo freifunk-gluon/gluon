@@ -35,8 +35,8 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    :maxdepth: 2
 
    dev/basics
-   dev/feature-flags
    dev/hardware
+   dev/packages
    dev/upgrade
    dev/wan
    dev/mac_addresses
