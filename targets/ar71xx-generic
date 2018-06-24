@@ -125,6 +125,7 @@ device onion-omega onion-omega
 
 device openmesh-a60 a60 A60
 alias openmesh-a40
+packages $ATH10K_PACKAGES
 
 device openmesh-mr1750 mr1750 MR1750
 alias openmesh-mr1750v2
