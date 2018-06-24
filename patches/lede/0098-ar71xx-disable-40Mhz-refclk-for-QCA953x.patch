@@ -1,0 +1,182 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Fri, 19 Jan 2018 14:02:09 +0100
+Subject: ar71xx: disable 40Mhz refclk for QCA953x
+
+The "QCA9531 v2.0 802.11n 2x2 2.4 GHz Premium SOC for WLAN Platforms"
+datasheet (80-Y7991-1 Rev. C - October 2014) doesn't specify support for a
+40 Mhz reference clock. The register description for "Bootstrap Options"
+(page 31) defines following states for the bit 4 (REF_CLK):
+
+* 0 - CLK25 (default)
+* 1 - (reserved)
+
+Devices like the TP-Link CPE210 v2 has this bit set to 1 but is using a 25
+Mhz reference clock. OpenWrt is still interpreted this bit as 40 Mhz and
+then break the bootup of the system due to this incorrect interpretation.
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+[refreshed patches]
+Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+
+Origin: backport, https://github.com/openwrt/openwrt/commit/b1d57dadb2da0e010e157fd2383523578c9dcc2e
+
+diff --git a/target/linux/ar71xx/patches-4.4/620-MIPS-ath79-add-support-for-QCA953x-SoC.patch b/target/linux/ar71xx/patches-4.4/620-MIPS-ath79-add-support-for-QCA953x-SoC.patch
+index 777f7b2c8838f2c93f79d5d5212f90b2bd82ced3..d55c97165a5abad8cb25fcc6ddc29415f238c7e6 100644
+--- a/target/linux/ar71xx/patches-4.4/620-MIPS-ath79-add-support-for-QCA953x-SoC.patch
++++ b/target/linux/ar71xx/patches-4.4/620-MIPS-ath79-add-support-for-QCA953x-SoC.patch
+@@ -44,7 +44,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  config ATH79_NVRAM
+ --- a/arch/mips/ath79/clock.c
+ +++ b/arch/mips/ath79/clock.c
+-@@ -354,6 +354,91 @@ static void __init ar934x_clocks_init(vo
++@@ -354,6 +354,87 @@ static void __init ar934x_clocks_init(vo
+  	iounmap(dpll_base);
+  }
+  
+@@ -56,13 +56,9 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+ +	unsigned long ahb_rate;
+ +	u32 pll, out_div, ref_div, nint, frac, clk_ctrl, postdiv;
+ +	u32 cpu_pll, ddr_pll;
+-+	u32 bootstrap;
+ +
+-+	bootstrap = ath79_reset_rr(QCA953X_RESET_REG_BOOTSTRAP);
+-+	if (bootstrap &	QCA953X_BOOTSTRAP_REF_CLK_40)
+-+		ref_rate = 40 * 1000 * 1000;
+-+	else
+-+		ref_rate = 25 * 1000 * 1000;
+++	/* QCA953X only supports 25MHz ref_clk */
+++	ref_rate = 25 * 1000 * 1000;
+ +
+ +	pll = ath79_pll_rr(QCA953X_PLL_CPU_CONFIG_REG);
+ +	out_div = (pll >> QCA953X_PLL_CPU_CONFIG_OUTDIV_SHIFT) &
+@@ -136,7 +132,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  static void __init qca955x_clocks_init(void)
+  {
+  	unsigned long ref_rate;
+-@@ -451,6 +536,8 @@ void __init ath79_clocks_init(void)
++@@ -451,6 +532,8 @@ void __init ath79_clocks_init(void)
+  		ar933x_clocks_init();
+  	else if (soc_is_ar934x())
+  		ar934x_clocks_init();
+@@ -247,14 +243,12 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  
+  	ath79_wmac_data.external_reset = ar933x_wmac_reset;
+  }
+-@@ -151,6 +151,26 @@ static void ar934x_wmac_setup(void)
++@@ -151,6 +151,21 @@ static void ar934x_wmac_setup(void)
+  	ath79_wmac_data.get_mac_revision = ar93xx_get_soc_revision;
+  }
+  
+ +static void qca953x_wmac_setup(void)
+ +{
+-+	u32 t;
+-+
+ +	ath79_wmac_device.name = "qca953x_wmac";
+ +
+ +	ath79_wmac_resources[0].start = QCA953X_WMAC_BASE;
+@@ -262,11 +256,8 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+ +	ath79_wmac_resources[1].start = ATH79_IP2_IRQ(1);
+ +	ath79_wmac_resources[1].end = ATH79_IP2_IRQ(1);
+ +
+-+	t = ath79_reset_rr(QCA953X_RESET_REG_BOOTSTRAP);
+-+	if (t & QCA953X_BOOTSTRAP_REF_CLK_40)
+-+		ath79_wmac_data.is_clk_25mhz = false;
+-+	else
+-+		ath79_wmac_data.is_clk_25mhz = true;
+++	/* QCA953X only supports 25MHz ref_clk */
+++	ath79_wmac_data.is_clk_25mhz = true;
+ +
+ +	ath79_wmac_data.get_mac_revision = ar93xx_get_soc_revision;
+ +}
+@@ -274,7 +265,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+  static void qca955x_wmac_setup(void)
+  {
+  	u32 t;
+-@@ -368,6 +388,8 @@ void __init ath79_register_wmac(u8 *cal_
++@@ -368,6 +383,8 @@ void __init ath79_register_wmac(u8 *cal_
+  		ar933x_wmac_setup();
+  	else if (soc_is_ar934x())
+  		ar934x_wmac_setup();
+@@ -550,7 +541,7 @@ meaning of the bits CPUCLK_FROM_CPUPLL and DDRCLK_FROM_DDRPLL is reversed.
+ +#define QCA953X_BOOTSTRAP_SW_OPTION2	BIT(12)
+ +#define QCA953X_BOOTSTRAP_SW_OPTION1	BIT(11)
+ +#define QCA953X_BOOTSTRAP_EJTAG_MODE	BIT(5)
+-+#define QCA953X_BOOTSTRAP_REF_CLK_40	BIT(4)
+++#define QCA953X_BOOTSTRAP_REF_CLK	BIT(4)
+ +#define QCA953X_BOOTSTRAP_SDRAM_DISABLED BIT(1)
+ +#define QCA953X_BOOTSTRAP_DDR1		BIT(0)
+ +
+diff --git a/target/linux/ar71xx/patches-4.4/621-MIPS-ath79-add-support-for-QCA956x-SoC.patch b/target/linux/ar71xx/patches-4.4/621-MIPS-ath79-add-support-for-QCA956x-SoC.patch
+index ed90c40d882fcff1a451533748912865cc78c6e8..de0ee4604cdeb946bab222cacaa51fb150b25aab 100644
+--- a/target/linux/ar71xx/patches-4.4/621-MIPS-ath79-add-support-for-QCA956x-SoC.patch
++++ b/target/linux/ar71xx/patches-4.4/621-MIPS-ath79-add-support-for-QCA956x-SoC.patch
+@@ -24,7 +24,7 @@
+  config ATH79_NVRAM
+ --- a/arch/mips/ath79/clock.c
+ +++ b/arch/mips/ath79/clock.c
+-@@ -524,6 +524,100 @@ static void __init qca955x_clocks_init(v
++@@ -520,6 +520,100 @@ static void __init qca955x_clocks_init(v
+  	clk_add_alias("uart", NULL, "ref", NULL);
+  }
+  
+@@ -125,7 +125,7 @@
+  void __init ath79_clocks_init(void)
+  {
+  	if (soc_is_ar71xx())
+-@@ -540,6 +634,8 @@ void __init ath79_clocks_init(void)
++@@ -536,6 +630,8 @@ void __init ath79_clocks_init(void)
+  		qca953x_clocks_init();
+  	else if (soc_is_qca955x())
+  		qca955x_clocks_init();
+@@ -219,7 +219,7 @@
+  }
+ --- a/arch/mips/ath79/dev-wmac.c
+ +++ b/arch/mips/ath79/dev-wmac.c
+-@@ -189,6 +189,26 @@ static void qca955x_wmac_setup(void)
++@@ -184,6 +184,26 @@ static void qca955x_wmac_setup(void)
+  		ath79_wmac_data.is_clk_25mhz = true;
+  }
+  
+@@ -246,7 +246,7 @@
+  static bool __init
+  ar93xx_wmac_otp_read_word(void __iomem *base, int addr, u32 *data)
+  {
+-@@ -392,6 +412,8 @@ void __init ath79_register_wmac(u8 *cal_
++@@ -387,6 +407,8 @@ void __init ath79_register_wmac(u8 *cal_
+  		qca953x_wmac_setup();
+  	else if (soc_is_qca955x())
+  		qca955x_wmac_setup();
+diff --git a/target/linux/ar71xx/patches-4.4/631-MIPS-ath79-wmac-enable-set-led-pin.patch b/target/linux/ar71xx/patches-4.4/631-MIPS-ath79-wmac-enable-set-led-pin.patch
+index 16a0b909c570b403473346b0c992f9de02b67132..b0e15379787ade16a02363c78c143e878f27a7f2 100644
+--- a/target/linux/ar71xx/patches-4.4/631-MIPS-ath79-wmac-enable-set-led-pin.patch
++++ b/target/linux/ar71xx/patches-4.4/631-MIPS-ath79-wmac-enable-set-led-pin.patch
+@@ -1,6 +1,6 @@
+ --- a/arch/mips/ath79/dev-wmac.c
+ +++ b/arch/mips/ath79/dev-wmac.c
+-@@ -400,6 +400,11 @@ void __init ath79_wmac_set_ext_lna_gpio(
++@@ -395,6 +395,11 @@ void __init ath79_wmac_set_ext_lna_gpio(
+  		ar934x_set_ext_lna_gpio(chain, gpio);
+  }
+  
+diff --git a/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch b/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+index 8aa5957a7152af27854f6f7c197120b8029cf9e8..b59e43c7712a18e5e81944361c358dfb08c488ea 100644
+--- a/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
++++ b/target/linux/ar71xx/patches-4.4/640-MIPS-ath79-add-QCA955x-wmac-reset.patch
+@@ -32,7 +32,7 @@
+   */
+ --- a/arch/mips/ath79/dev-wmac.c
+ +++ b/arch/mips/ath79/dev-wmac.c
+-@@ -171,6 +171,27 @@ static void qca953x_wmac_setup(void)
++@@ -166,6 +166,27 @@ static void qca953x_wmac_setup(void)
+  	ath79_wmac_data.get_mac_revision = ar93xx_get_soc_revision;
+  }
+  
+@@ -60,7 +60,7 @@
+  static void qca955x_wmac_setup(void)
+  {
+  	u32 t;
+-@@ -187,6 +208,8 @@ static void qca955x_wmac_setup(void)
++@@ -182,6 +203,8 @@ static void qca955x_wmac_setup(void)
+  		ath79_wmac_data.is_clk_25mhz = false;
+  	else
+  		ath79_wmac_data.is_clk_25mhz = true;
