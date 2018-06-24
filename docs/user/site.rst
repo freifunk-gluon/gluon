@@ -514,6 +514,12 @@ gluon-config-mode:altitude-label
 gluon-config-mode:altitude-help
     Description for the usage of the ``altitude`` field
 
+gluon-config-mode:contact-help
+    Description for the usage of the ``contact`` field
+
+gluon-config-mode:contact-note
+    Note shown (in small font) below the ``contact`` field
+
 gluon-config-mode:reboot
     General information shown on the reboot page.
 
