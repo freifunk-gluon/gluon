@@ -523,6 +523,9 @@ gluon-config-mode:contact-note
 gluon-config-mode:hostname-help
     Description for the usage of the ``hostname`` field
 
+gluon-config-mode:geo-location-help
+    Description for the usage of the longitude/latitude fields
+
 gluon-config-mode:reboot
     General information shown on the reboot page.
 
