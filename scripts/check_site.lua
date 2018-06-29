@@ -63,7 +63,7 @@ end
 
 
 local function path_to_string(path)
-	return table.concat(path, '/')
+	return table.concat(path, '.')
 end
 
 local function array_to_string(array)
