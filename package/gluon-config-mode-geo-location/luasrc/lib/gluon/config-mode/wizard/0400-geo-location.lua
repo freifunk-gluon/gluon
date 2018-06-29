@@ -14,7 +14,7 @@ return function(form, uci)
 		return uci:get_bool("gluon-node-info", location, "altitude")
 	end
 
-	local text = pkg_i18n.translate(
+	local text = site_i18n._translate("gluon-config-mode:geo-location-help") or pkg_i18n.translate(
 		'If you want the location of your node to ' ..
 		'be displayed on the map, you can enter its coordinates here.'
 	)

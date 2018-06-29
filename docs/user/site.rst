@@ -520,6 +520,9 @@ gluon-config-mode:contact-help
 gluon-config-mode:contact-note
     Note shown (in small font) below the ``contact`` field
 
+gluon-config-mode:geo-location-help
+    Description for the usage of the coordinates fields
+
 gluon-config-mode:reboot
     General information shown on the reboot page.
 
