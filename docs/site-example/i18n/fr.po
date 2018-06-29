@@ -63,19 +63,6 @@ msgstr ""
 "La altitude est optionelle et ne devrait que être ajoutée si la valeur "
 "exacte est connue."
 
-msgid "gluon-config-mode:contact-help"
-msgstr ""
-"Entrez vos coordonnées ici si vous souhaitez permettre à d'autres "
-"personnes de communiquer avec vous. Ces informations seront affichées "
-"<em>en ligne</em> avec les coordonnées du nœud. Il peut être téléchargé "
-"et traité par tous. Il n'est pas obligatoire "
-"de fournir ces informations pour pouvoir opérer un nœud. Si vous avez "
-"choisi d'entrer des données, elles seront stockées sur ce nœud et vous "
-"pourrez les effacer par vous-même à tout moment."
-
-msgid "gluon-config-mode:contact-note"
-msgstr "Ex : E-mail ou numéro de téléphone"
-
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-hostname/i18n/
 msgid "gluon-config-mode:hostname-help"
@@ -84,4 +71,12 @@ msgstr ""
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-geo-location/i18n/
 msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-contact-info/i18n/
+msgid "gluon-config-mode:contact-help"
+msgstr ""
+
+msgid "gluon-config-mode:contact-note"
 msgstr ""

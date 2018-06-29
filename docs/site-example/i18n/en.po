@@ -63,18 +63,6 @@ msgstr ""
 "Specifying the altitude is optional and should only be done if a proper "
 "value is known."
 
-msgid "gluon-config-mode:contact-help"
-msgstr ""
-"Please provide your contact information here to allow others to contact "
-"you. Note that this information will be visible <em>publicly</em> on "
-"the internet together with your node's coordinates. This means it can be "
-"downloaded and processed by anyone. This information is "
-"not required to operate a node. If you chose to enter data, it will be "
-"stored on this node and can be deleted by yourself at any time."
-
-msgid "gluon-config-mode:contact-note"
-msgstr "e.g. E-mail or phone number"
-
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-hostname/i18n/
 msgid "gluon-config-mode:hostname-help"
@@ -83,4 +71,12 @@ msgstr ""
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-geo-location/i18n/
 msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-contact-info/i18n/
+msgid "gluon-config-mode:contact-help"
+msgstr ""
+
+msgid "gluon-config-mode:contact-note"
 msgstr ""
