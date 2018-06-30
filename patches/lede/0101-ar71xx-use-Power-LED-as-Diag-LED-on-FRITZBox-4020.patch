@@ -1,0 +1,33 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Fri, 8 Jun 2018 21:42:52 +0200
+Subject: ar71xx: use Power-LED as Diag-LED on FRITZBox 4020
+
+This commit makes use of the Power-LED as Diag-LED, allowing the LED to
+work as a status indicator.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+index 54046dffc9a4d4ad0216dcda32bf98ee5d38b569..e163e3171a747c3756c376c4a92b1bc50baa8eaa 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+@@ -315,7 +315,6 @@ dlan-pro-1200-ac)
+ 	ucidef_set_led_gpio "plcr" "dLAN" "devolo:error:dlan" "16" "0"
+ 	;;
+ fritz4020)
+-	ucidef_set_led_default "power" "Power" "$board:green:power" "1"
+ 	ucidef_set_led_netdev "lan" "LAN" "$board:green:lan" "eth1"
+ 	ucidef_set_led_netdev "wan" "WAN" "$board:green:wan" "eth0"
+ 	ucidef_set_led_wlan "wlan" "WLAN" "$board:green:wlan" "phy0tpt"
+diff --git a/target/linux/ar71xx/base-files/etc/diag.sh b/target/linux/ar71xx/base-files/etc/diag.sh
+index f8d2eb314f7b57a1134b68c504c0dac202ed947c..8002e9702720a431dd38c598cb8f1f3284d3af1c 100644
+--- a/target/linux/ar71xx/base-files/etc/diag.sh
++++ b/target/linux/ar71xx/base-files/etc/diag.sh
+@@ -55,6 +55,7 @@ get_status_led() {
+ 	archer-c58-v1|\
+ 	archer-c59-v1|\
+ 	archer-c60-v1|\
++	fritz4020|\
+ 	mr12|\
+ 	mr16|\
+ 	nbg6616|\
