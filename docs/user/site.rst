@@ -182,6 +182,8 @@ next_node \: package
     in isolated mesh segments). This is possible by providing one or more names
     in the ``name`` field.
 
+.. _user-site-mesh:
+
 mesh
     Configuration of general mesh functionality.
 
