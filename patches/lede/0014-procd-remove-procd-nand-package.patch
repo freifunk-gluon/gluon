@@ -12,7 +12,7 @@ as a separate package.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index 4fbc9a265b535d850fe812085677b3f6aabf4e1f..c971de4deee7cd331ddcad6b87eb9fefd7af6a64 100644
+index 1d034fdede7598f15b1f802c47e834990e5852d9..f473ef732106eb8fa05e7c5b59df176fef33e42d 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
 @@ -19,7 +19,9 @@ PKG_BUILD_DEPENDS:=usign/host

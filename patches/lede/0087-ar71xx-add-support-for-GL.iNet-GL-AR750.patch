@@ -79,10 +79,10 @@ index 336d078f72a06073e3465c36ca98035c7d70282f..01d3b787bedcab82a5797c9a4801e813
  			;;
  		qihoo-c301)
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 91bdf0d3c591516f58030b165052b3dd2751314f..1626622a8e46484bbf2719f19843e61d9cc92506 100644
+index 65251284bba605afda8709c4799060e7a5554193..3b1e408f00846f8cc39e05d90600992e382b314a 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -103,6 +103,7 @@ case "$FIRMWARE" in
+@@ -109,6 +109,7 @@ case "$FIRMWARE" in
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth1/address) -2)
  		;;
@@ -129,7 +129,7 @@ index 03677ad1240c9a5af341354b95561f9d493a9cd8..236520b27c4d6d0b1b7e483d1100fb5a
  	gl-mifi|\
  	hiwifi-hc6361|\
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index 45bf500643837a7270b45e32b22225c06c5fb841..d96642b97c36187febb1f3843e7dd9acfab0e40d 100644
+index 9f449973b17a1d82098fb5b50f4b8f6cc9f869f8..d5ad6396a5c422b9b68b0a94658962226c13006e 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -110,6 +110,7 @@ CONFIG_ATH79_MACH_FRITZ4020=y

@@ -92,10 +92,10 @@ index 61db387c9ecefd7090c25a5f5d75fdbf65a44d65..97372bed0ea2fadfab10f22916a1e0d6
  	mr16|\
  	nbg6616|\
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 68f90de802ddd18e09a1da39c0d56292eea9489c..96b8f6b9a4bdd6a1609a819e72ade315bccfb3c0 100644
+index fc9eb005623fc029f839d7ce14788ffba32e42e5..be818b78638b741fff963c222bab7c395996c608 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -92,6 +92,7 @@ case "$FIRMWARE" in
+@@ -98,6 +98,7 @@ case "$FIRMWARE" in
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) -2)
  		;;

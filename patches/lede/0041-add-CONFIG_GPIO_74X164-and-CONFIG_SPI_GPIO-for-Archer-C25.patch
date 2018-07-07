@@ -9,10 +9,10 @@ Based-on-patch-by: Henryk Heisig <hyniu@o2.pl>
 Signed-off-by: Andreas Ziegler <github@andreas-ziegler.de>
 
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index e10401d42ae06506f82f2f5538fbc7df79fd4c65..c82fcf09228be7063967f2517e0942651234afb8 100644
+index d1d879cd764259571cce2a5e091ae99f0d7a6d6d..e576fd2ec4f0a8d3613f00aa0a29586b8c65abe0 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
-@@ -272,6 +272,7 @@ CONFIG_GENERIC_TIME_VSYSCALL=y
+@@ -273,6 +273,7 @@ CONFIG_GENERIC_TIME_VSYSCALL=y
  CONFIG_GPIOLIB=y
  CONFIG_GPIOLIB_IRQCHIP=y
  CONFIG_GPIO_DEVRES=y
@@ -20,7 +20,7 @@ index e10401d42ae06506f82f2f5538fbc7df79fd4c65..c82fcf09228be7063967f2517e094265
  # CONFIG_GPIO_LATCH is not set
  CONFIG_GPIO_NXP_74HC153=y
  CONFIG_GPIO_PCF857X=y
-@@ -429,6 +430,7 @@ CONFIG_SOC_QCA956X=y
+@@ -430,6 +431,7 @@ CONFIG_SOC_QCA956X=y
  CONFIG_SPI=y
  CONFIG_SPI_ATH79=y
  CONFIG_SPI_BITBANG=y

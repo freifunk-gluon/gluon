@@ -5,7 +5,7 @@ Subject: ar71xx: add unaligned access hacks for VXLAN
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/ar71xx/patches-4.4/910-unaligned_access_hacks.patch b/target/linux/ar71xx/patches-4.4/910-unaligned_access_hacks.patch
-index 374f9be3b4b76984842d3673ea78b70aadc9476a..3b6ed31556cbd1fa81bb6b616fc78e19b56099c4 100644
+index bbfe7bd80316050ae81959e4c17157b7de2141db..154dffe16eb65de7fef5aa1ac19a9e07403dc1ee 100644
 --- a/target/linux/ar71xx/patches-4.4/910-unaligned_access_hacks.patch
 +++ b/target/linux/ar71xx/patches-4.4/910-unaligned_access_hacks.patch
 @@ -929,3 +929,119 @@

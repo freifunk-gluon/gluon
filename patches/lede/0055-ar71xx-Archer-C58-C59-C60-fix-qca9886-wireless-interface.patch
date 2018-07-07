@@ -9,10 +9,10 @@ Signed-off-by: Henryk Heisig <hyniu@o2.pl>
 (cherry picked from commit 34958c826915cf864833ed8ba6e5b49d44c6cb41)
 
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index cfdc20455d61c3900473f57c3267b1a3fd10e150..91bdf0d3c591516f58030b165052b3dd2751314f 100644
+index 8efe348498d4aaf5ae660a29073fc75ae7c9d72e..65251284bba605afda8709c4799060e7a5554193 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -136,7 +136,9 @@ case "$FIRMWARE" in
+@@ -142,7 +142,9 @@ case "$FIRMWARE" in
  	;;
  "ath10k/pre-cal-pci-0000:00:00.0.bin")
  	case $board in
