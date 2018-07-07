@@ -85,10 +85,10 @@ index 3aa1f054d4f791545a8b6644f7bd24f64ed546a3..382500b75ee6dc1fe1126fb3121f4ae2
  	archer-c60-v1|\
  	mr12|\
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 5dd1d69e7e163c938759ce476846e4d985184b7b..538c86e4743109f7665096da32620d7862248aea 100644
+index 6c62f391e1aac2f052d3397fc25f8bddcca581dd..4ef5ba983d3fadc5e7842f707fff641a3c0cea8f 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -134,6 +134,13 @@ case "$FIRMWARE" in
+@@ -140,6 +140,13 @@ case "$FIRMWARE" in
  		;;
  	esac
  	;;
@@ -156,7 +156,7 @@ index f4ac73e40e1acb800433a0b1348c8264a4639c30..5e8a06a7ae70ec349693c09deedbfce4
  	archer-c60-v1|\
  	bullet-m|\
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index 5b33d48e52309b807dbdf2697524809ad08072ae..396a4fa02adb37c6e5f9f7f1cc40fd1014361654 100644
+index e335ef9b7dfe8f0250b4362542ea2518eac34cb4..b84e1cb584f3afce016d0685fb2397962ee85645 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -52,6 +52,7 @@ CONFIG_ATH79_MACH_AP152=y

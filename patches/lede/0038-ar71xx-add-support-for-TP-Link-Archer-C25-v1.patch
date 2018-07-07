@@ -64,10 +64,10 @@ index bc2fc2f774c4f2f0bbfa6e43d9b9a55e9b63153d..38cc5d7853c79f2a7800a387310a95ab
  	mr16|\
  	nbg6616|\
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index b3e23c9a8f8c56870ef36fb55ae52e6b5ea61134..68f90de802ddd18e09a1da39c0d56292eea9489c 100644
+index 96ca65e694bb5ed449dcae8dbca1930d25612602..fc9eb005623fc029f839d7ce14788ffba32e42e5 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -92,6 +92,7 @@ case "$FIRMWARE" in
+@@ -98,6 +98,7 @@ case "$FIRMWARE" in
  		ath10kcal_extract "art" 20480 2116
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) -2)
  		;;
@@ -102,7 +102,7 @@ index d2dc88127c02746cdecc4ced28f33548f35d037c..6258713dd0e3325ab109689f0ed3b51e
  	c-55|\
  	carambola2|\
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index a8622454b421c1c74a8a71134b53c50399114aa5..e10401d42ae06506f82f2f5538fbc7df79fd4c65 100644
+index 91eb9f0de7ef6c472cdccf2022d888df53b75e46..d1d879cd764259571cce2a5e091ae99f0d7a6d6d 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -51,6 +51,7 @@ CONFIG_ATH79_MACH_AP152=y
