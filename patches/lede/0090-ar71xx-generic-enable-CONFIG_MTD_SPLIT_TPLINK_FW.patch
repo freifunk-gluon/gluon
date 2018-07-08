@@ -9,10 +9,10 @@ rid of statically defined "kernel" and "rootfs" partitions in cmdline.
 Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
 
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index d96642b97c36187febb1f3843e7dd9acfab0e40d..6c29cd7748b3ce7e53adf359cd5002ba01066fbd 100644
+index d5ad6396a5c422b9b68b0a94658962226c13006e..26f855e66796106cd0f232c9c5e920b02365de31 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
-@@ -379,6 +379,7 @@ CONFIG_MTD_SPLIT_EVA_FW=y
+@@ -380,6 +380,7 @@ CONFIG_MTD_SPLIT_EVA_FW=y
  CONFIG_MTD_SPLIT_FIRMWARE=y
  CONFIG_MTD_SPLIT_LZMA_FW=y
  CONFIG_MTD_SPLIT_SEAMA_FW=y

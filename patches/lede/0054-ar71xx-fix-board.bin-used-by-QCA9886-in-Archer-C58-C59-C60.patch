@@ -6,10 +6,10 @@ Signed-off-by: Henryk Heisig <hyniu@o2.pl>
 (cherry picked from commit e917e51bf91fc7cb5085bda5e67d62520801f9cc)
 
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 538c86e4743109f7665096da32620d7862248aea..cfdc20455d61c3900473f57c3267b1a3fd10e150 100644
+index 4ef5ba983d3fadc5e7842f707fff641a3c0cea8f..8efe348498d4aaf5ae660a29073fc75ae7c9d72e 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -138,6 +138,8 @@ case "$FIRMWARE" in
+@@ -144,6 +144,8 @@ case "$FIRMWARE" in
  	case $board in
  	archer-c58-v1)
  		ath10kcal_extract "art" 20480 12064

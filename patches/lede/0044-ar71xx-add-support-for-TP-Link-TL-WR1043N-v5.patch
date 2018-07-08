@@ -108,7 +108,7 @@ index 6258713dd0e3325ab109689f0ed3b51e27c41f89..774e3c8964ef724d1efbae56434aeaa9
  	unifiac-lite|\
  	unifiac-pro|\
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index c82fcf09228be7063967f2517e0942651234afb8..57b6d2e541d7ef9dea8570ba8de72164d97b9775 100644
+index e576fd2ec4f0a8d3613f00aa0a29586b8c65abe0..6da3c323d300705a29355cdccff09fce1ce1bad7 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -181,6 +181,7 @@ CONFIG_ATH79_MACH_TL_WR1041N_V2=y

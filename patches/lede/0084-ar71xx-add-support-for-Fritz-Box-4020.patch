@@ -163,7 +163,7 @@ index 5e8a06a7ae70ec349693c09deedbfce41a52cfc2..491b5d5a98b44844f14441d4024f2ad9
  
  	echo "Sysupgrade is not yet supported on $board."
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index 396a4fa02adb37c6e5f9f7f1cc40fd1014361654..45bf500643837a7270b45e32b22225c06c5fb841 100644
+index b84e1cb584f3afce016d0685fb2397962ee85645..9f449973b17a1d82098fb5b50f4b8f6cc9f869f8 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -106,6 +106,7 @@ CONFIG_ATH79_MACH_ESR1750=y
@@ -174,7 +174,7 @@ index 396a4fa02adb37c6e5f9f7f1cc40fd1014361654..45bf500643837a7270b45e32b22225c0
  CONFIG_ATH79_MACH_GL_AR150=y
  CONFIG_ATH79_MACH_GL_AR300=y
  CONFIG_ATH79_MACH_GL_AR300M=y
-@@ -373,6 +374,7 @@ CONFIG_MTD_PHYSMAP=y
+@@ -374,6 +375,7 @@ CONFIG_MTD_PHYSMAP=y
  CONFIG_MTD_REDBOOT_DIRECTORY_BLOCK=-2
  CONFIG_MTD_REDBOOT_PARTS=y
  CONFIG_MTD_SPI_NOR=y

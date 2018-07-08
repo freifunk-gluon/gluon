@@ -113,10 +113,10 @@ index 97372bed0ea2fadfab10f22916a1e0d6a9c65725..3aa1f054d4f791545a8b6644f7bd24f6
  	mr16|\
  	nbg6616|\
 diff --git a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 607bbd2c0ec4b59ba569550e9e0e87b80c7ddddb..5dd1d69e7e163c938759ce476846e4d985184b7b 100644
+index 697fcb68d246aa445ce029440643ad5950e48f6d..6c62f391e1aac2f052d3397fc25f8bddcca581dd 100644
 --- a/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ar71xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -97,6 +97,8 @@ case "$FIRMWARE" in
+@@ -103,6 +103,8 @@ case "$FIRMWARE" in
  		ath10kcal_patch_mac $(macaddr_add $(cat /sys/class/net/eth0/address) -2)
  		;;
  	archer-c25-v1|\
@@ -156,7 +156,7 @@ index d6650e7719d268e1a500638b7eda2e15b9251aea..f4ac73e40e1acb800433a0b1348c8264
  	c-55|\
  	carambola2|\
 diff --git a/target/linux/ar71xx/config-4.4 b/target/linux/ar71xx/config-4.4
-index 57b6d2e541d7ef9dea8570ba8de72164d97b9775..5b33d48e52309b807dbdf2697524809ad08072ae 100644
+index 6da3c323d300705a29355cdccff09fce1ce1bad7..e335ef9b7dfe8f0250b4362542ea2518eac34cb4 100644
 --- a/target/linux/ar71xx/config-4.4
 +++ b/target/linux/ar71xx/config-4.4
 @@ -52,6 +52,8 @@ CONFIG_ATH79_MACH_AP152=y
@@ -168,7 +168,7 @@ index 57b6d2e541d7ef9dea8570ba8de72164d97b9775..5b33d48e52309b807dbdf2697524809a
  CONFIG_ATH79_MACH_ARCHER_C7=y
  CONFIG_ATH79_MACH_ARDUINO_YUN=y
  CONFIG_ATH79_MACH_AW_NR580=y
-@@ -272,6 +274,7 @@ CONFIG_GENERIC_SMP_IDLE_THREAD=y
+@@ -273,6 +275,7 @@ CONFIG_GENERIC_SMP_IDLE_THREAD=y
  CONFIG_GENERIC_TIME_VSYSCALL=y
  CONFIG_GPIOLIB=y
  CONFIG_GPIOLIB_IRQCHIP=y

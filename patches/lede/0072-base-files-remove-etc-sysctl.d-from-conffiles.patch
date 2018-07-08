@@ -9,7 +9,7 @@ old defaults get replaced properly.
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/package/base-files/Makefile b/package/base-files/Makefile
-index c971de4deee7cd331ddcad6b87eb9fefd7af6a64..55e67a97d03df7d96cf8a4aac3c5325ce7105c80 100644
+index f473ef732106eb8fa05e7c5b59df176fef33e42d..32b1ce0923cb984ff32e4444a18eccdad7572d70 100644
 --- a/package/base-files/Makefile
 +++ b/package/base-files/Makefile
 @@ -59,8 +59,6 @@ define Package/base-files/conffiles
