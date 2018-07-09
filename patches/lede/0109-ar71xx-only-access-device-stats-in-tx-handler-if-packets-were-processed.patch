@@ -1,0 +1,26 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Tue, 5 Dec 2017 14:23:59 +0100
+Subject: ar71xx: only access device stats in tx handler if packets were processed
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+index 1cb590fad044d54fe1cfd0e765aa43ee981ae9c1..6a8558284ed6a1feb1fddfe2875ba182c78a95d4 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -1006,12 +1006,12 @@ static int ag71xx_tx_packets(struct ag71xx *ag, bool flush)
+ 
+ 	DBG("%s: %d packets sent out\n", ag->dev->name, sent);
+ 
+-	ag->dev->stats.tx_bytes += bytes_compl;
+-	ag->dev->stats.tx_packets += sent;
+-
+ 	if (!sent)
+ 		return 0;
+ 
++	ag->dev->stats.tx_bytes += bytes_compl;
++	ag->dev->stats.tx_packets += sent;
++
+ 	netdev_completed_queue(ag->dev, sent, bytes_compl);
+ 	if ((ring->curr - ring->dirty) < (ring_size * 3) / 4)
+ 		netif_wake_queue(ag->dev);

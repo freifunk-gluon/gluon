@@ -1,0 +1,20 @@
+From: Alexander Couzens <lynxis@fe80.eu>
+Date: Sun, 11 Jun 2017 12:49:19 +0200
+Subject: ar71xx/ag71xx_mdio_probe: fix a memory leak when probe fails
+
+Found-by: Coverity Scan #1330233
+Signed-off-by: Alexander Couzens <lynxis@fe80.eu>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_mdio.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_mdio.c
+index 71ae8258b2ef20f7d20ceacec59011ab3babfe23..b63a4b7f9d9f4b997843aa4a91c385ea186d67e2 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_mdio.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_mdio.c
+@@ -234,7 +234,7 @@ static int ag71xx_mdio_probe(struct platform_device *pdev)
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "no iomem resource found\n");
+ 		err = -ENXIO;
+-		goto err_out;
++		goto err_free_mdio;
+ 	}
+ 
+ 	am->mdio_base = ioremap_nocache(res->start, res->end - res->start + 1);

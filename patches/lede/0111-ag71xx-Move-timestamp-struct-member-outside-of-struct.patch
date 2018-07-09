@@ -1,0 +1,55 @@
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 7 Feb 2018 13:57:30 -0800
+Subject: ag71xx: Move timestamp struct member outside of struct.
+
+With this change, the timestamp variable is only used in ag71xx_check_dma_stuck. Small tx speedup.
+
+Based on a Qualcomm commit. ag->timestamp = jiffies was not replaced with netif_trans_update(dev) because of this quote:
+
+It should be noted that after this series several instances
+of netif_trans_update() are useless (if they occur in
+.ndo_start_xmit and driver doesn't set LLTX flag -- stack already
+did an update).
+
+From: http://lists.openwall.net/netdev/2016/05/03/87
+
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 24ed2f56e41cf5fe1974c24786194620627a192b..0927b1871ee6dbf76b7775c7882e67a0cf5b2503 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -169,8 +169,6 @@ struct ag71xx {
+ 	struct napi_struct	napi;
+ 	u32			msg_enable;
+ 
+-	unsigned long	timestamp;
+-
+ 	/*
+ 	 * From this point onwards we're not looking at per-packet fields.
+ 	 */
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+index bc876e9d73e3e26143cfac0d5484e7900dd9db01..2f4218e08a9749ffc45c8265e7931f205e8e7935 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -823,7 +823,6 @@ static netdev_tx_t ag71xx_hard_start_xmit(struct sk_buff *skb,
+ 	i = (ring->curr + n - 1) & ring_mask;
+ 	ring->buf[i].len = skb->len;
+ 	ring->buf[i].skb = skb;
+-	ag->timestamp = jiffies;
+ 
+ 	netdev_sent_queue(dev, skb->len);
+ 
+@@ -935,9 +934,11 @@ static void ag71xx_restart_work_func(struct work_struct *work)
+ 
+ static bool ag71xx_check_dma_stuck(struct ag71xx *ag)
+ {
++	unsigned long timestamp;
+ 	u32 rx_sm, tx_sm, rx_fd;
+ 
+-	if (likely(time_before(jiffies, ag->timestamp + HZ/10)))
++	timestamp = netdev_get_tx_queue(ag->dev, 0)->trans_start;
++	if (likely(time_before(jiffies, timestamp + HZ/10)))
+ 		return false;
+ 
+ 	if (!netif_carrier_ok(ag->dev))

@@ -1,0 +1,69 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Tue, 5 Dec 2017 14:40:32 +0100
+Subject: ar71xx: use global timestamp for hang check
+
+Shrink the size of struct ag71xx_buf to 8 bytes, which improves cache
+footprint
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index d50ea81263744b5dd7e2ffa0c1d9c1061ef0ba8d..24ed2f56e41cf5fe1974c24786194620627a192b 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -100,9 +100,8 @@ struct ag71xx_buf {
+ 	};
+ 	union {
+ 		dma_addr_t	dma_addr;
+-		unsigned long	timestamp;
++		unsigned int		len;
+ 	};
+-	unsigned int		len;
+ };
+ 
+ struct ag71xx_ring {
+@@ -170,6 +169,8 @@ struct ag71xx {
+ 	struct napi_struct	napi;
+ 	u32			msg_enable;
+ 
++	unsigned long	timestamp;
++
+ 	/*
+ 	 * From this point onwards we're not looking at per-packet fields.
+ 	 */
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+index 6a8558284ed6a1feb1fddfe2875ba182c78a95d4..bc876e9d73e3e26143cfac0d5484e7900dd9db01 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -823,7 +823,7 @@ static netdev_tx_t ag71xx_hard_start_xmit(struct sk_buff *skb,
+ 	i = (ring->curr + n - 1) & ring_mask;
+ 	ring->buf[i].len = skb->len;
+ 	ring->buf[i].skb = skb;
+-	ring->buf[i].timestamp = jiffies;
++	ag->timestamp = jiffies;
+ 
+ 	netdev_sent_queue(dev, skb->len);
+ 
+@@ -933,11 +933,11 @@ static void ag71xx_restart_work_func(struct work_struct *work)
+ 	rtnl_unlock();
+ }
+ 
+-static bool ag71xx_check_dma_stuck(struct ag71xx *ag, unsigned long timestamp)
++static bool ag71xx_check_dma_stuck(struct ag71xx *ag)
+ {
+ 	u32 rx_sm, tx_sm, rx_fd;
+ 
+-	if (likely(time_before(jiffies, timestamp + HZ/10)))
++	if (likely(time_before(jiffies, ag->timestamp + HZ/10)))
+ 		return false;
+ 
+ 	if (!netif_carrier_ok(ag->dev))
+@@ -976,7 +976,7 @@ static int ag71xx_tx_packets(struct ag71xx *ag, bool flush)
+ 
+ 		if (!flush && !ag71xx_desc_empty(desc)) {
+ 			if (pdata->is_ar724x &&
+-			    ag71xx_check_dma_stuck(ag, ring->buf[i].timestamp)) {
++			    ag71xx_check_dma_stuck(ag)) {
+ 				schedule_delayed_work(&ag->restart_work, HZ / 2);
+ 				dma_stuck = true;
+ 			}
