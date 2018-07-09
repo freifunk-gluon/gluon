@@ -1,0 +1,33 @@
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 4 Dec 2017 11:40:22 -0800
+Subject: ag71xx: Reduce NAPI weight to 32.
+
+Qualcomm claims this reduces cache misses. Original commit message below:
+
+From: Ben Menchaca <ben.menchaca@qca.qualcomm.com>
+Date: Tue, 11 Jun 2013 12:18:46 -0500
+Subject: [ag71xx] reduce NAPI weight
+
+In an attempt to increase our cache warmth, we are decreasing NAPI.
+This increases the warmth of the reused SKBs.
+
+Signed-off-by: Ben Menchaca <ben.menchaca@qca.qualcomm.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 7b1cc1e1032f7b87430a9be1507ddb3e3faa26bc..71fbe8975b22c291ed13bb549f6b4d2951ff67c0 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -40,6 +40,12 @@
+ #define AG71XX_DRV_NAME		"ag71xx"
+ #define AG71XX_DRV_VERSION	"0.5.35"
+ 
++/*
++ * For our NAPI weight bigger does *NOT* mean better - it means more
++ * D-cache misses and lots more wasted cycles than we'll ever
++ * possibly gain from saving instructions.
++ */
++#define AG71XX_NAPI_WEIGHT	32
+ #define AG71XX_OOM_REFILL	(1 + HZ/10)
+ 
+ #define AG71XX_INT_ERR	(AG71XX_INT_RX_BE | AG71XX_INT_TX_BE)

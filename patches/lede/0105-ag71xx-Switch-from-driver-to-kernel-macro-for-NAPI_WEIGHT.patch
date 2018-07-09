@@ -1,0 +1,75 @@
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 17 Oct 2017 09:25:56 -0700
+Subject: ag71xx: Switch from driver to kernel macro for NAPI_WEIGHT.
+
+NAPI_POLL_WEIGHT was introduced in the kernel for exactly this purpose 5 years ago.
+
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 898bde1d257bb70801f4f585c1aa278ebb9d0030..7b1cc1e1032f7b87430a9be1507ddb3e3faa26bc 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -40,7 +40,6 @@
+ #define AG71XX_DRV_NAME		"ag71xx"
+ #define AG71XX_DRV_VERSION	"0.5.35"
+ 
+-#define AG71XX_NAPI_WEIGHT	64
+ #define AG71XX_OOM_REFILL	(1 + HZ/10)
+ 
+ #define AG71XX_INT_ERR	(AG71XX_INT_RX_BE | AG71XX_INT_TX_BE)
+@@ -136,8 +135,8 @@ struct ag71xx_napi_stats {
+ 	unsigned long		tx_packets;
+ 	unsigned long		tx_packets_max;
+ 
+-	unsigned long		rx[AG71XX_NAPI_WEIGHT + 1];
+-	unsigned long		tx[AG71XX_NAPI_WEIGHT + 1];
++	unsigned long		rx[NAPI_POLL_WEIGHT + 1];
++	unsigned long		tx[NAPI_POLL_WEIGHT + 1];
+ };
+ 
+ struct ag71xx_debug {
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_debugfs.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_debugfs.c
+index c86803c9ceda7c57f643df29acc8254768b3d264..89cea0c0f5ae97c9917cd13e1ee89bd31fe45e58 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_debugfs.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_debugfs.c
+@@ -78,7 +78,7 @@ void ag71xx_debugfs_update_napi_stats(struct ag71xx *ag, int rx, int tx)
+ 	if (rx) {
+ 		stats->rx_count++;
+ 		stats->rx_packets += rx;
+-		if (rx <= AG71XX_NAPI_WEIGHT)
++		if (rx <= NAPI_POLL_WEIGHT)
+ 			stats->rx[rx]++;
+ 		if (rx > stats->rx_packets_max)
+ 			stats->rx_packets_max = rx;
+@@ -87,7 +87,7 @@ void ag71xx_debugfs_update_napi_stats(struct ag71xx *ag, int rx, int tx)
+ 	if (tx) {
+ 		stats->tx_count++;
+ 		stats->tx_packets += tx;
+-		if (tx <= AG71XX_NAPI_WEIGHT)
++		if (tx <= NAPI_POLL_WEIGHT)
+ 			stats->tx[tx]++;
+ 		if (tx > stats->tx_packets_max)
+ 			stats->tx_packets_max = tx;
+@@ -121,7 +121,7 @@ static ssize_t read_file_napi_stats(struct file *file, char __user *user_buf,
+ 	len += snprintf(buf + len, buflen - len, "%3s  %10s %10s\n",
+ 			"len", "rx", "tx");
+ 
+-	for (i = 1; i <= AG71XX_NAPI_WEIGHT; i++)
++	for (i = 1; i <= NAPI_POLL_WEIGHT; i++)
+ 		len += snprintf(buf + len, buflen - len,
+ 				"%3d: %10lu %10lu\n",
+ 				i, stats->rx[i], stats->tx[i]);
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+index 72dd654a691355c881b15d796fad0d640e05fc15..b675c99f168bd5a6ea238c8321534bb0b8925521 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx_main.c
+@@ -1376,7 +1376,7 @@ static int ag71xx_probe(struct platform_device *pdev)
+ 
+ 	memcpy(dev->dev_addr, pdata->mac_addr, ETH_ALEN);
+ 
+-	netif_napi_add(dev, &ag->napi, ag71xx_poll, AG71XX_NAPI_WEIGHT);
++	netif_napi_add(dev, &ag->napi, ag71xx_poll, NAPI_POLL_WEIGHT);
+ 
+ 	ag71xx_dump_regs(ag);
+ 
