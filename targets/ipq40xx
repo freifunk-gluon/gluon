@@ -1,0 +1,26 @@
+# AVM
+
+device avm-fritz-box-4040 avm_fritzbox-4040
+factory
+extra_image -squashfs-eva -bootloader .bin
+
+
+# GL.iNet
+
+device gl.inet-gl-b1300 glinet_gl-b1300
+factory
+
+
+# NETGEAR
+
+device netgear-ex6100v2 netgear_ex6100v2
+factory .img
+
+device netgear-ex6150v2 netgear_ex6150v2
+factory .img
+
+
+# ZyXEL
+
+device zyxel-wre6606 zyxel_wre6606
+factory
