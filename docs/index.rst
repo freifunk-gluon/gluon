@@ -285,6 +285,27 @@ brcm2708-bcm2709
 
 * RaspberryPi 2
 
+
+ipq40xx
+^^^^^^^
+
+* AVM
+
+  - FRITZ!Box 4040 [#80211s]_
+
+* GL.iNet
+
+  - GL-B1300 [#80211s]_
+
+* NETGEAR
+
+  - EX6100v2 [#80211s]_
+  - EX6150v2 [#80211s]_
+
+* ZyXEL
+
+  - WRE6606 [#80211s]_
+
 ipq806x
 ^^^^^^^
 
