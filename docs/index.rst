@@ -319,6 +319,10 @@ ramips-mt7621
 ramips-mt7628
 ^^^^^^^^^^^^^
 
+* TP-Link
+
+  - Archer C50 v3 [#80211s]_
+
 * VoCore
 
   - VoCore2 [#80211s]_
