@@ -343,6 +343,7 @@ ramips-mt7628
 * TP-Link
 
   - Archer C50 v3 [#80211s]_
+  - TL-WR841N v13 [#80211s]_
 
 * VoCore
 
