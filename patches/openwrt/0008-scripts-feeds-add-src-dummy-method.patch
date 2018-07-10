@@ -1,0 +1,34 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 9 Jul 2018 22:00:27 +0200
+Subject: scripts/feeds: add src-dummy method
+
+The src-dummy method does not actually obtain any feed, but it can be used
+to insert addtional entries into the opkg distfeeds.conf.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/scripts/feeds b/scripts/feeds
+index 7613d3a107e4666b30cab2d3dad2ed64b6bcabc3..b29e1d5c353d23c8f0afc81fb0f1ec37e1f2a521 100755
+--- a/scripts/feeds
++++ b/scripts/feeds
+@@ -59,7 +59,8 @@ sub parse_config() {
+ 		my $valid = 1;
+ 		$line[0] =~ /^src-[\w-]+$/ or $valid = 0;
+ 		$line[1] =~ /^\w+$/ or $valid = 0;
+-		@src = split /\s+/, $line[2];
++		@src = split /\s+/, ($line[2] or '');
++		@src = ('') if @src == 0;
+ 		$valid or die "Syntax error in feeds.conf, line: $line\n";
+ 
+ 		$name{$line[1]} and die "Duplicate feed name '$line[1]', line: $line\n";
+@@ -127,6 +128,10 @@ my %update_method = (
+ 		'init'		=> "ln -s '%s' '%s'",
+ 		'update'	=> "",
+ 		'revision'	=> "echo -n 'local'"},
++	'src-dummy' => {
++		'init'		=> "true '%s' && mkdir '%s'",
++		'update'	=> "",
++		'revision'	=> "echo -n 'dummy'"},
+ 	'src-git' => {
+ 		'init'          => "git clone --depth 1 '%s' '%s'",
+ 		'init_branch'   => "git clone --depth 1 --branch '%s' '%s' '%s'",

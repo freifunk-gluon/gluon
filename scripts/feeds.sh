@@ -4,27 +4,20 @@ set -e
 
 . scripts/modules.sh
 
-FEEDS="$GLUON_SITE_FEEDS $GLUON_FEEDS"
+
+rm -rf openwrt/tmp
+rm -rf openwrt/feeds
+rm -rf openwrt/package/feeds
 
 (
-	cat lede/feeds.conf.default
-	echo 'src-link gluon ../../package'
+	echo 'src-link gluon_base ../../package'
 	for feed in $FEEDS; do
-		echo "src-link packages_$feed ../../packages/$feed"
+		echo "src-link $feed ../../packages/$feed"
 	done
-) > lede/feeds.conf
+	for feed in $(echo "$DEFAULT_FEEDS" | grep -vxF "$FEEDS"); do
+		echo "src-dummy $feed"
+	done
+) > openwrt/feeds.conf
 
-rm -rf lede/tmp
-rm -rf lede/feeds
-rm -rf lede/package/feeds
-
-mkdir -p lede/overlay
-rm -f lede/overlay/gluon
-ln -s ../../overlay lede/overlay/gluon
-
-lede/scripts/feeds update 'gluon'
-for feed in $FEEDS; do
-	lede/scripts/feeds update "packages_$feed"
-done
-
-lede/scripts/feeds install -a
+openwrt/scripts/feeds update -a
+openwrt/scripts/feeds install -a

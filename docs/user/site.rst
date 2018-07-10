@@ -67,8 +67,8 @@ opkg \: optional
 
     There are two optional fields in the ``opkg`` section:
 
-    - ``lede`` overrides the default LEDE repository URL. The default URL would
-      correspond to ``http://downloads.lede-project.org/snapshots/packages/%A``
+    - ``openwrt`` overrides the default OpenWrt repository URL. The default URL would
+      correspond to ``http://downloads.openwrt.org/snapshots/packages/%A``
       and usually doesn't need to be changed when nodes are expected to have IPv6
       internet connectivity.
     - ``extra`` specifies a table of additional repositories (with arbitrary keys)
@@ -76,7 +76,7 @@ opkg \: optional
     ::
 
       opkg = {
-        lede = 'http://opkg.services.ffac/lede/snapshots/packages/%A',
+        openwrt = 'http://opkg.services.ffac/openwrt/snapshots/packages/%A',
         extra = {
           gluon = 'http://opkg.services.ffac/modules/gluon-%GS-%GR/%S',
         },
@@ -84,8 +84,8 @@ opkg \: optional
 
     There are various patterns which can be used in the URLs:
 
-    - ``%n`` is replaced by the LEDE version codename
-    - ``%v`` is replaced by the LEDE version number (e.g. "17.01")
+    - ``%d`` is replaced by the OpenWrt distribution name ("openwrt")
+    - ``%v`` is replaced by the OpenWrt version number (e.g. "17.01")
     - ``%S`` is replaced by the target board (e.g. "ar71xx/generic")
     - ``%A`` is replaced by the target architecture (e.g. "mips_24kc")
     - ``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)

@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$LEDE_TARGET" ] || exit 1
+[ "$OPENWRT_TARGET" ] || exit 1
 
 target="$1"
 packages=$2
@@ -14,7 +14,7 @@ default_packages=
 profile_packages=
 
 
-LEDE_CONFIG_TARGET="${LEDE_TARGET//-/_}"
+OPENWRT_CONFIG_TARGET="${OPENWRT_TARGET//-/_}"
 
 
 emit() {
@@ -27,8 +27,8 @@ emit() {
 		[ "${package:0:1}" = '-' ] || echo "CONFIG_PACKAGE_${package}=m"
 	done
 
-	echo "CONFIG_TARGET_DEVICE_${LEDE_CONFIG_TARGET}_DEVICE_${profile}=y"
-	echo "CONFIG_TARGET_DEVICE_PACKAGES_${LEDE_CONFIG_TARGET}_DEVICE_${profile}=\"${profile_packages}\""
+	echo "CONFIG_TARGET_DEVICE_${OPENWRT_CONFIG_TARGET}_DEVICE_${profile}=y"
+	echo "CONFIG_TARGET_DEVICE_PACKAGES_${OPENWRT_CONFIG_TARGET}_DEVICE_${profile}=\"${profile_packages}\""
 }
 
 

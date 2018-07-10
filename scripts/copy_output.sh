@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$GLUON_IMAGEDIR" -a "$GLUON_PACKAGEDIR" -a "$LEDE_TARGET" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" ] || exit 1
+[ "$GLUON_IMAGEDIR" -a "$GLUON_PACKAGEDIR" -a "$OPENWRT_TARGET" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" ] || exit 1
 
 
 default_factory_ext='.bin'
@@ -24,10 +24,10 @@ no_opkg=
 
 mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade"
 
-if [ "$(expr match "$LEDE_TARGET" '.*-.*')" -gt 0 ]; then
-	LEDE_BINDIR="${LEDE_TARGET//-/\/}"
+if [ "$(expr match "$OPENWRT_TARGET" '.*-.*')" -gt 0 ]; then
+	OPENWRT_BINDIR="${OPENWRT_TARGET//-/\/}"
 else
-	LEDE_BINDIR="${LEDE_TARGET}/generic"
+	OPENWRT_BINDIR="${OPENWRT_TARGET}/generic"
 fi
 
 SITE_CODE="$(scripts/site.sh site_code)"
@@ -39,7 +39,7 @@ copy() {
 
 	if [ "$factory_ext" ]; then
 		rm -f "${GLUON_IMAGEDIR}/factory/gluon-"*"-${output}${factory_ext}"
-		cp "lede/bin/targets/${LEDE_BINDIR}/lede-${LEDE_TARGET}${profile}${factory_suffix}${factory_ext}" \
+		cp "openwrt/bin/targets/${OPENWRT_BINDIR}/openwrt-${OPENWRT_TARGET}${profile}${factory_suffix}${factory_ext}" \
 			"${GLUON_IMAGEDIR}/factory/gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}${factory_ext}"
 
 		for alias in $aliases; do
@@ -51,7 +51,7 @@ copy() {
 
 	if [ "$sysupgrade_ext" ]; then
 		rm -f "${GLUON_IMAGEDIR}/sysupgrade/gluon-"*"-${output}-sysupgrade${sysupgrade_ext}"
-		cp "lede/bin/targets/${LEDE_BINDIR}/lede-${LEDE_TARGET}${profile}${sysupgrade_suffix}${sysupgrade_ext}" \
+		cp "openwrt/bin/targets/${OPENWRT_BINDIR}/openwrt-${OPENWRT_TARGET}${profile}${sysupgrade_suffix}${sysupgrade_ext}" \
 			"${GLUON_IMAGEDIR}/sysupgrade/gluon-${SITE_CODE}-${GLUON_RELEASE}-${output}-sysupgrade${sysupgrade_ext}"
 
 		for alias in $aliases; do
@@ -157,8 +157,8 @@ no_opkg() {
 
 # Copy opkg repo
 if [ -z "$no_opkg" -a -z "$DEVICES" ]; then
-	rm -f "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR"/*
-	rmdir -p "$GLUON_PACKAGEDIR"/*/"$LEDE_BINDIR" 2>/dev/null || true
-	mkdir -p "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${LEDE_BINDIR}"
-	cp "lede/bin/targets/${LEDE_BINDIR}/packages"/* "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${LEDE_BINDIR}"
+	rm -f "$GLUON_PACKAGEDIR"/*/"$OPENWRT_BINDIR"/*
+	rmdir -p "$GLUON_PACKAGEDIR"/*/"$OPENWRT_BINDIR" 2>/dev/null || true
+	mkdir -p "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${OPENWRT_BINDIR}"
+	cp "openwrt/bin/targets/${OPENWRT_BINDIR}/packages"/* "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${OPENWRT_BINDIR}"
 fi
