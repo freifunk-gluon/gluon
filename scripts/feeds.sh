@@ -3,6 +3,7 @@
 set -e
 
 . scripts/modules.sh
+. scripts/default_feeds.sh
 
 
 rm -rf openwrt/tmp

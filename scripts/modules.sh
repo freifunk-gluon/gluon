@@ -2,7 +2,6 @@
 [ ! -f "$GLUON_SITEDIR"/modules ] || . "$GLUON_SITEDIR"/modules
 
 FEEDS="$(echo $GLUON_FEEDS $GLUON_SITE_FEEDS | tr ' ' '\n')"
-DEFAULT_FEEDS="$(awk '{print $2}' openwrt/feeds.conf.default)"
 
 GLUON_MODULES=openwrt
 

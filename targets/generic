@@ -2,6 +2,7 @@
 
 
 . scripts/modules.sh
+. scripts/default_feeds.sh
 
 
 config "CONFIG_GLUON_SITEDIR=\"$GLUON_SITEDIR\""
