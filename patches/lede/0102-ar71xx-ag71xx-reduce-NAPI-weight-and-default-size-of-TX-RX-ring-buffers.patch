@@ -1,0 +1,38 @@
+From: Vincent Wiemann <me@codefetch.de>
+Date: Sun, 8 Jul 2018 00:12:08 +0200
+Subject: ar71xx: ag71xx: reduce NAPI weight and default size of TX/RX ring buffers
+
+As to https://lwn.net/Articles/139884/ a too large NAPI weight can
+cause increased system load as a driver may turn off polling and
+return to interrupt-driven mode if the quota was not filled in
+the last polling cycle creating the need of more interrupts to 
+be handled. This commit decreases the NAPI weight from 64 to 32.
+
+Furthermore this commit decreases the default TX/RX ring buffer
+sizes from 128/256 to 64/128 as the buffers will unlikely be 
+filled with a throughput <= 100 Mbit/s.
+
+diff --git a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+index 898bde1d257bb70801f4f585c1aa278ebb9d0030..96ac77dcd0491377f8b76eaf066ea603354c7d36 100644
+--- a/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
++++ b/target/linux/ar71xx/files/drivers/net/ethernet/atheros/ag71xx/ag71xx.h
+@@ -40,7 +40,7 @@
+ #define AG71XX_DRV_NAME		"ag71xx"
+ #define AG71XX_DRV_VERSION	"0.5.35"
+ 
+-#define AG71XX_NAPI_WEIGHT	64
++#define AG71XX_NAPI_WEIGHT	32
+ #define AG71XX_OOM_REFILL	(1 + HZ/10)
+ 
+ #define AG71XX_INT_ERR	(AG71XX_INT_RX_BE | AG71XX_INT_TX_BE)
+@@ -55,8 +55,8 @@
+ #define AG71XX_TX_RING_SPLIT		512
+ #define AG71XX_TX_RING_DS_PER_PKT	DIV_ROUND_UP(AG71XX_TX_MTU_LEN, \
+ 						     AG71XX_TX_RING_SPLIT)
+-#define AG71XX_TX_RING_SIZE_DEFAULT	128
+-#define AG71XX_RX_RING_SIZE_DEFAULT	256
++#define AG71XX_TX_RING_SIZE_DEFAULT	64
++#define AG71XX_RX_RING_SIZE_DEFAULT	128
+ 
+ #define AG71XX_TX_RING_SIZE_MAX		128
+ #define AG71XX_RX_RING_SIZE_MAX		256
