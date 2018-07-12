@@ -116,6 +116,12 @@ factory .img
 fi
 
 
+# OCEDO
+
+device ocedo-koala koala
+factory
+
+
 # Onion
 
 device onion-omega onion-omega
