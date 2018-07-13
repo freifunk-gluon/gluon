@@ -1,12 +1,12 @@
 #!/usr/bin/lua
 
-local RESOLV_CONF_DIR = '/var/gluon/wan-dnsmasq'
-local RESOLV_CONF = RESOLV_CONF_DIR .. '/resolv.conf'
+local RESOLV_CONF = '/var/gluon/wan-dnsmasq/resolv.conf'
 
 
+local stat = require 'posix.sys.stat'
 local ubus = require('ubus').connect()
 local uci = require('simple-uci').cursor()
-local fs = require 'nixio.fs'
+local util = require 'gluon.util'
 
 
 local new_servers = ''
@@ -46,14 +46,15 @@ else
 end
 
 
-fs.mkdirr(RESOLV_CONF_DIR)
-
-local old_servers = fs.readfile(RESOLV_CONF)
+local old_servers = util.readfile(RESOLV_CONF)
 
 if new_servers ~= old_servers then
-   local f = io.open(RESOLV_CONF .. '.tmp', 'w')
-   f:write(new_servers)
-   f:close()
+  stat.mkdir('/var/gluon')
+  stat.mkdir('/var/gluon/wan-dnsmasq')
 
-   fs.rename(RESOLV_CONF .. '.tmp', RESOLV_CONF)
+  local f = io.open(RESOLV_CONF .. '.tmp', 'w')
+  f:write(new_servers)
+  f:close()
+
+  os.rename(RESOLV_CONF .. '.tmp', RESOLV_CONF)
 end
