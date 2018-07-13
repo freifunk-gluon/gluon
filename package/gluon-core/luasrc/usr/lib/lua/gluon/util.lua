@@ -77,12 +77,6 @@ function replace_prefix(file, prefix, add)
 	os.rename(tmp, file)
 end
 
-function readline(fd)
-	local line = fd:read('*l')
-	fd:close()
-	return line
-end
-
 function exec(command)
 	local pp   = io.popen(command)
 	local data = pp:read("*a")
