@@ -1,6 +1,6 @@
 <%-
-	local fs = require 'nixio.fs'
 	local ubus = require 'ubus'
+	local unistd = require 'posix.unistd'
 	local util = require 'gluon.util'
 
 	local translations = {}
@@ -42,13 +42,13 @@
 	local function is_wireless(iface)
 		while true do
 			local pattern = '/sys/class/net/' .. iface .. '/lower_*'
-			local lower = fs.glob(pattern)()
+			local lower = util.glob(pattern)[1]
 			if not lower then break end
 
 			iface = lower:sub(pattern:len())
 		end
 
-		return fs.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
+		return unistd.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
 	end
 
 	local interfaces = get_interfaces()
@@ -148,7 +148,7 @@
 				<%
 					for _, iface in ipairs(interfaces) do
 						local wireless = is_wireless(iface)
-						local address = fs.readfile('/sys/class/net/' .. iface .. '/address')
+						local address = util.readfile('/sys/class/net/' .. iface .. '/address')
 						if address then
 				%>
 					<h3><%| iface %></h3>
