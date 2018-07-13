@@ -1,22 +1,13 @@
-local fs = require "nixio.fs"
 local util = require "gluon.util"
-local nixio_util = require "nixio.util"
-
 local uci = require("simple-uci").cursor()
 
-local wizard_dir = "/lib/gluon/config-mode/wizard/"
-
-local files = nixio_util.consume(fs.dir(wizard_dir) or function() end)
-table.sort(files)
 
 local wizard = {}
-for _, entry in ipairs(files) do
-	if entry:sub(1, 1) ~= '.' then
-		local f = assert(loadfile(wizard_dir .. entry))
-		setfenv(f, getfenv())
-		local w = f()
-		table.insert(wizard, w)
-	end
+for _, entry in ipairs(util.glob('/lib/gluon/config-mode/wizard/*')) do
+	local f = assert(loadfile(entry))
+	setfenv(f, getfenv())
+	local w = f()
+	table.insert(wizard, w)
 end
 
 local f = Form(translate("Welcome!"))
@@ -45,7 +36,8 @@ for _, w in ipairs(wizard) do
 end
 
 function f:write()
-	local nixio = require "nixio"
+	local fcntl = require 'posix.fcntl'
+	local unistd = require 'posix.unistd'
 
 	uci:set("gluon-setup-mode", uci:get_first("gluon-setup-mode", "setup_mode"), "configured", true)
 
@@ -60,15 +52,16 @@ function f:write()
 	f.package = "gluon-config-mode-core"
 	f.hidenav = true
 
-	if nixio.fork() == 0 then
+	if unistd.fork() == 0 then
 		-- Replace stdout with /dev/null
-		nixio.dup(nixio.open('/dev/null', 'w'), nixio.stdout)
+		local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
+		unistd.dup2(null, unistd.STDOUT_FILENO)
 
 		-- Sleep a little so the browser can fetch everything required to
 		-- display the reboot page, then reboot the device.
-		nixio.nanosleep(1)
+		unistd.sleep(1)
 
-		nixio.execp("reboot")
+		unistd.execp('reboot', {[0] = 'reboot'})
 	end
 end
 

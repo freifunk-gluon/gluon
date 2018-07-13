@@ -1,7 +1,7 @@
 local site_i18n = i18n 'gluon-site'
 
 local uci = require("simple-uci").cursor()
-local fs = require "nixio.fs"
+local unistd = require 'posix.unistd'
 
 local platform = require 'gluon.platform'
 local site = require 'gluon.site'
@@ -11,8 +11,8 @@ local util = require "gluon.util"
 local pretty_hostname = require 'pretty_hostname'
 
 
-local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
-local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
+local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
 
 
 local hostname = pretty_hostname.get(uci)

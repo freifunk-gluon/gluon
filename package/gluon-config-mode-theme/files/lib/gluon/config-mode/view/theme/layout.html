@@ -9,12 +9,12 @@ You may obtain a copy of the License at
 	http://www.apache.org/licenses/LICENSE-2.0
 -%>
 <%
-	local uci  = require("simple-uci").cursor()
-	local fs   = require "nixio.fs"
 	local pretty_hostname = require "pretty_hostname"
+	local uci  = require("simple-uci").cursor()
+	local util = require "gluon.util"
 
 	local hostname = pretty_hostname.get(uci)
-	local release = fs.readfile("/lib/gluon/release")
+	local release = util.readfile("/lib/gluon/release")
 
 	local root = node()
 	local rnode = node(unpack(request))

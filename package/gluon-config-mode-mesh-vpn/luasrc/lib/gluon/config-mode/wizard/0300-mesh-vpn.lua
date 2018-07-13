@@ -1,7 +1,7 @@
-local fs = require "nixio.fs"
+local unistd = require 'posix.unistd'
 
-local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
-local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
+local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
 
 return function(form, uci)
 	if not (has_fastd or has_tunneldigger) then

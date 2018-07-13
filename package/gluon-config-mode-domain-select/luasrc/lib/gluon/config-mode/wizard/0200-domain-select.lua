@@ -2,7 +2,6 @@
 return function(form, uci)
 	local site_i18n = i18n 'gluon-site'
 
-	local fs = require 'nixio.fs'
 	local json = require 'jsonc'
 	local site = require 'gluon.site'
 	local util = require 'gluon.util'
@@ -22,7 +21,7 @@ return function(form, uci)
 
 	local function get_domain_list()
 		local list = {}
-		for domain_path in fs.glob('/lib/gluon/domains/*.json') do
+		for _, domain_path in ipairs(util.glob('/lib/gluon/domains/*.json')) do
 			local domain_code = domain_path:match('([^/]+)%.json$')
 			local domain = assert(json.load(domain_path))
 
