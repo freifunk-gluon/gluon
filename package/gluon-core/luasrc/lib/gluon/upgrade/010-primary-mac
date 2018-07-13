@@ -11,8 +11,6 @@ end
 local util = require 'gluon.util'
 local platform = require 'gluon.platform'
 
-local fs = require 'nixio.fs'
-
 
 local try_files = {
   '/sys/class/net/eth0/address'
@@ -52,7 +50,7 @@ end
 
 
 for _, file in ipairs(try_files) do
-  local addr = fs.readfile(file)
+  local addr = util.readfile(file)
 
   if addr then
     sysconfig.primary_mac = util.trim(addr)

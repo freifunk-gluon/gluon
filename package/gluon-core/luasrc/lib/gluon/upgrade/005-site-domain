@@ -1,9 +1,9 @@
 #!/usr/bin/lua
 
-local fs = require 'nixio.fs'
+local unistd = require 'posix.unistd'
 
 
-if not fs.access('/lib/gluon/domains/') then
+if not unistd.access('/lib/gluon/domains/') then
 	return
 end
 
@@ -11,7 +11,7 @@ end
 local uci = require('simple-uci').cursor()
 
 local domain = uci:get('gluon', 'core', 'domain')
-if domain and not fs.access('/lib/gluon/domains/' .. domain .. '.json') then
+if domain and not unistd.access('/lib/gluon/domains/' .. domain .. '.json') then
 	io.stderr:write(string.format("Warning: invalid mesh domain '%s' configured, resetting to default...\n", domain))
 	domain = nil
 end

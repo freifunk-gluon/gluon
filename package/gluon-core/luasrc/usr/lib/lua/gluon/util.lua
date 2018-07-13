@@ -22,11 +22,11 @@ local ipairs = ipairs
 local pairs = pairs
 local table = table
 
-local nixio = require 'nixio'
+local bit = require 'bit'
+local posix_glob = require 'posix.glob'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
-local fs = require 'nixio.fs'
 
 
 module 'gluon.util'
@@ -77,12 +77,22 @@ function replace_prefix(file, prefix, add)
 	os.rename(tmp, file)
 end
 
-function exec(command)
-	local pp   = io.popen(command)
-	local data = pp:read("*a")
-	pp:close()
+local function readall(f)
+	if not f then
+		return nil
+	end
 
+	local data = f:read('*a')
+	f:close()
 	return data
+end
+
+function readfile(file)
+	return readall(io.open(file))
+end
+
+function exec(command)
+	return readall(io.popen(command))
 end
 
 function node_id()
@@ -120,20 +130,25 @@ function get_mesh_devices(uconn)
 	return devices
 end
 
-local function find_phy_by_path(path)
-	for phy in fs.glob('/sys/devices/' .. path .. '/ieee80211/phy*') do
-		return phy:match('([^/]+)$')
-	end
+-- Safe glob: returns an empty table when the glob fails because of
+-- a non-existing path
+function glob(pattern)
+	return posix_glob.glob(pattern) or {}
+end
 
-	for phy in fs.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*') do
+local function find_phy_by_path(path)
+	local phy = glob('/sys/devices/' .. path .. '/ieee80211/phy*')[1]
+		or glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*')[1]
+
+	if phy then
 		return phy:match('([^/]+)$')
 	end
 end
 
 local function find_phy_by_macaddr(macaddr)
 	local addr = macaddr:lower()
-	for file in fs.glob('/sys/class/ieee80211/*/macaddress') do
-		if trim(fs.readfile(file)) == addr then
+	for _, file in ipairs(glob('/sys/class/ieee80211/*/macaddress')) do
+		if trim(readfile(file)) == addr then
 			return file:match('([^/]+)/macaddress$')
 		end
 	end
@@ -181,14 +196,14 @@ function generate_mac(i)
 	m1 = tonumber(m1, 16)
 	m6 = tonumber(m6, 16)
 
-	m1 = nixio.bit.bor(m1, 0x02)  -- set locally administered bit
-	m1 = nixio.bit.band(m1, 0xFE) -- unset the multicast bit
+	m1 = bit.bor(m1, 0x02)  -- set locally administered bit
+	m1 = bit.band(m1, 0xFE) -- unset the multicast bit
 
 	-- It's necessary that the first 45 bits of the MAC address don't
 	-- vary on a single hardware interface, since some chips are using
 	-- a hardware MAC filter. (e.g 'rt305x')
 
-	m6 = nixio.bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
+	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
 	m6 = m6 + i                   -- add virtual interface id
 
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)

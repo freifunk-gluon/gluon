@@ -1,8 +1,8 @@
 #!/usr/bin/lua
 
-local fs = require 'nixio.fs'
+local unistd = require 'posix.unistd'
 
-if not fs.access('/etc/opkg/distfeeds.conf') then
+if not unistd.access('/etc/opkg/distfeeds.conf') then
 	os.exit(0)
 end
 
@@ -22,8 +22,8 @@ subst['%%A'] = f:read()
 f:close()
 
 subst['%%GS'] = site.site_code()
-subst['%%GV'] = util.trim(fs.readfile('/lib/gluon/gluon-version'))
-subst['%%GR'] = util.trim(fs.readfile('/lib/gluon/release'))
+subst['%%GV'] = util.trim(util.readfile('/lib/gluon/gluon-version'))
+subst['%%GR'] = util.trim(util.readfile('/lib/gluon/release'))
 
 local prefix = subst['%%d'] .. '_'
 
