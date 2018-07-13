@@ -1,4 +1,3 @@
-local fs = require 'nixio.fs'
 local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
 local util = require 'gluon.util'

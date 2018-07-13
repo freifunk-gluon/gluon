@@ -9,7 +9,7 @@ include ../gluon.mk
 
 define Package/gluon-web
   TITLE:=Minimal Lua web framework derived from LuCI
-  DEPENDS:=+lua-jsonc +luci-lib-nixio
+  DEPENDS:=+lua-jsonc +luaposix
 endef
 
 define lang-config

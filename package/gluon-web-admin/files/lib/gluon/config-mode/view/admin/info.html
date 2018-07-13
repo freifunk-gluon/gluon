@@ -1,5 +1,4 @@
 <%-
-	local fs = require 'nixio.fs'
 	local uci = require('simple-uci').cursor()
 	local pretty_hostname = require 'pretty_hostname'
 
@@ -24,8 +23,8 @@
 		{ _('Hostname'), pretty_hostname.get(uci) },
 		{ _('MAC address'), sysconfig.primary_mac },
 		{ _('Hardware model'), platform.get_model() },
-		{ _('Gluon version'), util.trim(fs.readfile('/lib/gluon/gluon-version')) },
-		{ _('Firmware release'), util.trim(fs.readfile('/lib/gluon/release')) },
+		{ _('Gluon version'), util.trim(util.readfile('/lib/gluon/gluon-version')) },
+		{ _('Firmware release'), util.trim(util.readfile('/lib/gluon/release')) },
 		{ _('Site'), site.site_name() },
 		{ _('Public VPN key'), pubkey },
 	}

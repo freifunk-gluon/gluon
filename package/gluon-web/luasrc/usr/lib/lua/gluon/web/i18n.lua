@@ -1,8 +1,8 @@
 -- Copyright 2018 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local tparser = require "gluon.web.template.parser"
-local fs = require "nixio.fs"
+local tparser = require 'gluon.web.template.parser'
+local unistd = require 'posix.unistd'
 
 
 return function(config)
@@ -20,7 +20,7 @@ return function(config)
 	local function load_catalog(lang, pkg)
 		if pkg then
 			local file = i18n_file(lang, pkg)
-			local cat = fs.access(file) and tparser.load_catalog(file)
+			local cat = unistd.access(file) and tparser.load_catalog(file)
 
 			if cat then return cat end
 		end
@@ -32,7 +32,7 @@ return function(config)
 	local i18n = {}
 
 	function i18n.supported(lang)
-		return lang == 'en' or fs.access(i18n_file(lang, 'gluon-web'))
+		return lang == 'en' or unistd.access(i18n_file(lang, 'gluon-web'))
 	end
 
 	function i18n.load(lang, pkg)

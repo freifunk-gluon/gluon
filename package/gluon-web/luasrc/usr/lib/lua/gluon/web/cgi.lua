@@ -2,7 +2,7 @@
 -- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local nixio = require 'nixio'
+local stdlib = require 'posix.stdlib'
 local http = require 'gluon.web.http'
 local dispatcher = require 'gluon.web.dispatcher'
 
@@ -27,9 +27,10 @@ local function limitsource(handle, limit)
 end
 
 return function(config)
+	local env = stdlib.getenv()
 	dispatcher(config, http.Http(
-		nixio.getenv(),
-		limitsource(io.stdin, tonumber(nixio.getenv("CONTENT_LENGTH"))),
+		env,
+		limitsource(io.stdin, tonumber(env.CONTENT_LENGTH)),
 		io.stdout
 	))
 end

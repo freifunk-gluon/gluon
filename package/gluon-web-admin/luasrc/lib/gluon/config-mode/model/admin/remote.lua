@@ -10,24 +10,28 @@ You may obtain a copy of the License at
 	http://www.apache.org/licenses/LICENSE-2.0
 ]]--
 
-local nixio = require "nixio"
-local fs = require "nixio.fs"
-local util = require "gluon.util"
-local site = require "gluon.site"
+local util = require 'gluon.util'
+local site = require 'gluon.site'
+
+local fcntl = require 'posix.fcntl'
+local unistd = require 'posix.unistd'
+local wait = require 'posix.sys.wait'
 
 local f_keys = Form(translate("SSH keys"), translate("You can provide your SSH keys here (one per line):"), 'keys')
 local s = f_keys:section(Section)
 local keys = s:option(TextValue, "keys")
 keys.wrap = "off"
 keys.rows = 5
-keys.default = fs.readfile("/etc/dropbear/authorized_keys") or ""
+keys.default = util.readfile("/etc/dropbear/authorized_keys") or ""
 
 function keys:write(value)
 	value = util.trim(value:gsub("\r", ""))
 	if value ~= "" then
-		fs.writefile("/etc/dropbear/authorized_keys", value .. "\n")
+		local f = io.open("/etc/dropbear/authorized_keys", "w")
+		f:write(value, "\n")
+		f:close()
 	else
-		fs.remove("/etc/dropbear/authorized_keys")
+		unistd.unlink("/etc/dropbear/authorized_keys")
 	end
 end
 
@@ -72,34 +76,34 @@ function pw2.cfgvalue()
 end
 
 local function set_password(password)
-	local inr, inw = nixio.pipe()
-	local pid = nixio.fork()
+	local inr, inw = unistd.pipe()
+	local pid = unistd.fork()
 
 	if pid < 0 then
 		return false
 	elseif pid == 0 then
-		inw:close()
+		unistd.close(inw)
 
-		local null = nixio.open('/dev/null', 'w')
-		nixio.dup(null, nixio.stderr)
-		nixio.dup(null, nixio.stdout)
-		if null:fileno() > 2 then
-			null:close()
+		local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
+		unistd.dup2(null, unistd.STDOUT_FILENO)
+		unistd.dup2(null, unistd.STDERR_FILENO)
+		if null > 2 then
+			unistd.close(null)
 		end
 
-		nixio.dup(inr, nixio.stdin)
-		inr:close()
+		unistd.dup2(inr, unistd.STDIN_FILENO)
+		unistd.close(inr)
 
-		nixio.execp('passwd')
+		unistd.execp('passwd', {[0] = 'passwd'})
 		os.exit(127)
 	end
 
-	inr:close()
+	unistd.close(inr)
 
-	inw:write(string.format('%s\n%s\n', password, password))
-	inw:close()
+	unistd.write(inw, string.format('%s\n%s\n', password, password))
+	unistd.close(inw)
 
-	local wpid, status, code = nixio.waitpid(pid)
+	local wpid, status, code = wait.wait(pid)
 	return wpid and status == 'exited' and code == 0
 end
 

@@ -13,13 +13,13 @@ package 'gluon-web-admin'
 
 
 local util = require 'gluon.util'
-local fs = require 'nixio.fs'
+local unistd = require 'posix.unistd'
 
 local tmpfile = "/tmp/firmware.img"
 
 
 local function filehandler(meta, chunk, eof)
-	if not fs.access(tmpfile) and not file and chunk and #chunk > 0 then
+	if not unistd.access(tmpfile) and not file and chunk and #chunk > 0 then
 		file = io.open(tmpfile, "w")
 	end
 	if file and chunk then
@@ -31,33 +31,35 @@ local function filehandler(meta, chunk, eof)
 end
 
 local function action_upgrade(http, renderer)
-	local nixio = require 'nixio'
+	local fcntl = require 'posix.fcntl'
+	local stat = require 'posix.sys.stat'
+	local wait = require 'posix.sys.wait'
 
-	local function fork_exec(...)
-		local pid = nixio.fork()
+	local function fork_exec(argv)
+		local pid = unistd.fork()
 		if pid > 0 then
 			return
 		elseif pid == 0 then
 			-- change to root dir
-			nixio.chdir("/")
+			unistd.chdir('/')
 
 			-- patch stdin, out, err to /dev/null
-			local null = nixio.open("/dev/null", "w+")
+			local null = fcntl.open('/dev/null', fcntl.O_RDWR)
 			if null then
-				nixio.dup(null, nixio.stderr)
-				nixio.dup(null, nixio.stdout)
-				nixio.dup(null, nixio.stdin)
-				if null:fileno() > 2 then
-					null:close()
+				unistd.dup2(null, unistd.STDIN_FILENO)
+				unistd.dup2(null, unistd.STDOUT_FILENO)
+				unistd.dup2(null, unistd.STDERR_FILENO)
+				if null > 2 then
+					unistd.close(null)
 				end
 			end
 
 			-- Sleep a little so the browser can fetch everything required to
 			-- display the reboot page, then reboot the device.
-			nixio.nanosleep(1)
+			unistd.sleep(1)
 
 			-- replace with target command
-			nixio.exec(...)
+			unistd.exec(argv[0], argv)
 		end
 	end
 
@@ -67,7 +69,7 @@ local function action_upgrade(http, renderer)
 
 	local function storage_size()
 		local size = 0
-		if fs.access("/proc/mtd") then
+		if unistd.access("/proc/mtd") then
 			for l in io.lines("/proc/mtd") do
 				local d, s, e, n = l:match('^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s+"([^%s]+)"')
 				if n == "linux" then
@@ -75,7 +77,7 @@ local function action_upgrade(http, renderer)
 					break
 				end
 			end
-		elseif fs.access("/proc/partitions") then
+		elseif unistd.access("/proc/partitions") then
 			for l in io.lines("/proc/partitions") do
 				local x, y, b, n = l:match('^%s*(%d+)%s+(%d+)%s+([^%s]+)%s+([^%s]+)')
 				if b and n and not n:match('[0-9]') then
@@ -95,7 +97,7 @@ local function action_upgrade(http, renderer)
 	-- Determine state
 	local step = tonumber(http:getenv("REQUEST_METHOD") == "POST" and http:formvalue("step")) or 1
 
-	local has_image   = fs.access(tmpfile)
+	local has_image   = unistd.access(tmpfile)
 	local has_support = has_image and image_supported(tmpfile)
 
 	-- Step 1: file upload, error on unsupported image format
@@ -103,7 +105,7 @@ local function action_upgrade(http, renderer)
 		-- If there is an image but user has requested step 1
 		-- or type is not supported, then remove it.
 		if has_image then
-			fs.unlink(tmpfile)
+			unistd.unlink(tmpfile)
 		end
 
 		renderer.render_layout('admin/upgrade', {
@@ -114,17 +116,17 @@ local function action_upgrade(http, renderer)
 	elseif step == 2 then
 		renderer.render_layout('admin/upgrade_confirm', {
 			checksum   = image_checksum(tmpfile),
-			filesize   = fs.stat(tmpfile).size,
+			filesize   = stat.stat(tmpfile).st_size,
 			flashsize  = storage_size(),
 			keepconfig = (http:formvalue("keepcfg") == "1"),
 		}, 'gluon-web-admin')
 
 	elseif step == 3 then
-		if http:formvalue("keepcfg") == "1" then
-			fork_exec("/sbin/sysupgrade", tmpfile)
-		else
-			fork_exec("/sbin/sysupgrade", "-n", tmpfile)
+		local cmd = {[0] = '/sbin/sysupgrade', tmpfile}
+		if http:formvalue('keepcfg') ~= '1' then
+			table.insert(cmd, 1, '-n')
 		end
+		fork_exec(cmd)
 		renderer.render_layout('admin/upgrade_reboot', nil, 'gluon-web-admin', {
 			hidenav = true,
 		})
@@ -132,7 +134,7 @@ local function action_upgrade(http, renderer)
 end
 
 
-local has_platform = fs.access("/lib/upgrade/platform.sh")
+local has_platform = unistd.access("/lib/upgrade/platform.sh")
 if has_platform then
 	local upgrade = entry({"admin", "upgrade"}, call(action_upgrade), _("Upgrade firmware"), 90)
 	upgrade.filehandler = filehandler

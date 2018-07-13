@@ -4,7 +4,6 @@
 
 local string = string
 local table = table
-local nixio = require "nixio"
 local protocol = require "gluon.web.http.protocol"
 local util  = require "gluon.web.util"
 

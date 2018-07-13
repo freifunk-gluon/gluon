@@ -4,7 +4,7 @@
 
 module('gluon.web.model', package.seeall)
 
-local fs = require 'nixio.fs'
+local unistd = require 'posix.unistd'
 local classes = require 'gluon.web.model.classes'
 
 local util = require 'gluon.web.util'
@@ -38,7 +38,7 @@ return function(config, http, renderer, name, pkg)
 	local modeldir = config.base_path .. '/model/'
 	local filename = modeldir..name..'.lua'
 
-	if not fs.access(filename) then
+	if not unistd.access(filename) then
 		error("Model '" .. name .. "' not found!")
 	end
 
