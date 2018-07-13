@@ -3,9 +3,9 @@
 local site = require 'gluon.site'
 local users = require 'gluon.users'
 local util = require 'gluon.util'
-local fs = require 'nixio.fs'
 
 local uci = require('simple-uci').cursor()
+local unistd = require 'posix.unistd'
 
 
 uci:section('network', 'interface', 'mesh_vpn', {
@@ -20,7 +20,7 @@ uci:section('network', 'interface', 'mesh_vpn', {
 uci:save('network')
 
 
-if fs.access('/etc/config/gluon-simple-tc') then
+if unistd.access('/etc/config/gluon-simple-tc') then
 	os.rename('/etc/config/gluon-simple-tc', '/etc/config/simple-tc')
 end
 
@@ -49,10 +49,10 @@ uci:save('firewall')
 
 
 -- VPN migration
-local has_fastd = fs.access('/lib/gluon/mesh-vpn/fastd')
+local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
 local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
 
-local has_tunneldigger = fs.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
 local tunneldigger_enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
 
 local enabled
