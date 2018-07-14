@@ -1,26 +1,37 @@
+ATH10K_PACKAGES_IPQ40XX=
+if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
+	ATH10K_PACKAGES_IPQ40XX='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca4019 ath10k-firmware-qca4019-ct'
+fi
+
+
 # AVM
 
 device avm-fritz-box-4040 avm_fritzbox-4040
 factory
 extra_image -squashfs-eva -bootloader .bin
+packages $ATH10K_PACKAGES_IPQ40XX
 
 
 # GL.iNet
 
 device gl.inet-gl-b1300 glinet_gl-b1300
 factory
+packages $ATH10K_PACKAGES_IPQ40XX
 
 
 # NETGEAR
 
 device netgear-ex6100v2 netgear_ex6100v2
 factory .img
+packages $ATH10K_PACKAGES_IPQ40XX
 
 device netgear-ex6150v2 netgear_ex6150v2
 factory .img
+packages $ATH10K_PACKAGES_IPQ40XX
 
 
 # ZyXEL
 
 device zyxel-wre6606 zyxel_wre6606
 factory
+packages $ATH10K_PACKAGES_IPQ40XX
