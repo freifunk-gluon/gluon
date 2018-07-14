@@ -38,6 +38,10 @@ sysupgrade() {
 	:
 }
 
+extra_image() {
+	:
+}
+
 no_opkg() {
 	:
 }

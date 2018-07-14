@@ -9,6 +9,7 @@ default_factory_ext='.bin'
 default_factory_suffix='-squashfs-factory'
 default_sysupgrade_ext='.bin'
 default_sysupgrade_suffix='-squashfs-sysupgrade'
+default_extra_images=
 
 output=
 profile=
@@ -18,11 +19,12 @@ factory_ext=
 factory_suffix=
 sysupgrade_ext=
 sysupgrade_suffix=
+extra_images=
 
 no_opkg=
 
 
-mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade"
+mkdir -p "${GLUON_IMAGEDIR}/factory" "${GLUON_IMAGEDIR}/sysupgrade" "${GLUON_IMAGEDIR}/other"
 
 if [ "$(expr match "$OPENWRT_TARGET" '.*-.*')" -gt 0 ]; then
 	OPENWRT_BINDIR="${OPENWRT_TARGET//-/\/}"
@@ -76,6 +78,10 @@ copy() {
 
 	[ -z "$factory_ext" ] || do_copy 'factory' "$factory_suffix" '' "$factory_ext" "$aliases"
 	[ -z "$sysupgrade_ext" ] || do_copy 'sysupgrade' "$sysupgrade_suffix" '-sysupgrade' "$sysupgrade_ext" "$aliases"
+
+	echo -n "$extra_images" | while read in_suffix && read out_suffix && read ext; do
+		do_copy 'other' "$in_suffix" "$out_suffix" "$ext" "$aliases"
+	done
 }
 
 
@@ -92,6 +98,7 @@ device() {
 	factory_suffix="$default_factory_suffix"
 	sysupgrade_ext="$default_sysupgrade_ext"
 	sysupgrade_suffix="$default_sysupgrade_suffix"
+	extra_images="$default_extra_images"
 }
 
 factory_image() {
@@ -161,6 +168,21 @@ sysupgrade() {
 	if [ -z "$output" ]; then
 		default_sysupgrade_ext="$sysupgrade_ext"
 		default_sysupgrade_suffix="$sysupgrade_suffix"
+	fi
+}
+
+extra_image() {
+	local in_suffix="$1"
+	local out_suffix="$2"
+	local ext="$3"
+
+	extra_images="$in_suffix
+$out_suffix
+$ext
+$extra_images"
+
+	if [ -z "$output" ]; then
+		default_extra_images="$extra_images"
 	fi
 }
 
