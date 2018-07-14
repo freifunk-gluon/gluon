@@ -301,7 +301,19 @@ The status page has been rewritten to simplify the code and reduce its size. Rat
 having a static frontend and retrieving all information via JavaScript, all static information
 in the status page is now generated on the node, and JavaScript is only used for dynamic data.
 
-To achieve this, the status page was ported to the gluon-web framework. The new status page
+Many status page API endpoints have been removed; for all remaining endpoints, CORS
+(Cross-Origin Resource Sharing) has been disabled, as it led to a privacy issues:
+malicious websites could access the API via cross-site scripting, determining which
+node a user was connected to.
+
+The removal of CORS breaks compatibility with the node switching feature of the
+old status page implementation: In the new status page, switching to another node will
+reload the whole status page from the target node, while the old implementation would
+only switch to another backend host. While this will facilitate future updates, as
+frontend and backend always come from the same node and no stable API needs to be maintained,
+it prevents switching from the old status page to nodes running the new version.
+
+To achieve all this, the status page was ported to the gluon-web framework. The new status page
 also makes use of Gluon's usual i18n facilities now. In addition, the gluon-web-model
 package was split out of the gluon-web core package, as model support is only required
 for config mode packages, but not for the new status page.
