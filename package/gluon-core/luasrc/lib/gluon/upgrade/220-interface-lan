@@ -10,8 +10,6 @@ if not sysconfig.lan_ifname then
 	os.exit(0)
 end
 
-local old_proto = uci:get('network', 'mesh_lan', 'proto')
-
 uci:section('network', 'interface', 'mesh_lan', {
 	ifname        = sysconfig.lan_ifname,
 	igmp_snooping = false,
