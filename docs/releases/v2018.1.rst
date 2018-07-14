@@ -268,6 +268,20 @@ must be made:
   When shown, the password form requires a minimum password length of 12 characters now. This requirement
   can be modified using the *config_mode.remote_login.min_password_length* setting.
 
+* Next-node hostnames
+
+  The builtin DNS resolver of Gluon can be configured to resolve a next-node hostname to the
+  next-node IP address without querying an upstream DNS server. Since Gluon v2018.1, multiple
+  names can be specified. Old configurations setting *next_node.name* to a string must be
+  updated to provide an array of strings instead:
+
+  .. code-block:: lua
+
+    next_node = {
+      name = { 'nextnode.location.community.example.org' },
+      -- ...
+    },
+
 i18n
 ====
 
