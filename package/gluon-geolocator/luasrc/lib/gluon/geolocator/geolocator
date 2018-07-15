@@ -8,7 +8,7 @@ local LOC="gluon-node-info"
 local GLC="geolocator"
 
 if not uci:get_bool(GLC, "settings", "auto_location") then
-	os.exit(0)
+  os.exit(0)
 end
 
 -- PID file to ensure the geolocator isn't running parallel
@@ -16,120 +16,107 @@ local PID_PART="/var/run/geolocator.pid"
 local TIME_STAMP="/tmp/geolocator_timestamp"
 
 local function file_exsist(file)
-	return io.open(file, "r") ~= nil
+  return io.open(file, "r") ~= nil
 end
 
 if file_exsist(PID_PART) then
-	io.stdout:write("The geolocator is still running.\n")
-	os.exit(0)
+  io.stdout:write("The geolocator is still running.\n")
+  os.exit(0)
 end
 if io.open(PID_PART, "w") == nil then
-	io.stdout:write("Can`t create pid file on " .. PID_PART .. "\n")
-	os.exit(1)
+  io.stdout:write("Can`t create pid file on " .. PID_PART .. "\n")
+  os.exit(1)
 end
 
 -- Program terminating function including removing of PID file
 local function exit(exc)
-	if file_exsist(PID_PART) then
-		os.remove(PID_PART)
-	end
-	os.exit(exc)
-end
-
-local function table_contains(tbl, prefix)
-	for _, entry in ipairs(tbl) do
-		if entry:match(prefix) then
-			return true
-		end
-	end
-	return false
+  if file_exsist(PID_PART) then
+    os.remove(PID_PART)
+  end
+  os.exit(exc)
 end
 
 local function getWifiifnames()
-	local ifnames = {}
-	uci:foreach('wireless', 'wifi-iface',
-		function(s)
-			local ifname = uci:get('wireless', s['.name'], 'ifname')
-			if (ifname ~= nil) then
-				table.insert(ifnames, ifname)
-			end
-		end
-	)
-	return ifnames
+  local ifnames = {}
+  uci:foreach('wireless', 'wifi-iface',
+    function(s)
+      local ifname = uci:get('wireless', s['.name'], 'ifname')
+      if (ifname ~= nil) then
+        table.insert(ifnames, ifname)
+      end
+    end
+  )
+  return ifnames
 end
 
 -- Get position
 local function Get_geolocation_info()
 
-	-- Get list of BSSID there should ignored
-	local blacklist_bssid = { }
-	for _, bl_bssid in ipairs(uci:get(GLC, "settings", "blacklist")) do
-		-- Ensure rm colons and uppercase
-		table.insert(blacklist_bssid,(string.upper(bl_bssid):gsub(":", "")))
-	end
+  local scaned_bssid = ""
+  local uniq = { }
+  for _, ifname in ipairs(getWifiifnames()) do
+    local api = iwinfo.type(ifname)
+    if api then
+      local iw = iwinfo[api]
 
-	local scaned_bssid = ""
-	local uniq = { }
-	for _, ifname in ipairs(getWifiifnames()) do
-		local api = iwinfo.type(ifname)
-		if api then
-			local iw = iwinfo[api]
+      -- Get list of BSSID without redundancy entrys.
+      for _, net in ipairs(iw.scanlist(ifname) or { }) do
+        --only alowe Master mode driven wifis
+        if net.mode:match("Master") then
+          -- Ensure rm colons and uppercase
+          net.bssid = string.upper(net.bssid:gsub(":", ""))
+          if not uniq[net.bssid] then
+            scaned_bssid  = scaned_bssid .. "," .. net.bssid
+            uniq[net.bssid] = true
+          end
+        end
+      end
+      if #scaned_bssid < 12 then -- because one BSSID contains 12 characters
+        io.stdout:write("No surrounded BSSIDs found.\n")
+        return { }
+      end
+      scaned_bssid = scaned_bssid:gsub("^,(.-),*", "%1")
+    end
+  end
+  -- Request position
+  local req = io.popen("wget -T 15 -q -O - http://openwifi.su/api/v1/bssids/" .. scaned_bssid)
+  if not req then
+    io.stdout:write("connection failed.\n")
+    return { }
+  end
 
-			-- Get list of BSSID without blacklisted and redundancy entrys.
-			for _, net in ipairs(iw.scanlist(ifname) or { }) do
-				-- Ensure rm colons and uppercase
-				net.bssid = string.upper(net.bssid:gsub(":", ""))
-				if not uniq[net.bssid] and not table_contains(blacklist_bssid, net.bssid) then
-					scaned_bssid  = scaned_bssid .. "," .. net.bssid
-					uniq[net.bssid] = true
-				end
-			end
-			if #scaned_bssid < 12 then
-				io.stdout:write("No surrounded BSSIDs found.\n")
-				return { }
-			end
-			scaned_bssid = scaned_bssid:gsub("^,(.-),*", "%1")
-		end
-	end
-	-- Request position
-	local req = io.popen("wget -T 15 -q -O - http://openwifi.su/api/v1/bssids/" .. scaned_bssid)
-	if not req then
-		io.stdout:write("connection failed.\n")
-		return { }
-	end
+  local jreq, _, err = json.parse(req:read("*a"), 1, nil)
+  req:close()
+  if err or jreq == nil or jreq.lon == nil or jreq.lat == nil then
+    io.stdout:write("openwifi.su doesn't gif a location.\n")
+    return { }
+  end
 
-	local jreq, _, err = json.parse(req:read("*a"), 1, nil)
-	req:close()
-	if err or jreq == nil or jreq.lon == nil or jreq.lat == nil then
-		io.stdout:write("openwifi.su doesn't gif a location.\n")
-		return { }
-	end
-
-	return jreq
+  return jreq
 end -- end Get_geolocation_info()
 
 -- Check if interval over or not exist
 if file_exsist(TIME_STAMP) then
-	if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
-		exit(0)
-	end
+  if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
+    exit(0)
+  end
 end
 
 local pos = Get_geolocation_info()
 if not next(pos) then
-	exit(1)
+  exit(1)
 end
 if not uci:get_bool(GLC, "settings", "static_location") then
-	uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
-	uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
-	uci:save(LOC)
-	uci:commit(LOC)
+  uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
+  uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
+  uci:save(LOC)
+  uci:commit(LOC)
 end
 local timestap = io.open(TIME_STAMP, "w")
 if timestap ~= nil then
-	timestap:write(os.time())
-	timestap:close()
-	exit(0)
+  timestap:write(os.time())
+  timestap:close()
+  exit(0)
 end
 io.stdout:write("Can`t create file on " .. TIME_STAMP .. "\n")
 exit(1)

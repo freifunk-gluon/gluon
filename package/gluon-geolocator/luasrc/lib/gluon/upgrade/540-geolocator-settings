@@ -22,6 +22,5 @@ uci:section(config, config, 'settings', {
 	static_location = static_location,
 	refresh_interval = refresh_interval,
 	auto_location = auto_location,
-	blacklist = site.geolocator.blacklist({}),
 })
 uci:save(config)
