@@ -9,16 +9,16 @@ decentralised mesh-networks.
 Background informations
 -----------------------
 
-The main problem of the Nordwest Freifunk community was the fast increasing of
-amount of nodes in the network. This affected indirectly the stability of the
-network because also the noise inside the network e.g. management traffic from
-the batman-adv protocoll was increasing. Inside the community there were some
-ideas like to build seperated firmwares for each region. Kind of idea
-will have problems in resplitting regions again or even problems of scattered
-nodes, which belongs to an another region. Therefore we decide to develop an
-dynamic and decentralized management of kind of region called hoods.
-The Hoodselectors task is to choose belonged hoods in an inteligent way and
-ensure to hold the network together and accessible.
+The main problem of the Nordwest Freifunk community was the quickly rising
+number of nodes in the network. This indirectly affected the stability of the
+network because the noise inside the network, e.g. management traffic from
+the batman-adv protocol, was rising, too. Inside the community there were some
+ideas like building separate firmwares for each region. This kind of solution
+would have problems with splitting regions again and problems with scattered
+nodes, which belong to an other region. Therefore we decided to develop a
+dynamic and decentralised management of regions called hoods.
+The Hoodselector's task is to choose the "right" hoods in an intelligent way
+and to hold the network together and accessible.
 
 A hood is defined by geostationary fixed shapes by using longitude & latitude
 in combination with the domain configuration system. Below you can see a visual
@@ -29,56 +29,54 @@ example of regional hoods:
 Hoodselector logic
 ------------------
 
-In following there is an abstract state diagramm which should give an overview
+The following is an abstract state diagramm which gives an overview
 of the process:
 
 .. image:: gluon-hoodselector.svg
 
-The sequence of this diagramm is given the priorty of running modes.
+The sequence of this diagramm is given the priority of running modes.
 Each mode will be explained seperatedly below.
 
-VPN-MODE
+VPN-mode
 ^^^^^^^^
 
-This mode will be only entered if a router can see batman-adv Gateways over VPN.
-Means only routers which have a vpn connection to supernodes will enter and set
-the hood base on their position if they have one. If a node has a position
-which is outside of all definded shapes, it will set the default hood. If no
-position exists, the node will continue with the next mode. This mode will be
-entered at first. The reason is because the Hoodselector takes
-care of holding nodes arround supernodes e.g. to ensure that nodes can always
-reach at least the autoupdate server.
+This mode will be entered only if a router can see batman-adv gateways over VPN.
+Routers which have a VPN connection to a supernode will set their hood based on
+their position if they have one. If a node has a position which is outside of
+all defined shapes, it will set the default hood. If no position is set,
+the node will continue with the next mode. The VPN mode will be entered first.
+This way, the Hoodselector takes care of holding nodes around supernodes
+to ensure that nodes can at least reach the autoupdate server.
 
 Hood
 ----
 
 A hood bases on the related domain configuration with some additional
-configurations. There are two types of hoods: one without any defined shapes
-which has to be unique and other which contains shapes.
+configuration. There are two types of hoods: one without any defined shapes
+which has to be unique and others which contain shapes.
 
 * **default hood**
 
 defaulthood: The default hood doesn’t have shapes and is the inverted form of
-all other hoods with geo coordinates. It will be entered if no node match to a
-real hood. In the Nordwest Freifunk situation we defined the old network as
-default hood and continuously migrated parts from there to shape defined hoods
-named "real hood"
+all other hoods with geo coordinates. It will be entered if no node matches to a
+real hood. A suggested approach is to define the "old" network as default hood
+and gradually migrate parts from there to shape defined hoods ("real hood").
 
 * **real hood**
 
-A real hood contains shapes, which are described by three dimensional array and
-represents the geographical size of the real hood. There are 2 possible
-definitions of those shapes. The first one are rectangulars definded which
-means just two points per box are needed to reconstruct it.
-(see below for an example). The second one are normal polygons which can have
-multible edges. Each real hood can have multible defined shapes.
+A real hood contains shapes, which are described by three dimensional arrays and
+represents the geographical size of the real hood. There are two possible
+definitions of these shapes. The first one is using rectangulars so that only
+two coordinates per box are needed to reconstruct it (see below for an example).
+The second one is using polygons which can have multible edges.
+Each real hood can have multiple defined shapes.
 
 .. image:: rectangle-example.svg
 
 site.conf
 ---------
 
-The designer of the shapes should always ensure that no overleaping poligons
+The designer of the shapes should always ensure that no overlapping polygons
 will be created!
 Here is an example of a rectangular definition of a shape:
 Example::
@@ -98,7 +96,7 @@ Example::
     },
   },
 
-Here in an example of a Trigon polygon defined shape:
+Here is an example of a trigon polygon defined shape:
 Example::
 
   hoodselector = {
@@ -120,4 +118,4 @@ Example::
     },
   },
 
-This package is not compatible with the :doc:`gluon-config-mode-domain-select`.
+This package is incompatible with the :doc:`gluon-config-mode-domain-select`.
