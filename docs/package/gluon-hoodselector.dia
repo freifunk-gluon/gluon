@@ -265,13 +265,13 @@
         <dia:point val="21.35,2.95"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="17.0613,2.355;25.6388,4.7025"/>
+        <dia:rectangle val="17.2825,2.33631;25.4362,4.73988"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
             <dia:string>#(VPN MODE)
-Router have a batman-adv
+Router has a batman-adv
 connection via VPN.#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
