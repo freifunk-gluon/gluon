@@ -2,7 +2,8 @@
 
 local uci = require('simple-uci').cursor()
 local json = require ("luci.jsonc")
-require("iwinfo")
+local ubus = require 'ubus'
+local iwinfo = require("iwinfo")
 
 local LOC="gluon-node-info"
 local GLC="geolocator"
@@ -36,64 +37,68 @@ local function exit(exc)
   os.exit(exc)
 end
 
-local function getWifiifnames()
-  local ifnames = {}
-  uci:foreach('wireless', 'wifi-iface',
-    function(s)
-      local ifname = uci:get('wireless', s['.name'], 'ifname')
-      if (ifname ~= nil) then
-        table.insert(ifnames, ifname)
+-- Iterates over all active WLAN interfaces
+-- Returning true from the callback function will skip all remaining
+-- interfaces of the same radio
+local function foreach_radio(f)
+  local uconn = assert(ubus.connect(), 'failed to connect to ubus')
+  local status = uconn:call('network.wireless', 'status', {})
+  ubus.close(uconn)
+
+  for _, radio in pairs(status) do
+    for _, iface in ipairs(radio.interfaces) do
+      if f(iface.ifname) then
+        break
       end
     end
-  )
-  return ifnames
+  end
+end
+
+local function receive_json(request)
+  local f = assert(io.popen(string.format("exec wget -T 15 -q -O- '%s'", request)), 'failed to run wget')
+  local data = f:read('*a')
+  f:close()
+
+  return json.parse(data)
 end
 
 -- Get position
-local function Get_geolocation_info()
+local function locate()
+  local done_bssids = {}
+  local found_bssids = {}
+  foreach_radio(function(ifname)
+    local iw = iwinfo[iwinfo.type(ifname)]
+    if not iw then
+      -- Skip other ifaces of this radio, as they
+      -- will have the same type
+      return true
+    end
 
-  local scaned_bssid = ""
-  local uniq = { }
-  for _, ifname in ipairs(getWifiifnames()) do
-    local api = iwinfo.type(ifname)
-    if api then
-      local iw = iwinfo[api]
+    local scanlist = iw.scanlist(ifname)
+    if not scanlist then
+      return false
+    end
 
-      -- Get list of BSSID without redundancy entrys.
-      for _, net in ipairs(iw.scanlist(ifname) or { }) do
-        --only alowe Master mode driven wifis
-        if net.mode:match("Master") then
-          -- Ensure rm colons and uppercase
-          net.bssid = string.upper(net.bssid:gsub(":", ""))
-          if not uniq[net.bssid] then
-            scaned_bssid  = scaned_bssid .. "," .. net.bssid
-            uniq[net.bssid] = true
-          end
+    for _, entry in ipairs(scanlist) do
+      if entry.mode:match("Master") then
+        local bssid = string.upper(entry.bssid:gsub(":", ""))
+        if not done_bssids[bssid] then
+          table.insert(found_bssids, bssid)
+          done_bssids[bssid] = true
         end
       end
-      if #scaned_bssid < 12 then -- because one BSSID contains 12 characters
-        io.stdout:write("No surrounded BSSIDs found.\n")
-        return { }
-      end
-      scaned_bssid = scaned_bssid:gsub("^,(.-),*", "%1")
     end
-  end
-  -- Request position
-  local req = io.popen("wget -T 15 -q -O - http://openwifi.su/api/v1/bssids/" .. scaned_bssid)
-  if not req then
-    io.stdout:write("connection failed.\n")
-    return { }
-  end
 
-  local jreq, _, err = json.parse(req:read("*a"), 1, nil)
-  req:close()
-  if err or jreq == nil or jreq.lon == nil or jreq.lat == nil then
-    io.stdout:write("openwifi.su doesn't gif a location.\n")
-    return { }
-  end
+    return true
+  end)
 
-  return jreq
-end -- end Get_geolocation_info()
+  assert(#found_bssids >= 12, 'insufficient BSSIDs found')
+
+  local data = receive_json('http://openwifi.su/api/v1/bssids/' .. table.concat(found_bssids, ','))
+  assert(type(data) == 'table' and data.lon and data.lat, 'location not available')
+
+  return data
+end
 
 -- Check if interval over or not exist
 if file_exsist(TIME_STAMP) then
@@ -102,7 +107,7 @@ if file_exsist(TIME_STAMP) then
   end
 end
 
-local pos = Get_geolocation_info()
+local pos = locate()
 if not next(pos) then
   exit(1)
 end
