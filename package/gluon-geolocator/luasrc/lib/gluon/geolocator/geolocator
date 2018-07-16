@@ -1,40 +1,29 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local json = require ("luci.jsonc")
+local nixio = require('nixio')
+local json = require ("jsonc")
 local ubus = require 'ubus'
 local iwinfo = require("iwinfo")
 
 local LOC="gluon-node-info"
 local GLC="geolocator"
+local TIME_STAMP="/tmp/geolocator_timestamp"
 
 if not uci:get_bool(GLC, "settings", "auto_location") then
   os.exit(0)
 end
 
 -- PID file to ensure the geolocator isn't running parallel
-local PID_PART="/var/run/geolocator.pid"
-local TIME_STAMP="/tmp/geolocator_timestamp"
+local lockfile = '/var/lock/geolocator.lock'
+local lockfd = nixio.open(lockfile, 'w', 'rw-------')
 
-local function file_exsist(file)
-  return io.open(file, "r") ~= nil
-end
-
-if file_exsist(PID_PART) then
-  io.stdout:write("The geolocator is still running.\n")
-  os.exit(0)
-end
-if io.open(PID_PART, "w") == nil then
-  io.stdout:write("Can`t create pid file on " .. PID_PART .. "\n")
+if not lockfd:lock('tlock') then
+  io.stderr:write(string.format(
+    "Unable to lock file %s. Make sure there is no other instance of the geolocator running.\n",
+    lockfile
+  ))
   os.exit(1)
-end
-
--- Program terminating function including removing of PID file
-local function exit(exc)
-  if file_exsist(PID_PART) then
-    os.remove(PID_PART)
-  end
-  os.exit(exc)
 end
 
 -- Iterates over all active WLAN interfaces
@@ -101,15 +90,15 @@ local function locate()
 end
 
 -- Check if interval over or not exist
-if file_exsist(TIME_STAMP) then
+if io.open(TIME_STAMP) ~= nil then
   if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
-    exit(0)
+    os.exit(0)
   end
 end
 
 local pos = locate()
 if not next(pos) then
-  exit(1)
+  os.exit(1)
 end
 if not uci:get_bool(GLC, "settings", "static_location") then
   uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
@@ -121,7 +110,7 @@ local timestap = io.open(TIME_STAMP, "w")
 if timestap ~= nil then
   timestap:write(os.time())
   timestap:close()
-  exit(0)
+  os.exit(0)
 end
 io.stdout:write("Can`t create file on " .. TIME_STAMP .. "\n")
-exit(1)
+os.exit(1)
