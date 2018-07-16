@@ -1,4 +1,2 @@
 config geolocator 'settings'
 	option static_location '0'
-	option auto_location '1'
-	option refresh_interval '1000'
