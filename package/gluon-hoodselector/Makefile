@@ -5,13 +5,9 @@ PKG_NAME:=gluon-hoodselector
 GLUON_VERSION = 3
 PKG_VERSION:=2
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include ../gluon.mk
 
 define Package/gluon-hoodselector
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Automatically sortes nodes into network hoods.
   DEPENDS:=+gluon-site +gluon-mesh-batman-adv-15 @GLUON_MULTIDOMAIN
   CONFLICTS:=+gluon-config-mode-domain-select
