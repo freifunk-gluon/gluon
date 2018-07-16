@@ -11,4 +11,4 @@ define Package/gluon-geolocator
   DEPENDS:=+gluon-node-info +micrond
 endef
 
-$(eval $(call BuildPackage,gluon-geolocator))
+$(eval $(call BuildPackageGluon,gluon-geolocator))
