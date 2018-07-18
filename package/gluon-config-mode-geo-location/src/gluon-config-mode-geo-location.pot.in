@@ -1,0 +1,32 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid ""
+"If you want the location of your node to be displayed on the map, you can "
+"enter its coordinates here. "
+#ifdef WITHMAP
+"If your PC is connected to the internet you can also click on the map displayed below. "
+#endif
+"Please keep in mind setting a location can also enhance the network quality."
+msgstr ""
+
+msgid "Geo-Location"
+msgstr ""
+
+msgid "Static location"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Share your location to see your router on the map"
+msgstr ""
+
+msgid "Latitude"
+msgstr ""
+
+msgid "Longitude"
+msgstr ""
+
+msgid "e.g. %s"
+msgstr ""
