@@ -14,36 +14,25 @@ return function(form, uci)
 	  	if uci_longitude ~= nil then
 			return uci_longitude
 		end
-		if site.config_mode.geo_location.map_lon(false) then
-			return site.config_mode.geo_location.map_lon()
-		end
-		return 0.0
+		return site.config_mode.geo_location.map_lon(0.0)
 	end
 
 	local function show_lat()
 	  	if uci_latitude ~= nil then
 			return uci_latitude
 		end
-		if site.config_mode.geo_location.map_lat(false) then
-			return site.config_mode.geo_location.map_lat()
-		end
-		return 0.0
+		return site.config_mode.geo_location.map_lat(0.0)
 	end
 
 	local function show_olurl()
-		if site.config_mode.geo_location.olurl(false) then
-			return site.config_mode.geo_location.olurl()
-		end
-		return 'http://dev.openlayers.org/OpenLayers.js'
+		return site.config_mode.geo_location.olurl('http://dev.openlayers.org/OpenLayers.js')
 	end
 
 #endif
 
+        -- show altitude if site.json retruns true or nil and uci an value. Dont show if site.json retruns false or uci nil!
 	local function show_altitude()
-		if site.config_mode.geo_location.show_altitude(true) then
-			return true
-		end
-		return uci:get_bool("gluon-node-info", location, "altitude")
+		return site.config_mode.geo_location.show_altitude(uci:get("gluon-node-info", location, "altitude") ~= nil)
 	end
 
 	local text = site_i18n._translate("gluon-config-mode:geo-location-help") or pkg_i18n.translate(
@@ -67,7 +56,7 @@ return function(form, uci)
 
 	text = text .. [[
 		<div id="locationPickerMap" style="width:100%; height:300px; display: none;"></div>
-		<script type="text/javascript" src="]] .. show_olurl() .. [["></script>
+		<script async="true" type="text/javascript" src="]] .. show_olurl() .. [["></script>
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
 			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. [[;
