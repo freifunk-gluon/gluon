@@ -56,19 +56,21 @@ return function(form, uci)
 
 	text = text .. [[
 		<div id="locationPickerMap" style="width:100%; height:300px; display: none;"></div>
-		<script async="true" type="text/javascript" src="]] .. show_olurl() .. [["></script>
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
 			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. [[;
-			document.addEventListener("DOMContentLoaded", showMap, false);
-			setInterval(function() {
-				if(false !== findObj("longitude")) {
-					document.getElementById("locationPickerMap").style.display="block";
-				}else{
-					document.getElementById("locationPickerMap").style.display="none";
-				}
-			}, 1000);
+			function loadedContent() {
+				document.addEventListener("DOMContentLoaded", showMap, false);
+				setInterval(function() {
+					if(false !== findObj("longitude")) {
+						document.getElementById("locationPickerMap").style.display="block";
+					}else{
+						document.getElementById("locationPickerMap").style.display="none";
+					}
+				}, 10);
+			}
 		</script>
+		<script onload="loadedContent();" type="text/javascript" src="]] .. show_olurl() .. [[?noCache=]] .. os.time() .. [["></script>
 	]]
 
 #endif
