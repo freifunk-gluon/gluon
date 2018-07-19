@@ -23,7 +23,8 @@
 		{ _('Hostname'), pretty_hostname.get(uci) },
 		{ _('MAC address'), sysconfig.primary_mac },
 		{ _('Hardware model'), platform.get_model() },
-		{ _('Gluon version'), util.trim(util.readfile('/lib/gluon/gluon-version')) },
+		{ _('Gluon version') .. " / " .. _('Site version'), util.trim(util.readfile('/lib/gluon/gluon-version')) 
+			.. " / " .. util.trim(util.readfile('/lib/gluon/site-version')) },
 		{ _('Firmware release'), util.trim(util.readfile('/lib/gluon/release')) },
 		{ _('Site'), site.site_name() },
 		{ _('Public VPN key'), pubkey },
