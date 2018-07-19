@@ -12,7 +12,7 @@ define Package/gluon-config-mode-geo-location
 endef
 
 define Package/gluon-config-mode-geo-location-with-map
-  TITLE:=Set geographic location of a node manually and share it, optionally show a map if internet available.
+  TITLE:=Set geographic location of a node manually and share it, optionally show a map if internet is available.
   CONFLICTS:=+gluon-config-mode-geo-location
   DEPENDS:=+gluon-config-mode-core +gluon-node-info +gluon-web-osm
 endef
