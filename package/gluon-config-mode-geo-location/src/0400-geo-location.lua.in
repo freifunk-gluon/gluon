@@ -1,8 +1,8 @@
 return function(form, uci)
-        local pkg_i18n = i18n 'gluon-config-mode-geo-location'
-        local site_i18n = i18n 'gluon-site'
+	local pkg_i18n = i18n 'gluon-config-mode-geo-location'
+	local site_i18n = i18n 'gluon-site'
 
-        local site = require 'gluon.site'
+	local site = require 'gluon.site'
 
 	local location = uci:get_first("gluon-node-info", "location")
 	local uci_latitude = uci:get("gluon-node-info", location, "latitude")
@@ -30,7 +30,7 @@ return function(form, uci)
 
 #endif
 
-        -- show altitude if site.json retruns true or nil and uci an value. Dont show if site.json retruns false or uci nil!
+	-- show altitude if site.json returns true or nil and uci an value. Don't show if site.json returns false or uci nil!
 	local function show_altitude()
 		return site.config_mode.geo_location.show_altitude(uci:get("gluon-node-info", location, "altitude") ~= nil)
 	end
@@ -41,7 +41,7 @@ return function(form, uci)
 
 #ifdef WITHMAP
 
-		'If your PC is connected to the internet you can also click on the map displayed below. ' ..
+		'If your PC is connected to the internet you may also click on the map displayed below. ' ..
 
 #endif
 

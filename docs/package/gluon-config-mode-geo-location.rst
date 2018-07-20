@@ -10,14 +10,14 @@ It is possible to include ``gluon-config-mode-geo-location`` or
 gluon-config-mode-geo-location-with-map
 ---------------------------------------
 
-The package ``gluon-config-mode-geo-location-with-map`` will additionally and a
-map where users can pick a position. This map will only shown if the users
-computer will have an internet connection.
+The package ``gluon-config-mode-geo-location-with-map`` will additionally add a
+map where users can pick a position. This map will only be shown if the users
+computer has an internet connection.
 
 site.conf
 ^^^^^^^^^
 
-This option is valid for both typ of package.
+This option is valid for both package variants.
 
 config_mode.geo_location.show_altitude \: optional
   - ``true`` the altitude section in config mode is shown
@@ -35,8 +35,8 @@ config_mode.geo_location.map_lat \: optional
   - represents the default latitude center of the location picker map.
   - defaults to ``0.0``
 
-The above 2 options will usually shown on a factory flashed Router. If a node
-is reenter the config mode the maps center will be on the last defined
+The above 2 options will usually be shown on a factory flashed Router. If a node
+is reentered the config mode the map's center will be on the last defined
 position.
 
 config_mode.geo_location.olurl \: optional
