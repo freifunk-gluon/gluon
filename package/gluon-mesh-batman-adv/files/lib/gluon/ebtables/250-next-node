@@ -15,6 +15,14 @@ rule('OUTPUT --logical-out br-client -o bat0 -s ' .. macaddr .. ' -j DROP')
 if next_node.ip4 then
 	rule('FORWARD --logical-out br-client -o bat0 -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
 	rule('FORWARD --logical-out br-client -o bat0 -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
+	rule('FORWARD --logical-out br-client -i bat0 -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
+	rule('FORWARD --logical-out br-client -i bat0 -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
+
+	rule('OUTPUT --logical-out br-client -o bat0 -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
+	rule('OUTPUT --logical-out br-client -o bat0 -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
+
+	rule('INPUT -i bat0 -p ARP --arp-ip-src ' .. next_node.ip4 .. ' -j DROP')
+	rule('INPUT -i bat0 -p ARP --arp-ip-dst ' .. next_node.ip4 .. ' -j DROP')
 
 	rule('FORWARD --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
 	rule('OUTPUT --logical-out br-client -o bat0 -p IPv4 --ip-destination ' .. next_node.ip4 .. ' -j DROP')
