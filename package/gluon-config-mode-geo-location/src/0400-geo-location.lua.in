@@ -14,18 +14,18 @@ return function(form, uci)
 	  	if uci_longitude ~= nil then
 			return uci_longitude
 		end
-		return site.config_mode.geo_location.map.lon(0.0)
+		return site.config_mode.geo_location.map.lon(0)
 	end
 
 	local function show_lat()
 	  	if uci_latitude ~= nil then
 			return uci_latitude
 		end
-		return site.config_mode.geo_location.map.lat(0.0)
+		return site.config_mode.geo_location.map.lat(0)
 	end
 
 	local function site_zoom()
-	  return site.config_mode.geo_location.map.zoom(12)
+		return site.config_mode.geo_location.map.zoom(12)
 	end
 
 	local function show_olurl()
