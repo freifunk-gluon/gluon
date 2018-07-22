@@ -23,7 +23,8 @@ uci:section('network', 'device', 'local_node_dev', {
 local ip4, ip6
 
 if next_node.ip4 then
-	ip4 = next_node.ip4 .. '/32'
+	local plen = site.prefix4():match('/%d+$')
+	ip4 = next_node.ip4 .. plen
 end
 
 if next_node.ip6 then
