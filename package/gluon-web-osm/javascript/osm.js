@@ -18,7 +18,7 @@ function showMap() {
                 document.getElementById("locationPickerMap").style.display = "block";
                 var e = new OpenLayers.Projection("EPSG:4326"),
                         a = new OpenLayers.Projection("EPSG:900913"),
-                        t = 12,
+                        t = zoom,
                         n = new OpenLayers.Layer.Markers("Markers");
                 OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
                         defaultHandlerOptions: {
