@@ -37,29 +37,36 @@ config_mode.geo_location.show_altitude \: optional
 The remaining options are only valid for the
 ``gluon-config-mode-geo-location-with-map`` package:
 
-config_mode.geo_location.map_lon \: optional
+config_mode.geo_location.map.lon \: optional
   - represents the default longitude value to use for the center of the map.
   - defaults to ``0.0``
 
-config_mode.geo_location.map_lat \: optional
+config_mode.geo_location.map.lat \: optional
   - represents the default latitude value to use for the center of the map.
   - defaults to ``0.0``
 
-The map will center to the position defined in map_lat and map_lon, unless a
+The map will center to the position defined in **lat** and **lon**, unless a
 location was already defined. The new defined location will become the
 new center.
 
-config_mode.geo_location.openlayers_js_url \: optional
+config_mode.geo_location.map.zoom \: optional
+  - Natural number between ``0-17`` for the zoom level of the map.
+  - defaults to ``12``
+
+config_mode.geo_location.map.openlayers_js_url \: optional
   - ``url`` set an URL for OpenStreetMap layers.
   - defaults to ``http://dev.openlayers.org/OpenLayers.js``
 
 Example::
 
-  config_mode = {
-            geo_location = {
-                    map_lon = 52.951947558,
-                    map_lat = 7.844238281,
-                    openlayers_js_url = 'http://osm.ffnw.de/.static/ol/OpenLayers.js',
-                    show_altitude = true,
-            },
-  },
+ config_mode = {
+     geo_location = {
+         map = {
+             lon = 52.951947558,
+             lat = 7.844238281,
+             zoom = 12,
+             openlayers_js_url = 'http://osm.ffnw.de/.static/ol/OpenLayers.js',
+         },
+         show_altitude = true,
+     },
+ },

@@ -14,18 +14,22 @@ return function(form, uci)
 	  	if uci_longitude ~= nil then
 			return uci_longitude
 		end
-		return site.config_mode.geo_location.map_lon(0.0)
+		return site.config_mode.geo_location.map.lon(0.0)
 	end
 
 	local function show_lat()
 	  	if uci_latitude ~= nil then
 			return uci_latitude
 		end
-		return site.config_mode.geo_location.map_lat(0.0)
+		return site.config_mode.geo_location.map.lat(0.0)
+	end
+
+	local function site_zoom()
+	  return site.config_mode.geo_location.map.zoom(12)
 	end
 
 	local function show_olurl()
-		return site.config_mode.geo_location.openlayers_js_url('http://dev.openlayers.org/OpenLayers.js')
+		return site.config_mode.geo_location.map.openlayers_js_url('http://dev.openlayers.org/OpenLayers.js')
 	end
 
 #endif
@@ -58,7 +62,7 @@ return function(form, uci)
 		<div id="locationPickerMap" style="width:100%; height:300px; display: none;"></div>
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
-			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. [[;
+			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. ",zoom=" .. site_zoom() .. [[;
 			function loadedContent() {
 				document.addEventListener("DOMContentLoaded", showMap, false);
 				setInterval(function() {

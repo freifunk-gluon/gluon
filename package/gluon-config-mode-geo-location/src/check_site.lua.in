@@ -1,6 +1,7 @@
 need_boolean(in_site({'config_mode', 'geo_location', 'show_altitude'}), false)
 #ifdef WITHMAP
-need_string(in_site({'config_mode', 'geo_location', 'openlayers_js_url'}), false)
-need_number(in_site({'config_mode', 'geo_location', 'map_lon'}), false)
-need_number(in_site({'config_mode', 'geo_location', 'map_lat'}), false)
+need_string(in_site({'config_mode', 'geo_location', 'map', 'openlayers_js_url'}), false)
+need_number(in_site({'config_mode', 'geo_location', 'map', 'lon'}), false)
+need_number(in_site({'config_mode', 'geo_location', 'map', 'lat'}), false)
+need_number(in_site({'config_mode', 'geo_location', 'map', 'zoom'}), false)
 #endif
