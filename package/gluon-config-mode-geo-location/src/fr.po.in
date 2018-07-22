@@ -15,10 +15,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid ""
-"If you want the location of your node to be displayed on the map, you can "
+"If you want the location of your node to be displayed on the map, you may "
 "enter its coordinates here. "
 #ifdef WITHMAP
-"If your PC is connected to the internet you may also click on the map displayed below. "
+"If your PC is connected to the internet you may also select your position on the map displayed below. "
 #endif
 "Please keep in mind setting a location can also enhance the network quality."
 msgstr ""

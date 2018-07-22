@@ -15,21 +15,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid ""
-"If you want the location of your node to be displayed on the map, you can "
+"If you want the location of your node to be displayed on the map, you may "
 "enter its coordinates here. "
 #ifdef WITHMAP
-"If your PC is connected to the internet you may also click on the map displayed below. "
+"If your PC is connected to the internet you may also select your position on the map displayed below. "
 #endif
 "Please keep in mind setting a location can also enhance the network quality."
 msgstr ""
 "Um deinen Router auf der Karte anzeigen zu können, benötigen wir seine "
 "Koordinaten. Hier hast du die Möglichkeit, "
-"die Koordinaten händisch zu hinterlegen."
+"die Koordinaten von Hand einzutragen."
 #ifdef WITHMAP
 "Wenn dein Computer mit dem du den Router einrichtest eine Internetverbindung hat, "
 "hast du die Möglichkeit die Position des Routers auf der Karte auszuwählen."
 #endif
-"Bitte berücksichtige, dass das Setzen einer Position die Netzwerk Qualität verbessern kann."
+"Bitte berücksichtige, dass das Setzen einer Position die Netzwerkqualität verbessern kann."
 
 msgid "Geo-Location"
 msgstr "Geo-Position"

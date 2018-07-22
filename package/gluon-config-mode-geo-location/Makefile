@@ -6,13 +6,13 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-config-mode-geo-location
-  TITLE:=Set geographic location of a node manually and share it.
+  TITLE:=Set geographic location of a node and share it.
   CONFLICTS:=+gluon-config-mode-geo-location-with-map
   DEPENDS:=+gluon-config-mode-core +gluon-node-info
 endef
 
 define Package/gluon-config-mode-geo-location-with-map
-  TITLE:=Set geographic location of a node manually and share it, optionally show a map if internet is available.
+  TITLE:=Set geographic location of a node and share it, additionally show a map if internet is available.
   CONFLICTS:=+gluon-config-mode-geo-location
   DEPENDS:=+gluon-config-mode-core +gluon-node-info +gluon-web-osm
 endef

@@ -25,7 +25,7 @@ return function(form, uci)
 	end
 
 	local function show_olurl()
-		return site.config_mode.geo_location.olurl('http://dev.openlayers.org/OpenLayers.js')
+		return site.config_mode.geo_location.openlayers_js_url('http://dev.openlayers.org/OpenLayers.js')
 	end
 
 #endif
@@ -36,12 +36,12 @@ return function(form, uci)
 	end
 
 	local text = site_i18n._translate("gluon-config-mode:geo-location-help") or pkg_i18n.translate(
-		'If you want the location of your node to be displayed on the map, you can ' ..
+		'If you want the location of your node to be displayed on the map, you may ' ..
 		'enter its coordinates here. ' ..
 
 #ifdef WITHMAP
 
-		'If your PC is connected to the internet you may also click on the map displayed below. ' ..
+		'If your PC is connected to the internet you may also select your position on the map displayed below. ' ..
 
 #endif
 
@@ -76,7 +76,6 @@ return function(form, uci)
 #endif
 
 	local s = form:section(Section, nil, text)
-
 
 	local uci_share_location = uci:get_bool("gluon-node-info", location, "share_location")
 
