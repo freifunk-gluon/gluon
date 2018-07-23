@@ -1,3 +1,10 @@
+# TP-Link
+
+device tp-link-archer-c50-v3 tplink_c50-v3
+factory
+extra_image -squashfs-tftp-recovery -bootloader .bin
+
+
 # VoCore 2
 
 device vocore2 vocore2
