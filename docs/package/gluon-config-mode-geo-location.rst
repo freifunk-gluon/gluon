@@ -60,13 +60,13 @@ config_mode.geo_location.map.openlayers_js_url \: optional
 Example::
 
  config_mode = {
-     geo_location = {
-         map = {
-             lon = 52.951947558,
-             lat = 7.844238281,
-             zoom = 12,
-             openlayers_js_url = 'http://osm.ffnw.de/.static/ol/OpenLayers.js',
-         },
-         show_altitude = true,
+   geo_location = {
+     map = {
+       lon = 52.951947558,
+       lat = 7.844238281,
+       zoom = 12,
+       openlayers_js_url = 'http://osm.ffnw.de/.static/ol/OpenLayers.js',
      },
+     show_altitude = true,
+   },
  },
