@@ -407,6 +407,10 @@ input.gluon-button-submit {
   @include button-primary;
 }
 
+input.gluon-button-submit:active {
+    background: grey;
+}
+
 .gluon-input-invalid {
   background: $red !important;
   color: white;
