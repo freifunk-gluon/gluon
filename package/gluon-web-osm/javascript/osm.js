@@ -44,9 +44,6 @@ function showMap() {
                                         n.addMarker(new OpenLayers.Marker(i)),
                                         oLon.className = oLon.className.replace(/ gluon-input-invalid/g, ""),
                                         oLat.className = oLat.className.replace(/ gluon-input-invalid/g, "");
-                                        //Anyone knows how to trigger the change event?
-                                        //oLon.onChange()
-                                        //oLat.onChange()
                         }
                 }), osmMap = new OpenLayers.Map("locationPickerMap", {
                         controls: [new OpenLayers.Control.Navigation, new OpenLayers.Control.PanZoomBar, new OpenLayers.Control.MousePosition],
@@ -73,4 +70,3 @@ function showMap() {
                 osmMap.addControl(s), s.activate()
         } else setTimeout(showMap, 1e3)
 }
-
