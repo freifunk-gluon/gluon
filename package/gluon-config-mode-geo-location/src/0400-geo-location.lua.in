@@ -59,7 +59,8 @@ return function(form, uci)
 #ifdef WITHMAP
 
 	text = text .. [[
-		<div id="locationPickerMap" style="width:100%; height:300px; display: none;"></div>
+		</div>
+		<div id="locationPickerMap" style="width:100%; height:400px; margin-bottom:20px !important; display: none;"></div>
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
 			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. ",zoom=" .. site_zoom() .. [[;
@@ -75,6 +76,7 @@ return function(form, uci)
 			}
 		</script>
 		<script onload="loadedContent();" type="text/javascript" src="]] .. show_olurl() .. [[?noCache=]] .. os.time() .. [["></script>
+		<div>
 	]]
 
 #endif
