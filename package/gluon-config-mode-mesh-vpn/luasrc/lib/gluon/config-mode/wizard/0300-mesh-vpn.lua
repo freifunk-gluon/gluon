@@ -41,14 +41,25 @@ return function(form, uci)
 		uci:set("simple-tc", "mesh_vpn", "interface")
 		uci:set("simple-tc", "mesh_vpn", "enabled", data)
 		uci:set("simple-tc", "mesh_vpn", "ifname", "mesh-vpn")
+		if not data and has_tunneldigger then
+			uci:delete("tunneldigger", "mesh_vpn", "limit_bw_down")
+		end
 	end
 
 	o = s:option(Value, "limit_ingress", pkg_i18n.translate("Downstream (kbit/s)"))
 	o:depends(limit, true)
-	o.default = uci:get("simple-tc", "mesh_vpn", "limit_ingress")
+	if has_tunneldigger then
+		o.default = uci:get("tunneldigger", "mesh_vpn", "limit_bw_down")
+	else
+		o.default = uci:get("simple-tc", "mesh_vpn", "limit_ingress")
+	end
 	o.datatype = "uinteger"
 	function o:write(data)
-		uci:set("simple-tc", "mesh_vpn", "limit_ingress", data)
+		if has_tunneldigger then
+			uci:set("tunneldigger", "mesh_vpn", "limit_bw_down", data)
+		else
+			uci:set("simple-tc", "mesh_vpn", "limit_ingress", data)
+		end
 	end
 
 	o = s:option(Value, "limit_egress", pkg_i18n.translate("Upstream (kbit/s)"))
