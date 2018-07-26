@@ -25,6 +25,9 @@ return function(form, uci)
 	end
 
 	local function site_zoom()
+		if uci_longitude ~= nil and uci_latitude ~= nil then
+			return 18
+		end
 		return site.config_mode.geo_location.map.zoom(12)
 	end
 
