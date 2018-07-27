@@ -67,18 +67,22 @@ return function(form, uci)
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
 			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. ",zoom=" .. site_zoom() .. [[;
-			function loadedContent() {
-				document.addEventListener("DOMContentLoaded", showMap, false);
+			var openLayerSrc = document.createElement("script");
+			openLayerSrc.type = 'text/javascript';
+			openLayerSrc.src = "]] .. show_olurl() .. [[?noCache=]] .. os.time() .. [[";
+			openLayerSrc.onload = openLayerSrc.onreadystatechange = function () {
+				window.addEventListener("load", showMap, false);
+				var lpm=document.getElementById("locationPickerMap");
 				setInterval(function() {
 					if(false !== findObj("longitude")) {
-						document.getElementById("locationPickerMap").style.display="block";
+						lpm.style.display="block";
 					}else{
-						document.getElementById("locationPickerMap").style.display="none";
+						lpm.style.display="none";
 					}
-				}, 10);
-			}
+				}, 100);
+			};
+			document.head.appendChild(openLayerSrc);
 		</script>
-		<script onload="loadedContent();" type="text/javascript" src="]] .. show_olurl() .. [[?noCache=]] .. os.time() .. [["></script>
 		<div>
 	]]
 
