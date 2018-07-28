@@ -74,11 +74,7 @@ return function(form, uci)
 				window.addEventListener("load", showMap, false);
 				var lpm=document.getElementById("locationPickerMap");
 				setInterval(function() {
-					if(false !== findObj("longitude")) {
-						lpm.style.display="block";
-					}else{
-						lpm.style.display="none";
-					}
+					!1 !== findObj("longitude") ? lpm.style.display = "block" : lpm.style.display = "none";
 				}, 100);
 			};
 			document.head.appendChild(openLayerSrc);
