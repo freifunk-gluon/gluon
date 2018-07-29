@@ -104,7 +104,7 @@ wifi24 \: optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
 
-    There are currently three interface types available. You many choose to
+    There are currently three interface types available. You may choose to
     configure any subset of them:
 
     - ``ap`` creates a master interface where clients may connect
