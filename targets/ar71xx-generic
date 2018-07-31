@@ -1,6 +1,6 @@
 config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
 
-ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct'
+ATH10K_PACKAGES=
 ATH10K_PACKAGES_QCA9887=
 if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca988x ath10k-firmware-qca988x-ct'
