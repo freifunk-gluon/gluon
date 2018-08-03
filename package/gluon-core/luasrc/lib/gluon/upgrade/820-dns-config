@@ -16,13 +16,6 @@ uci:delete('dhcp', dnsmasq, 'cachesize')
 
 uci:delete('firewall', 'client_dns')
 if dns.servers then
-	localipv6 = uci:get("network", "loopback", "ip6addr")
-	-- below is an ugly hack that makes sure the dns upstream traffic is leaving the correct network interface.
-	appended = {}
-	for i,s in ipairs(dns.servers) do
-		table.insert(appended, s .. "@" .. string.sub(localipv6,0, string.find(localipv6,"/")-1 ) )
-	end
-	uci:set('dhcp', dnsmasq, 'server', appended )
 	-- allow inbound traffic for dns from client zone
 	uci:section('firewall', 'rule', 'client_dns', {
 		src = 'local_client',
