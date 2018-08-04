@@ -63,7 +63,7 @@ return function(form, uci)
 
 	text = text .. [[
 		</div>
-			<div id="locationPickerMap" style="position:relative; width:100%; height:400px; margin-bottom:20px !important; display:none;">
+			<div id="locationPickerMap" style="position:relative; width:100%; height:400px; margin-bottom:20px !important; display:none; border:1px solid #ccc">
 				<div target="_blank" style="position:absolute; left:5px; bottom:5px; z-index:1000; color:#aaa; outline: 0">
 				© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors
 			</div>
