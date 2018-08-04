@@ -32,7 +32,7 @@ return function(form, uci)
 	end
 
 	local function show_olurl()
-		return site.config_mode.geo_location.map.openlayers_js_url('http://dev.openlayers.org/OpenLayers.js')
+		return site.config_mode.geo_location.map.openlayers_js_url('https://openlayers.org/api/OpenLayers.js')
 	end
 
 #endif
@@ -63,7 +63,11 @@ return function(form, uci)
 
 	text = text .. [[
 		</div>
-		<div id="locationPickerMap" style="width:100%; height:400px; margin-bottom:20px !important; display: none;"></div>
+			<div id="locationPickerMap" style="position:relative; width:100%; height:400px; margin-bottom:20px !important; display:none;">
+				<div target="_blank" style="position:absolute; left:5px; bottom:5px; z-index:1000; color:#aaa; outline: 0">
+				© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors
+			</div>
+		</div>
 		<script type="text/javascript" src="/static/osm.js"></script>
 		<script type="text/javascript">
 			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. ",zoom=" .. site_zoom() .. [[;

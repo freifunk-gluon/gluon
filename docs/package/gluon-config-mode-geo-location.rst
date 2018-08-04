@@ -55,7 +55,7 @@ config_mode.geo_location.map.zoom \: optional
 
 config_mode.geo_location.map.openlayers_js_url \: optional
   - ``url`` set an URL for OpenStreetMap layers.
-  - defaults to ``http://dev.openlayers.org/OpenLayers.js``
+  - defaults to ``https://openlayers.org/api/OpenLayers.js``
 
 Example::
 
