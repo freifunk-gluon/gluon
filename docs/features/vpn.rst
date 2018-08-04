@@ -37,7 +37,7 @@ increase throughput, although in practice the gain is minimal.
 
 **Gateway configuration:**
 
-1) Prepend the ``none`` cipher in fastds method list
+1) Prepend the ``null`` cipher in fastd's method list
 
 
 **Config Mode:**
