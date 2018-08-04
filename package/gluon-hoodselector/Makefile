@@ -9,7 +9,7 @@ include ../gluon.mk
 
 define Package/gluon-hoodselector
   TITLE:=Automatically sortes nodes into network hoods.
-  DEPENDS:=+gluon-site +gluon-mesh-batman-adv-15 @GLUON_MULTIDOMAIN
+  DEPENDS:=+gluon-site +gluon-mesh-batman-adv-15 +micrond +libjson-c @GLUON_MULTIDOMAIN
   CONFLICTS:=+gluon-config-mode-domain-select
 endef
 
