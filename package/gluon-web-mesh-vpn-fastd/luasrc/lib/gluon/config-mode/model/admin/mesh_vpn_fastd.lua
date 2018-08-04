@@ -11,6 +11,7 @@ mode.template = "mesh-vpn-fastd"
 
 local methods = uci:get('fastd', 'mesh_vpn', 'method')
 if util.contains(methods, 'null') then
+	-- performance mode will only be used as default, if it is present in site.mesh_vpn.fastd.methods
 	mode.default = 'performance'
 else
 	mode.default = 'security'
@@ -19,6 +20,8 @@ end
 function mode:write(data)
 	local site = require 'gluon.site'
 
+	-- methods will be recreated and filled with the original values from site.mesh_vpn.fastd.methods
+	-- if performance mode was selected, and the method 'null' was not present in the original table, it will be added
 	local methods = {}
 	if data == 'performance' then
 		table.insert(methods, 'null')

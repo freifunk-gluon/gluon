@@ -32,8 +32,9 @@ increase throughput, although in practice the gain is minimal.
 
 **Site configuration:**
 
-1) Install ``gluon-web-mesh-vpn-fastd`` in ``site.mk``
+1) Add the feature ``web-mesh-vpn-fastd`` in ``site.mk``
 2) Set ``mesh_vpn.fastd.configurable = true`` in ``site.conf``
+3) Optionally add ``null`` to the ``mesh_vpn.fastd.methods`` table if you want "Performance mode" as default (not recommended)
 
 **Gateway configuration:**
 
@@ -54,4 +55,3 @@ socket can be interrogated, after installing for example `socat`.
        opkg update
        opkg install socat
        socat - UNIX-CONNECT:/var/run/fastd.mesh_vpn.socket
-
