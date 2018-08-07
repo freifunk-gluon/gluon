@@ -37,6 +37,7 @@ freshly installed Debian Wheezy system the following packages are required:
 * `libz-dev` (actually `zlib1g-dev`)
 * `libssl-dev`
 * `wget`
+* `time` (built-in `time` doesn't work)
 
 
 Building the images
