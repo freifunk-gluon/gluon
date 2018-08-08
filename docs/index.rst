@@ -340,6 +340,10 @@ ramips-mt7620
   - GL-MT300N [#80211s]_
   - GL-MT750 [#80211s]_
 
+* TP-Link
+
+  - Archer C20 (v1) [#80211s]_
+
 ramips-mt7621
 ^^^^^^^^^^^^^
 

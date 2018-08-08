@@ -7,3 +7,9 @@ factory
 
 device gl-mt750 gl-mt750
 factory
+
+# TP-Link
+if [ "$BROKEN" ]; then
+device tp-link-archer-c20-v1 tplink_c20-v1 # BROKEN: only 2.4GHz wifi working
+fi
+
