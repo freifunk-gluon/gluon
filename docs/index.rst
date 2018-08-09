@@ -161,6 +161,10 @@ ar71xx-generic
   - WNDR3800
   - WNDRMAC (v2)
 
+* OCEDO
+
+  - Koala [#ath10k]_
+
 * Onion
 
   - Omega
