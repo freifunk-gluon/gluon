@@ -57,11 +57,6 @@ local function get_mesh_vpn_interface()
 end
 
 -- INITIALISE AND PREPARE DATA --
--- read hoodfile...
-local jhood = hoodutil.get_domains()
-
--- get default hood
-local defaultHood = hoodutil.getDefaultHood(jhood)
 
 -- VPN MODE
 -- If we have a VPN connection we will try to get the node's location and
@@ -74,6 +69,7 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
   local geo = hoodutil.getGeolocation()
   if geo.lat ~= nil and geo.lon ~= nil then
     io.stdout:write('Position found.\n')
+    local jhood = hoodutil.get_domains()
     local geoHood = hoodutil.getHoodByGeo(jhood, geo)
     if geoHood ~= nil then
       if hoodutil.set_hoodconfig(geoHood) then
@@ -83,7 +79,7 @@ if hoodutil.directVPN(get_mesh_vpn_interface()) then
       os.exit(0)
     end
     io.stdout:write('No hood has been defined for the current position.\n')
-    if hoodutil.set_hoodconfig(defaultHood) then
+    if hoodutil.set_hoodconfig(hoodutil.getDefaultHood(jhood)) then
       hoodutil.restart_services() -- TMP solution
       io.stdout:write('Hood set by VPN mode.\n')
     end
