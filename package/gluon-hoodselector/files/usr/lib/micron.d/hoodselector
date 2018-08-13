@@ -1,1 +1,1 @@
-*/2 * * * * [[ -f /var/lock/hoddselector.lock ]] || /usr/sbin/hoodselector
+*/2 * * * * /usr/sbin/hoodselector
