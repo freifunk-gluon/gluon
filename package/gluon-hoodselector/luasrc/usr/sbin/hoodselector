@@ -1,14 +1,28 @@
 #!/usr/bin/lua
 
-local nixio = require('nixio')
+local bit = require('bit')
+local unistd = require('posix.unistd')
+local fcntl = require('posix.fcntl')
 local uci = require('simple-uci').cursor()
 local hoodutil = require("hoodselector.util")
 
 -- PID file to ensure the hoodselector isn't running parallel
 local lockfile = '/var/lock/hoodselector.lock'
-local lockfd = nixio.open(lockfile, 'w', 'rw-------')
+local lockfd, err = fcntl.open(lockfile, bit.bor(fcntl.O_WRONLY, fcntl.O_CREAT), 384) -- mode 0600
 
-if not lockfd:lock('tlock') then
+if not lockfd then
+  io.stderr:write(err, '\n')
+  os.exit(1)
+end
+
+local ok, _ = fcntl.fcntl(lockfd, fcntl.F_SETLK, {
+  l_start = 0,
+  l_len = 0,
+  l_type = fcntl.F_WRLCK,
+  l_whence = unistd.SEEK_SET,
+})
+
+if not ok then
   io.stderr:write(string.format(
     "Unable to lock file %s. Make sure there is no other instance of the hoodselector running.\n",
     lockfile
