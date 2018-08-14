@@ -1,0 +1,23 @@
+# A5
+
+device a5-v11 a5-v11
+
+
+# D-Link
+
+device d-link-dir-615-h1 dir-615-h1
+
+device d-link-dir-615-d dir-615-d
+alias d-link-dir-615-d1
+alias d-link-dir-615-d2
+alias d-link-dir-615-d3
+alias d-link-dir-615-d4
+
+
+# VoCore
+
+device vocore-8M vocore-8M
+factory
+
+device vocore-16M vocore-16M
+factory

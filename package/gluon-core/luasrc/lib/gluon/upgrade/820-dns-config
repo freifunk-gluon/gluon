@@ -1,0 +1,46 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+
+local dns = site.dns({})
+local next_node = site.next_node({})
+
+local dnsmasq = uci:get_first("dhcp", "dnsmasq")
+
+uci:set('dhcp', dnsmasq, 'localise_queries', true)
+uci:set('dhcp', dnsmasq, 'localservice', false)
+
+uci:set('dhcp', dnsmasq, 'server', dns.servers)
+uci:delete('dhcp', dnsmasq, 'cachesize')
+
+uci:delete('firewall', 'client_dns')
+if dns.servers then
+	-- allow inbound traffic for dns from client zone
+	uci:section('firewall', 'rule', 'client_dns', {
+		src = 'local_client',
+		dest_port = '53',
+		proto = 'tcpudp',
+		target = 'ACCEPT',
+	})
+end
+
+local function set_dns_record(name, ip, sectionname)
+	if not ip then return end
+	uci:section('dhcp', 'domain', sectionname, {
+		name = name,
+		ip = ip,
+	})
+end
+
+uci:delete_all('dhcp', 'domain', function(s)
+	return (s['.name'] and string.match(s['.name'], "^nextnode[46]"))
+end)
+
+for i, name in ipairs(next_node.name or {}) do
+	set_dns_record(name, next_node.ip4, 'nextnode4_' .. i)
+	set_dns_record(name, next_node.ip6, 'nextnode6_' .. i)
+end
+
+uci:save('dhcp')
+uci:save('firewall')

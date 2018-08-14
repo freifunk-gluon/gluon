@@ -1,0 +1,9 @@
+#!/usr/bin/lua
+
+local site = require "gluon.site"
+
+io.write("-i local-node -p " .. site.prefix6())
+
+if site.dns.servers() and site.next_node.ip6() then
+	io.write(" --rdnss " .. site.next_node.ip6())
+end

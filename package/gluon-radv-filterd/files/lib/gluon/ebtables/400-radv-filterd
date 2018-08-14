@@ -1,0 +1,3 @@
+chain('RADV_FILTER', 'DROP')
+rule 'FORWARD -p IPv6 -i bat0 --ip6-protocol ipv6-icmp --ip6-icmp-type router-advertisement -j RADV_FILTER'
+rule 'RADV_FILTER -j ACCEPT'

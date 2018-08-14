@@ -27,11 +27,44 @@
 #include "libgluonutil.h"
 
 #include <json-c/json.h>
-
+#include <uci.h>
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
+/**
+ * Merges two JSON objects
+ *
+ * Both objects are consumed. On conflicts, object b will be preferred.
+ */
+static struct json_object * merge_json(struct json_object *a, struct json_object *b) {
+	if (!json_object_is_type(a, json_type_object) || !json_object_is_type(b, json_type_object)) {
+		json_object_put(a);
+		return b;
+	}
+
+	json_object *m = json_object_new_object();
+
+	json_object_object_foreach(a, key_a, val_a)
+		json_object_object_add(m, key_a, json_object_get(val_a));
+	json_object_put(a);
+
+	json_object_object_foreach(b, key_b, val_b) {
+		struct json_object *val_m;
+
+		if (json_object_object_get_ex(m, key_b, &val_m))
+			val_m = merge_json(json_object_get(val_m), json_object_get(val_b));
+		else
+			val_m = json_object_get(val_b);
+
+		json_object_object_add(m, key_b, val_m);
+	}
+	json_object_put(b);
+
+	return m;
+}
 
 char * gluonutil_read_line(const char *filename) {
 	FILE *f = fopen(filename, "r");
@@ -109,6 +142,107 @@ struct json_object * gluonutil_wrap_and_free_string(char *str) {
 	return ret;
 }
 
+
+bool gluonutil_get_node_prefix6(struct in6_addr *prefix) {
+	struct json_object *site = gluonutil_load_site_config();
+	if (!site)
+		return false;
+
+	struct json_object *node_prefix = NULL;
+	if (!json_object_object_get_ex(site, "node_prefix6", &node_prefix)) {
+		json_object_put(site);
+		return false;
+	}
+
+	const char *str_prefix = json_object_get_string(node_prefix);
+	if (!str_prefix) {
+		json_object_put(site);
+		return false;
+	}
+
+	char *prefix_addr = strndup(str_prefix, strchrnul(str_prefix, '/')-str_prefix);
+
+	int ret = inet_pton(AF_INET6, prefix_addr, prefix);
+
+	free(prefix_addr);
+	json_object_put(site);
+
+	if (ret != 1)
+		return false;
+
+	return true;
+}
+
+
+
+bool gluonutil_has_domains(void) {
+	return (access("/lib/gluon/domains/", F_OK) == 0);
+}
+
+char * gluonutil_get_domain(void) {
+	if (!gluonutil_has_domains())
+		return NULL;
+
+	char *ret = NULL;
+
+	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		goto uci_fail;
+
+	ctx->flags &= ~UCI_FLAG_STRICT;
+
+	struct uci_package *p;
+	if (uci_load(ctx, "gluon", &p))
+		goto uci_fail;
+
+	struct uci_section *s = uci_lookup_section(ctx, p, "core");
+	if (!s)
+		goto uci_fail;
+
+	const char *domain_code = uci_lookup_option_string(ctx, s, "domain");
+	if (!domain_code)
+		goto uci_fail;
+
+	ret = strdup(domain_code);
+
+uci_fail:
+	if (ctx)
+		uci_free_context(ctx);
+
+	return ret;
+}
+
+
 struct json_object * gluonutil_load_site_config(void) {
-	return json_object_from_file("/lib/gluon/site.json");
+	char *domain_code = NULL;
+	struct json_object *site = NULL, *domain = NULL;
+
+	site = json_object_from_file("/lib/gluon/site.json");
+	if (!site)
+		return NULL;
+
+	if (!gluonutil_has_domains())
+		return site;
+
+	domain_code = gluonutil_get_domain();
+	if (!domain_code)
+		goto err;
+
+	{
+		const char *domain_path_fmt = "/lib/gluon/domains/%s.json";
+		char domain_path[strlen(domain_path_fmt) + strlen(domain_code)];
+		snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
+		free(domain_code);
+
+		domain = json_object_from_file(domain_path);
+	}
+	if (!domain)
+		goto err;
+
+	return merge_json(site, domain);
+
+err:
+	json_object_put(site);
+	free(domain_code);
+	return NULL;
 }

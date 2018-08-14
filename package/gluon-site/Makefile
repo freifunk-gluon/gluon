@@ -1,42 +1,76 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-site
-PKG_VERSION:=$(if $(GLUON_SITE_CODE),$(GLUON_SITE_CODE),1)
-PKG_RELEASE:=$(GLUON_RELEASE)
 
-PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/i18n/
-PKG_BUILD_DEPENDS := luci-base/host lua-cjson/host
+GLUON_SITEDIR = $(call qstrip,$(CONFIG_GLUON_SITEDIR))
+GLUON_SITE_VERSION = $(shell ( cd '$(GLUON_SITEDIR)' && git --git-dir=.git describe --always --dirty=+ ) 2>/dev/null || echo unknown)
+PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
+
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
+PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
+PKG_BUILD_DEPENDS := lua-cjson/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
-
 define Package/gluon-site
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Site-specific files of Gluon
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
+define Package/gluon-site/config
+config GLUON_RELEASE
+	string "Gluon release number"
+	depends on PACKAGE_gluon-site
+	default ""
+
+config GLUON_SITEDIR
+	string "Gluon site configuration directory"
+	depends on PACKAGE_gluon-site
+	default ""
+
+config GLUON_MULTIDOMAIN
+	bool "Gluon multi-domain support"
+
 endef
 
-define Build/Configure
+define GenerateJSON
+	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > '$$(PKG_BUILD_DIR)/$(1).json'
 endef
 
 define Build/Compile
-	$(call GluonBuildI18N,gluon-site,$(GLUON_SITEDIR)/i18n)
+	$(call GenerateJSON,site)
+
+  ifdef CONFIG_GLUON_MULTIDOMAIN
+	rm -rf $(PKG_BUILD_DIR)/domains
+	mkdir -p $(PKG_BUILD_DIR)/domains
+	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
+		[ ! -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]
+		$(call GenerateJSON,domains/$(domain))
+		lua ../../scripts/domain_aliases.lua '$(PKG_BUILD_DIR)/domains/$(domain).json' | while read alias; do \
+			[ "$$$${alias}" != '$(domain)' ] || continue; \
+			ln -s '$(domain).json' $(PKG_BUILD_DIR)/domains/$$$${alias}.json || exit 1; \
+		done
+	)
+  endif
+
+	$(call GluonBuildI18N,$(GLUON_SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
-	lua -e 'print(require("cjson").encode(assert(dofile("$(GLUONDIR)/scripts/site_config.lua"))))' > $(1)/lib/gluon/site.json
-	echo "$(GLUON_RELEASE)" > $(1)/lib/gluon/release
 
-	$(call GluonInstallI18N,gluon-site,$(1))
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
+  ifdef CONFIG_GLUON_MULTIDOMAIN
+	$(CP) $(PKG_BUILD_DIR)/domains $(1)/lib/gluon/
+  endif
+
+	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
+	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
+
+	$(GluonInstallI18N)
 endef
 
-$(eval $(call BuildPackage,gluon-site))
+$(eval $(call BuildPackageGluon,gluon-site))

@@ -1,0 +1,179 @@
+Gluon 2016.2
+============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* ALFA Network
+
+  - Tube2H
+  - N2
+  - N5
+
+* Buffalo
+
+  - WZR-HP-G300NH2
+
+* GL Innovations
+
+  - GL-AR150
+
+* OpenMesh
+
+  - MR1750 v1, v2 [#ath10k]_
+  - OM2P-HS v3
+  - OM5P-AC v1, v2 [#ath10k]_
+
+* TP-Link
+
+  - Archer C5 v1 [#ath10k]_
+  - Archer C7 v2 [#ath10k]_
+  - TL-WR710N v2.1
+  - TL-WR842N/ND v3
+
+* Ubiquiti
+
+  - UniFi AP AC Lite [#ath10k]_
+  - UniFi AP AC Pro [#ath10k]_
+
+.. [#ath10k]
+  Device uses the ath10k WLAN driver; no image is built unless GLUON_ATH10K_MESH
+  is set as described in :ref:`getting-started-make-variables`
+
+brcm2708-bcm2708
+^^^^^^^^^^^^^^^^
+
+* RaspberryPi 1
+
+brcm2708-bcm2709
+^^^^^^^^^^^^^^^^
+
+* RaspberryPi 2
+
+New features
+~~~~~~~~~~~~
+
+* Many UBNT Airmax XM model names are detected correctly now (e.g., the Loco
+  is no longer displayed as Bullet) (`#632 <https://github.com/freifunk-gluon/gluon/pull/632>`_)
+
+  Also, various new image aliases have been added for these devices.
+
+* batman-adv: mesh_no_rebroadcast is now enabled for Mesh-on-WAN/LAN (`#652 <https://github.com/freifunk-gluon/gluon/issues/652>`_)
+
+* The new UCI option ``gluon-core.@wireless[0].preserve_channels`` can be used to
+  prevent a changed WLAN channel from being reset on firmware upgrades (`#640 <https://github.com/freifunk-gluon/gluon/issues/640>`_)
+
+* PoE passthrough can now be configured from site.conf and the Advanced Settings
+  on TP-Link CPE 210/510 and Ubiquiti NanoStations (`#328 <https://github.com/freifunk-gluon/gluon/issues/328>`_)
+
+* The config mode *altitude* field can now be hidden using the ``config_mode.geo_location.show_altitude``
+  site.conf setting (`#693 <https://github.com/freifunk-gluon/gluon/issues/693>`_)
+
+* The contact information field in the config mode can be made obligatory using
+  the ``config_mode.owner.obligatory`` site.conf option
+
+* The *node name* setting in the config mode is no longer restricted to valid DNS
+  hostnames, but allows any UTF-8 string (`#414 <https://github.com/freifunk-gluon/gluon/issues/414>`_)
+
+* Besides the hostname, public key, site config and primary MAC address, the contact
+  information can now be accessed from config mode site texts
+
+* The functions ``escape`` and ``urlescape`` for HTML and URL escaping are now available from config mode
+  site texts. They should always be used when including user-provided information like
+  hostnames and contact information in HTML code or URLs.
+
+* Dropbear has been updated to a newer version, enabling new SSH crypto methods and removing
+  some old ones like DSA. This reduces the time needed for the first boot and makes
+  SSH logins faster (`#223 <https://github.com/freifunk-gluon/gluon/issues/223>`_)
+
+* WLAN basic and supported rate sets have been made configurable, to allow disabling
+  802.11b rates (`#810 <https://github.com/freifunk-gluon/gluon/pull/810>`_)
+
+* ath10k-based devices are now supported officially; it's possible to choose between
+  IBSS- and 11s-capable firmwares in site.mk (`#864 <https://github.com/freifunk-gluon/gluon/pull/864>`_)
+
+* The ``prefix4`` and ``next_node.ip4`` site.conf options are optional now.
+
+Bugfixes
+~~~~~~~~
+
+* The stability of the ath9k WLAN driver has been improved significantly
+  (`#605 <https://github.com/freifunk-gluon/gluon/issues/605>`_)
+
+  mac80211, hostapd and other related drivers and services have been backported from LEDE ``42f559e``.
+
+* Extremely slow downloads could lead to multiple instances of the autoupdater
+  running concurrently (`#582 <https://github.com/freifunk-gluon/gluon/pull/582>`_)
+
+  A lockfile is used to prevent this and timeouts have been added to download processes.
+
+* Usage of static DNS servers on the WAN port has been fixed
+  (`#886 <https://github.com/freifunk-gluon/gluon/issues/886>`_)
+
+  This is a regression introduced in Gluon v2016.1.6.
+
+Other changes
+~~~~~~~~~~~~~
+
+* The "Expert Mode" has been renamed to "Advanced Settings"
+
+Site changes
+~~~~~~~~~~~~
+
+site.mk
+^^^^^^^
+
+If you want to support ath10k-based devices, you should set GLUON_ATH10K_MESH
+and GLUON_REGION as described in :ref:`getting-started-make-variables`.
+
+i18n
+^^^^
+
+As the hostname field may now contain an arbitrary UTF-8 string, escaping must
+be added.
+
+Change
+
+::
+
+  <%=hostname%>
+
+to
+
+::
+
+  <%=escape(hostname)%>
+
+Inside of URLs, ``urlescape`` must be used instead of ``escape``.
+
+Internals
+~~~~~~~~~
+
+* Mesh interfaces are now configured in a protocol-independent way in UCI (`#870 <https://github.com/freifunk-gluon/gluon/pull/870>`_)
+
+  The MAC address assignment of all mesh and WLAN interfaces has been modified to prepare for support of
+  Ralink/Mediatek-based WLAN chips.
+
+* Preparations for supporting the new batman-adv multicast optimizations have been made
+  (`#674 <https://github.com/freifunk-gluon/gluon/pull/674>`_, `#675 <https://github.com/freifunk-gluon/gluon/pull/675>`_,
+  `#679 <https://github.com/freifunk-gluon/gluon/pull/679>`_)
+
+* All Lua code is minified now to save some space
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.

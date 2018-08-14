@@ -1,0 +1,210 @@
+#!/usr/bin/lua
+
+local util = require 'gluon.util'
+local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
+local iwinfo = require 'iwinfo'
+
+local uci = require('simple-uci').cursor()
+
+-- Initial
+if not sysconfig.gluon_version then
+	uci:delete_all('wireless', 'wifi-iface')
+end
+
+local function get_channel(radio, config)
+	local channel
+	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
+		channel = radio.channel
+	end
+
+	return channel or config.channel()
+end
+
+local function get_htmode(radio)
+       local phy = util.find_phy(radio)
+       if iwinfo.nl80211.hwmodelist(phy).ac then
+               return 'VHT20'
+       else
+               return 'HT20'
+       end
+end
+
+local function is_disabled(name)
+	if uci:get('wireless', name) then
+		return uci:get_bool('wireless', name, 'disabled')
+	else
+		return false
+	end
+end
+
+-- Returns the first argument that is not nil; don't call without any non-nil arguments!
+local function first_non_nil(first, ...)
+	if first ~= nil then
+		return first
+	else
+		return first_non_nil(...)
+	end
+end
+
+
+local function configure_ibss(config, radio, index, suffix, disabled)
+	local radio_name = radio['.name']
+	local name = 'ibss_' .. radio_name
+
+	uci:delete('network', name)
+	uci:delete('network', name .. '_vlan')
+	uci:delete('wireless', name)
+
+	if not config then
+		return
+	end
+
+	local macaddr = util.get_wlan_mac(uci, radio, index, 3)
+	if not macaddr then
+		return
+	end
+
+	if config.vlan then
+		uci:section('network', 'interface', name, {
+			proto = 'none',
+		})
+
+		uci:section('network', 'interface', name .. '_vlan', {
+			ifname = '@' .. name .. '.' .. config.vlan,
+			proto = 'gluon_mesh',
+		})
+	else
+		uci:section('network', 'interface', name, {
+			proto = 'gluon_mesh',
+		})
+	end
+
+	uci:section('wireless', 'wifi-iface', name, {
+		device = radio_name,
+		network = name,
+		mode = 'adhoc',
+		ssid = config.ssid,
+		bssid = config.bssid,
+		macaddr = macaddr,
+		mcast_rate = config.mcast_rate,
+		ifname = suffix and 'ibss' .. suffix,
+		disabled = disabled,
+	})
+end
+
+local function configure_mesh(config, radio, index, suffix, disabled)
+	local radio_name = radio['.name']
+	local name = 'mesh_' .. radio_name
+
+	local macfilter = uci:get('wireless', name, 'macfilter')
+	local maclist = uci:get('wireless', name, 'maclist')
+
+	uci:delete('network', name)
+	uci:delete('network', name .. '_vlan')
+	uci:delete('wireless', name)
+
+	if not config then
+		return
+	end
+
+	local macaddr = util.get_wlan_mac(uci, radio, index, 2)
+	if not macaddr then
+		return
+	end
+
+	uci:section('network', 'interface', name, {
+		proto = 'gluon_mesh',
+	})
+
+	uci:section('wireless', 'wifi-iface', name, {
+		device = radio_name,
+		network = name,
+		mode = 'mesh',
+		mesh_id = config.id,
+		mesh_fwding = false,
+		macaddr = macaddr,
+		mcast_rate = config.mcast_rate,
+		ifname = suffix and 'mesh' .. suffix,
+		disabled = disabled,
+		macfilter = macfilter,
+		maclist = maclist,
+	})
+end
+
+local function fixup_wan(radio, index)
+	local radio_name = radio['.name']
+	local name = 'wan_' .. radio_name
+
+	if not uci:get('wireless', name) then
+		return
+	end
+
+	local macaddr = util.get_wlan_mac(uci, radio, index, 4)
+	if not macaddr then
+		return
+	end
+
+	uci:set('wireless', name, 'macaddr', macaddr)
+end
+
+util.foreach_radio(uci, function(radio, index, config)
+	local radio_name = radio['.name']
+
+	if not config() then
+		uci:set('wireless', radio_name, 'disabled', true)
+		return
+	end
+
+	local suffix = radio_name:match('^radio(%d+)$')
+	if not suffix then
+		return
+	end
+
+	local channel = get_channel(radio, config)
+	local htmode = get_htmode(radio)
+
+	uci:delete('wireless', radio_name, 'disabled')
+
+	uci:set('wireless', radio_name, 'channel', channel)
+	uci:set('wireless', radio_name, 'htmode', htmode)
+	uci:set('wireless', radio_name, 'country', site.regdom())
+
+	uci:set_list('wireless', radio_name, 'supported_rates', config.supported_rates())
+	uci:set_list('wireless', radio_name, 'basic_rate', config.basic_rate())
+
+
+	local ibss_disabled = is_disabled('ibss_' .. radio_name)
+	local mesh_disabled = is_disabled('mesh_' .. radio_name)
+
+	configure_ibss(config.ibss(), radio, index, suffix,
+		first_non_nil(
+			ibss_disabled,
+			mesh_disabled,
+			config.ibss.disabled(false)
+		)
+	)
+	configure_mesh(config.mesh(), radio, index, suffix,
+		first_non_nil(
+			mesh_disabled,
+			ibss_disabled,
+			config.mesh.disabled(false)
+		)
+	)
+
+	fixup_wan(radio, index)
+end)
+
+
+if uci:get('system', 'rssid_wlan0') then
+	if uci:get('wireless', 'mesh_radio0') then
+		uci:set('system', 'rssid_wlan0', 'dev', 'mesh0')
+	else
+		uci:set('system', 'rssid_wlan0', 'dev', 'ibss0')
+	end
+
+	uci:save('system')
+end
+
+uci:save('wireless')
+uci:save('network')

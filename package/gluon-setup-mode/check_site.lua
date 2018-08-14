@@ -1,2 +1,1 @@
-need_boolean('setup_mode.skip', false)
-
+need_boolean(in_site({'setup_mode', 'skip'}), false)

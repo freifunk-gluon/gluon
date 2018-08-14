@@ -46,7 +46,7 @@ init_switch() {
 start_service() {
 	prepare_config
 	init_switch
-	iw reg set "$(lua -e 'print(require("gluon.site_config").regdom)')"
+	iw reg set "$(lua -e 'print(require("gluon.site").regdom())')"
 
 	procd_open_instance
 	procd_set_param command /sbin/netifd -c /var/gluon/setup-mode/config

@@ -1,0 +1,17 @@
+#!/bin/sh
+
+cd /lib/gluon/upgrade || exit 1
+
+err=0
+
+for script in *; do
+	echo "Configuring: ${script}"
+	./"$script" || err=1
+done
+
+if [ $err -eq 1 ]; then
+	echo 'One or more upgrade scripts failed. Please review the above error messages.'
+	exit 1
+fi
+
+exit 0

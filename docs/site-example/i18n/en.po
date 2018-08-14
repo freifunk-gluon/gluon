@@ -12,31 +12,71 @@ msgstr ""
 
 msgid "gluon-config-mode:welcome"
 msgstr ""
-"Welcome to the setup wizard of your new Freifunk Duckburg node. "
+"Welcome to the setup wizard of your new Freifunk Alpha Centauri node. "
 "Please fill out the following form and submit it."
+
+msgid "gluon-config-mode:domain"
+msgstr "Domain"
+
+msgid "gluon-config-mode:domain-select"
+msgstr ""
+"Here you have the possibility of selecting the mesh domain in which your node "
+"is placed. Please keep in mind that your router only connects with the nodes "
+"of the selected domain"
 
 msgid "gluon-config-mode:pubkey"
 msgstr ""
 "<p>This is your Freifunk node's public key. The node won't be able to "
-"connect to the mesh VPN until the key has been registered on the Freifunk "
-"Duckburg servers. "
-"To register, send the key together with your node's name (<em><%=hostname%></em>) to "
-"<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
+"connect to the mesh VPN until the key has been registered on the Freifunk servers. "
+"To register, send the key together with your node's name (<em><%=pcdata(hostname)%></em>) to "
+"<a href=\"mailto:keys@alpha-centauri.freifunk.net?subject=<%= urlencode('Registration: ' .. hostname) %>&amp;"
+"body=<%= urlencode('# ' .. hostname .. '\n' .. pubkey) %>\">keys@alpha-centauri.freifunk.net</a>."
 "</p>"
 "<div class=\"the-key\">"
-" # <%= hostname %>"
-" <br/>"
+" # <%= pcdata(hostname) %>"
+" <br />"
 "<%= pubkey %>"
 "</div>"
 
+msgid "gluon-config-mode:novpn"
+msgstr ""
+"<p>You have selected <strong>not</strong> to use the mesh VPN. "
+"Your node will only be able to connect to the Freifunk network if other nodes in reach "
+"already have a connection.</p>"
 
 msgid "gluon-config-mode:reboot"
 msgstr ""
-"<p>The node is currently rebooting and will try to connect to other "
-"nearby Freifunk nodes after that. "
-"For more information on the Freifunk Duckburg community, have a look at "
-"<a href=\"https://entenhausen.freifunk.net/\">our homepage</a>.</p>"
+"<p>Your node <em><%= pcdata(hostname) %></em> is currently rebooting and will "
+"try to connect to other nearby Freifunk nodes after that. For more "
+"information about the Freifunk community on Alpha Centauri, have a look at "
+"<a href=\"https://alpha-centauri.freifunk.net/\">our homepage</a>.</p>"
 "<p>To get back to this configuration interface, press the reset button for "
 "3 seconds during normal operation. The device will then reboot into config "
 "mode.</p>"
 "<p>Have fun with your node and exploring of the Freifunk network!</p>"
+
+msgid "gluon-config-mode:altitude-label"
+msgstr "Altitude"
+
+msgid "gluon-config-mode:altitude-help"
+msgstr ""
+"Specifying the altitude is optional and should only be done if a proper "
+"value is known."
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-hostname/i18n/
+msgid "gluon-config-mode:hostname-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-geo-location/i18n/
+msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-contact-info/i18n/
+msgid "gluon-config-mode:contact-help"
+msgstr ""
+
+msgid "gluon-config-mode:contact-note"
+msgstr ""

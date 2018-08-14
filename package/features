@@ -1,0 +1,26 @@
+nodefault 'web-wizard'
+
+packages 'web-wizard' \
+	'gluon-config-mode-hostname' \
+	'gluon-config-mode-geo-location' \
+	'gluon-config-mode-contact-info'
+
+packages 'web-wizard & autoupdater' \
+	'gluon-config-mode-autoupdater'
+
+packages 'web-wizard & (mesh-vpn-fastd | mesh-vpn-tunneldigger)' \
+	'gluon-config-mode-mesh-vpn'
+
+
+nodefault 'web-advanced'
+
+packages 'web-advanced' \
+	'gluon-web-admin' \
+	'gluon-web-network' \
+	'gluon-web-wifi-config'
+
+packages 'web-advanced & autoupdater' \
+	'gluon-web-autoupdater'
+
+packages 'status-page & (mesh-batman-adv-14 | mesh-batman-adv-15)' \
+        'gluon-status-page-mesh-batman-adv'

@@ -1,0 +1,232 @@
+Gluon 2017.1
+============
+
+General changes
+~~~~~~~~~~~~~~~
+
+Gluon 2017.1 is the first release of Gluon based on the LEDE 17.01 branch. The
+kernel has been updated from 3.18.x to 4.4.x.
+
+We've used the opportunity to greatly simplify the Gluon build system, removing
+many hacks that were required to make the build work with older OpenWrt releases.
+
+The *output/modules* directory is now called *output/packages* and provides a
+replacement for the whole repository with target-specific packages of LEDE (in
+contrast to packages that are common for all targets of the same architecture).
+Another change to the build system makes it necessary that the same *GLUON_RELEASE*
+value that is used to build the images is also set for ``make manifest``.
+
+GCC 4.8 or newer is now required to build Gluon.
+
+**Note: There is an issue in all Gluon versions before 2016.2.6 that will
+lead to x86 systems losing their configuration when upgrading to Gluon 2017.1!**
+Older Gluon versions should be upgraded to 2016.2.6 first before switching to
+2017.1.
+
+Another potential issue mostly affects virtual machines: Gluon 2017.1 images are
+bigger than 2016.2.x images on x86. If your virtual harddisk is based on a
+2016.2.x image, it must be resized to 273MB or bigger before upgrading to Gluon
+2017.1. Using qemu, the command
+
+::
+
+  qemu-img resize $IMAGE 273MB
+
+can be used to do this.
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - RE450
+  - WBS210 v1.20
+  - WBS510 v1.20
+
+* Ubiquiti
+
+  - AirGateway LR
+  - AirGateway PRO
+  - Rocket M2/M5 Ti
+  - UniFi AP LR
+
+ar71xx-tiny
+^^^^^^^^^^^
+
+The new *ar71xx-tiny* target has split out of *ar71xx-generic*; all
+*ar71xx-generic* devices with only 4MB of flash have been moved to this target.
+
+In contrast to *ar71xx-generic*, *ar71xx-tiny* **does not support opkg anymore**
+to save some space.
+
+* TP-Link
+
+  - TL-WA730RE v1
+  - TL-WA7210N v2
+
+x86-generic
+^^^^^^^^^^^
+
+The *x86-kvm* and *x86-xen_domu* targets have been removed; the *x86-generic*
+images now support these usecases as well, so no separate targets are needed
+anymore.
+
+x86-geode
+^^^^^^^^^
+
+The new *x86-geode* target for hardware based on Geode CPUs has been added.
+
+New features
+~~~~~~~~~~~~
+
+* Localization support has been added to the status page. In addition to German,
+  there are English and Russian translations now (`#1044 <https://github.com/freifunk-gluon/gluon/issues/1044>`_)
+
+* Add support for making nodes a DNS cache for clients
+  (`#1000 <https://github.com/freifunk-gluon/gluon/issues/1000>`_)
+
+* Add L2TP via tunneldigger as an alternative VPN system
+  (`#978 <https://github.com/freifunk-gluon/gluon/issues/978>`_)
+
+  L2TP will usually give better performance than fastd as it runs in kernel
+  space, but it does not provide encryption. Also, tunneling over IPv6 is
+  currently unsupported by tunneldigger.
+
+  It is not possible to include both fastd and tunneldigger in the same
+  firmware.
+
+* Add source filter package (`#1015 <https://github.com/freifunk-gluon/gluon/issues/1015>`_)
+
+  The new package *gluon-ebtables-source-filter* can be used to prevent traffic
+  using unexpected IP addresses or packet types from entering the mesh.
+
+  See also: :doc:`../package/gluon-ebtables-source-filter`
+
+Bugfixes
+~~~~~~~~
+
+* Disabling batman-adv on an interface (for example when an Ethernet link is lost
+  or before sysupgrades) could lead to a kernel crash in certain configurations
+  (`#680 <https://github.com/freifunk-gluon/gluon/issues/680>`_)
+
+* A race condition in the network setup scripts could lead to incomplete setup
+  during boot or when interfaces were added or removed from batman-adv after
+  Ethernet link changes (`#905 <https://github.com/freifunk-gluon/gluon/issues/905>`_)
+
+  The fix also solved the long-standing issue of Ethernet-only nodes (i.e. no
+  WLAN or VPN mesh) not booting up correctly without an Ethernet mesh link.
+
+* Some fixes in the WLAN stack of LEDE have improved the stability of the ath9k
+  driver (`#605 <https://github.com/freifunk-gluon/gluon/issues/605>`_)
+
+Site changes
+~~~~~~~~~~~~
+
+site.mk
+^^^^^^^
+
+* The *gluon-legacy* package does not exist anymore
+* All *gluon-luci-* packages have been renamed to *gluon-web-*;
+  *gluon-luci-portconfig* is now called *gluon-web-network*
+* The *gluon-next-node* package has been merged into the Gluon core and must not
+  be specified in *site.mk* anymore
+
+site.conf
+^^^^^^^^^
+
+* The *fastd_mesh_vpn* configuration section has been restructured to allow
+  sharing more options with tunneldigger. Instead of
+
+  .. code-block:: lua
+
+    fastd_mesh_vpn = {
+      mtu = 1280,
+      configurable = true,
+      methods = {'salsa2012+umac'},
+      groups = { ... },
+      bandwidth_limit = { ... },
+    }
+
+  the configuration must look like this now:
+
+  .. code-block:: lua
+
+    mesh_vpn = {
+      mtu = 1280,
+      fastd = {
+        configurable = true,
+        methods = {'salsa2012+umac'},
+        groups = { ... },
+      }
+      bandwidth_limit = { ... },
+    }
+
+* The *opkg.openwrt* option has been renamed to *opkg.lede*
+
+i18n
+^^^^
+
+* The *escape* function has been removed as it was duplicating the existing
+  *pcdata* function. All uses of *escape* in i18n templates must be changed to
+  use *pcdata* instead.
+
+* The *gluon-config-mode:altitude-label* and *gluon-config-mode:altitude-help*
+  translation IDs have been added to allow adjusting the texts for different
+  kinds of altitudes that might be expected.
+
+* The optional *gluon-config-mode:novpn* label has been added, which will be
+  shown in place of *gluon-config-mode:pubkey* when mesh VPN is disabled.
+
+Internals
+~~~~~~~~~
+
+* The LuCI base libraries have been replaced by a stripped-down
+  version called "gluon-web" (`#1007 <https://github.com/freifunk-gluon/gluon/issues/1007>`_)
+
+  Custom packages will need to be adjusted; in particular, all uses of *luci.model.uci*
+  need to be replaced with *simple-uci*. The Gluon documentation explains the most important
+  changes required to migrate from LuCI to gluon-web.
+
+* respondd now listens on ``ff05::2:1001`` in addition to ``ff02::2:1001`` for mesh-wide
+  operation (`#984 <https://github.com/freifunk-gluon/gluon/issues/984>`_)
+
+  Eventually, ``ff02::2:1001`` will be available for exchanging information
+  between neighbouring nodes only; map servers should be moved to ``ff05::2:1001``.
+
+* batman-adv has been updated to version 2017.1
+
+* Directly running make commands in the *lede* directory is supported now. Consequently,
+  build targets like ``target/linux/clean`` and ``package/NAME/compile`` can't be used
+  in the Gluon repository root anymore.
+
+  The command ``make config`` will set up the LEDE *.config* in the way a normal
+  Gluon build would, so it's possible to build individual packages for testing
+  and development afterwards.
+
+* Target definitions have been migrated from a Make-based format to a simpler
+  shell-based DSL
+
+* Gluon does not pass any custom variables into the LEDE build anymore, so things
+  like *GLUONDIR*, *GLUON_VERSION*, or *GLUON_SITEDIR* aren't available
+  to package Makefiles in Gluon 2017.1.
+
+  Instead of ``$(GLUONDIR)/package.mk``, ``$(TOPDIR)/../package/gluon.mk`` must
+  be included in custom packages now.
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.

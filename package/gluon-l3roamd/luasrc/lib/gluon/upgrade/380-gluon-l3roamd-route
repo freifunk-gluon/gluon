@@ -1,0 +1,6 @@
+#!/usr/bin/lua
+
+uci:delete('network', 'l3roam')
+uci:delete('network', 'l3roamd_client')
+
+uci:save('network')

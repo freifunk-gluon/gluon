@@ -2,15 +2,15 @@
 
 
 stop() {
-        if [ -x /etc/init.d/$1 ]; then
+        if [ -x /etc/init.d/"$1" ]; then
                 echo "Stopping $1..."
-                /etc/init.d/$1 stop
+                /etc/init.d/"$1" stop
         fi
 }
 
 start_enabled() {
-        if [ -x /etc/init.d/$1 ] && /etc/init.d/$1 enabled; then
+        if [ -x /etc/init.d/"$1" ] && /etc/init.d/"$1" enabled; then
                 echo "Starting $1..."
-                /etc/init.d/$1 start
+                /etc/init.d/"$1" start
         fi
 }

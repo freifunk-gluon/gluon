@@ -1,0 +1,8 @@
+#!/usr/bin/lua
+
+require 'gluon.web.cgi' {
+	base_path = '/lib/gluon/config-mode',
+
+	layout_package = 'gluon-config-mode-theme',
+	layout_template = 'theme/layout',
+}

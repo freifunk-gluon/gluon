@@ -22,15 +22,8 @@ The following targets for x86 images exist:
     These images only differ in the image file format, the content is the same. Therefore there is
     only a single `x86-generic` sysupgrade image instead of three.
 
-    Please note that the `x86-generic` image doesn't include VirtIO support, so another virtual NIC
-    like `pcnet32` must be chosen when using VirtualBox.
-
-`x86-kvm`
-    The `x86-kvm` image uses VirtIO as its harddisk and network driver.
-
-`x86-xen_domu`
-    The `x86-xen_domu` target contains the necessary drivers for use in Xen.
+`x86-geode`
+    x86 image for Geode CPUs.
 
 `x86-64`
-    64bit version of `x86-generic`. Also has VirtIO support, so there's no need for an
-    `x86-64-kvm` target.
+    64bit version of `x86-generic`.

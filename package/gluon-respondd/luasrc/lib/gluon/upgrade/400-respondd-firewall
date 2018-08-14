@@ -1,0 +1,46 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require('gluon.site')
+
+uci:delete('firewall', 'wan_announced')
+
+-- Allow respondd port on WAN to allow resolving neighbours over mesh-on-wan
+uci:section('firewall', 'rule', 'wan_respondd', {
+	name = 'wan_respondd',
+	src = 'wan',
+	src_ip = 'fe80::/64',
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+-- Allow respondd-access for local clients
+uci:section('firewall', 'rule', 'client_respondd', {
+	name = 'client_respondd',
+	src = 'local_client',
+	src_ip = 'fe80::/64',
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mesh_respondd_ll', {
+	name = 'mesh_respondd_ll',
+	src = 'mesh',
+	src_ip = 'fe80::/64',
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mesh_respondd_siteprefix', {
+	name = 'mesh_respondd_siteprefix',
+	src = 'mesh',
+	src_ip = site.prefix6(),
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:save('firewall')

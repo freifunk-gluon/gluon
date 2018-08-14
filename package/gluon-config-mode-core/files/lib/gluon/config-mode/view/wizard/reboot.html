@@ -1,0 +1,22 @@
+<h2><%:Your node's setup is now complete.%></h2>
+<%
+	local fs = require "nixio.fs"
+	local util = require "nixio.util"
+
+	local parts_dir = "/lib/gluon/config-mode/reboot/"
+	local files = util.consume(fs.dir(parts_dir) or function() end)
+	table.sort(files)
+
+	local parts = {}
+	for _, entry in ipairs(files) do
+		if entry:sub(1, 1) ~= '.' then
+			local p = assert(loadfile(parts_dir .. entry))
+			setfenv(p, getfenv())
+			table.insert(parts, p)
+		end
+	end
+
+	for _, p in ipairs(parts) do
+		p()
+	end
+%>

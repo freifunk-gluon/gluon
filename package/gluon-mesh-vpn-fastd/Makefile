@@ -3,33 +3,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-mesh-vpn-fastd
 PKG_VERSION:=3
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-PKG_BUILD_DEPENDS := respondd
-
-include $(GLUONDIR)/include/package.mk
+include ../gluon.mk
 
 define Package/gluon-mesh-vpn-fastd
-  SECTION:=gluon
-  CATEGORY:=Gluon
-  TITLE:=Support for connecting batman-adv meshes via fastd
-  DEPENDS:=+gluon-core +libgluonutil gluon-mesh-batman-adv +gluon-wan-dnsmasq +fastd +iptables +iptables-mod-extra +simple-tc
+  TITLE:=Support for connecting meshes via fastd
+  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +fastd +@GLUON_SPECIALIZE_KERNEL:KERNEL_TUN
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
-
-define Package/gluon-mesh-vpn-fastd/install
-	$(CP) ./files/* $(1)/
-
-	$(INSTALL_DIR) $(1)/lib/gluon/respondd
-	$(CP) $(PKG_BUILD_DIR)/respondd.so $(1)/lib/gluon/respondd/mesh-vpn-fastd.so
-endef
-
-define Package/gluon-mesh-vpn-fastd/postinst
-#!/bin/sh
-$(call GluonCheckSite,check_site.lua)
-endef
-
-$(eval $(call BuildPackage,gluon-mesh-vpn-fastd))
+$(eval $(call BuildPackageGluon,gluon-mesh-vpn-fastd))

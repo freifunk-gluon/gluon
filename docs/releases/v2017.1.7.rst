@@ -1,0 +1,34 @@
+Gluon 2017.1.7
+==============
+
+Bugfixes
+~~~~~~~~
+
+* Fix boot failure on many Ubiquiti devices
+  (`#1370 <https://github.com/freifunk-gluon/gluon/issues/1370>`_)
+
+  A kernel update in Gluon 2017.1.6 led to boot failures on Ubiquiti Airmax M2/M5
+  (NanoStation, Bullet, etc.) if the device had been running AirOS 5.6 before
+  installing Gluon/OpenWrt. The XW hardware revision is unaffected.
+
+  While the root cause is a bug in Ubiquiti's bootloader, the issue is mitigated in
+  Gluon 2017.1.7.
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory on weak hardware in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)

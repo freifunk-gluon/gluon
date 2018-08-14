@@ -12,33 +12,76 @@ msgstr ""
 
 msgid "gluon-config-mode:welcome"
 msgstr ""
-"Willkommen zum Einrichtungsassistenten für deinen neuen Entenhausener "
+"Willkommen zum Einrichtungsassistenten für deinen neuen Alpha Centauri "
 "Freifunk-Knoten. Fülle das folgende Formular deinen Vorstellungen "
 "entsprechend aus und sende es ab."
+
+msgid "gluon-config-mode:domain"
+msgstr "Domäne"
+
+msgid "gluon-config-mode:domain-select"
+msgstr ""
+"Hier hast du die Möglichkeit, die Mesh-Domäne, in der sich dein Knoten "
+"befindet, auszuwählen. Bitte denke daran, dass sich dein Knoten nur mit den "
+"Knoten der ausgewählten Domäne verbinden kann."
 
 msgid "gluon-config-mode:pubkey"
 msgstr ""
 "<p>Dies ist der öffentliche Schlüssel deines Freifunk-Knotens. Erst nachdem "
-"er auf den Servern des Entenhausener Freifunk-Projektes eingetragen wurde, "
-"kann sich dein Knoten mit dem Entenhausener Mesh-VPN verbinden. Bitte "
+"er auf den Servern des Freifunk-Projektes auf Alpha Centauri eingetragen wurde, "
+"kann sich dein Knoten mit dem Mesh-VPN dort verbinden. Bitte "
 "schicke dazu diesen Schlüssel und den Namen deines Knotens "
-"(<em><%=hostname%></em>) an "
-"<a href=\"mailto:keys@entenhausen.freifunk.net\">keys@entenhausen.freifunk.net</a>."
+"(<em><%=pcdata(hostname)%></em>) an "
+"<a href=\"mailto:keys@alpha-centauri.freifunk.net?subject=<%= urlencode('Anmeldung: ' .. hostname) %>&amp;"
+"body=<%= urlencode('# ' .. hostname .. '\n' .. pubkey) %>\">keys@alpha-centauri.freifunk.net</a>."
 "</p>"
 "<div class=\"the-key\">"
-" # <%= hostname %>"
-" <br/>"
+" # <%= pcdata(hostname) %>"
+" <br />"
 "<%= pubkey %>"
 "</div>"
 
+msgid "gluon-config-mode:novpn"
+msgstr ""
+"<p>Du hast ausgewählt, <strong>kein Mesh-VPN</strong> "
+"zu nutzen. Dein Knoten kann also nur dann eine Verbindung zum Freifunk-Netz "
+"aufbauen, wenn andere Freifunk-Router in WLAN-Reichweite sind."
+"</p>"
+
 msgid "gluon-config-mode:reboot"
 msgstr ""
-"<p>Dein Knoten startet gerade neu und wird anschließend versuchen, "
-"sich mit anderen Freifunkknoten in seiner Nähe zu "
+"<p>Dein Knoten <em><%= pcdata(hostname) %></em> startet gerade neu und wird "
+"anschließend versuchen, sich mit anderen Freifunkknoten in seiner Nähe zu "
 "verbinden. Weitere Informationen zur "
-"Entenhausener Freifunk-Community findest du auf "
-"<a href=\"https://entenhausen.freifunk.net/\">unserer Webseite</a>.</p>"
+"Alpha Centauri Freifunk-Community findest du auf "
+"<a href=\"https://alpha-centauri.freifunk.net/\">unserer Webseite</a>.</p>"
 "<p>Um zu dieser Konfigurationsseite zurückzugelangen, drücke im normalen "
 "Betrieb für drei Sekunden den Reset-Button. Das Gerät wird dann im Config "
 "Mode neustarten.</p>"
 "<p>Viel Spaß mit deinem Knoten und der Erkundung von Freifunk!</p>"
+
+msgid "gluon-config-mode:altitude-label"
+msgstr "Höhe"
+
+msgid "gluon-config-mode:altitude-help"
+msgstr ""
+"Die Höhenangabe ist optional und sollte nur gesetzt werden, wenn ein "
+"exakter Wert bekannt ist."
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-hostname/i18n/
+msgid "gluon-config-mode:hostname-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-geo-location/i18n/
+msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+# Leave empty to use the default text, which can be found in:
+# package/gluon-config-mode-contact-info/i18n/
+msgid "gluon-config-mode:contact-help"
+msgstr ""
+
+msgid "gluon-config-mode:contact-note"
+msgstr ""

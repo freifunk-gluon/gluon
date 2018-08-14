@@ -1,0 +1,91 @@
+Gluon 2017.1.6
+==============
+
+Bugfixes
+~~~~~~~~
+
+* Remove broken DNS cache feature
+  (`#1362 <https://github.com/freifunk-gluon/gluon/issues/1362>`_)
+
+  It was found that dnsmasq does not handle all answer records
+  equally. In particular, its cached answers are missing DNSKEY and DS
+  records, breaking DNSSEC validation on clients.
+
+  Nodes can still resolve the next-node hostname locally and will continue to
+  work as DNS forwarders. The DNS cache feature may return if dnsmasq is fixed
+  or if we switch to a different resolver.
+
+* Ensure that corefiles are stored in /tmp rather than cluttering the root
+  filesystem
+  (`00df8b76e54c <https://github.com/freifunk-gluon/gluon/commit/00df8b76e54c9bb89299df4b2ec49e972046d6b6>`_)
+
+  Nodes upgrades from Gluon v2016.2.x or earlier did not set kernel.core_pattern
+  correctly, leading to corefiles being stored in the current directory (usually
+  / for system services) in the case of crashes.
+
+  This is a regression introduced in Gluon v2017.1.
+
+* Only request a single IPv6 address instead of a prefix on the WAN interface
+  (`5db54ba78c3 <https://github.com/freifunk-gluon/gluon/commit/5db54ba78c3e245f06e4a407371608f6cb247b49>`_)
+
+* Fix signal graph on status page when there are many neighbours
+  (packages/`d1e0b6e0bdae <https://github.com/freifunk-gluon/packages/commit/d1e0b6e0bdaea14d8b9425cee6ca83087be1a905>`_)
+
+* Fix config files managed by opkg not being saved on sysupgrades on ar71xx-tiny
+  (LEDE/`17c0362178ca <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=17c0362178caf837680a4631b8d0de94e5393448>`_,
+  LEDE/`75be005e8bdc <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=75be005e8bdcbf86f9ad167a8737126dda98a444>`_)
+
+* Fix kernel crash in batman-adv-14
+  (`#1358 <https://github.com/freifunk-gluon/gluon/issues/1358>`_)
+
+  Starting with Gluon v2017.1, respondd could trigger a kernel crash caused by
+  a use-after-free in batman-adv-14, in particular after a gateway disappeared.
+
+  batman-adv-15 is not affected.
+
+* Increase bridge multicast querier timeout ("robustness") to avoid
+  "querier appeared/disappeared" log spam by batman-adv in the presence of
+  an external querier
+  (`e305a8c01917 <https://github.com/freifunk-gluon/gluon/commit/e305a8c019179472dbfc6fccea6c87cf40c08a75>`_)
+
+* Fix "broken pipe" log spam caused by the status page
+  (`883c32f2f1dc <https://github.com/freifunk-gluon/gluon/commit/883c32f2f1dc368626069865c07a5701e3e9bcae>`_)
+
+* Reduce memory limit of WLAN packet queues to 256KB on devices with small RAM
+  (`e63c6ca01f50 <https://github.com/freifunk-gluon/gluon/commit/e63c6ca01f50c96d76e5570faa290617a8a312b4>`_)
+
+  Will hopefully make out-of-memory crashes in busy meshes less likely.
+
+* Improve image validation for TP-Link CPE/WBS 210/510 and make it ready for
+  future images
+  (LEDE/`6577fe2198f5 <https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=6577fe2198f5c75acb1dba789941d96a036f4dae>`_)
+
+  Future OpenWrt/Gluon images will move the image metadata ("support-list") of
+  the CPE/WBS 210/510 images to a different offset. Make sysupgrade ready
+  to allow installing such images.
+
+  This change was also backported to Gluon v2016.2.x to allow direct updates
+  to future Gluon master versions without installing v2017.1.x first.
+
+* Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
+  have disappeared with the latest updates
+  (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory on weak hardware in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)

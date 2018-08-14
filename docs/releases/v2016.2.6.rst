@@ -1,0 +1,57 @@
+Gluon 2016.2.6
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link TL-WR841N/ND v12
+
+Bugfixes
+~~~~~~~~
+
+* Fix `CVE-2016-10229 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-10229>`_
+  (`#1097 <https://github.com/freifunk-gluon/gluon/issues/1097>`_)
+
+  Fortunately, the standard Gluon setup is not vulnerable, as the issue only affects
+  applications that use MSG_PEEK on UDP sockets. dnsmasq does use MSG_PEEK, but
+  only in the DHCP component, which is not enabled during normal node operation.
+
+* Fix roaming issue affecting communication between clients
+  (`#1121 <https://github.com/freifunk-gluon/gluon/issues/1121>`_)
+
+  This issue affects all previous releases of Gluon v2016.2.x.
+
+* Fix build against OpenSSL 1.1 (`b6a22ce <https://github.com/freifunk-gluon/gluon/commit/b6a22ce79307853b175192178bb0333d976a3a6f>`_)
+
+* Fix build with long path names (`#1120 <https://github.com/freifunk-gluon/gluon/issues/1120>`_)
+
+* Use new staged sysupgrade procedure (`d4a69c0 <https://github.com/freifunk-gluon/gluon/commit/d4a69c00047f72696a2400cd7129be032de458e3>`_)
+
+  The new sysupgrade fixes an issue affecting x86, causing nodes to lose their
+  configuration on upgrade when the size of the kernel partition grows. This is
+  the case when upgrading from Gluon v2016.2.x to newer (LEDE-based) Gluon
+  versions. **This means that a Gluon node running an older version must be
+  upgraded to Gluon v2016.2.6 first before switching to a LEDE-based version!**
+
+  One downside of the staged sysupgrade is that all processes, including the SSH
+  server, will be terminated at the start of the sysupgrade to allow unmounting
+  the root filesystem. This makes it impossible to get any feedback from the
+  upgrade process without a serial console.
+
+Known Issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.

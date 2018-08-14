@@ -46,24 +46,8 @@ fix some bug, detail in the remaining commit message exactly how it could be
 triggered and what you did to fix it. If in question, have a glance at the
 existing commit messages to get the idea.
 
-Squash commits
---------------
-Most changes are trivial enough to fit in one single commit in order to not
-clutter the history. While developing a new feature, you are free to use
-multiple commits, but if your feature is to be merged, reduce the number of
-commits to a minimum. Even huge feature introductions like the 802.11s mesh
-(commit [2a93c58]) fit into a single commit.
-
-If you developed your change in multiple smaller commits, you can easily
-[squash] those before opening the pull request. While discussing, it is okay to
-do your changes using `git commit --amend` and force-push them to your head of
-the pull request. This way, your change always consists of only one commit and
-can be merged in the instant everybody is content with the whole thing.
-
 
 [packages]: http://gluon.readthedocs.org/en/latest/user/site.html#packages
 [#gluon]: https://webirc.hackint.org/#gluon
 [mailing list]: mailto:gluon@luebeck.freifunk.net
 [list of rejected features]: https://github.com/freifunk-gluon/gluon/issues?q=label%3Arejected
-[2a93c58]: https://github.com/freifunk-gluon/gluon/commit/2a93c580428d10724116b0d2d1238e2745715a14
-[squash]: https://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Squashing-Commits

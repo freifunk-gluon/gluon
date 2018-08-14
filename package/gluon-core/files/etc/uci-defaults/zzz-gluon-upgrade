@@ -1,5 +1,5 @@
 #!/bin/sh
 
-for script in /lib/gluon/upgrade/*; do
-	"$script"
-done
+gluon-reconfigure
+
+exit 0

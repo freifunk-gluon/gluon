@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+uci:section('firewall', 'rule',  'mesh_respondd', {
+	name = 'mesh_respondd',
+	src = 'mesh',
+	src_ip = 'fe80::/64',
+	dest_port = '16962',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:save('firewall')

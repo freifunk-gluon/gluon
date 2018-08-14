@@ -1,0 +1,42 @@
+[ "$GLUON_SITEDIR" -a "$GLUON_RELEASE" -a "$BOARD" ] || exit 1
+
+config "CONFIG_GLUON_SITEDIR=\"$GLUON_SITEDIR\""
+config "CONFIG_GLUON_RELEASE=\"$GLUON_RELEASE\""
+try_config "CONFIG_GLUON_BRANCH=\"$GLUON_BRANCH\""
+
+for lang in $GLUON_LANGS; do
+	try_config "CONFIG_GLUON_WEB_LANG_${lang}=y"
+done
+
+[ "$BOARD" ] && config "CONFIG_TARGET_${BOARD}=y"
+[ -z "$SUBTARGET" ] || config "CONFIG_TARGET_${BOARD}_${SUBTARGET}=y"
+
+
+config '# CONFIG_TARGET_ROOTFS_INITRAMFS is not set'
+
+config 'CONFIG_ALL_NONSHARED=y'
+
+config '# CONFIG_PACKAGE_usbip is not set' # fails to build
+
+config 'CONFIG_BUSYBOX_CUSTOM=y'
+config '# CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set'
+
+config 'CONFIG_PACKAGE_ATH_DEBUG=y'
+
+try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
+try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
+
+if [ "$GLUON_MULTIDOMAIN" = 1 ]; then
+	config 'CONFIG_GLUON_MULTIDOMAIN=y'
+fi
+
+if [ "$GLUON_DEBUG" = 1 ]; then
+	config 'CONFIG_DEBUG=y'
+	config 'CONFIG_NO_STRIP=y'
+	config '# CONFIG_USE_STRIP is not set'
+	config '# CONFIG_USE_SSTRIP is not set'
+fi
+
+
+packages '-odhcpd' '-ppp' '-ppp-mod-pppoe' '-wpad-mini'
+packages 'gluon-core' 'ip6tables' 'hostapd-mini'

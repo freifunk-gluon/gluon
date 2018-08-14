@@ -1,0 +1,65 @@
+Gluon 2017.1.3
+==============
+
+The LEDE base of Gluon has been updated to v17.01.3, including various updates,
+stability improvements and security fixes. This includes some critical fixes
+to core packages like dnsmasq (see below for details); upgrading all Gluon
+nodes to v2017.1.3 is highly recommended.
+
+
+Bugfixes
+~~~~~~~~
+
+* dnsmasq has been upgraded to v2.78, fixing CVE-2017-13704, CVE-2017-14491,
+  CVE-2017-14492, CVE-2017-14493, CVE-2017-14494, 2017-CVE-14495 and
+  2017-CVE-14496
+
+  While many of the most severe (remote code execution) vulnarabilities are in
+  the DHCP component of dnsmasq, which is not active on a Gluon node unless in
+  Config Mode, CVE-2017-14491 does affect us. An attacker can cause memory
+  corruption and possibly remote code execution by deploying a malicious DNS
+  server and tricking a node into querying this server.
+
+* The Linux kernel has been upgraded to v4.4.89
+
+* Multiple security issues have been fixed in packages that are not usually part
+  of the Gluon build, including tcpdump, curl and mbedtls
+
+  Please refer to the
+  `LEDE commit log <https://git.lede-project.org/?p=source.git;a=shortlog;h=refs/heads/lede-17.01>`_
+  for details.
+
+* Filtering of multicast packets between the mesh and the *local-node* interface
+  has been fixed (`#1230 <https://github.com/freifunk-gluon/gluon/issues/1230>`_)
+
+  This issue was causing gluon-radvd to send a router advertisement to the local
+  clients whenever a router solicitation from the mesh was received. In busy
+  meshes, it would continuously send router advertisements every 3 seconds.
+
+* Reject autoupdater mirror URLs not starting with ``http://`` during build
+  (`9ab93992d1fc <https://github.com/freifunk-gluon/gluon/commit/9ab93992d1fca1b9cfa09c54d39cc92d3699055a>`_)
+
+* Fix MAC addresses on TP-Link TL-WR1043ND v4 when installing Gluon over newer
+  stock firmwares (`#1223 <https://github.com/freifunk-gluon/gluon/issues/1223>`_)
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx
+  (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)
+
+  The workaround added in Gluon v2017.1.1 has greatly reduced the frequency of
+  segfaults, but did not make them disappear completely.

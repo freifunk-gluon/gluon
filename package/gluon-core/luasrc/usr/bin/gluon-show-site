@@ -1,0 +1,6 @@
+#!/usr/bin/lua
+
+local json = require 'jsonc'
+local site = require 'gluon.site'
+
+print(json.stringify(site(), true))

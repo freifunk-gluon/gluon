@@ -11,14 +11,24 @@ during development), but it can be enabled by setting the variable GLUON_BRANCH 
 to override the default branch set in the set in the site configuration.
 
 A manifest file for the updater can be generated with `make manifest`. A signing script (using
-ecdsautils) can by found in the `contrib` directory. When creating the manifest, ``GLUON_PRIORITY`` can
-be set on the command line, or it can be taken from the ``site.mk``.
+``ecdsautils``) can by found in the `contrib` directory. When creating the manifest, the
+``PRIORITY`` value may be defined by setting ``GLUON_PRIORITY`` on the command line or in ``site.mk``.
 
-The priority defines the maximum number of days that may pass between releasing an update and installation
-of the images. The update probability will start at 0 after the release time mentioned in the manifest
-and then slowly rise to 1 up to the point when the number of days given by the priority has passed.
+``GLUON_PRIORITY`` defines the maximum number of days that may pass between releasing an update and installation
+of the images. The update probability will start at 0 after the release time declared in the manifest file
+by the variable DATE and then slowly rise up to 1 when ``GLUON_PRIORITY`` days have passed. The autoupdater checks
+for updates hourly (at a random minute of the hour), but usually only updates during its run between
+4am and 5am, except when the whole ``GLUON_PRIORITY`` days and another 24 hours have passed.
 
-The priority may be an integer or a decimal fraction.
+``GLUON_PRIORITY`` may be an integer or a decimal fraction.
+
+If ``GLUON_RELEASE`` is passed to ``make`` explicitly or it is generated dynamically
+in ``site.mk``, care must be taken to pass the same ``GLUON_RELEASE`` to ``make manifest``,
+as otherwise the generated manifest will be incomplete.
+
+
+Automated nightly builds
+------------------------
 
 A fully automated nightly build could use the following commands:
 
@@ -28,8 +38,9 @@ A fully automated nightly build could use the following commands:
     (cd site && git pull)
     make update
     make clean
-    make -j5 GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
-    make manifest GLUON_BRANCH=experimental
+    NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
+    make -j$NUM_CORES_PLUS_ONE GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
+    make manifest GLUON_BRANCH=$GLUON_BRANCH GLUON_RELEASE=$GLUON_RELEASE
     contrib/sign.sh $SECRETKEY output/images/sysupgrade/experimental.manifest
 
     rm -rf /where/to/put/this/experimental
@@ -70,11 +81,9 @@ These commands can be used on a node:
 
    # Force update check, even when the updater is disabled
    autoupdater -f
-   
+
 ::
 
-   # If fallback is true the updater will perform an update only if 
-   # the timespan given by the priority and another 24h have passed
+   # If fallback is true the updater will perform an update only if the timespan
+   # PRIORITY days (as defined in the manifest) and another 24h have passed
    autoupdater --fallback
-
-

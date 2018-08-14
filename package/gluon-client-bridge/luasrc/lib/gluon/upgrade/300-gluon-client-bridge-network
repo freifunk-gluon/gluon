@@ -1,0 +1,73 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
+
+local uci = require('simple-uci').cursor()
+
+
+local interfaces = uci:get('network', 'client', 'ifname') or {}
+
+if type(interfaces) == 'string' then
+	local ifname = interfaces
+	interfaces = {}
+	for iface in ifname:gmatch('%S+') do
+		util.add_to_set(interfaces, iface)
+	end
+end
+
+if sysconfig.lan_ifname and uci:get_bool('network', 'mesh_lan', 'disabled') then
+	for lanif in sysconfig.lan_ifname:gmatch('%S+') do
+		util.add_to_set(interfaces, lanif)
+	end
+end
+
+util.add_to_set(interfaces, 'local-port')
+
+
+uci:delete('network', 'client')
+uci:section('network', 'interface', 'client', {
+	type = 'bridge',
+	ifname = interfaces,
+	proto = 'none',
+	auto = true,
+	ipv6 = false,
+	macaddr = sysconfig.primary_mac,
+	igmp_snooping = true,
+	multicast_querier = true,
+})
+
+uci:save('network')
+
+-- TODO: remove this line and the next in 2019. Firewall zones have been renamed in 2017.
+uci:delete('firewall', 'client')
+
+uci:section('firewall', 'zone', 'drop', {
+	name = 'drop',
+	network = {'client'},
+	input = 'DROP',
+	output = 'DROP',
+	forward = 'DROP',
+})
+
+local networks = uci:get_list('firewall', 'local_client', 'network')
+util.add_to_set(networks, 'local_node')
+uci:set_list('firewall', 'local_client', 'network', networks)
+
+
+local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
+uci:set('dhcp', dnsmasq, 'boguspriv', false)
+uci:set('dhcp', dnsmasq, 'localise_queries', false)
+uci:set('dhcp', dnsmasq, 'rebind_protection', false)
+
+-- TODO: remove this line and the next two in 2019 the zones were removed in 2017
+uci:delete('dhcp', 'client')
+uci:delete('firewall', 'local_node')
+
+uci:section('dhcp', 'dhcp', 'local_client', {
+	interface = 'client',
+	ignore = true,
+})
+
+uci:save('dhcp')
+uci:save('firewall')

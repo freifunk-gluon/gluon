@@ -1,7 +1,7 @@
 #!/bin/sh
 
 check_command() {
-	which $1 >/dev/null 2>&1
+	which "$1" >/dev/null 2>&1
 }
 
 if check_command sha512sum; then
@@ -11,7 +11,7 @@ elif check_command shasum; then
 elif check_command cksum; then
 	ret="$(cksum -q -a sha512 "$@")"
 else
-	echo "$0: no suitable sha512sum implementation was found" >&1
+	echo "$0: no suitable sha512sum implementation was found" >&2
 	exit 1
 fi
 

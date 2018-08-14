@@ -1,0 +1,38 @@
+<%-
+	local fs = require 'nixio.fs'
+	local uci = require('simple-uci').cursor()
+	local pretty_hostname = require 'pretty_hostname'
+
+	local site = require 'gluon.site'
+	local sysconfig = require 'gluon.sysconfig'
+	local platform = require 'gluon.platform'
+	local util = require "gluon.util"
+
+	local _ = translate
+
+
+	local pubkey
+	local meshvpn_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
+	if meshvpn_enabled then
+		pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
+		if pubkey == '' then
+			pubkey = nil
+		end
+	end
+
+	local values = {
+		{ _('Hostname'), pretty_hostname.get(uci) },
+		{ _('MAC address'), sysconfig.primary_mac },
+		{ _('Hardware model'), platform.get_model() },
+		{ _('Gluon version'), util.trim(fs.readfile('/lib/gluon/gluon-version')) },
+		{ _('Firmware release'), util.trim(fs.readfile('/lib/gluon/release')) },
+		{ _('Site'), site.site_name() },
+		{ _('Public VPN key'), pubkey },
+	}
+-%>
+<h2><%:Information%></h2>
+<% for _, v in ipairs(values) do %>
+<div class="gluon-value">
+	<div class="gluon-value-title"><%|v[1]%></div><div class="gluon-value-field-text"><%|v[2] or 'n/a'%></div>
+</div>
+<% end %>

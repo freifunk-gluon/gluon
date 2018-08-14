@@ -1,0 +1,30 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+
+local old_proto = uci:get('network', 'mesh_wan', 'proto')
+
+uci:section('network', 'interface', 'mesh_wan', {
+	ifname = 'br-wan',
+	proto  = 'gluon_wired',
+	index  = 0,
+})
+
+local enable = site.mesh_on_wan(false)
+local old_auto = uci:get('network', 'mesh_wan', 'auto')
+local old_disabled = uci:get('network', 'mesh_wan', 'disabled')
+if old_auto ~= nil or old_disabled ~= nil then
+	enable = old_auto ~= '0' and old_disabled ~= '1'
+end
+uci:set('network', 'mesh_wan', 'disabled', not enable)
+
+if uci:get('network', 'mesh_wan', 'transitive') == nil then
+	uci:set('network', 'mesh_wan', 'transitive', true)
+end
+
+uci:delete('network', 'mesh_wan', 'auto')
+uci:delete('network', 'mesh_wan', 'fixed_mtu')
+uci:delete('network', 'mesh_wan', 'legacy')
+
+uci:save('network')

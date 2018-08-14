@@ -1,0 +1,20 @@
+<div<%=
+	attr("data-dynlist", {
+		prefix = id,
+		type = self.datatype,
+		optional = self.datatype and self.optional,
+		size = self.size,
+		placeholder = self.placeholder,
+	})
+%>>
+<%
+	for i, val in ipairs(self:cfgvalue()) do
+%>
+	<input class="gluon-input-text" value="<%|val%>" data-update="change" type="text"<%=
+		attr("id", id .. "." .. i) ..
+		attr("name", id) ..
+		attr("size", self.size) ..
+		attr("placeholder", self.placeholder)
+	%> /><br />
+<% end %>
+</div>

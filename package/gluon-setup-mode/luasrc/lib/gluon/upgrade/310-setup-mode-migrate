@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+
+local old = uci:get_first('gluon-config-mode', 'wizard', 'configured')
+if old == '1' then
+	local setup_mode = uci:get_first('gluon-setup-mode', 'setup_mode')
+	uci:set('gluon-setup-mode', setup_mode, 'configured', true)
+
+	uci:save('gluon-setup-mode')
+end
+
+os.remove('/etc/config/gluon-config-mode')

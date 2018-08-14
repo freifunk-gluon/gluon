@@ -1,0 +1,14 @@
+config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+
+factory -ubi-factory .img
+sysupgrade -squashfs-sysupgrade .tar
+
+# Netgear
+
+device netgear-wndr3700v4 wndr3700v4 WNDR3700V4
+device netgear-wndr4300 wndr4300 WNDR4300V1
+
+# ZyXEL
+device zyxel-nbg6716 nbg6716 NBG6716
+packages $ATH10K_PACKAGES
+factory -squashfs-factory .bin

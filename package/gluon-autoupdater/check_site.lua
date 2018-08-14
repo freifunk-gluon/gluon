@@ -1,14 +1,10 @@
-need_string 'autoupdater.branch'
+need_string(in_site({'autoupdater', 'branch'}))
 
-local function check_branch(k, _)
-   assert_uci_name(k)
+need_table({'autoupdater', 'branches'}, function(branch)
+	need_alphanumeric_key(branch)
 
-   local prefix = string.format('autoupdater.branches[%q].', k)
-
-   need_string(prefix .. 'name')
-   need_string_array(prefix .. 'mirrors')
-   need_number(prefix .. 'good_signatures')
-   need_string_array(prefix .. 'pubkeys')
-end
-
-need_table('autoupdater.branches', check_branch)
+	need_string(in_site(extend(branch, {'name'})))
+	need_string_array_match(extend(branch, {'mirrors'}), '^http://')
+	need_number(in_site(extend(branch, {'good_signatures'})))
+	need_string_array_match(in_site(extend(branch, {'pubkeys'})), '^%x+$')
+end)

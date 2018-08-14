@@ -1,0 +1,39 @@
+# BROKEN: No AP+IBSS support (plus individual issues)
+if [ "$BROKEN" ]; then
+
+## D-Link
+
+device d-link-dir-860l-b1 dir-860l-b1 # BROKEN: 2.4 GHz Mesh unreliable
+
+
+## Netgear
+
+device netgear-wndr3700v5 wndr3700v5 # BROKEN: Untested
+factory
+
+
+## ZBT
+
+device zbt-wg3526-16m zbt-wg3526-16M # BROKEN: Untested
+factory
+manifest_alias zbt-wg3526
+
+device zbt-wg3526-32m zbt-wg3526-32M # BROKEN: Untested
+factory
+
+fi
+
+
+# Devices without WLAN
+
+## Ubiquiti
+
+device ubnt-erx ubnt-erx
+packages '-hostapd-mini'
+factory
+sysupgrade '.tar'
+
+device ubnt-erx-sfp ubnt-erx-sfp
+packages '-hostapd-mini'
+factory
+sysupgrade '.tar'

@@ -1,1 +1,1 @@
-need_string_array 'authorized_keys'
+need_string_array(in_site({'authorized_keys'}))

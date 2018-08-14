@@ -6,8 +6,6 @@ CMAKE_INSTALL:=1
 
 PKG_LICENSE:=BSD-2-Clause
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
@@ -15,16 +13,7 @@ define Package/libgluonutil
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Gluon utility library
-  DEPENDS:=+libjson-c
-endef
-
-CMAKE_OPTIONS += \
-	-DCMAKE_BUILD_TYPE:String="MINSIZEREL"
-
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
+  DEPENDS:=+libjson-c +libuci
 endef
 
 define Package/libgluonutil/install

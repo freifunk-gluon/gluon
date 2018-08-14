@@ -1,0 +1,43 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 21 Mar 2015 16:40:52 +0100
+Subject: base-files: disable reset button handling
+
+This conflicts with our reset button usage.
+
+diff --git a/package/base-files/files/etc/rc.button/reset b/package/base-files/files/etc/rc.button/reset
+deleted file mode 100755
+index 2403122ad21d1abd568337908c9d58060e87bf08..0000000000000000000000000000000000000000
+--- a/package/base-files/files/etc/rc.button/reset
++++ /dev/null
+@@ -1,31 +0,0 @@
+-#!/bin/sh
+-
+-. /lib/functions.sh
+-
+-OVERLAY="$( grep ' /overlay ' /proc/mounts )"
+-
+-case "$ACTION" in
+-pressed)
+-	[ -z "$OVERLAY" ] && return 0
+-
+-	return 5
+-;;
+-timeout)
+-	. /etc/diag.sh
+-	set_state failsafe
+-;;
+-released)
+-	if [ "$SEEN" -lt 1 ]
+-	then
+-		echo "REBOOT" > /dev/console
+-		sync
+-		reboot
+-	elif [ "$SEEN" -ge 5 -a -n "$OVERLAY" ]
+-	then
+-		echo "FACTORY RESET" > /dev/console
+-		jffs2reset -y && reboot &
+-	fi
+-;;
+-esac
+-
+-return 0

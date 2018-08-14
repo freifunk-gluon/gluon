@@ -1,45 +1,29 @@
 #!/bin/sh /etc/rc.common
 
-EXTRA_COMMANDS='restart_if_running'
-
+USE_PROCD=1
 START=50
 
-SERVICE_WRITE_PID=1
-SERVICE_DAEMONIZE=1
-
-DEVLIST=/var/run/gluon-respondd.devs
 DAEMON=/usr/bin/respondd
-LOCK=/var/run/gluon-respondd.lock
+MAXDELAY=10
 
+start_service() {
+	local ifdump="$(ubus call network.interface dump)"
 
-do_start() {
-	DEVS=$(cat $DEVLIST 2>/dev/null | while read dev iface; do echo -n " -i $dev"; done)
-	service_start $DAEMON -g ff02::2:1001 -p 1001 -d /lib/gluon/respondd $DEVS
+	local meshdevs=$(for dev in $(echo "$ifdump" | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"); do echo " -i $dev";done;)
+	local clientdevs=$(for dev in $(echo "$ifdump" | jsonfilter -e "@.interface[@.interface='$(cat /lib/gluon/respondd/client.dev 2>/dev/null)' && @.up=true].device"); do echo " -i $dev -t $MAXDELAY";done;)
+
+	procd_open_instance
+	procd_set_param command $DAEMON -d /usr/lib/respondd -p 1001 -g ff02::2:1001 $meshdevs $clientdevs -g ff05::2:1001 $clientdevs
+	procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
+	procd_set_param stderr 1
+	procd_close_instance
 }
 
-do_stop() {
-	service_stop $DAEMON
-}
+service_triggers() {
+	local script=$(readlink "$initscript")
+	local name=$(basename ${script:-$initscript})
 
-start() {
-	lock $LOCK
-	do_start
-	lock -u $LOCK
-}
-
-stop() {
-	lock $LOCK
-	do_stop
-	lock -u $LOCK
-}
-
-restart_if_running() {
-	lock $LOCK
-
-	if service_check $DAEMON; then
-		do_stop
-		do_start
-	fi
-
-	lock -u $LOCK
+	procd_open_trigger
+	procd_add_raw_trigger "interface.*" 0 "/etc/init.d/$name" reload
+	procd_close_trigger
 }

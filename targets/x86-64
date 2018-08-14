@@ -1,0 +1,6 @@
+. targets/x86.inc
+
+factory_image x86-64 combined-ext4 .img.gz
+factory_image x86-64 combined-ext4 .vdi
+factory_image x86-64 combined-ext4 .vmdk
+sysupgrade_image x86-64 combined-ext4 .img.gz

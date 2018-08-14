@@ -1,0 +1,4 @@
+device raspberry-pi rpi
+manifest_alias raspberry-pi-model-b-rev-2
+factory -ext4-sdcard .img.gz
+sysupgrade -ext4-sdcard .img.gz

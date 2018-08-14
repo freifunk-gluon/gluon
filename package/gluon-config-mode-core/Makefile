@@ -6,35 +6,20 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=gluon-config-mode-core
 PKG_VERSION:=2
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
-include $(GLUONDIR)/include/package.mk
-
-PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
-
+include ../gluon.mk
 
 define Package/gluon-config-mode-core
-  SECTION:=gluon
-  CATEGORY:=Gluon
-  TITLE:=Luci based config mode for user friendly setup of new mesh nodes
-  DEPENDS:=gluon-setup-mode-virtual +gluon-luci-theme +gluon-lock-password $(GLUON_I18N_PACKAGES)
-  PROVIDES:=gluon-config-mode-core-virtual
-endef
-
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-	$(call GluonBuildI18N,gluon-config-mode-core,i18n)
+  TITLE:=Configuration wizard for user friendly setup of new mesh nodes
+  DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-config-mode-theme +uhttpd
 endef
 
 define Package/gluon-config-mode-core/install
-	$(CP) ./files/* $(1)/
-	$(call GluonInstallI18N,gluon-config-mode-core,$(1))
+	$(Gluon/Build/Install)
+
+	$(INSTALL_DIR) $(1)/lib/gluon/config-mode/view/ $(1)/lib/gluon/config-mode/www/static/
+	$(LN) /lib/gluon/web/i18n $(1)/lib/gluon/config-mode/
+	$(LN) /lib/gluon/web/view/{error,model} $(1)/lib/gluon/config-mode/view/
+	$(LN) /lib/gluon/web/www/static/gluon-web-model.js $(1)/lib/gluon/config-mode/www/static/
 endef
 
-$(eval $(call BuildPackage,gluon-config-mode-core))
+$(eval $(call BuildPackageGluon,gluon-config-mode-core))

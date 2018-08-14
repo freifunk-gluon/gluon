@@ -4,33 +4,25 @@ PKG_NAME:=gluon-ebtables
 PKG_VERSION:=1
 PKG_RELEASE:=1
 
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_SPECIALIZE_KERNEL
 
-include $(INCLUDE_DIR)/package.mk
+include ../gluon.mk
 
 define Package/gluon-ebtables
-  SECTION:=gluon
-  CATEGORY:=Gluon
   TITLE:=Ebtables support
-  DEPENDS:=+gluon-core +ebtables +kmod-ebtables-ipv4 +kmod-ebtables-ipv6 +kmod-ipt-core
+  DEPENDS:=+gluon-core +ebtables-tiny \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_T_FILTER \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_T_NAT \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_ARP \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_IP \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_IP6 \
+	+!GLUON_SPECIALIZE_KERNEL:kmod-ebtables \
+	+!GLUON_SPECIALIZE_KERNEL:kmod-ebtables-ipv4 \
+	+!GLUON_SPECIALIZE_KERNEL:kmod-ebtables-ipv6
 endef
 
 define Package/gluon-ebtables/description
 	Gluon community wifi mesh firmware framework: ebtables support
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/gluon-ebtables/install
-	$(CP) ./files/* $(1)/
-endef
-
-$(eval $(call BuildPackage,gluon-ebtables))
+$(eval $(call BuildPackageGluon,gluon-ebtables))

@@ -1,0 +1,13 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+
+if #site.ntp_servers({}) == 0 then
+	os.exit(0)
+end
+
+
+local uci = require('simple-uci').cursor()
+uci:delete('system', 'ntp', 'server')
+uci:set_list('system', 'ntp', 'server', site.ntp_servers({}))
+uci:save('system')

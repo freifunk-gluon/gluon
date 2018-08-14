@@ -29,12 +29,14 @@
 #include <json-c/json.h>
 #include <libgluonutil.h>
 #include <libplatforminfo.h>
+#include <uci.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
+#include <inttypes.h>
 
-#include <sys/utsname.h>
 #include <sys/vfs.h>
 
 
@@ -66,13 +68,36 @@ static struct json_object * get_site_code(void) {
 	return ret;
 }
 
+static struct json_object * get_domain_code(void) {
+	return gluonutil_wrap_and_free_string(gluonutil_get_domain());
+}
+
 static struct json_object * get_hostname(void) {
-	struct utsname utsname;
+	struct json_object *ret = NULL;
 
-	if (uname(&utsname))
+	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
 		return NULL;
+	ctx->flags &= ~UCI_FLAG_STRICT;
 
-	return gluonutil_wrap_string(utsname.nodename);
+	char section[] = "system.@system[0]";
+	struct uci_ptr ptr;
+	if (uci_lookup_ptr(ctx, &ptr, section, true))
+		goto error;
+
+	struct uci_section *s = ptr.s;
+
+	const char *hostname = uci_lookup_option_string(ctx, s, "pretty_hostname");
+
+	if (!hostname)
+		hostname = uci_lookup_option_string(ctx, s, "hostname");
+
+	ret = gluonutil_wrap_string(hostname);
+
+error:
+	uci_free_context(ctx);
+
+	return ret;
 }
 
 static struct json_object * respondd_provider_nodeinfo(void) {
@@ -82,7 +107,11 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 	json_object_object_add(ret, "hostname", get_hostname());
 
 	struct json_object *hardware = json_object_new_object();
-	json_object_object_add(hardware, "model", json_object_new_string(platforminfo_get_model()));
+
+	const char *model = platforminfo_get_model();
+	if (model)
+		json_object_object_add(hardware, "model", json_object_new_string(model));
+
 	json_object_object_add(hardware, "nproc", json_object_new_int(sysconf(_SC_NPROCESSORS_ONLN)));
 	json_object_object_add(ret, "hardware", hardware);
 
@@ -99,6 +128,8 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 	struct json_object *system = json_object_new_object();
 	json_object_object_add(system, "site_code", get_site_code());
+	if (gluonutil_has_domains())
+		json_object_object_add(system, "domain_code", get_domain_code());
 	json_object_object_add(ret, "system", system);
 
 	return ret;
@@ -178,6 +209,82 @@ static struct json_object * get_memory(void) {
 	return ret;
 }
 
+static struct json_object * get_stat(void) {
+	FILE *f = fopen("/proc/stat", "r");
+	if (!f)
+		return NULL;
+
+	struct json_object *stat = json_object_new_object();
+	struct json_object *ret = NULL;
+
+	char *line = NULL;
+	size_t len = 0;
+
+	while (getline(&line, &len, f) >= 0) {
+		char label[32];
+
+		if (sscanf(line, "%31s", label) != 1){
+			goto invalid_stat_format;
+		}
+
+		if (!strcmp(label, "cpu")) {
+			unsigned long long user, nice, system, idle, iowait, irq, softirq;
+			if (sscanf(line, "%*s %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64,
+			          &user, &nice, &system, &idle, &iowait, &irq, &softirq) != 7)
+				goto invalid_stat_format;
+
+			struct json_object *cpu = json_object_new_object();
+
+			json_object_object_add(cpu, "user", json_object_new_int64(user));
+			json_object_object_add(cpu, "nice", json_object_new_int64(nice));
+			json_object_object_add(cpu, "system", json_object_new_int64(system));
+			json_object_object_add(cpu, "idle", json_object_new_int64(idle));
+			json_object_object_add(cpu, "iowait", json_object_new_int64(iowait));
+			json_object_object_add(cpu, "irq", json_object_new_int64(irq));
+			json_object_object_add(cpu, "softirq", json_object_new_int64(softirq));
+
+			json_object_object_add(stat, "cpu", cpu);
+		} else if (!strcmp(label, "ctxt")) {
+			unsigned long long ctxt;
+			if (sscanf(line, "%*s %"SCNu64, &ctxt) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "ctxt", json_object_new_int64(ctxt));
+		} else if (!strcmp(label, "intr")) {
+			unsigned long long total_intr;
+			if (sscanf(line, "%*s %"SCNu64, &total_intr) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "intr", json_object_new_int64(total_intr));
+		} else if (!strcmp(label, "softirq")) {
+			unsigned long long total_softirq;
+			if (sscanf(line, "%*s %"SCNu64, &total_softirq) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "softirq", json_object_new_int64(total_softirq));
+		} else if (!strcmp(label, "processes")) {
+			unsigned long long processes;
+			if (sscanf(line, "%*s %"SCNu64, &processes) != 1)
+				goto invalid_stat_format;
+
+			json_object_object_add(stat, "processes", json_object_new_int64(processes));
+		}
+
+	}
+
+	ret = stat;
+
+invalid_stat_format:
+	if (!ret)
+		json_object_put(stat);
+
+	free(line);
+	fclose(f);
+
+	return ret;
+}
+
+
 static struct json_object * get_rootfs_usage(void) {
 	struct statfs s;
 	if (statfs("/", &s))
@@ -188,13 +295,27 @@ static struct json_object * get_rootfs_usage(void) {
 	return jso;
 }
 
+static struct json_object * get_time(void) {
+	struct timespec now;
+
+	if (clock_gettime(CLOCK_REALTIME, &now) != 0)
+		return NULL;
+
+	return json_object_new_int64(now.tv_sec);
+}
+
 static struct json_object * respondd_provider_statistics(void) {
 	struct json_object *ret = json_object_new_object();
 
 	json_object_object_add(ret, "node_id", gluonutil_wrap_and_free_string(gluonutil_get_node_id()));
 
+	json_object *time = get_time();
+	if (time != NULL)
+		json_object_object_add(ret, "time", time);
+
 	json_object_object_add(ret, "rootfs_usage", get_rootfs_usage());
 	json_object_object_add(ret, "memory", get_memory());
+	json_object_object_add(ret, "stat", get_stat());
 
 	add_uptime(ret);
 	add_loadavg(ret);

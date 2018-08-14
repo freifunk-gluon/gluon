@@ -1,0 +1,13 @@
+#!/bin/sh
+
+badrequest() {
+        echo 'Status: 400 Bad Request'
+        echo
+        exit 1
+}
+
+( gluon-list-mesh-interfaces | grep -qxF "$QUERY_STRING" ) 2>/dev/null || badrequest
+
+CMD="exec /lib/gluon/status-page/providers/stations '$QUERY_STRING'"
+
+exec sse-multiplex "$CMD"
