@@ -1,8 +1,13 @@
 Models
 ======
 
-Models are defined in ``/lib/gluon/web/model``. Each model defines one or more
-forms to display on a page, and how the submitted form data is handled.
+Models are defined in the ``model`` subdirectory of a gluon-web application
+(``/lib/gluon/config-mode/model`` for the config mode; the status
+page does not use any models). Model support is not part of the gluon-web core
+anymore, but is provided by the *gluon-web-model* package.
+
+Each model defines one or more forms to display on a page, and how the submitted
+form data is handled.
 
 Let's start with an example:
 

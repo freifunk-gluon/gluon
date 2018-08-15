@@ -1,8 +1,11 @@
 Views
 =====
 
-The template parser reads views from ``/lib/gluon/web/view``. Writing own view
-should be avoided in favour of using :doc:`model` with their predefined views.
+The template parser reads views from the ``view`` subdirectory of a
+gluon-web application (``/lib/gluon/config-mode/view`` for the config mode,
+``lib/gluon/status-page/view`` for the status page).
+Writing own views should usually be avoided in favour of using :doc:`model`
+with their predefined views.
 
 Views are partial HTML pages, with additional template tags that allow
 to embed Lua code and translation strings. The following tags are defined:

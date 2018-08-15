@@ -1,8 +1,10 @@
 Controllers
 ===========
 
-Controllers live in ``/lib/gluon/web/controller``. They define which pages ("routes")
-exist under the ``/cgi-bin/gluon`` path, and what code is run when these pages are requested.
+Controllers live in the ``controller`` subdirectory of a gluon-web application
+(``/lib/gluon/config-mode/controller`` for the config mode,
+``/lib/gluon/status-page/controller`` for the status page). They define which pages ("routes")
+exist under the application base URL, and what code is run when these pages are requested.
 
 Controller scripts usually start with a *package* declaration, followed by calls
 to the *entry* function, which each define one route:
