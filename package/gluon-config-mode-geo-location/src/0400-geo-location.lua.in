@@ -128,21 +128,15 @@ return function(form, uci)
 			uci:set("gluon-node-info", location, "latitude", latitude.data)
 			uci:set("gluon-node-info", location, "longitude", longitude.data)
 			if show_altitude() then
-				if altitude.data then
-					uci:set("gluon-node-info", location, "altitude", altitude.data)
-				else
-					uci:delete("gluon-node-info", location, "altitude")
-				end
+				uci:set("gluon-node-info", location, "altitude", altitude.data)
 			end
 		end
 		if data == "none" then
 			uci:delete("gluon-node-info", location, "altitude")
 			uci:delete("gluon-node-info", location, "latitude")
 			uci:delete("gluon-node-info", location, "longitude")
-			uci:set("gluon-node-info", location, "share_location", 0)
-		else
-			uci:set("gluon-node-info", location, "share_location", share_location.data)
 		end
+		uci:set("gluon-node-info", location, "share_location", share_location.data)
 	end
 	return {'gluon-node-info'}
 end
