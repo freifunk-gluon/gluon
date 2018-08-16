@@ -1,0 +1,142 @@
+return function(form, uci)
+	local pkg_i18n = i18n 'gluon-config-mode-geo-location'
+	local site_i18n = i18n 'gluon-site'
+
+	local site = require 'gluon.site'
+
+	local location = uci:get_first("gluon-node-info", "location")
+	local uci_latitude = uci:get("gluon-node-info", location, "latitude")
+	local uci_longitude = uci:get("gluon-node-info", location, "longitude")
+
+#ifdef WITHMAP
+
+	local function show_lon()
+	  	if uci_longitude ~= nil then
+			return uci_longitude
+		end
+		return site.config_mode.geo_location.map.lon(0)
+	end
+
+	local function show_lat()
+	  	if uci_latitude ~= nil then
+			return uci_latitude
+		end
+		return site.config_mode.geo_location.map.lat(0)
+	end
+
+	local function site_zoom()
+		if uci_longitude ~= nil and uci_latitude ~= nil then
+			return 18
+		end
+		return site.config_mode.geo_location.map.zoom(12)
+	end
+
+	local function show_olurl()
+		return site.config_mode.geo_location.map.openlayers_js_url('https://openlayers.org/api/OpenLayers.js')
+	end
+
+#endif
+
+	-- show altitude if site.json returns true or nil and uci an value. Don't show if site.json returns false or uci nil!
+	local function show_altitude()
+		return site.config_mode.geo_location.show_altitude(uci:get("gluon-node-info", location, "altitude") ~= nil)
+	end
+
+	local text = site_i18n._translate("gluon-config-mode:geo-location-help") or pkg_i18n.translate(
+		'If you want the location of your node to be displayed on the map, you may ' ..
+		'enter its coordinates here. ' ..
+
+#ifdef WITHMAP
+
+		'If your PC is connected to the internet you may also select your position on the map displayed below. ' ..
+
+#endif
+
+		'Please keep in mind setting a location can also enhance the network quality.'
+	)
+
+	if show_altitude() then
+		text = text .. ' ' .. site_i18n.translate("gluon-config-mode:altitude-help")
+	end
+
+#ifdef WITHMAP
+
+	text = text .. [[
+		</div>
+			<div id="locationPickerMap" style="position:relative; width:100%; height:400px; margin-bottom:20px !important; display:none; border:1px solid #ccc">
+				<div target="_blank" style="position:absolute; left:5px; bottom:5px; z-index:1000; color:#aaa; outline: 0">
+				© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors
+			</div>
+		</div>
+		<script type="text/javascript" src="/static/osm.js"></script>
+		<script type="text/javascript">
+			var latitude=]] .. show_lon() .. ",longitude=" .. show_lat() .. ",zoom=" .. site_zoom() .. [[;
+			var openLayerSrc = document.createElement("script");
+			openLayerSrc.type = 'text/javascript';
+			openLayerSrc.src = "]] .. show_olurl() .. [[?noCache=]] .. os.time() .. [[";
+			openLayerSrc.onload = openLayerSrc.onreadystatechange = function () {
+				window.addEventListener("load", showMap, false);
+				var lpm=document.getElementById("locationPickerMap");
+				setInterval(function() {
+					!1 !== findObj("longitude") ? lpm.style.display = "block" : lpm.style.display = "none";
+				}, 100);
+			};
+			document.head.appendChild(openLayerSrc);
+		</script>
+		<div>
+	]]
+
+#endif
+
+	local s = form:section(Section, nil, text)
+
+	local uci_share_location = uci:get_bool("gluon-node-info", location, "share_location")
+
+	local geolocation = s:option(ListValue, "geolocation", pkg_i18n.translate("Geo-Location"))
+	geolocation:value("static", pkg_i18n.translate("Static location"))
+	geolocation:value("none", pkg_i18n.translate("Disabled"))
+	if uci_latitude == nil and uci_longitude == nil and uci_share_location == false then
+		geolocation.default = "none"
+	else
+		geolocation.default = "static"
+	end
+
+	local share_location = s:option(Flag, "sharelocation", pkg_i18n.translate("Share your location to see your router on the map"))
+	share_location.default = uci_share_location
+	share_location:depends(geolocation, "static")
+
+	local latitude = s:option(Value, "latitude", pkg_i18n.translate("Latitude"), pkg_i18n.translatef("e.g. %s", "50.364931"))
+	latitude.default = uci_latitude
+	latitude:depends(geolocation, "static")
+	latitude.datatype = "float"
+
+	local longitude = s:option(Value, "longitude", pkg_i18n.translate("Longitude"), pkg_i18n.translatef("e.g. %s", "7.606417"))
+	longitude.default = uci_longitude
+	longitude:depends(geolocation, "static")
+	longitude.datatype = "float"
+
+	local altitude;
+	if show_altitude() then
+		altitude = s:option(Value, "altitude", site_i18n.translate("gluon-config-mode:altitude-label"), pkg_i18n.translatef("e.g. %s", "11.51"))
+		altitude.default = uci:get("gluon-node-info", location, "altitude")
+		altitude:depends(geolocation, "static")
+		altitude.datatype = "float"
+		altitude.optional = true
+	end
+	function geolocation:write(data)
+		if data == "static" then
+			uci:set("gluon-node-info", location, "latitude", latitude.data)
+			uci:set("gluon-node-info", location, "longitude", longitude.data)
+			if show_altitude() then
+				uci:set("gluon-node-info", location, "altitude", altitude.data)
+			end
+		end
+		if data == "none" then
+			uci:delete("gluon-node-info", location, "altitude")
+			uci:delete("gluon-node-info", location, "latitude")
+			uci:delete("gluon-node-info", location, "longitude")
+		end
+		uci:set("gluon-node-info", location, "share_location", share_location.data)
+	end
+	return {'gluon-node-info'}
+end

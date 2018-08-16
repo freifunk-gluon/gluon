@@ -1,0 +1,53 @@
+msgid ""
+msgstr ""
+#ifdef WITHMAP
+"Project-Id-Version: gluon-config-mode-geo-location-with-map\n"
+#else
+"Project-Id-Version: gluon-config-mode-geo-location\n"
+#endif
+"PO-Revision-Date: 2017-08-22 12:14+0100\n"
+"Last-Translator: Jan-Tarek Butt <tarek@ring0.de>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+\n
+msgid ""
+"If you want the location of your node to be displayed on the map, you may "
+"enter its coordinates here. "
+#ifdef WITHMAP
+"If your PC is connected to the internet you may also select your position on the map displayed below. "
+#endif
+"Please keep in mind setting a location can also enhance the network quality."
+msgstr ""
+"Um deinen Router auf der Karte anzeigen zu können, benötigen wir seine "
+"Koordinaten. Hier hast du die Möglichkeit, "
+"die Koordinaten von Hand einzutragen."
+#ifdef WITHMAP
+"Wenn dein Computer mit dem du den Router einrichtest eine Internetverbindung hat, "
+"hast du die Möglichkeit die Position des Routers auf der Karte auszuwählen."
+#endif
+"Bitte berücksichtige, dass das Setzen einer Position die Netzwerkqualität verbessern kann."
+\n
+msgid "Geo-Location"
+msgstr "Geo-Position"
+\n
+msgid "Static location"
+msgstr "Manuelle Position"
+\n
+msgid "Disabled"
+msgstr "Deaktiviert"
+\n
+msgid "Share your location to see your router on the map"
+msgstr "Position für die Karte freigeben"
+\n
+msgid "Latitude"
+msgstr "Breitengrad"
+\n
+msgid "Longitude"
+msgstr "Längengrad"
+\n
+msgid "e.g. %s"
+msgstr "z.B. %s"
