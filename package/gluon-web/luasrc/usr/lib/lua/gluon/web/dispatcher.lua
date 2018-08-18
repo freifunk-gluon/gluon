@@ -87,6 +87,7 @@ local function dispatch(config, http, request)
 		pcdata      = util.pcdata,
 		urlencode   = proto.urlencode,
 		attr        = attr,
+		json        = json.stringify,
 		url         = function(path) return build_url(http, path) end,
 	}, { __index = _G }))
 
