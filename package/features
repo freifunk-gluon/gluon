@@ -9,7 +9,7 @@ packages 'web-wizard' \
 packages 'web-wizard & autoupdater' \
 	'gluon-config-mode-autoupdater'
 
-packages 'web-wizard & (mesh-vpn-fastd | mesh-vpn-tunneldigger)' \
+packages 'web-wizard & (mesh-vpn-fastd | mesh-vpn-tunneldigger | mesh-vpn-wireguard)' \
 	'gluon-config-mode-mesh-vpn'
 
 

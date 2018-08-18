@@ -1,0 +1,19 @@
+#!/bin/sh
+
+get_down_wg_backbone_interfaces() {
+	ubus -S call network.interface dump | jsonfilter -e '@.interface[@.up=false && @.proto="gluon_wireguard"].interface'
+}
+
+is_wan_up() {
+	ubus -S call network.interface dump | jsonfilter -e  '@.interface[@.up=true && @.interface="wan"].up'
+}
+
+if is_wan_up >/dev/null; then
+	if [[ $(uci get gluon.mesh_vpn.enabled) == "1" ]]; then
+		for i in $(get_down_wg_backbone_interfaces)
+		do
+			ifup "$i"
+		done
+	fi
+fi
+

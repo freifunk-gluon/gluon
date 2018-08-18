@@ -18,6 +18,13 @@
 			pubkey = nil
 		end
 	end
+	local wg_meshvpn_enabled = uci:get_bool("wireguard", "mesh_vpn_backbone", "enabled")
+	if wg_meshvpn_enabled then
+		pubkey = util.trim(util.exec('/usr/bin/wg pubkey < $(uci get wireguard.mesh_vpn.secret)'))
+		if pubkey == '' then
+			pubkey = nil
+		end
+	end
 
 	local values = {
 		{ _('Hostname'), pretty_hostname.get(uci) },

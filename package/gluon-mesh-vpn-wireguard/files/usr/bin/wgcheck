@@ -1,0 +1,40 @@
+#!/bin/sh
+
+curtime=$(date +%s)
+
+get_wg_interfaces() {
+	ubus -S call network.interface dump | jsonfilter -e '@.interface[@.up=true && @.proto="gluon_wireguard"].l3_device'
+}
+
+get_connection_count() {
+	ubus -S call network.interface dump | jsonfilter -e '@.interface[@.up=true && @.proto="gluon_wireguard" && @].l3_device' | wc -l
+}
+
+get_interface_from_ifname() {
+	ubus -S call network.interface dump | jsonfilter -e "@.interface[@.proto=\"gluon_wireguard\" && @.l3_device=\"$1\"].interface"
+}
+
+# purge wg interface that have terminated
+for i in $(get_wg_interfaces)
+do
+	line=$(wg show "$i" latest-handshakes)
+	if [[ -n "${line}" ]]; then
+		latest=$(echo "${line}"| awk '{print $2}')
+		diff=$((curtime-latest))
+		if [[ $diff -gt 600 ]]; then
+			ifdown "$(get_interface_from_ifname "${i}")"
+		fi
+	else
+		ifdown "$(get_interface_from_ifname "${i}")"
+	fi
+done
+
+# in case less than our peer-limit connections is "up", start all wg interfaces that are currently down
+if [[ "$(uci get gluon.mesh_vpn.enabled)" == "1" ]] &&
+   [[ $(get_connection_count) -lt $(gluon-show-site |jsonfilter -e $.mesh_vpn.wireguard.groups.backbone.limit) ]]; then
+	if [[ $(get_connection_count) -gt 0 ]]; then
+		# it is ok to wait for a backup vpn connection. This sleep spreads the load for the servers
+		sleep "$(awk 'BEGIN{srand();print int(rand()*180)}')"
+	fi
+	/usr/bin/enable-all-wg-interfaces
+fi

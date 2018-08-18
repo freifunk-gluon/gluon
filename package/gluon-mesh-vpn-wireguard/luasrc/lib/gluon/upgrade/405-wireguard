@@ -1,0 +1,61 @@
+#!/usr/bin/lua
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+local iputil = require 'gluon.iputil'
+local sysconfig = require 'gluon.sysconfig'
+
+local add_groups
+
+local function generate_section_name(peer)
+	return "mesh_vpn_wg_" .. peer
+end
+
+local function generate_wg_iface_name(peer)
+	return "mesh-vpn-" .. peer
+end
+
+local function add_peer(name, count)
+	local ip = iputil.mac_to_ip("fe80::/64", sysconfig.primary_mac, 0x00, count)
+
+	uci:section('network', 'interface', generate_section_name(name) .. 'm', {
+		type = 'wireguard',
+		ifname = generate_wg_iface_name(count),
+		proto = 'gluon_mesh',
+	})
+
+	uci:section('network', 'interface', generate_section_name(name) .. 's', {
+		ip6addr = ip,
+		ifname = generate_wg_iface_name(count),
+		proto = 'static',
+	})
+
+	uci:section('network', 'interface', generate_section_name(name) .. 'w', {
+		ifname = generate_wg_iface_name(count),
+		proto = 'gluon_wireguard',
+	})
+end
+
+local function add_group(name, config)
+	local count=0
+	if config.peers then
+		for peername, _ in pairs(config.peers) do
+			add_peer(peername, count)
+			count = count + 1
+		end
+	end
+
+	add_groups(name, config.groups)
+end
+
+-- declared local above
+function add_groups(prefix, groups)
+	if groups then
+		for name, group in pairs(groups) do
+			add_group(prefix .. '_' .. name, group)
+		end
+	end
+end
+
+add_groups('mesh_vpn', site.mesh_vpn.wireguard.groups())
+
+uci:save('network')

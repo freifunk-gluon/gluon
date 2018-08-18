@@ -1,0 +1,7 @@
+#!/bin/sh
+touch /etc/config/gluon_mesh_vpn_wireguard
+uci set gluon_mesh_vpn_wireguard.mesh_vpn="backbone"
+
+if ! uci get gluon_mesh_vpn_wireguard.mesh_vpn.secret 2>/dev/null| wg pubkey 2>/dev/null; then
+	uci set gluon_mesh_vpn_wireguard.mesh_vpn.secret="generate"
+fi

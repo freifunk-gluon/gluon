@@ -1,0 +1,61 @@
+#!/bin/sh
+
+timeout=10
+run_broker() {
+	local interface="$1"
+	local pubkey="$2"
+	local remote="$3"
+	local brokerport="$4"
+	local port
+	local interval=5
+
+	localtime=$(date +%s)
+
+	# sleeping on stdin keeps the sockets open in nc, allowing us to receive a
+	# reply. Unfortunately this means all requests take $timeout seconds even
+	# if the server is faster
+	peer_reply="$( { echo '{"version":1, "pubkey":"'"$pubkey"'"}'; sleep $timeout; } | gluon-wan timeout $timeout nc "$remote" "$brokerport" | tail -n1)"
+
+	if [[ "x$peer_reply" != "x" ]]; then
+		port=$(jsonfilter -s "$peer_reply" -e "@.port")
+		peer_time=$(jsonfilter -s "$peer_reply" -e "@.time")
+
+		difference=0
+		if [[ $peer_time -gt $localtime ]]; then
+			difference=$((peer_time - localtime))
+		else
+			difference=$((localtime - peer_time))
+		fi
+
+		if [[ "x$peer_time" != "x" && $difference -gt 240 ]]; then
+			# local clock differs a lot from the peer clock.
+			# assuming ntp is working only when a tunnel is established we need to
+			# set the clock to something in the proximity of the correct time.
+			# Let's assume peer_time for now. ntpd will handle the rest
+			formatted_time=$(date -d "@$peer_time" +%Y%m%d%H%M.%S)
+			date -s "$formatted_time" >/dev/null
+		fi
+
+		if [[ -z $port ]]; then
+			error=$(jsonfilter -s "$peer_reply" -e "@.error")
+			if [[ -n $error ]]; then
+				reason=$(jsonfilter -s "$peer_reply" -e "@.error.reason")
+				ecode=$(jsonfilter -s "$peer_reply" -e "@.error.code")
+				echo "received error [$ecode] from host $remote: $reason" >&2
+
+				if [[ "$ecode" == "1" ]]; then
+					echo FULL
+					return 1
+				fi
+			fi
+		fi
+		echo "$port"
+		return 0
+	else
+		echo "Received no reply from peer $remote" >&2
+		echo "ERROR"
+		return 255
+	fi
+}
+
+run_broker "$1" "$2" "$3" "$4"
