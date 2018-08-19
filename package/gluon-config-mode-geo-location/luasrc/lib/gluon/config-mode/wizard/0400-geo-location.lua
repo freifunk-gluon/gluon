@@ -8,12 +8,18 @@ return function(form, uci)
 
 	local show_altitude = site.config_mode.geo_location.show_altitude(false)
 
-	local text = site_i18n._translate("gluon-config-mode:geo-location-help") or pkg_i18n.translate(
-		'If you want the location of your node to ' ..
-		'be displayed on the map, you can enter its coordinates here.'
-	)
-	if show_altitude then
-		text = text .. ' ' .. site_i18n.translate("gluon-config-mode:altitude-help")
+	local text = site_i18n._translate("gluon-config-mode:geo-location-help")
+	if not text then
+		text = pkg_i18n.translate(
+			'If you want the location of your node to ' ..
+			'be displayed on the map, you can enter its coordinates here.'
+		)
+		if show_altitude then
+			text = text .. ' ' .. pkg_i18n.translate(
+				'Specifying the altitude is optional; it should only be filled in if a accurate ' ..
+				'value is known.'
+			)
+		end
 	end
 
 	local s = form:section(Section, nil, text)
@@ -48,7 +54,10 @@ return function(form, uci)
 	end
 
 	if show_altitude then
-		o = s:option(Value, "altitude", site_i18n.translate("gluon-config-mode:altitude-label"), pkg_i18n.translatef("e.g. %s", "11.51"))
+		o = s:option(Value, "altitude",
+			site_i18n._translate("gluon-config-mode:altitude-label") or pkg_i18n.translate("Altitude"),
+			pkg_i18n.translatef("e.g. %s", "11.51")
+		)
 		o.default = uci:get("gluon-node-info", location, "altitude")
 		o:depends(share_location, true)
 		o.datatype = "float"

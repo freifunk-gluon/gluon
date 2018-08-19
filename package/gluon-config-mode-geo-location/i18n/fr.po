@@ -1,14 +1,17 @@
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "PO-Revision-Date: 2015-08-12 23:30+0100\n"
 "Last-Translator:Tobias Bernot <tqbs@airmail.cc>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Altitude"
+msgstr "Hauteur"
 
 msgid ""
 "If you want the location of your node to be displayed on the map, you can "
@@ -25,6 +28,13 @@ msgstr "Longitude"
 
 msgid "Show node on the map"
 msgstr "Afficher le nœud sur la carte"
+
+msgid ""
+"Specifying the altitude is optional; it should only be filled in if a "
+"accurate value is known."
+msgstr ""
+"La altitude est optionelle et ne devrait que être ajoutée si la valeur "
+"exacte est connue."
 
 msgid "e.g. %s"
 msgstr "Ex: %s"

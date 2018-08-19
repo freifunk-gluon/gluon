@@ -60,14 +60,6 @@ msgstr ""
 "Mode neustarten.</p>"
 "<p>Viel Spaß mit deinem Knoten und der Erkundung von Freifunk!</p>"
 
-msgid "gluon-config-mode:altitude-label"
-msgstr "Höhe"
-
-msgid "gluon-config-mode:altitude-help"
-msgstr ""
-"Die Höhenangabe ist optional und sollte nur gesetzt werden, wenn ein "
-"exakter Wert bekannt ist."
-
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-hostname/i18n/
 msgid "gluon-config-mode:hostname-help"
@@ -76,6 +68,9 @@ msgstr ""
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-geo-location/i18n/
 msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+msgid "gluon-config-mode:altitude-label"
 msgstr ""
 
 # Leave empty to use the default text, which can be found in:

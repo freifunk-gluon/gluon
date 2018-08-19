@@ -10,6 +10,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Altitude"
+msgstr "Höhe"
+
 msgid ""
 "If you want the location of your node to be displayed on the map, you can "
 "enter its coordinates here."
@@ -25,6 +28,13 @@ msgstr "Längengrad"
 
 msgid "Show node on the map"
 msgstr "Knoten auf der Karte anzeigen"
+
+msgid ""
+"Specifying the altitude is optional; it should only be filled in if a "
+"accurate value is known."
+msgstr ""
+"Die Höhenangabe ist optional und sollte nur gesetzt werden, wenn ein "
+"exakter Wert bekannt ist."
 
 msgid "e.g. %s"
 msgstr "z.B. %s"

@@ -55,14 +55,6 @@ msgstr ""
 "mode.</p>"
 "<p>Have fun with your node and exploring of the Freifunk network!</p>"
 
-msgid "gluon-config-mode:altitude-label"
-msgstr "Altitude"
-
-msgid "gluon-config-mode:altitude-help"
-msgstr ""
-"Specifying the altitude is optional and should only be done if a proper "
-"value is known."
-
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-hostname/i18n/
 msgid "gluon-config-mode:hostname-help"
@@ -71,6 +63,9 @@ msgstr ""
 # Leave empty to use the default text, which can be found in:
 # package/gluon-config-mode-geo-location/i18n/
 msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+msgid "gluon-config-mode:altitude-label"
 msgstr ""
 
 # Leave empty to use the default text, which can be found in:

@@ -403,10 +403,9 @@ config_mode \: optional
     and the node's primary MAC address is assigned. Manually setting a hostname
     can be enforced by setting *hostname.optional* to *false*.
 
-    By default, no altitude fields are shown by the *gluon-config-mode-geo-location*
-    package. If *geo_location.show_altitude* is set to *true*, the *gluon-config-mode:altitude-label*
-    and *gluon-config-mode:altitude-help* strings must be provided in the site i18n
-    data as well.
+    By default, no altitude field is shown by the *gluon-config-mode-geo-location*
+    package. Set *geo_location.show_altitude* to *true* if you want the altitude
+    field to be visible.
 
     The remote login page only shows SSH key configuration by default. A
     password form can be displayed by setting *remote_login.show_password_form*
@@ -580,12 +579,6 @@ gluon-config-mode:pubkey
 gluon-config-mode:novpn
     Information shown on the reboot page, if the mesh VPN was not selected.
 
-gluon-config-mode:altitude-label
-    Label for the ``altitude`` field
-
-gluon-config-mode:altitude-help
-    Description for the usage of the ``altitude`` field
-
 gluon-config-mode:contact-help
     Description for the usage of the ``contact`` field
 
@@ -596,7 +589,10 @@ gluon-config-mode:hostname-help
     Description for the usage of the ``hostname`` field
 
 gluon-config-mode:geo-location-help
-    Description for the usage of the longitude/latitude fields
+    Description for the usage of the longitude/latitude fields (and altitude, if shown)
+
+gluon-config-mode:altitude-label
+    Label for the ``altitude`` field
 
 gluon-config-mode:reboot
     General information shown on the reboot page.
