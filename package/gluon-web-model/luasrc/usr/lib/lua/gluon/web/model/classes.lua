@@ -171,7 +171,6 @@ Section = class(Node)
 
 function Section:__init__(...)
 	Node.__init__(self, ...)
-	self.fields = {}
 	self.template = "model/section"
 end
 
@@ -180,7 +179,6 @@ function Section:option(t, option, title, description, ...)
 
 	local obj  = t(title, description, option, ...)
 	self:append(obj)
-	self.fields[option] = obj
 	return obj
 end
 
