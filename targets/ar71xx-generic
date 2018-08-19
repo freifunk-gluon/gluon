@@ -36,6 +36,7 @@ factory
 # AVM
 device avm-fritz-box-4020 fritz4020 fritz4020
 factory
+extra_image -squashfs-eva -bootloader .bin
 
 # Buffalo
 
