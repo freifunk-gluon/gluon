@@ -4,6 +4,9 @@ return function(form, uci)
 
 	local site = require 'gluon.site'
 
+	local osm
+	pcall(function() osm = require 'gluon.config-mode.geo-location-osm' end)
+
 	local location = uci:get_first("gluon-node-info", "location")
 
 	local show_altitude = site.config_mode.geo_location.show_altitude(false)
@@ -14,6 +17,9 @@ return function(form, uci)
 			'If you want the location of your node to ' ..
 			'be displayed on the map, you can enter its coordinates here.'
 		)
+		if osm then
+			text = text .. ' ' .. osm.help(i18n)
+		end
 		if show_altitude then
 			text = text .. ' ' .. pkg_i18n.translate(
 				'Specifying the altitude is optional; it should only be filled in if an accurate ' ..
@@ -26,7 +32,7 @@ return function(form, uci)
 
 	local o
 
-	local share_location = s:option(Flag, "location", pkg_i18n.translate("Show node on the map"))
+	local share_location = s:option(Flag, "location", pkg_i18n.translate("Advertise node position"))
 	share_location.default = uci:get_bool("gluon-node-info", location, "share_location")
 	function share_location:write(data)
 		uci:set("gluon-node-info", location, "share_location", data)
@@ -37,6 +43,12 @@ return function(form, uci)
 		end
 	end
 
+	local map = {}
+	if osm then
+		map = s:option(osm.MapValue, "map", osm.options())
+		map:depends(share_location, true)
+	end
+
 	o = s:option(Value, "latitude", pkg_i18n.translate("Latitude"), pkg_i18n.translatef("e.g. %s", "53.873621"))
 	o.default = uci:get("gluon-node-info", location, "latitude")
 	o:depends(share_location, true)
@@ -44,6 +56,7 @@ return function(form, uci)
 	function o:write(data)
 		uci:set("gluon-node-info", location, "latitude", data)
 	end
+	map.lat = o
 
 	o = s:option(Value, "longitude", pkg_i18n.translate("Longitude"), pkg_i18n.translatef("e.g. %s", "10.689901"))
 	o.default = uci:get("gluon-node-info", location, "longitude")
@@ -52,6 +65,7 @@ return function(form, uci)
 	function o:write(data)
 		uci:set("gluon-node-info", location, "longitude", data)
 	end
+	map.lon = o
 
 	if show_altitude then
 		o = s:option(Value, "altitude",
