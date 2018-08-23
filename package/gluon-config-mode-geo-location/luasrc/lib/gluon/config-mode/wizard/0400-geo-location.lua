@@ -16,7 +16,7 @@ return function(form, uci)
 		)
 		if show_altitude then
 			text = text .. ' ' .. pkg_i18n.translate(
-				'Specifying the altitude is optional; it should only be filled in if a accurate ' ..
+				'Specifying the altitude is optional; it should only be filled in if an accurate ' ..
 				'value is known.'
 			)
 		end
