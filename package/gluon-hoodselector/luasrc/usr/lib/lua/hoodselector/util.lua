@@ -2,6 +2,7 @@ local util = require 'gluon.util'
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
+local vpn_util = require('gluon.mesh-vpn')
 
 local M = {}
 
@@ -47,17 +48,15 @@ function M.getDefaultHood(jhood)
 end
 
 -- bool if direct VPN. The detection is realised by searching the fastd network interface inside the originator table
-function M.directVPN(vpnIfaceList)
-  for _,vpnIface in ipairs(vpnIfaceList) do
+function M.directVPN()
     local file = io.open("/sys/kernel/debug/batman_adv/bat0/originators", 'r')
     if file ~= nil then
       for outgoingIF in file:lines() do
         -- escape special chars "[]-"
-        if outgoingIF:match(string.gsub("%[  " .. vpnIface .. "%]","%-", "%%-")) then
+        if outgoingIF:match(string.gsub("%[  " .. vpn_util.get_mesh_vpn_interface() .. "%]","%-", "%%-")) then
           return true
         end
       end
-    end
   end
   return false
 end

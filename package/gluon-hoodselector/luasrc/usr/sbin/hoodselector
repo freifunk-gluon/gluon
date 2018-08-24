@@ -3,7 +3,6 @@
 local bit = require('bit')
 local unistd = require('posix.unistd')
 local fcntl = require('posix.fcntl')
-local vpn_util = require('gluon.vpn-util')
 local hoodutil = require('hoodselector.util')
 
 -- PID file to ensure the hoodselector isn't running parallel
@@ -36,7 +35,7 @@ end
 -- If no hood for the location has been defined, we will select
 -- the default hood.
 -- If we can't determine the node's location, we will continue to the next mode.
-if hoodutil.directVPN(vpn_util.get_mesh_vpn_interface()) then
+if hoodutil.directVPN() then
   io.stdout:write('VPN connection found.\n')
   local geo = hoodutil.getGeolocation()
   if geo.lat ~= nil and geo.lon ~= nil then
