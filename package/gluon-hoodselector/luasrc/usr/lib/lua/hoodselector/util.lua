@@ -46,20 +46,6 @@ function M.getDefaultHood(jhood)
   return nil
 end
 
-function M.fastd_installed()
-  if io.open("/usr/bin/fastd", 'r') ~= nil then
-    return true
-  end
-  return false
-end
-
-function M.tunneldigger_installed()
-  if io.open("/usr/bin/tunneldigger", 'r') ~= nil then
-    return true
-  end
-  return false
-end
-
 -- bool if direct VPN. The detection is realised by searching the fastd network interface inside the originator table
 function M.directVPN(vpnIfaceList)
   for _,vpnIface in ipairs(vpnIfaceList) do

@@ -3,8 +3,8 @@
 local bit = require('bit')
 local unistd = require('posix.unistd')
 local fcntl = require('posix.fcntl')
-local uci = require('simple-uci').cursor()
-local hoodutil = require("hoodselector.util")
+local vpn_util = require('gluon.vpn-util')
+local hoodutil = require('hoodselector.util')
 
 -- PID file to ensure the hoodselector isn't running parallel
 local lockfile = '/var/lock/hoodselector.lock'
@@ -30,41 +30,13 @@ if not ok then
   os.exit(1)
 end
 
--- initialisation done
---
-local function get_mesh_vpn_interface()
-  local ret = {}
-  if hoodutil.fastd_installed() then
-    local vpnifac = uci:get('fastd', 'mesh_vpn_backbone', 'net')
-    if vpnifac  ~= nil then
-      vpnifac = vpnifac:gsub("%_",'-')
-      table.insert(ret,vpnifac)
-    else
-      hoodutil.log("fastd uci config broken! abort...")
-      os.exit(1)
-    end
-  end
-  if hoodutil.tunneldigger_installed() then
-    local vpnifac = uci:get('tunneldigger', 'mesh_vpn', 'interface')
-    if vpnifac  ~= nil then
-      table.insert(ret,vpnifac)
-    else
-      hoodutil.log("tunneldigger uci config broken! abort...")
-      os.exit(1)
-    end
-  end
-  return ret
-end
-
--- INITIALISE AND PREPARE DATA --
-
 -- VPN MODE
 -- If we have a VPN connection we will try to get the node's location and
 -- select the hood coresponding to this location.
 -- If no hood for the location has been defined, we will select
 -- the default hood.
 -- If we can't determine the node's location, we will continue to the next mode.
-if hoodutil.directVPN(get_mesh_vpn_interface()) then
+if hoodutil.directVPN(vpn_util.get_mesh_vpn_interface()) then
   io.stdout:write('VPN connection found.\n')
   local geo = hoodutil.getGeolocation()
   if geo.lat ~= nil and geo.lon ~= nil then
