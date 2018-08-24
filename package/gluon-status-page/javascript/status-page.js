@@ -74,7 +74,7 @@
 			return _['%s used'].sprintf(formatNumber(100 * value, 3) + '%');
 		},
 		'memory': function(memory) {
-			var usage = 1 - (memory.free + memory.buffers + memory.cached) / memory.total
+			var usage = 1 - memory.available / memory.total
 			return formats.percent(usage);
 		},
 		'time': function(seconds) {

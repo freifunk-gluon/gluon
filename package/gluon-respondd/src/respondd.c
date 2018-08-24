@@ -197,6 +197,8 @@ static struct json_object * get_memory(void) {
 			json_object_object_add(ret, "total", json_object_new_int(value));
 		else if (!strcmp(label, "MemFree"))
 			json_object_object_add(ret, "free", json_object_new_int(value));
+		else if (!strcmp(label, "MemAvailable"))
+			json_object_object_add(ret, "available", json_object_new_int(value));
 		else if (!strcmp(label, "Buffers"))
 			json_object_object_add(ret, "buffers", json_object_new_int(value));
 		else if (!strcmp(label, "Cached"))
