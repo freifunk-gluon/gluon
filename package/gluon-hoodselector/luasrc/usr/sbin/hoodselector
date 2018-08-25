@@ -44,14 +44,14 @@ if hoodutil.directVPN() then
     local geoHood = hoodutil.getHoodByGeo(jhood, geo)
     if geoHood ~= nil then
       if hoodutil.set_hoodconfig(geoHood) then
-        hoodutil.restart_services() -- temporary solution
+        hoodutil.restart_services()
         io.stdout:write('Hood set by VPN mode.\n')
       end
       os.exit(0)
     end
     io.stdout:write('No hood has been defined for the current position.\n')
     if hoodutil.set_hoodconfig(hoodutil.getDefaultHood(jhood)) then
-      hoodutil.restart_services() -- TMP solution
+      hoodutil.restart_services()
       io.stdout:write('Hood set by VPN mode.\n')
     end
     os.exit(0)
