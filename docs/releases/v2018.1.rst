@@ -400,3 +400,21 @@ Known issues
   Optimizations in Gluon 2018.1 have significantly improved memory usage.
   There are still known bugs leading to unreasonably high load that we hope to
   solve in future releases.
+
+* Configuration loss on upgrade under certain circumstances
+  (`#1496 <https://github.com/freifunk-gluon/gluon/issues/1496>`_)
+
+  The issue can only occur when upgrading from 2018.1 and there are multiple
+  mirror entries in *site.conf* (specifically, an early failure for one of the
+  mirrors, e.g. during DNS resolution, followed by a successful upgrade from a
+  different mirror triggers the issue).
+
+  This is a regression in Gluon 2018.1.
+
+* Next-node ARP issue
+  (`#1488 <https://github.com/freifunk-gluon/gluon/issues/1488>`_)
+
+  A routing table issue leads to ARP requests being sent from the next-node IPv4 address, but with
+  a node-specific source MAC address. This can make the next-node IPv4 address unreachable.
+
+  This is a regression in Gluon 2018.1.
