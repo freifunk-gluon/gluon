@@ -1,0 +1,44 @@
+<div id="<%=id%>" class="gluon-osm-map" style="display: none"></div>
+<script type="text/javascript" src="/static/gluon-web-osm.js"></script>
+<script type="text/javascript">
+	(function() {
+		var elMap = document.getElementById(<%=json(id)%>);
+		var wrapper = elMap.parentNode;
+
+		var elLon, elLat;
+		window.addEventListener('gluon-update', function() {
+			<% if self.lon then -%>
+				elLon = document.getElementById(<%=json(self.lon:id())%>);
+			<%- end %>
+			<% if self.lat then -%>
+				elLat = document.getElementById(<%=json(self.lat:id())%>);
+			<%- end %>
+		}, {once: true});
+
+		initOSM(<%=json(self.openlayers_url)%>, function(createMap) {
+			elMap.style.display = '';
+
+			var pos = <%=json(self:cfgvalue().pos)%>;
+			var map = createMap(
+				elMap,
+				[pos.lon, pos.lat],
+				<%=json(self:cfgvalue().zoom)%>,
+				<%=json(self:cfgvalue().set)%>,
+				function(lonlat) {
+					if (elLon) {
+						elLon.value = lonlat[0].toFixed(6);
+						elLon.dispatchEvent(new Event('gluon-revalidate'));
+					}
+					if (elLat) {
+						elLat.value = lonlat[1].toFixed(6);
+						elLat.dispatchEvent(new Event('gluon-revalidate'));
+					}
+				}
+			);
+
+			wrapper.addEventListener('gluon-show', function() {
+				map.updateSize();
+			});
+		});
+	})();
+</script>

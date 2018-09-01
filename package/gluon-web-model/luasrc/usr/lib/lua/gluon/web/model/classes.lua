@@ -43,7 +43,7 @@ end
 
 Node = class()
 
-function Node:__init__(title, description, name)
+function Node:__init__(name, title, description)
 	self.children = {}
 	self.title = title or ""
 	self.description = description or ""
@@ -117,8 +117,8 @@ end
 
 Form = class(Node)
 
-function Form:__init__(...)
-	Node.__init__(self, ...)
+function Form:__init__(title, description, name)
+	Node.__init__(self, name, title, description)
 	self.template = "model/form"
 end
 
@@ -169,26 +169,24 @@ end
 
 Section = class(Node)
 
-function Section:__init__(...)
-	Node.__init__(self, ...)
-	self.fields = {}
+function Section:__init__(title, description, name)
+	Node.__init__(self, name, title, description)
 	self.template = "model/section"
 end
 
-function Section:option(t, option, title, description, ...)
+function Section:option(t, ...)
 	assert(instanceof(t, AbstractValue), "class must be a descendant of AbstractValue")
 
-	local obj  = t(title, description, option, ...)
+	local obj  = t(...)
 	self:append(obj)
-	self.fields[option] = obj
 	return obj
 end
 
 
 AbstractValue = class(Node)
 
-function AbstractValue:__init__(option, ...)
-	Node.__init__(self, option, ...)
+function AbstractValue:__init__(...)
+	Node.__init__(self, ...)
 	self.deps = {}
 
 	self.default   = nil

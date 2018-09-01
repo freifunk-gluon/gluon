@@ -183,6 +183,8 @@
 	}
 
 	function update() {
+		window.dispatchEvent(new Event('gluon-update'));
+
 		var state = false;
 		for (var id in dep_entries) {
 			var entry = dep_entries[id];
@@ -191,6 +193,7 @@
 
 			if (node && node.parentNode && !check(entry.deps)) {
 				node.parentNode.removeChild(node);
+				node.dispatchEvent(new Event('gluon-hide'));
 				state = true;
 			} else if (parent && (!node || !node.parentNode) && check(entry.deps)) {
 				var next = undefined;
@@ -207,6 +210,7 @@
 					parent.insertBefore(entry.node, next);
 				}
 
+				entry.node.dispatchEvent(new Event('gluon-show'));
 				state = true;
 			}
 
@@ -471,6 +475,7 @@
 
 		bind(field, "blur",  validator);
 		bind(field, "keyup", validator);
+		bind(field, "gluon-revalidate", validator);
 
 		if (field.nodeName.toLowerCase() == 'select') {
 			bind(field, "change", validator);

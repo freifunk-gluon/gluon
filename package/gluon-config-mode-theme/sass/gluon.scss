@@ -284,6 +284,12 @@ code {
   margin-bottom: 2em;
 }
 
+.gluon-osm-map {
+  width: 100%;
+  height: 40em;
+  margin-bottom: 1em;
+}
+
 input:placeholder {
   color: #aaaaaa;
 }
@@ -498,15 +504,15 @@ input.gluon-section-create-name {
   margin-right: -0.25em;
 }
 
-div.gluon-map-descr {
+div.gluon-form-descr {
   margin-bottom: 1em;
 }
 
-.gluon-map-descr:empty, .gluon-section-descr:empty {
+.gluon-form-descr:empty, .gluon-section-descr:empty {
   display: none;
 }
 
-.gluon-map-descr, .gluon-section-descr, .gluon-page-actions {
+.gluon-form-descr, .gluon-section-descr, .gluon-page-actions {
   padding: 1em;
   background: #ececec;
 }

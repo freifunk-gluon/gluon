@@ -407,6 +407,13 @@ config_mode \: optional
     package. Set *geo_location.show_altitude* to *true* if you want the altitude
     field to be visible.
 
+    The *geo_location.osm* section is only relevant when the *gluon-config-mode-geo-location-osm*
+    package is used. The *center.lon* and *center.lat* values are mandatory in this case and
+    define the default center of the map when no position has been picked yet. The *zoom* level
+    defaults to 12 in this case. *openlayers_url* allows to override the base URL of the
+    *build/ol.js* and *css/ol.css* files (the default is
+    ``https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0``).
+
     The remote login page only shows SSH key configuration by default. A
     password form can be displayed by setting *remote_login.show_password_form*
     to true; in this case, *remote_login.min_password_length* defines the
@@ -419,6 +426,14 @@ config_mode \: optional
           },
           geo_location = {
             show_altitude = true,
+            osm = {
+              center = {
+                lon = 52.951947558,
+                lat = 7.844238281,
+              },
+              zoom = 13,
+              openlayers_url = 'http://ffac/ol',
+            },
           },
           remote_login = {
             show_password_form = true,
