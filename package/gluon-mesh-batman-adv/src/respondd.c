@@ -94,7 +94,7 @@ static struct json_object * get_addresses(void) {
 		if (sscanf(line,
 			   "%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8
 			   "%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8
-			   "  %*2x %*2x %*2x %2x %"STRINGIFY(IF_NAMESIZE)"s",
+			   "  %*x %*x %*x %x %"STRINGIFY(IF_NAMESIZE)"s",
 			   &addr.s6_addr[0], &addr.s6_addr[1], &addr.s6_addr[2], &addr.s6_addr[3],
 			   &addr.s6_addr[4], &addr.s6_addr[5], &addr.s6_addr[6], &addr.s6_addr[7],
 			   &addr.s6_addr[8], &addr.s6_addr[9], &addr.s6_addr[10], &addr.s6_addr[11],
