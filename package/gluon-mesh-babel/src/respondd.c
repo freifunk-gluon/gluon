@@ -47,6 +47,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <ifaddrs.h>
 
 #include <linux/ethtool.h>
 #include <linux/if_addr.h>
@@ -78,29 +79,40 @@
 
 static struct babelhelper_ctx bhelper_ctx = {};
 
-static int obtain_ifmac(unsigned char *ifmac, const char *ifname) {
-	struct ifreq ifr = {};
-	int sock;
+static void obtain_if_addr(const char *ifname, char *lladdr) {
+	struct ifaddrs *ifaddr, *ifa;
+	int family, n;
 
-	sock=socket(PF_INET, SOCK_STREAM, 0);
-	if (-1==sock) {
-		perror("socket() ");
-		return 1;
+	if (getifaddrs(&ifaddr) == -1) {
+		perror("getifaddrs");
+		exit(EXIT_FAILURE);
 	}
 
-	strncpy(ifr.ifr_name, ifname, IFNAMSIZ-1);
+	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
+		if (ifa->ifa_addr == NULL)
+			continue;
 
-	printf("obtaining hw address for nic: %s %s\n", ifname, ifr.ifr_name);
-	if (-1==ioctl(sock, SIOCGIFHWADDR, &ifr)) {
-		perror("ioctl(SIOCGIFHWADDR) ");
-		close(sock);
-		return 1;
+		family = ifa->ifa_addr->sa_family;
+
+		if ( (family == AF_INET6) && ( ! strncmp(ifname, ifa->ifa_name, strlen(ifname)) ) ) {
+			char lhost[INET6_ADDRSTRLEN];
+			struct in6_addr *address = &((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
+			if (inet_ntop(AF_INET6, address, lhost, INET6_ADDRSTRLEN) == NULL) {
+				fprintf(stderr, "obtain_if_addr: could not convert ip to string\n");
+				goto cleanup;
+			}
+
+			if (! strncmp("fe80:", lhost, 5) ) {
+				snprintf( lladdr, NI_MAXHOST, "%s", lhost );
+				goto cleanup;
+			}
+		}
 	}
-	close(sock);
 
-	memcpy(ifmac, ifr.ifr_hwaddr.sa_data, 6);
-	return 0;
+cleanup:
+	freeifaddrs(ifaddr);
 }
+
 
 static char*  get_line_from_run(const char* command) {
 	FILE *fp;
@@ -167,34 +179,11 @@ static bool interface_file_exists(const char *ifname, const char *name) {
 	return !access(path, F_OK);
 }
 
-struct in6_addr mac2ipv6(uint8_t mac[6], char * prefix) {
-	struct in6_addr address = {};
-	inet_pton(AF_INET6, prefix, &address);
-
-	address.s6_addr[8] = mac[0] ^ 0x02;
-	address.s6_addr[9] = mac[1];
-	address.s6_addr[10] = mac[2];
-	address.s6_addr[11] = 0xff;
-	address.s6_addr[12] = 0xfe;
-	address.s6_addr[13] = mac[3];
-	address.s6_addr[14] = mac[4];
-	address.s6_addr[15] = mac[5];
-
-	return address;
-}
-
 static void mesh_add_if(const char *ifname, struct json_object *wireless,
 		struct json_object *tunnel, struct json_object *other) {
-	char str_ip[INET6_ADDRSTRLEN] = {};
-	unsigned char mac[6] = {};
+	char str_ip[NI_MAXHOST] = {};
 
-	if (obtain_ifmac(mac, ifname)) {
-		printf("could not obtain mac for device: %s", ifname);
-		return;
-	}
-
-	struct in6_addr lladdr = mac2ipv6(mac, "fe80::");
-	inet_ntop(AF_INET6, &lladdr.s6_addr, str_ip, INET6_ADDRSTRLEN);
+	obtain_if_addr(ifname, str_ip);
 
 	struct json_object *address = json_object_new_string(str_ip);
 
@@ -206,6 +195,8 @@ static void mesh_add_if(const char *ifname, struct json_object *wireless,
 		json_object_array_add(other, address);
 
 }
+
+
 static bool handle_neighbour(char **data, void *obj) {
 	if (data[NEIGHBOUR]) {
 		struct json_object *neigh = json_object_new_object();
@@ -221,17 +212,10 @@ static bool handle_neighbour(char **data, void *obj) {
 
 		struct json_object *nif = 0;
 		if (data[IF] && !json_object_object_get_ex(obj, data[IF], &nif)) {
+			char str_ip[NI_MAXHOST] = {};
+			obtain_if_addr( (const char*)data[IF], str_ip );
+
 			nif = json_object_new_object();
-
-			unsigned char ifmac[6] = {};
-			char str_ip[INET6_ADDRSTRLEN] = {};
-
-			if (obtain_ifmac(ifmac, (const char*)data[IF])) {
-				printf("could not obtain mac for device: %s", data[IF]);
-				return false;
-			}
-			struct in6_addr lladdr = mac2ipv6(ifmac, "fe80::");
-			inet_ntop(AF_INET6, &lladdr.s6_addr, str_ip, INET6_ADDRSTRLEN);
 
 			json_object_object_add(nif, "ll-addr", json_object_new_string(str_ip));
 			json_object_object_add(nif, "protocol", json_object_new_string("babel"));
