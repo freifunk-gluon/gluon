@@ -1,0 +1,73 @@
+From: Christian Lamparter <chunkeey@gmail.com>
+Date: Mon, 14 Nov 2016 04:57:38 +0100
+Subject: mac80211: limit ath10k memory hunger
+
+This is a problem with 128MiB RAM
+
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+[sven@narfation.org: remove QCA4019 part of change, adjust commit message]
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+
+Origin: backport, https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=cc189c0b7fa015978b04bb663a75b1da726376b5
+
+diff --git a/package/kernel/mac80211/patches/960-0010-ath10k-limit-htt-rx-ring-size.patch b/package/kernel/mac80211/patches/960-0010-ath10k-limit-htt-rx-ring-size.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d49be4df703e8039509ecea23de8b5bd8e590765
+--- /dev/null
++++ b/package/kernel/mac80211/patches/960-0010-ath10k-limit-htt-rx-ring-size.patch
+@@ -0,0 +1,11 @@
++--- a/drivers/net/wireless/ath/ath10k/htt.h
+++++ b/drivers/net/wireless/ath/ath10k/htt.h
++@@ -199,7 +199,7 @@ enum htt_rx_ring_flags {
++ };
++ 
++ #define HTT_RX_RING_SIZE_MIN 128
++-#define HTT_RX_RING_SIZE_MAX 2048
+++#define HTT_RX_RING_SIZE_MAX 512
++ 
++ struct htt_rx_ring_setup_ring {
++ 	__le32 fw_idx_shadow_reg_paddr;
+diff --git a/package/kernel/mac80211/patches/960-0011-ath10k-limit-pci-buffer-size.patch b/package/kernel/mac80211/patches/960-0011-ath10k-limit-pci-buffer-size.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..54cc2ce7847d9256a78d3c60101ba6cd9baf496a
+--- /dev/null
++++ b/package/kernel/mac80211/patches/960-0011-ath10k-limit-pci-buffer-size.patch
+@@ -0,0 +1,38 @@
++--- a/drivers/net/wireless/ath/ath10k/pci.c
+++++ b/drivers/net/wireless/ath/ath10k/pci.c
++@@ -127,7 +127,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 512,
+++		.dest_nentries = 128,
++ 		.recv_cb = ath10k_pci_htt_htc_rx_cb,
++ 	},
++ 
++@@ -136,7 +136,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 128,
+++		.dest_nentries = 64,
++ 		.recv_cb = ath10k_pci_htc_rx_cb,
++ 	},
++ 
++@@ -163,7 +163,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 512,
++-		.dest_nentries = 512,
+++		.dest_nentries = 128,
++ 		.recv_cb = ath10k_pci_htt_rx_cb,
++ 	},
++ 
++@@ -188,7 +188,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 128,
+++		.dest_nentries = 96,
++ 		.recv_cb = ath10k_pci_pktlog_rx_cb,
++ 	},
++ 
