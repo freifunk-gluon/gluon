@@ -428,11 +428,11 @@ config_mode \: optional
             show_altitude = true,
             osm = {
               center = {
-                lon = 52.951947558,
-                lat = 7.844238281,
+                lat = 52.951947558,
+                lon = 8.744238281,
               },
               zoom = 13,
-              openlayers_url = 'http://ffac/ol',
+              -- openlayers_url = 'http://ffac.example.org/openlayer',
             },
           },
           remote_login = {
