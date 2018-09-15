@@ -403,6 +403,9 @@ config_mode \: optional
     and the node's primary MAC address is assigned. Manually setting a hostname
     can be enforced by setting *hostname.optional* to *false*.
 
+    To not prefill the hostname-field in config-mode with the default hostname,
+    set *hostname.prefill* to *false*.
+
     By default, no altitude field is shown by the *gluon-config-mode-geo-location*
     package. Set *geo_location.show_altitude* to *true* if you want the altitude
     field to be visible.
@@ -423,6 +426,7 @@ config_mode \: optional
         config_mode = {
           hostname = {
             optional = false,
+            prefill = true,
           },
           geo_location = {
             show_altitude = true,
