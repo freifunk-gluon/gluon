@@ -25,6 +25,10 @@ the gateways all announce the "next node" address for DNS, there is no way for
 nodes to automatically determine DNS servers. They have to be baked into the
 firmware.
 
+The 'servers' may be IPv6 or IPv4 addresses. Nodes usually have no IPv4
+connectivity in the mesh, so only use IPv4 servers if the nodes can reach them,
+for example when the nodes route IPv4 for their clients themselves.
+
 If these settings do not exist, the cache is not initialized and RAM usage will
 not increase.
 

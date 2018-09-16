@@ -72,7 +72,11 @@ end
 need_boolean(in_site({'poe_passthrough'}), false)
 
 if need_table({'dns'}, nil, false) then
-	need_string_array_match({'dns', 'servers'}, '^[%x:]+$')
+	need_array({'dns', 'servers'}, function(server)
+		need(server, function(v)
+			return type(v) == 'string' and (v:match('^[%x:]+$') or v:match('^%d+%.%d+%.%d+%.%d+$')) ~= nil
+		end, true, 'be an IPv6 or IPv4 address')
+	end)
 	need_number({'dns', 'cacheentries'}, false)
 end
 
