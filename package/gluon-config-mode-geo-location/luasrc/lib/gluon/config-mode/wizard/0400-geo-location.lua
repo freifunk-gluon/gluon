@@ -51,7 +51,6 @@ return function(form, uci)
 
 	o = s:option(Value, "latitude", pkg_i18n.translate("Latitude"), pkg_i18n.translatef("e.g. %s", "53.873621"))
 	o.default = uci:get("gluon-node-info", location, "latitude")
-	o:depends(share_location, true)
 	o.datatype = "float"
 	function o:write(data)
 		uci:set("gluon-node-info", location, "latitude", data)
@@ -60,7 +59,6 @@ return function(form, uci)
 
 	o = s:option(Value, "longitude", pkg_i18n.translate("Longitude"), pkg_i18n.translatef("e.g. %s", "10.689901"))
 	o.default = uci:get("gluon-node-info", location, "longitude")
-	o:depends(share_location, true)
 	o.datatype = "float"
 	function o:write(data)
 		uci:set("gluon-node-info", location, "longitude", data)
@@ -73,7 +71,6 @@ return function(form, uci)
 			pkg_i18n.translatef("e.g. %s", "11.51")
 		)
 		o.default = uci:get("gluon-node-info", location, "altitude")
-		o:depends(share_location, true)
 		o.datatype = "float"
 		o.optional = true
 		function o:write(data)
