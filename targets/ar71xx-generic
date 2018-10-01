@@ -87,13 +87,12 @@ device linksys-wrt160nl wrt160nl WRT160NL
 
 # Meraki
 
-# BROKEN: MAC address uniqueness issues
 if [ "$BROKEN" ]; then
-device meraki-mr12 mr12
+device meraki-mr12 mr12 # BROKEN: MAC address uniqueness issues
 alias meraki-mr62
 factory
 
-device meraki-mr16 mr16
+device meraki-mr16 mr16 # BROKEN: MAC address uniqueness issues
 alias meraki-mr66
 factory
 fi
