@@ -47,6 +47,8 @@ elseif platform.match('ar71xx', 'generic', {'archer-c5', 'archer-c58-v1',
 elseif platform.match('ipq40xx', nil, {'avm,fritzbox-4040',
                                        'openmesh,a42', 'openmesh,a62'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
+elseif platform.match('ramips', 'mt7620', {'tplink,c20-v1'}) then
+  table.insert(try_files, 1, '/sys/class/net/eth0/address')
 end
 
 
