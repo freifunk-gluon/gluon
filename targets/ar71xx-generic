@@ -213,6 +213,9 @@ factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 device tp-link-archer-c7-v4 archer-c7-v4
 packages $ATH10K_PACKAGES
 
+device tp-link-archer-c7-v5 archer-c7-v5
+packages $ATH10K_PACKAGES
+
 if [ "$BROKEN" ]; then
 device tp-link-archer-c25-v1 archer-c25-v1 # BROKEN: OOM with 5GHz enabled in most environments
 packages $ATH10K_PACKAGES_QCA9887
