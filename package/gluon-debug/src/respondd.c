@@ -71,11 +71,11 @@ static struct json_object * respondd_provider_statistics(void) {
 
 		struct json_object *process = json_object_new_object();
 
-		json_object_object_add(process, "n", gluonutil_wrap_string(name));
-		json_object_object_add(process, "u", json_object_new_int(utime));
-		json_object_object_add(process, "s", json_object_new_int(stime));
-		json_object_object_add(process, "cu", json_object_new_int(cutime));
-		json_object_object_add(process, "cs", json_object_new_int(cstime));
+		json_object_object_add(process, "name", gluonutil_wrap_string(name));
+		json_object_object_add(process, "utime", json_object_new_int(utime));
+		json_object_object_add(process, "stime", json_object_new_int(stime));
+		json_object_object_add(process, "cutime", json_object_new_int(cutime));
+		json_object_object_add(process, "cstime", json_object_new_int(cstime));
 
 		char pidstr[8];
 		snprintf(pidstr, 7, "%d", pid);
