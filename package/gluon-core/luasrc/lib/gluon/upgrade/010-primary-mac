@@ -23,7 +23,8 @@ if not (
   table.insert(try_files, 1, '/sys/class/ieee80211/phy0/macaddress')
 end
 
-if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300'}) then
+if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300',
+                                        'tl-wr902ac-v1'}) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
 elseif platform.match('ramips', 'mt7621', {'dir-860l-b1'}) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
