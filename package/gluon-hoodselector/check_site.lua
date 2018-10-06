@@ -1,5 +1,3 @@
-need_string_match(in_domain({'domain_seed'}), '^' .. ('%x'):rep(64) .. '$')
-
 function need_nil(path)
   need(path, function(val)
     if val == nil then
