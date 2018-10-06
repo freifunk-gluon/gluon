@@ -10,7 +10,7 @@ local lockfile = '/var/lock/hoodselector.lock'
 local lockfd, err = fcntl.open(lockfile, bit.bor(fcntl.O_WRONLY, fcntl.O_CREAT), 384) -- mode 0600
 
 if not lockfd then
-  io.stderr:write(err, '\n')
+  hoodutil.log(err, '\n')
   os.exit(1)
 end
 
@@ -35,26 +35,26 @@ end
 -- If no hood for the location has been defined, we will select
 -- the default hood.
 -- If we can't determine the node's location, we will continue to the next mode.
-if hoodutil.directVPN() then
+if hoodutil.direct_vpn() then
   io.stdout:write('VPN connection found.\n')
-  local geo = hoodutil.getGeolocation()
+  local geo = hoodutil.get_geolocation()
   if geo.lat ~= nil and geo.lon ~= nil then
     io.stdout:write('Position found.\n')
     local jhood = hoodutil.get_domains()
-    local geoHood = hoodutil.getHoodByGeo(jhood, geo)
-    if geoHood ~= nil then
-      if hoodutil.set_hoodconfig(geoHood) then
+    local geo_hood = hoodutil.get_hood_by_geo(jhood, geo)
+    if geo_hood ~= nil then
+      if hoodutil.set_hoodconfig(geo_hood) then
         hoodutil.restart_services()
-        io.stdout:write('Hood set by VPN mode.\n')
+        hoodutil.log('Domain set by VPN mode.\n')
       end
-      os.exit(0)
+      return
     end
-    io.stdout:write('No hood has been defined for the current position.\n')
-    if hoodutil.set_hoodconfig(hoodutil.getDefaultHood(jhood)) then
+    io.stdout:write('No domain has been defined for the current position.\n')
+    if hoodutil.set_hoodconfig(hoodutil.get_default_hood(jhood)) then
       hoodutil.restart_services()
-      io.stdout:write('Hood set by VPN mode.\n')
+      hoodutil.log('Domain set by VPN mode.\n')
     end
-    os.exit(0)
+    return
   else
     -- The hoodselector should continue with the next states because there can be other
     -- VPN nodes in the local mesh network which provide a position and therefore
@@ -64,5 +64,3 @@ if hoodutil.directVPN() then
 else
   io.stdout:write('No VPN connection found\n')
 end
-
-os.exit(0)
