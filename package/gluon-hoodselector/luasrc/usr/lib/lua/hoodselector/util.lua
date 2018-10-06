@@ -3,24 +3,20 @@ local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
 local vpn_util = require('gluon.mesh-vpn')
-
+local logger = require('posix.syslog')
 local M = {}
 
 function M.split(s, delimiter)
-  local result = {};
+  local result = {}
   for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-    table.insert(result, match);
+    table.insert(result, match)
   end
-  return result;
+  return result
 end
 
-local PID = M.split(io.open("/proc/self/stat", 'r'):read('*a'), " ")[1]
-
 function M.log(msg)
-  if msg then
-    io.stdout:write(msg.."\n")
-    os.execute("logger hoodselector["..PID.."]: "..msg)
-  end
+  io.stdout:write(msg..'\n')
+  logger.openlog(msg, logger.LOG_PID)
 end
 
 function M.get_domains()
@@ -38,7 +34,7 @@ end
 -- This method can return the following data:
 -- * default hood
 -- * nil if no default hood has been defined
-function M.getDefaultHood(jhood)
+function M.get_default_hood(jhood)
   for _, h in pairs(jhood) do
     if h.domain_code == site.default_domain() then
       return h
@@ -48,56 +44,55 @@ function M.getDefaultHood(jhood)
 end
 
 -- bool if direct VPN. The detection is realised by searching the fastd network interface inside the originator table
-function M.directVPN()
-    local file = io.open("/sys/kernel/debug/batman_adv/bat0/originators", 'r')
-    if file ~= nil then
-      for outgoingIF in file:lines() do
-        -- escape special chars "[]-"
-        if outgoingIF:match(string.gsub("%[  " .. vpn_util.get_mesh_vpn_interface() .. "%]","%-", "%%-")) then
-          return true
-        end
-      end
+function M.direct_vpn()
+  for outgoing_if in io.popen(string.format("batctl o"), 'r'):lines() do
+    -- escape special chars "[]-"
+    if outgoing_if:match(string.gsub("%[  " .. vpn_util.get_mesh_vpn_interface() .. "%]","%-", "%%-")) then
+      return true
+    end
   end
   return false
 end
 
 -- Get Geoposition. Return nil for no position
-function M.getGeolocation()
-  return {["lat"] = tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'latitude')),
-  ["lon"] =  tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'longitude')) }
+function M.get_geolocation()
+  return {
+    lat = tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'latitude')),
+    lon = tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'longitude'))
+  }
 end
 
 -- Source with pseudocode: https://de.wikipedia.org/wiki/Punkt-in-Polygon-Test_nach_Jordan
 -- see also https://en.wikipedia.org/wiki/Point_in_polygon
--- parameters: points A = (x_A,y_A), B = (x_B,y_B), C = (x_C,y_C)
+-- parameters: points A = (x_a,y_a), B = (x_b,y_b), C = (x_c,y_c)
 -- return value: −1 if the ray from A to the right bisects the edge [BC] (the lower vortex of [BC]
 -- is not seen as part of [BC]);
 --                0 if A is on [BC];
 --               +1 else
-function M.crossProdTest(x_A,y_A,x_B,y_B,x_C,y_C)
-  if y_A == y_B and y_B == y_C then
-    if (x_B <= x_A and x_A <= x_C) or (x_C <= x_A and x_A <= x_B) then
+function M.cross_prod_test(x_a,y_a,x_b,y_b,x_c,y_c)
+  if y_a == y_b and y_b == y_c then
+    if (x_b <= x_a and x_a <= x_c) or (x_c <= x_a and x_a <= x_b) then
       return 0
     end
     return 1
   end
-  if not ((y_A == y_B) and (x_A == x_B)) then
-    if y_B > y_C then
-      -- swap B and C
-      local h = x_B
-      x_B = x_C
-      x_C = h
-      h = y_B
-      y_B = y_C
-      y_C = h
+  if not ((y_a == y_b) and (x_a == x_b)) then
+    if y_b > y_c then
+      -- swap b and c
+      local h = x_b
+      x_b = x_c
+      x_c = h
+      h = y_b
+      y_b = y_c
+      y_c = h
     end
-    if (y_A <= y_B) or (y_A > y_C) then
+    if (y_a <= y_b) or (y_a > y_c) then
       return 1
     end
-    local Delta = (x_B-x_A) * (y_C-y_A) - (y_B-y_A) * (x_C-x_A)
-    if Delta > 0 then
+    local delta = (x_b-x_a) * (y_c-y_a) - (y_b-y_a) * (x_c-x_a)
+    if delta > 0 then
       return 1
-    elseif Delta < 0 then
+    elseif delta < 0 then
       return -1
     end
   end
@@ -110,7 +105,7 @@ end
 -- return value:  +1 if Q within P;
 --               −1 if Q outside of P;
 --                0 if Q on an edge of P
-function M.pointInPolygon(poly, point)
+function M.point_in_polygon(poly, point)
   local t = -1
   for i=1,#poly-1 do
     t = t * M.crossProdTest(point.lon,point.lat,poly[i].lon,poly[i].lat,poly[i+1].lon,poly[i+1].lat)
@@ -122,12 +117,12 @@ end
 -- Return hood from the hood file based on geo position or nil if no real hood could be determined
 -- First check if an area has > 2 points and is hence a polygon. Else assume it is a rectangular
 -- box defined by two points (south-west and north-east)
-function M.getHoodByGeo(jhood,geo)
+function M.get_hood_by_geo(jhood,geo)
   for _, hood in pairs(jhood) do
     if hood.domain_code ~= site.default_domain() then
     for _, area in pairs(hood.domain.hoodselector.shapes) do
       if #area > 2 then
-        if (M.pointInPolygon(area,geo) == 1) then
+        if (M.point_in_polygon(area,geo) == 1) then
           return hood
         end
       else
@@ -142,35 +137,30 @@ function M.getHoodByGeo(jhood,geo)
   return nil
 end
 
-function M.set_hoodconfig(geoHood)
-  if uci:get('gluon', 'core', 'domain') ~= geoHood.domain_code then
-    uci:set('gluon', 'core', 'domain', geoHood.domain_code)
-    uci:save('gluon')
+function M.set_hoodconfig(geo_hood)
+  if uci:get('gluon', 'core', 'domain') ~= geo_hood.domain_code then
+    uci:set('gluon', 'core', 'domain', geo_hood.domain_code)
     uci:commit('gluon')
     os.execute('gluon-reconfigure')
-    io.stdout:write("Set hood \""..geoHood.domain.domain_names[geoHood.domain_code].."\"\n")
+    M.log('Set domain "'..geo_hood.domain.domain_names[geo_hood.domain_code]..'"')
     return true
   end
   return false
 end
 
 function M.restart_services()
-  local procTBL = {
+  local proc_tbl = {
     "fastd",
     "tunneldigger",
     "network",
     "gluon-respondd",
   }
 
-  for proc in ipairs(procTBL) do
+  for proc in ipairs(proc_tbl) do
     if io.open("/etc/init.d/"..proc, 'r') ~= nil then
       print(proc.." restarting ...")
       os.execute("/etc/init.d/"..proc.." restart")
     end
-  end
-  if io.open("/etc/config/wireless", 'r') then
-    print("wifi restarting ...")
-    os.execute("wifi")
   end
 end
 
