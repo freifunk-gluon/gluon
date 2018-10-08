@@ -8,7 +8,7 @@ if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
 	ATH10K_PACKAGES_QCA9887='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca9887 ath10k-firmware-qca9887-ct'
 fi
 
-MIFI_PACKAGES='rt2800-usb-firmware kmod-mppe kmod-usb-net kmod-usb-net-rndis kmod-usb-net-qmi-wwan kmod-usb-acm kmod-usb-core kmod-ath kmod-ath9k kmod-ath9k-common kmod-cfg80211 kmod-crypto-aead kmod-crypto-crc32c kmod-crypto-ecb kmod-crypto-hash kmod-crypto-manager kmod-crypto-null kmod-crypto-pcompress kmod-crypto-sha1 kmod-fs-exfat kmod-fs-ext4 kmod-fs-ntfs kmod-fs-vfat kmod-fuse kmod-gpio-button-hotplug kmod-lib-crc-ccitt kmod-lib-crc-itu-t kmod-lib-crc16 kmod-lib-textsearch kmod-mac80211 kmod-mii kmod-ppp kmod-pppoe kmod-pppox kmod-rt2800-lib kmod-rt2800-usb kmod-rt2x00-lib kmod-rt2x00-usb kmod-scsi-core kmod-slhc kmod-tun kmod-udptunnel4 kmod-udptunnel6 kmod-usb-net-huawei-cdc-ncm kmod-usb-net-ipheth kmod-usb-net-sierrawireless kmod-usb-ohci kmod-usb-serial kmod-usb-serial-cp210x kmod-usb-serial-option kmod-usb-serial-sierrawireless kmod-usb-serial-wwan kmod-usb-serial-wwan kmod-usb-storage kmod-usb-uhci kmod-usb-wdm kmod-usb2'
+# MIFI_PACKAGES='rt2800-usb-firmware kmod-mppe kmod-usb-net kmod-usb-net-rndis kmod-usb-net-qmi-wwan kmod-usb-acm kmod-usb-core kmod-ath kmod-ath9k kmod-ath9k-common kmod-cfg80211 kmod-crypto-aead kmod-crypto-crc32c kmod-crypto-ecb kmod-crypto-hash kmod-crypto-manager kmod-crypto-null kmod-crypto-pcompress kmod-crypto-sha1 kmod-fs-exfat kmod-fs-ext4 kmod-fs-ntfs kmod-fs-vfat kmod-fuse kmod-gpio-button-hotplug kmod-lib-crc-ccitt kmod-lib-crc-itu-t kmod-lib-crc16 kmod-lib-textsearch kmod-mac80211 kmod-mii kmod-ppp kmod-pppoe kmod-pppox kmod-rt2800-lib kmod-rt2800-usb kmod-rt2x00-lib kmod-rt2x00-usb kmod-scsi-core kmod-slhc kmod-tun kmod-udptunnel4 kmod-udptunnel6 kmod-usb-net-huawei-cdc-ncm kmod-usb-net-ipheth kmod-usb-net-sierrawireless kmod-usb-ohci kmod-usb-serial kmod-usb-serial-cp210x kmod-usb-serial-option kmod-usb-serial-sierrawireless kmod-usb-serial-wwan kmod-usb-serial-wwan kmod-usb-storage kmod-usb-uhci kmod-usb-wdm kmod-usb2'
 
 
 # 8devices
@@ -83,7 +83,7 @@ packages $ATH10K_PACKAGES
 factory
 
 device gl-mifi gl-mifi
-packages $MIFI_PACKAGES
+# packages $MIFI_PACKAGES
 factory
 
 
