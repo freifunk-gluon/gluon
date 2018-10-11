@@ -674,41 +674,6 @@ modules
 site-repos in the wild
 ^^^^^^^^^^^^^^^^^^^^^^
 
-This is a non-exhaustive list of site-repos from various communities:
+A non-exhaustive list of site-repos from various communities can be found on the
+wiki: https://github.com/freifunk-gluon/gluon/wiki/Site-Configurations
 
-* `site-ffa <https://github.com/tecff/site-ffa>`_ (Altdorf, Landshut & Umgebung)
-* `site-ffac <https://github.com/ffac/site>`_ (Regio Aachen)
-* `site-ffbs <https://github.com/ffbs/site-ffbs>`_ (Braunschweig)
-* `site-ffhb <https://github.com/FreifunkBremen/gluon-site-ffhb>`_ (Bremen)
-* `site-ffda <https://git.darmstadt.ccc.de/ffda/site>`_ (Darmstadt)
-* `site-ff3l <https://github.com/ff3l/site-ff3l>`_ (Dreiländereck)
-* `site-ffeh <https://github.com/freifunk-ehingen/site-ffeh>`_ (Ehingen)
-* `site-fffl <https://github.com/freifunk-flensburg/site-fffl>`_ (Flensburg)
-* `site-ffgoe <https://github.com/freifunk-goettingen/site-ffgoe>`_ (Göttingen)
-* `site-ffgt-rhw <https://github.com/ffgtso/site-ffgt-rhw>`_ (Guetersloh)
-* `site-ffhh <https://github.com/freifunkhamburg/site-ffhh>`_ (Hamburg)
-* `site-ffho <https://git.ffho.net/freifunkhochstift/ffho-site>`_ (Hochstift)
-* `site-ffhgw <https://github.com/lorenzo-greifswald/site-ffhgw>`_ (Greifswald)
-* `site-ffka <https://github.com/ffka/site-ffka>`_ (Karlsruhe)
-* `site-ffki <https://git.freifunk.in-kiel.de/ffki-site/>`_ (Kiel)
-* `site-fflz <https://github.com/freifunk-lausitz/site-fflz>`_ (Lausitz)
-* `site-ffl <https://github.com/freifunk-leipzig/freifunk-gluon-leipzig>`_ (Leipzig)
-* `site-ffhl <https://github.com/freifunk-luebeck/site-ffhl>`_ (Lübeck)
-* `site-fflg <https://github.com/kartenkarsten/site-fflg>`_ (Lüneburg)
-* `site-ffmd <https://github.com/FreifunkMD/site-ffmd>`_ (Magdeburg)
-* `site-ffmwu <https://github.com/freifunk-mwu/sites-ffmwu>`_ (Mainz, Wiesbaden & Umgebung)
-* `site-ffmyk <https://github.com/FreifunkMYK/site-ffmyk>`_ (Mayen-Koblenz)
-* `site-ffmo <https://github.com/ffruhr/site-ffmo>`_ (Moers)
-* `site-ffmg <https://github.com/ffruhr/site-ffmg>`_ (Mönchengladbach)
-* `site-ffm <https://github.com/freifunkMUC/site-ffm>`_ (München)
-* `site-ffhmue <https://github.com/Freifunk-Muenden/site-conf>`_ (Münden)
-* `site-ffms <https://github.com/FreiFunkMuenster/site-ffms>`_ (Münsterland)
-* `site-neuss <https://github.com/ffne/site-neuss>`_ (Neuss)
-* `site-ffniers <https://github.com/ffruhr/site-ffniers>`_ (Niersufer)
-* `site-ffndh <https://github.com/freifunk-nordheide/ffnordheide/tree/ffnh-lede/ffndh-site>`_ (Nordheide)
-* `site-ffnw <https://git.nordwest.freifunk.net/ffnw-firmware/siteconf/tree/master>`_ (Nordwest)
-* `site-ffrgb <https://github.com/ffrgb/site-ffrgb>`_ (Regensburg)
-* `site-ffrn <https://github.com/Freifunk-Rhein-Neckar/site-ffrn>`_ (Rhein-Neckar)
-* `site-ffruhr <https://github.com/ffruhr?utf8=✓&query=site>`_ (Ruhrgebiet, Multi-Communities)
-* `site-ffs <https://github.com/freifunk-stuttgart/site-ffs>`_ (Stuttgart)
-* `site-fftr <https://github.com/freifunktrier/site-fftr>`_ (Trier)
