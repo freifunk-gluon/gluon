@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$OPENWRT_TARGET" ] || exit 1
+[ "$OPENWRT_TARGET" -a "$GLUON_TARGETSDIR" ] || exit 1
 
 target="$1"
 packages=$2
@@ -92,10 +92,10 @@ packages() {
 }
 
 
-. targets/generic
+. "${GLUON_TARGETSDIR}/generic"
 packages $packages
 
-. targets/"$target"
+. "${GLUON_TARGETSDIR}/$target"
 check_devices
 
 

@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$GLUON_IMAGEDIR" -a "$GLUON_PACKAGEDIR" -a "$OPENWRT_TARGET" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" ] || exit 1
+[ "$GLUON_IMAGEDIR" -a "$GLUON_PACKAGEDIR" -a "$OPENWRT_TARGET" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" -a "$GLUON_TARGETSDIR" ] || exit 1
 
 
 default_factory_ext='.bin'
@@ -191,7 +191,7 @@ no_opkg() {
 }
 
 
-. targets/"$1"; copy
+. "${GLUON_TARGETSDIR}/$1"; copy
 
 # Copy opkg repo
 if [ -z "$no_opkg" -a -z "$DEVICES" ]; then

@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$OPENWRT_TARGET" ] || exit 1
+[ "$OPENWRT_TARGET" -a "$GLUON_TARGETSDIR" ] || exit 1
 
 target="$1"
 packages=$2
@@ -74,9 +74,9 @@ packages() {
 # The sort will not only remove duplicate entries,
 # but also magically make =y entries override =m ones
 (
-	. targets/generic
+	. "${GLUON_TARGETSDIR}/generic"
 	packages $packages
 
-	. targets/"$target"
+	. "${GLUON_TARGETSDIR}/$target"
 	emit
 ) | sort -u
