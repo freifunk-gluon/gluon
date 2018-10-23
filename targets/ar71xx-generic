@@ -183,9 +183,7 @@ device tp-link-wbs510-v1.20 wbs510-v1
 device tp-link-tl-wr710n-v1 tl-wr710n-v1
 device tp-link-tl-wr710n-v2.1 tl-wr710n-v2.1
 
-if [ "$BROKEN" ]; then
-device tp-link-tl-wr810n-v1 tl-wr810n-v1 # BROKEN: Untested
-fi
+device tp-link-tl-wr810n-v1 tl-wr810n-v1
 
 device tp-link-tl-wr842n-nd-v1 tl-wr842n-v1
 device tp-link-tl-wr842n-nd-v2 tl-wr842n-v2
