@@ -2,7 +2,7 @@
 
 set -e
 
-[ "$GLUON_IMAGEDIR" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" ] || exit 1
+[ "$GLUON_IMAGEDIR" -a "$GLUON_RELEASE" -a "$GLUON_SITEDIR" -a "$GLUON_TARGETSDIR" ] || exit 1
 
 
 default_sysupgrade_ext='.bin'
@@ -110,4 +110,4 @@ sysupgrade() {
 	fi
 }
 
-. targets/"$1"; generate
+. "${GLUON_TARGETSDIR}/$1"; generate
