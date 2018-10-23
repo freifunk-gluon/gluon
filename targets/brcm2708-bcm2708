@@ -1,4 +1,4 @@
-. targets/brcm2708.inc
+. "${GLUON_TARGETSDIR}/brcm2708.inc"
 
 device raspberry-pi rpi
 manifest_alias raspberry-pi-model-b-rev-2

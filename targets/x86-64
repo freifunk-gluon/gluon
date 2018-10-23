@@ -1,4 +1,4 @@
-. targets/x86.inc
+. "${GLUON_TARGETSDIR}/x86.inc"
 
 factory_image x86-64 combined-squashfs .img.gz
 factory_image x86-64 combined-squashfs .vdi
