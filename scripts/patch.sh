@@ -19,7 +19,7 @@ for module in $GLUON_MODULES; do
 	git clone -s -b base --single-branch "$GLUONDIR/$module" "$PATCHDIR" 2>/dev/null
 
 	cd "$PATCHDIR"
-	for patch in "$GLUONDIR/patches/$module"/*.patch; do
+	for patch in "${GLUON_PATCHESDIR}/$module"/*.patch; do
 		git -c user.name='Gluon Patch Manager' -c user.email='gluon@void.example.com' -c commit.gpgsign=false am --whitespace=nowarn --committer-date-is-author-date "$patch"
 	done
 
