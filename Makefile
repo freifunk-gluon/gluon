@@ -37,11 +37,14 @@ include $(GLUON_SITEDIR)/site.mk
 
 GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
 
+GLUON_TARGETSDIR ?= targets
+$(eval $(call mkabspath,GLUON_TARGETSDIR))
+
 GLUON_MULTIDOMAIN ?= 0
 GLUON_WLAN_MESH ?= 11s
 GLUON_DEBUG ?= 0
 
-export GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_WLAN_MESH GLUON_DEBUG
+export GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_WLAN_MESH GLUON_DEBUG GLUON_TARGETSDIR
 
 show-release:
 	@echo '$(GLUON_RELEASE)'
@@ -70,7 +73,7 @@ GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
 GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
 endef
 
-include targets/targets.mk
+include $(GLUON_TARGETSDIR)/targets.mk
 
 
 OPENWRTMAKE = $(MAKE) -C openwrt
