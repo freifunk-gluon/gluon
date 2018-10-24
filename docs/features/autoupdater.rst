@@ -8,10 +8,10 @@ Building Images
 
 By default, the autoupdater is disabled (as it is usually not helpful to have unexpected updates
 during development), but it can be enabled by setting the variable GLUON_BRANCH when building
-to override the default branch set in the set in the site configuration.
+to override the default branch set in the site configuration.
 
 A manifest file for the updater can be generated with `make manifest`. A signing script (using
-``ecdsautils``) can by found in the `contrib` directory. When creating the manifest, the
+``ecdsautils``) can be found in the `contrib` directory. When creating the manifest, the
 ``PRIORITY`` value may be defined by setting ``GLUON_PRIORITY`` on the command line or in ``site.mk``.
 
 ``GLUON_PRIORITY`` defines the maximum number of days that may pass between releasing an update and installation
@@ -35,9 +35,9 @@ A fully automated nightly build could use the following commands:
 ::
 
     git pull
-    (cd site && git pull)
+    (git -C site pull)
     make update
-    make clean
+    make clean GLUON_TARGET=ar71xx-generic
     NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
     make -j$NUM_CORES_PLUS_ONE GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental
     make manifest GLUON_BRANCH=$GLUON_BRANCH GLUON_RELEASE=$GLUON_RELEASE
