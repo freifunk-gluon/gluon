@@ -207,6 +207,7 @@ site.mk
 * We recommend to use *GLUON_FEATURES* for all Gluon packages, and rely on
   *GLUON_SITE_PACKAGES* for non-Gluon (OpenWrt) packages only, as explained
   in :ref:`user-site-feature-flags`.
+* The `GLUON_ATH10K_MESH` variable was renamed to `GLUON_WLAN_MESH`.
 
 site.conf
 =========
