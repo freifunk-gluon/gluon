@@ -43,6 +43,9 @@ packages $ATH10K_PACKAGES_IPQ40XX $ATH10K_PACKAGES_QCA9888
 
 # ZyXEL
 
+device zyxel-nbg6617 zyxel_nbg6617
+packages $ATH10K_PACKAGES_IPQ40XX
+
 device zyxel-wre6606 zyxel_wre6606
 factory
 packages $ATH10K_PACKAGES_IPQ40XX
