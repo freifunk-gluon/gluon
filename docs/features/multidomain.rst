@@ -160,8 +160,8 @@ site.conf only variables
    in a domain specific way:
 
    -  mesh_vpn.fastd.syslog_level
-   -  wifi*.ibss.supported_basic_rates
-   -  wifi*.mesh.supported_basic_rates
+   -  wifi*.supported_rates
+   -  wifi*.basic_rates
    -  timezone
    -  regdom
 
