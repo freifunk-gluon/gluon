@@ -349,8 +349,11 @@ ramips-mt7621
   - EdgeRouter X
   - EdgeRouter X-SFP
 
-ramips-mt7628
+ramips-mt76x8
 ^^^^^^^^^^^^^
+
+* GL.iNet
+  - MT300N v2 [#80211s]_
 
 * TP-Link
 
