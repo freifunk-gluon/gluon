@@ -214,20 +214,21 @@ domain.conf only variables
 
    -  wifi*.ap.ssid
 
-- Some values should be only set in legacy domains and not in new domains.
+-  Some values should be only set in legacy domains and not in new domains.
+
    -  mesh.vxlan
 
-       -  By default, this value is `true`. It should be only set to `false`
-          for one legacy domain, since vxlan prevents accidental wired
-          merges of domains. For old domains this value is still available
-          to keep compatibility between all nodes in one domain.
+      -  By default, this value is `true`. It should be only set to `false`
+         for one legacy domain, since vxlan prevents accidental wired
+         merges of domains. For old domains this value is still available
+         to keep compatibility between all nodes in one domain.
 
    -  next_node.mac
 
-       -  For new domains, the default value should be used, since there is
-          no need for a special mac (or domain specific mac). For old domains
-          this value is still available to keep compatibility between all
-          nodes in one domain.
+      -  For new domains, the default value should be used, since there is
+         no need for a special mac (or domain specific mac). For old domains
+         this value is still available to keep compatibility between all
+         nodes in one domain.
 
 Example config
 --------------
