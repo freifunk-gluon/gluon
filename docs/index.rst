@@ -116,6 +116,7 @@ ar71xx-generic
 
 * ALFA Network
 
+  - AP120C
   - AP121
   - AP121F
   - AP121U
