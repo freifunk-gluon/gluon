@@ -25,6 +25,11 @@ uci:section('network', 'interface', 'client', {
 
 uci:delete('network', 'client_lan')
 
+uci:section('network', 'route', 'br_client_route', {
+	interface = 'client',
+	target = site.prefix4(),
+})
+
 uci:section('network', 'rule', 'local_node_rule', {
 	src = next_node.ip4 .. '/32',
 	lookup = 2,
