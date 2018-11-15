@@ -1,0 +1,4 @@
+chain('ALT_ESC', 'ACCEPT', 'nat')
+chain('ALT_ESC_OFFLINK', 'ACCEPT', 'nat')
+chain('ALT_ESC_STDGW', 'RETURN', 'nat')
+chain('ALT_ESC_DNAT', 'RETURN', 'nat')

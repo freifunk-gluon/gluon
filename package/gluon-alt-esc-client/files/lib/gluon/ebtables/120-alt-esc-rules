@@ -1,0 +1,5 @@
+rule ('PREROUTING -d Unicast -j ALT_ESC', 'nat')
+
+rule ('ALT_ESC_OFFLINK -p IPv6 --ip6-src fe80::/ffc0:: -j RETURN', 'nat')
+rule ('ALT_ESC_OFFLINK -p IPv4 --ip-dst 0.0.0.0 -j RETURN', 'nat')
+rule ('ALT_ESC_OFFLINK -j ALT_ESC_STDGW', 'nat')

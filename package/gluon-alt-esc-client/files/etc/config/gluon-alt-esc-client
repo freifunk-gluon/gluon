@@ -1,0 +1,5 @@
+config client
+	option disabled '1'
+	option exit4 ''
+	option exit6 ''
+	option altesc_on_lan '0'

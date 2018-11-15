@@ -1,0 +1,34 @@
+#!/bin/sh
+
+disabled=`uci get gluon-alt-esc-client.@client[0].disabled`
+
+if [ ! "$disabled" = "0" ]; then
+	ebtables-tiny -t nat -F ALT_ESC_STDGW
+	exit 0
+fi
+
+
+get_gw_hosts() {
+	for gw in `batctl gwl -n -H | sed "s/.* \(..:..:..:..:..:..\) (.*/\1/"`; do
+		batctl tg -n -H | grep ".* ..:..:..:..:..:.. .* $gw"
+	done | sed "s/^.* \(..:..:..:..:..:..\) .* ..:..:..:..:..:.. .*/\1/" | sort
+}
+
+gwhosts="`get_gw_hosts`"
+gwhostssum="`echo "$gwhosts" | md5sum`"
+oldgwhosts="`cat /var/run/gluon-alt-esc.hosts 2> /dev/null`"
+oldgwhostssum="`cat /var/run/gluon-alt-esc.hosts.md5sum 2> /dev/null`"
+
+if [ "$gwhostssum" = "$oldgwhostssum" ]; then
+	echo "Stayed the same"
+	exit 0
+fi
+
+ebtables-tiny -t nat -F ALT_ESC_STDGW
+
+for host in $gwhosts; do
+	ebtables-tiny -t nat -A ALT_ESC_STDGW -d "$host" -j ALT_ESC_DNAT
+done
+
+echo "$gwhosts" > /var/run/gluon-alt-esc.hosts
+echo "$gwhostssum" > /var/run/gluon-alt-esc.hosts.md5sum

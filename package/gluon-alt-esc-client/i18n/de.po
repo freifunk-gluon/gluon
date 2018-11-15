@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2017-11-13 08:00+0200\n"
+"Last-Translator:  Linus Lüssing <linus.luessing@c0d3.blue>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid ""
+"Here you can add a WiFi interface with an alternative gateway for its "
+"Internet connectivity. Usually, you connect to a node which has the "
+"Alt-ESC-Provider package activated (although other systems can "
+"provide access too)."
+msgstr ""
+"Hier kannst du ein WiFi Interface mit einem alternativen Gateway für "
+"dessen Internetzugang hinzufügen. Normalerweise verbindest du dich mit "
+"einem Knoten, welcher das Alt-ESC-Provider Paket aktiviert hat (wobei "
+"auch andere Systeme Zugang bieten können)."
+
+msgid "Name (SSID)"
+msgstr "Name (SSID)"
+
+msgid "Example: \"Lisa's Garden Gate\""
+msgstr "Beispiel: \"Lisas Gartentor\""
+
+msgid "Enable IPv4 redirection"
+msgstr "Umleitung für IPv4 aktivieren"
+
+msgid "Exit ID for IPv4"
+msgstr "Exit ID für IPv4"
+
+msgid "E.g. MAC address of the node serving as Alt-ESC-Provider for the IPv4 internet"
+msgstr "Z.B. die MAC-Adresse eines Knoten, der als Alt-ESC-Provider für das IPv4 Internet dient"
+
+msgid "Enable IPv6 redirection"
+msgstr "Umleitung für IPv6 aktivieren"
+
+msgid "Exit ID for IPv6"
+msgstr "Exit ID für IPv6"
+
+msgid "E.g. MAC address of the node serving as Alt-ESC-Provider for the IPv6 internet"
+msgstr "Z.B. die MAC-Adresse eines Knoten, der als Alt-ESC-Provider für das IPv6 Internet dient"
+
+msgid "Enable redirection on LAN ports"
+msgstr "Umleitung auf LAN-Ports aktivieren"
+
+msgid "Enable Password"
+msgstr "Passwort aktivieren"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "8-63 characters. Note: No strict enforcement (yet)"
+msgstr "8-63 Zeichen. Hinweis: (Bisweilen) keine strikte Durchsetzung"

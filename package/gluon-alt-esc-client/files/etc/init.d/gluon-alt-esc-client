@@ -1,0 +1,86 @@
+#!/bin/sh /etc/rc.common
+
+. $IPKG_INSTROOT/usr/share/libubox/jshn.sh
+
+START=60
+sitejson="/lib/gluon/site.json"
+
+
+__get_ifnames() {
+	local lanif
+	local altesc_on_lan=`uci get gluon-alt-esc-client.@client[0].altesc_on_lan`
+
+	for wifi in `uci show wireless | grep "wireless.altesc_radio.*\.ifname" | sed "s/\.ifname=.*//"`; do
+		[ "`uci get $wifi.disabled`" = 0 ] && \
+			uci get $wifi.ifname
+	done
+
+	[ "$altesc_on_lan" = "1" ] && cat /lib/gluon/core/sysconfig/lan_ifname
+}
+
+get_ifnames() {
+	ifnames=`__get_ifnames | sort`
+}
+
+setup_onlink_prefixes() {
+	json_load "$(cat /lib/gluon/site.json)"
+	json_get_var prefix4 prefix4
+	json_get_var prefix6 prefix6
+	json_get_values extra_prefixes4 extra_prefixes4
+	json_get_values extra_prefixes6 extra_prefixes6
+
+	if [ -n "$1" ]; then
+		M="$1"
+		OUT="2> /dev/null"
+	else
+		M="-I"
+		OUT=""
+	fi
+
+	for p4 in $prefix4 $extra_prefixes4; do
+		eval ebtables-tiny -t nat "$M" ALT_ESC_OFFLINK -p IPv4 --ip-dst $p4 -j RETURN $OUT
+	done
+	for p6 in $prefix6 $extra_prefixes6; do
+		eval ebtables-tiny -t nat "$M" ALT_ESC_OFFLINK -p IPv6 --ip6-dst $p6 -j RETURN $OUT
+	done
+}
+
+start() {
+	local exit4="`uci get gluon-alt-esc-client.@client[0].exit4 2> /dev/null | tr 'A-Z' 'a-z'`"
+	local exit6="`uci get gluon-alt-esc-client.@client[0].exit6 2> /dev/null | tr 'A-Z' 'a-z'`"
+	local ownmac="`uci get network.client.macaddr 2> /dev/null | tr 'A-Z' 'a-z'`"
+	local disabled="`uci get gluon-alt-esc-client.@client[0].disabled 2> /dev/null`"
+
+	get_ifnames
+	stop
+	[ ! "$disabled" = "0" ] && exit 0
+
+	for i in $ifnames; do
+		ebtables-tiny -t nat -A ALT_ESC -i $i --logical-in br-client -j ALT_ESC_OFFLINK
+	done
+
+	setup_onlink_prefixes
+
+
+	[ -n "$exit4" ] && {
+		if [ "$ownmac" = "$exit4" ]; then
+			ebtables-tiny -t nat -A ALT_ESC_DNAT -p IPv4 -j redirect --redirect-target ACCEPT
+		else
+			ebtables-tiny -t nat -A ALT_ESC_DNAT -p IPv4 -j dnat --to-dst "$exit4" --dnat-target ACCEPT
+		fi
+	}
+
+	[ -n "$exit6" ] && {
+		if [ "$ownmac" = "$exit6" ]; then
+			ebtables-tiny -t nat -A ALT_ESC_DNAT -p IPv6 -j redirect --redirect-target ACCEPT
+		else
+			ebtables-tiny -t nat -A ALT_ESC_DNAT -p IPv6 -j dnat --to-dst "$exit6" --dnat-target ACCEPT
+		fi
+	}
+}
+
+stop() {
+	ebtables-tiny -t nat -F ALT_ESC_DNAT
+	ebtables-tiny -t nat -F ALT_ESC
+	setup_onlink_prefixes "-D"
+}
