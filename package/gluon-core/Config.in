@@ -104,6 +104,10 @@ config KERNEL_BRIDGE_EBT_ARP
 	bool
 	select KERNEL_BRIDGE_NF_EBTABLES
 
+config KERNEL_BRIDGE_EBT_DNAT
+	bool
+	select KERNEL_BRIDGE_NF_EBTABLES
+
 config KERNEL_BRIDGE_EBT_IP
 	bool
 	select KERNEL_BRIDGE_NF_EBTABLES
@@ -124,6 +128,9 @@ config KERNEL_BRIDGE_EBT_MARK_T
 	bool
 	select KERNEL_BRIDGE_NF_EBTABLES
 
+config KERNEL_BRIDGE_EBT_REDIRECT
+	bool
+	select KERNEL_BRIDGE_NF_EBTABLES
 
 # Not all of the following modules are really required for Gluon, but fw3 pulls
 # them in, so we add them to the kernel config to reduce the number of loaded
