@@ -17,9 +17,6 @@ endef
 define Package/gluon-mesh-babel/install
 	$(Gluon/Build/Install)
 
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_DIR) $(1)/usr/lib/respondd
-	$(CP) $(PKG_BUILD_DIR)/babel-respondd.so $(1)/usr/lib/respondd/mesh-babel.so
 	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/neighbours-babel $(1)/lib/gluon/status-page/providers/
 endef

@@ -1,4 +1,4 @@
-all: babel-respondd.so neighbours-babel
+all: respondd.so neighbours-babel
 
 CFLAGS += -Wall -g -fPIC -D_GNU_SOURCE
 
@@ -24,7 +24,7 @@ CFLAGS_JSONC = $(shell pkg-config --cflags json-c)
 LDFLAGS_JSONC = $(shell pkg-config --libs json-c)
 
 
-babel-respondd.so: babel-respondd.c handle_neighbour.c
+respondd.so: respondd.c handle_neighbour.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -shared $(LDFLAGS_JSONC) -o $@ $^ -lgluonutil -lblobmsg_json -lubox -lubus -liwinfo -luci
 
 neighbours-babel: neighbours-babel.c handle_neighbour.c
