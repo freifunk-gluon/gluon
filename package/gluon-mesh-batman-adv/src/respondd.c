@@ -444,8 +444,12 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 		return;
 
 	struct iwinfo_assoclist_entry *entry;
-	for (entry = (struct iwinfo_assoclist_entry *)buf; (char*)(entry+1) <= buf + len; entry++)
+	for (entry = (struct iwinfo_assoclist_entry *)buf; (char*)(entry+1) <= buf + len; entry++) {
+		if (entry->inactive > MAX_INACTIVITY)
+			continue;
+
 		(*wifi)++;
+	}
 }
 
 static void count_stations(size_t *wifi24, size_t *wifi5) {
@@ -712,6 +716,9 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 
 	struct iwinfo_assoclist_entry *entry;
 	for (entry = (struct iwinfo_assoclist_entry *)buf; (char*)(entry+1) <= buf + len; entry++) {
+		if (entry->inactive > MAX_INACTIVITY)
+			continue;
+
 		struct json_object *obj = json_object_new_object();
 
 		json_object_object_add(obj, "signal", json_object_new_int(entry->signal));
