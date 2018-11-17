@@ -57,6 +57,9 @@
 #define _STRINGIFY(s) #s
 #define STRINGIFY(s) _STRINGIFY(s)
 
+#define MAX_INACTIVITY 60000
+
+
 struct neigh_netlink_opts {
 	struct json_object *interfaces;
 	struct batadv_nlquery_opts query_opts;
@@ -484,6 +487,12 @@ static void count_stations(size_t *wifi24, size_t *wifi5) {
 
 static const enum batadv_nl_attrs clients_mandatory[] = {
 	BATADV_ATTR_TT_FLAGS,
+	/* Entries without the BATADV_TT_CLIENT_NOPURGE flag do not have a
+	 * BATADV_ATTR_LAST_SEEN_MSECS attribute. We can still make this attr
+	 * mandatory here, as entries without BATADV_TT_CLIENT_NOPURGE are
+	 * ignored anyways.
+	 */
+	BATADV_ATTR_LAST_SEEN_MSECS,
 };
 
 static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
@@ -493,7 +502,7 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct batadv_nlquery_opts *query_opts = arg;
 	struct genlmsghdr *ghdr;
 	struct clients_netlink_opts *opts;
-	uint32_t flags;
+	uint32_t flags, lastseen;
 
 	opts = batadv_container_of(query_opts, struct clients_netlink_opts,
 				   query_opts);
@@ -517,6 +526,10 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 	flags = nla_get_u32(attrs[BATADV_ATTR_TT_FLAGS]);
 
 	if (flags & BATADV_TT_CLIENT_NOPURGE)
+		return NL_OK;
+
+	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
+	if (lastseen > MAX_INACTIVITY)
 		return NL_OK;
 
 	if (flags & BATADV_TT_CLIENT_WIFI)
