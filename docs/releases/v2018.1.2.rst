@@ -1,0 +1,58 @@
+Gluon 2018.1.2
+==============
+
+Bugfixes
+~~~~~~~~
+
+* Fix a bug leading to missing IPv6 addresses in respondd announcements
+  (`#1523 <https://github.com/freifunk-gluon/gluon/issues/1523>`_)
+
+  The pattern that was used to match addresses from /proc/net/if_inet6
+  did not expect interface indexes growing past two characters.
+
+* Mark ipq806x target as broken for unstable client WiFi
+  (`#1505 <https://github.com/freifunk-gluon/gluon/issues/1505>`_)
+
+  Station connections to the QCA9880 radio on the TP-Link C2600s are frequently
+  disconnected, leading to an abysmal user experience.
+
+* Fix button behaviour on FRITZ!Box 4020
+  (`#1544 <https://github.com/freifunk-gluon/gluon/pull/1544>`_)
+
+  Buttons were triggering an instant reboot into config mode, fix by setting
+  buttons to active low instead of active high.
+
+* Prevent caching of redirects on config mode and status page
+  (`#1530 <https://github.com/freifunk-gluon/gluon/issues/1530>`_)
+
+  As the path to both config mode and status page were changed between versions
+  users could be affected by a redirect to a no more valid URL. 
+
+* batman-adv has received two bugfixes, which were `backported <https://github.com/openwrt-routing/packages/commit/7bf62cc8b556b5046f9bbd37687376fe9ea175bb>`_ from v2018.4
+
+Other changes
+~~~~~~~~~~~~~
+
+* Linux kernel has been updated to v4.4.153
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware specially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
