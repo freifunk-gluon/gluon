@@ -219,8 +219,11 @@ mesh
     in the *batman_adv* section:
 
     The optional value *gw_sel_class* sets the gateway selection class. The
-    default is class 20, which is based on the link quality (TQ) only; class 1
+    default is class ``20``, which is based on the link quality (TQ) only; class ``1``
     is calculated from both the TQ and the announced bandwidth.
+
+    The optional value *routing_algo* allows to set up ``BATMAN_V`` based meshes.
+    If unset, the routing algorithm will default to ``BATMAN_IV``.
     ::
 
       mesh = {
@@ -228,6 +231,7 @@ mesh
         filter_membership_reports = false,
         batman_adv = {
           gw_sel_class = 1,
+          routing_algo = 'BATMAN_IV',
         },
       }
 
@@ -676,4 +680,3 @@ site-repos in the wild
 
 A non-exhaustive list of site-repos from various communities can be found on the
 wiki: https://github.com/freifunk-gluon/gluon/wiki/Site-Configurations
-
