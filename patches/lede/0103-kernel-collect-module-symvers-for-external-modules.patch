@@ -1,0 +1,73 @@
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Thu, 20 Jul 2017 22:34:54 +0200
+Subject: kernel: collect module symvers for external modules
+
+Collect module symvers for all external modules to make them available
+for modpost. This fixes dependencies for most external modules.
+
+Example:
+
+Before:
+
+root@LEDE:/# modinfo mt76
+module:         /lib/modules/4.4.74/mt76.ko
+license:        Dual BSD/GPL
+depends:
+
+After:
+
+root@LEDE:/# modinfo mt76
+module:         /lib/modules/4.4.74/mt76.ko
+license:        Dual BSD/GPL
+depends:        mac80211,cfg80211
+
+Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+
+Origin: backport, https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=2e496876c60cc45a06ac610e02c00ec767028b64
+
+diff --git a/include/kernel.mk b/include/kernel.mk
+index d8d457fe7a5d3584d8aa4e27430da84533c85ed0..10a264c9394c2b9a06801c10ae91d563adc7ee3f 100644
+--- a/include/kernel.mk
++++ b/include/kernel.mk
+@@ -85,6 +85,33 @@ else
+   LINUX_KARCH := $(ARCH)
+ endif
+ 
++PKG_EXTMOD_SUBDIRS ?= .
++
++define populate_module_symvers
++	@mkdir -p $(PKG_INFO_DIR)
++	cat /dev/null > $(PKG_INFO_DIR)/$(PKG_NAME).symvers; \
++	for subdir in $(PKG_EXTMOD_SUBDIRS); do \
++		cat $(PKG_INFO_DIR)/*.symvers 2>/dev/null > $(PKG_BUILD_DIR)/$$$$subdir/Module.symvers; \
++	done
++endef
++
++define collect_module_symvers
++	for subdir in $(PKG_EXTMOD_SUBDIRS); do \
++		grep -F $$$$(readlink -f $(PKG_BUILD_DIR)) $(PKG_BUILD_DIR)/$$$$subdir/Module.symvers >> $(PKG_BUILD_DIR)/Module.symvers.tmp; \
++	done; \
++	sort -u $(PKG_BUILD_DIR)/Module.symvers.tmp > $(PKG_BUILD_DIR)/Module.symvers; \
++	mv $(PKG_BUILD_DIR)/Module.symvers $(PKG_INFO_DIR)/$(PKG_NAME).symvers
++endef
++
++define KernelPackage/hooks
++  ifneq ($(PKG_NAME),kernel)
++    Hooks/Compile/Pre += populate_module_symvers
++    Hooks/Compile/Post += collect_module_symvers
++  endif
++  define KernelPackage/hooks
++  endef
++endef
++
+ define KernelPackage/Defaults
+   FILES:=
+   AUTOLOAD:=
+@@ -192,6 +219,7 @@ $(call KernelPackage/$(1)/config)
+   endif
+ 
+   $(call KernelPackage/depends)
++  $(call KernelPackage/hooks)
+ 
+   ifneq ($(if $(filter-out %=y %=n %=m,$(KCONFIG)),$(filter m y,$(foreach c,$(filter-out %=y %=n %=m,$(KCONFIG)),$($(c)))),.),)
+     define Package/kmod-$(1)/install
