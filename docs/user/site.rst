@@ -218,20 +218,32 @@ mesh
     In addition, options specific to the batman-adv routing protocol can be set
     in the *batman_adv* section:
 
-    The optional value *gw_sel_class* sets the gateway selection class. The
-    default is class ``20``, which is based on the link quality (TQ) only; class ``1``
-    is calculated from both the TQ and the announced bandwidth.
-
-    The optional value *routing_algo* allows to set up ``BATMAN_V`` based meshes.
+    The optional value *routing_algo* allows to set up ``BATMAN_V`` based meshes. 
     If unset, the routing algorithm will default to ``BATMAN_IV``.
+
+    The optional value *gw_sel_class* sets the gateway selection class, the
+    default is ``20`` for B.A.T.M.A.N. IV and ``5000`` kbit/s for B.A.T.M.A.N. V.
+
+    - **B.A.T.M.A.N. IV:** with the value ``20`` the gateway is selected based
+      on the link quality (TQ) only; with class ``1`` it is calculated from
+      both, the TQ and the announced bandwidth.
+    - **B.A.T.M.A.N. V:** with the value ``1500`` the gateway is selected if the
+      throughput is at least 1500 kbit/s faster than the throughput of the
+      currently selected gateway. 
+
+    For details on determining the threshhold, when to switch to a new gateway,
+    see `batctl manpage`_, section "gw_mode".
+    
+    .. _batctl manpage: https://www.open-mesh.org/projects/batman-adv/wiki/Gateways
+
     ::
 
       mesh = {
         vxlan = true,
         filter_membership_reports = false,
         batman_adv = {
-          gw_sel_class = 1,
           routing_algo = 'BATMAN_IV',
+          gw_sel_class = 1,
         },
       }
 
