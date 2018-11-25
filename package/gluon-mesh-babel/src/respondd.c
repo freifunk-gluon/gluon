@@ -591,7 +591,7 @@ static struct json_object * get_clients(void) {
 
 	count_stations(&wifi24, &wifi5);
 
-	size_t total = ask_l3roamd_for_client_count();
+	int total = ask_l3roamd_for_client_count();
 
 	size_t wifi = wifi24 + wifi5;
 	struct json_object *ret = json_object_new_object();
