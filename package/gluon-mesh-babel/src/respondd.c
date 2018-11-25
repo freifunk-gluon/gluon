@@ -559,11 +559,12 @@ static int ask_l3roamd_for_client_count() {
 
 	int rc = 0;
 	do {
-		buf = realloc(buf, already_read + SOCKET_INPUT_BUFFER_SIZE + 1);
-		if (buf == NULL) {
+		char *buf_tmp = realloc(buf, already_read + SOCKET_INPUT_BUFFER_SIZE + 1);
+		if (buf_tmp == NULL) {
 			fprintf(stderr, "could not allocate memory for buffer\n");
 			goto end;
 		}
+		buf = buf_tmp;
 
 		rc = read(fd, &buf[already_read], SOCKET_INPUT_BUFFER_SIZE);
 		already_read+=rc;
