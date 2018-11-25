@@ -38,6 +38,8 @@ Other changes
 Known issues
 ~~~~~~~~~~~~
 
+* Missing kernel module dependencies prevent batman-adv from being loaded on devices without WiFi drivers  (`#1578 <https://github.com/freifunk-gluon/gluon/issues/1578`_)
+
 * Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
 
   Reducing the TX power in the Advanced Settings is recommended.
