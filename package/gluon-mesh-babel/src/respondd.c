@@ -336,10 +336,9 @@ static struct json_object * get_mesh_ifs() {
 		goto end;
 	}
 
-	int uret = -2;
 	blob_buf_init(&b, 0);
 	ubus_lookup_id(ubus_ctx, "network.interface", &id);
-	uret = ubus_invoke(ubus_ctx, id, "dump", b.head, receive_call_result_data, &ret, UBUS_TIMEOUT * 1000);
+	int uret = ubus_invoke(ubus_ctx, id, "dump", b.head, receive_call_result_data, &ret, UBUS_TIMEOUT * 1000);
 
 	if (uret > 0)
 		fprintf(stderr, "ubus command failed: %s\n", ubus_strerror(uret));
