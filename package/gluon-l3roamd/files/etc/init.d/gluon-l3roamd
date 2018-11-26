@@ -5,10 +5,39 @@ START=55
 USE_PROCD=1
 PROG=/usr/sbin/l3roamd
 
+echotol3roamd() {
+	local count=0
+	local line="$1"
+	while ! (echo -e "$line" | uc /var/run/l3roamd.sock >/dev/null 2>&1)
+	do
+		sleep 1
+		echo retrying to connect to l3roamd in PID $$, waited ${count}s >&2
+		count=$((count+1))
+	done
+	return 0
+}
+
+
+
+reload_service() {
+	for i in $(ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device")
+	do
+		echotol3roamd "add_meshif $i"
+	done
+
+	for i in $(echotol3roamd "get_meshifs"| jsonfilter -e "@.mesh_interfaces[@]")
+	do
+		if ! ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"|grep -q $i
+		then
+			echotol3roamd "del_meshif $i"
+		fi
+	done
+}
+
 start_service () {
 	local interfaces=$(
-		for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
-		[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
+	for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
+	[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
 	)
 	/sbin/sysctl -w net.ipv6.neigh.default.gc_thresh1=2
 	/sbin/sysctl -w net.ipv4.neigh.default.gc_thresh1=2

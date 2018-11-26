@@ -22,11 +22,15 @@ start_service() {
 echotobabel() {
 	local count=0
 	local line="$1"
-	while ! (echo -e "$line" | nc ::1 "$PORT" >/dev/null 2>&1)
+	local maxretries=10
+	while ! (echo -e "$line" | busybox nc ::1 "$PORT" >/dev/null 2>&1)
 	do
 		sleep 1
 		echo retrying to connect to babeld in PID $$, waited ${count}s >&2
 		count=$((count+1))
+		if [ $count -gt $maxretries ]; then
+			return 1
+		fi
 	done
 	return 0
 }
