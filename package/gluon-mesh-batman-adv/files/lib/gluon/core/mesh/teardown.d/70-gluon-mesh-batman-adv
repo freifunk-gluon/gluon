@@ -2,4 +2,5 @@
 
 lock /var/lock/gluon_bat0.lock
 (echo 'none' > "/sys/class/net/$IFNAME/batman_adv/mesh_iface") 2>/dev/null
+(echo 'none' > "/sys/class/net/$IFNAME/batman_adv_legacy/mesh_iface") 2>/dev/null
 lock -u /var/lock/gluon_bat0.lock
