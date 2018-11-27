@@ -13,7 +13,6 @@ endef
 define Package/gluon-mesh-batman-adv-14
 $(Package/gluon-mesh-batman-adv/common)
   TITLE:=Support for batman-adv meshing (compat level 14)
-  CONFLICTS:=gluon-mesh-batman-adv-15
   DEPENDS+=+kmod-batman-adv-legacy
 endef
 
