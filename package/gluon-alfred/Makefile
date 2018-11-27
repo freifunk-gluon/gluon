@@ -7,7 +7,7 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-alfred
-  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info gluon-mesh-batman-adv +micrond +alfred
+  DEPENDS:=+gluon-core +gluon-respondd +gluon-neighbour-info gluon-mesh-batman-adv-common +micrond +alfred
   TITLE:=Configure alfred
 endef
 

@@ -562,17 +562,17 @@ in the *GLUON_FEATURES* variable. These flags allow to specify a set of features
 on a higher level than individual package names.
 
 Most Gluon packages can simply be specified as feature flags by removing the ``gluon-``
-prefix: The feature flag corresponding to the package *gluon-mesh-batman-adv-15* is
-*mesh-batman-adv-15*.
+prefix: The feature flag corresponding to the package *gluon-mesh-batman-adv* is
+*mesh-batman-adv*.
 
 The file ``package/features`` in the Gluon repository (or
 ``features`` in site feeds) can specify additional rules for deriving package lists
-from feature flags, e.g. specifying both *status-page* and either *mesh-batman-adv-14*
-or *mesh-batman-adv-15* will automatically select the additional package
+from feature flags, e.g. specifying both *status-page* and either *mesh-batman-adv-legacy*
+or *mesh-batman-adv* will automatically select the additional package
 *gluon-status-page-mesh-batman-adv*. In the future, selecting the flags
 *mesh-vpn-fastd* and *respondd* might automatically enable the additional
 package *gluon-mesh-vpn-fastd-respondd*, and enabling *status-page* and
-*mesh-batman-adv-15* (or *-14*) with ``de`` in *GLUON_LANGS* could
+*mesh-batman-adv* (or *-legacy*) with ``de`` in *GLUON_LANGS* could
 add the package *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 In short, it is not necessary anymore to list all the individual packages that are

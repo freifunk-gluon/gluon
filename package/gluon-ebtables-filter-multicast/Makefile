@@ -8,7 +8,7 @@ include ../gluon.mk
 
 define Package/gluon-ebtables-filter-multicast
   TITLE:=Ebtables filters for multicast packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv-common
 endef
 
 define Package/gluon-ebtables-filter-multicast/description

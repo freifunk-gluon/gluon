@@ -8,7 +8,7 @@ include ../gluon.mk
 
 define Package/gluon-ebtables-filter-ra-dhcp
   TITLE:=Ebtables filters for Router Advertisement and DHCP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv-common
 endef
 
 define Package/gluon-ebtables-filter-ra-dhcp/description
