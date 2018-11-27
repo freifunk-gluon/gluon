@@ -209,24 +209,32 @@ static struct json_object * get_mesh(void) {
 	return ret;
 }
 
-static struct json_object * get_batman_adv_compat(void) {
-	FILE *f = fopen("/lib/gluon/mesh-batman-adv/compat", "r");
-	if (!f)
-		return NULL;
+static int get_batman_adv_compat(void) {
+	char path[] = "batman-adv.bat0.routing_algo";
+	struct uci_ptr ptr;
+	struct uci_context *ctx = uci_alloc_context();
+	int compat = 15;
 
-	struct json_object *ret = NULL;
+	if (!ctx)
+		return compat;
 
-	int compat;
-	if (fscanf(f, "%i", &compat) == 1)
-		ret = json_object_new_int(compat);
+	if (uci_lookup_ptr(ctx, &ptr, path, true) != UCI_OK)
+		goto end;
 
-	fclose(f);
+	if (!ptr.o || ptr.o->type != UCI_TYPE_STRING || !ptr.o->v.string)
+		goto end;
 
-	return ret;
+	if (strncmp("BATMAN_IV_LEGACY", ptr.o->v.string, strlen("BATMAN_IV_LEGACY")) == 0)
+		compat = 14;
+end:
+	uci_free_context(ctx);
+	return compat;
 }
 
 static struct json_object * respondd_provider_nodeinfo(void) {
 	struct json_object *ret = json_object_new_object();
+	int compat = get_batman_adv_compat();
+	const char *version_path;
 
 	struct json_object *network = json_object_new_object();
 	json_object_object_add(network, "addresses", get_addresses());
@@ -235,8 +243,14 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 	struct json_object *software = json_object_new_object();
 	struct json_object *software_batman_adv = json_object_new_object();
-	json_object_object_add(software_batman_adv, "version", gluonutil_wrap_and_free_string(gluonutil_read_line("/sys/module/batman_adv/version")));
-	json_object_object_add(software_batman_adv, "compat", get_batman_adv_compat());
+	json_object_object_add(software_batman_adv, "compat", json_object_new_int(compat));
+
+	if (compat == 14)
+		version_path = "/sys/module/batman_adv_legacy/version";
+	else
+		version_path = "/sys/module/batman_adv/version";
+
+	json_object_object_add(software_batman_adv, "version", gluonutil_wrap_and_free_string(gluonutil_read_line(version_path)));
 	json_object_object_add(software, "batman-adv", software_batman_adv);
 	json_object_object_add(ret, "software", software);
 
