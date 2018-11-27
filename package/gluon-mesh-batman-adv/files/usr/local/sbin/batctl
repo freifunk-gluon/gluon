@@ -1,0 +1,9 @@
+#!/bin/sh
+
+routing_algo="$(uci -q get batman-adv.bat0.routing_algo || echo 'BATMAN_IV')"
+
+if [ "$routing_algo" = "BATMAN_IV_LEGACY" ]; then
+	exec /usr/sbin/batctl-legacy $@
+else
+	exec /usr/sbin/batctl $@
+fi
