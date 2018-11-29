@@ -122,6 +122,15 @@
 								string.format(' (%s)', nodeinfo.software.autoupdater.branch)
 						%></dd>
 					<%- end %>
+					<% if nodeinfo.system.role then -%>
+						<dt><%:Role%></dt><dd><%| nodeinfo.system.role %></dd>
+					<%- end %>
+					<% if nodeinfo.system.site_code then -%>
+						<dt><%:Site%></dt><dd><%| nodeinfo.system.site_code %></dd>
+					<%- end %>
+					<% if nodeinfo.system.domain_code then -%>
+						<dt><%:Domain%></dt><dd><%| nodeinfo.system.domain_code %></dd>
+					<%- end %>
 				</dl>
 			</div>
 			<div class="frame">
