@@ -223,6 +223,7 @@ ar71xx-generic
   - Rocket M2/M5 Ti
   - Rocket M2/M5 XW
   - UniFi AC Mesh [#ath10k]_
+  - UniFi AC Mesh Pro [#ath10k]_
   - UniFi AP
   - UniFi AP AC Lite [#ath10k]_
   - UniFi AP AC LR [#ath10k]_

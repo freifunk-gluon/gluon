@@ -1,0 +1,121 @@
+From: Christoph Krapp <achterin@googlemail.com>
+Date: Thu, 8 Nov 2018 11:09:02 +0000
+Subject: ar71xx: add support for UniFi-AC-Mesh-Pro
+
+This adds the build option for UniFi AC Mesh Pro as well as
+model detection for it.
+The device is a hardware clone of the AC Pro.
+
+- SoC: QCA9563-AL3A (775Mhz)
+- RAM: 128MiB
+- Flash: 16MiB - dual firmware partitions!
+- LAN: 2x 1000M - POE+
+- Wireless:
+        2.4G: QCA9563
+          5G: UniFi Chip, QCA988X compatible
+
+Signed-off-by: Christoph Krapp <achterin@googlemail.com>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 3af2eee2bd5f28dd1b1ffd2f212f79ff392b811a..ccbd4e77c324a36e7fba6e6dccad59d8f94a3921 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -98,22 +98,28 @@ ubnt_xm_board_detect() {
+ 	[ -z "$model" ] || AR71XX_MODEL="${model}${magic:3:1}"
+ }
+ 
+-ubnt_ac_lite_get_mtd_part_magic() {
++ubnt_unifi_ac_get_mtd_part_magic() {
+ 	ar71xx_get_mtd_offset_size_format EEPROM 12 2 %02x
+ }
+ 
+-ubnt_ac_lite_board_detect() {
++ubnt_unifi_ac_board_detect() {
+ 	local model
+ 	local magic
+ 
+-	magic="$(ubnt_ac_lite_get_mtd_part_magic)"
++	magic="$(ubnt_unifi_ac_get_mtd_part_magic)"
+ 	case ${magic:0:4} in
+ 	"e517")
+ 		model="Ubiquiti UniFi-AC-LITE"
+ 		;;
++	"e537")
++		model="Ubiquiti UniFi-AC-PRO"
++		;;
+ 	"e557")
+ 		model="Ubiquiti UniFi-AC-MESH"
+ 		;;
++	"e567")
++		model="Ubiquiti UniFi-AC-MESH-PRO"
++		;;
+ 	esac
+ 
+ 	[ -z "$model" ] || AR71XX_MODEL="${model}"
+@@ -1369,10 +1375,11 @@ ar71xx_board_detect() {
+ 		;;
+ 	*"UniFi-AC-LITE/MESH")
+ 		name="unifiac-lite"
+-		ubnt_ac_lite_board_detect
++		ubnt_unifi_ac_board_detect
+ 		;;
+-	*"UniFi-AC-PRO")
++	*"UniFi-AC-PRO/MESH-PRO")
+ 		name="unifiac-pro"
++		ubnt_unifi_ac_board_detect
+ 		;;
+ 	*"UniFiAP Outdoor")
+ 		name="unifi-outdoor"
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+index e7655b3c026ca8d3367b48c14f7263267c923008..1d0e3d910d42ab87af8481d6d13a79949d68e41b 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
++++ b/target/linux/ar71xx/files/arch/mips/ath79/Kconfig.openwrt
+@@ -2109,7 +2109,7 @@ config ATH79_MACH_UBNT
+ 	select ATH79_DEV_USB
+ 
+ config ATH79_MACH_UBNT_UNIFIAC
+-	bool "Ubiquiti UniFi AC (LITE/LR/MESH/PRO) support"
++	bool "Ubiquiti UniFi AC (LITE/LR/MESH/PRO/MESH-PRO) support"
+ 	select SOC_QCA956X
+ 	select ATH79_DEV_AP9X_PCI if PCI
+ 	select ATH79_DEV_ETH
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
+index 38195a466b841732aa5d2e4f775498f45c556a62..2f62d32029ff46843ee6ad3d9646928fd3f50c3a 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-unifiac.c
+@@ -176,4 +176,4 @@ static void __init ubnt_unifiac_pro_setup(void)
+ 
+ 
+ MIPS_MACHINE(ATH79_MACH_UBNT_UNIFIAC_PRO, "UBNT-UF-AC-PRO",
+-	     "Ubiquiti UniFi-AC-PRO", ubnt_unifiac_pro_setup);
++	     "Ubiquiti UniFi-AC-PRO/MESH-PRO", ubnt_unifiac_pro_setup);
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index 390ec0b2c38d9af99e215f75009eed9b2e4c0b01..80f6e1d95b7a4e5559e7d5da041b32d962ad4e84 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -329,7 +329,7 @@ enum ath79_mach_type {
+ 	ATH79_MACH_UBNT_UAP_PRO,		/* Ubiquiti UniFi AP Pro */
+ 	ATH79_MACH_UBNT_UNIFI,			/* Ubiquiti Unifi */
+ 	ATH79_MACH_UBNT_UNIFIAC_LITE,		/* Ubiquiti Unifi AC LITE/LR/MESH */
+-	ATH79_MACH_UBNT_UNIFIAC_PRO,		/* Ubiquiti Unifi AC PRO */
++	ATH79_MACH_UBNT_UNIFIAC_PRO,		/* Ubiquiti Unifi AC PRO/MESH PRO */
+ 	ATH79_MACH_UBNT_UNIFI_OUTDOOR,		/* Ubiquiti UnifiAP Outdoor */
+ 	ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS,	/* Ubiquiti UnifiAP Outdoor+ */
+ 	ATH79_MACH_UBNT_XM,			/* Ubiquiti Networks XM board rev 1.0 */
+diff --git a/target/linux/ar71xx/image/generic-ubnt.mk b/target/linux/ar71xx/image/generic-ubnt.mk
+index 07c02955041b1ca2c6eca3ad9e08dba5da41e455..77f9d3ad0a825b21b382e1a2d5490580ce9f2e49 100644
+--- a/target/linux/ar71xx/image/generic-ubnt.mk
++++ b/target/linux/ar71xx/image/generic-ubnt.mk
+@@ -143,6 +143,12 @@ define Device/ubnt-unifiac-pro
+ endef
+ TARGET_DEVICES += ubnt-unifiac-pro
+ 
++define Device/ubnt-unifiac-mesh-pro
++  $(Device/ubnt-unifiac-pro)
++  DEVICE_TITLE := Ubiquiti UniFi AC-Mesh-Pro
++endef
++TARGET_DEVICES += ubnt-unifiac-mesh-pro
++
+ define Device/ubnt-unifi-outdoor
+   $(Device/ubnt-bz)
+   DEVICE_TITLE := Ubiquiti UniFi Outdoor

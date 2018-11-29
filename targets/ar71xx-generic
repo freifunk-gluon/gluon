@@ -311,6 +311,10 @@ device ubiquiti-unifi-ac-mesh ubnt-unifiac-mesh
 packages $ATH10K_PACKAGES
 factory
 
+device ubiquiti-unifi-ac-mesh-pro ubnt-unifiac-mesh-pro
+packages $ATH10K_PACKAGES
+factory
+
 
 # Western Digital
 
