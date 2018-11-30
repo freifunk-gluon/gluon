@@ -83,13 +83,13 @@ New features
 ~~~~~~~~~~~~
 
 * Localization support has been added to the status page. In addition to German,
-  there are English and Russian translations now (`#1044 <https://github.com/freifunk-gluon/gluon/issues/1044>`_)
+  there are English and Russian translations now (`#1044 <https://github.com/freifunk-gluon/gluon/pull/1044>`_)
 
 * Add support for making nodes a DNS cache for clients
-  (`#1000 <https://github.com/freifunk-gluon/gluon/issues/1000>`_)
+  (`#1000 <https://github.com/freifunk-gluon/gluon/pull/1000>`_)
 
 * Add L2TP via tunneldigger as an alternative VPN system
-  (`#978 <https://github.com/freifunk-gluon/gluon/issues/978>`_)
+  (`#978 <https://github.com/freifunk-gluon/gluon/pull/978>`_)
 
   L2TP will usually give better performance than fastd as it runs in kernel
   space, but it does not provide encryption. Also, tunneling over IPv6 is
@@ -98,7 +98,7 @@ New features
   It is not possible to include both fastd and tunneldigger in the same
   firmware.
 
-* Add source filter package (`#1015 <https://github.com/freifunk-gluon/gluon/issues/1015>`_)
+* Add source filter package (`#1015 <https://github.com/freifunk-gluon/gluon/pull/1015>`_)
 
   The new package *gluon-ebtables-source-filter* can be used to prevent traffic
   using unexpected IP addresses or packet types from entering the mesh.
@@ -184,7 +184,7 @@ Internals
 ~~~~~~~~~
 
 * The LuCI base libraries have been replaced by a stripped-down
-  version called "gluon-web" (`#1007 <https://github.com/freifunk-gluon/gluon/issues/1007>`_)
+  version called "gluon-web" (`#1007 <https://github.com/freifunk-gluon/gluon/pull/1007>`_)
 
   Custom packages will need to be adjusted; in particular, all uses of *luci.model.uci*
   need to be replaced with *simple-uci*. The Gluon documentation explains the most important
