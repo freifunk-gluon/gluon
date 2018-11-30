@@ -19,7 +19,7 @@ an old site configuration to a newer release of Gluon.
 
 An example configuration can be found in the Gluon repository at *docs/site-example/*.
 
-.. _Git tags: http://git-scm.com/book/en/Git-Basics-Tagging
+.. _Git tags: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 .. _list of gluon releases: https://github.com/freifunk-gluon/gluon/releases
 
 Dependencies
