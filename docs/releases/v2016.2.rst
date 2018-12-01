@@ -64,13 +64,13 @@ New features
 * batman-adv: mesh_no_rebroadcast is now enabled for Mesh-on-WAN/LAN (`#652 <https://github.com/freifunk-gluon/gluon/issues/652>`_)
 
 * The new UCI option ``gluon-core.@wireless[0].preserve_channels`` can be used to
-  prevent a changed WLAN channel from being reset on firmware upgrades (`#640 <https://github.com/freifunk-gluon/gluon/issues/640>`_)
+  prevent a changed WLAN channel from being reset on firmware upgrades (`#640 <https://github.com/freifunk-gluon/gluon/pull/640>`_)
 
 * PoE passthrough can now be configured from site.conf and the Advanced Settings
   on TP-Link CPE 210/510 and Ubiquiti NanoStations (`#328 <https://github.com/freifunk-gluon/gluon/issues/328>`_)
 
 * The config mode *altitude* field can now be hidden using the ``config_mode.geo_location.show_altitude``
-  site.conf setting (`#693 <https://github.com/freifunk-gluon/gluon/issues/693>`_)
+  site.conf setting (`#693 <https://github.com/freifunk-gluon/gluon/pull/693>`_)
 
 * The contact information field in the config mode can be made obligatory using
   the ``config_mode.owner.obligatory`` site.conf option
@@ -93,7 +93,7 @@ New features
   802.11b rates (`#810 <https://github.com/freifunk-gluon/gluon/pull/810>`_)
 
 * ath10k-based devices are now supported officially; it's possible to choose between
-  IBSS- and 11s-capable firmwares in site.mk (`#864 <https://github.com/freifunk-gluon/gluon/pull/864>`_)
+  IBSS- and 11s-capable firmwares in site.mk (`#864 <https://github.com/freifunk-gluon/gluon/issues/864>`_)
 
 * The ``prefix4`` and ``next_node.ip4`` site.conf options are optional now.
 
@@ -106,7 +106,7 @@ Bugfixes
   mac80211, hostapd and other related drivers and services have been backported from LEDE ``42f559e``.
 
 * Extremely slow downloads could lead to multiple instances of the autoupdater
-  running concurrently (`#582 <https://github.com/freifunk-gluon/gluon/pull/582>`_)
+  running concurrently (`#582 <https://github.com/freifunk-gluon/gluon/issues/582>`_)
 
   A lockfile is used to prevent this and timeouts have been added to download processes.
 

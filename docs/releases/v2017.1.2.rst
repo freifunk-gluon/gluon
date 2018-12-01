@@ -12,7 +12,7 @@ New features
   preserved on upgrades.
 
 * Allow configuring the batman-adv routing algorithm (*BATMAN IV* or *BATMAN V*)
-  in *site.conf* (`#1185 <https://github.com/freifunk-gluon/gluon/issues/1185>`_)
+  in *site.conf* (`#1185 <https://github.com/freifunk-gluon/gluon/pull/1185>`_)
 
   *BATMAN V* still hasn't received extensive testing (and is incompatible with *BATMAN IV*).
   This new option allows to set up *BATMAN V*-based test meshes. If unset, the routing
@@ -55,7 +55,7 @@ Bugfixes
   fixed, triggering a reboot instead.
 
 * Also display *gluon-config-mode:novpn* message when Tunneldigger is installed, but disabled
-  (`#1172 <https://github.com/freifunk-gluon/gluon/issues/1172>`_)
+  (`#1172 <https://github.com/freifunk-gluon/gluon/pull/1172>`_)
 
   It was only displayed on nodes with fastd before.
 

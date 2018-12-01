@@ -13,7 +13,7 @@ Bugfixes
 ~~~~~~~~
 
 * Fix `CVE-2016-10229 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-10229>`_
-  (`#1097 <https://github.com/freifunk-gluon/gluon/issues/1097>`_)
+  (`#1097 <https://github.com/freifunk-gluon/gluon/pull/1097>`_)
 
   Fortunately, the standard Gluon setup is not vulnerable, as the issue only affects
   applications that use MSG_PEEK on UDP sockets. dnsmasq does use MSG_PEEK, but

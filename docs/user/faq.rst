@@ -32,7 +32,7 @@ Consider these key values:
   - and configure `MSS clamping`_ accordingly,
   - and announce your link MTU via Router Advertisments and DHCP
 
-  .. _MSS clamping: http://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
+  .. _MSS clamping: https://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
 
 - Encapsulation: Account for the overhead created by the configured mesh protocol
   encapsulating the payload, which is

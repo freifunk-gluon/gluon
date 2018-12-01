@@ -33,7 +33,7 @@ There are two packages responsible for distribution of the information. For
 one, information is distributed across the mesh using alfred_. Information
 between neighbouring nodes is exchanged using `gluon-respondd`.
 
-.. _alfred: http://www.open-mesh.org/projects/alfred
+.. _alfred: https://www.open-mesh.org/projects/alfred
 
 alfred (mesh bound)
 ~~~~~~~~~~~~~~~~~~~
