@@ -35,6 +35,7 @@ uci:section('network', 'interface', 'client', {
 	macaddr = sysconfig.primary_mac,
 	igmp_snooping = true,
 	multicast_querier = true,
+	ra_holdoff = 30,
 })
 
 uci:save('network')
