@@ -97,7 +97,7 @@ In order to retrieve statistics data you could run:
 
 You can find more information about alfred in its README_.
 
-.. _README: https://git.open-mesh.org/alfred.git/blob_plain/refs/heads/master:/README
+.. _README: https://git.open-mesh.org/alfred.git/blob_plain/refs/heads/master:/README.rst
 
 gluon-respondd
 ~~~~~~~~~~~~~~

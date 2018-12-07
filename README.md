@@ -1,8 +1,8 @@
 Documentation (incomplete at this time, contribute if you can!) may be found at
-https://gluon.readthedocs.org/.
+https://gluon.readthedocs.io/.
 
 If you're new to Gluon and ready to get your feet wet, have a look at the
-[Getting Started Guide](https://gluon.readthedocs.org/en/latest/user/getting_started.html).
+[Getting Started Guide](https://gluon.readthedocs.io/en/latest/user/getting_started.html).
 
 **Gluon IRC channel: `#gluon` in [hackint](https://hackint.org/)**
 

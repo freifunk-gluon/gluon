@@ -47,7 +47,7 @@ triggered and what you did to fix it. If in question, have a glance at the
 existing commit messages to get the idea.
 
 
-[packages]: http://gluon.readthedocs.org/en/latest/user/site.html#packages
+[packages]: https://gluon.readthedocs.io/en/latest/user/site.html#packages
 [#gluon]: https://webirc.hackint.org/#gluon
 [mailing list]: mailto:gluon@luebeck.freifunk.net
 [list of rejected features]: https://github.com/freifunk-gluon/gluon/issues?q=label%3Arejected
