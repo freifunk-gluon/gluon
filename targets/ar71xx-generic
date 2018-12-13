@@ -320,3 +320,7 @@ factory
 
 device wd-my-net-n600 mynet-n600
 device wd-my-net-n750 mynet-n750
+
+# ZyXEL
+device zyxel-nbg6616 NBG6616
+packages $ATH10K_PACKAGES
