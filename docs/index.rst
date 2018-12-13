@@ -238,6 +238,10 @@ ar71xx-generic
   - My Net N600
   - My Net N750
 
+* ZyXEL
+
+  - NBG6616 [#ath10k]_
+
 ar71xx-nand
 ^^^^^^^^^^^
 
