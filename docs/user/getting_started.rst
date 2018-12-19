@@ -25,7 +25,7 @@ An example configuration can be found in the Gluon repository at *docs/site-exam
 Dependencies
 ------------
 To build Gluon, several packages need to be installed on the system. On a
-freshly installed Debian Wheezy system the following packages are required:
+freshly installed Debian Stretch system the following packages are required:
 
 * `git` (to get Gluon and other dependencies)
 * `subversion`
