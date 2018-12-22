@@ -135,6 +135,7 @@ ar71xx-generic
 * AVM
 
   - Fritz!Box 4020 [#avmflash]_
+  - Fritz!WLAN Repeater 300E [#avmflash]_
   - Fritz!WLAN Repeater 450E [#avmflash]_
 
 * Buffalo
