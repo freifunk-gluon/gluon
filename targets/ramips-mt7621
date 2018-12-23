@@ -1,10 +1,11 @@
-# BROKEN: No AP+IBSS support (plus individual issues)
-if [ "$BROKEN" ]; then
-
 ## D-Link
 
-device d-link-dir-860l-b1 dir-860l-b1 # BROKEN: 2.4 GHz Mesh unreliable
+if [ "$BROKEN" ] || [ "$GLUON_WLAN_MESH" = '11s' ]; then
+device d-link-dir-860l-b1 dir-860l-b1 # BROKEN: IBSS untested
+fi
 
+# BROKEN: No AP+IBSS support (plus individual issues)
+if [ "$BROKEN" ]; then
 
 ## Netgear
 
