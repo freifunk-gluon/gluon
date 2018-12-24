@@ -360,12 +360,12 @@ ramips-mt76x8
 ^^^^^^^^^^^^^
 
 * GL.iNet
-  - MT300N v2 [#80211s]_
+  - MT300N (v2) [#80211s]_
 
 * TP-Link
 
-  - Archer C50 v3 [#80211s]_
-  - TL-WR841N v13 [#80211s]_
+  - Archer C50 (v3) [#80211s]_
+  - TL-WR841N (v13) [#80211s]_
 
 * VoCore
 
@@ -382,8 +382,7 @@ ramips-rt305x
 
 * VoCore
 
-  - VoCore (8M) [#80211s]_
-  - VoCore (16M) [#80211s]_
+  - VoCore (8M, 16M) [#80211s]_
 
 sunxi
 ^^^^^
