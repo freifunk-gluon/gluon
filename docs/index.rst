@@ -351,6 +351,10 @@ ramips-mt7620
 ramips-mt7621
 ^^^^^^^^^^^^^
 
+* D-Link
+
+  - DIR-860L (B1) [#80211s]_
+
 * Ubiquiti
 
   - EdgeRouter X
