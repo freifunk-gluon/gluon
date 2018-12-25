@@ -16,9 +16,9 @@
 #include "gluon-arp-limiter.h"
 #include "mac.h"
 
-#define BATCTL_DC "/usr/sbin/batctl dc -H -n"
-#define BATCTL_TL "/usr/sbin/batctl tl -H -n"
-#define EBTABLES "/usr/sbin/ebtables-tiny"
+#define BATCTL_DC "batctl dc -H -n"
+#define BATCTL_TL "batctl tl -H -n"
+#define EBTABLES "ebtables-tiny"
 
 #define BUILD_BUG_ON(check) ((void)sizeof(int[1-2*!!(check)]))
 
