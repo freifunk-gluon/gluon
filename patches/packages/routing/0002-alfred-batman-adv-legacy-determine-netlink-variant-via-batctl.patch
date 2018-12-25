@@ -1,0 +1,101 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 25 Dec 2018 18:24:54 +0100
+Subject: alfred: batman-adv-legacy: determine netlink variant via batctl
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/alfred/patches/0003-alfred-batman-adv-legacy-determine-netlink-variant-v.patch b/alfred/patches/0003-alfred-batman-adv-legacy-determine-netlink-variant-v.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..01e188f84f5d13b097f4a4e712264fffca6c80fc
+--- /dev/null
++++ b/alfred/patches/0003-alfred-batman-adv-legacy-determine-netlink-variant-v.patch
+@@ -0,0 +1,89 @@
++From 63bc04d17e7e9c81c334ab619ae275958fb283ec Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 25 Dec 2018 14:13:24 +0100
++Subject: [PATCH] alfred: batman-adv-legacy: determine netlink variant via
++ batctl
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ main.c    |  3 +++
++ netlink.c | 14 +++++++++++++-
++ netlink.h |  2 ++
++ 3 files changed, 18 insertions(+), 1 deletion(-)
++
++diff --git a/main.c b/main.c
++index 34d771e..cb63269 100644
++--- a/main.c
+++++ b/main.c
++@@ -35,6 +35,7 @@
++ #include "debugfs.h"
++ #include "packet.h"
++ #include "list.h"
+++#include "netlink.h"
++ 
++ static struct globals alfred_globals;
++ 
++@@ -183,6 +184,8 @@ static struct globals *alfred_init(int argc, char *argv[])
++ 	/* We need full capabilities to mount debugfs, so do that now */
++ 	debugfs_mount(NULL);
++ 
+++	netlink_init();
+++
++ 	ret = reduce_capabilities();
++ 	if (ret < 0)
++ 		return NULL;
++diff --git a/netlink.c b/netlink.c
++index 864123f..45cb7e2 100644
++--- a/netlink.c
+++++ b/netlink.c
++@@ -40,6 +40,8 @@
++ #define __unused __attribute__((unused))
++ #endif
++ 
+++static const char *batadv_nl_name;
+++
++ struct nla_policy batadv_netlink_policy[NUM_BATADV_ATTR] = {
++ 	[BATADV_ATTR_VERSION]			= { .type = NLA_STRING },
++ 	[BATADV_ATTR_ALGO_NAME]			= { .type = NLA_STRING },
++@@ -159,7 +161,7 @@ int netlink_query_common(const char *mesh_iface, uint8_t nl_cmd,
++ 		goto err_free_sock;
++ 	}
++ 
++-	family = genl_ctrl_resolve(sock, BATADV_NL_NAME);
+++	family = genl_ctrl_resolve(sock, batadv_nl_name);
++ 	if (family < 0) {
++ 		query_opts->err = -EOPNOTSUPP;
++ 		goto err_free_sock;
++@@ -203,3 +205,13 @@ err_free_sock:
++ 
++ 	return query_opts->err;
++ }
+++
+++void netlink_init(void)
+++{
+++	setenv("PATH", "/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin", 1);
+++
+++	if (system("batctl -v | grep -q '2013.4.0'") == 0)
+++		batadv_nl_name = "batadv_legacy";
+++	else
+++		batadv_nl_name = "batadv";
+++}
++diff --git a/netlink.h b/netlink.h
++index f8903be..1d724f6 100644
++--- a/netlink.h
+++++ b/netlink.h
++@@ -45,6 +45,8 @@ int netlink_query_common(const char *mesh_iface, uint8_t nl_cmd,
++ int missing_mandatory_attrs(struct nlattr *attrs[],  const int mandatory[],
++ 			    size_t num);
++ 
+++void netlink_init(void);
+++
++ extern struct nla_policy batadv_netlink_policy[];
++ 
++ #endif /* _ALFRED_NETLINK_H */
++-- 
++2.11.0
++
