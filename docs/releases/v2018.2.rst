@@ -1,0 +1,158 @@
+Gluon 2018.2
+############
+
+OpenWrt has been updated to the new major release 18.06.x. Depending on the
+target, this includes the Linux kernel 4.9.146 or 4.14.89.
+
+The new OpenWrt release introduces a dependency on GNU time. On Debian/Ubuntu,
+this can be found in the package *time*. The shell builtin *time*, which is
+available by default, is not sufficient.
+
+Added hardware support
+**********************
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* AVM
+
+  - Fritz!WLAN Repeater 450E
+
+* OCEDO
+
+  - Koala
+
+* TP-Link
+
+  - Archer C7 v5
+  - TL-WR810N v1
+
+* Ubiquiti
+
+  - UniFi AC Mesh Pro
+
+* ZyXEL
+
+  - NBG6616
+
+
+ipq40xx [#newtarget]_ [#noibss]_
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* AVM
+
+  - FRITZ!Box 4040
+
+* GL.iNet
+
+  - GL-B1300
+
+* NETGEAR
+
+  - EX6100v2
+  - EX6150v2
+
+* OpenMesh
+
+  - A42
+  - A62
+
+* ZyXEL
+
+  - NBG6617
+  - WRE6606
+
+ramips-mt7621 [#noibss]_
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+* D-Link
+
+  - DIR-860L B1
+
+* ZBT
+
+  - WG3526-16M
+  - WG3526-32M
+
+.. [#newtarget]
+  New target
+
+.. [#noibss]
+  AP+IBSS mode unsupported: This target is not built when *GLUON_WLAN_MESH* is
+  set to ``ibss``.
+
+New features
+************
+
+Besides many smaller improvements and optimizations, we'd like to highlight the
+following larger new features:
+
+OpenStreetMap-based map in config wizard
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When the features *web-wizard* and *web-osm* are enabled, the configuration
+wizard will try to load an OSM-based map to allow the user to specify the node
+location. Loading the map requires a working internet connection, for example
+via WLAN (while connected to the Gluon node via Ethernet).
+
+See the :ref:`config_mode <user-site-config_mode>` section for the *site.conf*
+configuration of this feature.
+
+Experimental support for the Babel mesh routing protocol
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As the layer-2 based routing protocol batman-adv does not scale well in large
+mesh networks, we are experimenting with alternatives. Babel is a promising
+layer-3 mesh routing protocol, which might become the recommended protocol in a
+future version of Gluon.
+
+Use the feature flag *mesh-babel* for Babel. Note that our Babel support is
+still **experimental** and not ready for production. If you are interested in
+trying it out, please contact us on our mailing list or in our IRC channel.
+
+gluon-ebtables-limit-arp enabled by default
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :doc:`../package/gluon-ebtables-limit-arp` package, introduced in Gluon
+2018.1, is now included by default. In case of issues, it can be removed by
+adding ``-gluon-ebtables-limit-arp`` to *GLUON_SITE_PACKAGES*.
+
+Site changes
+************
+
+No changes need to be made to *site.conf* or *site.mk* when upgrading from
+Gluon v2018.1.x.
+
+Internals
+*********
+
+* We have switched from LuCI's *nixio* library to the more actively developed
+  *luaposix*
+
+Known issues
+************
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are
+  unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is
+  disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected
+  (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API
+  (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API
+  will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on
+  weak hardware specially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.

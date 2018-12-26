@@ -418,6 +418,8 @@ autoupdater \: package
     All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
     explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
+.. _user-site-config_mode:
+
 config_mode \: optional
     Additional configuration for the configuration web interface. All values are
     optional.
