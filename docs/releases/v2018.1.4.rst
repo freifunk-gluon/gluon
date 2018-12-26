@@ -1,0 +1,49 @@
+Gluon 2018.1.4
+==============
+
+Bugfixes
+~~~~~~~~
+
+* Fix regression in autoupdater version comparison function
+
+  Due to a regression in Gluon 2018.1, the autoupdater would incorrectly
+  consider certain version strings equal and not attempt to upgrade.
+  In particular, any string and its prefix were considered equal when the
+  prefix did not end with a digit. For example, the following relations were
+  not evaluated correctly:
+
+  * ``1.0`` < ``1.0.1``
+  * ``1.0~pre`` < ``1.0``
+
+* Fix unintended difference between autoupdater version comparison and dpkg/opkg
+
+  Alphanumeric characters were considered less than end-of-string, when the
+  intended bahaviour (as implemented by dpkg and opkg) is that only ``~`` is
+  less than end-of-string. This broke relations like the following:
+
+  * ``1.0`` < ``1.0a``
+  * ``1.0a`` < ``1.0ab``
+  * ``1.0a`` < ``1.0a1``
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware specially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
