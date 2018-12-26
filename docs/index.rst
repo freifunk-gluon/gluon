@@ -361,21 +361,6 @@ ramips-mt7621
   - EdgeRouter X
   - EdgeRouter X-SFP
 
-ramips-mt76x8
-^^^^^^^^^^^^^
-
-* GL.iNet
-  - MT300N (v2) [#80211s]_
-
-* TP-Link
-
-  - Archer C50 (v3) [#80211s]_
-  - TL-WR841N (v13) [#80211s]_
-
-* VoCore
-
-  - VoCore2 [#80211s]_
-
 ramips-rt305x
 ^^^^^^^^^^^^^
 
