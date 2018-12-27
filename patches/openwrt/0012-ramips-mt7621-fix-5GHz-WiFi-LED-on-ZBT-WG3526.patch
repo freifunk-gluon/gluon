@@ -1,0 +1,23 @@
+From: Andreas Ziegler <dev@andreas-ziegler.de>
+Date: Thu, 27 Dec 2018 15:02:41 +0100
+Subject: ramips: mt7621: fix 5GHz WiFi LED on ZBT WG3526
+
+This fixes the 5GHz WiFi LED which was previously not working.
+
+Signed-off-by: Andreas Ziegler <dev@andreas-ziegler.de>
+
+diff --git a/target/linux/ramips/dts/ZBT-WG3526.dtsi b/target/linux/ramips/dts/ZBT-WG3526.dtsi
+index 104a51f8de7110c0f65f760af70033853f3da745..e42ec5e33de7fb69a9c668406f876f6443d2912b 100644
+--- a/target/linux/ramips/dts/ZBT-WG3526.dtsi
++++ b/target/linux/ramips/dts/ZBT-WG3526.dtsi
+@@ -101,6 +101,10 @@
+ 			mediatek,mtd-eeprom = <&factory 0x8000>;
+ 			ieee80211-freq-limit = <5000000 6000000>;
+ 		};
++
++		led {
++			led-sources = <2>;
++		};
+ 	};
+ };
+ 
