@@ -361,6 +361,11 @@ ramips-mt7621
   - EdgeRouter X
   - EdgeRouter X-SFP
 
+* ZBT
+
+  - WG3526-16M [#80211s]_
+  - WG3526-32M [#80211s]_
+
 ramips-rt305x
 ^^^^^^^^^^^^^
 
