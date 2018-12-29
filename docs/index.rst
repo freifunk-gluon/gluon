@@ -133,8 +133,8 @@ ar71xx-generic
 
 * AVM
 
-  - Fritz!Box 4020
-  - Fritz!WLAN Repeater 450E
+  - Fritz!Box 4020 [#avmflash]_
+  - Fritz!WLAN Repeater 450E [#avmflash]_
 
 * Buffalo
 
@@ -306,7 +306,7 @@ ipq40xx
 
 * AVM
 
-  - FRITZ!Box 4040 [#80211s]_
+  - FRITZ!Box 4040 [#80211s]_ [#avmflash]_
 
 * GL.iNet
 
@@ -425,6 +425,9 @@ Footnotes
 .. [#ath10k]
   Device uses the ath10k WLAN driver; images are built for 11s by default unless GLUON_WLAN_MESH
   is set as described in :ref:`getting-started-make-variables`
+
+.. [#avmflash]
+  For an instruction on how to flash AVM devices, visit https://www.fritzfla.sh
 
 .. [#80211s]
   Device does not support IBSS; images are built by default unless GLUON_WLAN_MESH
