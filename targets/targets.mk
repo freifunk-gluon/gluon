@@ -15,6 +15,7 @@ $(eval $(call GluonTarget,x86,64))
 ifneq ($(GLUON_WLAN_MESH_11s)$(BROKEN),)
 $(eval $(call GluonTarget,ipq40xx))
 $(eval $(call GluonTarget,ramips,mt7620))
+$(eval $(call GluonTarget,ramips,mt76x8))
 $(eval $(call GluonTarget,ramips,rt305x))
 endif
 
@@ -23,5 +24,4 @@ $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
 $(eval $(call GluonTarget,brcm2708,bcm2710)) # BROKEN: Untested
 $(eval $(call GluonTarget,ipq806x)) # BROKEN: unstable wifi drivers
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No AP+IBSS or 11s support
-$(eval $(call GluonTarget,ramips,mt76x8)) # BROKEN: unstable WiFi
 endif
