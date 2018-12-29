@@ -1,9 +1,8 @@
-if [ "$BROKEN" ]; then
-
 # GL.iNet
 
 device gl-mt300n-v2 gl-mt300n-v2
 factory
+
 
 # TP-Link
 
@@ -14,8 +13,6 @@ extra_image -squashfs-tftp-recovery -bootloader .bin
 device tp-link-tl-wr-841n-v13 tl-wr841n-v13
 factory
 extra_image -squashfs-tftp-recovery -bootloader .bin
-
-fi
 
 
 # VoCore 2
