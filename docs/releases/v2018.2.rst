@@ -117,6 +117,13 @@ The :doc:`../package/gluon-ebtables-limit-arp` package, introduced in Gluon
 2018.1, is now included by default. In case of issues, it can be removed by
 adding ``-gluon-ebtables-limit-arp`` to *GLUON_SITE_PACKAGES*.
 
+Renamed targets
+***************
+
+The `ramips-mt7628` target got renamed to `ramips-mt76x8`, and the `sunxi`
+target got renamed to `sunxi-cortexa7`. You might have to update your build
+scripts accordingly.
+
 Site changes
 ************
 
