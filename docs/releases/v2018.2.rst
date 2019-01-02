@@ -81,6 +81,12 @@ ramips-mt7621 [#noibss]_
   AP+IBSS mode unsupported: This target is not built when *GLUON_WLAN_MESH* is
   set to ``ibss``.
 
+.. note::
+
+    The *ramips-mt7628* target has been renamed to *ramips-mt76x8*, and the *sunxi*
+    target has been renamed to *sunxi-cortexa7*. You might have to update your build
+    scripts accordingly.
+
 New features
 ************
 
