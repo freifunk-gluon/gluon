@@ -96,10 +96,11 @@ following larger new features:
 OpenStreetMap-based map in config wizard
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When the features *web-wizard* and *web-osm* are enabled, the configuration
-wizard will try to load an OSM-based map to allow the user to specify the node
-location. Loading the map requires a working internet connection, for example
-via WLAN (while connected to the Gluon node via Ethernet).
+When the feature *config-mode-geo-location-osm* (package
+*gluon-config-mode-geo-location-osm*) is enabled, the configuration wizard will
+try to load an OSM-based map to allow the user to specify the node location.
+Loading the map requires a working internet connection, for example via WLAN
+(while connected to the Gluon node via Ethernet).
 
 See the :ref:`config_mode <user-site-config_mode>` section for the *site.conf*
 configuration of this feature.
