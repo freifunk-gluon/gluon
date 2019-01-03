@@ -15,7 +15,7 @@ return function(form, uci)
 	if not text then
 		text = pkg_i18n.translate(
 			'If you want the location of your node to ' ..
-			'be displayed on the map, you can enter its coordinates here.'
+			'be displayed on public maps, you can enter its coordinates here.'
 		)
 		if osm then
 			text = text .. ' ' .. osm.help(i18n)
