@@ -1,8 +1,15 @@
 config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
 
+ATH10K_PACKAGES='kmod-ath10k-ct ath10k-firmware-qca9887 ath10k-firmware-qca988x'
+if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
+	ATH10K_PACKAGES='kmod-ath10k-ct ath10k-firmware-qca9887-ct ath10k-firmware-qca988x-ct'
+fi
+
 # Enable ath5k in addition to ath9k
 # ath5k cards are commonly used with Mikrotik hardware
 packages 'kmod-ath5k'
+
+packages $ATH10K_PACKAGES
 
 device mikrotik-nand-64m nand-64m
 factory
