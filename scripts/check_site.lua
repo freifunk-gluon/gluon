@@ -305,6 +305,15 @@ function need_array_of(path, array, required)
 	return need_array(path, function(e) need_one_of(e, array) end, required)
 end
 
+function need_domain_name(path)
+	need_string(path)
+	need(path, function(domain_name)
+		local f = io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/domains/' .. domain_name .. '.json')
+		if not f then return false end
+		f:close()
+		return true
+	end, nil, 'be a valid domain name')
+end
 
 local check = assert(loadfile())
 
