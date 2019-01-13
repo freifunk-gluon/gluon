@@ -1,7 +1,15 @@
 Autoupdater
 ===========
 
-Gluon contains an automatic update system which can be configured in the site configuration.
+Gluon contains an automatic update system, which can be configured in the site configuration.
+
+Please mind that asking users for consent is not implemented within the automatic update system.
+If automatic updates are enabled by default, users are neither asked nor notified when updates are available or installed.
+
+It is reasonable to ask users for consent before administrators gain access to private devices
+and networks via automatic updates. This could be done before downloading, e.g. by providing different download options.
+Some community networks have guidelines regarding automatic update policies, that require agreeing explicitly.
+(e.g. `Freifunk Memorandum of Understanding <https://github.com/freifunk/MoU/blob/master/FreifunkMemorandumofUnderstanding_en.md>`).
 
 Building Images
 ---------------
