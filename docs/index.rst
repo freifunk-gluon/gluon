@@ -352,6 +352,10 @@ ramips-mt7620
   - GL-MT300N [#80211s]_
   - GL-MT750 [#80211s]_
 
+* Nexx
+
+  - WT3020AD/F/H (8M)
+
 ramips-mt7621
 ^^^^^^^^^^^^^
 
