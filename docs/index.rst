@@ -354,7 +354,7 @@ ramips-mt7620
 
 * Nexx
 
-  - WT3020AD/F/H (8M)
+  - WT3020AD/F/H
 
 ramips-mt7621
 ^^^^^^^^^^^^^
