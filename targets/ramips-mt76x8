@@ -19,3 +19,5 @@ extra_image -squashfs-tftp-recovery -bootloader .bin
 
 device vocore2 vocore2
 factory
+
+device wavlink_wl-wn570ha1 wavlink_wl-wn570ha1
