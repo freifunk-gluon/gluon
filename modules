@@ -2,7 +2,7 @@ GLUON_FEEDS='packages routing luci gluon'
 
 OPENWRT_REPO=https://git.openwrt.org/openwrt/openwrt.git
 OPENWRT_BRANCH=openwrt-18.06
-OPENWRT_COMMIT=eef6bd3393f406f73187a670fa34d5e6a228f9e8
+OPENWRT_COMMIT=6e16dd1234ea4814af2b46a22b4aea111baef3ab
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-18.06
@@ -10,7 +10,7 @@ PACKAGES_PACKAGES_COMMIT=d05b98c6c86da58db5cbda3c945007be09583609
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
 PACKAGES_ROUTING_BRANCH=openwrt-18.06
-PACKAGES_ROUTING_COMMIT=bc6e7f6903c8237c77131aedfc92dba40e1bc6ac
+PACKAGES_ROUTING_COMMIT=ea345d16a6e27c2a8fdf67bf543cc36a5f189131
 
 PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_BRANCH=openwrt-18.06
