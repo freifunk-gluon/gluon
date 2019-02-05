@@ -1,0 +1,29 @@
+#!/usr/bin/lua
+
+local util = require 'gluon.util'
+local site = require 'gluon.site'
+local hash = require 'hash'
+local uci = require('simple-uci').cursor()
+
+
+local function configure_sae(vif)
+	uci:set('wireless', vif, 'encryption', 'sae')
+	uci:set('wireless', vif, 'key', site.wifi.mesh.sae_passphrase() or hash.md5(site.prefix6()))
+end
+
+util.foreach_radio(uci, function(radio, _, _)
+	local radio_name = radio['.name']
+	local vif = 'mesh_' .. radio_name
+	local enable = site.wifi.mesh.sae(false)
+
+	if uci:get('wireless', vif) then
+		uci:delete('wireless', vif, 'encryption')
+		uci:delete('wireless', vif, 'key')
+
+		if enable then
+			configure_sae(vif)
+		end
+	end
+end)
+
+uci:save('wireless')
