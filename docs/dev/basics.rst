@@ -15,9 +15,13 @@ The `main repo`_ does have issues enabled.
 IRC
 ---
 
-Gluon's developers frequent `#gluon on hackint`_. You're welcome to join us!
+Gluon's developers frequent the IRC chatroom `#gluon`_ on `hackint`_.
+There is a `webchat`_ that allows for easy access from within your
+webbrowser. You're welcome to join us!
 
-.. _#gluon on hackint: irc://irc.hackint.org/#gluon
+.. _#gluon: ircs://irc.hackint.org/#gluon
+.. _hackint: https://hackint.org/
+.. _webchat: https://webirc.hackint.org/#irc://irc.hackint.org/#gluon
 
 
 Working with repositories
