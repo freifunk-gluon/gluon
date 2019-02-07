@@ -11,7 +11,7 @@ local GLC="geolocator"
 local TIME_STAMP="/tmp/geolocator_timestamp"
 
 if not uci:get_bool(GLC, "settings", "auto_location") then
-  os.exit(0)
+	os.exit(0)
 end
 
 -- PID file to ensure the geolocator isn't running parallel
@@ -19,98 +19,98 @@ local lockfile = '/var/lock/geolocator.lock'
 local lockfd = nixio.open(lockfile, 'w', 'rw-------')
 
 if not lockfd:lock('tlock') then
-  io.stderr:write(string.format(
-    "Unable to lock file %s. Make sure there is no other instance of the geolocator running.\n",
-    lockfile
-  ))
-  os.exit(1)
+	io.stderr:write(string.format(
+		"Unable to lock file %s. Make sure there is no other instance of the geolocator running.\n",
+		lockfile
+	))
+	os.exit(1)
 end
 
 -- Iterates over all active WLAN interfaces
 -- Returning true from the callback function will skip all remaining
 -- interfaces of the same radio
 local function foreach_radio(f)
-  local uconn = assert(ubus.connect(), 'failed to connect to ubus')
-  local status = uconn:call('network.wireless', 'status', {})
-  ubus.close(uconn)
+	local uconn = assert(ubus.connect(), 'failed to connect to ubus')
+	local status = uconn:call('network.wireless', 'status', {})
+	ubus.close(uconn)
 
-  for _, radio in pairs(status) do
-    for _, iface in ipairs(radio.interfaces) do
-      if f(iface.ifname) then
-        break
-      end
-    end
-  end
+	for _, radio in pairs(status) do
+		for _, iface in ipairs(radio.interfaces) do
+			if f(iface.ifname) then
+				break
+			end
+		end
+	end
 end
 
 local function receive_json(request)
-  local f = assert(io.popen(string.format("exec wget -T 15 -q -O- '%s'", request)), 'failed to run wget')
-  local data = f:read('*a')
-  f:close()
+	local f = assert(io.popen(string.format("exec wget -T 15 -q -O- '%s'", request)), 'failed to run wget')
+	local data = f:read('*a')
+	f:close()
 
-  return json.parse(data)
+	return json.parse(data)
 end
 
 -- Get position
 local function locate()
-  local done_bssids = {}
-  local found_bssids = {}
-  foreach_radio(function(ifname)
-    local iw = iwinfo[iwinfo.type(ifname)]
-    if not iw then
-      -- Skip other ifaces of this radio, as they
-      -- will have the same type
-      return true
-    end
+	local done_bssids = {}
+	local found_bssids = {}
+	foreach_radio(function(ifname)
+		local iw = iwinfo[iwinfo.type(ifname)]
+		if not iw then
+			-- Skip other ifaces of this radio, as they
+			-- will have the same type
+			return true
+		end
 
-    local scanlist = iw.scanlist(ifname)
-    if not scanlist then
-      return false
-    end
+		local scanlist = iw.scanlist(ifname)
+		if not scanlist then
+			return false
+		end
 
-    for _, entry in ipairs(scanlist) do
-      if entry.mode:match("Master") then
-        local bssid = string.upper(entry.bssid:gsub(":", ""))
-        if not done_bssids[bssid] then
-          table.insert(found_bssids, bssid)
-          done_bssids[bssid] = true
-        end
-      end
-    end
+		for _, entry in ipairs(scanlist) do
+			if entry.mode:match("Master") then
+				local bssid = string.upper(entry.bssid:gsub(":", ""))
+				if not done_bssids[bssid] then
+					table.insert(found_bssids, bssid)
+					done_bssids[bssid] = true
+				end
+			end
+		end
 
-    return true
-  end)
+		return true
+	end)
 
-  assert(#found_bssids >= 12, 'insufficient BSSIDs found')
+	assert(#found_bssids >= 12, 'insufficient BSSIDs found')
 
-  local data = receive_json('http://openwifi.su/api/v1/bssids/' .. table.concat(found_bssids, ','))
-  assert(type(data) == 'table' and data.lon and data.lat, 'location not available')
+	local data = receive_json('http://openwifi.su/api/v1/bssids/' .. table.concat(found_bssids, ','))
+	assert(type(data) == 'table' and data.lon and data.lat, 'location not available')
 
-  return data
+	return data
 end
 
 -- Check if interval over or not exist
 if io.open(TIME_STAMP) ~= nil then
-  if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
-    os.exit(0)
-  end
+	if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
+		os.exit(0)
+	end
 end
 
 local pos = locate()
 if not next(pos) then
-  os.exit(1)
+	os.exit(1)
 end
 if not uci:get_bool(GLC, "settings", "static_location") then
-  uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
-  uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
-  uci:save(LOC)
-  uci:commit(LOC)
+	uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
+	uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
+	uci:save(LOC)
+	uci:commit(LOC)
 end
 local timestap = io.open(TIME_STAMP, "w")
 if timestap ~= nil then
-  timestap:write(os.time())
-  timestap:close()
-  os.exit(0)
+	timestap:write(os.time())
+	timestap:close()
+	os.exit(0)
 end
 io.stdout:write("Can`t create file on " .. TIME_STAMP .. "\n")
 os.exit(1)
