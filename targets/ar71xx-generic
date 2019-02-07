@@ -72,14 +72,19 @@ factory
 # GL Innovations
 
 device gl-inet-6408a-v1 gl-inet-6408A-v1
+
 device gl-inet-6416a-v1 gl-inet-6416A-v1
 
-device gl-ar150 gl-ar150
+device gl.inet-gl-ar150 gl-ar150
+manifest_alias gl-ar150
 factory
-device gl-ar300m gl-ar300m
+
+device gl.inet-gl-ar300m gl-ar300m
+manifest_alias gl-ar300m
 factory
 
 device gl.inet-gl-ar750 gl-ar750
+manifest_alias gl-ar750
 packages $ATH10K_PACKAGES
 factory
 
