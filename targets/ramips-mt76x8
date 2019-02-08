@@ -10,6 +10,9 @@ device tp-link-archer-c50-v3 tplink_c50-v3
 factory
 extra_image -squashfs-tftp-recovery -bootloader .bin
 
+device tp-link-archer-c50-v4 tplink_c50-v4
+factory
+
 device tp-link-tl-wr-841n-v13 tl-wr841n-v13
 factory
 extra_image -squashfs-tftp-recovery -bootloader .bin

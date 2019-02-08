@@ -384,6 +384,7 @@ ramips-mt76x8
 
   - TL-WR841N v13 [#80211s]_
   - Archer C50 v3 [#80211s]_
+  - Archer C50 v4 [#80211s]_
 
 * VoCore
 
