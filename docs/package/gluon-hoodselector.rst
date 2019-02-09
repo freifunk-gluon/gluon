@@ -37,7 +37,7 @@ of the process:
 The sequence of this diagramm is given the priority of running modes.
 Each mode will be explained seperatedly below.
 
-VPN-mode
+VPN mode
 ^^^^^^^^
 
 This mode will be entered only if a router can see batman-adv gateways over VPN.
@@ -96,7 +96,7 @@ Example::
     },
   },
 
-Here is an example of a trigon polygon defined shape:
+Here is an example of a triangle defined shape:
 Example::
 
   hoodselector = {
