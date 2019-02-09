@@ -1,3 +1,9 @@
+# ASUS
+if [ "$BROKEN" ]; then
+device asus-rt-ac51u rt-ac51u # BROKEN: no 5GHz usable, LEDs not fully supported
+factory
+fi
+
 # GL Innovations
 
 device gl-mt300a gl-mt300a
