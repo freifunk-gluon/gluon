@@ -212,14 +212,21 @@ end
 local function get_wlan_mac_from_driver(uci, radio, vif)
 	local primary = sysconfig.primary_mac:lower()
 
-	local i = 1
-	for addr in get_addresses(uci, radio) do
-		if addr:lower() ~= primary then
-			if i == vif then
-				return addr
-			end
+	local addresses = {}
+	for address in get_addresses(uci, radio) do
+		if address:lower() ~= primary then
+			table.insert(addresses, address)
+		end
+	end
 
-			i = i + 1
+	-- Make sure we have at least 4 addresses
+	if #addresses < 4 then
+		return nil
+	end
+
+	for i, addr in ipairs(addresses) do
+		if i == vif then
+			return addr
 		end
 	end
 end
