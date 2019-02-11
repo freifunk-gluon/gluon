@@ -93,6 +93,7 @@ Switching the domain
 ::
 
     uci set gluon.core.domain="newdomaincode"
+    uci commit gluon.core.domain
     gluon-reconfigure
     reboot
 
