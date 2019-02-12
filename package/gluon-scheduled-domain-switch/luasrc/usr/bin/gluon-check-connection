@@ -1,0 +1,36 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+local util = require 'gluon.util'
+local site = require 'gluon.site'
+
+local offline_flag_file = "/tmp/gluon_offline"
+local is_offline = true
+
+-- Check if domain-switch is scheduled
+if site.domain_switch() == nil then
+	-- Switch not applicable for current domain
+	os.exit(0)
+end
+
+-- Check reachability of pre-defined targets
+for _, ip in ipairs(site.domain_switch.connection_check_targets()) do
+	local exit_code = os.execute("ping -c 1 -w 10 " .. ip)
+	if exit_code == 0 then
+		is_offline = false
+		break
+	end
+end
+
+if is_offline then
+	-- Check if we were previously offline
+	if unistd.access(offline_flag_file) then
+		os.exit(0)
+	end
+	-- Create offline flag
+	local f = io.open(offline_flag_file, "w")
+	f:write(tostring(util.get_uptime()))
+	f:close()
+else
+	os.remove(offline_flag_file)
+end

@@ -253,3 +253,12 @@ function foreach_radio(uci, f)
 		end
 	end
 end
+
+function get_uptime()
+	local uptime_file = readfile("/proc/uptime")
+	if uptime_file == nil then
+		-- Something went wrong reading "/proc/uptime"
+		return nil
+	end
+	return tonumber(uptime_file:match('^[^ ]+'))
+end
