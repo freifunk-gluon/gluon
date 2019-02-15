@@ -380,6 +380,10 @@ ramips-mt76x8
 
   - GL-MT300N v2 [#80211s]_
 
+* NETGEAR
+
+  - R6120 [#80211s]_
+
 * TP-Link
 
   - TL-WR841N v13 [#80211s]_
