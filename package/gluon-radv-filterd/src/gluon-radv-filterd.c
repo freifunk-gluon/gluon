@@ -634,7 +634,7 @@ static int fork_execvp_timeout(struct timespec *timeout, const char *file, const
 	if (child == 0) {
 		sigprocmask(SIG_SETMASK, &oldsignals, NULL);
 		// casting discards const, but should be safe
-		// (see http://stackoverflow.com/q/36925388)
+		// (see https://stackoverflow.com/q/36925388)
 		execvp(file, (char**) argv);
 		fprintf(stderr, "can't execvp(\"%s\", ...): %s\n", file, strerror(errno));
 		_exit(1);
