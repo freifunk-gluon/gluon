@@ -447,7 +447,7 @@ Footnotes
   is explicitly set to something other than *11s*
 
 .. [#avmflash]
-  For instructions on how to flash AVM devices, visit https://www.fritzfla.sh
+  For instructions on how to flash AVM devices, visit https://fritzfla.sh
 
 License
 -------
