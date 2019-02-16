@@ -8,8 +8,8 @@ sigtest.sh checks if a manifest is signed by the public key <public>. There is
 no output, success or failure is indicated via the return code.
 
 See also:
- * ecdsautils in https://github.com/tcatm/ecdsautils
- * http://gluon.readthedocs.org/en/latest/features/autoupdater.html
+ * ecdsautils in https://github.com/freifunk-gluon/ecdsautils
+ * https://gluon.readthedocs.io/en/latest/features/autoupdater.html
 
 EOHELP
     exit 1
