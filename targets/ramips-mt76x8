@@ -4,6 +4,12 @@ device gl-mt300n-v2 gl-mt300n-v2
 factory
 
 
+# Netgear
+
+device netgear-r6120 netgear_r6120
+factory .img
+
+
 # TP-Link
 
 device tp-link-archer-c50-v3 tplink_c50-v3
