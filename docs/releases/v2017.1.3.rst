@@ -26,7 +26,7 @@ Bugfixes
   of the Gluon build, including tcpdump, curl and mbedtls
 
   Please refer to the
-  `LEDE commit log <https://git.openwrt.org/?p=source.git;a=shortlog;h=refs/heads/lede-17.01>`_
+  `LEDE commit log <https://git.openwrt.org/?p=openwrt/openwrt.git;a=shortlog;h=refs/heads/lede-17.01>`_
   for details.
 
 * Filtering of multicast packets between the mesh and the *local-node* interface
