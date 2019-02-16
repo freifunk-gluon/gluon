@@ -21,6 +21,7 @@ uci:section('batman-adv', 'mesh', 'bat0', {
 	routing_algo = routing_algo,
 	multicast_mode = true,
 	multicast_fanout = 16,
+	noflood_mark = '0x4/0x4',
 })
 uci:save('batman-adv')
 
