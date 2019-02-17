@@ -26,6 +26,7 @@
 
 #include <respondd.h>
 
+#include <ifaddrs.h>
 #include <iwinfo.h>
 #include <json-c/json.h>
 #include <libgluonutil.h>
@@ -43,12 +44,16 @@
 #include <net/if.h>
 #include <netinet/in.h>
 
+#include <netlink/netlink.h>
+#include <netlink/genl/genl.h>
+
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 
 #include <linux/ethtool.h>
 #include <linux/if_addr.h>
+#include <linux/rtnetlink.h>
 #include <linux/sockios.h>
 
 #include <batadv-genl.h>
@@ -76,50 +81,69 @@ struct clients_netlink_opts {
 	struct batadv_nlquery_opts query_opts;
 };
 
+struct ip_address_information {
+	unsigned int ifindex;
+	struct json_object *addresses;
+};
 
-static struct json_object * get_addresses(void) {
-	FILE *f = fopen("/proc/net/if_inet6", "r");
-	if (!f)
-		return NULL;
+static int get_addresses_cb(struct nl_msg *msg, void *arg) {
+	struct ip_address_information *info = (struct ip_address_information*) arg;
 
-	char *line = NULL;
-	size_t len = 0;
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct ifaddrmsg *msg_content = NLMSG_DATA(nlh);
+	int remaining = nlh->nlmsg_len - NLMSG_LENGTH(sizeof(struct ifaddrmsg));
+	struct rtattr *hdr;
 
-	struct json_object *ret = json_object_new_array();
+	for (hdr = IFA_RTA(msg_content); RTA_OK(hdr, remaining); hdr = RTA_NEXT(hdr, remaining)) {
+		char addr_str_buf[INET6_ADDRSTRLEN];
 
-	while (getline(&line, &len, f) >= 0) {
-		/* IF_NAMESIZE would be enough, but adding 1 here is simpler than subtracting 1 in the format string */
-		char ifname[IF_NAMESIZE+1];
-		unsigned int flags;
-		struct in6_addr addr;
-		char buf[INET6_ADDRSTRLEN];
-
-		if (sscanf(line,
-			   "%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8
-			   "%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8"%2"SCNx8
-			   "  %*x %*x %*x %x %"STRINGIFY(IF_NAMESIZE)"s",
-			   &addr.s6_addr[0], &addr.s6_addr[1], &addr.s6_addr[2], &addr.s6_addr[3],
-			   &addr.s6_addr[4], &addr.s6_addr[5], &addr.s6_addr[6], &addr.s6_addr[7],
-			   &addr.s6_addr[8], &addr.s6_addr[9], &addr.s6_addr[10], &addr.s6_addr[11],
-			   &addr.s6_addr[12], &addr.s6_addr[13], &addr.s6_addr[14], &addr.s6_addr[15],
-			   &flags, ifname) != 18)
+		/* We are only interested in IP-addresses of br-client */
+		if (hdr->rta_type != IFA_ADDRESS ||
+			msg_content->ifa_index != info->ifindex ||
+			msg_content->ifa_flags & (IFA_F_TENTATIVE|IFA_F_DEPRECATED)) {
 			continue;
+		}
 
-		if (strcmp(ifname, "br-client"))
-			continue;
-
-		if (flags & (IFA_F_TENTATIVE|IFA_F_DEPRECATED))
-			continue;
-
-		inet_ntop(AF_INET6, &addr, buf, sizeof(buf));
-
-		json_object_array_add(ret, json_object_new_string(buf));
+		if (inet_ntop(AF_INET6, (struct in6_addr *) RTA_DATA(hdr), addr_str_buf, INET6_ADDRSTRLEN)) {
+			json_object_array_add(info->addresses, json_object_new_string(addr_str_buf));
+		}
 	}
 
-	fclose(f);
-	free(line);
+	return NL_OK;
+}
 
-	return ret;
+static struct json_object *get_addresses(void) {
+	struct ip_address_information info = {
+		.ifindex = if_nametoindex("br-client"),
+		.addresses = json_object_new_array(),
+	};
+	int err;
+
+	/* Open socket */
+	struct nl_sock *socket = nl_socket_alloc();
+	if (!socket) {
+		return info.addresses;
+	}
+
+	err = nl_connect(socket, NETLINK_ROUTE);
+	if (err < 0) {
+		goto out_free;
+	}
+
+	/* Send message */
+	struct ifaddrmsg rt_hdr = { .ifa_family = AF_INET6, };
+	err = nl_send_simple(socket, RTM_GETADDR, NLM_F_REQUEST | NLM_F_ROOT, &rt_hdr, sizeof(struct ifaddrmsg));
+	if (err < 0) {
+		goto out_free;
+	}
+
+	/* Retrieve answer. Message is handled by get_addresses_cb */
+	nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, get_addresses_cb, &info);
+	nl_recvmsgs_default(socket);
+
+out_free:
+	nl_socket_free(socket);
+	return info.addresses;
 }
 
 static void add_if_not_empty(struct json_object *obj, const char *key, struct json_object *val) {
