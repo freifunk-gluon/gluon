@@ -7,7 +7,20 @@ include ../gluon.mk
 
 define Package/gluon-mesh-batman-adv/common
   PROVIDES:=gluon-mesh-batman-adv
-  DEPENDS:=+gluon-core +libgluonutil +gluon-client-bridge +gluon-ebtables +firewall +libiwinfo +kmod-dummy +libnl-tiny +libbatadv +@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY +@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 +@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
+  DEPENDS:= \
+	+gluon-core \
+	+libgluonutil \
+	+gluon-client-bridge \
+	+gluon-ebtables \
+	+firewall \
+	+libiwinfo \
+	+kmod-dummy \
+	+libnl-tiny \
+	+libbatadv \
+	+batctl \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
 endef
 
 define Package/gluon-mesh-batman-adv-14
@@ -20,7 +33,7 @@ endef
 define Package/gluon-mesh-batman-adv-15
 $(Package/gluon-mesh-batman-adv/common)
   TITLE:=Support for batman-adv meshing (compat level 15)
-  DEPENDS+=+kmod-batman-adv +batctl
+  DEPENDS+=+kmod-batman-adv
 endef
 
 define Package/gluon-mesh-batman-adv-14/install
