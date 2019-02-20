@@ -4,15 +4,6 @@ LC_ALL:=C
 LANG:=C
 export LC_ALL LANG
 
-
-# initialize (possibly already user set) directory variables
-GLUON_SITEDIR ?= site
-GLUON_TMPDIR ?= tmp
-GLUON_OUTPUTDIR ?= output
-
-GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
-GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
-
 # check for spaces & resolve possibly relative paths
 define mkabspath
  ifneq (1,$(words [$($(1))]))
@@ -21,14 +12,8 @@ define mkabspath
  override $(1) := $(abspath $($(1)))
 endef
 
+GLUON_SITEDIR ?= site
 $(eval $(call mkabspath,GLUON_SITEDIR))
-$(eval $(call mkabspath,GLUON_TMPDIR))
-$(eval $(call mkabspath,GLUON_OUTPUTDIR))
-$(eval $(call mkabspath,GLUON_IMAGEDIR))
-$(eval $(call mkabspath,GLUON_PACKAGEDIR))
-
-export GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
-
 
 $(GLUON_SITEDIR)/site.mk:
 	$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
@@ -37,8 +22,18 @@ include $(GLUON_SITEDIR)/site.mk
 
 GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
 
+# initialize (possibly already user set) directory variables
+GLUON_TMPDIR ?= tmp
+GLUON_OUTPUTDIR ?= output
+GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
+GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
 GLUON_TARGETSDIR ?= targets
 GLUON_PATCHESDIR ?= patches
+
+$(eval $(call mkabspath,GLUON_TMPDIR))
+$(eval $(call mkabspath,GLUON_OUTPUTDIR))
+$(eval $(call mkabspath,GLUON_IMAGEDIR))
+$(eval $(call mkabspath,GLUON_PACKAGEDIR))
 $(eval $(call mkabspath,GLUON_TARGETSDIR))
 $(eval $(call mkabspath,GLUON_PATCHESDIR))
 
@@ -46,7 +41,8 @@ GLUON_MULTIDOMAIN ?= 0
 GLUON_WLAN_MESH ?= 11s
 GLUON_DEBUG ?= 0
 
-export GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_WLAN_MESH GLUON_DEBUG GLUON_TARGETSDIR GLUON_PATCHESDIR
+export GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_WLAN_MESH GLUON_DEBUG GLUON_TARGETSDIR GLUON_PATCHESDIR \
+	GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR DEVICES
 
 show-release:
 	@echo '$(GLUON_RELEASE)'
