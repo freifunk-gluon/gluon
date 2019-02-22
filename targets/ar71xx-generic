@@ -253,6 +253,17 @@ fi
 device tp-link-re450 re450-v1
 packages $ATH10K_PACKAGES
 
+device tp-link-tl-wr841n-nd-mod-8m-v8 tl-wr841-v8-8m
+device tp-link-tl-wr841n-nd-mod-8m-v9 tl-wr841-v9-8m
+device tp-link-tl-wr841n-nd-mod-8m-v10 tl-wr841-v10-8m
+device tp-link-tl-wr841n-nd-mod-8m-v11 tl-wr841-v11-8m
+factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
+
+device tp-link-tl-wr841n-nd-mod-16m-v8 tl-wr841-v8-16m
+device tp-link-tl-wr841n-nd-mod-16m-v9 tl-wr841-v9-16m
+device tp-link-tl-wr841n-nd-mod-16m-v10 tl-wr841-v10-16m
+device tp-link-tl-wr841n-nd-mod-16m-v11 tl-wr841-v11-16m
+factory -squashfs-factory${GLUON_REGION:+-${GLUON_REGION}} .bin
 
 # Ubiquiti
 
