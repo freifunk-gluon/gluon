@@ -92,6 +92,63 @@ function add_groups(prefix, groups, parent)
 	end
 end
 
+-- Checks if a peer or peer group entry belongs to the node2node VPN feature
+local function is_n2n(gp)
+	if gp and gp['.name']:find('n2n_vpn') then return true end
+	return false
+end
+
+--- Determine peers and peer groups from the old configuration that can be removed
+	-- @param group		Peer group as returned by uci:foreach or 'nil' for ALL
+	-- @param deln2n	Set 'true' for adding node2node VPN groups else 'false'
+	-- @return      	Array with first index being boolean indicating whether
+	--			any n2n peer groups have been restrained and second
+	--			being an array with the names of the items to delete.
+local function get_delgroups(group, deln2n)
+	if not deln2n and is_n2n(group) then
+		return false
+	end
+
+	local group_empty = true
+	local dellist = {}
+
+	if group then
+		uci:foreach('fastd', 'peer', function(peer)
+			if peer.group == group['.name'] then
+				if not deln2n and is_n2n(peer) then
+					group_empty = false
+				else
+					table.insert(dellist, peer['.name'])
+				end
+			end
+
+		end)
+	end
+
+	uci:foreach('fastd', 'peer_group', function(gr)
+		if gr.parent == group or gr.parent == group['.name'] then
+			local ret = get_delgroups(gr, deln2n)
+			for _, v in pairs(ret[2]) do table.insert(dellist, v) end
+			if ret[1] then
+				table.insert(dellist, gr['.name'])
+			else
+				group_empty = false
+			end
+		end
+
+	end)
+
+	return {group_empty, dellist}
+end
+
+if site.mesh_vpn.fastd.sysupgrade_remove_old_peers then
+	local del = get_delgroups(nil, site.mesh_vpn.fastd.sysupgrade_remove_n2n_peers)
+	for _, v in pairs(del[2]) do uci:delete('fastd', v) end
+elseif site.mesh_vpn.fastd.sysupgrade_remove_n2n_peers then
+	uci:delete_all('fastd', 'peer', is_n2n)
+	uci:delete_all('fastd', 'peer_group', is_n2n)
+end
+
 add_groups('mesh_vpn', site.mesh_vpn.fastd.groups())
 
 

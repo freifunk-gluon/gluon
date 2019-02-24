@@ -292,6 +292,13 @@ mesh_vpn
 
     You can set syslog_level from verbose (default) to warn to reduce syslog output.
 
+    While performing a sysupgrade fastd retains existing peer group and peer configurations to allow
+    incremental addition of peers and peer groups by default. This behaviour might be unwanted.
+    To make sure that fastd's peers and peer groups from previous firmware versions are removed 
+    (except those defined by the node2node VPN feature) set `sysupgrade_remove_old_peers` to `true`.
+    To remove peers and groups defined by the node2node VPN feature (which have ``n2n_vpn`` in their 
+    names) set `sysupgrade_remove_n2n_peers` to `true`.
+
     The `tunneldigger` section is used to define the *tunneldigger* broker list.
 
     **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
@@ -313,6 +320,8 @@ mesh_vpn
           methods = {'salsa2012+umac'},
           -- configurable = true,
           -- syslog_level = 'warn',
+          -- sysupgrade_remove_old_peers = false,
+          -- sysupgrade_remove_n2n_peers = false,
           groups = {
             backbone = {
               -- Limit number of connected peers from this group

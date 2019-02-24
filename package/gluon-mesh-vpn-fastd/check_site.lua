@@ -1,6 +1,8 @@
 local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac', 'null+salsa2012+umac', 'null'}
 need_array_of({'mesh_vpn', 'fastd', 'methods'}, fastd_methods)
 need_boolean(in_site({'mesh_vpn', 'fastd', 'configurable'}), false)
+need_boolean('mesh_vpn.fastd.sysupgrade_remove_old_peers', false)
+need_boolean('mesh_vpn.fastd.sysupgrade_remove_n2n_peers', false)
 
 need_one_of(in_site({'mesh_vpn', 'fastd', 'syslog_level'}), {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
 
