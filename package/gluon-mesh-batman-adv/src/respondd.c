@@ -667,9 +667,6 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 				      BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
 		return NL_OK;
 
-	if (!attrs[BATADV_ATTR_FLAG_BEST])
-		return NL_OK;
-
 	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
 	dest = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
 	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
