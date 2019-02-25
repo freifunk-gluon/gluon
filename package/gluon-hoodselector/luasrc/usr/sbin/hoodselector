@@ -29,38 +29,29 @@ if not ok then
 	os.exit(1)
 end
 
--- VPN MODE
--- If we have a VPN connection we will try to get the node's location and
--- select the hood coresponding to this location.
--- If no hood for the location has been defined, we will select
--- the default hood.
--- If we can't determine the node's location, we will continue to the next mode.
-if hoodutil.direct_vpn() then
-	io.stdout:write('VPN connection found.\n')
-	local geo = hoodutil.get_geolocation()
-	if geo.lat ~= nil and geo.lon ~= nil then
-		io.stdout:write('Position found.\n')
-		local jhood = hoodutil.get_domains()
-		local geo_hood = hoodutil.get_hood_by_geo(jhood, geo)
-		if geo_hood ~= nil then
-			if hoodutil.set_hoodconfig(geo_hood) then
-				hoodutil.restart_services()
-				hoodutil.log('Domain set by VPN mode.\n')
-			end
-			return
-		end
-		io.stdout:write('No domain has been defined for the current position.\n')
-		if hoodutil.set_hoodconfig(hoodutil.get_default_hood(jhood)) then
+-- geolocation mode
+-- If we have a location we will try to select the domain coresponding to this location.
+-- If no domain for the location has been defined or if we can't determine the node's location,
+-- we will select the default domain as last fallback instanc.
+local geo = hoodutil.get_geolocation()
+if geo.lat ~= nil and geo.lon ~= nil then
+	io.stdout:write('Position found. Enter "geolocation mode" ...\n')
+	local jdomains = hoodutil.get_domains()
+	local geo_base_domain = hoodutil.get_domain_by_geo(jdomains, geo)
+	if geo_base_domain ~= nil then
+		if hoodutil.set_domain_config(geo_base_domain) then
 			hoodutil.restart_services()
-			hoodutil.log('Domain set by VPN mode.\n')
+			hoodutil.log('Domain set by geolocation mode.\n')
 		end
 		return
-	else
-		-- The hoodselector should continue with the next states because there can be other
-		-- VPN nodes in the local mesh network which provide a position and therefore
-		-- have set a geo base hood.
-		io.stdout:write('No position found\n')
 	end
+	io.stdout:write('No domain has been defined for the current position. Continure with default domain mode\n')
 else
-	io.stdout:write('No VPN connection found\n')
+	io.stdout:write('No position found. Continure with default domain mode\n')
+end
+
+-- default domain mode
+if hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains())) then
+	hoodutil.restart_services()
+	hoodutil.log('Set default domain.\n')
 end

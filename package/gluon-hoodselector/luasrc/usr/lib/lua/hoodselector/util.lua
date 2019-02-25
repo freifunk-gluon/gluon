@@ -3,17 +3,8 @@ local util = require 'gluon.util'
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
-local vpn_util = require('gluon.mesh-vpn')
 local logger = require('posix.syslog')
 local M = {}
-
-function M.split(s, delimiter)
-	local result = {}
-	for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-		table.insert(result, match)
-	end
-	return result
-end
 
 function M.log(msg)
 	io.stdout:write(msg..'\n')
@@ -31,31 +22,23 @@ function M.get_domains()
 	return list
 end
 
--- Return the default hood in the hood list.
+-- Return the default domain from the domaon list.
 -- This method can return the following data:
--- * default hood
--- * nil if no default hood has been defined
-function M.get_default_hood(jhood)
-	for _, h in pairs(jhood) do
-		if h.domain_code == site.default_domain() then
-			return h
+-- * default domain
+-- * nil if no default domain has been defined
+function M.get_default_domain(jdomains)
+	for _, domain in pairs(jdomains) do
+		if domain.domain_code == site.default_domain() then
+			return domain
 		end
 	end
 	return nil
 end
 
--- Returns true if the node has an established running VPN connection.
-function M.direct_vpn()
-	for outgoing_if in io.popen(string.format("batctl o"), 'r'):lines() do
-		-- escape special chars "[]-"
-		if outgoing_if:match(string.gsub("%[  " .. vpn_util.get_mesh_vpn_interface() .. "%]","%-", "%%-")) then
-			return true
-		end
-	end
-	return false
-end
-
--- Get Geoposition. Return nil for no position
+-- Get Geoposition.
+-- This method can return the following data:
+-- * table {lat, lon}
+-- * nil for no position
 function M.get_geolocation()
 	return {
 		lat = tonumber(uci:get('gluon-node-info', uci:get_first('gluon-node-info', 'location'), 'latitude')),
@@ -115,21 +98,21 @@ function M.point_in_polygon(poly, point)
 	return t
 end
 
--- Return hood from the hood file based on geo position or nil if no real hood could be determined
--- First check if an area has > 2 points and is hence a polygon. Else assume it is a rectangular
--- box defined by two points (south-west and north-east)
-function M.get_hood_by_geo(jhood,geo)
-	for _, hood in pairs(jhood) do
-		if hood.domain_code ~= site.default_domain() then
-		for _, area in pairs(hood.domain.hoodselector.shapes) do
+-- Return domain from the domain list based on geo position or nil if no geo base domain could be
+-- determined. First check if an area has > 2 points and is hence a polygon. Else assume it is a
+-- rectangular box defined by two points (south-west and north-east)
+function M.get_domain_by_geo(jdomains,geo)
+	for _, domain in pairs(jdomains) do
+		if domain.domain_code ~= site.default_domain() then
+		for _, area in pairs(domain.domain.hoodselector.shapes) do
 			if #area > 2 then
 				if (M.point_in_polygon(area,geo) == 1) then
-					return hood
+					return domain
 				end
 			else
 				if ( geo.lat >= area[1].lat and geo.lat < area[2].lat and geo.lon >= area[1].lon
 					and geo.lon < area[2].lon ) then
-					return hood
+					return domain
 				end
 			end
 		end
@@ -138,12 +121,12 @@ function M.get_hood_by_geo(jhood,geo)
 	return nil
 end
 
-function M.set_hoodconfig(geo_hood)
-	if uci:get('gluon', 'core', 'domain') ~= geo_hood.domain_code then
-		uci:set('gluon', 'core', 'domain', geo_hood.domain_code)
+function M.set_domain_config(domain)
+	if uci:get('gluon', 'core', 'domain') ~= domain.domain_code then
+		uci:set('gluon', 'core', 'domain', domain.domain_code)
 		uci:commit('gluon')
 		os.execute('gluon-reconfigure')
-		M.log('Set domain "'..geo_hood.domain.domain_names[geo_hood.domain_code]..'"')
+		M.log('Set domain "'..domain.domain.domain_names[domain.domain_code]..'"')
 		return true
 	end
 	return false
