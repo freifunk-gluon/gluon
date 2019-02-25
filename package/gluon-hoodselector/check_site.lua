@@ -4,11 +4,11 @@ function need_nil(path)
       return true
     end
     return false
-  end, true, "default hood should not contain shapes")
+  end, true, "The default domain should not contain shapes")
   return nil
 end
 
---Need to check if not default hood and does the default not contain shapes
+--Need to check if not default domain and does the default not contain shapes
 if this_domain() ~= need_string(in_site({'default_domain'})) then
   local no_shapes = true
   for _,shape in ipairs(need_table(in_domain({'hoodselector', 'shapes'}))) do
@@ -28,8 +28,8 @@ if this_domain() ~= need_string(in_site({'default_domain'})) then
     end
   end
   if no_shapes then
-    need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "no shapes are defined in hoods")
+    need(in_domain({'hoodselector', 'shapes'}), function(err) return false end, true, "no shapes are defined in domainss")
   end
-else -- ente by default hood
+else -- ente by default domain
   need_nil(in_domain({'hoodselector', 'shapes'}))
 end
