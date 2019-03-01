@@ -12,3 +12,6 @@ packages 'kmod-ath9k'
 packages $ATH10K_PACKAGES
 packages 'kmod-gpio-button-hotplug' 'kmod-gpio-nct5104d' 'kmod-hwmon-core' 'kmod-leds-gpio' 'kmod-leds-apu2' 'kmod-sp5100_tco'
 packages 'kmod-usb-core' 'kmod-usb-ohci' 'kmod-usb2' 'kmod-usb3' 'kmod-usb-serial'
+
+config 'CONFIG_TARGET_KERNEL_PARTSIZE=16'
+config 'CONFIG_TARGET_ROOTFS_PARTSIZE=110'
