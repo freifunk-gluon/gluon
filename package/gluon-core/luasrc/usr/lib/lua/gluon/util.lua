@@ -157,6 +157,16 @@ function M.find_phy(config)
 	end
 end
 
+local function supports_channel(radio, channel)
+	local phy = M.find_phy(radio)
+	for i, chan in ipairs(iwinfo.nl80211.freqlist(phy)) do
+		if channel == chan.channel then
+			return true
+		end
+	end
+	return false
+end
+
 local function get_addresses(radio)
 	local phy = M.find_phy(radio)
 	if not phy then

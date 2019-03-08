@@ -56,7 +56,8 @@ local function get_channel(radio, config)
 	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
 		-- preserved channel always wins
 		channel = radio.channel
-	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
+
+	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and (is_outdoor() or not util.supports_channel(radio, config.channel())) then
 		-- actual channel will be picked and probed from chanlist
 		channel = 'auto'
 	end
@@ -251,7 +252,7 @@ util.foreach_radio(uci, function(radio, index, config)
 		uci:set('wireless', radio_name, 'legacy_rates', false)
 		configure_mesh_wireless(radio, index, config)
 	elseif (hwmode == '11a' or hwmode == '11na') then
-		if is_outdoor() then
+		if is_outdoor() or not util.supports_channel(radio, config.channel()) then
 			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
 
 			-- enforce outdoor channels by filtering the regdom for outdoor channels
@@ -274,7 +275,6 @@ util.foreach_radio(uci, function(radio, index, config)
 
 	fixup_wan(radio, index)
 end)
-
 
 if uci:get('system', 'rssid_wlan0') then
 	if uci:get('wireless', 'mesh_radio0') then
