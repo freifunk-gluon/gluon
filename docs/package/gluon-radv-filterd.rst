@@ -11,7 +11,7 @@ Selected router
 ---------------
 
 The router selection mechanism is independent from the batman-adv gateway mode.
-In contrast, the device originating the router advertisment could be any router
+In contrast, the device originating the router advertisement could be any router
 or client connected to the mesh, as radv-filterd captures all router
 advertisements originating  from it. All nodes announcing router advertisement
 **with** a default lifetime greater than 0 are being considered as candidates.

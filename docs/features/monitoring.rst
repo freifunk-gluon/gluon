@@ -24,7 +24,7 @@ Information to be announced is currently split into three categories:
     interfaces. This data can be used to determine the network topology.
 
 All categories will have a ``node_id`` key. It should be used to
-relate data of different catagories.
+relate data of different categories.
 
 Accessing Node Information
 --------------------------
@@ -117,7 +117,7 @@ The supported requests are:
 gluon-neighbour-info
 ~~~~~~~~~~~~~~~~~~~~
 
-The programm `gluon-neighbour-info` can be used to retrieve
+The program `gluon-neighbour-info` can be used to retrieve
 information from other nodes.
 
 ::

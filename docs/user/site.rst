@@ -24,7 +24,7 @@ site_code
 domain_seed
     32 bytes of random data, encoded in hexadecimal, used to seed other random
     values specific to the mesh domain. It must be the same for all nodes of one
-    mesh, but should be different for firmwares that are not supposed to mesh with
+    mesh, but should be different for firmware that is not supposed to mesh with
     each other.
 
     The recommended way to generate a value for a new site is:
@@ -152,7 +152,7 @@ wifi24 \: optional
     don't want users to connect to this mesh-SSID, so use a cryptic id that no
     one will accidentally mistake for the client WiFi.
 
-    ``ibss`` requires two parametersr: ``ssid`` (a string) and ``bssid`` (a MAC).
+    ``ibss`` requires two parameters: ``ssid`` (a string) and ``bssid`` (a MAC).
     An optional parameter ``vlan`` (integer) is supported.
 
     Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for
@@ -247,7 +247,7 @@ mesh
       throughput is at least 1500 kbit/s faster than the throughput of the
       currently selected gateway. 
 
-    For details on determining the threshhold, when to switch to a new gateway,
+    For details on determining the threshold, when to switch to a new gateway,
     see `batctl manpage`_, section "gw_mode".
     
     .. _batctl manpage: https://www.open-mesh.org/projects/batman-adv/wiki/Gateways
@@ -546,7 +546,7 @@ Feature flags
 
 With the addition of more and more features that interact in complex ways, it
 has become necessary to split certain packages into multiple parts, so it is
-possible to install just what is needed for a specific usecase. One example
+possible to install just what is needed for a specific use case. One example
 is the package *gluon-status-page-mesh-batman-adv*: There are batman-adv-specific
 status page components; they should only be installed when both batman-adv and
 the status page are enabled, making the addition of a specific package for this

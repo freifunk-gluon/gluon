@@ -5,7 +5,7 @@ the node will be placed in. If the selection has changed the upgrade scripts in
 ``/lib/gluon/upgrade/`` are triggered to update the nodes configuration.
 
 Hiding domains could be useful for default or testing domains, which should not
-be accidentally selected by a node operater.
+be accidentally selected by a node operator.
 
 domains/\*.conf
 ---------------

@@ -2,7 +2,7 @@ Config Mode
 ===========
 
 The `Config Mode` consists of several modules that provide a range of different
-condiguration options:
+configuration options:
 
 gluon-config-mode-core
     This modules provides the core functionality for the config mode.

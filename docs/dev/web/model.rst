@@ -51,14 +51,14 @@ Classes and methods
 
     - *Form:write* ()
 
-      Is called after the form has beed submitted (but only if the data is valid). It
+      Is called after the form has been submitted (but only if the data is valid). It
       is called last (after all options' *write* methods) and is usually used
       to commit changed UCI packages.
 
       The default implementation of *write* doesn't do anything, but it can be
       overridden.
 
-  - *Section* (usually instanciated through *Form:section*)
+  - *Section* (usually instantiated through *Form:section*)
 
     - *Section:option* (*type*, *id*, *title*, *description*)
 
