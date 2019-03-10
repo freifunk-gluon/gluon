@@ -43,7 +43,7 @@ See the *Site changes* section for details.
 
 Experimental support for batman-adv compat 15
 ---------------------------------------------
-As batman-adv has broken compatiblity starting with batman-adv 2014.0
+As batman-adv has broken compatibility starting with batman-adv 2014.0
 (bumping the "compat level" to 15), Gluon users must decide which
 batman-adv version to use. The package for the old batman-adv version
 ``gluon-mesh-batman-adv`` has been renamed to ``gluon-mesh-batman-adv-14``,

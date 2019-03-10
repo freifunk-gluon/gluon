@@ -24,7 +24,7 @@ Bugfixes
 ~~~~~~~~
 
 * Fix download of OpenSSL during build because of broken OpenSSL download servers (again...)
-* Fix another ABI incompatiblity with the upstream kernel modules which prevented loading some filesystem-related modules
+* Fix another ABI incompatibility with the upstream kernel modules which prevented loading some filesystem-related modules
 * Fix potential MAC address conflicts on x86 target when using mesh-on-wan/lan
 * Fix signal strength indicators on TP-LINK CPE210/510
 * Fix the model name string on some NETGEAR WNDR3700v2

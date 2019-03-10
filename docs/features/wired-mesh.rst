@@ -20,7 +20,7 @@ Wired mesh encapsulation
 
 Since version 2018.1, Gluon supports encapsulating wired mesh traffic in
 `VXLAN <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_, a new standard with
-usecases similar to VLANs, but a much greater ID space of 24bit; in addition, VXLAN
+use cases similar to VLANs, but a much greater ID space of 24bit; in addition, VXLAN
 packets pass through VLAN-aware switches without any special configuration.
 
 Encapsulating mesh traffic has two advantages:

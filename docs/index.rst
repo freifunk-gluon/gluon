@@ -1,8 +1,8 @@
 Welcome to Gluon
 ================
 
-Gluon is a modular framework for creating OpenWrt-based firmwares for wireless mesh nodes.
-Several Freifunk communities in Germany use Gluon as the foundation of their Freifunk firmwares.
+Gluon is a modular framework for creating OpenWrt-based firmware images for wireless mesh nodes.
+Several Freifunk communities in Germany use Gluon as the foundation of their Freifunk firmware.
 
 
 .. toctree::

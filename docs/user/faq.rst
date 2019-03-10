@@ -40,7 +40,7 @@ Consider these key values:
 - Payload: Allow for the transport of IPv6 packets, by adhering to the minimum MTU
   of 1280 Byte specified in RFC 2460
   - and configure `MSS clamping`_ accordingly,
-  - and announce your link MTU via Router Advertisments and DHCP
+  - and announce your link MTU via Router Advertisements and DHCP
 
   .. _MSS clamping: https://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
 
@@ -58,7 +58,7 @@ For reference, the complete MTU stack looks like this:
 Minimum MTU
 -----------
 
-Calculcate the minimum transport MTU by adding the encapsulation overhead to the
+Calculate the minimum transport MTU by adding the encapsulation overhead to the
 minimum payload MTU required. This is the lowest recommended value, since going
 lower would cause unnecessary fragmentation for clients which respect the announced
 link MTU.

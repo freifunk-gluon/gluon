@@ -172,7 +172,7 @@ GLUON_PRIORITY
 GLUON_REGION
   Some devices (at the moment the TP-Link Archer C7) contain a region code that restricts
   firmware installations. Set GLUON_REGION to ``eu`` or ``us`` to make the resulting
-  images installable from the respective stock firmwares.
+  images installable from the respective stock firmware.
 
 GLUON_RELEASE
   Firmware release number: This string is displayed in the config mode, announced

@@ -3,7 +3,7 @@ gluon-web-admin
 
 This package allows the user to set options like the password for ssh access
 within config mode. You can define in your ``site.conf`` whether it should be
-possible to access the nodes via ssh with a password or not and what the mimimum
+possible to access the nodes via ssh with a password or not and what the minimum
 password length must be.
 
 site.conf

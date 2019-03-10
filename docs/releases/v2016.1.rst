@@ -54,7 +54,7 @@ New features
 Kernel module opkg repository
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We've not been able to keep ABI compatiblity with the kernel of the official OpenWrt images.
+We've not been able to keep ABI compatibility with the kernel of the official OpenWrt images.
 Therefore, Gluon now generates an opkg repository with modules itself.
 
 The repository can be found at `output/modules/` by default, the image output directory has
@@ -269,7 +269,7 @@ Known Issues
 * batman-adv causes stability issues for both alfred and respondd/announced (`#177 <https://github.com/freifunk-gluon/gluon/issues/177>`_)
 * The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
 
-  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
 
 * Inconsistent respondd/announced API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
 
