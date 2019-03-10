@@ -1,7 +1,7 @@
 Private WLAN
 ============
 
-It is possible to set up a private WLAN that bridges the WAN port and is seperated from the mesh network.
+It is possible to set up a private WLAN that bridges the WAN port and is separated from the mesh network.
 Please note that you should not enable ``mesh_on_wan`` simultaneously.
 
 The private WLAN can be enabled through the config mode if the package ``gluon-web-private-wifi`` is installed.

@@ -6,7 +6,7 @@ in time. This is needed for switching between incompatible transport
 protocols (e.g. 802.11s and IBSS or VXLAN).
 
 Nodes will switch when the defined *switch-time* has passed. In case the node was
-powered off while this was supposed to happen, it might not be able to aquire the
+powered off while this was supposed to happen, it might not be able to acquire the
 correct time. In this case, the node will switch after it has not seen any gateway
 for a given period of time.
 

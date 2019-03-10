@@ -31,7 +31,7 @@ and slowly increase to 1 until ``PRIORITY`` days have passed. From then, the pro
 be configured in ``site.conf``. If the autoupdater is unable to determine the correct time, it will fall back to
 a behavior similar to the old implementation (i.e. hourly update attempts).
 
-Seperation of announced data
+Separation of announced data
 ----------------------------
 The data announced by alfred has been split into two data types:
 
@@ -73,7 +73,7 @@ which allows simple configuration of batman-adv on the WAN interface.
 
 Site validators
 ---------------
-The content of the ``site.conf`` is now validated when the images are built to make it less likely to accidentially
+The content of the ``site.conf`` is now validated when the images are built to make it less likely to accidentally
 build broken images.
 
 gluon-firewall

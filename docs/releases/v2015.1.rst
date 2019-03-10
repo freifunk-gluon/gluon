@@ -82,7 +82,7 @@ All config and expert mode modules contain both English and German texts now. Th
 locale should always be enabled in ``site.mk`` (as English is the fallback language),
 German can be enabled in addition using the ``GLUON_LANGS`` setting.
 
-The language shown is autmatically determined from the headers sent by the user's
+The language shown is automatically determined from the headers sent by the user's
 browser.
 
 Mesh-on-LAN
@@ -106,7 +106,7 @@ the WLAN adapters' transmission power can be changed in this package.
 fastd "performance mode"
 ^^^^^^^^^^^^^^^^^^^^^^^^
 The new package `gluon-luci-mesh-vpn-fastd` allows the user to switch between the `security` and
-`performance` VPN settions. In `performance mode`, the method `null` will be prepended to the
+`performance` VPN sections. In `performance mode`, the method `null` will be prepended to the
 method list.
 
 The new option ``configurable`` in the ``fastd_mesh_vpn`` section of ``site.conf`` must be set to `true`
@@ -131,7 +131,7 @@ ffmap backend has been adjusted accordingly.
 Nested peer groups
 ^^^^^^^^^^^^^^^^^^
 Nested peer groups for the `fastd-mesh-vpn-fastd` package can now be configured in ``site.conf``,
-each with its own peer limit. This allows to add additional constaints, for example to connect
+each with its own peer limit. This allows to add additional constraints, for example to connect
 to 2 peers altogether, but only 1 peer in each data center.
 
 Autoupdater manual branch override

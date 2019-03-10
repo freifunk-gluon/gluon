@@ -150,7 +150,7 @@ anymore.
 Filtering IGMP/MLD queries directed towards the mesh ensures that each node becomes the multicast querier
 for its own clients (unless there are other multicast-aware switches connected to the node), rather
 than electing a single, basically arbitrary node in the mesh to become the querier. Overall,
-this should significantly improve the reliablity of multicast in the mesh. This is especially
+this should significantly improve the reliability of multicast in the mesh. This is especially
 important for IPv6, as the IPv6 Neighbour Discovery Protocol (NDP) is based on local multicast.
 
 See also the documentation of the :ref:`site.conf mesh section <user-site-mesh>`.
@@ -176,7 +176,7 @@ Public key in respondd data (optional)
 ======================================
 
 If desired, the fastd public key of a node can be included in the respondd nodeinfo data,
-faciliating the correlations of VPN peers and nodes. As the VPN key is transmitted unencrypted
+facilitating the correlations of VPN peers and nodes. As the VPN key is transmitted unencrypted
 in the fastd handshake, this would theoretically allow an ISP to determine which nodes
 are operated behind which internet line. Therefore, this feature must be enabled explicitly
 by setting *mesh_vpn.pubkey_privacy* to ``false`` in *site.conf*.
@@ -389,7 +389,7 @@ Known issues
 
 * The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
 
-  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promicious mode is disallowed).
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
 
 * Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
 

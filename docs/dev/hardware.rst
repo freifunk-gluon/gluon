@@ -99,7 +99,7 @@ target supports *per-default rootfs*).
 Configuration
 '''''''''''''
 
-The ``config`` command allows to add arbitary target-specific OpenWrt configuration
+The ``config`` command allows to add arbitrary target-specific OpenWrt configuration
 to be emitted to ``.config``.
 
 Notes

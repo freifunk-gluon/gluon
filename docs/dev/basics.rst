@@ -36,9 +36,9 @@ rerun
 
 `make update` also applies the patches that can be found in the directories found in
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
-can be refered to by the branch `base`.
+can be referred to by the branch `base`.
 
-After new patches have been commited on top of the `patched` branch (or existing commits
+After new patches have been committed on top of the `patched` branch (or existing commits
 since the base commit have been edited or removed), the patch directories can be regenerated
 using
 
