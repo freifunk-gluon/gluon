@@ -53,5 +53,4 @@ end
 -- default domain mode
 if hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains())) then
 	hoodutil.restart_services()
-	hoodutil.log('Set default domain.\n')
 end
