@@ -220,7 +220,7 @@ ar71xx-generic
   - Loco M2/M5 XW
   - Nanostation M2/M5
   - Nanostation M2/M5 XW
-  - Picostation M2/M5
+  - Picostation M2
   - Rocket M2/M5
   - Rocket M2/M5 Ti
   - Rocket M2/M5 XW
@@ -281,7 +281,7 @@ ar71xx-tiny
   - TL-WA7210N (v2)
   - TL-WA7510N (v1)
   - TL-WR703N (v1)
-  - TL-WR710N (v1, v2, v2.1)
+  - TL-WR710N (v2)
   - TL-WR740N (v1, v3, v4, v5)
   - TL-WR741N/ND (v1, v2, v4, v5)
   - TL-WR743N/ND (v1, v2)
