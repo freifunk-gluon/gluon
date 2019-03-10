@@ -92,7 +92,7 @@ end
 function M.point_in_polygon(poly, point)
 	local t = -1
 	for i=1,#poly-1 do
-		t = t * M.crossProdTest(point.lon,point.lat,poly[i].lon,poly[i].lat,poly[i+1].lon,poly[i+1].lat)
+		t = t * M.cross_prod_test(point.lon,point.lat,poly[i].lon,poly[i].lat,poly[i+1].lon,poly[i+1].lat)
 		if t == 0 then break end
 	end
 	return t
