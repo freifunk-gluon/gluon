@@ -140,7 +140,7 @@ function M.restart_services()
 		"gluon-respondd",
 	}
 
-	for proc in ipairs(proc_tbl) do
+	for i, proc in ipairs(proc_tbl) do
 		if unistd.access("/etc/init.d/"..proc, "x") == 0 then
 			print(proc.." restarting ...")
 			os.execute("/etc/init.d/"..proc.." restart")
