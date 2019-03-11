@@ -100,22 +100,24 @@ end
 
 -- Return domain from the domain list based on geo position or nil if no geo based domain could be
 -- determined. First check if an area has > 2 points and is hence a polygon. Else assume it is a
--- rectangular box defined by two points (south-west and north-east)
+-- rectangular box defined by two points (south-west and north-east). Furthermore keep record of
+-- how many nested shapes we are in, e.g. a polyon with holes.
 function M.get_domain_by_geo(jdomains,geo)
 	for _, domain in pairs(jdomains) do
 		if domain.domain_code ~= site.default_domain() then
-		for _, area in pairs(domain.domain.hoodselector.shapes) do
-			if #area > 2 then
-				if (M.point_in_polygon(area,geo) == 1) then
-					return domain
-				end
-			else
-				if ( geo.lat >= area[1].lat and geo.lat < area[2].lat and geo.lon >= area[1].lon
-					and geo.lon < area[2].lon ) then
-					return domain
+			local nesting = 1
+			for _, area in pairs(domain.domain.hoodselector.shapes) do
+				if #area > 2 then
+					if (M.point_in_polygon(area,geo) == 1) then
+						nesting = nesting * (-1)
+					end
+				else
+					if ( geo.lat >= area[1].lat and geo.lat < area[2].lat and geo.lon >= area[1].lon and geo.lon < area[2].lon ) then
+						nesting = nesting * (-1)
+					end
 				end
 			end
-		end
+			if nesting == -1 then return domain end
 		end
 	end
 	return nil
