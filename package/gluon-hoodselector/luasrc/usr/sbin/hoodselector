@@ -30,9 +30,9 @@ if not ok then
 end
 
 -- geolocation mode
--- If we have a location we will try to select the domain coresponding to this location.
+-- If we have a location we will try to select the domain corresponding to this location.
 -- If no domain for the location has been defined or if we can't determine the node's location,
--- we will select the default domain as last fallback instanc.
+-- we will select the default domain as last fallback instance.
 local geo = hoodutil.get_geolocation()
 if geo.lat ~= nil and geo.lon ~= nil then
 	io.stdout:write('Position found. Enter "geolocation mode" ...\n')
@@ -45,9 +45,9 @@ if geo.lat ~= nil and geo.lon ~= nil then
 		end
 		return
 	end
-	io.stdout:write('No domain has been defined for the current position. Continure with default domain mode\n')
+	io.stdout:write('No domain has been defined for the current position. Continue with default domain mode\n')
 else
-	io.stdout:write('No position found. Continure with default domain mode\n')
+	io.stdout:write('No position found. Continue with default domain mode\n')
 end
 
 -- default domain mode
