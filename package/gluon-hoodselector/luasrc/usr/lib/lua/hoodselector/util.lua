@@ -22,7 +22,7 @@ function M.get_domains()
 	return list
 end
 
--- Return the default domain from the domaon list.
+-- Return the default domain from the domain list.
 -- This method can return the following data:
 -- * default domain
 -- * nil if no default domain has been defined
@@ -98,7 +98,7 @@ function M.point_in_polygon(poly, point)
 	return t
 end
 
--- Return domain from the domain list based on geo position or nil if no geo base domain could be
+-- Return domain from the domain list based on geo position or nil if no geo based domain could be
 -- determined. First check if an area has > 2 points and is hence a polygon. Else assume it is a
 -- rectangular box defined by two points (south-west and north-east)
 function M.get_domain_by_geo(jdomains,geo)
