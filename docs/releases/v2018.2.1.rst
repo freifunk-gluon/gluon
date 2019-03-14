@@ -1,0 +1,128 @@
+Gluon 2018.2.1
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* AVM
+
+  - Fritz!WLAN Repeater 300E
+
+ramips-mt7620
+^^^^^^^^^^^^^
+
+* Nexx
+
+  - WT3020AD/F/H [#noibss]_
+
+ramips-mt76x8
+^^^^^^^^^^^^^
+
+* Gl.iNet
+
+  - MT300N (v2) [#noibss]_
+
+* Netgear
+
+  - R6120 [#noibss]_
+
+* TP-Link
+
+  - Archer C50 (v3, v4) [#noibss]_
+  - TL-WR841N (v13) [#noibss]_
+
+Bugfixes
+~~~~~~~~
+
+* Fixes a bug in the batman-adv respondd module that caused duplicate
+  IPv6 addresses in nodeinfo replies (`#1615 <https://github.com/freifunk-gluon/gluon/issues/1615>`_)
+
+  This was visible on the status page and several map implementations.
+  The new implementation uses netlink instead of parsing `/proc/net/if_inet6`.
+
+* Fixes a localization issue in gluon-config-mode-geo-location which 
+  resulted in a partial translation of the wizard's location section
+  text. (`#1611 <https://github.com/freifunk-gluon/gluon/issues/1611>`_)
+
+* Fixes the display of the improved memory usage estimation in gluon-status-page
+
+  This change was actually already merged in time for v2018.2 but the 
+  JavaScript was not rebuilt.
+
+* Fixes automatic updates for several devices by adding and updating 
+  the autoupdater image names
+
+  This affects the following devices:
+
+  * GL.iNet GL-AR150, 
+  * GL.iNet GL-AR300M
+  * GL.iNet GL-AR750
+  * Raspberry Pi Model B+ Rev 1.2
+
+* Fixes the primary MAC address selection for Unifi AC 
+  Lite/Mesh/Pro/Mesh Pro (`#1629 <https://github.com/freifunk-gluon/gluon/issues/1629>`_)
+
+* Fixes low data rate selection for multicast and management frames on
+  ath10k and ath10k-ct (`#1644 <https://github.com/freifunk-gluon/gluon/pull/1644>`_)
+
+  A patchset has been backported that notifies these drivers of requested data rate changes
+
+* Fixes the data rate selection in ath10k and ath10k-ct when no 
+  `mcast_rate` is configured (`#1657 <https://github.com/freifunk-gluon/gluon/pull/1657>`_)
+
+  Previously a missing mcast_rate could result in broken 5 GHz connectivity
+
+New features
+~~~~~~~~~~~~
+
+Scheduled domain switch
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Gluon has support for multiple domains since its v2018.1 release.
+The scheduled domain switch allows for reliable migrations between 
+domains at a preconfigured time.
+This can be useful for communities that, among other things, plan to
+
+  * migrate between IBSS and 802.11s
+  * activate VXLAN encapsulation on wired mesh links
+
+Improved frequency band distribution of dual-band radios
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A new algorithm that improves the distribution of dual-band radios was
+added. They will now be evenly distributed between the 2.4 and 5 GHz
+band, with a preference towards 2.4 GHz. 
+
+If a device has only a single dual-band radio, like the AVM FRITZ!WLAN
+Repeater 300E, it will be configured for 2.4 GHz.
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are
+  unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is
+  disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected
+  (like VMware when promiscuous mode is disallowed).
+
+* Inconsistent respondd API
+  (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API
+  will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on
+  weak hardware specially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
