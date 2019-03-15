@@ -62,6 +62,9 @@ sysupgrade_image buffalo-wzr-hp-ag300h-wzr-600dhp wzr-hp-ag300h-squashfs-sysupgr
 
 # D-Link
 
+device d-link-dap-1330-rev-a1 dap-1330-a1
+factory .img
+
 device d-link-dir-505-rev-a1 dir-505-a1 DIR505A1
 alias d-link-dir-505-rev-a2
 
