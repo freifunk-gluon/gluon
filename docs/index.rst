@@ -148,6 +148,7 @@ ar71xx-generic
 
 * D-Link
 
+  - DAP-1330 (A1)
   - DIR-505 (A1, A2)
   - DIR-825 (B1)
 
