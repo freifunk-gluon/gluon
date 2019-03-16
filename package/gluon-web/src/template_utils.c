@@ -235,7 +235,7 @@ static size_t validate_utf8(const unsigned char **s, size_t l, struct template_b
 				break;
 		}
 
-		/* advance beyound the last found valid continuation char */
+		/* advance beyond the last found valid continuation char */
 		o = v;
 		ptr += v;
 	}
