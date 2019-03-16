@@ -58,7 +58,7 @@ return function(config, env)
 		-- Now finally render the thing
 		local stat, err = pcall(template)
 		assert(stat, "Failed to execute template '" .. name .. "'.\n" ..
-			      "A runtime error occured: " .. tostring(err or "(nil)"))
+			      "A runtime error occurred: " .. tostring(err or "(nil)"))
 	end
 
 	--- Render a certain template.
