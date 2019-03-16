@@ -76,8 +76,7 @@ struct gw_netlink_opts {
 };
 
 struct clients_netlink_opts {
-	size_t total;
-	size_t wifi;
+	size_t non_wifi;
 	struct batadv_nlquery_opts query_opts;
 };
 
@@ -553,26 +552,24 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 
 	flags = nla_get_u32(attrs[BATADV_ATTR_TT_FLAGS]);
 
-	if (flags & BATADV_TT_CLIENT_NOPURGE)
+	if (flags & (BATADV_TT_CLIENT_NOPURGE | BATADV_TT_CLIENT_WIFI))
 		return NL_OK;
 
 	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
 	if (lastseen > MAX_INACTIVITY)
 		return NL_OK;
 
-	if (flags & BATADV_TT_CLIENT_WIFI)
-		opts->wifi++;
-
-	opts->total++;
+	opts->non_wifi++;
 
 	return NL_OK;
 }
 
 static struct json_object * get_clients(void) {
 	size_t wifi24 = 0, wifi5 = 0;
+	size_t total;
+	size_t wifi;
 	struct clients_netlink_opts opts = {
-		.total = 0,
-		.wifi = 0,
+		.non_wifi = 0,
 		.query_opts = {
 			.err = 0,
 		},
@@ -583,10 +580,12 @@ static struct json_object * get_clients(void) {
 			  &opts.query_opts);
 
 	count_stations(&wifi24, &wifi5);
+	wifi = wifi24 + wifi5;
+	total = wifi + opts.non_wifi;
 
 	struct json_object *ret = json_object_new_object();
-	json_object_object_add(ret, "total", json_object_new_int(opts.total));
-	json_object_object_add(ret, "wifi", json_object_new_int(opts.wifi));
+	json_object_object_add(ret, "total", json_object_new_int(total));
+	json_object_object_add(ret, "wifi", json_object_new_int(wifi));
 	json_object_object_add(ret, "wifi24", json_object_new_int(wifi24));
 	json_object_object_add(ret, "wifi5", json_object_new_int(wifi5));
 	return ret;
