@@ -43,6 +43,12 @@ device('tp-link-tl-wr841n-v13', 'tl-wr841n-v13', {
 	},
 })
 
+device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
 
 -- VoCore 2
 
