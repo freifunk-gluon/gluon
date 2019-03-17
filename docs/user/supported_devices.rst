@@ -345,6 +345,7 @@ ramips-mt76x8
 
   - TL-MR3420 v5
   - TL-WR841N v13
+  - TL-WR902AC v3
   - Archer C50 v3
   - Archer C50 v4
 
