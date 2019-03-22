@@ -49,9 +49,16 @@ define Build/Compile
 	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
 		[ ! -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]
 		$(call GenerateJSON,domains/$(domain))
-		lua ../../scripts/domain_aliases.lua '$(PKG_BUILD_DIR)/domains/$(domain).json' | while read alias; do \
+		@lua ../../scripts/domain_aliases.lua '$(PKG_BUILD_DIR)/domains/$(domain).json' | while read alias; do \
 			[ "$$$${alias}" != '$(domain)' ] || continue; \
-			ln -s '$(domain).json' $(PKG_BUILD_DIR)/domains/$$$${alias}.json || exit 1; \
+			link="$(PKG_BUILD_DIR)/domains/$$$${alias}.json"; \
+			if ! ln -s '$(domain).json' "$$$$link"; then \
+				other="$$$$(basename $$$$(readlink -f "$$$$link") .json)"; \
+				if [ "$$$$other" ]; then \
+					echo >&2 "Failed to alias domain '"'$(domain)'"' as '$$$$alias', name already taken by domain '$$$$other'."; \
+				fi; \
+				exit 1; \
+			fi; \
 		done
 	)
   endif
