@@ -11,7 +11,9 @@ Views are partial HTML pages, with additional template tags that allow
 to embed Lua code and translation strings. The following tags are defined:
 
   - ``<%`` ... ``%>`` evaluates the enclosed Lua expression.
-  - ``<%=`` ... ``%>`` evaluates the enclosed Lua expression and prints its value.
+  - ``<%|`` ... ``%>`` evaluates the enclosed Lua expression and prints its value.
+  - ``<%=`` ... ``%>`` evaluates the enclosed Lua expression and prints its value
+    *without escaping HTML entities*. This is useful when the value contains HTML code.
   - ``<%+`` ... ``%>`` includes another template.
   - ``<%:`` ... ``%>`` translates the enclosed string using the loaded i18n catalog.
   - ``<%_`` ... ``%>`` translates the enclosed string *without escaping HTML entities*
