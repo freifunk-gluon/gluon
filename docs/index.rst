@@ -289,13 +289,6 @@ brcm2708-bcm2709
 
 * RaspberryPi 2
 
-ipq806x
-^^^^^^^
-
-* TP-Link
-
-  - Archer C2600 [#80211s]_
-
 mpc85xx-generic
 ^^^^^^^^^^^^^^^
 
