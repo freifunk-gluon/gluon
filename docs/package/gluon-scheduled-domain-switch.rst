@@ -21,7 +21,9 @@ domain_switch : optional (needed for domains to switch)
         - amount of time without reachable gateway to switch unconditionally
     switch_time :
         - UNIX epoch after which domain will be switched
-    connection_check_targets :
+
+check_connection :
+    targets :
         - array of IPv6 addresses which are probed to determine if the node is
 	  connected to the mesh
 
@@ -31,7 +33,10 @@ Example::
     target_domain = 'new_domain',
     switch_after_offline_mins = 120,
     switch_time = 1546344000, -- 01.01.2019 - 12:00 UTC
-    connection_check_targets = {
+  },
+
+  check_connection = {
+    targets = {
       '2001:4860:4860::8888',
       '2001:4860:4860::8844',
     },
