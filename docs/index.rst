@@ -403,8 +403,8 @@ ramips-rt305x
 
   - VoCore (8M, 16M) [#80211s]_
 
-sunxi
-^^^^^
+sunxi-cortexa7
+^^^^^^^^^^^^^^
 
 * LeMaker
 
