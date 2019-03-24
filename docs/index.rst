@@ -331,13 +331,6 @@ ipq40xx
   - NBG6617 [#80211s]_
   - WRE6606 [#80211s]_
 
-ipq806x
-^^^^^^^
-
-* TP-Link
-
-  - Archer C2600 [#80211s]_
-
 mpc85xx-generic
 ^^^^^^^^^^^^^^^
 
