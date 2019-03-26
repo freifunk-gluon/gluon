@@ -1,7 +1,31 @@
-ATH10K_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca99x0 ath10k-firmware-qca99x0-ct'
+# The QCA9980 was discontinued by Qualcomm. It didn't receive any firmware-update for over 4 years.
+# See https://github.com/kvalo/ath10k-firmware/tree/master/QCA99X0/hw2.0
+# 802.11s was never implemented for the chip's firmware. It will most likely be broken forever.
+# The QCA9984 on the other hand works fine for 11s meshes on both bands.
+
+QCA9980_PACKAGES='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca99x0 ath10k-firmware-qca99x0-ct'
+QCA9984_PACKAGES='kmod-ath10k -kmod-ath10k-ct ath10k-firmware-qca9984 -ath10k-firmware-qca9984-ct'
 
 
+#
+# QCA9980
+#
+
+if [ "$BROKEN" ]; then
 # TP-Link
-
 device tp-link-archer-c2600 tplink_c2600
-packages $ATH10K_PACKAGES
+packages $QCA9980_PACKAGES
+fi
+
+#
+# QCA9984
+#
+
+# -- ToDo --
+# The BROKEN flag for the target can be removed when switching to an OpenWrt base newer than 18.06,
+# as in 18.06 the LEDs are not yet functional. This is already fixed in the current OpenWrt master.
+
+# NETGEAR
+device netgear-nighthawk-x4s-r7800 netgear_r7800
+factory .img
+packages $QCA9984_PACKAGES
