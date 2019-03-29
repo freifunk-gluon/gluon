@@ -21,3 +21,10 @@ device nexx-wt3020-8m wt3020-8M
 alias nexx-wt3020ad
 alias nexx-wt3020f
 alias nexx-wt3020h
+
+# Xiaomi
+
+if [ "$BROKEN" ]; then
+device xiaomi-miwifi-mini miwifi-mini # BROKEN: 2.4GHz WiFi is Unstable 
+factory
+fi
