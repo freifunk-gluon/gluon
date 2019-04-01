@@ -5,7 +5,7 @@ As the WAN port of a node will be connected to a user's private network, it
 is essential that the node only uses the WAN when it is absolutely necessary.
 There are two cases in which the WAN port is used:
 
-* Mesh VPN (package ``gluon-mesh-vpn-fastd``
+* Mesh VPN (package ``gluon-mesh-vpn-fastd``)
 * DNS to resolve the VPN servers' addresses (package ``gluon-wan-dnsmasq``)
 
 After the VPN connection has been established, the node should be able to reach
