@@ -161,7 +161,7 @@ site.conf only variables
 
    -  mesh_vpn.fastd.syslog_level
    -  wifi*.supported_rates
-   -  wifi*.basic_rates
+   -  wifi*.basic_rate
    -  timezone
    -  regdom
 

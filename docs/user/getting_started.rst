@@ -186,9 +186,6 @@ GLUON_TARGET
 Special variables
 .................
 
-GLUON_BUILDDIR
-  Working directory during build. Defaults to ``build``.
-
 GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
 

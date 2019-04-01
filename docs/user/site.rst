@@ -69,7 +69,7 @@ timezone
       -- Europe/Berlin
       timezone = 'CET-1CEST,M3.5.0,M10.5.0/3'
 
-ntp_server
+ntp_servers
     List of NTP servers available in your community or used by your community, e.g.:
     ::
 
@@ -661,7 +661,7 @@ Site modules
 The file ``modules`` in the site repository is completely optional and can be used
 to supply additional package feeds from which packages are built. The git repositories
 specified here are retrieved in addition to the default feeds when ``make update``
-it called.
+is called.
 
 This file's format is very similar to the toplevel ``modules`` file of the Gluon
 tree, with the important different that the list of feeds must be assigned to

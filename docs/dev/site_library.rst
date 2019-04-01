@@ -11,7 +11,7 @@ from Lua scripts. Example:
 
 The *site* object in this example does not directly represent the *site.conf* data structure;
 instead, it is wrapped in a way that makes it more convenient to access deeply nested elements.
-To access the the underlying values, they must be unwrapped using the function call notation
+To access the underlying values, they must be unwrapped using the function call notation
 (the ``()`` after ``site.wifi24.ap.ssid`` in the example).
 
 The wrapper objects have two advantages over simple Lua tables:
