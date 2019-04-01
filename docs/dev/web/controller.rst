@@ -71,7 +71,7 @@ Useful functions:
     values for the given key.
   - *status* (*code*, *message*): Writes the HTTP status to the reply. Has no effect
     if a status has already been sent or non-header data has been written.
-  - *header* (*key*, *value*): Adds an HTTP header to the reply to be sent to to
+  - *header* (*key*, *value*): Adds an HTTP header to the reply to be sent to
     the client. Has no effect when non-header data has already been written.
   - *prepare_content* (*mime*): Sets the *Content-Type* header to the given MIME
     type, potentially setting additional headers or modifying the MIME type to

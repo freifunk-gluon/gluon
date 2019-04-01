@@ -19,8 +19,8 @@ The following targets for x86 images exist:
     * `virtualbox` (VDI image)
     * `vmware` (VMDK image)
 
-    These images only differ in the image file format, the content is the same. Therefore there is
-    only a single `x86-generic` sysupgrade image instead of three.
+    These images differ in the image file format, the content is the same. Therefore
+    a single `x86-generic` sysupgrade image is provided, only.
 
 `x86-geode`
     x86 image for Geode CPUs.
