@@ -26,7 +26,6 @@
 
 #include <respondd.h>
 
-#include <iwinfo.h>
 #include <json-c/json.h>
 #include <libgluonutil.h>
 #include <uci.h>
@@ -423,72 +422,6 @@ static struct json_object * get_traffic(void) {
 	return ret;
 }
 
-static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifname) {
-	const struct iwinfo_ops *iw = iwinfo_backend(ifname);
-	if (!iw)
-		return;
-
-	int freq;
-	if (iw->frequency(ifname, &freq) < 0)
-		return;
-
-	size_t *wifi;
-	if (freq >= 2400 && freq < 2500)
-		wifi = wifi24;
-	else if (freq >= 5000 && freq < 6000)
-		wifi = wifi5;
-	else
-		return;
-
-	int len;
-	char buf[IWINFO_BUFSIZE];
-	if (iw->assoclist(ifname, buf, &len) < 0)
-		return;
-
-	struct iwinfo_assoclist_entry *entry;
-	for (entry = (struct iwinfo_assoclist_entry *)buf; (char*)(entry+1) <= buf + len; entry++) {
-		if (entry->inactive > MAX_INACTIVITY)
-			continue;
-
-		(*wifi)++;
-	}
-}
-
-static void count_stations(size_t *wifi24, size_t *wifi5) {
-	struct uci_context *ctx = uci_alloc_context();
-	ctx->flags &= ~UCI_FLAG_STRICT;
-
-
-	struct uci_package *p;
-	if (uci_load(ctx, "wireless", &p))
-		goto end;
-
-
-	struct uci_element *e;
-	uci_foreach_element(&p->sections, e) {
-		struct uci_section *s = uci_to_section(e);
-		if (strcmp(s->type, "wifi-iface"))
-			continue;
-
-		const char *network = uci_lookup_option_string(ctx, s, "network");
-		if (!network || strcmp(network, "client"))
-			continue;
-
-		const char *mode = uci_lookup_option_string(ctx, s, "mode");
-		if (!mode || strcmp(mode, "ap"))
-			continue;
-
-		const char *ifname = uci_lookup_option_string(ctx, s, "ifname");
-		if (!ifname)
-			continue;
-
-		count_iface_stations(wifi24, wifi5, ifname);
-	}
-
-end:
-	uci_free_context(ctx);
-}
-
 static bool handle_route_addgw_nexthop(char **data, void *arg) {
 	struct json_object *obj = (struct json_object*) arg;
 	if (data[PREFIX] && data[FROM] && data[VIA] && data[IF]) {
@@ -570,21 +503,13 @@ end:
 }
 
 static struct json_object * get_clients(void) {
-	size_t wifi24 = 0, wifi5 = 0;
-
-	count_stations(&wifi24, &wifi5);
-
 	int total = ask_l3roamd_for_client_count();
 
-	size_t wifi = wifi24 + wifi5;
 	struct json_object *ret = json_object_new_object();
 
 	if (total >= 0)
 		json_object_object_add(ret, "total", json_object_new_int(total));
 
-	json_object_object_add(ret, "wifi", json_object_new_int(wifi));
-	json_object_object_add(ret, "wifi24", json_object_new_int(wifi24));
-	json_object_object_add(ret, "wifi5", json_object_new_int(wifi5));
 	return ret;
 }
 
@@ -599,100 +524,12 @@ static struct json_object * respondd_provider_statistics(void) {
 	return ret;
 }
 
-static struct json_object * get_wifi_neighbours(const char *ifname) {
-	const struct iwinfo_ops *iw = iwinfo_backend(ifname);
-	if (!iw)
-		return NULL;
-
-	int len;
-	char buf[IWINFO_BUFSIZE];
-	if (iw->assoclist(ifname, buf, &len) < 0)
-		return NULL;
-
-	struct json_object *neighbours = json_object_new_object();
-
-	struct iwinfo_assoclist_entry *entry;
-	for (entry = (struct iwinfo_assoclist_entry *)buf; (char*)(entry+1) <= buf + len; entry++) {
-		if (entry->inactive > MAX_INACTIVITY)
-			continue;
-
-		struct json_object *obj = json_object_new_object();
-
-		json_object_object_add(obj, "signal", json_object_new_int(entry->signal));
-		json_object_object_add(obj, "noise", json_object_new_int(entry->noise));
-		json_object_object_add(obj, "inactive", json_object_new_int(entry->inactive));
-
-		char mac[18];
-		snprintf(mac, sizeof(mac), "%02x:%02x:%02x:%02x:%02x:%02x",
-				entry->mac[0], entry->mac[1], entry->mac[2],
-				entry->mac[3], entry->mac[4], entry->mac[5]);
-
-		json_object_object_add(neighbours, mac, obj);
-	}
-
-	struct json_object *ret = json_object_new_object();
-
-	if (json_object_object_length(neighbours))
-		json_object_object_add(ret, "neighbours", neighbours);
-	else
-		json_object_put(neighbours);
-
-	return ret;
-}
-
-static struct json_object * get_wifi(void) {
-
-	struct uci_context *ctx = uci_alloc_context();
-	ctx->flags &= ~UCI_FLAG_STRICT;
-
-	struct json_object *ret = json_object_new_object();
-
-	struct uci_package *p;
-	if (uci_load(ctx, "network", &p))
-		goto end;
-
-
-	struct uci_element *e;
-	uci_foreach_element(&p->sections, e) {
-		struct uci_section *s = uci_to_section(e);
-		if (strcmp(s->type, "interface"))
-			continue;
-
-		const char *proto = uci_lookup_option_string(ctx, s, "proto");
-		if (!proto || strcmp(proto, "gluon_mesh"))
-			continue;
-
-		const char *ifname = uci_lookup_option_string(ctx, s, "ifname");
-		if (!ifname)
-			continue;
-
-		char *ifaddr = gluonutil_get_interface_address(ifname);
-		if (!ifaddr)
-			continue;
-
-		struct json_object *neighbours = get_wifi_neighbours(ifname);
-		if (neighbours)
-			json_object_object_add(ret, ifaddr, neighbours);
-
-		free(ifaddr);
-	}
-
-end:
-	uci_free_context(ctx);
-	return ret;
-}
-
 static struct json_object * respondd_provider_neighbours(void) {
 	struct json_object *ret = json_object_new_object();
 
 	struct json_object *babel = get_babel_neighbours();
 	if (babel)
 		json_object_object_add(ret, "babel", babel);
-
-
-	struct json_object *wifi = get_wifi();
-	if (wifi)
-		json_object_object_add(ret, "wifi", wifi);
 
 	return ret;
 }
