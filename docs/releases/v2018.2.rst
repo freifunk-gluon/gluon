@@ -127,8 +127,12 @@ adding ``-gluon-ebtables-limit-arp`` to *GLUON_SITE_PACKAGES*.
 Site changes
 ************
 
-No changes need to be made to *site.conf* or *site.mk* when upgrading from
-Gluon v2018.1.x.
+If an opkg repository for ``lede`` was configured the key needs to be migrated
+to ``openwrt``. ``lede`` is ignored and without an ``openwrt`` key the default
+OpenWrt repository is used.
+
+No other changes need to be made to *site.conf* or *site.mk* when upgrading
+from Gluon v2018.1.x.
 
 Internals
 *********
