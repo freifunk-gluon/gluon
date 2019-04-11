@@ -32,4 +32,4 @@ CFLAGS += $(LIBBATADV_CFLAGS)
 LDLIBS += $(LIBBATADV_LDLIBS)
 
 respondd.so: respondd.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -o $@ $^ $(LDLIBS) -lgluonutil -liwinfo -luci
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -o $@ $^ $(LDLIBS) -lgluonutil -luci
