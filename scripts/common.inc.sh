@@ -47,10 +47,10 @@ no_opkg() {
 }
 
 
-unknown_devices="$DEVICES"
+unknown_devices="$GLUON_DEVICES"
 
 want_device() {
-	[ "$DEVICES" ] || return 0
+	[ "$GLUON_DEVICES" ] || return 0
 
 	local new_devices=''
 
@@ -61,7 +61,7 @@ want_device() {
 	done
 	unknown_devices=$new_devices
 
-	for device in $DEVICES; do
+	for device in $GLUON_DEVICES; do
 		if [ "$device" = "$1" ]; then
 			return 0
 		fi

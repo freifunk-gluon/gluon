@@ -186,6 +186,12 @@ GLUON_TARGET
 Special variables
 .................
 
+GLUON_DEVICES
+  List of devices to build. The list contains the Gluon profile name of a device, the profile
+  name is the first parameter of the ``device`` command in a target file.
+  e.g. ``GLUON_DEVICES="avm-fritz-box-4020 tp-link-tl-wdr4300-v1"``.
+  Empty by default to build all devices of a target.
+
 GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
 

@@ -17,4 +17,4 @@ fi
 rm -f "openwrt/bin/targets/${OPENWRT_BINDIR}"/* 2>/dev/null || true
 
 # Full builds will output the "packages" directory, so clean up first
-[ "$DEVICES" ] || rm -rf "openwrt/bin/targets/${OPENWRT_BINDIR}/packages"
+[ "$GLUON_DEVICES" ] || rm -rf "openwrt/bin/targets/${OPENWRT_BINDIR}/packages"

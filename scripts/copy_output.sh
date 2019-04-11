@@ -194,7 +194,7 @@ no_opkg() {
 . targets/"$1"; copy
 
 # Copy opkg repo
-if [ -z "$no_opkg" -a -z "$DEVICES" ]; then
+if [ -z "$no_opkg" -a -z "$GLUON_DEVICES" ]; then
 	rm -f "$GLUON_PACKAGEDIR"/*/"$OPENWRT_BINDIR"/*
 	rmdir -p "$GLUON_PACKAGEDIR"/*/"$OPENWRT_BINDIR" 2>/dev/null || true
 	mkdir -p "${GLUON_PACKAGEDIR}/${PACKAGE_PREFIX}/${OPENWRT_BINDIR}"
