@@ -58,7 +58,7 @@ define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
 	$(FIND) $(2) -type f | while read src; do \
-		if LuaSrcDiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
+		if luasrcdiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
 			chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
 			mv "$$$$src.o" "$$$$src"; \
 		fi; \
