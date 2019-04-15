@@ -115,10 +115,18 @@ if not next(pos) then
 	os.exit(1)
 end
 if not uci:get_bool(GLC, "settings", "static_location") then
+
+	local old_lat = uci:get(LOC, uci:get_first(LOC, 'location'), 'latitude')
+	local old_lon = uci:get(LOC, uci:get_first(LOC, 'location'), 'longitude')
+
 	uci:set(LOC, uci:get_first(LOC, 'location'), 'latitude', pos.lat)
 	uci:set(LOC, uci:get_first(LOC, 'location'), 'longitude', pos.lon)
 	uci:save(LOC)
-	uci:commit(LOC)
+
+	-- Commit only if no coordinates have been stored before or the Nodes Pos have change significantly +- 22m
+	if (old_lat == nil or old_lon == nil) or ( math.abs(math.abs(old_lat) - math.abs(pos.lat)) > 0.0002 or math.abs(math.abs(old_lon) - math.abs(pos.lon)) > 0.0002 ) then
+		uci:commit(LOC)
+	end
 end
 local timestap = io.open(TIME_STAMP, "w")
 if timestap ~= nil then
