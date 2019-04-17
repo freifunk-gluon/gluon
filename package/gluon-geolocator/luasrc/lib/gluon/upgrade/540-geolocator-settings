@@ -12,15 +12,15 @@ if not auto_location then
 	auto_location = site.geolocator.autolocation(false)
 end
 
-local refresh_interval = uci:get(config, 'settings', 'refresh_interval')
-if not refresh_interval then
-	refresh_interval = site.geolocator.interval(720) -- default: 12h
-end
-
 uci:delete(config, 'settings')
 uci:section(config, config, 'settings', {
 	static_location = static_location,
-	refresh_interval = refresh_interval,
 	auto_location = auto_location,
 })
+
+local refresh_interval = site.geolocator.interval(12) -- default: 12h
+
+local f = io.open('/usr/lib/micron.d/geolocator', 'w')
+f:write(string.format('* */%i * * *     /lib/gluon/geolocator/geolocator\n', refresh_interval))
+f:close()
 uci:save(config)
