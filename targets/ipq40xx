@@ -49,3 +49,10 @@ packages $ATH10K_PACKAGES_IPQ40XX
 device zyxel-wre6606 zyxel_wre6606
 factory
 packages $ATH10K_PACKAGES_IPQ40XX
+
+# 8devices
+
+device 8devices-jalapeno 8dev_jalapeno
+factory -squashfs-nand-factory .ubi
+sysupgrade -squashfs-nand-sysupgrade .bin
+packages $ATH10K_PACKAGES_IPQ40XX
