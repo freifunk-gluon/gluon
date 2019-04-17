@@ -10,7 +10,6 @@ local iwinfo = require("iwinfo")
 
 local LOC="gluon-node-info"
 local GLC="geolocator"
-local TIME_STAMP="/tmp/geolocator_timestamp"
 
 if not uci:get_bool(GLC, "settings", "auto_location") then
 	os.exit(0)
@@ -103,17 +102,11 @@ local function locate()
 	return data
 end
 
--- Check if interval over or not exist
-if io.open(TIME_STAMP) ~= nil then
-	if os.time() - tonumber(io.open(TIME_STAMP):read("*a")) < uci:get(GLC, "settings", "refresh_interval") * 60 then
-		os.exit(0)
-	end
-end
-
 local pos = locate()
 if not next(pos) then
 	os.exit(1)
 end
+
 if not uci:get_bool(GLC, "settings", "static_location") then
 
 	local old_lat = uci:get(LOC, uci:get_first(LOC, 'location'), 'latitude')
@@ -128,11 +121,4 @@ if not uci:get_bool(GLC, "settings", "static_location") then
 		uci:commit(LOC)
 	end
 end
-local timestap = io.open(TIME_STAMP, "w")
-if timestap ~= nil then
-	timestap:write(os.time())
-	timestap:close()
-	os.exit(0)
-end
-io.stdout:write("Can`t create file on " .. TIME_STAMP .. "\n")
-os.exit(1)
+os.exit(0)
