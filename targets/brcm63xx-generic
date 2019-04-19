@@ -1,0 +1,4 @@
+#CONFIG_TARGET_brcm63xx_generic_DEVICE_DSL274XB-F1
+device DSL274XB-F1 DSL274XB-F1
+factory -squashfs-cfe-EU .bin
+sysupgrade -squashfs-cfe-EU .bin
