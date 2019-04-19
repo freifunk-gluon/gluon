@@ -106,6 +106,8 @@ list-targets: FORCE
 	@$(foreach target,$(GLUON_TARGETS),echo '$(target)';)
 
 
+GLUON_DEFAULT_PACKAGES := hostapd-mini
+
 GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)' || echo '__ERROR__')
 ifneq ($(filter __ERROR__,$(GLUON_FEATURE_PACKAGES)),)
 $(error Error while evaluating GLUON_FEATURES)
@@ -118,7 +120,7 @@ define merge_packages
     GLUON_PACKAGES := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(GLUON_PACKAGES)) $(pkg))
   )
 endef
-$(eval $(call merge_packages,$(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
+$(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
 
 config: FORCE
 	@$(CheckExternal)
