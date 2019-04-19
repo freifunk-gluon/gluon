@@ -186,6 +186,10 @@ GLUON_TARGET
 Special variables
 .................
 
+GLUON_DEBUG
+  Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or
+  similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
+
 GLUON_DEVICES
   List of devices to build. The list contains the Gluon profile name of a device, the profile
   name is the first parameter of the ``device`` command in a target file.
