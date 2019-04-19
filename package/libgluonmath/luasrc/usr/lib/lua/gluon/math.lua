@@ -30,7 +30,8 @@ function M.cross_prod_test(x_a,y_a,x_b,y_b,x_c,y_c)
 		local delta = (x_b-x_a) * (y_c-y_a) - (y_b-y_a) * (x_c-x_a)
 		if delta > 0 then
 			return 1
-		elseif delta < 0 then
+		end
+		if delta < 0 then
 			return -1
 		end
 	end
