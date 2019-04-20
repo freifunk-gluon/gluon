@@ -19,7 +19,7 @@ for module in $GLUON_MODULES; do
 
 	cd "$PATCHDIR"
 	for patch in "$GLUONDIR"/patches/$module/*.patch; do
-		git -c user.name='Gluon Patch Manager' -c user.email='gluon@void.example.com' -c commit.gpgsign=false am --whitespace=nowarn --committer-date-is-author-date "$patch"
+		git -c user.name='Gluon Patch Manager' -c user.email='gluon@void.example.com' -c commit.gpgsign=false am --ignore-space-change --whitespace=nowarn --committer-date-is-author-date "$patch"
 	done
 
 	cd "$GLUONDIR"/$module
