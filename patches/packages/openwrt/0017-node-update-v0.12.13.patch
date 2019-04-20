@@ -1,0 +1,113 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Thu, 21 Apr 2016 16:43:14 +0900
+Subject: node update v0.12.13
+
+diff --git a/lang/node-arduino-firmata/Makefile b/lang/node-arduino-firmata/Makefile
+index 89e9637be980fff6c216ba62d1bd617d63e2e130..9fca861f6a0b6f649bbad932da57735fe509dbfe 100644
+--- a/lang/node-arduino-firmata/Makefile
++++ b/lang/node-arduino-firmata/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=arduino-firmata
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.3.3
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/shokai/node-arduino-firmata.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=0.12.7
++PKG_NODE_VERSION:=0.12.13
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=MIT
+diff --git a/lang/node-cylon/Makefile b/lang/node-cylon/Makefile
+index e64a4d5b5c4dcc825574838ed21eadf7a7f9e3f3..63b8220e50065fcd3d7c225881475dee13d69432 100644
+--- a/lang/node-cylon/Makefile
++++ b/lang/node-cylon/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=cylon
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.22.0
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/hybridgroup/cylon-firmata.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=0.12.7
++PKG_NODE_VERSION:=0.12.13
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Apache-2.0
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index 471d31e873d86031ccbc451c896d50077995f8f2..777d5eafd60bdc86a7ba464aac70b1b664503893 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=hid
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.4.0
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/node-hid/node-hid.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_VERSION:=c56c8aa5d113c6f2574d1f7e64d41745702965bb
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=0.12.7
++PKG_NODE_VERSION:=0.12.13
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+diff --git a/lang/node-serialport/Makefile b/lang/node-serialport/Makefile
+index c39735f32fbc51d09155f074a264a2319c895b2b..a732174731ceebdb889acd7df9a79914cf2b9220 100644
+--- a/lang/node-serialport/Makefile
++++ b/lang/node-serialport/Makefile
+@@ -10,14 +10,14 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=serialport
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=1.4.6
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
+ PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+ PKG_MD5SUM:=1eb21082e0aa676b8350182a60230808
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=0.12.7
++PKG_NODE_VERSION:=0.12.13
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+diff --git a/lang/node/Makefile b/lang/node/Makefile
+index 14741049972a8bd8a15bcf879d3c1294dd754603..37da18ce83285882208fc303a9c29bd64f279042 100644
+--- a/lang/node/Makefile
++++ b/lang/node/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2006-2011 OpenWrt.org
++# Copyright (C) 2006-2016 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=node
+-PKG_VERSION:=v0.12.7
+-PKG_RELEASE:=2
++PKG_VERSION:=v0.12.13
++PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=node-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://nodejs.org/dist/${PKG_VERSION}

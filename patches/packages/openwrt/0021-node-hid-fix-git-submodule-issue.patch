@@ -1,0 +1,25 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Mon, 23 May 2016 14:49:29 +0900
+Subject: node-hid: fix git submodule issue
+
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index f9ad54e7ac1b46e6536753823ae7fbbcfac23b30..e28298b8421794f5862ed026faf0d5023713c7b3 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=hid
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.5.1
+-PKG_RELEASE:=2
++PKG_RELEASE:=3
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/node-hid/node-hid.git
+@@ -46,6 +46,7 @@ CPU:=$(subst x86_64,x64,$(subst i386,ia32,$(ARCH)))
+ EXTRA_CFLAGS+=-I$(STAGING_DIR)/usr/include/libusb-1.0
+ 
+ define Build/Compile
++	git init $(PKG_BUILD_DIR)
+ 	$(MAKE_VARS) \
+ 	$(MAKE_FLAGS) \
+ 	npm_config_arch=$(CONFIG_ARCH) \

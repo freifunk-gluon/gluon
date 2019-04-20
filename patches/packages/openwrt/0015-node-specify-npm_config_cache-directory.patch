@@ -1,0 +1,16 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Fri, 1 Apr 2016 13:48:46 +0900
+Subject: node-* : specify npm_config_cache directory
+
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index fbb7ed00eebef2fcf2b63175acc53b0b77a71e5c..471d31e873d86031ccbc451c896d50077995f8f2 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -49,6 +49,7 @@ define Build/Compile
+ 	$(MAKE_FLAGS) \
+ 	npm_config_arch=$(CONFIG_ARCH) \
+ 	npm_config_nodedir=$(BUILD_DIR)/node-v$(PKG_NODE_VERSION)/ \
++	npm_config_cache=$(BUILD_DIR)/node-v$(PKG_NODE_VERSION)/npm-cache \
+ 	PREFIX="$(PKG_INSTALL_DIR)/usr/" \
+ 	$(STAGING_DIR_HOST)/bin/npm install -g $(PKG_BUILD_DIR)
+ endef

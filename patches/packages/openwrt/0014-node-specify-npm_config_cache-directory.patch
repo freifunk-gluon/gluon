@@ -1,0 +1,16 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Fri, 1 Apr 2016 13:47:59 +0900
+Subject: node-* : specify npm_config_cache directory
+
+diff --git a/lang/node-cylon/Makefile b/lang/node-cylon/Makefile
+index d2ed0a0a25c65e8b13536dc1c44b498743766ef7..e64a4d5b5c4dcc825574838ed21eadf7a7f9e3f3 100644
+--- a/lang/node-cylon/Makefile
++++ b/lang/node-cylon/Makefile
+@@ -67,6 +67,7 @@ define Build/Compile
+ 	$(MAKE_FLAGS) \
+ 	npm_config_arch=$(CONFIG_ARCH) \
+ 	npm_config_nodedir=$(BUILD_DIR)/node-v$(PKG_NODE_VERSION)/ \
++	npm_config_cache=$(BUILD_DIR)/node-v$(PKG_NODE_VERSION)/npm-cache \
+ 	PREFIX="$(PKG_INSTALL_DIR)/usr/" \
+ 	$(STAGING_DIR_HOST)/bin/npm install -g $(PKG_BUILD_DIR)
+ endef

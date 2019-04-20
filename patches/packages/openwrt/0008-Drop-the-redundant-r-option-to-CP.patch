@@ -1,0 +1,56 @@
+From: Yousong Zhou <yszhou4tech@gmail.com>
+Date: Sat, 12 Mar 2016 01:10:04 +0800
+Subject: Drop the redundant -r option to $(CP)
+
+$(CP) was defined as `cp -fpR' since the very begining of OpenWrt build
+system (2006-06-22).  The -R option should be enough and base packages
+use only $(CP) for the same purposes just fine and BSD manual of cp also
+discourages the use of `-r' option.  So let's just tidy up the usage now.
+
+[linus.luessing@c0d3.blue: backport, node* only]
+Signed-off-by: Yousong Zhou <yszhou4tech@gmail.com>
+
+diff --git a/lang/node-arduino-firmata/Makefile b/lang/node-arduino-firmata/Makefile
+index aced0701287475e245a185f969b71232cf3ee6e0..73e8da126c5fc068f5af332cfde683449d16c849 100644
+--- a/lang/node-arduino-firmata/Makefile
++++ b/lang/node-arduino-firmata/Makefile
+@@ -60,7 +60,7 @@ define Package/node-arduino-firmata/install
+ 	mkdir -p $(1)/usr/lib/node
+ 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/node_modules/* $(1)/usr/lib/node
+ 	rm -rf $(1)/usr/lib/node/arduino-firmata/node_modules/serialport/ 
+-	$(CP) -r ./files/* $(1)/
++	$(CP) ./files/* $(1)/
+ endef
+ 
+ $(eval $(call BuildPackage,node-arduino-firmata))
+diff --git a/lang/node-cylon/Makefile b/lang/node-cylon/Makefile
+index 753ae2319b103e392297c8cf63c915cc2fcd3453..c2e3b7265d11316dabd22dbf0f6ea8ee83fdeb5a 100644
+--- a/lang/node-cylon/Makefile
++++ b/lang/node-cylon/Makefile
+@@ -73,22 +73,22 @@ endef
+ 
+ define Package/node-cylon/install
+ 	mkdir -p $(1)/usr/lib/node/cylon
+-	$(CP) -r $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon/* $(1)/usr/lib/node/cylon/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon/* $(1)/usr/lib/node/cylon/
+ endef
+ 
+ define Package/node-cylon-i2c/install
+ 	mkdir -p $(1)/usr/lib/node/cylon-i2c
+-	$(CP) -r $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon-i2c/* $(1)/usr/lib/node/cylon-i2c/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon-i2c/* $(1)/usr/lib/node/cylon-i2c/
+ endef
+ 
+ define Package/node-cylon-gpio/install
+ 	mkdir -p $(1)/usr/lib/node/cylon-gpio
+-	$(CP) -r $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon-gpio/* $(1)/usr/lib/node/cylon-gpio/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/node_modules/cylon-gpio/* $(1)/usr/lib/node/cylon-gpio/
+ endef
+ 
+ define Package/node-cylon-firmata/install
+ 	mkdir -p $(1)/usr/lib/node/cylon-firmata
+-	$(CP) -r $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/{index.js,lib,LICENSE,package.json,README.md,RELEASES.md,spec} $(1)/usr/lib/node/cylon-firmata/
++	$(CP) $(PKG_INSTALL_DIR)/usr/lib/node_modules/cylon-firmata/{index.js,lib,LICENSE,package.json,README.md,RELEASES.md,spec} $(1)/usr/lib/node/cylon-firmata/
+ endef
+ 
+ $(eval $(call BuildPackage,node-cylon))

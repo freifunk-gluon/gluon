@@ -1,0 +1,31 @@
+From: Dirk Neukirchen <plntyk.lede@plntyk.name>
+Date: Tue, 2 Aug 2016 15:16:33 +0200
+Subject: node: fix soft/hard float compile on arm/mips
+
+reported by brcm2708/2709 user on IRC
+
+Signed-off-by: Dirk Neukirchen <plntyk.lede@plntyk.name>
+
+diff --git a/lang/node/Makefile b/lang/node/Makefile
+index 5cf7a6ec143e0abd19106ba260f6eb16f85b36bf..e1ed0f76f953cf0e505ed4c97839a3009c8d6757 100644
+--- a/lang/node/Makefile
++++ b/lang/node/Makefile
+@@ -57,7 +57,18 @@ CONFIGURE_ARGS= \
+ 	--shared-openssl \
+ 	--prefix=/usr
+ 
++ifneq ($(findstring arm,$(ARCH)),)
++CONFIGURE_ARGS+= \
++	$(if $(CONFIG_SOFT_FLOAT),--with-arm-float-abi=soft,--with-arm-float-abi=hard)
++endif
++
++ifneq ($(findstring mips,$(ARCH)),)
++CONFIGURE_ARGS+= \
++	$(if $(CONFIG_SOFT_FLOAT),--with-mips-float-abi=soft,--with-mips-float-abi=hard)
++endif
++
+ HOST_CONFIGURE_VARS:=
++
+ HOST_CONFIGURE_ARGS:= \
+ 	--dest-os=linux \
+ 	--without-snapshot \

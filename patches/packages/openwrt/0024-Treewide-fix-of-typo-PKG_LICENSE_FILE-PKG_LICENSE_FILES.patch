@@ -1,0 +1,97 @@
+From: Michael Heimpold <mhei@heimpold.de>
+Date: Sat, 3 Sep 2016 00:00:54 +0200
+Subject: Treewide fix of typo: PKG_LICENSE_FILE --> PKG_LICENSE_FILES
+
+Without the trailing _S_ the variable is not considered at all.
+
+[linus.luessing@c0d3.blue: backport, node* only]
+Signed-off-by: Michael Heimpold <mhei@heimpold.de>
+
+diff --git a/lang/node-arduino-firmata/Makefile b/lang/node-arduino-firmata/Makefile
+index 3273f9760c929eeda47f93229a7aae3b19a5f874..1a46974d44ec87d1b09d9d39396e0705426f59cb 100644
+--- a/lang/node-arduino-firmata/Makefile
++++ b/lang/node-arduino-firmata/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=arduino-firmata
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.3.3
+-PKG_RELEASE:=4
++PKG_RELEASE:=5
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/shokai/node-arduino-firmata.git
+@@ -23,7 +23,7 @@ PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=MIT
+-PKG_LICENSE_FILE:=LICENSE.txt
++PKG_LICENSE_FILES:=LICENSE.txt
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+diff --git a/lang/node-cylon/Makefile b/lang/node-cylon/Makefile
+index dca44522e4c19fd180e5b5682592567f08a1e4f1..5c673b5785432ef65835d4972ef4eb88ac745b75 100644
+--- a/lang/node-cylon/Makefile
++++ b/lang/node-cylon/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=cylon
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.22.0
+-PKG_RELEASE:=4
++PKG_RELEASE:=5
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/hybridgroup/cylon-firmata.git
+@@ -23,7 +23,7 @@ PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Apache-2.0
+-PKG_LICENSE_FILE:=LICENSE
++PKG_LICENSE_FILES:=LICENSE
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index 7431cd5f22880bfea4ca8e10cf4d314f93ac050d..c553b9752a71e23290393940c27bf1443c6736f1 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=hid
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.5.1
+-PKG_RELEASE:=4
++PKG_RELEASE:=5
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/node-hid/node-hid.git
+@@ -23,7 +23,7 @@ PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+-PKG_LICENSE_FILE:=
++PKG_LICENSE_FILES:=
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 
+diff --git a/lang/node-serialport/Makefile b/lang/node-serialport/Makefile
+index c45149166b1e43e98be7f2cbb7159017874540d6..8fc676cd384a6d3e5348517a6839e91754d1d6b7 100644
+--- a/lang/node-serialport/Makefile
++++ b/lang/node-serialport/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=serialport
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=3.0.0
+-PKG_RELEASE:=2
++PKG_RELEASE:=3
+ 
+ PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
+ PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+@@ -21,7 +21,7 @@ PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+-PKG_LICENSE_FILE:=LICENSE
++PKG_LICENSE_FILES:=LICENSE
+ 
+ include $(INCLUDE_DIR)/package.mk
+ 

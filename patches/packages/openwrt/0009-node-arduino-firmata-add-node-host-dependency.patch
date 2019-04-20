@@ -1,0 +1,19 @@
+From: Stijn Tintel <stijn@linux-ipv6.be>
+Date: Thu, 17 Mar 2016 10:34:56 +0100
+Subject: node-arduino-firmata: add node host dependency
+
+Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
+
+diff --git a/lang/node-arduino-firmata/Makefile b/lang/node-arduino-firmata/Makefile
+index 73e8da126c5fc068f5af332cfde683449d16c849..96d120f5698a783e54384b05c32d11ed9b1bd319 100644
+--- a/lang/node-arduino-firmata/Makefile
++++ b/lang/node-arduino-firmata/Makefile
+@@ -18,7 +18,7 @@ PKG_SOURCE_VERSION:=16e76007edf218d72df590adbd711ac6b7432845
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+-PKG_BUILD_DEPENDS:=node
++PKG_BUILD_DEPENDS:=node/host
+ PKG_NODE_VERSION:=0.12.7
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>

@@ -1,0 +1,19 @@
+From: Stijn Tintel <stijn@linux-ipv6.be>
+Date: Thu, 17 Mar 2016 10:36:47 +0100
+Subject: node-hid: add node host dependency
+
+Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
+
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index 911e2a4cc695004d4ee4ee3d3078fc7d1876bee2..fbb7ed00eebef2fcf2b63175acc53b0b77a71e5c 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -18,7 +18,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+ PKG_SOURCE_VERSION:=c56c8aa5d113c6f2574d1f7e64d41745702965bb
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+-PKG_BUILD_DEPENDS:=node
++PKG_BUILD_DEPENDS:=node/host
+ PKG_NODE_VERSION:=0.12.7
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>

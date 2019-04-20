@@ -1,0 +1,202 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Fri, 27 May 2016 16:22:39 +0900
+Subject: node,node-*: node update to v4.4.5 and Enhance CPU-arch variant.
+
+[linus.luessing@c0d3.blue: backport]
+Conflicts:
+	lang/node/patches/004-gcc6-undefined-behaviour.patch
+
+diff --git a/lang/node-arduino-firmata/Makefile b/lang/node-arduino-firmata/Makefile
+index 5dc300e0e271ca0161547012b4de2a5954835965..3273f9760c929eeda47f93229a7aae3b19a5f874 100644
+--- a/lang/node-arduino-firmata/Makefile
++++ b/lang/node-arduino-firmata/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=arduino-firmata
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.3.3
+-PKG_RELEASE:=3
++PKG_RELEASE:=4
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/shokai/node-arduino-firmata.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=4.4.4
++PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=MIT
+diff --git a/lang/node-cylon/Makefile b/lang/node-cylon/Makefile
+index 8c73e8e7d29b4e95b9c549cc8603f690bfcd3edb..dca44522e4c19fd180e5b5682592567f08a1e4f1 100644
+--- a/lang/node-cylon/Makefile
++++ b/lang/node-cylon/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=cylon
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.22.0
+-PKG_RELEASE:=3
++PKG_RELEASE:=4
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/hybridgroup/cylon-firmata.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_SOURCE_VERSION)
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=4.4.4
++PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Apache-2.0
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index e28298b8421794f5862ed026faf0d5023713c7b3..7431cd5f22880bfea4ca8e10cf4d314f93ac050d 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=hid
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.5.1
+-PKG_RELEASE:=3
++PKG_RELEASE:=4
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/node-hid/node-hid.git
+@@ -19,7 +19,7 @@ PKG_SOURCE_VERSION:=35d830b7810c87d32484d0a346621568c4849441
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=4.4.4
++PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+diff --git a/lang/node-serialport/Makefile b/lang/node-serialport/Makefile
+index fd292d706ef1d92a4c825849b755dbfb85b4bdd6..c45149166b1e43e98be7f2cbb7159017874540d6 100644
+--- a/lang/node-serialport/Makefile
++++ b/lang/node-serialport/Makefile
+@@ -10,14 +10,14 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=serialport
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=3.0.0
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
+ PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+ PKG_MD5SUM:=ea20a17746dd64e72d5f6f2019d9e28d
+ 
+ PKG_BUILD_DEPENDS:=node/host
+-PKG_NODE_VERSION:=4.4.4
++PKG_NODE_VERSION:=4.4.5
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>
+ PKG_LICENSE:=Custom
+diff --git a/lang/node/Makefile b/lang/node/Makefile
+index a95aecb3aca1e52e29e4f151ffd28ef361bf1336..5cf7a6ec143e0abd19106ba260f6eb16f85b36bf 100644
+--- a/lang/node/Makefile
++++ b/lang/node/Makefile
+@@ -8,12 +8,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=node
+-PKG_VERSION:=v4.4.4
++PKG_VERSION:=v4.4.5
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=node-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL:=http://nodejs.org/dist/${PKG_VERSION}
+-PKG_MD5SUM:=1ad7915688df85f62a57f43860dc54c6
++PKG_MD5SUM:=376140907bbe362f36065a30af04f020
+ 
+ HOST_BUILD_DEPENDS:=python/host
+ PKG_BUILD_DEPENDS:=python/host
+@@ -35,7 +35,7 @@ define Package/node
+   SUBMENU:=Node.js
+   TITLE:=Node.js is a platform built on Chrome's JavaScript runtime
+   URL:=http://nodejs.org/
+-  DEPENDS:=+libpthread +librt +libstdcpp +libopenssl +libuv +zlib
++  DEPENDS:=+libpthread +librt +libstdcpp +libopenssl +zlib
+ endef
+ 
+ define Package/node/description
+@@ -44,7 +44,7 @@ define Package/node/description
+    package ecosystem, npm, is the largest ecosystem of open source libraries in the world.
+ endef
+ 
+-CPU:=$(subst x86_64,x64,$(subst i386,ia32,$(ARCH)))
++CPU:=$(subst aarch64,arm64,$(subst x86_64,x64,$(subst i386,ia32,$(ARCH))))
+ 
+ MAKE_VARS += \
+ 	DESTCPU=$(CPU)
+diff --git a/lang/node/patches/004-gcc6-undefined-behaviour.patch b/lang/node/patches/004-gcc6-undefined-behaviour.patch
+deleted file mode 100644
+index dbbbcf0c54bb62f643521411668772531d42b89a..0000000000000000000000000000000000000000
+--- a/lang/node/patches/004-gcc6-undefined-behaviour.patch
++++ /dev/null
+@@ -1,64 +0,0 @@
+-diff --git a/deps/v8/src/heap/incremental-marking.cc b/deps/v8/src/heap/incremental-marking.cc
+-index c922e83..2ead8be 100644
+---- a/deps/v8/src/heap/incremental-marking.cc
+-+++ b/deps/v8/src/heap/incremental-marking.cc
+-@@ -379,7 +379,7 @@ void IncrementalMarking::DeactivateIncrementalWriteBarrier() {
+-   DeactivateIncrementalWriteBarrierForSpace(heap_->new_space());
+- 
+-   LargePage* lop = heap_->lo_space()->first_page();
+--  while (lop->is_valid()) {
+-+  while (LargePage::IsValid(lop)) {
+-     SetOldSpacePageFlags(lop, false, false);
+-     lop = lop->next_page();
+-   }
+-@@ -414,7 +414,7 @@ void IncrementalMarking::ActivateIncrementalWriteBarrier() {
+-   ActivateIncrementalWriteBarrier(heap_->new_space());
+- 
+-   LargePage* lop = heap_->lo_space()->first_page();
+--  while (lop->is_valid()) {
+-+  while (LargePage::IsValid(lop)) {
+-     SetOldSpacePageFlags(lop, true, is_compacting_);
+-     lop = lop->next_page();
+-   }
+-diff --git a/deps/v8/src/heap/spaces-inl.h b/deps/v8/src/heap/spaces-inl.h
+-index 56c2bad..1a45096 100644
+---- a/deps/v8/src/heap/spaces-inl.h
+-+++ b/deps/v8/src/heap/spaces-inl.h
+-@@ -148,7 +148,7 @@ Page* Page::Initialize(Heap* heap, MemoryChunk* chunk, Executability executable,
+- 
+- bool PagedSpace::Contains(Address addr) {
+-   Page* p = Page::FromAddress(addr);
+--  if (!p->is_valid()) return false;
+-+  if (!Page::IsValid(p)) return false;
+-   return p->owner() == this;
+- }
+- 
+-diff --git a/deps/v8/src/heap/spaces.cc b/deps/v8/src/heap/spaces.cc
+-index e197f5a..2fe10eb 100644
+---- a/deps/v8/src/heap/spaces.cc
+-+++ b/deps/v8/src/heap/spaces.cc
+-@@ -2918,7 +2918,7 @@ LargePage* LargeObjectSpace::FindPage(Address a) {
+-   if (e != NULL) {
+-     DCHECK(e->value != NULL);
+-     LargePage* page = reinterpret_cast<LargePage*>(e->value);
+--    DCHECK(page->is_valid());
+-+    DCHECK(LargePage::IsValid(page));
+-     if (page->Contains(a)) {
+-       return page;
+-     }
+-diff --git a/deps/v8/src/heap/spaces.h b/deps/v8/src/heap/spaces.h
+-index 312d75f..1054672 100644
+---- a/deps/v8/src/heap/spaces.h
+-+++ b/deps/v8/src/heap/spaces.h
+-@@ -283,9 +283,9 @@ class MemoryChunk {
+-   // Only works for addresses in pointer spaces, not data or code spaces.
+-   static inline MemoryChunk* FromAnyPointerAddress(Heap* heap, Address addr);
+- 
+--  Address address() { return reinterpret_cast<Address>(this); }
+-+  static bool IsValid(MemoryChunk* chunk) { return chunk != nullptr; }
+- 
+--  bool is_valid() { return address() != NULL; }
+-+  Address address() { return reinterpret_cast<Address>(this); }
+- 
+-   MemoryChunk* next_chunk() const {
+-     return reinterpret_cast<MemoryChunk*>(base::Acquire_Load(&next_chunk_));

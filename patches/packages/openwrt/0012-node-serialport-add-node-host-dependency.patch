@@ -1,0 +1,19 @@
+From: Stijn Tintel <stijn@linux-ipv6.be>
+Date: Thu, 17 Mar 2016 10:37:10 +0100
+Subject: node-serialport: add node host dependency
+
+Signed-off-by: Stijn Tintel <stijn@linux-ipv6.be>
+
+diff --git a/lang/node-serialport/Makefile b/lang/node-serialport/Makefile
+index ad4b7aff604543fdfd5a443064552c5fa8fbc472..1f75a36850125a42d88915d83a053d8b35d49577 100644
+--- a/lang/node-serialport/Makefile
++++ b/lang/node-serialport/Makefile
+@@ -16,7 +16,7 @@ PKG_SOURCE:=$(PKG_NPM_NAME)-$(PKG_VERSION).tgz
+ PKG_SOURCE_URL:=http://registry.npmjs.org/$(PKG_NPM_NAME)/-/
+ PKG_MD5SUM:=1eb21082e0aa676b8350182a60230808
+ 
+-PKG_BUILD_DEPENDS:=node
++PKG_BUILD_DEPENDS:=node/host
+ PKG_NODE_VERSION:=0.12.7
+ 
+ PKG_MAINTAINER:=John Crispin <blogic@openwrt.org>

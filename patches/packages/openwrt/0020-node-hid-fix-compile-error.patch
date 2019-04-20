@@ -1,0 +1,27 @@
+From: Hirokazu MORIKAWA <register@nxhack.com>
+Date: Wed, 18 May 2016 14:54:38 +0900
+Subject: node-hid: fix compile error
+
+diff --git a/lang/node-hid/Makefile b/lang/node-hid/Makefile
+index 5a243a255a9a19071b62c540a6fafd10cf0628f9..f9ad54e7ac1b46e6536753823ae7fbbcfac23b30 100644
+--- a/lang/node-hid/Makefile
++++ b/lang/node-hid/Makefile
+@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
+ PKG_NPM_NAME:=hid
+ PKG_NAME:=node-$(PKG_NPM_NAME)
+ PKG_VERSION:=0.5.1
+-PKG_RELEASE:=1
++PKG_RELEASE:=2
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL:=https://github.com/node-hid/node-hid.git
+@@ -43,8 +43,7 @@ endef
+ 
+ CPU:=$(subst x86_64,x64,$(subst i386,ia32,$(ARCH)))
+ 
+-EXTRA_LDFLAGS+="-lhidapi-libusb"
+-EXTRA_CFLAGS+="-I$(STAGING_DIR)/usr/include/hidapi/"
++EXTRA_CFLAGS+=-I$(STAGING_DIR)/usr/include/libusb-1.0
+ 
+ define Build/Compile
+ 	$(MAKE_VARS) \
