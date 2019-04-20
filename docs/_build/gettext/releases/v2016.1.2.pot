@@ -1,0 +1,78 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.1.2.rst:2
+# cb02098f1b2f475f98c49e2d63faa936
+msgid "Gluon 2016.1.2"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:5
+# 80596a96cc7f405ca9e616ae49f12860
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:7
+# 0d01fa3c051b40179d0114a69f0eef43
+msgid "The *x86-generic* images now contain the ATIIXP PATA driver, adding support for FUTRO Thin Clients."
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:11
+# d3464c928da84caa84ee6a5c9984a5e6
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:13
+# 113f438730934911a48b1e409dcacfbb
+msgid "A nondeterministic boot hang (`#669 <https://github.com/freifunk-gluon/gluon/issues/669>`_) has been fixed. The TL-WR841N v5 seems to be affected in particular, but the kernel bug is not hardware-specific per se."
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:17
+# 0b45054f06af4ef399f0ee1714af994c
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:19
+# c833a6d15c8347098d02bb5fab3515b2
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:21
+# 081e48cee5164dfd88e0203cd18da6c1
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:23
+# c01074b02f66416982f1c4cc3de94fb5
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:25
+# 0bc79ff7e90142a1a460c65210fe39a8
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:27
+# d7db5ad7b7f64a018c0cf9ad201bbd69
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.2.rst:29
+# 0131a5b53d804094a34f7f440b87d7a5
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

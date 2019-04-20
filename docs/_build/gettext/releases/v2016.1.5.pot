@@ -1,0 +1,188 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.1.5.rst:2
+# 833e4268731d440ab305e3c2fadb1cf5
+msgid "Gluon 2016.1.5"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:5
+# 8b40e6517ef44e7498f7ca708017700f
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:8
+# ef3f6090341b47708b6d099a4f81141a
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:10
+# 9741ea6881914f3f9531225555be81ea
+msgid "OpenMesh"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:12
+# d2ac0015c60c4a11a11635c71b535e2c
+msgid "MR600 (v1, v2)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:13
+# ca4efcc6d444472497f8ad2e13c1e08d
+msgid "MR900 (v1, v2)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:14
+# a703e1feb1ab47e7a26ee05b4b30d296
+msgid "OM2P (v1, v2)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:15
+# 68c58d2b2170446094628becc3b51b79
+msgid "OM2P-HS (v1, v2)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:16
+# b5c33845bfc345fda9701b5074a2befa
+msgid "OM2P-LC"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:17
+# 5c07323cb0ee4edb9835567b33c7416f
+msgid "OM5P"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:18
+# 798d85eed3cd4bf7bae79b0d3f343aa9
+msgid "OM5P-AN"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:20
+# 6d46ab0c529c4609b0e5fedbda56dba2
+msgid "Ubiquiti"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:22
+# 93068bd560c14a9cad70d6f5fa835693
+msgid "Rocket M XW"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:24
+# 24162a59ea7948eaba99c2822409d0e8
+msgid "TP-LINK"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:26
+# b38c34a74a1840098b2b814af12f41a4
+msgid "TL-WR841N/ND v11"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:29
+# 6134fd1239994889aba468e6176b075f
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:31
+# d2e864a29f424a0cad7484b5048f07c3
+msgid "build: fix race condition caused by using certain make targets (like *clean*, *images* or *package/\\**) with parallel build options without doing a full build before"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:33
+# 2013109268164c31907226a2dde64a46
+msgid "build: fix package dependency issue causing \"recursive dependency\" warning"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:35
+# 667bac2aad564f1490911c3fb5aa855c
+msgid "This dependency issue could lead to broken configurations and reportedly caused failed builds in some cases when additional (site-specific) packages were used."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:37
+# cf500fb8d0b846019301eb435fa6d5ba
+msgid "build: Gluon will now build correctly with GCC 6 as host compiler"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:38
+# ce3f7675e1944581a3213d484a85d3c2
+msgid "Fix configuration of batman-adv when VLANs are used on top of IBSS interfaces (regression due to netifd update in :doc:`v2016.1.4`)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:39
+# a60d6c8a4be3478f85c799c4ef4c35bd
+msgid "Add back missing ath10k firmware (regression due to mac80211 update in :doc:`v2016.1.4`)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:40
+# 18ef4c9c329c40b180a3b4daeb0ea30b
+msgid "Gluon can now be used on all supported Ubiquiti AirMAX devices without downgrading to AirOS 5.5.x before"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:42
+# 4bbb182362e443fca0d8b5109d5d20ad
+msgid ":doc:`v2016.1.1` added support for most Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS, but left some devices (at least some PicoStations and Bullets) with unwritable flash. This issue has been resolved (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_)."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:45
+# e2b85588522b4930a1f5b07c3d9b5b15
+msgid "Add upgrade script to automatically remove whitespace from configured geolocation"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:47
+# 99bc74c930ce49d88b1d016a77587297
+msgid "The new respondd implementation included in :doc:`v2016.1` is stricter about the number format than the old one and doesn't accept trailing whitespace (so one or both coordinates are missing from the output)."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:50
+# e6e78e6fe00f4f949e41853c3226774d
+msgid "The Config Mode has been fixed to strip whitespace from numeric fields in new configurations since :doc:`v2016.1.1`. This still left old configurations, which are now fixed by this script."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:54
+# 9a52e5f542f9424f92cdb1b2ca7757e8
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:56
+# 97e38f23669a4825b4281b4f1ffcbfae
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:58
+# 6a07b1ef46384083b4dfe2fa89641fbc
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:60
+# f06ade8375804cffaaafb18a542ebe2f
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:62
+# 31fd8cc8f4664956ac18b28030a3914e
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:64
+# 2f8f6f37c09041c4a7b383010b2d692e
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.5.rst:66
+# 9b0ceb9e25194a829e185e82177baed4
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

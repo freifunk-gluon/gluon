@@ -1,0 +1,378 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.rst:2
+# dda6bcd458e14395aa72189a81123e9f
+msgid "Gluon 2016.2"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:5
+# fc87b62a9f414232a31c69035f60e2ea
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:8
+# 19dc4233e53643109f0c32687a73f4fa
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:10
+# a27a5285f10d4ae78e4af938e327f362
+msgid "ALFA Network"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:12
+# b48dfdd8fea14c22958eb64c8107dabf
+msgid "Tube2H"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:13
+# 018f5a9d72be4c1ea657adf943a99b68
+msgid "N2"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:14
+# aa5915257bfe489bad891b85a7b83625
+msgid "N5"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:16
+# 8065bbbec898485d83fad73e6a7c1c23
+msgid "Buffalo"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:18
+# d640b1733bf2495098cc26d53b118187
+msgid "WZR-HP-G300NH2"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:20
+# 02b36d5a7c97437e948d965f15d74f63
+msgid "GL Innovations"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:22
+# cb317630d9fc44d1bd47cd44d0fffc39
+msgid "GL-AR150"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:24
+# 95c4364ca0854682ae9afc255a7f1315
+msgid "OpenMesh"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:26
+# f6bf24187e00445bb6d868e8b0fcc3ae
+msgid "MR1750 v1, v2 [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:27
+# c1b9ec4a58bd420b9a987277a09ff04a
+msgid "OM2P-HS v3"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:28
+# 6f21f24a37554b4b8a4d9a423d9c4dbe
+msgid "OM5P-AC v1, v2 [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:30
+# ed475db93c5e424a83be68c565266686
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:32
+# 42b13b11ee794de8b5e25065bec931bf
+msgid "Archer C5 v1 [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:33
+# 13f1f4cad01441408cb4d3fa09a76b1a
+msgid "Archer C7 v2 [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:34
+# 245d202af77742c6a5b5175cf969c130
+msgid "TL-WR710N v2.1"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:35
+# 40ed117e72554d13866d1a08d29df47d
+msgid "TL-WR842N/ND v3"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:37
+# f2fd26ef11394bf1966af75d3941934c
+msgid "Ubiquiti"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:39
+# 494cd8e288e04f7aaa6173b6e1fd94de
+msgid "UniFi AP AC Lite [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:40
+# c720e4aa9faa47f29680556d1dafeb7b
+msgid "UniFi AP AC Pro [#ath10k]_"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:43
+# 85254eb7614b470994fa0bf73d5f5fce
+msgid "Device uses the ath10k WLAN driver; no image is built unless GLUON_ATH10K_MESH is set as described in :ref:`getting-started-make-variables`"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:47
+# 397d3f2184d04544bebb2aa06edf9778
+msgid "brcm2708-bcm2708"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:49
+# 8977687b11304452bcffb76720a354ab
+msgid "RaspberryPi 1"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:52
+# cd61190471a244f08a425a262bfa05ae
+msgid "brcm2708-bcm2709"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:54
+# af9b15f2d1e940aa80efaad5358d9025
+msgid "RaspberryPi 2"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:57
+# 063d23176e4841d4bdc325bded208f36
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:59
+# d23800eab4ff44baa076495488182b3d
+msgid "Many UBNT Airmax XM model names are detected correctly now (e.g., the Loco is no longer displayed as Bullet) (`#632 <https://github.com/freifunk-gluon/gluon/pull/632>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:62
+# 2fd4e699846345349139e3f25cd92f8c
+msgid "Also, various new image aliases have been added for these devices."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:64
+# 1c2181d3d2c24661ae2c15761339af06
+msgid "batman-adv: mesh_no_rebroadcast is now enabled for Mesh-on-WAN/LAN (`#652 <https://github.com/freifunk-gluon/gluon/issues/652>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:66
+# 5c6ef20dbbf6453cb036ebbebe84b830
+msgid "The new UCI option ``gluon-core.@wireless[0].preserve_channels`` can be used to prevent a changed WLAN channel from being reset on firmware upgrades (`#640 <https://github.com/freifunk-gluon/gluon/pull/640>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:69
+# 7c85ffaee2f14b4e84a776e7ec902a2a
+msgid "PoE passthrough can now be configured from site.conf and the Advanced Settings on TP-Link CPE 210/510 and Ubiquiti NanoStations (`#328 <https://github.com/freifunk-gluon/gluon/issues/328>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:72
+# 7280fc7514d042ffad2db7e9fd185a32
+msgid "The config mode *altitude* field can now be hidden using the ``config_mode.geo_location.show_altitude`` site.conf setting (`#693 <https://github.com/freifunk-gluon/gluon/pull/693>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:75
+# 44def1e9863644d987a6c57f9f044dc1
+msgid "The contact information field in the config mode can be made obligatory using the ``config_mode.owner.obligatory`` site.conf option"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:78
+# 72d5f8ca643b402e918912778f74634d
+msgid "The *node name* setting in the config mode is no longer restricted to valid DNS hostnames, but allows any UTF-8 string (`#414 <https://github.com/freifunk-gluon/gluon/issues/414>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:81
+# df44e5479f6d435a843da99377998158
+msgid "Besides the hostname, public key, site config and primary MAC address, the contact information can now be accessed from config mode site texts"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:84
+# 3566688b926e4bb986bf8a23fde31def
+msgid "The functions ``escape`` and ``urlescape`` for HTML and URL escaping are now available from config mode site texts. They should always be used when including user-provided information like hostnames and contact information in HTML code or URLs."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:88
+# f5857d453db34272b9f53e97505a0816
+msgid "Dropbear has been updated to a newer version, enabling new SSH crypto methods and removing some old ones like DSA. This reduces the time needed for the first boot and makes SSH logins faster (`#223 <https://github.com/freifunk-gluon/gluon/issues/223>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:92
+# 5b68d5f48ea74fceb8c3d41e24dd820c
+msgid "WLAN basic and supported rate sets have been made configurable, to allow disabling 802.11b rates (`#810 <https://github.com/freifunk-gluon/gluon/pull/810>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:95
+# 4fbfce0b49ea4205b5decfaf9ea0f9fd
+msgid "ath10k-based devices are now supported officially; it's possible to choose between IBSS- and 11s-capable firmwares in site.mk (`#864 <https://github.com/freifunk-gluon/gluon/issues/864>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:98
+# 48bfe3b4581e4ab68f0c79a30fe9744b
+msgid "The ``prefix4`` and ``next_node.ip4`` site.conf options are optional now."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:101
+# f20323f8fcff439385341b422e5b1df5
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:103
+# f359ea7675a6433588d784071518c1f8
+msgid "The stability of the ath9k WLAN driver has been improved significantly (`#605 <https://github.com/freifunk-gluon/gluon/issues/605>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:106
+# 7139337c1f7349f9a2d3a9d34e7a1443
+msgid "mac80211, hostapd and other related drivers and services have been backported from LEDE ``42f559e``."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:108
+# 71245e2373454cfc905af887e1c4844a
+msgid "Extremely slow downloads could lead to multiple instances of the autoupdater running concurrently (`#582 <https://github.com/freifunk-gluon/gluon/issues/582>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:111
+# b54332506e754710bffca98ee5dad97c
+msgid "A lockfile is used to prevent this and timeouts have been added to download processes."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:113
+# c06dd67f133849cdb3b996d45d4cc340
+msgid "Usage of static DNS servers on the WAN port has been fixed (`#886 <https://github.com/freifunk-gluon/gluon/issues/886>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:116
+# aaf64e72525f4eca9a11c59451e16a48
+msgid "This is a regression introduced in Gluon v2016.1.6."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:119
+# 6f3da61173b44693a45bc2c6b8d762ee
+msgid "Other changes"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:121
+# af34131b5d9e4b23961b9583cc13870c
+msgid "The \"Expert Mode\" has been renamed to \"Advanced Settings\""
+msgstr ""
+
+#: ../../releases/v2016.2.rst:124
+# 612f9f9baef747fd80574371980ad9fe
+msgid "Site changes"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:127
+# 5f23dae8684e4b85ba4d2fad7645e2ed
+msgid "site.mk"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:129
+# f7be0f7e15f14cf69a5b87db294626f8
+msgid "If you want to support ath10k-based devices, you should set GLUON_ATH10K_MESH and GLUON_REGION as described in :ref:`getting-started-make-variables`."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:133
+# 82584141db3e4fb59068fbe513bc6da0
+msgid "i18n"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:135
+# 9e3f7392b7dd4f54a3db9028f00e5876
+msgid "As the hostname field may now contain an arbitrary UTF-8 string, escaping must be added."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:138
+# 2cd117efd9fc481b8ecd97f5e8d8a98d
+msgid "Change"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:144
+# 29940817ab9a41dfb54db526a39c347e
+msgid "to"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:150
+# 6a9b0868796e4a239a4d485fd5eb62e1
+msgid "Inside of URLs, ``urlescape`` must be used instead of ``escape``."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:153
+# 14a82ce08adc41218294aa77825ea8c3
+msgid "Internals"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:155
+# 423c4d6f314f43738810fd4ab29786a3
+msgid "Mesh interfaces are now configured in a protocol-independent way in UCI (`#870 <https://github.com/freifunk-gluon/gluon/pull/870>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:157
+# a41481395bdb4293a033b8e3bf7b6c82
+msgid "The MAC address assignment of all mesh and WLAN interfaces has been modified to prepare for support of Ralink/Mediatek-based WLAN chips."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:160
+# 5e137bb7d99942ca88d07d7e38f68631
+msgid "Preparations for supporting the new batman-adv multicast optimizations have been made (`#674 <https://github.com/freifunk-gluon/gluon/pull/674>`_, `#675 <https://github.com/freifunk-gluon/gluon/pull/675>`_, `#679 <https://github.com/freifunk-gluon/gluon/pull/679>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:164
+# 941dad6b1281467496b086ab556ff440
+msgid "All Lua code is minified now to save some space"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:167
+# a9bd44d6eb6e4873aadcf4c9c41a609f
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:169
+# 981bf5f9ffbb49d3ac02bd5aa66d9ab8
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:171
+# 2411af687bc54b5089663ddf2bdcd6f9
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:173
+# d4d11ec45ed1474db6b9a91427b5d4d4
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:175
+# 8603423f68c64a2a8613fe9970484e7e
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.rst:177
+# f346856ca67942c5b088ab284eaa7de5
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.rst:179
+# 84f6336024a643fa8e8bd5acbfef2c5e
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

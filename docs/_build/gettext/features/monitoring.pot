@@ -1,0 +1,183 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../features/monitoring.rst:2
+# 80f522779c504bc0a25fe48f110e83ef
+msgid "Node monitoring"
+msgstr ""
+
+#: ../../features/monitoring.rst:4
+# 173e218ffb134b42854243d59427aa32
+msgid "Gluon is capable of announcing information about each node to the mesh and to neighbouring nodes. This allows nodes to learn each others hostname, IP addresses, location, software versions and various other information."
+msgstr ""
+
+#: ../../features/monitoring.rst:9
+# 5184d9d0e73a494aae42b328dc7b0ac3
+msgid "Format of collected data"
+msgstr ""
+
+#: ../../features/monitoring.rst:11
+# 73c5a692a9ed4a71868375c06114ae04
+msgid "Information to be announced is currently split into three categories:"
+msgstr ""
+
+#: ../../features/monitoring.rst:16
+# 3ac055cfb5f54abfa2f84cfec8231f30
+msgid "nodeinfo"
+msgstr ""
+
+#: ../../features/monitoring.rst:14
+# d7b69a16f690407a9f10c88f4dbd9de2
+msgid "In this category (mostly) static information is collected. If something is unlikely to change without human intervention it should be put here."
+msgstr ""
+
+#: ../../features/monitoring.rst:20
+# 27e4d0397b534cacb160ba32182f3fda
+msgid "statistics"
+msgstr ""
+
+#: ../../features/monitoring.rst:19
+# 27c0db4440a54d3985359da23a912ba6
+msgid "This category holds fast changing data, like traffic counters, uptime, system load or the selected gateway."
+msgstr ""
+
+#: ../../features/monitoring.rst:24
+# d6e3c8df1c6d481b8f6f261b55b653af
+msgid "neighbours"
+msgstr ""
+
+#: ../../features/monitoring.rst:23
+# 53c0444f4a3b4c36911b8f8a017872e3
+msgid "`neighbours` contains information about all neighbouring nodes of all interfaces. This data can be used to determine the network topology."
+msgstr ""
+
+#: ../../features/monitoring.rst:26
+# 692285d593904ff8a2041d3a4c7ea462
+msgid "All categories will have a ``node_id`` key. It should be used to relate data of different categories."
+msgstr ""
+
+#: ../../features/monitoring.rst:30
+# ec5fc6a92cda44129ca4dd59cc3cee4c
+msgid "Accessing Node Information"
+msgstr ""
+
+#: ../../features/monitoring.rst:32
+# 50cf24c4443e475ebc545a2aace8749d
+msgid "There are two packages responsible for distribution of the information. For one, information is distributed across the mesh using alfred_. Information between neighbouring nodes is exchanged using `gluon-respondd`."
+msgstr ""
+
+#: ../../features/monitoring.rst:39
+# 76b0edf5a8b24e459e426dd04dc450cf
+msgid "alfred (mesh bound)"
+msgstr ""
+
+#: ../../features/monitoring.rst:41
+# c7ddb812f12c47c6bfaab69af80d78f2
+msgid "The package ``gluon-alfred`` is required for this to work."
+msgstr ""
+
+#: ../../features/monitoring.rst:43
+# 6b4387fa6bbd45aeb3563e7ca9661e75
+msgid "Using alfred both categories are distributed within the mesh. In order to retrieve the data you'll need both a local alfred daemon and alfred-json_ installed. Please note that at least one alfred daemon is required to run as `master`."
+msgstr ""
+
+#: ../../features/monitoring.rst:50
+# 49e6b6b5b1d84472bb26da190d2e0e81
+msgid "The following datatypes are used:"
+msgstr ""
+
+#: ../../features/monitoring.rst:52
+# e8fd1346422b4c51a5babf41d4496c99
+msgid "`nodeinfo`: 158"
+msgstr ""
+
+#: ../../features/monitoring.rst:53
+# 8f965760c2c945268006ad87092da13f
+msgid "`statistics`: 159"
+msgstr ""
+
+#: ../../features/monitoring.rst:54
+# 9cc25eeba24a44079c121725262e3e80
+msgid "`neighbours`: 160"
+msgstr ""
+
+#: ../../features/monitoring.rst:56
+# 66f1ac1542844a3c8a437ee467fdc292
+msgid "All data is compressed using GZip (alfred-json can handle the decompression)."
+msgstr ""
+
+#: ../../features/monitoring.rst:58
+# d0afffe446574dfb8c4f2782e0adba99
+msgid "In order to retrieve statistics data you could run:"
+msgstr ""
+
+#: ../../features/monitoring.rst:98
+# 14c5ad6beea444d09416bdc0009bf603
+msgid "You can find more information about alfred in its README_."
+msgstr ""
+
+#: ../../features/monitoring.rst:103
+# 1e042d5e85b247c5b41ff6186288a9c7
+msgid "gluon-respondd"
+msgstr ""
+
+#: ../../features/monitoring.rst:105
+# 5326b36bf9804f7e82df20ba2f96c70e
+msgid "`gluon-respondd` allows querying neighbouring nodes for their information. It is a daemon listening on the multicast address ``ff02::2:1001`` on UDP port 1001 on both the bare mesh interfaces and `br-client`. Unicast requests are supported as well."
+msgstr ""
+
+#: ../../features/monitoring.rst:110
+# c891562114a14a29af1423771cb8bebd
+msgid "The supported requests are:"
+msgstr ""
+
+#: ../../features/monitoring.rst:112
+# 646a539c205742ab824ec0d954133f16
+msgid "``nodeinfo``, ``statistics``, ``neighbours``: Returns the data of single category uncompressed."
+msgstr ""
+
+#: ../../features/monitoring.rst:113
+# 3de3f5f3e6b940189719b04cc61217e1
+msgid "``GET nodeinfo``, ...: Returns the data of one or multiple categories (separated by spaces) compressed using the `deflate` algorithm (without a gzip header). The data may be decompressed using zlib and many zlib bindings using -15 as the window size parameter."
+msgstr ""
+
+#: ../../features/monitoring.rst:118
+# 8284ff64ed90493c83bc43215f20d9e1
+msgid "gluon-neighbour-info"
+msgstr ""
+
+#: ../../features/monitoring.rst:120
+# e082144ec6b541b3a8eb1176a5a3a208
+msgid "The program `gluon-neighbour-info` can be used to retrieve information from other nodes."
+msgstr ""
+
+#: ../../features/monitoring.rst:129
+# ab63800653b348ed8f9db6612e71ca8f
+msgid "An optional timeout may be specified, e.g. `-t 5` (default: 3 seconds). See the usage information printed by ``gluon-neighbour-info -h`` for more information about the supported arguments."
+msgstr ""
+
+#: ../../features/monitoring.rst:134
+# 23e87777066e4ed0890a8be02d9f1c40
+msgid "Adding a data provider"
+msgstr ""
+
+#: ../../features/monitoring.rst:136
+# 11bec7b45c764d9cbadfceb08dd50267
+msgid "To add a provider, you need to install a shared object into ``/lib/gluon/respondd``. For more information, refer to the `respondd README <https://github.com/freifunk-gluon/packages/blob/master/net/respondd/README.md>`_ and have a look the existing providers."
+msgstr ""
+

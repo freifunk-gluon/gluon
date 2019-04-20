@@ -1,0 +1,363 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../user/getting_started.rst:2
+# 8b22685045754441bb89bd49fb42d572
+msgid "Getting Started"
+msgstr ""
+
+#: ../../user/getting_started.rst:5
+# 46bb41dcb2cc4aa6afc691af5a117dd1
+msgid "Selecting the right version"
+msgstr ""
+
+#: ../../user/getting_started.rst:7
+# 137d84a596ff4de0a873f163050d6a98
+msgid "Gluon's releases are managed using `Git tags`_. If you are just getting started with Gluon we recommend to use the latest stable release of Gluon."
+msgstr ""
+
+#: ../../user/getting_started.rst:10
+# 0bca57ad0e2144f3923b43e1b8af30cb
+msgid "Take a look at the `list of gluon releases`_ and notice the latest release, e.g. *v2018.2.1*. Always get Gluon using git and don't try to download it as a Zip archive as the archive will be missing version information."
+msgstr ""
+
+#: ../../user/getting_started.rst:14
+# 2bb8577ad9db488a9b01db8c7ad272cb
+msgid "Please keep in mind that there is no \"default Gluon\" build; a site configuration is required to adjust Gluon to your needs. Due to new features being added (or sometimes being removed) the format of the site configuration changes slightly between releases. Please refer to our release notes for instructions to update an old site configuration to a newer release of Gluon."
+msgstr ""
+
+#: ../../user/getting_started.rst:20
+# c84d5120241344b593b3553ff028958e
+msgid "An example configuration can be found in the Gluon repository at *docs/site-example/*."
+msgstr ""
+
+#: ../../user/getting_started.rst:26
+# 1a484944980a472c9b880343c7363edd
+msgid "Dependencies"
+msgstr ""
+
+#: ../../user/getting_started.rst:27
+# 8a94ea301dca42b49a1e83ce7a77317c
+msgid "To build Gluon, several packages need to be installed on the system. On a freshly installed Debian Stretch system the following packages are required:"
+msgstr ""
+
+#: ../../user/getting_started.rst:30
+# 7c1b09dcb03e4dd08faf3441e8cfe5d1
+msgid "`git` (to get Gluon and other dependencies)"
+msgstr ""
+
+#: ../../user/getting_started.rst:31
+# 7ed6c9ab299b4a63bdde00c52b049265
+msgid "`subversion`"
+msgstr ""
+
+#: ../../user/getting_started.rst:32
+# 9389659910cd44e4b3fc1e21f9dcee48
+msgid "`python` (Python 3 doesn't work)"
+msgstr ""
+
+#: ../../user/getting_started.rst:33
+# b57784ceb0384979a11afd88d098ea65
+msgid "`build-essential`"
+msgstr ""
+
+#: ../../user/getting_started.rst:34
+# 7bd58e45092a44b097fd4566d3e14575
+msgid "`gawk`"
+msgstr ""
+
+#: ../../user/getting_started.rst:35
+# dc46719666044d5084e0d98d4d2c2e97
+msgid "`unzip`"
+msgstr ""
+
+#: ../../user/getting_started.rst:36
+# 59d7505b288949a887076f7be0376db5
+msgid "`libncurses-dev` (actually `libncurses5-dev`)"
+msgstr ""
+
+#: ../../user/getting_started.rst:37
+# 76b0671b413b4c0c8d27e61ce3af8ea0
+msgid "`libz-dev` (actually `zlib1g-dev`)"
+msgstr ""
+
+#: ../../user/getting_started.rst:38
+# c67c932cd51348aaa706ff6a97254895
+msgid "`libssl-dev`"
+msgstr ""
+
+#: ../../user/getting_started.rst:39
+# 147ab8b01c124412bcd58dd05d7ea4f7
+msgid "`wget`"
+msgstr ""
+
+#: ../../user/getting_started.rst:40
+# 45c9b309753a4ed2b0618c88a728f286
+msgid "`time` (built-in `time` doesn't work)"
+msgstr ""
+
+#: ../../user/getting_started.rst:44
+# bfdf6095c45f4f89a7e5c3385c7f9edf
+msgid "Building the images"
+msgstr ""
+
+#: ../../user/getting_started.rst:46
+# 2be33b7bebd6411488b8d10b3ed4a4f3
+msgid "To build Gluon, first check out the repository. Replace *RELEASE* with the version you'd like to checkout, e.g. *v2018.2.1*."
+msgstr ""
+
+#: ../../user/getting_started.rst:53
+# 65d0464a9f41478c9e97afc9ec2a5db2
+msgid "This command will create a directory named *gluon/*. It might also tell a scary message about being in a *detached state*. **Don't panic!** Everything's fine. Now, enter the freshly created directory::"
+msgstr ""
+
+#: ../../user/getting_started.rst:60
+# 6b72f8cb0bf7434bb6da11a907b637ec
+msgid "It's time to add (or create) your site configuration. If you already have a site repository, just clone it::"
+msgstr ""
+
+#: ../../user/getting_started.rst:65
+# 9250f4704e834de285d75793e8633ff3
+msgid "If you want to build a new site, create a new git repository *site/*::"
+msgstr ""
+
+#: ../../user/getting_started.rst:71
+# 283c2c7077b54a0b953205be94f9ce4a
+msgid "Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*::"
+msgstr ""
+
+#: ../../user/getting_started.rst:77
+# 294ce4a32174452f9899ee47ba7007d7
+msgid "Edit these files as you see fit and commit them into the site repository. Extensive documentation about the site configuration can be found at: :doc:`site`. The site directory should always be a git repository by itself; committing site-specific files to the Gluon main repository should be avoided, as it will make updates more complicated."
+msgstr ""
+
+#: ../../user/getting_started.rst:83
+# 433dc452bd624fdfbe49541c7c82f165
+msgid "Next go back to the top-level Gluon directory and build Gluon::"
+msgstr ""
+
+#: ../../user/getting_started.rst:89
+# 7484d6f299014999b266e61e3479371b
+msgid "In case of errors read the messages carefully and try to fix the stated issues (e.g. install tools not available yet)."
+msgstr ""
+
+#: ../../user/getting_started.rst:91
+# 4f824fd357fb4e328f9f3fc928690bf5
+msgid "``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware. To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``."
+msgstr ""
+
+#: ../../user/getting_started.rst:94
+# 4b1f54afe96e44249589e4c24874a55b
+msgid "You should generally reserve 5GB of disk space and additionally about 10GB for each `GLUON_TARGET`."
+msgstr ""
+
+#: ../../user/getting_started.rst:96
+# 70df75d7feef4b8494850c91a731ed46
+msgid "The built images can be found in the directory `output/images`. Of these, the `factory` images are to be used when flashing from the original firmware a device came with, and `sysupgrade` is to upgrade from other versions of Gluon or any other OpenWrt-based system."
+msgstr ""
+
+#: ../../user/getting_started.rst:101
+# 01462df5dd4f43c895139425f860fe43
+msgid "**Note:** The images for some models are identical; to save disk space, symlinks are generated instead of multiple copies of the same image. If your webserver's configuration prohibits following symlinks, you can use the following command to resolve these links while copying the images::"
+msgstr ""
+
+#: ../../user/getting_started.rst:108
+# 36cfb77dfaf143959a312023ee871151
+msgid "Cleaning the build tree"
+msgstr ""
+
+#: ../../user/getting_started.rst:110
+# 6c3d96347c8d456a9464d633aec1c19f
+msgid "There are two levels of `make clean`::"
+msgstr ""
+
+#: ../../user/getting_started.rst:114
+# dd9aa28c76384f97af2dcae2246b9742
+msgid "will ensure all packages are rebuilt for a single target. This normally not necessary, but may fix certain kinds of build failures."
+msgstr ""
+
+#: ../../user/getting_started.rst:121
+# a023f8cce6b84423923c11ab13ac1837
+msgid "will clean the entire tree, so the toolchain will be rebuilt as well, which will take a while."
+msgstr ""
+
+#: ../../user/getting_started.rst:124
+# 2cf75f974ee04bbd94af8986345b0a09
+msgid "opkg repositories"
+msgstr ""
+
+#: ../../user/getting_started.rst:126
+# 447d3f2092464642ad2b98716a34f1a9
+msgid "Gluon is mostly compatible with OpenWrt, so the normal OpenWrt package repositories can be used for Gluon as well."
+msgstr ""
+
+#: ../../user/getting_started.rst:129
+# dc0c6925d75d40bb81986bd2ca28d131
+msgid "This is not true for kernel modules; the Gluon kernel is incompatible with the kernel of the default OpenWrt images. Therefore, Gluon will not only generate images, but also an opkg repository containing all core packages provided by OpenWrt, including modules for the kernel of the generated images."
+msgstr ""
+
+#: ../../user/getting_started.rst:135
+# 42e089ab8703472b85b871fe2a5b219a
+msgid "Signing keys"
+msgstr ""
+
+#: ../../user/getting_started.rst:137
+# b32a0407b5fa4c8fa011fc14c0212856
+msgid "Gluon does not support HTTPS for downloading packages; fortunately, opkg deploys public-key cryptography to ensure package integrity."
+msgstr ""
+
+#: ../../user/getting_started.rst:140
+# 7daadb3ed2374a818d56089f6ead9ddf
+msgid "The Gluon images will contain public keys from two sources: the official OpenWrt keyring (to allow installing userspace packages) and a Gluon-specific key (which is used to sign the generated package repository)."
+msgstr ""
+
+#: ../../user/getting_started.rst:144
+# 588a4d19231641d49eb63207daa9cfde
+msgid "OpenWrt will handle the generation and handling of the keys itself. When making firmware releases based on Gluon, it might make sense to store the keypair, so updating the module repository later is possible."
+msgstr ""
+
+#: ../../user/getting_started.rst:151
+# 85eb429299164ecd9d8a9abf55fabb7d
+msgid "Make variables"
+msgstr ""
+
+#: ../../user/getting_started.rst:153
+# 071b52da56124c91b8275b5133284078
+msgid "Gluon's build process can be controlled by various variables. They can usually be set on the command line or in ``site.mk``."
+msgstr ""
+
+#: ../../user/getting_started.rst:157
+# b4b95581fbbd4e629ae2f7d8040d94ac
+msgid "Common variables"
+msgstr ""
+
+#: ../../user/getting_started.rst:162
+# 1b6594497b9743d78868f396325d8725
+msgid "GLUON_BRANCH"
+msgstr ""
+
+#: ../../user/getting_started.rst:160
+# 25838ba9548a40949b69ef7195b5d332
+msgid "Sets the default branch of the autoupdater. If unset, the autoupdater is disabled by default. For the ``make manifest`` command, GLUON_BRANCH defines the branch to generate a manifest for."
+msgstr ""
+
+#: ../../user/getting_started.rst:166
+# ec532c2f309f4223a6858f7e2bc1e8d0
+msgid "GLUON_LANGS"
+msgstr ""
+
+#: ../../user/getting_started.rst:165
+# ea0fbc5d24394f00adfac1e5b990f1a7
+msgid "Space-separated list of languages to include for the config mode/advanced settings. Defaults to ``en``. ``en`` should always be included, other supported languages are ``de`` and ``fr``."
+msgstr ""
+
+#: ../../user/getting_started.rst:170
+# 4cd21676ad3f4498a19ad3022a3ab03a
+msgid "GLUON_PRIORITY"
+msgstr ""
+
+#: ../../user/getting_started.rst:169
+# d13e86a9b13a406fa731656193d084f9
+msgid "Defines the priority of an automatic update in ``make manifest``. See :doc:`../features/autoupdater` for a detailed description of this value."
+msgstr ""
+
+#: ../../user/getting_started.rst:175
+# 93e694aae4294df98319d7eaf9d8e57b
+msgid "GLUON_REGION"
+msgstr ""
+
+#: ../../user/getting_started.rst:173
+# ad9d568bc081401894449cf26707e967
+msgid "Some devices (at the moment the TP-Link Archer C7) contain a region code that restricts firmware installations. Set GLUON_REGION to ``eu`` or ``us`` to make the resulting images installable from the respective stock firmware."
+msgstr ""
+
+#: ../../user/getting_started.rst:181
+# 656f72deeb464f548f8026ee1abd1477
+msgid "GLUON_RELEASE"
+msgstr ""
+
+#: ../../user/getting_started.rst:178
+# 21837e69f23546499668b1cc6f7094f6
+msgid "Firmware release number: This string is displayed in the config mode, announced via respondd/alfred and used by the autoupdater to decide if a newer version is available. The same GLUON_RELEASE has to be passed to ``make`` and ``make manifest`` to generate a correct manifest."
+msgstr ""
+
+#: ../../user/getting_started.rst:184
+# 1e8e2890b690400d987b4407237bd530
+msgid "GLUON_TARGET"
+msgstr ""
+
+#: ../../user/getting_started.rst:184
+# 9ab49039070644f1b21d0e6dfe085f28
+msgid "Target architecture to build."
+msgstr ""
+
+#: ../../user/getting_started.rst:187
+# 20583fa314fd42e38adfd820cfd4df9e
+msgid "Special variables"
+msgstr ""
+
+#: ../../user/getting_started.rst:193
+# 12f2d2e1f8e044bea121d8bf30fafa32
+msgid "GLUON_DEVICES"
+msgstr ""
+
+#: ../../user/getting_started.rst:190
+# 455135ea46be47f49d5f30021f47d2d6
+msgid "List of devices to build. The list contains the Gluon profile name of a device, the profile name is the first parameter of the ``device`` command in a target file. e.g. ``GLUON_DEVICES=\"avm-fritz-box-4020 tp-link-tl-wdr4300-v1\"``. Empty by default to build all devices of a target."
+msgstr ""
+
+#: ../../user/getting_started.rst:196
+# 5bbe25fb0ecc496f965c45e8b9a77ff6
+msgid "GLUON_IMAGEDIR"
+msgstr ""
+
+#: ../../user/getting_started.rst:196
+# 3326ed0874e04e38b99c601ac87528eb
+msgid "Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``."
+msgstr ""
+
+#: ../../user/getting_started.rst:199
+# 624c0ae2f1cb4f75ad029732158f8f1c
+msgid "GLUON_PACKAGEDIR"
+msgstr ""
+
+#: ../../user/getting_started.rst:199
+# 0db62b935c0b4c909d8c073e022311b2
+msgid "Path where the opkg package repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/packages``."
+msgstr ""
+
+#: ../../user/getting_started.rst:202
+# 463bff3a14974f7db1eef13ff86c2976
+msgid "GLUON_OUTPUTDIR"
+msgstr ""
+
+#: ../../user/getting_started.rst:202
+# 97f53fa4524c421988784a22ce9d9324
+msgid "Path where output files will be stored. Defaults to ``output``."
+msgstr ""
+
+#: ../../user/getting_started.rst:204
+# d6a43d43433845e6a54c0a1cf4a5afbe
+msgid "GLUON_SITEDIR"
+msgstr ""
+
+#: ../../user/getting_started.rst:205
+# 24381d3df09846c68bb9d86deced1441
+msgid "Path to the site configuration. Defaults to ``site``."
+msgstr ""
+

@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.6.rst:2
+# 8921f0e8650f4ea9b3fc5056de2f9bfb
+msgid "Gluon 2016.2.6"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:5
+# e30a3bcb40af4ce5b8fc7922a5273fbd
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:8
+# 732e5a6b92a74e708dcb019add4aee77
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:10
+# f2ef7cb4158642cb80dcdcc05b852b37
+msgid "TP-Link TL-WR841N/ND v12"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:13
+# bc53e19ca0c4479691c34be97d6565fd
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:15
+# 130550f6d690405894303f02a06696f5
+msgid "Fix `CVE-2016-10229 <https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-10229>`_ (`#1097 <https://github.com/freifunk-gluon/gluon/pull/1097>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:18
+# 38f84be6732246e9ae151a189b9d294d
+msgid "Fortunately, the standard Gluon setup is not vulnerable, as the issue only affects applications that use MSG_PEEK on UDP sockets. dnsmasq does use MSG_PEEK, but only in the DHCP component, which is not enabled during normal node operation."
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:22
+# 675469ca526b4a99aee8ed250c358266
+msgid "Fix roaming issue affecting communication between clients (`#1121 <https://github.com/freifunk-gluon/gluon/issues/1121>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:25
+# b45803f87d334dd981082b962636e9fa
+msgid "This issue affects all previous releases of Gluon v2016.2.x."
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:27
+# 09ea6593a8ee45639fef0e184be4394e
+msgid "Fix build against OpenSSL 1.1 (`b6a22ce <https://github.com/freifunk-gluon/gluon/commit/b6a22ce79307853b175192178bb0333d976a3a6f>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:29
+# 3a4d224165154a52ab22d20127f82f70
+msgid "Fix build with long path names (`#1120 <https://github.com/freifunk-gluon/gluon/issues/1120>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:31
+# 936e9770477744908648ffbe694d59d0
+msgid "Use new staged sysupgrade procedure (`d4a69c0 <https://github.com/freifunk-gluon/gluon/commit/d4a69c00047f72696a2400cd7129be032de458e3>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:33
+# 42136527221f4d72868e20c4886459a3
+msgid "The new sysupgrade fixes an issue affecting x86, causing nodes to lose their configuration on upgrade when the size of the kernel partition grows. This is the case when upgrading from Gluon v2016.2.x to newer (LEDE-based) Gluon versions. **This means that a Gluon node running an older version must be upgraded to Gluon v2016.2.6 first before switching to a LEDE-based version!**"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:39
+# 11790c28cbca4a20a1597b2afddd1afc
+msgid "One downside of the staged sysupgrade is that all processes, including the SSH server, will be terminated at the start of the sysupgrade to allow unmounting the root filesystem. This makes it impossible to get any feedback from the upgrade process without a serial console."
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:45
+# c3f4f15aedfb49b2a888f87a17b2e8d5
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:47
+# 53d1b9a8bbaa4a2a92d080d89adaef99
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:49
+# 2f6f9dd1adc44ba2aa048de59ad0720a
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:51
+# 050a7aabc4a54e81b48d0c7d13b53ffd
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:53
+# 5b8b0024b5ff462daf3d2e1c2d86500b
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:55
+# 778994d304274762a36a5bc17c719671
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.6.rst:57
+# d44b26fbcb3c49e59563fd8339456d47
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

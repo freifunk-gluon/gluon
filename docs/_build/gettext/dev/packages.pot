@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/packages.rst:2
+# d5b654054dac426ca292378e33e74f35
+msgid "Package development"
+msgstr ""
+
+#: ../../dev/packages.rst:4
+# d7d03f091dd541d987203d1f332ef190
+msgid "Gluon packages are OpenWrt packages and follow the same rules described at https://openwrt.org/docs/guide-developer/packages."
+msgstr ""
+
+#: ../../dev/packages.rst:8
+# c11ff63fa4534280b75c8c4cc609bed6
+msgid "Gluon package makefiles"
+msgstr ""
+
+#: ../../dev/packages.rst:10
+# 815b3ba252d940a1ae010c7b2a2f401e
+msgid "As many packages share the same or a similar structure, Gluon provides a ``package/gluon.mk`` that can be included for common definitions. This file replaces OpenWrt's ``$(INCLUDE_DIR)/package.mk``; it is usually included as ``include ../gluon.mk`` from Gluon core packages, or as ``include $(TOPDIR)../package/gluon.mk`` from feeds."
+msgstr ""
+
+#: ../../dev/packages.rst:16
+# 3b7078c7ef9d46b68ee4648d89052d57
+msgid "Provided macros"
+msgstr ""
+
+#: ../../dev/packages.rst:18
+# 85314b47d4c14b308b1b14783e9c419f
+msgid "*GluonBuildI18N* (arguments: *<source directory>*)"
+msgstr ""
+
+#: ../../dev/packages.rst:20
+# 57fd86aefe0843f0960217f34aaca5cb
+msgid "Converts the *.po* files for all enabled languages from the given source directory to the binary *.lmo* format and stores them in ``$(PKG_BUILD_DIR)/i18n``."
+msgstr ""
+
+#: ../../dev/packages.rst:23
+# 1c43c5739bbc49fa86998dcf3baa285b
+msgid "*GluonInstallI18N*"
+msgstr ""
+
+#: ../../dev/packages.rst:25
+# dd8c98287f7c473e961e09c054b04b3c
+msgid "Install *.lmo* files from ``$(PKG_BUILD_DIR)/i18n`` to ``/lib/gluon/web/i18n`` in the package install directory."
+msgstr ""
+
+#: ../../dev/packages.rst:28
+# 96db3994e866434190c05f2f54ff230e
+msgid "*GluonSrcDiet* (arguments: *<source directory>*, *<destination directory>*)"
+msgstr ""
+
+#: ../../dev/packages.rst:30
+# c529bf2f51d24a199e1bdecc8c335bff
+msgid "Copies a directory tree, processing all files in it using *LuaSrcDiet*. The directory tree should only contain Lua files."
+msgstr ""
+
+#: ../../dev/packages.rst:33
+# a168750208cc402782942841340cfe9e
+msgid "*GluonCheckSite* (arguments: *<source file>*)"
+msgstr ""
+
+#: ../../dev/packages.rst:35
+# f85d1c07a0b34d88b25171c0e017d399
+msgid "Intended to be used in a package postinst script. It will use the passed Lua snippet to verify package-specific site configuration."
+msgstr ""
+
+#: ../../dev/packages.rst:38
+# 46f365cd4af640c698bf52fbd9788efd
+msgid "*BuildPackageGluon* (replaces *BuildPackage*)"
+msgstr ""
+
+#: ../../dev/packages.rst:40
+# 2a63440bcae247c0ac2a02867e4ecb5f
+msgid "Extends the *Package/<name>* definition with common defaults, sets the package install script to the common *Gluon/Build/Install*, and automatically creates a postinst script using *GluonCheckSite* if a ``check_site.lua`` is found in the package directory."
+msgstr ""
+
+#: ../../dev/packages.rst:46
+# ce0ba2e1603b4adb8dc4f3df50bb5576
+msgid "Default build steps"
+msgstr ""
+
+#: ../../dev/packages.rst:48
+# a7db7f6dcf594ec08092d44520cca486
+msgid "These defaults greatly reduce the boilerplate in each package, but they can also be confusing because of the many implicit behaviors depending on files in the package directory. If any part of *Gluon/Build/Compile* or *Gluon/Build/Install* does not work as intended for a package, the compile and install steps can always be replaced or extended."
+msgstr ""
+
+#: ../../dev/packages.rst:54
+# 8484c0847bb14fd080045475e7a6e4b2
+msgid "*Build/Compile* is set to *Gluon/Build/Compile* by default, which will"
+msgstr ""
+
+#: ../../dev/packages.rst:56
+# e56bd716122e473fa1bfa1a431977573
+msgid "run OpenWrt standard default commands (*Build/Compile/Default*) if a ``src/Makefile`` or ``src/CMakeLists.txt`` is found"
+msgstr ""
+
+#: ../../dev/packages.rst:58
+# 8cebd14707274e1494a35beaba4758bd
+msgid "run *GluonSrcDiet* on all files in the ``luasrc`` directory"
+msgstr ""
+
+#: ../../dev/packages.rst:59
+# 08f2848f37a84a8faab1d056d94c8516
+msgid "run *GluonBuildI18N* if a ``i18n`` directory is found"
+msgstr ""
+
+#: ../../dev/packages.rst:61
+# 378d9d600df84bcc99b6d2443b0adc12
+msgid "*Package/<name>* defaults to *Gluon/Build/Install* for packages defined using *BuildPackageGluon*, which will"
+msgstr ""
+
+#: ../../dev/packages.rst:64
+# 84614bf5760749bdb882663ee4e2385b
+msgid "copy all files from ``$(PKG_INSTALL_DIR)`` into the package if ``$(PKG_INSTALL)`` is 1"
+msgstr ""
+
+#: ../../dev/packages.rst:65
+# 02d3d2c7135643449f8822560249d0b8
+msgid "copy all files from ``files`` into the package"
+msgstr ""
+
+#: ../../dev/packages.rst:66
+# 0aaff7cd874e48499ab9dab44259f36e
+msgid "copy all Lua files built from ``luasrc`` into the package"
+msgstr ""
+
+#: ../../dev/packages.rst:67
+# 98289dd24a3947f58eaf1929e3dc79f0
+msgid "installs ``$(PKG_BUILD_DIR)/respondd.so`` to ``/usr/lib/respondd/$(PKG_NAME).so`` if ``src/respondd.c`` exists"
+msgstr ""
+
+#: ../../dev/packages.rst:68
+# 70adfd3a653a403a9e9e8ed861e616e6
+msgid "installs compiled i18n *.lmo* files"
+msgstr ""
+
+#: ../../dev/packages.rst:71
+# 64eec6582a254047b4e4d5db0a48e160
+msgid "Feature flags"
+msgstr ""
+
+#: ../../dev/packages.rst:73
+# f942a07fd74f4e15bf4efa4119534dc0
+msgid "Feature flags provide a convenient way to define package selections without making it necessary to list each package explicitly."
+msgstr ""
+
+#: ../../dev/packages.rst:76
+# 244c3c5f872a4aee8a72cae2c613084f
+msgid "The main feature flag definition file is ``package/features``, but each package feed can provide additional definitions in a file called ``features`` at the root of the feed repository."
+msgstr ""
+
+#: ../../dev/packages.rst:80
+# 9f04defb11ef47278b45d7771118b44a
+msgid "Each flag *$flag* without any explicit definition will simply include the package with the name *gluon-$flag* by default. The feature definition file can modify the package selection in two ways:"
+msgstr ""
+
+#: ../../dev/packages.rst:84
+# 9bb6d36da08b462e896fdad7a426a546
+msgid "The *nodefault* function suppresses default of including the *gluon-$flag* package"
+msgstr ""
+
+#: ../../dev/packages.rst:86
+# c81f6e814efc4c1392e00b1201aca34c
+msgid "The *packages* function adds a list of packages (or removes, when package names are prepended with minus signs) when a given logical expression is satisfied"
+msgstr ""
+
+#: ../../dev/packages.rst:90
+# 9d194e575a4046be94414774ffcd34e9
+msgid "Example::"
+msgstr ""
+
+#: ../../dev/packages.rst:102
+# a40f113e7c46428292f6db59c4b76548
+msgid "This will"
+msgstr ""
+
+#: ../../dev/packages.rst:104
+# 499bc05440d3460cbafd85b7390e8d41
+msgid "disable the inclusion of a (non-existent) package called *gluon-web-wizard*"
+msgstr ""
+
+#: ../../dev/packages.rst:105
+# 606e8839723545b8afb65cea4b8f2e9c
+msgid "enable three config mode packages when the *web-wizard* feature is enabled"
+msgstr ""
+
+#: ../../dev/packages.rst:106
+# 957f1359c95d4ecfb282f16b4dc605aa
+msgid "enable *gluon-config-mode-mesh-vpn* when both *web-wizard* and one of *mesh-vpn-fastd* and *mesh-vpn-tunneldigger* are enabled"
+msgstr ""
+
+#: ../../dev/packages.rst:109
+# 558768b6fed6462b8dbb885c9cb7c56a
+msgid "Supported syntax elements of logical expressions are:"
+msgstr ""
+
+#: ../../dev/packages.rst:111
+# ab30265d0c1645bc8337b96afd5c64d7
+msgid "\\& (and)"
+msgstr ""
+
+#: ../../dev/packages.rst:112
+# 9326389abdf54adbaefb704784e65131
+msgid "\\| (or)"
+msgstr ""
+
+#: ../../dev/packages.rst:113
+# 4ac95161fa25423e9cd39d2bc74b2525
+msgid "\\! (not)"
+msgstr ""
+
+#: ../../dev/packages.rst:114
+# 14e832f961864dfd817f6b3755d56d58
+msgid "parentheses"
+msgstr ""
+

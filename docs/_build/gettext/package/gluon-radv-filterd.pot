@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../package/gluon-radv-filterd.rst:2
+# d5b7c38724cc41efbc0cebe2eae8381f
+msgid "gluon-radv-filterd"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:4
+# 9b7810d6af684901ba3e386a897bce95
+msgid "This package drops all incoming router advertisements except for the default router with the best metric according to B.A.T.M.A.N. advanced."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:7
+# edb17aa77c1a4fdf9a52d84141460a97
+msgid "Note that advertisements originating from the node itself (for example via gluon-radvd) are not affected and considered at all."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:11
+# 67f4daecbf4b44da8b77681552713d2a
+msgid "Selected router"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:13
+# 99738d69557540d9b9e6bba74724b731
+msgid "The router selection mechanism is independent from the batman-adv gateway mode. In contrast, the device originating the router advertisement could be any router or client connected to the mesh, as radv-filterd captures all router advertisements originating  from it. All nodes announcing router advertisement **with** a default lifetime greater than 0 are being considered as candidates."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:19
+# 2d9c40db84f7467ca6c97c512ab394cf
+msgid "In case a router is not a batman-adv originator itself, its TQ is defined by the originator it is connected to. This lookup uses the batman-adv global translation table."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:23
+# 702c0c26b6c148218874c7c5c0298a8e
+msgid "Initially the router is the selected by choosing the candidate with the strongest TQ. When another candidate can provide a better TQ metric it is not picked up as the selected router until it will outperform the currently selected router by X metric units. The hysteresis threshold is configurable and prevents excessive flapping of the gateway."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:30
+# 2f3d2b6b17fb4f28bfbe95ee1cba4768
+msgid "\"Local\" routers"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:32
+# 752d372ffd504b53bed47991e850cb12
+msgid "The package has functionality to select \"local\" routers, i.e. those connected via cable or WLAN instead of via the mesh (technically: appearing in the ``transtable_local``), a fake TQ of 512 so that they are always preferred. However, if used together with the :doc:`gluon-ebtables-filter-ra-dhcp` package, these router advertisements are filtered anyway and reach neither the node nor any other client. You currently have to disable the package or insert custom ebtables rules in order to use local routers."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:41
+# 1d08294dc3964eb38b1f0463aba61c75
+msgid "respondd module"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:43
+# 427fec46c5264604b0696be04eceb5f0
+msgid "This package also contains a module for respondd that announces the currently selected router via the ``statistics.gateway6`` property using its interface MAC address. Note that this is different from the ``statistics.gateway`` property, which contains the MAC address of the main B.A.T.M.A.N. adv slave interface of the selected IPv4 gateway."
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:50
+# bcff530e8b704dc383b7595577e67b11
+msgid "site.conf"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:55
+# e344ccfbef2c4696afc2f310b1d0b9ae
+msgid "radv_filterd.threshold"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:54
+# a8701572b0be43d3854e891a209a5389
+msgid "optional"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:53
+# 26adeef50ce7434ea5441b5b120fce77
+msgid "minimal difference in TQ value that another gateway has to be better than the currently chosen gateway to become the new chosen gateway"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:55
+# c413f35c0fad4b12bdc5aafbc7c4e18e
+msgid "defaults to ``20``"
+msgstr ""
+
+#: ../../package/gluon-radv-filterd.rst:57
+# 11a87785ffd545aebfa304ad1f92c59a
+msgid "Example::"
+msgstr ""
+

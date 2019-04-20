@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/site_library.rst:2
+# 8ec046487c344a65bab07381870cd53c
+msgid "gluon.site library"
+msgstr ""
+
+#: ../../dev/site_library.rst:4
+# 0af2cc965177422ba746f483a80a12ff
+msgid "The *gluon.site* library allows convenient access to the site configuration from Lua scripts. Example:"
+msgstr ""
+
+#: ../../dev/site_library.rst:12
+# 73c9d60a75f9459daac37c492a2e266a
+msgid "The *site* object in this example does not directly represent the *site.conf* data structure; instead, it is wrapped in a way that makes it more convenient to access deeply nested elements. To access the underlying values, they must be unwrapped using the function call notation (the ``()`` after ``site.wifi24.ap.ssid`` in the example)."
+msgstr ""
+
+#: ../../dev/site_library.rst:17
+# 74201c4f63a04bc0b4fe88b6544d1522
+msgid "The wrapper objects have two advantages over simple Lua tables:"
+msgstr ""
+
+#: ../../dev/site_library.rst:19
+# 48ca04124bf547abbaff62083675f368
+msgid "Accessing non-existing values is never an error: ``site.wifi24.ap.ssid()`` will simply return *nil* if ``site.wifi24`` or ``site.wifi24.ap`` do not exist"
+msgstr ""
+
+#: ../../dev/site_library.rst:21
+# 80641fa81d304c0fbe4fa7edd0c2966a
+msgid "Default values: A default value can be passed to the unwrapping function call:"
+msgstr ""
+
+#: ../../dev/site_library.rst:27
+# 2a220ecfef304f138e21100cfbc0e3f7
+msgid "will return *'Default'* instead of *nil* when the value is unset."
+msgstr ""
+
+#: ../../dev/site_library.rst:29
+# 12cd7bc85e284332b86aeacbe7943ebc
+msgid "Note that *nil* values and unset values are equivalent in Lua."
+msgstr ""
+
+#: ../../dev/site_library.rst:31
+# eab19f99b07e42e0aa105a238a753374
+msgid "A simple way to access the whole site configuration as a simple table is to unwrap the top-level site object:"
+msgstr ""
+

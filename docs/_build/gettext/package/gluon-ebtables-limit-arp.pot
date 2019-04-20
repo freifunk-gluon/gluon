@@ -1,0 +1,43 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../package/gluon-ebtables-limit-arp.rst:2
+# dcbb03faabc64159a715fa7858a51ad2
+msgid "gluon-ebtables-limit-arp"
+msgstr ""
+
+#: ../../package/gluon-ebtables-limit-arp.rst:4
+# 454533bab5004367af447bf60272f3df
+msgid "The *gluon-ebtables-limit-arp* package adds filters to limit the amount of ARP requests client devices are allowed to send into the mesh."
+msgstr ""
+
+#: ../../package/gluon-ebtables-limit-arp.rst:8
+# 83524aa1e7374020b5181bedd09c95e1
+msgid "The limits per client device, identified by its MAC address, are 6 packets per minute and 1 per second per node in total. A burst of up to 50 ARP requests is allowed until the rate-limiting takes effect (see ``--limit-burst`` in ``ebtables(8)``)."
+msgstr ""
+
+#: ../../package/gluon-ebtables-limit-arp.rst:13
+# 56da90faab2549f9b4911f414ed9d753
+msgid "Furthermore, ARP requests for a target IP already present in the batman-adv DAT cache are excluded from rate-limiting, in regard to both counting and filtering, as batman-adv will be able to respond locally without a burden for the mesh. Therefore, this limiter should not affect popular target IP addresses, like those of gateways or nameservers."
+msgstr ""
+
+#: ../../package/gluon-ebtables-limit-arp.rst:20
+# d6b2b6c2fc7947cb982b9304cdc1bbec
+msgid "However it mitigates the impact on the mesh when a larger range of its IPv4 subnet is being scanned, which would otherwise result in a significant amount of ARP chatter, even for unused IP addresses."
+msgstr ""
+

@@ -1,0 +1,133 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/web/i18n.rst:2
+# c480a280d2ff42879e0e170f77220e46
+msgid "Internationalization support"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:5
+# 756185b29d4d4e79a8d5f78089a3852b
+msgid "General guidelines"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:7
+# 8a626f4a6ae444199dda711206df4902
+msgid "All config mode packages must be fully translatable, with complete English and German texts."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:8
+# d38fd0d564e448c9aeade66ee8647459
+msgid "All new expert mode packages must be fully translatable. English texts are required."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:9
+# 370d66cd9ad545e69b86cc2ecf55b6c7
+msgid "German translations are recommended. Other supported languages, especially French, are nice-to-have, but not required. If you don't know a language well, rather leave the translation blank, so it is obvious that there is no proper translation yet."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:12
+# 5c1260a6513a4989a5825e0459c3dbb2
+msgid "Existing expert mode packages should be made translatable as soon as possible."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:13
+# 96e232ef18af45b78a47ea44b431e3c7
+msgid "The \"message IDs\" (which are the arguments to the *translate* function) should be the English texts."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:17
+# 9861c81c69cd47e1a30f3b001be9dad6
+msgid "i18n support in Gluon"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:19
+# 3aa96fd46f61406492a8e512eac63ef8
+msgid "Internationalization support is available in all components (models, view and controllers) of *gluon-web*-based packages. Strings are translated using the *translate*, *_translate* and *translatef* functions (*translate* for static strings, *translatef* for printf-like formatted string; *_translate* works the same as *translate*, but will return *nil* instead of the original string when no translation is available)."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:25
+# b26c2374e65f4958b18373960cd15335
+msgid "In views, the special tags ``<%:...%>`` can be used to translate the contained string."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:27
+# 6dbf6929dfe1428ab1a603292492f44a
+msgid "Example from the *gluon-config-mode-geo-location* package:"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:33
+# 33246e8e73f3464aa92ddaa937d154d6
+msgid "Note that translations are *namespaced*: each package will only use its own translation strings by default. For this purpose, the package name must by specified in a package's controller. It is possible to access a different translation package using the *i18n* function from models and view, which is necessary when strings from the site configuration are used, or packages do not have their own controller (which is the case for config mode wizard components)."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:46
+# f51f1d7aac6c4c99883c2f40873d82b7
+msgid "Adding translation templates to Gluon packages"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:48
+# 1427bdc1e1d644ea8ca1e71e664eef75
+msgid "The i18n support is based on the standard gettext system. For each translatable package, a translation template with extension ``.pot`` can be created using the *i18n-scan.pl* script in the ``contrib`` directory:"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:59
+# 1380c169b613435a805478d1e663e63d
+msgid "The same command can be run again to update the template."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:61
+# c938b98c5ec743359c9168f8b3020dab
+msgid "In addition, the Makefile must be adjusted. Instead of OpenWrt's default *package.mk*, the Gluon version (``../gluon.mk`` for core packages) must be used. The i18n files must be installed and PKG_CONFIG_DEPENDS must be added::"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:82
+# 6253b6fed4ff4cccaab888acdc2eea9e
+msgid "Adding translations"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:84
+# 7f9200be980b468f83dbdb5ad1fcab07
+msgid "A new translation file for a template can be added using the *msginit* command:"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:91
+# da56b696ed4d4acc9f41c60e168db825
+msgid "This will create the file *de.po* in which the translations can be added."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:93
+# 9cb9d528c4c64d319fc5eb64ad9a864b
+msgid "The translation file can be updated to a new template version using the *msgmerge* command:"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:99
+# d594e271789b4b2699bd42d3a10cb6a0
+msgid "After the merge, the translation file should be checked for \"fuzzy matched\" entries where the original English texts have changed. All entries from the translation file should be translated in the *.po* file (or removed from it, so the original English texts are displayed instead)."
+msgstr ""
+
+#: ../../dev/web/i18n.rst:105
+# 727a113c930b4d80a6dd37aade947334
+msgid "Adding support for new languages"
+msgstr ""
+
+#: ../../dev/web/i18n.rst:107
+# 77a92452976743c7b59bd24a623fac7f
+msgid "A list of all languages supported by *gluon-web* can be found in ``package/gluon.mk``. New languages just need to be added to *GLUON_SUPPORTED_LANGS*, and a human-readable language name must be defined."
+msgstr ""
+

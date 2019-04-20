@@ -1,0 +1,38 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../features/authorized-keys.rst:2
+# afc57f1501364338bde28b70ea518922
+msgid "Adding SSH public keys"
+msgstr ""
+
+#: ../../features/authorized-keys.rst:4
+# 8d675ec1d3454b0c84cac13a0d5c3c89
+msgid "By using the package ``gluon-authorized-keys`` it is possible to add SSH public keys to an image to permit root login."
+msgstr ""
+
+#: ../../features/authorized-keys.rst:7
+# 89521989d8724fb991aae22c5a0c595a
+msgid "If you select this package, add a list of authorized keys to ``site.conf`` like this:::"
+msgstr ""
+
+#: ../../features/authorized-keys.rst:15
+# 0b2a643ad7574e029db23ec34ea0e33c
+msgid "Existing keys in ``/etc/dropbear/authorized_keys`` will be preserved."
+msgstr ""
+

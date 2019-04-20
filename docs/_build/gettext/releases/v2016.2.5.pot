@@ -1,0 +1,93 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.5.rst:2
+# 7843f82c0c3d43dd80c5709a6e1a613d
+msgid "Gluon 2016.2.5"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:4
+# 64a56f6265cc43f2b9b9aa3a647c647d
+msgid "This version contains only a single bugfix for a regression introduced in Gluon v2016.2.4. As the regression affects batman-adv compat 15 only, firmwares using the compat 14 legacy version don't need to be updated."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:9
+# a08e5453894047e0a3d2788ff722a504
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:11
+# 6f4b256f88d14d6bb55d2fb066940478
+msgid "Fix kernel crash with batman-adv compat 15 (`d452a7c <https://github.com/freifunk-gluon/gluon/commit/d452a7c2cf1c0da4e034666a50dc0e7aa9ddc592>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:13
+# d18e58e7726348098b95d76a62cac3c7
+msgid "An incorrect backport of a fix for a very improbable kernel crash caused a much more frequent kernel crash. The backport has been fixed."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:16
+# 5af9a433ba814576897eaf2d87fc1bcc
+msgid "This bug a regression in Gluon v2016.2.4."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:19
+# 5f43acd294c949b38e79655e45b18134
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:21
+# 6252f6a89b6a4138a18adf8f60f60fee
+msgid "x86 sysupgrade (sometimes) loses config when kernel partition grows (`#1010 <https://github.com/freifunk-gluon/gluon/issues/1010>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:23
+# 1bb0f60c39a84894b764c757ca38e006
+msgid "This issue affects upgrades from v2016.2.x and older to the Gluon master only, we hope to fix it before the next major release."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:26
+# 1148e395b3324b3fa1f3a2dc7b6b7e6d
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:28
+# dfea3b6aba6942b99ef65ae6401b93db
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:30
+# 0062fb9071d34fd182cb73e25586f75c
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:32
+# 98c25f9775964308a57208d017e16622
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:34
+# 4a979b71e83d4dbd9a8188cc5377d7fc
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.5.rst:36
+# 8cdce0a161464928bd89675cefdcb6a6
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

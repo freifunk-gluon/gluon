@@ -1,0 +1,43 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../package/gluon-ebtables-filter-ra-dhcp.rst:2
+# a0b488b621a243e780502f64c6216c45
+msgid "gluon-ebtables-filter-ra-dhcp"
+msgstr ""
+
+#: ../../package/gluon-ebtables-filter-ra-dhcp.rst:4
+# b55749be6c88481a95f373810aca3845
+msgid "The *gluon-ebtables-filter-ra-dhcp* package tries to prevent common misconfigurations (i.e. connecting the client interface of a Gluon node to a private network) from causing issues for either of the networks."
+msgstr ""
+
+#: ../../package/gluon-ebtables-filter-ra-dhcp.rst:9
+# e0549a3fd5e7421abd4a117b64d900bd
+msgid "The rules are the following:"
+msgstr ""
+
+#: ../../package/gluon-ebtables-filter-ra-dhcp.rst:11
+# 763b89278fa1430abb7ad696d0507450
+msgid "DHCP requests, DHCPv6 requests and Router Solicitations may only be sent from clients to the mesh, but aren't forwarded from the mesh to clients"
+msgstr ""
+
+#: ../../package/gluon-ebtables-filter-ra-dhcp.rst:13
+# ce9dd67e0c5e4ba4bf440099c7d184d7
+msgid "DHCP replies, DHCPv6 replies and Router Advertisements from clients aren't forwarded to the mesh"
+msgstr ""
+

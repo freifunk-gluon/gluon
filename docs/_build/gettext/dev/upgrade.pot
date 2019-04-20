@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/upgrade.rst:2
+# 134ef0d358794e6891040c24a379f74f
+msgid "Upgrade scripts"
+msgstr ""
+
+#: ../../dev/upgrade.rst:5
+# bfb7609367da4999a43b77afd13ed75a
+msgid "Basics"
+msgstr ""
+
+#: ../../dev/upgrade.rst:7
+# b829a6056a234a71ac799b13763e851b
+msgid "After each sysupgrade (including the initial installation), Gluon will execute all scripts under ``/lib/gluon/upgrade``. These scripts' filenames usually begin with a 3-digit number specifying the order of execution. Note that the script files need to be executable."
+msgstr ""
+
+#: ../../dev/upgrade.rst:11
+# 4b5a046f1d3b47aea9c5e4afd81b7d6a
+msgid "To get an overview of the ordering of all scripts of all packages, the helper script ``contrib/lsupgrade.sh`` in the Gluon repository can be used, which will print all upgrade scripts' filenames and directories. If executed on a TTY, the filename will be highlighted in green, the repository in blue and the package in red."
+msgstr ""
+
+#: ../../dev/upgrade.rst:16
+# bf567f93bb8844e2abf685df312acb27
+msgid "Best practices"
+msgstr ""
+
+#: ../../dev/upgrade.rst:18
+# 586dfec1227b4b409f348f219f76afd1
+msgid "Most upgrade scripts are written in Lua. This allows using lots of helper functions provided by Gluon, e.g. to access the site configuration or edit UCI configuration files."
+msgstr ""
+
+#: ../../dev/upgrade.rst:21
+# ddc54ddabd0a45e1ad239ed275b7554a
+msgid "Whenever possible, scripts shouldn't check if they are running for the first time, but just edit configuration files to achieve a valid configuration (without overwriting configuration changes made by the user where desirable). This allows using the same code to create the initial configuration and upgrade configurations on upgrades."
+msgstr ""
+
+#: ../../dev/upgrade.rst:25
+# 092b2e2935ec44dd8bcd8d65f30cf949
+msgid "If it is unavoidable to run different code during the initial installation, the ``sysconfig.gluon_version`` variable can be checked. This variable is ``nil`` during the initial installation and contains the previously install Gluon version otherwise."
+msgstr ""
+
+#: ../../dev/upgrade.rst:30
+# 2a8b26ad580b46eb840fa053237dc1ff
+msgid "Script ordering"
+msgstr ""
+
+#: ../../dev/upgrade.rst:32
+# f8a6389da48946739776f05be1959d51
+msgid "These are some guidelines for the script numbers:"
+msgstr ""
+
+#: ../../dev/upgrade.rst:34
+# 36d00e3158b24206b331bde9a115fa64
+msgid "``0xx``: Basic ``sysconfig`` setup"
+msgstr ""
+
+#: ../../dev/upgrade.rst:35
+# 2a3751cbeea54a5fb6b7b4010c3e5119
+msgid "``1xx``: Basic system setup (including basic network configuration)"
+msgstr ""
+
+#: ../../dev/upgrade.rst:36
+# 71ebb7f5f4c842d99eb1c12656906445
+msgid "``2xx``: Wireless setup"
+msgstr ""
+
+#: ../../dev/upgrade.rst:37
+# 96b0921b597748db9a9e7dcae81c532d
+msgid "``3xx``: Advanced network and system setup"
+msgstr ""
+
+#: ../../dev/upgrade.rst:38
+# b62b1ba8c5074478b75ba3b67c145907
+msgid "``4xx``: Extended network and system setup (e.g. mesh VPN and next-node)"
+msgstr ""
+
+#: ../../dev/upgrade.rst:39
+# 2288c1f0a4384994868a5481eaf783de
+msgid "``5xx``: Miscellaneous (everything not fitting into any other category)"
+msgstr ""
+
+#: ../../dev/upgrade.rst:40
+# 36ab7a35c91049768803583c49cf4ee3
+msgid "``6xx`` .. ``8xx``: Currently unused"
+msgstr ""
+
+#: ../../dev/upgrade.rst:41
+# b79a57e175a646c9a2080e927c9ebea7
+msgid "``9xx``: Upgrade finalization"
+msgstr ""
+

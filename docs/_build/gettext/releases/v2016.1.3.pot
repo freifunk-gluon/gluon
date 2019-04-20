@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.1.3.rst:2
+# f8907df479f94be0abc08db19bfd7caf
+msgid "Gluon 2016.1.3"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:5
+# fe73999c45614213874bf2974417191b
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:8
+# a89f5d3f2e4f4daca969ce6b676f1961
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:10
+# 651c5a1e2e9a41b4b0cc186f80b697a6
+msgid "ALFA Hornet UB / AP121 / AP121U"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:11
+# 1025f4ee8d804a21b0da12405f19d906
+msgid "TP-Link TL-WA7510N"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:14
+# 97d00a29c38645d5b8cca0c3040245eb
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:16
+# f2f3822537914a619a84fe25ed4eda72
+msgid "The nondeterministic boot hang (`#669 <https://github.com/freifunk-gluon/gluon/issues/669>`_) that was thought to be fixed in Gluon v2016.1.2 has resurfaced on other hardware. We believe it is now fixed properly."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:18
+# 41e28f58c8c64f2f8501f18cda1fb105
+msgid "Sysupgrades on the Xen DomU have been fixed."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:19
+# 0f9b572f196a46548f833dfe7cfa06e3
+msgid "Gluon can now be built on systems that use LibreSSL instead of OpenSSL."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:22
+# 8a15b2d744f547749a934764094f1c37
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:24
+# bbec4e4bd84b42aa80f0c9edd8e41ac0
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:26
+# 4ec5190cdf5141eeaeda324518bc94ef
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:28
+# 08b584bf36204138ae98284d9634f6a2
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:30
+# 794dddf40f684957a25756c0a8fa2c84
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:32
+# f84e9a8516de4d048ec5aeae8d9ecf71
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:34
+# 6505b92daddd444393b467d61e134cff
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:36
+# 324edb0eb8fe4f848c0b9927c4bf61b0
+msgid "Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:38
+# 3bb4db4fecf14806856db4630b229ae2
+msgid "Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS first before flashing Gluon. It was discovered that on Ubiquiti PicoStations, this downgrade is still necessary, as the flash is not correctly unlocked, leaving the device unable to leave Config Mode and making regular sysupgrades impossible."
+msgstr ""
+
+#: ../../releases/v2016.1.3.rst:43
+# 5aac348e69414d508b17a457b042564b
+msgid "TFTP recovery can be used in this state to flash a new firmware."
+msgstr ""
+

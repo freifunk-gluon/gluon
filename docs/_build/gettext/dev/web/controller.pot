@@ -1,0 +1,213 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/web/controller.rst:2
+# fd27de9dbeb5445b8c4ac5d5320c134c
+msgid "Controllers"
+msgstr ""
+
+#: ../../dev/web/controller.rst:4
+# 0a111fac446f430a93d32602a6cd902d
+msgid "Controllers live in the ``controller`` subdirectory of a gluon-web application (``/lib/gluon/config-mode/controller`` for the config mode, ``/lib/gluon/status-page/controller`` for the status page). They define which pages (\"routes\") exist under the application base URL, and what code is run when these pages are requested."
+msgstr ""
+
+#: ../../dev/web/controller.rst:9
+# 5e45787f467a409681b460a14d0046e8
+msgid "Controller scripts usually start with a *package* declaration, followed by calls to the *entry* function, which each define one route:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:19
+# 8d2ce557db554453a3303347bc8dde25
+msgid "*package* defines the translation namespace for the titles of the defined pages as well as the referenced views and models. The entry function expects 4 arguments:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:23
+# 3e8bf0d2fc664a70b07a740194d800b1
+msgid "`path`: Components of the path to define a route for."
+msgstr ""
+
+#: ../../dev/web/controller.rst:25
+# a44157653fd44956aa84d80ac378f0b7
+msgid "The above example defines routes for the paths ``admin`` and ``admin/info``."
+msgstr ""
+
+#: ../../dev/web/controller.rst:27
+# 36c4f7ddc3e946f5ab72d92c6c65e6ee
+msgid "`target`: Dispatcher for the route. See the following section for details."
+msgstr ""
+
+#: ../../dev/web/controller.rst:28
+# 86642ee67cf94ce3b24f52a87ec58e29
+msgid "`title`: Page title (also used in navigation). The underscore function is used to mark the strings as translatable for ``i18n-scan.pl``."
+msgstr ""
+
+#: ../../dev/web/controller.rst:31
+# 82202a2740084003a8f961bb8d0775a1
+msgid "`order`: Sort index in navigation (defaults to 100)"
+msgstr ""
+
+#: ../../dev/web/controller.rst:33
+# 3c79629b98cd4a0c91685e3dc75b2122
+msgid "Navigation indexes are automatically generated for each path level. Pages can be hidden from the navigation by setting the `hidden` property of the node object returned by `entry`:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:43
+# 9dafcb63b9fc4d168b429ce9d9accd4b
+msgid "Dispatchers"
+msgstr ""
+
+#: ../../dev/web/controller.rst:45
+# 5e8ee7848b8341258d808dc81affa453
+msgid "*alias* (*path*, ...): Redirects to a different page. The path components are passed as individual arguments."
+msgstr ""
+
+#: ../../dev/web/controller.rst:47
+# 8cc65960e025477da47a2c56492b95e5
+msgid "*call* (*func*, ...): Runs a Lua function for custom request handling. The given function is called with the HTTP object and the template renderer as first two arguments, followed by all additional arguments passed to `call`."
+msgstr ""
+
+#: ../../dev/web/controller.rst:50
+# 242ff418edd94cd9a864b9e6e92b2808
+msgid "*template* (*view*): Renders the given view. See :doc:`view`."
+msgstr ""
+
+#: ../../dev/web/controller.rst:51
+# db5b39523f4341dbbae8543b84a7809a
+msgid "*model* (*name*): Displays and evaluates a form as defined by the given model. See the :doc:`model` page for an explanation of gluon-web models."
+msgstr ""
+
+#: ../../dev/web/controller.rst:58
+# 4fe248e8cdbe4297ada26c54af963fab
+msgid "The HTTP object"
+msgstr ""
+
+#: ../../dev/web/controller.rst:60
+# 23280c6597a94ff8a68b8546cc16db15
+msgid "The HTTP object provides information about the HTTP requests and allows to add data to the reply. Using it directly is rarely necessary when gluon-web models and views are used."
+msgstr ""
+
+#: ../../dev/web/controller.rst:64
+# 9700d274f34c4361b38aa9d03bc15436
+msgid "Useful functions:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:66
+# 73a7b24aefc54c6a82c4ed286f6027cb
+msgid "*getenv* (*key*): Returns a value from the CGI environment passed by the webserver."
+msgstr ""
+
+#: ../../dev/web/controller.rst:67
+# 968f2b964b664b94bb22f987b3dadc19
+msgid "*formvalue* (*key*): Returns a value passed in a query string or in the content of a POST request. If multiple values with the same name have been passed, only the first is returned."
+msgstr ""
+
+#: ../../dev/web/controller.rst:70
+# 505f64aa21c1401a85a92fdb312ccbb5
+msgid "*formvaluetable* (*key*): Similar to *formvalue*, but returns a table of all values for the given key."
+msgstr ""
+
+#: ../../dev/web/controller.rst:72
+# 9aac2ee284e546afbe84473a78a97785
+msgid "*status* (*code*, *message*): Writes the HTTP status to the reply. Has no effect if a status has already been sent or non-header data has been written."
+msgstr ""
+
+#: ../../dev/web/controller.rst:74
+# 616188b529ef471493bc0e5d9f90d306
+msgid "*header* (*key*, *value*): Adds an HTTP header to the reply to be sent to the client. Has no effect when non-header data has already been written."
+msgstr ""
+
+#: ../../dev/web/controller.rst:76
+# 03e1c72032384731a3fc9978f82a4b4b
+msgid "*prepare_content* (*mime*): Sets the *Content-Type* header to the given MIME type, potentially setting additional headers or modifying the MIME type to accommodate browser quirks"
+msgstr ""
+
+#: ../../dev/web/controller.rst:79
+# b6768393c2a246978bf2622882afb707
+msgid "*write* (*data*, ...): Sends the given data to the client. If headers have not been sent, it will be done before the data is written."
+msgstr ""
+
+#: ../../dev/web/controller.rst:83
+# dd5698538b9349279f09aac704df294f
+msgid "HTTP functions are called in method syntax, for example:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:93
+# 0285ef78dc0b412e9456012d9796f08c
+msgid "The template renderer"
+msgstr ""
+
+#: ../../dev/web/controller.rst:95
+# 30b7f9906967444b9de2a54bf49dd21b
+msgid "The template renderer allows to render templates (views). The most useful functions are:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:98
+# 348d1bd75d1c4f569679431135d8e1c7
+msgid "*render* (*view*, *scope*, *pkg*): Renders the given view, optionally passing a table with additional variables to make available in the template. The passed package defines the translation namespace."
+msgstr ""
+
+#: ../../dev/web/controller.rst:101
+# f5eb59a27ebf4d758e2e2c3258923f66
+msgid "*render_string* (*str*, *scope*, *pkg*): Same as *render*, but the template is passed directly instead of being loaded from the view directory."
+msgstr ""
+
+#: ../../dev/web/controller.rst:104
+# 5c8093d0efe54526b920216c0a0aa73a
+msgid "The renderer functions are called in property syntax, for example:"
+msgstr ""
+
+#: ../../dev/web/controller.rst:112
+# 2225c0eab381456bab4bc67ad21696e2
+msgid "Differences from LuCI"
+msgstr ""
+
+#: ../../dev/web/controller.rst:114
+# aba65f63956545c3a1db986a5e0a2f05
+msgid "Controllers must not use the *module* function to define a Lua module (*gluon-web* will set up a proper environment for each controller itself)"
+msgstr ""
+
+#: ../../dev/web/controller.rst:116
+# 02f500cafa8741bd8e22fdb5a08fda5a
+msgid "Entries are defined at top level, not inside an *index* function"
+msgstr ""
+
+#: ../../dev/web/controller.rst:117
+# 41b5de6cbe7948e98008d2943b084f5c
+msgid "The *alias* dispatcher triggers an HTTP redirect instead of directly running the dispatcher of the aliased route."
+msgstr ""
+
+#: ../../dev/web/controller.rst:119
+# 81d3590b361940f2ac5f8016a19bd514
+msgid "The *call* dispatcher is passed a function instead of a string with a function name."
+msgstr ""
+
+#: ../../dev/web/controller.rst:121
+# 3a22266f34fd4f92b9ecbf9a5396f074
+msgid "The *cbi* dispatcher of LuCI has been renamed to *model*."
+msgstr ""
+
+#: ../../dev/web/controller.rst:122
+# 39902663081245cea7a61d088f29d905
+msgid "The HTTP POST handler support the multipart/form-data encoding only, so ``enctype=\"multipart/form-data\"`` must be included in all *<form>* HTML elements."
+msgstr ""
+
+#: ../../dev/web/controller.rst:125
+# 68d62349423d4cc78fb2ac7ea85e7cff
+msgid "Other dispatchers like *form* are not provided."
+msgstr ""
+

@@ -1,0 +1,93 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../features/autoupdater.rst:2
+# 568a3b4c110149efbd8e54de17ce9138
+msgid "Autoupdater"
+msgstr ""
+
+#: ../../features/autoupdater.rst:4
+# fbc4b7187bf6474586fba80ef182f2b9
+msgid "Gluon contains an automatic update system which can be configured in the site configuration."
+msgstr ""
+
+#: ../../features/autoupdater.rst:7
+# 9aa18a79bba5479899817bdc4da6edf9
+msgid "Building Images"
+msgstr ""
+
+#: ../../features/autoupdater.rst:9
+# a53ac7d660b14d2389cc23c1e48bfc39
+msgid "By default, the autoupdater is disabled (as it is usually not helpful to have unexpected updates during development), but it can be enabled by setting the variable GLUON_BRANCH when building to override the default branch set in the site configuration."
+msgstr ""
+
+#: ../../features/autoupdater.rst:13
+# 46d653ad41f741bbba23df3bb89d2e25
+msgid "A manifest file for the updater can be generated with `make manifest`. A signing script (using ``ecdsautils``) can be found in the `contrib` directory. When creating the manifest, the ``PRIORITY`` value may be defined by setting ``GLUON_PRIORITY`` on the command line or in ``site.mk``."
+msgstr ""
+
+#: ../../features/autoupdater.rst:17
+# 68f815cc798c4d1290c2d0c38fa97576
+msgid "``GLUON_PRIORITY`` defines the maximum number of days that may pass between releasing an update and installation of the images. The update probability will start at 0 after the release time declared in the manifest file by the variable DATE and then slowly rise up to 1 when ``GLUON_PRIORITY`` days have passed. The autoupdater checks for updates hourly (at a random minute of the hour), but usually only updates during its run between 4am and 5am, except when the whole ``GLUON_PRIORITY`` days and another 24 hours have passed."
+msgstr ""
+
+#: ../../features/autoupdater.rst:23
+# 286872cdd8344ebbb96f10c665e99ecb
+msgid "``GLUON_PRIORITY`` may be an integer or a decimal fraction."
+msgstr ""
+
+#: ../../features/autoupdater.rst:25
+# 0b962ed802794204a960108d26e4af18
+msgid "If ``GLUON_RELEASE`` is passed to ``make`` explicitly or it is generated dynamically in ``site.mk``, care must be taken to pass the same ``GLUON_RELEASE`` to ``make manifest``, as otherwise the generated manifest will be incomplete."
+msgstr ""
+
+#: ../../features/autoupdater.rst:31
+# bc4e7ce6cbb94afea20eb00ee1caaf8a
+msgid "Automated nightly builds"
+msgstr ""
+
+#: ../../features/autoupdater.rst:33
+# 0af9c23bebd14be7bd831cf2e264d72f
+msgid "A fully automated nightly build could use the following commands:"
+msgstr ""
+
+#: ../../features/autoupdater.rst:51
+# 485529de33a14399954a2b89a109e9b1
+msgid "Infrastructure"
+msgstr ""
+
+#: ../../features/autoupdater.rst:53
+# c761a15f509843f8bfda06469351c281
+msgid "We suggest to have following directory tree accessible via http:"
+msgstr ""
+
+#: ../../features/autoupdater.rst:68
+# c442a4ab9dcc45caa2b45aeedfe5c297
+msgid "The server must be available via IPv6."
+msgstr ""
+
+#: ../../features/autoupdater.rst:71
+# c6e27c9411134bbda1aa0ebed3f8b312
+msgid "Command Line"
+msgstr ""
+
+#: ../../features/autoupdater.rst:73
+# 65107666c7e34dbe8f76e5ee97696adb
+msgid "These commands can be used on a node:"
+msgstr ""
+

@@ -1,0 +1,93 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/wan.rst:2
+# 26a1da2b36d54126a7d8cef51253b407
+msgid "WAN support"
+msgstr ""
+
+#: ../../dev/wan.rst:4
+# 367eb6f377bc4ee3b00b9a07ffbeab8c
+msgid "As the WAN port of a node will be connected to a user's private network, it is essential that the node only uses the WAN when it is absolutely necessary. There are two cases in which the WAN port is used:"
+msgstr ""
+
+#: ../../dev/wan.rst:8
+# a6703e7097ac4527a6f63198ed889107
+msgid "Mesh VPN (package ``gluon-mesh-vpn-fastd``)"
+msgstr ""
+
+#: ../../dev/wan.rst:9
+# 3d143b1b010c4535b50b040515a6e74d
+msgid "DNS to resolve the VPN servers' addresses (package ``gluon-wan-dnsmasq``)"
+msgstr ""
+
+#: ../../dev/wan.rst:11
+# 4b062665f52843ee9cb03dfbf42ec593
+msgid "After the VPN connection has been established, the node should be able to reach the mesh's DNS servers and use these for all other name resolution."
+msgstr ""
+
+#: ../../dev/wan.rst:16
+# 98710d2e43dc4751b233571af5180c26
+msgid "Routing tables"
+msgstr ""
+
+#: ../../dev/wan.rst:17
+# 0b8432a4c73d4214875d64f887c4b189
+msgid "As a node may get IPv6 default routes both over the WAN and the mesh, Gluon uses two routing tables for IPv6. As all normal traffic should go over the mesh, the mesh routes are added to the default table (table 0). All routes on the WAN interface are put into table 1 (see ``/lib/gluon/upgrade/110-network`` in ``gluon-core``)."
+msgstr ""
+
+#: ../../dev/wan.rst:22
+# ea2641cd228d4a14ac33ab5fa5d256f7
+msgid "There is also an *ip -6 rule* which routes all IPv6 traffic with a packet mark with the bit 1 set though table 1."
+msgstr ""
+
+#: ../../dev/wan.rst:27
+# 52eaa5cf598942b6a0a1ce539fd99f92
+msgid "libpacketmark"
+msgstr ""
+
+#: ../../dev/wan.rst:28
+# a2e07659c30642e8a015d435a350a680
+msgid "*libpacketmark* is a library which can be loaded with ``LD_PRELOAD`` and will set the packet mark of all sockets created by a process in accordance with the ``LIBPACKETMARK_MARK`` environment variable. This allows setting the packet mark for processes which don't support this themselves. The process must run as root (or at least with ``CAP_NET_ADMIN``) for this to work."
+msgstr ""
+
+#: ../../dev/wan.rst:33
+# 6039fdc967fc45dea01fa03d65508283
+msgid "Unfortunately there's no nice way to set the packet mark via iptables for outgoing packets. The iptables will run after the packet has been created, to even when the packet mark is changed and the packet is re-routed, the source address won't be rewritten to the default source address of the newly chosen route. *libpacketmark* avoids this issue as the packet mark will already be set when the packet is created."
+msgstr ""
+
+#: ../../dev/wan.rst:39
+# cb377c0a692443b6a4846c2b258740ef
+msgid "gluon-wan-dnsmasq"
+msgstr ""
+
+#: ../../dev/wan.rst:40
+# 4c26b9216f274ea2b9f5309a66de8a2a
+msgid "To separate the DNS servers in the mesh from the ones on the WAN, the ``gluon-wan-dnsmasq`` package provides a secondary DNS daemon which runs on ``127.0.0.1:54``. It will automatically use all DNS servers explicitly configured in ``/etc/config/gluon-wan-dnsmasq`` or received via DNS/RA on the WAN port. It is important that no DNS servers for the WAN interface are configured in ``/etc/config/network`` and that ``peerdns`` is set to 0 so the WAN DNS servers aren't leaked to the primary DNS daemon."
+msgstr ""
+
+#: ../../dev/wan.rst:46
+# 815828e33f614ad59e16502ed1e2489e
+msgid "*libpacketmark* is used to make the secondary DNS daemon send its requests over the WAN interface."
+msgstr ""
+
+#: ../../dev/wan.rst:48
+# 977255d61fb745e190b1bd3561fb90e4
+msgid "The package ``gluon-mesh-vpn-fastd`` provides an iptables rule which will redirect all DNS requests from processes running with the primary group ``gluon-mesh-vpn`` to ``127.0.0.1:54``, thus making fastd use the secondary DNS daemon."
+msgstr ""
+

@@ -1,0 +1,98 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2014.3.1.rst:2
+# bf089228b47440148e81fbf67be1ffa7
+msgid "Gluon 2014.3.1"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:4
+# 4f424501e52043cf9a5daa787f9cc5be
+msgid "This is a bugfix release."
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:7
+# 4d8aedf6989b46f8b1ec5a649192ea85
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:9
+# 22f652dfc9724f2a9ed8f184990d63da
+msgid "gluon-announced zombie process bug"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:11
+# 970307e2d7af400d8f7fea3028d36d60
+msgid "gluon-announced was creating zombie processes when answering requests, causing issues with the new status page which is currently in development."
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:14
+# 25917b5d89a945999124fa7abf103b61
+msgid "fastd peers removed from ``site.conf`` weren't removed correctly from the fastd configuration on firmware upgrades"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:16
+# f7a873952bef495ab5e566335fcb84d6
+msgid "Expert Mode: setting a password will not remove SSH keys anymore"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:17
+# 9f7f55c06d0140748a12b3ef0c6ef3ca
+msgid "alfred has been updated to 2014.3.0"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:19
+# 16db0e07700e41f4bc468bb375a448fe
+msgid "We hope this solves the alfred stability issues noted by several people."
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:21
+# 6df7ef3d7fc3434a9916c24afd6bd634
+msgid "``gluon-ebtables-filter-ra-dhcp`` and ``gluon-ebtables-filter-multicast`` have been fixed to allow DHCPv6 to work"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:24
+# bb85fdff9c5f45018b0bc36ea63e5185
+msgid "Another ath9k patch has been added, which might further improve WLAN stability and performance"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:27
+# cc2255cfc1974c4ba9aa57cb6270fd27
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:29
+# a47e113a4a74425d931252162a51525b
+msgid "Support for static WAN setups instead of (DHCP/Router Advertisement) has been added; configuration is possible on the port config page of the Expert Mode."
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:33
+# b9cf711d3478450c81dcce990156d2f0
+msgid "Site changes"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:35
+# 856053c21a1640e4bc3c45f21d387363
+msgid "``site.conf``"
+msgstr ""
+
+#: ../../releases/v2014.3.1.rst:37
+# 1f4fe0a6077545e7bcf8f0182869950d
+msgid "The new boolean option ``fastd_mesh_vpn.enabled`` allows enabling the mesh VPN by default. This value is optional; if it isn't specified, the mesh VPN will be disabled."
+msgstr ""
+

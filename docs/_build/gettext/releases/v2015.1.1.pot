@@ -1,0 +1,88 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2015.1.1.rst:2
+# 4c9d2841576f442d985f22b27539ac49
+msgid "Gluon 2015.1.1"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:5
+# 9df53d52a089403682c1dfac7bc12489
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:7
+# b903292439c146d69e15a9508b9b8272
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:9
+# 1945105aedd64edc94b9ab429b323cd1
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:11
+# e34e522c001448069befd8d144160df4
+msgid "TL-WA830RE (v1)"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:14
+# 54b84aee86dd488d88afe31261808016
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:15
+# 494304793f6947dba1b744290141b8a5
+msgid "The `x86-generic` and `x86-kvm_guest` images now support two ethernet interfaces by default. If two interfaces exist during the first boot, `eth0` will be used as LAN and `eth1` as WAN."
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:19
+# aa74fa626a064e5c9ef7fbcde8a5adc5
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:21
+# 967f59c5078e421ebd215db6a7c00f30
+msgid "Fix German \"Expert Mode\" label (was \"Export Mode\")"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:22
+# ce336a53145044c68dc6da4095ba0921
+msgid "Fix download of OpenSSL during build (because of broken OpenSSL download servers...)"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:23
+# 3a5a5039284a4472bf5ac146c446510a
+msgid "Fix ABI break causing kernel panics when trying to use network-related modules from the official OpenWrt repository (like `kmod-pppoe`)"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:24
+# 17d94f74cac845068a731a4342f2f5af
+msgid "Fix race conditions breaking parallel build occasionally"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:25
+# cfa37575c310477aa3356eaf2680adc9
+msgid "A broken network configuration would be generated when an older Gluon version was updated to 2015.1 with ``mesh_on_lan`` enabled in `site.conf`"
+msgstr ""
+
+#: ../../releases/v2015.1.1.rst:27
+# 82e2f74b4a8b49ee95f00d731ef34197
+msgid "Minor announced/alfred JSON format fixes (don't output empty lists where empty objects would be expected)"
+msgstr ""
+

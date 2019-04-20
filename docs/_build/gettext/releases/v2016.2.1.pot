@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.1.rst:2
+# 13eb41c7d7904e18883741e7cea8552d
+msgid "Gluon 2016.2.1"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:5
+# a8f8212eb2684a7fadd7219e05266374
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:8
+# 45cd69de3e62444180c41abf69baef63
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:10
+# ea9585959afb483faf5c725dbbdcdff9
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:12
+# 75c797c63d7b4fa9a7cec666d733ce1c
+msgid "TL-WA901ND v4"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:15
+# 5ec69deb19f649c785d862b606382d8f
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:17
+# 0b0c830ab01145bea7103b79a13f74bf
+msgid "Make status page work with disabled cookies/local storage (`#912 <https://github.com/freifunk-gluon/gluon/pull/912>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:20
+# ecc694224cf141f4991e3d8ac1139902
+msgid "Update kernel to 3.18.44"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:22
+# 094c58d8d29848a4a07a7eb25d2c1e83
+msgid "Fixes CVE-2016-5195 and CVE-2016-7117. It is unlikely that these issues pose a threat to usual Gluon setups, but installing additional packages may make a system vulnerable. In any case, updating is highly recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:26
+# 02ad4577e66a415e8c65ab4ab63a5b85
+msgid "Downgrade mac80211 to an earlier state"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:28
+# 9f1e85c9782f482ca397ac2b85b6b1a1
+msgid "Unfortunately, a mac80211 update that was done shortly before the release of Gluon v2016.2 (that seemed necessary to properly support ath10k devices) had again caused severe ath9k stability issues that remained unreported until v2016.2 was out."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:33
+# 9123819a47234869968f66a6d945f4ed
+msgid "We have now reverted mac80211 to an earlier state that was reported to be very stable (while keeping the ath10k-specific changes); in addition, some patches that were reported to cause connection or performance issues with certain clients have been reverted. While is it still not perfectly stable, is should be at least as good as (and probably better than) the v2016.1.x release series."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:40
+# 6ec6129e9a624bea975c1a4705e15a60
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:42
+# 0cc458227cdd40198e337eddbee90934
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:44
+# ae923a4f5ad34278b0ae642cff6022c4
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:46
+# c6b2cb95531e48f9a3b7a07d0328d7f1
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:48
+# 52f208dc0f07489281571eaf93da6054
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:50
+# 20eb60ed2e704debba3d61179c742299
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:52
+# 20095159e55848d3939d0016cfdf199a
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:54
+# aea2be412cc94b4fa4098652882d5bc6
+msgid "Git HTTPS downloads from git.kernel.org fail on Debian Wheezy (`#919 <https://github.com/freifunk-gluon/gluon/issues/919>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.1.rst:56
+# 3271ec47133449308c527ca6f74da835
+msgid "The GnuTLS version on Debian Wheezy is too old and can't establish a connection with git.kernel.org anymore. A newer GnuTLS version is available in wheezy-backports, but as there is no libcurl3-gnutls package linked against the new version, installing the new version has no effect."
+msgstr ""
+

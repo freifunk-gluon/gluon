@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2017.1.7.rst:2
+# c98b0412dc0a4f388d05185c42b5b442
+msgid "Gluon 2017.1.7"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:5
+# 21dbd59ed4324990a4cda4c25eb38230
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:7
+# fe5b328b822b42d99091cde0af12b15d
+msgid "Fix boot failure on many Ubiquiti devices (`#1370 <https://github.com/freifunk-gluon/gluon/issues/1370>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:10
+# 983acdfc3aea407eabc39b27d0bf7486
+msgid "A kernel update in Gluon 2017.1.6 led to boot failures on Ubiquiti Airmax M2/M5 (NanoStation, Bullet, etc.) if the device had been running AirOS 5.6 before installing Gluon/OpenWrt. The XW hardware revision is unaffected."
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:14
+# 84997cdb320e4f1a8588b53f0c9ec378
+msgid "While the root cause is a bug in Ubiquiti's bootloader, the issue is mitigated in Gluon 2017.1.7."
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:19
+# e71dbc4a02de487c93f4f79abf1ec4fd
+msgid "Known issues"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:21
+# b6256e55a9c9442da17920c0aac145f0
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:23
+# c561bf044c9e44fca3971a079ccee957
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:25
+# 6bdaa0e1c53a4267bbf096df88c57ffe
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:27
+# a95e50af329b4c38a6aa5f52328af38e
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:29
+# 2e31cd7af4384c8d90aea4b852d109a8
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:31
+# fc698ae6272343c68e4012e27c14d4dc
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2017.1.7.rst:33
+# 78827d9568cf448db6ed3d810f4edba3
+msgid "Frequent reboots due to out-of-memory on weak hardware in larger meshes (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+

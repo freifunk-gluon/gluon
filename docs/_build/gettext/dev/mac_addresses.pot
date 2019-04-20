@@ -1,0 +1,73 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/mac_addresses.rst:2
+# 59a1b5cf7775494d941b2a1aa0f0169d
+msgid "MAC addresses"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:4
+# 8be1d31b894b41138603858c3f4532e4
+msgid "Many devices don't have enough unique MAC addresses assigned by the vendor (in batman-adv, each mesh interface needs an own MAC address that must be unique mesh-wide)."
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:8
+# 9c463a9a31594b3f85c5515ee50874dc
+msgid "Gluon tries to solve this issue by using a hash of the primary MAC address as a 45 bit MAC address prefix. The resulting 8 addresses are used as follows:"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:11
+# 0be2de893bd1473faf50a9c692dc0af3
+msgid "0: client0; WAN"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:12
+# 522957b3e87240dabb9a53f4c3571939
+msgid "1: mesh0"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:13
+# d64e428b1be34ffaac6feb25f901e732
+msgid "2: ibss0"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:14
+# c75f30eed9fb426486c51d869ebf67a1
+msgid "3: wan_radio0 (private WLAN); batman-adv primary address"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:15
+# 8fa0b6e905e241b1a27295e2dd1ea482
+msgid "4: client1; LAN"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:16
+# 45e19d59c25e43d2a8944bb4a0a46a98
+msgid "5: mesh1"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:17
+# 498fc5b8ccc54ae2a59cc3ac9439326e
+msgid "6: ibss1"
+msgstr ""
+
+#: ../../dev/mac_addresses.rst:18
+# 2f2c8edf09ec43f6a505751c5ac5504d
+msgid "7: wan_radio1 (private WLAN); mesh VPN"
+msgstr ""
+

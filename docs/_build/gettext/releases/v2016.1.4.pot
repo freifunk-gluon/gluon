@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.1.4.rst:2
+# 26ff955f246f4458aaf7602a93a087b2
+msgid "Gluon 2016.1.4"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:5
+# 74a6fa61fee64426a88dd639429e76a9
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:8
+# 9edebc81c359431da65ccb2dbc2c6867
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:10
+# 5bd4feb7172e478cae4c32c6d62540c4
+msgid "8devices Carambola 2"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:11
+# a38e6218e3e549919f3d080f60c10de3
+msgid "Meraki MR12/MR62/MR16/MR66"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:14
+# fe328e1ad67c404ca0dbb78cf5c041f5
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:16
+# 1f83d44aaeea4f36b716f4defc600140
+msgid "Major update of all WLAN drivers"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:18
+# d89f903c17be43618e546d39de7e5244
+msgid "We've taken the unusual step of updating the WLAN drivers (\"wireless-backports\") to a much newer version, as it was reported that the new version fixes unstable WLAN seen in many setups"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:20
+# 239691fb2aca451cbc81214e68afdcb9
+msgid "Build fix: a race condition causing parallel builds to fail has been fixed"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:21
+# 58f8e1cad524414689412727a2d9a712
+msgid "Build fix: the Gluon tree could get into a state in which all commands fail with \"Too many levels of symbolic links\""
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:22
+# 0fe4a1a8d6234390a46fff071a088c1a
+msgid "Build fix: allow building Gluon on systems with certain versions of *dash* as */bin/sh*"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:25
+# 1ff6c1243545478f901b50a33c3f6b8d
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:27
+# 0d7ad7bcbccc47b7a9390904866cff05
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:29
+# ebf83f75369f4934a482064051d349ad
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:31
+# 50a9144880ff4adcb8fb30777797a2ab
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:33
+# d4f8bf24ad9a43ab9df1a6d3c3762bf4
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:35
+# 7ff20ffb014c40a38a3f6accaf82a947
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:37
+# 8f092d8ee37e485ea4ff350c80e0efcb
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:39
+# ce643d387eb447208ea23f50356fc7d4
+msgid "Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com/freifunk-gluon/gluon/issues/687>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:41
+# 3fa81142c4124d4e89a5526b8ecf64d4
+msgid "Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS 5.6.x without downgrading AirOS first before flashing Gluon. It was discovered that on Ubiquiti PicoStations, this downgrade is still necessary, as the flash is not correctly unlocked, leaving the device unable to leave Config Mode and making regular sysupgrades impossible."
+msgstr ""
+
+#: ../../releases/v2016.1.4.rst:46
+# 974b9860272a46fb9f97ec2b1b10234f
+msgid "TFTP recovery can be used in this state to flash a new firmware."
+msgstr ""
+

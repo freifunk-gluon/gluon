@@ -1,0 +1,493 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.1.rst:2
+# 411ed7ef250d4c8d8c66c8e11ef5c766
+msgid "Gluon 2016.1"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:5
+# 15ad68422d5d42e299a01a596ad89c99
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:8
+# 4464af5da6104b04baea746bb072c367
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:10
+# f8e433447bf94c77842743a875140645
+msgid "Buffalo"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:12
+# b7e1f540d9bc4992ad56e4597b1f42ff
+msgid "WZR-HP-G300NH"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:14
+# 6ff2db7a62dd48d9ad31dab297aa3444
+msgid "D-Link"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:16
+# 9502bb35e2df46c88a8e20b49e748f73
+msgid "DIR-505 (A1)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:18
+# e877dfbaf3114800a04f23d6248e51a9
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:20
+# bc6d8184e8974551899a9dd15fd115f9
+msgid "CPE210/220/510/520 v1.1"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:21
+# 849de8e211674a9983bd2eb18ee46249
+msgid "TL-WA901N/ND v1"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:22
+# e2da21ddc4e14d108e06e2d997af3096
+msgid "TL-WR710N v2"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:23
+# 033a8501c68c4eff8c744e4b898502bf
+msgid "TL-WR801N/ND v1, v2"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:24
+# 339c4480ddd44393a50a03e50622f66d
+msgid "TL-WR841N/ND v10"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:25
+# 2f24ea84edec42eba6c9b0839c46e864
+msgid "TL-WR843N/ND v1"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:26
+# d8b458e59dff42c9a1fe15e4698fe0d5
+msgid "TL-WR940N v1, v2, v3"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:27
+# c0396e6ee86e476a9f838710c8a6362b
+msgid "TL-WR941ND v6"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:28
+# 92b1537c150c46e294d5816bf9ebf60d
+msgid "TL-WR1043N/ND v3"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:30
+# d71f2cdd590b4bd6af7d0e76b528eb34
+msgid "Ubiquiti"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:32
+# e257cc1e032a4516836478a108459b5e
+msgid "airGateway"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:33
+# 680e39324ee54807bfb434d0260ed7e7
+msgid "airRouter"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:34
+# d33ef1c05e5b464ca209c9824ff82a42
+msgid "UniFi AP Outdoor+"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:36
+# a5c7ba9b997a4f9bbd95913e2a9045b9
+msgid "Western Digital"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:38
+# 4ba4d5180e704e74a1a3128b3286aa33
+msgid "My Net N600"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:39
+# 0a81a3c334504ec0b4639d04aafa29d7
+msgid "My Net N750"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:42
+# 79eff06680d348fcb689d27c7429c3aa
+msgid "x86-xen_domu"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:44
+# a3186d161e7b43e5b41480a04537cb41
+msgid "New target containing the necessary drivers for use in Xen."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:47
+# c7dc716e784b49d9a82065ee19c8f5a5
+msgid "x86-64"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:49
+# 497ef9ef39ff427f96841ad60820331d
+msgid "64bit version of `x86-generic`. The generic image can also be used in KVM with VirtIO."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:52
+# b3b68111e09c4a9b9a96fdba855cd66f
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:55
+# 2c692ffc3de940a3b2630ba6f809e9f8
+msgid "Kernel module opkg repository"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:57
+# b1b97456a4c843c39bca97f4df65a246
+msgid "We've not been able to keep ABI compatibility with the kernel of the official OpenWrt images. Therefore, Gluon now generates an opkg repository with modules itself."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:60
+# f607b6cecc31472a9e30d6fb1ad8c558
+msgid "The repository can be found at `output/modules/` by default, the image output directory has been moved from `images/` to `output/images/`. See the updated :doc:`../user/getting_started` guide for information on the handling of the signing keys for this repository."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:64
+# eceeb6c035f34d449990fe47c6056573
+msgid "The `opkg_repo` site.conf option has been replaced to allow specifying this and other additional repositories."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:67
+# 4c322cd0350b4c818b587c3c3e959add
+msgid "New status page"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:69
+# d083128686a841ec82324f4f99d318d0
+msgid "The new status page provides a visually pleasing experience, and displays all important information on a node in a clear manner. It also contains a real-time signal strength graph for all neighbouring nodes to aid with the alignment of antennas."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:74
+# 7a9f1ef1bc2d4f72b97faced7e781078
+msgid "802.11s mesh support"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:76
+# 21bbb68c87124bbab5c9f51604654063
+msgid "Gluon now supports using 802.11s for its mesh links instead of IBSS (Adhoc). This will allow supporting more WLAN hardware in the future (like Ralink/Mediatek, which don't support AP and IBSS mode simultaneously)."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:79
+# 55cfcceca408455892a2215e643e4565
+msgid "Note that batman-adv is still used on top of 802.11s (and 802.11s forwarding is disabled), the mesh routing protocol provided by 802.11s is not used."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:83
+# b9347be949e54802ac2e1bf158c0dddd
+msgid "Multicast filter extension"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:85
+# 6841fa2268704de6a61d3016aabb288e
+msgid "The `gluon-ebtables-filter-multicast` package has been extended to filter out multicast ICMP and ICMPv6 Echo Requests (ping) and Node Information Queries (RFC4620). This prevents pings to multicast addresses like ff02::1 to cause traffic peaks (as all nodes and clients would answer such a ping)."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:91
+# 013b38a1d224468ab68a678453fd6151
+msgid "French translation"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:93
+# 7635eed7214a4627b8d7965a39e8b9f9
+msgid "A French translation for the Config Mode/Expert Mode has been added."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:96
+# b65cfe6cd61e4fb68fe131f99216de25
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:98
+# e8e87fc0f679442bb9f9e883914de33a
+msgid "Update kernel code for the QCA953x"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:100
+# 13e6d37004784099a58553e74192e4f9
+msgid "Might improve stability of the TP-Link TL-WR841N/ND v9."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:101
+# b5fbd066ffdd47b994075598ea3589d1
+msgid "Fix model detection on some Netgear WNDR3700v2"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:103
+# 94a747a45b73432a82a728b5b6f4b4ec
+msgid "The broken devices will identify as \"NETGEAR \". This also breaks the autoupdater, making a manual upgrade necessary."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:105
+# 85afefde331f4f71820d903b3d3830f1
+msgid "Ensure that `odhcp6c` doesn't spawn multiple instances of ``dhcpv6.script``"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:106
+# 68b0ac583c6642ecb5735db29de0cc87
+msgid "Fix support for Buffalo WZR-600DHP"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:108
+# d9a26ef6d08f47e581757b130ed8b8cb
+msgid "A flashable factory image is generated now. The sysupgrade image is still shared with the WZR-HP-AG300H."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:112
+# 764e9e0dd715405d9234674a8ab45fae
+msgid "Site changes"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:114
+# 1a5b082261bf48e490a45ba355ac8e7e
+msgid "``site.conf``"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:116
+# e9c96d7ee10244d19ed43ef2bf41f3cf
+msgid "New WLAN configuration"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:118
+# edf9566f66be4920abbbaac3c123d790
+msgid "``wifi24`` and ``wifi5`` need to be updated to a new more flexible format. A configuration using the old format"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:132
+# 208690f9162746d29c8bd31746cee84b
+msgid "would look like this in the new format::"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:146
+# ab50ca80306749fc9f1954f4434f79e5
+msgid "The ``htmode`` option has been dropped, the channel width is now always set to 20MHz (see https://github.com/freifunk-gluon/gluon/issues/487 for a discussion of this change)."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:149
+# 887ea8d45fae4fab999ca6d030ad6c66
+msgid "In addition to the old IBSS (Adhoc) based meshing, 802.11s-based meshing can be configured using the ``mesh`` section. Example::"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:163
+# 3331bf0cd4a1445cb513fa0334e13532
+msgid "While using ``ibss`` and ``mesh`` at the same time is possible, is causes high load in very active meshes, so it is advisable to avoid such configurations."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:166
+# 43d76b90e4cb401db64a919a62040ec9
+msgid "Bandwidth limitation defaults"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:168
+# fcd973a18e3548f3a24b953dc7bcbdff
+msgid "The old section ``simple_tc.mesh_vpn`` has been moved to ``fastd_mesh_vpn.bandwidth_limit`` and the ``ifname`` field isn't used anymore. What looked like this before"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:183
+# c940a43ef69b45be8450dc73f4e0f373
+msgid "needs to be changed to"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:197
+# c216c7ff13114e9c997e27446012baab
+msgid "opkg repository configuration"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:199
+# 18ae4080f2034f8c9ea9ff61d2426ef0
+msgid "The opkg configuration has been changed to be more flexible and allow specifying custom repositories. Example::"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:209
+# dd03fe6784114cb7a0ae8eda714c778e
+msgid "The keys of the ``extra`` table (like ``modules`` in this example) can be chosen arbitrarily."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:211
+# e1571e696e554dc9adddf51c14ee28f1
+msgid "Instead of explicitly specifying the whole URL, using patterns is recommended. The following patterns are understood:"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:214
+# 022cfb30c0d844139ba10d0221e42196
+msgid "``%n`` is replaced by the OpenWrt version codename (e.g. \"chaos_calmer\")"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:215
+# 9b8d8ae256554de9af89bb4bb0c1e019
+msgid "``%v`` is replaced by the OpenWrt version number (e.g. \"15.05\")"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:216
+# 25d8761e1e8e4bbaa4b64063bf1da6ed
+msgid "``%S`` is replaced by the target architecture (e.g. \"ar71xx/generic\")"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:217
+# de2509ee1ba747d5935822c18a5ff100
+msgid "``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:218
+# 52f4ace996b8480f90e7d1c837355252
+msgid "``%GV`` is replaced by the Gluon version"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:219
+# b032757969694656af9e5d6d00c3c1e8
+msgid "``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:222
+# 00d9c7badfca43918c4075893f67689d
+msgid "``site.mk``"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:224
+# 63e181bd6a954b7c8fe86a60a0ce1322
+msgid "The packages `gluon-announce` and `gluon-announced` were merged into the package `gluon-respondd`. If you had any of them (probably `gluon-announced`) in your package list, you have to replace them."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:229
+# ca5f8cc2d4b94cdfa6358c67df53f7f5
+msgid "``i18n/``"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:231
+# e149ed03b3b24fb6af12d997d68e524b
+msgid "The translations of ``gluon-config-mode:pubkey`` now have to show the fastd public key themselves if desired, making the formatting of the key and whether it is shown at all configurable. To retain the old format, add ``<p>`` to the beginning of your translations and append::"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:244
+# 3d8ea1ef9e484728983eb33c2908676e
+msgid "Internals"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:246
+# f2dce13f7bd24b3298d525cfdf1f52e7
+msgid "OpenWrt has been updated to Chaos Calmer"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:247
+# a1663386589f41bca551c4075252b543
+msgid "mac80211 has been backported from OpenWrt trunk r47249 (wireless-testing 2015-07-21)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:249
+# 66a83d6534e947ffbaa1e0a63c9a1764
+msgid "This allows us to support the TL-WR940N v3/TL-WR941ND v6, which uses a TP9343 (QCA956x) SoC."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:250
+# fc27d10ac04b494080658eec0f873d66
+msgid "Several packages have been moved from the Gluon repo to the packages repo, removing references to Gluon:"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:252
+# 800304219e464e8d999c97a1e1c869f9
+msgid "gluon-cron -> micrond (the crontabs are now read from ``/usr/lib/micron.d`` instead of ``/lib/gluon/cron``)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:253
+# 56c33d9ec0f54beabd7f22220aab3915
+msgid "gluon-radvd -> uradvd"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:254
+# c18f6458f6a445e29a8de7d75b169b05
+msgid "gluon-simple-tc -> simple-tc (the config file has been renamed as well)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:256
+# c18c42d26e224955b407059d8c0b532b
+msgid "Some of the Gluon-specific i18n support code in the build system has been removed, as LuCI now provides similar facilities"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:258
+# 091d0a2f2f69412686bba839e73bf699
+msgid "The C-based `luci-lib-jsonc` library is now used for JSON encoding/decoding instead of the pure Lua `luci-lib-json`"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:259
+# f990f9babf534571a4a2f5b203b84348
+msgid "The site config is now stored as JSON on the node. The Lua interface ``gluon.site_config`` is still available, and a C interface was added as part of the new package `libgluonutil`."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:260
+# 2b1d5831a7b641a694f0297fcb9bdf59
+msgid "The `respondd` daemon now uses C modules instead of Lua snippets, which greatly enhances response speed and reduces memory usage. The Gluon integration package has been renamed from `gluon-announced` to `gluon-respondd`."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:264
+# fe4aae42d20448dfa4dbfc6c33664517
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:266
+# 752e9fbe6a14434d87eee1063fe58c86
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:268
+# e088651b39094a8a85ff658001d96534
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:269
+# d8227a4b50914e3e9e76ec9d8f2d3fab
+msgid "batman-adv causes stability issues for both alfred and respondd/announced (`#177 <https://github.com/freifunk-gluon/gluon/issues/177>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:270
+# e13a4606b9964135b8af706780d472dd
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:272
+# 3b2d9fe9f640401d857edf0598900e8b
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.1.rst:274
+# 04abc641f54c454ebe294f2840a6698a
+msgid "Inconsistent respondd/announced API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.1.rst:276
+# d5ad988e5b564a25b15d4a4d5e682d3b
+msgid "The current API is inconsistent and will be replaced in the next release. The old API will still be supported for a while."
+msgstr ""
+

@@ -1,0 +1,58 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../package/gluon-config-mode-domain-select.rst:2
+# 96f428a3632e4e9fa3ecde10ed3af104
+msgid "gluon-config-mode-domain-select"
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:3
+# 2d52db8dad6a493382ff49b084a30998
+msgid "This package provides a drop-down list for the config mode to select the domain the node will be placed in. If the selection has changed the upgrade scripts in ``/lib/gluon/upgrade/`` are triggered to update the nodes configuration."
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:7
+# 2a80158fe4f143d79b32c889028086f5
+msgid "Hiding domains could be useful for default or testing domains, which should not be accidentally selected by a node operator."
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:11
+# 51f0370394234a2bbc22c79de0ad9a03
+msgid "domains/\\*.conf"
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:15
+# e5dcc71b005343cb932316e32ad12d11
+msgid "hide_domain \\: optional (defaults to false)"
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:14
+# dfb677c6727c4f3b9f93d85f8e45fb60
+msgid "``false`` shows this domain in drop-down list"
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:15
+# 1ea2af45c79e42de9321d053ce7fbbe3
+msgid "``true`` hides this domain"
+msgstr ""
+
+#: ../../package/gluon-config-mode-domain-select.rst:17
+# cd1e9d0f145d431cafda8cb625843baf
+msgid "Example::"
+msgstr ""
+

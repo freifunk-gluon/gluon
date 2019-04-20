@@ -1,0 +1,163 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2017.1.2.rst:2
+# bbd874d1c13c45eab204ff1868f30930
+msgid "Gluon 2017.1.2"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:5
+# 01591f57682c4e4f98c06d5a33c6a409
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:7
+# 8578ed00392a41e68e5546029e9a3a87
+msgid "Preserve *gw_mode* on sysupgrades (`#1196 <https://github.com/freifunk-gluon/gluon/issues/1196>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:9
+# cf7862aa1f6645c68d8765e35e0eb125
+msgid "When a Gluon node is used as uplink (for example by connecting it to a router with a DHCP server directly, instead of using non-Gluon servers for the internet uplink), the *gw_mode* must be set to *server* on that node. The changed *gw_mode* is now preserved on upgrades."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:14
+# b28cd8f28e064abf95ff28321394d12e
+msgid "Allow configuring the batman-adv routing algorithm (*BATMAN IV* or *BATMAN V*) in *site.conf* (`#1185 <https://github.com/freifunk-gluon/gluon/pull/1185>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:17
+# c835c6aa957d4bbbb85bcbd63ee20a12
+msgid "*BATMAN V* still hasn't received extensive testing (and is incompatible with *BATMAN IV*). This new option allows to set up *BATMAN V*-based test meshes. If unset, the routing algorithm will default to *BATMAN IV*."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:21
+# 0047fd3b22184f69b3d6005ab886de03
+msgid "Configuration:"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:31
+# ff8338c6eecc4dafb02781a6a878bab3
+msgid "New *show-release* Make target"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:33
+# 406ef036194c4942818ffde95a318436
+msgid "The command ``make show-release`` can be used to print the release number defined by *GLUON_RELEASE* to the standard output. This can be useful for build scripts when a ``$(shell ...)`` expression is used in *site.mk* to generate the release number."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:39
+# 82c1c7014e924fa5a1c9721d586850af
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:41
+# b64bd1ee5fc4402181edb5e1a176dd88
+msgid "The image build code used for some devices has been fixed, solving multiple issues (`#1193 <https://github.com/freifunk-gluon/gluon/issues/1193>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:44
+# af24d094d0ba4843a1771a812f8a42b7
+msgid "Problems caused by this issue include:"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:46
+# 5cfd1e39841d4a95929b96a2fa4535e5
+msgid "sysupgrade rejecting Allnet images"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:47
+# d1e85e8303f746e5b0ddb90228b7c5d9
+msgid "OpenMesh devices losing their configuration on upgrades"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:49
+# 0e798e467e0c498aae8a7cfbe753f4a3
+msgid "This is a regression introduced in Gluon v2017.1."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:51
+# 7a19b4fec93843c8b831af5f1b8fd2c7
+msgid "Improve sysupgrade error handling (`#1160 <https://github.com/freifunk-gluon/gluon/issues/1160>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:53
+# f80dbf8b29004cb9a4aa9cbe74191110
+msgid "If for some reason processes don't react to SIGKILL (usually because of a kernel bug), a node could hang forever in sysupgrade, requiring a power cycle. This has been fixed, triggering a reboot instead."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:57
+# fa5581810c2d4d4aabbecabf4e7e0b44
+msgid "Also display *gluon-config-mode:novpn* message when Tunneldigger is installed, but disabled (`#1172 <https://github.com/freifunk-gluon/gluon/pull/1172>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:60
+# e3dd2bb65cbe46a2aa43bc62e2e18b35
+msgid "It was only displayed on nodes with fastd before."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:62
+# 80579ec11cb64ebab0c79c56558e14f2
+msgid "Fix migration of enabled/disabled state between fastd and Tunneldigger (`#1187 <https://github.com/freifunk-gluon/gluon/issues/1187>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:66
+# 8a75ac2f42ff469cb226d8f0fe4b69f4
+msgid "Known issues"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:68
+# 4249ed18c7f44bd3b5cf1fc703130ee6
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:70
+# f8e9fc2d33e544c09ecc78ef7d41144b
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:72
+# 6296632cbffd4298bac5206335ec6fdd
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:74
+# 8dc1474e76d64adfa4e633c810e40a54
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:76
+# c00595bdaf4b4ed487cba99477ca790d
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:78
+# fce48b97a13b41e9b4e74e4df863da96
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:80
+# de8989b5834d418aa34e1dbac50e9152
+msgid "Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx (`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)"
+msgstr ""
+
+#: ../../releases/v2017.1.2.rst:83
+# 9ce3a97c244a47eab1288c52121f80d7
+msgid "The workaround added in Gluon v2017.1.1 has greatly reduced the frequency of segfaults, but did not make them disappear completely."
+msgstr ""
+

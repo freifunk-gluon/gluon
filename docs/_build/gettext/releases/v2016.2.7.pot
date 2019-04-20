@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.7.rst:2
+# 68f4171dddb74364a9621de03412885d
+msgid "Gluon 2016.2.7"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:4
+# cf56e838d73846adb48944b7f07a4061
+msgid "This release only fixes a single regression introduced in Gluon v2016.2.6, and add support for building using Perl 5.26."
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:8
+# 1155896daa1e4d989bc09ee6b4c7297e
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:10
+# 24e0574f407f436a965e39e1bc3e68c7
+msgid "Improve sysupgrade error handling (`#1160 <https://github.com/freifunk-gluon/gluon/issues/1160>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:12
+# 6abf063a99cf4ae1a26903d2ef7df9fb
+msgid "If for some reason processes don't react to SIGKILL (usually because of a kernel bug), a node could hang forever in sysupgrade, requiring a power cycle. This has been fixed, triggering a reboot instead."
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:16
+# 98532aa53eb74a9099aa27ed4791f135
+msgid "Backport fixes to support building with Perl 5.26 or newer (`76753ed <https://github.com/freifunk-gluon/gluon/commit/76753ede0da78e24208f10675fa288247deec961>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:19
+# 6c623ca70822469aa10ecbeab5171e70
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:21
+# 118c7c6123e54e729ecc1ad891722df4
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:23
+# b02fe63fbbaa43c8b5a7733067dd1325
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:25
+# c7a5452801304431881ca305620041f0
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:27
+# 0f4530413c6b4f698fffdf774a2abc13
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:29
+# 9061a523ea71480d9ffe651300416b98
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.7.rst:31
+# a1368a76382b486db80177a2c84d79c3
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

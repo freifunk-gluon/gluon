@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2018.1.4.rst:2
+# d0243e5b30054aa683f5b71866020cc0
+msgid "Gluon 2018.1.4"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:5
+# 3f45944128eb4b0cbbd7f00c462288bd
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:7
+# f333afb2d0684bc6949cad111d341f6b
+msgid "Fix regression in autoupdater version comparison function"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:9
+# 86c04f9375654c3e932b4695d7665d9d
+msgid "Due to a regression in Gluon 2018.1, the autoupdater would incorrectly consider certain version strings equal and not attempt to upgrade. In particular, any string and its prefix were considered equal when the prefix did not end with a digit. For example, the following relations were not evaluated correctly:"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:15
+# 825e504b4eeb43539dd740bad544d012
+msgid "``1.0`` < ``1.0.1``"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:16
+# 990f2a9197604838b3d3e6a820633b13
+msgid "``1.0~pre`` < ``1.0``"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:18
+# ad103896c6184da795cd76e2c974b964
+msgid "Fix unintended difference between autoupdater version comparison and dpkg/opkg"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:20
+# 90884c4ab2654581b443a6544b1f6c1c
+msgid "Alphanumeric characters were considered less than end-of-string, when the intended behaviour (as implemented by dpkg and opkg) is that only ``~`` is less than end-of-string. This broke relations like the following:"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:24
+# e96b0e6f2633402788ab38f0b9aeee38
+msgid "``1.0`` < ``1.0a``"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:25
+# 4caaf9bd41fb4e3881e5d804796bc41d
+msgid "``1.0a`` < ``1.0ab``"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:26
+# f0247c78cfed45f1825bd646bc499b99
+msgid "``1.0a`` < ``1.0a1``"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:30
+# 3ba876ecbf5f47ee97aeefd614d8e7e1
+msgid "Known issues"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:32
+# 054cf88be05148339a46c527ed6ec85e
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:34
+# ae75470159544efcba7e82b8ad4441c1
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:36
+# db617970028549468faf71bce43c08a0
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:38
+# 27b071cf25104037ae98e21244678d48
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:40
+# 4363970d72794e7a8d77f4e3c1245d4f
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:42
+# ad35f5c049324842a1b3375f6be3b632
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:44
+# b6c5ecb71f1c46abbd66de71114b21dd
+msgid "Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware specially in larger meshes (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+#: ../../releases/v2018.1.4.rst:47
+# 35b4a814637a45f08140c2fc1f553a15
+msgid "Optimizations in Gluon 2018.1 have significantly improved memory usage. There are still known bugs leading to unreasonably high load that we hope to solve in future releases."
+msgstr ""
+

@@ -1,0 +1,118 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/basics.rst:2
+# 37e64ccf1ca847cd85cded0f7cd748fa
+msgid "Development Basics"
+msgstr ""
+
+#: ../../dev/basics.rst:4
+# fac41be0435c44dcaf0aa99ff0bc681b
+msgid "Gluon's source is kept in `git repositories`_ at GitHub."
+msgstr ""
+
+#: ../../dev/basics.rst:9
+# 2359690a031542d6b3e1a033c9a4802a
+msgid "Bug Tracker"
+msgstr ""
+
+#: ../../dev/basics.rst:11
+# 3abd66354ade44c789a6520b9a89521a
+msgid "The `main repo`_ does have issues enabled."
+msgstr ""
+
+#: ../../dev/basics.rst:16
+# bc13828b27dc43f4b101cb3ea639d189
+msgid "IRC"
+msgstr ""
+
+#: ../../dev/basics.rst:18
+# 3bc91f94095d49adaa64f3b0858625c8
+msgid "Gluon's developers frequent the IRC chatroom `#gluon`_ on `hackint`_. There is a `webchat`_ that allows for easy access from within your webbrowser. You're welcome to join us!"
+msgstr ""
+
+#: ../../dev/basics.rst:28
+# c1833c963dfb45229dfd39b89ef1497f
+msgid "Working with repositories"
+msgstr ""
+
+#: ../../dev/basics.rst:30
+# a4e232ed52dc4804a2f106a5a1833e70
+msgid "To update the repositories used by Gluon, just adjust the commit IDs in `modules` and rerun"
+msgstr ""
+
+#: ../../dev/basics.rst:37
+# 735c61eb648d4856b85e31ee8def71c3
+msgid "`make update` also applies the patches that can be found in the directories found in `patches`; the resulting branch will be called `patched`, while the commit specified in `modules` can be referred to by the branch `base`."
+msgstr ""
+
+#: ../../dev/basics.rst:41
+# 906ae84483114dd48976dcf8c93a8025
+msgid "After new patches have been committed on top of the `patched` branch (or existing commits since the base commit have been edited or removed), the patch directories can be regenerated using"
+msgstr ""
+
+#: ../../dev/basics.rst:49
+# 1d583466447a4730855819537b91bb1f
+msgid "If applying a patch fails because you have changed the base commit, the repository will be reset to the old `patched` branch and you can try rebasing it onto the new `base` branch yourself and after that call `make update-patches` to fix the problem."
+msgstr ""
+
+#: ../../dev/basics.rst:52
+# e9fc65cb55584579a905bf8a7e9aec3a
+msgid "Always call `make update-patches` after making changes to a module repository as `make update` will overwrite your commits, making `git reflog` the only way to recover them!"
+msgstr ""
+
+#: ../../dev/basics.rst:56
+# b4815758000445bca181941ddc46bd07
+msgid "Development Guidelines"
+msgstr ""
+
+#: ../../dev/basics.rst:57
+# a9db52ba03574c9f927d68a046290895
+msgid "lua should be used instead of sh whenever sensible. The following criteria should be considered:"
+msgstr ""
+
+#: ../../dev/basics.rst:60
+# b2a0c13bdda846e38f76f0e312cb2fd1
+msgid "Is the script doing more than just executing external commands? if so, use lua"
+msgstr ""
+
+#: ../../dev/basics.rst:61
+# bccf723ac54a4214aaded88ba36229f4
+msgid "Is the script parsing/editing json-data? If so, use lua for speed"
+msgstr ""
+
+#: ../../dev/basics.rst:62
+# befe1054fb024406905b60ddb4d0ef91
+msgid "When using sh, use jsonfilter instead of json_* functions for speed"
+msgstr ""
+
+#: ../../dev/basics.rst:64
+# 3f7830c3d61a4649825ce8d3a6f39d12
+msgid "Code formatting may sound like a topic for the pedantic, however it helps if the code in the project is formatted in the same way. The following rules apply:"
+msgstr ""
+
+#: ../../dev/basics.rst:68
+# 5b1246f9c0e643cebbde39d70ce1bdf1
+msgid "use tabs instead of spaces"
+msgstr ""
+
+#: ../../dev/basics.rst:69
+# 970f52cfc4b3438a908acedfb46e997a
+msgid "trailing whitespaces must be eliminated"
+msgstr ""
+

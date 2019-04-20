@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2016.2.2.rst:2
+# e5678ffd937841b59fb5309a5086bb14
+msgid "Gluon 2016.2.2"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:5
+# c478c1df3e714e4399f9107079b72b42
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:8
+# cb224c7582214c599601b9fa949c2b96
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:10
+# 9016dc420d204d0a8229e35303807f89
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:12
+# 96e5f75d4526494c98aa065ad7c8b11f
+msgid "CPE210/510 EU/US versions"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:13
+# a9c382e6fa1d4e9eb4eb6e784c99e60f
+msgid "TL-WA801N/ND v3"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:14
+# 3b01f8a8329b42ca940c252746fe6c14
+msgid "TL-WR841ND v11 EU/US versions"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:17
+# 06999192260b42fabeb33f16a725ede7
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:19
+# 000e4f7ce6454dc48490bdc8c473b472
+msgid "Fix boot on certain QCA955x-based devices (e.g. OpenMesh OM5P AC v2) (`#965 <https://github.com/freifunk-gluon/gluon/pull/965>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:21
+# d736ff8155344fa5891c165f7561b80d
+msgid "This issue was a regression in Gluon v2016.2.1."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:23
+# d0d0b3b90b614681bdb18df9cd96505c
+msgid "Build: Fix git downloads from git.kernel.org on Debian Wheezy (`#919 <https://github.com/freifunk-gluon/gluon/issues/919>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:25
+# 2da7ee32fd48402ab8e97deba28abf77
+msgid "We've switched back from HTTPS to the git protocol for now to avoid using the old GnuTLS version of Debian Wheezy which can't establish a HTTPS connection with git.kernel.org anymore."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:29
+#: ../../releases/v2016.2.2.rst:33
+#: ../../releases/v2016.2.2.rst:37
+# 0150ef3fab9b4d2191e373872013f8d7
+# 7e99718e10d6441f993e5a82e17bba7b
+# 86182a26702442569d58ae1d925223b8
+msgid "This issue was a regression in Gluon v2016.2."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:31
+# 9c5266d07a984e118cdee66e41445b2b
+msgid "Fix RX filter of Ubiquiti UAP Outdoor+ (`d43147a8e03d <https://github.com/freifunk-gluon/gluon/commit/d43147a8e03dd17bc27e4ab203736f2151f9db3d>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:35
+# 96696b1b5e0b462691ae4801e76631e0
+msgid "Fix switched WAN/LAN interface assignment on CPE210 (`59deb2064d54 <https://github.com/freifunk-gluon/gluon/commit/59deb2064d54a37e27139b76a3b6064f5f10f364>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:39
+# b122409c7c124349b9393de7888565eb
+msgid "Significantly reduce CPU load used by signal strength LEDs (`#897 <https://github.com/freifunk-gluon/gluon/issues/897>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:41
+# 5669e174aca44864b3eaafa9724d4c19
+msgid "Fix ethernet port of the Ubiquiti UAP AC Lite (`#911 <https://github.com/freifunk-gluon/gluon/issues/911>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:43
+# 143441f5546c47298a9b6dda98a92519
+msgid "Build: Don't use host ``/tmp`` directory (`f9072a36411b <https://github.com/freifunk-gluon/gluon/commit/f9072a36411b92089c697b2c0a564155bfe10bd1>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:45
+# 7e1299b20abd462da0b3aa01886c799c
+msgid "Fixes build when ``/tmp`` is mounted with *noexec*."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:47
+# dc4eb9df0831428f9f31ac8616c8a747
+msgid "Fix mesh interface type respondd/alfred announcements when using VLANs over IBSS (`#941 <https://github.com/freifunk-gluon/gluon/issues/941>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:49
+# 93d25dbde7a843ffa902704786f9efd9
+msgid "Fix next-node ebtables rules without *next_node.ip4* (`9dbe9f785d2b <https://github.com/freifunk-gluon/gluon/commit/9dbe9f785d2b439c3ebdae365b808ebf42b3cf03>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:51
+# 9686eb92663944b2b725d786a07696fc
+msgid "Gluon v2016.2 added support for using the next-node feature without specifying an IPv4 address. Some scripts had not been adjusted, making the next-node unreliable when no IPv4 address was specified."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:56
+# 6e9ef6eeedfa4d36a399635c9bdded0c
+msgid "Other changes"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:58
+# 866edcb79c4b41a18aceae1e1665cdb6
+msgid "x86-generic and x86-64 images now have PATA and MMC support to allow using them on various devices that were previously unsupported."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:61
+# 03bce92006744984b04b21ddd0b98fb4
+msgid "Clean up opkg postinst scripts up on image generation"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:63
+# 7eaabbdbce534974870937e03cf51f22
+msgid "OpenWrt does this by default to save a little space."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:66
+# a33d549a572947df92c66abf509332e6
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:68
+# b9d417c4ffca4709badb1179af29e2e0
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:70
+# c4e9d7237bf0407f902ae4c10a3a1127
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:72
+# ac61d50da89d4ff7b0bb6e5187850312
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:74
+# 77abe42957be405da54ea0126a92fc97
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:76
+# b2f5a48f99d446b99268498c9788e47a
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2016.2.2.rst:78
+# 95549ba67a9b44d4a2d11a8872590b79
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+

@@ -1,0 +1,358 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2014.4.rst:2
+# 3b71fc909c694cd094e9b0ad01eefaf9
+msgid "Gluon 2014.4"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:5
+# 513587332a0d456f8868b75eedeea900
+msgid "Added (and removed) hardware support"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:6
+# d3ac423c5d734aafbbf53564e0e16084
+msgid "Buffalo"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:8
+# caa5a58492ad4c21b014d23fcf3d3d0b
+msgid "WZR-HP-AG300H / WZR-600DHP"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:9
+# 9e1d329e8244429d8991ba39a98d3cf8
+msgid "WZR-HP-G450H"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:11
+# f5c66c3f7f824342b97aeffa8b11763a
+msgid "D-Link"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:13
+# c38eb378fecd4b7698e88aa49b60f8c0
+msgid "DIR-615 (E1) support had to be dropped"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:15
+# e26a01a97a814d35b51523f2909d6017
+msgid "TP-LINK"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:17
+# c51619ca5b2c46c7b9c62830daf671db
+msgid "CPE210/220/510/520 (v1)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:18
+# 9bbfa5a307cf4f85a534c081591b1abc
+msgid "TL-MR3040 (v2"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:19
+# 7287e746862f4ea0ac75a642f1ef368f
+msgid "TL-WA750RE (v1)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:20
+# 5e6213aa2bf044ca95943aedba0f7ac4
+msgid "TL-WA801N/ND (v2)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:21
+# 1f7b73347c6c4be7b336ce8d998ec1d3
+msgid "TL-WA850RE (v1)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:22
+# b815b4fff05f4eceb9fdeae1b3ae629c
+msgid "TL-WR703N (v1)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:23
+# 70ab4d29e1744f5d830dc049bb2dabcf
+msgid "TL-WR710N (v1)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:24
+# fa1867ffefde462093cab54e33cfcfce
+msgid "TL-WR1043N/ND (v2)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:28
+# bfe5bd6f5da84c1c898a7787c0d10eaa
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:30
+# fe09216a71b0450aac223e7c979ecc4d
+msgid "OpenWrt Barrier Breaker"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:31
+# 3ce6f0fa017845fcb559eb027ea95864
+msgid "Switching to the new OpenWrt release 14.09 (\"Barrier Breaker\") has yielded lots of updates for both the kernel and most packages. Besides better performance, this has also greatly improved stability (far less out-of-memory issues!)."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:37
+# 07016f9431104a09b1f036f159e73b09
+msgid "Modular config mode"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:38
+# bab6d1eb1939439b89a6c35a30673d04
+msgid "The old ``gluon-config-mode`` package has been split into five small packages, each providing a single section of the config mode form. This simplifies removing or replacing parts of the wizard."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:42
+# cd02307733834e9489abda5088a79aaf
+msgid "See the *Site changes* section for details."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:45
+# c7700cc3dee64fe5861f916e4792f963
+msgid "Experimental support for batman-adv compat 15"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:46
+# 71d03e335ebd4922b981f9afd6f138e2
+msgid "As batman-adv has broken compatibility starting with batman-adv 2014.0 (bumping the \"compat level\" to 15), Gluon users must decide which batman-adv version to use. The package for the old batman-adv version ``gluon-mesh-batman-adv`` has been renamed to ``gluon-mesh-batman-adv-14``, the new version can be used with ``gluon-mesh-batman-adv-15``."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:52
+# d67a019bc54d4b8f95188031399cb1ce
+msgid "Please note that batman-adv compat 15 still isn't tested very well (and there are known bugs in the current release 2014.3), so for now we still recommend using compat 14 in \"production\" environments."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:57
+# aa306797abd64232b176065c86efa4e9
+msgid "fastd v16"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:58
+# be3dfa75f36c4ad499abe1d9cda122c4
+msgid "Besides other new features and bugfixes, fastd v16 support the new authentication method \"UMAC\". We recommend switching from the old ``salsa2012+gmac`` and ``null+salsa2012+gmac`` methods to the new ``salsa2012+umac`` and ``null+salsa2012+umac`` as UMAC is much faster and even more secure than GMAC."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:65
+# 158ee050fe6d4cff848fa3ee1d135e6f
+msgid "Private WLAN"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:66
+# c6e0e4a170a049f4980bae67667cd9de
+msgid "The new package ``gluon-luci-private-wifi`` allows to configure a private WLAN with WPA-PSK in the expert mode which is bridged with the WAN uplink."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:70
+# 5516971f117c4c8b8386b962d8d96735
+msgid "Embedding SSH keys"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:72
+# b4551a8639904b91a2f4b622acc29aff
+msgid "Using ``gluon-authorized-keys`` it is possible to embed predefined SSH public keys to firmware images. If ``gluon-config-mode-*`` is left out images will be ready to mesh after the first boot with SSH running for further configuration."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:78
+# d868ba8b52a341efbffc718a8030912a
+msgid "Status page resolves nodenames"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:80
+# f7cb39d315ab41e8ad5bb0b071f8284e
+msgid "The tools ``gluon-announced`` and ``gluon-neighbour-info`` are now available. Using them enables the status page to resolve hostnames and IPs of a nodes' neighbours."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:84
+# 6678990d0b244ad8bdb8dc591b529e2e
+msgid "This will also work on devices with multiple wireless interfaces."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:87
+# ab9fbb6425bb4675889447b451b95e5a
+msgid "Bugfixes"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:89
+# 147136baa1504193b413317687718dca
+msgid "Expert Mode: Fixed all SSH keys being removed when a password was set"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:90
+# 7f9c5ed4c8c0496a94e21ce0447a3993
+msgid "``gluon-mesh-vpn-fastd``: Fixed VPN peers removed from the ``site.conf`` not being removed from ``/etc/config/fastd``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:91
+# e51db5d3ead242569ad7e9d10612cae8
+msgid "TL-LINK TL-WDR3600/4300: Added workaround for reboot issues"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:92
+# cda726c5aed04338833cd3170f9a0f9d
+msgid "Improved stability (due to switch to OpenWrt Barrier Breaker)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:95
+# e34e129f69d94e099f7c9a5e4d1fe88f
+msgid "Site changes"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:96
+# c40ffa605eba4285b9ddfd827b6b8f5e
+msgid "``site.mk``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:98
+# 58e8844227ba4747bf6f31919588fb57
+msgid "Obsolete packages:"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:100
+# f62f329cd61b4ce8a526872a1f71827e
+msgid "``gluon-config-mode``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:101
+# e9b01e85ea6449e8b9dedd00d014cbdf
+msgid "``gluon-mesh-batman-adv``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:103
+# e3ba2fc8638641f8be770b7aa24165a9
+msgid "Recommended new packages:"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:105
+# 7f9452d79d9a4f48835624a84f7e3578
+msgid "``gluon-config-mode-autoupdater``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:106
+# 1b434cbf522e415f8337c6557652a1e1
+msgid "``gluon-config-mode-hostname``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:107
+# 34ecffeed8bd4bc6be87c2e3c5af3c81
+msgid "``gluon-config-mode-mesh-vpn``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:108
+# bb61c5a436864a0dae07584e415601c5
+msgid "``gluon-config-mode-geo-location``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:109
+# ed9a64c43e96431ebaa1a7249068aa5d
+msgid "``gluon-config-mode-contact-info``"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:110
+# ed528086410041ae9eaf332aa4827dfa
+msgid "``gluon-mesh-batman-adv-14`` (specify this before all other packages in the ``site.mk``!)"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:113
+# 60e58259371941529ae9eeeadccb65e1
+msgid "Internals"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:114
+# 660a76ed5c4345788c3ff2ff83251464
+msgid "The switch to Barrier Breaker has led to a multitude of changes all over Gluon:"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:116
+# aeb587ef40a0407aaf9ed022d4491d0b
+msgid "The config mode/setup mode is now started by an own set of init scripts in ``/lib/gluon/setup-mode/rc.d`` run by procd"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:117
+# 00a05850ecd04fcfb016298c1e459b93
+msgid "Many tools and services used by Gluon have been replaced by our own implementations to reduce the size of the images:"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:119
+# ce37fdfe96134300a0d27f82214396ff
+msgid "ethtool has been replaced by our minimal Lua library *lua-ethtool-stats*"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:120
+# ebb259737cea471dbe31261becf2b366
+msgid "tc has been replaced by our minimal implementation *gluon-simple-tc*"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:121
+# 3c0e1856515a4696875e1ed6ce24c1d9
+msgid "radvd has been replaced by our minimal implementation *gluon-radvd*"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:124
+# 8eb113eb6aa147d1ad5733b21315f24b
+msgid "Known Issues"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:127
+# ac68aa0d09c34881902955d752d9e61a
+msgid "Alfred crashes"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:129
+# d7454bceb51b498dad2de39b7b395252
+msgid "https://github.com/freifunk-gluon/gluon/issues/177"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:131
+# 809afe47f69045809392f212d108daca
+msgid "Alfred may still crash unconditionally. Some measures have been taken to aid but the core problem hasn't been analyzed yet."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:135
+# 203e48ba688c4e47ba78c602a6803428
+msgid "Out of memory / batman-adv memory leaks"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:137
+# b7c76839893247c1bf681db62669ed48
+msgid "https://github.com/freifunk-gluon/gluon/issues/216"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:139
+# 875c193cbf794c7c8a84a1fa96fa482c
+msgid "In some (hopefully rare!) cases batman-adv may still leak memory associated with global TT entries. This may result in kernel panics or out-of-memory conditions."
+msgstr ""
+
+#: ../../releases/v2014.4.rst:145
+# 043d1d786c8d4b55985f1a92998ee576
+msgid "Ignored tx-power offset on Ubiquiti AirMax devices"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:147
+# e638b4fd01cf48869976769d4f7cb576
+msgid "https://github.com/freifunk-gluon/gluon/issues/94"
+msgstr ""
+
+#: ../../releases/v2014.4.rst:149
+# a1fd4530be894acaafa9350c12622c5c
+msgid "There is still no OpenWRT support for determining the transmission power offsets on Ubiquiti AirMax devices (Bullet M2, Picostation M2, Nanostation (loco) M2, ...). Use Gluon with caution on these devices! Manual adjustment may be required."
+msgstr ""
+

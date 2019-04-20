@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../dev/web/config-mode.rst:2
+# 518a517d116940e6a85ac0430ac14c35
+msgid "Config Mode"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:4
+# 2087498cbcc644bd9bac8d7c5e1a197c
+msgid "The `Config Mode` consists of several modules that provide a range of different configuration options:"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:9
+# 9809bed230de4815b59fa6f9c8188973
+msgid "gluon-config-mode-core"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:8
+# b342740792de4857bb4a19a4c50e875c
+msgid "This modules provides the core functionality for the config mode. All modules must depend on it."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:12
+# 5dbf5cf0bd724111bf27f535fe959fdb
+msgid "gluon-config-mode-hostname"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:12
+# 78998f7a855d4721a423db9de6a94c9f
+msgid "Provides a hostname field."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:15
+# e8872422cb004907a808554f6f29dfe6
+msgid "gluon-config-mode-autoupdater"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:15
+# 289819f9c1604bffb03050ff8cf6e80c
+msgid "Informs whether the autoupdater is enabled."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:18
+# 5f95cf3c18e440bd8409baa1a14a4a5d
+msgid "gluon-config-mode-mesh-vpn"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:18
+# 3e0af2a694484c14979e0b54cecf362d
+msgid "Allows toggling of mesh-vpn-fastd and setting a bandwidth limit."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:21
+# ebdb5e4d6eda4945b2264cfad7f6688e
+msgid "gluon-config-mode-geo-location"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:21
+# 2b086d0bd59542849b843ea9e24f56cc
+msgid "Enables the user to set the geographical location of the node."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:25
+# b7acb4962cb04cb3ab6d91d0766eff85
+msgid "gluon-config-mode-contact-info"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:24
+# 41c89141c2ed4684b2177b6ca3e4ad42
+msgid "Adds a field where the user can provide contact information."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:28
+# 404fe9262bd34fa296b614c7d10ac7cf
+msgid "Writing Config Mode modules"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:30
+# d75bd15503684cda8856ba595d647673
+msgid "Config mode modules are located at ``/lib/gluon/config-mode/wizard`` and ``/lib/gluon/config-mode/reboot``. Modules are named like ``0000-name.lua`` and are executed in lexical order. In the standard package set, the order is, for wizard modules:"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:35
+# 73c4e15b427b40d399e2c8e5e91776af
+msgid "0050-autoupdater-info"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:36
+# 6e1430e77c374928923473654da5e851
+msgid "0100-hostname"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:37
+# 3b4e2e474ff44687acdc80b6a2e27d6b
+msgid "0300-mesh-vpn"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:38
+# 5dc092b26c4f49719562c97654f04917
+msgid "0400-geo-location"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:39
+# ae74d81f767f4b48b25da35a79638ae4
+msgid "0500-contact-info"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:41
+# 861fcf9fdbf040c5be656da09b2f89f6
+msgid "The reboot module order is:"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:43
+# 721f76fffe854c8098d57205f2978517
+msgid "0100-mesh-vpn"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:44
+# 96cc0cafab9846689c65766639b5277d
+msgid "0900-msg-reboot"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:46
+# 577081e01b4e4a7fbdfdb39f5e7a9f91
+msgid "All modules are run in the gluon-web model context and have access to the same variables as \"full\" gluon-web modules."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:50
+# 1df2801100b94f01a395e1cd1ce8ea31
+msgid "Wizards"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:52
+# 70851b493c524b4ebc04475b6b6333a6
+msgid "Wizard modules must return a function that is provided with the wizard form and an UCI cursor. The function can create configuration sections in the form:"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:70
+# 85d59996bd9b42b1870638ef2fd0fcb0
+msgid "The function may return a table of UCI packages to commit after the individual fields' `write` methods have been executed. This is done to avoid committing the packages repeatedly when multiple wizard modules modify the same package."
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:75
+# bbcbf574b00145dda7a92769d6afa91d
+msgid "Reboot page"
+msgstr ""
+
+#: ../../dev/web/config-mode.rst:77
+# 4bf4d1b7f6da426cb4182bbb0719cfbc
+msgid "Reboot modules are simply executed when the reboot page is rendered:"
+msgstr ""
+

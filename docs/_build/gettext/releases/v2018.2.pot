@@ -1,0 +1,327 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 16:46-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../releases/v2018.2.rst:2
+# 64c7816d87cb42e183641bbe6024fa4e
+msgid "Gluon 2018.2"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:4
+# 5c7c0738743d4ab9bdcff7696bd65f66
+msgid "OpenWrt has been updated to the new major release 18.06.x. Depending on the target, this includes the Linux kernel 4.9.146 or 4.14.89."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:7
+# 0fb736967cb947f1bada66a023c03005
+msgid "The new OpenWrt release introduces a dependency on GNU time. On Debian/Ubuntu, this can be found in the package *time*. The shell builtin *time*, which is available by default, is not sufficient."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:12
+# de6f58b3a9604a609a5e337b46f29a44
+msgid "Added hardware support"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:15
+# d455e6dd52e449ce96daa6d0eed5ded7
+msgid "ar71xx-generic"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:17
+#: ../../releases/v2018.2.rst:42
+# c20b17be35ed4b71910ff6d0a6bd42f3
+# c5c1c373e52d4826955d2b42eae11fd3
+msgid "AVM"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:19
+# ab78ba179f134f9094674e901ec30755
+msgid "Fritz!WLAN Repeater 450E"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:21
+# 5884076488bf4b03a6789374c41df2a8
+msgid "OCEDO"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:23
+# c284ea8cab2849ac882f12fc167e011f
+msgid "Koala"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:25
+# f5d2515c84f14873bc1378fd2e9df5c3
+msgid "TP-Link"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:27
+# 19ab9add0f504b9ea22e15ad1edaa4eb
+msgid "Archer C7 v5"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:28
+# a6a505d7476343f59283104efb8cde46
+msgid "TL-WR810N v1"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:30
+# f9201b55b7bd4c47b88adc2aeb1c93ab
+msgid "Ubiquiti"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:32
+# d4dc91e978554bdfb18361c9598439b9
+msgid "UniFi AC Mesh Pro"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:34
+#: ../../releases/v2018.2.rst:60
+# 5d696d6db6c74314a422443cd1132e16
+# d4e6c94072f842eda2068775f6e5cf20
+msgid "ZyXEL"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:36
+# f51290315a1f489bbaa2ca945ec62f8b
+msgid "NBG6616"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:40
+# d81842d302844a728b15c4825edf1866
+msgid "ipq40xx [#newtarget]_ [#noibss]_"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:44
+# 6fc4ee3515534284992476463a53816f
+msgid "FRITZ!Box 4040"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:46
+# 8e64650589114ac5b24ee32d03c5e942
+msgid "GL.iNet"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:48
+# 6976660fdb9f4af4a5f629227e00d382
+msgid "GL-B1300"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:50
+# 4d9db1a492c4438593b98847752e2cf2
+msgid "NETGEAR"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:52
+# b5ca8d91405f48a995bda341b3be9f32
+msgid "EX6100v2"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:53
+# 9abaf4feee0e421a88275d6620b87948
+msgid "EX6150v2"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:55
+# c2a669e3b0d142c7837b83be1ee5d696
+msgid "OpenMesh"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:57
+# 1d5a727856624cd993b318217d640aa1
+msgid "A42"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:58
+# 20e5d352e06243159bd217142fd2648d
+msgid "A62"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:62
+# dcbacaba423a42f29bb48651f2f7a19f
+msgid "NBG6617"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:63
+# 3b609d62ab2d4936b27ec1e117d72fc6
+msgid "WRE6606"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:66
+# 345445cd64dd4e4bb4a96aaf97364420
+msgid "ramips-mt7621 [#noibss]_"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:68
+# 2b4b2337f779432fa69b3679ccbd0c15
+msgid "D-Link"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:70
+# 739c4b35e39847c29175b43246b2c866
+msgid "DIR-860L B1"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:72
+# 4ccc700d6f9e44699ffb12b66082b951
+msgid "ZBT"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:74
+# 9b1c812186244f75b79473ea5cd62c9a
+msgid "WG3526-16M"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:75
+# 086c9528326e4d87a65e9aaf1847a449
+msgid "WG3526-32M"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:78
+# 5eb72a278b45424189eeb56dac9e6d55
+msgid "New target"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:81
+# 3c6afd38e0b24d239e77f79c5cd76e59
+msgid "AP+IBSS mode unsupported: This target is not built when *GLUON_WLAN_MESH* is set to ``ibss``."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:86
+# 6de27ec028eb472ebf0714f5151a4fe0
+msgid "The *ramips-mt7628* target has been renamed to *ramips-mt76x8*, and the *sunxi* target has been renamed to *sunxi-cortexa7*. You might have to update your build scripts accordingly."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:91
+# 283f02227306453e8dc88dab954d22cb
+msgid "New features"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:93
+# e6b9fc2fe6334519bd148335199922b2
+msgid "Besides many smaller improvements and optimizations, we'd like to highlight the following larger new features:"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:97
+# e8e863b620ee47ae8210320ee4566217
+msgid "OpenStreetMap-based map in config wizard"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:99
+# edab935b38bd422fbbfbf97bb0c51d29
+msgid "When the feature *config-mode-geo-location-osm* (package *gluon-config-mode-geo-location-osm*) is enabled, the configuration wizard will try to load an OSM-based map to allow the user to specify the node location. Loading the map requires a working internet connection, for example via WLAN (while connected to the Gluon node via Ethernet)."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:105
+# 8de62da8ad8a43999bc4b6212d4b0d51
+msgid "See the :ref:`config_mode <user-site-config_mode>` section for the *site.conf* configuration of this feature."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:109
+# 020d8a2681d9415e868c57ba9415ba79
+msgid "Experimental support for the Babel mesh routing protocol"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:111
+# b117a4414c0b4af0bf42e16a9146eb23
+msgid "As the layer-2 based routing protocol batman-adv does not scale well in large mesh networks, we are experimenting with alternatives. Babel is a promising layer-3 mesh routing protocol, which might become the recommended protocol in a future version of Gluon."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:116
+# b4a0a4d5f6fd4fd2b52ca0d00e9536a7
+msgid "Use the feature flag *mesh-babel* for Babel. Note that our Babel support is still **experimental** and not ready for production. If you are interested in trying it out, please contact us on our mailing list or in our IRC channel."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:121
+# 95516b29c63e44fc84c245b4ef9d510e
+msgid "gluon-ebtables-limit-arp enabled by default"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:123
+# caf4765335644381b704b5d857f005dd
+msgid "The :doc:`../package/gluon-ebtables-limit-arp` package, introduced in Gluon 2018.1, is now included by default. In case of issues, it can be removed by adding ``-gluon-ebtables-limit-arp`` to *GLUON_SITE_PACKAGES*."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:128
+# f6515b537e074b8fba20649eb5f60465
+msgid "Site changes"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:130
+# df520433a2754e30a1fbf67e125116fd
+msgid "If an opkg repository for ``lede`` was configured the key needs to be migrated to ``openwrt``. ``lede`` is ignored and without an ``openwrt`` key the default OpenWrt repository is used."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:134
+# efc968625bd7451894470a5f630b5f5d
+msgid "No other changes need to be made to *site.conf* or *site.mk* when upgrading from Gluon v2018.1.x."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:138
+# 709980a885554ab19bc7e14e07794c7b
+msgid "Internals"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:140
+# 1ac55caaae844a5ebfd31c20e89a7b95
+msgid "We have switched from LuCI's *nixio* library to the more actively developed *luaposix*"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:144
+# 1802baf48fa1464a83388eaa148df2f0
+msgid "Known issues"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:146
+# 05176d0bc5b04924b9d4cdce7bc891dc
+msgid "Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:149
+# 270db6fc919f45ceb24e22afaa4b1f6f
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:151
+# 0c6d01321505411ea5361ac7bd577985
+msgid "The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:154
+# 2dbe7069e535405db45dd01e0e9f84b3
+msgid "This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:157
+# 72c55872304747a28ce77f11517ad072
+msgid "Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:160
+# c47687e823d74101af47d793786d9dbc
+msgid "The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while."
+msgstr ""
+
+#: ../../releases/v2018.2.rst:163
+# 381b43dcc03348089927b903b8d50047
+msgid "Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware specially in larger meshes (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+#: ../../releases/v2018.2.rst:167
+# 7bf464b944e64aa4ae58f2c2d6a9fccd
+msgid "Optimizations in Gluon 2018.1 have significantly improved memory usage. There are still known bugs leading to unreasonably high load that we hope to solve in future releases."
+msgstr ""
+
