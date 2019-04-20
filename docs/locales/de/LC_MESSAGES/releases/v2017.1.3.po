@@ -1,0 +1,168 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# fad58d06642e46899bebae7b6663fb98
+#: ../../releases/v2017.1.3.rst:2
+msgid "Gluon 2017.1.3"
+msgstr ""
+
+# 7248df6a8b014a6ba3d7f9c2f6a94551
+#: ../../releases/v2017.1.3.rst:4
+msgid ""
+"The LEDE base of Gluon has been updated to v17.01.3, including various "
+"updates, stability improvements and security fixes. This includes some "
+"critical fixes to core packages like dnsmasq (see below for details); "
+"upgrading all Gluon nodes to v2017.1.3 is highly recommended."
+msgstr ""
+
+# 1dee22372ff34ec3828850948de0935f
+#: ../../releases/v2017.1.3.rst:11
+msgid "Bugfixes"
+msgstr ""
+
+# a76d3d0a22a743d7b2a0f097bc626187
+#: ../../releases/v2017.1.3.rst:13
+msgid ""
+"dnsmasq has been upgraded to v2.78, fixing CVE-2017-13704, "
+"CVE-2017-14491, CVE-2017-14492, CVE-2017-14493, CVE-2017-14494, "
+"2017-CVE-14495 and 2017-CVE-14496"
+msgstr ""
+
+# 3918d8e2b8a0497bb49456512e5aeaf4
+#: ../../releases/v2017.1.3.rst:17
+msgid ""
+"While many of the most severe (remote code execution) vulnerabilities are"
+" in the DHCP component of dnsmasq, which is not active on a Gluon node "
+"unless in Config Mode, CVE-2017-14491 does affect us. An attacker can "
+"cause memory corruption and possibly remote code execution by deploying a"
+" malicious DNS server and tricking a node into querying this server."
+msgstr ""
+
+# 01e887db1a5f4be1a1124c0deba5734b
+#: ../../releases/v2017.1.3.rst:23
+msgid "The Linux kernel has been upgraded to v4.4.89"
+msgstr ""
+
+# 333838accad349df9dc90ae3c14a2cb9
+#: ../../releases/v2017.1.3.rst:25
+msgid ""
+"Multiple security issues have been fixed in packages that are not usually"
+" part of the Gluon build, including tcpdump, curl and mbedtls"
+msgstr ""
+
+# 1db58cbe25b34aecaddd09edfb34fac8
+#: ../../releases/v2017.1.3.rst:28
+msgid ""
+"Please refer to the `LEDE commit log "
+"<https://git.openwrt.org/?p=openwrt/openwrt.git;a=shortlog;h=refs/heads/lede-17.01>`_"
+" for details."
+msgstr ""
+
+# 3af9f30b4a824974a365c4ab60ccbe63
+#: ../../releases/v2017.1.3.rst:32
+msgid ""
+"Filtering of multicast packets between the mesh and the *local-node* "
+"interface has been fixed (`#1230 <https://github.com/freifunk-"
+"gluon/gluon/issues/1230>`_)"
+msgstr ""
+
+# b413b73a64824f2d8a0ffd161a309ce9
+#: ../../releases/v2017.1.3.rst:35
+msgid ""
+"This issue was causing gluon-radvd to send a router advertisement to the "
+"local clients whenever a router solicitation from the mesh was received. "
+"In busy meshes, it would continuously send router advertisements every 3 "
+"seconds."
+msgstr ""
+
+# 200063caa76144a1b740c41470b4f702
+#: ../../releases/v2017.1.3.rst:39
+msgid ""
+"Reject autoupdater mirror URLs not starting with ``http://`` during build"
+" (`9ab93992d1fc <https://github.com/freifunk-"
+"gluon/gluon/commit/9ab93992d1fca1b9cfa09c54d39cc92d3699055a>`_)"
+msgstr ""
+
+# 02621f006ac24a5ebd3f2862ec552e19
+#: ../../releases/v2017.1.3.rst:42
+msgid ""
+"Fix MAC addresses on TP-Link TL-WR1043ND v4 when installing Gluon over "
+"newer stock firmwares (`#1223 <https://github.com/freifunk-"
+"gluon/gluon/issues/1223>`_)"
+msgstr ""
+
+# 6b75f85a60a742b896dc7655a9f9a50f
+#: ../../releases/v2017.1.3.rst:47
+msgid "Known issues"
+msgstr ""
+
+# 90b2ef99656441fcb79c76e809a3deea
+#: ../../releases/v2017.1.3.rst:49
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 4dc9f2c358004a11b2356097a421e8dc
+#: ../../releases/v2017.1.3.rst:51
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# f59e5b1006cd40d0974eab5ce1cc49ab
+#: ../../releases/v2017.1.3.rst:53
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# ee446ebd705e4f51baa43702738c6793
+#: ../../releases/v2017.1.3.rst:55
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# bb2619f11fd344868e6fc1d382af0f15
+#: ../../releases/v2017.1.3.rst:57
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 4cd05866f2ac4e86aaead09e6d26f6e9
+#: ../../releases/v2017.1.3.rst:59
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 98c7c464aea245849027d87fc74822b3
+#: ../../releases/v2017.1.3.rst:61
+msgid ""
+"Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx "
+"(`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)"
+msgstr ""
+
+# 061094ac459642beab7a4e5524480df1
+#: ../../releases/v2017.1.3.rst:64
+msgid ""
+"The workaround added in Gluon v2017.1.1 has greatly reduced the frequency"
+" of segfaults, but did not make them disappear completely."
+msgstr ""
+

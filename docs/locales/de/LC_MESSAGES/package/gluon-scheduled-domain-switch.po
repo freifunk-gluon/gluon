@@ -1,0 +1,110 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 8b630ff8357342a99e97d9276901ac20
+#: ../../package/gluon-scheduled-domain-switch.rst:2
+msgid "gluon-scheduled-domain-switch"
+msgstr ""
+
+# c1902d3feb2948978d446515e0007376
+#: ../../package/gluon-scheduled-domain-switch.rst:4
+msgid ""
+"This package allows to switch a routers domain at a given point in time. "
+"This is needed for switching between incompatible transport protocols "
+"(e.g. 802.11s and IBSS or VXLAN)."
+msgstr ""
+
+# b720b9e78ccd460cba5407b1b6434534
+#: ../../package/gluon-scheduled-domain-switch.rst:8
+msgid ""
+"Nodes will switch when the defined *switch-time* has passed. In case the "
+"node was powered off while this was supposed to happen, it might not be "
+"able to acquire the correct time. In this case, the node will switch "
+"after it has not seen any gateway for a given period of time."
+msgstr ""
+
+# 754d46ed4d224501adc48232d17de805
+#: ../../package/gluon-scheduled-domain-switch.rst:14
+msgid "site.conf"
+msgstr ""
+
+# 7de93ef0dce5454f98596d37aebc6e38
+#: ../../package/gluon-scheduled-domain-switch.rst:15
+msgid ""
+"All those settings have to be defined exclusively in the domain, not the "
+"site."
+msgstr ""
+
+# dc6e1cbdbf50444aa508fb5300f6695b
+#: ../../package/gluon-scheduled-domain-switch.rst:26
+msgid "domain_switch"
+msgstr ""
+
+# 5220f46d4b9c4589859d4eda2a44e8ca
+#: ../../package/gluon-scheduled-domain-switch.rst:25
+msgid "optional (needed for domains to switch)"
+msgstr ""
+
+# ccc019ea05d143da81191aeae238c87b
+#: ../../package/gluon-scheduled-domain-switch.rst:18
+msgid "target_domain :"
+msgstr ""
+
+# 5be9b96804c643b1b5e1b5dde0263fee
+#: ../../package/gluon-scheduled-domain-switch.rst:19
+msgid "target domain to switch to"
+msgstr ""
+
+# 4879c6cc12834cc182149747282d5e83
+#: ../../package/gluon-scheduled-domain-switch.rst:20
+msgid "switch_after_offline_mins :"
+msgstr ""
+
+# 3d1f2cf8aeb54b97b01c26d43005c602
+#: ../../package/gluon-scheduled-domain-switch.rst:21
+msgid "amount of time without reachable gateway to switch unconditionally"
+msgstr ""
+
+# 22dd314d687d4860889a023ca8f1d6e1
+#: ../../package/gluon-scheduled-domain-switch.rst:22
+msgid "switch_time :"
+msgstr ""
+
+# 1435e173385d4d45914bb7501c18dc2c
+#: ../../package/gluon-scheduled-domain-switch.rst:23
+msgid "UNIX epoch after which domain will be switched"
+msgstr ""
+
+# 48cab3a6e1b0464195eb0d6c29174b5b
+#: ../../package/gluon-scheduled-domain-switch.rst:26
+msgid "connection_check_targets :"
+msgstr ""
+
+# 6f9223c72ffb4b95acabe83eee5d49ae
+#: ../../package/gluon-scheduled-domain-switch.rst:25
+msgid ""
+"array of IPv6 addresses which are probed to determine if the node is "
+"connected to the mesh"
+msgstr ""
+
+# c2ff21dab11a4399b220bfd101724e55
+#: ../../package/gluon-scheduled-domain-switch.rst:28
+msgid "Example::"
+msgstr ""
+

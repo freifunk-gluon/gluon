@@ -1,0 +1,180 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# a33acfc9b81940afa2f60889dad90170
+#: ../../releases/v2017.1.8.rst:2
+msgid "Gluon 2017.1.8"
+msgstr ""
+
+# 5c04ac09d7ea490b8a76095f63e1388a
+#: ../../releases/v2017.1.8.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# 353a1e15e30b4d038cc768b9ad57c11b
+#: ../../releases/v2017.1.8.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# ba755f9487b346218a3add90b8257f51
+#: ../../releases/v2017.1.8.rst:10
+msgid "GL.iNet GL-AR750"
+msgstr ""
+
+# 9fb2abd1d60b45e0b8c6bddc33472ded
+#: ../../releases/v2017.1.8.rst:11
+msgid "TP-Link Archer C7 v4"
+msgstr ""
+
+# 6437dec7c4fc42e2a03b16a05bad9d5a
+#: ../../releases/v2017.1.8.rst:12
+msgid "Ubiquiti UniFi AC Mesh"
+msgstr ""
+
+# e37a8dccfb93440b8afcac4c0b614a5a
+#: ../../releases/v2017.1.8.rst:15
+msgid "ar71xx-tiny"
+msgstr ""
+
+# ba6fe5991e4e43ecb5fc6c1be6168cfc
+#: ../../releases/v2017.1.8.rst:17
+msgid "TP-Link TL-WR940N v6"
+msgstr ""
+
+# 0762162c5d8d45bca9e901ac5fd17793
+#: ../../releases/v2017.1.8.rst:21
+msgid "Bugfixes"
+msgstr ""
+
+# 6942e52359a341539facdcbbc604e8b3
+#: ../../releases/v2017.1.8.rst:23
+msgid ""
+"Fix refcounting issue in batman-adv leading to hangs on interface "
+"restarts (`#1258 <https://github.com/freifunk-gluon/gluon/issues/1258>`_)"
+msgstr ""
+
+# c48b4e006a524f3ebc9cf16f654a66fd
+#: ../../releases/v2017.1.8.rst:26
+msgid "This fix applied to both batman-adv compat 14 (legacy) and 15."
+msgstr ""
+
+# 2d098f75a25543e7be20bbbf6161eabf
+#: ../../releases/v2017.1.8.rst:28
+msgid ""
+"Various batman-adv bugfixes have been backported (`f5b3c0c3bc7e "
+"<https://github.com/freifunk-"
+"gluon/gluon/commit/f5b3c0c3bc7e795b4b544cbaa49e9c6ca7581ce9>`_ and "
+"`5947ba300e50 <https://github.com/freifunk-"
+"gluon/gluon/commit/5947ba300e50726a8af38fb115b834172780ab26>`_, fixing "
+"`#1321 <https://github.com/freifunk-gluon/gluon/issues/1321>`_, `#1380 "
+"<https://github.com/freifunk-gluon/gluon/issues/1380>`_, `#1382 "
+"<https://github.com/freifunk-gluon/gluon/issues/1382>`_, `#1419 "
+"<https://github.com/freifunk-gluon/gluon/issues/1419>`_ and a number of "
+"other minor issues)"
+msgstr ""
+
+# 8b9f0c80e963466dbee7938c7621322e
+#: ../../releases/v2017.1.8.rst:38
+msgid ""
+"The listed bugs could lead to high rates of batman-adv management traffic"
+" (causing considerable load), trigger warnings about packet checksum "
+"failures in certain non-standard interface configurations, and possibly "
+"other issues."
+msgstr ""
+
+# 90e89574e850451ebbcff25e03cf3e92
+#: ../../releases/v2017.1.8.rst:44
+msgid "Other changes"
+msgstr ""
+
+# a4a1c0ee5e914c93870a1e91a912d605
+#: ../../releases/v2017.1.8.rst:46
+msgid ""
+"Linux kernel has been updated to v4.4.129 (LEDE/`81573ea25924 "
+"<https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=81573ea259247f1c6c1a7a490de174d0a6c48a64>`_)"
+msgstr ""
+
+# 672ed44bd6804af092f9db0539ff4a53
+#: ../../releases/v2017.1.8.rst:48
+msgid ""
+"The description of the \"contact information\" field in the configuration"
+" wizard has been extended with regard to the EU General Data Protection "
+"Regulation (GDPR) (`fd355cf0ef7b <https://github.com/freifunk-"
+"gluon/gluon/commit/fd355cf0ef7ba0d1c9137bfb8fd76e87ad5d1aba>`_)"
+msgstr ""
+
+# 6dc3c069e3c54933a32a6ae612f91592
+#: ../../releases/v2017.1.8.rst:52
+msgid ""
+"The *mandatory* site option for the contact information field has been "
+"removed."
+msgstr ""
+
+# 54797ec8f55e452db2dfcf31be7e84d9
+#: ../../releases/v2017.1.8.rst:56
+msgid "Known issues"
+msgstr ""
+
+# 2f6e1c5f9ad64e9dace8414d587914d9
+#: ../../releases/v2017.1.8.rst:58
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 824b56babf0144f3bd6046918500961c
+#: ../../releases/v2017.1.8.rst:60
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 612be1c5acb348bc92d3e81a0e3aa9d1
+#: ../../releases/v2017.1.8.rst:62
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# c5d39747660a496b8695e528d028356e
+#: ../../releases/v2017.1.8.rst:64
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 698cc6f3979843a097c2d96798b0e169
+#: ../../releases/v2017.1.8.rst:66
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# df08a9b52ad54fa498eeae7e0e78857b
+#: ../../releases/v2017.1.8.rst:68
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 5ecc8321c5914a86b4c740aaf8e83e62
+#: ../../releases/v2017.1.8.rst:70
+msgid ""
+"Frequent reboots due to out-of-memory on weak hardware in larger meshes "
+"(`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+

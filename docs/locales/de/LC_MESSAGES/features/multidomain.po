@@ -1,0 +1,599 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 0ef6f837661347ad8d691ca4a36f46d8
+#: ../../features/multidomain.rst:2
+msgid "Multidomain Support"
+msgstr ""
+
+# 97bb8db90b0340f0bb10db29b0c5e3f7
+#: ../../features/multidomain.rst:5
+msgid "Preamble"
+msgstr ""
+
+# 544557e258fd4d8d8fd1a25006f2b950
+#: ../../features/multidomain.rst:7
+msgid ""
+"There comes a time when a mesh network grows past sensible boundaries. As"
+" broadcast traffic grows, mesh networks experience scaling issues and "
+"using them becomes very unpleasant. An approach to solve this follows the"
+" well-known “divide and conquer” paradigm and splits a large network into"
+" multiple smaller networks. These smaller networks start with a dedicated"
+" layer 2 network each, which are interconnected via their gateways by "
+"layer 3 routing. Gluon is already field-tested handling a single domain "
+"and the multidomain feature allows for the reconfiguration of key "
+"parameters that decide which domain a node participates in, without the "
+"need of a distinct set of firmware images for each mesh domain."
+msgstr ""
+
+# 432f44f8f73044aba719b57a8ef50ef3
+#: ../../features/multidomain.rst:19
+msgid "Overview"
+msgstr ""
+
+# 7a6064a456894b9dbbd10113d13b25f3
+#: ../../features/multidomain.rst:21
+msgid ""
+"Multidomain support allows to build a single firmware with multiple, "
+"switchable domain configurations. The nomenclature is as follows:"
+msgstr ""
+
+# d412d10e978e4e28991f760b1adae721
+#: ../../features/multidomain.rst:24
+msgid "``site``: an aggregate over multiple domains"
+msgstr ""
+
+# ef3164a0688b49f5bf33298c581a7e75
+#: ../../features/multidomain.rst:25
+msgid ""
+"``domain``: mesh network with connectivity parameters that prevent "
+"accidental bridging with other domains"
+msgstr ""
+
+# d0baef011bc0448f83c76a5c29c5d240
+#: ../../features/multidomain.rst:27
+msgid "``domain code``: unique domain identifier"
+msgstr ""
+
+# 17a04218adff40feac72d0e21b183f27
+#: ../../features/multidomain.rst:28
+msgid "``domain name``: pretty name for a domain code"
+msgstr ""
+
+# 191bbba80c754383bac361c08bc9ef94
+#: ../../features/multidomain.rst:30
+msgid ""
+"By default Gluon builds firmware with a single domain embedded into "
+"``site.conf``. To use multiple domains, enable it in ``site.mk``:"
+msgstr ""
+
+# bb64d25bc35b4bacbf83ef452f65e0d9
+#: ../../features/multidomain.rst:37
+msgid ""
+"In the site repository, create the ``domains/`` directory, which will "
+"hold your domain configurations. Each domain configuration file is named "
+"after its primary ``domain_code``, additional domain codes and names are "
+"supported."
+msgstr ""
+
+# 57aaa9fe121d4594b46669b36dc0b6ba
+#: ../../features/multidomain.rst:53
+msgid "The domain configuration ``alpha_centauri.conf`` could look like this."
+msgstr ""
+
+# 65e63915a1a14495b12a601a2f45ffe5
+#: ../../features/multidomain.rst:65
+msgid ""
+"In this example “Alpha Centauri” is the user-visible ``domain_name`` for "
+"the domain_code ``alpha_centauri``. Also note that the domain code "
+"``alpha_centauri`` matches the filename ``alpha_centauri.conf``."
+msgstr ""
+
+# 25f0c376dcf94b9cb07a71f478640dab
+#: ../../features/multidomain.rst:69
+msgid ""
+"Additional domain codes/names can be added to ``domain_names``, which are"
+" treated as aliases for the their domain configuration. Aliases can be "
+"used to offer more fine-grained and well-recognizable domain choices to "
+"users. Having multiple aliases on a single domain is a helpful precursor "
+"to splitting the domain into even smaller blocks."
+msgstr ""
+
+# d537daa153e04939a33a3389fa42f3e2
+#: ../../features/multidomain.rst:75
+msgid ""
+"Furthermore you have to specify the ``default_domain`` in the "
+"``site.conf``. This domain is applied in following cases:"
+msgstr ""
+
+# 5d33209589834936942f8d134112796e
+#: ../../features/multidomain.rst:78
+msgid "When the config mode is skipped."
+msgstr ""
+
+# 01b5aa5b012d4e3fba859dbcaea7fad1
+#: ../../features/multidomain.rst:79
+msgid ""
+"When a domain is removed in a new firmware release, the default_domain "
+"will be chosen then."
+msgstr ""
+
+# dd1e09cb139949169b6a85394243d13b
+#: ../../features/multidomain.rst:81
+msgid "When a user selects a wrong domain code via uci."
+msgstr ""
+
+# 42b5556ca90e422695910397889eb7e7
+#: ../../features/multidomain.rst:83
+msgid ""
+"Please note, that this value is saved to uci, so changing the "
+"`default_domain` value in the `site.conf` in a new firmware release only "
+"affects the actual domain of a router, if and only if one of the above "
+"conditions matches."
+msgstr ""
+
+# 80dc6212b0bd4d4d9b0bfe6cde7b8e45
+#: ../../features/multidomain.rst:89
+msgid "Switching the domain"
+msgstr ""
+
+# b4821d10670e4210b318ce9217fa8d98
+#: ../../features/multidomain.rst:91
+msgid "**via commandline**:"
+msgstr ""
+
+# 68a6fa1a23f4471781e9e67076af6b18
+#: ../../features/multidomain.rst:99
+msgid "**via config mode:**"
+msgstr ""
+
+# 61c86c637be246ee97d937bdc12c1b08
+#: ../../features/multidomain.rst:101
+msgid ""
+"To allow switching the domain via config mode, ``config-mode-domain-"
+"select`` has to be added to GLUON_FEATURES in the site.mk."
+msgstr ""
+
+# 81ec5cb794e4492db38b188d86863db7
+#: ../../features/multidomain.rst:104
+msgid "|image0|"
+msgstr ""
+
+# b272113ef85f423483c1066292e3a641
+#: ../../features/multidomain.rst:107
+msgid "Allowed site variables"
+msgstr ""
+
+# 753c8a78d31646159963630ac0c9de4a
+#: ../../features/multidomain.rst:109
+msgid ""
+"Internally the site variables are merged from the ``site.conf`` and the "
+"selected ``domain.conf``, so the most variables are also allowed in "
+"``site.conf`` and in ``domain.conf``. But there are some exceptions, "
+"which do not make sense in a domain or site specific way. The following "
+"sections give an overview over variables that are only usable in either "
+"site or domain context."
+msgstr ""
+
+# f88db7b3b9d943cf8683fd86dffa5c0f
+#: ../../features/multidomain.rst:117
+msgid "site.conf only variables"
+msgstr ""
+
+# 4dbfef051157410c910159120dffec73
+#: ../../features/multidomain.rst:119
+msgid ""
+"Used in as initial default values, when the firmware was just flashed "
+"and/or the config mode is skipped, so they do not make sense in a domain "
+"specific way:"
+msgstr ""
+
+# 61bcd92a64504fd996788520906dea3a
+#: ../../features/multidomain.rst:123
+msgid "authorized_keys"
+msgstr ""
+
+# 4706f9fd3f8e4c2783741ceca168c6dd
+#: ../../features/multidomain.rst:124
+msgid "default_domain"
+msgstr ""
+
+# 02ceb4f3f68b4314a6a532dcd5c14a31
+#: ../../features/multidomain.rst:125
+msgid "poe_passthrough"
+msgstr ""
+
+# 35162991c78a47eeb88f01c0370ba2b0
+#: ../../features/multidomain.rst:126
+msgid "mesh_on_wan"
+msgstr ""
+
+# aaedafd167ee468883a76fcf6fe9e80f
+#: ../../features/multidomain.rst:127
+msgid "mesh_on_lan"
+msgstr ""
+
+# 115a549485514185b329d4598840ef1c
+#: ../../features/multidomain.rst:128
+msgid "single_as_lan"
+msgstr ""
+
+# f703f83dfed8445c83a6fd8f26242b54
+#: ../../features/multidomain.rst:129
+msgid "setup_mode.skip"
+msgstr ""
+
+# 1bd8a1a2e3c4482c9666efd2adc4b3e9
+#: ../../features/multidomain.rst:130
+msgid "autoupdater.branch"
+msgstr ""
+
+# 1608401b35264d2c8cc7e155644076c3
+#: ../../features/multidomain.rst:131
+msgid "mesh_vpn.enabled"
+msgstr ""
+
+# 8712db0dd74c4d23b81f9c4841073fd8
+#: ../../features/multidomain.rst:132
+msgid "mesh_vpn.pubkey_privacy"
+msgstr ""
+
+# b9b3b8901410438395a2954d37062852
+#: ../../features/multidomain.rst:133
+msgid "mesh_vpn.bandwidth_limit"
+msgstr ""
+
+# df32a1747027417ab6fa26beb18d2025
+#: ../../features/multidomain.rst:134
+msgid "mesh_vpn.bandwidth_limit.enabled"
+msgstr ""
+
+# c0b7e3fee1ce4eb08bbad45291a311c7
+#: ../../features/multidomain.rst:135
+msgid "mesh_vpn.bandwidth_limit.ingress"
+msgstr ""
+
+# 6046521a23be4d3bb038c8bbc4da2ea5
+#: ../../features/multidomain.rst:136
+msgid "mesh_vpn.bandwidth_limit.egress"
+msgstr ""
+
+# 0428c144545f47b7bf23df3170f7d422
+#: ../../features/multidomain.rst:138
+msgid ""
+"Variables that influence the appearance of the config mode, domain-"
+"independent because they are relevant before a domain was selected."
+msgstr ""
+
+# 2618da30f5de4cb49b1103bbf735e4df
+#: ../../features/multidomain.rst:141
+msgid "config_mode.geo_location.show_altitude"
+msgstr ""
+
+# c241886ad4904e608aba4b71760e4e6a
+#: ../../features/multidomain.rst:142
+msgid "config_mode.hostname.optional"
+msgstr ""
+
+# 53fdbb4a5f894d7e88fd183bb4379442
+#: ../../features/multidomain.rst:143
+msgid "config_mode.remote_login"
+msgstr ""
+
+# f976a2cc15694072b82e4be2b6e37656
+#: ../../features/multidomain.rst:144
+msgid "config_mode.remote_login.show_password_form"
+msgstr ""
+
+# 1e3088d71573458083c4b8de448a9059
+#: ../../features/multidomain.rst:145
+msgid "config_mode.remote_login.min_password_length"
+msgstr ""
+
+# 6ef3ad28fd4a4f529e832bd422a37308
+#: ../../features/multidomain.rst:146
+msgid "hostname_prefix"
+msgstr ""
+
+# 676c8c141c6442cd873c2c7287d40c65
+#: ../../features/multidomain.rst:147
+msgid "mesh_vpn.fastd.configurable"
+msgstr ""
+
+# c4945f6f1ab74679b18593f69bb0c06d
+#: ../../features/multidomain.rst:148
+msgid "roles.default"
+msgstr ""
+
+# ad302c95eeb341978aa8ba7fee492487
+#: ../../features/multidomain.rst:149
+msgid "roles.list"
+msgstr ""
+
+# 39c51e38db4642949709de0c67b2a7c7
+#: ../../features/multidomain.rst:151
+msgid "Specific to a firmware build itself:"
+msgstr ""
+
+# c285cc5dd4c04015b583efaba2c71dd8
+#: ../../features/multidomain.rst:153
+msgid "site_code"
+msgstr ""
+
+# e33bb749657d448fac589f8a87ebed3a
+#: ../../features/multidomain.rst:154
+msgid "site_name"
+msgstr ""
+
+# 4e02d44f82aa4b3eaa7b24b5baa18699
+#: ../../features/multidomain.rst:155
+msgid "autoupdater.branches.*.name"
+msgstr ""
+
+# 32cc0e6ba4e640d0a14a78ae8befd584
+#: ../../features/multidomain.rst:156
+msgid "autoupdater.branches.*.good_signatures"
+msgstr ""
+
+# f8caa3734d7f4c2fb750bfce549ade75
+#: ../../features/multidomain.rst:157
+msgid "autoupdater.branches.*.pubkeys"
+msgstr ""
+
+# 48023d6205e94241bced5915a36c2ab2
+#: ../../features/multidomain.rst:159
+msgid ""
+"We simply do not see any reason, why these variables could be helpful in "
+"a domain specific way:"
+msgstr ""
+
+# 73f8db5112064a3eb738a0e84c2bc572
+#: ../../features/multidomain.rst:162
+msgid "mesh_vpn.fastd.syslog_level"
+msgstr ""
+
+# 6540a84a24c3406296a19ce97699a408
+#: ../../features/multidomain.rst:163
+msgid "wifi*.supported_rates"
+msgstr ""
+
+# a461d5685b04435c9d82bfc26270b3f3
+#: ../../features/multidomain.rst:164
+msgid "wifi*.basic_rate"
+msgstr ""
+
+# e08f0e76b70c49b38110c2784aea2b47
+#: ../../features/multidomain.rst:165
+msgid "timezone"
+msgstr ""
+
+# f2c29f0399954c00b9f19e2aee849115
+#: ../../features/multidomain.rst:166
+msgid "regdom"
+msgstr ""
+
+# 1e597ff635084eb28b04d736ae12bb8f
+#: ../../features/multidomain.rst:169
+msgid "domain.conf only variables"
+msgstr ""
+
+# ff0ebc2b6a8646a2b07905c42e24352c
+#: ../../features/multidomain.rst:171
+msgid "Obviously:"
+msgstr ""
+
+# f17a2f6e95b44e31bb4beb78e414f1ff
+#: ../../features/multidomain.rst:173
+msgid "domain_names"
+msgstr ""
+
+# fe2940a9a23f46d9aa5ff5990a132915
+#: ../../features/multidomain.rst:175
+msgid ""
+"a table of domain codes to domain names ``domain_names = { foo = 'Foo "
+"Domain', bar = 'Bar Domain', baz = 'Baz Domain' }``"
+msgstr ""
+
+# b6b5eebdb79f47bc8203f995ba37e6a4
+#: ../../features/multidomain.rst:178
+msgid "hide_domain"
+msgstr ""
+
+# 11a9b6b6f5154144a16637a83bc634ab
+#: ../../features/multidomain.rst:180
+msgid ""
+"prevents a domain name(s) from appearing in config mode, either boolean "
+"or array of domain codes"
+msgstr ""
+
+# 720eaef0e8c74e6b87cb97dc3e93932f
+#: ../../features/multidomain.rst:183
+msgid "``true``, ``false``"
+msgstr ""
+
+# 61411b0d3c034685ae7f3d7fc5e008dd
+#: ../../features/multidomain.rst:184
+msgid "``{ 'foo', 'bar' }``"
+msgstr ""
+
+# d63b630e0a78441aae4675a35e45f730
+#: ../../features/multidomain.rst:186
+msgid ""
+"Because each domain is considered as an own layer 2 network, these values"
+" should be different in each domain:"
+msgstr ""
+
+# c8c62ce9801e4f7198f05e3a15f74025
+#: ../../features/multidomain.rst:189
+msgid "next_node.ip4"
+msgstr ""
+
+# 68eacc2f7cdc4c2da2fdc6a058e48b9f
+#: ../../features/multidomain.rst:190
+msgid "next_node.ip6"
+msgstr ""
+
+# fbbbaa82a0614741a7eea9d2ac4f3dcd
+#: ../../features/multidomain.rst:191
+msgid "next_node.name"
+msgstr ""
+
+# 491bf5261253473f95851c09f67c99dd
+#: ../../features/multidomain.rst:192
+msgid "prefix6"
+msgstr ""
+
+# 5286e7d21acd4c9984b5b8121c25b89a
+#: ../../features/multidomain.rst:193
+msgid "prefix4"
+msgstr ""
+
+# 33109bbc3845464c9e8005f28f5ce1d8
+#: ../../features/multidomain.rst:194
+msgid "extra_prefixes6"
+msgstr ""
+
+# de3928c5d83b40a496c881a3852a646e
+#: ../../features/multidomain.rst:196
+msgid ""
+"To prevent accidental bridging of different domains, all meshing "
+"technologies should be separated:"
+msgstr ""
+
+# 3f794249838f420196ab77066d978172
+#: ../../features/multidomain.rst:199
+msgid "domain_seed (wired mesh)"
+msgstr ""
+
+# 3facf5a546f04739802fe0f9212efa13
+#: ../../features/multidomain.rst:201
+msgid "must be a random value used to derive the vxlan id for wired meshing"
+msgstr ""
+
+# 5ce4ca5e824f4fd1996e5bc378131da4
+#: ../../features/multidomain.rst:203
+msgid "wifi*.ibss.ssid"
+msgstr ""
+
+# 72acc42b47b54a3480328af6a8bbc806
+#: ../../features/multidomain.rst:204
+msgid "wifi*.ibss.bssid"
+msgstr ""
+
+# 25e11076d1124eaa99e596d4ec93f607
+#: ../../features/multidomain.rst:205
+msgid "wifi*.mesh.id"
+msgstr ""
+
+# b772d39d7a2e440bb61574465a584c32
+#: ../../features/multidomain.rst:206
+msgid "mesh_vpn.fastd.groups.*.peers.remotes"
+msgstr ""
+
+# 1ba4f2a0a50946e4b1ee9fba73207f12
+#: ../../features/multidomain.rst:207
+msgid "mesh_vpn.fastd.groups.*.peers.key"
+msgstr ""
+
+# 3d0d2413c4fe41fd89a49e27c48de0be
+#: ../../features/multidomain.rst:208
+msgid "mesh_vpn.tunneldigger.brokers"
+msgstr ""
+
+# 47ed63bd93fd450687c7b99e463c96a1
+#: ../../features/multidomain.rst:210
+msgid ""
+"Clients consider WiFi networks sharing the same ESSID as if they were the"
+" same L2 network and try to reconfirm and reuse previous addressing. If "
+"multiple neighbouring domains shared the same ESSID, the roaming "
+"experience of clients would degrade."
+msgstr ""
+
+# de4f4b58ee404aafa611b523326faf70
+#: ../../features/multidomain.rst:215
+msgid "wifi*.ap.ssid"
+msgstr ""
+
+# 81e76629fcaa4c7bb9c7c31f290c3ca5
+#: ../../features/multidomain.rst:217
+msgid "Some values should be only set in legacy domains and not in new domains."
+msgstr ""
+
+# c41d147650f54449bb9c450c62d0c527
+#: ../../features/multidomain.rst:219
+msgid "mesh.vxlan"
+msgstr ""
+
+# c6f1009df1ff46e89f5a8232abaa4dec
+#: ../../features/multidomain.rst:221
+msgid ""
+"By default, this value is `true`. It should be only set to `false` for "
+"one legacy domain, since vxlan prevents accidental wired merges of "
+"domains. For old domains this value is still available to keep "
+"compatibility between all nodes in one domain."
+msgstr ""
+
+# a5db690fa30246e5bbab5e5d2399a460
+#: ../../features/multidomain.rst:226
+msgid "next_node.mac"
+msgstr ""
+
+# 52fffa4dd0ee47d3b77c1319c76ea930
+#: ../../features/multidomain.rst:228
+msgid ""
+"For new domains, the default value should be used, since there is no need"
+" for a special mac (or domain specific mac). For old domains this value "
+"is still available to keep compatibility between all nodes in one domain."
+msgstr ""
+
+# 3e07099af5904dfbbc707306de8f91fd
+#: ../../features/multidomain.rst:234
+msgid "Example config"
+msgstr ""
+
+# 477b1b70d4224769b179eeffc1f4a1a1
+#: ../../features/multidomain.rst:237
+msgid "site.mk"
+msgstr ""
+
+# f49d804a409e412cb6b6f4af70aa0e2c
+#: ../../features/multidomain.rst:243
+msgid "site.conf"
+msgstr ""
+
+# 2f472eb1ecd144a58584c43865193db9
+#: ../../features/multidomain.rst:249
+msgid "domains/alpha_centauri.conf"
+msgstr ""
+
+# 7fc77c7e96e640cf8478600d5265edb6
+#: ../../features/multidomain.rst:255
+msgid "i18n/en.po"
+msgstr ""
+
+# 27794644561e4d40817e4235d7d77565
+#: ../../features/multidomain.rst:261
+msgid "i18n/de.po"
+msgstr ""
+
+# d08a72b83e3b4afd8921452b3fdb24c5
+#: ../../features/multidomain.rst:267
+msgid "modules"
+msgstr ""
+

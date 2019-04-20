@@ -1,0 +1,173 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# ace454c030e24fa3b69ad1f619463d9d
+#: ../../releases/v2018.1.2.rst:2
+msgid "Gluon 2018.1.2"
+msgstr ""
+
+# 08a163ec7cb94e74b400cf07a9a8a57d
+#: ../../releases/v2018.1.2.rst:5
+msgid "Bugfixes"
+msgstr ""
+
+# e6ab4ce65e6144dbac95ec1187d84cb4
+#: ../../releases/v2018.1.2.rst:7
+msgid ""
+"Fix a bug leading to missing IPv6 addresses in respondd announcements "
+"(`#1523 <https://github.com/freifunk-gluon/gluon/issues/1523>`_)"
+msgstr ""
+
+# 93df8111ea0646378f1481b732b07f4e
+#: ../../releases/v2018.1.2.rst:10
+msgid ""
+"The pattern that was used to match addresses from /proc/net/if_inet6 did "
+"not expect interface indexes growing past two characters."
+msgstr ""
+
+# c88d5afd46694ac29545083f79fde2d8
+#: ../../releases/v2018.1.2.rst:13
+msgid ""
+"Mark ipq806x target as broken for unstable client WiFi (`#1505 "
+"<https://github.com/freifunk-gluon/gluon/issues/1505>`_)"
+msgstr ""
+
+# 835b264d13cd457d88008969d8829658
+#: ../../releases/v2018.1.2.rst:16
+msgid ""
+"Station connections to the QCA9880 radio on the TP-Link C2600s are "
+"frequently disconnected, leading to an abysmal user experience."
+msgstr ""
+
+# 22b0eddf92bf4c56bd235b70c4e08b4c
+#: ../../releases/v2018.1.2.rst:19
+msgid ""
+"Fix button behaviour on FRITZ!Box 4020 (`#1544 <https://github.com"
+"/freifunk-gluon/gluon/pull/1544>`_)"
+msgstr ""
+
+# 6b3d44082c2a4b47bf49bd2a5987fd92
+#: ../../releases/v2018.1.2.rst:22
+msgid ""
+"Buttons were triggering an instant reboot into config mode, fix by "
+"setting buttons to active low instead of active high."
+msgstr ""
+
+# 0fc909b4a98c4c378577c2b71ff869cb
+#: ../../releases/v2018.1.2.rst:25
+msgid ""
+"Prevent caching of redirects on config mode and status page (`#1530 "
+"<https://github.com/freifunk-gluon/gluon/issues/1530>`_)"
+msgstr ""
+
+# ad71ff7ef55e47e9823c83bc9ee8ff43
+#: ../../releases/v2018.1.2.rst:28
+msgid ""
+"As the path to both config mode and status page were changed between "
+"versions users could be affected by a redirect to a no more valid URL."
+msgstr ""
+
+# 4683a2a378b941a19144a141e5e56916
+#: ../../releases/v2018.1.2.rst:31
+msgid ""
+"batman-adv has received two bugfixes, which were `backported "
+"<https://github.com/openwrt-"
+"routing/packages/commit/7bf62cc8b556b5046f9bbd37687376fe9ea175bb>`_ from "
+"v2018.4"
+msgstr ""
+
+# 5beaddd26e95499a82d680d55b09d944
+#: ../../releases/v2018.1.2.rst:34
+msgid "Other changes"
+msgstr ""
+
+# ac5ca7d9d8654d38870ddd6d227ea048
+#: ../../releases/v2018.1.2.rst:36
+msgid "Linux kernel has been updated to v4.4.153"
+msgstr ""
+
+# 0ebe8a3152e84720896a24950944db93
+#: ../../releases/v2018.1.2.rst:39
+msgid "Known issues"
+msgstr ""
+
+# 97a6d0a5c6b44eae96f335cbe9108980
+#: ../../releases/v2018.1.2.rst:41
+msgid ""
+"Missing kernel module dependencies prevent batman-adv from being loaded "
+"on devices without WiFi drivers  (`#1578 <https://github.com/freifunk-"
+"gluon/gluon/issues/1578>`_)"
+msgstr ""
+
+# f37cad5f36b44731a37a979f202c0f93
+#: ../../releases/v2018.1.2.rst:43
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 26a009c5547149828972860e255ac745
+#: ../../releases/v2018.1.2.rst:45
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 73f9d22ebfb84173b551c094b893fbfb
+#: ../../releases/v2018.1.2.rst:47
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 5bb79a4eb3ad41268d131ad99d9343d5
+#: ../../releases/v2018.1.2.rst:49
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 4f5acfc045f54184a6773799d3c223de
+#: ../../releases/v2018.1.2.rst:51
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 60639b9a1daf4765a5fa892e81790081
+#: ../../releases/v2018.1.2.rst:53
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# c2f0d74313a843c194cc418e1066f26b
+#: ../../releases/v2018.1.2.rst:55
+msgid ""
+"Frequent reboots due to out-of-memory or high load due to memory pressure"
+" on weak hardware specially in larger meshes (`#1243 <https://github.com"
+"/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+# 1d4f4f85f02345a8909b127688fecaa0
+#: ../../releases/v2018.1.2.rst:58
+msgid ""
+"Optimizations in Gluon 2018.1 have significantly improved memory usage. "
+"There are still known bugs leading to unreasonably high load that we hope"
+" to solve in future releases."
+msgstr ""
+

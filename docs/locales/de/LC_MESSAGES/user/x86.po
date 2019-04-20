@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 2368eff005f1434abf1d2ad7b8585098
+#: ../../user/x86.rst:2
+msgid "x86 support"
+msgstr ""
+
+# 93d3e4dcb29a4a978294786395765c40
+#: ../../user/x86.rst:4
+msgid ""
+"Gluon can run on normal x86 systems, for example virtual machines and VPN"
+" boxes. By default, there is no WLAN support on x86 though."
+msgstr ""
+
+# 7a2717af365f43459854ff85991c73c2
+#: ../../user/x86.rst:8
+msgid "Targets"
+msgstr ""
+
+# 8722a168dc74402a842a5c175ec0e999
+#: ../../user/x86.rst:10
+msgid "The following targets for x86 images exist:"
+msgstr ""
+
+# 115fbd303371409ba1d8d5ea2c090606
+#: ../../user/x86.rst:23
+msgid "`x86-generic`"
+msgstr ""
+
+# aa2565e7db4d42b7941383fd7380c404
+#: ../../user/x86.rst:13
+msgid ""
+"Generic x86 support with many different ethernet drivers; should run on "
+"most x86 systems."
+msgstr ""
+
+# ede9ab7800d7453080c044128f56f25d
+#: ../../user/x86.rst:16
+msgid "There are three images:"
+msgstr ""
+
+# 57cef94c1b5e42bfa39dbedead134fd5
+#: ../../user/x86.rst:18
+msgid ""
+"`generic` (compressed \"raw\" image, can written to a disk directly or "
+"booted with qemu)"
+msgstr ""
+
+# 4c4270f960724a5db6d73a4a3d5f2820
+#: ../../user/x86.rst:19
+msgid "`virtualbox` (VDI image)"
+msgstr ""
+
+# 09762c8ff2754bb489541547778144e3
+#: ../../user/x86.rst:20
+msgid "`vmware` (VMDK image)"
+msgstr ""
+
+# cafb0ec139204875be2999573f9ba164
+#: ../../user/x86.rst:22
+msgid ""
+"These images differ in the image file format, the content is the same. "
+"Therefore a single `x86-generic` sysupgrade image is provided, only."
+msgstr ""
+
+# e1e17bea78f4420fa216566a6107a224
+#: ../../user/x86.rst:26
+msgid "`x86-geode`"
+msgstr ""
+
+# c489c23bc7274b47989525347284abfa
+#: ../../user/x86.rst:26
+msgid "x86 image for Geode CPUs."
+msgstr ""
+
+# 01acb44dcd694d18ac8966f48ec86f9b
+#: ../../user/x86.rst:28
+msgid "`x86-64`"
+msgstr ""
+
+# 2c90ad513cf243b3bb12839a10d4d3c9
+#: ../../user/x86.rst:29
+msgid "64bit version of `x86-generic`."
+msgstr ""
+

@@ -1,0 +1,502 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 317564b313f24f8b93acfde4b39cbe1b
+#: ../../releases/v2017.1.rst:2
+msgid "Gluon 2017.1"
+msgstr ""
+
+# 69347559657c4cdf9c128ef0fb0e392c
+#: ../../releases/v2017.1.rst:5
+msgid "General changes"
+msgstr ""
+
+# 1939ceb1ee0e4bb38e0dbab136f23756
+#: ../../releases/v2017.1.rst:7
+msgid ""
+"Gluon 2017.1 is the first release of Gluon based on the LEDE 17.01 "
+"branch. The kernel has been updated from 3.18.x to 4.4.x."
+msgstr ""
+
+# 79dc6ca09e194f858d42fcf7f937ec2e
+#: ../../releases/v2017.1.rst:10
+msgid ""
+"We've used the opportunity to greatly simplify the Gluon build system, "
+"removing many hacks that were required to make the build work with older "
+"OpenWrt releases."
+msgstr ""
+
+# 0de00827cde94a98b651295e42937bf5
+#: ../../releases/v2017.1.rst:13
+msgid ""
+"The *output/modules* directory is now called *output/packages* and "
+"provides a replacement for the whole repository with target-specific "
+"packages of LEDE (in contrast to packages that are common for all targets"
+" of the same architecture). Another change to the build system makes it "
+"necessary that the same *GLUON_RELEASE* value that is used to build the "
+"images is also set for ``make manifest``."
+msgstr ""
+
+# c3bc25b60f6b4ab5878f3d5ed92fec8a
+#: ../../releases/v2017.1.rst:19
+msgid "GCC 4.8 or newer is now required to build Gluon."
+msgstr ""
+
+# 8bf9ceab03ff478da97b791dcee8cf6f
+#: ../../releases/v2017.1.rst:21
+msgid ""
+"**Note: There is an issue in all Gluon versions before 2016.2.6 that will"
+" lead to x86 systems losing their configuration when upgrading to Gluon "
+"2017.1!** Older Gluon versions should be upgraded to 2016.2.6 first "
+"before switching to 2017.1."
+msgstr ""
+
+# 1bf0eed0a87a43af8db0412ea8ee52a3
+#: ../../releases/v2017.1.rst:26
+msgid ""
+"Another potential issue mostly affects virtual machines: Gluon 2017.1 "
+"images are bigger than 2016.2.x images on x86. If your virtual harddisk "
+"is based on a 2016.2.x image, it must be resized to 273MB or bigger "
+"before upgrading to Gluon 2017.1. Using qemu, the command"
+msgstr ""
+
+# db88cb22a349445897d61ed7115f28ed
+#: ../../releases/v2017.1.rst:35
+msgid "can be used to do this."
+msgstr ""
+
+# 7db053bc28ab4cda86b92bd19ada0053
+#: ../../releases/v2017.1.rst:38
+msgid "Added hardware support"
+msgstr ""
+
+# a81bbbb914914119920817d979fb7eb4
+#: ../../releases/v2017.1.rst:41
+msgid "ar71xx-generic"
+msgstr ""
+
+# 85b0e5b7c54340afa444d60fbcba4fcb
+# f1dd5be5b7c0454a811b200ec4fac272
+#: ../../releases/v2017.1.rst:43 ../../releases/v2017.1.rst:65
+msgid "TP-Link"
+msgstr ""
+
+# 966731a173884c9a8b242dd27f25c108
+#: ../../releases/v2017.1.rst:45
+msgid "RE450"
+msgstr ""
+
+# bdde314345f54e5183a6f03f26126624
+#: ../../releases/v2017.1.rst:46
+msgid "WBS210 v1.20"
+msgstr ""
+
+# 7c303f0f5b8f4260a99f7946e4ecf9d5
+#: ../../releases/v2017.1.rst:47
+msgid "WBS510 v1.20"
+msgstr ""
+
+# 0f4be15f29374347a8d4e5f381a2239e
+#: ../../releases/v2017.1.rst:49
+msgid "Ubiquiti"
+msgstr ""
+
+# 30b9c93ec9224e539602dabee1dc4638
+#: ../../releases/v2017.1.rst:51
+msgid "AirGateway LR"
+msgstr ""
+
+# 0b6f3ef798204ab4967e77ac72ae6374
+#: ../../releases/v2017.1.rst:52
+msgid "AirGateway PRO"
+msgstr ""
+
+# 7e332790a8224d4a9ee690a6ca17e6af
+#: ../../releases/v2017.1.rst:53
+msgid "Rocket M2/M5 Ti"
+msgstr ""
+
+# c224a3f1a8b14a188189fc8239567a8b
+#: ../../releases/v2017.1.rst:54
+msgid "UniFi AP LR"
+msgstr ""
+
+# ce835f83e4654631ae50cace9afdae8d
+#: ../../releases/v2017.1.rst:57
+msgid "ar71xx-tiny"
+msgstr ""
+
+# 98254e5cdf2c45cf970978da0d777c42
+#: ../../releases/v2017.1.rst:59
+msgid ""
+"The new *ar71xx-tiny* target has split out of *ar71xx-generic*; all "
+"*ar71xx-generic* devices with only 4MB of flash have been moved to this "
+"target."
+msgstr ""
+
+# 1aff2797d71442b3b65ea934c19c0267
+#: ../../releases/v2017.1.rst:62
+msgid ""
+"In contrast to *ar71xx-generic*, *ar71xx-tiny* **does not support opkg "
+"anymore** to save some space."
+msgstr ""
+
+# e4d273b5596747e0996de74d7e16fbe5
+#: ../../releases/v2017.1.rst:67
+msgid "TL-WA730RE v1"
+msgstr ""
+
+# f7fb6f5ab43a4c169e4455928f6b2362
+#: ../../releases/v2017.1.rst:68
+msgid "TL-WA7210N v2"
+msgstr ""
+
+# 224f9ed288754191b97621e061e6ff77
+#: ../../releases/v2017.1.rst:71
+msgid "x86-generic"
+msgstr ""
+
+# ac9d7a7b236b48f08920636d99e96c5e
+#: ../../releases/v2017.1.rst:73
+msgid ""
+"The *x86-kvm* and *x86-xen_domu* targets have been removed; the "
+"*x86-generic* images now support these use cases as well, so no separate "
+"targets are needed anymore."
+msgstr ""
+
+# 2814a2ebd81949d387a2a4e8ba53fcd9
+#: ../../releases/v2017.1.rst:78
+msgid "x86-geode"
+msgstr ""
+
+# 734dbc036784441ba9136f933950ede2
+#: ../../releases/v2017.1.rst:80
+msgid ""
+"The new *x86-geode* target for hardware based on Geode CPUs has been "
+"added."
+msgstr ""
+
+# cadb7cd166df48a6a938e329f74ba754
+#: ../../releases/v2017.1.rst:83
+msgid "New features"
+msgstr ""
+
+# 8ea52735847d4b8b96074f8c4c8ab59d
+#: ../../releases/v2017.1.rst:85
+msgid ""
+"Localization support has been added to the status page. In addition to "
+"German, there are English and Russian translations now (`#1044 "
+"<https://github.com/freifunk-gluon/gluon/pull/1044>`_)"
+msgstr ""
+
+# 3ed8507689f249918a186aaf01dcce5c
+#: ../../releases/v2017.1.rst:88
+msgid ""
+"Add support for making nodes a DNS cache for clients (`#1000 "
+"<https://github.com/freifunk-gluon/gluon/pull/1000>`_)"
+msgstr ""
+
+# 024785e72b2148b3a57d2b4c25c665e5
+#: ../../releases/v2017.1.rst:91
+msgid ""
+"Add L2TP via tunneldigger as an alternative VPN system (`#978 "
+"<https://github.com/freifunk-gluon/gluon/pull/978>`_)"
+msgstr ""
+
+# aebfc7ea8af94b7897625b3f16ba018d
+#: ../../releases/v2017.1.rst:94
+msgid ""
+"L2TP will usually give better performance than fastd as it runs in kernel"
+" space, but it does not provide encryption. Also, tunneling over IPv6 is "
+"currently unsupported by tunneldigger."
+msgstr ""
+
+# 3be64d9f661b461f8c269b0eb04927cc
+#: ../../releases/v2017.1.rst:98
+msgid ""
+"It is not possible to include both fastd and tunneldigger in the same "
+"firmware."
+msgstr ""
+
+# f1fe3c8b7b4744429c52cb95b3752810
+#: ../../releases/v2017.1.rst:101
+msgid ""
+"Add source filter package (`#1015 <https://github.com/freifunk-"
+"gluon/gluon/pull/1015>`_)"
+msgstr ""
+
+# 0a6e2f327dee4521a2f6d9e477ddab4e
+#: ../../releases/v2017.1.rst:103
+msgid ""
+"The new package *gluon-ebtables-source-filter* can be used to prevent "
+"traffic using unexpected IP addresses or packet types from entering the "
+"mesh."
+msgstr ""
+
+# 160053761e014c4eb5689405660b4875
+#: ../../releases/v2017.1.rst:106
+msgid "See also: :doc:`../package/gluon-ebtables-source-filter`"
+msgstr ""
+
+# 8dbbbca1de2047e68caa8857eda9998d
+#: ../../releases/v2017.1.rst:109
+msgid "Bugfixes"
+msgstr ""
+
+# f860f785ea2246fe89696ba68bdeb028
+#: ../../releases/v2017.1.rst:111
+msgid ""
+"Disabling batman-adv on an interface (for example when an Ethernet link "
+"is lost or before sysupgrades) could lead to a kernel crash in certain "
+"configurations (`#680 <https://github.com/freifunk-"
+"gluon/gluon/issues/680>`_)"
+msgstr ""
+
+# a278c7edf9b84a448f68578629dbbb1e
+#: ../../releases/v2017.1.rst:115
+msgid ""
+"A race condition in the network setup scripts could lead to incomplete "
+"setup during boot or when interfaces were added or removed from batman-"
+"adv after Ethernet link changes (`#905 <https://github.com/freifunk-"
+"gluon/gluon/issues/905>`_)"
+msgstr ""
+
+# 9ffb793ffca645acbd7bb5ac506bbc95
+#: ../../releases/v2017.1.rst:119
+msgid ""
+"The fix also solved the long-standing issue of Ethernet-only nodes (i.e. "
+"no WLAN or VPN mesh) not booting up correctly without an Ethernet mesh "
+"link."
+msgstr ""
+
+# 0c10d862951f4b4eacb72748f872f2f3
+#: ../../releases/v2017.1.rst:122
+msgid ""
+"Some fixes in the WLAN stack of LEDE have improved the stability of the "
+"ath9k driver (`#605 <https://github.com/freifunk-"
+"gluon/gluon/issues/605>`_)"
+msgstr ""
+
+# 152bac06e921404ba3ec2a0ffe8282c2
+#: ../../releases/v2017.1.rst:126
+msgid "Site changes"
+msgstr ""
+
+# d07ccc63b6e6429bbba28f3b2e9ba8b2
+#: ../../releases/v2017.1.rst:129
+msgid "site.mk"
+msgstr ""
+
+# 1125393acd944c77b003ef7bc450a59a
+#: ../../releases/v2017.1.rst:131
+msgid "The *gluon-legacy* package does not exist anymore"
+msgstr ""
+
+# 05ae4ab61a9f43c18bbcef196a45b0aa
+#: ../../releases/v2017.1.rst:132
+msgid ""
+"All *gluon-luci-* packages have been renamed to *gluon-web-*; *gluon-"
+"luci-portconfig* is now called *gluon-web-network*"
+msgstr ""
+
+# 217ea5a14c064d5896da8b45095a1317
+#: ../../releases/v2017.1.rst:134
+msgid ""
+"The *gluon-next-node* package has been merged into the Gluon core and "
+"must not be specified in *site.mk* anymore"
+msgstr ""
+
+# eb291a58a64743d794ca8b6c7594febc
+#: ../../releases/v2017.1.rst:138
+msgid "site.conf"
+msgstr ""
+
+# 313c862e61fa4790a7947ba6947b7d3e
+#: ../../releases/v2017.1.rst:140
+msgid ""
+"The *fastd_mesh_vpn* configuration section has been restructured to allow"
+" sharing more options with tunneldigger. Instead of"
+msgstr ""
+
+# e34bd83791324ca8a83b94628f4083c8
+#: ../../releases/v2017.1.rst:153
+msgid "the configuration must look like this now:"
+msgstr ""
+
+# cb2af5e2e3a2489d9558a10f3cc3f5d3
+#: ../../releases/v2017.1.rst:167
+msgid "The *opkg.openwrt* option has been renamed to *opkg.lede*"
+msgstr ""
+
+# ca386887bee64e4f8ab6192934d5b42e
+#: ../../releases/v2017.1.rst:170
+msgid "i18n"
+msgstr ""
+
+# 4709afaa0d844bf683b90a4450158666
+#: ../../releases/v2017.1.rst:172
+msgid ""
+"The *escape* function has been removed as it was duplicating the existing"
+" *pcdata* function. All uses of *escape* in i18n templates must be "
+"changed to use *pcdata* instead."
+msgstr ""
+
+# 52245f516c474938b0c0db55e9e23056
+#: ../../releases/v2017.1.rst:176
+msgid ""
+"The *gluon-config-mode:altitude-label* and *gluon-config-mode:altitude-"
+"help* translation IDs have been added to allow adjusting the texts for "
+"different kinds of altitudes that might be expected."
+msgstr ""
+
+# 46839c7c7e3249ef88ff36575ab55dfd
+#: ../../releases/v2017.1.rst:180
+msgid ""
+"The optional *gluon-config-mode:novpn* label has been added, which will "
+"be shown in place of *gluon-config-mode:pubkey* when mesh VPN is "
+"disabled."
+msgstr ""
+
+# c134e5925eaa447e8aa9566a929fbc73
+#: ../../releases/v2017.1.rst:184
+msgid "Internals"
+msgstr ""
+
+# 18fb3910fea2489a84b5ea6d9f7466b3
+#: ../../releases/v2017.1.rst:186
+msgid ""
+"The LuCI base libraries have been replaced by a stripped-down version "
+"called \"gluon-web\" (`#1007 <https://github.com/freifunk-"
+"gluon/gluon/pull/1007>`_)"
+msgstr ""
+
+# 560d2ed5589d457d9d250efe7b0c9cb9
+#: ../../releases/v2017.1.rst:189
+msgid ""
+"Custom packages will need to be adjusted; in particular, all uses of "
+"*luci.model.uci* need to be replaced with *simple-uci*. The Gluon "
+"documentation explains the most important changes required to migrate "
+"from LuCI to gluon-web."
+msgstr ""
+
+# 4b59d02d50da48f7a0989e9262fb0281
+#: ../../releases/v2017.1.rst:193
+msgid ""
+"respondd now listens on ``ff05::2:1001`` in addition to ``ff02::2:1001`` "
+"for mesh-wide operation (`#984 <https://github.com/freifunk-"
+"gluon/gluon/issues/984>`_)"
+msgstr ""
+
+# 91fc497558324534ac5ee92980e11886
+#: ../../releases/v2017.1.rst:196
+msgid ""
+"Eventually, ``ff02::2:1001`` will be available for exchanging information"
+" between neighbouring nodes only; map servers should be moved to "
+"``ff05::2:1001``."
+msgstr ""
+
+# 95faec0e27974fb1b8238eb1a9914e3f
+#: ../../releases/v2017.1.rst:199
+msgid "batman-adv has been updated to version 2017.1"
+msgstr ""
+
+# a47e184b5d1e404f865f79fcb8c9452b
+#: ../../releases/v2017.1.rst:201
+msgid ""
+"Directly running make commands in the *lede* directory is supported now. "
+"Consequently, build targets like ``target/linux/clean`` and "
+"``package/NAME/compile`` can't be used in the Gluon repository root "
+"anymore."
+msgstr ""
+
+# c41a233c42a647509e68a3725f661404
+#: ../../releases/v2017.1.rst:205
+msgid ""
+"The command ``make config`` will set up the LEDE *.config* in the way a "
+"normal Gluon build would, so it's possible to build individual packages "
+"for testing and development afterwards."
+msgstr ""
+
+# aee81a70f85749f096e2bc86b1e33033
+#: ../../releases/v2017.1.rst:209
+msgid ""
+"Target definitions have been migrated from a Make-based format to a "
+"simpler shell-based DSL"
+msgstr ""
+
+# ed870aade0b342f583981071212c6513
+#: ../../releases/v2017.1.rst:212
+msgid ""
+"Gluon does not pass any custom variables into the LEDE build anymore, so "
+"things like *GLUONDIR*, *GLUON_VERSION*, or *GLUON_SITEDIR* aren't "
+"available to package Makefiles in Gluon 2017.1."
+msgstr ""
+
+# 514d6a55a6a34d25a1bc83450e043a2e
+#: ../../releases/v2017.1.rst:216
+msgid ""
+"Instead of ``$(GLUONDIR)/package.mk``, ``$(TOPDIR)/../package/gluon.mk`` "
+"must be included in custom packages now."
+msgstr ""
+
+# f29aeee07c2a4c89a28bd81528f2e043
+#: ../../releases/v2017.1.rst:220
+msgid "Known issues"
+msgstr ""
+
+# 426042330fd84d719d189e81232e519a
+#: ../../releases/v2017.1.rst:222
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# c3f82c707d364dedbf0594bf99182a5c
+#: ../../releases/v2017.1.rst:224
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 1277a4d850ca4ae48bcddbf8ff9870d1
+#: ../../releases/v2017.1.rst:226
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 9c9b969a709b4db2a9b9026a99e41fb7
+#: ../../releases/v2017.1.rst:228
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 6e70e9a63661482cb80459c2aa2eebba
+#: ../../releases/v2017.1.rst:230
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 69889e72b0234e11b26242991c1fbe77
+#: ../../releases/v2017.1.rst:232
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+

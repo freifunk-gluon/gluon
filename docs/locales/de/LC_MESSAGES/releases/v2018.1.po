@@ -1,0 +1,825 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 0f84d98473484defb82bf290131dc97c
+#: ../../releases/v2018.1.rst:2
+msgid "Gluon 2018.1"
+msgstr ""
+
+# 037724d729414ab880ecc5dc851d68e4
+#: ../../releases/v2018.1.rst:5
+msgid "Important notes"
+msgstr ""
+
+# d3f7e448532b4fb5bf69b24b83869d27
+#: ../../releases/v2018.1.rst:7
+msgid ""
+"This version changes the flash partition layout on some devices (TP-Link "
+"CPE/WBS 210/510). To avoid upgrade failures, make sure to upgrade to "
+"Gluon 2017.1.8 or the latest Gluon 2016.2.x (unreleased) before "
+"installing Gluon 2018.1."
+msgstr ""
+
+# 0674031c00204249964819b235afc27d
+#: ../../releases/v2018.1.rst:11
+msgid ""
+"Some of the following paragraphs describe so-called \"feature flags\". "
+"This new concept is explained in :ref:`user-site-feature-flags`."
+msgstr ""
+
+# 8fc8d910fce14b0d8d83b04431ce4e38
+#: ../../releases/v2018.1.rst:15
+msgid "Added hardware support"
+msgstr ""
+
+# 3116e1a4c41d4480b73b48ea348e7157
+#: ../../releases/v2018.1.rst:18
+msgid "ar71xx-generic"
+msgstr ""
+
+# 3237fa1cb374429894c5238a89402394
+#: ../../releases/v2018.1.rst:20
+msgid "ALFA NETWORK"
+msgstr ""
+
+# 0ea33c2ddca7415a8baea4bb7872dc9f
+#: ../../releases/v2018.1.rst:22
+msgid "AP121F"
+msgstr ""
+
+# 78927776904f43c4b46ab4042af1e950
+#: ../../releases/v2018.1.rst:24
+msgid "AVM"
+msgstr ""
+
+# 17e4ec84d0144752a3e9ff38c527ff2f
+#: ../../releases/v2018.1.rst:26
+msgid "FRITZ!Box 4020"
+msgstr ""
+
+# 1392e110290543a89456fa101f6b21b9
+#: ../../releases/v2018.1.rst:28
+msgid "OpenMesh"
+msgstr ""
+
+# 5fd00e6cf0ad42b68b0b2fc54475aadb
+#: ../../releases/v2018.1.rst:30
+msgid "A40"
+msgstr ""
+
+# 09ff0a5c7956464697aedb99da2a2503
+#: ../../releases/v2018.1.rst:31
+msgid "A60"
+msgstr ""
+
+# 97f5346c856545ac94ec628b3d561d25
+#: ../../releases/v2018.1.rst:32
+msgid "OM2P v4"
+msgstr ""
+
+# 96e1d4c40e06445495e8e6eb8c54a047
+#: ../../releases/v2018.1.rst:33
+msgid "OM2P-HS v4"
+msgstr ""
+
+# f853ea3800cd4d63930ccee6d6cb2e7c
+# d4cbdb1d264549a18faf25b13e93282f
+# 53c58696a3f9492ba7c57fb91326991f
+#: ../../releases/v2018.1.rst:35 ../../releases/v2018.1.rst:50
+#: ../../releases/v2018.1.rst:57
+msgid "TP-Link"
+msgstr ""
+
+# ec7771f67f754f369dbc1c9f2d7935be
+#: ../../releases/v2018.1.rst:37
+msgid "Archer C59 v1 [#noibss]_"
+msgstr ""
+
+# 88984800c9b64bbc90ec94c6c19d1ce7
+#: ../../releases/v2018.1.rst:38
+msgid "CPE210 v2"
+msgstr ""
+
+# 18655e39cec644ed90c28aa2868bb3f7
+#: ../../releases/v2018.1.rst:41
+msgid "ar71xx-nand"
+msgstr ""
+
+# 1dd8905ee45e4b85a3185e076034f4f2
+#: ../../releases/v2018.1.rst:43
+msgid "ZyXEL"
+msgstr ""
+
+# b66f27bcb84e43ab846bac12f36a8f6d
+#: ../../releases/v2018.1.rst:45
+msgid "NBG6716"
+msgstr ""
+
+# de4b64ad552e48d594150df3f5e7753b
+#: ../../releases/v2018.1.rst:48
+msgid "ar71xx-tiny"
+msgstr ""
+
+# 675cf205e5194e4f869d5403dd44af40
+#: ../../releases/v2018.1.rst:52
+msgid "TL-WA901ND v5"
+msgstr ""
+
+# 5b616a9796134ba183093b7c87c39922
+#: ../../releases/v2018.1.rst:55
+msgid "ipq806x [#newtarget]_ [#noibss]_"
+msgstr ""
+
+# 424e764198544474a84fc5bfc62b254f
+#: ../../releases/v2018.1.rst:59
+msgid "Archer C2600"
+msgstr ""
+
+# d4d14978cc644b02827c96b777c64635
+#: ../../releases/v2018.1.rst:62
+msgid "ramips-mt7620 [#newtarget]_ [#noibss]_"
+msgstr ""
+
+# 334fcc602d4a43188c9e3b949f6fe1f1
+#: ../../releases/v2018.1.rst:64
+msgid "GL Innovations"
+msgstr ""
+
+# 27104065f8f94ee2a164516ef7a8376e
+#: ../../releases/v2018.1.rst:66
+msgid "GL-MT300A"
+msgstr ""
+
+# 8b556b57e1324d548165b45ae40d8a8d
+#: ../../releases/v2018.1.rst:67
+msgid "GL-MT300N"
+msgstr ""
+
+# a578bcb6dc9748beaf83302753a996c5
+#: ../../releases/v2018.1.rst:68
+msgid "GL-MT750"
+msgstr ""
+
+# f854fbf4386047ebafcae3d8fb9c1432
+#: ../../releases/v2018.1.rst:71
+msgid "ramips-mt7628 [#newtarget]_ [#noibss]_"
+msgstr ""
+
+# 39c2308d11e44913aef5a83f0a91c644
+# 06fb2e85eab0496aade181327aebeabc
+#: ../../releases/v2018.1.rst:73 ../../releases/v2018.1.rst:88
+msgid "VoCore"
+msgstr ""
+
+# ab57d9906d3448e0b2e50311855dbd11
+#: ../../releases/v2018.1.rst:75
+msgid "VoCore 2"
+msgstr ""
+
+# 41302ef5db3d4d9a8f5eba7e2d45cff9
+#: ../../releases/v2018.1.rst:78
+msgid "ramips-rt305x [#newtarget]_ [#noibss]_"
+msgstr ""
+
+# 677c465ba29a47b4a27d37e207340bb1
+#: ../../releases/v2018.1.rst:80
+msgid "A5"
+msgstr ""
+
+# 87bdc8bf48754a44aa75d961e2558849
+#: ../../releases/v2018.1.rst:82
+msgid "V11"
+msgstr ""
+
+# 5c2af263471643959ca9a15c354568dd
+#: ../../releases/v2018.1.rst:84
+msgid "D-Link"
+msgstr ""
+
+# 38b0ca4d0044429b8db4db280f839f70
+#: ../../releases/v2018.1.rst:86
+msgid "DIR615 (D1, D2, D3, D4, H1)"
+msgstr ""
+
+# 11eed0eb29cb477686c21c4ad7b65dd5
+#: ../../releases/v2018.1.rst:90
+msgid "VoCore (8MB, 16MB)"
+msgstr ""
+
+# d6a4f69951814aac977e44a23bcf7912
+#: ../../releases/v2018.1.rst:93
+msgid "sunxi [#newtarget]_"
+msgstr ""
+
+# b02dfe4cac2c4f48b260918978787d58
+#: ../../releases/v2018.1.rst:95
+msgid "LeMaker/SinoVoip"
+msgstr ""
+
+# 849a31b4322b48a384e0c98961cd1001
+#: ../../releases/v2018.1.rst:97
+msgid "Banana Pi (M1)"
+msgstr ""
+
+# b668b81c014743ee9307d597d649d2cc
+#: ../../releases/v2018.1.rst:101
+msgid "New target"
+msgstr ""
+
+# 5d9cd072795f4b0faf941aeca9045a98
+#: ../../releases/v2018.1.rst:104
+msgid ""
+"Device or target does not support AP+IBSS mode: This device or target "
+"will not be built when *GLUON_WLAN_MESH* is set to ``ibss``."
+msgstr ""
+
+# 5d4e091603a544348be8cc711100d2cb
+#: ../../releases/v2018.1.rst:108
+msgid "New features"
+msgstr ""
+
+# f12b687233a0444ebd2f3b5e397c688f
+#: ../../releases/v2018.1.rst:111
+msgid "Multidomain support"
+msgstr ""
+
+# 37a3209f927349c2854f64574f537029
+#: ../../releases/v2018.1.rst:113
+msgid ""
+"When mesh networks grow too large, it becomes necessary to split them "
+"into multiple independent mesh domains to allow the meshes to work with "
+"reasonable performance. Formerly, the only way to achieve this with Gluon"
+" was to build a separate set of firmware images for each domain."
+msgstr ""
+
+# e7b18297d25d43f290465aafe1767fbd
+#: ../../releases/v2018.1.rst:118
+msgid ""
+"With Gluon 2018.1, multidomain firmwares can be used to achieve the same,"
+" using only a single site configuration that is basis for several "
+"different domain-specific configurations. The feature is explained in "
+"detail in :doc:`../features/multidomain`."
+msgstr ""
+
+# 0d1f9dae581249fdb5fd0660ffa2394e
+#: ../../releases/v2018.1.rst:124
+msgid "Wired mesh encapsulation"
+msgstr ""
+
+# 3131278ceba049d18a93c3988fd667b3
+#: ../../releases/v2018.1.rst:126
+msgid ""
+"Gluon now supports encapsulating wired mesh traffic (Mesh on LAN/WAN) in "
+"`VXLAN <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_. See "
+":doc:`../features/wired-mesh` for details on this feature."
+msgstr ""
+
+# 74118802f51843178f784e1f69299c25
+#: ../../releases/v2018.1.rst:131
+msgid "Router advertisement filtering"
+msgstr ""
+
+# 82e1b8077ace48efac15e07806cbdd52
+#: ../../releases/v2018.1.rst:133
+msgid ""
+"Similar to the builtin batman-adv gateway feature for IPv4, the *gluon-"
+"radv-filterd* package (*radv-filterd* feature flag) allows to filter IPv6"
+" router advertisements received from the mesh so that only the RAs with "
+"the best routing metric (TQ) reach the clients, ensuring that the "
+"\"best\" (topologically closest) gateway is chosen as the IPv6 default "
+"route, thereby reducing gateway crosstalk."
+msgstr ""
+
+# 2f34ce91983a44bcac370ae9de496867
+#: ../../releases/v2018.1.rst:139
+msgid ""
+"At the moment, this feature only filters RAs forwarded to clients; the "
+"RAs handled on the nodes themselves will be unfiltered, so the nodes will"
+" still use arbitrary default gateways."
+msgstr ""
+
+# 9d1a26c2feb14ff281ae9d69c352d42d
+#: ../../releases/v2018.1.rst:144
+msgid "IGMP/MLD segmentation"
+msgstr ""
+
+# 3c3c0709cbc94559b11a00313e38e948
+#: ../../releases/v2018.1.rst:146
+msgid ""
+"The IGMP/MLD segmentation feature previously provided by the *gluon-"
+"ebtables-segment-mld* package has been extended and moved into the Gluon "
+"core; it does not exist as a separate package anymore."
+msgstr ""
+
+# f72481331b684e7294d3b4aaa3c2b9ae
+#: ../../releases/v2018.1.rst:150
+msgid ""
+"Filtering IGMP/MLD queries directed towards the mesh ensures that each "
+"node becomes the multicast querier for its own clients (unless there are "
+"other multicast-aware switches connected to the node), rather than "
+"electing a single, basically arbitrary node in the mesh to become the "
+"querier. Overall, this should significantly improve the reliability of "
+"multicast in the mesh. This is especially important for IPv6, as the IPv6"
+" Neighbour Discovery Protocol (NDP) is based on local multicast."
+msgstr ""
+
+# 93a9bf65d0b74881bd61e17eae98d578
+#: ../../releases/v2018.1.rst:156
+msgid ""
+"See also the documentation of the :ref:`site.conf mesh section <user-"
+"site-mesh>`."
+msgstr ""
+
+# 582c0e3b352a4885b2b3680cf510cf11
+#: ../../releases/v2018.1.rst:159
+msgid "gluon-ebtables-limit-arp"
+msgstr ""
+
+# 5ce17a20a5f24a85a70e3668ecb91c18
+#: ../../releases/v2018.1.rst:161
+msgid ""
+"The *gluon-ebtables-limit-arp* (*ebtables-limit-arp* feature flag) "
+"package adds filters to limit the rate of ARP requests client devices are"
+" allowed to send into the mesh."
+msgstr ""
+
+# 595b8b3a164e4d6f97a017b3d02e2c2e
+#: ../../releases/v2018.1.rst:164
+msgid ""
+"Certain client applications are known to generate a significant amount of"
+" such ARP requests and are reportedly becoming more and more common. "
+"Without this package, such clients are one known cause for mesh wide load"
+" and congestion problems (see also the :ref:`releases-v2018.1-known-"
+"issues` section below)."
+msgstr ""
+
+# 69a8170c46b84c49ab9b5199d2268270
+#: ../../releases/v2018.1.rst:169
+msgid ""
+"Because of this package's implementation, which relies on frequent "
+"dynamic updates - something ebtables does not perform well at - it is not"
+" included by default, as it can cause unnecessary load. Feedback, "
+"especially with a close look on load and congestion on nodes with a large"
+" number of changing client devices, is very much welcome. Depending on "
+"the feedback, we might enable this feature by default in a future "
+"release."
+msgstr ""
+
+# be19d9b53c50426b8cac4c46a43c964d
+#: ../../releases/v2018.1.rst:176
+msgid "Public key in respondd data (optional)"
+msgstr ""
+
+# 26889092fbec4e5ca15a143e6198454c
+#: ../../releases/v2018.1.rst:178
+msgid ""
+"If desired, the fastd public key of a node can be included in the "
+"respondd nodeinfo data, facilitating the correlations of VPN peers and "
+"nodes. As the VPN key is transmitted unencrypted in the fastd handshake, "
+"this would theoretically allow an ISP to determine which nodes are "
+"operated behind which internet line. Therefore, this feature must be "
+"enabled explicitly by setting *mesh_vpn.pubkey_privacy* to ``false`` in "
+"*site.conf*."
+msgstr ""
+
+# c8b8e797c5b2427b93622afff7d191be
+#: ../../releases/v2018.1.rst:185
+msgid "B.A.T.M.A.N. V (experimental)"
+msgstr ""
+
+# 624f479b141e4394b82bdb3606daff3b
+#: ../../releases/v2018.1.rst:187
+msgid ""
+"When using batman-adv compat 15, it is now possible to switch to the new "
+"routing algorithm B.A.T.M.A.N. V (while the old algorithm is called "
+"B.A.T.M.A.N. IV) by setting *mesh.batman_adv.routing_algo* to "
+"``\"BATMAN_V\"``. Note that the new routing algorithm is not backwards-"
+"compatible, so nodes using different algorithms can not interoperate."
+msgstr ""
+
+# 903128f52548469aa0654899722daba6
+#: ../../releases/v2018.1.rst:196
+msgid "Site changes"
+msgstr ""
+
+# e89d6d8892964b599798c7d3ec54cc2e
+#: ../../releases/v2018.1.rst:199
+msgid "site.mk"
+msgstr ""
+
+# eae119dc13284678ada429ab9f546572
+#: ../../releases/v2018.1.rst:201
+msgid ""
+"Due to improved package dependency handling, the packages *gluon-config-"
+"mode-core* and *gluon-setup-mode* do not need to be listed explicitly in "
+"*site.mk* anymore; they will be pulled in implicitly."
+msgstr ""
+
+# 8b4bee5020db4e889cde7d7820fb2980
+#: ../../releases/v2018.1.rst:205
+msgid ""
+"Including the *ebtables-limit-arp* feature flag is recommended. Please "
+"note the abovementioned caveats on this feature."
+msgstr ""
+
+# 2b951ad62d604153b43a6a43d1a17423
+#: ../../releases/v2018.1.rst:207
+msgid ""
+"We recommend to use *GLUON_FEATURES* for all Gluon packages, and rely on "
+"*GLUON_SITE_PACKAGES* for non-Gluon (OpenWrt) packages only, as explained"
+" in :ref:`user-site-feature-flags`."
+msgstr ""
+
+# 3f112dce2928409fabf4618fba728f34
+#: ../../releases/v2018.1.rst:210
+msgid "The `GLUON_ATH10K_MESH` variable was renamed to `GLUON_WLAN_MESH`."
+msgstr ""
+
+# 5f971ef6490e4c0dafbe2cdd62e3ab7a
+#: ../../releases/v2018.1.rst:213
+msgid "site.conf"
+msgstr ""
+
+# 80550a11356047db830e67e4e891dbcd
+#: ../../releases/v2018.1.rst:215
+msgid ""
+"When updating a site configuration from Gluon 2017.1.x, the following "
+"changes must be made:"
+msgstr ""
+
+# 0ac555526c0b444f828bcef0626b5462
+#: ../../releases/v2018.1.rst:222
+msgid ""
+"These 32 bytes of random data (encoded in hexadecimal) are used to seed a"
+" number of site/domain specific random values that must be the same on "
+"all nodes of the same mesh, but different for different meshes. The "
+"following command can be used to generate such a random value:"
+msgstr ""
+
+# 3d64e0791b574e86981e4b365ab30a91
+#: ../../releases/v2018.1.rst:231
+msgid "In multidomain setups, repeat this command for each domain."
+msgstr ""
+
+# 17477758003942afb0438ef100cb1de2
+#: ../../releases/v2018.1.rst:233
+msgid ""
+"At this time, only the VXLAN ID for wired meshing is derived from the "
+"domain seed."
+msgstr ""
+
+# f53e472985294379a09a43938415a327
+#: ../../releases/v2018.1.rst:242
+msgid ""
+"In single domain setups, the new *mesh.vxlan* option is mandatory. It "
+"should be set to *true* in new meshes; existing setups should set it to "
+"*false* to retain compatibility with older versions of Gluon."
+msgstr ""
+
+# d18a250951f5449f8dd4f28b26211d58
+#: ../../releases/v2018.1.rst:245
+msgid ""
+"In multidomain setups, *mesh.vxlan* defaults to *true* and does not need "
+"to be set explicitly. It can still be set to *false* for individual "
+"domains that should allow wired meshing with existing setups, which is "
+"also useful for migrating an existing mesh to a multidomain-capable "
+"firmware."
+msgstr ""
+
+# c64bc859ecab443d95e627d89c12fb3d
+#: ../../releases/v2018.1.rst:249
+msgid "Password change form"
+msgstr ""
+
+# 7a6bc4dee472427bb7c70d5035674382
+#: ../../releases/v2018.1.rst:251
+msgid ""
+"The password change form in the \"Advanced settings\" is not shown by "
+"default anymore, as SSH keys are the recommended means of authentication."
+" It is still possible to set a password via SSH while in config mode."
+msgstr ""
+
+# 9a120745eb804437afd718b1b1312bbc
+#: ../../releases/v2018.1.rst:255
+msgid "Set"
+msgstr ""
+
+# d73c549aa8cb4fa993cc4aa20067e072
+#: ../../releases/v2018.1.rst:267
+msgid "to restore the old behaviour."
+msgstr ""
+
+# 8df8f708f9954410b7e5473b87509d1e
+#: ../../releases/v2018.1.rst:269
+msgid ""
+"When shown, the password form requires a minimum password length of 12 "
+"characters now. This requirement can be modified using the "
+"*config_mode.remote_login.min_password_length* setting."
+msgstr ""
+
+# ae8a6f5431654c82a80427c424d68f9a
+#: ../../releases/v2018.1.rst:272
+msgid "Next-node hostnames"
+msgstr ""
+
+# 4c041c5bfbbd453a8be5a162ea5e529f
+#: ../../releases/v2018.1.rst:274
+msgid ""
+"The builtin DNS resolver of Gluon can be configured to resolve a next-"
+"node hostname to the next-node IP address without querying an upstream "
+"DNS server. Since Gluon v2018.1, multiple names can be specified. Old "
+"configurations setting *next_node.name* to a string must be updated to "
+"provide an array of strings instead:"
+msgstr ""
+
+# f75ef941f8454d3794d53770ceba203d
+#: ../../releases/v2018.1.rst:287
+msgid "i18n"
+msgstr ""
+
+# 10144990abc449a8aced5d66bc507c79
+#: ../../releases/v2018.1.rst:289
+msgid ""
+"It is now possible to override a few labels and descriptions in the "
+"configuration wizard. The available message IDs are listed in :ref:`site-"
+"config-mode-texts`."
+msgstr ""
+
+# d8ed8a95e8c9434ca42bd65b714225fc
+#: ../../releases/v2018.1.rst:292
+msgid ""
+"These new i18n strings are optional; leaving them empty or unset will "
+"retain the default texts."
+msgstr ""
+
+# e24202d7ac3c4fc5a880dc8e583bd440
+#: ../../releases/v2018.1.rst:296
+msgid "Internals"
+msgstr ""
+
+# 66b314d50d6a4aa9b57a21ff3993daa6
+#: ../../releases/v2018.1.rst:299
+msgid "Status page rewrite"
+msgstr ""
+
+# fd761148855c4800b23a82ac9d26093c
+#: ../../releases/v2018.1.rst:301
+msgid ""
+"The status page has been rewritten to simplify the code and reduce its "
+"size. Rather than having a static frontend and retrieving all information"
+" via JavaScript, all static information in the status page is now "
+"generated on the node, and JavaScript is only used for dynamic data."
+msgstr ""
+
+# 676cc80d7dc8493bae7ac1dae397e80d
+#: ../../releases/v2018.1.rst:305
+msgid ""
+"Many status page API endpoints have been removed; for all remaining "
+"endpoints, CORS (Cross-Origin Resource Sharing) has been disabled, as it "
+"led to a privacy issues: malicious websites could access the API via "
+"cross-site scripting, determining which node a user was connected to."
+msgstr ""
+
+# 4905e2ec967f40c6896e7090f1b8c999
+#: ../../releases/v2018.1.rst:310
+msgid ""
+"The removal of CORS breaks compatibility with the node switching feature "
+"of the old status page implementation: In the new status page, switching "
+"to another node will reload the whole status page from the target node, "
+"while the old implementation would only switch to another backend host. "
+"While this will facilitate future updates, as frontend and backend always"
+" come from the same node and no stable API needs to be maintained, it "
+"prevents switching from the old status page to nodes running the new "
+"version."
+msgstr ""
+
+# 6def8f33232445fcaff87ba0dcf3776b
+#: ../../releases/v2018.1.rst:317
+msgid ""
+"To achieve all this, the status page was ported to the gluon-web "
+"framework. The new status page also makes use of Gluon's usual i18n "
+"facilities now. In addition, the gluon-web-model package was split out of"
+" the gluon-web core package, as model support is only required for config"
+" mode packages, but not for the new status page."
+msgstr ""
+
+# ea0de2546a1f4e9cb23e1f10e03a0e80
+#: ../../releases/v2018.1.rst:323
+msgid "i18n namespaces"
+msgstr ""
+
+# ba9c7abcd8be45dc9205fdbd2945255c
+#: ../../releases/v2018.1.rst:325
+msgid ""
+"In earlier version of Gluon, all gluon-web (formerly LuCI) packages "
+"shared the same i18n namespace, so independent packages could override "
+"each others translations (with an arbitrary translation of the same "
+"string \"winning\"). This issue has been solved by giving each package "
+"its own translation namespace, which is defined by the *package* "
+"directive in a package's controller. It is still possible to access a "
+"different i18n namespace (e.g. gluon-web base or site translations), "
+"which is described in :doc:`../dev/web/i18n`."
+msgstr ""
+
+# 43e51399a0fb4f0eb445b7d76910f39b
+#: ../../releases/v2018.1.rst:333
+msgid "Package Makefile cleanup"
+msgstr ""
+
+# 6ed45885b8304029ba7c33c123e858da
+#: ../../releases/v2018.1.rst:335
+msgid ""
+"The Makefiles of the individual Gluon packages have been cleaned up "
+"significantly by moving a lot of boilerplate code to *package/gluon.mk*. "
+"The new features of *package/gluon.mk* are explained in detail in "
+":doc:`../dev/packages`."
+msgstr ""
+
+# 11dec269393743b4ab9d028e61e0c4cb
+#: ../../releases/v2018.1.rst:340
+msgid "Site checker"
+msgstr ""
+
+# c08ce3155131427cb1a909b9a927ac64
+#: ../../releases/v2018.1.rst:342
+msgid "New JSON/Lua path specification"
+msgstr ""
+
+# 33d3c6a9f47a4650aa55e9c727212203
+#: ../../releases/v2018.1.rst:344
+msgid ""
+"The old string-based path specifications in site check scripts (e.g. "
+"``'autoupdater.branch'``) have been replaced with arrays "
+"(``{'autoupdater', 'branch'}``). This will implicitly ensure that "
+"*autoupdater* is a table when it exists (simplifying checks for deep "
+"structures), and it makes it easier to specify paths with variable "
+"components (by referencing a variable as an array element)."
+msgstr ""
+
+# e159d8963b98439e9124cc34df641539
+#: ../../releases/v2018.1.rst:349
+msgid "Alternatives"
+msgstr ""
+
+# 2a88f31dda9c4656aae8c4fea488e5dd
+#: ../../releases/v2018.1.rst:351
+msgid ""
+"The site check library has gained support for *alternatives*. It is now "
+"possible to check if a configuration satisfies one of multiple checks:"
+msgstr ""
+
+# 2c90cbd5da9543c88d9231b0ea1cc482
+#: ../../releases/v2018.1.rst:363
+msgid ""
+"As many branches (functions) as necessary can be passed to a single "
+"*alternatives* call, which will succeed when at least one of the branches"
+" succeeds."
+msgstr ""
+
+# 42b274f69325461e8153fb82f9755f3c
+#: ../../releases/v2018.1.rst:367
+msgid "batman-adv multicast optimizations"
+msgstr ""
+
+# e45ea0a6e97848ecb099eb8f32c22b1f
+#: ../../releases/v2018.1.rst:369
+msgid ""
+"After various extra rounds of testing and fixes, the batman-adv (compat "
+"15) multicast optimizations were reenabled: knowledge about potential "
+"multicast listeners is gathered and distributed through the mesh again."
+msgstr ""
+
+# 361ed46e2796406399999c64e3db12a5
+#: ../../releases/v2018.1.rst:372
+msgid ""
+"This is the next step towards the addition of the actual multicast "
+"distribution optimizations, which are being prepared in `#1357 "
+"<https://github.com/freifunk-gluon/gluon/pull/1357>`_. When finished, the"
+" optimizations will help reduce the remaining Layer-2-specific network "
+"overhead, e.g. multicasted ICMPv6 messages."
+msgstr ""
+
+# 4d66834661da4107b61553983945a05e
+#: ../../releases/v2018.1.rst:376
+msgid ""
+"No behaviour changes are expected yet, as the multicast sender side is "
+"still disabled. Once the majority of the mesh network has been updated to"
+" Gluon 2018.1, it can be activated on dedicated nodes by including `#1357"
+" <https://github.com/freifunk-gluon/gluon/pull/1357>`_ in the firmware "
+"build. Test feedback is very welcome."
+msgstr ""
+
+# 35a6e6f622694a75bc9faf18f0e752fb
+#: ../../releases/v2018.1.rst:384
+msgid "Known issues"
+msgstr ""
+
+# f12e1c21810d4e3d9a192a65ce870aff
+#: ../../releases/v2018.1.rst:386
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 01029584960c40d393cd2885d3a991b8
+#: ../../releases/v2018.1.rst:388
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 764fdd7df6dd4af78883a28ecbafa4fe
+#: ../../releases/v2018.1.rst:390
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# a119a63640434e298e541043f4bef128
+#: ../../releases/v2018.1.rst:392
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# b316814073934c19902be7c8f7e165ff
+#: ../../releases/v2018.1.rst:394
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 9ed65956f6df4b4c972fecc241256aaf
+#: ../../releases/v2018.1.rst:396
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# a83e21feddea4962a5c162064bd30f05
+#: ../../releases/v2018.1.rst:398
+msgid ""
+"Frequent reboots due to out-of-memory or high load due to memory pressure"
+" on weak hardware specially in larger meshes (`#1243 <https://github.com"
+"/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+# ac95ecd8aa0f4fce9652d05a37c2df0c
+#: ../../releases/v2018.1.rst:401
+msgid ""
+"Optimizations in Gluon 2018.1 have significantly improved memory usage. "
+"There are still known bugs leading to unreasonably high load that we hope"
+" to solve in future releases."
+msgstr ""
+
+# d47fb5dc743d4649a3760d60b69266df
+#: ../../releases/v2018.1.rst:405
+msgid ""
+"Configuration loss on upgrade under certain circumstances (`#1496 "
+"<https://github.com/freifunk-gluon/gluon/issues/1496>`_)"
+msgstr ""
+
+# 9a89a6c2cc02467e8e869c7c80fa6d95
+#: ../../releases/v2018.1.rst:408
+msgid ""
+"The issue can only occur when upgrading from 2018.1 and there are "
+"multiple mirror entries in *site.conf* (specifically, an early failure "
+"for one of the mirrors, e.g. during DNS resolution, followed by a "
+"successful upgrade from a different mirror triggers the issue)."
+msgstr ""
+
+# 6f20822540b040afb4689b9aab11cc64
+# 55524c4c016445af93d92b72d5b71acb
+#: ../../releases/v2018.1.rst:413 ../../releases/v2018.1.rst:421
+msgid "This is a regression in Gluon 2018.1."
+msgstr ""
+
+# f3eea7d23c034991a813544b54e75bd9
+#: ../../releases/v2018.1.rst:415
+msgid ""
+"Next-node ARP issue (`#1488 <https://github.com/freifunk-"
+"gluon/gluon/issues/1488>`_)"
+msgstr ""
+
+# 5e124619aac4492b9bd632cb7eadb136
+#: ../../releases/v2018.1.rst:418
+msgid ""
+"A routing table issue leads to ARP requests being sent from the next-node"
+" IPv4 address, but with a node-specific source MAC address. This can make"
+" the next-node IPv4 address unreachable."
+msgstr ""
+

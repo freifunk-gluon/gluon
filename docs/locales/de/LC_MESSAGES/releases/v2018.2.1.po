@@ -1,0 +1,325 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:37-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 3a0b270375fb40f78915133f9d05f758
+#: ../../releases/v2018.2.1.rst:2
+msgid "Gluon 2018.2.1"
+msgstr ""
+
+# 213cddd842364822be0bace664c99170
+#: ../../releases/v2018.2.1.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# 1c2633da4abe47a3a4d42aa9c6776083
+#: ../../releases/v2018.2.1.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# 0d7bef9b0e1145ab9e73a31fba57e53d
+#: ../../releases/v2018.2.1.rst:10
+msgid "AVM"
+msgstr ""
+
+# ab7413b0285a4a6793bbe4488d9957b8
+#: ../../releases/v2018.2.1.rst:12
+msgid "Fritz!WLAN Repeater 300E"
+msgstr ""
+
+# cff26467ea3b4fd38b607ef3f9d3580c
+#: ../../releases/v2018.2.1.rst:15
+msgid "ramips-mt7620"
+msgstr ""
+
+# 198db14809224f35bcb687fbf90aedc8
+#: ../../releases/v2018.2.1.rst:17
+msgid "Nexx"
+msgstr ""
+
+# 39bc5b37ae1249bba14af3167d71c6d2
+#: ../../releases/v2018.2.1.rst:19
+msgid "WT3020AD/F/H [#noibss]_"
+msgstr ""
+
+# 1520f2c8ca044bc986845c5a958ff066
+#: ../../releases/v2018.2.1.rst:22
+msgid "ramips-mt76x8"
+msgstr ""
+
+# b4b06cd7dab64eedbed7bffdc0cdfac1
+#: ../../releases/v2018.2.1.rst:24
+msgid "Gl.iNet"
+msgstr ""
+
+# 5401276871eb4bd8bdeafcc2af77218a
+#: ../../releases/v2018.2.1.rst:26
+msgid "MT300N (v2) [#noibss]_"
+msgstr ""
+
+# 8df7a5e20ee84affbc796b6894189892
+#: ../../releases/v2018.2.1.rst:28
+msgid "Netgear"
+msgstr ""
+
+# f115e6ead38e4fecab5da881409ad571
+#: ../../releases/v2018.2.1.rst:30
+msgid "R6120 [#noibss]_"
+msgstr ""
+
+# bc393e4f30354780bc617baddd2b0fb0
+#: ../../releases/v2018.2.1.rst:32
+msgid "TP-Link"
+msgstr ""
+
+# 7b6b349e52ef46a293673c8230bdafec
+#: ../../releases/v2018.2.1.rst:34
+msgid "Archer C50 (v3, v4) [#noibss]_"
+msgstr ""
+
+# f23b8084290c44049da68c3682ed6d0b
+#: ../../releases/v2018.2.1.rst:35
+msgid "TL-WR841N (v13) [#noibss]_"
+msgstr ""
+
+# acfeb8514e1248a898cf257e119ce5ff
+#: ../../releases/v2018.2.1.rst:38
+msgid ""
+"Device or target does not support AP+IBSS mode: This device or target "
+"will not be built when *GLUON_WLAN_MESH* is set to ``ibss``."
+msgstr ""
+
+# 43eb8400a3704c41be9d3deb049566f3
+#: ../../releases/v2018.2.1.rst:42
+msgid "Bugfixes"
+msgstr ""
+
+# 24ebaee59eb3444eb72a974affde352e
+#: ../../releases/v2018.2.1.rst:44
+msgid ""
+"Fixes a bug in the batman-adv respondd module that caused duplicate IPv6 "
+"addresses in nodeinfo replies (`#1615 <https://github.com/freifunk-"
+"gluon/gluon/issues/1615>`_)"
+msgstr ""
+
+# 1255fc7a209d4094b16faac7c523c1ef
+#: ../../releases/v2018.2.1.rst:47
+msgid ""
+"This was visible on the status page and several map implementations. The "
+"new implementation uses netlink instead of parsing `/proc/net/if_inet6`."
+msgstr ""
+
+# 9fe6c34fc8134b8fb708d7bdfdaaff54
+#: ../../releases/v2018.2.1.rst:50
+msgid ""
+"Fixes a localization issue in gluon-config-mode-geo-location which "
+"resulted in a partial translation of the wizard's location section text. "
+"(`#1611 <https://github.com/freifunk-gluon/gluon/issues/1611>`_)"
+msgstr ""
+
+# b912caa544f9469a948fe587297725f3
+#: ../../releases/v2018.2.1.rst:54
+msgid ""
+"Fixes the display of the improved memory usage estimation in gluon-"
+"status-page"
+msgstr ""
+
+# ed08c09d6385459ca54e42bd067053d9
+#: ../../releases/v2018.2.1.rst:56
+msgid ""
+"This change was actually already merged in time for v2018.2 but the "
+"JavaScript was not rebuilt."
+msgstr ""
+
+# b8304f8c279c4fe58349e66c5afc7800
+#: ../../releases/v2018.2.1.rst:59
+msgid ""
+"Fixes automatic updates for several devices by adding and updating the "
+"autoupdater image names"
+msgstr ""
+
+# 1dbd1064bdc649ce85d7fe3cb3d786dd
+#: ../../releases/v2018.2.1.rst:62
+msgid "This affects the following devices:"
+msgstr ""
+
+# 8b454c62abd143e8b71ca30589f2f4bc
+#: ../../releases/v2018.2.1.rst:64
+msgid "GL.iNet GL-AR150,"
+msgstr ""
+
+# 2cca18c4a5f64a7cac813ceffaf3d6e4
+#: ../../releases/v2018.2.1.rst:65
+msgid "GL.iNet GL-AR300M"
+msgstr ""
+
+# 528869a342a24d14bafa4f9fdf9a6a32
+#: ../../releases/v2018.2.1.rst:66
+msgid "GL.iNet GL-AR750"
+msgstr ""
+
+# 2ac7ba6c4fe1464c9af7c4085d90354d
+#: ../../releases/v2018.2.1.rst:67
+msgid "Raspberry Pi Model B+ Rev 1.2"
+msgstr ""
+
+# 258885e39f614bb28c1215b3e615c5cf
+#: ../../releases/v2018.2.1.rst:69
+msgid ""
+"Fixes the primary MAC address selection for Unifi AC Lite/Mesh/Pro/Mesh "
+"Pro (`#1629 <https://github.com/freifunk-gluon/gluon/issues/1629>`_)"
+msgstr ""
+
+# 62379fc7cbea442daffec79350da2d70
+#: ../../releases/v2018.2.1.rst:72
+msgid ""
+"Fixes low data rate selection for multicast and management frames on "
+"ath10k and ath10k-ct (`#1644 <https://github.com/freifunk-"
+"gluon/gluon/pull/1644>`_)"
+msgstr ""
+
+# f8193242129347a2a49a79653afaae1c
+#: ../../releases/v2018.2.1.rst:75
+msgid ""
+"A patchset has been backported that notifies these drivers of requested "
+"data rate changes"
+msgstr ""
+
+# 1f6de6833dbc4e9891909f8d1574563f
+#: ../../releases/v2018.2.1.rst:77
+msgid ""
+"Fixes the data rate selection in ath10k and ath10k-ct when no "
+"`mcast_rate` is configured (`#1657 <https://github.com/freifunk-"
+"gluon/gluon/pull/1657>`_)"
+msgstr ""
+
+# b04ab25f316f4b48a57af1103011ae2a
+#: ../../releases/v2018.2.1.rst:80
+msgid "Previously a missing mcast_rate could result in broken 5 GHz connectivity"
+msgstr ""
+
+# 34e489dce35040db880d5844a492a853
+#: ../../releases/v2018.2.1.rst:83
+msgid "New features"
+msgstr ""
+
+# 0a17d977abdb4aedae5e758b09afa777
+#: ../../releases/v2018.2.1.rst:86
+msgid "Scheduled domain switch"
+msgstr ""
+
+# e6bd9c7eff5b4cb78d57113e7ea7db02
+#: ../../releases/v2018.2.1.rst:88
+msgid ""
+"Gluon has support for multiple domains since its v2018.1 release. The "
+"scheduled domain switch allows for reliable migrations between domains at"
+" a preconfigured time. This can be useful for communities that, among "
+"other things, plan to"
+msgstr ""
+
+# 73aea8470dd64f22a7e1b6a82c16caca
+#: ../../releases/v2018.2.1.rst:93
+msgid "migrate between IBSS and 802.11s"
+msgstr ""
+
+# dec5c43412154a7ab3f705a4768e5772
+#: ../../releases/v2018.2.1.rst:94
+msgid "activate VXLAN encapsulation on wired mesh links"
+msgstr ""
+
+# 0c719a3ea5ab473285689f1443d7400d
+#: ../../releases/v2018.2.1.rst:97
+msgid "Improved frequency band distribution of dual-band radios"
+msgstr ""
+
+# f4c4a3f8c31b4229b508a416a2770355
+#: ../../releases/v2018.2.1.rst:99
+msgid ""
+"A new algorithm that improves the distribution of dual-band radios was "
+"added. They will now be evenly distributed between the 2.4 and 5 GHz "
+"band, with a preference towards 2.4 GHz."
+msgstr ""
+
+# c08480f18d1746b3b5e7b1b679730012
+#: ../../releases/v2018.2.1.rst:103
+msgid ""
+"If a device has only a single dual-band radio, like the AVM FRITZ!WLAN "
+"Repeater 300E, it will be configured for 2.4 GHz."
+msgstr ""
+
+# c4cc9cdd897f4feeaae4cae8fd4477f1
+#: ../../releases/v2018.2.1.rst:107
+msgid "Known issues"
+msgstr ""
+
+# 24c06eb0fcb74d678ac84ad420b07f8b
+#: ../../releases/v2018.2.1.rst:109
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# e50119c610c1422b8f7c6c173c8b6312
+#: ../../releases/v2018.2.1.rst:112
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 1443eacef7a14557a2b337eaed1f1e9e
+#: ../../releases/v2018.2.1.rst:114
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 0dd13fe4931447db9b6a4792b1ead825
+#: ../../releases/v2018.2.1.rst:117
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# cb61819735d04cc9b59bb711bd1e9002
+#: ../../releases/v2018.2.1.rst:120
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 8ee44f4ec06f42509da9ca5ece3f6ba8
+#: ../../releases/v2018.2.1.rst:123
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 19f23e9ffd584702bf5d9ed85fa5a1e9
+#: ../../releases/v2018.2.1.rst:126
+msgid ""
+"Frequent reboots due to out-of-memory or high load due to memory pressure"
+" on weak hardware specially in larger meshes (`#1243 <https://github.com"
+"/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+# 34690e48614e4d8d8df52fe56042a1de
+#: ../../releases/v2018.2.1.rst:130
+msgid ""
+"Optimizations in Gluon 2018.1 have significantly improved memory usage. "
+"There are still known bugs leading to unreasonably high load that we hope"
+" to solve in future releases."
+msgstr ""
+

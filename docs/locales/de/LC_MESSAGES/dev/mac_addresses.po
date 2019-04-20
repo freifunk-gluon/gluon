@@ -1,0 +1,80 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 4fc16287cb51470c9f8708bd51181261
+#: ../../dev/mac_addresses.rst:2
+msgid "MAC addresses"
+msgstr ""
+
+# 8a6ac02cd37545a982dcca72057b94a3
+#: ../../dev/mac_addresses.rst:4
+msgid ""
+"Many devices don't have enough unique MAC addresses assigned by the "
+"vendor (in batman-adv, each mesh interface needs an own MAC address that "
+"must be unique mesh-wide)."
+msgstr ""
+
+# 48554ff982424bbeb22f498971940876
+#: ../../dev/mac_addresses.rst:8
+msgid ""
+"Gluon tries to solve this issue by using a hash of the primary MAC "
+"address as a 45 bit MAC address prefix. The resulting 8 addresses are "
+"used as follows:"
+msgstr ""
+
+# b369ef2da6ab4f08aba0c4684a07c768
+#: ../../dev/mac_addresses.rst:11
+msgid "0: client0; WAN"
+msgstr ""
+
+# 413bb026049643b39a1d7e6cdc4e8848
+#: ../../dev/mac_addresses.rst:12
+msgid "1: mesh0"
+msgstr ""
+
+# 2f15fb0ad929452592f7160c673698db
+#: ../../dev/mac_addresses.rst:13
+msgid "2: ibss0"
+msgstr ""
+
+# ad0067c833e64ba5b2a82c2e2b35f104
+#: ../../dev/mac_addresses.rst:14
+msgid "3: wan_radio0 (private WLAN); batman-adv primary address"
+msgstr ""
+
+# 087bac3e4ee7422d8837f5f6b8818959
+#: ../../dev/mac_addresses.rst:15
+msgid "4: client1; LAN"
+msgstr ""
+
+# 41aa66e8624944fca286b2d935a4fde8
+#: ../../dev/mac_addresses.rst:16
+msgid "5: mesh1"
+msgstr ""
+
+# ff4d7120b42246a3802ac6f11fbfc097
+#: ../../dev/mac_addresses.rst:17
+msgid "6: ibss1"
+msgstr ""
+
+# bf9e269213594d56a246609e84c032a5
+#: ../../dev/mac_addresses.rst:18
+msgid "7: wan_radio1 (private WLAN); mesh VPN"
+msgstr ""
+

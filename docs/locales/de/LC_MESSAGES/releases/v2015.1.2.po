@@ -1,0 +1,158 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 5f89daf684034295beb58189b4ff6534
+#: ../../releases/v2015.1.2.rst:2
+msgid "Gluon 2015.1.2"
+msgstr ""
+
+# fe273d915ee64f2b82ae019a641d1977
+#: ../../releases/v2015.1.2.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# bf280b0bd6a84afc82bfee54f32fb9af
+#: ../../releases/v2015.1.2.rst:7
+msgid "ar71xx-generic"
+msgstr ""
+
+# 0d223a0631784680a65fa8a79e0bfef6
+#: ../../releases/v2015.1.2.rst:9
+msgid "TP-Link"
+msgstr ""
+
+# c61045965687444fbcb8afac8ccfbcb8
+#: ../../releases/v2015.1.2.rst:11
+msgid "TL-WA701N/ND (v2)"
+msgstr ""
+
+# 16e125c7b0a347008371e768634f2c6f
+#: ../../releases/v2015.1.2.rst:12
+msgid "TL-WA801N/ND (v1)"
+msgstr ""
+
+# f4608bb3888c4580b22e567d8aa0114a
+#: ../../releases/v2015.1.2.rst:13
+msgid "TL-WA830RE (v2)"
+msgstr ""
+
+# 5c258a524e624761b5987a26f28732ac
+#: ../../releases/v2015.1.2.rst:14
+msgid "TL-WR740N / TL-WR741ND (v5)"
+msgstr ""
+
+# 3470009d99bd4d31be6a32fed19c36e8
+#: ../../releases/v2015.1.2.rst:17
+msgid "New features"
+msgstr ""
+
+# 2f65de79c5db499b80d621de0917011f
+#: ../../releases/v2015.1.2.rst:19
+msgid ""
+"Ubiquiti Loco M, Picostation M and Rocket M now get their own images "
+"(which are just copies of the Bullet M image) so it's more obvious for "
+"users which image to use"
+msgstr ""
+
+# 41917799c0394bb7a681ecdd048f3343
+#: ../../releases/v2015.1.2.rst:21
+msgid "The x86-generic images now contain the e1000e ethernet driver by default"
+msgstr ""
+
+# 6e95eb845e054892b4d3adf971196207
+#: ../../releases/v2015.1.2.rst:24
+msgid "Bugfixes"
+msgstr ""
+
+# e9c3707446d44576ba31e7d5c8c9baea
+#: ../../releases/v2015.1.2.rst:26
+msgid ""
+"Fix download of OpenSSL during build because of broken OpenSSL download "
+"servers (again...)"
+msgstr ""
+
+# 32be4f1016904cf09747d594e0a344cb
+#: ../../releases/v2015.1.2.rst:27
+msgid ""
+"Fix another ABI incompatibility with the upstream kernel modules which "
+"prevented loading some filesystem-related modules"
+msgstr ""
+
+# d7659c66bde44c2ea10a29d99176b756
+#: ../../releases/v2015.1.2.rst:28
+msgid ""
+"Fix potential MAC address conflicts on x86 target when using mesh-on-"
+"wan/lan"
+msgstr ""
+
+# 77c28be8fc864d0f84765b20addaedde
+#: ../../releases/v2015.1.2.rst:29
+msgid "Fix signal strength indicators on TP-LINK CPE210/510"
+msgstr ""
+
+# 9bf2c79c066449a5b2eb5399851b0da2
+#: ../../releases/v2015.1.2.rst:30
+msgid "Fix the model name string on some NETGEAR WNDR3700v2"
+msgstr ""
+
+# af85d829903644ddbcabd8a05da01099
+#: ../../releases/v2015.1.2.rst:31
+msgid ""
+"Fix 5GHz WLAN switching channels and losing connectivity when other WLANs"
+" using the same channel are detected (including other Gluon nodes...); "
+"see https://github.com/freifunk-gluon/gluon/issues/386"
+msgstr ""
+
+# 467c3c0d0b81453782e303b9f1f4e26a
+#: ../../releases/v2015.1.2.rst:32
+msgid ""
+"Fix DNS resolution for mesh VPN on IPv6-only WAN; see https://github.com"
+"/freifunk-gluon/gluon/issues/397"
+msgstr ""
+
+# cd5bef63cb36455fb8ff222602c87202
+#: ../../releases/v2015.1.2.rst:33
+msgid ""
+"gluon-mesh-batman-adv-15: update batman-adv to 2015.0 with additional "
+"bugfixes (fixes various minor bugs)"
+msgstr ""
+
+# d7bcd7dda5ab438c8e705f3c642c9c36
+#: ../../releases/v2015.1.2.rst:34
+msgid ""
+"gluon-mesh-batman-adv-15: fix forwarding of fragmented frames over "
+"multiple links with different MTUs"
+msgstr ""
+
+# 27bc2cdb21dd42abbc3164d0d6825fc5
+#: ../../releases/v2015.1.2.rst:36
+msgid ""
+"batman-adv compat 15 doesn't re-fragment frames that are fragmented "
+"already. In particular, this breaks transmission of large packets which "
+"are first fragmented for mesh-on-lan/wan and are then sent over the mesh "
+"VPN, which has an even smaller MTU. Work around this limitation by "
+"decreasing the maximum fragment size to 1280, so they can always be "
+"forwarded as long there's no link with a MTU smaller than 1280."
+msgstr ""
+
+# 9adb3bb2577d45afa746782139484ae0
+#: ../../releases/v2015.1.2.rst:41
+msgid "See https://github.com/freifunk-gluon/gluon/issues/435"
+msgstr ""
+

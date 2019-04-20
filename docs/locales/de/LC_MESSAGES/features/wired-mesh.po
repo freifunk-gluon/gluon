@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# db1ff8ac4fc0441d8d7837f2d080c919
+#: ../../features/wired-mesh.rst:2
+msgid "Wired mesh (Mesh-on-WAN/LAN)"
+msgstr ""
+
+# e3a01596356a443fb931543ad250060b
+#: ../../features/wired-mesh.rst:4
+msgid ""
+"In addition to meshing over WLAN and VPN, it is also possible to "
+"configure wired meshing over the LAN or WAN ports. This allows nodes to "
+"be connected directly or over wireless bridges."
+msgstr ""
+
+# 590131059c7f4b04929e3d8ee8311756
+#: ../../features/wired-mesh.rst:8
+msgid ""
+"Mesh-on-WAN can be enabled in addition to the mesh VPN, so multiple nodes"
+" in the same local network that is used as VPN uplink can also mesh "
+"directly. Enabling Mesh-on-WAN should be avoided if the local network is "
+"also bridged with a WLAN access point, as meshing over batman-adv causes "
+"large amounts of multicast traffic, which will take up a lot of airtime."
+msgstr ""
+
+# 8a99c55556594961a68f39de810936f9
+#: ../../features/wired-mesh.rst:14
+msgid ""
+"Enabling Mesh-on-LAN replaces the normal \"client network\" function of "
+"the LAN ports, as client network ports may never be connected (so care "
+"must be taken to always enable Mesh-on-LAN before connecting two nodes' "
+"LAN ports)."
+msgstr ""
+
+# 84b1184cd5ab44f0b16fbc79bf91de2b
+#: ../../features/wired-mesh.rst:19
+msgid "Wired mesh encapsulation"
+msgstr ""
+
+# f119289fa7264331a900587b5b1024af
+#: ../../features/wired-mesh.rst:21
+msgid ""
+"Since version 2018.1, Gluon supports encapsulating wired mesh traffic in "
+"`VXLAN <https://en.wikipedia.org/wiki/Virtual_Extensible_LAN>`_, a new "
+"standard with use cases similar to VLANs, but a much greater ID space of "
+"24bit; in addition, VXLAN packets pass through VLAN-aware switches "
+"without any special configuration."
+msgstr ""
+
+# ff0aff8641ff4197a12d54fe6b71b1ef
+#: ../../features/wired-mesh.rst:26
+msgid "Encapsulating mesh traffic has two advantages:"
+msgstr ""
+
+# 4c138ab3807c4a14b0f44f6ff1f1b5a8
+#: ../../features/wired-mesh.rst:28
+msgid ""
+"By using a different VXLAN ID for each site and mesh domain, accidental "
+"wired mesh connections between nodes of different domains will be "
+"prevented. This has special importance when nodes migrate between domains"
+" automatically, as currently possible through different site-specific "
+"packages."
+msgstr ""
+
+# 6b71ac328c6b4a728fa97c2a3a1e9c3c
+#: ../../features/wired-mesh.rst:32
+msgid ""
+"While batman-adv traffic does not interact with non-mesh traffic in the "
+"same wired network in any way (so Gluon nodes can mesh over existing "
+"wired networks), this is not the case for layer 3 mesh protocols like "
+"Babel. Encapsulating the traffic allows to distinguish mesh traffic from "
+"unrelated packets."
+msgstr ""
+
+# 32fb6fa47d2c4df7b52bc2f4e1ef8fbc
+#: ../../features/wired-mesh.rst:37
+msgid ""
+"As enabling VXLAN encapsulation will prevent wired mesh communication "
+"with old nodes that do not support VXLAN yet, VXLANs can be enabled per-"
+"domain using the site configuration setting *mesh.vxlan*. VXLAN is "
+"enabled by default in multidomain setups; in single-domain site "
+"configurations, the *mesh.vxlan* setting is mandatory. We recommend to "
+"enable VXLAN encapsulation in all new sites and domains."
+msgstr ""
+
+# fdde8f74eeac4733ba4673ee52e4e53f
+#: ../../features/wired-mesh.rst:43
+msgid ""
+"Non-encapsulated (\"legacy\") wired meshing will be removed in a future "
+"Gluon release. We cannot give a concrete timeframe for the removal yet; a"
+" missing prerequisite is the implementation of a robust migration path "
+"for existing deployments."
+msgstr ""
+
+# 823a16b9f6fa42439cdcbbef0aee46fa
+#: ../../features/wired-mesh.rst:48
+msgid "Configuration"
+msgstr ""
+
+# 5342374218d9479c931e6ae9eb23801c
+#: ../../features/wired-mesh.rst:50
+msgid ""
+"Both Mesh-on-WAN and Mesh-on-LAN can be configured on the \"Network\" "
+"page of the *Advanced settings* (if the package ``gluon-web-network`` is "
+"installed)."
+msgstr ""
+
+# a0f14d5bd03d4dbb9fdc4967769dc933
+#: ../../features/wired-mesh.rst:53
+msgid ""
+"It is also possible to enable Mesh-on-WAN and Mesh-on-LAN by default by "
+"adding ``mesh_on_wan = true`` and ``mesh_on_lan = true`` to "
+"``site.conf``."
+msgstr ""
+
+# 71f7364382364448a71f3d46e28cb1c2
+#: ../../features/wired-mesh.rst:57
+msgid "Commandline"
+msgstr ""
+
+# ad2ddc1d903c486285e7cbcc4e6c5780
+#: ../../features/wired-mesh.rst:59
+msgid "Enable Mesh-on-WAN::"
+msgstr ""
+
+# 31e3f9d0a2cc4d73a8fdf11d8e6dd18d
+#: ../../features/wired-mesh.rst:64
+msgid "Disable Mesh-on-WAN::"
+msgstr ""
+
+# 08605ab4c4744da48bccf6bf249ef78e
+#: ../../features/wired-mesh.rst:69
+msgid "Enable Mesh-on-LAN::"
+msgstr ""
+
+# 9067a19e25bc447194265ad44b90cde1
+#: ../../features/wired-mesh.rst:77
+msgid "Disable Mesh-on-LAN::"
+msgstr ""
+
+# 006e5a04f3cd47298b7ace10a963b729
+#: ../../features/wired-mesh.rst:85
+msgid ""
+"Please note that this configuration has changed in Gluon 2016.1. Using "
+"the old commands on 2016.1 and later will break the corresponding options"
+" in the *Advanced settings*."
+msgstr ""
+

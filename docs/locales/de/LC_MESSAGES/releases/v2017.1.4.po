@@ -1,0 +1,144 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 2bbd7fe5e187458a82c73956ac2f20af
+#: ../../releases/v2017.1.4.rst:2
+msgid "Gluon 2017.1.4"
+msgstr ""
+
+# 9fc0d7ec538943bc8f7e8c783478a0ab
+#: ../../releases/v2017.1.4.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# f735e88f057344e882612f15d4c23c53
+#: ../../releases/v2017.1.4.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# 2e877903920a4f59bc55ad52cf0ca065
+#: ../../releases/v2017.1.4.rst:10
+msgid "GL Innovations GL-AR300M"
+msgstr ""
+
+# 93b6916f722944a0a7b76a674142c371
+#: ../../releases/v2017.1.4.rst:14
+msgid "Bugfixes"
+msgstr ""
+
+# 0e6db90dcfb5455bb0ed3444958ad8fb
+#: ../../releases/v2017.1.4.rst:16
+msgid ""
+"LEDE has been updated to the latest stable commit, including various "
+"fixes for the kernel (including security updates), and making opkg work "
+"again. This also includes fixes for the KRACK issue (which is irrelevant "
+"for most Gluon deployments, as Gluon nodes are rarely used as WLAN "
+"clients) (`b62af904bbfd <https://github.com/freifunk-"
+"gluon/gluon/commit/b62af904bbfd6360ed728fc9ae69af3d8e8db1d7>`_, "
+"`ba56b41ddaf6 <https://github.com/freifunk-"
+"gluon/gluon/commit/ba56b41ddaf6033e3cdef18d30da6b34cd438e8c>`_, "
+"`ad0824136e5b <https://github.com/freifunk-"
+"gluon/gluon/commit/ad0824136e5b47482e11483c50e7bc88ba2c506e>`_, "
+"`017fbe88bb8a <https://github.com/freifunk-"
+"gluon/gluon/commit/017fbe88bb8a89623464b02e09178696c1d077a6>`_)"
+msgstr ""
+
+# 7ca70f450d9d43cf9a40117eef0783a7
+#: ../../releases/v2017.1.4.rst:25
+msgid ""
+"Fix DNS resolution for mesh VPN (fastd / tunneldigger) on ARM-based "
+"targets (`#1245 <https://github.com/freifunk-gluon/gluon/issues/1245>`_)"
+msgstr ""
+
+# fb7c742e9307475f8e42c6e7f1ce5076
+#: ../../releases/v2017.1.4.rst:28
+msgid ""
+"Fix a build issue in *kmod-jool* (`06842728233a <https://github.com"
+"/freifunk-gluon/gluon/commit/06842728233a39784c437767eb9df4167ab07a87>`_)"
+msgstr ""
+
+# b101f2a17d394439936fd2bf66279521
+#: ../../releases/v2017.1.4.rst:31
+msgid ""
+"Fix enabling/disabling PoE Passthrough in *site.conf* or in the advanced "
+"settings (`7268e49a301f <https://github.com/freifunk-"
+"gluon/gluon/commit/7268e49a301fcd643a49b329bd6097a0f85bdaBb>`_, "
+"`7c2636d28264 <https://github.com/freifunk-"
+"gluon/gluon/commit/7c2636d28264df20b448b0160b69f5059c40b84a>`_)"
+msgstr ""
+
+# f9c4898bcf1a4939b66aa70a7d1d89b7
+#: ../../releases/v2017.1.4.rst:38
+msgid "Known issues"
+msgstr ""
+
+# 1fe03819fed447a0bf18824001ba56d7
+#: ../../releases/v2017.1.4.rst:40
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# d2c6523737a04064bf3b9ea3427d2782
+#: ../../releases/v2017.1.4.rst:42
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 10e7925f8c6b4086a35b85d8b92bf8b7
+#: ../../releases/v2017.1.4.rst:44
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 4f323b21a6d149f3ab1e5aedfd38f4ab
+#: ../../releases/v2017.1.4.rst:46
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 0cbe7e81155940c9a0c94fd41c1ec14f
+#: ../../releases/v2017.1.4.rst:48
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# b470bea3c9fd48fd8fcc5477f4381565
+#: ../../releases/v2017.1.4.rst:50
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 9c228d55f9594da4bf0c7bf6bb88a606
+#: ../../releases/v2017.1.4.rst:52
+msgid ""
+"Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx "
+"(`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)"
+msgstr ""
+
+# 96e06a70f63b406bbc600b7c3ec94d86
+#: ../../releases/v2017.1.4.rst:55
+msgid ""
+"The workaround added in Gluon v2017.1.1 has greatly reduced the frequency"
+" of segfaults, but it did not make them disappear completely."
+msgstr ""
+

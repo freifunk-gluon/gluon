@@ -1,0 +1,1069 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:33-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# e466cedbfa3440b5b59e0cba63e600ad
+#: ../../index.rst:2
+msgid "Welcome to Gluon"
+msgstr ""
+
+# c4170132f7844bd9873526589d3eacfd
+#: ../../index.rst:4
+msgid ""
+"Gluon is a modular framework for creating OpenWrt-based firmware images "
+"for wireless mesh nodes. Several Freifunk communities in Germany use "
+"Gluon as the foundation of their Freifunk firmware."
+msgstr ""
+
+# 0f340874f9ce41619dbe0521469c416c
+#: ../../index.rst:8
+msgid "User Documentation"
+msgstr ""
+
+# 34dc5f384ad541078f1f41c4c139283c
+#: ../../index.rst:17
+msgid "Features"
+msgstr ""
+
+# 2726bf26389646e8994b03efddb60c30
+#: ../../index.rst:33
+msgid "Developer Documentation"
+msgstr ""
+
+# c3397a9753dc46b1be0707f14c029b00
+#: ../../index.rst:45
+msgid "gluon-web Reference"
+msgstr ""
+
+# 96375db5723144c3b045a4c5adc83fa3
+#: ../../index.rst:55
+msgid "Packages"
+msgstr ""
+
+# 6c839e5ad4e246d6a2c0e20c49365566
+#: ../../index.rst:70
+msgid "Releases"
+msgstr ""
+
+# bf79f47cf26e49079f867c3b45c4ba84
+#: ../../index.rst:114
+msgid "Supported Devices & Architectures"
+msgstr ""
+
+# ed8fb2f2fbb14ce59b6a4c134da3c1fc
+#: ../../index.rst:117
+msgid "ar71xx-generic"
+msgstr ""
+
+# f3c04a932caf463dbfe41aedcb8540c2
+#: ../../index.rst:119
+msgid "8devices"
+msgstr ""
+
+# d6bf7a73f06a4f25b91d8af21f4bd31a
+#: ../../index.rst:121
+msgid "Carambola 2"
+msgstr ""
+
+# 193b895bd3294b9b8569cc159e985562
+#: ../../index.rst:123
+msgid "ALFA Network"
+msgstr ""
+
+# c1ec66f7a3f0446788338f8c5c70902b
+#: ../../index.rst:125
+msgid "AP121"
+msgstr ""
+
+# 978d9185cb97439c8dccc2e4824ea227
+#: ../../index.rst:126
+msgid "AP121F"
+msgstr ""
+
+# 847085ab7d574ad3abbdfa55c0f2a5d8
+#: ../../index.rst:127
+msgid "AP121U"
+msgstr ""
+
+# 01e65d903bfa4f9ab534ee05e707e15a
+#: ../../index.rst:128
+msgid "Hornet-UB"
+msgstr ""
+
+# 399fefee7ba14e11a410da1fc93c5ee5
+#: ../../index.rst:129
+msgid "Tube2H"
+msgstr ""
+
+# 03e3b15a84de420b8c0dd3e1638a8126
+#: ../../index.rst:130
+msgid "N2"
+msgstr ""
+
+# b19b0d5827524f81bc7c9cabc1a98948
+#: ../../index.rst:131
+msgid "N5"
+msgstr ""
+
+# 4351e7ac33f042408c521d3dd1059424
+#: ../../index.rst:133
+msgid "Allnet"
+msgstr ""
+
+# ef76fb82b617430d94b1dc6459498d3e
+#: ../../index.rst:135
+msgid "ALL0315N"
+msgstr ""
+
+# 2a629be87117438996dba60e0439036f
+# b0b240c6966d45f58226a0758773173e
+#: ../../index.rst:137 ../../index.rst:313
+msgid "AVM"
+msgstr ""
+
+# 9c048bd3b3344370b099bdf6d4ca39d7
+#: ../../index.rst:139
+msgid "Fritz!Box 4020 [#avmflash]_"
+msgstr ""
+
+# 2e070693c3fb44e9af4a6aa1c0d230f5
+#: ../../index.rst:140
+msgid "Fritz!WLAN Repeater 300E [#avmflash]_"
+msgstr ""
+
+# 9c15df62dd59472a98f2f8315353ba8c
+#: ../../index.rst:141
+msgid "Fritz!WLAN Repeater 450E [#avmflash]_"
+msgstr ""
+
+# 44aa9f84b95a4602bd25d093aedd1420
+#: ../../index.rst:143
+msgid "Buffalo"
+msgstr ""
+
+# f4d2ec14e24f4385970edadaa9dd0401
+#: ../../index.rst:145
+msgid "WZR-HP-AG300H / WZR-600DHP"
+msgstr ""
+
+# 448cfefc2e6c4644a054fbeba84396bb
+#: ../../index.rst:146
+msgid "WZR-HP-G300NH"
+msgstr ""
+
+# bba7acfac7854688ac84a5a10082943c
+#: ../../index.rst:147
+msgid "WZR-HP-G300NH2"
+msgstr ""
+
+# 1bde2851c058475aaa0924bfbaaffa9c
+#: ../../index.rst:148
+msgid "WZR-HP-G450H"
+msgstr ""
+
+# cd5107fee7cc4ef998b3c46838b72bee
+# f16f2ff8061d464dac6c1c4309158f2d
+# 72e8e961c97542af8f0d2972759457d1
+# 31efa1c1e06e4e46a956c25dc9eba88c
+#: ../../index.rst:150 ../../index.rst:267 ../../index.rst:359
+#: ../../index.rst:399
+msgid "D-Link"
+msgstr ""
+
+# e86969e5c01344e992c310c21a7c0dec
+#: ../../index.rst:152
+msgid "DAP-1330 (A1)"
+msgstr ""
+
+# 8dc0373a260746289776577b454ed2cb
+#: ../../index.rst:153
+msgid "DIR-505 (A1, A2)"
+msgstr ""
+
+# ae1d44d29a984e4cbc8b51e96621fea7
+#: ../../index.rst:154
+msgid "DIR-825 (B1)"
+msgstr ""
+
+# c2330de604c74b40b493faac365abab2
+# 85b5185db59345639e2caf51d87d60ba
+#: ../../index.rst:156 ../../index.rst:346
+msgid "GL Innovations"
+msgstr ""
+
+# d69348307abd4893ada6b35dc1309998
+#: ../../index.rst:158
+msgid "GL-AR150"
+msgstr ""
+
+# 53ead9bdce1b4630ac0e84f5643536c8
+#: ../../index.rst:159
+msgid "GL-AR300M"
+msgstr ""
+
+# 36d6d0fc9cab4345b29a1880df2c3876
+#: ../../index.rst:160
+msgid "GL-AR750 [#ath10k]_"
+msgstr ""
+
+# ef38239f3aa5435b87fae60057246264
+#: ../../index.rst:161
+msgid "GL-iNet 6408A (v1)"
+msgstr ""
+
+# f41d9fa59f0a4394949db87079c89f45
+#: ../../index.rst:162
+msgid "GL-iNet 6416A (v1)"
+msgstr ""
+
+# 909231ebc9cd458f93c92b49b64cc397
+#: ../../index.rst:164
+msgid "Linksys"
+msgstr ""
+
+# 05f86ed1df704659a4b187423de12bfd
+#: ../../index.rst:166
+msgid "WRT160NL"
+msgstr ""
+
+# 59ee1e35c53b4479b020b42f4525aece
+# 8fa7a4dad08a482ea1ab36a149a33a14
+#: ../../index.rst:168 ../../index.rst:255
+msgid "Netgear"
+msgstr ""
+
+# 9c0f78410fd4404cb0b77cfd4c8a6c3e
+#: ../../index.rst:170
+msgid "WNDR3700 (v1, v2, v5)"
+msgstr ""
+
+# df12ac5f69cd4ec991e27c19e576b661
+#: ../../index.rst:171
+msgid "WNDR3800"
+msgstr ""
+
+# 7ea932671eb64c56acf502b235ba27f1
+#: ../../index.rst:172
+msgid "WNDRMAC (v2)"
+msgstr ""
+
+# 2c26a436a10242c28607290d91c82185
+#: ../../index.rst:174
+msgid "OCEDO"
+msgstr ""
+
+# 5096e4e8ecff47f2a9a29012b7dba6c1
+#: ../../index.rst:176
+msgid "Koala [#ath10k]_"
+msgstr ""
+
+# 8ea3d8e87f08482ab5fe58f8b387e61e
+#: ../../index.rst:178
+msgid "Onion"
+msgstr ""
+
+# 3f13aa5420d94f399fff3f643925fc6e
+#: ../../index.rst:180
+msgid "Omega"
+msgstr ""
+
+# b4535a6766014713bb8991e36a1f0a63
+# f93a516b0c874c13805b4944dea3a851
+#: ../../index.rst:182 ../../index.rst:326
+msgid "OpenMesh"
+msgstr ""
+
+# 5ca71a38381545168d6e7a98abe20b51
+#: ../../index.rst:184
+msgid "A40"
+msgstr ""
+
+# a8c39a4bff134668a9c7c8e092488d37
+#: ../../index.rst:185
+msgid "A60"
+msgstr ""
+
+# aaf691f9d7c34d30b01839f5a885a5c3
+#: ../../index.rst:186
+msgid "MR600 (v1, v2)"
+msgstr ""
+
+# a2f5332f735b4e06ba7968fe79fcc104
+#: ../../index.rst:187
+msgid "MR900 (v1, v2)"
+msgstr ""
+
+# 755e91af5974473896fd77e17d7688b3
+#: ../../index.rst:188
+msgid "MR1750 (v1, v2) [#ath10k]_"
+msgstr ""
+
+# 033420c1d8a941f9a4721b8a91771434
+#: ../../index.rst:189
+msgid "OM2P (v1, v2, v4)"
+msgstr ""
+
+# 6d547aeafe09417a86abd0bffcb52692
+#: ../../index.rst:190
+msgid "OM2P-HS (v1, v2, v3, v4)"
+msgstr ""
+
+# 19a9c14e59e049e4898020ad837c5ba0
+#: ../../index.rst:191
+msgid "OM2P-LC"
+msgstr ""
+
+# e40676162c6e45809f5e3fb614a68f82
+#: ../../index.rst:192
+msgid "OM5P"
+msgstr ""
+
+# 58d7a7698caa4c7dabb2c81f7ace4cfa
+#: ../../index.rst:193
+msgid "OM5P-AN"
+msgstr ""
+
+# a3113927328a4af3adde7fe7ea1439ab
+#: ../../index.rst:194
+msgid "OM5P-AC (v1, v2) [#ath10k]_"
+msgstr ""
+
+# 5ded407da29a4006b91faa4cf7794051
+# 9a8bfe64cbbf4ae2a27bab825d74d67d
+# 37cca26ef4114e1093c201312c39c17d
+# 94dbf8149e064a848f9fd7fea09ffc5e
+#: ../../index.rst:196 ../../index.rst:271 ../../index.rst:339
+#: ../../index.rst:384
+msgid "TP-Link"
+msgstr ""
+
+# da65a2bdd34444c0a5869cebeb3a9f26
+#: ../../index.rst:198
+msgid "Archer C5 (v1) [#ath10k]_"
+msgstr ""
+
+# 33fc3f9b954a465c9e84bd8bbdee8d52
+#: ../../index.rst:199
+msgid "Archer C59 (v1) [#80211s]_"
+msgstr ""
+
+# fe07a43395d54e399861ec97d856c05d
+#: ../../index.rst:200
+msgid "Archer C7 (v2, v4, v5) [#ath10k]_"
+msgstr ""
+
+# 44bef11448db4a5789084552c5f6e471
+#: ../../index.rst:201
+msgid "CPE210 (v1.0, v1.1, v2.0)"
+msgstr ""
+
+# 49ff022cc2bd4069be7337c5f1aae2a7
+#: ../../index.rst:202
+msgid "CPE220 (v1.1)"
+msgstr ""
+
+# 0c572d66bd854197ad43fc601e5f29e2
+#: ../../index.rst:203
+msgid "CPE510 (v1.0, v1.1)"
+msgstr ""
+
+# e57cc6fee59e4c41a4d199c1acdb87ea
+#: ../../index.rst:204
+msgid "CPE520 (v1.1)"
+msgstr ""
+
+# d0ad5aeb16b84b558d7234f3fa428381
+#: ../../index.rst:205
+msgid "RE450 [#ath10k]_"
+msgstr ""
+
+# 6ffd3593de7b41c2ae3c96edeee2a0d7
+#: ../../index.rst:206
+msgid "TL-WDR3500 (v1)"
+msgstr ""
+
+# 5052a6c38b9b4672af25da93930a361f
+#: ../../index.rst:207
+msgid "TL-WDR3600 (v1)"
+msgstr ""
+
+# 69c53ba8a15749bfbb818b46c83105a9
+#: ../../index.rst:208
+msgid "TL-WDR4300 (v1)"
+msgstr ""
+
+# 68c64426ee1148baabf35f269bed99ed
+#: ../../index.rst:209
+msgid "TL-WR710N (v1, v2.1)"
+msgstr ""
+
+# 08b528c5101d42e491d1c6dd96eda08c
+#: ../../index.rst:210
+msgid "TL-WR810N (v1)"
+msgstr ""
+
+# 8c180337b6cf4cacb72414ba47d4cf3b
+#: ../../index.rst:211
+msgid "TL-WR842N/ND (v1, v2, v3)"
+msgstr ""
+
+# ed735e1d94a54a6281a09f6150ac30eb
+#: ../../index.rst:212
+msgid "TL-WR1043N/ND (v1, v2, v3, v4, v5)"
+msgstr ""
+
+# 7f3fb0a2a98d45b0872fd7df277ba635
+#: ../../index.rst:213
+msgid "TL-WR2543N/ND (v1)"
+msgstr ""
+
+# 62073e42a0a947688052397ccb5ddd6e
+#: ../../index.rst:214
+msgid "WBS210 (v1.20)"
+msgstr ""
+
+# ab11198b330c45ac9b83b18c7cdc6b34
+#: ../../index.rst:215
+msgid "WBS510 (v1.20)"
+msgstr ""
+
+# b5a49ab01bf344599c23463be3769725
+# ea3a5a520f1a430d85d0bce3b7a1d3c9
+#: ../../index.rst:217 ../../index.rst:363
+msgid "Ubiquiti"
+msgstr ""
+
+# b62c5801cbf14769977f6b127d6dca7b
+#: ../../index.rst:219
+msgid "Air Gateway"
+msgstr ""
+
+# a8577a96a1064d3f828c1d8fdf1ded73
+#: ../../index.rst:220
+msgid "Air Gateway LR"
+msgstr ""
+
+# 1c6bd007655f489bb6fe146d8375e180
+#: ../../index.rst:221
+msgid "Air Gateway PRO"
+msgstr ""
+
+# c4dd6933242448ab90a1de20ba462298
+#: ../../index.rst:222
+msgid "Air Router"
+msgstr ""
+
+# aa40dc514ecb4b15aaab4170dc7d64ff
+#: ../../index.rst:223
+msgid "Bullet M2/M5"
+msgstr ""
+
+# 45ff96a901e84a059833f547167e188a
+#: ../../index.rst:224
+msgid "Loco M2/M5"
+msgstr ""
+
+# 1ef2320de4b2476ebd6a907aee6206fe
+#: ../../index.rst:225
+msgid "Loco M2/M5 XW"
+msgstr ""
+
+# 79d99a6a0b2e47798d6795ee326ad7e3
+#: ../../index.rst:226
+msgid "Nanostation M2/M5"
+msgstr ""
+
+# 4db76d85d6aa41e6a10d94eaad911697
+#: ../../index.rst:227
+msgid "Nanostation M2/M5 XW"
+msgstr ""
+
+# 8419b41adfcd4811989bdafe00745012
+#: ../../index.rst:228
+msgid "Picostation M2"
+msgstr ""
+
+# 5801e460ad654d8cb5dcbadb43e8c5e2
+#: ../../index.rst:229
+msgid "Rocket M2/M5"
+msgstr ""
+
+# 0ad6337c8dc94738ad8389401fd0e338
+#: ../../index.rst:230
+msgid "Rocket M2/M5 Ti"
+msgstr ""
+
+# 13b426b765f04c87b4ccd578b315e042
+#: ../../index.rst:231
+msgid "Rocket M2/M5 XW"
+msgstr ""
+
+# 0139429418a641719fd0354c68a9f6e1
+#: ../../index.rst:232
+msgid "UniFi AC Mesh [#ath10k]_"
+msgstr ""
+
+# 00f3d575ec684bca84c1cfd6416f7d66
+#: ../../index.rst:233
+msgid "UniFi AC Mesh Pro [#ath10k]_"
+msgstr ""
+
+# 7e0e1efa8cfb4b90b0a4675dd5cd8b5e
+#: ../../index.rst:234
+msgid "UniFi AP"
+msgstr ""
+
+# 9c492980c80c413d8f8959960b0e84bf
+#: ../../index.rst:235
+msgid "UniFi AP AC Lite [#ath10k]_"
+msgstr ""
+
+# c2d3dc4179124f71a3a9c1571993b570
+#: ../../index.rst:236
+msgid "UniFi AP AC LR [#ath10k]_"
+msgstr ""
+
+# f7c75a0809ee4d4094a39be8d8e211fe
+#: ../../index.rst:237
+msgid "UniFi AP AC Pro [#ath10k]_"
+msgstr ""
+
+# 1ce44322398c4145a8cc1002c52f753b
+#: ../../index.rst:238
+msgid "UniFi AP LR"
+msgstr ""
+
+# 588d92fda96c41d1a66e768a5f390cc9
+#: ../../index.rst:239
+msgid "UniFi AP Pro"
+msgstr ""
+
+# 80ff794bbb0241789772d234b52e706a
+#: ../../index.rst:240
+msgid "UniFi AP Outdoor"
+msgstr ""
+
+# 0f445a34463146668055ca58a9f7cad2
+#: ../../index.rst:241
+msgid "UniFi AP Outdoor+"
+msgstr ""
+
+# e53f2066682f45828132e8ef6fbef72b
+#: ../../index.rst:243
+msgid "Western Digital"
+msgstr ""
+
+# 833ef5ff8e2d464fad95a8fe1eaf851d
+#: ../../index.rst:245
+msgid "My Net N600"
+msgstr ""
+
+# 95cf7b6ad0a142ba9ef90c275786066e
+#: ../../index.rst:246
+msgid "My Net N750"
+msgstr ""
+
+# 1e983f7e7ab64476b51d0f9c67f77154
+# 0f7b97423b8f4c8a87ca24e878f84e83
+# da01a5efa98941d9b1f5718baf6b580b
+#: ../../index.rst:248 ../../index.rst:260 ../../index.rst:331
+msgid "ZyXEL"
+msgstr ""
+
+# eebb77797a224090b16100afd92c21e5
+#: ../../index.rst:250
+msgid "NBG6616 [#ath10k]_"
+msgstr ""
+
+# 51fabd5d521f4c3fb56f1e1f1ec97fa1
+#: ../../index.rst:253
+msgid "ar71xx-nand"
+msgstr ""
+
+# e3ad65986cfa466ea23212a7cd397e58
+#: ../../index.rst:257
+msgid "WNDR3700 (v4)"
+msgstr ""
+
+# eeba94a7cbd044c597300dd4db8f5172
+#: ../../index.rst:258
+msgid "WNDR4300 (v1)"
+msgstr ""
+
+# 756162ab08944c458eb207bbdbd5af95
+#: ../../index.rst:262
+msgid "NBG6716 [#ath10k]_"
+msgstr ""
+
+# 69dbf0365c7847e484c814861e0c8d4a
+#: ../../index.rst:265
+msgid "ar71xx-tiny"
+msgstr ""
+
+# f98ef3c9a2254d31b54ef910c58bed56
+#: ../../index.rst:269
+msgid "DIR-615 (C1)"
+msgstr ""
+
+# f193e7adf8ac4c938a63126f5657d97d
+#: ../../index.rst:273
+msgid "TL-MR13U (v1)"
+msgstr ""
+
+# 4a20479ba2364df9b96e16cecb9251c9
+#: ../../index.rst:274
+msgid "TL-MR3020 (v1)"
+msgstr ""
+
+# c8ef0446897244e8b67c7ffe2b7ed72a
+#: ../../index.rst:275
+msgid "TL-MR3040 (v1, v2)"
+msgstr ""
+
+# 8420b84e6c134796a364fd610c97cd4c
+#: ../../index.rst:276
+msgid "TL-MR3220 (v1, v2)"
+msgstr ""
+
+# 690f1ff037b04aa7811e40f4b6de762c
+#: ../../index.rst:277
+msgid "TL-MR3420 (v1, v2)"
+msgstr ""
+
+# fc6ac7da6b2d4857a9bb3b87e8f8fcb5
+#: ../../index.rst:278
+msgid "TL-WA701N/ND (v1, v2)"
+msgstr ""
+
+# 5337a5b6bb2843c8b09adce10fc4eb63
+#: ../../index.rst:279
+msgid "TL-WA730RE (v1)"
+msgstr ""
+
+# d5736fc477ca460ea0c720afc388dd02
+#: ../../index.rst:280
+msgid "TL-WA750RE (v1)"
+msgstr ""
+
+# 8afa588a92a84ba9ba9489765d4715bd
+#: ../../index.rst:281
+msgid "TL-WA801N/ND (v1, v2, v3)"
+msgstr ""
+
+# ced5734b06c4441e869df69447ed6b7b
+#: ../../index.rst:282
+msgid "TL-WA830RE (v1, v2)"
+msgstr ""
+
+# 41343be0dce8419a825960acbf864b07
+#: ../../index.rst:283
+msgid "TL-WA850RE (v1)"
+msgstr ""
+
+# 24462da5ea174f6ab1f323a6e44b9d96
+#: ../../index.rst:284
+msgid "TL-WA860RE (v1)"
+msgstr ""
+
+# a02f547b562349d09a4f7b5819f9b01a
+#: ../../index.rst:285
+msgid "TL-WA901N/ND (v1, v2, v3, v4, v5)"
+msgstr ""
+
+# 054fd484bc694234bc927c4f9e4725cf
+#: ../../index.rst:286
+msgid "TL-WA7210N (v2)"
+msgstr ""
+
+# a9aa6dfc19b9474998868614282e422e
+#: ../../index.rst:287
+msgid "TL-WA7510N (v1)"
+msgstr ""
+
+# 9c9c7301aadd4c1d86b23e982fb77f1d
+#: ../../index.rst:288
+msgid "TL-WR703N (v1)"
+msgstr ""
+
+# ce17029a51a040ee9e81036f5903660b
+#: ../../index.rst:289
+msgid "TL-WR710N (v2)"
+msgstr ""
+
+# 29e4b02a936b41fa84a51b115553df60
+#: ../../index.rst:290
+msgid "TL-WR740N (v1, v3, v4, v5)"
+msgstr ""
+
+# 98c9c868dda241b084658c24a722653d
+#: ../../index.rst:291
+msgid "TL-WR741N/ND (v1, v2, v4, v5)"
+msgstr ""
+
+# a3ba9fc18957479abf5c2dba4df10cf2
+#: ../../index.rst:292
+msgid "TL-WR743N/ND (v1, v2)"
+msgstr ""
+
+# 126f52023cfd47309ed59522d3d4dd72
+#: ../../index.rst:293
+msgid "TL-WR840N (v2)"
+msgstr ""
+
+# b92c533d42934d43acf2dd1347fc295d
+#: ../../index.rst:294
+msgid "TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)"
+msgstr ""
+
+# b199f9a61cd5460f8436eda9ec515da0
+#: ../../index.rst:295
+msgid "TL-WR843N/ND (v1)"
+msgstr ""
+
+# ecbaa626eae64b83a26c060db6e5e2ac
+#: ../../index.rst:296
+msgid "TL-WR940N (v1, v2, v3, v4, v5, v6)"
+msgstr ""
+
+# 523a169cca5c4bdabd45629d56e614d5
+#: ../../index.rst:297
+msgid "TL-WR941ND (v2, v3, v4, v5, v6)"
+msgstr ""
+
+# b337a123b5754f2089ec2f4d7b088bae
+#: ../../index.rst:300
+msgid "brcm2708-bcm2708"
+msgstr ""
+
+# 6399f984fcda4b8780814e18311cc396
+#: ../../index.rst:302
+msgid "RaspberryPi 1"
+msgstr ""
+
+# d6342fbe7af94b33ac9170c5cecfb1b2
+#: ../../index.rst:305
+msgid "brcm2708-bcm2709"
+msgstr ""
+
+# 7c26d84fac294d4aaf720fd6d00d4bee
+#: ../../index.rst:307
+msgid "RaspberryPi 2"
+msgstr ""
+
+# b4c9200fcee749b2b204ebf22ae07ffb
+#: ../../index.rst:311
+msgid "ipq40xx"
+msgstr ""
+
+# 14695bf8446e4d26839d14cba4e514dc
+#: ../../index.rst:315
+msgid "FRITZ!Box 4040 [#80211s]_ [#avmflash]_"
+msgstr ""
+
+# dae1094f1bd14f2ead680a09099b0254
+# 670604dab1344ccca18430bd1e4d6389
+#: ../../index.rst:317 ../../index.rst:376
+msgid "GL.iNet"
+msgstr ""
+
+# 5f631d7eb7c4497db02b01bd14455d9e
+#: ../../index.rst:319
+msgid "GL-B1300 [#80211s]_"
+msgstr ""
+
+# 6012bf4109bd4bd286e169418d756f19
+# e20d073b80a9427e9f8ef202134edcb4
+#: ../../index.rst:321 ../../index.rst:380
+msgid "NETGEAR"
+msgstr ""
+
+# fb8f56a5d36248038c685183d814a8c6
+#: ../../index.rst:323
+msgid "EX6100v2 [#80211s]_"
+msgstr ""
+
+# f52e56d1ae38436b802827586a9d415a
+#: ../../index.rst:324
+msgid "EX6150v2 [#80211s]_"
+msgstr ""
+
+# 793df93034624063b94ee0836f983cb5
+#: ../../index.rst:328
+msgid "A42 [#80211s]_"
+msgstr ""
+
+# 0420c8232f44496fa28f93ef407612d1
+#: ../../index.rst:329
+msgid "A62 [#80211s]_"
+msgstr ""
+
+# ecfa6e8d78184cc8919778970bc4ccfd
+#: ../../index.rst:333
+msgid "NBG6617 [#80211s]_"
+msgstr ""
+
+# c0fbd021f5cc49079a9a22025ee8128d
+#: ../../index.rst:334
+msgid "WRE6606 [#80211s]_"
+msgstr ""
+
+# c1f76ca56a2847baaa1ab6b14bc3e7fe
+#: ../../index.rst:337
+msgid "mpc85xx-generic"
+msgstr ""
+
+# 6051e03d9965497993ed30f8e331247a
+#: ../../index.rst:341
+msgid "TL-WDR4900 (v1)"
+msgstr ""
+
+# 85b9bd40576e4d3f8243ff65b34dde6e
+#: ../../index.rst:344
+msgid "ramips-mt7620"
+msgstr ""
+
+# 69cf7223719a4cc6b9458c6e4db6d0dd
+#: ../../index.rst:348
+msgid "GL-MT300A [#80211s]_"
+msgstr ""
+
+# c91b93f269db424988f799bad7d933a8
+#: ../../index.rst:349
+msgid "GL-MT300N [#80211s]_"
+msgstr ""
+
+# 4e5ef961ffe645e9b0ad3b5ab3ec9221
+#: ../../index.rst:350
+msgid "GL-MT750 [#80211s]_"
+msgstr ""
+
+# 00f84a26d19e453e8ca5f1bdd8c9907d
+#: ../../index.rst:352
+msgid "Nexx"
+msgstr ""
+
+# db5ad73f1c444534964ce70d3c912051
+#: ../../index.rst:354
+msgid "WT3020AD/F/H"
+msgstr ""
+
+# fc6b0eb9d5a444b8892d34e271877adf
+#: ../../index.rst:357
+msgid "ramips-mt7621"
+msgstr ""
+
+# 967d8f436fd04d389f3b937453060450
+#: ../../index.rst:361
+msgid "DIR-860L (B1) [#80211s]_"
+msgstr ""
+
+# ffced0055a3d4278983bbcfe4a33c7c7
+#: ../../index.rst:365
+msgid "EdgeRouter X"
+msgstr ""
+
+# 0484411e78ad4281995ea0d78cbbbb8c
+#: ../../index.rst:366
+msgid "EdgeRouter X-SFP"
+msgstr ""
+
+# 9f8d594d7195415386eff082c9b50182
+#: ../../index.rst:368
+msgid "ZBT"
+msgstr ""
+
+# bfadfdf384fd483bac6a1195839ee963
+#: ../../index.rst:370
+msgid "WG3526-16M [#80211s]_"
+msgstr ""
+
+# e209cb501b7043fba49147f586969daf
+#: ../../index.rst:371
+msgid "WG3526-32M [#80211s]_"
+msgstr ""
+
+# 1af24e98b0e64c4fb8e653f55683541d
+#: ../../index.rst:374
+msgid "ramips-mt76x8"
+msgstr ""
+
+# 05b24d4261d946809f71779b0d7f3aee
+#: ../../index.rst:378
+msgid "GL-MT300N v2 [#80211s]_"
+msgstr ""
+
+# 66333618669c400c8eff85533e6d009e
+#: ../../index.rst:382
+msgid "R6120 [#80211s]_"
+msgstr ""
+
+# 42289c32ab2a4de58d142a2f61e5e9b1
+#: ../../index.rst:386
+msgid "TL-WR841N v13 [#80211s]_"
+msgstr ""
+
+# 3715f3b7fe9947b68e2b83cbbd90b98b
+#: ../../index.rst:387
+msgid "Archer C50 v3 [#80211s]_"
+msgstr ""
+
+# 232cf6dd3805427cbb58d656e342bfab
+#: ../../index.rst:388
+msgid "Archer C50 v4 [#80211s]_"
+msgstr ""
+
+# b77d6fbd787c4d7b92e13235c0ebdb16
+# 814630c26e8a49de90de91edcc60863c
+#: ../../index.rst:390 ../../index.rst:403
+msgid "VoCore"
+msgstr ""
+
+# 33bd3e2316a44cff8dc10c7b95c3cedb
+#: ../../index.rst:392
+msgid "VoCore2 [#80211s]_"
+msgstr ""
+
+# aa269f679dcc44ed811415c1bcd9a758
+#: ../../index.rst:395
+msgid "ramips-rt305x"
+msgstr ""
+
+# 6e39edc3d6524fbdbf47f5252c8273ae
+#: ../../index.rst:397
+msgid "A5-V11 [#80211s]_"
+msgstr ""
+
+# e3dff88d5b6a4d67b4e36993933f58d4
+#: ../../index.rst:401
+msgid "DIR-615 (D1, D2, D3, D4, H1) [#80211s]_"
+msgstr ""
+
+# 98f96bceb6d4493a833683eccca0ff56
+#: ../../index.rst:405
+msgid "VoCore (8M, 16M) [#80211s]_"
+msgstr ""
+
+# 8d300d447d3d497d83d736fb7d29b501
+#: ../../index.rst:408
+msgid "sunxi-cortexa7"
+msgstr ""
+
+# b3945db0ee7f48658c45a53c257875a5
+#: ../../index.rst:410
+msgid "LeMaker"
+msgstr ""
+
+# 806f6a2682fd4282b669d01cb56167f0
+#: ../../index.rst:412
+msgid "Banana Pi M1"
+msgstr ""
+
+# ea258324bb884664a95ff23823828a72
+# 1555192510f74a048adb34f7c7ba5e3e
+#: ../../index.rst:415 ../../index.rst:417
+msgid "x86-generic"
+msgstr ""
+
+# 080c5657015242f680b6120562106065
+#: ../../index.rst:418
+msgid "x86-virtualbox"
+msgstr ""
+
+# 0132a19ffc284c94bdbf8e1947f8efa5
+#: ../../index.rst:419
+msgid "x86-vmware"
+msgstr ""
+
+# d7a6bbfa8780451c93ae2d9c53829c66
+# 5f21e7e107f24514aa68de6795e4334f
+# 9575d0d43fdf4470a7105791faa87079
+#: ../../index.rst:421 ../../index.rst:428 ../../index.rst:437
+msgid "See also: :doc:`user/x86`"
+msgstr ""
+
+# bfa5ee3b46cb40e09cf84e1135e04a96
+# 2a3a063db58d4651ab5519ac38346986
+#: ../../index.rst:424 ../../index.rst:426
+msgid "x86-geode"
+msgstr ""
+
+# 7682a693001c4176983d0e060235f5e0
+#: ../../index.rst:431
+msgid "x86-64"
+msgstr ""
+
+# db761bef95504ec68ac66b5a2a25b4fd
+#: ../../index.rst:433
+msgid "x86-64-generic"
+msgstr ""
+
+# 425afb715dc54e8490f84a73189235e6
+#: ../../index.rst:434
+msgid "x86-64-virtualbox"
+msgstr ""
+
+# 7af6748893794e2dbbd66e260d3c78b5
+#: ../../index.rst:435
+msgid "x86-64-vmware"
+msgstr ""
+
+# c49d2c9a223e4fbabb489edea8b2af86
+#: ../../index.rst:440
+msgid "Footnotes"
+msgstr ""
+
+# b96f641a0d4e4243bbf329c8eed19a94
+#: ../../index.rst:443
+msgid ""
+"Device uses the ath10k WLAN driver; images are built for 11s by default "
+"unless GLUON_WLAN_MESH is set as described in :ref:`getting-started-make-"
+"variables`"
+msgstr ""
+
+# 015d9cf2edf9434f8ff3df9dd6553a1a
+#: ../../index.rst:447
+msgid ""
+"Device does not support IBSS; images are built by default unless "
+"GLUON_WLAN_MESH is explicitly set to something other than *11s*"
+msgstr ""
+
+# c94f6762f0ca4d06ab4da20c4b55303f
+#: ../../index.rst:451
+msgid "For instructions on how to flash AVM devices, visit https://fritzfla.sh"
+msgstr ""
+
+# 589ebe43ae814ed9bed6235e29061860
+#: ../../index.rst:454
+msgid "License"
+msgstr ""
+
+# ae2184b6fbac4e87b576dcf43ed879fb
+#: ../../index.rst:456
+msgid "See LICENCE_"
+msgstr ""
+
+# 1605a590c9a94f31bd71a5990348e3d0
+#: ../../index.rst:461
+msgid "Indices and tables"
+msgstr ""
+
+# 107770a6e7f04921a91bb32209d3aada
+#: ../../index.rst:463
+msgid ":ref:`search`"
+msgstr ""
+

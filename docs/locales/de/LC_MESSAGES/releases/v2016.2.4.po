@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 75c7577cd5c546b1b707886570a8bfdc
+#: ../../releases/v2016.2.4.rst:2
+msgid "Gluon 2016.2.4"
+msgstr ""
+
+# 3d70694586a0492db3d2fb0d20608ff0
+#: ../../releases/v2016.2.4.rst:5
+msgid "Bugfixes"
+msgstr ""
+
+# 4ae3cb6246494b5bbb229e97a0c24671
+#: ../../releases/v2016.2.4.rst:7
+msgid ""
+"Fix batman-adv (compat 15) not being able to transmit packages of "
+"specific sizes (`b7eeef9 <https://github.com/freifunk-"
+"gluon/gluon/commit/b7eeef9b04b44a70b2a953c4efe35a3fdceba2db>`_)"
+msgstr ""
+
+# 09c7f48927e7412fa8d1bacce89e70e3
+#: ../../releases/v2016.2.4.rst:9
+msgid ""
+"We suspect that this issue was also the reason for the autoupdater/wget "
+"hangs observed by many communities. Non-Gluon nodes like gateways should "
+"be updated to batman-adv 2017.0.1 to get the fix."
+msgstr ""
+
+# a08f18290df048d280b56ba8d7583777
+#: ../../releases/v2016.2.4.rst:12
+msgid ""
+"Fix build after ftp.all.kernel.org discontinuation (`#1059 "
+"<https://github.com/freifunk-gluon/gluon/issues/1059>`_)"
+msgstr ""
+
+# c757dced483f4a9bb481bcc8977574d6
+#: ../../releases/v2016.2.4.rst:14
+msgid ""
+"Fix high load because of frequent calls of the respondd initscript "
+"(`9a0aeb9 <https://github.com/freifunk-"
+"gluon/gluon/commit/9a0aeb9b7482df4e4515e61356b9d393e3a7eacb>`_)"
+msgstr ""
+
+# 67135fda239744d0acfb5f5ba4345c63
+#: ../../releases/v2016.2.4.rst:16
+msgid ""
+"The respondd restart triggers added in v2016.2.3 ran a significant "
+"portion of the respondd initscript for each router advertisement "
+"received. This was fixed by a backport of a netifd patch."
+msgstr ""
+
+# 3464c90e8dc748e690834dc86b282a88
+#: ../../releases/v2016.2.4.rst:19
+msgid ""
+"x86 sysupgrade fixes (`41fd50d <https://github.com/freifunk-"
+"gluon/gluon/commit/41fd50d20ba31d73c4796c5b2d4eb44ad2258b90>`_, `ad37e2b "
+"<https://github.com/freifunk-"
+"gluon/gluon/commit/ad37e2b6b43b2c3389356d892b04f3873d8f6b93>`_)"
+msgstr ""
+
+# a4948721a07346eaab54773d4363ac34
+#: ../../releases/v2016.2.4.rst:22
+msgid "This fixes sysupgrade on mmcblk and similar devices."
+msgstr ""
+
+# a1b028c694904cdf99731ae97453a5f4
+#: ../../releases/v2016.2.4.rst:25
+msgid "Other changes"
+msgstr ""
+
+# d013aec3e7fb48a2ae26606a104c0661
+#: ../../releases/v2016.2.4.rst:27
+msgid ""
+"The manifest generator has been extended to generate SHA256 checksums in "
+"addition to SHA512 ones (`f9d59be <https://github.com/freifunk-"
+"gluon/gluon/commit/f9d59be731efd31a26c59e049ccbdc4b1762f6b1>`_)"
+msgstr ""
+
+# d96340c9ac5e415ba22369b3b6dad686
+#: ../../releases/v2016.2.4.rst:30
+msgid ""
+"We have recently switched the autoupdater to SHA256 in the Gluon master "
+"to avoid mixing two different lengths of hashes for no good reason. This "
+"makes the manifests of Gluon v2016.2.x compatible with the new "
+"autoupdater so it doesn't prevent backports or downgrades."
+msgstr ""
+
+# 5487c52d372c41e68cf854d3e2c8fb16
+#: ../../releases/v2016.2.4.rst:34
+msgid ""
+"**Note:** Downgrades of major Gluon versions are generally unsupported "
+"and will often lead to broken configurations."
+msgstr ""
+
+# bef2e5fd92354c8094fa01c51c8414bc
+#: ../../releases/v2016.2.4.rst:38
+msgid "Known Issues"
+msgstr ""
+
+# 7c435e6b5f2f45979dc44061c344d937
+#: ../../releases/v2016.2.4.rst:40
+msgid ""
+"x86 sysupgrade (sometimes) loses config when kernel partition grows "
+"(`#1010 <https://github.com/freifunk-gluon/gluon/issues/1010>`_)"
+msgstr ""
+
+# 64df456e5d5d4254815a1bc92f1f6cb9
+#: ../../releases/v2016.2.4.rst:42
+msgid ""
+"This issue affects upgrades from v2016.2.x and older to the Gluon master "
+"only, we hope to fix it before the next major release."
+msgstr ""
+
+# 14235a345464489b89b3722a39dccd13
+#: ../../releases/v2016.2.4.rst:45
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 37b960b311fc4146866fdcc3be6cdbe9
+#: ../../releases/v2016.2.4.rst:47
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 3d9692719e404671b9dc0b2638d22827
+#: ../../releases/v2016.2.4.rst:49
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 47712641731344a69625638795efc33f
+#: ../../releases/v2016.2.4.rst:51
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 186fa4a31838403a89cabb043db37c51
+#: ../../releases/v2016.2.4.rst:53
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# b8c113fce25c4c9da27d5cb12344d5c8
+#: ../../releases/v2016.2.4.rst:55
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+

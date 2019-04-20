@@ -1,0 +1,409 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 877cb7df694841fa9d2ebcd6def4aa13
+#: ../../dev/web/model.rst:2
+msgid "Models"
+msgstr ""
+
+# e2b5c210a1334a77a13d1ae27291548a
+#: ../../dev/web/model.rst:4
+msgid ""
+"Models are defined in the ``model`` subdirectory of a gluon-web "
+"application (``/lib/gluon/config-mode/model`` for the config mode; the "
+"status page does not use any models). Model support is not part of the "
+"gluon-web core anymore, but is provided by the *gluon-web-model* package."
+msgstr ""
+
+# 0fe1426ff64c41fbb9e554e532835d48
+#: ../../dev/web/model.rst:9
+msgid ""
+"Each model defines one or more forms to display on a page, and how the "
+"submitted form data is handled."
+msgstr ""
+
+# 4f7857a39e5a40c88dd4a247d3c6fb11
+#: ../../dev/web/model.rst:12
+msgid "Let's start with an example:"
+msgstr ""
+
+# 3a05f65befe54e0390459f5413d7bc46
+#: ../../dev/web/model.rst:29
+msgid ""
+"The toplevel element of a model is always a *Form*, but it is also "
+"possible for a model to return multiple forms, which are displayed one "
+"below the other."
+msgstr ""
+
+# f2d72dc4765d4bb193fa00b75efb8429
+#: ../../dev/web/model.rst:32
+msgid ""
+"A *Form* has one or more *Sections*, and each *Section* has different "
+"types of options."
+msgstr ""
+
+# 3d3c10ec6b5c43f5a8fd4e2e94d77197
+#: ../../dev/web/model.rst:35
+msgid ""
+"All of these elements have an *id*, which is used to identify them in the"
+" HTML form and handlers. If no ID is given, numerical IDs will be "
+"assigned automatically, but using explicitly named elements is often "
+"advisable (and it is required if a form does not always include the same "
+"elements, i.e., some forms, sections or options are added conditionally)."
+" IDs are hierarchical, so in the above example, the *Value* would get the"
+" ID ``1.1.hostname`` (value *hostname* in first section of first form)."
+msgstr ""
+
+# 6798b0aa8d4b46918d1a2bcb56733611
+#: ../../dev/web/model.rst:44
+msgid "Classes and methods"
+msgstr ""
+
+# 5c134076fd4d428296c27a3f7d11a831
+#: ../../dev/web/model.rst:46
+msgid "*Form* (*title*, *description*, *id*)"
+msgstr ""
+
+# 3c2044f4e5984b57a33648db15d380a7
+#: ../../dev/web/model.rst:48
+msgid "*Form:section* (*type*, *title*, *description*, *id*)"
+msgstr ""
+
+# e0aacd298a1a4b0ea5d3edf02e08c80d
+#: ../../dev/web/model.rst:50
+msgid "Creates a new section of the given type (usually *Section*)."
+msgstr ""
+
+# f1750a9303dc4f9d8b1151d2026f9e32
+#: ../../dev/web/model.rst:52
+msgid "*Form:write* ()"
+msgstr ""
+
+# 709a69d22ef140ee86475c9c05395bae
+#: ../../dev/web/model.rst:54
+msgid ""
+"Is called after the form has been submitted (but only if the data is "
+"valid). It is called last (after all options' *write* methods) and is "
+"usually used to commit changed UCI packages."
+msgstr ""
+
+# 0e1e58c87938499594e47fc5b84d7be1
+#: ../../dev/web/model.rst:58
+msgid ""
+"The default implementation of *write* doesn't do anything, but it can be "
+"overridden."
+msgstr ""
+
+# 50695ed73483469a928992af3f38b7a1
+#: ../../dev/web/model.rst:61
+msgid "*Section* (usually instantiated through *Form:section*)"
+msgstr ""
+
+# 493b5ad819994a62b425b775486779bd
+#: ../../dev/web/model.rst:63
+msgid "*Section:option* (*type*, *id*, *title*, *description*)"
+msgstr ""
+
+# 185759da4e3f41bab15c0071ec99e7cf
+#: ../../dev/web/model.rst:65
+msgid "Creates a new option of the given type. Option types:"
+msgstr ""
+
+# 16221344f58141baa2230a43d07b5a0e
+#: ../../dev/web/model.rst:67
+msgid "*Value*: simple text entry"
+msgstr ""
+
+# e32b2da5a9634b98a7f6d2d09281fb03
+#: ../../dev/web/model.rst:68
+msgid "*TextValue*: multiline text field"
+msgstr ""
+
+# dc4e0a60220d4c8ab1e309db0ba22c3b
+#: ../../dev/web/model.rst:69
+msgid "*ListValue*: radio buttons or dropdown selection"
+msgstr ""
+
+# 345d4e9d2d0741748d3cca37f1232ee8
+#: ../../dev/web/model.rst:70
+msgid "*DynamicList*: variable number of text entry fields"
+msgstr ""
+
+# d3830aec048e4d1b995a4a128504d95a
+#: ../../dev/web/model.rst:71
+msgid "*Flag*: checkbox"
+msgstr ""
+
+# 9eb02b8e442d4647a7e7346b99cd7822
+#: ../../dev/web/model.rst:73
+msgid "Most option types share the same properties and methods:"
+msgstr ""
+
+# e579c2fd55004ee6beae7df9622d4d9c
+#: ../../dev/web/model.rst:75
+msgid "*default*: default value"
+msgstr ""
+
+# 2f9c23a1314f4d08b45d1d0b76140d41
+#: ../../dev/web/model.rst:76
+msgid "*optional*: value may be empty"
+msgstr ""
+
+# c4a45d9759044015bae4aa02fdd5989d
+#: ../../dev/web/model.rst:77
+msgid "*datatype*: one of the types described in :ref:`web-model-datatypes`"
+msgstr ""
+
+# b34ad411719c4d6f854a2010b9e8ab00
+#: ../../dev/web/model.rst:79
+msgid "By default (when *datatype* is *nil*), all values are accepted."
+msgstr ""
+
+# cbaec0bf63f44351bb108865d75bc451
+#: ../../dev/web/model.rst:81
+msgid ""
+"*state*: has one of the values *FORM_NODATA*, *FORM_VALID* and "
+"*FORM_INVALID* when read in a form handler"
+msgstr ""
+
+# 6b04a8b4bb53412bb7f7f763ff4b124a
+#: ../../dev/web/model.rst:84
+msgid ""
+"An option that has not been submitted because of its dependencies will "
+"have the state *FORM_NODATA*, *FORM_INVALID* if the submitted value is "
+"not valid according to the set *datatype*, and *FORM_VALID* otherwise."
+msgstr ""
+
+# 985cfbba5ba1456f8a3c1c75ff298d25
+#: ../../dev/web/model.rst:88
+msgid "*data*: can be read in form handlers to get the submitted value"
+msgstr ""
+
+# a5aa01c9fb4f4151be1c29dfa811b691
+#: ../../dev/web/model.rst:90
+msgid "*depends* (*self*, *option*, *value*): adds a dependency on another option"
+msgstr ""
+
+# 52be57504ac240719c600a063dcc675a
+#: ../../dev/web/model.rst:92
+msgid ""
+"The option will only be shown when the passed option has the given value."
+" This is mainly useful when the other value is a *Flag* or *ListValue*."
+msgstr ""
+
+# a05c5fb3f44a4a678384d6847dcaaf2c
+#: ../../dev/web/model.rst:95
+msgid "*depends* (*self*, *deps*): adds a dependency on multiple other options"
+msgstr ""
+
+# 02831f01311340258616f29b9a2929c2
+#: ../../dev/web/model.rst:97
+msgid ""
+"*deps* must be a table with options as keys and values as values. The "
+"option will only be shown when all passed options have the corresponding "
+"values."
+msgstr ""
+
+# 7702e4646a134b43967f322fef4ddc89
+#: ../../dev/web/model.rst:100
+msgid ""
+"Multiple alternative dependencies can be added by calling *depends* "
+"repeatedly."
+msgstr ""
+
+# 55ac7691077e413ebac433f30555d459
+#: ../../dev/web/model.rst:102
+msgid "*value* (*self*, *value*, *text*): adds a choice to a *ListValue*"
+msgstr ""
+
+# a0842d9407664b9e957ea34ee35c4c2e
+#: ../../dev/web/model.rst:104
+msgid ""
+"*write* (*self*, *data*): is called with the submitted value when all "
+"form data is valid."
+msgstr ""
+
+# dd3f54ffb9cb419e9f34c748062bbb95
+#: ../../dev/web/model.rst:106
+msgid "Does not do anything by default, but can be overridden."
+msgstr ""
+
+# 238b825ddabb4813b5486148faefb05b
+#: ../../dev/web/model.rst:108
+msgid ""
+"The *default* value, the *value* argument to *depends* and the output "
+"*data* always have the same type, which is usually a string (or *nil* for"
+" optional values). Exceptions are:"
+msgstr ""
+
+# 207b622cd7634c96b04c0b5a873cd05d
+#: ../../dev/web/model.rst:112
+msgid "*Flag* uses boolean values"
+msgstr ""
+
+# 1af07070deff41f99920e82201cf5683
+#: ../../dev/web/model.rst:113
+msgid "*DynamicList* uses a table of strings"
+msgstr ""
+
+# e825e46a8ace4bd9b6edb6ead16e4c23
+#: ../../dev/web/model.rst:115
+msgid ""
+"Despite its name, the *datatype* setting does not affect the returned "
+"value type, but only defines a validator the check the submitted value "
+"with."
+msgstr ""
+
+# 3194bd08490f4461b69ff5d2bf112eb3
+#: ../../dev/web/model.rst:118
+msgid ""
+"For a more complete example that actually makes use of most of these "
+"features, have a look at the model of the *gluon-web-network* package."
+msgstr ""
+
+# bb23528569cf4d2a9a6cf3c9b70488d1
+#: ../../dev/web/model.rst:124
+msgid "Data types"
+msgstr ""
+
+# f7fc2d6930a74d438494adca26d80481
+#: ../../dev/web/model.rst:126
+msgid "*integer*: an integral number"
+msgstr ""
+
+# 0bcec743febb4a00bf555b01c3dcad3b
+#: ../../dev/web/model.rst:127
+msgid "*uinteger*: an integral number greater than or equal to zero"
+msgstr ""
+
+# cce12ea70870424b832f85a9cc059e3f
+#: ../../dev/web/model.rst:128
+msgid "*float*: a number"
+msgstr ""
+
+# df3e2fd0b29a4b7fb0c84557c05624f3
+#: ../../dev/web/model.rst:129
+msgid "*ufloat*: a number greater than or equal to zero"
+msgstr ""
+
+# 11dd94a9fcaa4132b79078e6b829b89a
+#: ../../dev/web/model.rst:130
+msgid "*ipaddr*: an IPv4 or IPv6 address"
+msgstr ""
+
+# 2d0e5531656e49d395cdcc37ac027485
+#: ../../dev/web/model.rst:131
+msgid "*ip4addr*: an IPv4 address"
+msgstr ""
+
+# 1e1f8f3d72cc4305bfd68b7677873f6b
+#: ../../dev/web/model.rst:132
+msgid "*ip6addr*: an IPv6 address"
+msgstr ""
+
+# bda1a633f4894006ad2cd085872f8a4c
+#: ../../dev/web/model.rst:133
+msgid ""
+"*wpakey*: a string usable as a WPA key (either between 8 and 63 "
+"characters, or 64 hex digits)"
+msgstr ""
+
+# 2faffa5f4cfd4b31bf75426bc96bdfb3
+#: ../../dev/web/model.rst:134
+msgid "*range* (*min*, *max*): a number in the given range (inclusive)"
+msgstr ""
+
+# ef63f16ed9554920ada1aedd31206a91
+#: ../../dev/web/model.rst:135
+msgid "*min* (*min*): a number greater than or equal to the given minimum"
+msgstr ""
+
+# 5a42a8eafa6b46e5a5fca539d651373e
+#: ../../dev/web/model.rst:136
+msgid "*max* (*max*): a number less than or equal to the given maximum"
+msgstr ""
+
+# a3c977d5e24c42dd8dd8ec96bd670174
+#: ../../dev/web/model.rst:137
+msgid "*irange* (*min*, *max*): an integral number in the given range (inclusive)"
+msgstr ""
+
+# c55cea9adbd84acabaee92cd41f90faa
+#: ../../dev/web/model.rst:138
+msgid ""
+"*imin* (*min*): an integral number greater than or equal to the given "
+"minimum"
+msgstr ""
+
+# 3af71d2adb0249c49dc85b96e7ca8cad
+#: ../../dev/web/model.rst:139
+msgid "*imax* (*max*): an integral number less than or equal to the given maximum"
+msgstr ""
+
+# 2792f8b0924f4502a6b277f95b0c175e
+#: ../../dev/web/model.rst:140
+msgid "*minlength* (*min*): a string with the given minimum length"
+msgstr ""
+
+# cdc5e69c8bef4a61871e41a2f5e8d2d1
+#: ../../dev/web/model.rst:141
+msgid "*maxlength* (*max*): a string with the given maximum length"
+msgstr ""
+
+# cc7cd7385c3a43519e4aedf8f52c6bea
+#: ../../dev/web/model.rst:144
+msgid "Differences from LuCI"
+msgstr ""
+
+# 7d9e092d58624acfa87c6b1d2f24fcc4
+#: ../../dev/web/model.rst:146
+msgid ""
+"LuCI's *SimpleForm* and *SimpleSection* are called *Form* and *Section*, "
+"respectively"
+msgstr ""
+
+# 72ad0be5835d494a8d4cbab70d712811
+#: ../../dev/web/model.rst:147
+msgid ""
+"Is it not possible to add options to a *Form* directly, a *Section* must "
+"always be created explicitly"
+msgstr ""
+
+# 0e23b31e03304e57bf04866622f418ab
+#: ../../dev/web/model.rst:149
+msgid "Many of LuCI's CBI classes have been removed, most importantly the *Map*"
+msgstr ""
+
+# 89ae28e5d3d6420794bc4ad9f56e1167
+#: ../../dev/web/model.rst:150
+msgid "The *rmempty* option attribute does not exist, use *optional* instead"
+msgstr ""
+
+# 397ae987aa5940eb884cdfd558f31815
+#: ../../dev/web/model.rst:151
+msgid "Only the described data types are supported"
+msgstr ""
+
+# 8d805bbbd70c450e8423a8a801497a54
+#: ../../dev/web/model.rst:152
+msgid ""
+"Form handlers work completely differently (in particular, a *Form*'s "
+"*handle* method should usually not be overridden in *gluon-web*)"
+msgstr ""
+

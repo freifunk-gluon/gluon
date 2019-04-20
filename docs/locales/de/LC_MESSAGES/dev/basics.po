@@ -1,0 +1,145 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 986f5abfc87145ac9d43b51026e14109
+#: ../../dev/basics.rst:2
+msgid "Development Basics"
+msgstr ""
+
+# b4903c7d9333469c9c0aeb2680dadc6a
+#: ../../dev/basics.rst:4
+msgid "Gluon's source is kept in `git repositories`_ at GitHub."
+msgstr ""
+
+# d142c92880f04ea6a98f451dbdd06775
+#: ../../dev/basics.rst:9
+msgid "Bug Tracker"
+msgstr ""
+
+# fd84d6fc728a4fa984b57ac6959603ca
+#: ../../dev/basics.rst:11
+msgid "The `main repo`_ does have issues enabled."
+msgstr ""
+
+# 349055e4e3224b14bdaf26b0d4457b1c
+#: ../../dev/basics.rst:16
+msgid "IRC"
+msgstr ""
+
+# a7ae585b9c5043b0b596bae1bd1911a1
+#: ../../dev/basics.rst:18
+msgid ""
+"Gluon's developers frequent the IRC chatroom `#gluon`_ on `hackint`_. "
+"There is a `webchat`_ that allows for easy access from within your "
+"webbrowser. You're welcome to join us!"
+msgstr ""
+
+# dde0affbe9ba48e8b38422ae6c60fb99
+#: ../../dev/basics.rst:28
+msgid "Working with repositories"
+msgstr ""
+
+# decd9b7d4e854a8f8a2f40717f053973
+#: ../../dev/basics.rst:30
+msgid ""
+"To update the repositories used by Gluon, just adjust the commit IDs in "
+"`modules` and rerun"
+msgstr ""
+
+# ed7fc6ca791844d9a4acfc3e48c6ead3
+#: ../../dev/basics.rst:37
+msgid ""
+"`make update` also applies the patches that can be found in the "
+"directories found in `patches`; the resulting branch will be called "
+"`patched`, while the commit specified in `modules` can be referred to by "
+"the branch `base`."
+msgstr ""
+
+# 711b1d599d5b442c8a80bc7324acef45
+#: ../../dev/basics.rst:41
+msgid ""
+"After new patches have been committed on top of the `patched` branch (or "
+"existing commits since the base commit have been edited or removed), the "
+"patch directories can be regenerated using"
+msgstr ""
+
+# 66dc1adb7d244971b5acccfae53174e2
+#: ../../dev/basics.rst:49
+msgid ""
+"If applying a patch fails because you have changed the base commit, the "
+"repository will be reset to the old `patched` branch and you can try "
+"rebasing it onto the new `base` branch yourself and after that call `make"
+" update-patches` to fix the problem."
+msgstr ""
+
+# 30b8a36ef98a4e0d91973dc035571a2b
+#: ../../dev/basics.rst:52
+msgid ""
+"Always call `make update-patches` after making changes to a module "
+"repository as `make update` will overwrite your commits, making `git "
+"reflog` the only way to recover them!"
+msgstr ""
+
+# 6be5da10b0224782a2e976f7ee5834bf
+#: ../../dev/basics.rst:56
+msgid "Development Guidelines"
+msgstr ""
+
+# 7c1e506762774c50a350c1633d84bf17
+#: ../../dev/basics.rst:57
+msgid ""
+"lua should be used instead of sh whenever sensible. The following "
+"criteria should be considered:"
+msgstr ""
+
+# 93a23b7f575842f2b1ca9de1bbc81f63
+#: ../../dev/basics.rst:60
+msgid ""
+"Is the script doing more than just executing external commands? if so, "
+"use lua"
+msgstr ""
+
+# a5325572cac44e49a25af16ae8f7b7a3
+#: ../../dev/basics.rst:61
+msgid "Is the script parsing/editing json-data? If so, use lua for speed"
+msgstr ""
+
+# 60339dd7e6434a1dba8c37b429128c10
+#: ../../dev/basics.rst:62
+msgid "When using sh, use jsonfilter instead of json_* functions for speed"
+msgstr ""
+
+# 91a5f7771287450dad6e3b1376179775
+#: ../../dev/basics.rst:64
+msgid ""
+"Code formatting may sound like a topic for the pedantic, however it helps"
+" if the code in the project is formatted in the same way. The following "
+"rules apply:"
+msgstr ""
+
+# c9bfda03f25b4386a74b78fae5321aad
+#: ../../dev/basics.rst:68
+msgid "use tabs instead of spaces"
+msgstr ""
+
+# cc63627f944d450292463d9cd46becc5
+#: ../../dev/basics.rst:69
+msgid "trailing whitespaces must be eliminated"
+msgstr ""
+

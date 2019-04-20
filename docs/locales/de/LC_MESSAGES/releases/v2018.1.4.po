@@ -1,0 +1,145 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# ad00d4943b424804b16a36ce7e6c4d4c
+#: ../../releases/v2018.1.4.rst:2
+msgid "Gluon 2018.1.4"
+msgstr ""
+
+# a47c57ac2a404290950b07223ecf7710
+#: ../../releases/v2018.1.4.rst:5
+msgid "Bugfixes"
+msgstr ""
+
+# 0e49c05368be4fc1a03a8a35cccd0d67
+#: ../../releases/v2018.1.4.rst:7
+msgid "Fix regression in autoupdater version comparison function"
+msgstr ""
+
+# bdc18dbc459d4457ba79265391eef324
+#: ../../releases/v2018.1.4.rst:9
+msgid ""
+"Due to a regression in Gluon 2018.1, the autoupdater would incorrectly "
+"consider certain version strings equal and not attempt to upgrade. In "
+"particular, any string and its prefix were considered equal when the "
+"prefix did not end with a digit. For example, the following relations "
+"were not evaluated correctly:"
+msgstr ""
+
+# e568bf091341417788ed8a2afde173eb
+#: ../../releases/v2018.1.4.rst:15
+msgid "``1.0`` < ``1.0.1``"
+msgstr ""
+
+# 10931f9ea9bc487189a0b39e5bad205e
+#: ../../releases/v2018.1.4.rst:16
+msgid "``1.0~pre`` < ``1.0``"
+msgstr ""
+
+# 09dc6cb4b5444c8bb1b6a3e9da681d50
+#: ../../releases/v2018.1.4.rst:18
+msgid ""
+"Fix unintended difference between autoupdater version comparison and "
+"dpkg/opkg"
+msgstr ""
+
+# 50f2c13698e2472dae3606711036ec51
+#: ../../releases/v2018.1.4.rst:20
+msgid ""
+"Alphanumeric characters were considered less than end-of-string, when the"
+" intended behaviour (as implemented by dpkg and opkg) is that only ``~`` "
+"is less than end-of-string. This broke relations like the following:"
+msgstr ""
+
+# fd06c8a208fa491ebd62caf9ad7b7b4f
+#: ../../releases/v2018.1.4.rst:24
+msgid "``1.0`` < ``1.0a``"
+msgstr ""
+
+# a6d7d486cd9e4b238a55db2abd3d8544
+#: ../../releases/v2018.1.4.rst:25
+msgid "``1.0a`` < ``1.0ab``"
+msgstr ""
+
+# e5c1b4cf882745eaac448533c5ee7cd7
+#: ../../releases/v2018.1.4.rst:26
+msgid "``1.0a`` < ``1.0a1``"
+msgstr ""
+
+# c4f7c17e76ad440995efe806f23b7386
+#: ../../releases/v2018.1.4.rst:30
+msgid "Known issues"
+msgstr ""
+
+# d9a615df387a4a06b8aba110acba2f6b
+#: ../../releases/v2018.1.4.rst:32
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# f9c2b10356574d78a1d8ae38b0eeae84
+#: ../../releases/v2018.1.4.rst:34
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# b706e8cb7525462c9d8401e1d37e479a
+#: ../../releases/v2018.1.4.rst:36
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# a890d44d2a4a44f798419c193974ea6d
+#: ../../releases/v2018.1.4.rst:38
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 3e0a59472dbc4efe899d30043e783b20
+#: ../../releases/v2018.1.4.rst:40
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 386f5c561a034282b0d5d9c8f393b7b2
+#: ../../releases/v2018.1.4.rst:42
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 22e72c372fe14cafa466f026c59de99b
+#: ../../releases/v2018.1.4.rst:44
+msgid ""
+"Frequent reboots due to out-of-memory or high load due to memory pressure"
+" on weak hardware specially in larger meshes (`#1243 <https://github.com"
+"/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+
+# 5ee7b4c9bf09408fa109e455d3be343f
+#: ../../releases/v2018.1.4.rst:47
+msgid ""
+"Optimizations in Gluon 2018.1 have significantly improved memory usage. "
+"There are still known bugs leading to unreasonably high load that we hope"
+" to solve in future releases."
+msgstr ""
+

@@ -1,0 +1,85 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 4d6f3720b45f49f9babf4cbadd2003c0
+#: ../../features/wlan-configuration.rst:2
+msgid "WLAN configuration"
+msgstr ""
+
+# 9e456d3e0e82404696f6eaeb10b352b8
+#: ../../features/wlan-configuration.rst:4
+msgid ""
+"Gluon allows to configure 2.4GHz and 5GHz radios independently. The "
+"configuration may include any or all of the three networks \"client\" (AP"
+" mode), \"mesh\" (802.11s mode) and \"ibss\" (adhoc mode), which can be "
+"used simultaneously (using \"mesh\" and \"ibss\" at same time should be "
+"avoided though as weaker hardware usually can't handle the additional "
+"load). See :doc:`../user/site` for details on the configuration."
+msgstr ""
+
+# 70a963f3e6ec4bfeb3d4dfd9ecabad74
+#: ../../features/wlan-configuration.rst:11
+msgid "Upgrade behaviour"
+msgstr ""
+
+# 9cdc57bf414b457aaa4aa4a081e83c36
+#: ../../features/wlan-configuration.rst:13
+msgid ""
+"For each of these networks, the site configuration may define a "
+"`disabled` flag (by default, all configured networks are enabled). This "
+"flag is merely a default setting, on upgrades the existing setting is "
+"always retained (as this setting may have been changed by the user). This"
+" means that it is not possible to enable or disable an existing network "
+"configurations during upgrades."
+msgstr ""
+
+# 7d0b8279a6024633afb423a480a00d81
+#: ../../features/wlan-configuration.rst:19
+msgid ""
+"For the \"mesh\" and \"ibss\" networks, the default setting only has an "
+"effect if none of the two has existed before. If a new configuration has "
+"been added for \"mesh\" or \"ibss\", while the other of the two has "
+"already existed before, the enabled/disabled state of the existing "
+"configuration will also be set for the new configuration."
+msgstr ""
+
+# bae4a1f586ec43a6ba09aa30ff387a76
+#: ../../features/wlan-configuration.rst:24
+msgid ""
+"This allows upgrades to change from IBSS to 11s and vice-versa while "
+"retaining the \"wireless meshing is enabled/disabled\" property "
+"configured by the user regardless of the used mode."
+msgstr ""
+
+# 681589c4db5b407abcd48929919bd2a3
+#: ../../features/wlan-configuration.rst:28
+msgid ""
+"During upgrades the wifi channel of the 2.4GHz and 5GHz radio will be "
+"restored to the channel configured in the site.conf. If you need to "
+"preserve a user defined wifi channel during upgrades you can configure "
+"this via the uci section ``gluon-core.wireless``::"
+msgstr ""
+
+# 5a01d002cecc4ec6b5abe14c8107fda5
+#: ../../features/wlan-configuration.rst:34
+msgid ""
+"Keep in mind that nodes running wifi interfaces on custom channels can't "
+"mesh with default nodes anymore!"
+msgstr ""
+

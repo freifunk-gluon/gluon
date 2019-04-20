@@ -1,0 +1,177 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 16ffc9fd4c8746f9b5ea5922893648cb
+#: ../../releases/v2016.1.1.rst:2
+msgid "Gluon 2016.1.1"
+msgstr ""
+
+# cf6efc5bcd3c4f7fa473883e7baead13
+#: ../../releases/v2016.1.1.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# ac1e348c5efd4778a64cdedb0c615048
+#: ../../releases/v2016.1.1.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# 0b7f3ad9b0074180ad2415d13fe98973
+#: ../../releases/v2016.1.1.rst:10
+msgid "Onion Omega"
+msgstr ""
+
+# c6bdec290d6043d09f2f215e8273572d
+#: ../../releases/v2016.1.1.rst:11
+msgid "TP-Link TL-MR13U v1"
+msgstr ""
+
+# 3b42034233c74bf2be31bc9152a263c2
+#: ../../releases/v2016.1.1.rst:15
+msgid "Bugfixes"
+msgstr ""
+
+# b389c46ab5594203a4a61c4704c6c3b9
+#: ../../releases/v2016.1.1.rst:18
+msgid "Build"
+msgstr ""
+
+# 118e9cfd075349bb8968b678d4912719
+#: ../../releases/v2016.1.1.rst:20
+msgid "Don't overwrite the opkg repository key on each build."
+msgstr ""
+
+# d266b888252249a4aec8bec0e27e6e9f
+#: ../../releases/v2016.1.1.rst:23
+msgid "AirOS 5.6.x compatibility"
+msgstr ""
+
+# 0058a51456224178b4e916e7fec6c9a4
+#: ../../releases/v2016.1.1.rst:25
+msgid ""
+"Downgrading to AirOS 5.5.x before flashing Gluon on Airmax M XM/XW "
+"devices (NanoStation, Bullet, ...) is not necessary anymore."
+msgstr ""
+
+# 6e35df3b17b043d9b46321d6c0f8910d
+#: ../../releases/v2016.1.1.rst:29
+msgid "Status page"
+msgstr ""
+
+# 58d933d951c64959980415c3a26567f9
+#: ../../releases/v2016.1.1.rst:31
+msgid "Fix purging of disappeared neighbours from the list"
+msgstr ""
+
+# 09e432cae59a4235aa99dffe639bfb63
+#: ../../releases/v2016.1.1.rst:32
+msgid "Don't clear the signal graphs when scrolling in mobile browsers"
+msgstr ""
+
+# 7601de53778f48d7a9e71f1030fc7fa6
+#: ../../releases/v2016.1.1.rst:33
+msgid ""
+"Improve browser compatibility (don't assume the Internationalization API "
+"is available, fixes the display of numbers in Firefox for Android)"
+msgstr ""
+
+# 74f004db9ecd4b6fb8abc5c173d19227
+#: ../../releases/v2016.1.1.rst:37
+msgid "Config mode"
+msgstr ""
+
+# 7587bde0d2374aaaa24dabc1aba2b418
+#: ../../releases/v2016.1.1.rst:39
+msgid ""
+"Strip trailing whitespace from number input fields (LuCI's validator "
+"doesn't catch this)"
+msgstr ""
+
+# 48e0b1bd08624e0b9d0ad539fa5c3186
+#: ../../releases/v2016.1.1.rst:40
+msgid "Don't allow negative bandwidth limits"
+msgstr ""
+
+# f0f69b11d3eb49f49c8c823315bdb9d6
+#: ../../releases/v2016.1.1.rst:43
+msgid "Failsafe mode"
+msgstr ""
+
+# 1ae53daff3a1445fab3301e2405e8a9b
+#: ../../releases/v2016.1.1.rst:45
+msgid "Fix entering the failsafe mode on the TL-WDR4900."
+msgstr ""
+
+# 43c84071644340798657e27711d26f2b
+#: ../../releases/v2016.1.1.rst:48
+msgid "Known Issues"
+msgstr ""
+
+# a3588cb5bf724bb8a9709899259573d2
+#: ../../releases/v2016.1.1.rst:50
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# c253d9f02ff441dcbfb30f6573b3ba2b
+#: ../../releases/v2016.1.1.rst:52
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+# 418cc8a8be534fa0bcd8464147ff966d
+#: ../../releases/v2016.1.1.rst:54
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# bb01a3bd05bd4dfbbc12e18caec50e19
+#: ../../releases/v2016.1.1.rst:56
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 180bdcfd57194fd0b93a621b98e74ff9
+#: ../../releases/v2016.1.1.rst:58
+msgid ""
+"Inconsistent respondd/announced API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 8a5e10cba9484609bff164d81431dfc4
+#: ../../releases/v2016.1.1.rst:60
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 5411fa457cce46d8a96bc503885c907f
+#: ../../releases/v2016.1.1.rst:62
+msgid ""
+"Nondeterministic production of broken images for some (very old) hardware"
+" (`#669 <https://github.com/freifunk-gluon/gluon/issues/669>`_)"
+msgstr ""
+
+# 4a20617f7e2c4ebfae55fbd40809a360
+#: ../../releases/v2016.1.1.rst:64
+msgid "At the moment it seems like only the TL-WR841N v5 is affected."
+msgstr ""
+

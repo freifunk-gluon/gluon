@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 75a5a2b96ffe4a6b851472b218e630f5
+#: ../../package/gluon-config-mode-domain-select.rst:2
+msgid "gluon-config-mode-domain-select"
+msgstr ""
+
+# 805551da3ace44ccb5d286cea3a4af8e
+#: ../../package/gluon-config-mode-domain-select.rst:3
+msgid ""
+"This package provides a drop-down list for the config mode to select the "
+"domain the node will be placed in. If the selection has changed the "
+"upgrade scripts in ``/lib/gluon/upgrade/`` are triggered to update the "
+"nodes configuration."
+msgstr ""
+
+# 468344b155764385a1639e48256e90d3
+#: ../../package/gluon-config-mode-domain-select.rst:7
+msgid ""
+"Hiding domains could be useful for default or testing domains, which "
+"should not be accidentally selected by a node operator."
+msgstr ""
+
+# e9b7ba09f1e94eb1b7ce53e42cc9ca80
+#: ../../package/gluon-config-mode-domain-select.rst:11
+msgid "domains/\\*.conf"
+msgstr ""
+
+# 40027842e3214849a4d0ccee570f85e5
+#: ../../package/gluon-config-mode-domain-select.rst:15
+msgid "hide_domain \\: optional (defaults to false)"
+msgstr ""
+
+# 88fdd34cf82840c981b7ef8a7315d6d1
+#: ../../package/gluon-config-mode-domain-select.rst:14
+msgid "``false`` shows this domain in drop-down list"
+msgstr ""
+
+# 173604431307405ba3f05da73af12a24
+#: ../../package/gluon-config-mode-domain-select.rst:15
+msgid "``true`` hides this domain"
+msgstr ""
+
+# 728e97fdbefa46cc83f7bcaf59e33701
+#: ../../package/gluon-config-mode-domain-select.rst:17
+msgid "Example::"
+msgstr ""
+

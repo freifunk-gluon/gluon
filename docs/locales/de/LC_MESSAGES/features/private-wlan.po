@@ -1,0 +1,53 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# ef3920cec03741b99533c5b6cfec5689
+#: ../../features/private-wlan.rst:2
+msgid "Private WLAN"
+msgstr ""
+
+# 0c6fc574470248cb82be968c4c204ef3
+#: ../../features/private-wlan.rst:4
+msgid ""
+"It is possible to set up a private WLAN that bridges the WAN port and is "
+"separated from the mesh network. Please note that you should not enable "
+"``mesh_on_wan`` simultaneously."
+msgstr ""
+
+# 8dcabe8ba432405c9e17ba5ce9ea9a29
+#: ../../features/private-wlan.rst:7
+msgid ""
+"The private WLAN can be enabled through the config mode if the package "
+"``gluon-web-private-wifi`` is installed. You may also enable a private "
+"WLAN using the command line::"
+msgstr ""
+
+# e410e8dfa50746fdb0df13056fe70987
+#: ../../features/private-wlan.rst:26
+msgid ""
+"Please replace ``$SSID`` by the name of the WLAN and ``$KEY`` by your "
+"passphrase (8-63 characters). If you have two radios (e.g. 2.4 and 5 GHz)"
+" you need to do this for radio0 and radio1."
+msgstr ""
+
+# 77b6784a288d468c87a923324cb54084
+#: ../../features/private-wlan.rst:29
+msgid "It may also be disabled by running::"
+msgstr ""
+

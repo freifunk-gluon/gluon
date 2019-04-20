@@ -1,0 +1,1205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# af0d74e91c9640a3af8224b1102bcd77
+#: ../../user/site.rst:2
+msgid "Site configuration"
+msgstr ""
+
+# 4abf20bb5cfc41568aea18d854619f9d
+#: ../../user/site.rst:4
+msgid ""
+"The ``site`` consists of the files ``site.conf`` and ``site.mk``. In the "
+"first community based values are defined, which both are processed during"
+" the build process and runtime. The last is directly included in the make"
+" process of Gluon."
+msgstr ""
+
+# 7b2e618e2d2a4431a5dfbd26a0d54e95
+#: ../../user/site.rst:10
+msgid "Configuration"
+msgstr ""
+
+# 4b0bfd84e2da467f9c6738249f524ce3
+#: ../../user/site.rst:12
+msgid "The ``site.conf`` is a lua dictionary with the following defined keys."
+msgstr ""
+
+# 9de7d7c8617d4ed7a01832c8f3fa6885
+#: ../../user/site.rst:15
+msgid "hostname_prefix"
+msgstr ""
+
+# 3ce78b1dbe5d4b2d80f77206f1741918
+#: ../../user/site.rst:15
+msgid "A string which shall prefix the default hostname of a device."
+msgstr ""
+
+# 33ef1ab63b74442a887ac43f010ce949
+#: ../../user/site.rst:18
+msgid "site_name"
+msgstr ""
+
+# b6082ae205a74676b92a81fb5806352f
+#: ../../user/site.rst:18
+msgid "The name of your community."
+msgstr ""
+
+# 92bb0e77029d47fd9abf8d91a9aa46dc
+#: ../../user/site.rst:22
+msgid "site_code"
+msgstr ""
+
+# e75c0a3dcd324355aca55e65cb374165
+#: ../../user/site.rst:21
+msgid ""
+"The code of your community. It is good practice to use the TLD of your "
+"community here."
+msgstr ""
+
+# 7c25513f372f43d6b92f16366492cf12
+#: ../../user/site.rst:33
+msgid "domain_seed"
+msgstr ""
+
+# 634d7120dde84de287eadecc67777b3c
+#: ../../user/site.rst:25
+msgid ""
+"32 bytes of random data, encoded in hexadecimal, used to seed other "
+"random values specific to the mesh domain. It must be the same for all "
+"nodes of one mesh, but should be different for firmware that is not "
+"supposed to mesh with each other."
+msgstr ""
+
+# 3f8e46312eb84c2f92aa905bd307d4e3
+#: ../../user/site.rst:30
+msgid "The recommended way to generate a value for a new site is: ::"
+msgstr ""
+
+# cb6955f03ee74dc59e70b730c75e55a6
+#: ../../user/site.rst:41
+msgid "prefix4 \\: optional"
+msgstr ""
+
+# 93b5b1c74e0d4e15bbaefcab06d76f57
+#: ../../user/site.rst:36
+msgid "The IPv4 Subnet of your community mesh network in CIDR notation, e.g. ::"
+msgstr ""
+
+# 8132c95c59384721a39eb1507c0e725c
+#: ../../user/site.rst:41
+msgid "Required if ``next_node.ip4`` is set."
+msgstr ""
+
+# b1cdd5a4fff64c69a8554275ef4e2618
+#: ../../user/site.rst:47
+msgid "prefix6"
+msgstr ""
+
+# a4c2ab5d83ad4dac8946bcadc06de0a0
+#: ../../user/site.rst:44
+msgid "The IPv6 subnet of your community mesh network, e.g. ::"
+msgstr ""
+
+# 56017325e16d40f485a3fcbd118144fd
+#: ../../user/site.rst:54
+msgid "node_prefix6"
+msgstr ""
+
+# ceb5d8121faa4d00983820e636aecfbd
+#: ../../user/site.rst:50
+msgid ""
+"The ipv6 prefix from which the unique IP-addresses for nodes are selected"
+" in babel-based networks. This may overlap with prefix6. e.g. ::"
+msgstr ""
+
+# a4c0a2cad3d34e3f8af113826e3f2a1f
+#: ../../user/site.rst:63
+msgid "node_client_prefix6"
+msgstr ""
+
+# 57082d987272410eb1e0f5ac0efa406e
+#: ../../user/site.rst:57
+msgid ""
+"The ipv6 prefix from which the client-specific IP-address is calculated "
+"that is assigned to each node by l3roamd to allow efficient communication"
+" when roaming. This is exclusively useful when running a routing mesh "
+"protocol like babel. e.g. ::"
+msgstr ""
+
+# 013ca3c61e344801a89f5f286c44a855
+#: ../../user/site.rst:70
+msgid "timezone"
+msgstr ""
+
+# d9a703beae7d40bb950b777a93abe9c8
+#: ../../user/site.rst:66
+msgid "The timezone of your community live in, e.g. ::"
+msgstr ""
+
+# b2afc9705df144a09ec728c6ca1f2560
+#: ../../user/site.rst:79
+msgid "ntp_servers"
+msgstr ""
+
+# 72f935940b884de0a63a098c31856c9c
+#: ../../user/site.rst:73
+msgid ""
+"List of NTP servers available in your community or used by your "
+"community, e.g.: ::"
+msgstr ""
+
+# 80b16281d556451fa21234c0b21e4189
+#: ../../user/site.rst:78
+msgid ""
+"This NTP servers must be reachable via IPv6 from the nodes. If you don't "
+"want to set an IPv6 address explicitly, but use a hostname (which is "
+"recommended), see also the :ref:`FAQ <faq-dns>`."
+msgstr ""
+
+# 7754ea9cebea4c5aad913669a0955020
+#: ../../user/site.rst:109
+msgid "opkg \\: optional"
+msgstr ""
+
+# 381c4e83395244a39e0838d7b94f6992
+#: ../../user/site.rst:82
+msgid "``opkg`` package manager configuration."
+msgstr ""
+
+# f36ffde8f9d8457f82b77bee3429f2cd
+#: ../../user/site.rst:84
+msgid "There are two optional fields in the ``opkg`` section:"
+msgstr ""
+
+# 9265c71252474753ad25b12ac56e5dc5
+#: ../../user/site.rst:86
+msgid ""
+"``openwrt`` overrides the default OpenWrt repository URL. The default URL"
+" would correspond to "
+"``http://downloads.openwrt.org/snapshots/packages/%A`` and usually "
+"doesn't need to be changed when nodes are expected to have IPv6 internet "
+"connectivity."
+msgstr ""
+
+# 15f5f63a78884b6e83356f7b4125ec6c
+#: ../../user/site.rst:90
+msgid ""
+"``extra`` specifies a table of additional repositories (with arbitrary "
+"keys)"
+msgstr ""
+
+# c89bebb6b1944de39be6f04028653804
+#: ../../user/site.rst:101
+msgid "There are various patterns which can be used in the URLs:"
+msgstr ""
+
+# 34c2a946d829466ba1eaa0b1924e2a1e
+#: ../../user/site.rst:103
+#, python-format
+msgid "``%d`` is replaced by the OpenWrt distribution name (\"openwrt\")"
+msgstr ""
+
+# 78ce0b5a9fe04ea69a9cd70e4ee14f50
+#: ../../user/site.rst:104
+msgid "``%v`` is replaced by the OpenWrt version number (e.g. \"17.01\")"
+msgstr ""
+
+# d6b6093c3e624157983d1b52671a68b7
+#: ../../user/site.rst:105
+msgid "``%S`` is replaced by the target board (e.g. \"ar71xx/generic\")"
+msgstr ""
+
+# 4aadcde068ec490cb5012b7eaf6feff2
+#: ../../user/site.rst:106
+msgid "``%A`` is replaced by the target architecture (e.g. \"mips_24kc\")"
+msgstr ""
+
+# d8e7b9b48c964cc9acb323b14f1c7820
+#: ../../user/site.rst:107
+#, python-format
+msgid "``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)"
+msgstr ""
+
+# 7c7713152a184154a3353e75ceeb6f07
+#: ../../user/site.rst:108
+#, python-format
+msgid "``%GV`` is replaced by the Gluon version"
+msgstr ""
+
+# d45131d0208d404aa0d7fea80acdf620
+#: ../../user/site.rst:109
+#, python-format
+msgid "``%GR`` is replaced by the Gluon release (as specified in ``site.mk``)"
+msgstr ""
+
+# 8b65f9abc1b3415b90933c64ca6fd0bb
+#: ../../user/site.rst:117
+msgid "regdom \\: optional"
+msgstr ""
+
+# d4cefe1f60204928950b7230eeee4d76
+#: ../../user/site.rst:112
+msgid "The wireless regulatory domain responsible for your area, e.g.: ::"
+msgstr ""
+
+# 2c4ab51c14dd4977ad16129991afcd25
+#: ../../user/site.rst:117
+msgid "Setting ``regdom`` is mandatory if ``wifi24`` or ``wifi5`` is defined."
+msgstr ""
+
+# e1d729b637be46a5846d4c92d830ea51
+#: ../../user/site.rst:179
+msgid "wifi24 \\: optional"
+msgstr ""
+
+# 97af17ce3b8445909dec2085e196b026
+#: ../../user/site.rst:120
+msgid ""
+"WLAN configuration for 2.4 GHz devices. ``channel`` must be set to a "
+"valid wireless channel for your radio."
+msgstr ""
+
+# 72369f713a8c4b4e9a6209c64b219e23
+#: ../../user/site.rst:123
+msgid ""
+"There are currently three interface types available. You may choose to "
+"configure any subset of them:"
+msgstr ""
+
+# 02d2771cd37145d6bbd7bff54ae2775b
+#: ../../user/site.rst:126
+msgid "``ap`` creates a master interface where clients may connect"
+msgstr ""
+
+# 172d0929b5bc426ca2590caa02ce2da5
+#: ../../user/site.rst:127
+msgid "``mesh`` creates an 802.11s mesh interface with forwarding disabled"
+msgstr ""
+
+# 21a89e44da6f4c7db3b2ac77743fece8
+#: ../../user/site.rst:128
+msgid "``ibss`` creates an ad-hoc interface"
+msgstr ""
+
+# ee26933190ec4772a6986fba140b1924
+#: ../../user/site.rst:130
+msgid ""
+"Each interface may be disabled by setting ``disabled`` to ``true``. This "
+"will only affect new installations. Upgrades will not change the disabled"
+" state."
+msgstr ""
+
+# fa5c2a1c36764fec938caa701da83f81
+#: ../../user/site.rst:134
+msgid ""
+"Additionally it is possible to configure the ``supported_rates`` and "
+"``basic_rate`` of each radio. Both are optional, by default "
+"hostapd/driver dictate the rates. If ``supported_rates`` is set, "
+"``basic_rate`` is required, because ``basic_rate`` has to be a subset of "
+"``supported_rates``. Possible values are:"
+msgstr ""
+
+# 7d977841375e4314aaf7fbfa36c3c154
+#: ../../user/site.rst:139
+msgid "6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000 (OFDM)"
+msgstr ""
+
+# 049990f1b1774902a081a54764ae461d
+#: ../../user/site.rst:140
+msgid "1000, 5500, 11000 (legacy 802.11b, DSSS)"
+msgstr ""
+
+# 3028dd6f3f8f48baaf7d583d82f0a04a
+#: ../../user/site.rst:142
+msgid ""
+"The example below disables legacy 802.11b rates (DSSS) for performance "
+"reasons. For backwards compatibility in 802.11, this setting only effects"
+" 802.11a/b/g rates. I.e in 802.11n 6 MBit/s is announced  all time. In "
+"802.11ac the field is used to derive the length of a packet."
+msgstr ""
+
+# a763b298d68f4d13b8944a0792b9dbf2
+#: ../../user/site.rst:147
+msgid ""
+"``ap`` requires a single parameter, a string, named ``ssid`` which sets "
+"the interface's ESSID. This is the WiFi the clients connect to."
+msgstr ""
+
+# 77614ed3b0244c79bdd5cf9e9b455684
+#: ../../user/site.rst:150
+msgid ""
+"``mesh`` requires a single parameter, a string, named ``id`` which sets "
+"the mesh id, also visible as an open WiFi in some network managers. "
+"Usually you don't want users to connect to this mesh-SSID, so use a "
+"cryptic id that no one will accidentally mistake for the client WiFi."
+msgstr ""
+
+# fad900287d9542f3a541cfba64030868
+#: ../../user/site.rst:155
+msgid ""
+"``ibss`` requires two parameters: ``ssid`` (a string) and ``bssid`` (a "
+"MAC). An optional parameter ``vlan`` (integer) is supported."
+msgstr ""
+
+# 320b2b3102804573869415bf0e271d4b
+#: ../../user/site.rst:158
+msgid ""
+"Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) "
+"parameter for setting the multicast bitrate. Increasing the default value"
+" of 1000 to something like 12000 is recommended. ::"
+msgstr ""
+
+# 9ca1b800bfeb433fbf44f2724de2155a
+#: ../../user/site.rst:182
+msgid "wifi5 \\: optional"
+msgstr ""
+
+# da9c280bcbf444fd83e1dc2c6896acae
+#: ../../user/site.rst:182
+msgid "Same as `wifi24` but for the 5Ghz radio."
+msgstr ""
+
+# 98c2ed1e6729473381ef6b5ff8af83d4
+#: ../../user/site.rst:206
+msgid "next_node \\: package"
+msgstr ""
+
+# 2e0c341de8c54fab85e76d74e721b5be
+#: ../../user/site.rst:185
+msgid "Configuration of the local node feature of Gluon ::"
+msgstr ""
+
+# bb41a229232b458d93d4637a4540e45d
+#: ../../user/site.rst:195
+msgid ""
+"All values of this section are optional. If the IPv4 or IPv6 address is "
+"omitted, there will be no IPv4 or IPv6 anycast address. The MAC address "
+"defaults to ``16:41:95:40:f7:dc``; this value usually doesn't need to be "
+"changed, but it can be adjusted to match existing deployments that use a "
+"different value."
+msgstr ""
+
+# 028c232ea3a14be3a3ca8795ef895e20
+#: ../../user/site.rst:201
+msgid ""
+"When the nodes' next-node address is used as a DNS resolver by clients "
+"(by passing it via DHCP or router advertisements), it may be useful to "
+"allow resolving a next-node hostname without referring to an upstream DNS"
+" server (e.g. to allow reaching the node using such a hostname via HTTP "
+"or SSH in isolated mesh segments). This is possible by providing one or "
+"more names in the ``name`` field."
+msgstr ""
+
+# 3b46ff3a6d134a22aabdb24ae3275209
+#: ../../user/site.rst:265
+msgid "mesh"
+msgstr ""
+
+# 53d3a93bf1764849a725f61bab1ba617
+#: ../../user/site.rst:211
+msgid "Configuration of general mesh functionality."
+msgstr ""
+
+# d2686d8ffe8f4bf593b346a983529534
+#: ../../user/site.rst:213
+msgid ""
+"To avoid inter-mesh links, Gluon can encapsulate the mesh protocol in "
+"VXLAN for Mesh-on-LAN/WAN. It is recommended to set *mesh.vxlan* to "
+"``true`` to enable VXLAN in new setups. Setting it to ``false`` disables "
+"this encapsulation to allow meshing with other nodes that don't support "
+"VXLAN (Gluon 2017.1.x and older). In multi-domain setups, *mesh.vxlan* is"
+" optional and defaults to ``true``."
+msgstr ""
+
+# 0f454f589b404d73ba6e7ca7a1dd8296
+#: ../../user/site.rst:220
+msgid ""
+"Gluon generally segments layer-2 meshes so that each node becomes "
+"IGMP/MLD querier for its own local clients. This is necessary for "
+"reliable multicast snooping. The segmentation is realized by preventing "
+"IGMP/MLD queries from passing through the mesh."
+msgstr ""
+
+# 2c9d6cf6904a47869380425f5ae8a2e5
+#: ../../user/site.rst:225
+msgid ""
+"By default, not only queries are filtered, but also membership report and"
+" leave packets, as they add to the background noise of the mesh. As a "
+"consequence, snooping switches outside the mesh that are connected to a "
+"Gluon node need to be configured to forward all multicast traffic towards"
+" the mesh; this is usually not a problem, as such setups are unusual. If "
+"you run a special-purpose mesh that requires membership reports to be "
+"working, this filtering can be disabled by setting the optional "
+"*filter_membership_reports* value to ``false``."
+msgstr ""
+
+# d6dd971dbbe549628b35a79f0f3b4d00
+#: ../../user/site.rst:234
+msgid ""
+"In addition, options specific to the batman-adv routing protocol can be "
+"set in the *batman_adv* section:"
+msgstr ""
+
+# baf111de954e47d3875ebf417a47629e
+#: ../../user/site.rst:237
+msgid ""
+"The optional value *routing_algo* allows to set up ``BATMAN_V`` based "
+"meshes. If unset, the routing algorithm will default to ``BATMAN_IV``."
+msgstr ""
+
+# 0931f2be9f0240a9962bb95781a41bb3
+#: ../../user/site.rst:240
+msgid ""
+"The optional value *gw_sel_class* sets the gateway selection class, the "
+"default is ``20`` for B.A.T.M.A.N. IV and ``5000`` kbit/s for "
+"B.A.T.M.A.N. V."
+msgstr ""
+
+# 2933c1b5552c49be9abc343d6199a063
+#: ../../user/site.rst:243
+msgid ""
+"**B.A.T.M.A.N. IV:** with the value ``20`` the gateway is selected based "
+"on the link quality (TQ) only; with class ``1`` it is calculated from "
+"both, the TQ and the announced bandwidth."
+msgstr ""
+
+# 3962e83264a2462190601cc44625561a
+#: ../../user/site.rst:246
+msgid ""
+"**B.A.T.M.A.N. V:** with the value ``1500`` the gateway is selected if "
+"the throughput is at least 1500 kbit/s faster than the throughput of the "
+"currently selected gateway."
+msgstr ""
+
+# 6e3c17ca864e46d8841ea3037604e107
+#: ../../user/site.rst:250
+msgid ""
+"For details on determining the threshold, when to switch to a new "
+"gateway, see `batctl manpage`_, section \"gw_mode\"."
+msgstr ""
+
+# e8588b6d072f48e981751e526f885910
+#: ../../user/site.rst:375
+msgid "mesh_vpn"
+msgstr ""
+
+# 2f5b676fce6b493c8bcf6d478461f031
+#: ../../user/site.rst:268
+msgid "Remote server setup for the mesh VPN."
+msgstr ""
+
+# bde2a2f877584a8b9b6ff050dd41d288
+#: ../../user/site.rst:270
+msgid ""
+"The `enabled` option can be set to true to enable the VPN by default. "
+"`mtu` defines the MTU of the VPN interface, determining a proper MTU "
+"value is described in the :ref:`FAQ <faq-mtu>`."
+msgstr ""
+
+# 1e04225a0ddd400f975bc3e31ae45b30
+#: ../../user/site.rst:274
+msgid ""
+"By default the public key of a node's VPN daemon is not added to "
+"announced respondd data; this prevents malicious ISPs from correlating "
+"VPN sessions with specific mesh nodes via public respondd data. If this "
+"is of no concern in your threat model, this behaviour can be disabled "
+"(and thus announcing the public key be enabled) by setting "
+"`pubkey_privacy` to `false`. At the moment, this option only affects "
+"fastd."
+msgstr ""
+
+# 79cc4f92473d4b89b56640a793d62d3c
+#: ../../user/site.rst:280
+msgid ""
+"The `fastd` section configures settings specific to the *fastd* VPN "
+"implementation."
+msgstr ""
+
+# 3d5435bed0d84f9787b3410e0a5c6cb7
+#: ../../user/site.rst:283
+msgid ""
+"If `configurable` is set to `false` or unset, the method list will be "
+"replaced on updates with the list from the site configuration. Setting "
+"`configurable` to `true` will allow the user to add the method ``null`` "
+"to the beginning of the method list or remove ``null`` from it, and make "
+"this change survive updates. Setting `configurable` is necessary for the "
+"package `gluon-web-mesh-vpn-fastd`, which adds a UI for this "
+"configuration."
+msgstr ""
+
+# 1f2eef9647e24bff8230bfe710ef0cd7
+#: ../../user/site.rst:289
+msgid ""
+"In any case, the ``null`` method should always be the first method in the"
+" list if it is supported at all. You should only set `configurable` to "
+"`true` if the configured peers support both the ``null`` method and "
+"methods with encryption."
+msgstr ""
+
+# b4d3f829ef8a4b7aa2c544dd01416d1a
+#: ../../user/site.rst:293
+msgid ""
+"You can set syslog_level from verbose (default) to warn to reduce syslog "
+"output."
+msgstr ""
+
+# 13f85b1b288d413ba919eeeb66fd452b
+#: ../../user/site.rst:295
+msgid ""
+"The `tunneldigger` section is used to define the *tunneldigger* broker "
+"list."
+msgstr ""
+
+# 5a79c7eb4a954bfbb721a9e86689d7ab
+#: ../../user/site.rst:297
+msgid ""
+"**Note:** It doesn't make sense to include both `fastd` and "
+"`tunneldigger` sections in the same configuration file, as only one of "
+"the packages *gluon-mesh-vpn-fastd* and *gluon-mesh-vpn-tunneldigger* "
+"should be installed with the current implementation."
+msgstr ""
+
+# a0816e4ae315473c9394ed45fe6813c0
+#: ../../user/site.rst:302
+msgid ""
+"**Note:** It may be interesting to include the package *gluon-iptables-"
+"clamp-mss-to-pmtu* in the build when using *gluon-mesh-babel* to work "
+"around icmp blackholes on the internet."
+msgstr ""
+
+# cbb699e992854fc8bb146c082b4c1a66
+#: ../../user/site.rst:381
+msgid "mesh_on_wan \\: optional"
+msgstr ""
+
+# 9419cc69321d480c8ea0ed9a970b67f0
+#: ../../user/site.rst:378
+msgid "Enables the mesh on the WAN port (``true`` or ``false``). ::"
+msgstr ""
+
+# fe44844eed834868a752ed8b38d5a2df
+#: ../../user/site.rst:387
+msgid "mesh_on_lan \\: optional"
+msgstr ""
+
+# 24757a76428f4d88bec3dcdca8d5d833
+#: ../../user/site.rst:384
+msgid "Enables the mesh on the LAN port (``true`` or ``false``). ::"
+msgstr ""
+
+# bf9e227e5aba4fecaf1c5e56b27f2195
+#: ../../user/site.rst:390
+msgid "poe_passthrough \\: optional"
+msgstr ""
+
+# 27065d95a31545ae95d43d4082eb42c5
+#: ../../user/site.rst:390
+msgid "Enable PoE passthrough by default on hardware with such a feature."
+msgstr ""
+
+# 75bf7c76c4c34080ba27a085b35e92cc
+#: ../../user/site.rst:419
+msgid "autoupdater \\: package"
+msgstr ""
+
+# fbfd3ebceafb42c5ad9a0a50d5b08f45
+#: ../../user/site.rst:393
+msgid "Configuration for the autoupdater feature of Gluon."
+msgstr ""
+
+# 8bdc4be470c849ecbc8fffc6bf3ca0a2
+#: ../../user/site.rst:395
+msgid ""
+"The mirrors are checked in random order until the manifest could be "
+"downloaded successfully or all mirrors have been tried. ::"
+msgstr ""
+
+# a0d2cd84c86f46a49b02bd8d154a5e45
+#: ../../user/site.rst:418
+msgid ""
+"All configured mirrors must be reachable from the nodes via IPv6. If you "
+"don't want to set an IPv6 address explicitly, but use a hostname (which "
+"is recommended), see also the :ref:`FAQ <faq-dns>`."
+msgstr ""
+
+# c2c54d82ff7d48b2b47ab8ffdf86ce68
+#: ../../user/site.rst:472
+msgid "config_mode \\: optional"
+msgstr ""
+
+# 128bb788dd9746a78c9969d1465a6d53
+#: ../../user/site.rst:424
+msgid ""
+"Additional configuration for the configuration web interface. All values "
+"are optional."
+msgstr ""
+
+# d5808479811a465b9f197d8ce99d0b1c
+#: ../../user/site.rst:427
+msgid ""
+"When no hostname is specified, a default hostname based on the "
+"*hostname_prefix* and the node's primary MAC address is assigned. "
+"Manually setting a hostname can be enforced by setting "
+"*hostname.optional* to *false*."
+msgstr ""
+
+# 1eb35567b8fe4983aae50d15e89e1db2
+#: ../../user/site.rst:431
+msgid ""
+"To not prefill the hostname-field in config-mode with the default "
+"hostname, set *hostname.prefill* to *false*."
+msgstr ""
+
+# 5e62caaddaaf47fdb9472506227381ee
+#: ../../user/site.rst:434
+msgid ""
+"By default, no altitude field is shown by the *gluon-config-mode-geo-"
+"location* package. Set *geo_location.show_altitude* to *true* if you want"
+" the altitude field to be visible."
+msgstr ""
+
+# 963eddae725749d49fb1113b067bace0
+#: ../../user/site.rst:438
+msgid ""
+"The *geo_location.osm* section is only relevant when the *gluon-config-"
+"mode-geo-location-osm* package is used. The *center.lon* and *center.lat*"
+" values are mandatory in this case and define the default center of the "
+"map when no position has been picked yet. The *zoom* level defaults to 12"
+" in this case. *openlayers_url* allows to override the base URL of the "
+"*build/ol.js* and *css/ol.css* files (the default is "
+"``https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0``)."
+msgstr ""
+
+# 56e682b2d7774ed9a5d4014db7d5bf3f
+#: ../../user/site.rst:445
+msgid ""
+"The remote login page only shows SSH key configuration by default. A "
+"password form can be displayed by setting "
+"*remote_login.show_password_form* to true; in this case, "
+"*remote_login.min_password_length* defines the minimum password length. "
+"::"
+msgstr ""
+
+# 8660a29507764ae787c596e43b3e3bd8
+#: ../../user/site.rst:496
+msgid "roles \\: optional"
+msgstr ""
+
+# 0333e08c57f645b4b5ef5d0ba32f6897
+#: ../../user/site.rst:475
+msgid ""
+"Optional role definitions. Nodes will announce their role inside the "
+"mesh. This will allow in the backend to distinguish between normal, "
+"backbone and service nodes or even gateways (if they advertise that "
+"role). It is up to the community which roles to define. See the section "
+"below as an example. ``default`` takes the default role which is set "
+"initially. This value should be part of ``list``. If you want node owners"
+" to change the role via config mode add the package ``gluon-web-node-"
+"role`` to ``site.mk``."
+msgstr ""
+
+# 165e00a21c8247e7bf9a618c03219b11
+#: ../../user/site.rst:483
+msgid ""
+"The strings to display in the web interface are configured per language "
+"in the ``i18n/en.po``, ``i18n/de.po``, etc. files of the site repository "
+"using message IDs like ``gluon-web-node-role:role:node`` and ``gluon-web-"
+"node-role:role:backbone``. ::"
+msgstr ""
+
+# 440ccb28c80f4e93a4129d0284919612
+#: ../../user/site.rst:505
+msgid "setup_mode \\: package"
+msgstr ""
+
+# 621be675fe124b68a01e63916ede16e8
+#: ../../user/site.rst:499
+msgid ""
+"Allows skipping setup mode (config mode) at first boot when attribute "
+"``skip`` is set to ``true``. This is optional and may be left out. ::"
+msgstr ""
+
+# 22b807d312ee49cd842b403b10ad88a3
+#: ../../user/site.rst:508
+msgid "Build configuration"
+msgstr ""
+
+# 5923be8e87a242b18ea601fa7fb19819
+#: ../../user/site.rst:510
+msgid ""
+"The ``site.mk`` is a Makefile which defines various values involved in "
+"the build process of Gluon."
+msgstr ""
+
+# fbc2d99f337847438795984a4c5e258a
+#: ../../user/site.rst:515
+msgid "GLUON_FEATURES"
+msgstr ""
+
+# 39f5ad6ccafd45688f478b9af30de678
+#: ../../user/site.rst:514
+msgid ""
+"Defines a list of features to include. The feature list is used to "
+"generate the default package set."
+msgstr ""
+
+# c91dd62bbec847c08c71d467abbb69e2
+#: ../../user/site.rst:520
+msgid "GLUON_SITE_PACKAGES"
+msgstr ""
+
+# 99053ad2401b427f889fedd861be334d
+#: ../../user/site.rst:518
+msgid ""
+"Defines a list of packages which should be installed in addition to the "
+"default package set. It is also possible to remove packages from the "
+"default set by prepending a minus sign to the package name."
+msgstr ""
+
+# 0b81a7fb9d5046aca2f5950a717518eb
+#: ../../user/site.rst:523
+msgid "GLUON_RELEASE"
+msgstr ""
+
+# cd4fb9f6a8c2402dae9ea5e88c59abe5
+#: ../../user/site.rst:523
+msgid "The current release version Gluon should use."
+msgstr ""
+
+# 4c75a0ad4adf40e1a427120f02ec8573
+#: ../../user/site.rst:527
+msgid "GLUON_PRIORITY"
+msgstr ""
+
+# 0f306a95b5d94e59b7adc71a5dc8f9b7
+#: ../../user/site.rst:526
+msgid ""
+"The default priority for the generated manifests (see the autoupdater "
+"documentation for more information)."
+msgstr ""
+
+# 68764e790cdd42ef8c5ddce40f28bf88
+#: ../../user/site.rst:531
+msgid "GLUON_REGION"
+msgstr ""
+
+# 44754cd1061d4663a4e4d189baca2828
+#: ../../user/site.rst:530
+msgid ""
+"Region code to build into images where necessary. Valid values are the "
+"empty string, ``us`` and ``eu``."
+msgstr ""
+
+# 3a713ac3fc874f6790caae1e2afc52cc
+#: ../../user/site.rst:535
+msgid "GLUON_LANGS"
+msgstr ""
+
+# 93bbafdaa1f445b98d1018239a7315cd
+#: ../../user/site.rst:534
+msgid ""
+"List of languages (as two-letter-codes) to be included in the web "
+"interface. Should always contain ``en``."
+msgstr ""
+
+# 4b8a50bd7ccb4c678209ac6298f51c9a
+#: ../../user/site.rst:540
+msgid "GLUON_WLAN_MESH"
+msgstr ""
+
+# 880fe17af7b244c4afb8c22349a03edd
+#: ../../user/site.rst:538
+msgid ""
+"Setting this to ``11s`` or ``ibss`` will enable generation of matching "
+"images for devices which don't support both meshing modes, either at all "
+"(e.g. ralink and mediatek don't support AP+IBSS) or in the same firmware "
+"(ath10k-based 5GHz). Defaults to ``11s``."
+msgstr ""
+
+# f935520328454918937f194666d1ceab
+#: ../../user/site.rst:545
+msgid "Feature flags"
+msgstr ""
+
+# 800b9109fa1445abaea21e6b0e96a5fd
+#: ../../user/site.rst:547
+msgid ""
+"With the addition of more and more features that interact in complex "
+"ways, it has become necessary to split certain packages into multiple "
+"parts, so it is possible to install just what is needed for a specific "
+"use case. One example is the package *gluon-status-page-mesh-batman-adv*:"
+" There are batman-adv-specific status page components; they should only "
+"be installed when both batman-adv and the status page are enabled, making"
+" the addition of a specific package for this combination necessary."
+msgstr ""
+
+# 288f53a70a8f4f89918b2740ac28b851
+#: ../../user/site.rst:555
+msgid ""
+"With the ongoing modularization, e.g. for the purpose of supporting new "
+"routing protocols, specifying all such split packages in *site.mk* would "
+"soon become very cumbersome: In the future, further components like "
+"respondd support or languages might be split off as separate packages, "
+"leading to entangled package names like *gluon-mesh-vpn-fastd-respondd* "
+"or *gluon-status-page-mesh-batman-adv-i18n-de*."
+msgstr ""
+
+# f8200b9bf33e45059d39590afe34ec57
+#: ../../user/site.rst:562
+msgid ""
+"For this reason, we have introduced *feature flags*, which can be "
+"specified in the *GLUON_FEATURES* variable. These flags allow to specify "
+"a set of features on a higher level than individual package names."
+msgstr ""
+
+# 26332fac26e54a6d9d5fcbaf915c9b02
+#: ../../user/site.rst:566
+msgid ""
+"Most Gluon packages can simply be specified as feature flags by removing "
+"the ``gluon-`` prefix: The feature flag corresponding to the package "
+"*gluon-mesh-batman-adv-15* is *mesh-batman-adv-15*."
+msgstr ""
+
+# 3d5e5a1906f14a78bb9896f1c8dea046
+#: ../../user/site.rst:570
+msgid ""
+"The file ``package/features`` in the Gluon repository (or ``features`` in"
+" site feeds) can specify additional rules for deriving package lists from"
+" feature flags, e.g. specifying both *status-page* and either *mesh-"
+"batman-adv-14* or *mesh-batman-adv-15* will automatically select the "
+"additional package *gluon-status-page-mesh-batman-adv*. In the future, "
+"selecting the flags *mesh-vpn-fastd* and *respondd* might automatically "
+"enable the additional package *gluon-mesh-vpn-fastd-respondd*, and "
+"enabling *status-page* and *mesh-batman-adv-15* (or *-14*) with ``de`` in"
+" *GLUON_LANGS* could add the package *gluon-status-page-mesh-batman-adv-"
+"i18n-de*."
+msgstr ""
+
+# b223691898fe44efaf4929ed697d7874
+#: ../../user/site.rst:580
+msgid ""
+"In short, it is not necessary anymore to list all the individual packages"
+" that are relevant for a firmware; instead, the package list is derived "
+"from a list of feature flags using a flexible ruleset defined in the "
+"Gluon repo or site package feeds. To some extent, it will even allow us "
+"to further modularize existing Gluon packages, without necessitating "
+"changes to existing site configurations."
+msgstr ""
+
+# c0c58fb3528f497596bfe02b7cee7034
+#: ../../user/site.rst:586
+msgid ""
+"It is still possible to override such automatic rules using "
+"*GLUON_SITE_PACKAGES* (e.g., ``-gluon-status-page-mesh-batman-adv`` to "
+"remove the automatically added package *gluon-status-page-mesh-batman-"
+"adv*)."
+msgstr ""
+
+# f070432dc9804e568a6d4d52c5dba3e1
+#: ../../user/site.rst:590
+msgid ""
+"For convenience, there are two feature flags that do not directly "
+"correspond to a Gluon package:"
+msgstr ""
+
+# cac3e5e3073b4dc2b05cf7567ee22517
+#: ../../user/site.rst:593
+msgid "web-wizard"
+msgstr ""
+
+# 19ff7e9503fe45b5bbf11ba9a2a5efdc
+#: ../../user/site.rst:595
+msgid ""
+"Includes the *gluon-config-mode-...* base packages (hostname, geolocation"
+" and contact info), as well as the *gluon-config-mode-autoupdater* (when "
+"*autoupdater* is in *GLUON_FEATURES*), and *gluon-config-mode-mesh-vpn* "
+"(when *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* are in "
+"*GLUON_FEATURES*)"
+msgstr ""
+
+# 2a30a730c0e443739238a4c7b97e6a98
+#: ../../user/site.rst:600
+msgid "web-advanced"
+msgstr ""
+
+# f678c5ae3018425da80dd107529c91be
+#: ../../user/site.rst:602
+msgid ""
+"Includes the *gluon-web-...* base packages (admin, network, WiFi config),"
+" as well as the *gluon-web-autoupdater* (when *autoupdater* is in "
+"*GLUON_FEATURES*)"
+msgstr ""
+
+# edc8533619c54c999b782d33238f477e
+#: ../../user/site.rst:605
+msgid ""
+"We recommend to use *GLUON_SITE_PACKAGES* for non-Gluon OpenWrt packages "
+"only and completely rely on *GLUON_FEATURES* for Gluon packages, as it is"
+" shown in the example *site.mk*."
+msgstr ""
+
+# 9e2282074c21486fbc64da85d0169069
+#: ../../user/site.rst:612
+msgid "Config mode texts"
+msgstr ""
+
+# 5397d5b24d3b482eb99635a0488a3cb3
+#: ../../user/site.rst:614
+msgid ""
+"The community-defined texts in the config mode are configured in PO files"
+" in the ``i18n`` subdirectory of the site configuration. The message IDs "
+"currently defined are:"
+msgstr ""
+
+# 725a003eca1a46d1aa1cae814bc94cb9
+#: ../../user/site.rst:618
+msgid "gluon-config-mode:welcome"
+msgstr ""
+
+# 6a3310f55ba147c789f66cb5ce023eec
+#: ../../user/site.rst:618
+msgid "Welcome text on the top of the config wizard page."
+msgstr ""
+
+# 5f4f2007a51d469fb1da430f471baf47
+#: ../../user/site.rst:621
+msgid "gluon-config-mode:pubkey"
+msgstr ""
+
+# 8575a87949514aeca062a6bec352e410
+#: ../../user/site.rst:621
+msgid "Information about the public VPN key on the reboot page."
+msgstr ""
+
+# 40b80078a94f456eb66541acff5f6553
+#: ../../user/site.rst:624
+msgid "gluon-config-mode:novpn"
+msgstr ""
+
+# b6475c8d662a4f4680b65a1862a87c31
+#: ../../user/site.rst:624
+msgid "Information shown on the reboot page, if the mesh VPN was not selected."
+msgstr ""
+
+# 6e9f2e2aab404962bd37f6e20e6cf968
+#: ../../user/site.rst:627
+msgid "gluon-config-mode:contact-help"
+msgstr ""
+
+# 7411130c78354f51b9d5d3d21749116c
+#: ../../user/site.rst:627
+msgid "Description for the usage of the ``contact`` field"
+msgstr ""
+
+# 4f7b2545600b4d00858c800de89e2243
+#: ../../user/site.rst:630
+msgid "gluon-config-mode:contact-note"
+msgstr ""
+
+# 296e6505d6d6432c85d7874a76eb111f
+#: ../../user/site.rst:630
+msgid "Note shown (in small font) below the ``contact`` field"
+msgstr ""
+
+# 4e33faa51cf0422ca7512a9728789fc9
+#: ../../user/site.rst:633
+msgid "gluon-config-mode:hostname-help"
+msgstr ""
+
+# bf0b3ec95f8c4bc2a41e4bca150ed45a
+#: ../../user/site.rst:633
+msgid "Description for the usage of the ``hostname`` field"
+msgstr ""
+
+# b61ffcce9a164dfcbf1c75e4009d83cf
+#: ../../user/site.rst:636
+msgid "gluon-config-mode:geo-location-help"
+msgstr ""
+
+# efddd80969414161ad22b71bcb7da9e2
+#: ../../user/site.rst:636
+msgid ""
+"Description for the usage of the longitude/latitude fields (and altitude,"
+" if shown)"
+msgstr ""
+
+# 3a2cdcb7e82b44b094a9c5026ba547c8
+#: ../../user/site.rst:639
+msgid "gluon-config-mode:altitude-label"
+msgstr ""
+
+# 659b39a2ecb14d0098a071bdf9819498
+#: ../../user/site.rst:639
+msgid "Label for the ``altitude`` field"
+msgstr ""
+
+# 85bb7f68fd81460f87a2a191a3a394d0
+#: ../../user/site.rst:642
+msgid "gluon-config-mode:reboot"
+msgstr ""
+
+# 4010fc0f4b56447faed6c2b85c04ad40
+#: ../../user/site.rst:642
+msgid "General information shown on the reboot page."
+msgstr ""
+
+# 34a68b3b45cc445a88eecb9790e65cdd
+#: ../../user/site.rst:644
+msgid ""
+"There is a POT file in the site example directory which can be used to "
+"create templates for the language files. The command ``msginit -l en -i "
+"../../docs/site-example/i18n/gluon-site.pot`` can be used from the "
+"``i18n`` directory to create an initial PO file called ``en.po`` if the "
+"``gettext`` utilities are installed."
+msgstr ""
+
+# f642a1de763546478555184f25521c5e
+#: ../../user/site.rst:651
+msgid ""
+"An empty ``msgstr``, as is the default after running ``msginit``, leads "
+"to the ``msgid`` being printed as-is. It does *not* hide the whole text, "
+"as might be expected."
+msgstr ""
+
+# 33e1671cdfb745baab9ccf29a20c3f75
+#: ../../user/site.rst:655
+msgid ""
+"Depending on the context, you might be able to use comments like ``<!-- "
+"empty -->`` as translations to effectively hide the text."
+msgstr ""
+
+# d2564d14a01a4adbae2233c6d1abf6c8
+#: ../../user/site.rst:659
+msgid "Site modules"
+msgstr ""
+
+# 538b71cf97564942ab8079c2a058a7e6
+#: ../../user/site.rst:661
+msgid ""
+"The file ``modules`` in the site repository is completely optional and "
+"can be used to supply additional package feeds from which packages are "
+"built. The git repositories specified here are retrieved in addition to "
+"the default feeds when ``make update`` is called."
+msgstr ""
+
+# ff6229584fc64034ac9e5458245eeec6
+#: ../../user/site.rst:666
+msgid ""
+"This file's format is very similar to the toplevel ``modules`` file of "
+"the Gluon tree, with the important different that the list of feeds must "
+"be assigned to the variable ``GLUON_SITE_FEEDS``. Multiple feed names "
+"must be separated by spaces, for example::"
+msgstr ""
+
+# 9f324488589b479aa0679f39518dcad7
+#: ../../user/site.rst:673
+msgid ""
+"The feed names may only contain alphanumerical characters, underscores "
+"and slashes. For each of the feeds, the following variables are used to "
+"specify how to update the feed:"
+msgstr ""
+
+# e9e555bb3de548fca8a5e76f9c970e53
+#: ../../user/site.rst:678
+msgid "PACKAGES_${feed}_REPO"
+msgstr ""
+
+# 3b1f3053ea4542c7a988c48ecd3d56e7
+#: ../../user/site.rst:678
+msgid ""
+"The URL of the git repository to clone (usually ``git://`` or "
+"``http(s)://``)"
+msgstr ""
+
+# 8e2a165b3816481a9c9caae241cee0c4
+#: ../../user/site.rst:681
+msgid "PACKAGES_${feed}_COMMIT"
+msgstr ""
+
+# 26b008d675bc43c69529e0479f9eb414
+#: ../../user/site.rst:681
+msgid "The commit ID of the repository to use"
+msgstr ""
+
+# 2b607addccfe4fde84e554903928c56b
+#: ../../user/site.rst:685
+msgid "PACKAGES_${feed}_BRANCH"
+msgstr ""
+
+# 5910287d1129482fa3eea6d4d36ee27d
+#: ../../user/site.rst:684
+msgid ""
+"Optional: The branch of the repository the given commit ID can be found "
+"in. Defaults to the default branch of the repository (usually ``master``)"
+msgstr ""
+
+# 6fa270dbdd6f469f83b09dbe7c86974c
+#: ../../user/site.rst:687
+msgid ""
+"These variables are always all uppercase, so for an entry ``foo`` in "
+"GLUON_SITE_FEEDS, the corresponding configuration variables would be "
+"``PACKAGES_FOO_REPO``, ``PACKAGES_FOO_COMMIT`` and "
+"``PACKAGES_FOO_BRANCH``. Slashes in feed names are replaced by "
+"underscores to get valid shell variable identifiers."
+msgstr ""
+
+# d0b66939e9974a56b5b2b167bb763ec9
+#: ../../user/site.rst:694
+msgid "Examples"
+msgstr ""
+
+# 5ed7ab5ddbd14a0b859e9374d49c0b04
+#: ../../user/site.rst:697
+msgid "site.mk"
+msgstr ""
+
+# f307127a2cf34fe2a72e7a92ac2e3268
+#: ../../user/site.rst:703
+msgid "site.conf"
+msgstr ""
+
+# 6ef19252407e42bc8f2c0e208daa0d3b
+#: ../../user/site.rst:709
+msgid "i18n/en.po"
+msgstr ""
+
+# e242d210378d414b91248d7e1ca451f8
+#: ../../user/site.rst:715
+msgid "i18n/de.po"
+msgstr ""
+
+# a13ee4bebf754a2589896daf2dedbd9a
+#: ../../user/site.rst:721
+msgid "modules"
+msgstr ""
+
+# d3566b0556a3445bb31f0a7ff1341311
+#: ../../user/site.rst:727
+msgid "site-repos in the wild"
+msgstr ""
+
+# 3db5b8ea81e74cb98c207756619cf897
+#: ../../user/site.rst:729
+msgid ""
+"A non-exhaustive list of site-repos from various communities can be found"
+" on the wiki: https://github.com/freifunk-gluon/gluon/wiki/Site-"
+"Configurations"
+msgstr ""
+

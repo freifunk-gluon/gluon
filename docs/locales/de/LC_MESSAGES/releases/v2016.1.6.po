@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# fada2360abd74a80a972defeb56e7dcc
+#: ../../releases/v2016.1.6.rst:2
+msgid "Gluon 2016.1.6"
+msgstr ""
+
+# 1cb63f9fe2a8411fbb278f5d7d6550b7
+#: ../../releases/v2016.1.6.rst:5
+msgid "Bugfixes"
+msgstr ""
+
+# 0e1973fd3bc64607acc9639017b7d3ee
+#: ../../releases/v2016.1.6.rst:7
+msgid ""
+"build: fix nodejs host build on Debian Wheezy (`#776 <https://github.com"
+"/freifunk-gluon/gluon/issues/776>`_)"
+msgstr ""
+
+# 4e0782e7d96d4240a4c9bdce5f50ac3b
+#: ../../releases/v2016.1.6.rst:8
+msgid "build: fix parallel builds with Make 4.2+"
+msgstr ""
+
+# 1a3812412e2e429eaab3e8abcb65219a
+#: ../../releases/v2016.1.6.rst:10
+msgid ""
+"Trying to use ``-j N`` with Make 4.2 would spawn an unlimited number of "
+"processes, eventually leading to memory exhaustion."
+msgstr ""
+
+# a703dc0727304c9695a526bead627e1e
+#: ../../releases/v2016.1.6.rst:13
+msgid "build: fix occasional build failure in libpcap package"
+msgstr ""
+
+# 550a2369f2764c3fbbbd87711f5aa003
+#: ../../releases/v2016.1.6.rst:14
+msgid ""
+"build: don't require hexdump for x86 builds (`#811 <https://github.com"
+"/freifunk-gluon/gluon/issues/811>`_)"
+msgstr ""
+
+# 606315a0a1a44bdc94c91b09869b1e8b
+#: ../../releases/v2016.1.6.rst:16
+msgid ""
+"Trying to build Gluon for x86 on systems without hexdump would silently "
+"generate broken images."
+msgstr ""
+
+# 66cf3ff569064dbdab404f3034d4eaac
+#: ../../releases/v2016.1.6.rst:19
+msgid ""
+"Add support for DNS servers given by their link-local IPv6 address in "
+"Router Advertisements (`#854 <https://github.com/freifunk-"
+"gluon/gluon/issues/854>`_)"
+msgstr ""
+
+# 0fb5ad8e155c44f49ab4c2ca3c75f8cf
+#: ../../releases/v2016.1.6.rst:22
+msgid ""
+"ar71xx-generic: correctly setup LNA GPIOs on CPE210/510 (`#796 "
+"<https://github.com/freifunk-gluon/gluon/issues/796>`_)"
+msgstr ""
+
+# a398f38cf68b43e0867375c98b775ff8
+#: ../../releases/v2016.1.6.rst:24
+msgid "Improves the reception by about 20dB."
+msgstr ""
+
+# ffeaab201c98478184b9c2c741a637ea
+#: ../../releases/v2016.1.6.rst:26
+msgid ""
+"ar71xx-generic: switch default WAN/LAN assignment on Ubiquiti UAP Pro "
+"(`#764 <https://github.com/freifunk-gluon/gluon/issues/764>`_)"
+msgstr ""
+
+# a5bb3879aea34e32b663e759014b30c5
+#: ../../releases/v2016.1.6.rst:29
+msgid ""
+"Switch to the usual \"PoE is WAN/setup mode, secondary is LAN\" scheme. "
+"This only affects new installations; the assignment won't be changed on "
+"updates unless the configuration is reset."
+msgstr ""
+
+# 21e3ccc056744873b2974b29554cb872
+#: ../../releases/v2016.1.6.rst:33
+msgid ""
+"ar71xx-generic: fix ath10k memory leak (`#690 <https://github.com"
+"/freifunk-gluon/gluon/issues/690>`_)"
+msgstr ""
+
+# e26aca1a843c40c58322567fd53a7f14
+#: ../../releases/v2016.1.6.rst:34
+msgid ""
+"ar71xx-generic: add support for new TP-Link region codes (`#860 "
+"<https://github.com/freifunk-gluon/gluon/issues/860>`_)"
+msgstr ""
+
+# 05eb5a97b6164754a9fe1672eb1be6de
+#: ../../releases/v2016.1.6.rst:37
+msgid ""
+"TP-Link has started providing US- and EU-specific firmwares for the "
+"Archer C7 v2. To generate Gluon images installable from these new "
+"firmwares, the ``GLUON_REGION`` variable must be set to ``eu`` or ``us`` "
+"in ``site.mk`` or on the ``make`` command line (the images will still be "
+"installable from all old firmwares without region codes)."
+msgstr ""
+
+# 23fa753771d94db6aa48d32465e25dff
+#: ../../releases/v2016.1.6.rst:43
+msgid "Known Issues"
+msgstr ""
+
+# 5f6fa2054ee44896829564653c650181
+#: ../../releases/v2016.1.6.rst:45
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 8302645c35664e67b3e5e4bead38bbb4
+#: ../../releases/v2016.1.6.rst:47
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+# f523d63421c6417e84481b9806e533ff
+#: ../../releases/v2016.1.6.rst:49
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 31810cabb2d941caa91e9077cc94c1e5
+#: ../../releases/v2016.1.6.rst:51
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 2a50ebd600554e1e973e32b183f470e1
+#: ../../releases/v2016.1.6.rst:53
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 00372154ce7e43b481059c3f8a961174
+#: ../../releases/v2016.1.6.rst:55
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+

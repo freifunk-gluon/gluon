@@ -1,0 +1,135 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 1a2d5ef2fdf44c22b99e0382ee47b52b
+#: ../../releases/v2016.1.3.rst:2
+msgid "Gluon 2016.1.3"
+msgstr ""
+
+# a63ced423a904cc0a86e98bd1ff51b6e
+#: ../../releases/v2016.1.3.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# 3b1b4055dfaa46a19ab0356e96ad466b
+#: ../../releases/v2016.1.3.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# 64c4e1090914464aaaa1f822599fb4c9
+#: ../../releases/v2016.1.3.rst:10
+msgid "ALFA Hornet UB / AP121 / AP121U"
+msgstr ""
+
+# d43a941dbc884ac0acd3562ee775e30f
+#: ../../releases/v2016.1.3.rst:11
+msgid "TP-Link TL-WA7510N"
+msgstr ""
+
+# e89e4cfa6bf8475aaac25238d2f53711
+#: ../../releases/v2016.1.3.rst:14
+msgid "Bugfixes"
+msgstr ""
+
+# ace8b4ae0b6f43f994fdb37ff3ca193a
+#: ../../releases/v2016.1.3.rst:16
+msgid ""
+"The nondeterministic boot hang (`#669 <https://github.com/freifunk-"
+"gluon/gluon/issues/669>`_) that was thought to be fixed in Gluon "
+"v2016.1.2 has resurfaced on other hardware. We believe it is now fixed "
+"properly."
+msgstr ""
+
+# a1658f5eb2114a39990d52f4997547ee
+#: ../../releases/v2016.1.3.rst:18
+msgid "Sysupgrades on the Xen DomU have been fixed."
+msgstr ""
+
+# cea361ed0b144949961fa07c9b58591c
+#: ../../releases/v2016.1.3.rst:19
+msgid "Gluon can now be built on systems that use LibreSSL instead of OpenSSL."
+msgstr ""
+
+# 900f4d42828c4b328e8c14a3029ae970
+#: ../../releases/v2016.1.3.rst:22
+msgid "Known Issues"
+msgstr ""
+
+# 35e66b15cd7f4a15a3098eb602636dfc
+#: ../../releases/v2016.1.3.rst:24
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 2353d3512ccc4922b15b891caab6e60f
+#: ../../releases/v2016.1.3.rst:26
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+# 2dbc3c124a8c4be4a3a379ebfd90d0b6
+#: ../../releases/v2016.1.3.rst:28
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 7bb357ffc1d94f06aa8184d2950c626a
+#: ../../releases/v2016.1.3.rst:30
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# fe1775f4b3304f1494ba289a62712a61
+#: ../../releases/v2016.1.3.rst:32
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 8ea16529b5e240b2a323c41aeab92f46
+#: ../../releases/v2016.1.3.rst:34
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# dcbe58f5d77c494a8deaebafd31ee948
+#: ../../releases/v2016.1.3.rst:36
+msgid ""
+"Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com"
+"/freifunk-gluon/gluon/issues/687>`_)"
+msgstr ""
+
+# 05bdedac1d8e47b380b6984fcdb760ed
+#: ../../releases/v2016.1.3.rst:38
+msgid ""
+"Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS "
+"5.6.x without downgrading AirOS first before flashing Gluon. It was "
+"discovered that on Ubiquiti PicoStations, this downgrade is still "
+"necessary, as the flash is not correctly unlocked, leaving the device "
+"unable to leave Config Mode and making regular sysupgrades impossible."
+msgstr ""
+
+# 4f0d8652f7274874aa5046b74de79dbd
+#: ../../releases/v2016.1.3.rst:43
+msgid "TFTP recovery can be used in this state to flash a new firmware."
+msgstr ""
+

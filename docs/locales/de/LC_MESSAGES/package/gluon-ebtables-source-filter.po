@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# f98d8e2644c04d1381bc56112243fa59
+#: ../../package/gluon-ebtables-source-filter.rst:2
+msgid "gluon-ebtables-source-filter"
+msgstr ""
+
+# 20acee5f912048cfa0dc460fda1f964b
+#: ../../package/gluon-ebtables-source-filter.rst:4
+msgid ""
+"The *gluon-ebtables-source-filter* package adds an additional layer-2 "
+"filter ruleset to prevent unreasonable traffic entering the network via "
+"the nodes. Unreasonable means traffic entering the mesh via a node which "
+"source IP does not belong to the configured IP space."
+msgstr ""
+
+# 41ffcd95804a4d7b8170747e342de178
+#: ../../package/gluon-ebtables-source-filter.rst:9
+msgid ""
+"You may first check if there is a certain proportion of unreasonable "
+"traffic, before adding this package to the firmware image. Furthermore, "
+"you should not use this package if some kind of gateway or upstream "
+"network is provided by a device connected to the client port."
+msgstr ""
+
+# 120af7fdd82b492ebd805d4ad3cd291c
+#: ../../package/gluon-ebtables-source-filter.rst:15
+msgid "site.conf"
+msgstr ""
+
+# 28323019e0e5483e9dca4bb1ac1ed594
+#: ../../package/gluon-ebtables-source-filter.rst:18
+msgid "prefix4"
+msgstr ""
+
+# c729b556982f45c1aa3466f00536bb8e
+# be2457d42662428db31e302bc96217c7
+#: ../../package/gluon-ebtables-source-filter.rst:17
+#: ../../package/gluon-ebtables-source-filter.rst:23
+msgid "optional"
+msgstr ""
+
+# 29ccd6145adf40bb84350fa0cc3dc5f6
+#: ../../package/gluon-ebtables-source-filter.rst:18
+msgid "IPv4 subnet"
+msgstr ""
+
+# 40e502c9dfe949b2a6b1b20a98f158a5
+#: ../../package/gluon-ebtables-source-filter.rst:21
+msgid "prefix6 :"
+msgstr ""
+
+# d64a195386bf429c86b3faf97e58ba54
+#: ../../package/gluon-ebtables-source-filter.rst:21
+msgid "IPv6 subnet"
+msgstr ""
+
+# 0dbdf70d110745b5b0703c8931e47422
+#: ../../package/gluon-ebtables-source-filter.rst:24
+msgid "extra_prefixes6"
+msgstr ""
+
+# 2f942910dd4c4dd79528a2a2b0c8302c
+#: ../../package/gluon-ebtables-source-filter.rst:24
+msgid "list of additional IPv6 subnets"
+msgstr ""
+
+# d94ad813dba94590b689bb6ecc202dad
+#: ../../package/gluon-ebtables-source-filter.rst:26
+msgid "Example::"
+msgstr ""
+

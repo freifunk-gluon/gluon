@@ -1,0 +1,181 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# b4d14c6a11da4c71983862b073d3a2d7
+#: ../../dev/web/view.rst:2
+msgid "Views"
+msgstr ""
+
+# f3d95466851e46e48a52e04b3373e2a9
+#: ../../dev/web/view.rst:4
+msgid ""
+"The template parser reads views from the ``view`` subdirectory of a "
+"gluon-web application (``/lib/gluon/config-mode/view`` for the config "
+"mode, ``lib/gluon/status-page/view`` for the status page). Writing own "
+"views should usually be avoided in favour of using :doc:`model` with "
+"their predefined views."
+msgstr ""
+
+# 6992cace21014c81b8596b779a9a9f8e
+#: ../../dev/web/view.rst:10
+msgid ""
+"Views are partial HTML pages, with additional template tags that allow to"
+" embed Lua code and translation strings. The following tags are defined:"
+msgstr ""
+
+# 537f988c9af44b67a113189768a3226b
+#: ../../dev/web/view.rst:13
+msgid "``<%`` ... ``%>`` evaluates the enclosed Lua expression."
+msgstr ""
+
+# 247baa41ca74468e806bf539fa850e82
+#: ../../dev/web/view.rst:14
+msgid ""
+"``<%|`` ... ``%>`` evaluates the enclosed Lua expression and prints its "
+"value."
+msgstr ""
+
+# 87ef9e71c7094e19b60b8994af652ec3
+#: ../../dev/web/view.rst:15
+msgid ""
+"``<%=`` ... ``%>`` evaluates the enclosed Lua expression and prints its "
+"value *without escaping HTML entities*. This is useful when the value "
+"contains HTML code."
+msgstr ""
+
+# 7448565f617e4a35a36929b92ea95d8e
+#: ../../dev/web/view.rst:17
+msgid "``<%+`` ... ``%>`` includes another template."
+msgstr ""
+
+# 625164ce09894b5ca4a94a38bb484092
+#: ../../dev/web/view.rst:18
+msgid ""
+"``<%:`` ... ``%>`` translates the enclosed string using the loaded i18n "
+"catalog."
+msgstr ""
+
+# 74696860f80240b2b19ddef097308ed5
+#: ../../dev/web/view.rst:19
+msgid ""
+"``<%_`` ... ``%>`` translates the enclosed string *without escaping HTML "
+"entities* in the translation. This only makes sense when the i18n catalog"
+" contains HTML code."
+msgstr ""
+
+# e4d0f7804d27468f978aeb54a0528b34
+#: ../../dev/web/view.rst:21
+msgid "``<%#`` ... ``%>`` is a comment."
+msgstr ""
+
+# 0ff2f63b815a4690b331209b9257d2b3
+#: ../../dev/web/view.rst:23
+msgid ""
+"All of these also come in the whitespace-stripping variants ``<%-`` and "
+"``-%>`` that remove all whitespace before or after the tag."
+msgstr ""
+
+# fa9a4f6d8acf4f5ca008c78238eecf42
+#: ../../dev/web/view.rst:26
+msgid "Complex combinations of HTML and Lua code are possible, for example:"
+msgstr ""
+
+# 492df715d89d439894c703b166e81809
+#: ../../dev/web/view.rst:38
+msgid "Variables and functions"
+msgstr ""
+
+# 1bc24e0fb92e436db0bab221180d05fa
+#: ../../dev/web/view.rst:40
+msgid ""
+"Many call sites define additional variables (for example, model templates"
+" can access the model as *self* and a unique element ID as *id*), but the"
+" following variables and functions should always be available for the "
+"embedded Lua code:"
+msgstr ""
+
+# 22b96b335ff34f85b16d6924490e21dd
+#: ../../dev/web/view.rst:44
+msgid "*renderer*: :ref:`web-controller-template-renderer`"
+msgstr ""
+
+# 70a6b341596b4126a78d526f0ee0b70a
+#: ../../dev/web/view.rst:45
+msgid "*http*: :ref:`web-controller-http`"
+msgstr ""
+
+# 40eda110c6214d6bb68849992acafaeb
+#: ../../dev/web/view.rst:46
+msgid "*request*: Table containing the path components of the current page"
+msgstr ""
+
+# 5774224ab91749e4bbe81517afd1a43e
+#: ../../dev/web/view.rst:47
+msgid ""
+"*url* (*path*): returns the URL for the given path, which is passed as a "
+"table of path components."
+msgstr ""
+
+# fcfd80cede124c92b3f70c10f8ef3bdc
+#: ../../dev/web/view.rst:48
+msgid ""
+"*attr* (*key*, *value*): Returns a string of the form ``key=\"value\"`` "
+"(with a leading space character before the key)."
+msgstr ""
+
+# a7061dca92964ab5adade45c8a5bcd13
+#: ../../dev/web/view.rst:51
+msgid ""
+"*value* is converted to a string (tables are serialized as JSON) and HTML"
+" entities are escaped. Returns an empty string when *value* is *nil* or "
+"*false*."
+msgstr ""
+
+# ffe9a6aa1d6a40f7910eebf7e11a7acb
+#: ../../dev/web/view.rst:53
+msgid "*include* (*template*): Includes another template."
+msgstr ""
+
+# 5e9692ab4e0744dfa66fccaa97d22b86
+#: ../../dev/web/view.rst:54
+msgid ""
+"*node* (*path*, ...): Returns the controller node for the given page "
+"(passed as one argument per path component)."
+msgstr ""
+
+# 5887efe12d8d47519341f8bb1213271f
+#: ../../dev/web/view.rst:57
+msgid "Use ``node(unpack(request))`` to get the node for the current page."
+msgstr ""
+
+# 87af31fc5751437b9d2945a3ebaeb732
+#: ../../dev/web/view.rst:58
+msgid "*pcdata* (*str*): Escapes HTML entities in the passed string."
+msgstr ""
+
+# 5bc1dc3336384ad99f8cfcca08e87936
+#: ../../dev/web/view.rst:59
+msgid "*urlencode* (*str*): Escapes the passed string for use in an URL."
+msgstr ""
+
+# 4a4d2903d54a47b887d31e4f9dcdc657
+#: ../../dev/web/view.rst:60
+msgid "*translate*, *_translate*, *translatef* and *i18n*: see :doc:`i18n`"
+msgstr ""
+

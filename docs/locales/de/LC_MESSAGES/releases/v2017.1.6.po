@@ -1,0 +1,233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 964b9001c0174c948018861d303e9f97
+#: ../../releases/v2017.1.6.rst:2
+msgid "Gluon 2017.1.6"
+msgstr ""
+
+# a388db91b8134ae49a6db0bdc3f54f63
+#: ../../releases/v2017.1.6.rst:5
+msgid "Bugfixes"
+msgstr ""
+
+# 9d6cc05789db4fe485cc6308ae0929d5
+#: ../../releases/v2017.1.6.rst:7
+msgid ""
+"Remove broken DNS cache feature (`#1362 <https://github.com/freifunk-"
+"gluon/gluon/issues/1362>`_)"
+msgstr ""
+
+# 170b351ddc7448c6a243c3cec0aa0bdb
+#: ../../releases/v2017.1.6.rst:10
+msgid ""
+"It was found that dnsmasq does not handle all answer records equally. In "
+"particular, its cached answers are missing DNSKEY and DS records, "
+"breaking DNSSEC validation on clients."
+msgstr ""
+
+# 6bed1e31d396496d94252dda66525928
+#: ../../releases/v2017.1.6.rst:14
+msgid ""
+"Nodes can still resolve the next-node hostname locally and will continue "
+"to work as DNS forwarders. The DNS cache feature may return if dnsmasq is"
+" fixed or if we switch to a different resolver."
+msgstr ""
+
+# 86f25bf66f7446fcbdce3ea61bb2e501
+#: ../../releases/v2017.1.6.rst:18
+msgid ""
+"Ensure that corefiles are stored in /tmp rather than cluttering the root "
+"filesystem (`00df8b76e54c <https://github.com/freifunk-"
+"gluon/gluon/commit/00df8b76e54c9bb89299df4b2ec49e972046d6b6>`_)"
+msgstr ""
+
+# 2c41364811ac4ea88884d79892bb9e49
+#: ../../releases/v2017.1.6.rst:22
+msgid ""
+"Nodes upgrades from Gluon v2016.2.x or earlier did not set "
+"kernel.core_pattern correctly, leading to corefiles being stored in the "
+"current directory (usually / for system services) in the case of crashes."
+msgstr ""
+
+# d879e8a398684c209359424a06ed26ce
+#: ../../releases/v2017.1.6.rst:26
+msgid "This is a regression introduced in Gluon v2017.1."
+msgstr ""
+
+# 2a5152aa60ba41238cf862a21d271d14
+#: ../../releases/v2017.1.6.rst:28
+msgid ""
+"Only request a single IPv6 address instead of a prefix on the WAN "
+"interface (`5db54ba78c3 <https://github.com/freifunk-"
+"gluon/gluon/commit/5db54ba78c3e245f06e4a407371608f6cb247b49>`_)"
+msgstr ""
+
+# 7671115097b34d4497c3d9cb07705795
+#: ../../releases/v2017.1.6.rst:31
+msgid ""
+"Fix signal graph on status page when there are many neighbours "
+"(packages/`d1e0b6e0bdae <https://github.com/freifunk-"
+"gluon/packages/commit/d1e0b6e0bdaea14d8b9425cee6ca83087be1a905>`_)"
+msgstr ""
+
+# 91c06723838440a3972821268ecfe003
+#: ../../releases/v2017.1.6.rst:34
+msgid ""
+"Fix config files managed by opkg not being saved on sysupgrades on "
+"ar71xx-tiny (LEDE/`17c0362178ca "
+"<https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=17c0362178caf837680a4631b8d0de94e5393448>`_,"
+" LEDE/`75be005e8bdc "
+"<https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=75be005e8bdcbf86f9ad167a8737126dda98a444>`_)"
+msgstr ""
+
+# 9d3635ae814a4087a568a797ad12ad01
+#: ../../releases/v2017.1.6.rst:38
+msgid ""
+"Fix kernel crash in batman-adv-14 (`#1358 <https://github.com/freifunk-"
+"gluon/gluon/issues/1358>`_)"
+msgstr ""
+
+# 58e50453a4b540939393b460fc5ca319
+#: ../../releases/v2017.1.6.rst:41
+msgid ""
+"Starting with Gluon v2017.1, respondd could trigger a kernel crash caused"
+" by a use-after-free in batman-adv-14, in particular after a gateway "
+"disappeared."
+msgstr ""
+
+# a18a0ac5c68343f39cd9c892467faa06
+#: ../../releases/v2017.1.6.rst:44
+msgid "batman-adv-15 is not affected."
+msgstr ""
+
+# 09379322708346668999108eb43b9c9a
+#: ../../releases/v2017.1.6.rst:46
+msgid ""
+"Increase bridge multicast querier timeout (\"robustness\") to avoid "
+"\"querier appeared/disappeared\" log spam by batman-adv in the presence "
+"of an external querier (`e305a8c01917 <https://github.com/freifunk-"
+"gluon/gluon/commit/e305a8c019179472dbfc6fccea6c87cf40c08a75>`_)"
+msgstr ""
+
+# f4f3eddf013f41f38ab62c0d7e79ce29
+#: ../../releases/v2017.1.6.rst:51
+msgid ""
+"Fix \"broken pipe\" log spam caused by the status page (`883c32f2f1dc "
+"<https://github.com/freifunk-"
+"gluon/gluon/commit/883c32f2f1dc368626069865c07a5701e3e9bcae>`_)"
+msgstr ""
+
+# aa2956b63b7346d8bca44ad759ca32c4
+#: ../../releases/v2017.1.6.rst:54
+msgid ""
+"Reduce memory limit of WLAN packet queues to 256KB on devices with small "
+"RAM (`e63c6ca01f50 <https://github.com/freifunk-"
+"gluon/gluon/commit/e63c6ca01f50c96d76e5570faa290617a8a312b4>`_)"
+msgstr ""
+
+# c329b60801e84ff6ade530a40b92f50a
+#: ../../releases/v2017.1.6.rst:57
+msgid "Will hopefully make out-of-memory crashes in busy meshes less likely."
+msgstr ""
+
+# ce6d79ded8e442a8b46b3fb379bc4cda
+#: ../../releases/v2017.1.6.rst:59
+msgid ""
+"Improve image validation for TP-Link CPE/WBS 210/510 and make it ready "
+"for future images (LEDE/`6577fe2198f5 "
+"<https://git.openwrt.org/?p=openwrt/openwrt.git;a=commit;h=6577fe2198f5c75acb1dba789941d96a036f4dae>`_)"
+msgstr ""
+
+# cb43356f97084ed0ad259818c9eb9f8f
+#: ../../releases/v2017.1.6.rst:63
+msgid ""
+"Future OpenWrt/Gluon images will move the image metadata (\"support-"
+"list\") of the CPE/WBS 210/510 images to a different offset. Make "
+"sysupgrade ready to allow installing such images."
+msgstr ""
+
+# dea81d2ab67a40c08baa80c08ef4e363
+#: ../../releases/v2017.1.6.rst:67
+msgid ""
+"This change was also backported to Gluon v2016.2.x to allow direct "
+"updates to future Gluon master versions without installing v2017.1.x "
+"first."
+msgstr ""
+
+# 9956f1e49400447fa2e633e054e4830e
+#: ../../releases/v2017.1.6.rst:70
+msgid ""
+"Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx "
+"have disappeared with the latest updates (`#1157 <https://github.com"
+"/freifunk-gluon/gluon/issues/1157>`_)"
+msgstr ""
+
+# 4b628052db1043b7a7e9d2610a83dc29
+#: ../../releases/v2017.1.6.rst:76
+msgid "Known issues"
+msgstr ""
+
+# 05a868b3e2b34fcc8a081fc9207eddcd
+#: ../../releases/v2017.1.6.rst:78
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 3f1ee7535ac04f92a6344082638fd773
+#: ../../releases/v2017.1.6.rst:80
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 44b74c89ae3f475fbe2e12feb9f05f22
+#: ../../releases/v2017.1.6.rst:82
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 993b49de4884483da16caa3249a8e35d
+#: ../../releases/v2017.1.6.rst:84
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 568524a969a24cc8b4c711cdeae86cb1
+#: ../../releases/v2017.1.6.rst:86
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# cf43c6a9cced41edb6ead7e542dc39e9
+#: ../../releases/v2017.1.6.rst:88
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# a725ffee190b451781d0cce0114dfa88
+#: ../../releases/v2017.1.6.rst:90
+msgid ""
+"Frequent reboots due to out-of-memory on weak hardware in larger meshes "
+"(`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+

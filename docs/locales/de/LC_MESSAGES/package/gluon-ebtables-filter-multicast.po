@@ -1,0 +1,101 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 83848c3cc6c54de898885e4378a4a800
+#: ../../package/gluon-ebtables-filter-multicast.rst:2
+msgid "gluon-ebtables-filter-multicast"
+msgstr ""
+
+# 2557c1bfcba5499cb84aac4719e9a0e8
+#: ../../package/gluon-ebtables-filter-multicast.rst:4
+msgid ""
+"The *gluon-ebtables-filter-multicast* package filters out various kinds "
+"of non-essential multicast traffic, as this traffic often constitutes a "
+"disproportionate burden on the mesh network. Unfortunately, this breaks "
+"many useful services (Avahi, Bonjour chat, ...), but this seems "
+"unavoidable, as the current Avahi implementation is optimized for small "
+"local networks and causes too much traffic in large mesh networks."
+msgstr ""
+
+# 52d11363fc054ca39bddd6dce75d730f
+#: ../../package/gluon-ebtables-filter-multicast.rst:10
+msgid ""
+"The multicast packets are filtered between the nodes' client bridge (*br-"
+"client*) and mesh interface (*bat0*) on output."
+msgstr ""
+
+# fd5d2a01df184c5b803265d473f963c2
+#: ../../package/gluon-ebtables-filter-multicast.rst:14
+msgid "The following packet types are considered essential and aren't filtered:"
+msgstr ""
+
+# fa9f5518211342188325af1b09166979
+#: ../../package/gluon-ebtables-filter-multicast.rst:16
+msgid "ARP (except requests for/replies from 0.0.0.0)"
+msgstr ""
+
+# 2351beee8e434a1abad0e600f37aa382
+#: ../../package/gluon-ebtables-filter-multicast.rst:17
+msgid "DHCP, DHCPv6"
+msgstr ""
+
+# 7b22cd9eac994cd99906241f3d1e84db
+#: ../../package/gluon-ebtables-filter-multicast.rst:18
+msgid "ICMPv6 (except Echo Requests (ping) and Node Information Queries (RFC4620)"
+msgstr ""
+
+# a38fc7038a8e4bea99b5ecef2b40a272
+#: ../../package/gluon-ebtables-filter-multicast.rst:19
+msgid "IGMP"
+msgstr ""
+
+# e202856f5ccf411aac597e1c64d25fc6
+#: ../../package/gluon-ebtables-filter-multicast.rst:21
+msgid ""
+"In addition, the following packet types are allowed to allow "
+"experimentation with layer 3 routing protocols."
+msgstr ""
+
+# 1abda94469cc40a9aab7b103c0443199
+#: ../../package/gluon-ebtables-filter-multicast.rst:24
+msgid "Babel"
+msgstr ""
+
+# c19fcfe4a7bc4482902aa6200110c453
+#: ../../package/gluon-ebtables-filter-multicast.rst:25
+msgid "OSPF"
+msgstr ""
+
+# 3246e60ff04b415483b946d09f150c27
+#: ../../package/gluon-ebtables-filter-multicast.rst:26
+msgid "RIPng"
+msgstr ""
+
+# 5aa50c924a2c4fcc84d2e07577509282
+#: ../../package/gluon-ebtables-filter-multicast.rst:28
+msgid "The following packet types are also allowed:"
+msgstr ""
+
+# 3225279cd5994095a29be4b88ef4759e
+#: ../../package/gluon-ebtables-filter-multicast.rst:30
+msgid ""
+"BitTorrent Local Peer Discovery (it seems better to have local peers for "
+"BitTorrent than sending everything through the internet)"
+msgstr ""
+

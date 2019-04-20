@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 081bad78ea404680bbd3320a940dacad
+#: ../../releases/v2016.1.4.rst:2
+msgid "Gluon 2016.1.4"
+msgstr ""
+
+# 7854124aa2944ce98f30621c2c7213bf
+#: ../../releases/v2016.1.4.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# e1e048692261429eba09ba989e360086
+#: ../../releases/v2016.1.4.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# a2f33cced3e3482181504470ad031ad6
+#: ../../releases/v2016.1.4.rst:10
+msgid "8devices Carambola 2"
+msgstr ""
+
+# 8da43f1e8ff94cb49d7701396b902b05
+#: ../../releases/v2016.1.4.rst:11
+msgid "Meraki MR12/MR62/MR16/MR66"
+msgstr ""
+
+# 18cd51e1c4e5497498047dfc2b470387
+#: ../../releases/v2016.1.4.rst:14
+msgid "Bugfixes"
+msgstr ""
+
+# 2d4cc3cc76564867aa37bcc9cf2dec38
+#: ../../releases/v2016.1.4.rst:16
+msgid "Major update of all WLAN drivers"
+msgstr ""
+
+# 4c8d8fc2a19440ec9da47356a4ef5d20
+#: ../../releases/v2016.1.4.rst:18
+msgid ""
+"We've taken the unusual step of updating the WLAN drivers (\"wireless-"
+"backports\") to a much newer version, as it was reported that the new "
+"version fixes unstable WLAN seen in many setups"
+msgstr ""
+
+# 328f8974efa7490ea46a9ed7a0f66a62
+#: ../../releases/v2016.1.4.rst:20
+msgid "Build fix: a race condition causing parallel builds to fail has been fixed"
+msgstr ""
+
+# a13fc287cd4543fe87be8ab0131919f2
+#: ../../releases/v2016.1.4.rst:21
+msgid ""
+"Build fix: the Gluon tree could get into a state in which all commands "
+"fail with \"Too many levels of symbolic links\""
+msgstr ""
+
+# de862d2cb1d34ff1aadf652e1300a198
+#: ../../releases/v2016.1.4.rst:22
+msgid ""
+"Build fix: allow building Gluon on systems with certain versions of "
+"*dash* as */bin/sh*"
+msgstr ""
+
+# 762835664ec641a4abf982ec6b9e355b
+#: ../../releases/v2016.1.4.rst:25
+msgid "Known Issues"
+msgstr ""
+
+# 892effe197d345358bb39046408d6a86
+#: ../../releases/v2016.1.4.rst:27
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 9f3c2af0b74d4752bed07041877fbf09
+#: ../../releases/v2016.1.4.rst:29
+msgid "Reducing the TX power in the Expert Mode is recommended."
+msgstr ""
+
+# ebca3b914e234c0cb55e26b1c0333ce8
+#: ../../releases/v2016.1.4.rst:31
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# f86cb29ba24c484ca46b97e860d1043a
+#: ../../releases/v2016.1.4.rst:33
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 6ba47db3836d448f9bb7161ab3ac4166
+#: ../../releases/v2016.1.4.rst:35
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 1a3053abfb3242c19fe215a16425fa49
+#: ../../releases/v2016.1.4.rst:37
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 02f11c0cd6da42f79655497c26677526
+#: ../../releases/v2016.1.4.rst:39
+msgid ""
+"Unwritable flash on some Ubiquiti PicoStations (`#687 <https://github.com"
+"/freifunk-gluon/gluon/issues/687>`_)"
+msgstr ""
+
+# dc7eb071a9824ee88af20ddb37418c79
+#: ../../releases/v2016.1.4.rst:41
+msgid ""
+"Gluon v2016.1.1 added support for Ubiquiti AirMAX devices with AirOS "
+"5.6.x without downgrading AirOS first before flashing Gluon. It was "
+"discovered that on Ubiquiti PicoStations, this downgrade is still "
+"necessary, as the flash is not correctly unlocked, leaving the device "
+"unable to leave Config Mode and making regular sysupgrades impossible."
+msgstr ""
+
+# e658691c60a1413a85066b8a5b2eae7b
+#: ../../releases/v2016.1.4.rst:46
+msgid "TFTP recovery can be used in this state to flash a new firmware."
+msgstr ""
+

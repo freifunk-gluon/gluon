@@ -1,0 +1,90 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# c0d02c8dda894574a660ef069d458385
+#: ../../features/configmode.rst:2
+msgid "Config Mode"
+msgstr ""
+
+# 274f0e94a737422dbd74cad2b7ae4416
+#: ../../features/configmode.rst:4
+msgid ""
+"When in Config Mode a node will neither participate in the mesh nor "
+"connect to the VPN using the WAN port. Instead, it'll offer a web "
+"interface on the LAN port to aid configuration of the node."
+msgstr ""
+
+# 625a7ffdaaac4e8da336dfb26ea601a6
+#: ../../features/configmode.rst:8
+msgid ""
+"Whether a node is in Config Mode can be determined by a characteristic "
+"blinking sequence of the SYS LED:"
+msgstr ""
+
+# b74345dc7c7747eb91f04cc05fb02024
+#: ../../features/configmode.rst:14
+msgid "Activating Config Mode"
+msgstr ""
+
+# 7d4333f91c1846338f8830c2974ddcab
+#: ../../features/configmode.rst:16
+msgid ""
+"Config Mode is automatically entered at the first boot. You can re-enter "
+"Config Mode by pressing and holding the RESET/WPS button for about three "
+"seconds. The device should reboot (all LEDs will turn off briefly) and "
+"Config Mode will be available."
+msgstr ""
+
+# 883e3e4e10ba4da3b2ec6ce3f13d8b0a
+#: ../../features/configmode.rst:23
+msgid "Port Configuration"
+msgstr ""
+
+# 45bd97ee3b5b4107a086ee9c8138f867
+#: ../../features/configmode.rst:25
+msgid ""
+"In general, Config Mode will be offered on the LAN ports. However, there "
+"are two practical exceptions:"
+msgstr ""
+
+# 713f149166344cd8aceaf91e3bac8d26
+#: ../../features/configmode.rst:28
+msgid "Devices with just one network port will run Config Mode on that port."
+msgstr ""
+
+# d44243a2463b47808005eeb77481a669
+#: ../../features/configmode.rst:29
+msgid ""
+"Devices with PoE on the WAN port will run Config Mode on the WAN port "
+"instead."
+msgstr ""
+
+# 9dabd11f5dc343afa8100e41d87da500
+#: ../../features/configmode.rst:33
+msgid "Accessing Config Mode"
+msgstr ""
+
+# 05b47e3e833f4996bfe6a4ffcd508346
+#: ../../features/configmode.rst:35
+msgid ""
+"Config Mode can be accessed at http://192.168.1.1. The node will offer "
+"DHCP to clients. Should this fail, you may assign an IP from "
+"192.168.1.0/24 to your computer manually."
+msgstr ""
+

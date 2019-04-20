@@ -1,0 +1,130 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 3a7893ee292a48a9b553b7ad6d790586
+#: ../../dev/upgrade.rst:2
+msgid "Upgrade scripts"
+msgstr ""
+
+# 9035843d06924b59b5b1a3bf34d95dbb
+#: ../../dev/upgrade.rst:5
+msgid "Basics"
+msgstr ""
+
+# 8ef6738f948e4024b298435d38d81613
+#: ../../dev/upgrade.rst:7
+msgid ""
+"After each sysupgrade (including the initial installation), Gluon will "
+"execute all scripts under ``/lib/gluon/upgrade``. These scripts' "
+"filenames usually begin with a 3-digit number specifying the order of "
+"execution. Note that the script files need to be executable."
+msgstr ""
+
+# 1bd50d80a92c41c48634c6a197539034
+#: ../../dev/upgrade.rst:11
+msgid ""
+"To get an overview of the ordering of all scripts of all packages, the "
+"helper script ``contrib/lsupgrade.sh`` in the Gluon repository can be "
+"used, which will print all upgrade scripts' filenames and directories. If"
+" executed on a TTY, the filename will be highlighted in green, the "
+"repository in blue and the package in red."
+msgstr ""
+
+# e5b6d33536b04a6292ff34ac8ce7f939
+#: ../../dev/upgrade.rst:16
+msgid "Best practices"
+msgstr ""
+
+# 1a0b51e6c1a94a36bae5d5e893bc923a
+#: ../../dev/upgrade.rst:18
+msgid ""
+"Most upgrade scripts are written in Lua. This allows using lots of helper"
+" functions provided by Gluon, e.g. to access the site configuration or "
+"edit UCI configuration files."
+msgstr ""
+
+# 6a7a9ea6dc4a422680f2d482a70cde66
+#: ../../dev/upgrade.rst:21
+msgid ""
+"Whenever possible, scripts shouldn't check if they are running for the "
+"first time, but just edit configuration files to achieve a valid "
+"configuration (without overwriting configuration changes made by the user"
+" where desirable). This allows using the same code to create the initial "
+"configuration and upgrade configurations on upgrades."
+msgstr ""
+
+# e8ab226b2f2445649b60624350494bf9
+#: ../../dev/upgrade.rst:25
+msgid ""
+"If it is unavoidable to run different code during the initial "
+"installation, the ``sysconfig.gluon_version`` variable can be checked. "
+"This variable is ``nil`` during the initial installation and contains the"
+" previously install Gluon version otherwise."
+msgstr ""
+
+# 5d14e6378f054dd5bd8369879b3ffe51
+#: ../../dev/upgrade.rst:30
+msgid "Script ordering"
+msgstr ""
+
+# 679368144c594d0ab2d75096f0add02b
+#: ../../dev/upgrade.rst:32
+msgid "These are some guidelines for the script numbers:"
+msgstr ""
+
+# 8dbd20bda36947be87559bc56d948b96
+#: ../../dev/upgrade.rst:34
+msgid "``0xx``: Basic ``sysconfig`` setup"
+msgstr ""
+
+# 439eedc827d94062b74ba2fc37b963d4
+#: ../../dev/upgrade.rst:35
+msgid "``1xx``: Basic system setup (including basic network configuration)"
+msgstr ""
+
+# 0edef3a698fa4f1688c4c210522ceac8
+#: ../../dev/upgrade.rst:36
+msgid "``2xx``: Wireless setup"
+msgstr ""
+
+# c4938c225c5943738354c2369d3bff9e
+#: ../../dev/upgrade.rst:37
+msgid "``3xx``: Advanced network and system setup"
+msgstr ""
+
+# 745a4d00ddba4eb085306970c3c149da
+#: ../../dev/upgrade.rst:38
+msgid "``4xx``: Extended network and system setup (e.g. mesh VPN and next-node)"
+msgstr ""
+
+# 1f0d43f69199496492a1a1234c966952
+#: ../../dev/upgrade.rst:39
+msgid "``5xx``: Miscellaneous (everything not fitting into any other category)"
+msgstr ""
+
+# 51c1de8e95ac4b0a892d752e0ded2144
+#: ../../dev/upgrade.rst:40
+msgid "``6xx`` .. ``8xx``: Currently unused"
+msgstr ""
+
+# cf8fdff82cc747b1a06ae3f9f584d106
+#: ../../dev/upgrade.rst:41
+msgid "``9xx``: Upgrade finalization"
+msgstr ""
+

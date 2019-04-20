@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# be888f8cfe3b41a7a994a2ec622aaa90
+#: ../../user/faq.rst:2
+msgid "Frequently Asked Questions"
+msgstr ""
+
+# ac6f750260ea4180870fe0d49d335a61
+#: ../../user/faq.rst:7
+msgid "What hardware is supported?"
+msgstr ""
+
+# eb3acaea104b45c383bcd173840f5e59
+#: ../../user/faq.rst:8
+msgid ""
+"A table with hardware supported by Gluon can be found on the `OpenWrt "
+"Wiki`_. If you want to find out if your device can potentially be "
+"supported have a look at :doc:`../dev/hardware` for detailed hardware "
+"requirements."
+msgstr ""
+
+# fd70351c90664c5c8ad888630ff1edde
+#: ../../user/faq.rst:17
+msgid "Why does DNS not work on the nodes?"
+msgstr ""
+
+# 3245d2accf2b49fc81776ab796ce47c5
+#: ../../user/faq.rst:19
+msgid ""
+"Gluon nodes will ignore the DNS server on the WAN port for everything "
+"except the mesh VPN, which can lead to confusion."
+msgstr ""
+
+# 5377865ebea14a5cb88d8dbf3c385ea0
+#: ../../user/faq.rst:22
+msgid ""
+"All normal services on the nodes exclusively use the DNS server on the "
+"mesh interface. This DNS server must be announced in router "
+"advertisements (using *radvd* or a similar software) from one or more "
+"central servers in meshes based on *batman-adv*. If your mesh does not "
+"have global IPv6 connectivity, you can setup your *radvd* not to announce"
+" a default route by setting the *default lifetime* to 0; in this case, "
+"the *radvd* is only used to announce the DNS server."
+msgstr ""
+
+# f2475ba5d0f6439ea51c16dc9de1af36
+#: ../../user/faq.rst:32
+msgid "What is a good MTU on the mesh-vpn?"
+msgstr ""
+
+# 21ab3d007fc84a638d7d34b724f94bb8
+#: ../../user/faq.rst:34
+msgid ""
+"Setting the MTU on the transport interface requires careful "
+"consideration, as setting it too low will cause excessive fragmentation "
+"and setting it too high may leave peers with a broken tunnel due to "
+"packet loss."
+msgstr ""
+
+# 5d7a879c9dc74b07bfea44e4836161a2
+#: ../../user/faq.rst:38
+msgid "Consider these key values:"
+msgstr ""
+
+# f703f9377aa04d98814620ee75d346d0
+#: ../../user/faq.rst:40
+msgid ""
+"Payload: Allow for the transport of IPv6 packets, by adhering to the "
+"minimum MTU of 1280 Byte specified in RFC 2460 - and configure `MSS "
+"clamping`_ accordingly, - and announce your link MTU via Router "
+"Advertisements and DHCP"
+msgstr ""
+
+# 0629da70f1464cdbb9e090a5a7c74d5d
+#: ../../user/faq.rst:47
+msgid ""
+"Encapsulation: Account for the overhead created by the configured mesh "
+"protocol encapsulating the payload, which is - up to 32 Byte (14 Byte "
+"Ethernet + 18 Byte batadv) for batman-adv compat v15 (v2014.0 and later) "
+"- up to 28 Byte (14 Byte Ethernet + 14 Byte batadv) for batman-adv compat"
+" v14 (v2011.3.0 until and including v2013.4.0)"
+msgstr ""
+
+# 53030baba5a441be989d758f04eb7935
+#: ../../user/faq.rst:52
+msgid ""
+"PMTU: What MTU does the path between your gateway and each of its peers "
+"support?"
+msgstr ""
+
+# c37b1520d31444dbba409185abb4c295
+#: ../../user/faq.rst:54
+msgid "For reference, the complete MTU stack looks like this:"
+msgstr ""
+
+# 2421da137d34451086b3e078078e7a1b
+#: ../../user/faq.rst:59
+msgid "Minimum MTU"
+msgstr ""
+
+# 185c0114a14e4a87a6d482e79eaa67b1
+#: ../../user/faq.rst:61
+msgid ""
+"Calculate the minimum transport MTU by adding the encapsulation overhead "
+"to the minimum payload MTU required. This is the lowest recommended "
+"value, since going lower would cause unnecessary fragmentation for "
+"clients which respect the announced link MTU."
+msgstr ""
+
+# 624c23a757d8482887ef5d5eab036c78
+#: ../../user/faq.rst:66
+msgid ""
+"Example: Our network currently uses batman-adv v15, it therefore requires"
+" up to 32 Bytes of encapsulation overhead on top of the minimal link MTU "
+"required for transporting IPv6.::"
+msgstr ""
+
+# 21b1703ef3c748f6bbee294da417e218
+#: ../../user/faq.rst:80
+msgid "Maximum MTU"
+msgstr ""
+
+# 6f45bdf0a6704c2f9394f6889b30c92f
+#: ../../user/faq.rst:82
+msgid ""
+"Calculating the maximum transport MTU is interesting, because it "
+"increases the throughput, by allowing larger payloads to be transported, "
+"but also more difficult as you have to take into account the tunneling "
+"overhead and each peers PMTU, which varies between providers. The "
+"underlying reasons are mostly PPPoE, Tunneling and IPv6 transition "
+"technologies like DS-Lite."
+msgstr ""
+
+# 5db8ac0b544141da919b73faa29457f3
+#: ../../user/faq.rst:89
+msgid ""
+"Example: The peer with the smallest MTU on your network is behind DS-Lite"
+" and can transport IPv4 packets up to 1436 Bytes in size. Your tunnel "
+"uses IPv4 (20 Byte), UDP (8 Byte), Fastd (24 byte) and you require TAP "
+"(14 Byte) for Layer 2 (Ethernet) Tunneling.::"
+msgstr ""
+
+# cb4c9c2ed24545668b215b09dfc32965
+#: ../../user/faq.rst:104
+msgid "Conclusion"
+msgstr ""
+
+# db466ce504744f20a0c20b85880b8ec7
+#: ../../user/faq.rst:106
+msgid ""
+"Determining the maximum MTU can be a tedious process, especially since "
+"the PMTU of peers could change at any time. The general recommendation "
+"for maximized compatibility is therefore the minimum MTU of 1312 Byte, "
+"which works well with all combinations of IPv4, IPv6, batman-adv compat "
+"v14 and v15."
+msgstr ""
+

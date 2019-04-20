@@ -1,0 +1,378 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# e895b5f984a9433a842bb3207ef95b22
+#: ../../releases/v2014.3.rst:2
+msgid "Gluon 2014.3"
+msgstr ""
+
+# 2c5a0854e4a24d53a62c94affbb1f576
+#: ../../releases/v2014.3.rst:5
+msgid "New hardware support"
+msgstr ""
+
+# 55392c3e855a424bb67efb66862c3bf5
+#: ../../releases/v2014.3.rst:6
+msgid "Linksys WRT160NL"
+msgstr ""
+
+# d5fd451dd6bb479cbd2874b7251be09a
+#: ../../releases/v2014.3.rst:9
+msgid "New features"
+msgstr ""
+
+# 2bb3ea47cacf4b44bc8de9dff86667b6
+#: ../../releases/v2014.3.rst:12
+msgid "New autoupdater"
+msgstr ""
+
+# 61430985a1604e988ee8e5280fbdd131
+#: ../../releases/v2014.3.rst:13
+msgid "The autoupdater has been rewritten."
+msgstr ""
+
+# d1db9bb1fee04f1b98bbac7a002c1e37
+#: ../../releases/v2014.3.rst:15
+msgid "Two new fields have been added to the manifest:"
+msgstr ""
+
+# c9b9512744c0494e878897e81045dbf8
+#: ../../releases/v2014.3.rst:18
+msgid "``DATE``"
+msgstr ""
+
+# 727b9c9cc64b4bc59a4693a2c65a28c4
+#: ../../releases/v2014.3.rst:18
+msgid ""
+"Specifies the time and date the update was released. ``make manifest`` "
+"will take care of setting it to the correct value."
+msgstr ""
+
+# 27097193de5f46759dc4a94a154f341e
+#: ../../releases/v2014.3.rst:23
+msgid "``PRIORITY``"
+msgstr ""
+
+# 98271dae83bd4483b87291fa021dca80
+#: ../../releases/v2014.3.rst:21
+msgid ""
+"Specifies the maximum number of days until the update should be attempted"
+" (thus lower numbers mean the priority is higher). It must be set either "
+"in ``site.mk`` or on the ``make manifest`` command line."
+msgstr ""
+
+# ec8f90f8da454ef29864004e5cfd3c6f
+#: ../../releases/v2014.3.rst:25
+msgid ""
+"Updates will be attempted at night, between 04:00 and 5:00, with a "
+"specific probability. When less than ``PRIORITY`` days have passed "
+"(calculated using ``DATE`` and the current time), the probability will "
+"proportional to the time passed. I.e. the update probability will start "
+"at 0 and slowly increase to 1 until ``PRIORITY`` days have passed. From "
+"then, the probability will be fixed at 1."
+msgstr ""
+
+# 24d482780752429684748d73c88dcd5e
+#: ../../releases/v2014.3.rst:30
+msgid ""
+"**Note:** For the new update logic to work, a valid NTP server reachable "
+"over the mesh (using IPv6) must be configured in ``site.conf``. If the "
+"autoupdater is unable to determine the correct time, it will fall back to"
+" a behavior similar to the old implementation (i.e. hourly update "
+"attempts)."
+msgstr ""
+
+# 042a67388a8f43c7b9c679a3789b8c2e
+#: ../../releases/v2014.3.rst:35
+msgid "Separation of announced data"
+msgstr ""
+
+# 985b8e512e654c758939b775d419e08c
+#: ../../releases/v2014.3.rst:36
+msgid "The data announced by alfred has been split into two data types:"
+msgstr ""
+
+# ba956c6afced4fcdb7649765b05fa893
+#: ../../releases/v2014.3.rst:38
+msgid "*nodeinfo* (type 158) contains all static information about a node"
+msgstr ""
+
+# 4cabdcadb00840f0ab26f002e9261777
+#: ../../releases/v2014.3.rst:39
+msgid "*statistics* (type 159) contains all dynamic information about a node"
+msgstr ""
+
+# 5463489158824c968706b1e2417e65b5
+#: ../../releases/v2014.3.rst:41
+msgid ""
+"Both types also contain a new field ``node_id`` which contains an "
+"arbitrary unique ID (currently the primary MAC address, sans colons) "
+"which can be used to match the *nodeinfo* with *statistics* information."
+msgstr ""
+
+# 0ccc6b3851784606a248769db2f5e21f
+#: ../../releases/v2014.3.rst:46
+msgid "gluon-announced"
+msgstr ""
+
+# e24bba2ddbfb4c3c963a55d0b8b416d3
+#: ../../releases/v2014.3.rst:47
+msgid ""
+"A new daemon has been added in a new package ``gluon-announced``. This "
+"daemon can be used for querying the *nodeinfo* data of a node via link-"
+"local multicast on the ad-hoc interfaces."
+msgstr ""
+
+# 9923b67629e04666b24b144c762f60ce
+#: ../../releases/v2014.3.rst:51
+msgid ""
+"At the moment, this daemon is not used, but we recommend including it in "
+"``site.mk`` nevertheless as we plan to implement a new status page "
+"showing some information about neighbor nodes in the next version of "
+"Gluon."
+msgstr ""
+
+# 86716437c6554a2292dc9e4b07c9976e
+#: ../../releases/v2014.3.rst:56
+msgid "VPN over IPv6"
+msgstr ""
+
+# 029574bccf55407593181a6767e978ed
+#: ../../releases/v2014.3.rst:57
+msgid ""
+"It is now possible to use fastd in IPv6 WAN networks. This still needs "
+"testing, but it should work well."
+msgstr ""
+
+# 049ba1409ec84559aac661b5328b83f6
+#: ../../releases/v2014.3.rst:59
+msgid ""
+"Please note that the MTU of 1426 used by many communities for VPN over "
+"IPv4 is too big for IPv6 as the IPv6 header is 20 bytes longer (fastd "
+"over IPv4 has an overhead of 66 bytes, fastd over IPv6 has an overhead of"
+" 86 bytes)."
+msgstr ""
+
+# 614b313e32a942fd97fa4a82e5e83e01
+#: ../../releases/v2014.3.rst:64
+msgid "More modular Config Mode"
+msgstr ""
+
+# faf5e4ae21d24a7987014749dcc9ab9c
+#: ../../releases/v2014.3.rst:65
+msgid ""
+"The package ``gluon-config-mode`` has been split into multiple packages "
+"to simplify the development of extensions. The low-level logic (handling "
+"of the button, starting the services for the config mode) has been moved "
+"into a new package ``gluon-setup-mode``, while ``gluon-config-mode`` only"
+" contains the frontend now."
+msgstr ""
+
+# 83f3726b87764dcab4b177b28d191768
+#: ../../releases/v2014.3.rst:70
+msgid "Extended Expert Mode"
+msgstr ""
+
+# 3a91c0b93eec4b71be842911df71f7aa
+#: ../../releases/v2014.3.rst:71
+msgid ""
+"The Expert Mode now has a nice info page. In addition, the new package "
+"``gluon-luci-portconfig`` has been added which allows simple "
+"configuration of batman-adv on the WAN interface."
+msgstr ""
+
+# acf4aaba984640d99668c2168ab046d6
+#: ../../releases/v2014.3.rst:75
+msgid "Site validators"
+msgstr ""
+
+# 93b167262b464f209f74958079afda5a
+#: ../../releases/v2014.3.rst:76
+msgid ""
+"The content of the ``site.conf`` is now validated when the images are "
+"built to make it less likely to accidentally build broken images."
+msgstr ""
+
+# 0876eaafdf644041ae1ab28bc9c9b5c2
+#: ../../releases/v2014.3.rst:80
+msgid "gluon-firewall"
+msgstr ""
+
+# 71cd3629f4a44ef3983674b8b483d2cd
+#: ../../releases/v2014.3.rst:81
+msgid ""
+"The package ``gluon-firewall`` has been removed. Its features are now "
+"part of the packages ``gluon-core`` and ``gluon-mesh-batman-adv``."
+msgstr ""
+
+# b4709338ec8f4eb5b4c3906578384e5d
+#: ../../releases/v2014.3.rst:85
+msgid "gluon-ath9k-workaround"
+msgstr ""
+
+# 4ef4247ad05d49cba38b5b50a0c08d5b
+#: ../../releases/v2014.3.rst:86
+msgid ""
+"This package installs a cron job which tries to recognize ath9k hangs and"
+" restart the WLAN while recording some information. It is very "
+"rudimentary and we can't really recommend using it on \"production\" "
+"nodes."
+msgstr ""
+
+# 238436d39f334223911042f0f349af37
+#: ../../releases/v2014.3.rst:90
+msgid "Bugfixes"
+msgstr ""
+
+# 96483ad211ab46d4a58c712a3ac474f0
+#: ../../releases/v2014.3.rst:93
+msgid "Improved ath9k stability"
+msgstr ""
+
+# 5a959868d70e4419b63780cf99545f98
+#: ../../releases/v2014.3.rst:94
+msgid ""
+"Multiple bugs in the WLAN driver ath9k have been fixed upstream. This "
+"should greatly improve the WLAN stability."
+msgstr ""
+
+# b4e5a8fac3204f2fa3cd5ff3cda81b78
+#: ../../releases/v2014.3.rst:97
+msgid "odhcp6c 50 day bug"
+msgstr ""
+
+# dd6eea87140d4d33b4e327182a1fb0a4
+#: ../../releases/v2014.3.rst:98
+msgid ""
+"An important update for odhcp6c fixes a bug which caused Gluon nodes to "
+"lose their IPv6 addresses on br-client after an uptime of 50 days, making"
+" the nodes unable perform automated updates (besides other issues)."
+msgstr ""
+
+# cbba50eb778f44d5ab582fa4d601e085
+#: ../../releases/v2014.3.rst:102
+msgid "IPv6 preference"
+msgstr ""
+
+# 1c41020f1f024ef881e5ab121695edc5
+#: ../../releases/v2014.3.rst:103
+msgid ""
+"Commands like ``wget`` now prefer IPv6 for domains with both AAAA and A "
+"records, allowing to use such domains for the autoupdater URLs and as NTP"
+" servers in ``site.conf``."
+msgstr ""
+
+# 3acd19db9ddb4e78af4674483a64937b
+#: ../../releases/v2014.3.rst:107
+msgid "Site changes"
+msgstr ""
+
+# 4097c7dbb73b4db59c1f8622635c260b
+#: ../../releases/v2014.3.rst:108
+msgid "``site.conf``"
+msgstr ""
+
+# a2932b17ec8a4de5a5677cc16f77bfcd
+#: ../../releases/v2014.3.rst:110
+msgid ""
+"The ``probability`` fields for the autoupdater branches can be dropped as"
+" they aren't used anymore"
+msgstr ""
+
+# d6e2a5cc3b1f4b88bab7499e14701aa8
+#: ../../releases/v2014.3.rst:111
+msgid ""
+"The type of the ``enabled`` options of the ``gluon-simple-tc`` "
+"configuration has been changed to boolean, so ``true`` and ``false`` must"
+" be used instead of 1 and 0 now"
+msgstr ""
+
+# 1ce769d5a734439aab911413944ffe36
+#: ../../releases/v2014.3.rst:113
+msgid "``site.mk``"
+msgstr ""
+
+# bcfa261652074a29bed3d6a01de42ddf
+#: ../../releases/v2014.3.rst:115
+msgid "Obsolete packages:"
+msgstr ""
+
+# 63b6a7b11c3145f68e67071e13246847
+#: ../../releases/v2014.3.rst:117
+msgid "``gluon-firewall``"
+msgstr ""
+
+# 2857ff584fd94884898b94bf197b9e8f
+#: ../../releases/v2014.3.rst:119
+msgid "Recommended new packages:"
+msgstr ""
+
+# df1f654aebd144d8a97053d23179636b
+#: ../../releases/v2014.3.rst:121
+msgid "``gluon-announced``"
+msgstr ""
+
+# 2e4d601288384116834a8212a6577290
+#: ../../releases/v2014.3.rst:122
+msgid "``gluon-luci-portconfig``"
+msgstr ""
+
+# 02a87f6ec7234218b840db859b93edd4
+#: ../../releases/v2014.3.rst:124
+msgid ""
+"GLUON_PRIORITY must be set in ``site.mk`` or on the ``make manifest`` "
+"commandline. Use ``GLUON_PRIORITY ?= 0`` in ``site.mk`` to allow "
+"overriding from the commandline."
+msgstr ""
+
+# ee2a079e6b4e4ee9960d5011d6df29f6
+#: ../../releases/v2014.3.rst:127
+msgid "Internals"
+msgstr ""
+
+# 81cf824ac9d84c969fdb09ec06adbd87
+#: ../../releases/v2014.3.rst:128
+msgid ""
+"Some internal changes not mentioned before which are interesting for "
+"developers:"
+msgstr ""
+
+# 5f17e14af0b54079a43103e2c6fe1d41
+#: ../../releases/v2014.3.rst:130
+msgid "Many more shell scripts have been converted to Lua"
+msgstr ""
+
+# e666c702496441f09e0f5a4ccbc21994
+#: ../../releases/v2014.3.rst:131
+msgid ""
+"``gluon-mesh-vpn-fastd`` now uses the new package ``gluon-wan-dnsmasq``, "
+"which provides a secondary DNS server on port 54 that is only reachable "
+"from *localhost* and uses the DNS servers on the WAN interface for "
+"everything. This allowed us to remove some ugly hacks which were making "
+"the DNS servers used depend on the domain being resolved."
+msgstr ""
+
+# 9826f55c3b954fe29afeb1eb05885f8c
+#: ../../releases/v2014.3.rst:135
+msgid ""
+"For IPv6, the default route is now controlled via packet marks, so the "
+"secondary DNS server and fastd set the packet mark so they use the "
+"default route provided on the WAN interface instead of the mesh."
+msgstr ""
+

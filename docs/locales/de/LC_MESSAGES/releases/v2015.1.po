@@ -1,0 +1,566 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 2b6500b1c7d24e1195f8a320460332ca
+#: ../../releases/v2015.1.rst:2
+msgid "Gluon 2015.1"
+msgstr ""
+
+# 298e6f0c47b242778f44ef7bf95b1ad5
+#: ../../releases/v2015.1.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# 1c2f52c69dfb4bb2b08ddd274e67ceb7
+#: ../../releases/v2015.1.rst:6
+msgid ""
+"Gluon v2015.1 is the first release to officially support hardware that is"
+" not handled by the `ar71xx-generic` OpenWrt target. This also means that"
+" `ar71xx-generic` isn't the default target anymore, the ``GLUON_TARGET`` "
+"variable must be set for all runs of ``make`` and ``make clean`` now."
+msgstr ""
+
+# 77fe5b8c28964f48a04c27adafa2ccd8
+#: ../../releases/v2015.1.rst:12
+msgid "ar71xx-generic"
+msgstr ""
+
+# f8bf6e48c41b4c28983c89320d100481
+#: ../../releases/v2015.1.rst:14
+msgid "Allnet"
+msgstr ""
+
+# cf4a83dceebc486f96e45954803bb839
+#: ../../releases/v2015.1.rst:16
+msgid "ALL0315N"
+msgstr ""
+
+# b2dd781846234d26a0d2ef0ef4026002
+#: ../../releases/v2015.1.rst:18
+msgid "D-Link"
+msgstr ""
+
+# ec2646fea643440e877412f4f945c2c3
+#: ../../releases/v2015.1.rst:20
+msgid "DIR-615 (C1)"
+msgstr ""
+
+# 1da6fc5876bf4851886f5864f51ade06
+#: ../../releases/v2015.1.rst:22
+msgid "GL-Inet"
+msgstr ""
+
+# 4b1a9e7018c0438eb963cea5863c84dd
+#: ../../releases/v2015.1.rst:24
+msgid "6408A (v1)"
+msgstr ""
+
+# dde38f2ccc384f358b6568e50df10fa0
+#: ../../releases/v2015.1.rst:25
+msgid "6416A (v1)"
+msgstr ""
+
+# 97eafa4d073e400da978a115ec2f0b57
+#: ../../releases/v2015.1.rst:27
+msgid "WRT160NL"
+msgstr ""
+
+# 0e8279f416e844099641b8fb47052ff5
+# c172063ffd4140efa1dbd12eba15246b
+#: ../../releases/v2015.1.rst:29 ../../releases/v2015.1.rst:54
+msgid "Netgear"
+msgstr ""
+
+# c5c7d3af8fc945f9a6de2a976763f710
+#: ../../releases/v2015.1.rst:31
+msgid "WNDR3700 (v1, v2)"
+msgstr ""
+
+# 1540e1c3cf574dadb2a8b6922620dcba
+#: ../../releases/v2015.1.rst:32
+msgid "WNDR3800"
+msgstr ""
+
+# ed1761074697466280101f0eed887ffe
+#: ../../releases/v2015.1.rst:33
+msgid "WNDRMAC (v2)"
+msgstr ""
+
+# 2db7ded3ae9d4369b06e8e273275eef3
+# 5ef161d8dace474a9f6d8c36cef5b9a0
+#: ../../releases/v2015.1.rst:35 ../../releases/v2015.1.rst:62
+msgid "TP-Link"
+msgstr ""
+
+# a8a33091e9ad4b929465677995d09c9f
+#: ../../releases/v2015.1.rst:37
+msgid "TL-MR3220 (v2)"
+msgstr ""
+
+# 91237c5acf5b4fadb0d5fc948e82e3f1
+#: ../../releases/v2015.1.rst:38
+msgid "TL-WA701N/ND (v1)"
+msgstr ""
+
+# fb72ed8a5f3f4d35bb7f57f753f514bd
+#: ../../releases/v2015.1.rst:39
+msgid "TL-WA860RE (v1)"
+msgstr ""
+
+# bdb0b54e8a854cfdb87972f10659ab31
+#: ../../releases/v2015.1.rst:40
+msgid "TL-WA901N/ND (v2, v3)"
+msgstr ""
+
+# d3459b547c864db58819cbf96e5f170a
+#: ../../releases/v2015.1.rst:41
+msgid "TL-WR743N/ND (v1, v2)"
+msgstr ""
+
+# 914c7f6a0ad34a349ad488d3062bc756
+#: ../../releases/v2015.1.rst:42
+msgid "TL-WR941N/ND (v5)"
+msgstr ""
+
+# 8e27725e3f8947519709eede3343841c
+#: ../../releases/v2015.1.rst:43
+msgid "TL-WR2543N/ND (v1)"
+msgstr ""
+
+# 5398de4e8ebb44b9aeb265deb9972255
+#: ../../releases/v2015.1.rst:45
+msgid "Ubiquiti"
+msgstr ""
+
+# daafd61f4bb54e2cac00db89e0f62417
+#: ../../releases/v2015.1.rst:47
+msgid "Nanostation M XW"
+msgstr ""
+
+# 5f342e334e784a4183aea4755cfadfd4
+#: ../../releases/v2015.1.rst:48
+msgid "Loco M XW"
+msgstr ""
+
+# 52bfc376289248c6a8b55e665d92cbd9
+#: ../../releases/v2015.1.rst:49
+msgid "UniFi AP Pro"
+msgstr ""
+
+# 3ab6ee20ae054377aa484a5fa2920745
+#: ../../releases/v2015.1.rst:52
+msgid "ar71xx-nand"
+msgstr ""
+
+# eb32b76bbd7440a09079e653951e9619
+#: ../../releases/v2015.1.rst:56
+msgid "WNDR3700 (v4)"
+msgstr ""
+
+# 446a0c9073f14a60979a85864e5f300b
+#: ../../releases/v2015.1.rst:57
+msgid "WNDR4300 (v1)"
+msgstr ""
+
+# a951a939b6a64901ae8c08d3cfcdcbbe
+#: ../../releases/v2015.1.rst:60
+msgid "mpc85xx-generic"
+msgstr ""
+
+# a963a3606a33476d8751c10016a0491b
+#: ../../releases/v2015.1.rst:64
+msgid "TL-WDR4900 (v1)"
+msgstr ""
+
+# 700b974b20ca4f3599c2501597ca7c09
+# 770da0de919d49f080debe918d9da870
+#: ../../releases/v2015.1.rst:67 ../../releases/v2015.1.rst:68
+msgid "x86-generic"
+msgstr ""
+
+# 2f10fff4210a4ff7a13a52bd107de165
+#: ../../releases/v2015.1.rst:69
+msgid "x86-virtualbox"
+msgstr ""
+
+# af3b95af61e2437c88b54e87fa81f5c7
+#: ../../releases/v2015.1.rst:70
+msgid "x86-vmware"
+msgstr ""
+
+# 5b93e4a4d1b1465796306362f8f9e3fe
+#: ../../releases/v2015.1.rst:73
+msgid "x86-kvm_guest"
+msgstr ""
+
+# 4717d81c85f94e4387c7383960107c0a
+#: ../../releases/v2015.1.rst:74
+msgid "x86-kvm"
+msgstr ""
+
+# 55092484cd0445009ec9f12a3e85984c
+#: ../../releases/v2015.1.rst:78
+msgid "New features"
+msgstr ""
+
+# 1963a3da460d497aa0d2d92d7d912d10
+#: ../../releases/v2015.1.rst:80
+msgid "Multilingual config mode"
+msgstr ""
+
+# 2c0dfe32e20249db8842803832445d79
+#: ../../releases/v2015.1.rst:81
+msgid ""
+"All config and expert mode modules contain both English and German texts "
+"now. The English locale should always be enabled in ``site.mk`` (as "
+"English is the fallback language), German can be enabled in addition "
+"using the ``GLUON_LANGS`` setting."
+msgstr ""
+
+# c3d3af10ae4f4afa906a8206f97fd232
+#: ../../releases/v2015.1.rst:85
+msgid ""
+"The language shown is automatically determined from the headers sent by "
+"the user's browser."
+msgstr ""
+
+# 8362f60a581f43f98f48d4e7663bf8fd
+#: ../../releases/v2015.1.rst:89
+msgid "Mesh-on-LAN"
+msgstr ""
+
+# a628262518844617a7d2f09429a7cb0a
+#: ../../releases/v2015.1.rst:90
+msgid ""
+"Gluon now supports meshing using a node's LAN ports. It can be enabled by"
+" default in `site.conf`, and configured by the user using the `gluon-"
+"luci-portconfig` expert mode package."
+msgstr ""
+
+# b9c0aed8d87440c2bd621d9457dbc9be
+#: ../../releases/v2015.1.rst:94
+msgid ""
+"Please note that nodes without the `mesh-on-lan` feature enabled must "
+"never be connected via their LAN ports."
+msgstr ""
+
+# b1e36eb26edf413c9f8159bd3d3375cf
+#: ../../releases/v2015.1.rst:98
+msgid "Extended WLAN configuration"
+msgstr ""
+
+# d3a7f548129a4634b1481a0ee39e7639
+#: ../../releases/v2015.1.rst:99
+msgid ""
+"The new ``client_disabled`` and ``mesh_disabled`` keys in the ``wifi24`` "
+"and ``wifi5`` sections allow to disable the client and mesh networks by "
+"default, which may make sense for images for special installations."
+msgstr ""
+
+# c62ebbb4b3374fe685a4d2c2bc49c62c
+#: ../../releases/v2015.1.rst:103
+msgid ""
+"The new package `gluon-luci-wifi-config` allows the user to change these "
+"settings; in addition, the WLAN adapters' transmission power can be "
+"changed in this package."
+msgstr ""
+
+# 28292ade4071415696acf37649f0df31
+#: ../../releases/v2015.1.rst:107
+msgid "fastd \"performance mode\""
+msgstr ""
+
+# 0dd15a2a47624ec98d2d9e83bb316d52
+#: ../../releases/v2015.1.rst:108
+msgid ""
+"The new package `gluon-luci-mesh-vpn-fastd` allows the user to switch "
+"between the `security` and `performance` VPN sections. In `performance "
+"mode`, the method `null` will be prepended to the method list."
+msgstr ""
+
+# a6a6af42a5d247879d0ededd9fe7b0b2
+#: ../../releases/v2015.1.rst:112
+msgid ""
+"The new option ``configurable`` in the ``fastd_mesh_vpn`` section of "
+"``site.conf`` must be set to `true` so firmware upgrades don't overwrite "
+"the method list completely (non-`null` methods will still be "
+"overwritten). Adding the `gluon-luci-mesh-vpn-fastd` package enforces "
+"this setting."
+msgstr ""
+
+# 6cf664999b244a6c8f810f5fbe54843d
+#: ../../releases/v2015.1.rst:117
+msgid "Altitude setting in `gluon-config-mode-geo-location`"
+msgstr ""
+
+# 5eeacdbd41f84f04b18c2b0503f3354b
+#: ../../releases/v2015.1.rst:118
+msgid ""
+"The `gluon-config-mode-geo-location` config mode module now contains an "
+"optional altitude field."
+msgstr ""
+
+# 76baafd68be342449af0b97c806573b5
+#: ../../releases/v2015.1.rst:122
+msgid "`gluon-announced` rework"
+msgstr ""
+
+# a78d9248de29429b9fada7cb509aa4e3
+#: ../../releases/v2015.1.rst:123
+msgid ""
+"The `gluon-announced` package has been reworked to allow querying it from"
+" anywhere in the mesh. In contrast to `gluon-alfred`, it is based on a "
+"query-response model (the master multicasts a query, the nodes respond), "
+"while `gluon-alfred` uses periodic announcements."
+msgstr ""
+
+# e60a6354fac0432f9a5b3895eb15ce28
+#: ../../releases/v2015.1.rst:127
+msgid ""
+"For now, we recommend including both `gluon-alfred` and `gluon-announced`"
+" in Gluon-based firmwares, until `gluon-announced` is ready to replace "
+"`gluon-alfred` completely, and software like the ffmap backend has been "
+"adjusted accordingly."
+msgstr ""
+
+# b4d09f2b95724d3c9ea5d33b9b895816
+#: ../../releases/v2015.1.rst:132
+msgid "Nested peer groups"
+msgstr ""
+
+# af8525c351ba4016929775dbfee2aa68
+#: ../../releases/v2015.1.rst:133
+msgid ""
+"Nested peer groups for the `fastd-mesh-vpn-fastd` package can now be "
+"configured in ``site.conf``, each with its own peer limit. This allows to"
+" add additional constraints, for example to connect to 2 peers "
+"altogether, but only 1 peer in each data center."
+msgstr ""
+
+# 97354dbe684b44cf8bc6c944fcf40203
+#: ../../releases/v2015.1.rst:138
+msgid "Autoupdater manual branch override"
+msgstr ""
+
+# 450a79e969394a04844feb0d3bb5bd2e
+#: ../../releases/v2015.1.rst:139
+msgid ""
+"When running the updater manually on the command line, the branch to use "
+"can now be overridden using the ``-b`` option."
+msgstr ""
+
+# a92a5d397f774164b614f232d1706384
+#: ../../releases/v2015.1.rst:143
+msgid "Bugfixes"
+msgstr ""
+
+# d4603812006d4e0fb391c449f7b76cb7
+#: ../../releases/v2015.1.rst:145
+msgid "Accidental factory reset fix"
+msgstr ""
+
+# 58b467e80554462caf4434c0ecce6db4
+#: ../../releases/v2015.1.rst:146
+msgid ""
+"Pressing a node's reset button for more than 5 seconds would completely "
+"reset a node's configuration under certain conditions."
+msgstr ""
+
+# 5564f50c92644780a88ad6e2ccc1a6f1
+#: ../../releases/v2015.1.rst:150
+msgid "WAN IPv6 issues"
+msgstr ""
+
+# 55653a351b1a4384aa1bb9da0b9fb628
+#: ../../releases/v2015.1.rst:151
+msgid ""
+"The WAN port would stop to respond to IPv6 packets sometimes, also "
+"breaking IPv6 VPN connectivity."
+msgstr ""
+
+# a06f21ccb7ce435fba99fb673958f046
+#: ../../releases/v2015.1.rst:154
+msgid "WDR4900 WAN MAC address"
+msgstr ""
+
+# d28acf508462423f860efdd41024f78b
+#: ../../releases/v2015.1.rst:155
+msgid ""
+"The MAC address on the WAN port of the WDR4900 was broken, making this "
+"device unusable for `mesh-on-wan` configurations."
+msgstr ""
+
+# d96bf09e15ce46f0b18b0fc7fc5e6022
+#: ../../releases/v2015.1.rst:160
+msgid "Site changes"
+msgstr ""
+
+# d95a1138fb8a4178b5d605a307b0a4dc
+#: ../../releases/v2015.1.rst:161
+msgid "``site.conf``"
+msgstr ""
+
+# 2610568d7ed743f2b852a5f3190b56ef
+#: ../../releases/v2015.1.rst:163
+msgid ""
+"``hostname_prefix`` is now optional, and is concatenated directly with "
+"the generated node ID, in particular no hyphen is inserted anymore. If "
+"you want to keep the old behaviour, you have to append the hyphen to the "
+"``hostname_prefix`` field of your ``site.conf``."
+msgstr ""
+
+# 17b764b68fae4dc580e8ae409359613e
+#: ../../releases/v2015.1.rst:168
+msgid ""
+"``mesh_vpn_fastd``: The default peer group name ``backbone`` isn't "
+"hardcoded anymore, any group name can be used. Instead, the "
+"``fastd_mesh_vpn`` table must now contain an element ``groups``, for "
+"example::"
+msgstr ""
+
+# 3260407a9928468ca5f7d3eac10cc3ff
+#: ../../releases/v2015.1.rst:185
+msgid ""
+"``config_mode``: The config mode messages aren't configured in "
+"``site.conf`` anymore. Instead, they are defined language-specific "
+"gettext files in the ``i18n`` subdirectory of the site configuration (see"
+" :ref:`site-config-mode-texts`)."
+msgstr ""
+
+# 67d4772141dd467e9a85e48c33147213
+#: ../../releases/v2015.1.rst:189
+msgid ""
+"``roles``: The display strings for the node roles aren't configured in "
+"the ``site.conf`` anymore, but in the site i18n files. The ``site.conf`` "
+"section becomes::"
+msgstr ""
+
+# a61e8e30c0a44c0bb922da1ced1b38b2
+#: ../../releases/v2015.1.rst:200
+msgid ""
+"The display string use i18n message IDs like ``gluon-luci-node-"
+"role:role:foo`` and ``gluon-luci-node-role:role:bar``."
+msgstr ""
+
+# e83adcefd9cc400cb22146f6724e900f
+#: ../../releases/v2015.1.rst:202
+msgid "``site.mk``"
+msgstr ""
+
+# 60b1e84b087f4960ac0b6695497d5c89
+#: ../../releases/v2015.1.rst:204
+msgid ""
+"``gluon-mesh-batman-adv-15`` is now the recommended batman-adv version "
+"for new Gluon deployments."
+msgstr ""
+
+# 5c0a1ffc108f41cfaf8df3e1f25e8b32
+#: ../../releases/v2015.1.rst:206
+msgid ""
+"The packages ``gluon-setup-mode`` and ``gluon-config-mode-core`` must now"
+" be added to ``GLUON_SITE_PACKAGES`` explicitly (to allow replacing them "
+"with community-specific implementations)."
+msgstr ""
+
+# d4666851dbd144c7a41be9a4d67d4eb9
+#: ../../releases/v2015.1.rst:210
+msgid ""
+"The new ``GLUON_LANGS`` variable selects the config mode languages to "
+"include. It defaults to ``en``, setting it to ``en de`` will select both "
+"the English and German locales. ``en`` must always be included."
+msgstr ""
+
+# 61e2692a17f64045af39959471941176
+#: ../../releases/v2015.1.rst:215
+msgid "Internals"
+msgstr ""
+
+# 6656fe9c212741b4982ec1b71b517958
+#: ../../releases/v2015.1.rst:217
+msgid "New upgrade script directory"
+msgstr ""
+
+# a0bbb1edb0b041b1b00eb26b8fad38af
+#: ../../releases/v2015.1.rst:218
+msgid ""
+"The distinction between `initial` and `invariant` scripts has been "
+"removed, all scripts are now run on each upgrade. Instead of having one "
+"script directory per package, all upgrade scripts lie in "
+"``/lib/gluon/upgrade`` now, so it is possible to define the run order "
+"across packages."
+msgstr ""
+
+# e954eebcb8c341f0a891cd1b04faa756
+#: ../../releases/v2015.1.rst:224
+msgid "Merged package repository"
+msgstr ""
+
+# 4da38da3d36a4543b1371427ffcdd553
+#: ../../releases/v2015.1.rst:225
+msgid ""
+"The Gluon-specific packages have been moved to the ``package`` directory "
+"of the Gluon main repository. The ``packages`` repository now only "
+"contains packages that will be submitted to the OpenWrt upstream "
+"eventually."
+msgstr ""
+
+# f05c3dc7f05c44dd9cd49a2636b10716
+#: ../../releases/v2015.1.rst:230
+msgid "Known Issues"
+msgstr ""
+
+# e0cb167fdbfc4e6db08e18ff42f6d0b9
+#: ../../releases/v2015.1.rst:233
+msgid "Alfred/respondd crashes"
+msgstr ""
+
+# 093b4df7e1b9401fa29ca29c720513e2
+#: ../../releases/v2015.1.rst:235
+msgid "https://github.com/freifunk-gluon/gluon/issues/177"
+msgstr ""
+
+# 3b07f336f5f94f579bc9f5d5c5227419
+#: ../../releases/v2015.1.rst:237
+msgid ""
+"Occasional alfred crashes may still occur. As this is caused by a kernel "
+"issue, we suspect that respondd, which gluon-announced is based on, is "
+"affected in the same way."
+msgstr ""
+
+# 419b23021db649eaa5bb1dccf0051fdd
+#: ../../releases/v2015.1.rst:243
+msgid "Ignored TX power offset on Ubiquiti AirMax devices"
+msgstr ""
+
+# fefde39c8a254d229a1a01d3809f8f4e
+#: ../../releases/v2015.1.rst:245
+msgid "https://github.com/freifunk-gluon/gluon/issues/94"
+msgstr ""
+
+# db213609c1354014b1eeaedd4b15b4a1
+#: ../../releases/v2015.1.rst:247
+msgid ""
+"The default transmission power setting on many of these devices is too "
+"high. It may be necessary to make manual adjustments, for example using "
+"the ``gluon-luci-wifi-config`` package. The values shown by ``gluon-luci-"
+"wifi-config`` generally include the TX power offset (amplifier and "
+"antenna gain) where available, but on many devices the offset is "
+"inaccurate or unavailable."
+msgstr ""
+

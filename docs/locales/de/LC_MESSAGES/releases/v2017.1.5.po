@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 496d8a5356364850a54986e3465cbb7f
+#: ../../releases/v2017.1.5.rst:2
+msgid "Gluon 2017.1.5"
+msgstr ""
+
+# 1ca8bdb33bb04bf4ad862c7d258e0084
+#: ../../releases/v2017.1.5.rst:5
+msgid "Added hardware support"
+msgstr ""
+
+# 66d98246ec3045d4ac7e7e3258d7e631
+#: ../../releases/v2017.1.5.rst:8
+msgid "ar71xx-generic"
+msgstr ""
+
+# 4f76eae772e64ca89a098af4a97f18ba
+#: ../../releases/v2017.1.5.rst:10
+msgid "TP-Link TL-WR1043N v5"
+msgstr ""
+
+# 260fd850931b43f6adb01f1b14ce47a4
+#: ../../releases/v2017.1.5.rst:13
+msgid "ramips-mt7621"
+msgstr ""
+
+# 9051ecc86aa4409b978a4d3bf39e0f37
+#: ../../releases/v2017.1.5.rst:15
+msgid "Ubiquiti EdgeRouter-X"
+msgstr ""
+
+# 872700a1d6d74ef2a2c2009410a25519
+#: ../../releases/v2017.1.5.rst:16
+msgid "Ubiquiti EdgeRouter-X SFP"
+msgstr ""
+
+# 19b9c0209985492da22f9c1954bf323c
+#: ../../releases/v2017.1.5.rst:20
+msgid "Bugfixes"
+msgstr ""
+
+# fe8fc683fc644f12ab04d88deed4249d
+#: ../../releases/v2017.1.5.rst:22
+msgid ""
+"Fix build with empty ``site/modules`` (`#1262 <https://github.com"
+"/freifunk-gluon/gluon/issues/1262>`_)"
+msgstr ""
+
+# 407f3ce3f17240508a45970ad5977982
+#: ../../releases/v2017.1.5.rst:25
+msgid ""
+"Fix Ethernet stalls at high throughput on certain devices (`#1101 "
+"<https://github.com/freifunk-gluon/gluon/issues/1101>`_)"
+msgstr ""
+
+# 32bf5eaed4d44fc9ae3f149fb2ee4b55
+#: ../../releases/v2017.1.5.rst:28
+msgid ""
+"Update Tunneldigger to support connections with servers running newer "
+"kernel versions (`9ed6ff752eb7 <https://github.com/freifunk-"
+"gluon/gluon/commit/9ed6ff752eb7972d90b138197641f12eeb4572fb>`_)"
+msgstr ""
+
+# 6bf1f73c69b5401eba9a5c7148da5f71
+#: ../../releases/v2017.1.5.rst:31
+msgid ""
+"Fix batman-adv Bridge Loop Avoidance (BLA) with *gluon-ebtables-filter-"
+"multicast* (`#1198 <https://github.com/freifunk-"
+"gluon/gluon/issues/1198>`_)"
+msgstr ""
+
+# 63561e6f03e84d1e9e8f06da9d134bf6
+#: ../../releases/v2017.1.5.rst:36
+msgid "Known issues"
+msgstr ""
+
+# d791cd4ca59e4fc28794306c93c40a9a
+#: ../../releases/v2017.1.5.rst:38
+msgid ""
+"Default TX power on many Ubiquiti devices is too high, correct offsets "
+"are unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)"
+msgstr ""
+
+# 490c68e5b7924936a9d40840bebdfd89
+#: ../../releases/v2017.1.5.rst:40
+msgid "Reducing the TX power in the Advanced Settings is recommended."
+msgstr ""
+
+# 5a628617496e4c42af84cd0fe124a277
+#: ../../releases/v2017.1.5.rst:42
+msgid ""
+"The MAC address of the WAN interface is modified even when Mesh-on-WAN is"
+" disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)"
+msgstr ""
+
+# 61e142d8968f46e08e74634fd9f9d1d8
+#: ../../releases/v2017.1.5.rst:44
+msgid ""
+"This may lead to issues in environments where a fixed MAC address is "
+"expected (like VMware when promiscuous mode is disallowed)."
+msgstr ""
+
+# 23974040b8de4d9f90490352ab72df8f
+#: ../../releases/v2017.1.5.rst:46
+msgid ""
+"Inconsistent respondd API (`#522 <https://github.com/freifunk-"
+"gluon/gluon/issues/522>`_)"
+msgstr ""
+
+# 6375a5215007411eb0ee93e6162cc03b
+#: ../../releases/v2017.1.5.rst:48
+msgid ""
+"The current API is inconsistent and will be replaced eventually. The old "
+"API will still be supported for a while."
+msgstr ""
+
+# 061e13b457c2459eacefc95abc137e3d
+#: ../../releases/v2017.1.5.rst:50
+msgid ""
+"Sporadic segfaults of busybox (ash) when running shell scripts on ar71xx "
+"(`#1157 <https://github.com/freifunk-gluon/gluon/issues/1157>`_)"
+msgstr ""
+
+# 1208083527604f30910f56a40a96b2d2
+#: ../../releases/v2017.1.5.rst:53
+msgid ""
+"The workaround added in Gluon v2017.1.1 has greatly reduced the frequency"
+" of segfaults, but it did not make them disappear completely."
+msgstr ""
+
+# d938d793dbcf4a8ab9fb610014ae5ce7
+#: ../../releases/v2017.1.5.rst:56
+msgid ""
+"Frequent reboots due to out-of-memory on weak hardware in larger meshes "
+"(`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)"
+msgstr ""
+

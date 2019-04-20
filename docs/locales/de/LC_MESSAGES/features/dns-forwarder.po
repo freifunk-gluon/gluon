@@ -1,0 +1,48 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2015-2019, Project Gluon
+# This file is distributed under the same license as the Gluon package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Gluon 2018.2+\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-20 14:06-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+# 1161708f8ad447bbb344402a02835a78
+#: ../../features/dns-forwarder.rst:2
+msgid "DNS forwarder"
+msgstr ""
+
+# 61812f07552d41d093b52a51a160fc41
+#: ../../features/dns-forwarder.rst:4
+msgid ""
+"A Gluon node can be configured to act as a DNS forwarder. Requests for "
+"the next-node hostname(s) can be answered locally, without querying the "
+"upstream resolver."
+msgstr ""
+
+# 65b7374d806249b18d84d45fbdc98ec9
+#: ../../features/dns-forwarder.rst:8
+msgid ""
+"**Note:** While this reduces answer time and allows to use the next-node "
+"hostname without upstream connectivity, this feature should not be used "
+"for next-node hostnames that are FQDN when the zone uses DNSSEC."
+msgstr ""
+
+# ba5236b771b94d4da638a4a34ee6e78b
+#: ../../features/dns-forwarder.rst:12
+msgid ""
+"One or more upstream resolvers can be configured in the *dns.servers* "
+"setting. When *next_node.name* is set, A and/or AAAA records for the "
+"next-node IP addresses are placed in the dnsmasq configuration."
+msgstr ""
+
