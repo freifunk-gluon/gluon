@@ -4,13 +4,13 @@ cd "/lib/gluon/reload.d" || exit 1
 
 err=0
 
-for service in *; do
-	echo "restarting: ${service} ..."
-	exec "/etc/init.d/$service restart" || err=1
+for script in *; do
+	echo "Reloading: ${script}"
+	./"$script" || err=1
 done
 
 if [ $err -eq 1 ]; then
-	echo 'One or more daemons failed to restart.'
+	echo 'One or more daemons failed to reload.'
 	exit 1
 fi
 
