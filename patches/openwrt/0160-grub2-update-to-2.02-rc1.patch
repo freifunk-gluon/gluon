@@ -1,0 +1,28 @@
+From: Alif M. Ahmad <alive4ever@live.com>
+Date: Sat, 18 Feb 2017 23:03:33 +0700
+Subject: grub2: update to 2.02~rc1
+
+Signed-off-by: Alif M. Ahmad <alive4ever@live.com>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index ca94b1878a44b926e83f8d62da57587dbc437f84..fde4b1276d73e6195d23bba054970b1fb35e6ec7 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ include $(INCLUDE_DIR)/kernel.mk
+ 
+ PKG_NAME:=grub
+-PKG_VERSION:=2.02~beta3
++PKG_VERSION:=2.02~rc1
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+@@ -17,7 +17,7 @@ PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+ 	http://gnualpha.uib.no/grub/ \
+ 	http://mirrors.fe.up.pt/pub/gnu-alpha/grub/ \
+ 	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
+-PKG_HASH:=30ec3d555e52a702c3eef449872ef874eff28b320f40b55ffc47f70db8e5ada1
++PKG_HASH:=445239e9b96d1143c194c1d37851cf4196b83701c60172e49665e9d453d80278
+ 
+ PKG_FIXUP:=autoreconf
+ HOST_BUILD_PARALLEL:=1

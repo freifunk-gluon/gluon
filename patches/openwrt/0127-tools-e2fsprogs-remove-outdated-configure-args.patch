@@ -1,0 +1,29 @@
+From: John Crispin <john@openwrt.org>
+Date: Wed, 23 Dec 2015 14:44:18 +0000
+Subject: tools/e2fsprogs: remove outdated configure args
+
+removed upstream in 1.40.5:
+Don't build e2fsck statically by default anymore 7e8fe327b51051adcbb0d44169b1a933173ce1ff
+
+fixes:
+configure: WARNING: unrecognized options: --disable-shared, --enable-static, --enable-dynamic-e2fsck
+
+Signed-off-by: Dirk Neukirchen <dirkneukirchen@web.de>
+
+SVN-Revision: 47978
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index 0ecd9521f4e077b1354cb5eba230dbbf206b8bb5..e1027599257a3765cbd43800060c2508e50194e0 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -22,10 +22,7 @@ include $(INCLUDE_DIR)/host-build.mk
+ HOST_CFLAGS += $(FPIC)
+ 
+ HOST_CONFIGURE_ARGS += \
+-	--disable-shared \
+ 	--disable-elf-shlibs \
+-	--enable-static \
+-	--enable-dynamic-e2fsck \
+ 	--disable-tls \
+ 	--disable-nls
+ 

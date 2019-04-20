@@ -1,0 +1,41 @@
+From: Alexandru Ardelean <ardeleanalex@gmail.com>
+Date: Thu, 17 Nov 2016 18:25:52 +0200
+Subject: grub2: add PKG_FIXUP:=autoreconf
+
+The host-side build of grub2 requires this sometimes.
+This will re-generate the ./configure script from configure.ac.
+I don't know the conditions of how this reproduces, it just
+sometimes appears, and sometimes doesn't.
+
+Build error
+```
+<lede-dir>/build_dir/target-x86_64_musl-1.1.15_yogi/host/grub-2.02~beta2/build-aux/missing: line 81: aclocal-1.14: command not found
+WARNING: 'aclocal-1.14' is missing on your system.
+         You should only need it if you modified 'acinclude.m4' or
+         'configure.ac' or m4 files included by 'configure.ac'.
+         The 'aclocal' program is part of the GNU Automake package:
+         <http://www.gnu.org/software/automake>
+         It also requires GNU Autoconf, GNU m4 and Perl in order to run:
+         <http://www.gnu.org/software/autoconf>
+         <http://www.gnu.org/software/m4/>
+         <http://www.perl.org/>
+Makefile:3962: recipe for target 'aclocal.m4' failed
+```
+
+Adding PKG_FIXUP adds sanity (i.e. autoreconf is used for host & target
+builds) over just using HOST_FIXUP.
+
+Signed-off-by: Alexandru Ardelean <ardeleanalex@gmail.com>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 02e6637c32c5cd335a8622cd1a8e16cc15ed42ba..af97a31cda4053dd19e9643151b8da8ab4ee7a0f 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -19,6 +19,7 @@ PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+ 	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
+ PKG_MD5SUM:=be62932eade308a364ea4bbc91295930
+ 
++PKG_FIXUP:=autoreconf
+ HOST_BUILD_PARALLEL:=1
+ PKG_BUILD_DEPENDS:=grub2/host
+ 

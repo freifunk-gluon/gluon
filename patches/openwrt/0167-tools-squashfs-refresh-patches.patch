@@ -1,0 +1,29 @@
+From: John Crispin <john@openwrt.org>
+Date: Fri, 11 Dec 2015 15:07:28 +0000
+Subject: tools/squashfs: refresh patches
+
+Signed-off-by: John Crispin <blogic@openwrt.org>
+
+SVN-Revision: 47859
+
+diff --git a/tools/squashfs/patches/100-lzma.patch b/tools/squashfs/patches/100-lzma.patch
+index e3b2a3a89c143df0b5ed6565be93c05b0dbcc333..73f6a4e05527deebfd23c93b95e98c72f134e858 100644
+--- a/tools/squashfs/patches/100-lzma.patch
++++ b/tools/squashfs/patches/100-lzma.patch
+@@ -1,6 +1,6 @@
+ --- a/squashfs-tools/Makefile
+ +++ b/squashfs-tools/Makefile
+-@@ -7,6 +8,9 @@ all: mksquashfs unsquashfs
++@@ -7,6 +7,9 @@ all: mksquashfs unsquashfs
+  mksquashfs: mksquashfs.o read_fs.o sort.o
+  	$(CC) mksquashfs.o read_fs.o sort.o -lz -o $@
+  
+@@ -10,7 +10,7 @@
+  mksquashfs.o: mksquashfs.c squashfs_fs.h mksquashfs.h global.h sort.h
+  
+  read_fs.o: read_fs.c squashfs_fs.h read_fs.h global.h
+-@@ -16,4 +20,9 @@ sort.o: sort.c squashfs_fs.h global.h so
++@@ -16,4 +19,9 @@ sort.o: sort.c squashfs_fs.h global.h so
+  unsquashfs: unsquashfs.o
+  	$(CC) unsquashfs.o -lz -o $@
+  

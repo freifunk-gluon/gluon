@@ -1,0 +1,54 @@
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Tue, 4 Oct 2016 07:28:54 -0500
+Subject: source: Switch to xz for packages and tools where possible
+
+* Change git packages to xz
+* Update mirror checksums in packages where they are used
+* Change a few source tarballs to xz if available upstream
+* Remove unused lines in packages we're touching, requested by jow- and blogic
+* We're relying more on xz-utils so add official mirror as primary source, master site as secondary.
+* Add SHA256 checksums to multiple git tarball packages
+
+[linus.luessing@c0d3.blue: backport,
+ e2fsprogs/bison/m4/make-ext4fs/mtd-utils only]
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index f74f602ec984a4b8ab407a16bf6ad5920eb802d8..20cf6cfb60dde8db8a6ce3c5dfe0807822a899e7 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -10,13 +10,12 @@ include $(TOPDIR)/rules.mk
+ PKG_NAME:=make-ext4fs
+ PKG_VERSION:=2016-08-14
+ 
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL=$(LEDE_GIT)/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_VERSION:=484903e4332be6c317f531b008cb2a841a18c506
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=b80d6ddcd6f6925e2f5b80775bb96f3e
+-PKG_CAT:=zcat
++PKG_MIRROR_MD5SUM:=5a4473e58dcaed1f41c2391d2326a67af356ca9a3a075fc3486d95276fb9a400
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+ 
+diff --git a/tools/mtd-utils/Makefile b/tools/mtd-utils/Makefile
+index 2db629419b98adbee8e78c2527b44386aa526056..73301975a699b9d95bc203be202c3409b3f70f64 100644
+--- a/tools/mtd-utils/Makefile
++++ b/tools/mtd-utils/Makefile
+@@ -10,12 +10,11 @@ PKG_NAME:=mtd-utils
+ PKG_VERSION:=1.5.2
+ 
+ PKG_SOURCE_VERSION:=aea36417067dade75192bafa03af70b6eb2677b1
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
+ PKG_SOURCE_URL:=git://git.infradead.org/mtd-utils.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=
+-PKG_CAT:=zcat
++PKG_MIRROR_MD5SUM:=e11b342b85a36b2e438a8412ec52f87621d3046aec1a93039f8c72de9990b2a7
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+ 

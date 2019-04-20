@@ -1,0 +1,27 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Thu, 5 May 2016 18:47:55 +0100
+Subject: tools: make-ext4fs: fix build regression on mac os x
+
+Including sys/sysmacros.h is not portable
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index 23989c047a6281d5f1d66ec687db54d14702edb0..553e6cd752f396377d3ce81738223c1d685fc747 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -8,12 +8,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=make-ext4fs
+-PKG_VERSION:=2016-04-25
++PKG_VERSION:=2016-05-05
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://git.openwrt.org/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_VERSION:=bf98b86a5df5fcfb658d77fd5e0897ca87a35e8e
++PKG_SOURCE_VERSION:=3af931b0b6545757aaeadb13f9bb9da0296fc172
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+ PKG_MIRROR_MD5SUM:=2c4161638d4ff3343e250321126d29e6
+ PKG_CAT:=zcat

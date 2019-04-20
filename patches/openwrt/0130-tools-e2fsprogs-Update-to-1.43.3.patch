@@ -1,0 +1,23 @@
+From: diizzyy <diizzyy@users.noreply.github.com>
+Date: Sun, 2 Oct 2016 22:55:23 +0200
+Subject: tools/e2fsprogs: Update to 1.43.3
+
+Update e2fsprogs to 1.43.3
+
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index 1251361b3e05880a01448e44d22649bd5ba73cf6..ffe1782eb130dd4e3799bf8b36a9575222eb8831 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.43.1
+-PKG_MD5SUM:=1775f3f0eed9dee1c5f39e08d1964a97
++PKG_VERSION:=1.43.3
++PKG_MD5SUM:=ec0cd4faac71b2fcf9f73733e4d50ead
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz

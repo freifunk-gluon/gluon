@@ -1,0 +1,24 @@
+From: Jo-Philipp Wich <jo@mein.io>
+Date: Wed, 26 Oct 2016 17:51:44 +0200
+Subject: grub2: add missing SECTION variable and remove non breaking space
+
+Fix metadata scan failure in the grub2 package by removing an unexpected
+invisible space character and by adding back the missing SECTION variable
+which was removed with d140648.
+
+Signed-off-by: Jo-Philipp Wich <jo@mein.io>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 4ed110e38e67ed30f609be0049c1e74d2c5ee455..02e6637c32c5cd335a8622cd1a8e16cc15ed42ba 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -28,7 +28,8 @@ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+ 
+ define Package/grub2
+-  CATEGORY:=Boot Loaders
++  CATEGORY:=Boot Loaders
++  SECTION:=boot
+   TITLE:=GRand Unified Bootloader
+   URL:=http://www.gnu.org/software/grub/
+   DEPENDS:=@TARGET_x86||TARGET_x86_64

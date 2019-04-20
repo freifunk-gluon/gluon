@@ -1,0 +1,18 @@
+From: John Crispin <blogic@openwrt.org>
+Date: Wed, 27 Apr 2016 01:33:14 +0200
+Subject: include: add lede git server url
+
+Signed-off-by: John Crispin <john@phrozen.org>
+
+diff --git a/include/download.mk b/include/download.mk
+index 130bbc57ba89b4ad0b8e8600f45bf553ad6ecfa1..430ef3a92de1d0d98593d3d676370b20e05f8fd1 100644
+--- a/include/download.mk
++++ b/include/download.mk
+@@ -6,6 +6,7 @@
+ #
+ 
+ OPENWRT_GIT = http://git.openwrt.org
++LEDE_GIT = http://git.lede-project.org
+ 
+ DOWNLOAD_RDEP=$(STAMP_PREPARED) $(HOST_STAMP_PREPARED)
+ 

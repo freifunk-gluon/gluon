@@ -1,0 +1,200 @@
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Sat, 5 Dec 2015 15:44:58 +0000
+Subject: update mtd-utils to 1.5.2
+
+ - update mtd-utils to 1.5.2 (git a494d30ab1ae40cb7665680cadf5af3ca3830a73)
+ - remove patches that went upstream
+ - fixes build from scratch as of broken patches
+
+Signed-off-by: Sven Roederer <devel-sven@geroedel.de>
+[use the final version of 1.5.2 instead, fix header of jffs2_lzma_(de,)compress()]
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+SVN-Revision: 47790
+
+diff --git a/tools/mtd-utils/Makefile b/tools/mtd-utils/Makefile
+index b4c9c662b25f3d87cef26ff6c59e137ccb3104b7..2db629419b98adbee8e78c2527b44386aa526056 100644
+--- a/tools/mtd-utils/Makefile
++++ b/tools/mtd-utils/Makefile
+@@ -7,14 +7,14 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=mtd-utils
+-PKG_VERSION:=1.5.1
++PKG_VERSION:=1.5.2
+ 
+-PKG_SOURCE_VERSION:=92686f212c9a4e16891c6a3c57629cbf4f0f8360
++PKG_SOURCE_VERSION:=aea36417067dade75192bafa03af70b6eb2677b1
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+ PKG_SOURCE_URL:=git://git.infradead.org/mtd-utils.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=9fe0518213feddacd1842935dddeb6c8
++PKG_MIRROR_MD5SUM:=
+ PKG_CAT:=zcat
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+diff --git a/tools/mtd-utils/patches/110-portability.patch b/tools/mtd-utils/patches/110-portability.patch
+index 4ad209a449191bfec3d54fb7dc349af06d039051..c4cdab928aea66b3d4beeeb5629aac1ead87ed7f 100644
+--- a/tools/mtd-utils/patches/110-portability.patch
++++ b/tools/mtd-utils/patches/110-portability.patch
+@@ -150,27 +150,6 @@
+  #include <inttypes.h>
+  #include "version.h"
+  
+-@@ -117,11 +116,6 @@ extern "C" {
+- 	fprintf(stderr, "%s: warning!: " fmt "\n", PROGRAM_NAME, ##__VA_ARGS__); \
+- } while(0)
+- 
+--#if defined(__UCLIBC__)
+--/* uClibc versions before 0.9.34 don't have rpmatch() */
+--#if __UCLIBC_MAJOR__ == 0 && \
+--		(__UCLIBC_MINOR__ < 9 || \
+--		(__UCLIBC_MINOR__ == 9 && __UCLIBC_SUBLEVEL__ < 34))
+- #undef rpmatch
+- #define rpmatch __rpmatch
+- static inline int __rpmatch(const char *resp)
+-@@ -129,8 +123,6 @@ static inline int __rpmatch(const char *
+-     return (resp[0] == 'y' || resp[0] == 'Y') ? 1 :
+- 	(resp[0] == 'n' || resp[0] == 'N') ? 0 : -1;
+- }
+--#endif
+--#endif
+- 
+- /**
+-  * prompt the user for confirmation
+ --- a/include/mtd/ubifs-media.h
+ +++ b/include/mtd/ubifs-media.h
+ @@ -33,7 +33,15 @@
+diff --git a/tools/mtd-utils/patches/130-lzma_jffs2.patch b/tools/mtd-utils/patches/130-lzma_jffs2.patch
+index 17f9978bef186a6a2fc088c58d1c31b7ce5b4fcb..b04f01992266386b979471629ceb2ef99d4df908 100644
+--- a/tools/mtd-utils/patches/130-lzma_jffs2.patch
++++ b/tools/mtd-utils/patches/130-lzma_jffs2.patch
+@@ -1,7 +1,7 @@
+ --- a/Makefile
+ +++ b/Makefile
+ @@ -4,6 +4,7 @@
+- VERSION = 1.5.1
++ VERSION = 1.5.2
+  
+  CPPFLAGS += -D_GNU_SOURCE -I./include -I$(BUILDDIR)/include -I./ubi-utils/include $(ZLIBCPPFLAGS) $(LZOCPPFLAGS) $(UUIDCPPFLAGS)
+ +CPPFLAGS += -I./include/linux/lzma
+@@ -123,7 +123,7 @@
+ +}
+ +
+ +STATIC int jffs2_lzma_compress(unsigned char *data_in, unsigned char *cpage_out,
+-+			      uint32_t *sourcelen, uint32_t *dstlen, void *model)
+++			      uint32_t *sourcelen, uint32_t *dstlen)
+ +{
+ +	SizeT compress_size = (SizeT)(*dstlen);
+ +	int ret;
+@@ -148,7 +148,7 @@
+ +}
+ +
+ +STATIC int jffs2_lzma_decompress(unsigned char *data_in, unsigned char *cpage_out,
+-+				 uint32_t srclen, uint32_t destlen, void *model)
+++				 uint32_t srclen, uint32_t destlen)
+ +{
+ +	int ret;
+ +	SizeT dl = (SizeT)destlen;
+diff --git a/tools/mtd-utils/patches/136-mkfs.ubifs-xz-support.patch b/tools/mtd-utils/patches/136-mkfs.ubifs-xz-support.patch
+index d97c244fafb86496efb85ef0db3a661a4465582f..e8b491b3cebe56ccfb0a454fabb055fef9cf8f78 100644
+--- a/tools/mtd-utils/patches/136-mkfs.ubifs-xz-support.patch
++++ b/tools/mtd-utils/patches/136-mkfs.ubifs-xz-support.patch
+@@ -1,7 +1,7 @@
+ --- a/Makefile
+ +++ b/Makefile
+ @@ -4,7 +4,7 @@
+- VERSION = 1.5.1
++ VERSION = 1.5.2
+  
+  CPPFLAGS += -D_GNU_SOURCE -I./include -I$(BUILDDIR)/include -I./ubi-utils/include $(ZLIBCPPFLAGS) $(LZOCPPFLAGS) $(UUIDCPPFLAGS)
+ -CPPFLAGS += -I./include/linux/lzma
+diff --git a/tools/mtd-utils/patches/137-no_extern_inline.patch b/tools/mtd-utils/patches/137-no_extern_inline.patch
+deleted file mode 100644
+index d871d670d294797dac288968d82a1cd9132fc129..0000000000000000000000000000000000000000
+--- a/tools/mtd-utils/patches/137-no_extern_inline.patch
++++ /dev/null
+@@ -1,41 +0,0 @@
+---- a/mkfs.ubifs/hashtable/hashtable_itr.c
+-+++ b/mkfs.ubifs/hashtable/hashtable_itr.c
+-@@ -35,18 +35,6 @@ hashtable_iterator(struct hashtable *h)
+- }
+- 
+- /*****************************************************************************/
+--/* key      - return the key of the (key,value) pair at the current position */
+--/* value    - return the value of the (key,value) pair at the current position */
+--
+--void *
+--hashtable_iterator_key(struct hashtable_itr *i)
+--{ return i->e->k; }
+--
+--void *
+--hashtable_iterator_value(struct hashtable_itr *i)
+--{ return i->e->v; }
+--
+--/*****************************************************************************/
+- /* advance - advance the iterator to the next element
+-  *           returns zero if advanced to end of table */
+- 
+---- a/mkfs.ubifs/hashtable/hashtable_itr.h
+-+++ b/mkfs.ubifs/hashtable/hashtable_itr.h
+-@@ -28,7 +28,7 @@ hashtable_iterator(struct hashtable *h);
+- /* hashtable_iterator_key
+-  * - return the value of the (key,value) pair at the current position */
+- 
+--extern inline void *
+-+static inline void *
+- hashtable_iterator_key(struct hashtable_itr *i)
+- {
+-     return i->e->k;
+-@@ -37,7 +37,7 @@ hashtable_iterator_key(struct hashtable_
+- /*****************************************************************************/
+- /* value - return the value of the (key,value) pair at the current position */
+- 
+--extern inline void *
+-+static inline void *
+- hashtable_iterator_value(struct hashtable_itr *i)
+- {
+-     return i->e->v;
+diff --git a/tools/mtd-utils/patches/300-libfec_use_standard_unsigned_long.patch b/tools/mtd-utils/patches/300-libfec_use_standard_unsigned_long.patch
+deleted file mode 100644
+index 73a68b5860928ed9afb737d85995748346e0085a..0000000000000000000000000000000000000000
+--- a/tools/mtd-utils/patches/300-libfec_use_standard_unsigned_long.patch
++++ /dev/null
+@@ -1,35 +0,0 @@
+---- a/lib/libfec.c
+-+++ b/lib/libfec.c
+-@@ -61,8 +61,6 @@ struct timeval {
+- };
+- #define gettimeofday(x, dummy) { (x)->ticks = clock() ; }
+- #define DIFF_T(a,b) (1+ 1000000*(a.ticks - b.ticks) / CLOCKS_PER_SEC )
+--typedef unsigned long u_long ;
+--typedef unsigned short u_short ;
+- #else /* typically, unix systems */
+- #include <sys/time.h>
+- #define DIFF_T(a,b) \
+-@@ -75,12 +73,12 @@ typedef unsigned short u_short ;
+- 	t = x.tv_usec + 1000000* (x.tv_sec & 0xff ) ; \
+- 	}
+- #define TOCK(t) \
+--	{ u_long t1 ; TICK(t1) ; \
+-+	{ unsigned long t1 ; TICK(t1) ; \
+- 	  if (t1 < t) t = 256000000 + t1 - t ; \
+- 	  else t = t1 - t ; \
+- 	  if (t == 0) t = 1 ;}
+- 
+--u_long ticks[10];	/* vars for timekeeping */
+-+unsigned long ticks[10];	/* vars for timekeeping */
+- #else
+- #define DEB(x)
+- #define DDB(x)
+-@@ -625,7 +623,7 @@ init_fec(void)
+- #define FEC_MAGIC	0xFECC0DEC
+- 
+- struct fec_parms {
+--    u_long magic ;
+-+    unsigned long magic ;
+-     int k, n ;		/* parameters of the code */
+-     gf *enc_matrix ;
+- } ;

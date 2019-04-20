@@ -1,0 +1,93 @@
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Thu, 7 Jun 2018 19:21:12 +0200
+Subject: tools/bison: Update to 3.0.5
+
+Update bison to 3.0.5
+Bugfix release
+Remove 001-fix-macos-vasnprintf.patch as it is fixed upstream
+
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+
+diff --git a/tools/bison/Makefile b/tools/bison/Makefile
+index af5737c552384f2cfec919d0379ccd64e7d5ccbe..68e06ae33b566df5c20388acc9b83d1cc6ab19f2 100644
+--- a/tools/bison/Makefile
++++ b/tools/bison/Makefile
+@@ -1,4 +1,4 @@
+-# 
++#
+ # Copyright (C) 2008-2015 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+@@ -7,11 +7,11 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=bison
+-PKG_VERSION:=3.0.4
++PKG_VERSION:=3.0.5
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL:=@GNU/$(PKG_NAME)
+-PKG_HASH:=a72428c7917bdf9fa93cb8181c971b6e22834125848cf1d03ce10b1bb0716fe1
++PKG_HASH:=075cef2e814642e30e10e8155e93022e4a91ca38a65aa1d5467d4e969f97f338
+ 
+ HOST_BUILD_PARALLEL:=1
+ 
+diff --git a/tools/bison/patches/001-fix-macos-vasnprintf.patch b/tools/bison/patches/001-fix-macos-vasnprintf.patch
+deleted file mode 100644
+index e41315d34ec7d2462035c27c344215688b18c4f6..0000000000000000000000000000000000000000
+--- a/tools/bison/patches/001-fix-macos-vasnprintf.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+---- a/lib/vasnprintf.c
+-+++ b/lib/vasnprintf.c
+-@@ -4858,7 +4858,11 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *
+- #endif
+-                   *fbp = dp->conversion;
+- #if USE_SNPRINTF
+--# if !(((__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3)) && !defined __UCLIBC__) || ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__))
+-+# if ! (((__GLIBC__ > 2                                                 \
+-+          || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3))                  \
+-+         && !defined __UCLIBC__)                                        \
+-+        || (defined __APPLE__ && defined __MACH__)                      \
+-+        || ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__))
+-                 fbp[1] = '%';
+-                 fbp[2] = 'n';
+-                 fbp[3] = '\0';
+-@@ -4872,6 +4876,9 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *
+-                    in format strings in writable memory may crash the program
+-                    (if compiled with _FORTIFY_SOURCE=2), so we should avoid it
+-                    in this situation.  */
+-+                /* macOS 10.13 High Sierra behaves like glibc with
+-+                   _FORTIFY_SOURCE=2, and older macOS releases
+-+                   presumably do not need %n.  */
+-                 /* On native Windows systems (such as mingw), we can avoid using
+-                    %n because:
+-                      - Although the gl_SNPRINTF_TRUNCATION_C99 test fails,
+diff --git a/tools/bison/patches/100-fix-gets-removal.patch b/tools/bison/patches/100-fix-gets-removal.patch
+index 20b18cf2e7cd722622fced5b0e7703807bef38ef..563c12040c594f9d9f46eed3af229e69f0201a26 100644
+--- a/tools/bison/patches/100-fix-gets-removal.patch
++++ b/tools/bison/patches/100-fix-gets-removal.patch
+@@ -1,6 +1,8 @@
++diff --git a/lib/stdio.in.h b/lib/stdio.in.h
++index ff7c9c8..f391832 100644
+ --- a/lib/stdio.in.h
+ +++ b/lib/stdio.in.h
+-@@ -719,13 +719,6 @@
++@@ -739,14 +739,6 @@ _GL_WARN_ON_USE (getline, "getline is unportable - "
+  # endif
+  #endif
+  
+@@ -8,9 +10,10 @@
+ -   so any use of gets warrants an unconditional warning; besides, C11
+ -   removed it.  */
+ -#undef gets
+--#if HAVE_RAW_DECL_GETS
++-#if HAVE_RAW_DECL_GETS && !defined __cplusplus
+ -_GL_WARN_ON_USE (gets, "gets is a security hole - use fgets instead");
+ -#endif
+- 
+- 
++-
+  #if @GNULIB_OBSTACK_PRINTF@ || @GNULIB_OBSTACK_PRINTF_POSIX@
++ struct obstack;
++ /* Grow an obstack with formatted output.  Return the number of

@@ -1,0 +1,40 @@
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Sun, 3 Jan 2016 20:57:53 +0000
+Subject: build: add pure make tolower/toupper funtions that do not require shell calls
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+SVN-Revision: 48105
+
+diff --git a/rules.mk b/rules.mk
+index ece502609bd08af21be782a706f0bf6599895568..3aac5c770056ab1b2e84eb15d3bfdabd546df8a9 100644
+--- a/rules.mk
++++ b/rules.mk
+@@ -26,6 +26,11 @@ merge=$(subst $(space),,$(1))
+ confvar=$(call merge,$(foreach v,$(1),$(if $($(v)),y,n)))
+ strip_last=$(patsubst %.$(lastword $(subst .,$(space),$(1))),%,$(1))
+ 
++paren_left = (
++paren_right = )
++chars_lower = a b c d e f g h i j k l m n o p q r s t u v w x y z
++chars_upper = A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
++
+ define sep
+ 
+ endef
+@@ -35,6 +40,15 @@ define newline
+ 
+ endef
+ 
++__tr_list = $(join $(join $(1),$(foreach char,$(1),$(comma))),$(2))
++__tr_head_stripped = $(subst $(space),,$(foreach cv,$(call __tr_list,$(1),$(2)),$$$(paren_left)subst$(cv)$(comma)))
++__tr_head = $(subst $(paren_left)subst,$(paren_left)subst$(space),$(__tr_head_stripped))
++__tr_tail = $(subst $(space),,$(foreach cv,$(1),$(paren_right)))
++__tr_template = $(__tr_head)$$(1)$(__tr_tail)
++
++$(eval toupper = $(call __tr_template,$(chars_lower),$(chars_upper)))
++$(eval tolower = $(call __tr_template,$(chars_upper),$(chars_lower)))
++
+ _SINGLE=export MAKEFLAGS=$(space);
+ CFLAGS:=
+ ARCH:=$(subst i486,i386,$(subst i586,i386,$(subst i686,i386,$(call qstrip,$(CONFIG_ARCH)))))

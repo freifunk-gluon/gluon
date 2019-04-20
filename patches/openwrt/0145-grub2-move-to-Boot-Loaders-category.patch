@@ -1,0 +1,35 @@
+From: Alberto Bursi <alberto.bursi@outlook.it>
+Date: Sun, 23 Oct 2016 21:04:49 +0200
+Subject: grub2: move to Boot Loaders category
+
+because boot loaders are in Boot Loaders, not in Utilities -> Boot Loaders
+
+Also moved brub2-editenv in Utilities -> Boot Loaders
+
+Part of a wider housekeeping effort on the packages repository.
+
+Signed-off-by: Alberto Bursi <alberto.bursi@outlook.it>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 92e2ba81438278775215d10c27d37b4cbce65d2b..4ed110e38e67ed30f609be0049c1e74d2c5ee455 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -28,9 +28,7 @@ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+ 
+ define Package/grub2
+-  SUBMENU:=Boot Loaders
+-  CATEGORY:=Utilities
+-  SECTION:=utils
++  CATEGORY:=Boot Loaders
+   TITLE:=GRand Unified Bootloader
+   URL:=http://www.gnu.org/software/grub/
+   DEPENDS:=@TARGET_x86||TARGET_x86_64
+@@ -39,6 +37,7 @@ endef
+ define Package/grub2-editenv
+   CATEGORY:=Utilities
+   SECTION:=utils
++  SUBMENU:=Boot Loaders
+   TITLE:=Grub2 Environment editor
+   URL:=http://www.gnu.org/software/grub/
+   DEPENDS:=@TARGET_x86||TARGET_x86_64

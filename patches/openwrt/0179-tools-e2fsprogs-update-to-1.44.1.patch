@@ -1,0 +1,24 @@
+From: Paul Wassi <p.wassi@gmx.at>
+Date: Mon, 26 Mar 2018 13:51:01 +0200
+Subject: tools/e2fsprogs: update to 1.44.1
+
+Update e2fsprogs to upstream 1.44.1 (feature and bugfix release)
+
+Signed-off-by: Paul Wassi <p.wassi@gmx.at>
+(cherry picked from commit 8262179f4a007035a531bb913261f5f91115fad8)
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index d709e8fa88e80c75d8aa60dadeca9471821ba2e6..676da26e751fe34eeb41a149bf291d439ea18ff7 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.44.0
+-PKG_HASH:=a3567042f03fcee0e01db8f923b24cec92e2ba5b11f8e39e245672ad5392723d
++PKG_VERSION:=1.44.1
++PKG_HASH:=0ca164c1c87724df904c918b2d7051ef989b51de725db66c67514dbe6dd2b9ef
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz

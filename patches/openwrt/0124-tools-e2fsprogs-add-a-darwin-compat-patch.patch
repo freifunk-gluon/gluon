@@ -1,0 +1,39 @@
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Wed, 15 Jul 2015 08:16:40 +0000
+Subject: tools/e2fsprogs: add a darwin-compat patch
+
+On darwin we need to import stdint to get these integer typedefs.
+
+Patch by: Lawrence D'Anna <larry@elder-gods.org>
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+SVN-Revision: 46378
+
+diff --git a/tools/e2fsprogs/patches/005-darwin-compat.patch b/tools/e2fsprogs/patches/005-darwin-compat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..bc81d8638a5f294bb520f54ad518c3aecda0c3bd
+--- /dev/null
++++ b/tools/e2fsprogs/patches/005-darwin-compat.patch
+@@ -0,0 +1,22 @@
++--- a/lib/blkid/blkid_types.h.in
+++++ b/lib/blkid/blkid_types.h.in
++@@ -9,6 +9,8 @@
++ 
++ @ASM_TYPES_HEADER@
++ 
+++#include <stdint.h>
+++
++ #ifdef __U8_TYPEDEF
++ typedef __U8_TYPEDEF __u8;
++ #else
++--- a/lib/ext2fs/ext2_types.h.in
+++++ b/lib/ext2fs/ext2_types.h.in
++@@ -9,6 +9,8 @@
++ 
++ @ASM_TYPES_HEADER@
++ 
+++#include <stdint.h>
+++
++ #ifdef __U8_TYPEDEF
++ typedef __U8_TYPEDEF __u8;
++ #else

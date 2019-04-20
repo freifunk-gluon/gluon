@@ -1,0 +1,30 @@
+From: Jo-Philipp Wich <jo@mein.io>
+Date: Fri, 5 Jan 2018 10:43:55 +0100
+Subject: downloads.mk: introduce name-agnostic PROJECT_GIT variable
+
+Introduce a name-agnostic PROJECT_GIT variable poiting to
+https://git.openwrt.org/ and declare LEDE_GIT and OPENWRT_GIT
+as aliases to it.
+
+After some transition time we can drop this alias variables.
+
+Signed-off-by: Jo-Philipp Wich <jo@mein.io>
+(cherry picked from commit 4700544e4068cb72932148ac1ecd294ca1388671)
+
+diff --git a/include/download.mk b/include/download.mk
+index d8074855f87ef3f269f99050911f2dd167812226..2aa75ce2e4f98e850d761b9416963c7958df7c82 100644
+--- a/include/download.mk
++++ b/include/download.mk
+@@ -5,8 +5,10 @@
+ # See /LICENSE for more information.
+ #
+ 
+-OPENWRT_GIT = http://git.openwrt.org
+-LEDE_GIT = https://git.lede-project.org
++PROJECT_GIT = https://git.openwrt.org
++
++OPENWRT_GIT = $(PROJECT_GIT)
++LEDE_GIT = $(PROJECT_GIT)
+ 
+ DOWNLOAD_RDEP=$(STAMP_PREPARED) $(HOST_STAMP_PREPARED)
+ 

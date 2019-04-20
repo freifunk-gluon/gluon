@@ -1,0 +1,49 @@
+From: Alexandru Ardelean <ardeleanalex@gmail.com>
+Date: Wed, 23 Nov 2016 10:27:55 +0200
+Subject: target/linux/x86/image: add explicit prefix to grub-mkimage command
+
+In the latest version of grub-mkimage, the prefix option is mandatory.
+Not supplying it fails with:
+```
+Prefix not specified (use the -p option).
+```
+
+In grub-2.02-beta2 a DEFAULT_DIRECTORY was defined
+in `include/grub/osdep/hostfile_unix.h` as:
+```
+ #if defined (__NetBSD__)
+ /* NetBSD uses /boot for its boot block.  */
+ # define DEFAULT_DIRECTORY  "/"GRUB_DIR_NAME
+ #else
+ # define DEFAULT_DIRECTORY  "/"GRUB_BOOT_DIR_NAME"/"GRUB_DIR_NAME
+ #endif
+```
+
+Where:
+* GRUB_BOOT_DIR_NAME == boot
+* GRUB_DIR_NAME == grub
+
+This was used if the -p option was omitted.
+
+Signed-off-by: Alexandru Ardelean <ardeleanalex@gmail.com>
+
+diff --git a/target/linux/x86/image/Makefile b/target/linux/x86/image/Makefile
+index 6f64eba398e34093308b766839e69780512a4ca8..ad995b675b51da11ea5fef83702f7dd9327a39f4 100644
+--- a/target/linux/x86/image/Makefile
++++ b/target/linux/x86/image/Makefile
+@@ -71,6 +71,7 @@ ifneq ($(CONFIG_GRUB_IMAGES),)
+ 	$(INSTALL_DIR) $(KDIR)/root.grub/boot/grub $(KDIR)/grub2
+ 	$(CP) $(KDIR)/bzImage $(KDIR)/root.grub/boot/vmlinuz
+ 	grub-mkimage \
++		-p /boot/grub \
+ 		-d $(STAGING_DIR_HOST)/lib/grub/i386-pc \
+ 		-o $(KDIR)/grub2/core.img \
+ 		-O i386-pc \
+@@ -108,6 +109,7 @@ define Image/Build/iso
+ 	$(INSTALL_DIR) $(KDIR)/root.grub/boot/grub $(KDIR)/grub2
+ 	$(CP) $(KDIR)/bzImage $(KDIR)/root.grub/boot/vmlinuz
+ 	grub-mkimage \
++		-p /boot/grub \
+ 		-d $(STAGING_DIR_HOST)/lib/grub/i386-pc \
+ 		-o $(KDIR)/grub2/eltorito.img \
+ 		-O i386-pc \

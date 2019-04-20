@@ -1,0 +1,43 @@
+From: Jo-Philipp Wich <jow@openwrt.org>
+Date: Thu, 25 Jun 2015 11:19:23 +0000
+Subject: grub2: fix build against musl
+
+Invert the `__GLIBC__` guards into `!__UCLIBC__` ones to avoid
+invalid references to `_llseek` on musl.
+
+Signed-off-by: Jo-Philipp Wich <jow@openwrt.org>
+
+SVN-Revision: 46125
+
+diff --git a/package/boot/grub2/patches/100-musl-compat.patch b/package/boot/grub2/patches/100-musl-compat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..e3b12be58a24840f4dde269f9a515dd30f7df627
+--- /dev/null
++++ b/package/boot/grub2/patches/100-musl-compat.patch
+@@ -0,0 +1,26 @@
++--- a/grub-core/osdep/unix/hostdisk.c
+++++ b/grub-core/osdep/unix/hostdisk.c
++@@ -48,11 +48,10 @@
++ #ifdef __linux__
++ # include <sys/ioctl.h>         /* ioctl */
++ # include <sys/mount.h>
++-# if !defined(__GLIBC__) || \
++-        ((__GLIBC__ < 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ < 1)))
+++# if defined(__UCLIBC__)
++ /* Maybe libc doesn't have large file support.  */
++ #  include <linux/unistd.h>     /* _llseek */
++-# endif /* (GLIBC < 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR < 1)) */
+++# endif /* __UCLIBC__ */
++ #endif /* __linux__ */
++ 
++ grub_uint64_t
++@@ -79,8 +78,7 @@ grub_util_get_fd_size (grub_util_fd_t fd
++   return st.st_size;
++ }
++ 
++-#if defined(__linux__) && (!defined(__GLIBC__) || \
++-        ((__GLIBC__ < 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ < 1))))
+++#if defined(__linux__) && defined(__UCLIBC__)
++   /* Maybe libc doesn't have large file support.  */
++ int
++ grub_util_fd_seek (grub_util_fd_t fd, grub_uint64_t off)

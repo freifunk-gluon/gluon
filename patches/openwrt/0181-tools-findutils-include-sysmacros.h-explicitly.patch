@@ -1,0 +1,31 @@
+From: Alex Maclean <monkeh@monkeh.net>
+Date: Mon, 23 Oct 2017 13:43:43 +0100
+Subject: tools/findutils: include sysmacros.h explicitly
+
+glibc is moving to remove the include of sys/sysmacros.h from
+sys/types.h, and some distros have done this early. Other libcs may
+already lack this include. Include sysmacros.h explicitly.
+
+Fixes: FS#1016
+
+Signed-off-by: Alex Maclean <monkeh@monkeh.net>
+
+diff --git a/tools/findutils/patches/100-include_sysmacros.patch b/tools/findutils/patches/100-include_sysmacros.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..82b1ee9a42b57219a79d26786c029c57d50525f9
+--- /dev/null
++++ b/tools/findutils/patches/100-include_sysmacros.patch
+@@ -0,0 +1,13 @@
++--- a/gl/lib/mountlist.c
+++++ b/gl/lib/mountlist.c
++@@ -17,6 +17,10 @@
++ 
++ #include <config.h>
++ 
+++#ifdef MAJOR_IN_SYSMACROS
+++# include <sys/sysmacros.h>
+++#endif
+++
++ #include "mountlist.h"
++ 
++ #include <limits.h>

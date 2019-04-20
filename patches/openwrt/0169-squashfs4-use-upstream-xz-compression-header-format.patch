@@ -1,0 +1,70 @@
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Date: Tue, 21 Jun 2016 22:05:44 +0200
+Subject: squashfs4: use upstream xz compression header format
+
+In the upstream kernel and the upstream squashfs4 tools the xz
+compression header looks the following:
+struct disk_comp_opts {
+        __le32 dictionary_size;
+        __le32 flags;
+};
+
+We added some other members and also moved some existing members. Place
+the members which are already in upstream header at the same position
+as in that kernel and add our own at the end. The kernel should not
+have a problem when there are some additional members and just ignore
+them.
+
+Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+
+diff --git a/target/linux/generic/patches-3.18/520-squashfs_update_xz_comp_opts.patch b/target/linux/generic/patches-3.18/520-squashfs_update_xz_comp_opts.patch
+deleted file mode 100644
+index ad11b30281ce28a0d1cfb27c92ea332ef333169b..0000000000000000000000000000000000000000
+--- a/target/linux/generic/patches-3.18/520-squashfs_update_xz_comp_opts.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From f31b7c0efa255dd17a5f584022a319387f09b0d8 Mon Sep 17 00:00:00 2001
+-From: Jonas Gorski <jonas.gorski@gmail.com>
+-Date: Tue, 12 Apr 2011 19:55:41 +0200
+-Subject: [PATCH] squashfs: update xz compressor options struct.
+-
+-Update the xz compressor options struct to match the squashfs userspace
+-one.
+----
+- fs/squashfs/xz_wrapper.c |    4 +++-
+- 1 files changed, 3 insertions(+), 1 deletions(-)
+-
+---- a/fs/squashfs/xz_wrapper.c
+-+++ b/fs/squashfs/xz_wrapper.c
+-@@ -40,8 +40,10 @@ struct squashfs_xz {
+- };
+- 
+- struct disk_comp_opts {
+--	__le32 dictionary_size;
+- 	__le32 flags;
+-+	__le16 bit_opts;
+-+	__le16 fb;
+-+	__le32 dictionary_size;
+- };
+- 
+- struct comp_opts {
+diff --git a/tools/squashfs4/patches/160-expose_lzma_xz_options.patch b/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
+index 2fbd9548590ea17a4e14d29ddf1b47685a22caa9..9e1c1fbb1eafd04701cd09f4730d63038a90664d 100644
+--- a/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
++++ b/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
+@@ -40,6 +40,7 @@
+ +
+ +
+ +struct lzma_opts {
+++	uint32_t dict_size;
+ +	uint32_t flags;
+ +#define LZMA_OPT_FLT_MASK	0xffff
+ +#define LZMA_OPT_PRE_OFF	16
+@@ -53,7 +54,6 @@
+ +#define LZMA_OPT_PB_OFF		6
+ +#define LZMA_OPT_PB_MASK	(0x7 << LZMA_OPT_PB_OFF)
+ +	uint16_t fb;
+-+	uint32_t dict_size;
+ +};
+ +
+ +#if __BYTE_ORDER == __BIG_ENDIAN

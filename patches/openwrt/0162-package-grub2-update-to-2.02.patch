@@ -1,0 +1,32 @@
+From: Alif M. Ahmad <alive4ever@live.com>
+Date: Sat, 20 May 2017 14:11:16 +0700
+Subject: package/grub2: update to 2.02
+
+Update to version 2.02
+
+Signed-off-by: Alif M. Ahmad <alive4ever@live.com>
+(cherry picked from commit 415c47de79ada7496c39f435df0b0523472aee58)
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index ca65b93605fb87e485fdd643a115eb5ca8ceb363..b9e79e10217fa3266dbfcf2fabc2df39e54e3486 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -9,15 +9,12 @@ include $(TOPDIR)/rules.mk
+ include $(INCLUDE_DIR)/kernel.mk
+ 
+ PKG_NAME:=grub
+-PKG_VERSION:=2.02~rc2
++PKG_VERSION:=2.02
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+-PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+-	http://gnualpha.uib.no/grub/ \
+-	http://mirrors.fe.up.pt/pub/gnu-alpha/grub/ \
+-	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
+-PKG_HASH:=053bfcbe366733e4f5a1baf4eb15e1efd977225bdd323b78087ce5fa172fc246
++PKG_SOURCE_URL:=@GNU/grub
++PKG_HASH:=810b3798d316394f94096ec2797909dbf23c858e48f7b3830826b8daa06b7b0f
+ 
+ PKG_FIXUP:=autoreconf
+ HOST_BUILD_PARALLEL:=1

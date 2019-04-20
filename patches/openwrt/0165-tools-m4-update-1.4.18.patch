@@ -1,0 +1,50 @@
+From: Etienne Haarsma <bladeoner112@gmail.com>
+Date: Sun, 12 Feb 2017 16:50:07 +0100
+Subject: tools/m4: update 1.4.18
+
+Patch 100-fix-gets-removal.patch is removed because it's included in the new version.
+
+Signed-off-by: Etienne Haarsma <bladeoner112@gmail.com>
+(cherry picked from commit d90abebd06bbb004fc7957c39fe89202fbdca9f2)
+
+diff --git a/tools/m4/Makefile b/tools/m4/Makefile
+index 6fe9e0b6e695924e0919fdd5158ce9db2919198c..aa3c382f5bb38b7a4aacdfcc6dc36bbdb17b90d5 100644
+--- a/tools/m4/Makefile
++++ b/tools/m4/Makefile
+@@ -7,11 +7,11 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=m4
+-PKG_VERSION:=1.4.17
++PKG_VERSION:=1.4.18
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL:=@GNU/$(PKG_NAME)
+-PKG_HASH:=f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508
++PKG_HASH:=f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07
+ PKG_CAT:=xzcat
+ 
+ HOST_BUILD_PARALLEL:=1
+diff --git a/tools/m4/patches/100-fix-gets-removal.patch b/tools/m4/patches/100-fix-gets-removal.patch
+deleted file mode 100644
+index ecd110d934ea04a1f630a31ee67ab5bc8189ab20..0000000000000000000000000000000000000000
+--- a/tools/m4/patches/100-fix-gets-removal.patch
++++ /dev/null
+@@ -1,17 +0,0 @@
+---- a/lib/stdio.in.h
+-+++ b/lib/stdio.in.h
+-@@ -714,14 +714,6 @@ _GL_WARN_ON_USE (getline, "getline is un
+- # endif
+- #endif
+- 
+--/* It is very rare that the developer ever has full control of stdin,
+--   so any use of gets warrants an unconditional warning; besides, C11
+--   removed it.  */
+--#undef gets
+--#if HAVE_RAW_DECL_GETS
+--_GL_WARN_ON_USE (gets, "gets is a security hole - use fgets instead");
+--#endif
+--
+- 
+- #if @GNULIB_OBSTACK_PRINTF@ || @GNULIB_OBSTACK_PRINTF_POSIX@
+- struct obstack;

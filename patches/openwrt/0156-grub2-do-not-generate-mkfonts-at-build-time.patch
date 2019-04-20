@@ -1,0 +1,38 @@
+From: Alexandru Ardelean <ardeleanalex@gmail.com>
+Date: Mon, 21 Nov 2016 17:36:56 +0200
+Subject: grub2: do not generate mkfonts at build time
+
+Even though these fonts may not be installed, they seem to be
+generated at build time.
+
+Seems that the configure script re-generated from configure.ac
+is a bit more annoying than it has to be.
+
+Signed-off-by: Alexandru Ardelean <ardeleanalex@gmail.com>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 6b96e0a8d1910f1177506b89b34459c75177b7a1..a9bfaadcf09b6332a9dff9a283f9b2cc869c3096 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -51,6 +51,9 @@ endef
+ 
+ HOST_BUILD_PREFIX := $(STAGING_DIR_HOST)
+ 
++CONFIGURE_VARS += \
++	grub_build_mkfont_excuse="don't want fonts"
++
+ CONFIGURE_ARGS += \
+ 	--target=$(REAL_GNU_TARGET_NAME) \
+ 	--disable-werror \
+@@ -59,7 +62,11 @@ CONFIGURE_ARGS += \
+ 	--disable-libzfs \
+ 	--disable-grub-mkfont
+ 
++HOST_CONFIGURE_VARS += \
++	grub_build_mkfont_excuse="don't want fonts"
++
+ HOST_CONFIGURE_ARGS += \
++	--disable-grub-mkfont \
+ 	--target=$(REAL_GNU_TARGET_NAME) \
+ 	--sbindir="$(STAGING_DIR_HOST)/bin" \
+ 	--disable-werror \

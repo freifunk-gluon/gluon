@@ -1,0 +1,82 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 21 Dec 2016 16:39:56 +0100
+Subject: build: add defaults for PKG_SOURCE, PKG_SOURCE_SUBDIR, PKG_VERSION
+
+This makes it easier to unify versioning of git based package downloads.
+PKG_SOURCE_DATE along with an 8-character abbreviation of the git hash
+is used as PKG_VERSION, PKG_RELEASE should be used like normal packages.
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/include/download.mk b/include/download.mk
+index 2aa75ce2e4f98e850d761b9416963c7958df7c82..b5a2a16a3072a7635b42514a77f2458e34ae1d64 100644
+--- a/include/download.mk
++++ b/include/download.mk
+@@ -10,6 +10,12 @@ PROJECT_GIT = https://git.openwrt.org
+ OPENWRT_GIT = $(PROJECT_GIT)
+ LEDE_GIT = $(PROJECT_GIT)
+ 
++ifdef PKG_SOURCE_VERSION
++PKG_VERSION ?= $(if $(PKG_SOURCE_DATE),$(PKG_SOURCE_DATE)-)$(call version_abbrev,$(PKG_SOURCE_VERSION))
++PKG_SOURCE_SUBDIR ?= $(PKG_NAME)-$(PKG_VERSION)
++PKG_SOURCE ?= $(PKG_SOURCE_SUBDIR).tar.xz
++endif
++
+ DOWNLOAD_RDEP=$(STAMP_PREPARED) $(HOST_STAMP_PREPARED)
+ 
+ # Try to guess the download method from the URL
+diff --git a/include/host-build.mk b/include/host-build.mk
+index 44401b866a4d637648bb093470a5e66b4a3e38fc..6a5f82dd302c948e8d9d53a67dbfb842d171a25d 100644
+--- a/include/host-build.mk
++++ b/include/host-build.mk
+@@ -5,6 +5,8 @@
+ # See /LICENSE for more information.
+ #
+ 
++include $(INCLUDE_DIR)/download.mk
++
+ HOST_BUILD_DIR ?= $(BUILD_DIR_HOST)/$(PKG_NAME)$(if $(PKG_VERSION),-$(PKG_VERSION))
+ HOST_INSTALL_DIR ?= $(HOST_BUILD_DIR)/host-install
+ HOST_BUILD_PARALLEL ?=
+@@ -34,7 +36,6 @@ HOST_STAMP_INSTALLED:=$(STAGING_DIR_HOST)/stamp/.$(PKG_NAME)_installed
+ 
+ override MAKEFLAGS=
+ 
+-include $(INCLUDE_DIR)/download.mk
+ include $(INCLUDE_DIR)/quilt.mk
+ include $(INCLUDE_DIR)/autotools.mk
+ 
+diff --git a/include/package.mk b/include/package.mk
+index a99cdc6990280d7ef83223861cd9f224c6eebc33..ed83865b2192e56c41faa8b14f5aad8715d70f04 100644
+--- a/include/package.mk
++++ b/include/package.mk
+@@ -9,6 +9,8 @@ __package_mk:=1
+ 
+ all: $(if $(DUMP),dumpinfo,compile)
+ 
++include $(INCLUDE_DIR)/download.mk
++
+ PKG_BUILD_DIR ?= $(BUILD_DIR)/$(PKG_NAME)$(if $(PKG_VERSION),-$(PKG_VERSION))
+ PKG_INSTALL_DIR ?= $(PKG_BUILD_DIR)/ipkg-install
+ PKG_MD5SUM ?= unknown
+@@ -129,7 +131,6 @@ endif
+ PKG_DIR_NAME:=$(lastword $(subst /,$(space),$(CURDIR)))
+ PKG_INSTALL_STAMP:=$(PKG_INFO_DIR)/$(PKG_DIR_NAME).$(if $(BUILD_VARIANT),$(BUILD_VARIANT),default).install
+ 
+-include $(INCLUDE_DIR)/download.mk
+ include $(INCLUDE_DIR)/quilt.mk
+ include $(INCLUDE_DIR)/package-defaults.mk
+ include $(INCLUDE_DIR)/package-dumpinfo.mk
+diff --git a/rules.mk b/rules.mk
+index 3aac5c770056ab1b2e84eb15d3bfdabd546df8a9..da4d48b0e28b2d845323901163b95162cf7e1c03 100644
+--- a/rules.mk
++++ b/rules.mk
+@@ -49,6 +49,8 @@ __tr_template = $(__tr_head)$$(1)$(__tr_tail)
+ $(eval toupper = $(call __tr_template,$(chars_lower),$(chars_upper)))
+ $(eval tolower = $(call __tr_template,$(chars_upper),$(chars_lower)))
+ 
++version_abbrev = $(if $(if $(CHECK),,$(DUMP)),$(1),$(shell printf '%.8s' $(1)))
++
+ _SINGLE=export MAKEFLAGS=$(space);
+ CFLAGS:=
+ ARCH:=$(subst i486,i386,$(subst i586,i386,$(subst i686,i386,$(call qstrip,$(CONFIG_ARCH)))))

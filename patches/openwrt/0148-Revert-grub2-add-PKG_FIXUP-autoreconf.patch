@@ -1,0 +1,22 @@
+From: John Crispin <john@phrozen.org>
+Date: Mon, 21 Nov 2016 16:49:07 +0100
+Subject: Revert "grub2: add PKG_FIXUP:=autoreconf"
+
+this caused build errors on x86
+
+This reverts commit a0ea22ac430f91ab045431a79b2e2161e66cd56a.
+
+Signed-off-by: John Crispin <john@phrozen.org>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index af97a31cda4053dd19e9643151b8da8ab4ee7a0f..02e6637c32c5cd335a8622cd1a8e16cc15ed42ba 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -19,7 +19,6 @@ PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+ 	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
+ PKG_MD5SUM:=be62932eade308a364ea4bbc91295930
+ 
+-PKG_FIXUP:=autoreconf
+ HOST_BUILD_PARALLEL:=1
+ PKG_BUILD_DEPENDS:=grub2/host
+ 

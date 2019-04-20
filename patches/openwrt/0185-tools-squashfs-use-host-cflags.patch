@@ -1,0 +1,19 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Tue, 24 Oct 2017 13:22:09 +0200
+Subject: tools/squashfs: use host cflags
+
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+(cherry picked from commit 20d363aed395e07ff42fe648f898b17f2077cc82)
+
+diff --git a/tools/squashfs/Makefile b/tools/squashfs/Makefile
+index 27adca1d7f4a23435fa730c471dab7ec05851e93..87f6e8fd9931994438ce1340b3c72e4d872af1de 100644
+--- a/tools/squashfs/Makefile
++++ b/tools/squashfs/Makefile
+@@ -21,6 +21,7 @@ include $(INCLUDE_DIR)/host-build.mk
+ define Host/Compile
+ 	$(MAKE) -C $(HOST_BUILD_DIR)/squashfs-tools \
+ 		CC="$(HOSTCC)" \
++		CFLAGS="$(HOST_CFLAGS) -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -I." \
+ 		CXX="$(CXX)" \
+ 		LZMAPATH=$(STAGING_DIR_HOST)/lib \
+ 		mksquashfs-lzma unsquashfs-lzma 

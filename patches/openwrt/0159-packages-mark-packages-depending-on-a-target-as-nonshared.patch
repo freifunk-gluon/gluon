@@ -1,0 +1,25 @@
+From: Mathias Kresin <dev@kresin.me>
+Date: Thu, 19 Jan 2017 09:18:57 +0100
+Subject: packages: mark packages depending on a target as nonshared
+
+The packages can't be build as shared packages due to the unmet
+dependencies.
+
+Fixes FS#418.
+
+[linus.luessing@c0d3.blue: backport, grub2 only]
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 2742118671b33a739349a428395dee352e1d988b..ca94b1878a44b926e83f8d62da57587dbc437f84 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -25,6 +25,8 @@ PKG_BUILD_DEPENDS:=grub2/host
+ 
+ PKG_SSP:=0
+ 
++PKG_FLAGS:=nonshared
++
+ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+ 

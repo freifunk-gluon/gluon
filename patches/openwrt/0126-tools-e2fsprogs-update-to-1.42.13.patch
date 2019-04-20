@@ -1,0 +1,99 @@
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Sun, 8 Nov 2015 20:40:03 +0000
+Subject: tools/e2fsprogs: update to 1.42.13
+
+Update e2fsprogs to 1.42.13.
+Refresh and cleanup patches.
+
+Signed-off-by: Hannu Nyman <hannu.nyman@iki.fi>
+
+SVN-Revision: 47426
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index 5632e1949d30aecd8a3fd0501c5e6e3684207986..0ecd9521f4e077b1354cb5eba230dbbf206b8bb5 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -1,5 +1,5 @@
+ #
+-# Copyright (C) 2010-2013 OpenWrt.org
++# Copyright (C) 2010-2015 OpenWrt.org
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.42.8
+-PKG_MD5SUM:=8ef664b6eb698aa6b733df59b17b9ed4
++PKG_VERSION:=1.42.13
++PKG_MD5SUM:=bc759fc62666786f5436e2075beb3265
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+diff --git a/tools/e2fsprogs/patches/003-openbsd-compat.patch b/tools/e2fsprogs/patches/003-openbsd-compat.patch
+index 1f7cdca0e56992d908f2bf863cf4b6bb687c4315..ded0ecad77fa9f382493556eeaeaf9fbee9fc97d 100644
+--- a/tools/e2fsprogs/patches/003-openbsd-compat.patch
++++ b/tools/e2fsprogs/patches/003-openbsd-compat.patch
+@@ -1,7 +1,6 @@
+-diff -Nur e2fsprogs-1.42.7.orig/lib/blkid/getsize.c e2fsprogs-1.42.7/lib/blkid/getsize.c
+---- e2fsprogs-1.42.7.orig/lib/blkid/getsize.c	Fri Nov 30 03:40:18 2012
+-+++ e2fsprogs-1.42.7/lib/blkid/getsize.c	Thu Mar  7 14:21:59 2013
+-@@ -26,6 +26,9 @@
++--- a/lib/blkid/getsize.c
+++++ b/lib/blkid/getsize.c
++@@ -25,6 +25,9 @@
+  #include <fcntl.h>
+  #ifdef HAVE_SYS_IOCTL_H
+  #include <sys/ioctl.h>
+@@ -11,9 +10,8 @@ diff -Nur e2fsprogs-1.42.7.orig/lib/blkid/getsize.c e2fsprogs-1.42.7/lib/blkid/g
+  #endif
+  #ifdef HAVE_LINUX_FD_H
+  #include <linux/fd.h>
+-diff -Nur e2fsprogs-1.42.7.orig/lib/quota/mkquota.c e2fsprogs-1.42.7/lib/quota/mkquota.c
+---- e2fsprogs-1.42.7.orig/lib/quota/mkquota.c	Wed Jan  2 01:47:20 2013
+-+++ e2fsprogs-1.42.7/lib/quota/mkquota.c	Thu Mar  7 14:21:59 2013
++--- a/lib/quota/mkquota.c
+++++ b/lib/quota/mkquota.c
+ @@ -8,6 +8,7 @@
+  #include <sys/stat.h>
+  #include <unistd.h>
+diff --git a/tools/e2fsprogs/patches/004-freebsd-compat.patch b/tools/e2fsprogs/patches/004-freebsd-compat.patch
+index 5eff49999e2e68f50e5fa05583a2a7158f0d0de9..c6435d49192bfa1f645f94e69baa62ccf1658d81 100644
+--- a/tools/e2fsprogs/patches/004-freebsd-compat.patch
++++ b/tools/e2fsprogs/patches/004-freebsd-compat.patch
+@@ -1,6 +1,5 @@
+-diff -Nur e2fsprogs-1.42.7.orig/lib/ext2fs/tdb.c e2fsprogs-1.42.7/lib/ext2fs/tdb.c
+---- e2fsprogs-1.42.7.orig/lib/ext2fs/tdb.c	2012-07-06 15:37:27.000000000 +0200
+-+++ e2fsprogs-1.42.7/lib/ext2fs/tdb.c	2013-03-07 14:54:59.000000000 +0100
++--- a/lib/ext2fs/tdb.c
+++++ b/lib/ext2fs/tdb.c
+ @@ -56,7 +56,9 @@
+  #include <utime.h>
+  #endif
+diff --git a/tools/e2fsprogs/patches/005-darwin-compat.patch b/tools/e2fsprogs/patches/005-darwin-compat.patch
+index bc81d8638a5f294bb520f54ad518c3aecda0c3bd..c5d0e28c555f215b1953861a7e9ba8e881ed2e24 100644
+--- a/tools/e2fsprogs/patches/005-darwin-compat.patch
++++ b/tools/e2fsprogs/patches/005-darwin-compat.patch
+@@ -6,9 +6,9 @@
+  
+ +#include <stdint.h>
+ +
++ #ifndef HAVE___U8
++ #define HAVE___U8
+  #ifdef __U8_TYPEDEF
+- typedef __U8_TYPEDEF __u8;
+- #else
+ --- a/lib/ext2fs/ext2_types.h.in
+ +++ b/lib/ext2fs/ext2_types.h.in
+ @@ -9,6 +9,8 @@
+@@ -17,6 +17,7 @@
+  
+ +#include <stdint.h>
+ +
++ #ifndef HAVE___U8
++ #define HAVE___U8
+  #ifdef __U8_TYPEDEF
+- typedef __U8_TYPEDEF __u8;
+- #else
++

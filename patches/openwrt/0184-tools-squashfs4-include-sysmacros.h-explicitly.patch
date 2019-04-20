@@ -1,0 +1,199 @@
+From: Alex Maclean <monkeh@monkeh.net>
+Date: Mon, 23 Oct 2017 13:48:19 +0100
+Subject: tools/squashfs4: include sysmacros.h explicitly
+
+glibc is moving to remove the include of sys/sysmacros.h from
+sys/types.h, and some distros have done this early. Other libcs may
+already lack this include. Include sysmacros.h explicitly.
+
+Fixes: FS#1017
+
+Signed-off-by: Alex Maclean <monkeh@monkeh.net>
+[refresh patches]
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+
+diff --git a/tools/squashfs4/patches/130-include_sysmacros.patch b/tools/squashfs4/patches/130-include_sysmacros.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..e8845130ef71d00c6cf17eb550078f9bec894c1a
+--- /dev/null
++++ b/tools/squashfs4/patches/130-include_sysmacros.patch
+@@ -0,0 +1,20 @@
++--- a/squashfs-tools/mksquashfs.c
+++++ b/squashfs-tools/mksquashfs.c
++@@ -33,6 +33,7 @@
++ #include <stddef.h>
++ #include <sys/time.h>
++ #include <sys/types.h>
+++#include <sys/sysmacros.h>
++ #include <sys/stat.h>
++ #include <fcntl.h>
++ #include <errno.h>
++--- a/squashfs-tools/unsquashfs.c
+++++ b/squashfs-tools/unsquashfs.c
++@@ -30,6 +30,7 @@
++ #include "xattr.h"
++ 
++ #include <sys/types.h>
+++#include <sys/sysmacros.h>
++ 
++ struct cache *fragment_cache, *data_cache;
++ struct queue *to_reader, *to_deflate, *to_writer, *from_writer;
+diff --git a/tools/squashfs4/patches/170-add_support_for_LZMA_MAGIC_to_unsqashfs.patch b/tools/squashfs4/patches/170-add_support_for_LZMA_MAGIC_to_unsqashfs.patch
+index ad69b190ea9f1d2335d7b83e8b0a26700dd5c05c..bc7d6c7a4a06b7ed62233a263dce68d935317621 100644
+--- a/tools/squashfs4/patches/170-add_support_for_LZMA_MAGIC_to_unsqashfs.patch
++++ b/tools/squashfs4/patches/170-add_support_for_LZMA_MAGIC_to_unsqashfs.patch
+@@ -16,7 +16,7 @@
+  #define SQUASHFS_METADATA_LOG		13
+ --- a/squashfs-tools/unsquashfs.c
+ +++ b/squashfs-tools/unsquashfs.c
+-@@ -1463,10 +1463,12 @@ int read_super(char *source)
++@@ -1464,10 +1464,12 @@ int read_super(char *source)
+  	 */
+  	read_fs_bytes(fd, SQUASHFS_START, sizeof(struct squashfs_super_block),
+  		&sBlk_4);
+@@ -31,7 +31,7 @@
+  			sBlk_4.s_minor == 0) {
+  		s_ops.squashfs_opendir = squashfs_opendir_4;
+  		s_ops.read_fragment = read_fragment_4;
+-@@ -1479,7 +1481,11 @@ int read_super(char *source)
++@@ -1480,7 +1482,11 @@ int read_super(char *source)
+  		/*
+  		 * Check the compression type
+  		 */
+@@ -44,7 +44,7 @@
+  		return TRUE;
+  	}
+  
+-@@ -1494,8 +1500,10 @@ int read_super(char *source)
++@@ -1495,8 +1501,10 @@ int read_super(char *source)
+  	 * Check it is a SQUASHFS superblock
+  	 */
+  	swap = 0;
+@@ -57,7 +57,7 @@
+  			squashfs_super_block_3 sblk;
+  			ERROR("Reading a different endian SQUASHFS filesystem "
+  				"on %s\n", source);
+-@@ -1573,7 +1581,11 @@ int read_super(char *source)
++@@ -1574,7 +1582,11 @@ int read_super(char *source)
+  	/*
+  	 * 1.x, 2.x and 3.x filesystems use gzip compression.
+  	 */
+diff --git a/tools/squashfs4/patches/180-openbsd_compat.patch b/tools/squashfs4/patches/180-openbsd_compat.patch
+index b9c1b5925d8526454a6bed5139bf6301a5896c02..4f7afd89cc914af1e2a05a469256a651beb4892d 100644
+--- a/tools/squashfs4/patches/180-openbsd_compat.patch
++++ b/tools/squashfs4/patches/180-openbsd_compat.patch
+@@ -8,8 +8,8 @@
+ +#include <sys/param.h>
+ +#endif
+  #include <sys/types.h>
++ #include <sys/sysmacros.h>
+  #include <sys/stat.h>
+- #include <fcntl.h>
+ --- a/squashfs-tools/unsquashfs.h
+ +++ b/squashfs-tools/unsquashfs.h
+ @@ -25,6 +25,9 @@
+diff --git a/tools/squashfs4/patches/190-no_nonstatic_inline.patch b/tools/squashfs4/patches/190-no_nonstatic_inline.patch
+index 27ebc6a2639be8d3b303e34ab73e224f394d9b2d..8cab12083259492095016c8032a25b13b3fe8784 100644
+--- a/tools/squashfs4/patches/190-no_nonstatic_inline.patch
++++ b/tools/squashfs4/patches/190-no_nonstatic_inline.patch
+@@ -1,6 +1,6 @@
+ --- a/squashfs-tools/mksquashfs.c
+ +++ b/squashfs-tools/mksquashfs.c
+-@@ -735,13 +735,13 @@ void cache_block_put(struct file_buffer
++@@ -736,13 +736,13 @@ void cache_block_put(struct file_buffer
+  			+ (((char *)A) - data_cache)))
+  
+  
+@@ -16,7 +16,7 @@
+  {
+  	pthread_mutex_lock(&progress_mutex);
+  	pthread_cond_signal(&progress_wait);
+-@@ -749,7 +749,7 @@ inline void update_progress_bar()
++@@ -750,7 +750,7 @@ inline void update_progress_bar()
+  }
+  
+  
+@@ -25,7 +25,7 @@
+  {
+  	TRACE("Waiting for thread %d\n", i);
+  	while(thread[i] != 0)
+-@@ -3358,7 +3358,7 @@ struct inode_info *lookup_inode(struct s
++@@ -3359,7 +3359,7 @@ struct inode_info *lookup_inode(struct s
+  }
+  
+  
+diff --git a/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch b/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
+index 5cec51f7b7ea716b76fdb63db307728728f21f44..7411b97844978d5c7a4ec0030bd204a3fadb5c64 100644
+--- a/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
++++ b/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
+@@ -1,6 +1,6 @@
+ --- a/squashfs-tools/mksquashfs.c
+ +++ b/squashfs-tools/mksquashfs.c
+-@@ -175,6 +175,9 @@ unsigned int cache_bytes = 0, cache_size
++@@ -176,6 +176,9 @@ unsigned int cache_bytes = 0, cache_size
+  /* inode lookup table */
+  squashfs_inode *inode_lookup_table = NULL;
+  
+@@ -10,7 +10,7 @@
+  /* in memory directory data */
+  #define I_COUNT_SIZE		128
+  #define DIR_ENTRIES		32
+-@@ -2452,6 +2455,8 @@ again:
++@@ -2453,6 +2456,8 @@ again:
+  restat:
+  	fstat(file, &buf2);
+  	close(file);
+@@ -19,7 +19,7 @@
+  	if(read_size != buf2.st_size) {
+  		memcpy(buf, &buf2, sizeof(struct stat));
+  		file_buffer->error = 2;
+-@@ -3612,7 +3617,7 @@ void dir_scan(squashfs_inode *inode, cha
++@@ -3613,7 +3618,7 @@ void dir_scan(squashfs_inode *inode, cha
+  		buf.st_mode = S_IRWXU | S_IRWXG | S_IRWXO | S_IFDIR;
+  		buf.st_uid = getuid();
+  		buf.st_gid = getgid();
+@@ -28,7 +28,7 @@
+  		buf.st_dev = 0;
+  		buf.st_ino = 0;
+  		dir_ent->inode = lookup_inode(&buf);
+-@@ -3623,6 +3628,8 @@ void dir_scan(squashfs_inode *inode, cha
++@@ -3624,6 +3629,8 @@ void dir_scan(squashfs_inode *inode, cha
+  				pathname, strerror(errno));
+  			return;
+  		}
+@@ -37,7 +37,7 @@
+  		dir_ent->inode = lookup_inode(&buf);
+  	}
+  
+-@@ -3677,6 +3684,8 @@ struct dir_info *dir_scan1(char *pathnam
++@@ -3678,6 +3685,8 @@ struct dir_info *dir_scan1(char *pathnam
+  				filename, strerror(errno));
+  			continue;
+  		}
+@@ -46,7 +46,7 @@
+  
+  		if((buf.st_mode & S_IFMT) != S_IFREG &&
+  			(buf.st_mode & S_IFMT) != S_IFDIR &&
+-@@ -3795,7 +3804,7 @@ struct dir_info *dir_scan2(struct dir_in
++@@ -3796,7 +3805,7 @@ struct dir_info *dir_scan2(struct dir_in
+  		buf.st_gid = pseudo_ent->dev->gid;
+  		buf.st_rdev = makedev(pseudo_ent->dev->major,
+  			pseudo_ent->dev->minor);
+@@ -55,7 +55,7 @@
+  		buf.st_ino = pseudo_ino ++;
+  
+  		if(pseudo_ent->dev->type == 'f') {
+-@@ -4674,6 +4683,15 @@ int main(int argc, char *argv[])
++@@ -4675,6 +4684,15 @@ int main(int argc, char *argv[])
+  			progress = FALSE;
+  		else if(strcmp(argv[i], "-no-exports") == 0)
+  			exportable = FALSE;
+@@ -71,7 +71,7 @@
+  		else if(strcmp(argv[i], "-processors") == 0) {
+  			if((++i == argc) || (processors =
+  					strtol(argv[i], &b, 10), *b != '\0')) {
+-@@ -5314,7 +5332,7 @@ printOptions:
++@@ -5315,7 +5333,7 @@ printOptions:
+  	sBlk.flags = SQUASHFS_MKFLAGS(noI, noD, noF, noX, no_fragments,
+  		always_use_fragments, duplicate_checking, exportable,
+  		no_xattrs, comp_opts);

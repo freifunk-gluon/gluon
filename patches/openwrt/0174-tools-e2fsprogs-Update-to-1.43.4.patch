@@ -1,0 +1,51 @@
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Mon, 6 Feb 2017 20:05:36 +0100
+Subject: tools/e2fsprogs: Update to 1.43.4
+
+* Update to 1.43.4
+* Refresh patches
+* xz tarball which saves about 2M in size
+
+Changelog: http://e2fsprogs.sourceforge.net/e2fsprogs-release.html#1.43.4
+
+Tested by Etienne Haarsma (ar71xx), Daniel Engberg (kirkwood)
+
+Signed-off-by: Etienne Haarsma <bladeoner112@gmail.com>
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Signed-off-by: Felix Fietkau <nbd@nbd.name> [use @KERNEL instead of harcoded URL]
+(cherry picked from commit 34ba64fe708e45b7c042e2d273e66d4ce03df4e3)
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index fca90f2091b91dfde8a980e48a871dc8693551c2..a95edaba670656cc2f0e9f0b13bfe53fbe9e2047 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,12 +8,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.43.3
+-PKG_HASH:=ce8ef1bbb0d4730f170167284fda156ac9d6bf18db2750eb94af619a81b19927
++PKG_VERSION:=1.43.4
++PKG_HASH:=54b3f21123a531a6a536b9cdcc21344b0122a72790dbe4dacc98e64db25e4a24
+ PKG_RELEASE:=1
+ 
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=@SF/e2fsprogs
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
++PKG_SOURCE_URL:=@KERNEL/linux/kernel/people/tytso/e2fsprogs/v$(PKG_VERSION)/
+ 
+ HOST_BUILD_PARALLEL:=1
+ 
+diff --git a/tools/e2fsprogs/patches/010-old-libmagic.patch b/tools/e2fsprogs/patches/010-old-libmagic.patch
+index 9156b733729c6985a63672daca0887d4ed9ca550..11a7e180be8cb5c6e9d6809c08507afda02b7ff8 100644
+--- a/tools/e2fsprogs/patches/010-old-libmagic.patch
++++ b/tools/e2fsprogs/patches/010-old-libmagic.patch
+@@ -14,7 +14,7 @@ Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+ 
+ --- a/lib/support/plausible.c
+ +++ b/lib/support/plausible.c
+-@@ -247,7 +247,7 @@ int check_plausibility(const char *devic
++@@ -258,7 +258,7 @@ int check_plausibility(const char *devic
+  		return 0;
+  	}
+  

@@ -1,0 +1,81 @@
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Fri, 11 Dec 2015 19:21:43 +0000
+Subject: tools/squashfs4: refresh patches
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+SVN-Revision: 47869
+
+diff --git a/tools/squashfs4/patches/160-expose_lzma_xz_options.patch b/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
+index d6063969d274278df08046a5c73ee38aea1bd404..2fbd9548590ea17a4e14d29ddf1b47685a22caa9 100644
+--- a/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
++++ b/tools/squashfs4/patches/160-expose_lzma_xz_options.patch
+@@ -637,7 +637,7 @@
+  		}
+  
+  		name = argv[1];
+-@@ -76,190 +73,50 @@ static int xz_options(char *argv[], int 
++@@ -76,190 +73,50 @@ static int xz_options(char *argv[], int
+  			}
+  			if(bcj[i].name == NULL) {
+  				fprintf(stderr, "xz: -Xbcj unrecognised "
+@@ -864,7 +864,7 @@
+  		SQUASHFS_METADATA_SIZE;
+  
+  	filter[0].filter[0].id = LZMA_FILTER_LZMA2;
+-@@ -323,14 +181,25 @@ static int xz_compress(void *strm, void 
++@@ -323,14 +181,25 @@ static int xz_compress(void *strm, void
+          lzma_ret res = 0;
+  	struct xz_stream *stream = strm;
+  	struct filter *selected = NULL;
+diff --git a/tools/squashfs4/patches/180-openbsd_compat.patch b/tools/squashfs4/patches/180-openbsd_compat.patch
+index 6d7a857a05ab140753c6dc6fd52cadfb9a3f9ef8..b9c1b5925d8526454a6bed5139bf6301a5896c02 100644
+--- a/tools/squashfs4/patches/180-openbsd_compat.patch
++++ b/tools/squashfs4/patches/180-openbsd_compat.patch
+@@ -1,6 +1,5 @@
+-diff -Nur squashfs4.2.orig/squashfs-tools/mksquashfs.c squashfs4.2/squashfs-tools/mksquashfs.c
+---- squashfs4.2.orig/squashfs-tools/mksquashfs.c	Tue Mar  5 16:20:49 2013
+-+++ squashfs4.2/squashfs-tools/mksquashfs.c	Tue Mar  5 16:25:10 2013
++--- a/squashfs-tools/mksquashfs.c
+++++ b/squashfs-tools/mksquashfs.c
+ @@ -32,6 +32,9 @@
+  #include <stdio.h>
+  #include <stddef.h>
+@@ -11,9 +10,8 @@ diff -Nur squashfs4.2.orig/squashfs-tools/mksquashfs.c squashfs4.2/squashfs-tool
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+-diff -Nur squashfs4.2.orig/squashfs-tools/unsquashfs.h squashfs4.2/squashfs-tools/unsquashfs.h
+---- squashfs4.2.orig/squashfs-tools/unsquashfs.h	Tue Mar  5 16:20:49 2013
+-+++ squashfs4.2/squashfs-tools/unsquashfs.h	Tue Mar  5 16:25:57 2013
++--- a/squashfs-tools/unsquashfs.h
+++++ b/squashfs-tools/unsquashfs.h
+ @@ -25,6 +25,9 @@
+  #define TRUE 1
+  #define FALSE 0
+diff --git a/tools/squashfs4/patches/190-no_nonstatic_inline.patch b/tools/squashfs4/patches/190-no_nonstatic_inline.patch
+index 7b5808afab5de2a00e1b862f7405cb60f51c88b1..27ebc6a2639be8d3b303e34ab73e224f394d9b2d 100644
+--- a/tools/squashfs4/patches/190-no_nonstatic_inline.patch
++++ b/tools/squashfs4/patches/190-no_nonstatic_inline.patch
+@@ -1,6 +1,6 @@
+ --- a/squashfs-tools/mksquashfs.c
+ +++ b/squashfs-tools/mksquashfs.c
+-@@ -735,13 +735,13 @@ void cache_block_put(struct file_buffer 
++@@ -735,13 +735,13 @@ void cache_block_put(struct file_buffer
+  			+ (((char *)A) - data_cache)))
+  
+  
+diff --git a/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch b/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
+index 7ac1765eed22a371f8584e4a3968941eb923fa89..5cec51f7b7ea716b76fdb63db307728728f21f44 100644
+--- a/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
++++ b/tools/squashfs4/patches/200-add-fixed-timestamp-option.patch
+@@ -1,7 +1,5 @@
+-Index: squashfs4.2/squashfs-tools/mksquashfs.c
+-===================================================================
+---- squashfs4.2.orig/squashfs-tools/mksquashfs.c
+-+++ squashfs4.2/squashfs-tools/mksquashfs.c
++--- a/squashfs-tools/mksquashfs.c
+++++ b/squashfs-tools/mksquashfs.c
+ @@ -175,6 +175,9 @@ unsigned int cache_bytes = 0, cache_size
+  /* inode lookup table */
+  squashfs_inode *inode_lookup_table = NULL;

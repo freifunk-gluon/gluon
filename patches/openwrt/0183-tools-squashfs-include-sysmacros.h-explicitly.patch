@@ -1,0 +1,38 @@
+From: Alex Maclean <monkeh@monkeh.net>
+Date: Mon, 23 Oct 2017 13:47:55 +0100
+Subject: tools/squashfs: include sysmacros.h explicitly
+
+glibc is moving to remove the include of sys/sysmacros.h from
+sys/types.h, and some distros have done this early. Other libcs may
+already lack this include. Include sysmacros.h explicitly.
+
+Fixes: FS#1018
+
+Signed-off-by: Alex Maclean <monkeh@monkeh.net>
+
+diff --git a/tools/squashfs/patches/130-include_sysmacros.patch b/tools/squashfs/patches/130-include_sysmacros.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f0149d6f65f08cddce365b39f31310e383f437f5
+--- /dev/null
++++ b/tools/squashfs/patches/130-include_sysmacros.patch
+@@ -0,0 +1,20 @@
++--- a/squashfs-tools/mksquashfs.c
+++++ b/squashfs-tools/mksquashfs.c
++@@ -30,6 +30,7 @@
++ #include <unistd.h>
++ #include <stdio.h>
++ #include <sys/types.h>
+++#include <sys/sysmacros.h>
++ #include <sys/stat.h>
++ #include <fcntl.h>
++ #include <errno.h>
++--- a/squashfs-tools/unsquashfs.c
+++++ b/squashfs-tools/unsquashfs.c
++@@ -25,6 +25,7 @@
++ #define FALSE 0
++ #include <stdio.h>
++ #include <sys/types.h>
+++#include <sys/sysmacros.h>
++ #include <sys/stat.h>
++ #include <fcntl.h>
++ #include <errno.h>

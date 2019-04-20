@@ -1,0 +1,52 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Wed, 21 Dec 2016 22:25:41 +0100
+Subject: treewide: clean up and unify PKG_VERSION for git based downloads
+
+Also use default defintions for PKG_SOURCE_SUBDIR, PKG_SOURCE
+
+[linus.luessing@c0d3.blue: backport,
+ e2fsprogs/bison/m4/make-ext4fs/mtd-utils only]
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index c9ea4eddab7ba18aae7f2496bce78e48b0f48203..a886dc0a717a60cb7462853b5b4459c683cce0f5 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -8,16 +8,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=make-ext4fs
+-PKG_VERSION:=2016-08-14
+ 
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL=$(LEDE_GIT)/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
++PKG_SOURCE_DATE:=2016-08-14
+ PKG_SOURCE_VERSION:=484903e4332be6c317f531b008cb2a841a18c506
+-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_HASH:=5a4473e58dcaed1f41c2391d2326a67af356ca9a3a075fc3486d95276fb9a400
+-
+-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
++PKG_MIRROR_HASH:=d7ccd5e426b1d15331ff000a37dc15161f6eef594453e970fd584fcde5a25075
+ 
+ include $(INCLUDE_DIR)/host-build.mk
+ 
+diff --git a/tools/mtd-utils/Makefile b/tools/mtd-utils/Makefile
+index 4cee46e816ffcdd56c712c13f710a02f67651245..5d867eb56b1e8c8e8737b5922bb48097d0c96831 100644
+--- a/tools/mtd-utils/Makefile
++++ b/tools/mtd-utils/Makefile
+@@ -10,14 +10,10 @@ PKG_NAME:=mtd-utils
+ PKG_VERSION:=1.5.2
+ 
+ PKG_SOURCE_VERSION:=aea36417067dade75192bafa03af70b6eb2677b1
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
+ PKG_SOURCE_URL:=git://git.infradead.org/mtd-utils.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+ PKG_MIRROR_HASH:=e11b342b85a36b2e438a8412ec52f87621d3046aec1a93039f8c72de9990b2a7
+ 
+-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+-
+ include $(INCLUDE_DIR)/host-build.mk
+ 
+ HOST_CFLAGS += -I$(STAGING_DIR_HOST)/include/e2fsprogs

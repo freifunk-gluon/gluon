@@ -1,0 +1,24 @@
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Mon, 7 Aug 2017 04:42:21 +0200
+Subject: tools/e2fsprogs: Update to 1.43.5
+
+Update e2fsprogs to 1.43.5
+
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+(cherry picked from commit 8477d5454531a35306d57c123c89602fee71a07f)
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index a95edaba670656cc2f0e9f0b13bfe53fbe9e2047..04befc9c809da031a9b9a062a6eb4f73a19c65ca 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.43.4
+-PKG_HASH:=54b3f21123a531a6a536b9cdcc21344b0122a72790dbe4dacc98e64db25e4a24
++PKG_VERSION:=1.43.5
++PKG_HASH:=261f3d9ade383fbf032a19140c9c25e998cc0f71a1ae686614fb3ae0eb955a17
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz

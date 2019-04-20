@@ -1,0 +1,45 @@
+From: Alex Maclean <monkeh@monkeh.net>
+Date: Mon, 23 Oct 2017 13:47:33 +0100
+Subject: tools/mtd-utils: include sysmacros.h explicitly
+
+glibc is moving to remove the include of sys/sysmacros.h from
+sys/types.h, and some distros have done this early. Other libcs may
+already lack this include. Include sysmacros.h explicitly.
+
+Fixes: FS#1015
+
+Signed-off-by: Alex Maclean <monkeh@monkeh.net>
+[refresh patches]
+Signed-off-by: Mathias Kresin <dev@kresin.me>
+
+diff --git a/tools/mtd-utils/patches/120-include_sysmacros.patch b/tools/mtd-utils/patches/120-include_sysmacros.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..81ba1cfb2b875c6efeac9b703de7b3bae1537416
+--- /dev/null
++++ b/tools/mtd-utils/patches/120-include_sysmacros.patch
+@@ -0,0 +1,25 @@
++From 9a06f45ec71116d76ee4b268ebe1b33d45b06fc0 Mon Sep 17 00:00:00 2001
++From: Mike Frysinger <vapier@gentoo.org>
++Date: Sat, 16 Apr 2016 22:10:43 -0400
++Subject: [PATCH mtd-utils] include sys/sysmacros.h for major/minor/makedev
++
++These functions have always been defined in sys/sysmacros.h under
++Linux C libraries.  For some, including sys/types.h implicitly
++includes that as well, but glibc wants to deprecate that, and some
++others already have.  Include the header explicitly for the funcs.
++
++Signed-off-by: Mike Frysinger <vapier@gentoo.org>
++---
++ include/common.h | 1 +
++ 1 file changed, 1 insertion(+)
++
++--- a/include/common.h
+++++ b/include/common.h
++@@ -27,6 +27,7 @@
++ #include <fcntl.h>
++ #include <errno.h>
++ #include <inttypes.h>
+++#include <sys/sysmacros.h>
++ #include "version.h"
++ 
++ #ifndef PROGRAM_NAME

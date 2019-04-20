@@ -1,0 +1,29 @@
+From: Alexandru Ardelean <ardeleanalex@gmail.com>
+Date: Mon, 21 Nov 2016 17:39:20 +0200
+Subject: grub2: disable 'check-macro-version' build rule in 'po' build
+
+This seems to occur when gettext-full is built on the host-side
+and the autoreconf stuff re-generates some of the build files,
+except for the po/Makefile.in.in
+
+Signed-off-by: Alexandru Ardelean <ardeleanalex@gmail.com>
+
+diff --git a/package/boot/grub2/patches/101-disable-gettext-check-macro-version.patch b/package/boot/grub2/patches/101-disable-gettext-check-macro-version.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..4b850ed2a118c18530b78b03e001e56413a6d0e2
+--- /dev/null
++++ b/package/boot/grub2/patches/101-disable-gettext-check-macro-version.patch
+@@ -0,0 +1,13 @@
++diff --git a/po/Makefile.in.in b/po/Makefile.in.in
++index 3619458..060e0db 100644
++--- a/po/Makefile.in.in
+++++ b/po/Makefile.in.in
++@@ -97,7 +97,7 @@ CATALOGS = @CATALOGS@
++ 	mv t-$@ $@
++ 
++ 
++-all: check-macro-version all-@USE_NLS@
+++all: all-@USE_NLS@
++ 
++ all-yes: stamp-po
++ all-no:

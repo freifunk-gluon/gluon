@@ -1,0 +1,21 @@
+From: Felix Fietkau <nbd@openwrt.org>
+Date: Thu, 21 Jan 2016 11:46:18 +0000
+Subject: grub2: switch back to installing to STAGING_DIR_HOST
+
+Signed-off-by: Felix Fietkau <nbd@openwrt.org>
+
+SVN-Revision: 48424
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 3601dd86a9789c9788e7cdd4a9d029b0a239ebf7..92e2ba81438278775215d10c27d37b4cbce65d2b 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -48,6 +48,8 @@ define Package/grub2-editenv/description
+ 	Edit grub2 environment files.
+ endef
+ 
++HOST_BUILD_PREFIX := $(STAGING_DIR_HOST)
++
+ CONFIGURE_ARGS += \
+ 	--target=$(REAL_GNU_TARGET_NAME) \
+ 	--disable-werror \

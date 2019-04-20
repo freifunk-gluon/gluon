@@ -1,0 +1,19 @@
+From: Jo-Philipp Wich <jo@mein.io>
+Date: Sun, 14 Aug 2016 22:29:36 +0200
+Subject: tools: make_ext4fs: switch to LEDE git mirror
+
+Signed-off-by: Jo-Philipp Wich <jo@mein.io>
+
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index a880dd4c57fd4bb34290c512565675d3dcd0da07..f74f602ec984a4b8ab407a16bf6ad5920eb802d8 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -11,7 +11,7 @@ PKG_NAME:=make-ext4fs
+ PKG_VERSION:=2016-08-14
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+-PKG_SOURCE_URL:=http://git.openwrt.org/project/make_ext4fs.git
++PKG_SOURCE_URL=$(LEDE_GIT)/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_VERSION:=484903e4332be6c317f531b008cb2a841a18c506
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)

@@ -1,0 +1,88 @@
+From: Kevin Darbyshire-Bryant <kevin@darbyshire-bryant.me.uk>
+Date: Wed, 22 Jun 2016 21:37:23 +0100
+Subject: tools: e2fsprogs: bump to 1.43.1
+
+Bump e2fsprogs to v1.43.1 & refresh patches
+
+Signed-off-by: Kevin Darbyshire-Bryant <kevin@darbyshire-bryant.me.uk>
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index e1027599257a3765cbd43800060c2508e50194e0..1251361b3e05880a01448e44d22649bd5ba73cf6 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.42.13
+-PKG_MD5SUM:=bc759fc62666786f5436e2075beb3265
++PKG_VERSION:=1.43.1
++PKG_MD5SUM:=1775f3f0eed9dee1c5f39e08d1964a97
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+@@ -23,6 +23,7 @@ HOST_CFLAGS += $(FPIC)
+ 
+ HOST_CONFIGURE_ARGS += \
+ 	--disable-elf-shlibs \
++	--enable-libuuid \
+ 	--disable-tls \
+ 	--disable-nls
+ 
+diff --git a/tools/e2fsprogs/patches/002-dont-build-e4defrag.patch b/tools/e2fsprogs/patches/002-dont-build-e4defrag.patch
+index 9f6e7b1cefc7aa87c0ba13f0779a3d0fdfb75f64..2a7842f65543b653824d174f1fa9f11d0b24837a 100644
+--- a/tools/e2fsprogs/patches/002-dont-build-e4defrag.patch
++++ b/tools/e2fsprogs/patches/002-dont-build-e4defrag.patch
+@@ -8,4 +8,4 @@
+ +@DEFRAG_CMT@@LINUX_CMT@E4DEFRAG_PROG=
+  @DEFRAG_CMT@@LINUX_CMT@E4DEFRAG_MAN= e4defrag.8
+  
+- @IMAGER_CMT@E2IMAGE_PROG= e2image
++ @LINUX_CMT@E4CRYPT_PROG = e4crypt
+diff --git a/tools/e2fsprogs/patches/003-openbsd-compat.patch b/tools/e2fsprogs/patches/003-openbsd-compat.patch
+index ded0ecad77fa9f382493556eeaeaf9fbee9fc97d..492b8a88608bb21d6bececd12314b2ed7c0d817e 100644
+--- a/tools/e2fsprogs/patches/003-openbsd-compat.patch
++++ b/tools/e2fsprogs/patches/003-openbsd-compat.patch
+@@ -1,6 +1,6 @@
+ --- a/lib/blkid/getsize.c
+ +++ b/lib/blkid/getsize.c
+-@@ -25,6 +25,9 @@
++@@ -29,6 +29,9 @@
+  #include <fcntl.h>
+  #ifdef HAVE_SYS_IOCTL_H
+  #include <sys/ioctl.h>
+@@ -10,13 +10,3 @@
+  #endif
+  #ifdef HAVE_LINUX_FD_H
+  #include <linux/fd.h>
+---- a/lib/quota/mkquota.c
+-+++ b/lib/quota/mkquota.c
+-@@ -8,6 +8,7 @@
+- #include <sys/stat.h>
+- #include <unistd.h>
+- #include <errno.h>
+-+#include <stdint.h>
+- #include <string.h>
+- #include <fcntl.h>
+- 
+diff --git a/tools/e2fsprogs/patches/004-freebsd-compat.patch b/tools/e2fsprogs/patches/004-freebsd-compat.patch
+index c6435d49192bfa1f645f94e69baa62ccf1658d81..d102e1cd9c0966091da25fcbeb3d284c65ffc063 100644
+--- a/tools/e2fsprogs/patches/004-freebsd-compat.patch
++++ b/tools/e2fsprogs/patches/004-freebsd-compat.patch
+@@ -1,6 +1,6 @@
+ --- a/lib/ext2fs/tdb.c
+ +++ b/lib/ext2fs/tdb.c
+-@@ -56,7 +56,9 @@
++@@ -58,7 +58,9 @@ Last Changed Date: 2007-06-22 13:36:10 -
+  #include <utime.h>
+  #endif
+  #include <sys/stat.h>
+diff --git a/tools/e2fsprogs/patches/005-darwin-compat.patch b/tools/e2fsprogs/patches/005-darwin-compat.patch
+index c5d0e28c555f215b1953861a7e9ba8e881ed2e24..d84aa121ca540977c2973630a9ceb26a8a2e3a6c 100644
+--- a/tools/e2fsprogs/patches/005-darwin-compat.patch
++++ b/tools/e2fsprogs/patches/005-darwin-compat.patch
+@@ -20,4 +20,3 @@
+  #ifndef HAVE___U8
+  #define HAVE___U8
+  #ifdef __U8_TYPEDEF
+-

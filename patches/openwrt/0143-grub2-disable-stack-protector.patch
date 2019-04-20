@@ -1,0 +1,29 @@
+From: Jo-Philipp Wich <jow@openwrt.org>
+Date: Thu, 25 Jun 2015 11:20:39 +0000
+Subject: grub2: disable stack-protector
+
+- enabling "-fstack-protector" results in build errors
+- Upstream explicitly tests & disables it
+
+v2:
+- use override
+
+reference: upstream commit baa2a121e004a95a12e2bb7f2419de6625a30c2d
+
+Signed-off-by: Dirk Neukirchen <dirkneukirchen@web.de>
+
+SVN-Revision: 46126
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 203e426b7705026a4c4c94adfdfa9df35ecc731c..3601dd86a9789c9788e7cdd4a9d029b0a239ebf7 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -22,6 +22,8 @@ PKG_MD5SUM:=be62932eade308a364ea4bbc91295930
+ HOST_BUILD_PARALLEL:=1
+ PKG_BUILD_DEPENDS:=grub2/host
+ 
++PKG_SSP:=0
++
+ include $(INCLUDE_DIR)/host-build.mk
+ include $(INCLUDE_DIR)/package.mk
+ 

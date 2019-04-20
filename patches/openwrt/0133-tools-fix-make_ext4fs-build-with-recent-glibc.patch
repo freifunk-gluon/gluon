@@ -1,0 +1,50 @@
+From: Jo-Philipp Wich <jo@mein.io>
+Date: Mon, 25 Apr 2016 13:41:43 +0200
+Subject: tools: fix make_ext4fs build with recent glibc
+
+Update to latest make_ext4fs Git HEAD to fix build with recent glibc version
+which does not implicitely includes sysmacros.h anymore.
+
+Signed-off-by: Jo-Philipp Wich <jo@mein.io>
+
+diff --git a/target/linux/uml/Makefile b/target/linux/uml/Makefile
+index ab077036a38b2b8c4b20611e8c343efeb47dc5d2..89452b5ac058e497c2485ae1b6a61cdddcd0db13 100644
+--- a/target/linux/uml/Makefile
++++ b/target/linux/uml/Makefile
+@@ -18,6 +18,7 @@ ARCH:=$(shell uname -m | sed \
+ 	-e 's/sh[234]/sh/' \
+ 	-e 's/armeb/arm/' \
+ )
++ARCH_PACKAGES:=uml
+ BOARD:=uml
+ BOARDNAME:=User Mode Linux
+ FEATURES:=ext4 audio
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index ba988290879ced9709e6337b892a12329727c3ee..23989c047a6281d5f1d66ec687db54d14702edb0 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -1,5 +1,6 @@
+ #
+ # Copyright (C) 2015 OpenWrt.org
++# Copyright (C) 2016 LEDE project
+ #
+ # This is free software, licensed under the GNU General Public License v2.
+ # See /LICENSE for more information.
+@@ -7,14 +8,14 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=make-ext4fs
+-PKG_VERSION:=2015-12-02
++PKG_VERSION:=2016-04-25
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=http://git.openwrt.org/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_VERSION:=bd53eaafbc2a89a57b8adda38f53098a431fa8f4
++PKG_SOURCE_VERSION:=bf98b86a5df5fcfb658d77fd5e0897ca87a35e8e
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=742ed45a833c81de5732a3adb827cde5
++PKG_MIRROR_MD5SUM:=2c4161638d4ff3343e250321126d29e6
+ PKG_CAT:=zcat
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)

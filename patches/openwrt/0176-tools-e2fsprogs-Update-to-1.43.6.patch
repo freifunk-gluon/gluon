@@ -1,0 +1,133 @@
+From: Daniel Engberg <daniel.engberg.lists@pyret.net>
+Date: Fri, 8 Sep 2017 09:42:23 +0200
+Subject: tools/e2fsprogs: Update to 1.43.6
+
+Update e2fsprogs to 1.43.6
+* Remove FreeBSD patch as it's not needed, FreeBSD 9.1 is EoL and this
+  is compiling on FreeBSD 11.1.
+* Remove libmagic patch, RHEL 5 is EoL (End of Production Phase) since
+  March 31, 2017.
+
+Signed-off-by: Daniel Engberg <daniel.engberg.lists@pyret.net>
+(cherry picked from commit ed617fd8f2f39e18ad435883db5b4100e6f7f977)
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index 04befc9c809da031a9b9a062a6eb4f73a19c65ca..0c054b13cab1ebe13ddb0c9c347c589ad7ed05f2 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.43.5
+-PKG_HASH:=261f3d9ade383fbf032a19140c9c25e998cc0f71a1ae686614fb3ae0eb955a17
++PKG_VERSION:=1.43.6
++PKG_HASH:=c9b226234ee878a8d89951f3b155cec7416dd0ec09c932c855f1b1df8ad93402
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+diff --git a/tools/e2fsprogs/patches/004-darwin-compat.patch b/tools/e2fsprogs/patches/004-darwin-compat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d84aa121ca540977c2973630a9ceb26a8a2e3a6c
+--- /dev/null
++++ b/tools/e2fsprogs/patches/004-darwin-compat.patch
+@@ -0,0 +1,22 @@
++--- a/lib/blkid/blkid_types.h.in
+++++ b/lib/blkid/blkid_types.h.in
++@@ -9,6 +9,8 @@
++ 
++ @ASM_TYPES_HEADER@
++ 
+++#include <stdint.h>
+++
++ #ifndef HAVE___U8
++ #define HAVE___U8
++ #ifdef __U8_TYPEDEF
++--- a/lib/ext2fs/ext2_types.h.in
+++++ b/lib/ext2fs/ext2_types.h.in
++@@ -9,6 +9,8 @@
++ 
++ @ASM_TYPES_HEADER@
++ 
+++#include <stdint.h>
+++
++ #ifndef HAVE___U8
++ #define HAVE___U8
++ #ifdef __U8_TYPEDEF
+diff --git a/tools/e2fsprogs/patches/004-freebsd-compat.patch b/tools/e2fsprogs/patches/004-freebsd-compat.patch
+deleted file mode 100644
+index d102e1cd9c0966091da25fcbeb3d284c65ffc063..0000000000000000000000000000000000000000
+--- a/tools/e2fsprogs/patches/004-freebsd-compat.patch
++++ /dev/null
+@@ -1,12 +0,0 @@
+---- a/lib/ext2fs/tdb.c
+-+++ b/lib/ext2fs/tdb.c
+-@@ -58,7 +58,9 @@ Last Changed Date: 2007-06-22 13:36:10 -
+- #include <utime.h>
+- #endif
+- #include <sys/stat.h>
+-+#ifndef __FreeBSD__
+- #include <sys/file.h>
+-+#endif
+- #include <fcntl.h>
+- 
+- #ifdef HAVE_SYS_MMAN_H
+diff --git a/tools/e2fsprogs/patches/005-darwin-compat.patch b/tools/e2fsprogs/patches/005-darwin-compat.patch
+deleted file mode 100644
+index d84aa121ca540977c2973630a9ceb26a8a2e3a6c..0000000000000000000000000000000000000000
+--- a/tools/e2fsprogs/patches/005-darwin-compat.patch
++++ /dev/null
+@@ -1,22 +0,0 @@
+---- a/lib/blkid/blkid_types.h.in
+-+++ b/lib/blkid/blkid_types.h.in
+-@@ -9,6 +9,8 @@
+- 
+- @ASM_TYPES_HEADER@
+- 
+-+#include <stdint.h>
+-+
+- #ifndef HAVE___U8
+- #define HAVE___U8
+- #ifdef __U8_TYPEDEF
+---- a/lib/ext2fs/ext2_types.h.in
+-+++ b/lib/ext2fs/ext2_types.h.in
+-@@ -9,6 +9,8 @@
+- 
+- @ASM_TYPES_HEADER@
+- 
+-+#include <stdint.h>
+-+
+- #ifndef HAVE___U8
+- #define HAVE___U8
+- #ifdef __U8_TYPEDEF
+diff --git a/tools/e2fsprogs/patches/010-old-libmagic.patch b/tools/e2fsprogs/patches/010-old-libmagic.patch
+deleted file mode 100644
+index 11a7e180be8cb5c6e9d6809c08507afda02b7ff8..0000000000000000000000000000000000000000
+--- a/tools/e2fsprogs/patches/010-old-libmagic.patch
++++ /dev/null
+@@ -1,25 +0,0 @@
+-From b482eb7af94885b6bbad9329e40702c958d5b448 Mon Sep 17 00:00:00 2001
+-From: Hauke Mehrtens <hauke@hauke-m.de>
+-Date: Thu, 30 Jun 2016 19:53:03 +0200
+-Subject: [PATCH] fix build problem with very old libmagic
+-
+-The libmagic shipped with RedHat 5 does not define
+-MAGIC_NO_CHECK_ELF and MAGIC_NO_CHECK_COMPRESS. e2fsprogs should
+-check for that otherwise the build will fail.
+-
+-Signed-off-by: Hauke Mehrtens <hauke@hauke-m.de>
+----
+- lib/support/plausible.c | 2 +-
+- 1 file changed, 1 insertion(+), 1 deletion(-)
+-
+---- a/lib/support/plausible.c
+-+++ b/lib/support/plausible.c
+-@@ -258,7 +258,7 @@ int check_plausibility(const char *devic
+- 		return 0;
+- 	}
+- 
+--#ifdef HAVE_MAGIC_H
+-+#if defined(HAVE_MAGIC_H) && defined(MAGIC_NO_CHECK_ELF) && defined(MAGIC_NO_CHECK_COMPRESS)
+- 	if ((flags & CHECK_FS_EXIST) &&
+- 	    !getenv("E2FSPROGS_LIBMAGIC_SUPPRESS") &&
+- 	    magic_library_available()) {

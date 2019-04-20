@@ -1,0 +1,128 @@
+From: Felix Fietkau <nbd@nbd.name>
+Date: Fri, 16 Dec 2016 17:32:10 +0100
+Subject: treewide: clean up download hashes
+
+Replace *MD5SUM with *HASH, replace MD5 hashes with SHA256
+
+[linus.luessing@c0d3.blue: backport, for these tools only:
+ e2fsprogs, bison, m4, make_ext4fs, mtd-utils, findutils,
+ squashfs, squashfs4, grub2]
+Signed-off-by: Felix Fietkau <nbd@nbd.name>
+
+diff --git a/package/boot/grub2/Makefile b/package/boot/grub2/Makefile
+index 02e6637c32c5cd335a8622cd1a8e16cc15ed42ba..75f5e826c1828ea8209c649a98adf9cccf631840 100644
+--- a/package/boot/grub2/Makefile
++++ b/package/boot/grub2/Makefile
+@@ -17,7 +17,7 @@ PKG_SOURCE_URL:=http://alpha.gnu.org/gnu/grub \
+ 	http://gnualpha.uib.no/grub/ \
+ 	http://mirrors.fe.up.pt/pub/gnu-alpha/grub/ \
+ 	http://www.nic.funet.fi/pub/gnu/alpha/gnu/grub/
+-PKG_MD5SUM:=be62932eade308a364ea4bbc91295930
++PKG_HASH:=f6c702b2a8ea58f27a2b02928bb77973cb5a827af08f63db38c471c0a01b418d
+ 
+ HOST_BUILD_PARALLEL:=1
+ PKG_BUILD_DEPENDS:=grub2/host
+diff --git a/tools/bison/Makefile b/tools/bison/Makefile
+index b8ad32c561f2d95ade66465cefb5eeaec74f64c2..af5737c552384f2cfec919d0379ccd64e7d5ccbe 100644
+--- a/tools/bison/Makefile
++++ b/tools/bison/Makefile
+@@ -11,7 +11,7 @@ PKG_VERSION:=3.0.4
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL:=@GNU/$(PKG_NAME)
+-PKG_MD5SUM:=c342201de104cc9ce0a21e0ad10d4021
++PKG_HASH:=a72428c7917bdf9fa93cb8181c971b6e22834125848cf1d03ce10b1bb0716fe1
+ 
+ HOST_BUILD_PARALLEL:=1
+ 
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index ffe1782eb130dd4e3799bf8b36a9575222eb8831..fca90f2091b91dfde8a980e48a871dc8693551c2 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+ PKG_VERSION:=1.43.3
+-PKG_MD5SUM:=ec0cd4faac71b2fcf9f73733e4d50ead
++PKG_HASH:=ce8ef1bbb0d4730f170167284fda156ac9d6bf18db2750eb94af619a81b19927
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+diff --git a/tools/findutils/Makefile b/tools/findutils/Makefile
+index 188257925e613dc2e5302c442c939ae2fa7fc8fb..b07c53d9f674e88fbac0d00b363e1b615125d2ac 100644
+--- a/tools/findutils/Makefile
++++ b/tools/findutils/Makefile
+@@ -11,7 +11,7 @@ PKG_VERSION:=4.6.0
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=@GNU/$(PKG_NAME)
+-PKG_MD5SUM:=9936aa8009438ce185bea2694a997fc1
++PKG_HASH:=ded4c9f73731cd48fec3b6bdaccce896473b6d8e337e9612e16cf1431bb1169d
+ 
+ HOST_BUILD_PARALLEL:=1
+ 
+diff --git a/tools/m4/Makefile b/tools/m4/Makefile
+index 47c332123be4e2cd1a0f8c2c54ff85b8ec183050..6fe9e0b6e695924e0919fdd5158ce9db2919198c 100644
+--- a/tools/m4/Makefile
++++ b/tools/m4/Makefile
+@@ -11,7 +11,7 @@ PKG_VERSION:=1.4.17
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+ PKG_SOURCE_URL:=@GNU/$(PKG_NAME)
+-PKG_MD5SUM:=12a3c829301a4fd6586a57d3fcf196dc
++PKG_HASH:=f0543c3beb51fa6b3337d8025331591e0e18d8ec2886ed391f1aade43477d508
+ PKG_CAT:=xzcat
+ 
+ HOST_BUILD_PARALLEL:=1
+diff --git a/tools/make-ext4fs/Makefile b/tools/make-ext4fs/Makefile
+index 20cf6cfb60dde8db8a6ce3c5dfe0807822a899e7..c9ea4eddab7ba18aae7f2496bce78e48b0f48203 100644
+--- a/tools/make-ext4fs/Makefile
++++ b/tools/make-ext4fs/Makefile
+@@ -15,7 +15,7 @@ PKG_SOURCE_URL=$(LEDE_GIT)/project/make_ext4fs.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_VERSION:=484903e4332be6c317f531b008cb2a841a18c506
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=5a4473e58dcaed1f41c2391d2326a67af356ca9a3a075fc3486d95276fb9a400
++PKG_MIRROR_HASH:=5a4473e58dcaed1f41c2391d2326a67af356ca9a3a075fc3486d95276fb9a400
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+ 
+diff --git a/tools/mtd-utils/Makefile b/tools/mtd-utils/Makefile
+index 73301975a699b9d95bc203be202c3409b3f70f64..4cee46e816ffcdd56c712c13f710a02f67651245 100644
+--- a/tools/mtd-utils/Makefile
++++ b/tools/mtd-utils/Makefile
+@@ -14,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.xz
+ PKG_SOURCE_URL:=git://git.infradead.org/mtd-utils.git
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_MIRROR_MD5SUM:=e11b342b85a36b2e438a8412ec52f87621d3046aec1a93039f8c72de9990b2a7
++PKG_MIRROR_HASH:=e11b342b85a36b2e438a8412ec52f87621d3046aec1a93039f8c72de9990b2a7
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
+ 
+diff --git a/tools/squashfs/Makefile b/tools/squashfs/Makefile
+index 88416bd95d48fd7b43ec08a8ce5e8bb16a75bbe2..27adca1d7f4a23435fa730c471dab7ec05851e93 100644
+--- a/tools/squashfs/Makefile
++++ b/tools/squashfs/Makefile
+@@ -11,7 +11,7 @@ PKG_VERSION:=3.0
+ 
+ PKG_SOURCE:=$(PKG_NAME)$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=@SF/squashfs
+-PKG_MD5SUM:=9fd05d0bfbb712f5fb95edafea5bc733
++PKG_HASH:=39dbda43cf118536deb746c7730b468702d514a19f4cfab73b710e32908ddf20
+ PKG_CAT:=zcat
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)$(PKG_VERSION)
+diff --git a/tools/squashfs4/Makefile b/tools/squashfs4/Makefile
+index 50b70fbe1c90108a3bb21beefce7cd4f928ad5e8..e2c9fc91ccb9341f737907f4a58779b1235e3942 100644
+--- a/tools/squashfs4/Makefile
++++ b/tools/squashfs4/Makefile
+@@ -11,7 +11,7 @@ PKG_VERSION:=4.2
+ 
+ PKG_SOURCE:=squashfs$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=@SF/squashfs
+-PKG_MD5SUM:=1b7a781fb4cf8938842279bd3e8ee852
++PKG_HASH:=d9e0195aa922dbb665ed322b9aaa96e04a476ee650f39bbeadb0d00b24022e96
+ PKG_CAT:=zcat
+ 
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/squashfs$(PKG_VERSION)

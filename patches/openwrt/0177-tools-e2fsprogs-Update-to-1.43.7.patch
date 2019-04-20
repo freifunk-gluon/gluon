@@ -1,0 +1,24 @@
+From: Rosen Penev <rosenp@gmail.com>
+Date: Tue, 21 Nov 2017 21:57:53 -0800
+Subject: tools/e2fsprogs: Update to 1.43.7
+
+Compile tested on Fedora 27.
+
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+(cherry picked from commit 08cc9a2ca8536e9808b60145cd0e10bdcfc98aca)
+
+diff --git a/tools/e2fsprogs/Makefile b/tools/e2fsprogs/Makefile
+index 0c054b13cab1ebe13ddb0c9c347c589ad7ed05f2..0a48b5434d91d57fb85061e2f0f088512d3cc692 100644
+--- a/tools/e2fsprogs/Makefile
++++ b/tools/e2fsprogs/Makefile
+@@ -8,8 +8,8 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=e2fsprogs
+-PKG_VERSION:=1.43.6
+-PKG_HASH:=c9b226234ee878a8d89951f3b155cec7416dd0ec09c932c855f1b1df8ad93402
++PKG_VERSION:=1.43.7
++PKG_HASH:=2a6367289047d68d9ba6a46cf89ab9a1efd0556cde02a51ebaf414ff51edded9
+ PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
