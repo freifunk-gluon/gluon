@@ -891,7 +891,7 @@ index 0000000000000000000000000000000000000000..d7f8c5955caee15d373a342b75c8c194
 +	status = "okay";
 +};
 diff --git a/target/linux/ipq40xx/image/Makefile b/target/linux/ipq40xx/image/Makefile
-index 38600cf979242142aa08c30163e63d911f0ddb63..d1ee1004fddce6cf6007259229d8eee5b5b2ea3b 100644
+index 90d9dfeff0c228765ac24247ce72dec497dc63f0..cb79baccd21b3fa7f35df543bfca1a7d6ba8f83f 100644
 --- a/target/linux/ipq40xx/image/Makefile
 +++ b/target/linux/ipq40xx/image/Makefile
 @@ -1,6 +1,8 @@

@@ -267,7 +267,7 @@ index 640557532c8a02f37bc6f84ade8cb34e7172162d..4568b656219419e9ca1156c6716bd212
    # We cannot currently build a factory image. It is the sysupgrade image
    # prefixed with a header (which is actually written into the MTD device).
 diff --git a/target/linux/ipq40xx/image/Makefile b/target/linux/ipq40xx/image/Makefile
-index d1ee1004fddce6cf6007259229d8eee5b5b2ea3b..5cd11cae237b4658906652967d8120bd0dc080a8 100644
+index cb79baccd21b3fa7f35df543bfca1a7d6ba8f83f..a0f81f7d631b6c53a5612dee172e752a9fecd06d 100644
 --- a/target/linux/ipq40xx/image/Makefile
 +++ b/target/linux/ipq40xx/image/Makefile
 @@ -221,7 +221,7 @@ define Device/zyxel_nbg6617
