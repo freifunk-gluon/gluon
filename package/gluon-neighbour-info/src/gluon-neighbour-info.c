@@ -220,6 +220,16 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
+	if (client_addr.sin6_scope_id) {
+		if (setsockopt(
+			sock, IPPROTO_IPV6, IPV6_MULTICAST_IF,
+			&client_addr.sin6_scope_id, sizeof(client_addr.sin6_scope_id)
+		) < 0) {
+			perror("setsockopt");
+			exit(EXIT_FAILURE);
+		}
+	}
+
 	if (sse) {
 		fputs("Content-Type: text/event-stream\n\n", stdout);
 		fflush(stdout);
