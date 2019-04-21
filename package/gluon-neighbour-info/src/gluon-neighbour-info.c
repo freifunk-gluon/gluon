@@ -201,7 +201,8 @@ int main(int argc, char **argv) {
 			exit(EXIT_SUCCESS);
 			break;
 		default:
-			fprintf(stderr, "Invalid parameter %c ignored.\n", c);
+			fprintf(stderr, "Invalid parameter %c\n", optopt);
+			exit(EXIT_FAILURE);
 		}
 
 	if (request_string == NULL) {
