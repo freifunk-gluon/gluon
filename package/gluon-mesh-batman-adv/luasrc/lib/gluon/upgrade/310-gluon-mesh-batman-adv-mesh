@@ -1,33 +1,23 @@
 #!/usr/bin/lua
 
 local sysconfig = require 'gluon.sysconfig'
-local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
 
 
-local gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or 'client'
-local gw_sel_class = site.mesh.batman_adv.gw_sel_class()
-local routing_algo = site.mesh.batman_adv.routing_algo()
+local gw_mode = uci:get('network', 'gluon_bat0', 'gw_mode') or uci:get('network', 'bat0', 'gw_mode') or 'client'
 
 uci:delete('batman-adv-legacy', 'bat0')
 uci:save('batman-adv-legacy')
 
 uci:delete('batman-adv', 'bat0')
-uci:section('batman-adv', 'mesh', 'bat0', {
-	orig_interval = 5000,
-	gw_mode = gw_mode,
-	gw_sel_class = gw_sel_class,
-	hop_penalty = 15,
-	routing_algo = routing_algo,
-	multicast_mode = false,
-})
 uci:save('batman-adv')
 
 uci:delete('network', 'gluon_bat0')
 uci:section('network', 'interface', 'gluon_bat0', {
 	proto = 'gluon_bat0',
+	gw_mode = gw_mode,
 })
 
 uci:delete('network', 'bat0')
