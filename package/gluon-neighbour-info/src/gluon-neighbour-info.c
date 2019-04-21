@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
         break;
       case 'd':
         if (!inet_pton(AF_INET6, optarg, &client_addr.sin6_addr)) {
-          perror("Invalid IPv6 address. This message will probably confuse you");
+          fprintf(stderr, "Invalid destination address\n");
           exit(EXIT_FAILURE);
         }
         break;
