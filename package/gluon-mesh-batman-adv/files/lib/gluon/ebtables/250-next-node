@@ -7,6 +7,9 @@ local macaddr = client_bridge.next_node_macaddr()
 rule('FORWARD --logical-out br-client -i bat0 -o local-port -j DROP')
 rule('FORWARD --logical-out br-client -i local-port -o bat0 -j DROP')
 
+rule('PREROUTING --logical-in br-client -i bat0 -s ' .. macaddr .. ' -j DROP', 'nat')
+rule('PREROUTING --logical-in br-client -i bat0 -d ' .. macaddr .. ' -j DROP', 'nat')
+
 rule('FORWARD --logical-out br-client -o bat0 -d ' .. macaddr .. ' -j DROP')
 rule('OUTPUT --logical-out br-client -o bat0 -d ' .. macaddr .. ' -j DROP')
 rule('FORWARD --logical-out br-client -o bat0 -s ' .. macaddr .. ' -j DROP')
