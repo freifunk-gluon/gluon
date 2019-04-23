@@ -1,2 +1,2 @@
 #!/bin/sh
-/etc/init.d/network reload
+/etc/init.d/network restart
