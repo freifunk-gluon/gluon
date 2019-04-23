@@ -10,7 +10,7 @@ for script in *; do
 done
 
 if [ $err -eq 1 ]; then
-	echo 'One or more daemons failed to reload.'
+	echo 'One or more daemons failed to reload.' >&2
 	exit 1
 fi
 
