@@ -24,8 +24,8 @@ domain_switch : optional (needed for domains to switch)
 
 check_connection :
     targets :
-        - array of IPv6 addresses which are probed to determine if the node is
-	  connected to the mesh
+        - array of IPv6 addresses which are probed to determine if the node can
+          reach any time-servers to acquire the correct time
 
 Example::
 
@@ -41,3 +41,6 @@ Example::
       '2001:4860:4860::8844',
     },
   },
+
+Note: the package ``gluon-check-connection`` is installed as dependency but it can
+also be used stand-alone, e.g. to detect if a connection to the internet is working.
