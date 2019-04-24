@@ -1,10 +1,14 @@
 gluon-hoodselector
 ==================
 
-This package provides an automatism of selecting the right hood network in an
-intelligent way. This hood bases on geostationary fixed quadrants for
-batman-adv mesh networks. The Hoodselector makes it possible to build scaled
-decentralised mesh-networks.
+This package provides an automatism of selecting the right domain network in an
+intelligent way. The job of the hoodselector is to automatically detect in which
+domain the node is located by its geolocation settings. Therefore the domains
+needs to have geostationary fixed quadrants defined as polygons or rectangles.
+Based on this information the hoodselector will select a domain from a list of
+known domains and adjust the domain related settings e.g. VPN, wireless ...
+This package makes able to build scaled decentralised mesh-networks in a dynamical
+and easy extendable way.
 
 Background informations
 -----------------------
@@ -16,13 +20,13 @@ the batman-adv protocol, was rising, too. Inside the community there were some
 ideas like building separate firmwares for each region. This kind of solution
 would have problems with splitting regions again and problems with scattered
 nodes, which belong to an other region. Therefore we decided to develop a
-dynamic and decentralised management of regions called hoods.
-The Hoodselector's task is to choose the "right" hoods in an intelligent way
+dynamic and decentralised management of regions called domains.
+The Hoodselector's task is to choose the "right" domains in an intelligent way
 and to hold the network together and accessible.
 
-A hood is defined by geostationary fixed shapes by using longitude & latitude
+A domain is defined by geostationary fixed shapes by using longitude & latitude
 in combination with the domain configuration system. Below you can see a visual
-example of regional hoods:
+example of regional domain:
 
 .. image:: hoodmap.jpeg
 
@@ -37,39 +41,42 @@ of the process:
 The sequence of this diagramm is given the priority of running modes.
 Each mode will be explained seperatedly below.
 
-VPN mode
-^^^^^^^^
+geolocation mode
+^^^^^^^^^^^^^^^^
 
-This mode will be entered only if a router can see batman-adv gateways over VPN.
-Routers which have a VPN connection to a supernode will set their hood based on
-their position if they have one. If a node has a position which is outside of
-all defined shapes, it will set the default hood. If no position is set,
-the node will continue with the next mode. The VPN mode will be entered first.
-This way, the Hoodselector takes care of holding nodes around supernodes
-to ensure that nodes can at least reach the autoupdate server.
+This mode will be entered only if a node have set a geo location.
+Nodes which have a position will set their domain based on
+it. If a node has a position which is outside of all defined shapes,
+it will continue with the next mode. If no position is set,
+the node will continue with the next mode too.
 
-Hood
-----
+default domain mode
+^^^^^^^^^^^^^^^^^^^
 
-A hood bases on the related domain configuration with some additional
-configuration. There are two types of hoods: one without any defined shapes
+This mode will be entered if no other modes before fits.
+It will simply set the default domain.
+
+Domain shapes
+-------------
+
+There are two types of domainss: one without any defined shapes
 which has to be unique and others which contain shapes.
 
-* **default hood**
+* **default domain**
 
-defaulthood: The default hood doesn’t have shapes and is the inverted form of
-all other hoods with geo coordinates. It will be entered if no node matches to a
-real hood. A suggested approach is to define the "old" network as default hood
-and gradually migrate parts from there to shape defined hoods ("real hood").
+default domain: The default domain doesn’t have shapes and is the inverted form of
+all other domains with geo coordinates. It will be entered if no node matches to a
+real domain. A suggested approach is to define the "old" network as default domain
+and gradually migrate parts from there to shape defined domains ("real domain").
 
-* **real hood**
+* **real domains**
 
-A real hood contains shapes, which are described by three dimensional arrays and
-represents the geographical size of the real hood. There are two possible
+A real domain contains shapes, which are described by three dimensional arrays and
+represents the geographical size of the domain. There are two possible
 definitions of these shapes. The first one is using rectangulars so that only
 two coordinates per box are needed to reconstruct it (see below for an example).
 The second one is using polygons which can have multible edges.
-Each real hood can have multiple defined shapes.
+Each domain can have multiple defined shapes.
 
 .. image:: rectangle-example.svg
 
