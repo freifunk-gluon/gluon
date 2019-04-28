@@ -65,8 +65,20 @@ local function path_to_string(path)
 	return table.concat(path, '.')
 end
 
+local function format(val)
+	if type(val) == 'string' then
+		return string.format('%q', val)
+	else
+		return tostring(val)
+	end
+end
+
 local function array_to_string(array)
-	return '[' .. table.concat(array, ', ') .. ']'
+	local strings = {}
+	for i, v in ipairs(array) do
+		strings[i] = format(v)
+	end
+	return '[' .. table.concat(strings, ', ') .. ']'
 end
 
 function table_keys(tbl)
