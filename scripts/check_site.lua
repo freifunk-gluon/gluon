@@ -4,7 +4,6 @@ local function config_error(src, ...)
 	error(src .. ' error: ' .. string.format(...), 0)
 end
 
-
 local has_domains = (os.execute('ls -d "$IPKG_INSTROOT"/lib/gluon/domains/ >/dev/null 2>&1') == 0)
 
 
@@ -89,11 +88,7 @@ local function domain_src()
 	return 'domains/' .. domain_code .. '.conf'
 end
 
-local function var_error(path, val, msg)
-	if type(val) == 'string' then
-		val = string.format('%q', val)
-	end
-
+local function conf_src(path)
 	local src
 
 	if has_domains then
@@ -108,14 +103,21 @@ local function var_error(path, val, msg)
 		src = site_src()
 	end
 
+	return src
+end
+
+local function var_error(path, val, msg)
+	if type(val) == 'string' then
+		val = string.format('%q', val)
+	end
+
 	local found = 'unset'
 	if val ~= nil then
 		found = string.format('%s (a %s value)', tostring(val), type(val))
 	end
 
-	config_error(src, 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
+	config_error(conf_src(path), 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
 end
-
 
 function in_site(path)
 	if has_domains and loadpath(nil, domain, unpack(path)) ~= nil then
@@ -313,6 +315,20 @@ function need_domain_name(path)
 		f:close()
 		return true
 	end, nil, 'be a valid domain name')
+end
+
+function obsolete(path, msg)
+	local val = loadvar(path)
+	if val == nil then
+		return nil
+	end
+
+	if not msg then
+		msg = 'Check the release notes and documentation for details.'
+
+	end
+
+	config_error(conf_src(path), '%s is obsolete. %s', path_to_string(path), msg)
 end
 
 local check = assert(loadfile())
