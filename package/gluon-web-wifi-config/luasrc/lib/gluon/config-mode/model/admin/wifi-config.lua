@@ -1,4 +1,5 @@
 local iwinfo = require 'iwinfo'
+local site = require 'gluon.site'
 local uci = require("simple-uci").cursor()
 local util = require 'gluon.util'
 
@@ -8,7 +9,6 @@ local function txpower_list(phy)
 	local off  = tonumber(iwinfo.nl80211.txpower_offset(phy)) or 0
 	local new  = { }
 	local prev = -1
-	local _, val
 	for _, val in ipairs(list) do
 		local dbm = val.dbm + off
 		local mw  = math.floor(10 ^ (dbm / 10))
@@ -24,6 +24,17 @@ local function txpower_list(phy)
 	return new
 end
 
+local function has_5ghz_radio()
+	local result = false
+	uci:foreach('wireless', 'wifi-device', function(config)
+		local radio = config['.name']
+		local hwmode = uci:get('wireless', radio, 'hwmode')
+
+		result = result or (hwmode == '11a' or hwmode == '11na')
+	end)
+
+	return result
+end
 
 local f = Form(translate("WLAN"))
 
@@ -97,7 +108,57 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	end
 end)
 
+
+if has_5ghz_radio() then
+	local r = f:section(Section, translate("Outdoor Installation"), translate(
+		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
+		.. "and transmission power that conforms with the local regulatory requirements. "
+		.. "It also enables dynamic frequency selection (DFS; radar detection). At the "
+		.. "same time, mesh functionality is disabled as it requires neighbouring nodes "
+		.. "to stay on the same channel permanently."
+	))
+
+	local outdoor = r:option(Flag, 'outdoor', translate("Node will be installed outdoors"))
+	outdoor.default = uci:get_bool('gluon', 'wireless', 'outdoor')
+
+	function outdoor:write(data)
+		uci:set('gluon', 'wireless', 'outdoor', data)
+	end
+
+	uci:foreach('wireless', 'wifi-device', function(config)
+		local radio = config['.name']
+		local hwmode = uci:get('wireless', radio, 'hwmode')
+
+		if hwmode ~= '11a' and hwmode ~= '11na' then
+			return
+		end
+
+		local phy = util.find_phy(uci:get_all('wireless', radio))
+
+		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
+		ht:depends(outdoor, true)
+		ht.default = uci.get('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode') or 'default'
+
+		ht:value('default', translate("(default)"))
+		for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
+			if available then
+				ht:value(mode, mode)
+			end
+		end
+
+		function ht:write(data)
+			if data == 'default' then
+				data = nil
+			end
+			uci:set('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode', data)
+		end
+	end)
+end
+
+
 function f:write()
+	uci:commit('gluon')
+	os.execute('/lib/gluon/upgrade/200-wireless') 
 	uci:commit('wireless')
 end
 

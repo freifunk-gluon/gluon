@@ -166,6 +166,25 @@ wifi24 \: optional
 wifi5 \: optional
     Same as `wifi24` but for the 5Ghz radio.
 
+    Additionally a range of channels that are safe to use outsides on the 5 GHz band can
+    be set up through ``outdoor_chanlist``, which allows for a space-seperated list of
+    channels and channel ranges, seperated by a hyphen.
+    When set this offers the outdoor mode flag for 5 GHz radios in the config mode which
+    reconfigures the AP to select its channel from outdoor chanlist, while respecting
+    regulatory specifications, and  disables mesh on that radio.
+    The ``outdoors`` option in turn allows to configure when outdoor mode will be enabled.
+    When set to ``true`` all 5 GHz radios will use outdoor channels, while on ``false``
+    the outdoor mode will be completely disabled. The default setting is ``'preset'``,
+    which will enable outdoor mode automatically on outdoor-capable devices.
+    ::
+
+      wifi5 = {
+        channel = 44,
+        outdoor_chanlist = "100-140",
+
+        [...]
+      },
+
 next_node \: package
     Configuration of the local node feature of Gluon
     ::

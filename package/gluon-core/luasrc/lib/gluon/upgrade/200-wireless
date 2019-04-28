@@ -49,22 +49,37 @@ if not sysconfig.gluon_version then
 	end)
 end
 
+local function is_outdoor()
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
 local function get_channel(radio, config)
 	local channel
 	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
+		-- preserved channel always wins
 		channel = radio.channel
+	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
+		-- actual channel will be picked and probed from chanlist
+		channel = 'auto'
 	end
 
 	return channel or config.channel()
 end
 
 local function get_htmode(radio)
-       local phy = util.find_phy(radio)
-       if iwinfo.nl80211.hwmodelist(phy).ac then
-               return 'VHT20'
-       else
-               return 'HT20'
-       end
+	if (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
+		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
+		if outdoor_htmode ~= nil then
+			return outdoor_htmode
+		end
+	end
+
+	local phy = util.find_phy(radio)
+	if iwinfo.nl80211.hwmodelist(phy).ac then
+		return 'VHT20'
+	end
+
+	return 'HT20'
 end
 
 local function is_disabled(name)
@@ -207,31 +222,49 @@ util.foreach_radio(uci, function(radio, index, config)
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
 
-	local hwmode = radio.hwmode
-	if hwmode == '11g' or hwmode == '11ng' then
-		uci:set('wireless', radio_name, 'legacy_rates', false)
-	end
-
 	uci:delete('wireless', radio_name, 'supported_rates')
 	uci:delete('wireless', radio_name, 'basic_rate')
 
-	local ibss_disabled = is_disabled('ibss_' .. radio_name)
-	local mesh_disabled = is_disabled('mesh_' .. radio_name)
+	local hwmode = radio.hwmode
+	if hwmode == '11g' or hwmode == '11ng' then
+		uci:set('wireless', radio_name, 'legacy_rates', false)
+	elseif (hwmode == '11a' or hwmode == '11na') then
+		if is_outdoor() then
+			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
 
-	configure_ibss(config.ibss(), radio, index, suffix,
-		first_non_nil(
-			ibss_disabled,
-			mesh_disabled,
-			config.ibss.disabled(false)
-		)
-	)
-	configure_mesh(config.mesh(), radio, index, suffix,
-		first_non_nil(
-			mesh_disabled,
-			ibss_disabled,
-			config.mesh.disabled(false)
-		)
-	)
+			-- enforce outdoor channels by filtering the regdom for outdoor channels
+			local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
+			util.add_to_set(hostapd_options, 'country3=0x4f')
+			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
+
+			uci:delete('wireless', 'ibss_' .. radio_name)
+			uci:delete('wireless', 'mesh_' .. radio_name)
+		else
+			uci:delete('wireless', radio_name, 'channels')
+
+			local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
+			util.remove_from_set(hostapd_options, 'country3=0x4f')
+			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
+
+			local ibss_disabled = is_disabled('ibss_' .. radio_name)
+			local mesh_disabled = is_disabled('mesh_' .. radio_name)
+
+			configure_ibss(config.ibss(), radio, index, suffix,
+				first_non_nil(
+					ibss_disabled,
+					mesh_disabled,
+					config.ibss.disabled(false)
+				)
+			)
+			configure_mesh(config.mesh(), radio, index, suffix,
+				first_non_nil(
+					mesh_disabled,
+					ibss_disabled,
+					config.mesh.disabled(false)
+				)
+			)
+		end
+	end
 
 	fixup_wan(radio, index)
 end)
