@@ -119,13 +119,9 @@ local function conf_src(path)
 end
 
 local function var_error(path, val, msg)
-	if type(val) == 'string' then
-		val = string.format('%q', val)
-	end
-
 	local found = 'unset'
 	if val ~= nil then
-		found = string.format('%s (a %s value)', tostring(val), type(val))
+		found = string.format('%s (a %s value)', format(val), type(val))
 	end
 
 	config_error(conf_src(path), 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
