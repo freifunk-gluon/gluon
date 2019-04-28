@@ -131,19 +131,6 @@ wifi24 \: optional
     This will only affect new installations.
     Upgrades will not change the disabled state.
 
-    Additionally it is possible to configure the ``supported_rates`` and ``basic_rate``
-    of each radio. Both are optional, by default hostapd/driver dictate the rates.
-    If ``supported_rates`` is set, ``basic_rate`` is required, because ``basic_rate``
-    has to be a subset of ``supported_rates``. Possible values are: 
-
-    - 6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000 (OFDM)
-    - 1000, 5500, 11000 (legacy 802.11b, DSSS)
-
-    The example below disables legacy 802.11b rates (DSSS) for performance reasons.  
-    For backwards compatibility in 802.11, this setting only effects 802.11a/b/g rates. 
-    I.e in 802.11n 6 MBit/s is announced  all time. In 802.11ac the field is used to 
-    derive the length of a packet.
-
     ``ap`` requires a single parameter, a string, named ``ssid`` which sets the
     interface's ESSID. This is the WiFi the clients connect to.
 
@@ -162,8 +149,6 @@ wifi24 \: optional
 
        wifi24 = {
          channel = 11,
-         supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000},
-         basic_rate = {6000, 9000, 18000, 36000, 54000},
          ap = {
            ssid = 'alpha-centauri.freifunk.net',
          },

@@ -207,9 +207,13 @@ util.foreach_radio(uci, function(radio, index, config)
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
 
-	uci:set_list('wireless', radio_name, 'supported_rates', config.supported_rates())
-	uci:set_list('wireless', radio_name, 'basic_rate', config.basic_rate())
+	local hwmode = radio.hwmode
+	if hwmode == '11g' or hwmode == '11ng' then
+		uci:set('wireless', radio_name, 'legacy_rates', false)
+	end
 
+	uci:delete('wireless', radio_name, 'supported_rates')
+	uci:delete('wireless', radio_name, 'basic_rate')
 
 	local ibss_disabled = is_disabled('ibss_' .. radio_name)
 	local mesh_disabled = is_disabled('mesh_' .. radio_name)
