@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+
+local ap_password = site.wlan_encryption_psk()["ap"]
+local mesh_password = site.wlan_encryption_psk()["mesh"]
+
+
+uci:foreach('wireless', 'wifi-iface', function(wifi_if)
+    local ifname = wifi_if['.name']
+    if wifi_if.mode == 'ap' and ap_password ~= nil and ap_password ~= '' then
+      uci:set('wireless', ifname, 'encryption', 'psk2')
+      uci:set('wireless', ifname, 'key', ap_password)
+    elseif wifi_if.mode == "mesh" and mesh_password ~= nil and mesh_password ~= '' then
+      uci:set('wireless', ifname, 'encryption', 'psk2/aes')
+      uci:set('wireless', ifname,  'key', mesh_password)
+    end
+end)
+
+uci:save('wireless')
