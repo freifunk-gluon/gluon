@@ -1,0 +1,122 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"PO-Revision-Date: 2019-05-04 16:49+0200\n"
+"Last-Translator: jan <freifunk@yanosz.net>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: \n"
+"X-Generator: Poedit 1.8.11\n"
+
+msgid ""
+"<p /><span style=\"color:red\">You have already agreed to remote maintenance "
+"via automatic upgrades by downloading and using this software. <br /> You "
+"can disable automatic updates by selecting no branch. </span>"
+msgstr ""
+"<p /><span style=\"color:red\">Du hast Dich schon mit dem Download und der "
+"Benutzung dieser Firmware für eine Fernwartung mittels automatischer Updates "
+"entschieden. <br /> Du kannst den Auto-Updater deaktivieren, indem Du keinen "
+"Branch auswählst. </span>"
+
+msgid ""
+"<p /><span style=\"color:red\">You have already agreed to remote maintenance "
+"via automatic upgrades by downloading and using this software.</span>"
+msgstr ""
+"<p /><span style=\"color:red\">Du hast Dich schon mit dem Download und der "
+"Benutzung dieser Firmware für eine Fernwartung mittels automatischer Updates "
+"entschieden. </span>"
+
+msgid "<p />You have disabled automatic updates after giving consent."
+msgstr "<p />Du hast zugestimmt, aber die Updates ausgeschaltet."
+
+msgid "<p />You have manually disabled automatic updates after giving consent."
+msgstr ""
+"<p />Du hast zugestimmt, aber die Updates manuell ausgeschaltet (z.B. per "
+"shell)"
+
+msgid "Automatic updates"
+msgstr "Automatische Updates"
+
+msgid "Branch"
+msgstr "Branch"
+
+msgid "Disable - I do not agree"
+msgstr "Deaktivieren - ich stimme nicht zu"
+
+msgid "Enable - I agree"
+msgstr "Aktivieren - ich stimme zu"
+
+msgid ""
+"Node operators have the choice to allow remote maintenance. Interventions on "
+"the nodes via automatic firmware upgrades are done with explicit agreement "
+"of the respective operators."
+msgstr ""
+"Die Knotenbetreiber*innen haben die Wahl, sich für Fernwartung zu "
+"entscheiden. Eingriffe in die Knoten, z.B. Firmwareupdates oder andere "
+"Fernwartungsarbeiten geschehen immer mit dem ausdrücklichen Einverständnis "
+"der jeweiligen Betreibenden."
+
+msgid ""
+"Node operators have the choice to allow remote maintenance. Interventions on "
+"the nodes via automatic firmware upgrades are done with explicit agreement "
+"of the respective operators. You can configure automatic updates in the <a "
+"href=\"/cgi-bin/config/admin/autoupdater\"> Advanced settings</a> section."
+msgstr ""
+"Die Knotenbetreiber*innen haben die Wahl, sich für Fernwartung zu "
+"entscheiden. Eingriffe in die Knoten, z.B. Firmwareupdates oder andere "
+"Fernwartungsarbeiten geschehen immer mit dem ausdrücklichen Einverständnis "
+"der jeweiligen Betreibenden. Weitere Einstellungen findest Du im Bereich <a "
+"href=\"/cgi-bin/config/admin/autoupdater\">Erweiterte Einstellungen</a>."
+
+msgid ""
+"Pick a branch to receive updates from. If you disable automatic updates, "
+"this branch is used when executing autoupdater using the command shell. "
+"Selecting no branch disables automatic updates."
+msgstr ""
+"Wähle einen Branch aus, von dem Du automatisches Updates erhalten willst.  "
+"Falls automatische Updates deaktiviert sind, so wird der Branch als default "
+"verwendet, wenn Du den autoupdater von der Shell aus aufrufst. Ist der "
+"Branch leer, so werden keine automatischen Updates installiert."
+
+msgid "Remote Maintenance via Automatic Updates"
+msgstr "Fernwartung mittels automatischer Updates"
+
+msgid "autoupdater-freifunk:constent_assumed"
+msgstr ""
+
+msgid "autoupdater-freifunk:description"
+msgstr ""
+
+msgid "autoupdater-freifunk:disabled_on_shell"
+msgstr ""
+
+msgid "autoupdater-freifunk:option_consent"
+msgstr ""
+
+msgid "autoupdater-freifunk:option_dissent"
+msgstr ""
+
+msgid "autoupdater-freifunk:option_name"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:constent_assumed_admin"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:description_admin"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:disabled_on_shell_admin"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:option_consent"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:option_dissent"
+msgstr ""
+
+msgid "gluon-autoupdater-freifunk:option_name"
+msgstr ""

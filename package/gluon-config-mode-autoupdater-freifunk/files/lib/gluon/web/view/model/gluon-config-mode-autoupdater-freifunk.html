@@ -1,0 +1,46 @@
+<%
+local br = self.orientation == "horizontal" and '&#160;&#160;&#160;' or '<br />'
+local entries = self:entries()
+%>
+
+<% if self.widget == "select" then %>
+<select class="gluon-input-select" data-update="change"<%=
+attr("id", id) ..
+attr("name", id) ..
+attr("size", self.size) ..
+attr("data-type", "minlength(1)") ..
+attr("data-optional", self.optional)
+%>>
+<% for i, entry in pairs(entries) do -%>
+<option<%=
+attr("id", id.."."..entry.key) ..
+attr("value", entry.key) ..
+attr("data-index", i) ..
+attr("data-depends", self:deplist(entry.deps)) ..
+attr("selected", (self:cfgvalue() == entry.key) and "selected")
+%>><%|entry.value%></option>
+<%- end %>
+</select>
+<% elseif self.widget == "radio" then %>
+<div>
+    <% for i, entry in pairs(entries) do %>
+    <label<%=
+    attr("data-index", i) ..
+    attr("data-depends", self:deplist(entry.deps))
+    %>>
+    <input class="gluon-input-radio" data-update="click change" type="radio"<%=
+    attr("id", id.."."..entry.key) ..
+    attr("name", id) ..
+    attr("value", entry.key) ..
+    attr("checked", (self:cfgvalue() == entry.key) and "checked") ..
+    attr("disabled", (self.disabled) and "disabled")
+    %> />
+    <label<%= attr("for", id.."."..entry.key)..
+    attr("style",(self.disabled) and "background-color: #DDD")
+    %>></label>
+    <%|entry.value%>
+    </label>
+    <% if i ~= #entries then write(br) end %>
+    <% end %>
+</div>
+<% end %>
