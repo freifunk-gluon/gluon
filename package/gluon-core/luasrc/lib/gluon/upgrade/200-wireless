@@ -200,6 +200,29 @@ local function fixup_wan(radio, index)
 	uci:set('wireless', name, 'macaddr', macaddr)
 end
 
+local function configure_mesh_wireless(radio, index, config)
+	local radio_name = radio['.name']
+	local suffix = radio_name:match('^radio(%d+)$')
+
+	local ibss_disabled = is_disabled('ibss_' .. radio_name)
+	local mesh_disabled = is_disabled('mesh_' .. radio_name)
+
+	configure_ibss(config.ibss(), radio, index, suffix,
+		first_non_nil(
+			ibss_disabled,
+			mesh_disabled,
+			config.ibss.disabled(false)
+		)
+	)
+	configure_mesh(config.mesh(), radio, index, suffix,
+		first_non_nil(
+			mesh_disabled,
+			ibss_disabled,
+			config.mesh.disabled(false)
+		)
+	)
+end
+
 util.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
 
@@ -228,6 +251,7 @@ util.foreach_radio(uci, function(radio, index, config)
 	local hwmode = radio.hwmode
 	if hwmode == '11g' or hwmode == '11ng' then
 		uci:set('wireless', radio_name, 'legacy_rates', false)
+		configure_mesh_wireless(radio, index, config)
 	elseif (hwmode == '11a' or hwmode == '11na') then
 		if is_outdoor() then
 			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
@@ -246,23 +270,7 @@ util.foreach_radio(uci, function(radio, index, config)
 			util.remove_from_set(hostapd_options, 'country3=0x4f')
 			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
 
-			local ibss_disabled = is_disabled('ibss_' .. radio_name)
-			local mesh_disabled = is_disabled('mesh_' .. radio_name)
-
-			configure_ibss(config.ibss(), radio, index, suffix,
-				first_non_nil(
-					ibss_disabled,
-					mesh_disabled,
-					config.ibss.disabled(false)
-				)
-			)
-			configure_mesh(config.mesh(), radio, index, suffix,
-				first_non_nil(
-					mesh_disabled,
-					ibss_disabled,
-					config.mesh.disabled(false)
-				)
-			)
+			configure_mesh_wireless(radio, index, config)
 		end
 	end
 
