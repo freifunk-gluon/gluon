@@ -56,7 +56,7 @@ function M.get_domain_by_geo(jdomains,geo)
 			local nesting = 1
 			for _, area in pairs(domain.domain.hoodselector.shapes) do
 				-- Convert rectangle, defined by to points, into polygon
-				if #area = 2 then
+				if #area == 2 then
 					area = math_polygon.two_point_rec_to_poly(area)
 				end
 				if (math_polygon.point_in_polygon(area,geo) == 1) then
