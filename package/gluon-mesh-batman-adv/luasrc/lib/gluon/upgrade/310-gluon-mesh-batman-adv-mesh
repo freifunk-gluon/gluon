@@ -19,7 +19,7 @@ uci:section('batman-adv', 'mesh', 'bat0', {
 	gw_sel_class = gw_sel_class,
 	hop_penalty = 15,
 	routing_algo = routing_algo,
-	multicast_mode = false,
+	multicast_mode = true,
 })
 uci:save('batman-adv')
 
