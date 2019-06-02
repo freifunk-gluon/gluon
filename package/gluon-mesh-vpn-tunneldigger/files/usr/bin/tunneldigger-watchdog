@@ -1,21 +1,21 @@
 #!/usr/bin/lua
 
-function restartTunneldigger()
+function restart_tunneldigger()
 	io.popen('logger -t tunneldigger-watchdog "Restarting Tunneldigger."')
 	os.execute("/etc/init.d/tunneldigger restart")
 end
 
-function readPidFile()
+function read_pid_file()
 	local pidFile = io.open("/var/run/tunneldigger.mesh-vpn.pid", "r")
-	local returnPid = "0"
-	if pidFile~=nil then 
-		returnPid = pidFile:read("*l") 
-		io.close(pidFile)
+	if not pidFile then
+		return nil
 	end
+	returnPid = pidFile:read("*l") 
+	io.close(pidFile)
 	return returnPid
 end
 
-function checkForMeshVpnNeighbours()
+function check_for_mesh_vpn_neighbours()
 	local handleBatctl = io.popen("batctl o", 'r')
 	if handleBatctl~=nil then
 		for line in handleBatctl:lines() do
@@ -33,12 +33,12 @@ local uci = require('simple-uci').cursor()
 if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
 	if io.popen("pgrep tunneldigger"):read("*l") ~= readPidFile() then
 		io.popen('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
-		restartTunneldigger()
+		restart_tunneldigger()
 		return
 	end
-	if checkForMeshVpnNeighbours() ~= true then
+	if check_for_mesh_vpn_neighbours() ~= true then
 		io.popen('logger -t tunneldigger-watchdog "No vpn-mesh neighbours found."')
-		restartTunneldigger()
+		restart_tunneldigger()
 		return
 	end
 end
