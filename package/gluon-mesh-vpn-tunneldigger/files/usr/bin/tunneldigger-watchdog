@@ -17,16 +17,16 @@ end
 
 function getNeighbourCount()
 	local handleBatctl = io.popen("batctl o", 'r')
-        if handleBatctl~=nil then
-                for line in handleBatctl:lines() do
-                        if line:find('mesh%-vpn') then
+	if handleBatctl~=nil then
+		for line in handleBatctl:lines() do
+			if line:find('mesh%-vpn') then
 				handleBatctl.close()
-                                return 1
-                        end
-                end
-        end
+				return 1
+			end
+		end
+	end
 	handleBatctl.close()
-        return nil
+	return nil
 end
 
 local uci = require('simple-uci').cursor()
@@ -36,9 +36,9 @@ if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
 		restartTunneldigger()
 		return
 	end
-        if getNeighbourCount() ~= 1 then
+	if getNeighbourCount() ~= 1 then
 		io.popen('logger -t tunneldigger-watchdog "No vpn-mesh neighbours found."')
 		restartTunneldigger()
 		return
-        end
+	end
 end
