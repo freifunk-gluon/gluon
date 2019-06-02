@@ -1,0 +1,43 @@
+#!/usr/bin/lua
+
+function restartTunneldigger()
+	io.popen('logger -t tunneldigger-watchdog "Restarting Tunneldigger."')
+	os.execute("/etc/init.d/tunneldigger restart")
+end
+
+function readPidFile()
+	local pidFile = io.open("/var/run/tunneldigger.mesh-vpn.pid", "r")
+	local returnPid = "0"
+	if pidFile~=nil then 
+		returnPid = pidFile:read("*l") 
+		io.close(pidFile)
+	end
+	return returnPid
+end
+
+function getNeighbourCount()
+        local list = io.lines("/sys/kernel/debug/batman_adv/bat0/originators")
+        if list~=nil then
+                for line in list do
+                        if line:find('mesh%-vpn') then
+                                return 1
+                        end
+                end
+        end
+        return nil
+end
+
+local uci = require('simple-uci').cursor()
+local tunneldiggerEnabled = uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') 
+if tunneldiggerEnabled then
+	if io.popen("pgrep tunneldigger"):read("*l") ~= readPidFile() then
+		io.popen('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
+		restartTunneldigger()
+		return
+	end
+        if getNeighbourCount() ~= 1 then
+		io.popen('logger -t tunneldigger-watchdog "No vpn-mesh neighbours found."')
+		restartTunneldigger()
+		return
+        end
+end
