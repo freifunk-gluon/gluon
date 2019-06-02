@@ -15,18 +15,18 @@ function readPidFile()
 	return returnPid
 end
 
-function getNeighbourCount()
+function checkForMeshVpnNeighbours()
 	local handleBatctl = io.popen("batctl o", 'r')
 	if handleBatctl~=nil then
 		for line in handleBatctl:lines() do
 			if line:find('mesh%-vpn') then
 				handleBatctl.close()
-				return 1
+				return true
 			end
 		end
 	end
 	handleBatctl.close()
-	return nil
+	return false
 end
 
 local uci = require('simple-uci').cursor()
@@ -36,7 +36,7 @@ if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
 		restartTunneldigger()
 		return
 	end
-	if getNeighbourCount() ~= 1 then
+	if checkForMeshVpnNeighbours() ~= true then
 		io.popen('logger -t tunneldigger-watchdog "No vpn-mesh neighbours found."')
 		restartTunneldigger()
 		return
