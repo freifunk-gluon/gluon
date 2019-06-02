@@ -17,7 +17,7 @@ end
 
 function check_for_mesh_vpn_neighbours()
 	local handle = io.popen("batctl o", 'r')
-	if handle~=nil then
+	if not handle then
 		for line in handle:lines() do
 			if line:find('mesh%-vpn') then
 				handle:close()
