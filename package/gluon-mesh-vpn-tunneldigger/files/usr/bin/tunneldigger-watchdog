@@ -16,20 +16,21 @@ function readPidFile()
 end
 
 function getNeighbourCount()
-        local list = io.lines("/sys/kernel/debug/batman_adv/bat0/originators")
-        if list~=nil then
-                for line in list do
+	local handleBatctl = io.popen("batctl o", 'r')
+        if handleBatctl~=nil then
+                for line in handleBatctl:lines() do
                         if line:find('mesh%-vpn') then
+				handleBatctl.close()
                                 return 1
                         end
                 end
         end
+	handleBatctl.close()
         return nil
 end
 
 local uci = require('simple-uci').cursor()
-local tunneldiggerEnabled = uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') 
-if tunneldiggerEnabled then
+if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
 	if io.popen("pgrep tunneldigger"):read("*l") ~= readPidFile() then
 		io.popen('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
 		restartTunneldigger()
