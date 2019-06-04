@@ -1,5 +1,7 @@
 #!/usr/bin/lua
 
+local uci = require('simple-uci').cursor()
+
 function restart_tunneldigger()
 	io.popen('logger -t tunneldigger-watchdog "Restarting Tunneldigger."')
 	os.execute('/etc/init.d/tunneldigger restart')
@@ -30,7 +32,6 @@ function has_mesh_vpn_neighbours()
 	return false
 end
 
-local uci = require('simple-uci').cursor()
 if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
 	if io.popen('pgrep tunneldigger'):read('*l') ~= read_pid_file() then
 		io.popen('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
