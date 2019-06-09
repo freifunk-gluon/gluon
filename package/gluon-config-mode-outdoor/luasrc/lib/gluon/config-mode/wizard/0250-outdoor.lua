@@ -14,7 +14,7 @@ return function(form, uci)
 	))
 
 	local outdoor = section:option(Flag, 'outdoor', pkg_i18n.translate("Node will be installed outdoors"))
-	outdoor.default = outdoor_mode
+	outdoor.default = uci:get_bool('gluon', 'wireless', 'outdoor')
 
 	function outdoor:write(data)
 		if data ~= outdoor_mode then
