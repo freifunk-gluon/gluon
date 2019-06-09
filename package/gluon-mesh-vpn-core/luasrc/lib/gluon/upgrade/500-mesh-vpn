@@ -52,7 +52,7 @@ uci:save('firewall')
 local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
 local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
 
-local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_tunneldigger = (not has_fastd) and unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
 local tunneldigger_enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
 
 local enabled
