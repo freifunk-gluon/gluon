@@ -13,8 +13,9 @@ return function(form, uci)
 		.. "to comply with local frequency regulations."
 	))
 
+	local outdoor_mode = uci:get_bool('gluon', 'wireless', 'outdoor')
 	local outdoor = section:option(Flag, 'outdoor', pkg_i18n.translate("Node will be installed outdoors"))
-	outdoor.default = uci:get_bool('gluon', 'wireless', 'outdoor')
+	outdoor.default = outdoor_mode
 
 	function outdoor:write(data)
 		if data ~= outdoor_mode then
