@@ -20,11 +20,6 @@ uci:section('network', 'interface', 'mesh_vpn', {
 uci:save('network')
 
 
-if unistd.access('/etc/config/gluon-simple-tc') then
-	os.rename('/etc/config/gluon-simple-tc', '/etc/config/simple-tc')
-end
-
-
 -- The previously used user and group are removed, we now have a generic group
 users.remove_user('gluon-fastd')
 users.remove_group('gluon-fastd')
