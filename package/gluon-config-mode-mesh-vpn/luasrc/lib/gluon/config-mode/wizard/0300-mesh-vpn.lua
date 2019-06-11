@@ -24,54 +24,39 @@ return function(form, uci)
 	local o
 
 	local meshvpn = s:option(Flag, "meshvpn", pkg_i18n.translate("Use internet connection (mesh VPN)"))
-	meshvpn.default = uci:get_bool("fastd", "mesh_vpn", "enabled") or uci:get_bool("tunneldigger", "mesh_vpn", "enabled")
+	meshvpn.default = uci:get_bool("gluon", "mesh_vpn", "enabled")
 	function meshvpn:write(data)
-		if has_fastd then
-			uci:set("fastd", "mesh_vpn", "enabled", data)
-		end
-		if has_tunneldigger then
-			uci:set("tunneldigger", "mesh_vpn", "enabled", data)
-		end
+		uci:set("gluon", "mesh_vpn", "enabled", data)
 	end
 
 	local limit = s:option(Flag, "limit_enabled", pkg_i18n.translate("Limit bandwidth"))
 	limit:depends(meshvpn, true)
-	limit.default = uci:get_bool("simple-tc", "mesh_vpn", "enabled")
+	limit.default = uci:get_bool("gluon", "mesh_vpn", "limit_enabled")
 	function limit:write(data)
-		uci:set("simple-tc", "mesh_vpn", "interface")
-		uci:set("simple-tc", "mesh_vpn", "enabled", data)
-		uci:set("simple-tc", "mesh_vpn", "ifname", "mesh-vpn")
-		if not data and has_tunneldigger then
-			uci:delete("tunneldigger", "mesh_vpn", "limit_bw_down")
-		end
+		uci:set("gluon", "mesh_vpn", "limit_enabled", data)
 	end
 
 	o = s:option(Value, "limit_ingress", pkg_i18n.translate("Downstream (kbit/s)"))
 	o:depends(limit, true)
-	o.default = uci:get("simple-tc", "mesh_vpn", "limit_ingress")
-	if has_tunneldigger then
-		-- Check if limit_bw_down exists. If not, take the value from limit_ingress
-		local limit_bw_down = uci:get("tunneldigger", "mesh_vpn", "limit_bw_down")
-		if limit_bw_down ~= nil then
-			o.default = limit_bw_down
-		end
-	end
+	o.default = uci:get("gluon", "mesh_vpn", "limit_ingress")
 	o.datatype = "uinteger"
 	function o:write(data)
-		if has_tunneldigger then
-			uci:set("tunneldigger", "mesh_vpn", "limit_bw_down", data)
-		else
-			uci:set("simple-tc", "mesh_vpn", "limit_ingress", data)
-		end
+		uci:set("gluon", "mesh_vpn", "limit_ingress", data)
 	end
 
 	o = s:option(Value, "limit_egress", pkg_i18n.translate("Upstream (kbit/s)"))
 	o:depends(limit, true)
-	o.default = uci:get("simple-tc", "mesh_vpn", "limit_egress")
+	o.default = uci:get("gluon", "mesh_vpn", "limit_egress")
 	o.datatype = "uinteger"
 	function o:write(data)
-		uci:set("simple-tc", "mesh_vpn", "limit_egress", data)
+		uci:set("gluon", "mesh_vpn", "limit_egress", data)
 	end
 
-	return {'fastd', 'tunneldigger', 'simple-tc'}
+	function s:handle()
+		Section.handle(s)
+		uci:save('gluon')
+		os.execute('exec /lib/gluon/mesh-vpn/update-config')
+	end
+
+	return {'gluon', 'fastd', 'tunneldigger', 'simple-tc'}
 end
