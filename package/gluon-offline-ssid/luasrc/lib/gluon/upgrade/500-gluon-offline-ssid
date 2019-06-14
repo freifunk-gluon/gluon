@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+
+local uci = require('simple-uci').cursor()
+
+if site.offline_ssid ~= nil then
+	local site_disabled = site.offline_ssid.disabled() or '0'
+
+	uci:section('gluon-offline-ssid', 'settings', 'settings', {
+		disabled          = uci:get('gluon-offline-ssid', 'settings', 'disabled') or site_disabled,
+		switch_timeframe  = site.offline_ssid.switch_timeframe() or '30',
+		first             = site.offline_ssid.first() or '5',
+		prefix            = site.offline_ssid.prefix() or 'Offline_',
+		suffix            = site.offline_ssid.suffix() or 'nodename',
+		tq_limit_enabled  = site.offline_ssid.tq_limit_enabled() or false,
+		tq_limit_max      = site.offline_ssid.tq_limit_max() or 45,
+		tq_limit_min      = site.offline_ssid.tq_limit_min() or 35,
+	})
+	uci:save('gluon-offline-ssid')
+end

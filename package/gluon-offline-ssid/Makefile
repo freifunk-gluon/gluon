@@ -1,9 +1,9 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gluon-ssid-changer
-PKG_VERSION:=5
+PKG_NAME:=gluon-offline-ssid
+PKG_VERSION:=7
 
-include $(TOPDIR)/../package/gluon.mk
+include ../gluon.mk
 
 define Package/$(PKG_NAME)
   TITLE:=changes the SSID to an Offline-SSID so clients don't connect to an offline WiFi
@@ -18,19 +18,5 @@ define Package/$(PKG_NAME)/description
   and it will change from online to Offline-SSID once per definable timeframe at
   most.
 endef
-
-
-define Build/Compile
-	$(call Gluon/Build/Compile)
-	./gluonShellDiet.sh shsrc/ssid-changer.sh > $(PKG_BUILD_DIR)/ssid-changer.sh
-endef
-
-define Package/$(PKG_NAME)/install
-	$(Gluon/Build/Install)
-
-	$(INSTALL_DIR) $(1)/lib/gluon/ssid-changer
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ssid-changer.sh $(1)/lib/gluon/ssid-changer/
-endef
-
 
 $(eval $(call BuildPackageGluon,$(PKG_NAME)))
