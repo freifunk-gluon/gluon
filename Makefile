@@ -87,18 +87,14 @@ GLUON_CONFIG_VARS := \
 	BOARD='$(BOARD)' \
 	SUBTARGET='$(SUBTARGET)'
 
-OPENWRT_TARGET := $(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
-export OPENWRT_TARGET
-
-
-CheckTarget := [ '$(OPENWRT_TARGET)' ] \
+CheckTarget := [ '$(BOARD)' ] \
 	|| (echo 'Please set GLUON_TARGET to a valid target. Gluon supports the following targets:'; $(foreach target,$(GLUON_TARGETS),echo ' * $(target)';) false)
 
 CheckExternal := test -d openwrt || (echo 'You don'"'"'t seem to have obtained the external repositories needed by Gluon; please call `make update` first!'; false)
 
 define CheckSite
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) scripts/site_config.lua \
+	@GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) -e 'assert(dofile("scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))' \
 		|| (echo 'Your site configuration ($(1).conf) did not pass validation.'; false)
 
 endef
@@ -123,18 +119,6 @@ define merge_packages
 endef
 $(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
 
-config: FORCE
-	@$(CheckExternal)
-	@$(CheckTarget)
-
-	@$(GLUON_CONFIG_VARS) \
-		scripts/target_config.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)' \
-		> openwrt/.config
-	+@$(OPENWRTMAKE) defconfig
-
-	@$(GLUON_CONFIG_VARS) \
-		scripts/target_config_check.sh '$(GLUON_TARGET)' '$(GLUON_PACKAGES)'
-
 
 LUA := openwrt/staging_dir/hostpkg/bin/lua
 
@@ -145,14 +129,27 @@ $(LUA):
 	+@$(OPENWRTMAKE) tools/install
 	+@$(OPENWRTMAKE) package/lua/host/compile
 
-prepare-target: config $(LUA) ;
 
-all: prepare-target
+config: $(LUA) FORCE
+	@$(CheckExternal)
+	@$(CheckTarget)
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),$(call CheckSite,$(conf)))
 
-	@scripts/clean_output.sh
+	@$(GLUON_CONFIG_VARS) \
+		$(LUA) scripts/target_config.lua '$(GLUON_TARGET)' '$(GLUON_PACKAGES)' \
+		> openwrt/.config
+	+@$(OPENWRTMAKE) defconfig
+
+	@$(GLUON_CONFIG_VARS) \
+		$(LUA) scripts/target_config_check.lua '$(GLUON_TARGET)' '$(GLUON_PACKAGES)'
+
+
+all: config
+	@$(GLUON_CONFIG_VARS) \
+		$(LUA) scripts/clean_output.lua
 	+@$(OPENWRTMAKE)
-	@GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/copy_output.sh '$(GLUON_TARGET)'
+	@$(GLUON_CONFIG_VARS) \
+		$(LUA) scripts/copy_output.lua '$(GLUON_TARGET)'
 
 clean download: config
 	+@$(OPENWRTMAKE) $@
@@ -173,7 +170,7 @@ manifest: $(LUA) FORCE
 		echo 'PRIORITY=$(GLUON_PRIORITY)' && \
 		echo && \
 		$(foreach GLUON_TARGET,$(GLUON_TARGETS), \
-			GLUON_SITEDIR='$(GLUON_SITEDIR)' scripts/generate_manifest.sh '$(GLUON_TARGET)' && \
+			GLUON_SITEDIR='$(GLUON_SITEDIR)' $(LUA) scripts/generate_manifest.lua '$(GLUON_TARGET)' && \
 		) : \
 	) > 'tmp/$(GLUON_BRANCH).manifest.tmp'
 

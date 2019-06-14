@@ -1,14 +1,31 @@
 config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
 
-factory -ubi-factory .img
-sysupgrade -squashfs-sysupgrade .tar
+local ATH10K_PACKAGES = {}
+if env.GLUON_WLAN_MESH == 'ibss' then
+	ATH10K_PACKAGES = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca988x', 'ath10k-firmware-qca988x-ct'}
+end
 
-# Netgear
 
-device netgear-wndr3700v4 wndr3700v4 WNDR3700V4
-device netgear-wndr4300 wndr4300 WNDR4300V1
+defaults {
+	sysupgrade_ext = '.tar',
+}
 
-# ZyXEL
-device zyxel-nbg6716 nbg6716 NBG6716
-packages $ATH10K_PACKAGES
-factory -squashfs-factory .bin
+
+-- Netgear
+
+device('netgear-wndr3700v4', 'wndr3700v4', {
+	profile = 'WNDR3700V4',
+	factory = '-ubi-factory',
+	factory_ext = '.img',
+})
+device('netgear-wndr4300', 'wndr4300', {
+	profile = 'WNDR4300V1',
+	factory = '-ubi-factory',
+	factory_ext = '.img',
+})
+
+-- ZyXEL
+device('zyxel-nbg6716', 'nbg6716', {
+	profile = 'NBG6716',
+	packages = ATH10K_PACKAGES,
+})

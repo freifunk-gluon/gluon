@@ -1,30 +1,40 @@
-# ASUS
-if [ "$BROKEN" ]; then
-device asus-rt-ac51u rt-ac51u # BROKEN: no 5GHz usable, LEDs not fully supported
-factory
-fi
+-- ASUS
 
-# GL Innovations
+device('asus-rt-ac51u', 'rt-ac51u', {
+	factory = false,
+	broken = true, -- no 5GHz usable, LEDs not fully supported
+})
 
-device gl-mt300a gl-mt300a
-factory
 
-device gl-mt300n gl-mt300n
-factory
+-- GL Innovations
 
-device gl-mt750 gl-mt750
-factory
+device('gl-mt300a', 'gl-mt300a', {
+	factory = false,
+})
 
-# Nexx
+device('gl-mt300n', 'gl-mt300n', {
+	factory = false,
+})
 
-device nexx-wt3020-8m wt3020-8M
-alias nexx-wt3020ad
-alias nexx-wt3020f
-alias nexx-wt3020h
+device('gl-mt750', 'gl-mt750', {
+	factory = false,
+})
 
-# Xiaomi
 
-if [ "$BROKEN" ]; then
-device xiaomi-miwifi-mini miwifi-mini # BROKEN: 2.4GHz WiFi is Unstable 
-factory
-fi
+-- Nexx
+
+device('nexx-wt3020-8m', 'wt3020-8M', {
+	aliases = {
+		'nexx-wt3020ad',
+		'nexx-wt3020f',
+		'nexx-wt3020h',
+	},
+})
+
+
+-- Xiaomi
+
+device('xiaomi-miwifi-mini', 'miwifi-mini', {
+	factory = false,
+	broken = true, -- 2.4GHz WiFi is unstable
+})

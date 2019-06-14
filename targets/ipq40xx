@@ -1,58 +1,79 @@
-ATH10K_PACKAGES_IPQ40XX=
-ATH10K_PACKAGES_QCA9888='ath10k-firmware-qca9888'
-if [ "$GLUON_WLAN_MESH" = 'ibss' ]; then
-	ATH10K_PACKAGES_IPQ40XX='-kmod-ath10k kmod-ath10k-ct -ath10k-firmware-qca4019 ath10k-firmware-qca4019-ct'
-	ATH10K_PACKAGES_QCA9888='-ath10k-firmware-qca9888 ath10k-firmware-qca9888-ct'
-fi
+local ATH10K_PACKAGES_IPQ40XX = {}
+local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {'ath10k-firmware-qca9888'}
+if env.GLUON_WLAN_MESH == 'ibss' then
+	ATH10K_PACKAGES_IPQ40XX = {
+		'-kmod-ath10k',
+		'kmod-ath10k-ct',
+		'-ath10k-firmware-qca4019',
+		'ath10k-firmware-qca4019-ct',
+	}
+	ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
+		'-kmod-ath10k',
+		'kmod-ath10k-ct',
+		'-ath10k-firmware-qca4019',
+		'ath10k-firmware-qca4019-ct',
+		'-ath10k-firmware-qca9888',
+		'ath10k-firmware-qca9888-ct',
+	}
+end
 
 
-# AVM
-
-device avm-fritz-box-4040 avm_fritzbox-4040
-factory
-extra_image -squashfs-eva -bootloader .bin
-packages $ATH10K_PACKAGES_IPQ40XX
+defaults {
+	packages = ATH10K_PACKAGES_IPQ40XX,
+}
 
 
-# GL.iNet
+-- AVM
 
-device gl.inet-gl-b1300 glinet_gl-b1300
-factory
-packages $ATH10K_PACKAGES_IPQ40XX
-
-
-# NETGEAR
-
-device netgear-ex6100v2 netgear_ex6100v2
-factory .img
-packages $ATH10K_PACKAGES_IPQ40XX
-
-device netgear-ex6150v2 netgear_ex6150v2
-factory .img
-packages $ATH10K_PACKAGES_IPQ40XX
+device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-eva', '-bootloader', '.bin'},
+	},
+})
 
 
-# OpenMesh
+-- GL.iNet
 
-device openmesh-a42 openmesh_a42
-packages $ATH10K_PACKAGES_IPQ40XX
-
-device openmesh-a62 openmesh_a62
-packages $ATH10K_PACKAGES_IPQ40XX $ATH10K_PACKAGES_QCA9888
+device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
+	factory = false,
+})
 
 
-# ZyXEL
+-- NETGEAR
 
-device zyxel-nbg6617 zyxel_nbg6617
-packages $ATH10K_PACKAGES_IPQ40XX
+device('netgear-ex6100v2', 'netgear_ex6100v2', {
+	factory_ext = '.img',
+})
 
-device zyxel-wre6606 zyxel_wre6606
-factory
-packages $ATH10K_PACKAGES_IPQ40XX
+device('netgear-ex6150v2', 'netgear_ex6150v2', {
+	factory_ext = '.img',
+})
 
-# 8devices
 
-device 8devices-jalapeno 8dev_jalapeno
-factory -squashfs-nand-factory .ubi
-sysupgrade -squashfs-nand-sysupgrade .bin
-packages $ATH10K_PACKAGES_IPQ40XX
+-- OpenMesh
+
+device('openmesh-a42', 'openmesh_a42')
+
+device('openmesh-a62', 'openmesh_a62', {
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
+
+-- ZyXEL
+
+device('zyxel-nbg6617', 'zyxel_nbg6617')
+
+device('zyxel-wre6606', 'zyxel_wre6606', {
+	factory = false,
+})
+
+
+-- 8devices
+
+device('8devices-jalapeno', '8dev_jalapeno', {
+	factory = '-squashfs-nand-factory',
+	factory_ext = '.ubi',
+	sysupgrade = '-squashfs-nand-sysupgrade',
+	sysupgrade_ext = '.bin',
+})

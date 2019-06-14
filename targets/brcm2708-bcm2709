@@ -1,4 +1,7 @@
-. "${GLUON_TARGETSDIR}/brcm2708.inc"
+dofile(env.GLUON_TARGETSDIR .. '/brcm2708.inc')
 
-device raspberry-pi-2 rpi-2
-manifest_alias raspberry-pi-2-model-b-rev-1.1
+device('raspberry-pi-2', 'rpi-2', {
+	manifest_aliases = {
+		'raspberry-pi-2-model-b-rev-1.1',
+	},
+})

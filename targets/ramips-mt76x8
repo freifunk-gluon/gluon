@@ -1,30 +1,40 @@
-# GL.iNet
+-- GL.iNet
 
-device gl-mt300n-v2 gl-mt300n-v2
-factory
-
-
-# Netgear
-
-device netgear-r6120 netgear_r6120
-factory .img
+device('gl-mt300n-v2', 'gl-mt300n-v2', {
+	factory = false,
+})
 
 
-# TP-Link
+-- Netgear
 
-device tp-link-archer-c50-v3 tplink_c50-v3
-factory
-extra_image -squashfs-tftp-recovery -bootloader .bin
-
-device tp-link-archer-c50-v4 tplink_c50-v4
-factory
-
-device tp-link-tl-wr841n-v13 tl-wr841n-v13
-factory
-extra_image -squashfs-tftp-recovery -bootloader .bin
+device('netgear-r6120', 'netgear_r6120', {
+	factory_ext = '.img',
+})
 
 
-# VoCore 2
+-- TP-Link
 
-device vocore2 vocore2
-factory
+device('tp-link-archer-c50-v3', 'tplink_c50-v3', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
+device('tp-link-archer-c50-v4', 'tplink_c50-v4', {
+	factory = false,
+})
+
+device('tp-link-tl-wr841n-v13', 'tl-wr841n-v13', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
+
+-- VoCore 2
+
+device('vocore2', 'vocore2', {
+	factory = false,
+})

@@ -37,7 +37,9 @@ config GLUON_MULTIDOMAIN
 endef
 
 define GenerateJSON
-	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua"))))' > '$$(PKG_BUILD_DIR)/$(1).json'
+	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' \
+		lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))))' \
+		> '$$(PKG_BUILD_DIR)/$(1).json'
 endef
 
 define Build/Compile

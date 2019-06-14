@@ -1,13 +1,17 @@
-factory -ext4-sdcard .img.gz
-sysupgrade -ext4-sdcard .img.gz
+defaults {
+	factory = '-ext4-sdcard',
+	factory_ext = '.img.gz',
+	sysupgrade = '-ext4-sdcard',
+	sysupgrade_ext = '.img.gz',
+}
 
 
-device lemaker-banana-pi sun7i-a20-bananapi
+device('lemaker-banana-pi', 'sun7i-a20-bananapi')
 
-if [ "$BROKEN" ]; then
+device('lemaker-banana-pro', 'sun7i-a20-bananapro', {
+	broken = true, -- WiFi chip not supported
+})
 
-device lemaker-banana-pro sun7i-a20-bananapro # BROKEN: WiFi chip not supported
-
-device lamobo-r1 sun7i-a20-lamobo-r1 # BROKEN: AP+IBSS and AP+11s not working
-
-fi
+device('lamobo-r1', 'sun7i-a20-lamobo-r1', {
+	broken = true, -- AP+IBSS and AP+11s not working
+})

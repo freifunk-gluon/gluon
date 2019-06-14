@@ -1,8 +1,11 @@
-. "${GLUON_TARGETSDIR}/x86.inc"
+dofile(env.GLUON_TARGETSDIR .. '/x86.inc')
 
-factory_image x86-generic combined-squashfs .img.gz
-factory_image x86-generic combined-squashfs .vdi
-factory_image x86-generic combined-squashfs .vmdk
-sysupgrade_image x86-generic combined-squashfs .img.gz
-manifest_alias x86-kvm
-manifest_alias x86-xen_domu
+factory_image('x86-generic', 'combined-squashfs', '.img.gz')
+factory_image('x86-generic', 'combined-squashfs', '.vdi')
+factory_image('x86-generic', 'combined-squashfs', '.vmdk')
+sysupgrade_image('x86-generic', 'combined-squashfs', '.img.gz', {
+	manifest_aliases = {
+		'x86-kvm',
+		'x86-xen_domu',
+	},
+})

@@ -1,33 +1,40 @@
-[ "$GLUON_SITEDIR" -a "$GLUON_RELEASE" -a "$BOARD" ] || exit 1
+assert(env.GLUON_LANGS)
 
 
-. scripts/modules.sh
-. scripts/default_feeds.sh
+config('CONFIG_GLUON_SITEDIR="%s"', env.GLUON_SITEDIR)
+config('CONFIG_GLUON_RELEASE="%s"', env.GLUON_RELEASE)
+try_config('CONFIG_GLUON_BRANCH="%s"', env.GLUON_BRANCH or '')
 
+for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
+	try_config('CONFIG_GLUON_WEB_LANG_%s=y', lang)
+end
 
-config "CONFIG_GLUON_SITEDIR=\"$GLUON_SITEDIR\""
-config "CONFIG_GLUON_RELEASE=\"$GLUON_RELEASE\""
-try_config "CONFIG_GLUON_BRANCH=\"$GLUON_BRANCH\""
+config('CONFIG_TARGET_%s=y', env.BOARD)
+if env.SUBTARGET ~= '' then
+	config('CONFIG_TARGET_%s_%s=y', env.BOARD, env.SUBTARGET)
+end
 
-for lang in $GLUON_LANGS; do
-	try_config "CONFIG_GLUON_WEB_LANG_${lang}=y"
-done
+-- Disable non-default feeds in distfeeds.conf
+config('# CONFIG_FEED_gluon_base is not set')
 
-[ "$BOARD" ] && config "CONFIG_TARGET_${BOARD}=y"
-[ -z "$SUBTARGET" ] || config "CONFIG_TARGET_${BOARD}_${SUBTARGET}=y"
+local default_feeds = {}
+for feed in string.gmatch(exec_capture_raw('. scripts/default_feeds.sh && echo "$DEFAULT_FEEDS"'), '%S+') do
+	default_feeds[feed] = true
+end
 
-# Disable non-default feeds in distfeeds.conf
-for feed in gluon_base $(echo "$FEEDS" | grep -vxF "$DEFAULT_FEEDS"); do
-	config "# CONFIG_FEED_${feed} is not set"
-done
+for feed in string.gmatch(exec_capture_raw('. scripts/modules.sh && echo -n "$FEEDS"'), '%S+') do
+	if not default_feeds[feed] then
+		config('# CONFIG_FEED_%s is not set', feed)
+	end
+end
 
 
 config '# CONFIG_TARGET_ROOTFS_INITRAMFS is not set'
 
 config 'CONFIG_ALL_NONSHARED=y'
 
-config '# CONFIG_PACKAGE_usbip is not set' # fails to build
-config '# CONFIG_PACKAGE_kmod-jool is not set' # fails to build
+config '# CONFIG_PACKAGE_usbip is not set' -- fails to build
+config '# CONFIG_PACKAGE_kmod-jool is not set' -- fails to build
 
 config 'CONFIG_BUSYBOX_CUSTOM=y'
 config '# CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set'
@@ -40,17 +47,23 @@ config '# CONFIG_KERNEL_IPV6_MROUTE is not set'
 try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
 try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
-if [ "$GLUON_MULTIDOMAIN" = 1 ]; then
+if envtrue.GLUON_MULTIDOMAIN then
 	config 'CONFIG_GLUON_MULTIDOMAIN=y'
-fi
+end
 
-if [ "$GLUON_DEBUG" = 1 ]; then
+if envtrue.GLUON_DEBUG then
 	config 'CONFIG_DEBUG=y'
 	config 'CONFIG_NO_STRIP=y'
 	config '# CONFIG_USE_STRIP is not set'
 	config '# CONFIG_USE_SSTRIP is not set'
-fi
+end
 
 
-packages '-odhcpd-ipv6only' '-ppp' '-ppp-mod-pppoe' '-wpad-mini'
-packages 'gluon-core' 'ip6tables'
+packages {
+	'-odhcpd-ipv6only',
+	'-ppp',
+	'-ppp-mod-pppoe',
+	'-wpad-mini',
+	'gluon-core',
+	'ip6tables',
+}

@@ -1,43 +1,46 @@
-## D-Link
+-- D-Link
 
-if [ "$BROKEN" ] || [ "$GLUON_WLAN_MESH" = '11s' ]; then
-device d-link-dir-860l-b1 dir-860l-b1 # BROKEN: IBSS untested
-fi
-
-
-## Netgear
-
-if [ "$BROKEN" ]; then
-device netgear-wndr3700v5 wndr3700v5 # BROKEN: Untested
-factory
-fi
+device('d-link-dir-860l-b1', 'dir-860l-b1', {
+	broken = (env.GLUON_WLAN_MESH ~= '11s'),
+})
 
 
-# BROKEN: IBSS untested
-if [ "$BROKEN" ] || [ "$GLUON_WLAN_MESH" = '11s' ]; then
+-- Netgear
 
-## ZBT
-
-device zbt-wg3526-16m zbt-wg3526-16M
-factory
-manifest_alias zbt-wg3526
-
-device zbt-wg3526-32m zbt-wg3526-32M
-factory
-
-fi
+device('netgear-wndr3700v5', 'wndr3700v5', {
+	factory = false,
+	broken = true, -- untested
+})
 
 
-# Devices without WLAN
+-- ZBT
 
-## Ubiquiti
+device('zbt-wg3526-16m', 'zbt-wg3526-16M', {
+	factory = false,
+	manifest_aliases = {
+		'zbt-wg3526',
+	},
+	broken = (env.GLUON_WLAN_MESH ~= '11s'),
+})
 
-device ubnt-erx ubnt-erx
-packages '-hostapd-mini'
-factory
-sysupgrade '.tar'
+device('zbt-wg3526-32m', 'zbt-wg3526-32M', {
+	factory = false,
+	broken = (env.GLUON_WLAN_MESH ~= '11s'),
+})
 
-device ubnt-erx-sfp ubnt-erx-sfp
-packages '-hostapd-mini'
-factory
-sysupgrade '.tar'
+
+-- Devices without WLAN
+
+-- Ubiquiti
+
+device('ubnt-erx', 'ubnt-erx', {
+	factory = false,
+	sysupgrade_ext = '.tar',
+	packages = {'-hostapd-mini'},
+})
+
+device('ubnt-erx-sfp', 'ubnt-erx-sfp', {
+	factory = false,
+	sysupgrade_ext = '.tar',
+	packages = {'-hostapd-mini'},
+})
