@@ -1,7 +1,9 @@
 GLUON_WLAN_MESH_11s := $(filter 11s,$(GLUON_WLAN_MESH))
 
 $(eval $(call GluonTarget,ar71xx,generic))
+ifneq ($(GLUON_DEPRECATED),0)
 $(eval $(call GluonTarget,ar71xx,tiny))
+endif
 $(eval $(call GluonTarget,ar71xx,nand))
 $(eval $(call GluonTarget,brcm2708,bcm2708))
 $(eval $(call GluonTarget,brcm2708,bcm2709))
