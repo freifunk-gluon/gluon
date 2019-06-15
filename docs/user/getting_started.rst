@@ -93,6 +93,12 @@ In case of errors read the messages carefully and try to fix the stated issues
 ``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
+To build all targets use a loop like this:
+
+    for TARGET in $(make list-targets); do
+      make GLUON_TARGET=$TARGET
+    done
+
 You should generally reserve 5GB of disk space and additionally about 10GB for each `GLUON_TARGET`.
 
 The built images can be found in the directory `output/images`. Of these, the `factory`
