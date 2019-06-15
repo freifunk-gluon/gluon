@@ -140,7 +140,9 @@ factory
 
 # Onion
 
-device onion-omega onion-omega
+if [ "$BROKEN" ]; then
+device onion-omega onion-omega # BROKEN: no ethernet
+fi
 
 
 # OpenMesh

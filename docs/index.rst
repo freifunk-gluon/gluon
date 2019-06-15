@@ -175,10 +175,6 @@ ar71xx-generic
 
   - Koala [#ath10k]_
 
-* Onion
-
-  - Omega
-
 * OpenMesh
 
   - A40
