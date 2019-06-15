@@ -1,7 +1,7 @@
 local cjson = require 'cjson'
 
 local function config_error(src, ...)
-	error(src .. ' error: ' .. string.format(...), 0)
+	error(src .. ' - Error in site.conf: ' .. string.format(...), 0)
 end
 
 local has_domains = (os.execute('ls -d "$IPKG_INSTROOT"/lib/gluon/domains/ >/dev/null 2>&1') == 0)
