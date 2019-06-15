@@ -161,6 +161,19 @@ GLUON_BRANCH
   by default. For the ``make manifest`` command, GLUON_BRANCH defines the branch to
   generate a manifest for.
 
+GLUON_DEPRECATED
+  Controls whether images for deprecated devices should be built. The following
+  values are supported:
+
+  - ``0``: Do not build any images for deprecated devices.
+  - ``upgrade``: Only build sysupgrade images for deprecated devices.
+  - ``full``: Build both sysupgrade and factory images for deprecated devices.
+
+  Usually, devices are deprecated because their flash size is insufficient to
+  support future Gluon versions. The recommended setting is ``0`` for new sites,
+  and ``upgrade`` for existing configurations (where upgrades for existing
+  deployments of low-flash devices are required).
+
 GLUON_LANGS
   Space-separated list of languages to include for the config mode/advanced settings. Defaults to ``en``.
   ``en`` should always be included, other supported languages are ``de`` and ``fr``.

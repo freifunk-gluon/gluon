@@ -8,6 +8,7 @@ envtrue = setmetatable({}, {
 assert(env.GLUON_SITEDIR)
 assert(env.GLUON_TARGETSDIR)
 assert(env.GLUON_RELEASE)
+assert(env.GLUON_DEPRECATED)
 
 
 site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
@@ -25,6 +26,7 @@ local default_options = {
 	aliases = {},
 	manifest_aliases = {},
 	packages = {},
+	deprecated = false,
 	broken = false,
 }
 
@@ -39,6 +41,9 @@ local function want_device(dev, options)
 	if options.broken and not envtrue.BROKEN then
 		return false
 	end
+	if options.deprecated and env.GLUON_DEPRECATED == '0' then
+		return false
+	end
 
 	if (env.GLUON_DEVICES or '') == '' then
 		return true
@@ -47,6 +52,8 @@ local function want_device(dev, options)
 	unknown_devices[dev] = nil
 	return gluon_devices[dev]
 end
+
+local full_deprecated = env.GLUON_DEPRECATED == 'full'
 
 
 local function merge(a, b)
@@ -148,18 +155,6 @@ function device(image, name, options)
 		options = options,
 	})
 
-	if options.factory then
-		add_image {
-			image = image,
-			name = name,
-			subdir = 'factory',
-			in_suffix = options.factory,
-			out_suffix = '',
-			extension = options.factory_ext,
-			aliases = options.aliases,
-			manifest_aliases = options.manifest_aliases,
-		}
-	end
 	if options.sysupgrade then
 		add_image {
 			image = image,
@@ -168,6 +163,23 @@ function device(image, name, options)
 			in_suffix = options.sysupgrade,
 			out_suffix = '-sysupgrade',
 			extension = options.sysupgrade_ext,
+			aliases = options.aliases,
+			manifest_aliases = options.manifest_aliases,
+		}
+	end
+
+	if options.deprecated and not full_deprecated then
+		return
+	end
+
+	if options.factory then
+		add_image {
+			image = image,
+			name = name,
+			subdir = 'factory',
+			in_suffix = options.factory,
+			out_suffix = '',
+			extension = options.factory_ext,
 			aliases = options.aliases,
 			manifest_aliases = options.manifest_aliases,
 		}
@@ -190,6 +202,10 @@ function factory_image(image, name, ext, options)
 	options = merge(default_options, options)
 
 	if not want_device(image, options) then
+		return
+	end
+
+	if options.deprecated and not full_deprecated then
 		return
 	end
 

@@ -514,6 +514,19 @@ Build configuration
 The ``site.mk`` is a Makefile which defines various values
 involved in the build process of Gluon.
 
+GLUON_DEPRECATED
+    Controls whether images for deprecated devices should be built. The following
+    values are supported:
+
+    - ``0``: Do not build any images for deprecated devices.
+    - ``upgrade``: Only build sysupgrade images for deprecated devices.
+    - ``full``: Build both sysupgrade and factory images for deprecated devices.
+
+    Usually, devices are deprecated because their flash size is insufficient to
+    support future Gluon versions. The recommended setting is ``0`` for new sites,
+    and ``upgrade`` for existing configurations (where upgrades for existing
+    deployments of low-flash devices are required).
+
 GLUON_FEATURES
     Defines a list of features to include. The feature list is used to generate
     the default package set.
