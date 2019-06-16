@@ -21,12 +21,11 @@ if ok ~= 0 then
 	io.stderr:write(string.format("gluon-wan: unable to change to group: %s\n", err))
 	os.exit(1)
 end
+local args = {[0] = arg[1], unpack(arg)}
+table.remove(args, 1)
 
-arg[0] = arg[1]
-table.remove(arg, 1)
-print(arg[0], unpack(arg))
-
-ok, err = unistd.execp(arg[0], arg)
+local _
+_, err = unistd.execp(args[0], args)
 
 io.stderr:write(string.format("gluon-wan: exec failed: %s\n", err))
 os.exit(1)
