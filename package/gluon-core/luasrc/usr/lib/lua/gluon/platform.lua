@@ -24,9 +24,16 @@ end
 
 function M.is_outdoor_device()
 	if M.match('ar71xx', 'generic', {
-		'cpe510-520-v1',
-		'ubnt-nano-m',
-		'ubnt-nano-m-xw',
+		'bullet-m',
+		'cpe510',
+		'lbe-m5',
+		'loco-m-xw',
+		'nanostation-m',
+		'nanostation-m-xw',
+		'rocket-m',
+		'rocket-m-ti',
+		'rocket-m-xw',
+		'unifi-outdoor',
 	}) then
 		return true
 
