@@ -2,17 +2,15 @@
 -- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local string = string
-local table = table
 local protocol = require "gluon.web.http.protocol"
 local util  = require "gluon.web.util"
 
-local ipairs, pairs, tostring = ipairs, pairs, tostring
 
-module "gluon.web.http"
+local M = {}
 
+local Http = util.class()
+M.Http = Http
 
-Http = util.class()
 function Http:__init__(env, input, output)
 	self.input = input
 	self.output = output
@@ -120,3 +118,5 @@ function Http:redirect(url)
 	self:header("Location", url)
 	self:close()
 end
+
+return M

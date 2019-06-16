@@ -1,5 +1,3 @@
-module('gluon.web.model.osm', package.seeall)
-
 local classes = require 'gluon.web.model.classes'
 local util = require "gluon.web.util"
 
@@ -9,7 +7,10 @@ local class = util.class
 local DEFAULT_URL = 'https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0'
 
 
-MapValue = class(classes.AbstractValue)
+local M = {}
+
+local MapValue = class(classes.AbstractValue)
+M.MapValue = MapValue
 
 function MapValue:__init__(title, options)
 	classes.AbstractValue.__init__(self, title)
@@ -41,3 +42,5 @@ end
 function MapValue:validate()
 	return true
 end
+
+return M

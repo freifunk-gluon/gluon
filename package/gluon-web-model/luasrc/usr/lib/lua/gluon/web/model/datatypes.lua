@@ -2,13 +2,9 @@
 -- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-local tonumber = tonumber
+local M = {}
 
-
-module "gluon.web.model.datatypes"
-
-
-function bool(val)
+function M.bool(val)
 	if val == "1" or val == "yes" or val == "on" or val == "true" then
 		return true
 	elseif val == "0" or val == "no" or val == "off" or val == "false" then
@@ -32,29 +28,29 @@ local function int(val)
 	end
 end
 
-function uinteger(val)
+function M.uinteger(val)
 	local n = int(val)
 	return (n ~= nil and n >= 0)
 end
 
-function integer(val)
+function M.integer(val)
 	return (int(val) ~= nil)
 end
 
-function ufloat(val)
+function M.ufloat(val)
 	local n = dec(val)
 	return (n ~= nil and n >= 0)
 end
 
-function float(val)
+function M.float(val)
 	return (dec(val) ~= nil)
 end
 
-function ipaddr(val)
-	return ip4addr(val) or ip6addr(val)
+function M.ipaddr(val)
+	return M.ip4addr(val) or M.ip6addr(val)
 end
 
-function ip4addr(val)
+function M.ip4addr(val)
 	local g = '(%d%d?%d?)'
 	local v1, v2, v3, v4 = val:match('^'..((g..'%.'):rep(3))..g..'$')
 	local n1, n2, n3, n4 = tonumber(v1), tonumber(v2), tonumber(v3), tonumber(v4)
@@ -69,7 +65,7 @@ function ip4addr(val)
 	)
 end
 
-function ip6addr(val)
+function M.ip6addr(val)
 	local g1 = '%x%x?%x?%x?'
 
 	if not val:match('::') then
@@ -100,7 +96,7 @@ function ip6addr(val)
 	return false
 end
 
-function wpakey(val)
+function M.wpakey(val)
 	if #val == 64 then
 		return (val:match("^%x+$") ~= nil)
 	else
@@ -108,11 +104,11 @@ function wpakey(val)
 	end
 end
 
-function range(val, vmin, vmax)
-	return min(val, vmin) and max(val, vmax)
+function M.range(val, vmin, vmax)
+	return M.min(val, vmin) and M.max(val, vmax)
 end
 
-function min(val, min)
+function M.min(val, min)
 	val = dec(val)
 	min = tonumber(min)
 
@@ -123,7 +119,7 @@ function min(val, min)
 	return false
 end
 
-function max(val, max)
+function M.max(val, max)
 	val = dec(val)
 	max = tonumber(max)
 
@@ -134,19 +130,19 @@ function max(val, max)
 	return false
 end
 
-function irange(val, vmin, vmax)
-	return integer(val) and range(val, vmin, vmax)
+function M.irange(val, vmin, vmax)
+	return M.integer(val) and M.range(val, vmin, vmax)
 end
 
-function imin(val, vmin)
-	return integer(val) and min(val, vmin)
+function M.imin(val, vmin)
+	return M.integer(val) and M.min(val, vmin)
 end
 
-function imax(val, vmax)
-	return integer(val) and max(val, vmax)
+function M.imax(val, vmax)
+	return M.integer(val) and M.max(val, vmax)
 end
 
-function minlength(val, min)
+function M.minlength(val, min)
 	min = tonumber(min)
 
 	if min ~= nil then
@@ -156,7 +152,7 @@ function minlength(val, min)
 	return false
 end
 
-function maxlength(val, max)
+function M.maxlength(val, max)
 	max = tonumber(max)
 
 	if max ~= nil then
@@ -165,3 +161,5 @@ function maxlength(val, max)
 
 	return false
 end
+
+return M

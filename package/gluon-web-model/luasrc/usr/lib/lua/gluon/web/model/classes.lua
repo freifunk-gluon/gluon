@@ -2,17 +2,18 @@
 -- Copyright 2017-2018 Matthias Schiffer <mschiffer@universe-factory.net>
 -- Licensed to the public under the Apache License 2.0.
 
-module("gluon.web.model.classes", package.seeall)
-
 local util = require "gluon.web.util"
 
 local datatypes  = require "gluon.web.model.datatypes"
 local class      = util.class
 local instanceof = util.instanceof
 
-FORM_NODATA  =  0
-FORM_VALID   =  1
-FORM_INVALID = -1
+
+local M = {}
+
+M.FORM_NODATA  =  0
+M.FORM_VALID   =  1
+M.FORM_INVALID = -1
 
 
 local function parse_datatype(code)
@@ -41,7 +42,8 @@ local function verify_datatype(dt, value)
 end
 
 
-Node = class()
+local Node = class()
+M.Node = Node
 
 function Node:__init__(name, title, description)
 	self.children = {}
@@ -107,7 +109,8 @@ function Node:handle()
 end
 
 
-Template = class(Node)
+local Template = class(Node)
+M.Template = Template
 
 function Template:__init__(template)
 	Node.__init__(self)
@@ -115,75 +118,8 @@ function Template:__init__(template)
 end
 
 
-Form = class(Node)
-
-function Form:__init__(title, description, name)
-	Node.__init__(self, name, title, description)
-	self.template = "model/form"
-end
-
-function Form:submitstate(http)
-	return http:getenv("REQUEST_METHOD") == "POST" and http:formvalue(self:id()) ~= nil
-end
-
-function Form:parse(http)
-	if not self:submitstate(http) then
-		self.state = FORM_NODATA
-		return
-	end
-
-	Node.parse(self, http)
-
-	while self:resolve_depends() do end
-
-	for _, s in ipairs(self.children) do
-		for _, v in ipairs(s.children) do
-			if v.state == FORM_INVALID then
-				self.state = FORM_INVALID
-				return
-			end
-		end
-	end
-
-	self.state = FORM_VALID
-end
-
-function Form:handle()
-	if self.state == FORM_VALID then
-		Node.handle(self)
-		self:write()
-	end
-end
-
-function Form:write()
-end
-
-function Form:section(t, ...)
-	assert(instanceof(t, Section), "class must be a descendent of Section")
-
-	local obj  = t(...)
-	self:append(obj)
-	return obj
-end
-
-
-Section = class(Node)
-
-function Section:__init__(title, description, name)
-	Node.__init__(self, name, title, description)
-	self.template = "model/section"
-end
-
-function Section:option(t, ...)
-	assert(instanceof(t, AbstractValue), "class must be a descendant of AbstractValue")
-
-	local obj  = t(...)
-	self:append(obj)
-	return obj
-end
-
-
-AbstractValue = class(Node)
+local AbstractValue = class(Node)
+M.AbstractValue = AbstractValue
 
 function AbstractValue:__init__(...)
 	Node.__init__(self, ...)
@@ -195,7 +131,7 @@ function AbstractValue:__init__(...)
 
 	self.template  = "model/valuewrapper"
 
-	self.state = FORM_NODATA
+	self.state = M.FORM_NODATA
 end
 
 function AbstractValue:depends(field, value)
@@ -234,7 +170,7 @@ function AbstractValue:formvalue(http)
 end
 
 function AbstractValue:cfgvalue()
-	if self.state == FORM_NODATA then
+	if self.state == M.FORM_NODATA then
 		return self:defaultvalue()
 	else
 		return self.data
@@ -250,7 +186,7 @@ function AbstractValue:add_error(type, msg)
 		self.tag_missing = true
 	end
 
-	self.state = FORM_INVALID
+	self.state = M.FORM_INVALID
 end
 
 function AbstractValue:reset()
@@ -258,7 +194,7 @@ function AbstractValue:reset()
 	self.tag_invalid = nil
 	self.tag_missing = nil
 	self.data = nil
-	self.state = FORM_NODATA
+	self.state = M.FORM_NODATA
 
 end
 
@@ -275,18 +211,18 @@ function AbstractValue:parse(http)
 		return
 	end
 
-	self.state = FORM_VALID
+	self.state = M.FORM_VALID
 end
 
 function AbstractValue:resolve_depends()
-	if self.state == FORM_NODATA or #self.deps == 0 then
+	if self.state == M.FORM_NODATA or #self.deps == 0 then
 		return false
 	end
 
 	for _, d in ipairs(self.deps) do
 		local valid = true
 		for k, v in pairs(d) do
-			if k.state ~= FORM_VALID or k.data ~= v then
+			if k.state ~= M.FORM_VALID or k.data ~= v then
 				valid = false
 				break
 			end
@@ -316,7 +252,7 @@ function AbstractValue:validate()
 end
 
 function AbstractValue:handle()
-	if self.state == FORM_VALID then
+	if self.state == M.FORM_VALID then
 		self:write(self.data)
 	end
 end
@@ -325,7 +261,8 @@ function AbstractValue:write(value)
 end
 
 
-Value = class(AbstractValue)
+local Value = class(AbstractValue)
+M.Value = Value
 
 function Value:__init__(...)
 	AbstractValue.__init__(self, ...)
@@ -333,7 +270,8 @@ function Value:__init__(...)
 end
 
 
-Flag = class(AbstractValue)
+local Flag = class(AbstractValue)
+M.Flag = Flag
 
 function Flag:__init__(...)
 	AbstractValue.__init__(self, ...)
@@ -351,7 +289,8 @@ function Flag:validate()
 end
 
 
-ListValue = class(AbstractValue)
+local ListValue = class(AbstractValue)
+M.ListValue = ListValue
 
 function ListValue:__init__(...)
 	AbstractValue.__init__(self, ...)
@@ -411,7 +350,8 @@ function ListValue:validate()
 end
 
 
-DynamicList = class(AbstractValue)
+local DynamicList = class(AbstractValue)
+M.DynamicList = DynamicList
 
 function DynamicList:__init__(...)
 	AbstractValue.__init__(self, ...)
@@ -450,9 +390,83 @@ function DynamicList:validate()
 end
 
 
-TextValue = class(AbstractValue)
+local TextValue = class(AbstractValue)
+M.TextValue = TextValue
 
 function TextValue:__init__(...)
 	AbstractValue.__init__(self, ...)
 	self.subtemplate  = "model/tvalue"
 end
+
+
+local Section = class(Node)
+M.Section = Section
+
+function Section:__init__(title, description, name)
+	Node.__init__(self, name, title, description)
+	self.template = "model/section"
+end
+
+function Section:option(t, ...)
+	assert(instanceof(t, AbstractValue), "class must be a descendant of AbstractValue")
+
+	local obj  = t(...)
+	self:append(obj)
+	return obj
+end
+
+
+local Form = class(Node)
+M.Form = Form
+
+function Form:__init__(title, description, name)
+	Node.__init__(self, name, title, description)
+	self.template = "model/form"
+end
+
+function Form:submitstate(http)
+	return http:getenv("REQUEST_METHOD") == "POST" and http:formvalue(self:id()) ~= nil
+end
+
+function Form:parse(http)
+	if not self:submitstate(http) then
+		self.state = M.FORM_NODATA
+		return
+	end
+
+	Node.parse(self, http)
+
+	while self:resolve_depends() do end
+
+	for _, s in ipairs(self.children) do
+		for _, v in ipairs(s.children) do
+			if v.state == M.FORM_INVALID then
+				self.state = M.FORM_INVALID
+				return
+			end
+		end
+	end
+
+	self.state = M.FORM_VALID
+end
+
+function Form:handle()
+	if self.state == M.FORM_VALID then
+		Node.handle(self)
+		self:write()
+	end
+end
+
+function Form:write()
+end
+
+function Form:section(t, ...)
+	assert(instanceof(t, Section), "class must be a descendent of Section")
+
+	local obj  = t(...)
+	self:append(obj)
+	return obj
+end
+
+
+return M

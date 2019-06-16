@@ -20,15 +20,7 @@ local function set(_, name, val)
 	end
 end
 
-local setmetatable = setmetatable
-
-module 'gluon.sysconfig'
-
-setmetatable(_M,
-	{
-		__index = get,
-		__newindex = set,
-	}
-)
-
-return _M
+return setmetatable({}, {
+	__index = get,
+	__newindex = set,
+})

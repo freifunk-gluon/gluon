@@ -1,3 +1,12 @@
+local bit = require 'bit'
+local posix_glob = require 'posix.glob'
+local hash = require 'hash'
+local sysconfig = require 'gluon.sysconfig'
+local site = require 'gluon.site'
+
+
+local M = {}
+
 -- Writes all lines from the file input to the file output except those starting with prefix
 -- Doesn't close the output file, but returns the file object
 local function do_filter_prefix(input, output, prefix)
@@ -13,29 +22,11 @@ local function do_filter_prefix(input, output, prefix)
 	return f
 end
 
-
-local io = io
-local os = os
-local string = string
-local tonumber = tonumber
-local ipairs = ipairs
-local pairs = pairs
-local table = table
-
-local bit = require 'bit'
-local posix_glob = require 'posix.glob'
-local hash = require 'hash'
-local sysconfig = require 'gluon.sysconfig'
-local site = require 'gluon.site'
-
-
-module 'gluon.util'
-
-function trim(str)
+function M.trim(str)
 	return str:gsub("^%s*(.-)%s*$", "%1")
 end
 
-function contains(table, value)
+function M.contains(table, value)
 	for k, v in pairs(table) do
 		if value == v then
 			return k
@@ -44,7 +35,7 @@ function contains(table, value)
 	return false
 end
 
-function add_to_set(t, itm)
+function M.add_to_set(t, itm)
 	for _,v in ipairs(t) do
 		if v == itm then return false end
 	end
@@ -52,7 +43,7 @@ function add_to_set(t, itm)
 	return true
 end
 
-function remove_from_set(t, itm)
+function M.remove_from_set(t, itm)
 	local i = 1
 	local changed = false
 	while i <= #t do
@@ -67,7 +58,7 @@ function remove_from_set(t, itm)
 end
 
 -- Removes all lines starting with a prefix from a file, optionally adding a new one
-function replace_prefix(file, prefix, add)
+function M.replace_prefix(file, prefix, add)
 	local tmp = file .. '.tmp'
 	local f = do_filter_prefix(file, tmp, prefix)
 	if add then
@@ -87,23 +78,23 @@ local function readall(f)
 	return data
 end
 
-function readfile(file)
+function M.readfile(file)
 	return readall(io.open(file))
 end
 
-function exec(command)
+function M.exec(command)
 	return readall(io.popen(command))
 end
 
-function node_id()
+function M.node_id()
 	return string.gsub(sysconfig.primary_mac, ':', '')
 end
 
-function default_hostname()
-	return site.hostname_prefix('') .. node_id()
+function M.default_hostname()
+	return site.hostname_prefix('') .. M.node_id()
 end
 
-function domain_seed_bytes(key, length)
+function M.domain_seed_bytes(key, length)
 	local ret = ''
 	local v = ''
 	local i = 0
@@ -119,7 +110,7 @@ function domain_seed_bytes(key, length)
 	return ret:sub(0, 2*length)
 end
 
-function get_mesh_devices(uconn)
+function M.get_mesh_devices(uconn)
 	local dump = uconn:call("network.interface", "dump", {})
 	local devices = {}
 	for _, interface in ipairs(dump.interface) do
@@ -132,13 +123,13 @@ end
 
 -- Safe glob: returns an empty table when the glob fails because of
 -- a non-existing path
-function glob(pattern)
+function M.glob(pattern)
 	return posix_glob.glob(pattern) or {}
 end
 
 local function find_phy_by_path(path)
-	local phy = glob('/sys/devices/' .. path .. '/ieee80211/phy*')[1]
-		or glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*')[1]
+	local phy = M.glob('/sys/devices/' .. path .. '/ieee80211/phy*')[1]
+		or M.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*')[1]
 
 	if phy then
 		return phy:match('([^/]+)$')
@@ -147,14 +138,14 @@ end
 
 local function find_phy_by_macaddr(macaddr)
 	local addr = macaddr:lower()
-	for _, file in ipairs(glob('/sys/class/ieee80211/*/macaddress')) do
-		if trim(readfile(file)) == addr then
+	for _, file in ipairs(M.glob('/sys/class/ieee80211/*/macaddress')) do
+		if M.trim(M.readfile(file)) == addr then
 			return file:match('([^/]+)/macaddress$')
 		end
 	end
 end
 
-function find_phy(config)
+function M.find_phy(config)
 	if not config or config.type ~= 'mac80211' then
 		return nil
 	elseif config.path then
@@ -167,7 +158,7 @@ function find_phy(config)
 end
 
 local function get_addresses(uci, radio)
-	local phy = find_phy(radio)
+	local phy = M.find_phy(radio)
 	if not phy then
 		return function() end
 	end
@@ -187,7 +178,7 @@ end
 -- 5: mesh1
 -- 6: ibss1
 -- 7: wan_radio1 (private WLAN); mesh VPN
-function generate_mac(i)
+function M.generate_mac(i)
 	if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
 
 	local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
@@ -231,19 +222,19 @@ local function get_wlan_mac_from_driver(uci, radio, vif)
 	end
 end
 
-function get_wlan_mac(uci, radio, index, vif)
+function M.get_wlan_mac(uci, radio, index, vif)
 	local addr = get_wlan_mac_from_driver(uci, radio, vif)
 	if addr then
 		return addr
 	end
 
-	return generate_mac(4*(index-1) + (vif-1))
+	return M.generate_mac(4*(index-1) + (vif-1))
 end
 
 -- Iterate over all radios defined in UCI calling
 -- f(radio, index, site.wifiX) for each radio found while passing
 --  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
-function foreach_radio(uci, f)
+function M.foreach_radio(uci, f)
 	local radios = {}
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
@@ -261,11 +252,13 @@ function foreach_radio(uci, f)
 	end
 end
 
-function get_uptime()
-	local uptime_file = readfile("/proc/uptime")
+function M.get_uptime()
+	local uptime_file = M.readfile("/proc/uptime")
 	if uptime_file == nil then
 		-- Something went wrong reading "/proc/uptime"
 		return nil
 	end
 	return tonumber(uptime_file:match('^[^ ]+'))
 end
+
+return M

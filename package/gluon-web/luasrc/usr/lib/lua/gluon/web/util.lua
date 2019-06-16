@@ -4,10 +4,8 @@
 
 local tparser = require "gluon.web.template.parser"
 
-local getmetatable, setmetatable = getmetatable, setmetatable
-local tostring = tostring
 
-module "gluon.web.util"
+local M = {}
 
 --
 -- Class helper routines
@@ -33,14 +31,14 @@ end
 -- to the __init__ function of this class - if such a function exists.
 -- The __init__ function must be used to set any object parameters that are not shared
 -- with other objects of this class. Any return values will be ignored.
-function class(base)
+function M.class(base)
 	return setmetatable({}, {
 		__call  = _instantiate,
 		__index = base
 	})
 end
 
-function instanceof(object, class)
+function M.instanceof(object, class)
 	while object do
 		if object == class then
 			return true
@@ -56,6 +54,8 @@ end
 -- String and data manipulation routines
 --
 
-function pcdata(value)
+function M.pcdata(value)
 	return value and tparser.pcdata(tostring(value))
 end
+
+return M

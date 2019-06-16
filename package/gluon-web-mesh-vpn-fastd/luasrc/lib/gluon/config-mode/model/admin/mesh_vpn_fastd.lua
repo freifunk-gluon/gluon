@@ -1,5 +1,5 @@
 local uci = require("simple-uci").cursor()
-local util = gluon.util
+local util = require 'gluon.util'
 
 local f = Form(translate('Mesh VPN'))
 
