@@ -85,10 +85,9 @@ function M.mac_to_ip(prefix, mac)
 	local h3 = 0x100 * m5 + tonumber(m6, 16)
 	local h4 = 0x100 * tonumber(m7, 16) + tonumber(m8, 16)
 
-	local prefix, plen = string.match(prefix, '(.*)/(%d+)')
-	plen = tonumber(plen, 10)
+	prefix = string.match(prefix, '(.*)/%d+')
 
-	local p1, p2, p3, p4, p5, p6, p7, p8 = M.IPv6(prefix)
+	local p1, p2, p3, p4 = M.IPv6(prefix)
 
 	return string.format("%x:%x:%x:%x:%x:%x:%x:%x/%d", p1, p2, p3, p4, h1, h2, h3, h4, 128)
 end

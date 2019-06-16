@@ -5,7 +5,6 @@
 
 
 local site = require 'gluon.site'
-local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
@@ -39,7 +38,7 @@ local networks = uci:get_list('firewall', 'mesh', 'network')
 util.add_to_set(networks, 'client')
 uci:set_list('firewall', 'mesh', 'network', networks)
 
-local networks = uci:get_list('firewall', 'drop', 'network')
+networks = uci:get_list('firewall', 'drop', 'network')
 util.remove_from_set(networks, 'client')
 uci:set_list('firewall', 'drop', 'network', networks)
 

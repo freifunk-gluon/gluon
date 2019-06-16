@@ -15,10 +15,11 @@ package 'gluon-web-admin'
 local util = require 'gluon.util'
 local unistd = require 'posix.unistd'
 
+local file
 local tmpfile = "/tmp/firmware.img"
 
 
-local function filehandler(meta, chunk, eof)
+local function filehandler(_, chunk, eof)
 	if not unistd.access(tmpfile) and not file and chunk and #chunk > 0 then
 		file = io.open(tmpfile, "w")
 	end
@@ -33,7 +34,6 @@ end
 local function action_upgrade(http, renderer)
 	local fcntl = require 'posix.fcntl'
 	local stat = require 'posix.sys.stat'
-	local wait = require 'posix.sys.wait'
 
 	local function fork_exec(argv)
 		local pid = unistd.fork()
@@ -63,15 +63,15 @@ local function action_upgrade(http, renderer)
 		end
 	end
 
-	local function image_supported(tmpfile)
-		return (os.execute(string.format("exec /sbin/sysupgrade -T %q >/dev/null", tmpfile)) == 0)
+	local function image_supported(supported_tmpfile)
+		return (os.execute(string.format("exec /sbin/sysupgrade -T %q >/dev/null", supported_tmpfile)) == 0)
 	end
 
 	local function storage_size()
 		local size = 0
 		if unistd.access("/proc/mtd") then
 			for l in io.lines("/proc/mtd") do
-				local d, s, e, n = l:match('^([^%s]+)%s+([^%s]+)%s+([^%s]+)%s+"([^%s]+)"')
+				local s, n = l:match('^[^%s]+%s+([^%s]+)%s+[^%s]+%s+"([^%s]+)"')
 				if n == "linux" then
 					size = tonumber(s, 16)
 					break
@@ -79,7 +79,7 @@ local function action_upgrade(http, renderer)
 			end
 		elseif unistd.access("/proc/partitions") then
 			for l in io.lines("/proc/partitions") do
-				local x, y, b, n = l:match('^%s*(%d+)%s+(%d+)%s+([^%s]+)%s+([^%s]+)')
+				local b, n = l:match('^%s*%d+%s+%d+%s+([^%s]+)%s+([^%s]+)')
 				if b and n and not n:match('[0-9]') then
 					size = tonumber(b) * 1024
 					break
@@ -89,8 +89,8 @@ local function action_upgrade(http, renderer)
 		return size
 	end
 
-	local function image_checksum(tmpfile)
-		return (util.exec(string.format("exec sha256sum %q", tmpfile)):match("^([^%s]+)"))
+	local function image_checksum(checksum_tmpfile)
+		return (util.exec(string.format("exec sha256sum %q", checksum_tmpfile)):match("^([^%s]+)"))
 	end
 
 

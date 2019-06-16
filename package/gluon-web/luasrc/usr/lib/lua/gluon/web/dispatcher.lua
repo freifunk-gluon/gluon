@@ -109,8 +109,8 @@ local function dispatch(config, http, request)
 					return _node({...})
 				end,
 
-				entry = function(path, target, title, order)
-					local c = _node(path, true)
+				entry = function(entry_path, target, title, order)
+					local c = _node(entry_path, true)
 
 					c.target = target
 					c.title  = title
@@ -204,7 +204,7 @@ return function(config, http)
 		table.insert(request, node)
 	end
 
-	ok, err = pcall(dispatch, config, http, request)
+	local ok, err = pcall(dispatch, config, http, request)
 	if not ok then
 		http:status(500, "Internal Server Error")
 		http:prepare_content("text/plain")

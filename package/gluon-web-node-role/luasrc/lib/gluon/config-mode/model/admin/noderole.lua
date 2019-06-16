@@ -17,8 +17,8 @@ s = f:section(Section, nil, translate(
 
 o = s:option(ListValue, "role", translate("Role"))
 o.default = role
-for _, role in ipairs(site.roles.list()) do
-	o:value(role, site_i18n.translate('gluon-web-node-role:role:' .. role))
+for _, role_value in ipairs(site.roles.list()) do
+	o:value(role, site_i18n.translate('gluon-web-node-role:role:' .. role_value))
 end
 
 function o:write(data)

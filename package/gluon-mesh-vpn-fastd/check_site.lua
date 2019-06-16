@@ -2,7 +2,8 @@ local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac'
 need_array_of({'mesh_vpn', 'fastd', 'methods'}, fastd_methods)
 need_boolean(in_site({'mesh_vpn', 'fastd', 'configurable'}), false)
 
-need_one_of(in_site({'mesh_vpn', 'fastd', 'syslog_level'}), {'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
+need_one_of(in_site({'mesh_vpn', 'fastd', 'syslog_level'}),
+	{'error', 'warn', 'info', 'verbose', 'debug', 'debug2'}, false)
 
 local function check_peer(k)
 	need_alphanumeric_key(k)

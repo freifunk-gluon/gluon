@@ -3,7 +3,7 @@
 local site = require 'gluon.site'
 local babelconf='/etc/gluon-babeld.conf'
 
-file = io.open(babelconf, "w")
+local file = io.open(babelconf, "w")
 file:write("ipv6-subtrees true\n")
 file:write("reflect-kernel-metric true\n")
 file:write("export-table 254\n")

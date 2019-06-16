@@ -46,7 +46,7 @@ for line in io.lines('/etc/opkg/distfeeds.conf') do
 	table.insert(distfeeds, line)
 end
 
-local f = io.open('/etc/opkg/distfeeds.conf', 'w')
+f = io.open('/etc/opkg/distfeeds.conf', 'w')
 
 for _, line in ipairs(distfeeds) do
 	local name = line:match('^src/gz%s' .. prefix .. '(%S+)%s')
@@ -62,7 +62,7 @@ end
 f:close()
 
 if next(extra) then
-	local f = io.open('/etc/opkg/gluon.conf', 'w')
+	f = io.open('/etc/opkg/gluon.conf', 'w')
 
 	for k, v in pairs(extra) do
 		f:write(string.format('src/gz %s %s\n', k, replace_patterns(v)))
