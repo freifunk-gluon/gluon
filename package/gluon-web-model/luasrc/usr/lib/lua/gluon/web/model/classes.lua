@@ -97,7 +97,7 @@ end
 function Node:resolve_depends()
 	local updated = false
 	for _, node in ipairs(self.children) do
-		update = updated or node:resolve_depends()
+		updated = updated or node:resolve_depends()
 	end
 	return updated
 end
