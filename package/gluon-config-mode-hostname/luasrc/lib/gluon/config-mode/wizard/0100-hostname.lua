@@ -14,7 +14,8 @@ return function(form, uci)
 
 	local current_hostname = pretty_hostname.get(uci)
 	local default_hostname = util.default_hostname()
-	local configured = uci:get_first('gluon-setup-mode', 'setup_mode', 'configured', false) or (current_hostname ~= default_hostname)
+	local configured = uci:get_first('gluon-setup-mode', 'setup_mode', 'configured', false) or
+		(current_hostname ~= default_hostname)
 
 	local s = form:section(Section)
 	local o = s:option(Value, "hostname", pkg_i18n.translate("Node name"))

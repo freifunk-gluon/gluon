@@ -13,7 +13,7 @@ local function load(filename, i18n)
 	local func = assert(loadfile(filename))
 
 	setfenv(func, setmetatable({}, {__index =
-		function(tbl, key)
+		function(_, key)
 			return classes[key] or i18n[key] or _G[key]
 		end
 	}))

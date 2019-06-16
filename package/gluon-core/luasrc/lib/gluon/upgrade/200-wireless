@@ -16,14 +16,12 @@ if not sysconfig.gluon_version then
 	-- capable of operating in the 2.4 GHz and 5 GHz band need
 	-- to be distributed evenly.
 	local radio_band_count = {band24=0, band5=0}
-	util.foreach_radio(uci, function(radio, index, config)
+	util.foreach_radio(uci, function(radio)
 		local hwmodes = iwinfo.nl80211.hwmodelist(util.find_phy(radio))
-		if (hwmodes.a or hwmodes.ac) and hwmodes.g then
-			-- Dualband - do nothing in this step
-		elseif hwmodes.g then
+		if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
 			-- 2.4 GHz
 			radio_band_count["band24"] = radio_band_count["band24"] + 1
-		elseif hwmodes.a or hwmodes.ac then
+		elseif (hwmodes.a or hwmodes.ac) and not hwmodes.g then
 			-- 5 GHz
 			radio_band_count["band5"] = radio_band_count["band5"] + 1
 		end
@@ -31,7 +29,7 @@ if not sysconfig.gluon_version then
 
 	-- Use the number of all fixed 2.4G GHz and 5 GHz radios to
 	-- distribute dualband radios in this step.
-	util.foreach_radio(uci, function(radio, index, config)
+	util.foreach_radio(uci, function(radio)
 		local radio_name = radio['.name']
 		local hwmodes = iwinfo.nl80211.hwmodelist(util.find_phy(radio))
 		if (hwmodes.a or hwmodes.ac) and hwmodes.g then

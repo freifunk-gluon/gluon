@@ -6,7 +6,7 @@ local util = require 'gluon.util'
 local site = require 'gluon.site'
 
 -- Returns true if node was offline long enough to perform domain switch
-function switch_after_min_reached()
+local function switch_after_min_reached()
 	if not unistd.access("/tmp/gluon_offline") then
 		return false
 	end
@@ -33,7 +33,7 @@ function switch_after_min_reached()
 end
 
 -- Returns true in case switch time has passed
-function switch_time_passed()
+local function switch_time_passed()
 	local current_time = os.time()
 	local switch_time = site.domain_switch.switch_time()
 

@@ -2,8 +2,6 @@ return function(form, uci)
 	local pkg_i18n = i18n 'gluon-config-mode-contact-info'
 	local site_i18n = i18n 'gluon-site'
 
-	local site = require 'gluon.site'
-
 	local owner = uci:get_first("gluon-node-info", "owner")
 
 	local help = site_i18n._translate("gluon-config-mode:contact-help") or pkg_i18n.translate(

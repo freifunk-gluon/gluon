@@ -43,7 +43,7 @@ return function(form, uci)
 		end
 	end
 
-	local map = {}
+	local map
 	if osm then
 		map = s:option(osm.MapValue, "map", osm.options())
 		map:depends(share_location, true)
@@ -56,7 +56,9 @@ return function(form, uci)
 	function o:write(data)
 		uci:set("gluon-node-info", location, "latitude", data)
 	end
-	map.lat = o
+	if osm then
+		map.lat = o
+	end
 
 	o = s:option(Value, "longitude", pkg_i18n.translate("Longitude"), pkg_i18n.translatef("e.g. %s", "10.689901"))
 	o.default = uci:get("gluon-node-info", location, "longitude")
@@ -65,7 +67,9 @@ return function(form, uci)
 	function o:write(data)
 		uci:set("gluon-node-info", location, "longitude", data)
 	end
-	map.lon = o
+	if osm then
+		map.lon = o
+	end
 
 	if show_altitude then
 		o = s:option(Value, "altitude",

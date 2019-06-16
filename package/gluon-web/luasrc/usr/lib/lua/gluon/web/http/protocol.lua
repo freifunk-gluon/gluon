@@ -124,13 +124,13 @@ local function mimedecode_message_body(src, msg, filecb)
 	local store  = nil
 	local lchunk = nil
 
-	local function parse_headers(chunk, field)
+	local function parse_headers(chunk, pfield)
 		local stat
 		repeat
 			chunk, stat = chunk:gsub(
 				"^([A-Z][A-Za-z0-9%-_]+): +([^\r\n]+)\r\n",
 				function(k,v)
-					field.headers[k] = v
+					pfield.headers[k] = v
 					return ""
 				end
 			)
@@ -140,26 +140,26 @@ local function mimedecode_message_body(src, msg, filecb)
 
 		-- End of headers
 		if stat > 0 then
-			if field.headers["Content-Disposition"] then
-				if field.headers["Content-Disposition"]:match("^form%-data; ") then
-					field.name = field.headers["Content-Disposition"]:match('name="(.-)"')
-					field.file = field.headers["Content-Disposition"]:match('filename="(.+)"$')
+			if pfield.headers["Content-Disposition"] then
+				if pfield.headers["Content-Disposition"]:match("^form%-data; ") then
+					pfield.name = pfield.headers["Content-Disposition"]:match('name="(.-)"')
+					pfield.file = pfield.headers["Content-Disposition"]:match('filename="(.+)"$')
 				end
 			end
 
-			if not field.headers["Content-Type"] then
-				field.headers["Content-Type"] = "text/plain"
+			if not pfield.headers["Content-Type"] then
+				pfield.headers["Content-Type"] = "text/plain"
 			end
 
 
-			if field.name then
-				initval(msg.params, field.name)
-				if field.file then
-					appendval(msg.params, field.name, field.file)
+			if pfield.name then
+				initval(msg.params, pfield.name)
+				if pfield.file then
+					appendval(msg.params, pfield.name, pfield.file)
 					store = filecb
 				else
-					store = function(hdr, buf, eof)
-						appendval(msg.params, field.name, buf)
+					store = function(_, buf, _)
+						appendval(msg.params, pfield.name, buf)
 					end
 				end
 			else
@@ -197,6 +197,7 @@ local function mimedecode_message_body(src, msg, filecb)
 
 				if spos then
 					local predata = data:sub(1, spos - 1)
+					local eof
 
 					if inhdr then
 						predata, eof = parse_headers(predata, field)
@@ -225,11 +226,12 @@ local function mimedecode_message_body(src, msg, filecb)
 				-- We found at least some boundary. Save
 				-- the unparsed remaining data for the
 				-- next chunk.
-				lchunk, data = data, nil
+				lchunk = data
 			else
 				-- There was a complete chunk without a boundary. Parse it as headers or
 				-- append it as data, depending on our current state.
 				if inhdr then
+					local eof
 					lchunk, eof = parse_headers(data, field)
 					inhdr = not eof
 				else
@@ -240,7 +242,7 @@ local function mimedecode_message_body(src, msg, filecb)
 					if store then
 						store(field, lchunk, false)
 					end
-					lchunk, chunk = chunk, nil
+					lchunk = chunk
 				end
 			end
 		end

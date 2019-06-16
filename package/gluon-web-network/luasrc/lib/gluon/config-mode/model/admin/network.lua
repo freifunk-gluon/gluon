@@ -42,7 +42,7 @@ ipv4_gateway.default = wan.gateway
 ipv4_gateway.datatype = "ip4addr"
 
 
-local s = f:section(Section)
+s = f:section(Section)
 
 local ipv6 = s:option(ListValue, "ipv6", translate("IPv6"))
 ipv6:value("dhcpv6", translate("Automatic (RA/DHCPv6)"))
@@ -61,7 +61,7 @@ ipv6_gateway.default = wan6.ip6gw
 ipv6_gateway.datatype = "ip6addr"
 
 if dns_static then
-	local s = f:section(Section)
+	s = f:section(Section)
 
 	local dns = s:option(DynamicList, "dns", translate("Static DNS servers"))
 	dns.default = uci:get_list("gluon-wan-dnsmasq", dns_static, "server")
@@ -74,7 +74,7 @@ if dns_static then
 	end
 end
 
-local s = f:section(Section)
+s = f:section(Section)
 
 local mesh_wan = s:option(Flag, "mesh_wan", translate("Enable meshing on the WAN interface"))
 mesh_wan.default = not uci:get_bool("network", "mesh_wan", "disabled")
@@ -84,7 +84,7 @@ function mesh_wan:write(data)
 end
 
 if sysconfig.lan_ifname then
-	local s = f:section(Section)
+	s = f:section(Section)
 
 	local mesh_lan = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
 	mesh_lan.default = not uci:get_bool("network", "mesh_lan", "disabled")
@@ -107,24 +107,24 @@ if sysconfig.lan_ifname then
 end
 
 local section
-uci:foreach("system", "gpio_switch", function(s)
-	if s[".name"]:match("poe") then
+uci:foreach("system", "gpio_switch", function(si)
+	if si[".name"]:match("poe") then
 		if not section then
 			section = f:section(Section)
 		end
 
-		local port = s.name:match("^PoE Power Port(%d*)$")
+		local port = si.name:match("^PoE Power Port(%d*)$")
 		local name
 		if port then
 			name = translatef("Enable PoE Power Port %s", port)
 		else
-			name = translate("Enable " .. s.name)
+			name = translate("Enable " .. si.name)
 		end
-		local poe = section:option(Flag, s[".name"], name)
-		poe.default = uci:get_bool("system", s[".name"], "value")
+		local poe = section:option(Flag, si[".name"], name)
+		poe.default = uci:get_bool("system", si[".name"], "value")
 
 		function poe:write(data)
-			uci:set("system", s[".name"], "value", data)
+			uci:set("system", si[".name"], "value", data)
 		end
 	end
 end)

@@ -37,7 +37,7 @@ local site, domain_code, domain, conf
 local function merge(a, b)
 	local function is_array(t)
 		local n = 0
-		for k, v in pairs(t) do
+		for _ in pairs(t) do
 			n = n + 1
 		end
 		return n == #t
@@ -216,12 +216,12 @@ local function check_chanlist(channels)
 	return function(chanlist)
 		for group in chanlist:gmatch("%S+") do
 			if group:match("^%d+$") then
-				channel = tonumber(group)
+				local channel = tonumber(group)
 				if not is_valid_channel(channel) then
 					return false
 				end
 			elseif group:match("^%d+-%d+$") then
-				from, to = group:match("^(%d+)-(%d+)$")
+				local from, to = group:match("^(%d+)-(%d+)$")
 				from = tonumber(from)
 				to = tonumber(to)
 				if from >= to then
@@ -344,8 +344,9 @@ end
 
 function need_chanlist(path, channels, required)
 	local valid_chanlist = check_chanlist(channels)
-	return need(path, valid_chanlist, required, 'be a space-separated list of WiFi channels or channel-ranges (separated by a hyphen). ' .. 
-	'Valid channels are: ' .. array_to_string(channels))
+	return need(path, valid_chanlist, required,
+		'be a space-separated list of WiFi channels or channel-ranges (separated by a hyphen). '
+		.. 'Valid channels are: ' .. array_to_string(channels))
 end
 
 function need_domain_name(path)

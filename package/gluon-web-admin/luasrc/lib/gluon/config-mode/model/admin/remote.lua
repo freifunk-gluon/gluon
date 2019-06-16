@@ -57,7 +57,7 @@ local f_password = Form(translate("Password"), translate(
 )
 f_password.reset = false
 
-local s = f_password:section(Section)
+s = f_password:section(Section)
 
 local pw1 = s:option(Value, "pw1", translate("Password"))
 pw1.password = true

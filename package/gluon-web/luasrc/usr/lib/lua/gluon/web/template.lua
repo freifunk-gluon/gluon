@@ -44,13 +44,13 @@ return function(config, env)
 			translate = t.translate,
 			translatef = t.translatef,
 			_translate = t._translate,
-			include = function(name)
-				ctx.render(name, scope, pkg)
+			include = function(include_name)
+				ctx.render(include_name, scope, pkg)
 			end,
 		}
 
 		setfenv(template, setmetatable({}, {
-			__index = function(tbl, key)
+			__index = function(_, key)
 				return scope[key] or locals[key] or env[key]
 			end
 		}))

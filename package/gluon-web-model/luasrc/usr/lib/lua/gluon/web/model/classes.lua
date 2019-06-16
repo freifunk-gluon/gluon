@@ -97,7 +97,7 @@ end
 function Node:resolve_depends()
 	local updated = false
 	for _, node in ipairs(self.children) do
-		update = updated or node:resolve_depends()
+		updated = updated or node:resolve_depends()
 	end
 	return updated
 end
@@ -145,7 +145,7 @@ function AbstractValue:depends(field, value)
 	table.insert(self.deps, deps)
 end
 
-function AbstractValue:deplist(section, deplist)
+function AbstractValue:deplist(_, deplist)
 	local deps = {}
 
 	for _, d in ipairs(deplist or self.deps) do
@@ -257,7 +257,8 @@ function AbstractValue:handle()
 	end
 end
 
-function AbstractValue:write(value)
+-- will be overridden: write(value)
+function AbstractValue:write()
 end
 
 

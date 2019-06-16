@@ -8,7 +8,6 @@ if sysconfig.lan_ifname or sysconfig.wan_ifname then
 end
 
 
-local util = require 'gluon.util'
 local platform = require 'gluon.platform'
 local site = require 'gluon.site'
 

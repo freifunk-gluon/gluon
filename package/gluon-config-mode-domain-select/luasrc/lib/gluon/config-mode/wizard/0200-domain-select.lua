@@ -7,7 +7,8 @@ return function(form, uci)
 	local util = require 'gluon.util'
 
 	local selected_domain = uci:get('gluon', 'core', 'domain')
-	local configured = uci:get_first('gluon-setup-mode','setup_mode', 'configured') == '1' or (selected_domain ~= site.default_domain())
+	local configured = uci:get_first('gluon-setup-mode','setup_mode', 'configured') == '1' or
+		(selected_domain ~= site.default_domain())
 
 	local function hide_domain_code(domain, code)
 		if configured and code == selected_domain then

@@ -1,5 +1,4 @@
 local iwinfo = require 'iwinfo'
-local site = require 'gluon.site'
 local uci = require("simple-uci").cursor()
 local util = require 'gluon.util'
 
@@ -158,7 +157,7 @@ end
 
 function f:write()
 	uci:commit('gluon')
-	os.execute('/lib/gluon/upgrade/200-wireless') 
+	os.execute('/lib/gluon/upgrade/200-wireless')
 	uci:commit('wireless')
 end
 

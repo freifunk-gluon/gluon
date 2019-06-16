@@ -157,7 +157,7 @@ function M.find_phy(config)
 	end
 end
 
-local function get_addresses(uci, radio)
+local function get_addresses(radio)
 	local phy = M.find_phy(radio)
 	if not phy then
 		return function() end
@@ -200,11 +200,11 @@ function M.generate_mac(i)
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
-local function get_wlan_mac_from_driver(uci, radio, vif)
+local function get_wlan_mac_from_driver(radio, vif)
 	local primary = sysconfig.primary_mac:lower()
 
 	local addresses = {}
-	for address in get_addresses(uci, radio) do
+	for address in get_addresses(radio) do
 		if address:lower() ~= primary then
 			table.insert(addresses, address)
 		end
@@ -222,8 +222,8 @@ local function get_wlan_mac_from_driver(uci, radio, vif)
 	end
 end
 
-function M.get_wlan_mac(uci, radio, index, vif)
-	local addr = get_wlan_mac_from_driver(uci, radio, vif)
+function M.get_wlan_mac(_, radio, index, vif)
+	local addr = get_wlan_mac_from_driver(radio, vif)
 	if addr then
 		return addr
 	end

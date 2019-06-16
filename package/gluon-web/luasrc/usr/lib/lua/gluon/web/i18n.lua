@@ -13,7 +13,7 @@ return function(config)
 		return string.format('%s/%s.%s.lmo', i18ndir, pkg, lang)
 	end
 
-	local function no_translation(key)
+	local function no_translation()
 		return nil
 	end
 
