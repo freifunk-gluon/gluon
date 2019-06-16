@@ -2,22 +2,22 @@
 
 local uci = require('simple-uci').cursor()
 
-function restart_tunneldigger()
+local function restart_tunneldigger()
 	os.execute('logger -t tunneldigger-watchdog "Restarting Tunneldigger."')
 	os.execute('/etc/init.d/tunneldigger restart')
 end
 
-function read_pid_file()
+local function read_pid_file()
 	local pid_file = io.open('/var/run/tunneldigger.mesh-vpn.pid', 'r')
 	if not pid_file then
 		return nil
 	end
-	local pid = pid_file:read('*l') 
+	local pid = pid_file:read('*l')
 	pid_file:close()
 	return pid
 end
 
-function has_mesh_vpn_neighbours()
+local function has_mesh_vpn_neighbours()
 	local handle = io.popen('batctl o', 'r')
 	if not handle then
 		return false
