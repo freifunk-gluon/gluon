@@ -56,7 +56,7 @@ function Http:getcookie(name)
 	local c = string.gsub(";" .. (self:getenv("HTTP_COOKIE") or "") .. ";", "%s*;%s*", ";")
 	local p = ";" .. name .. "=(.-);"
 	local i, j, value = c:find(p)
-	return value and urldecode(value)
+	return value and protocol.urldecode(value)
 end
 
 function Http:getenv(name)
