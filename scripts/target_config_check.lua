@@ -1,6 +1,3 @@
-dofile('scripts/common.inc.lua')
-
-
 local ret = 0
 
 
@@ -31,15 +28,10 @@ local function check_config_prefix(pattern)
 	return match_config(function(line) return string.sub(line, 1, -2) == pattern end)
 end
 
-function config(...)
-	local pattern = string.format(...)
 
-	if not check_config(pattern) then
-		fail("unable to set '%s'", pattern)
-	end
-end
+local funcs = {}
 
-function config_message(message, ...)
+function funcs.config_message(_, message, ...)
 	local pattern = string.format(...)
 
 	if not check_config(pattern) then
@@ -47,9 +39,9 @@ function config_message(message, ...)
 	end
 end
 
-function config_package(pkg, value)
+function funcs.config_package(_, pkg, value)
 	local pattern = string.format('CONFIG_PACKAGE_%s=%s', pkg, value)
-	local ret
+	local res
 	if value == 'y' then
 		res = check_config(pattern)
 	else
@@ -61,8 +53,14 @@ function config_package(pkg, value)
 	end
 end
 
+local lib = dofile('scripts/target_config_lib.lua')(funcs)
 
-dofile('scripts/target_config.inc.lua')
-
+for config, v in pairs(lib.configs) do
+	if v == 2 then
+		if not check_config(config) then
+			fail("unable to set '%s'", config)
+		end
+	end
+end
 
 os.exit(ret)

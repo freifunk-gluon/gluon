@@ -1,4 +1,4 @@
-dofile(env.GLUON_TARGETSDIR .. '/x86.inc')
+include 'x86.inc'
 
 factory_image('x86-generic', 'combined-squashfs', '.img.gz')
 factory_image('x86-generic', 'combined-squashfs', '.vdi')

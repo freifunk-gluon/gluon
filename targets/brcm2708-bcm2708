@@ -1,4 +1,4 @@
-dofile(env.GLUON_TARGETSDIR .. '/brcm2708.inc')
+include 'brcm2708.inc'
 
 device('raspberry-pi', 'rpi', {
 	manifest_aliases = {

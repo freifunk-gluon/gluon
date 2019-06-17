@@ -1,12 +1,12 @@
-dofile('scripts/common.inc.lua')
+local lib = dofile('scripts/target_lib.lua')
+local env = lib.env
 
 assert(env.GLUON_IMAGEDIR)
-assert(env.GLUON_TARGETSDIR)
 
 
 local target = arg[1]
 
-dofile(env.GLUON_TARGETSDIR..'/'..target)
+lib.include(target)
 
 
 local function strip(s)
@@ -14,13 +14,13 @@ local function strip(s)
 end
 
 local function generate_line(model, dir, filename, filesize)
-	local exists = pcall(exec, {'test', '-e', dir..'/'..filename})
+	local exists = pcall(lib.exec, {'test', '-e', dir..'/'..filename})
 	if not exists then
 		return
 	end
 
-	local file256sum = strip(exec_capture {'scripts/sha256sum.sh', dir..'/'..filename})
-	local file512sum = strip(exec_capture {'scripts/sha512sum.sh', dir..'/'..filename})
+	local file256sum = strip(lib.exec_capture {'scripts/sha256sum.sh', dir..'/'..filename})
+	local file512sum = strip(lib.exec_capture {'scripts/sha512sum.sh', dir..'/'..filename})
 
 	io.stdout:write(string.format('%s %s %s %s %s\n', model, env.GLUON_RELEASE, file256sum, filesize, filename))
 	io.stdout:write(string.format('%s %s %s %s\n', model, env.GLUON_RELEASE, file256sum, filename))
@@ -29,12 +29,12 @@ end
 
 local function generate(image)
 	local dir, filename = image:dest_name(image.image)
-	local exists = pcall(exec, {'test', '-e', dir..'/'..filename})
+	local exists = pcall(lib.exec, {'test', '-e', dir..'/'..filename})
 	if not exists then
 		return
 	end
 
-	local filesize = strip(exec_capture {'scripts/filesize.sh', dir..'/'..filename})
+	local filesize = strip(lib.exec_capture {'scripts/filesize.sh', dir..'/'..filename})
 
 	generate_line(image.image, dir, filename, filesize)
 
@@ -48,7 +48,7 @@ local function generate(image)
 	end
 end
 
-for _, image in ipairs(images) do
+for _, image in ipairs(lib.images) do
 	if image.subdir == 'sysupgrade' then
 		generate(image)
 	end

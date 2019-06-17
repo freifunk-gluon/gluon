@@ -1,9 +1,24 @@
-env = setmetatable({}, {
-	__index = function(t, k) return os.getenv(k) end
+-- Functions for use in targets/*
+local F = {}
+
+-- To be accessed by scripts using target_lib
+local M = setmetatable({}, { __index = F })
+
+local funcs = setmetatable({}, {
+	__index = function(_, k)
+		return F[k] or _G[k]
+	end,
 })
-envtrue = setmetatable({}, {
-	__index = function(t, k) return (tonumber(os.getenv(k)) or 0) > 0 end
+
+local env = setmetatable({}, {
+	__index = function(_, k) return os.getenv(k) end
 })
+F.env = env
+
+local envtrue = setmetatable({}, {
+	__index = function(_, k) return (tonumber(os.getenv(k)) or 0) > 0 end
+})
+F.envtrue = envtrue
 
 assert(env.GLUON_SITEDIR)
 assert(env.GLUON_TARGETSDIR)
@@ -11,10 +26,13 @@ assert(env.GLUON_RELEASE)
 assert(env.GLUON_DEPRECATED)
 
 
-site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
+M.site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
+M.target_packages = {}
+M.configs = {}
+M.devices = {}
+M.images = {}
+M.opkg = true
 
-
-target_packages = {}
 
 local default_options = {
 	profile = false,
@@ -73,7 +91,7 @@ end
 -- argument are replaced by '\''.
 -- To allow using shell wildcards, zero bytes in the arguments are replaced
 -- by unquoted asterisks.
-function escape(s)
+function F.escape(s)
 	s = string.gsub(s, "'", "'\\''")
 	s = string.gsub(s, "%z", "'*'")
 	return "'" .. s .. "'"
@@ -82,7 +100,7 @@ end
 local function escape_command(command, raw)
 	local ret = 'exec'
 	for _, arg in ipairs(command) do
-		ret = ret .. ' ' .. escape(arg)
+		ret = ret .. ' ' .. F.escape(arg)
 	end
 	if raw then
 		ret = ret .. ' ' .. raw
@@ -90,17 +108,17 @@ local function escape_command(command, raw)
 	return ret
 end
 
-function exec_raw(command, may_fail)
+function F.exec_raw(command, may_fail)
 	local ret = os.execute(command)
 	assert((ret == 0) or may_fail)
 	return ret
 end
 
-function exec(command, may_fail, raw)
-	return exec_raw(escape_command(command, raw), may_fail)
+function F.exec(command, may_fail, raw)
+	return F.exec_raw(escape_command(command, raw), may_fail)
 end
 
-function exec_capture_raw(command)
+function F.exec_capture_raw(command)
 	local f = io.popen(command)
 	assert(f)
 
@@ -109,47 +127,47 @@ function exec_capture_raw(command)
 	return data
 end
 
-function exec_capture(command, raw)
-	return exec_capture_raw(escape_command(command, raw))
+function F.exec_capture(command, raw)
+	return F.exec_capture_raw(escape_command(command, raw))
 end
 
 
 local image_mt = {
 	__index = {
 		dest_name = function(image, name, site, release)
-			return env.GLUON_IMAGEDIR..'/'..image.subdir, 'gluon-'..(site or site_code)..'-'..(release or env.GLUON_RELEASE)..'-'..name..image.out_suffix..image.extension
+			return env.GLUON_IMAGEDIR..'/'..image.subdir,
+				'gluon-'..(site or M.site_code)..'-'..(release or env.GLUON_RELEASE)..'-'..name..image.out_suffix..image.extension
 		end,
 	},
 }
 
 local function add_image(image)
-	table.insert(images, setmetatable(image, image_mt))
+	table.insert(M.images, setmetatable(image, image_mt))
 end
 
+function F.try_config(...)
+	M.configs[string.format(...)] = 1
+end
 
--- Variables to be consumed by scripts using common.inc.lua
-devices = {}
-images = {}
-opkg = true
+function F.config(...)
+	M.configs[string.format(...)] = 2
+end
 
-
-function config() end
-function try_config() end
-
-function packages(pkgs)
+function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
-		table.insert(target_packages, pkg)
+		table.insert(M.target_packages, pkg)
 	end
 end
+M.packages = F.packages
 
-function device(image, name, options)
+function F.device(image, name, options)
 	options = merge(default_options, options)
 
 	if not want_device(image, options) then
 		return
 	end
 
-	table.insert(devices, {
+	table.insert(M.devices, {
 		image = image,
 		name = name,
 		options = options,
@@ -198,7 +216,7 @@ function device(image, name, options)
 	end
 end
 
-function factory_image(image, name, ext, options)
+function F.factory_image(image, name, ext, options)
 	options = merge(default_options, options)
 
 	if not want_device(image, options) then
@@ -221,7 +239,7 @@ function factory_image(image, name, ext, options)
 	}
 end
 
-function sysupgrade_image(image, name, ext, options)
+function F.sysupgrade_image(image, name, ext, options)
 	options = merge(default_options, options)
 
 	if not want_device(image, options) then
@@ -240,16 +258,22 @@ function sysupgrade_image(image, name, ext, options)
 	}
 end
 
-function no_opkg()
-	opkg = false
+function F.no_opkg()
+	M.opkg = false
 end
 
-function defaults(options)
+function F.defaults(options)
 	default_options = merge(default_options, options)
 end
 
+function F.include(name)
+	local f = assert(loadfile(env.GLUON_TARGETSDIR .. '/' .. name))
+	setfenv(f, funcs)
+	return f()
+end
 
-function check_devices()
+
+function M.check_devices()
 	local device_list = {}
 	for device in pairs(unknown_devices) do
 		table.insert(device_list, device)
@@ -260,3 +284,6 @@ function check_devices()
 		os.exit(1)
 	end
 end
+
+
+return M

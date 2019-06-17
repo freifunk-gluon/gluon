@@ -1,27 +1,21 @@
-dofile('scripts/common.inc.lua')
+local funcs = {}
+
+function funcs.config_message(config, _, ...)
+	config(...)
+end
+
+function funcs.config_package(config, pkg, value)
+	config('CONFIG_PACKAGE_%s=%s', pkg, value)
+end
+
+local lib = dofile('scripts/target_config_lib.lua')(funcs)
 
 
 local output = {}
 
-
-function config(...)
-	table.insert(output, string.format(...))
+for config in pairs(lib.configs) do
+	table.insert(output, config)
 end
-
-try_config = config
-
-
-function config_message(msg, ...)
-	config(...)
-end
-
-function config_package(pkg, value)
-	config('CONFIG_PACKAGE_%s=%s', pkg, value)
-end
-
-
-dofile('scripts/target_config.inc.lua')
-
 
 -- The sort will make =y entries override =m ones
 table.sort(output)
