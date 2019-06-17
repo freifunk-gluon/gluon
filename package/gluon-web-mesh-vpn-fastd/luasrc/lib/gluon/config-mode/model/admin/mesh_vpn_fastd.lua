@@ -20,7 +20,7 @@ end
 function mode:write(data)
 	local site = require 'gluon.site'
 
-	-- methods will be recreated and filled with the original values from site.mesh_vpn.fastd.methods
+	-- site_methods will be recreated and filled with the original values from site.mesh_vpn.fastd.methods
 	-- if performance mode was selected, and the method 'null' was not present in the original table, it will be added
 	local site_methods = {}
 	if data == 'performance' then
