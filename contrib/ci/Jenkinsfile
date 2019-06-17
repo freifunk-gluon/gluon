@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'gluon-docker' }
     environment {
         GLUON_SITEDIR = "contrib/ci/minimal-site"
         GLUON_TARGET = "x86-generic"
