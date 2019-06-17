@@ -34,6 +34,9 @@ end
 local site, domain_code, domain, conf
 
 
+local M = setmetatable({}, { __index = _G })
+
+
 local function merge(a, b)
 	local function is_array(t)
 		local n = 0
@@ -81,9 +84,9 @@ local function array_to_string(array)
 	return '[' .. table.concat(strings, ', ') .. ']'
 end
 
-function table_keys(tbl)
+function M.table_keys(tbl)
 	local keys = {}
-	for k, _ in pairs(tbl) do
+	for k in pairs(tbl) do
 		keys[#keys + 1] = k
 	end
 	return keys
@@ -127,7 +130,7 @@ local function var_error(path, val, msg)
 	config_error(conf_src(path), 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
 end
 
-function in_site(path)
+function M.in_site(path)
 	if has_domains and loadpath(nil, domain, unpack(path)) ~= nil then
 		config_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
 	end
@@ -135,7 +138,7 @@ function in_site(path)
 	return path
 end
 
-function in_domain(path)
+function M.in_domain(path)
 	if has_domains and loadpath(nil, site, unpack(path)) ~= nil then
 		config_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
 	end
@@ -143,12 +146,12 @@ function in_domain(path)
 	return path
 end
 
-function this_domain()
+function M.this_domain()
 	return domain_code
 end
 
 
-function extend(path, c)
+function M.extend(path, c)
 	if not path then return nil end
 
 	local p = {unpack(path)}
@@ -172,7 +175,7 @@ function loadpath(path, base, c, ...)
 		end
 	end
 
-	return loadpath(extend(path, {c}), base[c], ...)
+	return loadpath(M.extend(path, {c}), base[c], ...)
 end
 
 local function loadvar(path)
@@ -197,7 +200,7 @@ local function check_one_of(array)
 end
 
 
-function alternatives(...)
+function M.alternatives(...)
 	local errs = {'All of the following alternatives have failed:'}
 	for i, f in ipairs({...}) do
 		local ok, err = pcall(f)
@@ -238,7 +241,7 @@ local function check_chanlist(channels)
 	end
 end
 
-function need(path, check, required, msg)
+function M.need(path, check, required, msg)
 	local val = loadvar(path)
 	if required == false and val == nil then
 		return nil
@@ -252,11 +255,11 @@ function need(path, check, required, msg)
 end
 
 local function need_type(path, type, required, msg)
-	return need(path, check_type(type), required, msg)
+	return M.need(path, check_type(type), required, msg)
 end
 
 
-function need_alphanumeric_key(path)
+function M.need_alphanumeric_key(path)
 	local val = path[#path]
 	-- We don't use character classes like %w here to be independent of the locale
 	if type(val) ~= 'string' or not val:match('^[0-9a-zA-Z_]+$') then
@@ -265,12 +268,12 @@ function need_alphanumeric_key(path)
 end
 
 
-function need_string(path, required)
+function M.need_string(path, required)
 	return need_type(path, 'string', required, 'be a string')
 end
 
-function need_string_match(path, pat, required)
-	local val = need_string(path, required)
+function M.need_string_match(path, pat, required)
+	local val = M.need_string(path, required)
 	if not val then
 		return nil
 	end
@@ -282,15 +285,15 @@ function need_string_match(path, pat, required)
 	return val
 end
 
-function need_number(path, required)
+function M.need_number(path, required)
 	return need_type(path, 'number', required, 'be a number')
 end
 
-function need_boolean(path, required)
+function M.need_boolean(path, required)
 	return need_type(path, 'boolean', required, 'be a boolean')
 end
 
-function need_array(path, subcheck, required)
+function M.need_array(path, subcheck, required)
 	local val = need_type(path, 'table', required, 'be an array')
 	if not val then
 		return nil
@@ -298,14 +301,14 @@ function need_array(path, subcheck, required)
 
 	if subcheck then
 		for i = 1, #val do
-			subcheck(extend(path, {i}))
+			subcheck(M.extend(path, {i}))
 		end
 	end
 
 	return val
 end
 
-function need_table(path, subcheck, required)
+function M.need_table(path, subcheck, required)
 	local val = need_type(path, 'table', required, 'be a table')
 	if not val then
 		return nil
@@ -313,45 +316,45 @@ function need_table(path, subcheck, required)
 
 	if subcheck then
 		for k, _ in pairs(val) do
-			subcheck(extend(path, {k}))
+			subcheck(M.extend(path, {k}))
 		end
 	end
 
 	return val
 end
 
-function need_value(path, value, required)
-	return need(path, function(v)
+function M.need_value(path, value, required)
+	return M.need(path, function(v)
 		return v == value
 	end, required, 'be ' .. tostring(value))
 end
 
-function need_one_of(path, array, required)
-	return need(path, check_one_of(array), required, 'be one of the given array ' .. array_to_string(array))
+function M.need_one_of(path, array, required)
+	return M.need(path, check_one_of(array), required, 'be one of the given array ' .. array_to_string(array))
 end
 
-function need_string_array(path, required)
-	return need_array(path, need_string, required)
+function M.need_string_array(path, required)
+	return M.need_array(path, M.need_string, required)
 end
 
-function need_string_array_match(path, pat, required)
-	return need_array(path, function(e) need_string_match(e, pat) end, required)
+function M.need_string_array_match(path, pat, required)
+	return M.need_array(path, function(e) M.need_string_match(e, pat) end, required)
 end
 
-function need_array_of(path, array, required)
-	return need_array(path, function(e) need_one_of(e, array) end, required)
+function M.need_array_of(path, array, required)
+	return M.need_array(path, function(e) M.need_one_of(e, array) end, required)
 end
 
-function need_chanlist(path, channels, required)
+function M.need_chanlist(path, channels, required)
 	local valid_chanlist = check_chanlist(channels)
-	return need(path, valid_chanlist, required,
+	return M.need(path, valid_chanlist, required,
 		'be a space-separated list of WiFi channels or channel-ranges (separated by a hyphen). '
 		.. 'Valid channels are: ' .. array_to_string(channels))
 end
 
-function need_domain_name(path)
-	need_string(path)
-	need(path, function(domain_name)
+function M.need_domain_name(path)
+	M.need_string(path)
+	M.need(path, function(domain_name)
 		local f = io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/domains/' .. domain_name .. '.json')
 		if not f then return false end
 		f:close()
@@ -359,7 +362,7 @@ function need_domain_name(path)
 	end, nil, 'be a valid domain name')
 end
 
-function obsolete(path, msg)
+function M.obsolete(path, msg)
 	local val = loadvar(path)
 	if val == nil then
 		return nil
@@ -373,7 +376,7 @@ function obsolete(path, msg)
 	config_error(conf_src(path), '%s is obsolete. %s', path_to_string(path), msg)
 end
 
-local check = assert(loadfile())
+local check = setfenv(assert(loadfile()), M)
 
 site = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json')
 
