@@ -69,7 +69,8 @@ for _, dev in ipairs(devices) do
 		handle_pkg(pkg)
 	end
 
-	config_message(string.format("unable to enable device '%s'", profile), 'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
+	config_message(string.format("unable to enable device '%s'", profile),
+		'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
 	config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
 		openwrt_config_target, profile, device_pkgs)
 end

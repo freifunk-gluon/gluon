@@ -49,7 +49,7 @@ end
 
 function config_package(pkg, value)
 	local pattern = string.format('CONFIG_PACKAGE_%s=%s', pkg, value)
-	local ret
+	local res
 	if value == 'y' then
 		res = check_config(pattern)
 	else

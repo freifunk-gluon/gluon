@@ -40,7 +40,8 @@ for _, image in ipairs(images) do
 	clean(image, image.image)
 
 	local destdir, destname = image:dest_name(image.image)
-	local source = string.format('openwrt/bin/targets/%s/openwrt-%s-%s%s%s', bindir, openwrt_target, image.name, image.in_suffix, image.extension)
+	local source = string.format('openwrt/bin/targets/%s/openwrt-%s-%s%s%s', bindir,
+		openwrt_target, image.name, image.in_suffix, image.extension)
 
 	exec {'cp', source, destdir..'/'..destname}
 

@@ -1,8 +1,8 @@
 env = setmetatable({}, {
-	__index = function(t, k) return os.getenv(k) end
+	__index = function(_, k) return os.getenv(k) end
 })
 envtrue = setmetatable({}, {
-	__index = function(t, k) return (tonumber(os.getenv(k)) or 0) > 0 end
+	__index = function(_, k) return (tonumber(os.getenv(k)) or 0) > 0 end
 })
 
 assert(env.GLUON_SITEDIR)
@@ -117,7 +117,10 @@ end
 local image_mt = {
 	__index = {
 		dest_name = function(image, name, site, release)
-			return env.GLUON_IMAGEDIR..'/'..image.subdir, 'gluon-'..(site or site_code)..'-'..(release or env.GLUON_RELEASE)..'-'..name..image.out_suffix..image.extension
+			return env.GLUON_IMAGEDIR .. '/' .. image.subdir,
+				'gluon-' .. (site or site_code) .. '-'
+				.. (release or env.GLUON_RELEASE) .. '-'
+				.. name .. image.out_suffix .. image.extension
 		end,
 	},
 }
