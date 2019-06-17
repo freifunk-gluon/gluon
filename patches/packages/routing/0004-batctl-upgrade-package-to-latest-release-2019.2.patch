@@ -1,0 +1,23 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Mon, 17 Jun 2019 19:25:52 +0200
+Subject: batctl: upgrade package to latest release 2019.2
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/batctl/Makefile b/batctl/Makefile
+index df96ca7325ba3f84bd682da6df32fa4489474113..94c37a8046944348028cb358016ee9258f630232 100644
+--- a/batctl/Makefile
++++ b/batctl/Makefile
+@@ -9,9 +9,9 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=batctl
+ 
+-PKG_VERSION:=2018.1
+-PKG_RELEASE:=1
+-PKG_HASH:=27877d0da6916f88a6cecbbb3f3d23cc4558ef7c7294324bf4fd050ed606b553
++PKG_VERSION:=2019.2
++PKG_RELEASE:=0
++PKG_HASH:=fb656208ff7d4cd8b1b422f60c9e6d8747302a347cbf6c199d7afa9b80f80ea3
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
