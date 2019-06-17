@@ -223,9 +223,7 @@ local function mimedecode_message_body(src, msg, filecb)
 			until not spos
 
 			if found then
-				-- We found at least some boundary. Save
-				-- the unparsed remaining data for the
-				-- next chunk.
+				-- We found at least some boundary.
 				lchunk = data
 			else
 				-- There was a complete chunk without a boundary. Parse it as headers or
