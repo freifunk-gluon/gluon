@@ -10,7 +10,6 @@ read_globals = {
 
 include_files = {
 	"**/*.lua",
-	"package/**/files/lib/gluon/ebtables/*",
 	"package/**/luasrc/**/*",
 	"targets/*",
 }
@@ -46,14 +45,6 @@ files["package/**/check_site.lua"] = {
 	},
 }
 
-files["package/**/files/lib/gluon/ebtables/*"] = {
-	read_globals = {
-		"chain",
-		"rule",
-	},
-	max_line_length = false,
-}
-
 files["package/**/luasrc/lib/gluon/config-mode/*"] = {
 	globals = {
 		"DynamicList",
@@ -82,6 +73,14 @@ files["package/**/luasrc/lib/gluon/**/controller/*"] = {
 		"node",
 		"template",
 	},
+}
+
+files["package/**/luasrc/lib/gluon/ebtables/*"] = {
+	read_globals = {
+		"chain",
+		"rule",
+	},
+	max_line_length = false,
 }
 
 files["targets/*"] = {
