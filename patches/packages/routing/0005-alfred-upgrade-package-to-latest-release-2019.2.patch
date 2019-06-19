@@ -1,0 +1,156 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Wed, 19 Jun 2019 00:52:57 +0200
+Subject: alfred: upgrade package to latest release 2019.2
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/alfred/Makefile b/alfred/Makefile
+index 646a2abfb5bc4d97f9e88fce8e2b231cd0239f7c..535e712b578a5fe00a9c9c797344c76759291ab7 100644
+--- a/alfred/Makefile
++++ b/alfred/Makefile
+@@ -8,9 +8,9 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=alfred
+-PKG_VERSION:=2018.1
+-PKG_RELEASE:=2
+-PKG_HASH:=808fa6acf65c7a8e26405115176a5587157f746108cbe5dd974788eb05416d76
++PKG_VERSION:=2019.2
++PKG_RELEASE:=0
++PKG_HASH:=b656f0e9a97a99c7531b6d49ebfd663451c16cdd275bbf7d48ff8daed3880bf2
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+diff --git a/alfred/patches/0001-alfred-Fix-detection-of-own-packets-for-IPv4-mode.patch b/alfred/patches/0001-alfred-Fix-detection-of-own-packets-for-IPv4-mode.patch
+deleted file mode 100644
+index 576ca8ccd0d05d760c177aa9cd05371d5d7a0657..0000000000000000000000000000000000000000
+--- a/alfred/patches/0001-alfred-Fix-detection-of-own-packets-for-IPv4-mode.patch
++++ /dev/null
+@@ -1,37 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Mon, 29 Oct 2018 18:05:42 +0100
+-Subject: [PATCH] alfred: Fix detection of own packets for IPv4 mode
+-
+-The incoming packet address is checked for a match against the local
+-interface addresses to avoid processing its own packets. The IPv4
+-implementation used the same code but only initialized 4 of the 16 bytes of
+-the address in the recv function. The interface initialization code in
+-netsock_set_interfaces set all unused bytes to zero but recv_alfred_packet
+-was modified to use 12 random bytes from the stack.
+-
+-Both functions must work the same way and first set the address bytes to
+-zero and overwrite the actual used bytes with the address bytes. Otherwise,
+-the result of netsock_set_interfaces for own packets is random in the IPv4
+-implementation.
+-
+-Fixes: c7da798113a2 ("alfred: IPv4 multicast distribution support.")
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-Tested-by: Jonathan Haws <jhaws@sdl.usu.edu>
+-
+-Origin: upstream, https://git.open-mesh.org/alfred.git/commit/db842ed210d00345619e0ebc45a4d0d840e0b7e5
+----
+- recv.c | 1 +
+- 1 file changed, 1 insertion(+)
+-
+-diff --git a/recv.c b/recv.c
+-index 59d759cfba816d3dd7ed4a56fd3269730093bcfd..5ff4bb5df2354d7f2310e2105ee385b9365b0c4b 100644
+---- a/recv.c
+-+++ b/recv.c
+-@@ -416,6 +416,7 @@ int recv_alfred_packet(struct globals *globals, struct interface *interface,
+- 
+- 	packet = (struct alfred_tlv *)buf;
+- 
+-+	memset(&alfred_source, 0, sizeof(alfred_source));
+- 	if (globals->ipv4mode) {
+- 		memcpy(&alfred_source, &source4.sin_addr, sizeof(source4.sin_addr));
+- 	} else {
+diff --git a/alfred/patches/0002-alfred-Request-MAC-resolution-for-IPv4-address-not-i.patch b/alfred/patches/0002-alfred-Request-MAC-resolution-for-IPv4-address-not-i.patch
+deleted file mode 100644
+index f60da7d59a19a246f45ad466e23cdeec04a6917a..0000000000000000000000000000000000000000
+--- a/alfred/patches/0002-alfred-Request-MAC-resolution-for-IPv4-address-not-i.patch
++++ /dev/null
+@@ -1,84 +0,0 @@
+-From: Jonathan Haws <jhaws@sdl.usu.edu>
+-Date: Mon, 29 Oct 2018 11:57:59 -0600
+-Subject: [PATCH] alfred: Request MAC resolution for IPv4 address not in ARP cache
+-
+-When using IPv4, if the remote server is not yet in the ARP cache, the
+-MAC resolution will fail and data appear to not be shared via alfred.
+-Add a routine (modified from batctl sources) to request MAC resolution
+-by simply sending a datagram to the discard port (UDP/9). This adds the
+-remote MAC to the ARP cache, resulting in successful MAC resolution.
+-
+-Fixes: c7da798113a2 ("alfred: IPv4 multicast distribution support.")
+-Signed-off-by: Jonathan Haws <jhaws@sdl.usu.edu>
+-Tested-by: Gary Zou <guohuizou2000@sina.com>
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/alfred.git/commit/5610d5bf8f4447b4d689aede638b4e92ae343340
+----
+- util.c | 34 ++++++++++++++++++++++++++++++++--
+- 1 file changed, 32 insertions(+), 2 deletions(-)
+-
+-diff --git a/util.c b/util.c
+-index dd3f00fa6280d7de04a11acb8485c11cead3d0a4..07947929dfe2d5a22ca16f5bf33846d7365c771e 100644
+---- a/util.c
+-+++ b/util.c
+-@@ -30,6 +30,7 @@
+- #include <sys/ioctl.h>
+- #include <sys/time.h>
+- #include <time.h>
+-+#include <unistd.h>
+- #include "alfred.h"
+- 
+- int time_diff(struct timespec *tv1, struct timespec *tv2,
+-@@ -80,11 +81,35 @@ bool is_valid_ether_addr(uint8_t addr[ETH_ALEN])
+- 	return true;
+- }
+- 
+-+static void ipv4_request_mac_resolve(const alfred_addr *addr)
+-+{
+-+	const struct sockaddr *sockaddr;
+-+	struct sockaddr_in inet4;
+-+	size_t sockaddr_len;
+-+	int sock;
+-+	char t = 0;
+-+
+-+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+-+	if (sock < 0)
+-+		return;
+-+
+-+	memset(&inet4, 0, sizeof(inet4));
+-+	inet4.sin_family = AF_INET;
+-+	inet4.sin_port = htons(9);
+-+	inet4.sin_addr.s_addr = addr->ipv4.s_addr;
+-+	sockaddr = (const struct sockaddr *)&inet4;
+-+	sockaddr_len = sizeof(inet4);
+-+
+-+	sendto(sock, &t, sizeof(t), 0, sockaddr, sockaddr_len);
+-+	close(sock);
+-+}
+-+
+- int ipv4_arp_request(struct interface *interface, const alfred_addr *addr,
+- 		     struct ether_addr *mac)
+- {
+- 	struct arpreq arpreq;
+- 	struct sockaddr_in *sin;
+-+	int retries = 1;
+- 
+- 	memset(&arpreq, 0, sizeof(arpreq));
+- 	memset(mac, 0, ETH_ALEN);
+-@@ -96,8 +121,13 @@ int ipv4_arp_request(struct interface *interface, const alfred_addr *addr,
+- 	strncpy(arpreq.arp_dev, interface->interface, sizeof(arpreq.arp_dev));
+- 	arpreq.arp_dev[sizeof(arpreq.arp_dev) - 1] = '\0';
+- 
+--	if (ioctl(interface->netsock, SIOCGARP, &arpreq) < 0)
+--		return -1;
+-+	while ((ioctl(interface->netsock, SIOCGARP, &arpreq) < 0) || !(arpreq.arp_flags & ATF_COM)) {
+-+		ipv4_request_mac_resolve(addr);
+-+		usleep(200000);
+-+
+-+		if (retries-- == 0)
+-+			break;
+-+	}
+- 
+- 	if (arpreq.arp_flags & ATF_COM) {
+- 		memcpy(mac, arpreq.arp_ha.sa_data, sizeof(*mac));
