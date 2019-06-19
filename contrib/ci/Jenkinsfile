@@ -2,15 +2,17 @@ pipeline {
     agent { label 'gluon-docker' }
     environment {
         GLUON_SITEDIR = "contrib/ci/minimal-site"
-        GLUON_TARGET = "x86-generic"
+        GLUON_TARGET = "x86-64"
         BUILD_LOG = "1"
     }
     stages {
         stage('build') {
             steps {
                 sh 'ls -la'
+                sh 'luacheck --std=min .'
                 sh 'make update'
-                sh 'make'
+                sh 'make download'
+                sh 'make -j$(nproc)'
             }
         }
     }
