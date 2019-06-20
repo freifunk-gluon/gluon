@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('lint') {
             steps {
-                sh 'luacheck --std=min {packages,scripts,target}'
+                sh 'luacheck package scripts targets'
             }
         }
         stage('docs') {
