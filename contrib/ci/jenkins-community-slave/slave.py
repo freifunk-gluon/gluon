@@ -2,7 +2,7 @@ from jenkins import Jenkins, JenkinsError, NodeLaunchMethod
 import os
 import signal
 import sys
-import urllib
+import urllib.request
 import subprocess
 import shutil
 import requests
@@ -34,7 +34,7 @@ def slave_download(target):
     if os.path.isfile(slave_jar):
         os.remove(slave_jar)
 
-    loader = urllib.URLopener()
+    loader = urllib.request.URLopener()
     loader.retrieve(os.environ['JENKINS_URL'] + '/jnlpJars/slave.jar', '/var/lib/jenkins/slave.jar')
 
 def slave_run(slave_jar, jnlp_url):
@@ -80,24 +80,24 @@ while not master_ready(slave_jar_url):
     time.sleep(10)
 
 slave_download(slave_jar)
-print 'Downloaded Jenkins slave jar.'
+print('Downloaded Jenkins slave jar.')
 
 if os.environ['SLAVE_WORING_DIR']:
     os.setcwd(os.environ['SLAVE_WORING_DIR'])
 
 if os.environ['CLEAN_WORKING_DIR'] == 'true':
     clean_dir(os.getcwd())
-    print "Cleaned up working directory."
+    print("Cleaned up working directory.")
 
 if os.environ['SLAVE_NAME'] == '':
     slave_create(slave_name, os.getcwd(), os.environ['SLAVE_EXECUTORS'], os.environ['SLAVE_LABELS'])
-    print 'Created temporary Jenkins slave.'
+    print('Created temporary Jenkins slave.')
 
 process = slave_run(slave_jar, jnlp_url)
-print 'Started Jenkins slave with name "' + slave_name + '" and labels [' + os.environ['SLAVE_LABELS'] + '].'
+print('Started Jenkins slave with name "' + slave_name + '" and labels [' + os.environ['SLAVE_LABELS'] + '].')
 process.wait()
 
-print 'Jenkins slave stopped.'
+print('Jenkins slave stopped.')
 if os.environ['SLAVE_NAME'] == '':
     slave_delete(slave_name)
-    print 'Removed temporary Jenkins slave.'
+    print('Removed temporary Jenkins slave.')
