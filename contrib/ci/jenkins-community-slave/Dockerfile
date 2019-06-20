@@ -5,8 +5,8 @@ USER root
 # this is needed to install default-jre-headless in debian slim images
 RUN mkdir -p /usr/share/man/man1
  
-RUN apt-get update && apt-get install -y default-jre-headless curl python python-pip git
-RUN pip install jenkins-webapi
+RUN apt-get update && apt-get install -y default-jre-headless curl python3 python3-pip python3-sphinx git
+RUN pip3 install jenkins-webapi sphinx_rtd_theme
  
 # Get docker-compose in the agent container
 RUN mkdir -p /home/jenkins
@@ -30,4 +30,4 @@ ENV SLAVE_LABELS "docker"
 ENV SLAVE_WORING_DIR ""
 ENV CLEAN_WORKING_DIR "true"
  
-CMD [ "python", "-u", "/var/lib/jenkins/slave.py" ]
+CMD [ "python3", "-u", "/var/lib/jenkins/slave.py" ]
