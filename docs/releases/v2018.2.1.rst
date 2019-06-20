@@ -34,6 +34,10 @@ ramips-mt76x8
   - Archer C50 (v3, v4) [#noibss]_
   - TL-WR841N (v13) [#noibss]_
 
+.. [#noibss]
+  Device or target does not support AP+IBSS mode: This device or target will not be built
+  when *GLUON_WLAN_MESH* is set to ``ibss``.
+
 Bugfixes
 ~~~~~~~~
 
