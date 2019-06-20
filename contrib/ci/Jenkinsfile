@@ -6,10 +6,18 @@ pipeline {
         BUILD_LOG = "1"
     }
     stages {
+        stage('lint') {
+            steps {
+                sh 'luacheck --std=min {packages,scripts,target}'
+            }
+        }
+        stage('docs') {
+            steps {
+                sh' make -C docs html'
+            }
+        }
         stage('build') {
             steps {
-                sh 'ls -la'
-                sh 'luacheck --std=min .'
                 sh 'make update'
                 sh 'make download'
                 sh 'make -j$(nproc)'
