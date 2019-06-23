@@ -1,0 +1,69 @@
+Gluon 2018.2.2
+==============
+
+Removed hardware support
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Support for the Onion Omega has been removed since the device does not
+have an ethernet port, and even with the ethernet shield connected the
+interface would not have been configured.
+
+Bugfixes
+~~~~~~~~
+
+* Fixes vulnerabilities that allowed for remote crashes and denial of service attacks through the Linux kernels
+  TCP selective acknowledgement implementation. (CVE-2019-11477, CVE-2019-11478 and CVE-2019-11479)
+
+* Fixes a bug in the image generation for the Netgear R6120 where the OverlayFS might not be created on boot as
+  the JFFS2 end-of-filesystem marker was omitted by the vendor firmware. This resulted in the router not being
+  able to save its configuration and seemingly "being stuck" in config-mode. (`#1722 <https://github.com/freifunk-gluon/gluon/pull/1722>`_)
+
+* Fixes oddities in the calculation of non-wireless clients published through respondd on batman-adv networks.
+  Previously both the kernel wifi layer and batman-adv were consulted, which led to issues because they use 
+  different timeout values. (`#1676 <https://github.com/freifunk-gluon/gluon/pull/1676>`_)
+
+* Fixes doubled batman-adv management overhead, introduced with Gluon v2017.1. A timer in batman-adv was
+  wrongly started twice, resulting in each node emitting not one but two OGMs from the same originator per 5 seconds.
+  (`#1446 <https://github.com/freifunk-gluon/gluon/issues/1446>`_)
+
+* Fixes an issue, where services provided by a node (such as DNS resolver or status-page)
+  might become unavailable due to other misbehaving nodes on the same layer 2 segment.
+  (`#1659 <https://github.com/freifunk-gluon/gluon/issues/1659>`_)
+
+* Fixes traffic shaping not working correctly when using tunneldigger, as well as the migration between fastd 
+  and tunneldigger (`#1736 <https://github.com/freifunk-gluon/gluon/issues/1736>`_)
+
+
+Other changes
+~~~~~~~~~~~~~
+
+* Linux kernel has been updated to 4.9.182 or 4.14.128, depending on the target
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are
+  unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is
+  disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected
+  (like VMware when promiscuous mode is disallowed).
+
+* Inconsistent respondd API
+  (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API
+  will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on
+  weak hardware specially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
