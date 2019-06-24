@@ -87,8 +87,9 @@ Next go back to the top-level Gluon directory and build Gluon::
     make GLUON_TARGET=ar71xx-generic   # Build Gluon
 
 In case of errors read the messages carefully and try to fix the stated issues
-(e.g. install missing tools not available or look at the wiki:
-[Troubleshooting](https://github.com/freifunk-gluon/gluon/wiki/Troubleshooting))
+(e.g. install missing tools not available or look for Troubleshooting_ in the wiki.
+
+.. _Troubleshooting: https://github.com/freifunk-gluon/gluon/wiki/Troubleshooting
 
 ``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
