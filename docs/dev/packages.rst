@@ -10,7 +10,7 @@ Gluon package makefiles
 As many packages share the same or a similar structure, Gluon provides a ``package/gluon.mk`` that
 can be included for common definitions. This file replaces OpenWrt's ``$(INCLUDE_DIR)/package.mk``;
 it is usually included as ``include ../gluon.mk`` from Gluon core packages, or as
-``include $(TOPDIR)../package/gluon.mk`` from feeds.
+``include $(TOPDIR)/../package/gluon.mk`` from feeds.
 
 Provided macros
 ***************
