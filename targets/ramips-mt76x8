@@ -25,6 +25,13 @@ device('tp-link-archer-c50-v4', 'tplink_c50-v4', {
 	factory = false,
 })
 
+device('tp-link-tl-mr3420-v5', 'tplink_tl-mr3420-v5', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
 device('tp-link-tl-wr841n-v13', 'tl-wr841n-v13', {
 	factory = false,
 	extra_images = {
