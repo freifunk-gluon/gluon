@@ -378,6 +378,7 @@ ramips-mt76x8
 
 * TP-Link
 
+  - TL-MR3420 v5 [#80211s]_
   - TL-WR841N v13 [#80211s]_
   - Archer C50 v3 [#80211s]_
   - Archer C50 v4 [#80211s]_
