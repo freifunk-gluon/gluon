@@ -7,7 +7,7 @@ include ../gluon.mk
 
 define Package/gluon-authorized-keys
   TITLE:=Fill /etc/dropbear/authorized_keys from site.conf
-  DEPENDS:=+gluon-core
+  DEPENDS:=+gluon-core +gluon-lock-password
 endef
 
 $(eval $(call BuildPackageGluon,gluon-authorized-keys))
