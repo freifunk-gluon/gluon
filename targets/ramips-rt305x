@@ -4,6 +4,7 @@ config '# CONFIG_KERNEL_KALLSYMS is not set'
 
 device('a5-v11', 'a5-v11', {
 	deprecated = true, -- 4/32
+	broken = true,
 })
 
 
@@ -11,6 +12,7 @@ device('a5-v11', 'a5-v11', {
 
 device('d-link-dir-615-h1', 'dir-615-h1', {
 	deprecated = true, -- 4/32
+	broken = true,
 })
 
 device('d-link-dir-615-d', 'dir-615-d', {
@@ -21,6 +23,7 @@ device('d-link-dir-615-d', 'dir-615-d', {
 		'd-link-dir-615-d4',
 	},
 	deprecated = true, -- 4/32
+	broken = true,
 })
 
 
