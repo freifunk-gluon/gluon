@@ -10,6 +10,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "%u characters min."
+msgstr "Mindestens %u Zeichen"
+
 msgid "(%s available)"
 msgstr "(%s verfügbar)"
 
@@ -32,9 +35,6 @@ msgstr "Abbrechen"
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-msgid "%u characters min."
-msgstr "Mindestens %u Zeichen"
-
 msgid "Continue"
 msgstr "Fortfahren"
 
@@ -49,9 +49,6 @@ msgstr "Firmware-Release"
 
 msgid "Gluon version"
 msgstr "Gluon-Version"
-
-msgid "Site version"
-msgstr "Site-Version"
 
 msgid "Hardware model"
 msgstr "Hardware-Modell"
@@ -89,12 +86,15 @@ msgstr "SSH-Schlüssel"
 msgid "Site"
 msgstr "Site"
 
+msgid "Site version"
+msgstr "Site-Version"
+
 msgid "Size"
 msgstr "Größe"
 
 msgid ""
-"The firmware image has been transmitted. Please ensure the SHA-256 checksum and "
-"image size are correct and click \"continue\"."
+"The firmware image has been transmitted. Please ensure the SHA-256 checksum "
+"and image size are correct and click \"continue\"."
 msgstr ""
 "Die Firmwaredatei wurde übermittelt. Bitte vergleiche SHA-256-Checksumme und "
 "Dateigröße und klicke anschließend auf \"fortfahren\"."
