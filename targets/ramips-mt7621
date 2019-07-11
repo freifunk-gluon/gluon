@@ -1,3 +1,10 @@
+-- ASUS
+
+device('asus-rt-ac57u', 'asus_rt-ac57u', {
+	factory = false,
+})
+
+
 -- D-Link
 
 device('d-link-dir-860l-b1', 'dir-860l-b1', {
