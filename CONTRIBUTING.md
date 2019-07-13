@@ -50,4 +50,4 @@ existing commit messages to get the idea.
 [packages]: https://gluon.readthedocs.io/en/latest/user/site.html#packages
 [#gluon]: https://webirc.hackint.org/#gluon
 [mailing list]: mailto:gluon@luebeck.freifunk.net
-[list of rejected features]: https://github.com/freifunk-gluon/gluon/issues?q=label%3Arejected
+[list of rejected features]: https://github.com/freifunk-gluon/gluon/issues?q=label%3A%222.+status%3A+rejected%22
