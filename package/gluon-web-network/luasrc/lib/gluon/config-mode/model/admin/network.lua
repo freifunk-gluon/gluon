@@ -113,13 +113,23 @@ uci:foreach("system", "gpio_switch", function(si)
 			section = f:section(Section)
 		end
 
-		local port = si.name:match("^PoE Power Port(%d*)$")
+		local texts = {
+			["^PoE Power Port(%d*)$"] = function(m) return translatef("Enable PoE Power Port %s", m[1]) end,
+			["^PoE Passthrough$"] = function() return translate("Enable PoE Passthrough") end,
+		}
+
 		local name
-		if port then
-			name = translatef("Enable PoE Power Port %s", port)
-		else
-			name = translate("Enable " .. si.name)
+		for pattern, f in pairs(texts) do
+			local match = {si.name:match(pattern)}
+			if match[1] then
+				name = f(match)
+				break
+			end
 		end
+		if not name then
+			name = translatef('Enable "%s"', si.name)
+		end
+
 		local poe = section:option(Flag, si[".name"], name)
 		poe.default = uci:get_bool("system", si[".name"], "value")
 
