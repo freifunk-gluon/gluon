@@ -104,7 +104,7 @@ index 7213b22d0c2734488bd96bc34e921f08649b8c2f..e4d813341b0e4d1ac804ee8cf0ec258e
  	awm002-evb-8M|\
 diff --git a/target/linux/ramips/dts/RT-AC57U.dts b/target/linux/ramips/dts/RT-AC57U.dts
 new file mode 100644
-index 0000000000000000000000000000000000000000..649240b837275f968ac732878996b1597c37d05d
+index 0000000000000000000000000000000000000000..cdab94676e13d259eb80afbcb28347d75d1f08f6
 --- /dev/null
 +++ b/target/linux/ramips/dts/RT-AC57U.dts
 @@ -0,0 +1,150 @@
