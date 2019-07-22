@@ -14,7 +14,7 @@ local util = require 'gluon.util'
 local subst = {}
 
 
-local f = io.popen('. /etc/os-release; echo "$ID"; echo "$VERSION_ID"; echo "$LEDE_BOARD"; echo "$LEDE_ARCH"')
+local f = io.popen('. /etc/os-release; echo "$ID"; echo "$VERSION_ID"; echo "$OPENWRT_BOARD"; echo "$OPENWRT_ARCH"')
 subst['%%d'] = f:read()
 subst['%%v'] = f:read():gsub('-snapshot', '')
 subst['%%S'] = f:read()
