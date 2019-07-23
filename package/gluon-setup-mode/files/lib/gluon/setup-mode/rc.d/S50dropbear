@@ -9,7 +9,7 @@ start_service() {
 
 	. /etc/init.d/dropbear
 
-	[ -s /etc/dropbear/dropbear_rsa_host_key ] || keygen
+	hk_generate_as_needed
 
 	. /lib/functions.sh
 	. /lib/functions/network.sh
