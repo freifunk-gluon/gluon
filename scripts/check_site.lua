@@ -121,6 +121,10 @@ local function conf_src(path)
 	return src
 end
 
+function M.conf_src(path)
+	return conf_src(path)
+end
+
 local function var_error(path, val, msg)
 	local found = 'unset'
 	if val ~= nil then
