@@ -5,8 +5,8 @@ PKG_VERSION:=1
 
 include ../gluon.mk
 
-define Package/gluon-mesh-batman-adv/common
-  PROVIDES:=gluon-mesh-batman-adv
+define Package/gluon-mesh-batman-adv-common
+  TITLE:=Gluon scripts for batman-adv and batman-adv-legacy
   DEPENDS:= \
 	+gluon-core \
 	+libgluonutil \
@@ -18,31 +18,42 @@ define Package/gluon-mesh-batman-adv/common
 	+libnl-tiny \
 	+libbatadv \
 	+batctl \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY
+endef
+
+define Package/gluon-mesh-batman-adv-14
+  PROVIDES:=gluon-mesh-batman-adv
+  TITLE:=Support for batman-adv meshing (compat level 14)
+  CONFLICTS:=gluon-mesh-batman-adv-15
+  DEPENDS+= \
+	+gluon-mesh-batman-adv-common \
+	+kmod-batman-adv-legacy \
 	+@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 \
 	+@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
 endef
 
-define Package/gluon-mesh-batman-adv-14
-$(Package/gluon-mesh-batman-adv/common)
-  TITLE:=Support for batman-adv meshing (compat level 14)
-  CONFLICTS:=gluon-mesh-batman-adv-15
-  DEPENDS+=+kmod-batman-adv-legacy
+define Package/gluon-mesh-batman-adv-15
+  PROVIDES:=gluon-mesh-batman-adv
+  TITLE:=Support for batman-adv meshing (compat level 15)
+  DEPENDS+= \
+	+gluon-mesh-batman-adv-common \
+	+kmod-batman-adv \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 \
+	+@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
 endef
 
-define Package/gluon-mesh-batman-adv-15
-$(Package/gluon-mesh-batman-adv/common)
-  TITLE:=Support for batman-adv meshing (compat level 15)
-  DEPENDS+=+kmod-batman-adv
+define Package/gluon-mesh-batman-adv-common/install
+	$(Gluon/Build/Install)
 endef
 
 define Package/gluon-mesh-batman-adv-14/install
-	$(Gluon/Build/Install)
+	$(Gluon/Build/Prepare)
 endef
 
 define Package/gluon-mesh-batman-adv-15/install
-	$(Gluon/Build/Install)
+	$(Gluon/Build/Prepare)
 endef
 
+$(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-common))
 $(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-14))
 $(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-15))
