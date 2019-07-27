@@ -38,16 +38,10 @@ endef
 
 define Package/gluon-mesh-batman-adv-14/install
 	$(Gluon/Build/Install)
-
-	$(INSTALL_DIR) $(1)/lib/gluon/mesh-batman-adv
-	echo 14 > $(1)/lib/gluon/mesh-batman-adv/compat
 endef
 
 define Package/gluon-mesh-batman-adv-15/install
 	$(Gluon/Build/Install)
-
-	$(INSTALL_DIR) $(1)/lib/gluon/mesh-batman-adv
-	echo 15 > $(1)/lib/gluon/mesh-batman-adv/compat
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-14))

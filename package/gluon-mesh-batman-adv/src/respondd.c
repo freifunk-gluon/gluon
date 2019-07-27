@@ -232,24 +232,23 @@ static struct json_object * get_mesh(void) {
 	return ret;
 }
 
-static struct json_object * get_batman_adv_compat(void) {
-	FILE *f = fopen("/lib/gluon/mesh-batman-adv/compat", "r");
-	if (!f)
+static struct json_object * get_batman_adv_compat(const char *version) {
+	int compat = 15;
+
+	if (!version)
 		return NULL;
 
-	struct json_object *ret = NULL;
+	if (!strncmp(version, "2013.4.0", strlen("2013.4.0")))
+		compat = 14;
 
-	int compat;
-	if (fscanf(f, "%i", &compat) == 1)
-		ret = json_object_new_int(compat);
-
-	fclose(f);
-
-	return ret;
+	return json_object_new_int(compat);
 }
 
 static struct json_object * respondd_provider_nodeinfo(void) {
 	struct json_object *ret = json_object_new_object();
+
+	char *version = gluonutil_read_line("/sys/module/batman_adv/version");
+	struct json_object *compat = get_batman_adv_compat(version);
 
 	struct json_object *network = json_object_new_object();
 	json_object_object_add(network, "addresses", get_addresses());
@@ -258,8 +257,8 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 	struct json_object *software = json_object_new_object();
 	struct json_object *software_batman_adv = json_object_new_object();
-	json_object_object_add(software_batman_adv, "version", gluonutil_wrap_and_free_string(gluonutil_read_line("/sys/module/batman_adv/version")));
-	json_object_object_add(software_batman_adv, "compat", get_batman_adv_compat());
+	json_object_object_add(software_batman_adv, "version", gluonutil_wrap_and_free_string(version));
+	json_object_object_add(software_batman_adv, "compat", compat);
 	json_object_object_add(software, "batman-adv", software_batman_adv);
 	json_object_object_add(ret, "software", software);
 
