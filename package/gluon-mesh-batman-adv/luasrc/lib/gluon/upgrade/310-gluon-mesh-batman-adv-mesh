@@ -7,20 +7,32 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or 'client'
+local gw_mode = uci:get('batman-adv', 'bat0', 'gw_mode') or uci:get('batman-adv-legacy', 'bat0', 'gw_mode') or 'client'
 local gw_sel_class = site.mesh.batman_adv.gw_sel_class()
 local routing_algo = site.mesh.batman_adv.routing_algo()
 
-
+uci:delete('batman-adv-legacy', 'bat0')
 uci:delete('batman-adv', 'bat0')
-uci:section('batman-adv', 'mesh', 'bat0', {
-	orig_interval = 5000,
-	gw_mode = gw_mode,
-	gw_sel_class = gw_sel_class,
-	hop_penalty = 15,
-	routing_algo = routing_algo,
-	multicast_mode = true,
-})
+
+if routing_algo == 'BATMAN_IV_LEGACY' then
+	uci:section('batman-adv-legacy', 'mesh', 'bat0', {
+		orig_interval = 5000,
+		gw_mode = gw_mode,
+		gw_sel_class = gw_sel_class,
+		hop_penalty = 15,
+	})
+else
+	uci:section('batman-adv', 'mesh', 'bat0', {
+		orig_interval = 5000,
+		gw_mode = gw_mode,
+		gw_sel_class = gw_sel_class,
+		hop_penalty = 15,
+		routing_algo = routing_algo,
+		multicast_mode = true,
+	})
+end
+
+uci:save('batman-adv-legacy')
 uci:save('batman-adv')
 
 uci:delete('network', 'gluon_bat0')
