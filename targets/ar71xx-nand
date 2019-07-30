@@ -3,6 +3,11 @@ config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
 factory -ubi-factory .img
 sysupgrade -squashfs-sysupgrade .tar
 
+# Aerohive
+
+device aerohive-hiveap-121 hiveap-121
+factory -squashfs-factory .bin
+
 # Netgear
 
 device netgear-wndr3700v4 wndr3700v4 WNDR3700V4
