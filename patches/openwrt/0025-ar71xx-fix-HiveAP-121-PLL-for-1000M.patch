@@ -1,0 +1,27 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 30 Jul 2019 19:16:21 +0200
+Subject: ar71xx: fix HiveAP 121 PLL for 1000M
+
+The Aerohive HiveAP 121 has the wrong PLL value set for Gigabit speeds,
+leading to packet-loss. 10M and 100M work fine.
+
+This commit sets the Gigabit Ethernet PLL value to the correct value,
+fixing packet loss.
+
+COnfirmed with iperf and floodping.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-hiveap-121.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-hiveap-121.c
+index 363d73dd5328ad9ce4be166c926fb22e8bf54684..5cbb2054f7c58c8329abea08d99cd4cdec767587 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-hiveap-121.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-hiveap-121.c
+@@ -111,7 +111,7 @@ static void __init hiveap_121_setup(void)
+ 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
+ 	ath79_eth0_data.phy_if_mode = PHY_INTERFACE_MODE_RGMII;
+ 	ath79_eth0_data.phy_mask = BIT(HIVEAP_121_LAN_PHYADDR);
+-	ath79_eth0_pll_data.pll_1000 = 0x0e000000;
++	ath79_eth0_pll_data.pll_1000 = 0x06000000;
+ 	ath79_eth0_pll_data.pll_100 = 0x00000101;
+ 	ath79_eth0_pll_data.pll_10 = 0x00001313;
+ 	ath79_register_eth(0);

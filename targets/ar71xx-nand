@@ -11,6 +11,11 @@ defaults {
 }
 
 
+-- Aerohive
+
+device('aerohive-hiveap-121', 'hiveap-121')
+
+
 -- Netgear
 
 device('netgear-wndr3700v4', 'wndr3700v4', {
