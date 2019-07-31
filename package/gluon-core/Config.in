@@ -50,6 +50,10 @@ config KERNEL_NET_CLS_ACT
 	bool
 	select KERNEL_NET_CLS
 
+config KERNEL_NET_ACT_POLICE
+	bool
+	select KERNEL_NET_CLS_ACT
+
 config KERNEL_NET_CLS_BASIC
 	bool
 	select KERNEL_NET_CLS
