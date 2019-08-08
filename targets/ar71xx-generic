@@ -118,7 +118,7 @@ device('gl.inet-gl-ar300m', 'gl-ar300m', {
 device('gl.inet-gl-ar750', 'gl-ar750', {
 	factory = false,
 	manifest_aliases = {'gl-ar750'},
-	packages = ATH10K_PACKAGES,
+	packages = ATH10K_PACKAGES_QCA9887,
 })
 
 
