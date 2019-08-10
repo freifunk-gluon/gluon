@@ -85,8 +85,9 @@ factory
 
 device gl.inet-gl-ar750 gl-ar750
 manifest_alias gl-ar750
-packages $ATH10K_PACKAGES
+packages $ATH10K_PACKAGES_QCA9887
 factory
+
 
 # Linksys by Cisco
 
