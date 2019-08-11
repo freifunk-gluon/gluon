@@ -24,7 +24,7 @@ CFLAGS_JSONC = $(shell pkg-config --cflags json-c)
 LDFLAGS_JSONC = $(shell pkg-config --libs json-c)
 
 
-respondd.so: respondd.c handle_neighbour.c
+respondd.so: respondd.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LDLIBS) -shared $(LDFLAGS_JSONC) -o $@ $^ -lgluonutil -lblobmsg_json -lubox -lubus -luci
 
 neighbours-babel: neighbours-babel.c handle_neighbour.c
