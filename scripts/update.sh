@@ -20,6 +20,9 @@ for module in $GLUON_MODULES; do
 
 	if ! git branch -f base "$commit" 2>/dev/null; then
 		git fetch "$repo" "$branch"
-		git branch -f base "$commit"
+		git branch -f base "$commit" || {
+		  echo "unable to find commit \"$commit\" on branch \"$branch\" in repo \"$repo\"." >&2
+		  exit 1
+		}
 	fi
 done
