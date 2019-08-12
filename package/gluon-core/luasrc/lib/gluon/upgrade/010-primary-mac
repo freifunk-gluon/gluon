@@ -54,6 +54,8 @@ elseif platform.match('ipq40xx', nil, {'avm,fritzbox-4040',
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ipq806x', nil, {'netgear,r7800'}) then
   table.insert(try_files, 1, '/sys/class/net/eth1/address')
+elseif platform.match('mpc85xx', 'p1020', {'aerohive,hiveap-330'}) then
+  table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ramips', 'mt7620', {'miwifi-mini'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ramips', 'mt7621', {'dir-860l-b1'}) then
