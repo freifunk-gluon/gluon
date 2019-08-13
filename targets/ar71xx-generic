@@ -24,21 +24,6 @@ device('alfa-network-ap121f', 'ap121f', {
 	factory = false,
 })
 
-device('alfa-network-hornet-ub', 'hornet-ub', {
-	profile = 'HORNETUB',
-	aliases = { 'alfa-network-ap121', 'alfa-network-ap121u' },
-	deprecated = true,  -- kernel partition too small with OpenWrt 19.07
-})
-
-device('alfa-network-tube2h', 'tube2h-8M', {
-	profile = 'TUBE2H8M',
-	deprecated = true,  -- kernel partition too small with OpenWrt 19.07
-})
-device('alfa-network-n2-n5', 'alfa-nx', {
-	profile = 'ALFANX',
-	deprecated = true,  -- kernel partition too small with OpenWrt 19.07
-})
-
 
 -- Allnet
 

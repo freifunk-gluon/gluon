@@ -13,10 +13,6 @@ ar71xx-generic
   - AP121 [#deprecated]_
   - AP121F
   - AP121U [#deprecated]_
-  - Hornet-UB [#deprecated]_
-  - Tube2H [#deprecated]_
-  - N2 [#deprecated]_
-  - N5 [#deprecated]_
 
 * Allnet
 
