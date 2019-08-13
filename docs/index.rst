@@ -248,6 +248,10 @@ ar71xx-generic
 ar71xx-nand
 ^^^^^^^^^^^
 
+* Aerohive
+
+  - HiveAP 121
+
 * Netgear
 
   - WNDR3700 (v4)
@@ -334,6 +338,13 @@ mpc85xx-generic
 * TP-Link
 
   - TL-WDR4900 (v1)
+
+mpc85xx-p1020
+^^^^^^^^^^^^^^^
+
+* Aerohive
+
+  - HiveAP 330
 
 ramips-mt7620 [#80211s]_
 ^^^^^^^^^^^^^^^^^^^^^^^^
