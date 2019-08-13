@@ -119,10 +119,10 @@ uci:foreach("system", "gpio_switch", function(si)
 		}
 
 		local name
-		for pattern, f in pairs(texts) do
+		for pattern, func in pairs(texts) do
 			local match = {si.name:match(pattern)}
 			if match[1] then
-				name = f(match)
+				name = func(match)
 				break
 			end
 		end
