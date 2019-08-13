@@ -388,10 +388,9 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 
 static uint64_t getnumber(const char *ifname, const char *stat) {
 	const char *format = "/sys/class/net/%s/statistics/%s";
-	char path[strlen(format) + strlen(ifname) + strlen(stat)];
+	char path[strlen(format) + strlen(ifname) + strlen(stat) + 1];
 	snprintf(path, sizeof(path), format, ifname, stat);
-	if (! access(path, F_OK))
-	{
+	if (! access(path, F_OK)) {
 		char *line=gluonutil_read_line(path);
 		long long i = atoll(line);
 		free(line);
