@@ -2,7 +2,7 @@ GLUON_FEEDS='packages routing luci gluon'
 
 OPENWRT_REPO=https://git.openwrt.org/openwrt/openwrt.git
 OPENWRT_BRANCH=openwrt-18.06
-OPENWRT_COMMIT=b7e7d220e7eff6ac1d73c5b97dec448704b26735
+OPENWRT_COMMIT=89808e211cd5ef5989bd0becb8cd45f9340610ff
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-18.06
