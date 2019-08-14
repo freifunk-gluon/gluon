@@ -4,10 +4,10 @@ config 'CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=64'
 local ATH10K_PACKAGES = {}
 local ATH10K_PACKAGES_QCA9887 = {}
 local ATH10K_PACKAGES_QCA9888 = {}
-if env.GLUON_WLAN_MESH == 'ibss' then
-	ATH10K_PACKAGES = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca988x', 'ath10k-firmware-qca988x-ct'}
-	ATH10K_PACKAGES_QCA9887 = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca9887', 'ath10k-firmware-qca9887-ct'}
-	ATH10K_PACKAGES_QCA9888 = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca9888', 'ath10k-firmware-qca9888-ct'}
+if env.GLUON_WLAN_MESH == '11s' then
+	ATH10K_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca988x', '-ath10k-firmware-qca988x-ct'}
+	ATH10K_PACKAGES_QCA9887 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9887', '-ath10k-firmware-qca9887-ct'}
+	ATH10K_PACKAGES_QCA9888 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9888', '-ath10k-firmware-qca9888-ct'}
 end
 
 
