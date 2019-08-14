@@ -43,12 +43,10 @@ device('zbt-wg3526-32m', 'zbt-wg3526-32M', {
 
 device('ubnt-erx', 'ubnt-erx', {
 	factory = false,
-	sysupgrade_ext = '.tar',
 	packages = {'-hostapd-mini'},
 })
 
 device('ubnt-erx-sfp', 'ubnt-erx-sfp', {
 	factory = false,
-	sysupgrade_ext = '.tar',
 	packages = {'-hostapd-mini'},
 })
