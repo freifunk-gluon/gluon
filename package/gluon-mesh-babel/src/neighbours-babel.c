@@ -18,7 +18,7 @@ int main(void) {
 			continue;
 
 		bhelper_ctx.debug = false;
-		babelhelper_readbabeldata(&bhelper_ctx, (void*)neighbours, handle_neighbour);
+		babelhelper_readbabeldata(&bhelper_ctx, "dump", (void*)neighbours, handle_neighbour);
 
 		printf("data: %s\n\n", json_object_to_json_string(neighbours));
 		fflush(stdout);
