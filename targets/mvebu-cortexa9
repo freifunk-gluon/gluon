@@ -1,3 +1,3 @@
-device('linksys-wrt1200ac', 'linksys-wrt1200ac', {
+device('linksys-wrt1200ac', 'linksys_wrt1200ac', {
 	factory_ext = '.img',
 })
