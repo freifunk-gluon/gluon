@@ -365,6 +365,10 @@ ramips-mt7620 [#80211s]_
 ramips-mt7621
 ^^^^^^^^^^^^^
 
+* ASUS
+
+  - RT-AC57U [#80211s]_
+
 * D-Link
 
   - DIR-860L (B1) [#80211s]_
