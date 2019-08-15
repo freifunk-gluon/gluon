@@ -2,6 +2,7 @@
 
 device('asus-rt-ac57u', 'asus_rt-ac57u', {
 	factory = false,
+	broken = (env.GLUON_WLAN_MESH ~= '11s'),
 })
 
 
