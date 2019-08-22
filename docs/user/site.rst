@@ -256,11 +256,11 @@ mesh
       both, the TQ and the announced bandwidth.
     - **B.A.T.M.A.N. V:** with the value ``1500`` the gateway is selected if the
       throughput is at least 1500 kbit/s faster than the throughput of the
-      currently selected gateway. 
+      currently selected gateway.
 
     For details on determining the threshold, when to switch to a new gateway,
     see `batctl manpage`_, section "gw_mode".
-    
+
     .. _batctl manpage: https://www.open-mesh.org/projects/batman-adv/wiki/Gateways
 
     ::
