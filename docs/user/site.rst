@@ -238,8 +238,15 @@ mesh
     In addition, options specific to the batman-adv routing protocol can be set
     in the *batman_adv* section:
 
-    The optional value *routing_algo* allows to set up ``BATMAN_V`` based meshes. 
-    If unset, the routing algorithm will default to ``BATMAN_IV``.
+    The mandatory value *routing_algo* selects the batman-adv protocol variant.
+    The following values are supported:
+
+    - ``BATMAN_IV_LEGACY`` (*mesh-batman-adv-14*)
+    - ``BATMAN_IV`` (*mesh-batman-adv-15*)
+    - ``BATMAN_V`` (*mesh-batman-adv-15*)
+
+    When both *mesh-batman-adv-14* and *mesh-batman-adv-15* are included, this
+    setting specifies which one to use.
 
     The optional value *gw_sel_class* sets the gateway selection class, the
     default is ``20`` for B.A.T.M.A.N. IV and ``5000`` kbit/s for B.A.T.M.A.N. V.
