@@ -74,10 +74,10 @@ function M.IPv6(address)
 	end
 end
 
-function M.mac_to_ip(prefix, mac)
+function M.mac_to_ip(prefix, mac, firstbyte, secondbyte)
 	local m1, m2, m3, m6, m7, m8 = string.match(mac, '(%x%x):(%x%x):(%x%x):(%x%x):(%x%x):(%x%x)')
-	local m4 = 0xff
-	local m5 = 0xfe
+	local m4 = firstbyte or 0xff
+	local m5 = secondbyte or 0xfe
 	m1 = bit.bxor(tonumber(m1, 16), 0x02)
 
 	local h1 = 0x100 * m1 + tonumber(m2, 16)
