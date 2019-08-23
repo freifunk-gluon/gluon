@@ -10,7 +10,7 @@ include ../gluon.mk
 
 define Package/gluon-mesh-babel
   TITLE:=Babel mesh
-  DEPENDS:=+gluon-core +babeld +mmfd +libiwinfo +libgluonutil +firewall +libjson-c +libnl-tiny +libubus +libubox +libblobmsg-json +libbabelhelper +luabitop +gluon-l3roamd
+  DEPENDS:=+gluon-core +babeld +gluon-mmfd +libiwinfo +libgluonutil +firewall +libjson-c +libnl-tiny +libubus +libubox +libblobmsg-json +libbabelhelper +luabitop
   PROVIDES:=gluon-mesh-provider
 endef
 
