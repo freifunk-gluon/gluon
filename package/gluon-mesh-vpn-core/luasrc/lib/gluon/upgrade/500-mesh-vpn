@@ -8,16 +8,19 @@ local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
 
 
-uci:section('network', 'interface', 'mesh_vpn', {
-	ifname = 'mesh-vpn',
-	proto = 'gluon_mesh',
-	transitive = true,
-	fixed_mtu = true,
-	macaddr = util.generate_mac(7),
-	mtu = site.mesh_vpn.mtu(),
-})
-
-uci:save('network')
+if not unistd.access('/lib/gluon/mesh-vpn/wireguard') then
+	-- wireguard brings its own mechanism for creating interfaces as it
+	-- requires one interface per peer.
+	uci:section('network', 'interface', 'mesh_vpn', {
+		ifname = 'mesh-vpn',
+		proto = 'gluon_mesh',
+		transitive = true,
+		fixed_mtu = true,
+		macaddr = util.generate_mac(7),
+		mtu = site.mesh_vpn.mtu(),
+	})
+	uci:save('network')
+end
 
 
 -- The previously used user and group are removed, we now have a generic group
@@ -40,10 +43,13 @@ if not uci:get('gluon', 'mesh_vpn') then
 		vpn = 'fastd'
 	elseif unistd.access('/lib/gluon/mesh-vpn/tunneldigger') then
 		vpn = 'tunneldigger'
+	elseif  unistd.access('/lib/gluon/mesh-vpn/wireguard') then
+		vpn = 'wireguard'
 	end
 
 	local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
 	local tunneldigger_enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
+	local wireguard_enabled = uci:get('wireguard', 'mesh_vpn', 'enabled')
 
 	local enabled
 
@@ -52,14 +58,15 @@ if not uci:get('gluon', 'mesh_vpn') then
 		enabled = fastd_enabled == '1'
 	elseif vpn == 'tunneldigger' and tunneldigger_enabled then
 		enabled = tunneldigger_enabled == '1'
+	elseif vpn == 'wireguard' and wireguard_enabled then
+		enabled = wireguard_enabled == '1'
 	-- Otherwise, migrate the other package's value if any is set
-	elseif fastd_enabled or tunneldigger_enabled then
-		enabled = fastd_enabled == '1' or tunneldigger_enabled == '1'
+	elseif fastd_enabled or tunneldigger_enabled or wireguard_enabled then
+		enabled = fastd_enabled == '1' or tunneldigger_enabled == '1' or wireguard_enabled == '1'
 	-- If nothing is set, use the default
 	else
 		enabled = site.mesh_vpn.enabled(false)
 	end
-
 
 	local limit_enabled = tonumber((uci:get('simple-tc', 'mesh_vpn', 'enabled')))
 	if limit_enabled == nil then
