@@ -21,10 +21,10 @@ return function(form, uci)
 
 	local s = form:section(Section, nil, msg)
 
-	local o
+	local site = require 'gluon.site'
 
 	local meshvpn = s:option(Flag, "meshvpn", pkg_i18n.translate("Use internet connection (mesh VPN)"))
-	meshvpn.default = uci:get_bool("gluon", "mesh_vpn", "enabled")
+	meshvpn.default = uci:get_bool("gluon", "mesh_vpn", "enabled") or site.mesh_vpn.enabled(false)
 	function meshvpn:write(data)
 		uci:set("gluon", "mesh_vpn", "enabled", data)
 	end
@@ -42,7 +42,7 @@ return function(form, uci)
 		end
 	end
 
-	o = s:option(Value, "limit_ingress", pkg_i18n.translate("Downstream (Mbit/s)"))
+	local o = s:option(Value, "limit_ingress", pkg_i18n.translate("Downstream (Mbit/s)"))
 	o:depends(limit, true)
 	o.default = div(uci:get("gluon", "mesh_vpn", "limit_ingress"), 1000)
 	o.datatype = "ufloat"
