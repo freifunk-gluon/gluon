@@ -13,6 +13,8 @@ local pretty_hostname = require 'pretty_hostname'
 
 local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
 local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_wireguard = unistd.access('/lib/gluon/mesh-vpn/wireguard')
+
 
 
 local hostname = pretty_hostname.get(uci)
