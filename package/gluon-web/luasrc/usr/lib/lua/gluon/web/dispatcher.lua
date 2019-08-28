@@ -159,10 +159,10 @@ local function dispatch(config, http, request)
 			ctl()
 		end
 
-		for _, path in ipairs(glob.glob(base .. "*.lua") or {}) do
+		for _, path in ipairs(glob.glob(base .. "*.lua", 0) or {}) do
 			load_ctl(path)
 		end
-		for _, path in ipairs(glob.glob(base .. "*/*.lua") or {}) do
+		for _, path in ipairs(glob.glob(base .. "*/*.lua", 0) or {}) do
 			load_ctl(path)
 		end
 	end
