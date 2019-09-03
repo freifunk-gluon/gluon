@@ -1,9 +1,20 @@
 config '# CONFIG_KERNEL_KALLSYMS is not set'
+config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+
+no_opkg()
+
+local STRIP_USB_PACKAGES = {
+	'-kmod-usb-core',
+	'-kmod-usb-dwc2',
+	'-kmod-usb-ledtrig-usbport',
+}
+
 
 -- A5
 
 device('a5-v11', 'a5-v11', {
 	deprecated = true, -- 4/32
+	packages = STRIP_USB_PACKAGES,
 })
 
 
@@ -11,6 +22,7 @@ device('a5-v11', 'a5-v11', {
 
 device('d-link-dir-615-h1', 'dir-615-h1', {
 	deprecated = true, -- 4/32
+	packages = STRIP_USB_PACKAGES,
 })
 
 device('d-link-dir-615-d', 'dir-615-d', {
@@ -21,6 +33,7 @@ device('d-link-dir-615-d', 'dir-615-d', {
 		'd-link-dir-615-d4',
 	},
 	deprecated = true, -- 4/32
+	packages = STRIP_USB_PACKAGES,
 })
 
 
