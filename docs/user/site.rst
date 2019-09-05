@@ -224,7 +224,8 @@ mesh
     Gluon generally segments layer-2 meshes so that each node becomes IGMP/MLD
     querier for its own local clients. This is necessary for reliable multicast
     snooping. The segmentation is realized by preventing IGMP/MLD queries from
-    passing through the mesh.
+    passing through the mesh. See also
+    :ref:`gluon-mesh-batman-adv <igmp-mld-domain-segmentation>` for details.
 
     By default, not only queries are filtered, but also membership report and
     leave packets, as they add to the background noise of the mesh. As a
