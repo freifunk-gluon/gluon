@@ -53,15 +53,6 @@ node_prefix6
 
        node_prefix6 = 'fdca::ffee:babe:2::/64'
 
-node_client_prefix6
-    The ipv6 prefix from which the client-specific IP-address is calculated that
-    is assigned to each node by l3roamd to allow efficient communication when 
-    roaming. This is exclusively useful when running a routing mesh protocol
-    like babel. e.g.
-    ::
-
-       node_client_prefix6 = 'fdca::ffee:babe:3::/64'
-
 timezone
     The timezone of your community live in, e.g.
     ::
