@@ -39,6 +39,12 @@ start_service () {
 	for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
 	[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
 	)
+
+	local prefix4="$(lua -e 'prefix4 = require("gluon.site").prefix4() if prefix4 then print(" -p " .. prefix4) end')"
+	local prefix6="$(lua -e 'print(" -p " .. require("gluon.site").prefix6())')"
+	local localip="$(uci get network.loopback.ip6addr | cut -d/ -f1)"
+	local roamingprefix="$(lua -e 'roamingprefix = require("gluon.site").node_client_prefix6() if roamingprefix then print(" -P " .. roamingprefix) end')"
+
 	/sbin/sysctl -w net.ipv6.neigh.default.gc_thresh1=2
 	/sbin/sysctl -w net.ipv4.neigh.default.gc_thresh1=2
 
@@ -46,7 +52,7 @@ start_service () {
 	procd_set_param stdout 1
 	procd_set_param stderr 1
 	procd_set_param respawn ${respawn_threshold:-3660} ${respawn_timeout:-5} ${respawn_retry:-0}
-	procd_set_param command "$PROG" -s /var/run/l3roamd.sock -p $(lua -e 'print(require("gluon.site").prefix6())') $interfaces -t 254 -a $(uci get network.loopback.ip6addr | cut -d/ -f1) -4 0:0:0:0:0:ffff::/96 -b br-client
+	procd_set_param command "$PROG" -s /var/run/l3roamd.sock $prefix4 $prefix6 $interfaces -t 254 -a $localip -b br-client $roamingprefix
 	procd_close_instance
 }
 
