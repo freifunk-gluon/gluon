@@ -1,0 +1,89 @@
+Gluon 2018.2.3
+==============
+
+Added hardware support
+~~~~~~~~~~~~~~~~~~~~~~
+
+ar71xx-generic
+^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - CPE210 v3
+  
+ar71xx-nand
+^^^^^^^^^^^
+
+* Aerohive
+
+  - HiveAP 121
+
+mcp85xx-p1020
+^^^^^^^^^^^^^
+
+* Aerohive
+
+  - HiveAP 330
+
+ramips-mt76x8
+^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TL-MR3420 v5 [#noibss]_
+  
+.. [#noibss]
+  Device or target does not support AP+IBSS mode: This device or target will not be built
+  when *GLUON_WLAN_MESH* is set to ``ibss``.
+
+
+Bugfixes
+~~~~~~~~
+
+* Fixes passwordless SSH access when gluon-authorized-keys was used without gluon-setup-mode. (`#1777 <https://github.com/freifunk-gluon/gluon/issues/1777>`_)
+
+* Fixes ingress traffic shaping. A necessary kernel config value was not set. (`#1790 <https://github.com/freifunk-gluon/gluon/issues/1790>`_)
+
+* Fixes the generation of the bootloader image for the AVM FRITZ!Box 4040. (`#1766 <https://github.com/freifunk-gluon/gluon/issues/1766>`_)
+
+* Fixes the IBSS mesh on the GL.iNet AR750. The wrong driver/firmware package was previously selected. (`#1792 <https://github.com/freifunk-gluon/gluon/pull/1792>`_)
+
+* Fixes the primary mac selection on the TP-Link Archer C25 v1. (`#1771 <https://github.com/freifunk-gluon/gluon/issues/1771>`_)
+
+
+Other changes
+~~~~~~~~~~~~~
+
+* Linux kernel has been updated to either
+  
+  - 4.9.188 (ar71xx, brcm2708, mpc85xx) or
+  - 4.14.137 (ipq40xx, ipq806x, mvebu, ramips, sunxi, x86).
+
+
+Known issues
+~~~~~~~~~~~~
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are
+  unknown (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is
+  disabled (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected
+  (like VMware when promiscuous mode is disallowed).
+
+* Inconsistent respondd API
+  (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API
+  will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on
+  weak hardware especially in larger meshes
+  (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
