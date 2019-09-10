@@ -21,3 +21,9 @@ However it mitigates the impact on the mesh when a larger range of
 its IPv4 subnet is being scanned, which would otherwise result in
 a significant amount of ARP chatter, even for unused IP addresses.
 
+This package is selected by default if the installed routing
+package is gluon-mesh-batman-adv-14 or gluon-mesh-batman-adv-15.
+It can be unselected via::
+
+    GLUON_SITE_PACKAGES := \
+      -gluon-ebtables-limit-arp
