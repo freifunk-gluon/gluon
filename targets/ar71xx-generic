@@ -256,16 +256,26 @@ device('tp-link-cpe510-v1.0', 'cpe510-520-v1', {
 device('tp-link-wbs210-v1.20', 'wbs210-v1')
 device('tp-link-wbs510-v1.20', 'wbs510-v1')
 
-device('tp-link-tl-wr710n-v1', 'tl-wr710n-v1')
-device('tp-link-tl-wr710n-v2.1', 'tl-wr710n-v2.1')
+device('tp-link-tl-wr710n-v1', 'tl-wr710n-v1', {
+	packages = { 'zram-swap' },
+})
+device('tp-link-tl-wr710n-v2.1', 'tl-wr710n-v2.1', {
+	packages = { 'zram-swap' },
+})
 
 device('tp-link-tl-wr810n-v1', 'tl-wr810n-v1')
 
-device('tp-link-tl-wr842n-nd-v1', 'tl-wr842n-v1')
-device('tp-link-tl-wr842n-nd-v2', 'tl-wr842n-v2')
+device('tp-link-tl-wr842n-nd-v1', 'tl-wr842n-v1', {
+	packages = { 'zram-swap' },
+})
+device('tp-link-tl-wr842n-nd-v2', 'tl-wr842n-v2', {
+	packages = { 'zram-swap' },
+})
 device('tp-link-tl-wr842n-nd-v3', 'tl-wr842n-v3')
 
-device('tp-link-tl-wr1043n-nd-v1', 'tl-wr1043nd-v1')
+device('tp-link-tl-wr1043n-nd-v1', 'tl-wr1043nd-v1', {
+	packages = { 'zram-swap' },
+})
 device('tp-link-tl-wr1043n-nd-v2', 'tl-wr1043nd-v2')
 device('tp-link-tl-wr1043n-nd-v3', 'tl-wr1043nd-v3')
 device('tp-link-tl-wr1043n-nd-v4', 'tl-wr1043nd-v4')
@@ -342,6 +352,7 @@ device('ubiquiti-bullet-m', 'ubnt-bullet-m', {
 		'ubiquiti-bullet-m5',
 		'ubiquiti-picostation-m2',
 	},
+	packages = { 'zram-swap' },
 })
 
 device('ubiquiti-rocket-m', 'ubnt-rocket-m', {
@@ -356,6 +367,7 @@ device('ubiquiti-nanostation-m', 'ubnt-nano-m', {
 		'ubiquiti-nanostation-m2',
 		'ubiquiti-nanostation-m5',
 	},
+	packages = { 'zram-swap' },
 })
 
 device('ubiquiti-loco-m-xw', 'ubnt-loco-m-xw', {
