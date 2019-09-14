@@ -16,15 +16,15 @@ return function(funcs)
 	end
 
 
-	local function site_packages(profile)
+	local function site_packages(image)
 		return lib.exec_capture_raw(string.format([[
-	MAKEFLAGS= make print PROFILE=%s --no-print-directory -s -f - <<'END_MAKE'
+	MAKEFLAGS= make print _GLUON_IMAGE_=%s --no-print-directory -s -f - <<'END_MAKE'
 include $(GLUON_SITEDIR)/site.mk
 
 print:
-	echo -n '$(GLUON_$(PROFILE)_SITE_PACKAGES)'
+	echo -n '$(GLUON_$(_GLUON_IMAGE_)_SITE_PACKAGES)'
 END_MAKE
-		]], lib.escape(profile)))
+		]], lib.escape(image)))
 	end
 
 	lib.include('generic')
@@ -68,7 +68,7 @@ END_MAKE
 		for _, pkg in ipairs(dev.options.packages or {}) do
 			handle_pkg(pkg)
 		end
-		for pkg in string.gmatch(site_packages(profile), '%S+') do
+		for pkg in string.gmatch(site_packages(dev.image), '%S+') do
 			handle_pkg(pkg)
 		end
 
