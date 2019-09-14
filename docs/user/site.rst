@@ -163,6 +163,8 @@ wifi24 \: optional
          },
        },
 
+.. _user-site-wifi5:
+
 wifi5 \: optional
     Same as `wifi24` but for the 5Ghz radio.
 
@@ -515,6 +517,8 @@ setup_mode \: package
       setup_mode = {
         skip = true,
       },
+
+.. _user-site-build-configuration:
 
 Build configuration
 -------------------

@@ -1,0 +1,284 @@
+Gluon 2019.1
+############
+
+Important notes
+***************
+
+Gluon v2019.1.x will be the last series of releases to support batman-adv-legacy (v14 compat) and IBSS
+(Ad-hoc) mesh links. Migration features have been developed and should be used during this release cycle
+to migrate to batman-adv v15 compat and/or 802.11s mesh links. These migration features are the
+:doc:`scheduled domain switching <../package/gluon-scheduled-domain-switch>` (since v2018.2.1) and
+:ref:`batman-adv module coexistence <release-v2019.1-batman-adv-coexistence>` (since v2019.1, see below).
+The migration must be completed before an upgrade to future Gluon releases (v2019.2 or later) becomes
+possible.
+
+With Gluon v2019.1, nodes will not answer respondd queries on ``[ff02::2:1001]:1001`` anymore. Respondd
+querier setups still using this address must be updated to the new address ``[ff05::2:1001]:1001``
+(supported since Gluon v2017.1). This change was required due to cross-domain leakage of respondd data.
+
+If you are upgrading from a version prior to v2018.1, please note that the flash layout on some
+devices (TP-Link CPE/WBS 210/510) was changed. To avoid upgrade failures, make sure to upgrade
+to Gluon 2017.1.8 or the latest Gluon 2016.2.x (unreleased) before installing Gluon 2018.1, 2018.2 or 2019.1.
+
+Added hardware support
+**********************
+
+ar71xx-generic
+==============
+
+* D-Link
+
+  - DAP-1330 A1
+
+ar71xx-tiny [#deprecated]_
+==========================
+
+* TP-Link
+
+  - TL-WR840N v2
+
+ipq40xx
+=======
+
+* 8devices
+
+  - Jalapeno
+
+mpc85xx-p1020 [#newtarget]_
+===========================
+
+* Aerohive
+
+  - HiveAP 330
+
+ramips-mt7621
+=============
+
+* ASUS
+
+  - RT-AC57U [#noibss]_
+
+.. [#deprecated]
+  This target will be reaching its end of life soon. This means that support
+  in the next major release of Gluon is doubtful.
+
+.. [#newtarget]
+  This is a new target.
+
+.. [#noibss]
+  Device or target does not support AP+IBSS mode: This device or target will not be built
+  when *GLUON_WLAN_MESH* is set to ``ibss``.
+
+
+.. note::
+
+    The ``ipq806x`` target has been flagged as broken, as none of its devices are fully supported in this OpenWrt
+    release yet. You might have to update your build scripts accordingly.
+
+
+
+New features
+************
+
+.. _release-v2019.1-batman-adv-coexistence:
+
+batman-adv coexistence
+======================
+
+To allow a migration from B.A.T.M.A.N. Adv. compat 14 this Gluon release offers the ability to ship both
+B.A.T.M.A.N. Adv. compat versions 14 and 15 in the same image. The ``mesh.batman_adv.routing_algo`` option is used
+to decide which module gets loaded and the scheduled domain switching functionality can be used to migrate between
+the two versions.
+
+Note that if you were using ``gluon-mesh-batman-adv-14`` ("batman-adv-legacy") before you will need to update the
+``mesh.batman_adv.routing_algo`` setting from from ``BATMAN_IV`` to ``BATMAN_IV_LEGACY`` if you want to
+stay on v14 compat.
+
+See the :ref:`mesh <user-site-mesh>` section for the *site.conf* configuration of this feature.
+
+Outdoor Mode
+============
+
+Radio devices hosted outdoors are often affected by different regulation than if they were installed indoors. The
+outdoor mode allows for the reconfiguration of 5 GHz radios onto different channels and channel ranges.
+Regulatory policies like DFS currently make it difficult to use the 5 GHz band for mesh networking because it's
+never certain that nodes will stay on the same channel.
+If enabled, by setting ``wifi5.outdoor_chanlist``, a number of devices that are commonly installed outdoors will
+have outdoor mode automatically enabled during their initial setup, specifically:
+
+* Ubiquiti
+
+    - Bullet M
+    - Litebeam M5
+    - Nanostation M5
+    - Nanostation M5 Loco
+    - Rocket M5
+    - Rocket M5 TI
+    - Unifi AC Mesh
+    - Unifi AC Mesh Pro
+    - Unifi Outdoor
+
+* TP-Link
+
+    - CPE510
+    - WBS510
+
+See the :ref:`wifi5 <user-site-wifi5>` section for the *site.conf* configuration of this feature.
+
+Device Deprecation
+==================
+
+The ar71xx-tiny and several devices in the ramips-rt305x target have been marked as deprecated. The `GLUON_DEPRECATED`
+flag was introduced to offer communities the choice on how to deal with the ending support for those devices. Devices
+or targets marked as deprecated will very likely not be included in following Gluon releases anymore, usually due to
+their insufficient flash size.
+
+See the :ref:`Build configuration <user-site-build-configuration>` section for details.
+
+Hoodselector: Geolocation Mode
+==============================
+
+The new hoodselector package allows a node to automatically reevaluate its selected mesh domain at runtime. In this
+release we support its geolocation feature.
+
+See the :doc:`../package/gluon-hoodselector` documentation for details.
+
+
+x86 images support firstboot
+============================
+
+x86 images are now using squashfs instead of ext4 and can now have their configuration reset by using ``firstboot``.
+
+
+Bugfixes
+********
+
+* Fixes passwordless SSH access when gluon-authorized-keys was used without gluon-setup-mode.
+  (`#1777 <https://github.com/freifunk-gluon/gluon/issues/1777>`_)
+
+* Fixes cross-domain leakage of respondd data by not joining the link-local multicast group on br-client. Nodes will
+  not be answering respondd queries on  ``[ff02::2:1001]:1001`` anymore. Respondd queries using that adresss must be
+  updated to the new address ``[ff05::2:1001]:1001``. (`#1701 <https://github.com/freifunk-gluon/gluon/issues/1701>`_)
+
+
+Site changes
+************
+
+When updating a site configuration from Gluon 2018.2.x, the following changes must be made:
+
+site.mk
+=======
+
+* We now require the ``GLUON_DEPRECATED`` variable to be set to decide how to handle the image generation for
+  deprecated devices. (`#1745 <https://github.com/freifunk-gluon/gluon/pull/1745>`_)
+
+* The variable ``DEVICES`` that controls which devices to build images for has been renamed to ``GLUON_DEVICES``.
+  (`#1686 <https://github.com/freifunk-gluon/gluon/pull/1686>`_)
+
+* The ``gluon-radvd`` package is now included by default and can be dropped from *FEATURES* and  *GLUON_SITE_PACKGES*.
+
+site.conf
+=========
+
+* The ``mesh.batman_adv.routing_algo`` option is now required when the batman-adv routing protocol is used.
+  (`#1622 <https://github.com/freifunk-gluon/gluon/pull/1622>`_)
+
+  To continue using batman-adv v14 compat you need to set this option from ``BATMAN_IV`` to ``BATMAN_IV_LEGACY``.
+
+* The options ``wifi*.basic_rates`` and ``wifi*.supported_rates`` have been removed, as the legacy 802.11b rates are
+  now disabled by default. (`#1716 <https://github.com/freifunk-gluon/gluon/pull/1716>`_)
+
+
+Gateway recommendations
+***********************
+
+These are recommendations for running non-Gluon nodes, like for example gateways, in your mesh network:
+
+* Since Gluon v2018.1 the IGMP/MLD segmentation feature was enabled by default. When ``bat0`` is run with a bridge on
+  top the ``bat0`` bridge port should be set to receive all multicast traffic unconditionally:
+
+  ::
+
+    # echo 2 > /sys/class/net/bat0/brport/multicast_router
+
+  See the chapter on :ref:`IGMP/MLD Domain Segmentation <igmp-mld-domain-segmentation>` for more details.
+
+
+Internals
+*********
+
+Debug Build Flag
+================
+
+Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or similar tools.
+Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
+
+Lua target files
+================
+
+Target definitions were rewritten in Lua; this was necessary to implement the device deprecation feature. It also
+offers the option for more flexible tagging of devices in the future.
+(`#1745 <https://github.com/freifunk-gluon/gluon/pull/1745>`_)
+
+luacheck
+========
+
+Lua scripts can now be properly linted and analyzed using luacheck. Run ``luacheck package scripts target`` in the
+Gluon project root. (`#1741 <https://github.com/freifunk-gluon/gluon/pull/1741>`_)
+
+
+Docker build environment
+========================
+
+A minimal docker-based build environment is now available in ``contrib/Dockerfile``.
+(`#1738 <https://github.com/freifunk-gluon/gluon/pull/1738>`_)
+
+
+Reload of domain-related services
+=================================
+
+A mechanism to reload domain related services is now available.
+(`#1710 <https://github.com/freifunk-gluon/gluon/pull/1710>`_)
+
+
+.. _releases-v2019.1-known-issues:
+
+
+Known issues
+************
+
+* Out of memory situations with high client count on ath9k.
+  (`#1768 <https://github.com/freifunk-gluon/gluon/issues/1768>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+   - | Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+     | Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+     | metric.
+
+   - | Throughput values are not correctly acquired for different interface types.
+     | (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+     | This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is
+  disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware especially in larger
+  meshes (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
+
