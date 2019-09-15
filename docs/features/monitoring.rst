@@ -104,7 +104,8 @@ gluon-respondd
 
 `gluon-respondd` allows querying neighbouring nodes for their information.
 It is a daemon listening on the multicast address ``ff02::2:1001`` on
-UDP port 1001 on both the bare mesh interfaces and `br-client`. Unicast
+UDP port 1001 on the mesh interface and on the multicast address
+``ff05::2:1001`` on the `br-client` interface. Unicast
 requests are supported as well.
 
 The supported requests are:
@@ -122,8 +123,8 @@ information from other nodes.
 
 ::
 
-  gluon-neighbour-info -i wlan0 \
-  -p 1001 -d ff02:0:0:0:0:0:2:1001 \
+  gluon-neighbour-info -i bat0 \
+  -p 1001 -d ff05:0:0:0:0:0:2:1001 \
   -r nodeinfo
 
 An optional timeout may be specified, e.g. `-t 5` (default: 3 seconds). See
