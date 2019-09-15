@@ -55,7 +55,7 @@ ar71xx-generic
 
 * Netgear
 
-  - WNDR3700 (v1, v2, v5)
+  - WNDR3700 (v1, v2)
   - WNDR3800
   - WNDRMAC (v2)
 
