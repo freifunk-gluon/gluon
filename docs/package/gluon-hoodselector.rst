@@ -28,7 +28,10 @@ A domain is defined by geostationary fixed shapes by using longitude & latitude
 in combination with the domain configuration system. Below you can see a visual
 example of a regional domain:
 
-.. image:: gluon-hoodselector-domainmap.jpeg
+.. figure:: ./gluon-hoodselector-domainmap.jpeg
+    :alt: Regional domains visualized as shapes defined by latitude & longitude
+
+    © OpenStreetMap contributors
 
 Behaviour
 ------------------
@@ -36,7 +39,7 @@ Behaviour
 The following is an abstract state diagramm which gives an overview
 of the process:
 
-.. image:: gluon-hoodselector.svg
+.. image:: ./gluon-hoodselector.svg
 
 The sequence of this diagram reflects the priority of its running modes.
 Each mode will be explained separately below.
@@ -78,7 +81,7 @@ two coordinates per box are needed to define it (see below for an
 example). The second one uses polygons which can have multiple edges.
 Each domain can hold multiple shapes.
 
-.. image:: gluon-hoodselector-rectangle-example.svg
+.. image:: ./gluon-hoodselector-rectangle-example.svg
 
 site.conf
 ---------
