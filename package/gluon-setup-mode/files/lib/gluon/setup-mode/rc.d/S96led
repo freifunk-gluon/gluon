@@ -6,6 +6,12 @@ start() {
 	/etc/init.d/led start
 
 	. /etc/diag.sh
-	get_status_led
+
+	get_status_led 2> /dev/null
+
+	if [ -z $status_led ]; then
+		status_led="$running"
+	fi
+
 	status_led_set_timer 1000 300
 }
