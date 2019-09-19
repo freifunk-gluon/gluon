@@ -149,8 +149,8 @@ ar71xx-nand
 
   - NBG6716 [#ath10k]_
 
-ar71xx-tiny
------------
+ar71xx-tiny [#deprecated]_
+--------------------------
 
 * D-Link
 
@@ -291,8 +291,8 @@ ramips-mt76x8 [#80211s]_
 
   - VoCore2
 
-ramips-rt305x [#80211s]_
-------------------------
+ramips-rt305x [#80211s]_ [#deprecated]_
+---------------------------------------
 
 * A5-V11
 
@@ -338,6 +338,10 @@ See also: :doc:`x86`
 
 Footnotes
 ---------
+
+.. [#deprecated]
+  The device or target is reaching its end of life soon. This means that support
+  in the next major release of Gluon is doubtful.
 
 .. [#ath10k]
   Device uses the ath10k WLAN driver. Images are built for 11s by default unless GLUON_WLAN_MESH
