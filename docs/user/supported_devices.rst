@@ -10,13 +10,13 @@ ar71xx-generic
 
 * ALFA Network
 
-  - AP121
+  - AP121 [#deprecated]_
   - AP121F
-  - AP121U
-  - Hornet-UB
-  - Tube2H
-  - N2
-  - N5
+  - AP121U [#deprecated]_
+  - Hornet-UB [#deprecated]_
+  - Tube2H [#deprecated]_
+  - N2 [#deprecated]_
+  - N5 [#deprecated]_
 
 * Allnet
 
