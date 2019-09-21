@@ -197,6 +197,12 @@ assume that there is no multicast router behind this port, meaning
 to only forward multicast to this port if an according multicast
 listener on this link was detected.
 
+Further limitations: IGMP/MLD snooping switches (e.g. "enterprise switches")
+behind the client network of a node (LAN ports) are unsupported. It is
+advised to disable IGMP/MLD snooping on those enterprise switches for now
+or to at least manually mark the port to the Gluon router as a
+"multicast router port".
+
 Alternatively, the filtering of IGMP/MLD reports can be disabled via
 the site.conf (which is not recommended in large meshes though).
 See :ref:`site.conf mesh section <user-site-mesh>` for details.
