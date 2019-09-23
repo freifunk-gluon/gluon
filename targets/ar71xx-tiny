@@ -12,6 +12,7 @@ packages {
 
 defaults {
 	deprecated = true, -- 4/32
+	class = 'tiny',
 }
 
 

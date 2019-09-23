@@ -3,6 +3,10 @@ config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
 
 no_opkg()
 
+defaults {
+	class = 'tiny',  -- 32M RAM
+}
+
 local STRIP_USB_PACKAGES = {
 	'-kmod-usb-core',
 	'-kmod-usb-dwc2',
