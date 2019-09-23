@@ -1,0 +1,60 @@
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=50
+DAEMON=/usr/sbin/mmfd
+SOCKET=/var/run/mmfd.sock
+
+start_service() {
+	local interfaces=$(for dev in $(gluon-list-mesh-interfaces); do echo " -i $dev"; done)
+
+	procd_open_instance
+	procd_set_param command $DAEMON -s $SOCKET $interfaces
+	procd_set_param respawn ${respawn_threshold:-60} ${respawn_timeout:-1} ${respawn_retry:-0}
+	procd_set_param stderr 1
+	procd_set_param stdout 1
+	procd_close_instance
+}
+
+mmfd_get_interfaces() {
+	echo get_meshifs | uc $SOCKET | jsonfilter -e "@.mesh_interfaces[@]"
+}
+
+mmfd_has_interface() {
+	mmfd_get_interfaces | grep -q "^$1$"
+}
+
+addif() {
+	echo "add_meshif $@" | uc $SOCKET
+}
+
+delif() {
+	echo "del_meshif $@" | uc $SOCKET
+}
+
+reload_service() {
+	waitforsocket
+
+	for i in $(ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device")
+	do
+		if ! mmfd_has_interface $i; then
+			addif $i
+		fi
+	done
+
+	for i in $(mmfd_get_interfaces)
+	do
+		if ! ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device" | grep -q "^$i$"; then
+			delif $i
+		fi
+	done
+}
+
+service_triggers() {
+	local script=$(readlink "$initscript")
+	local name=$(basename "${script:-$initscript}")
+
+	procd_open_trigger
+	procd_add_raw_trigger "interface.*" 0 "/etc/init.d/$name" reload
+	procd_close_trigger
+}
