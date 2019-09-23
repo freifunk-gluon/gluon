@@ -7,6 +7,10 @@ return function(funcs)
 
 	local target = arg[1]
 	local extra_packages = arg[2]
+	local class_packages = {
+		standard = arg[3],
+		tiny = arg[4],
+	}
 
 	local openwrt_config_target
 	if env.SUBTARGET ~= '' then
@@ -64,13 +68,19 @@ END_MAKE
 			end
 			device_pkgs = device_pkgs .. ' ' .. pkg
 		end
+		local function handle_pkgs(pkgs)
+			local packages = string.gmatch(pkgs or '', '%S+')
+			for pkg in packages do
+				handle_pkg(pkg)
+			end
+		end
 
 		for _, pkg in ipairs(dev.options.packages or {}) do
 			handle_pkg(pkg)
 		end
-		for pkg in string.gmatch(site_packages(dev.image), '%S+') do
-			handle_pkg(pkg)
-		end
+		handle_pkgs(site_packages(dev.image))
+
+		handle_pkgs(class_packages[dev.options.class])
 
 		funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
 			'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)

@@ -39,6 +39,7 @@ local default_options = {
 	aliases = {},
 	manifest_aliases = {},
 	packages = {},
+	class = "standard",
 	deprecated = false,
 	broken = false,
 }

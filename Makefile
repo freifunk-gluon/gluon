@@ -112,6 +112,8 @@ lint-sh: FORCE
 	@scripts/lint-sh.sh
 
 GLUON_DEFAULT_PACKAGES := hostapd-mini
+GLUON_CLASS_PACKAGES_standard :=
+GLUON_CLASS_PACKAGES_tiny :=
 
 GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)' || echo '__ERROR__')
 ifneq ($(filter __ERROR__,$(GLUON_FEATURE_PACKAGES)),)
@@ -144,12 +146,12 @@ config: $(LUA) FORCE
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),$(call CheckSite,$(conf)))
 
 	@$(GLUON_CONFIG_VARS) \
-		$(LUA) scripts/target_config.lua '$(GLUON_TARGET)' '$(GLUON_PACKAGES)' \
+		$(LUA) scripts/target_config.lua '$(GLUON_TARGET)' '$(GLUON_DEFAULT_PACKAGES)' '$(GLUON_CLASS_PACKAGES_standard)' '$(GLUON_CLASS_PACKAGES_tiny)' \
 		> openwrt/.config
 	+@$(OPENWRTMAKE) defconfig
 
 	@$(GLUON_CONFIG_VARS) \
-		$(LUA) scripts/target_config_check.lua '$(GLUON_TARGET)' '$(GLUON_PACKAGES)'
+		$(LUA) scripts/target_config_check.lua '$(GLUON_TARGET)' '$(GLUON_DEFAULT_PACKAGES)' '$(GLUON_CLASS_PACKAGES_standard)' '$(GLUON_CLASS_PACKAGES_tiny)'
 
 
 all: config
