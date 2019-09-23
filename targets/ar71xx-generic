@@ -35,6 +35,7 @@ device('8devices-carambola2-board', 'carambola2', {
 
 device('alfa-network-ap121f', 'ap121f', {
 	factory = false,
+	class = 'tiny', -- 32M ath9k
 })
 
 
@@ -129,6 +130,7 @@ device('gl.inet-gl-ar750', 'gl-ar750', {
 
 device('linksys-wrt160nl', 'wrt160nl', {
 	profile = 'WRT160NL',
+	class = 'tiny', -- 32M ath9k
 })
 
 
@@ -262,23 +264,28 @@ device('tp-link-wbs210-v1.20', 'wbs210-v1')
 device('tp-link-wbs510-v1.20', 'wbs510-v1')
 
 device('tp-link-tl-wr710n-v1', 'tl-wr710n-v1', {
+	class = 'tiny', -- 32M ath9k
 	packages = { 'zram-swap' },
 })
 device('tp-link-tl-wr710n-v2.1', 'tl-wr710n-v2.1', {
+	class = 'tiny', -- 32M ath9k
 	packages = { 'zram-swap' },
 })
 
 device('tp-link-tl-wr810n-v1', 'tl-wr810n-v1')
 
 device('tp-link-tl-wr842n-nd-v1', 'tl-wr842n-v1', {
+	class = 'tiny', -- 32M ath9k
 	packages = { 'zram-swap' },
 })
 device('tp-link-tl-wr842n-nd-v2', 'tl-wr842n-v2', {
+	class = 'tiny', -- 32M ath9k
 	packages = { 'zram-swap' },
 })
 device('tp-link-tl-wr842n-nd-v3', 'tl-wr842n-v3')
 
 device('tp-link-tl-wr1043n-nd-v1', 'tl-wr1043nd-v1', {
+	class = 'tiny', -- 32M ath9k
 	packages = { 'zram-swap' },
 })
 device('tp-link-tl-wr1043n-nd-v2', 'tl-wr1043nd-v2')
@@ -312,11 +319,13 @@ device('tp-link-archer-c7-v5', 'archer-c7-v5', {
 device('tp-link-archer-c25-v1', 'archer-c25-v1', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
 })
 
 device('tp-link-archer-c58-v1', 'archer-c58-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
 })
 
 device('tp-link-archer-c59-v1', 'archer-c59-v1', {
@@ -326,25 +335,30 @@ device('tp-link-archer-c59-v1', 'archer-c59-v1', {
 device('tp-link-archer-c60-v1', 'archer-c60-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
 })
 
 device('tp-link-archer-c60-v2', 'archer-c60-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
 })
 
 device('tp-link-re355', 're355-v1', {
 	packages = ATH10K_PACKAGES,
 	broken = true, -- OOM with 5GHz enabled in most environments if device is 64M RAM variant
+	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
 device('tp-link-tl-wr902ac-v1', 'tl-wr902ac-v1', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	broken = true, -- OOM due to insufficient RAM for ath10k expected
+	class = 'tiny', -- 64M ath9k + ath10k
 })
 
 device('tp-link-re450', 're450-v1', {
 	packages = ATH10K_PACKAGES,
+	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
 
@@ -352,11 +366,16 @@ device('tp-link-re450', 're450-v1', {
 
 device('ubiquiti-airgateway', 'ubnt-air-gateway', {
 	aliases = {'ubiquiti-airgateway-lr'},
+	class = 'tiny', -- 32M ath9k
 })
 
-device('ubiquiti-airgateway-pro', 'ubnt-air-gateway-pro')
+device('ubiquiti-airgateway-pro', 'ubnt-air-gateway-pro', {
+	class = 'tiny', -- 32M ath9k
+})
 
-device('ubiquiti-airrouter', 'ubnt-airrouter')
+device('ubiquiti-airrouter', 'ubnt-airrouter', {
+	class = 'tiny', -- 32M ath9k
+})
 
 device('ubiquiti-bullet-m', 'ubnt-bullet-m', {
 	aliases = {
@@ -367,6 +386,7 @@ device('ubiquiti-bullet-m', 'ubnt-bullet-m', {
 		'ubiquiti-picostation-m2',
 	},
 	packages = { 'zram-swap' },
+	class = 'tiny', -- 32M ath9k
 })
 
 device('ubiquiti-rocket-m', 'ubnt-rocket-m', {
@@ -382,6 +402,7 @@ device('ubiquiti-nanostation-m', 'ubnt-nano-m', {
 		'ubiquiti-nanostation-m5',
 	},
 	packages = { 'zram-swap' },
+	class = 'tiny', -- 32M ath9k
 })
 
 device('ubiquiti-loco-m-xw', 'ubnt-loco-m-xw', {
@@ -426,6 +447,7 @@ device('ubiquiti-unifiap-outdoor+', 'ubnt-unifi-outdoor-plus')
 
 device('ubiquiti-ls-sr71', 'ubnt-ls-sr71', {
 	broken = true, -- untested
+	class = 'tiny', -- 32M ath9k
 })
 
 device('ubiquiti-unifi-ac-lite', 'ubnt-unifiac-lite', {
