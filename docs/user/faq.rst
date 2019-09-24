@@ -45,9 +45,8 @@ Consider these key values:
   .. _MSS clamping: https://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
 
 - Encapsulation: Account for the overhead created by the configured mesh protocol
-  encapsulating the payload, which is
-  - up to 32 Byte (14 Byte Ethernet + 18 Byte batadv) for batman-adv compat v15 (v2014.0 and later)
-  - up to 28 Byte (14 Byte Ethernet + 14 Byte batadv) for batman-adv compat v14 (v2011.3.0 until and including v2013.4.0)
+  encapsulating the payload, which is up to 32 Byte (14 Byte Ethernet + 18 Byte
+  batadv).
 
 - PMTU: What MTU does the path between your gateway and each of its peers support?
 
@@ -106,4 +105,4 @@ Conclusion
 Determining the maximum MTU can be a tedious process, especially since the PMTU
 of peers could change at any time. The general recommendation for maximized
 compatibility is therefore the minimum MTU of 1312 Byte, which works well with
-all combinations of IPv4, IPv6, batman-adv compat v14 and v15.
+both IPv4 and IPv6.

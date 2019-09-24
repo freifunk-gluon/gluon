@@ -244,12 +244,8 @@ mesh
     The mandatory value *routing_algo* selects the batman-adv protocol variant.
     The following values are supported:
 
-    - ``BATMAN_IV_LEGACY`` (*mesh-batman-adv-14*)
-    - ``BATMAN_IV`` (*mesh-batman-adv-15*)
-    - ``BATMAN_V`` (*mesh-batman-adv-15*)
-
-    When both *mesh-batman-adv-14* and *mesh-batman-adv-15* are included, this
-    setting specifies which one to use.
+    - ``BATMAN_IV``
+    - ``BATMAN_V``
 
     The optional value *gw_sel_class* sets the gateway selection class, the
     default is ``20`` for B.A.T.M.A.N. IV and ``5000`` kbit/s for B.A.T.M.A.N. V.
@@ -598,12 +594,12 @@ prefix: The feature flag corresponding to the package *gluon-mesh-batman-adv-15*
 
 The file ``package/features`` in the Gluon repository (or
 ``features`` in site feeds) can specify additional rules for deriving package lists
-from feature flags, e.g. specifying both *status-page* and either *mesh-batman-adv-14*
-or *mesh-batman-adv-15* will automatically select the additional package
+from feature flags, e.g. specifying both *status-page* and *mesh-batman-adv-15*
+will automatically select the additional package
 *gluon-status-page-mesh-batman-adv*. In the future, selecting the flags
 *mesh-vpn-fastd* and *respondd* might automatically enable the additional
 package *gluon-mesh-vpn-fastd-respondd*, and enabling *status-page* and
-*mesh-batman-adv-15* (or *-14*) with ``de`` in *GLUON_LANGS* could
+*mesh-batman-adv-15* with ``de`` in *GLUON_LANGS* could
 add the package *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 In short, it is not necessary anymore to list all the individual packages that are

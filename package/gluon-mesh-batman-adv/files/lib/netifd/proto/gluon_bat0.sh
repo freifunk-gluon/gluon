@@ -43,13 +43,7 @@ proto_gluon_bat0_setup() {
 	ip link set primary0 address "$primary0_mac" mtu 1532 up
 
 	local routing_algo="$(lua -e 'print(require("gluon.site").mesh.batman_adv.routing_algo())')"
-
-	if [ "$routing_algo" = 'BATMAN_IV_LEGACY' ]; then
-		modprobe batman-adv-legacy
-	else
-		modprobe batman-adv
-		(echo "$routing_algo" >/sys/module/batman_adv/parameters/routing_algo) 2>/dev/null
-	fi
+	(echo "$routing_algo" >/sys/module/batman_adv/parameters/routing_algo) 2>/dev/null
 
 	echo bat0 > /sys/class/net/primary0/batman_adv/mesh_iface
 
@@ -64,8 +58,6 @@ proto_gluon_bat0_teardown() {
 
 	ip link del bat0
 	ip link del primary0
-
-	rmmod batman-adv
 }
 
 add_protocol gluon_bat0
