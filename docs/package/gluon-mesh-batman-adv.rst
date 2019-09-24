@@ -20,49 +20,11 @@ B.A.T.M.A.N. Advanced project homepage:
 
 * https://www.open-mesh.org/projects/batman-adv/wiki/Wiki
 
-Flavours
---------
-
-Gluon currently supports two main build flavours of batman-adv:
-
-gluon-mesh-batman-adv-15
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-This is the recommended batman-adv flavour to use.
-
-It follows recent, upstream batman-adv releases and is flexible to new feature additions.
-
-gluon-mesh-batman-adv-14 (`batman-adv-legacy`)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-`gluon-mesh-batman-adv-14`, also known as `batman-adv-legacy` or batman-adv v2013.4
-is the last batman-adv release with the batman-adv compatibility version 14, which
-was released in October 2013.
-
-With batman-adv v2014.0.0 a compat breakage became necessary for the introduction
-of new features. However, one of these features was the addition of TVLV support
-(type-version-length-value fields) which from then on allowed adding features
-without breaking packet format compatibility. This made it possible to stay with
-compatibility version 15 so far.
-
-For new installations `gluon-mesh-batman-adv-14` is **not recommended**. It misses
-a lot of bugfixes and is currently only available for existing communities
-until they have migrated. This package will soon be deprecated and removed.
-
-Also see:
-
-* https://www.open-mesh.org/projects/batman-adv/wiki/Compatversion
-* https://www.open-mesh.org/news/56
-* https://github.com/freifunk-gluon/batman-adv-legacy/
-
-
 B.A.T.M.A.N. Routing Algorithms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For the `gluon-mesh-batman-adv-15` package two routing algorithms are selectable
-via :ref:`site.conf mesh section <user-site-mesh>`: BATMAN_IV and BATMAN_V.
-
-For the `gluon-mesh-batman-adv-14` package, BATMAN_IV_LEGACY needs to be selected.
+Two routing algorithms are selectable via
+:ref:`site.conf mesh section <user-site-mesh>`: BATMAN_IV and BATMAN_V.
 
 BATMAN_IV - stable
 """"""""""""""""""
@@ -92,8 +54,8 @@ mesh protocol, it quickly reaches its limit.
 
 For meshes with about **50 nodes / 100 clients, or more** it is therefore highly
 recommended to add the :doc:`gluon-ebtables-filter-multicast`
-package. Also, with gluon-mesh-batman-adv-15 or gluon-mesh-batman-adv-14
-installed :doc:`gluon-ebtables-limit-arp` is selected by default.
+package. Also, with the *mesh-batman-adv-15* feature,
+:doc:`gluon-ebtables-limit-arp` is selected by default.
 
 Furthermore, by default IGMP and MLD messages are filtered. See
 :ref:`site.conf mesh section <user-site-mesh>` and
