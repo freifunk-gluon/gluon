@@ -256,6 +256,7 @@ device('tp-link-cpe510-v1.0', 'cpe510-520-v1', {
 })
 
 device('tp-link-wbs210-v1.20', 'wbs210-v1')
+device('tp-link-wbs210-v2.0', 'wbs210-v2')
 device('tp-link-wbs510-v1.20', 'wbs510-v1')
 
 device('tp-link-tl-wr710n-v1', 'tl-wr710n-v1', {

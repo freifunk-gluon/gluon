@@ -1,0 +1,148 @@
+From fa599cbdc721b445e6909b75af82620619cb6bce Mon Sep 17 00:00:00 2001
+From: Bernhard Geier <2651739+citronalco@users.noreply.github.com>
+Date: Wed, 25 Sep 2019 18:25:09 +0200
+Subject: [PATCH] Add support for TP-Links WBS210 v2
+
+Signed-off-by: Bernhard Geier <freifunk@geierb.de>
+---
+ .../ar71xx/base-files/etc/board.d/01_leds     |  1 +
+ target/linux/ar71xx/base-files/lib/ar71xx.sh  |  4 +++
+ .../ar71xx/base-files/lib/upgrade/platform.sh |  4 +++
+ .../files/arch/mips/ath79/mach-cpe510.c       |  3 ++
+ .../ar71xx/files/arch/mips/ath79/machtypes.h  |  1 +
+ target/linux/ar71xx/image/generic-tp-link.mk  |  8 +++++
+ tools/firmware-utils/src/tplink-safeloader.c  | 32 +++++++++++++++++++
+ 7 files changed, 53 insertions(+)
+
+diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+index e0222f3637..1f1d1c01b1 100755
+--- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
++++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
+@@ -252,6 +252,7 @@ cpe210-v2|\
+ cpe210-v3|\
+ cpe510|\
+ wbs210|\
++wbs210-v2|\
+ wbs510)
+ 	ucidef_set_rssimon "wlan0" "200000" "1"
+ 	ucidef_set_led_rssi "rssilow" "RSSILOW" "tp-link:green:link1" "wlan0" "1" "100" "0" "13"
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 2200069c64..4d8a237e08 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -1398,6 +1398,10 @@ ar71xx_board_detect() {
+ 		name="wbs210"
+ 		tplink_pharos_board_detect "$(tplink_pharos_get_model_string | tr -d '\r')"
+ 		;;
++       *"WBS210 v2")
++                name="wbs210-v2"
++               tplink_pharos_board_detect "$(tplink_pharos_v2_get_model_string)"
++                ;;
+ 	*"WBS510")
+ 		name="wbs510"
+ 		tplink_pharos_board_detect "$(tplink_pharos_get_model_string | tr -d '\r')"
+diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+index a04dd7441d..3c234ab219 100755
+--- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
+@@ -592,6 +592,10 @@ platform_check_image() {
+ 		tplink_pharos_check_image "$1" "01000000" "$(tplink_pharos_v2_get_model_string)" '\0\xff\r' && return 0
+ 		return 1
+ 		;;
++	wbs210-v2)
++		tplink_pharos_check_image "$1" "7f454c46" "$(tplink_pharos_v2_get_model_string)" '\0\xff\r' && return 0
++		return 1
++		;;
+ 	a40|\
+ 	a60|\
+ 	mr1750|\
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+index f25a69f08e..e8209e282d 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-cpe510.c
+@@ -245,5 +245,8 @@ MIPS_MACHINE(ATH79_MACH_CPE510, "CPE510", "TP-LINK CPE510/520",
+ MIPS_MACHINE(ATH79_MACH_WBS210, "WBS210", "TP-LINK WBS210",
+ 	     wbs_setup);
+ 
++MIPS_MACHINE(ATH79_MACH_WBS210_V2, "WBS210V2", "TP-LINK WBS210 v2",
++             wbs_setup);
++
+ MIPS_MACHINE(ATH79_MACH_WBS510, "WBS510", "TP-LINK WBS510",
+ 	     wbs_setup);
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index c82cb17cf6..ab1be5b430 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -336,6 +336,7 @@ enum ath79_mach_type {
+ 	ATH79_MACH_UBNT_XM,			/* Ubiquiti Networks XM board rev 1.0 */
+ 	ATH79_MACH_WAM250,			/* Samsung WAM250 */
+ 	ATH79_MACH_WBS210,			/* TP-LINK WBS210 */
++	ATH79_MACH_WBS210_V2,                   /* TP-LINK WBS210 v2*/
+ 	ATH79_MACH_WBS510,			/* TP-LINK WBS510 */
+ 	ATH79_MACH_WEIO,			/* WeIO board */
+ 	ATH79_MACH_WHR_G301N,			/* Buffalo WHR-G301N */
+diff --git a/target/linux/ar71xx/image/generic-tp-link.mk b/target/linux/ar71xx/image/generic-tp-link.mk
+index 8ad1f6e382..c4aeca3b35 100644
+--- a/target/linux/ar71xx/image/generic-tp-link.mk
++++ b/target/linux/ar71xx/image/generic-tp-link.mk
+@@ -215,6 +215,14 @@ define Device/wbs210-v1
+ endef
+ TARGET_DEVICES += wbs210-v1
+ 
++define Device/wbs210-v2
++  $(Device/cpe510-520-v1)
++  DEVICE_TITLE := TP-LINK WBS210 v2
++  BOARDNAME := WBS210V2
++  TPLINK_BOARD_ID := WBS210V2
++endef
++TARGET_DEVICES += wbs210-v2
++
+ define Device/wbs510-v1
+   $(Device/cpe510-520-v1)
+   DEVICE_TITLE := TP-LINK WBS510 v1
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index de15faf679..9d3b0e4c7d 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -303,6 +303,38 @@ static struct device_info boards[] = {
+ 		.last_sysupgrade_partition = "support-list",
+ 	},
+ 
++	{
++		.id	= "WBS210V2",
++		.vendor	= "CPE510(TP-LINK|UN|N300-5):1.0\r\n",
++		.support_list =
++			"SupportList:\r\n"
++                        "WBS210(TP-LINK|UN|N300-2|00000000):2.0\r\n"
++                        "WBS210(TP-LINK|US|N300-2|55530000):2.0\r\n"
++                        "WBS210(TP-LINK|EU|N300-2|45550000):2.0\r\n",
++		.support_trail = '\xff',
++		.soft_ver = NULL,
++
++		.partitions = {
++			{"fs-uboot", 0x00000, 0x20000},
++			{"partition-table", 0x20000, 0x02000},
++			{"default-mac", 0x30000, 0x00020},
++			{"product-info", 0x31100, 0x00100},
++			{"signature", 0x32000, 0x00400},
++			{"os-image", 0x40000, 0x1c0000},
++			{"file-system", 0x200000, 0x5b0000},
++			{"soft-version", 0x7b0000, 0x00100},
++			{"support-list", 0x7b1000, 0x00400},
++			{"user-config", 0x7c0000, 0x10000},
++			{"default-config", 0x7d0000, 0x10000},
++			{"log", 0x7e0000, 0x10000},
++			{"radio", 0x7f0000, 0x10000},
++			{NULL, 0, 0}
++		},
++
++		.first_sysupgrade_partition = "os-image",
++		.last_sysupgrade_partition = "support-list",
++	},
++
+ 	{
+ 		.id	= "WBS510",
+ 		.vendor	= "CPE510(TP-LINK|UN|N300-5):1.0\r\n",
+-- 
+2.23.0
+
