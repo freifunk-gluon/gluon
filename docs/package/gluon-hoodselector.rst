@@ -36,7 +36,7 @@ example of a regional domain:
 Behaviour
 ------------------
 
-The following is an abstract state diagramm which gives an overview
+The following is an abstract state diagram which gives an overview
 of the process:
 
 .. image:: ./gluon-hoodselector.svg
@@ -61,7 +61,7 @@ It provides a fallback to the default domain.
 Domain shapes
 -------------
 
-There are two types of domains: the unique dehault one without a defined shape
+There are two types of domains: the unique default one without a defined shape
 and others which contain shapes.
 
 * **default domain**
