@@ -91,7 +91,7 @@ to decide which module gets loaded and the scheduled domain switching functional
 the two versions.
 
 Note that if you were using ``gluon-mesh-batman-adv-14`` ("batman-adv-legacy") before you will need to update the
-``mesh.batman_adv.routing_algo`` setting from from ``BATMAN_IV`` to ``BATMAN_IV_LEGACY`` if you want to
+``mesh.batman_adv.routing_algo`` setting from ``BATMAN_IV`` to ``BATMAN_IV_LEGACY`` if you want to
 stay on v14 compat.
 
 See the :ref:`mesh <user-site-mesh>` section for the *site.conf* configuration of this feature.
@@ -157,7 +157,7 @@ Bugfixes
   (`#1777 <https://github.com/freifunk-gluon/gluon/issues/1777>`_)
 
 * Fixes cross-domain leakage of respondd data by not joining the link-local multicast group on br-client. Nodes will
-  not be answering respondd queries on  ``[ff02::2:1001]:1001`` anymore. Respondd queries using that adresss must be
+  not be answering respondd queries on  ``[ff02::2:1001]:1001`` anymore. Respondd queries using that address must be
   updated to the new address ``[ff05::2:1001]:1001``. (`#1701 <https://github.com/freifunk-gluon/gluon/issues/1701>`_)
 
 

@@ -99,7 +99,7 @@ Furthermore, by default IGMP and MLD messages are filtered. See
 :ref:`site.conf mesh section <user-site-mesh>` and
 :ref:`igmp-mld-domain-segmentation` for details.
 
-To achieve some level of scalabilty for multicast, multicast group
+To achieve some level of scalability for multicast, multicast group
 awareness is implemented and utilized in the following ways:
 
 Node-Local Multicast Handling
