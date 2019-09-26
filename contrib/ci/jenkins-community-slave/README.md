@@ -16,11 +16,11 @@ You can support the gluon CI with your infrastructure:
 git clone https://github.com/freifunk-gluon/gluon/
 cd gluon/contrib/ci/jenkins-community-slave/
 docker build -t gluon-jenkins .
-mkdir /srv/openwrt_dl_cache/
+mkdir /var/cache/openwrt_dl_cache/
 docker run --detach --restart always \
     -e "SLAVE_NAME=whoareyou" \
     -e "SLAVE_SECRET=changeme" \
-    -v /srv/openwrt_dl_cache/:/dl_cache
+    -v /var/cache/openwrt_dl_cache/:/dl_cache
 ```
 4. Check whether the instance is running correctly:
    - Your node should appear [here](https://build.ffh.zone/label/gluon-docker/).
