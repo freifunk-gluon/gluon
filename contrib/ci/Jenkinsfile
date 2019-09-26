@@ -1,3 +1,22 @@
+def lualint() {
+	sh 'luacheck package scripts targets'
+}
+
+def shelllint() {
+	sh 'find -not \( -path './*.git/*' -prune \) -not \( -path './package/*' -prune \) -not \( -path './scripts/*' -prune \) -type f -exec bash -c 'if echo $1 | grep -qE ".*\.sh$" || head -n1 $1 | grep -qE "^#.*(sh|bash|dash|ksh)$"; then shellcheck -f gcc $1; fi' _ {} \;'
+	sh 'find package -type f -exec bash -c 'if echo $1 | grep -qE ".*\.sh$" || head -n1 $1 | grep -qE "^#.*(sh|bash|dash|ksh)$"; then shellcheck -x -f gcc -s sh -eSC2039,SC1091,SC2155,SC2034 $1; fi' _ {} \;'
+	sh 'find scripts -type f -exec bash -c 'if echo $1 | grep -qE ".*\.sh$" || head -n1 $1 | grep -qE "^#.*(sh|bash|dash|ksh)$"; then shellcheck -f gcc -x -e SC2154,SC1090,SC2181,SC2155,SC2148,SC2034,SC2148  $1; fi' _ {} \;'
+}
+
+run_lint_set = [
+	"task1": {
+		lualint()
+	},
+	"task2": {
+		shelllint()
+	}
+]
+
 pipeline {
 	agent { label 'gluon-docker' }
 	environment {
@@ -8,7 +27,9 @@ pipeline {
 	stages {
 		stage('lint') {
 			steps {
-				sh 'luacheck package scripts targets'
+				script {
+					parallel(run_lint_set)
+				}
 			}
 		}
 		stage('docs') {
