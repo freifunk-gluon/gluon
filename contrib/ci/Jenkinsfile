@@ -1,3 +1,20 @@
+def lualint() {
+	make lint-lua
+}
+
+def shelllint() {
+	make lint-sh
+}
+
+run_lint_set = [
+	"task1": {
+		lualint()
+	},
+	"task2": {
+		shelllint()
+	}
+]
+
 pipeline {
 	agent { label 'gluon-docker' }
 	environment {
@@ -8,7 +25,9 @@ pipeline {
 	stages {
 		stage('lint') {
 			steps {
-				sh 'luacheck package scripts targets'
+				script {
+					parallel(run_lint_set)
+				}
 			}
 		}
 		stage('docs') {
