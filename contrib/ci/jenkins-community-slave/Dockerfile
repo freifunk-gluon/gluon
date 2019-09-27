@@ -1,4 +1,4 @@
-FROM gluon
+FROM gluonmesh/build:latest
 
 USER root
 
