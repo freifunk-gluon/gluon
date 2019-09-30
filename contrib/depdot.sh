@@ -10,7 +10,7 @@
 shopt -s nullglob
 
 
-pushd "$(dirname "$0")/.." >/dev/null
+pushd "$(dirname "$0")/.." >/dev/null || exit
 
 
 escape_name() {
@@ -40,6 +40,6 @@ for makefile in ./package/*/Makefile; do
 	done
 done | sort -u
 
-popd >/dev/null
+popd >/dev/null || exit
 
 echo '}'

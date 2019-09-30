@@ -16,7 +16,7 @@ xor2() {
 
 interface_linklocal() {
         local macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
-        local oldIFS="$IFS"; IFS=':'; set -- $macaddr; IFS="$oldIFS"
+        local oldIFS="$IFS"; IFS=':'; set -- "$macaddr"; IFS="$oldIFS"
 
         echo "fe80::$(xor2 "$1")$2:$3ff:fe$4:$5$6"
 }

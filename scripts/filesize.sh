@@ -1,7 +1,7 @@
 #!/bin/sh
 
 check_command() {
-	which "$1" >/dev/null 2>&1
+	command -v "$1" >/dev/null 2>&1
 }
 
 if check_command gnustat; then

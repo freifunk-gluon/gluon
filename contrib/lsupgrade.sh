@@ -25,12 +25,12 @@ else
 fi
 
 
-pushd "$(dirname "$0")/.." >/dev/null
+pushd "$(dirname "$0")/.." >/dev/null || exit
 
-find ./package packages -name Makefile | while read makefile; do
+find ./package packages -name Makefile | while read -r makefile; do
 	dir="$(dirname "$makefile")"
 
-	pushd "$dir" >/dev/null
+	pushd "$dir" >/dev/null || exit
 
 	repo="$(dirname "$dir" | cut -d/ -f 2)"
 	dirname="$(dirname "$dir" | cut -d/ -f 3-)"
@@ -42,7 +42,7 @@ find ./package packages -name Makefile | while read makefile; do
 	for file in "${SUFFIX2}"/*; do
 		echo "${GREEN}$(basename "${file}")${RESET}" "(${BLUE}${repo}${RESET}/${dirname}${dirname:+/}${RED}${package}${RESET}/${SUFFIX2})"
 	done
-	popd >/dev/null
+	popd >/dev/null || exit
 done | sort
 
-popd >/dev/null
+popd >/dev/null || exit

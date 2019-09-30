@@ -34,7 +34,7 @@ sanitize() {
 vars=
 
 for feature in $1; do
-	if [ "$(type -t gluon_feature_nodefault_${feature})" != 'function' ]; then
+	if [ "$(type -t gluon_feature_nodefault_"${feature}")" != 'function' ]; then
 		echo "gluon-${feature}"
 	fi
 
@@ -57,7 +57,7 @@ packages() {
 
 	# Let will return false when the result of the passed expression is 0,
 	# so we always add 1. This way false is only returned for syntax errors.
-	local ret="$(env -i $vars bash --norc -ec "let _result_='1+($cond)'; echo -n \"\$_result_\"" 2>/dev/null)"
+	local ret="$(env -i "$vars" bash --norc -ec "let _result_='1+($cond)'; echo -n \"\$_result_\"" 2>/dev/null)"
 	case "$ret" in
 	2)
 		for pkg in "$@"; do

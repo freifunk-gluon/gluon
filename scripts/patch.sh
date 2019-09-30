@@ -3,7 +3,7 @@
 set -e
 shopt -s nullglob
 
-[ "$GLUON_TMPDIR" -a "$GLUON_PATCHESDIR" ] || exit 1
+[ "$GLUON_TMPDIR" ] && [ "$GLUON_PATCHESDIR" ] || exit 1
 
 . scripts/modules.sh
 
