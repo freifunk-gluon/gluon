@@ -12,7 +12,7 @@ wait_setup_mode() {
 }
 
 
-if [ "$BUTTON" = wps -o "$BUTTON" = reset -o "$BUTTON" = phone ]; then
+if [ "$BUTTON" = wps ] || [ "$BUTTON" = reset ] || [ "$BUTTON" = phone ]; then
 	case "$ACTION" in
 		pressed)
 			wait_setup_mode &
@@ -21,7 +21,7 @@ if [ "$BUTTON" = wps -o "$BUTTON" = reset -o "$BUTTON" = phone ]; then
 			;;
 		released)
 			if [ -r /tmp/.wait_setup_mode ]; then
-				kill $(cat /tmp/.wait_setup_mode)
+				kill "$(cat /tmp/.wait_setup_mode)"
 				rm /tmp/.wait_setup_mode
 			fi
 			;;

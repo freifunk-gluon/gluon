@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $# -eq 0 -o "-h" = "$1" -o "-help" = "$1" -o "--help" = "$1" ]; then
+if [ $# -eq 0 ] || [ "-h" = "$1" ] || [ "-help" = "$1" ] || [ "--help" = "$1" ]; then
     cat <<EOHELP
 Usage: $0 <public> <signed manifest>
 
@@ -27,7 +27,7 @@ awk "BEGIN    { sep=0 }
                 else       print > \"$lower\"}" \
     "$manifest"
 
-while read line
+while read -r line
 do
     if ecdsaverify -s "$line" -p "$public" "$upper"; then
         ret=0
