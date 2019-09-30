@@ -82,5 +82,5 @@ entry({}, call(function(http, renderer)
 	end
 
 
-	renderer.render('status-page', { nodeinfo = nodeinfo }, 'gluon-status-page')
+	renderer.render('status-page', { nodeinfo = nodeinfo, site = site }, 'gluon-status-page')
 end))

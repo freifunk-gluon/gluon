@@ -116,6 +116,10 @@
 					<% if nodeinfo.software.fastd then -%>
 						<dt><%:Mesh VPN%></dt><dd><%| enabled(nodeinfo.software.fastd.enabled) %></dd>
 					<%- end %>
+					<dt><%:Site%></dt><dd><%| site.site_name() %></dd>
+					<% if nodeinfo.system.domain_code then -%>
+						<dt><%:Domain%></dt><dd><%| site.domain_names[nodeinfo.system.domain_code]() %></dd>
+					<%- end %>
 					<% if nodeinfo.software.autoupdater then -%>
 						<dt><%:Automatic updates%></dt><dd><%| enabled(nodeinfo.software.autoupdater.enabled) %><%|
 							nodeinfo.software.autoupdater.enabled and
