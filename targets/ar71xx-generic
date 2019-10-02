@@ -181,6 +181,7 @@ device('netgear-wnr2200', 'wnr2200', {
 
 device('ocedo-koala', 'koala', {
 	factory = false,
+	packages = ATH10K_PACKAGES,
 })
 
 
