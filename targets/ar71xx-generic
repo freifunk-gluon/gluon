@@ -133,6 +133,7 @@ fi
 # OCEDO
 
 device ocedo-koala koala
+packages $ATH10K_PACKAGES
 factory
 
 
