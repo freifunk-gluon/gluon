@@ -409,7 +409,7 @@ device('ubiquiti-ls-sr71', 'ubnt-ls-sr71', {
 device('ubiquiti-unifi-ac-lite', 'ubnt-unifiac-lite', {
 	factory = false,
 	packages = ATH10K_PACKAGES,
-	aliases = {'ubiquiti-unifi-ac-lr'},
+	aliases = {'ubiquiti-unifi-ac-lite-mesh'},
 })
 
 device('ubiquiti-unifi-ac-pro', 'ubnt-unifiac-pro', {
