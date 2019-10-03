@@ -312,7 +312,7 @@ device ubiquiti-ls-sr71 ubnt-ls-sr71 # BROKEN: Untested
 fi
 
 device ubiquiti-unifi-ac-lite ubnt-unifiac-lite
-alias ubiquiti-unifi-ac-lr
+alias ubiquiti-unifi-ac-lite-mesh
 packages $ATH10K_PACKAGES
 factory
 
