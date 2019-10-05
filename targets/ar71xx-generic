@@ -326,7 +326,7 @@ device('tp-link-archer-c60-v1', 'archer-c60-v1', {
 })
 
 device('tp-link-archer-c60-v2', 'archer-c60-v2', {
-	broken = true, -- Testing in progress...
+	broken = false, -- Testing done
 })
 
 device('tp-link-re355', 're355-v1', {
