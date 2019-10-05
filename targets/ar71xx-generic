@@ -326,7 +326,6 @@ device('tp-link-archer-c60-v1', 'archer-c60-v1', {
 })
 
 device('tp-link-archer-c60-v2', 'archer-c60-v2', {
-	packages = ATH10K_PACKAGES,
 	broken = false, -- Testing done
 })
 
