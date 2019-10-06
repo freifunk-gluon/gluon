@@ -28,6 +28,7 @@ if platform.match('ar71xx', 'generic', {'tl-wdr3600', 'tl-wdr4300',
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
 elseif platform.match('ar71xx', 'generic', {'a40', 'a60',
                                             'archer-c25-v1',
+                                            'archer-c60-v2',
                                             'archer-c7-v4', 'archer-c7-v5',
                                             'carambola2',
                                             'koala',
