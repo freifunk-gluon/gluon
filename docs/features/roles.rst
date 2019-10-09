@@ -2,8 +2,8 @@ Roles
 =====
 
 It is possible to define a set of roles you want to distinguish at backend side. One node can own one
-role which it will announce via alfred inside the mesh. This will make it easier to differentiate
-nodes when parsing alfred data. E.g to count only **normal** nodes and not the gateways
+role which it will announce via respondd/announced inside the mesh. This will make it easier to differentiate
+nodes when parsing respondd data. E.g to count only **normal** nodes and not the gateways
 or servers (nodemap). A lot of things are possible.
 
 For this the section ``roles`` in ``site.conf`` is needed::
