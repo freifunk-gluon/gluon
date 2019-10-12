@@ -51,7 +51,7 @@ packages() {
 	shift
 
 	# We only allow variable names, parentheses and the operators: & | !
-	if [ "$(expr match "$cond" '.*[^A-Za-z0-9_()&|! ].*')" -gt 0 ]; then
+	if grep -q ".*[^A-Za-z0-9_()&|! ].*" <<< "$cond"; then
 		exit 1
 	fi
 
