@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 # Script to list all upgrade scripts in a clear manner
 # Limitations:
 #  * Does only show scripts of packages whose `files'/`luasrc' directories represent the whole image filesystem (which are all Gluon packages)
@@ -25,12 +26,12 @@ else
 fi
 
 
-pushd "$(dirname "$0")/.." >/dev/null || exit
+pushd "$(dirname "$0")/.." >/dev/null
 
 find ./package packages -name Makefile | while read -r makefile; do
 	dir="$(dirname "$makefile")"
 
-	pushd "$dir" >/dev/null || exit
+	pushd "$dir" >/dev/null
 
 	repo="$(dirname "$dir" | cut -d/ -f 2)"
 	dirname="$(dirname "$dir" | cut -d/ -f 3-)"
@@ -42,7 +43,7 @@ find ./package packages -name Makefile | while read -r makefile; do
 	for file in "${SUFFIX2}"/*; do
 		echo "${GREEN}$(basename "${file}")${RESET}" "(${BLUE}${repo}${RESET}/${dirname}${dirname:+/}${RED}${package}${RESET}/${SUFFIX2})"
 	done
-	popd >/dev/null || exit
+	popd >/dev/null
 done | sort
 
-popd >/dev/null || exit
+popd >/dev/null

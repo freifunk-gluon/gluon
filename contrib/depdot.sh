@@ -1,16 +1,15 @@
 #!/bin/bash
 
+set -e
 # Script to output the dependency graph of Gluon's packages
 # Limitations:
 #  * Works only if directory names and package names are the same (true for all Gluon packages)
 #  * Doesn't show dependencies through virtual packages correctly
 
-
-
 shopt -s nullglob
 
 
-pushd "$(dirname "$0")/.." >/dev/null || exit
+pushd "$(dirname "$0")/.." >/dev/null
 
 
 escape_name() {
@@ -40,6 +39,6 @@ for makefile in ./package/*/Makefile; do
 	done
 done | sort -u
 
-popd >/dev/null || exit
+popd >/dev/null
 
 echo '}'
