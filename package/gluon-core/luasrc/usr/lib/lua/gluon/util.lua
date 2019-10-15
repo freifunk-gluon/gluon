@@ -35,6 +35,15 @@ function M.contains(table, value)
 	return false
 end
 
+function M.file_contains_line(path, value)
+	for line in io.lines(path) do
+		if line == value then
+			return true
+		end
+	end
+	return false
+end
+
 function M.add_to_set(t, itm)
 	for _,v in ipairs(t) do
 		if v == itm then return false end
