@@ -3,9 +3,11 @@ config 'CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=64'
 
 local ATH10K_PACKAGES = {}
 local ATH10K_PACKAGES_QCA9887 = {}
+local ATH10K_PACKAGES_QCA9888 = {}
 if env.GLUON_WLAN_MESH == 'ibss' then
 	ATH10K_PACKAGES = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca988x', 'ath10k-firmware-qca988x-ct'}
 	ATH10K_PACKAGES_QCA9887 = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca9887', 'ath10k-firmware-qca9887-ct'}
+	ATH10K_PACKAGES_QCA9888 = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca9888', 'ath10k-firmware-qca9888-ct'}
 end
 
 
@@ -314,26 +316,32 @@ device('tp-link-archer-c25-v1', 'archer-c25-v1', {
 })
 
 device('tp-link-archer-c58-v1', 'archer-c58-v1', {
+	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
 })
 
 device('tp-link-archer-c59-v1', 'archer-c59-v1', {
+	packages = ATH10K_PACKAGES_QCA9888,
 	broken = (env.GLUON_WLAN_MESH ~= '11s'),
 })
 
 device('tp-link-archer-c60-v1', 'archer-c60-v1', {
+	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
 })
 
 device('tp-link-archer-c60-v2', 'archer-c60-v2', {
+	packages = ATH10K_PACKAGES_QCA9888,
 	broken = true, -- OOM with 5GHz enabled in most environments
 })
 
 device('tp-link-re355', 're355-v1', {
+	packages = ATH10K_PACKAGES,
 	broken = true, -- OOM with 5GHz enabled in most environments if device is 64M RAM variant
 })
 
 device('tp-link-tl-wr902ac-v1', 'tl-wr902ac-v1', {
+	packages = ATH10K_PACKAGES_QCA9887,
 	broken = true, -- OOM due to insufficient RAM for ath10k expected
 })
 
