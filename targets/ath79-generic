@@ -2,6 +2,20 @@
 -- local ATH10K_PACKAGES_QCA9887 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9887', '-ath10k-firmware-qca9887-ct'}
 local ATH10K_PACKAGES_QCA9888 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9888', '-ath10k-firmware-qca9888-ct'}
 
+-- GL Innovations
+
+device('gl-inet-gl-ar150', 'glinet_gl-ar150', {
+	factory = false,
+})
+
+device('gl-inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
+	factory = false,
+})
+
+device('gl-inet-gl-ar300m', 'glinet_gl-ar300m-nor', {
+	factory = false,
+})
+
 -- TP-Link
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
