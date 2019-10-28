@@ -1,23 +1,7 @@
-assert(env.GLUON_LANGS)
-
-
-config('GLUON_SITEDIR', env.GLUON_SITEDIR)
-config('GLUON_RELEASE', env.GLUON_RELEASE)
-
-try_config('GLUON_AUTOUPDATER_BRANCH', env.GLUON_AUTOUPDATER_BRANCH)
-try_config('GLUON_AUTOUPDATER_ENABLED', istrue(env.GLUON_AUTOUPDATER_ENABLED))
-
-for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
-	try_config('GLUON_WEB_LANG_' .. lang, true)
-end
-
 config('TARGET_' .. env.BOARD, true)
 if env.SUBTARGET ~= '' then
 	config(string.format('TARGET_%s_%s', env.BOARD, env.SUBTARGET), true)
 end
-
--- Disable non-default feeds in distfeeds.conf
-config('FEED_gluon_base', false)
 
 local default_feeds = {}
 for feed in string.gmatch(exec_capture_raw('. scripts/default_feeds.sh && echo "$DEFAULT_FEEDS"'), '%S+') do
@@ -30,34 +14,6 @@ for feed in string.gmatch(exec_capture_raw('. scripts/modules.sh && echo -n "$FE
 	end
 end
 
-
-config('TARGET_ROOTFS_INITRAMFS', false)
-
-config('DEVEL', true)
-config('ALL_NONSHARED', true)
-
-config('PACKAGE_usbip', false) -- fails to build
-config('PACKAGE_kmod-jool', false) -- fails to build
-
-config('BUSYBOX_CUSTOM', true)
-config('BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS', false)
-
-try_config('PACKAGE_ATH_DEBUG', true)
-
-try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
-
-config('KERNEL_IP_MROUTE', false)
-config('KERNEL_IPV6_MROUTE', false)
-
-config('COLLECT_KERNEL_DEBUG', true)
-
-try_config('TARGET_MULTI_PROFILE', true)
-try_config('TARGET_PER_DEVICE_ROOTFS', true)
-
-config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
-
-config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
-
 if istrue(env.GLUON_DEBUG) then
 	config('DEBUG', true)
 	config('NO_STRIP', true)
@@ -66,16 +22,3 @@ if istrue(env.GLUON_DEBUG) then
 
 	try_config('TARGET_ROOTFS_PARTSIZE', 500)
 end
-
-config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
-
-packages {
-	'-kmod-ipt-offload',
-	'-odhcpd-ipv6only',
-	'-ppp',
-	'-ppp-mod-pppoe',
-	'-wpad-mini',
-	'-wpad-basic',
-	'gluon-core',
-	'ip6tables',
-}
