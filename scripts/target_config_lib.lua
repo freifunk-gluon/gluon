@@ -28,6 +28,9 @@ END_MAKE
 	end
 
 	lib.include('generic')
+	if env.FOREIGN_BUILD == '' then
+		lib.include('generic_gluon')
+	end
 	for pkg in string.gmatch(extra_packages, '%S+') do
 		lib.packages {pkg}
 	end
@@ -72,10 +75,12 @@ END_MAKE
 			handle_pkg(pkg)
 		end
 
-		funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
-			'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
-		lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
-			openwrt_config_target, profile, device_pkgs)
+		if env.FOREIGN_BUILD == '' then
+			funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
+				'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
+			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
+				openwrt_config_target, profile, device_pkgs)
+		end
 	end
 
 	return lib
