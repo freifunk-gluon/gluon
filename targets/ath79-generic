@@ -2,6 +2,18 @@
 -- local ATH10K_PACKAGES_QCA9887 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9887', '-ath10k-firmware-qca9887-ct'}
 local ATH10K_PACKAGES_QCA9888 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9888', '-ath10k-firmware-qca9888-ct'}
 
+-- AVM
+
+device('avm-fritz-box-4020', 'avm_fritz4020', {
+	factory = false,
+	packages = {'fritz-tffs'},
+})
+
+device('avm-fritz-wlan-repeater-300e', 'avm_fritz300e', {
+	factory = false,
+	packages = {'fritz-tffs'},
+})
+
 -- GL Innovations
 
 device('gl-inet-gl-ar150', 'glinet_gl-ar150', {
