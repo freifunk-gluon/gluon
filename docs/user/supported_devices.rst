@@ -271,6 +271,7 @@ ramips-mt76x8 [#80211s]_
 * GL.iNet
 
   - GL-MT300N v2
+  - VIXMINI
 
 * NETGEAR
 

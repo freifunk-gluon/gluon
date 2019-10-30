@@ -4,6 +4,10 @@ device('gl-mt300n-v2', 'gl-mt300n-v2', {
 	factory = false,
 })
 
+device('gl.inet-vixmini', 'glinet_vixmini', {
+	factory = false,
+})
+
 
 -- Netgear
 
