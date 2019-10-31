@@ -180,6 +180,13 @@ ar71xx-tiny [#deprecated]_
   - TL-WR940N (v1, v2, v3, v4, v5, v6)
   - TL-WR941ND (v2, v3, v4, v5, v6)
 
+ath79-generic
+--------------
+
+* TP-Link
+
+  - Archer C6 (v2)
+
 brcm2708-bcm2708
 ----------------
 
