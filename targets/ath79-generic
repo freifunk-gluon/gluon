@@ -1,0 +1,10 @@
+local ATH10K_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca988x', '-ath10k-firmware-qca988x-ct'}
+local ATH10K_PACKAGES_QCA9887 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9887', '-ath10k-firmware-qca9887-ct'}
+local ATH10K_PACKAGES_QCA9888 = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9888', '-ath10k-firmware-qca9888-ct'}
+
+-- TP-Link
+
+device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
+	packages = ATH10K_PACKAGES_QCA9888,
+})
+

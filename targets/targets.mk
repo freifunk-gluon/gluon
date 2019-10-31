@@ -3,6 +3,7 @@ ifneq ($(GLUON_DEPRECATED),0)
 $(eval $(call GluonTarget,ar71xx,tiny))
 endif
 $(eval $(call GluonTarget,ar71xx,nand))
+$(eval $(call GluonTarget,ath79,generic))
 $(eval $(call GluonTarget,brcm2708,bcm2708))
 $(eval $(call GluonTarget,brcm2708,bcm2709))
 $(eval $(call GluonTarget,ipq40xx,generic))
