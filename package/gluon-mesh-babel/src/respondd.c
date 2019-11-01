@@ -841,11 +841,20 @@ static struct json_object * respondd_provider_neighbours(void) {
 
 	if (neighbours) {
 		pthread_rwlock_rdlock(&neighbours_lock);
-		int deepcopy_state = json_object_deep_copy(neighbours, neighbours_copy, NULL);
+#if (JSON_C_MINOR_VERSION >= 13)
+		int deepcopy_state = json_object_deep_copy(neighbours, &neighbours_copy, NULL);
+#else
+		char *serialized_neighbours = json_object_to_json_string(neighbours);
+#endif
 		pthread_rwlock_unlock(&neighbours_lock);
 
+#if (JSON_C_MINOR_VERSION >= 13)
 		if (!deepcopy_state)
 			json_object_object_add(ret, "babel", neighbours_copy);
+#else
+		if (serialized_neighbours)
+			json_object_object_add(ret, "babel", json_tokener_parse(serialized_neighbours));
+#endif
 	}
 
 	return ret;
