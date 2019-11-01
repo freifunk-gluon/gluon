@@ -47,14 +47,17 @@ device('allnet-all0315n', 'all0315n', {
 
 device('avm-fritz-box-4020', 'fritz4020', {
 	factory = false,
+	packages = {'fritz-tffs'},
 })
 
 device('avm-fritz-wlan-repeater-300e', 'fritz300e', {
 	factory = false,
+	packages = {'fritz-tffs'},
 })
 
 device('avm-fritz-wlan-repeater-450e', 'fritz450e', {
 	factory = false,
+	packages = {'fritz-tffs'},
 })
 
 
