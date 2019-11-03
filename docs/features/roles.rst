@@ -28,7 +28,7 @@ If you want node owners to change the defined roles via config-mode you can add 
 
 The role is saved in ``gluon-node-info.system.role``. To change the role using command line do::
 
-  uci set gluon-node-info.system.role="$ROLE"
+  uci set gluon-node-info.@system[0].role="$ROLE"
   uci commit
 
 Please replace ``$ROLE`` by the role you want the node to own.
