@@ -3,3 +3,10 @@
 device('aerohive-hiveap-330', 'hiveap-330', {
         factory = false,
 })
+
+-- OCEDO
+
+device('ocedo-panda', 'panda', {
+        factory = false,
+})
+
