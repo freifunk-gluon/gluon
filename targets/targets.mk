@@ -25,6 +25,6 @@ endif
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
 $(eval $(call GluonTarget,brcm2708,bcm2710)) # BROKEN: Untested
-$(eval $(call GluonTarget,ipq806x)) # BROKEN: See target file for details
+$(eval $(call GluonTarget,ipq806x,generic)) # BROKEN: See target file for details
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No AP+IBSS or 11s support
 endif
