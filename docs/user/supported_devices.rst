@@ -41,7 +41,7 @@ ar71xx-generic
 
   - GL-AR150
   - GL-AR300M
-  - GL-AR750 [#ath10k]_
+  - GL-AR750
   - GL-iNet 6408A (v1)
   - GL-iNet 6416A (v1)
 
@@ -57,7 +57,7 @@ ar71xx-generic
 
 * OCEDO
 
-  - Koala [#ath10k]_
+  - Koala
 
 * OpenMesh
 
@@ -65,24 +65,24 @@ ar71xx-generic
   - A60
   - MR600 (v1, v2)
   - MR900 (v1, v2)
-  - MR1750 (v1, v2) [#ath10k]_
+  - MR1750 (v1, v2)
   - OM2P (v1, v2, v4)
   - OM2P-HS (v1, v2, v3, v4)
   - OM2P-LC
   - OM5P
   - OM5P-AN
-  - OM5P-AC (v1, v2) [#ath10k]_
+  - OM5P-AC (v1, v2)
 
 * TP-Link
 
-  - Archer C5 (v1) [#ath10k]_
-  - Archer C59 (v1) [#80211s]_
-  - Archer C7 (v2, v4, v5) [#ath10k]_
+  - Archer C5 (v1)
+  - Archer C59 (v1)
+  - Archer C7 (v2, v4, v5)
   - CPE210 (v1.0, v1.1, v2.0, v3.0)
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
-  - RE450 [#ath10k]_
+  - RE450
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -109,12 +109,12 @@ ar71xx-generic
   - Rocket M2/M5
   - Rocket M2/M5 Ti
   - Rocket M2/M5 XW
-  - UniFi AC Mesh [#ath10k]_
-  - UniFi AC Mesh Pro [#ath10k]_
+  - UniFi AC Mesh
+  - UniFi AC Mesh Pro
   - UniFi AP
-  - UniFi AP AC Lite [#ath10k]_
-  - UniFi AP AC LR [#ath10k]_
-  - UniFi AP AC Pro [#ath10k]_
+  - UniFi AP AC Lite
+  - UniFi AP AC LR
+  - UniFi AP AC Pro
   - UniFi AP LR
   - UniFi AP Pro
   - UniFi AP Outdoor
@@ -127,7 +127,7 @@ ar71xx-generic
 
 * ZyXEL
 
-  - NBG6616 [#ath10k]_
+  - NBG6616
 
 ar71xx-nand
 -----------
@@ -143,7 +143,7 @@ ar71xx-nand
 
 * ZyXEL
 
-  - NBG6716 [#ath10k]_
+  - NBG6716
 
 ar71xx-tiny [#deprecated]_
 --------------------------
@@ -191,8 +191,8 @@ brcm2708-bcm2709
 * RaspberryPi 2
 
 
-ipq40xx-generic [#80211s]_
---------------------------
+ipq40xx-generic
+---------------
 
 * AVM
 
@@ -217,8 +217,8 @@ ipq40xx-generic [#80211s]_
   - NBG6617
   - WRE6606
 
-ipq806x-generic [#80211s]_
---------------------------
+ipq806x-generic
+---------------
 
 * NETGEAR
 
@@ -249,8 +249,8 @@ mpc85xx-p1020
 
   - Panda
 
-ramips-mt7620 [#80211s]_
-------------------------
+ramips-mt7620
+-------------
 
 * GL Innovations
 
@@ -267,11 +267,11 @@ ramips-mt7621
 
 * ASUS
 
-  - RT-AC57U [#80211s]_
+  - RT-AC57U
 
 * D-Link
 
-  - DIR-860L (B1) [#80211s]_
+  - DIR-860L (B1)
 
 * Ubiquiti
 
@@ -280,11 +280,11 @@ ramips-mt7621
 
 * ZBT
 
-  - WG3526-16M [#80211s]_
-  - WG3526-32M [#80211s]_
+  - WG3526-16M
+  - WG3526-32M
 
-ramips-mt76x8 [#80211s]_
-------------------------
+ramips-mt76x8
+-------------
 
 * GL.iNet
 
@@ -306,8 +306,8 @@ ramips-mt76x8 [#80211s]_
 
   - VoCore2
 
-ramips-rt305x [#80211s]_ [#deprecated]_
----------------------------------------
+ramips-rt305x [#deprecated]_
+----------------------------
 
 * A5-V11
 
@@ -357,15 +357,6 @@ Footnotes
 .. [#deprecated]
   The device or target is reaching its end of life soon. This means that support
   in the next major release of Gluon is doubtful.
-
-.. [#ath10k]
-  Device uses the ath10k WLAN driver. Images are built for 11s by default unless GLUON_WLAN_MESH
-  is set as described in :ref:`getting-started-make-variables`.
-
-.. [#80211s]
-  Device or target does not support IBSS. Images are built by default unless
-  GLUON_WLAN_MESH is explicitly set to something other than *11s*. Targets that
-  are affected as a whole may not be selected for build in this case.
 
 .. [#avmflash]
   For instructions on how to flash AVM devices, visit https://fritzfla.sh

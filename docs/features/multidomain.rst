@@ -198,8 +198,6 @@ domain.conf only variables
 
       -  must be a random value used to derive the vxlan id for wired meshing
 
-   -  wifi*.ibss.ssid
-   -  wifi*.ibss.bssid
    -  wifi*.mesh.id
    -  mesh_vpn.fastd.groups.*.peers.remotes
    -  mesh_vpn.fastd.groups.*.peers.key
