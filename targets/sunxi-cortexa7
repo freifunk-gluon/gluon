@@ -13,5 +13,5 @@ device('lemaker-banana-pro', 'sun7i-a20-bananapro', {
 })
 
 device('lamobo-r1', 'sun7i-a20-lamobo-r1', {
-	broken = true, -- AP+IBSS and AP+11s not working
+	broken = true, -- AP+11s not working
 })

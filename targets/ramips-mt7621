@@ -2,15 +2,12 @@
 
 device('asus-rt-ac57u', 'asus_rt-ac57u', {
 	factory = false,
-	broken = (env.GLUON_WLAN_MESH ~= '11s'),
 })
 
 
 -- D-Link
 
-device('d-link-dir-860l-b1', 'dir-860l-b1', {
-	broken = (env.GLUON_WLAN_MESH ~= '11s'),
-})
+device('d-link-dir-860l-b1', 'dir-860l-b1')
 
 
 -- Netgear
@@ -28,12 +25,10 @@ device('zbt-wg3526-16m', 'zbt-wg3526-16M', {
 	manifest_aliases = {
 		'zbt-wg3526',
 	},
-	broken = (env.GLUON_WLAN_MESH ~= '11s'),
 })
 
 device('zbt-wg3526-32m', 'zbt-wg3526-32M', {
 	factory = false,
-	broken = (env.GLUON_WLAN_MESH ~= '11s'),
 })
 
 
