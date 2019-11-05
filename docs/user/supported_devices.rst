@@ -217,6 +217,13 @@ ipq40xx-generic [#80211s]_
   - NBG6617
   - WRE6606
 
+ipq806x-generic [#80211s]_
+--------------------------
+
+* NETGEAR
+
+  - R7800
+
 mpc85xx-generic
 ---------------
 
