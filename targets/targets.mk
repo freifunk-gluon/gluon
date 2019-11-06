@@ -7,6 +7,7 @@ endif
 $(eval $(call GluonTarget,ar71xx,nand))
 $(eval $(call GluonTarget,brcm2708,bcm2708))
 $(eval $(call GluonTarget,brcm2708,bcm2709))
+$(eval $(call GluonTarget,lantiq,xway))
 $(eval $(call GluonTarget,mpc85xx,generic))
 $(eval $(call GluonTarget,mpc85xx,p1020))
 $(eval $(call GluonTarget,ramips,mt7621))
