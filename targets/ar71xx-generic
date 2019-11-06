@@ -421,6 +421,11 @@ device('ubiquiti-unifi-ac-lite', 'ubnt-unifiac-lite', {
 	aliases = {'ubiquiti-unifi-ac-lite-mesh'},
 })
 
+device('ubiquiti-unifi-ac-lr', 'ubnt-unifiac-lr', {
+	factory = false,
+	packages = ATH10K_PACKAGES,
+})
+
 device('ubiquiti-unifi-ac-pro', 'ubnt-unifiac-pro', {
 	factory = false,
 	packages = ATH10K_PACKAGES,
