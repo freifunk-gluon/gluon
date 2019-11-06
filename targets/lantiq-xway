@@ -1,0 +1,3 @@
+device('avm-fritz-box-7312', 'avm_fritz7312', {
+	factory = false,
+})

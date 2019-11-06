@@ -224,6 +224,13 @@ ipq806x-generic [#80211s]_
 
   - R7800
 
+lantiq-xway
+-----------
+
+* AVM
+
+  - FRITZ!Box 7312 [#avmflash]_
+
 mpc85xx-generic
 ---------------
 
