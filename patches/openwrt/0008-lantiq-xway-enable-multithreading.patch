@@ -1,0 +1,16 @@
+From: Misanthropos <misanthropos@gmx.de>
+Date: Wed, 6 Nov 2019 18:27:19 +0100
+Subject: lantiq-xway: enable multithreading
+
+diff --git a/target/linux/lantiq/xway/config-4.14 b/target/linux/lantiq/xway/config-4.14
+index 64a6c5583244b029b156b00c7165f1a4fa2e4d03..c64ddecb9a2e6a09f84d40962ec96167c6733afc 100644
+--- a/target/linux/lantiq/xway/config-4.14
++++ b/target/linux/lantiq/xway/config-4.14
+@@ -1,3 +1,7 @@
++CONFIG_MIPS_MT_SMP=y
++CONFIG_SCHED_SMT=y
++CONFIG_MIPS_MT_FPAFF=y
++CONFIG_NR_CPUS=2
+ CONFIG_ADM6996_PHY=y
+ CONFIG_AR8216_PHY=y
+ CONFIG_AT803X_PHY=y
