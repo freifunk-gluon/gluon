@@ -14,7 +14,7 @@ Activating Config Mode
 ----------------------
 
 Config Mode is automatically entered at the first boot. You can re-enter
-Config Mode by pressing and holding the RESET/WPS button for about three
+Config Mode by pressing and holding the RESET/WPS/DECT button for about three
 seconds. The device should reboot (all LEDs will turn off briefly) and
 Config Mode will be available.
 
