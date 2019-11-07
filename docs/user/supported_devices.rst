@@ -280,6 +280,10 @@ ramips-mt7621
 
   - DIR-860L (B1)
 
+* NETGEAR
+
+  - R6220
+
 * Ubiquiti
 
   - EdgeRouter X

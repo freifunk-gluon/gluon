@@ -12,6 +12,10 @@ device('d-link-dir-860l-b1', 'dir-860l-b1')
 
 -- Netgear
 
+device('netgear-r6220', 'r6220', {
+	factory_ext = '.img',
+})
+
 device('netgear-wndr3700v5', 'wndr3700v5', {
 	factory = false,
 	broken = true, -- untested
