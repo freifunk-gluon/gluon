@@ -32,7 +32,7 @@ packages {
 	'kmod-usb2',
 	'kmod-usb3',
 	'kmod-usb-serial',
-	'kmod-ath10k-ct',
+	'kmod-ath10k',
 	'ath10k-firmware-qca9887',
 	'ath10k-firmware-qca988x',
 }
