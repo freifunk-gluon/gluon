@@ -34,8 +34,17 @@ device('nexx-wt3020-8m', 'wt3020-8M', {
 
 -- TP-Link
 
+local tplink_region_suffix = ''
+if (env.GLUON_REGION or '') ~= '' then
+        tplink_region_suffix = '-' .. env.GLUON_REGION
+end
+
 device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
         factory = false,
+})
+
+device('tp-link-archer-c50', 'ArcherC50v1', {
+        factory = '-squashfs-factory' .. tplink_region_suffix,
 })
 
 

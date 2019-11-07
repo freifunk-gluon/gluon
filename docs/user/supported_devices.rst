@@ -303,6 +303,7 @@ ramips-mt7620
 * TP-Link  
 
   - Archer C2 v1
+  - Archer C50 v1
 
 * Xiaomi
 
