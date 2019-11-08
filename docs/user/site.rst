@@ -120,12 +120,11 @@ wifi24 \: optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
 
-    There are currently three interface types available. You may choose to
+    There are currently two interface types available. You may choose to
     configure any subset of them:
 
     - ``ap`` creates a master interface where clients may connect
     - ``mesh`` creates an 802.11s mesh interface with forwarding disabled
-    - ``ibss`` creates an ad-hoc interface
 
     Each interface may be disabled by setting ``disabled`` to ``true``.
     This will only affect new installations.
@@ -139,10 +138,7 @@ wifi24 \: optional
     don't want users to connect to this mesh-SSID, so use a cryptic id that no
     one will accidentally mistake for the client WiFi.
 
-    ``ibss`` requires two parameters: ``ssid`` (a string) and ``bssid`` (a MAC).
-    An optional parameter ``vlan`` (integer) is supported.
-
-    Both ``mesh`` and ``ibss`` accept an optional ``mcast_rate`` (kbit/s) parameter for
+    ``mesh`` also accepts an optional ``mcast_rate`` (kbit/s) parameter for
     setting the multicast bitrate. Increasing the default value of 1000 to something
     like 12000 is recommended.
     ::
@@ -154,11 +150,6 @@ wifi24 \: optional
          },
          mesh = {
            id = 'ueH3uXjdp',
-           mcast_rate = 12000,
-         },
-         ibss = {
-           ssid = 'ff:ff:ff:ee:ba:be',
-           bssid = 'ff:ff:ff:ee:ba:be',
            mcast_rate = 12000,
          },
        },
@@ -558,11 +549,6 @@ GLUON_REGION
 GLUON_LANGS
     List of languages (as two-letter-codes) to be included in the web interface. Should always contain
     ``en``.
-
-GLUON_WLAN_MESH
-  Setting this to ``11s`` or ``ibss`` will enable generation of matching images for devices which don't
-  support both meshing modes, either at all (e.g. ralink and mediatek don't support AP+IBSS) or in the
-  same firmware (ath10k-based 5GHz). Defaults to ``11s``.
 
 .. _user-site-feature-flags:
 

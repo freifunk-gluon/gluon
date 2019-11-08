@@ -76,7 +76,6 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	vif_option('client', translate('Enable client network (access point)'))
 	vif_option('mesh', translate("Enable mesh network (802.11s)"))
-	vif_option('ibss', translate("Enable mesh network (IBSS)"))
 
 	local phy = util.find_phy(config)
 	if not phy then

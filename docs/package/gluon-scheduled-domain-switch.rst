@@ -3,7 +3,7 @@ gluon-scheduled-domain-switch
 
 This package allows to switch a routers domain at a given point
 in time. This is needed for switching between incompatible transport
-protocols (e.g. 802.11s and IBSS or VXLAN).
+protocols (e.g. wired meshing with and without VXLAN).
 
 Nodes will switch when the defined *switch-time* has passed. In case the node was
 powered off while this was supposed to happen, it might not be able to acquire the

@@ -1,21 +1,17 @@
-local ATH10K_PACKAGES_IPQ40XX = {}
-local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {}
-if env.GLUON_WLAN_MESH == '11s' then
-	ATH10K_PACKAGES_IPQ40XX = {
-		'kmod-ath10k',
-		'-kmod-ath10k-ct',
-		'ath10k-firmware-qca4019',
-		'-ath10k-firmware-qca4019-ct',
-	}
-	ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
-		'kmod-ath10k',
-		'-kmod-ath10k-ct',
-		'ath10k-firmware-qca4019',
-		'-ath10k-firmware-qca4019-ct',
-		'ath10k-firmware-qca9888',
-		'-ath10k-firmware-qca9888-ct',
-	}
-end
+local ATH10K_PACKAGES_IPQ40XX = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+}
+local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+	'ath10k-firmware-qca9888',
+	'-ath10k-firmware-qca9888-ct',
+}
 
 
 defaults {
