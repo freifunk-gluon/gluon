@@ -224,6 +224,13 @@ ipq806x-generic
 
   - R7800
 
+lantiq-xrx200
+-------------
+
+* AVM
+
+  - FRITZ!Box 7412
+
 lantiq-xway
 -----------
 
