@@ -10,6 +10,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "%u characters min."
+msgstr "Au moins %u caractères"
+
 msgid "(%s available)"
 msgstr ""
 
@@ -33,9 +36,6 @@ msgstr "Annuler"
 msgid "Confirmation"
 msgstr "Confirmation"
 
-msgid "%u characters min."
-msgstr "Au moins %u caractères"
-
 msgid "Continue"
 msgstr "Continuer"
 
@@ -50,9 +50,6 @@ msgstr "Version de la firmware"
 
 msgid "Gluon version"
 msgstr "Version de Gluon"
-
-msgid "Site version"
-msgstr "Version de Site"
 
 msgid "Hardware model"
 msgstr "Modèle du Matériel"
@@ -90,15 +87,18 @@ msgstr "Clé SSH"
 msgid "Site"
 msgstr "Site"
 
+msgid "Site version"
+msgstr "Version de Site"
+
 msgid "Size"
 msgstr "Taille"
 
 msgid ""
-"The firmware image has been transmitted. Please ensure the SHA-256 checksum and "
-"image size are correct and click \"continue\"."
+"The firmware image has been transmitted. Please ensure the SHA-256 checksum "
+"and image size are correct and click \"continue\"."
 msgstr ""
-"L'image de firmware a été transmise. Vérifiez que la somme SHA-256 et la taille "
-"de l'image correspondent, et appuiez ensuite sur \"continuer\"."
+"L'image de firmware a été transmise. Vérifiez que la somme SHA-256 et la "
+"taille de l'image correspondent, et appuiez ensuite sur \"continuer\"."
 
 msgid "The firmware is currently being upgraded."
 msgstr "La firmware est en cours de mise à jour."

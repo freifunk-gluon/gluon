@@ -1,6 +1,9 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+msgid "%u characters min."
+msgstr ""
+
 msgid "(%s available)"
 msgstr ""
 
@@ -19,9 +22,6 @@ msgstr ""
 msgid "Confirmation"
 msgstr ""
 
-msgid "%u characters min."
-msgstr ""
-
 msgid "Continue"
 msgstr ""
 
@@ -35,9 +35,6 @@ msgid "Firmware release"
 msgstr ""
 
 msgid "Gluon version"
-msgstr ""
-
-msgid "Site version"
 msgstr ""
 
 msgid "Hardware model"
@@ -76,12 +73,15 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
+msgid "Site version"
+msgstr ""
+
 msgid "Size"
 msgstr ""
 
 msgid ""
-"The firmware image has been transmitted. Please ensure the SHA-256 checksum and "
-"image size are correct and click \"continue\"."
+"The firmware image has been transmitted. Please ensure the SHA-256 checksum "
+"and image size are correct and click \"continue\"."
 msgstr ""
 
 msgid "The firmware is currently being upgraded."
