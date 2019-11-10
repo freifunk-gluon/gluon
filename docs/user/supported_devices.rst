@@ -204,6 +204,7 @@ ipq40xx-generic
 * AVM
 
   - FRITZ!Box 4040 [#avmflash]_
+  - FRITZ!Repeater 1200 [#eva_ramboot]_
 
 * GL.iNet
 
@@ -371,3 +372,7 @@ Footnotes
 
 .. [#avmflash]
   For instructions on how to flash AVM devices, visit https://fritzfla.sh
+
+.. [#eva_ramboot]
+  For instructions on how to flash AVM NAND devices, see the respective
+  commit which added support in OpenWrt.
