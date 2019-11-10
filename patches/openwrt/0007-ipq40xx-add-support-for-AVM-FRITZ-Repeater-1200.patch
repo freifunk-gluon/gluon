@@ -1,0 +1,374 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 10 Sep 2019 21:07:23 +0200
+Subject: ipq40xx: add support for AVM FRITZ!Repeater 1200
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/ipq40xx/base-files/etc/board.d/02_network b/target/linux/ipq40xx/base-files/etc/board.d/02_network
+index 6a7b09cc603a245e98c37305c1f25c2cc11694ae..01825b8bac46eec6325de00396d96307c946f975 100755
+--- a/target/linux/ipq40xx/base-files/etc/board.d/02_network
++++ b/target/linux/ipq40xx/base-files/etc/board.d/02_network
+@@ -39,10 +39,7 @@ ipq40xx_setup_interfaces()
+ 		ucidef_add_switch "switch0" \
+ 			"0u@eth0" "1:lan" "2:lan" "3:lan" "4:lan"
+ 		;;
+-	avm,fritzrepeater-3000|\
+-	compex,wpj428)
+-		ucidef_set_interface_lan "eth0 eth1"
+-		;;
++	avm,fritzrepeater-1200|\
+ 	engenius,eap1300|\
+ 	meraki,mr33|\
+ 	netgear,ex6100v2|\
+@@ -50,6 +47,10 @@ ipq40xx_setup_interfaces()
+ 	zyxel,wre6606)
+ 		ucidef_set_interface_lan "eth0"
+ 		;;
++	avm,fritzrepeater-3000|\
++	compex,wpj428)
++		ucidef_set_interface_lan "eth0 eth1"
++		;;
+ 	glinet,gl-b1300)
+ 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+ 		ucidef_add_switch "switch0" \
+diff --git a/target/linux/ipq40xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ipq40xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 5f7e5f4923f19ecd78a981be55230cfcd3779146..b0035ce8a394b6e87d7d89b9f55a6ec7c66e448e 100644
+--- a/target/linux/ipq40xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ipq40xx/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -148,6 +148,7 @@ case "$FIRMWARE" in
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x400 -e 0x207 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader_config")
+ 		;;
+ 	avm,fritzbox-7530 |\
++	avm,fritzrepeater-1200 |\
+ 	avm,fritzrepeater-3000)
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x3C000 -e 0x207 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader0") || \
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x3C800 -e 0x207 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader0") || \
+@@ -209,6 +210,7 @@ case "$FIRMWARE" in
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x400 -e 0x208 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader_config")
+ 		;;
+ 	avm,fritzbox-7530 |\
++	avm,fritzrepeater-1200 |\
+ 	avm,fritzrepeater-3000)
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x3C800 -e 0x208 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader0") || \
+ 		/usr/bin/fritz_cal_extract -i 1 -s 0x3D000 -e 0x208 -l 12064 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader0") || \
+diff --git a/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh b/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
+index 2abafabbd0589c07bcd2ceee766d3d7675ba9716..a7b7da1bf378f7cc19e960c497bc52efb3bae4fb 100644
+--- a/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
+@@ -49,6 +49,7 @@ platform_do_upgrade() {
+ 	8dev,jalapeno |\
+ 	alfa-network,ap120c-ac |\
+ 	avm,fritzbox-7530 |\
++	avm,fritzrepeater-1200 |\
+ 	avm,fritzrepeater-3000 |\
+ 	qxwlan,e2600ac-c2)
+ 		nand_do_upgrade "$1"
+diff --git a/target/linux/ipq40xx/files-4.14/arch/arm/boot/dts/qcom-ipq4019-fritzrepeater-1200.dts b/target/linux/ipq40xx/files-4.14/arch/arm/boot/dts/qcom-ipq4019-fritzrepeater-1200.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4d02f8a8384f386c92c70ef24b677ee95058a1bf
+--- /dev/null
++++ b/target/linux/ipq40xx/files-4.14/arch/arm/boot/dts/qcom-ipq4019-fritzrepeater-1200.dts
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "qcom-ipq4019.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/soc/qcom,tcsr.h>
++
++/ {
++	model = "AVM FRITZ!Repeater 1200";
++	compatible = "avm,fritzrepeater-1200";
++
++	aliases {
++		led-boot = &power_green;
++		led-failsafe = &power_red;
++		led-running = &power_green;
++		led-upgrade = &power_red;
++	};
++
++	soc {
++		mdio@90000 {
++			status = "okay";
++			pinctrl-0 = <&mdio_pins>;
++			pinctrl-names = "default";
++		};
++
++		tcsr@1949000 {
++			compatible = "qcom,tcsr";
++			reg = <0x1949000 0x100>;
++			qcom,wifi_glb_cfg = <TCSR_WIFI_GLB_CFG>;
++		};
++
++		ess_tcsr@1953000 {
++			compatible = "qcom,tcsr";
++			reg = <0x1953000 0x1000>;
++			qcom,ess-interface-select = <TCSR_ESS_PSGMII_RGMII5>;
++		};
++
++		tcsr@1957000 {
++			compatible = "qcom,tcsr";
++			reg = <0x1957000 0x100>;
++			qcom,wifi_noc_memtype_m0_m2 = <TCSR_WIFI_NOC_MEMTYPE_M0_M2>;
++		};
++
++		crypto@8e3a000 {
++			status = "okay";
++		};
++
++		watchdog@b017000 {
++			status = "okay";
++		};
++
++		ess-switch@c000000 {
++			switch_mac_mode = <0x3>; /* mac mode for RGMII RMII */
++			switch_lan_bmp = <0x0>; /* lan port bitmap */
++			switch_wan_bmp = <0x10>; /* wan port bitmap */
++		};
++
++		edma@c080000 {
++			status = "okay";
++			phy-mode = "rgmii-rxid";
++			qcom,num_gmac = <1>;
++			qcom,single-phy;
++		};
++	};
++
++	key {
++		compatible = "gpio-keys";
++
++		wps {
++			label = "WPS button";
++			gpios = <&tlmm 10 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_WPS_BUTTON>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		power_red: power_red {
++			label = "fritzwlan-1200:red:power";
++			gpios = <&tlmm 50 GPIO_ACTIVE_LOW>;
++		};
++
++		power_green: power_green {
++			label = "fritzwlan-1200:green:power";
++			gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
++		};
++
++		power_yellow {
++			label = "fritzwlan-1200:yellow:power";
++			gpios = <&tlmm 49 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&tlmm {
++	serial_0_pins: serial_pinmux {
++		mux {
++			pins = "gpio16", "gpio17";
++			function = "blsp_uart0";
++			bias-disable;
++		};
++	};
++
++	nand_pins: nand_pins {
++		pullups {
++			pins = "gpio53", "gpio58", "gpio59";
++			function = "qpic";
++			bias-pull-up;
++		};
++
++		pulldowns {
++			pins = "gpio54", "gpio55", "gpio56",
++				"gpio57", "gpio60", "gpio61",
++				"gpio62", "gpio63", "gpio64",
++				"gpio65", "gpio66", "gpio67",
++				"gpio68", "gpio69";
++			function = "qpic";
++			bias-pull-down;
++		};
++	};
++
++	mdio_pins: mdio_pinmux {
++		mux_1 {
++			pins = "gpio6";
++			function = "mdio";
++			bias-pull-up;
++		};
++		mux_2 {
++			pins = "gpio7";
++			function = "mdc";
++			bias-pull-up;
++		};
++	};
++
++	phy-reset {
++		line-name = "PHY-reset";
++		gpios = <19 GPIO_ACTIVE_HIGH>;
++		gpio-hog;
++		output-high;
++	};
++
++	phy-reset-2 {
++		line-name = "PHY-reset-2";
++		gpios = <47 GPIO_ACTIVE_HIGH>;
++		gpio-hog;
++		output-high;
++	};
++};
++
++&nand {
++	pinctrl-0 = <&nand_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	nand@0 {
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "SBL1";
++				reg = <0x000000 0x80000>;
++				read-only;
++			};
++
++			partition@80000 {
++				label = "MIBIB";
++				reg = <0x080000 0x80000>;
++				read-only;
++			};
++
++			partition@100000 {
++				label = "QSEE";
++				reg = <0x100000 0x80000>;
++				read-only;
++			};
++
++			partition@180000 {
++				label = "CDT";
++				reg = <0x180000 0x40000>;
++				read-only;
++			};
++
++			partition@1c0000 {
++				label = "QSEE_B";
++				reg = <0x1c0000 0x80000>;
++				read-only;
++			};
++
++			partition@240000 {
++				label = "urlader0";
++				reg = <0x240000 0x40000>;
++				read-only;
++			};
++
++			partition@280000 {
++				label = "urlader1";
++				reg = <0x280000 0x40000>;
++				read-only;
++			};
++
++			partition@2c0000 {
++				label = "nand-tffs";
++				reg = <0x2c0000 0x840000>;
++				read-only;
++			};
++
++			partition@b00000 {
++				/* 'kernel1' in AVM firmware */
++				label = "uboot0";
++				reg = <0xb00000 0x400000>;
++			};
++
++			partition@f00000 {
++				/* 'kernel2' in AVM firmware */
++				label = "uboot1";
++				reg = <0xf00000 0x400000>;
++			};
++
++			partition@1300000 {
++				label = "ubi";
++				reg = <0x1300000 0x6d00000>;
++			};
++		};
++	};
++};
++
++&cryptobam {
++	status = "okay";
++};
++
++&blsp_dma {
++	status = "okay";
++};
++
++&blsp1_uart1 {
++	pinctrl-0 = <&serial_0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&qpic_bam {
++	status = "okay";
++};
++
++&wifi0 {
++	status = "okay";
++	qcom,ath10k-calibration-variant = "AVM-FRITZRepeater-1200";
++};
++
++&wifi1 {
++	status = "okay";
++	qcom,ath10k-calibration-variant = "AVM-FRITZRepeater-1200";
++};
++
++&gmac0 {
++	qcom,phy_mdio_addr = <0>;
++	qcom,poll_required = <1>;
++	vlan_tag = <0 0x20>;
++};
+diff --git a/target/linux/ipq40xx/image/Makefile b/target/linux/ipq40xx/image/Makefile
+index 3a9b58de4f01f17ac9df368729035d630eb32b04..bdbbcbe851e60ee5a445c576a870a87a46c57fee 100644
+--- a/target/linux/ipq40xx/image/Makefile
++++ b/target/linux/ipq40xx/image/Makefile
+@@ -138,6 +138,15 @@ define Device/avm_fritzbox-7530
+ endef
+ TARGET_DEVICES += avm_fritzbox-7530
+ 
++define Device/avm_fritzrepeater-1200
++	$(call Device/FitImageLzma)
++	DEVICE_DTS := qcom-ipq4019-fritzrepeater-1200
++	DEVICE_TITLE := AVM Fritz!Repeater 1200
++	DEVICE_PACKAGES := fritz-caldata fritz-tffs-nand ipq-wifi-avm_fritzrepeater-1200
++	IMAGES := sysupgrade.bin
++endef
++TARGET_DEVICES += avm_fritzrepeater-1200
++
+ define Device/avm_fritzrepeater-3000
+ 	$(call Device/FitImageLzma)
+ 	DEVICE_DTS := qcom-ipq4019-fritzrepeater-3000
+diff --git a/target/linux/ipq40xx/patches-4.14/901-arm-boot-add-dts-files.patch b/target/linux/ipq40xx/patches-4.14/901-arm-boot-add-dts-files.patch
+index bb539155e98b75df5dd88e39f6405af5a82e0320..f7efd415f1f1c000867793b3b133e44b3e50b0fd 100644
+--- a/target/linux/ipq40xx/patches-4.14/901-arm-boot-add-dts-files.patch
++++ b/target/linux/ipq40xx/patches-4.14/901-arm-boot-add-dts-files.patch
+@@ -10,7 +10,7 @@ Signed-off-by: John Crispin <john@phrozen.org>
+ 
+ --- a/arch/arm/boot/dts/Makefile
+ +++ b/arch/arm/boot/dts/Makefile
+-@@ -697,7 +697,30 @@ dtb-$(CONFIG_ARCH_QCOM) += \
++@@ -697,7 +697,31 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+  	qcom-apq8074-dragonboard.dtb \
+  	qcom-apq8084-ifc6540.dtb \
+  	qcom-apq8084-mtp.dtb \
+@@ -30,6 +30,7 @@ Signed-off-by: John Crispin <john@phrozen.org>
+ +	qcom-ipq4019-a62.dtb \
+ +	qcom-ipq4019-ap.dk04.1-c1.dtb \
+ +	qcom-ipq4019-fritzbox-7530.dtb \
+++	qcom-ipq4019-fritzrepeater-1200.dtb \
+ +	qcom-ipq4019-fritzrepeater-3000.dtb \
+ +	qcom-ipq4019-linksys_ea8300.dtb \
+ +	qcom-ipq4019-map-ac2200.dtb \
