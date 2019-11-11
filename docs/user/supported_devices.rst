@@ -261,6 +261,9 @@ lantiq-xway
 * AVM
 
   - FRITZ!Box 7312 [#avmflash]_
+  - FRITZ!Box 7320 [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7330 [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7330 SL [#avmflash]_ [#lan_as_wan]_
 
 mpc85xx-generic
 ---------------
