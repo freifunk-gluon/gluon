@@ -250,6 +250,7 @@ lantiq-xrx200
 
 * AVM
 
+  - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
 
 lantiq-xway

@@ -1,3 +1,7 @@
+device('avm-fritz-box-7362-sl', 'avm_fritz7362sl', {
+        factory = false,
+})
+
 device('avm-fritz-box-7412', 'avm_fritz7412', {
         factory = false,
 })
