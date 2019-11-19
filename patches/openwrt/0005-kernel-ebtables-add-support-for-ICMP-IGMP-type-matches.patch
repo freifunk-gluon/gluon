@@ -6,10 +6,10 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 
 diff --git a/target/linux/generic/backport-4.14/096-0001-ebtables-add-support-for-matching-ICMP-type-and-code.patch b/target/linux/generic/backport-4.14/096-0001-ebtables-add-support-for-matching-ICMP-type-and-code.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f4575b5027d
+index 0000000000000000000000000000000000000000..fe9c479338a7b597be649c761c70a63085b51c5f
 --- /dev/null
 +++ b/target/linux/generic/backport-4.14/096-0001-ebtables-add-support-for-matching-ICMP-type-and-code.patch
-@@ -0,0 +1,141 @@
+@@ -0,0 +1,134 @@
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Sat, 3 Mar 2018 11:55:21 +0100
 +Subject: [PATCH 1/2] ebtables: add support for matching ICMP type and code
@@ -23,8 +23,6 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + net/bridge/netfilter/ebt_ip.c                | 43 +++++++++++++++++++++-------
 + 2 files changed, 43 insertions(+), 13 deletions(-)
 +
-+diff --git a/include/uapi/linux/netfilter_bridge/ebt_ip.h b/include/uapi/linux/netfilter_bridge/ebt_ip.h
-+index 8e462fb1983f..4ed7fbb0a482 100644
 +--- a/include/uapi/linux/netfilter_bridge/ebt_ip.h
 ++++ b/include/uapi/linux/netfilter_bridge/ebt_ip.h
 +@@ -24,8 +24,9 @@
@@ -55,8 +53,6 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + };
 + 
 + #endif
-+diff --git a/net/bridge/netfilter/ebt_ip.c b/net/bridge/netfilter/ebt_ip.c
-+index 2b46c50abce0..8cb8f8395768 100644
 +--- a/net/bridge/netfilter/ebt_ip.c
 ++++ b/net/bridge/netfilter/ebt_ip.c
 +@@ -19,9 +19,15 @@
@@ -78,7 +74,7 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + };
 + 
 + static bool
-+@@ -30,8 +36,8 @@ ebt_ip_mt(const struct sk_buff *skb, struct xt_action_param *par)
++@@ -30,8 +36,8 @@ ebt_ip_mt(const struct sk_buff *skb, str
 + 	const struct ebt_ip_info *info = par->matchinfo;
 + 	const struct iphdr *ih;
 + 	struct iphdr _iph;
@@ -89,7 +85,7 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + 
 + 	ih = skb_header_pointer(skb, 0, sizeof(_iph), &_iph);
 + 	if (ih == NULL)
-+@@ -50,29 +56,38 @@ ebt_ip_mt(const struct sk_buff *skb, struct xt_action_param *par)
++@@ -50,29 +56,38 @@ ebt_ip_mt(const struct sk_buff *skb, str
 + 	if (info->bitmask & EBT_IP_PROTO) {
 + 		if (NF_INVF(info, EBT_IP_PROTO, info->protocol != ih->protocol))
 + 			return false;
@@ -133,7 +129,7 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + 	}
 + 	return true;
 + }
-+@@ -101,6 +116,14 @@ static int ebt_ip_mt_check(const struct xt_mtchk_param *par)
++@@ -101,6 +116,14 @@ static int ebt_ip_mt_check(const struct
 + 		return -EINVAL;
 + 	if (info->bitmask & EBT_IP_SPORT && info->sport[0] > info->sport[1])
 + 		return -EINVAL;
@@ -148,15 +144,12 @@ index 0000000000000000000000000000000000000000..9e4d90fb3b8e2c91e4adf0e0efdb3f45
 + 	return 0;
 + }
 + 
-+-- 
-+2.16.2
-+
 diff --git a/target/linux/generic/backport-4.14/096-0002-ebtables-add-support-for-matching-IGMP-type.patch b/target/linux/generic/backport-4.14/096-0002-ebtables-add-support-for-matching-IGMP-type.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6c53bba29
+index 0000000000000000000000000000000000000000..4c8144834d87c58ff90363cdc2f2933194e54fdc
 --- /dev/null
 +++ b/target/linux/generic/backport-4.14/096-0002-ebtables-add-support-for-matching-IGMP-type.patch
-@@ -0,0 +1,95 @@
+@@ -0,0 +1,88 @@
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
 +Date: Sat, 3 Mar 2018 12:02:21 +0100
 +Subject: [PATCH 2/2] ebtables: add support for matching IGMP type
@@ -171,8 +164,6 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + net/bridge/netfilter/ebt_ip.c                | 19 +++++++++++++++++--
 + 2 files changed, 20 insertions(+), 3 deletions(-)
 +
-+diff --git a/include/uapi/linux/netfilter_bridge/ebt_ip.h b/include/uapi/linux/netfilter_bridge/ebt_ip.h
-+index 4ed7fbb0a482..46d6261370b0 100644
 +--- a/include/uapi/linux/netfilter_bridge/ebt_ip.h
 ++++ b/include/uapi/linux/netfilter_bridge/ebt_ip.h
 +@@ -25,8 +25,9 @@
@@ -194,8 +185,6 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + 	};
 + 	union {
 + 		__u16 dport[2];
-+diff --git a/net/bridge/netfilter/ebt_ip.c b/net/bridge/netfilter/ebt_ip.c
-+index 8cb8f8395768..ffaa8ce2e724 100644
 +--- a/net/bridge/netfilter/ebt_ip.c
 ++++ b/net/bridge/netfilter/ebt_ip.c
 +@@ -28,6 +28,9 @@ union pkthdr {
@@ -208,7 +197,7 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + };
 + 
 + static bool
-+@@ -57,12 +60,12 @@ ebt_ip_mt(const struct sk_buff *skb, struct xt_action_param *par)
++@@ -57,12 +60,12 @@ ebt_ip_mt(const struct sk_buff *skb, str
 + 		if (NF_INVF(info, EBT_IP_PROTO, info->protocol != ih->protocol))
 + 			return false;
 + 		if (!(info->bitmask & (EBT_IP_DPORT | EBT_IP_SPORT |
@@ -223,7 +212,7 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + 		pptr = skb_header_pointer(skb, ih->ihl*4,
 + 					  sizeof(_pkthdr), &_pkthdr);
 + 		if (pptr == NULL)
-+@@ -88,6 +91,11 @@ ebt_ip_mt(const struct sk_buff *skb, struct xt_action_param *par)
++@@ -88,6 +91,11 @@ ebt_ip_mt(const struct sk_buff *skb, str
 + 			    pptr->icmphdr.code < info->icmp_code[0] ||
 + 			    pptr->icmphdr.code > info->icmp_code[1]))
 + 			return false;
@@ -235,7 +224,7 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + 	}
 + 	return true;
 + }
-+@@ -124,6 +132,13 @@ static int ebt_ip_mt_check(const struct xt_mtchk_param *par)
++@@ -124,6 +132,13 @@ static int ebt_ip_mt_check(const struct
 + 		    info->icmp_code[0] > info->icmp_code[1])
 + 			return -EINVAL;
 + 	}
@@ -249,6 +238,3 @@ index 0000000000000000000000000000000000000000..35b93adc802c2850cd6ee218c3d7d6f6
 + 	return 0;
 + }
 + 
-+-- 
-+2.16.2
-+
