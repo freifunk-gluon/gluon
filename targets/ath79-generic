@@ -5,6 +5,12 @@ local ATH10K_PACKAGES_QCA9888 = {
 	'-ath10k-firmware-qca9888-ct',
 }
 
+-- devolo
+
+device('devolo-wifi-pro-1200i', 'devolo_dvl1200i', {
+	factory = false,
+})
+
 -- TP-Link
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {

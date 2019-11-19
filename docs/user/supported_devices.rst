@@ -183,6 +183,10 @@ ar71xx-tiny [#deprecated]_
 ath79-generic
 --------------
 
+* devolo
+
+  - WiFi pro 1200i
+
 * TP-Link
 
   - Archer C6 (v2)
