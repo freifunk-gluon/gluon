@@ -1,0 +1,142 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 20 Nov 2019 00:07:49 +0100
+Subject: kernel: implement get_link_ksettings ethtool method for VXLAN and bridge
+
+Although the patch was accepted upstream, we add it in the "pending"
+directory to avoid modifying patch files provided by OpenWrt.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/generic/pending-4.14/950-v5.5-0001-vxlan-implement-get_link_ksettings-ethtool-method.patch b/target/linux/generic/pending-4.14/950-v5.5-0001-vxlan-implement-get_link_ksettings-ethtool-method.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6d8039ff704c0842eea900b1af2944fe05f586a3
+--- /dev/null
++++ b/target/linux/generic/pending-4.14/950-v5.5-0001-vxlan-implement-get_link_ksettings-ethtool-method.patch
+@@ -0,0 +1,50 @@
++From aa5f15831b6d112a5787c2e097f10da72b94caa6 Mon Sep 17 00:00:00 2001
++Message-Id: <aa5f15831b6d112a5787c2e097f10da72b94caa6.1574203789.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 12 Nov 2019 22:12:24 +0100
++Subject: [PATCH] vxlan: implement get_link_ksettings ethtool method
++
++Similar to VLAN and similar drivers, we can forward get_link_ksettings to
++the lower dev if we have one to get meaningful speed/duplex data.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++(cherry picked from commit 36fe3a61aaca2be4ef7484187e7484d19d54553e)
++---
++ drivers/net/vxlan.c | 24 ++++++++++++++++++++++--
++ 1 file changed, 22 insertions(+), 2 deletions(-)
++
++--- a/drivers/net/vxlan.c
+++++ b/drivers/net/vxlan.c
++@@ -2831,9 +2831,29 @@ static void vxlan_get_drvinfo(struct net
++ 	strlcpy(drvinfo->driver, "vxlan", sizeof(drvinfo->driver));
++ }
++ 
+++static int vxlan_get_link_ksettings(struct net_device *dev,
+++				    struct ethtool_link_ksettings *cmd)
+++{
+++	struct vxlan_dev *vxlan = netdev_priv(dev);
+++	struct vxlan_rdst *dst = &vxlan->default_dst;
+++	struct net_device *lowerdev = __dev_get_by_index(vxlan->net,
+++							 dst->remote_ifindex);
+++
+++	if (!lowerdev) {
+++		cmd->base.duplex = DUPLEX_UNKNOWN;
+++		cmd->base.port = PORT_OTHER;
+++		cmd->base.speed = SPEED_UNKNOWN;
+++
+++		return 0;
+++	}
+++
+++	return __ethtool_get_link_ksettings(lowerdev, cmd);
+++}
+++
++ static const struct ethtool_ops vxlan_ethtool_ops = {
++-	.get_drvinfo	= vxlan_get_drvinfo,
++-	.get_link	= ethtool_op_get_link,
+++	.get_drvinfo		= vxlan_get_drvinfo,
+++	.get_link		= ethtool_op_get_link,
+++	.get_link_ksettings	= vxlan_get_link_ksettings,
++ };
++ 
++ static struct socket *vxlan_create_sock(struct net *net, bool ipv6,
+diff --git a/target/linux/generic/pending-4.14/950-v5.5-0002-bridge-implement-get_link_ksettings-ethtool-method.patch b/target/linux/generic/pending-4.14/950-v5.5-0002-bridge-implement-get_link_ksettings-ethtool-method.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d56d9ee2849467c2757c99c86db6bc196dc58794
+--- /dev/null
++++ b/target/linux/generic/pending-4.14/950-v5.5-0002-bridge-implement-get_link_ksettings-ethtool-method.patch
+@@ -0,0 +1,71 @@
++From 147f3688f75ca268d245b6679a4f416c9c237061 Mon Sep 17 00:00:00 2001
++Message-Id: <147f3688f75ca268d245b6679a4f416c9c237061.1574203789.git.mschiffer@universe-factory.net>
++In-Reply-To: <aa5f15831b6d112a5787c2e097f10da72b94caa6.1574203789.git.mschiffer@universe-factory.net>
++References: <aa5f15831b6d112a5787c2e097f10da72b94caa6.1574203789.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 12 Nov 2019 22:12:25 +0100
++Subject: [PATCH] bridge: implement get_link_ksettings ethtool method
++
++We return the maximum speed of all active ports. This matches how the link
++speed would give an upper limit for traffic to/from any single peer if the
++bridge were replaced with a hardware switch.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++(cherry picked from commit 542575fe4b9a7ad5f86da0346f147c3bae0c93cb)
++---
++ net/bridge/br_device.c | 36 ++++++++++++++++++++++++++++++++++--
++ 1 file changed, 34 insertions(+), 2 deletions(-)
++
++--- a/net/bridge/br_device.c
+++++ b/net/bridge/br_device.c
++@@ -239,6 +239,37 @@ static void br_getinfo(struct net_device
++ 	strlcpy(info->bus_info, "N/A", sizeof(info->bus_info));
++ }
++ 
+++static int br_get_link_ksettings(struct net_device *dev,
+++				 struct ethtool_link_ksettings *cmd)
+++{
+++	struct net_bridge *br = netdev_priv(dev);
+++	struct net_bridge_port *p;
+++
+++	cmd->base.duplex = DUPLEX_UNKNOWN;
+++	cmd->base.port = PORT_OTHER;
+++	cmd->base.speed = SPEED_UNKNOWN;
+++
+++	list_for_each_entry(p, &br->port_list, list) {
+++		struct ethtool_link_ksettings ecmd;
+++		struct net_device *pdev = p->dev;
+++
+++		if (!netif_running(pdev) || !netif_oper_up(pdev))
+++			continue;
+++
+++		if (__ethtool_get_link_ksettings(pdev, &ecmd))
+++			continue;
+++
+++		if (ecmd.base.speed == (__u32)SPEED_UNKNOWN)
+++			continue;
+++
+++		if (cmd->base.speed == (__u32)SPEED_UNKNOWN ||
+++		    cmd->base.speed < ecmd.base.speed)
+++			cmd->base.speed = ecmd.base.speed;
+++	}
+++
+++	return 0;
+++}
+++
++ static netdev_features_t br_fix_features(struct net_device *dev,
++ 	netdev_features_t features)
++ {
++@@ -340,8 +371,9 @@ static int br_del_slave(struct net_devic
++ }
++ 
++ static const struct ethtool_ops br_ethtool_ops = {
++-	.get_drvinfo    = br_getinfo,
++-	.get_link	= ethtool_op_get_link,
+++	.get_drvinfo		 = br_getinfo,
+++	.get_link		 = ethtool_op_get_link,
+++	.get_link_ksettings	 = br_get_link_ksettings,
++ };
++ 
++ #if IS_ENABLED(CONFIG_NF_FLOW_TABLE)
