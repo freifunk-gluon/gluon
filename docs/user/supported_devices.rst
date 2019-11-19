@@ -187,6 +187,10 @@ ath79-generic
 
   - WiFi pro 1200i
 
+  * OCEDO
+
+  - Raccoon
+
 * TP-Link
 
   - Archer C6 (v2)
