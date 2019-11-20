@@ -11,6 +11,12 @@ device('devolo-wifi-pro-1200i', 'devolo_dvl1200i', {
 	factory = false,
 })
 
+-- OCEDO
+
+device('ocedo-raccoon', 'ocedo_raccoon', {
+	factory = false,
+})
+
 -- TP-Link
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
