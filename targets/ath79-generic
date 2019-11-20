@@ -11,6 +11,11 @@ device('devolo-wifi-pro-1200i', 'devolo_dvl1200i', {
 	factory = false,
 })
 
+device('devolo-wifi-pro-1750i', 'devolo_dvl1750i', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 -- OCEDO
 
 device('ocedo-raccoon', 'ocedo_raccoon', {
