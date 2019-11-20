@@ -186,6 +186,7 @@ ath79-generic
 * devolo
 
   - WiFi pro 1200i
+  - WiFi pro 1750c
   - WiFi pro 1750i
 
   * OCEDO
