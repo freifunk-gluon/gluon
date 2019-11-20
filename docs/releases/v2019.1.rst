@@ -15,6 +15,7 @@ possible.
 With Gluon v2019.1, nodes will not answer respondd queries on ``[ff02::2:1001]:1001`` anymore. Respondd
 querier setups still using this address must be updated to the new address ``[ff05::2:1001]:1001``
 (supported since Gluon v2017.1). This change was required due to cross-domain leakage of respondd data.
+If you are using hopglass-server to query respondd data, you need to update it to at least commit f0e2c0a5.
 
 If you are upgrading from a version prior to v2018.1, please note that the flash layout on some
 devices (TP-Link CPE/WBS 210/510) was changed. To avoid upgrade failures, make sure to upgrade
