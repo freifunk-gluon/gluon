@@ -44,6 +44,9 @@ function M.is_outdoor_device()
 	elseif M.match('ar71xx', 'generic', {'unifiac-pro'}) and
 		M.get_model() == 'Ubiquiti UniFi-AC-MESH-PRO' then
 		return true
+
+	elseif M.match('ath79', 'generic', {'devolo,dvl1750x'}) then
+		return true
 	end
 
 	return false

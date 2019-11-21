@@ -188,6 +188,7 @@ ath79-generic
   - WiFi pro 1200i
   - WiFi pro 1750c
   - WiFi pro 1750i
+  - WiFi pro 1750x
 
   * OCEDO
 
