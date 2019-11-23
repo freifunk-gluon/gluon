@@ -31,5 +31,8 @@ endif
 CFLAGS += $(LIBBATADV_CFLAGS)
 LDLIBS += $(LIBBATADV_LDLIBS)
 
-respondd.so: respondd.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -D_GNU_SOURCE -o $@ $^ $(LDLIBS) -lgluonutil -luci
+
+SOURCES = respondd.c respondd-nodeinfo.c respondd-statistics.c respondd-neighbours.c
+
+respondd.so: $(SOURCES) respondd-common.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -shared -fPIC -fvisibility=hidden -D_GNU_SOURCE -o $@ $(SOURCES) $(LDLIBS) -lgluonutil

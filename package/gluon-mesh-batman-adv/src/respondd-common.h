@@ -23,15 +23,8 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "respondd-common.h"
+#pragma once
 
-#include <respondd.h>
-
-
-__attribute__ ((visibility ("default")))
-const struct respondd_provider_info respondd_providers[] = {
-	{"nodeinfo", respondd_provider_nodeinfo},
-	{"statistics", respondd_provider_statistics},
-	{"neighbours", respondd_provider_neighbours},
-	{}
-};
+struct json_object * respondd_provider_nodeinfo(void);
+struct json_object * respondd_provider_statistics(void);
+struct json_object * respondd_provider_neighbours(void);
