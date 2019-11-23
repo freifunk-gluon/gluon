@@ -9,6 +9,8 @@ clean:
 parser.so: template_parser.o template_utils.o template_lmo.o template_lualib.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^
 
+gluon-po2lmo: gluon-po2lmo.o template_lmo.o
+
 compile: parser.so
 
 install: compile

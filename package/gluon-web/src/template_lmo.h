@@ -22,8 +22,15 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
 
+struct lmo_entry {
+	uint32_t key_id;
+	uint32_t val_id;
+	uint32_t offset;
+	uint32_t length;
+} __attribute__((packed));
 typedef struct lmo_entry lmo_entry_t;
 
 
@@ -36,6 +43,8 @@ struct lmo_catalog {
 
 typedef struct lmo_catalog lmo_catalog_t;
 
+
+uint32_t sfh_hash(const void *input, size_t len);
 
 bool lmo_load(lmo_catalog_t *cat, const char *file);
 void lmo_unload(lmo_catalog_t *cat);

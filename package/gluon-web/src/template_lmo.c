@@ -25,18 +25,9 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-
-struct lmo_entry {
-	uint32_t key_id;
-	uint32_t val_id;
-	uint32_t offset;
-	uint32_t length;
-} __attribute__((packed));
 
 
 static inline uint16_t get_le16(const void *data) {
@@ -56,7 +47,7 @@ static inline uint32_t get_be32(const void *data) {
  * Hash function from http://www.azillionmonkeys.com/qed/hash.html
  * Copyright (C) 2004-2008 by Paul Hsieh
  */
-static uint32_t sfh_hash(const void *input, size_t len)
+uint32_t sfh_hash(const void *input, size_t len)
 {
 	const uint8_t *data = input;
 	uint32_t hash = len, tmp;
