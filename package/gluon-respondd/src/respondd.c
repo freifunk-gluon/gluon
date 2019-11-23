@@ -230,8 +230,8 @@ static struct json_object * get_stat(void) {
 		}
 
 		if (!strcmp(label, "cpu")) {
-			unsigned long long user, nice, system, idle, iowait, irq, softirq;
-			if (sscanf(line, "%*s %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64" %"SCNu64,
+			int64_t user, nice, system, idle, iowait, irq, softirq;
+			if (sscanf(line, "%*s %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64,
 			          &user, &nice, &system, &idle, &iowait, &irq, &softirq) != 7)
 				goto invalid_stat_format;
 
@@ -247,26 +247,26 @@ static struct json_object * get_stat(void) {
 
 			json_object_object_add(stat, "cpu", cpu);
 		} else if (!strcmp(label, "ctxt")) {
-			unsigned long long ctxt;
-			if (sscanf(line, "%*s %"SCNu64, &ctxt) != 1)
+			int64_t ctxt;
+			if (sscanf(line, "%*s %"SCNd64, &ctxt) != 1)
 				goto invalid_stat_format;
 
 			json_object_object_add(stat, "ctxt", json_object_new_int64(ctxt));
 		} else if (!strcmp(label, "intr")) {
-			unsigned long long total_intr;
-			if (sscanf(line, "%*s %"SCNu64, &total_intr) != 1)
+			int64_t total_intr;
+			if (sscanf(line, "%*s %"SCNd64, &total_intr) != 1)
 				goto invalid_stat_format;
 
 			json_object_object_add(stat, "intr", json_object_new_int64(total_intr));
 		} else if (!strcmp(label, "softirq")) {
-			unsigned long long total_softirq;
-			if (sscanf(line, "%*s %"SCNu64, &total_softirq) != 1)
+			int64_t total_softirq;
+			if (sscanf(line, "%*s %"SCNd64, &total_softirq) != 1)
 				goto invalid_stat_format;
 
 			json_object_object_add(stat, "softirq", json_object_new_int64(total_softirq));
 		} else if (!strcmp(label, "processes")) {
-			unsigned long long processes;
-			if (sscanf(line, "%*s %"SCNu64, &processes) != 1)
+			int64_t processes;
+			if (sscanf(line, "%*s %"SCNd64, &processes) != 1)
 				goto invalid_stat_format;
 
 			json_object_object_add(stat, "processes", json_object_new_int64(processes));
