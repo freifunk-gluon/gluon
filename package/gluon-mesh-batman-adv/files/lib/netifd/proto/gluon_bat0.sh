@@ -30,11 +30,6 @@ proto_gluon_bat0_renew() {
 		read data
 
 		echo bat0 > "/sys/class/net/$dev/batman_adv/mesh_iface"
-
-		! [ "$(echo "$data" | jsonfilter -e "@.transitive")" = 'true' ]
-		transitive=$?
-
-		(echo "$transitive" > "/sys/class/net/$dev/batman_adv/no_rebroadcast") 2>/dev/null
 	done
 
 	lock -u /var/lock/gluon_bat0.lock
