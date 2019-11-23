@@ -241,7 +241,7 @@ static struct json_object * get_babel_neighbours(void) {
 	if (!neighbours)
 		return NULL;
 
-	babelhelper_readbabeldata(&bhelper_ctx, (void*)neighbours, handle_neighbour);
+	babelhelper_readbabeldata(&bhelper_ctx, "dump", (void*)neighbours, handle_neighbour);
 
 	return(neighbours);
 }
@@ -593,7 +593,7 @@ static struct json_object * respondd_provider_statistics(void) {
 	json_object_object_add(ret, "clients", get_clients());
 	json_object_object_add(ret, "traffic", get_traffic());
 
-	babelhelper_readbabeldata(&bhelper_ctx, (void*)ret, handle_route_addgw_nexthop );
+	babelhelper_readbabeldata(&bhelper_ctx, "dump", (void*)ret, handle_route_addgw_nexthop );
 
 	return ret;
 }
