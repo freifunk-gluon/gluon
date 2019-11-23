@@ -1,8 +1,7 @@
 GLUON_MK := $(abspath $(lastword $(MAKEFILE_LIST)))
 PKG_FILE_DEPENDS += $(GLUON_MK)
 
-# Dependencies for LuaSrcDiet
-PKG_BUILD_DEPENDS += luci-base/host
+PKG_BUILD_DEPENDS += luasrcdiet/host
 
 ifneq ($(wildcard ./src/respondd.c),)
   PKG_BUILD_DEPENDS += respondd
