@@ -4,10 +4,10 @@ Subject: procd: add support for alternative rc.d directories
 
 diff --git a/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b973844d5
+index 0000000000000000000000000000000000000000..16d3179f05c64b7178f883745294c64a27127775
 --- /dev/null
 +++ b/package/system/procd/patches/0001-Add-support-for-alternative-rc.d-directories.patch
-@@ -0,0 +1,97 @@
+@@ -0,0 +1,80 @@
 +From 03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d Mon Sep 17 00:00:00 2001
 +Message-Id: <03a2bc70e4260ec9f669391c47b9a7a9ecd0b75d.1407329621.git.mschiffer@universe-factory.net>
 +From: Matthias Schiffer <mschiffer@universe-factory.net>
@@ -19,21 +19,10 @@ index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b
 + rcS.c           |  2 +-
 + 2 files changed, 39 insertions(+), 1 deletion(-)
 +
-+diff --git a/initd/preinit.c b/initd/preinit.c
-+index fb94527..8b832a7 100644
 +--- a/initd/preinit.c
 ++++ b/initd/preinit.c
-+@@ -12,6 +12,8 @@
-+  * GNU General Public License for more details.
-+  */
-+ 
-++#define _GNU_SOURCE
-++
-+ #include <sys/stat.h>
-+ #include <sys/types.h>
-+ #include <sys/mount.h>
-+@@ -46,6 +48,35 @@ check_dbglvl(void)
-+ 		debug = lvl;
++@@ -87,12 +87,42 @@ fail:
++ 	free(command);
 + }
 + 
 ++static char*
@@ -68,15 +57,14 @@ index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b
 + static void
 + spawn_procd(struct uloop_process *proc, int ret)
 + {
-+@@ -53,6 +84,7 @@ spawn_procd(struct uloop_process *proc, int ret)
++ 	char *wdt_fd = watchdog_fd();
 + 	char *argv[] = { "/sbin/procd", NULL};
-+ 	struct stat s;
 + 	char dbg[2];
 ++	char *rc_d_path;
 + 
 + 	if (plugd_proc.pid > 0)
 + 		kill(plugd_proc.pid, SIGKILL);
-+@@ -72,6 +104,12 @@ spawn_procd(struct uloop_process *proc, int ret)
++@@ -112,6 +142,12 @@ spawn_procd(struct uloop_process *proc,
 + 		setenv("DBGLVL", dbg, 1);
 + 	}
 + 
@@ -89,11 +77,9 @@ index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b
 + 	execvp(argv[0], argv);
 + }
 + 
-+diff --git a/rcS.c b/rcS.c
-+index 0e1b0ba..1b00831 100644
 +--- a/rcS.c
 ++++ b/rcS.c
-+@@ -150,7 +150,7 @@ int rcS(char *pattern, char *param, void (*q_empty)(struct runqueue *))
++@@ -184,7 +184,7 @@ int rcS(char *pattern, char *param, void
 + 	q.empty_cb = q_empty;
 + 	q.max_running_tasks = 1;
 + 
@@ -102,6 +88,3 @@ index 0000000000000000000000000000000000000000..bc2434200364b46f1db4c2eec22c4e8b
 + }
 + 
 + int rc(const char *file, char *param)
-+-- 
-+2.0.4
-+

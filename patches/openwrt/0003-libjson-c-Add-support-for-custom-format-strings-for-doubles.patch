@@ -4,10 +4,10 @@ Subject: libjson-c: Add support for custom format strings for doubles
 
 diff --git a/package/libs/libjson-c/patches/002-custom-format-string.patch b/package/libs/libjson-c/patches/002-custom-format-string.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e6299bd5e6f
+index 0000000000000000000000000000000000000000..b67433a7baf37654a17fa5036c4266b33bdda9f2
 --- /dev/null
 +++ b/package/libs/libjson-c/patches/002-custom-format-string.patch
-@@ -0,0 +1,98 @@
+@@ -0,0 +1,91 @@
 +From 21dc5dc92bd56f5f4dc2c90b9ea6bf1e1407714e Mon Sep 17 00:00:00 2001
 +From: Jan-Philipp Litza <janphilipp@litza.de>
 +Date: Fri, 6 May 2016 16:12:44 +0200
@@ -20,11 +20,9 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 + json_object.h | 28 ++++++++++++++++++++++++++++
 + 2 files changed, 34 insertions(+), 6 deletions(-)
 +
-+diff --git a/json_object.c b/json_object.c
-+index 7d60884..46701e7 100644
 +--- a/json_object.c
 ++++ b/json_object.c
-+@@ -55,7 +55,6 @@ static struct json_object* json_object_new(enum json_type o_type);
++@@ -55,7 +55,6 @@ static struct json_object* json_object_n
 + static json_object_to_json_string_fn json_object_object_to_json_string;
 + static json_object_to_json_string_fn json_object_boolean_to_json_string;
 + static json_object_to_json_string_fn json_object_int_to_json_string;
@@ -32,7 +30,7 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 + static json_object_to_json_string_fn json_object_string_to_json_string;
 + static json_object_to_json_string_fn json_object_array_to_json_string;
 + 
-+@@ -644,10 +643,10 @@ int64_t json_object_get_int64(const struct json_object *jso)
++@@ -560,10 +559,10 @@ int64_t json_object_get_int64(struct jso
 + 
 + /* json_object_double */
 + 
@@ -47,7 +45,7 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 + {
 +   char buf[128], *p, *q;
 +   int size;
-+@@ -663,7 +662,8 @@ static int json_object_double_to_json_string(struct json_object* jso,
++@@ -579,7 +578,8 @@ static int json_object_double_to_json_st
 +     else
 +       size = snprintf(buf, sizeof(buf), "-Infinity");
 +   else
@@ -57,11 +55,9 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 + 
 +   p = strchr(buf, ',');
 +   if (p) {
-+diff --git a/json_object.h b/json_object.h
-+index 2bce454..a89de44 100644
 +--- a/json_object.h
 ++++ b/json_object.h
-+@@ -614,6 +614,9 @@ extern int64_t json_object_get_int64(const struct json_object *obj);
++@@ -515,6 +515,9 @@ extern int64_t json_object_get_int64(str
 + /* double type methods */
 + 
 + /** Create a new empty json_object of type json_type_double
@@ -71,7 +67,7 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 +  * @param d the double
 +  * @returns a json_object of type json_type_double
 +  */
-+@@ -642,6 +645,31 @@ extern struct json_object* json_object_new_double(double d);
++@@ -543,6 +546,31 @@ extern struct json_object* json_object_n
 +  */
 + extern struct json_object* json_object_new_double_s(double d, const char *ds);
 + 
@@ -103,6 +99,3 @@ index 0000000000000000000000000000000000000000..2f454c560ff78c1edd4654b9651f0e62
 + /** Get the double floating point value of a json_object
 +  *
 +  * The type is coerced to a double if the passed object is not a double.
-+-- 
-+2.7.4
-+
