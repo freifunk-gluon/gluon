@@ -74,8 +74,7 @@
 #define IFNAMELEN 32
 #define PROTOLEN 32
 
-#define UBUS_TIMEOUT 30
-#define UBUS_SOCKET "/var/run/ubus.sock"
+#define UBUS_TIMEOUT 30000
 
 static struct babelhelper_ctx bhelper_ctx = {};
 
@@ -330,7 +329,7 @@ static struct json_object * get_mesh_ifs() {
 
 	unsigned int id=8;
 
-	ubus_ctx = ubus_connect(UBUS_SOCKET);
+	ubus_ctx = ubus_connect(NULL);
 	if (!ubus_ctx) {
 		fprintf(stderr,"could not connect to ubus, not providing mesh-data\n");
 		goto end;
@@ -338,7 +337,7 @@ static struct json_object * get_mesh_ifs() {
 
 	blob_buf_init(&b, 0);
 	ubus_lookup_id(ubus_ctx, "network.interface", &id);
-	int uret = ubus_invoke(ubus_ctx, id, "dump", b.head, receive_call_result_data, &ret, UBUS_TIMEOUT * 1000);
+	int uret = ubus_invoke(ubus_ctx, id, "dump", b.head, receive_call_result_data, &ret, UBUS_TIMEOUT);
 
 	if (uret > 0)
 		fprintf(stderr, "ubus command failed: %s\n", ubus_strerror(uret));
