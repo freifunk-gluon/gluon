@@ -113,15 +113,18 @@
 			return prettyBytes(bytes);
 		},
 		'neighbour': function(addr) {
+			if (!addr)
+				return '';
+
 			for (var i in interfaces) {
 				var iface = interfaces[i];
 				var neigh = iface.get_neigh(addr);
 				if (!neigh)
 					continue;
-				return neigh.get_hostname() + ' (' + i + ')';
+				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
 			}
 
-			return addr + ' (unknown iface)';
+			return 'via ' + addr + ' (unknown iface)';
 		}
 	}
 
