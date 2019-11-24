@@ -1,0 +1,39 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 24 Nov 2019 13:26:01 +0100
+Subject: batman-adv: revert "batman-adv: disable ethtool link speed detection when auto negotiation off"
+
+As long as there is no actual measurement of throughput on non-wireless
+devices, this change does more harm than good. Revert it for now.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/batman-adv/patches/0100-Revert-batman-adv-disable-ethtool-link-speed-detecti.patch b/batman-adv/patches/0100-Revert-batman-adv-disable-ethtool-link-speed-detecti.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..4c78ed9e97f7d805c91992cc1be38850ab9e59dd
+--- /dev/null
++++ b/batman-adv/patches/0100-Revert-batman-adv-disable-ethtool-link-speed-detecti.patch
+@@ -0,0 +1,24 @@
++--- a/net/batman-adv/bat_v_elp.c
+++++ b/net/batman-adv/bat_v_elp.c
++@@ -120,20 +120,7 @@ static u32 batadv_v_elp_get_throughput(s
++ 	rtnl_lock();
++ 	ret = __ethtool_get_link_ksettings(hard_iface->net_dev, &link_settings);
++ 	rtnl_unlock();
++-
++-	/* Virtual interface drivers such as tun / tap interfaces, VLAN, etc
++-	 * tend to initialize the interface throughput with some value for the
++-	 * sake of having a throughput number to export via ethtool. This
++-	 * exported throughput leaves batman-adv to conclude the interface
++-	 * throughput is genuine (reflecting reality), thus no measurements
++-	 * are necessary.
++-	 *
++-	 * Based on the observation that those interface types also tend to set
++-	 * the link auto-negotiation to 'off', batman-adv shall check this
++-	 * setting to differentiate between genuine link throughput information
++-	 * and placeholders installed by virtual interfaces.
++-	 */
++-	if (ret == 0 && link_settings.base.autoneg == AUTONEG_ENABLE) {
+++	if (ret == 0) {
++ 		/* link characteristics might change over time */
++ 		if (link_settings.base.duplex == DUPLEX_FULL)
++ 			hard_iface->bat_v.flags |= BATADV_FULL_DUPLEX;
