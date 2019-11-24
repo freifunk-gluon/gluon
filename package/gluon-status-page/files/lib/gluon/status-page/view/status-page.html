@@ -136,6 +136,7 @@
 					<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
 					<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
 					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %></td></tr>
+					<tr><th><%:Gateway Nexthop%></th><td><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
 					<tr><th><%:Clients%></th><td><%= statistics('clients/total') %></td></tr>
 				</table>
 
