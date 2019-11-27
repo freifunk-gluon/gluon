@@ -24,6 +24,11 @@ device('devolo-wifi-pro-1750c', 'devolo_dvl1750c', {
 	factory = false,
 })
 
+device('devolo-wifi-pro-1750e', 'devolo_dvl1750e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 device('devolo-wifi-pro-1750i', 'devolo_dvl1750i', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
