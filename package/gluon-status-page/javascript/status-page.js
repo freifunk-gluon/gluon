@@ -112,6 +112,20 @@
 		'bytes': function(bytes) {
 			return prettyBytes(bytes);
 		},
+		'neighbour': function(addr) {
+			if (!addr)
+				return '';
+
+			for (var i in interfaces) {
+				var iface = interfaces[i];
+				var neigh = iface.get_neigh(addr);
+				if (!neigh)
+					continue;
+				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
+			}
+
+			return 'via ' + addr + ' (unknown iface)';
+		}
 	}
 
 
@@ -582,6 +596,9 @@
 		}
 
 		return {
+			'get_hostname': function() {
+				return hostname.textContent;
+			},
 			'update_nodeinfo': function(nodeinfo) {
 				var addr = choose_address(nodeinfo.network.addresses);
 				if (addr) {
