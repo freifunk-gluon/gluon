@@ -1,20 +1,20 @@
 -- Aerohive
 
-device('aerohive-hiveap-330', 'hiveap-330', {
+device('aerohive-hiveap-330', 'aerohive_hiveap-330', {
 	factory = false,
 })
 
 
 -- Enterasys
 
-device('enterasys-ws-ap3710i', 'ws-ap3710i', {
+device('enterasys-ws-ap3710i', 'enterasys_ws-ap3710i', {
 	factory = false,
 })
 
 
 -- OCEDO
 
-device('ocedo-panda', 'panda', {
+device('ocedo-panda', 'ocedo_panda', {
 	factory = false,
 })
 
