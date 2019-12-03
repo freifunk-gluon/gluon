@@ -185,10 +185,10 @@ ath79-generic
 
 * devolo
 
-  - WiFi pro 1200e
+  - WiFi pro 1200e [#lan_as_wan]_
   - WiFi pro 1200i
   - WiFi pro 1750c
-  - WiFi pro 1750e
+  - WiFi pro 1750e [#lan_as_wan]_
   - WiFi pro 1750i
   - WiFi pro 1750x
 
@@ -396,3 +396,6 @@ Footnotes
 .. [#eva_ramboot]
   For instructions on how to flash AVM NAND devices, see the respective
   commit which added support in OpenWrt.
+
+.. [#lan_as_wan]
+  All LAN ports on this device are used as WAN.
