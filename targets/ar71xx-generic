@@ -154,6 +154,7 @@ device('netgear-wndr3700v2', 'wndr3700v2', {
 })
 
 device('netgear-wndr3800', 'wndr3800', {
+	aliases = {'netgear-wndr3800chmychart'},
 	factory_ext = '.img',
 })
 
