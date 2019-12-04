@@ -118,7 +118,7 @@
 
 			for (var i in interfaces) {
 				var iface = interfaces[i];
-				var neigh = iface.get_neigh(addr);
+				var neigh = iface.lookup_neigh(addr);
 				if (!neigh)
 					continue;
 				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
@@ -728,6 +728,9 @@
 			}
 		}
 
+		function lookup_neigh(addr) {
+			return neighs[addr];
+		}
 
 		function get_neigh(addr) {
 			var neigh = neighs[addr];
@@ -755,6 +758,7 @@
 
 		return {
 			'get_neigh': get_neigh,
+			'lookup_neigh': lookup_neigh
 		};
 	}
 
