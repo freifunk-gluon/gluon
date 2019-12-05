@@ -112,6 +112,20 @@
 		'bytes': function(bytes) {
 			return prettyBytes(bytes);
 		},
+		'neighbour': function(addr) {
+			if (!addr)
+				return '';
+
+			for (var i in interfaces) {
+				var iface = interfaces[i];
+				var neigh = iface.lookup_neigh(addr);
+				if (!neigh)
+					continue;
+				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
+			}
+
+			return 'via ' + addr + ' (unknown iface)';
+		}
 	}
 
 
@@ -582,6 +596,9 @@
 		}
 
 		return {
+			'get_hostname': function() {
+				return hostname.textContent;
+			},
 			'update_nodeinfo': function(nodeinfo) {
 				var addr = choose_address(nodeinfo.network.addresses);
 				if (addr) {
@@ -711,6 +728,9 @@
 			}
 		}
 
+		function lookup_neigh(addr) {
+			return neighs[addr];
+		}
 
 		function get_neigh(addr) {
 			var neigh = neighs[addr];
@@ -738,6 +758,7 @@
 
 		return {
 			'get_neigh': get_neigh,
+			'lookup_neigh': lookup_neigh
 		};
 	}
 
