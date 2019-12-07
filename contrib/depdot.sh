@@ -1,11 +1,11 @@
 #!/bin/bash
 
-set -e
 # Script to output the dependency graph of Gluon's packages
 # Limitations:
 #  * Works only if directory names and package names are the same (true for all Gluon packages)
 #  * Doesn't show dependencies through virtual packages correctly
 
+set -e
 shopt -s nullglob
 
 
