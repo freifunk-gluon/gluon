@@ -86,7 +86,7 @@ ar71xx-generic
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
-  - RE450 [#ath10k]_
+  - RE450 (v1) [#ath10k]_
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
