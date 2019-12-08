@@ -31,14 +31,14 @@ sanitize() {
 	echo -n "$v"
 }
 
-vars=
+vars=()
 
 for feature in $1; do
 	if [ "$(type -t gluon_feature_nodefault_"${feature}")" != 'function' ]; then
 		echo "gluon-${feature}"
 	fi
 
-	vars="$vars $(sanitize "$feature")=1"
+	vars+=("$(sanitize "$feature")=1")
 done
 
 
@@ -46,18 +46,21 @@ nodefault() {
 	:
 }
 
+# shellcheck disable=SC2086
 packages() {
 	local cond="$(sanitize "$1")"
 	shift
 
 	# We only allow variable names, parentheses and the operators: & | !
-	if grep -q ".*[^A-Za-z0-9_()&|! ].*" <<< "$cond"; then
+	if grep -q '[^A-Za-z0-9_()&|! ]' <<< "$cond"; then
 		exit 1
 	fi
 
 	# Let will return false when the result of the passed expression is 0,
 	# so we always add 1. This way false is only returned for syntax errors.
-	local ret="$(env -i "$vars" bash --norc -ec "let _result_='1+($cond)'; echo -n \"\$_result_\"" 2>/dev/null)"
+	set -A
+	local ret="$(env -i "${vars[@]}" bash --norc -ec "let _result_='1+($cond)'; echo -n \"\$_result_\"" 2>/dev/null)"
+	set +A
 	case "$ret" in
 	2)
 		for pkg in "$@"; do
