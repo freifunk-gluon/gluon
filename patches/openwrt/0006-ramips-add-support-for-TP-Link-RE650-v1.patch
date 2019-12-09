@@ -1,0 +1,334 @@
+From: Georgi Vlaev <georgi.vlaev@gmail.com>
+Date: Wed, 17 Apr 2019 21:17:45 +0300
+Subject: ramips: add support for TP-Link RE650 v1
+
+TP-Link RE650 v1 is a dual-band AC2600 range extender,
+based on MediaTek MT7621A and MT7615E. According to the
+wikidevi entry for RE650 this device is identical with
+TP-Link RE500 as hardware. This patch supports only RE650.
+
+Hardware specification:
+
+- SoC 880 MHz - MediaTek MT7621AT
+- 128 MB of DDR3 RAM
+- 16 MB - Winbond 25Q128FVSG
+- 4T4R 2.4 GHz - MediaTek MT7615E
+- 4T4R 5 GHz - MediaTek MT7615E
+- 1x 1 Gbps Ethernet - MT7621AT integrated
+- 7x LEDs (Power, 2G, 5G, WPS(x2), Lan(x2))
+- 4x buttons (Reset, Power, WPS, LED)
+- UART header (J1) - 2:GND, 3:RX, 4:TX
+  Serial console @ 57600,8n1
+
+Flash instructions:
+
+Upload
+openwrt-ramips-mt7621-tplink_re650-v1-squashfs-factory.bin
+from the RE650 web interface.
+
+TFTP recovery to stock firmware:
+
+Unfortunately, I can't find an easy way to recover the RE
+without opening the device and using modified binaries. The
+TFTP upload will only work if selected from u-boot, which
+means you have to open the device and attach to the serial
+console. The TFTP update procedure does *not* accept the
+published vendor firmware binaries. However, it allows to
+flash kernel + rootfs binaries, and this works if you have
+a backup of the original contents of the flash. It's probably
+possible to create special image out of the vendor binaries
+and use that as recovery image.
+
+Signed-off-by: Georgi Vlaev <georgi.vlaev@gmail.com>
+[re-added variables for kernel header]
+Signed-off-by: David Bauer <mail@david-bauer.net>
+(cherry picked from commit 8c51ddeff0876b439ac35a3f492ab719085bfb9c)
+
+diff --git a/target/linux/ramips/base-files/etc/board.d/01_leds b/target/linux/ramips/base-files/etc/board.d/01_leds
+index 83cb88ad5c2d3e10d83c48bedaa574db969214ff..a3ecb3f2e3ae08043ced1238d2a592bf38931850 100755
+--- a/target/linux/ramips/base-files/etc/board.d/01_leds
++++ b/target/linux/ramips/base-files/etc/board.d/01_leds
+@@ -347,6 +347,10 @@ tplink,tl-wa801nd-v5)
+ 	ucidef_set_led_wlan "wlan" "wlan" "$boardname:green:wlan" "phy0tpt"
+ 	ucidef_set_led_netdev "lan" "lan" "$boardname:green:lan" "eth0"
+ 	;;
++tplink,re650-v1)
++	ucidef_set_led_netdev "eth_act" "LAN act" "$boardname:green:eth_act" "eth0" "tx rx"
++	ucidef_set_led_switch "eth_link" "LAN link" "$boardname:green:eth_link" "switch0" "0x01"
++	;;
+ tplink,tl-mr3020-v3)
+ 	set_wifi_led "$boardname:green:wlan"
+ 	ucidef_set_led_netdev "lan" "LAN" "$boardname:green:lan" "eth0"
+diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
+index 0ffd5d6560df6598350162da7e046773cb73a873..57038be72b0fc167559ffcf8d1eb78e45da6803f 100755
+--- a/target/linux/ramips/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/base-files/etc/board.d/02_network
+@@ -385,6 +385,7 @@ ramips_setup_interfaces()
+ 	dlink,dir-510l|\
+ 	glinet,vixmini|\
+ 	netgear,ex6150|\
++	tplink,re650-v1|\
+ 	re350-v1)
+ 		ucidef_add_switch "switch0" \
+ 			"0:lan" "6@eth0"
+diff --git a/target/linux/ramips/dts/mt7621_tplink_re650-v1.dts b/target/linux/ramips/dts/mt7621_tplink_re650-v1.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..545f1d2ba3f0583bf67cdfb6df8482c8f5065468
+--- /dev/null
++++ b/target/linux/ramips/dts/mt7621_tplink_re650-v1.dts
+@@ -0,0 +1,179 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include "mt7621.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	compatible = "tplink,re650-v1", "mediatek,mt7621-soc";
++	model = "TP-Link RE650 v1";
++
++	aliases {
++		led-boot = &led_power;
++		led-failsafe = &led_power;
++		led-running = &led_power;
++		led-upgrade = &led_power;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,57600";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_power: power {
++			label = "re650-v1:blue:power";
++			gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
++		};
++
++		wifi2g {
++			label = "re650-v1:blue:wifi2G";
++			gpios = <&gpio0 23 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "phy0tpt";
++		};
++
++		wifi5g {
++			label = "re650-v1:blue:wifi5G";
++			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "phy1tpt";
++		};
++
++		wps_red {
++			label = "re650-v1:red:wps";
++			gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
++		};
++
++		wps_blue {
++			label = "re650-v1:blue:wps";
++			gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
++		};
++
++		eth_act {
++			label = "re650-v1:green:eth_act";
++			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
++		};
++
++		eth_link {
++			label = "re650-v1:green:eth_link";
++			gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		wps {
++			label = "wps";
++			gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++			linux,code = <KEY_WPS_BUTTON>;
++		};
++
++		power {
++			label = "power";
++			gpios = <&gpio0 25 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++			linux,code = <KEY_POWER>;
++		};
++
++		led {
++			label = "led";
++			gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++			linux,code = <KEY_LIGHTS_TOGGLE>;
++		};
++
++		reset {
++			label = "reset";
++			gpios = <&gpio0 31 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++			linux,code = <KEY_RESTART>;
++		};
++	};
++};
++
++&spi0 {
++	status = "okay";
++
++	w25q64@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <40000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0x0 0x20000>;
++				read-only;
++			};
++
++			partition@20000 {
++				compatible = "tplink,firmware";
++				label = "firmware";
++				reg = <0x20000 0xde0000>;
++			};
++
++			config: partition@e00000 {
++				label = "config";
++				reg = <0xe00000 0x50000>;
++				read-only;
++			};
++
++			/* range 0xe50000 to 0xff0000 is empty in vendor
++			 * firmware, so we do not use it either
++			 */
++
++			radio: partition@ff0000 {
++				label = "radio";
++				reg = <0xff0000 0x10000>;
++				read-only;
++			};
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pcie0 {
++	wifi@0,0 {
++		compatible = "mediatek,mt76";
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&radio 0>;
++		mtd-mac-address = <&config 0x10008>;
++		mtd-mac-address-increment = <1>;
++		ieee80211-freq-limit = <2400000 2500000>;
++	};
++};
++
++&pcie1 {
++	wifi@0,0 {
++		compatible = "mediatek,mt76";
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&radio 0x8000>;
++		mtd-mac-address = <&config 0x10008>;
++		mtd-mac-address-increment = <2>;
++		ieee80211-freq-limit = <5000000 6000000>;
++	};
++};
++
++&ethernet {
++	mtd-mac-address = <&config 0x10008>;
++};
++
++&pinctrl {
++	state_default: pinctrl0 {
++		gpio {
++			ralink,group = "rgmii2", "wdt";
++			ralink,function = "gpio";
++		};
++	};
++};
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index 7eb59188fb482b84ab76518a55d6daca9302ccaa..0cfc011875d04717f9864677dea0b43f17fcaba2 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -434,6 +434,22 @@ define Device/re350-v1
+ endef
+ TARGET_DEVICES += re350-v1
+ 
++define Device/tplink_re650-v1
++  DTS := mt7621_tplink_re650-v1
++  DEVICE_TITLE := TP-LINK RE650 v1
++  DEVICE_PACKAGES := kmod-mt7615e wpad-basic
++  TPLINK_BOARD_ID := RE650-V1
++  TPLINK_HWID := 0x0
++  TPLINK_HWREV := 0
++  TPLINK_HEADER_VERSION := 1
++  IMAGE_SIZE := 14208k
++  KERNEL := $(KERNEL_DTB) | tplink-v1-header -e -O
++  IMAGES += factory.bin
++  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade | append-metadata | check-size $$$$(IMAGE_SIZE)
++  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
++endef
++TARGET_DEVICES += tplink_re650-v1
++
+ define Device/re6500
+   DTS := RE6500
+   DEVICE_TITLE := Linksys RE6500
+diff --git a/tools/firmware-utils/src/tplink-safeloader.c b/tools/firmware-utils/src/tplink-safeloader.c
+index a53b05c478550e835e5cd7b68ade87ad913ce9c5..1b9db85d53521076aecee2361eb203c0d418bf68 100644
+--- a/tools/firmware-utils/src/tplink-safeloader.c
++++ b/tools/firmware-utils/src/tplink-safeloader.c
+@@ -1359,6 +1359,44 @@ static struct device_info boards[] = {
+ 		.last_sysupgrade_partition = "file-system"
+ 	},
+ 
++	/** Firmware layout for the RE650 */
++	{
++		.id = "RE650-V1",
++		.vendor = "",
++		.support_list =
++			"SupportList:\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:00000000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:55530000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:45550000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:4A500000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:43410000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:41550000}\r\n"
++			"{product_name:RE650,product_ver:1.0.0,special_id:41530000}\r\n",
++		.support_trail = '\x00',
++		.soft_ver = NULL,
++
++		/* We're using a dynamic kernel/rootfs split here */
++		.partitions = {
++			{"fs-uboot", 0x00000, 0x20000},
++			{"os-image", 0x20000, 0x2e0000},
++			{"file-system", 0x300000, 0xb00000},
++			{"partition-table", 0xe00000, 0x02000},
++			{"default-mac", 0xe10000, 0x00020},
++			{"pin", 0xe10100, 0x00020},
++			{"product-info", 0xe11100, 0x01000},
++			{"soft-version", 0xe20000, 0x01000},
++			{"support-list", 0xe21000, 0x01000},
++			{"profile", 0xe22000, 0x08000},
++			{"user-config", 0xe30000, 0x10000},
++			{"default-config", 0xe40000, 0x10000},
++			{"radio", 0xff0000, 0x10000},
++			{NULL, 0, 0}
++		},
++
++		.first_sysupgrade_partition = "os-image",
++		.last_sysupgrade_partition = "file-system"
++	},
++
+ 	{}
+ };
+ 

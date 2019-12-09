@@ -22,6 +22,11 @@ device('netgear-wndr3700v5', 'wndr3700v5', {
 })
 
 
+-- TP-Link
+
+device('tp-link-re650-v1', 'tplink_re650-v1')
+
+
 -- ZBT
 
 device('zbt-wg3526-16m', 'zbt-wg3526-16M', {

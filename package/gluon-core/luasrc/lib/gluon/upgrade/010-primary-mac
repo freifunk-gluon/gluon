@@ -65,6 +65,8 @@ elseif platform.match('ramips', 'mt7620', {'miwifi-mini'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ramips', 'mt7621', {'dir-860l-b1'}) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')
+elseif platform.match('ramips', 'mt7621', {'tplink,re650-v1'}) then
+  table.insert(try_files, 1, '/sys/class/net/eth0/address')
 end
 
 
