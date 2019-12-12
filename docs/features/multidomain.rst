@@ -94,7 +94,7 @@ Switching the domain
 
     uci set gluon.core.domain="newdomaincode"
     gluon-reconfigure
-    reboot
+    gluon-reload
 
 **via config mode:**
 
