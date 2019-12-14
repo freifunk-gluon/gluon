@@ -10,9 +10,9 @@ ar71xx-generic
 
 * ALFA Network
 
-  - AP121 [#deprecated]_
+  - AP121 [#deprecated]_  [#device-class-tiny]_
   - AP121F
-  - AP121U [#deprecated]_
+  - AP121U [#deprecated]_  [#device-class-tiny]_
 
 * Allnet
 
@@ -47,7 +47,7 @@ ar71xx-generic
 
 * Linksys
 
-  - WRT160NL
+  - WRT160NL  [#device-class-tiny]_
 
 * Netgear
 
@@ -82,7 +82,7 @@ ar71xx-generic
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
-  - RE450 (v1)
+  - RE450 (v1)  [#device-class-tiny]_
   - TD-W8970 (v1) [#lan_as_wan]_
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
@@ -97,16 +97,16 @@ ar71xx-generic
 
 * Ubiquiti
 
-  - Air Gateway
-  - Air Gateway LR
-  - Air Gateway PRO
-  - Air Router
-  - Bullet M2/M5
-  - Loco M2/M5
+  - Air Gateway  [#device-class-tiny]_
+  - Air Gateway LR  [#device-class-tiny]_
+  - Air Gateway PRO  [#device-class-tiny]_
+  - Air Router  [#device-class-tiny]_
+  - Bullet M2/M5  [#device-class-tiny]_
+  - Loco M2/M5  [#device-class-tiny]_
   - Loco M2/M5 XW
-  - Nanostation M2/M5
+  - Nanostation M2/M5  [#device-class-tiny]_
   - Nanostation M2/M5 XW
-  - Picostation M2
+  - Picostation M2  [#device-class-tiny]_
   - Rocket M2/M5
   - Rocket M2/M5 Ti
   - Rocket M2/M5 XW
@@ -146,8 +146,8 @@ ar71xx-nand
 
   - NBG6716
 
-ar71xx-tiny [#deprecated]_
---------------------------
+ar71xx-tiny [#deprecated]_ [#device-class-tiny]_
+------------------------------------------------
 
 * D-Link
 
@@ -245,7 +245,7 @@ ipq40xx-generic
 * ZyXEL
 
   - NBG6617
-  - WRE6606
+  - WRE6606  [#device-class-tiny]_
 
 ipq806x-generic
 ---------------
@@ -376,8 +376,8 @@ ramips-mt76x8
 
   - VoCore2
 
-ramips-rt305x [#deprecated]_
-----------------------------
+ramips-rt305x [#deprecated]_  [#device-class-tiny]_
+---------------------------------------------------
 
 * A5-V11
 
@@ -427,6 +427,12 @@ Footnotes
 .. [#deprecated]
   The device or target is reaching its end of life soon. This means that support
   in the next major release of Gluon is doubtful.
+
+.. [#device-class-tiny]
+  These devices only support a subset of Gluons capabilities due to flash or memory
+  size constraints. Devices are classified as tiny in they provide less than 7M of usable
+  flash space or have a low amount of system memory. For more information, see the
+  developer documentation: :ref:`device-class-definition`.
 
 .. [#avmflash]
   For instructions on how to flash AVM devices, visit https://fritzfla.sh

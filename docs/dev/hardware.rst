@@ -9,6 +9,18 @@ Having an ath9k, ath10k or mt76 based WLAN adapter is highly recommended,
 although other chipsets may also work. VAP (multiple SSID) support
 is a requirement.
 
+.. _device-class-definition:
+
+Device classes
+--------------
+Gluon currently is aware of two device classes. Depending on the device class, different
+features can be installed onto the device.
+
+The ``tiny`` device-class contains devices with the following limitations:
+
+* All devices with less than 64 MB of system memory
+* All devices with less than 7 MB of usable firmware space
+* Devices using a single ath10k radio and less than 128MB of system memory
 
 .. _hardware-adding-profiles:
 
