@@ -4,6 +4,14 @@ Private WLAN
 It is possible to set up a private WLAN that bridges the WAN port and is separated from the mesh network.
 Please note that you should not enable ``mesh_on_wan`` simultaneously.
 
+The private WLAN is encrypted using WPA2 by default. On devices with enough flash and a supported radio,
+WPA3 or WPA2/WPA3 mixed-mode can be used instead of WPA2. For this to work, the ``wireless-encryption-wpa3``
+feature has to be added to ``GLUON_FEATURES``.
+
+It is recommended to enable IEEE 802.11w management frame protection for WPA2/WPA3 networks, however this
+can lead to connectivity problems for older clients. In this case, management frame protection can be
+made optional or completely disabled in the advanced settings tab.
+
 The private WLAN can be enabled through the config mode if the package ``gluon-web-private-wifi`` is installed.
 You may also enable a private WLAN using the command line::
 
