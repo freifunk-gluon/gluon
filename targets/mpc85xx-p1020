@@ -4,6 +4,14 @@ device('aerohive-hiveap-330', 'hiveap-330', {
         factory = false,
 })
 
+
+-- Enterasys
+
+device('enterasys-ws-ap3710i', 'ws-ap3710i', {
+	factory = false,
+})
+
+
 -- OCEDO
 
 device('ocedo-panda', 'panda', {
