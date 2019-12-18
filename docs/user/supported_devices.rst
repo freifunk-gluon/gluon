@@ -279,6 +279,10 @@ mpc85xx-p1020
 
   - HiveAP 330
 
+* Enterasys
+
+  - WS-AP3710i
+
 * OCEDO
 
   - Panda
