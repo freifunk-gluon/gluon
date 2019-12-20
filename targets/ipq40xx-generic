@@ -19,6 +19,13 @@ defaults {
 }
 
 
+-- Aruba
+
+device('aruba-ap-303', 'aruba_ap-303', {
+	factory = false,
+})
+
+
 -- AVM
 
 device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
