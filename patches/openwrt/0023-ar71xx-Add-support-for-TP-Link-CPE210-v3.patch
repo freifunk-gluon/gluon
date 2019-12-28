@@ -28,7 +28,7 @@ definition from cpe210-v2]
 Signed-off-by: Adrian Schmutzler <freifunk@adrianschmutzler.de>
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
-index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..e0222f3637b60b89a6ef6c0d10cfb20fbe73f075 100755
+index 037eaee7196b229ec67a08417d88dcb92995c17f..92f3c0281a485fd671b0f8490edaad997a2af25e 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/01_leds
 +++ b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 @@ -249,6 +249,7 @@ cf-e530n)
@@ -50,7 +50,7 @@ index 23f3d23bf53883fb08944bc65b98cac06a16c0a5..e0222f3637b60b89a6ef6c0d10cfb20f
  		;;
  	*)
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index e9522252a2b8ba7de1c8ca7d070ff7f2897aade9..386d93e58451b953937320b1bfe8d71ed73c69fd 100755
+index befa032cd4c93779cf66b8b57a15e4bcba7fc959..908743c05eaac7092d3dfb117f23a934507dffd0 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
 @@ -75,6 +75,7 @@ ar71xx_setup_interfaces()
@@ -77,7 +77,7 @@ index ccbd4e77c324a36e7fba6e6dccad59d8f94a3921..2200069c647b33220126e797b6a61928
  		name="cpe505n"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index ca1270b7fdc84c53f8417c226f18ca4fff1f27d8..a04dd7441d28e9db4dc7c744707bb5f35936da00 100755
+index 8558fde3fef9738220a1598a3e4135836c8279f4..f7bb7dbbcd2606cdcbf2c76aa30a96831a232617 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -587,7 +587,8 @@ platform_check_image() {
