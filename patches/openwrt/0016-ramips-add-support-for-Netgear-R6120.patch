@@ -37,10 +37,10 @@ index 19386b9e139a25fd1ac29cd9a66b738b5b092cdf..4203773b4fa3ec771f07b7a8c414a416
  	set_usb_led "$boardname:red:status"
  	;;
 diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
-index 1c6cc6b0af745b43b81bbfffc9b5462c1b88defc..9424c7ddfd64f9149a24ff91e63b71990265d211 100755
+index c8bb6622333afaaf5b70ca4afd2ada2055d0399e..92430fc525a0eb48decee907f614e3278aadfd8b 100755
 --- a/target/linux/ramips/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/base-files/etc/board.d/02_network
-@@ -301,6 +301,10 @@ ramips_setup_interfaces()
+@@ -304,6 +304,10 @@ ramips_setup_interfaces()
  			"0:lan" "1:lan" "2:lan" "3:lan" "6t@eth0"
  		ucidef_set_interface_wan "usb0"
  		;;
