@@ -734,6 +734,16 @@ modules
 .. literalinclude:: ../site-example/modules
   :language: makefile
 
+.travis.yml and ``test`` folder
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The test folder contains a validation script that can be called in your site
+folder if you want to validate the external packages you defined in your
+``modules`` file. Travis can be added to your git repository to automatically
+validate new commits to your site repository. It can also be called manually in
+your console with ``bash tests/validate_site.sh``.
+
+
 site-repos in the wild
 ^^^^^^^^^^^^^^^^^^^^^^
 
