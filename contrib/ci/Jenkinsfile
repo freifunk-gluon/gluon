@@ -1,22 +1,5 @@
-def lualint() {
-	make lint-lua
-}
-
-def shelllint() {
-	make lint-sh
-}
-
-run_lint_set = [
-	"task1": {
-		lualint()
-	},
-	"task2": {
-		shelllint()
-	}
-]
-
 pipeline {
-	agent { label 'gluon-docker' }
+	agent none
 	environment {
 		GLUON_SITEDIR = "contrib/ci/minimal-site"
 		GLUON_TARGET = "x86-64"
@@ -24,18 +7,29 @@ pipeline {
 	}
 	stages {
 		stage('lint') {
-			steps {
-				script {
-					parallel(run_lint_set)
+			parallel {
+				stage('lint-lua') {
+					agent { label 'gluon-docker' }
+					steps {
+						sh 'make lint-lua'
+					}
+				}
+				stage('lint-sh') {
+					agent { label 'gluon-docker' }
+					steps {
+						sh 'make lint-sh'
+					}
 				}
 			}
 		}
 		stage('docs') {
+			agent { label 'gluon-docker' }
 			steps {
 				sh 'make -C docs html'
 			}
 		}
 		stage('build') {
+			agent { label 'gluon-docker' }
 			steps {
 				sh 'make update'
 				sh 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
