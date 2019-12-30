@@ -112,22 +112,30 @@ lint-sh: FORCE
 	@scripts/lint-sh.sh
 
 GLUON_DEFAULT_PACKAGES := hostapd-mini
-GLUON_CLASS_PACKAGES_standard :=
-GLUON_CLASS_PACKAGES_tiny :=
-
-GLUON_FEATURE_PACKAGES := $(shell scripts/features.sh '$(GLUON_FEATURES)' || echo '__ERROR__')
-ifneq ($(filter __ERROR__,$(GLUON_FEATURE_PACKAGES)),)
-$(error Error while evaluating GLUON_FEATURES)
-endif
-
-
-GLUON_PACKAGES :=
-define merge_packages
-  $(foreach pkg,$(1),
-    GLUON_PACKAGES := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(GLUON_PACKAGES)) $(pkg))
+define merge_lists
+  $(1) :=
+  $(foreach pkg,$(2),
+    $(1) := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(value $(1))) $(pkg))
   )
 endef
-$(eval $(call merge_packages,$(GLUON_DEFAULT_PACKAGES) $(GLUON_FEATURE_PACKAGES) $(GLUON_SITE_PACKAGES)))
+
+define feature_packages
+  $(1) := $(shell scripts/features.sh '$(2)' || echo '__ERROR__')
+endef
+
+$(eval $(call merge_lists,GLUON_FEATURE_LIST_standard,$(GLUON_FEATURES) $(GLUON_FEATURES_standard)))
+$(eval $(call merge_lists,GLUON_FEATURE_LIST_tiny,$(GLUON_FEATURES) $(GLUON_FEATURES_tiny)))
+
+$(eval $(call feature_packages,GLUON_FEATURE_PACKAGES_standard,$(GLUON_FEATURE_LIST_standard)))
+$(eval $(call feature_packages,GLUON_FEATURE_PACKAGES_tiny,$(GLUON_FEATURE_LIST_tiny)))
+
+ifneq ($(filter __ERROR__,$(GLUON_FEATURES_standard) $(GLUON_FEATURES_tiny)),)
+  $(error Error while evaluating features)
+endif
+
+$(eval $(call merge_lists,GLUON_DEFAULT_PACKAGES,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES)))
+$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_standard,$(GLUON_FEATURE_PACKAGES_standard)))
+$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_tiny,$(GLUON_FEATURE_PACKAGES_tiny)))
 
 
 LUA := openwrt/staging_dir/hostpkg/bin/lua

@@ -527,8 +527,18 @@ GLUON_DEPRECATED
     deployments of low-flash devices are required).
 
 GLUON_FEATURES
-    Defines a list of features to include. The feature list is used to generate
-    the default package set.
+    Defines a list of features to include. Depending on the device, the feature list
+    defined from this value is combined with the feature list for either the standard
+    or the tiny device-class. The resulting feature list is used to generate the default
+    package set.
+
+GLUON_FEATURES_standard
+    Defines a list of additional features to include or exclude for devices of
+    the standard device-class.
+
+GLUON_FEATURES_tiny
+    Defines a list of additional features to include or exclude for devices of
+    the tiny device-class.
 
 GLUON_SITE_PACKAGES
     Defines a list of packages which should be installed in addition to the
