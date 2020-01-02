@@ -77,6 +77,7 @@ ar71xx-generic
 
   - Archer C5 (v1)
   - Archer C59 (v1)
+  - Archer C60 (v1, v2)
   - Archer C7 (v2, v4, v5)
   - CPE210 (v1.0, v1.1, v2.0, v3.0)
   - CPE220 (v1.1)
