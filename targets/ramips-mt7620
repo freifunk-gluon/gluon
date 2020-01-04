@@ -36,5 +36,4 @@ device('nexx-wt3020-8m', 'wt3020-8M', {
 
 device('xiaomi-miwifi-mini', 'miwifi-mini', {
 	factory = false,
-	broken = true, -- 2.4GHz WiFi is unstable
 })
