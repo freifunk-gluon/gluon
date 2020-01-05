@@ -32,6 +32,13 @@ device('nexx-wt3020-8m', 'wt3020-8M', {
 })
 
 
+-- TP-Link
+
+device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
+        factory = false,
+})
+
+
 -- Xiaomi
 
 device('xiaomi-miwifi-mini', 'miwifi-mini', {

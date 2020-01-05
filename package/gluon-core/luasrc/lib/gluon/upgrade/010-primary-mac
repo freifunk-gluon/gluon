@@ -61,7 +61,7 @@ elseif platform.match('mpc85xx', 'p1020', {'aerohive,hiveap-330'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('mpc85xx', 'p1020', {'ocedo,panda'}) then
   table.insert(try_files, 1, '/sys/class/net/eth1/address')
-elseif platform.match('ramips', 'mt7620', {'miwifi-mini'}) then
+elseif platform.match('ramips', 'mt7620', {'miwifi-mini', 'tplink,c2-v1'}) then
   table.insert(try_files, 1, '/sys/class/net/eth0/address')
 elseif platform.match('ramips', 'mt7621', {'dir-860l-b1'}) then
   table.insert(try_files, 1, '/sys/class/ieee80211/phy1/macaddress')

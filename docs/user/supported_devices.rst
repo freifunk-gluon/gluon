@@ -300,6 +300,10 @@ ramips-mt7620
 
   - WT3020AD/F/H
 
+* TP-Link  
+
+  - Archer C2 v1
+
 * Xiaomi
 
   - MiWiFi Mini
