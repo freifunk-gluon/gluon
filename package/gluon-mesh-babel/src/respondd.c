@@ -477,8 +477,13 @@ __attribute__((constructor)) static void init(void) {
 
 	model = gluonutil_read_line("/tmp/sysinfo/model");
 
-	if (pthread_create(&babelmonitor, NULL, &babeld_monitor_thread_start, NULL) < 0 ) {
-		perror("error on pthread_create for babel monitor");
+	if (neighbours) {
+		if (pthread_create(&babelmonitor, NULL, &babeld_monitor_thread_start, NULL) < 0 ) {
+			perror("error on pthread_create for babel monitor");
+		}
+	}
+	else {
+		fprintf(stderr, "Unable to allocate json object >neighbours< - not creating neighbour watcher thread. The neighbour structure will always be empty.\n");
 	}
 }
 
