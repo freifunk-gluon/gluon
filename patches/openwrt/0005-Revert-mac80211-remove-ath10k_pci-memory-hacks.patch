@@ -1,0 +1,72 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Mon, 6 Jan 2020 03:42:15 +0100
+Subject: Revert "mac80211: remove ath10k_pci memory hacks"
+
+This reverts commit 1e27befe63ff4c69f110c7310316f4af75ee63e9.
+
+Gluon still uses QCA ath10k as the primary WiFi driver. To increase
+stability on lowmem systems, decrease ath10k buffer sizes.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mac80211/patches/ath/960-0010-ath10k-limit-htt-rx-ring-size.patch b/package/kernel/mac80211/patches/ath/960-0010-ath10k-limit-htt-rx-ring-size.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..05fce6a168f07d1894f12fe1c9c08336e1f26ff0
+--- /dev/null
++++ b/package/kernel/mac80211/patches/ath/960-0010-ath10k-limit-htt-rx-ring-size.patch
+@@ -0,0 +1,11 @@
++--- a/drivers/net/wireless/ath/ath10k/htt.h
+++++ b/drivers/net/wireless/ath/ath10k/htt.h
++@@ -226,7 +226,7 @@ enum htt_rx_ring_flags {
++ };
++ 
++ #define HTT_RX_RING_SIZE_MIN 128
++-#define HTT_RX_RING_SIZE_MAX 2048
+++#define HTT_RX_RING_SIZE_MAX 512
++ #define HTT_RX_RING_SIZE HTT_RX_RING_SIZE_MAX
++ #define HTT_RX_RING_FILL_LEVEL (((HTT_RX_RING_SIZE) / 2) - 1)
++ #define HTT_RX_RING_FILL_LEVEL_DUAL_MAC (HTT_RX_RING_SIZE - 1)
+diff --git a/package/kernel/mac80211/patches/ath/960-0011-ath10k-limit-pci-buffer-size.patch b/package/kernel/mac80211/patches/ath/960-0011-ath10k-limit-pci-buffer-size.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0c25fb3f04c837f50ca40ff0f3330e60f1eceab0
+--- /dev/null
++++ b/package/kernel/mac80211/patches/ath/960-0011-ath10k-limit-pci-buffer-size.patch
+@@ -0,0 +1,38 @@
++--- a/drivers/net/wireless/ath/ath10k/pci.c
+++++ b/drivers/net/wireless/ath/ath10k/pci.c
++@@ -131,7 +131,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 512,
+++		.dest_nentries = 128,
++ 		.recv_cb = ath10k_pci_htt_htc_rx_cb,
++ 	},
++ 
++@@ -140,7 +140,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 128,
+++		.dest_nentries = 64,
++ 		.recv_cb = ath10k_pci_htc_rx_cb,
++ 	},
++ 
++@@ -167,7 +167,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 512,
++-		.dest_nentries = 512,
+++		.dest_nentries = 128,
++ 		.recv_cb = ath10k_pci_htt_rx_cb,
++ 	},
++ 
++@@ -192,7 +192,7 @@ static struct ce_attr host_ce_config_wla
++ 		.flags = CE_ATTR_FLAGS,
++ 		.src_nentries = 0,
++ 		.src_sz_max = 2048,
++-		.dest_nentries = 128,
+++		.dest_nentries = 96,
++ 		.recv_cb = ath10k_pci_pktlog_rx_cb,
++ 	},
++ 
