@@ -300,7 +300,7 @@ ramips-mt7620
 
   - WT3020AD/F/H
 
-# Xiaomi
+* Xiaomi
 
   - MiWiFi Mini
 
