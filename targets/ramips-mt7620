@@ -43,6 +43,8 @@ device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
         factory = false,
 })
 
+device('tp-link-archer-c20i', 'ArcherC20i')
+
 device('tp-link-archer-c50', 'ArcherC50v1', {
         factory = '-squashfs-factory' .. tplink_region_suffix,
 })
