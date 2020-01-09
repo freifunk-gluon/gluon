@@ -730,6 +730,7 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 		json_object_object_add(obj, "signal", json_object_new_int(entry->signal));
 		json_object_object_add(obj, "noise", json_object_new_int(entry->noise));
 		json_object_object_add(obj, "inactive", json_object_new_int(entry->inactive));
+		json_object_object_add(obj, "iface", json_object_new_string(ifname));
 
 		char mac[18];
 		snprintf(mac, sizeof(mac), "%02x:%02x:%02x:%02x:%02x:%02x",
