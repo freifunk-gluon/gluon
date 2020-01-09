@@ -32,3 +32,6 @@ packages 'mesh-batman-adv-15' \
 
 packages 'mesh-babel' \
 	'gluon-radvd'
+
+packages '!wireless-encryption-wpa3' \
+	'hostapd-mini'
