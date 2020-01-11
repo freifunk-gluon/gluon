@@ -718,6 +718,10 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 	if (iw->assoclist(ifname, buf, &len) < 0)
 		return NULL;
 
+	char *ifaddr = gluonutil_get_interface_address(ifname);
+	if (!ifaddr)
+		return NULL;
+
 	struct json_object *neighbours = json_object_new_object();
 
 	struct iwinfo_assoclist_entry *entry;
@@ -730,7 +734,7 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 		json_object_object_add(obj, "signal", json_object_new_int(entry->signal));
 		json_object_object_add(obj, "noise", json_object_new_int(entry->noise));
 		json_object_object_add(obj, "inactive", json_object_new_int(entry->inactive));
-		json_object_object_add(obj, "iface", json_object_new_string(ifname));
+		json_object_object_add(obj, "bssid", json_object_new_string(ifaddr));
 
 		char mac[18];
 		snprintf(mac, sizeof(mac), "%02x:%02x:%02x:%02x:%02x:%02x",
@@ -739,6 +743,8 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 
 		json_object_object_add(neighbours, mac, obj);
 	}
+
+	free(ifaddr);
 
 	struct json_object *ret = json_object_new_object();
 
