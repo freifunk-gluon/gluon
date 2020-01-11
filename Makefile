@@ -111,7 +111,6 @@ lint-lua: FORCE
 lint-sh: FORCE
 	@scripts/lint-sh.sh
 
-GLUON_DEFAULT_PACKAGES := hostapd-mini
 define merge_lists
   $(1) :=
   $(foreach pkg,$(2),
