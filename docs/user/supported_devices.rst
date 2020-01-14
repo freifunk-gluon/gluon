@@ -300,7 +300,7 @@ ramips-mt7620
 
   - WT3020AD/F/H
 
-* TP-Link  
+* TP-Link
 
   - Archer C2 v1
   - Archer C20i
@@ -350,6 +350,7 @@ ramips-mt76x8
 * TP-Link
 
   - TL-MR3420 v5
+  - TL-WA801ND v5
   - TL-WR841N v13
   - TL-WR902AC v3
   - Archer C50 v3
