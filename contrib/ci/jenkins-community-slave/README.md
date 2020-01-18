@@ -26,7 +26,7 @@ docker run --detach --restart always \
    - Your node should appear [here](https://build.ffh.zone/label/gluon-docker/).
    - When clicking on it, Jenkins should state "Agent is connected." like here: 
 ![Screenshot from 2019-09-24 01-00-52](https://user-images.githubusercontent.com/601153/65469209-dac6c180-de66-11e9-9d62-0d1c3b6b940b.png)
-5. **Your docker container needs to be rebuilt, when the build dependencies of gluon change. So please be aware of that and update your docker container in that case.** 
+5. **Your docker container needs to be rebuilt, when the build dependencies of gluon change. As soon as build dependencies have changed, the build dependency api level has to be raised.** After you rebuilt your docker container, notifiy @lemoer, so he can bump the versioning number.
 
 ## Backoff
 - If @lemoer is not reachable, please be patient at first if possible. Otherwise contact info@hannover.freifunk.net or join the channel `#freifunkh` on hackint.
