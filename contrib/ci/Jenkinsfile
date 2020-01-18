@@ -15,7 +15,7 @@ pipeline {
 					}
 				}
 				stage('lint-sh') {
-					agent { label 'gluon-docker-1' }
+					agent { label 'gluon-docker-v1' }
 					steps {
 						sh 'make lint-sh'
 					}
@@ -47,4 +47,4 @@ pipeline {
 # As soon, as you properly rebuilt your docker container, you
 # can notify lemoer, that you have updated your node.
 #
-# - gluon-docker-1: add shellcheck binary to the build environment
+# - gluon-docker-v1: add shellcheck binary to the build environment
