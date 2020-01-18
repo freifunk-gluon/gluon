@@ -39,12 +39,14 @@ pipeline {
 	}
 }
 
-# api-history:
-#
-# Every time the build dependencies of gluon change, the version
-# every container has to be rebuilt. Therefore, we use Jenkins
-# labels which intoduce a version number which is documented here.
-# As soon, as you properly rebuilt your docker container, you
-# can notify lemoer, that you have updated your node.
-#
-# - gluon-docker-v1: add shellcheck binary to the build environment
+/*
+ api-history:
+
+ Every time the build dependencies of gluon change, the version
+ every container has to be rebuilt. Therefore, we use Jenkins
+ labels which intoduce a version number which is documented here.
+ As soon, as you properly rebuilt your docker container, you
+ can notify lemoer, that you have updated your node.
+
+ - gluon-docker-v1: add shellcheck binary to the build environment
+*/
