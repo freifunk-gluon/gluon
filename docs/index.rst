@@ -57,6 +57,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    :caption: Packages
    :maxdepth: 1
 
+   package/gluon-464xlat-clat
    package/gluon-client-bridge
    package/gluon-config-mode-domain-select
    package/gluon-ebtables-filter-multicast
