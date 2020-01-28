@@ -192,7 +192,11 @@ ath79-generic
   - WiFi pro 1750i
   - WiFi pro 1750x
 
-  * OCEDO
+* GL.iNet
+
+  - GL-AR300M-Lite
+
+* OCEDO
 
   - Raccoon
 
