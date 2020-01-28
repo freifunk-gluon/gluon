@@ -225,8 +225,8 @@ ipq40xx-generic
 
 * NETGEAR
 
-  - EX6100v2
-  - EX6150v2
+  - EX6100 (v2)
+  - EX6150 (v2)
 
 * OpenMesh
 
@@ -324,7 +324,7 @@ ramips-mt7621
 
 * NETGEAR
 
-  - EX6150
+  - EX6150 (v1)
   - R6220
 
 * Ubiquiti
