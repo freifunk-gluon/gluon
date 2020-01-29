@@ -112,10 +112,10 @@ index 6057275978591192e3b7799a8e6d97761c3e23a5..19386b9e139a25fd1ac29cd9a66b738b
  	ucidef_set_led_switch "wan" "wan" "$boardname:green:wan" "switch0" "0x01"
  	ucidef_set_led_wlan "wlan2g" "wlan2g" "$boardname:green:wlan2g" "phy0tpt"
 diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
-index 4a58f61b925902725705a99dba8d370cfeb8b91a..c8bb6622333afaaf5b70ca4afd2ada2055d0399e 100755
+index 50d3a89bd88478b6077cf4f0aacde26901f869b4..15034e8e5e461a2ca13913ecde6a789a261dad64 100755
 --- a/target/linux/ramips/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/base-files/etc/board.d/02_network
-@@ -203,6 +203,7 @@ ramips_setup_interfaces()
+@@ -202,6 +202,7 @@ ramips_setup_interfaces()
  	rt-n14u|\
  	tplink,c20-v4|\
  	tplink,c50-v3|\
