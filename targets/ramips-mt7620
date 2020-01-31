@@ -6,7 +6,7 @@ device('asus-rt-ac51u', 'rt-ac51u', {
 })
 
 
--- GL Innovations
+-- GL.iNet
 
 device('gl-mt300a', 'gl-mt300a', {
 	factory = false,

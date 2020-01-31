@@ -37,13 +37,13 @@ ar71xx-generic
   - DIR-505 (A1, A2)
   - DIR-825 (B1)
 
-* GL Innovations
+* GL.iNet
 
   - GL-AR150
   - GL-AR300M
   - GL-AR750
-  - GL-iNet 6408A (v1)
-  - GL-iNet 6416A (v1)
+  - GL.iNet 6408A (v1)
+  - GL.iNet 6416A (v1)
 
 * Linksys
 
@@ -294,7 +294,7 @@ mpc85xx-p1020
 ramips-mt7620
 -------------
 
-* GL Innovations
+* GL.iNet
 
   - GL-MT300A
   - GL-MT300N
