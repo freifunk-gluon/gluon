@@ -351,6 +351,7 @@ ramips-mt76x8
 
 * TP-Link
 
+  - TL-MR3020 v3
   - TL-MR3420 v5
   - TL-WA801ND v5
   - TL-WR841N v13
