@@ -39,11 +39,11 @@ ar71xx-generic
 
 * GL.iNet
 
+  - 6408A
+  - 6416A
   - GL-AR150
   - GL-AR300M
   - GL-AR750
-  - GL.iNet 6408A (v1)
-  - GL.iNet 6416A (v1)
 
 * Linksys
 
