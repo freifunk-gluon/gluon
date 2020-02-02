@@ -1,3 +1,7 @@
 include 'brcm2708.inc'
 
-device('raspberry-pi-3', 'rpi-3')
+device('raspberry-pi-3', 'rpi-3', {
+	manifest_aliases = {
+		'raspberry-pi-3-model-b-rev-1.2',
+	},
+})
