@@ -44,10 +44,10 @@ Web-interface.
 Signed-off-by: David Bauer <mail@david-bauer.net>
 
 diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
-index 92430fc525a0eb48decee907f614e3278aadfd8b..521e03bd3d0c78b65e72164099b73934a6ec09c1 100755
+index 0b65e567e558e94b5de0a53ac95dc406ccf0acec..212204a1a3edf78cbf2f67d9b9709eb0e703b330 100755
 --- a/target/linux/ramips/base-files/etc/board.d/02_network
 +++ b/target/linux/ramips/base-files/etc/board.d/02_network
-@@ -186,6 +186,7 @@ ramips_setup_interfaces()
+@@ -185,6 +185,7 @@ ramips_setup_interfaces()
  		ucidef_add_switch "switch0" \
  			"1:lan" "2:lan" "3:lan" "4:lan" "6t@eth0"
  		;;
@@ -55,7 +55,7 @@ index 92430fc525a0eb48decee907f614e3278aadfd8b..521e03bd3d0c78b65e72164099b73934
  	atp-52b|\
  	awm002-evb-4M|\
  	awm002-evb-8M|\
-@@ -416,6 +417,11 @@ ramips_setup_macs()
+@@ -419,6 +420,11 @@ ramips_setup_macs()
  	wmdr-143n)
  		lan_mac=$(cat /sys/class/net/eth0/address)
  		;;
@@ -67,7 +67,7 @@ index 92430fc525a0eb48decee907f614e3278aadfd8b..521e03bd3d0c78b65e72164099b73934
  	all0239-3g|\
  	carambola|\
  	freestation5|\
-@@ -543,10 +549,6 @@ ramips_setup_macs()
+@@ -546,10 +552,6 @@ ramips_setup_macs()
  		lan_mac=$(mtd_get_mac_ascii u-boot-env LAN_MAC_ADDR)
  		wan_mac=$(mtd_get_mac_ascii u-boot-env WAN_MAC_ADDR)
  		;;
