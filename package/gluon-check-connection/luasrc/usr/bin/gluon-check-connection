@@ -4,7 +4,8 @@ local unistd = require 'posix.unistd'
 local util = require 'gluon.util'
 local site = require 'gluon.site'
 
-local offline_flag_file = "/var/gluon/check-connection/offline"
+local offline_flag_file_path = "/var/gluon/check-connection"
+local offline_flag_file = offline_flag_file_path + "/offline"
 local is_offline = true
 
 -- Check reachability of pre-defined targets
@@ -20,6 +21,10 @@ if is_offline then
 	-- Check if we were previously offline
 	if unistd.access(offline_flag_file) then
 		os.exit(0)
+	end
+	-- check if path exists
+	if !access(offline_flag_file_path, F_OK) then
+		stat.mkdir(offline_flag_file_path)
 	end
 	-- Create offline flag
 	local f = io.open(offline_flag_file, "w")
