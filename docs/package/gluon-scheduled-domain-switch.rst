@@ -22,11 +22,6 @@ domain_switch : optional (needed for domains to switch)
     switch_time :
         - UNIX epoch after which domain will be switched
 
-check_connection :
-    targets :
-        - array of IPv6 addresses which are probed to determine if the node can
-          reach any time-servers to acquire the correct time
-
 Example::
 
   domain_switch = {
@@ -42,5 +37,6 @@ Example::
     },
   },
 
-Note: the package ``gluon-check-connection`` is installed as dependency but it can
-also be used stand-alone, e.g. to detect if a connection to the internet is working.
+Note: the package ``gluon-check-connection`` is installed as dependency so you
+have to define ``check_connection`` too. A node is considered online if any of
+the specified ip addresses can be reached via ping.

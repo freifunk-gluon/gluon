@@ -419,6 +419,22 @@ autoupdater \: package
     All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
     explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
+.. _user-site-check_connection:
+
+check_connection \: optional
+    ``targets`` defines an array of IPv6 addresses which are probed for
+    connectivity, for example determine if the node can reach any time-servers
+    to acquire the correct time. This is e.g. used for the
+    *gluon-scheduled-domain-switch* package
+    ::
+
+      check_connection = {
+        targets = {
+          '2001:4860:4860::8888',
+          '2001:4860:4860::8844',
+        },
+      },
+
 .. _user-site-config_mode:
 
 config_mode \: optional
