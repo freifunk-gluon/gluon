@@ -54,9 +54,10 @@ end
 if envtrue.GLUON_DEBUG then
 	config 'CONFIG_DEBUG=y'
 	config 'CONFIG_NO_STRIP=y'
-	config 'CONFIG_TARGET_ROOTFS_PARTSIZE=500'
 	config '# CONFIG_USE_STRIP is not set'
 	config '# CONFIG_USE_SSTRIP is not set'
+
+	try_config 'CONFIG_TARGET_ROOTFS_PARTSIZE=500'
 end
 
 
