@@ -545,6 +545,14 @@ GLUON_SITE_PACKAGES
     default package set. It is also possible to remove packages from the
     default set by prepending a minus sign to the package name.
 
+GLUON_SITE_PACKAGES_standard
+    Defines a list of additional packages to include or exclude for devices of
+    the standard device-class.
+
+GLUON_SITE_PACKAGES_tiny
+    Defines a list of additional packages to include or exclude for devices of
+    the tiny device-class.
+
 GLUON_RELEASE
     The current release version Gluon should use.
 

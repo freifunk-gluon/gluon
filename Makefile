@@ -133,8 +133,8 @@ ifneq ($(filter __ERROR__,$(GLUON_FEATURES_standard) $(GLUON_FEATURES_tiny)),)
 endif
 
 $(eval $(call merge_lists,GLUON_DEFAULT_PACKAGES,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES)))
-$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_standard,$(GLUON_FEATURE_PACKAGES_standard)))
-$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_tiny,$(GLUON_FEATURE_PACKAGES_tiny)))
+$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_standard,$(GLUON_FEATURE_PACKAGES_standard) $(GLUON_SITE_PACKAGES_standard)))
+$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_tiny,$(GLUON_FEATURE_PACKAGES_tiny) $(GLUON_SITE_PACKAGES_tiny)))
 
 
 LUA := openwrt/staging_dir/hostpkg/bin/lua
