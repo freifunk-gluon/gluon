@@ -26,7 +26,7 @@ In general, Config Mode will be offered on the LAN ports. However, there
 are two practical exceptions:
 
 * Devices with just one network port will run Config Mode on that port.
-* Devices with PoE on the WAN port will run Config Mode on the WAN port instead.
+* Devices with PoE on the LAN port will run Config Mode on the WAN port instead.
 
 
 Accessing Config Mode
