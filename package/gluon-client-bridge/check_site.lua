@@ -9,7 +9,13 @@ need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 
 for _, config in ipairs({'wifi24', 'wifi5'}) do
 	if need_table({config, 'ap'}, nil, false) then
-		need_string_match(in_domain({config, 'ap', 'ssid'}), '^' .. ('.?'):rep(32) .. '$')
 		need_boolean({config, 'ap', 'disabled'}, false)
+		if need_boolean({config, 'ap', 'owe_transition_mode'}, false) then
+			need_string_match(in_domain({config, 'ap', 'ssid'}), '^' .. ('.?'):rep(32) .. '$')
+			need_string_match(in_domain({config, 'ap', 'owe_ssid'}), '^' .. ('.?'):rep(32) .. '$')
+		else
+			need_string_match(in_domain({config, 'ap', 'ssid'}), '^' .. ('.?'):rep(32) .. '$', false)
+			need_string_match(in_domain({config, 'ap', 'owe_ssid'}), '^' .. ('.?'):rep(32) .. '$', false)
+		end
 	end
 end
