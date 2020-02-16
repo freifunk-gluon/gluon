@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 
 local util = require 'gluon.util'
+local platform = require 'gluon.platform'
 
 local uci = require('simple-uci').cursor()
 
@@ -13,9 +14,7 @@ local function is_disabled(config, name)
 	return config.disabled(false)
 end
 
-util.foreach_radio(uci, function(radio, index, config)
-	local radio_name = radio['.name']
-
+local function configure_ap(radio, index, config, radio_name)
 	local name = 'client_' .. radio_name
 	local suffix = radio_name:match('^radio(%d+)$')
 
@@ -24,12 +23,9 @@ util.foreach_radio(uci, function(radio, index, config)
 
 	uci:delete('wireless', name)
 
-	if not ap() then
-		return
-	end
-
 	local macaddr = util.get_wlan_mac(uci, radio, index, 1)
-	if not macaddr then
+
+	if not ap() or not ap.ssid() or not macaddr then
 		return
 	end
 
@@ -42,6 +38,84 @@ util.foreach_radio(uci, function(radio, index, config)
 		ifname = suffix and 'client' .. suffix,
 		disabled = disabled or false,
 	})
+end
+
+local function configure_owe(radio, index, config, radio_name)
+	local name = 'owe_' .. radio_name
+	local suffix = radio_name:match('^radio(%d+)$')
+
+	local ap = config.ap
+
+	local disabled = is_disabled(ap, 'client_' .. radio_name)
+
+	uci:delete('wireless', name)
+
+	-- Don't configure OWE in case our device
+	-- can't do MFP, as it's mandatory for OWE.
+	if not platform.device_supports_mfp(uci) then
+		return
+	end
+
+	local macaddr = util.get_wlan_mac(uci, radio, index, 3)
+
+	if not ap() or not ap.owe_ssid() or not macaddr then
+		return
+	end
+
+	uci:section('wireless', 'wifi-iface', name, {
+		device = radio_name,
+		network = 'client',
+		mode = 'ap',
+		ssid = ap.owe_ssid(),
+		macaddr = macaddr,
+		ifname = suffix and 'owe' .. suffix,
+		disabled = disabled or false,
+		encryption = 'owe',
+		ieee80211w = 2,
+	})
+end
+
+local function configure_owe_transition_mode(config, radio_name)
+	local ap = config.ap
+
+	-- Don't configure OWE in case our device
+	-- can't do MFP, as it's mandatory for OWE.
+	if not platform.device_supports_mfp(uci) then
+		return
+	end
+
+	if not ap() or not ap.owe_transition_mode() then
+		return
+	end
+
+	local name_client = 'client_' .. radio_name
+	local name_owe = 'owe_' .. radio_name
+
+	local ssid_client = uci:get('wireless', name_client, 'ssid')
+	local ssid_owe = uci:get('wireless', name_owe, 'ssid')
+
+	local macaddr_client = uci:get('wireless', name_client, 'macaddr')
+	local macaddr_owe = uci:get('wireless', name_owe, 'macaddr')
+
+	if not ssid_client or not ssid_owe or not macaddr_client or not macaddr_owe then
+		return
+	end
+
+	uci:set('wireless', name_client, 'owe_transition_ssid', ssid_owe)
+	uci:set('wireless', name_client, 'owe_transition_bssid', macaddr_owe)
+
+	uci:set('wireless', name_owe, 'owe_transition_ssid', ssid_client)
+	uci:set('wireless', name_owe, 'owe_transition_bssid', macaddr_client)
+	uci:set('wireless', name_owe, 'hidden', '1')
+end
+
+util.foreach_radio(uci, function(radio, index, config)
+	local radio_name = radio['.name']
+
+	configure_ap(radio, index, config, radio_name)
+
+	configure_owe(radio, index, config, radio_name)
+	configure_owe_transition_mode(config, radio_name)
 end)
 
 uci:save('wireless')
