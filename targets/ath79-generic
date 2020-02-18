@@ -58,6 +58,12 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })
 
+-- Siemens
+
+device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
+	factory = false,
+})
+
 -- TP-Link
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
