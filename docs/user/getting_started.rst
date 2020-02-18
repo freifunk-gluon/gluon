@@ -229,3 +229,7 @@ GLUON_OUTPUTDIR
 
 GLUON_SITEDIR
   Path to the site configuration. Defaults to ``site``.
+
+FOREIGN_BUILD
+  If defined it changes the build-framework into a more generic mode, which will not necessarily 
+  generate a Gluon compatible firmware.
