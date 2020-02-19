@@ -120,7 +120,7 @@ There are two levels of `make clean`::
 
     make clean GLUON_TARGET=ar71xx-generic
 
-will ensure all packages are rebuilt for a single target. This normally not
+will ensure all packages are rebuilt for a single target. This is normally not
 necessary, but may fix certain kinds of build failures.
 
 ::
