@@ -28,9 +28,7 @@ END_MAKE
 	end
 
 	lib.include('generic')
-	if env.FOREIGN_BUILD == '' then
-		lib.include('generic_gluon')
-	end
+	lib.include('generic_' .. env.FOREIGN_BUILD)
 	for pkg in string.gmatch(extra_packages, '%S+') do
 		lib.packages {pkg}
 	end
