@@ -1,19 +1,5 @@
-assert(env.GLUON_LANGS)
-
-config('CONFIG_GLUON_SITEDIR="%s"', env.GLUON_SITEDIR)
-config('CONFIG_GLUON_RELEASE="%s"', env.GLUON_RELEASE)
-try_config('CONFIG_GLUON_BRANCH="%s"', env.GLUON_BRANCH or '')
-
-for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
-	try_config('CONFIG_GLUON_WEB_LANG_%s=y', lang)
-end
-
--- Disable non-default feeds in distfeeds.conf
-config('# CONFIG_FEED_gluon_base is not set')
 
 config '# CONFIG_TARGET_ROOTFS_INITRAMFS is not set'
-
-config 'CONFIG_ALL_NONSHARED=y'
 
 config '# CONFIG_PACKAGE_usbip is not set' -- fails to build
 config '# CONFIG_PACKAGE_kmod-jool is not set' -- fails to build
@@ -21,25 +7,189 @@ config '# CONFIG_PACKAGE_kmod-jool is not set' -- fails to build
 config 'CONFIG_BUSYBOX_CUSTOM=y'
 config '# CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set'
 
-config 'CONFIG_PACKAGE_ATH_DEBUG=y'
+--config 'CONFIG_PACKAGE_ATH_DEBUG=y'
 
 config '# CONFIG_KERNEL_IP_MROUTE is not set'
 config '# CONFIG_KERNEL_IPV6_MROUTE is not set'
 
 try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
+try_config 'CONFIG_TARGET_ALL_PROFILES=y'
 try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
-if envtrue.GLUON_MULTIDOMAIN then
-	config 'CONFIG_GLUON_MULTIDOMAIN=y'
-end
+config 'CONFIG_DEVEL=y'
+config 'CONFIG_TOOLCHAINOPTS=y'
+config 'CONFIG_ALFRED_NEEDS_lua=y'
+--config 'CONFIG_ATH_USER_REGD=y'
+config 'CONFIG_IB=y'
+config 'CONFIG_IMAGEOPT=y'
+config 'CONFIG_BUILD_LOG=y'
+config '# CONFIG_KERNEL_DEBUG_INFO is not set'
+config '# CONFIG_KERNEL_DEBUG_KERNEL is not set'
+config '# CONFIG_KERNEL_KALLSYMS is not set'
+--config 'CONFIG_KMOD_BATMAN_ADV_DAT=y'
+--config 'CONFIG_KMOD_BATMAN_ADV_MCAST=y'
+config 'CONFIG_BUSYBOX_CUSTOM=y'
+config '# CONFIG_BUSYBOX_CONFIG_MKSWAP is not set'
+config '# CONFIG_BUSYBOX_CONFIG_SWAPON is not set'
+config '# CONFIG_BUSYBOX_CONFIG_SWAPOFF is not set'
+config 'CONFIG_BUSYBOX_CONFIG_TELNET=y'
+config 'CONFIG_BUSYBOX_CONFIG_FEATURE_TELNET_TTYPE=y'
+config 'CONFIG_BUSYBOX_CONFIG_FEATURE_TRACEROUTE_USE_ICMP=y'
+config 'CONFIG_PREINITOPT=y'
+config 'CONFIG_SDK=y'
+config 'CONFIG_STRIP_KERNEL_EXPORTS=y'
+config 'CONFIG_TARGET_PREINIT_IP="192.168.42.1"'
+config 'CONFIG_TARGET_PREINIT_NETMASK="255.255.255.0"'
+config 'CONFIG_TARGET_PREINIT_BROADCAST="192.168.42.255"'
+config 'CONFIG_VERSIONOPT=y'
+config 'CONFIG_VERSION_FILENAMES=y'
+config 'CONFIG_VERSION_CODE_FILENAMES=y'
+config 'CONFIG_VERSION_DIST="Freifunk Berlin"'
+config 'CONFIG_VERSION_HWREV=""'
+config 'CONFIG_VERSION_MANUFACTURER=""'
+config 'CONFIG_VERSION_NUMBER="Dev-daily-1907"'
+config 'CONFIG_VERSION_CODE=""'
+config 'CONFIG_VERSION_PRODUCT=""'
+config 'CONFIG_LUCI_SRCDIET=y'
+config 'CONFIG_LUCI_LANG_de=m'
+config 'CONFIG_LUCI_LANG_en=m'
+
+
+config 'CONFIG_PACKAGE_kmod-batman-adv=m'
+config 'CONFIG_PACKAGE_kmod-crypto-crc32c=m'
+config 'CONFIG_PACKAGE_kmod-crypto-hash=m'
+config 'CONFIG_PACKAGE_kmod-fs-cifs=m'
+config 'CONFIG_PACKAGE_kmod-fs-ext4=m'
+config 'CONFIG_PACKAGE_kmod-fs-vfat=m'
+--config 'CONFIG_PACKAGE_kmod-ifb=m'
+--config 'CONFIG_PACKAGE_kmod-ipip=m'
+--config 'CONFIG_PACKAGE_kmod-ipt-conntrack-extra=m'
+--config 'CONFIG_PACKAGE_kmod-ipt-filter=m'
+--config 'CONFIG_PACKAGE_kmod-ipt-ipopt=m'
+--config 'CONFIG_PACKAGE_kmod-iptunnel=m'
+--config 'CONFIG_PACKAGE_kmod-iptunnel4=m'
+config 'CONFIG_PACKAGE_kmod-lib-crc-itu-t=m'
+config 'CONFIG_PACKAGE_kmod-lib-crc16=m'
+config 'CONFIG_PACKAGE_kmod-lib-crc32c=m'
+--config 'CONFIG_PACKAGE_kmod-lib-textsearch=m'
+config 'CONFIG_PACKAGE_kmod-nf-nathelper-extra=m'
+config 'CONFIG_PACKAGE_kmod-nls-utf8=m'
+config 'CONFIG_PACKAGE_kmod-nls-iso8859-1=m'
+config 'CONFIG_PACKAGE_kmod-nls-iso8859-15=m'
+config 'CONFIG_PACKAGE_kmod-ppp=m'
+--config 'CONFIG_PACKAGE_kmod-rt2800-lib=m'
+--config 'CONFIG_PACKAGE_kmod-rt2800-usb=m'
+--config 'CONFIG_PACKAGE_kmod-rt2x00-lib=m'
+--config 'CONFIG_PACKAGE_kmod-rt2x00-usb=m'
+--config 'CONFIG_PACKAGE_kmod-sched-connmark=m'
+--config 'CONFIG_PACKAGE_kmod-sched-core=m'
+config 'CONFIG_PACKAGE_kmod-sit=m'
+config 'CONFIG_PACKAGE_kmod-tun=m'
+config 'CONFIG_PACKAGE_kmod-usb-acm=m'
+config 'CONFIG_PACKAGE_kmod-usb-net=m'
+config 'CONFIG_PACKAGE_kmod-usb-net-cdc-ether=m'
+config 'CONFIG_PACKAGE_kmod-usb-net-rndis=m'
+config 'CONFIG_PACKAGE_kmod-usb-ohci=m'
+config 'CONFIG_PACKAGE_kmod-usb-serial=m'
+config 'CONFIG_PACKAGE_kmod-usb-serial-option=m'
+config 'CONFIG_PACKAGE_kmod-usb-serial-wwan=m'
+config 'CONFIG_PACKAGE_kmod-usb-storage=m'
+config 'CONFIG_PACKAGE_kmod-usb-uhci=m'
+config 'CONFIG_PACKAGE_kmod-veth=m'
+
+config 'CONFIG_PACKAGE_ALFRED_BATHOSTS=y'
+config 'CONFIG_PACKAGE_ALFRED_VIS=y'
+--config 'CONFIG_PACKAGE_ATH_DFS=y'
+config 'CONFIG_PACKAGE_luci-mod-failsafe=y'
+config 'CONFIG_PACKAGE_luci-theme-bootstrap=y'
+config 'CONFIG_PACKAGE_uhttpd=y'
 
 
 packages {
+	'-hostapd-mini',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
-	'-wpad-mini',
-	'-wpad-basic',
-	'gluon-core',
-	'ip6tables',
+	'freifunk-berlin-system-defaults',
+'alfred',
+'batctl-default',
+'collectd',
+'collectd-mod-conntrack',
+'collectd-mod-cpu',
+'collectd-mod-exec',
+'collectd-mod-interface',
+'collectd-mod-irq',
+'collectd-mod-iwinfo',
+'collectd-mod-load',
+'collectd-mod-memory',
+'collectd-mod-network',
+'collectd-mod-olsrd',
+'collectd-mod-ping',
+'collectd-mod-routeros',
+'collectd-mod-rrdtool',
+'collectd-mod-snmp',
+'collectd-mod-uptime',
+'collectd-mod-wireless',
+'collectd-snmp-templates',
+'community-profiles',
+'ethtool',
+'freifunk-berlin-dhcp-defaults',
+'freifunk-berlin-firewall-defaults',
+'freifunk-berlin-freifunk-defaults',
+'freifunk-berlin-lib-guard',
+'freifunk-berlin-migration',
+'freifunk-berlin-network-defaults',
+'freifunk-berlin-olsrd-defaults',
+'freifunk-berlin-system-defaults',
+'freifunk-berlin-statistics-defaults',
+'freifunk-berlin-tunneldigger',
+'freifunk-berlin-uhttpd-defaults',
+'freifunk-common',
+'freifunk-firewall',
+'freifunk-gwcheck',
+'freifunk-policyrouting',
+'horst',
+--'ip',
+'ipip',
+'iptables-mod-conntrack-extra',
+'iptables-mod-filter',
+'iptables-mod-ipopt',
+'iwinfo',
+'libiwinfo-lua',
+'libubus-lua',
+'libuci-lua',
+'libustream-mbedtls',
+'luci-app-ffwizard-berlin',
+'luci-app-firewall',
+'luci-app-opkg',
+'luci-app-olsr',
+'luci-app-olsr-services',
+'luci-app-olsr-viz',
+'luci-app-owm',
+'luci-app-owm-ant',
+'luci-app-owm-cmd',
+'luci-app-owm-gui',
+'luci-app-statistics',
+'luci-mod-admin-full',
+'luci-proto-ipip',
+'mtr',
+'olsrd',
+'olsrd-mod-arprefresh',
+'olsrd-mod-dyn-gw',
+'olsrd-mod-dyn-gw-plain',
+'olsrd-mod-jsoninfo',
+'olsrd-mod-nameservice',
+'olsrd-mod-netjson',
+'olsrd-mod-txtinfo',
+'olsrd-mod-watchdog',
+'om-watchdog',
+'px5g-mbedtls',
+'qos-scripts',
+'rssileds',
+'tc',
+'terminfo',
+'tmux',
+'uhttpd-mod-ubus',
+'vnstat',
+--'wpad-basic',
 }
