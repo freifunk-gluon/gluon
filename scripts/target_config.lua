@@ -15,6 +15,7 @@ local output = {}
 
 for config in pairs(lib.configs) do
 	table.insert(output, config)
+	io.stderr:write(config, "\n")
 end
 
 -- The sort will make =y entries override =m ones

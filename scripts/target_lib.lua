@@ -146,15 +146,18 @@ local function add_image(image)
 end
 
 function F.try_config(...)
+	io.stderr:write("try_config: " .. ... .. "\n")
 	M.configs[string.format(...)] = 1
 end
 
 function F.config(...)
+	io.stderr:write("config: " .. ... .. "\n")
 	M.configs[string.format(...)] = 2
 end
 
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
+		io.stderr:write("packages: " .. pkg .. "\n")
 		table.insert(M.target_packages, pkg)
 	end
 end

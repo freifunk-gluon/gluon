@@ -66,6 +66,8 @@ END_MAKE
 			device_pkgs = device_pkgs .. ' ' .. pkg
 		end
 
+		io.stderr:write("debug: in for _, dev in ipairs(lib.devices) for profile " .. profile .. "\n")
+
 		for _, pkg in ipairs(dev.options.packages or {}) do
 			handle_pkg(pkg)
 		end
