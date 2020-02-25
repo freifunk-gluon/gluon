@@ -9,6 +9,7 @@ RUN apt update && apt install -y --no-install-recommends \
     build-essential \
     gawk \
     unzip \
+    squashfs-tools \
     libncurses5-dev \
     zlib1g-dev \
     libssl-dev \
