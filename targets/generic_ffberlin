@@ -86,9 +86,6 @@ config 'CONFIG_PACKAGE_kmod-veth=m'
 
 config 'CONFIG_PACKAGE_ALFRED_BATHOSTS=y'
 config 'CONFIG_PACKAGE_ALFRED_VIS=y'
-config 'CONFIG_PACKAGE_luci-mod-failsafe=y'
-config 'CONFIG_PACKAGE_luci-theme-bootstrap=y'
-config 'CONFIG_PACKAGE_uhttpd=y'
 
 
 packages {
@@ -96,4 +93,7 @@ packages {
 	'-ppp',
 	'-ppp-mod-pppoe',
 	'odhcpd-ipv6only',
+	'luci-mod-failsafe',
+	'luci-theme-bootstrap',
+	'uhttpd'
 }
