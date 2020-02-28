@@ -17,6 +17,7 @@ return function(funcs)
 
 
 	local function site_packages(image)
+		io.stderr:write("site_packages(".. image ..")\n")
 		return lib.exec_capture_raw(string.format([[
 	MAKEFLAGS= make print _GLUON_IMAGE_=%s --no-print-directory -s -f - <<'END_MAKE'
 include $(GLUON_SITEDIR)/site.mk
