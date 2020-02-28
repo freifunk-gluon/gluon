@@ -4,7 +4,6 @@ try_config 'CONFIG_TARGET_ALL_PROFILES=y'
 
 config 'CONFIG_DEVEL=y'
 config 'CONFIG_TOOLCHAINOPTS=y'
-config 'CONFIG_ALFRED_NEEDS_lua=y'
 try_config 'CONFIG_ATH_USER_REGD=y'
 try_config 'CONFIG_PACKAGE_ATH_DFS=y'
 config 'CONFIG_IB=y'
@@ -84,8 +83,9 @@ config 'CONFIG_PACKAGE_kmod-usb-storage=m'
 config 'CONFIG_PACKAGE_kmod-usb-uhci=m'
 config 'CONFIG_PACKAGE_kmod-veth=m'
 
-config 'CONFIG_PACKAGE_ALFRED_BATHOSTS=y'
-config 'CONFIG_PACKAGE_ALFRED_VIS=y'
+try_config 'CONFIG_ALFRED_NEEDS_lua=y'
+try_config 'CONFIG_PACKAGE_ALFRED_BATHOSTS=y'
+try_config 'CONFIG_PACKAGE_ALFRED_VIS=y'
 
 
 packages {
