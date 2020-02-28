@@ -52,7 +52,7 @@ END_MAKE
 		if string.sub(pkg, 1, 1) == '-' then
 			lib.try_config('# CONFIG_PACKAGE_%s is not set', string.sub(pkg, 2))
 		else
-			funcs.config_package(lib.config, pkg, 'y')
+			funcs.config_package(lib.config, pkg, 'm')
 		end
 	end
 
