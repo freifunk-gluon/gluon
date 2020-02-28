@@ -156,6 +156,12 @@ function F.config(...)
 	M.configs[string.format(...)] = 2
 end
 
+function F.config_m(...)
+	local arg = {...}
+	io.stderr:write(string.format("config_m: %s; %i\n", ... , #arg))
+	M.configs[string.format(...)] = 2
+end
+
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
 		io.stderr:write("packages: " .. pkg .. "\n")
