@@ -151,7 +151,8 @@ function F.try_config(...)
 end
 
 function F.config(...)
-	io.stderr:write("config: " .. ... .. "\n")
+	local arg = {...}
+	io.stderr:write(string.format("config: %s; %i\n", ... , #arg))
 	M.configs[string.format(...)] = 2
 end
 
