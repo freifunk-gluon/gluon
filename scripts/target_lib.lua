@@ -152,19 +152,19 @@ end
 
 function F.config(...)
 	local arg = {...}
-	io.stderr:write(string.format("config: %s; %i\n", ... , #arg))
+	io.stderr:write(string.format("target_lib.lua:config# %s; %i\n", ... , #arg))
 	M.configs[string.format(...)] = 2
 end
 
 function F.config_m(...)
 	local arg = {...}
-	io.stderr:write(string.format("config_m: %s; %i\n", ... , #arg))
+	io.stderr:write(string.format("target_lib.lua:config_m# %s; %i\n", ... , #arg))
 	M.configs[string.format(...)] = 2
 end
 
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
-		io.stderr:write("packages: " .. pkg .. "\n")
+		io.stderr:write("target_lib.lua:packages# " .. pkg .. "\n")
 		table.insert(M.target_packages, pkg)
 	end
 end
