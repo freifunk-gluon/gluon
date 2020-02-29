@@ -6,7 +6,7 @@ return function(funcs)
 	assert(env.SUBTARGET)
 
 	local target = arg[1]
-	local extra_packages = arg[2]
+	local default_packages = arg[2]
 
 	local openwrt_config_target
 	if env.SUBTARGET ~= '' then
@@ -30,7 +30,7 @@ END_MAKE
 
 	lib.include('generic')
 	lib.include('generic_' .. env.FOREIGN_BUILD)
-	for pkg in string.gmatch(extra_packages, '%S+') do
+	for pkg in string.gmatch(default_packages, '%S+') do
 		lib.packages {pkg}
 	end
 	lib.include(target)
