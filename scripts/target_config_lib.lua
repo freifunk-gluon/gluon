@@ -30,11 +30,14 @@ END_MAKE
 
 	lib.include('generic')
 	lib.include('generic_' .. env.FOREIGN_BUILD)
+	io.stderr:write(string.format("target_config_lib.lua:default_packages is: %s\n", default_packages))
 	for pkg in string.gmatch(default_packages, '%S+') do
 		lib.packages {pkg}
 	end
+	io.stderr:write(string.format("target_config_lib.lua: calling lib.include(target)\n"))
 	lib.include(target)
 
+	io.stderr:write(string.format("target_config_lib.lua: calling lib.check_devices()\n"))
 	lib.check_devices()
 
 

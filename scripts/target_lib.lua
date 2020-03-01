@@ -164,7 +164,7 @@ end
 
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
-		io.stderr:write("target_lib.lua:packages# " .. pkg .. "\n")
+		io.stderr:write("target_lib.lua:packages: adding to M.target_packages: " .. pkg .. "\n")
 		table.insert(M.target_packages, pkg)
 	end
 end
