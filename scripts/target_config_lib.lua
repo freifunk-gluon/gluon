@@ -7,6 +7,7 @@ return function(funcs)
 
 	local target = arg[1]
 	local default_packages = arg[2]
+	local extra_packages = arg[3]
 
 	local openwrt_config_target
 	if env.SUBTARGET ~= '' then
@@ -47,6 +48,11 @@ END_MAKE
 		lib.packages {'-opkg'}
 	end
 
+	io.stderr:write(string.format("target_config_lib.lua: calling starting loop extra_packages\n"))
+	for pkg in string.gmatch(extra_packages, '%S+') do
+		lib.e_packages {pkg}
+	end
+
 
 	local default_pkgs = ''
 	for _, pkg in ipairs(lib.target_packages) do
@@ -85,6 +91,12 @@ END_MAKE
 			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
 				openwrt_config_target, profile, device_pkgs)
 		end
+	end
+
+	local extra_pkgs = ''
+	for _, pkg in ipairs(lib.extra_packages) do
+		extra_pkgs = extra_pkgs .. ' ' .. pkg
+		funcs.config_package(lib.config_m, pkg, "m")
 	end
 
 	return lib

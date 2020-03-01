@@ -28,6 +28,7 @@ assert(env.GLUON_DEPRECATED)
 
 M.site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
 M.target_packages = {}
+M.extra_packages = {}
 M.configs = {}
 M.devices = {}
 M.images = {}
@@ -166,6 +167,13 @@ function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
 		io.stderr:write("target_lib.lua:packages: adding to M.target_packages: " .. pkg .. "\n")
 		table.insert(M.target_packages, pkg)
+	end
+end
+
+function F.e_packages(pkgs)
+	for _, pkg in ipairs(pkgs) do
+		io.stderr:write("target_lib.lua:extra_packages# " .. pkg .. "\n")
+		table.insert(M.extra_packages, pkg)
 	end
 end
 M.packages = F.packages
