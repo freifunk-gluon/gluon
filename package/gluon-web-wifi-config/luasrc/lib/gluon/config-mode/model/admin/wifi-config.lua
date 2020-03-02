@@ -61,21 +61,45 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	local p = f:section(Section, title)
 
-	local function vif_option(t, msg)
-		if not uci:get('wireless', t .. '_' .. radio) then
+	local function filter_existing_interfaces(interfaces)
+		local out = {}
+		for _, interface in ipairs(interfaces) do
+			if uci:get('wireless', interface .. '_' .. radio) then
+				table.insert(out, interface)
+			end
+		end
+		return out
+	end
+
+	local function filter_active_interfaces(interfaces)
+		local out = false
+		for _, interface in ipairs(interfaces) do
+			if not uci:get_bool('wireless', interface .. '_' .. radio, 'disabled') then
+				out = true
+			end
+		end
+		return out
+	end
+
+	local function vif_option(name, interfaces, msg)
+		local existing_interfaces = filter_existing_interfaces(interfaces)
+
+		if #existing_interfaces == 0 then
 			return
 		end
 
-		local o = p:option(Flag, radio .. '_' .. t .. '_enabled', msg)
-		o.default = not uci:get_bool('wireless', t .. '_' .. radio, 'disabled')
+		local o = p:option(Flag, radio .. '_' .. name .. '_enabled', msg)
+		o.default = filter_active_interfaces(existing_interfaces)
 
 		function o:write(data)
-			uci:set('wireless', t .. '_' .. radio, 'disabled', not data)
+			for _, interface in ipairs(existing_interfaces) do
+				uci:set('wireless', interface .. '_' .. radio, 'disabled', not data)
+			end
 		end
 	end
 
-	vif_option('client', translate('Enable client network (access point)'))
-	vif_option('mesh', translate("Enable mesh network (802.11s)"))
+	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
+	vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
 
 	local phy = util.find_phy(config)
 	if not phy then
