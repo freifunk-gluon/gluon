@@ -13,29 +13,32 @@ Selected router
 The router selection mechanism is independent from the batman-adv gateway mode.
 In contrast, the device originating the router advertisement could be any router
 or client connected to the mesh, as radv-filterd captures all router
-advertisements originating  from it. All nodes announcing router advertisement
+advertisements originating from it. All nodes announcing router advertisement
 **with** a default lifetime greater than 0 are being considered as candidates.
 
 In case a router is not a batman-adv originator itself, its TQ is defined by
 the originator it is connected to. This lookup uses the batman-adv global
 translation table.
 
-Initially the router is the selected by choosing the candidate with the
-strongest TQ. When another candidate can provide a better TQ metric it is not
-picked up as the selected router until it will outperform the currently
-selected router by X metric units. The hysteresis threshold is configurable
-and prevents excessive flapping of the gateway.
+Initially the router is selected by choosing the candidate with the strongest
+TQ. When another candidate can provide a better TQ metric, that outperforms the
+currently selected router by X metric units, it will be picked as the new
+selected router. The hysteresis threshold is configurable and prevents excessive
+flapping of the gateway.
 
-"Local" routers
----------------
+Local routers
+-------------
 
-The package has functionality to select "local" routers, i.e. those connected
-via cable or WLAN instead of via the mesh (technically: appearing in the
-``transtable_local``), a fake TQ of 512 so that they are always preferred.
-However, if used together with the :doc:`gluon-ebtables-filter-ra-dhcp`
-package, these router advertisements are filtered anyway and reach neither the
-node nor any other client. You currently have to disable the package or insert
-custom ebtables rules in order to use local routers.
+Local routers (i.e. local internet gateways connected to some nodes) that are
+connected to the client interface via cable or WLAN instead of via the mesh
+(technically: appearing in the transtable_local) are taken into account with a
+fake TQ of 512, so that they are always preferred.
+
+Be aware of problems if you plan to use local routers together with the
+:doc:`gluon-ebtables-filter-ra-dhcp` package. These router advertisements are
+filtered anyway and reach neither the node nor any other client. Therefore the
+use of local routers is not possible as long as the package
+``gluon-radv-filterd`` is used.
 
 respondd module
 ---------------

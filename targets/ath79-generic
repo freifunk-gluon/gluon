@@ -1,9 +1,62 @@
+local ATH10K_PACKAGES_QCA9880 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca988x',
+	'-ath10k-firmware-qca988x-ct',
+}
+
 local ATH10K_PACKAGES_QCA9888 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
 	'ath10k-firmware-qca9888',
 	'-ath10k-firmware-qca9888-ct',
 }
+
+-- devolo
+
+device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('devolo-wifi-pro-1200i', 'devolo_dvl1200i', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('devolo-wifi-pro-1750c', 'devolo_dvl1750c', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('devolo-wifi-pro-1750e', 'devolo_dvl1750e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('devolo-wifi-pro-1750i', 'devolo_dvl1750i', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+-- GL.iNet
+
+device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
+    factory = false,
+})
+
+-- OCEDO
+
+device('ocedo-raccoon', 'ocedo_raccoon', {
+	factory = false,
+})
 
 -- TP-Link
 

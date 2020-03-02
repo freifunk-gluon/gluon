@@ -17,6 +17,7 @@ RUN apt update && apt install -y --no-install-recommends \
     time \
     ecdsautils \
     lua-check \
+    shellcheck \
   && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -d /gluon gluon

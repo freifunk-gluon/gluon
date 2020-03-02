@@ -1,12 +1,14 @@
 local ATH10K_PACKAGES_IPQ40XX = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
 	'ath10k-firmware-qca4019',
 	'-ath10k-firmware-qca4019-ct',
 }
 local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
 	'ath10k-firmware-qca4019',
 	'-ath10k-firmware-qca4019-ct',
 	'ath10k-firmware-qca9888',
@@ -17,6 +19,14 @@ local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
 defaults {
 	packages = ATH10K_PACKAGES_IPQ40XX,
 }
+
+
+-- Aruba
+
+device('aruba-ap-303', 'aruba_ap-303', {
+	factory = false,
+	aliases = {'aruba-instant-on-ap11'},
+})
 
 
 -- AVM

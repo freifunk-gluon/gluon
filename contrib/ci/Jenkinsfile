@@ -1,27 +1,52 @@
 pipeline {
-    agent { label 'gluon-docker' }
-    environment {
-        GLUON_SITEDIR = "contrib/ci/minimal-site"
-        GLUON_TARGET = "x86-64"
-        BUILD_LOG = "1"
-    }
-    stages {
-        stage('lint') {
-            steps {
-                sh 'luacheck package scripts targets'
-            }
-        }
-        stage('docs') {
-            steps {
-                sh 'make -C docs html'
-            }
-        }
-        stage('build') {
-            steps {
-                sh 'make update'
-                sh 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
-                sh 'make -j$(nproc) V=s'
-            }
-        }
-    }
+	agent none
+	environment {
+		GLUON_SITEDIR = "contrib/ci/minimal-site"
+		GLUON_TARGET = "x86-64"
+		BUILD_LOG = "1"
+	}
+	stages {
+		stage('lint') {
+			parallel {
+				stage('lint-lua') {
+					agent { label 'gluon-docker' }
+					steps {
+						sh 'make lint-lua'
+					}
+				}
+				stage('lint-sh') {
+					agent { label 'gluon-docker-v1' }
+					steps {
+						sh 'make lint-sh'
+					}
+				}
+			}
+		}
+		stage('docs') {
+			agent { label 'gluon-docker' }
+			steps {
+				sh 'make -C docs html'
+			}
+		}
+		stage('build') {
+			agent { label 'gluon-docker' }
+			steps {
+				sh 'make update'
+				sh 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
+				sh 'make -j$(nproc) V=s'
+			}
+		}
+	}
 }
+
+/*
+ api-history:
+
+ Every time the build dependencies of gluon change, the version
+ every container has to be rebuilt. Therefore, we use Jenkins
+ labels which intoduce a version number which is documented here.
+ As soon, as you properly rebuilt your docker container, you
+ can notify lemoer, that you have updated your node.
+
+ - gluon-docker-v1: add shellcheck binary to the build environment
+*/

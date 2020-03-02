@@ -22,20 +22,9 @@ proto_gluon_bat0_renew() {
 
 	lock /var/lock/gluon_bat0.lock
 
-	local ifdump="$(ubus call network.interface dump)"
-
-	echo "$ifdump" | jsonfilter \
-		-e "@.interface[@.proto='gluon_mesh' && @.up=true]['device','data']" \
-	| while read dev; do
-		read data
-
-		echo bat0 > "/sys/class/net/$dev/batman_adv/mesh_iface"
-
-		! [ "$(echo "$data" | jsonfilter -e "@.transitive")" = 'true' ]
-		transitive=$?
-
-		(echo "$transitive" > "/sys/class/net/$dev/batman_adv/no_rebroadcast") 2>/dev/null
-	done
+	ubus call network.interface dump | jsonfilter \
+		-e "@.interface[@.proto='gluon_mesh' && @.up=true].device" \
+	| xargs -r -n 1 batctl interface add
 
 	lock -u /var/lock/gluon_bat0.lock
 }

@@ -14,6 +14,7 @@ xor2() {
         echo -n "${1:1:1}" | tr '0123456789abcdef' '23016745ab89efcd'
 }
 
+# shellcheck disable=SC2086
 interface_linklocal() {
         local macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
         local oldIFS="$IFS"; IFS=':'; set -- $macaddr; IFS="$oldIFS"

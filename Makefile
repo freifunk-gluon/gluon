@@ -103,6 +103,13 @@ endef
 list-targets: FORCE
 	@$(foreach target,$(GLUON_TARGETS),echo '$(target)';)
 
+lint: lint-lua lint-sh
+
+lint-lua: FORCE
+	@scripts/lint-lua.sh
+
+lint-sh: FORCE
+	@scripts/lint-sh.sh
 
 GLUON_DEFAULT_PACKAGES := hostapd-mini
 

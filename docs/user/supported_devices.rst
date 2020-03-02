@@ -37,13 +37,13 @@ ar71xx-generic
   - DIR-505 (A1, A2)
   - DIR-825 (B1)
 
-* GL Innovations
+* GL.iNet
 
+  - 6408A
+  - 6416A
   - GL-AR150
   - GL-AR300M
   - GL-AR750
-  - GL-iNet 6408A (v1)
-  - GL-iNet 6416A (v1)
 
 * Linksys
 
@@ -82,7 +82,7 @@ ar71xx-generic
   - CPE220 (v1.1)
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
-  - RE450
+  - RE450 (v1)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -183,6 +183,23 @@ ar71xx-tiny [#deprecated]_
 ath79-generic
 --------------
 
+* devolo
+
+  - WiFi pro 1200e [#lan_as_wan]_
+  - WiFi pro 1200i
+  - WiFi pro 1750c
+  - WiFi pro 1750e [#lan_as_wan]_
+  - WiFi pro 1750i
+  - WiFi pro 1750x
+
+* GL.iNet
+
+  - GL-AR300M-Lite
+
+* OCEDO
+
+  - Raccoon
+
 * TP-Link
 
   - Archer C6 (v2)
@@ -212,8 +229,8 @@ ipq40xx-generic
 
 * NETGEAR
 
-  - EX6100v2
-  - EX6150v2
+  - EX6100 (v2)
+  - EX6150 (v2)
 
 * OpenMesh
 
@@ -237,6 +254,9 @@ lantiq-xrx200
 
 * AVM
 
+  - FRITZ!Box 7360 (v1, v2) [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
 
 lantiq-xway
@@ -245,6 +265,9 @@ lantiq-xway
 * AVM
 
   - FRITZ!Box 7312 [#avmflash]_
+  - FRITZ!Box 7320 [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7330 [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7330 SL [#avmflash]_ [#lan_as_wan]_
 
 mpc85xx-generic
 ---------------
@@ -260,6 +283,10 @@ mpc85xx-p1020
 
   - HiveAP 330
 
+* Enterasys
+
+  - WS-AP3710i
+
 * OCEDO
 
   - Panda
@@ -267,7 +294,7 @@ mpc85xx-p1020
 ramips-mt7620
 -------------
 
-* GL Innovations
+* GL.iNet
 
   - GL-MT300A
   - GL-MT300N
@@ -276,6 +303,17 @@ ramips-mt7620
 * Nexx
 
   - WT3020AD/F/H
+
+* TP-Link
+
+  - Archer C2 v1
+  - Archer C20 (v1)
+  - Archer C20i
+  - Archer C50 v1
+
+* Xiaomi
+
+  - MiWiFi Mini
 
 ramips-mt7621
 -------------
@@ -290,6 +328,7 @@ ramips-mt7621
 
 * NETGEAR
 
+  - EX6150 (v1)
   - R6220
 
 * Ubiquiti
@@ -316,10 +355,13 @@ ramips-mt76x8
 
 * TP-Link
 
-  - TL-MR3420 v5
-  - TL-WR841N v13
   - Archer C50 v3
   - Archer C50 v4
+  - TL-MR3020 v3
+  - TL-MR3420 v5
+  - TL-WA801ND v5
+  - TL-WR841N v13
+  - TL-WR902AC v3
 
 * VoCore
 
@@ -383,3 +425,6 @@ Footnotes
 .. [#eva_ramboot]
   For instructions on how to flash AVM NAND devices, see the respective
   commit which added support in OpenWrt.
+
+.. [#lan_as_wan]
+  All LAN ports on this device are used as WAN.

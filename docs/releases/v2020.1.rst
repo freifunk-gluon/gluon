@@ -1,0 +1,191 @@
+Gluon 2020.1
+============
+
+This is the first release of Gluon in 2020, based on OpenWrt 19.07. It
+introduces the ath79 target, which will replace ar71xx in the short
+term.
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+-  devolo WiFi pro 1200e
+-  devolo WiFi pro 1200i
+-  devolo WiFi pro 1750c
+-  devolo WiFi pro 1750e
+-  devolo WiFi pro 1750i
+-  devolo WiFi pro 1750x
+-  GL.iNet GL-AR300M-Lite
+-  OCEDO Raccoon
+-  TP-Link Archer C6 v2
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+-  Aruba AP-303
+-  Aruba Instant On AP11
+-  AVM FRITZ!Repeater 1200
+
+ipq806x-generic
+~~~~~~~~~~~~~~~
+
+-  Netgear R7800
+
+lantiq-xway
+~~~~~~~~~~~
+
+-  AVM FRITZ!Box 7312
+-  AVM FRITZ!Box 7320
+-  AVM FRITZ!Box 7330
+-  AVM FRITZ!Box 7330 SL
+
+lantiq-xrx200
+~~~~~~~~~~~~~
+
+-  AVM FRITZ!Box 7360 (v1, v2)
+-  AVM FRITZ!Box 7360 SL
+-  AVM FRITZ!Box 7362 SL
+-  AVM FRITZ!Box 7412
+
+mpc85xx-p1020
+~~~~~~~~~~~~~
+
+-  Enterasys WS-AP3710i
+-  OCEDO Panda
+
+ramips-mt7620
+~~~~~~~~~~~~~
+
+-  TP-Link Archer C2 (v1)
+-  TP-Link Archer C20 (v1)
+-  TP-Link Archer C20i
+-  TP-Link Archer C50 (v1)
+-  Xiaomi MiWifi Mini
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+-  Netgear EX6150 (v1)
+-  Netgear R6220
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+-  GL.iNet VIXMINI
+-  TP-Link TL-MR3020 (v3)
+-  TP-Link TL-WA801ND (v5)
+-  TP-Link TL-WR902AC (v3)
+
+Removed hardware support
+------------------------
+
+-  ALFA Network Hornet-UB [#kernelpartition_too_small]_
+-  ALFA Network Tube2H [#kernelpartition_too_small]_
+-  ALFA Network N2 [#kernelpartition_too_small]_
+-  ALFA Network N5 [#kernelpartition_too_small]_
+
+.. [#kernelpartition_too_small]
+  The kernel partition on this device is too small to build a working image.
+
+Major changes
+-------------
+
+OpenWrt 19.07
+~~~~~~~~~~~~~
+
+Gluon v2020.1 is the first release to use OpenWrt 19.07. All targets
+therefore use Linux 4.14.166.
+
+batman-adv compat v14 removal
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Support for the long deprecated compat 14 version of batman-adv has been
+dropped. Communities still using this version should migrate to batman-adv
+using the scheduled domain switch.
+
+IBSS wireless mesh removal
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Support for the IBSS wireless protocol has been dropped. Communities
+still using IBSS are suggested to migrate to 802.11s using the scheduled
+domain switch.
+
+Performance enhancements
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+We install zram-swap by default on ``ar71xx`` devices with 8MB of flash
+and 32MB of RAM.
+
+Renamed targets
+~~~~~~~~~~~~~~~
+
+- The ``ipq40xx`` target was renamed to ``ipq40xx-generic``.
+- The ``ipq806x`` target was renamed to ``ipq806x-generic``.
+
+Status Page
+~~~~~~~~~~~
+
+- Gateway nexthop information has been added to the statuspage when batman-adv
+  is used. This includes its MAC address and prettyname as well as the interface
+  name towards the selected gateway.
+- The site name has been added to the statuspage. If the node is in a multidomain
+  setup it will also show the domain name.
+
+DECT button to enter config mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Many AVM devices don't feature a separate RESET/WPS button, therefore
+starting this release we support entering the config mode via DECT buttons.
+
+X86 partition size
+~~~~~~~~~~~~~~~~~~
+
+The x86 partition size has been reduced to fit on disks with a capacity of 128 MB.
+
+Bugfixes
+--------
+
+Autoupdater aliases
+~~~~~~~~~~~~~~~~~~~
+
+We have added several new aliases for autoupdater compatibility on
+the following devices:
+
+- Ubiquiti UniFi AC LR
+- Raspberry Pi
+
+Site changes
+------------
+
+site.mk
+~~~~~~~
+
+-  The ``GLUON_WLAN_MESH`` variable can be dropped, as 802.11s is
+   the only supported wireless transport from now on.
+
+Internals
+---------
+
+Linting Targets
+~~~~~~~~~~~~~~~
+
+Support for linter make targets was added.
+
+- ``make lint``
+- ``make lint-sh`` to only check shell scripts
+- ``make lint-lua`` to only check lua scripts
+
+These require the shellcheck and luacheck tools. The docker image has
+been updated accordingly.
+
+Continuous integration
+~~~~~~~~~~~~~~~~~~~~~~
+
+We have implemented continuous integration testing using Jenkins and thereby
+ensure that all lua and shell scripts are linted, that the documentation
+still builds and warnings are highlighted, and that Gluon still
+compiles, by testing a build on the ``x86_64`` target. We expect this to
+significantly improve the feedback cycle and quality of contributions.
+

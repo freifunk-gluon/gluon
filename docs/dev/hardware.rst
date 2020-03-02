@@ -5,7 +5,7 @@ for new hardware to Gluon.
 
 Hardware requirements
 ---------------------
-Having an ath9k (or ath10k) based WLAN adapter is highly recommended,
+Having an ath9k, ath10k or mt76 based WLAN adapter is highly recommended,
 although other chipsets may also work. VAP (multiple SSID) support
 is a requirement.
 

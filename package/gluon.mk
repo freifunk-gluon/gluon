@@ -1,8 +1,7 @@
 GLUON_MK := $(abspath $(lastword $(MAKEFILE_LIST)))
 PKG_FILE_DEPENDS += $(GLUON_MK)
 
-# Dependencies for LuaSrcDiet
-PKG_BUILD_DEPENDS += luci-base/host
+PKG_BUILD_DEPENDS += luasrcdiet/host
 
 ifneq ($(wildcard ./src/respondd.c),)
   PKG_BUILD_DEPENDS += respondd
@@ -31,6 +30,7 @@ GLUON_I18N_CONFIG := $(foreach lang,$(GLUON_SUPPORTED_LANGS),CONFIG_GLUON_WEB_LA
 GLUON_ENABLED_LANGS := en $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(if $(CONFIG_GLUON_WEB_LANG_$(lang)),$(lang)))
 
 ifneq ($(wildcard ./i18n/.),)
+  PKG_BUILD_DEPENDS += gluon-web/host
   PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 endif
 
@@ -40,7 +40,7 @@ define GluonBuildI18N
 	for lang in $$(GLUON_ENABLED_LANGS); do \
 		if [ -e $(1)/$$$$lang.po ]; then \
 			rm -f $$(PKG_BUILD_DIR)/i18n/$$$$lang.lmo; \
-			po2lmo $(1)/$$$$lang.po $$(PKG_BUILD_DIR)/i18n/$$$$lang.lmo; \
+			gluon-po2lmo $(1)/$$$$lang.po $$(PKG_BUILD_DIR)/i18n/$$$$lang.lmo; \
 		fi; \
 	done
 endef

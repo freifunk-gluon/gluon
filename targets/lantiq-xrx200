@@ -1,15 +1,24 @@
+device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
+        factory = false,
+        aliases = {'avm-fritz-box-7360-v1', 'avm-fritz-box-7360-v2'},
+})
+
+device('avm-fritz-box-7362-sl', 'avm_fritz7362sl', {
+        factory = false,
+})
+
 device('avm-fritz-box-7412', 'avm_fritz7412', {
         factory = false,
 })
 
 -- TP-Link
 
-  -- CAVEAT: These devices don't have a dedicated WAN port. 
+  -- CAVEAT: These devices don't have a dedicated WAN port.
   --         All ethernet ports on the device are bridged and
   --         used as WAN ports. Clients connected to these
   --         ports will be connected to your private network.
 
-device('tp-link-td-w8970', 'tplink_tdw8970') 
+device('tp-link-td-w8970', 'tplink_tdw8970')
 
 device('tp-link-td-w8980', 'tplink_tdw8980', {
 	aliases = {'tp-link-td-w9980'},
