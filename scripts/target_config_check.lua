@@ -21,6 +21,7 @@ local function match_config(f)
 end
 
 local function check_config(pattern)
+	io.stderr:write(string.format("target_config_check.lua:check_config()# %s\n", pattern))
 	return match_config(function(line) return line == pattern end)
 end
 
@@ -52,6 +53,8 @@ function funcs.config_package(_, pkg, value)
 		fail("unable to enable package '%s'", pkg)
 	end
 end
+
+io.stderr:write("This is target_config_check.lua\n")
 
 local lib = dofile('scripts/target_config_lib.lua')(funcs)
 
