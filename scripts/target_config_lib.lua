@@ -7,7 +7,7 @@ return function(funcs)
 
 	local target = arg[1]
 	local default_packages = arg[2]
-	local extra_packages = arg[3]
+	local extra_packages = arg[3] or ""
 
 	local openwrt_config_target
 	if env.SUBTARGET ~= '' then
