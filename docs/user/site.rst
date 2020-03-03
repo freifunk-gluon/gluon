@@ -130,8 +130,15 @@ wifi24 \: optional
     This will only affect new installations.
     Upgrades will not change the disabled state.
 
-    ``ap`` requires a single parameter, a string, named ``ssid`` which sets the
-    interface's ESSID. This is the WiFi the clients connect to.
+    ``ap`` holds the client network configuration.
+    To create an unencrypted client network, a string named ``ssid`` which sets the
+    interface's ESSID is required. This is the wireless network clients connect to.
+    For an OWE secured network, the ``owe_ssid`` string has to be set. It sets the
+    SSID for the opportunistically encrypted wireless network, to which compatible
+    clients can connect to.
+    To utilize the OWE transition mode, ``owe_transition_mode`` has to be set to true.
+    Note that for the transition mode to work, both ``ssid`` as well as ``owe_ssid``
+    have to be enabled.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the
     mesh id, also visible as an open WiFi in some network managers. Usually you
@@ -147,6 +154,8 @@ wifi24 \: optional
          channel = 11,
          ap = {
            ssid = 'alpha-centauri.freifunk.net',
+           owe_ssid = 'owe.alpha-centauri.freifunk.net',
+           owe_transition_mode = true,  
          },
          mesh = {
            id = 'ueH3uXjdp',
