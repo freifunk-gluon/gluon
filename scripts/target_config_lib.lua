@@ -91,6 +91,9 @@ END_MAKE
 			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
 				openwrt_config_target, profile, device_pkgs)
 		end
+		io.stderr:write(string.format('setting profile: %s="%s"\n',
+				profile, device_pkgs))
+
 	end
 
 	local extra_pkgs = ''
