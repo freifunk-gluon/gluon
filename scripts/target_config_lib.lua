@@ -114,5 +114,20 @@ io.stderr:write(string.format("debug_a: %s\n", device_pkgs))
 		funcs.config_package(lib.config_m, pkg, "m")
 	end
 
+	function get_pkglist()
+		local adevice_pkgs = {}
+		io.stderr:write(string.format("called target_config_lib.lua:get_pkglist()\n"))
+		for _, dev in ipairs(lib.devices) do
+			local profile = dev.options.profile or dev.name
+			local pkgs = devpkgs(dev)
+			io.stderr:write(string.format("get_pkglist().profile: %s\n", profile))
+			io.stderr:write(string.format("get_pkglist().pkgs: %s\n", pkgs))
+			table.insert(adevice_pkgs, {profile, pkgs})
+			io.stderr:write(string.format("get_pkglist().length: %i\n", #adevice_pkgs))
+		end
+		io.stderr:write(string.format("get_pkglist().length_final: %i\n", #adevice_pkgs))
+		return adevice_pkgs
+	end
+
 	return lib
 end
