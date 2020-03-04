@@ -84,6 +84,8 @@ io.stderr:write(string.format("debug_a: %s\n", device_pkgs))
 		local profile = dev.options.profile or dev.name
 		local device_pkgs = devpkgs(dev)
 
+io.stderr:write(string.format("debug: %s\n", device_pkgs))
+
 		local function handle_pkg(pkg)
 			if string.sub(pkg, 1, 1) ~= '-' then
 				funcs.config_package(lib.config, pkg, 'm')
@@ -103,8 +105,6 @@ io.stderr:write(string.format("debug_a: %s\n", device_pkgs))
 			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
 				openwrt_config_target, profile, device_pkgs)
 		end
-		io.stderr:write(string.format('setting profile: %s="%s"\n',
-				profile, device_pkgs))
 
 	end
 
