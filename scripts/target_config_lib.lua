@@ -65,9 +65,24 @@ END_MAKE
 		end
 	end
 
+	local function devpkgs(dev)
+		io.stderr:write(string.format("called target_config_lib.lua:devpkgs(%s)\n", dev.name))
+		local device_pkgs = default_pkgs
+
+		for _, pkg in ipairs(dev.options.packages or {}) do
+			device_pkgs = device_pkgs .. ' ' .. pkg
+		end
+		for pkg in string.gmatch(site_packages(dev.image), '%S+') do
+			device_pkgs = device_pkgs .. ' ' .. pkg
+		end
+
+io.stderr:write(string.format("debug_a: %s\n", device_pkgs))
+		return(device_pkgs)
+	end
+
 	for _, dev in ipairs(lib.devices) do
 		local profile = dev.options.profile or dev.name
-		local device_pkgs = default_pkgs
+		local device_pkgs = devpkgs(dev)
 
 		local function handle_pkg(pkg)
 			if string.sub(pkg, 1, 1) ~= '-' then
@@ -78,10 +93,7 @@ END_MAKE
 
 		io.stderr:write("debug: in for _, dev in ipairs(lib.devices) for profile " .. profile .. "\n")
 
-		for _, pkg in ipairs(dev.options.packages or {}) do
-			handle_pkg(pkg)
-		end
-		for pkg in string.gmatch(site_packages(dev.image), '%S+') do
+		for pkg in string.gmatch(device_pkgs, '%S+') do
 			handle_pkg(pkg)
 		end
 
