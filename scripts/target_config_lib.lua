@@ -99,12 +99,10 @@ io.stderr:write(string.format("debug: %s\n", device_pkgs))
 			handle_pkg(pkg)
 		end
 
-		if env.FOREIGN_BUILD == '' then
-			funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
-				'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
-			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
-				openwrt_config_target, profile, device_pkgs)
-		end
+		funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
+			'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
+		lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
+			openwrt_config_target, profile, device_pkgs)
 
 	end
 
