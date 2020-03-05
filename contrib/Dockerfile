@@ -5,7 +5,7 @@ RUN apt update && apt install -y --no-install-recommends \
     file \
     git \
     subversion \
-    python \
+    python3 \
     build-essential \
     gawk \
     unzip \
