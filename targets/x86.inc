@@ -23,7 +23,7 @@ packages {
 	'kmod-ath9k',
 	'kmod-gpio-button-hotplug',
 	'kmod-hwmon-core',
-	'kmod-sp5100_tco',
+	'kmod-sp5100-tco',
 	'kmod-usb-core',
 	'kmod-usb-ohci',
 	'kmod-usb2',
