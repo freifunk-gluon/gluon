@@ -34,5 +34,11 @@ packages {
 	'kmod-usb-serial',
 	'kmod-ath10k',
 	'ath10k-firmware-qca9887',
+	'ath10k-firmware-qca9888',
 	'ath10k-firmware-qca988x',
+	'ath10k-firmware-qca9984',
+	'kmod-mt76x0e',
+	'kmod-mt76x2',
+	'kmod-mt7603',
+	'kmod-mt7615e',
 }
