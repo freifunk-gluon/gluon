@@ -47,6 +47,9 @@ function M.is_outdoor_device()
 
 	elseif M.match('ath79', 'generic', {'devolo,dvl1750x'}) then
 		return true
+
+	elseif M.match('ipq40xx', 'generic', {'engenius,ens620ext'}) then
+		return true
 	end
 
 	return false
