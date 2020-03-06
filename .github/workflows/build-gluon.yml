@@ -141,8 +141,8 @@ jobs:
           name: ath79-generic_output
           path: output
 
-  brcm2708-bcm2708:
-    name: brcm2708-bcm2708
+  bcm27xx-bcm2708:
+    name: bcm27xx-bcm2708
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -157,7 +157,7 @@ jobs:
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm2708-bcm2708
+        run: contrib/actions/run-build.sh brcm27xx-bcm2708
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -165,16 +165,16 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2708_logs
+          name: bcm27xx-bcm2708_logs
           path: openwrt/logs
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2708_output
+          name: bcm27xx-bcm2708_output
           path: output
 
-  brcm2708-bcm2709:
-    name: brcm2708-bcm2709
+  bcm27xx-bcm2709:
+    name: bcm27xx-bcm2709
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -189,7 +189,7 @@ jobs:
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm2708-bcm2709
+        run: contrib/actions/run-build.sh brcm27xx-bcm2709
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -197,12 +197,12 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2709_logs
+          name: bcm27xx-bcm2709_logs
           path: openwrt/logs
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2709_output
+          name: bcm27xx-bcm2709_output
           path: output
 
   ipq40xx-generic:
@@ -717,8 +717,8 @@ jobs:
           name: ar71xx-mikrotik_output
           path: output
 
-  brcm2708-bcm2710:
-    name: brcm2708-bcm2710
+  bcm27xx-bcm2710:
+    name: bcm27xx-bcm2710
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -733,7 +733,7 @@ jobs:
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm2708-bcm2710
+        run: contrib/actions/run-build.sh brcm27xx-bcm2710
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -741,12 +741,12 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2710_logs
+          name: bcm27xx-bcm2710_logs
           path: openwrt/logs
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: brcm2708-bcm2710_output
+          name: bcm27xx-bcm2710_output
           path: output
 
   mvebu-cortexa9:
