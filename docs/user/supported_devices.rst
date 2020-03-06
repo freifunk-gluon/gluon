@@ -223,6 +223,10 @@ ipq40xx-generic
   - FRITZ!Box 4040 [#avmflash]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
+* EnGenius
+
+  - ENS620EXT
+
 * GL.iNet
 
   - GL-B1300
