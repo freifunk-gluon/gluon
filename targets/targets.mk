@@ -4,8 +4,8 @@ $(eval $(call GluonTarget,ar71xx,tiny))
 endif
 $(eval $(call GluonTarget,ar71xx,nand))
 $(eval $(call GluonTarget,ath79,generic))
-$(eval $(call GluonTarget,brcm2708,bcm2708))
-$(eval $(call GluonTarget,brcm2708,bcm2709))
+$(eval $(call GluonTarget,bcm27xx,bcm2708))
+$(eval $(call GluonTarget,bcm27xx,bcm2709))
 $(eval $(call GluonTarget,ipq40xx,generic))
 $(eval $(call GluonTarget,ipq806x,generic))
 $(eval $(call GluonTarget,lantiq,xrx200))
@@ -25,6 +25,6 @@ $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,ar71xx,mikrotik)) # BROKEN: no sysupgrade support
-$(eval $(call GluonTarget,brcm2708,bcm2710)) # BROKEN: Untested
+$(eval $(call GluonTarget,bcm27xx,bcm2710)) # BROKEN: Untested
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
 endif
