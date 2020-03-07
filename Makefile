@@ -6,10 +6,10 @@ export LC_ALL LANG
 
 # check for spaces & resolve possibly relative paths
 define mkabspath
- ifneq (1,$(words [$($(1))]))
-  $$(error $(1) must not contain spaces)
- endif
- override $(1) := $(abspath $($(1)))
+   ifneq (1,$(words [$($(1))]))
+     $$(error $(1) must not contain spaces)
+   endif
+   override $(1) := $(abspath $($(1)))
 endef
 
 GLUON_SITEDIR ?= site
