@@ -1,0 +1,3 @@
+include 'bcm27xx.inc'
+
+device('raspberrypi-4-model-b', 'rpi-4')

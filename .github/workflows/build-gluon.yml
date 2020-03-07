@@ -770,6 +770,27 @@ jobs:
           name: bcm27xx-bcm2710_output
           path: output
 
+  bcm27xx-bcm2711:
+    name: bcm27xx-bcm2711
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo contrib/actions/install-dependencies.sh
+      - name: Build
+        run: contrib/actions/run-build.sh bcm27xx-bcm2711
+      - name: Archive build logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: bcm27xx-bcm2711_logs
+          path: openwrt/logs
+      - name: Archive build output
+        uses: actions/upload-artifact@v1
+        with:
+          name: bcm27xx-bcm2711_output
+          path: output
+
   mvebu-cortexa9:
     name: mvebu-cortexa9
     runs-on: ubuntu-latest
