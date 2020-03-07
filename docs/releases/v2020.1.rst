@@ -189,3 +189,46 @@ still builds and warnings are highlighted, and that Gluon still
 compiles, by testing a build on the ``x86_64`` target. We expect this to
 significantly improve the feedback cycle and quality of contributions.
 
+Known issues
+************
+
+* LEDs on TP-Link Archer C5 v1 and Archer C7 v2 are not working after Upgrade to v2020.1
+  (`#1941 <https://github.com/freifunk-gluon/gluon/issues/1941>`_)
+
+* AVM FRITZ!WLAN Repeater 450E is stuck in failsafe mode. (`#1940 <https://github.com/freifunk-gluon/gluon/issues/1940>`_)
+
+* Out of memory situations with high client count on ath9k.
+  (`#1768 <https://github.com/freifunk-gluon/gluon/issues/1768>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+   - | Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+     | Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+     | metric.
+
+   - | Throughput values are not correctly acquired for different interface types.
+     | (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+     | This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is
+  disallowed).
+
+* Inconsistent respondd API (`#522 <https://github.com/freifunk-gluon/gluon/issues/522>`_)
+
+  The current API is inconsistent and will be replaced eventually. The old API will still be supported for a while.
+
+* Frequent reboots due to out-of-memory or high load due to memory pressure on weak hardware especially in larger
+  meshes (`#1243 <https://github.com/freifunk-gluon/gluon/issues/1243>`_)
+
+  Optimizations in Gluon 2018.1 have significantly improved memory usage.
+  There are still known bugs leading to unreasonably high load that we hope to
+  solve in future releases.
+
