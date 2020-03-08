@@ -67,5 +67,10 @@ apply:
 
 - use tabs instead of spaces
 - trailing whitespaces must be eliminated
+- files need to end with a final newline
+- newlines need to have unix line endings (lf)
+
+To that end we provide a ``.editorconfig`` configuration, which is supported by most
+of the editors out there.
 
 If you add Lua scripts to gluon, check formatting with ``luacheck``.
