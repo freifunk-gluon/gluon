@@ -6,3 +6,7 @@ device('avm-fritz-box-7320', 'avm_fritz7320', {
 	factory = false,
 	aliases = {'avm-fritz-box-7330', 'avm-fritz-box-7330-sl'},
 })
+
+device('netgear-dgn3500b', 'netgear_dgn3500b', {
+	factory_ext = '.img',
+})
