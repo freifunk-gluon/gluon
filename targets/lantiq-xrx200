@@ -1,14 +1,14 @@
 device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
-        factory = false,
-        aliases = {'avm-fritz-box-7360-v1', 'avm-fritz-box-7360-v2'},
+	factory = false,
+	aliases = {'avm-fritz-box-7360-v1', 'avm-fritz-box-7360-v2'},
 })
 
 device('avm-fritz-box-7362-sl', 'avm_fritz7362sl', {
-        factory = false,
+	factory = false,
 })
 
 device('avm-fritz-box-7412', 'avm_fritz7412', {
-        factory = false,
+	factory = false,
 })
 
 -- TP-Link

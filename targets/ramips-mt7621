@@ -13,7 +13,7 @@ device('d-link-dir-860l-b1', 'dir-860l-b1')
 -- Netgear
 
 device('netgear-ex6150', 'netgear_ex6150', {
-        factory_ext = '.chk',
+	factory_ext = '.chk',
 })
 
 device('netgear-r6220', 'r6220', {
