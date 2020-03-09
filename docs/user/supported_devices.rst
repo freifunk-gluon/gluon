@@ -83,7 +83,7 @@ ar71xx-generic
   - CPE510 (v1.0, v1.1)
   - CPE520 (v1.1)
   - RE450 (v1)
-  - TD-W8970 (v1)
+  - TD-W8970 (v1) [#lan_as_wan]_
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
