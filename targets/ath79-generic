@@ -49,7 +49,7 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 -- GL.iNet
 
 device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
-    factory = false,
+	factory = false,
 })
 
 -- OCEDO

@@ -1,7 +1,7 @@
 -- Aerohive
 
 device('aerohive-hiveap-330', 'hiveap-330', {
-        factory = false,
+	factory = false,
 })
 
 
@@ -15,6 +15,6 @@ device('enterasys-ws-ap3710i', 'ws-ap3710i', {
 -- OCEDO
 
 device('ocedo-panda', 'panda', {
-        factory = false,
+	factory = false,
 })
 
