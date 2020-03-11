@@ -8,6 +8,7 @@ if sysconfig.primary_mac then
 end
 
 
+local json = require 'jsonc'
 local platform = require 'gluon.platform'
 local util = require 'gluon.util'
 
@@ -28,6 +29,15 @@ end
 
 local function phy(index)
 	return sysfs('/sys/class/ieee80211/phy%d/macaddress', index)
+end
+
+local function board(iface)
+	return function()
+		local data = json.load('/etc/board.json')
+		if data and data.network and data.network[iface] then
+			return data.network[iface].macaddr
+		end
+	end
 end
 
 
@@ -109,6 +119,11 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt7621', {
 			'dir-860l-b1',
+		}},
+	}},
+	{board('lan'), {
+		{'lantiq', 'xway', {
+			'netgear,dgn3500b',
 		}},
 	}},
 	-- phy0 default
