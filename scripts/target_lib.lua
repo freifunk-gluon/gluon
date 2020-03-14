@@ -15,11 +15,6 @@ local env = setmetatable({}, {
 })
 F.env = env
 
-local envtrue = setmetatable({}, {
-	__index = function(_, k) return (tonumber(os.getenv(k)) or 0) > 0 end
-})
-F.envtrue = envtrue
-
 assert(env.GLUON_SITEDIR)
 assert(env.GLUON_TARGETSDIR)
 assert(env.GLUON_RELEASE)
@@ -55,8 +50,12 @@ for dev in string.gmatch(env.GLUON_DEVICES or '', '%S+') do
 	unknown_devices[dev] = true
 end
 
+function F.istrue(v)
+	return (tonumber(v) or 0) > 0
+end
+
 local function want_device(dev, options)
-	if options.broken and not envtrue.BROKEN then
+	if options.broken and not F.istrue(env.BROKEN) then
 		return false
 	end
 	if options.deprecated and env.GLUON_DEPRECATED == '0' then

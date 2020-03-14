@@ -47,11 +47,11 @@ config '# CONFIG_KERNEL_IPV6_MROUTE is not set'
 try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
 try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
-if envtrue.GLUON_MULTIDOMAIN then
+if istrue(env.GLUON_MULTIDOMAIN) then
 	config 'CONFIG_GLUON_MULTIDOMAIN=y'
 end
 
-if envtrue.GLUON_DEBUG then
+if istrue(env.GLUON_DEBUG) then
 	config 'CONFIG_DEBUG=y'
 	config 'CONFIG_NO_STRIP=y'
 	config '# CONFIG_USE_STRIP is not set'
