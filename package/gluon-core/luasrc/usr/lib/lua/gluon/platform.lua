@@ -7,11 +7,11 @@ local M = setmetatable({}, {
 })
 
 function M.match(target, subtarget, boards)
-	if M.get_target() ~= target then
+	if target and M.get_target() ~= target then
 		return false
 	end
 
-	if M.get_subtarget() ~= subtarget then
+	if subtarget and M.get_subtarget() ~= subtarget then
 		return false
 	end
 
