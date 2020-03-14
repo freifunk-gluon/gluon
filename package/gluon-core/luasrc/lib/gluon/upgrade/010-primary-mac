@@ -107,10 +107,10 @@ local primary_addrs = {
 			'netgear,dgn3500b',
 		}},
 		{'ramips', 'mt7620', {
-			'c20-v1',
-			'c20i',
-			'c50',
-			'tplink,c2-v1',
+			'tplink,archer-c2-v1',
+			'tplink,archer-c20-v1',
+			'tplink,archer-c20i',
+			'tplink,archer-c50-v1',
 		}},
 		{'x86'},
 	}},
@@ -133,7 +133,7 @@ local primary_addrs = {
 			'ocedo,panda',
 		}},
 		{'ramips', 'mt7620', {
-			'miwifi-mini',
+			'xiaomi,miwifi-mini',
 		}},
 	}},
 	{phy(1), {
@@ -143,7 +143,7 @@ local primary_addrs = {
 			'tl-wr902ac-v1',
 		}},
 		{'ramips', 'mt7621', {
-			'dir-860l-b1',
+			'dlink,dir-860l-b1',
 		}},
 	}},
 	-- phy0 default
