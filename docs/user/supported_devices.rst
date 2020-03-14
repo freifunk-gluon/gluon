@@ -274,6 +274,10 @@ lantiq-xway
   - FRITZ!Box 7330 [#avmflash]_ [#lan_as_wan]_
   - FRITZ!Box 7330 SL [#avmflash]_ [#lan_as_wan]_
 
+* NETGEAR
+
+  - DGN3500B [#lan_as_wan]_
+
 mpc85xx-generic
 ---------------
 
