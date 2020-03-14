@@ -4,6 +4,7 @@ local site = require 'gluon.site'
 
 local uci = require('simple-uci').cursor()
 
+uci:set('ddhcpd', 'settings', 'enabled', false)
 uci:set('ddhcpd', 'settings', 'block_network', site.prefix4())
 
 uci:save('ddhcpd')

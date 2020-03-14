@@ -7,7 +7,7 @@ uci:section('firewall', 'rule', 'local_node_dhcp', {
 	name = 'allow_dhcp_local_client',
 	dest_port = '67',
 	proto = 'udp',
-	target = 'ACCEPT'
+	target = 'ACCEPT',
 })
 
 uci:section('firewall', 'rule', 'ddhcpd_mmfd', {
@@ -16,7 +16,7 @@ uci:section('firewall', 'rule', 'ddhcpd_mmfd', {
 	src_ip = 'fe80::/64',
 	name = 'allow_ddhcp_to_reserve_blocks',
 	proto = 'udp',
-	target = 'ACCEPT'
+	target = 'ACCEPT',
 })
 
 uci:save('firewall')
