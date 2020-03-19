@@ -192,6 +192,10 @@ significantly improve the feedback cycle and quality of contributions.
 Known issues
 ************
 
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the
+  NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
 * LEDs on TP-Link Archer C5 v1 and Archer C7 v2 are not working after Upgrade to v2020.1
   (`#1941 <https://github.com/freifunk-gluon/gluon/issues/1941>`_)
 
