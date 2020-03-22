@@ -34,6 +34,23 @@ pipeline {
 				sh 'make update'
 				sh 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
 				sh 'make -j$(nproc) V=s'
+				stash includes: '**/output/images/factory/*-x86-64.img.gz', name: 'gluon-x86-64-factory'
+			}
+		}
+		stage('test') {
+			agent { label 'gluon-docker-v2' }
+			environment {
+				TMUX = "notmux"
+			}
+			steps {
+				unstash 'gluon-x86-64-factory'
+				sh label: 'Unpack image', script: 'gunzip -cd ./output/images/factory/*x86-64*.img.gz > ./image.img'
+				sh label: 'Print python environment', script: 'python3 -m pip freeze'
+				script {
+					for (f in findFiles(glob: '**/tests/*.py')) {
+						sh label: "Test ${f.name}", script: "python3 tests/${f.name} --use-tmp-workdir"
+					}
+				}
 			}
 		}
 	}
@@ -49,4 +66,5 @@ pipeline {
  can notify lemoer, that you have updated your node.
 
  - gluon-docker-v1: add shellcheck binary to the build environment
+ - gluon-docker-v2: add qemu-testlab testing, requires KVM virtualization support
 */
