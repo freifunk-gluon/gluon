@@ -239,7 +239,7 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 	}
 }
 
-static void count_stations(size_t *wifi24, size_t *wifi5) {
+static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t owe5) {
 	struct uci_context *ctx = uci_alloc_context();
 	if (!ctx)
 		return;
@@ -269,6 +269,9 @@ static void count_stations(size_t *wifi24, size_t *wifi5) {
 		if (!ifname)
 			continue;
 
+		if (strstr(ifname, "owe") == ifname)
+			count_iface_stations(owe24, owe5, ifname);
+
 		count_iface_stations(wifi24, wifi5, ifname);
 	}
 
@@ -277,15 +280,19 @@ static void count_stations(size_t *wifi24, size_t *wifi5) {
 }
 
 static struct json_object * get_clients(void) {
-	size_t wifi24 = 0, wifi5 = 0;
+	size_t wifi24 = 0, wifi5 = 0, owe24 = 0, owe5 = 0;
 
-	count_stations(&wifi24, &wifi5);
+	count_stations(&wifi24, &wifi5, &owe24, &owe5);
 
 	struct json_object *ret = json_object_new_object();
 
 	json_object_object_add(ret, "wifi", json_object_new_int(wifi24 + wifi5));
 	json_object_object_add(ret, "wifi24", json_object_new_int(wifi24));
 	json_object_object_add(ret, "wifi5", json_object_new_int(wifi5));
+
+	json_object_object_add(ret, "owe", json_object_new_int(owe24 + owe5));
+	json_object_object_add(ret, "owe24", json_object_new_int(owe24));
+	json_object_object_add(ret, "owe5", json_object_new_int(owe5));
 
 	return ret;
 }
