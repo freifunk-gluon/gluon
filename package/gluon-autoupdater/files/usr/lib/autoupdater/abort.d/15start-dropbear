@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /lib/gluon/autoupdater/lib.sh
+
+start_enabled dropbear
