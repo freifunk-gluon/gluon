@@ -23,6 +23,7 @@ assert(env.GLUON_DEPRECATED)
 
 M.site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
 M.target_packages = {}
+M.target_class = nil
 M.configs = {}
 M.devices = {}
 M.images = {}
@@ -151,6 +152,10 @@ end
 
 function F.config(...)
 	M.configs[string.format(...)] = 2
+end
+
+function F.class(target_class)
+	M.target_class = target_class
 end
 
 function F.packages(pkgs)
