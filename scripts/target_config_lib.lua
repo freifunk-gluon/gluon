@@ -31,11 +31,20 @@ END_MAKE
 		]], lib.escape(image)))
 	end
 
-	lib.include('generic')
-	for pkg in string.gmatch(extra_packages, '%S+') do
-		lib.packages {pkg}
+	local function handle_target_pkgs(pkgs)
+		local packages = string.gmatch(pkgs, '%S+')
+		for pkg in packages do
+			lib.packages {pkg}
+		end
 	end
+
+	lib.include('generic')
+	handle_target_pkgs(extra_packages)
 	lib.include(target)
+
+	if lib.target_class ~= nil then
+		handle_target_pkgs(class_packages[lib.target_class])
+	end
 
 	lib.check_devices()
 

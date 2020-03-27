@@ -85,6 +85,7 @@ files["package/**/luasrc/lib/gluon/ebtables/*"] = {
 
 files["targets/*"] = {
 	read_globals = {
+		"class",
 		"config",
 		"defaults",
 		"device",
