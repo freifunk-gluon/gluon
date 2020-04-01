@@ -196,6 +196,7 @@ ath79-generic
 * GL.iNet
 
   - GL-AR300M-Lite
+  - GL-AR750S
 
 * OCEDO
 

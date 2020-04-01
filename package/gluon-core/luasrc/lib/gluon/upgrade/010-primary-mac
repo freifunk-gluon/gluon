@@ -82,6 +82,7 @@ local primary_addrs = {
 			'hiveap-121',
 		}},
 		{'ath79', 'generic', {
+			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
 		}},
 		{'ipq40xx', 'generic', {
