@@ -1,0 +1,19 @@
+#!/usr/bin/lua
+local site = require('gluon.site')
+local uci = require('simple-uci').cursor()
+
+local system = uci:get_first('system', 'system')
+
+if not site.syslog.ip() then
+	uci:delete('system', system, 'log_remote')
+	uci:delete('system', system, 'log_ip')
+	uci:delete('system', system, 'log_port')
+	uci:delete('system', system, 'log_proto')
+else
+	uci:set('system', system, 'log_remote', 1)
+	uci:set('system', system, 'log_ip', site.syslog.ip())
+	uci:set('system', system, 'log_port', site.syslog.port(514))
+	uci:set('system', system, 'log_proto', site.syslog.proto('udp'))
+end
+
+uci:save('system')
