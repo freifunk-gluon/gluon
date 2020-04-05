@@ -65,6 +65,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    package/gluon-ebtables-limit-arp
    package/gluon-ebtables-source-filter
    package/gluon-hoodselector
+   package/gluon-logging
    package/gluon-mesh-batman-adv
    package/gluon-mesh-wireless-sae
    package/gluon-radv-filterd
