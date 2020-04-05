@@ -103,6 +103,9 @@ local primary_addrs = {
 		{'ipq806x', 'generic', {
 			'netgear,r7800',
 		}},
+		{'lantiq', 'xrx200', {
+			'arcadyan,vgv7510kw22-nor',
+		}},
 		{'lantiq', 'xway', {
 			'netgear,dgn3500b',
 		}},
