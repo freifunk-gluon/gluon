@@ -289,6 +289,19 @@ function M.need_number(path, required)
 	return need_type(path, 'number', required, 'be a number')
 end
 
+function M.need_number_range(path, min, max, required)
+	local val = need_type(path, 'number', required)
+	if not val then
+		return nil
+	end
+
+	if val < min or val > max then
+		var_error(path, val, "be in range [" .. min .. ", " .. max .. "]")
+	end
+
+	return val
+end
+
 function M.need_boolean(path, required)
 	return need_type(path, 'boolean', required, 'be a boolean')
 end

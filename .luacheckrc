@@ -32,6 +32,7 @@ files["package/**/check_site.lua"] = {
 		"need_chanlist",
 		"need_domain_name",
 		"need_number",
+		"need_number_range",
 		"need_one_of",
 		"need_string",
 		"need_string_array",
