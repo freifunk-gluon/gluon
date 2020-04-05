@@ -20,6 +20,8 @@ ACTIONS_TARGET="""
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: bash contrib/actions/install-dependencies.sh
       - name: Build
         run: bash contrib/actions/run-build.sh {target_name}
       - name: Archive build output
