@@ -6,5 +6,5 @@ export GLUON_SITEDIR="contrib/ci/minimal-site"
 export GLUON_TARGET=$1
 
 make update
-make -j2
+make -j2 V=s
 
