@@ -517,7 +517,7 @@
 		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
 			var events = node.getAttribute('data-update').split(' ');
 			for (var j = 0, event; (event = events[j]) !== undefined; j++) {
-				bind(node, event, update);
+				bind(node, event, function () {setTimeout(update, 0);});
 			}
 		}
 
