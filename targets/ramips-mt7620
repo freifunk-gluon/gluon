@@ -1,6 +1,6 @@
 -- ASUS
 
-device('asus-rt-ac51u', 'rt-ac51u', {
+device('asus-rt-ac51u', 'asus_rt-ac51u', {
 	factory = false,
 	broken = true, -- no 5GHz usable, LEDs not fully supported
 })
@@ -8,22 +8,22 @@ device('asus-rt-ac51u', 'rt-ac51u', {
 
 -- GL.iNet
 
-device('gl-mt300a', 'gl-mt300a', {
+device('gl-mt300a', 'glinet_gl-mt300a', {
 	factory = false,
 })
 
-device('gl-mt300n', 'gl-mt300n', {
+device('gl-mt300n', 'glinet_gl-mt300n', {
 	factory = false,
 })
 
-device('gl-mt750', 'gl-mt750', {
+device('gl-mt750', 'glinet_gl-mt750', {
 	factory = false,
 })
 
 
 -- Nexx
 
-device('nexx-wt3020-8m', 'wt3020-8M', {
+device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
 	aliases = {
 		'nexx-wt3020ad',
 		'nexx-wt3020f',
@@ -38,21 +38,22 @@ if (env.GLUON_REGION or '') ~= '' then
 	tplink_region_suffix = '-' .. env.GLUON_REGION
 end
 
-device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
+device('tp-link-archer-c2-v1', 'tplink_archer-c2-v1', {
 	factory = false,
 })
 
-device('tp-link-archer-c20-v1', 'tplink_c20-v1')
+device('tp-link-archer-c20-v1', 'tplink_archer-c20-v1')
 
-device('tp-link-archer-c20i', 'ArcherC20i')
+device('tp-link-archer-c20i', 'tplink_archer-c20i')
 
-device('tp-link-archer-c50', 'ArcherC50v1', {
+device('tp-link-archer-c50-v1', 'tplink_archer-c50-v1', {
 	factory = '-squashfs-factory' .. tplink_region_suffix,
+	manifest_aliases = {'tp-link-archer-c50'},
 })
 
 
 -- Xiaomi
 
-device('xiaomi-miwifi-mini', 'miwifi-mini', {
+device('xiaomi-miwifi-mini', 'xiaomi_miwifi-mini', {
 	factory = false,
 })

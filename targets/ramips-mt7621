@@ -7,7 +7,7 @@ device('asus-rt-ac57u', 'asus_rt-ac57u', {
 
 -- D-Link
 
-device('d-link-dir-860l-b1', 'dir-860l-b1')
+device('d-link-dir-860l-b1', 'dlink_dir-860l-b1')
 
 
 -- Netgear
@@ -16,27 +16,35 @@ device('netgear-ex6150', 'netgear_ex6150', {
 	factory_ext = '.chk',
 })
 
-device('netgear-r6220', 'r6220', {
+device('netgear-r6220', 'netgear_r6220', {
 	factory_ext = '.img',
 })
 
-device('netgear-wndr3700v5', 'wndr3700v5', {
+device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	factory = false,
 	broken = true, -- untested
+	manifest_aliases = {
+		'netgear-wndr3700v5',
+	},
 })
 
 
 -- ZBT
 
-device('zbt-wg3526-16m', 'zbt-wg3526-16M', {
+device('zbtlink-zbt-wg3526-16m', 'zbtlink_zbt-wg3526-16m', {
 	factory = false,
 	manifest_aliases = {
 		'zbt-wg3526',
+		'zbt-wg3526-16m',
 	},
 })
 
-device('zbt-wg3526-32m', 'zbt-wg3526-32M', {
+device('zbtlink-zbt-wg3526-32m', 'zbtlink_zbt-wg3526-32m', {
 	factory = false,
+	manifest_aliases = {
+		'zbt-wg3526-32m',
+	},
+
 })
 
 
@@ -44,12 +52,18 @@ device('zbt-wg3526-32m', 'zbt-wg3526-32M', {
 
 -- Ubiquiti
 
-device('ubnt-erx', 'ubnt-erx', {
+device('ubiquiti-edgerouter-x', 'ubnt_edgerouter-x', {
 	factory = false,
 	packages = {'-hostapd-mini'},
+	manifest_aliases = {
+		'ubnt-erx',
+	},
 })
 
-device('ubnt-erx-sfp', 'ubnt-erx-sfp', {
+device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
 	factory = false,
 	packages = {'-hostapd-mini'},
+	manifest_aliases = {
+		'ubnt-erx-sfp',
+	},
 })
