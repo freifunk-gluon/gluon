@@ -5,7 +5,7 @@ device('cudy-wr1000', 'cudy_wr1000')
 
 -- GL.iNet
 
-device('gl-mt300n-v2', 'gl-mt300n-v2', {
+device('gl-mt300n-v2', 'glinet_gl-mt300n-v2', {
 	factory = false,
 })
 
@@ -23,14 +23,14 @@ device('netgear-r6120', 'netgear_r6120', {
 
 -- TP-Link
 
-device('tp-link-archer-c50-v3', 'tplink_c50-v3', {
+device('tp-link-archer-c50-v3', 'tplink_archer-c50-v3', {
 	factory = false,
 	extra_images = {
 		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
 	},
 })
 
-device('tp-link-archer-c50-v4', 'tplink_c50-v4', {
+device('tp-link-archer-c50-v4', 'tplink_archer-c50-v4', {
 	factory = false,
 })
 
@@ -55,7 +55,7 @@ device('tp-link-tl-wa801nd-v5', 'tplink_tl-wa801nd-v5', {
 	},
 })
 
-device('tp-link-tl-wr841n-v13', 'tl-wr841n-v13', {
+device('tp-link-tl-wr841n-v13', 'tplink_tl-wr841n-v13', {
 	factory = false,
 	extra_images = {
 		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
@@ -71,6 +71,6 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 
 -- VoCore 2
 
-device('vocore2', 'vocore2', {
+device('vocore2', 'vocore_vocore2', {
 	factory = false,
 })
