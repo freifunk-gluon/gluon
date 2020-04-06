@@ -6,12 +6,12 @@ defaults {
 }
 
 
-device('lemaker-banana-pi', 'sun7i-a20-bananapi')
+device('lemaker-banana-pi', 'lemaker_bananapi')
 
-device('lemaker-banana-pro', 'sun7i-a20-bananapro', {
+device('lemaker-banana-pro', 'lemaker_bananapro', {
 	broken = true, -- WiFi chip not supported
 })
 
-device('lamobo-r1', 'sun7i-a20-lamobo-r1', {
+device('lamobo-r1', 'lamobo_lamobo-r1', {
 	broken = true, -- AP+11s not working
 })
