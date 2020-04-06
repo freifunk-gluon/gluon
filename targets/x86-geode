@@ -18,5 +18,9 @@ packages {
 	'kmod-via-velocity',
 }
 
-factory_image('x86-geode', 'combined-squashfs', '.img.gz')
-sysupgrade_image('x86-geode', 'combined-squashfs', '.img.gz')
+device('x86-geode', 'generic', {
+	factory = '-squashfs-combined',
+	factory_ext = '.img.gz',
+	sysupgrade = '-squashfs-combined',
+	sysupgrade_ext = '.img.gz',
+})
