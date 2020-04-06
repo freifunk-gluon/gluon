@@ -1,6 +1,9 @@
 include 'x86.inc'
 
-factory_image('x86-64', 'combined-squashfs', '.img.gz')
-factory_image('x86-64', 'combined-squashfs', '.vdi')
-factory_image('x86-64', 'combined-squashfs', '.vmdk')
-sysupgrade_image('x86-64', 'combined-squashfs', '.img.gz')
+packages {
+        'kmod-gpio-nct5104d',
+        'kmod-leds-gpio',
+        'kmod-leds-apu2',
+}
+
+device('x86-64', 'generic')

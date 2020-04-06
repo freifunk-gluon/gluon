@@ -1,9 +1,12 @@
 include 'x86.inc'
 
-factory_image('x86-generic', 'combined-squashfs', '.img.gz')
-factory_image('x86-generic', 'combined-squashfs', '.vdi')
-factory_image('x86-generic', 'combined-squashfs', '.vmdk')
-sysupgrade_image('x86-generic', 'combined-squashfs', '.img.gz', {
+packages {
+        'kmod-gpio-nct5104d',
+        'kmod-leds-gpio',
+        'kmod-leds-apu2',
+}
+
+device('x86-generic', 'generic', {
 	manifest_aliases = {
 		'x86-kvm',
 		'x86-xen_domu',
