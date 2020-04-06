@@ -16,7 +16,7 @@ local STRIP_USB_PACKAGES = {
 
 -- A5
 
-device('a5-v11', 'a5-v11', {
+device('a5-v11', 'unbranded_a5-v11', {
 	deprecated = true, -- 4/32
 	packages = STRIP_USB_PACKAGES,
 })
@@ -24,12 +24,12 @@ device('a5-v11', 'a5-v11', {
 
 -- D-Link
 
-device('d-link-dir-615-h1', 'dir-615-h1', {
+device('d-link-dir-615-h1', 'dlink_dir-615-h1', {
 	deprecated = true, -- 4/32
 	packages = STRIP_USB_PACKAGES,
 })
 
-device('d-link-dir-615-d', 'dir-615-d', {
+device('d-link-dir-615-d', 'dlink_dir-615-d', {
 	aliases = {
 		'd-link-dir-615-d1',
 		'd-link-dir-615-d2',
@@ -43,10 +43,10 @@ device('d-link-dir-615-d', 'dir-615-d', {
 
 -- VoCore
 
-device('vocore-8M', 'vocore-8M', {
+device('vocore-8M', 'vocore_vocore-8m', {
 	factory = false,
 })
 
-device('vocore-16M', 'vocore-16M', {
+device('vocore-16M', 'vocore_vocore-16m', {
 	factory = false,
 })
