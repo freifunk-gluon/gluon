@@ -152,7 +152,7 @@
 					</table>
 				</div>
 			</div>
-			<div class="frame">
+			<div class="frame frame-wide">
 				<h2><%:Neighbors%></h2>
 
 				<%
@@ -167,12 +167,12 @@
 							<tr>
 								<th><%:Node%></th>
 								<% for i, v in ipairs(mesh.attrs or {}) do %>
-									<th<%= attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
+									<th<%= attr('class', 'row-' .. v[1] ) .. attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
 								<% end %>
 								<% if wireless then %>
-									<th>dBm</th>
-									<th><%:Distance%></th>
-									<th><%:Last seen%></th>
+									<th class="row-signal">dBm</th>
+									<th class="row-distance"><%:Distance%></th>
+									<th class="row-inactive"><%:Last seen%></th>
 								<% end %>
 							</tr>
 						</table>

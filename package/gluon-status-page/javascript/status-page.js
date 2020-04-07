@@ -433,6 +433,7 @@
 		var el = iface.table.insertRow();
 
 		var tdHostname = el.insertCell();
+		tdHostname.setAttribute('data-label', th.children[0].textContent);
 
 		if (iface.wireless) {
 			var marker = document.createElement("span");
@@ -456,6 +457,7 @@
 
 			var td = el.insertCell();
 			td.textContent = '-';
+			td.setAttribute('data-label', attr.textContent);
 
 			meshAttrs[key] = {
 				'td': td,
@@ -474,10 +476,24 @@
 		if (iface.wireless) {
 			tdSignal = el.insertCell();
 			tdSignal.textContent = '-';
+			tdSignal.setAttribute(
+				'data-label',
+				th.children[Object.keys(meshAttrs).length + 1].textContent
+			);
+
 			tdDistance = el.insertCell();
 			tdDistance.textContent = '-';
+			tdDistance.setAttribute(
+				'data-label',
+				th.children[Object.keys(meshAttrs).length + 2].textContent
+			);
+
 			tdInactive = el.insertCell();
 			tdInactive.textContent = '-';
+			tdInactive.setAttribute(
+				'data-label',
+				th.children[Object.keys(meshAttrs).length + 3].textContent
+			);
 
 			signal = Signal(color);
 			iface.signalgraph.addSignal(signal);
