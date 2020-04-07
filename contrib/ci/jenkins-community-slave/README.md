@@ -17,6 +17,7 @@ git clone https://github.com/freifunk-gluon/gluon/
 cd gluon/contrib/ci/jenkins-community-slave/
 docker build -t gluon-jenkins .
 mkdir /var/cache/openwrt_dl_cache/
+chown 1000:1000 /var/cache/openwrt_dl_cache
 docker run --detach --restart always \
     -e "SLAVE_NAME=whoareyou" \
     -e "SLAVE_SECRET=changeme" \
