@@ -109,10 +109,14 @@ header {
 		& + .frame {
 			border-width: 0 0 0 1px;
 		}
+
+		&-wide {
+			flex: 2;
+		}
 	}
 }
 
-dt, th {
+dt, th, td::before {
 	font-weight: bold;
 	color: rgba(0, 0, 0, 0.87);
 }
@@ -146,13 +150,30 @@ table {
 
 	&.datatable {
 		width: 100%;
+		table-layout: fixed;
 
 		th, td {
 			font-size: 1em;
 			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
 
-			&:last-child {
-				width: 100%;
+		th {
+			&.row-tq {
+				width: 42px;
+			}
+
+			&.row-signal {
+				width: 36px;
+			}
+
+			&.row-distance {
+				width: 90px;
+			}
+
+			&.row-inactive {
+				width: 130px;
 			}
 		}
 
@@ -181,6 +202,34 @@ canvas.signalgraph {
 		height: 56px;
 		z-index: 1;
 		position: fixed;
+	}
+
+	.datatable {
+		tr {
+			display: block;
+			margin-bottom: 15px;
+
+			&:first-child {
+				margin-bottom: 0;
+			}
+		}
+
+		th {
+			display: none;
+		}
+
+		td {
+			display: block;
+			position: relative;
+			padding-left: 150px;
+			max-width: calc(100% - 150px);
+
+			&::before {
+				position: absolute;
+				left: 5px;
+				content: attr(data-label)
+			}
+		}
 	}
 }
 
