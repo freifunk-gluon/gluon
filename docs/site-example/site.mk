@@ -23,7 +23,7 @@ GLUON_FEATURES := \
 #		selection that would be enabled by default or due to the
 #		chosen feature flags
 
-GLUON_SITE_PACKAGES := haveged iwinfo
+GLUON_SITE_PACKAGES := iwinfo
 
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images
