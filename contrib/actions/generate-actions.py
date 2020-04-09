@@ -9,6 +9,10 @@ ACTIONS_HEAD = """
 name: Build Gluon
 on:
   push:
+    branches:
+      - master
+      - next
+      - v20*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
