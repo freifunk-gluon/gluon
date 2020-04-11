@@ -176,18 +176,23 @@ local function get_addresses(radio)
 end
 
 -- Generates a (hopefully) unique MAC address
--- The parameter defines the ID to add to the MAC address
+-- The range parameter identifies the range the MAC address belongs to
+-- Range 0 is reserved for MAC addresses not assigned to a radio
+-- Wireless PHYs are assigned starting at range 1
+-- The i parameter defines the ID to add to the MAC address
 --
--- IDs defined so far:
--- 0: client0; WAN
--- 1: mesh0
--- 2: owe0
--- 3: wan_radio0 (private WLAN); batman-adv primary address
--- 4: client1; LAN
--- 5: mesh1
--- 6: owe1
--- 7: wan_radio1 (private WLAN); mesh VPN
-function M.generate_mac(i)
+-- IDs for non-radio interfaces defined so far:
+-- 0: WAN
+-- 3: batman-adv primary address
+-- 4: LAN
+-- 7: mesh VPN
+--
+-- IDs for radio interfaces defined so far:
+-- 0: client
+-- 1: mesh
+-- 2: owe
+-- 3: wan_radio (private WLAN)
+function M.generate_mac(range, i)
 	if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
 
 	local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
@@ -199,6 +204,13 @@ function M.generate_mac(i)
 	m1 = bit.bor(m1, 0x02)  -- set locally administered bit
 	m1 = bit.band(m1, 0xFE) -- unset the multicast bit
 
+	m5 = tonumber(m5, 16)
+	m5 = m5 + range
+
+	if m5 > 255 then
+		m5 = m5 - 256
+	end
+
 	-- It's necessary that the first 45 bits of the MAC address don't
 	-- vary on a single hardware interface, since some chips are using
 	-- a hardware MAC filter. (e.g 'rt305x')
@@ -206,7 +218,7 @@ function M.generate_mac(i)
 	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
 	m6 = m6 + i                   -- add virtual interface id
 
-	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+	return string.format('%02x:%s:%s:%s:%02x:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 local function get_wlan_mac_from_driver(radio, vif)
@@ -237,7 +249,7 @@ function M.get_wlan_mac(_, radio, index, vif)
 		return addr
 	end
 
-	return M.generate_mac(4*(index-1) + (vif-1))
+	return M.generate_mac(index, (vif-1))
 end
 
 -- Iterate over all radios defined in UCI calling

@@ -41,7 +41,7 @@ proto_gluon_wired_setup() {
 
                 json_init
                 json_add_string name "$meshif"
-                [ -n "$index" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac($index))")"
+                [ -n "$index" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac(0, $index))")"
                 json_add_string proto 'vxlan6'
                 json_add_string tunlink "$config"
                 json_add_string ip6addr "$(interface_linklocal "$ifname")"

@@ -13,7 +13,7 @@ uci:section('network', 'interface', 'mesh_vpn', {
 	proto = 'gluon_mesh',
 	transitive = true,
 	fixed_mtu = true,
-	macaddr = util.generate_mac(7),
+	macaddr = util.generate_mac(0, 7),
 	mtu = site.mesh_vpn.mtu(),
 })
 

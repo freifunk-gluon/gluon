@@ -6,13 +6,19 @@ Many devices don't have enough unique MAC addresses assigned by the vendor
 mesh-wide).
 
 Gluon tries to solve this issue by using a hash of the primary MAC address as a
-45 bit MAC address prefix. The resulting 8 addresses are used as follows:
+45 bit MAC address prefix per radio. One additional prefix is dedicated to wired
+interfaces as well as the mesh-protocol.
 
-* 0: client0; WAN
-* 1: mesh0
-* 2: owe0
-* 3: wan_radio0 (private WLAN); batman-adv primary address
-* 4: client1; LAN
-* 5: mesh1
-* 6: owe1
-* 7: wan_radio1 (private WLAN); mesh VPN
+The remaining 3 bits are assigned to the following interfaces / VAPs:
+
+IDs for non-radio interfaces defined so far:
+* 0: WAN
+* 3: batman-adv primary address
+* 4: LAN
+* 7: mesh VPN
+
+IDs for radio interfaces defined so far:
+* 0: client
+* 1: mesh
+* 2: owe
+* 3: wan_radio (private WLAN)
