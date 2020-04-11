@@ -181,11 +181,11 @@ end
 -- IDs defined so far:
 -- 0: client0; WAN
 -- 1: mesh0
--- 2: (unused)
+-- 2: owe0
 -- 3: wan_radio0 (private WLAN); batman-adv primary address
 -- 4: client1; LAN
 -- 5: mesh1
--- 6: (unused)
+-- 6: owe1
 -- 7: wan_radio1 (private WLAN); mesh VPN
 function M.generate_mac(i)
 	if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
