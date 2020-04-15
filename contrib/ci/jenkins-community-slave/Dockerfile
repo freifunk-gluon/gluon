@@ -5,7 +5,7 @@ USER root
 # this is needed to install default-jre-headless in debian slim images
 RUN mkdir -p /usr/share/man/man1
  
-RUN apt-get update && apt-get install -y default-jre-headless curl git netcat-openbsd python3 python3-pip qemu-system-x86 iproute2 openssh-client
+RUN apt-get update && apt-get install -y default-jre-headless curl git netcat-openbsd python3 python3-pip qemu-system-x86 iproute2 openssh-client rsync
 RUN python3 -m pip install jenkins-webapi sphinx sphinx_rtd_theme gluon-qemu-testlab==0.0.5
  
 # Get docker-compose in the agent container
