@@ -1,0 +1,13 @@
+local ATH10K_PACKAGES_QCA9887 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9887',
+	'-ath10k-firmware-qca9887-ct',
+}
+
+
+device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s-nor', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9887,
+})
