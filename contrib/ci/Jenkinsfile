@@ -32,7 +32,7 @@ pipeline {
 			}
 		}
 		stage('build') {
-			agent { label 'gluon-docker' }
+			agent { label 'gluon-docker-v2' }
 			steps {
 				sh label: 'Identify runner', script: 'echo $SLAVE_NAME'
 				sh 'make update'
@@ -70,6 +70,9 @@ pipeline {
  As soon, as you properly rebuilt your docker container, you
  can notify lemoer, that you have updated your node.
 
- - gluon-docker-v1: add shellcheck binary to the build environment
- - gluon-docker-v2: add qemu-testlab testing, requires KVM virtualization support
+ - gluon-docker-v1:
+   - add shellcheck binary to the build environment
+ - gluon-docker-v2:
+   - add qemu-testlab testing, requires KVM virtualization support
+   - require rsync dependency to be able to build the next branch
 */
