@@ -6,14 +6,6 @@ local ATH10K_PACKAGES_QCA9880 = {
 	'-ath10k-firmware-qca988x-ct',
 }
 
-local ATH10K_PACKAGES_QCA9887 = {
-	'kmod-ath10k',
-	'-kmod-ath10k-ct',
-	'-kmod-ath10k-ct-smallbuffers',
-	'ath10k-firmware-qca9887',
-	'-ath10k-firmware-qca9887-ct',
-}
-
 local ATH10K_PACKAGES_QCA9888 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
@@ -58,11 +50,6 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 
 device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
-})
-
-device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s', {
-	factory = false,
-	packages = ATH10K_PACKAGES_QCA9887,
 })
 
 -- OCEDO

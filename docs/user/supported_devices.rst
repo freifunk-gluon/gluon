@@ -196,7 +196,6 @@ ath79-generic
 * GL.iNet
 
   - GL-AR300M-Lite
-  - GL-AR750S
 
 * OCEDO
 
@@ -206,6 +205,13 @@ ath79-generic
 
   - Archer C6 (v2)
   - CPE220 (v3.0)
+
+ath79-nand
+----------
+
+* GL.iNet
+
+  - GL-AR750S
 
 brcm2708-bcm2708
 ----------------

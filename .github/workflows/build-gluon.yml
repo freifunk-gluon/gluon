@@ -141,6 +141,27 @@ jobs:
           name: ath79-generic_output
           path: output
 
+  ath79-nand:
+    name: ath79-nand
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo contrib/actions/install-dependencies.sh
+      - name: Build
+        run: contrib/actions/run-build.sh ath79-nand
+      - name: Archive build logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ath79-nand_logs
+          path: openwrt/logs
+      - name: Archive build output
+        uses: actions/upload-artifact@v1
+        with:
+          name: ath79-nand_output
+          path: output
+
   bcm27xx-bcm2708:
     name: bcm27xx-bcm2708
     runs-on: ubuntu-latest
