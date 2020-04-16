@@ -52,7 +52,7 @@ pipeline {
 				sh label: 'Unpack image', script: 'gunzip -cd ./output/images/factory/*x86-64*.img.gz > ./image.img'
 				sh label: 'Print python environment', script: 'python3 -m pip freeze'
 				script {
-					for (f in findFiles(glob: '**/tests/*.py')) {
+					for (f in findFiles(glob: 'tests/*.py')) {
 						sh label: "Test ${f.name}", script: "python3 tests/${f.name} --use-tmp-workdir"
 					}
 				}
