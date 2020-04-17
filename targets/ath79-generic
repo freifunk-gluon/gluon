@@ -14,6 +14,13 @@ local ATH10K_PACKAGES_QCA9888 = {
 	'-ath10k-firmware-qca9888-ct',
 }
 
+-- AVM
+
+device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
