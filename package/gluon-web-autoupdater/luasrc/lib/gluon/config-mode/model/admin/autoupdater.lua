@@ -22,11 +22,18 @@ function o:write(data)
 end
 
 o = s:option(ListValue, "branch", translate("Branch"))
-uci:foreach("autoupdater", "branch",
-	function (section)
-		o:value(section[".name"])
-	end
-)
+
+local branches = {}
+uci:foreach("autoupdater", "branch", function(branch)
+	table.insert(branches, branch)
+end)
+table.sort(branches, function(a, b)
+	return a.name < b.name
+end)
+for _, branch in ipairs(branches) do
+	o:value(branch[".name"], branch.name)
+end
+
 o.default = uci:get("autoupdater", autoupdater, "branch")
 function o:write(data)
 	uci:set("autoupdater", autoupdater, "branch", data)
