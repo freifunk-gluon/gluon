@@ -17,6 +17,11 @@ lookup_site() {
 	lua -e "print(require('gluon.site').$path('$default'))"
 }
 
+lookup_uci() {
+	local path="$1" default="$2"
+	uci -q get "$path" || echo "$default"
+}
+
 proto_gluon_bat0_renew() {
 	local config="$1"
 
@@ -41,7 +46,7 @@ proto_gluon_bat0_setup() {
 	batctl interface create
 
 	batctl orig_interval 5000
-	batctl hop_penalty 15
+	batctl hop_penalty "$(lookup_uci 'gluon.mesh_batman_adv.hop_penalty' 15)"
 	batctl multicast_mode 0
 
 	case "$gw_mode" in
