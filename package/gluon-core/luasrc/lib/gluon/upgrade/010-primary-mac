@@ -109,6 +109,7 @@ local primary_addrs = {
 			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
 			'tplink,archer-c2-v3',
+			'tplink,archer-d50-v1',
 		}},
 		{'brcm2708'},
 		{'ipq40xx', 'generic', {
