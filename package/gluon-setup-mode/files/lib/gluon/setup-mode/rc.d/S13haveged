@@ -1,5 +1,0 @@
-#!/bin/sh /etc/rc.common
-
-if [ -x /etc/init.d/haveged ] && /etc/init.d/haveged enabled; then
-	. /etc/init.d/haveged
-fi
