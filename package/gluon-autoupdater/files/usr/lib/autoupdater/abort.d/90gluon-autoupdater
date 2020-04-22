@@ -4,6 +4,6 @@
 
 
 start_enabled cron
-start_enabled haveged
+start_enabled urngd
 start_enabled micrond
 start_enabled sysntpd
