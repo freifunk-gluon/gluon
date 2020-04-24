@@ -36,20 +36,22 @@ local function clean(image, name)
 	lib.exec {'rm', '-f', dir..'/'..file}
 end
 
-for _, image in ipairs(lib.images) do
-	clean(image, image.image)
+for _, images in pairs(lib.images) do
+	for _, image in ipairs(images) do
+		clean(image, image.image)
 
-	local destdir, destname = image:dest_name(image.image)
-	local source = string.format('openwrt/bin/targets/%s/openwrt-%s-%s%s%s',
-		bindir, openwrt_target, image.name, image.in_suffix, image.extension)
+		local destdir, destname = image:dest_name(image.image)
+		local source = string.format('openwrt/bin/targets/%s/openwrt-%s-%s%s%s',
+			bindir, openwrt_target, image.name, image.in_suffix, image.extension)
 
-	lib.exec {'cp', source, destdir..'/'..destname}
+		lib.exec {'cp', source, destdir..'/'..destname}
 
-	for _, alias in ipairs(image.aliases) do
-		clean(image, alias)
+		for _, alias in ipairs(image.aliases) do
+			clean(image, alias)
 
-		local _, aliasname = image:dest_name(alias)
-		lib.exec {'ln', '-s', destname, destdir..'/'..aliasname}
+			local _, aliasname = image:dest_name(alias)
+			lib.exec {'ln', '-s', destname, destdir..'/'..aliasname}
+		end
 	end
 end
 

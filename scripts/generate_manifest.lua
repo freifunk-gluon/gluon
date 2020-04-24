@@ -48,8 +48,10 @@ local function generate(image)
 	end
 end
 
-for _, image in ipairs(lib.images) do
-	if image.subdir == 'sysupgrade' then
-		generate(image)
+for _, images in pairs(lib.images) do
+	for _, image in ipairs(images) do
+		if image.subdir == 'sysupgrade' then
+			generate(image)
+		end
 	end
 end
