@@ -205,6 +205,7 @@ ath79-generic
 * TP-Link
 
   - Archer C6 (v2)
+  - CPE220 (v3.0)
 
 brcm2708-bcm2708
 ----------------
