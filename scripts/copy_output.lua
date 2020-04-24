@@ -31,6 +31,12 @@ mkdir(env.GLUON_IMAGEDIR..'/other')
 lib.include(target)
 
 
+local function image_source(image)
+	return string.format(
+		'openwrt/bin/targets/%s/openwrt-%s-%s%s%s',
+		bindir, openwrt_target, image.name, image.in_suffix, image.extension)
+end
+
 local function clean(image, name)
 	local dir, file = image:dest_name(name, '\0', '\0')
 	lib.exec {'rm', '-f', dir..'/'..file}
@@ -41,8 +47,7 @@ for _, images in pairs(lib.images) do
 		clean(image, image.image)
 
 		local destdir, destname = image:dest_name(image.image)
-		local source = string.format('openwrt/bin/targets/%s/openwrt-%s-%s%s%s',
-			bindir, openwrt_target, image.name, image.in_suffix, image.extension)
+		local source = image_source(image)
 
 		lib.exec {'cp', source, destdir..'/'..destname}
 
@@ -52,6 +57,11 @@ for _, images in pairs(lib.images) do
 			local _, aliasname = image:dest_name(alias)
 			lib.exec {'ln', '-s', destname, destdir..'/'..aliasname}
 		end
+	end
+
+	for _, image in ipairs(images) do
+		local source = image_source(image)
+		lib.exec {'rm', '-f', source}
 	end
 end
 
