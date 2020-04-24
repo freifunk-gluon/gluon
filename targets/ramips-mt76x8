@@ -1,3 +1,8 @@
+-- Cudy
+
+device('cudy-wr1000', 'cudy_wr1000')
+
+
 -- GL.iNet
 
 device('gl-mt300n-v2', 'gl-mt300n-v2', {

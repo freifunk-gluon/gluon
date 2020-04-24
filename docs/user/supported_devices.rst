@@ -354,6 +354,10 @@ ramips-mt7621
 ramips-mt76x8
 -------------
 
+* Cudy
+
+  - WR1000 (v1)
+
 * GL.iNet
 
   - GL-MT300N (v2)
