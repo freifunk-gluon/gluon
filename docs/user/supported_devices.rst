@@ -316,10 +316,10 @@ ramips-mt7620
 
 * TP-Link
 
-  - Archer C2 v1
+  - Archer C2 (v1)
   - Archer C20 (v1)
   - Archer C20i
-  - Archer C50 v1
+  - Archer C50 (v1)
 
 * Xiaomi
 
@@ -356,7 +356,7 @@ ramips-mt76x8
 
 * GL.iNet
 
-  - GL-MT300N v2
+  - GL-MT300N (v2)
   - VIXMINI
 
 * NETGEAR
@@ -365,13 +365,13 @@ ramips-mt76x8
 
 * TP-Link
 
-  - Archer C50 v3
-  - Archer C50 v4
-  - TL-MR3020 v3
-  - TL-MR3420 v5
-  - TL-WA801ND v5
-  - TL-WR841N v13
-  - TL-WR902AC v3
+  - Archer C50 (v3)
+  - Archer C50 (v4)
+  - TL-MR3020 (v3)
+  - TL-MR3420 (v5)
+  - TL-WA801ND (v5)
+  - TL-WR841N (v13)
+  - TL-WR902AC (v3)
 
 * VoCore
 
