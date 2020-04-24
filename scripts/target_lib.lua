@@ -143,7 +143,9 @@ local image_mt = {
 }
 
 local function add_image(image)
-	table.insert(M.images, setmetatable(image, image_mt))
+	local device = image.image
+	M.images[device] = M.images[device] or {}
+	table.insert(M.images[device], setmetatable(image, image_mt))
 end
 
 function F.try_config(...)
