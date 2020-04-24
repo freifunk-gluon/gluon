@@ -1,17 +1,9 @@
-From 0d5a95cac5aada71108e2178e0ec5b2a6efdc415 Mon Sep 17 00:00:00 2001
 From: Jan Alexander <jan@nalx.net>
 Date: Tue, 31 Mar 2020 21:50:28 +0200
-Subject: [PATCH] ath79: enable GL-AR750S NOR variant from master
-
----
- target/linux/ath79/base-files/etc/board.d/02_network          | 2 +-
- .../ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata | 2 +-
- target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts           | 4 ++--
- target/linux/ath79/image/generic.mk                           | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+Subject: ath79: enable GL-AR750S NOR variant from master
 
 diff --git a/target/linux/ath79/base-files/etc/board.d/02_network b/target/linux/ath79/base-files/etc/board.d/02_network
-index 8edd4e6c2e..2d2d4e33af 100755
+index 1b0e76b1593bfd38cfaea6dc4844ed9f222f0b6b..31b59c46699e45e2611efee046efe3ebf9521f56 100755
 --- a/target/linux/ath79/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/base-files/etc/board.d/02_network
 @@ -140,7 +140,7 @@ ath79_setup_interfaces()
@@ -24,7 +16,7 @@ index 8edd4e6c2e..2d2d4e33af 100755
  			"0@eth0" "2:lan:2" "3:lan:1" "1:wan"
  		;;
 diff --git a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index d93e6dcd71..c917f38211 100644
+index d93e6dcd71ab19c53905daa41e95cc4fc614f114..c917f38211d0b246f064dba4b7feefecf61f5856 100644
 --- a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 @@ -117,7 +117,7 @@ case "$FIRMWARE" in
@@ -37,7 +29,7 @@ index d93e6dcd71..c917f38211 100644
  		ath10kcal_patch_mac $(macaddr_add $(mtd_get_mac_binary art 0) +1)
  		;;
 diff --git a/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts b/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
-index 0145a24fba..ebecb8cc77 100644
+index 0145a24fbae2cdbe6fb6445607795af6b792352d..ebecb8cc776091ec019638589cb88159345d367f 100644
 --- a/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
 +++ b/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
 @@ -7,8 +7,8 @@
@@ -52,7 +44,7 @@ index 0145a24fba..ebecb8cc77 100644
  	chosen {
  		bootargs = "console=ttyS0,115200n8";
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
-index 55053be34f..892ef10f87 100644
+index 55053be34f11f0df982c85f94c9180fdba9ff221..892ef10f870e347c8a1509cecd35bce4b5e98bee 100644
 --- a/target/linux/ath79/image/generic.mk
 +++ b/target/linux/ath79/image/generic.mk
 @@ -403,9 +403,9 @@ define Device/glinet_gl-ar750s
@@ -67,6 +59,3 @@ index 55053be34f..892ef10f87 100644
  
  define Device/glinet_gl-x750
    ATH_SOC := qca9531
--- 
-2.25.1
-
