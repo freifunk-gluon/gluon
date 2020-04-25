@@ -22,6 +22,8 @@ cd gluon/contrib/ci/jenkins-community-slave/
 docker build -t gluon-jenkins .
 mkdir /var/cache/openwrt_dl_cache/
 chown 1000:1000 /var/cache/openwrt_dl_cache
+echo "z /dev/kvm 0666 - kvm -" > /etc/tmpfiles.d/kvm.conf
+systemd-tmpfiles --create
 docker run --detach --restart always \
     --env "SLAVE_NAME=whoareyou" \
     --env "SLAVE_SECRET=changeme" \
