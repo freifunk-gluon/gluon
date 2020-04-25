@@ -1,8 +1,53 @@
+boolean targetNeedsBuild(targetName) {
+	// matches an exact path name
+	rebuildWhenFileModified = [
+		"modules",
+		"Makefile",
+		"targets/${targetName}",
+		"${targetName.split('-')[0]}.inc",
+		"contrib/ci/Jenkinsfile"
+	]
+	// matches a path by its prefix
+	rebuildWhenPathModified = [
+		"patches/",
+		"scripts/",
+	]
+
+	if (targetName == "x86-64") {
+		rebuildWhenPathModified.addAll([
+			"package/",
+			"tests/"
+		])
+	}
+
+	result = false
+	for (changeLogSet in currentBuild.changeSets) {
+		for (entry in changeLogSet.getItems()) {
+			for (file in entry.getAffectedFiles()) {
+				if (file.getPath() in rebuildWhenFileModified) {
+					println("file ${file.getPath()} modified, rebuild ${targetName}")
+					result = true
+				}
+				for (path in rebuildWhenPathModified) {
+					if (file.getPath().startsWith(path)) {
+						println("path ${path} with file ${file.getPath()} modified, rebuild ${targetName}")
+						result = true
+					}
+				}
+			}
+		}
+	}
+	return result
+}
+
 pipeline {
 	agent none
 	environment {
+		GLUON_BRANCH = "ci"
+		GLUON_DEPRECATED = "full"
+		GLUON_RELEASE = "fixed"
 		GLUON_SITEDIR = "contrib/ci/minimal-site"
-		GLUON_TARGET = "x86-64"
+		BROKEN = "1"
 		BUILD_LOG = "1"
 	}
 	stages {
@@ -32,15 +77,47 @@ pipeline {
 			}
 		}
 		stage('build') {
-			agent { label 'gluon-docker-v2' }
+			agent { label "gluon-docker-v2" }
 			steps {
-				sh label: 'Identify runner', script: 'echo $SLAVE_NAME'
-				sh 'make update'
-				sh 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
-				timeout(time: 2, unit: "HOURS") {
-					sh 'make -j$(nproc) V=s'
+				script {
+					def jobs = [:]
+					for (target in findFiles(glob: "targets/*")) {
+						def targetName = target.name
+						if (targetName == "generic" ||
+						    targetName.endsWith(".inc") ||
+						    targetName.endsWith(".mk")) {
+							continue
+						}
+						if (!targetNeedsBuild(targetName)) {
+							continue
+						}
+						jobs[targetName] = {
+							node (label: "gluon-docker-v2") {
+								stage(targetName) {
+									checkout scm
+									sh label: 'Identify runner', script: 'echo $SLAVE_NAME'
+									targetNeedsBuild(targetName)
+									sh 'make update'
+									sh label: ' Symlink download cache', script: 'test -d /dl_cache && ln -s /dl_cache openwrt/dl || true'
+									timeout(time: 2, unit: "HOURS") {
+										sh label: "Build ${targetName}", script: "make -j\$(nproc) GLUON_TARGET=${targetName} V=s"
+									}
+									sh 'make manifest'
+									sh 'cat output/images/sysupgrade/*.manifest'
+									script {
+										if (targetName == "x86-64") {
+											stash includes: '**/output/images/factory/*-x86-64.img.gz', name: 'gluon-x86-64-factory'
+										}
+									}
+								}
+							}
+						}
+					}
+					if (jobs.isEmpty()) {
+						println("No targets required a rebuild")
+					}
+					parallel jobs
 				}
-				stash includes: '**/output/images/factory/*-x86-64.img.gz', name: 'gluon-x86-64-factory'
 			}
 		}
 		stage('test') {
