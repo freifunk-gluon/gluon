@@ -78,3 +78,10 @@ device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 })
 
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+
+-- Ubiquiti
+
+device('ubiquiti-nanostation-ac', 'ubnt_nanostation-ac', {
+	broken = true, -- 64M RAM ath9k + ath10k
+	packages = ATH10K_PACKAGES_QCA9880,
+})

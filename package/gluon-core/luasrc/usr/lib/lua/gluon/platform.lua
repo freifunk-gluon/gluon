@@ -54,6 +54,7 @@ function M.is_outdoor_device()
 	elseif M.match('ath79', 'generic', {
 		'devolo,dvl1750x',
 		'tplink,cpe220-v3',
+		'ubnt,nanostation-ac',
 	}) then
 		return true
 
