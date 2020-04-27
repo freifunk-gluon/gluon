@@ -221,6 +221,11 @@ brcm2708-bcm2709
 ipq40xx-generic
 ---------------
 
+* Aruba
+
+  - AP-303
+  - Instant On AP11
+
 * AVM
 
   - FRITZ!Box 4040 [#avmflash]_
