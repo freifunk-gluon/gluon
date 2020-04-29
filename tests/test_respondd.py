@@ -1,4 +1,4 @@
-#!/usr/bin/python36
+#!/usr/bin/env python3
 import sys
 from pynet import *
 import asyncio
