@@ -11,6 +11,14 @@ is a requirement.
 
 .. _device-class-definition:
 
+Device checklist
+----------------
+Pull requests adding device support must have the device checklist
+included in their description. The checklist assures core functionality
+of Gluon is well supported on the device.
+
+The checklist can be found in the `wiki <https://github.com/freifunk-gluon/gluon/wiki/Device-Integration-checklist>`_.
+
 Device classes
 --------------
 Gluon currently is aware of two device classes. Depending on the device class, different
