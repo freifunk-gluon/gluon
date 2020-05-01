@@ -212,11 +212,11 @@ GLUON_DEBUG
   Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or
   similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
 
-GLUON_DO_NOT_MINIFY
-  Setting ``GLUON_DO_NOT_MINIFY`` will omit the minification of scripts during the build process.
-  This setting is handy if human readable scripts on the devices are desired for development purposes.
-  Be aware, that this will increase the size of the resulting images and is therefore not suitable
-  for devices with small flash chips.
+GLUON_MINIFY
+  Setting ``GLUON_MINIFY`` will minify scripts during the build process. This flag is enabled by
+  default. Disabling this flag is handy if human readable scripts on the devices are desired for
+  development purposes. Be aware, that this will increase the size of the resulting images and
+  is therefore not suitable for devices with small flash chips.
 
 GLUON_DEVICES
   List of devices to build. The list contains the Gluon profile name of a device, the profile

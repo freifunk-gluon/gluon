@@ -348,5 +348,6 @@ config GLUON_SPECIALIZE_KERNEL
 	select KERNEL_IP_NF_TARGET_MASQUERADE
 	select KERNEL_IP_NF_TARGET_REDIRECT
 
-config GLUON_DO_NOT_MINIFY
-	bool "Disables minification of gluon scripts during build"
+config GLUON_MINIFY
+	bool "Minify Gluon scripts"
+	default y
