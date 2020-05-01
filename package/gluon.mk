@@ -3,13 +3,10 @@ PKG_FILE_DEPENDS += $(GLUON_MK)
 
 PKG_BUILD_DEPENDS += luasrcdiet/host
 
-<<<<<<< HEAD
-=======
 ifneq ($(wildcard ./luasrc/.),)
 	PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
 endif
 
->>>>>>> 51dde9fa... rebase and so on
 ifneq ($(wildcard ./src/respondd.c),)
   PKG_BUILD_DEPENDS += respondd
 endif
