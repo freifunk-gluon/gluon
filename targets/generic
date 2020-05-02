@@ -60,8 +60,8 @@ if istrue(env.GLUON_DEBUG) then
 	try_config 'CONFIG_TARGET_ROOTFS_PARTSIZE=500'
 end
 
-if istrue(env.GLUON_MINIFY) then
-	config 'CONFIG_GLUON_MINIFY=y'
+if not istrue(env.GLUON_MINIFY) then
+	config '# CONFIG_GLUON_MINIFY is not set'
 end
 
 packages {

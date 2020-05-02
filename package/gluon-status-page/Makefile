@@ -18,7 +18,7 @@ define Package/gluon-status-page/install
 	$(INSTALL_DIR) $(1)/lib/gluon/status-page/providers
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/stations $(1)/lib/gluon/status-page/providers/
 
-ifndef GLUON_MINIFY
+ifndef CONFIG_GLUON_MINIFY
 	$(CP) ./javascript/status-page.js $(1)/lib/gluon/status-page/www/static/status-page.js
 endif
 

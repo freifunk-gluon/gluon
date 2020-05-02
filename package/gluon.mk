@@ -61,7 +61,7 @@ endef
 define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
-ifdef GLUON_MINIFY
+ifdef CONFIG_GLUON_MINIFY
 	$(FIND) $(2) -type f | while read src; do \
 		if luasrcdiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
 			chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
