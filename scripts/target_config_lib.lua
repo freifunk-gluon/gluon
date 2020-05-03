@@ -20,15 +20,19 @@ return function(funcs)
 	end
 
 
-	local function site_packages(image)
+	local function site_vars(var)
 		return lib.exec_capture_raw(string.format([[
-	MAKEFLAGS= make print _GLUON_IMAGE_=%s --no-print-directory -s -f - <<'END_MAKE'
+	MAKEFLAGS= make print _GLUON_SITE_VARS_=%s --no-print-directory -s -f - <<'END_MAKE'
 include $(GLUON_SITEDIR)/site.mk
 
 print:
-	echo -n '$(GLUON_$(_GLUON_IMAGE_)_SITE_PACKAGES)'
+	echo -n '$(_GLUON_SITE_VARS_)'
 END_MAKE
-		]], lib.escape(image)))
+		]], lib.escape(var)))
+	end
+
+	local function site_packages(image)
+		return site_vars(string.format('$(GLUON_%s_SITE_PACKAGES)', image))
 	end
 
 	local function handle_target_pkgs(pkgs)
