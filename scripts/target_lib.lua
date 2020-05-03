@@ -99,7 +99,10 @@ function F.escape(s)
 end
 
 local function escape_command(command, raw)
-	local ret = 'exec'
+	local ret = ''
+	if not raw then
+		ret = 'exec'
+	end
 	for _, arg in ipairs(command) do
 		ret = ret .. ' ' .. F.escape(arg)
 	end
