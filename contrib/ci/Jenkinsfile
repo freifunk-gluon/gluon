@@ -76,6 +76,20 @@ pipeline {
 				sh 'make -C docs html'
 			}
 		}
+		stage('debug') {
+			agent { label "gluon-docker-v2" }
+			steps {
+				script {
+					for (changeLogSet in currentBuild.changeSets) {
+						for (entry in changeLogSet.getItems()) {
+							for (file in entry.getAffectedFiles()) {
+								println("${file.getPath()} modified")
+							}
+						}
+					}
+				}
+			}
+		}
 		stage('build') {
 			agent { label "gluon-docker-v2" }
 			steps {
