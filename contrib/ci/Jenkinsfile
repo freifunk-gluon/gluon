@@ -122,15 +122,21 @@ pipeline {
 		}
 		stage('test') {
 			agent { label 'gluon-docker-v2' }
-			environment {
-				TMUX = "notmux"
-			}
 			steps {
 				sh label: 'Identify runner', script: 'echo $SLAVE_NAME'
-				unstash 'gluon-x86-64-factory'
-				sh label: 'Unpack image', script: 'gunzip -cd ./output/images/factory/*x86-64*.img.gz > ./image.img'
-				sh label: 'Print python environment', script: 'python3 -m pip freeze'
 				script {
+					try {
+						unstash 'gluon-x86-64-factory'
+					} catch (err) {
+						echo err.getMessage()
+						// Abort here, if we don't have an x86-64 factory image we can't run tests
+						currentBuild.result = 'ABORTED'
+						return
+					}
+
+					sh label: 'Unpack image', script: 'gunzip -cd ./output/images/factory/*x86-64*.img.gz > ./image.img'
+					sh label: 'Print python environment', script: 'python3 -m pip freeze'
+
 					for (f in findFiles(glob: 'tests/*.py')) {
 						timeout(time: 10, unit: "MINUTES") {
 							sh label: "Test ${f.name}", script: "python3 tests/${f.name} --use-tmp-workdir"
