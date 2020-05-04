@@ -105,6 +105,9 @@ local primary_addrs = {
 			'archer-c60-v1',
 			'archer-c7',
 		}},
+		{'ipq40xx', 'generic', {
+			'linksys,ea6350v3',
+		}},
 		{'ipq806x', 'generic', {
 			'netgear,r7800',
 		}},
