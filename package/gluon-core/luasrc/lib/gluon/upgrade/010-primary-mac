@@ -12,6 +12,8 @@ local json = require 'jsonc'
 local platform = require 'gluon.platform'
 local util = require 'gluon.util'
 
+local board_data = json.load('/etc/board.json')
+local network_data = (board_data or {}).network
 
 local function sysfs(...)
 	local path = string.format(...)
@@ -33,9 +35,9 @@ end
 
 local function board(iface)
 	return function()
-		local data = json.load('/etc/board.json')
-		if data and data.network and data.network[iface] then
-			return data.network[iface].macaddr
+		local ifdata = network_data[iface] or {}
+		if ifdata.macaddr then
+			return ifdata.macaddr
 		end
 	end
 end
