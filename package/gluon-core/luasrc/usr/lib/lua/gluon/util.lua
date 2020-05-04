@@ -23,7 +23,7 @@ local function do_filter_prefix(input, output, prefix)
 end
 
 function M.trim(str)
-	return str:gsub("^%s*(.-)%s*$", "%1")
+	return (str:gsub("^%s*(.-)%s*$", "%1"))
 end
 
 function M.contains(table, value)
@@ -96,7 +96,7 @@ function M.exec(command)
 end
 
 function M.node_id()
-	return string.gsub(sysconfig.primary_mac, ':', '')
+	return (string.gsub(sysconfig.primary_mac, ':', ''))
 end
 
 function M.default_hostname()
