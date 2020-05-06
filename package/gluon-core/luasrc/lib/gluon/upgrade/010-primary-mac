@@ -26,6 +26,10 @@ local function get_netdev_addr(ifname)
 	return read('/sys/class/net/%s/address', ifname)
 end
 
+local function strip_vlan(ifname)
+	return (ifname:gsub('%..*', ''))
+end
+
 
 local function netdev(ifname)
 	return function()
@@ -44,6 +48,8 @@ local function interface(name)
 		local ifdata = network_data[name] or {}
 		if ifdata.macaddr then
 			return ifdata.macaddr
+		elseif ifdata.ifname then
+			return get_netdev_addr(strip_vlan(ifdata.ifname))
 		end
 	end
 end
