@@ -26,7 +26,10 @@ end
 function M.is_outdoor_device()
 	if M.match('ar71xx', 'generic', {
 		'bullet-m',
+		'cpe210',
 		'cpe510',
+		'wbs210',
+		'wbs510',
 		'lbe-m5',
 		'loco-m-xw',
 		'nanostation-m',
@@ -35,6 +38,7 @@ function M.is_outdoor_device()
 		'rocket-m-ti',
 		'rocket-m-xw',
 		'unifi-outdoor',
+		'unifi-outdoor-plus',
 	}) then
 		return true
 
@@ -46,7 +50,10 @@ function M.is_outdoor_device()
 		M.get_model() == 'Ubiquiti UniFi-AC-MESH-PRO' then
 		return true
 
-	elseif M.match('ath79', 'generic', {'devolo,dvl1750x'}) then
+	elseif M.match('ath79', 'generic', {
+		'devolo,dvl1750x',
+		'tplink,cpe220-v3',
+	}) then
 		return true
 
 	elseif M.match('ipq40xx', 'generic', {'engenius,ens620ext'}) then
