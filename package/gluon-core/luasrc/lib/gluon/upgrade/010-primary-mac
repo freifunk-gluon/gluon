@@ -15,27 +15,33 @@ local util = require 'gluon.util'
 local board_data = json.load('/etc/board.json')
 local network_data = (board_data or {}).network
 
-local function sysfs(...)
-	local path = string.format(...)
-	return function()
-		local addr = util.readfile(path)
-		if addr then
-			return util.trim(addr)
-		end
+local function read(...)
+	local addr = util.readfile(string.format(...))
+	if addr then
+		return util.trim(addr)
 	end
 end
 
-local function eth(index)
-	return sysfs('/sys/class/net/eth%d/address', index)
+local function get_netdev_addr(ifname)
+	return read('/sys/class/net/%s/address', ifname)
+end
+
+
+local function netdev(ifname)
+	return function()
+		return get_netdev_addr(ifname)
+	end
 end
 
 local function phy(index)
-	return sysfs('/sys/class/ieee80211/phy%d/macaddress', index)
+	return function()
+		return read('/sys/class/ieee80211/phy%d/macaddress', index)
+	end
 end
 
-local function board(iface)
+local function interface(name)
 	return function()
-		local ifdata = network_data[iface] or {}
+		local ifdata = network_data[name] or {}
 		if ifdata.macaddr then
 			return ifdata.macaddr
 		end
@@ -45,7 +51,7 @@ end
 
 -- Entries are matched in the order they are listed
 local primary_addrs = {
-	{eth(0), {
+	{netdev('eth0'), {
 		{'x86'},
 		{'brcm2708'},
 		{'ar71xx', 'generic', {
@@ -99,7 +105,7 @@ local primary_addrs = {
 			'miwifi-mini', 'tplink,c2-v1', 'c20-v1', 'c20i', 'c50',
 		}},
 	}},
-	{eth(1), {
+	{netdev('eth0'), {
 		{'ar71xx', 'generic', {
 			'archer-c5',
 			'archer-c58-v1',
@@ -124,7 +130,7 @@ local primary_addrs = {
 			'dir-860l-b1',
 		}},
 	}},
-	{board('lan'), {
+	{interface('lan'), {
 		{'lantiq', 'xway', {
 			'netgear,dgn3500b',
 		}},
@@ -139,7 +145,7 @@ local primary_addrs = {
 		{}, -- matches everything
 	}},
 	-- eth0 fallback when phy0 does not exist
-	{eth(0), {
+	{netdev('eth0'), {
 		{}, -- matches everything
 	}},
 }
