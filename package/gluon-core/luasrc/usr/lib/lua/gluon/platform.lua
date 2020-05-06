@@ -66,21 +66,20 @@ function M.device_supports_wpa3()
 end
 
 function M.device_supports_mfp(uci)
-	local idx = 0
 	local supports_mfp = true
 
 	if not M.device_supports_wpa3() then
 		return false
 	end
 
-	uci:foreach('wireless', 'wifi-device', function()
-		local phypath = '/sys/kernel/debug/ieee80211/phy' .. idx .. '/'
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		local phy = util.find_phy(radio)
+		local phypath = '/sys/kernel/debug/ieee80211/' .. phy .. '/'
 
 		if not util.file_contains_line(phypath .. 'hwflags', 'MFP_CAPABLE') then
 			supports_mfp = false
+			return false
 		end
-
-		idx = idx + 1
 	end)
 
 	return supports_mfp
