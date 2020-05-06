@@ -85,4 +85,17 @@ function M.device_supports_mfp(uci)
 	return supports_mfp
 end
 
+function M.device_uses_11a(uci)
+	local ret = false
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		if radio.hwmode == '11a' or radio.hwmode == '11na' then
+			ret = true
+			return false
+		end
+	end)
+
+	return ret
+end
+
 return M
