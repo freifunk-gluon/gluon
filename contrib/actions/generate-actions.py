@@ -31,7 +31,7 @@ ACTIONS_TARGET="""
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: output
+          name: {target_name}
           path: output
 """
 
