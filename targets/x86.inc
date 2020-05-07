@@ -1,8 +1,6 @@
 config 'CONFIG_VDI_IMAGES=y'
 config 'CONFIG_VMDK_IMAGES=y'
 
-class 'standard'
-
 packages {
 	'kmod-3c59x',
 	'kmod-8139cp',

@@ -55,7 +55,8 @@ endef
 GLUON_VARS = \
 	GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_DEBUG GLUON_DEPRECATED GLUON_DEVICES \
 	GLUON_TARGETSDIR GLUON_PATCHESDIR GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR \
-	GLUON_SITEDIR GLUON_RELEASE GLUON_BRANCH GLUON_LANGS GLUON_BASE_FEEDS BOARD SUBTARGET
+	GLUON_SITEDIR GLUON_RELEASE GLUON_BRANCH GLUON_LANGS GLUON_BASE_FEEDS \
+	GLUON_TARGET BOARD SUBTARGET
 
 unexport $(GLUON_VARS)
 GLUON_ENV = $(foreach var,$(GLUON_VARS),$(var)=$(call escape,$($(var))))
@@ -135,31 +136,6 @@ lint-lua: FORCE
 lint-sh: FORCE
 	scripts/lint-sh.sh
 
-define merge_lists
-  $(1) :=
-  $(foreach pkg,$(2),
-    $(1) := $$(strip $$(filter-out -$$(patsubst -%,%,$(pkg)) $$(patsubst -%,%,$(pkg)),$$(value $(1))) $(pkg))
-  )
-endef
-
-define feature_packages
-  $(1) := $(shell scripts/features.sh '$(2)' || echo '__ERROR__')
-endef
-
-$(eval $(call merge_lists,GLUON_FEATURE_LIST_standard,$(GLUON_FEATURES) $(GLUON_FEATURES_standard)))
-$(eval $(call merge_lists,GLUON_FEATURE_LIST_tiny,$(GLUON_FEATURES) $(GLUON_FEATURES_tiny)))
-
-$(eval $(call feature_packages,GLUON_FEATURE_PACKAGES_standard,$(GLUON_FEATURE_LIST_standard)))
-$(eval $(call feature_packages,GLUON_FEATURE_PACKAGES_tiny,$(GLUON_FEATURE_LIST_tiny)))
-
-ifneq ($(filter __ERROR__,$(GLUON_FEATURES_standard) $(GLUON_FEATURES_tiny)),)
-  $(error Error while evaluating features)
-endif
-
-$(eval $(call merge_lists,GLUON_DEFAULT_PACKAGES,$(GLUON_DEFAULT_PACKAGES) $(GLUON_SITE_PACKAGES)))
-$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_standard,$(GLUON_FEATURE_PACKAGES_standard) $(GLUON_SITE_PACKAGES_standard)))
-$(eval $(call merge_lists,GLUON_CLASS_PACKAGES_tiny,$(GLUON_FEATURE_PACKAGES_tiny) $(GLUON_SITE_PACKAGES_tiny)))
-
 
 LUA := openwrt/staging_dir/hostpkg/bin/lua
 
@@ -182,22 +158,16 @@ config: $(LUA) FORCE
 		$(call CheckSite,$(conf)); \
 	)
 
-	$(GLUON_ENV) \
-		$(LUA) scripts/target_config.lua '$(GLUON_TARGET)' '$(GLUON_DEFAULT_PACKAGES)' '$(GLUON_CLASS_PACKAGES_standard)' '$(GLUON_CLASS_PACKAGES_tiny)' \
-		> openwrt/.config
+	$(GLUON_ENV) $(LUA) scripts/target_config.lua > openwrt/.config
 	$(OPENWRTMAKE) defconfig
-
-	$(GLUON_ENV) \
-		$(LUA) scripts/target_config_check.lua '$(GLUON_TARGET)' '$(GLUON_DEFAULT_PACKAGES)' '$(GLUON_CLASS_PACKAGES_standard)' '$(GLUON_CLASS_PACKAGES_tiny)'
+	$(GLUON_ENV) $(LUA) scripts/target_config_check.lua
 
 
 all: config
 	+
-	$(GLUON_ENV) \
-		$(LUA) scripts/clean_output.lua
+	$(GLUON_ENV) $(LUA) scripts/clean_output.lua
 	$(OPENWRTMAKE)
-	$(GLUON_ENV) \
-		$(LUA) scripts/copy_output.lua '$(GLUON_TARGET)'
+	$(GLUON_ENV) $(LUA) scripts/copy_output.lua
 
 clean download: config
 	+$(OPENWRTMAKE) $@

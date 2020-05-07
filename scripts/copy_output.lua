@@ -1,11 +1,12 @@
 local lib = dofile('scripts/target_lib.lua')
 local env = lib.env
 
+local target = env.GLUON_TARGET
+
+assert(target)
 assert(env.GLUON_IMAGEDIR)
 assert(env.GLUON_PACKAGEDIR)
 
-
-local target = arg[1]
 
 local openwrt_target
 local subtarget = env.SUBTARGET
