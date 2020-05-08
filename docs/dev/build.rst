@@ -32,3 +32,59 @@ GLUON_BASE_FEEDS
     verbatim. By default, this contains a reference to the Gluon base packages;
     when using the Gluon build system to build a non-Gluon system, the variable
     can be set to the empty string.
+
+Helper scripts
+--------------
+
+Several tasks of the build process have been separated from the Makefile into
+external scripts, which are stored in the *scripts* directory. This was done to
+ease maintenance of these scripts and the Makefile, by avoiding a lot of escaping.
+These scripts are either bash or Lua scripts that run on the build system.
+
+default_feeds.sh
+    Defines the constant ``DEFAULT_FEEDS`` with the names of all feeds listed in
+    *openwrt/feeds.conf.default*. This script is only used as an include by other
+    scripts.
+
+feeds.sh
+    Creates the *openwrt/feeds.conf* file from ``FEEDS`` and ``DEFAULT_FEEDS``. The
+    feeds from ``FEEDS`` are linked to the matching subfolder of *packages/* and not
+    explicitly defined feeds of ``DEFAULT_FEEDS`` are setup as dummy (src-dummy).
+    This *openwrt/feeds.conf* is used to reinstall all packages of all feeds with
+    the *openwrt/scripts/feeds* tool.
+
+modules.sh
+    Defines the constants ``GLUON_MODULES`` and ``FEEDS`` by reading the *modules*
+    files of the Gluon repository root and the site configuration. The returned
+    variables look like:
+
+    - ``FEEDS``: "*feedA feedB ...*"
+    - ``GLUON_MODULES``: "*openwrt packages/feedA packages/feedB ...*"
+
+    This script is only used as an include by other scripts.
+
+patch.sh
+    (Re-)applies the patches from the *patches* directory to all ``GLUON_MODULES``
+    and checks out the files to the filesystem.
+    This is done for each repo by:
+
+    - creating a temporary clone of the repo to patch
+      - only branch *base* is used
+    - applying all patches via *git am* on top of this temporary *base* branch
+      - this branch is named *patched*
+    - copying the temporary clone to the *openwrt* (for OpenWrt Base) or
+      *packages* (for feeds) folder
+      - *git fetch* is used with the temporary clone as source
+      - *git checkout* is called to update the filesystem
+    - updating all git submodules
+
+    This solution with a temporary clone ensures that the timestamps of checked
+    out files are not changed by any intermedidate patch steps, but only when
+    updating the checkout with the final result. This avoids triggering unnecessary
+    rebuilds.
+
+update.sh
+    Sets up a working clone of the ``GLUON_MODULES`` (external repos) from the external
+    source and installs it into *packages/* directory. It simply tries to set the *base*
+    branch of the cloned repo to the correct commit. If this fails it fetches the
+    upstream branch and tries again to set the local *base* branch.
