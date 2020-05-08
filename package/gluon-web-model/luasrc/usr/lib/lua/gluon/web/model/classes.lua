@@ -145,7 +145,7 @@ function AbstractValue:depends(field, value)
 	table.insert(self.deps, deps)
 end
 
-function AbstractValue:deplist(_, deplist)
+function AbstractValue:deplist(deplist)
 	local deps = {}
 
 	for _, d in ipairs(deplist or self.deps) do
