@@ -179,20 +179,11 @@ end
 
 function AbstractValue:add_error(type, msg)
 	self.error = msg or type
-
-	if type == "invalid" then
-		self.tag_invalid = true
-	elseif type == "missing" then
-		self.tag_missing = true
-	end
-
 	self.state = M.FORM_INVALID
 end
 
 function AbstractValue:reset()
 	self.error = nil
-	self.tag_invalid = nil
-	self.tag_missing = nil
 	self.data = nil
 	self.state = M.FORM_NODATA
 
