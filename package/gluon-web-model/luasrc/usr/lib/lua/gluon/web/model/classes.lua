@@ -47,6 +47,7 @@ M.Node = Node
 
 function Node:__init__(name, title, description)
 	self.children = {}
+	self.deps = {}
 	self.title = title or ""
 	self.description = description or ""
 	self.name = name
@@ -71,6 +72,12 @@ function Node:id()
 	return prefix.."."..self:id_suffix()
 end
 
+function Node:reset()
+	for _, child in ipairs(self.children) do
+		child:reset()
+	end
+end
+
 function Node:parse(http)
 	for _, child in ipairs(self.children) do
 		child:parse(http)
@@ -80,8 +87,8 @@ end
 function Node:render(renderer, scope)
 	if self.template then
 		local env = setmetatable({
-			self  = self,
-			id  = self:id(),
+			self = self,
+			id = self:id(),
 			scope = scope,
 		}, {__index = scope})
 		renderer.render(self.template, env, self.package)
@@ -94,12 +101,61 @@ function Node:render_children(renderer, scope)
 	end
 end
 
+function Node:depends(field, value)
+	local deps
+	if instanceof(field, Node) then
+		deps = { [field] = value }
+	else
+		deps = field
+	end
+
+	table.insert(self.deps, deps)
+end
+
+function Node:deplist(deplist)
+	local deps = {}
+
+	for _, d in ipairs(deplist or self.deps) do
+		local a = {}
+		for k, v in pairs(d) do
+			a[k:id()] = v
+		end
+		table.insert(deps, a)
+	end
+
+	if next(deps) then
+		return deps
+	end
+end
+
 function Node:resolve_depends()
-	local updated = false
+	local updated = self:resolve_node_depends()
+
 	for _, node in ipairs(self.children) do
 		updated = updated or node:resolve_depends()
 	end
+
 	return updated
+end
+
+function Node:resolve_node_depends()
+	if #self.deps == 0 then
+		return false
+	end
+
+	for _, d in ipairs(self.deps) do
+		local valid = true
+		for k, v in pairs(d) do
+			if k.state ~= M.FORM_VALID or k.data ~= v then
+				valid = false
+				break
+			end
+		end
+		if valid then return false end
+	end
+
+	self:reset()
+	return true
 end
 
 function Node:handle()
@@ -123,7 +179,6 @@ M.AbstractValue = AbstractValue
 
 function AbstractValue:__init__(...)
 	Node.__init__(self, ...)
-	self.deps = {}
 
 	self.default   = nil
 	self.size      = nil
@@ -132,33 +187,6 @@ function AbstractValue:__init__(...)
 	self.template  = "model/valuewrapper"
 
 	self.state = M.FORM_NODATA
-end
-
-function AbstractValue:depends(field, value)
-	local deps
-	if instanceof(field, Node) then
-		deps = { [field] = value }
-	else
-		deps = field
-	end
-
-	table.insert(self.deps, deps)
-end
-
-function AbstractValue:deplist(deplist)
-	local deps = {}
-
-	for _, d in ipairs(deplist or self.deps) do
-		local a = {}
-		for k, v in pairs(d) do
-			a[k:id()] = v
-		end
-		table.insert(deps, a)
-	end
-
-	if next(deps) then
-		return deps
-	end
 end
 
 function AbstractValue:defaultvalue()
@@ -214,24 +242,12 @@ function AbstractValue:parse(http)
 	self.state = M.FORM_VALID
 end
 
-function AbstractValue:resolve_depends()
-	if self.state == M.FORM_NODATA or #self.deps == 0 then
+function AbstractValue:resolve_node_depends()
+	if self.state == M.FORM_NODATA then
 		return false
 	end
 
-	for _, d in ipairs(self.deps) do
-		local valid = true
-		for k, v in pairs(d) do
-			if k.state ~= M.FORM_VALID or k.data ~= v then
-				valid = false
-				break
-			end
-		end
-		if valid then return false end
-	end
-
-	self:reset()
-	return true
+	return Node.resolve_node_depends(self)
 end
 
 function AbstractValue:validate()

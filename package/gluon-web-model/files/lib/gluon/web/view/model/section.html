@@ -1,4 +1,4 @@
-<fieldset class="gluon-section">
+<fieldset class="gluon-section" id="<%=id%>" data-index="<%=self.index%>"<%= attr("data-depends", self:deplist()) %>>
 	<% if self.title and #self.title > 0 then -%>
 		<legend><%|self.title%></legend>
 	<%- end %>
