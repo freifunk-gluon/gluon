@@ -61,6 +61,11 @@ device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 })
 
 
+-- Linksys
+
+device('linksys-ea6350v3', 'linksys_ea6350v3')
+
+
 -- NETGEAR
 
 device('netgear-ex6100v2', 'netgear_ex6100v2', {

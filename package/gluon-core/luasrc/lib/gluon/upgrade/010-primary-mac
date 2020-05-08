@@ -127,6 +127,11 @@ local primary_addrs = {
 			'netgear,dgn3500b',
 		}},
 	}},
+	{board('wan'), {
+		{'ipq40xx', 'generic', {
+			'linksys,ea6350v3',
+		}},
+	}},
 	-- phy0 default
 	{phy(0), {
 		{}, -- matches everything
