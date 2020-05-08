@@ -131,6 +131,7 @@ function AbstractValue:__init__(...)
 
 	self.template  = "model/valuewrapper"
 
+	self.error = false
 	self.state = M.FORM_NODATA
 end
 
@@ -177,14 +178,9 @@ function AbstractValue:cfgvalue()
 	end
 end
 
-function AbstractValue:add_error(type, msg)
-	self.error = msg or type
-	self.state = M.FORM_INVALID
-end
-
 function AbstractValue:reset()
-	self.error = nil
 	self.data = nil
+	self.error = false
 	self.state = M.FORM_NODATA
 
 end
@@ -192,13 +188,9 @@ end
 function AbstractValue:parse(http)
 	self.data = self:formvalue(http)
 
-	local ok, err = self:validate()
-	if not ok then
-		if type(self.data) ~= "string" or #self.data > 0 then
-			self:add_error("invalid", err)
-		else
-			self:add_error("missing", err)
-		end
+	if not self:validate() then
+		self.error = true
+		self.state = M.FORM_INVALID
 		return
 	end
 
