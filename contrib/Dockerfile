@@ -14,6 +14,7 @@ RUN apt update && apt install -y --no-install-recommends \
     libssl-dev \
     libelf-dev \
     wget \
+    rsync \
     time \
     ecdsautils \
     lua-check \
