@@ -239,6 +239,10 @@ ipq40xx-generic
 
   - GL-B1300
 
+* Linksys
+
+  - EA6350 (v3)
+
 * NETGEAR
 
   - EX6100 (v2)
