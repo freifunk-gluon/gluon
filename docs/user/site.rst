@@ -302,6 +302,12 @@ mesh_vpn
 
     You can set syslog_level from verbose (default) to warn to reduce syslog output.
 
+    fastd allows to configure a tree of peer groups and peers. By default, the
+    list of groups and peers configured in the *fastd* UCI config is completely
+    replaced by the list from site.conf on upgrades. To allow custom modifications
+    to the peer list, removal and modification of peers can be prevented by
+    setting the *preserve* option of a peer to ``1`` in UCI.
+
     The `tunneldigger` section is used to define the *tunneldigger* broker list.
 
     **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
