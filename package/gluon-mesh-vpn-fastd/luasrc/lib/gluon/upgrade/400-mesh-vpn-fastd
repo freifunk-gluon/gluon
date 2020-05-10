@@ -74,10 +74,8 @@ local function add_group(name, config, parent)
 		peer_limit = config.limit,
 	})
 
-	if config.peers then
-		for peername, peerconfig in pairs(config.peers) do
-			add_peer(name, peername, peerconfig)
-		end
+	for peername, peerconfig in pairs(config.peers or {}) do
+		add_peer(name, peername, peerconfig)
 	end
 
 	add_groups(name, config.groups, name)
@@ -85,10 +83,8 @@ end
 
 -- declared local above
 function add_groups(prefix, groups, parent)
-	if groups then
-		for name, group in pairs(groups) do
-			add_group(prefix .. '_' .. name, group, parent)
-		end
+	for name, group in pairs(groups or {}) do
+		add_group(prefix .. '_' .. name, group, parent)
 	end
 end
 
