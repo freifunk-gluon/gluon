@@ -213,9 +213,9 @@ GLUON_DEBUG
   similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
 
 GLUON_MINIFY
-  Setting ``GLUON_MINIFY`` will minify scripts during the build process. This flag is enabled by
+  Setting ``GLUON_MINIFY=1`` will minify scripts during the build process. This flag is enabled by
   default. Disabling this flag is handy if human readable scripts on the devices are desired for
-  development purposes. Be aware, that this will increase the size of the resulting images and
+  development purposes. Be aware that this will increase the size of the resulting images and
   is therefore not suitable for devices with small flash chips.
 
 GLUON_DEVICES
