@@ -1,13 +1,16 @@
-local ret = 0
+local errors = {}
 
 
 local function fail(...)
-	if ret == 0 then
-		ret = 1
+	if not next(errors) then
 		io.stderr:write('Configuration failed:', '\n')
 	end
 
-	io.stderr:write(' * ', string.format(...), '\n')
+	local msg = string.format(...)
+	if not errors[msg] then
+		errors[msg] = true
+		io.stderr:write(' * ', msg, '\n')
+	end
 end
 
 local function match_config(f)
@@ -63,4 +66,6 @@ for config, v in pairs(lib.configs) do
 	end
 end
 
-os.exit(ret)
+if next(errors) then
+	os.exit(1)
+end
