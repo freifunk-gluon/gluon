@@ -62,23 +62,25 @@ unexport $(GLUON_VARS)
 GLUON_ENV = $(foreach var,$(GLUON_VARS),$(var)=$(call escape,$($(var))))
 
 show-release:
-	echo '$(GLUON_RELEASE)'
+	@echo '$(GLUON_RELEASE)'
 
 
 update: FORCE
+	@
 	export $(GLUON_ENV)
 	scripts/update.sh
 	scripts/patch.sh
 	scripts/feeds.sh
 
 update-patches: FORCE
+	@
 	export $(GLUON_ENV)
 	scripts/update.sh
 	scripts/update-patches.sh
 	scripts/patch.sh
 
 update-feeds: FORCE
-	$(GLUON_ENV) scripts/feeds.sh
+	@$(GLUON_ENV) scripts/feeds.sh
 
 
 GLUON_TARGETS :=
@@ -124,23 +126,23 @@ define CheckSite
 endef
 
 list-targets: FORCE
-	for target in $(GLUON_TARGETS); do
+	@for target in $(GLUON_TARGETS); do
 		echo "$$target"
 	done
 
 lint: lint-lua lint-sh
 
 lint-lua: FORCE
-	scripts/lint-lua.sh
+	@scripts/lint-lua.sh
 
 lint-sh: FORCE
-	scripts/lint-sh.sh
+	@scripts/lint-sh.sh
 
 
 LUA := openwrt/staging_dir/hostpkg/bin/lua
 
 $(LUA):
-	+
+	+@
 
 	$(CheckExternal)
 
@@ -150,7 +152,7 @@ $(LUA):
 
 
 config: $(LUA) FORCE
-	+
+	+@
 
 	$(CheckExternal)
 	$(CheckTarget)
@@ -164,21 +166,22 @@ config: $(LUA) FORCE
 
 
 all: config
-	+
+	+@
 	$(GLUON_ENV) $(LUA) scripts/clean_output.lua
 	$(OPENWRTMAKE)
 	$(GLUON_ENV) $(LUA) scripts/copy_output.lua
 
 clean download: config
-	+$(OPENWRTMAKE) $@
+	+@$(OPENWRTMAKE) $@
 
 dirclean: FORCE
-	+
+	+@
 	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) dirclean
 	rm -rf $(GLUON_TMPDIR) $(GLUON_OUTPUTDIR)
 
 manifest: $(LUA) FORCE
+	@
 	[ '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
 	$(CheckExternal)
@@ -202,4 +205,3 @@ FORCE: ;
 .PHONY: FORCE
 .NOTPARALLEL:
 .ONESHELL:
-.SILENT:
