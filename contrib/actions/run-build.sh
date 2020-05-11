@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export BROKEN=1
+export GLUON_AUTOREMOVE=1
 export GLUON_DEPRECATED=1
 export GLUON_SITEDIR="contrib/ci/minimal-site"
 export GLUON_TARGET=$1

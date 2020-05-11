@@ -208,6 +208,12 @@ GLUON_TARGET
 Special variables
 .................
 
+GLUON_AUTOREMOVE
+  Setting ``GLUON_AUTOREMOVE=1`` enables the ``CONFIG_AUTOREMOVE`` OpenWrt setting, which will delete package build
+  directories after a package build has finished to save space. This is mostly useful for CI builds from scratch. Do
+  not set this flag during development (or generally, when you want you reuse your build tree for subsequent builds),
+  as it significantly increases incremental build times.
+
 GLUON_DEBUG
   Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or
   similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
