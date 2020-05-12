@@ -28,10 +28,16 @@ ACTIONS_TARGET="""
         run: bash contrib/actions/install-dependencies.sh
       - name: Build
         run: bash contrib/actions/run-build.sh {target_name}
+      - name: Archive build logs
+        if: ${{{{ !cancelled() }}}}
+        uses: actions/upload-artifact@v1
+        with:
+          name: {target_name}_logs
+          path: openwrt/logs
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: {target_name}
+          name: {target_name}_output
           path: output
 """
 
