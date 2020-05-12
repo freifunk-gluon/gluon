@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+set -e
 
 export BROKEN=1
 export GLUON_AUTOREMOVE=1

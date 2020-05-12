@@ -25,9 +25,9 @@ ACTIONS_TARGET="""
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
-        run: bash contrib/actions/install-dependencies.sh
+        run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: bash contrib/actions/run-build.sh {target_name}
+        run: contrib/actions/run-build.sh {target_name}
       - name: Archive build logs
         if: ${{{{ !cancelled() }}}}
         uses: actions/upload-artifact@v1
