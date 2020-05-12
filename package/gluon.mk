@@ -3,6 +3,10 @@ PKG_FILE_DEPENDS += $(GLUON_MK)
 
 PKG_BUILD_DEPENDS += luasrcdiet/host
 
+ifneq ($(wildcard ./luasrc/.),)
+	PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
+endif
+
 ifneq ($(wildcard ./src/respondd.c),)
   PKG_BUILD_DEPENDS += respondd
 endif
@@ -57,12 +61,14 @@ endef
 define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
+ifdef CONFIG_GLUON_MINIFY
 	$(FIND) $(2) -type f | while read src; do \
 		if luasrcdiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
 			chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
 			mv "$$$$src.o" "$$$$src"; \
 		fi; \
 	done
+endif
 endef
 
 
