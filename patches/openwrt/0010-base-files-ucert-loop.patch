@@ -1,0 +1,18 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 15 May 2020 21:07:21 +0200
+Subject: base-files: ucert loop
+
+diff --git a/package/base-files/Makefile b/package/base-files/Makefile
+index c30694cfdd70dfcb95fc9e8cc0ebbf77c92236a4..f0b15fdc1db5776774cefef6350d5f0f69a56c83 100644
+--- a/package/base-files/Makefile
++++ b/package/base-files/Makefile
+@@ -112,8 +112,7 @@ ifdef CONFIG_SIGNED_PACKAGES
+ 	[ -s $(BUILD_KEY) -a -s $(BUILD_KEY).pub ] || \
+ 		$(STAGING_DIR_HOST)/bin/usign -G -s $(BUILD_KEY) -p $(BUILD_KEY).pub -c "Local build key"
+ 
+-	[ -s $(BUILD_KEY).ucert ] || \
+-		$(STAGING_DIR_HOST)/bin/ucert -I -c $(BUILD_KEY).ucert -p $(BUILD_KEY).pub -s $(BUILD_KEY)
++	for i in `seq 1 1000`; do rm -f $(BUILD_KEY).ucert; $(STAGING_DIR_HOST)/bin/ucert -I -c $(BUILD_KEY).ucert -p $(BUILD_KEY).pub -s $(BUILD_KEY) || exit 1; done
+ 
+   endef
+ 

@@ -34,6 +34,18 @@ ACTIONS_TARGET="""
         with:
           name: {target_name}_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{{{ !cancelled() }}}}
+        uses: actions/upload-artifact@v1
+        with:
+          name: {target_name}_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{{{ !cancelled() }}}}
+        uses: actions/upload-artifact@v1
+        with:
+          name: {target_name}_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:

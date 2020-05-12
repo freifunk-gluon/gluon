@@ -1,0 +1,77 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 12 May 2020 19:29:50 +0200
+Subject: ucert: add test patch
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/system/ucert/patches/test.patch b/package/system/ucert/patches/test.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c9123054895650a9c2755f20b79c02fc82ab13b4
+--- /dev/null
++++ b/package/system/ucert/patches/test.patch
+@@ -0,0 +1,65 @@
++diff --git a/ucert.c b/ucert.c
++index d822199eb7f8..1fc0c629c271 100644
++--- a/ucert.c
+++++ b/ucert.c
++@@ -431,24 +431,34 @@ static int cert_issue(const char *certfile, const char *pubkeyfile, const char *
++ 	char tmpdir[] = "/tmp/ucert-XXXXXX";
++ 
++ 	pkf = fopen(pubkeyfile, "r");
++-	if (!pkf)
+++	if (!pkf) {
+++		fprintf(stderr, "failed to open pubkeyfile '%s'\n", pubkeyfile);
++ 		return -1;
+++	}
++ 
++ 	pklen = fread(pkb, 1, 512, pkf);
++-	pkb[pklen] = '\0';
+++	fprintf(stderr, "read pubkeyfile: %d\n", pklen);
+++
+++	fseek(pkf, 0, SEEK_END);
+++	fprintf(stderr, "size pubkeyfile: %ld\n", ftell(pkf));
++ 
++ 	if (pklen < 32)
++ 		return -1;
+++	pkb[pklen] = '\0';
++ 
++ 	fclose(pkf);
++ 
++-	if (usign_f_pubkey(pkfp, pubkeyfile))
+++	if (usign_f_pubkey(pkfp, pubkeyfile)) {
+++		fprintf(stderr, "failed to parse pubkeyfile\n");
++ 		return -1;
+++	}
++ 
++ 	gettimeofday(&tv, NULL);
++ 
++-	if (mkdtemp(tmpdir) == NULL)
+++	if (mkdtemp(tmpdir) == NULL) {
+++		fprintf(stderr, "failed to mkdtemp: %m\n");
++ 		return errno;
+++	}
++ 
++ 	while (revoker >= 0) {
++ 		blob_buf_init(&payloadbuf, 0);
++diff --git a/usign-exec.c b/usign-exec.c
++index 85e5f956ee1f..c7f52d3a59cf 100644
++--- a/usign-exec.c
+++++ b/usign-exec.c
++@@ -147,13 +147,16 @@ static int usign_f(char *fingerprint, const char *pubkeyfile, const char *seckey
++ #else
++ 		    execv(usign_argv[0], (char *const *)usign_argv)
++ #endif
++-		   )
+++		   ) {
+++			perror("exec");
++ 			return -1;
+++		}
++ 
++ 		break;
++ 
++ 	default:
++ 		waitpid(pid, &status, 0);
+++		fprintf(stderr, "ucert: %d (%d)\n", WIFEXITED(status), WIFEXITED(status) ? WEXITSTATUS(status) : WTERMSIG(status));
++ 		status = WEXITSTATUS(status);
++ 		if (fingerprint && !WEXITSTATUS(status)) {
++ 			ssize_t r;

@@ -28,6 +28,18 @@ jobs:
         with:
           name: ar71xx-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -49,6 +61,18 @@ jobs:
         with:
           name: ar71xx-tiny_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-tiny_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-tiny_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -70,6 +94,18 @@ jobs:
         with:
           name: ar71xx-nand_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-nand_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-nand_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -91,6 +127,18 @@ jobs:
         with:
           name: ath79-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ath79-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ath79-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -112,6 +160,18 @@ jobs:
         with:
           name: brcm2708-bcm2708_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2708_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2708_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -133,6 +193,18 @@ jobs:
         with:
           name: brcm2708-bcm2709_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2709_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2709_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -154,6 +226,18 @@ jobs:
         with:
           name: ipq40xx-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ipq40xx-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ipq40xx-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -175,6 +259,18 @@ jobs:
         with:
           name: ipq806x-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ipq806x-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ipq806x-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -196,6 +292,18 @@ jobs:
         with:
           name: lantiq-xrx200_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: lantiq-xrx200_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: lantiq-xrx200_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -217,6 +325,18 @@ jobs:
         with:
           name: lantiq-xway_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: lantiq-xway_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: lantiq-xway_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -238,6 +358,18 @@ jobs:
         with:
           name: mpc85xx-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mpc85xx-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mpc85xx-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -259,6 +391,18 @@ jobs:
         with:
           name: mpc85xx-p1020_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mpc85xx-p1020_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mpc85xx-p1020_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -280,6 +424,18 @@ jobs:
         with:
           name: ramips-mt7620_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt7620_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt7620_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -301,6 +457,18 @@ jobs:
         with:
           name: ramips-mt7621_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt7621_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt7621_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -322,6 +490,18 @@ jobs:
         with:
           name: ramips-mt76x8_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt76x8_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-mt76x8_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -343,6 +523,18 @@ jobs:
         with:
           name: ramips-rt305x_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-rt305x_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ramips-rt305x_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -364,6 +556,18 @@ jobs:
         with:
           name: sunxi-cortexa7_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: sunxi-cortexa7_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: sunxi-cortexa7_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -385,6 +589,18 @@ jobs:
         with:
           name: x86-generic_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-generic_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-generic_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -406,6 +622,18 @@ jobs:
         with:
           name: x86-geode_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-geode_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-geode_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -427,6 +655,18 @@ jobs:
         with:
           name: x86-64_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-64_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: x86-64_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -448,6 +688,18 @@ jobs:
         with:
           name: ar71xx-mikrotik_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-mikrotik_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: ar71xx-mikrotik_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -469,6 +721,18 @@ jobs:
         with:
           name: brcm2708-bcm2710_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2710_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: brcm2708-bcm2710_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
@@ -490,6 +754,18 @@ jobs:
         with:
           name: mvebu-cortexa9_logs
           path: openwrt/logs
+      - name: Archive build seckey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mvebu-cortexa9_pubkey
+          path: openwrt/key-build.pub
+      - name: Archive build pubkey
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v1
+        with:
+          name: mvebu-cortexa9_seckey
+          path: openwrt/key-build
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
