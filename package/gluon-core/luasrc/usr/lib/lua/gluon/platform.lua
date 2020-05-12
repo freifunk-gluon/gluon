@@ -26,7 +26,10 @@ end
 function M.is_outdoor_device()
 	if M.match('ar71xx', 'generic', {
 		'bullet-m',
+		'cpe210',
 		'cpe510',
+		'wbs210',
+		'wbs510',
 		'lbe-m5',
 		'loco-m-xw',
 		'nanostation-m',
@@ -35,6 +38,7 @@ function M.is_outdoor_device()
 		'rocket-m-ti',
 		'rocket-m-xw',
 		'unifi-outdoor',
+		'unifi-outdoor-plus',
 	}) then
 		return true
 
@@ -46,7 +50,10 @@ function M.is_outdoor_device()
 		M.get_model() == 'Ubiquiti UniFi-AC-MESH-PRO' then
 		return true
 
-	elseif M.match('ath79', 'generic', {'devolo,dvl1750x'}) then
+	elseif M.match('ath79', 'generic', {
+		'devolo,dvl1750x',
+		'tplink,cpe220-v3',
+	}) then
 		return true
 
 	elseif M.match('ipq40xx', 'generic', {'engenius,ens620ext'}) then
@@ -66,24 +73,36 @@ function M.device_supports_wpa3()
 end
 
 function M.device_supports_mfp(uci)
-	local idx = 0
 	local supports_mfp = true
 
 	if not M.device_supports_wpa3() then
 		return false
 	end
 
-	uci:foreach('wireless', 'wifi-device', function()
-		local phypath = '/sys/kernel/debug/ieee80211/phy' .. idx .. '/'
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		local phy = util.find_phy(radio)
+		local phypath = '/sys/kernel/debug/ieee80211/' .. phy .. '/'
 
 		if not util.file_contains_line(phypath .. 'hwflags', 'MFP_CAPABLE') then
 			supports_mfp = false
+			return false
 		end
-
-		idx = idx + 1
 	end)
 
 	return supports_mfp
+end
+
+function M.device_uses_11a(uci)
+	local ret = false
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		if radio.hwmode == '11a' or radio.hwmode == '11na' then
+			ret = true
+			return false
+		end
+	end)
+
+	return ret
 end
 
 return M

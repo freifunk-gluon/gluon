@@ -22,7 +22,7 @@ if sysconfig.gluon_version then
 	outdoor = false
 elseif config == 'preset' then
 	-- enable outdoor mode through presets on new installs
-	outdoor = platform.is_outdoor_device()
+	outdoor = platform.is_outdoor_device() and platform.device_uses_11a(uci)
 else
 	-- enable/disable outdoor mode unconditionally on new installs
 	outdoor = config
