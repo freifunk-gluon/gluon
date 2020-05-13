@@ -33,6 +33,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
+#include <errno.h>
 
 /**
  * Merges two JSON objects
@@ -210,6 +212,36 @@ uci_fail:
 		uci_free_context(ctx);
 
 	return ret;
+}
+
+char * gluonutil_get_primary_domain(void) {
+	if (!gluonutil_has_domains())
+		return NULL;
+
+	char *domain_code = gluonutil_get_domain();
+	if (!domain_code)
+		return NULL;
+
+	const char *domain_path_fmt = "/lib/gluon/domains/%s.json";
+	char domain_path[strlen(domain_path_fmt) + strlen(domain_code)];
+	snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
+	free(domain_code);
+
+	char primary_domain_path[PATH_MAX] = "";
+	if ((readlink(domain_path, primary_domain_path, PATH_MAX) < 0) && (errno == EINVAL)) {
+		// EINVAL = file is not a symlink = the domain itself is the primary domain
+		strncpy(primary_domain_path, domain_path, PATH_MAX);
+	}
+
+	char *primary_domain_code = basename(primary_domain_path);
+	char *ext_begin = strrchr(primary_domain_code, '.');
+	if (ext_begin) {
+		// strip .json from filename
+		*ext_begin = '\0';
+		return strdup(primary_domain_code);
+	}
+
+	return NULL;
 }
 
 
