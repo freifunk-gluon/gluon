@@ -1,5 +1,6 @@
 config 'CONFIG_VDI_IMAGES=y'
 config 'CONFIG_VMDK_IMAGES=y'
+config 'CONFIG_KERNEL_DEVMEM=y'
 
 packages {
 	'kmod-3c59x',
