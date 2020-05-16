@@ -118,7 +118,13 @@
 					<%- end %>
 					<dt><%:Site%></dt><dd><%| site.site_name() %></dd>
 					<% if nodeinfo.system.domain_code then -%>
-						<dt><%:Domain%></dt><dd><%| site.domain_names[nodeinfo.system.domain_code]() %></dd>
+						<dt><%:Domain%></dt>
+						<dd>
+							<%| site.domain_names[nodeinfo.system.domain_code]() %>
+							<% if nodeinfo.system.domain_code ~= nodeinfo.system.primary_domain_code then %>
+							(<%| site.domain_names[nodeinfo.system.primary_domain_code]() %>)
+							<%- end %>
+						</dd>
 					<%- end %>
 					<% if nodeinfo.software.autoupdater then -%>
 						<dt><%:Automatic updates%></dt><dd><%| enabled(nodeinfo.software.autoupdater.enabled) %><%|
