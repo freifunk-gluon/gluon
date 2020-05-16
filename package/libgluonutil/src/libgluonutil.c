@@ -227,21 +227,25 @@ char * gluonutil_get_primary_domain(void) {
 	snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
 	free(domain_code);
 
-	char primary_domain_path[PATH_MAX] = "";
-	if ((readlink(domain_path, primary_domain_path, PATH_MAX) < 0) && (errno == EINVAL)) {
+	char primary_domain_path[PATH_MAX+1] = "";
+	char *primary_domain_code;
+	if (readlink(domain_path, primary_domain_path, PATH_MAX) < 0) {
 		// EINVAL = file is not a symlink = the domain itself is the primary domain
-		strncpy(primary_domain_path, domain_path, PATH_MAX);
+		if (errno != EINVAL)
+			return NULL;
+
+		primary_domain_code = basename(domain_path);
+	} else {
+		primary_domain_code = basename(primary_domain_path);
 	}
 
-	char *primary_domain_code = basename(primary_domain_path);
 	char *ext_begin = strrchr(primary_domain_code, '.');
-	if (ext_begin) {
-		// strip .json from filename
-		*ext_begin = '\0';
-		return strdup(primary_domain_code);
-	}
+	if (!ext_begin)
+		return NULL;
 
-	return NULL;
+	// strip .json from filename
+	*ext_begin = '\0';
+	return strdup(primary_domain_code);
 }
 
 
