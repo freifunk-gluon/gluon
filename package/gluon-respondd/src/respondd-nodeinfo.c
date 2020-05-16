@@ -64,6 +64,10 @@ static struct json_object * get_site_code(void) {
 	return ret;
 }
 
+static struct json_object * get_primary_domain_code(void) {
+	return gluonutil_wrap_and_free_string(gluonutil_get_primary_domain());
+}
+
 static struct json_object * get_domain_code(void) {
 	return gluonutil_wrap_and_free_string(gluonutil_get_domain());
 }
@@ -124,8 +128,10 @@ struct json_object * respondd_provider_nodeinfo(void) {
 
 	struct json_object *system = json_object_new_object();
 	json_object_object_add(system, "site_code", get_site_code());
-	if (gluonutil_has_domains())
+	if (gluonutil_has_domains()) {
 		json_object_object_add(system, "domain_code", get_domain_code());
+		json_object_object_add(system, "primary_domain_code", get_primary_domain_code());
+	}
 	json_object_object_add(ret, "system", system);
 
 	return ret;
