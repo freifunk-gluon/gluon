@@ -243,6 +243,5 @@ struct json_object * gluonutil_load_site_config(void) {
 
 err:
 	json_object_put(site);
-	free(domain_code);
 	return NULL;
 }
