@@ -12,7 +12,8 @@ wait_setup_mode() {
 }
 
 
-if [ "$BUTTON" = wps ] || [ "$BUTTON" = reset ] || [ "$BUTTON" = phone ]; then
+if [ "$BUTTON" = wps ] || [ "$BUTTON" = reset ] ||
+	[ "$BUTTON" = phone ] || [ "$BUTTON" = power ]; then
 	case "$ACTION" in
 		pressed)
 			wait_setup_mode &
