@@ -19,6 +19,7 @@ $(eval $(call GluonTarget,ramips,rt305x))
 $(eval $(call GluonTarget,sunxi,cortexa7))
 $(eval $(call GluonTarget,x86,generic))
 $(eval $(call GluonTarget,x86,geode))
+$(eval $(call GluonTarget,x86,legacy))
 $(eval $(call GluonTarget,x86,64))
 
 
