@@ -32,6 +32,7 @@ local supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000}
 for _, config in ipairs({'wifi24', 'wifi5'}) do
 	if need_table({config}, nil, false) then
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
+		need_number({config, 'beacon_interval'}, false)
 
 		if config == "wifi24" then
 			local channels = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
