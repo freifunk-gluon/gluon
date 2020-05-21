@@ -225,21 +225,24 @@ char * gluonutil_get_primary_domain(void) {
 	const char *domain_path_fmt = "/lib/gluon/domains/%s.json";
 	char domain_path[strlen(domain_path_fmt) + strlen(domain_code)];
 	snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
-	free(domain_code);
 
 	char primary_domain_path[PATH_MAX+1];
 	char *primary_domain_code;
 	ssize_t len = readlink(domain_path, primary_domain_path, PATH_MAX);
 	if (len < 0) {
 		// EINVAL = file is not a symlink = the domain itself is the primary domain
-		if (errno != EINVAL)
+		if (errno != EINVAL) {
+			free(domain_code);
 			return NULL;
+		}
 
-		primary_domain_code = basename(domain_path);
-	} else {
-		primary_domain_path[len] = '\0';
-		primary_domain_code = basename(primary_domain_path);
+		return domain_code;
 	}
+
+	free(domain_code);
+
+	primary_domain_path[len] = '\0';
+	primary_domain_code = basename(primary_domain_path);
 
 	char *ext_begin = strrchr(primary_domain_code, '.');
 	if (!ext_begin)
