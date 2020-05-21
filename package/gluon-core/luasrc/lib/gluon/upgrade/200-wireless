@@ -191,6 +191,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	local channel = get_channel(radio, config)
 	local htmode = get_htmode(radio)
+	local beacon_interval = config.beacon_interval()
 
 	uci:delete('wireless', radio_name, 'disabled')
 
@@ -225,6 +226,8 @@ wireless.foreach_radio(uci, function(radio, index, config)
 			configure_mesh_wireless(radio, index, config)
 		end
 	end
+
+	uci:set('wireless', radio_name, 'beacon_int', beacon_interval)
 
 	fixup_wan(radio, index)
 end)
