@@ -227,15 +227,17 @@ char * gluonutil_get_primary_domain(void) {
 	snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
 	free(domain_code);
 
-	char primary_domain_path[PATH_MAX+1] = "";
+	char primary_domain_path[PATH_MAX+1];
 	char *primary_domain_code;
-	if (readlink(domain_path, primary_domain_path, PATH_MAX) < 0) {
+	ssize_t len = readlink(domain_path, primary_domain_path, PATH_MAX);
+	if (len < 0) {
 		// EINVAL = file is not a symlink = the domain itself is the primary domain
 		if (errno != EINVAL)
 			return NULL;
 
 		primary_domain_code = basename(domain_path);
 	} else {
+		primary_domain_path[len] = '\0';
 		primary_domain_code = basename(primary_domain_path);
 	}
 
