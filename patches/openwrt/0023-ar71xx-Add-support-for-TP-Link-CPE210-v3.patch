@@ -50,7 +50,7 @@ index 037eaee7196b229ec67a08417d88dcb92995c17f..92f3c0281a485fd671b0f8490edaad99
  		;;
  	*)
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/02_network b/target/linux/ar71xx/base-files/etc/board.d/02_network
-index befa032cd4c93779cf66b8b57a15e4bcba7fc959..908743c05eaac7092d3dfb117f23a934507dffd0 100755
+index 87a6677d883756c20e708f14bc40648f5737eca2..55b517fa136214654e71c179438cbf5c01e62c38 100755
 --- a/target/linux/ar71xx/base-files/etc/board.d/02_network
 +++ b/target/linux/ar71xx/base-files/etc/board.d/02_network
 @@ -75,6 +75,7 @@ ar71xx_setup_interfaces()
