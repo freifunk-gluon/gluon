@@ -130,15 +130,18 @@ wifi24 \: optional
     This will only affect new installations.
     Upgrades will not change the disabled state.
 
-    ``ap`` holds the client network configuration.
-    To create an unencrypted client network, a string named ``ssid`` which sets the
-    interface's ESSID is required. This is the wireless network clients connect to.
-    For an OWE secured network, the ``owe_ssid`` string has to be set. It sets the
-    SSID for the opportunistically encrypted wireless network, to which compatible
-    clients can connect to.
-    To utilize the OWE transition mode, ``owe_transition_mode`` has to be set to true.
-    Note that for the transition mode to work, both ``ssid`` as well as ``owe_ssid``
-    have to be enabled.
+    ``ap`` holds the client network configuration. To create an unencrypted
+    client network, a string named ``ssid`` which sets the interface's ESSID is
+    required. This is the wireless network clients connect to. For an OWE
+    secured network, the ``owe_ssid`` string has to be set which sets the SSID
+    for the opportunistically encrypted wireless network (to which compatible
+    clients can connect to) and the ``wireless-encryption-wpa3`` feature has to
+    be added to ``GLUON_FEATURES_standard`` in ``site.mk`` (which will enable it
+    only for non-tiny devices). To utilize the OWE transition mode,
+    ``owe_transition_mode`` has to be set to true. Note that for the transition
+    mode to work, both ``ssid`` as well as ``owe_ssid`` have to be enabled. Also
+    note that some devices get problems connecting, when transition mode is
+    enabled.
 
     ``mesh`` requires a single parameter, a string, named ``id`` which sets the
     mesh id, also visible as an open WiFi in some network managers. Usually you
