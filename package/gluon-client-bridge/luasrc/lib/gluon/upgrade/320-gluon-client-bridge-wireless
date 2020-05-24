@@ -25,7 +25,7 @@ local function configure_ap(radio, index, config, radio_name)
 
 	local macaddr = util.get_wlan_mac(uci, radio, index, 1)
 
-	if not ap() or not ap.ssid() or not macaddr then
+	if not ap.ssid() or not macaddr then
 		return
 	end
 
@@ -58,7 +58,7 @@ local function configure_owe(radio, index, config, radio_name)
 
 	local macaddr = util.get_wlan_mac(uci, radio, index, 3)
 
-	if not ap() or not ap.owe_ssid() or not macaddr then
+	if not ap.owe_ssid() or not macaddr then
 		return
 	end
 
@@ -84,7 +84,7 @@ local function configure_owe_transition_mode(config, radio_name)
 		return
 	end
 
-	if not ap() or not ap.owe_transition_mode() then
+	if not ap.owe_transition_mode(false) then
 		return
 	end
 
@@ -97,7 +97,7 @@ local function configure_owe_transition_mode(config, radio_name)
 	local macaddr_client = uci:get('wireless', name_client, 'macaddr')
 	local macaddr_owe = uci:get('wireless', name_owe, 'macaddr')
 
-	if not ssid_client or not ssid_owe or not macaddr_client or not macaddr_owe then
+	if not (ssid_client and ssid_owe and macaddr_client and macaddr_owe) then
 		return
 	end
 
