@@ -21,6 +21,6 @@ for module in $GLUON_MODULES; do
 	for commit in $(git rev-list --reverse --no-merges base..patched); do
 		(( ++n ))
 		mkdir -p "${GLUON_PATCHESDIR}/$module"
-		git -c core.abbrev=40 show --pretty=format:'From: %an <%ae>%nDate: %aD%nSubject: %B' --no-renames --binary "$commit" > "${GLUON_PATCHESDIR}/$module/$(printf '%04u' $n)-$(git show -s --pretty=format:%f "$commit").patch"
+		git -c core.abbrev=40 show --pretty=format:'From: %an <%ae>%nDate: %aD%nSubject: %B' --no-renames --binary "$commit" > "${GLUON_PATCHESDIR}/$module/$(printf '%04u' "$n")-$(git show -s --pretty=format:%f "$commit").patch"
 	done
 done
