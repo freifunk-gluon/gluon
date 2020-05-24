@@ -61,14 +61,14 @@ endef
 define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
-ifdef CONFIG_GLUON_MINIFY
-	$(FIND) $(2) -type f | while read src; do \
-		if luasrcdiet --noopt-binequiv -o "$$$$src.o" "$$$$src"; then \
-			chmod $$$$(stat -c%a "$$$$src") "$$$$src.o"; \
-			mv "$$$$src.o" "$$$$src"; \
-		fi; \
+  ifdef CONFIG_GLUON_MINIFY
+	# Use cp + rm instead of mv to preserve destination permissions
+	set -e; $(FIND) $(2) -type f | while read src; do \
+		luasrcdiet --noopt-binequiv -o "$$$$src.tmp" "$$$$src"; \
+		cp "$$$$src.tmp" "$$$$src"; \
+		rm "$$$$src.tmp"; \
 	done
-endif
+  endif
 endef
 
 
