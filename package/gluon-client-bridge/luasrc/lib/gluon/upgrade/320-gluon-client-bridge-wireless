@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
-local util = require 'gluon.util'
 local platform = require 'gluon.platform'
+local wireless = require 'gluon.wireless'
 
 local uci = require('simple-uci').cursor()
 
@@ -23,7 +23,7 @@ local function configure_ap(radio, index, config, radio_name)
 
 	uci:delete('wireless', name)
 
-	local macaddr = util.get_wlan_mac(uci, radio, index, 1)
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 1)
 
 	if not ap.ssid() or not macaddr then
 		return
@@ -56,7 +56,7 @@ local function configure_owe(radio, index, config, radio_name)
 		return
 	end
 
-	local macaddr = util.get_wlan_mac(uci, radio, index, 3)
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 3)
 
 	if not ap.owe_ssid() or not macaddr then
 		return
@@ -109,7 +109,7 @@ local function configure_owe_transition_mode(config, radio_name)
 	uci:set('wireless', name_owe, 'hidden', '1')
 end
 
-util.foreach_radio(uci, function(radio, index, config)
+wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
 
 	configure_ap(radio, index, config, radio_name)

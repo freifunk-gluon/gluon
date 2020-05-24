@@ -1,5 +1,6 @@
 local platform_info = require 'platform_info'
 local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
 local unistd = require 'posix.unistd'
 
 
@@ -80,7 +81,7 @@ function M.device_supports_mfp(uci)
 	end
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
-		local phy = util.find_phy(radio)
+		local phy = wireless.find_phy(radio)
 		local phypath = '/sys/kernel/debug/ieee80211/' .. phy .. '/'
 
 		if not util.file_contains_line(phypath .. 'hwflags', 'MFP_CAPABLE') then

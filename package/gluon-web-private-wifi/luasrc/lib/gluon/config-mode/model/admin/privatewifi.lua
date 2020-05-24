@@ -1,6 +1,6 @@
 local uci = require("simple-uci").cursor()
-local util = require 'gluon.util'
 local platform = require 'gluon.platform'
+local wireless = require 'gluon.wireless'
 
 -- where to read the configuration from
 local primary_iface = 'wan_radio0'
@@ -47,12 +47,12 @@ mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
 
 
 function f:write()
-	util.foreach_radio(uci, function(radio, index)
+	wireless.foreach_radio(uci, function(radio, index)
 		local radio_name = radio['.name']
 		local name   = "wan_" .. radio_name
 
 		if enabled.data then
-			local macaddr = util.get_wlan_mac(uci, radio, index, 4)
+			local macaddr = wireless.get_wlan_mac(uci, radio, index, 4)
 
 			uci:section('wireless', 'wifi-iface', name, {
 				device     = radio_name,

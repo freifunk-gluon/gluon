@@ -1,6 +1,6 @@
 local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
-local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
 
 
 local function txpower_list(phy)
@@ -101,7 +101,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
 	vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
 
-	local phy = util.find_phy(config)
+	local phy = wireless.find_phy(config)
 	if not phy then
 		return
 	end
@@ -155,7 +155,7 @@ if has_5ghz_radio() then
 			return
 		end
 
-		local phy = util.find_phy(uci:get_all('wireless', radio))
+		local phy = wireless.find_phy(uci:get_all('wireless', radio))
 
 		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
 		ht:depends(outdoor, true)

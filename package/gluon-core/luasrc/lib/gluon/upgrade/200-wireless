@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 
 local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
 local site = require 'gluon.site'
 local sysconfig = require 'gluon.sysconfig'
 local iwinfo = require 'iwinfo'
@@ -16,8 +17,8 @@ if not sysconfig.gluon_version then
 	-- capable of operating in the 2.4 GHz and 5 GHz band need
 	-- to be distributed evenly.
 	local radio_band_count = {band24=0, band5=0}
-	util.foreach_radio(uci, function(radio)
-		local hwmodes = iwinfo.nl80211.hwmodelist(util.find_phy(radio))
+	wireless.foreach_radio(uci, function(radio)
+		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
 		if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
 			-- 2.4 GHz
 			radio_band_count["band24"] = radio_band_count["band24"] + 1
@@ -29,9 +30,9 @@ if not sysconfig.gluon_version then
 
 	-- Use the number of all fixed 2.4G GHz and 5 GHz radios to
 	-- distribute dualband radios in this step.
-	util.foreach_radio(uci, function(radio)
+	wireless.foreach_radio(uci, function(radio)
 		local radio_name = radio['.name']
-		local hwmodes = iwinfo.nl80211.hwmodelist(util.find_phy(radio))
+		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
 		if (hwmodes.a or hwmodes.ac) and hwmodes.g then
 			-- Dualband radio
 			if radio_band_count["band24"] <= radio_band_count["band5"] then
@@ -72,7 +73,7 @@ local function get_htmode(radio)
 		end
 	end
 
-	local phy = util.find_phy(radio)
+	local phy = wireless.find_phy(radio)
 	if iwinfo.nl80211.hwmodelist(phy).ac then
 		return 'VHT20'
 	end
@@ -121,7 +122,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		return
 	end
 
-	local macaddr = util.get_wlan_mac(uci, radio, index, 2)
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 2)
 	if not macaddr then
 		return
 	end
@@ -153,7 +154,7 @@ local function fixup_wan(radio, index)
 		return
 	end
 
-	local macaddr = util.get_wlan_mac(uci, radio, index, 4)
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 4)
 	if not macaddr then
 		return
 	end
@@ -173,7 +174,7 @@ local function configure_mesh_wireless(radio, index, config)
 	)
 end
 
-util.foreach_radio(uci, function(radio, index, config)
+wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
 
 	delete_ibss(radio_name)
