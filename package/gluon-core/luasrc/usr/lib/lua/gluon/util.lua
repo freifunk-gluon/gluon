@@ -136,45 +136,6 @@ function M.glob(pattern)
 	return posix_glob.glob(pattern) or {}
 end
 
-local function find_phy_by_path(path)
-	local phy = M.glob('/sys/devices/' .. path .. '/ieee80211/phy*')[1]
-		or M.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*')[1]
-
-	if phy then
-		return phy:match('([^/]+)$')
-	end
-end
-
-local function find_phy_by_macaddr(macaddr)
-	local addr = macaddr:lower()
-	for _, file in ipairs(M.glob('/sys/class/ieee80211/*/macaddress')) do
-		if M.trim(M.readfile(file)) == addr then
-			return file:match('([^/]+)/macaddress$')
-		end
-	end
-end
-
-function M.find_phy(config)
-	if not config or config.type ~= 'mac80211' then
-		return nil
-	elseif config.path then
-		return find_phy_by_path(config.path)
-	elseif config.macaddr then
-		return find_phy_by_macaddr(config.macaddr)
-	else
-		return nil
-	end
-end
-
-local function get_addresses(radio)
-	local phy = M.find_phy(radio)
-	if not phy then
-		return function() end
-	end
-
-	return io.lines('/sys/class/ieee80211/' .. phy .. '/addresses')
-end
-
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the MAC address
 --
@@ -207,58 +168,6 @@ function M.generate_mac(i)
 	m6 = m6 + i                   -- add virtual interface id
 
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
-end
-
-local function get_wlan_mac_from_driver(radio, vif)
-	local primary = sysconfig.primary_mac:lower()
-
-	local addresses = {}
-	for address in get_addresses(radio) do
-		if address:lower() ~= primary then
-			table.insert(addresses, address)
-		end
-	end
-
-	-- Make sure we have at least 4 addresses
-	if #addresses < 4 then
-		return nil
-	end
-
-	for i, addr in ipairs(addresses) do
-		if i == vif then
-			return addr
-		end
-	end
-end
-
-function M.get_wlan_mac(_, radio, index, vif)
-	local addr = get_wlan_mac_from_driver(radio, vif)
-	if addr then
-		return addr
-	end
-
-	return M.generate_mac(4*(index-1) + (vif-1))
-end
-
--- Iterate over all radios defined in UCI calling
--- f(radio, index, site.wifiX) for each radio found while passing
---  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
-function M.foreach_radio(uci, f)
-	local radios = {}
-
-	uci:foreach('wireless', 'wifi-device', function(radio)
-		table.insert(radios, radio)
-	end)
-
-	for index, radio in ipairs(radios) do
-		local hwmode = radio.hwmode
-
-		if hwmode == '11g' or hwmode == '11ng' then
-			f(radio, index, site.wifi24)
-		elseif hwmode == '11a' or hwmode == '11na' then
-			f(radio, index, site.wifi5)
-		end
-	end
 end
 
 function M.get_uptime()
