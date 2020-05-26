@@ -150,13 +150,50 @@ local function add_image(image)
 	table.insert(M.images[device], setmetatable(image, image_mt))
 end
 
-function F.try_config(...)
-	M.configs[string.format(...)] = 1
+
+local function format_config(k, v)
+	local format
+	if type(v) == 'string' then
+		format = '%s=%q'
+	elseif v == true then
+		format = '%s=y'
+	elseif v == nil then
+		format = '%s=m'
+	elseif v == false then
+		format = '# %s is not set'
+	else
+		format = '%s=%d'
+	end
+	return string.format(format, k, v)
 end
 
-function F.config(...)
-	M.configs[string.format(...)] = 2
+local config_mt = {
+	__index = {
+		format = function(config)
+			return format_config(config.key, config.value)
+		end,
+	}
+}
+
+local function do_config(k, v, required)
+	M.configs[k] = setmetatable({
+		key = k,
+		value = v,
+		required = required,
+	}, config_mt)
 end
+
+function F.try_config(k, v)
+	do_config(k, v)
+end
+
+function F.config(k, v, message)
+	if not message then
+		message = string.format("unable to set '%s'", format_config(k, v))
+	end
+	do_config(k, v, message)
+end
+
 
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do

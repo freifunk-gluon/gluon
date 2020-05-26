@@ -40,7 +40,7 @@ local function compact_list(list, keep_neg)
 	return ret
 end
 
-return function(funcs)
+return function()
 	local lib = dofile('scripts/target_lib.lua')
 	local env = lib.env
 
@@ -102,12 +102,29 @@ END_MAKE
 		return pkgs
 	end
 
+	local enabled_packages = {}
+	-- Arguments: package name and config value (true: y, nil: m, false: unset)
+	-- Ensures precedence of y > m > unset
+	local function config_package(pkg, v)
+		if v == false then
+			if not enabled_packages[pkg] then
+				lib.try_config('CONFIG_PACKAGE_' .. pkg, false)
+			end
+			return
+		end
+
+		if v == true or not enabled_packages[pkg] then
+			lib.config('CONFIG_PACKAGE_' .. pkg, v, string.format("unable to enable package '%s'", pkg))
+			enabled_packages[pkg] = true
+		end
+	end
+
 	local function handle_target_pkgs(pkgs)
 		for _, pkg in ipairs(pkgs) do
 			if string.sub(pkg, 1, 1) == '-' then
-				lib.try_config('# CONFIG_PACKAGE_%s is not set', string.sub(pkg, 2))
+				config_package(string.sub(pkg, 2), false)
 			else
-				funcs.config_package(lib.config, pkg, 'y')
+				config_package(pkg, true)
 			end
 		end
 	end
@@ -118,8 +135,8 @@ END_MAKE
 	lib.check_devices()
 
 	if not lib.opkg then
-		lib.config '# CONFIG_SIGNED_PACKAGES is not set'
-		lib.config 'CONFIG_CLEAN_IPKG=y'
+		lib.config('CONFIG_SIGNED_PACKAGES', false)
+		lib.config('CONFIG_CLEAN_IPKG', true)
 		lib.packages {'-opkg'}
 	end
 
@@ -133,7 +150,7 @@ END_MAKE
 			local function handle_pkgs(pkgs)
 				for _, pkg in ipairs(pkgs) do
 					if string.sub(pkg, 1, 1) ~= '-' then
-						funcs.config_package(lib.config, pkg, 'm')
+						config_package(pkg, nil)
 					end
 					device_pkgs = append_to_list(device_pkgs, pkg)
 				end
@@ -144,11 +161,15 @@ END_MAKE
 			handle_pkgs(dev.options.packages or {})
 			handle_pkgs(site_packages(dev.image))
 
-			funcs.config_message(lib.config, string.format("unable to enable device '%s'", profile),
-				'CONFIG_TARGET_DEVICE_%s_DEVICE_%s=y', openwrt_config_target, profile)
-			lib.config('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s="%s"',
-				openwrt_config_target, profile,
-				table.concat(device_pkgs, ' '))
+			lib.config(
+				string.format('CONFIG_TARGET_DEVICE_%s_DEVICE_%s', openwrt_config_target, profile),
+				true,
+				string.format("unable to enable device '%s'", profile)
+			)
+			lib.config(
+				string.format('CONFIG_TARGET_DEVICE_PACKAGES_%s_DEVICE_%s', openwrt_config_target, profile),
+				table.concat(device_pkgs, ' ')
+			)
 		end
 	else
 		-- x86 fallback: no devices
