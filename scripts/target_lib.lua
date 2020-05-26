@@ -164,7 +164,7 @@ local function format_config(k, v)
 	else
 		format = '%s=%d'
 	end
-	return string.format(format, k, v)
+	return string.format(format, 'CONFIG_' .. k, v)
 end
 
 local config_mt = {

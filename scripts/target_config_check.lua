@@ -24,7 +24,7 @@ local function check_config(config)
 end
 
 
-local lib = dofile('scripts/target_config_lib.lua')()
+local lib = dofile('scripts/target_config_lib.lua')
 
 for _, config in pairs(lib.configs) do
 	if config.required then
