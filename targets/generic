@@ -70,6 +70,7 @@ if not istrue(env.GLUON_MINIFY) then
 end
 
 packages {
+	'-kmod-ipt-offload',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
