@@ -62,6 +62,7 @@ end
 
 
 packages {
+	'-kmod-ipt-offload',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
