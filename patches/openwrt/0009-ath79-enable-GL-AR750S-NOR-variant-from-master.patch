@@ -3,10 +3,10 @@ Date: Tue, 31 Mar 2020 21:50:28 +0200
 Subject: ath79: enable GL-AR750S NOR variant from master
 
 diff --git a/target/linux/ath79/base-files/etc/board.d/02_network b/target/linux/ath79/base-files/etc/board.d/02_network
-index 1b0e76b1593bfd38cfaea6dc4844ed9f222f0b6b..31b59c46699e45e2611efee046efe3ebf9521f56 100755
+index 9b9bc8a7fc15300247bceeb431ab3ae8d3ac47e6..da45b40086c0cb0011c1db6b89ae75b981fcc9b7 100755
 --- a/target/linux/ath79/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/base-files/etc/board.d/02_network
-@@ -140,7 +140,7 @@ ath79_setup_interfaces()
+@@ -151,7 +151,7 @@ ath79_setup_interfaces()
  	etactica,eg200)
  		ucidef_set_interface_lan "eth0" "dhcp"
  		;;
