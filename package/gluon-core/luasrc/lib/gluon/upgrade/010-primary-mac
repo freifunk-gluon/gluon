@@ -12,30 +12,44 @@ local json = require 'jsonc'
 local platform = require 'gluon.platform'
 local util = require 'gluon.util'
 
+local board_data = json.load('/etc/board.json')
+local network_data = (board_data or {}).network
 
-local function sysfs(...)
-	local path = string.format(...)
-	return function()
-		local addr = util.readfile(path)
-		if addr then
-			return util.trim(addr)
-		end
+local function read(...)
+	local addr = util.readfile(string.format(...))
+	if addr then
+		return util.trim(addr)
 	end
 end
 
-local function eth(index)
-	return sysfs('/sys/class/net/eth%d/address', index)
+local function get_netdev_addr(ifname)
+	return read('/sys/class/net/%s/address', ifname)
+end
+
+local function strip_vlan(ifname)
+	return (ifname:gsub('%..*', ''))
+end
+
+
+local function netdev(ifname)
+	return function()
+		return get_netdev_addr(ifname)
+	end
 end
 
 local function phy(index)
-	return sysfs('/sys/class/ieee80211/phy%d/macaddress', index)
+	return function()
+		return read('/sys/class/ieee80211/phy%d/macaddress', index)
+	end
 end
 
-local function board(iface)
+local function interface(name)
 	return function()
-		local data = json.load('/etc/board.json')
-		if data and data.network and data.network[iface] then
-			return data.network[iface].macaddr
+		local ifdata = network_data[name] or {}
+		if ifdata.macaddr then
+			return ifdata.macaddr
+		elseif ifdata.ifname then
+			return get_netdev_addr(strip_vlan(ifdata.ifname))
 		end
 	end
 end
@@ -43,14 +57,13 @@ end
 
 -- Entries are matched in the order they are listed
 local primary_addrs = {
-	{eth(0), {
-		{'x86'},
-		{'brcm2708'},
+	{interface('lan'), {
 		{'ar71xx', 'generic', {
-			'a40',
-			'a60',
-			'archer-c25-v1',
-			'archer-c60-v2',
+			'archer-c5',
+			'archer-c58-v1',
+			'archer-c59-v1',
+			'archer-c60-v1',
+			'archer-c7',
 			'archer-c7-v4',
 			'archer-c7-v5',
 			'carambola2',
@@ -63,11 +76,9 @@ local primary_addrs = {
 			'mr1750v2',
 			'om2p',
 			'om2pv2',
-			'om2pv4',
 			'om2p-hs',
 			'om2p-hsv2',
 			'om2p-hsv3',
-			'om2p-hsv4',
 			'om2p-lc',
 			'om5p',
 			'om5p-an',
@@ -85,31 +96,44 @@ local primary_addrs = {
 			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
 		}},
+		{'brcm2708'},
 		{'ipq40xx', 'generic', {
 			'avm,fritzbox-4040',
+		}},
+		{'ipq806x', 'generic', {
+			'netgear,r7800',
+		}},
+		{'lantiq', 'xway', {
+			'netgear,dgn3500b',
+		}},
+		{'ramips', 'mt7620', {
+			'c20-v1',
+			'c20i',
+			'c50',
+			'tplink,c2-v1',
+		}},
+		{'x86'},
+	}},
+	{interface('wan'), {
+		{'ar71xx', 'generic', {
+			'a40',
+			'a60',
+			'archer-c25-v1',
+			'archer-c60-v2',
+			'om2pv4',
+			'om2p-hsv4',
+		}},
+		{'ipq40xx', 'generic', {
+			'linksys,ea6350v3',
 			'openmesh,a42',
 			'openmesh,a62',
 		}},
 		{'mpc85xx', 'p1020', {
 			'aerohive,hiveap-330',
+			'ocedo,panda',
 		}},
 		{'ramips', 'mt7620', {
-			'miwifi-mini', 'tplink,c2-v1', 'c20-v1', 'c20i', 'c50',
-		}},
-	}},
-	{eth(1), {
-		{'ar71xx', 'generic', {
-			'archer-c5',
-			'archer-c58-v1',
-			'archer-c59-v1',
-			'archer-c60-v1',
-			'archer-c7',
-		}},
-		{'ipq806x', 'generic', {
-			'netgear,r7800',
-		}},
-		{'mpc85xx', 'p1020', {
-			'ocedo,panda',
+			'miwifi-mini',
 		}},
 	}},
 	{phy(1), {
@@ -122,22 +146,12 @@ local primary_addrs = {
 			'dir-860l-b1',
 		}},
 	}},
-	{board('lan'), {
-		{'lantiq', 'xway', {
-			'netgear,dgn3500b',
-		}},
-	}},
-	{board('wan'), {
-		{'ipq40xx', 'generic', {
-			'linksys,ea6350v3',
-		}},
-	}},
 	-- phy0 default
 	{phy(0), {
 		{}, -- matches everything
 	}},
 	-- eth0 fallback when phy0 does not exist
-	{eth(0), {
+	{netdev('eth0'), {
 		{}, -- matches everything
 	}},
 }
