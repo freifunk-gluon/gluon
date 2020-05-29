@@ -31,6 +31,7 @@ end
 
 config '# CONFIG_TARGET_ROOTFS_INITRAMFS is not set'
 
+config 'CONFIG_DEVEL=y'
 config 'CONFIG_ALL_NONSHARED=y'
 
 config '# CONFIG_PACKAGE_usbip is not set' -- fails to build
@@ -51,6 +52,10 @@ try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
 
 if envtrue.GLUON_MULTIDOMAIN then
 	config 'CONFIG_GLUON_MULTIDOMAIN=y'
+end
+
+if envtrue.GLUON_AUTOREMOVE then
+	config 'CONFIG_AUTOREMOVE=y'
 end
 
 if envtrue.GLUON_DEBUG then
