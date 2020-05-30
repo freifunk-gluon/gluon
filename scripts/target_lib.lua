@@ -202,6 +202,14 @@ function F.packages(pkgs)
 end
 M.packages = F.packages
 
+local function as_table(v)
+	if type(v) == 'table' then
+		return v
+	else
+		return {v}
+	end
+end
+
 function F.device(image, name, options)
 	options = merge(default_options, options)
 
@@ -233,15 +241,17 @@ function F.device(image, name, options)
 	end
 
 	if options.factory then
-		add_image {
-			image = image,
-			name = name,
-			subdir = 'factory',
-			in_suffix = options.factory,
-			out_suffix = '',
-			extension = options.factory_ext,
-			aliases = options.aliases,
-		}
+		for _, ext in ipairs(as_table(options.factory_ext)) do
+			add_image {
+				image = image,
+				name = name,
+				subdir = 'factory',
+				in_suffix = options.factory,
+				out_suffix = '',
+				extension = ext,
+				aliases = options.aliases,
+			}
+		end
 	end
 	for _, extra_image in ipairs(options.extra_images) do
 		add_image {
