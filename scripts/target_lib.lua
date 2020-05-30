@@ -241,7 +241,6 @@ function F.device(image, name, options)
 			out_suffix = '',
 			extension = options.factory_ext,
 			aliases = options.aliases,
-			manifest_aliases = options.manifest_aliases,
 		}
 	end
 	for _, extra_image in ipairs(options.extra_images) do
@@ -253,7 +252,6 @@ function F.device(image, name, options)
 			out_suffix = extra_image[2],
 			extension = extra_image[3],
 			aliases = options.aliases,
-			manifest_aliases = options.manifest_aliases,
 		}
 	end
 end
@@ -277,7 +275,6 @@ function F.factory_image(image, name, ext, options)
 		out_suffix = '',
 		extension = ext,
 		aliases = options.aliases,
-		manifest_aliases = options.manifest_aliases,
 	}
 end
 
