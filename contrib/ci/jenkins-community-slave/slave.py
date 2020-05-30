@@ -2,7 +2,6 @@ from jenkins import Jenkins, JenkinsError, NodeLaunchMethod
 import os
 import signal
 import sys
-import urllib.request
 import subprocess
 import shutil
 import requests
@@ -34,8 +33,9 @@ def slave_download(target):
     if os.path.isfile(slave_jar):
         os.remove(slave_jar)
 
-    loader = urllib.request.URLopener()
-    loader.retrieve(os.environ['JENKINS_URL'] + '/jnlpJars/slave.jar', '/var/lib/jenkins/slave.jar')
+    r = requests.get(os.environ['JENKINS_URL'] + '/jnlpJars/slave.jar')
+    with open('/var/lib/jenkins/slave.jar', 'wb') as f:
+        f.write(r.content)
 
 def slave_run(slave_jar, jnlp_url):
     params = [ 'java', '-jar', slave_jar, '-jnlpUrl', jnlp_url ]
