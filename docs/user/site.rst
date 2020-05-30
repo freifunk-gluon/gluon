@@ -120,7 +120,7 @@ wifi24 \: optional
     WLAN configuration for 2.4 GHz devices.
     ``channel`` must be set to a valid wireless channel for your radio.
     ``beacon_interval`` can be specified to set a custom beacon interval in
-    time units (TU). A time unit is equivalent to 1024 microseconds.
+    time units (TU). A time unit is equivalent to 1024 µs.
     If not set, the default value of 100 TU (=102.4 ms) is used.
 
 
