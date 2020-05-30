@@ -70,7 +70,7 @@ if os.environ.get('SLAVE_SECRET') is None:
 
 def master_ready(url):
     try:
-        r = requests.head(url, verify=False, timeout=None)
+        r = requests.head(url, timeout=None)
         return r.status_code == requests.codes.ok
     except:
         return False
