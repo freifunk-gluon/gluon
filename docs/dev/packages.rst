@@ -71,44 +71,62 @@ Feature flags
 =============
 
 Feature flags provide a convenient way to define package selections without
-making it necessary to list each package explicitly.
+making it necessary to list each package explicitly. The list of features to
+enable for a Gluon build is set by the *GLUON_FEATURES* variable in *site.mk*.
 
 The main feature flag definition file is ``package/features``, but each package
 feed can provide additional definitions in a file called ``features`` at the root
 of the feed repository.
 
-Each flag *$flag* without any explicit definition will simply include the package
-with the name *gluon-$flag* by default. The feature definition file can modify
-the package selection in two ways:
+Each flag *$flag* will include the package the name *gluon-$flag* by default.
+The feature definition file can modify the package selection by adding or removing
+packages when certain combinations of flags are set.
 
-* The *nodefault* function suppresses default of including the *gluon-$flag*
-  package
-* The *packages* function adds a list of packages (or removes, when package
-  names are prepended with minus signs) when a given logical expression
-  is satisfied
+Feature definitions use Lua syntax. The function *feature* has two arguments:
+
+* A logical expression composed of feature flag names (each prefixed with an underscore before the opening
+  quotation mark), logical operators (*and*, *or*, *not*) and parantheses
+* A table with settings that are applied when the logical expression is
+  satisfied:
+
+  * Setting *nodefault* to *true* suppresses the default of including the *gluon-$flag* package.
+    This setting is only applicable when the logical expression is a single,
+    non-negated flag name.
+  * The *packages* field adds or removes packages to install. A package is
+    removed when the package name is prefixed with a ``-`` (after the opening
+    quotation mark).
 
 Example::
 
-    nodefault 'web-wizard'
+    feature(_'web-wizard', {
+      nodefault = true,
+      packages = {
+        'gluon-config-mode-hostname',
+        'gluon-config-mode-geo-location',
+        'gluon-config-mode-contact-info',
+        'gluon-config-mode-outdoor',
+      },
+    })
 
-    packages 'web-wizard' \
-      'gluon-config-mode-hostname' \
-      'gluon-config-mode-geo-location' \
-      'gluon-config-mode-contact-info'
+    feature(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
+      packages = {
+        'gluon-config-mode-mesh-vpn',
+      },
+    })
 
-    packages 'web-wizard & (mesh-vpn-fastd | mesh-vpn-tunneldigger)' \
-      'gluon-config-mode-mesh-vpn'
+    feature(_'no-radvd', {
+      nodefault = true,
+      packages = {
+        '-gluon-radvd',
+      },
+    })
+
 
 This will
 
-* disable the inclusion of a (non-existent) package called *gluon-web-wizard*
-* enable three config mode packages when the *web-wizard* feature is enabled
+* disable the inclusion of the (non-existent) packages *gluon-web-wizard* and *gluon-no-radvd* when their
+  corresponding feature flags appear in *GLUON_FEATURES*
+* enable four additional config mode packages when the *web-wizard* feature is enabled
 * enable *gluon-config-mode-mesh-vpn* when both *web-wizard* and one
   of *mesh-vpn-fastd* and *mesh-vpn-tunneldigger* are enabled
-
-Supported syntax elements of logical expressions are:
-
-* \& (and)
-* \| (or)
-* \! (not)
-* parentheses
+* disable the *gluon-radvd* package when *gluon-no-radvd* is enabled

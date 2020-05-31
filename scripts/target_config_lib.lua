@@ -1,4 +1,5 @@
 local lib = dofile('scripts/target_lib.lua')
+local feature_lib = dofile('scripts/feature_lib.lua')
 local env = lib.env
 
 local target = env.GLUON_TARGET
@@ -23,6 +24,8 @@ local function split(s)
 	end
 	return ret
 end
+
+local feeds = split(lib.exec_capture_raw('. scripts/modules.sh; echo "$FEEDS"'))
 
 -- Strip leading '-' character
 local function strip_neg(s)
@@ -61,6 +64,15 @@ local function compact_list(list, keep_neg)
 	return concat_list({}, list, keep_neg)
 end
 
+local function file_exists(file)
+	local f = io.open(file)
+	if not f then
+		return false
+	end
+	f:close()
+	return true
+end
+
 local function site_vars(var)
 	return lib.exec_capture_raw(string.format(
 [[
@@ -78,17 +90,25 @@ local function site_packages(image)
 	return split(site_vars(string.format('$(GLUON_%s_SITE_PACKAGES)', image)))
 end
 
--- TODO: Rewrite features.sh in Lua
 local function feature_packages(features)
-	-- Ugly hack: Lua doesn't give us the return code of a popened
-	-- command, so we match on a special __ERROR__ marker
-	local pkgs = lib.exec_capture({'scripts/features.sh', features}, '|| echo __ERROR__')
-	assert(string.find(pkgs, '__ERROR__') == nil, 'Error while evaluating features')
+	local pkgs = {}
+	local function handle_feature_file(file)
+		pkgs = concat_list(pkgs, feature_lib.get_packages(file, features))
+	end
+
+	handle_feature_file('package/features')
+
+	for _, feed in ipairs(feeds) do
+		local path = string.format('packages/%s/features', feed)
+		if file_exists(path) then
+			handle_feature_file(path)
+		end
+	end
+
 	return pkgs
 end
 
--- This involves running lots of processes to evaluate site.mk, so we
--- add a simple cache
+-- This involves running a few processes to evaluate site.mk, so we add a simple cache
 local class_cache = {}
 local function class_packages(class)
 	if class_cache[class] then
@@ -96,12 +116,10 @@ local function class_packages(class)
 	end
 
 	local features = site_vars(string.format('$(GLUON_FEATURES) $(GLUON_FEATURES_%s)', class))
-	features = table.concat(compact_list(split(features), false), ' ')
+	features = compact_list(split(features), false)
 
 	local pkgs = feature_packages(features)
-	pkgs = pkgs .. ' ' .. site_vars(string.format('$(GLUON_SITE_PACKAGES) $(GLUON_SITE_PACKAGES_%s)', class))
-
-	pkgs = compact_list(split(pkgs))
+	pkgs = concat_list(pkgs, split(site_vars(string.format('$(GLUON_SITE_PACKAGES) $(GLUON_SITE_PACKAGES_%s)', class))))
 
 	class_cache[class] = pkgs
 	return pkgs
