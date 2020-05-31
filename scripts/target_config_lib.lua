@@ -49,14 +49,17 @@ local function append_to_list(list, item, keep_neg)
 	return ret
 end
 
-local function compact_list(list, keep_neg)
-	local ret = {}
-	for _, el in ipairs(list) do
+local function concat_list(a, b, keep_neg)
+	local ret = a
+	for _, el in ipairs(b) do
 		ret  = append_to_list(ret, el, keep_neg)
 	end
 	return ret
 end
 
+local function compact_list(list, keep_neg)
+	return concat_list({}, list, keep_neg)
+end
 
 local function site_vars(var)
 	return lib.exec_capture_raw(string.format(
@@ -178,9 +181,7 @@ else
 	-- x86 fallback: no devices
 	local target_pkgs = {}
 	local function handle_pkgs(pkgs)
-		for _, pkg in ipairs(pkgs) do
-			target_pkgs = append_to_list(target_pkgs, pkg)
-		end
+		target_pkgs = concat_list(target_pkgs, pkgs)
 	end
 
 	-- Just hardcode the class for device-less targets to 'standard'
