@@ -80,9 +80,18 @@ for _, zone in ipairs({ 'wan', 'local_client', 'mesh' }) do
 end
 
 
--- We can't put mesh_wan into this zone, as mesh_wan is the same
--- interface as wan, which has its own zone
-uci:set('firewall', 'wired_mesh', 'network', {'mesh_lan'})
+local wired_mesh_ifaces = {}
+uci:foreach('network', 'interface',
+	function(iface)
+		-- Select all interfaces with proto gluon_wired except for
+		-- mesh_wan into this zone, as mesh_wan is the same
+		-- interface as wan, which has its own zone
+		if iface['proto'] == 'gluon_wired' and iface['.name'] ~= 'mesh_wan' then
+			table.insert(wired_mesh_ifaces, iface['.name'])
+		end
+	end
+)
+uci:set('firewall', 'wired_mesh', 'network', wired_mesh_ifaces)
 
 -- VXLAN for wired meshing
 for _, zone in ipairs({'wired_mesh', 'wan'}) do
