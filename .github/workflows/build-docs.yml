@@ -1,0 +1,20 @@
+name: Build Documentation
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build-documentation:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo pip3 install sphinx-rtd-theme
+      - name: Build documentation
+        run: make -C docs html
+      - name: Archive build output
+        uses: actions/upload-artifact@v1
+        with:
+          name: docs_output
+          path: docs/_build/html
