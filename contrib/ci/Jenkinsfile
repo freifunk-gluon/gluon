@@ -44,10 +44,7 @@ pipeline {
 			}
 		}
 		stage('test') {
-			agent { label 'gluon-docker-v2' }
-			environment {
-				TMUX = "notmux"
-			}
+			agent { label 'gluon-vmx' }
 			steps {
 				sh label: 'Identify runner', script: 'echo $SLAVE_NAME'
 				unstash 'gluon-x86-64-factory'
@@ -79,4 +76,7 @@ pipeline {
  - gluon-docker-v2:
    - add qemu-testlab testing, requires KVM virtualization support
    - require rsync dependency to be able to build the next branch
+ - gluon-vmx
+   - splits the qemu testing from the gluon-docker-v2 label to accomodate
+     nodes without the vmx cpu flag
 */
