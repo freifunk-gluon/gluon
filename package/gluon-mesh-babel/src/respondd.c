@@ -62,38 +62,40 @@
 
 static struct babelhelper_ctx bhelper_ctx = {};
 
-static void obtain_if_addr(const char *ifname, char *lladdr) {
+static bool get_linklocal_address(const char *ifname, char lladdr[INET6_ADDRSTRLEN]) {
 	struct ifaddrs *ifaddr, *ifa;
-	int family, n;
+	bool ret = false;
 
 	if (getifaddrs(&ifaddr) == -1) {
 		perror("getifaddrs");
-		exit(EXIT_FAILURE);
+		return false;
 	}
 
-	for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
-		if (ifa->ifa_addr == NULL)
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		if (!ifa->ifa_addr)
 			continue;
 
-		family = ifa->ifa_addr->sa_family;
+		if (ifa->ifa_addr->sa_family != AF_INET6)
+			continue;
 
-		if ( (family == AF_INET6) && ( ! strncmp(ifname, ifa->ifa_name, strlen(ifname)) ) ) {
-			char lhost[INET6_ADDRSTRLEN];
-			struct in6_addr *address = &((struct sockaddr_in6*)ifa->ifa_addr)->sin6_addr;
-			if (inet_ntop(AF_INET6, address, lhost, INET6_ADDRSTRLEN) == NULL) {
-				fprintf(stderr, "obtain_if_addr: could not convert ip to string\n");
-				goto cleanup;
-			}
+		if (strcmp(ifname, ifa->ifa_name) != 0)
+			continue;
 
-			if (! strncmp("fe80:", lhost, 5) ) {
-				snprintf( lladdr, NI_MAXHOST, "%s", lhost );
-				goto cleanup;
-			}
+		const struct in6_addr *address = &((const struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr;
+		if (!IN6_IS_ADDR_LINKLOCAL(address))
+			continue;
+
+		if (!inet_ntop(AF_INET6, address, lladdr, INET6_ADDRSTRLEN)) {
+			perror("inet_ntop");
+			continue;
 		}
+
+		ret = true;
+		break;
 	}
 
-cleanup:
 	freeifaddrs(ifaddr);
+	return ret;
 }
 
 
@@ -164,9 +166,10 @@ static bool interface_file_exists(const char *ifname, const char *name) {
 
 static void mesh_add_if(const char *ifname, struct json_object *wireless,
 		struct json_object *tunnel, struct json_object *other) {
-	char str_ip[NI_MAXHOST] = {};
+	char str_ip[INET6_ADDRSTRLEN];
 
-	obtain_if_addr(ifname, str_ip);
+	if (!get_linklocal_address(ifname, str_ip))
+		return;
 
 	struct json_object *address = json_object_new_string(str_ip);
 
@@ -193,24 +196,26 @@ static bool handle_neighbour(char **data, void *obj) {
 		if (data[REACH])
 			json_object_object_add(neigh, "reachability", json_object_new_double(strtod(data[REACH], NULL)));
 
-		struct json_object *nif = 0;
-		if (data[IF] && !json_object_object_get_ex(obj, data[IF], &nif)) {
-			char str_ip[NI_MAXHOST] = {};
-			obtain_if_addr( (const char*)data[IF], str_ip );
+		if (!data[IF])
+			return true;
+
+		struct json_object *nif;
+		if (!json_object_object_get_ex(obj, data[IF], &nif)) {
+			char str_ip[INET6_ADDRSTRLEN];
 
 			nif = json_object_new_object();
 
-			json_object_object_add(nif, "ll-addr", json_object_new_string(str_ip));
+			if (get_linklocal_address(data[IF], str_ip))
+				json_object_object_add(nif, "ll-addr", json_object_new_string(str_ip));
+
 			json_object_object_add(nif, "protocol", json_object_new_string("babel"));
 			json_object_object_add(obj, data[IF], nif);
 
-		}
-		struct json_object *neighborcollector = 0;
-		if (!json_object_object_get_ex(nif, "neighbours", &neighborcollector)) {
-			neighborcollector = json_object_new_object();
-			json_object_object_add(nif, "neighbours", neighborcollector);
+			json_object_object_add(nif, "neighbours", json_object_new_object());
 		}
 
+		struct json_object *neighborcollector;
+		json_object_object_get_ex(nif, "neighbours", &neighborcollector);
 		json_object_object_add(neighborcollector, data[ADDRESS], neigh);
 
 	}
