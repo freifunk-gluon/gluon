@@ -156,14 +156,6 @@ free:
 	return retval;
 }
 
-static bool interface_file_exists(const char *ifname, const char *name) {
-	const char *format = "/sys/class/net/%s/%s";
-	char path[strlen(format) + strlen(ifname) + strlen(name)+1];
-	snprintf(path, sizeof(path), format, ifname, name);
-
-	return !access(path, F_OK);
-}
-
 static void mesh_add_if(const char *ifname, struct json_object *wireless,
 		struct json_object *tunnel, struct json_object *other) {
 	char str_ip[INET6_ADDRSTRLEN];
@@ -173,13 +165,23 @@ static void mesh_add_if(const char *ifname, struct json_object *wireless,
 
 	struct json_object *address = json_object_new_string(str_ip);
 
-	if (interface_file_exists(ifname, "wireless"))
-		json_object_array_add(wireless, address);
-	else if (interface_file_exists(ifname, "tun_flags"))
-		json_object_array_add(tunnel, address);
-	else
-		json_object_array_add(other, address);
+	/* In case of VLAN and bridge interfaces, we want the lower interface
+	 * to determine the interface type (but not for the interface address) */
+	char lowername[IF_NAMESIZE];
+	gluonutil_get_interface_lower(lowername, ifname);
 
+	switch(gluonutil_get_interface_type(lowername)) {
+	case GLUONUTIL_INTERFACE_TYPE_WIRELESS:
+		json_object_array_add(wireless, address);
+		break;
+
+	case GLUONUTIL_INTERFACE_TYPE_TUNNEL:
+		json_object_array_add(tunnel, address);
+		break;
+
+	default:
+		json_object_array_add(other, address);
+	}
 }
 
 
@@ -282,6 +284,13 @@ static void blobmsg_handle_list(struct blob_attr *attr, int len, bool array, str
 	free(proto);
 }
 
+static void add_if_not_empty(struct json_object *obj, const char *key, struct json_object *val) {
+	if (json_object_array_length(val))
+		json_object_object_add(obj, key, val);
+	else
+		json_object_put(val);
+}
+
 static void receive_call_result_data(struct ubus_request *req, int type, struct blob_attr *msg) {
 	struct json_object *ret = json_object_new_object();
 	struct json_object *wireless = json_object_new_array();
@@ -303,9 +312,9 @@ static void receive_call_result_data(struct ubus_request *req, int type, struct 
 
 	blobmsg_handle_list(blobmsg_data(msg), blobmsg_data_len(msg), false, wireless, tunnel, other);
 
-	json_object_object_add(ret, "wireless", wireless);
-	json_object_object_add(ret, "tunnel", tunnel);
-	json_object_object_add(ret, "other", other);
+	add_if_not_empty(ret, "wireless", wireless);
+	add_if_not_empty(ret, "tunnel", tunnel);
+	add_if_not_empty(ret, "other", other);
 
 	*((struct json_object**)(req->priv)) = ret;
 }
