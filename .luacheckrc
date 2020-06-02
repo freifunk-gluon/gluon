@@ -12,6 +12,7 @@ include_files = {
 	"**/*.lua",
 	"package/**/luasrc/**/*",
 	"targets/*",
+	"package/features",
 }
 
 exclude_files = {
@@ -102,5 +103,12 @@ files["targets/*"] = {
 		"packages",
 		"sysupgrade_image",
 		"try_config",
+	},
+}
+
+files["package/features"] = {
+	read_globals = {
+		"_",
+		"feature",
 	},
 }
