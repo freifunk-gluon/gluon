@@ -1,4 +1,4 @@
-config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+config('GLUON_SPECIALIZE_KERNEL', true)
 
 no_opkg()
 

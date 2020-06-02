@@ -1,5 +1,5 @@
-config 'CONFIG_VDI_IMAGES=y'
-config 'CONFIG_VMDK_IMAGES=y'
+config('VDI_IMAGES', true)
+config('VMDK_IMAGES', true)
 
 packages {
 	'kmod-3c59x',

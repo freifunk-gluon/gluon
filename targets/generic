@@ -1,21 +1,21 @@
 assert(env.GLUON_LANGS)
 
 
-config('CONFIG_GLUON_SITEDIR="%s"', env.GLUON_SITEDIR)
-config('CONFIG_GLUON_RELEASE="%s"', env.GLUON_RELEASE)
-try_config('CONFIG_GLUON_BRANCH="%s"', env.GLUON_BRANCH or '')
+config('GLUON_SITEDIR', env.GLUON_SITEDIR)
+config('GLUON_RELEASE', env.GLUON_RELEASE)
+try_config('GLUON_BRANCH', env.GLUON_BRANCH or '')
 
 for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
-	try_config('CONFIG_GLUON_WEB_LANG_%s=y', lang)
+	try_config('GLUON_WEB_LANG_' .. lang, true)
 end
 
-config('CONFIG_TARGET_%s=y', env.BOARD)
+config('TARGET_' .. env.BOARD, true)
 if env.SUBTARGET ~= '' then
-	config('CONFIG_TARGET_%s_%s=y', env.BOARD, env.SUBTARGET)
+	config(string.format('TARGET_%s_%s', env.BOARD, env.SUBTARGET), true)
 end
 
 -- Disable non-default feeds in distfeeds.conf
-config('# CONFIG_FEED_gluon_base is not set')
+config('FEED_gluon_base', false)
 
 local default_feeds = {}
 for feed in string.gmatch(exec_capture_raw('. scripts/default_feeds.sh && echo "$DEFAULT_FEEDS"'), '%S+') do
@@ -24,52 +24,46 @@ end
 
 for feed in string.gmatch(exec_capture_raw('. scripts/modules.sh && echo -n "$FEEDS"'), '%S+') do
 	if not default_feeds[feed] then
-		config('# CONFIG_FEED_%s is not set', feed)
+		config('FEED_' .. feed, false)
 	end
 end
 
 
-config '# CONFIG_TARGET_ROOTFS_INITRAMFS is not set'
+config('TARGET_ROOTFS_INITRAMFS', false)
 
-config 'CONFIG_DEVEL=y'
-config 'CONFIG_ALL_NONSHARED=y'
+config('DEVEL', true)
+config('ALL_NONSHARED', true)
 
-config '# CONFIG_PACKAGE_usbip is not set' -- fails to build
-config '# CONFIG_PACKAGE_kmod-jool is not set' -- fails to build
+config('PACKAGE_usbip', false) -- fails to build
+config('PACKAGE_kmod-jool', false) -- fails to build
 
-config 'CONFIG_BUSYBOX_CUSTOM=y'
-config '# CONFIG_BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS is not set'
+config('BUSYBOX_CUSTOM', true)
+config('BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS', false)
 
-config 'CONFIG_PACKAGE_ATH_DEBUG=y'
+config('PACKAGE_ATH_DEBUG', true)
 
-try_config 'CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=256'
+try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
-config '# CONFIG_KERNEL_IP_MROUTE is not set'
-config '# CONFIG_KERNEL_IPV6_MROUTE is not set'
+config('KERNEL_IP_MROUTE', false)
+config('KERNEL_IPV6_MROUTE', false)
 
-try_config 'CONFIG_TARGET_MULTI_PROFILE=y'
-try_config 'CONFIG_TARGET_PER_DEVICE_ROOTFS=y'
+try_config('TARGET_MULTI_PROFILE', true)
+try_config('TARGET_PER_DEVICE_ROOTFS', true)
 
-if istrue(env.GLUON_MULTIDOMAIN) then
-	config 'CONFIG_GLUON_MULTIDOMAIN=y'
-end
+config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
-if istrue(env.GLUON_AUTOREMOVE) then
-	config 'CONFIG_AUTOREMOVE=y'
-end
+config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
 
 if istrue(env.GLUON_DEBUG) then
-	config 'CONFIG_DEBUG=y'
-	config 'CONFIG_NO_STRIP=y'
-	config '# CONFIG_USE_STRIP is not set'
-	config '# CONFIG_USE_SSTRIP is not set'
+	config('DEBUG', true)
+	config('NO_STRIP', true)
+	config('USE_STRIP', false)
+	config('USE_SSTRIP', false)
 
-	try_config 'CONFIG_TARGET_ROOTFS_PARTSIZE=500'
+	try_config('TARGET_ROOTFS_PARTSIZE', 500)
 end
 
-if not istrue(env.GLUON_MINIFY) then
-	config '# CONFIG_GLUON_MINIFY is not set'
-end
+config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 
 packages {
 	'-kmod-ipt-offload',

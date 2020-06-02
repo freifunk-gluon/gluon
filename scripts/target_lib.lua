@@ -150,13 +150,50 @@ local function add_image(image)
 	table.insert(M.images[device], setmetatable(image, image_mt))
 end
 
-function F.try_config(...)
-	M.configs[string.format(...)] = 1
+
+local function format_config(k, v)
+	local format
+	if type(v) == 'string' then
+		format = '%s=%q'
+	elseif v == true then
+		format = '%s=y'
+	elseif v == nil then
+		format = '%s=m'
+	elseif v == false then
+		format = '# %s is not set'
+	else
+		format = '%s=%d'
+	end
+	return string.format(format, 'CONFIG_' .. k, v)
 end
 
-function F.config(...)
-	M.configs[string.format(...)] = 2
+local config_mt = {
+	__index = {
+		format = function(config)
+			return format_config(config.key, config.value)
+		end,
+	}
+}
+
+local function do_config(k, v, required)
+	M.configs[k] = setmetatable({
+		key = k,
+		value = v,
+		required = required,
+	}, config_mt)
 end
+
+function F.try_config(k, v)
+	do_config(k, v)
+end
+
+function F.config(k, v, message)
+	if not message then
+		message = string.format("unable to set '%s'", format_config(k, v))
+	end
+	do_config(k, v, message)
+end
+
 
 function F.packages(pkgs)
 	for _, pkg in ipairs(pkgs) do
@@ -164,6 +201,14 @@ function F.packages(pkgs)
 	end
 end
 M.packages = F.packages
+
+local function as_table(v)
+	if type(v) == 'table' then
+		return v
+	else
+		return {v}
+	end
+end
 
 function F.device(image, name, options)
 	options = merge(default_options, options)
@@ -196,16 +241,17 @@ function F.device(image, name, options)
 	end
 
 	if options.factory then
-		add_image {
-			image = image,
-			name = name,
-			subdir = 'factory',
-			in_suffix = options.factory,
-			out_suffix = '',
-			extension = options.factory_ext,
-			aliases = options.aliases,
-			manifest_aliases = options.manifest_aliases,
-		}
+		for _, ext in ipairs(as_table(options.factory_ext)) do
+			add_image {
+				image = image,
+				name = name,
+				subdir = 'factory',
+				in_suffix = options.factory,
+				out_suffix = '',
+				extension = ext,
+				aliases = options.aliases,
+			}
+		end
 	end
 	for _, extra_image in ipairs(options.extra_images) do
 		add_image {
@@ -216,7 +262,6 @@ function F.device(image, name, options)
 			out_suffix = extra_image[2],
 			extension = extra_image[3],
 			aliases = options.aliases,
-			manifest_aliases = options.manifest_aliases,
 		}
 	end
 end
@@ -240,7 +285,6 @@ function F.factory_image(image, name, ext, options)
 		out_suffix = '',
 		extension = ext,
 		aliases = options.aliases,
-		manifest_aliases = options.manifest_aliases,
 	}
 end
 

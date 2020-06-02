@@ -1,5 +1,5 @@
-config '# CONFIG_KERNEL_KALLSYMS is not set'
-config 'CONFIG_GLUON_SPECIALIZE_KERNEL=y'
+config('KERNEL_KALLSYMS', false)
+config('GLUON_SPECIALIZE_KERNEL', true)
 
 no_opkg()
 
