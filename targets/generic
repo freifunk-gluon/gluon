@@ -47,6 +47,8 @@ try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 config('KERNEL_IP_MROUTE', false)
 config('KERNEL_IPV6_MROUTE', false)
 
+config('COLLECT_KERNEL_DEBUG', true)
+
 try_config('TARGET_MULTI_PROFILE', true)
 try_config('TARGET_PER_DEVICE_ROOTFS', true)
 

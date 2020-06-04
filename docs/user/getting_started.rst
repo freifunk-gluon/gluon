@@ -113,6 +113,12 @@ symlinks, you can use the following command to resolve these links while copying
 
     cp -rL output/images /var/www
 
+The directory `output/debug` contains a compressed kernel image for each
+architecture.
+These can be used for debugging and should be stored along with the images to
+allow debugging of kernel problems on devices in the field.
+See :ref:`Debugging <dev-debugging-kernel-oops>` for more information.
+
 Cleaning the build tree
 .......................
 

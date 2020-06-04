@@ -43,6 +43,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    dev/mac_addresses
    dev/site_library
    dev/build
+   dev/debugging
 
 .. toctree::
    :caption: gluon-web Reference
