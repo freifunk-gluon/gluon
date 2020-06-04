@@ -100,6 +100,7 @@ device('d-link-dir-505-rev-a1', 'dir-505-a1', {
 device('d-link-dir-825-rev-b1', 'dir-825-b1', {
 	profile = 'DIR825B1',
 	factory = false,
+	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
 
