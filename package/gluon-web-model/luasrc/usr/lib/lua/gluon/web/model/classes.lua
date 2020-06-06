@@ -72,9 +72,9 @@ function Node:id()
 	return prefix.."."..self:id_suffix()
 end
 
-function Node:reset()
+function Node:reset_node()
 	for _, child in ipairs(self.children) do
-		child:reset()
+		child:reset_node()
 	end
 end
 
@@ -154,7 +154,7 @@ function Node:resolve_node_depends()
 		if valid then return false end
 	end
 
-	self:reset()
+	self:reset_node()
 	return true
 end
 
@@ -206,7 +206,7 @@ function AbstractValue:cfgvalue()
 	end
 end
 
-function AbstractValue:reset()
+function AbstractValue:reset_node()
 	self.data = nil
 	self.error = false
 	self.state = M.FORM_NODATA
