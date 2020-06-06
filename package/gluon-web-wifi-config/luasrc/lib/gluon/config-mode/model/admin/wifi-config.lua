@@ -71,14 +71,13 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return out
 	end
 
-	local function filter_active_interfaces(interfaces)
-		local out = false
+	local function has_active_interfaces(interfaces)
 		for _, interface in ipairs(interfaces) do
 			if not uci:get_bool('wireless', interface .. '_' .. radio, 'disabled') then
-				out = true
+				return true
 			end
 		end
-		return out
+		return false
 	end
 
 	local function vif_option(name, interfaces, msg)
@@ -89,7 +88,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		end
 
 		local o = p:option(Flag, radio .. '_' .. name .. '_enabled', msg)
-		o.default = filter_active_interfaces(existing_interfaces)
+		o.default = has_active_interfaces(existing_interfaces)
 
 		function o:write(data)
 			for _, interface in ipairs(existing_interfaces) do
