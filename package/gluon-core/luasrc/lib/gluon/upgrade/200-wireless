@@ -161,12 +161,13 @@ local function fixup_wan(radio, index)
 	uci:set('wireless', name, 'macaddr', macaddr)
 end
 
-local function configure_mesh_wireless(radio, index, config)
+local function configure_mesh_wireless(radio, index, config, disabled)
 	local radio_name = radio['.name']
 	local suffix = radio_name:match('^radio(%d+)$')
 
 	configure_mesh(config.mesh(), radio, index, suffix,
 		first_non_nil(
+			disabled,
 			is_disabled('mesh_' .. radio_name),
 			config.mesh.disabled(false)
 		)
@@ -213,7 +214,7 @@ util.foreach_radio(uci, function(radio, index, config)
 			util.add_to_set(hostapd_options, 'country3=0x4f')
 			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
 
-			uci:delete('wireless', 'mesh_' .. radio_name)
+			configure_mesh_wireless(radio, index, config, true)
 		else
 			uci:delete('wireless', radio_name, 'channels')
 
