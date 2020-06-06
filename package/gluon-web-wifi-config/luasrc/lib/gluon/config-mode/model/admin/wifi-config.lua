@@ -47,13 +47,18 @@ f:section(Section, nil, translate(
 ))
 
 
+local mesh_vifs_5ghz = {}
+
+
 uci:foreach('wireless', 'wifi-device', function(config)
 	local radio = config['.name']
 
+	local is_5ghz = false
 	local title
 	if config.hwmode == '11g' or config.hwmode == '11ng' then
 		title = translate("2.4GHz WLAN")
 	elseif config.hwmode == '11a' or config.hwmode == '11na' then
+		is_5ghz = true
 		title = translate("5GHz WLAN")
 	else
 		return
@@ -95,10 +100,16 @@ uci:foreach('wireless', 'wifi-device', function(config)
 				uci:set('wireless', interface .. '_' .. radio, 'disabled', not data)
 			end
 		end
+
+		return o
 	end
 
 	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
-	vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
+
+	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
+	if is_5ghz then
+		table.insert(mesh_vifs_5ghz, mesh_vif)
+	end
 
 	local phy = wireless.find_phy(config)
 	if not phy then
@@ -141,6 +152,10 @@ if has_5ghz_radio() then
 
 	local outdoor = r:option(Flag, 'outdoor', translate("Node will be installed outdoors"))
 	outdoor.default = uci:get_bool('gluon', 'wireless', 'outdoor')
+
+	for _, mesh_vif in ipairs(mesh_vifs_5ghz) do
+		mesh_vif:depends(outdoor, false)
+	end
 
 	function outdoor:write(data)
 		uci:set('gluon', 'wireless', 'outdoor', data)
