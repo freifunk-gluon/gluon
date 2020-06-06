@@ -25,5 +25,5 @@ return function(form, uci)
 		end
 	end
 
-	return {'gluon', 'wireless'}
+	return {'gluon', 'network', 'wireless'}
 end
