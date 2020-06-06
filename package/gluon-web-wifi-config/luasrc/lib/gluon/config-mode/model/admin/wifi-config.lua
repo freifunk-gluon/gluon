@@ -157,6 +157,7 @@ end
 function f:write()
 	uci:commit('gluon')
 	os.execute('/lib/gluon/upgrade/200-wireless')
+	uci:commit('network')
 	uci:commit('wireless')
 end
 
