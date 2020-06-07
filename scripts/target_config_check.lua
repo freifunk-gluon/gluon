@@ -9,18 +9,26 @@ local function fail(msg)
 	io.stderr:write(' * ', msg, '\n')
 end
 
-local function match_config(f)
-	for line in io.lines('openwrt/.config') do
-		if f(line) then
-			return true
-		end
+local function match_config(expected, actual)
+	if expected == actual then
+		return true
+	end
+
+	if expected:gsub('=m$', '=y') == actual then
+		return true
 	end
 
 	return false
 end
 
 local function check_config(config)
-	return match_config(function(line) return line == config end)
+	for line in io.lines('openwrt/.config') do
+		if match_config(config, line) then
+			return true
+		end
+	end
+
+	return false
 end
 
 
