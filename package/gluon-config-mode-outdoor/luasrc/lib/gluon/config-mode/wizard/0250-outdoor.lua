@@ -21,6 +21,24 @@ return function(form, uci)
 		if data ~= outdoor_mode then
 			uci:set('gluon', 'wireless', 'outdoor', data)
 			uci:save('gluon')
+
+			if data == false then
+				local mesh_ifaces_5ghz = {}
+				uci:foreach('wireless', 'wifi-device', function(config)
+					if config.hwmode ~= '11a' and config.hwmode ~= '11na' then
+						return
+					end
+
+					local radio_name = config['.name']
+					local mesh_iface = 'mesh_' .. radio_name
+					table.insert(mesh_ifaces_5ghz, mesh_iface)
+				end)
+				for _, mesh_iface in ipairs(mesh_ifaces_5ghz) do
+					uci:delete('wireless', mesh_iface)
+				end
+				uci:save('wireless')
+			end
+
 			os.execute('/lib/gluon/upgrade/200-wireless')
 		end
 	end
