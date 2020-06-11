@@ -84,7 +84,7 @@ local function is_disabled(name)
 	if uci:get('wireless', name) then
 		return uci:get_bool('wireless', name, 'disabled')
 	else
-		return false
+		return nil
 	end
 end
 
