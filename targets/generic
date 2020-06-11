@@ -40,7 +40,7 @@ config('PACKAGE_kmod-jool', false) -- fails to build
 config('BUSYBOX_CUSTOM', true)
 config('BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS', false)
 
-config('PACKAGE_ATH_DEBUG', true)
+try_config('PACKAGE_ATH_DEBUG', true)
 
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
