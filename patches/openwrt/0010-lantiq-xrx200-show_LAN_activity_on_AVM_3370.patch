@@ -1,0 +1,24 @@
+From: D. Gathmann <dzsoftware@posteo.org>
+Date: Sat, 06 Jun 2020 14:37:07 +0200
+Subject: lantiq: show LAN activity on AVM Fritzbox 3370
+
+This patch changes system.led_lan.trigger to 'netdev' for Fritzbox 3370.
+This will configure the LED to show both status and activity on the LAN ports,
+as demanded by gluon's Device Integration Checklist.
+
+Signed-off-by: D. Gathmann <dzsoftware@posteo.org>
+
+diff --git a/target/linux/lantiq/base-files/etc/board.d/01_leds b/target/linux/lantiq/base-files/etc/board.d/01_leds
+index e89de97fbe..3d7d1dc6db 100755
+--- a/target/linux/lantiq/base-files/etc/board.d/01_leds
++++ b/target/linux/lantiq/base-files/etc/board.d/01_leds
+@@ -55,7 +55,7 @@ netgear,dm200)
+ 	;;
+ avm,fritz3370-rev2-hynix|\
+ avm,fritz3370-rev2-micron)
+-	ucidef_set_led_switch "lan" "LAN" "fritz3370:green:lan" "switch0" "0x17"
++	ucidef_set_led_netdev "lan" "LAN" "fritz3370:green:lan" "eth0"
+ 	;;
+ zyxel,p-2812hnu-f1|\
+ zyxel,p-2812hnu-f3)
+
