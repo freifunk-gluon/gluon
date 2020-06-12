@@ -1,5 +1,6 @@
 local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
+local site = require 'gluon.site'
 local wireless = require 'gluon.wireless'
 
 
@@ -155,6 +156,9 @@ if has_5ghz_radio() then
 
 	for _, mesh_vif in ipairs(mesh_vifs_5ghz) do
 		mesh_vif:depends(outdoor, false)
+		if outdoor.default then
+			mesh_vif.default = not site.wifi5.mesh.disabled(false)
+		end
 	end
 
 	function outdoor:write(data)
