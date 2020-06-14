@@ -45,6 +45,16 @@ if platform.match('ar71xx', 'generic', {
 	'unifiac-pro',
 }) then
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
+elseif platform.match('lantiq') then
+	local switch_data = board_data.switch or {}
+	local switch0_data = switch_data.switch0 or {}
+	local roles_data = switch0_data.roles or {}
+	for _, role_data in ipairs(roles_data) do
+		if role_data.role == 'wan' then
+			wan_ifname = iface_exists(role_data.device)
+			break
+		end
+	end
 end
 
 if wan_ifname and lan_ifname then
