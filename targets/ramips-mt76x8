@@ -21,6 +21,11 @@ device('netgear-r6120', 'netgear_r6120', {
 })
 
 
+-- RAVPower
+
+device('ravpower-rp-wd009', 'ravpower_rp-wd009');
+
+
 -- TP-Link
 
 device('tp-link-archer-c50-v3', 'tplink_archer-c50-v3', {
