@@ -1,3 +1,5 @@
+.. _dev-mac-addresses:
+
 MAC addresses
 =============
 
@@ -16,3 +18,9 @@ Gluon tries to solve this issue by using a hash of the primary MAC address as a
 * 5: mesh1
 * 6: owe1
 * 7: wan_radio1 (private WLAN); mesh VPN
+
+When you need another MAC address, e.g. for adding another Mesh-Interface,
+pick an index from an unused feature on your device.
+
+Example: if you don't have wireless meshing enabled on 5 GHz (mesh1),
+you can go with index 5.
