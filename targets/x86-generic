@@ -3,7 +3,7 @@ include 'x86.inc'
 packages {
         'kmod-gpio-nct5104d',
         'kmod-leds-gpio',
-        'kmod-leds-apu2',
+        'kmod-pcengines-apuv2',
 }
 
 device('x86-generic', 'generic', {
