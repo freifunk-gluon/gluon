@@ -1,0 +1,56 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+
+
+local function shift()
+	table.remove(arg, 1)
+end
+
+local reboot = true
+if arg[1] == '--no-reboot' then
+	reboot = false
+	shift()
+end
+
+local setup_mode = unistd.access('/var/gluon/setup-mode') == 0
+
+if #arg ~= 1 then
+	io.stderr:write('Usage: gluon-switch-domain [--no-reboot] <domain>\n')
+	os.exit(1)
+end
+local domain = arg[1]
+
+
+if not unistd.access('/lib/gluon/domains/') then
+	io.stderr:write('This Gluon firmware does not support multiple mesh domains.\n')
+	os.exit(1)
+end
+
+
+local function domain_exists(dom)
+	return unistd.access('/lib/gluon/domains/' .. dom .. '.json') == 0
+end
+
+if not domain_exists(domain) then
+	io.stderr:write(string.format("Error: invalid mesh domain '%s'\n", domain))
+	os.exit(1)
+end
+
+
+local uci = require('simple-uci').cursor()
+uci:set('gluon', 'core', 'switch_domain', domain)
+uci:set('gluon', 'core', 'reconfigure', true)
+uci:save('gluon')
+
+local cmd
+if setup_mode then
+	cmd = 'gluon-reconfigure'
+elseif reboot then
+	uci:commit('gluon')
+	cmd = 'reboot'
+else
+	cmd = 'gluon-reload'
+end
+
+unistd.execp(cmd, {[0] = cmd})

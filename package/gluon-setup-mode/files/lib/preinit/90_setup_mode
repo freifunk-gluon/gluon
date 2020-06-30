@@ -7,6 +7,10 @@ setup_mode_enable() {
 
 	if [ "$enabled" = 1 ] || [ "$configured" != 1 ]; then
 		echo '/lib/gluon/setup-mode/rc.d' > /tmp/rc_d_path
+
+		# This directory is a marker for scripts to know that we're
+		# in config mode, but it is also used for temporary files
+		mkdir -p /var/gluon/setup-mode
 	fi
 }
 
