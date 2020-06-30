@@ -14,5 +14,5 @@ end
 -- Only in case domain switch is scheduled
 local f = io.open(cronfile, "w")
 f:write("* * * * *  /usr/bin/gluon-check-connection\n")
-f:write("*/5 * * * *  /usr/bin/gluon-switch-domain\n")
+f:write("*/5 * * * *  /lib/gluon/scheduled-domain-switch/switch-domain\n")
 f:close()
