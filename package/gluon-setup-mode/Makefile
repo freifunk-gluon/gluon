@@ -17,4 +17,25 @@ define Package/gluon-setup-mode/description
 	Offline mode to perform basic setup in a secure manner.
 endef
 
+init_links := \
+	K89log \
+	K98boot \
+	K99umount \
+	S00sysfixtime \
+	S10boot \
+	S10system \
+	S11sysctl \
+	S12log \
+	S95done
+
+define Package/gluon-setup-mode/install
+	$(Gluon/Build/Install)
+
+	$(LN) S20network $(1)/lib/gluon/setup-mode/rc.d/K90network
+
+	for link in $(init_links); do \
+		$(LN) "/etc/init.d/$$$${link:3}" "$(1)/lib/gluon/setup-mode/rc.d/$$$${link}"; \
+	done
+endef
+
 $(eval $(call BuildPackageGluon,gluon-setup-mode))
