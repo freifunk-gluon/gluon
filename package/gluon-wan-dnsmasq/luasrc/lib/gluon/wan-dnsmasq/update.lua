@@ -16,6 +16,19 @@ local function append_server(server)
 end
 
 
+local function handled_interfaces()
+  local interfaces = {}
+
+  for _, path in ipairs(util.glob('/lib/gluon/wan-dnsmasq/interface.d/*')) do
+    for interface in io.lines(path) do
+      table.insert(interfaces, interface)
+    end
+  end
+
+  return interfaces
+end
+
+
 local function handle_interface(status)
   local ifname = status.device
   local servers = status.inactive['dns-server']
@@ -41,8 +54,9 @@ if type(static) == 'table' and #static > 0 then
     append_server(server)
   end
 else
-  pcall(append_interface_servers, 'wan6')
-  pcall(append_interface_servers, 'wan')
+  for _, interface in ipairs(handled_interfaces()) do
+      pcall(append_interface_servers, interface)
+  end
 end
 
 
