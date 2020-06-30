@@ -23,6 +23,7 @@ init_links := \
 	K99umount \
 	S00sysfixtime \
 	S10boot \
+	S10gluon-core-reconfigure \
 	S10system \
 	S11sysctl \
 	S12log \
