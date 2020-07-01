@@ -1,0 +1,68 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 1 Jul 2020 20:54:51 +0200
+Subject: ar71xx: add model detection for UniFi AP-LR
+
+The UniFi AP-LR uses the same image as the UniFi AP.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 9e3819d56ee4384dcf2444f345a3fd35a437cd10..9fbabddf5d1e6156b8aaad32ee0b69bfa854440f 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -69,33 +69,36 @@ ubnt_get_mtd_part_magic() {
+ }
+ 
+ ubnt_xm_board_detect() {
+-	local model
+-	local magic
++	local magic="$(ubnt_get_mtd_part_magic)"
++	local band="${magic:3:1}"
+ 
+-	magic="$(ubnt_get_mtd_part_magic)"
+-	case ${magic:0:3} in
++	case "${magic:0:3}" in
+ 	"e00"|\
+ 	"e01"|\
+ 	"e80")
+-		model="Ubiquiti NanoStation M"
++		AR71XX_MODEL="Ubiquiti NanoStation M${band}"
+ 		;;
+ 	"e0a")
+-		model="Ubiquiti NanoStation loco M"
++		AR71XX_MODEL="Ubiquiti NanoStation loco M${band}"
+ 		;;
+ 	"e1b"|\
+ 	"e1d")
+-		model="Ubiquiti Rocket M"
++		AR71XX_MODEL="Ubiquiti Rocket M${band}"
+ 		;;
+ 	"e20"|\
+ 	"e2d")
+-		model="Ubiquiti Bullet M"
++		AR71XX_MODEL="Ubiquiti Bullet M${band}"
+ 		;;
+ 	"e30")
+-		model="Ubiquiti PicoStation M"
++		AR71XX_MODEL="Ubiquiti PicoStation M${band}"
++		;;
++	"e50")
++		AR71XX_MODEL="Ubiquiti UniFi AP"
++		;;
++	"e51")
++		AR71XX_MODEL="Ubiquiti UniFi AP-LR"
+ 		;;
+ 	esac
+-
+-	[ -z "$model" ] || AR71XX_MODEL="${model}${magic:3:1}"
+ }
+ 
+ ubnt_unifi_ac_get_mtd_part_magic() {
+@@ -1426,6 +1429,7 @@ ar71xx_board_detect() {
+ 		;;
+ 	*"UniFi AP")
+ 		name="unifi"
++		ubnt_xm_board_detect
+ 		;;
+ 	*"UniFi AP-PRO")
+ 		name="uap-pro"

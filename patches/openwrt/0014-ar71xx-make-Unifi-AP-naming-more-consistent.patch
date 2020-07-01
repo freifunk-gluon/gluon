@@ -1,0 +1,177 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Wed, 1 Jul 2020 20:45:38 +0200
+Subject: ar71xx: make Unifi AP naming more consistent
+
+- Make device titles and model strings match
+- More consistent word splitting:
+  - UniFiAP -> UniFi AP
+  - UAP -> UniFi AP
+- Make "UniFi AP-PRO" formatting match official name
+
+- The image names are adjusted as well:
+  - uap -> unifiap
+  - unifi-outdoor -> unifiap-outdoor
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/target/linux/ar71xx/base-files/lib/ar71xx.sh b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+index 044ef4eae5e1cd2f04bacc5b0c18a151f2fe1253..9e3819d56ee4384dcf2444f345a3fd35a437cd10 100755
+--- a/target/linux/ar71xx/base-files/lib/ar71xx.sh
++++ b/target/linux/ar71xx/base-files/lib/ar71xx.sh
+@@ -1424,10 +1424,10 @@ ar71xx_board_detect() {
+ 	*"Tube2H")
+ 		name="tube2h"
+ 		;;
+-	*"UniFi")
++	*"UniFi AP")
+ 		name="unifi"
+ 		;;
+-	*"UniFi AP Pro")
++	*"UniFi AP-PRO")
+ 		name="uap-pro"
+ 		;;
+ 	*"UniFi-AC-LITE/MESH")
+@@ -1438,10 +1438,10 @@ ar71xx_board_detect() {
+ 		name="unifiac-pro"
+ 		ubnt_unifi_ac_board_detect
+ 		;;
+-	*"UniFiAP Outdoor")
++	*"UniFi AP Outdoor")
+ 		name="unifi-outdoor"
+ 		;;
+-	*"UniFiAP Outdoor+")
++	*"UniFi AP Outdoor+")
+ 		name="unifi-outdoor-plus"
+ 		;;
+ 	*"WAM250")
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-xm.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-xm.c
+index 6ceb91efff573ad0fa92caa95660875f126fef6d..4f51284e5899c08ca1ea454212b2accbaaf87d80 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-xm.c
++++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-ubnt-xm.c
+@@ -229,7 +229,7 @@ static void __init ubnt_unifi_setup(void)
+                                         ubnt_xm_gpio_keys);
+ }
+ 
+-MIPS_MACHINE(ATH79_MACH_UBNT_UNIFI, "UBNT-UF", "Ubiquiti UniFi",
++MIPS_MACHINE(ATH79_MACH_UBNT_UNIFI, "UBNT-UF", "Ubiquiti UniFi AP",
+ 	     ubnt_unifi_setup);
+ 
+ 
+@@ -263,7 +263,7 @@ static void __init ubnt_unifi_outdoor_setup(void)
+ }
+ 
+ MIPS_MACHINE(ATH79_MACH_UBNT_UNIFI_OUTDOOR, "UBNT-U20",
+-	     "Ubiquiti UniFiAP Outdoor",
++	     "Ubiquiti UniFi AP Outdoor",
+ 	     ubnt_unifi_outdoor_setup);
+ 
+ 
+@@ -295,7 +295,7 @@ static void __init ubnt_unifi_outdoor_plus_setup(void)
+ }
+ 
+ MIPS_MACHINE(ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS, "UBNT-UOP",
+-	     "Ubiquiti UniFiAP Outdoor+",
++	     "Ubiquiti UniFi AP Outdoor+",
+ 	     ubnt_unifi_outdoor_plus_setup);
+ 
+ 
+@@ -383,7 +383,7 @@ static void __init ubnt_uap_pro_setup(void)
+ 	ath79_register_eth(0);
+ }
+ 
+-MIPS_MACHINE(ATH79_MACH_UBNT_UAP_PRO, "UAP-PRO", "Ubiquiti UniFi AP Pro",
++MIPS_MACHINE(ATH79_MACH_UBNT_UAP_PRO, "UAP-PRO", "Ubiquiti UniFi AP-PRO",
+ 	     ubnt_uap_pro_setup);
+ 
+ #define UBNT_XW_GPIO_LED_L1		11
+diff --git a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+index 900b4ec87b1b8a3bf6def552974ce930df750acd..9323cb27d951ed13efde00eb80209eb425c4ef02 100644
+--- a/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
++++ b/target/linux/ar71xx/files/arch/mips/ath79/machtypes.h
+@@ -334,12 +334,12 @@ enum ath79_mach_type {
+ 	ATH79_MACH_UBNT_ROCKET_M_XW,		/* Ubiquiti Rocket M XW */
+ 	ATH79_MACH_UBNT_RS,			/* Ubiquiti RouterStation */
+ 	ATH79_MACH_UBNT_RSPRO,			/* Ubiquiti RouterStation Pro */
+-	ATH79_MACH_UBNT_UAP_PRO,		/* Ubiquiti UniFi AP Pro */
+-	ATH79_MACH_UBNT_UNIFI,			/* Ubiquiti Unifi */
+-	ATH79_MACH_UBNT_UNIFIAC_LITE,		/* Ubiquiti Unifi AC LITE/LR/MESH */
+-	ATH79_MACH_UBNT_UNIFIAC_PRO,		/* Ubiquiti Unifi AC PRO/MESH PRO */
+-	ATH79_MACH_UBNT_UNIFI_OUTDOOR,		/* Ubiquiti UnifiAP Outdoor */
+-	ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS,	/* Ubiquiti UnifiAP Outdoor+ */
++	ATH79_MACH_UBNT_UAP_PRO,		/* Ubiquiti UniFi AP-PRO */
++	ATH79_MACH_UBNT_UNIFI,			/* Ubiquiti UniFi AP */
++	ATH79_MACH_UBNT_UNIFIAC_LITE,		/* Ubiquiti UniFi AC LITE/LR/MESH */
++	ATH79_MACH_UBNT_UNIFIAC_PRO,		/* Ubiquiti UniFi AC PRO/MESH PRO */
++	ATH79_MACH_UBNT_UNIFI_OUTDOOR,		/* Ubiquiti Unifi AP Outdoor */
++	ATH79_MACH_UBNT_UNIFI_OUTDOOR_PLUS,	/* Ubiquiti Unifi AP Outdoor+ */
+ 	ATH79_MACH_UBNT_XM,			/* Ubiquiti Networks XM board rev 1.0 */
+ 	ATH79_MACH_WAM250,			/* Samsung WAM250 */
+ 	ATH79_MACH_WBS210,			/* TP-LINK WBS210 */
+diff --git a/target/linux/ar71xx/image/generic-ubnt.mk b/target/linux/ar71xx/image/generic-ubnt.mk
+index 8d62980add2940cc809976550b388a118eac3ff5..2f3ff7e85eaf2298270c5a55059fb03fc386603e 100644
+--- a/target/linux/ar71xx/image/generic-ubnt.mk
++++ b/target/linux/ar71xx/image/generic-ubnt.mk
+@@ -114,13 +114,13 @@ define Device/ubnt-nano-m
+ endef
+ TARGET_DEVICES += ubnt-nano-m
+ 
+-define Device/ubnt-unifi
++define Device/ubnt-unifiap
+   $(Device/ubnt-bz)
+-  DEVICE_TITLE := Ubiquiti UniFi
++  DEVICE_TITLE := Ubiquiti UniFi AP
+   BOARDNAME := UBNT-UF
+   DEVICE_PROFILE += UBNTUNIFI
+ endef
+-TARGET_DEVICES += ubnt-unifi
++TARGET_DEVICES += ubnt-unifiap
+ 
+ define Device/ubnt-unifiac
+   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+@@ -167,13 +167,13 @@ define Device/ubnt-unifiac-mesh-pro
+ endef
+ TARGET_DEVICES += ubnt-unifiac-mesh-pro
+ 
+-define Device/ubnt-unifi-outdoor
++define Device/ubnt-unifiap-outdoor
+   $(Device/ubnt-bz)
+-  DEVICE_TITLE := Ubiquiti UniFi Outdoor
++  DEVICE_TITLE := Ubiquiti UniFi AP Outdoor
+   BOARDNAME := UBNT-U20
+   DEVICE_PROFILE += UBNTUNIFIOUTDOOR
+ endef
+-TARGET_DEVICES += ubnt-unifi-outdoor
++TARGET_DEVICES += ubnt-unifiap-outdoor
+ 
+ define Device/ubnt-nano-m-xw
+   $(Device/ubnt-xw)
+@@ -293,8 +293,8 @@ define Device/ubnt-ls-sr71
+ endef
+ TARGET_DEVICES += ubnt-ls-sr71
+ 
+-define Device/ubnt-uap-pro
+-  DEVICE_TITLE := Ubiquiti UAP Pro
++define Device/ubnt-unifiap-pro
++  DEVICE_TITLE := Ubiquiti UniFi AP-PRO
+   KERNEL_SIZE := 2048k
+   IMAGE_SIZE := 15744k
+   MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,2048k(kernel),13696k(rootfs),256k(cfg)ro,64k(EEPROM)ro,15744k@0x50000(firmware)
+@@ -307,13 +307,13 @@ define Device/ubnt-uap-pro
+   IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+   IMAGE/factory.bin := $$(IMAGE/sysupgrade.bin) | mkubntimage2
+ endef
+-TARGET_DEVICES += ubnt-uap-pro
++TARGET_DEVICES += ubnt-unifiap-pro
+ 
+-define Device/ubnt-unifi-outdoor-plus
+-  $(Device/ubnt-uap-pro)
+-  DEVICE_TITLE := Ubiquiti UniFi Outdoor Plus
++define Device/ubnt-unifiap-outdoor-plus
++  $(Device/ubnt-unifiap-pro)
++  DEVICE_TITLE := Ubiquiti UniFi AP Outdoor Plus
+   UBNT_CHIP := ar7240
+   BOARDNAME := UBNT-UOP
+   DEVICE_PROFILE := UBNT
+ endef
+-TARGET_DEVICES += ubnt-unifi-outdoor-plus
++TARGET_DEVICES += ubnt-unifiap-outdoor-plus

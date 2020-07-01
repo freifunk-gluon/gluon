@@ -435,16 +435,28 @@ device('ubiquiti-rocket-m-ti', 'ubnt-rocket-m-ti', {
 	},
 })
 
-device('ubiquiti-unifi', 'ubnt-unifi', {
+device('ubiquiti-unifi-ap', 'ubnt-unifiap', {
 	aliases = {
-		'ubiquiti-unifi-ap',
 		'ubiquiti-unifi-ap-lr',
+	},
+	manifest_aliases = {
+		'ubiquiti-unifi',
 	},
 })
 
-device('ubiquiti-unifi-ap-pro', 'ubnt-uap-pro')
-device('ubiquiti-unifiap-outdoor', 'ubnt-unifi-outdoor')
-device('ubiquiti-unifiap-outdoor+', 'ubnt-unifi-outdoor-plus')
+device('ubiquiti-unifi-ap-pro', 'ubnt-unifiap-pro')
+
+device('ubiquiti-unifi-ap-outdoor', 'ubnt-unifiap-outdoor', {
+	manifest_aliases = {
+		'ubiquiti-unifiap-outdoor',
+	},
+})
+
+device('ubiquiti-unifi-ap-outdoor+', 'ubnt-unifiap-outdoor-plus', {
+	manifest_aliases = {
+		'ubiquiti-unifiap-outdoor+',
+	},
+})
 
 device('ubiquiti-ls-sr71', 'ubnt-ls-sr71', {
 	broken = true, -- untested
