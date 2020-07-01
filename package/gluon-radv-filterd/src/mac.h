@@ -1,4 +1,7 @@
+#pragma once
+
 #include <stdint.h>
+#include <string.h>
 #include <linux/if_ether.h>
 
 #define F_MAC "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx"
