@@ -608,12 +608,12 @@ static void update_tqs(void) {
 	foreach(router, G.routers) {
 		if (router->tq == 0) {
 			if (ether_addr_equal(router->originator, unspec))
-				fprintf(stderr,
-					"Unable to find router " F_MAC " in transtable_{global,local}\n",
+				DEBUG_MSG(
+					"Unable to find router " F_MAC " in transtable_{global,local}",
 					F_MAC_VAR(router->src));
 			else
-				fprintf(stderr,
-					"Unable to find TQ for originator " F_MAC " (router " F_MAC ")\n",
+				DEBUG_MSG(
+					"Unable to find TQ for originator " F_MAC " (router " F_MAC ")",
 					F_MAC_VAR(router->originator),
 					F_MAC_VAR(router->src));
 		}
