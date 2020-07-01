@@ -559,14 +559,13 @@ static int parse_tt_local(struct nl_msg *msg,
 }
 
 static void update_tqs(void) {
+	static const struct ether_addr unspec = {};
 	struct router *router;
 	bool update_originators = false;
-	struct ether_addr unspec;
 	struct batadv_nlquery_opts opts;
 	int ret;
 
 	// reset TQs
-	memset(&unspec, 0, sizeof(unspec));
 	foreach(router, G.routers) {
 		router->tq = 0;
 		if (ether_addr_equal(router->originator, unspec))
