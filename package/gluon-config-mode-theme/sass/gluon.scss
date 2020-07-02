@@ -24,7 +24,6 @@ $red:       #ee3300;
 	}
 
 	display: inline-block;
-	zoom: 1;
 	line-height: normal;
 	white-space: nowrap;
 	vertical-align: baseline;
@@ -36,8 +35,8 @@ $red:       #ee3300;
 	font-size: 100%;
 	padding: 0.5em 1em;
 	color: rgba(0, 0, 0, 0.80);
-	border: none rgba(0, 0, 0, 0);
 	background-color: #E6E6E6;
+	border: none;
 	text-decoration: none;
 	border-radius: 2px;
 
@@ -65,24 +64,10 @@ $red:       #ee3300;
 	}
 }
 
-@mixin button-primary {
-	background-color: $ffzusatz;
-	color: #fff;
-}
-
-.lang_he {
-	direction: RTL;
-	unicode-bidi: embed;
-}
-
-.hidden {
-	display: none;
-}
-
 html {
 	min-height: 100%;
 	height: auto;
-	position:relative;
+	position: relative;
 }
 
 body, input, select, option {
@@ -98,11 +83,6 @@ body {
 	flex-direction: column;
 	min-height: 100vh;
 	background-color: #f3f3f3;
-}
-
-a img {
-	border: none;
-	text-decoration: none;
 }
 
 .tabmenu1 {
@@ -142,36 +122,8 @@ ul.tabmenu li {
 	}
 }
 
-abbr,
-acronym {
-	font-style: normal;
-	font-variant: normal;
-}
-
-abbr[title],
-acronym[title] {
-	border-bottom: 1px dotted;
-	cursor: help;
-}
-
-a:link abbr[title],
-a:visited abbr[title],
-a:link acronym[title],
-a:visited acronym[title] {
-	cursor: pointer;
-}
-
-code {
-	font-family: monospace;
-	white-space: pre;
-}
-
 #maincontent ul {
 	margin-left: 2em;
-}
-
-.clear {
-	clear: both;
 }
 
 .error {
@@ -207,7 +159,7 @@ code {
 	}
 }
 
-#menubar div.hostinfo {
+#menubar .hostinfo {
 	position: relative;
 	margin: 0;
 	padding: 0.5em;
@@ -216,7 +168,7 @@ code {
 	font-size: 80%;
 }
 
-#menubar div.hostinfo a {
+#menubar .hostinfo a {
 	&:link, &:visited {
 		text-decoration: none;
 		font-weight: bold;
@@ -269,15 +221,15 @@ code {
 }
 
 .gluon-section h2 {
-	margin: 0em 0 0.5em -0.5em !important;
+	margin: 0em 0 0.5em -0.5em;
 }
 
 .gluon-section h3 {
-	text-decoration: none !important;
-	font-weight: bold !important;
-	color: #555555 !important;
-	margin: 0.25em !important;
-	font-size: 100% !important;
+	text-decoration: none;
+	font-weight: bold;
+	color: #555555;
+	margin: 0.25em;
+	font-size: 100%;
 }
 
 .gluon-section-descr {
@@ -290,19 +242,11 @@ code {
 	margin-bottom: 1em;
 }
 
-input:placeholder {
+input::placeholder {
 	color: #aaaaaa;
 }
 
-input:-webkit-input-placeholder {
-	color: #aaaaaa;
-}
-
-input:-moz-placeholder {
-	color: #aaaaaa;
-}
-
-input:-ms-input-placeholder {
+input::-webkit-input-placeholder {
 	color: #aaaaaa;
 }
 
@@ -317,7 +261,7 @@ input[type=checkbox] {
 		margin: 0;
 	}
 
-	&:checked + label:after {
+	&:checked + label::after {
 		content: '✔';
 		color: $ffmagenta;
 		vertical-align: middle;
@@ -347,7 +291,7 @@ input[type=radio] {
 		border-radius: 50%;
 	}
 
-	&:checked + label:after {
+	&:checked + label::after {
 		content: '•';
 		color: $ffmagenta;
 		vertical-align: middle;
@@ -363,7 +307,6 @@ input[type=radio] {
 
 input[type=submit],
 input[type=reset],
-input[type=image],
 input[type=button] {
 	cursor: pointer;
 }
@@ -388,33 +331,30 @@ option {
 	background: lighten($ffyellow, 30);
 }
 
-input[type=image] {
-	border: none;
-}
-
 select,
 input[type=text],
 input[type=password] {
 	min-width: 20em;
 }
 
-input.gluon-button {
+.gluon-button {
 	@include button;
 
 	margin-left: 0.5em;
 	background-repeat: no-repeat;
 }
 
-input.gluon-button-reset {
+.gluon-button-reset {
 	background-color: $red;
 	color: #fff;
 }
-input.gluon-button-submit {
-	@include button-primary;
-}
 
-input.gluon-button-submit:active {
-		background: grey;
+.gluon-button-submit {
+	background-color: $ffzusatz;
+	color: #fff;
+}
+.gluon-button-submit:active {
+	background: grey;
 }
 
 .gluon-input-invalid {
@@ -422,25 +362,12 @@ input.gluon-button-submit:active {
 	color: white;
 }
 
-div.gluon-section-remove input {
-	border-bottom: none;
-}
-
 textarea {
 	margin-left: -1px;
 	margin-bottom: 0.5em;
 }
 
-.gluon-section .gluon-rowstyle-1 h3 {
-	background-color: #eeeeff;
-	color: #555555;
-}
-
-.gluon-rowstyle-2 {
-	color: #000000;
-}
-
-div.gluon-value {
+.gluon-value {
 	display: flex;
 	flex-direction: row;
 	margin-bottom: 0.5em;
@@ -458,7 +385,7 @@ div.gluon-value {
 	font-weight: bold;
 }
 
-div.gluon-value-field {
+.gluon-value-field {
 	flex: 3;
 	position: relative;
 
@@ -467,12 +394,12 @@ div.gluon-value-field {
 	}
 }
 
-div.gluon-value-field-text {
+.gluon-value-field-text {
 	flex: 3;
 	padding-top: 0.39em;
 }
 
-div.gluon-value-field-long {
+.gluon-value-field-long {
 	flex: 10;
 	position: relative;
 	margin-top: 0.65em;
@@ -482,29 +409,15 @@ div.gluon-value-field-long {
 	}
 }
 
-div.gluon-value-field-long-after {
+.gluon-value-field-long-after {
 	flex: 2;
 }
 
-div.gluon-value-description {
+.gluon-value-description {
 	font-size: 8pt;
 }
 
-div.gluon-section-create {
-	clear: left;
-	white-space: nowrap;
-	vertical-align: top;
-}
-
-div.gluon-section-create .gluon-button {
-	margin: 0.25em;
-}
-
-input.gluon-section-create-name {
-	margin-right: -0.25em;
-}
-
-div.gluon-form-descr {
+.gluon-form-descr {
 	margin-bottom: 1em;
 }
 
@@ -523,30 +436,10 @@ div.gluon-form-descr {
 	flex-flow: row-reverse;
 }
 
-div.gluon-optionals {
-	padding: 0.25em;
-	border-bottom: 1px dotted #bbbbbb;
-}
-
-div.gluon-section-remove {
-	float: right;
-}
-
 .gluon-section-node {
 	clear: both;
 	position: relative;
 	border: none;
-}
-
-.gluon-section-node-tabbed {
-	border-top-left-radius: 0;
-}
-
-div.gluon-error {
-	font-size: 95%;
-	font-weight: bold;
-	color: #ff0000;
-	background-color: #ffffff;
 }
 
 .gluon-value-error input,
@@ -554,11 +447,7 @@ div.gluon-error {
 	background-color: #ffcccc;
 }
 
-.gluon-value-field var {
-	color: #2222FF;
-}
-
-.gluon-add:after, .gluon-remove:after {
+.gluon-add::after, .gluon-remove::after {
 	cursor: pointer;
 	display: inline-block;
 	text-align: center;
@@ -584,7 +473,7 @@ div.gluon-error {
 		left: -0.08em;
 	}
 
-	&:after {
+	&::after {
 		content: '+';
 	}
 }
@@ -595,21 +484,9 @@ div.gluon-error {
 	position: relative;
 	top: -0.03em;
 
-	&:after {
+	&::after {
 		content: '–';
 	}
-}
-
-.left {
-	text-align: left !important;
-}
-
-.right {
-	text-align: right !important;
-}
-
-.inline {
-	display: inline;
 }
 
 .error500 {
