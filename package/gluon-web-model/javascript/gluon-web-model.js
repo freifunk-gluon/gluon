@@ -276,7 +276,6 @@
 					t.value = values[i-1];
 					t.type = 'text';
 					t.index = i;
-					t.className = 'gluon-input-text';
 
 				if (attr.size)
 					t.size = attr.size;
