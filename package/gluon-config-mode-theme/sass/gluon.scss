@@ -326,6 +326,35 @@ input[type=checkbox] + label {
 	outline: 0;
 }
 
+.select-wrapper {
+	position: relative;
+	display: inline-block;
+
+	&::before {
+		position: absolute;
+		z-index: 1;
+		right: 0.05em;
+		top: calc(2px + 0.1em);
+		bottom: calc(2px + 0.1em);
+		width: 1.4em;
+		border-left: 0.05em solid rgba(0, 0, 0, 0.25);
+		pointer-events: none;
+		background:
+			url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="8" height="5"><path fill="none" stroke="black" stroke-linejoin="bevel" d="M1,1L4,4L7,1"/></svg>')
+			center / 0.8em 0.5em
+			no-repeat
+		;
+		content: '';
+	}
+
+	select {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		cursor: pointer;
+	}
+}
+
 option {
 	color: darken($ffzusatz, 30);
 	background: lighten($ffyellow, 30);
