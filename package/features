@@ -1,37 +1,69 @@
-nodefault 'web-wizard'
-
-packages 'web-wizard' \
-	'gluon-config-mode-hostname' \
-	'gluon-config-mode-geo-location' \
-	'gluon-config-mode-contact-info' \
-	'gluon-config-mode-outdoor'
-
-packages 'web-wizard & autoupdater' \
-	'gluon-config-mode-autoupdater'
-
-packages 'web-wizard & (mesh-vpn-fastd | mesh-vpn-tunneldigger)' \
-	'gluon-config-mode-mesh-vpn'
+-- GLUON_FEATURES definition file
+--
+-- See the page `dev/packages` (Developer Documentation / Package development)
+-- in the `docs` directory or on gluon.readthedocs.io for information on the
+-- file format
 
 
-nodefault 'web-advanced'
+feature(_'web-wizard', {
+	nodefault = true,
+	packages = {
+		'gluon-config-mode-hostname',
+		'gluon-config-mode-geo-location',
+		'gluon-config-mode-contact-info',
+		'gluon-config-mode-outdoor',
+	},
+})
 
-packages 'web-advanced' \
-	'gluon-web-admin' \
-	'gluon-web-network' \
-	'gluon-web-wifi-config'
+feature(_'web-wizard' and _'autoupdater', {
+	packages = {
+		'gluon-config-mode-autoupdater',
+	},
+})
 
-packages 'web-advanced & autoupdater' \
-	'gluon-web-autoupdater'
+feature(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
+	packages = {
+		'gluon-config-mode-mesh-vpn',
+	},
+})
 
-packages 'status-page & mesh-batman-adv-15' \
-	'gluon-status-page-mesh-batman-adv'
 
-packages 'mesh-batman-adv-15' \
-	'gluon-ebtables-limit-arp' \
-	'gluon-radvd'
+feature(_'web-advanced', {
+	nodefault = true,
+	packages = {
+		'gluon-web-admin',
+		'gluon-web-network',
+		'gluon-web-wifi-config',
+	},
+})
 
-packages 'mesh-babel' \
-	'gluon-radvd'
+feature(_'web-advanced' and _'autoupdater', {
+	packages = {
+		'gluon-web-autoupdater',
+	},
+})
 
-packages '!wireless-encryption-wpa3' \
-	'hostapd-mini'
+feature(_'status-page' and _'mesh-batman-adv-15', {
+	packages = {
+		'gluon-status-page-mesh-batman-adv',
+	},
+})
+
+feature(_'mesh-batman-adv-15', {
+	packages = {
+		'gluon-ebtables-limit-arp',
+		'gluon-radvd',
+	},
+})
+
+feature(_'mesh-babel', {
+	packages = {
+		'gluon-radvd',
+	},
+})
+
+feature(not _'wireless-encryption-wpa3', {
+	packages = {
+		'hostapd-mini',
+	},
+})
