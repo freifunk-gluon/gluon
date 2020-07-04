@@ -5,6 +5,8 @@ local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
 
 
+local min_branch
+
 for name, config in pairs(site.autoupdater.branches()) do
 	uci:delete('autoupdater', name)
 	uci:section('autoupdater', 'branch', name, {
@@ -13,16 +15,24 @@ for name, config in pairs(site.autoupdater.branches()) do
 		good_signatures = config.good_signatures,
 		pubkey = config.pubkeys,
 	})
+
+	if not min_branch or (name < min_branch) then
+		min_branch = name
+	end
 end
 
 if not uci:get('autoupdater', 'settings') then
 	local enabled = unistd.access('/lib/gluon/autoupdater/default_enabled') ~= nil
 
-	local branch = site.autoupdater.branch()
+	local branch = site.autoupdater.branch(min_branch)
 	local f = io.open('/lib/gluon/autoupdater/default_branch')
 	if f then
 		branch = f:read('*line')
 		f:close()
+	end
+
+	if not branch then
+		enabled = false
 	end
 
 	uci:section('autoupdater', 'autoupdater', 'settings', {
