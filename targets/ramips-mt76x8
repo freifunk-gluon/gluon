@@ -74,3 +74,10 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 device('vocore2', 'vocore2', {
 	factory = false,
 })
+
+-- Wavlink/Maginon
+
+device('wavlink-wl-wn577a2', 'wavlink_wl-wn577a2', {
+	factory = false,
+	aliases = {'maginon-wlr-755'},
+})

@@ -1,0 +1,217 @@
+From: Lars Wessels <software@bytebox.org>
+Date: Sat, 04 Jul 2020 15:10:17 +0200
+Subject: ramips: add support for Wavlink WL-WN557A2 (aka Maginon WLR-755)
+
+Backport of https://github.com/openwrt/openwrt/pull/3139
+to current OpenWRT-19.07-SNAPSHOT
+
+Signed-off-by: Lars Wessels <software@bytebox.org>
+
+diff --git a/target/linux/ramips/dts/WL-WN577A2.dts b/target/linux/ramips/dts/WL-WN577A2.dts
+new file mode 100644
+index 0000000000..3949c67d30
+--- /dev/null
++++ b/target/linux/ramips/dts/WL-WN577A2.dts
+@@ -0,0 +1,145 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
++
++#include "mt7628an.dtsi"
++
++/ {
++	compatible = "wavlink,wl-wn577a2", "maginon,wlr-755", "mediatek,mt7628an-soc";
++	model = "WAVLINK WL-WN577A2";
++
++    aliases {
++        led-boot = &led_wps;
++        led-failsafe = &led_wps;
++        led-running = &led_wps;
++        led-upgrade = &led_wps;
++    };
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x4000000>;
++	};
++
++	keys {
++		compatible = "gpio-keys-polled";
++		poll-interval = <20>;
++
++		reset {
++			label = "reset";
++			gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++
++		wps {
++			label = "wps";
++			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_WPS_BUTTON>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		lan {
++			label = "wl-wn577a2:green:lan";
++			gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
++		};
++
++		wan {
++			label = "wl-wn577a2:green:wan";
++			gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
++		};
++
++		led_wps: wps {
++			label = "wl-wn577a2:green:wps";
++			gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pinctrl {
++	state_default: pinctrl0 {
++		gpio {
++			ralink,group = "i2c", "wdt", "p0led_an", "p3led_an", "p4led_an";
++			ralink,function = "gpio";
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pcie0 {
++	mt76@0,0 {
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&factory 0x8000>;
++		ieee80211-freq-limit = <5000000 6000000>;
++	};
++};
++
++&spi0 {
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <40000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0x0 0x30000>;
++				read-only;
++			};
++
++			partition@30000 {
++				label = "u-boot-env";
++				reg = <0x30000 0x10000>;
++				read-only;
++			};
++
++			factory: partition@40000 {
++				label = "factory";
++				reg = <0x40000 0x10000>;
++				read-only;
++			};
++
++			partition@50000 {
++				compatible = "denx,uimage";
++				label = "firmware";
++				reg = <0x50000 0x7b0000>;
++			};
++		};
++	};
++};
++
++&wmac {
++	status = "okay";
++};
++
++&ethernet {
++	mtd-mac-address = <&factory 0x28>;
++};
++
++&esw {
++	mediatek,portmap = <0x2f>;
++};
++
++&usbphy {
++	status = "disabled";
++};
++
++&ehci {
++	status = "disabled";
++};
++
++&ohci {
++	status = "disabled";
++};
+diff --git a/target/linux/ramips/image/mt76x8.mk b/target/linux/ramips/image/mt76x8.mk
+index 7df5c04297..2c4be5ae82 100644
+--- a/target/linux/ramips/image/mt76x8.mk
++++ b/target/linux/ramips/image/mt76x8.mk
+@@ -402,6 +402,14 @@ define Device/wavlink_wl-wn575a3
+ endef
+ TARGET_DEVICES += wavlink_wl-wn575a3
+
++define Device/wavlink_wl-wn577a2
++  DTS := WL-WN577A2
++  IMAGE_SIZE := $(ralink_default_fw_size_8M)
++  DEVICE_TITLE := WAVLINK WL-WN577A2 (Maginon WLR-755)
++  DEVICE_PACKAGES := kmod-mt76x0e
++endef
++TARGET_DEVICES += wavlink_wl-wn577a2
++
+ define Device/wcr-1166ds
+   DTS := WCR-1166DS
+   BUFFALO_TAG_PLATFORM := MTK
+diff --git a/target/linux/ramips/base-files/etc/board.d/01_leds b/target/linux/ramips/base-files/etc/board.d/01_leds
+index 5c005db0c1..5a9daed3d3 100755
+--- a/target/linux/ramips/base-files/etc/board.d/01_leds
++++ b/target/linux/ramips/base-files/etc/board.d/01_leds
+@@ -382,6 +382,10 @@ wavlink,wl-wn575a3)
+	ucidef_set_led_rssi "wifi-med" "wifi-med" "$boardname:green:wifi-med" "wlan1" "50" "84"
+	ucidef_set_led_rssi "wifi-high" "wifi-high" "$boardname:green:wifi-high" "wlan1" "85" "100"
+	;;
++wavlink,wl-wn577a2)
++	ucidef_set_led_switch "lan" "lan" "$boardname:green:lan" "switch0" "0x8"
++	ucidef_set_led_switch "wan" "wan" "$boardname:green:wan" "switch0" "0x10"
++	;;
+ we1026-5g-16m)
+	ucidef_set_led_netdev "lan" "LAN" "we1026-5g:green:lan" "eth0"
+	set_wifi_led "we1026-5g:green:wifi"
+diff --git a/target/linux/ramips/base-files/etc/board.d/02_network b/target/linux/ramips/base-files/etc/board.d/02_network
+index f743ce851a..73d2440cc2 100755
+--- a/target/linux/ramips/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/base-files/etc/board.d/02_network
+@@ -179,6 +179,7 @@ ramips_setup_interfaces()
+			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "4:wan" "6@eth0"
+		;;
+	alfa-network,r36m-e4g|\
++	wavlink,wl-wn577a2|\
+	wcr-1166ds)
+		ucidef_add_switch "switch0" \
+			"3:lan" "4:wan" "6@eth0"
+@@ -660,6 +661,10 @@ ramips_setup_macs()
+		lan_mac=$(cat /sys/class/net/eth0/address)
+		wan_mac=$(macaddr_add "$lan_mac" 5)
+		;;
++	wavlink,wl-wn577a2)
++		wan_mac=$(mtd_get_mac_binary factory 0x2e)
++		label_mac=$(mtd_get_mac_binary factory 0x4)
++		;;
+	wcr-1166ds|\
+	wsr-1166)
+		local index="$(find_mtd_index "board_data")"

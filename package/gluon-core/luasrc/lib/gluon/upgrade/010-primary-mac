@@ -112,6 +112,9 @@ local primary_addrs = {
 			'c50',
 			'tplink,c2-v1',
 		}},
+		{'ramips', 'mt76x8', {
+			'wavlink,wl-wn577a2',
+		}},
 		{'x86'},
 	}},
 	{interface('wan'), {
@@ -135,6 +138,9 @@ local primary_addrs = {
 		{'ramips', 'mt7620', {
 			'miwifi-mini',
 		}},
+		{'ramips', 'mt76x8', {
+			'wavlink,wl-wn577a2',
+		}},
 	}},
 	{phy(1), {
 		{'ar71xx', 'generic', {
@@ -144,6 +150,9 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt7621', {
 			'dir-860l-b1',
+		}},
+		{'ramips', 'mt76x8', {
+			'wavlink,wl-wn577a2',
 		}},
 	}},
 	-- phy0 default
