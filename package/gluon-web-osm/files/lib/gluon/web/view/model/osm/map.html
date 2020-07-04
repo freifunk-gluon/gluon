@@ -15,7 +15,7 @@
 			<%- end %>
 		}, {once: true});
 
-		initOSM(<%=json(self.openlayers_url)%>, function(createMap) {
+		initOSM(<%=json(self.options)%>, function(createMap) {
 			elMap.style.display = '';
 
 			var pos = <%=json(self:cfgvalue().pos)%>;

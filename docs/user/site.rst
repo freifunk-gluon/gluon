@@ -464,9 +464,14 @@ config_mode \: optional
     The *geo_location.osm* section is only relevant when the *gluon-config-mode-geo-location-osm*
     package is used. The *center.lon* and *center.lat* values are mandatory in this case and
     define the default center of the map when no position has been picked yet. The *zoom* level
-    defaults to 12 in this case. *openlayers_url* allows to override the base URL of the
+    defaults to 12 in this case.
+
+    *openlayers_url* allows to override the base URL of the
     *build/ol.js* and *css/ol.css* files (the default is
     ``https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0``).
+    It is also possible to replace the default tile layer (which is OpenStreetMap)
+    with a custom one using the *tile_layer* section. Only XYZ layers are supported
+    at this point.
 
     The remote login page only shows SSH key configuration by default. A
     password form can be displayed by setting *remote_login.show_password_form*
@@ -488,6 +493,11 @@ config_mode \: optional
               },
               zoom = 13,
               -- openlayers_url = 'http://ffac.example.org/openlayer',
+              -- tile_layer = {
+              --   type = 'XYZ',
+              --   url = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              --   attributions = '&#169; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
+              -- },
             },
           },
           remote_login = {
