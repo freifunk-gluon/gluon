@@ -1,0 +1,10 @@
+if PACKAGE_gluon-autoupdater
+
+config GLUON_AUTOUPDATER_BRANCH
+	string "Autoupdater branch"
+	default ""
+
+config GLUON_AUTOUPDATER_ENABLED
+	bool "Enable autoupdater by default"
+
+endif

@@ -2,6 +2,7 @@
 
 local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
+local unistd = require 'posix.unistd'
 
 
 for name, config in pairs(site.autoupdater.branches()) do
@@ -15,12 +16,11 @@ for name, config in pairs(site.autoupdater.branches()) do
 end
 
 if not uci:get('autoupdater', 'settings') then
-	local enabled = false
-	local branch = site.autoupdater.branch()
+	local enabled = unistd.access('/lib/gluon/autoupdater/default_enabled') ~= nil
 
+	local branch = site.autoupdater.branch()
 	local f = io.open('/lib/gluon/autoupdater/default_branch')
 	if f then
-		enabled = true
 		branch = f:read('*line')
 		f:close()
 	end
