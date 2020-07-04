@@ -142,7 +142,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 end)
 
 
-if has_5ghz_radio() then
+if has_5ghz_radio() and not wireless.preserve_channels(uci) then
 	local r = f:section(Section, translate("Outdoor Installation"), translate(
 		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
 		.. "and transmission power that conforms with the local regulatory requirements. "

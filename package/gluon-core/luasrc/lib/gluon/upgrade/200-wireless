@@ -54,7 +54,7 @@ end
 
 local function get_channel(radio, config)
 	local channel
-	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
+	if wireless.preserve_channels(uci) then
 		-- preserved channel always wins
 		channel = radio.channel
 	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
