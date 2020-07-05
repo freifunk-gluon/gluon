@@ -1,8 +1,14 @@
 return function(form, uci)
 	local platform = require 'gluon.platform'
+	local wireless = require 'gluon.wireless'
 
 	if not (platform.is_outdoor_device() and platform.device_uses_11a(uci)) then
 		-- only visible on wizard for outdoor devices
+		return
+	end
+
+	if wireless.preserve_channels(uci) then
+		-- Don't show if channel should be preserved
 		return
 	end
 
