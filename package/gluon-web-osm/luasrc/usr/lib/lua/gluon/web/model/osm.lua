@@ -15,7 +15,10 @@ M.MapValue = MapValue
 function MapValue:__init__(title, options)
 	classes.AbstractValue.__init__(self, title)
 	self.subtemplate  = "model/osm/map"
-	self.openlayers_url = options.openlayers_url or DEFAULT_URL
+	self.options = {
+		openlayers_url = options.openlayers_url or DEFAULT_URL,
+		tile_layer = options.tile_layer,
+	}
 	self.lon = options.lon
 	self.lat = options.lat
 
