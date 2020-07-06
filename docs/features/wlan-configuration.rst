@@ -21,4 +21,6 @@ you can configure this via the uci section ``gluon-core.wireless``::
 
   uci set gluon-core.@wireless[0].preserve_channels='1'
 
+When channels should be preserved, toggling the outdoor mode will have no effect on the channel settings.
+Therefore, the Outdoor mode settings won't be displayed in config mode.
 Keep in mind that nodes running wifi interfaces on custom channels can't mesh with default nodes anymore!
