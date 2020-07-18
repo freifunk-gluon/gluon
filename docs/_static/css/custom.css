@@ -1,0 +1,45 @@
+/*
+  This fixes the vertical position of list markers when the first
+  element in the <li> is a <pre> block
+
+  Scrolling inside the <pre> block is still working as expected
+*/
+.rst-content pre.literal-block,
+.rst-content div[class^='highlight'] pre {
+	overflow: visible;
+}
+
+
+/*
+  This fixes the bottom margin of paragraphs inside lists, where margins inside
+  a single list item would incorrectly be displayed larger than margins between
+  the list items.
+
+  Upstream fix (not fixed on readthedocs.io yet):
+  https://github.com/readthedocs/sphinx_rtd_theme/commit/ac20ce75d426efeb40fe2af1f89ea9bad285a45b
+*/
+.rst-content .section ol li > p,
+.rst-content .section ol li > p:last-child,
+.rst-content .section ul li > p,
+.rst-content .section ul li > p:last-child {
+	margin-bottom: 12px;
+}
+.rst-content .section ol li > p:only-child,
+.rst-content .section ol li > p:only-child:last-child,
+.rst-content .section ul li > p:only-child,
+.rst-content .section ul li > p:only-child:last-child {
+	margin-bottom: 0rem;
+}
+
+/*
+  This fixes the bottom margin of nested lists
+
+  Based on upstream fix (not on readthedocs.io yet):
+  https://github.com/readthedocs/sphinx_rtd_theme/commit/6f0de13baff93f25204aa2cdf0308aae47d71312
+*/
+.rst-content .section ul li > ul,
+.rst-content .section ul li > ol,
+.rst-content .section ol li > ul,
+.rst-content .section ol li > ol {
+	margin-bottom: 12px;
+}
