@@ -52,8 +52,6 @@ for _, line in ipairs(distfeeds) do
 	local name = line:match('^src/gz%s' .. prefix .. '(%S+)%s')
 	if name == 'core' then
 		f:write('# ' .. line .. '\n')
-	elseif name and openwrt then
-		f:write(string.format('src/gz %s %s/%s\n', prefix .. name, replace_patterns(openwrt), name))
 	else
 		f:write(line .. '\n')
 	end
