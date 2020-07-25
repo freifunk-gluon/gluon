@@ -146,10 +146,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v2
+        id: cache-dl
+        with:
+          path: dl_target
+          key: openwrt-dl-ath79-nand-${{ hashFiles('modules') }}
+      - name: Prepare download cache
+        if: steps.cache-dl.outputs.cache-hit == 'true'
+        run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
         run: contrib/actions/run-build.sh ath79-nand
+      - name: Create cache to save
+        if: steps.cache-dl.outputs.cache-hit != 'true'
+        run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
       - name: Archive build logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
@@ -171,14 +182,14 @@ jobs:
         id: cache-dl
         with:
           path: dl_target
-          key: openwrt-dl-brcm2708-bcm2708-${{ hashFiles('modules') }}
+          key: openwrt-dl-bcm27xx-bcm2708-${{ hashFiles('modules') }}
       - name: Prepare download cache
         if: steps.cache-dl.outputs.cache-hit == 'true'
         run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm27xx-bcm2708
+        run: contrib/actions/run-build.sh bcm27xx-bcm2708
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -203,14 +214,14 @@ jobs:
         id: cache-dl
         with:
           path: dl_target
-          key: openwrt-dl-brcm2708-bcm2709-${{ hashFiles('modules') }}
+          key: openwrt-dl-bcm27xx-bcm2709-${{ hashFiles('modules') }}
       - name: Prepare download cache
         if: steps.cache-dl.outputs.cache-hit == 'true'
         run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm27xx-bcm2709
+        run: contrib/actions/run-build.sh bcm27xx-bcm2709
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -363,7 +374,7 @@ jobs:
         id: cache-dl
         with:
           path: dl_target
-          key: openwrt-dl-mpc85xx-generic-${{ hashFiles('modules') }}
+          key: openwrt-dl-mpc85xx-p1010-${{ hashFiles('modules') }}
       - name: Prepare download cache
         if: steps.cache-dl.outputs.cache-hit == 'true'
         run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
@@ -747,14 +758,14 @@ jobs:
         id: cache-dl
         with:
           path: dl_target
-          key: openwrt-dl-brcm2708-bcm2710-${{ hashFiles('modules') }}
+          key: openwrt-dl-bcm27xx-bcm2710-${{ hashFiles('modules') }}
       - name: Prepare download cache
         if: steps.cache-dl.outputs.cache-hit == 'true'
         run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh brcm27xx-bcm2710
+        run: contrib/actions/run-build.sh bcm27xx-bcm2710
       - name: Create cache to save
         if: steps.cache-dl.outputs.cache-hit != 'true'
         run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
@@ -775,10 +786,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/cache@v2
+        id: cache-dl
+        with:
+          path: dl_target
+          key: openwrt-dl-bcm27xx-bcm2711-${{ hashFiles('modules') }}
+      - name: Prepare download cache
+        if: steps.cache-dl.outputs.cache-hit == 'true'
+        run: mkdir -p openwrt/dl; mv dl_target/* openwrt/dl/; ls openwrt/dl
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
         run: contrib/actions/run-build.sh bcm27xx-bcm2711
+      - name: Create cache to save
+        if: steps.cache-dl.outputs.cache-hit != 'true'
+        run: mkdir dl_target; mv openwrt/dl/* dl_target/; find dl_target/ -size +20M -delete
       - name: Archive build logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
