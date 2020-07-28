@@ -1,0 +1,9 @@
+defaults {
+	factory = false,
+	sysupgrade = '-ext4-sysupgrade',
+	sysupgrade_ext = '.img.gz',
+}
+
+
+device('friendlyarm-nanopi-r2s', 'friendlyarm_nanopi-r2s')
+
