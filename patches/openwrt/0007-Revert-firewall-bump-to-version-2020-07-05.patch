@@ -1,0 +1,28 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 8 Aug 2020 10:29:36 +0200
+Subject: Revert "firewall: bump to version 2020-07-05"
+
+This reverts commit 6c57fb7aa93df862c2db201620089b2103d149aa.
+
+It broke the firewall configuration Gluon uses downstream. This is only
+a workaround until the issue is fixed upstream.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/network/config/firewall/Makefile b/package/network/config/firewall/Makefile
+index 16edfd35277f94186d13311c47a9b73e855ab7b3..bf2a1060ebf8c02545400d1592fa48e85ba9491e 100644
+--- a/package/network/config/firewall/Makefile
++++ b/package/network/config/firewall/Makefile
+@@ -13,9 +13,9 @@ PKG_RELEASE:=1
+ 
+ PKG_SOURCE_PROTO:=git
+ PKG_SOURCE_URL=$(PROJECT_GIT)/project/firewall3.git
+-PKG_SOURCE_DATE:=2020-07-25
+-PKG_SOURCE_VERSION:=e9b90dfac2225927c035f6a76277b850c282dc9a
+-PKG_MIRROR_HASH:=9164089058b5c8d62e81806dcd2261b9f78b050fb40cd84cbd127794ad7a940e
++PKG_SOURCE_DATE:=2019-11-22
++PKG_SOURCE_VERSION:=8174814a507489ebbe8bb85c1004e1f02919ca82
++PKG_MIRROR_HASH:=84e0cca2d47470bdb1788a8ae044cc425be8ff650a1137474ba43a15040085da
+ PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
+ PKG_LICENSE:=ISC
+ 
