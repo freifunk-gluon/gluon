@@ -11,9 +11,12 @@ end
 local platform = require 'gluon.platform'
 local site = require 'gluon.site'
 
+local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
 
+local board_data = json.load('/etc/board.json')
+local network_data = (board_data or {}).network
 
 local function iface_exists(ifaces)
 	if not ifaces then return nil end
@@ -26,8 +29,8 @@ local function iface_exists(ifaces)
 end
 
 
-local lan_ifname = iface_exists(uci:get('network', 'lan', 'ifname'))
-local wan_ifname = iface_exists(uci:get('network', 'wan', 'ifname'))
+local lan_ifname = iface_exists((network_data.lan or {}).ifname)
+local wan_ifname = iface_exists((network_data.wan or {}).ifname)
 
 if platform.match('ar71xx', 'generic', {
 	'cpe210',
@@ -42,6 +45,16 @@ if platform.match('ar71xx', 'generic', {
 	'unifiac-pro',
 }) then
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
+elseif platform.match('lantiq') then
+	local switch_data = board_data.switch or {}
+	local switch0_data = switch_data.switch0 or {}
+	local roles_data = switch0_data.roles or {}
+	for _, role_data in ipairs(roles_data) do
+		if role_data.role == 'wan' then
+			wan_ifname = iface_exists(role_data.device)
+			break
+		end
+	end
 end
 
 if wan_ifname and lan_ifname then
