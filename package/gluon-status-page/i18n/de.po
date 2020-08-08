@@ -55,9 +55,6 @@ msgstr "Weitergeleitet"
 msgid "Gateway"
 msgstr "Gateway"
 
-msgid "Gateway Nexthop"
-msgstr "Gateway Nexthop"
-
 msgid "IP address"
 msgstr "IP-Adresse"
 
@@ -106,6 +103,9 @@ msgstr "Site"
 msgid "Status"
 msgstr "Status"
 
+msgid "Total"
+msgstr "Gesamt"
+
 msgid "Traffic"
 msgstr ""
 
@@ -114,6 +114,12 @@ msgstr "Gesendet"
 
 msgid "Uptime"
 msgstr "Laufzeit"
+
+msgid "Wireless 2.4 GHz"
+msgstr ""
+
+msgid "Wireless 5 GHz"
+msgstr ""
 
 msgid "connected"
 msgstr "verbunden"
@@ -126,3 +132,6 @@ msgstr "aktiviert"
 
 msgid "not connected"
 msgstr "nicht verbunden"
+
+#~ msgid "Gateway Nexthop"
+#~ msgstr "Gateway Nexthop"

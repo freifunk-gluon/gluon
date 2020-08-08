@@ -142,7 +142,13 @@
 					<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
 					<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
 					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br /><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
-					<tr><th><%:Clients%></th><td><%= statistics('clients/total') %></td></tr>
+				</table>
+
+				<h3><%:Clients%></h3>
+				<table>
+					<tr><th><%:Total%></th><td><%= statistics('clients/total') %></td></tr>
+					<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
+					<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
 				</table>
 
 				<h3><%:Traffic%></h3>
