@@ -53,6 +53,8 @@ device('tp-link-tl-mr3420-v5', 'tplink_tl-mr3420-v5', {
 	},
 })
 
+device('tp-link-re200-v3', 'tplink_re200-v3')
+
 device('tp-link-tl-wa801nd-v5', 'tplink_tl-wa801nd-v5', {
 	factory = false,
 	extra_images = {
