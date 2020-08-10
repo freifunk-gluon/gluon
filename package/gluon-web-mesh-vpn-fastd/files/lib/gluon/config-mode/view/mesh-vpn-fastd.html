@@ -1,6 +1,6 @@
 <div class="gluon-value">
   <div class="gluon-value-title">
-    <input class="gluon-input-radio" data-update="change" type="radio" value="security"<%= attr("id", id..'.1') .. attr("name", id) .. attr("checked", ((self:cfgvalue() or self.default) == "security") and "checked") %> />
+    <input data-update="change" type="radio" value="security"<%= attr("id", id..'.1') .. attr("name", id) .. attr("checked", ((self:cfgvalue() or self.default) == "security") and "checked") %> />
     <label<%= attr("for", id..'.1')%>></label>
   </div>
   <div class="gluon-value-field-long">
@@ -18,7 +18,7 @@
 
 <div class="gluon-value gluon-value-last">
   <div class="gluon-value-title">
-    <input class="gluon-input-radio" data-update="change" type="radio" value="performance"<%= attr("id", id..'.2') .. attr("name", id) .. attr("checked", ((self:cfgvalue() or self.default) == "performance") and "checked") %> />
+    <input data-update="change" type="radio" value="performance"<%= attr("id", id..'.2') .. attr("name", id) .. attr("checked", ((self:cfgvalue() or self.default) == "performance") and "checked") %> />
     <label<%= attr("for", id..'.2')%>></label>
   </div>
   <div class="gluon-value-field-long">

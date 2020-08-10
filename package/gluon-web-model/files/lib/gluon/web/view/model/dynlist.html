@@ -10,7 +10,7 @@
 <%
 	for i, val in ipairs(self:cfgvalue()) do
 %>
-	<input class="gluon-input-text" value="<%|val%>" data-update="change" type="text"<%=
+	<input value="<%|val%>" data-update="change" type="text"<%=
 		attr("id", id .. "." .. i) ..
 		attr("name", id) ..
 		attr("size", self.size) ..
