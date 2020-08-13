@@ -47,7 +47,7 @@ The resulting firmware will allow users to choose between secure (encrypted) and
 .. image:: fastd_mode.gif
 
 **Unix socket:**
-To confirm whether the correct cipher is being used, fastds unix
+To confirm whether the correct cipher is being used, fastd's unix
 socket can be interrogated, after installing for example `socat`.
 
 ::

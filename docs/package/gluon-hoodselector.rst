@@ -66,7 +66,7 @@ and others which contain shapes.
 
 * **default domain**
 
-The default domain doesn’t hold any shapes and represents the inverted area of
+The default domain doesn't hold any shapes and represents the inverted area of
 all other shapes held by other domains with geo coordinates. It will only be
 entered if a node could not be matched to a geo domain. A suggested approach is
 to define the "old" network as default domain and gradually migrate nodes from
