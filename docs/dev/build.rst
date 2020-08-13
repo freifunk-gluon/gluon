@@ -23,7 +23,7 @@ GLUON_SITE_FEED
     List of site feeds; defined in file *modules* in site config
 
 \*_REPO, \*_BRANCH, \*_COMMIT
-    Git repository URL, branch and and
+    Git repository URL, branch and
     commit ID of the feeds to use. The branch name may be omitted; the default
     branch will be used in this case.
 
@@ -79,7 +79,7 @@ patch.sh
     - updating all git submodules
 
     This solution with a temporary clone ensures that the timestamps of checked
-    out files are not changed by any intermedidate patch steps, but only when
+    out files are not changed by any intermediate patch steps, but only when
     updating the checkout with the final result. This avoids triggering unnecessary
     rebuilds.
 

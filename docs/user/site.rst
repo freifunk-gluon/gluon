@@ -176,7 +176,7 @@ wifi24 \: optional
 .. _user-site-wifi5:
 
 wifi5 \: optional
-    Same as `wifi24` but for the 5Ghz radio.
+    Same as `wifi24` but for the 5 GHz radio.
 
     Additionally a range of channels that are safe to use outsides on the 5 GHz band can
     be set up through ``outdoor_chanlist``, which allows for a space-separated list of
@@ -326,7 +326,7 @@ mesh_vpn
     implementation.
 
     **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
-    in the build when using *gluon-mesh-babel* to work around icmp blackholes on the internet.
+    in the build when using *gluon-mesh-babel* to work around ICMP blackholes on the internet.
 
     ::
 

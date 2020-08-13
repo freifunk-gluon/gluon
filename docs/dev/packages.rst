@@ -85,7 +85,7 @@ packages when certain combinations of flags are set.
 Feature definitions use Lua syntax. The function *feature* has two arguments:
 
 * A logical expression composed of feature flag names (each prefixed with an underscore before the opening
-  quotation mark), logical operators (*and*, *or*, *not*) and parantheses
+  quotation mark), logical operators (*and*, *or*, *not*) and parentheses
 * A table with settings that are applied when the logical expression is
   satisfied:
 
