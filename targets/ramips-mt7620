@@ -20,6 +20,14 @@ device('gl-mt750', 'gl-mt750', {
 	factory = false,
 })
 
+-- Netgear
+
+device('netgear-ex3700', 'ex3700-ex3800', {
+	aliases = {'netgear-ex3800',
+		'netgear-ex3700-ex3800',
+	},
+	factory_ext = '.chk',
+})
 
 -- Nexx
 
