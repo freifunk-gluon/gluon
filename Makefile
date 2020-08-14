@@ -114,13 +114,6 @@ define CheckTarget
 	fi
 endef
 
-define CheckExternal
-	if [ ! -d openwrt ]; then
-		echo "You don't seem to have obtained the external repositories needed by Gluon; please call \`make update\` first!"
-		exit 1
-	fi
-endef
-
 define CheckSite
 	if ! GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) -e 'assert(dofile("scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))'; then
 		echo 'Your site configuration ($(1).conf) did not pass validation'
@@ -147,7 +140,7 @@ LUA := openwrt/staging_dir/hostpkg/bin/lua
 $(LUA):
 	+@
 
-	$(CheckExternal)
+	scripts/module_check.sh
 
 	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) tools/install
@@ -157,7 +150,7 @@ $(LUA):
 config: $(LUA) FORCE
 	+@
 
-	$(CheckExternal)
+	scripts/module_check.sh
 	$(CheckTarget)
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),\
 		$(call CheckSite,$(conf)); \
@@ -187,7 +180,7 @@ manifest: $(LUA) FORCE
 	@
 	[ '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
 	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
-	$(CheckExternal)
+	scripts/module_check.sh
 
 	(
 		export $(GLUON_ENV)
