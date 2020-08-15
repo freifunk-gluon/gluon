@@ -21,7 +21,9 @@ assert(env.GLUON_RELEASE)
 assert(env.GLUON_DEPRECATED)
 
 
-M.site_code = assert(assert(dofile('scripts/site_config.lua')('site.conf')).site_code)
+M.site_code = assert(
+	dofile('scripts/site_config.lua')('site.conf').site_code, 'site_code missing in site.conf'
+)
 M.target_packages = {}
 M.configs = {}
 M.devices = {}
