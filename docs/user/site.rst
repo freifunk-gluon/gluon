@@ -418,12 +418,16 @@ poe_passthrough \: optional
 autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
 
+    Specifying a default branch in *site.conf* is optional. See
+    :doc:`../features/autoupdater` for information how to change the behaviour
+    of the autoupdater during image build.
+
     The mirrors are checked in random order until the manifest could be downloaded
     successfully or all mirrors have been tried.
     ::
 
       autoupdater = {
-        branch = 'stable',
+        branch = 'stable', -- optional
         branches = {
           stable = {
             name = 'stable',

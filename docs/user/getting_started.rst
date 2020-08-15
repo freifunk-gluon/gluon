@@ -171,10 +171,12 @@ usually be set on the command line or in ``site.mk``.
 Common variables
 ................
 
-GLUON_BRANCH
-  Sets the default branch of the autoupdater. If unset, the autoupdater is disabled
-  by default. For the ``make manifest`` command, GLUON_BRANCH defines the branch to
-  generate a manifest for.
+GLUON_AUTOUPDATER_BRANCH
+  Overrides the default branch of the autoupdater set in ``site.conf``. For the ``make manifest`` command,
+  ``GLUON_AUTOUPDATER_BRANCH`` defines the branch to generate a manifest for.
+
+GLUON_AUTOUPDATER_ENABLED
+  Set to ``1`` to enable the autoupdater by default for newly installed nodes.
 
 GLUON_DEPRECATED
   Controls whether images for deprecated devices should be built. The following
@@ -225,7 +227,7 @@ GLUON_DEBUG
   similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
 
 GLUON_MINIFY
-  Setting ``GLUON_MINIFY=0`` will omit the minification of scripts during the build process. By 
+  Setting ``GLUON_MINIFY=0`` will omit the minification of scripts during the build process. By
   default the flag is set to ``1``. Disabling the flag is handy if human readable scripts on the
   devices are desired for development purposes. Be aware that this will increase the size of the
   resulting images and is therefore not suitable for devices with small flash chips.
