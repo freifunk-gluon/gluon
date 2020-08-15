@@ -266,6 +266,8 @@ device('tp-link-cpe210-v2', 'cpe210-v2', {
 device('tp-link-cpe210-v3', 'cpe210-v3', {
 	manifest_aliases = {
 		'tp-link-cpe210-v3.0',
+		'tp-link-cpe210-v3.1',
+		'tp-link-cpe210-v3.20',
 	},
 })
 
