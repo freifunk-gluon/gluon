@@ -1,0 +1,29 @@
+name: Lint
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  lua:
+    name: Lua
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo apt install lua-check
+      - name: Install example site
+        run: ln -s ./docs/site-example ./site
+      - name: Lint Lua code
+        run: make lint-lua
+
+  sh:
+    name: Shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: sudo apt install shellcheck
+      - name: Install example site
+        run: ln -s ./docs/site-example ./site
+      - name: Lint shell code
+        run: make lint-sh
