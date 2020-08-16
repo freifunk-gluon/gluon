@@ -1,14 +1,7 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local unistd = require 'posix.unistd'
-
-local vpn
-if unistd.access('/lib/gluon/mesh-vpn/fastd') then
-	vpn = 'fastd'
-elseif unistd.access('/lib/gluon/mesh-vpn/tunneldigger') then
-	vpn = 'tunneldigger'
-end
+local vpn_name, vpn = require('gluon.mesh-vpn').get_active_provider()
 
 local vpn_config = {
 	enabled = uci:get_bool('gluon', 'mesh_vpn', 'enabled'),
@@ -17,32 +10,20 @@ local vpn_config = {
 	limit_ingress = uci:get('gluon', 'mesh_vpn', 'limit_ingress'),
 }
 
-uci:delete('simple-tc', 'mesh_vpn')
-uci:section('simple-tc', 'interface', 'mesh_vpn', {
-	ifname = 'mesh-vpn',
-	enabled = vpn_config.limit_enabled,
-	limit_egress = vpn_config.limit_egress,
-})
-
-if vpn == 'fastd' then
-	uci:set('fastd', 'mesh_vpn', 'enabled', vpn_config.enabled)
-	uci:set('simple-tc', 'mesh_vpn', 'limit_ingress', vpn_config.limit_ingress)
-else
+if vpn_name ~= 'fastd' then
 	uci:set('fastd', 'mesh_vpn', 'enabled', false)
+	uci:save('fastd')
 end
-uci:save('fastd')
 
-if vpn == 'tunneldigger' then
-	uci:set('tunneldigger', 'mesh_vpn', 'enabled', vpn_config.enabled)
-
-	if vpn_config.limit_enabled then
-		uci:set('tunneldigger', 'mesh_vpn', 'limit_bw_down', vpn_config.limit_ingress)
-	else
-		uci:delete('tunneldigger', 'mesh_vpn', 'limit_bw_down')
-	end
-else
+if vpn_name ~= 'tunneldigger' then
 	uci:set('tunneldigger', 'mesh_vpn', 'enabled', false)
+	uci:save('tunneldigger')
 end
-uci:save('tunneldigger')
 
-uci:save('simple-tc')
+vpn.enable(vpn_config.enabled)
+if vpn_config.limit_enabled then
+	vpn.set_limit(vpn_config.limit_ingress, vpn_config.limit_egress)
+else
+	vpn.set_limit(nil, nil)
+end
+

@@ -2,6 +2,7 @@
 
 local site = require 'gluon.site'
 local util = require 'gluon.util'
+local vpn_core = require 'gluon.mesh-vpn'
 
 local uci = require('simple-uci').cursor()
 
@@ -23,7 +24,7 @@ end
 uci:section('tunneldigger', 'broker', 'mesh_vpn', {
 	enabled = enabled,
 	uuid = util.node_id(),
-	interface = 'mesh-vpn',
+	interface = vpn_core.get_interface(),
 	bind_interface = 'br-wan',
 	group = 'gluon-mesh-vpn',
 	broker_selection = 'usage',

@@ -6,14 +6,19 @@
 	local sysconfig = require 'gluon.sysconfig'
 	local platform = require 'gluon.platform'
 	local util = require "gluon.util"
+	local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
 
 	local _ = translate
 
 
 	local pubkey
-	local meshvpn_enabled = uci:get_bool("fastd", "mesh_vpn", "enabled")
-	if meshvpn_enabled then
-		pubkey = util.trim(util.exec('/etc/init.d/fastd show_key mesh_vpn'))
+	if has_vpn and vpn.enabled() then
+		local _, active_vpn = vpn.get_active_provider()
+
+		if active_vpn ~= nil then
+			pubkey = active_vpn.public_key()
+		end
+
 		if pubkey == '' then
 			pubkey = nil
 		end
