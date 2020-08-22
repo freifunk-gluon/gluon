@@ -1,3 +1,6 @@
 #!/bin/sh
 
-exec uci commit
+uci -q batch <<-EOF
+	delete gluon.core.reconfigure
+	commit
+EOF

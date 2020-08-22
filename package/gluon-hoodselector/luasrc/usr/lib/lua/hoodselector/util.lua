@@ -67,9 +67,7 @@ end
 
 function M.set_domain_config(domain)
 	if uci:get('gluon', 'core', 'domain') ~= domain.domain_code then
-		uci:set('gluon', 'core', 'domain', domain.domain_code)
-		uci:commit('gluon')
-		os.execute('gluon-reconfigure')
+		os.execute(string.format("exec gluon-switch-domain --no-reboot '%s'", domain.domain_code))
 		M.log('Set domain "'..domain.domain.domain_names[domain.domain_code]..'"')
 		return true
 	end

@@ -1,0 +1,48 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+
+
+if not unistd.access('/lib/gluon/domains/') then
+	return
+end
+
+
+local function domain_exists(domain)
+	return unistd.access('/lib/gluon/domains/' .. domain .. '.json') == 0
+end
+
+
+local uci = require('simple-uci').cursor()
+
+local domain = uci:get('gluon', 'core', 'switch_domain')
+if domain and not domain_exists(domain) then
+	io.stderr:write(
+		string.format("Warning: invalid mesh domain switch to '%s' configured, not switching\n", domain)
+	)
+	domain = nil
+end
+
+if not domain then
+	domain = uci:get('gluon', 'core', 'domain')
+end
+if domain and not domain_exists(domain) then
+	io.stderr:write(
+		string.format("Warning: invalid mesh domain '%s' configured, resetting to default...\n", domain)
+	)
+	domain = nil
+end
+
+if not domain then
+
+	-- We can't use gluon.site yet, as it depends on gluon.core.domain to be set
+	local json = require 'jsonc'
+	local site = assert(json.load('/lib/gluon/site.json'))
+
+	domain = site.default_domain
+
+end
+
+uci:set('gluon', 'core', 'domain', domain)
+uci:delete('gluon', 'core', 'switch_domain')
+uci:save('gluon')
