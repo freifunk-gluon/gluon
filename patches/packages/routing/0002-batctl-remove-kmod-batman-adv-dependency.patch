@@ -8,7 +8,7 @@ batctl works just as well with batman-adv-legacy (compat 14).
 Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/batctl/Makefile b/batctl/Makefile
-index c74fdbd35f0adcc98814b8919a98a65b5cf918f3..422e5c415fb8112febab8b30d3cdffe76e1d18d9 100644
+index 95124f063ea7a3a385a2dc71008b899a56e4c5b6..7f358d5b17f5356f5150ddb9e484320658392646 100644
 --- a/batctl/Makefile
 +++ b/batctl/Makefile
 @@ -23,7 +23,7 @@ define Package/batctl
