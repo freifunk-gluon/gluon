@@ -249,12 +249,12 @@ index ccddaa0016b0c926d4737abb5757e7212b0a1157..00000000000000000000000000000000
 -
 -rm -rf "$tmpdir"
 diff --git a/target/linux/ar71xx/image/generic.mk b/target/linux/ar71xx/image/generic.mk
-index 640557532c8a02f37bc6f84ade8cb34e7172162d..4568b656219419e9ca1156c6716bd2124074cb32 100644
+index ba5f9d90a639c8102d8a380d57a491b0206bd588..a494fa6b0be07b3b1f99f6fbb29e11d77df1dfd1 100644
 --- a/target/linux/ar71xx/image/generic.mk
 +++ b/target/linux/ar71xx/image/generic.mk
 @@ -1086,8 +1086,12 @@ define Device/NBG6616
    IMAGE_SIZE := 15323k
-   MTDPARTS := spi0.0:192k(u-boot)ro,64k(env)ro,64k(RFdata)ro,384k(zyxel_rfsd),384k(romd),64k(header),2048k(kernel),13184k(rootfs),15232k@0x120000(firmware)
+   MTDPARTS := spi0.0:192k(u-boot)ro,64k(env),64k(RFdata)ro,384k(zyxel_rfsd),384k(romd),64k(header),2048k(kernel),13184k(rootfs),15232k@0x120000(firmware)
    CMDLINE += mem=128M
 -  IMAGES := sysupgrade.bin
 +  RAS_BOARD := NBG6616

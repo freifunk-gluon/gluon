@@ -77,7 +77,7 @@ index a61c781b28177ece36e6c2a63f921d15c39b6c2a..7e96ab2b2a0b026ac063cc0f30ab8f4b
  		name="cpe505n"
  		;;
 diff --git a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
-index 8558fde3fef9738220a1598a3e4135836c8279f4..f7bb7dbbcd2606cdcbf2c76aa30a96831a232617 100755
+index 1ac0613c7bc4cf189cfafc306bd66e1aa434d9ad..5ebc775e8e0015bc62a63e7126e8247db8932428 100755
 --- a/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 +++ b/target/linux/ar71xx/base-files/lib/upgrade/platform.sh
 @@ -587,7 +587,8 @@ platform_check_image() {
