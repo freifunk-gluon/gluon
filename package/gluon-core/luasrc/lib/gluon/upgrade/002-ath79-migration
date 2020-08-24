@@ -1,0 +1,98 @@
+#!/usr/bin/lua
+
+local platform = require 'gluon.platform'
+local sysconfig = require 'gluon.sysconfig'
+local migration = require 'gluon.migration'
+
+local uci = require('simple-uci').cursor()
+
+local migration_name = 'ar71xx-ath79'
+
+local migration_target_config = {
+	-- {DEVICE, ETH_SWAP}
+}
+
+-- Create a list for use with platform matching
+local migration_targets = {}
+for _, v in ipairs(migration_target_config) do
+	table.insert(migration_targets, v[0])
+end
+
+-- Check if device is a migration target
+if not platform.match('ath79', 'generic', migration_targets) then
+    return
+end
+
+-- Check if this is an initial installation
+if not sysconfig.gluon_version then
+    os.execute('touch /lib/gluon/core/migrations/ar71xx-ath79')
+    return
+end
+
+-- Check if migration has already been done
+if migration.is_migration_done(migration_name) then
+    return
+end
+
+-- Reinit board.json
+migration.reinit_board_json()
+
+migration.reinit_led_config(uci)
+
+local function sysconfig_ifname_swap(input_ifnames)
+	local output_ifnames = {}
+	for v in input_ifnames:gmatch('%S+') do
+		if string.match(v, 'eth0') then
+			table.insert(output_ifnames, v:gsub('eth0', 'eth1'))
+		elseif string.match(v, 'eth1') then
+			table.insert(output_ifnames, v:gsub('eth1', 'eth0'))
+		end
+	end
+
+	return table.concat(output_ifnames, ' ')
+end
+
+-- For devices with embedded FE switch, eth0 and eth1
+-- have been swapped.
+local function perform_eth_swap()
+	-- Modify running config
+	uci:foreach('network', 'interface', function(iface)
+		local interfaces = uci:get_list('network', iface['.name'], 'ifname')
+		if interfaces == nil then return end
+
+		local new_interfaces = {}
+
+		for _, v in ipairs(interfaces) do
+			if string.match(v, 'eth0') then
+				table.insert(new_interfaces, v:gsub('eth0', 'eth1'))
+			elseif string.match(v, 'eth1') then
+				table.insert(new_interfaces, v:gsub('eth1', 'eth0'))
+			end
+		end
+
+		uci:set_list('network', iface['.name'], 'ifname', new_interfaces)
+	end)
+	uci:save('network')
+
+	-- Modify Gluons port assignment. Important for setup-mode.
+	sysconfig.lan_ifname = sysconfig_ifname_swap(sysconfig.lan_ifname)
+	sysconfig.wan_ifname = sysconfig_ifname_swap(sysconfig.wan_ifname)
+end
+
+local function board_requires_eth_swap()
+	local board_name = platform.get_board_name()
+	for _, v in ipairs(migration_target_config) do
+		if board_name == v[0] and v[1] then
+			return true
+		end
+	end
+	return false
+end
+
+-- Perform eth swap
+if board_requires_eth_swap() then
+	perform_eth_swap()
+end
+
+-- Flag migration done
+migration.flag_migration_done(migration_name)
