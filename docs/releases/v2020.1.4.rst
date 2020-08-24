@@ -1,0 +1,47 @@
+Gluon 2020.1.4
+==============
+
+Added hardware support
+----------------------
+
+- Added support for TP-Link CPE210 3.20 (`#2080 <https://github.com/freifunk-gluon/gluon/issues/2080>`_)
+
+Bugfixes
+--------
+
+- Fixed a rare race-condition during mesh interface teardown (`#2057 <https://github.com/freifunk-gluon/gluon/pull/2057>`_)
+
+- Fixed handling of mesh interfaces together with outdoor mode, site.conf defaults and config mode (`#2049 <https://github.com/freifunk-gluon/gluon/pull/2049>`_) (`#2054 <https://github.com/freifunk-gluon/gluon/pull/2054>`_)
+
+Other changes
+-------------
+
+- Linux kernel has been updated to 4.14.193
+- Backports of batman-adv bugfixes
+
+Known issues
+------------
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the
+  NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* The MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is
+  disallowed).
