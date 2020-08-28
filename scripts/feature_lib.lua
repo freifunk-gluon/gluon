@@ -43,7 +43,10 @@ function M.get_packages(file, features)
 	end
 
 	-- Evaluate the feature definition file
-	local f = loadfile(file)
+	local f, err = loadfile(file)
+	if not f then
+		error('Failed to parse feature definition: ' .. err)
+	end
 	setfenv(f, funcs)
 	f()
 
