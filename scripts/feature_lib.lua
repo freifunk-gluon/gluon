@@ -16,7 +16,7 @@ local function collect_keys(t)
 	return ret
 end
 
-function M.get_packages(file, features)
+function M.get_packages(files, features)
 	local enabled_features = to_keys(features)
 	local handled_features = {}
 	local packages = {}
@@ -55,13 +55,15 @@ function M.get_packages(file, features)
 		end
 	end
 
-	-- Evaluate the feature definition file
-	local f, err = loadfile(file)
-	if not f then
-		error('Failed to parse feature definition: ' .. err)
+	-- Evaluate the feature definition files
+	for _, file in ipairs(files) do
+		local f, err = loadfile(file)
+		if not f then
+			error('Failed to parse feature definition: ' .. err)
+		end
+		setfenv(f, funcs)
+		f()
 	end
-	setfenv(f, funcs)
-	f()
 
 	-- Handle default packages
 	for _, feature in ipairs(features) do
