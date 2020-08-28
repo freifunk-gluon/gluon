@@ -110,5 +110,6 @@ files["package/features"] = {
 	read_globals = {
 		"_",
 		"feature",
+		"when",
 	},
 }

@@ -82,43 +82,43 @@ Each flag *$flag* will include the package the name *gluon-$flag* by default.
 The feature definition file can modify the package selection by adding or removing
 packages when certain combinations of flags are set.
 
-Feature definitions use Lua syntax. The function *feature* has two arguments:
+Feature definitions use Lua syntax. Two basic functions are defined:
 
-* A logical expression composed of feature flag names (each prefixed with an underscore before the opening
-  quotation mark), logical operators (*and*, *or*, *not*) and parentheses
-* A table with settings that are applied when the logical expression is
-  satisfied:
+* *feature(name, pkgs)*: Defines a new feature. *feature()* expects a feature
+  (flag) name and a list of packages to add or remove when the feature is
+  enabled.
 
-  * Setting *nodefault* to *true* suppresses the default of including the *gluon-$flag* package.
-    This setting is only applicable when the logical expression is a single,
-    non-negated flag name.
-  * The *packages* field adds or removes packages to install. A package is
-    removed when the package name is prefixed with a ``-`` (after the opening
-    quotation mark).
+  * Defining a feature using *feature* replaces the default definition of
+    just including *gluon-$flag*.
+  * A package is removed when the package name is prefixed with a ``-`` (after
+    the opening quotation mark).
+
+* *when(expr, pkgs)*: Adds or removes packages when a given logical expression
+  of feature flags is satisfied.
+
+  * *expr* is a logical expression composed of feature flag names (each prefixed
+    with an underscore before the opening quotation mark), logical operators
+    (*and*, *or*, *not*) and parentheses.
+  * Referencing a feature flag in *expr* has no effect on the default handling
+    of the flag. When no *feature()* entry for a flag exists, it will still
+    add *gluon-$flag* by default.
+  * *pkgs* is handled as for *feature()*.
 
 Example::
 
-    feature(_'web-wizard', {
-      nodefault = true,
-      packages = {
-        'gluon-config-mode-hostname',
-        'gluon-config-mode-geo-location',
-        'gluon-config-mode-contact-info',
-        'gluon-config-mode-outdoor',
-      },
+    feature('web-wizard', {
+      'gluon-config-mode-hostname',
+      'gluon-config-mode-geo-location',
+      'gluon-config-mode-contact-info',
+      'gluon-config-mode-outdoor',
     })
 
-    feature(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
-      packages = {
-        'gluon-config-mode-mesh-vpn',
-      },
+    when(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
+      'gluon-config-mode-mesh-vpn',
     })
 
-    feature(_'no-radvd', {
-      nodefault = true,
-      packages = {
-        '-gluon-radvd',
-      },
+    feature('no-radvd', {
+      '-gluon-radvd',
     })
 
 
