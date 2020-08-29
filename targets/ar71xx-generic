@@ -126,6 +126,10 @@ device('gl.inet-gl-ar750', 'gl-ar750', {
 	packages = ATH10K_PACKAGES_QCA9887,
 })
 
+device('gl.inet-gl-usb150', 'gl-usb150', {
+	factory = false,
+})
+
 
 -- Linksys by Cisco
 

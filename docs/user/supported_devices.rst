@@ -44,6 +44,7 @@ ar71xx-generic
   - GL-AR150
   - GL-AR300M
   - GL-AR750
+  - GL-USB150 (Microuter)
 
 * Linksys
 
