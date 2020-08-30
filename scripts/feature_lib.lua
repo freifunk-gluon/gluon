@@ -16,43 +16,58 @@ local function collect_keys(t)
 	return ret
 end
 
-function M.get_packages(file, features)
-	local feature_table = to_keys(features)
+function M.get_packages(files, features)
+	local enabled_features = to_keys(features)
+	local handled_features = {}
+	local packages = {}
 
 	local funcs = {}
 
+	local function add_pkgs(pkgs)
+		for _, pkg in ipairs(pkgs or {}) do
+			packages[pkg] = true
+		end
+	end
+
 	function funcs._(feature)
-		if feature_table[feature] then
-			return feature
+		return enabled_features[feature] ~= nil
+	end
+
+	function funcs.feature(feature, pkgs)
+		assert(
+			type(feature) == 'string',
+			'Incorrect use of feature(): pass a feature name without _ as first argument')
+
+		if enabled_features[feature] then
+			handled_features[feature] = true
+			add_pkgs(pkgs)
+		end
+
+	end
+
+	function funcs.when(cond, pkgs)
+		assert(
+			type(cond) == 'boolean',
+			'Incorrect use of when(): pass a locical expression of _-prefixed strings as first argument')
+
+		if cond then
+			add_pkgs(pkgs)
 		end
 	end
 
-	local nodefault = {}
-	local packages = {}
-	function funcs.feature(match, options)
-		if not match then
-			return
+	-- Evaluate the feature definition files
+	for _, file in ipairs(files) do
+		local f, err = loadfile(file)
+		if not f then
+			error('Failed to parse feature definition: ' .. err)
 		end
-
-		if options.nodefault then
-			nodefault[match] = true
-		end
-		for _, package in ipairs(options.packages or {}) do
-			packages[package] = true
-		end
+		setfenv(f, funcs)
+		f()
 	end
-
-	-- Evaluate the feature definition file
-	local f, err = loadfile(file)
-	if not f then
-		error('Failed to parse feature definition: ' .. err)
-	end
-	setfenv(f, funcs)
-	f()
 
 	-- Handle default packages
 	for _, feature in ipairs(features) do
-		if not nodefault[feature] then
+		if not handled_features[feature] then
 			packages['gluon-' .. feature] = true
 		end
 	end

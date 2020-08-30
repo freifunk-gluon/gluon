@@ -91,21 +91,15 @@ local function site_packages(image)
 end
 
 local function feature_packages(features)
-	local pkgs = {}
-	local function handle_feature_file(file)
-		pkgs = concat_list(pkgs, feature_lib.get_packages(file, features))
-	end
-
-	handle_feature_file('package/features')
-
+	local files = {'package/features'}
 	for _, feed in ipairs(feeds) do
 		local path = string.format('packages/%s/features', feed)
 		if file_exists(path) then
-			handle_feature_file(path)
+			table.insert(files, path)
 		end
 	end
 
-	return pkgs
+	return feature_lib.get_packages(files, features)
 end
 
 -- This involves running a few processes to evaluate site.mk, so we add a simple cache

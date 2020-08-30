@@ -5,65 +5,48 @@
 -- file format
 
 
-feature(_'web-wizard', {
-	nodefault = true,
-	packages = {
-		'gluon-config-mode-hostname',
-		'gluon-config-mode-geo-location',
-		'gluon-config-mode-contact-info',
-		'gluon-config-mode-outdoor',
-	},
+feature('web-wizard', {
+	'gluon-config-mode-hostname',
+	'gluon-config-mode-geo-location',
+	'gluon-config-mode-contact-info',
+	'gluon-config-mode-outdoor',
 })
 
-feature(_'web-wizard' and _'autoupdater', {
-	packages = {
-		'gluon-config-mode-autoupdater',
-	},
+when(_'web-wizard' and _'autoupdater', {
+	'gluon-config-mode-autoupdater',
 })
 
-feature(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
-	packages = {
-		'gluon-config-mode-mesh-vpn',
-	},
+when(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
+	'gluon-config-mode-mesh-vpn',
 })
 
 
-feature(_'web-advanced', {
-	nodefault = true,
-	packages = {
-		'gluon-web-admin',
-		'gluon-web-network',
-		'gluon-web-wifi-config',
-	},
+feature('web-advanced', {
+	'gluon-web-admin',
+	'gluon-web-network',
+	'gluon-web-wifi-config',
 })
 
-feature(_'web-advanced' and _'autoupdater', {
-	packages = {
-		'gluon-web-autoupdater',
-	},
+when(_'web-advanced' and _'autoupdater', {
+	'gluon-web-autoupdater',
 })
 
-feature(_'status-page' and _'mesh-batman-adv-15', {
-	packages = {
-		'gluon-status-page-mesh-batman-adv',
-	},
+
+when(_'mesh-batman-adv-15', {
+	'gluon-ebtables-limit-arp',
+	'gluon-radvd',
 })
 
-feature(_'mesh-batman-adv-15', {
-	packages = {
-		'gluon-ebtables-limit-arp',
-		'gluon-radvd',
-	},
+when(_'status-page' and _'mesh-batman-adv-15', {
+	'gluon-status-page-mesh-batman-adv',
 })
 
-feature(_'mesh-babel', {
-	packages = {
-		'gluon-radvd',
-	},
+
+when(_'mesh-babel', {
+	'gluon-radvd',
 })
 
-feature(not _'wireless-encryption-wpa3', {
-	packages = {
-		'hostapd-mini',
-	},
+
+when(not _'wireless-encryption-wpa3', {
+	'hostapd-mini',
 })
