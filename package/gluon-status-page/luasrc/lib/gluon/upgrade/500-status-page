@@ -27,7 +27,7 @@ uci:section('uhttpd', 'uhttpd', 'main', {
 uci:save('uhttpd')
 
 
-for _, zone in ipairs({'mesh', 'local_client'}) do
+for _, zone in ipairs({'mesh', 'loc_client'}) do
 	uci:section('firewall', 'rule', zone .. '_http', {
 		src = zone,
 		dest_port = '80',
@@ -35,4 +35,8 @@ for _, zone in ipairs({'mesh', 'local_client'}) do
 		target = 'ACCEPT',
 	})
 end
+
+-- ToDo remove in v2022.x
+uci:delete('firewall', 'local_client_http')
+
 uci:save('firewall')

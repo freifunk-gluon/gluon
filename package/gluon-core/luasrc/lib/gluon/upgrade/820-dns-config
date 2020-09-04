@@ -18,7 +18,7 @@ uci:delete('firewall', 'client_dns')
 if dns.servers then
 	-- allow inbound traffic for dns from client zone
 	uci:section('firewall', 'rule', 'client_dns', {
-		src = 'local_client',
+		src = 'loc_client',
 		dest_port = '53',
 		proto = 'tcpudp',
 		target = 'ACCEPT',

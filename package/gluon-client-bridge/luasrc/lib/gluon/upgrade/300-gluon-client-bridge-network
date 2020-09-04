@@ -51,9 +51,9 @@ uci:section('firewall', 'zone', 'drop', {
 	forward = 'DROP',
 })
 
-local networks = uci:get_list('firewall', 'local_client', 'network')
+local networks = uci:get_list('firewall', 'loc_client', 'network')
 util.add_to_set(networks, 'local_node')
-uci:set_list('firewall', 'local_client', 'network', networks)
+uci:set_list('firewall', 'loc_client', 'network', networks)
 
 
 local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
