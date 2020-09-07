@@ -151,7 +151,10 @@ list-targets: FORCE
 		echo "$$target"
 	done
 
-lint: lint-lua lint-sh
+lint: lint-editorconfig lint-lua lint-sh
+
+lint-editorconfig: FORCE
+	@scripts/lint-editorconfig.sh
 
 lint-lua: FORCE
 	@scripts/lint-lua.sh
