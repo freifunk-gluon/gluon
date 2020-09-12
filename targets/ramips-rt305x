@@ -7,40 +7,6 @@ defaults {
 	class = 'tiny',  -- 32M RAM
 }
 
-local STRIP_USB_PACKAGES = {
-	'-kmod-usb-core',
-	'-kmod-usb-dwc2',
-	'-kmod-usb-ledtrig-usbport',
-}
-
-
--- A5
-
-device('a5-v11', 'unbranded_a5-v11', {
-	deprecated = true, -- 4/32
-	packages = STRIP_USB_PACKAGES,
-})
-
-
--- D-Link
-
-device('d-link-dir-615-h1', 'dlink_dir-615-h1', {
-	deprecated = true, -- 4/32
-	packages = STRIP_USB_PACKAGES,
-})
-
-device('d-link-dir-615-d', 'dlink_dir-615-d', {
-	aliases = {
-		'd-link-dir-615-d1',
-		'd-link-dir-615-d2',
-		'd-link-dir-615-d3',
-		'd-link-dir-615-d4',
-	},
-	deprecated = true, -- 4/32
-	packages = STRIP_USB_PACKAGES,
-})
-
-
 -- VoCore
 
 device('vocore-8M', 'vocore_vocore-8m', {
