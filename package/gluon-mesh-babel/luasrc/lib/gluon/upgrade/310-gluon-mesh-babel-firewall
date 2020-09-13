@@ -23,18 +23,18 @@ uci:section('firewall', 'zone', 'mmfd', {
 
 -- forwardings and respective rules
 uci:section('firewall', 'forwarding', 'fcc', {
-	src = 'local_client',
-	dest = 'local_client',
+	src = 'loc_client',
+	dest = 'loc_client',
 })
 
 uci:section('firewall', 'forwarding', 'fcm', {
-	src = 'local_client',
+	src = 'loc_client',
 	dest = 'mesh',
 })
 
 uci:section('firewall', 'forwarding', 'fmc', {
 	src = 'mesh',
-	dest = 'local_client',
+	dest = 'loc_client',
 })
 
 uci:section('firewall', 'forwarding', 'fmm', {
@@ -44,11 +44,11 @@ uci:section('firewall', 'forwarding', 'fmm', {
 
 uci:section('firewall', 'forwarding', 'flc', {
 	src = 'l3roamd',
-	dest = 'local_client',
+	dest = 'loc_client',
 })
 
 uci:section('firewall', 'forwarding', 'fcl', {
-	src = 'local_client',
+	src = 'loc_client',
 	dest = 'l3roamd',
 })
 
