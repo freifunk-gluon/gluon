@@ -101,6 +101,7 @@ device('d-link-dir-825-rev-b1', 'dir-825-b1', {
 	profile = 'DIR825B1',
 	factory = false,
 	class = 'tiny', -- Only 6M of usable Firmware space
+	packages = { '-kmod-usb-core', '-kmod-usb2', '-kmod-usb-ledtrig-usbport' },
 })
 
 
