@@ -40,9 +40,6 @@ uci:section('network', 'interface', 'client', {
 
 uci:save('network')
 
--- TODO: remove this line and the next in 2019. Firewall zones have been renamed in 2017.
-uci:delete('firewall', 'client')
-
 uci:section('firewall', 'zone', 'drop', {
 	name = 'drop',
 	network = {'client'},
@@ -60,10 +57,6 @@ local dnsmasq = uci:get_first('dhcp', 'dnsmasq')
 uci:set('dhcp', dnsmasq, 'boguspriv', false)
 uci:set('dhcp', dnsmasq, 'localise_queries', false)
 uci:set('dhcp', dnsmasq, 'rebind_protection', false)
-
--- TODO: remove this line and the next two in 2019 the zones were removed in 2017
-uci:delete('dhcp', 'client')
-uci:delete('firewall', 'local_node')
 
 uci:section('dhcp', 'dhcp', 'local_client', {
 	interface = 'client',

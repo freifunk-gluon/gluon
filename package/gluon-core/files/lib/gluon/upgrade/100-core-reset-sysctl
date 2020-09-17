@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# This script can be removed after Gluon v2018.2
-
-# Check for a random line that always was in /etc/sysctl.conf
-if grep -qxF 'net.ipv4.ip_forward=1' /etc/sysctl.conf; then
-	echo '# Defaults are configured in /etc/sysctl.d/* and can be customized in this file' >/etc/sysctl.conf
-fi
