@@ -10,6 +10,7 @@ local migration_name = 'ar71xx-ath79'
 
 local migration_target_config = {
 	-- {DEVICE, ETH_SWAP}
+	{'ocedo,koala', false}
 }
 
 -- Create a list for use with platform matching
