@@ -80,7 +80,6 @@ local primary_addrs = {
 			'archer-c7-v4',
 			'archer-c7-v5',
 			'carambola2',
-			'koala',
 			'mr600',
 			'mr600v2',
 			'mr900',
@@ -107,6 +106,7 @@ local primary_addrs = {
 		}},
 		{'ath79', 'generic', {
 			'glinet,gl-ar750s-nor',
+			'ocedo,koala',
 			'ocedo,raccoon',
 			'tplink,archer-c2-v3',
 			'tplink,archer-d50-v1',
