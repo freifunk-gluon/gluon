@@ -108,9 +108,9 @@ ar71xx-generic
   - Nanostation M2/M5  [#device-class-tiny]_
   - Nanostation M2/M5 XW
   - Picostation M2  [#device-class-tiny]_
-  - Rocket M2/M5
-  - Rocket M2/M5 Ti
-  - Rocket M2/M5 XW
+  - Rocket M2
+  - Rocket M2 Ti
+  - Rocket M2 XW
   - UniFi AC Mesh
   - UniFi AC Mesh Pro
   - UniFi AP
