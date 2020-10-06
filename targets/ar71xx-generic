@@ -427,10 +427,8 @@ device('ubiquiti-bullet-m', 'ubnt-bullet-m', {
 })
 
 device('ubiquiti-rocket-m', 'ubnt-rocket-m', {
-	aliases = {
-		'ubiquiti-rocket-m2',
-		'ubiquiti-rocket-m5',
-	},
+	aliases = {'ubiquiti-rocket-m2'},
+	manifest_aliases = {'ubiquiti-rocket-m5'},
 })
 
 device('ubiquiti-nanostation-m', 'ubnt-nano-m', {
