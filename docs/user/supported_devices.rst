@@ -318,6 +318,11 @@ ramips-mt7620
   - GL-MT300N
   - GL-MT750
 
+* NETGEAR
+
+  - EX3700
+  - EX3800
+
 * Nexx
 
   - WT3020AD/F/H
