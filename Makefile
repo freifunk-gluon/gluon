@@ -90,6 +90,13 @@ update-patches: FORCE
 	scripts/update-patches.sh
 	scripts/patch.sh
 
+refresh-patches: FORCE
+	@
+	export $(GLUON_ENV)
+	scripts/update.sh
+	scripts/patch.sh
+	scripts/update-patches.sh
+
 update-feeds: FORCE
 	@$(GLUON_ENV) scripts/feeds.sh
 
