@@ -8,7 +8,7 @@ or batman-adv-legacy module, depending on the configured routing
 algorithm in UCI.
 
 diff --git a/batman-adv/Makefile b/batman-adv/Makefile
-index 75bf5327c73a388f136b713c107eae0ec82771b8..4b595de790d7b61c8e5151449b8764a539cdae94 100644
+index b4f7768464127bb5f1bc7ed9416d54747fdaa0be..765e6781d17e53afffcc35368351cba9271e6cb3 100644
 --- a/batman-adv/Makefile
 +++ b/batman-adv/Makefile
 @@ -30,7 +30,6 @@ define KernelPackage/batman-adv
