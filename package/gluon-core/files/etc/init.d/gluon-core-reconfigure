@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+
+# Start right after S10boot
+START=10
+
+start() {
+	config_load gluon
+	config_get_bool reconfigure core reconfigure 0
+	if [ "$reconfigure" = 1 ]; then
+		gluon-reconfigure
+	fi
+}

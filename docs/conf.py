@@ -24,7 +24,7 @@ copyright = '2015-2020, Project Gluon'
 author = 'Project Gluon'
 
 # The short X.Y version
-version = '2020.1+'
+version = '2020.2+'
 # The full version, including alpha/beta/rc tags
 release = version
 
@@ -89,7 +89,7 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 #
-# html_static_path = ['_static']
+html_static_path = ['_static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -100,6 +100,10 @@ html_theme = 'sphinx_rtd_theme'
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = ['css/custom.css']
 
 
 # -- Options for HTMLHelp output ---------------------------------------------

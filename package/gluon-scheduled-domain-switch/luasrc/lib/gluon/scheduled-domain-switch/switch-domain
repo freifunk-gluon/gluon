@@ -60,8 +60,5 @@ if not switch_after_min_reached() and not switch_time_passed() then
 	os.exit(0)
 end
 
-uci:set("gluon", "core", "domain", target_domain)
-uci:commit("gluon")
-
-os.execute("gluon-reconfigure")
-os.execute("reboot")
+local cmd = {[0] = 'gluon-switch-domain', target_domain}
+unistd.execp(cmd[0], cmd)

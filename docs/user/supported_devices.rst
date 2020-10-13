@@ -44,6 +44,7 @@ ar71xx-generic
   - GL-AR150
   - GL-AR300M
   - GL-AR750
+  - GL-USB150 (Microuter)
 
 * Linksys
 
@@ -107,9 +108,9 @@ ar71xx-generic
   - Nanostation M2/M5  [#device-class-tiny]_
   - Nanostation M2/M5 XW
   - Picostation M2  [#device-class-tiny]_
-  - Rocket M2/M5
-  - Rocket M2/M5 Ti
-  - Rocket M2/M5 XW
+  - Rocket M2
+  - Rocket M2 Ti
+  - Rocket M2 XW
   - UniFi AC Mesh
   - UniFi AC Mesh Pro
   - UniFi AP
@@ -229,6 +230,7 @@ ipq40xx-generic
 * AVM
 
   - FRITZ!Box 4040 [#avmflash]_
+  - FRITZ!Box 7530 [#eva_ramboot]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
 * EnGenius
@@ -316,6 +318,11 @@ ramips-mt7620
   - GL-MT300A
   - GL-MT300N
   - GL-MT750
+
+* NETGEAR
+
+  - EX3700
+  - EX3800
 
 * Nexx
 

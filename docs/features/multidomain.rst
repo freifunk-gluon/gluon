@@ -88,18 +88,25 @@ domain of a router, if and only if one of the above conditions matches.
 Switching the domain
 --------------------
 
-**via commandline**:
+Via commandline
+^^^^^^^^^^^^^^^
 
 ::
 
-    uci set gluon.core.domain="newdomaincode"
-    gluon-reconfigure
-    reboot
+    gluon-switch-domain 'newdomaincode'
 
-**via config mode:**
+When the node is not in config mode, ``gluon-switch-domain`` will automatically
+reboot the node by default. This can be suppressed by passing ``--no-reboot``::
 
-To allow switching the domain via config mode, ``config-mode-domain-select``
-has to be added to GLUON_FEATURES in the site.mk.
+    gluon-switch-domain --no-reboot 'newdomaincode'
+
+Switching the domain without reboot is currently **experimental**.
+
+Via config mode
+^^^^^^^^^^^^^^^
+
+To allow switching the domain via config mode, add ``config-mode-domain-select``
+to GLUON_FEATURES in site.mk.
 
 |image0|
 

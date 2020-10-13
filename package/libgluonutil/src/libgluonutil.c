@@ -28,13 +28,16 @@
 
 #include <json-c/json.h>
 #include <uci.h>
+
 #include <arpa/inet.h>
+
+#include <errno.h>
+#include <glob.h>
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <limits.h>
-#include <errno.h>
 
 /**
  * Merges two JSON objects
@@ -129,6 +132,74 @@ char * gluonutil_get_interface_address(const char *ifname) {
 	return gluonutil_read_line(path);
 }
 
+void gluonutil_get_interface_lower(char out[IF_NAMESIZE], const char *ifname) {
+	strncpy(out, ifname, IF_NAMESIZE-1);
+	out[IF_NAMESIZE-1] = 0;
+
+	const char *format = "/sys/class/net/%s/lower_*";
+	char pattern[strlen(format) + IF_NAMESIZE];
+
+	while (true) {
+		snprintf(pattern, sizeof(pattern), format, out);
+		size_t pattern_len = strlen(pattern);
+
+		glob_t lower;
+		if (glob(pattern, GLOB_NOSORT, NULL, &lower) != 0)
+			break;
+
+		strncpy(out, lower.gl_pathv[0] + pattern_len - 1, IF_NAMESIZE-1);
+
+		globfree(&lower);
+	}
+}
+
+enum gluonutil_interface_type lookup_interface_type(const char *devtype) {
+	if (strcmp(devtype, "wlan") == 0)
+		return GLUONUTIL_INTERFACE_TYPE_WIRELESS;
+
+	if (strcmp(devtype, "l2tpeth") == 0 || strcmp(devtype, "wireguard") == 0)
+		return GLUONUTIL_INTERFACE_TYPE_TUNNEL;
+
+	/* Regular wired interfaces do not set DEVTYPE, so if this point is
+	 * reached, we have something different */
+	return GLUONUTIL_INTERFACE_TYPE_UNKNOWN;
+}
+
+enum gluonutil_interface_type gluonutil_get_interface_type(const char *ifname) {
+	const char *pattern = "/sys/class/net/%s/%s";
+
+	/* Default to wired type when no DEVTYPE is set */
+	enum gluonutil_interface_type ret = GLUONUTIL_INTERFACE_TYPE_WIRED;
+	char *line = NULL, path[PATH_MAX];
+	size_t buflen = 0;
+	ssize_t len;
+	FILE *f;
+
+	snprintf(path, sizeof(path), pattern, ifname, "tun_flags");
+	if (access(path, F_OK) == 0)
+		return GLUONUTIL_INTERFACE_TYPE_TUNNEL;
+
+	snprintf(path, sizeof(path), pattern, ifname, "uevent");
+	f = fopen(path, "r");
+	if (!f)
+		return GLUONUTIL_INTERFACE_TYPE_UNKNOWN;
+
+	while ((len = getline(&line, &buflen, f)) >= 0) {
+		if (len == 0)
+			continue;
+
+		if (line[len-1] == '\n')
+			line[len-1] = '\0';
+
+		if (strncmp(line, "DEVTYPE=", 8) == 0) {
+			ret = lookup_interface_type(line+8);
+			break;
+		}
+	}
+
+	fclose(f);
+	return ret;
+}
 
 
 struct json_object * gluonutil_wrap_string(const char *str) {

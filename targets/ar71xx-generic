@@ -126,6 +126,10 @@ device('gl.inet-gl-ar750', 'gl-ar750', {
 	packages = ATH10K_PACKAGES_QCA9887,
 })
 
+device('gl.inet-gl-usb150', 'gl-usb150', {
+	factory = false,
+})
+
 
 -- Linksys by Cisco
 
@@ -251,18 +255,50 @@ if (env.GLUON_REGION or '') ~= '' then
 	tplink_region_suffix = '-' .. env.GLUON_REGION
 end
 
-device('tp-link-cpe210-v1.0', 'cpe210-220-v1', {
-	aliases = {'tp-link-cpe210-v1.1', 'tp-link-cpe220-v1.1'},
+device('tp-link-cpe210-v1', 'cpe210-220-v1', {
+	aliases = {
+		'tp-link-cpe220-v1',
+	},
+	manifest_aliases = {
+		'tp-link-cpe210-v1.0',
+		'tp-link-cpe210-v1.1',
+		'tp-link-cpe220-v1.1',
+	},
 })
-device('tp-link-cpe210-v2.0', 'cpe210-v2')
-device('tp-link-cpe210-v3.0', 'cpe210-v3')
-
-device('tp-link-cpe510-v1.0', 'cpe510-520-v1', {
-	aliases = {'tp-link-cpe510-v1.1', 'tp-link-cpe520-v1.1'},
+device('tp-link-cpe210-v2', 'cpe210-v2', {
+	manifest_aliases = {
+		'tp-link-cpe210-v2.0',
+	},
+})
+device('tp-link-cpe210-v3', 'cpe210-v3', {
+	manifest_aliases = {
+		'tp-link-cpe210-v3.0',
+		'tp-link-cpe210-v3.1',
+		'tp-link-cpe210-v3.20',
+	},
 })
 
-device('tp-link-wbs210-v1.20', 'wbs210-v1')
-device('tp-link-wbs510-v1.20', 'wbs510-v1')
+device('tp-link-cpe510-v1', 'cpe510-520-v1', {
+	aliases = {
+		'tp-link-cpe520-v1',
+	},
+	manifest_aliases = {
+		'tp-link-cpe510-v1.0',
+		'tp-link-cpe510-v1.1',
+		'tp-link-cpe520-v1.1',
+	},
+})
+
+device('tp-link-wbs210-v1', 'wbs210-v1', {
+	manifest_aliases = {
+		'tp-link-wbs210-v1.20',
+	},
+})
+device('tp-link-wbs510-v1', 'wbs510-v1', {
+	manifest_aliases = {
+		'tp-link-wbs510-v1.20',
+	},
+})
 
 device('tp-link-tl-wr710n-v1', 'tl-wr710n-v1', {
 	class = 'tiny', -- 32M ath9k
@@ -391,10 +427,8 @@ device('ubiquiti-bullet-m', 'ubnt-bullet-m', {
 })
 
 device('ubiquiti-rocket-m', 'ubnt-rocket-m', {
-	aliases = {
-		'ubiquiti-rocket-m2',
-		'ubiquiti-rocket-m5',
-	},
+	aliases = {'ubiquiti-rocket-m2'},
+	manifest_aliases = {'ubiquiti-rocket-m5'},
 })
 
 device('ubiquiti-nanostation-m', 'ubnt-nano-m', {

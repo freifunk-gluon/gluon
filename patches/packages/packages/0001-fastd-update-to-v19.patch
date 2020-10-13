@@ -3,6 +3,7 @@ Date: Fri, 22 May 2020 21:09:21 +0200
 Subject: fastd: update to v19
 
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+(cherry picked from commit 598d4baa02d312d2bc68739a1f2f1f2cb3c91051)
 
 diff --git a/net/fastd/Config.in b/net/fastd/Config.in
 index 3350eb3099a26c870d70373c0712a8b59881ee5c..e6440075e561093c86543943cb982d010a4ef0e0 100644

@@ -40,7 +40,6 @@ if geo.lat ~= nil and geo.lon ~= nil then
 	local geo_base_domain = hoodutil.get_domain_by_geo(jdomains, geo)
 	if geo_base_domain ~= nil then
 		if hoodutil.set_domain_config(geo_base_domain) then
-			os.execute("gluon-reload")
 			hoodutil.log('Domain set by geolocation mode.\n')
 		end
 		return
@@ -51,6 +50,4 @@ else
 end
 
 -- default domain mode
-if hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains())) then
-	os.execute("gluon-reload")
-end
+hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains()))

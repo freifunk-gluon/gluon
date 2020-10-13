@@ -19,6 +19,7 @@ function M.options()
 
 	return {
 		openlayers_url = config.openlayers_url(),
+		tile_layer = config.tile_layer(),
 		zoom = config.zoom(12),
 		pos = config.center(),
 	}

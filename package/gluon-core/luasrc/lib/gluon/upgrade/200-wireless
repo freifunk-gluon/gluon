@@ -54,7 +54,7 @@ end
 
 local function get_channel(radio, config)
 	local channel
-	if uci:get_first('gluon-core', 'wireless', 'preserve_channels') then
+	if wireless.preserve_channels(uci) then
 		-- preserved channel always wins
 		channel = radio.channel
 	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
@@ -82,20 +82,20 @@ local function get_htmode(radio)
 end
 
 local function is_disabled(name)
-	if uci:get('wireless', name) then
-		return uci:get_bool('wireless', name, 'disabled')
-	else
+	if not uci:get('wireless', name) then
 		return nil
 	end
+
+	return uci:get_bool('wireless', name, 'disabled')
 end
 
 -- Returns the first argument that is not nil; don't call without any non-nil arguments!
 local function first_non_nil(first, ...)
 	if first ~= nil then
 		return first
-	else
-		return first_non_nil(...)
 	end
+
+	return first_non_nil(...)
 end
 
 

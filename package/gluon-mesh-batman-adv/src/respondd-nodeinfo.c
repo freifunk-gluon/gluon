@@ -131,35 +131,23 @@ static void mesh_add_subif(const char *ifname, struct json_object *wireless,
 			   struct json_object *tunnel, struct json_object *other) {
 	struct json_object *address = gluonutil_wrap_and_free_string(gluonutil_get_interface_address(ifname));
 
-	char lowername[IFNAMSIZ];
-	strncpy(lowername, ifname, sizeof(lowername)-1);
-	lowername[sizeof(lowername)-1] = 0;
-
-	const char *format = "/sys/class/net/%s/lower_*";
-	char pattern[strlen(format) + IFNAMSIZ];
-
 	/* In case of VLAN and bridge interfaces, we want the lower interface
 	 * to determine the interface type (but not for the interface address) */
-	while (true) {
-		snprintf(pattern, sizeof(pattern), format, lowername);
-		size_t pattern_len = strlen(pattern);
+	char lowername[IF_NAMESIZE];
+	gluonutil_get_interface_lower(lowername, ifname);
 
-		glob_t lower;
-		if (glob(pattern, GLOB_NOSORT, NULL, &lower))
-			break;
-
-		strncpy(lowername, lower.gl_pathv[0] + pattern_len - 1, sizeof(lowername)-1);
-
-		globfree(&lower);
-	}
-
-	if (interface_file_exists(lowername, "wireless"))
+	switch(gluonutil_get_interface_type(lowername)) {
+	case GLUONUTIL_INTERFACE_TYPE_WIRELESS:
 		json_object_array_add(wireless, address);
-	else if (interface_file_exists(lowername, "tun_flags"))
-		json_object_array_add(tunnel, address);
-	else
-		json_object_array_add(other, address);
+		break;
 
+	case GLUONUTIL_INTERFACE_TYPE_TUNNEL:
+		json_object_array_add(tunnel, address);
+		break;
+
+	default:
+		json_object_array_add(other, address);
+	}
 }
 
 static struct json_object * get_mesh_subifs(const char *ifname) {

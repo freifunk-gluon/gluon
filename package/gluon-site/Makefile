@@ -49,7 +49,14 @@ define Build/Compile
 	rm -rf $(PKG_BUILD_DIR)/domains
 	mkdir -p $(PKG_BUILD_DIR)/domains
 	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
-		[ ! -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]
+		@if [ -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]; then \
+			link='$(PKG_BUILD_DIR)/domains/$(domain).json'; \
+			other="$$$$(basename $$$$(readlink -f "$$$$link") .json)"; \
+			if [ "$$$$other" ]; then \
+				echo >&2 "Error: Failed to install domain '"'$(domain)'"', name already taken by domain '$$$$other'."; \
+			fi; \
+			exit 1; \
+		fi
 		$(call GenerateJSON,domains/$(domain))
 		@lua ../../scripts/domain_aliases.lua '$(PKG_BUILD_DIR)/domains/$(domain).json' | while read alias; do \
 			[ "$$$${alias}" != '$(domain)' ] || continue; \
@@ -57,7 +64,7 @@ define Build/Compile
 			if ! ln -s '$(domain).json' "$$$$link"; then \
 				other="$$$$(basename $$$$(readlink -f "$$$$link") .json)"; \
 				if [ "$$$$other" ]; then \
-					echo >&2 "Failed to alias domain '"'$(domain)'"' as '$$$$alias', name already taken by domain '$$$$other'."; \
+					echo >&2 "Error: Failed to alias domain '"'$(domain)'"' as '$$$$alias', name already taken by domain '$$$$other'."; \
 				fi; \
 				exit 1; \
 			fi; \

@@ -3,7 +3,9 @@ assert(env.GLUON_LANGS)
 
 config('GLUON_SITEDIR', env.GLUON_SITEDIR)
 config('GLUON_RELEASE', env.GLUON_RELEASE)
-try_config('GLUON_BRANCH', env.GLUON_BRANCH or '')
+
+try_config('GLUON_AUTOUPDATER_BRANCH', env.GLUON_AUTOUPDATER_BRANCH)
+try_config('GLUON_AUTOUPDATER_ENABLED', istrue(env.GLUON_AUTOUPDATER_ENABLED))
 
 for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
 	try_config('GLUON_WEB_LANG_' .. lang, true)

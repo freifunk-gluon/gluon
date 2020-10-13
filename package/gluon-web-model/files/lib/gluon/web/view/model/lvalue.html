@@ -4,23 +4,25 @@
 %>
 
 <% if self.widget == "select" then %>
-	<select class="gluon-input-select" data-update="change"<%=
-		attr("id", id) ..
-		attr("name", id) ..
-		attr("size", self.size) ..
-		attr("data-type", "minlength(1)") ..
-		attr("data-optional", self.optional)
-	%>>
-		<% for i, entry in pairs(entries) do -%>
-			<option<%=
-				attr("id", id.."."..entry.key) ..
-				attr("value", entry.key) ..
-				attr("data-index", i) ..
-				attr("data-depends", self:deplist(entry.deps)) ..
-				attr("selected", (self:cfgvalue() == entry.key) and "selected")
-			%>><%|entry.value%></option>
-		<%- end %>
-	</select>
+	<div class="select-wrapper">
+		<select data-update="change"<%=
+			attr("id", id) ..
+			attr("name", id) ..
+			attr("size", self.size) ..
+			attr("data-type", "minlength(1)") ..
+			attr("data-optional", self.optional)
+		%>>
+			<% for i, entry in pairs(entries) do -%>
+				<option<%=
+					attr("id", id.."."..entry.key) ..
+					attr("value", entry.key) ..
+					attr("data-index", i) ..
+					attr("data-depends", self:deplist(entry.deps)) ..
+					attr("selected", (self:cfgvalue() == entry.key) and "selected")
+				%>><%|entry.value%></option>
+			<%- end %>
+		</select>
+	</div>
 <% elseif self.widget == "radio" then %>
 	<div>
 		<% for i, entry in pairs(entries) do %>
@@ -28,7 +30,7 @@
 				attr("data-index", i) ..
 				attr("data-depends", self:deplist(entry.deps))
 			%>>
-				<input class="gluon-input-radio" data-update="click change" type="radio"<%=
+				<input data-update="click change" type="radio"<%=
 					attr("id", id.."."..entry.key) ..
 					attr("name", id) ..
 					attr("value", entry.key) ..

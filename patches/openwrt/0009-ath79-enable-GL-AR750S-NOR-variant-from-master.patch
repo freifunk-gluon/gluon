@@ -3,10 +3,10 @@ Date: Tue, 31 Mar 2020 21:50:28 +0200
 Subject: ath79: enable GL-AR750S NOR variant from master
 
 diff --git a/target/linux/ath79/base-files/etc/board.d/02_network b/target/linux/ath79/base-files/etc/board.d/02_network
-index 9b9bc8a7fc15300247bceeb431ab3ae8d3ac47e6..da45b40086c0cb0011c1db6b89ae75b981fcc9b7 100755
+index 5dda551caae0429880ee9d5965bfb6797d218e6d..b8fac8816c9a2b2a87a5d1335b41127666afe2e4 100755
 --- a/target/linux/ath79/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/base-files/etc/board.d/02_network
-@@ -151,7 +151,7 @@ ath79_setup_interfaces()
+@@ -155,7 +155,7 @@ ath79_setup_interfaces()
  	etactica,eg200)
  		ucidef_set_interface_lan "eth0" "dhcp"
  		;;
@@ -29,7 +29,7 @@ index d93e6dcd71ab19c53905daa41e95cc4fc614f114..c917f38211d0b246f064dba4b7feefec
  		ath10kcal_patch_mac $(macaddr_add $(mtd_get_mac_binary art 0) +1)
  		;;
 diff --git a/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts b/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
-index 0145a24fbae2cdbe6fb6445607795af6b792352d..ebecb8cc776091ec019638589cb88159345d367f 100644
+index 03922bcd1fe9a453d5916537609317b94eea18c6..ff64e16d1ce7a94d16529e5954e1d50513a5e2cb 100644
 --- a/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
 +++ b/target/linux/ath79/dts/qca9563_glinet_gl-ar750s.dts
 @@ -7,8 +7,8 @@
@@ -41,8 +41,8 @@ index 0145a24fbae2cdbe6fb6445607795af6b792352d..ebecb8cc776091ec019638589cb88159
 +	compatible = "glinet,gl-ar750s-nor", "qca,qca9563";
 +	model = "GL.iNet GL-AR750S (NOR)";
  
- 	chosen {
- 		bootargs = "console=ttyS0,115200n8";
+ 	aliases {
+ 		led-boot = &power;
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
 index 55053be34f11f0df982c85f94c9180fdba9ff221..892ef10f870e347c8a1509cecd35bce4b5e98bee 100644
 --- a/target/linux/ath79/image/generic.mk

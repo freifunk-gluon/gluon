@@ -1,4 +1,4 @@
-need_string(in_site({'autoupdater', 'branch'}))
+need_string(in_site({'autoupdater', 'branch'}), false)
 
 need_table({'autoupdater', 'branches'}, function(branch)
 	need_alphanumeric_key(branch)

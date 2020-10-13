@@ -7,7 +7,7 @@ Debugging
 Kernel Oops
 -----------
 
-Sometimes a running Linux kernel detects an error during runtime that canot
+Sometimes a running Linux kernel detects an error during runtime that can't
 be corrected.
 This usually generates a stack trace that points to the location in the code
 that caused the oops.

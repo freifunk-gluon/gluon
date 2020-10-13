@@ -1,5 +1,5 @@
 #!/bin/sh
 
 lock /var/lock/gluon_bat0.lock
-batctl interface del "$IFNAME" 2>/dev/null
+batctl interface -M del "$IFNAME" 2>/dev/null
 lock -u /var/lock/gluon_bat0.lock

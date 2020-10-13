@@ -28,6 +28,14 @@ GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site
 
 GLUON_DEPRECATED ?= $(error GLUON_DEPRECATED not set. Please consult the documentation)
 
+ifneq ($(GLUON_BRANCH),)
+  $(warning *** Warning: GLUON_BRANCH has been deprecated, please set GLUON_AUTOUPDATER_BRANCH and GLUON_AUTOUPDATER_ENABLED instead.)
+  GLUON_AUTOUPDATER_BRANCH ?= $(GLUON_BRANCH)
+  GLUON_AUTOUPDATER_ENABLED ?= 1
+endif
+
+GLUON_AUTOUPDATER_ENABLED ?= 0
+
 # initialize (possibly already user set) directory variables
 GLUON_TMPDIR ?= tmp
 GLUON_OUTPUTDIR ?= output
@@ -58,7 +66,7 @@ endef
 GLUON_VARS = \
 	GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_AUTOREMOVE GLUON_DEBUG GLUON_MINIFY GLUON_DEPRECATED \
 	GLUON_DEVICES GLUON_TARGETSDIR GLUON_PATCHESDIR GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR GLUON_DEBUGDIR \
-	GLUON_SITEDIR GLUON_RELEASE GLUON_BRANCH GLUON_LANGS GLUON_BASE_FEEDS \
+	GLUON_SITEDIR GLUON_RELEASE GLUON_AUTOUPDATER_BRANCH GLUON_AUTOUPDATER_ENABLED GLUON_LANGS GLUON_BASE_FEEDS \
 	GLUON_TARGET BOARD SUBTARGET
 
 unexport $(GLUON_VARS)
@@ -114,13 +122,6 @@ define CheckTarget
 	fi
 endef
 
-define CheckExternal
-	if [ ! -d openwrt ]; then
-		echo "You don't seem to have obtained the external repositories needed by Gluon; please call \`make update\` first!"
-		exit 1
-	fi
-endef
-
 define CheckSite
 	if ! GLUON_SITEDIR='$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' $(LUA) -e 'assert(dofile("scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))'; then
 		echo 'Your site configuration ($(1).conf) did not pass validation'
@@ -147,7 +148,7 @@ LUA := openwrt/staging_dir/hostpkg/bin/lua
 $(LUA):
 	+@
 
-	$(CheckExternal)
+	scripts/module_check.sh
 
 	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) tools/install
@@ -157,7 +158,7 @@ $(LUA):
 config: $(LUA) FORCE
 	+@
 
-	$(CheckExternal)
+	scripts/module_check.sh
 	$(CheckTarget)
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),\
 		$(call CheckSite,$(conf)); \
@@ -185,23 +186,23 @@ dirclean: FORCE
 
 manifest: $(LUA) FORCE
 	@
-	[ '$(GLUON_BRANCH)' ] || (echo 'Please set GLUON_BRANCH to create a manifest.'; false)
+	[ '$(GLUON_AUTOUPDATER_BRANCH)' ] || (echo 'Please set GLUON_AUTOUPDATER_BRANCH to create a manifest.'; false)
 	echo '$(GLUON_PRIORITY)' | grep -qE '^([0-9]*\.)?[0-9]+$$' || (echo 'Please specify a numeric value for GLUON_PRIORITY to create a manifest.'; false)
-	$(CheckExternal)
+	scripts/module_check.sh
 
 	(
 		export $(GLUON_ENV)
-		echo 'BRANCH=$(GLUON_BRANCH)'
+		echo 'BRANCH=$(GLUON_AUTOUPDATER_BRANCH)'
 		echo "DATE=$$($(LUA) scripts/rfc3339date.lua)"
 		echo 'PRIORITY=$(GLUON_PRIORITY)'
 		echo
 		for target in $(GLUON_TARGETS); do
 			$(LUA) scripts/generate_manifest.lua "$$target"
 		done
-	) > 'tmp/$(GLUON_BRANCH).manifest.tmp'
+	) > 'tmp/$(GLUON_AUTOUPDATER_BRANCH).manifest.tmp'
 
 	mkdir -p '$(GLUON_IMAGEDIR)/sysupgrade'
-	mv 'tmp/$(GLUON_BRANCH).manifest.tmp' '$(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_BRANCH).manifest'
+	mv 'tmp/$(GLUON_AUTOUPDATER_BRANCH).manifest.tmp' '$(GLUON_IMAGEDIR)/sysupgrade/$(GLUON_AUTOUPDATER_BRANCH).manifest'
 
 FORCE: ;
 

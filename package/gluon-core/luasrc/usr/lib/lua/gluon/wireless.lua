@@ -96,4 +96,8 @@ function M.foreach_radio(uci, f)
 	end
 end
 
+function M.preserve_channels(uci)
+	return uci:get_first('gluon-core', 'wireless', 'preserve_channels')
+end
+
 return M

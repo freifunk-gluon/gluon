@@ -18,7 +18,7 @@ end
 
 uci:foreach('firewall', 'zone', reject_input_on_wan)
 
-for _, zone in ipairs({'mesh', 'local_client', 'wired_mesh'}) do
+for _, zone in ipairs({'mesh', 'loc_client', 'wired_mesh'}) do
 	-- Other packages assign interfaces to these zones
 	uci:section('firewall', 'zone', zone, {
 		name = zone,
@@ -52,13 +52,16 @@ for _, zone in ipairs({'mesh', 'local_client', 'wired_mesh'}) do
 		family = 'ipv6',
 		target = 'ACCEPT',
 	})
-
-	-- Can be removed soon: was never in a release
-	uci:delete('firewall', zone .. '_ICMPv6_out')
 end
 
-uci:section('firewall', 'rule', 'local_client_ICMPv4_in', {
-	src = 'local_client',
+-- ToDo Remove in v2022.x
+uci:delete('firewall', 'local_client')
+uci:delete('firewall', 'local_client_ssh')
+uci:delete('firewall', 'local_client_ICMPv4_in')
+uci:delete('firewall', 'local_client_ICMPv6_in')
+
+uci:section('firewall', 'rule', 'loc_client_ICMPv4_in', {
+	src = 'loc_client',
 	proto = 'icmp',
 	icmp_type = {
 		'echo-request',
@@ -67,9 +70,8 @@ uci:section('firewall', 'rule', 'local_client_ICMPv4_in', {
 	target = 'ACCEPT',
 })
 
-
 -- allow inbound SSH from anywhere
-for _, zone in ipairs({ 'wan', 'local_client', 'mesh' }) do
+for _, zone in ipairs({ 'wan', 'loc_client', 'mesh' }) do
 	uci:section('firewall', 'rule', zone .. '_ssh', {
 		name =  zone .. '_ssh',
 		src = zone,

@@ -13,7 +13,7 @@ the mesh's DNS servers and use these for all other name resolution.
 
 If the device does not feature a WAN port, the LAN port is configured as WAN port.
 In case such a device has multiple LAN ports, all these can be used as WAN.
-Devices, which feature a "hybrid" port (labled as WAN/LAN), this port is used as WAN.
+Devices, which feature a "hybrid" port (labelled as WAN/LAN), this port is used as WAN.
 
 This behavior can be reversed using the ``single_as_lan`` site.conf option.
 

@@ -176,7 +176,7 @@ wifi24 \: optional
 .. _user-site-wifi5:
 
 wifi5 \: optional
-    Same as `wifi24` but for the 5Ghz radio.
+    Same as `wifi24` but for the 5 GHz radio.
 
     Additionally a range of channels that are safe to use outsides on the 5 GHz band can
     be set up through ``outdoor_chanlist``, which allows for a space-separated list of
@@ -326,7 +326,7 @@ mesh_vpn
     implementation.
 
     **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
-    in the build when using *gluon-mesh-babel* to work around icmp blackholes on the internet.
+    in the build when using *gluon-mesh-babel* to work around ICMP blackholes on the internet.
 
     ::
 
@@ -418,12 +418,16 @@ poe_passthrough \: optional
 autoupdater \: package
     Configuration for the autoupdater feature of Gluon.
 
+    Specifying a default branch in *site.conf* is optional. See
+    :doc:`../features/autoupdater` for information how to change the behaviour
+    of the autoupdater during image build.
+
     The mirrors are checked in random order until the manifest could be downloaded
     successfully or all mirrors have been tried.
     ::
 
       autoupdater = {
-        branch = 'stable',
+        branch = 'stable', -- optional
         branches = {
           stable = {
             name = 'stable',
@@ -464,9 +468,14 @@ config_mode \: optional
     The *geo_location.osm* section is only relevant when the *gluon-config-mode-geo-location-osm*
     package is used. The *center.lon* and *center.lat* values are mandatory in this case and
     define the default center of the map when no position has been picked yet. The *zoom* level
-    defaults to 12 in this case. *openlayers_url* allows to override the base URL of the
+    defaults to 12 in this case.
+
+    *openlayers_url* allows to override the base URL of the
     *build/ol.js* and *css/ol.css* files (the default is
     ``https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0``).
+    It is also possible to replace the default tile layer (which is OpenStreetMap)
+    with a custom one using the *tile_layer* section. Only XYZ layers are supported
+    at this point.
 
     The remote login page only shows SSH key configuration by default. A
     password form can be displayed by setting *remote_login.show_password_form*
@@ -488,6 +497,11 @@ config_mode \: optional
               },
               zoom = 13,
               -- openlayers_url = 'http://ffac.example.org/openlayer',
+              -- tile_layer = {
+              --   type = 'XYZ',
+              --   url = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              --   attributions = '&#169; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.',
+              -- },
             },
           },
           remote_login = {

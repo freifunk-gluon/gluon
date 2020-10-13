@@ -1,0 +1,198 @@
+Gluon 2020.2
+============
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+* GL.iNet
+
+  - GL-AR750S
+
+* TP-Link
+
+  - CPE220 (v3)
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+* EnGenius
+
+  - ENS620EXT [#outdoor]_
+
+* Linksys
+
+  - EA6350 (v3)
+
+lantiq-xrx200
+~~~~~~~~~~~~~
+
+* TP-Link
+
+  - TD-W8970
+
+lantiq-xway
+~~~~~~~~~~~
+
+* NETGEAR
+
+  - DGN3500B
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+* Cudy
+
+  - WR1000
+
+
+x86-legacy [#newtarget]_
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Devices older than the Pentium 4
+
+
+.. [#newtarget]
+  This is a new target.
+
+.. [#outdoor]
+  This device is supposed to be set up outdoors and will therefore have its outdoor mode flag automatically enabled.
+
+
+Major changes
+-------------
+
+Device Classes
+~~~~~~~~~~~~~~
+
+Devices are now categorized into device classes. This device class can determine which features
+as well as packages are installed on the device when building images.
+
+Currently there are two classes used in Gluon, *tiny* and *standard*. All devices with less than 64M of RAM or
+less than 7M of usable firmware space are assigned to the tiny class.
+
+WPA3 support for Private WLAN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The private WLAN now supports WPA3-SAE key exchange as well as management frame protection (802.11w).
+For this to work, the firmware needs to be built with the *wireless-encryption-wpa3* feature.
+
+OWE on Client Network
+~~~~~~~~~~~~~~~~~~~~~
+
+Gluon now allows to configure a VAP for the client network which supports opportunistic encryption on the
+client network for devices which support the OWE security type (also known as Enhanced Open).
+
+This encrypted VAP can be the only available access point or be configured in addition to an unencrypted VAP.
+In the latter case, the transition mode can be enabled, which enables compatible devices to automatically
+connect to the encrypted VAP while legacy devices continue to use the unencrypted connection.
+
+There are issues with some devices running Android 9 when connecting to a transition mode enabled network. See the site documentation for more information.
+
+SAE Encrypted Mesh Links
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mesh links can now be operated in an encrypted mode using SAE authentication. For this to work, a common shared secret
+has to be distributed to all participating nodes using the site.conf.
+
+Responsive status page
+~~~~~~~~~~~~~~~~~~~~~~
+
+The status page design is now responsive and reflows better on mobile devices.
+
+Primary domain code
+~~~~~~~~~~~~~~~~~~~
+
+The primary domain code is now visible on the node status page as well as in the respondd information
+emitted by the node.
+
+Logging
+~~~~~~~
+
+The new *gluon-logging* package allows to configure a remote syslog server using the site.conf.
+This package can only be included when *gluon-web-logging* is excluded.
+
+Peer cleanup in fastd
+~~~~~~~~~~~~~~~~~~~~~
+
+fastd peers and groups are now removed on update in case they do not exist in the new site configuration.
+To preserve a custom peer across updates, add the *preserve* key to the peer's UCI configuration and set it to ``1``.
+
+
+Bugfixes
+--------
+
+- The WAN MAC address now matches the one defined in OpenWrt if VXLAN is enabled for the selected domain.
+
+- *gluon-reload* now reloads all relevant services.
+
+- Disabling outdoor mode and enabling meshing in the config mode can now be performed in a single step.
+
+- Fixed section visibility with enabled outdoor mode in config mode.
+
+
+Site changes
+------------
+
+site.mk
+~~~~~~~
+
+Starting with version 19.07 OpenWrt ships the urngd entropy daemon by default.
+It replaces the haveged daemon, for which we removed the support in Gluon. Remove ``haveged`` from your package selection.
+
+
+Internal
+--------
+
+Editorconfig
+~~~~~~~~~~~~
+
+Gluon now ships a *editorconfig* file to allow compatible editors to automatically apply key aspects of Gluon's code style.
+
+Continuous Integration
+~~~~~~~~~~~~~~~~~~~~~~
+
+* Jenkins
+
+  - The CI now has a test stage to verify Gluons runtime functionality.
+
+* GitHub Actions
+
+  - GitHub actions is now enabled for the Gluon project, build-testing all available targets.
+
+Build system
+~~~~~~~~~~~~
+
+- Source code minification can now be skipped by enabling the GLUON_MINIFY flag.
+
+- Enabling the GLUON_AUTOREMOVE flag will remove package build directories after they are built.
+  This reduces space consumption at the expense of subsequent builds being slower.
+
+
+Known issues
+------------
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the
+  NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations not using VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is
+  disallowed).

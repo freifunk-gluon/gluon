@@ -7,8 +7,11 @@ Building Images
 ---------------
 
 By default, the autoupdater is disabled (as it is usually not helpful to have unexpected updates
-during development), but it can be enabled by setting the variable GLUON_BRANCH when building
-to override the default branch set in the site configuration.
+during development), but it can be enabled by setting the variable ``GLUON_AUTOUPDATER_ENABLED`` to ``1`` when building.
+It is also possible to override the default branch during build using the variable ``GLUON_AUTOUPDATER_BRANCH``.
+
+If a default branch is set neither in *site.conf* nor via ``GLUON_AUTOUPDATER_BRANCH``, the default branch is
+implementation-defined. Currently, the branch with the first name in alphabetical order is chosen.
 
 A manifest file for the updater can be generated with `make manifest`. A signing script (using
 ``ecdsautils``) can be found in the `contrib` directory. When creating the manifest, the
@@ -32,15 +35,16 @@ Automated nightly builds
 
 A fully automated nightly build could use the following commands:
 
-::
+.. code-block:: sh
 
     git pull
-    (git -C site pull)
+    # git -C site pull
     make update
     make clean GLUON_TARGET=ar71xx-generic
     NUM_CORES_PLUS_ONE=$(expr $(nproc) + 1)
-    make -j$NUM_CORES_PLUS_ONE GLUON_TARGET=ar71xx-generic GLUON_BRANCH=experimental GLUON_RELEASE=$GLUON_RELEASE
-    make manifest GLUON_BRANCH=experimental GLUON_RELEASE=$GLUON_RELEASE
+    make -j$NUM_CORES_PLUS_ONE GLUON_TARGET=ar71xx-generic GLUON_RELEASE=$GLUON_RELEASE \
+        GLUON_AUTOUPDATER_BRANCH=experimental GLUON_AUTOUPDATER_ENABLED=1
+    make manifest GLUON_RELEASE=$GLUON_RELEASE GLUON_AUTOUPDATER_BRANCH=experimental
     contrib/sign.sh $SECRETKEY output/images/sysupgrade/experimental.manifest
 
     rm -rf /where/to/put/this/experimental

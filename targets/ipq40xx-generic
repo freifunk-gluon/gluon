@@ -38,6 +38,10 @@ device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
 	},
 })
 
+device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
+	factory = false,
+})
+
 device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
 	factory = false,
 })

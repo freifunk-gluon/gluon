@@ -37,7 +37,7 @@ Other changes
 Internals
 ---------
 
-- OpenWrt 19.07 introduced the urgnd entropy daemon that serves the same function as the haveged service, which we have been recommending. To not have two redundant entropy daemons in this release we remove urngd in favor of haveged in the v2020.1 release series.
+- OpenWrt 19.07 introduced the urngd entropy daemon that serves the same function as the haveged service, which we have been recommending. To not have two redundant entropy daemons in this release we remove urngd in favor of haveged in the v2020.1 release series.
 
 Known issues
 ------------
