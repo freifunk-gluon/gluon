@@ -5,13 +5,16 @@ local sysconfig = require 'gluon.sysconfig'
 
 
 uci:section('network', 'interface', 'wan', {
-	ifname = sysconfig.wan_ifname,
 	type = 'bridge',
 	igmp_snooping = true,
 	multicast_querier = false,
 	peerdns = false,
 	auto = true,
 })
+
+if not uci:get('network', 'wan', 'ifname') then
+	uci:set('network', 'wan', 'ifname', sysconfig.wan_ifname)
+end
 
 if not uci:get('network', 'wan', 'proto') then
 	uci:set('network', 'wan', 'proto', 'dhcp')
