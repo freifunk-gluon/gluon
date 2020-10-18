@@ -85,6 +85,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    releases/v2020.1.2
    releases/v2020.1.1
    releases/v2020.1
+   releases/v2019.1.3
    releases/v2019.1.2
    releases/v2019.1.1
    releases/v2019.1
