@@ -1,0 +1,68 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Mon, 19 Oct 2020 22:09:34 +0200
+Subject: fastd: fix buffer leak when receiving invalid packets
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+(cherry picked from commit a72e95a2f450a42f59984135ce6239289d1d3a5a)
+
+diff --git a/net/fastd/Makefile b/net/fastd/Makefile
+index 2686c7fb9a453649ce4da66329fbd182b14cae5f..70df5c20aa17e782090a880358922d4b13c69437 100644
+--- a/net/fastd/Makefile
++++ b/net/fastd/Makefile
+@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=fastd
+ PKG_VERSION:=18
+-PKG_RELEASE:=2.1
++PKG_RELEASE:=2.2
+ 
+ PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+diff --git a/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch b/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..b67a85c4e4f8ca1ef72d3216afa1ad4e9370cd02
+--- /dev/null
++++ b/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch
+@@ -0,0 +1,42 @@
++From f6a2651fa91c472d04cb34264718f761669c8aa1 Mon Sep 17 00:00:00 2001
++Message-Id: <f6a2651fa91c472d04cb34264718f761669c8aa1.1603136280.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Mon, 19 Oct 2020 21:08:16 +0200
++Subject: [PATCH] receive: fix buffer leak when receiving invalid packets
++
++For fastd versions before v20, this was just a memory leak (which could
++still be used for DoS, as it's remotely triggerable). With the new
++buffer management of fastd v20, this will trigger an assertion failure
++instead as soon as the buffer pool is empty.
++
++(cherry picked from commit 737925113363b6130879729cdff9ccc46c33eaea)
++---
++ src/receive.c | 10 ++++++++++
++ 1 file changed, 10 insertions(+)
++
++--- a/src/receive.c
+++++ b/src/receive.c
++@@ -186,6 +186,11 @@ static inline void handle_socket_receive
++ 
++ 	case PACKET_HANDSHAKE:
++ 		fastd_handshake_handle(sock, local_addr, remote_addr, peer, buffer);
+++		break;
+++
+++	default:
+++		fastd_buffer_free(buffer);
+++		pr_debug("received packet with invalid type from %P[%I]", peer, remote_addr);
++ 	}
++ }
++ 
++@@ -211,6 +216,11 @@ static inline void handle_socket_receive
++ 
++ 	case PACKET_HANDSHAKE:
++ 		fastd_handshake_handle(sock, local_addr, remote_addr, NULL, buffer);
+++		break;
+++
+++	default:
+++		fastd_buffer_free(buffer);
+++		pr_debug("received packet with invalid type from unknown address %I", remote_addr);
++ 	}
++ }
++ 
