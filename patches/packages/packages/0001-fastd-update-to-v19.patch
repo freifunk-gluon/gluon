@@ -3,7 +3,6 @@ Date: Fri, 22 May 2020 21:09:21 +0200
 Subject: fastd: update to v19
 
 Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
-(cherry picked from commit 598d4baa02d312d2bc68739a1f2f1f2cb3c91051)
 
 diff --git a/net/fastd/Config.in b/net/fastd/Config.in
 index 3350eb3099a26c870d70373c0712a8b59881ee5c..e6440075e561093c86543943cb982d010a4ef0e0 100644
@@ -27,7 +26,7 @@ index 3350eb3099a26c870d70373c0712a8b59881ee5c..e6440075e561093c86543943cb982d01
  config FASTD_ENABLE_CIPHER_NULL
  	bool "Enable the null cipher"
 diff --git a/net/fastd/Makefile b/net/fastd/Makefile
-index f4890b56931a75849229d25fe78720e19d493383..8eabc34db6f3b906ddb1b5df5c232309e85d2ffb 100644
+index f4890b56931a75849229d25fe78720e19d493383..7483e7b003041fb59991d72d0ccfcc8a28bb17a3 100644
 --- a/net/fastd/Makefile
 +++ b/net/fastd/Makefile
 @@ -8,13 +8,13 @@
@@ -37,7 +36,7 @@ index f4890b56931a75849229d25fe78720e19d493383..8eabc34db6f3b906ddb1b5df5c232309
 -PKG_VERSION:=18
 -PKG_RELEASE:=5
 +PKG_VERSION:=19
-+PKG_RELEASE:=1
++PKG_RELEASE:=2
  
  PKG_MAINTAINER:=Matthias Schiffer <mschiffer@universe-factory.net>
  PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
@@ -163,51 +162,3 @@ index b576a987369e93f3cd14fbc83f3c4bffe5cc97d1..00000000000000000000000000000000
 --- 
 -2.23.0
 -
-diff --git a/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch b/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch
-deleted file mode 100644
-index b67a85c4e4f8ca1ef72d3216afa1ad4e9370cd02..0000000000000000000000000000000000000000
---- a/net/fastd/patches/0003-receive-fix-buffer-leak-when-receiving-invalid-packe.patch
-+++ /dev/null
-@@ -1,42 +0,0 @@
--From f6a2651fa91c472d04cb34264718f761669c8aa1 Mon Sep 17 00:00:00 2001
--Message-Id: <f6a2651fa91c472d04cb34264718f761669c8aa1.1603136280.git.mschiffer@universe-factory.net>
--From: Matthias Schiffer <mschiffer@universe-factory.net>
--Date: Mon, 19 Oct 2020 21:08:16 +0200
--Subject: [PATCH] receive: fix buffer leak when receiving invalid packets
--
--For fastd versions before v20, this was just a memory leak (which could
--still be used for DoS, as it's remotely triggerable). With the new
--buffer management of fastd v20, this will trigger an assertion failure
--instead as soon as the buffer pool is empty.
--
--(cherry picked from commit 737925113363b6130879729cdff9ccc46c33eaea)
-----
-- src/receive.c | 10 ++++++++++
-- 1 file changed, 10 insertions(+)
--
----- a/src/receive.c
--+++ b/src/receive.c
--@@ -186,6 +186,11 @@ static inline void handle_socket_receive
-- 
-- 	case PACKET_HANDSHAKE:
-- 		fastd_handshake_handle(sock, local_addr, remote_addr, peer, buffer);
--+		break;
--+
--+	default:
--+		fastd_buffer_free(buffer);
--+		pr_debug("received packet with invalid type from %P[%I]", peer, remote_addr);
-- 	}
-- }
-- 
--@@ -211,6 +216,11 @@ static inline void handle_socket_receive
-- 
-- 	case PACKET_HANDSHAKE:
-- 		fastd_handshake_handle(sock, local_addr, remote_addr, NULL, buffer);
--+		break;
--+
--+	default:
--+		fastd_buffer_free(buffer);
--+		pr_debug("received packet with invalid type from unknown address %I", remote_addr);
-- 	}
-- }
-- 
