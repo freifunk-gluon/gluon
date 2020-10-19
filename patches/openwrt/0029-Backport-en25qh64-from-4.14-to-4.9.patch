@@ -1,0 +1,22 @@
+From: Chris Fiege <chris@tinyhost.de>
+Date: Wed, 14 Oct 2020 21:47:56 +0200
+Subject: HACK: Backport en25qh64 from 4.14 to 4.9
+
+diff --git a/target/linux/generic/pending-4.9/476-mtd-spi-nor-add-eon-en25q128.patch b/target/linux/generic/pending-4.9/476-mtd-spi-nor-add-eon-en25q128.patch
+index ac1fda51593af87fe9bd5a5a3bb433e1f098a740..9a9371165369442143a04e74c100db4d589b99d0 100644
+--- a/target/linux/generic/pending-4.9/476-mtd-spi-nor-add-eon-en25q128.patch
++++ b/target/linux/generic/pending-4.9/476-mtd-spi-nor-add-eon-en25q128.patch
+@@ -8,11 +8,12 @@ Signed-off-by: Piotr Dymacz <pepe2k@gmail.com>
+ 
+ --- a/drivers/mtd/spi-nor/spi-nor.c
+ +++ b/drivers/mtd/spi-nor/spi-nor.c
+-@@ -954,6 +954,7 @@ static const struct flash_info spi_nor_i
++@@ -954,6 +954,8 @@ static const struct flash_info spi_nor_i
+  	{ "en25q32b",   INFO(0x1c3016, 0, 64 * 1024,   64, 0) },
+  	{ "en25p64",    INFO(0x1c2017, 0, 64 * 1024,  128, 0) },
+  	{ "en25q64",    INFO(0x1c3017, 0, 64 * 1024,  128, SECT_4K) },
+ +	{ "en25q128",   INFO(0x1c3018, 0, 64 * 1024,  256, SECT_4K) },
+++	{ "en25qh64",   INFO(0x1c7017, 0, 64 * 1024,   128, 0) },
+  	{ "en25qh128",  INFO(0x1c7018, 0, 64 * 1024,  256, 0) },
+  	{ "en25qh256",  INFO(0x1c7019, 0, 64 * 1024,  512, 0) },
+  	{ "en25s64",	INFO(0x1c3817, 0, 64 * 1024,  128, SECT_4K) },
