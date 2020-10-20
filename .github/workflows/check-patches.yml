@@ -1,0 +1,18 @@
+name: Check patches
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  check-patches:
+    name: Check patches
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Refresh patches
+        run: make refresh-patches GLUON_SITEDIR="contrib/ci/minimal-site"
+      - name: Show diff
+        run: git status; git diff
+      - name: Patch status
+        run: git diff-files --quiet
+
