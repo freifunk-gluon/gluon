@@ -1,6 +1,4 @@
-local util = require ('gluon.util')
 local math_polygon = require('math-polygon')
-local json = require ('jsonc')
 local uci = require('simple-uci').cursor()
 local site = require ('gluon.site')
 local logger = require('posix.syslog')
@@ -9,17 +7,6 @@ local M = {}
 function M.log(msg)
 	io.stdout:write(msg..'\n')
 	logger.openlog(msg, logger.LOG_PID)
-end
-
-function M.get_domains()
-	local list = {}
-	for _, domain_path in ipairs(util.glob('/lib/gluon/domains/*.json')) do
-		table.insert(list, {
-			domain_code = domain_path:match('([^/]+)%.json$'),
-			domain = assert(json.load(domain_path)),
-		})
-	end
-	return list
 end
 
 -- Return the default domain from the domain list.
