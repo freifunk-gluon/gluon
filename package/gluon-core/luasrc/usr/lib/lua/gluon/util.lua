@@ -3,6 +3,7 @@ local posix_glob = require 'posix.glob'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
+local json = require 'jsonc'
 
 
 local M = {}
@@ -117,6 +118,17 @@ function M.domain_seed_bytes(key, length)
 	end
 
 	return ret:sub(0, 2*length)
+end
+
+function M.get_domains()
+	local list = {}
+	for _, domain_path in ipairs(M.glob('/lib/gluon/domains/*.json')) do
+		table.insert(list, {
+			domain_code = domain_path:match('([^/]+)%.json$'),
+			domain = assert(json.load(domain_path)),
+		})
+	end
+	return list
 end
 
 function M.get_mesh_devices(uconn)
