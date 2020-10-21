@@ -1,5 +1,6 @@
 #!/usr/bin/lua
 
+local util = require ('gluon.util')
 local bit = require('bit')
 local unistd = require('posix.unistd')
 local fcntl = require('posix.fcntl')
@@ -36,7 +37,7 @@ end
 local geo = hoodutil.get_geolocation()
 if geo.lat ~= nil and geo.lon ~= nil then
 	io.stdout:write('Position found. Enter "geolocation mode" ...\n')
-	local jdomains = hoodutil.get_domains()
+	local jdomains = util.get_domains()
 	local geo_base_domain = hoodutil.get_domain_by_geo(jdomains, geo)
 	if geo_base_domain ~= nil then
 		if hoodutil.set_domain_config(geo_base_domain) then
@@ -50,4 +51,4 @@ else
 end
 
 -- default domain mode
-hoodutil.set_domain_config(hoodutil.get_default_domain(hoodutil.get_domains()))
+hoodutil.set_domain_config(hoodutil.get_default_domain(util.get_domains()))
