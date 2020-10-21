@@ -2,7 +2,6 @@
 return function(form, uci)
 	local site_i18n = i18n 'gluon-site'
 
-	local json = require 'jsonc'
 	local site = require 'gluon.site'
 	local util = require 'gluon.util'
 
@@ -22,10 +21,7 @@ return function(form, uci)
 
 	local function get_domain_list()
 		local list = {}
-		for _, domain_path in ipairs(util.glob('/lib/gluon/domains/*.json')) do
-			local domain_code = domain_path:match('([^/]+)%.json$')
-			local domain = assert(json.load(domain_path))
-
+		for domain_code, domain in pairs(util.get_domains()) do
 			if not hide_domain_code(domain, domain_code) then
 				table.insert(list, {
 					domain_code = domain_code,
