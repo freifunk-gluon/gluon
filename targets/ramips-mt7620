@@ -25,8 +25,8 @@ device('gl-mt750', 'gl-mt750', {
 device('netgear-ex3700', 'ex3700-ex3800', {
 	aliases = {
 		'netgear-ex3800',
-		'netgear-ex3700-ex3800',
 	},
+	manifest_aliases = {'netgear-ex3700-ex3800'},
 	factory_ext = '.chk',
 })
 
