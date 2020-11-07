@@ -210,7 +210,7 @@ ramips-mt7621
 
   - WG3526-16M
   - WG3526-32M
-  
+
 * Xiaomi
 
   - Xiaomi Mi Router 4A (Gigabit Edition)
@@ -239,6 +239,7 @@ ramips-mt76x8
 
   - Archer C50 (v3)
   - Archer C50 (v4)
+  - RE200 (v2)
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-WA801ND (v5)
