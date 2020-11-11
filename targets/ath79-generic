@@ -73,6 +73,13 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 
 -- TP-Link
 
+device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
+	packages = ATH10K_PACKAGES_QCA9887,
+	class = 'tiny',
+	broken = true,  -- 64M ath9k + ath10k
+
+})
+
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })
