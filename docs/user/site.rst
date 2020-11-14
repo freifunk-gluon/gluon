@@ -183,11 +183,17 @@ wifi5 \: optional
     channels and channel ranges, separated by a hyphen.
     When set this offers the outdoor mode flag for 5 GHz radios in the config mode which
     reconfigures the AP to select its channel from outdoor chanlist, while respecting
-    regulatory specifications, and  disables mesh on that radio.
+    regulatory specifications, and disables mesh on that radio.
     The ``outdoors`` option in turn allows to configure when outdoor mode will be enabled.
     When set to ``true`` all 5 GHz radios will use outdoor channels, while on ``false``
     the outdoor mode will be completely disabled. The default setting is ``'preset'``,
     which will enable outdoor mode automatically on outdoor-capable devices.
+
+    It can be beneficial to look up the WLAN channels that are used by `weather radars`_
+    when constructing ``outdoor_chanlist`` to try and minimize the impact of DFS events.
+
+    .. _weather radars: https://homepage.univie.ac.at/albert.rafetseder/RADARs/help.html
+
     ::
 
       wifi5 = {
