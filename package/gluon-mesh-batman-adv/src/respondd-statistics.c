@@ -42,6 +42,10 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 
+#include <ifaddrs.h>
+#include <netpacket/packet.h>
+#include <linux/if_ether.h>
+
 #include <linux/ethtool.h>
 #include <linux/sockios.h>
 
@@ -52,6 +56,7 @@
 struct clients_netlink_opts {
 	size_t clients;
 	struct batadv_nlquery_opts query_opts;
+	struct ifaddrs *ifaddr;
 };
 
 struct gw_netlink_opts {
@@ -257,6 +262,8 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct genlmsghdr *ghdr;
 	struct clients_netlink_opts *opts;
 	uint32_t flags, lastseen;
+	struct ifaddrs *ifa = NULL;
+	uint8_t *tt_addr;
 
 	opts = batadv_container_of(query_opts, struct clients_netlink_opts,
 				   query_opts);
@@ -286,6 +293,20 @@ static int parse_clients_list_netlink_cb(struct nl_msg *msg, void *arg)
 	if (lastseen > MAX_INACTIVITY)
 		return NL_OK;
 
+	// Check if client is a local interface
+	tt_addr = nla_data(attrs[BATADV_ATTR_TT_ADDRESS]);
+	for(ifa = opts->ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+		if( (ifa->ifa_addr) && (ifa->ifa_addr->sa_family == AF_PACKET)) {
+			struct sockaddr_ll *s = (struct sockaddr_ll*) ifa->ifa_addr;
+			if(memcmp(s->sll_addr, tt_addr, ETH_ALEN) == 0) {
+				// This client is a local interface.
+				// Do not increment client count
+				return NL_OK;
+			}
+		}
+	}
+
+
 	opts->clients++;
 
 	return NL_OK;
@@ -299,10 +320,17 @@ static struct json_object * get_clients(void) {
 		},
 	};
 
+	if (getifaddrs(& opts.ifaddr) == -1) {
+		opts.ifaddr = NULL;
+	}
+
 	batadv_genl_query("bat0", BATADV_CMD_GET_TRANSTABLE_LOCAL,
 			  parse_clients_list_netlink_cb, NLM_F_DUMP,
 			  &opts.query_opts);
 
+	if(opts.ifaddr != NULL) {
+		freeifaddrs(opts.ifaddr);
+	}
 	struct json_object *ret = json_object_new_object();
 
 	json_object_object_add(ret, "total", json_object_new_int(opts.clients));
