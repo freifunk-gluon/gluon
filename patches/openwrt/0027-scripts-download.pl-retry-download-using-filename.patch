@@ -1,0 +1,51 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 18 Nov 2020 16:02:23 +0100
+Subject: scripts: download.pl: retry download using filename
+
+With this commit, the download script will try downloading source files
+using the filename instead of the url-filename in case the previous
+download attempt using the url-filename failed.
+
+This is required, as the OpenWrt sources mirrors serve files using the
+filename files might be renamed to after downloading. If the original
+mirror for a file where url-filename and filename do not match goes
+down, the download failed prior to this patch.
+
+Further improvement can be done by performing this only for the
+OpenWrt sources mirrors.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/scripts/download.pl b/scripts/download.pl
+index 9848a625220c83072e00dd2aa58b0a3a59b35690..d6e60cbbcf2ef4dd0ad0a7921c449fc8f610c8a9 100755
+--- a/scripts/download.pl
++++ b/scripts/download.pl
+@@ -93,6 +93,7 @@ $hash_cmd or ($file_hash eq "skip") or die "Cannot find appropriate hash command
+ sub download
+ {
+ 	my $mirror = shift;
++	my $download_filename = shift;
+ 
+ 	$mirror =~ s!/$!!;
+ 
+@@ -139,7 +140,7 @@ sub download
+ 			}
+ 		};
+ 	} else {
+-		my @cmd = download_cmd("$mirror/$url_filename");
++		my @cmd = download_cmd("$mirror/$download_filename");
+ 		print STDERR "+ ".join(" ",@cmd)."\n";
+ 		open(FETCH_FD, '-|', @cmd) or die "Cannot launch curl or wget.\n";
+ 		$hash_cmd and do {
+@@ -267,7 +268,10 @@ while (!-f "$target/$filename") {
+ 	my $mirror = shift @mirrors;
+ 	$mirror or die "No more mirrors to try - giving up.\n";
+ 
+-	download($mirror);
++	download($mirror, $url_filename);
++	if (!-f "$target/$filename" && $url_filename ne $filename) {
++		download($mirror, $filename);
++	}
+ }
+ 
+ $SIG{INT} = \&cleanup;
