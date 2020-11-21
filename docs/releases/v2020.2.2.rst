@@ -1,0 +1,42 @@
+Gluon 2020.2.2
+==============
+
+Bugfixes
+--------
+
+- Fixed unstable WiFi on some units of the TP-Link Archer C50 v4 (`#2133 <https://github.com/freifunk-gluon/gluon/pull/2133>`_)
+
+- Fixed CVE-2020-27638 in fastd
+
+Other changes
+-------------
+
+- Linux kernel has been updated to 4.14.206
+- Backports of batman-adv bugfixes
+
+Known issues
+------------
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the
+  NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations not using VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is
+  disallowed).
