@@ -113,6 +113,7 @@ local primary_addrs = {
 		{'brcm2708'},
 		{'ipq40xx', 'generic', {
 			'avm,fritzbox-4040',
+			'plasmacloud,pa1200',
 		}},
 		{'ipq806x', 'generic', {
 			'netgear,r7800',
