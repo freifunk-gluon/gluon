@@ -263,6 +263,7 @@ ipq40xx-generic
 * Plasma Cloud
 
   - PA1200
+  - PA2200
 
 * ZyXEL
 
