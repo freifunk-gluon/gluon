@@ -206,6 +206,7 @@ ath79-generic
 * Plasma Cloud
 
   - PA300
+  - PA300E
 
 * TP-Link
 
