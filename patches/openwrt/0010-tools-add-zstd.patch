@@ -6,7 +6,7 @@ Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
 (cherry picked from commit 258dc0d0fd3aae47add9b7dca40848a92d03a4ea)
 
 diff --git a/tools/Makefile b/tools/Makefile
-index d7207ba89dd91df558eaf970961fdef225aa1f37..14fe4fb4b5f4e0c745cb8592a39bcf238dcc5444 100644
+index b8d986b80cc4b34addf2b35a2b143cfcb583c717..33266ca72d01fa564fb3f06d675219d700edd481 100644
 --- a/tools/Makefile
 +++ b/tools/Makefile
 @@ -33,7 +33,7 @@ tools-$(CONFIG_TARGET_mxs) += elftosb sdimage
