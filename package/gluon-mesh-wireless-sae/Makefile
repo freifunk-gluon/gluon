@@ -7,7 +7,7 @@ include ../gluon.mk
 
 define Package/gluon-mesh-wireless-sae
   TITLE:=Encryption of 802.11s Mesh Links through SAE
-  DEPENDS:=+gluon-core +wpa-supplicant-mesh-wolfssl
+  DEPENDS:=+gluon-core +wpa-supplicant-mesh-openssl
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-wireless-sae))
