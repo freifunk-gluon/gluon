@@ -77,6 +77,8 @@ packages {
 	'-wpad-mini',
 	'-wpad-basic',
 	'-wpad-basic-wolfssl',
+	'-libustream-wolfssl',
+	'-ca-bundle',
 	'gluon-core',
 	'ip6tables',
 }
