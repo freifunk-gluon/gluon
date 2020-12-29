@@ -1,0 +1,14 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+
+for group, hosts in pairs(site.check_connection.targets()) do
+	uci:delete('gluon-check-connection', 'target', group)
+	uci:section('gluon-check-connection', 'target', group, {
+		hosts = hosts
+	})
+end
+
+uci:save('gluon-check-connection')
+

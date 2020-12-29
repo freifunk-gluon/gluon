@@ -516,7 +516,6 @@ config_mode \: optional
           },
         },
 
-
 roles \: optional
     Optional role definitions. Nodes will announce their role inside the mesh.
     This will allow in the backend to distinguish between normal, backbone and

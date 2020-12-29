@@ -1,0 +1,158 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+local util = require 'gluon.util'
+local uci = require('simple-uci').cursor()
+
+-- Minimal uptime (in minutes) before the checks start
+local min_uptime = 5
+
+local offline_flag_file_prefix = '/tmp/gluon-offline-'
+local firstrun_file = '/tmp/gluon-check-connection-firstrun'
+local lastrun_file = '/tmp/gluon-check-connection-lastrun'
+
+local function lock(file)
+	exec('lock', file)
+end
+
+local function unlock(file)
+	exec('lock', '-u', file)
+end
+
+local function shuffle(tbl)
+	new_tbl = {}
+	for i, ele in ipairs(tbl) do
+		table.insert(new_tbl, math.random(1, #new_tbl+1), ele)
+	end
+	
+	return new_tbl
+end
+
+local function ping_hosts(hosts)
+	for _, host in ipairs(hosts) do
+		if 0 == os.execute("ping -c 1 -w 10 " .. host) then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function check_connection(group, old_state, hosts)
+	local offline_flag_file = offline_flag_file_prefix .. group
+	local targets = shuffle(hosts)
+
+	if ping_hosts(targets) then
+		if not old_state then
+			util.log(group .. 'connectivity available again')
+			os.remove(offline_flag_file)
+		end
+
+		return true
+	end
+
+	if old_state then
+		util.log(group .. ' connectivity lost')
+		io.open(offline_flag_file, "w"):write(tostring(util.get_uptime()))
+	end
+
+	return false
+end
+
+local uptime = math.floor(util.get_uptime() / 60)
+
+if uptime < min_uptime then
+	os.exit(0)
+end
+
+if not lock('/var/lock/gluon-check-connection.lock') then
+	util.log('Unable to set lock. Is an old instance still running?')
+	os.exit(0)
+end
+
+math.randomseed(uptime)
+
+local firstrun = uptime
+local lastrun = uptime
+if unistd.access(firstrun_file) and unistd.access(lastrun_file) then
+	firstrun = tonumber(util.readfile(firstrun_file))
+	lastrun = tonumber(util.readfile(lastrun_file))
+else
+	io.open(firstrun_file, "w"):write(tostring(uptime))
+end
+
+local runtime = lastrun - firstrun
+
+local scripts = {}
+uci:foreach('gluon-check-connection', 'script', function(script)
+	if not script['enabled'] then return end
+
+	if not runtime or uptime - lastrun >= (tonumber(script['interval']) or 1) then
+		table.insert(scripts, script)
+	end
+end)
+
+local groups = {}
+uci:foreach('gluon-check-connection', 'target', function(group)
+	-- do not perform connection checks for groups which are not in use
+	for _, script in ipairs(scripts) do
+		if util.contains(script['groups'], group['.name']) then
+			groups[group['.name']] = group['hosts']
+			break
+		end
+	end
+end)
+
+local old_states = {}
+for group, _ in pairs(groups) do
+	if unistd.access(offline_flag_file_prefix .. group) then
+		old_states[group] = false
+	else
+		old_states[group] = true
+	end
+end
+
+local states = {}
+for group, hosts in pairs(groups) do
+	states[group] = check_connection(group, old_states[group], hosts)
+end
+
+for _, script in ipairs(scripts) do
+	local state_changed = false
+	local state_offline = false
+	local state_online = false
+
+	for _, group in ipairs(script['groups']) do
+		if nil ~= states[group] then
+			if states[group] ~= old_states[group] then
+				state_changed = true
+			end
+
+			if states[group] then
+				state_online = true
+			else
+				state_offline = true
+			end
+		end
+	end
+
+	if not runtime or state_changed or not script['onchange'] then
+		local do_run = not script['trigger']
+
+		if script['trigger'] == 'online' and state_online then
+			do_run = true
+		end
+
+		if script['trigger'] == 'offline' and state_offline then
+			do_run = true
+		end
+
+		if do_run then
+			util.exec(script['command'])
+		end
+	end
+end
+
+unlock('/var/lock/gluon-check-connection.lock')
+
+io.open(lastrun_file, "w"):write(tostring(math.floor(util.get_uptime() / 60)))
