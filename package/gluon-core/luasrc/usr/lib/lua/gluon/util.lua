@@ -26,6 +26,30 @@ function M.trim(str)
 	return (str:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+-- Allows the conversion to booleans of standard values which are regularly being used as
+-- booleans like numbers (everything but 0 is true) and strings like "True"
+function M.toboolean(val)
+	-- 'nil' and 'false' are false
+	if not val then return false end
+
+	-- use the string representation
+	val = tostring(val)
+
+	-- if it is literally 'true' in lowercase
+	if val:lower() == 'true' then
+		return true
+	end
+
+	val = tonumber(val)
+	-- every number but 0 is true
+	if val and val ~= 0 then
+		return true
+	end
+
+	-- everything else is false
+	return false
+end
+
 function M.contains(table, value)
 	for k, v in pairs(table) do
 		if value == v then
