@@ -16,34 +16,36 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
-"""
-
-ACTIONS_TARGET="""
-  {target_name}:
-    name: {target_name}
+  build_firmware:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [{matrix}]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
       - name: Build
-        run: contrib/actions/run-build.sh {target_name}
+        run: contrib/actions/run-build.sh ${{{{ matrix.target }}}}
       - name: Archive build logs
         if: ${{{{ !cancelled() }}}}
         uses: actions/upload-artifact@v1
         with:
-          name: {target_name}_logs
+          name: ${{{{ matrix.target }}}}_logs
           path: openwrt/logs
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:
-          name: {target_name}_output
+          name: ${{{{ matrix.target }}}}_output
           path: output
 """
 
-output = ACTIONS_HEAD
+targets = []
 
 for target in sys.stdin:
-	output += ACTIONS_TARGET.format(target_name=target.strip())
+    targets.append(target.strip())
+
+output = ACTIONS_HEAD.format(matrix=", ".join(targets))
 
 print(output)
