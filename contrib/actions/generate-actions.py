@@ -13,8 +13,24 @@ on:
       - master
       - next
       - v20*
+    paths:
+      - "modules"
+      - "Makefile"
+      - "scripts/**"
+      - "package/**"
+      - "patches/**"
+      - "targets/**"
+      - ".github/workflows/build-gluon.yml"
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - "modules"
+      - "Makefile"
+      - "scripts/**"
+      - "package/**"
+      - "patches/**"
+      - "targets/**"
+      - ".github/workflows/build-gluon.yml"
 jobs:
   build_firmware:
     strategy:
