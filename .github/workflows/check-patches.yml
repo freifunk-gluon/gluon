@@ -1,8 +1,17 @@
+---
 name: Check patches
 on:
   push:
+    paths:
+      - 'modules'
+      - 'patches/**'
+      - '.github/workflows/check-patches.yml'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'modules'
+      - 'patches/**'
+      - '.github/workflows/check-patches.yml'
 jobs:
   check-patches:
     name: Check patches

@@ -1,8 +1,14 @@
 name: Build Documentation
 on:
   push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/build-docs.yml'
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'docs**/'
+      - '.github/workflows/build-docs.yml'
 jobs:
   build-documentation:
     name: docs
