@@ -3,13 +3,7 @@ local math_polygon = require('math-polygon')
 local json = require ('jsonc')
 local uci = require('simple-uci').cursor()
 local site = require ('gluon.site')
-local logger = require('posix.syslog')
 local M = {}
-
-function M.log(msg)
-	io.stdout:write(msg..'\n')
-	logger.openlog(msg, logger.LOG_PID)
-end
 
 function M.get_domains()
 	local list = {}
@@ -68,7 +62,7 @@ end
 function M.set_domain_config(domain)
 	if uci:get('gluon', 'core', 'domain') ~= domain.domain_code then
 		os.execute(string.format("exec gluon-switch-domain --no-reboot '%s'", domain.domain_code))
-		M.log('Set domain "'..domain.domain.domain_names[domain.domain_code]..'"')
+		util.log('Set domain "' .. domain.domain.domain_names[domain.domain_code] .. '"', true)
 		return true
 	end
 	return false

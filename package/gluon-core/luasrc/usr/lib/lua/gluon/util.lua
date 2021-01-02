@@ -1,5 +1,6 @@
 local bit = require 'bit'
 local posix_glob = require 'posix.glob'
+local posix_syslog = require 'posix.syslog'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
@@ -177,6 +178,14 @@ function M.get_uptime()
 		return nil
 	end
 	return tonumber(uptime_file:match('^[^ ]+'))
+end
+
+function M.log(message, verbose)
+	if verbose then
+		io.stdout:write(message .. '\n')
+	end
+
+	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
 end
 
 return M
