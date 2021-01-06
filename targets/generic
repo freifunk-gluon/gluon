@@ -30,6 +30,8 @@ for feed in string.gmatch(exec_capture_raw('. scripts/modules.sh && echo -n "$FE
 	end
 end
 
+config('IB', true)
+config('IB_STANDALONE', true)
 
 config('TARGET_ROOTFS_INITRAMFS', false)
 
