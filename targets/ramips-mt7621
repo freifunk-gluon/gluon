@@ -29,6 +29,13 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 })
 
 
+-- Ubiquiti
+
+device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
+	factory = false,
+})
+
+
 -- ZBT
 
 device('zbtlink-zbt-wg3526-16m', 'zbtlink_zbt-wg3526-16m', {
