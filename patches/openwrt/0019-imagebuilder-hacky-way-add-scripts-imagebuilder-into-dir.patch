@@ -1,0 +1,19 @@
+From: lemoer <git@irrelefant.net>
+Date: Wed, 6 Jan 2021 17:23:27 +0100
+Subject: imagebuilder: hacky way add scripts/imagebuilder into dir
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index e478b5f266cf47a638c82798e8ee596d1820d2ee..4b538529e950f820aede91275b779ab53f88ff71 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -39,6 +39,10 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
+ 	$(CP) -L \
+ 		$(TOPDIR)/../scripts \
+ 		$(PKG_BUILD_DIR)/gluon/
++	$(CP) -L \
++		$(TOPDIR)/../scripts/imagebuilder/* \
++		$(PKG_BUILD_DIR)/
++	echo "{}" > $(PKG_BUILD_DIR)/custom.json
+ 
+ ifeq ($(CONFIG_IB_STANDALONE),)
+ 	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
