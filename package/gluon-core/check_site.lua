@@ -3,7 +3,7 @@ need_string(in_site({'site_name'}))
 
 -- this_domain() returns nil when multidomain support is disabled
 if this_domain() then
-	need_domain_name(in_site({'default_domain'}))
+	need_domain_name(in_site_or_custom({'default_domain'}))
 
 	need_table(in_domain({'domain_names'}), function(domain)
 		need_alphanumeric_key(domain)
@@ -60,7 +60,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 	end
 end
 
-need_boolean(in_site({'poe_passthrough'}), false)
+need_boolean(in_site_or_custom({'poe_passthrough'}), false)
 
 if need_table(in_site_or_domain({'dns'}), nil, false) then
 	need_string_array_match(in_site_or_domain({'dns', 'servers'}), '^[%x:]+$')
@@ -72,6 +72,6 @@ need_string_match(in_domain({'next_node', 'ip4'}), '^%d+.%d+.%d+.%d+$', false)
 
 need_boolean(in_domain({'mesh', 'vxlan'}), false)
 
-need_boolean(in_site({'mesh_on_wan'}), false)
-need_boolean(in_site({'mesh_on_lan'}), false)
+need_boolean(in_site_or_custom({'mesh_on_wan'}), false)
+need_boolean(in_site_or_custom({'mesh_on_lan'}), false)
 need_boolean(in_site({'single_as_lan'}), false)

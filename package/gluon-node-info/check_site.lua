@@ -1,1 +1,1 @@
-need_string(in_site({'roles', 'default'}), false)
+need_string(in_site_or_custom({'roles', 'default'}), false)
