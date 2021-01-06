@@ -23,9 +23,12 @@ files["package/**/check_site.lua"] = {
 	read_globals = {
 		"alternatives",
 		"extend",
-		"in_site_or_domain",
+		"in_custom",
 		"in_domain",
+		"in_domain_or_custom",
 		"in_site",
+		"in_site_or_domain",
+		"in_site_or_custom",
 		"need",
 		"need_alphanumeric_key",
 		"need_array",

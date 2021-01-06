@@ -5,6 +5,7 @@ local function config_error(src, ...)
 end
 
 local has_domains = (os.execute('ls -d "$IPKG_INSTROOT"/lib/gluon/domains/ >/dev/null 2>&1') == 0)
+local has_custom = (os.execute('test -e "$IPKG_INSTROOT"/lib/gluon/custom.json') == 0)
 
 
 local function get_domains()
@@ -23,7 +24,7 @@ local function get_domains()
 	return domains
 end
 
-local site, domain_code, domain, conf
+local site, domain_code, domain, custom, conf
 
 
 local M = setmetatable({}, { __index = _G })
@@ -95,22 +96,49 @@ local function domain_src()
 	return 'domains/' .. domain_code .. '.conf'
 end
 
-local function conf_src(path)
-	local src
+local function custom_src()
+	return 'custom.json'
+end
 
-	if has_domains then
-		if loadpath(nil, domain, unpack(path)) ~= nil then
-			src = domain_src()
-		elseif loadpath(nil, site, unpack(path)) ~= nil then
-			src = site_src()
-		else
-			src = site_src() .. ' / ' .. domain_src()
-		end
+local function config_contains(config, path)
+	-- A more precise name would be config_exists_and_contains(...), but we want
+	-- to keep the name short here.
+	if config == 'custom' then
+		return has_custom and loadpath(nil, custom, unpack(path)) ~= nil
+	elseif config == 'domain' then
+		return has_domains and loadpath(nil, domain, unpack(path)) ~= nil
+	elseif config == 'site' then
+		return loadpath(nil, site, unpack(path)) ~= nil
 	else
-		src = site_src()
+		assert(false)
+	end
+end
+
+local function conf_src(path, skip)
+	local sources = {}
+
+	if skip ~= 'custom' and config_contains('custom', path) then
+		table.insert(sources, custom_src())
+	elseif skip ~= 'domain' and config_contains('domain', path) then
+		table.insert(sources, domain_src())
+	elseif skip ~= 'site' and config_contains('site', path) then
+		table.insert(sources, site_src())
+	else
+		-- path not found, so show all possible sources
+		if skip ~= 'site' then
+			table.insert(sources, site_src())
+		end
+
+		if skip ~= 'domain' and has_domains then
+			table.insert(sources, domain_src())
+		end
+
+		if skip ~= 'custom' and has_custom then
+			table.insert(sources, custom_src())
+		end
 	end
 
-	return src
+	return table.concat(sources, ' / ')
 end
 
 local function var_error(path, val, msg)
@@ -123,22 +151,58 @@ local function var_error(path, val, msg)
 end
 
 function M.in_site(path)
-	if has_domains and loadpath(nil, domain, unpack(path)) ~= nil then
-		config_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
+	if config_contains('domain', path) or config_contains('custom', path) then
+		config_error(conf_src(path, 'site'), '%s is allowed in site configuration only', path_to_string(path))
 	end
 
 	return path
 end
 
 function M.in_domain(path)
-	if has_domains and loadpath(nil, site, unpack(path)) ~= nil then
-		config_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
+	-- We allow all domain only variables in site, when there is no domain config,
+	-- meaning that we only have a single domain inside the site.conf.
+	local allowed_in_site = not has_domains
+
+	if (not allowed_in_site and config_contains('site', path)) or config_contains('custom', path) then
+		config_error(conf_src(path, 'domain'), '%s is allowed in domain configuration only', path_to_string(path))
+	end
+
+	return path
+end
+
+function M.in_custom(path)
+	if config_contains('site', path) or config_contains('domain', path) then
+		config_error(conf_src(path, 'custom'), '%s is allowed in custom configuration only', path_to_string(path))
 	end
 
 	return path
 end
 
 function M.in_site_or_domain(path)
+	if config_contains('custom', path)  then
+		config_error(custom_src(), '%s is allowed in site or domain configuration only', path_to_string(path))
+	end
+
+	return path
+end
+
+function M.in_site_or_custom(path)
+	if config_contains('domain', path)  then
+		config_error(domain_src(), '%s is allowed in site or custom configuration only', path_to_string(path))
+	end
+
+	return path
+end
+
+function M.in_domain_or_custom(path)
+	-- We allow all domain only variables in site, when there is no domain config,
+	-- meaning that we only have a single domain inside the site.conf.
+	local allowed_in_site = not has_domains
+
+	if not allowed_in_site and config_contains('site', path)  then
+		config_error(site_src(), '%s is allowed in domain or custom configuration only', path_to_string(path))
+	end
+
 	return path
 end
 
@@ -389,16 +453,29 @@ local check = setfenv(assert(loadfile()), M)
 
 site = assert(json.load((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/site.json'))
 
+if has_custom then
+	custom = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json')
+	print('Found ' .. os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json!')
+else
+	print('Info: ' .. os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json is not existing.')
+end
+
 local ok, err = pcall(function()
 	if has_domains then
 		for k, v in pairs(get_domains()) do
 			domain_code = k
 			domain = v
 			conf = merge(site, domain)
+			if has_custom then
+				conf = merge(conf, custom)
+			end
 			check()
 		end
 	else
 		conf = site
+		if has_custom then
+			conf = merge(conf, custom)
+		end
 		check()
 	end
 end)
