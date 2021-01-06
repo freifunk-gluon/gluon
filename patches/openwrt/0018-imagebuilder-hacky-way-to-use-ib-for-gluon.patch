@@ -1,0 +1,46 @@
+From: lemoer <git@irrelefant.net>
+Date: Wed, 6 Jan 2021 05:41:56 +0100
+Subject: imagebuilder: hacky way to use ib for gluon
+
+- Include scripts/ into the imagebuilder.
+- Install openwrt/staging_dir/hostpkg into the imagebuilder.
+- Install openwrt/staging_dir/hostpkg/lib/lua into the imagebuilder.
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index 05c7cf3318deb18af1851524c533b1c47af52e1e..e478b5f266cf47a638c82798e8ee596d1820d2ee 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -35,6 +35,11 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
+ 		$(TMP_DIR)/.packageinfo \
+ 		$(PKG_BUILD_DIR)/
+ 
++	mkdir -p $(PKG_BUILD_DIR)/gluon
++	$(CP) -L \
++		$(TOPDIR)/../scripts \
++		$(PKG_BUILD_DIR)/gluon/
++
+ ifeq ($(CONFIG_IB_STANDALONE),)
+ 	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
+ 	$(call FeedSourcesAppend,$(PKG_BUILD_DIR)/repositories.conf)
+@@ -81,11 +86,21 @@ endif
+ 	  | $(XARGS) rm -rf
+ 	$(INSTALL_DIR) $(IB_IDIR)
+ 	-$(CP) $(STAGING_DIR_IMAGE)/* $(IB_IDIR)/
++	# install staging_dir/host/bin
+ 	$(INSTALL_DIR) $(PKG_BUILD_DIR)/staging_dir/host/bin
+ 	$(CP) $(STAGING_DIR_HOST)/bin/* $(PKG_BUILD_DIR)/staging_dir/host/bin/
+ 	(cd $(PKG_BUILD_DIR); find staging_dir/host/bin/ $(IB_LDIR)/scripts/dtc/ -type f | \
+ 		$(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/host)
+ 	STRIP=sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
++	# install staging_dir/hostpkg/bin
++	$(INSTALL_DIR) $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin
++	$(CP) $(STAGING_DIR_HOST)/../hostpkg/bin/* $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
++	(cd $(PKG_BUILD_DIR); find staging_dir/hostpkg/bin/ $(IB_LDIR)/scripts/dtc/ -type f | \
++		$(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg)
++	# install lua libs
++	$(CP) $(STAGING_DIR_HOST)/../hostpkg/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/
++	STRIP=sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
++	# bundle
+ 	$(TAR) -cf - -C $(BUILD_DIR) $(IB_NAME) | xz -zc -7e > $@
+ 
+ download:
