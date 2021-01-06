@@ -14,9 +14,9 @@ end
 
 need_string_match(in_domain({'domain_seed'}), '^' .. ('%x'):rep(64) .. '$')
 
-need_string({'opkg', 'openwrt'}, false)
+need_string(in_site_or_domain({'opkg', 'openwrt'}), false)
 obsolete({'opkg', 'lede'}, 'Use opkg.openwrt instead.')
-need_table({'opkg', 'extra'}, function(extra_repo)
+need_table(in_site_or_domain({'opkg', 'extra'}), function(extra_repo)
 	need_alphanumeric_key(extra_repo)
 	need_string(extra_repo)
 end, false)
@@ -24,13 +24,13 @@ end, false)
 need_string(in_site({'hostname_prefix'}), false)
 need_string(in_site({'timezone'}))
 
-need_string_array({'ntp_servers'}, false)
+need_string_array(in_site_or_domain({'ntp_servers'}), false)
 
 need_string_match(in_domain({'prefix6'}), '^[%x:]+/64$')
 
 local supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000}
 for _, config in ipairs({'wifi24', 'wifi5'}) do
-	if need_table({config}, nil, false) then
+	if need_table(in_site_or_domain({config}), nil, false) then
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
 		need_number({config, 'beacon_interval'}, false)
 
@@ -62,8 +62,8 @@ end
 
 need_boolean(in_site({'poe_passthrough'}), false)
 
-if need_table({'dns'}, nil, false) then
-	need_string_array_match({'dns', 'servers'}, '^[%x:]+$')
+if need_table(in_site_or_domain({'dns'}), nil, false) then
+	need_string_array_match(in_site_or_domain({'dns', 'servers'}), '^[%x:]+$')
 end
 
 need_string_array(in_domain({'next_node', 'name'}), false)

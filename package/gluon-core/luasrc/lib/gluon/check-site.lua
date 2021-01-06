@@ -138,6 +138,10 @@ function M.in_domain(path)
 	return path
 end
 
+function M.in_site_or_domain(path)
+	return path
+end
+
 function M.this_domain()
 	return domain_code
 end
