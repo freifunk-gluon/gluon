@@ -14,7 +14,7 @@ end
 pcall(load_keys)
 
 local f = io.open(file, 'a')
-for _, key in ipairs(site.authorized_keys()) do
+for _, key in ipairs(site.authorized_keys({})) do
   if not keys[key] then
     f:write(key .. '\n')
   end
