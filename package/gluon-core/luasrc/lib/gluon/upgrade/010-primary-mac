@@ -54,6 +54,19 @@ local function interface(name)
 	end
 end
 
+local function label_mac()
+	return function()
+		local mac = util.exec('/lib/gluon/label_mac.sh')
+
+		if mac == nil then return nil end
+
+		mac = util.trim(mac)
+		if string.len(mac) ~= 17 then return nil end
+
+		return mac
+	end
+end
+
 
 -- Entries are matched in the order they are listed
 local primary_addrs = {
@@ -147,6 +160,10 @@ local primary_addrs = {
 		{'ramips', 'mt7621', {
 			'dir-860l-b1',
 		}},
+	}},
+	-- label-mac-device default
+	{label_mac(), {
+		{}, -- matches everything
 	}},
 	-- phy0 default
 	{phy(0), {
