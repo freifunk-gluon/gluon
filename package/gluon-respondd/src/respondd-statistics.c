@@ -239,7 +239,7 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 	}
 }
 
-static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t owe5) {
+static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t *owe5) {
 	struct uci_context *ctx = uci_alloc_context();
 	if (!ctx)
 		return;
