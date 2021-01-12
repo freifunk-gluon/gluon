@@ -38,7 +38,7 @@ freshly installed Debian Stretch system the following packages are required:
 * `libssl-dev`
 * `wget`
 * `time` (built-in `time` doesn't work)
-
+* `qemu-utils`
 
 Building the images
 -------------------
