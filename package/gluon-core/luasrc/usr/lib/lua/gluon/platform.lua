@@ -59,7 +59,10 @@ function M.is_outdoor_device()
 	}) then
 		return true
 
-	elseif M.match('ipq40xx', 'generic', {'engenius,ens620ext'}) then
+	elseif M.match('ipq40xx', 'generic', {
+		'engenius,ens620ext',
+		'plasmacloud,pa1200',
+	}) then
 		return true
 	end
 

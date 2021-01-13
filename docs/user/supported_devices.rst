@@ -260,6 +260,11 @@ ipq40xx-generic
   - A42
   - A62
 
+* Plasma Cloud
+
+  - PA1200
+  - PA2200
+
 * ZyXEL
 
   - NBG6617

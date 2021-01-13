@@ -90,6 +90,15 @@ device('openmesh-a62', 'openmesh_a62', {
 })
 
 
+-- Plasma Cloud
+
+device('plasma-cloud-pa1200', 'plasmacloud_pa1200')
+
+device('plasma-cloud-pa2200', 'plasmacloud_pa2200', {
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
+
 -- ZyXEL
 
 device('zyxel-nbg6617', 'zyxel_nbg6617')
