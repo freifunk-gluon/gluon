@@ -19,10 +19,22 @@ for module in $GLUON_MODULES; do
 	git init
 
 	if ! git branch -f base "$commit" 2>/dev/null; then
-		git fetch "$repo" "$branch"
-		git branch -f base "$commit" || {
-		  echo "unable to find commit \"$commit\" on branch \"$branch\" in repo \"$repo\"." >&2
-		  exit 1
-		}
+		for repository in $repo; do
+			if git fetch "$repository" "$branch"; then
+				if ! git branch -f base "$commit"; then
+					echo "unable to find commit \"$commit\" on branch \"$branch\" in repo \"$repo\"." >&2
+					break
+				fi
+				fetched=1
+				break
+			else
+				echo "unable to fetch module \"$module\" from \"$repository\"" >&2
+			fi
+		done
+
+		if [ $fetched -ne 1 ]; then
+			echo "No suitable mirror for module \"$module\" found." >&2
+			exit 1
+		fi
 	fi
 done
