@@ -1,14 +1,14 @@
 GLUON_FEEDS='packages routing gluon'
 
-OPENWRT_REPO=https://github.com/openwrt/openwrt.git
+OPENWRT_REPO='https://github.com/openwrt/openwrt.git https://git.openwrt.org/openwrt/openwrt.git'
 OPENWRT_BRANCH=openwrt-19.07
 OPENWRT_COMMIT=a7a207e18bf7fa04f265bb95cbe6fa91561fbfe8
 
-PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
+PACKAGES_PACKAGES_REPO='https://github.com/openwrt/packages.git https://git.openwrt.org/feed/packages.git'
 PACKAGES_PACKAGES_BRANCH=openwrt-19.07
 PACKAGES_PACKAGES_COMMIT=2974079d3db786fe5da00c10f1d80e79b0112093
 
-PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_REPO='https://github.com/openwrt-routing/packages.git https://git.openwrt.org/feed/routing.git'
 PACKAGES_ROUTING_BRANCH=openwrt-19.07
 PACKAGES_ROUTING_COMMIT=02b4dbfcb7b8f8b566940847d22d5a6f229d2e66
 
