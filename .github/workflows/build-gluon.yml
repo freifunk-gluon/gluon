@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ath79-generic, ath79-nand, bcm27xx-bcm2708, bcm27xx-bcm2709, ipq40xx-generic, ipq806x-generic, lantiq-xrx200, lantiq-xway, mpc85xx-p1010, mpc85xx-p1020, ramips-mt7620, ramips-mt7621, ramips-mt76x8, ramips-rt305x, rockchip-armv8, sunxi-cortexa7, x86-generic, x86-geode, x86-legacy, x86-64, bcm27xx-bcm2710, bcm27xx-bcm2711, mvebu-cortexa9]
+        target: [ath79-generic, ath79-nand, bcm27xx-bcm2708, bcm27xx-bcm2709, ipq40xx-generic, ipq806x-generic, lantiq-xrx200, lantiq-xway, mediatek-mt7622, mpc85xx-p1020, ramips-mt7620, ramips-mt7621, ramips-mt76x8, ramips-rt305x, rockchip-armv8, sunxi-cortexa7, x86-generic, x86-geode, x86-legacy, x86-64, bcm27xx-bcm2710, bcm27xx-bcm2711, mvebu-cortexa9]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
