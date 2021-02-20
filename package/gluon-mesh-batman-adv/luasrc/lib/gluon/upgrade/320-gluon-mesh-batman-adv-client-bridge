@@ -14,7 +14,7 @@ uci:section('network', 'interface', 'client', {
 	proto = 'dhcpv6',
 	reqprefix = 'no',
 	peerdns = not site.dns.servers(),
-	sourcefilter = false,
+	sourcefilter = true,
 	keep_ra_dnslifetime = true,
 	robustness = 9,
 	query_interval = 2000,
