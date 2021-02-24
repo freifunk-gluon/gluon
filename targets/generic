@@ -66,6 +66,8 @@ end
 
 config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 
+try_config('TESTING_KERNEL', true)
+
 packages {
 	'-ca-bundle',
 	'-kmod-ipt-offload',
