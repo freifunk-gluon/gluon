@@ -69,6 +69,8 @@ end
 
 config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 
+try_config('TESTING_KERNEL', true)
+
 packages {
 	'-kmod-ipt-offload',
 	'-odhcpd-ipv6only',
