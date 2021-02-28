@@ -51,7 +51,9 @@ device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
 	factory = false,
 })
 
-device('tp-link-archer-c20-v1', 'tplink_c20-v1')
+device('tp-link-archer-c20-v1', 'tplink_c20-v1', {
+	factory = false,
+})
 
 device('tp-link-archer-c20i', 'ArcherC20i')
 
