@@ -11,20 +11,22 @@ local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 local methods
 
 if site.mesh_vpn.fastd.configurable(false) then
-	local has_null = util.contains(site.mesh_vpn.fastd.methods(), 'null')
+	local site_methods = site.mesh_vpn.fastd.methods()
+	local has_null = util.contains(site_methods, 'null@l2tp') or util.contains(site_methods, 'null')
 
 	local old_methods = uci:get('fastd', 'mesh_vpn', 'method')
 	if old_methods then
-		has_null = util.contains(old_methods, 'null')
+		has_null = util.contains(old_methods, 'null@l2tp') or util.contains(old_methods, 'null')
 	end
 
 	methods = {}
 	if has_null then
+		table.insert(methods, 'null@l2tp')
 		table.insert(methods, 'null')
 	end
 
-	for _, method in ipairs(site.mesh_vpn.fastd.methods()) do
-		if method ~= 'null' then
+	for _, method in ipairs(site_methods) do
+		if method ~= 'null@l2tp' and method ~= 'null' then
 			table.insert(methods, method)
 		end
 	end
