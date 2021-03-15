@@ -44,7 +44,8 @@ void usage() {
 	puts("  -t <sec>         timeout in seconds (default: 3)");
 	puts("  -s <event>       output as server-sent events of type <event>");
 	puts("                   or without type if <event> is the empty string");
-	puts("  -c <count>       only wait for at most <count> replies");
+	puts("  -c <count>       only wait for at most <count> replies (default: 1");
+	puts("                   if -l is not given for unicast destination addresses)");
 	puts("  -l               after timeout (or <count> replies if -c is given),");
 	puts("                   send another request and loop forever");
 	puts("  -h               this help\n");
@@ -230,6 +231,10 @@ int main(int argc, char **argv) {
 			perror("setsockopt");
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	if (!loop && !IN6_IS_ADDR_MULTICAST(&client_addr.sin6_addr)) {
+		max_count=1;
 	}
 
 	if (sse) {
