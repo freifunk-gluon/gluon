@@ -15,6 +15,7 @@ uci:section('network', 'interface', 'mesh_lan', {
 	igmp_snooping = false,
 	proto         = 'gluon_wired',
 	index         = 4,
+	vxlan         = site.mesh.vxlan(true),
 })
 
 if sysconfig.lan_ifname:match(' ') then

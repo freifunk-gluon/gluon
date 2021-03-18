@@ -7,6 +7,7 @@ init_proto "$@"
 proto_gluon_wired_init_config() {
         proto_config_add_boolean transitive
         proto_config_add_int index
+        proto_config_add_boolean vxlan
 }
 
 xor2() {
@@ -28,15 +29,16 @@ proto_gluon_wired_setup() {
 
         local meshif="$config"
 
-        local vxlan="$(lua -e 'print(require("gluon.site").mesh.vxlan(true))')"
+        local transitive index vxlan
+        json_get_vars transitive index vxlan
 
-        local transitive index
-        json_get_vars transitive index
+        # default args
+        [ -z "$vxlan" ] && vxlan=1
 
         proto_init_update "$ifname" 1
         proto_send_update "$config"
 
-        if [ "$vxlan" = 'true' ]; then
+        if [ "$vxlan" -eq 1 ]; then
                 meshif="vx_$config"
 
                 json_init
