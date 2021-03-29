@@ -56,6 +56,7 @@ function M.is_outdoor_device()
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',
 		'tplink,cpe220-v3',
+		'tplink,eap225-outdoor-v1',
 	}) then
 		return true
 
