@@ -1,0 +1,66 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 13 Mar 2021 09:10:31 +0100
+Subject: opkg: libopkg: pkg_hash: prefer original packages to satisfy dependencies
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/system/opkg/patches/0001-libopkg-pkg_hash-prefer-original-packages-to-satisfy.patch b/package/system/opkg/patches/0001-libopkg-pkg_hash-prefer-original-packages-to-satisfy.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..a06c9974ea66efb5d577a481f2fe28a8be9175fd
+--- /dev/null
++++ b/package/system/opkg/patches/0001-libopkg-pkg_hash-prefer-original-packages-to-satisfy.patch
+@@ -0,0 +1,54 @@
++From 9c1e3dd3bf12684c67d7da433594bfb7e3f40f82 Mon Sep 17 00:00:00 2001
++Message-Id: <9c1e3dd3bf12684c67d7da433594bfb7e3f40f82.1615622873.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Sat, 13 Mar 2021 02:00:40 +0100
++Subject: [PATCH] libopkg: pkg_hash: prefer original packages to satisfy
++ dependencies
++
++When one package "provides" another non-virtual package, prefer to use
++the original package instead of the providing package.
++
++Example:
++
++Consider packages "foo" and "bar", where "foo" provides "bar".
++The current code will sort all candidates by name and use the last entry
++by default, so "foo" would be used to satisfy a dependency on "bar".
++Change the logic to prefer the actual package "bar" in this case.
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++Reviewed-by: Daniel Golle <daniel@makrotopia.org>
++---
++ libopkg/pkg_hash.c | 14 ++++++++++++--
++ 1 file changed, 12 insertions(+), 2 deletions(-)
++
++--- a/libopkg/pkg_hash.c
+++++ b/libopkg/pkg_hash.c
++@@ -285,6 +285,7 @@ pkg_t *pkg_hash_fetch_best_installation_
++ 	int nmatching = 0;
++ 	int wrong_arch_found = 0;
++ 	int arch_priority;
+++	int good_pkg_score = 0;
++ 	pkg_vec_t *matching_pkgs;
++ 	abstract_pkg_vec_t *matching_apkgs;
++ 	abstract_pkg_vec_t *provided_apkg_vec;
++@@ -408,9 +409,18 @@ pkg_t *pkg_hash_fetch_best_installation_
++ 	for (i = 0; i < matching_pkgs->len; i++) {
++ 		pkg_t *matching = matching_pkgs->pkgs[i];
++ 		if (constraint_fcn(matching, cdata)) {
++-			opkg_msg(DEBUG, "Candidate: %s %s.\n",
++-				 matching->name, pkg_get_string(matching, PKG_VERSION));
+++			int score = 1;
+++			if (strcmp(matching->name, apkg->name) == 0)
+++				score++;
+++
+++			opkg_msg(DEBUG, "Candidate: %s %s (score %d).\n",
+++				 matching->name, pkg_get_string(matching, PKG_VERSION),
+++				 score);
+++			if (score < good_pkg_score)
+++				continue;
+++
++ 			good_pkg_by_name = matching;
+++			good_pkg_score = score;
++ 			/* It has been provided by hand, so it is what user want */
++ 			if (matching->provided_by_hand == 1)
++ 				break;
