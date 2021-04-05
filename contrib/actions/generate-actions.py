@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         target: [{matrix}]
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
