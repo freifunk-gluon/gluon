@@ -185,6 +185,10 @@ ar71xx-tiny [#deprecated]_ [#device-class-tiny]_
 ath79-generic
 --------------
 
+* Aruba
+  
+  - AP-105
+
 * devolo
 
   - WiFi pro 1200e [#lan_as_wan]_
