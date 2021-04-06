@@ -91,3 +91,10 @@ device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 })
 
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+
+-- Aruba
+
+device('aruba-ap-105', 'aruba_ap-105', {
+	factory = false,
+})
+
