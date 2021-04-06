@@ -24,16 +24,12 @@ config KERNEL_TUN
 config KERNEL_L2TP_V3
 	bool
 
-config KERNEL_L2TP_IP
-	bool
-
 config KERNEL_L2TP_ETH
 	bool
 
 config KERNEL_L2TP
 	bool
 	select KERNEL_L2TP_V3
-	select KERNEL_L2TP_IP
 	select KERNEL_L2TP_ETH
 
 
