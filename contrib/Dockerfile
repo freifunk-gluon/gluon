@@ -1,6 +1,7 @@
 FROM debian:buster-slim
 
-RUN apt update && apt install -y --no-install-recommends \
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     file \
     git \
