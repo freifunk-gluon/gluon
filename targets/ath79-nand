@@ -1,3 +1,11 @@
+local ATH10K_PACKAGES_QCA9880 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca988x',
+	'-ath10k-firmware-qca988x-ct',
+}
+
 local ATH10K_PACKAGES_QCA9887 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
@@ -10,4 +18,9 @@ local ATH10K_PACKAGES_QCA9887 = {
 device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s-nor', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9887,
+})
+
+device('zyxel-nbg6716', 'zyxel_nbg6716', {
+	sysupgrade_ext = '.tar',
+	packages = ATH10K_PACKAGES_QCA9880,
 })
