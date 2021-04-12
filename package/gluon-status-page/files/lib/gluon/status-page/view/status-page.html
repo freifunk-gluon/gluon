@@ -126,6 +126,9 @@
 							<%- end %>
 						</dd>
 					<%- end %>
+					<% if nodeinfo.system.role then -%>
+						<dt><%:Role%></dt><dd><%| nodeinfo.system.role %></dd>
+					<%- end %>
 					<% if nodeinfo.software.autoupdater then -%>
 						<dt><%:Automatic updates%></dt><dd><%| enabled(nodeinfo.software.autoupdater.enabled) %><%|
 							nodeinfo.software.autoupdater.enabled and
