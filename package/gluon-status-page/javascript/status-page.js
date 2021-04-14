@@ -698,9 +698,9 @@
 				var inactiveLimit = 200;
 
 				tdSignal.textContent = wifi.signal;
-			        tdInactive.textContent = Math.round(wifi.inactive / 1000) + ' s';
+				tdInactive.textContent = Math.round(wifi.inactive / 1000) + ' s';
 
-			        el.classList.toggle('inactive', wifi.inactive > inactiveLimit);
+				el.classList.toggle('inactive', wifi.inactive > inactiveLimit);
 				signal.set(wifi.inactive > inactiveLimit ? null : wifi.signal);
 
 				updated();
