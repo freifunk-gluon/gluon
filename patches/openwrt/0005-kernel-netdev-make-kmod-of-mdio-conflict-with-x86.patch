@@ -1,0 +1,19 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 17 Apr 2021 01:27:09 +0200
+Subject: kernel: netdev: make kmod-of-mdio conflict with x86
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/linux/modules/netdevices.mk b/package/kernel/linux/modules/netdevices.mk
+index c9bdeb5a570db09b3e92070e33838557b7f366ec..bc6ed2c7aa8f08490a031dfcd595de00db4735b1 100644
+--- a/package/kernel/linux/modules/netdevices.mk
++++ b/package/kernel/linux/modules/netdevices.mk
+@@ -1006,7 +1006,7 @@ $(eval $(call KernelPackage,forcedeth))
+ define KernelPackage/of-mdio
+   SUBMENU:=$(NETWORK_DEVICES_MENU)
+   TITLE:=OpenFirmware MDIO support
+-  DEPENDS:=+kmod-libphy
++  DEPENDS:=+kmod-libphy @!TARGET_x86
+   KCONFIG:=CONFIG_OF_MDIO
+   FILES:= \
+ 	$(LINUX_DIR)/drivers/net/phy/fixed_phy.ko \
