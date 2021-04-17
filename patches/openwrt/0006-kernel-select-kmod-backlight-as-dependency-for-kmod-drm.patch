@@ -1,0 +1,28 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 17 Apr 2021 20:04:48 +0200
+Subject: kernel: select kmod-backlight as dependency for kmod-drm
+
+Select kmod-backlight as dependency for kmod-drm in case kmod-backlight
+is compiled.
+
+This fixes kernel 5.10 build issues on x86-geode with all kmods
+enabled:
+
+Package kmod-drm is missing dependencies for the following libraries:
+backlight.ko
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/linux/modules/video.mk b/package/kernel/linux/modules/video.mk
+index c71f0760a666ef0956c2449e4d988932a2a60c2f..394dff6239b21cf892c322ad1434ea53aaedebf5 100644
+--- a/package/kernel/linux/modules/video.mk
++++ b/package/kernel/linux/modules/video.mk
+@@ -225,7 +225,7 @@ define KernelPackage/drm
+   SUBMENU:=$(VIDEO_MENU)
+   TITLE:=Direct Rendering Manager (DRM) support
+   HIDDEN:=1
+-  DEPENDS:=+kmod-dma-buf +kmod-i2c-core
++  DEPENDS:=+kmod-dma-buf +kmod-i2c-core +PACKAGE_kmod-backlight:kmod-backlight
+   KCONFIG:=CONFIG_DRM
+   FILES:= \
+ 	$(LINUX_DIR)/drivers/gpu/drm/drm.ko \
