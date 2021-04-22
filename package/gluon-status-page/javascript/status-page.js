@@ -233,13 +233,15 @@
 		while (table.lastChild)
 			table.removeChild(table.lastChild);
 
+		wireless.sort(function (a, b) {
+			return a.phy - b.phy;
+		});
+
 		wireless.forEach(function (radio) {
 			var tr = document.createElement('tr');
 
 			var th = document.createElement('th');
-			// TODO enhancement possible, as soon as #2204 is resolved
-			// (use actual radio names)
-			th.textContent = "radio";
+			th.textContent = "phy" + radio.phy;
 			tr.appendChild(th);
 
 			var td = document.createElement('td');
