@@ -1,9 +1,12 @@
 local bit = require 'bit'
 local posix_glob = require 'posix.glob'
 local posix_syslog = require 'posix.syslog'
+local posix_stat = require 'posix.sys.stat'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
+local fcntl = require 'posix.fcntl'
+local unistd = require 'posix.unistd'
 
 
 local M = {}
@@ -186,6 +189,30 @@ function M.log(message, verbose)
 	end
 
 	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
+end
+
+function M.in_setup_mode()
+	return (posix_stat.stat('/var/gluon/setup-mode') ~= nil)
+end
+
+function M.reconfigure_asynchronously()
+	local uci = require('simple-uci').cursor()
+	uci:set('gluon', 'core', 'reconfigure', true)
+	uci:save('gluon')
+	uci:commit('gluon')
+
+	-- as this may take a while, we fork here.
+	if unistd.fork() == 0 then
+		-- Replace stdout with /dev/null
+		local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
+		unistd.dup2(null, unistd.STDOUT_FILENO)
+
+		-- Sleep a little so the browser can fetch everything required to
+		-- display the reboot page, then reboot the device.
+		unistd.sleep(1)
+
+		unistd.execp('gluon-reload', {[0] = 'gluon-reload'})
+	end
 end
 
 return M

@@ -1,11 +1,16 @@
 local uci = require("simple-uci").cursor()
 local platform = require 'gluon.platform'
 local wireless = require 'gluon.wireless'
+local util = require 'gluon.util'
 
 -- where to read the configuration from
 local primary_iface = 'wan_radio0'
 
 local f = Form(translate("Private WLAN"))
+
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
 
 local s = f:section(Section, nil, translate(
 	'Your node can additionally extend your private network by bridging the WAN interface '
@@ -77,6 +82,10 @@ function f:write()
 	end)
 
 	uci:commit('wireless')
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f

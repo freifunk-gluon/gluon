@@ -10,8 +10,14 @@ You may obtain a copy of the License at
 
 local uci = require("simple-uci").cursor()
 local autoupdater = uci:get_first("autoupdater", "autoupdater")
+local util = require 'gluon.util'
 
 local f = Form(translate("Automatic updates"))
+
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
+
 local s = f:section(Section)
 local o
 
@@ -41,6 +47,10 @@ end
 
 function f:write()
 	uci:commit("autoupdater")
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f

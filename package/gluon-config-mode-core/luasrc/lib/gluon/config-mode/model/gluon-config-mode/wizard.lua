@@ -11,7 +11,12 @@ for _, entry in ipairs(util.glob('/lib/gluon/config-mode/wizard/*')) do
 end
 
 local f = Form(translate("Welcome!"))
-f.submit = translate('Save & restart')
+
+if util.in_setup_mode() then
+	f.submit = translate('Save & restart')
+else
+	f.submit = translate('Save & apply')
+end
 f.reset = false
 
 local s = f:section(Section)
@@ -48,20 +53,25 @@ function f:write()
 		r()
 	end
 
-	f.template = "wizard/reboot"
 	f.package = "gluon-config-mode-core"
-	f.hidenav = true
 
-	if unistd.fork() == 0 then
-		-- Replace stdout with /dev/null
-		local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
-		unistd.dup2(null, unistd.STDOUT_FILENO)
+	if util.in_setup_mode() then
+		f.template = "wizard/reboot"
+		f.hidenav = true
 
-		-- Sleep a little so the browser can fetch everything required to
-		-- display the reboot page, then reboot the device.
-		unistd.sleep(1)
+		if unistd.fork() == 0 then
+			-- Replace stdout with /dev/null
+			local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
+			unistd.dup2(null, unistd.STDOUT_FILENO)
 
-		unistd.execp('reboot', {[0] = 'reboot'})
+			-- Sleep a little so the browser can fetch everything required to
+			-- display the reboot page, then reboot the device.
+			unistd.sleep(1)
+
+			unistd.execp('reboot', {[0] = 'reboot'})
+		end
+	else
+		util.reconfigure_asynchronously()
 	end
 end
 

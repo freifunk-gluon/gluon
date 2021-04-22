@@ -1,6 +1,7 @@
 local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
 local site = require 'gluon.site'
+local util = require 'gluon.util'
 local wireless = require 'gluon.wireless'
 
 
@@ -37,6 +38,10 @@ local function has_5ghz_radio()
 end
 
 local f = Form(translate("WLAN"))
+
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
 
 f:section(Section, nil, translate(
 	"You can enable or disable your node's client and mesh network "
@@ -201,6 +206,10 @@ function f:write()
 	os.execute('/lib/gluon/upgrade/200-wireless')
 	uci:commit('network')
 	uci:commit('wireless')
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f

@@ -54,7 +54,7 @@ return function(form, uci)
 	function o:write(data)
 		if data ~= selected_domain then
 			domain_changed = true
-			uci:set('gluon', 'core', 'domain', data)
+			uci:set('gluon', 'core', 'switch_domain', data)
 		end
 	end
 

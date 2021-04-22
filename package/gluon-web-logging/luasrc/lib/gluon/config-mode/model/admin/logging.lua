@@ -1,11 +1,17 @@
 local uci = require('simple-uci').cursor()
 local system = uci:get_first('system', 'system')
+local util = require 'gluon.util'
 
 local f = Form(translate('Logging'), translate(
 	"If you want to use a remote syslog server, you can set it up here. "
 	.. "Please keep in mind that the data is not encrypted, which may cause "
 	.. "individual-related data to be transmitted unencrypted over the internet."
 ))
+
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
+
 local s = f:section(Section)
 
 local enable = s:option(Flag, 'log_remote', translate('Enable'))
@@ -36,6 +42,10 @@ end
 
 function f:write()
 	uci:commit('system')
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f
