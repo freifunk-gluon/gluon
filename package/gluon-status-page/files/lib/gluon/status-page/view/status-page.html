@@ -4,6 +4,7 @@
 	local util = require 'gluon.util'
 
 	local translations = {}
+	local site_i18n = i18n 'gluon-site'
 
 	local function _(v)
 		translations[v] = translate(v)
@@ -125,6 +126,9 @@
 							(<%| site.domain_names[nodeinfo.system.primary_domain_code]() %>)
 							<%- end %>
 						</dd>
+					<%- end %>
+					<% if nodeinfo.system.role then -%>
+						<dt><%:Role%></dt><dd><%| site_i18n._translate('gluon-web-node-role:role:' .. nodeinfo.system.role) %></dd>
 					<%- end %>
 					<% if nodeinfo.software.autoupdater then -%>
 						<dt><%:Automatic updates%></dt><dd><%| enabled(nodeinfo.software.autoupdater.enabled) %><%|
