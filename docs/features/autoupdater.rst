@@ -30,6 +30,27 @@ in ``site.mk``, care must be taken to pass the same ``GLUON_RELEASE`` to ``make 
 as otherwise the generated manifest will be incomplete.
 
 
+Manifest format
+------------------------
+
+The manifest starts with a short header, followed by the list of firmwares and signatures.
+The header contains the following information:
+
+.. code-block:: sh
+
+    BRANCH=stable
+    DATE=2020-10-07 00:00:00+02:00
+    PRIORITY=7
+
+- ``BRANCH`` is the autoupdater branch name that needs to match the nodes configuration.
+- ``DATE`` specifies when the time period for the update begins. Nodes will do their regular update during a random minute
+  between 4:00 and 4:59 am. Nodes might not always have a reliable NTP synchronization, which is why a fallback mechanism
+  exists, that checks for an update, and will execute if ``DATE`` is at least 24h in the past.
+- ``PRIORITY`` can be configured as ``GLUON_PRIORITY`` when generating the manifest or in ``site.mk``, and defines
+  the number of days over which the update should be stretched out after ``DATE``. Nodes will calculate a probability
+  based on the time left to determine when to update.
+
+
 Automated nightly builds
 ------------------------
 
