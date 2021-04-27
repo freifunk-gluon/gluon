@@ -159,6 +159,14 @@ to sign the generated package repository).
 OpenWrt will handle the generation and handling of the keys itself.
 When making firmware releases based on Gluon, it might make sense to store
 the keypair, so updating the module repository later is possible.
+In fact you should take care to reuse the same opkg keypair, so you don't pollute the key
+store (see ``/etc/opkg/keys``) on the node.
+
+The signing-key is stored at ``openwrt/key-build.pub``, ``openwrt/key-build``,
+``key-build.ucert`` and  ``key-build.ucert.revoke``.
+
+The ``openwrt`` directory is the Git checkout, that gets created after calling ``make update``.
+After making a fresh clone copy the key files to the aforementioned locations.
 
 .. _getting-started-make-variables:
 
