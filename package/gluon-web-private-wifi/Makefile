@@ -7,7 +7,7 @@ PKG_RELEASE:=1
 include ../gluon.mk
 
 define Package/gluon-web-private-wifi
-  DEPENDS:=+gluon-web-admin
+  DEPENDS:=+gluon-web-admin +gluon-private-wifi
   TITLE:=UI for activating a private WLAN
 endef
 
