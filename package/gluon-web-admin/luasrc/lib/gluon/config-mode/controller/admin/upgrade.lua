@@ -72,7 +72,7 @@ local function action_upgrade(http, renderer)
 		if unistd.access("/proc/mtd") then
 			for l in io.lines("/proc/mtd") do
 				local s, n = l:match('^[^%s]+%s+([^%s]+)%s+[^%s]+%s+"([^%s]+)"')
-				if n == "linux" then
+				if n == "firmware" then
 					size = tonumber(s, 16)
 					break
 				end
