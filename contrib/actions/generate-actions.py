@@ -11,7 +11,7 @@ on:
   push:
     branches:
       - master
-      - next
+      - next*
       - v20*
     paths:
       - "modules"
