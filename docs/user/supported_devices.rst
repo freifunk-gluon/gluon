@@ -256,6 +256,10 @@ ipq40xx-generic
 
   - EA6350 (v3)
 
+* MikroTik
+
+  - SXTsq 5 ac
+
 * NETGEAR
 
   - EX6100 (v2)

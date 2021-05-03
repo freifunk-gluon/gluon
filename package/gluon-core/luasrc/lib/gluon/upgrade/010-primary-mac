@@ -116,6 +116,7 @@ local primary_addrs = {
 			'avm,fritzbox-4040',
 			'plasmacloud,pa1200',
 			'plasmacloud,pa2200',
+			'mikrotik,sxtsq-5-ac',
 		}},
 		{'ipq806x', 'generic', {
 			'netgear,r7800',
