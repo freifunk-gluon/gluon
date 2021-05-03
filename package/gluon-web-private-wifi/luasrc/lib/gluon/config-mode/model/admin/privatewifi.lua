@@ -49,6 +49,7 @@ mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
 function f:write()
 	wireless.foreach_radio(uci, function(radio, index)
 		local radio_name = radio['.name']
+		local suffix = radio_name:match('^radio(%d+)$')
 		local name   = "wan_" .. radio_name
 
 		if enabled.data then
@@ -62,6 +63,7 @@ function f:write()
 				ssid       = ssid.data,
 				key        = key.data,
 				macaddr    = macaddr,
+				ifname     = suffix and 'wan' .. suffix,
 				disabled   = false,
 			})
 
