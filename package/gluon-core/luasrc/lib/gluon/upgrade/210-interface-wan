@@ -7,6 +7,7 @@ uci:section('network', 'interface', 'mesh_wan', {
 	ifname = 'br-wan',
 	proto  = 'gluon_wired',
 	index  = 0,
+	vxlan  = site.mesh.vxlan(true),
 })
 
 local enable = site.mesh_on_wan(false)
