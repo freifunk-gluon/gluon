@@ -37,6 +37,10 @@ rerun
 `make update` also applies the patches that can be found in the directories found in
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
 can be referred to by the branch `base`.
+To separately call `make update` was choosen, to let you decide when to update and reset the external
+repos. This will prevent potential loss of commits during local development and allow building Gluon
+without the need of having an internet connection (for sure the the 3rd-party sources must have been
+downloaded already).
 
 After new patches have been committed on top of the `patched` branch (or existing commits
 since the base commit have been edited or removed), the patch directories can be regenerated
