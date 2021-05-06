@@ -23,12 +23,62 @@
 
 #include <respondd.h>
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <json-c/json.h>
 #include <libgluonutil.h>
+#include <uci.h>
 
+
+static struct json_object * get_bandwidth_limit(void) {
+	bool enabled = false;
+	int egress = -1;
+	int ingress = -1;
+
+	struct json_object *ret = json_object_new_object();
+
+	struct uci_context *ctx = uci_alloc_context();
+	if (!ctx)
+		goto disabled;
+	ctx->flags &= ~UCI_FLAG_STRICT;
+
+	struct uci_package *p;
+	if (uci_load(ctx, "gluon", &p))
+		goto disabled;
+
+	struct uci_section *s = uci_lookup_section(ctx, p, "mesh_vpn");
+	if (!s)
+		goto disabled;
+
+	const char *enabled_str = uci_lookup_option_string(ctx, s, "limit_enabled");
+	if (enabled_str && strcmp(enabled_str, "1"))
+		goto disabled;
+
+	enabled = true;
+
+	const char *egress_str = uci_lookup_option_string(ctx, s, "limit_egress");
+	if (strcmp(egress_str, "-"))
+		egress = atoi(egress_str);
+
+	const char *ingress_str = uci_lookup_option_string(ctx, s, "limit_ingress");
+	if (strcmp(ingress_str, "-"))
+		ingress = atoi(ingress_str);
+
+	if (egress >= 0)
+		json_object_object_add(ret, "egress", json_object_new_int(egress));
+	if (ingress >= 0)
+		json_object_object_add(ret, "ingress", json_object_new_int(ingress));
+
+disabled:
+	if (ctx)
+		uci_free_context(ctx);
+
+	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled));
+	return ret;
+}
 
 char * read_stdout(const char *command) {
 	FILE *f = popen(command, "r");
@@ -89,6 +139,7 @@ static struct json_object * respondd_provider_nodeinfo(void) {
 	struct json_object *network = json_object_new_object();
 	struct json_object *mesh_vpn = json_object_new_object();
 
+	json_object_object_add(mesh_vpn, "bandwidth_limit", get_bandwidth_limit());
 	json_object_object_add(mesh_vpn, "provider", get_active_vpn_provider());
 	json_object_object_add(mesh_vpn, "enabled", get_mesh_vpn_enabled());
 	json_object_object_add(network, "mesh_vpn", mesh_vpn);
