@@ -52,6 +52,13 @@ and you can try rebasing it onto the new `base` branch yourself and after that c
 Always call `make update-patches` after making changes to a module repository as `make update` will overwrite your
 commits, making `git reflog` the only way to recover them!
 
+Then all is set start the build by calling (probably add -jn):
+
+::
+
+	make all
+
+
 Development Guidelines
 ----------------------
 Lua should be used instead of sh whenever sensible. The following criteria
