@@ -64,6 +64,16 @@
 		return v and translate('enabled') or translate('disabled')
 	end
 
+	local function formatBits(bits)
+		local units = {[0]='', 'k', 'M', 'G'}
+
+		local pow = math.floor(math.log(math.max(math.abs(bits), 1)) / math.log(1000))
+		local known_pow = math.min(pow, #units)
+
+		local significand = bits/(1000^known_pow)
+		return string.format('%g %sbit', significand, units[known_pow])
+	end
+
 	local function statistics(key, format)
 		return string.format('<span data-statistics="%s" data-format="%s"></span>', pcdata(key), pcdata(format or 'id'))
 	end
@@ -122,6 +132,17 @@
 							<br /><%| nodeinfo.network.mesh_vpn.provider %>
 							<%- end %>
 						</dd>
+						<% if nodeinfo.network.mesh_vpn.bandwidth_limit.enabled then -%>
+						<dt><%:Bandwidth limit%></dt>
+						<dd>
+							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.egress then -%>
+								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%><br />
+							<%- end %>
+							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.ingress then -%>
+								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%>
+							<%- end %>
+						</dd>
+						<%- end %>
 					<%- end %>
 					<dt><%:Site%></dt><dd><%| site.site_name() %></dd>
 					<% if nodeinfo.system.domain_code then -%>
