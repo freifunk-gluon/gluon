@@ -196,6 +196,7 @@ enum gluonutil_interface_type gluonutil_get_interface_type(const char *ifname) {
 			break;
 		}
 	}
+	free(line);
 
 	fclose(f);
 	return ret;
