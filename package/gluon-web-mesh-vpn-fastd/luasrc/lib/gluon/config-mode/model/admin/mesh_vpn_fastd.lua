@@ -3,6 +3,10 @@ local util = require 'gluon.util'
 
 local f = Form(translate('Mesh VPN'))
 
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
+
 local s = f:section(Section)
 
 local mode = s:option(Value, 'mode')
@@ -37,6 +41,10 @@ function mode:write(data)
 
 	uci:save('fastd')
 	uci:commit('fastd')
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f

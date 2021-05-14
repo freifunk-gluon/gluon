@@ -18,6 +18,11 @@ local unistd = require 'posix.unistd'
 local wait = require 'posix.sys.wait'
 
 local f_keys = Form(translate("SSH keys"), translate("You can provide your SSH keys here (one per line):"), 'keys')
+
+if not util.in_setup_mode() then
+	f_keys.submit = translate('Save & apply')
+end
+
 local s = f_keys:section(Section)
 local keys = s:option(TextValue, "keys")
 keys.wrap = "off"
@@ -32,6 +37,10 @@ function keys:write(value)
 		f:close()
 	else
 		unistd.unlink("/etc/dropbear/authorized_keys")
+	end
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
 	end
 end
 
@@ -56,6 +65,10 @@ local f_password = Form(translate("Password"), translate(
 	), 'password'
 )
 f_password.reset = false
+
+if not util.in_setup_mode() then
+	f_password.submit = translate('Save & apply')
+end
 
 s = f_password:section(Section)
 
@@ -125,6 +138,10 @@ function f_password:write()
 		-- We don't check the return code here as the error 'password for root is already locked' is normal...
 		os.execute('passwd -l root >/dev/null')
 		f_password.message = translate("Password removed.")
+	end
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
 	end
 end
 

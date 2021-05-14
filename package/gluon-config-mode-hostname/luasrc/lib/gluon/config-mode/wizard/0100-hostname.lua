@@ -32,5 +32,11 @@ return function(form, uci)
 		pretty_hostname.set(uci, data or default_hostname)
 	end
 
-	return {'system'}
+	local function reload_hostname()
+		local hostname_file = io.open('/proc/sys/kernel/hostname', 'w')
+		hostname_file:write(o.data or default_hostname)
+		hostname_file:close()
+	end
+
+	return {'system', reload_hostname}
 end

@@ -18,6 +18,10 @@ local dns_static = uci:get_first("gluon-wan-dnsmasq", "static")
 
 local f = Form(translate("WAN connection"))
 
+if not util.in_setup_mode() then
+	f.submit = translate('Save & apply')
+end
+
 local s = f:section(Section)
 
 local ipv4 = s:option(ListValue, "ipv4", translate("IPv4"))
@@ -163,6 +167,10 @@ function f:write()
 
 	uci:commit("network")
 	uci:commit('system')
+
+	if not util.in_setup_mode() then
+		util.reconfigure_asynchronously()
+	end
 end
 
 return f
