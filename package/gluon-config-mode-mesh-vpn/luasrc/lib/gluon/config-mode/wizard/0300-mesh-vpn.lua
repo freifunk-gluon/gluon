@@ -60,8 +60,5 @@ return function(form, uci)
 
 	function s:write()
 		uci:save('gluon')
-		os.execute('exec /lib/gluon/mesh-vpn/update-config')
 	end
-
-	return {'gluon', 'fastd', 'tunneldigger', 'simple-tc'}
 end

@@ -100,5 +100,7 @@ return function(form, uci)
 		end
 	end
 
-	return {'gluon-node-info'}
+	function s:write()
+		uci:save("gluon-node-info")
+	end
 end

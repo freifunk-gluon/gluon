@@ -1,15 +1,6 @@
 local util = require "gluon.util"
 local uci = require("simple-uci").cursor()
 
-
-local wizard = {}
-for _, entry in ipairs(util.glob('/lib/gluon/config-mode/wizard/*')) do
-	local f = assert(loadfile(entry))
-	setfenv(f, getfenv())
-	local w = f()
-	table.insert(wizard, w)
-end
-
 local f = Form(translate("Welcome!"))
 f.submit = translate('Save & restart')
 f.reset = false
@@ -18,21 +9,10 @@ local s = f:section(Section)
 s.template = "wizard/welcome"
 s.package = "gluon-config-mode-core"
 
-local commit = {'gluon-setup-mode'}
-local run = {}
-
-for _, w in ipairs(wizard) do
-	for _, c in ipairs(w(f, uci) or {}) do
-		if type(c) == 'string' then
-			if not util.contains(commit, c) then
-				table.insert(commit, c)
-			end
-		elseif type(c) == 'function' then
-			table.insert(run, c)
-		else
-			error('invalid wizard module return')
-		end
-	end
+for _, entry in ipairs(util.glob('/lib/gluon/config-mode/wizard/*')) do
+	local section = assert(loadfile(entry))
+	setfenv(section, getfenv())
+	section()(f, uci)
 end
 
 function f:write()
@@ -41,12 +21,7 @@ function f:write()
 
 	uci:set("gluon-setup-mode", uci:get_first("gluon-setup-mode", "setup_mode"), "configured", true)
 
-	for _, c in ipairs(commit) do
-		uci:commit(c)
-	end
-	for _, r in ipairs(run) do
-		r()
-	end
+	os.execute('gluon-reconfigure')
 
 	f.template = "wizard/reboot"
 	f.package = "gluon-config-mode-core"

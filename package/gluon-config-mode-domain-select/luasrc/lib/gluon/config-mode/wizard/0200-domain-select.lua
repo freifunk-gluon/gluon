@@ -49,20 +49,8 @@ return function(form, uci)
 		o:value(domain.domain_code, domain.domain_name)
 	end
 
-	local domain_changed = false
-
 	function o:write(data)
-		if data ~= selected_domain then
-			domain_changed = true
-			uci:set('gluon', 'core', 'domain', data)
-		end
+		uci:set('gluon', 'core', 'domain', data)
+		uci:save('gluon')
 	end
-
-	local function reconfigure()
-		if domain_changed then
-			os.execute('gluon-reconfigure')
-		end
-	end
-
-	return {'gluon', reconfigure}
 end

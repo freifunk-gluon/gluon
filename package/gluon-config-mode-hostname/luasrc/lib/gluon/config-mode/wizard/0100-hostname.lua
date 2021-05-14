@@ -30,7 +30,6 @@ return function(form, uci)
 
 	function o:write(data)
 		pretty_hostname.set(uci, data or default_hostname)
+		uci:save('system')
 	end
-
-	return {'system'}
 end

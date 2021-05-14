@@ -21,7 +21,6 @@ return function(form, uci)
 	o.optional = true
 	function o:write(data)
 		uci:set("gluon-node-info", owner, "contact", data)
+		uci:save("gluon-node-info")
 	end
-
-	return {'gluon-node-info'}
 end
