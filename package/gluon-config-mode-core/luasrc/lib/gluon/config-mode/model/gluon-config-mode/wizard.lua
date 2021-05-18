@@ -20,6 +20,7 @@ function f:write()
 	local unistd = require 'posix.unistd'
 
 	uci:set("gluon-setup-mode", uci:get_first("gluon-setup-mode", "setup_mode"), "configured", true)
+	uci:save("gluon-setup-mode")
 
 	os.execute('gluon-reconfigure')
 
