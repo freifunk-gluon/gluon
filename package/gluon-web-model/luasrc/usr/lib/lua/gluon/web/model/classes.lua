@@ -53,6 +53,7 @@ function Node:__init__(name, title, description)
 	self.name = name
 	self.index = nil
 	self.parent = nil
+	self.state = M.FORM_NODATA
 	self.package = 'gluon-web-model'
 end
 
@@ -73,14 +74,29 @@ function Node:id()
 end
 
 function Node:reset_node()
+	self.state = M.FORM_NODATA
 	for _, child in ipairs(self.children) do
 		child:reset_node()
 	end
 end
 
 function Node:parse(http)
+	self.state = M.FORM_VALID
 	for _, child in ipairs(self.children) do
 		child:parse(http)
+	end
+end
+
+function Node:propagate_state()
+	if self.state == M.FORM_NODATA then
+		return
+	end
+
+	for _, child in ipairs(self.children) do
+		child:propagate_state()
+		if child.state == M.FORM_INVALID then
+			self.state = M.FORM_INVALID
+		end
 	end
 end
 
@@ -158,9 +174,16 @@ function Node:resolve_node_depends()
 	return true
 end
 
+-- will be overridden: write(value)
+function Node:write()
+end
+
 function Node:handle()
-	for _, node in ipairs(self.children) do
-		node:handle()
+	if self.state == M.FORM_VALID then
+		for _, node in ipairs(self.children) do
+			node:handle()
+		end
+		self:write(self.data)
 	end
 end
 
@@ -187,7 +210,6 @@ function AbstractValue:__init__(...)
 	self.template  = "model/valuewrapper"
 
 	self.error = false
-	self.state = M.FORM_NODATA
 end
 
 function AbstractValue:defaultvalue()
@@ -248,16 +270,6 @@ function AbstractValue:validate()
 
 	return false
 
-end
-
-function AbstractValue:handle()
-	if self.state == M.FORM_VALID then
-		self:write(self.data)
-	end
-end
-
--- will be overridden: write(value)
-function AbstractValue:write()
 end
 
 
@@ -438,26 +450,7 @@ function Form:parse(http)
 
 	while self:resolve_depends() do end
 
-	for _, s in ipairs(self.children) do
-		for _, v in ipairs(s.children) do
-			if v.state == M.FORM_INVALID then
-				self.state = M.FORM_INVALID
-				return
-			end
-		end
-	end
-
-	self.state = M.FORM_VALID
-end
-
-function Form:handle()
-	if self.state == M.FORM_VALID then
-		Node.handle(self)
-		self:write()
-	end
-end
-
-function Form:write()
+	self:propagate_state()
 end
 
 function Form:section(t, ...)

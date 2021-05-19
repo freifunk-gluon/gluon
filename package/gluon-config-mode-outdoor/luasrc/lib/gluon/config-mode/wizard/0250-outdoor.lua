@@ -44,10 +44,6 @@ return function(form, uci)
 				end
 				uci:save('wireless')
 			end
-
-			os.execute('/lib/gluon/upgrade/200-wireless')
 		end
 	end
-
-	return {'gluon', 'network', 'wireless'}
 end
