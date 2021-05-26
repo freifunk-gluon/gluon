@@ -1,10 +1,8 @@
-local unistd = require 'posix.unistd'
-
-local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
-local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
+local vpn = require 'gluon.mesh-vpn'
+local _, active_vpn = vpn.get_active_provider()
 
 return function(form, uci)
-	if not (has_fastd or has_tunneldigger) then
+	if active_vpn == nil then
 		return
 	end
 
