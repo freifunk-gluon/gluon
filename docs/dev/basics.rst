@@ -52,6 +52,14 @@ and you can try rebasing it onto the new `base` branch yourself and after that c
 Always call `make update-patches` after making changes to a module repository as `make update` will overwrite your
 commits, making `git reflog` the only way to recover them!
 
+::
+
+	make refresh-patches
+
+In order to refresh patches when updating feeds or the OpenWrt base, `make refresh-patches` applies and updates all of their patches without installing feed packages to the OpenWrt buildsystem.
+
+This command speeds up the maintenance of updating OpenWrt and feeds.
+
 Development Guidelines
 ----------------------
 Lua should be used instead of sh whenever sensible. The following criteria
