@@ -114,8 +114,14 @@
 					<dt><%:Primary MAC address%></dt><dd><%| nodeinfo.network.mac %></dd>
 					<dt><%:IP address%></dt><dd><%= pcdata(table.concat(sorted(nodeinfo.network.addresses), '\n')):gsub('\n', '<br />') %></dd>
 					<dt><%:Firmware%></dt><dd><%| nodeinfo.software.firmware.release %></dd>
-					<% if nodeinfo.software.fastd then -%>
-						<dt><%:Mesh VPN%></dt><dd><%| enabled(nodeinfo.software.fastd.enabled) %></dd>
+					<% if nodeinfo.network.mesh_vpn then -%>
+						<dt><%:Mesh VPN%></dt>
+						<dd>
+							<%| enabled(nodeinfo.network.mesh_vpn.enabled) %>
+							<% if nodeinfo.network.mesh_vpn.provider then -%>
+							<br /><%| nodeinfo.network.mesh_vpn.provider %>
+							<%- end %>
+						</dd>
 					<%- end %>
 					<dt><%:Site%></dt><dd><%| site.site_name() %></dd>
 					<% if nodeinfo.system.domain_code then -%>
