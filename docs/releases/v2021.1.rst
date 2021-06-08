@@ -1,0 +1,140 @@
+Gluon 2021.1
+============
+
+Important notes
+---------------
+
+Upgrades to v2021.1 and later releases are only supported from releases v2018.2 and later. This is due to migrations that have been removed to simplify maintenance.
+
+
+Added hardware support
+----------------------
+
+
+ath79-generic
+~~~~~~~~~~~~~
+
+* Plasma Cloud
+
+    - PA300 [#outdoor]_
+    - PA300E [#outdoor]_
+
+* TP-Link
+
+    - Archer C2 v3
+    - Archer D50 v1
+
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+* AVM
+
+    - FRITZ!Box 7530
+
+* Plasma Cloud
+
+    - PA1200 [#outdoor]_
+    - PA2200
+
+
+ramips-mt7620
+~~~~~~~~~~~~~
+
+* Netgear
+
+    - EX3700
+    - EX3800
+
+
+.. [#outdoor]
+  This device is supposed to be set up outdoors and will therefore have its outdoor mode flag automatically enabled.
+
+
+Major changes
+-------------
+
+Multicast optimizations (batman-adv)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In this release, we reenable the multicast optimizations, that have gone through another round of bug squashing upstream. This reduces layer 2 overhead, especially for IPv6 neighbor discovery, because multicast traffic will be converted to unicast traffic when the number of subscribers does not exceed 16. This is beneficial as we would previously drop multicast traffic that wasn't explicitly allowed but now can allow multicast traffic if it wouldn't result in broadcast.
+
+
+Status page
+~~~~~~~~~~~
+
+The status page has received much attention in this release and now exposes many more details that help to understand a node's setup remotely.
+
+Among other things, we now expose wireless client count per radio, the mac80211 identifiers, the frequencies radios are tuned to, as well as information about the VPN provider and details on the mesh protocol stack.
+
+
+gluon-switch-domain utility
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``gluon-switch-domain`` utility has been introduced to allow for a standard way to encapsulate the steps required for safely switching between domains. Existing packages like the hoodselector and the scheduled-domain-switch have been tied in with gluon-switch-domain.
+
+It has an experimental ``--no-reboot`` flag that requires further testing, to ensure it doesn't accidentally bridge separate domains.
+
+
+Other changes
+-------------
+
+- The private WLAN interface is now assigned the interface name `wan_radioX` where X is the phy index.
+- Linux kernel has been updated to 4.14.235
+- The kernel's mac80211 stack has been updated to 4.19.193-test1 to mitigate the `FragAttacks <https://www.fragattacks.com/>`_ vulnerabilities
+- OpenSSL has been updated to 1.1.1k, fixing CVE-2021-3449 and CVE-2021-3450
+- Dropbear has been patched against mishandling of special filenames in its scp component (CVE-2020-36524)
+
+Bugfixes
+--------
+
+- The firmware partition lookup in gluon-web-admin's firmware update page was using an old partition label and therefore failed to look up the available flash size. This resulted in misleading error messages in case the uploaded firmware file exceeds the flash size.
+
+- Android 9 and higher do not properly wake up to renew their MLD subscriptions, therefore dropping out of the Neighbor Discovery MLD group, which leads to broken IPv6 connectivity after the device has slept for a while. A workaround has been deployed to wake these devices up in regular intervals to prevent this regression.
+
+
+Internal
+--------
+
+Mesh-VPN Abstraction Layer
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In preparation for the introduction of new tunneling protocols, the gluon-mesh-vpn framework has been modularized. This allows for providers to use a standard interface and keep their implementation details in a dedicated package.
+
+
+Continuous Integration
+~~~~~~~~~~~~~~~~~~~~~~
+
+* GitHub Actions
+
+  - GitHub actions is now enabled for the Gluon project, build-testing all available targets.
+
+  - CI jobs are now run based on which paths have been modified.
+
+  - Linters for lua and shell scripts have been integrated.
+
+
+Known issues
+------------
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
