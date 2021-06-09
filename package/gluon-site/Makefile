@@ -8,7 +8,7 @@ PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
-PKG_BUILD_DEPENDS := lua-cjson/host gluon-web/host
+PKG_BUILD_DEPENDS := lua-jsonc/host gluon-web/host
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
@@ -38,7 +38,7 @@ endef
 
 define GenerateJSON
 	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' \
-		lua -e 'print(require("cjson").encode(assert(dofile("../../scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))))' \
+		lua -e 'print(require("jsonc").stringify(assert(dofile("../../scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))))' \
 		> '$$(PKG_BUILD_DIR)/$(1).json'
 endef
 

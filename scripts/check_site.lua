@@ -1,4 +1,4 @@
-local cjson = require 'cjson'
+local json = require 'jsonc'
 
 local function config_error(src, ...)
 	error(src .. ' error: ' .. string.format(...), 0)
@@ -7,20 +7,12 @@ end
 local has_domains = (os.execute('ls -d "$IPKG_INSTROOT"/lib/gluon/domains/ >/dev/null 2>&1') == 0)
 
 
-local function load_json(filename)
-	local f = assert(io.open(filename))
-	local json = cjson.decode(f:read('*a'))
-	f:close()
-	return json
-end
-
-
 local function get_domains()
 	local domains = {}
 	local dirs = io.popen("find \"$IPKG_INSTROOT\"/lib/gluon/domains/ -name '*.json'")
 	for filename in dirs:lines() do
 		local name = string.match(filename, '([^/]+).json$')
-		domains[name] = load_json(filename)
+		domains[name] = assert(json.load(filename))
 	end
 	dirs:close()
 
@@ -391,7 +383,7 @@ end
 
 local check = setfenv(assert(loadfile()), M)
 
-site = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json')
+site = assert(json.load(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json'))
 
 local ok, err = pcall(function()
 	if has_domains then
