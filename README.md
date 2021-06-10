@@ -2,15 +2,20 @@
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/freifunk-gluon/gluon?sort=semver)](https://github.com/freifunk-gluon/gluon/releases/latest)
 
-Documentation (incomplete at this time, contribute if you can!) may be found at
-https://gluon.readthedocs.io/.
+# Gluon
+
+Gluon is a firmware framework to build preconfigured OpenWrt images for public mesh networks.
+
+## Getting started
+
+We have a huge amount of documentation over at https://gluon.readthedocs.io/.
 
 If you're new to Gluon and ready to get your feet wet, have a look at the
 [Getting Started Guide](https://gluon.readthedocs.io/en/latest/user/getting_started.html).
 
 Gluon's developers frequent an IRC chatroom at [#gluon](ircs://irc.hackint.org/#gluon)
 on [hackint](https://hackint.org/). There is also a [webchat](https://webirc.hackint.org/#irc://irc.hackint.org/#gluon)
-that allows for access from within your browser.
+that allows for uncomplicated access from within your browser.
 
 ## Issues & Feature requests
 
@@ -28,7 +33,7 @@ Use the most recent release instead. You can list all releases by running `git t
 and switch to one by running `git checkout v2021.1 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
-If you upgrade using random master commits the nodes *will break* eventually.
+If you upgrade using random master commits the nodes *might break* eventually.
 
 ## Mailinglist
 
