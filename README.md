@@ -1,3 +1,7 @@
+[![Build Gluon](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml/badge.svg?branch=master)](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml)
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/freifunk-gluon/gluon?sort=semver)](https://github.com/freifunk-gluon/gluon/releases/latest)
+
 Documentation (incomplete at this time, contribute if you can!) may be found at
 https://gluon.readthedocs.io/.
 
