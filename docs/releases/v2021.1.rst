@@ -57,8 +57,9 @@ Major changes
 Multicast optimizations (batman-adv)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this release, we reenable the multicast optimizations, that have gone through another round of bug squashing upstream. This reduces layer 2 overhead, especially for IPv6 neighbor discovery, because multicast traffic will be converted to unicast traffic when the number of subscribers does not exceed 16. This is beneficial as we would previously drop multicast traffic that wasn't explicitly allowed but now can allow multicast traffic if it wouldn't result in broadcast.
+In this release, we reenable the multicast optimizations, that have gone through another round of bug squashing upstream. With this feature batman-adv will distribute IPv6 link-local multicast packets via individual unicast packets instead of flooding them through the whole mesh as long as the number of subscribed nodes does not exceed 16. This reduces layer 2 overhead, especially for IPv6 Neighbor Discovery.
 
+We also relaxed the firewall for IPv6 multicast packets: Instead of always dropping non-essential multicast packets we now allow all IPv6 link-local multicast packets to pass when the destination group has up to 16 subscribers
 
 Status page
 ~~~~~~~~~~~
