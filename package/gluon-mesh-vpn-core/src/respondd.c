@@ -60,11 +60,11 @@ static struct json_object * get_bandwidth_limit(void) {
 	enabled = true;
 
 	const char *egress_str = uci_lookup_option_string(ctx, s, "limit_egress");
-	if (strcmp(egress_str, "-"))
+	if (egress_str && strcmp(egress_str, "-"))
 		egress = atoi(egress_str);
 
 	const char *ingress_str = uci_lookup_option_string(ctx, s, "limit_ingress");
-	if (strcmp(ingress_str, "-"))
+	if (ingress_str && strcmp(ingress_str, "-"))
 		ingress = atoi(ingress_str);
 
 	if (egress >= 0)
