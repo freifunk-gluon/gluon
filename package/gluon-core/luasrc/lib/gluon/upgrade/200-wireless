@@ -38,11 +38,11 @@ if not sysconfig.gluon_version then
 			if radio_band_count["band24"] <= radio_band_count["band5"] then
 				-- Assign radio to 2.4GHz band
 				radio_band_count["band24"] = radio_band_count["band24"] + 1
-				uci:set('wireless', radio_name, 'hwmode', '11g')
+				uci:set('wireless', radio_name, 'band', '2g')
 			else
 				-- Assign radio to 5GHz band
 				radio_band_count["band5"] = radio_band_count["band5"] + 1
-				uci:set('wireless', radio_name, 'hwmode', '11a')
+				uci:set('wireless', radio_name, 'band', '5g')
 			end
 		end
 	end)
@@ -57,7 +57,7 @@ local function get_channel(radio, config)
 	if wireless.preserve_channels(uci) then
 		-- preserved channel always wins
 		channel = radio.channel
-	elseif  (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
+	elseif  radio.band == '5g' and is_outdoor() then
 		-- actual channel will be picked and probed from chanlist
 		channel = 'auto'
 	end
@@ -66,7 +66,7 @@ local function get_channel(radio, config)
 end
 
 local function get_htmode(radio)
-	if (radio.hwmode == '11a' or radio.hwmode == '11na') and is_outdoor() then
+	if radio.band == '5g' and is_outdoor() then
 		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
 		if outdoor_htmode ~= nil then
 			return outdoor_htmode
@@ -207,11 +207,11 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	uci:delete('wireless', radio_name, 'supported_rates')
 	uci:delete('wireless', radio_name, 'basic_rate')
 
-	local hwmode = radio.hwmode
-	if hwmode == '11g' or hwmode == '11ng' then
+	local band = radio.band
+	if band == '1g' then
 		uci:set('wireless', radio_name, 'legacy_rates', false)
 		configure_mesh_wireless(radio, index, config)
-	elseif (hwmode == '11a' or hwmode == '11na') then
+	elseif (band == '5g') then
 		if is_outdoor() then
 			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
 

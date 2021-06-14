@@ -76,7 +76,7 @@ function M.device_uses_11a(uci)
 	local ret = false
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
-		if radio.hwmode == '11a' or radio.hwmode == '11na' then
+		if radio.band == '5g' then
 			ret = true
 			return false
 		end

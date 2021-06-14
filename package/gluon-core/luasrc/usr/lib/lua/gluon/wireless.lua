@@ -86,11 +86,11 @@ function M.foreach_radio(uci, f)
 	end)
 
 	for index, radio in ipairs(radios) do
-		local hwmode = radio.hwmode
+		local band = radio.band
 
-		if hwmode == '11g' or hwmode == '11ng' then
+		if band == '2g' then
 			f(radio, index, site.wifi24)
-		elseif hwmode == '11a' or hwmode == '11na' then
+		elseif band == '5g' then
 			f(radio, index, site.wifi5)
 		end
 	end

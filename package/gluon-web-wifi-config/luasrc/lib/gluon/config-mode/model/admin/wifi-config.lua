@@ -28,9 +28,9 @@ local function has_5ghz_radio()
 	local result = false
 	uci:foreach('wireless', 'wifi-device', function(config)
 		local radio = config['.name']
-		local hwmode = uci:get('wireless', radio, 'hwmode')
+		local band = uci:get('wireless', radio, 'band')
 
-		result = result or (hwmode == '11a' or hwmode == '11na')
+		result = result or (band == '5g')
 	end)
 
 	return result
@@ -56,9 +56,9 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	local is_5ghz = false
 	local title
-	if config.hwmode == '11g' or config.hwmode == '11ng' then
+	if config.band == '2g' then
 		title = translate("2.4GHz WLAN")
-	elseif config.hwmode == '11a' or config.hwmode == '11na' then
+	elseif config.band == '5g' then
 		is_5ghz = true
 		title = translate("5GHz WLAN")
 	else
@@ -167,9 +167,9 @@ if has_5ghz_radio() and not wireless.preserve_channels(uci) then
 
 	uci:foreach('wireless', 'wifi-device', function(config)
 		local radio = config['.name']
-		local hwmode = uci:get('wireless', radio, 'hwmode')
+		local band = uci:get('wireless', radio, 'band')
 
-		if hwmode ~= '11a' and hwmode ~= '11na' then
+		if band ~= '5g' then
 			return
 		end
 
