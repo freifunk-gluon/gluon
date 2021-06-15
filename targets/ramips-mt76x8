@@ -74,3 +74,10 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 device('vocore2', 'vocore2', {
 	factory = false,
 })
+
+
+-- Xiaomi
+
+device('xiaomi-mi-router-4a-100m-edition', 'xiaomi_mir4a-100m', {
+	factory = false,
+})
