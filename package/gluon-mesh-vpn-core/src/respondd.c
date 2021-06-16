@@ -60,11 +60,11 @@ static struct json_object * get_bandwidth_limit(void) {
 	enabled = true;
 
 	const char *egress_str = uci_lookup_option_string(ctx, s, "limit_egress");
-	if (strcmp(egress_str, "-"))
+	if (egress_str && strcmp(egress_str, "-"))
 		egress = atoi(egress_str);
 
 	const char *ingress_str = uci_lookup_option_string(ctx, s, "limit_ingress");
-	if (strcmp(ingress_str, "-"))
+	if (ingress_str && strcmp(ingress_str, "-"))
 		ingress = atoi(ingress_str);
 
 	if (egress >= 0)
@@ -110,6 +110,9 @@ static struct json_object * get_mesh_vpn_enabled() {
 	int enabled = -1;
 	char *line = read_stdout("exec lua -e 'print(require(\"gluon.mesh-vpn\").enabled())'");
 
+	if (!line)
+		return NULL;
+
 	if (!strcmp(line, "true"))
 		enabled = 1;
 	if (!strcmp(line, "false"))
@@ -126,7 +129,7 @@ static struct json_object * get_mesh_vpn_enabled() {
 static struct json_object * get_active_vpn_provider() {
 	char *line = read_stdout("exec lua -e 'name, _ = require(\"gluon.mesh-vpn\").get_active_provider(); print(name)'");
 
-	if (!strcmp(line, "nil")) {
+	if (line && !strcmp(line, "nil")) {
 		free(line);
 		return NULL;
 	}
