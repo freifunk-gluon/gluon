@@ -1,6 +1,8 @@
 local bit = require 'bit'
+local posix_fcntl = require 'posix.fcntl'
 local posix_glob = require 'posix.glob'
 local posix_syslog = require 'posix.syslog'
+local posix_unistd = require 'posix.unistd'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
@@ -188,4 +190,73 @@ function M.log(message, verbose)
 	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
 end
 
+M.PipePolicies = {
+	DISCARD=-1,
+	INHERIT=0,
+	CREATE=1
+}
+
+-- Execute a program found using command PATH search, like the shell.
+-- Return the pid, as well as the I/O streams as pipes or nil on error.
+function M.popen3(policies, path, ...)
+	local pipes = {}
+	local intern = {}
+	local extern = {}
+
+	for fd, policy in pairs(policies) do
+		if M.PipePolicies.CREATE==policy then
+			pipes[fd]={posix_unistd.pipe()}
+			if posix_unistd.STDIN_FILENO==fd then
+				intern[fd]=pipes[fd][1]
+				extern[fd]=pipes[fd][2]
+			else
+				intern[fd]=pipes[fd][2]
+				extern[fd]=pipes[fd][1]
+			end
+		end
+	end
+
+	-- intern: r0, w1, w2
+	-- extern: w0, r1, r2
+
+	local pid = posix_unistd.fork()
+
+	if pid < 0 then
+		return nil
+	elseif pid == 0 then
+		local null=-1;
+		if M.contains(policies, M.PipePolicies.DISCARD) then
+			-- only open, if there's anything to discard
+			null = posix_fcntl.open('/dev/null', posix_fcntl.O_WRONLY)
+		end
+
+		for fd, policy in pairs(policies) do
+			if M.PipePolicies.DISCARD==policy then
+				if posix_unistd.STDIN_FILENO~=fd then
+					posix_unistd.dup2(null, fd)
+				end
+			elseif M.PipePolicies.CREATE==policy then
+				-- only close these, if they exist
+				posix_unistd.close(extern[fd])
+				posix_unistd.dup2(intern[fd], fd)
+				-- close all the dups
+				posix_unistd.close(intern[fd])
+			end
+		end
+
+		-- close potential null
+		if null > 2 then
+			posix_unistd.close(null)
+		end
+
+		posix_unistd.execp(path, ...)
+		posix_unistd._exit(127)
+	end
+
+	for _, v in pairs(intern) do
+		posix_unistd.close(v)
+	end
+
+	return pid, extern
+end
 return M
