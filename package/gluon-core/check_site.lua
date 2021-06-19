@@ -46,8 +46,10 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 				120, 122, 124, 126, 128, 132, 134, 136, 138, 140, 142, 144,
 				149, 151, 153, 155, 157, 159, 161, 165, 169, 173 }
 			need_one_of({config, 'channel'}, channels)
-			need_chanlist({config, 'outdoor_chanlist'}, channels, false)
-			need_one_of({config, 'outdoors'}, {true, false, 'preset'}, false)
+
+			local outdoors = need_one_of({config, 'outdoors'}, {true, false, 'preset'}, false)
+			local outdoor_chanlist_required = (outdoors ~= false)
+			need_chanlist({config, 'outdoor_chanlist'}, channels, outdoor_chanlist_required)
 		end
 
 		obsolete({config, 'supported_rates'}, '802.11b rates are disabled by default.')
