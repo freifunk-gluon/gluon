@@ -13,11 +13,15 @@ end
 
 local sysconfig = require 'gluon.sysconfig'
 local platform = require 'gluon.platform'
+local wireless = require 'gluon.wireless'
 
 local config = site.wifi5.outdoors('preset')
 local outdoor
 
-if sysconfig.gluon_version then
+if not wireless.site_supports_outdoor_mode() then
+	-- site does not support outdoor mode
+	outdoor = false
+elseif sysconfig.gluon_version then
 	-- don't enable the outdoor mode after an upgrade
 	outdoor = false
 elseif config == 'preset' then
