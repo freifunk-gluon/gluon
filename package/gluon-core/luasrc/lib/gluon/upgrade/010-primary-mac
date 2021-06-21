@@ -130,6 +130,9 @@ local primary_addrs = {
 			'tplink,c2-v1',
 			'ex3700'
 		}},
+		{'ramips', 'mt76x8', {
+			'xiaomi,mir4a-100m',
+		}},
 		{'x86'},
 	}},
 	{interface('wan'), {

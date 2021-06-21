@@ -405,6 +405,10 @@ ramips-mt76x8
 
   - VoCore2
 
+* Xiaomi
+
+  - Xiaomi Mi Router 4A (100M Edition)
+
 ramips-rt305x [#deprecated]_  [#device-class-tiny]_
 ---------------------------------------------------
 
