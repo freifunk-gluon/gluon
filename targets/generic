@@ -51,8 +51,8 @@ config('KERNEL_IPV6_MROUTE', false)
 
 config('COLLECT_KERNEL_DEBUG', true)
 
-try_config('TARGET_MULTI_PROFILE', true)
-try_config('TARGET_PER_DEVICE_ROOTFS', true)
+config('TARGET_MULTI_PROFILE', true)
+config('TARGET_PER_DEVICE_ROOTFS', true)
 
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
