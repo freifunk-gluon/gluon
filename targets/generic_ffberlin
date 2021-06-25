@@ -1,0 +1,183 @@
+config('TARGET_ROOTFS_INITRAMFS', false)
+
+config('TARGET_MULTI_PROFILE', true)
+config('TARGET_ALL_PROFILES', true)
+config('TARGET_PER_DEVICE_ROOTFS', true)
+
+config('DEVEL', true)
+config('TOOLCHAINOPTS', true)
+config('ALFRED_NEEDS_lua', true)
+--config('ATH_USER_REGD', true)
+config('IB', true)
+config('IMAGEOPT', true)
+config('BUILD_LOG', true)
+config('KERNEL_DEBUG_INFO', false)
+config('KERNEL_DEBUG_KERNEL', false)
+config('KERNEL_KALLSYMS', false)
+--config('KMOD_BATMAN_ADV_DAT', true)
+--config('KMOD_BATMAN_ADV_MCAST', true)
+config('BUSYBOX_CUSTOM', true)
+config('BUSYBOX_CONFIG_MKSWAP', false)
+config('BUSYBOX_CONFIG_SWAPON', false)
+config('BUSYBOX_CONFIG_SWAPOFF', false)
+config('BUSYBOX_CONFIG_TELNET', true)
+config('BUSYBOX_CONFIG_FEATURE_TELNET_TTYPE', true)
+config('BUSYBOX_CONFIG_FEATURE_TRACEROUTE_USE_ICMP', true)
+config('PREINITOPT', true)
+config('SDK', true)
+config('STRIP_KERNEL_EXPORTS', true)
+config('TARGET_PREINIT_IP="192.168.42.1"')
+config('TARGET_PREINIT_NETMASK="255.255.255.0"')
+config('TARGET_PREINIT_BROADCAST="192.168.42.255"')
+config('VERSIONOPT', true)
+config('VERSION_FILENAMES', true)
+config('VERSION_CODE_FILENAMES', true)
+config('VERSION_DIST="Freifunk Berlin"')
+config('VERSION_HWREV=""')
+config('VERSION_MANUFACTURER=""')
+config('VERSION_NUMBER="Dev-daily-1907"')
+config('VERSION_CODE=""')
+config('VERSION_PRODUCT=""')
+config('LUCI_SRCDIET', true)
+--config('LUCI_LANG_de=m'
+--config('LUCI_LANG_en=m'
+
+--config('PACKAGE_kmod-batman-adv=m'
+--config('PACKAGE_kmod-crypto-crc32c=m'
+--config('PACKAGE_kmod-crypto-hash=m'
+--config('PACKAGE_kmod-fs-cifs=m'
+--config('PACKAGE_kmod-fs-ext4=m'
+--config('PACKAGE_kmod-fs-vfat=m'
+--config('PACKAGE_kmod-ifb=m'
+--config('PACKAGE_kmod-ipip=m'
+--config('PACKAGE_kmod-ipt-conntrack-extra=m'
+--config('PACKAGE_kmod-ipt-filter=m'
+--config('PACKAGE_kmod-ipt-ipopt=m'
+--config('PACKAGE_kmod-iptunnel=m'
+--config('PACKAGE_kmod-iptunnel4=m'
+--config('PACKAGE_kmod-lib-crc-itu-t=m'
+--config('PACKAGE_kmod-lib-crc16=m'
+--config('PACKAGE_kmod-lib-crc32c=m'
+--config('PACKAGE_kmod-lib-textsearch=m'
+--config('PACKAGE_kmod-nf-nathelper-extra=m'
+--config('PACKAGE_kmod-nls-utf8=m'
+--config('PACKAGE_kmod-nls-iso8859-1=m'
+--config('PACKAGE_kmod-nls-iso8859-15=m'
+--config('PACKAGE_kmod-ppp=m'
+--config('PACKAGE_kmod-rt2800-lib=m'
+--config('PACKAGE_kmod-rt2800-usb=m'
+--config('PACKAGE_kmod-rt2x00-lib=m'
+--config('PACKAGE_kmod-rt2x00-usb=m'
+--config('PACKAGE_kmod-sched-connmark=m'
+--config('PACKAGE_kmod-sched-core=m'
+--config('PACKAGE_kmod-sit=m'
+--config('PACKAGE_kmod-tun=m'
+--config('PACKAGE_kmod-usb-acm=m'
+--config('PACKAGE_kmod-usb-net=m'
+--config('PACKAGE_kmod-usb-net-cdc-ether=m'
+--config('PACKAGE_kmod-usb-net-rndis=m'
+--config('PACKAGE_kmod-usb-ohci=m'
+--config('PACKAGE_kmod-usb-serial=m'
+--config('PACKAGE_kmod-usb-serial-option=m'
+--config('PACKAGE_kmod-usb-serial-wwan=m'
+--config('PACKAGE_kmod-usb-storage=m'
+--config('PACKAGE_kmod-usb-uhci=m'
+--config('PACKAGE_kmod-veth=m'
+
+--config('PACKAGE_ALFRED_BATHOSTS', true)
+--config('PACKAGE_ALFRED_VIS', true)
+--config('PACKAGE_ATH_DFS', true)
+--config('PACKAGE_luci-mod-failsafe', true)
+--config('PACKAGE_luci-theme-bootstrap', true)
+--config('PACKAGE_uhttpd', true)
+
+try_config('TARGET_MULTI_PROFILE', true)
+try_config('TARGET_PER_DEVICE_ROOTFS', true)
+
+packages {
+	'-hostapd-mini',
+	'-odhcpd-ipv6only',
+	'-ppp',
+	'-ppp-mod-pppoe',
+	'wpad-basic',
+'freifunk-berlin-system-defaults',
+'alfred',
+'batctl-default',
+'collectd',
+'collectd-mod-conntrack',
+'collectd-mod-cpu',
+'collectd-mod-exec',
+'collectd-mod-interface',
+'collectd-mod-irq',
+'collectd-mod-iwinfo',
+'collectd-mod-load',
+'collectd-mod-memory',
+'collectd-mod-network',
+'collectd-mod-olsrd',
+'collectd-mod-ping',
+'collectd-mod-routeros',
+'collectd-mod-rrdtool',
+'collectd-mod-snmp',
+'collectd-mod-uptime',
+'collectd-mod-wireless',
+'collectd-snmp-templates',
+'community-profiles',
+'ethtool',
+'freifunk-berlin-dhcp-defaults',
+'freifunk-berlin-firewall-defaults',
+'freifunk-berlin-freifunk-defaults',
+'freifunk-berlin-lib-guard',
+'freifunk-berlin-migration',
+'freifunk-berlin-network-defaults',
+'freifunk-berlin-olsrd-defaults',
+'freifunk-berlin-system-defaults',
+'freifunk-berlin-statistics-defaults',
+'freifunk-berlin-tunneldigger',
+'freifunk-berlin-uhttpd-defaults',
+'freifunk-common',
+'freifunk-firewall',
+'freifunk-gwcheck',
+'freifunk-policyrouting',
+'horst',
+'ipip',
+'iptables-mod-conntrack-extra',
+'iptables-mod-filter',
+'iptables-mod-ipopt',
+'iwinfo',
+'libiwinfo-lua',
+'libubus-lua',
+'libuci-lua',
+'libustream-mbedtls',
+'luci-app-ffwizard-berlin',
+'luci-app-firewall',
+'luci-app-opkg',
+'luci-app-olsr',
+'luci-app-olsr-services',
+'luci-app-olsr-viz',
+'luci-app-owm',
+'luci-app-owm-ant',
+'luci-app-owm-cmd',
+'luci-app-owm-gui',
+'luci-app-statistics',
+'luci-mod-admin-full',
+'luci-proto-ipip',
+'mtr',
+'olsrd',
+'olsrd-mod-arprefresh',
+'olsrd-mod-dyn-gw',
+'olsrd-mod-dyn-gw-plain',
+'olsrd-mod-jsoninfo',
+'olsrd-mod-nameservice',
+'olsrd-mod-netjson',
+'olsrd-mod-txtinfo',
+'olsrd-mod-watchdog',
+'om-watchdog',
+'px5g-mbedtls',
+'qos-scripts',
+'rssileds',
+'tc',
+'terminfo',
+'tmux',
+'uhttpd-mod-ubus',
+'vnstat',
+}

@@ -147,6 +147,7 @@ local function handle_target_pkgs(pkgs)
 end
 
 lib.include('generic')
+lib.include('generic_' .. env.GLUON_BUILDTYPE)
 lib.include(target)
 
 lib.check_devices()
@@ -179,15 +180,17 @@ if #lib.devices > 0 then
 		handle_pkgs(dev.options.packages or {})
 		handle_pkgs(site_packages(dev.image))
 
-		local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, profile)
-		lib.config(
-			'TARGET_DEVICE_' .. profile_config, true,
-			string.format("unable to enable device '%s'", profile)
-		)
-		lib.config(
-			'TARGET_DEVICE_PACKAGES_' .. profile_config,
-			table.concat(device_pkgs, ' ')
-		)
+		if env.GLUON_BUILDTYPE == 'gluon' then
+			local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, profile)
+			lib.config(
+				'TARGET_DEVICE_' .. profile_config, true,
+				string.format("unable to enable device '%s'", profile)
+			)
+			lib.config(
+				'TARGET_DEVICE_PACKAGES_' .. profile_config,
+				table.concat(device_pkgs, ' ')
+			)
+		end
 	end
 else
 	-- x86 fallback: no devices
