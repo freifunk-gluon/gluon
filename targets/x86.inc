@@ -22,11 +22,8 @@ packages {
 	'kmod-via-velocity',
 	'kmod-ath9k',
 	'kmod-gpio-button-hotplug',
-	'kmod-gpio-nct5104d',
 	'kmod-hwmon-core',
-	'kmod-leds-gpio',
-	'kmod-leds-apu2',
-	'kmod-sp5100_tco',
+	'kmod-sp5100-tco',
 	'kmod-usb-core',
 	'kmod-usb-ohci',
 	'kmod-usb2',
@@ -41,4 +38,11 @@ packages {
 	'kmod-mt76x2',
 	'kmod-mt7603',
 	'kmod-mt7615e',
+}
+
+defaults {
+	factory = '-squashfs-combined',
+	factory_ext = {'.img.gz', '.vmdk', '.vdi'},
+	sysupgrade = '-squashfs-combined',
+	sysupgrade_ext = '.img.gz',
 }

@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     file \
     git \
     subversion \
-    python \
+    python3 \
     build-essential \
     gawk \
     unzip \
@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libssl-dev \
     libelf-dev \
     wget \
+    rsync \
     time \
+    qemu-utils \
     ecdsautils \
     lua-check \
     shellcheck \

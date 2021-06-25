@@ -60,11 +60,6 @@ device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
 })
 
-device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s', {
-	factory = false,
-	packages = ATH10K_PACKAGES_QCA9887,
-})
-
 -- OCEDO
 
 device('ocedo-raccoon', 'ocedo_raccoon', {

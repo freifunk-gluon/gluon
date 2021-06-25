@@ -14,10 +14,10 @@ Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/batman-adv/patches/0034-batman-adv-Introduce-no-noflood-mark.patch b/batman-adv/patches/0034-batman-adv-Introduce-no-noflood-mark.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301e592b112
+index 0000000000000000000000000000000000000000..8dbde75343f04fb3a643e300856ecfac7dc23e32
 --- /dev/null
 +++ b/batman-adv/patches/0034-batman-adv-Introduce-no-noflood-mark.patch
-@@ -0,0 +1,167 @@
+@@ -0,0 +1,156 @@
 +From 25b21382238c783298c0d8defc8c739126c1b54d Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 +Date: Sat, 31 Mar 2018 03:36:19 +0200
@@ -51,11 +51,9 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + net/batman-adv/types.h          | 12 ++++++++++++
 + 4 files changed, 66 insertions(+)
 +
-+diff --git a/include/uapi/linux/batman_adv.h b/include/uapi/linux/batman_adv.h
-+index 67f46367..6fabb7aa 100644
 +--- a/include/uapi/linux/batman_adv.h
 ++++ b/include/uapi/linux/batman_adv.h
-+@@ -480,6 +480,18 @@ enum batadv_nl_attrs {
++@@ -481,6 +481,18 @@ enum batadv_nl_attrs {
 + 	 */
 + 	BATADV_ATTR_MULTICAST_FANOUT,
 + 
@@ -74,11 +72,9 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 	/* add attributes above here, update the policy in netlink.c */
 + 
 + 	/**
-+diff --git a/net/batman-adv/netlink.c b/net/batman-adv/netlink.c
-+index e1978bc5..3d2c147a 100644
 +--- a/net/batman-adv/netlink.c
 ++++ b/net/batman-adv/netlink.c
-+@@ -134,6 +134,8 @@ static const struct nla_policy batadv_netlink_policy[NUM_BATADV_ATTR] = {
++@@ -134,6 +134,8 @@ static const struct nla_policy batadv_ne
 + 	[BATADV_ATTR_AP_ISOLATION_ENABLED]	= { .type = NLA_U8 },
 + 	[BATADV_ATTR_ISOLATION_MARK]		= { .type = NLA_U32 },
 + 	[BATADV_ATTR_ISOLATION_MASK]		= { .type = NLA_U32 },
@@ -87,7 +83,7 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 	[BATADV_ATTR_BONDING_ENABLED]		= { .type = NLA_U8 },
 + 	[BATADV_ATTR_BRIDGE_LOOP_AVOIDANCE_ENABLED]	= { .type = NLA_U8 },
 + 	[BATADV_ATTR_DISTRIBUTED_ARP_TABLE_ENABLED]	= { .type = NLA_U8 },
-+@@ -286,6 +288,14 @@ static int batadv_netlink_mesh_fill(struct sk_buff *msg,
++@@ -286,6 +288,14 @@ static int batadv_netlink_mesh_fill(stru
 + 			bat_priv->isolation_mark_mask))
 + 		goto nla_put_failure;
 + 
@@ -102,7 +98,7 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 	if (nla_put_u8(msg, BATADV_ATTR_BONDING_ENABLED,
 + 		       !!atomic_read(&bat_priv->bonding)))
 + 		goto nla_put_failure;
-+@@ -466,6 +476,18 @@ static int batadv_netlink_set_mesh(struct sk_buff *skb, struct genl_info *info)
++@@ -466,6 +476,18 @@ static int batadv_netlink_set_mesh(struc
 + 		bat_priv->isolation_mark_mask = nla_get_u32(attr);
 + 	}
 + 
@@ -121,11 +117,9 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 	if (info->attrs[BATADV_ATTR_BONDING_ENABLED]) {
 + 		attr = info->attrs[BATADV_ATTR_BONDING_ENABLED];
 + 
-+diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
-+index c99facdb..4e71b9f3 100644
 +--- a/net/batman-adv/soft-interface.c
 ++++ b/net/batman-adv/soft-interface.c
-+@@ -176,6 +176,23 @@ static void batadv_interface_set_rx_mode(struct net_device *dev)
++@@ -175,6 +175,23 @@ static void batadv_interface_set_rx_mode
 + {
 + }
 + 
@@ -149,7 +143,7 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
 + 				       struct net_device *soft_iface)
 + {
-+@@ -326,6 +343,9 @@ static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
++@@ -325,6 +342,9 @@ send:
 + 		if (batadv_dat_snoop_outgoing_arp_request(bat_priv, skb))
 + 			brd_delay = msecs_to_jiffies(ARP_REQ_DELAY);
 + 
@@ -159,11 +153,9 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 		if (batadv_skb_head_push(skb, sizeof(*bcast_packet)) < 0)
 + 			goto dropped;
 + 
-+diff --git a/net/batman-adv/types.h b/net/batman-adv/types.h
-+index c0ded822..09c877fa 100644
 +--- a/net/batman-adv/types.h
 ++++ b/net/batman-adv/types.h
-+@@ -1599,6 +1599,18 @@ struct batadv_priv {
++@@ -1635,6 +1635,18 @@ struct batadv_priv {
 + 	 */
 + 	u32 isolation_mark_mask;
 + 
@@ -182,6 +174,3 @@ index 0000000000000000000000000000000000000000..2ccb6da270acf41e56f9a37801e23301
 + 	/** @bcast_seqno: last sent broadcast packet sequence number */
 + 	atomic_t bcast_seqno;
 + 
-+-- 
-+2.31.0
-+

@@ -8,10 +8,10 @@ Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/batctl/patches/0012-batctl-Add-noflood_mark-command.patch b/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b8f457120
+index 0000000000000000000000000000000000000000..1234c56cc0be080de8142f3a563cf4e070c4840a
 --- /dev/null
 +++ b/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
-@@ -0,0 +1,273 @@
+@@ -0,0 +1,226 @@
 +From c14abebbeb4af76600cd6eb508e5e4e38a436b2f Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 +Date: Fri, 26 Apr 2019 19:27:38 +0200
@@ -40,24 +40,20 @@ index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b
 + 5 files changed, 192 insertions(+)
 + create mode 100644 noflood_mark.c
 +
-+diff --git a/Makefile b/Makefile
-+index e3747a2..686de7e 100755
 +--- a/Makefile
 ++++ b/Makefile
-+@@ -61,6 +61,7 @@ $(eval $(call add_command,multicast_mode,y))
-+ $(eval $(call add_command,nc_nodes,y))
++@@ -69,6 +69,7 @@ $(eval $(call add_command,multicast_mode
 + $(eval $(call add_command,neighbors,y))
++ $(eval $(call add_command,neighbors_json,y))
 + $(eval $(call add_command,network_coding,y))
 ++$(eval $(call add_command,noflood_mark,y))
 + $(eval $(call add_command,orig_interval,y))
 + $(eval $(call add_command,originators,y))
-+ $(eval $(call add_command,ping,y))
-+diff --git a/README.rst b/README.rst
-+index 128f539..bc937d2 100644
++ $(eval $(call add_command,originators_json,y))
 +--- a/README.rst
 ++++ b/README.rst
-+@@ -582,6 +582,21 @@ Usage::
-+ * Example 4: ``batctl mark 0x0f``
++@@ -419,6 +419,21 @@ Example::
++ 
 + 
 + 
 ++batctl noflood_mark
@@ -76,13 +72,11 @@ index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b
 ++
 ++
 + batctl translocal
-+ =================
++ -----------------
 + 
-+diff --git a/batman_adv.h b/batman_adv.h
-+index 67f4636..6fabb7a 100644
 +--- a/batman_adv.h
 ++++ b/batman_adv.h
-+@@ -480,6 +480,18 @@ enum batadv_nl_attrs {
++@@ -481,6 +481,18 @@ enum batadv_nl_attrs {
 + 	 */
 + 	BATADV_ATTR_MULTICAST_FANOUT,
 + 
@@ -101,46 +95,9 @@ index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b
 + 	/* add attributes above here, update the policy in netlink.c */
 + 
 + 	/**
-+diff --git a/man/batctl.8 b/man/batctl.8
-+index d42b682..5489c2e 100644
-+--- a/man/batctl.8
-++++ b/man/batctl.8
-+@@ -124,6 +124,29 @@ If no parameter is given the current multicast fanout setting is displayed. Othe
-+ the multicast fanout. The multicast fanout defines the maximum number of packet copies that may be generated for a
-+ multicast-to-unicast conversion. Once this limit is exceeded distribution will fall back to broadcast.
-+ .br
-++.IP "\fBnoflood_mark\fP|\fBnf\fP"
-++If no parameter is given the current noflood mark value is displayed.
-++Otherwise the parameter is used to set or unset the noflood mark. The
-++noflood mark allows to prevent broadcast flooding of a frame which
-++was previously tagged via netfilter for instance. batman-adv will
-++then only forward a frame into the mesh if destined to a limited
-++number of destination nodes and drop the frame otherwise.
-++.br
-++The input is supposed to be of the form $value/$mask, where $value can be any
-++32bit long integer (expressed in decimal or hex base) and $mask is a generic
-++bitmask (expressed in hex base) that selects the bits to take into consideration
-++from $value. It is also possible to enter the input using only $value and in
-++this case the full bitmask is used by default.
-++
-++.br
-++.br
-++Example 1: 0x00000001/0xffffffff
-++.br
-++Example 2: 0x00040000/0xffff0000
-++.br
-++Example 3: 16 or 0x0F
-++.br
-++.br
-+ .IP "\fBloglevel\fP|\fBll\fP [\fBlevel\fP[ \fBlevel\fP[ \fBlevel\fP]] \fB...\fP]"
-+ If no parameter is given the current log level settings are displayed otherwise the parameter(s) is/are used to set the log
-+ level. Level 'none' disables all verbose logging. Level 'batman' enables messages related to routing / flooding / broadcasting.
-+diff --git a/noflood_mark.c b/noflood_mark.c
-+new file mode 100644
-+index 0000000..e89205c
 +--- /dev/null
 ++++ b/noflood_mark.c
-+@@ -0,0 +1,141 @@
++@@ -0,0 +1,140 @@
 ++// SPDX-License-Identifier: GPL-2.0
 ++/* Copyright (C) 2009-2019  B.A.T.M.A.N. contributors:
 ++ *
@@ -271,7 +228,6 @@ index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b
 ++}
 ++
 ++static struct settings_data batctl_settings_noflood_mark = {
-++	.sysfs_name = NULL,
 ++	.data = &noflood_mark,
 ++	.parse = parse_noflood_mark,
 ++	.netlink_get = get_noflood_mark,
@@ -282,6 +238,3 @@ index 0000000000000000000000000000000000000000..296f3c51b79333a8e96c340d151ba00b
 ++	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
 ++	      &batctl_settings_noflood_mark,
 ++	      "[mark]            \tdisplay or modify noflood_mark setting");
-+-- 
-+2.31.0
-+

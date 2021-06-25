@@ -1,4 +1,4 @@
-include 'brcm2708.inc'
+include 'bcm27xx.inc'
 
 device('raspberrypi-model-b', 'rpi', {
 	manifest_aliases = {

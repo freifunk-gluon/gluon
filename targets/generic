@@ -39,9 +39,6 @@ config('ALL_NONSHARED', true)
 config('PACKAGE_usbip', false) -- fails to build
 config('PACKAGE_kmod-jool', false) -- fails to build
 
-config('BUSYBOX_CUSTOM', true)
-config('BUSYBOX_CONFIG_FEATURE_PREFER_IPV4_ADDRESS', false)
-
 try_config('PACKAGE_ATH_DEBUG', true)
 
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
@@ -51,8 +48,8 @@ config('KERNEL_IPV6_MROUTE', false)
 
 config('COLLECT_KERNEL_DEBUG', true)
 
-try_config('TARGET_MULTI_PROFILE', true)
-try_config('TARGET_PER_DEVICE_ROOTFS', true)
+config('TARGET_MULTI_PROFILE', true)
+config('TARGET_PER_DEVICE_ROOTFS', true)
 
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
@@ -70,12 +67,16 @@ end
 config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 
 packages {
+	'-ca-bundle',
 	'-kmod-ipt-offload',
+	'-libustream-wolfssl',
+	'-libwolfssl',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
 	'-wpad-mini',
 	'-wpad-basic',
+	'-wpad-basic-wolfssl',
 	'gluon-core',
 	'ip6tables',
 }
