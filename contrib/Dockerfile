@@ -21,6 +21,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shellcheck \
   && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir /tmp/ec &&\
+  wget -O /tmp/ec/ec-linux-amd64.tar.gz https://github.com/editorconfig-checker/editorconfig-checker/releases/download/2.3.5/ec-linux-amd64.tar.gz &&\
+  tar -xvzf /tmp/ec/ec-linux-amd64.tar.gz &&\
+  mv bin/ec-linux-amd64 /usr/local/bin/ec &&\
+  rm -rf /tmp/ec
+
 RUN useradd -d /gluon gluon
 USER gluon
 
