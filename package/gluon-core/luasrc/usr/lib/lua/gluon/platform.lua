@@ -25,33 +25,7 @@ function M.match(target, subtarget, boards)
 end
 
 function M.is_outdoor_device()
-	if M.match('ar71xx', 'generic', {
-		'bullet-m',
-		'cpe210',
-		'cpe510',
-		'wbs210',
-		'wbs510',
-		'lbe-m5',
-		'loco-m-xw',
-		'nanostation-m',
-		'nanostation-m-xw',
-		'rocket-m',
-		'rocket-m-ti',
-		'rocket-m-xw',
-		'unifi-outdoor',
-		'unifi-outdoor-plus',
-	}) then
-		return true
-
-	elseif M.match('ar71xx', 'generic', {'unifiac-lite'}) and
-		M.get_model() == 'Ubiquiti UniFi-AC-MESH' then
-		return true
-
-	elseif M.match('ar71xx', 'generic', {'unifiac-pro'}) and
-		M.get_model() == 'Ubiquiti UniFi-AC-MESH-PRO' then
-		return true
-
-	elseif M.match('ath79', 'generic', {
+	if M.match('ath79', 'generic', {
 		'devolo,dvl1750x',
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',

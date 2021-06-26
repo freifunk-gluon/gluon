@@ -84,14 +84,14 @@ Next go back to the top-level Gluon directory and build Gluon::
 
     cd ..
     make update                        # Get other repositories used by Gluon
-    make GLUON_TARGET=ar71xx-generic   # Build Gluon
+    make GLUON_TARGET=ath79-generic   # Build Gluon
 
 In case of errors read the messages carefully and try to fix the stated issues
 (e.g. install missing tools not available or look for Troubleshooting_ in the wiki.
 
 .. _Troubleshooting: https://github.com/freifunk-gluon/gluon/wiki/Troubleshooting
 
-``ar71xx-generic`` is the most common target and will generate images for most of the supported hardware.
+``ath79-generic`` is the most common target and will generate images for most of the supported hardware.
 To see a complete list of supported targets, call ``make`` without setting ``GLUON_TARGET``.
 
 To build all targets use a loop like this::
@@ -124,7 +124,7 @@ Cleaning the build tree
 
 There are two levels of `make clean`::
 
-    make clean GLUON_TARGET=ar71xx-generic
+    make clean GLUON_TARGET=ath79-generic
 
 will ensure all packages are rebuilt for a single target. This is usually not
 necessary, but may fix certain kinds of build failures.

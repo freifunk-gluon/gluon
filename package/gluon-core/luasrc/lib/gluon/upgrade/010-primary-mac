@@ -71,40 +71,6 @@ end
 -- Entries are matched in the order they are listed
 local primary_addrs = {
 	{interface('lan'), {
-		{'ar71xx', 'generic', {
-			'archer-c5',
-			'archer-c58-v1',
-			'archer-c59-v1',
-			'archer-c60-v1',
-			'archer-c7',
-			'archer-c7-v4',
-			'archer-c7-v5',
-			'carambola2',
-			'koala',
-			'mr600',
-			'mr600v2',
-			'mr900',
-			'mr900v2',
-			'mr1750',
-			'mr1750v2',
-			'om2p',
-			'om2pv2',
-			'om2p-hs',
-			'om2p-hsv2',
-			'om2p-hsv3',
-			'om2p-lc',
-			'om5p',
-			'om5p-an',
-			'om5p-ac',
-			'om5p-acv2',
-			'unifi-outdoor-plus',
-			'unifiac-lite',
-			'unifiac-pro',
-		}},
-		{'ar71xx', 'mikrotik'},
-		{'ar71xx', 'nand', {
-			'hiveap-121',
-		}},
 		{'ath79', 'generic', {
 			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
@@ -136,14 +102,6 @@ local primary_addrs = {
 		{'x86'},
 	}},
 	{interface('wan'), {
-		{'ar71xx', 'generic', {
-			'a40',
-			'a60',
-			'archer-c25-v1',
-			'archer-c60-v2',
-			'om2pv4',
-			'om2p-hsv4',
-		}},
 		{'ipq40xx', 'generic', {
 			'linksys,ea6350v3',
 			'openmesh,a42',
@@ -158,11 +116,6 @@ local primary_addrs = {
 		}},
 	}},
 	{phy(1), {
-		{'ar71xx', 'generic', {
-			'tl-wdr3600',
-			'tl-wdr4300',
-			'tl-wr902ac-v1',
-		}},
 		{'ramips', 'mt7621', {
 			'dlink,dir-860l-b1',
 		}},

@@ -34,8 +34,8 @@ The ``tiny`` device-class contains devices with the following limitations:
 
 Adding profiles
 ---------------
-The vast majority of devices with ath9k WLAN is based on the ar71xx target of OpenWrt.
-If the hardware you want to add support for is ar71xx, adding a new profile
+The vast majority of devices with ath9k WLAN are based on the ath79 target of OpenWrt.
+If the hardware you want to add support for is ath79, adding a new profile
 is sufficient.
 
 Profiles are defined in ``targets/*`` in a shell-based DSL (so common shell
@@ -155,10 +155,7 @@ Build system support
 ''''''''''''''''''''
 
 A definition for the new target must be created under ``targets``, and it must be added
-to ``targets/targets.mk``. The ``GluonTarget`` macro takes one to three arguments:
-the target name, the Gluon subtarget name (if the target has subtargets), and the
-OpenWrt subtarget name (if it differs from the Gluon subtarget). The third argument
-can be used to define multiple Gluon targets with different configuration for the
-same OpenWrt target, like it is done for the ``ar71xx-tiny`` target.
+to ``targets/targets.mk``. The ``GluonTarget`` macro takes one to two arguments:
+the target name and the OpenWrt subtarget name.
 
 After this, is should be sufficient to call ``make GLUON_TARGET=<target>`` to build the images for the new target.
