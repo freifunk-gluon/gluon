@@ -20,17 +20,35 @@ local network_data = (board_data or {}).network
 
 local function iface_exists(ifaces)
 	if not ifaces then return nil end
+	local ifnames = table.concat(ifaces, ' ')
 
-	for iface in ifaces:gmatch('%S+') do
+	for _, iface in ipairs(ifaces) do
 		if unistd.access('/sys/class/net/' .. iface:gsub('%..*$', '')) then
-			return ifaces
+			return ifnames
 		end
 	end
 end
 
+local lan_data = network_data.lan or {}
+local wan_data = network_data.wan or {}
 
-local lan_ifname = iface_exists((network_data.lan or {}).device)
-local wan_ifname = iface_exists((network_data.wan or {}).device)
+local lan_interfaces = lan_data.ports
+local wan_interfaces = wan_data.ports
+
+-- In case we have a single port for either WAN or LAN,
+-- add it to the respective empty table, as devices and
+-- ports is XOR in board.json
+
+if lan_data.device ~= nil then
+	lan_interfaces = {lan_data.device}
+end
+
+if wan_data.device ~= nil then
+	wan_interfaces = {wan_data.device}
+end
+
+local lan_ifname = iface_exists(lan_interfaces)
+local wan_ifname = iface_exists(wan_interfaces)
 
 if platform.match('ar71xx', 'generic', {
 	'cpe210',
