@@ -32,20 +32,7 @@ end
 local lan_ifname = iface_exists((network_data.lan or {}).ifname)
 local wan_ifname = iface_exists((network_data.wan or {}).ifname)
 
-if platform.match('ar71xx', 'generic', {
-	'cpe210',
-	'cpe510',
-	'wbs210',
-	'wbs510',
-	'airgateway',
-	'nanostation-m',
-	'nanostation-m-xw',
-	'unifi-outdoor-plus',
-	'uap-pro',
-	'unifiac-pro',
-}) then
-	lan_ifname, wan_ifname = wan_ifname, lan_ifname
-elseif platform.match('lantiq') then
+if platform.match('lantiq') then
 	local switch_data = board_data.switch or {}
 	local switch0_data = switch_data.switch0 or {}
 	local roles_data = switch0_data.roles or {}
