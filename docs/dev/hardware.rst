@@ -34,7 +34,7 @@ The ``tiny`` device-class contains devices with the following limitations:
 
 Adding profiles
 ---------------
-The vast majority of devices with ath9k WLAN is based on the ath79 target of OpenWrt.
+The vast majority of devices with ath9k WLAN are based on the ath79 target of OpenWrt.
 If the hardware you want to add support for is ath79, adding a new profile
 is sufficient.
 
