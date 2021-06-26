@@ -29,8 +29,8 @@ local function iface_exists(ifaces)
 end
 
 
-local lan_ifname = iface_exists((network_data.lan or {}).ifname)
-local wan_ifname = iface_exists((network_data.wan or {}).ifname)
+local lan_ifname = iface_exists((network_data.lan or {}).device)
+local wan_ifname = iface_exists((network_data.wan or {}).device)
 
 if platform.match('ar71xx', 'generic', {
 	'cpe210',
