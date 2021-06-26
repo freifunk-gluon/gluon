@@ -102,7 +102,7 @@ opkg \: optional
 
     - ``%d`` is replaced by the OpenWrt distribution name ("openwrt")
     - ``%v`` is replaced by the OpenWrt version number (e.g. "17.01")
-    - ``%S`` is replaced by the target board (e.g. "ar71xx/generic")
+    - ``%S`` is replaced by the target board (e.g. "ath79/generic")
     - ``%A`` is replaced by the target architecture (e.g. "mips_24kc")
     - ``%GS`` is replaced by the Gluon site code (as specified in ``site.conf``)
     - ``%GV`` is replaced by the Gluon version
