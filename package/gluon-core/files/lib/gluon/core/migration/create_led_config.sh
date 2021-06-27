@@ -2,7 +2,7 @@
 
 CFG=/etc/board.json
 
-. /lib/functions/config-generate.sh
+. /bin/config_generate source-only
 
 json_init
 json_load "$(cat ${CFG})"
