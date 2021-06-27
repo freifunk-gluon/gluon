@@ -1,0 +1,17 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sun, 27 Jun 2021 12:33:36 +0200
+Subject: base-files: allow sourcing of config_generate
+
+diff --git a/package/base-files/files/bin/config_generate b/package/base-files/files/bin/config_generate
+index 0dca5549e8a91749217d959b543a16f1258b0af0..cc838d25e8acfa7cc0652c9801de795e497d3033 100755
+--- a/package/base-files/files/bin/config_generate
++++ b/package/base-files/files/bin/config_generate
+@@ -5,7 +5,7 @@ CFG=/etc/board.json
+ . /usr/share/libubox/jshn.sh
+ 
+ [ -s $CFG ] || /bin/board_detect || exit 1
+-[ -s /etc/config/network -a -s /etc/config/system ] && exit 0
++[ "$1" != "source-only" ] && [ -s /etc/config/network -a -s /etc/config/system ] && exit 0
+ 
+ generate_bridge() {
+ 	local name=$1
