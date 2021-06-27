@@ -13,7 +13,6 @@ You may obtain a copy of the License at
 local util = require 'gluon.util'
 local site = require 'gluon.site'
 
-local fcntl = require 'posix.fcntl'
 local unistd = require 'posix.unistd'
 local wait = require 'posix.sys.wait'
 
@@ -76,29 +75,12 @@ function pw2.cfgvalue()
 end
 
 local function set_password(password)
-	local inr, inw = unistd.pipe()
-	local pid = unistd.fork()
+	local policies = {[unistd.STDIN_FILENO]=util.PipePolicies.CREATE,
+			  [unistd.STDOUT_FILENO]=util.PipePolicies.DISCARD,
+			  [unistd.STDERR_FILENO]=util.PipePolicies.DISCARD}
 
-	if pid < 0 then
-		return false
-	elseif pid == 0 then
-		unistd.close(inw)
-
-		local null = fcntl.open('/dev/null', fcntl.O_WRONLY)
-		unistd.dup2(null, unistd.STDOUT_FILENO)
-		unistd.dup2(null, unistd.STDERR_FILENO)
-		if null > 2 then
-			unistd.close(null)
-		end
-
-		unistd.dup2(inr, unistd.STDIN_FILENO)
-		unistd.close(inr)
-
-		unistd.execp('passwd', {[0] = 'passwd'})
-		os.exit(127)
-	end
-
-	unistd.close(inr)
+	local pid, pipe = util.popen3(policies, 'passwd', {[0] = 'passwd'})
+	local inw = pipe[unistd.STDIN_FILENO]
 
 	unistd.write(inw, string.format('%s\n%s\n', password, password))
 	unistd.close(inw)
