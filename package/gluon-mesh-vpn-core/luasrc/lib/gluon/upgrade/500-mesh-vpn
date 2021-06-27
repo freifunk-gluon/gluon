@@ -54,6 +54,8 @@ if not uci:get('gluon', 'mesh_vpn') then
 	else
 		enabled = site.mesh_vpn.enabled(false)
 	end
+	-- wireguard is not listed here, as it didn't exist before the uci section
+	-- gluon.mesh_vpn was introduced. Therefore no migration is necessary.
 
 
 	local limit_enabled = tonumber((uci:get('simple-tc', 'mesh_vpn', 'enabled')))
