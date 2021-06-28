@@ -63,7 +63,9 @@ ipq40xx-generic
 * Aruba
 
   - AP-303
+  - AP-365
   - Instant On AP11
+  - Instant On AP17
 
 * AVM
 
