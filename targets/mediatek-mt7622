@@ -1,0 +1,3 @@
+device('ubiquiti-unifi-6-lr', 'ubnt_unifi-6-lr', {
+	factory = false,
+})
