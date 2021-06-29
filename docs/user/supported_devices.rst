@@ -123,6 +123,13 @@ lantiq-xway
 
   - DGN3500B [#lan_as_wan]_
 
+mediatek-mt7622
+---------------
+
+* Ubiquiti
+
+  - UniFi 6 LR
+
 mpc85xx-generic
 ---------------
 
