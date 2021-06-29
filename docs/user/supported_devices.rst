@@ -233,6 +233,7 @@ ramips-mt76x8
 * Xiaomi
 
   - Xiaomi Mi Router 4A (100M Edition)
+  - Xiaomi Mi Router 4C
 
 ramips-rt305x [#deprecated]_  [#device-class-tiny]_
 ---------------------------------------------------

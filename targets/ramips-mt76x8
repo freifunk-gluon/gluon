@@ -81,3 +81,7 @@ device('vocore2', 'vocore_vocore2', {
 device('xiaomi-mi-router-4a-100m-edition', 'xiaomi_mi-router-4a-100m', {
 	factory = false,
 })
+
+device('xiaomi-mi-router-4c', 'xiaomi_mi-router-4c', {
+	factory = false,
+})
