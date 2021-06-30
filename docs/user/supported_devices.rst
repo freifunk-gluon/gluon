@@ -249,12 +249,6 @@ ramips-mt76x8
 ramips-rt305x [#deprecated]_  [#device-class-tiny]_
 ---------------------------------------------------
 
-* A5-V11
-
-* D-Link
-
-  - DIR-615 (D1, D2, D3, D4, H1)
-
 * VoCore
 
   - VoCore (8M, 16M)
