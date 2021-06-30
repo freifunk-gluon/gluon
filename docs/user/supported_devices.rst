@@ -253,6 +253,13 @@ ramips-rt305x [#deprecated]_  [#device-class-tiny]_
 
   - VoCore (8M, 16M)
 
+rockchip-armv8
+--------------
+
+* FriendlyElec
+
+  - NanoPi R2S
+
 sunxi-cortexa7
 --------------
 
