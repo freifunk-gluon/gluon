@@ -8,7 +8,7 @@ PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-19.07
 PACKAGES_PACKAGES_COMMIT=476b8b82bb7447a1ed847c96d85de567e09cdb62
 
-PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_REPO=https://github.com/openwrt/routing.git
 PACKAGES_ROUTING_BRANCH=openwrt-19.07
 PACKAGES_ROUTING_COMMIT=101632e153b41238bc19dfd96ba2d23339dbcb76
 
