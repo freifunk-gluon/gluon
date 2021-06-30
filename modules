@@ -8,7 +8,7 @@ PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-21.02
 PACKAGES_PACKAGES_COMMIT=5fa605a1fa76bc68e3f70122713e592a1b25f068
 
-PACKAGES_ROUTING_REPO=https://github.com/openwrt-routing/packages.git
+PACKAGES_ROUTING_REPO=https://github.com/openwrt/routing.git
 PACKAGES_ROUTING_BRANCH=openwrt-21.02
 PACKAGES_ROUTING_COMMIT=2baff33918c089fd3744c7192f8ae7a29c47a8d7
 
