@@ -29,6 +29,13 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 })
 
 
+-- Tenbay
+
+device('tenbay-t-mb5eu-v01', 'tenbay_t-mb5eu-v01', {
+	factory = false,
+})
+
+
 -- Ubiquiti
 
 device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
