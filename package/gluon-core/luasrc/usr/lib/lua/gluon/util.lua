@@ -4,6 +4,7 @@ local posix_syslog = require 'posix.syslog'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
+local unistd = require 'posix.unistd'
 
 
 local M = {}
@@ -37,6 +38,10 @@ function M.contains(table, value)
 end
 
 function M.file_contains_line(path, value)
+	if not unistd.access(path) then
+		return false
+	end
+
 	for line in io.lines(path) do
 		if line == value then
 			return true
