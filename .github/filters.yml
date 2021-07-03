@@ -292,6 +292,16 @@
     "targets/targets.mk",
     "targets/bcm27xx.inc"
   ],
+  "kirkwood-generic": [
+    "targets/kirkwood-generic",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
     ".github/workflows/build-gluon.yml",
