@@ -1,0 +1,5 @@
+-- Linksys
+
+device('linksys_viper', 'linksys-viper', 'linksys_e4200', 'linksys-e4200' {
+	factory = false,
+})

@@ -102,6 +102,13 @@ ipq806x-generic
 
   - R7800
 
+kirkwood-generic
+---------------
+
+* Linksys
+
+  - E4200 (v2)
+
 lantiq-xrx200
 -------------
 
