@@ -85,3 +85,32 @@ Disable Mesh-on-LAN::
 Please note that this configuration has changed in Gluon 2016.1. Using
 the old commands on 2016.1 and later will break the corresponding options
 in the *Advanced settings*.
+
+Mesh on other interfaces
+========================
+In some cases you may want to mesh on more interfaces than only LAN or WAN.
+
+This is especially useful if you have multiple other nodes connected to a central node,
+and don't want them to mesh with each other, but only the central node.
+In this case, you may need to isolate them via VLANs on the device switch.
+
+Starting from Gluon 2020.2 it's possible to configure additional mesh-interfaces
+by adding an interface configuration with the proto ``gluon_wired``::
+
+  uci set network.mesh_add=interface
+  uci set network.mesh_add.proto=gluon_wired
+  uci set network.mesh_add.index=2
+  uci set network.mesh_add.disabled='0'
+  uci set network.mesh_add.transitive='1'
+  uci set network.mesh_add.ifname='eth2'
+
+``ifname`` is the mesh hardware-interface. This could be a VLAN.
+
+``index`` must be between 0 and 7, and is used to generate the used MAC.
+Be careful when selecting the index,
+see :ref:`MAC addresses <dev-mac-addresses>` for details.
+
+Before the changes take effect, the node needs a reboot or
+``gluon-reconfigure`` to update the firewall.
+
+This configuration should survive updates.
