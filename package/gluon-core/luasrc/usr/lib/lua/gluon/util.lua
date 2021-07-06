@@ -199,19 +199,18 @@ M.PipePolicies = {
 -- Execute a program found using command PATH search, like the shell.
 -- Return the pid, as well as the I/O streams as pipes or nil on error.
 function M.popen3(policies, path, ...)
-	local pipes = {}
 	local intern = {}
 	local extern = {}
 
 	for fd, policy in pairs(policies) do
 		if M.PipePolicies.CREATE==policy then
-			pipes[fd]={posix_unistd.pipe()}
+			local piper, pipew = posix_unistd.pipe()
 			if posix_unistd.STDIN_FILENO==fd then
-				intern[fd]=pipes[fd][1]
-				extern[fd]=pipes[fd][2]
+				intern[fd]=piper
+				extern[fd]=pipew
 			else
-				intern[fd]=pipes[fd][2]
-				extern[fd]=pipes[fd][1]
+				intern[fd]=pipew
+				extern[fd]=piper
 			end
 		end
 	end
