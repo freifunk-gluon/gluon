@@ -224,7 +224,7 @@ function M.popen3(policies, path, ...)
 	if pid == nil then
 		return nil
 	elseif pid == 0 then
-		local null=-1;
+		local null=-1
 		if M.contains(policies, M.PipePolicies.DISCARD) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_WRONLY)
