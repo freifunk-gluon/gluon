@@ -218,10 +218,10 @@ function M.popen3(policies, path, ...)
 	-- intern: r0, w1, w2
 	-- extern: w0, r1, r2
 
-	local pid = posix_unistd.fork()
+	local pid, errmsg, errnum = posix_unistd.fork()
 
 	if pid == nil then
-		return nil
+		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null=-1
 		if M.contains(policies, M.PipePolicies.DISCARD) then
