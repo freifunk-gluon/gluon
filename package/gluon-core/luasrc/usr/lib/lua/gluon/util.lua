@@ -203,9 +203,9 @@ function M.popen3(policies, path, ...)
 	local parentfds = {}
 
 	for fd, policy in pairs(policies) do
-		if M.PipePolicies.CREATE==policy then
+		if policy==M.PipePolicies.CREATE then
 			local piper, pipew = posix_unistd.pipe()
-			if posix_unistd.STDIN_FILENO==fd then
+			if fd==posix_unistd.STDIN_FILENO then
 				childfds[fd]=piper
 				parentfds[fd]=pipew
 			else
@@ -230,11 +230,11 @@ function M.popen3(policies, path, ...)
 		end
 
 		for fd, policy in pairs(policies) do
-			if M.PipePolicies.DISCARD==policy then
-				if posix_unistd.STDIN_FILENO~=fd then
+			if policy==M.PipePolicies.DISCARD then
+				if fd~=posix_unistd.STDIN_FILENO then
 					posix_unistd.dup2(null, fd)
 				end
-			elseif M.PipePolicies.CREATE==policy then
+			elseif policy==M.PipePolicies.CREATE then
 				-- only close these, if they exist
 				posix_unistd.close(parentfds[fd])
 				posix_unistd.dup2(childfds[fd], fd)
