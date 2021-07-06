@@ -203,14 +203,14 @@ function M.subprocess.popen(policies, path, ...)
 	local parentfds = {}
 
 	for fd, policy in pairs(policies) do
-		if policy==M.subprocess.PIPE then
+		if policy == M.subprocess.PIPE then
 			local piper, pipew = posix_unistd.pipe()
-			if fd==posix_unistd.STDIN_FILENO then
-				childfds[fd]=piper
-				parentfds[fd]=pipew
+			if fd == posix_unistd.STDIN_FILENO then
+				childfds[fd] = piper
+				parentfds[fd] = pipew
 			else
-				childfds[fd]=pipew
-				parentfds[fd]=piper
+				childfds[fd] = pipew
+				parentfds[fd] = piper
 			end
 		end
 	end
@@ -223,18 +223,18 @@ function M.subprocess.popen(policies, path, ...)
 	if pid == nil then
 		return nil, errmsg, errnum
 	elseif pid == 0 then
-		local null=-1
+		local null = -1
 		if M.contains(policies, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_WRONLY)
 		end
 
 		for fd, policy in pairs(policies) do
-			if policy==M.subprocess.DEVNULL then
-				if fd~=posix_unistd.STDIN_FILENO then
+			if policy == M.subprocess.DEVNULL then
+				if fd ~= posix_unistd.STDIN_FILENO then
 					posix_unistd.dup2(null, fd)
 				end
-			elseif policy==M.subprocess.PIPE then
+			elseif policy == M.subprocess.PIPE then
 				-- only close these, if they exist
 				posix_unistd.close(parentfds[fd])
 				posix_unistd.dup2(childfds[fd], fd)
