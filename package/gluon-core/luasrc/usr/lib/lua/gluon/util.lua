@@ -199,24 +199,24 @@ M.PipePolicies = {
 -- Execute a program found using command PATH search, like the shell.
 -- Return the pid, as well as the I/O streams as pipes or nil on error.
 function M.popen3(policies, path, ...)
-	local intern = {}
-	local extern = {}
+	local childfds = {}
+	local parentfds = {}
 
 	for fd, policy in pairs(policies) do
 		if M.PipePolicies.CREATE==policy then
 			local piper, pipew = posix_unistd.pipe()
 			if posix_unistd.STDIN_FILENO==fd then
-				intern[fd]=piper
-				extern[fd]=pipew
+				childfds[fd]=piper
+				parentfds[fd]=pipew
 			else
-				intern[fd]=pipew
-				extern[fd]=piper
+				childfds[fd]=pipew
+				parentfds[fd]=piper
 			end
 		end
 	end
 
-	-- intern: r0, w1, w2
-	-- extern: w0, r1, r2
+	-- childfds: r0, w1, w2
+	-- parentfds: w0, r1, r2
 
 	local pid, errmsg, errnum = posix_unistd.fork()
 
@@ -236,10 +236,10 @@ function M.popen3(policies, path, ...)
 				end
 			elseif M.PipePolicies.CREATE==policy then
 				-- only close these, if they exist
-				posix_unistd.close(extern[fd])
-				posix_unistd.dup2(intern[fd], fd)
+				posix_unistd.close(parentfds[fd])
+				posix_unistd.dup2(childfds[fd], fd)
 				-- close all the dups
-				posix_unistd.close(intern[fd])
+				posix_unistd.close(childfds[fd])
 			end
 		end
 
@@ -252,10 +252,10 @@ function M.popen3(policies, path, ...)
 		posix_unistd._exit(127)
 	end
 
-	for _, v in pairs(intern) do
+	for _, v in pairs(childfds) do
 		posix_unistd.close(v)
 	end
 
-	return pid, extern
+	return pid, parentfds
 end
 return M
