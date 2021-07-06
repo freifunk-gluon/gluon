@@ -190,20 +190,20 @@ function M.log(message, verbose)
 	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
 end
 
-M.PipePolicies = {
-	DISCARD=-1,
-	INHERIT=0,
-	CREATE=1
-}
+M.subprocess = {}
+
+M.subprocess.DEVNULL = -1
+M.subprocess.INHERIT = nil
+M.subprocess.PIPE = 1
 
 -- Execute a program found using command PATH search, like the shell.
 -- Return the pid, as well as the I/O streams as pipes or nil on error.
-function M.popen3(policies, path, ...)
+function M.subprocess.popen(policies, path, ...)
 	local childfds = {}
 	local parentfds = {}
 
 	for fd, policy in pairs(policies) do
-		if policy==M.PipePolicies.CREATE then
+		if policy==M.subprocess.PIPE then
 			local piper, pipew = posix_unistd.pipe()
 			if fd==posix_unistd.STDIN_FILENO then
 				childfds[fd]=piper
@@ -224,17 +224,17 @@ function M.popen3(policies, path, ...)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null=-1
-		if M.contains(policies, M.PipePolicies.DISCARD) then
+		if M.contains(policies, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_WRONLY)
 		end
 
 		for fd, policy in pairs(policies) do
-			if policy==M.PipePolicies.DISCARD then
+			if policy==M.subprocess.DEVNULL then
 				if fd~=posix_unistd.STDIN_FILENO then
 					posix_unistd.dup2(null, fd)
 				end
-			elseif policy==M.PipePolicies.CREATE then
+			elseif policy==M.subprocess.PIPE then
 				-- only close these, if they exist
 				posix_unistd.close(parentfds[fd])
 				posix_unistd.dup2(childfds[fd], fd)
