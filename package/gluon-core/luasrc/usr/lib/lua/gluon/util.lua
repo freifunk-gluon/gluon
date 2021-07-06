@@ -221,7 +221,7 @@ function M.popen3(policies, path, ...)
 
 	local pid = posix_unistd.fork()
 
-	if pid < 0 then
+	if pid == nil then
 		return nil
 	elseif pid == 0 then
 		local null=-1;
