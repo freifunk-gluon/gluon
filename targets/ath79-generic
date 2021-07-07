@@ -72,6 +72,13 @@ device('plasma-cloud-pa300', 'plasmacloud_pa300')
 
 device('plasma-cloud-pa300e', 'plasmacloud_pa300e')
 
+
+-- Siemens
+
+device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
+	factory = false,
+})
+
 -- TP-Link
 
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {

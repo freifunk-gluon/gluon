@@ -26,6 +26,10 @@ ath79-generic
   - PA300
   - PA300E
 
+* Siemens
+
+  - WS-AP3610
+
 * TP-Link
 
   - Archer C6 (v2)
