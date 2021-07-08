@@ -1,6 +1,8 @@
 need_string_match(in_domain({'node_prefix6'}), '^[%x:]+/64$')
 need_string_match(in_domain({'node_client_prefix6'}), '^[%x:]+/64$')
 
+need_string_match(in_domain({'clat_range'}), '^[%x:]+/48$', false)
+
 need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 need_string_match(in_domain({'next_node', 'ip4'}), '^%d+.%d+.%d+.%d+$', false)
 

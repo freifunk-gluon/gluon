@@ -1,0 +1,39 @@
+#!/usr/bin/lua
+local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
+local uci = require('simple-uci').cursor()
+
+local f = io.open("/etc/iproute2/rt_tables", "r")
+if f then
+	if not f:read("*a"):find("10\tclat") then
+		f:close()
+		f = io.open("/etc/iproute2/rt_tables", "a")
+		if f then
+			f:write("\n10\tclat\n")
+		end
+	end
+	f:close()
+end
+
+local plat_prefix = uci:get('network', 'plat', 'local_v6') or "64:ff9b::/96"
+
+uci:set('network', 'local_node', 'ip4table', 'clat')
+
+local appendix = sysconfig.primary_mac:gsub('%:', '')
+appendix = string.format('%x:%x:%x', tonumber(appendix:sub(1, 4), 16),
+                                     tonumber(appendix:sub(5, 8), 16),
+                                     tonumber(appendix:sub(9, 12), 16))
+local clat_prefix = string.format('%s%s::/96', site.clat_range():gsub(':/.+', ''), appendix)
+
+uci:delete('network', 'clat')
+uci:section('network', 'interface', 'clat', {
+	proto = '464xlatclat',
+	local_v4 = site.prefix4(),
+	local_v6 = clat_prefix,
+	remote_v6 = plat_prefix,
+	zone = "local_client",
+	zone4 = "local_client",
+	ip4table = "clat",
+	local_ip = site.next_node.ip4() .. '/32'
+})
+uci:save('network')
