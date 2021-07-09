@@ -35,6 +35,10 @@ device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
 	factory = false,
 })
 
+device('xiaomi-mir3g', 'xiaomi_mir4g', {
+	factory = false,
+})
+
 
 -- ZBT
 

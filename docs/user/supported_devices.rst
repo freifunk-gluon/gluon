@@ -213,6 +213,7 @@ ramips-mt7621
   
 * Xiaomi
 
+  - Xiaomi MiWiFi 3G (v1)
   - Xiaomi Mi Router 4A (Gigabit Edition)
 
 ramips-mt76x8
