@@ -2,16 +2,51 @@ local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
 local util = require 'gluon.util'
 
+local unistd = require 'posix.unistd'
+local dirent = require 'posix.dirent'
+
 
 local M = {}
 
 local function find_phy_by_path(path)
-	local phy = util.glob('/sys/devices/' .. path .. '/ieee80211/phy*')[1]
-		or util.glob('/sys/devices/platform/' .. path .. '/ieee80211/phy*')[1]
+	local phy_path, phy_offset
+	-- Special handling required for multi-phy devices
+	if string.match(path, '+%d$') then
+		phy_path, phy_offset = string.match(path, "([^,]+)+(%d)$")
 
-	if phy then
-		return phy:match('([^/]+)$')
+		-- The UCI radio path is split into the path and a PHY offset,
+		-- which is incremented for each additional PHY available on
+		-- the device.
+
+		phy_idx = phy_offset
+	else
+		phy_path = path
+		phy_offset = 0
 	end
+
+	-- Find the PHY path. Either it's located at /sys/devices or /sys/devices/platform
+	local path_prefix = ''
+	if not unistd.access('/sys/devices/' .. phy_path .. '/ieee80211') then
+		path_prefix = 'platform/'
+	end
+
+	-- Get all available PHYs of the device and dertermine the one with the lowest index
+	local phy_names = dirent.dir('/sys/devices/' .. path_prefix .. phy_path .. '/ieee80211')
+	local lowest_phy = nil
+	for _, v in ipairs(phy_names) do
+		local phy_idx = v:match('(%d)$')
+		phy_idx = tonumber(phy_idx)
+
+		if phy_idx ~= nil and (lowest_phy == nil or lowest_phy > phy_idx) then
+			lowest_phy = phy_idx
+		end
+	end
+
+	if lowest_phy == nil then
+		return nil
+	end
+
+	return 'phy' .. lowest_phy + phy_offset
 end
 
 local function find_phy_by_macaddr(macaddr)
