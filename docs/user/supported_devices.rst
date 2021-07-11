@@ -250,13 +250,6 @@ ramips-mt76x8
   - Xiaomi Mi Router 4A (100M Edition)
   - Xiaomi Mi Router 4C
 
-ramips-rt305x [#deprecated]_  [#device-class-tiny]_
----------------------------------------------------
-
-* VoCore
-
-  - VoCore (8M, 16M)
-
 rockchip-armv8
 --------------
 
@@ -298,10 +291,6 @@ See also: :doc:`x86`
 
 Footnotes
 ---------
-
-.. [#deprecated]
-  The device or target is reaching its end of life soon. This means that support
-  in the next major release of Gluon is doubtful.
 
 .. [#device-class-tiny]
   These devices only support a subset of Gluons capabilities due to flash or memory
