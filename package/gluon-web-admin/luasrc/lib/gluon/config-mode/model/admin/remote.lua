@@ -12,6 +12,7 @@ You may obtain a copy of the License at
 
 local util = require 'gluon.util'
 local site = require 'gluon.site'
+local sp = util.subprocess
 
 local unistd = require 'posix.unistd'
 local wait = require 'posix.sys.wait'
@@ -75,12 +76,12 @@ function pw2.cfgvalue()
 end
 
 local function set_password(password)
-	local options = {[unistd.STDIN_FILENO] = util.subprocess.PIPE,
-			 [unistd.STDOUT_FILENO] = util.subprocess.DEVNULL,
-			 [unistd.STDERR_FILENO] = util.subprocess.DEVNULL}
+	local options = {stdin = sp.PIPE,
+			 stdout = sp.DEVNULL,
+			 stderr = sp.DEVNULL}
 
-	local pid, pipe = util.subprocess.popen('passwd', {[0] = 'passwd'}, options)
-	local inw = pipe[unistd.STDIN_FILENO]
+	local pid, pipe = sp.popen('passwd', {[0] = 'passwd'}, options)
+	local inw = pipe["stdin"]
 
 	unistd.write(inw, string.format('%s\n%s\n', password, password))
 	unistd.close(inw)
