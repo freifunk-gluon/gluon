@@ -226,14 +226,12 @@ function M.subprocess.popen(policies, path, ...)
 		local null = -1
 		if M.contains(policies, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
-			null = posix_fcntl.open('/dev/null', posix_fcntl.O_WRONLY)
+			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
 		end
 
 		for fd, policy in pairs(policies) do
 			if policy == M.subprocess.DEVNULL then
-				if fd ~= posix_unistd.STDIN_FILENO then
-					posix_unistd.dup2(null, fd)
-				end
+				posix_unistd.dup2(null, fd)
 			elseif policy == M.subprocess.PIPE then
 				-- only close these, if they exist
 				posix_unistd.close(parentfds[fd])
