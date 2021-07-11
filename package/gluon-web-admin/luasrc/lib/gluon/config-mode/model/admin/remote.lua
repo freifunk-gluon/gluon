@@ -75,11 +75,11 @@ function pw2.cfgvalue()
 end
 
 local function set_password(password)
-	local policies = {[unistd.STDIN_FILENO] = util.subprocess.PIPE,
-			  [unistd.STDOUT_FILENO] = util.subprocess.DEVNULL,
-			  [unistd.STDERR_FILENO] = util.subprocess.DEVNULL}
+	local options = {[unistd.STDIN_FILENO] = util.subprocess.PIPE,
+			 [unistd.STDOUT_FILENO] = util.subprocess.DEVNULL,
+			 [unistd.STDERR_FILENO] = util.subprocess.DEVNULL}
 
-	local pid, pipe = util.subprocess.popen(policies, 'passwd', {[0] = 'passwd'})
+	local pid, pipe = util.subprocess.popen('passwd', {[0] = 'passwd'}, options)
 	local inw = pipe[unistd.STDIN_FILENO]
 
 	unistd.write(inw, string.format('%s\n%s\n', password, password))
