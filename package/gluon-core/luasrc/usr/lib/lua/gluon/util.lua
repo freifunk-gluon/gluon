@@ -198,12 +198,12 @@ M.subprocess.PIPE = 1
 
 -- Execute a program found using command PATH search, like the shell.
 -- Return the pid, as well as the I/O streams as pipes or nil on error.
-function M.subprocess.popen(policies, path, ...)
+function M.subprocess.popen(path, argt, options)
 	local childfds = {}
 	local parentfds = {}
 
-	for fd, policy in pairs(policies) do
-		if policy == M.subprocess.PIPE then
+	for fd, option in pairs(options) do
+		if option == M.subprocess.PIPE then
 			local piper, pipew = posix_unistd.pipe()
 			if fd == posix_unistd.STDIN_FILENO then
 				childfds[fd] = piper
@@ -224,15 +224,15 @@ function M.subprocess.popen(policies, path, ...)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null = -1
-		if M.contains(policies, M.subprocess.DEVNULL) then
+		if M.contains(options, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
 		end
 
-		for fd, policy in pairs(policies) do
-			if policy == M.subprocess.DEVNULL then
+		for fd, option in pairs(options) do
+			if option == M.subprocess.DEVNULL then
 				posix_unistd.dup2(null, fd)
-			elseif policy == M.subprocess.PIPE then
+			elseif option == M.subprocess.PIPE then
 				-- only close these, if they exist
 				posix_unistd.close(parentfds[fd])
 				posix_unistd.dup2(childfds[fd], fd)
@@ -246,7 +246,7 @@ function M.subprocess.popen(policies, path, ...)
 			posix_unistd.close(null)
 		end
 
-		posix_unistd.execp(path, ...)
+		posix_unistd.execp(path, argt)
 		posix_unistd._exit(127)
 	end
 
