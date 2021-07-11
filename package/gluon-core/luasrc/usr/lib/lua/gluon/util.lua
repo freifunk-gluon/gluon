@@ -202,15 +202,15 @@ function M.subprocess.popen(path, argt, options)
 	local childfds = {}
 	local parentfds = {}
 
-	for fd, option in pairs(options) do
+	for iostream, option in pairs(options) do
 		if option == M.subprocess.PIPE then
 			local piper, pipew = posix_unistd.pipe()
-			if fd == posix_unistd.STDIN_FILENO then
-				childfds[fd] = piper
-				parentfds[fd] = pipew
+			if iostream == "stdin" then
+				childfds[iostream] = piper
+				parentfds[iostream] = pipew
 			else
-				childfds[fd] = pipew
-				parentfds[fd] = piper
+				childfds[iostream] = pipew
+				parentfds[iostream] = piper
 			end
 		end
 	end
@@ -224,20 +224,21 @@ function M.subprocess.popen(path, argt, options)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null = -1
+		local stdiostreams = {["stdin"] = 0, ["stdout"] = 1, ["stderr"] = 2}
 		if M.contains(options, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
 		end
 
-		for fd, option in pairs(options) do
+		for iostream, option in pairs(options) do
 			if option == M.subprocess.DEVNULL then
-				posix_unistd.dup2(null, fd)
+				posix_unistd.dup2(null, stdiostreams[iostream])
 			elseif option == M.subprocess.PIPE then
 				-- only close these, if they exist
-				posix_unistd.close(parentfds[fd])
-				posix_unistd.dup2(childfds[fd], fd)
+				posix_unistd.close(parentfds[iostream])
+				posix_unistd.dup2(childfds[iostream], stdiostreams[iostream])
 				-- close all the dups
-				posix_unistd.close(childfds[fd])
+				posix_unistd.close(childfds[iostream])
 			end
 		end
 
