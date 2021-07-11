@@ -4,7 +4,7 @@ PKG_FILE_DEPENDS += $(GLUON_MK)
 PKG_BUILD_DEPENDS += luasrcdiet/host
 
 ifneq ($(wildcard ./luasrc/.),)
-	PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
+  PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
 endif
 
 ifneq ($(wildcard ./src/respondd.c),)
