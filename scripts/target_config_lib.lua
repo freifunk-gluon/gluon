@@ -151,13 +151,6 @@ lib.include(target)
 
 lib.check_devices()
 
-if not lib.opkg then
-	lib.config('SIGNED_PACKAGES', false)
-	lib.config('CLEAN_IPKG', true)
-	lib.config('ALL_NONSHARED', false)
-	lib.packages {'-opkg'}
-end
-
 if #lib.devices > 0 then
 	handle_target_pkgs(lib.target_packages)
 

@@ -83,7 +83,7 @@ lib.exec {'cp', kernel_debug_source, kernel_debug_dest}
 
 
 -- Copy opkg repo
-if lib.opkg and (env.GLUON_DEVICES or '') == '' then
+if (env.GLUON_DEVICES or '') == '' then
 	local package_prefix = string.format('gluon-%s-%s', lib.site_code, env.GLUON_RELEASE)
 	local function dest_dir(prefix)
 		return env.GLUON_PACKAGEDIR..'/'..prefix..'/'..bindir
