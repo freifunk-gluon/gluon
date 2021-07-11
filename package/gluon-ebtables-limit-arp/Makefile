@@ -8,10 +8,7 @@ include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
   TITLE:=Ebtables limiter for ARP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_LIMIT \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_MARK \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_BRIDGE_EBT_MARK_T
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-limit-arp/description
