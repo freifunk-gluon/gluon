@@ -100,4 +100,8 @@ function M.preserve_channels(uci)
 	return uci:get_first('gluon-core', 'wireless', 'preserve_channels')
 end
 
+function M.site_supports_outdoor_mode()
+	return site.wifi5.outdoor_chanlist() ~= nil
+end
+
 return M
