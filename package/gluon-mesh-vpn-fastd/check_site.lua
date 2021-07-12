@@ -1,5 +1,5 @@
 local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac', 'null+salsa2012+umac', 'null'}
-need_array_of({'mesh_vpn', 'fastd', 'methods'}, fastd_methods)
+need_array_of(in_site_or_domain({'mesh_vpn', 'fastd', 'methods'}), fastd_methods)
 need_boolean(in_site({'mesh_vpn', 'fastd', 'configurable'}), false)
 
 need_one_of(in_site({'mesh_vpn', 'fastd', 'syslog_level'}),
@@ -20,4 +20,4 @@ local function check_group(k)
 	need_table(extend(k, {'groups'}), check_group, false)
 end
 
-need_table({'mesh_vpn', 'fastd', 'groups'}, check_group)
+need_table(in_site_or_domain({'mesh_vpn', 'fastd', 'groups'}), check_group)

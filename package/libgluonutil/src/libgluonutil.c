@@ -253,6 +253,11 @@ bool gluonutil_has_domains(void) {
 	return (access("/lib/gluon/domains/", F_OK) == 0);
 }
 
+bool gluonutil_has_custom(void) {
+	return (access("/lib/gluon/custom.json", F_OK) == 0);
+}
+
+
 char * gluonutil_get_domain(void) {
 	if (!gluonutil_has_domains())
 		return NULL;
@@ -328,33 +333,45 @@ char * gluonutil_get_primary_domain(void) {
 
 struct json_object * gluonutil_load_site_config(void) {
 	char *domain_code = NULL;
-	struct json_object *site = NULL, *domain = NULL;
+	struct json_object *site = NULL, *domain = NULL, *custom = NULL;
 
 	site = json_object_from_file("/lib/gluon/site.json");
 	if (!site)
 		return NULL;
 
-	if (!gluonutil_has_domains())
-		return site;
+	if (gluonutil_has_domains()) {
+		domain_code = gluonutil_get_domain();
+		if (!domain_code)
+			goto err;
 
-	domain_code = gluonutil_get_domain();
-	if (!domain_code)
-		goto err;
+		{
+			const char *domain_path_fmt = "/lib/gluon/domains/%s.json";
+			char domain_path[strlen(domain_path_fmt) + strlen(domain_code)];
+			snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
+			free(domain_code);
 
-	{
-		const char *domain_path_fmt = "/lib/gluon/domains/%s.json";
-		char domain_path[strlen(domain_path_fmt) + strlen(domain_code)];
-		snprintf(domain_path, sizeof(domain_path), domain_path_fmt, domain_code);
-		free(domain_code);
+			domain = json_object_from_file(domain_path);
+		}
+		if (!domain)
+			goto err;
 
-		domain = json_object_from_file(domain_path);
+		site = merge_json(site, domain);
 	}
-	if (!domain)
-		goto err;
 
-	return merge_json(site, domain);
+	if (gluonutil_has_custom()) {
+		custom = json_object_from_file("/lib/gluon/custom.json");
+		if (!custom)
+			goto err;
+
+		site = merge_json(site, custom);
+	}
+
+	return site;
 
 err:
+	if (domain)
+		json_object_put(domain);
+
 	json_object_put(site);
 	return NULL;
 }

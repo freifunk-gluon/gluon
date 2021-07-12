@@ -4,6 +4,7 @@ local env = lib.env
 local target = env.GLUON_TARGET
 
 assert(target)
+assert(env.GLUON_IMAGEBUILDERDIR)
 assert(env.GLUON_IMAGEDIR)
 assert(env.GLUON_PACKAGEDIR)
 
@@ -27,6 +28,7 @@ end
 mkdir(env.GLUON_IMAGEDIR..'/factory')
 mkdir(env.GLUON_IMAGEDIR..'/sysupgrade')
 mkdir(env.GLUON_IMAGEDIR..'/other')
+mkdir(env.GLUON_IMAGEBUILDERDIR)
 mkdir(env.GLUON_DEBUGDIR)
 
 
@@ -80,6 +82,22 @@ local kernel_debug_dest = string.format('%s/gluon-%s-%s-%s-kernel-debug.tar.zst'
         env.GLUON_RELEASE,
         target)
 lib.exec {'cp', kernel_debug_source, kernel_debug_dest}
+
+
+-- copy imagebuilder
+local imagebuilder_glob = string.format('%s/gluon-\0-imagebuilder-%s.tar.xz',
+        env.GLUON_IMAGEBUILDERDIR,
+        target)
+lib.exec {'rm', '-f', imagebuilder_glob}
+local imagebuilder_source = string.format('openwrt/bin/targets/%s/openwrt-imagebuilder-%s.Linux-x86_64.tar.xz',
+        bindir,
+        target)
+local imagebuilder_dest = string.format('%s/gluon-%s-%s-imagebuilder-%s.tar.xz',
+        env.GLUON_IMAGEBUILDERDIR,
+        lib.site_code,
+        env.GLUON_RELEASE,
+        target)
+lib.exec {'cp', imagebuilder_source, imagebuilder_dest}
 
 
 -- Copy opkg repo

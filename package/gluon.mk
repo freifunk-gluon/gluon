@@ -20,8 +20,24 @@ shell-unescape = $(subst @1,@,$(subst @2,$(newline),$(1)))
 shell-verbatim = $(call shell-unescape,$(call shell-escape,$(1)))
 
 
+# This will be executed during opkg package installation during the normal build
+# and also in imagebuilder builds. Therefore we differentiate here with GLUON_DIR,
+# where the gluon scripts are located:
+# - In the normal gluon build, they are located in $(TOPDIR)/../scripts/
+# - In the imagebuilder, the directory scripts/ from the gluon is copied into
+#   the imagebuilder under gluon/scripts/. Therefore the scripts are located in
+#   $(TOPDIR)/gluon/scripts.
+# Furthermore we need to set the LUA_CPATH variable. This would not be necessary
+# for the normal gluon build but is necessary for the imagebuilder.
+# Note that all variables in GluonCheckSite except for $(1) are expanded when
+# opkg calls the post-install scripts, not during the package build.
 define GluonCheckSite
-[ -z "$$IPKG_INSTROOT" ] || "${TOPDIR}/staging_dir/hostpkg/bin/lua" "${TOPDIR}/../scripts/check_site.lua" <<'END__GLUON__CHECK__SITE'
+if [ -d "$${TOPDIR}/gluon" ]; then
+	GLUON_DIR="$${TOPDIR}/gluon"
+else
+	GLUON_DIR="$${TOPDIR}/.."
+fi
+[ -z "$$IPKG_INSTROOT" ] || LUA_CPATH="$${TOPDIR}/staging_dir/hostpkg/lib/lua/5.1/?.so" "$${TOPDIR}/staging_dir/hostpkg/bin/lua" "$${GLUON_DIR}/scripts/check_site.lua" <<'END__GLUON__CHECK__SITE'
 $(call shell-verbatim,cat '$(1)')
 END__GLUON__CHECK__SITE
 endef
