@@ -200,9 +200,10 @@ M.subprocess.PIPE = 1
 function M.subprocess.popen(path, argt, options)
 	local childfds = {}
 	local parentfds = {}
+	local stdiostreams = {stdin = 0, stdout = 1, stderr = 2}
 
-	for iostream, option in pairs(options) do
-		if option == M.subprocess.PIPE then
+	for iostream in pairs(stdiostreams) do
+		if options[iostream] == M.subprocess.PIPE then
 			local piper, pipew = posix_unistd.pipe()
 			if iostream == "stdin" then
 				childfds[iostream] = piper
@@ -223,13 +224,13 @@ function M.subprocess.popen(path, argt, options)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null = -1
-		local stdiostreams = {stdin = 0, stdout = 1, stderr = 2}
 		if M.contains(options, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
 		end
 
-		for iostream, option in pairs(options) do
+		for iostream in pairs(stdiostreams) do
+			local option = options[iostream]
 			if option == M.subprocess.DEVNULL then
 				posix_unistd.dup2(null, stdiostreams[iostream])
 			elseif option == M.subprocess.PIPE then
