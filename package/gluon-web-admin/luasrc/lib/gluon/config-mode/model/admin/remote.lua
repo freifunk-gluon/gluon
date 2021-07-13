@@ -80,7 +80,7 @@ local function set_password(password)
 			 stdout = sp.DEVNULL,
 			 stderr = sp.DEVNULL}
 
-	local pid, pipe = sp.popen('passwd', {[0] = 'passwd'}, options)
+	local pid, pipe = sp.popen('passwd', {}, options)
 	local inw = pipe["stdin"]
 
 	unistd.write(inw, string.format('%s\n%s\n', password, password))
