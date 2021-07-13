@@ -224,7 +224,7 @@ function M.subprocess.popen(path, argt, options)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null = -1
-		local stdiostreams = {["stdin"] = 0, ["stdout"] = 1, ["stderr"] = 2}
+		local stdiostreams = {stdin = 0, stdout = 1, stderr = 2}
 		if M.contains(options, M.subprocess.DEVNULL) then
 			-- only open, if there's anything to discard
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
