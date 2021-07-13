@@ -193,7 +193,6 @@ end
 M.subprocess = {}
 
 M.subprocess.DEVNULL = -1
-M.subprocess.INHERIT = nil
 M.subprocess.PIPE = 1
 
 -- Execute a program found using command PATH search, like the shell.
