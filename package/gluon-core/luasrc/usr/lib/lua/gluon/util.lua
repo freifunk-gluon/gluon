@@ -190,6 +190,13 @@ function M.log(message, verbose)
 	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
 end
 
+-- Blindly close the file descriptors in a given table.
+local function close_fds(descriptors)
+	for _, fd in pairs(descriptors) do
+		posix_unistd.close(fd)
+	end
+end
+
 M.subprocess = {}
 
 M.subprocess.DEVNULL = -1
@@ -221,6 +228,8 @@ function M.subprocess.popen(path, argt, options)
 	local pid, errmsg, errnum = posix_unistd.fork()
 
 	if pid == nil then
+		close_fds(childfds)
+		close_fds(parentfds)
 		return nil, errmsg, errnum
 	elseif pid == 0 then
 		local null = -1
@@ -251,9 +260,7 @@ function M.subprocess.popen(path, argt, options)
 		posix_unistd._exit(127)
 	end
 
-	for _, v in pairs(childfds) do
-		posix_unistd.close(v)
-	end
+	close_fds(childfds)
 
 	return pid, parentfds
 end
