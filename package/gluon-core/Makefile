@@ -22,7 +22,9 @@ define Package/gluon-core/description
 endef
 
 define Package/gluon-core/config
-        source "$(SOURCE)/Config.in"
+config GLUON_MINIFY
+	bool "Minify Gluon scripts"
+	default y
 endef
 
 define Package/gluon-core/install

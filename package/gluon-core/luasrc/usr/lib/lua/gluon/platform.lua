@@ -44,11 +44,6 @@ function M.is_outdoor_device()
 end
 
 function M.device_supports_wpa3()
-	-- rt2x00 crashes when enabling WPA3 personal / OWE VAP
-	if M.match('ramips', 'rt305x') then
-		return false
-	end
-
 	return unistd.access('/lib/gluon/features/wpa3')
 end
 

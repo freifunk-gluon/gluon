@@ -19,10 +19,7 @@ define Package/gluon-mesh-batman-adv-15
 	+kmod-dummy \
 	+libnl-tiny \
 	+libbatadv \
-	+batctl \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
+	+batctl
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-15))

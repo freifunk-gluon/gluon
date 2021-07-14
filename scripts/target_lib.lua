@@ -28,7 +28,6 @@ M.target_packages = {}
 M.configs = {}
 M.devices = {}
 M.images = {}
-M.opkg = true
 
 
 local default_options = {
@@ -307,10 +306,6 @@ function F.sysupgrade_image(image, name, ext, options)
 		aliases = options.aliases,
 		manifest_aliases = options.manifest_aliases,
 	}
-end
-
-function F.no_opkg()
-	M.opkg = false
 end
 
 function F.defaults(options)
