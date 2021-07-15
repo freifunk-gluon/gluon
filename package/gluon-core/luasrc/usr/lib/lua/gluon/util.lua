@@ -208,6 +208,7 @@ M.subprocess.PIPE = 1
 -- Execute a program found using command PATH search, like the shell.
 -- Return the pid, as well as the I/O streams as pipes or nil on error.
 function M.subprocess.popen(path, argt, options)
+	argt = argt or {}
 	local childfds = {}
 	local parentfds = {}
 	local stdiostreams = {stdin = 0, stdout = 1, stderr = 2}
