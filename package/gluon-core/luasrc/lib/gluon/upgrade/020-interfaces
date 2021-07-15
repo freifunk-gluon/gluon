@@ -78,9 +78,6 @@ end
 uci:delete('network', 'lan')
 uci:delete('network', 'wan')
 
-uci:foreach('network', 'device', function(dev)
-	-- Delete all default OpenWrt network device sections.
-	uci:delete('network', dev['.name'])
-end)
+uci:delete_all('network', 'device')
 
 uci:save('network')
