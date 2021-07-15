@@ -246,9 +246,11 @@ function M.subprocess.popen(path, argt, options)
 			if option == M.subprocess.DEVNULL then
 				posix_unistd.dup2(null, fd)
 			elseif option == M.subprocess.PIPE then
+				-- only close these, if they exist
+				posix_unistd.close(parentfds[iostream])
 				posix_unistd.dup2(childfds[iostream], fd)
+				posix_unistd.close(childfds[iostream])
 			end
-			close_fds(childfds, parentfds)
 		end
 
 		-- close potential null
