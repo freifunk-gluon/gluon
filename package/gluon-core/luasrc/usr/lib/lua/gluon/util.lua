@@ -241,12 +241,12 @@ function M.subprocess.popen(path, argt, options)
 			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
 		end
 
-		for iostream in pairs(stdiostreams) do
+		for iostream, fd in pairs(stdiostreams) do
 			local option = options[iostream]
 			if option == M.subprocess.DEVNULL then
-				posix_unistd.dup2(null, stdiostreams[iostream])
+				posix_unistd.dup2(null, fd)
 			elseif option == M.subprocess.PIPE then
-				posix_unistd.dup2(childfds[iostream], stdiostreams[iostream])
+				posix_unistd.dup2(childfds[iostream], fd)
 			end
 			close_fds(childfds, parentfds)
 		end
