@@ -9,30 +9,26 @@ local route4_flag    = state_dir .. "default_route_4"
 local route6_flag    = state_dir .. "default_route_6"
 
 local function has_v6_default()
-	local handle = io.popen("ip -6 r")
+	local handle = io.popen("ip -6 route show default")
 	if not handle then
 		return false
 	end
 	for line in handle:lines() do
-		if line:find("default") then
-			handle:close()
-			return true
-		end
+		handle:close()
+		return true
 	end
 	handle:close()
 	return false
 end
 
 local function has_v4_default()
-	local handle = io.popen("ip -4 r")
+	local handle = io.popen("ip -4 route show default")
 	if not handle then
 		return false
 	end
 	for line in handle:lines() do
-		if line:find("default") then
-			handle:close()
-			return true
-		end
+		handle:close()
+		return true
 	end
 	handle:close()
 	return false
