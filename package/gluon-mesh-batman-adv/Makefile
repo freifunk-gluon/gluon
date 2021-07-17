@@ -19,6 +19,7 @@ define Package/gluon-mesh-batman-adv-15
 	+kmod-dummy \
 	+libnl-tiny \
 	+libbatadv \
+	+micrond \
 	+batctl
 endef
 
