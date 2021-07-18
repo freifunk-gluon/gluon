@@ -1,0 +1,59 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+local stat = require 'posix.sys.stat'
+
+local state_dir = "/var/gluon/state/"
+
+local route4_flag    = state_dir .. "default_route_4"
+local route6_flag    = state_dir .. "default_route_6"
+
+local function has_v6_default()
+	local handle = io.popen("ip -6 route show default")
+	if not handle then
+		return false
+	end
+	for line in handle:lines() do
+		handle:close()
+		return true
+	end
+	handle:close()
+	return false
+end
+
+local function has_v4_default()
+	local handle = io.popen("ip -4 route show default")
+	if not handle then
+		return false
+	end
+	for line in handle:lines() do
+		handle:close()
+		return true
+	end
+	handle:close()
+	return false
+end
+
+local function set_flag(stateflag, state)
+	if state then
+		-- this does not modify atime
+		local flaghandle = io.open(stateflag, "w")
+		flaghandle:close()
+	else
+		os.remove(stateflag)
+	end
+end
+
+-- ensure state path exists
+if not unistd.access(state_dir) then
+	stat.mkdir(state_dir)
+end
+
+local v4_default = has_v4_default()
+local v6_default = has_v6_default()
+
+print("\thas_default_gw4: " .. tostring(v4_default))
+print("\thas_default_gw6: " .. tostring(v6_default))
+
+set_flag(route4_flag, v4_default)
+set_flag(route6_flag, v6_default)
