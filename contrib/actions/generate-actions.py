@@ -16,6 +16,8 @@ on:
     paths:
       - "modules"
       - "Makefile"
+      - "contrib/ci/minimal-site/**"
+      - "docs/site-example/**"
       - "scripts/**"
       - "package/**"
       - "patches/**"
@@ -26,6 +28,8 @@ on:
     paths:
       - "modules"
       - "Makefile"
+      - "contrib/ci/minimal-site/**"
+      - "docs/site-example/**"
       - "scripts/**"
       - "package/**"
       - "patches/**"
