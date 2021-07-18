@@ -231,6 +231,10 @@ ramips-mt76x8
 
   - R6120
 
+* RAVPower
+
+  - RP-WD009
+
 * TP-Link
 
   - Archer C50 (v3)
