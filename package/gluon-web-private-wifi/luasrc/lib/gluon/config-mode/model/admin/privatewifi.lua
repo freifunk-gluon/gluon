@@ -1,4 +1,6 @@
 local uci = require("simple-uci").cursor()
+local unistd = require 'posix.unistd'
+
 local platform = require 'gluon.platform'
 local wireless = require 'gluon.wireless'
 
@@ -45,6 +47,12 @@ if platform.device_supports_mfp(uci) then
 end
 mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
 
+local ieee80211r = nil
+if unistd.access('/lib/gluon/features/wpa3') then
+	ieee80211r = s:option(Flag, "80211r", translate("Fast BSSID transition"))
+	ieee80211r:depends(encryption, "psk2")
+	ieee80211r.default = uci:get('wireless', primary_iface, 'ieee80211r') or false
+end
 
 function f:write()
 	wireless.foreach_radio(uci, function(radio, index)
@@ -56,16 +64,20 @@ function f:write()
 			local macaddr = wireless.get_wlan_mac(uci, radio, index, 4)
 
 			uci:section('wireless', 'wifi-iface', name, {
-				device     = radio_name,
-				network    = 'wan',
-				mode       = 'ap',
-				encryption = encryption.data,
-				ssid       = ssid.data,
-				key        = key.data,
-				macaddr    = macaddr,
-				ifname     = suffix and 'wan' .. suffix,
-				disabled   = false,
+				device                = radio_name,
+				network               = 'wan',
+				mode                  = 'ap',
+				encryption            = encryption.data,
+				ssid                  = ssid.data,
+				key                   = key.data,
+				macaddr               = macaddr,
+				ifname                = suffix and 'wan' .. suffix,
+				disabled              = false,
 			})
+
+			if ieee80211r ~= nil then
+				uci:set('wireless', name, 'ieee80211r', ieee80211r.data)
+			end
 
 			-- hostapd-mini won't start in case 802.11w is configured
 			if platform.device_supports_mfp(uci) then
