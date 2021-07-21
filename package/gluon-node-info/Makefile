@@ -11,4 +11,8 @@ define Package/gluon-node-info
   DEPENDS:=+gluon-core +libgluonutil
 endef
 
+define Package/gluon-node-info/conffiles
+/etc/config/gluon-node-info
+endef
+
 $(eval $(call BuildPackageGluon,gluon-node-info))
