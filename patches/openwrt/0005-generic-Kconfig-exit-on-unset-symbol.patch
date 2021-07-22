@@ -1,0 +1,23 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Fri, 23 Jul 2021 01:32:38 +0200
+Subject: generic: Kconfig: exit on unset symbol
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/generic/hack-5.4/205-kconfig-exit.patch b/target/linux/generic/hack-5.4/205-kconfig-exit.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ddffd0816c9d76f0da03d0cbb30ae734fe43c182
+--- /dev/null
++++ b/target/linux/generic/hack-5.4/205-kconfig-exit.patch
+@@ -0,0 +1,11 @@
++--- a/scripts/kconfig/conf.c
+++++ b/scripts/kconfig/conf.c
++@@ -212,6 +212,8 @@ static int conf_sym(struct menu *menu)
++ 				break;
++ 			continue;
++ 		case 0:
+++			if (!sym_has_value(sym) && !tty_stdio)
+++				exit(1);
++ 			newval = oldval;
++ 			break;
++ 		case '?':
