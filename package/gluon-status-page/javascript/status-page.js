@@ -121,7 +121,15 @@
 				var neigh = iface.lookup_neigh(addr);
 				if (!neigh)
 					continue;
-				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
+
+				var span = document.createElement('span');
+				span.appendChild(document.createTextNode('via '));
+				var a = document.createElement('a');
+				a.href = 'http://[' + neigh.get_addr() + ']/';
+				a.textContent = neigh.get_hostname();
+				span.appendChild(a);
+				span.appendChild(document.createTextNode(' (' + i + ')'));
+				return span;
 			}
 
 			return 'via ' + addr + ' (unknown iface)';
@@ -264,9 +272,17 @@
 			var valuePrev = resolve_key(dataPrev, stat);
 			var value = resolve_key(data, stat);
 			try {
-				var text = formats[format](value, valuePrev, diff);
-				if (text !== undefined)
-					elem.textContent = text;
+				var format_result = formats[format](value, valuePrev, diff);
+				switch (typeof format_result) {
+					case "string":
+						elem.textContent = format_result;
+						break;
+					case "object":
+						if (elem.lastChild)
+							elem.removeChild(elem.lastChild);
+						elem.appendChild(format_result);
+						break;
+				}
 			} catch (e) {
 				console.error(e);
 			}
@@ -492,6 +508,7 @@
 		}
 
 		var hostname = document.createElement("span");
+		var addr;
 		hostname.textContent = addr;
 		tdHostname.appendChild(hostname);
 
@@ -664,8 +681,11 @@
 			'get_hostname': function() {
 				return hostname.textContent;
 			},
+			'get_addr': function() {
+				return addr;
+			},
 			'update_nodeinfo': function(nodeinfo) {
-				var addr = choose_address(nodeinfo.network.addresses);
+				addr = choose_address(nodeinfo.network.addresses);
 				if (addr) {
 					if (hostname.nodeName.toLowerCase() === 'span') {
 						var oldHostname = hostname;
