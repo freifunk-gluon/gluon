@@ -17,6 +17,10 @@ define Package/gluon-setup-mode/description
 	Offline mode to perform basic setup in a secure manner.
 endef
 
+define Package/gluon-setup-mode/conffiles
+/etc/config/gluon-setup-mode
+endef
+
 init_links := \
 	K89log \
 	K98boot \
