@@ -60,6 +60,14 @@ device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
 })
 
+-- JOY-IT
+
+device('joy-it-jt-or750i', 'joyit_jt-or750i', {
+	packages = ATH10K_PACKAGES_QCA9887,
+	factory = false,
+})
+
+
 -- OCEDO
 
 device('ocedo-raccoon', 'ocedo_raccoon', {
