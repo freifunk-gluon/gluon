@@ -17,6 +17,10 @@ ath79-generic
 
   - GL-AR300M-Lite
 
+* Joy-IT
+
+  - JT-OR750i
+
 * OCEDO
 
   - Raccoon
