@@ -1,0 +1,24 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 28 Jul 2021 13:52:22 +0200
+Subject: ath79: enable missing pinmux for JT-OR750i
+
+Without explicit configuration of these pins the ethernet as well as
+status LED of the device do not work correctly.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+(cherry picked from commit 4feb9a4211d4c8e118e6b8f01fa0bbd4eab5d35c)
+
+diff --git a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+index 8a4d4c682380b26aa2437b26391273ddc7bf2d75..d87daddd771325a8788b59edf2159c3be7bedf07 100644
+--- a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
++++ b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+@@ -31,6 +31,9 @@
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
++		pinctrl-names = "default";
++		pinctrl-0 = <&jtag_disable_pins &pinmux_led_eth_pins>;
++
+ 		led_status_green: status_green {
+ 			label = "green:status";
+ 			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;

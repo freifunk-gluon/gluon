@@ -1,0 +1,220 @@
+From: Vincent Wiemann <vincent.wiemann@ironai.com>
+Date: Sun, 20 Jun 2021 16:56:21 +0200
+Subject: ath79: add support for Joy-IT JT-OR750i
+
+Specifications:
+ * QCA9531, 16 MiB flash (Winbond W25Q128JVSQ), 128 MiB RAM
+ * 802.11n 2T2R (external antennas)
+ * QCA9887, 802.11ac 1T1R (connected with diplexer to one of the antennas)
+ * 3x 10/100 LAN, 1x 10/100 WAN
+ * UART header with pinout printed on PCB
+
+Installation:
+ * The device comes with a bootloader installed only
+ * The bootloader offers DHCP and is reachable at http://10.123.123.1
+ * Accept the agreement and flash sysupgrade.bin
+ * Use Firefox if flashing does not work
+
+TFTP recovery with static IP:
+ * Rename sysupgrade.bin to jt-or750i_firmware.bin
+ * Offer it via TFTP server at 192.168.0.66
+ * Keep the reset button pressed for 4 seconds after connecting power
+
+TFTP recovery with dynamic IP:
+ * Rename sysupgrade.bin to jt-or750i_firmware.bin
+ * Offer it via TFTP server with a DHCP server running at the same address
+ * Keep the reset button pressed for 6 seconds after connecting power
+
+Co-authored-by: Sebastian Schaper <openwrt@sebastianschaper.net>
+Signed-off-by: Vincent Wiemann <vincent.wiemann@ironai.com>
+(cherry picked from commit 55b4b3655263984b92e4b9fc515a5e6b8003c655)
+
+diff --git a/target/linux/ath79/base-files/etc/board.d/01_leds b/target/linux/ath79/base-files/etc/board.d/01_leds
+index dd0f91affa3cd9a731343a816bc666e0bbd44e99..ba8dcd430304a284296861b9e0694be42c68fe44 100755
+--- a/target/linux/ath79/base-files/etc/board.d/01_leds
++++ b/target/linux/ath79/base-files/etc/board.d/01_leds
+@@ -84,6 +84,9 @@ glinet,gl-ar300m-lite)
+ glinet,gl-x750)
+ 	ucidef_set_led_netdev "wan" "WAN" "$boardname:green:wan" "eth1"
+ 	;;
++joyit,jt-or750i)
++	ucidef_set_led_default "ath10k" "ath10k-disable" "ath10k-phy0" "0"
++	;;
+ netgear,wnr612-v2|\
+ on,n150r)
+ 	ucidef_set_led_netdev "wan" "WAN" "netgear:green:wan" "eth0"
+diff --git a/target/linux/ath79/base-files/etc/board.d/02_network b/target/linux/ath79/base-files/etc/board.d/02_network
+index 57429fbc1c851b6d8a8a03096d7043f78a489549..fba5d68eafff37bcedeb734a4d524cfb338d00fa 100755
+--- a/target/linux/ath79/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/base-files/etc/board.d/02_network
+@@ -171,6 +171,11 @@ ath79_setup_interfaces()
+ 		ucidef_add_switch "switch0" \
+ 			"0@eth0" "1:lan" "2:lan" "3:lan" "4:lan" "5:wan"
+ 	;;
++	joyit,jt-or750i)
++		ucidef_set_interface_wan "eth1"
++		ucidef_add_switch "switch0" \
++			"0@eth0" "2:lan:3" "3:lan:2" "4:lan:1"
++		;;
+ 	librerouter,librerouter-v1)
+ 		ucidef_add_switch "switch0" \
+ 			"0@eth0" "5:wan" "6@eth1" "4:lan"
+diff --git a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index c917f38211d0b246f064dba4b7feefecf61f5856..39205de2ec2ecd4d67a560dccfad36aab7a0aa0b 100644
+--- a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -100,7 +100,8 @@ case "$FIRMWARE" in
+ 		ath10kcal_extract "art" 20480 2116
+ 		ath10kcal_patch_mac $(mtd_get_mac_ascii devdata "wlan5mac")
+ 		;;
+-	elecom,wrc-1750ghbk2-i)
++	elecom,wrc-1750ghbk2-i|\
++	joyit,jt-or750i)
+ 		ath10kcal_extract "art" 20480 2116
+ 		;;
+ 	engenius,ecb1750)
+diff --git a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..8a4d4c682380b26aa2437b26391273ddc7bf2d75
+--- /dev/null
++++ b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include "qca953x.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	compatible = "joyit,jt-or750i", "qca,qca9531";
++	model = "Joy-IT JT-OR750i";
++
++	aliases {
++		led-boot = &led_status_green;
++		led-failsafe = &led_status_red;
++		led-running = &led_status_green;
++		led-upgrade = &led_status_red;
++		label-mac-device = &eth0;
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_status_green: status_green {
++			label = "green:status";
++			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led_status_red: status_red {
++			label = "red:status";
++			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&pinmux {
++	pinmux_led_eth_pins: pinmux_led_eth_pins {
++		pinctrl-single,bits = \
++			/* GPIO 4: LED_LINK_5 (WAN) */     \
++			<0x04 0x0000002d 0x000000ff>,      \
++			/* GPIO 14: LED_LINK_2 (LAN 3) */  \
++			/* GPIO 15: LED_LINK_3 (LAN 2) */  \
++			<0x0c 0x2b2c0000 0xffff0000>,      \
++			/* GPIO 16: LED_LINK_4 (LAN 1) */  \
++			<0x10 0x0000002a 0x000000ff>;
++	};
++};
++
++&spi {
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0x0 0x40000>;
++				read-only;
++			};
++
++			partition@40000 {
++				label = "u-boot-env";
++				reg = <0x40000 0x10000>;
++				read-only;
++			};
++
++			partition@50000 {
++				label = "firmware";
++				reg = <0x50000 0xfa0000>;
++				compatible = "denx,uimage";
++			};
++
++			art: partition@ff0000 {
++				label = "art";
++				reg = <0xff0000 0x10000>;
++				read-only;
++			};
++		};
++	};
++};
++
++&eth0 {
++	status = "okay";
++
++	phy-handle = <&swphy4>;
++
++	mtd-mac-address = <&art 0x0>;
++};
++
++&eth1 {
++	mtd-mac-address = <&art 0x6>;
++};
++
++&pcie0 {
++	status = "okay";
++};
++
++&wmac {
++	status = "okay";
++
++	mtd-cal-data = <&art 0x1000>;
++};
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index 7159f9c6d2dabf0a80b4a107790471da32af97bc..080be91fe1351b45a68057de71e5cd1464773f11 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -484,6 +484,14 @@ define Device/jjplus_ja76pf2
+ endef
+ TARGET_DEVICES += jjplus_ja76pf2
+ 
++define Device/joyit_jt-or750i
++  ATH_SOC := qca9531
++  DEVICE_TITLE := Joy-IT JT-OR750i
++  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9887-ct
++  IMAGE_SIZE := 16000k
++endef
++TARGET_DEVICES += joyit_jt-or750i
++
+ define Device/librerouter_librerouter-v1
+   ATH_SOC := qca9558
+   DEVICE_TITLE := LibreRouter v1

@@ -1,0 +1,26 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 28 Jul 2021 14:17:13 +0200
+Subject: ath79: fix JT-OR750i switch LED assignment
+
+The LEDs for LAN1 and LAN3 were swapped. Link on port 1 would illuminate
+the LED on port 3 and vice versa.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+(cherry picked from commit f0a885ed8636b9762d12f2eb2755f63297ff0cb5)
+
+diff --git a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+index d87daddd771325a8788b59edf2159c3be7bedf07..60fa922878355ebdaf7d2983fe926efdf8b97207 100644
+--- a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
++++ b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+@@ -54,9 +54,9 @@
+ 			<0x04 0x0000002d 0x000000ff>,      \
+ 			/* GPIO 14: LED_LINK_2 (LAN 3) */  \
+ 			/* GPIO 15: LED_LINK_3 (LAN 2) */  \
+-			<0x0c 0x2b2c0000 0xffff0000>,      \
++			<0x0c 0x2b2a0000 0xffff0000>,      \
+ 			/* GPIO 16: LED_LINK_4 (LAN 1) */  \
+-			<0x10 0x0000002a 0x000000ff>;
++			<0x10 0x0000002c 0x000000ff>;
+ 	};
+ };
+ 
