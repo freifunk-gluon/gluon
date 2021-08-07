@@ -106,3 +106,6 @@ device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 })
 
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+
+device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
