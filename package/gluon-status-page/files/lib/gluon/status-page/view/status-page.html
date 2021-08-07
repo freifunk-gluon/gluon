@@ -66,12 +66,17 @@
 
 	local function formatBits(bits)
 		local units = {[0]='', 'k', 'M', 'G'}
+		local unit = 0
 
-		local pow = math.floor(math.log(math.max(math.abs(bits), 1)) / math.log(1000))
-		local known_pow = math.min(pow, #units)
+		for i = 1, #units do
+			if math.abs(bits) < 1000 then
+				break
+			end
+			unit = i
+			bits = bits / 1000
+		end
 
-		local significand = bits/(1000^known_pow)
-		return string.format('%g %sbit', significand, units[known_pow])
+		return string.format('%g %sbit', bits, units[unit])
 	end
 
 	local function statistics(key, format)
