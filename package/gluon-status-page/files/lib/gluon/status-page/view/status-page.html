@@ -29,15 +29,29 @@
 
 	local mesh = get_mesh()
 
-	local function get_interfaces()
-		local uconn = ubus.connect()
-		if not uconn then
-			error('failed to connect to ubus')
-		end
+	local function get_interfaces(uconn)
 		local interfaces = util.get_mesh_devices(uconn)
-		ubus.close(uconn)
 		table.sort(interfaces)
 		return interfaces
+	end
+
+	local function get_radios(uconn)
+		local radios = uconn:call("network.wireless", "status", {})
+		local ret = {}
+
+		for radio, info in pairs(radios) do
+			if info.up then
+				table.insert(ret, {
+					name = radio,
+					channel = info.config.channel,
+				})
+			end
+		end
+
+		table.sort(ret, function(a, b)
+			return a.name < b.name
+		end)
+		return ret
 	end
 
 	local function is_wireless(iface)
@@ -52,7 +66,15 @@
 		return unistd.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
 	end
 
-	local interfaces = get_interfaces()
+	local uconn = ubus.connect()
+	if not uconn then
+		error('failed to connect to ubus')
+	end
+
+	local interfaces = get_interfaces(uconn)
+	local radios = get_radios(uconn)
+
+	ubus.close(uconn)
 
 	local function sorted(t)
 		t = {unpack(t)}
@@ -195,11 +217,17 @@
 					<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
 					<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
 				</table>
-				<div id="radios" style="display: none">
+				<% if radios[1] then -%>
 					<h3><%:Radios%></h3>
-					<table id="radio-devices">
+					<table>
+						<% for _, radio in ipairs(radios) do -%>
+							<tr>
+								<th><%| radio.name %></th>
+								<td><%| translatef('Channel %u', radio.channel) %></td>
+							</tr>
+						<%- end %>
 					</table>
-				</div>
+				<%- end %>
 
 				<h3><%:Traffic%></h3>
 				<table>
