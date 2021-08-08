@@ -230,14 +230,13 @@
 			try {
 				var format_result = formats[format](value, valuePrev, diff);
 				switch (typeof format_result) {
-					case "string":
-						elem.textContent = format_result;
-						break;
 					case "object":
 						if (elem.lastChild)
 							elem.removeChild(elem.lastChild);
 						elem.appendChild(format_result);
 						break;
+					default:
+						elem.textContent = format_result;
 				}
 			} catch (e) {
 				console.error(e);
