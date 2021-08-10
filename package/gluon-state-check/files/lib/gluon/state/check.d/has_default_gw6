@@ -1,0 +1,2 @@
+#!/bin/sh
+out=$(ip -6 route show default dev br-client 2>/dev/null) && [ -n "$out" ]

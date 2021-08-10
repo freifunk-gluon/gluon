@@ -1,0 +1,41 @@
+#!/usr/bin/lua
+
+local util = require 'gluon.util'
+local unistd = require 'posix.unistd'
+
+local state_dir = "/var/gluon/state/"
+local check_dir = "/lib/gluon/state/check.d/"
+
+
+local function set_flag(stateflag, state)
+	if state then
+		-- this does not modify atime
+		local flaghandle = io.open(stateflag, "w")
+		flaghandle:close()
+	else
+		os.remove(stateflag)
+	end
+end
+
+local function exec_check(checkpath)
+	local checkname = string.sub(checkpath, #check_dir+1)
+	local ret = os.execute(checkpath)
+	local flagfile = state_dir..checkname
+	set_flag(flagfile, 0==ret)
+end
+
+local function run_executable_checks()
+	for _, v in ipairs(util.glob(check_dir..'*')) do
+		if unistd.access(v, 'x') then
+			exec_check(v)
+		end
+	end
+end
+
+
+-- ensure state path exists
+if not unistd.access(state_dir) then
+	os.execute("mkdir -p "..state_dir)
+end
+
+run_executable_checks()
