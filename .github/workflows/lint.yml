@@ -8,7 +8,7 @@ jobs:
     name: Lua
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install Dependencies
         run: sudo apt install lua-check
       - name: Install example site
@@ -20,7 +20,7 @@ jobs:
     name: Shell
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install Dependencies
         run: sudo apt install shellcheck
       - name: Install example site
