@@ -28,6 +28,11 @@ device('aruba-ap-303', 'aruba_ap-303', {
 	aliases = {'aruba-instant-on-ap11'},
 })
 
+device('aruba-ap-365', 'aruba_ap-365', {
+	factory = false,
+	aliases = {'aruba-instant-on-ap17'},
+})
+
 
 -- AVM
 

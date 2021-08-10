@@ -34,6 +34,7 @@ function M.is_outdoor_device()
 		return true
 
 	elseif M.match('ipq40xx', 'generic', {
+		'aruba,ap-365',
 		'engenius,ens620ext',
 		'plasmacloud,pa1200',
 	}) then
