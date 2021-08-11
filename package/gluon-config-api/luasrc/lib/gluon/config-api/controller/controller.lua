@@ -66,6 +66,7 @@ local parts = load_parts()
 
 entry({"v1", "config"}, call(function(http, renderer)
 	if http.request.env.REQUEST_METHOD == 'GET' then
+		http:header('Content-Type', 'application/json; charset=utf-8')
 		http:write(json.stringify(config_get(parts), true))
 	elseif http.request.env.REQUEST_METHOD == 'POST' then
 		local request_body = ""
@@ -82,6 +83,7 @@ entry({"v1", "config"}, call(function(http, renderer)
 		local config = json.parse(request_body)
 		if not config then
 			http:status(400, 'Bad Request')
+			http:header('Content-Type', 'application/json; charset=utf-8')
 			http:write('{ "status": 400, "error": "Bad JSON in Body" }\n')
 			http:close()
 			return
@@ -94,6 +96,7 @@ entry({"v1", "config"}, call(function(http, renderer)
 
 		if not res then
 			http:status(500, 'Internal Server Error.')
+			http:header('Content-Type', 'application/json; charset=utf-8')
 			http:write('{ "status": 500, "error": "Internal UCL Parsing Failed. This should not happen at all." }\n')
 			http:close()
 			return
@@ -102,25 +105,30 @@ entry({"v1", "config"}, call(function(http, renderer)
 		res, err = parser:validate(schema_get(parts))
 		if not res then
 			http:status(400, 'Bad Request')
+			http:header('Content-Type', 'application/json; charset=utf-8')
 			http:write('{ "status": 400, "error": "Schema mismatch" }\n')
 			http:close()
 			return
 		end
 
 		-- Apply config
-
 		config_set(parts, config)
 
+		-- Write result
+
 		http:write(json.stringify(res, true))
+	elseif http.request.env.REQUEST_METHOD == 'OPTIONS' then
+		local result = json.stringify({ schema = schema_get(parts)}, true)
+
+		-- Content-Length is needed, as the transfer encoding is not chunked.
+		http:header('Content-Length', tostring(#result))
+		http:header('Content-Type', 'application/json; charset=utf-8')
+		http:write(result)
 	else
 		http:status(400, 'Bad Request')
+		http:header('Content-Length', '0')
 		http:write('Not implemented')
 	end
 
-	http:close()
-end))
-
-entry({"v1", "schema"}, call(function(http, renderer)
-	http:write(json.stringify(schema_get(parts), true))
 	http:close()
 end))
