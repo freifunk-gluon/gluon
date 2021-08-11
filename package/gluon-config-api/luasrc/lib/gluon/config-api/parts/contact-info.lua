@@ -13,11 +13,12 @@ function M.schema(site, platform)
 					}
 				}
 			}
-		}
+		},
+		required = { 'wizard' }
 	}
 end
 
-function M.save(config, uci)
+function M.set(config, uci)
 	local owner = uci:get_first("gluon-node-info", "owner")
 
 	uci:set("gluon-node-info", owner, "contact", config.wizard.contact)

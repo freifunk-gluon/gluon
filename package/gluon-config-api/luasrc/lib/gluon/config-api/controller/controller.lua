@@ -6,7 +6,8 @@ local os = require 'os'
 local glob = require 'posix.glob'
 local libgen = require 'posix.libgen'
 local simpleuci = require 'simple-uci'
-local schema = require 'schema'
+local schema = dofile('../controller/schema.lua') -- pwd is www/
+local ucl = require "ucl"
 
 package 'gluon-config-api'
 
@@ -29,20 +30,97 @@ function config_get(parts)
 	return config
 end
 
+function schema_get(parts)
+	local total_schema = {}
+	for _, part in pairs(parts) do
+		total_schema = schema.merge_schemas(total_schema, part.schema(site, nil))
+	end
+	return total_schema
+end
+
+function config_set(parts, config)
+	local uci = simpleuci.cursor()
+
+	for _, part in pairs(parts) do
+		part.set(config, uci)
+	end
+end
+
+local function pump(src, snk)
+	while true do
+		local chunk, src_err = src()
+		local ret, snk_err = snk(chunk, src_err)
+
+		if not (chunk and ret) then
+			local err = src_err or snk_err
+			if err then
+				return nil, err
+			else
+				return true
+			end
+		end
+	end
+end
+
 local parts = load_parts()
 
+entry({"v1", "config"}, call(function(http, renderer)
+	if http.request.env.REQUEST_METHOD == 'GET' then
+		http:write(json.stringify(config_get(parts), true))
+	elseif http.request.env.REQUEST_METHOD == 'POST' then
+		local request_body = ""
+		pump(http.input, function (data)
+			if data then
+				request_body = request_body .. data
+			end
+		end)
 
-entry({"config"}, call(function(http, renderer)
+		-- Verify that we really have JSON input. UCL is able to parse other
+		-- config formats as well. Those config formats allow includes and so on.
+		-- This may be a security issue.
 
-	http:write(json.stringify(config_get(parts), true))
+		local config = json.parse(request_body)
+		if not config then
+			http:status(400, 'Bad Request')
+			http:write('{ "status": 400, "error": "Bad JSON in Body" }\n')
+			http:close()
+			return
+		end
+
+		-- Verify schema
+
+		local parser = ucl.parser()
+		local res, err = parser:parse_string(request_body)
+
+		if not res then
+			http:status(500, 'Internal Server Error.')
+			http:write('{ "status": 500, "error": "Internal UCL Parsing Failed. This should not happen at all." }\n')
+			http:close()
+			return
+		end
+
+		res, err = parser:validate(schema_get(parts))
+		if not res then
+			http:status(400, 'Bad Request')
+			http:write('{ "status": 400, "error": "Schema mismatch" }\n')
+			http:close()
+			return
+		end
+
+		-- Apply config
+
+		config_set(parts, config)
+
+		http:write(json.stringify(res, true))
+	else
+		http:status(400, 'Bad Request')
+		http:write('Not implemented')
+	end
+
 	http:close()
 end))
 
-entry({"schema"}, call(function(http, renderer)
-	local total_schema = {}
-	for _, part in pairs(parts) do
-		total_schema = schema.merge_schemas(total_schema, part.schema())
-	end
-	http:write(json.stringify(total_schema, true))
+entry({"v1", "schema"}, call(function(http, renderer)
+	http:write(json.stringify(schema_get(parts), true))
 	http:close()
 end))

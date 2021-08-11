@@ -34,12 +34,12 @@ local function merged_keys(table1, table2)
 	local keys = {}
 	if table1 then
 		for k, _ in pairs(table1) do
-			table.insert(k)
+			table.insert(keys, k)
 		end
 	end
 	if table2 then
 		for k, _ in pairs(table2) do
-			if not util.contains(k) then
+			if not util.contains(keys, k) then
 				table.insert(keys, k)
 			end
 		end
@@ -51,12 +51,12 @@ local function merged_values(table1, table2)
 	local values = {}
 	if table1 then
 		for _, v in pairs(table1) do
-			table.insert(v)
+			table.insert(values, v)
 		end
 	end
 	if table2 then
 		for _, v in pairs(table2) do
-			if not util.contains(v) then
+			if not util.contains(values, v) then
 				table.insert(values, v)
 			end
 		end
@@ -105,7 +105,7 @@ function M.merge_schemas(schema1, schema2)
 			local pdef2 = properties2[pkey]
 
 			if pdef1 and pdef2 then
-				add_property(pkey, merge_schemas(pdef1, pdef2))
+				add_property(pkey, M.merge_schemas(pdef1, pdef2))
 			elseif pdef1 then
 				add_property(pkey, deepcopy(pdef1))
 			elseif pdef2 then
@@ -115,14 +115,14 @@ function M.merge_schemas(schema1, schema2)
 
 		-- generate merged.additionalProperties
 		if schema1.additionalProperties and schema2.additionalProperties then
-			merged.additionalProperties = merge_schemas(
+			merged.additionalProperties = M.merge_schemas(
 				schema1.additionalProperties, schema2.additionalProperties)
 		else
 			merged.additionalProperties = false
 		end
 
 		-- generate merged.required
-		merged.required = merged_values(schema1, schema2)
+		merged.required = merged_values(schema1.required, schema2.required)
 		if #merged.required == 0 then
 			merged.required = nil
 		end
@@ -132,6 +132,8 @@ function M.merge_schemas(schema1, schema2)
 
 	-- generate merged.default
 	merged.default = schema2.default or schema1.default
+
+	return merged
 end
 
 return M
