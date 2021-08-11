@@ -38,6 +38,7 @@ ath79-generic
 
   - Archer C6 (v2)
   - CPE220 (v3.0)
+  - CPE510 (v3.0)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
 
