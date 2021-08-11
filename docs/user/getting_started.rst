@@ -29,7 +29,7 @@ freshly installed Debian Stretch system the following packages are required:
 
 * `git` (to get Gluon and other dependencies)
 * `subversion`
-* `python` (Python 3 doesn't work)
+* `python3`
 * `build-essential`
 * `gawk`
 * `unzip`
