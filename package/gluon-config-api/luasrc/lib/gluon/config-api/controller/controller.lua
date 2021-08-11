@@ -125,9 +125,9 @@ entry({"v1", "config"}, call(function(http, renderer)
 		http:header('Content-Type', 'application/json; charset=utf-8')
 		http:write(result)
 	else
-		http:status(400, 'Bad Request')
+		http:status(501, 'Not Implemented')
 		http:header('Content-Length', '0')
-		http:write('Not implemented')
+		http:write('Not Implemented\n')
 	end
 
 	http:close()
