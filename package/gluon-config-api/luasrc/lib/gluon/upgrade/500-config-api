@@ -1,0 +1,36 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+
+local function get_mem_total()
+	for line in io.lines('/proc/meminfo') do
+		local match = line:match('^MemTotal:%s+(%d+)')
+		if match then
+			return tonumber(match)
+		end
+	end
+end
+
+local max_requests = 32
+if get_mem_total() < 48*1024 then
+	max_requests = 16
+end
+
+uci:section('uhttpd', 'uhttpd', 'config_api', {
+	listen_http = { '0.0.0.0:83', '[::]:83' },
+	listen_https = {},
+
+	home = '/lib/gluon/config-api/www',
+	max_requests = max_requests,
+	max_connections = 100,
+	redirect_https = true,
+	rfc1918_filter = true,
+	cgi_prefix = '/cgi-bin',
+	script_timeout = 60,
+	network_timeout = 30,
+	http_keepalive = 20,
+	tcp_keepalive = true,
+})
+uci:save('uhttpd')
+uci:save('firewall')
