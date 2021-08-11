@@ -6,7 +6,7 @@ local os = require 'os'
 local glob = require 'posix.glob'
 local libgen = require 'posix.libgen'
 local simpleuci = require 'simple-uci'
-local schema = dofile('../controller/schema.lua') -- pwd is www/
+local schema = dofile('/lib/gluon/config-api/controller/schema.lua')
 local ucl = require "ucl"
 
 package 'gluon-config-api'

@@ -10,7 +10,7 @@ include ../gluon.mk
 
 define Package/gluon-config-api
   TITLE:=Provides a REST API to configure the gluon node
-  DEPENDS:=+gluon-web +uhttpd +libucl
+  DEPENDS:=+gluon-web +uhttpd +libucl +gluon-config-mode-core
 endef
 
 $(eval $(call BuildPackageGluon,gluon-config-api))
