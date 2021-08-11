@@ -9,10 +9,8 @@ function M.schema(site, platform)
 	end
 
 	return {
-		type = 'object',
 		properties = {
 			wizard = {
-				type = 'object',
 				properties = {
 					location = {
 						type = 'object',
@@ -27,7 +25,6 @@ function M.schema(site, platform)
 				}
 			}
 		},
-		required = { 'wizard' }
 	}
 end
 

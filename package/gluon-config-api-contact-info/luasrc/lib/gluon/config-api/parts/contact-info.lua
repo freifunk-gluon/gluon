@@ -3,18 +3,15 @@ local M = {}
 
 function M.schema(site, platform)
 	return {
-		type = 'object',
 		properties = {
 			wizard = {
-				type = 'object',
 				properties = {
 					contact = {
 						type = 'string'
 					}
 				}
 			}
-		},
-		required = { 'wizard' }
+		}
 	}
 end
 
