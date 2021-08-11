@@ -118,9 +118,12 @@ entry({"v1", "config"}, call(function(http, renderer)
 
 		http:write(json.stringify(res, true))
 	elseif http.request.env.REQUEST_METHOD == 'OPTIONS' then
-		local result = json.stringify({ schema = schema_get(parts)}, true)
+		local result = json.stringify({
+			schema = schema_get(parts),
+			allowed_methods = {'GET', 'POST', 'OPTIONS'}
+		}, true)
 
-		-- Content-Length is needed, as the transfer encoding is not chunked.
+		-- Content-Length is needed, as the transfer encoding is not chunked for OPTIONS.
 		http:header('Content-Length', tostring(#result))
 		http:header('Content-Type', 'application/json; charset=utf-8')
 		http:write(result)
