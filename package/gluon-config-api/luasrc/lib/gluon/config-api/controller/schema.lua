@@ -30,24 +30,17 @@ local function merge_types(Ta, Tb)
 	end
 end
 
-local function merged_keys(table1, table2)
+local function keys(tab)
 	local keys = {}
-	if table1 then
-		for k, _ in pairs(table1) do
+	if tab then
+		for k, _ in pairs(tab) do
 			table.insert(keys, k)
-		end
-	end
-	if table2 then
-		for k, _ in pairs(table2) do
-			if not util.contains(keys, k) then
-				table.insert(keys, k)
-			end
 		end
 	end
 	return keys
 end
 
-local function merged_values(table1, table2)
+local function merge_array(table1, table2)
 	local values = {}
 	if table1 then
 		for _, v in pairs(table1) do
@@ -84,7 +77,6 @@ local function deepcopy(o, seen)
 	return no
 end
 
-
 function M.merge_schemas(schema1, schema2)
 	local merged = {}
 
@@ -100,7 +92,7 @@ function M.merge_schemas(schema1, schema2)
 		local properties1 = schema1.properties or {}
 		local properties2 = schema2.properties or {}
 
-		for _, pkey in pairs(merged_keys(properties1, properties2)) do
+		for _, pkey in pairs(merge_array(keys(properties1), keys(properties2))) do
 			local pdef1 = properties1[pkey]
 			local pdef2 = properties2[pkey]
 
@@ -122,7 +114,7 @@ function M.merge_schemas(schema1, schema2)
 		end
 
 		-- generate merged.required
-		merged.required = merged_values(schema1.required, schema2.required)
+		merged.required = merge_array(schema1.required, schema2.required)
 		if #merged.required == 0 then
 			merged.required = nil
 		end
