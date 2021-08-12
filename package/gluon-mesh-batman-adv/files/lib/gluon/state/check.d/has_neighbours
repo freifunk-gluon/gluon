@@ -1,0 +1,2 @@
+#!/bin/sh
+out=$(batctl n -H 2>/dev/null) && [ -n "$out" ]
