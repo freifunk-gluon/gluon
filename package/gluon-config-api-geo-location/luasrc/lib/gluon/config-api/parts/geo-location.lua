@@ -30,23 +30,13 @@ end
 
 function M.set(config, uci)
 	local location = uci:get_first("gluon-node-info", "location")
-	local config_location = config.wizard.location
+	local config_location = config.wizard.location or {}
 
-	if config_location then
-		uci:set("gluon-node-info", location, "share_location", config_location.share_location)
-		uci:set("gluon-node-info", location, "latitude", config_location.lat)
-		uci:set("gluon-node-info", location, "longitude", config_location.lon)
-		if config_location.altitude then -- altitude is optional
-			uci:set("gluon-node-info", location, "altitude", config_location.altitude) -- TODO: check if the "if" is necessary
-		else
-			uci:delete("gluon-node-info", location, "altitude")
-		end
-	else
-		uci:set("gluon-node-info", location, "share_location", false)
-		uci:delete("gluon-node-info", location, "latitude")
-		uci:delete("gluon-node-info", location, "longitude")
-		uci:delete("gluon-node-info", location, "altitude")
-	end
+	uci:set("gluon-node-info", location, "share_location",
+		config_location.share_location or false)
+	uci:set("gluon-node-info", location, "latitude", config_location.lat)
+	uci:set("gluon-node-info", location, "longitude", config_location.lon)
+	uci:set("gluon-node-info", location, "altitude", config_location.altitude)
 
 	uci:save("gluon-node-info")
 end
