@@ -1,8 +1,5 @@
 local json = require 'jsonc'
 local site = require 'gluon.site'
-local util = require 'gluon.util'
-local ubus = require 'ubus'
-local os = require 'os'
 local glob = require 'posix.glob'
 local libgen = require 'posix.libgen'
 local simpleuci = require 'simple-uci'
@@ -62,51 +59,61 @@ local function pump(src, snk)
 	end
 end
 
-local parts = load_parts()
+local function get_request_body_as_json(http)
+	local request_body = ""
+	pump(http.input, function (data)
+		if data then
+			request_body = request_body .. data
+		end
+	end)
+
+	-- Verify that we really have JSON input. UCL is able to parse other
+	-- config formats as well. Those config formats allow includes and so on.
+	-- This may be a security issue.
+
+	local data = json.parse(request_body)
+
+	if not data then
+		http:status(400, 'Bad Request')
+		json_response(http, { status = 400, error = "Bad JSON in Body" })
+		http:close()
+		return
+	end
+
+	return data
+end
+
+local function verify_schema(schema, config)
+	local parser = ucl.parser()
+	local res, err = parser:parse_string(json.stringify(config))
+
+	assert(res, "Internal UCL Parsing Failed. This should not happen at all.")
+
+	res, err = parser:validate(schema)
+	return res
+end
+
+local function json_response(http, obj)
+	local result = json.stringify(obj, true)
+	http:header('Content-Type', 'application/json; charset=utf-8')
+	-- Content-Length is needed, as the transfer encoding is not chunked for
+	-- http method OPTIONS.
+	http:header('Content-Length', tostring(#result))
+	http:write(result..'\n')
+end
 
 entry({"v1", "config"}, call(function(http, renderer)
+	local parts = load_parts()
+
 	if http.request.env.REQUEST_METHOD == 'GET' then
-		http:header('Content-Type', 'application/json; charset=utf-8')
-		http:write(json.stringify(config_get(parts), true))
+		json_response(http, config_get(parts))
 	elseif http.request.env.REQUEST_METHOD == 'POST' then
-		local request_body = ""
-		pump(http.input, function (data)
-			if data then
-				request_body = request_body .. data
-			end
-		end)
-
-		-- Verify that we really have JSON input. UCL is able to parse other
-		-- config formats as well. Those config formats allow includes and so on.
-		-- This may be a security issue.
-
-		local config = json.parse(request_body)
-		if not config then
-			http:status(400, 'Bad Request')
-			http:header('Content-Type', 'application/json; charset=utf-8')
-			http:write('{ "status": 400, "error": "Bad JSON in Body" }\n')
-			http:close()
-			return
-		end
+		local config = get_request_body_as_json(http)
 
 		-- Verify schema
-
-		local parser = ucl.parser()
-		local res, err = parser:parse_string(request_body)
-
-		if not res then
-			http:status(500, 'Internal Server Error.')
-			http:header('Content-Type', 'application/json; charset=utf-8')
-			http:write('{ "status": 500, "error": "Internal UCL Parsing Failed. This should not happen at all." }\n')
-			http:close()
-			return
-		end
-
-		res, err = parser:validate(schema_get(parts))
-		if not res then
+		if not verify_schema(schema_get(parts), config) then
 			http:status(400, 'Bad Request')
-			http:header('Content-Type', 'application/json; charset=utf-8')
-			http:write('{ "status": 400, "error": "Schema mismatch" }\n')
+			json_response(http, { status = 400, error = "Schema mismatch" })
 			http:close()
 			return
 		end
@@ -115,18 +122,12 @@ entry({"v1", "config"}, call(function(http, renderer)
 		config_set(parts, config)
 
 		-- Write result
-
-		http:write(json.stringify(res, true))
+		json_response(http, { status = 200, error = "Accepted" })
 	elseif http.request.env.REQUEST_METHOD == 'OPTIONS' then
-		local result = json.stringify({
+		json_response(http, {
 			schema = schema_get(parts),
 			allowed_methods = {'GET', 'POST', 'OPTIONS'}
-		}, true)
-
-		-- Content-Length is needed, as the transfer encoding is not chunked for OPTIONS.
-		http:header('Content-Length', tostring(#result))
-		http:header('Content-Type', 'application/json; charset=utf-8')
-		http:write(result)
+		})
 	else
 		http:status(501, 'Not Implemented')
 		http:header('Content-Length', '0')
