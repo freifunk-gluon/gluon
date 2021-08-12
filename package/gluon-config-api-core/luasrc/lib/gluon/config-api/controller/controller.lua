@@ -59,6 +59,15 @@ local function pump(src, snk)
 	end
 end
 
+local function json_response(http, obj)
+	local result = json.stringify(obj, true)
+	http:header('Content-Type', 'application/json; charset=utf-8')
+	-- Content-Length is needed, as the transfer encoding is not chunked for
+	-- http method OPTIONS.
+	http:header('Content-Length', tostring(#result))
+	http:write(result..'\n')
+end
+
 local function get_request_body_as_json(http)
 	local request_body = ""
 	pump(http.input, function (data)
@@ -91,15 +100,6 @@ local function verify_schema(schema, config)
 
 	res, err = parser:validate(schema)
 	return res
-end
-
-local function json_response(http, obj)
-	local result = json.stringify(obj, true)
-	http:header('Content-Type', 'application/json; charset=utf-8')
-	-- Content-Length is needed, as the transfer encoding is not chunked for
-	-- http method OPTIONS.
-	http:header('Content-Length', tostring(#result))
-	http:write(result..'\n')
 end
 
 entry({"v1", "config"}, call(function(http, renderer)
