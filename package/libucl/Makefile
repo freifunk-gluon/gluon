@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2014 OpenWrt.org
+# Copyright (C) 2021 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -19,8 +19,6 @@ PKG_MAINTAINER:=Leonardo Mörlein <me@irrelefant.net>
 PKG_LICENSE:=BSD-2-Clause
 
 PKG_FIXUP:=autoreconf
-# PKG_FIXUP:=patch-libtool
-# PKG_FIXUP:=gettext-version
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/autotools.mk
@@ -40,9 +38,6 @@ define Package/libucl/description
   Universal configuration library parser.
 endef
 
-# MAKE_FLAGS += \
-# 	CFLAGS="$(TARGET_CFLAGS) $(FPIC)"
-
 define Package/libucl/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_BUILD_DIR)/src/.libs/libucl.so $(1)/usr/lib/
@@ -52,14 +47,5 @@ define Package/libucl/install
 	$(CP) $(PKG_BUILD_DIR)/lua/.libs/ucl.so $(1)/usr/lib/lua/ucl.so
 endef
 
-
-# define Build/InstallDev
-# 	$(INSTALL_DIR) $(1)/usr/include
-# 	$(CP)   $(PKG_BUILD_DIR)/argp.h \
-# 		$(1)/usr/include/
-# 	$(INSTALL_DIR) $(1)/usr/lib
-# 	$(CP)   $(PKG_BUILD_DIR)/libargp.a \
-# 		$(1)/usr/lib/
-# endef
 
 $(eval $(call BuildPackage,libucl))
