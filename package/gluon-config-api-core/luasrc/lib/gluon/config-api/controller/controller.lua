@@ -1,3 +1,4 @@
+local os = require 'os'
 local json = require 'jsonc'
 local site = require 'gluon.site'
 local glob = require 'posix.glob'
@@ -41,6 +42,9 @@ function config_set(parts, config)
 	for _, part in pairs(parts) do
 		part.set(config, uci)
 	end
+
+	-- commit all uci configs
+	os.execute('uci commit')
 end
 
 local function pump(src, snk)
