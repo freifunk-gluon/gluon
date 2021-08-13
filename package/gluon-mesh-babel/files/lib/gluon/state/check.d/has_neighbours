@@ -1,0 +1,2 @@
+#!/bin/sh
+out=$(echo dump | nc ::1 33123 | grep "add neighbour" 2>/dev/null) && [ -n "$out" ]
