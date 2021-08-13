@@ -42,6 +42,7 @@ ath79-generic
   - CPE510 (v3.0)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
+  - WBS210 (v2.0)
 
 ath79-nand
 ----------
