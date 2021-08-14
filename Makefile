@@ -100,6 +100,9 @@ refresh-patches: FORCE
 update-feeds: FORCE
 	@$(GLUON_ENV) scripts/feeds.sh
 
+update-modules: FORCE
+	@scripts/update-modules.sh
+
 update-ci: FORCE
 	@scripts/update-ci.sh
 
