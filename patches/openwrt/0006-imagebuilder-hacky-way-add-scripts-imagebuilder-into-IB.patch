@@ -1,0 +1,20 @@
+From: Leonardo Mörlein <me@irrelefant.net>
+Date: Sun, 15 Aug 2021 17:06:51 +0200
+Subject: imagebuilder: hacky way add scripts/imagebuilder into IB
+
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index 79bfbbd86fd7ebc4fd888c6b408a2df712c85a81..8b89af5c6b490d1ad756fd6c21a8e30a4722a3b6 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -40,6 +40,11 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
+ 		$(TMP_DIR)/.packageinfo \
+ 		$(PKG_BUILD_DIR)/
+ 
++	# add gluon specific build scripts to IB
++	$(CP) -L \
++		$(TOPDIR)/../scripts/imagebuilder/* \
++		$(PKG_BUILD_DIR)/
++
+ ifeq ($(CONFIG_IB_STANDALONE),)
+ 	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
+ 	$(call FeedSourcesAppend,$(PKG_BUILD_DIR)/repositories.conf)
