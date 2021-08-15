@@ -24,9 +24,13 @@ shell-verbatim = $(call shell-unescape,$(call shell-escape,$(1)))
 # for the normal gluon build but is necessary for the imagebuilder.
 # Note that all variables in GluonCheckSite except for $(1) are expanded when
 # opkg calls the post-install scripts, not during the package build.
+#
+# [ -z "$$STAGING_DIR_HOSTPKG" ] || export LUA_CPATH="$${STAGING_DIR_HOSTPKG}/lib/lua/5.1/?.so"
+#
+# TODO: But maybe we do not need it anymore, since PATH is now altered?
 define GluonCheckSite
 [ -z "$$STAGING_DIR_HOSTPKG" ] || PATH="$$STAGING_DIR_HOSTPKG/bin:$$PATH"
-LUA_CPATH="$${TOPDIR}/staging_dir/hostpkg/lib/lua/5.1/?.so" lua "$$IPKG_INSTROOT/lib/gluon/check-site.lua" <<'END__GLUON__CHECK__SITE'
+lua "$$IPKG_INSTROOT/lib/gluon/check-site.lua" <<'END__GLUON__CHECK__SITE'
 $(call shell-verbatim,cat '$(1)')
 END__GLUON__CHECK__SITE
 endef
