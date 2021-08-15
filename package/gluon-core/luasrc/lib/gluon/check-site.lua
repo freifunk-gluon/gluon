@@ -454,7 +454,7 @@ local check = setfenv(assert(loadfile()), M)
 site = assert(json.load((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/site.json'))
 
 if has_custom then
-	custom = load_json(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json')
+	custom = json.load(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json')
 	print('Found ' .. os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json!')
 else
 	print('Info: ' .. os.getenv('IPKG_INSTROOT') .. '/lib/gluon/custom.json is not existing.')
