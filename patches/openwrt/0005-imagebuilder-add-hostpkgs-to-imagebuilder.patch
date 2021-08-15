@@ -14,7 +14,7 @@ After this commit, we are able to use lua in opkg postinstall
 scripts in combination with the imagebuilder.
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 0580e41c5790d8989ec2daf38e89e046cd1c0862..79bfbbd86fd7ebc4fd888c6b408a2df712c85a81 100644
+index 0580e41c5790d8989ec2daf38e89e046cd1c0862..6a4de542f31ad94bdd7b998f4818c9c228987cfb 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -100,12 +100,22 @@ endif
@@ -30,11 +30,11 @@ index 0580e41c5790d8989ec2daf38e89e046cd1c0862..79bfbbd86fd7ebc4fd888c6b408a2df7
  	STRIP=$(STAGING_DIR_HOST)/bin/sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/host/bin/
 +	# install staging_dir/hostpkg/bin
 +	$(INSTALL_DIR) $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin
-+	$(CP) $(STAGING_DIR_HOST)/../hostpkg/bin/* $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
++	$(CP) $(STAGING_DIR_HOSTPKG)/bin/* $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
 +	(cd $(PKG_BUILD_DIR); find staging_dir/hostpkg/bin/ $(IB_LDIR)/scripts/dtc/ -type f | \
 +		$(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg)
 +	# install lua libs
-+	$(CP) $(STAGING_DIR_HOST)/../hostpkg/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/
++	$(CP) $(STAGING_DIR_HOSTPKG)/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/
 +	STRIP=sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
 +	# bundle
  	(cd $(BUILD_DIR); \
