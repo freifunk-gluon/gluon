@@ -1,0 +1,33 @@
+#!/bin/sh
+
+[ -z "$IFNAME" ] && exit 0
+
+. /lib/functions.sh
+
+BPFCOUNTD_RUN="/var/run/bpfcountd"
+
+lock /var/lock/gluon_bpfcountd.lock
+export UCI_CONFIG_DIR="${BPFCOUNTD_RUN}/gluon-config"
+
+
+bpfcountd_uci_delete() {
+	local cfg="$1"
+	local uci_ifname
+
+	config_get uci_ifname "$cfg" ifname
+	[ "${uci_ifname}" = "$IFNAME" ] || return
+
+	uci -c "${UCI_CONFIG_DIR}" delete "bpfcountd.$cfg"
+}
+
+/etc/init.d/bpfcountd stop "gluon_${IFNAME//-/_}_in"
+/etc/init.d/bpfcountd stop "gluon_${IFNAME//-/_}_out"
+
+rm "${BPFCOUNTD_RUN}/gluon-sockets/"*"/${IFNAME}.in.sock"
+rm "${BPFCOUNTD_RUN}/gluon-sockets/"*"/${IFNAME}.out.sock"
+
+config_load bpfcountd
+config_foreach bpfcountd_uci_delete bpfcountd
+uci -c "${UCI_CONFIG_DIR}" commit bpfcountd
+
+lock -u /var/lock/gluon_bpfcountd.lock

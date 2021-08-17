@@ -1,0 +1,68 @@
+case "$INTERFACE" in
+  "client"|\
+  "mmfd")
+	;;
+  *)
+	exit 0
+	;;
+esac
+
+BPFCOUNTD_RUN="/var/run/bpfcountd"
+mkdir -p "${BPFCOUNTD_RUN}/gluon-ifaces"
+
+get_ifup_ifaces() {
+	local ifaces="$DEVICE"
+	local brports
+
+	if [ -d "/sys/class/net/$DEVICE/bridge/" ]; then
+		brports="$(ls "/sys/class/net/$DEVICE/brif/")"
+		[ -n "$brports" ] && ifaces="$(echo -e "${brports}\n${ifaces}")"
+	fi
+
+	echo "$ifaces"
+}
+
+get_ifdown_ifaces() {
+	cat "${BPFCOUNTD_RUN}/gluon-ifaces/$INTERFACE"
+}
+
+bpfcountd_start() {
+	local ifaces="$(get_ifup_ifaces)"
+	local iface
+
+	[ -z "$ifaces" ] && return
+	[ -f "${BPFCOUNTD_RUN}/gluon-ifaces/$INTERFACE" ] && return
+	echo "$ifaces" > "${BPFCOUNTD_RUN}/gluon-ifaces/$INTERFACE"
+
+	for iface in $ifaces; do
+		IFNAME="$iface" /lib/gluon/core/mesh/setup.d/40-bpfcountd "clients"
+	done
+}
+
+bpfcountd_stop() {
+	local ifaces="$(get_ifdown_ifaces)"
+	local iface
+
+	[ -z "$ifaces" ] && return
+	rm "${BPFCOUNTD_RUN}/gluon-ifaces/$INTERFACE"
+
+	for iface in $ifaces; do
+		IFNAME="$iface" /lib/gluon/core/mesh/teardown.d/40-bpfcountd
+	done
+}
+
+# synchronize reads+writes to /var/run/gluon-ifaces/$INTERFACE
+lock /var/lock/gluon_bpfcountd_ifaces.lock
+
+case "$ACTION" in
+  "ifup")
+	bpfcountd_start
+	;;
+  "ifdown")
+	bpfcountd_stop
+	;;
+  *)
+	;;
+esac
+
+lock -u /var/lock/gluon_bpfcountd_ifaces.lock
