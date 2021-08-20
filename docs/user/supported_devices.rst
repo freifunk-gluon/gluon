@@ -235,6 +235,7 @@ ramips-mt76x8
 * GL.iNet
 
   - GL-MT300N (v2)
+  - microuter-N300
   - VIXMINI
 
 * NETGEAR

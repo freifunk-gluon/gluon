@@ -9,6 +9,10 @@ device('gl-mt300n-v2', 'glinet_gl-mt300n-v2', {
 	factory = false,
 })
 
+device('gl.inet-microuter-n300', 'glinet_microuter-n300', {
+	factory = false,
+})
+
 device('gl.inet-vixmini', 'glinet_vixmini', {
 	factory = false,
 })
