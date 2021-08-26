@@ -3,7 +3,7 @@ Date: Sun, 15 Aug 2021 17:06:51 +0200
 Subject: imagebuilder: hacky way add scripts/imagebuilder into IB
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 6a4de542f31ad94bdd7b998f4818c9c228987cfb..a5fa9d9063ee262e247eb9da105c8d32330240ee 100644
+index c4263f4a5191042aee8478a57342d4a635dc18a6..2aa193f6f9b08a7d2ef7f31c79dbc9d5800cd9c6 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
 @@ -40,6 +40,11 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean

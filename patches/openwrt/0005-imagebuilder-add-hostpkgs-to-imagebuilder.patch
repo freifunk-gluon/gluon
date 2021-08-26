@@ -3,21 +3,31 @@ Date: Sun, 15 Aug 2021 16:56:46 +0200
 Subject: imagebuilder: add hostpkgs to imagebuilder
 
 Before this commit, host packages were not installed into the
-imagebuilder. This made it impossible to use lua in opkg
+imagebuilder. This made it impossible to make use of hostpkgs in opkg
 postinstall scripts in combination with the imagebuilder.
 
 This commit changes this and ensures, that
-- staging_dir/hostpkg is installed to the imagebuilder.
-- staging_dir/hostpkg/lib/lua is installed into the imagebuilder.
+- staging_dir/hostpkg/bin/* is installed to the imagebuilder.
+- staging_dir/hostpkg/lib/lua is installed into the
+  imagebuilder (if existing).
 
-After this commit, we are able to use lua in opkg postinstall
-scripts in combination with the imagebuilder.
+After this commit, we are able to use hostpkgs (like lua) in opkg
+postinstall scripts in combination with the imagebuilder, assuming
+that those packages built as hostpkgs anyways.
+
+With default OpenWrt configuration for x86-64, the unpacked
+imagebuilder becomes this much larger:
+
+    1.5M	staging_dir/hostpkg/bin
+    3.6M	staging_dir/hostpkg/lib
+
+Signed-off-by: Leonardo Mörlein <me@irrelefant.net>
 
 diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
-index 0580e41c5790d8989ec2daf38e89e046cd1c0862..6a4de542f31ad94bdd7b998f4818c9c228987cfb 100644
+index 0580e41c5790d8989ec2daf38e89e046cd1c0862..c4263f4a5191042aee8478a57342d4a635dc18a6 100644
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
-@@ -100,12 +100,22 @@ endif
+@@ -100,12 +100,25 @@ endif
  	  | $(XARGS) rm -rf
  	$(INSTALL_DIR) $(IB_IDIR)
  	-$(CP) $(STAGING_DIR_IMAGE)/* $(IB_IDIR)/
@@ -33,9 +43,12 @@ index 0580e41c5790d8989ec2daf38e89e046cd1c0862..6a4de542f31ad94bdd7b998f4818c9c2
 +	$(CP) $(STAGING_DIR_HOSTPKG)/bin/* $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
 +	(cd $(PKG_BUILD_DIR); find staging_dir/hostpkg/bin/ $(IB_LDIR)/scripts/dtc/ -type f | \
 +		$(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg)
-+	# install lua libs
-+	$(CP) $(STAGING_DIR_HOSTPKG)/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/
 +	STRIP=sstrip $(SCRIPT_DIR)/rstrip.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg/bin/
++	# install lua libs
++	if [ -d $(STAGING_DIR_HOSTPKG)/lib/lua ]; then \
++		$(INSTALL_DIR) $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/lua; \
++		$(CP) $(STAGING_DIR_HOSTPKG)/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/; \
++	fi
 +	# bundle
  	(cd $(BUILD_DIR); \
  		tar -I '$(STAGING_DIR_HOST)/bin/xz -7e -T$(if $(filter 1,$(NPROC)),2,0)' -cf $@ $(IB_NAME) \

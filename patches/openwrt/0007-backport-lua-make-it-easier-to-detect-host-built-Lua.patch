@@ -1,0 +1,28 @@
+From: Daniel Golle <daniel@makrotopia.org>
+Date: Sat, 10 Jul 2021 20:21:26 +0100
+Subject: backport: lua: make it easier to detect host-built Lua
+
+Install pkg-config file also for host-build, clean up Lua symlinks.
+
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Backport-by: Leonardo Mörlein <me@irrelefant.net>
+
+diff --git a/package/utils/lua/Makefile b/package/utils/lua/Makefile
+index d262d1e1fc2bfa1772ff2a88e388346d4550106f..e15142d8d26e988a6fa1cecf27a3f8fad368b980 100644
+--- a/package/utils/lua/Makefile
++++ b/package/utils/lua/Makefile
+@@ -134,8 +134,12 @@ define Host/Install
+ 		INSTALL_TOP="$(STAGING_DIR_HOSTPKG)" \
+ 		install
+ 
+-	$(LN) $(STAGING_DIR_HOSTPKG)/bin/lua5.1 $(STAGING_DIR_HOSTPKG)/bin/lua
+-	$(LN) $(STAGING_DIR_HOSTPKG)/bin/luac5.1 $(STAGING_DIR_HOSTPKG)/bin/luac
++	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/lib/pkgconfig
++	$(CP) $(HOST_BUILD_DIR)/etc/lua.pc $(STAGING_DIR_HOSTPKG)/lib/pkgconfig/lua5.1.pc
++
++	$(LN) lua5.1 $(STAGING_DIR_HOSTPKG)/bin/lua
++	$(LN) luac5.1 $(STAGING_DIR_HOSTPKG)/bin/luac
++	$(LN) lua5.1.pc $(STAGING_DIR_HOSTPKG)/lib/pkgconfig/lua.pc
+ endef
+ 
+ define Build/InstallDev
