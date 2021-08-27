@@ -1,0 +1,439 @@
+From: Leonardo Mörlein <me@irrelefant.net>
+Date: Sun, 9 May 2021 22:28:15 +0200
+Subject: build: introduce $(MKHASH)
+
+Before this commit, it was assumed that mkhash is in the PATH. While
+this was fine for the normal build workflow, this led to some issues if
+
+    make TOPDIR="$(pwd)" -C "$pkgdir" compile
+
+was called manually. In most of the cases, I just saw warnings like this:
+
+    make: Entering directory '/home/.../package/gluon-status-page'
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    bash: line 1: mkhash: command not found
+    [...]
+
+While these were only warnings and the package still compiled sucessfully,
+I also observed that some package even fail to build because of this.
+
+After applying this commit, the variable $(MKHASH) is introduced. This
+variable points to $(STAGING_DIR_HOST)/bin/mkhash, which is always the
+correct path.
+
+Signed-off-by: Leonardo Mörlein <me@irrelefant.net>
+
+diff --git a/include/depends.mk b/include/depends.mk
+index 0080b97876f7bf5b6f7b923aa46ac868ba2b1181..465e4e952a9a546c5729a20d3eb8746179941e2f 100644
+--- a/include/depends.mk
++++ b/include/depends.mk
+@@ -11,7 +11,7 @@
+ 
+ DEP_FINDPARAMS := -x "*/.svn*" -x ".*" -x "*:*" -x "*\!*" -x "* *" -x "*\\\#*" -x "*/.*_check" -x "*/.*.swp" -x "*/.pkgdir*"
+ 
+-find_md5=find $(wildcard $(1)) -type f $(patsubst -x,-and -not -path,$(DEP_FINDPARAMS) $(2)) -printf "%p%T@\n" | sort | mkhash md5
++find_md5=find $(wildcard $(1)) -type f $(patsubst -x,-and -not -path,$(DEP_FINDPARAMS) $(2)) -printf "%p%T@\n" | sort | $(MKHASH) md5
+ 
+ define rdep
+   .PRECIOUS: $(2)
+diff --git a/include/download.mk b/include/download.mk
+index c69d84939c0e9e742fad119e41be3556a43d9e26..9e5860105665caf61e1c55195ec3c99635c72aad 100644
+--- a/include/download.mk
++++ b/include/download.mk
+@@ -74,7 +74,7 @@ else
+   check_warn = $(if $(filter-out undefined,$(origin F_$(1))),$(filter ,$(shell $(call F_$(1),$(2),$(3),$(4)) >&2)),$(check_warn_nofix))
+ endif
+ 
+-gen_sha256sum = $(shell mkhash sha256 $(DL_DIR)/$(1))
++gen_sha256sum = $(shell $(MKHASH) sha256 $(DL_DIR)/$(1))
+ 
+ ifdef FIXUP
+ F_hash_deprecated = $(SCRIPT_DIR)/fixup-makefile.pl $(CURDIR)/Makefile fix-hash $(3) $(call gen_sha256sum,$(1)) $(2)
+diff --git a/include/image-commands.mk b/include/image-commands.mk
+index 4d54a14ba4d4542c4c886c24d6ecd16c0a10a9b7..ffd64bb3946c692dc6ad0878cc970dba7f9f1fac 100644
+--- a/include/image-commands.mk
++++ b/include/image-commands.mk
+@@ -182,7 +182,7 @@ define Build/elx-header
+ 			dd bs=20 count=1 conv=sync; \
+ 		echo -ne "$$(printf '%08x' $$(stat -c%s $@) | fold -s2 | xargs -I {} echo \\x{} | tr -d '\n')" | \
+ 			dd bs=8 count=1 conv=sync; \
+-		echo -ne "$$($(STAGING_DIR_HOST)/bin/mkhash md5 $@ | fold -s2 | xargs -I {} echo \\x{} | tr -d '\n')" | \
++		echo -ne "$$($(MKHASH) md5 $@ | fold -s2 | xargs -I {} echo \\x{} | tr -d '\n')" | \
+ 			dd bs=58 count=1 conv=sync; \
+ 	) > $(KDIR)/tmp/$(DEVICE_NAME).header
+ 	$(call Build/xor-image,-p $(xor_pattern) -x)
+diff --git a/include/image.mk b/include/image.mk
+index b6e8ab3c8402613af5f23c544f6d980f6b167816..42f2f6d38565c4cb0760d2d41f1de0e61138f011 100644
+--- a/include/image.mk
++++ b/include/image.mk
+@@ -26,7 +26,7 @@ param_get_default = $(firstword $(call param_get,$(1),$(2)) $(3))
+ param_mangle = $(subst $(space),_,$(strip $(1)))
+ param_unmangle = $(subst _,$(space),$(1))
+ 
+-mkfs_packages_id = $(shell echo $(sort $(1)) | mkhash md5 | cut -b1-8)
++mkfs_packages_id = $(shell echo $(sort $(1)) | $(MKHASH) md5 | cut -b1-8)
+ mkfs_target_dir = $(if $(call param_get,pkg,$(1)),$(KDIR)/target-dir-$(call param_get,pkg,$(1)),$(TARGET_DIR))
+ 
+ KDIR=$(KERNEL_BUILD_DIR)
+@@ -40,8 +40,8 @@ IMG_PREFIX_VERCODE:=$(if $(CONFIG_VERSION_CODE_FILENAMES),$(call sanitize,$(VERS
+ IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+ IMG_ROOTFS:=$(IMG_PREFIX)-rootfs
+ IMG_COMBINED:=$(IMG_PREFIX)-combined
+-IMG_PART_SIGNATURE:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | mkhash md5 | cut -b1-8)
+-IMG_PART_DISKGUID:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | mkhash md5 | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{10})../\1-\2-\3-\4-\500/')
++IMG_PART_SIGNATURE:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | $(MKHASH) md5 | cut -b1-8)
++IMG_PART_DISKGUID:=$(shell echo $(SOURCE_DATE_EPOCH)$(LINUX_VERMAGIC) | $(MKHASH) md5 | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{10})../\1-\2-\3-\4-\500/')
+ 
+ MKFS_DEVTABLE_OPT := -D $(INCLUDE_DIR)/device_table.txt
+ 
+diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
+index 3aa1baa7610d95f88aea10e4896e12164bda8445..40a08e92a07f1b2dfed499c7697bdb6d2a35c77b 100644
+--- a/include/kernel-defaults.mk
++++ b/include/kernel-defaults.mk
+@@ -106,7 +106,7 @@ define Kernel/Configure/Default
+ 		cp $(LINUX_DIR)/.config.set $(LINUX_DIR)/.config.prev; \
+ 	}
+ 	$(_SINGLE) [ -d $(LINUX_DIR)/user_headers ] || $(KERNEL_MAKE) INSTALL_HDR_PATH=$(LINUX_DIR)/user_headers headers_install
+-	grep '=[ym]' $(LINUX_DIR)/.config.set | LC_ALL=C sort | mkhash md5 > $(LINUX_DIR)/.vermagic
++	grep '=[ym]' $(LINUX_DIR)/.config.set | LC_ALL=C sort | $(MKHASH) md5 > $(LINUX_DIR)/.vermagic
+ endef
+ 
+ define Kernel/Configure/Initramfs
+@@ -162,5 +162,3 @@ define Kernel/Clean/Default
+ 	rm -f $(LINUX_KERNEL)
+ 	$(_SINGLE)$(MAKE) -C $(KERNEL_BUILD_DIR)/linux-$(LINUX_VERSION) clean
+ endef
+-
+-
+diff --git a/include/package-ipkg.mk b/include/package-ipkg.mk
+index e972b7de0bb9d270f5b4c4e68363143777912459..19f09c2311d941ac43bcad241636def91fad55b0 100644
+--- a/include/package-ipkg.mk
++++ b/include/package-ipkg.mk
+@@ -221,7 +221,7 @@ $(_endef)
+     ifneq ($$(CONFIG_IPK_FILES_CHECKSUMS),)
+ 	(cd $$(IDIR_$(1)); \
+ 		( \
+-			find . -type f \! -path ./CONTROL/\* -exec mkhash sha256 -n \{\} \; 2> /dev/null | \
++			find . -type f \! -path ./CONTROL/\* -exec $(MKHASH) sha256 -n \{\} \; 2> /dev/null | \
+ 			sed 's|\([[:blank:]]\)\./| \1/|' > $$(IDIR_$(1))/CONTROL/files-sha256sum \
+ 		) || true \
+ 	)
+diff --git a/include/quilt.mk b/include/quilt.mk
+index 00597ca0f2a67c83e62e82014104ea93bb371201..6d25469dafb36e23d3d60e9faee6060008ef7e2b 100644
+--- a/include/quilt.mk
++++ b/include/quilt.mk
+@@ -159,7 +159,7 @@ define Quilt/Template
+ 		false; \
+ 	}
+ 	@[ -n "$$$$(ls $(1)/patches/series)" -o \
+-	   "$$$$(cat $(1)/patches/series | mkhash md5)" = "$$(sort $(1)/patches/series | mkhash md5)" ] || { \
++	   "$$$$(cat $(1)/patches/series | $(MKHASH) md5)" = "$$(sort $(1)/patches/series | $(MKHASH) md5)" ] || { \
+ 		echo "The patches are not sorted in the right order. Please fix."; \
+ 		false; \
+ 	}
+diff --git a/include/scan.mk b/include/scan.mk
+index 7df5dc64865c5d5ade7953c8246679d76ce20d69..aee24cb3e597dd75645de70cc996627a950cc52a 100644
+--- a/include/scan.mk
++++ b/include/scan.mk
+@@ -1,4 +1,5 @@
+ include $(TOPDIR)/include/verbose.mk
++include $(TOPDIR)/rules.mk
+ TMP_DIR:=$(TOPDIR)/tmp
+ 
+ all: $(TMP_DIR)/.$(SCAN_TARGET)
+@@ -100,7 +101,7 @@ $(TMP_DIR)/info/.files-$(SCAN_TARGET).mk: $(FILELIST)
+ $(TARGET_STAMP)::
+ 	+( \
+ 		$(NO_TRACE_MAKE) $(FILELIST); \
+-		MD5SUM=$$(cat $(FILELIST) $(OVERRIDELIST) | mkhash md5 | awk '{print $$1}'); \
++		MD5SUM=$$(cat $(FILELIST) $(OVERRIDELIST) | $(MKHASH) md5 | awk '{print $$1}'); \
+ 		[ -f "$@.$$MD5SUM" ] || { \
+ 			rm -f $@.*; \
+ 			touch $@.$$MD5SUM; \
+diff --git a/package/base-files/Makefile b/package/base-files/Makefile
+index 8a1ddf96f50b29324dc46cfc1501dbd351d6748b..d8d093a3068d0cbf55d63f8fe79df2969994309f 100644
+--- a/package/base-files/Makefile
++++ b/package/base-files/Makefile
+@@ -30,7 +30,7 @@ PKG_CONFIG_DEPENDS += \
+ include $(INCLUDE_DIR)/package.mk
+ 
+ ifneq ($(DUMP),1)
+-  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | mkhash md5)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | $(MKHASH) md5)
+   TARGET:=-$(BOARD)
+ endif
+ 
+diff --git a/package/kernel/linux/Makefile b/package/kernel/linux/Makefile
+index 39b9e82c27d5779ec844839153cee3508a489e5c..9fa68d78f722f414de60a01467615fa2220a20b1 100644
+--- a/package/kernel/linux/Makefile
++++ b/package/kernel/linux/Makefile
+@@ -24,7 +24,7 @@ export SHELL:=/bin/sh
+ include $(INCLUDE_DIR)/package.mk
+ 
+ ifeq ($(DUMP),)
+-  STAMP_BUILT:=$(STAMP_BUILT)_$(shell $(SCRIPT_DIR)/kconfig.pl $(LINUX_DIR)/.config | mkhash md5)
++  STAMP_BUILT:=$(STAMP_BUILT)_$(shell $(SCRIPT_DIR)/kconfig.pl $(LINUX_DIR)/.config | $(MKHASH) md5)
+   -include $(LINUX_DIR)/.config
+ endif
+ 
+diff --git a/package/libs/openssl/Makefile b/package/libs/openssl/Makefile
+index 5a20db660a15e167518959fcaaebf99a92c5888a..bd28b69c0cde4ee9224a9d398e225c065f4be282 100644
+--- a/package/libs/openssl/Makefile
++++ b/package/libs/openssl/Makefile
+@@ -327,7 +327,7 @@ endif
+ 
+ OPENSSL_TARGET:=linux-$(call qstrip,$(CONFIG_ARCH))-openwrt
+ 
+-STAMP_CONFIGURED := $(STAMP_CONFIGURED)_$(shell echo $(OPENSSL_OPTIONS) | mkhash md5)
++STAMP_CONFIGURED := $(STAMP_CONFIGURED)_$(shell echo $(OPENSSL_OPTIONS) | $(MKHASH) md5)
+ 
+ define Build/Configure
+ 	(cd $(PKG_BUILD_DIR); \
+diff --git a/package/network/services/dropbear/Makefile b/package/network/services/dropbear/Makefile
+index 8bbb26f829be7c730f5709f826d3ab5eb8318617..77887f39db1ba4ae75b7ed6d1f3be74ce9ebaf15 100644
+--- a/package/network/services/dropbear/Makefile
++++ b/package/network/services/dropbear/Makefile
+@@ -37,7 +37,7 @@ PKG_CONFIG_DEPENDS:= \
+ include $(INCLUDE_DIR)/package.mk
+ 
+ ifneq ($(DUMP),1)
+-  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | mkhash md5)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | $(MKHASH) md5)
+ endif
+ 
+ define Package/dropbear/Default
+diff --git a/package/network/utils/iptables/Makefile b/package/network/utils/iptables/Makefile
+index b1ac0be4e84c231136dc5e63fe08300ee1310b54..42d9af14b07f837647198a59aaecd9eeec9a3260 100644
+--- a/package/network/utils/iptables/Makefile
++++ b/package/network/utils/iptables/Makefile
+@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/package.mk
+ ifeq ($(DUMP),)
+   -include $(LINUX_DIR)/.config
+   include $(INCLUDE_DIR)/netfilter.mk
+-  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell grep 'NETFILTER' $(LINUX_DIR)/.config | mkhash md5)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell grep 'NETFILTER' $(LINUX_DIR)/.config | $(MKHASH) md5)
+ endif
+ 
+ 
+diff --git a/package/system/procd/Makefile b/package/system/procd/Makefile
+index 30d5adf4278c7f32c7abb18cba2f7220b324849d..c8f122ef895bcc43d9be25fcc8a2a984872f1ddd 100644
+--- a/package/system/procd/Makefile
++++ b/package/system/procd/Makefile
+@@ -32,7 +32,7 @@ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/cmake.mk
+ 
+ ifeq ($(DUMP),)
+-  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | mkhash md5)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell echo $(CONFIG_TARGET_INIT_PATH) | $(MKHASH) md5)
+ endif
+ 
+ CMAKE_OPTIONS += -DEARLY_PATH="$(TARGET_INIT_PATH)"
+diff --git a/package/utils/busybox/Makefile b/package/utils/busybox/Makefile
+index 7ac042e9f71ed54f9636f10922b098ff182ef3f3..e4e176870c7adda3c594f2804be57fe15b643e73 100644
+--- a/package/utils/busybox/Makefile
++++ b/package/utils/busybox/Makefile
+@@ -35,7 +35,7 @@ endif
+ include $(INCLUDE_DIR)/package.mk
+ 
+ ifeq ($(DUMP),)
+-  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell grep '^CONFIG_BUSYBOX_' $(TOPDIR)/.config | mkhash md5)
++  STAMP_CONFIGURED:=$(strip $(STAMP_CONFIGURED))_$(shell grep '^CONFIG_BUSYBOX_' $(TOPDIR)/.config | $(MKHASH) md5)
+ endif
+ 
+ # All files provided by busybox will serve as fallback alternatives by opkg.
+diff --git a/rules.mk b/rules.mk
+index f31d9bb113e25f83475177ca83125d98ba9346a6..51f822e3f1c5f4264f025348fbad6f67f8fe9ec4 100644
+--- a/rules.mk
++++ b/rules.mk
+@@ -27,7 +27,7 @@ empty:=
+ space:= $(empty) $(empty)
+ comma:=,
+ merge=$(subst $(space),,$(1))
+-confvar=$(shell echo '$(foreach v,$(1),$(v)=$(subst ','\'',$($(v))))' | $(STAGING_DIR_HOST)/bin/mkhash md5)
++confvar=$(shell echo '$(foreach v,$(1),$(v)=$(subst ','\'',$($(v))))' | $(MKHASH) md5)
+ strip_last=$(patsubst %.$(lastword $(subst .,$(space),$(1))),%,$(1))
+ 
+ paren_left = (
+@@ -266,6 +266,9 @@ TARGET_CXX:=$(TARGET_CROSS)g++
+ KPATCH:=$(SCRIPT_DIR)/patch-kernel.sh
+ SED:=$(STAGING_DIR_HOST)/bin/sed -i -e
+ ESED:=$(STAGING_DIR_HOST)/bin/sed -E -i -e
++MKHASH:=$(STAGING_DIR_HOST)/bin/mkhash
++# MKHASH is used in /scripts, so we export it here.
++export MKHASH
+ CP:=cp -fpR
+ LN:=ln -sf
+ XARGS:=xargs -r
+@@ -399,7 +402,7 @@ endef
+ # $(2) => If set, recurse into subdirectories
+ define sha256sums
+ 	(cd $(1); find . $(if $(2),,-maxdepth 1) -type f -not -name 'sha256sums' -printf "%P\n" | sort | \
+-		xargs -r $(STAGING_DIR_HOST)/bin/mkhash -n sha256 | sed -ne 's!^\(.*\) \(.*\)$$!\1 *\2!p' > sha256sums)
++		xargs -r $(MKHASH) -n sha256 | sed -ne 's!^\(.*\) \(.*\)$$!\1 *\2!p' > sha256sums)
+ endef
+ 
+ # file extension
+diff --git a/scripts/combined-ext-image.sh b/scripts/combined-ext-image.sh
+index 7ff287bde791717a44c9bcfed1cbde925a07b93f..c20203f23b9c815caffd72f06c4b802e4e424532 100755
+--- a/scripts/combined-ext-image.sh
++++ b/scripts/combined-ext-image.sh
+@@ -63,7 +63,7 @@ while [ "$#" -gt 1 ]
+ 
+       [ ! -f "$file" ] && echo "$ME: Not a valid file: $file" && usage
+       FILES="$FILES $file"
+-      md5=$(mkhash md5 "$file")
++      md5=$($MKHASH md5 "$file")
+       printf "%-32s%08x%32s" "$filename" $(stat -c "%s" "$file") "${md5%% *}" >> "${IMG_TMP_OUT}"
+       shift 2
+    done
+diff --git a/scripts/combined-image.sh b/scripts/combined-image.sh
+index 4e00cb89a286dae0ba97c9872965ccf5c9e8a875..a365fbc5362c89843b1dd82937afb13d15bb5088 100755
+--- a/scripts/combined-image.sh
++++ b/scripts/combined-image.sh
+@@ -16,7 +16,7 @@ dd if="$1" of="$kern" bs=$BLKSZ conv=sync 2>/dev/null
+ dd if="$2" of="$root" bs=$BLKSZ conv=sync 2>/dev/null
+ 
+ # Calculate md5sum over combined kernel and rootfs image.
+-md5=$(cat "$kern" "$root" | mkhash md5)
++md5=$(cat "$kern" "$root" | $MKHASH md5)
+ 
+ # Write image header followed by kernel and rootfs image.
+ # The header is padded to 64k, format is:
+diff --git a/scripts/download.pl b/scripts/download.pl
+index beb3abdeee429acd7489e7b8ce1e94dc31dfe3c3..addd03c5a66d6d79aa6bccfd36e99c9a2a0f3414 100755
+--- a/scripts/download.pl
++++ b/scripts/download.pl
+@@ -65,8 +65,8 @@ sub hash_cmd() {
+ 	my $len = length($file_hash);
+ 	my $cmd;
+ 
+-	$len == 64 and return "mkhash sha256";
+-	$len == 32 and return "mkhash md5";
++	$len == 64 and return "$ENV{'MKHASH'} sha256";
++	$len == 32 and return "$ENV{'MKHASH'} md5";
+ 	return undef;
+ }
+ 
+@@ -291,4 +291,3 @@ while (!-f "$target/$filename") {
+ }
+ 
+ $SIG{INT} = \&cleanup;
+-
+diff --git a/scripts/ipkg-make-index.sh b/scripts/ipkg-make-index.sh
+index f6f15d7dd8c33969d81d43abed706513e3078b86..8965d0aa183db47c907beb659d5e00f5d2407182 100755
+--- a/scripts/ipkg-make-index.sh
++++ b/scripts/ipkg-make-index.sh
+@@ -18,7 +18,7 @@ for pkg in `find $pkg_dir -name '*.ipk' | sort`; do
+ 	[[ "$name" = "libc" ]] && continue
+ 	echo "Generating index for package $pkg" >&2
+ 	file_size=$(stat -L -c%s $pkg)
+-	sha256sum=$(mkhash sha256 $pkg)
++	sha256sum=$($MKHASH sha256 $pkg)
+ 	# Take pains to make variable value sed-safe
+ 	sed_safe_pkg=`echo $pkg | sed -e 's/^\.\///g' -e 's/\\//\\\\\\//g'`
+ 	tar -xzOf $pkg ./control.tar.gz | tar xzOf - ./control | sed -e "s/^Description:/Filename: $sed_safe_pkg\\
+diff --git a/scripts/om-fwupgradecfg-gen.sh b/scripts/om-fwupgradecfg-gen.sh
+index bf7c047c5ba8e78ad4e43fa7edff2bb4bb3f4388..c3858416a6278b54797947d1d17b3a5521194f7b 100755
+--- a/scripts/om-fwupgradecfg-gen.sh
++++ b/scripts/om-fwupgradecfg-gen.sh
+@@ -54,8 +54,8 @@ esac
+ CHECK_BS=65536
+ 
+ KERNEL_SIZE=$(stat -c%s "$KERNEL_PATH")
+-KERNEL_MD5=$(mkhash md5 $KERNEL_PATH)
+-KERNEL_SHA256=$(mkhash sha256 $KERNEL_PATH)
++KERNEL_MD5=$($MKHASH md5 $KERNEL_PATH)
++KERNEL_SHA256=$($MKHASH sha256 $KERNEL_PATH)
+ KERNEL_PART_SIZE_KB=$((KERNEL_SIZE / 1024))
+ KERNEL_PART_SIZE=$(printf $SIZE_FORMAT $(($KERNEL_PART_SIZE_KB * $SIZE_FACTOR)))
+ 
+@@ -63,9 +63,9 @@ ROOTFS_FLASH_ADDR=$(addr=$(($KERNEL_FLASH_ADDR + ($KERNEL_PART_SIZE_KB * 1024)))
+ ROOTFS_SIZE=$(stat -c%s "$ROOTFS_PATH")
+ ROOTFS_SQUASHFS_SIZE=$((ROOTFS_SIZE-4))
+ ROOTFS_CHECK_BLOCKS=$((ROOTFS_SQUASHFS_SIZE / CHECK_BS))
+-ROOTFS_MD5=$(dd if=$ROOTFS_PATH bs=$CHECK_BS count=$ROOTFS_CHECK_BLOCKS 2>&- | mkhash md5)
+-ROOTFS_MD5_FULL=$(mkhash md5 $ROOTFS_PATH)
+-ROOTFS_SHA256_FULL=$(mkhash sha256 $ROOTFS_PATH)
++ROOTFS_MD5=$(dd if=$ROOTFS_PATH bs=$CHECK_BS count=$ROOTFS_CHECK_BLOCKS 2>&- | $MKHASH md5)
++ROOTFS_MD5_FULL=$($MKHASH md5 $ROOTFS_PATH)
++ROOTFS_SHA256_FULL=$($MKHASH sha256 $ROOTFS_PATH)
+ ROOTFS_CHECK_SIZE=$(printf '0x%x' $ROOTFS_SQUASHFS_SIZE)
+ ROOTFS_PART_SIZE_KB=$(($MAX_PART_SIZE - $KERNEL_PART_SIZE_KB))
+ ROOTFS_PART_SIZE=$(printf $SIZE_FORMAT $(($ROOTFS_PART_SIZE_KB * $SIZE_FACTOR)))
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index ce4e462a40e80a4a829aa605b9cc9867b00d7c5b..2dc21edd6843159a22a1796f8656bd884098f486 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -35,7 +35,7 @@ define Build/addpattern
+ endef
+ 
+ define Build/append-md5sum-bin
+-	$(STAGING_DIR_HOST)/bin/mkhash md5 $@ | sed 's/../\\\\x&/g' |\
++	$(MKHASH) md5 $@ | sed 's/../\\\\x&/g' |\
+ 		xargs echo -ne >> $@
+ endef
+ 
+diff --git a/target/linux/ramips/image/Makefile b/target/linux/ramips/image/Makefile
+index 5937970a37a94c26be12ae9568a2c277ce67b84f..fc5223f3a4e0d562d708682c49a46e19d2ee0a73 100644
+--- a/target/linux/ramips/image/Makefile
++++ b/target/linux/ramips/image/Makefile
+@@ -91,7 +91,7 @@ endef
+ 
+ define Build/netis-tail
+ 	echo -n $(1) >> $@
+-	echo -n $(UIMAGE_NAME)-yun | $(STAGING_DIR_HOST)/bin/mkhash md5 | \
++	echo -n $(UIMAGE_NAME)-yun | $(MKHASH) md5 | \
+ 		sed 's/../\\\\x&/g' | xargs echo -ne >> $@
+ endef
+ 
+diff --git a/target/linux/ramips/image/mt7620.mk b/target/linux/ramips/image/mt7620.mk
+index 56941f2b9c73601555cbb90a06bb7e6897bd2dcb..11baec8ec1123542c99a05c49b60a2f53a354440 100644
+--- a/target/linux/ramips/image/mt7620.mk
++++ b/target/linux/ramips/image/mt7620.mk
+@@ -9,9 +9,9 @@ DEVICE_VARS += DLINK_ROM_ID DLINK_FAMILY_MEMBER DLINK_FIRMWARE_SIZE DLINK_IMAGE_
+ define Build/elecom-header
+ 	cp $@ $(KDIR)/v_0.0.0.bin
+ 	( \
+-		mkhash md5 $(KDIR)/v_0.0.0.bin && \
++		$(MKHASH) md5 $(KDIR)/v_0.0.0.bin && \
+ 		echo 458 \
+-	) | mkhash md5 > $(KDIR)/v_0.0.0.md5
++	) | $(MKHASH) md5 > $(KDIR)/v_0.0.0.md5
+ 	$(STAGING_DIR_HOST)/bin/tar -c \
+ 		$(if $(SOURCE_DATE_EPOCH),--mtime=@$(SOURCE_DATE_EPOCH)) \
+ 		--owner=0 --group=0 -f $@ -C $(KDIR) v_0.0.0.bin v_0.0.0.md5
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index a3bc14d59d9923aac77be2f76a2289c05282259e..643fd404f8b666aac8b5e787bed008ac0a8ea325 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -13,7 +13,7 @@ define Build/elecom-wrc-gs-factory
+ 	$(eval product=$(word 1,$(1)))
+ 	$(eval version=$(word 2,$(1)))
+ 	$(eval hash_opt=$(word 3,$(1)))
+-	$(STAGING_DIR_HOST)/bin/mkhash md5 $(hash_opt) $@ >> $@
++	$(MKHASH) md5 $(hash_opt) $@ >> $@
+ 	( \
+ 		echo -n "ELECOM $(product) v$(version)" | \
+ 			dd bs=32 count=1 conv=sync; \
+@@ -65,13 +65,13 @@ define Build/ubnt-erx-factory-image
+ 		$(TAR) -cf $(1) --transform='s/^.*/compat/' $(1).compat; \
+ 		\
+ 		$(TAR) -rf $(1) --transform='s/^.*/vmlinux.tmp/' $(KDIR)/tmp/$(KERNEL_INITRAMFS_IMAGE); \
+-		mkhash md5 $(KDIR)/tmp/$(KERNEL_INITRAMFS_IMAGE) > $(1).md5; \
++		$(MKHASH) md5 $(KDIR)/tmp/$(KERNEL_INITRAMFS_IMAGE) > $(1).md5; \
+ 		$(TAR) -rf $(1) --transform='s/^.*/vmlinux.tmp.md5/' $(1).md5; \
+ 		\
+ 		echo "dummy" > $(1).rootfs; \
+ 		$(TAR) -rf $(1) --transform='s/^.*/squashfs.tmp/' $(1).rootfs; \
+ 		\
+-		mkhash md5 $(1).rootfs > $(1).md5; \
++		$(MKHASH) md5 $(1).rootfs > $(1).md5; \
+ 		$(TAR) -rf $(1) --transform='s/^.*/squashfs.tmp.md5/' $(1).md5; \
+ 		\
+ 		echo '$(BOARD) $(VERSION_CODE) $(VERSION_NUMBER)' > $(1).version; \

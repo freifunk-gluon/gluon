@@ -1,0 +1,39 @@
+From: Leonardo Mörlein <me@irrelefant.net>
+Date: Fri, 27 Aug 2021 02:02:23 +0200
+Subject: imagebuilder: add dependencies of hostpkg lua libs
+
+diff --git a/scripts/bundle-libraries.sh b/scripts/bundle-libraries.sh
+index 621bf579e70234da6f148f68d5451d0e2eed74a1..b6094a2f067385dae8ba49ab47c5b05b3eb05bfd 100755
+--- a/scripts/bundle-libraries.sh
++++ b/scripts/bundle-libraries.sh
+@@ -167,7 +167,7 @@ for BIN in "$@"; do
+ 
+ 	LDSO=""
+ 
+-	[ -n "$LDD" ] && should_be_patched "$BIN" && {
++	[ -n "$LDD" ] && {
+ 		for token in $("$LDD" "$BIN" 2>/dev/null); do
+ 			case "$token" in */*.so*)
+ 				dest="$DIR/lib/${token##*/}"
+@@ -190,7 +190,7 @@ for BIN in "$@"; do
+ 	}
+ 
+ 	# is a dynamically linked executable
+-	if [ -n "$LDSO" ]; then
++	if [ -n "$LDSO" ] && should_be_patched "$BIN"; then
+ 		echo "Bundling ${BIN##*/}"
+ 
+ 		RUNDIR="$(readlink -f "$BIN")"; RUNDIR="${RUNDIR%/*}"
+diff --git a/target/imagebuilder/Makefile b/target/imagebuilder/Makefile
+index 2aa193f6f9b08a7d2ef7f31c79dbc9d5800cd9c6..a5baf937127b83bf691f8f2c461bcfc5f4175a3d 100644
+--- a/target/imagebuilder/Makefile
++++ b/target/imagebuilder/Makefile
+@@ -122,6 +122,8 @@ endif
+ 	if [ -d $(STAGING_DIR_HOSTPKG)/lib/lua ]; then \
+ 		$(INSTALL_DIR) $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/lua; \
+ 		$(CP) $(STAGING_DIR_HOSTPKG)/lib/lua $(PKG_BUILD_DIR)/staging_dir/hostpkg/lib/; \
++		(cd $(PKG_BUILD_DIR); find staging_dir/hostpkg/lib/lua/ -type f | \
++			$(XARGS) $(SCRIPT_DIR)/bundle-libraries.sh $(PKG_BUILD_DIR)/staging_dir/hostpkg)
+ 	fi
+ 	# bundle
+ 	(cd $(BUILD_DIR); \
