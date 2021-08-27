@@ -32,6 +32,7 @@ function M.is_outdoor_device()
 		'tplink,cpe220-v3',
 		'tplink,cpe510-v2',
 		'tplink,cpe510-v3',
+		'tplink,wbs210-v2',
 	}) then
 		return true
 
