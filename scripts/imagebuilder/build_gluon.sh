@@ -17,26 +17,24 @@ config2profiles() {
 		cut -d '=' -f 1 | cut -d '_' -f 7-
 }
 
-config2default_packages() {
-	grep -e '^CONFIG_DEFAULT_[[:lower:]].*=y$' "$1" | sed 's/^CONFIG_DEFAULT_\(.*\)=y$/\1/'
-}
-
 config2packages() {
-	# - some config symbols, which are not a package appear, therefore strip
-	#   everything with uppercase characters
-	# - installing grub is wrong
-	grep -e '^CONFIG_PACKAGE.*=y' "$1" | \
+	# some CONFIG_PACKAGE_* symbols appear, which are not a package, therefore
+	# strip everything that begins with uppercase characters.
+	grep -e '^CONFIG_PACKAGE_[[:lower:]].*=y' "$1" | \
 		cut -d '_' -f 3- | cut -d '=' -f 1 | \
-		grep -ve '[A-Z]' | \
-		grep -ve '^grub2$' | \
 		tr -s '\n' ' '
 
 	# Per device packages
-	grep -e "^CONFIG_TARGET_DEVICE_PACKAGES_${BOARD}_${SUBTARGET}_DEVICE_$2=" "$1" | \
-		cut -d '=' -f 2 | tr -d '"'
+	if grep -qe '^CONFIG_TARGET_PER_DEVICE_ROOTFS=y$' "$1"; then
+		grep -e "^CONFIG_TARGET_DEVICE_PACKAGES_${BOARD}_${SUBTARGET}_DEVICE_$2=" "$1" | \
+			cut -d '=' -f 2 | tr -d '"'
+	fi
 
 	# Disable default packages (if necessary)
-	default_packages="$(config2default_packages "$1")"
+	default_packages="$(
+		grep -e '^CONFIG_DEFAULT_[[:lower:]].*=y$' "$1" | \
+			sed 's/^CONFIG_DEFAULT_\(.*\)=y$/\1/'
+	)"
 	for default_package in $default_packages; do
 		if ! grep -q "^CONFIG_PACKAGE_${default_package}=y$" "$1"; then
 			echo "-${default_package}"
@@ -76,6 +74,6 @@ if [ -z "$INCLUDE_ONLY" ]; then
 		exit 1
 	fi
 
-	make -C "$SCRIPT_DIR" image \
-		FILES="$CUSTOM_DIR" PACKAGES="$(config2packages .config)" PROFILE="$1"
+	make -n -C \"$SCRIPT_DIR\" image \
+		FILES=\"$CUSTOM_DIR\" PACKAGES=\"$(config2packages .config "$1")\" PROFILE=\"$1\"
 fi
