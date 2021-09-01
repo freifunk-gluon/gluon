@@ -74,6 +74,10 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })
 
+-- Onion
+
+device('onion-omega', 'onion_omega')
+
 -- Plasma Cloud
 
 device('plasma-cloud-pa300', 'plasmacloud_pa300')

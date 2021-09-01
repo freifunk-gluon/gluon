@@ -25,6 +25,10 @@ ath79-generic
 
   - Raccoon
 
+* Onion
+
+  - Omega
+
 * Plasma Cloud
 
   - PA300
