@@ -76,7 +76,7 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 
 -- Onion
 
--- modular/optional "ethernet expansion board" recommended for setupmode
+-- modular/optional "ethernet expansion board" recommended for config mode
 -- setup via integrated (USB-)tty is possible as well
 device('onion-omega', 'onion_omega')
 
