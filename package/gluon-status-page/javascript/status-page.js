@@ -216,50 +216,6 @@
 		});
 	}
 
-	function update_radios(wireless) {
-		function channel(frequency) {
-			if (frequency===2484)
-				return 14
-
-			if (2412<=frequency && frequency<=2472)
-				return (frequency-2407)/5
-
-			if (5160<=frequency && frequency<=5885)
-				return (frequency-5000)/5
-
-			return 'unknown'
-		}
-
-		var div = document.getElementById('radios');
-		if (!wireless) {
-			div.style.display = 'none';
-			return;
-		}
-		div.style.display = '';
-
-		var table = document.getElementById('radio-devices');
-		while (table.lastChild)
-			table.removeChild(table.lastChild);
-
-		wireless.sort(function (a, b) {
-			return a.phy - b.phy;
-		});
-
-		wireless.forEach(function (radio) {
-			var tr = document.createElement('tr');
-
-			var th = document.createElement('th');
-			th.textContent = "phy" + radio.phy;
-			tr.appendChild(th);
-
-			var td = document.createElement('td');
-			td.innerHTML = radio.frequency + " MHz<br />Channel " + channel(radio.frequency);
-			tr.appendChild(td);
-
-			table.appendChild(tr);
-		});
-	}
-
 	var statisticsElems = document.querySelectorAll('[data-statistics]');
 
 	add_event_source('/cgi-bin/dyn/statistics', function(data, dataPrev) {
@@ -274,14 +230,13 @@
 			try {
 				var format_result = formats[format](value, valuePrev, diff);
 				switch (typeof format_result) {
-					case "string":
-						elem.textContent = format_result;
-						break;
 					case "object":
 						if (elem.lastChild)
 							elem.removeChild(elem.lastChild);
 						elem.appendChild(format_result);
 						break;
+					default:
+						elem.textContent = format_result;
 				}
 			} catch (e) {
 				console.error(e);
@@ -290,11 +245,6 @@
 
 		try {
 			update_mesh_vpn(data.mesh_vpn);
-		} catch (e) {
-			console.error(e);
-		}
-		try {
-			update_radios(data.wireless);
 		} catch (e) {
 			console.error(e);
 		}
