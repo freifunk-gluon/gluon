@@ -26,7 +26,9 @@ need_string(in_site({'timezone'}))
 
 need_string_array({'ntp_servers'}, false)
 
+need_string_match(in_domain({'prefix4'}), '^%d+.%d+.%d+.%d+/%d+$', false)
 need_string_match(in_domain({'prefix6'}), '^[%x:]+/64$')
+need_string_array_match(in_domain({'extra_prefixes6'}), '^[%x:]+/%d+$', false)
 
 local supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000}
 for _, config in ipairs({'wifi24', 'wifi5'}) do
