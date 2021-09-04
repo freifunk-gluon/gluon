@@ -25,6 +25,10 @@ ath79-generic
 
   - Raccoon
 
+* Onion
+
+  - Omega [#modular_ethernet]_
+
 * Plasma Cloud
 
   - PA300
@@ -327,3 +331,10 @@ Footnotes
 
 .. [#lan_as_wan]
   All LAN ports on this device are used as WAN.
+
+.. [#modular_ethernet]
+  These devices follow a modular principle,
+  which means even basic functionality like ethernet is provided by an expansion-board,
+  that may not be bundled with the device itself.
+  Such expansions are recommended for the config mode, but are not strictly necessary,
+  as exposed serial ports may grant sufficient access as well.

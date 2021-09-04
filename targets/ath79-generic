@@ -74,6 +74,12 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })
 
+-- Onion
+
+-- modular/optional "ethernet expansion board" recommended for config mode
+-- setup via integrated (USB-)tty is possible as well
+device('onion-omega', 'onion_omega')
+
 -- Plasma Cloud
 
 device('plasma-cloud-pa300', 'plasmacloud_pa300')
