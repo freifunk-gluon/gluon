@@ -24,18 +24,6 @@ local function txpower_list(phy)
 	return new
 end
 
-local function has_5ghz_radio()
-	local result = false
-	uci:foreach('wireless', 'wifi-device', function(config)
-		local radio = config['.name']
-		local hwmode = uci:get('wireless', radio, 'hwmode')
-
-		result = result or (hwmode == '11a' or hwmode == '11na')
-	end)
-
-	return result
-end
-
 local f = Form(translate("WLAN"))
 
 f:section(Section, nil, translate(
@@ -142,7 +130,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 end)
 
 
-if has_5ghz_radio() and not wireless.preserve_channels(uci) then
+if wireless.device_uses_11a(uci) and not wireless.preserve_channels(uci) then
 	local r = f:section(Section, translate("Outdoor Installation"), translate(
 		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
 		.. "and transmission power that conforms with the local regulatory requirements. "
