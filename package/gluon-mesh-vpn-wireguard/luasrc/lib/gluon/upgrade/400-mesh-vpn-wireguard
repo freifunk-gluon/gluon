@@ -1,0 +1,39 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+
+local private_key = uci:get("network", 'wg_mesh', "private_key")
+
+if not private_key or not private_key:match("^" .. ("[%a%d+/]"):rep(42) .. "[AEIMQUYcgkosw480]=$") then
+  private_key = "generate"
+end
+
+uci:section('network', 'interface', 'wg_mesh', {
+  proto = 'wireguard',
+  fwmark = 1,
+  private_key = private_key,
+})
+
+uci:section('network', 'interface', 'mesh_wg_mesh', {
+	ifname = 'wg_mesh',
+	proto = 'gluon_wireguard'
+})
+
+-- Clean up previous configuration
+uci:delete_all('wgpeerselector', 'peer', function(peer)
+  return peer.preserve ~= '1'
+end)
+
+for name, peer in pairs(site.mesh_vpn.wireguard.peers()) do
+  uci:section("wgpeerselector", "peer", name, {
+    enabled = true,
+    endpoint = peer.endpoint,
+    public_key = peer.public_key,
+    allowed_ips = { "fe80::1/128" },
+    ifname = 'wg_mesh',
+  })
+end
+
+uci:save("wgpeerselector")
+uci:save("network")
