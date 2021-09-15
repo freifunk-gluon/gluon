@@ -3,6 +3,8 @@
 # Update target filters using
 #   make update-ci
 
+import re
+import os
 import sys
 import json
 
@@ -23,6 +25,13 @@ extra = [
 
 _filter = dict()
 
+# INCLUDE_PATTERN matches:
+# include '...'
+# include "..."
+# include("...")
+# include('...')
+INCLUDE_PATTERN = "^\\s*include *\\(? *[\"']([^\"']+)[\"']"
+
 # construct filters map from stdin
 for target in sys.stdin:
     target = target.strip()
@@ -30,6 +39,11 @@ for target in sys.stdin:
     _filter[target] = [
         f"targets/{target}"
     ] + common
+
+    target_file = os.path.join(os.environ['GLUON_TARGETSDIR'], target)
+    with open(target_file) as f:
+        includes = re.findall(INCLUDE_PATTERN, f.read(), re.MULTILINE)
+        _filter[target].extend([f"targets/{i}" for i in includes])
 
     if target == "x86-64":
         _filter[target].extend(extra)
