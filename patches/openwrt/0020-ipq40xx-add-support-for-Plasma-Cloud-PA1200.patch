@@ -429,7 +429,7 @@ index 0000000000000000000000000000000000000000..bcb9552ce777d1d522c7642649e22ec2
 +	qcom,ath10k-calibration-variant = "PlasmaCloud-PA1200";
 +};
 diff --git a/target/linux/ipq40xx/image/Makefile b/target/linux/ipq40xx/image/Makefile
-index 68dcbc59a42f6d8360b87c7b4e74cd34f697b465..e14d00ad08b8caf2dae935d573f0ba7bb0433c23 100644
+index 68dcbc59a42f6d8360b87c7b4e74cd34f697b465..3a2e7a4410afcba1a1369cac328e237fc350668b 100644
 --- a/target/linux/ipq40xx/image/Makefile
 +++ b/target/linux/ipq40xx/image/Makefile
 @@ -345,6 +345,21 @@ endef
@@ -447,7 +447,7 @@ index 68dcbc59a42f6d8360b87c7b4e74cd34f697b465..e14d00ad08b8caf2dae935d573f0ba7b
 +	IMAGES = factory.bin sysupgrade.bin
 +	IMAGE/factory.bin := append-rootfs | pad-rootfs | openmesh-image ce_type=PA1200
 +	IMAGE/sysupgrade.bin/squashfs := append-rootfs | pad-rootfs | sysupgrade-tar rootfs=$$$$@ | append-metadata
-+	DEVICE_PACKAGES := uboot-envtools ipq-wifi-plasmacloud-pa1200
++	DEVICE_PACKAGES := uboot-envtools ipq-wifi-plasmacloud_pa1200
 +endef
 +TARGET_DEVICES += plasmacloud_pa1200
 +
