@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
 
-GLUON_VERSION = $(shell git describe --always --dirty=+ 2>/dev/null || echo unknown)
+GLUON_VERSION = $(shell cat $(TOPDIR)/../.scmversion 2>/dev/null || git describe --always --dirty=+ 2>/dev/null || echo unknown)
 PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)

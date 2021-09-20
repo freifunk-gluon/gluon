@@ -75,6 +75,11 @@ GLUON_ENV = $(foreach var,$(GLUON_VARS),$(var)=$(call escape,$($(var))))
 show-release:
 	@echo '$(GLUON_RELEASE)'
 
+show-version:
+	@cat .scmversion 2>/dev/null || git describe --always --dirty=+ 2>/dev/null || echo unknown
+
+show-describe:
+	@git describe --always --dirty=+ 2>/dev/null || echo unknown
 
 update: FORCE
 	@
