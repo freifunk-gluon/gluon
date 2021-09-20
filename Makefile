@@ -104,7 +104,7 @@ update-modules: FORCE
 	@scripts/update-modules.sh
 
 update-ci: FORCE
-	@scripts/update-ci.sh
+	@$(GLUON_ENV) scripts/update-ci.sh
 
 GLUON_TARGETS :=
 

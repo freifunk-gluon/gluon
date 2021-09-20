@@ -21,7 +21,8 @@
     "Makefile",
     "patches/**",
     "targets/generic",
-    "targets/targets.mk"
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
   ],
   "bcm27xx-bcm2709": [
     "targets/bcm27xx-bcm2709",
@@ -29,7 +30,8 @@
     "Makefile",
     "patches/**",
     "targets/generic",
-    "targets/targets.mk"
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
   ],
   "ipq40xx-generic": [
     "targets/ipq40xx-generic",
@@ -133,7 +135,8 @@
     "Makefile",
     "patches/**",
     "targets/generic",
-    "targets/targets.mk"
+    "targets/targets.mk",
+    "targets/x86.inc"
   ],
   "x86-geode": [
     "targets/x86-geode",
@@ -149,7 +152,8 @@
     "Makefile",
     "patches/**",
     "targets/generic",
-    "targets/targets.mk"
+    "targets/targets.mk",
+    "targets/x86.inc"
   ],
   "x86-64": [
     "targets/x86-64",
@@ -158,6 +162,7 @@
     "patches/**",
     "targets/generic",
     "targets/targets.mk",
+    "targets/x86.inc",
     "contrib/ci/minimal-site/**",
     "package/**"
   ],
@@ -167,7 +172,8 @@
     "Makefile",
     "patches/**",
     "targets/generic",
-    "targets/targets.mk"
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
   ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
