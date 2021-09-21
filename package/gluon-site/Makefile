@@ -1,16 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-site
+PKG_VERSION:=1
 
 GLUON_SITEDIR = $(call qstrip,$(CONFIG_GLUON_SITEDIR))
-GLUON_SITE_VERSION = $(shell ( cd '$(GLUON_SITEDIR)' && git --git-dir=.git describe --always --dirty=+ ) 2>/dev/null || echo unknown)
-PKG_VERSION:=$(if $(DUMP),x,$(GLUON_SITE_VERSION))
 
-PKG_CONFIG_DEPENDS := CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_SITE_VERSION CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
 PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-jsonc/host gluon-web/host
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
 include ../gluon.mk
 
@@ -21,6 +18,11 @@ define Package/gluon-site
 endef
 
 define Package/gluon-site/config
+config GLUON_SITE_VERSION
+	string "Gluon site version number"
+	depends on PACKAGE_gluon-site
+	default ""
+
 config GLUON_RELEASE
 	string "Gluon release number"
 	depends on PACKAGE_gluon-site
@@ -83,7 +85,7 @@ define Package/gluon-site/install
 	$(CP) $(PKG_BUILD_DIR)/domains $(1)/lib/gluon/
   endif
 
-	echo '$(GLUON_SITE_VERSION)' > $(1)/lib/gluon/site-version
+	echo '$(call qstrip,$(CONFIG_GLUON_SITE_VERSION))' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release
 
 	$(GluonInstallI18N)
