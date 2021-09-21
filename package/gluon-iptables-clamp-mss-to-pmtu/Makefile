@@ -2,9 +2,6 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-iptables-clamp-mss-to-pmtu
 
-GLUON_VERSION = $(shell git describe --always --dirty=+ 2>/dev/null || echo unknown)
-PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
-
 include ../gluon.mk
 
 define Package/$(PKG_NAME)

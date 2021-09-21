@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-radvd
-PKG_VERSION:=3
 
 include ../gluon.mk
 

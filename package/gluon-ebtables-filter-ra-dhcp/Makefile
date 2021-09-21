@@ -1,8 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-ebtables-filter-ra-dhcp
-PKG_VERSION:=1
-PKG_RELEASE:=1
 
 include ../gluon.mk
 

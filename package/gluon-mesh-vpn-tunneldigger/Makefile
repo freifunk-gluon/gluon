@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-mesh-vpn-tunneldigger
-PKG_VERSION:=3
 
 include ../gluon.mk
 

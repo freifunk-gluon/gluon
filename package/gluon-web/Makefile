@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-web
-PKG_VERSION:=1
 
 PKG_INSTALL:=1
 
