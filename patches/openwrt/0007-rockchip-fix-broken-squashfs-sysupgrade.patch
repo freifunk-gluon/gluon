@@ -1,0 +1,29 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 23 Sep 2021 21:01:37 +0200
+Subject: rockchip: fix broken squashfs sysupgrade
+
+The rockchip platform supports squashfs SD card images. However, the
+resulting image is not padded to completely fill the rootfs partition.
+
+Because of that, the f2fs overlay might not be erased, resulting in
+uci-defaults not bing executed or the configuration not being erased,
+even though drop config was selected.
+
+Modify the image generation process so the image is padded to cover the
+entire root filesystem partition.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/rockchip/image/Makefile b/target/linux/rockchip/image/Makefile
+index f5fdff637f8f24c15720797fffae82f84f03c5c7..e4db1e5d58c62bbacb2382c95d9999f0e4fddb04 100644
+--- a/target/linux/rockchip/image/Makefile
++++ b/target/linux/rockchip/image/Makefile
+@@ -34,7 +34,7 @@ define Build/pine64-img
+ 	# http://opensource.rock-chips.com/wiki_Boot_option#Boot_flow
+ 	#
+ 	# U-Boot SPL expects the U-Boot ITB to be located at sector 0x4000 (8 MiB) on the MMC storage
+-	$(SCRIPT_DIR)/gen_image_generic.sh \
++	PADDING=1 $(SCRIPT_DIR)/gen_image_generic.sh \
+ 		$@ \
+ 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $@.boot \
+ 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(IMAGE_ROOTFS) \
