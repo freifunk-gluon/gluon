@@ -95,7 +95,7 @@ ssize_t recvtimeout(int socket, char **recvbuffer, size_t *recvbuffer_len,
 
 	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout_left, sizeof(timeout_left));
 
-	recvlen = recv(socket, NULL, 0, MSG_PEEK | MSG_TRUNC);
+	recvlen = recv(socket, *recvbuffer, 0, MSG_PEEK | MSG_TRUNC);
 	if (recvlen < 0)
 		return recvlen;
 
@@ -268,6 +268,8 @@ int main(int argc, char **argv) {
 		fputs("Content-Type: text/event-stream\n\n", stdout);
 		fflush(stdout);
 	}
+
+	resize_recvbuffer(&recvbuffer, &recvbuffer_len, 8192);
 
 	do {
 		ret = request(sock, &recvbuffer, &recvbuffer_len, &client_addr,
