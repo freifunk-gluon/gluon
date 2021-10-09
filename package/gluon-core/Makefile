@@ -2,10 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-core
 
-GLUON_VERSION = $(shell git describe --always --dirty=+ 2>/dev/null || echo unknown)
-PKG_VERSION:=$(if $(DUMP),x,$(GLUON_VERSION))
-
-PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
+PKG_CONFIG_DEPENDS := CONFIG_GLUON_VERSION
 
 include ../gluon.mk
 include $(INCLUDE_DIR)/cmake.mk
@@ -22,6 +19,11 @@ define Package/gluon-core/description
 endef
 
 define Package/gluon-core/config
+config GLUON_VERSION
+	string "Gluon version number"
+	depends on PACKAGE_gluon-core
+	default ""
+
 config GLUON_MINIFY
 	bool "Minify Gluon scripts"
 	default y
@@ -36,7 +38,7 @@ define Package/gluon-core/install
 	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/lib/gluon
-	echo '$(GLUON_VERSION)' > $(1)/lib/gluon/gluon-version
+	echo '$(call qstrip,$(CONFIG_GLUON_VERSION))' > $(1)/lib/gluon/gluon-version
 endef
 
 $(eval $(call BuildPackageGluon,gluon-core))

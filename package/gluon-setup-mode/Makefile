@@ -4,7 +4,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-setup-mode
-PKG_VERSION:=1
 
 include ../gluon.mk
 

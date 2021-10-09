@@ -4,8 +4,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-web-autoupdater
-PKG_VERSION:=1
-PKG_RELEASE:=1
 
 include ../gluon.mk
 

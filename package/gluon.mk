@@ -1,6 +1,8 @@
 GLUON_MK := $(abspath $(lastword $(MAKEFILE_LIST)))
 PKG_FILE_DEPENDS += $(GLUON_MK)
 
+PKG_VERSION ?= 1
+
 PKG_BUILD_DEPENDS += luasrcdiet/host
 
 ifneq ($(wildcard ./luasrc/.),)

@@ -4,8 +4,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-web-admin
-PKG_VERSION:=1
-PKG_RELEASE:=1
 
 include ../gluon.mk
 

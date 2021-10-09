@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-mesh-babel
-PKG_VERSION:=1
 
 PKG_BUILD_DEPENDS := libbabelhelper
 PKG_BUILD_DEPENDS += libjson-c

@@ -2,9 +2,6 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-hoodselector
 
-GLUON_VERSION:=3
-PKG_VERSION:=2
-
 include ../gluon.mk
 
 define Package/gluon-hoodselector

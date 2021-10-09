@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-config-mode-mesh-vpn
-PKG_VERSION:=2
 
 include ../gluon.mk
 

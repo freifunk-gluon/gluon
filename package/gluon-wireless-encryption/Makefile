@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-wireless-encryption
-PKG_RELEASE:=1
 
 include ../gluon.mk
 
