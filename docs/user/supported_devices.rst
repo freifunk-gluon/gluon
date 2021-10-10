@@ -37,6 +37,7 @@ ath79-generic
 
   - A40
   - A60
+  - MR600 (v1)
 
 * Plasma Cloud
 
