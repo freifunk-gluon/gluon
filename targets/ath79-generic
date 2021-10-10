@@ -185,6 +185,10 @@ device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
 	manifest_aliases = {'openmesh-om2p-hsv4'},
 })
 
+device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
+	factory = false,
+})
+
 
 -- Plasma Cloud
 
