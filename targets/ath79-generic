@@ -119,6 +119,12 @@ device('openmesh-mr900-v1', 'openmesh_mr900-v1', {
 	manifest_aliases = {'openmesh-mr900'},
 })
 
+device('openmesh-mr900-v2', 'openmesh_mr900-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr900v2'},
+})
+
 
 -- Plasma Cloud
 
