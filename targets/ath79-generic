@@ -189,6 +189,10 @@ device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
 	factory = false,
 })
 
+device('openmesh-om5p', 'openmesh_om5p', {
+	factory = false,
+})
+
 
 -- Plasma Cloud
 

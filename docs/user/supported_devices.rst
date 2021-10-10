@@ -43,6 +43,7 @@ ath79-generic
   - OM2P (v1, v2, v4)
   - OM2P-HS (v1, v2, v3, v4)
   - OM2P-LC
+  - OM5P
 
 * Plasma Cloud
 
