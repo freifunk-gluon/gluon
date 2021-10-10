@@ -207,6 +207,10 @@ device('openmesh-om5p-ac-v2', 'openmesh_om5p-ac-v2', {
 	manifest_aliases = {'openmesh-om5p-acv2'},
 })
 
+device('openmesh-om5p-an', 'openmesh_om5p-an', {
+	factory = false,
+})
+
 
 -- Plasma Cloud
 
