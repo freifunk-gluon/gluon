@@ -33,6 +33,10 @@ ath79-generic
 
   - Omega [#modular_ethernet]_
 
+* OpenMesh
+
+  - A60
+
 * Plasma Cloud
 
   - PA300

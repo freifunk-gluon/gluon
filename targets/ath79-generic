@@ -88,6 +88,15 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 -- setup via integrated (USB-)tty is possible as well
 device('onion-omega', 'onion_omega')
 
+
+-- OpenMesh
+
+device('openmesh-a60', 'openmesh_a60', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+
 -- Plasma Cloud
 
 device('plasma-cloud-pa300', 'plasmacloud_pa300')
