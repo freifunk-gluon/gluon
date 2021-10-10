@@ -193,6 +193,13 @@ device('openmesh-om5p', 'openmesh_om5p', {
 	factory = false,
 })
 
+device('openmesh-om5p-ac-v1', 'openmesh_om5p-ac-v1', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om5p-ac'},
+})
+
 
 -- Plasma Cloud
 
