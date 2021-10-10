@@ -41,7 +41,7 @@ ath79-generic
   - MR900 (v1, v2)
   - MR1750 (v1, v2)
   - OM2P (v1, v2, v4)
-  - OM2P-HS (v1, v2)
+  - OM2P-HS (v1, v2, v3)
 
 * Plasma Cloud
 
