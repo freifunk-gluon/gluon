@@ -179,6 +179,12 @@ device('openmesh-om2p-hs-v3', 'openmesh_om2p-hs-v3', {
 	manifest_aliases = {'openmesh-om2p-hsv3'},
 })
 
+device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv4'},
+})
+
 
 -- Plasma Cloud
 
