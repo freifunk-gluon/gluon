@@ -145,6 +145,16 @@ device('openmesh-om2p-v1', 'openmesh_om2p-v1', {
 	manifest_aliases = {'openmesh-om2p'},
 })
 
+device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x; deacticated at the moment because
+	-- the physical ethernet port for this device changed between 19.07
+	-- and 21.02. And automated update could therefore "break" the
+	-- device until someone physically changed the ethernet cable.
+	-- See https://github.com/freifunk-gluon/gluon/pull/2325#issuecomment-940749284
+	--manifest_aliases = {'openmesh-om2pv2'},
+})
+
 
 -- Plasma Cloud
 
