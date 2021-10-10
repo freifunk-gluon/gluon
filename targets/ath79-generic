@@ -155,6 +155,12 @@ device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
 	--manifest_aliases = {'openmesh-om2pv2'},
 })
 
+device('openmesh-om2p-v4', 'openmesh_om2p-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2pv4'},
+})
+
 
 -- Plasma Cloud
 
