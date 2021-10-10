@@ -91,6 +91,11 @@ device('onion-omega', 'onion_omega')
 
 -- OpenMesh
 
+device('openmesh-a40', 'openmesh_a40', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 device('openmesh-a60', 'openmesh_a60', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
