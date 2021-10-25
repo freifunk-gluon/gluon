@@ -553,7 +553,8 @@
 			var n = parts.length;
 			var groups = [];
 
-			parts.forEach(function(part, i) {
+			for (var i = 0; i < parts.length; i++) {
+				var part = parts[i];
 				if (part === '') {
 					while (n++ <= 8)
 						groups.push(0);
@@ -563,7 +564,7 @@
 
 					groups.push(parseInt(part, 16));
 				}
-			});
+			};
 
 			return groups;
 		}
