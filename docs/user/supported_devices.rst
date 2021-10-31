@@ -13,6 +13,10 @@ ath79-generic
   - WiFi pro 1750i
   - WiFi pro 1750x
 
+* Enterasys
+
+  - WS-AP3705i
+
 * GL.iNet
 
   - GL-AR300M-Lite
