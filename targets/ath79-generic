@@ -54,6 +54,14 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 	factory = false,
 })
 
+
+-- Enterasys
+
+device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
+	factory = false,
+})
+
+
 -- GL.iNet
 
 device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
