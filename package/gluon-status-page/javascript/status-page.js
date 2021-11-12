@@ -285,7 +285,7 @@
 			'resize': function(w, h) {
 				var lastImage;
 				try {
-					ctx.getImageData(0, 0, w, h);
+					lastImage = ctx.getImageData(0, 0, w, h);
 				} catch (e) {}
 				canvas.width = w;
 				canvas.height = h;
@@ -519,13 +519,13 @@
 			el.classList.add("highlight");
 			if (signal)
 				signal.highlight = true;
-		}
+		};
 
 		el.onmouseleave = function () {
-			el.classList.remove("highlight")
+			el.classList.remove("highlight");
 			if (signal)
 				signal.highlight = false;
-		}
+		};
 
 		var timeout;
 
@@ -553,7 +553,8 @@
 			var n = parts.length;
 			var groups = [];
 
-			parts.forEach(function(part, i) {
+			for (var i = 0; i < parts.length; i++) {
+				var part = parts[i];
 				if (part === '') {
 					while (n++ <= 8)
 						groups.push(0);
@@ -563,7 +564,7 @@
 
 					groups.push(parseInt(part, 16));
 				}
-			});
+			};
 
 			return groups;
 		}
