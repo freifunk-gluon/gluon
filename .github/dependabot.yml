@@ -9,18 +9,6 @@ updates:
     reviewers: [blocktrron]
     assignees: [blocktrron]
 
-  - package-ecosystem: docker
-    directory: /
-    schedule: {interval: monthly}
-    reviewers: [blocktrron]
-    assignees: [blocktrron]
-
-  - package-ecosystem: docker
-    directory: /
-    schedule: {interval: monthly}
-    reviewers: [blocktrron]
-    assignees: [blocktrron]
-
   - package-ecosystem: pip
     directory: /docs/
     schedule: {interval: monthly}
