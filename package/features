@@ -58,3 +58,7 @@ when(_'mesh-babel', {
 when(not _'wireless-encryption-wpa3', {
 	'hostapd-mini',
 })
+
+when(_'config-mode-theme-funkfeuer', {
+	'-config-mode-theme'
+})
