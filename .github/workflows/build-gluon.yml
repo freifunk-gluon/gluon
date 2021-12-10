@@ -9,43 +9,47 @@ on:
       - master
       - next*
       - v20*
-    paths:
-      - "modules"
-      - "Makefile"
-      - "scripts/**"
-      - "package/**"
-      - "patches/**"
-      - "targets/**"
-      - ".github/workflows/build-gluon.yml"
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - "modules"
-      - "Makefile"
-      - "scripts/**"
-      - "package/**"
-      - "patches/**"
-      - "targets/**"
-      - ".github/workflows/build-gluon.yml"
+
 jobs:
+  changed:
+    runs-on: ubuntu-latest
+    outputs:
+      targets: ${{ steps.filter.outputs.changes }}
+    steps:
+      - uses: actions/checkout@v2
+
+      # Filter targets based on changed files
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: .github/filters.yml
+
   build_firmware:
+    needs: changed
     strategy:
       fail-fast: false
       matrix:
-        target: [ath79-generic, ath79-nand, bcm27xx-bcm2708, bcm27xx-bcm2709, ipq40xx-generic, ipq806x-generic, lantiq-xrx200, lantiq-xway, mediatek-mt7622, mpc85xx-p1010, mpc85xx-p1020, ramips-mt7620, ramips-mt7621, ramips-mt76x8, ramips-rt305x, rockchip-armv8, sunxi-cortexa7, x86-generic, x86-geode, x86-legacy, x86-64, bcm27xx-bcm2710, mvebu-cortexa9]
+        # Read back changd targets to create build matrix
+        target: ${{ fromJSON(needs.changed.outputs.targets) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
+
       - name: Build
         run: contrib/actions/run-build.sh ${{ matrix.target }}
+
       - name: Archive build logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v1
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
+
       - name: Archive build output
         uses: actions/upload-artifact@v1
         with:

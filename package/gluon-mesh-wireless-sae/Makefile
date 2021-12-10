@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-mesh-wireless-sae
-PKG_VERSION:=1
 
 include ../gluon.mk
 

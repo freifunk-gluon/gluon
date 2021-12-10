@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-mesh-batman-adv
-PKG_VERSION:=1
 
 include ../gluon.mk
 
@@ -19,10 +18,7 @@ define Package/gluon-mesh-batman-adv-15
 	+kmod-dummy \
 	+libnl-tiny \
 	+libbatadv \
-	+batctl \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_DUMMY \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_CRC16 \
-	+@GLUON_SPECIALIZE_KERNEL:KERNEL_LIBCRC32C
+	+batctl
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-batman-adv-15))

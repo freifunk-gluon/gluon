@@ -9,6 +9,10 @@ device('gl-mt300n-v2', 'glinet_gl-mt300n-v2', {
 	factory = false,
 })
 
+device('gl.inet-microuter-n300', 'glinet_microuter-n300', {
+	factory = false,
+})
+
 device('gl.inet-vixmini', 'glinet_vixmini', {
 	factory = false,
 })
@@ -19,6 +23,11 @@ device('gl.inet-vixmini', 'glinet_vixmini', {
 device('netgear-r6120', 'netgear_r6120', {
 	factory_ext = '.img',
 })
+
+
+-- RAVPower
+
+device('ravpower-rp-wd009', 'ravpower_rp-wd009')
 
 
 -- TP-Link
@@ -33,6 +42,8 @@ device('tp-link-archer-c50-v3', 'tplink_archer-c50-v3', {
 device('tp-link-archer-c50-v4', 'tplink_archer-c50-v4', {
 	factory = false,
 })
+
+device('tp-link-re200-v2', 'tplink_re200-v2')
 
 device('tp-link-tl-mr3020-v3', 'tplink_tl-mr3020-v3', {
 	factory = false,

@@ -61,7 +61,7 @@ local function match(a, b, n)
 end
 
 entry({}, call(function(http, renderer)
-	local nodeinfo = json.parse(util.exec('exec gluon-neighbour-info -d ::1 -p 1001 -t 1 -c 1 -r nodeinfo'))
+	local nodeinfo = json.parse(util.exec('exec gluon-neighbour-info -d ::1 -p 1001 -t 3 -c 1 -r nodeinfo'))
 
 	local node_ip = parse_ip(http:getenv('SERVER_ADDR'))
 	if node_ip and (

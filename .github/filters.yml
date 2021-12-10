@@ -1,0 +1,186 @@
+{
+  "ath79-generic": [
+    "targets/ath79-generic",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "ath79-nand": [
+    "targets/ath79-nand",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "bcm27xx-bcm2708": [
+    "targets/bcm27xx-bcm2708",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
+  "bcm27xx-bcm2709": [
+    "targets/bcm27xx-bcm2709",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
+  "ipq40xx-generic": [
+    "targets/ipq40xx-generic",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "ipq806x-generic": [
+    "targets/ipq806x-generic",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "lantiq-xrx200": [
+    "targets/lantiq-xrx200",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "lantiq-xway": [
+    "targets/lantiq-xway",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "mediatek-mt7622": [
+    "targets/mediatek-mt7622",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "mpc85xx-p1010": [
+    "targets/mpc85xx-p1010",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "mpc85xx-p1020": [
+    "targets/mpc85xx-p1020",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "ramips-mt7620": [
+    "targets/ramips-mt7620",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "ramips-mt7621": [
+    "targets/ramips-mt7621",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "ramips-mt76x8": [
+    "targets/ramips-mt76x8",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "rockchip-armv8": [
+    "targets/rockchip-armv8",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "sunxi-cortexa7": [
+    "targets/sunxi-cortexa7",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "x86-generic": [
+    "targets/x86-generic",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/x86.inc"
+  ],
+  "x86-geode": [
+    "targets/x86-geode",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "x86-legacy": [
+    "targets/x86-legacy",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/x86.inc"
+  ],
+  "x86-64": [
+    "targets/x86-64",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/x86.inc",
+    "contrib/ci/minimal-site/**",
+    "package/**"
+  ],
+  "bcm27xx-bcm2710": [
+    "targets/bcm27xx-bcm2710",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
+  "mvebu-cortexa9": [
+    "targets/mvebu-cortexa9",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ]
+}

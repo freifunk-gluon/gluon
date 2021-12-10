@@ -1,7 +1,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-web-node-role
-PKG_VERSION:=1
 
 include ../gluon.mk
 

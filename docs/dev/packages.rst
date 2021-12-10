@@ -3,6 +3,85 @@ Package development
 
 Gluon packages are OpenWrt packages and follow the same rules described at https://openwrt.org/docs/guide-developer/packages.
 
+Development workflow
+====================
+
+When you are developing packages, it often happens that you iteratively want to deploy
+and verify the state your development. There are two ways to verify your changes:
+
+1) One way is to rebuild the complete firmware, flash it, configure it and verify your
+   development then. This usually takes at least a few minutes to get your changes
+   working so you can test them. Especially if you iterate a lot, this becomes tedious.
+2) Another way is to rebuild only the package you are currently working on and
+   to deploy this package to your test system. Here not even a reboot is required.
+   This makes iterating relatively fast. Your test system could be real hardware or
+   even a qemu in most cases.
+
+Gluon provides scripts to enhance workflow 2). Here is an example illustrating
+the workflow using these scripts:
+
+.. code-block:: shell
+
+  # start a local qemu instance
+  contrib/run_qemu.sh output/images/factory/[...]-x86-64.img
+
+  # apply changes to the desired package
+  vi package/gluon-ebtables/files/etc/init.d/gluon-ebtables
+
+  # rebuild and push the package to the qemu instance
+  contrib/push_pkg.sh package/gluon-ebtables/
+
+  # test your changes
+  ...
+
+  # do more changes
+  ...
+
+  # rebuild and push the package to the qemu instance
+  contrib/push_pkg.sh package/gluon-ebtables/
+
+  # test your changes
+  ...
+
+  (and so on...)
+
+  # see help of the script for more information
+  contrib/push_pkg.sh -h
+  ...
+
+Features of ``push_pkg.sh``:
+
+* Works with compiled and non-compiled packages.
+
+  * This means it can be used in the development of C-code, Lua-Code and mostly any other code.
+
+* Works with native OpenWrt and Gluon packages.
+* Pushes to remote machines or local qemu instances.
+* Pushes multiple packages in in one call if desired.
+* Performs site.conf checks.
+
+Implementation details of ``push_pkg.sh``:
+
+* First, the script builds an opkg package using the OpenWrt build system.
+* This package is pushed to a *target machine* using scp:
+
+  * By default the *target machine* is a locally running x86 qemu started using ``run_qemu.sh``.
+  * The *target machine* can also be remote machine. (See the cli switch ``-r``)
+  * Remote machines are not limited to a specific architecture. All architectures supported by gluon can be used as remote machines.
+
+* Finally opkg is used to install/update the packages in the target machine.
+
+  * While doing this, it will not override ``/etc/config`` with package defaults by default. (See the cli switch ``-P``).
+  * While doing this, opkg calls the ``check_site.lua`` from the package as post_install script to validate the ``site.conf``. This means that the ``site.conf`` of the target machine is used for this validation.
+
+Note that:
+
+* ``push_pkg.sh`` does neither build nor push dependencies of the packages automatically. If you want to update dependencies, you must explicitly specify them to be pushed.
+* If you add new packages, you must run ``make update config GLUON_TARGET=...``.
+* You can change the gluon target of the target machine via ``make config GLUON_TARGET=...``.
+* If you want to update the ``site.conf`` of the target machine, use ``push_pkg.sh package/gluon-site/``.
+* Sometimes when things break, you can heal them by compiling a package with its dependencies: ``cd openwrt; make package/gluon-ebtables/clean; make package/gluon-ebtables/compile; cd ..``.
+* You can exit qemu by pressing ``CTRL + a`` and ``c`` afterwards.
 
 Gluon package makefiles
 =======================

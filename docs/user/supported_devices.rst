@@ -13,13 +13,25 @@ ath79-generic
   - WiFi pro 1750i
   - WiFi pro 1750x
 
+* Enterasys
+
+  - WS-AP3705i
+
 * GL.iNet
 
   - GL-AR300M-Lite
 
+* Joy-IT
+
+  - JT-OR750i
+
 * OCEDO
 
   - Raccoon
+
+* Onion
+
+  - Omega [#modular_ethernet]_
 
 * Plasma Cloud
 
@@ -34,6 +46,12 @@ ath79-generic
 
   - Archer C6 (v2)
   - CPE220 (v3.0)
+  - CPE510 (v2.0)
+  - CPE510 (v3.0)
+  - EAP225-Outdoor (v1)
+  - TL-WDR3600 (v1)
+  - TL-WDR4300 (v1)
+  - WBS210 (v2.0)
 
 ath79-nand
 ----------
@@ -59,7 +77,11 @@ ipq40xx-generic
 * Aruba
 
   - AP-303
+  - AP-303H
+  - AP-365
   - Instant On AP11
+  - Instant On AP11D
+  - Instant On AP17
 
 * AVM
 
@@ -206,12 +228,13 @@ ramips-mt7621
 
   - EdgeRouter X
   - EdgeRouter X-SFP
+  - UniFi 6 Lite
 
 * ZBT
 
   - WG3526-16M
   - WG3526-32M
-  
+
 * Xiaomi
 
   - Xiaomi Mi Router 4A (Gigabit Edition)
@@ -226,16 +249,22 @@ ramips-mt76x8
 * GL.iNet
 
   - GL-MT300N (v2)
+  - microuter-N300
   - VIXMINI
 
 * NETGEAR
 
   - R6120
 
+* RAVPower
+
+  - RP-WD009
+
 * TP-Link
 
   - Archer C50 (v3)
   - Archer C50 (v4)
+  - RE200 (v2)
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-WA801ND (v5)
@@ -250,13 +279,6 @@ ramips-mt76x8
 
   - Xiaomi Mi Router 4A (100M Edition)
   - Xiaomi Mi Router 4C
-
-ramips-rt305x [#deprecated]_  [#device-class-tiny]_
----------------------------------------------------
-
-* VoCore
-
-  - VoCore (8M, 16M)
 
 rockchip-armv8
 --------------
@@ -300,10 +322,6 @@ See also: :doc:`x86`
 Footnotes
 ---------
 
-.. [#deprecated]
-  The device or target is reaching its end of life soon. This means that support
-  in the next major release of Gluon is doubtful.
-
 .. [#device-class-tiny]
   These devices only support a subset of Gluons capabilities due to flash or memory
   size constraints. Devices are classified as tiny in they provide less than 7M of usable
@@ -319,3 +337,10 @@ Footnotes
 
 .. [#lan_as_wan]
   All LAN ports on this device are used as WAN.
+
+.. [#modular_ethernet]
+  These devices follow a modular principle,
+  which means even basic functionality like ethernet is provided by an expansion-board,
+  that may not be bundled with the device itself.
+  Such expansions are recommended for the config mode, but are not strictly necessary,
+  as exposed serial ports may grant sufficient access as well.

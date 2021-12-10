@@ -1,6 +1,8 @@
 local bit = require 'bit'
+local posix_fcntl = require 'posix.fcntl'
 local posix_glob = require 'posix.glob'
 local posix_syslog = require 'posix.syslog'
+local posix_unistd = require 'posix.unistd'
 local hash = require 'hash'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
@@ -193,4 +195,76 @@ function M.log(message, verbose)
 	posix_syslog.syslog(posix_syslog.LOG_INFO, message)
 end
 
+local function close_fds(fds)
+	for _, fd in pairs(fds) do
+		posix_unistd.close(fd)
+	end
+end
+
+M.subprocess = {}
+
+M.subprocess.DEVNULL = -1
+M.subprocess.PIPE = 1
+
+-- Execute a program found using command PATH search, like the shell.
+-- Return the pid, as well as the I/O streams as pipes or nil on error.
+function M.subprocess.popen(path, argt, options)
+	argt = argt or {}
+	local childfds = {}
+	local parentfds = {}
+	local stdiostreams = {stdin = 0, stdout = 1, stderr = 2}
+
+	for iostream in pairs(stdiostreams) do
+		if options[iostream] == M.subprocess.PIPE then
+			local piper, pipew = posix_unistd.pipe()
+			if iostream == "stdin" then
+				childfds[iostream] = piper
+				parentfds[iostream] = pipew
+			else
+				childfds[iostream] = pipew
+				parentfds[iostream] = piper
+			end
+		end
+	end
+
+	-- childfds: r0, w1, w2
+	-- parentfds: w0, r1, r2
+
+	local pid, errmsg, errnum = posix_unistd.fork()
+
+	if pid == nil then
+		close_fds(parentfds)
+		close_fds(childfds)
+		return nil, errmsg, errnum
+	elseif pid == 0 then
+		local null = -1
+		if M.contains(options, M.subprocess.DEVNULL) then
+			-- only open if there's anything to discard
+			null = posix_fcntl.open('/dev/null', posix_fcntl.O_RDWR)
+		end
+
+		for iostream, fd in pairs(stdiostreams) do
+			local option = options[iostream]
+			if option == M.subprocess.DEVNULL then
+				posix_unistd.dup2(null, fd)
+			elseif option == M.subprocess.PIPE then
+				posix_unistd.dup2(childfds[iostream], fd)
+			end
+		end
+		close_fds(childfds)
+		close_fds(parentfds)
+
+		-- close potential null
+		if null > 2 then
+			posix_unistd.close(null)
+		end
+
+		posix_unistd.execp(path, argt)
+		posix_unistd._exit(127)
+	end
+
+	close_fds(childfds)
+
+	return pid, parentfds
+end
 return M

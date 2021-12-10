@@ -30,10 +30,15 @@ function M.is_outdoor_device()
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',
 		'tplink,cpe220-v3',
+		'tplink,cpe510-v2',
+		'tplink,cpe510-v3',
+		'tplink,eap225-outdoor-v1',
+		'tplink,wbs210-v2',
 	}) then
 		return true
 
 	elseif M.match('ipq40xx', 'generic', {
+		'aruba,ap-365',
 		'engenius,ens620ext',
 		'plasmacloud,pa1200',
 	}) then
@@ -44,11 +49,6 @@ function M.is_outdoor_device()
 end
 
 function M.device_supports_wpa3()
-	-- rt2x00 crashes when enabling WPA3 personal / OWE VAP
-	if M.match('ramips', 'rt305x') then
-		return false
-	end
-
 	return unistd.access('/lib/gluon/features/wpa3')
 end
 

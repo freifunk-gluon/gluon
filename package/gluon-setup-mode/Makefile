@@ -4,7 +4,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-setup-mode
-PKG_VERSION:=1
 
 include ../gluon.mk
 
@@ -15,6 +14,10 @@ endef
 
 define Package/gluon-setup-mode/description
 	Offline mode to perform basic setup in a secure manner.
+endef
+
+define Package/gluon-setup-mode/conffiles
+/etc/config/gluon-setup-mode
 endef
 
 init_links := \

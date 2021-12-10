@@ -78,11 +78,6 @@ end
 uci:delete('network', 'lan')
 uci:delete('network', 'wan')
 
-uci:foreach('network', 'device', function(dev)
-	if dev['type'] ~= 'bridge' then return end
-	if dev['ifname'] ~= 'lan' and dev['ifname'] ~= 'wan' then return end
-
-	uci:delete('network', dev['.name'])
-end)
+uci:delete_all('network', 'device')
 
 uci:save('network')

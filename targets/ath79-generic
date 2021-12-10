@@ -54,17 +54,39 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 	factory = false,
 })
 
+
+-- Enterasys
+
+device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
+	factory = false,
+})
+
+
 -- GL.iNet
 
 device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
 })
 
+-- JOY-IT
+
+device('joy-it-jt-or750i', 'joyit_jt-or750i', {
+	packages = ATH10K_PACKAGES_QCA9887,
+	factory = false,
+})
+
+
 -- OCEDO
 
 device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })
+
+-- Onion
+
+-- modular/optional "ethernet expansion board" recommended for config mode
+-- setup via integrated (USB-)tty is possible as well
+device('onion-omega', 'onion_omega')
 
 -- Plasma Cloud
 
@@ -85,17 +107,27 @@ device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	class = 'tiny',
 	broken = true,  -- 64M ath9k + ath10k
-
 })
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })
 
-device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
-
 device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
+
+device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
+device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
+
+device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
+       packages = ATH10K_PACKAGES_QCA9888,
+})
+
+device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
+
+device('tp-link-wbs210-v2', 'tplink_wbs210-v2')

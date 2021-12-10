@@ -88,3 +88,17 @@ update.sh
     source and installs it into *packages/* directory. It simply tries to set the *base*
     branch of the cloned repo to the correct commit. If this fails it fetches the
     upstream branch and tries again to set the local *base* branch.
+
+getversion.sh
+    Used to determine the version numbers of the repositories of Gluon and the
+    site configuraiton, to be included in the built firmware images as
+    */lib/gluon/gluon-version* and */lib/gluon/site-version*.
+
+    By default, this uses ``git describe`` to generate a version number based
+    on the last git tag. This can be overridden by putting a file called
+    *.scmversion* into the root of the respective repositories.
+
+    A command like ``rm -f .scmversion; echo "$(./scripts/getversion.sh .)" > .scmversion``
+    can be used before applying local patches to ensure that the reported
+    version numbers refer to an upstream commit ID rather than an arbitrary
+    local one after ``git am``.

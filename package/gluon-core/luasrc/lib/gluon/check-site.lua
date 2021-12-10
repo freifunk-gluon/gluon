@@ -360,7 +360,7 @@ end
 function M.need_domain_name(path)
 	M.need_string(path)
 	M.need(path, function(domain_name)
-		local f = io.open(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/domains/' .. domain_name .. '.json')
+		local f = io.open((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/domains/' .. domain_name .. '.json')
 		if not f then return false end
 		f:close()
 		return true
@@ -383,7 +383,7 @@ end
 
 local check = setfenv(assert(loadfile()), M)
 
-site = assert(json.load(os.getenv('IPKG_INSTROOT') .. '/lib/gluon/site.json'))
+site = assert(json.load((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/site.json'))
 
 local ok, err = pcall(function()
 	if has_domains then
