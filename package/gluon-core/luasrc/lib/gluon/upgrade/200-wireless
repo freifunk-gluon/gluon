@@ -135,7 +135,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 	local id = config.id
 
 	if user_adjustable_channel then
-		id = string.format(template, channel)
+		id = string.format(id, channel)
 	end
 
 	-- mode mesh, adhoc
