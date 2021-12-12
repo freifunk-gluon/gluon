@@ -127,23 +127,51 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		return
 	end
 
-	uci:section('network', 'interface', name, {
-		proto = 'gluon_mesh',
-	})
+	-- TODO: source from site
+	user_adjustable_channel = true
+	channel = 5
+	mode = "adhoc"
 
-	uci:section('wireless', 'wifi-iface', name, {
-		device = radio_name,
-		network = name,
-		mode = 'mesh',
-		mesh_id = config.id,
-		mesh_fwding = false,
-		macaddr = macaddr,
-		mcast_rate = config.mcast_rate,
-		ifname = suffix and 'mesh' .. suffix,
-		disabled = disabled,
-		macfilter = macfilter,
-		maclist = maclist,
-	})
+	local id = config.id
+
+	if user_adjustable_channel then
+		id = string.format(template, channel)
+	end
+
+	-- mode mesh, adhoc
+	if mode == "mesh" then
+		uci:section('network', 'interface', name, {
+			proto = 'gluon_mesh',
+		})
+
+		uci:section('wireless', 'wifi-iface', name, {
+			device = radio_name,
+			network = name,
+			mode = 'mesh',
+			mesh_id = id,
+			mesh_fwding = false,
+			macaddr = macaddr,
+			mcast_rate = config.mcast_rate,
+			ifname = suffix and 'mesh' .. suffix,
+			disabled = disabled,
+			macfilter = macfilter,
+			maclist = maclist,
+		})
+	elseif mode == "adhoc" then
+		uci:section('wireless', 'wifi-iface', name, {
+			device = radio_name,
+			network = name,
+			mode = 'adhoc',
+			ssid = id,
+			encryption = 'none',
+			macaddr = macaddr,
+			mcast_rate = config.mcast_rate,
+			ifname = suffix and 'mesh' .. suffix,
+			disabled = disabled,
+			macfilter = macfilter,
+			maclist = maclist,
+		})
+	end
 end
 
 local function fixup_wan(radio, index)
