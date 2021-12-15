@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+-- Setup a cron for manman-sync if enabled
+
+local uci = require('simple-uci').cursor()
+
+local urandom = io.open('/dev/urandom', 'r')
+local seed1, seed2 = urandom:read(2):byte(1, 2)
+math.randomseed(seed1*0x100 + seed2)
+urandom:close()
+
+-- Perform sync at a random time each hour
+local minute = math.random(0, 59)
+
+local f = io.open('/usr/lib/micron.d/manman-sync', 'w')
+-- Only setup cron if enabled
+-- Write file regardless to clear old cron
+if uci:get_bool('gluon', 'manman_sync', 'enabled') then
+  f:write(string.format('%i * * * * /usr/bin/manman-sync\n', minute))
+end
+f:close()

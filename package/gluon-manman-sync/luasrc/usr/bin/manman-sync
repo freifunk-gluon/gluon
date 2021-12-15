@@ -1,0 +1,20 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+local manman = 'https://manman.graz.funkfeuer.at'
+
+if uci:get_bool('gluon', 'manman_sync', 'enabled') then
+  if not uci:get('gluon', 'manman_sync', 'node_id') then
+    print('E: manman node_id missing')
+    return 2
+  end
+
+  -- check manman location, abort if not reachable
+
+  -- try to fetch data
+  -- check if anything changed since last time
+  -- if yes, apply changes and do gluon-reload
+else
+  print('manman-sync not enabled, skipping')
+end
