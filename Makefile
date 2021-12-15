@@ -19,8 +19,9 @@ escape = '$(subst ','\'',$(1))'
 GLUON_SITEDIR ?= site
 $(eval $(call mkabspath,GLUON_SITEDIR))
 
-$(GLUON_SITEDIR)/site.mk:
-	$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
+ifeq ($(realpath $(GLUON_SITEDIR)/site.mk),)
+$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
+endif
 
 include $(GLUON_SITEDIR)/site.mk
 
