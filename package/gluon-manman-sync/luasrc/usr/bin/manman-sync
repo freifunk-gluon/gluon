@@ -12,12 +12,16 @@ local mappings = {
 }
 
 if uci:get_bool('gluon', 'manman_sync', 'enabled') then
-  if not uci:get('gluon', 'manman_sync', 'location_id') then
+  local location_id = uci:get('gluon', 'manman_sync', 'location_id')
+
+  if not location_id then
     print('E: manman location_id missing')
     return 2
   end
 
-  -- check manman location, abort if not reachable
+  -- check manman reachability, abort if not reachable
+
+  -- get location from ip
 
   location = getLocation()
   print('Syncing with location ' .. location['name'])
@@ -48,7 +52,10 @@ if uci:get_bool('gluon', 'manman_sync', 'enabled') then
 
   for index, net in ipairs(device['networks']) do
     net_name = net['name']
-    net_mapped = 'mesh_' .. (mappings[net_name] or net_name)
+    net_mapped = mappings[net_name] or net_name
+    if not string.find(net_mapped, '_') then
+      net_mapped = 'mesh_' .. net_mapped
+    end
 
     cidr = ip.new(net['ip'], net['netmask']):string()
 
@@ -57,6 +64,7 @@ if uci:get_bool('gluon', 'manman_sync', 'enabled') then
   end
 
   -- TODO: exec gluon-reload
+  print('Reloading...')
 else
   print('manman-sync not enabled, skipping')
 end

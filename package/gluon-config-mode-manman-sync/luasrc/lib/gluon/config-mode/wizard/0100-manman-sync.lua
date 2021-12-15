@@ -6,8 +6,8 @@ return function(form, uci)
 	local pkg_i18n = i18n 'gluon-config-mode-manman-sync'
 
 	local msg = pkg_i18n.translate(
-		'Sync data from ManMan ' ..
-		'by entering ManMan location id here.\n' ..
+		'Sync configuration from ManMan ' ..
+			'by entering ManMan location id here.\n' ..
 		'This will automatically keep name, location and ips ' ..
 			'in sync with the values specified in ManMan.'
 	)
