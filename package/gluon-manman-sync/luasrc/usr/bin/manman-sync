@@ -1,20 +1,62 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+local ip = require "luci.ip" -- luci-lib-ip
 
 local manman = 'https://manman.graz.funkfeuer.at'
 
+-- NOTE: these will have mesh_ appended for static-ip
+local mappings = {
+  wifi = 'radio0',
+  tunnel = 'vpn'
+}
+
 if uci:get_bool('gluon', 'manman_sync', 'enabled') then
-  if not uci:get('gluon', 'manman_sync', 'node_id') then
-    print('E: manman node_id missing')
+  if not uci:get('gluon', 'manman_sync', 'location_id') then
+    print('E: manman location_id missing')
     return 2
   end
 
   -- check manman location, abort if not reachable
 
+  location = getLocation()
+  print('Syncing with location ' .. location['name'])
+
+  local device
+
+  if #location['devices'] > 1 then
+    print('E: multiple devices, not impl yet')
+    -- TODO: iterate devices, check if any with matching hostname, then use that
+    return 2
+  else
+    device = location['devices'][0]
+  end
+
+  if device == nil then
+    print('E: unable to find matching device')
+    return 2
+  end
+
+  print('Syncing with device ' .. device['name'])
+
+  -- TODO: compare device
+
   -- try to fetch data
   -- check if anything changed since last time
   -- if yes, apply changes and do gluon-reload
+
+
+  for index, net in ipairs(device['networks']) do
+    net_name = net['name']
+    net_mapped = 'mesh_' .. (mappings[net_name] or net_name)
+
+    cidr = ip.new(net['ip'], net['netmask']):string()
+
+    print('Syncing ' .. net_name .. ' as ' .. net_mapped .. ' to ' .. cidr)
+    uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
+  end
+
+  -- TODO: exec gluon-reload
 else
   print('manman-sync not enabled, skipping')
 end
