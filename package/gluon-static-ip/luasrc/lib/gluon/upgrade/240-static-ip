@@ -16,7 +16,7 @@ end
 local function static_ip_4(name, ifname, macaddr, actually_use)
 	-- actually_use = if ip should be applied to interface or not
 	-- if set and actually_use=false then it will be removed
-	local static4 = uci:get('gluon-static-ip', interface, 'ip4')
+	local static4 = uci:get('gluon-static-ip', name, 'ip4')
 
 	if not static4 then
 		local prefixOverflow = IPV4_PREFIX_MAX - tmp4:prefix()
@@ -29,7 +29,9 @@ local function static_ip_4(name, ifname, macaddr, actually_use)
 		end
 
 		static4 = tmp4:add(ipnum):string()
-		uci:set('gluon-static-ip', interface, 'ip4', static4)
+    uci:section('gluon-static-ip', 'interface', name, {
+      ip4 = static4,
+    })
 	end
 
 	if actually_use then
