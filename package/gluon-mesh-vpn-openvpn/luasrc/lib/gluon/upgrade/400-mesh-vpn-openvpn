@@ -11,21 +11,18 @@ local enabled
 
 local file = '/etc/openvpn/mesh_vpn.ovpn'
 
--- TODO: support for directly specifying options in site conf
+-- TODO: support for directly specifying options in site conf??
 
 fd = io.open(file, 'w')
 fd:write(site.mesh_vpn.openvpn.config())
+fd:write("\ndev " .. vpn_core.get_interface())
 fd:close()
+
+-- NOTE: ip is set by static-ip
 
 uci:section('openvpn', 'mesh_vpn', {
 	enabled = enabled,
 	config = file,
-	-- uuid = util.node_id(),
-	-- interface = vpn_core.get_interface(),
-	-- bind_interface = 'br-wan',
-	-- group = 'gluon-mesh-vpn',
-	-- broker_selection = 'usage',
-	-- address = site.mesh_vpn.openvpn.brokers(),
 })
 
 uci:save('openvpn')
