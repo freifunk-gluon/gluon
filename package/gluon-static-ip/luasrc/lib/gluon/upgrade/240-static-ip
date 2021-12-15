@@ -33,13 +33,16 @@ local function static_ip_4(name, ifname, macaddr, actually_use)
 	end
 
 	if actually_use then
-		ip4 = ip.IPv4(static4)
-		-- uci:set('network', name, 'proto', 'static')
+		ip4 = ip.new(static4)
+    -- we have to set proto to static as otherwise we won't have the ip assigned
+    -- TODO: maybe modify the protos instead to allow reading static ips and using them?
+    -- NOTE: wan also uses dhcp/static directly
+		uci:set('network', name, 'proto', 'static')
 		uci:set('network', name, 'ipaddr', ip4:host():string())
 		uci:set('network', name, 'netmask', ip4:mask():string())
 	else
-		if uci:get('network', name, 'ipaddr') == static4 then
-			-- uci:del('network', name, 'proto')
+		if uci:get('network', name, 'proto') == 'static' then
+			uci:del('network', name, 'proto')
 			uci:del('network', name, 'ipaddr')
 			uci:del('network', name, 'netmask')
 		end
@@ -50,16 +53,10 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	net = 'mesh_' .. radio['.name']
 
 	if uci:get('network', net, 'proto') == nil then
-		-- uci:section('network', 'device', {
-		-- 	type = 'bridge',
-		-- 	name = net,
-		-- 	bridge_empty = '1',
-		-- })
 		uci:section('network', 'interface', net, {
 			proto = 'static',
 			type = 'bridge',
 			ifname = net,
-			-- device = net,
 		})
 	end
 
