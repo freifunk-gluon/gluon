@@ -41,16 +41,16 @@ static struct json_object * get_autoupdater(void) {
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 	struct uci_package *p;
-	if (uci_load(ctx, "gluon", &p))
+	if (uci_load(ctx, "gluon-manman-sync", &p))
 		goto error;
 
-	struct uci_section *s = uci_lookup_section(ctx, p, "manman_sync");
+	struct uci_section *s = uci_lookup_section(ctx, p, "sync");
 	if (!s)
 		goto error;
 
 	struct json_object *ret = json_object_new_object();
 
-	json_object_object_add(ret, "nodeid", gluonutil_wrap_string(uci_lookup_option_string(ctx, s, "nodeid")));
+	json_object_object_add(ret, "node_id", gluonutil_wrap_string(uci_lookup_option_string(ctx, s, "node_id")));
 
 	const char *enabled = uci_lookup_option_string(ctx, s, "enabled");
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled && !strcmp(enabled, "1")));

@@ -11,8 +11,8 @@ local mappings = {
   tunnel = 'vpn'
 }
 
-if uci:get_bool('gluon', 'manman_sync', 'enabled') then
-  local location_id = uci:get('gluon', 'manman_sync', 'location_id')
+if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
+  local location_id = uci:get('gluon-manman-sync', 'sync', 'location_id')
 
   if not location_id then
     print('E: manman location_id missing')

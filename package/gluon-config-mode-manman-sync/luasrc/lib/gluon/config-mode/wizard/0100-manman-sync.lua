@@ -12,18 +12,18 @@ return function(form, uci)
 
 	local o
 
-	local manman = s:option(Flag, "manman_sync", pkg_i18n.translate("Enable ManMan sync"))
-	manman.default = uci:get_bool("gluon", "manman_sync", "enabled")
+	local manman = s:option(Flag, 'manman_sync', pkg_i18n.translate('Enable ManMan sync'))
+	manman.default = uci:get_bool('gluon-manman-sync', 'sync', 'enabled')
 	function manman:write(data)
-		uci:set("gluon", "manman_sync", "enabled", data)
+		uci:set('gluon-manman-sync', 'sync', 'enabled', data)
 	end
 
-	local id = s:option(Value, "manman_id", pkg_i18n.translate("ManMan location ID"))
+	local id = s:option(Value, 'manman_id', pkg_i18n.translate('ManMan location ID'))
 	id:depends(manman, true)
-	id.default = uci:get("gluon", "manman_sync", "node_id")
-	id.datatype = "uinteger"
+	id.default = uci:get('gluon-manman-sync', 'sync', 'node_id')
+	id.datatype = 'uinteger'
 	function id:write(data)
-		uci:set("gluon", "manman_sync", "node_id", data)
+		uci:set('gluon-manman-sync', 'sync', 'node_id', data)
 	end
 
 	function s:write()
