@@ -1,9 +1,17 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local ip = require "luci.ip" -- luci-lib-ip
+local ip = require 'luci.ip' -- luci-lib-ip
+local fetch = require 'luci.httpclient'
+local json = require 'luci.jsonc'
+local site = require 'gluon.site'
 
-local manman = 'https://manman.graz.funkfeuer.at'
+local pretty_hostname = require 'pretty_hostname'
+local hostname = pretty_hostname.get(uci)
+
+local manapi = site.manman.api()
+local mankey = site.manman.key()
+-- TODO: use manman ecdsa key to verify response
 
 -- NOTE: these will have mesh_ appended for static-ip
 local mappings = {
@@ -21,50 +29,99 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   -- check manman reachability, abort if not reachable
 
-  -- get location from ip
-
-  location = getLocation()
-  print('Syncing with location ' .. location['name'])
-
-  local device
-
-  if #location['devices'] > 1 then
-    print('E: multiple devices, not impl yet')
-    -- TODO: iterate devices, check if any with matching hostname, then use that
+  local success, a, b, c = pcall(function() return fetch.request_raw(manapi .. '/') end)
+  if not success then
+    print('E: couldnt reach manman: ' .. a)
     return 2
   else
-    device = location['devices'][0]
+    if a ~= 200 then
+      print('E: couldnt reach manman - unexpected fetch result', a, b, c)
+      return 2
+    end
   end
 
-  if device == nil then
-    print('E: unable to find matching device')
+  -- try to fetch data
+  print('Fetching manman data...')
+  local code, _, result = fetch.request_raw(manapi .. '/location/show/' .. location_id)
+
+  if code == 404 then
+    print('E: location does not exist')
     return 2
   end
 
-  print('Syncing with device ' .. device['name'])
+  if code < 1 then
+    print('E: failed to fetch')
+    return 2
+  end
+
+  -- cloudflare's reverse proxies send http chunked responses with chunk sizes
+  -- for whatever reasons the chunk size gets smashed into the result
+  -- this is a hack to fish it out, it is irrelevant on unaffected reverse proxies
+  j_start = string.find(result, '{')
+  result = string.sub(result, j_start)
+
+  local location = json.parse(result)
+  print('Syncing with location ' .. location.location.name)
+
+  uci:set('gluon-node-info', 'owner', 'contact', location.administrator.email)
+  uci:set('gluon-node-info', 'location', 'share_location', '1')
+  uci:set('gluon-node-info', 'location', 'latitude', location.location.lat)
+  uci:set('gluon-node-info', 'location', 'longitutde', location.location.long)
+
+  local node
+
+  local should_hostname
+
+  if #location.nodes > 1 then
+    for i, potential_node in ipairs(location.nodes) do
+      if potential_node.name == hostname then
+        node = potential_node
+        should_hostname = location.location.name .. '-' .. node.name
+      end
+    end
+  else
+    node = location.nodes[1]
+    should_hostname = location.location.name
+  end
+
+  if node == nil then
+    print('E: unable to find matching node')
+    return 2
+  end
+
+  if hostname ~= should_hostname then
+    print('Renaming node to ' .. should_hostname)
+    pretty_hostname.set(uci, should_hostname)
+  end
+
+  print('Syncing data for node ' .. node.name)
 
   -- TODO: compare device
 
-  -- try to fetch data
   -- check if anything changed since last time
   -- if yes, apply changes and do gluon-reload
 
 
-  for index, net in ipairs(device['networks']) do
-    net_name = net['name']
+  for i, net in ipairs(node.interfaces) do
+    net_name = net.name
     net_mapped = mappings[net_name] or net_name
     if not string.find(net_mapped, '_') then
       net_mapped = 'mesh_' .. net_mapped
     end
 
-    cidr = ip.new(net['ip'], net['netmask']):string()
+    cidr = ip.new(net.ip, net.netmask):string()
 
     print('Syncing ' .. net_name .. ' as ' .. net_mapped .. ' to ' .. cidr)
     uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
   end
 
+  uci:save('gluon-manman-sync')
+  uci:save('gluon-static-ip')
+  uci:save('gluon-node-info')
+
   -- TODO: exec gluon-reload
   print('Reloading...')
+  os.execute('exec gluon-reload')
 else
   print('manman-sync not enabled, skipping')
 end

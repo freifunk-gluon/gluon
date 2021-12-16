@@ -27,6 +27,6 @@ return function(form, uci)
 	end
 
 	function s:write()
-		uci:save('gluon')
+		uci:save('gluon-manman-sync')
 	end
 end

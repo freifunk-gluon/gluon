@@ -7,7 +7,7 @@ include ../gluon.mk
 
 define Package/gluon-config-mode-manman-sync
   TITLE:=Sync location data from manman
-  DEPENDS:=+gluon-config-mode-core +luci-lib-ip +gluon-manman-sync
+  DEPENDS:=+gluon-config-mode-core +gluon-manman-sync
 endef
 
 $(eval $(call BuildPackageGluon,gluon-config-mode-manman-sync))
