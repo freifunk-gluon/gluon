@@ -21,7 +21,7 @@ return function(form, uci)
 	local id = s:option(Value, "manman_id", pkg_i18n.translate("ManMan location ID"))
 	id:depends(manman, true)
 	id.default = uci:get("gluon", "manman_sync", "node_id")
-	id.datatype = "nfloat" -- TODO: int
+	id.datatype = "uinteger"
 	function id:write(data)
 		uci:set("gluon", "manman_sync", "node_id", data)
 	end
