@@ -13,5 +13,5 @@ end
 if not msg then return end
 
 renderer.render_string(msg, {
-	location_id = uci:get('gluon-manman-sync', 'sync', 'node_id')
+	location_id = uci:get('gluon-manman-sync', 'sync', 'location_id')
 })

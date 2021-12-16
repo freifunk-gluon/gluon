@@ -20,10 +20,10 @@ return function(form, uci)
 
 	local id = s:option(Value, 'manman_id', pkg_i18n.translate('ManMan location ID'))
 	id:depends(manman, true)
-	id.default = uci:get('gluon-manman-sync', 'sync', 'node_id')
+	id.default = uci:get('gluon-manman-sync', 'sync', 'location_id')
 	id.datatype = 'uinteger'
 	function id:write(data)
-		uci:set('gluon-manman-sync', 'sync', 'node_id', data)
+		uci:set('gluon-manman-sync', 'sync', 'location_id', data)
 	end
 
 	function s:write()

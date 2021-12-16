@@ -50,7 +50,7 @@ static struct json_object * get_autoupdater(void) {
 
 	struct json_object *ret = json_object_new_object();
 
-	json_object_object_add(ret, "node_id", gluonutil_wrap_string(uci_lookup_option_string(ctx, s, "node_id")));
+	json_object_object_add(ret, "location_id", gluonutil_wrap_string(uci_lookup_option_string(ctx, s, "location_id")));
 
 	const char *enabled = uci_lookup_option_string(ctx, s, "enabled");
 	json_object_object_add(ret, "enabled", json_object_new_boolean(enabled && !strcmp(enabled, "1")));
