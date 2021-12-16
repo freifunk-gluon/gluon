@@ -1,6 +1,5 @@
 #!/usr/bin/lua
 
-local platform = require 'gluon.platform'
 local wireless = require 'gluon.wireless'
 
 local uci = require('simple-uci').cursor()
@@ -52,7 +51,7 @@ local function configure_owe(radio, index, config, radio_name)
 
 	-- Don't configure OWE in case our device
 	-- can't do MFP, as it's mandatory for OWE.
-	if not platform.device_supports_mfp(uci) then
+	if not wireless.device_supports_mfp(uci) then
 		return
 	end
 
@@ -80,7 +79,7 @@ local function configure_owe_transition_mode(config, radio_name)
 
 	-- Don't configure OWE in case our device
 	-- can't do MFP, as it's mandatory for OWE.
-	if not platform.device_supports_mfp(uci) then
+	if not wireless.device_supports_mfp(uci) then
 		return
 	end
 

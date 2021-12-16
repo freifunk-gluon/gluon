@@ -126,4 +126,52 @@ function M.preserve_channels(uci)
 	return uci:get_first('gluon-core', 'wireless', 'preserve_channels')
 end
 
+function M.device_supports_wpa3()
+	return unistd.access('/lib/gluon/features/wpa3')
+end
+
+function M.device_supports_mfp(uci)
+	local supports_mfp = true
+
+	if not M.device_supports_wpa3() then
+		return false
+	end
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		local phy = M.find_phy(radio)
+		local phypath = '/sys/kernel/debug/ieee80211/' .. phy .. '/'
+
+		if not util.file_contains_line(phypath .. 'hwflags', 'MFP_CAPABLE') then
+			supports_mfp = false
+			return false
+		end
+	end)
+
+	return supports_mfp
+end
+
+function M.device_uses_wlan(uci)
+	local ret = false
+
+	uci:foreach('wireless', 'wifi-device', function()
+		ret = true
+		return false
+	end)
+
+	return ret
+end
+
+function M.device_uses_11a(uci)
+	local ret = false
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		if radio.hwmode == '11a' or radio.hwmode == '11na' then
+			ret = true
+			return false
+		end
+	end)
+
+	return ret
+end
+
 return M
