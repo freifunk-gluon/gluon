@@ -1,8 +1,4 @@
 return function(form, uci)
-	if active_vpn == nil then
-		return
-	end
-
 	local pkg_i18n = i18n 'gluon-config-mode-manman-sync'
 
 	local msg = pkg_i18n.translate(
