@@ -49,6 +49,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     return 2
   end
 
+  if code ~= 200 then
+    print('E: got status code ' .. code)
+    return 2
+  end
+
   if code < 1 then
     print('E: failed to fetch')
     return 2
