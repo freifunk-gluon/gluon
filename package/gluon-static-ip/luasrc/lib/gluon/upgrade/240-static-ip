@@ -1,9 +1,10 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local site = require "gluon.site"
+local site = require 'gluon.site'
 local wireless = require 'gluon.wireless'
-local ip = require "luci.ip" -- luci-lib-ip
+local ip = require 'luci.ip' -- luci-lib-ip
+local util = require 'gluon.util'
 
 IPV4_PREFIX_MAX = 32
 
@@ -21,7 +22,7 @@ local function static_ip_4(name, ifname, macaddr, actually_use)
 	if not static4 then
 		local prefixOverflow = IPV4_PREFIX_MAX - tmp4:prefix()
 		-- magic that turns mac into random number
-		local ipnum = math.fmod(tonumber(macaddr:gsub(":", ""):sub(-6), 16), 2 ^ prefixOverflow)
+		local ipnum = math.fmod(tonumber(macaddr:gsub(':', ''):sub(-6), 16), 2 ^ prefixOverflow)
 
 		-- the rare case where we get 0 or 1 as our mac based number
 		if ipnum < 2 then
@@ -41,7 +42,7 @@ local function static_ip_4(name, ifname, macaddr, actually_use)
     -- NOTE: wan also uses dhcp/static directly
 		uci:set('network', name, 'proto', 'static')
 		uci:set('network', name, 'ipaddr', ip4:host():string())
-		uci:set('network', name, 'netmask', ip4:mask():string())
+    uci:set('network', name, 'netmask', ip4:mask():string())
 	else
 		if uci:get('network', name, 'proto') == 'static' then
 			uci:del('network', name, 'proto')
@@ -63,20 +64,29 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	end
 
 	use = uci:get('wifi-iface', net, 'disabled') ~= '1'
-	static_ip_4(net, uci:get('wifi-iface', net, 'ifname'), uci:get('network', net, 'macaddr') or 'afafafafafafafaf', use)
+	static_ip_4(net, uci:get('wifi-iface', net, 'ifname'), uci:get('wifi-iface', net, 'macaddr'), use)
 end)
 
-local function apply_network(name, use)
+local function apply_network(name, use, mac)
+  if not uci:get('network', name, 'proto') then
+    print('warn: non-existent network ' .. name)
+    return
+  end
+
 	not_disabled = uci:get('network', name, 'disabled') ~= '1'
 	if use == nil then
 		use = not_disabled
 	end
-	static_ip_4(name, uci:get('network', name, 'ifname'), uci:get('network', name, 'macaddr') or 'afafafafafafafaf', use)
+  if not uci:get('network', name, 'macaddr') then
+    uci:set('network', name, 'macaddr', util.generate_mac(mac))
+  end
+	static_ip_4(name, uci:get('network', name, 'ifname'), uci:get('network', name, 'macaddr'), use)
 end
 
 -- TODO: get actual enabled value from options
-apply_network('mesh_wan', nil)
-apply_network('mesh_vpn', nil)
+apply_network('mesh_wan', nil, 10)
+apply_network('mesh_lan', nil, 11)
+apply_network('mesh_vpn', nil, 12)
 
 uci:save('gluon-static-ip')
 uci:save('network')
