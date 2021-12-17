@@ -6,7 +6,8 @@ PKG_VERSION:=1
 include ../gluon.mk
 
 define Package/gluon-manman-sync
-  DEPENDS:=+gluon-core +micrond +luci-lib-ip +luci-lib-httpclient
+	# luci-base shouldn't be here but httpclient depends on util depends on template.parser which is from base
+  DEPENDS:=+gluon-core +micrond +luci-lib-ip +luci-lib-httpclient +luci-base
   TITLE:=Sync configuration with data from manman
 endef
 
