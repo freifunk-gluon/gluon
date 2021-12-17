@@ -15,7 +15,7 @@ local minute = math.random(0, 59)
 local f = io.open('/usr/lib/micron.d/manman-sync', 'w')
 -- Only setup cron if enabled
 -- Write file regardless to clear old cron
-if uci:get_bool('gluon', 'manman_sync', 'enabled') then
+if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   f:write(string.format('%i * * * * /usr/bin/manman-sync\n', minute))
 end
 f:close()
