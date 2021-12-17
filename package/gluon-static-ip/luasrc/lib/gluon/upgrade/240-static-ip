@@ -77,10 +77,12 @@ local function apply_network(name, use, mac)
 	if use == nil then
 		use = not_disabled
 	end
-  if not uci:get('network', name, 'macaddr') then
-    uci:set('network', name, 'macaddr', util.generate_mac(mac))
+  macaddr = uci:get('network', name, 'macaddr')
+  if not macaddr then
+    macaddr = util.generate_mac(mac)
+    uci:set('network', name, 'macaddr', macaddr)
   end
-	static_ip_4(name, uci:get('network', name, 'ifname'), uci:get('network', name, 'macaddr'), use)
+	static_ip_4(name, uci:get('network', name, 'ifname'), macaddr, use)
 end
 
 -- TODO: get actual enabled value from options
