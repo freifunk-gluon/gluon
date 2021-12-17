@@ -88,7 +88,7 @@ end
 -- TODO: get actual enabled value from options
 apply_network('mesh_wan', nil, 10)
 apply_network('mesh_lan', nil, 11)
-apply_network('mesh_vpn', nil, 12)
+apply_network('mesh_vpn', nil, 7)
 
 uci:save('gluon-static-ip')
 uci:save('network')
