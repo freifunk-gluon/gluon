@@ -65,7 +65,7 @@ end
 need_boolean(in_site({'poe_passthrough'}), false)
 
 if need_table({'dns'}, nil, false) then
-	need_string_array_match({'dns', 'servers'}, '^[%x:]+$')
+	-- need_string_array_match({'dns', 'servers'}, '^[%x:]+$')
 end
 
 need_string_array(in_domain({'next_node', 'name'}), false)
