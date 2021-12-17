@@ -20,7 +20,7 @@ fd:close()
 
 -- NOTE: ip is set by static-ip
 
-uci:section('openvpn', 'mesh_vpn', {
+uci:section('openvpn', 'openvpn', 'mesh_vpn', {
 	enabled = enabled,
 	config = file,
 })
