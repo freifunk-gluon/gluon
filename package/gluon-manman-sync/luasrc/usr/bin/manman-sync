@@ -124,8 +124,8 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:save('gluon-static-ip')
   uci:save('gluon-node-info')
 
-  -- TODO: exec gluon-reload
-  print('Reloading...')
+  print('Applying changes...')
+  os.execute('exec gluon-reconfigure')
   os.execute('exec gluon-reload')
 else
   print('manman-sync not enabled, skipping')
