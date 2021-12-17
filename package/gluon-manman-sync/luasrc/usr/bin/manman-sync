@@ -32,11 +32,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   local success, a, b, c = pcall(function() return fetch.request_raw(manapi .. '/') end)
   if not success then
     print('E: couldnt reach manman: ' .. a)
-    return 2
+    return 1
   else
     if a ~= 200 then
       print('E: couldnt reach manman - unexpected fetch result', a, b, c)
-      return 2
+      return 1
     end
   end
 
@@ -51,12 +51,12 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   if code ~= 200 then
     print('E: got status code ' .. code)
-    return 2
+    return 1
   end
 
   if code < 1 then
     print('E: failed to fetch')
-    return 2
+    return 1
   end
 
   -- cloudflare's reverse proxies send http chunked responses with chunk sizes
