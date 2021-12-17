@@ -7,7 +7,7 @@ local vpn_core = require 'gluon.mesh-vpn'
 local uci = require('simple-uci').cursor()
 
 
-local enabled
+local enabled = vpn_core.enabled()
 
 local file = '/etc/openvpn/mesh_vpn.ovpn'
 
