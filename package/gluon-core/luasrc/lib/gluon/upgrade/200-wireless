@@ -113,13 +113,22 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 		return
 	end
 
-	local macaddr = util.get_wlan_mac(uci, radio, index, 3)
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 3)
 	if not macaddr then
 		return
 	end
 
+	local ssid = config.ssid
+	local bssid = config.bssid
+
+	if radio.wireless_config.include_channel_in_id then
+		ssid = string.format(ssid, radio.current_channel)
+		bssid = string.format(bssid, radio.current_channel)
+	end
+
 	if config.vlan then
 		uci:section('network', 'interface', name, {
+			ifname = suffix and 'ibss' .. suffix,
 			proto = 'none',
 		})
 
@@ -130,6 +139,7 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 	else
 		uci:section('network', 'interface', name, {
 			proto = 'gluon_mesh',
+			ifname = suffix and 'ibss' .. suffix,
 		})
 	end
 
@@ -137,8 +147,8 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 		device = radio_name,
 		network = name,
 		mode = 'adhoc',
-		ssid = config.ssid,
-		bssid = config.bssid,
+		ssid = ssid,
+		bssid = bssid,
 		macaddr = macaddr,
 		mcast_rate = config.mcast_rate,
 		ifname = suffix and 'ibss' .. suffix,
@@ -164,19 +174,15 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		return
 	end
 
-	-- TODO: source from site
-	user_adjustable_channel = true
-	channel = 5
-	mode = "adhoc"
-
 	local id = config.id
 
-	if user_adjustable_channel then
-		id = string.format(id, channel)
+	if radio.wireless_config.include_channel_in_id then
+		id = string.format(id, radio.current_channel)
 	end
 
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
+		ifname = suffix and 'mesh' .. suffix,
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
@@ -255,6 +261,9 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	uci:set('wireless', radio_name, 'channel', channel)
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
+
+	radio.current_channel = channel
+	radio.wireless_config = config
 
 	uci:delete('wireless', radio_name, 'supported_rates')
 	uci:delete('wireless', radio_name, 'basic_rate')
