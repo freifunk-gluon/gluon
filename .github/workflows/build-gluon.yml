@@ -24,6 +24,7 @@ jobs:
 
   build_firmware:
     needs: changed
+    if: ${{ needs.changed.outputs.targets != '[]' && needs.changed.outputs.targets != '' }}
     strategy:
       fail-fast: false
       matrix:
