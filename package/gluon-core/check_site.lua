@@ -52,7 +52,14 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 
 		obsolete({config, 'supported_rates'}, '802.11b rates are disabled by default.')
 		obsolete({config, 'basic_rate'}, '802.11b rates are disabled by default.')
-		obsolete({config, 'ibss'}, 'IBSS support has been dropped.')
+
+		if need_table({config, 'ibss'}, nil, false) then
+			need_string_match(in_domain({config, 'ibss', 'ssid'}), '^' .. ('.?'):rep(32) .. '$')
+			need_string_match(in_domain({config, 'ibss', 'bssid'}), '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
+			need_one_of({config, 'ibss', 'mcast_rate'}, supported_rates, false)
+			need_number({config, 'ibss', 'vlan'}, false)
+			need_boolean({config, 'ibss', 'disabled'}, false)
+		end
 
 		if need_table({config, 'mesh'}, nil, false) then
 			need_string_match(in_domain({config, 'mesh', 'id'}), '^' .. ('.?'):rep(32) .. '$')
