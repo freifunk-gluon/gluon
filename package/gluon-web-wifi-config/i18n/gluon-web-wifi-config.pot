@@ -10,27 +10,13 @@ msgstr ""
 msgid "5GHz WLAN"
 msgstr ""
 
-msgid ""
-"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
-"and transmission power that conforms with the local regulatory requirements. "
-"It also enables dynamic frequency selection (DFS; radar detection). At the "
-"same time, mesh functionality is disabled as it requires neighbouring nodes "
-"to stay on the same channel permanently."
-msgstr ""
-
 msgid "Enable client network (access point)"
 msgstr ""
 
 msgid "Enable mesh network (802.11s)"
 msgstr ""
 
-msgid "HT Mode"
-msgstr ""
-
-msgid "Node will be installed outdoors"
-msgstr ""
-
-msgid "Outdoor Installation"
+msgid "Enable mesh network (IBSS)"
 msgstr ""
 
 msgid "Transmission power"
@@ -46,4 +32,21 @@ msgid ""
 "adapters transmission power here. Please note that the transmission power "
 "values include the antenna gain where available, but there are many devices "
 "for which the gain is unavailable or inaccurate."
+msgstr ""
+
+msgid "Outdoor installation"
+msgstr ""
+
+msgid "Node will be installed outdoors"
+msgstr ""
+
+msgid ""
+"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
+"and transmission power that conforms with the local regulatory requirements. "
+"It also enables dynamic frequency selection (DFS; radar detection). At the "
+"same time, mesh functionality is disabled as it requires neighbouring nodes "
+"to stay on the same channel permanently."
+msgstr ""
+
+msgid "HT Mode"
 msgstr ""
