@@ -6,11 +6,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule: {interval: monthly}
-    reviewers: [blocktrron]
-    assignees: [blocktrron]
 
   - package-ecosystem: pip
     directory: /docs/
     schedule: {interval: monthly}
-    reviewers: [blocktrron]
-    assignees: [blocktrron]
