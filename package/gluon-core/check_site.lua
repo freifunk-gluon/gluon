@@ -55,7 +55,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 
 		if need_table({config, 'ibss'}, nil, false) then
 			need_string_match(in_domain({config, 'ibss', 'ssid'}), '^' .. ('.?'):rep(32) .. '$')
-			need_string_match(in_domain({config, 'ibss', 'bssid'}), '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
+			-- need_string_match(in_domain({config, 'ibss', 'bssid'}), '^%x[02468aAcCeE]:%x%x:%x%x:%x%x:%x%x:%x%x$')
 			need_one_of({config, 'ibss', 'mcast_rate'}, supported_rates, false)
 			need_number({config, 'ibss', 'vlan'}, false)
 			need_boolean({config, 'ibss', 'disabled'}, false)
