@@ -13,7 +13,9 @@
 /*
 	Based on the CI from https://download.funkfeuer.at/misc/Funkfeuer-CI/VIguide_FUNKFEUER_last.pdf
 
-	Currently only change is colors
+	Changes:
+	- colors adjusted to funkfeuer theme
+	- gluon-warning class
 */
 
 @charset "utf-8";
@@ -556,4 +558,9 @@ textarea {
 	border: 3pt dashed $ffmagenta;
 	margin-bottom: 0.5em;
 	padding: 0.5em
+}
+
+.gluon-warning {
+	@extend .gluon-section-descr;
+	background: lighten($ffyellow, 35);
 }
