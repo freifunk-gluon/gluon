@@ -85,10 +85,19 @@ local function apply_network(name, use, mac)
 	static_ip_4(name, uci:get('network', name, 'ifname'), macaddr, use)
 end
 
--- TODO: get actual enabled value from options
-apply_network('mesh_wan', nil, 10)
-apply_network('mesh_lan', nil, 11)
-apply_network('mesh_vpn', nil, 7)
+if pcall(function() require 'gluon.mesh-vpn' end) then
+	local vpn_core = require 'gluon.mesh-vpn'
+
+  apply_network('mesh_vpn', vpn_core.enabled(), 7)
+end
+
+local wan_mesh = not uci:get_bool('network', 'mesh_wan', 'disabled')
+apply_network('mesh_wan', wan_mesh, 10)
+
+if uci:get('network', 'mesh_lan', 'proto') then
+  local lan_mesh = not uci:get_bool('network', 'mesh_lan', 'disabled')
+  apply_network('mesh_lan', lan_mesh, 11)
+end
 
 uci:save('gluon-static-ip')
 uci:save('network')
