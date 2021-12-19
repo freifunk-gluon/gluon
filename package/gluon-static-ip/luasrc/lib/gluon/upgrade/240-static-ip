@@ -45,7 +45,6 @@ local function static_ip_4(name, ifname, macaddr, actually_use)
     uci:set('network', name, 'netmask', ip4:mask():string())
 	else
 		if uci:get('network', name, 'proto') == 'static' then
-			uci:del('network', name, 'proto')
 			uci:del('network', name, 'ipaddr')
 			uci:del('network', name, 'netmask')
 		end
