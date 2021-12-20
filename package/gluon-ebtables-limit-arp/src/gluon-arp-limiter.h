@@ -8,6 +8,6 @@
 #ifndef _GLUON_ARP_LIMITER_H_
 #define _GLUON_ARP_LIMITER_H_
 
-int clock;
+extern int clock;
 
 #endif /* _GLUON_ARP_LIMITER_H_ */

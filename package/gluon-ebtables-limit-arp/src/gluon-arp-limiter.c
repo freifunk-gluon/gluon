@@ -25,6 +25,8 @@
 static struct addr_store ip_store;
 static struct addr_store mac_store;
 
+int clock;
+
 char *addr_mac_ntoa(void *addr)
 {
 	return mac_ntoa((struct mac_addr *)addr);
