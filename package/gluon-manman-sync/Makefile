@@ -7,7 +7,7 @@ include ../gluon.mk
 
 define Package/gluon-manman-sync
 	# luci-base shouldn't be here but httpclient depends on util depends on template.parser which is from base
-  DEPENDS:=+gluon-core +micrond +luci-lib-ip +luci-lib-httpclient +luci-base
+  DEPENDS:=+gluon-core +micrond +luci-lib-ip +luci-lib-httpclient +luci-base +gluon-lib-ecdsa
   TITLE:=Sync configuration with data from manman
 endef
 
