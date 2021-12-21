@@ -11,16 +11,9 @@
 #include <limits.h>
 
 bool do_verify(struct verify_params* params) {
-	ecdsa_sha256_context_t hash_ctx;
-	ecdsa_sha256_init(&hash_ctx);
-	ecdsa_sha256_update(&hash_ctx, params->data, strlen(params->data));
-
-	ecc_int256_t hash;
-	ecdsa_sha256_final(&hash_ctx, hash.p);
-
 	ecdsa_verify_context_t ctxs[params->n_signatures];
 	for (size_t i = 0; i < params->n_signatures; i++)
-		ecdsa_verify_prepare_legacy(&ctxs[i], &hash, params->signatures[i]);
+		ecdsa_verify_prepare_legacy(&ctxs[i], &params->hash, params->signatures[i]);
 
 	long unsigned int good_signatures = ecdsa_verify_list_legacy(ctxs, params->n_signatures, params->pubkeys, params->n_pubkeys);
 
@@ -29,6 +22,16 @@ bool do_verify(struct verify_params* params) {
 	}
 
 	return true;
+}
+
+int hash_data(struct verify_params* params, const char* data) {
+  ecdsa_sha256_context_t hash_ctx;
+  ecdsa_sha256_init(&hash_ctx);
+  ecdsa_sha256_update(&hash_ctx, data, strlen(data));
+
+  ecdsa_sha256_final(&hash_ctx, params->hash.p);
+
+  return 1;
 }
 
 int load_pubkeys(struct verify_params* params, const size_t n_pubkeys, const char **pubkeys_str, const bool ignore_pubkeys) {

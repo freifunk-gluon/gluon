@@ -32,11 +32,16 @@ limitations under the License.
 
 #define ECDSA "gluon.ecdsa"
 
+// TODO: fix all the memory leaks
+
 static bool verify(lua_State *L, const char *data, const char *sig, const char *key) {
 	struct verify_params params = {
-		.good_signatures = 1,
-		.data = data
+		.good_signatures = 1
 	};
+
+	if (!hash_data(&params, data)) {
+		return luaL_error(L, "failed hashing data");
+	}
 
 	if (!load_signatures(&params, 1, &sig, false)) {
 		return luaL_error(L, "failed loading signature");
