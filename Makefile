@@ -177,6 +177,10 @@ config: $(LUA) FORCE
 	$(GLUON_ENV) $(LUA) scripts/target_config_check.lua
 
 
+container: FORCE
+	@scripts/container.sh
+
+
 all: config
 	+@
 	$(GLUON_ENV) $(LUA) scripts/clean_output.lua
