@@ -5,7 +5,7 @@ struct verify_params {
   ecc_int256_t hash;
 
 	size_t n_signatures;
-	ecdsa_signature_t **signatures;
+	ecdsa_signature_t *signatures;
 
 	size_t n_pubkeys;
 	ecc_25519_work_t *pubkeys;

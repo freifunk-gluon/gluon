@@ -48,7 +48,7 @@ static bool verify(lua_State *L, const char *data, const char *sig, const char *
 	}
 
 	if (!load_pubkeys(&params, 1, &key, false)) {
-		return luaL_error(L, "failed loading keys");
+		return luaL_error(L, "failed loading key");
 	}
 
 	return do_verify(&params);

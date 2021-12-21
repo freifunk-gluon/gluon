@@ -13,7 +13,7 @@
 bool do_verify(struct verify_params* params) {
 	ecdsa_verify_context_t ctxs[params->n_signatures];
 	for (size_t i = 0; i < params->n_signatures; i++)
-		ecdsa_verify_prepare_legacy(&ctxs[i], &params->hash, params->signatures[i]);
+		ecdsa_verify_prepare_legacy(&ctxs[i], &params->hash, &params->signatures[i]);
 
 	long unsigned int good_signatures = ecdsa_verify_list_legacy(ctxs, params->n_signatures, params->pubkeys, params->n_pubkeys);
 
@@ -35,12 +35,11 @@ int hash_data(struct verify_params* params, const char* data) {
 }
 
 int load_pubkeys(struct verify_params* params, const size_t n_pubkeys, const char **pubkeys_str, const bool ignore_pubkeys) {
-	params->n_pubkeys = n_pubkeys;
-	params->pubkeys = safe_malloc(n_pubkeys * sizeof(ecc_25519_work_t));
+  params->pubkeys = safe_malloc(n_pubkeys * sizeof(ecc_25519_work_t));
 
 	size_t ignored_keys = 0;
 
-	for (size_t i = 0; i < params->n_pubkeys; i++) {
+	for (size_t i = 0; i < n_pubkeys; i++) {
 		ecc_int256_t pubkey_packed;
 		if (!pubkeys_str[i])
 			goto pubkey_fail;
@@ -61,24 +60,21 @@ pubkey_fail:
 		}
 	}
 
-	params->n_pubkeys -= ignored_keys;
+	params->n_pubkeys = n_pubkeys - ignored_keys;
 
 	return 1;
 }
 
 int load_signatures(struct verify_params* params, const size_t n_signatures, const char **signatures_str, const bool ignore_signatures) {
-	params->n_signatures = n_signatures;
 	params->signatures = safe_malloc(n_signatures * sizeof(ecdsa_signature_t));
 
   size_t ignored_signatures = 0;
 
-	for (size_t i = 0; i < params->n_pubkeys; i++) {
-		ecdsa_signature_t* signature;
+	for (size_t i = 0; i < n_signatures; i++) {
 		if (!signatures_str[i])
 			goto signature_fail;
-		if (!parsehex(signature, signatures_str[i], 64))
+		if (!parsehex(&params->signatures[i-ignored_signatures], signatures_str[i], 64))
 			goto signature_fail;
-		params->signatures[i-ignored_signatures] = &signature;
 		continue;
 
 signature_fail:
@@ -90,7 +86,7 @@ signature_fail:
 		}
 	}
 
-	params->n_signatures -= ignored_signatures;
+	params->n_signatures = n_signatures - ignored_signatures;
 
 	return 1;
 }
