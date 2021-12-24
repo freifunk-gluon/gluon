@@ -253,13 +253,15 @@ Known issues
 
 * The integration of the BATMAN_V routing algorithm is incomplete.
 
-  - | Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
-    | Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
-    | metric.
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
 
-  - | Throughput values are not correctly acquired for different interface types.
-    | (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
-    | This affects virtual interface types like bridges and VXLAN.
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+
+    This affects virtual interface types like bridges and VXLAN.
 
 * Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
   (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
