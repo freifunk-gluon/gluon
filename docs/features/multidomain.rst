@@ -188,7 +188,7 @@ domain.conf only variables
       - ``true``, ``false``
       - ``{ 'foo', 'bar' }``
 
-- Because each domain is considered as an own layer 2 network, these
+- Because each domain is considered a separate layer 2 network, these
   values should be different in each domain:
 
   - next_node.ip4

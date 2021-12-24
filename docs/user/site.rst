@@ -68,7 +68,7 @@ ntp_servers
 
     ntp_servers = {'1.ntp.services.ffac','2.ntp.services.ffac'}
 
-  This NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
+  These NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
   explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
 opkg \: optional
