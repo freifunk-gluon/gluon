@@ -44,7 +44,7 @@ We also provide a container environment that already tracks all these dependenci
 
 ::
 
-   ./scripts/container.sh
+  ./scripts/container.sh
 
 Building the images
 -------------------
@@ -54,31 +54,31 @@ version you'd like to checkout, e.g. *v2021.1*.
 
 ::
 
-    git clone https://github.com/freifunk-gluon/gluon.git gluon -b RELEASE
+  git clone https://github.com/freifunk-gluon/gluon.git gluon -b RELEASE
 
 This command will create a directory named *gluon/*.
 It might also tell a scary message about being in a *detached state*.
 **Don't panic!** Everything's fine.
 Now, enter the freshly created directory::
 
-    cd gluon
+  cd gluon
 
 It's time to add (or create) your site configuration. If you already
 have a site repository, just clone it::
 
-   git clone https://github.com/freifunk-alpha-centauri/site-ffac.git site
+  git clone https://github.com/freifunk-alpha-centauri/site-ffac.git site
 
 If you want to build a new site, create a new git repository *site/*::
 
-    mkdir site
-    cd site
-    git init
+  mkdir site
+  cd site
+  git init
 
 Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*::
 
-    cp ../docs/site-example/site.conf .
-    cp ../docs/site-example/site.mk .
-    cp -r ../docs/site-example/i18n .
+  cp ../docs/site-example/site.conf .
+  cp ../docs/site-example/site.mk .
+  cp -r ../docs/site-example/i18n .
 
 Edit these files as you see fit and commit them into the site repository.
 Extensive documentation about the site configuration can be found at:
@@ -88,9 +88,9 @@ to the Gluon main repository should be avoided, as it will make updates more com
 
 Next go back to the top-level Gluon directory and build Gluon::
 
-    cd ..
-    make update                        # Get other repositories used by Gluon
-    make GLUON_TARGET=ath79-generic   # Build Gluon
+  cd ..
+  make update                        # Get other repositories used by Gluon
+  make GLUON_TARGET=ath79-generic   # Build Gluon
 
 In case of errors read the messages carefully and try to fix the stated issues
 (e.g. install missing tools not available or look for Troubleshooting_ in the wiki.
@@ -102,9 +102,9 @@ To see a complete list of supported targets, call ``make`` without setting ``GLU
 
 To build all targets use a loop like this::
 
-    for TARGET in $(make list-targets); do
-      make GLUON_TARGET=$TARGET
-    done
+  for TARGET in $(make list-targets); do
+    make GLUON_TARGET=$TARGET
+  done
 
 You should generally reserve 5GB of disk space and additionally about 10GB for each `GLUON_TARGET`.
 
@@ -117,7 +117,7 @@ system.
 of multiple copies of the same image. If your webserver's configuration prohibits following
 symlinks, you can use the following command to resolve these links while copying the images::
 
-    cp -rL output/images /var/www
+  cp -rL output/images /var/www
 
 The directory `output/debug` contains a compressed kernel image for each
 architecture.
@@ -130,14 +130,14 @@ Cleaning the build tree
 
 There are two levels of `make clean`::
 
-    make clean GLUON_TARGET=ath79-generic
+  make clean GLUON_TARGET=ath79-generic
 
 will ensure all packages are rebuilt for a single target. This is usually not
 necessary, but may fix certain kinds of build failures.
 
 ::
 
-    make dirclean
+  make dirclean
 
 will clean the entire tree, so the toolchain will be rebuilt as well, which will take a while.
 

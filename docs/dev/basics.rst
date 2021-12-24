@@ -32,7 +32,7 @@ rerun
 
 ::
 
-	make update
+  make update
 
 `make update` also applies the patches that can be found in the directories found in
 `patches`; the resulting branch will be called `patched`, while the commit specified in `modules`
@@ -44,7 +44,7 @@ using
 
 ::
 
-	make update-patches
+  make update-patches
 
 If applying a patch fails because you have changed the base commit, the repository will be reset to the old `patched` branch
 and you can try rebasing it onto the new `base` branch yourself and after that call `make update-patches` to fix the problem.
@@ -54,7 +54,7 @@ commits, making `git reflog` the only way to recover them!
 
 ::
 
-	make refresh-patches
+  make refresh-patches
 
 In order to refresh patches when updating feeds or the OpenWrt base, `make refresh-patches` applies and updates all of their patches without installing feed packages to the OpenWrt buildsystem.
 

@@ -170,16 +170,16 @@ Site changes
     for example::
 
       fastd_mesh_vpn = {
-          methods = {'salsa2012+umac'},
-          mtu = 1426,
-          groups = {
-              backbone = {
-                  limit = 2,
-                  peers = {
-                      -- ...
-                  }
-              }
+        methods = {'salsa2012+umac'},
+        mtu = 1426,
+        groups = {
+          backbone = {
+            limit = 2,
+            peers = {
+              -- ...
+            }
           }
+        }
       }
 
   - ``config_mode``: The config mode messages aren't configured in ``site.conf`` anymore. Instead, they are
@@ -190,11 +190,11 @@ Site changes
     in the site i18n files. The ``site.conf`` section becomes::
 
       roles = {
-          default = 'foo',
-          list = {
-              'foo',
-              'bar',
-          }
+        default = 'foo',
+        list = {
+          'foo',
+          'bar',
+        }
       }
 
     The display string use i18n message IDs like ``gluon-luci-node-role:role:foo`` and ``gluon-luci-node-role:role:bar``.
