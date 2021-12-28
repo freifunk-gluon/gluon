@@ -7,3 +7,4 @@ local function check_peer(k)
 end
 
 need_table({'mesh_vpn', 'wireguard', 'peers'}, check_peer)
+need_number({'mesh_vpn', 'wireguard', 'mtu'})

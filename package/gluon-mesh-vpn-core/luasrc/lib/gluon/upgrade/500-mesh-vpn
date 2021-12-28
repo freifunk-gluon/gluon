@@ -7,6 +7,7 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 local vpn_core = require 'gluon.mesh-vpn'
+local _, active_vpn = vpn_core.get_active_provider()
 
 uci:section('network', 'interface', 'mesh_vpn', {
 	ifname = vpn_core.get_interface(),
@@ -14,7 +15,7 @@ uci:section('network', 'interface', 'mesh_vpn', {
 	transitive = true,
 	fixed_mtu = true,
 	macaddr = util.generate_mac(7),
-	mtu = site.mesh_vpn.mtu(),
+	mtu = active_vpn.mtu(),
 })
 
 uci:save('network')
