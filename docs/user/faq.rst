@@ -54,8 +54,8 @@ For reference, the complete MTU stack looks like this:
 
 .. image:: mtu-diagram_v5.png
 
-Minimum MTU
------------
+Example for Minimum MTU
+-----------------------
 
 Calculate the minimum transport MTU by adding the encapsulation overhead to the
 minimum payload MTU required. This is the lowest recommended value, since going
@@ -75,8 +75,8 @@ transporting IPv6.::
 
           MTU_LOW = 1280 Byte + 14 Byte + 18 Byte = 1312 Byte
 
-Maximum MTU
------------
+Example for Maximum MTU
+-----------------------
 
 Calculating the maximum transport MTU is interesting, because it increases the
 throughput, by allowing larger payloads to be transported, but also more difficult
@@ -99,10 +99,149 @@ Tunneling.::
 
        MTU_HIGH = 1436 Byte - 20 Byte - 8 Byte - 24 Byte - 14 Byte = 1370 Byte
 
+
+Tables for Different VPN Providers
+----------------------------------
+
+VPN Protocol Overhead (IPv4)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Overhead of the VPN protocol layers in bytes on top of an Ethernet frame.
+
++----------+-------+--------------+-----------+
+|          | fastd | Tunneldigger | Wireguard |
++==========+=======+==============+===========+
+| IPv4     | 20    | 20           | 20        |
++----------+-------+--------------+-----------+
+| UDP      | 8     | 8            | 8         |
++----------+-------+--------------+-----------+
+| Protocol | 24    | 8            | 32        |
++----------+-------+--------------+-----------+
+| TAP      | 14    | 14           | /         |
++----------+-------+--------------+-----------+
+| Sum      | 66    | 50           | 60        |
++----------+-------+--------------+-----------+
+
+Intermediate Layer Overhead
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Overhead of additional layers on top of the VPN packet needed for different VPN
+providers.
+
++------------+-------+--------------+-----------+
+|            | fastd | Tunneldigger | Wireguard |
++============+=======+==============+===========+
+| IPv6       | /     | /            | 40        |
++------------+-------+--------------+-----------+
+| vxlan      | /     | /            | 16        |
++------------+-------+--------------+-----------+
+| Ethernet   | /     | /            | 14        |
++------------+-------+--------------+-----------+
+| Batman v15 | 18    | 18           | 18        |
++------------+-------+--------------+-----------+
+| Ethernet   | 14    | 14           | 14        |
++------------+-------+--------------+-----------+
+| Sum        | 32    | 32           | 102       |
++------------+-------+--------------+-----------+
+
+Minimum MTU
+^^^^^^^^^^^
+
+Calculation of different derived MTUs based on a 1280 byte payload to
+avoid fragmentation.
+
+Suggestions:
+
+- This configuration is only suggested for fastd and Tunneldigger.
+
+- For WireGuard, this configuration is **unsuitable**. To obtain a 1280 byte
+  payload with our protocol stack (see below), the Ethernet frame payload would
+  be 1442 bytes long (for IPv4). As we assume that the WAN network might have
+  a (worst case) MTU of only 1436 (with DSLite), this packet would be too long
+  for the WAN network.
+
++-------------------------------+-------+--------------+-----------+
+|                               | fastd | Tunneldigger | Wireguard |
++===============================+=======+==============+===========+
+| max unfragmented payload\*    | 1280  | 1280         | 1280      |
++-------------------------------+-------+--------------+-----------+
+| intermed layer overhead       | 32    | 32           | 102       |
++-------------------------------+-------+--------------+-----------+
+| VPN MTU\*\*                   | 1312  | 1312         | 1382      |
++-------------------------------+-------+--------------+-----------+
+| protocol overhead (IPv4)      | 66    | 50           | 60        |
++-------------------------------+-------+--------------+-----------+
+| min acceptable WAN MTU (IPv4) | 1378  | 1362         | **1442**  |
++-------------------------------+-------+--------------+-----------+
+| min acceptable WAN MTU (IPv6) | 1398  | 1382         | 1462      |
++-------------------------------+-------+--------------+-----------+
+
+\* Maximum size of payload going into the bat0 interface, that will not be
+fragmented by batman.
+
+\*\* This is the MTU that is set in the site.conf.
+
+Maximum MTU
+^^^^^^^^^^^
+
+Calculation of different derived MTUs based on a maximum WAN MTU of 1436.
+
+Sugestions:
+
+- This configuration can be used for fastd and Tunneldigger.
+
+- For WireGuard, this is the recommended configuration. batman-adv will
+  fragment larger packets transparently to avoid packet loss.
+
++-------------------------------+-------+--------------+-----------+
+|                               | fastd | Tunneldigger | Wireguard |
++===============================+=======+==============+===========+
+| min acceptable WAN MTU (IPv4) | 1436  | 1436         | 1436      |
++-------------------------------+-------+--------------+-----------+
+| protocol overhead (IPv4)      | 66    | 50           | 60        |
++-------------------------------+-------+--------------+-----------+
+| VPN MTU\*\*                   | 1370  | 1386         | 1376      |
++-------------------------------+-------+--------------+-----------+
+| intermed layer overhead       | 32    | 32           | 102       |
++-------------------------------+-------+--------------+-----------+
+| max unfragmented payload\*    | 1338  | 1354         | 1274      |
++-------------------------------+-------+--------------+-----------+
+| min acceptable WAN MTU (IPv6) | 1398  | 1382         | 1462      |
++-------------------------------+-------+--------------+-----------+
+
+\* Maximum size of payload going into the bat0 interface, that will not be
+fragmented by batman.
+
+\*\* This is the MTU that is set in the site.conf.
+
+Suggested MSS Values
+^^^^^^^^^^^^^^^^^^^^
+
+It is highly advised to use MSS clamping for TCP on the gateways/supernodes in
+order to avoid the fragmentation mechanism of batman whenever possible.
+Especially on small embedded devices, fragmentation costs performance.
+
+As batmans fragmentation is transparent to the TCP layer, clamping the MSS
+automatically to the PMTU does not work. Instead, the MSS must be specified
+explicitly. In iptables, this is done via :code:`-j TCPMSS --set-mss X`,
+whereby :code:`X` is the desired MSS.
+
+Since the MSS is specified in terms of payload of a TCP packet, the MSS is
+different for IPv4 and IPv6. Here are some examples for different max
+unfragmented payloads:
+
++---------------------------------+------+------+------+------+
+| max unfragmented payload        | 1274 | 1280 | 1338 | 1354 |
++=================================+======+======+======+======+
+| suggested MSS (IPv4, -40 bytes) | 1234 | 1240 | 1298 | 1314 |
++---------------------------------+------+------+------+------+
+| suggested MSS (IPv6, -60 bytes) | 1214 | 1220 | 1278 | 1294 |
++---------------------------------+------+------+------+------+
+
 Conclusion
-----------
+^^^^^^^^^^
 
 Determining the maximum MTU can be a tedious process, especially since the PMTU
 of peers could change at any time. The general recommendation for maximized
-compatibility is therefore the minimum MTU of 1312 Byte, which works well with
-both IPv4 and IPv6.
+compatibility is therefore an MTU of 1312 bytes (for fastd and tunneldigger)
+and 1376 bytes (for WireGuard).

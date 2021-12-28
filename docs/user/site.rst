@@ -385,7 +385,21 @@ mesh_vpn
 
       tunneldigger = {
         mtu = 1312,
-        brokers = {'vpn1.alpha-centauri.freifunk.net'}
+        brokers = {'vpn1.alpha-centauri.freifunk.net'},
+      },
+
+      wireguard = {
+        mtu = 1376,
+        peers = {
+          vpn1 = {
+            public_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=',
+            endpoint = 'vpn1.alpha-centauri.freifunk.net:51810',
+          },
+          vpn2 = {
+            public_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=',
+            endpoint = 'vpn2.alpha-centauri.freifunk.net:51810',
+          },
+        },
       },
 
       bandwidth_limit = {
