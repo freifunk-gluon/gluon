@@ -1,15 +1,7 @@
 #!/usr/bin/lua
 
-local sysconfig = require 'gluon.sysconfig'
-
--- Are we already set up?
-if sysconfig.lan_ifname or sysconfig.wan_ifname then
-	os.exit(0)
-end
-
-
 local platform = require 'gluon.platform'
-local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
 
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
@@ -69,13 +61,11 @@ end
 if wan_ifname and lan_ifname then
 	sysconfig.wan_ifname = wan_ifname
 	sysconfig.lan_ifname = lan_ifname
+	sysconfig.single_ifname = nil
 else
-	local single_ifname = lan_ifname or wan_ifname
-	if site.single_as_lan(false) then
-		sysconfig.lan_ifname = single_ifname
-	else
-		sysconfig.wan_ifname = single_ifname
-	end
+	sysconfig.wan_ifname = nil
+	sysconfig.lan_ifname = nil
+	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
 
 
