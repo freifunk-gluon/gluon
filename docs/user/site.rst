@@ -331,10 +331,10 @@ mesh_vpn
 
     mesh_vpn = {
       -- enabled = true,
-      mtu = 1312,
       -- pubkey_privacy = true,
 
       fastd = {
+        mtu = 1312,
         methods = {'salsa2012+umac'},
         -- configurable = true,
         -- syslog_level = 'warn',
@@ -384,6 +384,7 @@ mesh_vpn
       },
 
       tunneldigger = {
+        mtu = 1312,
         brokers = {'vpn1.alpha-centauri.freifunk.net'}
       },
 
