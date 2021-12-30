@@ -52,6 +52,6 @@ socket can be interrogated, after installing for example `socat`.
 
 ::
 
-       opkg update
-       opkg install socat
-       socat - UNIX-CONNECT:/var/run/fastd.mesh_vpn.socket
+  opkg update
+  opkg install socat
+  socat - UNIX-CONNECT:/var/run/fastd.mesh_vpn.socket

@@ -11,80 +11,80 @@ Added hardware support
 ath79-generic
 ~~~~~~~~~~~~~
 
--  devolo WiFi pro 1200e
--  devolo WiFi pro 1200i
--  devolo WiFi pro 1750c
--  devolo WiFi pro 1750e
--  devolo WiFi pro 1750i
--  devolo WiFi pro 1750x
--  GL.iNet GL-AR300M-Lite
--  OCEDO Raccoon
--  TP-Link Archer C6 v2
+- devolo WiFi pro 1200e
+- devolo WiFi pro 1200i
+- devolo WiFi pro 1750c
+- devolo WiFi pro 1750e
+- devolo WiFi pro 1750i
+- devolo WiFi pro 1750x
+- GL.iNet GL-AR300M-Lite
+- OCEDO Raccoon
+- TP-Link Archer C6 v2
 
 ipq40xx-generic
 ~~~~~~~~~~~~~~~
 
--  Aruba AP-303
--  Aruba Instant On AP11
--  AVM FRITZ!Repeater 1200
+- Aruba AP-303
+- Aruba Instant On AP11
+- AVM FRITZ!Repeater 1200
 
 ipq806x-generic
 ~~~~~~~~~~~~~~~
 
--  Netgear R7800
+- Netgear R7800
 
 lantiq-xway
 ~~~~~~~~~~~
 
--  AVM FRITZ!Box 7312
--  AVM FRITZ!Box 7320
--  AVM FRITZ!Box 7330
--  AVM FRITZ!Box 7330 SL
+- AVM FRITZ!Box 7312
+- AVM FRITZ!Box 7320
+- AVM FRITZ!Box 7330
+- AVM FRITZ!Box 7330 SL
 
 lantiq-xrx200
 ~~~~~~~~~~~~~
 
--  AVM FRITZ!Box 7360 (v1, v2)
--  AVM FRITZ!Box 7360 SL
--  AVM FRITZ!Box 7362 SL
--  AVM FRITZ!Box 7412
+- AVM FRITZ!Box 7360 (v1, v2)
+- AVM FRITZ!Box 7360 SL
+- AVM FRITZ!Box 7362 SL
+- AVM FRITZ!Box 7412
 
 mpc85xx-p1020
 ~~~~~~~~~~~~~
 
--  Enterasys WS-AP3710i
--  OCEDO Panda
+- Enterasys WS-AP3710i
+- OCEDO Panda
 
 ramips-mt7620
 ~~~~~~~~~~~~~
 
--  TP-Link Archer C2 (v1)
--  TP-Link Archer C20 (v1)
--  TP-Link Archer C20i
--  TP-Link Archer C50 (v1)
--  Xiaomi MiWifi Mini
+- TP-Link Archer C2 (v1)
+- TP-Link Archer C20 (v1)
+- TP-Link Archer C20i
+- TP-Link Archer C50 (v1)
+- Xiaomi MiWifi Mini
 
 ramips-mt7621
 ~~~~~~~~~~~~~
 
--  Netgear EX6150 (v1)
--  Netgear R6220
+- Netgear EX6150 (v1)
+- Netgear R6220
 
 ramips-mt76x8
 ~~~~~~~~~~~~~
 
--  GL.iNet VIXMINI
--  TP-Link TL-MR3020 (v3)
--  TP-Link TL-WA801ND (v5)
--  TP-Link TL-WR902AC (v3)
+- GL.iNet VIXMINI
+- TP-Link TL-MR3020 (v3)
+- TP-Link TL-WA801ND (v5)
+- TP-Link TL-WR902AC (v3)
 
 Removed hardware support
 ------------------------
 
--  ALFA Network Hornet-UB [#kernelpartition_too_small]_
--  ALFA Network Tube2H [#kernelpartition_too_small]_
--  ALFA Network N2 [#kernelpartition_too_small]_
--  ALFA Network N5 [#kernelpartition_too_small]_
+- ALFA Network Hornet-UB [#kernelpartition_too_small]_
+- ALFA Network Tube2H [#kernelpartition_too_small]_
+- ALFA Network N2 [#kernelpartition_too_small]_
+- ALFA Network N5 [#kernelpartition_too_small]_
 
 .. [#kernelpartition_too_small]
   The kernel partition on this device is too small to build a working image.
@@ -162,8 +162,8 @@ Site changes
 site.mk
 ~~~~~~~
 
--  The ``GLUON_WLAN_MESH`` variable can be dropped, as 802.11s is
-   the only supported wireless transport from now on.
+- The ``GLUON_WLAN_MESH`` variable can be dropped, as 802.11s is
+  the only supported wireless transport from now on.
 
 Internals
 ---------
@@ -206,13 +206,15 @@ Known issues
 
 * The integration of the BATMAN_V routing algorithm is incomplete.
 
-   - | Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
-     | Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
-     | metric.
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
 
-   - | Throughput values are not correctly acquired for different interface types.
-     | (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
-     | This affects virtual interface types like bridges and VXLAN.
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+
+    This affects virtual interface types like bridges and VXLAN.
 
 * Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
   (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
