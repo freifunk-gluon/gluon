@@ -15,7 +15,7 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 
 Gluon's developers frequent an IRC chatroom at [#gluon](ircs://irc.hackint.org/#gluon)
 on [hackint](https://hackint.org/). There is also a [webchat](https://webirc.hackint.org/#irc://irc.hackint.org/#gluon)
-that allows for uncomplicated access from within your browser.
+that allows for uncomplicated access from within your browser and a bridged Matrix Room under [#gluon:hackint.org](https://matrix.to/#/#gluon:hackint.org).
 
 ## Issues & Feature requests
 
