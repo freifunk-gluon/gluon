@@ -27,7 +27,7 @@ include $(GLUON_SITEDIR)/site.mk
 
 GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
 
-GLUON_DEPRECATED ?= $(error GLUON_DEPRECATED not set. Please consult the documentation)
+GLUON_DEPRECATED ?= 0
 
 ifneq ($(GLUON_BRANCH),)
   $(warning *** Warning: GLUON_BRANCH has been deprecated, please set GLUON_AUTOUPDATER_BRANCH and GLUON_AUTOUPDATER_ENABLED instead.)
