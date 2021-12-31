@@ -6,4 +6,9 @@ packages {
 	'kmod-pcengines-apuv2',
 }
 
-device('x86-64', 'generic')
+device('x86-64', 'generic', {
+	extra_images = {
+		{'-kernel', '-kernel', '.bin'},
+		{'-squashfs-rootfs', '-rootfs', '.img.gz'},
+	},
+})
