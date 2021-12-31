@@ -86,10 +86,10 @@ Extensive documentation about the site configuration can be found at:
 site directory should always be a git repository by itself; committing site-specific files
 to the Gluon main repository should be avoided, as it will make updates more complicated.
 
-Next go back to the top-level Gluon directory and build Gluon::
+Next go back to the top-level Gluon directory and build Gluon\ [#make_update]_::
 
   cd ..
-  make update                        # Get other repositories used by Gluon
+  make update                       # Get other repositories used by Gluon
   make GLUON_TARGET=ath79-generic   # Build Gluon
 
 In case of errors read the messages carefully and try to fix the stated issues
@@ -124,6 +124,16 @@ architecture.
 These can be used for debugging and should be stored along with the images to
 allow debugging of kernel problems on devices in the field.
 See :ref:`Debugging <dev-debugging-kernel-oops>` for more information.
+
+.. rubric:: Footnotes
+
+.. [#make_update] ``make update`` only needs to be called again after updating the
+  Gluon repository (using ``git pull`` or similar) or after changing branches,
+  not for each build. Running it more often than necessary is undesirable, as
+  the update will take some time, and may undo manual modifications of the
+  external repositories while developing on Gluon.
+
+  See :ref:`working-with-repositories` for more information.
 
 Cleaning the build tree
 .......................
