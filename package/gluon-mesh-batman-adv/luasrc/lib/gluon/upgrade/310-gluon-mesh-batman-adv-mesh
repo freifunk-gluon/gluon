@@ -6,14 +6,10 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local gw_mode = uci:get('network', 'gluon_bat0', 'gw_mode') or uci:get('network', 'bat0', 'gw_mode') or 'client'
-
-uci:delete('batman-adv-legacy', 'bat0')
-uci:save('batman-adv-legacy')
-
 uci:delete('batman-adv', 'bat0')
 uci:save('batman-adv')
 
+local gw_mode = uci:get('network', 'gluon_bat0', 'gw_mode') or 'client'
 uci:delete('network', 'gluon_bat0')
 uci:section('network', 'interface', 'gluon_bat0', {
 	proto = 'gluon_bat0',
