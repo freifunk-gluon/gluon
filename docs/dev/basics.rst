@@ -23,6 +23,7 @@ webbrowser. You're welcome to join us!
 .. _hackint: https://hackint.org/
 .. _webchat: https://webirc.hackint.org/#irc://irc.hackint.org/#gluon
 
+.. _working-with-repositories:
 
 Working with repositories
 -------------------------
