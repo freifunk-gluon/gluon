@@ -1954,7 +1954,7 @@ index 0000000000000000000000000000000000000000..92bb9275df9d54778ce8f00b1cb6e999
 +2.27.0
 +
 diff --git a/target/linux/generic/config-4.14 b/target/linux/generic/config-4.14
-index de8dd8bb8ad05ec1992800b2c8abb2dec2492649..fc793706dcfe536080a155e79baee65e274e49ca 100644
+index cbe2c09af91dcbb036bb71d42b6b1075d7f31012..e7faafd719656769fe2e43ff9145abc28b806827 100644
 --- a/target/linux/generic/config-4.14
 +++ b/target/linux/generic/config-4.14
 @@ -629,6 +629,7 @@ CONFIG_BRIDGE=y
