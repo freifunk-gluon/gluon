@@ -6,8 +6,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # normalize branch name to reflect a valid image name
-BRANCH=$(git branch --show-current | sed 's/[^a-z0-9-]/_/ig')
-TAG=gluon:${BRANCH}
+BRANCH=$(git branch --show-current 2>/dev/null | sed 's/[^a-z0-9-]/_/ig')
+TAG="gluon:${BRANCH:-latest}"
 
 if [ "$(command -v podman)" ]
 then
