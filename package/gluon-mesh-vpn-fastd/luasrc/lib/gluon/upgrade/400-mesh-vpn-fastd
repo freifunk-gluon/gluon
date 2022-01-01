@@ -46,7 +46,6 @@ uci:section('fastd', 'fastd', 'mesh_vpn', {
 	packet_mark = 1,
 	status_socket = '/var/run/fastd.mesh_vpn.socket',
 })
-uci:delete('fastd', 'mesh_vpn', 'user')
 
 
 -- Collect list of groups that have peers with 'preserve' flag

@@ -21,10 +21,6 @@ uci:section('network', 'interface', 'client', {
 	query_response_interval = 500,
 })
 
-uci:delete('network', 'client_lan')
-
-uci:delete('network', 'local_node_route')
-
 uci:delete('network', 'local_node_route6')
 uci:section('network', 'route6', 'local_node_route6', {
 	interface = 'client',
@@ -41,7 +37,5 @@ uci:set_list('firewall', 'mesh', 'network', networks)
 networks = uci:get_list('firewall', 'drop', 'network')
 util.remove_from_set(networks, 'client')
 uci:set_list('firewall', 'drop', 'network', networks)
-
-uci:delete('firewall', 'local_node_dns')
 
 uci:save('firewall')
