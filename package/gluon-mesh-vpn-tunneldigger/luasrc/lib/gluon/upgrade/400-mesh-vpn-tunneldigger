@@ -7,22 +7,7 @@ local vpn_core = require 'gluon.mesh-vpn'
 local uci = require('simple-uci').cursor()
 
 
-local enabled
-
--- Delete old broker config section (remove in 2019)
-if not uci:get('tunneldigger', 'mesh_vpn') then
-	if uci:get_first('tunneldigger', 'broker', 'interface') == 'mesh-vpn' then
-		enabled = uci:get_first('tunneldigger', 'broker', 'enabled')
-	end
-
-	-- In the usual case (no migration from old tunneldigger package), the
-	-- enabled state is set in the 500-mesh-vpn script
-
-	uci:delete_all('tunneldigger', 'broker')
-end
-
 uci:section('tunneldigger', 'broker', 'mesh_vpn', {
-	enabled = enabled,
 	uuid = util.node_id(),
 	interface = vpn_core.get_interface(),
 	bind_interface = 'br-wan',
