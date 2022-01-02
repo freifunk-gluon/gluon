@@ -1,7 +1,11 @@
 <%-
+	local iwinfo = require 'iwinfo'
 	local ubus = require 'ubus'
 	local unistd = require 'posix.unistd'
 	local util = require 'gluon.util'
+	local wireless = require 'gluon.wireless'
+
+	local uci = require('simple-uci').cursor()
 
 	local translations = {}
 	local site_i18n = i18n 'gluon-site'
@@ -35,22 +39,22 @@
 		return interfaces
 	end
 
-	local function get_radios(uconn)
-		local radios = uconn:call("network.wireless", "status", {})
+	local function get_radios()
 		local ret = {}
 
-		for radio, info in pairs(radios) do
-			if info.up then
+		wireless.foreach_radio(uci, function(radio)
+			local channel = iwinfo.nl80211.channel(wireless.find_phy(radio))
+			if channel then
 				table.insert(ret, {
-					name = radio,
-					channel = info.config.channel,
+					name = radio['.name'],
+					channel = channel,
 				})
 			end
-		end
-
+		end)
 		table.sort(ret, function(a, b)
 			return a.name < b.name
 		end)
+
 		return ret
 	end
 
@@ -72,9 +76,10 @@
 	end
 
 	local interfaces = get_interfaces(uconn)
-	local radios = get_radios(uconn)
 
 	ubus.close(uconn)
+
+	local radios = get_radios()
 
 	local function sorted(t)
 		t = {unpack(t)}
