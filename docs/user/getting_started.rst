@@ -213,7 +213,7 @@ GLUON_DEPRECATED
   Usually, devices are deprecated because their flash size is insufficient to
   support future Gluon versions. The recommended setting is ``0`` for new sites,
   and ``upgrade`` for existing configurations (where upgrades for existing
-  deployments of low-flash devices are required).
+  deployments of low-flash devices are required). Defaults to ``0``.
 
 GLUON_LANGS
   Space-separated list of languages to include for the config mode/advanced settings. Defaults to ``en``.
