@@ -31,7 +31,6 @@ endef
 
 define Package/gluon-core/conffiles
 /etc/config/gluon
-/etc/config/gluon-core
 endef
 
 define Package/gluon-core/install
