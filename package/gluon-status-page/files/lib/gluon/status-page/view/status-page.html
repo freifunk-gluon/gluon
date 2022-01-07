@@ -168,10 +168,10 @@
 						<dt><%:Bandwidth limit%></dt>
 						<dd>
 							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.ingress then -%>
-								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%>
+								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%><br />
 							<%- end %>
 							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.egress then -%>
-								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%><br />
+								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%>
 							<%- end %>
 						</dd>
 						<%- end %>
