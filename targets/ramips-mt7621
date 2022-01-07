@@ -39,6 +39,13 @@ device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 })
 
 
+-- Totolink
+
+device('totolink-x5000r', 'totolink_x5000r', {
+	factory = false,
+})
+
+
 -- Xiaomi
 
 device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
