@@ -3,23 +3,23 @@
 local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 
+local disabled = uci:get('network_gluon-old', 'mesh_wan', 'disabled')
+if disabled == nil then
+	disabled = not site.mesh_on_wan(false)
+end
+
+local transitive = uci:get('network_gluon-old', 'mesh_wan', 'transitive')
+if transitive == nil then
+	transitive = true
+end
+
 uci:section('network', 'interface', 'mesh_wan', {
 	ifname = 'br-wan',
-	proto  = 'gluon_wired',
-	index  = 0,
-	vxlan  = site.mesh.vxlan(true),
+	proto = 'gluon_wired',
+	index = 0,
+	vxlan = site.mesh.vxlan(true),
+	disabled = disabled,
+	transitive = transitive,
 })
-
-local enable = site.mesh_on_wan(false)
-local old_auto = uci:get('network', 'mesh_wan', 'auto')
-local old_disabled = uci:get('network', 'mesh_wan', 'disabled')
-if old_auto ~= nil or old_disabled ~= nil then
-	enable = old_auto ~= '0' and old_disabled ~= '1'
-end
-uci:set('network', 'mesh_wan', 'disabled', not enable)
-
-if uci:get('network', 'mesh_wan', 'transitive') == nil then
-	uci:set('network', 'mesh_wan', 'transitive', true)
-end
 
 uci:save('network')

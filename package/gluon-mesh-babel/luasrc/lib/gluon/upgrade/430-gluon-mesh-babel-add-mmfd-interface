@@ -2,7 +2,6 @@
 
 local uci = require('simple-uci').cursor()
 
-uci:delete('network', 'mmfd')
 uci:section('network', 'interface', 'mmfd', {
 	proto = 'static',
 	ifname = 'mmfd0',

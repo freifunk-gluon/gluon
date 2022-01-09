@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site'
-local util = require 'gluon.util'
 local sysconfig = require 'gluon.sysconfig'
 
 local uci = require('simple-uci').cursor()
@@ -10,44 +9,30 @@ if not sysconfig.lan_ifname then
 	os.exit(0)
 end
 
-uci:section('network', 'interface', 'mesh_lan', {
-	ifname        = sysconfig.lan_ifname,
-	igmp_snooping = false,
-	proto         = 'gluon_wired',
-	index         = 4,
-	vxlan         = site.mesh.vxlan(true),
-})
-
+local type
 if sysconfig.lan_ifname:match(' ') then
-	uci:set('network', 'mesh_lan', 'type', 'bridge')
-else
-	uci:delete('network', 'mesh_lan', 'type')
+	type = 'bridge'
 end
 
-local enable = site.mesh_on_lan(false)
-local old_auto = uci:get('network', 'mesh_lan', 'auto')
-local old_disabled = uci:get('network', 'mesh_lan', 'disabled')
-if old_auto ~= nil or old_disabled ~= nil then
-	enable = old_auto ~= '0' and old_disabled ~= '1'
+local disabled = uci:get('network_gluon-old', 'mesh_lan', 'disabled')
+if disabled == nil then
+	disabled = not site.mesh_on_lan(false)
 end
 
-if enable then
-	local interfaces = uci:get_list('network', 'client', 'ifname')
-
-	if interfaces then
-		for lanif in sysconfig.lan_ifname:gmatch('%S+') do
-			if util.contains(interfaces, lanif) then
-				enable = false
-				break
-			end
-		end
-	end
+local transitive = uci:get('network_gluon-old', 'mesh_lan', 'transitive')
+if transitive == nil then
+	transitive = true
 end
 
-uci:set('network', 'mesh_lan', 'disabled', not enable)
-
-if uci:get('network', 'mesh_lan', 'transitive') == nil then
-	uci:set('network', 'mesh_lan', 'transitive', true)
-end
+uci:section('network', 'interface', 'mesh_lan', {
+	ifname = sysconfig.lan_ifname,
+	type = type,
+	igmp_snooping = false,
+	proto = 'gluon_wired',
+	index = 4,
+	vxlan = site.mesh.vxlan(true),
+	disabled = disabled,
+	transitive = transitive,
+})
 
 uci:save('network')

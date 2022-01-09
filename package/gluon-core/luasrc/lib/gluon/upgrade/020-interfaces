@@ -79,9 +79,7 @@ else
 end
 
 
-uci:delete('network', 'lan')
-uci:delete('network', 'wan')
-
 uci:delete_all('network', 'device')
+uci:delete_all('network', 'interface')
 
 uci:save('network')

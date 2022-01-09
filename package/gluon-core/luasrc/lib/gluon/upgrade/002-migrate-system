@@ -1,0 +1,31 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+-- Migrate system section
+local system = uci:get_all('system_gluon-old', '@system[0]')
+if system then
+	uci:tset('system', '@system[0]', system)
+end
+
+-- Migrate ntp section
+local ntp = uci:get_all('system_gluon-old', 'ntp')
+if ntp then
+	uci:tset('system', 'ntp', ntp)
+end
+
+-- Migrate gpio_switch sections
+--
+-- Only the value is copied from the old config, so updates to names and
+-- pins are preserved
+uci:foreach('system', 'gpio_switch', function(s)
+	local name = s['.name']
+	local value = uci:get('system_gluon-old', name, 'value')
+	if value then
+		uci:set('system', name, 'value', value)
+	end
+end)
+
+-- No other sections are migrated, so updated LED and RSSI configs can take effect
+
+uci:save('system')

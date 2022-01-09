@@ -3,8 +3,21 @@
 local uci = require('simple-uci').cursor()
 local sysconfig = require 'gluon.sysconfig'
 
+local wan = uci:get_all('network_gluon-old', 'wan') or {}
+local wan6 = uci:get_all('network_gluon-old', 'wan6') or {}
+
+uci:section('network', 'interface', 'loopback', {
+	ifname = 'lo',
+	proto = 'static',
+	ipaddr = '127.0.0.1',
+	netmask = '255.0.0.0',
+})
 
 uci:section('network', 'interface', 'wan', {
+	proto = wan.proto or 'dhcp',
+	ipaddr = wan.ipaddr,
+	netmask = wan.netmask,
+	gateway = wan.gateway,
 	ifname = sysconfig.wan_ifname,
 	type = 'bridge',
 	igmp_snooping = true,
@@ -13,23 +26,16 @@ uci:section('network', 'interface', 'wan', {
 	auto = true,
 })
 
-if not uci:get('network', 'wan', 'proto') then
-	uci:set('network', 'wan', 'proto', 'dhcp')
-end
-
-
 uci:section('network', 'interface', 'wan6', {
+	proto = wan6.proto or 'dhcpv6',
+	ip6addr = wan6.ip6addr,
+	ip6gw = wan6.ip6gw,
 	ifname = 'br-wan',
 	peerdns = false,
 	ip6table = 1,
 	sourcefilter = false,
 	reqprefix = 'no',
 })
-
-if not uci:get('network', 'wan6', 'proto') then
-	uci:set('network', 'wan6', 'proto', 'dhcpv6')
-end
-
 
 uci:section('network', 'rule6', 'wan6_lookup', {
 	mark = '0x01/0x01',
