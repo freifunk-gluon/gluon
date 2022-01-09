@@ -94,7 +94,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	end
 
 	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
-	vif_option('ibss', translate("Enable mesh network (IBSS)"))
+	vif_option('ibss',  {'ibss'}, translate("Enable mesh network (IBSS)"))
 
 	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
 	if is_5ghz then
