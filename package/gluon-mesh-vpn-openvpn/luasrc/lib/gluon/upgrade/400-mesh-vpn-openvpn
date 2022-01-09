@@ -6,23 +6,33 @@ local vpn_core = require 'gluon.mesh-vpn'
 
 local uci = require('simple-uci').cursor()
 
+-- https://stackoverflow.com/a/4991602/3990041
+function file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
 
-local enabled = vpn_core.enabled()
+local vpn = {
+	enabled = vpn_core.enabled(),
 
-local file = '/etc/openvpn/mesh_vpn.ovpn'
+	client = true,
+	dev = vpn_core.get_interface(),
+	dev_type = 'tap'
+}
 
--- TODO: support for directly specifying options in site conf??
+for key, value in pairs(site.mesh_vpn.openvpn.config()) do
+	vpn[key] = value
+end
 
-fd = io.open(file, 'w')
-fd:write(site.mesh_vpn.openvpn.config())
-fd:write("\ndev " .. vpn_core.get_interface())
-fd:close()
+-- if mesh_vpn is on but we have no key, even tho we need one then we can't proceed
+if vpn.key ~= nil and not file_exists(vpn.key) then
+	vpn.enabled = false
+end
 
 -- NOTE: ip is set by static-ip
+-- TODO: maybe better integration? currently we still listen to openvpn push
 
-uci:section('openvpn', 'openvpn', 'mesh_vpn', {
-	enabled = enabled,
-	config = file,
-})
+uci:delete('openvpn', 'mesh_vpn')
+uci:section('openvpn', 'openvpn', 'mesh_vpn', vpn)
 
 uci:save('openvpn')

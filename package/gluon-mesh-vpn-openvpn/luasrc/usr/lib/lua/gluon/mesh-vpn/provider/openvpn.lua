@@ -6,6 +6,7 @@ local vpn_core = require 'gluon.mesh-vpn'
 local M = {}
 
 function M.public_key()
+	-- TODO: get key from openvpn.mesh_vpn.key and then get fingerprint
 	return nil
 end
 
