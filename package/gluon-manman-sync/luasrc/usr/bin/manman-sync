@@ -4,6 +4,7 @@ local uci = require('simple-uci').cursor()
 local ip = require 'luci.ip' -- luci-lib-ip
 local fetch = require 'luci.httpclient'
 local json = require 'luci.jsonc'
+local ecdsa = require 'gluon.ecdsa'
 local site = require 'gluon.site'
 
 local pretty_hostname = require 'pretty_hostname'
@@ -18,6 +19,59 @@ local mappings = {
   wifi = 'radio0',
   tunnel = 'vpn'
 }
+
+function fetch_signed_json(url)
+  local code, res, result = fetch.request_raw(manapi .. url)
+
+  if code < 1 then
+    print('E: failed to fetch')
+    return 1
+  end
+
+  if code == 404 then
+    print('E: location does not exist')
+    return 2
+  end
+
+  if code ~= 200 then
+    print('E: got status code ' .. code)
+    return 1
+  end
+
+  -- cloudflare's reverse proxies send http chunked responses with chunk sizes
+  -- for whatever reasons the chunk size gets smashed into the result
+  -- this is a hack to fish it out, it is irrelevant on unaffected reverse proxies
+  local j_start = result:find('{')
+  local j_end = (result:reverse()):find("}")
+  result = string.sub(result, j_start, 1 - j_end)
+
+  local sig = res.headers['x-ecdsa']
+  local ts = res.headers['x-ecdsa-ts']
+
+  if not sig or not ts then
+    print('E: provided response is not signed')
+    return 1
+  end
+
+  local data = ts .. '@' .. result
+  if not ecdsa.verify(data, sig, mankey) then
+    print('E: signature invalid or not signed with expected key')
+
+    print('C: manman-sync is currently not properly signed')
+    print('C: this error will be actually considered once manapi has been fixed')
+
+    -- return 1
+  end
+
+  local obj = json.parse(result)
+
+  if obj == nil then
+    print('E: failed to parse json data')
+    return 1
+  end
+
+  return false, obj
+end
 
 if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   local location_id = uci:get('gluon-manman-sync', 'sync', 'location_id')
@@ -42,30 +96,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   -- try to fetch data
   print('Fetching manman data...')
-  local code, _, result = fetch.request_raw(manapi .. '/location/show/' .. location_id)
-
-  if code == 404 then
-    print('E: location does not exist')
-    return 2
+  local err, location = fetch_signed_json('/location/show/' .. location_id)
+  if err then
+    return err
   end
 
-  if code ~= 200 then
-    print('E: got status code ' .. code)
-    return 1
-  end
-
-  if code < 1 then
-    print('E: failed to fetch')
-    return 1
-  end
-
-  -- cloudflare's reverse proxies send http chunked responses with chunk sizes
-  -- for whatever reasons the chunk size gets smashed into the result
-  -- this is a hack to fish it out, it is irrelevant on unaffected reverse proxies
-  j_start = string.find(result, '{')
-  result = string.sub(result, j_start)
-
-  local location = json.parse(result)
   print('Syncing with location ' .. location.location.name)
 
   uci:set('gluon-node-info', 'owner', 'contact', location.administrator.email)
@@ -120,6 +155,7 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
   end
 
+  uci:save('system')
   uci:save('gluon-manman-sync')
   uci:save('gluon-static-ip')
   uci:save('gluon-node-info')
