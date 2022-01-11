@@ -17,7 +17,8 @@ local mankey = site.manman.key()
 -- NOTE: these will have mesh_ appended for static-ip
 local mappings = {
   wifi = 'radio0',
-  tunnel = 'vpn'
+  tunnel = 'vpn',
+  eth = 'lan'
 }
 
 function fetch_signed_json(url)
