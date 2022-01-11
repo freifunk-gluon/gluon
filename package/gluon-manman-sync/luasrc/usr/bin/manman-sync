@@ -21,8 +21,17 @@ local mappings = {
   eth = 'lan'
 }
 
-function fetch_signed_json(url)
-  local code, res, result = fetch.request_raw(manapi .. url)
+-- https://gist.github.com/Uradamus/10323382
+local function shuffle(tbl)
+  for i = #tbl, 2, -1 do
+    local j = math.random(i)
+    tbl[i], tbl[j] = tbl[j], tbl[i]
+  end
+  return tbl
+end
+
+local function fetch_signed_json(remote, url)
+  local code, res, result = fetch.request_raw(remote .. url)
 
   if code < 1 then
     print('E: failed to fetch')
@@ -84,20 +93,33 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   -- check manman reachability, abort if not reachable
 
-  local success, a, b, c = pcall(function() return fetch.request_raw(manapi .. '/') end)
-  if not success then
-    print('E: couldnt reach manman: ' .. a)
-    return 1
-  else
-    if a ~= 200 then
-      print('E: couldnt reach manman - unexpected fetch result', a, b, c)
-      return 1
+  local working_remote
+
+  for _, remote in ipairs(shuffle(manapi)) do
+    if not working_remote then -- don't try other remotes if we got one that works
+      print('Trying remote ' .. remote)
+
+      local success, a, b, c = pcall(function() return fetch.request_raw(remote .. '/') end)
+      if not success then
+        print('E: couldnt reach manman: ' .. a)
+      else
+        if a ~= 200 then
+          print('E: couldnt reach manman - unexpected fetch result', a, b, c)
+        else
+          working_remote = remote
+        end
+      end
     end
+  end
+
+  if not working_remote then
+    print('E: couldnt reach any manapi server, giving up')
+    return 1
   end
 
   -- try to fetch data
   print('Fetching manman data...')
-  local err, location = fetch_signed_json('/location/show/' .. location_id)
+  local err, location = fetch_signed_json(working_remote, '/location/show/' .. location_id)
   if err then
     return err
   end
@@ -110,11 +132,10 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:set('gluon-node-info', 'location', 'longitutde', location.location.long)
 
   local node
-
   local should_hostname
 
   if #location.nodes > 1 then
-    for i, potential_node in ipairs(location.nodes) do
+    for _, potential_node in ipairs(location.nodes) do
       if potential_node.name == hostname then
         node = potential_node
         should_hostname = location.location.name .. '-' .. node.name
@@ -143,14 +164,14 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   -- if yes, apply changes and do gluon-reload
 
 
-  for i, net in ipairs(node.interfaces) do
-    net_name = net.name
-    net_mapped = mappings[net_name] or net_name
+  for _, net in ipairs(node.interfaces) do
+    local net_name = net.name
+    local net_mapped = mappings[net_name] or net_name
     if not string.find(net_mapped, '_') then
       net_mapped = 'mesh_' .. net_mapped
     end
 
-    cidr = ip.new(net.ip, net.netmask):string()
+    local cidr = ip.new(net.ip, net.netmask):string()
 
     print('Syncing ' .. net_name .. ' as ' .. net_mapped .. ' to ' .. cidr)
     uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
