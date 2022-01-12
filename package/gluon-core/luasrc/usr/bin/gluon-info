@@ -1,0 +1,38 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local pretty_hostname = require 'pretty_hostname'
+
+local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
+local platform = require 'gluon.platform'
+local util = require 'gluon.util'
+local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
+
+local pubkey
+if has_vpn and vpn.enabled() then
+	local _, active_vpn = vpn.get_active_provider()
+
+	if active_vpn ~= nil then
+		pubkey = active_vpn.public_key()
+	end
+end
+
+local values = {
+	{ 'Hostname', pretty_hostname.get(uci) },
+	{ 'MAC address', sysconfig.primary_mac },
+	{ 'Hardware model', platform.get_model() },
+	{ 'Gluon version' .. " / " .. 'Site version', util.trim(util.readfile('/lib/gluon/gluon-version'))
+		.. " / " .. util.trim(util.readfile('/lib/gluon/site-version')) },
+	{ 'Firmware release', util.trim(util.readfile('/lib/gluon/release')) },
+	{ 'Site', site.site_name() },
+	{ 'Public VPN key', pubkey or 'n/a' },
+}
+
+local padTo = 24
+
+for _, info in ipairs(values) do
+	local labelLen = string.len(info[1]) + 1
+
+	print(info[1] .. ':' .. string.rep(' ', padTo - labelLen), info[2])
+end
