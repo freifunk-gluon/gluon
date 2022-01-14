@@ -44,6 +44,7 @@ ath79-generic
 
 * TP-Link
 
+  - Archer A7 (v5)
   - Archer C6 (v2)
   - CPE220 (v3.0)
   - CPE510 (v2.0)

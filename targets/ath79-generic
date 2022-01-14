@@ -103,6 +103,10 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 
 -- TP-Link
 
+device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	class = 'tiny',
