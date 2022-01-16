@@ -54,7 +54,7 @@ end
 
 local function get_channel(radio, config)
 	local channel
-	if wireless.preserve_channels(uci) then
+	if wireless.preserve_channels(uci) or config.channel_adjustable(false) then
 		-- preserved channel always wins
 		channel = radio.channel
 	elseif radio.band == '5g' and is_outdoor() then
