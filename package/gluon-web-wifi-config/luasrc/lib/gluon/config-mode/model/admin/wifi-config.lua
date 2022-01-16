@@ -128,6 +128,32 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		end
 		uci:set('wireless', radio, 'txpower', data)
 	end
+
+	local conf
+
+	if is_5ghz then
+		conf = site.wifi5
+	else
+		conf = site.wifi24
+	end
+
+	if conf.channel_adjustable(false) then
+		local ch = p:option(ListValue, radio .. '_channel', translate("Channel"))
+		ch.default = uci:get('wireless', radio, 'channel')
+
+		local defaultChannel = conf.channel()
+
+		local phy = wireless.find_phy(uci:get_all('wireless', radio))
+		local channels = iwinfo.nl80211.freqlist(phy)
+
+		for _, entry in ipairs(channels) do
+			ch:value(entry.channel, string.format(entry.channel == defaultChannel and "%i " .. translate("(default)") or "%i", entry.channel))
+		end
+
+		function ch:write(data)
+			uci:set('wireless', radio, 'channel', data)
+		end
+	end
 end)
 
 
