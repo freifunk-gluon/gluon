@@ -136,7 +136,7 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   local _location = uci:get_first('gluon-node-info', 'location')
   uci:set('gluon-node-info', _location, 'share_location', '1')
   uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
-  uci:set('gluon-node-info', _location, 'longitutde', location.location.long)
+  uci:set('gluon-node-info', _location, 'longitude', location.location.long)
 
   local node
   local should_hostname
