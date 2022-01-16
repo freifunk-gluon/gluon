@@ -126,6 +126,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   print('Syncing with location ' .. location.location.name)
 
+  if uci:get('gluon-manman-sync', 'sync', 'last_data') and json.stringify(location) == uci:get('gluon-manman-sync', 'sync', 'last_data') then
+    print('Nothing changed, skipping sync')
+    return 0
+  end
+
   local owner = uci:get_first('gluon-node-info', 'owner')
   uci:set('gluon-node-info', owner, 'contact', location.administrator.email)
   local _location = uci:get_first('gluon-node-info', 'location')
@@ -178,6 +183,8 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     print('Syncing ' .. net_name .. ' as ' .. net_mapped .. ' to ' .. cidr)
     uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
   end
+
+  uci:set('gluon-manman-sync', 'sync', 'last_data', json.stringify(location))
 
   uci:save('system')
   uci:save('gluon-manman-sync')
