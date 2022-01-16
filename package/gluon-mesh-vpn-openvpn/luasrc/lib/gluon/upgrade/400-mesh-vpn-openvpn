@@ -7,7 +7,7 @@ local vpn_core = require 'gluon.mesh-vpn'
 local uci = require('simple-uci').cursor()
 
 -- https://stackoverflow.com/a/4991602/3990041
-function file_exists(name)
+local function file_exists(name)
    local f=io.open(name,"r")
    if f~=nil then io.close(f) return true else return false end
 end
@@ -33,6 +33,8 @@ end
 -- TODO: maybe better integration? currently we still listen to openvpn push
 
 uci:delete('openvpn', 'mesh_vpn')
-uci:section('openvpn', 'openvpn', 'mesh_vpn', vpn)
+if vpn.enabled then
+  uci:section('openvpn', 'openvpn', 'mesh_vpn', vpn)
+end
 
 uci:save('openvpn')
