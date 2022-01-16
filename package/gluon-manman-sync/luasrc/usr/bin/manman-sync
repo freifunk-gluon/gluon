@@ -126,10 +126,12 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   print('Syncing with location ' .. location.location.name)
 
-  uci:set('gluon-node-info', 'owner', 'contact', location.administrator.email)
-  uci:set('gluon-node-info', 'location', 'share_location', '1')
-  uci:set('gluon-node-info', 'location', 'latitude', location.location.lat)
-  uci:set('gluon-node-info', 'location', 'longitutde', location.location.long)
+  local owner = uci:get_first('gluon-node-info', 'owner')
+  uci:set('gluon-node-info', owner, 'contact', location.administrator.email)
+  local _location = uci:get_first('gluon-node-info', 'location')
+  uci:set('gluon-node-info', _location, 'share_location', '1')
+  uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
+  uci:set('gluon-node-info', _location, 'longitutde', location.location.long)
 
   local node
   local should_hostname
