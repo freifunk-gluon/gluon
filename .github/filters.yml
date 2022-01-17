@@ -17,6 +17,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "ath79-mikrotik": [
+    "targets/ath79-mikrotik",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/mikrotik.inc"
+  ],
   "bcm27xx-bcm2708": [
     "targets/bcm27xx-bcm2708",
     "modules",
