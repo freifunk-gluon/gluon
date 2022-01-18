@@ -231,6 +231,7 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:set('gluon-manman-sync', 'sync', 'last_data', json.stringify(location))
 
   uci:save('system')
+  uci:save('gluon')
   uci:save('gluon-manman-sync')
   uci:save('gluon-static-ip')
   uci:save('gluon-node-info')
