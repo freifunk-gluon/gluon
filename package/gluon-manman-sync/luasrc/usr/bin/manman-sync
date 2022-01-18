@@ -212,6 +212,7 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:save('gluon-manman-sync')
   uci:save('gluon-static-ip')
   uci:save('gluon-node-info')
+  os.execute('exec uci commit')
 
   print('Applying changes...')
   os.execute('exec gluon-reconfigure')
