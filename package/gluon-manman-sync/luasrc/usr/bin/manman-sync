@@ -196,7 +196,13 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   -- Use this when changing something that needs a reload and/or rollback (not the hostname)
   local function set(a, b, c, d, isbool)
-    local curval = isbool and uci:get_bool(a, b, c) or uci:get(a, b, c)
+    local curval
+
+    if isbool then
+      curval = uci:get_bool(a, b, c)
+    else
+      curval = uci:get(a, b, c)
+    end
 
     if curval ~= d then
       uci:set(a, b, c, d)
