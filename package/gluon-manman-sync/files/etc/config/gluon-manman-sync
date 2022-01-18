@@ -2,7 +2,8 @@ package gluon-manman-sync
 
 config sync 'sync'
 	option enabled '0'
-  option node_id ''
+  option location_id ''
+	option node ''
   option last_data_hash ''
   option last_data ''
 

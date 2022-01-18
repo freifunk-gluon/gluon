@@ -21,6 +21,17 @@ local mappings = {
   eth = 'lan'
 }
 
+-- https://stackoverflow.com/a/1647577/3990041
+function string:split(pat)
+  pat = pat or '%s+'
+  local st, g = 1, self:gmatch("()("..pat..")")
+  local function getter(segs, seps, sep, cap1, ...)
+    st = sep and seps + #sep
+    return self:sub(segs, (seps or 0) - 1), cap1 or sep, ...
+  end
+  return function() if st then return getter(st, g()) end end
+end
+
 -- https://gist.github.com/Uradamus/10323382
 local function shuffle(tbl)
   for i = #tbl, 2, -1 do
@@ -138,12 +149,21 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
   uci:set('gluon-node-info', _location, 'longitude', location.location.long)
 
+
+  local local_router_id
+  for id, _ in string.split(hostname, '-') do
+    if id then
+      local_router_id = id
+    end
+  end
+
+  local local_node = uci:get('gluon-manman-sync', 'sync', 'node') or local_router_id
   local node
   local should_hostname
 
   if #location.nodes > 1 then
     for _, potential_node in ipairs(location.nodes) do
-      if potential_node.name == hostname then
+      if potential_node.name == local_node then
         node = potential_node
         should_hostname = location.location.name .. '-' .. node.name
       end
@@ -151,10 +171,12 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   else
     node = location.nodes[1]
     should_hostname = location.location.name
+    -- save node in csse this location gets more nodes
+    uci:set('gluon-manman-sync', 'sync', 'node', node.name)
   end
 
   if node == nil then
-    print('E: unable to find matching node')
+    print('E: unable to find matching node (selector "' .. node .. '")')
     return 2
   end
 
