@@ -192,9 +192,28 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   -- check if anything changed since last time
   -- if yes, apply changes and do gluon-reload
 
+  local has_changes = false
+
+  -- Use this when changing something that needs a reload and/or rollback (not the hostname)
+  local function set(a, b, c, d, isbool)
+    local curval = isbool and uci:get_bool(a, b, c) or uci:get(a, b, c)
+
+    if curval ~= d then
+      uci:set(a, b, c, d)
+      print('  Value', a, b, c, 'changed to', d, 'was', curval)
+      has_changes = true
+    else
+      print('  Value', a, b, c, 'unchanged', d)
+    end
+  end
+
+  local has_tunnel = false
 
   for _, net in ipairs(node.interfaces) do
     local net_name = net.name
+    if net_name == 'tunnel' or net_name == 'vpn' or net_name == 'mesh_vpn' then
+      has_tunnel = true
+    end
     local net_mapped = mappings[net_name] or net_name
     if not string.find(net_mapped, '_') then
       net_mapped = 'mesh_' .. net_mapped
@@ -203,8 +222,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     local cidr = ip.new(net.ip, net.netmask):string()
 
     print('Syncing ' .. net_name .. ' as ' .. net_mapped .. ' to ' .. cidr)
-    uci:set('gluon-static-ip', net_mapped, 'ip4', cidr)
+    set('gluon-static-ip', net_mapped, 'ip4', cidr)
   end
+
+  print('Syncing mesh vpn: ' .. (has_tunnel and 'on' or 'off'))
+  set('gluon', 'mesh_vpn', 'enabled', has_tunnel, true)
 
   uci:set('gluon-manman-sync', 'sync', 'last_data', json.stringify(location))
 
@@ -214,9 +236,13 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   uci:save('gluon-node-info')
   os.execute('exec uci commit')
 
-  print('Applying changes...')
-  os.execute('exec gluon-reconfigure')
-  os.execute('exec gluon-reload')
+  if has_changes then
+    print('Applying changes...')
+    os.execute('exec gluon-reconfigure')
+    os.execute('exec gluon-reload')
+  else
+    print('No settings changes, no reason to reload')
+  end
 else
   print('manman-sync not enabled, skipping')
 end
