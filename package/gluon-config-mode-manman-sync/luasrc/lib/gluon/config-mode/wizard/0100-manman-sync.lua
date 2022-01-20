@@ -26,7 +26,7 @@ return function(form, uci)
 		uci:set('gluon-manman-sync', 'sync', 'location_id', data)
 	end
 
-	local id = s:option(Value, 'manman_id', pkg_i18n.translate('ManMan node (optional)'))
+	local id = s:option(Value, 'manman_node', pkg_i18n.translate('ManMan node (optional)'))
 	id:depends(manman, true)
 	id.default = uci:get('gluon-manman-sync', 'sync', 'node')
 	id.datatype = 'maxlength(16)'
