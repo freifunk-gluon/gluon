@@ -18,7 +18,10 @@ local mankey = site.manman.key()
 local mappings = {
   wifi = 'radio0',
   tunnel = 'vpn',
-  eth = 'lan'
+  eth = 'other',
+  lan = 'other',
+  wan = 'uplink',
+  single = 'uplink',
 }
 
 -- https://stackoverflow.com/a/1647577/3990041
