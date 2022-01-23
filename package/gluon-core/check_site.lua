@@ -74,6 +74,11 @@ need_string_match(in_domain({'next_node', 'ip4'}), '^%d+.%d+.%d+.%d+$', false)
 
 need_boolean(in_domain({'mesh', 'vxlan'}), false)
 
-need_boolean(in_site({'mesh_on_wan'}), false)
-need_boolean(in_site({'mesh_on_lan'}), false)
-need_boolean(in_site({'single_as_lan'}), false)
+local interfaces_roles = {'client', 'uplink', 'mesh'}
+for _, config in ipairs({'wan', 'lan', 'single'}) do
+	need_array_of(in_site({'interfaces', config, 'default_roles'}), interfaces_roles, false)
+end
+
+obsolete({'mesh_on_wan'}, 'Use interfaces.wan.default_roles.')
+obsolete({'mesh_on_lan'}, 'Use interfaces.lan.default_roles.')
+obsolete({'single_as_lan'}, 'Use interfaces.single.default_roles.')

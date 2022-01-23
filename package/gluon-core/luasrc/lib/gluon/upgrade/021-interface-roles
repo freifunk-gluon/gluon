@@ -1,0 +1,66 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+
+-- Defaults from site.conf
+local roles = {
+	lan = site.interfaces.lan.roles({'client'}),
+	wan = site.interfaces.wan.roles({'uplink'}),
+}
+roles.single = site.interfaces.single.roles(roles.wan)
+
+-- Migration of Mesh-on-WAN/LAN setting from Gluon 2021.1 and older (to be removed in 2024)
+--
+-- Wired meshing is enabled for single interfaces if either of the settings
+-- was previously enabled
+local mesh_lan_disabled = uci:get('network_gluon-old', 'mesh_lan', 'disabled')
+local mesh_wan_disabled = uci:get('network_gluon-old', 'mesh_wan', 'disabled')
+if mesh_wan_disabled == '0' then
+	util.add_to_set(roles.wan, 'mesh')
+	util.add_to_set(roles.single, 'mesh')
+elseif mesh_wan_disabled == '1' then
+	util.remove_from_set(roles.wan, 'mesh')
+	util.remove_from_set(roles.single, 'mesh')
+end
+if mesh_lan_disabled == '0' then
+	util.add_to_set(roles.lan, 'mesh')
+	util.add_to_set(roles.single, 'mesh')
+elseif mesh_lan_disabled == '1' then
+	util.remove_from_set(roles.lan, 'mesh')
+	util.remove_from_set(roles.single, 'mesh')
+end
+
+-- Migration of single to WAN/LAN or vice-versa (an interface was added or removed)
+-- We identify the WAN with the single interface in this case
+--
+-- These settings only take effect when the section that is the target of the
+-- migration does not exist yet.
+if uci:get('gluon', 'iface_wan') then
+	roles.single = uci:get_list('gluon', 'iface_wan', 'role')
+end
+if uci:get('gluon', 'iface_single') then
+	roles.wan = uci:get_list('gluon', 'iface_single', 'role')
+end
+
+-- Non-existing interfaces are nil, so they will not be added to the table
+local interfaces = {
+	lan = sysconfig.lan_ifname,
+	wan = sysconfig.wan_ifname,
+	single = sysconfig.single_ifname,
+}
+
+for iface in pairs(interfaces) do
+	local section_name = 'iface_' .. iface
+	if not uci:get('gluon', section_name) then
+		uci:section('gluon', 'interface', section_name, {
+			-- / prefix refers to sysconfig ifnames
+			name = '/' .. iface,
+			role = roles[iface],
+		})
+	end
+end
+
+uci:save('gluon')
