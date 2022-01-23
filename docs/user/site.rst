@@ -399,17 +399,49 @@ mesh_vpn
       },
     }
 
-mesh_on_wan \: optional
-  Enables the mesh on the WAN port (``true`` or ``false``).
+interfaces \: optional
+  Default setup for Ethernet ports.
   ::
 
-    mesh_on_wan = true,
+    interfaces = {
+      lan = {
+        default_roles = { 'client', 'mesh' },
+      },
+      wan = {
+        default_roles = { 'uplink', 'mesh' },
+      },
+      single = {
+        default_roles = { 'uplink', 'mesh' },
+      },
+    },
 
-mesh_on_lan \: optional
-  Enables the mesh on the LAN port (``true`` or ``false``).
-  ::
+  For devices that have two distinct Ethernet ports or port groups (often
+  labelled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
+  is only one port (group), ``single`` is used instead.
 
-    mesh_on_lan = true,
+  Available interface roles:
+
+  - ``client``: Port allows regular clients to connect to the mesh
+  - ``uplink``: Port is used to establish Mesh VPN connections
+  - ``mesh``: Wired meshing to another Gluon or Gluon-compatible node
+
+  The ``client`` role requires exclusive control over an interface. When
+  the ``client`` role is assigned to an interface at the same time as other
+  roles (like ``'client', 'mesh'`` in the above example), the other roles take
+  precedence (enabling ``mesh``, but not ``client`` in the example).
+
+  Such a default configuration still fulfills a purpose (and is in fact the
+  recommended way to enable "Mesh-on-LAN" by default): The "LAN interface
+  meshing" checkbox in the advanced network settings will only add or remove
+  the ``mesh`` role, so the ``client`` role must already be in the configuration
+  to make the LAN port a regular client interface when the checkbox is disabled.
+
+  All interface settings are optional. If unset, the following defaults are
+  used:
+
+  - ``lan``: ``{ 'client' }``
+  - ``wan``: ``{ 'uplink' }``
+  - ``single``: Same as ``wan``
 
 poe_passthrough \: optional
   Enable PoE passthrough by default on hardware with such a feature.

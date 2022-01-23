@@ -1,5 +1,5 @@
-WAN support
-===========
+Uplink support
+==============
 
 As the WAN port of a node will be connected to a user's private network, it
 is essential that the node only uses the WAN when it is absolutely necessary.
@@ -11,11 +11,12 @@ There are two cases in which the WAN port is used:
 After the VPN connection has been established, the node should be able to reach
 the mesh's DNS servers and use these for all other name resolution.
 
-If the device does not feature a WAN port, the LAN port is configured as WAN port.
-In case such a device has multiple LAN ports, all these can be used as WAN.
-Devices, which feature a "hybrid" port (labelled as WAN/LAN), this port is used as WAN.
-
-This behavior can be reversed using the ``single_as_lan`` site.conf option.
+If a device has only a single Ethernet port (or group of ports), it will be
+used as an uplink port even when it is not labelled as "WAN" by default. This
+behavior can be controlled using the ``interfaces.single.default_roles``
+site.conf option. It is also possible to alter the interface assignment after
+installation by modifying ``/etc/config/gluon`` and running
+``gluon-reconfigure``.
 
 Routing tables
 ~~~~~~~~~~~~~~

@@ -1,8 +1,8 @@
 Private WLAN
 ============
 
-It is possible to set up a private WLAN that bridges the WAN port and is separated from the mesh network.
-Please note that you should not enable ``mesh_on_wan`` simultaneously.
+It is possible to set up a private WLAN that bridges the uplink port and is separated from the mesh network.
+Please note that you should not enable Wired Mesh on the uplink port at the same time.
 
 The private WLAN is encrypted using WPA2 by default. On devices with enough flash and a supported radio,
 WPA3 or WPA2/WPA3 mixed-mode can be used instead of WPA2. For this to work, the ``wireless-encryption-wpa3``
