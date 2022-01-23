@@ -1,7 +1,7 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local wan = uci:get_all('network_gluon-old', 'wan') or {}
 local wan6 = uci:get_all('network_gluon-old', 'wan6') or {}
@@ -18,7 +18,7 @@ uci:section('network', 'interface', 'wan', {
 	ipaddr = wan.ipaddr,
 	netmask = wan.netmask,
 	gateway = wan.gateway,
-	ifname = sysconfig.wan_ifname,
+	ifname = util.get_role_interfaces(uci, 'uplink'),
 	type = 'bridge',
 	igmp_snooping = true,
 	multicast_querier = false,

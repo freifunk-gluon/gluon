@@ -86,9 +86,9 @@ local wired_mesh_ifaces = {}
 uci:foreach('network', 'interface',
 	function(iface)
 		-- Select all interfaces with proto gluon_wired except for
-		-- mesh_wan into this zone, as mesh_wan is the same
+		-- mesh_uplink into this zone, as mesh_uplink is the same
 		-- interface as wan, which has its own zone
-		if iface['proto'] == 'gluon_wired' and iface['.name'] ~= 'mesh_wan' then
+		if iface['proto'] == 'gluon_wired' and iface['.name'] ~= 'mesh_uplink' then
 			table.insert(wired_mesh_ifaces, iface['.name'])
 		end
 	end

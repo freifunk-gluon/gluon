@@ -138,6 +138,34 @@ function M.get_mesh_devices(uconn)
 	return devices
 end
 
+-- Returns a list of all interfaces with a given role
+--
+-- If exclusive is set to true, only interfaces that have no other role
+-- are returned; this is used to ensure that the client role is not active
+-- at the same time as any other role
+function M.get_role_interfaces(uci, role, exclusive)
+	local ret = {}
+
+	local function add(name)
+		-- Interface names with a / prefix refer to sysconfig interfaces
+		-- (lan_ifname/wan_ifname/single_ifname)
+		if string.sub(name, 1, 1) == '/' then
+			name = sysconfig[string.sub(name, 2) .. '_ifname'] or ''
+		end
+		for iface in string.gmatch(name, '%S+') do
+			M.add_to_set(ret, iface)
+		end
+	end
+
+	uci:foreach('gluon', 'interface', function(s)
+		if M.contains(s.role, role) and (not exclusive or #s.role == 1) then
+			add(s.name)
+		end
+	end)
+
+	return ret
+end
+
 -- Safe glob: returns an empty table when the glob fails because of
 -- a non-existing path
 function M.glob(pattern)

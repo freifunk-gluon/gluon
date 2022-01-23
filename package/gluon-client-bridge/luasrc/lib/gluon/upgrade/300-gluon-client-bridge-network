@@ -6,12 +6,8 @@ local util = require 'gluon.util'
 local uci = require('simple-uci').cursor()
 
 
-local interfaces = { 'local-port' }
-if sysconfig.lan_ifname and uci:get_bool('network', 'mesh_lan', 'disabled') then
-	for lanif in sysconfig.lan_ifname:gmatch('%S+') do
-		util.add_to_set(interfaces, lanif)
-	end
-end
+local interfaces = util.get_role_interfaces(uci, 'client', true)
+util.add_to_set(interfaces, 'local-port')
 
 uci:section('network', 'interface', 'client', {
 	type = 'bridge',
