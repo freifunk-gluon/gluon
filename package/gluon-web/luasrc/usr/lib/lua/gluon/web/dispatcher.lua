@@ -184,9 +184,15 @@ local function dispatch(config, http, request)
 		return
 	end
 
-	http:parse_input(node.filehandler)
+	local ok, err = pcall(http.parse_input, http, node.filehandler)
+	if not ok then
+		http:status(400, "Bad request")
+		http:prepare_content("text/plain")
+		http:write(err .. "\r\n")
+		return
+	end
 
-	local ok, err = pcall(node.target)
+	ok, err = pcall(node.target)
 	if not ok then
 		http:status(500, "Internal Server Error")
 		renderer.render_layout("error/500", {
