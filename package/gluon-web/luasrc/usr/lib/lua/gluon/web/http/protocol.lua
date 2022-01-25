@@ -248,6 +248,47 @@ local function mimedecode_message_body(src, msg, filecb)
 	assert(pump(src, snk))
 end
 
+local function check_post_origin(msg)
+	local default_port = '80'
+	local request_scheme = 'http'
+	if msg.env.HTTPS then
+		default_port = '443'
+		request_scheme = 'https'
+	end
+
+	local request_host = msg.env.HTTP_HOST
+	if not request_host then
+		error('POST request without Host header')
+	end
+	if not request_host:match(':[0-9]+$') then
+		request_host = request_host .. ':' .. default_port
+	end
+
+	local origin = msg.env.HTTP_ORIGIN
+	if not origin then
+		error('POST request without Origin header')
+	end
+	local origin_scheme, origin_host = origin:match('^([^:]*)://(.*)$')
+	if not origin_host then
+		error('POST request with invalid Origin header')
+	end
+	if not origin_host:match(':[0-9]+$') then
+		local origin_port
+		if origin_scheme == 'http' then
+			origin_port = '80'
+		elseif origin_scheme == 'https' then
+			origin_port = '443'
+		else
+			error('POST request with invalid Origin header')
+		end
+		origin_host = origin_host .. ':' .. origin_port
+	end
+
+	if request_scheme ~= origin_scheme or request_host ~= origin_host then
+		error('Invalid cross-origin POST')
+	end
+end
+
 -- This function will examine the Content-Type within the given message object
 -- to select the appropriate content decoder.
 -- Currently only the multipart/form-data mime type is supported.
@@ -255,6 +296,8 @@ function M.parse_message_body(src, msg, filecb)
 	if msg.env.REQUEST_METHOD ~= "POST" then
 		return
 	end
+
+	check_post_origin(msg)
 
 	mimedecode_message_body(src, msg, filecb)
 end
