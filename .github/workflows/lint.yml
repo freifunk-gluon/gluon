@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
-        run: sudo apt install lua-check
+        run: sudo apt-get -y update && sudo apt-get -y install lua-check
       - name: Install example site
         run: ln -s ./docs/site-example ./site
       - name: Lint Lua code
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
-        run: sudo apt install shellcheck
+        run: sudo apt-get -y update && sudo apt-get -y install shellcheck
       - name: Install example site
         run: ln -s ./docs/site-example ./site
       - name: Lint shell code
