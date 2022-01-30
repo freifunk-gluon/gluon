@@ -31,9 +31,8 @@ $red:       #ee3300;
 	cursor: pointer;
 	user-select: none;
 
-
 	font-size: 100%;
-	padding: 0.5em 1em;
+	padding: 0.5rem 1rem;
 	color: rgba(0, 0, 0, 0.80);
 	background-color: #E6E6E6;
 	border: none;
@@ -71,13 +70,12 @@ html {
 }
 
 body, input, select, option {
-	font-family: 'Open Sans', Arial, sans-serif;
-	font-size: 12pt;
+	font: 12pt "Open Sans", Arial, sans-serif
 }
 
 body {
 	color: rgb(77, 78, 83);
-	line-height: 1.5em;
+	line-height: 1.5rem;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
@@ -92,90 +90,87 @@ body {
 ul.tabmenu {
 	list-style: none;
 	padding: 0;
-	margin: 2em 0;
-	display: inline-flex;
-}
+	margin: 2rem 0 0;
+	display: block;
 
-ul.tabmenu li {
-	white-space: nowrap;
-	margin: 0 0.5em;
-	padding: 0;
-	text-align: center;
+	li {
+		white-space: nowrap;
+		margin: 0 0.5rem;
+		padding: 0;
+		text-align: center;
 
-	a {
-		display: block;
-		text-decoration: none;
-		padding: 1em;
-		margin: 0;
-		color: #333;
-		border-radius: 2em;
+		a {
+			display: block;
+			text-decoration: none;
+			padding: 1rem;
+			margin: 0;
+			color: #333;
+			border-radius: 2rem;
 
-		&:hover {
-			background: lighten($ffyellow, 35);
+			&:hover {
+				background: lighten($ffyellow, 35);
+			}
+		}
+
+		&.active a {
+			font-weight: bold;
+			background: white;
+			color: #333;
 		}
 	}
-
-	&.active a {
-		font-weight: bold;
-		background: white;
-		color: #333;
-	}
-}
-
-#maincontent ul {
-	margin-left: 2em;
 }
 
 .error {
 	color: #ff0000;
 	background-color: white;
+	padding: 1rem;
+	font-weight: bold;
 }
 
 #menubar {
-	display: flex;
 	background: $ffmagenta;
 	color: #ffffff;
-}
 
-#menubar a:link.topcat,
-#menubar a:visited.topcat {
-	position: relative;
-	display: block;
-	padding: 0.5em;
-	text-decoration: none;
-	font-size: 80%;
-	font-weight: normal;
-	color: white;
-
-	&:hover, &:focus {
-		background: $ffyellow;
-		color: black;
-	}
-
-	&.active {
-		background: $ffyellow;
-		color: black;
-		font-weight: bold;
-	}
-}
-
-#menubar .hostinfo {
-	position: relative;
-	margin: 0;
-	padding: 0.5em;
-	flex: 1;
-	font-weight: bold;
-	font-size: 80%;
-}
-
-#menubar .hostinfo a {
-	&:link, &:visited {
+	a:link.topcat,
+	a:visited.topcat {
+		position: relative;
+		display: block;
+		padding: 0.5rem;
 		text-decoration: none;
-		font-weight: bold;
+		font-size: 80%;
+		font-weight: normal;
 		color: white;
 
 		&:hover, &:focus {
-			text-decoration: underline;
+			background: $ffyellow;
+			color: black;
+		}
+
+		&.active {
+			font-weight: bold;
+			background: $ffzusatz;
+			color: white;
+		}
+	}
+
+	.hostinfo {
+		position: relative;
+		margin: 0;
+		padding: 0.5rem;
+		flex: 1;
+		font-weight: bold;
+		font-size: 80%;
+
+		a {
+			&:link, &:visited {
+				text-decoration: none;
+				font-weight: bold;
+				color: white;
+
+				&:hover, &:focus {
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 }
@@ -184,131 +179,142 @@ ul.tabmenu li {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-}
 
-#topmenu li {
-	display: inline-block;
+	li {
+		display: inline-block;
+	}
 }
 
 #maincontent {
-	padding: 0 1em 2em;
-	max-width: 60em;
-	min-width: 40em;
-	margin: 1em auto;
-}
+	max-width: 60rem;
+	margin: 1rem auto;
+	background-color: rgba(255, 255, 255, 0.333);
+	padding: 0;
+	border-radius: 0.5rem;
 
-#maincontent p {
-	margin-bottom: 1em;
+	p {
+		margin: 0 1rem 1rem;
+	}
+
+	ul {
+		margin-left: 2rem;
+	}
 }
 
 .gluon-section {
-	margin: 0;
+	margin: 0 0 1.25rem;
 	padding: 0;
 	border: none;
-	margin-bottom: 1.3em;
+
+	&:last-child {
+		margin-bottom: 0.75rem;
+	}
+
+	legend {
+		font-size: 1.5rem;
+		font-weight: bold;
+		position: relative;
+		margin-bottom: 0.5rem;
+		padding: 1rem;
+	}
+
+	h2 {
+		margin: 0 0 0.5rem -0.5rem;
+	}
+
+	h3 {
+		text-decoration: none;
+		font-weight: bold;
+		color: #555555;
+		margin: 0.25rem;
+		font-size: 100%;
+	}
 }
 
-.gluon-section:last-child {
-	margin-bottom: 0.7em;
-}
-
-.gluon-section legend {
-	font-size: 1.4em;
-	font-weight: bold;
-	position: relative;
-	padding: 0;
-	margin-bottom: 0.5em;
-}
-
-.gluon-section h2 {
-	margin: 0em 0 0.5em -0.5em;
-}
-
-.gluon-section h3 {
-	text-decoration: none;
-	font-weight: bold;
-	color: #555555;
-	margin: 0.25em;
-	font-size: 100%;
+body.admin-network .gluon-section {
+	margin-bottom: 0;
 }
 
 .gluon-section-descr {
-	margin-bottom: 2em;
+	margin-bottom: 2rem;
 }
 
 .gluon-osm-map {
 	width: 100%;
-	height: 40em;
-	margin-bottom: 1em;
+	height: 40rem;
+	margin-bottom: 1rem;
 }
 
-input::placeholder {
-	color: #aaaaaa;
+#value-id\.1\.6\.map {
+	margin: 0 1rem;
 }
 
-input::-webkit-input-placeholder {
-	color: #aaaaaa;
-}
-
-input[type=checkbox] {
-	display: none;
-
-	& + label {
-		display: inline-block;
-		position: relative;
-		width: 1em;
-		height: 1em;
-		margin: 0;
+input {
+	&::placeholder,
+	&::-webkit-input-placeholder {
+		color: #aaaaaa;
 	}
 
-	&:checked + label::after {
-		content: '✔';
-		color: $ffmagenta;
-		vertical-align: middle;
-		position: absolute;
-		top: 50%;
-		left: 0;
-		margin-top: -0.5em;
-		width: 100%;
-		text-align: center;
-		font-size: 1.7em;
-	}
-}
+	&[type=checkbox] {
+		display: none;
 
-input[type=radio] {
-	display: none;
+		& + label {
+			display: inline-block;
+			position: relative;
+			width: 1rem;
+			height: 1rem;
+			margin: 0;
+		}
 
-	& + label {
-		display: inline-block;
-		position: relative;
-		width: 0.8em;
-		height: 0.8em;
-		padding: 0.5em;
-		margin: 0.2em 0.2em 0.2em 0.1em;
-		border: none;
-		background: lighten($ffyellow, 30);
-		vertical-align: middle;
-		border-radius: 50%;
+		&:checked + label::after {
+			content: '✔';
+			color: $ffmagenta;
+			vertical-align: middle;
+			position: absolute;
+			top: 50%;
+			left: 0;
+			margin-top: -33.333%;
+			width: 100%;
+			text-align: center;
+			font-size: 1.7rem;
+		}
 	}
 
-	&:checked + label::after {
-		content: '•';
-		color: $ffmagenta;
-		vertical-align: middle;
-		position: absolute;
-		top: 50%;
-		left: 0;
-		margin-top: -0.4em;
-		width: 100%;
-		text-align: center;
-		font-size: 2em;
-	}
-}
+	&[type=radio] {
+		display: none;
 
-input[type=submit],
-input[type=reset],
-input[type=button] {
-	cursor: pointer;
+		& + label {
+			display: inline-block;
+			position: relative;
+			width: 0.75rem;
+			height: 0.75rem;
+			padding: 0.75rem;
+			margin: 0.25rem 0.25rem 0.25rem 0.125rem;
+			border: none;
+			background: lighten($ffyellow, 30);
+			vertical-align: middle;
+			border-radius: 50%;
+		}
+
+		&:checked + label::after {
+			content: '•';
+			color: $ffmagenta;
+			vertical-align: middle;
+			position: absolute;
+			top: 50%;
+			left: 0;
+			margin-top: -0.5rem;
+			width: 100%;
+			text-align: center;
+			font-size: 2rem;
+		}
+	}
+
+	&[type=submit],
+	&[type=reset],
+	&[type=button] {
+		cursor: pointer;
+	}
 }
 
 select,
@@ -319,11 +325,16 @@ input[type=checkbox] + label {
 	border: none;
 	background: lighten($ffyellow, 30);
 	border-radius: 3pt;
-	padding: 0.5em;
+	padding: 0.5rem;
 	margin-top: 1px;
 	margin-bottom: 2px;
 	box-sizing: content-box;
 	outline: 0;
+}
+
+select, input[type="text"],
+input[type="password"] {
+	min-width: auto;
 }
 
 .select-wrapper {
@@ -333,17 +344,13 @@ input[type=checkbox] + label {
 	&::before {
 		position: absolute;
 		z-index: 1;
-		right: 0.05em;
-		top: calc(2px + 0.1em);
-		bottom: calc(2px + 0.1em);
-		width: 1.4em;
-		border-left: 0.05em solid rgba(0, 0, 0, 0.25);
+		right: 0.125rem;
+		top: calc(2px + 0.125rem);
+		bottom: calc(2px + 0.125rem);
+		width: 1.5rem;
+		border-left: 0.125rem solid rgba(0, 0, 0, 0.25);
 		pointer-events: none;
-		background:
-			url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="8" height="5"><path fill="none" stroke="black" stroke-linejoin="bevel" d="M1,1L4,4L7,1"/></svg>')
-			center / 0.8em 0.5em
-			no-repeat
-		;
+		background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="8" height="5"><path fill="none" stroke="black" stroke-linejoin="bevel" d="M1,1L4,4L7,1"/></svg>') center / 0.75rem 0.5rem no-repeat;
 		content: '';
 	}
 
@@ -360,16 +367,10 @@ option {
 	background: lighten($ffyellow, 30);
 }
 
-select,
-input[type=text],
-input[type=password] {
-	min-width: 20em;
-}
-
 .gluon-button {
 	@include button;
 
-	margin-left: 0.5em;
+	margin-left: 0.5rem;
 	background-repeat: no-repeat;
 }
 
@@ -381,9 +382,11 @@ input[type=password] {
 .gluon-button-submit {
 	background-color: $ffzusatz;
 	color: #fff;
-}
-.gluon-button-submit:active {
-	background: grey;
+
+	&:active {
+		background: grey;
+	}
+
 }
 
 .gluon-input-invalid {
@@ -393,13 +396,12 @@ input[type=password] {
 
 textarea {
 	margin-left: -1px;
-	margin-bottom: 0.5em;
+	margin-bottom: 0.5rem;
+	max-width: calc(100% - 3rem);
 }
 
 .gluon-value {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 0.5em;
+	margin-bottom: .75rem;
 }
 
 .gluon-section-node .gluon-value:last-child {
@@ -407,31 +409,43 @@ textarea {
 }
 
 .gluon-value-title {
-	flex: 2;
-	text-align: right;
-	padding-top: 0.39em;
-	padding-right: 1em;
+	padding-top: .5rem;
+	padding-right: 1rem;
 	font-weight: bold;
+	padding-left: 1rem;
+	overflow-wrap: break-word;
 }
 
 .gluon-value-field {
-	flex: 3;
 	position: relative;
+	margin-right: 1rem;
 
-	input, select, input + label {
+	select, input + label {
 		position: relative;
+		margin-left: 1rem;
+	}
+
+	select {
+		padding-right: 2rem;
+	}
+
+	input,
+	.gluon-add,
+	.gluon-value-description {
+		margin-left: 1rem;
 	}
 }
 
 .gluon-value-field-text {
-	flex: 3;
-	padding-top: 0.39em;
+	padding-top: 0.5rem;
+	padding-left: 1rem;
+	overflow-wrap: break-word;
 }
 
 .gluon-value-field-long {
 	flex: 10;
 	position: relative;
-	margin-top: 0.65em;
+	margin-top: 0.75rem;
 
 	input, select, input + label {
 		position: relative;
@@ -443,23 +457,29 @@ textarea {
 }
 
 .gluon-value-description {
-	font-size: 8pt;
+	font-size: 0.75rem;
 }
 
 .gluon-form-descr {
-	margin-bottom: 1em;
+	margin-bottom: 1rem;
 }
 
-.gluon-form-descr:empty, .gluon-section-descr:empty {
-	display: none;
+.gluon-form-descr,
+.gluon-section-descr {
+	&:empty {
+		display: none;
+	}
 }
 
-.gluon-form-descr, .gluon-section-descr, .gluon-page-actions {
-	padding: 1em;
+.gluon-form-descr,
+.gluon-section-descr {
+	padding: 1rem;
 	background: #ececec;
 }
 
 .gluon-page-actions {
+	padding: 1rem;
+	background: #ececec;
 	text-align: right;
 	display: flex;
 	flex-flow: row-reverse;
@@ -471,35 +491,39 @@ textarea {
 	border: none;
 }
 
-.gluon-value-error input,
-.gluon-value-error select {
-	background-color: #ffcccc;
+.gluon-value-error {
+	input,
+	select {
+		background-color: #ffcccc;
+	}
 }
 
-.gluon-add::after, .gluon-remove::after {
-	cursor: pointer;
-	display: inline-block;
-	text-align: center;
-	vertical-align: middle;
-	font-size: 180%;
-	width: 1.2em;
-	height: 1em;
+.gluon-add,
+.gluon-remove {
+	&::after {
+		cursor: pointer;
+		display: inline-block;
+		text-align: center;
+		vertical-align: middle;
+		font-size: 180%;
+		width: 1.25rem;
+		height: 1rem;
+	}
 }
 
 .gluon-add {
 	color: #008000;
-
 	position: relative;
-	left: 21em;
+	left: 21.75rem;
 
 	input + & {
 		left: 0;
-		top: 0.04em;
+		top: 0.125rem;
 	}
 
 	&:first-child {
-		top: 0.53em;
-		left: -0.08em;
+		top: 0.5rem;
+		left: -0.125rem;
 	}
 
 	&::after {
@@ -509,9 +533,9 @@ textarea {
 
 .gluon-remove {
 	color: #800000;
-
 	position: relative;
-	top: -0.03em;
+	top: -0.375rem;
+	margin-left: 0.75rem;
 
 	&::after {
 		content: '–';
@@ -522,7 +546,7 @@ textarea {
 	border: 1px dotted #ff0000;
 	background-color: #ffffff;
 	color: #000000;
-	padding: 0.5em;
+	padding: 0.5rem;
 }
 
 .errorbox {
@@ -530,18 +554,120 @@ textarea {
 	background-color: #FFCCCC;
 	padding: 5px;
 	margin-bottom: 5px;
-}
 
-.errorbox a {
-	color: #000000 !important;
+	a {
+		color: #000000 !important;
+	}
 }
-
 
 .the-key {
 	text-align: left;
-	font-size: 1.4em;
+	font-size: 1.5rem;
 	background: lighten($ffyellow, 35);
 	border: 3pt dashed $ffmagenta;
-	margin-bottom: 0.5em;
-	padding: 0.5em
+	margin-bottom: 0.5rem;
+	padding: 0.5rem
+}
+
+h2 {
+	color: $ffzusatz;
+	padding: 1rem;
+}
+
+fieldset.gluon-section {
+	padding-top: 1rem;
+}
+
+input[type="checkbox"] + label, select {
+	border: 1px solid #c0c0c0;
+	margin-top: 0;
+	margin-bottom: 1px;
+}
+
+input,
+option,
+select,
+input[type="checkbox"] + label,
+textarea,
+ul.tabmenu li a:hover,
+#menubar a:link.topcat:hover,
+#menubar a:link.topcat:focus,
+#menubar a:visited.topcat:hover,
+#menubar a:visited.topcat:focus {
+	background-color: #99d9F5;
+}
+
+.gluon-page-actions {
+	padding: 1rem;
+	border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.gluon-form-descr,
+.gluon-section-descr {
+	margin: 0 1rem 1rem;
+}
+
+.gluon-value:last-child {
+	padding-bottom: 1rem;
+}
+
+textarea,
+.gluon-form > p,
+form > p {
+	margin: 0 1rem;
+}
+
+// Small devices (landscape phones, 576px and up)
+@media (min-width: 576px) {
+	#menubar {
+		display: flex;
+	}
+
+	select,
+	input[type=text],
+	input[type=password] {
+		min-width: 20rem;
+	}
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+	#maincontent {
+		min-width: 40rem;
+	}
+
+	.gluon-value-field {
+		margin-right: auto;
+	}
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+	ul.tabmenu {
+		display: inline-flex;
+	}
+	.gluon-value {
+		display: flex;
+		flex-direction: row;
+	}
+	.gluon-value-title {
+		flex: 2;
+		text-align: right;
+	}
+
+	.gluon-value-field {
+		flex: 3;
+	}
+
+	.gluon-value-field-text {
+		flex: 3;
+		padding-left: 0;
+	}
+}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+	#value-id\.1\.6\.map {
+		margin: 0;
+	}
 }
