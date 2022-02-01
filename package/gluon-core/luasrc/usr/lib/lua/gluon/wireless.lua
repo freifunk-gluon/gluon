@@ -123,7 +123,7 @@ function M.foreach_radio(uci, f)
 end
 
 function M.preserve_channels(uci)
-	return uci:get_first('gluon-core', 'wireless', 'preserve_channels')
+	return uci:get('gluon', 'wireless', 'preserve_channels')
 end
 
 function M.device_supports_wpa3()
