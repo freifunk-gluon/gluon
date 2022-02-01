@@ -208,6 +208,6 @@ return function(config, http)
 	if not ok then
 		http:status(500, "Internal Server Error")
 		http:prepare_content("text/plain")
-		http:write(err)
+		http:write(err .. "\r\n")
 	end
 end
