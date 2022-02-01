@@ -7,7 +7,7 @@ This is a backport of
 https://git.openwrt.org/?p=project/uci.git;a=commit;h=4b3db1179747b6a6779029407984bacef851325c
 
 diff --git a/package/system/uci/Makefile b/package/system/uci/Makefile
-index 75fc1bdfad0694aac99830b9b0cc87b42ea16e7d..924d5bb4824f567888e2ffd2954429af8f4fd504 100644
+index 46694e619d287fe90e49bf6526a732aa600df91e..eabdd5220623302c0e5f3564a64e915cbc6f699b 100644
 --- a/package/system/uci/Makefile
 +++ b/package/system/uci/Makefile
 @@ -9,7 +9,7 @@
