@@ -27,6 +27,7 @@ function M.is_outdoor_device()
 		'devolo,dvl1750x',
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',
+		'tplink,cpe210-v1',
 		'tplink,cpe220-v3',
 		'tplink,cpe510-v2',
 		'tplink,cpe510-v3',

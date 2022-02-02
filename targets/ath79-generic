@@ -123,6 +123,12 @@ device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
 
+device('tp-link-cpe210-v1', 'tplink_cpe210-v1', {
+	manifest_aliases = {
+		'tp-link-cpe210-v1.0', -- Upgrade from OpenWrt 19.07
+		'tp-link-cpe210-v1.1', -- Upgrade from OpenWrt 19.07
+	},
+})
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
 device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
 device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
