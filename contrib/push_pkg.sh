@@ -48,7 +48,7 @@ shift $(( OPTIND - 1 ))
 if [ "$build_only" -eq 0 ]; then
 	remote_info=$(ssh -p "${ssh_port}" "root@${ssh_host}" '
 		source /etc/os-release
-		printf "%s\t%s\n" "$OPENWRT_BOARD" "$OPENWRT_ARCH"
+		printf "%s\\t%s\\n" "$OPENWRT_BOARD" "$OPENWRT_ARCH"
 	')
 	REMOTE_OPENWRT_BOARD="$(echo "$remote_info" | cut -f 1)"
 	REMOTE_OPENWRT_ARCH="$(echo "$remote_info" | cut -f 2)"
@@ -92,7 +92,7 @@ while [ $# -gt 0 ]; do
 	opkg_packages="$(make TOPDIR="${topdir}" -C "${pkgdir}" DUMP=1 | awk '/^Package: / { print $2 }')"
 
 	search_package() {
-		find "$2" -name "$1_*.ipk" -printf "%f\n"
+		find "$2" -name "$1_*.ipk" -printf '%f\n'
 	}
 
 	make TOPDIR="${topdir}" -C "${pkgdir}" clean
