@@ -58,6 +58,3 @@ GLUON_REGION ?= eu
 
 # Languages to include
 GLUON_LANGS ?= en de
-
-# Do not build images for deprecated devices
-GLUON_DEPRECATED ?= 0

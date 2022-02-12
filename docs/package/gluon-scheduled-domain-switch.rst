@@ -15,15 +15,15 @@ site.conf
 All those settings have to be defined exclusively in the domain, not the site.
 
 domain_switch : optional (needed for domains to switch)
-    target_domain :
-        - target domain to switch to
-    switch_after_offline_mins :
-        - amount of time without reachable gateway to switch unconditionally
-    switch_time :
-        - UNIX epoch after which domain will be switched
-    connection_check_targets :
-        - array of IPv6 addresses which are probed to determine if the node is
-	  connected to the mesh
+  target_domain :
+    - target domain to switch to
+  switch_after_offline_mins :
+    - amount of time without reachable gateway to switch unconditionally
+  switch_time :
+    - UNIX epoch after which domain will be switched
+  connection_check_targets :
+    - array of IPv6 addresses which are probed to determine if the node is
+      connected to the mesh
 
 Example::
 

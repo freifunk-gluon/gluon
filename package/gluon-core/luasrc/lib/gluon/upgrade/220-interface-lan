@@ -50,8 +50,4 @@ if uci:get('network', 'mesh_lan', 'transitive') == nil then
 	uci:set('network', 'mesh_lan', 'transitive', true)
 end
 
-uci:delete('network', 'mesh_lan', 'auto')
-uci:delete('network', 'mesh_lan', 'fixed_mtu')
-uci:delete('network', 'mesh_lan', 'legacy')
-
 uci:save('network')

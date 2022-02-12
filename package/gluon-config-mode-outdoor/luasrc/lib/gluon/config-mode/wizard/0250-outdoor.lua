@@ -2,7 +2,7 @@ return function(form, uci)
 	local platform = require 'gluon.platform'
 	local wireless = require 'gluon.wireless'
 
-	if not (platform.is_outdoor_device() and platform.device_uses_11a(uci)) then
+	if not (platform.is_outdoor_device() and wireless.device_uses_11a(uci)) then
 		-- only visible on wizard for outdoor devices
 		return
 	end
@@ -31,7 +31,7 @@ return function(form, uci)
 			if data == false then
 				local mesh_ifaces_5ghz = {}
 				uci:foreach('wireless', 'wifi-device', function(config)
-					if config.hwmode ~= '11a' and config.hwmode ~= '11na' then
+					if config.band ~= '5g' then
 						return
 					end
 

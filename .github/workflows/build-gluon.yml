@@ -1,7 +1,3 @@
-
-# Update this file after adding/removing/renaming a target by running
-# `make list-targets BROKEN=1 | ./contrib/actions/generate-actions.py > ./.github/workflows/build-gluon.yml`
-
 name: Build Gluon
 on:
   push:
@@ -28,6 +24,7 @@ jobs:
 
   build_firmware:
     needs: changed
+    if: ${{ needs.changed.outputs.targets != '[]' && needs.changed.outputs.targets != '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -45,13 +42,13 @@ jobs:
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.3.1
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
 
       - name: Archive build output
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2.3.1
         with:
           name: ${{ matrix.target }}_output
           path: output

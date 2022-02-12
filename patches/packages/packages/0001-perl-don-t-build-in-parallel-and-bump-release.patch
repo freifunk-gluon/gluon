@@ -1,0 +1,24 @@
+From: Martin Weinelt <martin@darmstadt.freifunk.net>
+Date: Tue, 8 Feb 2022 21:09:20 +0100
+Subject: perl: don't build in parallel and bump release
+
+Parallel builds cause spurious build failures with high core counts.
+
+https://github.com/openwrt/packages/issues/8238
+https://github.com/openwrt/packages/pull/17274
+
+diff --git a/lang/perl/Makefile b/lang/perl/Makefile
+index 443164f0a4a6a1c9fa189bf9c3c033d70db30ca0..121a3bfe653f46ecac7d10b1f3ae480fcd02f155 100644
+--- a/lang/perl/Makefile
++++ b/lang/perl/Makefile
+@@ -34,8 +34,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_NAME)-$(PKG_VERSION)
+ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/perl/$(PKG_NAME)-$(PKG_VERSION)
+ PKG_INSTALL:=1
+ PKG_BUILD_DEPENDS:=perl/host
+-PKG_BUILD_PARALLEL:=1
+-HOST_BUILD_PARALLEL:=1
++PKG_BUILD_PARALLEL:=0
++HOST_BUILD_PARALLEL:=0
+ 
+ # Variables used during configuration/build
+ HOST_PERL_PREFIX:=$(STAGING_DIR_HOSTPKG)/usr

@@ -2,7 +2,7 @@ gluon-mesh-batman-adv
 =====================
 
 .. image:: gluon-mesh-batman-adv-logo.svg
-   :width: 300 px
+  :width: 300 px
 
 B.A.T.M.A.N. Advanced (often referenced as batman-adv) is an implementation of
 the B.A.T.M.A.N. routing protocol in form of a linux kernel module operating on layer 2.
@@ -47,7 +47,7 @@ Multicast Architecture
 ----------------------
 
 .. image:: gluon-mesh-batman-adv-multicast.svg
-   :width: 300 px
+  :width: 300 px
 
 While generally broadcast capability is a nice feature of a layer 2
 mesh protocol, it quickly reaches its limit.

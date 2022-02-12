@@ -3,8 +3,6 @@
 local uci = require('simple-uci').cursor()
 local site = require('gluon.site')
 
-uci:delete('firewall', 'wan_announced')
-
 -- Allow respondd port on WAN to allow resolving neighbours over mesh-on-wan
 uci:section('firewall', 'rule', 'wan_respondd', {
 	name = 'wan_respondd',

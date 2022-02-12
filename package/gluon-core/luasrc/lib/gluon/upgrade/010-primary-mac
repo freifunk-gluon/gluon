@@ -74,6 +74,7 @@ local primary_addrs = {
 		{'ath79', 'generic', {
 			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
+			'tplink,archer-a7-v5',
 			'tplink,archer-c2-v3',
 			'tplink,archer-d50-v1',
 		}},

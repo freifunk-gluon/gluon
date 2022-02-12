@@ -19,14 +19,15 @@ escape = '$(subst ','\'',$(1))'
 GLUON_SITEDIR ?= site
 $(eval $(call mkabspath,GLUON_SITEDIR))
 
-$(GLUON_SITEDIR)/site.mk:
-	$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
+ifeq ($(realpath $(GLUON_SITEDIR)/site.mk),)
+$(error No site configuration was found. Please check out a site configuration to $(GLUON_SITEDIR))
+endif
 
 include $(GLUON_SITEDIR)/site.mk
 
 GLUON_RELEASE ?= $(error GLUON_RELEASE not set. GLUON_RELEASE can be set in site.mk or on the command line)
 
-GLUON_DEPRECATED ?= $(error GLUON_DEPRECATED not set. Please consult the documentation)
+GLUON_DEPRECATED ?= 0
 
 ifneq ($(GLUON_BRANCH),)
   $(warning *** Warning: GLUON_BRANCH has been deprecated, please set GLUON_AUTOUPDATER_BRANCH and GLUON_AUTOUPDATER_ENABLED instead.)
@@ -70,7 +71,7 @@ GLUON_VARS = \
 	GLUON_VERSION GLUON_SITE_VERSION \
 	GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_AUTOREMOVE GLUON_DEBUG GLUON_MINIFY GLUON_DEPRECATED \
 	GLUON_DEVICES GLUON_TARGETSDIR GLUON_PATCHESDIR GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR GLUON_DEBUGDIR \
-	GLUON_SITEDIR GLUON_RELEASE GLUON_AUTOUPDATER_BRANCH GLUON_AUTOUPDATER_ENABLED GLUON_LANGS GLUON_BASE_FEEDS \
+	GLUON_SITEDIR GLUON_AUTOUPDATER_BRANCH GLUON_AUTOUPDATER_ENABLED GLUON_LANGS GLUON_BASE_FEEDS \
 	GLUON_TARGET BOARD SUBTARGET
 
 unexport $(GLUON_VARS)
@@ -183,6 +184,10 @@ config: $(LUA) FORCE
 	$(GLUON_ENV) $(LUA) scripts/target_config.lua > openwrt/.config
 	$(OPENWRTMAKE) defconfig
 	$(GLUON_ENV) $(LUA) scripts/target_config_check.lua
+
+
+container: FORCE
+	@scripts/container.sh
 
 
 all: config

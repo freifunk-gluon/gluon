@@ -1,5 +1,0 @@
-#!/usr/bin/lua
-
-local users = require 'gluon.users'
-
-users.remove_user('gluon-radvd')

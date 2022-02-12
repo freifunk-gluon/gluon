@@ -9,6 +9,11 @@ local uci = require('simple-uci').cursor()
 
 local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
 
+local secret = uci:get('fastd', 'mesh_vpn', 'secret')
+if not secret or not secret:match(('%x'):rep(64)) then
+	secret = 'generate'
+end
+
 local methods
 
 if site.mesh_vpn.fastd.configurable(false) then
@@ -38,6 +43,7 @@ end
 uci:section('fastd', 'fastd', 'mesh_vpn', {
 	group = 'gluon-mesh-vpn',
 	syslog_level = syslog_level,
+	secret = secret,
 	interface = vpn_core.get_interface(),
 	mode = 'tap',
 	mtu = site.mesh_vpn.mtu(),
@@ -46,7 +52,6 @@ uci:section('fastd', 'fastd', 'mesh_vpn', {
 	packet_mark = 1,
 	status_socket = '/var/run/fastd.mesh_vpn.socket',
 })
-uci:delete('fastd', 'mesh_vpn', 'user')
 
 
 -- Collect list of groups that have peers with 'preserve' flag

@@ -40,6 +40,12 @@ freshly installed Debian Stretch system the following packages are required:
 * `time` (built-in `time` doesn't work)
 * `qemu-utils`
 
+We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
+
+::
+
+  ./scripts/container.sh
+
 Building the images
 -------------------
 
@@ -48,31 +54,31 @@ version you'd like to checkout, e.g. *v2021.1*.
 
 ::
 
-    git clone https://github.com/freifunk-gluon/gluon.git gluon -b RELEASE
+  git clone https://github.com/freifunk-gluon/gluon.git gluon -b RELEASE
 
 This command will create a directory named *gluon/*.
 It might also tell a scary message about being in a *detached state*.
 **Don't panic!** Everything's fine.
 Now, enter the freshly created directory::
 
-    cd gluon
+  cd gluon
 
 It's time to add (or create) your site configuration. If you already
 have a site repository, just clone it::
 
-   git clone https://github.com/freifunk-alpha-centauri/site-ffac.git site
+  git clone https://github.com/freifunk-alpha-centauri/site-ffac.git site
 
 If you want to build a new site, create a new git repository *site/*::
 
-    mkdir site
-    cd site
-    git init
+  mkdir site
+  cd site
+  git init
 
 Copy *site.conf*, *site.mk* and *i18n* from *docs/site-example*::
 
-    cp ../docs/site-example/site.conf .
-    cp ../docs/site-example/site.mk .
-    cp -r ../docs/site-example/i18n .
+  cp ../docs/site-example/site.conf .
+  cp ../docs/site-example/site.mk .
+  cp -r ../docs/site-example/i18n .
 
 Edit these files as you see fit and commit them into the site repository.
 Extensive documentation about the site configuration can be found at:
@@ -80,11 +86,11 @@ Extensive documentation about the site configuration can be found at:
 site directory should always be a git repository by itself; committing site-specific files
 to the Gluon main repository should be avoided, as it will make updates more complicated.
 
-Next go back to the top-level Gluon directory and build Gluon::
+Next go back to the top-level Gluon directory and build Gluon\ [#make_update]_::
 
-    cd ..
-    make update                        # Get other repositories used by Gluon
-    make GLUON_TARGET=ath79-generic   # Build Gluon
+  cd ..
+  make update                       # Get other repositories used by Gluon
+  make GLUON_TARGET=ath79-generic   # Build Gluon
 
 In case of errors read the messages carefully and try to fix the stated issues
 (e.g. install missing tools not available or look for Troubleshooting_ in the wiki.
@@ -96,9 +102,9 @@ To see a complete list of supported targets, call ``make`` without setting ``GLU
 
 To build all targets use a loop like this::
 
-    for TARGET in $(make list-targets); do
-      make GLUON_TARGET=$TARGET
-    done
+  for TARGET in $(make list-targets); do
+    make GLUON_TARGET=$TARGET
+  done
 
 You should generally reserve 5GB of disk space and additionally about 10GB for each `GLUON_TARGET`.
 
@@ -111,7 +117,7 @@ system.
 of multiple copies of the same image. If your webserver's configuration prohibits following
 symlinks, you can use the following command to resolve these links while copying the images::
 
-    cp -rL output/images /var/www
+  cp -rL output/images /var/www
 
 The directory `output/debug` contains a compressed kernel image for each
 architecture.
@@ -119,19 +125,29 @@ These can be used for debugging and should be stored along with the images to
 allow debugging of kernel problems on devices in the field.
 See :ref:`Debugging <dev-debugging-kernel-oops>` for more information.
 
+.. rubric:: Footnotes
+
+.. [#make_update] ``make update`` only needs to be called again after updating the
+  Gluon repository (using ``git pull`` or similar) or after changing branches,
+  not for each build. Running it more often than necessary is undesirable, as
+  the update will take some time, and may undo manual modifications of the
+  external repositories while developing on Gluon.
+
+  See :ref:`working-with-repositories` for more information.
+
 Cleaning the build tree
 .......................
 
 There are two levels of `make clean`::
 
-    make clean GLUON_TARGET=ath79-generic
+  make clean GLUON_TARGET=ath79-generic
 
 will ensure all packages are rebuilt for a single target. This is usually not
 necessary, but may fix certain kinds of build failures.
 
 ::
 
-    make dirclean
+  make dirclean
 
 will clean the entire tree, so the toolchain will be rebuilt as well, which will take a while.
 
@@ -197,7 +213,7 @@ GLUON_DEPRECATED
   Usually, devices are deprecated because their flash size is insufficient to
   support future Gluon versions. The recommended setting is ``0`` for new sites,
   and ``upgrade`` for existing configurations (where upgrades for existing
-  deployments of low-flash devices are required).
+  deployments of low-flash devices are required). Defaults to ``0``.
 
 GLUON_LANGS
   Space-separated list of languages to include for the config mode/advanced settings. Defaults to ``en``.

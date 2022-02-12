@@ -267,47 +267,6 @@ function F.device(image, name, options)
 	end
 end
 
-function F.factory_image(image, name, ext, options)
-	options = merge(default_options, options)
-
-	if not want_device(image, options) then
-		return
-	end
-
-	if options.deprecated and not full_deprecated then
-		return
-	end
-
-	add_image {
-		image = image,
-		name = name,
-		subdir = 'factory',
-		in_suffix = '',
-		out_suffix = '',
-		extension = ext,
-		aliases = options.aliases,
-	}
-end
-
-function F.sysupgrade_image(image, name, ext, options)
-	options = merge(default_options, options)
-
-	if not want_device(image, options) then
-		return
-	end
-
-	add_image {
-		image = image,
-		name = name,
-		subdir = 'sysupgrade',
-		in_suffix = '',
-		out_suffix = '-sysupgrade',
-		extension = ext,
-		aliases = options.aliases,
-		manifest_aliases = options.manifest_aliases,
-	}
-end
-
 function F.defaults(options)
 	default_options = merge(default_options, options)
 end

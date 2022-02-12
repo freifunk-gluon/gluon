@@ -1,5 +1,4 @@
 local uci = require("simple-uci").cursor()
-local platform = require 'gluon.platform'
 local wireless = require 'gluon.wireless'
 
 -- where to read the configuration from
@@ -30,7 +29,7 @@ key.default = uci:get('wireless', primary_iface, "key")
 local encryption = s:option(ListValue, "encryption", translate("Encryption"))
 encryption:depends(enabled, true)
 encryption:value("psk2", translate("WPA2"))
-if platform.device_supports_wpa3() then
+if wireless.device_supports_wpa3() then
 	encryption:value("psk3-mixed", translate("WPA2 / WPA3"))
 	encryption:value("psk3", translate("WPA3"))
 end
@@ -39,7 +38,7 @@ encryption.default = uci:get('wireless', primary_iface, 'encryption') or "psk2"
 local mfp = s:option(ListValue, "mfp", translate("Management Frame Protection"))
 mfp:depends(enabled, true)
 mfp:value("0", translate("Disabled"))
-if platform.device_supports_mfp(uci) then
+if wireless.device_supports_mfp(uci) then
 	mfp:value("1", translate("Optional"))
 	mfp:value("2", translate("Required"))
 end
@@ -68,7 +67,7 @@ function f:write()
 			})
 
 			-- hostapd-mini won't start in case 802.11w is configured
-			if platform.device_supports_mfp(uci) then
+			if wireless.device_supports_mfp(uci) then
 				uci:set('wireless', name, 'ieee80211w', mfp.data)
 			else
 				uci:delete('wireless', name, 'ieee80211w')

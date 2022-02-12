@@ -108,15 +108,10 @@ end
 --  o String value containing a chunk of the file data
 --  o Boolean which indicates whether the current chunk is the last one (eof)
 local function mimedecode_message_body(src, msg, filecb)
-
-	if msg and msg.env.CONTENT_TYPE then
-		msg.mime_boundary = msg.env.CONTENT_TYPE:match("^multipart/form%-data; boundary=(.+)$")
+	local mime_boundary = (msg.env.CONTENT_TYPE or ''):match("^multipart/form%-data; boundary=(.+)$")
+	if not mime_boundary then
+		error("Invalid Content-Type found")
 	end
-
-	if not msg.mime_boundary then
-		return nil, "Invalid Content-Type found"
-	end
-
 
 	local tlen   = 0
 	local inhdr  = false
@@ -188,10 +183,10 @@ local function mimedecode_message_body(src, msg, filecb)
 			local spos, epos, found
 
 			repeat
-				spos, epos = data:find("\r\n--" .. msg.mime_boundary .. "\r\n", 1, true)
+				spos, epos = data:find("\r\n--" .. mime_boundary .. "\r\n", 1, true)
 
 				if not spos then
-					spos, epos = data:find("\r\n--" .. msg.mime_boundary .. "--\r\n", 1, true)
+					spos, epos = data:find("\r\n--" .. mime_boundary .. "--\r\n", 1, true)
 				end
 
 
@@ -250,20 +245,61 @@ local function mimedecode_message_body(src, msg, filecb)
 		return true
 	end
 
-	return pump(src, snk)
+	assert(pump(src, snk))
+end
+
+local function check_post_origin(msg)
+	local default_port = '80'
+	local request_scheme = 'http'
+	if msg.env.HTTPS then
+		default_port = '443'
+		request_scheme = 'https'
+	end
+
+	local request_host = msg.env.HTTP_HOST
+	if not request_host then
+		error('POST request without Host header')
+	end
+	if not request_host:match(':[0-9]+$') then
+		request_host = request_host .. ':' .. default_port
+	end
+
+	local origin = msg.env.HTTP_ORIGIN
+	if not origin then
+		error('POST request without Origin header')
+	end
+	local origin_scheme, origin_host = origin:match('^([^:]*)://(.*)$')
+	if not origin_host then
+		error('POST request with invalid Origin header')
+	end
+	if not origin_host:match(':[0-9]+$') then
+		local origin_port
+		if origin_scheme == 'http' then
+			origin_port = '80'
+		elseif origin_scheme == 'https' then
+			origin_port = '443'
+		else
+			error('POST request with invalid Origin header')
+		end
+		origin_host = origin_host .. ':' .. origin_port
+	end
+
+	if request_scheme ~= origin_scheme or request_host ~= origin_host then
+		error('Invalid cross-origin POST')
+	end
 end
 
 -- This function will examine the Content-Type within the given message object
 -- to select the appropriate content decoder.
 -- Currently only the multipart/form-data mime type is supported.
 function M.parse_message_body(src, msg, filecb)
-	if not (msg.env.REQUEST_METHOD == "POST" and msg.env.CONTENT_TYPE) then
+	if msg.env.REQUEST_METHOD ~= "POST" then
 		return
 	end
 
-	if msg.env.CONTENT_TYPE:match("^multipart/form%-data") then
-		return mimedecode_message_body(src, msg, filecb)
-	end
+	check_post_origin(msg)
+
+	mimedecode_message_body(src, msg, filecb)
 end
 
 return M

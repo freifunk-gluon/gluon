@@ -99,16 +99,16 @@ These commands can be used on a node:
 
 ::
 
-   # Update with some probability
-   autoupdater
+  # Update with some probability
+  autoupdater
 
 ::
 
-   # Force update check, even when the updater is disabled
-   autoupdater -f
+  # Force update check, even when the updater is disabled
+  autoupdater -f
 
 ::
 
-   # If fallback is true the updater will perform an update only if the timespan
-   # PRIORITY days (as defined in the manifest) and another 24h have passed
-   autoupdater --fallback
+  # If fallback is true the updater will perform an update only if the timespan
+  # PRIORITY days (as defined in the manifest) and another 24h have passed
+  autoupdater --fallback

@@ -9,13 +9,16 @@ Development workflow
 When you are developing packages, it often happens that you iteratively want to deploy
 and verify the state your development. There are two ways to verify your changes:
 
-1) One way is to rebuild the complete firmware, flash it, configure it and verify your
-   development then. This usually takes at least a few minutes to get your changes
-   working so you can test them. Especially if you iterate a lot, this becomes tedious.
-2) Another way is to rebuild only the package you are currently working on and
-   to deploy this package to your test system. Here not even a reboot is required.
-   This makes iterating relatively fast. Your test system could be real hardware or
-   even a qemu in most cases.
+1)
+  One way is to rebuild the complete firmware, flash it, configure it and verify your
+  development then. This usually takes at least a few minutes to get your changes
+  working so you can test them. Especially if you iterate a lot, this becomes tedious.
+
+2)
+  Another way is to rebuild only the package you are currently working on and
+  to deploy this package to your test system. Here not even a reboot is required.
+  This makes iterating relatively fast. Your test system could be real hardware or
+  even a qemu in most cases.
 
 Gluon provides scripts to enhance workflow 2). Here is an example illustrating
 the workflow using these scripts:
