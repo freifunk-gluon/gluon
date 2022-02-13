@@ -4,7 +4,8 @@ local util = require "gluon.web.util"
 local class = util.class
 
 
-local DEFAULT_URL = 'https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0'
+local DEFAULT_URL =
+	'https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@35ffe7626ce16c372143f3c903950750075e7068/en/v5.3.0'
 
 
 local M = {}

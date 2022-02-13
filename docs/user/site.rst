@@ -471,7 +471,7 @@ config_mode \: optional
 
   *openlayers_url* allows to override the base URL of the
   *build/ol.js* and *css/ol.css* files (the default is
-  ``https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0``).
+  ``https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@35ffe7626ce16c372143f3c903950750075e7068/en/v5.3.0``).
   It is also possible to replace the default tile layer (which is OpenStreetMap)
   with a custom one using the *tile_layer* section. Only XYZ layers are supported
   at this point.
