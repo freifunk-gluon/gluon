@@ -1,7 +1,6 @@
 <div id="<%=id%>" class="gluon-osm-map" style="display: none"></div>
 <script type="text/javascript" src="/static/gluon-web-osm.js"></script>
 <script type="text/javascript">
-	//<![CDATA[
 	(function() {
 		var elMap = document.getElementById(<%=json(id)%>);
 		var wrapper = elMap.parentNode;
@@ -42,5 +41,4 @@
 			});
 		});
 	})();
-	//]]>
 </script>
