@@ -1,5 +1,5 @@
 <form method="post" enctype="multipart/form-data" action="<%|url(request)%>" data-update="reset">
-	<input type="hidden" name="<%=id%>" value="1" />
+	<input type="hidden" name="<%=id%>" value="1">
 
 	<div class="gluon-form" id="form-<%=id%>">
 		<% if self.title and #self.title > 0 then %><h2 name="content"><%|self.title%></h2><% end %>
@@ -16,12 +16,12 @@
 	<%- if self.submit ~= false then %>
 		<input class="gluon-button gluon-button-submit" type="submit" value="
 			<%- if not self.submit then -%><%-:Save-%><%-else-%><%|self.submit%><%end-%>
-		" />
+		">
 	<% end %>
 	<%- if self.reset ~= false then %>
 		<input class="gluon-button gluon-button-reset" type="reset" value="
 			<%- if not self.reset then -%><%-:Reset-%><%-else-%><%|self.reset%><%end-%>
-		" />
+		">
 	<% end %>
 	</div>
 </form>

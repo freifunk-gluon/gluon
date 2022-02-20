@@ -36,7 +36,7 @@ msgstr ""
 "body=<%= urlencode('# ' .. hostname .. '\n' .. pubkey) %>\">keys@alpha-centauri.freifunk.net</a>."
 "</p>"
 "<div class=\"the-key\">"
-" # <%= pcdata(hostname) %><br />"
+" # <%= pcdata(hostname) %><br>"
 "<%= pubkey %>"
 "</div>"
 

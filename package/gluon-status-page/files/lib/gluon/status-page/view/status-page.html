@@ -111,7 +111,7 @@
 	end
 
 	local function statisticsTraffic(key)
-		return string.format('%s<br />%s<br />%s',
+		return string.format('%s<br>%s<br>%s',
 			statistics(key .. '/packets', 'packetsDiff'),
 			statistics(key .. '/bytes', 'bytesDiff'),
 			statistics(key .. '/bytes', 'bytes')
@@ -123,12 +123,12 @@
 <!DOCTYPE html>
 <html lang="">
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, user-scalable=no" />
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
 
 		<title><%| nodeinfo.hostname %> - <%:Status%></title>
 
-		<link rel="stylesheet" href="/static/status-page.css" type="text/css" />
+		<link rel="stylesheet" href="/static/status-page.css" type="text/css">
 	</head>
 	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%=
 		attr('data-translations', translations) ..
@@ -154,21 +154,21 @@
 					<%- end %>
 					<dt><%:Model%></dt><dd><%| nodeinfo.hardware.model %></dd>
 					<dt><%:Primary MAC address%></dt><dd><%| nodeinfo.network.mac %></dd>
-					<dt><%:IP address%></dt><dd><%= pcdata(table.concat(sorted(nodeinfo.network.addresses), '\n')):gsub('\n', '<br />') %></dd>
+					<dt><%:IP address%></dt><dd><%= pcdata(table.concat(sorted(nodeinfo.network.addresses), '\n')):gsub('\n', '<br>') %></dd>
 					<dt><%:Firmware%></dt><dd><%| nodeinfo.software.firmware.release %></dd>
 					<% if nodeinfo.network.mesh_vpn then -%>
 						<dt><%:Mesh VPN%></dt>
 						<dd>
 							<%| enabled(nodeinfo.network.mesh_vpn.enabled) %>
 							<% if nodeinfo.network.mesh_vpn.provider then -%>
-							<br /><%| nodeinfo.network.mesh_vpn.provider %>
+							<br><%| nodeinfo.network.mesh_vpn.provider %>
 							<%- end %>
 						</dd>
 						<% if nodeinfo.network.mesh_vpn.bandwidth_limit.enabled then -%>
 						<dt><%:Bandwidth limit%></dt>
 						<dd>
 							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.ingress then -%>
-								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%><br />
+								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%><br>
 							<%- end %>
 							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.egress then -%>
 								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%>
@@ -213,7 +213,7 @@
 					<tr><th><%:Load average%></th><td><%= statistics('loadavg', 'decimal') %></td></tr>
 					<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
 					<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
-					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br /><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
+					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
 				</table>
 
 				<h3><%:Clients%></h3>
