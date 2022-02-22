@@ -51,7 +51,7 @@ end
 
 local f_password = Form(translate("Password"), translate(
 	"Alternatively, you can set a password to access your node. Please choose a "
-	.. "secure password you don't use anywhere else.<br /><br />If you set an empty "
+	.. "secure password you don't use anywhere else.<br><br>If you set an empty "
 	.. "password, login via password will be disabled. This is the default."
 	), 'password'
 )

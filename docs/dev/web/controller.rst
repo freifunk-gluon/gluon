@@ -74,8 +74,7 @@ Useful functions:
   - *header* (*key*, *value*): Adds an HTTP header to the reply to be sent to
     the client. Has no effect when non-header data has already been written.
   - *prepare_content* (*mime*): Sets the *Content-Type* header to the given MIME
-    type, potentially setting additional headers or modifying the MIME type to
-    accommodate browser quirks
+    type
   - *write* (*data*, ...): Sends the given data to the client. If headers have not
     been sent, it will be done before the data is written.
 
