@@ -69,8 +69,23 @@ void tv_subtract (struct timeval *r, const struct timeval *a, const struct timev
 	}
 }
 
-ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, const struct timeval *timeout) {
+void resize_recvbuffer(char **recvbuffer, size_t *recvbuffer_len, size_t recvlen)
+{
+	free(*recvbuffer);
+	*recvbuffer = malloc(recvlen);
+
+	if (!(*recvbuffer)) {
+		perror("Could not resize recvbuffer");
+		exit(EXIT_FAILURE);
+	}
+
+	*recvbuffer_len = recvlen;
+}
+
+ssize_t recvtimeout(int socket, char **recvbuffer, size_t *recvbuffer_len,
+		    const struct timeval *timeout) {
 	struct timeval now, timeout_left;
+	ssize_t recvlen;
 
 	getclock(&now);
 	tv_subtract(&timeout_left, timeout, &now);
@@ -79,18 +94,28 @@ ssize_t recvtimeout(int socket, void *buffer, size_t length, int flags, const st
 		return -1;
 
 	setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout_left, sizeof(timeout_left));
-	return recv(socket, buffer, length, flags);
+
+	recvlen = recv(socket, NULL, 0, MSG_PEEK | MSG_TRUNC);
+	if (recvlen < 0)
+		return recvlen;
+
+	if (recvlen > *recvbuffer_len)
+		resize_recvbuffer(recvbuffer, recvbuffer_len, recvlen);
+
+	return recv(socket, *recvbuffer, *recvbuffer_len, 0);
 }
 
-int request(const int sock, const struct sockaddr_in6 *client_addr, const char *request, const char *sse, double timeout, unsigned int max_count) {
+int request(const int sock, char **recvbuffer, size_t *recvbuffer_len,
+	    const struct sockaddr_in6 *client_addr, const char *request,
+	    const char *sse, double timeout, unsigned int max_count) {
 	ssize_t ret;
-	char buffer[8192];
 	unsigned int count = 0;
 
 	ret = sendto(sock, request, strlen(request), 0, (struct sockaddr *)client_addr, sizeof(struct sockaddr_in6));
 
 	if (ret < 0) {
 		perror("Error in sendto()");
+		free(*recvbuffer);
 		exit(EXIT_FAILURE);
 	}
 
@@ -105,7 +130,7 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
 	}
 
 	do {
-		ret = recvtimeout(sock, buffer, sizeof(buffer), 0, &tv_timeout);
+		ret = recvtimeout(sock, recvbuffer, recvbuffer_len, &tv_timeout);
 
 		if (ret < 0)
 			break;
@@ -116,7 +141,7 @@ int request(const int sock, const struct sockaddr_in6 *client_addr, const char *
 			fputs("data: ", stdout);
 		}
 
-		fwrite(buffer, sizeof(char), ret, stdout);
+		fwrite(*recvbuffer, sizeof(char), ret, stdout);
 
 		if (sse)
 			fputs("\n\n", stdout);
@@ -137,6 +162,8 @@ int main(int argc, char **argv) {
 	int sock;
 	struct sockaddr_in6 client_addr = {};
 	char *request_string = NULL;
+	char *recvbuffer = NULL;
+	size_t recvbuffer_len = 0;
 
 	sock = socket(PF_INET6, SOCK_DGRAM, 0);
 
@@ -243,11 +270,13 @@ int main(int argc, char **argv) {
 	}
 
 	do {
-		ret = request(sock, &client_addr, request_string, sse, timeout, max_count);
+		ret = request(sock, &recvbuffer, &recvbuffer_len, &client_addr,
+			      request_string, sse, timeout, max_count);
 	} while(loop);
 
 	if (sse)
 		fputs("event: eot\ndata: null\n\n", stdout);
 
+	free(recvbuffer);
 	return ret;
 }

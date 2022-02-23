@@ -121,7 +121,15 @@
 				var neigh = iface.lookup_neigh(addr);
 				if (!neigh)
 					continue;
-				return 'via ' + neigh.get_hostname() + ' (' + i + ')';
+
+				var span = document.createElement('span');
+				span.appendChild(document.createTextNode('via '));
+				var a = document.createElement('a');
+				a.href = 'http://[' + neigh.get_addr() + ']/';
+				a.textContent = neigh.get_hostname();
+				span.appendChild(a);
+				span.appendChild(document.createTextNode(' (' + i + ')'));
+				return span;
 			}
 
 			return 'via ' + addr + ' (unknown iface)';
@@ -208,50 +216,6 @@
 		});
 	}
 
-	function update_radios(wireless) {
-		function channel(frequency) {
-			if (frequency===2484)
-				return 14
-
-			if (2412<=frequency && frequency<=2472)
-				return (frequency-2407)/5
-
-			if (5160<=frequency && frequency<=5885)
-				return (frequency-5000)/5
-
-			return 'unknown'
-		}
-
-		var div = document.getElementById('radios');
-		if (!wireless) {
-			div.style.display = 'none';
-			return;
-		}
-		div.style.display = '';
-
-		var table = document.getElementById('radio-devices');
-		while (table.lastChild)
-			table.removeChild(table.lastChild);
-
-		wireless.sort(function (a, b) {
-			return a.phy - b.phy;
-		});
-
-		wireless.forEach(function (radio) {
-			var tr = document.createElement('tr');
-
-			var th = document.createElement('th');
-			th.textContent = "phy" + radio.phy;
-			tr.appendChild(th);
-
-			var td = document.createElement('td');
-			td.innerHTML = radio.frequency + " MHz<br />Channel " + channel(radio.frequency);
-			tr.appendChild(td);
-
-			table.appendChild(tr);
-		});
-	}
-
 	var statisticsElems = document.querySelectorAll('[data-statistics]');
 
 	add_event_source('/cgi-bin/dyn/statistics', function(data, dataPrev) {
@@ -264,9 +228,16 @@
 			var valuePrev = resolve_key(dataPrev, stat);
 			var value = resolve_key(data, stat);
 			try {
-				var text = formats[format](value, valuePrev, diff);
-				if (text !== undefined)
-					elem.textContent = text;
+				var format_result = formats[format](value, valuePrev, diff);
+				switch (typeof format_result) {
+					case "object":
+						if (elem.lastChild)
+							elem.removeChild(elem.lastChild);
+						elem.appendChild(format_result);
+						break;
+					default:
+						elem.textContent = format_result;
+				}
 			} catch (e) {
 				console.error(e);
 			}
@@ -274,11 +245,6 @@
 
 		try {
 			update_mesh_vpn(data.mesh_vpn);
-		} catch (e) {
-			console.error(e);
-		}
-		try {
-			update_radios(data.wireless);
 		} catch (e) {
 			console.error(e);
 		}
@@ -319,7 +285,7 @@
 			'resize': function(w, h) {
 				var lastImage;
 				try {
-					ctx.getImageData(0, 0, w, h);
+					lastImage = ctx.getImageData(0, 0, w, h);
 				} catch (e) {}
 				canvas.width = w;
 				canvas.height = h;
@@ -492,6 +458,7 @@
 		}
 
 		var hostname = document.createElement("span");
+		var addr;
 		hostname.textContent = addr;
 		tdHostname.appendChild(hostname);
 
@@ -552,13 +519,13 @@
 			el.classList.add("highlight");
 			if (signal)
 				signal.highlight = true;
-		}
+		};
 
 		el.onmouseleave = function () {
-			el.classList.remove("highlight")
+			el.classList.remove("highlight");
 			if (signal)
 				signal.highlight = false;
-		}
+		};
 
 		var timeout;
 
@@ -586,7 +553,8 @@
 			var n = parts.length;
 			var groups = [];
 
-			parts.forEach(function(part, i) {
+			for (var i = 0; i < parts.length; i++) {
+				var part = parts[i];
 				if (part === '') {
 					while (n++ <= 8)
 						groups.push(0);
@@ -596,7 +564,7 @@
 
 					groups.push(parseInt(part, 16));
 				}
-			});
+			};
 
 			return groups;
 		}
@@ -664,8 +632,11 @@
 			'get_hostname': function() {
 				return hostname.textContent;
 			},
+			'get_addr': function() {
+				return addr;
+			},
 			'update_nodeinfo': function(nodeinfo) {
-				var addr = choose_address(nodeinfo.network.addresses);
+				addr = choose_address(nodeinfo.network.addresses);
 				if (addr) {
 					if (hostname.nodeName.toLowerCase() === 'span') {
 						var oldHostname = hostname;

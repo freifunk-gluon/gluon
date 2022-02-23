@@ -1,7 +1,11 @@
 <%-
+	local iwinfo = require 'iwinfo'
 	local ubus = require 'ubus'
 	local unistd = require 'posix.unistd'
 	local util = require 'gluon.util'
+	local wireless = require 'gluon.wireless'
+
+	local uci = require('simple-uci').cursor()
 
 	local translations = {}
 	local site_i18n = i18n 'gluon-site'
@@ -29,15 +33,29 @@
 
 	local mesh = get_mesh()
 
-	local function get_interfaces()
-		local uconn = ubus.connect()
-		if not uconn then
-			error('failed to connect to ubus')
-		end
+	local function get_interfaces(uconn)
 		local interfaces = util.get_mesh_devices(uconn)
-		ubus.close(uconn)
 		table.sort(interfaces)
 		return interfaces
+	end
+
+	local function get_radios()
+		local ret = {}
+
+		wireless.foreach_radio(uci, function(radio)
+			local channel = iwinfo.nl80211.channel(wireless.find_phy(radio))
+			if channel then
+				table.insert(ret, {
+					name = radio['.name'],
+					channel = channel,
+				})
+			end
+		end)
+		table.sort(ret, function(a, b)
+			return a.name < b.name
+		end)
+
+		return ret
 	end
 
 	local function is_wireless(iface)
@@ -52,7 +70,16 @@
 		return unistd.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
 	end
 
-	local interfaces = get_interfaces()
+	local uconn = ubus.connect()
+	if not uconn then
+		error('failed to connect to ubus')
+	end
+
+	local interfaces = get_interfaces(uconn)
+
+	ubus.close(uconn)
+
+	local radios = get_radios()
 
 	local function sorted(t)
 		t = {unpack(t)}
@@ -66,12 +93,17 @@
 
 	local function formatBits(bits)
 		local units = {[0]='', 'k', 'M', 'G'}
+		local unit = 0
 
-		local pow = math.floor(math.log(math.max(math.abs(bits), 1)) / math.log(1000))
-		local known_pow = math.min(pow, #units)
+		for i = 1, #units do
+			if math.abs(bits) < 1000 then
+				break
+			end
+			unit = i
+			bits = bits / 1000
+		end
 
-		local significand = bits/(1000^known_pow)
-		return string.format('%g %sbit', significand, units[known_pow])
+		return string.format('%g %sbit', bits, units[unit])
 	end
 
 	local function statistics(key, format)
@@ -135,11 +167,11 @@
 						<% if nodeinfo.network.mesh_vpn.bandwidth_limit.enabled then -%>
 						<dt><%:Bandwidth limit%></dt>
 						<dd>
-							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.egress then -%>
-								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%><br />
-							<%- end %>
 							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.ingress then -%>
-								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%>
+								▼ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.ingress*1000) %>/s <%:downstream%><br />
+							<%- end %>
+							<% if nodeinfo.network.mesh_vpn.bandwidth_limit.egress then -%>
+								▲ <%| formatBits(nodeinfo.network.mesh_vpn.bandwidth_limit.egress*1000) %>/s <%:upstream%>
 							<%- end %>
 						</dd>
 						<%- end %>
@@ -190,11 +222,17 @@
 					<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
 					<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
 				</table>
-					<div id="radios" style="display: none">
+				<% if radios[1] then -%>
 					<h3><%:Radios%></h3>
-					<table id="radio-devices">
+					<table>
+						<% for _, radio in ipairs(radios) do -%>
+							<tr>
+								<th><%| radio.name %></th>
+								<td><%| translatef('Channel %u', radio.channel) %></td>
+							</tr>
+						<%- end %>
 					</table>
-				</div>
+				<%- end %>
 
 				<h3><%:Traffic%></h3>
 				<table>

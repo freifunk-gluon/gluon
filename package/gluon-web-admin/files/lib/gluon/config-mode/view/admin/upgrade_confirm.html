@@ -49,13 +49,11 @@ You may obtain a copy of the License at
   <form method="post" enctype="multipart/form-data" action="<%|url(request)%>" style="display:inline">
     <input type="hidden" name="step" value="3" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-    <input type="hidden" name="token" value="<%=token%>" />
     <input class="gluon-button gluon-button-submit" type="submit" value="<%:Continue%>" />
   </form>
   <form method="post" enctype="multipart/form-data" action="<%|url(request)%>" style="display:inline">
     <input type="hidden" name="step" value="1" />
     <input type="hidden" name="keepcfg" value="<%=keepconfig and "1" or "0"%>" />
-    <input type="hidden" name="token" value="<%=token%>" />
     <input class="gluon-button gluon-button-reset" type="submit" value="<%:Cancel%>" />
   </form>
 </div>
