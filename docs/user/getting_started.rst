@@ -40,6 +40,12 @@ freshly installed Debian Stretch system the following packages are required:
 * `time` (built-in `time` doesn't work)
 
 
+We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
+
+::
+
+   ./scripts/container.sh
+
 Building the images
 -------------------
 
