@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Makes your current device blink
+
+. /etc/diag.sh
+
+start() {
+	set_led_state preinit
+}
+
+stop() {
+	status_led_off
+}
+
+trap stop EXIT SIGTERM SIGINT
+start
+
+echo "Blinking on $(pretty-hostname) ($(cat /lib/gluon/core/sysconfig/primary_mac)) ... (ctrl-c to stop)"
+
+sleep infinity
