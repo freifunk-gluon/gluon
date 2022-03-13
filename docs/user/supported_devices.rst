@@ -391,6 +391,7 @@ ramips-mt76x8
   - Archer C50 (v3)
   - Archer C50 (v4)
   - RE200 (v2)
+  - RE305 (v1) [#device-class-tiny]
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-WA801ND (v5)
