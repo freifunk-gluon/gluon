@@ -6,6 +6,7 @@ ath79-generic
 
 * AVM
 
+  - FRITZ!WLAN Repeater 300E [#avmflash]_
   - Fritz!WLAN Repeater 450E [#avmflash]_
   - Fritz!Box 4020 [#avmflash]_
 
