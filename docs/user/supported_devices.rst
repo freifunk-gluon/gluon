@@ -329,7 +329,7 @@ Footnotes
   developer documentation: :ref:`device-class-definition`.
 
 .. [#avmflash]
-  For instructions on how to flash AVM devices, visit https://fritzfla.sh
+  For instructions on how to flash AVM devices, visit https://fritz-tools.readthedocs.io
 
 .. [#eva_ramboot]
   For instructions on how to flash AVM NAND devices, see the respective
