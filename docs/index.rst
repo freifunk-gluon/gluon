@@ -39,7 +39,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    dev/hardware
    dev/packages
    dev/upgrade
-   dev/wan
+   dev/uplink
    dev/mac_addresses
    dev/site_library
    dev/build

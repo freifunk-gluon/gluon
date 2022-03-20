@@ -50,8 +50,8 @@ Configuration
 Both Mesh-on-WAN and Mesh-on-LAN can be configured on the "Network" page
 of the *Advanced settings* (if the package ``gluon-web-network`` is installed).
 
-It is also possible to enable Mesh-on-WAN and Mesh-on-LAN by default by
-adding ``mesh_on_wan = true`` and ``mesh_on_lan = true`` to ``site.conf``.
+It is also possible to enable Mesh-on-WAN and Mesh-on-LAN by default by adding
+the ``mesh`` role to the ``interfaces.*.default_roles`` options in site.conf.
 
 Commandline
 ===========

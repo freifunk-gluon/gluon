@@ -76,35 +76,36 @@ end
 
 s = f:section(Section)
 
-local mesh_wan = s:option(Flag, "mesh_wan", translate("Enable meshing on the WAN interface"))
-mesh_wan.default = not uci:get_bool("network", "mesh_wan", "disabled")
+local wired_mesh_help = {
+	single = translate('Enable meshing on the Ethernet interface'),
+	wan = translate('Enable meshing on the WAN interface'),
+	lan = translate('Enable meshing on the LAN interface'),
+}
 
-function mesh_wan:write(data)
-	uci:set("network", "mesh_wan", "disabled", not data)
-end
+local function wired_mesh(iface)
+	if not sysconfig[iface .. '_ifname'] then return end
+	local iface_roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
 
-if sysconfig.lan_ifname then
-	s = f:section(Section)
+	local option = s:option(Flag, 'mesh_' .. iface, wired_mesh_help[iface])
+	option.default = util.contains(iface_roles, 'mesh') ~= false
 
-	local mesh_lan = s:option(Flag, "mesh_lan", translate("Enable meshing on the LAN interface"))
-	mesh_lan.default = not uci:get_bool("network", "mesh_lan", "disabled")
-
-	function mesh_lan:write(data)
-		uci:set("network", "mesh_lan", "disabled", not data)
-
-		local interfaces = uci:get_list("network", "client", "ifname")
-
-		for lanif in sysconfig.lan_ifname:gmatch('%S+') do
-			if data then
-				util.remove_from_set(interfaces, lanif)
-			else
-				util.add_to_set(interfaces, lanif)
-			end
+	function option:write(data)
+		local roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
+		if data then
+			util.add_to_set(roles, 'mesh')
+		else
+			util.remove_from_set(roles, 'mesh')
 		end
+		uci:set_list('gluon', 'iface_' .. iface, 'role', roles)
 
-		uci:set_list("network", "client", "ifname", interfaces)
+		-- Reconfigure on next reboot
+		uci:set('gluon', 'core', 'reconfigure', true)
 	end
 end
+
+wired_mesh('single')
+wired_mesh('wan')
+wired_mesh('lan')
 
 local section
 uci:foreach("system", "gpio_switch", function(si)
@@ -160,7 +161,7 @@ function f:write()
 		uci:delete("network", "wan6", "ip6gw")
 	end
 
-
+	uci:commit('gluon')
 	uci:commit("network")
 	uci:commit('system')
 end

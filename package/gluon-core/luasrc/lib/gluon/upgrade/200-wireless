@@ -106,8 +106,6 @@ end
 local function delete_ibss(radio_name)
 	local name = 'ibss_' .. radio_name
 
-	uci:delete('network', name)
-	uci:delete('network', name .. '_vlan')
 	uci:delete('wireless', name)
 end
 
@@ -118,8 +116,6 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 	local macfilter = uci:get('wireless', name, 'macfilter')
 	local maclist = uci:get('wireless', name, 'maclist')
 
-	uci:delete('network', name)
-	uci:delete('network', name .. '_vlan')
 	uci:delete('wireless', name)
 
 	if not config then

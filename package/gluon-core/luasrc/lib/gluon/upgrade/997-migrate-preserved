@@ -1,0 +1,19 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+for _, config in ipairs({'system', 'network'}) do
+	uci:foreach(config .. '_gluon-old', nil, function(s)
+		if s.gluon_preserve ~= '1' then return end
+
+		-- Unnamed sections can't be preserved
+		if s['.anonymous'] then return end
+
+		-- We don't allow overwriting existing sections
+		if uci:get(config, s['.name']) then return end
+
+		uci:section(config, s['.type'], s['.name'], s)
+	end)
+
+	uci:save(config)
+end

@@ -11,6 +11,10 @@ local function get(_, name)
 end
 
 local function set(_, name, val)
+	if val == get(nil, name) then
+		return
+	end
+
 	if val then
 		local f = io.open(sysconfigdir .. name, 'w+')
 		f:write(val, '\n')

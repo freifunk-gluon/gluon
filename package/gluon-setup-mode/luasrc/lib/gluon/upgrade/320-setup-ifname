@@ -3,13 +3,8 @@
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
 
-
-if sysconfig.setup_ifname then
-	os.exit(0)
-end
-
 if platform.is_outdoor_device() then
-	sysconfig.setup_ifname = sysconfig.wan_ifname or sysconfig.lan_ifname
+	sysconfig.setup_ifname = sysconfig.single_ifname or sysconfig.wan_ifname
 else
-	sysconfig.setup_ifname = sysconfig.lan_ifname or sysconfig.wan_ifname
+	sysconfig.setup_ifname = sysconfig.single_ifname or sysconfig.lan_ifname
 end
