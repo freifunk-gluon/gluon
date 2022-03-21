@@ -46,6 +46,7 @@ if platform.match('ath79', 'generic', {
 	'tplink,cpe210-v1',
 	'tplink,cpe210-v2',
 	'tplink,wbs210-v2',
+	'ubnt,unifi-ap-pro',
 }) then
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
 elseif platform.match('lantiq') then

@@ -312,3 +312,5 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 		'ubiquiti-unifi',
 	},
 })
+
+device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')

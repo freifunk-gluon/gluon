@@ -3,7 +3,11 @@
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
 
-if platform.is_outdoor_device() then
+if platform.is_outdoor_device() or
+	platform.match('ath79', 'generic', {
+		'ubnt,unifi-ap-pro',
+	})
+then
 	sysconfig.setup_ifname = sysconfig.single_ifname or sysconfig.wan_ifname
 else
 	sysconfig.setup_ifname = sysconfig.single_ifname or sysconfig.lan_ifname

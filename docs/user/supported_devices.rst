@@ -86,6 +86,7 @@ ath79-generic
 
   - UniFi AP
   - UniFi AP LR
+  - UniFi AP PRO
 
 ath79-nand
 ----------
