@@ -13,6 +13,10 @@ ath79-generic
   - WiFi pro 1750i
   - WiFi pro 1750x
 
+* D-Link
+
+  - DAP-2660 A1 [#lan_as_wan]_
+
 * Enterasys
 
   - WS-AP3705i
