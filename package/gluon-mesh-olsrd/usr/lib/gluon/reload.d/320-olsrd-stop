@@ -1,0 +1,4 @@
+#!/bin/sh
+
+service olsrd stop
+service olsrd2 stop
