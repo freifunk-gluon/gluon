@@ -63,9 +63,20 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 
 -- D-Link
 
+device('d-link-dap-1330-a1', 'dlink_dap-1330-a1')
+device('d-link-dap-1365-a1', 'dlink_dap-1365-a1')
+
 device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('d-link-dir-505', 'dlink_dir-505', {
+        factory = false,
+        manifest_aliases = {
+                'd-link-dir-505-rev-a1', -- Upgrade from OpenWrt 19.07
+                'd-link-dir-505-rev-a2', -- Upgrade from OpenWrt 19.07
+        },
 })
 
 

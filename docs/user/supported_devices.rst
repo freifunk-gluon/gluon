@@ -19,7 +19,11 @@ ath79-generic
 
 * D-Link
 
+  - DAP-1330 A1 [#lan_as_wan]_
+  - DAP-1365 A1 [#lan_as_wan]_
   - DAP-2660 A1 [#lan_as_wan]_
+  - DIR-505 A1 [#lan_as_wan]_
+  - DIR-505 A2 [#lan_as_wan]_
 
 * Enterasys
 
