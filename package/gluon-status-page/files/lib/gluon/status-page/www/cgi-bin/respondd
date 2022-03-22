@@ -1,0 +1,35 @@
+#!/bin/sh
+
+badrequest() {
+	echo 'Status: 400 Bad Request'
+	echo
+	exit 1
+}
+
+case "${REQUEST_METHOD}" in
+  GET)
+	;;
+  POST)
+	QUERY_STRING="$(cat)"
+	;;
+  *)
+	badrequest
+	;;
+esac
+
+if [ -z "${QUERY_STRING}" ]; then
+	# default to nodeinfo
+	QUERY_STRING="nodeinfo"
+else
+	# replace URL encoded spaces via '+' with real space
+	QUERY_STRING="${QUERY_STRING//+/ }"
+fi
+
+
+# Return deflate compressed ("GET" prefix), JSON formatted response
+
+echo "Content-Type: application/json"
+echo "Content-Encoding: deflate"
+echo ""
+
+exec gluon-neighbour-info -i lo -d ::1 -p 1001 -r "GET ${QUERY_STRING}"
