@@ -4,6 +4,10 @@ Supported Devices & Architectures
 ath79-generic
 --------------
 
+* AVM
+
+  - Fritz!WLAN Repeater 450E [#avmflash]_
+
 * devolo
 
   - WiFi pro 1200e [#lan_as_wan]_
