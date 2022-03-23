@@ -13,6 +13,7 @@ common = [
     "modules",
     "Makefile",
     "patches/**",
+    "scripts/**",
     "targets/generic",
     "targets/targets.mk",
 ]
