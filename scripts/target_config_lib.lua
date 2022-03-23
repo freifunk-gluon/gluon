@@ -155,8 +155,6 @@ if #lib.devices > 0 then
 	handle_target_pkgs(lib.target_packages)
 
 	for _, dev in ipairs(lib.devices) do
-		local profile = dev.options.profile or dev.name
-
 		local device_pkgs = {}
 		local function handle_pkgs(pkgs)
 			for _, pkg in ipairs(pkgs) do
@@ -172,10 +170,10 @@ if #lib.devices > 0 then
 		handle_pkgs(dev.options.packages or {})
 		handle_pkgs(site_packages(dev.image))
 
-		local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, profile)
+		local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
 		lib.config(
 			'TARGET_DEVICE_' .. profile_config, true,
-			string.format("unable to enable device '%s'", profile)
+			string.format("unable to enable device '%s'", dev.name)
 		)
 		lib.config(
 			'TARGET_DEVICE_PACKAGES_' .. profile_config,
