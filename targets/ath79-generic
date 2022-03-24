@@ -102,6 +102,130 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 -- setup via integrated (USB-)tty is possible as well
 device('onion-omega', 'onion_omega')
 
+
+-- OpenMesh
+
+device('openmesh-a40', 'openmesh_a40', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('openmesh-a60', 'openmesh_a60', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('openmesh-mr600-v1', 'openmesh_mr600-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr600'},
+})
+
+device('openmesh-mr600-v2', 'openmesh_mr600-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr600v2'},
+})
+
+device('openmesh-mr900-v1', 'openmesh_mr900-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr900'},
+})
+
+device('openmesh-mr900-v2', 'openmesh_mr900-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr900v2'},
+})
+
+device('openmesh-mr1750-v1', 'openmesh_mr1750-v1', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr1750'},
+})
+
+device('openmesh-mr1750-v2', 'openmesh_mr1750-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr1750v2'},
+})
+
+device('openmesh-om2p-v1', 'openmesh_om2p-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p'},
+})
+
+device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x; deacticated at the moment because
+	-- the physical ethernet port for this device changed between 19.07
+	-- and 21.02. And automated update could therefore "break" the
+	-- device until someone physically changed the ethernet cable.
+	-- See https://github.com/freifunk-gluon/gluon/pull/2325#issuecomment-940749284
+	--manifest_aliases = {'openmesh-om2pv2'},
+})
+
+device('openmesh-om2p-v4', 'openmesh_om2p-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2pv4'},
+})
+
+device('openmesh-om2p-hs-v1', 'openmesh_om2p-hs-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hs'},
+})
+
+device('openmesh-om2p-hs-v2', 'openmesh_om2p-hs-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv2'},
+})
+
+device('openmesh-om2p-hs-v3', 'openmesh_om2p-hs-v3', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv3'},
+})
+
+device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv4'},
+})
+
+device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
+	factory = false,
+})
+
+device('openmesh-om5p', 'openmesh_om5p', {
+	factory = false,
+})
+
+device('openmesh-om5p-ac-v1', 'openmesh_om5p-ac-v1', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om5p-ac'},
+})
+
+device('openmesh-om5p-ac-v2', 'openmesh_om5p-ac-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om5p-acv2'},
+})
+
+device('openmesh-om5p-an', 'openmesh_om5p-an', {
+	factory = false,
+})
+
+
 -- Plasma Cloud
 
 device('plasma-cloud-pa300', 'plasmacloud_pa300')

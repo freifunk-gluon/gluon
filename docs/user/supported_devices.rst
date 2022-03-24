@@ -41,6 +41,20 @@ ath79-generic
 
   - Omega [#modular_ethernet]_
 
+* OpenMesh
+
+  - A40
+  - A60
+  - MR600 (v1, v2)
+  - MR900 (v1, v2)
+  - MR1750 (v1, v2)
+  - OM2P (v1, v2, v4)
+  - OM2P-HS (v1, v2, v3, v4)
+  - OM2P-LC
+  - OM5P
+  - OM5P-AC (v1, v2)
+  - OM5P-AN
+
 * Plasma Cloud
 
   - PA300
