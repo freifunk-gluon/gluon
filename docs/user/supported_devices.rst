@@ -68,6 +68,7 @@ ath79-generic
 
   - Archer A7 (v5)
   - Archer C6 (v2)
+  - CPE210 (v1.0, v1.1)
   - CPE220 (v3.0)
   - CPE510 (v2.0)
   - CPE510 (v3.0)
