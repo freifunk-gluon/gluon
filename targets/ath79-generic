@@ -139,6 +139,9 @@ device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
 -- Ubiquiti
 
 device('ubiquiti-unifi-ap', 'ubnt_unifi', {
+	aliases = {
+		'ubiquiti-unifi-ap-lr',
+	},
 	manifest_aliases = {
 		'ubiquiti-unifi',
 	},
