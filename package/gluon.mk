@@ -67,6 +67,7 @@ define GluonSrcDiet
   ifdef CONFIG_GLUON_MINIFY
 	# Use cp + rm instead of mv to preserve destination permissions
 	set -e; $(FIND) $(2) -type f | while read src; do \
+		echo "Minifying $$$$src..."; \
 		luasrcdiet --noopt-binequiv -o "$$$$src.tmp" "$$$$src"; \
 		cp "$$$$src.tmp" "$$$$src"; \
 		rm "$$$$src.tmp"; \
