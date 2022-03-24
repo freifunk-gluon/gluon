@@ -31,7 +31,6 @@ M.images = {}
 
 
 local default_options = {
-	profile = false,
 	factory = '-squashfs-factory',
 	factory_ext = '.bin',
 	sysupgrade = '-squashfs-sysupgrade',
