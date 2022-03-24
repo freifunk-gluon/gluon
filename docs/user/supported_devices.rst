@@ -77,6 +77,11 @@ ath79-generic
   - TL-WDR4300 (v1)
   - WBS210 (v2.0)
 
+* Ubiquiti
+
+  - UniFi AP
+  - UniFi AP LR
+
 ath79-nand
 ----------
 
