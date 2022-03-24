@@ -304,6 +304,11 @@ device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
 
 -- Ubiquiti
 
+device('ubiquiti-unifi-ac-mesh', 'ubnt_unifiac-mesh', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 	aliases = {
 		'ubiquiti-unifi-ap-lr',
