@@ -30,6 +30,7 @@ function M.is_outdoor_device()
 		'tplink,cpe210-v1',
 		'tplink,cpe210-v2',
 		'tplink,cpe220-v3',
+		'tplink,cpe510-v1',
 		'tplink,cpe510-v2',
 		'tplink,cpe510-v3',
 		'tplink,eap225-outdoor-v1',

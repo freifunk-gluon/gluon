@@ -284,6 +284,12 @@ device('tp-link-cpe210-v2', 'tplink_cpe210-v2', {
 	},
 })
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+device('tp-link-cpe510-v1', 'tplink_cpe510-v1', {
+	manifest_aliases = {
+		'tp-link-cpe510-v1.0', -- upgrade from OpenWrt 19.07
+		'tp-link-cpe510-v1.1', -- upgrade from OpenWrt 19.07
+	},
+})
 device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
 device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
