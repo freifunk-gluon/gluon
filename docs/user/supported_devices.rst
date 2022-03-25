@@ -70,6 +70,7 @@ ath79-generic
   - Archer C6 (v2)
   - CPE210 (v1.0, v1.1, v2.0)
   - CPE220 (v3.0)
+  - CPE510 (v1.0, v1.1)
   - CPE510 (v2.0)
   - CPE510 (v3.0)
   - EAP225-Outdoor (v1)
