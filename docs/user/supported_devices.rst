@@ -102,6 +102,7 @@ ath79-generic
 
 * Ubiquiti
 
+  - NanoBeam M5 (XW)
   - NanoStation M2/M5 (XW)
   - UniFi AC Lite
   - UniFi AC LR
