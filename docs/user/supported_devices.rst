@@ -85,6 +85,7 @@ ath79-generic
 
 * Ubiquiti
 
+  - UniFi AC Mesh
   - UniFi AP
   - UniFi AP LR
 
