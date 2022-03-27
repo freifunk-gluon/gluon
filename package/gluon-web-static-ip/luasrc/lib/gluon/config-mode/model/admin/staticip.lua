@@ -38,8 +38,8 @@ local function intf_setting(intf, desc, enabled)
 	if site.prefix4() and intf ~= 'loopback' then
 		local v4addr = uci:get('gluon-static-ip', intf, 'ip4')
 
-		if site.tmpIp4() and v4addr then
-			local tmp = ip.new(site.tmpIp4(), site.tmpIp4Range())
+		if site.node_prefix4() and v4addr and site.node_prefix4_temporary() then
+			local tmp = ip.new(site.node_prefix4(), site.node_prefix4())
 			local isTmp = tmp:contains(ip.new(v4addr):host())
 
 			if isTmp then
@@ -59,11 +59,11 @@ local function intf_setting(intf, desc, enabled)
 		-- TODO: datatype = "ip4cidr"
 		v4.datatype = "maxlength(32)"
 		v4.default = v4addr
-		v4.required = site.tmpIp4()
+		v4.required = site.node_prefix4()
 
 		function v4:write(data)
 			-- TODO: validate via datatype
-			if data == '' and not site.tmpIp4() then
+			if data == '' and not site.node_prefix4() then
 				data = null
 			end
 
@@ -78,8 +78,8 @@ local function intf_setting(intf, desc, enabled)
 	if site.prefix6() then
 		local v6addr = uci:get('gluon-static-ip', intf, 'ip6')
 
-		if site.tmpIp6() and v6addr then
-			local tmp = ip.new(site.tmpIp6(), site.tmpIp6Range())
+		if site.node_prefix6() and v6addr and site.node_prefix6_temporary() then
+			local tmp = ip.new(site.node_prefix6(), site.node_prefix6_range(64))
 			local isTmp = tmp:contains(ip.new(v6addr):host())
 
 			if isTmp then
@@ -102,7 +102,7 @@ local function intf_setting(intf, desc, enabled)
 
 		function v6:write(data)
 			-- TODO: validate via datatype
-			if data == '' and (not site.tmpIp6() or (not site.tmpIp6Everywhere() or intf ~= 'loopback')) then
+			if data == '' and (not site.node_prefix6() or (not site.tmpIp6Everywhere() or intf ~= 'loopback')) then
 				data = null
 			end
 

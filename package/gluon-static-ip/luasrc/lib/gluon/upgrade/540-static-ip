@@ -64,11 +64,11 @@ local function static_ip(name, ifname, macaddr, actually_use)
 	local static6 = uci:get('gluon-static-ip', name, 'ip6')
 
   if site.prefix4() then
-    if not static4 and site.tmpIp4() and name ~= 'loopback' then
-      local tmp4 = ip.new(site.tmpIp4())
+    if not static4 and site.node_prefix4() and name ~= 'loopback' then
+      local tmp4 = ip.new(site.node_prefix4())
 
   		-- magic that turns mac into random number
-  		local ipnum = ipnum(macaddr, IPV4_PREFIX_MAX - site.tmpIp4Range())
+  		local ipnum = ipnum(macaddr, IPV4_PREFIX_MAX - site.node_prefix4_range())
 
   		-- the rare case where we get 0 or 1 as our mac based number
   		if ipnum < 2 then
@@ -80,11 +80,11 @@ local function static_ip(name, ifname, macaddr, actually_use)
   end
 
   if site.prefix6() then
-    if not static6 and site.tmpIp6() and (site.tmpIp6Everywhere() or name == 'loopback') then
-      local tmp6 = ip.new(site.tmpIp6())
+    if not static6 and site.node_prefix6() and (site.tmpIp6Everywhere() or name == 'loopback') then
+      local tmp6 = ip.new(site.node_prefix6())
 
   		-- magic that turns mac into random number
-  		local ipnum = ipnum(macaddr, IPV6_PREFIX_MAX - site.tmpIp6Range(), true)
+  		local ipnum = ipnum(macaddr, IPV6_PREFIX_MAX - site.node_prefix6_range(64), true)
 
   		-- the rare case where we get 0 or 1 as our mac based number
   		if tonumber(ipnum:gsub(':', ''), 16) < 2 then
