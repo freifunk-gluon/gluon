@@ -145,14 +145,6 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     return 0
   end
 
-  local owner = uci:get_first('gluon-node-info', 'owner')
-  uci:set('gluon-node-info', owner, 'contact', location.administrator.email)
-  local _location = uci:get_first('gluon-node-info', 'location')
-  uci:set('gluon-node-info', _location, 'share_location', '1')
-  uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
-  uci:set('gluon-node-info', _location, 'longitude', location.location.long)
-
-
   local local_router_id
   for id, _ in string.split(hostname, '-') do
     if id then
@@ -183,12 +175,19 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     return 2
   end
 
+  print('Syncing data for node ' .. node.name)
+
   if hostname ~= should_hostname then
     print('Renaming node to ' .. should_hostname)
     pretty_hostname.set(uci, should_hostname)
   end
 
-  print('Syncing data for node ' .. node.name)
+  local owner = uci:get_first('gluon-node-info', 'owner')
+  uci:set('gluon-node-info', owner, 'contact', location.administrator.email)
+  local _location = uci:get_first('gluon-node-info', 'location')
+  uci:set('gluon-node-info', _location, 'share_location', '1')
+  uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
+  uci:set('gluon-node-info', _location, 'longitude', location.location.long)
 
   -- TODO: compare device
 
