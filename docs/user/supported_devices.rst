@@ -101,6 +101,7 @@ ath79-generic
   - UniFi AC Pro
   - UniFi AP
   - UniFi AP LR
+  - UniFi AP Outdoor+
   - UniFi AP PRO
 
 ath79-nand

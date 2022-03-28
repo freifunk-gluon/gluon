@@ -52,6 +52,11 @@ if platform.match('ath79', 'generic', {
 	'ubnt,unifi-ap-pro',
 }) then
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
+elseif platform.match('ath79', 'generic', {
+	'ubnt,unifi-ap-outdoor-plus',
+}) then
+	-- Temporary solution to separate interfaces in bridged default setup
+	lan_ifname, wan_ifname = 'eth0', 'eth1'
 elseif platform.match('lantiq') then
 	local switch_data = board_data.switch or {}
 	local switch0_data = switch_data.switch0 or {}
