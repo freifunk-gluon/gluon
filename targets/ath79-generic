@@ -266,6 +266,10 @@ device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })
 
+device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
