@@ -1,1 +1,10 @@
+-- Sophos
+
+device('sophos-red-15w-rev.1', 'sophos_red-15w-rev1', {
+	factory = false,
+})
+
+
+-- TP-Link
+
 device('tp-link-tl-wdr4900-v1', 'tplink_tl-wdr4900-v1')

@@ -197,6 +197,10 @@ mediatek-mt7622
 mpc85xx-generic
 ---------------
 
+* Sophos
+
+  - RED 15w Rev.1
+
 * TP-Link
 
   - TL-WDR4900 (v1)
