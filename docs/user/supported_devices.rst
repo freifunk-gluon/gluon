@@ -4,6 +4,10 @@ Supported Devices & Architectures
 ath79-generic
 --------------
 
+* AVM
+
+  - Fritz!WLAN Repeater 450E [#avmflash]_
+
 * devolo
 
   - WiFi pro 1200e [#lan_as_wan]_
@@ -12,6 +16,14 @@ ath79-generic
   - WiFi pro 1750e [#lan_as_wan]_
   - WiFi pro 1750i
   - WiFi pro 1750x
+
+* D-Link
+
+  - DAP-1330 A1 [#lan_as_wan]_
+  - DAP-1365 A1 [#lan_as_wan]_
+  - DAP-2660 A1 [#lan_as_wan]_
+  - DIR-505 A1 [#lan_as_wan]_
+  - DIR-505 A2 [#lan_as_wan]_
 
 * Enterasys
 
@@ -33,6 +45,20 @@ ath79-generic
 
   - Omega [#modular_ethernet]_
 
+* OpenMesh
+
+  - A40
+  - A60
+  - MR600 (v1, v2)
+  - MR900 (v1, v2)
+  - MR1750 (v1, v2)
+  - OM2P (v1, v2, v4)
+  - OM2P-HS (v1, v2, v3, v4)
+  - OM2P-LC
+  - OM5P
+  - OM5P-AC (v1, v2)
+  - OM5P-AN
+
 * Plasma Cloud
 
   - PA300
@@ -46,13 +72,24 @@ ath79-generic
 
   - Archer A7 (v5)
   - Archer C6 (v2)
+  - Archer C7 (v2)
+  - CPE210 (v1.0, v1.1, v2.0)
   - CPE220 (v3.0)
+  - CPE510 (v1.0, v1.1)
   - CPE510 (v2.0)
   - CPE510 (v3.0)
   - EAP225-Outdoor (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
+  - TL-WR1043N/ND (v3, v4)
   - WBS210 (v2.0)
+
+* Ubiquiti
+
+  - UniFi AC Mesh
+  - UniFi AP
+  - UniFi AP LR
+  - UniFi AP PRO
 
 ath79-nand
 ----------
@@ -330,7 +367,7 @@ Footnotes
   developer documentation: :ref:`device-class-definition`.
 
 .. [#avmflash]
-  For instructions on how to flash AVM devices, visit https://fritzfla.sh
+  For instructions on how to flash AVM devices, visit https://fritz-tools.readthedocs.io
 
 .. [#eva_ramboot]
   For instructions on how to flash AVM NAND devices, see the respective

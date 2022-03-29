@@ -4,3 +4,6 @@ uci -q batch <<-EOF
 	delete gluon.core.reconfigure
 	commit
 EOF
+
+# New config is saved, we can delete the old one
+rm -f /etc/config/*_gluon-old

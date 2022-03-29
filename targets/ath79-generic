@@ -22,6 +22,12 @@ local ATH10K_PACKAGES_QCA9888 = {
 	'-ath10k-firmware-qca9888-ct',
 }
 
+-- AVM
+
+device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
@@ -52,6 +58,25 @@ device('devolo-wifi-pro-1750i', 'devolo_dvl1750i', {
 device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
+})
+
+
+-- D-Link
+
+device('d-link-dap-1330-a1', 'dlink_dap-1330-a1')
+device('d-link-dap-1365-a1', 'dlink_dap-1365-a1')
+
+device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('d-link-dir-505', 'dlink_dir-505', {
+        factory = false,
+        manifest_aliases = {
+                'd-link-dir-505-rev-a1', -- Upgrade from OpenWrt 19.07
+                'd-link-dir-505-rev-a2', -- Upgrade from OpenWrt 19.07
+        },
 })
 
 
@@ -88,6 +113,130 @@ device('ocedo-raccoon', 'ocedo_raccoon', {
 -- setup via integrated (USB-)tty is possible as well
 device('onion-omega', 'onion_omega')
 
+
+-- OpenMesh
+
+device('openmesh-a40', 'openmesh_a40', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('openmesh-a60', 'openmesh_a60', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('openmesh-mr600-v1', 'openmesh_mr600-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr600'},
+})
+
+device('openmesh-mr600-v2', 'openmesh_mr600-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr600v2'},
+})
+
+device('openmesh-mr900-v1', 'openmesh_mr900-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr900'},
+})
+
+device('openmesh-mr900-v2', 'openmesh_mr900-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr900v2'},
+})
+
+device('openmesh-mr1750-v1', 'openmesh_mr1750-v1', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr1750'},
+})
+
+device('openmesh-mr1750-v2', 'openmesh_mr1750-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-mr1750v2'},
+})
+
+device('openmesh-om2p-v1', 'openmesh_om2p-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p'},
+})
+
+device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x; deacticated at the moment because
+	-- the physical ethernet port for this device changed between 19.07
+	-- and 21.02. And automated update could therefore "break" the
+	-- device until someone physically changed the ethernet cable.
+	-- See https://github.com/freifunk-gluon/gluon/pull/2325#issuecomment-940749284
+	--manifest_aliases = {'openmesh-om2pv2'},
+})
+
+device('openmesh-om2p-v4', 'openmesh_om2p-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2pv4'},
+})
+
+device('openmesh-om2p-hs-v1', 'openmesh_om2p-hs-v1', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hs'},
+})
+
+device('openmesh-om2p-hs-v2', 'openmesh_om2p-hs-v2', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv2'},
+})
+
+device('openmesh-om2p-hs-v3', 'openmesh_om2p-hs-v3', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv3'},
+})
+
+device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om2p-hsv4'},
+})
+
+device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
+	factory = false,
+})
+
+device('openmesh-om5p', 'openmesh_om5p', {
+	factory = false,
+})
+
+device('openmesh-om5p-ac-v1', 'openmesh_om5p-ac-v1', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om5p-ac'},
+})
+
+device('openmesh-om5p-ac-v2', 'openmesh_om5p-ac-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	-- old name from OpenWrt 19.07.x
+	manifest_aliases = {'openmesh-om5p-acv2'},
+})
+
+device('openmesh-om5p-an', 'openmesh_om5p-an', {
+	factory = false,
+})
+
+
 -- Plasma Cloud
 
 device('plasma-cloud-pa300', 'plasmacloud_pa300')
@@ -117,13 +266,34 @@ device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })
 
+device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
 
+device('tp-link-cpe210-v1', 'tplink_cpe210-v1', {
+	manifest_aliases = {
+		'tp-link-cpe210-v1.0', -- Upgrade from OpenWrt 19.07
+		'tp-link-cpe210-v1.1', -- Upgrade from OpenWrt 19.07
+	},
+})
+device('tp-link-cpe210-v2', 'tplink_cpe210-v2', {
+	manifest_aliases = {
+		'tp-link-cpe210-v2.0', -- Upgrade from OpenWrt 19.07
+	},
+})
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
+device('tp-link-cpe510-v1', 'tplink_cpe510-v1', {
+	manifest_aliases = {
+		'tp-link-cpe510-v1.0', -- upgrade from OpenWrt 19.07
+		'tp-link-cpe510-v1.1', -- upgrade from OpenWrt 19.07
+	},
+})
 device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
 device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
@@ -134,4 +304,33 @@ device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
 device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
 device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
+device('tp-link-tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3', {
+	manifest_aliases = {
+		'tp-link-tl-wr1043n-nd-v3', -- upgrade from OpenWrt 19.07
+	},
+})
+device('tp-link-tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4', {
+	manifest_aliases = {
+		'tp-link-tl-wr1043n-nd-v4', -- upgrade from OpenWrt 19.07
+	},
+})
+
 device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
+
+-- Ubiquiti
+
+device('ubiquiti-unifi-ac-mesh', 'ubnt_unifiac-mesh', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('ubiquiti-unifi-ap', 'ubnt_unifi', {
+	aliases = {
+		'ubiquiti-unifi-ap-lr',
+	},
+	manifest_aliases = {
+		'ubiquiti-unifi',
+	},
+})
+
+device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')

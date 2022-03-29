@@ -78,13 +78,6 @@ end
 function Http:prepare_content(mime)
 	if self.headers["content-type"] then return end
 
-	if mime == "application/xhtml+xml" then
-		local accept = self:getenv("HTTP_ACCEPT")
-		if not accept or not accept:find("application/xhtml+xml", nil, true) then
-			mime = "text/html; charset=UTF-8"
-		end
-		self:header("Vary", "Accept")
-	end
 	self:header("Content-Type", mime)
 end
 

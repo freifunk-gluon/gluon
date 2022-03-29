@@ -130,9 +130,7 @@ site.conf only variables
   - authorized_keys
   - default_domain
   - poe_passthrough
-  - mesh_on_wan
-  - mesh_on_lan
-  - single_as_lan
+  - interfaces.*.default_roles
   - setup_mode.skip
   - autoupdater.branch
   - mesh_vpn.enabled

@@ -1,0 +1,48 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+
+local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
+local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
+
+local mesh_interfaces_uplink = {}
+local mesh_interfaces_other = {}
+for _, iface in ipairs(mesh_interfaces) do
+	if util.contains(uplink_interfaces, iface) then
+		table.insert(mesh_interfaces_uplink, iface)
+	else
+		table.insert(mesh_interfaces_other, iface)
+	end
+end
+
+if #mesh_interfaces_uplink > 0 then
+	uci:section('network', 'interface', 'mesh_uplink', {
+		ifname = 'br-wan',
+		proto = 'gluon_wired',
+		index = 0,
+		vxlan = site.mesh.vxlan(true),
+	})
+end
+
+if #mesh_interfaces_other > 0 then
+	local iftype, ifname
+	if #mesh_interfaces_other == 1 then
+		ifname = mesh_interfaces_other[1]
+	else
+		iftype = 'bridge'
+		ifname = mesh_interfaces_other
+	end
+
+	uci:section('network', 'interface', 'mesh_other', {
+		ifname = ifname,
+		type = iftype,
+		igmp_snooping = false,
+		proto = 'gluon_wired',
+		index = 4,
+		vxlan = site.mesh.vxlan(true),
+	})
+end
+
+uci:save('network')

@@ -3,7 +3,7 @@
 local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
 
-local private_key = uci:get("network", 'wg_mesh', "private_key")
+local private_key = uci:get("network_gluon-old", 'wg_mesh', "private_key")
 
 if not private_key or not private_key:match("^" .. ("[%a%d+/]"):rep(42) .. "[AEIMQUYcgkosw480]=$") then
   private_key = "generate"

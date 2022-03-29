@@ -5,6 +5,7 @@ local util = require 'gluon.util'
 local vpn_core = require 'gluon.mesh-vpn'
 
 local uci = require('simple-uci').cursor()
+local unistd = require 'posix.unistd'
 
 
 local syslog_level = uci:get('fastd', 'mesh_vpn', 'syslog_level') or 'verbose'
@@ -17,20 +18,22 @@ end
 local methods
 
 if site.mesh_vpn.fastd.configurable(false) then
-	local has_null = util.contains(site.mesh_vpn.fastd.methods(), 'null')
+	local site_methods = site.mesh_vpn.fastd.methods()
+	local has_null = util.contains(site_methods, 'null@l2tp') or util.contains(site_methods, 'null')
 
 	local old_methods = uci:get('fastd', 'mesh_vpn', 'method')
 	if old_methods then
-		has_null = util.contains(old_methods, 'null')
+		has_null = util.contains(old_methods, 'null@l2tp') or util.contains(old_methods, 'null')
 	end
 
 	methods = {}
 	if has_null then
+		table.insert(methods, 'null@l2tp')
 		table.insert(methods, 'null')
 	end
 
-	for _, method in ipairs(site.mesh_vpn.fastd.methods()) do
-		if method ~= 'null' then
+	for _, method in ipairs(site_methods) do
+		if method ~= 'null@l2tp' and method ~= 'null' then
 			table.insert(methods, method)
 		end
 	end
@@ -50,9 +53,19 @@ uci:section('fastd', 'fastd', 'mesh_vpn', {
 	secure_handshakes = true,
 	method = methods,
 	packet_mark = 1,
+	persist_interface = true,
+	offload_l2tp = false,
 	status_socket = '/var/run/fastd.mesh_vpn.socket',
 })
+uci:delete('fastd', 'mesh_vpn', 'peer_limit')
 
+-- L2TP offload support
+if unistd.access('/lib/gluon/mesh-vpn/fastd/l2tp') then
+	uci:set('fastd', 'mesh_vpn', 'mode', 'multitap')
+	uci:set('fastd', 'mesh_vpn', 'persist_interface', false)
+	uci:set('fastd', 'mesh_vpn', 'offload_l2tp', true)
+	uci:set('fastd', 'mesh_vpn', 'peer_limit', 1)
+end
 
 -- Collect list of groups that have peers with 'preserve' flag
 local preserve_groups = {}
@@ -94,6 +107,7 @@ local function add_peer(group, name, config)
 		enabled = true,
 		net = 'mesh_vpn',
 		group = group,
+		interface = 'mesh-vpn',
 		key = config.key,
 		remote = config.remotes,
 	})
@@ -123,5 +137,11 @@ end
 
 add_groups('mesh_vpn', site.mesh_vpn.fastd.groups())
 
+-- Update preserved peers as well
+uci:foreach('fastd', 'peer', function(peer)
+	if peer.net == 'mesh_vpn' then
+		uci:set('fastd', peer['.name'], 'interface', 'mesh-vpn')
+	end
+end)
 
 uci:save('fastd')

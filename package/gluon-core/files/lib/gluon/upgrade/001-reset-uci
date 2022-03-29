@@ -1,0 +1,23 @@
+#!/bin/sh
+
+NETWORK_CFG='/etc/config/network'
+NETWORK_SAVED="${NETWORK_CFG}_gluon-old"
+
+SYSTEM_CFG='/etc/config/system'
+SYSTEM_SAVED="${SYSTEM_CFG}_gluon-old"
+
+# Make sure everything is saved before we move away the config files
+uci commit
+
+# Save old configs (unless there is already a saved config,
+# which means that the previous upgrade was interrupted)
+if [ -s "$NETWORK_CFG" ] && ! [ -s "$NETWORK_SAVED" ]; then
+	mv -f "$NETWORK_CFG" "$NETWORK_SAVED"
+fi
+if [ -s "$SYSTEM_CFG" ] && ! [ -s "$SYSTEM_SAVED" ]; then
+	mv -f "$SYSTEM_CFG" "$SYSTEM_SAVED"
+fi
+
+# Generate a new network config
+rm -f /etc/board.json "$NETWORK_CFG" "$SYSTEM_CFG"
+config_generate

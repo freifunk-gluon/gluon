@@ -1,4 +1,4 @@
-local fastd_methods = {'salsa2012+gmac', 'salsa2012+umac', 'null+salsa2012+gmac', 'null+salsa2012+umac', 'null'}
+local fastd_methods = {'salsa2012+umac', 'null+salsa2012+umac', 'null@l2tp', 'null'}
 need_array_of({'mesh_vpn', 'fastd', 'methods'}, fastd_methods)
 need_boolean(in_site({'mesh_vpn', 'fastd', 'configurable'}), false)
 

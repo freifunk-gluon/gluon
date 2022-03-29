@@ -1,5 +1,5 @@
 <%
-	local br = self.orientation == "horizontal" and '&#160;&#160;&#160;' or '<br />'
+	local br = self.orientation == "horizontal" and '&#160;&#160;&#160;' or '<br>'
 	local entries = self:entries()
 %>
 
@@ -35,7 +35,7 @@
 					attr("name", id) ..
 					attr("value", entry.key) ..
 					attr("checked", (self:cfgvalue() == entry.key) and "checked")
-				%> />
+				%>>
 				<label<%= attr("for", id.."."..entry.key)%>></label>
 				<%|entry.value%>
 			</label>

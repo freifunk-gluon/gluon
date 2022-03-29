@@ -9,14 +9,12 @@ local uci = require('simple-uci').cursor()
 uci:delete('batman-adv', 'bat0')
 uci:save('batman-adv')
 
-local gw_mode = uci:get('network', 'gluon_bat0', 'gw_mode') or 'client'
-uci:delete('network', 'gluon_bat0')
+local gw_mode = uci:get('network_gluon-old', 'gluon_bat0', 'gw_mode') or 'client'
 uci:section('network', 'interface', 'gluon_bat0', {
 	proto = 'gluon_bat0',
 	gw_mode = gw_mode,
 })
 
-uci:delete('network', 'bat0')
 uci:section('network', 'interface', 'bat0', {
 	ifname = 'bat0',
 	proto = 'none',
