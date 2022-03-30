@@ -81,6 +81,7 @@ ath79-generic
   - EAP225-Outdoor (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
+  - TL-WR810N (v1)
   - TL-WR1043N/ND (v3, v4)
   - WBS210 (v2.0)
 
