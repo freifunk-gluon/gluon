@@ -31,6 +31,7 @@ ath79-generic
 
 * GL.iNet
 
+  - GL-AR150
   - GL-AR300M-Lite
 
 * Joy-IT

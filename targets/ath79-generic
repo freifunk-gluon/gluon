@@ -89,6 +89,10 @@ device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
 
 -- GL.iNet
 
+device('gl.inet-gl-ar150', 'glinet_gl-ar150', {
+	factory = false,
+})
+
 device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
 })
