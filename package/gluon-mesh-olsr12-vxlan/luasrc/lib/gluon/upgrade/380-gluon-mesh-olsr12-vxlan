@@ -1,0 +1,40 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
+local olsrd = require 'gluon.olsrd'
+
+if site.mesh.olsrd.olsr12.enable() then
+	-- TODO: gluon_wired once added in mesh-olsrd
+	uci:section('network', 'interface', 'olsr12', {
+		proto = 'vxlan',
+		vid = 111,
+
+		port = site.mesh.olsrd.olsr12.port(598),
+		peeraddr = site.mesh.olsrd.olsr12.server(),
+
+		mtu = 1300,
+
+		zone = 'mesh',
+	})
+
+	uci:section('olsrd2', 'interface', 'olsr12_mesh', {
+		ifname = { 'olsr12' },
+		bindto = uci:get_list('olsrd2', 'wired_mesh', 'bindto'),
+		-- TODO: link quality
+	})
+
+	local intfs = uci:get_list('firewall', 'mesh', 'network')
+
+	table.insert(intfs, 'olsr12')
+
+	uci:set_list('firewall', 'mesh', 'network', intfs)
+end
+
+uci:save('olsrd2')
+uci:save('firewall')
+uci:save('network')
