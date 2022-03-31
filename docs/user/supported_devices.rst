@@ -89,6 +89,7 @@ ath79-generic
 
 * Ubiquiti
 
+  - NanoStation M2/M5 (XW)
   - UniFi AC Lite
   - UniFi AC LR
   - UniFi AC Mesh
