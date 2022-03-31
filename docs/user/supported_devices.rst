@@ -32,6 +32,7 @@ ath79-generic
 
 * GL.iNet
 
+  - 6416A
   - GL-AR150
   - GL-AR300M-Lite
   - GL-AR750
