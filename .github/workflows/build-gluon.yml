@@ -42,13 +42,13 @@ jobs:
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
 
       - name: Archive build output
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}_output
           path: output
