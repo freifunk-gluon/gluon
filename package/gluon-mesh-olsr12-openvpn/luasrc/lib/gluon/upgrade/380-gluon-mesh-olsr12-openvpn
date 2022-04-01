@@ -18,11 +18,11 @@ if site.mesh.olsrd.olsr12.enable() then
 		zone = 'mesh',
 	})
 
-	local cred = io.open('/tmp/olsr12', 'w')
+	local cred = io.open('/etc/openvpn/olsr12.auth', 'w')
 	cred:write(sysconfig.primary_mac .. '\n' .. sysconfig.primary_mac .. '\n')
 	cred:close()
 
-	local ca = io.open('/tmp/olsr12.ca', 'w')
+	local ca = io.open('/etc/openvpn/olsr12.ca', 'w')
 	ca:write(site.mesh.olsrd.olsr12.ca())
 	ca:close()
 
@@ -37,7 +37,7 @@ if site.mesh.olsrd.olsr12.enable() then
 		persist_key = true,
 		persist_tun = true,
 
-		ca = '/tmp/olsr12.ca',
+		ca = '/etc/openvpn/olsr12.ca',
 
 		verb = 3,
 
@@ -45,7 +45,7 @@ if site.mesh.olsrd.olsr12.enable() then
 			site.mesh.olsrd.olsr12.server() .. " " .. site.mesh.olsrd.olsr12.port(1194)
 		},
 
-		auth_user_pass = '/tmp/olsr12',
+		auth_user_pass = '/etc/openvpn/olsr12.auth',
 	})
 
 	uci:section('olsrd2', 'interface', 'olsr12_mesh', {
