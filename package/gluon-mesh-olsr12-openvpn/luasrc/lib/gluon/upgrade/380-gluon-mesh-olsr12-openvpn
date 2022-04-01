@@ -8,18 +8,44 @@ local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 local olsrd = require 'gluon.olsrd'
 
+uci:delete('openvpn', 'olsr12_vpn')
+
 if site.mesh.olsrd.olsr12.enable() then
 	-- TODO: gluon_wired once added in mesh-olsrd
 	uci:section('network', 'interface', 'olsr12', {
-		proto = 'vxlan',
-		vid = 111,
-
-		port = site.mesh.olsrd.olsr12.port(598),
-		peeraddr = site.mesh.olsrd.olsr12.server(),
-
-		mtu = 1300,
-
+		ifname = 'olsr12',
+		proto = 'tap',
 		zone = 'mesh',
+	})
+
+	local cred = io.open('/tmp/olsr12', 'w')
+	cred:write(sysconfig.primary_mac .. '\n' .. sysconfig.primary_mac .. '\n')
+	cred:close()
+
+	local ca = io.open('/tmp/olsr12.ca', 'w')
+	ca:write(site.mesh.olsrd.olsr12.ca())
+	ca:close()
+
+	uci:section('openvpn', 'openvpn', 'olsr12_vpn', {
+		enabled = true,
+		client = true,
+
+		dev = 'olsr12',
+		dev_type = 'tap',
+
+		data_ciphers_fallback = 'none',
+		persist_key = true,
+		persist_tun = true,
+
+		ca = '/tmp/olsr12.ca',
+
+		verb = 3,
+
+		remote = {
+			site.mesh.olsrd.olsr12.server() .. " " .. site.mesh.olsrd.olsr12.port(1194)
+		},
+
+		auth_user_pass = '/tmp/olsr12',
 	})
 
 	uci:section('olsrd2', 'interface', 'olsr12_mesh', {
@@ -38,3 +64,4 @@ end
 uci:save('olsrd2')
 uci:save('firewall')
 uci:save('network')
+uci:save('openvpn')
