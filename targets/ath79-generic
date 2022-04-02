@@ -327,6 +327,12 @@ device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
 device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
+device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3', {
+	manifest_aliases = {
+		'tp-link-tl-wr842n-nd-v3', -- upgrade from OpenWrt 19.07
+	},
+})
+
 device('tp-link-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2', {
 	manifest_aliases = {
 		'tp-link-tl-wr1043n-nd-v2', -- upgrade from OpenWrt 19.07
