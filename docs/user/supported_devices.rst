@@ -33,6 +33,7 @@ ath79-generic
 
   - GL-AR150
   - GL-AR300M-Lite
+  - GL-AR750
 
 * Joy-IT
 
