@@ -31,6 +31,7 @@ ath79-generic
 
 * GL.iNet
 
+  - GL-AR150
   - GL-AR300M-Lite
 
 * Joy-IT
@@ -71,8 +72,9 @@ ath79-generic
 * TP-Link
 
   - Archer A7 (v5)
+  - Archer C5 (v1)
   - Archer C6 (v2)
-  - Archer C7 (v2)
+  - Archer C7 (v2, v5)
   - CPE210 (v1.0, v1.1, v2.0)
   - CPE220 (v3.0)
   - CPE510 (v1.0, v1.1)
@@ -81,6 +83,7 @@ ath79-generic
   - EAP225-Outdoor (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
+  - TL-WR810N (v1)
   - TL-WR1043N/ND (v3, v4)
   - WBS210 (v2.0)
 

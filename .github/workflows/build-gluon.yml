@@ -14,7 +14,7 @@ jobs:
     outputs:
       targets: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Filter targets based on changed files
       - uses: dorny/paths-filter@v2
@@ -32,7 +32,7 @@ jobs:
         target: ${{ fromJSON(needs.changed.outputs.targets) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
@@ -42,13 +42,13 @@ jobs:
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
 
       - name: Archive build output
-        uses: actions/upload-artifact@v2.3.1
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}_output
           path: output
