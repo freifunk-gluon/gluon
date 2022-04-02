@@ -333,6 +333,11 @@ device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
 
 -- Ubiquiti
 
+device('ubiquiti-unifi-ac-lite', 'ubnt_unifiac-lite', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ubiquiti-unifi-ac-lr', 'ubnt_unifiac-lr', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
