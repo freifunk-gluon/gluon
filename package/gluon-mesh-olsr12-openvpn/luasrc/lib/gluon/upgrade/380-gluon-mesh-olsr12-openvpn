@@ -10,6 +10,11 @@ local olsrd = require 'gluon.olsrd'
 
 uci:delete('openvpn', 'olsr12_vpn')
 
+-- NOTE: we need to place olsr12 files in a persistent directory,
+-- since reconfigure only happens on upgrades
+-- Since it happens on upgrades tho, we do not need to store it
+-- in a permanent directory like /etc/openvpn
+
 if site.mesh.olsrd.olsr12.enable() then
 	-- TODO: gluon_wired once added in mesh-olsrd
 	uci:section('network', 'interface', 'olsr12', {
@@ -18,11 +23,11 @@ if site.mesh.olsrd.olsr12.enable() then
 		zone = 'mesh',
 	})
 
-	local cred = io.open('/etc/openvpn/olsr12.auth', 'w')
+	local cred = io.open('/etc/olsr12.auth', 'w')
 	cred:write(sysconfig.primary_mac .. '\n' .. sysconfig.primary_mac .. '\n')
 	cred:close()
 
-	local ca = io.open('/etc/openvpn/olsr12.ca', 'w')
+	local ca = io.open('/etc/olsr12.ca', 'w')
 	ca:write(site.mesh.olsrd.olsr12.ca())
 	ca:close()
 
@@ -37,7 +42,7 @@ if site.mesh.olsrd.olsr12.enable() then
 		persist_key = true,
 		persist_tun = true,
 
-		ca = '/etc/openvpn/olsr12.ca',
+		ca = '/etc/olsr12.ca',
 
 		verb = 3,
 
@@ -45,7 +50,7 @@ if site.mesh.olsrd.olsr12.enable() then
 			site.mesh.olsrd.olsr12.server() .. " " .. site.mesh.olsrd.olsr12.port(1194)
 		},
 
-		auth_user_pass = '/etc/openvpn/olsr12.auth',
+		auth_user_pass = '/etc/olsr12.auth',
 	})
 
 	uci:section('olsrd2', 'interface', 'olsr12_mesh', {
