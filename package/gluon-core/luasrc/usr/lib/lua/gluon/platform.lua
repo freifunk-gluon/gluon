@@ -35,6 +35,7 @@ function M.is_outdoor_device()
 		'tplink,cpe510-v3',
 		'tplink,eap225-outdoor-v1',
 		'tplink,wbs210-v2',
+		'ubnt,nanostation-m-xw',
 		'ubnt,unifiac-mesh',
 	}) then
 		return true
