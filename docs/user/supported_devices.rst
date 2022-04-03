@@ -85,7 +85,7 @@ ath79-generic
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
   - TL-WR810N (v1)
-  - TL-WR1043N/ND (v3, v4)
+  - TL-WR1043N/ND (v2, v3, v4)
   - WBS210 (v2.0)
 
 * Ubiquiti
