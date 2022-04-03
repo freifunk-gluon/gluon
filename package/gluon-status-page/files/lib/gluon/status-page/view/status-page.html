@@ -209,41 +209,50 @@
 			<div class="frame">
 				<h2><%:Monitoring%></h2>
 				<table>
-					<tr><th><%:Uptime%></th><td><%= statistics('uptime', 'time') %></td></tr>
-					<tr><th><%:Load average%></th><td><%= statistics('loadavg', 'decimal') %></td></tr>
-					<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
-					<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
-					<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
+					<tbody>
+						<tr><th><%:Uptime%></th><td><%= statistics('uptime', 'time') %></td></tr>
+						<tr><th><%:Load average%></th><td><%= statistics('loadavg', 'decimal') %></td></tr>
+						<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
+						<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
+						<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
+					</tbody>
 				</table>
 
 				<h3><%:Clients%></h3>
 				<table>
-					<tr><th><%:Total%></th><td><%= statistics('clients/total') %></td></tr>
-					<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
-					<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
+					<tbody>
+						<tr><th><%:Total%></th><td><%= statistics('clients/total') %></td></tr>
+						<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
+						<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
+					</tbody>
 				</table>
 				<% if radios[1] then -%>
 					<h3><%:Radios%></h3>
 					<table>
-						<% for _, radio in ipairs(radios) do -%>
+						<tbody>
+							<% for _, radio in ipairs(radios) do -%>
 							<tr>
 								<th><%| radio.name %></th>
 								<td><%| translatef('Channel %u', radio.channel) %></td>
 							</tr>
-						<%- end %>
+							<%- end %>
+						</tbody>
 					</table>
 				<%- end %>
 
 				<h3><%:Traffic%></h3>
 				<table>
-					<tr><th><%:Transmitted%></th><td><%= statisticsTraffic('traffic/tx') %></td></tr>
-					<tr><th><%:Received%></th><td><%= statisticsTraffic('traffic/rx') %></td></tr>
-					<tr><th><%:Forwarded%></th><td><%= statisticsTraffic('traffic/forward') %></td></tr>
+					<tbody>
+						<tr><th><%:Transmitted%></th><td><%= statisticsTraffic('traffic/tx') %></td></tr>
+						<tr><th><%:Received%></th><td><%= statisticsTraffic('traffic/rx') %></td></tr>
+						<tr><th><%:Forwarded%></th><td><%= statisticsTraffic('traffic/forward') %></td></tr>
+					</tbody>
 				</table>
 
 				<div id="mesh-vpn" style="display: none">
 					<h3><%:Mesh VPN%></h3>
 					<table id="mesh-vpn-peers">
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
@@ -259,17 +268,19 @@
 					<h3><%| iface %></h3>
 					<div data-interface="<%| iface %>" data-interface-address="<%| util.trim(address) %>"<%= attr('data-interface-wireless', wireless) %>>
 						<table class="datatable">
-							<tr>
-								<th><%:Node%></th>
-								<% for i, v in ipairs(mesh.attrs or {}) do %>
-									<th<%= attr('class', 'row-' .. v[1] ) .. attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
-								<% end %>
-								<% if wireless then %>
-									<th class="row-signal">dBm</th>
-									<th class="row-distance"><%:Distance%></th>
-									<th class="row-inactive"><%:Last seen%></th>
-								<% end %>
-							</tr>
+							<tbody>
+								<tr>
+									<th><%:Node%></th>
+									<% for i, v in ipairs(mesh.attrs or {}) do %>
+										<th<%= attr('class', 'row-' .. v[1] ) .. attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
+									<% end %>
+									<% if wireless then %>
+										<th class="row-signal">dBm</th>
+										<th class="row-distance"><%:Distance%></th>
+										<th class="row-inactive"><%:Last seen%></th>
+									<% end %>
+								</tr>
+							</tbody>
 						</table>
 					</div>
 				<%
