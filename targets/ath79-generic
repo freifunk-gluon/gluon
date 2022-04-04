@@ -24,6 +24,10 @@ local ATH10K_PACKAGES_QCA9888 = {
 
 -- AVM
 
+device('avm-fritz-box-4020', 'avm_fritz4020', {
+	factory = false,
+})
+
 device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
 	factory = false,
 })
