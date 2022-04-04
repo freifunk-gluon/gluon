@@ -20,14 +20,14 @@ echotol3roamd() {
 
 
 reload_service() {
-	for i in $(echo /nhdpinfo interface  | nc localhost 2009 | cut -f1)
+	for i in $(ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device")
 	do
 		echotol3roamd "add_meshif $i"
 	done
 
 	for i in $(echotol3roamd "get_meshifs"| jsonfilter -e "@.mesh_interfaces[@]")
 	do
-		if ! echo /nhdpinfo interface  | nc localhost 2009 | cut -f1 |grep -q $i
+		if ! ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"|grep -q $i
 		then
 			echotol3roamd "del_meshif $i"
 		fi
