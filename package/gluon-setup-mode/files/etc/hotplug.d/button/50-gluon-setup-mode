@@ -6,9 +6,7 @@ wait=3
 
 wait_setup_mode() {
 	sleep $wait
-	uci set 'gluon-setup-mode.@setup_mode[0].enabled=1'
-	uci commit gluon-setup-mode
-	reboot
+	gluon-enter-setup-mode
 }
 
 
