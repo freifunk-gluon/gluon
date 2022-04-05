@@ -105,6 +105,7 @@ ath79-nand
 
 * GL.iNet
 
+  - GL-AR300M
   - GL-AR750S
 
 brcm2708-bcm2708
