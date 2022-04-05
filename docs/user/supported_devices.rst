@@ -101,6 +101,10 @@ ath79-generic
   - UniFi AP LR
   - UniFi AP PRO
 
+* ZyXEL
+
+  - NBG6616
+
 ath79-nand
 ----------
 

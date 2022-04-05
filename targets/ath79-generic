@@ -392,3 +392,9 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 })
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
+
+-- ZyXEL
+
+device('zyxel-nbg6616', 'zyxel_nbg6616', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
