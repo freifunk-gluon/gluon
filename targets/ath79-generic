@@ -93,6 +93,13 @@ device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
 
 -- GL.iNet
 
+device('gl.inet-6416', 'glinet_6416', {
+	factory = false,
+	manifest_aliases = {
+		'gl-inet-6416a-v1', -- Upgrade from OpenWrt 19.07
+	},
+})
+
 device('gl.inet-gl-ar150', 'glinet_gl-ar150', {
 	factory = false,
 })
