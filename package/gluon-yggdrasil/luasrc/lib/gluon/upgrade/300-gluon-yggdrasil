@@ -1,5 +1,8 @@
 #!/usr/bin/lua
 
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+
 -- TODO: maybe restrict multicast to mesh?
 -- TODO: userpeers with user prefix (u_) in id plus config-mode webui for that
   -- similar to static dns list field
@@ -17,3 +20,5 @@ if site.mesh.yggdrasil.enabled(false) then
 else
   os.execute('/etc/init.d/yggdrasil disable')
 end
+
+uci:save('yggdrasil')
