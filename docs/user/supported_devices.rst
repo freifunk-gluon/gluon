@@ -115,6 +115,7 @@ ath79-generic
   - UniFi AC Lite
   - UniFi AC LR
   - UniFi AC Mesh
+  - UniFi AC Mesh Pro
   - UniFi AC Pro
   - UniFi AP
   - UniFi AP LR

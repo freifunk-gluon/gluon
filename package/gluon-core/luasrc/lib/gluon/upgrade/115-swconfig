@@ -5,6 +5,7 @@ local uci = require('simple-uci').cursor()
 
 local switch_vlans = {
 	-- device identifier, lan ports, wan ports
+	["ubnt,unifiac-mesh-pro"] = {"3 0t", "2 0t"},
 	["ubnt,unifiac-pro"] = {"2 0t", "3 0t"},
 }
 

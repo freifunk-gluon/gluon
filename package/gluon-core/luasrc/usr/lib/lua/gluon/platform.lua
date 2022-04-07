@@ -44,6 +44,7 @@ function M.is_outdoor_device()
 		'ubnt,nanostation-m-xw',
 		'ubnt,unifi-ap-outdoor-plus',
 		'ubnt,unifiac-mesh',
+		'ubnt,unifiac-mesh-pro',
 	}) then
 		return true
 

@@ -59,6 +59,7 @@ elseif platform.match('ath79', 'generic', {
 	-- Temporary solution to separate interfaces in bridged default setup
 	lan_ifname, wan_ifname = 'eth0', 'eth1'
 elseif platform.match('ath79', 'generic', {
+	'ubnt,unifiac-mesh-pro',
 	'ubnt,unifiac-pro',
 }) then
 	lan_ifname, wan_ifname = 'eth0.2', 'eth0.1'
