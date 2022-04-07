@@ -1,0 +1,18 @@
+#!/usr/bin/lua
+
+local uci = require("simple-uci").cursor()
+local wireless = require 'gluon.wireless'
+
+wireless.foreach_radio(uci, function(radio)
+	local radio_name = radio['.name']
+	local suffix = radio_name:match('^radio(%d+)$')
+	local name   = "ap_" .. radio_name
+
+	if not uci:get('wireless', name, 'device') then
+		return
+	end
+
+	uci:set('wireless', name, 'ifname', suffix and 'wan' .. suffix)
+end)
+
+uci:save('wireless')
