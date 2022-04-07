@@ -12,7 +12,7 @@ wireless.foreach_radio(uci, function(radio)
 		return
 	end
 
-	uci:set('wireless', name, 'ifname', suffix and 'wan' .. suffix)
+	uci:set('wireless', name, 'ifname', suffix and 'ap' .. suffix)
 end)
 
 uci:save('wireless')
