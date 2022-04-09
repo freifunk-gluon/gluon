@@ -323,9 +323,23 @@ int oi(struct olsr_info **out) {
 	if (v2 && json_object_get_boolean(json_object_object_get(v2, "enable"))) {
 		info->olsr2.enabled = true;
 
+		// FIXME: we SHOULD use running but IT DOESN'T FUCKING EXIST
+		// use either /tmp/run/olsrd2.pid or something else...
 		if (success_exit("/etc/init.d/olsrd2", "running", NULL)) {
 			info->olsr2.running = true;
 		}
+
+		/*
+		this should be added to /etc/init.d/olsrd2 to fix it
+
+running() {
+  test -e "/tmp/run/olsrd2.pid" && test -e "/proc/$(cat "/tmp/run/olsrd2.pid")" && return 0
+  return 1
+}
+
+extra_command "running" "Check if service is running"
+
+		*/
 	}
 
 	*out = info;
