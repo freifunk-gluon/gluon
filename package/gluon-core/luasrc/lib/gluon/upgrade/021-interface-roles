@@ -7,10 +7,10 @@ local util = require 'gluon.util'
 
 -- Defaults from site.conf
 local roles = {
-	lan = site.interfaces.lan.roles({'client'}),
-	wan = site.interfaces.wan.roles({'uplink'}),
+	lan = site.interfaces.lan.default_roles({'client'}),
+	wan = site.interfaces.wan.default_roles({'uplink'}),
 }
-roles.single = site.interfaces.single.roles(roles.wan)
+roles.single = site.interfaces.single.default_roles(roles.wan)
 
 -- Migration of Mesh-on-WAN/LAN setting from Gluon 2021.1 and older (to be removed in 2024)
 --
