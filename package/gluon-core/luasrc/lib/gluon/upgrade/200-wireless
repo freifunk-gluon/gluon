@@ -16,7 +16,7 @@ if not sysconfig.gluon_version then
 	-- This is needed to distribute devices which have radios
 	-- capable of operating in the 2.4 GHz and 5 GHz band need
 	-- to be distributed evenly.
-	local radio_band_count = {band24=0, band5=0}
+	local radio_band_count = {band24=0, band5=0, band60=0}
 	wireless.foreach_radio(uci, function(radio)
 		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
 		if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
@@ -25,6 +25,8 @@ if not sysconfig.gluon_version then
 		elseif (hwmodes.a or hwmodes.ac) and not hwmodes.g then
 			-- 5 GHz
 			radio_band_count["band5"] = radio_band_count["band5"] + 1
+		elseif (hwmodes.ad) then
+			radio_band_count["band60"] = radio_band_count["band60"] + 1
 		end
 	end)
 
@@ -223,13 +225,15 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 	local ibss_disabled = is_disabled('ibss_' .. radio_name)
 	local mesh_disabled = is_disabled('mesh_' .. radio_name)
 
-	configure_ibss(config.ibss(), radio, index, suffix,
-		first_non_nil(
-			ibss_disabled,
-			mesh_disabled,
-			config.ibss.disabled(false)
+	if radio.band ~= '60g' then
+		configure_ibss(config.ibss(), radio, index, suffix,
+			first_non_nil(
+				ibss_disabled,
+				mesh_disabled,
+				config.ibss.disabled(false)
+			)
 		)
-	)
+	end
 	configure_mesh(config.mesh(), radio, index, suffix,
 		first_non_nil(
 			mesh_disabled,
@@ -291,6 +295,8 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 			configure_mesh_wireless(radio, index, config)
 		end
+	elseif (band == '60g') then
+		configure_mesh_wireless(radio, index, config, true)
 	end
 
 	uci:set('wireless', radio_name, 'beacon_int', beacon_interval)

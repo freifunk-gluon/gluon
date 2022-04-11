@@ -118,6 +118,8 @@ function M.foreach_radio(uci, f)
 			f(radio, index, site.wifi24)
 		elseif band == '5g' then
 			f(radio, index, site.wifi5)
+		elseif band == '60g' then
+			f(radio, index, site.wifi60)
 		end
 	end
 end
@@ -166,6 +168,19 @@ function M.device_uses_11a(uci)
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
 		if radio.band == '5g' then
+			ret = true
+			return false
+		end
+	end)
+
+	return ret
+end
+
+function M.device_uses_ad(uci)
+	local ret = false
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		if radio.band == '60g' then
 			ret = true
 			return false
 		end

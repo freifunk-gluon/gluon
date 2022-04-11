@@ -43,12 +43,16 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	local radio = config['.name']
 
 	local is_5ghz = false
+	local is_60ghz = false
 	local title
 	if config.band == '2g' then
 		title = translate("2.4GHz WLAN")
 	elseif config.band == '5g' then
 		is_5ghz = true
 		title = translate("5GHz WLAN")
+	elseif config.band == '60g' then
+		is_60ghz = true
+		title = translate("60Ghz WLAN")
 	else
 		return
 	end
@@ -93,8 +97,10 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return o
 	end
 
-	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
-	vif_option('ibss',  {'ibss'}, translate("Enable mesh network (IBSS, outdated)"))
+	if not is_60ghz then
+		vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
+		vif_option('ibss',  {'ibss'}, translate("Enable mesh network (IBSS, outdated)"))
+	end
 
 	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
 	if is_5ghz then
@@ -133,6 +139,8 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	if is_5ghz then
 		conf = site.wifi5
+	elseif is_60ghz then
+		conf = site.wifi60
 	else
 		conf = site.wifi24
 	end
