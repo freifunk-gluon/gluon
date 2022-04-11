@@ -16,3 +16,5 @@ local ATH10K_PACKAGES_IPQ40XX = {
 device('mikrotik-hap-ac2', 'mikrotik_hap-ac2', {
   packages = ATH10K_PACKAGES_IPQ40XX,
 })
+
+device('mikrotik-lhgg-60ad', 'mikrotik_lhgg-60ad')
