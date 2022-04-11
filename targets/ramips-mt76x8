@@ -32,6 +32,10 @@ device('ravpower-rp-wd009', 'ravpower_rp-wd009')
 
 -- TP-Link
 
+device('tp-link-archer-c20-v5', 'tplink_archer-c20-v5', {
+	factory = false,
+})
+
 device('tp-link-archer-c50-v3', 'tplink_archer-c50-v3', {
 	factory = false,
 	extra_images = {
