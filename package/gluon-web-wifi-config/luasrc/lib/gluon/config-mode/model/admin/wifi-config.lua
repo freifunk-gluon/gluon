@@ -2,6 +2,7 @@ local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
 local site = require 'gluon.site'
 local wireless = require 'gluon.wireless'
+local sysconfig = require 'gluon.sysconfig'
 
 
 local function txpower_list(phy)
@@ -100,11 +101,37 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	if not is_60ghz then
 		vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
 		vif_option('ibss',  {'ibss'}, translate("Enable mesh network (IBSS, outdated)"))
+
+		local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
+		if is_5ghz then
+			table.insert(mesh_vifs_5ghz, mesh_vif)
+		end
 	end
 
-	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
-	if is_5ghz then
-		table.insert(mesh_vifs_5ghz, mesh_vif)
+	if is_60ghz then
+		-- leftover todos for 60ghz
+		-- - since client AP on 60ghz makes no sense (and additional APs can't be created due to limit of 1 device)
+		--   a function would be needed to say "device.supports_access_points()" or "device.client_facing()" or similar
+		--   that would return a bool whether to setup & show private AP, client AP, etc options
+		-- - 802.11s on 60ghz may or may not become a thing
+		--   could be handeled dynamically. a toggle to switch between p2p and mesh if driver supports it.
+		local vif = vif_option('p2p', {'p2p'}, translate('Enable point-to-point mesh'))
+		local id = p:option(Value, radio .. '_p2pid', translate('Master ID'))
+		id.datatype = "maxlength(32)"
+		id.default = uci:get('wireless', radio, '_p2pid') or 'g-' .. string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
+		id:depends(vif, true)
+		function id:write(data)
+			uci:set('wireless', radio, '_p2pid', data)
+		end
+
+		local mode = p:option(ListValue, radio .. '_p2pmode', translate("P2P Mode (master/GO - slave/client)"))
+		mode.default = uci:get('wireless', radio, '_p2pmode') or 'master'
+		mode:value('master', translate('Master'))
+		mode:value('slave', translate('Slave'))
+		mode:depends(vif, true)
+		function mode:write(data)
+			uci:set('wireless', radio, '_p2pmode', data)
+		end
 	end
 
 	local phy = wireless.find_phy(config)

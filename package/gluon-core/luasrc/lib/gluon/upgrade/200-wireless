@@ -202,6 +202,62 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 	})
 end
 
+local function configure_p2p(config, radio, index, suffix, disabled)
+	local radio_name = radio['.name']
+	local name = 'p2p_' .. radio_name
+
+	local macfilter = uci:get('wireless', name, 'macfilter')
+	local maclist = uci:get('wireless', name, 'maclist')
+
+	uci:delete('wireless', name)
+
+	if not config then
+		return
+	end
+
+	local macaddr = wireless.get_wlan_mac(uci, radio, index, 2)
+	if not macaddr then
+		return
+	end
+
+	local master = uci:get('wireless', radio_name, '_p2pid') or string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
+	local mode = uci:get('wireless', radio_name, '_p2pmode') or 'master'
+
+	local p2pmode = nil
+
+	if mode == 'master' then
+		p2pmode = 'p2p-go'
+	end
+
+	if mode == 'slave' then
+		p2pmode = 'p2p-client'
+	end
+
+	if p2pmode == nil then
+		return
+	end
+
+	-- FIXME: id
+	-- FIXME: static ip stuffs
+
+	uci:section('network', 'interface', name, {
+		proto = 'gluon_mesh',
+		ifname = suffix and 'p2p' .. suffix,
+	})
+
+	uci:section('wireless', 'wifi-iface', name, {
+		device = radio_name,
+		network = name,
+		mode = p2pmode,
+		macaddr = macaddr,
+		mcast_rate = config.mcast_rate,
+		ifname = suffix and 'p2p' .. suffix,
+		disabled = disabled,
+		macfilter = macfilter,
+		maclist = maclist,
+	})
+end
+
 local function fixup_wan(radio, index)
 	local radio_name = radio['.name']
 	local name = 'wan_' .. radio_name
@@ -223,9 +279,18 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 	local suffix = radio_name:match('^radio(%d+)$')
 
 	local ibss_disabled = is_disabled('ibss_' .. radio_name)
+	local mesh_disabled = is_disabled('p2p_' .. radio_name)
 	local mesh_disabled = is_disabled('mesh_' .. radio_name)
 
-	if radio.band ~= '60g' then
+	if radio.band == '60g' then
+		configure_p2p(config.mesh(), radio, index, suffix,
+			first_non_nil(
+				p2p_disabled,
+				mesh_disabled,
+				config.mesh.disabled(false)
+			)
+	)
+	else
 		configure_ibss(config.ibss(), radio, index, suffix,
 			first_non_nil(
 				ibss_disabled,
@@ -233,14 +298,14 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 				config.ibss.disabled(false)
 			)
 		)
-	end
-	configure_mesh(config.mesh(), radio, index, suffix,
-		first_non_nil(
-			mesh_disabled,
-			ibss_disabled,
-			config.mesh.disabled(false)
+		configure_mesh(config.mesh(), radio, index, suffix,
+			first_non_nil(
+				mesh_disabled,
+				ibss_disabled,
+				config.mesh.disabled(false)
+			)
 		)
-	)
+	end
 end
 
 wireless.foreach_radio(uci, function(radio, index, config)
