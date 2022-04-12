@@ -211,8 +211,8 @@ mediatek-mt7622
 
   - UniFi 6 LR
 
-mpc85xx-generic
----------------
+mpc85xx-p1010
+-------------
 
 * Sophos
 
