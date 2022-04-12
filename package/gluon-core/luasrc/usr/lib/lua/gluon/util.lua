@@ -158,7 +158,8 @@ function M.get_role_interfaces(uci, role, exclusive)
 	end
 
 	uci:foreach('gluon', 'interface', function(s)
-		if M.contains(s.role, role) and (not exclusive or #s.role == 1) then
+		local roles = s.role or {}
+		if M.contains(roles, role) and (not exclusive or #roles == 1) then
 			add(s.name)
 		end
 	end)
