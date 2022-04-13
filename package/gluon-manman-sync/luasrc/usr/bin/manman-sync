@@ -377,7 +377,7 @@ local function enable_sync(location, node)
   end
 
   if not uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
-    uci:set('gluon-manman-sync', 'sync', 'enabled', false)
+    uci:set('gluon-manman-sync', 'sync', 'enabled', true)
     print('Enabled sync.')
     print('Trigger with manman-sync sync')
   else
