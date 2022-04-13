@@ -12,6 +12,87 @@ local hostname = pretty_hostname.get(uci)
 
 local manapi = site.manman.api()
 local mankey = site.manman.key()
+
+-- CLI lib from olsrd-cli (todo: move to it's own lib package)
+-- DO NOT EDIT HERE, JUST COPY FROM THERE
+
+function printf(...)
+	print(string.format(...))
+end
+
+-- Print contents of `tbl`, with indentation.
+-- `indent` sets the initial level of indentation.
+-- src https://gist.github.com/xytis/5361405
+function tprint (tbl, indent)
+  if not indent then indent = 0 end
+  for k, v in pairs(tbl) do
+    formatting = string.rep('  ', indent) .. k .. ': '
+    if type(v) == 'table' then
+      print(formatting)
+      tprint(v, indent + 1)
+    else
+      print(formatting .. tostring(v))
+    end
+  end
+end
+
+-- src https://stackoverflow.com/a/24823383/3990041
+function table.slice(tbl, first, last, step)
+  local sliced = {}
+
+  for i = first or 1, last or #tbl, step or 1 do
+    sliced[#sliced+1] = tbl[i]
+  end
+
+  return sliced
+end
+
+-- CLI lib
+
+function exec_cmd(args, sub)
+	if sub[args[1]] == nil then
+		return cmd_err('does not exist')
+	else
+		local cmd = sub[args[1]]
+		if cmd[3] ~= nil and #args > 1 then
+			exec_cmd(table.slice(args, 2), cmd[3])
+		else
+			cmd[1](unpack(table.slice(args, 2)))
+		end
+	end
+end
+
+function list_cmd(level, sub)
+	for key, cmd in pairs(sub) do
+		printf('%s%s: %s', string.rep('  ', level), key, cmd[2])
+		if cmd[3] ~= nil then
+			list_cmd(level + 1, cmd[3])
+		end
+	end
+end
+
+function show_help()
+	printf('Usage: %s <command>', arg[0])
+	list_cmd(1, sub)
+end
+
+function cmd_err(msg, no_show_help)
+	-- since argv0 is at... well... 0... even though this is lua...
+	--- ...slice just returns arg without argv0 as the for starts at 1
+	printf('Error: Command "%s" %s', table.concat(table.slice(arg), ' '), msg)
+	if not no_show_help then
+		printf('')
+		show_help()
+	end
+	os.exit(2)
+end
+
+function dummy()
+	cmd_err('requires a subcommand')
+end
+
+-- ///
+
 -- TODO: use manman ecdsa key to verify response
 
 -- NOTE: these will have mesh_ appended for static-ip
@@ -97,11 +178,9 @@ local function fetch_signed_json(remote, url)
   return false, obj
 end
 
-if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
-  local location_id = uci:get('gluon-manman-sync', 'sync', 'location_id')
-
-  if not location_id then
-    print('E: manman location_id missing')
+local function do_manman_sync()
+  if not uci:get('gluon-manman-sync', 'sync', 'location_id') and not uci:get('gluon-manman-sync', 'sync', 'location') then
+    print('E: manman location missing')
     return 2
   end
 
@@ -133,12 +212,29 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   -- try to fetch data
   print('Fetching manman data...')
+  local location_id = uci:get('gluon-manman-sync', 'sync', 'location_id')
+  local location = uci:get('gluon-manman-sync', 'sync', 'location')
+
+  if not location_id and location then
+    local err, resp = fetch_signed_json(working_remote, '/find_location_by_name/' .. location)
+    if err then
+      return err
+    end
+
+    if not resp.id then
+      printf('E: location %s is invalid (404)', location)
+      return 2
+    end
+  end
+
   local err, location = fetch_signed_json(working_remote, '/location/show/' .. location_id)
   if err then
     return err
   end
 
   print('Syncing with location ' .. location.location.name)
+
+  uci:set('gluon-manman-sync', 'sync', 'location', location.location.name)
 
   if uci:get('gluon-manman-sync', 'sync', 'last_data') and json.stringify(location) == uci:get('gluon-manman-sync', 'sync', 'last_data') then
     print('Nothing changed, skipping sync')
@@ -255,6 +351,71 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   else
     print('No settings changes, no reason to reload')
   end
-else
-  print('manman-sync not enabled, skipping')
 end
+
+local function maybe_sync()
+  if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
+    do_manman_sync()
+  else
+    print('manman-sync not enabled, skipping')
+  end
+end
+
+local function enable_sync(location, node)
+  if not uci:get('gluon-manman-sync', 'sync', 'location') and not uci:get('gluon-manman-sync', 'sync', 'location_id') and not location then
+    cmd_err('requires at least a location (No location was found in config)', true)
+  end
+
+  if location then
+    printf('Config location %s', location)
+    uci:set('gluon-manman-sync', 'sync', location)
+  end
+
+  if node then
+    printf('Config node %s', node)
+    uci:set('gluon-manman-sync', 'sync', node)
+  end
+
+  if not uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
+    uci:set('gluon-manman-sync', 'sync', 'enabled', false)
+    print('Enabled sync.')
+    print('Trigger with manman-sync sync')
+  else
+    print('Sync already enabled.')
+  end
+
+  uci:save('gluon-manman-sync')
+end
+
+local function disable_sync()
+  if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
+    uci:set('gluon-manman-sync', 'sync', 'enabled', false)
+    print('Disabled sync.')
+    uci:save('gluon-manman-sync')
+  end
+end
+
+local function show_info()
+  tprint({
+    enabled = uci:get_bool('gluon-manman-sync', 'sync', 'enabled'),
+    location = string.format('%s (id %s)',
+      uci:get('gluon-manman-sync', 'sync', 'location') or '[none]',
+      uci:get('gluon-manman-sync', 'sync', 'location_id') or '[will autodetect]'
+    ),
+    d = string.format('%s (id %s)',
+      uci:get('gluon-manman-sync', 'sync', 'node') or '[none - use only available or error]',
+      uci:get('gluon-manman-sync', 'sync', 'node_id') or '[will autodetect]'
+    ),
+  })
+end
+
+sub = {
+	info = { show_info, 'Show manman-sync configuration' },
+	help = { show_help, 'Show help' },
+  sync = { maybe_sync, 'Trigger a manman-sync' },
+  force_sync = { do_manman_sync, 'Trigger a manman-sync, despite being disabled' },
+  enable = { enable_sync, 'Enable sync. [<location>] [<node>]' },
+  disable = { disable_sync, 'Disable sync.' }
+}
+
+exec_cmd(table.slice(arg), sub)
