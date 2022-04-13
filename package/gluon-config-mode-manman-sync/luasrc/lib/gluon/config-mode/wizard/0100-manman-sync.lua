@@ -31,6 +31,9 @@ return function(form, uci)
 	id.default = uci:get('gluon-manman-sync', 'sync', 'node')
 	id.datatype = 'maxlength(16)'
 	function id:write(data)
+		-- so ID gets fetched from manman-sync again
+		uci:set('gluon-manman-sync', 'sync', 'node_id', nil)
+
 		uci:set('gluon-manman-sync', 'sync', 'node', data)
 	end
 

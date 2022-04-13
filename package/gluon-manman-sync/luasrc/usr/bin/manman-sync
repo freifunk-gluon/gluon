@@ -152,13 +152,14 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
     end
   end
 
-  local local_node = uci:get('gluon-manman-sync', 'sync', 'node') or local_router_id
+  local local_node_name = uci:get('gluon-manman-sync', 'sync', 'node') or local_router_id
+  local local_node = uci:get('gluon-manman-sync', 'sync', 'node_id') or local_router_id
   local node
   local should_hostname
 
   if #location.nodes > 1 then
     for _, potential_node in ipairs(location.nodes) do
-      if potential_node.name == local_node then
+      if (local_node ~= nil and potential_node.name == local_node) or (local_node_name ~= nil and potential_node.name == local_node_name) then
         node = potential_node
         should_hostname = location.location.name .. '-' .. node.name
       end
@@ -166,9 +167,11 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
   else
     node = location.nodes[1]
     should_hostname = location.location.name
-    -- save node in csse this location gets more nodes
-    uci:set('gluon-manman-sync', 'sync', 'node', node.name)
   end
+
+  -- save node data to update name and persist ID
+  uci:set('gluon-manman-sync', 'sync', 'node_id', node.id)
+  uci:set('gluon-manman-sync', 'sync', 'node', node.name)
 
   if node == nil then
     print('E: unable to find matching node (selector "' .. node .. '")')
