@@ -368,12 +368,12 @@ local function enable_sync(location, node)
 
   if location then
     printf('Config location %s', location)
-    uci:set('gluon-manman-sync', 'sync', location)
+    uci:set('gluon-manman-sync', 'sync', 'location', location)
   end
 
   if node then
     printf('Config node %s', node)
-    uci:set('gluon-manman-sync', 'sync', node)
+    uci:set('gluon-manman-sync', 'sync', 'node', node)
   end
 
   if not uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
