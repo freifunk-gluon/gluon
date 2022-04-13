@@ -159,7 +159,7 @@ if uci:get_bool('gluon-manman-sync', 'sync', 'enabled') then
 
   if #location.nodes > 1 then
     for _, potential_node in ipairs(location.nodes) do
-      if (local_node ~= nil and potential_node.name == local_node) or (local_node_name ~= nil and potential_node.name == local_node_name) then
+      if (local_node ~= nil and tostring(potential_node.id) == local_node) or (local_node_name ~= nil and potential_node.name == local_node_name) then
         node = potential_node
         should_hostname = location.location.name .. '-' .. node.name
       end
