@@ -4,15 +4,18 @@ msgstr "Content-Type: text/plain; charset=UTF-8"
 msgid "Enable ManMan sync"
 msgstr ""
 
-msgid "ManMan location ID"
+msgid "ManMan location"
 msgstr ""
 
 msgid "ManMan node (optional)"
 msgstr ""
 
+msgid "Required if multiple nodes in location"
+msgstr ""
+
 msgid ""
 "Sync configuration from ManMan "
-"by entering ManMan location id here.\n"
+"by entering ManMan location and node name here.<br>"
 "This will automatically keep name, location and ips "
 "in sync with the values specified in ManMan."
 msgstr ""

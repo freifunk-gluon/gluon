@@ -3,7 +3,7 @@ return function(form, uci)
 
 	local msg = pkg_i18n.translate(
 		'Sync configuration from ManMan ' ..
-			'by entering ManMan location id here.\n' ..
+			'by entering ManMan location and node name here.<br>' ..
 		'This will automatically keep name, location and ips ' ..
 			'in sync with the values specified in ManMan.'
 	)
@@ -18,20 +18,23 @@ return function(form, uci)
 		uci:set('gluon-manman-sync', 'sync', 'enabled', data)
 	end
 
-	local id = s:option(Value, 'manman_id', pkg_i18n.translate('ManMan location ID'))
+	local id = s:option(Value, 'manman_location', pkg_i18n.translate('ManMan location'))
 	id:depends(manman, true)
-	id.default = uci:get('gluon-manman-sync', 'sync', 'location_id')
-	id.datatype = 'uinteger'
+	id.default = uci:get('gluon-manman-sync', 'sync', 'location')
+	id.datatype = 'maxlength(16)'
 	function id:write(data)
-		uci:set('gluon-manman-sync', 'sync', 'location_id', data)
+		-- clear ID, gets fetched from manman-sync
+		uci:set('gluon-manman-sync', 'sync', 'location_id', nil)
+
+		uci:set('gluon-manman-sync', 'sync', 'location', data)
 	end
 
-	local id = s:option(Value, 'manman_node', pkg_i18n.translate('ManMan node (optional)'))
+	local id = s:option(Value, 'manman_node', pkg_i18n.translate('ManMan node (optional)'), pkg_i18n.translate('Required if multiple nodes in location'))
 	id:depends(manman, true)
 	id.default = uci:get('gluon-manman-sync', 'sync', 'node')
 	id.datatype = 'maxlength(16)'
 	function id:write(data)
-		-- so ID gets fetched from manman-sync again
+		-- clear ID, gets fetched from manman-sync
 		uci:set('gluon-manman-sync', 'sync', 'node_id', nil)
 
 		uci:set('gluon-manman-sync', 'sync', 'node', data)
