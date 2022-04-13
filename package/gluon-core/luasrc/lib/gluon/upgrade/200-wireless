@@ -220,24 +220,9 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 		return
 	end
 
-	local master = uci:get('wireless', radio_name, '_p2pid') or string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
-	local mode = uci:get('wireless', radio_name, '_p2pmode') or 'master'
+	local ssid = uci:get('wireless', name, 'ssid') or string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
+	local mode = uci:get('wireless', name, 'mode') or 'ap'
 
-	local p2pmode = nil
-
-	if mode == 'master' then
-		p2pmode = 'p2p-go'
-	end
-
-	if mode == 'slave' then
-		p2pmode = 'p2p-client'
-	end
-
-	if p2pmode == nil then
-		return
-	end
-
-	-- FIXME: id
 	-- FIXME: static ip stuffs
 
 	uci:section('network', 'interface', name, {
@@ -248,7 +233,8 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 	uci:section('wireless', 'wifi-iface', name, {
 		device = radio_name,
 		network = name,
-		mode = p2pmode,
+		ssid = ssid,
+		mode = mode,
 		macaddr = macaddr,
 		mcast_rate = config.mcast_rate,
 		ifname = suffix and 'p2p' .. suffix,

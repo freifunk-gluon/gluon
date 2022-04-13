@@ -109,25 +109,26 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	end
 
 	if is_60ghz then
+		local name6 = 'p2p_' .. radio
 		-- leftover todos for 60ghz
 		-- - since client AP on 60ghz makes no sense (and additional APs can't be created due to limit of 1 device)
 		--   a function would be needed to say "device.supports_access_points()" or "device.client_facing()" or similar
 		--   that would return a bool whether to setup & show private AP, client AP, etc options
 		-- - 802.11s on 60ghz may or may not become a thing
 		--   could be handeled dynamically. a toggle to switch between p2p and mesh if driver supports it.
-		local vif = vif_option('p2p', {'p2p'}, translate('Enable point-to-point mesh'))
-		local id = p:option(Value, radio .. '_p2pid', translate('Master ID'))
+		local vif = vif_option('p2p', {'p2p'}, translate('Enable point-to-point AP/STA mesh'))
+		local id = p:option(Value, radio .. '_p2pid', translate('SSID'))
 		id.datatype = "maxlength(32)"
-		id.default = uci:get('wireless', radio, '_p2pid') or 'g-' .. string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
+		id.default = uci:get('wireless', name6, 'ssid') or 'g-' .. string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
 		id:depends(vif, true)
 		function id:write(data)
-			uci:set('wireless', radio, '_p2pid', data)
+			uci:set('wireless', name6, 'ssid', data)
 		end
 
-		local mode = p:option(ListValue, radio .. '_p2pmode', translate("P2P Mode (master/GO - slave/client)"))
-		mode.default = uci:get('wireless', radio, '_p2pmode') or 'master'
-		mode:value('master', translate('Master'))
-		mode:value('slave', translate('Slave'))
+		local mode = p:option(ListValue, radio .. '_p2pmode', translate("P2P Mode (master/ap - slave/station)"))
+		mode.default = uci:get('wireless', name6, 'mode') or 'ap'
+		mode:value('ap', translate('Master'))
+		mode:value('station', translate('Slave'))
 		mode:depends(vif, true)
 		function mode:write(data)
 			uci:set('wireless', radio, '_p2pmode', data)
