@@ -126,6 +126,8 @@ local function shuffle(tbl)
 end
 
 local function fetch_signed_json(remote, url)
+  print('GET ' .. url)
+
   local code, res, result = fetch.request_raw(remote .. url)
 
   if code < 1 then
@@ -148,7 +150,7 @@ local function fetch_signed_json(remote, url)
   -- this is a hack to fish it out, it is irrelevant on unaffected reverse proxies
   local j_start = result:find('{')
   local j_end = (result:reverse()):find("}")
-  result = string.sub(result, j_start, 1 - j_end)
+  result = string.sub(result, j_start, (1 - j_end) > 0 and (1 - j_end) or nil)
 
   local sig = res.headers['x-ecdsa']
   local ts = res.headers['x-ecdsa-ts']
@@ -225,6 +227,9 @@ local function do_manman_sync()
       printf('E: location %s is invalid (404)', location)
       return 2
     end
+
+    uci:set('gluon-manman-sync', 'sync', 'location_id', resp.id)
+    location_id = resp.id
   end
 
   local err, location = fetch_signed_json(working_remote, '/location/show/' .. location_id)
@@ -402,7 +407,7 @@ local function show_info()
       uci:get('gluon-manman-sync', 'sync', 'location') or '[none]',
       uci:get('gluon-manman-sync', 'sync', 'location_id') or '[will autodetect]'
     ),
-    d = string.format('%s (id %s)',
+    node = string.format('%s (id %s)',
       uci:get('gluon-manman-sync', 'sync', 'node') or '[none - use only available or error]',
       uci:get('gluon-manman-sync', 'sync', 'node_id') or '[will autodetect]'
     ),
