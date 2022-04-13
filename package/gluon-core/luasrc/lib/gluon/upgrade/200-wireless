@@ -209,6 +209,9 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 	local macfilter = uci:get('wireless', name, 'macfilter')
 	local maclist = uci:get('wireless', name, 'maclist')
 
+	local ssid = uci:get('wireless', name, 'ssid') or string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
+	local mode = uci:get('wireless', name, 'mode') or 'ap'
+
 	uci:delete('wireless', name)
 
 	if not config then
@@ -219,9 +222,6 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 	if not macaddr then
 		return
 	end
-
-	local ssid = uci:get('wireless', name, 'ssid') or string.sub(string.gsub(sysconfig.primary_mac, ':', ''), 8)
-	local mode = uci:get('wireless', name, 'mode') or 'ap'
 
 	-- FIXME: static ip stuffs
 
@@ -238,6 +238,7 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 		macaddr = macaddr,
 		mcast_rate = config.mcast_rate,
 		ifname = suffix and 'p2p' .. suffix,
+		encryption = 'none',
 		disabled = disabled,
 		macfilter = macfilter,
 		maclist = maclist,

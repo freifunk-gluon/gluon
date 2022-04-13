@@ -125,13 +125,13 @@ uci:foreach('wireless', 'wifi-device', function(config)
 			uci:set('wireless', name6, 'ssid', data)
 		end
 
-		local mode = p:option(ListValue, radio .. '_p2pmode', translate("P2P Mode (master/ap - slave/station)"))
+		local mode = p:option(ListValue, radio .. '_p2pmode', translate("P2P Mode"), translate("Master=AP Slave=Station"))
 		mode.default = uci:get('wireless', name6, 'mode') or 'ap'
 		mode:value('ap', translate('Master'))
 		mode:value('station', translate('Slave'))
 		mode:depends(vif, true)
 		function mode:write(data)
-			uci:set('wireless', radio, '_p2pmode', data)
+			uci:set('wireless', name6, 'mode', data)
 		end
 	end
 
