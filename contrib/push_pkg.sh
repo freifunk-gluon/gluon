@@ -9,6 +9,19 @@ ssh_host=localhost
 build_only=0
 preserve_config=1
 
+# Starting from OpenSSH 9.0p, scp started to use sftp in favor of the scp protocol by
+# default. As dropbear in OpenWrt currently does not support sftp by default, we need
+# to use the fallback cli switch "-O" to use the scp protocol for scp. As OpenSSH does
+# not support "-O" for longer than version 8.7p, we can not just use this cli switch
+# "-O" unconditionally.
+ssh_version="$(ssh -V 2>&1 | cut -d ',' -f 1)"
+openssh_major_version="$(echo "$ssh_version" | sed 's/OpenSSH_//' | cut -d '.' -f 1)"
+
+scp_options=
+if echo "$ssh_version" | grep -q ^OpenSSH_ && [ "$openssh_major_version" -gt 8 ]; then
+	scp_options=-O
+fi
+
 print_help() {
 	echo "$0 [OPTIONS] PACAKGE_DIR [PACKAGE_DIR] ..."
 	echo ""
@@ -127,7 +140,7 @@ while [ $# -gt 0 ]; do
 
 		# shellcheck disable=SC2029
 		if [ -n "$filename" ]; then
-			scp -P "${ssh_port}" "$feed/$filename" "root@${BL}${ssh_host}${BR}:/tmp/${filename}"
+			scp $scp_options -P "${ssh_port}" "$feed/$filename" "root@${BL}${ssh_host}${BR}:/tmp/${filename}"
 			ssh -p "${ssh_port}" "root@${ssh_host}" "
 				set -e
 				echo Running opkg:
