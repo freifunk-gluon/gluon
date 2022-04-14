@@ -127,7 +127,7 @@ while [ $# -gt 0 ]; do
 
 		# shellcheck disable=SC2029
 		if [ -n "$filename" ]; then
-			scp -P "${ssh_port}" "$feed/$filename" "root@${BL}${ssh_host}${BR}:/tmp/${filename}"
+			scp -O -P "${ssh_port}" "$feed/$filename" "root@${BL}${ssh_host}${BR}:/tmp/${filename}"
 			ssh -p "${ssh_port}" "root@${ssh_host}" "
 				set -e
 				echo Running opkg:
