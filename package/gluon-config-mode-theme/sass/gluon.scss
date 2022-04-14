@@ -366,6 +366,13 @@ input[type=password] {
 	min-width: 20em;
 }
 
+.gluon-multi-list-option-descr {
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 0.35em;
+	margin-left: 0.4em;
+}
+
 .gluon-button {
 	@include button;
 

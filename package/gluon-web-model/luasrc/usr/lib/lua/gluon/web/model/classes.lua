@@ -361,6 +361,60 @@ function ListValue:validate()
 end
 
 
+local MultiListValue = class(AbstractValue)
+M.MultiListValue = MultiListValue
+
+function MultiListValue:__init__(...)
+	AbstractValue.__init__(self, ...)
+	self.subtemplate  = "model/mlvalue"
+
+	self.size = 1
+
+	self.keys = {}
+	self.entry_list = {}
+end
+
+function MultiListValue:value(key, val, ...)
+	key = tostring(key)
+
+	if self.keys[key] then
+		return
+	end
+	self.keys[key] = true
+
+	val = val or key
+	table.insert(self.entry_list, {
+		key = key,
+		value = tostring(val),
+		deps = {...},
+	})
+end
+
+function MultiListValue:entries()
+	local ret = {unpack(self.entry_list)}
+
+	return ret
+end
+
+function MultiListValue:validate()
+	for _, val in ipairs(self.data) do
+		if not self.keys[val] then
+			return false
+		end
+	end
+
+	return true
+end
+
+function MultiListValue:defaultvalue()
+	return self.default or {}
+end
+
+function MultiListValue:formvalue(http)
+	return http:formvaluetable(self:id())
+end
+
+
 local DynamicList = class(AbstractValue)
 M.DynamicList = DynamicList
 

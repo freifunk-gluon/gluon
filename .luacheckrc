@@ -50,6 +50,7 @@ files["package/**/check_site.lua"] = {
 
 files["package/**/luasrc/lib/gluon/config-mode/*"] = {
 	globals = {
+		"MultiListValue",
 		"DynamicList",
 		"Flag",
 		"Form",
