@@ -1,0 +1,21 @@
+<form method="post" enctype="multipart/form-data" action="<%|url(request)%>">
+	<% if self.error then %>
+	<p class="error"><%=self.error%></p>
+	<% end %>
+
+	<div class="gluon-section-node">
+		<div class="gluon-value">
+			<label class="gluon-value-title">
+				<%=self.title%>
+			</label>
+			<div class="gluon-value-field">
+				<input type="file" name="file">
+			</div>
+		</div>
+	</div>
+
+	<div class="gluon-page-actions">
+		<input type="hidden" name="step" value="2">
+		<input class="gluon-button gluon-button-submit" type="submit" value="<%:Upload%>">
+	</div>
+</form>

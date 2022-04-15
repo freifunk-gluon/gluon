@@ -189,6 +189,21 @@ function Node:handle()
 end
 
 
+local File = class(Node)
+M.File = File
+
+function File:__init__(...)
+	Node.__init__(self, ...)
+
+	self.default   = nil
+	self.size      = nil
+	self.optional  = false
+
+	self.template  = "model/file"
+
+	self.error = false
+end
+
 local Template = class(Node)
 M.Template = Template
 
