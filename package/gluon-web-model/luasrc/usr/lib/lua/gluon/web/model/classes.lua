@@ -188,6 +188,28 @@ function Node:handle()
 	end
 end
 
+local Info = class(Node)
+M.Info = Info
+
+function Info:__init__(...)
+	Node.__init__(self, ...)
+
+	self.default   = nil
+	self.size      = nil
+	self.optional  = false
+
+	self.template  = "model/info"
+
+	self.error = false
+end
+
+function Info:setcontent(content)
+	self.content = content
+end
+
+function Info:settitle(title)
+	self.title = title
+end
 
 local File = class(Node)
 M.File = File
