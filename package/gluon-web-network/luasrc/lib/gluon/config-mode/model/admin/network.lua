@@ -16,6 +16,9 @@ local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
 local dns_static = uci:get_first("gluon-wan-dnsmasq", "static")
 
+local files = require 'posix.dirent'.files
+local unistd = require "posix.unistd"
+
 local f = Form(translate("WAN connection"))
 
 local s = f:section(Section)
@@ -76,36 +79,60 @@ end
 
 s = f:section(Section)
 
-local wired_mesh_help = {
-	single = translate('Enable meshing on the Ethernet interface'),
-	wan = translate('Enable meshing on the WAN interface'),
-	lan = translate('Enable meshing on the LAN interface'),
-}
+local function has_devtype(iface_dir, devtype)
+	return util.file_contains_line(iface_dir..'/uevent', 'DEVTYPE='..devtype)
+end
 
-local function wired_mesh(iface)
-	if not sysconfig[iface .. '_ifname'] then return end
-	local iface_roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
+local function is_physical(iface_dir)
+	return unistd.access(iface_dir .. '/device') == 0
+end
 
-	local option = s:option(Flag, 'mesh_' .. iface, wired_mesh_help[iface])
-	option.default = util.contains(iface_roles, 'mesh') ~= false
+local function ethernet_interfaces()
+	local eth_ifaces = {}
+	local ifaces_dir = '/sys/class/net/'
 
-	function option:write(data)
-		local roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
-		if data then
-			util.add_to_set(roles, 'mesh')
-		else
-			util.remove_from_set(roles, 'mesh')
+	for iface in files(ifaces_dir) do
+		if iface ~= '.' and iface ~= '..' then
+			local iface_dir = ifaces_dir .. iface
+			if (is_physical(iface_dir) and not has_devtype(iface_dir, 'wlan'))
+			   or has_devtype(iface_dir, 'vlan') then
+				table.insert(eth_ifaces, iface)
+			end
 		end
-		uci:set_list('gluon', 'iface_' .. iface, 'role', roles)
+	end
 
-		-- Reconfigure on next reboot
-		uci:set('gluon', 'core', 'reconfigure', true)
+	return eth_ifaces
+end
+
+local items = {}
+for _, iface in ipairs(ethernet_interfaces()) do
+	-- TODO: here we assume lan_ifname, ... just contain a single line
+	if sysconfig['lan_ifname'] == iface then
+		table.insert(items, {'lan', 'Roles of the LAN-Interface'})
+	elseif sysconfig['wan_ifname'] == iface then
+		table.insert(items, {'wan', 'Roles of the WAN-Interface'})
+	elseif sysconfig['single_ifname'] == iface then
+		table.insert(items, {'single', 'Roles of the Main-Interface'})
+	else
+		table.insert(items, {iface, 'Roles of Interface '..iface})
 	end
 end
 
-wired_mesh('single')
-wired_mesh('wan')
-wired_mesh('lan')
+for _, iface in ipairs(items) do
+	ifaces = s:option(MultiListValue, iface[1], iface[2])
+	ifaces.widget = 'radio'
+	ifaces.orientation = 'horizontal'
+	ifaces:value('uplink', 'Uplink') -- TODO: Uplink and Client should be mutually exclusive.
+	ifaces:value('mesh', 'Mesh')
+	ifaces:value('client', 'Client')
+
+	ifaces.default = uci:get_list("gluon", "iface_"..iface[1], "role")
+
+	function ifaces:write(data)
+		-- TODO: create section (and assign name) if not existing
+		uci:set_list("gluon", "iface_"..iface[1], "role", data)
+	end
+end
 
 local section
 uci:foreach("system", "gpio_switch", function(si)
