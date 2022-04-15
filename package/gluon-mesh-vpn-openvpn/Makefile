@@ -7,7 +7,7 @@ include ../gluon.mk
 
 define Package/gluon-mesh-vpn-openvpn
   TITLE:=Support for connecting meshes via custom openvpn configuration
-  DEPENDS:=+gluon-core +gluon-mesh-vpn-core +openvpn
+  DEPENDS:=+gluon-core +gluon-mesh-vpn-core +openvpn +lua-openssl
 endef
 
 $(eval $(call BuildPackageGluon,gluon-mesh-vpn-openvpn))
