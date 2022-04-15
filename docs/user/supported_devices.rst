@@ -44,7 +44,7 @@ ath79-generic
 
 * Netgear
 
-  - WNDR3700 (v2)
+  - WNDR3700 (v1, v2)
 
 * OCEDO
 
