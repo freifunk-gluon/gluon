@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2015-05-03 20:39+0200\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Mesh VPN"
+msgstr "Mesh-VPN"
+
+msgid "Key %s, %s bits"
+msgstr "Schlüssel %s, %s bits"
+
+msgid "CA Certificate \"%s\""
+msgstr "CA Zertifikat \"%s\""
+
+msgid "Certificate \"%s\" from \"%s\""
+msgstr "Zertifikat \"%s\" von \"%s\""
+
+msgid "Configured, %s"
+msgstr "Konfiguriert, %s"
+
+msgid "Not configured"
+msgstr "Nicht konfiguriert"
+
+msgid "Successfully installed %s"
+msgstr "%s erfolgreich installiert"
+
+msgid "Error: Unknown file"
+msgstr "Fehler: Unbekkannte Datei"
+
+msgid "CA Cert"
+msgstr "CA Zertifikat"
+
+msgid "Mesh Cert"
+msgstr "Mesh Zertifikat"
+
+msgid "Mesh Key"
+msgstr "Mesh Schlüssel"
+
+msgid "Upload .tar.gz, key, CA or cert"
+msgstr "Lade ein .tar.gz, Schlüssel, CA oder Zertifikat hoch"
