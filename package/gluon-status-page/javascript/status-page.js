@@ -444,7 +444,7 @@
 	}
 
 	function Neighbour(iface, addr, color, destroy) {
-		var th = iface.tbody.firstElementChild;
+		var th = iface.tbody.querySelector('tr');
 		var el = iface.tbody.insertRow();
 
 		var tdHostname = el.insertCell();
@@ -692,7 +692,7 @@
 		}
 
 		var info = {
-			'tbody': el.firstElementChild.firstElementChild,
+			'tbody': el.querySelector('tbody'),
 			'signalgraph': signalgraph,
 			'ifname': ifname,
 			'wireless': wireless,
