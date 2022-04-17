@@ -388,6 +388,11 @@ device('ubiquiti-unifi-ac-mesh', 'ubnt_unifiac-mesh', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
+device('ubiquiti-unifi-ac-pro', 'ubnt_unifiac-pro', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 	aliases = {
 		'ubiquiti-unifi-ap-lr',
