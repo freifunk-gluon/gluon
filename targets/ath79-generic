@@ -355,6 +355,7 @@ device('tp-link-tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4', {
 		'tp-link-tl-wr1043n-nd-v4', -- upgrade from OpenWrt 19.07
 	},
 })
+device('tp-link-tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
 
 device('tp-link-wbs210-v1', 'tplink_wbs210-v1', {
 	manifest_aliases = {

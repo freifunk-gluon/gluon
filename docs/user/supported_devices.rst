@@ -88,7 +88,7 @@ ath79-generic
   - TL-WDR4300 (v1)
   - TL-WR810N (v1)
   - TL-WR842N/ND (v3)
-  - TL-WR1043N/ND (v2, v3, v4)
+  - TL-WR1043N/ND (v2, v3, v4, v5)
   - WBS210 (v1.20)
   - WBS210 (v2.0)
 
