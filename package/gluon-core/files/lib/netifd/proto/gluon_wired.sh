@@ -56,6 +56,12 @@ proto_gluon_wired_setup() {
         proto_init_update "$ifname" 1
         proto_send_update "$config"
 
+        if [ -d "/sys/devices/virtual/net/${ifname}/bridge" ]; then
+                for brif in "/sys/class/net/${ifname}/brif/"* ; do
+                        echo 1 > "${brif}/isolated"
+                done
+        fi
+
         if [ "$vxlan" -eq 1 ]; then
                 meshif="vx_$config"
 
