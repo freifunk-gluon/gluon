@@ -41,6 +41,10 @@ ath79-generic
 
   - JT-OR750i
 
+* Netgear
+
+  - WNDR3700 (v2)
+
 * OCEDO
 
   - Raccoon
