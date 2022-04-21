@@ -36,6 +36,7 @@ function M.is_outdoor_device()
 		'tplink,eap225-outdoor-v1',
 		'tplink,wbs210-v1',
 		'tplink,wbs210-v2',
+		'ubnt,nanostation-loco-m',
 		'ubnt,nanostation-m-xw',
 		'ubnt,unifiac-mesh',
 	}) then
