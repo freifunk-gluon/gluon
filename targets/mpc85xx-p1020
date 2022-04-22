@@ -1,3 +1,11 @@
+local ATH10K_PACKAGES_QCA9880 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca988x',
+	'-ath10k-firmware-qca988x-ct',
+}
+
 -- Aerohive
 
 device('aerohive-hiveap-330', 'aerohive_hiveap-330', {
@@ -9,6 +17,14 @@ device('aerohive-hiveap-330', 'aerohive_hiveap-330', {
 
 device('enterasys-ws-ap3710i', 'enterasys_ws-ap3710i', {
 	factory = false,
+})
+
+
+-- Extreme Networks
+
+device('extreme-networks-ws-ap3825i', 'extreme-networks_ws-ap3825i', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
 })
 
 
