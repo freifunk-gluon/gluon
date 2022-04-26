@@ -12,6 +12,9 @@ start() {
 	if [ -z $status_led ]; then
 		status_led="$running"
 	fi
+	if [ -z $status_led ]; then
+		status_led="$boot"
+	fi
 
 	status_led_set_timer 1000 300
 }
