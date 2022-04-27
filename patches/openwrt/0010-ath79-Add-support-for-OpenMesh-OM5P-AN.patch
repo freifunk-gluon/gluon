@@ -67,7 +67,7 @@ Signed-off-by: Sven Eckelmann <sven@narfation.org>
 (cherry picked from commit 72ef5945508193228544bcd7fcfe81b32e8dc042)
 
 diff --git a/package/boot/uboot-envtools/files/ath79 b/package/boot/uboot-envtools/files/ath79
-index 08c066c3494e8ea6fa5db639e11caa6406f3c6f9..78e5fc0a2be25e1ed676ac647214f237f29b4667 100644
+index 0fe6d046c35a09d8b61974c92ffbc6568e74faf1..739b595a61000273e40c3cab410ea398f7d5db00 100644
 --- a/package/boot/uboot-envtools/files/ath79
 +++ b/package/boot/uboot-envtools/files/ath79
 @@ -58,6 +58,7 @@ openmesh,mr900-v2|\
@@ -301,10 +301,10 @@ index 0000000000000000000000000000000000000000..6950ba3a2936cf8c9b12a22c966dc3b9
 +	};
 +};
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/01_leds b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-index 68ea4281a56bff44147c7792990cc1e26bc10a7c..403ca9edd940d76bf9695cc18fe0c8cdd7e22967 100755
+index 0f37e086b336af07abffb62ec3c4d47ca412ec3e..236703b7d958d13136a0be3744cd35a65adcfda1 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/01_leds
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-@@ -261,6 +261,10 @@ openmesh,om5p-ac-v1)
+@@ -262,6 +262,10 @@ openmesh,om5p-ac-v1)
  	ucidef_set_led_netdev "lan" "LAN" "blue:lan" "eth0"
  	ucidef_set_led_netdev "wan" "WAN" "blue:wan" "eth1"
  	;;
@@ -344,7 +344,7 @@ index 2cac42c9feaed3c0360091a5b7959e741d4a0473..67e53c5fdebf29e71b920753be829fa4
  		platform_do_upgrade_openmesh "$1"
  		;;
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
-index 75dbc1c03b5c42b81463bf7c4ddd4aa5803afd69..000fec405e161dc4906e88dd967f73c2df95f296 100644
+index 54a2ec13692ae24244d95b79e35cdf8fb70fbc53..4d6647f8c56a4bc14a641d8bab4a70c3e895efbd 100644
 --- a/target/linux/ath79/image/generic.mk
 +++ b/target/linux/ath79/image/generic.mk
 @@ -1832,6 +1832,15 @@ define Device/openmesh_om5p-ac-v2

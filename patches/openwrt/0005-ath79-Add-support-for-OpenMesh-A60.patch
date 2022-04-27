@@ -67,7 +67,7 @@ Signed-off-by: Sven Eckelmann <sven@narfation.org>
 (cherry picked from commit eaf2e32c12655d7fb58e158086a784393dc6f69a)
 
 diff --git a/package/boot/uboot-envtools/files/ath79 b/package/boot/uboot-envtools/files/ath79
-index abcb99663dfd8e5d1ad0ee757e17972d63c856c7..0791d58b04cd108fcd2190bcf3c39f715f0b511f 100644
+index 8bc7dc5ebfd8b6042336144b000d7ab2237add89..363a0f9a581d16dff4673019b7706b505f74d11c 100644
 --- a/package/boot/uboot-envtools/files/ath79
 +++ b/package/boot/uboot-envtools/files/ath79
 @@ -49,6 +49,7 @@ netgear,wnr2200-16m|\
@@ -279,7 +279,7 @@ index 0000000000000000000000000000000000000000..9938e5f4c013575c686edce5699f3541
 +	status = "okay";
 +};
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
-index d4f53e7dae16b84955d318b9d79b6912ee156bdb..4b83ac7d32fc372cd3b493e8ec427c04e0f2e0d1 100755
+index b01dfa41d1d43e55abfb92ac84ffad01766460e2..eb6068180cb2dd3aac8a455fdbfb29a91d475699 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
 @@ -172,6 +172,7 @@ ath79_setup_interfaces()
@@ -291,10 +291,10 @@ index d4f53e7dae16b84955d318b9d79b6912ee156bdb..4b83ac7d32fc372cd3b493e8ec427c04
  	openmesh,om2p-hs-v4|\
  	plasmacloud,pa300|\
 diff --git a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-index 69735f336070a48ddad76c72c2876bcd775c56a1..b4c8a78a7fe4ba5bd3ca1f9c6e2b5e51e7fd1882 100644
+index c7dbaafac1056916db79322555c1d3bd63ee20b0..9e1f660cbcf47b1e6194fd10be051daba59b5fe3 100644
 --- a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
 +++ b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
-@@ -99,6 +99,7 @@ case "$FIRMWARE" in
+@@ -100,6 +100,7 @@ case "$FIRMWARE" in
  		caldata_extract "art" 0x5000 0x844
  		ath10k_patch_mac $(mtd_get_mac_binary art 0xc)
  		;;
@@ -315,7 +315,7 @@ index 1240ef51e88ed2e5d24088746596da085c01ab5c..f7862bb032fbce56be77e9db8ae2e37b
  	openmesh,mr600-v2|\
  	openmesh,mr900-v1|\
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
-index 304e58980062465ba7955e5fe45dbd6b0097937b..c669eb2cdb3f868c320412801723ceb112b4089f 100644
+index f6e6f98db9090405c2119f58c97f9e8d3e063b31..ed13ad231736d5da1a412162892139193a9523ab 100644
 --- a/target/linux/ath79/image/generic.mk
 +++ b/target/linux/ath79/image/generic.mk
 @@ -1640,6 +1640,16 @@ define Device/openmesh_common_256k
