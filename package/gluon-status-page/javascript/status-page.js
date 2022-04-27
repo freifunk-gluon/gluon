@@ -191,9 +191,9 @@
 		}
 
 		div.style.display = '';
-		var table = document.getElementById('mesh-vpn-peers');
-		while (table.lastChild)
-			table.removeChild(table.lastChild);
+		var tbody = document.getElementById('mesh-vpn-peers');
+		while (tbody.lastChild)
+			tbody.removeChild(tbody.lastChild);
 
 		var peers = add_group([], data);
 		peers.sort();
@@ -212,7 +212,7 @@
 				td.textContent = _['not connected'];
 			tr.appendChild(td);
 
-			table.appendChild(tr);
+			tbody.appendChild(tr);
 		});
 	}
 
@@ -444,8 +444,8 @@
 	}
 
 	function Neighbour(iface, addr, color, destroy) {
-		var th = iface.table.firstElementChild;
-		var el = iface.table.insertRow();
+		var th = iface.tbody.querySelector('tr');
+		var el = iface.tbody.insertRow();
 
 		var tdHostname = el.insertCell();
 		tdHostname.setAttribute('data-label', th.children[0].textContent);
@@ -692,7 +692,7 @@
 		}
 
 		var info = {
-			'table': el.firstElementChild,
+			'tbody': el.querySelector('tbody'),
 			'signalgraph': signalgraph,
 			'ifname': ifname,
 			'wireless': wireless,
