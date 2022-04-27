@@ -69,10 +69,10 @@ Signed-off-by: Sven Eckelmann <sven@narfation.org>
 (cherry picked from commit 8143709c90c3aa0a84e14cf4a9dfbcb365b0d966)
 
 diff --git a/package/boot/uboot-envtools/files/ath79 b/package/boot/uboot-envtools/files/ath79
-index a37057953bc1e9b7fdf2be02136142d0fc145054..f4ccb2faea4e5e6202413a76cd137065dc535fe7 100644
+index e75edff16eb40c7950cfed7767144becae6b67b1..9782274868ad4d015e6fb90114750a734f55b379 100644
 --- a/package/boot/uboot-envtools/files/ath79
 +++ b/package/boot/uboot-envtools/files/ath79
-@@ -95,6 +95,7 @@ netgear,wndr4300tn|\
+@@ -97,6 +97,7 @@ netgear,wndr4300tn|\
  netgear,wndr4300sw)
  	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x40000" "0x20000"
  	;;
@@ -241,10 +241,10 @@ index 0000000000000000000000000000000000000000..24d406f7ecd2e14729587190de1aecf7
 +	};
 +};
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/01_leds b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-index 3031b4703bfa885c5036856f0ba6a6dc332da4d8..f5384e7fc3859bab1d6c0422de7e173fad3abae2 100755
+index 146470855d4ca04258d69e33933730f526e39e44..4b97b2f7f41a181753100c6c1a3ba9c7f63528ad 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/01_leds
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/01_leds
-@@ -253,6 +253,10 @@ openmesh,om2p-hs-v4)
+@@ -254,6 +254,10 @@ openmesh,om2p-hs-v4)
  	ucidef_set_led_netdev "wan" "WAN" "blue:wan" "eth0"
  	ucidef_set_led_switch "lan" "LAN" "blue:lan" "switch0" "0x02"
  	;;
@@ -256,7 +256,7 @@ index 3031b4703bfa885c5036856f0ba6a6dc332da4d8..f5384e7fc3859bab1d6c0422de7e173f
  	ucidef_set_led_netdev "wan" "WAN" "blue:wan" "eth1"
  	ucidef_set_led_switch "lan1" "LAN1" "blue:lan1" "switch0" "0x04"
 diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
-index c2932c1737d97f3eb732620041664f5060d16946..5626f79ee199865df4e9a4f04ce2ff9580bce012 100755
+index 6d9dd22b99fc90b197189b4bae6a457ec52e17a9..2d2990fb9f0127d5ac2de10b1371af7bcf86d320 100755
 --- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
 +++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
 @@ -174,6 +174,7 @@ ath79_setup_interfaces()
@@ -294,7 +294,7 @@ index e979c11bb91cb20fd4168b8921499f03572d3512..e9203f3a5b624e1e9b46c474e95e2758
  	openmesh,om2p-v4|\
  	openmesh,om2p-hs-v1|\
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
-index c63900dc701bbc21dce12086f7045d7d450fc5f3..8113b515368b253d0812fbbb86278e7fde63a038 100644
+index 26b12945459c10fa5eb251509836e0c96a39d546..ca3400e0387581cb20e6402ad63612397a3b8791 100644
 --- a/target/linux/ath79/image/generic.mk
 +++ b/target/linux/ath79/image/generic.mk
 @@ -1722,6 +1722,16 @@ define Device/openmesh_mr1750-v2
