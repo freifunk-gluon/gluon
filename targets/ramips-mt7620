@@ -2,7 +2,6 @@
 
 device('asus-rt-ac51u', 'asus_rt-ac51u', {
 	factory = false,
-	broken = true, -- no 5GHz usable, LEDs not fully supported
 })
 
 
