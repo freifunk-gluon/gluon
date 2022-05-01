@@ -229,6 +229,10 @@ mpc85xx-p1020
 
   - WS-AP3710i
 
+* Extreme Networks
+
+  - WS-AP3825i
+
 * OCEDO
 
   - Panda
