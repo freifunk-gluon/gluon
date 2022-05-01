@@ -113,6 +113,10 @@ device('gl.inet-gl-ar750', 'glinet_gl-ar750', {
 	packages = ATH10K_PACKAGES_QCA9887,
 })
 
+device('gl.inet-gl-usb150', 'glinet_gl-usb150', {
+	factory = false,
+})
+
 -- JOY-IT
 
 device('joy-it-jt-or750i', 'joyit_jt-or750i', {
