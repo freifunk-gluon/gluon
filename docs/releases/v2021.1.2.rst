@@ -1,8 +1,11 @@
-Gluon 2021.1.2 (unreleased)
-===========================
+Gluon 2021.1.2
+==============
 
 Important notes
 ---------------
+
+This release fixes a **critical security vulnerability** in Gluon's
+autoupdater.
 
 Upgrades to v2021.1 and later releases are only supported from releases v2018.2
 and later. Migration code for upgrades from older versions has been removed to
@@ -23,11 +26,30 @@ log.
 Bugfixes
 --------
 
-* **[SECURITY]** This release will fix a critical security vulnerability
+* **[SECURITY]** Autoupdater: Fix signature verification
 
-  This bugfix has not been pushed to the public Gluon repository yet to avoid
-  disclosing information on the issue. A detailed advisory will be published at
-  the same time as the Gluon release.
+  A recently discovered issue (CVE-2022-24884) in the *ecdsautils* package
+  allows forgery of cryptographic signatures. This vulnerability can be
+  exploited to create a manifest accepted by the autoupdater without knowledge
+  of the signers' private keys. By intercepting nodes' connections to the update
+  server, such a manifest allows to distribute malicious firmware updates.
+
+  This is a **critical** vulnerability. All nodes with autoupdater must be
+  updated. Requiring multiple signatures for an update does *not* mitigate the
+  issue.
+
+  As a temporary workaround, the issue can be mitigated on individual nodes by
+  disabling the autoupdater via config mode or using the following commands::
+
+    uci set autoupdater.settings.enabled=0
+    uci commit autoupdater
+
+  A fixed firmware should be installed manually before enabling the autoupdater
+  again.
+
+  See security advisory `GHSA-qhcg-9ffp-78pw
+  <https://github.com/freifunk-gluon/ecdsautils/security/advisories/GHSA-qhcg-9ffp-78pw>`_
+  for further information on this vulnerability.
 
 * **[SECURITY]** Config Mode: Prevent Cross-Site Request Forgery (CSRF)
 

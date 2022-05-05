@@ -20,11 +20,11 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Gluon'
-copyright = '2015-2021, Project Gluon'
+copyright = '2015-2022, Project Gluon'
 author = 'Project Gluon'
 
 # The short X.Y version
-version = '2021.1.1'
+version = '2021.1.2'
 # The full version, including alpha/beta/rc tags
 release = version
 
