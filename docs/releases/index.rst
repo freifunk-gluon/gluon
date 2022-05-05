@@ -5,6 +5,7 @@ Release Notes
    :caption: Gluon 2021.1
    :maxdepth: 2
 
+   v2021.1.2
    v2021.1.1
    v2021.1
 
