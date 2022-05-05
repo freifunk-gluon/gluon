@@ -323,7 +323,7 @@ ramips-mt76x8
 
 * TP-Link
 
-  - Archer C20 (v5)
+  - Archer C20 (v4, v5)
   - Archer C50 (v3)
   - Archer C50 (v4)
   - RE200 (v2)
