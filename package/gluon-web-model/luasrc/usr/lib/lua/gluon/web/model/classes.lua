@@ -3,6 +3,7 @@
 -- Licensed to the public under the Apache License 2.0.
 
 local util = require "gluon.web.util"
+local gluon_util = require "gluon.util"
 
 local datatypes  = require "gluon.web.model.datatypes"
 local class      = util.class
@@ -382,6 +383,7 @@ function MultiListValue:value(key, val, ...)
 		return
 	end
 	self.keys[key] = true
+	self.exclusions = {}
 
 	val = val or key
 	table.insert(self.entry_list, {
@@ -404,7 +406,29 @@ function MultiListValue:validate()
 		end
 	end
 
+	for key, exclusive_with in pairs(self.exclusions) do
+		if gluon_util.contains(self.data, key) then
+			for _, exclusion in ipairs(exclusive_with) do
+				if gluon_util.contains(self.data, exclusion) then
+					return false
+				end
+			end
+		end
+	end
+
 	return true
+end
+
+function MultiListValue:exclusive(a, b)
+	if not self.exclusions[a] then
+		self.exclusions[a] = {}
+	end
+	if not self.exclusions[b] then
+		self.exclusions[b] = {}
+	end
+
+	gluon_util.add_to_set(self.exclusions[a], b)
+	gluon_util.add_to_set(self.exclusions[b], a)
 end
 
 function MultiListValue:defaultvalue()
