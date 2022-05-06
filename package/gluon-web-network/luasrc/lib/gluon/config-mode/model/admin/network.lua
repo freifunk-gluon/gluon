@@ -89,6 +89,8 @@ uci:foreach('gluon', 'interface', function(config)
 	ifaces:value('uplink', 'Uplink')
 	ifaces:value('mesh', 'Mesh')
 	ifaces:value('client', 'Client')
+	ifaces:exclusive('uplink', 'client')
+	ifaces:exclusive('mesh', 'client')
 
 	ifaces.default = config.role
 
