@@ -46,6 +46,9 @@ try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
 config('KERNEL_IP_MROUTE', false)
 config('KERNEL_IPV6_MROUTE', false)
+config('KERNEL_IPV6_SEG6_LWTUNNEL', false)
+config('SECCOMP', false)
+config('KERNEL_SECCOMP', false)
 
 config('COLLECT_KERNEL_DEBUG', true)
 
