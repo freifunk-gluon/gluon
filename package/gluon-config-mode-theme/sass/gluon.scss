@@ -273,6 +273,10 @@ input[type=checkbox] {
 		text-align: center;
 		font-size: 1.7em;
 	}
+
+	&[disabled] + label {
+		background-color: #dcdcdc !important;
+	}
 }
 
 input[type=radio] {
