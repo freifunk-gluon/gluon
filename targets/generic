@@ -70,8 +70,10 @@ config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 packages {
 	'-ca-bundle',
 	'-kmod-ipt-offload',
+	'-kmod-nft-offload',
 	'-libustream-wolfssl',
 	'-libwolfssl',
+	'-nftables',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
