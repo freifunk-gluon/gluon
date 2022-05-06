@@ -13,7 +13,9 @@
 				attr("id", id.."."..entry.key) ..
 				attr("name", id) ..
 				attr("value", entry.key) ..
-				attr("checked", (util.contains(self:cfgvalue(), entry.key)) and "checked")
+				attr("checked", (util.contains(self:cfgvalue(), entry.key)) and "checked") ..
+				attr("data-exclusive-with", self.exclusions[entry.key]) ..
+				attr("data-update", "change")
 			%>>
 			<label<%= attr("for", id.."."..entry.key)%>></label>
 			<span class="gluon-multi-list-option-descr"><%|entry.value%></span>

@@ -219,6 +219,20 @@
 				parent.parentNode.style.display = (parent.options.length <= 1) ? 'none' : '';
 		}
 
+		var nodes = document.querySelectorAll('[data-exclusive-with]');
+		for (var i = 0, node; (node = nodes[i]) !== undefined; i++) {
+			var exclusive_with = JSON.parse(node.getAttribute('data-exclusive-with'));
+
+			node.disabled = false;
+			for (var list_item of exclusive_with) {
+				var el = document.getElementById(node.name + '.' + list_item);
+				node.disabled ||= el.checked;
+			}
+
+			if (node.disabled)
+				node.checked = false;
+		}
+
 		if (state) {
 			update();
 		}
