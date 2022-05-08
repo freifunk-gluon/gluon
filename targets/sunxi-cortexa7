@@ -15,3 +15,7 @@ device('lemaker-banana-pro', 'lemaker_bananapro', {
 device('lamobo-r1', 'lamobo_lamobo-r1', {
 	broken = true, -- AP+11s not working
 })
+
+device('friendlyarm-nanopi-r1', 'friendlyarm_nanopi-r1', {
+	broken = true, -- 11s not working
+})
