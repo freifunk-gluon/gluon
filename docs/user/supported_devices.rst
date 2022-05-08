@@ -9,6 +9,10 @@ ath79-generic
   - Fritz!WLAN Repeater 450E [#avmflash]_
   - Fritz!Box 4020 [#avmflash]_
 
+* Buffalo
+
+  - WZR-HP-AG300H / WZR-600DHP
+
 * devolo
 
   - WiFi pro 1200e [#lan_as_wan]_
