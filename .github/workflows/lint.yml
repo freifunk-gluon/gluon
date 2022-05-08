@@ -3,6 +3,9 @@ on:
   push:
   pull_request:
     types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+
 jobs:
   lua:
     name: Lua

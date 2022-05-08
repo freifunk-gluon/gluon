@@ -9,6 +9,9 @@ on:
     paths:
       - 'docs**/'
       - '.github/workflows/build-docs.yml'
+permissions:
+  contents: read
+
 jobs:
   build-documentation:
     name: docs
