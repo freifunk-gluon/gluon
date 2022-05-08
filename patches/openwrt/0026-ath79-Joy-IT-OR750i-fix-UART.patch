@@ -1,0 +1,21 @@
+From: Nico Boehr <freifunk@nicoboehr.de>
+Date: Sat, 7 May 2022 08:39:05 +0200
+Subject: ath79: Joy-IT OR750i: fix UART
+
+The serial console defaults to disabled in the DTSI files, explicitly
+enable it for the Joy-IT OR750i, so we can get a console in linux.
+
+Signed-off-by: Nico Boehr <freifunk@nicoboehr.de>
+
+diff --git a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+index 60fa922878355ebdaf7d2983fe926efdf8b97207..042348d82c479c097f534f0bf2bb383ace55e02d 100644
+--- a/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
++++ b/target/linux/ath79/dts/qca9531_joyit_jt-or750i.dts
+@@ -121,3 +121,7 @@
+ 
+ 	mtd-cal-data = <&art 0x1000>;
+ };
++
++&uart {
++       status = "okay";
++};
