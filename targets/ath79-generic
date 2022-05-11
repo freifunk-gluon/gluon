@@ -126,6 +126,11 @@ device('joy-it-jt-or750i', 'joyit_jt-or750i', {
 
 
 -- Netgear
+
+device('netgear-wndr3700', 'netgear_wndr3700', {
+	factory_ext = '.img',
+})
+
 device('netgear-wndr3700-v2', 'netgear_wndr3700-v2', {
 	manifest_aliases = {
 		'netgear-wndr3700v2', -- Upgrade from OpenWrt 19.07
