@@ -147,13 +147,26 @@ function M.get_role_interfaces(uci, role, exclusive)
 	local ret = {}
 
 	local function add(name)
+		local subindex = nil
+
 		-- Interface names with a / prefix refer to sysconfig interfaces
 		-- (lan_ifname/wan_ifname/single_ifname)
 		if string.sub(name, 1, 1) == '/' then
+			subindex = tonumber(string.match(name, "%[(%d+)%]"))
+			if subindex then
+				-- handle something like "/lan[10]":
+				name = string.gsub(name, "%[%d+%]", "")
+			end
+
 			name = sysconfig[string.sub(name, 2) .. '_ifname'] or ''
 		end
+		local i = 0
 		for iface in string.gmatch(name, '%S+') do
-			M.add_to_set(ret, iface)
+			if not subindex or subindex == i then
+				M.add_to_set(ret, iface)
+			end
+
+			i = i + 1
 		end
 	end
 
