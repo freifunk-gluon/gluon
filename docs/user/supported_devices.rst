@@ -279,7 +279,6 @@ ramips-mt7621
 * ASUS
 
   - RT-AC57U
-  
 
 * D-Link
 
