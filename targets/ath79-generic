@@ -312,6 +312,12 @@ device('tp-link-archer-c5-v1', 'tplink_archer-c5-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
+device('tp-link-archer-c58-v1', 'tplink_archer-c58-v1', {
+	packages = ATH10K_PACKAGES_QCA9888,
+	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
+})
+
 device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
 	manifest_aliases = {
