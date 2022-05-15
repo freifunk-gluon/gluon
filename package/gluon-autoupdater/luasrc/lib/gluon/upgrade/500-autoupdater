@@ -21,16 +21,21 @@ for name, config in pairs(site.autoupdater.branches()) do
 	end
 end
 
+local function default_branch()
+	local f = io.open('/lib/gluon/autoupdater/default_branch')
+	if f then
+		local ret = f:read('*line')
+		f:close()
+		return ret
+	end
+
+	return site.autoupdater.branch(min_branch)
+end
+
 if not uci:get('autoupdater', 'settings') then
 	local enabled = unistd.access('/lib/gluon/autoupdater/default_enabled') ~= nil
 
-	local branch = site.autoupdater.branch(min_branch)
-	local f = io.open('/lib/gluon/autoupdater/default_branch')
-	if f then
-		branch = f:read('*line')
-		f:close()
-	end
-
+	local branch = default_branch()
 	if not branch then
 		enabled = false
 	end
