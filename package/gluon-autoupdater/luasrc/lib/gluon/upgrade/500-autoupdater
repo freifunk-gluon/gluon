@@ -32,19 +32,23 @@ local function default_branch()
 	return site.autoupdater.branch(min_branch)
 end
 
+local enabled, branch
 if not uci:get('autoupdater', 'settings') then
-	local enabled = unistd.access('/lib/gluon/autoupdater/default_enabled') ~= nil
+	enabled = unistd.access('/lib/gluon/autoupdater/default_enabled') ~= nil
+end
 
-	local branch = default_branch()
+local old_branch = uci:get('autoupdater', 'settings', 'branch')
+if not old_branch or not uci:get('autoupdater', old_branch) then
+	branch = default_branch()
 	if not branch then
 		enabled = false
 	end
-
-	uci:section('autoupdater', 'autoupdater', 'settings', {
-		enabled = enabled,
-		branch = branch,
-	})
 end
+
+uci:section('autoupdater', 'autoupdater', 'settings', {
+	enabled = enabled,
+	branch = branch,
+})
 
 uci:set('autoupdater', 'settings', 'version_file', '/lib/gluon/release')
 
