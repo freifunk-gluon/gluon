@@ -105,8 +105,6 @@ local function static_ip(name, ifname, macaddr, actually_use)
     -- TODO: maybe modify the protos instead to allow reading static ips and using them?
     -- NOTE: wan also uses dhcp/static directly
 
-    uci:set('network', name, 'proto', 'static')
-
     if site.prefix4 and static4 then
       local ip4 = ip.new(static4)
       if not ip4 or not ip4:is4() then
