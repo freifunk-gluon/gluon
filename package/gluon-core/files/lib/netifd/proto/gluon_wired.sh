@@ -9,6 +9,8 @@ proto_gluon_wired_init_config() {
         proto_config_add_int index
         proto_config_add_boolean vxlan
         proto_config_add_string vxpeer6addr
+        proto_config_add_string ipaddr
+        proto_config_add_string ip6addr
 }
 
 xor2() {
@@ -79,6 +81,12 @@ proto_gluon_wired_setup() {
         json_add_string ifname "@${meshif}"
         json_add_string proto 'gluon_mesh'
         json_add_boolean fixed_mtu 1
+        if [ ! -n "$ipaddr" ]; then
+      		json_add_string ipaddr "$ipaddr"
+      	fi
+      	if [ ! -n "$ip6addr" ]; then
+      		json_add_string ip6addr "$ip6addr"
+      	fi
         [ -n "$transitive" ] && json_add_boolean transitive "$transitive"
         json_close_object
         ubus call network add_dynamic "$(json_dump)"

@@ -7,6 +7,8 @@ init_proto "$@"
 proto_gluon_mesh_init_config() {
 	proto_config_add_boolean fixed_mtu
 	proto_config_add_boolean transitive
+	proto_config_add_string ipaddr
+	proto_config_add_string ip6addr
 }
 
 proto_gluon_mesh_setup() {
@@ -28,6 +30,14 @@ proto_gluon_mesh_setup() {
 	proto_add_data
 	json_add_boolean fixed_mtu "$FIXED_MTU"
 	json_add_boolean transitive "$TRANSITIVE"
+	if [ ! -n "$ipaddr" ]; then
+		json_add_string ipaddr "$ipaddr"
+		ip addr add "$ipaddr" dev "$IFNAME"
+	fi
+	if [ ! -n "$ip6addr" ]; then
+		json_add_string ip6addr "$ip6addr"
+		ip addr add "$ip6addr" dev "$IFNAME"
+	fi
 	[ "$IFNAME" != 'br-wan' ] && json_add_string zone 'mesh'
 	proto_close_data
 	proto_send_update "$CONFIG"
