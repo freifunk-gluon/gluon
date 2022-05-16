@@ -114,8 +114,7 @@ local function static_ip(name, ifname, macaddr, actually_use)
         return
       end
 
-      uci:set('network', name, 'ipaddr', ip4:host():string())
-      uci:set('network', name, 'netmask', ip4:mask():string())
+      uci:set('network', name, 'ipaddr', ip4:string())
     elseif name ~= 'loopback' then
       if uci:get('network', name, 'ipaddr') then
         uci:del('network', name, 'ipaddr')
@@ -140,11 +139,12 @@ local function static_ip(name, ifname, macaddr, actually_use)
       end
     end
 	else
-		if uci:get('network', name, 'proto') == 'static' then
-      uci:del('network', name, 'ipaddr')
-			uci:del('network', name, 'netmask')
+    if uci:get('network', name, 'ip6addr') ~= nil then
       uci:del('network', name, 'ip6addr')
-		end
+    end
+    if uci:get('network', name, 'ipaddr') ~= nil then
+      uci:del('network', name, 'ipaddr')
+    end
 	end
 end
 
