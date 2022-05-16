@@ -48,8 +48,8 @@ proto_gluon_wired_setup() {
 
         local meshif="$config"
 
-        local transitive index vxlan vxpeer6addr
-        json_get_vars transitive index vxlan vxpeer6addr
+        local transitive index vxlan vxpeer6addr ipaddr ip6addr
+        json_get_vars transitive index vxlan vxpeer6addr ipaddr ip6addr
 
         # default args
         [ -z "$vxlan" ] && vxlan=1
@@ -81,10 +81,10 @@ proto_gluon_wired_setup() {
         json_add_string ifname "@${meshif}"
         json_add_string proto 'gluon_mesh'
         json_add_boolean fixed_mtu 1
-        if [ ! -n "$ipaddr" ]; then
+        if [ ! -z "$ipaddr" ]; then
       		json_add_string ipaddr "$ipaddr"
       	fi
-      	if [ ! -n "$ip6addr" ]; then
+      	if [ ! -z "$ip6addr" ]; then
       		json_add_string ip6addr "$ip6addr"
       	fi
         [ -n "$transitive" ] && json_add_boolean transitive "$transitive"
