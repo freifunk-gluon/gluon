@@ -92,12 +92,4 @@ uci:section('firewall', 'rule',  'mesh_mmfd', {
 	target = 'ACCEPT',
 })
 
-uci:section('firewall', 'rule', 'mesh_babel', {
-	src = 'mesh',
-	src_ip = 'fe80::/64',
-	dest_port = '6696',
-	proto = 'udp',
-	target = 'ACCEPT',
-})
-
 uci:save('firewall')
