@@ -189,8 +189,8 @@ apply_network('mesh_uplink', uplink_mesh, 10)
 
 apply_network('loopback', true, 12)
 
-local client_mesh = not uci:get_bool('network', 'mesh_client', 'disabled')
-apply_network('mesh_client', client_mesh, 11)
+local other_mesh = not uci:get_bool('network', 'mesh_other', 'disabled')
+apply_network('mesh_other', other_mesh, 11)
 
 local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
 local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
@@ -204,9 +204,9 @@ for _, iface in ipairs(mesh_interfaces) do
 	end
 end
 
-for index, intf in ipairs(mesh_interfaces_other) do
-  apply_network('mesh_' .. intf, true, 12 + index)
-end
+-- for index, intf in ipairs(mesh_interfaces_other) do
+--   apply_network('mesh_' .. intf, true, 12 + index)
+-- end
 
 uci:save('gluon-static-ip')
 uci:save('network')
