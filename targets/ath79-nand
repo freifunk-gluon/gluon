@@ -6,6 +6,9 @@ local ATH10K_PACKAGES_QCA9887 = {
 	'-ath10k-firmware-qca9887-ct',
 }
 
+device('gl.inet-gl-ar300m-nand', 'glinet_gl-ar300m-nand', {
+	factory = false,
+})
 
 -- GL.iNet
 
