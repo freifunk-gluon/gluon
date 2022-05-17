@@ -43,10 +43,37 @@ if wireless.device_supports_mfp(uci) then
 end
 mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
 
+local subnet4 = s:option(Value, "subnet4", translate("Subnet IPv4 (NAT)"), translate("IPv4 CIDR"))
+subnet4:depends(enabled, true)
+subnet4.datatype = "maxlength(32)"
+subnet4.default = uci:get('network', 'ap', 'ipaddr') or '192.168.178.1/24'
+
+local subnet6 = s:option(Value, "subnet6", translate("ULA IPv6"), translate("IPv6 CIDR or 'auto'"))
+subnet6:depends(enabled, true)
+subnet6.datatype = "maxlength(128)"
+subnet6.default = uci:get('network', 'globals', 'ula_prefix')
+
 -- TODO: ipv4 when prefix4() set? or always? allow custom cidr
 -- TODO: allow mesh (regular meshing) on private net?
 
 function f:write()
+	uci:set('network', 'globals', 'ula_prefix', subnet6.data)
+
+	uci:section('network', 'interface', 'ap', {
+		type = 'bridge',
+		ifname = {},
+		proto = 'static',
+		ipaddr = subnet4.data,
+		ip6assign = '64',
+	})
+
+	uci:section('dhcp', 'dhcp', 'ap', {
+		interface = 'ap',
+		start = '100',
+		limit = '150',
+		leasetime = '12h',
+	})
+
 	wireless.foreach_radio(uci, function(radio, index)
 		local radio_name = radio['.name']
 		local suffix = radio_name:match('^radio(%d+)$')
@@ -78,6 +105,7 @@ function f:write()
 		end
 	end)
 
+	uci:commit('network')
 	uci:commit('wireless')
 end
 
