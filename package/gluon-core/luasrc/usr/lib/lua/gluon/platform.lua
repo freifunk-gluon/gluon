@@ -38,6 +38,7 @@ function M.is_outdoor_device()
 		'tplink,wbs210-v1',
 		'tplink,wbs210-v2',
 		'ubnt,nanostation-m-xw',
+		'ubnt,picostation-m',
 		'ubnt,unifiac-mesh',
 	}) then
 		return true
