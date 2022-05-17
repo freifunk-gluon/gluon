@@ -6,9 +6,6 @@ local wireless = require 'gluon.wireless'
 local ip = require 'luci.ip' -- luci-lib-ip
 local util = require 'gluon.util'
 
-local IPV4_PREFIX_MAX = 32
-local IPV6_PREFIX_MAX = 128
-
 function hex2bin(str)
     local map = {
         ['0'] = '0000',
@@ -55,6 +52,9 @@ function ipnum(macaddr, prefixOverflow, hex)
 
   return out
 end
+
+local IPV4_PREFIX_MAX = 32
+local IPV6_PREFIX_MAX = 128
 
 local function static_ip(name, ifname, macaddr, actually_use)
 	-- actually_use = if ip should be applied to interface or not
@@ -105,7 +105,7 @@ local function static_ip(name, ifname, macaddr, actually_use)
     -- TODO: maybe modify the protos instead to allow reading static ips and using them?
     -- NOTE: wan also uses dhcp/static directly
 
-    if site.prefix4 and static4 then
+    if site.prefix4() and static4 then
       local ip4 = ip.new(static4)
       if not ip4 or not ip4:is4() then
         print('E: ' .. name .. ' has invalid ip4 ' .. static4)
@@ -123,7 +123,7 @@ local function static_ip(name, ifname, macaddr, actually_use)
       end
     end
 
-    if site.prefix6 and static6 then
+    if site.prefix6() and static6 then
   		local ip6 = ip.new(static6)
       if not ip6 or not ip6:is6() then
         print('E: ' .. name .. ' has invalid ip6 ' .. static6)
@@ -187,10 +187,26 @@ end
 local uplink_mesh = not uci:get_bool('network', 'mesh_uplink', 'disabled')
 apply_network('mesh_uplink', uplink_mesh, 10)
 
-local other_mesh = not uci:get_bool('network', 'mesh_other', 'disabled')
-apply_network('mesh_other', other_mesh, 11)
-
 apply_network('loopback', true, 12)
+
+local client_mesh = not uci:get_bool('network', 'mesh_client', 'disabled')
+apply_network('mesh_client', client_mesh, 11)
+
+local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
+local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
+local client_interfaces = util.get_role_interfaces(uci, 'client')
+
+local mesh_interfaces_other = {}
+
+for _, iface in ipairs(mesh_interfaces) do
+	if not util.contains(uplink_interfaces, iface) and not util.contains(client_interfaces, iface) then
+		table.insert(mesh_interfaces_other, iface)
+	end
+end
+
+for index, intf in ipairs(mesh_interfaces_other) do
+  apply_network('mesh_' .. intf, true, 12 + index)
+end
 
 uci:save('gluon-static-ip')
 uci:save('network')
