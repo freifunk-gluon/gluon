@@ -46,7 +46,7 @@ mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
 local subnet4 = s:option(Value, "subnet4", translate("Subnet IPv4 (NAT)"), translate("IPv4 CIDR"))
 subnet4:depends(enabled, true)
 subnet4.datatype = "maxlength(32)"
-subnet4.default = uci:get('network', 'ap', 'ipaddr') or '192.168.178.1/24'
+subnet4.default = uci:get('network', 'ap', 'ipaddr')
 
 local subnet6 = s:option(Value, "subnet6", translate("ULA IPv6"), translate("IPv6 CIDR or 'auto'"))
 subnet6:depends(enabled, true)
@@ -59,20 +59,7 @@ subnet6.default = uci:get('network', 'globals', 'ula_prefix')
 function f:write()
 	uci:set('network', 'globals', 'ula_prefix', subnet6.data)
 
-	uci:section('network', 'interface', 'ap', {
-		type = 'bridge',
-		ifname = {},
-		proto = 'static',
-		ipaddr = subnet4.data,
-		ip6assign = '64',
-	})
-
-	uci:section('dhcp', 'dhcp', 'ap', {
-		interface = 'ap',
-		start = '100',
-		limit = '150',
-		leasetime = '12h',
-	})
+	uci:set('network', 'interface', 'ap', subnet4.data)
 
 	wireless.foreach_radio(uci, function(radio, index)
 		local radio_name = radio['.name']

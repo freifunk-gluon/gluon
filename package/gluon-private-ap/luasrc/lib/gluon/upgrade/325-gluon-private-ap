@@ -15,4 +15,23 @@ wireless.foreach_radio(uci, function(radio)
 	uci:set('wireless', name, 'ifname', suffix and 'ap' .. suffix)
 end)
 
+uci:set('network', 'globals', 'ula_prefix', uci:get('network_gluon-old', 'globals', 'ula_prefix'))
+
+uci:section('network', 'interface', 'ap', {
+	type = 'bridge',
+	ifname = {},
+	proto = 'static',
+	ipaddr = uci:get('network_gluon-old', 'ap', 'ipaddr') or '192.168.178.1/24',
+	ip6assign = '64',
+})
+
+uci:section('dhcp', 'dhcp', 'ap', {
+	interface = 'ap',
+	start = '100',
+	limit = '150',
+	leasetime = '12h',
+})
+
+uci:save('network')
+uci:save('dhcp')
 uci:save('wireless')
