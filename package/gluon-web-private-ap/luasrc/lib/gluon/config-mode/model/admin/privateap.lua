@@ -59,7 +59,7 @@ subnet6.default = uci:get('network', 'globals', 'ula_prefix')
 function f:write()
 	uci:set('network', 'globals', 'ula_prefix', subnet6.data)
 
-	uci:set('network', 'interface', 'ap', subnet4.data)
+	uci:set('network', 'ap', 'ipaddr', subnet4.data)
 
 	wireless.foreach_radio(uci, function(radio, index)
 		local radio_name = radio['.name']
