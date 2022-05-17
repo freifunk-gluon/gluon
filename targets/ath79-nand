@@ -7,6 +7,8 @@ local ATH10K_PACKAGES_QCA9887 = {
 }
 
 
+-- GL.iNet
+
 device('gl.inet-gl-ar300m-nor', 'glinet_gl-ar300m-nor', {
 	factory = false,
 })
