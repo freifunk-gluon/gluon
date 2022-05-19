@@ -52,14 +52,35 @@ local interfaces = {
 	single = sysconfig.single_ifname,
 }
 
-for iface in pairs(interfaces) do
-	local section_name = 'iface_' .. iface
-	if not uci:get('gluon', section_name) then
-		uci:section('gluon', 'interface', section_name, {
-			-- / prefix refers to sysconfig ifnames
-			name = '/' .. iface,
-			role = roles[iface],
-		})
+for iface, ifnames in pairs(interfaces) do
+	local default_roles = roles[iface]
+
+	-- migration from intermediate gluon master
+	local section_name_old = 'iface_' .. iface
+	if uci:get('gluon', section_name_old) then
+		default_roles = uci:get('gluon', section_name_old, 'role')
+		uci:delete('gluon', section_name_old)
+	end
+
+	local interface_count = 1
+	if type(ifnames) == 'table' then
+		interface_count = #ifnames
+	end
+
+	for i = 0, interface_count-1 do
+		local section_name = 'iface_' .. iface .. '_' .. tostring(i)
+
+		if not uci:get('gluon', section_name) then
+			uci:section('gluon', 'interface', section_name, {
+				-- / prefix refers to sysconfig ifnames
+				name = '/' .. iface .. '[' .. tostring(i) .. ']',
+				role = default_roles,
+			})
+		else
+			-- In case we have existing interfaces in that category, we want to
+			-- use their roles as default for other new interfaces in that category.
+			default_roles = uci:get('gluon', section_name, 'role')
+		end
 	end
 end
 
