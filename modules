@@ -1,4 +1,4 @@
-GLUON_FEEDS='packages routing gluon luci ddhcpd'
+GLUON_FEEDS='packages routing gluon luci ddhcpd cm'
 
 OPENWRT_REPO=https://github.com/openwrt/openwrt.git
 OPENWRT_BRANCH=openwrt-22.03
