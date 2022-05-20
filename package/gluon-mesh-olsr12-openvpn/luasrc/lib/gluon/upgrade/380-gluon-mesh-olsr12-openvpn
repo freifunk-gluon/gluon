@@ -12,15 +12,14 @@ uci:delete('openvpn', 'olsr12_vpn')
 
 -- NOTE: we need to place olsr12 files in a persistent directory,
 -- since reconfigure only happens on upgrades
--- Since it happens on upgrades tho, we do not need to store it
+-- But since it happens on upgrades, we do not need to store it
 -- in a permanent directory like /etc/openvpn
 
-if site.mesh.olsrd.olsr12.enable() then
+if site.mesh.olsrd.olsr12.enable(false) then
 	-- TODO: gluon_wired once added in mesh-olsrd
 	uci:section('network', 'interface', 'olsr12', {
 		ifname = 'olsr12',
-		proto = 'tap',
-		zone = 'mesh',
+		proto = 'gluon_mesh',
 	})
 
 	local cred = io.open('/etc/olsr12.auth', 'w')
@@ -58,15 +57,8 @@ if site.mesh.olsrd.olsr12.enable() then
 		bindto = uci:get_list('olsrd2', 'wired_mesh', 'bindto'),
 		-- TODO: link quality
 	})
-
-	local intfs = uci:get_list('firewall', 'mesh', 'network')
-
-	table.insert(intfs, 'olsr12')
-
-	uci:set_list('firewall', 'mesh', 'network', intfs)
 end
 
 uci:save('olsrd2')
-uci:save('firewall')
 uci:save('network')
 uci:save('openvpn')
