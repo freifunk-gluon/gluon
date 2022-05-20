@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require "gluon.site"
+
+local payload = site.next_node.ip4()
+local len = 4 -- this has to be 4
+
+uci:section('ddhcpd', 'dhcp_option', 'nextnode_router', {
+	len = len,
+	payload = payload,
+	code = '3',
+})
+
+uci:section('ddhcpd', 'dhcp_option', 'nextnode_dns', {
+	len = len,
+	payload = payload,
+	code = '6',
+})
+
+uci:save('ddhcpd')
