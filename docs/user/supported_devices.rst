@@ -223,6 +223,7 @@ ipq40xx-mikrotik
 * Mikrotik
 
   - DISC Lite5 ac (RBDiscG-5acD)
+  - hAP ac2
   - SXTsq 5 ac (RBSXTsqG-5acD)
 
 ipq806x-generic
