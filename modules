@@ -20,9 +20,9 @@ PACKAGES_DDHCPD_REPO=https://github.com/mkg20001/gluon-sargon
 PACKAGES_DDHCPD_COMMIT=43d401970434f2e79eaf213a82192b028cd5e535
 PACKAGES_DDHCPD_BRANCH=fix
 
-PACKAGES_CM_REPO=https://github.com/ffgraz/community-packages.git
+PACKAGES_CM_REPO=https://github.com/freifunk-gluon/community-packages.git
 PACKAGES_CM_COMMIT=73f1dea489062e7070d8324eec9f697591f0816a
-PACKAGES_CM_BRANCH=ddhcpd
+PACKAGES_CM_BRANCH=master
 
 PACKAGES_GLUON_REPO=https://github.com/mkg20001/packages-2.git
 PACKAGES_GLUON_COMMIT=c965ae6ae1a6cd0959ae022f78128d7d808edcda
