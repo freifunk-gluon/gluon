@@ -1,4 +1,4 @@
-GLUON_FEEDS='packages routing gluon luci ddhcpd cm'
+GLUON_FEEDS='packages routing gluon luci cm'
 
 OPENWRT_REPO=https://github.com/openwrt/openwrt.git
 OPENWRT_BRANCH=openwrt-22.03
@@ -16,12 +16,8 @@ PACKAGES_LUCI_REPO=https://github.com/openwrt/luci.git
 PACKAGES_LUCI_BRANCH=openwrt-22.03
 PACKAGES_LUCI_COMMIT=d8ecf48f20da632af86def0f18093861c522914b
 
-PACKAGES_DDHCPD_REPO=https://github.com/mkg20001/gluon-sargon
-PACKAGES_DDHCPD_COMMIT=43d401970434f2e79eaf213a82192b028cd5e535
-PACKAGES_DDHCPD_BRANCH=fix
-
 PACKAGES_CM_REPO=https://github.com/freifunk-gluon/community-packages.git
-PACKAGES_CM_COMMIT=73f1dea489062e7070d8324eec9f697591f0816a
+PACKAGES_CM_COMMIT=b7fc6c147dcf188dac5d43cecd8153e00890df09
 PACKAGES_CM_BRANCH=master
 
 PACKAGES_GLUON_REPO=https://github.com/mkg20001/packages-2.git
