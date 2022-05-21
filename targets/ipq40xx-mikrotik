@@ -4,3 +4,15 @@ device('mikrotik-sxtsq-5-ac-rbsxtsqg-5acd', 'mikrotik_sxtsq-5-ac', {
 	factory = false,
 	aliases = {'mikrotik-discg-5acd'},
 })
+
+local ATH10K_PACKAGES_IPQ40XX = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+}
+
+device('mikrotik-hap-ac2', 'mikrotik_hap-ac2', {
+  packages = ATH10K_PACKAGES_IPQ40XX,
+})

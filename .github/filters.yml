@@ -56,6 +56,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "ipq40xx-mikrotik": [
+    "targets/ipq40xx-mikrotik",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/mikrotik.inc"
+  ],
   "ipq806x-generic": [
     "targets/ipq806x-generic",
     "modules",
