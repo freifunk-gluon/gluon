@@ -206,7 +206,7 @@
 			tr.appendChild(th);
 
 			var td = document.createElement('td');
-			if (peer[1])
+			if (peer[1] && peer[1].established != null)
 				td.textContent = _['connected'] + ' (' + formats.time(peer[1].established) + ')';
 			else
 				td.textContent = _['not connected'];
