@@ -285,6 +285,10 @@ ramips-mt7621
   - EX6150 (v1)
   - R6220
 
+* TP-Link
+
+  - RE650 (v1)
+
 * Ubiquiti
 
   - EdgeRouter X
