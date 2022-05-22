@@ -1,1 +1,1 @@
--- need_string(in_domain({'mesh_vpn', 'openvpn', ''}))
+need_table({'mesh_vpn', 'openvpn', 'config'})
