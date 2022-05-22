@@ -288,7 +288,7 @@ mesh_vpn
 
   The `enabled` option can be set to true to enable the VPN by default. `mtu`
   defines the MTU of the VPN interface, determining a proper MTU value is described
-  in the :ref:`FAQ <faq-mtu>`.
+  in :doc:`mtu`.
 
   By default the public key of a node's VPN daemon is not added to announced respondd
   data; this prevents malicious ISPs from correlating VPN sessions with specific mesh

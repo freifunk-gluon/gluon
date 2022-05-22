@@ -14,6 +14,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    user/supported_devices
    user/x86
    user/faq
+   user/mtu
 
 .. toctree::
    :caption: Features
