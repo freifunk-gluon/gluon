@@ -40,4 +40,8 @@ function M.set_limit(ingress_limit, egress_limit)
 	uci:save('simple-tc')
 end
 
+function M.mtu()
+	return site.mesh_vpn.wireguard.mtu()
+end
+
 return M

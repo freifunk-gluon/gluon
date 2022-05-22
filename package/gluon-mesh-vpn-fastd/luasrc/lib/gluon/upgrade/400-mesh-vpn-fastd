@@ -3,6 +3,7 @@
 local site = require 'gluon.site'
 local util = require 'gluon.util'
 local vpn_core = require 'gluon.mesh-vpn'
+local _, active_vpn = vpn_core.get_active_provider()
 
 local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
@@ -49,7 +50,7 @@ uci:section('fastd', 'fastd', 'mesh_vpn', {
 	secret = secret,
 	interface = vpn_core.get_interface(),
 	mode = 'tap',
-	mtu = site.mesh_vpn.mtu(),
+	mtu = active_vpn.mtu(),
 	secure_handshakes = true,
 	method = methods,
 	packet_mark = 1,
