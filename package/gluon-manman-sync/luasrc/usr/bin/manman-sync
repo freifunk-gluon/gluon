@@ -13,7 +13,7 @@ local hostname = pretty_hostname.get(uci)
 local manapi = site.manman.api()
 local mankey = site.manman.key()
 
--- CLI lib from olsrd-cli (todo: move to it's own lib package)
+-- CLI lib from olsrd-cli (TODO: move to it's own lib package)
 -- DO NOT EDIT HERE, JUST COPY FROM THERE
 
 function printf(...)
@@ -92,8 +92,6 @@ function dummy()
 end
 
 -- ///
-
--- TODO: use manman ecdsa key to verify response
 
 -- NOTE: these will have mesh_ appended for static-ip
 local mappings = {
@@ -288,8 +286,6 @@ local function do_manman_sync()
   uci:set('gluon-node-info', _location, 'share_location', '1')
   uci:set('gluon-node-info', _location, 'latitude', location.location.lat)
   uci:set('gluon-node-info', _location, 'longitude', location.location.long)
-
-  -- TODO: compare device
 
   -- check if anything changed since last time
   -- if yes, apply changes and do gluon-reload
