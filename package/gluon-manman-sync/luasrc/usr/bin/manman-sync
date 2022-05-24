@@ -163,11 +163,7 @@ local function fetch_signed_json(remote, url)
   local data = ts .. '@' .. result
   if not ecdsa.verify(data, sig, mankey) then
     print('E: signature invalid or not signed with expected key')
-
-    print('C: manman-sync is currently not properly signed')
-    print('C: this error will be actually considered once manapi has been fixed')
-
-    -- return 1
+    return 1
   end
 
   local obj = json.parse(result)
