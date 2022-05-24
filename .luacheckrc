@@ -63,6 +63,7 @@ files["package/**/luasrc/lib/gluon/config-mode/*"] = {
 		"translate",
 		"translatef",
 		"Value",
+		"Warning",
 	},
 }
 
