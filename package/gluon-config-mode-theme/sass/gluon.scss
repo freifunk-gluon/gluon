@@ -518,6 +518,11 @@ textarea {
 	}
 }
 
+.gluon-warning {
+	@extend .gluon-section-descr;
+	background: lighten($ffyellow, 35);
+}
+
 .error500 {
 	border: 1px dotted #ff0000;
 	background-color: #ffffff;
