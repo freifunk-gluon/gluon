@@ -196,6 +196,24 @@ function Template:__init__(template)
 	self.template = template
 end
 
+local Warning = class(Node)
+M.Warning = Warning
+
+function Warning:__init__(...)
+	Node.__init__(self, ...)
+
+	self.default   = nil
+	self.size      = nil
+	self.optional  = false
+
+	self.template  = "model/warning"
+
+	self.error = false
+end
+
+function Warning:setcontent(content)
+	self.content = content
+end
 
 local AbstractValue = class(Node)
 M.AbstractValue = AbstractValue
