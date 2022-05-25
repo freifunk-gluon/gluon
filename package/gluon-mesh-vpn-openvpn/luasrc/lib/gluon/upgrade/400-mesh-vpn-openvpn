@@ -3,6 +3,8 @@
 local site = require 'gluon.site'
 local util = require 'gluon.util'
 local vpn_core = require 'gluon.mesh-vpn'
+local sysconfig = require 'gluon.sysconfig'
+local ssl = require 'openssl'
 
 local uci = require('simple-uci').cursor()
 
@@ -29,11 +31,36 @@ end
 
 -- if mesh_vpn is on but we have no key, even tho we need one then we can't proceed
 if vpn.key ~= nil and not file_exists(vpn.key) then
-	vpn.enabled = false
+	if site.mesh_vpn.openvpn.self_signed(true) then
+    local key = ssl.pkey:new()
+
+    local cert = ssl.x509:new()
+    cert:notbefore(os.time())
+    cert:notafter(os.time() + 10 * 365 * 24 * 60)
+    cert:subject(ssl.x509.name.new{
+      { C = 'CN'},
+      { O = 'gluon' },
+      { CN = sysconfig.primary_mac }
+    })
+    cert:sign(key:export())
+
+    local certf = io.open(vpn.cert, 'w+')
+    certf:write(cert:export())
+    certf:close()
+
+    local keyf = io.open(vpn.key, 'w+')
+    keyf:write(key:export())
+    keyf:close()
+  else
+    vpn.enabled = false
+  end
 end
 
--- NOTE: ip is set by static-ip
--- TODO: maybe better integration? currently we still listen to openvpn push
+if vpn.ca ~= nil and not file_exists(vpn.ca) then
+  local caf = io.open(vpn.ca, 'w+')
+  caf:write(site.mesh_vpn.openvpn.ca())
+  caf:close()
+end
 
 uci:delete('openvpn', 'mesh_vpn')
 if vpn.enabled then
