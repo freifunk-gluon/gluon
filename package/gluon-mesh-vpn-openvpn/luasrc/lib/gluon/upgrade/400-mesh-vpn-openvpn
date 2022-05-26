@@ -32,7 +32,7 @@ end
 -- if mesh_vpn is on but we have no key, even tho we need one then we can't proceed
 if vpn.key ~= nil and not file_exists(vpn.key) then
 	if site.mesh_vpn.openvpn.self_signed(true) then
-    local key = ssl.pkey:new()
+    local key = ssl.pkey.new()
 
     local cert = ssl.x509:new()
     cert:notbefore(os.time())
