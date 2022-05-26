@@ -32,17 +32,19 @@ end
 -- if mesh_vpn is on but we have no key, even tho we need one then we can't proceed
 if vpn.key ~= nil and not file_exists(vpn.key) then
 	if site.mesh_vpn.openvpn.self_signed(true) then
+    local name = ssl.x509.name.new{
+      { C = 'CN'},
+      { O = 'gluon' },
+      { CN = sysconfig.primary_mac }
+    }
+
     local key = ssl.pkey.new()
 
     local cert = ssl.x509:new()
     cert:notbefore(os.time())
     cert:notafter(os.time() + 10 * 365 * 24 * 60)
-    cert:subject(ssl.x509.name.new{
-      { C = 'CN'},
-      { O = 'gluon' },
-      { CN = sysconfig.primary_mac }
-    })
-    cert:sign(key:export())
+    cert:subject(name)
+    cert:sign(key, name)
 
     local certf = io.open(vpn.cert, 'w+')
     certf:write(cert:export())
