@@ -449,4 +449,10 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 	},
 })
 
+device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
+	manifest_aliases = {
+		'ubiquiti-unifiap-outdoor+', -- upgrade from OpenWrt 19.07
+	},
+})
+
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
