@@ -251,6 +251,10 @@ mpc85xx-p1020
 ramips-mt7620
 -------------
 
+* ASUS
+
+  - RT-AC51U
+
 * GL.iNet
 
   - GL-MT300A

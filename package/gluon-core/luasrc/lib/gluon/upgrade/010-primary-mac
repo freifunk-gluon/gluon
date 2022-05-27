@@ -117,6 +117,7 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt7620', {
 			'xiaomi,miwifi-mini',
+			'asus,rt-ac51u',
 		}},
 	}},
 	{phy(1), {
