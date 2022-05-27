@@ -310,8 +310,11 @@ device('tp-link-archer-c5-v1', 'tplink_archer-c5-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
-device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
+device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
+	manifest_aliases = {
+		'tp-link-archer-c6-v2', -- Upgrade from OpenWrt 19.07
+	},
 })
 
 device('tp-link-archer-c60-v1', 'tplink_archer-c60-v1', {
