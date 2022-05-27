@@ -174,7 +174,7 @@ local function try_key(file, input)
 
   return {
     type = 'key',
-    display = translate_format('Key %s, %s bits', info.type, info.size),
+    display = translate_format('Key %s, %s bits', info.type, info.size * 8),
     info = info,
   }
 end
