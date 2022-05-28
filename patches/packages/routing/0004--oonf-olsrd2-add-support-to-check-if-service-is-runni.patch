@@ -1,0 +1,28 @@
+From e5c0192003d6a0afee97abb9a947bc0944883091 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Maciej=20Kr=C3=BCger?= <mkg20001@gmail.com>
+Date: Sun, 10 Apr 2022 01:58:41 +0200
+Subject: [PATCH] oonf-olsrd2: add support to check if service is running
+
+---
+ oonf-olsrd2/files/olsrd2.init | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/oonf-olsrd2/files/olsrd2.init b/oonf-olsrd2/files/olsrd2.init
+index debae98..b6c1e9a 100755
+--- a/oonf-olsrd2/files/olsrd2.init
++++ b/oonf-olsrd2/files/olsrd2.init
+@@ -3,4 +3,11 @@
+ START=82
+ DAEMON='olsrd2'
+ 
++running() {
++  test -e "/tmp/run/olsrd2.pid" && test -e "/proc/$(cat "/tmp/run/olsrd2.pid")" && return 0
++  return 1
++}
++
++extra_command "running" "Check if service is running"
++
+ . /lib/functions/oonf_init.sh
+-- 
+2.35.1
+
