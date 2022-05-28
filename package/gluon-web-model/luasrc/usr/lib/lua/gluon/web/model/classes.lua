@@ -413,7 +413,7 @@ end
 local Element = class(Node)
 M.Element = Element
 
-function Element:__init__(template, ...)
+function Element:__init__(template, kv, ...)
 	Node.__init__(self, ...)
 
 	self.default   = nil
@@ -421,6 +421,10 @@ function Element:__init__(template, ...)
 	self.optional  = false
 
 	self.template  = template
+
+	for key, value in pairs(kv) do
+		self[key] = value
+	end
 
 	self.error = false
 end
