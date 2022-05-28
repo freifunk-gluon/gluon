@@ -1,5 +1,9 @@
 <%- if self.content then -%>
-<div class="gluon-warning">
+<div class="gluon-warning"<%=
+  attr("id", id) ..
+  attr("data-index", self.index) ..
+  attr("data-depends", self:deplist(self.deps))
+%>>
   <%=self.content%>
 </div>
 <%- end -%>
