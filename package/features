@@ -46,6 +46,9 @@ when(_'status-page' and _'mesh-batman-adv-15', {
 	'gluon-status-page-mesh-batman-adv',
 })
 
+when(_'status-page' and _'mesh-olsrd', {
+ 'gluon-status-page-mesh-olsrd'
+})
 
 when(_'mesh-babel', {
 	'gluon-radvd',

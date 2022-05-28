@@ -1,0 +1,79 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+
+networks = uci:get_list('firewall', 'drop', 'network')
+util.remove_from_set(networks, 'client')
+uci:set_list('firewall', 'drop', 'network', networks)
+
+uci:section('firewall', 'rule', 'allow_mesh_ping', {
+	name = 'Allow mesh ping',
+	src = 'mesh',
+	proto = 'icmp',
+	icmp_type = {
+		'echo-request'
+	},
+	family = 'ipv4',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule', 'allow_mesh_mld', {
+	name = 'Allow mesh MLD',
+	src = 'mesh',
+	proto = 'icmp',
+	src_ip = 'fe80::/10',
+	icmp_type = {
+		'130/0',
+		'131/0',
+		'132/0',
+		'143/0',
+	},
+	family = 'ipv6',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule', 'allow_mesh_icmpv6_input', {
+	name = 'Allow mesh icmpv6 input',
+	src = 'mesh',
+	proto = 'icmp',
+	icmp_type = {
+		'echo-request',
+		'echo-reply',
+		'destination-unreachable',
+		'packet-too-big',
+		'time-exceeded',
+		'bad-header',
+		'unknown-header-type',
+		'router-solicitation',
+		'neighbour-solicitation',
+		'router-advertisement',
+		'neighbour-advertisement'
+	},
+ 	limit = '1000/sec',
+	family = 'ipv6',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule', 'allow_mesh_icmpv6_forward', {
+	name = 'Allow mesh icmpv6 forward',
+	src = 'mesh',
+	dest = '*',
+	proto = 'icmp',
+	icmp_type = {
+		'echo-request',
+		'echo-reply',
+		'destination-unreachable',
+		'packet-too-big',
+		'time-exceeded',
+		'bad-header',
+		'unknown-header-type'
+	},
+ 	limit = '1000/sec',
+	family = 'ipv6',
+	target = 'ACCEPT',
+})
+
+uci:save('firewall')
