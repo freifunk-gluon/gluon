@@ -410,6 +410,21 @@ function TextValue:__init__(...)
 end
 
 
+local Element = class(Node)
+M.Element = Element
+
+function Element:__init__(template, ...)
+	Node.__init__(self, ...)
+
+	self.default   = nil
+	self.size      = nil
+	self.optional  = false
+
+	self.template  = template
+
+	self.error = false
+end
+
 local Section = class(Node)
 M.Section = Section
 
@@ -426,8 +441,8 @@ function Section:option(t, ...)
 	return obj
 end
 
-function Section:template(...)
-	local obj  = Template(...)
+function Section:element(...)
+	local obj  = Element(...)
 	self:append(obj)
 	return obj
 end
