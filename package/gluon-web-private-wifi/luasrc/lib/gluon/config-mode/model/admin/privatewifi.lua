@@ -26,13 +26,12 @@ end
 local enabled = s:option(Flag, "enabled", translate("Enabled"))
 enabled.default = uci:get('wireless', primary_iface) and not uci:get_bool('wireless', primary_iface, "disabled")
 
-local warning = s:element('model/warning', 'warning')
-if mesh_on_wan then
-	warning.content = translate(
+local warning = s:element('model/warning', {
+	content = mesh_on_wan and translate(
 		'Meshing on WAN interface is enabled.' ..
 		'This can lead to problems.'
-	)
-end
+	) or nil,
+}, 'warning')
 warning:depends(enabled, true)
 
 local ssid = s:option(Value, "ssid", translate("Name (SSID)"))
