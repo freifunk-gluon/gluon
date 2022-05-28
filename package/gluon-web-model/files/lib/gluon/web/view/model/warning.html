@@ -1,9 +1,14 @@
-<%- if self.content then -%>
+<%- if self.title or self.content then -%>
 <div class="gluon-warning"<%=
   attr("id", id) ..
   attr("data-index", self.index) ..
   attr("data-depends", self:deplist(self.deps))
 %>>
+  <%- if self.content then -%>
   <%=self.content%>
+  <%- else -%>
+  <b><%=self.title%></b>
+  <%=self.description%>
+  <%- end -%>
 </div>
 <%- end -%>
