@@ -3,5 +3,7 @@
 . /lib/gluon/autoupdater/lib.sh
 
 
+stop olsrd
 stop olsrd2
+stop olsrd6
 wifi down

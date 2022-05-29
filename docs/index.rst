@@ -28,6 +28,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
    features/dns-forwarder
    features/monitoring
    features/multidomain
+   features/olsrd
    features/authorized-keys
    features/roles
    features/vpn

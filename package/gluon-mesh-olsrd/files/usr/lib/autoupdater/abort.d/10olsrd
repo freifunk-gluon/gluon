@@ -3,5 +3,7 @@
 . /lib/gluon/autoupdater/lib.sh
 
 
+start_enabled olsrd
 start_enabled olsrd2
+start_enabled olsrd6
 wifi up

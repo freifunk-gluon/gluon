@@ -7,4 +7,6 @@ reload_running() {
   fi
 }
 
+reload_running olsrd
 reload_running olsrd2
+reload_running olsrd6

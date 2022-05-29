@@ -1,0 +1,5 @@
+#!/bin/sh
+
+CMD='exec /lib/gluon/status-page/providers/neighbours-olsrd'
+
+exec /usr/sbin/sse-multiplex "$CMD"

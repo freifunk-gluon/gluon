@@ -1,0 +1,139 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
+local olsrd = require 'gluon.olsrd'
+
+-- Utils
+
+function printf(...)
+	print(string.format(...))
+end
+
+-- Print contents of `tbl`, with indentation.
+-- `indent` sets the initial level of indentation.
+-- src https://gist.github.com/xytis/5361405
+function tprint (tbl, indent)
+  if not indent then indent = 0 end
+  for k, v in pairs(tbl) do
+    formatting = string.rep('  ', indent) .. k .. ': '
+    if type(v) == 'table' then
+      print(formatting)
+      tprint(v, indent + 1)
+    else
+      print(formatting .. tostring(v))
+    end
+  end
+end
+
+-- src https://stackoverflow.com/a/24823383/3990041
+function table.slice(tbl, first, last, step)
+  local sliced = {}
+
+  for i = first or 1, last or #tbl, step or 1 do
+    sliced[#sliced+1] = tbl[i]
+  end
+
+  return sliced
+end
+
+-- CLI lib
+
+function exec_cmd(args, sub)
+	if sub[args[1]] == nil then
+		return cmd_err('does not exist')
+	else
+		local cmd = sub[args[1]]
+		if cmd[3] ~= nil and #args > 1 then
+			exec_cmd(table.slice(args, 2), cmd[3])
+		else
+			cmd[1](unpack(table.slice(args, 2)))
+		end
+	end
+end
+
+function list_cmd(level, sub)
+	for key, cmd in pairs(sub) do
+		printf('%s%s: %s', string.rep('  ', level), key, cmd[2])
+		if cmd[3] ~= nil then
+			list_cmd(level + 1, cmd[3])
+		end
+	end
+end
+
+function show_help()
+	printf('Usage: %s <command>', arg[0])
+	list_cmd(1, sub)
+end
+
+function cmd_err(msg, no_show_help)
+	-- since argv0 is at... well... 0... even though this is lua...
+	--- ...slice just returns arg without argv0 as the for starts at 1
+	printf('Error: Command "%s" %s', table.concat(table.slice(arg), ' '), msg)
+	if not no_show_help then
+		printf('')
+		show_help()
+	end
+	os.exit(2)
+end
+
+function dummy()
+	cmd_err('requires a subcommand')
+end
+
+-- our stuff
+
+function show_info()
+	local info = olsrd.oi()
+	tprint(info)
+end
+
+function olsr1_nodeinfo(...)
+	if #{ ... } == 0 then
+		return cmd_err('requires at least one argument (example: "all")', true)
+	end
+
+	local query = table.concat({ ... }, '/')
+	local res = olsrd.olsr1_get_nodeinfo(query)
+	tprint(res)
+end
+
+function olsr2_nodeinfo_raw(...)
+	if #{ ... } == 0 then
+		return cmd_err('requires at least one argument (example: "nhdpinfo link")', true)
+	end
+
+	local query = table.concat({ ... }, ' ')
+	local res = olsrd.olsr2_get_nodeinfo_raw(query)
+	print(res)
+end
+
+function olsr2_nodeinfo_json(...)
+	if #{ ... } == 0 then
+		return cmd_err('requires at least one argument (example: "nhdpinfo jsonraw link")', true)
+	end
+
+	local query = table.concat({ ... }, ' ')
+	local res = olsrd.olsr2_get_nodeinfo(query)
+	tprint(res)
+end
+
+sub = {
+	info = { show_info, 'Show information about status of olsr1 and olsr2' },
+	help = { show_help, 'Show help' },
+	olsr1 = { dummy, 'OLSRv1 Control Commands', {
+		nodeinfo = { olsr1_nodeinfo, 'OLSRv1 Nodeinfo' }
+	}	},
+	olsr2 = { dummy, 'OLSRv2 Control Commands', {
+		nodeinfo = { dummy, 'OLSRv2 Nodeinfo', {
+			raw = { olsr2_nodeinfo_raw, 'OLSRv2 Nodeinfo Raw' },
+			json = { olsr2_nodeinfo_json, 'OLSRv2 Nodeinfo JSON' }
+		} }
+	}	}
+}
+
+exec_cmd(table.slice(arg), sub)
