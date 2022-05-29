@@ -25,6 +25,7 @@ ath79-generic
   - DAP-2660 A1 [#lan_as_wan]_
   - DIR-505 A1 [#lan_as_wan]_
   - DIR-505 A2 [#lan_as_wan]_
+  - DIR-825 B1
 
 * Enterasys
 
