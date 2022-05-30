@@ -457,6 +457,8 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 	},
 })
 
+device('ubiquiti-nanobeam-m5-xw', 'ubnt_nanobeam-m5-xw')
+
 device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 	manifest_aliases = {
 		'ubiquiti-unifiap-outdoor+', -- upgrade from OpenWrt 19.07
