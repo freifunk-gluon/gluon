@@ -1,0 +1,50 @@
+From 17bb2d25191704d0526bd1bdc0e9060dbf02e12b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Maciej=20Kr=C3=BCger?= <mkg20001@gmail.com>
+Date: Wed, 1 Jun 2022 06:44:10 +0200
+Subject: [PATCH] yggdrasil: stop properly
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Previously it was using killall with procd respand enabled
+
+This was causing yggdrasil to restart after being killed
+
+root@r3test-hap:/# service yggdrasil stop ; echo $? ; sleep 10s ; ps | grep yggdrasil
+Terminated
+143
+ 6701 root      653m S    /usr/sbin/yggdrasil -useconffile /tmp/yggdrasil.conf
+ 6748 root      1308 S    grep yggdrasil
+
+Now it's just using whatever procd is using and see there, it actually stops
+
+root@r3test-hap:/# service yggdrasil stop ; echo $? ; sleep 10s ; ps | grep yggdrasil
+0
+ 6802 root      1308 S    grep yggdrasil
+
+I assume there was some procd bug that kept it from being used properly
+
+Signed-off-by: Maciej Krüger <mkg20001@gmail.com>
+---
+ net/yggdrasil/files/yggdrasil.init | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/net/yggdrasil/files/yggdrasil.init b/net/yggdrasil/files/yggdrasil.init
+index 38971281e..3510e3a3c 100755
+--- a/net/yggdrasil/files/yggdrasil.init
++++ b/net/yggdrasil/files/yggdrasil.init
+@@ -22,11 +22,6 @@ start_service()
+ 	procd_close_instance
+ }
+ 
+-stop_service()
+-{
+-	killall yggdrasil
+-}
+-
+ reload_service()
+ {
+ 	restart
+-- 
+2.36.0
+
