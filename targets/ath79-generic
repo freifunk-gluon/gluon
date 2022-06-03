@@ -383,6 +383,11 @@ device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
 device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
 device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
+device('tp-link-tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
+	class = 'tiny', -- 32M ath9k
+	packages = { 'zram-swap' },
+})
+
 device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
 device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3', {

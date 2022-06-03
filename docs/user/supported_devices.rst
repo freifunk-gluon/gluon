@@ -94,6 +94,7 @@ ath79-generic
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
+  - TL-WR710N (v1)
   - TL-WR810N (v1)
   - TL-WR842N/ND (v3)
   - TL-WR1043N/ND (v2, v3, v4, v5)
