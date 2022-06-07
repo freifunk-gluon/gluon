@@ -1,19 +1,10 @@
-<%- if self.title then -%>
-<div class="gluon-value"<%=
-  attr("id", id) ..
-  attr("data-index", self.index) ..
-  attr("data-depends", self:deplist(self.deps))
-%>>
+<%- if self.title or self.content then -%>
+<%- if self.title -%>
   <label class="gluon-value-title"><%=self.title%></label>
 
   <span class="gluon-value-field"><%=self.description%></span>
 </div>
 <%- elseif self.content then -%>
-<div class="gluon-value"<%=
-  attr("id", id) ..
-  attr("data-index", self.index) ..
-  attr("data-depends", self:deplist(self.deps))
-%>>
   <%=self.content%>
-</div>
+<%- end -%>
 <%- end -%>
