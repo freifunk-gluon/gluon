@@ -33,12 +33,12 @@ no security.
 Tunneldigger's primary drawback is the lack of IPv6 support.
 It also provides less configurability than fastd.
 
-mesh-vpn-wireguard (experimental)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mesh-vpn-wireguard
+~~~~~~~~~~~~~~~~~~
 
-Wireguard is a new tunneling software that offers modern encryption
-methods and is implemented in the kernel, resulting in high throughput.
-It is implemented in Gluon using the *wgpeerselector* tool.
+WireGuard is an encrypted in-kernel tunneling protocol that
+provides encrypted transmission and at the same time offers
+high throughput.
 
 fastd
 ^^^^^
@@ -119,3 +119,50 @@ The resulting firmware will allow users to choose between secure (encrypted) and
 
 To confirm whether the correct cipher is being used, the log output
 of fastd can be checked using ``logread``.
+
+WireGuard
+^^^^^^^^^
+
+In order to support WireGuard in Gluon, a few technologies are glued together.
+
+**VXLAN:** As Gluon typically relies on batman-adv, the Mesh VPN has to provide
+OSI Layer 2 transport. But WireGuard is an OSI Layer 3 tunneling protocol, so
+additional technology is necessary here. For this, we use VXLAN. In short, VXLAN
+is a well-known technology to encapsulate ethernet packages into IP packages.
+You can think of it as kind of similar to VLAN, but on a different layer. Here,
+we use VXLAN to transport batman-adv traffic over WireGuard.
+
+**wgpeerselector**: To connect all gluon nodes to each other, it is common to
+create a topology where each gluon node is connected to one of the available
+gateways via Mesh VPN respectively. To achieve this, the gluon node should be
+able to select a random gateway to connect to. But such "random selection of a
+peer" is not implemented in WireGuard by default. WireGuard only knows static
+peers. Therefore the *wgpeerselector* has been developed. It randomly selects a
+gateway, tries to establish a connection, and if it fails, tries to connect
+to the next gateway. This approach has several advantages, such as load
+balancing VPN connection attempts and avoiding problems with offline gateways.
+More information about the wgpeerselector and its algorithm can be found
+`here <https://github.com/freifunk-gluon/packages/blob/master/net/wgpeerselector/README.md>`__.
+
+On the gluon node both VXLAN and the wgpeerselector are well integrated and no
+explicit configuation of those tools is necessary, once the general WireGuard
+support has been configured.
+
+Attention must by paid to time synchronization. As WireGuard
+performs checks on timestamps in order to avoid replay attacks, time must
+be synchronized before the Mesh VPN connection is established. This means that
+the NTP servers specified in your site.conf must be publicly available (and not
+only through the mesh). Be aware that if you fail this, you may not directly see
+negative effects. Only when a previously connected node reboots the effect
+comes into play, as the gateway still knows about the old timestamp of the gluon
+node.
+
+Gateway / Supernode Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On the gateway side, a software called *wireguard-vxlan-glue* is necessary. It
+is a small daemon that dynamically adds and removes forwarding rules for VXLAN
+interfaces, so traffic is sent correctly into the WireGuard interface. Thereby
+the forwarding rules are only installed if a client is connected, so
+unnecessary traffic in the kernel is avoided. The source can be found
+`here <https://github.com/freifunkh/wireguard-vxlan-glue/>`__.

@@ -288,7 +288,7 @@ mesh_vpn
 
   The `enabled` option can be set to true to enable the VPN by default. `mtu`
   defines the MTU of the VPN interface, determining a proper MTU value is described
-  in the :ref:`FAQ <faq-mtu>`.
+  in :doc:`mtu`.
 
   By default the public key of a node's VPN daemon is not added to announced respondd
   data; this prevents malicious ISPs from correlating VPN sessions with specific mesh
@@ -385,7 +385,21 @@ mesh_vpn
 
       tunneldigger = {
         mtu = 1312,
-        brokers = {'vpn1.alpha-centauri.freifunk.net'}
+        brokers = {'vpn1.alpha-centauri.freifunk.net'},
+      },
+
+      wireguard = {
+        mtu = 1376,
+        peers = {
+          vpn1 = {
+            public_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=',
+            endpoint = 'vpn1.alpha-centauri.freifunk.net:51810',
+          },
+          vpn2 = {
+            public_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=',
+            endpoint = 'vpn2.alpha-centauri.freifunk.net:51810',
+          },
+        },
       },
 
       bandwidth_limit = {
