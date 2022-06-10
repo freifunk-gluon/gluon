@@ -355,6 +355,7 @@ device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	manifest_aliases = {
 		'tp-link-archer-c6-v2', -- Upgrade from OpenWrt 19.07
 	},
+	broken = true,
 })
 
 device('tp-link-archer-c60-v1', 'tplink_archer-c60-v1', {
@@ -524,6 +525,7 @@ device('ubiquiti-unifi-ac-mesh-pro', 'ubnt_unifiac-mesh-pro', {
 device('ubiquiti-unifi-ac-pro', 'ubnt_unifiac-pro', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
+	broken = true,
 })
 
 device('ubiquiti-unifi-ap', 'ubnt_unifi', {
