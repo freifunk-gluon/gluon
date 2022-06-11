@@ -149,10 +149,8 @@ local function configure_ibss(config, radio, index, suffix, disabled)
 		device = radio_name,
 		network = name,
 		mode = 'adhoc',
-		ssid = ssid,
-		bssid = bssid,
 		macaddr = macaddr,
-		mcast_rate = config.mcast_rate,
+		ssid = ssid,
 		ifname = suffix and 'ibss' .. suffix,
 		disabled = disabled,
 	})
