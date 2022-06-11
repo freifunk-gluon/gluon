@@ -25,6 +25,7 @@ files["package/**/check_site.lua"] = {
 		"extend",
 		"in_domain",
 		"in_site",
+		"value",
 		"need",
 		"need_alphanumeric_key",
 		"need_array",

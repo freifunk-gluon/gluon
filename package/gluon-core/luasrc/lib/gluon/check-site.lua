@@ -57,6 +57,10 @@ end
 
 
 local function path_to_string(path)
+	if path.is_value then
+		return path.label
+	end
+
 	return table.concat(path, '.')
 end
 
@@ -96,6 +100,10 @@ local function domain_src()
 end
 
 local function conf_src(path)
+	if path.is_value then
+		return 'Configuration'
+	end
+
 	local src
 
 	if has_domains then
@@ -138,6 +146,14 @@ function M.in_domain(path)
 	return path
 end
 
+function M.value(label, value)
+	return {
+		is_value = true,
+		label = label,
+		value = value,
+	}
+end
+
 function M.this_domain()
 	return domain_code
 end
@@ -171,6 +187,10 @@ function loadpath(path, base, c, ...)
 end
 
 local function loadvar(path)
+	if path.is_value then
+		return path.value
+	end
+
 	return loadpath({}, conf, unpack(path))
 end
 
