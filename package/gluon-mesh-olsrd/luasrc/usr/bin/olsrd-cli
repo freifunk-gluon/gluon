@@ -122,17 +122,27 @@ function olsr2_nodeinfo_json(...)
 	tprint(res)
 end
 
+function olsr1_neigh()
+	return olsr1_nodeinfo('links')
+end
+
+function olsr2_neigh()
+	return olsr2_nodeinfo('nhdpinfo jsonraw link')
+end
+
 sub = {
 	info = { show_info, 'Show information about status of olsr1 and olsr2' },
 	help = { show_help, 'Show help' },
 	olsr1 = { dummy, 'OLSRv1 Control Commands', {
-		nodeinfo = { olsr1_nodeinfo, 'OLSRv1 Nodeinfo' }
+		nodeinfo = { olsr1_nodeinfo, 'OLSRv1 Nodeinfo' },
+		neigh = { olsr1_neigh, 'OLSRv1 Neighbour List' },
 	}	},
 	olsr2 = { dummy, 'OLSRv2 Control Commands', {
 		nodeinfo = { dummy, 'OLSRv2 Nodeinfo', {
 			raw = { olsr2_nodeinfo_raw, 'OLSRv2 Nodeinfo Raw' },
 			json = { olsr2_nodeinfo_json, 'OLSRv2 Nodeinfo JSON' }
-		} }
+		} },
+		neigh = { olsr2_neigh, 'OLSRv2 Neighbour List' },
 	}	}
 }
 
