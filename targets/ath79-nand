@@ -9,6 +9,11 @@ local ATH10K_PACKAGES_QCA9887 = {
 local ATH10K_PACKAGES_QCA9888 = {}
 
 
+-- Aerohive
+
+device('aerohive-hiveap-121', 'aerohive_hiveap-121')
+
+
 -- GL.iNet
 
 device('gl.inet-gl-ar300m-nor', 'glinet_gl-ar300m-nor', {
