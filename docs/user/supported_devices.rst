@@ -139,6 +139,10 @@ ath79-generic
 ath79-nand
 ----------
 
+* Aerohive
+
+  - HiveAP 121
+
 * GL.iNet
 
   - GL-AR300M
