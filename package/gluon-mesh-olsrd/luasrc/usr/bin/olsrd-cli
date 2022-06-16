@@ -127,7 +127,7 @@ function olsr1_neigh()
 end
 
 function olsr2_neigh()
-	return olsr2_nodeinfo('nhdpinfo jsonraw link')
+	return olsr2_nodeinfo_json('nhdpinfo jsonraw link')
 end
 
 sub = {
