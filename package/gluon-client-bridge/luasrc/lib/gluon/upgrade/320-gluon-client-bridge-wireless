@@ -90,21 +90,16 @@ local function configure_owe_transition_mode(config, radio_name)
 	local name_client = 'client_' .. radio_name
 	local name_owe = 'owe_' .. radio_name
 
-	local ssid_client = uci:get('wireless', name_client, 'ssid')
-	local ssid_owe = uci:get('wireless', name_owe, 'ssid')
+	local ifname_client = uci:get('wireless', name_client, 'ifname')
+	local ifname_owe = uci:get('wireless', name_owe, 'ifname')
 
-	local macaddr_client = uci:get('wireless', name_client, 'macaddr')
-	local macaddr_owe = uci:get('wireless', name_owe, 'macaddr')
-
-	if not (ssid_client and ssid_owe and macaddr_client and macaddr_owe) then
+	if not (ifname_client and ifname_owe) then
 		return
 	end
 
-	uci:set('wireless', name_client, 'owe_transition_ssid', ssid_owe)
-	uci:set('wireless', name_client, 'owe_transition_bssid', macaddr_owe)
+	uci:set('wireless', name_client, 'owe_transition_ifname', ifname_owe)
+	uci:set('wireless', name_owe, 'owe_transition_ifname', ifname_client)
 
-	uci:set('wireless', name_owe, 'owe_transition_ssid', ssid_client)
-	uci:set('wireless', name_owe, 'owe_transition_bssid', macaddr_client)
 	uci:set('wireless', name_owe, 'hidden', '1')
 end
 
