@@ -1,0 +1,55 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require "gluon.site"
+
+uci:section('firewall', 'zone', 'mmfd', {
+	name = 'mmfd',
+	input = 'REJECT',
+	output = 'accept',
+	forward = 'REJECT',
+	device = 'mmfd+',
+	log = '1',
+})
+
+uci:section('firewall', 'rule',  'mesh_mmfd', {
+	src = 'mesh',
+	src_ip = 'fe80::/64',
+	dest_port = '27275',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mesh_respondd_mcast_ll', {
+	src = 'mesh',
+	src_ip = 'fe80::/64' ,
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mesh_respondd_mcast2', {
+	src = 'mesh',
+	src_ip = site.node_prefix6() or site.prefix6(),
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mmfd_respondd_ll', {
+	src = 'mmfd',
+	src_ip = 'fe80::/64',
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:section('firewall', 'rule',  'mmfd_respondd_mesh', {
+	src = 'mmfd',
+	src_ip = site.node_prefix6() or site.prefix6(),
+	dest_port = '1001',
+	proto = 'udp',
+	target = 'ACCEPT',
+})
+
+uci:save('firewall')
