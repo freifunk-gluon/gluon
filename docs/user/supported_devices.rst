@@ -291,6 +291,10 @@ ramips-mt7621
 
   - RT-AC57U
 
+* Cudy
+
+  - WR2100
+
 * D-Link
 
   - DIR-860L (B1)

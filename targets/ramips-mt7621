@@ -5,6 +5,13 @@ device('asus-rt-ac57u', 'asus_rt-ac57u', {
 })
 
 
+-- Cudy
+
+device('cudy-wr2100', 'cudy_wr2100', {
+        factory = false,
+})
+
+
 -- D-Link
 
 device('d-link-dir-860l-b1', 'dlink_dir-860l-b1')
