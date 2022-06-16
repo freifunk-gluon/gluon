@@ -1,6 +1,7 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+local site = require "gluon.site"
 
 uci:section('firewall', 'rule', 'mesh_babel', {
 	src = 'mesh',
