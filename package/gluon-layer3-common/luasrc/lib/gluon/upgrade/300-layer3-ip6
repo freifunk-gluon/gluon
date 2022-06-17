@@ -1,0 +1,11 @@
+#!/usr/bin/lua
+
+local sysconfig = require 'gluon.sysconfig'
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+local iputil = require 'gluon.iputil'
+
+local ip = iputil.mac_to_ip(site.node_prefix6(), sysconfig.primary_mac)
+
+uci:set('network', 'loopback', 'ip6addr', ip)
+uci:save('network')
