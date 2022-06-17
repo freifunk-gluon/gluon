@@ -20,6 +20,10 @@ device('netgear-r6220', 'netgear_r6220', {
 	factory_ext = '.img',
 })
 
+device('netgear-wac104', 'netgear_wac104', {
+	factory_ext = '.img',
+})
+
 device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	factory = false,
 	broken = true, -- untested
