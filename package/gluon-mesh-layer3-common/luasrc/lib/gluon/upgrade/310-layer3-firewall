@@ -1,0 +1,25 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+uci:section('firewall', 'forwarding', 'fcc', {
+	src = 'loc_client',
+	dest = 'loc_client',
+})
+
+uci:section('firewall', 'forwarding', 'fcm', {
+	src = 'loc_client',
+	dest = 'mesh',
+})
+
+uci:section('firewall', 'forwarding', 'fmc', {
+	src = 'mesh',
+	dest = 'loc_client',
+})
+
+uci:section('firewall', 'forwarding', 'fmm', {
+	src = 'mesh',
+	dest = 'mesh',
+})
+
+uci:save('firewall')
