@@ -300,6 +300,7 @@ ramips-mt7621
 
   - EX6150 (v1)
   - R6220
+  - WAC104
 
 * TP-Link
 
