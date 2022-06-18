@@ -27,6 +27,10 @@ device('netgear-r6220', 'netgear_r6220', {
 	factory_ext = '.img',
 })
 
+device('netgear-r6260', 'netgear_r6260', {
+	factory_ext = '.img',
+})
+
 device('netgear-wac104', 'netgear_wac104', {
 	factory_ext = '.img',
 })
