@@ -234,7 +234,7 @@ local function configure_p2p(config, radio, index, suffix, disabled)
 		ssid = ssid,
 		mode = mode,
 		macaddr = macaddr,
-		mcast_rate = config.mcast_rate,
+		-- mcast_rate = config.mcast_rate,
 		ifname = suffix and 'p2p' .. suffix,
 		encryption = 'none',
 		disabled = disabled,

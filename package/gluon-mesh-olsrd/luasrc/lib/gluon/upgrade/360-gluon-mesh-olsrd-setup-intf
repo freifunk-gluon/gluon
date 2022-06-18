@@ -46,7 +46,12 @@ end
 -- get all mesh radios and mesh lans and then add them to olsrd
 wireless.foreach_radio(uci, function(radio, _, _)
 	local radio_name = radio['.name']
-	table.insert(intf.radio_mesh, 'mesh_' .. radio_name)
+	if uci:get('network', 'mesh_' .. radio_name, 'proto') then
+		table.insert(intf.radio_mesh, 'mesh_' .. radio_name)
+	end
+	if uci:get('network', 'p2p_' .. radio_name, 'proto') then
+		table.insert(intf.radio_mesh, 'p2p_' .. radio_name)
+	end
 	if uci:get('network', 'ibss_' .. radio_name, 'proto') then
 		table.insert(intf.radio_mesh, 'ibss_' .. radio_name)
 	end
