@@ -1,3 +1,10 @@
 device('ubiquiti-unifi-6-lr', 'ubnt_unifi-6-lr', {
 	factory = false,
 })
+
+-- Xiaomi
+
+device('xiaomi-redmi-router-ax6s', 'xiaomi_redmi-router-ax6s', {
+	factory = false,
+})
+
