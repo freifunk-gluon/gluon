@@ -226,6 +226,10 @@ lantiq-xway
 mediatek-mt7622
 ---------------
 
+* Linksys
+
+  - E8450
+
 * Ubiquiti
 
   - UniFi 6 LR

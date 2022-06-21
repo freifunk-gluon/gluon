@@ -1,3 +1,11 @@
+-- Linksys
+
+device('linksys-e8450-ubi', 'linksys_e8450-ubi', {
+	factory = false,
+	sysupgrade_ext = '.itb',
+})
+
+
 device('ubiquiti-unifi-6-lr', 'ubnt_unifi-6-lr', {
 	factory = false,
 })
