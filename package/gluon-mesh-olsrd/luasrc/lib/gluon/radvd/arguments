@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local site = require "gluon.site"
+
+io.write("-i local-node --default-lifetime 900 -a " ..
+	site.node_client_prefix6() or site.node_prefix6() or site.prefix6())
+
+if site.dns() and site.dns.servers() then
+	io.write(" --rdnss " .. site.next_node.ip6())
+end
