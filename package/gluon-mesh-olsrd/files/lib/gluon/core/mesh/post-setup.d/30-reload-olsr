@@ -1,0 +1,10 @@
+#!/bin/sh
+
+reload_running() {
+  if [ -x /etc/init.d/"$1" ] && /etc/init.d/"$1" enabled && /etc/init.d/"$1" running; then
+    echo "(post-setup.d:$IFNAME) Reloading $1..."
+    /etc/init.d/"$1" reload
+  fi
+}
+
+reload_running olsrd2

@@ -59,6 +59,8 @@ config('KERNEL_SECCOMP', false)
 -- use try_config, so enabling the package is still possible
 try_config('PACKAGE_kmod-mt7915e', false)
 
+try_config('OONF_GENERIC_HTTP', true)
+
 config('COLLECT_KERNEL_DEBUG', true)
 
 config('TARGET_MULTI_PROFILE', true)
