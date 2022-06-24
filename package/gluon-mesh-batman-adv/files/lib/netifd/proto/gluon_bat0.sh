@@ -37,7 +37,7 @@ proto_gluon_bat0_renew() {
 proto_gluon_bat0_setup() {
 	local config="$1"
 
-	local routing_algo=$(lookup_site 'mesh.batman_adv.routing_algo' 'BATMAN_IV')
+	local routing_algo="$(lookup_site 'mesh.batman_adv.routing_algo' 'BATMAN_IV')"
 
 	local gw_mode
 	json_get_vars gw_mode
