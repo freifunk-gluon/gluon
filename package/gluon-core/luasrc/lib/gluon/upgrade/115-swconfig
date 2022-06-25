@@ -1,0 +1,28 @@
+#!/usr/bin/lua
+
+local platform = require 'gluon.platform'
+local uci = require('simple-uci').cursor()
+
+local switch_vlans = {
+	-- device identifier, lan ports, wan ports
+	["ubnt,unifiac-pro"] = {"2 0t", "3 0t"},
+}
+
+local board_name = platform.get_board_name()
+local assignments = switch_vlans[board_name]
+
+if not platform.match('ath79', 'generic') or not assignments then
+	return
+end
+
+uci:delete_all('network', 'switch_vlan')
+
+for vlan, ports in ipairs(assignments) do
+	uci:section("network", "switch_vlan", nil, {
+		device = "switch0",
+		vlan = vlan,
+		ports = ports,
+	})
+end
+
+uci:save('network')
