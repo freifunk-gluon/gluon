@@ -304,8 +304,18 @@ struct json_object * olsr2_get_interfaces (void) {
 		);
 
 		json_object_object_add(intf, "mac", json_object_object_get(el, "if_mac"));
-		json_object_object_add(intf, "v4", json_object_object_get(el, "if_bindto_v4"));
-		json_object_object_add(intf, "v6", json_object_object_get(el, "if_bindto_v6"));
+
+		if (json_object_get_string(json_object_object_get(intf, "v4"))[0] != "-"[0]) {
+			json_object_object_add(intf, "v4", json_object_object_get(el, "if_bindto_v4"));
+		} else {
+			json_object_object_add(intf, "v4", json_object_new_null());
+		}
+
+		if (json_object_get_string(json_object_object_get(intf, "v6"))[0] != "-"[0]) {
+			json_object_object_add(intf, "v6", json_object_object_get(el, "if_bindto_v6"));
+		} else {
+			json_object_object_add(intf, "v6", json_object_new_null());
+		}
 	}
 
 	return out;
