@@ -32,7 +32,17 @@ uci:section('network', 'interface', 'wan', {
 	igmp_snooping = true,
 	multicast_querier = false,
 	peerdns = false,
+	ip4table = 1,
 	auto = true,
+})
+
+uci:section('network', 'route4', 'wan4_unreachable', {
+	type = 'unreachable',
+	interface = 'loopback',
+	target = '0.0.0.0/0',
+	gateway = '0.0.0.0',
+	table = 1,
+	metric = 65535,
 })
 
 uci:section('network', 'interface', 'wan6', {
