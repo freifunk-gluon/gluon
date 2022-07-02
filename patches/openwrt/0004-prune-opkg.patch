@@ -1,22 +1,23 @@
-From 318c93ccb99221a401c79a3d3f11374ad71e1a9a Mon Sep 17 00:00:00 2001
+From df92dac989c8ddca5fb4b54db121626b789aa24f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Maciej=20Kr=C3=BCger?= <mkg20001@gmail.com>
 Date: Fri, 10 Jun 2022 20:21:02 +0200
 Subject: [PATCH] prune opkg
 
 ---
- include/image.mk | 3 +++
- 1 file changed, 3 insertions(+)
+ include/image.mk | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/include/image.mk b/include/image.mk
-index 1703c39797..83db6a84ad 100644
+index 1703c39797..295844af09 100644
 --- a/include/image.mk
 +++ b/include/image.mk
-@@ -330,6 +330,9 @@ target-dir-%: FORCE
+@@ -330,6 +330,10 @@ target-dir-%: FORCE
  	-$(CP) -T $(mkfs_cur_target_dir).opkg/ $(mkfs_cur_target_dir)/etc/opkg/
  	rm -rf $(mkfs_cur_target_dir).opkg $(mkfs_cur_target_dir).conf
  	$(call prepare_rootfs,$(mkfs_cur_target_dir),$(TOPDIR)/files)
 +	rm -rf $(mkfs_cur_target_dir)/usr/lib/opkg
 +	rm -rf $(mkfs_cur_target_dir)/bin/opkg
++	rm -rf $(mkfs_cur_target_dir)/usr/sbin/opkg-key
 +	rm -rf $(mkfs_cur_target_dir)/etc/opkg
  
  $(KDIR)/root.%: kernel_prepare
