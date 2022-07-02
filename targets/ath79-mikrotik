@@ -1,5 +1,5 @@
 include 'mikrotik.inc'
 
 device('mikrotik-routerboard-951ui-2nd-hap', 'mikrotik_routerboard-951ui-2nd', {
-  class = 'yggdrasil',
+--  class = 'yggdrasil',
 })
