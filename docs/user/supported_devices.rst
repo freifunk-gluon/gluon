@@ -234,6 +234,10 @@ mediatek-mt7622
 
   - UniFi 6 LR
 
+* Xiaomi
+
+  - AX3200 (RB03)
+
 mpc85xx-p1010
 -------------
 
