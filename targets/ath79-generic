@@ -435,6 +435,12 @@ device('tp-link-wbs210-v1', 'tplink_wbs210-v1', {
 
 device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
 
+device('tp-link-wbs510-v1', 'tplink_wbs510-v1', {
+	manifest_aliases = {
+		'tp-link-wbs510-v1.20', -- upgrade from OpenWrt 19.07
+	},
+})
+
 -- Ubiquiti
 
 device('ubiquiti-nanostation-loco-m-xw', 'ubnt_nanostation-loco-m-xw', {

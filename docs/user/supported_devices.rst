@@ -104,6 +104,7 @@ ath79-generic
   - TL-WR1043N/ND (v2, v3, v4, v5)
   - WBS210 (v1.20)
   - WBS210 (v2.0)
+  - WBS510 (v1.20)
 
 * Ubiquiti
 
