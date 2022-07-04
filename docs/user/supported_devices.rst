@@ -196,6 +196,14 @@ ipq40xx-generic
   - NBG6617
   - WRE6606  [#device-class-tiny]_
 
+ipq40xx-mikrotik
+----------------
+
+* Mikrotik
+
+  - DISC Lite5 ac (RBDiscG-5acD)
+  - SXTsq 5 ac (RBSXTsqG-5acD)
+
 ipq806x-generic
 ---------------
 
