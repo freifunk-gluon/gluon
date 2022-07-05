@@ -1,6 +1,8 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+
+local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
 
 local wan = uci:get_all('network_gluon-old', 'wan') or {}
@@ -13,8 +15,15 @@ uci:section('network', 'interface', 'loopback', {
 	netmask = '255.0.0.0',
 })
 
+local wan_proto = 'dhcp'
+
+if sysconfig.gluon_version and wan.proto ~= nil then
+	-- Only restore WAN proto in case this is an upgrade
+	wan_proto = wan.proto
+end
+
 uci:section('network', 'interface', 'wan', {
-	proto = wan.proto or 'dhcp',
+	proto = wan_proto,
 	ipaddr = wan.ipaddr,
 	netmask = wan.netmask,
 	gateway = wan.gateway,
