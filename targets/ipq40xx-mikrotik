@@ -1,0 +1,6 @@
+include 'mikrotik.inc'
+
+device('mikrotik-sxtsq-5-ac-rbsxtsqg-5acd', 'mikrotik_sxtsq-5-ac', {
+	factory = false,
+	aliases = {'mikrotik-discg-5acd'},
+})

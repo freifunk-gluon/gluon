@@ -53,6 +53,11 @@ function M.is_outdoor_device()
 		'plasmacloud,pa1200',
 	}) then
 		return true
+
+	elseif M.match('ipq40xx', 'mikrotik', {
+		'mikrotik,sxtsq-5-ac',
+	}) then
+		return true
 	end
 
 	return false
