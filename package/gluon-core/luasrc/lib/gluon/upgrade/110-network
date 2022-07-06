@@ -45,6 +45,11 @@ uci:section('network', 'route4', 'wan4_unreachable', {
 	metric = 65535,
 })
 
+uci:section('network', 'rule', 'wan4_lookup', {
+	mark = '0x01/0x01',
+	lookup = 1,
+})
+
 uci:section('network', 'interface', 'wan6', {
 	proto = wan6.proto or 'dhcpv6',
 	ip6addr = wan6.ip6addr,
