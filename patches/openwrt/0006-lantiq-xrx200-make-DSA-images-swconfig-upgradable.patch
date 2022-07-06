@@ -1,0 +1,30 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 5 Jul 2022 23:49:31 +0200
+Subject: lantiq-xrx200: make DSA images swconfig upgradable
+
+diff --git a/target/linux/lantiq/image/tp-link.mk b/target/linux/lantiq/image/tp-link.mk
+index 756105b94c7f844439132ab57837c9ac87d231ca..5563968de9ab3f491fa89d755fcc6e6fff79948f 100644
+--- a/target/linux/lantiq/image/tp-link.mk
++++ b/target/linux/lantiq/image/tp-link.mk
+@@ -1,7 +1,7 @@
+ DEVICE_VARS += TPLINK_FLASHLAYOUT TPLINK_HWID TPLINK_HWREV TPLINK_HWREVADD TPLINK_HVERSION
+ 
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
++  DEVICE_COMPAT_VERSION := 1.0
+   DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+ 
+diff --git a/target/linux/lantiq/image/vr9.mk b/target/linux/lantiq/image/vr9.mk
+index d17045b6db157a878534a28988accd8998ddd572..e83da928e57d827d33bca6bdef96df290bb67347 100644
+--- a/target/linux/lantiq/image/vr9.mk
++++ b/target/linux/lantiq/image/vr9.mk
+@@ -1,7 +1,7 @@
+ DEVICE_VARS += NETGEAR_BOARD_ID NETGEAR_HW_ID
+ 
+ define Device/dsa-migration
+-  DEVICE_COMPAT_VERSION := 1.1
++  DEVICE_COMPAT_VERSION := 1.0
+   DEVICE_COMPAT_MESSAGE := Config cannot be migrated from swconfig to DSA
+ endef
+ 
