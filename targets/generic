@@ -94,5 +94,5 @@ packages {
 	'-wpad-basic-wolfssl',
 	'-firewall4',
 	'gluon-core',
-	'ip6tables-legacy',
+	'ip6tables-zz-legacy',
 }
