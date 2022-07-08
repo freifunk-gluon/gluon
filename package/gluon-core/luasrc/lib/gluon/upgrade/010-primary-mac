@@ -147,7 +147,7 @@ for _, matcher in ipairs(primary_addrs) do
 		if platform.match(unpack(match)) then
 			local addr = f()
 			if addr then
-				sysconfig.primary_mac = addr
+				sysconfig.primary_mac = addr:lower()
 				return
 			end
 		end
