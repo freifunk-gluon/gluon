@@ -4,6 +4,10 @@ Supported Devices & Architectures
 ath79-generic
 --------------
 
+* ALFA Network
+
+  - AP121F
+
 * AVM
 
   - FRITZ!WLAN Repeater 300E [#avmflash]_

@@ -16,6 +16,12 @@ local ATH10K_PACKAGES_QCA9887 = {
 
 local ATH10K_PACKAGES_QCA9888 = {}
 
+-- ALFA NETWORK
+
+device('alfa-network-ap121f', 'alfa-network_ap121f', {
+	factory = false,
+})
+
 -- AVM
 
 device('avm-fritz-box-4020', 'avm_fritz4020', {
