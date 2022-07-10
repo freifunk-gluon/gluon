@@ -149,6 +149,13 @@ device('netgear-wndr3700-v2', 'netgear_wndr3700-v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-wnr2200-8m', 'netgear_wnr2200-8m', {
+	manifest_aliases = {
+		'netgear-wnr2200', -- Upgrade from OpenWrt 19.07
+	},
+	factory_ext = '.img',
+})
+
 
 -- OCEDO
 

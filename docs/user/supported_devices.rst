@@ -51,6 +51,7 @@ ath79-generic
 * Netgear
 
   - WNDR3700 (v1, v2)
+  - WNR2200 (8M)
 
 * OCEDO
 
