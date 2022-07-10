@@ -156,6 +156,10 @@ device('netgear-wnr2200-8m', 'netgear_wnr2200-8m', {
 	factory_ext = '.img',
 })
 
+device('netgear-wnr2200-16m', 'netgear_wnr2200-16m', {
+	factory_ext = '.img',
+})
+
 
 -- OCEDO
 
