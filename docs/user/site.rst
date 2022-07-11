@@ -414,6 +414,8 @@ mesh_vpn
       },
     }
 
+.. _user-site-interfaces:
+
 interfaces \: optional
   Default setup for Ethernet ports.
   ::

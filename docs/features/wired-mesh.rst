@@ -51,37 +51,81 @@ Both Mesh-on-WAN and Mesh-on-LAN can be configured on the "Network" page
 of the *Advanced settings* (if the package ``gluon-web-network`` is installed).
 
 It is also possible to enable Mesh-on-WAN and Mesh-on-LAN by default by adding
-the ``mesh`` role to the ``interfaces.*.default_roles`` options in site.conf.
+the ``mesh`` role to the ``interfaces.*.default_roles`` options in your
+:ref:`site.conf<user-site-interfaces>`.
+
 
 Commandline
 ===========
 
+Starting with release 2022.1, the wired network configuration is rebuilt from ``/etc/config/gluon``
+upon each ``gluon-reconfigure``.
+Therefore the network configuration is overwritten at least with every firmware upgrade.
+
+Every interface has a list of roles assigned to it which can be ``client``, ``mesh`` or ``uplink``.
+
+When the client role is assigned to an interface in combination with other roles
+(like 'client', 'mesh' in the Mesh-on-LAN example below), the other roles take
+precedence, enabling mesh but not client in the previous example.
+
+The setup/config-mode interface is every interface with the role ``client`` which makes removing
+it from interfaces not only unnecessary, but generally unrecommended.
+
+In order to make persistent changes to the router's configuration it's necessary to:
+
+* change the sections in ``/etc/config/gluon`` e.g. using uci (see examples below)
+* call ``gluon-reconfigure`` to re-generate ``/etc/config/network``
+* apply the networking changes, either through executing ``service network restart`` or by performing a ``reboot``
+
 Enable Mesh-on-WAN::
 
-  uci set network.mesh_wan.disabled=0
-  uci commit network
+  uci add_list gluon.iface_wan.role='mesh'
+  uci commit gluon
 
 Disable Mesh-on-WAN::
 
-  uci set network.mesh_wan.disabled=1
-  uci commit network
+  uci del_list gluon.iface_wan.role='mesh'
+  uci commit gluon
 
 Enable Mesh-on-LAN::
 
-  uci set network.mesh_lan.disabled=0
-  for ifname in $(cat /lib/gluon/core/sysconfig/lan_ifname); do
-    uci del_list network.client.ifname=$ifname
-  done
-  uci commit network
+  uci add_list gluon.iface_lan.role='mesh'
+  uci commit gluon
 
 Disable Mesh-on-LAN::
 
-  uci set network.mesh_lan.disabled=1
-  for ifname in $(cat /lib/gluon/core/sysconfig/lan_ifname); do
-    uci add_list network.client.ifname=$ifname
-  done
-  uci commit network
+  uci del_list gluon.iface_lan.role='mesh'
+  uci commit gluon
 
-Please note that this configuration has changed in Gluon 2016.1. Using
-the old commands on 2016.1 and later will break the corresponding options
+For devices with a single interface, instead of `iface_lan` and `iface_wan` configuration is
+done with `iface_single`.
+
+Enable Mesh-on-Single::
+
+  uci add_list gluon.iface_single.role='mesh'
+  uci commit gluon
+
+Disable Mesh-on-Single::
+
+  uci del_list gluon.iface_single.role='mesh'
+  uci commit gluon
+
+Furthermore it is possible to make use of 802.1Q VLAN.
+The following statements would create a VLAN with id 8 on ``eth0`` and join the mesh network with it::
+
+  uci set gluon.iface_lan_vlan8=interface
+  uci set gluon.iface_lan_vlan8.name='eth0.8'
+  uci add_list gluon.iface_lan_vlan8.role='mesh'
+  uci commit gluon
+
+Other VLAN-interfaces could be configured on the same parent interface in order to have
+all three roles available on ``eth0`` without having them interfere with each other.
+This feature comes in especially handy for the persistent configuration of virtual machines
+as offloader for bigger installations.
+
+A ``reboot`` is not sufficient to apply an altered configuration; calling ``gluon-reconfigure`` before is
+mandatory in order for changes to take effect.
+
+Please note that this configuration has changed in Gluon 2022.1. Using
+the old commands on 2022.1 and later will break the corresponding options
 in the *Advanced settings*.
