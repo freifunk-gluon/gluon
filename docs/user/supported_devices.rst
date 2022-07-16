@@ -340,6 +340,7 @@ ramips-mt7621
   - R6220
   - R6260
   - WAC104
+  - WAX202
 
 * TP-Link
 
