@@ -161,6 +161,15 @@ device('netgear-wndr3700-v2', 'netgear_wndr3700-v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-wndr3800', 'netgear_wndr3800', {
+	factory_ext = '.img',
+})
+
+device('netgear-wndr3800ch', 'netgear_wndr3800ch', {
+	factory_ext = '.img',
+	manifest_aliases = {'netgear-wndr3800chmychart'},  -- Upgrade from OpenWrt 19.07
+})
+
 device('netgear-wnr2200-8m', 'netgear_wnr2200-8m', {
 	manifest_aliases = {
 		'netgear-wnr2200', -- Upgrade from OpenWrt 19.07
