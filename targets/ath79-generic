@@ -41,6 +41,12 @@ device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
 device('buffalo-wzr-600dhp', 'buffalo_wzr-600dhp')
 
+device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s', {
+	manifest_aliases = {
+		'buffalo-wzr-hp-g300nh', -- Upgrade from OpenWrt 19.07
+	},
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {

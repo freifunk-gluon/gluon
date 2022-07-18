@@ -17,6 +17,7 @@ ath79-generic
 * Buffalo
 
   - WZR-HP-AG300H / WZR-600DHP
+  - WZR-HP-G300NH (rtl8366s)
 
 * devolo
 
