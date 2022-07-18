@@ -134,6 +134,10 @@ ath79-nand
   - GL-AR300M
   - GL-AR750S
 
+* Netgear
+
+  - WNDR3700 (v4)
+
 ath79-mikrotik
 --------------
 
