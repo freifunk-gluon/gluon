@@ -25,7 +25,7 @@ table, tr, th, td {
 }
 
 body {
-	background: rgba(0, 0, 0, 0.12);
+	background: rgba(85, 98, 112, 0.12); // $feuer_greyblue
 	font-family: Roboto, Lucida Grande, sans, Arial;
 	color: rgba(0, 0, 0, 0.87);
 	font-size: 14px;
@@ -34,7 +34,8 @@ body {
 
 
 a {
-	color: rgba(220, 0, 103, 0.87);
+	// color: rgba(105, 145, 170, 0.87); // $feuer_lightblue
+	color: rgba(161, 200, 32, 0.87); // $feuer_green
 	text-decoration: none;
 
 	margin: 0;
@@ -68,7 +69,7 @@ h3 {
 header {
 	display: flex;
 	padding: 0 14px;
-	background: #dc0067;
+	background: #6991aa; // $feuer_lightblue
 	color: rgba(255, 255, 255, 0.98);
 	position: absolute;
 	top: 0;
