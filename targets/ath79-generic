@@ -435,6 +435,7 @@ device('tp-link-re450-v1', 'tplink_re450-v1', {
 		'tp-link-re450', -- upgrade from OpenWrt 19.07
 	},
 	class = 'tiny', -- Only 6M of usable Firmware space
+	broken = true,
 })
 
 device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
