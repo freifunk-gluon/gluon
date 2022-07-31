@@ -3,7 +3,7 @@ Date: Sun, 5 Jun 2022 23:43:38 +0200
 Subject: ramips-mt7621: make DSA images swconfig upgradable
 
 diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
-index bdaeac2cb16e3d27931c0a54d691d834bf274cbb..ac2c84a435c49fb30c21ad2cb6c71a1e94c24192 100644
+index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3b9e0f14d 100644
 --- a/target/linux/ramips/image/mt7621.mk
 +++ b/target/linux/ramips/image/mt7621.mk
 @@ -171,7 +171,6 @@ endef
@@ -38,15 +38,15 @@ index bdaeac2cb16e3d27931c0a54d691d834bf274cbb..ac2c84a435c49fb30c21ad2cb6c71a1e
    $(Device/uimage-lzma-loader)
    BLOCKSIZE := 128k
    PAGESIZE := 2048
-@@ -1357,7 +1353,6 @@ endef
- TARGET_DEVICES += netgear_wac124
+@@ -1380,7 +1376,6 @@ endef
+ TARGET_DEVICES += netgear_wax202
  
  define Device/netgear_wndr3700-v5
 -  $(Device/dsa-migration)
    $(Device/netgear_sercomm_nor)
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 15232k
-@@ -1681,7 +1676,6 @@ endef
+@@ -1704,7 +1699,6 @@ endef
  TARGET_DEVICES += tplink_tl-wpa8631p-v3
  
  define Device/ubnt_edgerouter_common
@@ -54,7 +54,7 @@ index bdaeac2cb16e3d27931c0a54d691d834bf274cbb..ac2c84a435c49fb30c21ad2cb6c71a1e
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := Ubiquiti
    IMAGE_SIZE := 256768k
-@@ -2067,7 +2061,6 @@ endef
+@@ -2090,7 +2084,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg2626
  
  define Device/zbtlink_zbt-wg3526-16m
@@ -62,7 +62,7 @@ index bdaeac2cb16e3d27931c0a54d691d834bf274cbb..ac2c84a435c49fb30c21ad2cb6c71a1e
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 16064k
    DEVICE_VENDOR := Zbtlink
-@@ -2080,7 +2073,6 @@ endef
+@@ -2103,7 +2096,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg3526-16m
  
  define Device/zbtlink_zbt-wg3526-32m
