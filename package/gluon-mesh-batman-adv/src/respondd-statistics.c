@@ -63,6 +63,7 @@ struct gw_netlink_opts {
 static const enum batadv_nl_attrs gateways_mandatory[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_ROUTER,
+	BATADV_ATTR_TQ,
 };
 
 static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
@@ -73,6 +74,7 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 	struct genlmsghdr *ghdr;
 	uint8_t *orig;
 	uint8_t *router;
+	uint8_t tq;
 	struct gw_netlink_opts *opts;
 	char addr[18];
 
@@ -100,11 +102,13 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 
 	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
 	router = nla_data(attrs[BATADV_ATTR_ROUTER]);
+	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
 
 	sprintf(addr, "%02x:%02x:%02x:%02x:%02x:%02x",
 		orig[0], orig[1], orig[2], orig[3], orig[4], orig[5]);
 
 	json_object_object_add(opts->obj, "gateway", json_object_new_string(addr));
+	json_object_object_add(opts->obj, "gateway_tq", json_object_new_int(tq));
 
 	sprintf(addr, "%02x:%02x:%02x:%02x:%02x:%02x",
 		router[0], router[1], router[2], router[3], router[4], router[5]);
