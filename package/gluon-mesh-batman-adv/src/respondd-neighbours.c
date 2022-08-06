@@ -74,6 +74,18 @@ static const enum batadv_nl_attrs parse_orig_list_mandatory[] = {
 	BATADV_ATTR_LAST_SEEN_MSECS,
 };
 
+void increment_json_int_by_key(struct json_object *obj, const char *key) {
+	struct json_object *old_obj;
+	int new_val;
+
+	json_object_object_get_ex(obj, key, &old_obj);
+	new_val = json_object_get_int(old_obj)+1;
+	json_object_object_del(obj, key);
+
+	json_object_object_add(obj, key, json_object_new_int(new_val));
+
+}
+
 static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 {
 	struct nlattr *attrs[BATADV_ATTR_MAX+1];
@@ -114,19 +126,12 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 	hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
 	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
 
-	if (memcmp(orig, dest, 6) != 0)
-		return NL_OK;
-
 	ifname = if_indextoname(hardif, ifname_buf);
 	if (!ifname)
 		return NL_OK;
 
 	sprintf(mac1, "%02x:%02x:%02x:%02x:%02x:%02x",
-		orig[0], orig[1], orig[2], orig[3], orig[4], orig[5]);
-
-	struct json_object *obj = json_object_new_object();
-	if (!obj)
-		return NL_OK;
+		dest[0], dest[1], dest[2], dest[3], dest[4], dest[5]);
 
 	struct json_object *interface;
 	if (!json_object_object_get_ex(opts->interfaces, ifname, &interface)) {
@@ -134,10 +139,34 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 		json_object_object_add(opts->interfaces, ifname, interface);
 	}
 
+	struct json_object *obj;
+	struct json_object *routes;
+	if (!json_object_object_get_ex(interface, mac1, &obj)) {
+		obj = json_object_new_object();
+		json_object_object_add(interface, mac1, obj);
+		routes = json_object_new_object();
+		json_object_object_add(routes, "imported", json_object_new_int(0));
+		json_object_object_add(routes, "selected", json_object_new_int(0));
+		json_object_object_add(obj, "routes", routes);
+	}
+
+	if (!routes) {
+		json_object_object_get_ex(obj, "routes", &routes);
+	}
+
+	if (!!attrs[BATADV_ATTR_FLAG_BEST]) {
+		increment_json_int_by_key(routes, "selected");
+	}
+
+	increment_json_int_by_key(routes, "imported");
+
+	if (memcmp(orig, dest, 6) != 0) {
+		return NL_OK;
+	}
+
 	json_object_object_add(obj, "tq", json_object_new_int(tq));
 	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
 	json_object_object_add(obj, "best", json_object_new_boolean(!!attrs[BATADV_ATTR_FLAG_BEST]));
-	json_object_object_add(interface, mac1, obj);
 
 	return NL_OK;
 }
