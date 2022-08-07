@@ -129,6 +129,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
+		ifname = suffix and 'mesh' .. suffix,
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
