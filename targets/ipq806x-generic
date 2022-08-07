@@ -26,3 +26,7 @@ device('netgear-nighthawk-x4s-r7800', 'netgear_r7800', {
 	factory_ext = '.img',
 	packages = QCA9984_PACKAGES,
 })
+
+device('zyxel_nbg6817', 'zyxel_nbg6817', {
+
+})
