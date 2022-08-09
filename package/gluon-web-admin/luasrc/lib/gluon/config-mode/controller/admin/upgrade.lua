@@ -17,6 +17,7 @@ local unistd = require 'posix.unistd'
 
 local file
 local tmpfile = "/tmp/firmware.img"
+local compat_option = "--ignore-minor-compat-version"
 
 
 local function filehandler(_, chunk, eof)
@@ -64,7 +65,7 @@ local function action_upgrade(http, renderer)
 	end
 
 	local function image_supported(supported_tmpfile)
-		return (os.execute(string.format("exec /sbin/sysupgrade -T %q >/dev/null", supported_tmpfile)) == 0)
+		return (os.execute(string.format("exec /sbin/sysupgrade -T %s %q >/dev/null", compat_option, supported_tmpfile)) == 0)
 	end
 
 	local function storage_size()
@@ -122,7 +123,7 @@ local function action_upgrade(http, renderer)
 		}, 'gluon-web-admin')
 
 	elseif step == 3 then
-		local cmd = {[0] = '/sbin/sysupgrade', tmpfile}
+		local cmd = {[0] = '/sbin/sysupgrade', compat_option, tmpfile}
 		if http:formvalue('keepcfg') ~= '1' then
 			table.insert(cmd, 1, '-n')
 		end
