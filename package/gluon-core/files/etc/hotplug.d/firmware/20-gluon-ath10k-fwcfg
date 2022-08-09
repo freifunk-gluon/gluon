@@ -1,0 +1,9 @@
+#!/bin/sh
+
+[ -e "/lib/firmware/$FIRMWARE" ] && exit 0
+
+case "$FIRMWARE" in
+ath10k/fwcfg*)
+	cp "/lib/gluon/ath10k-fwcfg.txt" "/lib/firmware/$FIRMWARE"
+	;;
+esac
