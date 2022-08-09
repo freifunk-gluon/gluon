@@ -65,7 +65,7 @@ static struct json_object * get_fastd_version(void) {
 	}
 
 	const char *version = line;
-	if (strncmp(version, "fastd ", 6) == 0)
+	if (version && strncmp(version, "fastd ", 6) == 0)
 		version += 6;
 
 	struct json_object *ret = gluonutil_wrap_string(version);
