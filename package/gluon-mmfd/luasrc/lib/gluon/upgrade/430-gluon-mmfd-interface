@@ -7,4 +7,5 @@ uci:section('network', 'interface', 'mmfd', {
 	ifname = 'mmfd0',
 	ip6addr = 'fe80::1/64'
 })
+
 uci:save('network')

@@ -1,5 +1,25 @@
 #!/usr/bin/lua
+
 local uci = require('simple-uci').cursor()
+
+uci:section('firewall', 'zone', 'l3roamd', {
+	name = 'l3roamd',
+	input = 'ACCEPT',
+	output = 'ACCEPT',
+	forward = 'REJECT',
+	device = 'l3roam+',
+	log = '1',
+})
+
+uci:section('firewall', 'forwarding', 'flc', {
+	src = 'l3roamd',
+	dest = 'loc_client',
+})
+
+uci:section('firewall', 'forwarding', 'fcl', {
+	src = 'loc_client',
+	dest = 'l3roamd',
+})
 
 uci:section('firewall', 'rule',  'mesh_l3roamd', {
 	name = 'mesh_l3roamd',
