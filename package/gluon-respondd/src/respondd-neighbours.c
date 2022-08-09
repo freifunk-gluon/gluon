@@ -82,18 +82,18 @@ static struct json_object * get_wifi(void) {
 	struct json_object *ret = json_object_new_object();
 
 	struct uci_package *p;
-	if (uci_load(ctx, "network", &p))
+	if (uci_load(ctx, "wireless", &p))
 		goto end;
 
 
 	struct uci_element *e;
 	uci_foreach_element(&p->sections, e) {
 		struct uci_section *s = uci_to_section(e);
-		if (strcmp(s->type, "interface"))
+		if (strcmp(s->type, "wifi-iface"))
 			continue;
 
-		const char *proto = uci_lookup_option_string(ctx, s, "proto");
-		if (!proto || strcmp(proto, "gluon_mesh"))
+		const char *proto = uci_lookup_option_string(ctx, s, "mode");
+		if (!proto || strcmp(proto, "mesh"))
 			continue;
 
 		const char *ifname = uci_lookup_option_string(ctx, s, "ifname");
