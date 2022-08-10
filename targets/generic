@@ -39,6 +39,8 @@ config('DEVEL', true)
 config('ALL_NONSHARED', true)
 
 try_config('PACKAGE_usbip', false) -- fails to build
+try_config('PACKAGE_coova-chilli', false) -- fails to build
+try_config('PACKAGE_kmod-ipt-coova', false) -- fails to build
 
 try_config('PACKAGE_ATH_DEBUG', true)
 
