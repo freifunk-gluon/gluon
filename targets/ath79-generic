@@ -582,7 +582,7 @@ device('ubiquiti-unifi-ac-pro', 'ubnt_unifiac-pro', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
-device('ubiquiti-unifi-ap', 'ubnt_unifi', {
+device('ubiquiti-unifi-ap', 'ubnt_unifi-ap', {
 	aliases = {
 		'ubiquiti-unifi-ap-lr',
 	},
