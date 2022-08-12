@@ -19,7 +19,7 @@ During upgrades the wifi channel of the 2.4GHz and 5GHz radio will be restored t
 configured in the site.conf. If you need to preserve a user defined wifi channel during upgrades
 you can configure this via the uci section ``gluon-core.wireless``::
 
-  uci set gluon-core.@wireless[0].preserve_channels='1'
+  uci set gluon.wireless.preserve_channels='1'
 
 When channels should be preserved, toggling the outdoor mode will have no effect on the channel settings.
 Therefore, the Outdoor mode settings won't be displayed in config mode.
