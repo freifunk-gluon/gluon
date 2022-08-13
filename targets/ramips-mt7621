@@ -35,6 +35,10 @@ device('netgear-wac104', 'netgear_wac104', {
 	factory_ext = '.img',
 })
 
+device('netgear-wax202', 'netgear_wax202', {
+	factory_ext = '.img',
+})
+
 device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	factory = false,
 	broken = true, -- untested
