@@ -79,6 +79,46 @@ performance reasons. Nodes using offloading can communicate with supornodes that
 don't use offloading as long as both use the ``null@l2tp`` method.
 
 
+.. _vpn-gateway-configuration-offloading:
+
+Offloading on Gateways / Supernodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To enable L2TP offloading on the supornodes, it is recommended to study the
+fastd documentation section pertaining to the `offload configuration option
+<https://fastd.readthedocs.io/en/stable/manual/config.html#option-offload>`_.
+
+However, the important changes to the fastd config on your Supernode are:
+
+    - | Set ``mode multitap;``
+      | Every peer gets their own interface.
+
+    - | Replace ``interface "foo":`` with ``interface "peer-%k";``
+      | ``%k`` is substituted for a portion of the peers public key.
+
+    - | Set ``offload l2tp yes;``
+      | This tells fastd to use the l2tp kernel module.
+
+    - | Set ``persist interface no;``
+      | This tells fastd to only keep interfaces arround while the connection is active.
+
+Note that in ``multitap`` mode, which is required when using L2TP offloading,
+fastd will create one interface per peer on the supernode's. This allows
+offloading the L2TP forwarding into the kernel space. But this also means added
+copmlexity with regards to handling those interfaces.
+
+There are two main options on how you can handle this:
+
+    -  create ``on up`` and ``on down`` hooks
+
+        - to handle interface setup and destruction
+        - preferrably using the async keyword, so hooks are not blocking fastd
+
+    - use a daemon like systemd-networkd
+
+Examples for both options can be found in the
+`Wiki <https://github.com/freifunk-gluon/gluon/wiki/fastd-l2tp-offloading-on-supernodes>`_.
+
 Configurable Method
 """""""""""""""""""
 
