@@ -11,7 +11,7 @@ There are currently three protocol handlers which can be selected
 via ``GLUON_FEATURES`` in ``site.mk``:
 
 mesh-vpn-fastd
-~~~~~~~~~~~~~~
+""""""""""""""
 
 fastd is a lightweight userspace tunneling daemon that
 implements cipher suites that are specifically designed
@@ -25,7 +25,7 @@ at the cost of losing the ability to protect tunnel connections
 against eavesdropping or manipulation.
 
 mesh-vpn-tunneldigger
-~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""
 
 Tunneldigger always uses L2TPv3, generally achieving the same
 performance as fastd with the ``null@l2tp`` method, but offering
@@ -34,7 +34,7 @@ Tunneldigger's primary drawback is the lack of IPv6 support.
 It also provides less configurability than fastd.
 
 mesh-vpn-wireguard
-~~~~~~~~~~~~~~~~~~
+""""""""""""""""""
 
 WireGuard is an encrypted in-kernel tunneling protocol that
 provides encrypted transmission and at the same time offers
@@ -44,7 +44,7 @@ fastd
 ^^^^^
 
 Methods
-~~~~~~~
+"""""""
 
 fastd offers various different connection "methods" with different
 security properties that can be configured in the site configuration.
@@ -63,8 +63,24 @@ considerable performance gain, especially on weaker embedded hardware.
 For L2TP offloading, the ``mesh-vpn-fastd-l2tp`` feature needs to be enabled in
 ``site.mk``.
 
+
+.. _vpn-gateway-configuration:
+
+Gateway / Supernode Configuration
+"""""""""""""""""""""""""""""""""
+
+When only using the ``null`` or ``null@l2tp`` methods without offloading,
+simply add these methods to the front of the method list. ``null@l2tp``
+should always appear before ``null`` in the configuration when both are enabled.
+fastd v22 or newer is needed for the ``null@l2tp`` method.
+
+It is often not necessary to enable L2TP offloading on supernodes for
+performance reasons. Nodes using offloading can communicate with supornodes that
+don't use offloading as long as both use the ``null@l2tp`` method.
+
+
 Configurable Method
-~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""
 
 From the site configuration, fastd can be allowed to offer
 toggleable encryption in the config mode with the intent to
@@ -76,7 +92,7 @@ performance gains provided by the latter (compared to the encrypted
 and authenticated methods) are very small.
 
 Site configuration
-------------------
+~~~~~~~~~~~~~~~~~~
 
 1)
   Add the feature ``web-mesh-vpn-fastd`` in ``site.mk``
@@ -86,32 +102,8 @@ Site configuration
   Optionally, add ``null@l2tp`` to the ``mesh_vpn.fastd.methods`` table if you want
   "Performance mode" as default (not recommended)
 
-Gateway / Supernode Configuration
----------------------------------
-
-When only using the ``null`` or ``null@l2tp`` methods without offloading,
-simply add these methods to the front of the method list. ``null@l2tp``
-should always appear before ``null`` in the configuration when both are enabled.
-fastd v22 or newer is needed for the ``null@l2tp`` method.
-
-It is often not necessary to enable L2TP offloading on supernodes for
-performance reasons. Nodes using offloading can communicate with supornodes that
-don't use offloading as long as both use the ``null@l2tp`` method.
-
-To enable L2TP offloading on the supornodes as well, it is recommended to study
-the fastd documentation section pertaining to the `offload configuration option
-<https://fastd.readthedocs.io/en/stable/manual/config.html#option-offload>`_.
-
-Note that in ``multitap`` mode, which is required when using
-L2TP offloading, fastd will create one interface per peer
-on the supernode's side and it is the administrator's
-responsibility to ensure that these interfaces are handled correctly.
-In batman-adv-based setups this involves adding the dynamically created
-interfaces to an batadv interface using fastd's ``on up`` scripts or some
-network configuration daemon like systemd-networkd.
-
 Config Mode
------------
+~~~~~~~~~~~
 
 The resulting firmware will allow users to choose between secure (encrypted) and fast (unencrypted) transport.
 
@@ -158,7 +150,7 @@ comes into play, as the gateway still knows about the old timestamp of the gluon
 node.
 
 Gateway / Supernode Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""""""""""""""""""""""""""""""""
 
 On the gateway side, a software called *wireguard-vxlan-glue* is necessary. It
 is a small daemon that dynamically adds and removes forwarding rules for VXLAN
