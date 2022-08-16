@@ -175,6 +175,11 @@ device('netgear-wnr2200-16m', 'netgear_wnr2200-16m', {
 
 -- OCEDO
 
+device('ocedo-koala', 'ocedo_koala', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })

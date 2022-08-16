@@ -60,6 +60,7 @@ ath79-generic
 
 * OCEDO
 
+  - Koala
   - Raccoon
 
 * Onion
