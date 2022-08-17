@@ -143,7 +143,7 @@
 				<h2><%:Overview%></h2>
 				<dl>
 					<dt><%:Node name%></dt><dd><%| nodeinfo.hostname %></dd>
-					<% if nodeinfo.owner and nodeinfo.owner.contact then -%>
+					<% if nodeinfo.owner and nodeinfo.owner.contact and not nodeinfo.owner.hide_statuspage then -%>
 						<dt><%:Contact%></dt><dd><%| nodeinfo.owner.contact %></dd>
 					<%- end %>
 					<% if nodeinfo.location then -%>
