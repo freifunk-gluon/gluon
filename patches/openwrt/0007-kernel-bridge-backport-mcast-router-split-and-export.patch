@@ -1,0 +1,1872 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Fri, 19 Aug 2022 11:30:49 +0200
+Subject: kernel: bridge: backport mcast router split and export
+
+This backports patches from Linux 5.14 which added support for
+more fine grained, individual IPv4/IPv6 multicast router
+snooping, which was tracked combined for both protocol families
+before. As well as a patch to export this now split multicast
+router state to other kernel modules.
+
+These are needed for batman-adv 2021.2 and newer to support not only
+link-local multicast addresses in bridged scenarios but routeable ones,
+too.
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-00-net-bridge-mcast-rename-multicast-router-lists-and-t.patch b/target/linux/generic/backport-5.10/610-v5.14-00-net-bridge-mcast-rename-multicast-router-lists-and-t.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..49b590191a4bc796a2c4e6951ab09e7e7ccca1a5
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-00-net-bridge-mcast-rename-multicast-router-lists-and-t.patch
+@@ -0,0 +1,291 @@
++From 9533309bfab9b3c03db120984ffdecbf33dee24b Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:43 +0200
++Subject: [PATCH 01/13] net: bridge: mcast: rename multicast router lists and
++ timers
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants, rename the affected variable to the IPv4
++version first to avoid some renames in later commits.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_forward.c   |  4 ++--
++ net/bridge/br_mdb.c       |  6 ++---
++ net/bridge/br_multicast.c | 48 +++++++++++++++++++--------------------
++ net/bridge/br_private.h   | 10 ++++----
++ 4 files changed, 34 insertions(+), 34 deletions(-)
++
++--- a/net/bridge/br_forward.c
+++++ b/net/bridge/br_forward.c
++@@ -277,7 +277,7 @@ void br_multicast_flood(struct net_bridg
++ 	bool allow_mode_include = true;
++ 	struct hlist_node *rp;
++ 
++-	rp = rcu_dereference(hlist_first_rcu(&br->router_list));
+++	rp = rcu_dereference(hlist_first_rcu(&br->ip4_mc_router_list));
++ 	if (mdst) {
++ 		p = rcu_dereference(mdst->ports);
++ 		if (br_multicast_should_handle_mode(br, mdst->addr.proto) &&
++@@ -291,7 +291,7 @@ void br_multicast_flood(struct net_bridg
++ 		struct net_bridge_port *port, *lport, *rport;
++ 
++ 		lport = p ? p->key.port : NULL;
++-		rport = hlist_entry_safe(rp, struct net_bridge_port, rlist);
+++		rport = hlist_entry_safe(rp, struct net_bridge_port, ip4_rlist);
++ 
++ 		if ((unsigned long)lport > (unsigned long)rport) {
++ 			port = lport;
++--- a/net/bridge/br_mdb.c
+++++ b/net/bridge/br_mdb.c
++@@ -23,14 +23,14 @@ static int br_rports_fill_info(struct sk
++ 	struct net_bridge_port *p;
++ 	struct nlattr *nest, *port_nest;
++ 
++-	if (!br->multicast_router || hlist_empty(&br->router_list))
+++	if (!br->multicast_router || hlist_empty(&br->ip4_mc_router_list))
++ 		return 0;
++ 
++ 	nest = nla_nest_start_noflag(skb, MDBA_ROUTER);
++ 	if (nest == NULL)
++ 		return -EMSGSIZE;
++ 
++-	hlist_for_each_entry_rcu(p, &br->router_list, rlist) {
+++	hlist_for_each_entry_rcu(p, &br->ip4_mc_router_list, ip4_rlist) {
++ 		if (!p)
++ 			continue;
++ 		port_nest = nla_nest_start_noflag(skb, MDBA_ROUTER_PORT);
++@@ -38,7 +38,7 @@ static int br_rports_fill_info(struct sk
++ 			goto fail;
++ 		if (nla_put_nohdr(skb, sizeof(u32), &p->dev->ifindex) ||
++ 		    nla_put_u32(skb, MDBA_ROUTER_PATTR_TIMER,
++-				br_timer_value(&p->multicast_router_timer)) ||
+++				br_timer_value(&p->ip4_mc_router_timer)) ||
++ 		    nla_put_u8(skb, MDBA_ROUTER_PATTR_TYPE,
++ 			       p->multicast_router)) {
++ 			nla_nest_cancel(skb, port_nest);
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -1344,13 +1344,13 @@ static int br_ip6_multicast_add_group(st
++ static void br_multicast_router_expired(struct timer_list *t)
++ {
++ 	struct net_bridge_port *port =
++-			from_timer(port, t, multicast_router_timer);
+++			from_timer(port, t, ip4_mc_router_timer);
++ 	struct net_bridge *br = port->br;
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	if (port->multicast_router == MDB_RTR_TYPE_DISABLED ||
++ 	    port->multicast_router == MDB_RTR_TYPE_PERM ||
++-	    timer_pending(&port->multicast_router_timer))
+++	    timer_pending(&port->ip4_mc_router_timer))
++ 		goto out;
++ 
++ 	__del_port_router(port);
++@@ -1373,12 +1373,12 @@ static void br_mc_router_state_change(st
++ 
++ static void br_multicast_local_router_expired(struct timer_list *t)
++ {
++-	struct net_bridge *br = from_timer(br, t, multicast_router_timer);
+++	struct net_bridge *br = from_timer(br, t, ip4_mc_router_timer);
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	if (br->multicast_router == MDB_RTR_TYPE_DISABLED ||
++ 	    br->multicast_router == MDB_RTR_TYPE_PERM ||
++-	    timer_pending(&br->multicast_router_timer))
+++	    timer_pending(&br->ip4_mc_router_timer))
++ 		goto out;
++ 
++ 	br_mc_router_state_change(br, false);
++@@ -1596,7 +1596,7 @@ int br_multicast_add_port(struct net_bri
++ {
++ 	port->multicast_router = MDB_RTR_TYPE_TEMP_QUERY;
++ 
++-	timer_setup(&port->multicast_router_timer,
+++	timer_setup(&port->ip4_mc_router_timer,
++ 		    br_multicast_router_expired, 0);
++ 	timer_setup(&port->ip4_own_query.timer,
++ 		    br_ip4_multicast_port_query_expired, 0);
++@@ -1628,7 +1628,7 @@ void br_multicast_del_port(struct net_br
++ 	hlist_move_list(&br->mcast_gc_list, &deleted_head);
++ 	spin_unlock_bh(&br->multicast_lock);
++ 	br_multicast_gc(&deleted_head);
++-	del_timer_sync(&port->multicast_router_timer);
+++	del_timer_sync(&port->ip4_mc_router_timer);
++ 	free_percpu(port->mcast_stats);
++ }
++ 
++@@ -1653,7 +1653,7 @@ static void __br_multicast_enable_port(s
++ 	br_multicast_enable(&port->ip6_own_query);
++ #endif
++ 	if (port->multicast_router == MDB_RTR_TYPE_PERM &&
++-	    hlist_unhashed(&port->rlist))
+++	    hlist_unhashed(&port->ip4_rlist))
++ 		br_multicast_add_router(br, port);
++ }
++ 
++@@ -1679,7 +1679,7 @@ void br_multicast_disable_port(struct ne
++ 
++ 	__del_port_router(port);
++ 
++-	del_timer(&port->multicast_router_timer);
+++	del_timer(&port->ip4_mc_router_timer);
++ 	del_timer(&port->ip4_own_query.timer);
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	del_timer(&port->ip6_own_query.timer);
++@@ -2577,19 +2577,19 @@ static void br_multicast_add_router(stru
++ 	struct net_bridge_port *p;
++ 	struct hlist_node *slot = NULL;
++ 
++-	if (!hlist_unhashed(&port->rlist))
+++	if (!hlist_unhashed(&port->ip4_rlist))
++ 		return;
++ 
++-	hlist_for_each_entry(p, &br->router_list, rlist) {
+++	hlist_for_each_entry(p, &br->ip4_mc_router_list, ip4_rlist) {
++ 		if ((unsigned long) port >= (unsigned long) p)
++ 			break;
++-		slot = &p->rlist;
+++		slot = &p->ip4_rlist;
++ 	}
++ 
++ 	if (slot)
++-		hlist_add_behind_rcu(&port->rlist, slot);
+++		hlist_add_behind_rcu(&port->ip4_rlist, slot);
++ 	else
++-		hlist_add_head_rcu(&port->rlist, &br->router_list);
+++		hlist_add_head_rcu(&port->ip4_rlist, &br->ip4_mc_router_list);
++ 	br_rtr_notify(br->dev, port, RTM_NEWMDB);
++ 	br_port_mc_router_state_change(port, true);
++ }
++@@ -2601,9 +2601,9 @@ static void br_multicast_mark_router(str
++ 
++ 	if (!port) {
++ 		if (br->multicast_router == MDB_RTR_TYPE_TEMP_QUERY) {
++-			if (!timer_pending(&br->multicast_router_timer))
+++			if (!timer_pending(&br->ip4_mc_router_timer))
++ 				br_mc_router_state_change(br, true);
++-			mod_timer(&br->multicast_router_timer,
+++			mod_timer(&br->ip4_mc_router_timer,
++ 				  now + br->multicast_querier_interval);
++ 		}
++ 		return;
++@@ -2615,7 +2615,7 @@ static void br_multicast_mark_router(str
++ 
++ 	br_multicast_add_router(br, port);
++ 
++-	mod_timer(&port->multicast_router_timer,
+++	mod_timer(&port->ip4_mc_router_timer,
++ 		  now + br->multicast_querier_interval);
++ }
++ 
++@@ -3233,7 +3233,7 @@ void br_multicast_init(struct net_bridge
++ 	br_opt_toggle(br, BROPT_HAS_IPV6_ADDR, true);
++ 
++ 	spin_lock_init(&br->multicast_lock);
++-	timer_setup(&br->multicast_router_timer,
+++	timer_setup(&br->ip4_mc_router_timer,
++ 		    br_multicast_local_router_expired, 0);
++ 	timer_setup(&br->ip4_other_query.timer,
++ 		    br_ip4_multicast_querier_expired, 0);
++@@ -3333,7 +3333,7 @@ void br_multicast_open(struct net_bridge
++ 
++ void br_multicast_stop(struct net_bridge *br)
++ {
++-	del_timer_sync(&br->multicast_router_timer);
+++	del_timer_sync(&br->ip4_mc_router_timer);
++ 	del_timer_sync(&br->ip4_other_query.timer);
++ 	del_timer_sync(&br->ip4_own_query.timer);
++ #if IS_ENABLED(CONFIG_IPV6)
++@@ -3370,7 +3370,7 @@ int br_multicast_set_router(struct net_b
++ 	case MDB_RTR_TYPE_DISABLED:
++ 	case MDB_RTR_TYPE_PERM:
++ 		br_mc_router_state_change(br, val == MDB_RTR_TYPE_PERM);
++-		del_timer(&br->multicast_router_timer);
+++		del_timer(&br->ip4_mc_router_timer);
++ 		br->multicast_router = val;
++ 		err = 0;
++ 		break;
++@@ -3389,9 +3389,9 @@ int br_multicast_set_router(struct net_b
++ 
++ static void __del_port_router(struct net_bridge_port *p)
++ {
++-	if (hlist_unhashed(&p->rlist))
+++	if (hlist_unhashed(&p->ip4_rlist))
++ 		return;
++-	hlist_del_init_rcu(&p->rlist);
+++	hlist_del_init_rcu(&p->ip4_rlist);
++ 	br_rtr_notify(p->br->dev, p, RTM_DELMDB);
++ 	br_port_mc_router_state_change(p, false);
++ 
++@@ -3410,7 +3410,7 @@ int br_multicast_set_port_router(struct
++ 	if (p->multicast_router == val) {
++ 		/* Refresh the temp router port timer */
++ 		if (p->multicast_router == MDB_RTR_TYPE_TEMP)
++-			mod_timer(&p->multicast_router_timer,
+++			mod_timer(&p->ip4_mc_router_timer,
++ 				  now + br->multicast_querier_interval);
++ 		err = 0;
++ 		goto unlock;
++@@ -3419,7 +3419,7 @@ int br_multicast_set_port_router(struct
++ 	case MDB_RTR_TYPE_DISABLED:
++ 		p->multicast_router = MDB_RTR_TYPE_DISABLED;
++ 		__del_port_router(p);
++-		del_timer(&p->multicast_router_timer);
+++		del_timer(&p->ip4_mc_router_timer);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP_QUERY:
++ 		p->multicast_router = MDB_RTR_TYPE_TEMP_QUERY;
++@@ -3427,7 +3427,7 @@ int br_multicast_set_port_router(struct
++ 		break;
++ 	case MDB_RTR_TYPE_PERM:
++ 		p->multicast_router = MDB_RTR_TYPE_PERM;
++-		del_timer(&p->multicast_router_timer);
+++		del_timer(&p->ip4_mc_router_timer);
++ 		br_multicast_add_router(br, p);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP:
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -313,14 +313,14 @@ struct net_bridge_port {
++ 
++ #ifdef CONFIG_BRIDGE_IGMP_SNOOPING
++ 	struct bridge_mcast_own_query	ip4_own_query;
+++	struct timer_list		ip4_mc_router_timer;
+++	struct hlist_node		ip4_rlist;
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	struct bridge_mcast_own_query	ip6_own_query;
++ #endif /* IS_ENABLED(CONFIG_IPV6) */
++ 	unsigned char			multicast_router;
++ 	struct bridge_mcast_stats	__percpu *mcast_stats;
++-	struct timer_list		multicast_router_timer;
++ 	struct hlist_head		mglist;
++-	struct hlist_node		rlist;
++ #endif
++ 
++ #ifdef CONFIG_SYSFS
++@@ -453,9 +453,9 @@ struct net_bridge {
++ 
++ 	struct hlist_head		mcast_gc_list;
++ 	struct hlist_head		mdb_list;
++-	struct hlist_head		router_list;
++ 
++-	struct timer_list		multicast_router_timer;
+++	struct hlist_head		ip4_mc_router_list;
+++	struct timer_list		ip4_mc_router_timer;
++ 	struct bridge_mcast_other_query	ip4_other_query;
++ 	struct bridge_mcast_own_query	ip4_own_query;
++ 	struct bridge_mcast_querier	ip4_querier;
++@@ -849,7 +849,7 @@ static inline bool br_multicast_is_route
++ {
++ 	return br->multicast_router == 2 ||
++ 	       (br->multicast_router == 1 &&
++-		timer_pending(&br->multicast_router_timer));
+++		timer_pending(&br->ip4_mc_router_timer));
++ }
++ 
++ static inline bool
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-01-net-bridge-mcast-add-wrappers-for-router-node-retrie.patch b/target/linux/generic/backport-5.10/610-v5.14-01-net-bridge-mcast-add-wrappers-for-router-node-retrie.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..a330765b3ef5a7bbea3eb00004a08d2b10a7457c
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-01-net-bridge-mcast-add-wrappers-for-router-node-retrie.patch
+@@ -0,0 +1,61 @@
++From 9aa73cb262cb647e0a42606980c6fdf585308615 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:44 +0200
++Subject: [PATCH 02/13] net: bridge: mcast: add wrappers for router node
++ retrieval
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants and to avoid IPv6 #ifdef clutter later add
++two wrapper functions for router node retrieval in the payload
++forwarding code.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_forward.c |  5 +++--
++ net/bridge/br_private.h | 10 ++++++++++
++ 2 files changed, 13 insertions(+), 2 deletions(-)
++
++--- a/net/bridge/br_forward.c
+++++ b/net/bridge/br_forward.c
++@@ -277,7 +277,8 @@ void br_multicast_flood(struct net_bridg
++ 	bool allow_mode_include = true;
++ 	struct hlist_node *rp;
++ 
++-	rp = rcu_dereference(hlist_first_rcu(&br->ip4_mc_router_list));
+++	rp = br_multicast_get_first_rport_node(br, skb);
+++
++ 	if (mdst) {
++ 		p = rcu_dereference(mdst->ports);
++ 		if (br_multicast_should_handle_mode(br, mdst->addr.proto) &&
++@@ -291,7 +292,7 @@ void br_multicast_flood(struct net_bridg
++ 		struct net_bridge_port *port, *lport, *rport;
++ 
++ 		lport = p ? p->key.port : NULL;
++-		rport = hlist_entry_safe(rp, struct net_bridge_port, ip4_rlist);
+++		rport = br_multicast_rport_from_node_skb(rp, skb);
++ 
++ 		if ((unsigned long)lport > (unsigned long)rport) {
++ 			port = lport;
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -845,6 +845,16 @@ void br_multicast_sg_add_exclude_ports(s
++ #define mlock_dereference(X, br) \
++ 	rcu_dereference_protected(X, lockdep_is_held(&br->multicast_lock))
++ 
+++static inline struct hlist_node *
+++br_multicast_get_first_rport_node(struct net_bridge *b, struct sk_buff *skb) {
+++	return rcu_dereference(hlist_first_rcu(&b->ip4_mc_router_list));
+++}
+++
+++static inline struct net_bridge_port *
+++br_multicast_rport_from_node_skb(struct hlist_node *rp, struct sk_buff *skb) {
+++	return hlist_entry_safe(rp, struct net_bridge_port, ip4_rlist);
+++}
+++
++ static inline bool br_multicast_is_router(struct net_bridge *br)
++ {
++ 	return br->multicast_router == 2 ||
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-02-net-bridge-mcast-prepare-mdb-netlink-for-mcast-route.patch b/target/linux/generic/backport-5.10/610-v5.14-02-net-bridge-mcast-prepare-mdb-netlink-for-mcast-route.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..22bf0cf43d4f587a4b0e9cd70f1e04c698737b6f
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-02-net-bridge-mcast-prepare-mdb-netlink-for-mcast-route.patch
+@@ -0,0 +1,88 @@
++From cc19b1f59994df56e8e3748e496cc1a03b8c4a06 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:45 +0200
++Subject: [PATCH 03/13] net: bridge: mcast: prepare mdb netlink for mcast
++ router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants and to avoid IPv6 #ifdef clutter later add
++some inline functions for the protocol specific parts in the mdb router
++netlink code. Also the we need iterate over the port instead of router
++list to be able put one router port entry with both the IPv4 and IPv6
++multicast router info later.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_mdb.c | 39 ++++++++++++++++++++++++++++++++++-----
++ 1 file changed, 34 insertions(+), 5 deletions(-)
++
++--- a/net/bridge/br_mdb.c
+++++ b/net/bridge/br_mdb.c
++@@ -16,29 +16,58 @@
++ 
++ #include "br_private.h"
++ 
+++static bool br_rports_have_mc_router(struct net_bridge *br)
+++{
+++	return !hlist_empty(&br->ip4_mc_router_list);
+++}
+++
+++static bool
+++br_ip4_rports_get_timer(struct net_bridge_port *port, unsigned long *timer)
+++{
+++	*timer = br_timer_value(&port->ip4_mc_router_timer);
+++	return !hlist_unhashed(&port->ip4_rlist);
+++}
+++
+++static bool
+++br_ip6_rports_get_timer(struct net_bridge_port *port, unsigned long *timer)
+++{
+++	*timer = 0;
+++	return false;
+++}
+++
++ static int br_rports_fill_info(struct sk_buff *skb, struct netlink_callback *cb,
++ 			       struct net_device *dev)
++ {
++ 	struct net_bridge *br = netdev_priv(dev);
++-	struct net_bridge_port *p;
+++	bool have_ip4_mc_rtr, have_ip6_mc_rtr;
+++	unsigned long ip4_timer, ip6_timer;
++ 	struct nlattr *nest, *port_nest;
+++	struct net_bridge_port *p;
+++
+++	if (!br->multicast_router)
+++		return 0;
++ 
++-	if (!br->multicast_router || hlist_empty(&br->ip4_mc_router_list))
+++	if (!br_rports_have_mc_router(br))
++ 		return 0;
++ 
++ 	nest = nla_nest_start_noflag(skb, MDBA_ROUTER);
++ 	if (nest == NULL)
++ 		return -EMSGSIZE;
++ 
++-	hlist_for_each_entry_rcu(p, &br->ip4_mc_router_list, ip4_rlist) {
++-		if (!p)
+++	list_for_each_entry_rcu(p, &br->port_list, list) {
+++		have_ip4_mc_rtr = br_ip4_rports_get_timer(p, &ip4_timer);
+++		have_ip6_mc_rtr = br_ip6_rports_get_timer(p, &ip6_timer);
+++
+++		if (!have_ip4_mc_rtr && !have_ip6_mc_rtr)
++ 			continue;
+++
++ 		port_nest = nla_nest_start_noflag(skb, MDBA_ROUTER_PORT);
++ 		if (!port_nest)
++ 			goto fail;
+++
++ 		if (nla_put_nohdr(skb, sizeof(u32), &p->dev->ifindex) ||
++ 		    nla_put_u32(skb, MDBA_ROUTER_PATTR_TIMER,
++-				br_timer_value(&p->ip4_mc_router_timer)) ||
+++				max(ip4_timer, ip6_timer)) ||
++ 		    nla_put_u8(skb, MDBA_ROUTER_PATTR_TYPE,
++ 			       p->multicast_router)) {
++ 			nla_nest_cancel(skb, port_nest);
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-03-net-bridge-mcast-prepare-query-reception-for-mcast-r.patch b/target/linux/generic/backport-5.10/610-v5.14-03-net-bridge-mcast-prepare-query-reception-for-mcast-r.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ea6852b794d7653cd30e6853c5335c1b76e10ca3
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-03-net-bridge-mcast-prepare-query-reception-for-mcast-r.patch
+@@ -0,0 +1,110 @@
++From cf580b34cb6709d3efc31fe54d5eb35744025f1b Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:46 +0200
++Subject: [PATCH 04/13] net: bridge: mcast: prepare query reception for mcast
++ router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants and as the br_multicast_mark_router() will
++be split for that remove the select querier wrapper and instead add
++ip4 and ip6 variants for br_multicast_query_received().
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_multicast.c | 53 ++++++++++++++++++++-------------------
++ 1 file changed, 27 insertions(+), 26 deletions(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -2526,22 +2526,6 @@ update:
++ }
++ #endif
++ 
++-static bool br_multicast_select_querier(struct net_bridge *br,
++-					struct net_bridge_port *port,
++-					struct br_ip *saddr)
++-{
++-	switch (saddr->proto) {
++-	case htons(ETH_P_IP):
++-		return br_ip4_multicast_select_querier(br, port, saddr->src.ip4);
++-#if IS_ENABLED(CONFIG_IPV6)
++-	case htons(ETH_P_IPV6):
++-		return br_ip6_multicast_select_querier(br, port, &saddr->src.ip6);
++-#endif
++-	}
++-
++-	return false;
++-}
++-
++ static void
++ br_multicast_update_query_timer(struct net_bridge *br,
++ 				struct bridge_mcast_other_query *query,
++@@ -2619,19 +2603,36 @@ static void br_multicast_mark_router(str
++ 		  now + br->multicast_querier_interval);
++ }
++ 
++-static void br_multicast_query_received(struct net_bridge *br,
++-					struct net_bridge_port *port,
++-					struct bridge_mcast_other_query *query,
++-					struct br_ip *saddr,
++-					unsigned long max_delay)
+++static void
+++br_ip4_multicast_query_received(struct net_bridge *br,
+++				struct net_bridge_port *port,
+++				struct bridge_mcast_other_query *query,
+++				struct br_ip *saddr,
+++				unsigned long max_delay)
++ {
++-	if (!br_multicast_select_querier(br, port, saddr))
+++	if (!br_ip4_multicast_select_querier(br, port, saddr->src.ip4))
++ 		return;
++ 
++ 	br_multicast_update_query_timer(br, query, max_delay);
++ 	br_multicast_mark_router(br, port);
++ }
++ 
+++#if IS_ENABLED(CONFIG_IPV6)
+++static void
+++br_ip6_multicast_query_received(struct net_bridge *br,
+++				struct net_bridge_port *port,
+++				struct bridge_mcast_other_query *query,
+++				struct br_ip *saddr,
+++				unsigned long max_delay)
+++{
+++	if (!br_ip6_multicast_select_querier(br, port, &saddr->src.ip6))
+++		return;
+++
+++	br_multicast_update_query_timer(br, query, max_delay);
+++	br_multicast_mark_router(br, port);
+++}
+++#endif
+++
++ static void br_ip4_multicast_query(struct net_bridge *br,
++ 				   struct net_bridge_port *port,
++ 				   struct sk_buff *skb,
++@@ -2679,8 +2680,8 @@ static void br_ip4_multicast_query(struc
++ 		saddr.proto = htons(ETH_P_IP);
++ 		saddr.src.ip4 = iph->saddr;
++ 
++-		br_multicast_query_received(br, port, &br->ip4_other_query,
++-					    &saddr, max_delay);
+++		br_ip4_multicast_query_received(br, port, &br->ip4_other_query,
+++						&saddr, max_delay);
++ 		goto out;
++ 	}
++ 
++@@ -2767,8 +2768,8 @@ static int br_ip6_multicast_query(struct
++ 		saddr.proto = htons(ETH_P_IPV6);
++ 		saddr.src.ip6 = ipv6_hdr(skb)->saddr;
++ 
++-		br_multicast_query_received(br, port, &br->ip6_other_query,
++-					    &saddr, max_delay);
+++		br_ip6_multicast_query_received(br, port, &br->ip6_other_query,
+++						&saddr, max_delay);
++ 		goto out;
++ 	} else if (!group) {
++ 		goto out;
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-04-net-bridge-mcast-prepare-is-router-function-for-mcas.patch b/target/linux/generic/backport-5.10/610-v5.14-04-net-bridge-mcast-prepare-is-router-function-for-mcas.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4baadb0ca9702cd5c6a639f8f7dc17f72e42fef
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-04-net-bridge-mcast-prepare-is-router-function-for-mcas.patch
+@@ -0,0 +1,108 @@
++From ea978567bf6e94b8ef5539ae68d1fe6b216b1647 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:47 +0200
++Subject: [PATCH 05/13] net: bridge: mcast: prepare is-router function for
++ mcast router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants make br_multicast_is_router() protocol
++family aware.
++
++Note that for now br_ip6_multicast_is_router() uses the currently still
++common ip4_mc_router_timer for now. It will be renamed to
++ip6_mc_router_timer later when the split is performed.
++
++While at it also renames the "1" and "2" constants in
++br_multicast_is_router() to the MDB_RTR_TYPE_TEMP_QUERY and
++MDB_RTR_TYPE_PERM enums.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_input.c     |  2 +-
++ net/bridge/br_multicast.c |  5 +++--
++ net/bridge/br_private.h   | 37 +++++++++++++++++++++++++++++++++----
++ 3 files changed, 37 insertions(+), 7 deletions(-)
++
++--- a/net/bridge/br_input.c
+++++ b/net/bridge/br_input.c
++@@ -143,7 +143,7 @@ int br_handle_frame_finish(struct net *n
++ 		if ((mdst || BR_INPUT_SKB_CB_MROUTERS_ONLY(skb)) &&
++ 		    br_multicast_querier_exists(br, eth_hdr(skb))) {
++ 			if ((mdst && mdst->host_joined) ||
++-			    br_multicast_is_router(br)) {
+++			    br_multicast_is_router(br, skb)) {
++ 				local_rcv = true;
++ 				br->dev->stats.multicast++;
++ 			}
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -1378,7 +1378,8 @@ static void br_multicast_local_router_ex
++ 	spin_lock(&br->multicast_lock);
++ 	if (br->multicast_router == MDB_RTR_TYPE_DISABLED ||
++ 	    br->multicast_router == MDB_RTR_TYPE_PERM ||
++-	    timer_pending(&br->ip4_mc_router_timer))
+++	    br_ip4_multicast_is_router(br) ||
+++	    br_ip6_multicast_is_router(br))
++ 		goto out;
++ 
++ 	br_mc_router_state_change(br, false);
++@@ -3532,7 +3533,7 @@ bool br_multicast_router(const struct ne
++ 	bool is_router;
++ 
++ 	spin_lock_bh(&br->multicast_lock);
++-	is_router = br_multicast_is_router(br);
+++	is_router = br_multicast_is_router(br, NULL);
++ 	spin_unlock_bh(&br->multicast_lock);
++ 	return is_router;
++ }
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -855,11 +855,40 @@ br_multicast_rport_from_node_skb(struct
++ 	return hlist_entry_safe(rp, struct net_bridge_port, ip4_rlist);
++ }
++ 
++-static inline bool br_multicast_is_router(struct net_bridge *br)
+++static inline bool br_ip4_multicast_is_router(struct net_bridge *br)
++ {
++-	return br->multicast_router == 2 ||
++-	       (br->multicast_router == 1 &&
++-		timer_pending(&br->ip4_mc_router_timer));
+++	return timer_pending(&br->ip4_mc_router_timer);
+++}
+++
+++static inline bool br_ip6_multicast_is_router(struct net_bridge *br)
+++{
+++#if IS_ENABLED(CONFIG_IPV6)
+++	return timer_pending(&br->ip4_mc_router_timer);
+++#else
+++	return false;
+++#endif
+++}
+++
+++static inline bool
+++br_multicast_is_router(struct net_bridge *br, struct sk_buff *skb)
+++{
+++	switch (br->multicast_router) {
+++	case MDB_RTR_TYPE_PERM:
+++		return true;
+++	case MDB_RTR_TYPE_TEMP_QUERY:
+++		if (skb) {
+++			if (skb->protocol == htons(ETH_P_IP))
+++				return br_ip4_multicast_is_router(br);
+++			else if (skb->protocol == htons(ETH_P_IPV6))
+++				return br_ip6_multicast_is_router(br);
+++		} else {
+++			return br_ip4_multicast_is_router(br) ||
+++			       br_ip6_multicast_is_router(br);
+++		}
+++		fallthrough;
+++	default:
+++		return false;
+++	}
++ }
++ 
++ static inline bool
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-05-net-bridge-mcast-prepare-expiry-functions-for-mcast-.patch b/target/linux/generic/backport-5.10/610-v5.14-05-net-bridge-mcast-prepare-expiry-functions-for-mcast-.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0f934ce85d3edf60fb47a880263b1002d74d69cf
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-05-net-bridge-mcast-prepare-expiry-functions-for-mcast-.patch
+@@ -0,0 +1,101 @@
++From 09b719247b153c9e1c8377f19ffa1ca66204b75d Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:48 +0200
++Subject: [PATCH 06/13] net: bridge: mcast: prepare expiry functions for mcast
++ router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants move the protocol specific timer access to
++an ip4 wrapper function.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_multicast.c | 31 ++++++++++++++++++++++---------
++ 1 file changed, 22 insertions(+), 9 deletions(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -1341,16 +1341,16 @@ static int br_ip6_multicast_add_group(st
++ }
++ #endif
++ 
++-static void br_multicast_router_expired(struct timer_list *t)
+++static void br_multicast_router_expired(struct net_bridge_port *port,
+++					struct timer_list *t,
+++					struct hlist_node *rlist)
++ {
++-	struct net_bridge_port *port =
++-			from_timer(port, t, ip4_mc_router_timer);
++ 	struct net_bridge *br = port->br;
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	if (port->multicast_router == MDB_RTR_TYPE_DISABLED ||
++ 	    port->multicast_router == MDB_RTR_TYPE_PERM ||
++-	    timer_pending(&port->ip4_mc_router_timer))
+++	    timer_pending(t))
++ 		goto out;
++ 
++ 	__del_port_router(port);
++@@ -1358,6 +1358,13 @@ out:
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
+++static void br_ip4_multicast_router_expired(struct timer_list *t)
+++{
+++	struct net_bridge_port *port = from_timer(port, t, ip4_mc_router_timer);
+++
+++	br_multicast_router_expired(port, t, &port->ip4_rlist);
+++}
+++
++ static void br_mc_router_state_change(struct net_bridge *p,
++ 				      bool is_mc_router)
++ {
++@@ -1371,10 +1378,9 @@ static void br_mc_router_state_change(st
++ 	switchdev_port_attr_set(p->dev, &attr);
++ }
++ 
++-static void br_multicast_local_router_expired(struct timer_list *t)
+++static void br_multicast_local_router_expired(struct net_bridge *br,
+++					      struct timer_list *timer)
++ {
++-	struct net_bridge *br = from_timer(br, t, ip4_mc_router_timer);
++-
++ 	spin_lock(&br->multicast_lock);
++ 	if (br->multicast_router == MDB_RTR_TYPE_DISABLED ||
++ 	    br->multicast_router == MDB_RTR_TYPE_PERM ||
++@@ -1387,6 +1393,13 @@ out:
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
+++static void br_ip4_multicast_local_router_expired(struct timer_list *t)
+++{
+++	struct net_bridge *br = from_timer(br, t, ip4_mc_router_timer);
+++
+++	br_multicast_local_router_expired(br, t);
+++}
+++
++ static void br_multicast_querier_expired(struct net_bridge *br,
++ 					 struct bridge_mcast_own_query *query)
++ {
++@@ -1598,7 +1611,7 @@ int br_multicast_add_port(struct net_bri
++ 	port->multicast_router = MDB_RTR_TYPE_TEMP_QUERY;
++ 
++ 	timer_setup(&port->ip4_mc_router_timer,
++-		    br_multicast_router_expired, 0);
+++		    br_ip4_multicast_router_expired, 0);
++ 	timer_setup(&port->ip4_own_query.timer,
++ 		    br_ip4_multicast_port_query_expired, 0);
++ #if IS_ENABLED(CONFIG_IPV6)
++@@ -3236,7 +3249,7 @@ void br_multicast_init(struct net_bridge
++ 
++ 	spin_lock_init(&br->multicast_lock);
++ 	timer_setup(&br->ip4_mc_router_timer,
++-		    br_multicast_local_router_expired, 0);
+++		    br_ip4_multicast_local_router_expired, 0);
++ 	timer_setup(&br->ip4_other_query.timer,
++ 		    br_ip4_multicast_querier_expired, 0);
++ 	timer_setup(&br->ip4_own_query.timer,
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-06-net-bridge-mcast-prepare-add-router-function-for-mca.patch b/target/linux/generic/backport-5.10/610-v5.14-06-net-bridge-mcast-prepare-add-router-function-for-mca.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..63c9783559c3cdc5298cb28078b7b26496669801
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-06-net-bridge-mcast-prepare-add-router-function-for-mca.patch
+@@ -0,0 +1,234 @@
++From 7396aa0c21f93427c5298f342dafccfef8f0d5db Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:49 +0200
++Subject: [PATCH 07/13] net: bridge: mcast: prepare add-router function for
++ mcast router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants move the protocol specific router list
++and timer access to ip4 wrapper functions.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_multicast.c | 121 +++++++++++++++++++++++++++-----------
++ 1 file changed, 87 insertions(+), 34 deletions(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -50,8 +50,8 @@ static const struct rhashtable_params br
++ 
++ static void br_multicast_start_querier(struct net_bridge *br,
++ 				       struct bridge_mcast_own_query *query);
++-static void br_multicast_add_router(struct net_bridge *br,
++-				    struct net_bridge_port *port);
+++static void br_ip4_multicast_add_router(struct net_bridge *br,
+++					struct net_bridge_port *port);
++ static void br_ip4_multicast_leave_group(struct net_bridge *br,
++ 					 struct net_bridge_port *port,
++ 					 __be32 group,
++@@ -1666,9 +1666,8 @@ static void __br_multicast_enable_port(s
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	br_multicast_enable(&port->ip6_own_query);
++ #endif
++-	if (port->multicast_router == MDB_RTR_TYPE_PERM &&
++-	    hlist_unhashed(&port->ip4_rlist))
++-		br_multicast_add_router(br, port);
+++	if (port->multicast_router == MDB_RTR_TYPE_PERM)
+++		br_ip4_multicast_add_router(br, port);
++ }
++ 
++ void br_multicast_enable_port(struct net_bridge_port *port)
++@@ -2564,45 +2563,86 @@ static void br_port_mc_router_state_chan
++ 	switchdev_port_attr_set(p->dev, &attr);
++ }
++ 
++-/*
++- * Add port to router_list
+++static struct net_bridge_port *
+++br_multicast_rport_from_node(struct net_bridge *br,
+++			     struct hlist_head *mc_router_list,
+++			     struct hlist_node *rlist)
+++{
+++	return hlist_entry(rlist, struct net_bridge_port, ip4_rlist);
+++}
+++
+++static struct hlist_node *
+++br_multicast_get_rport_slot(struct net_bridge *br,
+++			    struct net_bridge_port *port,
+++			    struct hlist_head *mc_router_list)
+++
+++{
+++	struct hlist_node *slot = NULL;
+++	struct net_bridge_port *p;
+++	struct hlist_node *rlist;
+++
+++	hlist_for_each(rlist, mc_router_list) {
+++		p = br_multicast_rport_from_node(br, mc_router_list, rlist);
+++
+++		if ((unsigned long)port >= (unsigned long)p)
+++			break;
+++
+++		slot = rlist;
+++	}
+++
+++	return slot;
+++}
+++
+++/* Add port to router_list
++  *  list is maintained ordered by pointer value
++  *  and locked by br->multicast_lock and RCU
++  */
++ static void br_multicast_add_router(struct net_bridge *br,
++-				    struct net_bridge_port *port)
+++				    struct net_bridge_port *port,
+++				    struct hlist_node *rlist,
+++				    struct hlist_head *mc_router_list)
++ {
++-	struct net_bridge_port *p;
++-	struct hlist_node *slot = NULL;
+++	struct hlist_node *slot;
++ 
++-	if (!hlist_unhashed(&port->ip4_rlist))
+++	if (!hlist_unhashed(rlist))
++ 		return;
++ 
++-	hlist_for_each_entry(p, &br->ip4_mc_router_list, ip4_rlist) {
++-		if ((unsigned long) port >= (unsigned long) p)
++-			break;
++-		slot = &p->ip4_rlist;
++-	}
+++	slot = br_multicast_get_rport_slot(br, port, mc_router_list);
++ 
++ 	if (slot)
++-		hlist_add_behind_rcu(&port->ip4_rlist, slot);
+++		hlist_add_behind_rcu(rlist, slot);
++ 	else
++-		hlist_add_head_rcu(&port->ip4_rlist, &br->ip4_mc_router_list);
+++		hlist_add_head_rcu(rlist, mc_router_list);
+++
++ 	br_rtr_notify(br->dev, port, RTM_NEWMDB);
++ 	br_port_mc_router_state_change(port, true);
++ }
++ 
+++/* Add port to router_list
+++ *  list is maintained ordered by pointer value
+++ *  and locked by br->multicast_lock and RCU
+++ */
+++static void br_ip4_multicast_add_router(struct net_bridge *br,
+++					struct net_bridge_port *port)
+++{
+++	br_multicast_add_router(br, port, &port->ip4_rlist,
+++				&br->ip4_mc_router_list);
+++}
+++
++ static void br_multicast_mark_router(struct net_bridge *br,
++-				     struct net_bridge_port *port)
+++				     struct net_bridge_port *port,
+++				     struct timer_list *timer,
+++				     struct hlist_node *rlist,
+++				     struct hlist_head *mc_router_list)
++ {
++ 	unsigned long now = jiffies;
++ 
++ 	if (!port) {
++ 		if (br->multicast_router == MDB_RTR_TYPE_TEMP_QUERY) {
++-			if (!timer_pending(&br->ip4_mc_router_timer))
+++			if (!br_ip4_multicast_is_router(br) &&
+++			    !br_ip6_multicast_is_router(br))
++ 				br_mc_router_state_change(br, true);
++-			mod_timer(&br->ip4_mc_router_timer,
++-				  now + br->multicast_querier_interval);
+++			mod_timer(timer, now + br->multicast_querier_interval);
++ 		}
++ 		return;
++ 	}
++@@ -2611,10 +2651,23 @@ static void br_multicast_mark_router(str
++ 	    port->multicast_router == MDB_RTR_TYPE_PERM)
++ 		return;
++ 
++-	br_multicast_add_router(br, port);
+++	br_multicast_add_router(br, port, rlist, mc_router_list);
+++	mod_timer(timer, now + br->multicast_querier_interval);
+++}
+++
+++static void br_ip4_multicast_mark_router(struct net_bridge *br,
+++					 struct net_bridge_port *port)
+++{
+++	struct timer_list *timer = &br->ip4_mc_router_timer;
+++	struct hlist_node *rlist = NULL;
+++
+++	if (port) {
+++		timer = &port->ip4_mc_router_timer;
+++		rlist = &port->ip4_rlist;
+++	}
++ 
++-	mod_timer(&port->ip4_mc_router_timer,
++-		  now + br->multicast_querier_interval);
+++	br_multicast_mark_router(br, port, timer, rlist,
+++				 &br->ip4_mc_router_list);
++ }
++ 
++ static void
++@@ -2628,7 +2681,7 @@ br_ip4_multicast_query_received(struct n
++ 		return;
++ 
++ 	br_multicast_update_query_timer(br, query, max_delay);
++-	br_multicast_mark_router(br, port);
+++	br_ip4_multicast_mark_router(br, port);
++ }
++ 
++ #if IS_ENABLED(CONFIG_IPV6)
++@@ -2643,7 +2696,7 @@ br_ip6_multicast_query_received(struct n
++ 		return;
++ 
++ 	br_multicast_update_query_timer(br, query, max_delay);
++-	br_multicast_mark_router(br, port);
+++	br_ip4_multicast_mark_router(br, port);
++ }
++ #endif
++ 
++@@ -3014,7 +3067,7 @@ static void br_multicast_pim(struct net_
++ 		return;
++ 
++ 	spin_lock(&br->multicast_lock);
++-	br_multicast_mark_router(br, port);
+++	br_ip4_multicast_mark_router(br, port);
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
++@@ -3027,7 +3080,7 @@ static int br_ip4_multicast_mrd_rcv(stru
++ 		return -ENOMSG;
++ 
++ 	spin_lock(&br->multicast_lock);
++-	br_multicast_mark_router(br, port);
+++	br_ip4_multicast_mark_router(br, port);
++ 	spin_unlock(&br->multicast_lock);
++ 
++ 	return 0;
++@@ -3097,7 +3150,7 @@ static void br_ip6_multicast_mrd_rcv(str
++ 		return;
++ 
++ 	spin_lock(&br->multicast_lock);
++-	br_multicast_mark_router(br, port);
+++	br_ip4_multicast_mark_router(br, port);
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
++@@ -3443,11 +3496,11 @@ int br_multicast_set_port_router(struct
++ 	case MDB_RTR_TYPE_PERM:
++ 		p->multicast_router = MDB_RTR_TYPE_PERM;
++ 		del_timer(&p->ip4_mc_router_timer);
++-		br_multicast_add_router(br, p);
+++		br_ip4_multicast_add_router(br, p);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP:
++ 		p->multicast_router = MDB_RTR_TYPE_TEMP;
++-		br_multicast_mark_router(br, p);
+++		br_ip4_multicast_mark_router(br, p);
++ 		break;
++ 	default:
++ 		goto unlock;
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-07-net-bridge-mcast-split-router-port-del-notify-for-mc.patch b/target/linux/generic/backport-5.10/610-v5.14-07-net-bridge-mcast-split-router-port-del-notify-for-mc.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ea0895b16fc3648393a16b7219af1af7a6bd77a1
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-07-net-bridge-mcast-split-router-port-del-notify-for-mc.patch
+@@ -0,0 +1,135 @@
++From 047d1e34ade29e4d91797e5510f24aae75783895 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:50 +0200
++Subject: [PATCH 08/13] net: bridge: mcast: split router port del+notify for
++ mcast router split
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++In preparation for the upcoming split of multicast router state into
++their IPv4 and IPv6 variants split router port deletion and notification
++into two functions. When we disable a port for instance later we want to
++only send one notification to switchdev and netlink for compatibility
++and want to avoid sending one for IPv4 and one for IPv6. For that the
++split is needed.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_multicast.c | 40 ++++++++++++++++++++++++++++++---------
++ 1 file changed, 31 insertions(+), 9 deletions(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -59,7 +59,8 @@ static void br_ip4_multicast_leave_group
++ 					 const unsigned char *src);
++ static void br_multicast_port_group_rexmit(struct timer_list *t);
++ 
++-static void __del_port_router(struct net_bridge_port *p);
+++static void
+++br_multicast_rport_del_notify(struct net_bridge_port *p, bool deleted);
++ #if IS_ENABLED(CONFIG_IPV6)
++ static void br_ip6_multicast_leave_group(struct net_bridge *br,
++ 					 struct net_bridge_port *port,
++@@ -1341,11 +1342,26 @@ static int br_ip6_multicast_add_group(st
++ }
++ #endif
++ 
+++static bool br_multicast_rport_del(struct hlist_node *rlist)
+++{
+++	if (hlist_unhashed(rlist))
+++		return false;
+++
+++	hlist_del_init_rcu(rlist);
+++	return true;
+++}
+++
+++static bool br_ip4_multicast_rport_del(struct net_bridge_port *p)
+++{
+++	return br_multicast_rport_del(&p->ip4_rlist);
+++}
+++
++ static void br_multicast_router_expired(struct net_bridge_port *port,
++ 					struct timer_list *t,
++ 					struct hlist_node *rlist)
++ {
++ 	struct net_bridge *br = port->br;
+++	bool del;
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	if (port->multicast_router == MDB_RTR_TYPE_DISABLED ||
++@@ -1353,7 +1369,8 @@ static void br_multicast_router_expired(
++ 	    timer_pending(t))
++ 		goto out;
++ 
++-	__del_port_router(port);
+++	del = br_multicast_rport_del(rlist);
+++	br_multicast_rport_del_notify(port, del);
++ out:
++ 	spin_unlock(&br->multicast_lock);
++ }
++@@ -1684,19 +1701,20 @@ void br_multicast_disable_port(struct ne
++ 	struct net_bridge *br = port->br;
++ 	struct net_bridge_port_group *pg;
++ 	struct hlist_node *n;
+++	bool del = false;
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	hlist_for_each_entry_safe(pg, n, &port->mglist, mglist)
++ 		if (!(pg->flags & MDB_PG_FLAGS_PERMANENT))
++ 			br_multicast_find_del_pg(br, pg);
++ 
++-	__del_port_router(port);
++-
+++	del |= br_ip4_multicast_rport_del(port);
++ 	del_timer(&port->ip4_mc_router_timer);
++ 	del_timer(&port->ip4_own_query.timer);
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	del_timer(&port->ip6_own_query.timer);
++ #endif
+++	br_multicast_rport_del_notify(port, del);
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
++@@ -3455,11 +3473,12 @@ int br_multicast_set_router(struct net_b
++ 	return err;
++ }
++ 
++-static void __del_port_router(struct net_bridge_port *p)
+++static void
+++br_multicast_rport_del_notify(struct net_bridge_port *p, bool deleted)
++ {
++-	if (hlist_unhashed(&p->ip4_rlist))
+++	if (!deleted)
++ 		return;
++-	hlist_del_init_rcu(&p->ip4_rlist);
+++
++ 	br_rtr_notify(p->br->dev, p, RTM_DELMDB);
++ 	br_port_mc_router_state_change(p, false);
++ 
++@@ -3473,6 +3492,7 @@ int br_multicast_set_port_router(struct
++ 	struct net_bridge *br = p->br;
++ 	unsigned long now = jiffies;
++ 	int err = -EINVAL;
+++	bool del = false;
++ 
++ 	spin_lock(&br->multicast_lock);
++ 	if (p->multicast_router == val) {
++@@ -3486,12 +3506,14 @@ int br_multicast_set_port_router(struct
++ 	switch (val) {
++ 	case MDB_RTR_TYPE_DISABLED:
++ 		p->multicast_router = MDB_RTR_TYPE_DISABLED;
++-		__del_port_router(p);
+++		del |= br_ip4_multicast_rport_del(p);
++ 		del_timer(&p->ip4_mc_router_timer);
+++		br_multicast_rport_del_notify(p, del);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP_QUERY:
++ 		p->multicast_router = MDB_RTR_TYPE_TEMP_QUERY;
++-		__del_port_router(p);
+++		del |= br_ip4_multicast_rport_del(p);
+++		br_multicast_rport_del_notify(p, del);
++ 		break;
++ 	case MDB_RTR_TYPE_PERM:
++ 		p->multicast_router = MDB_RTR_TYPE_PERM;
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-08-net-bridge-mcast-split-multicast-router-state-for-IP.patch b/target/linux/generic/backport-5.10/610-v5.14-08-net-bridge-mcast-split-multicast-router-state-for-IP.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8c8ba065a322b7bd6c55ba6f51bd3b7941a8a584
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-08-net-bridge-mcast-split-multicast-router-state-for-IP.patch
+@@ -0,0 +1,410 @@
++From 2542514507c9c942f157c01882a380e0cbc0e6ea Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:51 +0200
++Subject: [PATCH 09/13] net: bridge: mcast: split multicast router state for
++ IPv4 and IPv6
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++A multicast router for IPv4 does not imply that the same host also is a
++multicast router for IPv6 and vice versa.
++
++To reduce multicast traffic when a host is only a multicast router for
++one of these two protocol families, keep router state for IPv4 and IPv6
++separately. Similar to how querier state is kept separately.
++
++For backwards compatibility for netlink and switchdev notifications
++these two will still only notify if a port switched from either no
++IPv4/IPv6 multicast router to any IPv4/IPv6 multicast router or the
++other way round. However a full netlink MDB router dump will now also
++include a multicast router timeout for both IPv4 and IPv6.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_mdb.c       |  10 +++
++ net/bridge/br_multicast.c | 134 ++++++++++++++++++++++++++++++++++++--
++ net/bridge/br_private.h   |  14 +++-
++ 3 files changed, 151 insertions(+), 7 deletions(-)
++
++--- a/net/bridge/br_mdb.c
+++++ b/net/bridge/br_mdb.c
++@@ -18,7 +18,12 @@
++ 
++ static bool br_rports_have_mc_router(struct net_bridge *br)
++ {
+++#if IS_ENABLED(CONFIG_IPV6)
+++	return !hlist_empty(&br->ip4_mc_router_list) ||
+++	       !hlist_empty(&br->ip6_mc_router_list);
+++#else
++ 	return !hlist_empty(&br->ip4_mc_router_list);
+++#endif
++ }
++ 
++ static bool
++@@ -31,8 +36,13 @@ br_ip4_rports_get_timer(struct net_bridg
++ static bool
++ br_ip6_rports_get_timer(struct net_bridge_port *port, unsigned long *timer)
++ {
+++#if IS_ENABLED(CONFIG_IPV6)
+++	*timer = br_timer_value(&port->ip6_mc_router_timer);
+++	return !hlist_unhashed(&port->ip6_rlist);
+++#else
++ 	*timer = 0;
++ 	return false;
+++#endif
++ }
++ 
++ static int br_rports_fill_info(struct sk_buff *skb, struct netlink_callback *cb,
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -62,6 +62,8 @@ static void br_multicast_port_group_rexm
++ static void
++ br_multicast_rport_del_notify(struct net_bridge_port *p, bool deleted);
++ #if IS_ENABLED(CONFIG_IPV6)
+++static void br_ip6_multicast_add_router(struct net_bridge *br,
+++					struct net_bridge_port *port);
++ static void br_ip6_multicast_leave_group(struct net_bridge *br,
++ 					 struct net_bridge_port *port,
++ 					 const struct in6_addr *group,
++@@ -1356,6 +1358,15 @@ static bool br_ip4_multicast_rport_del(s
++ 	return br_multicast_rport_del(&p->ip4_rlist);
++ }
++ 
+++static bool br_ip6_multicast_rport_del(struct net_bridge_port *p)
+++{
+++#if IS_ENABLED(CONFIG_IPV6)
+++	return br_multicast_rport_del(&p->ip6_rlist);
+++#else
+++	return false;
+++#endif
+++}
+++
++ static void br_multicast_router_expired(struct net_bridge_port *port,
++ 					struct timer_list *t,
++ 					struct hlist_node *rlist)
++@@ -1382,6 +1393,15 @@ static void br_ip4_multicast_router_expi
++ 	br_multicast_router_expired(port, t, &port->ip4_rlist);
++ }
++ 
+++#if IS_ENABLED(CONFIG_IPV6)
+++static void br_ip6_multicast_router_expired(struct timer_list *t)
+++{
+++	struct net_bridge_port *port = from_timer(port, t, ip6_mc_router_timer);
+++
+++	br_multicast_router_expired(port, t, &port->ip6_rlist);
+++}
+++#endif
+++
++ static void br_mc_router_state_change(struct net_bridge *p,
++ 				      bool is_mc_router)
++ {
++@@ -1417,6 +1437,15 @@ static void br_ip4_multicast_local_route
++ 	br_multicast_local_router_expired(br, t);
++ }
++ 
+++#if IS_ENABLED(CONFIG_IPV6)
+++static void br_ip6_multicast_local_router_expired(struct timer_list *t)
+++{
+++	struct net_bridge *br = from_timer(br, t, ip6_mc_router_timer);
+++
+++	br_multicast_local_router_expired(br, t);
+++}
+++#endif
+++
++ static void br_multicast_querier_expired(struct net_bridge *br,
++ 					 struct bridge_mcast_own_query *query)
++ {
++@@ -1632,6 +1661,8 @@ int br_multicast_add_port(struct net_bri
++ 	timer_setup(&port->ip4_own_query.timer,
++ 		    br_ip4_multicast_port_query_expired, 0);
++ #if IS_ENABLED(CONFIG_IPV6)
+++	timer_setup(&port->ip6_mc_router_timer,
+++		    br_ip6_multicast_router_expired, 0);
++ 	timer_setup(&port->ip6_own_query.timer,
++ 		    br_ip6_multicast_port_query_expired, 0);
++ #endif
++@@ -1660,6 +1691,9 @@ void br_multicast_del_port(struct net_br
++ 	spin_unlock_bh(&br->multicast_lock);
++ 	br_multicast_gc(&deleted_head);
++ 	del_timer_sync(&port->ip4_mc_router_timer);
+++#if IS_ENABLED(CONFIG_IPV6)
+++	del_timer_sync(&port->ip6_mc_router_timer);
+++#endif
++ 	free_percpu(port->mcast_stats);
++ }
++ 
++@@ -1683,8 +1717,10 @@ static void __br_multicast_enable_port(s
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	br_multicast_enable(&port->ip6_own_query);
++ #endif
++-	if (port->multicast_router == MDB_RTR_TYPE_PERM)
+++	if (port->multicast_router == MDB_RTR_TYPE_PERM) {
++ 		br_ip4_multicast_add_router(br, port);
+++		br_ip6_multicast_add_router(br, port);
+++	}
++ }
++ 
++ void br_multicast_enable_port(struct net_bridge_port *port)
++@@ -1711,7 +1747,9 @@ void br_multicast_disable_port(struct ne
++ 	del |= br_ip4_multicast_rport_del(port);
++ 	del_timer(&port->ip4_mc_router_timer);
++ 	del_timer(&port->ip4_own_query.timer);
+++	del |= br_ip6_multicast_rport_del(port);
++ #if IS_ENABLED(CONFIG_IPV6)
+++	del_timer(&port->ip6_mc_router_timer);
++ 	del_timer(&port->ip6_own_query.timer);
++ #endif
++ 	br_multicast_rport_del_notify(port, del);
++@@ -2586,6 +2624,10 @@ br_multicast_rport_from_node(struct net_
++ 			     struct hlist_head *mc_router_list,
++ 			     struct hlist_node *rlist)
++ {
+++#if IS_ENABLED(CONFIG_IPV6)
+++	if (mc_router_list == &br->ip6_mc_router_list)
+++		return hlist_entry(rlist, struct net_bridge_port, ip6_rlist);
+++#endif
++ 	return hlist_entry(rlist, struct net_bridge_port, ip4_rlist);
++ }
++ 
++@@ -2611,6 +2653,19 @@ br_multicast_get_rport_slot(struct net_b
++ 	return slot;
++ }
++ 
+++static bool br_multicast_no_router_otherpf(struct net_bridge_port *port,
+++					   struct hlist_node *rnode)
+++{
+++#if IS_ENABLED(CONFIG_IPV6)
+++	if (rnode != &port->ip6_rlist)
+++		return hlist_unhashed(&port->ip6_rlist);
+++	else
+++		return hlist_unhashed(&port->ip4_rlist);
+++#else
+++	return true;
+++#endif
+++}
+++
++ /* Add port to router_list
++  *  list is maintained ordered by pointer value
++  *  and locked by br->multicast_lock and RCU
++@@ -2632,8 +2687,14 @@ static void br_multicast_add_router(stru
++ 	else
++ 		hlist_add_head_rcu(rlist, mc_router_list);
++ 
++-	br_rtr_notify(br->dev, port, RTM_NEWMDB);
++-	br_port_mc_router_state_change(port, true);
+++	/* For backwards compatibility for now, only notify if we
+++	 * switched from no IPv4/IPv6 multicast router to a new
+++	 * IPv4 or IPv6 multicast router.
+++	 */
+++	if (br_multicast_no_router_otherpf(port, rlist)) {
+++		br_rtr_notify(br->dev, port, RTM_NEWMDB);
+++		br_port_mc_router_state_change(port, true);
+++	}
++ }
++ 
++ /* Add port to router_list
++@@ -2647,6 +2708,19 @@ static void br_ip4_multicast_add_router(
++ 				&br->ip4_mc_router_list);
++ }
++ 
+++/* Add port to router_list
+++ *  list is maintained ordered by pointer value
+++ *  and locked by br->multicast_lock and RCU
+++ */
+++static void br_ip6_multicast_add_router(struct net_bridge *br,
+++					struct net_bridge_port *port)
+++{
+++#if IS_ENABLED(CONFIG_IPV6)
+++	br_multicast_add_router(br, port, &port->ip6_rlist,
+++				&br->ip6_mc_router_list);
+++#endif
+++}
+++
++ static void br_multicast_mark_router(struct net_bridge *br,
++ 				     struct net_bridge_port *port,
++ 				     struct timer_list *timer,
++@@ -2688,6 +2762,23 @@ static void br_ip4_multicast_mark_router
++ 				 &br->ip4_mc_router_list);
++ }
++ 
+++static void br_ip6_multicast_mark_router(struct net_bridge *br,
+++					 struct net_bridge_port *port)
+++{
+++#if IS_ENABLED(CONFIG_IPV6)
+++	struct timer_list *timer = &br->ip6_mc_router_timer;
+++	struct hlist_node *rlist = NULL;
+++
+++	if (port) {
+++		timer = &port->ip6_mc_router_timer;
+++		rlist = &port->ip6_rlist;
+++	}
+++
+++	br_multicast_mark_router(br, port, timer, rlist,
+++				 &br->ip6_mc_router_list);
+++#endif
+++}
+++
++ static void
++ br_ip4_multicast_query_received(struct net_bridge *br,
++ 				struct net_bridge_port *port,
++@@ -2714,7 +2805,7 @@ br_ip6_multicast_query_received(struct n
++ 		return;
++ 
++ 	br_multicast_update_query_timer(br, query, max_delay);
++-	br_ip4_multicast_mark_router(br, port);
+++	br_ip6_multicast_mark_router(br, port);
++ }
++ #endif
++ 
++@@ -3168,7 +3259,7 @@ static void br_ip6_multicast_mrd_rcv(str
++ 		return;
++ 
++ 	spin_lock(&br->multicast_lock);
++-	br_ip4_multicast_mark_router(br, port);
+++	br_ip6_multicast_mark_router(br, port);
++ 	spin_unlock(&br->multicast_lock);
++ }
++ 
++@@ -3326,6 +3417,8 @@ void br_multicast_init(struct net_bridge
++ 	timer_setup(&br->ip4_own_query.timer,
++ 		    br_ip4_multicast_query_expired, 0);
++ #if IS_ENABLED(CONFIG_IPV6)
+++	timer_setup(&br->ip6_mc_router_timer,
+++		    br_ip6_multicast_local_router_expired, 0);
++ 	timer_setup(&br->ip6_other_query.timer,
++ 		    br_ip6_multicast_querier_expired, 0);
++ 	timer_setup(&br->ip6_own_query.timer,
++@@ -3423,6 +3516,7 @@ void br_multicast_stop(struct net_bridge
++ 	del_timer_sync(&br->ip4_other_query.timer);
++ 	del_timer_sync(&br->ip4_own_query.timer);
++ #if IS_ENABLED(CONFIG_IPV6)
+++	del_timer_sync(&br->ip6_mc_router_timer);
++ 	del_timer_sync(&br->ip6_other_query.timer);
++ 	del_timer_sync(&br->ip6_own_query.timer);
++ #endif
++@@ -3457,6 +3551,9 @@ int br_multicast_set_router(struct net_b
++ 	case MDB_RTR_TYPE_PERM:
++ 		br_mc_router_state_change(br, val == MDB_RTR_TYPE_PERM);
++ 		del_timer(&br->ip4_mc_router_timer);
+++#if IS_ENABLED(CONFIG_IPV6)
+++		del_timer(&br->ip6_mc_router_timer);
+++#endif
++ 		br->multicast_router = val;
++ 		err = 0;
++ 		break;
++@@ -3479,6 +3576,16 @@ br_multicast_rport_del_notify(struct net
++ 	if (!deleted)
++ 		return;
++ 
+++	/* For backwards compatibility for now, only notify if there is
+++	 * no multicast router anymore for both IPv4 and IPv6.
+++	 */
+++	if (!hlist_unhashed(&p->ip4_rlist))
+++		return;
+++#if IS_ENABLED(CONFIG_IPV6)
+++	if (!hlist_unhashed(&p->ip6_rlist))
+++		return;
+++#endif
+++
++ 	br_rtr_notify(p->br->dev, p, RTM_DELMDB);
++ 	br_port_mc_router_state_change(p, false);
++ 
++@@ -3497,9 +3604,14 @@ int br_multicast_set_port_router(struct
++ 	spin_lock(&br->multicast_lock);
++ 	if (p->multicast_router == val) {
++ 		/* Refresh the temp router port timer */
++-		if (p->multicast_router == MDB_RTR_TYPE_TEMP)
+++		if (p->multicast_router == MDB_RTR_TYPE_TEMP) {
++ 			mod_timer(&p->ip4_mc_router_timer,
++ 				  now + br->multicast_querier_interval);
+++#if IS_ENABLED(CONFIG_IPV6)
+++			mod_timer(&p->ip6_mc_router_timer,
+++				  now + br->multicast_querier_interval);
+++#endif
+++		}
++ 		err = 0;
++ 		goto unlock;
++ 	}
++@@ -3508,21 +3620,31 @@ int br_multicast_set_port_router(struct
++ 		p->multicast_router = MDB_RTR_TYPE_DISABLED;
++ 		del |= br_ip4_multicast_rport_del(p);
++ 		del_timer(&p->ip4_mc_router_timer);
+++		del |= br_ip6_multicast_rport_del(p);
+++#if IS_ENABLED(CONFIG_IPV6)
+++		del_timer(&p->ip6_mc_router_timer);
+++#endif
++ 		br_multicast_rport_del_notify(p, del);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP_QUERY:
++ 		p->multicast_router = MDB_RTR_TYPE_TEMP_QUERY;
++ 		del |= br_ip4_multicast_rport_del(p);
+++		del |= br_ip6_multicast_rport_del(p);
++ 		br_multicast_rport_del_notify(p, del);
++ 		break;
++ 	case MDB_RTR_TYPE_PERM:
++ 		p->multicast_router = MDB_RTR_TYPE_PERM;
++ 		del_timer(&p->ip4_mc_router_timer);
++ 		br_ip4_multicast_add_router(br, p);
+++#if IS_ENABLED(CONFIG_IPV6)
+++		del_timer(&p->ip6_mc_router_timer);
+++#endif
+++		br_ip6_multicast_add_router(br, p);
++ 		break;
++ 	case MDB_RTR_TYPE_TEMP:
++ 		p->multicast_router = MDB_RTR_TYPE_TEMP;
++ 		br_ip4_multicast_mark_router(br, p);
+++		br_ip6_multicast_mark_router(br, p);
++ 		break;
++ 	default:
++ 		goto unlock;
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -317,6 +317,8 @@ struct net_bridge_port {
++ 	struct hlist_node		ip4_rlist;
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	struct bridge_mcast_own_query	ip6_own_query;
+++	struct timer_list		ip6_mc_router_timer;
+++	struct hlist_node		ip6_rlist;
++ #endif /* IS_ENABLED(CONFIG_IPV6) */
++ 	unsigned char			multicast_router;
++ 	struct bridge_mcast_stats	__percpu *mcast_stats;
++@@ -461,6 +463,8 @@ struct net_bridge {
++ 	struct bridge_mcast_querier	ip4_querier;
++ 	struct bridge_mcast_stats	__percpu *mcast_stats;
++ #if IS_ENABLED(CONFIG_IPV6)
+++	struct hlist_head		ip6_mc_router_list;
+++	struct timer_list		ip6_mc_router_timer;
++ 	struct bridge_mcast_other_query	ip6_other_query;
++ 	struct bridge_mcast_own_query	ip6_own_query;
++ 	struct bridge_mcast_querier	ip6_querier;
++@@ -847,11 +851,19 @@ void br_multicast_sg_add_exclude_ports(s
++ 
++ static inline struct hlist_node *
++ br_multicast_get_first_rport_node(struct net_bridge *b, struct sk_buff *skb) {
+++#if IS_ENABLED(CONFIG_IPV6)
+++	if (skb->protocol == htons(ETH_P_IPV6))
+++		return rcu_dereference(hlist_first_rcu(&b->ip6_mc_router_list));
+++#endif
++ 	return rcu_dereference(hlist_first_rcu(&b->ip4_mc_router_list));
++ }
++ 
++ static inline struct net_bridge_port *
++ br_multicast_rport_from_node_skb(struct hlist_node *rp, struct sk_buff *skb) {
+++#if IS_ENABLED(CONFIG_IPV6)
+++	if (skb->protocol == htons(ETH_P_IPV6))
+++		return hlist_entry_safe(rp, struct net_bridge_port, ip6_rlist);
+++#endif
++ 	return hlist_entry_safe(rp, struct net_bridge_port, ip4_rlist);
++ }
++ 
++@@ -863,7 +875,7 @@ static inline bool br_ip4_multicast_is_r
++ static inline bool br_ip6_multicast_is_router(struct net_bridge *br)
++ {
++ #if IS_ENABLED(CONFIG_IPV6)
++-	return timer_pending(&br->ip4_mc_router_timer);
+++	return timer_pending(&br->ip6_mc_router_timer);
++ #else
++ 	return false;
++ #endif
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-09-net-bridge-mcast-add-ip4-ip6-mcast-router-timers-to-.patch b/target/linux/generic/backport-5.10/610-v5.14-09-net-bridge-mcast-add-ip4-ip6-mcast-router-timers-to-.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3aeacab6fd29c024865dc60912cfbb92275a3164
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-09-net-bridge-mcast-add-ip4-ip6-mcast-router-timers-to-.patch
+@@ -0,0 +1,48 @@
++From 46b9de28078dd3f35ce41ad72fa29e8cbc944e0b Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:52 +0200
++Subject: [PATCH 10/13] net: bridge: mcast: add ip4+ip6 mcast router timers to
++ mdb netlink
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Now that we have split the multicast router state into two, one for IPv4
++and one for IPv6, also add individual timers to the mdb netlink router
++port dump. Leaving the old timer attribute for backwards compatibility.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ include/uapi/linux/if_bridge.h | 2 ++
++ net/bridge/br_mdb.c            | 8 +++++++-
++ 2 files changed, 9 insertions(+), 1 deletion(-)
++
++--- a/include/uapi/linux/if_bridge.h
+++++ b/include/uapi/linux/if_bridge.h
++@@ -502,6 +502,8 @@ enum {
++ 	MDBA_ROUTER_PATTR_UNSPEC,
++ 	MDBA_ROUTER_PATTR_TIMER,
++ 	MDBA_ROUTER_PATTR_TYPE,
+++	MDBA_ROUTER_PATTR_INET_TIMER,
+++	MDBA_ROUTER_PATTR_INET6_TIMER,
++ 	__MDBA_ROUTER_PATTR_MAX
++ };
++ #define MDBA_ROUTER_PATTR_MAX (__MDBA_ROUTER_PATTR_MAX - 1)
++--- a/net/bridge/br_mdb.c
+++++ b/net/bridge/br_mdb.c
++@@ -79,7 +79,13 @@ static int br_rports_fill_info(struct sk
++ 		    nla_put_u32(skb, MDBA_ROUTER_PATTR_TIMER,
++ 				max(ip4_timer, ip6_timer)) ||
++ 		    nla_put_u8(skb, MDBA_ROUTER_PATTR_TYPE,
++-			       p->multicast_router)) {
+++			       p->multicast_router) ||
+++		    (have_ip4_mc_rtr &&
+++		     nla_put_u32(skb, MDBA_ROUTER_PATTR_INET_TIMER,
+++				 ip4_timer)) ||
+++		    (have_ip6_mc_rtr &&
+++		     nla_put_u32(skb, MDBA_ROUTER_PATTR_INET6_TIMER,
+++				 ip6_timer))) {
++ 			nla_nest_cancel(skb, port_nest);
++ 			goto fail;
++ 		}
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-10-net-bridge-mcast-export-multicast-router-presence-ad.patch b/target/linux/generic/backport-5.10/610-v5.14-10-net-bridge-mcast-export-multicast-router-presence-ad.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..284550befaf7423e5c682fb7193985206901513e
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-10-net-bridge-mcast-export-multicast-router-presence-ad.patch
+@@ -0,0 +1,112 @@
++From 2e1580e0ea307cec3eca1896d53353b7b7d50ef3 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Thu, 13 May 2021 15:20:53 +0200
++Subject: [PATCH 11/13] net: bridge: mcast: export multicast router presence
++ adjacent to a port
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++To properly support routable multicast addresses in batman-adv in a
++group-aware way, a batman-adv node needs to know if it serves multicast
++routers.
++
++This adds a function to the bridge to export this so that batman-adv
++can then make full use of the Multicast Router Discovery capability of
++the bridge.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ include/linux/if_bridge.h |  8 ++++++
++ net/bridge/br_multicast.c | 55 +++++++++++++++++++++++++++++++++++++++
++ 2 files changed, 63 insertions(+)
++
++--- a/include/linux/if_bridge.h
+++++ b/include/linux/if_bridge.h
++@@ -66,6 +66,7 @@ int br_multicast_list_adjacent(struct ne
++ 			       struct list_head *br_ip_list);
++ bool br_multicast_has_querier_anywhere(struct net_device *dev, int proto);
++ bool br_multicast_has_querier_adjacent(struct net_device *dev, int proto);
+++bool br_multicast_has_router_adjacent(struct net_device *dev, int proto);
++ bool br_multicast_enabled(const struct net_device *dev);
++ bool br_multicast_router(const struct net_device *dev);
++ #else
++@@ -84,6 +85,13 @@ static inline bool br_multicast_has_quer
++ {
++ 	return false;
++ }
+++
+++static inline bool br_multicast_has_router_adjacent(struct net_device *dev,
+++						    int proto)
+++{
+++	return true;
+++}
+++
++ static inline bool br_multicast_enabled(const struct net_device *dev)
++ {
++ 	return false;
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -3964,6 +3964,61 @@ unlock:
++ }
++ EXPORT_SYMBOL_GPL(br_multicast_has_querier_adjacent);
++ 
+++/**
+++ * br_multicast_has_router_adjacent - Checks for a router behind a bridge port
+++ * @dev: The bridge port adjacent to which to check for a multicast router
+++ * @proto: The protocol family to check for: IGMP -> ETH_P_IP, MLD -> ETH_P_IPV6
+++ *
+++ * Checks whether the given interface has a bridge on top and if so returns
+++ * true if a multicast router is behind one of the other ports of this
+++ * bridge. Otherwise returns false.
+++ */
+++bool br_multicast_has_router_adjacent(struct net_device *dev, int proto)
+++{
+++	struct net_bridge_port *port, *p;
+++	bool ret = false;
+++
+++	rcu_read_lock();
+++	port = br_port_get_check_rcu(dev);
+++	if (!port)
+++		goto unlock;
+++
+++	switch (proto) {
+++	case ETH_P_IP:
+++		hlist_for_each_entry_rcu(p, &port->br->ip4_mc_router_list,
+++					 ip4_rlist) {
+++			if (p == port)
+++				continue;
+++
+++			ret = true;
+++			goto unlock;
+++		}
+++		break;
+++#if IS_ENABLED(CONFIG_IPV6)
+++	case ETH_P_IPV6:
+++		hlist_for_each_entry_rcu(p, &port->br->ip6_mc_router_list,
+++					 ip6_rlist) {
+++			if (p == port)
+++				continue;
+++
+++			ret = true;
+++			goto unlock;
+++		}
+++		break;
+++#endif
+++	default:
+++		/* when compiled without IPv6 support, be conservative and
+++		 * always assume presence of an IPv6 multicast router
+++		 */
+++		ret = true;
+++	}
+++
+++unlock:
+++	rcu_read_unlock();
+++	return ret;
+++}
+++EXPORT_SYMBOL_GPL(br_multicast_has_router_adjacent);
+++
++ static void br_mcast_stats_add(struct bridge_mcast_stats __percpu *stats,
++ 			       const struct sk_buff *skb, u8 type, u8 dir)
++ {
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-11-net-bridge-fix-br_multicast_is_router-stub-when-igmp.patch b/target/linux/generic/backport-5.10/610-v5.14-11-net-bridge-fix-br_multicast_is_router-stub-when-igmp.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c178ed3829e1c4795411476d1dec7ea382fe166f
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-11-net-bridge-fix-br_multicast_is_router-stub-when-igmp.patch
+@@ -0,0 +1,32 @@
++From 8577c2385c98490cb1c7c4821954c2e36511d733 Mon Sep 17 00:00:00 2001
++From: Nikolay Aleksandrov <nikolay@nvidia.com>
++Date: Fri, 14 May 2021 10:32:33 +0300
++Subject: [PATCH 12/13] net: bridge: fix br_multicast_is_router stub when igmp
++ is disabled
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++br_multicast_is_router takes two arguments when bridge IGMP is enabled
++and just one when it's disabled, fix the stub to take two as well.
++
++Fixes: 1a3065a26807 ("net: bridge: mcast: prepare is-router function for mcast router split")
++Signed-off-by: Nikolay Aleksandrov <nikolay@nvidia.com>
++Acked-by: Linus Lüssing <linus.luessing@c0d3.blue>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_private.h | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
++
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -1046,7 +1046,8 @@ static inline void br_multicast_flood(st
++ {
++ }
++ 
++-static inline bool br_multicast_is_router(struct net_bridge *br)
+++static inline bool br_multicast_is_router(struct net_bridge *br,
+++					  struct sk_buff *skb)
++ {
++ 	return false;
++ }
+diff --git a/target/linux/generic/backport-5.10/610-v5.14-12-net-bridge-fix-build-when-IPv6-is-disabled.patch b/target/linux/generic/backport-5.10/610-v5.14-12-net-bridge-fix-build-when-IPv6-is-disabled.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..7716079dd490ca9f83db3489f45f4e6f99d1f5bb
+--- /dev/null
++++ b/target/linux/generic/backport-5.10/610-v5.14-12-net-bridge-fix-build-when-IPv6-is-disabled.patch
+@@ -0,0 +1,48 @@
++From ca129ff130fa72e2e4d3ec4edd5a694165796e56 Mon Sep 17 00:00:00 2001
++From: Matteo Croce <mcroce@microsoft.com>
++Date: Fri, 14 May 2021 03:53:48 +0200
++Subject: [PATCH 13/13] net: bridge: fix build when IPv6 is disabled
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++The br_ip6_multicast_add_router() prototype is defined only when
++CONFIG_IPV6 is enabled, but the function is always referenced, so there
++is this build error with CONFIG_IPV6 not defined:
++
++net/bridge/br_multicast.c: In function ‘__br_multicast_enable_port’:
++net/bridge/br_multicast.c:1743:3: error: implicit declaration of function ‘br_ip6_multicast_add_router’; did you mean ‘br_ip4_multicast_add_router’? [-Werror=implicit-function-declaration]
++ 1743 |   br_ip6_multicast_add_router(br, port);
++      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
++      |   br_ip4_multicast_add_router
++net/bridge/br_multicast.c: At top level:
++net/bridge/br_multicast.c:2804:13: warning: conflicting types for ‘br_ip6_multicast_add_router’
++ 2804 | static void br_ip6_multicast_add_router(struct net_bridge *br,
++      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
++net/bridge/br_multicast.c:2804:13: error: static declaration of ‘br_ip6_multicast_add_router’ follows non-static declaration
++net/bridge/br_multicast.c:1743:3: note: previous implicit declaration of ‘br_ip6_multicast_add_router’ was here
++ 1743 |   br_ip6_multicast_add_router(br, port);
++      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Fix this build error by moving the definition out of the #ifdef.
++
++Fixes: a3c02e769efe ("net: bridge: mcast: split multicast router state for IPv4 and IPv6")
++Signed-off-by: Matteo Croce <mcroce@microsoft.com>
++Signed-off-by: David S. Miller <davem@davemloft.net>
++---
++ net/bridge/br_multicast.c | 2 +-
++ 1 file changed, 1 insertion(+), 1 deletion(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -61,9 +61,9 @@ static void br_multicast_port_group_rexm
++ 
++ static void
++ br_multicast_rport_del_notify(struct net_bridge_port *p, bool deleted);
++-#if IS_ENABLED(CONFIG_IPV6)
++ static void br_ip6_multicast_add_router(struct net_bridge *br,
++ 					struct net_bridge_port *port);
+++#if IS_ENABLED(CONFIG_IPV6)
++ static void br_ip6_multicast_leave_group(struct net_bridge *br,
++ 					 struct net_bridge_port *port,
++ 					 const struct in6_addr *group,

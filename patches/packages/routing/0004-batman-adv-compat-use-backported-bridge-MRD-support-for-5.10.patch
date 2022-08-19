@@ -1,0 +1,44 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Fri, 19 Aug 2022 20:23:11 +0200
+Subject: batman-adv: compat: use backported bridge MRD support for 5.10
+
+The per protocol family Multicast Router Discovery support was
+backported from Linux 5.14 to Linux 5.10. As well as the bridge exports
+added in 5.14 for batman-adv to retrieve the more accurate MRD based
+multicast router state, compared to the previous "guessing" on ff02::2
+approach to detect IPv6 multicast routers..
+
+This enables the use of routable multicast addresses in bridged setups
+in batman-adv's multicast optimizations.
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/batman-adv/src/compat-hacks.h b/batman-adv/src/compat-hacks.h
+index 99a1bb39fedcbd2069a0f790a624fdeaed12b47c..dd9122cb44f3931b8d95c74d76856c6c690205f3 100644
+--- a/batman-adv/src/compat-hacks.h
++++ b/batman-adv/src/compat-hacks.h
+@@ -47,10 +47,6 @@ inline void __batadv_br_ip_list_check(void)
+ #define br_ip batadv_br_ip
+ #define br_ip_list batadv_br_ip_list
+ 
+-#endif /* LINUX_VERSION_IS_LESS(5, 10, 0) */
+-
+-#if LINUX_VERSION_IS_LESS(5, 14, 0)
+-
+ #include <linux/if_bridge.h>
+ #include <net/addrconf.h>
+ 
+@@ -90,10 +86,12 @@ br_multicast_has_router_adjacent(struct net_device *dev, int proto)
+ }
+ #endif
+ 
+-#endif /* LINUX_VERSION_IS_LESS(5, 14, 0) */
++#endif /* LINUX_VERSION_IS_LESS(5, 10, 0) */
+ 
+ #if LINUX_VERSION_IS_LESS(5, 15, 0)
+ 
++#include <linux/etherdevice.h>
++
+ static inline void batadv_eth_hw_addr_set(struct net_device *dev,
+ 					  const u8 *addr)
+ {
