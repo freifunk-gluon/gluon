@@ -3,10 +3,10 @@ Date: Sun, 5 Jun 2022 23:43:38 +0200
 Subject: ramips-mt7621: make DSA images swconfig upgradable
 
 diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
-index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3b9e0f14d 100644
+index e3608d8d4e464146d88bdcd8efdd6ec870823fb7..c85a6f90bd4efffee6d05cd43759a1c8578477ac 100644
 --- a/target/linux/ramips/image/mt7621.mk
 +++ b/target/linux/ramips/image/mt7621.mk
-@@ -171,7 +171,6 @@ endef
+@@ -172,7 +172,6 @@ endef
  TARGET_DEVICES += asiarf_ap7621-nv1
  
  define Device/asus_rt-ac57u
@@ -14,7 +14,7 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    DEVICE_VENDOR := ASUS
    DEVICE_MODEL := RT-AC57U
    DEVICE_ALT0_VENDOR := ASUS
-@@ -400,7 +399,6 @@ endef
+@@ -418,7 +417,6 @@ endef
  TARGET_DEVICES += dlink_dir-853-r1
  
  define Device/dlink_dir-860l-b1
@@ -22,15 +22,15 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    $(Device/seama)
    SEAMA_SIGNATURE := wrgac13_dlink.2013gui_dir860lb
    LOADER_TYPE := bin
-@@ -1185,7 +1183,6 @@ endef
- TARGET_DEVICES += mtc_wr1201
+@@ -1224,7 +1222,6 @@ endef
+ TARGET_DEVICES += mts_wg430223
  
  define Device/netgear_ex6150
 -  $(Device/dsa-migration)
    DEVICE_VENDOR := NETGEAR
    DEVICE_MODEL := EX6150
    DEVICE_PACKAGES := kmod-mt76x2
-@@ -1197,7 +1194,6 @@ endef
+@@ -1236,7 +1233,6 @@ endef
  TARGET_DEVICES += netgear_ex6150
  
  define Device/netgear_sercomm_nand
@@ -38,7 +38,7 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    $(Device/uimage-lzma-loader)
    BLOCKSIZE := 128k
    PAGESIZE := 2048
-@@ -1380,7 +1376,6 @@ endef
+@@ -1419,7 +1415,6 @@ endef
  TARGET_DEVICES += netgear_wax202
  
  define Device/netgear_wndr3700-v5
@@ -46,7 +46,7 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    $(Device/netgear_sercomm_nor)
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 15232k
-@@ -1704,7 +1699,6 @@ endef
+@@ -1743,7 +1738,6 @@ endef
  TARGET_DEVICES += tplink_tl-wpa8631p-v3
  
  define Device/ubnt_edgerouter_common
@@ -54,7 +54,7 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := Ubiquiti
    IMAGE_SIZE := 256768k
-@@ -2090,7 +2084,6 @@ endef
+@@ -2129,7 +2123,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg2626
  
  define Device/zbtlink_zbt-wg3526-16m
@@ -62,7 +62,7 @@ index 30442175bf6a3f888a8e8b8fc0186bb41717f8e3..1261770813ddb80a17b47333b7244dc3
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 16064k
    DEVICE_VENDOR := Zbtlink
-@@ -2103,7 +2096,6 @@ endef
+@@ -2142,7 +2135,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg3526-16m
  
  define Device/zbtlink_zbt-wg3526-32m
