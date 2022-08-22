@@ -378,6 +378,7 @@ ramips-mt76x8
 
 * NETGEAR
 
+  - R6020
   - R6120
 
 * RAVPower
