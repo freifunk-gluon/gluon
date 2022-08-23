@@ -154,12 +154,31 @@ local function handle_target_pkgs(pkgs)
 	end
 end
 
+local function get_default_pkgs()
+	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/')
+	local target_matches = false
+	for line in io.lines('openwrt/tmp/.targetinfo') do
+		local target_match = string.match(line, '^Target: (.+)$')
+		if target_match then
+			target_matches = (target_match == targetinfo_target)
+		end
+
+		local default_packages_match = string.match(line, '^Default%-Packages: (.+)$')
+		if target_matches and default_packages_match then
+			return split(default_packages_match)
+		end
+	end
+
+	io.stderr:write('Error: unable to get default packages for OpenWrt target ', targetinfo_target, '\n')
+	os.exit(1)
+end
+
 lib.include('generic')
 lib.include(target)
 
 lib.check_devices()
 
-handle_target_pkgs(lib.target_packages)
+handle_target_pkgs(concat_list(get_default_pkgs(), lib.target_packages))
 
 for _, dev in ipairs(lib.devices) do
 	local device_pkgs = {}
