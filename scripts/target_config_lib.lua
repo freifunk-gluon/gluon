@@ -151,49 +151,33 @@ lib.include(target)
 
 lib.check_devices()
 
-if #lib.devices > 0 then
-	handle_target_pkgs(lib.target_packages)
+handle_target_pkgs(lib.target_packages)
 
-	for _, dev in ipairs(lib.devices) do
-		local device_pkgs = {}
-		local function handle_pkgs(pkgs)
-			for _, pkg in ipairs(pkgs) do
-				if string.sub(pkg, 1, 1) ~= '-' then
-					config_package(pkg, nil)
-				end
-				device_pkgs = append_to_list(device_pkgs, pkg)
-			end
-		end
-
-		handle_pkgs(lib.target_packages)
-		handle_pkgs(class_packages(dev.options.class))
-		handle_pkgs(dev.options.packages or {})
-		handle_pkgs(site_packages(dev.image))
-
-		local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
-		lib.config(
-			'TARGET_DEVICE_' .. profile_config, true,
-			string.format("unable to enable device '%s'", dev.name)
-		)
-		lib.config(
-			'TARGET_DEVICE_PACKAGES_' .. profile_config,
-			table.concat(device_pkgs, ' ')
-		)
-	end
-else
-	-- x86 fallback: no devices
-	local target_pkgs = {}
+for _, dev in ipairs(lib.devices) do
+	local device_pkgs = {}
 	local function handle_pkgs(pkgs)
-		target_pkgs = concat_list(target_pkgs, pkgs)
+		for _, pkg in ipairs(pkgs) do
+			if string.sub(pkg, 1, 1) ~= '-' then
+				config_package(pkg, nil)
+			end
+			device_pkgs = append_to_list(device_pkgs, pkg)
+		end
 	end
 
-	-- Just hardcode the class for device-less targets to 'standard'
-	-- - this is x86 only at the moment, and it will have devices
-	-- in OpenWrt 19.07 + 1 as well
 	handle_pkgs(lib.target_packages)
-	handle_pkgs(class_packages('standard'))
+	handle_pkgs(class_packages(dev.options.class))
+	handle_pkgs(dev.options.packages or {})
+	handle_pkgs(site_packages(dev.image))
 
-	handle_target_pkgs(target_pkgs)
+	local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
+	lib.config(
+		'TARGET_DEVICE_' .. profile_config, true,
+		string.format("unable to enable device '%s'", dev.name)
+	)
+	lib.config(
+		'TARGET_DEVICE_PACKAGES_' .. profile_config,
+		table.concat(device_pkgs, ' ')
+	)
 end
 
 return lib
