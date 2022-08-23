@@ -123,6 +123,14 @@ local enabled_packages = {}
 -- Arguments: package name and config value (true: y, nil: m, false: unset)
 -- Ensures precedence of y > m > unset
 local function config_package(pkg, v)
+	-- HACK: Handle virtual default packages
+	local subst = {
+		nftables = 'nftables-nojson'
+	}
+	if subst[pkg] then
+		pkg = subst[pkg]
+	end
+
 	if v == false then
 		if not enabled_packages[pkg] then
 			lib.try_config('PACKAGE_' .. pkg, false)
