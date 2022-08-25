@@ -43,6 +43,8 @@ high throughput.
 fastd
 ^^^^^
 
+.. _VPN fastd methods:
+
 Methods
 """""""
 
