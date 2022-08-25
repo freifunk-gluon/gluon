@@ -181,6 +181,7 @@ config: $(LUA) FORCE
 		$(call CheckSite,$(conf)); \
 	)
 
+	$(OPENWRTMAKE) prepare-tmpinfo
 	$(GLUON_ENV) $(LUA) scripts/target_config.lua > openwrt/.config
 	$(OPENWRTMAKE) defconfig
 	$(GLUON_ENV) $(LUA) scripts/target_config_check.lua

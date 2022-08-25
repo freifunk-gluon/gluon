@@ -123,6 +123,14 @@ local enabled_packages = {}
 -- Arguments: package name and config value (true: y, nil: m, false: unset)
 -- Ensures precedence of y > m > unset
 local function config_package(pkg, v)
+	-- HACK: Handle virtual default packages
+	local subst = {
+		nftables = 'nftables-nojson'
+	}
+	if subst[pkg] then
+		pkg = subst[pkg]
+	end
+
 	if v == false then
 		if not enabled_packages[pkg] then
 			lib.try_config('PACKAGE_' .. pkg, false)
@@ -146,54 +154,57 @@ local function handle_target_pkgs(pkgs)
 	end
 end
 
+local function get_default_pkgs()
+	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/')
+	local target_matches = false
+	for line in io.lines('openwrt/tmp/.targetinfo') do
+		local target_match = string.match(line, '^Target: (.+)$')
+		if target_match then
+			target_matches = (target_match == targetinfo_target)
+		end
+
+		local default_packages_match = string.match(line, '^Default%-Packages: (.+)$')
+		if target_matches and default_packages_match then
+			return split(default_packages_match)
+		end
+	end
+
+	io.stderr:write('Error: unable to get default packages for OpenWrt target ', targetinfo_target, '\n')
+	os.exit(1)
+end
+
 lib.include('generic')
 lib.include(target)
 
 lib.check_devices()
 
-if #lib.devices > 0 then
-	handle_target_pkgs(lib.target_packages)
+handle_target_pkgs(concat_list(get_default_pkgs(), lib.target_packages))
 
-	for _, dev in ipairs(lib.devices) do
-		local device_pkgs = {}
-		local function handle_pkgs(pkgs)
-			for _, pkg in ipairs(pkgs) do
-				if string.sub(pkg, 1, 1) ~= '-' then
-					config_package(pkg, nil)
-				end
-				device_pkgs = append_to_list(device_pkgs, pkg)
-			end
-		end
-
-		handle_pkgs(lib.target_packages)
-		handle_pkgs(class_packages(dev.options.class))
-		handle_pkgs(dev.options.packages or {})
-		handle_pkgs(site_packages(dev.image))
-
-		local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
-		lib.config(
-			'TARGET_DEVICE_' .. profile_config, true,
-			string.format("unable to enable device '%s'", dev.name)
-		)
-		lib.config(
-			'TARGET_DEVICE_PACKAGES_' .. profile_config,
-			table.concat(device_pkgs, ' ')
-		)
-	end
-else
-	-- x86 fallback: no devices
-	local target_pkgs = {}
+for _, dev in ipairs(lib.devices) do
+	local device_pkgs = {}
 	local function handle_pkgs(pkgs)
-		target_pkgs = concat_list(target_pkgs, pkgs)
+		for _, pkg in ipairs(pkgs) do
+			if string.sub(pkg, 1, 1) ~= '-' then
+				config_package(pkg, nil)
+			end
+			device_pkgs = append_to_list(device_pkgs, pkg)
+		end
 	end
 
-	-- Just hardcode the class for device-less targets to 'standard'
-	-- - this is x86 only at the moment, and it will have devices
-	-- in OpenWrt 19.07 + 1 as well
 	handle_pkgs(lib.target_packages)
-	handle_pkgs(class_packages('standard'))
+	handle_pkgs(class_packages(dev.options.class))
+	handle_pkgs(dev.options.packages or {})
+	handle_pkgs(site_packages(dev.image))
 
-	handle_target_pkgs(target_pkgs)
+	local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
+	lib.config(
+		'TARGET_DEVICE_' .. profile_config, true,
+		string.format("unable to enable device '%s'", dev.name)
+	)
+	lib.config(
+		'TARGET_DEVICE_PACKAGES_' .. profile_config,
+		table.concat(device_pkgs, ' ')
+	)
 end
 
 return lib
