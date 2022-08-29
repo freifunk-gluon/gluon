@@ -345,6 +345,7 @@ ramips-mt7621
 
 * TP-Link
 
+  - RE500 (v1)
   - RE650 (v1)
 
 * Ubiquiti
