@@ -391,6 +391,7 @@ ramips-mt76x8
   - Archer C50 (v3)
   - Archer C50 (v4)
   - RE200 (v2)
+  - RE305 (v1) [#device-class-tiny]
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-WA801ND (v5)
@@ -451,7 +452,7 @@ Footnotes
 
 .. [#device-class-tiny]
   These devices only support a subset of Gluons capabilities due to flash or memory
-  size constraints. Devices are classified as tiny in they provide less than 7M of usable
+  size constraints. Devices are classified as tiny if they provide less than 7M of usable
   flash space or have a low amount of system memory. For more information, see the
   developer documentation: :ref:`device-class-definition`.
 
