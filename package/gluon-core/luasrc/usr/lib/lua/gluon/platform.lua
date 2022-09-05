@@ -69,4 +69,18 @@ function M.is_outdoor_device()
 	return false
 end
 
+function M.is_cellular_device()
+	if M.match('ath79', 'nand', {
+		'zte,mf281',
+	}) then
+		return true
+	elseif M.match('ipq40xx', 'generic', {
+		'glinet,gl-ap1300',
+	}) then
+		return true
+	end
+
+	return false
+end
+
 return M
