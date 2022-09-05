@@ -2,6 +2,12 @@ Release Notes
 =============
 
 .. toctree::
+   :caption: Gluon 2022.1
+   :maxdepth: 2
+
+   v2022.1
+
+.. toctree::
    :caption: Gluon 2021.1
    :maxdepth: 2
 

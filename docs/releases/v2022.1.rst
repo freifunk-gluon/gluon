@@ -1,0 +1,416 @@
+Gluon 2022.1
+============
+
+Important notes
+---------------
+
+Upgrades to v2022.1 and later releases are only supported from releases v2020.1 and later. This is due to migrations that have been removed to simplify maintenance.
+
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+-  D-Link
+
+   -  DAP-2660 A1
+
+-  Enterasys
+
+   -  WS-AP3705i
+
+-  Siemens
+
+   -  WS-AP3610
+
+-  TP-Link
+
+   -  Archer A7 v5
+   -  CPE510 v2
+   -  CPE510 v3
+   -  CPE710 v1
+   -  EAP225-Outdoor v1
+   -  WBS210 v2
+
+ath79-mikrotik
+~~~~~~~~~~~~~~
+
+-  Mikrotik
+
+   -  RB951Ui-2nD
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+-  Aruba Networks
+
+   -  AP-303H
+   -  AP-365
+   -  InstantOn AP11D
+   -  InstantOn AP17
+
+ipq40xx-mikrotik
+~~~~~~~~~~~~~~~~
+
+-  Mikrotik
+
+   -  SXTsq-5-AC
+
+ramips-mt7620
+~~~~~~~~~~~~~
+
+-  Xiaomi
+
+   -  Mi Router 3G (v2)
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+-  Cudy
+
+   -  WR2100
+
+-  Netgear
+
+   -  R6260
+   -  WAC104
+   -  WAX202
+
+-  TP-Link
+
+   -  RE500
+   -  RE650 v1
+
+-  Ubiquiti
+
+   -  UniFi 6 Lite
+
+-  Xiaomi
+
+   -  Mi Router 4A (Gigabit Edition)
+
+ramips-mt7622
+~~~~~~~~~~~~~
+
+-  Linksys
+
+   -  E8450
+
+-  Xiaomi
+
+   -  AX3200
+
+-  Ubiquiti
+
+   -  UniFi 6 LR
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+-  GL.iNet
+
+   -  microuter-N300
+
+-  Netgear
+
+   -  R6020
+
+-  RAVPower
+
+   -  RP-WD009
+
+-  TP-Link
+
+   -  Archer C20 v4
+   -  Archer C20 v5
+   -  RE200 v2
+   -  RE305 v1
+
+-  Xiaomi
+
+   -  Mi Router 4C
+   -  Mi Router 4A (100M Edition)
+
+rockchip-armv8
+~~~~~~~~~~~~~~
+
+-  FriendlyElec
+
+   -  NanoPi R2S
+
+mpc85xx-p1010
+~~~~~~~~~~~~~
+
+-  Sophos
+
+   -  RED 15w rev. 1
+
+mpc85xx-p1020
+~~~~~~~~~~~~~
+
+-  Extreme Networks
+
+   -  WS-AP3825i
+
+Removed Devices
+---------------
+
+This list contains devices which do not have enough memory or flash to
+be operated with this Gluon release.
+
+-  D-Link
+
+   -  DIR-615 (C1, D1, D2, D3, D4, H1)
+
+-  Linksys
+
+   -  WRT160NL
+
+-  TP-Link
+
+   -  TL-MR13U (v1)
+   -  TL-MR3020 (v1)
+   -  TL-MR3040 (v1, v2)
+   -  TL-MR3220 (v1, v2)
+   -  TL-MR3420 (v1, v2)
+   -  TL-WA701N/ND (v1, v2)
+   -  TL-WA730RE (v1)
+   -  TL-WA750RE (v1)
+   -  TL-WA801N/ND (v1, v2, v3)
+   -  TL-WA830RE (v1, v2)
+   -  TL-WA850RE (v1)
+   -  TL-WA860RE (v1)
+   -  TL-WA901N/ND (v1, v2, v3, v4, v5)
+   -  TL-WA7210N (v2)
+   -  TL-WA7510N (v1)
+   -  TL-WR703N (v1)
+   -  TL-WR710N (v1, v2)
+   -  TL-WR740N (v1, v3, v4, v5)
+   -  TL-WR741N/ND (v1, v2, v4, v5)
+   -  TL-WR743N/ND (v1, v2)
+   -  TL-WR840N (v2)
+   -  TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
+   -  TL-WR841N/ND (v1, v2)
+   -  TL-WR843N/ND (v1)
+   -  TL-WR940N (v1, v2, v3, v4, v5, v6)
+   -  TL-WR941ND (v2, v3, v4, v5, v6)
+   -  TL-WR1043N/ND (v1)
+   -  WDR4900
+
+-  Ubiquiti
+
+   -  AirGateway
+   -  AirGateway Pro
+   -  AirRouter
+   -  Bullet
+   -  LS-SR71
+   -  Nanostation XM
+   -  Nanostation Loco XM
+   -  Picostation
+
+-  Unknown
+
+   -  A5-V11
+
+-  VoCore
+
+   -  VoCore (8M, 16M)
+
+Atheros target migration
+------------------------
+
+All Atheros MIPS devices built with the ``ar71xx-generic``,
+``ar71xx-nand`` as well as ``ar71xx-tiny`` were deprecated upstream and
+are therefore not available with Gluon anymore.
+
+Many devices previously built with ``ar71xx-generic`` and
+``ar71xx-nand`` are now available with the ``ath79-generic`` as well as
+``ath79-nand`` target respectively.
+
+Missing devices
+~~~~~~~~~~~~~~~
+
+The following devices have not yet been integrated into Gluons ath79
+targets.
+
+-  8Devices
+
+   -  Carambola 2
+
+-  Aerohive
+
+   -  HiveAP 121
+
+-  Allnet
+
+   -  ALL0315
+
+-  Buffalo
+
+   -  WZR-HP-G300NH2
+   -  WZR-HP-G450H
+
+-  GL.iNet
+
+   -  6408A v1
+
+-  NETGEAR
+
+   -  WNDR4300
+   -  WNDRMAC
+   -  WNDRMAC v2
+
+-  TP-Link
+
+   -  WR2543
+
+-  Ubiquiti
+
+   -  Rocket
+
+-  WD
+
+   -  MyNet N600
+   -  MyNet N750
+
+-  ZyXEL
+
+   -  NB6616
+   -  NB6716
+
+Features
+--------
+
+WireGuard
+~~~~~~~~~
+
+Gluon got WireGuard support. This allows offloading **encrypted**
+connections into kernel space, increasing performance by forwarding
+packets without the need for context switches between user and kernel
+space.
+
+In order to reuse existing (already verified) fastd-keypairs for
+WireGuard, a key derivation procedure is `currently being
+developed <https://github.com/freifunk-gluon/gluon/pull/2601>`__. This
+should ease migration from fastd to WireGuard in case whitelisting VPN
+keys is desired.
+
+fastd L2TP
+~~~~~~~~~~
+
+fastd can now act as a connection broker for unencrypted L2TP-based
+tunneling within Gluons mesh-vpn framework. This new ``null@l2tp``
+connection method allows for increased performance within existing
+fastd setups.
+
+In addition to a sufficiently
+:ref:`configured fastd-based VPN server<vpn-gateway-configuration>`,
+this requires further modifications to a sites :ref:`VPN fastd methods<VPN fastd methods>`.
+
+Major changes
+-------------
+
+OpenWrt
+~~~~~~~
+
+This release is based on the newest OpenWrt 22.03 release branch.
+It ships with Linux kernel 5.10 as well as wireless-backports 5.15.
+
+
+Network changes (DSA / Upgrade-Behavior)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``ramips-mt7621`` and ``lantiq-xrx200`` targets now use the upstream DSA
+subsystem instead of OpenWrt swconfig for managing ethernet switches.
+
+Gluon detects the existing user-intent and automatically applies it over
+to DSA syntax. See the section about network reconfiguration for more
+details.
+
+System reconfiguration
+~~~~~~~~~~~~~~~~~~~~~~
+
+The network and system-LED configurations are now re-generated after
+each update / invocation of ``gluon-reconfigure``.
+
+The user-intent is preserved within Gluon’s implemented functionality
+(Wired-Mesh / Client access / WAN).
+
+As an additional feature, Gluon now supports assigning roles to
+interfaces. This behavior is explained
+:ref:`here<wired-mesh-commandline>`.
+
+Site changes
+------------
+
+VPN provider MTU
+~~~~~~~~~~~~~~~~
+
+To account for multiple VPN methods available for a site, the MTU used
+for the VPN tunnel connection is now moved to the specific VPN provider
+configuration. For fastd this means that ``mesh_vpn.mtu`` needs to be
+moved to ``mesh_vpn.fastd.mtu``. (`#2352 <https://github.com/freifunk-gluon/gluon/pull/2352>`__)
+
+Preconfigured Interfaces Roles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Instead of ``mesh_on_wan`` and ``mesh_on_lan`` there is now an
+``interfaces`` block to configure the default behavior of network
+interfaces. Details can be found in the 
+:ref:`documentation<user-site-interfaces>`.
+
+Minor changes
+-------------
+
+-  The ``brcm2708-bcm2708`` ``brcm2708-bcm2709`` ``brcm2708-bcm2710``
+   targets were renamed to ``bcm27xx-bcm2708`` ``bcm27xx-bcm2709`` and
+   ``bcm27xx-bcm2710``
+-  The GL.iNet GL-AR750S was moved to the ``ath79-nand`` subtarget
+-  Gluon now ships the ath10k-ct firmware derivation for
+   QCA9886 / QCA9888 / QCA9896 / QCA9898 / QCA9984 /
+   QCA9994 / IPQ4018 / IPQ4028 / IPQ4019 / IPQ4029
+   radios (`#2541 <https://github.com/freifunk-gluon/gluon/pull/2541>`__)
+-  WolfSSL instead of OpenSSL is now used when built with WPA3 support
+-  The option to configure the wireless-channel independent from the
+   site-selected channel was moved from
+   ``gluon-core.wireless.preserve_channels`` to
+   ``gluon.wireless.preserve_channels``
+-  ``gluon-info`` is a new command that provides information about the
+   current node
+-  ``GLUON_DEPRECATED`` is now set to 0 by default
+-  To reboot a running gluon-node into setup-mode, Gluon now offers the
+   ``gluon-enter-setup-mode`` command
+-  Devices without WLAN do not show the private-wifi configuration
+   anymore
+-  The Autoupdater now uses the site default branch in case it is
+   configured to use a non-existent / invalid branch
+
+Known issues
+------------
+
+* A workaround for Android devices not waking up to their MLD subscriptions was removed,
+  potentially breaking IPv6 connectivity for these devices after extended sleep periods
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).

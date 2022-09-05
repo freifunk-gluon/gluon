@@ -55,6 +55,8 @@ the ``mesh`` role to the ``interfaces.*.default_roles`` options in your
 :ref:`site.conf<user-site-interfaces>`.
 
 
+.. _wired-mesh-commandline:
+
 Commandline
 ===========
 
