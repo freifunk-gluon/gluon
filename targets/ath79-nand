@@ -6,6 +6,8 @@ local ATH10K_PACKAGES_QCA9887 = {
 	'-ath10k-firmware-qca9887-ct',
 }
 
+local ATH10K_PACKAGES_QCA9888 = {}
+
 
 -- GL.iNet
 
@@ -29,4 +31,12 @@ device('netgear-wndr3700-v4', 'netgear_wndr3700-v4', {
 	manifest_aliases = {
 		'netgear-wndr3700v4', -- Upgrade from OpenWrt 19.07
 	},
+})
+
+
+-- ZTE
+
+device('zte-mf281', 'zte_mf281', {
+	broken = true,
+	packages = ATH10K_PACKAGES_QCA9888,
 })
