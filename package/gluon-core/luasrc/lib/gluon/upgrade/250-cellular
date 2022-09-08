@@ -43,6 +43,10 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 end
 
 if platform.match('ath79', 'nand', {
+	'glinet,gl-xe300',
+}) then
+	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
+elseif platform.match('ath79', 'nand', {
 	'zte,mf281',
 }) then
 	setup_ncm_qmi('/dev/ttyACM0', 'ncm', 15)

@@ -143,6 +143,7 @@ ath79-nand
 
   - GL-AR300M
   - GL-AR750S
+  - GL-XE300
 
 * Netgear
 
