@@ -416,6 +416,7 @@ rockchip-armv8
 * FriendlyElec
 
   - NanoPi R2S
+  - NanoPi R4S (4GB LPDDR4)
 
 sunxi-cortexa7
 --------------
