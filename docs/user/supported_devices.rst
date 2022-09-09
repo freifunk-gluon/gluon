@@ -185,6 +185,7 @@ ipq40xx-generic
 
 * GL.iNet
 
+  - GL-AP1300
   - GL-B1300
 
 * Linksys
