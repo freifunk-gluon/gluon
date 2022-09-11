@@ -208,22 +208,20 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		uci:set('wireless', radio_name, 'legacy_rates', false)
 		configure_mesh_wireless(radio, index, config)
 	elseif (band == '5g') then
+		-- ToDo: Remove in v2024.x
+		local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
+		util.remove_from_set(hostapd_options, 'country3=0x4f')
+		uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
+
 		if is_outdoor() then
 			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
 
 			-- enforce outdoor channels by filtering the regdom for outdoor channels
-			local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
-			util.add_to_set(hostapd_options, 'country3=0x4f')
-			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
-
+			uci:set('wireless', radio_name, 'country3', '0x4f')
 			configure_mesh_wireless(radio, index, config, true)
 		else
 			uci:delete('wireless', radio_name, 'channels')
-
-			local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
-			util.remove_from_set(hostapd_options, 'country3=0x4f')
-			uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
-
+			uci:delete('wireless', radio_name, 'country3')
 			configure_mesh_wireless(radio, index, config)
 		end
 	end
