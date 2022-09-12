@@ -56,6 +56,13 @@ device('engenius-ens620ext', 'engenius_ens620ext', {
 
 -- GL.iNet
 
+device('gl.inet-gl-ap1300', 'glinet_gl-ap1300', {
+	factory = '-squashfs-nand-factory',
+	factory_ext = '.ubi',
+	sysupgrade = '-squashfs-nand-sysupgrade',
+	sysupgrade_ext = '.bin',
+})
+
 device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 	factory = false,
 })
