@@ -13,6 +13,9 @@ local ATH10K_PACKAGES_QCA9888 = {}
 
 device('gl.inet-gl-ar300m-nor', 'glinet_gl-ar300m-nor', {
 	factory = false,
+	manifest_aliases = {
+		'gl.inet-gl-ar300m', -- Upgrade from OpenWrt 19.07
+	},
 })
 
 device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s-nor', {
