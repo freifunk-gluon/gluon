@@ -59,6 +59,11 @@ function M.is_outdoor_device()
 		'mikrotik,sxtsq-5-ac',
 	}) then
 		return true
+
+	elseif M.match('ramips', 'mt7621', {
+		'zyxel,nwa55axe',
+	}) then
+		return true
 	end
 
 	return false
