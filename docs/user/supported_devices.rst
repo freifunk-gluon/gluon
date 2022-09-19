@@ -185,6 +185,7 @@ ipq40xx-generic
 
 * GL.iNet
 
+  - GL-AP1300
   - GL-B1300
 
 * Linksys
@@ -416,6 +417,7 @@ rockchip-armv8
 * FriendlyElec
 
   - NanoPi R2S
+  - NanoPi R4S (4GB LPDDR4)
 
 sunxi-cortexa7
 --------------

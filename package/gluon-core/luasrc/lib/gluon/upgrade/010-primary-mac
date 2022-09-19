@@ -102,6 +102,7 @@ local primary_addrs = {
 		}},
 		{'rockchip', 'armv8', {
 			'friendlyarm,nanopi-r2s',
+			'friendlyarm,nanopi-r4s',
 		}},
 		{'x86'},
 	}},
