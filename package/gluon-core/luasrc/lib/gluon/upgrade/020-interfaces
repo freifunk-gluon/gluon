@@ -67,6 +67,10 @@ elseif platform.match('ramips', 'mt7621', {
 	'netgear,wac104',
 }) then
 	lan_ifname, wan_ifname = 'lan2 lan3 lan4', 'lan1'
+elseif platform.match('ramips', 'mt7621', {
+	'ubnt,usw-flex',
+}) then
+	lan_ifname, wan_ifname = 'lan2 lan3 lan4 lan5', 'lan1'
 end
 
 if wan_ifname and lan_ifname then

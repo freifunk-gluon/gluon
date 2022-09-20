@@ -355,6 +355,7 @@ ramips-mt7621
   - EdgeRouter X
   - EdgeRouter X-SFP
   - UniFi 6 Lite
+  - UniFi Switch Flex
 
 * ZBT
 

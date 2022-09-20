@@ -109,3 +109,8 @@ device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
 		'ubnt-erx-sfp',
 	},
 })
+
+device('ubiquiti-unifi-switch-flex', 'ubnt_usw-flex', {
+	factory = false,
+	packages = {'-hostapd-mini', 'poemgr'},
+})
