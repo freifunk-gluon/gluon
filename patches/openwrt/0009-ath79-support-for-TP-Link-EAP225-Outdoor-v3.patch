@@ -1,0 +1,149 @@
+From: Paul Maruhn <paulmaruhn@posteo.de>
+Date: Tue, 22 Mar 2022 21:06:42 +0100
+Subject: ath79: support for TP-Link EAP225-Outdoor v3
+
+This model is almost identical to the EAP225-Outdoor v1.
+Major difference is the RTL8211FS PHY Chipset.
+
+Device specifications:
+* SoC: QCA9563 @ 775MHz
+* Memory: 128MiB DDR2
+* Flash: 16MiB SPI-NOR
+* Wireless 2.4GHz (SoC): b/g/n 2x2
+* Wireless 5GHz (QCA9886): a/n/ac 2x2 MU-MIMO
+* Ethernet (RTL8211FS): 1× 1GbE, PoE
+
+Flashing instructions:
+* ssh into target device with recent (>= v1.6.0) firmware
+* run `cliclientd stopcs` on target device
+* upload factory image via web interface
+
+Debricking:
+To recover the device, you need access to the serial port. This requires
+fine soldering to test points, or the use of probe pins.
+* Open the case and solder wires to the test points: RXD, TXD and TPGND4
+  * Use a 3.3V UART, 115200 baud, 8n1
+* Interrupt bootloader by holding ctrl+B during boot
+* upload initramfs via built-in tftp client and perform sysupgrade
+    setenv ipaddr 192.168.1.1 # default, change as required
+    setenv serverip 192.168.1.10 # default, change as required
+    tftp 0x80800000 initramfs.bin
+    bootelf $fileaddr
+
+MAC addresses:
+MAC address (as on device label) is stored in device info partition at
+an offset of 8 bytes. ath9k device has same address as ethernet, ath10k
+uses address incremented by 1.
+From stock ifconfig:
+
+    ath0      Link encap:Ethernet  HWaddr D8:...:2E
+    ath10     Link encap:Ethernet  HWaddr D8:...:2F
+    br0       Link encap:Ethernet  HWaddr D8:...:2E
+    eth0      Link encap:Ethernet  HWaddr D8:...:2E
+
+Signed-off-by: Paul Maruhn <paulmaruhn@posteo.de>
+Co-developed-by: Philipp Rothmann <philipprothmann@posteo.de>
+Signed-off-by: Philipp Rothmann <philipprothmann@posteo.de>
+[Add pre-calibraton nvme-cells]
+Tested-by: Tido Klaassen <tido_ff@4gh.eu>
+Signed-off-by: Nick Hainke <vincent@systemli.org>
+
+diff --git a/target/linux/ath79/dts/qca9563_tplink_eap225-outdoor-v3.dts b/target/linux/ath79/dts/qca9563_tplink_eap225-outdoor-v3.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e5914c9a55069e5baa5c7b989f3405c762e4d29d
+--- /dev/null
++++ b/target/linux/ath79/dts/qca9563_tplink_eap225-outdoor-v3.dts
+@@ -0,0 +1,59 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "qca9563_tplink_eap2x5-1port.dtsi"
++
++/ {
++	compatible = "tplink,eap225-outdoor-v3", "qca,qca9563";
++	model = "TP-Link EAP225-Outdoor v3";
++
++	aliases {
++		led-boot = &led_status_green;
++		led-failsafe = &led_status_amber;
++		led-running = &led_status_green;
++		led-upgrade = &led_status_amber;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_status_green: status_green {
++			label = "green:status";
++			gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led_status_amber: status_amber {
++			label = "amber:status";
++			gpios = <&gpio 9 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&art {
++	precalibration_ath10k: pre-calibration@5000 {
++		reg = <0x5000 0x2f20>;
++	};
++};
++
++&eth0 {
++	phy-handle = <&phy6>;
++	phy-mode = "sgmii";
++};
++
++&mdio0 {
++	phy6: ethernet-phy@6 {
++		reg = <6>;
++	};
++};
++
++&pcie {
++	wifi@0,0 {
++		compatible = "qcom,ath10k";
++		reg = <0 0 0 0 0>;
++
++		mac-address-increment = <1>;
++
++		nvmem-cells = <&macaddr_info_8>, <&precalibration_ath10k>;
++		nvmem-cell-names = "mac-address", "pre-calibration";
++	};
++};
+diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+index 1ca89096bc73e4fe3d1e6a7628d7f35f27cc49a5..3a88b3cf677e0c59de191ebe9e7a82a50f7c6556 100644
+--- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+@@ -77,6 +77,7 @@ ath79_setup_interfaces()
+ 	tplink,cpe610-v2|\
+ 	tplink,cpe710-v1|\
+ 	tplink,eap225-outdoor-v1|\
++	tplink,eap225-outdoor-v3|\
+ 	tplink,eap225-v1|\
+ 	tplink,eap225-v3|\
+ 	tplink,eap245-v1|\
+diff --git a/target/linux/ath79/image/generic-tp-link.mk b/target/linux/ath79/image/generic-tp-link.mk
+index fed572c884c75bd21081c7c22dd4652ecefdd993..3d3a45711302b7a73c914d80ec0d309878813149 100644
+--- a/target/linux/ath79/image/generic-tp-link.mk
++++ b/target/linux/ath79/image/generic-tp-link.mk
+@@ -401,6 +401,17 @@ define Device/tplink_eap225-outdoor-v1
+ endef
+ TARGET_DEVICES += tplink_eap225-outdoor-v1
+ 
++define Device/tplink_eap225-outdoor-v3
++  $(Device/tplink-eap2x5)
++  SOC := qca9563
++  IMAGE_SIZE := 13824k
++  DEVICE_MODEL := EAP225-Outdoor
++  DEVICE_VARIANT := v3
++  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9888-ct
++  TPLINK_BOARD_ID := EAP225-V3
++endef
++TARGET_DEVICES += tplink_eap225-outdoor-v3
++
+ define Device/tplink_eap225-v1
+   $(Device/tplink-eap2x5)
+   SOC := qca9563

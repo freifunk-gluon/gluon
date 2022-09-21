@@ -1,0 +1,21 @@
+From: Philipp Rothmann <philipprothmann@posteo.de>
+Date: Tue, 21 Jun 2022 21:39:39 +0200
+Subject: ath79: generic: add support for Realtek PHY
+
+Some models of the TP-Link EAP225 series use a Realtek PHY,
+therefore the driver is added.
+
+Signed-off-by: Philipp Rothmann <philipprothmann@posteo.de>
+
+diff --git a/target/linux/ath79/generic/config-default b/target/linux/ath79/generic/config-default
+index 0ac756642fe15b9af946db5eb6fee4970055843f..21e14aa3ab2a14cdb9e0a744043dfa5b119cdd88 100644
+--- a/target/linux/ath79/generic/config-default
++++ b/target/linux/ath79/generic/config-default
+@@ -18,6 +18,7 @@ CONFIG_MTD_REDBOOT_PARTS=y
+ CONFIG_MTD_SPLIT_EVA_FW=y
+ CONFIG_PHY_AR7100_USB=y
+ CONFIG_PHY_AR7200_USB=y
++CONFIG_REALTEK_PHY=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_RTL8366RB_PHY=y
+ CONFIG_RTL8366S_PHY=y

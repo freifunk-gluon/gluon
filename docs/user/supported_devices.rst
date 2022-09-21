@@ -104,7 +104,7 @@ ath79-generic
   - CPE510 (v2.0)
   - CPE510 (v3.0)
   - CPE710 (v1.0)
-  - EAP225-Outdoor (v1)
+  - EAP225-Outdoor (v1, v3)
   - RE450 (v1)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
