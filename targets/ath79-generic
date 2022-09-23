@@ -180,6 +180,12 @@ device('joy-it-jt-or750i', 'joyit_jt-or750i', {
 	factory = false,
 })
 
+-- LibreRouter
+
+-- lacks support for additional radios
+device('librerouter-v1', 'librerouter_librerouter-v1', {
+	factory = false,
+})
 
 -- Netgear
 
