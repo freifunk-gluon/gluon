@@ -41,6 +41,10 @@ ath79-generic
 
   - WS-AP3705i
 
+* Extreme Networks
+
+  - WS-AP3805i
+
 * GL.iNet
 
   - 6416A
