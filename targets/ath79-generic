@@ -114,6 +114,14 @@ device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
 })
 
 
+-- Extreme Networks
+
+device('extreme-networks-ws-ap3805i', 'extreme-networks_ws-ap3805i', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+
 -- GL.iNet
 
 device('gl.inet-6416', 'glinet_6416', {
