@@ -503,6 +503,7 @@ device('tp-link-wbs510-v1', 'tplink_wbs510-v1', {
 
 device('ubiquiti-nanostation-loco-m-xw', 'ubnt_nanostation-loco-m-xw', {
 	manifest_aliases = {
+		'ubiquiti-loco-m-xw', -- upgrade from OpenWrt 19.07
 		'ubiquiti-nanostation-loco-m2-xw', -- upgrade from OpenWrt 19.07
 		'ubiquiti-nanostation-loco-m5-xw', -- upgrade from OpenWrt 19.07
 	},
