@@ -270,6 +270,10 @@ mpc85xx-p1010
 
   - RED 15w Rev.1
 
+* TP-Link
+
+  - WDR4900
+
 mpc85xx-p1020
 ---------------
 
