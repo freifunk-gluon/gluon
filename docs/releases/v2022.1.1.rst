@@ -1,0 +1,84 @@
+Gluon 2022.1.1
+==============
+
+Important notes
+---------------
+
+This release mitigates multiple flaws in the Linux wireless stack fixing RCE and DoS vulnerabilities.
+
+
+Added hardware support
+----------------------
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- GL.iNet
+
+  - GL-AP1300
+
+mpc85xx-p1010
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - TL-WDR4900 (v1)
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- ZyXEL
+
+  - NWA50AX
+
+rockchip-armv8
+~~~~~~~~~~~~~~
+
+-  FriendlyElec
+
+   -  NanoPi R4S (4GB LPDDR4)
+
+Bugfixes
+--------
+
+ * Multiple mitigations for (`critical vulnerabilities <https://seclists.org/oss-sec/2022/q4/20>`_) in the Linux kernel WLAN stack. This only concerns Gluon v2022.1, older Gluon versions are unaffected.
+
+   * CVE-2022-41674
+   * CVE-2022-42719
+   * CVE-2022-42720
+   * CVE-2022-42721
+   * CVE-2022-42722
+ * Fixes `security issues in WolfSSL <https://openwrt.org/releases/22.03/notes-22.03.1#security_fixes>`_. People who have installed additional, non-Gluon packages which rely on WolfSSL's TLS 1.3 implementation might be affected. Firmwares using either gluon-mesh-wireless-sae or gluon-wireless-encryption-wpa3 are unaffected by these issues, since only WPA-Enterprise relies on the affected TLS functionality.
+
+   * CVE-2022-38152
+   * CVE-2022-39173
+
+ * Fixes the update path for GL-AR300M and NanoStation Loco M2/M5 (XW) devices.
+
+Known issues
+------------
+
+* A workaround for Android devices not waking up to their MLD subscriptions was removed,
+  potentially breaking IPv6 connectivity for these devices after extended sleep periods
+
+* Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the NAND flash which the NAND driver before this release does not handle well.
+  (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).

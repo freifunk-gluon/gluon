@@ -5,6 +5,7 @@ Release Notes
    :caption: Gluon 2022.1
    :maxdepth: 2
 
+   v2022.1.1
    v2022.1
 
 .. toctree::
