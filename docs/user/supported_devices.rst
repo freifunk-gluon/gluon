@@ -369,6 +369,10 @@ ramips-mt7621
   - WG3526-16M
   - WG3526-32M
 
+* ZyXEL
+
+  - NWA50AX
+
 * Xiaomi
 
   - Xiaomi Mi Router 4A (Gigabit Edition)
