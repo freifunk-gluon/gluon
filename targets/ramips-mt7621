@@ -90,6 +90,11 @@ device('zbtlink-zbt-wg3526-32m', 'zbtlink_zbt-wg3526-32m', {
 })
 
 
+-- ZyXEL
+
+device('zyxel-nwa50ax', 'zyxel_nwa50ax')
+
+
 -- Devices without WLAN
 
 -- Ubiquiti
