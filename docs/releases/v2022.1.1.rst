@@ -59,7 +59,8 @@ Known issues
 ------------
 
 * A workaround for Android devices not waking up to their MLD subscriptions was removed,
-  potentially breaking IPv6 connectivity for these devices after extended sleep periods
+  potentially breaking IPv6 connectivity for these devices after extended sleep periods.
+  (`#2672 <https://github.com/freifunk-gluon/gluon/issues/2672>`_)
 
 * Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the NAND flash which the NAND driver before this release does not handle well.
   (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
