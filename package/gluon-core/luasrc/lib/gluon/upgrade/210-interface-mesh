@@ -33,6 +33,14 @@ if #mesh_interfaces_other > 0 then
 	else
 		iftype = 'bridge'
 		ifname = mesh_interfaces_other
+
+		for _, iface in ipairs(ifname) do
+			uci:section('network', 'device', nil, {
+				name = iface,
+				isolate = true,
+			})
+		end
+
 	end
 
 	uci:section('network', 'interface', 'mesh_other', {
