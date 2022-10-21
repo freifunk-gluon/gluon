@@ -180,6 +180,7 @@ ipq40xx-generic
 * AVM
 
   - FRITZ!Box 4040 [#avmflash]_
+  - FRITZ!Box 7520 (v1) [#eva_ramboot]_
   - FRITZ!Box 7530 [#eva_ramboot]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
