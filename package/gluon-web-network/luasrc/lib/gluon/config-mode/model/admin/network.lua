@@ -75,12 +75,18 @@ end
 
 s = f:section(Section)
 
+local pretty_ifnames = {
+	["/wan"] = translate("WAN Interfaces"),
+	["/single"] = translate("Interface"),
+	["/lan"] = translate("LAN Interfaces")
+}
+
 uci:foreach('gluon', 'interface', function(config)
 	local section_name = config['.name']
-	local ifaces = s:option(MultiListValue, section_name, config.name)
+	local ifaces = s:option(MultiListValue, section_name, pretty_ifnames[config.name] or config.name)
 
 	ifaces.orientation = 'horizontal'
-	ifaces:value('uplink', 'Uplink') -- TODO: Uplink and Client should be mutually exclusive.
+	ifaces:value('uplink', 'Uplink')
 	ifaces:value('mesh', 'Mesh')
 	ifaces:value('client', 'Client')
 

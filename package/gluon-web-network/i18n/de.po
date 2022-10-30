@@ -28,15 +28,6 @@ msgstr "PoE-Passthrough aktivieren"
 msgid "Enable PoE Power Port %s"
 msgstr "PoE-Ausgabe auf Port %s aktivieren"
 
-msgid "Enable meshing on the Ethernet interface"
-msgstr "Mesh auf dem Ethernet-Port aktivieren"
-
-msgid "Enable meshing on the LAN interface"
-msgstr "Mesh auf dem LAN-Port aktivieren"
-
-msgid "Enable meshing on the WAN interface"
-msgstr "Mesh auf dem WAN-Port aktivieren"
-
 msgid "Gateway"
 msgstr "Gateway"
 
@@ -49,6 +40,12 @@ msgstr "IPv4"
 msgid "IPv6"
 msgstr "IPv6"
 
+msgid "Interface"
+msgstr "Interface"
+
+msgid "LAN Interfaces"
+msgstr "LAN-Interfaces"
+
 msgid "Netmask"
 msgstr "Netzmaske"
 
@@ -60,6 +57,9 @@ msgstr "Statisch"
 
 msgid "Static DNS servers"
 msgstr "Statische DNS-Server"
+
+msgid "WAN Interfaces"
+msgstr "WAN-Interfaces"
 
 msgid "WAN connection"
 msgstr "WAN-Verbindung"
