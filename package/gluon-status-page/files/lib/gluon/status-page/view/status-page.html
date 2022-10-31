@@ -214,7 +214,7 @@
 						<tr><th><%:Load average%></th><td><%= statistics('loadavg', 'decimal') %></td></tr>
 						<tr><th><%:RAM%></th><td><%= statistics('memory', 'memory') %></td></tr>
 						<tr><th><%:Filesystem%></th><td><%= statistics('rootfs_usage', 'percent') %></td></tr>
-						<tr><th><%:Gateway%></th><td><%= statistics('gateway') %><br><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
+						<tr><th><%:Gateway%></th><td><%= statistics('gateway') %> (TQ: <%= statistics('gateway_tq', 'tq') %>)<br><%= statistics('gateway_nexthop', 'neighbour') %></td></tr>
 					</tbody>
 				</table>
 
