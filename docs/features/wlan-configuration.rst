@@ -16,8 +16,8 @@ by the user). This means that it is not possible to enable or disable an existin
 configurations during upgrades.
 
 During upgrades the wifi channel of the 2.4GHz and 5GHz radio will be restored to the channel
-configured in the site.conf. If you need to preserve a user defined wifi channel during upgrades
-you can configure this via the uci section ``gluon-core.wireless``::
+configured in the site.conf. The channel width will be reset to Gluon's default. If you need to preserve
+these settings during upgrades you can configure this via the uci section ``gluon-core.wireless``::
 
   uci set gluon.wireless.preserve_channels='1'
 
