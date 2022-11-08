@@ -66,6 +66,10 @@ local function get_channel(radio, config)
 end
 
 local function get_htmode(radio)
+	if wireless.preserve_channels(uci) then
+		return radio.htmode
+	end
+
 	if radio.band == '5g' and is_outdoor() then
 		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
 		if outdoor_htmode ~= nil then
