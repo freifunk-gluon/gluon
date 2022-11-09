@@ -1,3 +1,6 @@
+-- enforce mainline ath10k kmod/firmware over openwrt default ath10k-ct usage
+-- ath10k-ct is unstable/broken with 11s meshing, works only wave2 chipsets
+
 local ATH10K_PACKAGES_QCA9880 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
@@ -8,6 +11,24 @@ local ATH10K_PACKAGES_QCA9880 = {
 
 local ATH10K_PACKAGES_QCA9887 = {
 	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9887',
+	'-ath10k-firmware-qca9887-ct',
+}
+
+-- enforce mainline ath10k-smallbuffers kmod, fixes 5GHz-OOM for low memory devices
+
+local ATH10K_PACKAGES_SMALLBUFFERS_QCA9880 = {
+	'kmod-ath10k-smallbuffers',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca988x',
+	'-ath10k-firmware-qca988x-ct',
+}
+
+local ATH10K_PACKAGES_SMALLBUFFERS_QCA9887 = {
+	'kmod-ath10k-smallbuffers',
 	'-kmod-ath10k-ct',
 	'-kmod-ath10k-ct-smallbuffers',
 	'ath10k-firmware-qca9887',
@@ -351,13 +372,13 @@ device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
 })
 
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
-	packages = ATH10K_PACKAGES_QCA9887,
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
 	class = 'tiny',
 	broken = true,  -- 64M ath9k + ath10k
 })
 
 device('tp-link-archer-c25-v1', 'tplink_archer-c25-v1', {
-	packages = ATH10K_PACKAGES_QCA9887,
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
 	broken = true, -- OOM with 5GHz enabled in most environments
 	class = 'tiny', -- 64M ath9k + ath10k
 })
@@ -402,7 +423,7 @@ device('tp-link-archer-c59-v1', 'tplink_archer-c59-v1', {
 })
 
 device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
-	packages = ATH10K_PACKAGES_QCA9880,
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
 	factory = false,
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
@@ -445,7 +466,7 @@ device('tp-link-re355-v1', 'tplink_re355-v1', {
 	manifest_aliases = {
 		'tp-link-re355', -- upgrade from OpenWrt 19.07
 	},
-	packages = ATH10K_PACKAGES_QCA9880,
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
 	broken = true, -- OOM with 5GHz enabled in most environments if device is 64M RAM variant
 	class = 'tiny', -- Only 6M of usable Firmware space
 })
@@ -471,7 +492,7 @@ device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3', {
 })
 
 device('tp-link-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
-	packages = ATH10K_PACKAGES_QCA9887,
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
 	broken = true, -- OOM with 5GHz enabled in most environments
 	class = 'tiny', -- 64M ath9k + ath10k
 })
