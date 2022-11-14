@@ -104,9 +104,7 @@ ath79-generic
   - Archer C59 (v1)
   - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
   - CPE220 (v3.0)
-  - CPE510 (v1.0, v1.1)
-  - CPE510 (v2.0)
-  - CPE510 (v3.0)
+  - CPE510 (v1.0, v1.1, v2.0, v3.0)
   - CPE710 (v1.0)
   - EAP225-Outdoor (v1)
   - RE450 (v1)
@@ -116,8 +114,7 @@ ath79-generic
   - TL-WR810N (v1)
   - TL-WR842N/ND (v3)
   - TL-WR1043N/ND (v2, v3, v4, v5)
-  - WBS210 (v1.20)
-  - WBS210 (v2.0)
+  - WBS210 (v1.20, v2.0)
   - WBS510 (v1.20)
 
 * Ubiquiti
@@ -404,8 +401,7 @@ ramips-mt76x8
 * TP-Link
 
   - Archer C20 (v4, v5)
-  - Archer C50 (v3)
-  - Archer C50 (v4)
+  - Archer C50 (v3, v4)
   - RE200 (v2)
   - RE305 (v1) [#device-class-tiny]
   - TL-MR3020 (v3)
