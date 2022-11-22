@@ -18,6 +18,9 @@ Config Mode by pressing and holding the RESET/WPS/DECT button for about three
 seconds. The device should reboot (all LEDs will turn off briefly) and
 Config Mode will be available.
 
+If you have access to the console of the node, there is the
+``gluon-enter-setup-mode`` command, which reboots a node into Config Mode.
+
 
 Port Configuration
 ------------------
