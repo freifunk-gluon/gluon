@@ -342,6 +342,12 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 	factory = false,
 })
 
+
+-- Teltonika
+
+device('teltonika-rut230-v1', 'teltonika_rut230-v1')
+
+
 -- TP-Link
 
 device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
