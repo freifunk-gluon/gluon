@@ -422,6 +422,13 @@ ramips-mt76x8
   - Xiaomi Mi Router 4A (100M International Edition)
   - Xiaomi Mi Router 4C
 
+realtek-rtl838x
+---------------
+
+* D-Link
+
+  - DGS-1210-10P (F1)
+
 rockchip-armv8
 --------------
 
