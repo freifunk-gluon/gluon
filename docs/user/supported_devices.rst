@@ -368,6 +368,10 @@ ramips-mt7621
   - EdgeRouter X-SFP
   - UniFi 6 Lite
 
+* Wavlink
+
+  - WS-WN572HP3 (4G)
+
 * ZBT
 
   - WG3526-16M

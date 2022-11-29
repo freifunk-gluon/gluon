@@ -61,6 +61,7 @@ function M.is_outdoor_device()
 		return true
 
 	elseif M.match('ramips', 'mt7621', {
+		'wavlink,ws-wn572hp3-4g',
 		'zyxel,nwa55axe',
 	}) then
 		return true
@@ -76,6 +77,10 @@ function M.is_cellular_device()
 		return true
 	elseif M.match('ipq40xx', 'generic', {
 		'glinet,gl-ap1300',
+	}) then
+		return true
+	elseif M.match('ramips', 'mt7621', {
+		'wavlink,ws-wn572hp3-4g',
 	}) then
 		return true
 	end

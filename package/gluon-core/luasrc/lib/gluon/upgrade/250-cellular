@@ -50,6 +50,10 @@ elseif platform.match('ipq40xx', 'generic', {
 	'glinet,gl-ap1300',
 }) then
 	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
+elseif platform.match('ramips', 'mt7621', {
+	'wavlink,ws-wn572hp3-4g',
+}) then
+	setup_ncm_qmi('/dev/ttyUSB2', 'ncm', 15)
 end
 
 uci:save('network')
