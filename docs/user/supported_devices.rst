@@ -143,6 +143,7 @@ ath79-nand
 * Netgear
 
   - WNDR3700 (v4)
+  - WNDR4300 (v1)
 
 ath79-mikrotik
 --------------
