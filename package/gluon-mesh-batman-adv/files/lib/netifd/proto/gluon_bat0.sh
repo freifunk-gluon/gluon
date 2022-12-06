@@ -10,6 +10,7 @@ proto_gluon_bat0_init_config() {
 	renew_handler=1
 
 	proto_config_add_string 'gw_mode'
+	proto_config_add_boolean 'ap_isolation:bool'
 }
 
 lookup_site() {
@@ -40,7 +41,9 @@ proto_gluon_bat0_setup() {
 	local routing_algo="$(lookup_site 'mesh.batman_adv.routing_algo' 'BATMAN_IV')"
 
 	local gw_mode
+	local ap_isolation
 	json_get_vars gw_mode
+	json_get_vars ap_isolation
 
 	batctl routing_algo "$routing_algo"
 	batctl interface create
@@ -48,6 +51,8 @@ proto_gluon_bat0_setup() {
 	batctl orig_interval 5000
 	batctl hop_penalty "$(lookup_uci 'gluon.mesh_batman_adv.hop_penalty' 15)"
 	batctl noflood_mark 0x4/0x4
+	
+	[ -n "$ap_isolation" ] && batctl ap_isolation "$ap_isolation"
 
 	case "$gw_mode" in
 		server)
