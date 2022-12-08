@@ -3,7 +3,7 @@ Date: Sun, 5 Jun 2022 23:43:38 +0200
 Subject: ramips-mt7621: make DSA images swconfig upgradable
 
 diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
-index 4057c4ea11b29233be7673a77fc2c8100209d8b3..c80d6e7f3aa0d1222aa087ba3cb11b8905a576b3 100644
+index 961f8a3b7514a3658f8d4795c136d5069830126f..982ca6b9196853df2ab5070c26f175ade6567eaa 100644
 --- a/target/linux/ramips/image/mt7621.mk
 +++ b/target/linux/ramips/image/mt7621.mk
 @@ -179,7 +179,6 @@ endef
@@ -38,7 +38,7 @@ index 4057c4ea11b29233be7673a77fc2c8100209d8b3..c80d6e7f3aa0d1222aa087ba3cb11b89
    $(Device/netgear_sercomm_nor)
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 15232k
-@@ -1753,7 +1749,6 @@ endef
+@@ -1754,7 +1750,6 @@ endef
  TARGET_DEVICES += tplink_tl-wpa8631p-v3
  
  define Device/ubnt_edgerouter_common
@@ -46,7 +46,7 @@ index 4057c4ea11b29233be7673a77fc2c8100209d8b3..c80d6e7f3aa0d1222aa087ba3cb11b89
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := Ubiquiti
    IMAGE_SIZE := 256768k
-@@ -2152,7 +2147,6 @@ endef
+@@ -2170,7 +2165,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg2626
  
  define Device/zbtlink_zbt-wg3526-16m
@@ -54,7 +54,7 @@ index 4057c4ea11b29233be7673a77fc2c8100209d8b3..c80d6e7f3aa0d1222aa087ba3cb11b89
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 16064k
    DEVICE_VENDOR := Zbtlink
-@@ -2165,7 +2159,6 @@ endef
+@@ -2183,7 +2177,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg3526-16m
  
  define Device/zbtlink_zbt-wg3526-32m
