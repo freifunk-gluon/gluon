@@ -17,7 +17,7 @@ find package -type f | while read -r file; do
 	is_scriptfile "$file" || continue
 
 	echo "Checking $file"
-	shellcheck -f gcc -x -s sh -e SC2039,SC1091,SC2155,SC2034,SC3043,SC3037,SC3057 "$file"
+	shellcheck -f gcc -x -s sh -e SC2039,SC1091,SC2155,SC2034,SC3043,SC3037,SC3057,SC3060 "$file"
 done
 
 find scripts -type f | while read -r file; do
