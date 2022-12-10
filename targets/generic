@@ -38,7 +38,7 @@ config('TARGET_ROOTFS_INITRAMFS', false)
 config('DEVEL', true)
 config('ALL_NONSHARED', true)
 
-config('PACKAGE_usbip', false) -- fails to build
+try_config('PACKAGE_usbip', false) -- fails to build
 
 try_config('PACKAGE_ATH_DEBUG', true)
 
