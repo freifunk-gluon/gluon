@@ -405,7 +405,7 @@ ramips-mt76x8
   - Archer C20 (v4, v5)
   - Archer C50 (v3, v4)
   - RE200 (v2, v3)
-  - RE305 (v1) [#device-class-tiny]
+  - RE305 (v1) [#device-class-tiny]_
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-WA801ND (v5)
@@ -468,6 +468,90 @@ x86-64
 * x86-64-vmware
 
 See also: :doc:`x86`
+
+Broken Devices & Architectures
+------------------------------
+
+These devices are untested or do not meet our requirements. Images for these devices
+aren't built by default, some just have missing buttons or LEDs but others don't have
+functional WLAN capabilities.
+
+ath79-generic
+^^^^^^^^^^^^^
+
+* TP-Link
+
+  - Archer C2 (v3) (64M ath9k + ath10k) [#device-class-tiny]_
+  - Archer C25 (v1) (OOM with 5GHz enabled in most environments) [#device-class-tiny]_
+  - Archer C58 (v1) (OOM with 5GHz enabled in most environments) [#device-class-tiny]_
+  - Archer C60 (v1) (OOM with 5GHz enabled in most environments) [#device-class-tiny]_
+  - Archer D50 (v1) (64M ath9k + ath10k & power LED not working) [#lan_as_wan]_
+  - RE355 (v1) (OOM with 5GHz enabled in most environments if device is 64M RAM variant) [#device-class-tiny]_
+  - TL-WR902AC (v1) (OOM with 5GHz enabled in most environments) [#device-class-tiny]_
+
+ath79-nand
+^^^^^^^^^^
+
+* ZTE
+
+  - MF281 (LEDs on the front can not be controlled)
+
+bcm27xx-bcm2710
+^^^^^^^^^^^^^^^
+
+This target is untested.
+
+* RaspberryPi 3
+
+ipq806x-generic
+^^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - Archer C2600 (no 802.11s support)
+
+lantiq-xrx200
+^^^^^^^^^^^^^
+
+* AVM
+
+  - FRITZ!Box 3370 Rev. 2 (Hynix NAND) (no button for setup mode; hw revision not visible on device) [#eva_ramboot]_ [#lan_as_wan]_
+  - FRITZ!Box 3370 Rev. 2 (Micron NAND) (no button for setup mode; hw revision not visible on device) [#eva_ramboot]_ [#lan_as_wan]_
+
+* TP- Link
+
+  - TD-W8980 (5GHz unsupported) [#lan_as_wan]_
+
+mvebu-cortexa9
+^^^^^^^^^^^^^^
+
+This target has no 802.11s support.
+
+* Linksys
+
+  - WRT1200AC
+
+ramips-7621
+^^^^^^^^^^^
+
+* Netgear
+
+  - WNDR3700 (v5) (untested)
+
+* ZyXEL
+
+  - NWA55AXE (missing LED / Reset button)
+
+sunix-cortexa7
+^^^^^^^^^^^^^^
+
+* LeMaker
+
+  - Banana Pro (WiFi chip not supported)
+
+* Lamobo
+
+  - R1 (AP+11s not working)
 
 Footnotes
 ---------

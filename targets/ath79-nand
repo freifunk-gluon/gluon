@@ -41,6 +41,6 @@ device('netgear-wndr4300', 'netgear_wndr4300', {
 -- ZTE
 
 device('zte-mf281', 'zte_mf281', {
-	broken = true,
+	broken = true, -- LEDs on the front can not be controlled by OpenWRT
 	packages = ATH10K_PACKAGES_QCA9888,
 })
