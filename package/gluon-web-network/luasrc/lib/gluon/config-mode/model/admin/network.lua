@@ -8,6 +8,10 @@ local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
 local dns_static = uci:get_first("gluon-wan-dnsmasq", "static")
 
+local files = require 'posix.dirent'.files
+local unistd = require "posix.unistd"
+local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local f = Form(translate("WAN connection"))
 
@@ -75,9 +79,39 @@ local pretty_ifnames = {
 	["/lan"] = translate("LAN Interfaces")
 }
 
+local function has_devtype(iface_dir, devtype)
+	return util.file_contains_line(iface_dir..'/uevent', 'DEVTYPE='..devtype)
+end
+
+local function is_physical(iface_dir)
+	return unistd.access(iface_dir .. '/device') == 0
+end
+
+local function ethernet_interfaces()
+	local eth_ifaces = {}
+	local ifaces_dir = '/sys/class/net/'
+
+	for iface in files(ifaces_dir) do
+		if iface ~= '.' and iface ~= '..' then
+			local iface_dir = ifaces_dir .. iface
+			if is_physical(iface_dir) and not has_devtype(iface_dir, 'wlan') then
+				table.insert(eth_ifaces, iface)
+			end
+		end
+	end
+
+	return eth_ifaces
+end
+
+local vlan_interface_sections = {}
+
 uci:foreach('gluon', 'interface', function(config)
 	local section_name = config['.name']
 	local ifaces = s:option(MultiListValue, section_name, pretty_ifnames[config.name] or config.name)
+
+	if section_name:find("vlan") then
+		vlan_interface_sections[section_name] = config.name
+	end
 
 	ifaces.orientation = 'horizontal'
 	ifaces:value('uplink', 'Uplink')
@@ -154,4 +188,62 @@ function f:write()
 end
 
 
-return f
+local f_actions = Form(translate("Actions"))
+
+local s = f_actions:section(Section)
+
+local action = s:option(ListValue, "action", translate("Action"))
+action:value("create_vlan_interface", translate("Create VLAN interface config"))
+action:value("delete_vlan_interface", translate("Delete VLAN interface config"))
+
+action:value("expand_wan_interfaces", translate("Expand WAN interfaces"))
+
+action:value("contract_wan_interfaces", translate("Contract WAN interfaces"))
+
+-- Options for create_vlan_interface
+
+local interface = s:option(ListValue, "interface", translate("Interface"))
+for _, iface in ipairs(ethernet_interfaces()) do
+	-- TODO: this should not include vlan interfaces
+	interface:value(iface, iface)
+end
+interface:depends(action, "create_vlan_interface")
+
+local vlan_id = s:option(Value, "vlan_id", translate("VLAN ID"))
+vlan_id.datatype = "irange(1,4094)"
+vlan_id:depends(action, "create_vlan_interface")
+
+function create_vlan_interface()
+	local new_iface = interface.data .. '.' .. vlan_id.data
+	local section_name = 'iface_' .. interface.data .. '_vlan' .. vlan_id.data
+
+	uci:section('gluon', 'interface', section_name, {
+		name = new_iface,
+		role = {}
+	})
+end
+
+-- Options for delete_vlan_interface
+
+local vlan_iface_to_delete = s:option(ListValue, "vlan_iface_to_delete", translate("VLAN Interface"))
+vlan_iface_to_delete:depends(action, "delete_vlan_interface")
+for section_name, iface in pairs(vlan_interface_sections) do
+	vlan_iface_to_delete:value(section_name, iface)
+end
+
+function delete_vlan_interface()
+	uci:delete('gluon', vlan_iface_to_delete.data)
+end
+
+function f_actions:write(data)
+	if action.data == 'create_vlan_interface' then
+		create_vlan_interface()
+	elseif action.data == 'delete_vlan_interface' then
+		delete_vlan_interface()
+	end
+
+	uci:commit('gluon')
+end
+
+
+return f, f_actions
