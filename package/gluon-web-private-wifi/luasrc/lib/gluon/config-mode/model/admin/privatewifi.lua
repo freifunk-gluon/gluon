@@ -28,7 +28,7 @@ enabled.default = uci:get('wireless', primary_iface) and not uci:get_bool('wirel
 
 local warning = s:element('model/warning', {
 	content = mesh_on_wan and translate(
-		'Meshing on WAN interface is enabled.' ..
+		'Meshing on WAN interface is enabled. ' ..
 		'This can lead to problems.'
 	) or nil,
 }, 'warning')

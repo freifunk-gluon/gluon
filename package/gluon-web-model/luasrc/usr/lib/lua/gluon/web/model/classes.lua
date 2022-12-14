@@ -410,11 +410,11 @@ function TextValue:__init__(...)
 end
 
 
-local Element = class(Node)
+local Element = class(AbstractValue)
 M.Element = Element
 
 function Element:__init__(template, kv, ...)
-	Node.__init__(self, ...)
+	AbstractValue.__init__(self, ...)
 
 	self.default   = nil
 	self.size      = nil
