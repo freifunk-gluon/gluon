@@ -63,4 +63,19 @@ for iface in pairs(interfaces) do
 	end
 end
 
+-- Fix invalid role configurations
+
+uci:foreach('gluon', 'interface', function(interface)
+
+	local function has_role(role)
+		return util.contains(interface.role, role)
+	end
+
+	if has_role('client') and (has_role('mesh') or has_role('uplink')) then
+		-- remove 'client' role
+		util.remove_from_set(interface.role, 'client')
+		uci:set('gluon', interface['.name'], 'role', interface.role)
+	end
+end)
+
 uci:save('gluon')
