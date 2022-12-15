@@ -448,13 +448,8 @@ interfaces \: optional
   The ``client`` role requires exclusive control over an interface. When
   the ``client`` role is assigned to an interface at the same time as other
   roles (like ``'client', 'mesh'`` in the above example), the other roles take
-  precedence (enabling ``mesh``, but not ``client`` in the example).
-
-  Such a default configuration still fulfills a purpose (and is in fact the
-  recommended way to enable "Mesh-on-LAN" by default): The "LAN interface
-  meshing" checkbox in the advanced network settings will only add or remove
-  the ``mesh`` role, so the ``client`` role must already be in the configuration
-  to make the LAN port a regular client interface when the checkbox is disabled.
+  precedence (enabling ``mesh``, but not ``client`` in the example). In that
+  case, the ``client`` role is removed from the config of the interface.
 
   All interface settings are optional. If unset, the following defaults are
   used:
