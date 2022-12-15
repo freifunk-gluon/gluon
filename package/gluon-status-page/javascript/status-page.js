@@ -133,6 +133,9 @@
 			}
 
 			return 'via ' + addr + ' (unknown iface)';
+		},
+		'tq': function(value) {
+			return formatNumber(100/255 * value, 1) + '%';
 		}
 	}
 
