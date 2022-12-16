@@ -35,6 +35,8 @@ minimum payload MTU required. This is the lowest recommended value, since going
 lower would cause unnecessary fragmentation for clients which respect the announced
 link MTU.
 
+.. editorconfig-checker-disable
+
 Example: Our network currently uses batman-adv v15, it therefore requires up
 to 32 Bytes of encapsulation overhead on top of the minimal link MTU required for
 transporting IPv6.::
@@ -72,6 +74,7 @@ Tunneling.::
 
        MTU_HIGH = 1436 Byte - 20 Byte - 8 Byte - 24 Byte - 14 Byte = 1370 Byte
 
+.. editorconfig-checker-enable
 
 Tables for Different VPN Providers
 ----------------------------------

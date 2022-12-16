@@ -6,80 +6,80 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
 
 
 .. toctree::
-   :caption: User Documentation
-   :maxdepth: 2
+  :caption: User Documentation
+  :maxdepth: 2
 
-   user/getting_started
-   user/site
-   user/supported_devices
-   user/x86
-   user/faq
-   user/mtu
-
-.. toctree::
-   :caption: Features
-   :maxdepth: 2
-
-   features/configmode
-   features/autoupdater
-   features/wlan-configuration
-   features/private-wlan
-   features/wired-mesh
-   features/dns-forwarder
-   features/monitoring
-   features/multidomain
-   features/authorized-keys
-   features/roles
-   features/vpn
+  user/getting_started
+  user/site
+  user/supported_devices
+  user/x86
+  user/faq
+  user/mtu
 
 .. toctree::
-   :caption: Developer Documentation
-   :maxdepth: 2
+  :caption: Features
+  :maxdepth: 2
 
-   dev/basics
-   dev/hardware
-   dev/packages
-   dev/upgrade
-   dev/uplink
-   dev/mac_addresses
-   dev/site_library
-   dev/build
-   dev/debugging
-
-.. toctree::
-   :caption: gluon-web Reference
-   :maxdepth: 1
-
-   dev/web/controller
-   dev/web/model
-   dev/web/view
-   dev/web/i18n
-   dev/web/config-mode
+  features/configmode
+  features/autoupdater
+  features/wlan-configuration
+  features/private-wlan
+  features/wired-mesh
+  features/dns-forwarder
+  features/monitoring
+  features/multidomain
+  features/authorized-keys
+  features/roles
+  features/vpn
 
 .. toctree::
-   :caption: Packages
-   :maxdepth: 1
+  :caption: Developer Documentation
+  :maxdepth: 2
 
-   package/gluon-client-bridge
-   package/gluon-config-mode-domain-select
-   package/gluon-ebtables-filter-multicast
-   package/gluon-ebtables-filter-ra-dhcp
-   package/gluon-ebtables-limit-arp
-   package/gluon-ebtables-source-filter
-   package/gluon-hoodselector
-   package/gluon-logging
-   package/gluon-mesh-batman-adv
-   package/gluon-mesh-wireless-sae
-   package/gluon-radv-filterd
-   package/gluon-scheduled-domain-switch
-   package/gluon-web-admin
-   package/gluon-web-logging
+  dev/basics
+  dev/hardware
+  dev/packages
+  dev/upgrade
+  dev/uplink
+  dev/mac_addresses
+  dev/site_library
+  dev/build
+  dev/debugging
 
 .. toctree::
-   :caption: Releases
-   :maxdepth: 1
+  :caption: gluon-web Reference
+  :maxdepth: 1
 
-   releases/index
+  dev/web/controller
+  dev/web/model
+  dev/web/view
+  dev/web/i18n
+  dev/web/config-mode
+
+.. toctree::
+  :caption: Packages
+  :maxdepth: 1
+
+  package/gluon-client-bridge
+  package/gluon-config-mode-domain-select
+  package/gluon-ebtables-filter-multicast
+  package/gluon-ebtables-filter-ra-dhcp
+  package/gluon-ebtables-limit-arp
+  package/gluon-ebtables-source-filter
+  package/gluon-hoodselector
+  package/gluon-logging
+  package/gluon-mesh-batman-adv
+  package/gluon-mesh-wireless-sae
+  package/gluon-radv-filterd
+  package/gluon-scheduled-domain-switch
+  package/gluon-web-admin
+  package/gluon-web-logging
+
+.. toctree::
+  :caption: Releases
+  :maxdepth: 1
+
+  releases/index
 
 License
 -------
