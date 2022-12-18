@@ -13,146 +13,146 @@ Added hardware support
 ath79-generic
 ~~~~~~~~~~~~~
 
--  D-Link
+- D-Link
 
-   -  DAP-2660 A1
+  - DAP-2660 A1
 
--  Enterasys
+- Enterasys
 
-   -  WS-AP3705i
+  - WS-AP3705i
 
--  Siemens
+- Siemens
 
-   -  WS-AP3610
+  - WS-AP3610
 
--  TP-Link
+- TP-Link
 
-   -  Archer A7 v5
-   -  CPE510 v2
-   -  CPE510 v3
-   -  CPE710 v1
-   -  EAP225-Outdoor v1
-   -  WBS210 v2
+  - Archer A7 v5
+  - CPE510 v2
+  - CPE510 v3
+  - CPE710 v1
+  - EAP225-Outdoor v1
+  - WBS210 v2
 
 ath79-mikrotik
 ~~~~~~~~~~~~~~
 
--  Mikrotik
+- Mikrotik
 
-   -  RB951Ui-2nD
+  - RB951Ui-2nD
 
 ipq40xx-generic
 ~~~~~~~~~~~~~~~
 
--  Aruba Networks
+- Aruba Networks
 
-   -  AP-303H
-   -  AP-365
-   -  InstantOn AP11D
-   -  InstantOn AP17
+  - AP-303H
+  - AP-365
+  - InstantOn AP11D
+  - InstantOn AP17
 
 ipq40xx-mikrotik
 ~~~~~~~~~~~~~~~~
 
--  Mikrotik
+- Mikrotik
 
-   -  SXTsq-5-AC
+  - SXTsq-5-AC
 
 ramips-mt7620
 ~~~~~~~~~~~~~
 
--  Xiaomi
+- Xiaomi
 
-   -  Mi Router 3G (v2)
+  - Mi Router 3G (v2)
 
 ramips-mt7621
 ~~~~~~~~~~~~~
 
--  Cudy
+- Cudy
 
-   -  WR2100
+  - WR2100
 
--  Netgear
+- Netgear
 
-   -  R6260
-   -  WAC104
-   -  WAX202
+  - R6260
+  - WAC104
+  - WAX202
 
--  TP-Link
+- TP-Link
 
-   -  RE500
-   -  RE650 v1
+  - RE500
+  - RE650 v1
 
--  Ubiquiti
+- Ubiquiti
 
-   -  UniFi 6 Lite
+  - UniFi 6 Lite
 
--  Xiaomi
+- Xiaomi
 
-   -  Mi Router 4A (Gigabit Edition)
+  - Mi Router 4A (Gigabit Edition)
 
 ramips-mt7622
 ~~~~~~~~~~~~~
 
--  Linksys
+- Linksys
 
-   -  E8450
+  - E8450
 
--  Xiaomi
+- Xiaomi
 
-   -  AX3200
+  - AX3200
 
--  Ubiquiti
+- Ubiquiti
 
-   -  UniFi 6 LR
+  - UniFi 6 LR
 
 ramips-mt76x8
 ~~~~~~~~~~~~~
 
--  GL.iNet
+- GL.iNet
 
-   -  microuter-N300
+  - microuter-N300
 
--  Netgear
+- Netgear
 
-   -  R6020
+  - R6020
 
--  RAVPower
+- RAVPower
 
-   -  RP-WD009
+  - RP-WD009
 
--  TP-Link
+- TP-Link
 
-   -  Archer C20 v4
-   -  Archer C20 v5
-   -  RE200 v2
-   -  RE305 v1
+  - Archer C20 v4
+  - Archer C20 v5
+  - RE200 v2
+  - RE305 v1
 
--  Xiaomi
+- Xiaomi
 
-   -  Mi Router 4C
-   -  Mi Router 4A (100M Edition)
+  - Mi Router 4C
+  - Mi Router 4A (100M Edition)
 
 rockchip-armv8
 ~~~~~~~~~~~~~~
 
--  FriendlyElec
+- FriendlyElec
 
-   -  NanoPi R2S
+  - NanoPi R2S
 
 mpc85xx-p1010
 ~~~~~~~~~~~~~
 
--  Sophos
+- Sophos
 
-   -  RED 15w rev. 1
+  - RED 15w rev. 1
 
 mpc85xx-p1020
 ~~~~~~~~~~~~~
 
--  Extreme Networks
+- Extreme Networks
 
-   -  WS-AP3825i
+  - WS-AP3825i
 
 Removed Devices
 ---------------
@@ -160,63 +160,63 @@ Removed Devices
 This list contains devices which do not have enough memory or flash to
 be operated with this Gluon release.
 
--  D-Link
+- D-Link
 
-   -  DIR-615 (C1, D1, D2, D3, D4, H1)
+  - DIR-615 (C1, D1, D2, D3, D4, H1)
 
--  Linksys
+- Linksys
 
-   -  WRT160NL
+  - WRT160NL
 
--  TP-Link
+- TP-Link
 
-   -  TL-MR13U (v1)
-   -  TL-MR3020 (v1)
-   -  TL-MR3040 (v1, v2)
-   -  TL-MR3220 (v1, v2)
-   -  TL-MR3420 (v1, v2)
-   -  TL-WA701N/ND (v1, v2)
-   -  TL-WA730RE (v1)
-   -  TL-WA750RE (v1)
-   -  TL-WA801N/ND (v1, v2, v3)
-   -  TL-WA830RE (v1, v2)
-   -  TL-WA850RE (v1)
-   -  TL-WA860RE (v1)
-   -  TL-WA901N/ND (v1, v2, v3, v4, v5)
-   -  TL-WA7210N (v2)
-   -  TL-WA7510N (v1)
-   -  TL-WR703N (v1)
-   -  TL-WR710N (v1, v2)
-   -  TL-WR740N (v1, v3, v4, v5)
-   -  TL-WR741N/ND (v1, v2, v4, v5)
-   -  TL-WR743N/ND (v1, v2)
-   -  TL-WR840N (v2)
-   -  TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
-   -  TL-WR841N/ND (v1, v2)
-   -  TL-WR843N/ND (v1)
-   -  TL-WR940N (v1, v2, v3, v4, v5, v6)
-   -  TL-WR941ND (v2, v3, v4, v5, v6)
-   -  TL-WR1043N/ND (v1)
-   -  WDR4900
+  - TL-MR13U (v1)
+  - TL-MR3020 (v1)
+  - TL-MR3040 (v1, v2)
+  - TL-MR3220 (v1, v2)
+  - TL-MR3420 (v1, v2)
+  - TL-WA701N/ND (v1, v2)
+  - TL-WA730RE (v1)
+  - TL-WA750RE (v1)
+  - TL-WA801N/ND (v1, v2, v3)
+  - TL-WA830RE (v1, v2)
+  - TL-WA850RE (v1)
+  - TL-WA860RE (v1)
+  - TL-WA901N/ND (v1, v2, v3, v4, v5)
+  - TL-WA7210N (v2)
+  - TL-WA7510N (v1)
+  - TL-WR703N (v1)
+  - TL-WR710N (v1, v2)
+  - TL-WR740N (v1, v3, v4, v5)
+  - TL-WR741N/ND (v1, v2, v4, v5)
+  - TL-WR743N/ND (v1, v2)
+  - TL-WR840N (v2)
+  - TL-WR841N/ND (v3, v5, v7, v8, v9, v10, v11, v12)
+  - TL-WR841N/ND (v1, v2)
+  - TL-WR843N/ND (v1)
+  - TL-WR940N (v1, v2, v3, v4, v5, v6)
+  - TL-WR941ND (v2, v3, v4, v5, v6)
+  - TL-WR1043N/ND (v1)
+  - WDR4900
 
--  Ubiquiti
+- Ubiquiti
 
-   -  AirGateway
-   -  AirGateway Pro
-   -  AirRouter
-   -  Bullet
-   -  LS-SR71
-   -  Nanostation XM
-   -  Nanostation Loco XM
-   -  Picostation
+  - AirGateway
+  - AirGateway Pro
+  - AirRouter
+  - Bullet
+  - LS-SR71
+  - Nanostation XM
+  - Nanostation Loco XM
+  - Picostation
 
--  Unknown
+- Unknown
 
-   -  A5-V11
+  - A5-V11
 
--  VoCore
+- VoCore
 
-   -  VoCore (8M, 16M)
+  - VoCore (8M, 16M)
 
 Atheros target migration
 ------------------------
@@ -235,50 +235,50 @@ Missing devices
 The following devices have not yet been integrated into Gluons ath79
 targets.
 
--  8Devices
+- 8Devices
 
-   -  Carambola 2
+  - Carambola 2
 
--  Aerohive
+- Aerohive
 
-   -  HiveAP 121
+  - HiveAP 121
 
--  Allnet
+- Allnet
 
-   -  ALL0315
+  - ALL0315
 
--  Buffalo
+- Buffalo
 
-   -  WZR-HP-G300NH2
-   -  WZR-HP-G450H
+  - WZR-HP-G300NH2
+  - WZR-HP-G450H
 
--  GL.iNet
+- GL.iNet
 
-   -  6408A v1
+  - 6408A v1
 
--  NETGEAR
+- NETGEAR
 
-   -  WNDR4300
-   -  WNDRMAC
-   -  WNDRMAC v2
+  - WNDR4300
+  - WNDRMAC
+  -  WNDRMAC v2
 
--  TP-Link
+- TP-Link
 
-   -  WR2543
+  - WR2543
 
--  Ubiquiti
+- Ubiquiti
 
-   -  Rocket
+  - Rocket
 
--  WD
+- WD
 
-   -  MyNet N600
-   -  MyNet N750
+  - MyNet N600
+  - MyNet N750
 
--  ZyXEL
+- ZyXEL
 
-   -  NB6616
-   -  NB6716
+  - NB6616
+  - NB6716
 
 Features
 --------
@@ -364,28 +364,28 @@ interfaces. Details can be found in the
 Minor changes
 -------------
 
--  The ``brcm2708-bcm2708`` ``brcm2708-bcm2709`` ``brcm2708-bcm2710``
-   targets were renamed to ``bcm27xx-bcm2708`` ``bcm27xx-bcm2709`` and
-   ``bcm27xx-bcm2710``
--  The GL.iNet GL-AR750S was moved to the ``ath79-nand`` subtarget
--  Gluon now ships the ath10k-ct firmware derivation for
-   QCA9886 / QCA9888 / QCA9896 / QCA9898 / QCA9984 /
-   QCA9994 / IPQ4018 / IPQ4028 / IPQ4019 / IPQ4029
-   radios (`#2541 <https://github.com/freifunk-gluon/gluon/pull/2541>`__)
--  WolfSSL instead of OpenSSL is now used when built with WPA3 support
--  The option to configure the wireless-channel independent from the
-   site-selected channel was moved from
-   ``gluon-core.wireless.preserve_channels`` to
-   ``gluon.wireless.preserve_channels``
--  ``gluon-info`` is a new command that provides information about the
-   current node
--  ``GLUON_DEPRECATED`` is now set to 0 by default
--  To reboot a running gluon-node into setup-mode, Gluon now offers the
-   ``gluon-enter-setup-mode`` command
--  Devices without WLAN do not show the private-wifi configuration
-   anymore
--  The Autoupdater now uses the site default branch in case it is
-   configured to use a non-existent / invalid branch
+- The ``brcm2708-bcm2708`` ``brcm2708-bcm2709`` ``brcm2708-bcm2710``
+  targets were renamed to ``bcm27xx-bcm2708`` ``bcm27xx-bcm2709`` and
+  ``bcm27xx-bcm2710``
+- The GL.iNet GL-AR750S was moved to the ``ath79-nand`` subtarget
+- Gluon now ships the ath10k-ct firmware derivation for
+  QCA9886 / QCA9888 / QCA9896 / QCA9898 / QCA9984 /
+  QCA9994 / IPQ4018 / IPQ4028 / IPQ4019 / IPQ4029
+  radios (`#2541 <https://github.com/freifunk-gluon/gluon/pull/2541>`__)
+- WolfSSL instead of OpenSSL is now used when built with WPA3 support
+- The option to configure the wireless-channel independent from the
+  site-selected channel was moved from
+  ``gluon-core.wireless.preserve_channels`` to
+  ``gluon.wireless.preserve_channels``
+- ``gluon-info`` is a new command that provides information about the
+  current node
+- ``GLUON_DEPRECATED`` is now set to 0 by default
+- To reboot a running gluon-node into setup-mode, Gluon now offers the
+  ``gluon-enter-setup-mode`` command
+- Devices without WLAN do not show the private-wifi configuration
+  anymore
+- The Autoupdater now uses the site default branch in case it is
+  configured to use a non-existent / invalid branch
 
 Known issues
 ------------
