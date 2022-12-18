@@ -21,8 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ecdsautils \
     lua-check \
     shellcheck \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -d /gluon gluon
 USER gluon

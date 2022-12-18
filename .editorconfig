@@ -7,6 +7,10 @@ insert_final_newline = true
 indent_style = tab
 charset = utf-8
 
+[Dockerfile]
+indent_style = space
+indent_size = 4
+
 [/patches/**]
 indent_style = unset
 indent_size = unset
