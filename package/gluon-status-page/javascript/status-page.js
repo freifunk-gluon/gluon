@@ -1,7 +1,7 @@
 /*
 	Build using:
 
-	uglifyjs javascript/status-page.js -o files/lib/gluon/status-page/www/static/status-page.js -c -m
+	uglifyjs javascript/status-page.js -o javascript/status-page.min.js -c -m
 */
 
 'use strict';
