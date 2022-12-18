@@ -18,7 +18,7 @@ define Package/gluon-config-mode-core/install
 	$(INSTALL_DIR) $(1)/lib/gluon/config-mode/view/ $(1)/lib/gluon/config-mode/www/static/
 	$(LN) /lib/gluon/web/i18n $(1)/lib/gluon/config-mode/
 	$(LN) /lib/gluon/web/view/{error,model} $(1)/lib/gluon/config-mode/view/
-	$(LN) /lib/gluon/web/www/static/gluon-web-model.js $(1)/lib/gluon/config-mode/www/static/
+	$(LN) /lib/gluon/web/www/static/gluon-web-model.min.js $(1)/lib/gluon/config-mode/www/static/gluon-web-model.js
 endef
 
 $(eval $(call BuildPackageGluon,gluon-config-mode-core))
