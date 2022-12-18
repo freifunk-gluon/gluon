@@ -11,6 +11,10 @@ charset = utf-8
 indent_style = unset
 indent_size = unset
 
+[*.dia]
+indent_style = space
+indent_size = 2
+
 [*{.json,.ecrc}]
 indent_style = space
 indent_size = 2
