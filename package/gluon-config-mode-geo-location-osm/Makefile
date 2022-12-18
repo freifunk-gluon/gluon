@@ -13,7 +13,7 @@ define Package/gluon-config-mode-geo-location-osm/install
 	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/lib/gluon/config-mode/www/static/
-	$(LN) /lib/gluon/web/www/static/gluon-web-osm.js $(1)/lib/gluon/config-mode/www/static/
+	$(LN) /lib/gluon/web/www/static/gluon-web-osm.min.js $(1)/lib/gluon/config-mode/www/static/gluon-web-osm.js
 endef
 
 $(eval $(call BuildPackageGluon,gluon-config-mode-geo-location-osm))
