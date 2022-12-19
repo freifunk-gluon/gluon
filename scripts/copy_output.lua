@@ -69,16 +69,16 @@ end
 
 -- copy kernel image with debug symbols
 local kernel_debug_glob = string.format('%s/gluon-\0-%s-kernel-debug.tar.zst',
-        env.GLUON_DEBUGDIR,
-        target)
+	env.GLUON_DEBUGDIR,
+	target)
 lib.exec {'rm', '-f', kernel_debug_glob}
 local kernel_debug_source = string.format('openwrt/bin/targets/%s/kernel-debug.tar.zst',
-        bindir)
+	bindir)
 local kernel_debug_dest = string.format('%s/gluon-%s-%s-%s-kernel-debug.tar.zst',
-        env.GLUON_DEBUGDIR,
-        lib.site_code,
-        env.GLUON_RELEASE,
-        target)
+	env.GLUON_DEBUGDIR,
+	lib.site_code,
+	env.GLUON_RELEASE,
+	target)
 lib.exec {'cp', kernel_debug_source, kernel_debug_dest}
 
 

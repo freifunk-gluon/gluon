@@ -79,7 +79,7 @@ if( open F, "find @ARGV -type f '(' -name '*.html' -o -name '*.lua' ')' |" )
 				{
 					my $stag = quotemeta $1;
 					my $etag = $stag;
-					   $etag =~ s/\[/]/g;
+					$etag =~ s/\[/]/g;
 
 					( $res ) = extract_tagged($code, $stag, $etag);
 

@@ -8,7 +8,7 @@ device('asus-rt-ac57u', 'asus_rt-ac57u', {
 -- Cudy
 
 device('cudy-wr2100', 'cudy_wr2100', {
-        factory = false,
+	factory = false,
 })
 
 
