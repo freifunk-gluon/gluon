@@ -5,6 +5,15 @@ START=50
 DAEMON=/usr/sbin/mmfd
 SOCKET=/var/run/mmfd.sock
 
+waitforsocket() {
+	while ! echo "get_neighbours" | uc $SOCKET
+	do
+		sleep 1
+		echo "waiting for successful socket connection for mmfd"
+	done
+}
+
+
 start_service() {
 	local interfaces=$(for dev in $(gluon-list-mesh-interfaces); do echo " -i $dev"; done)
 
