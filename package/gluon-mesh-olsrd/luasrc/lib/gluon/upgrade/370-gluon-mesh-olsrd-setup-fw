@@ -1,0 +1,10 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+
+local networks = uci:get_list('firewall', 'drop', 'network')
+util.remove_from_set(networks, 'client')
+uci:set_list('firewall', 'drop', 'network', networks)
+
+uci:save('firewall')

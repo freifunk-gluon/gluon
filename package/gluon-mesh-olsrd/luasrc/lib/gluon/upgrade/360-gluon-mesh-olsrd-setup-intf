@@ -1,0 +1,163 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local site = require 'gluon.site'
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
+local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
+local client_interfaces = util.get_role_interfaces(uci, 'client')
+
+local mesh_interfaces_uplink = {}
+local mesh_interfaces_client = {}
+local mesh_interfaces_other = {}
+for _, iface in ipairs(mesh_interfaces) do
+	if util.contains(uplink_interfaces, iface) then
+		table.insert(mesh_interfaces_uplink, iface)
+	elseif util.contains(client_interfaces, iface) then
+		table.insert(mesh_interfaces_client, iface)
+	else
+		table.insert(mesh_interfaces_other, iface)
+	end
+end
+
+local intf = {
+	wired_mesh = {},
+	vpn_mesh = {},
+	radio_mesh = {},
+}
+
+intf.all_intfs = {}
+
+for _, l in ipairs({ intf.wired_mesh, intf.vpn_mesh, intf.radio_mesh }) do
+	for _, n in ipairs(l) do
+		table.insert(intf.all_intfs, n)
+	end
+end
+
+-- get all mesh radios and mesh lans and then add them to olsrd
+wireless.foreach_radio(uci, function(radio, _, _)
+	local radio_name = radio['.name']
+	table.insert(intf.radio_mesh, 'mesh_' .. radio_name)
+end)
+
+if pcall(function() require 'gluon.mesh-vpn' end) then
+	local vpn_core = require 'gluon.mesh-vpn'
+
+	if vpn_core.enabled() then
+		-- mesh_vpn is a interface that has the right ifname
+		-- we can't use mesh-vpn (dash instead of underscore) since it's not a uci interface
+		table.insert(intf.vpn_mesh, 'mesh_vpn')
+	end
+end
+
+table.insert(intf.wired_mesh, 'loopback')
+
+local has_uplink_mesh = false
+local has_other_mesh = false
+
+for _,i in pairs(mesh_interfaces) do
+	if util.contains(uplink_interfaces, i) then
+		has_uplink_mesh = true
+	else
+		has_other_mesh = true
+	end
+end
+
+if has_uplink_mesh then
+	table.insert(intf.wired_mesh, 'mesh_uplink')
+end
+
+if has_other_mesh then
+	table.insert(intf.wired_mesh, 'mesh_other')
+end
+
+uci:delete_all('olsrd2', 'interface')
+
+if site.mesh.olsrd.v2.enable(true) then
+	os.execute('/etc/init.d/olsrd2 enable')
+
+	local addrs = { }
+	local lan = { }
+	local cfg = site.mesh.olsrd.v2
+	local config = uci:get_first("olsrd2", "olsrv2")
+
+	-- set global config
+	local olsr2Config = {
+		failfast = 'no',
+		pidfile = '/var/run/olsrd2.pid',
+		lockfile = '/var/lock/olsrd2'
+	}
+
+	local extraConf = cfg.config()
+	if extraConf then
+		for k, _ in pairs(extraConf) do
+			olsr2Config[k] = extraConf[k]
+		end
+	end
+
+	uci:delete_all('olsrd2', 'global')
+	uci:section('olsrd2', 'global', 'global', olsr2Config)
+
+	uci:delete_all('olsrd2', 'telnet')
+	uci:section('olsrd2', 'telnet', 'telnet', {
+
+	})
+
+	uci:delete_all('olsrd2', 'http')
+	uci:section('olsrd2', 'http', 'http', {
+
+	})
+
+	if cfg.lan() then
+		lan = cfg.lan()
+	end
+
+	table.insert(addrs, '-127.0.0.1/8')
+	table.insert(addrs, '-::1/128')
+
+	table.insert(addrs, 'default_accept')
+
+	uci:set("olsrd2", config, "originator", addrs)
+	uci:set("olsrd2", config, "lan", lan)
+
+	if #intf.wired_mesh then
+		uci:section('olsrd2', 'interface', 'wired_mesh', {
+			ifname = intf.wired_mesh,
+			bindto = addrs,
+		})
+	end
+
+	if #intf.vpn_mesh then
+		uci:section('olsrd2', 'interface', 'vpn_mesh', {
+			ifname = intf.vpn_mesh,
+			bindto = addrs,
+		})
+	end
+
+	if #intf.radio_mesh then
+		uci:section('olsrd2', 'interface', 'radio_mesh', {
+			ifname = intf.radio_mesh,
+			bindto = addrs,
+		})
+	end
+
+	uci:section('olsrd2', 'interface', 'loopback', {
+		ifname = { 'loopback' },
+		bindto = addrs,
+	})
+
+	uci:section('firewall', 'rule', 'allow_olsr2_mesh', {
+		src = 'mesh',
+		dest_port = '269',
+		proto = 'udp',
+		target = 'ACCEPT',
+	})
+else
+	-- site.mesh.olsrd.v2.enable false
+	os.execute('/etc/init.d/olsrd2 disable')
+	uci:delete('firewall', 'allow_olsr2_mesh')
+end
+uci:save('olsrd2')
+uci:save('firewall')
+uci:save('network')
