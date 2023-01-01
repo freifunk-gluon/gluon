@@ -16,7 +16,7 @@ index 756105b94c7f844439132ab57837c9ac87d231ca..5563968de9ab3f491fa89d755fcc6e6f
  endef
  
 diff --git a/target/linux/lantiq/image/vr9.mk b/target/linux/lantiq/image/vr9.mk
-index d17045b6db157a878534a28988accd8998ddd572..e83da928e57d827d33bca6bdef96df290bb67347 100644
+index deea3996670fcef6d2a546373425c4ca5d92734b..d23b80e94e5548ccb19738f22c29c75fa19ab1e7 100644
 --- a/target/linux/lantiq/image/vr9.mk
 +++ b/target/linux/lantiq/image/vr9.mk
 @@ -1,7 +1,7 @@
