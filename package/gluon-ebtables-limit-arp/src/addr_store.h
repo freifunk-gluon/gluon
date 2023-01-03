@@ -20,9 +20,9 @@ struct addr_store {
 };
 
 int addr_store_init(size_t addr_len,
-		    void (*destructor)(struct addr_list *),
-		    char *(*ntoa)(void *),
-		    struct addr_store *store);
+		void (*destructor)(struct addr_list *),
+		char *(*ntoa)(void *),
+		struct addr_store *store);
 int addr_store_add(void *addr, struct addr_store *store);
 void addr_store_cleanup(struct addr_store *store);
 
