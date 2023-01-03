@@ -38,7 +38,7 @@ SPDX-FileCopyrightText: 2008-2010 Jo-Philipp Wich <xm@subsignal.org>
 		table.sort(ret,
 			function(a, b)
 				return (node.nodes[a].order or 100)
-				     < (node.nodes[b].order or 100)
+					< (node.nodes[b].order or 100)
 			end
 		)
 		return ret
@@ -120,7 +120,7 @@ SPDX-FileCopyrightText: 2008-2010 Jo-Philipp Wich <xm@subsignal.org>
 	</div>
 
 	<div id="maincontainer">
-	  <%
+		<%
 			if not hidenav then
 				menutree(unpack(request))
 			end
