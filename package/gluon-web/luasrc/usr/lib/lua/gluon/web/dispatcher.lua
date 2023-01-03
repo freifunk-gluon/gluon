@@ -179,7 +179,7 @@ local function dispatch(config, http, request)
 		renderer.render_layout("error/404", {
 			message =
 				"No page is registered at '/" .. table.concat(request, "/") .. "'.\n" ..
-			        "If this URL belongs to an extension, make sure it is properly installed.\n",
+				"If this URL belongs to an extension, make sure it is properly installed.\n",
 		}, 'gluon-web')
 		return
 	end
