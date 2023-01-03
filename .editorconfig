@@ -15,11 +15,15 @@ indent_size = 4
 indent_style = unset
 indent_size = unset
 
+[*.c]
+
 [*.css]
 
 [*.dia]
 indent_style = space
 indent_size = 2
+
+[*.h]
 
 [*.html]
 
