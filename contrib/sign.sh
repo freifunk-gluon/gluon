@@ -29,11 +29,22 @@ lower="$(mktemp)"
 
 trap 'rm -f "$upper" "$lower"' EXIT
 
-awk 'BEGIN    { sep=0 }
-     /^---$/ { sep=1; next }
-              { if(sep==0) print > "'"$upper"'";
-                else       print > "'"$lower"'"}' \
-    "$manifest"
+awk 'BEGIN    {
+	sep = 0
+}
+
+/^---$/ {
+	sep = 1;
+	next
+}
+
+{
+	if(sep == 0) {
+		print > "'"$upper"'"
+	} else {
+		print > "'"$lower"'"
+	}
+}' "$manifest"
 
 ecdsasign "$upper" < "$SECRET" >> "$lower"
 
