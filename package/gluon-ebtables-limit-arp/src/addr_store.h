@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2017 Linus Lüssing <linus.luessing@c0d3.blue>
-// SPDX-License-Identifier: GPL-2.0+
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef _ADDR_STORE_H_
 #define _ADDR_STORE_H_
