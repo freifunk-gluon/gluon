@@ -106,7 +106,7 @@ static bool interface_file_exists(const char *ifname, const char *name) {
 }
 
 static void mesh_add_subif(const char *ifname, struct json_object *wireless,
-			   struct json_object *tunnel, struct json_object *other) {
+		struct json_object *tunnel, struct json_object *other) {
 	struct json_object *address = gluonutil_wrap_and_free_string(gluonutil_get_interface_address(ifname));
 
 	/* In case of VLAN and bridge interfaces, we want the lower interface
@@ -144,7 +144,7 @@ static struct json_object * get_mesh_subifs(const char *ifname) {
 		size_t i;
 		for (i = 0; i < lower.gl_pathc; i++) {
 			mesh_add_subif(lower.gl_pathv[i] + pattern_len - 1,
-				       wireless, tunnel, other);
+					wireless, tunnel, other);
 		}
 
 		globfree(&lower);

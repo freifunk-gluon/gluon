@@ -68,7 +68,7 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 	char mac1[18];
 
 	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
-				   query_opts);
+			query_opts);
 
 	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
@@ -79,11 +79,11 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-		      genlmsg_len(ghdr), batadv_genl_policy))
+				genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
 	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory,
-				      BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
+				BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
 		return NL_OK;
 
 	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
