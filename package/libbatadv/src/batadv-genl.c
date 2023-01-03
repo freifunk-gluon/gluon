@@ -45,19 +45,19 @@ struct nla_policy batadv_genl_policy[NUM_BATADV_ATTR] = {
 	[BATADV_ATTR_ALGO_NAME]		= { .type = NLA_STRING },
 	[BATADV_ATTR_MESH_IFINDEX]	= { .type = NLA_U32 },
 	[BATADV_ATTR_MESH_IFNAME]	= { .type = NLA_STRING,
-					    .maxlen = IFNAMSIZ },
+		.maxlen = IFNAMSIZ },
 	[BATADV_ATTR_MESH_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_HARD_IFINDEX]	= { .type = NLA_U32 },
 	[BATADV_ATTR_HARD_IFNAME]	= { .type = NLA_STRING,
-					    .maxlen = IFNAMSIZ },
+		.maxlen = IFNAMSIZ },
 	[BATADV_ATTR_HARD_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_ORIG_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_TPMETER_RESULT]	= { .type = NLA_U8 },
 	[BATADV_ATTR_TPMETER_TEST_TIME]	= { .type = NLA_U32 },
 	[BATADV_ATTR_TPMETER_BYTES]	= { .type = NLA_U64 },
@@ -65,8 +65,8 @@ struct nla_policy batadv_genl_policy[NUM_BATADV_ATTR] = {
 	[BATADV_ATTR_PAD]		= { .type = NLA_UNSPEC },
 	[BATADV_ATTR_ACTIVE]		= { .type = NLA_FLAG },
 	[BATADV_ATTR_TT_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_TT_TTVN]		= { .type = NLA_U8 },
 	[BATADV_ATTR_TT_LAST_TTVN]	= { .type = NLA_U8 },
 	[BATADV_ATTR_TT_CRC32]		= { .type = NLA_U32 },
@@ -75,23 +75,23 @@ struct nla_policy batadv_genl_policy[NUM_BATADV_ATTR] = {
 	[BATADV_ATTR_FLAG_BEST]		= { .type = NLA_FLAG },
 	[BATADV_ATTR_LAST_SEEN_MSECS]	= { .type = NLA_U32 },
 	[BATADV_ATTR_NEIGH_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_TQ]		= { .type = NLA_U8 },
 	[BATADV_ATTR_THROUGHPUT]	= { .type = NLA_U32 },
 	[BATADV_ATTR_BANDWIDTH_UP]	= { .type = NLA_U32 },
 	[BATADV_ATTR_BANDWIDTH_DOWN]	= { .type = NLA_U32 },
 	[BATADV_ATTR_ROUTER]		= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_BLA_OWN]		= { .type = NLA_FLAG },
 	[BATADV_ATTR_BLA_ADDRESS]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_BLA_VID]		= { .type = NLA_U16 },
 	[BATADV_ATTR_BLA_BACKBONE]	= { .type = NLA_UNSPEC,
-					    .minlen = ETH_ALEN,
-					    .maxlen = ETH_ALEN },
+		.minlen = ETH_ALEN,
+		.maxlen = ETH_ALEN },
 	[BATADV_ATTR_BLA_CRC]		= { .type = NLA_U16 },
 };
 
@@ -105,7 +105,7 @@ struct nla_policy batadv_genl_policy[NUM_BATADV_ATTR] = {
  * Return: Always NL_STOP
  */
 static int nlquery_error_cb(struct sockaddr_nl *nla __attribute__((unused)),
-			    struct nlmsgerr *nlerr, void *arg)
+		struct nlmsgerr *nlerr, void *arg)
 {
 	struct batadv_nlquery_opts *query_opts = arg;
 
@@ -147,8 +147,8 @@ static int nlquery_stop_cb(struct nl_msg *msg, void *arg)
  */
 __attribute__ ((visibility ("default")))
 int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
-		      nl_recvmsg_msg_cb_t callback, int flags,
-		      struct batadv_nlquery_opts *query_opts)
+		nl_recvmsg_msg_cb_t callback, int flags,
+		struct batadv_nlquery_opts *query_opts)
 {
 	struct nl_sock *sock;
 	struct nl_msg *msg;
@@ -198,7 +198,7 @@ int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
 	}
 
 	genlmsg_put(msg, NL_AUTO_PID, NL_AUTO_SEQ, family, 0, flags,
-		    nl_cmd, 1);
+			nl_cmd, 1);
 
 	nla_put_u32(msg, BATADV_ATTR_MESH_IFINDEX, ifindex);
 	nl_send_auto_complete(sock, msg);
