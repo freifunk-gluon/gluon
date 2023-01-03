@@ -97,8 +97,8 @@ static int template_L_load_catalog(lua_State *L)
 		return 0;
 	}
 
-        luaL_getmetatable(L, TEMPLATE_CATALOG);
-        lua_setmetatable(L, -2);
+	luaL_getmetatable(L, TEMPLATE_CATALOG);
+	lua_setmetatable(L, -2);
 
 	return 1;
 }
@@ -106,7 +106,7 @@ static int template_L_load_catalog(lua_State *L)
 static int template_catalog_call(lua_State *L)
 {
 	size_t inlen, outlen;
-        lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
+	lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
 	const char *in = luaL_checklstring(L, 2, &inlen), *out;
 	if (!lmo_translate(cat, in, inlen, &out, &outlen))
 		return 0;
@@ -118,7 +118,7 @@ static int template_catalog_call(lua_State *L)
 
 static int template_catalog_gc(lua_State *L)
 {
-        lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
+	lmo_catalog_t *cat = luaL_checkudata(L, 1, TEMPLATE_CATALOG);
 	lmo_unload(cat);
 
 	return 0;
@@ -133,8 +133,8 @@ static const luaL_reg R[] = {
 };
 
 static const luaL_reg template_catalog_methods[] = {
-        { "__call", template_catalog_call },
-        { "__gc", template_catalog_gc },
+	{ "__call", template_catalog_call },
+	{ "__gc", template_catalog_gc },
 	{}
 };
 

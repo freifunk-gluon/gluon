@@ -130,37 +130,37 @@ static inline bool mb_is_shortest(const unsigned char *s, size_t n)
 		case 2:
 			/* 1100000x (10xxxxxx) */
 			return !(((*s >> 1) == 0x60) &&
-					 ((*(s+1) >> 6) == 0x02));
+				((*(s+1) >> 6) == 0x02));
 
 		case 3:
 			/* 11100000 100xxxxx (10xxxxxx) */
 			return !((*s == 0xE0) &&
-					 ((*(s+1) >> 5) == 0x04) &&
-					 ((*(s+2) >> 6) == 0x02));
+				((*(s+1) >> 5) == 0x04) &&
+				((*(s+2) >> 6) == 0x02));
 
 		case 4:
 			/* 11110000 1000xxxx (10xxxxxx 10xxxxxx) */
 			return !((*s == 0xF0) &&
-					 ((*(s+1) >> 4) == 0x08) &&
-					 ((*(s+2) >> 6) == 0x02) &&
-					 ((*(s+3) >> 6) == 0x02));
+				((*(s+1) >> 4) == 0x08) &&
+				((*(s+2) >> 6) == 0x02) &&
+				((*(s+3) >> 6) == 0x02));
 
 		case 5:
 			/* 11111000 10000xxx (10xxxxxx 10xxxxxx 10xxxxxx) */
 			return !((*s == 0xF8) &&
-					 ((*(s+1) >> 3) == 0x10) &&
-					 ((*(s+2) >> 6) == 0x02) &&
-					 ((*(s+3) >> 6) == 0x02) &&
-					 ((*(s+4) >> 6) == 0x02));
+				((*(s+1) >> 3) == 0x10) &&
+				((*(s+2) >> 6) == 0x02) &&
+				((*(s+3) >> 6) == 0x02) &&
+				((*(s+4) >> 6) == 0x02));
 
 		case 6:
 			/* 11111100 100000xx (10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx) */
 			return !((*s == 0xF8) &&
-					 ((*(s+1) >> 2) == 0x20) &&
-					 ((*(s+2) >> 6) == 0x02) &&
-					 ((*(s+3) >> 6) == 0x02) &&
-					 ((*(s+4) >> 6) == 0x02) &&
-					 ((*(s+5) >> 6) == 0x02));
+				((*(s+1) >> 2) == 0x20) &&
+				((*(s+2) >> 6) == 0x02) &&
+				((*(s+3) >> 6) == 0x02) &&
+				((*(s+4) >> 6) == 0x02) &&
+				((*(s+5) >> 6) == 0x02));
 	}
 
 	return true;
@@ -270,18 +270,18 @@ bool pcdata(const char *s, size_t l, char **out, size_t *outl)
 	for (o = 0; o < l; o++)	{
 		/* Invalid XML bytes */
 		if ((*ptr <= 0x08) ||
-		    ((*ptr >= 0x0B) && (*ptr <= 0x0C)) ||
-		    ((*ptr >= 0x0E) && (*ptr <= 0x1F)) ||
-		    (*ptr == 0x7F)) {
+		((*ptr >= 0x0B) && (*ptr <= 0x0C)) ||
+		((*ptr >= 0x0E) && (*ptr <= 0x1F)) ||
+		(*ptr == 0x7F)) {
 			ptr++;
 		}
 
 		/* Escapes */
 		else if ((*ptr == '\'') ||
-		         (*ptr == '"') ||
-		         (*ptr == '&') ||
-		         (*ptr == '<') ||
-		         (*ptr == '>')) {
+		(*ptr == '"') ||
+		(*ptr == '&') ||
+		(*ptr == '<') ||
+		(*ptr == '>')) {
 			esl = snprintf(esq, sizeof(esq), "&#%i;", *ptr);
 
 			if (!buf_append(buf, esq, esl))
