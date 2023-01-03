@@ -134,7 +134,7 @@ static struct json_object * get_stat(void) {
 		if (!strcmp(label, "cpu")) {
 			int64_t user, nice, system, idle, iowait, irq, softirq;
 			if (sscanf(line, "%*s %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64" %"SCNd64,
-			          &user, &nice, &system, &idle, &iowait, &irq, &softirq) != 7)
+						&user, &nice, &system, &idle, &iowait, &irq, &softirq) != 7)
 				goto invalid_stat_format;
 
 			struct json_object *cpu = json_object_new_object();
@@ -275,7 +275,7 @@ static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t 
 		count_iface_stations(wifi24, wifi5, ifname);
 	}
 
- end:
+end:
 	uci_free_context(ctx);
 }
 
