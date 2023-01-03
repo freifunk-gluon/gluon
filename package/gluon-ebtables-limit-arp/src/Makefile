@@ -1,7 +1,5 @@
-# Copyright (c) 2017 Linus Lüssing <linus.luessing@c0d3.blue>
-#
+# SPDX-FileCopyrightText: 2017 Linus Lüssing <linus.luessing@c0d3.blue>
 # SPDX-License-Identifier: GPL-2.0+
-# License-Filename: LICENSE
 
 all: gluon-arp-limiter
 
