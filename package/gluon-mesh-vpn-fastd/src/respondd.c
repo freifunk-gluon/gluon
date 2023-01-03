@@ -219,7 +219,7 @@ static bool get_peer_connection(struct json_object **ret, struct json_object *co
 
 	struct json_object *peer, *connection, *established;
 	if (!json_object_object_get_ex(peers, key, &peer) ||
-	    !json_object_object_get_ex(peer, "connection", &connection))
+			!json_object_object_get_ex(peer, "connection", &connection))
 		return false;
 
 	if (json_object_object_get_ex(connection, "established", &established)) {
@@ -242,7 +242,7 @@ static struct json_object * get_peer_group(struct json_object *config, struct js
 
 	struct json_object *config_peers;
 	if (json_object_object_get_ex(config, "peers", &config_peers) &&
-	    json_object_is_type(config_peers, json_type_object)) {
+			json_object_is_type(config_peers, json_type_object)) {
 		struct json_object *ret_peers = json_object_new_object();
 
 		json_object_object_foreach(config_peers, peername, peerconfig) {
@@ -320,7 +320,7 @@ static struct json_object * get_mesh_vpn(void) {
 
 	ret = get_peer_group(mesh_vpn_fastd, peers);
 
- end:
+end:
 	json_object_put(site);
 	json_object_put(status);
 
