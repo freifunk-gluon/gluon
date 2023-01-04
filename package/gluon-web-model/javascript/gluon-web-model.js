@@ -13,7 +13,7 @@
 /*
 	Build using:
 
-	uglifyjs javascript/gluon-web-model.js -o javascript/gluon-web-model.min.js -c -m --support-ie8
+	uglifyjs javascript/gluon-web-model.js -o javascript/gluon-web-model.min.js -c -m --ie
 */
 
 
