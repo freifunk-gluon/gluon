@@ -95,6 +95,10 @@ ath79-generic
 
   - WS-AP3610
 
+* Teltonika
+
+  - RUT230 (v1)
+
 * TP-Link
 
   - Archer A7 (v5)
