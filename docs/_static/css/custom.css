@@ -1,8 +1,8 @@
 /*
-  This fixes the vertical position of list markers when the first
-  element in the <li> is a <pre> block
+	This fixes the vertical position of list markers when the first
+	element in the <li> is a <pre> block
 
-  Scrolling inside the <pre> block is still working as expected
+	Scrolling inside the <pre> block is still working as expected
 */
 .rst-content pre.literal-block,
 .rst-content div[class^='highlight'] pre {

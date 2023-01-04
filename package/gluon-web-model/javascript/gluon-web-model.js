@@ -13,7 +13,7 @@
 /*
 	Build using:
 
-	uglifyjs javascript/gluon-web-model.js -o files/lib/gluon/web/www/static/gluon-web-model.js -c -m --support-ie8
+	uglifyjs javascript/gluon-web-model.js -o javascript/gluon-web-model.min.js -c -m --support-ie8
 */
 
 
@@ -56,9 +56,9 @@
 			var match;
 			if ((match = this.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/))) {
 				return (match[1] >= 0) && (match[1] <= 255) &&
-				       (match[2] >= 0) && (match[2] <= 255) &&
-				       (match[3] >= 0) && (match[3] <= 255) &&
-				       (match[4] >= 0) && (match[4] <= 255);
+					(match[2] >= 0) && (match[2] <= 255) &&
+					(match[3] >= 0) && (match[3] <= 255) &&
+					(match[4] >= 0) && (match[4] <= 255);
 			}
 
 			return false;
