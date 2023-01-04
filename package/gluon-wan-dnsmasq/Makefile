@@ -5,8 +5,8 @@ PKG_NAME:=gluon-wan-dnsmasq
 include ../gluon.mk
 
 define Package/gluon-wan-dnsmasq
-  TITLE:=Support for a secondary DNS server using the WAN interface
-  DEPENDS:=+gluon-core +libubus-lua +dnsmasq +libpacketmark
+	TITLE:=Support for a secondary DNS server using the WAN interface
+	DEPENDS:=+gluon-core +libubus-lua +dnsmasq +libpacketmark
 endef
 
 define Package/gluon-wan-dnsmasq/description

@@ -8,8 +8,8 @@ include ../gluon.mk
 include $(INCLUDE_DIR)/host-build.mk
 
 define Package/gluon-web
-  TITLE:=Minimal Lua web framework derived from LuCI
-  DEPENDS:=+lua-jsonc +luaposix
+	TITLE:=Minimal Lua web framework derived from LuCI
+	DEPENDS:=+lua-jsonc +luaposix
 endef
 
 define lang-config

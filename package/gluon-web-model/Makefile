@@ -5,8 +5,8 @@ PKG_NAME:=gluon-web-model
 include ../gluon.mk
 
 define Package/gluon-web-model
-  TITLE:=Minimal Lua web framework derived from LuCI (model support)
-  DEPENDS:=+gluon-web
+	TITLE:=Minimal Lua web framework derived from LuCI (model support)
+	DEPENDS:=+gluon-web
 endef
 
 PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY

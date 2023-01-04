@@ -5,8 +5,8 @@ PKG_NAME:=gluon-ebtables-filter-multicast
 include ../gluon.mk
 
 define Package/gluon-ebtables-filter-multicast
-  TITLE:=Ebtables filters for multicast packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+	TITLE:=Ebtables filters for multicast packets
+	DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-filter-multicast/description

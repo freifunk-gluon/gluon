@@ -6,11 +6,11 @@ PKG_VERSION ?= 1
 PKG_BUILD_DEPENDS += luasrcdiet/host
 
 ifneq ($(wildcard ./luasrc/.),)
-  PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
+	PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY
 endif
 
 ifneq ($(wildcard ./src/respondd.c),)
-  PKG_BUILD_DEPENDS += respondd
+	PKG_BUILD_DEPENDS += respondd
 endif
 
 include $(INCLUDE_DIR)/package.mk
@@ -37,8 +37,8 @@ GLUON_I18N_CONFIG := $(foreach lang,$(GLUON_SUPPORTED_LANGS),CONFIG_GLUON_WEB_LA
 GLUON_ENABLED_LANGS := en $(foreach lang,$(GLUON_SUPPORTED_LANGS),$(if $(CONFIG_GLUON_WEB_LANG_$(lang)),$(lang)))
 
 ifneq ($(wildcard ./i18n/.),)
-  PKG_BUILD_DEPENDS += gluon-web/host
-  PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
+	PKG_BUILD_DEPENDS += gluon-web/host
+	PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 endif
 
 
@@ -64,7 +64,7 @@ endef
 define GluonSrcDiet
 	rm -rf $(2)
 	$(CP) $(1) $(2)
-  ifdef CONFIG_GLUON_MINIFY
+	ifdef CONFIG_GLUON_MINIFY
 	# Use cp + rm instead of mv to preserve destination permissions
 	set -e; $(FIND) $(2) -type f | while read src; do \
 		echo "Minifying $$$$src..."; \
@@ -72,7 +72,7 @@ define GluonSrcDiet
 		cp "$$$$src.tmp" "$$$$src"; \
 		rm "$$$$src.tmp"; \
 	done
-  endif
+	endif
 endef
 
 
@@ -110,20 +110,20 @@ endef
 Build/Compile=$(call Gluon/Build/Compile)
 
 define BuildPackageGluon
-  define Package/$(1) :=
-    SECTION:=gluon
-    CATEGORY:=Gluon
-    $$(Package/$(1))
-  endef
+	define Package/$(1) :=
+		SECTION:=gluon
+		CATEGORY:=Gluon
+		$$(Package/$(1))
+	endef
 
-  Package/$(1)/install ?= $$(Gluon/Build/Install)
+	Package/$(1)/install ?= $$(Gluon/Build/Install)
 
-  ifneq ($(wildcard check_site.lua),)
-    define Package/$(1)/postinst
+	ifneq ($(wildcard check_site.lua),)
+		define Package/$(1)/postinst
 #!/bin/sh
 $$(call GluonCheckSite,check_site.lua)
-    endef
-  endif
+		endef
+	endif
 
-  $$(eval $$(call BuildPackage,$(1)))
+	$$(eval $$(call BuildPackage,$(1)))
 endef

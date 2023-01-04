@@ -5,8 +5,8 @@ PKG_NAME:=gluon-status-page
 include ../gluon.mk
 
 define Package/gluon-status-page
-  TITLE:=Status page showing information about the node
-  DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua
+	TITLE:=Status page showing information about the node
+	DEPENDS:=+gluon-web +gluon-neighbour-info +gluon-respondd +uhttpd +sse-multiplex +libiwinfo +libjson-c +libnl-tiny +libubus-lua
 endef
 
 PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY

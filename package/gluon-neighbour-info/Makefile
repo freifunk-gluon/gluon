@@ -5,8 +5,8 @@ PKG_NAME:=gluon-neighbour-info
 include ../gluon.mk
 
 define Package/gluon-neighbour-info
-  TITLE:=neighbour-info
-  DEPENDS:=
+	TITLE:=neighbour-info
+	DEPENDS:=
 endef
 
 define Package/gluon-neighbour-info/description

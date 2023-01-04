@@ -5,13 +5,13 @@ PKG_NAME:=gluon-radv-filterd
 include ../gluon.mk
 
 define Package/gluon-radv-filterd
-  TITLE:=Filter IPv6 router advertisements
-  DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv +libnl-tiny
+	TITLE:=Filter IPv6 router advertisements
+	DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv +libnl-tiny
 endef
 
 MAKE_VARS += \
-        LIBNL_NAME="libnl-tiny" \
-        LIBNL_GENL_NAME="libnl-tiny"
+	LIBNL_NAME="libnl-tiny" \
+	LIBNL_GENL_NAME="libnl-tiny"
 
 define Package/gluon-radv-filterd/install
 	$(Gluon/Build/Install)

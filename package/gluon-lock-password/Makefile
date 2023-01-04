@@ -5,8 +5,8 @@ PKG_NAME:=gluon-lock-password
 include ../gluon.mk
 
 define Package/gluon-lock-password
-  TITLE:=Locks the root account by default
-  DEPENDS:=+gluon-core
+	TITLE:=Locks the root account by default
+	DEPENDS:=+gluon-core
 endef
 
 define Package/gluon-lock-password/description

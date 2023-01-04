@@ -13,7 +13,7 @@ include ../gluon.mk
 PKG_CONFIG_DEPENDS += $(GLUON_I18N_CONFIG)
 
 define Package/gluon-site
-  TITLE:=Site-specific files of Gluon
+	TITLE:=Site-specific files of Gluon
 endef
 
 define Package/gluon-site/config
@@ -46,7 +46,7 @@ endef
 define Build/Compile
 	$(call GenerateJSON,site)
 
-  ifdef CONFIG_GLUON_MULTIDOMAIN
+	ifdef CONFIG_GLUON_MULTIDOMAIN
 	rm -rf $(PKG_BUILD_DIR)/domains
 	mkdir -p $(PKG_BUILD_DIR)/domains
 	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
@@ -71,7 +71,7 @@ define Build/Compile
 			fi; \
 		done
 	)
-  endif
+	endif
 
 	$(call GluonBuildI18N,$(GLUON_SITEDIR)/i18n)
 endef
@@ -80,9 +80,9 @@ define Package/gluon-site/install
 	$(INSTALL_DIR) $(1)/lib/gluon
 
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/site.json $(1)/lib/gluon/
-  ifdef CONFIG_GLUON_MULTIDOMAIN
+	ifdef CONFIG_GLUON_MULTIDOMAIN
 	$(CP) $(PKG_BUILD_DIR)/domains $(1)/lib/gluon/
-  endif
+	endif
 
 	echo '$(call qstrip,$(CONFIG_GLUON_SITE_VERSION))' > $(1)/lib/gluon/site-version
 	echo '$(call qstrip,$(CONFIG_GLUON_RELEASE))' > $(1)/lib/gluon/release

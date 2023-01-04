@@ -5,8 +5,8 @@ PKG_NAME:=gluon-ebtables-limit-arp
 include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
-  TITLE:=Ebtables limiter for ARP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+	TITLE:=Ebtables limiter for ARP packets
+	DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
 endef
 
 define Package/gluon-ebtables-limit-arp/description

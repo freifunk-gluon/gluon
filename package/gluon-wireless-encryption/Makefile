@@ -5,8 +5,8 @@ PKG_NAME:=gluon-wireless-encryption
 include ../gluon.mk
 
 define Package/gluon-wireless-encryption-wpa3
-  DEPENDS:=+hostapd-wolfssl
-  TITLE:=Package for supporting WPA3 encrypted wireless networks
+	DEPENDS:=+hostapd-wolfssl
+	TITLE:=Package for supporting WPA3 encrypted wireless networks
 endef
 
 define Package/gluon-wireless-encryption-wpa3/install

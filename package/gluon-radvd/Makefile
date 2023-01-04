@@ -5,8 +5,8 @@ PKG_NAME:=gluon-radvd
 include ../gluon.mk
 
 define Package/gluon-radvd
-  TITLE:=Advertise an IPv6 prefix from the node
-  DEPENDS:=+gluon-core +uradvd
+	TITLE:=Advertise an IPv6 prefix from the node
+	DEPENDS:=+gluon-core +uradvd
 endef
 
 define Package/gluon-radvd/description

@@ -8,8 +8,8 @@ PKG_NAME:=gluon-setup-mode
 include ../gluon.mk
 
 define Package/gluon-setup-mode
-  TITLE:=Setup mode
-  DEPENDS:=+gluon-core +gluon-lock-password +ubus +dnsmasq
+	TITLE:=Setup mode
+	DEPENDS:=+gluon-core +gluon-lock-password +ubus +dnsmasq
 endef
 
 define Package/gluon-setup-mode/description

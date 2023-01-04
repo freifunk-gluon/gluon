@@ -8,8 +8,8 @@ PKG_NAME:=gluon-config-mode-core
 include ../gluon.mk
 
 define Package/gluon-config-mode-core
-  TITLE:=Configuration wizard for user friendly setup of new mesh nodes
-  DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-config-mode-theme +uhttpd
+	TITLE:=Configuration wizard for user friendly setup of new mesh nodes
+	DEPENDS:=+gluon-setup-mode +gluon-web-model +gluon-config-mode-theme +uhttpd
 endef
 
 define Package/gluon-config-mode-core/install

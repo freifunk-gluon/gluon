@@ -33,10 +33,10 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 define Package/libbatadv
-  SECTION:=libs
-  CATEGORY:=Libraries
-  TITLE:=batman-adv helpers functions
-  DEPENDS:=+libnl-tiny
+	SECTION:=libs
+	CATEGORY:=Libraries
+	TITLE:=batman-adv helpers functions
+	DEPENDS:=+libnl-tiny
 endef
 
 
@@ -44,8 +44,8 @@ TARGET_CFLAGS  += -flto -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -fuse-linker-plugin -Wl,--gc-sections
 
 MAKE_VARS += \
-        LIBNL_NAME="libnl-tiny" \
-        LIBNL_GENL_NAME="libnl-tiny"
+	LIBNL_NAME="libnl-tiny" \
+	LIBNL_GENL_NAME="libnl-tiny"
 
 MAKE_ARGS += \
 	PREFIX=/usr

@@ -8,8 +8,8 @@ PKG_NAME:=gluon-web-network
 include ../gluon.mk
 
 define Package/gluon-web-network
-  TITLE:=gluon-web module for network port configuration
-  DEPENDS:=+gluon-web-admin +gluon-client-bridge
+	TITLE:=gluon-web module for network port configuration
+	DEPENDS:=+gluon-web-admin +gluon-client-bridge
 endef
 
 $(eval $(call BuildPackageGluon,gluon-web-network))

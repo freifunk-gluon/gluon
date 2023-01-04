@@ -2,19 +2,19 @@ CFLAGS += -std=c99 -D_BSD_SOURCE
 CPPFLAGS +=  -D_GNU_SOURCE
 
 ifeq ($(origin PKG_CONFIG), undefined)
-  PKG_CONFIG = pkg-config
-  ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
-    $(error $(PKG_CONFIG) not found)
-  endif
+	PKG_CONFIG = pkg-config
+	ifeq ($(shell which $(PKG_CONFIG) 2>/dev/null),)
+		$(error $(PKG_CONFIG) not found)
+	endif
 endif
 
 ifeq ($(origin LIBNL_CFLAGS) $(origin LIBNL_LDLIBS), undefined undefined)
-  LIBNL_NAME ?= libnl-tiny
-  ifeq ($(shell $(PKG_CONFIG) --modversion $(LIBNL_NAME) 2>/dev/null),)
-    $(error No $(LIBNL_NAME) development libraries found!)
-  endif
-  LIBNL_CFLAGS += $(shell $(PKG_CONFIG) --cflags $(LIBNL_NAME))
-  LIBNL_LDLIBS +=  $(shell $(PKG_CONFIG) --libs $(LIBNL_NAME))
+	LIBNL_NAME ?= libnl-tiny
+	ifeq ($(shell $(PKG_CONFIG) --modversion $(LIBNL_NAME) 2>/dev/null),)
+		$(error No $(LIBNL_NAME) development libraries found!)
+	endif
+	LIBNL_CFLAGS += $(shell $(PKG_CONFIG) --cflags $(LIBNL_NAME))
+	LIBNL_LDLIBS +=  $(shell $(PKG_CONFIG) --libs $(LIBNL_NAME))
 endif
 
 CFLAGS_JSONC = $(shell pkg-config --cflags json-c)

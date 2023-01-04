@@ -8,8 +8,8 @@ PKG_NAME:=gluon-web-autoupdater
 include ../gluon.mk
 
 define Package/gluon-web-autoupdater
-  TITLE:=gluon-web module for gluon-autoupdater
-  DEPENDS:=+gluon-web-admin +gluon-autoupdater
+	TITLE:=gluon-web module for gluon-autoupdater
+	DEPENDS:=+gluon-web-admin +gluon-autoupdater
 endef
 
 $(eval $(call BuildPackageGluon,gluon-web-autoupdater))

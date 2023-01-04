@@ -5,8 +5,8 @@ PKG_NAME:=gluon-config-mode-geo-location-osm
 include ../gluon.mk
 
 define Package/gluon-config-mode-geo-location-osm
-  TITLE:=Set geographic location of a node (map support)
-  DEPENDS:=+gluon-config-mode-geo-location +gluon-web-osm
+	TITLE:=Set geographic location of a node (map support)
+	DEPENDS:=+gluon-config-mode-geo-location +gluon-web-osm
 endef
 
 define Package/gluon-config-mode-geo-location-osm/install

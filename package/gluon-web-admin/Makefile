@@ -8,8 +8,8 @@ PKG_NAME:=gluon-web-admin
 include ../gluon.mk
 
 define Package/gluon-web-admin
-  TITLE:=Web-based simple administration interface for mesh nodes
-  DEPENDS:=+gluon-config-mode-core +pretty-hostname
+	TITLE:=Web-based simple administration interface for mesh nodes
+	DEPENDS:=+gluon-config-mode-core +pretty-hostname
 endef
 
 $(eval $(call BuildPackageGluon,gluon-web-admin))

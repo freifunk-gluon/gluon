@@ -5,8 +5,8 @@ PKG_NAME:=gluon-config-mode-outdoor
 include ../gluon.mk
 
 define Package/gluon-config-mode-outdoor
-  TITLE:=UI for displaying & changing the outdoor mode flag in the wizard
-  DEPENDS:=+gluon-config-mode-core
+	TITLE:=UI for displaying & changing the outdoor mode flag in the wizard
+	DEPENDS:=+gluon-config-mode-core
 endef
 
 $(eval $(call BuildPackageGluon,gluon-config-mode-outdoor))

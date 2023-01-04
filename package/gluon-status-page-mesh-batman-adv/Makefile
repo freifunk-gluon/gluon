@@ -5,8 +5,8 @@ PKG_NAME:=gluon-status-page-mesh-batman-adv
 include ../gluon.mk
 
 define Package/gluon-status-page-mesh-batman-adv
-  TITLE:=Batman-data provider for gluon-status-page
-  DEPENDS:=+gluon-status-page gluon-mesh-batman-adv +libnl-tiny +libbatadv +libjson-c
+	TITLE:=Batman-data provider for gluon-status-page
+	DEPENDS:=+gluon-status-page gluon-mesh-batman-adv +libnl-tiny +libbatadv +libjson-c
 endef
 
 define Package/gluon-status-page-mesh-batman-adv/install

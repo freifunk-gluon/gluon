@@ -8,9 +8,9 @@ PKG_BUILD_DEPENDS += libjson-c
 include ../gluon.mk
 
 define Package/gluon-mesh-babel
-  TITLE:=Babel mesh
-  DEPENDS:=+gluon-core +babeld +gluon-mesh-layer3-common +libiwinfo +libgluonutil +firewall +libjson-c +libnl-tiny +libubus +libubox +libblobmsg-json +libbabelhelper +luabitop
-  PROVIDES:=gluon-mesh-provider
+	TITLE:=Babel mesh
+	DEPENDS:=+gluon-core +babeld +gluon-mesh-layer3-common +libiwinfo +libgluonutil +firewall +libjson-c +libnl-tiny +libubus +libubox +libblobmsg-json +libbabelhelper +luabitop
+	PROVIDES:=gluon-mesh-provider
 endef
 
 define Package/gluon-mesh-babel/install

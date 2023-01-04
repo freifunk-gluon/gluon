@@ -8,8 +8,8 @@ include ../gluon.mk
 include $(INCLUDE_DIR)/cmake.mk
 
 define Package/gluon-core
-  TITLE:=Base files of Gluon
-  DEPENDS:= \
+	TITLE:=Base files of Gluon
+	DEPENDS:= \
 	+gluon-site +libgluonutil +libiwinfo-lua +lua-platform-info +lua-simple-uci +lua-hash +lua-jsonc \
 	+luabitop +luaposix +vxlan +odhcp6c +firewall +pretty-hostname
 endef

@@ -5,9 +5,9 @@ PKG_NAME:=gluon-mesh-batman-adv
 include ../gluon.mk
 
 define Package/gluon-mesh-batman-adv-15
-  PROVIDES:=gluon-mesh-batman-adv
-  TITLE:=Support for batman-adv meshing (compat level 15)
-  DEPENDS+= \
+	PROVIDES:=gluon-mesh-batman-adv
+	TITLE:=Support for batman-adv meshing (compat level 15)
+	DEPENDS+= \
 	+kmod-batman-adv \
 	+gluon-core \
 	+libgluonutil \

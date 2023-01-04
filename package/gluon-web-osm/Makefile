@@ -5,7 +5,7 @@ PKG_NAME:=gluon-web-osm
 include ../gluon.mk
 
 define Package/gluon-web-osm
-  TITLE:=base src for OSM inlay
+	TITLE:=base src for OSM inlay
 endef
 
 PKG_CONFIG_DEPENDS += CONFIG_GLUON_MINIFY

@@ -5,8 +5,8 @@ PKG_NAME:=gluon-ebtables
 include ../gluon.mk
 
 define Package/gluon-ebtables
-  TITLE:=Ebtables support
-  DEPENDS:=+gluon-core +ebtables-tiny \
+	TITLE:=Ebtables support
+	DEPENDS:=+gluon-core +ebtables-tiny \
 	+kmod-ebtables +kmod-ebtables-ipv4 +kmod-ebtables-ipv6
 endef
 
