@@ -5,6 +5,6 @@ local uci = require('simple-uci').cursor()
 local config = 'gluon-node-info'
 
 if not uci:get_first(config, 'system') then
-  uci:section(config, 'system')
-  uci:save(config)
+	uci:section(config, 'system')
+	uci:save(config)
 end
