@@ -37,7 +37,7 @@ static struct json_object * get_autoupdater(void) {
 
 	return ret;
 
- error:
+error:
 	uci_free_context(ctx);
 	return NULL;
 }
