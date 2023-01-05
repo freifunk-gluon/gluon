@@ -48,7 +48,7 @@ static struct json_object * stdout_read(const char *cmd, const char *skip, bool 
 	if (oneword) {
 		for (int i = 0; i < len; i++) {
 			if (isspace(line[i])) {
-				 line[i] = 0;
+				line[i] = 0;
 			}
 		}
 	}
