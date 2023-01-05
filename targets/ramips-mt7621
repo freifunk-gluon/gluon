@@ -59,6 +59,11 @@ device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 	factory = false,
 })
 
+-- Wavlink
+
+device('wavlink-ws-wn572hp3-4g', 'wavlink_ws-wn572hp3-4g', {
+        factory = false,
+})
 
 -- Xiaomi
 
