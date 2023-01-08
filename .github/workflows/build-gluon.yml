@@ -8,8 +8,14 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+
 jobs:
   changed:
+    permissions:
+      contents: read  # for dorny/paths-filter to fetch a list of changed files
+      pull-requests: read  # for dorny/paths-filter to read pull requests
     runs-on: ubuntu-latest
     outputs:
       targets: ${{ steps.filter.outputs.changes }}

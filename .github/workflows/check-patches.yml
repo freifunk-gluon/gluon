@@ -12,6 +12,9 @@ on:
       - 'modules'
       - 'patches/**'
       - '.github/workflows/check-patches.yml'
+permissions:
+  contents: read
+
 jobs:
   check-patches:
     name: Check patches
