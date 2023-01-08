@@ -43,7 +43,7 @@ start_service () {
 	local prefix4="$(lua -e 'prefix4 = require("gluon.site").prefix4() if prefix4 then print(" -p " .. prefix4) end')"
 	local prefix6="$(lua -e 'print(" -p " .. require("gluon.site").prefix6())')"
 	local localip="$(uci get network.loopback.ip6addr | cut -d/ -f1)"
-	local roamingprefix="$(lua -e 'roamingprefix = require("gluon.site").node_client_prefix6() if roamingprefix then print(" -P " .. roamingprefix) end')"
+	local roamingprefix="$(lua -e 'print(" -P " .. require("gluon.l3").node_client_prefix6())')"
 
 	/sbin/sysctl -w net.ipv6.neigh.default.gc_thresh1=2
 	/sbin/sysctl -w net.ipv4.neigh.default.gc_thresh1=2
