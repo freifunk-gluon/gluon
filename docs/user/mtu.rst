@@ -162,7 +162,7 @@ Maximum MTU
 
 Calculation of different derived MTUs based on a maximum WAN MTU of 1436.
 
-Sugestions:
+Suggestions:
 
 - This configuration can be used for fastd and Tunneldigger.
 

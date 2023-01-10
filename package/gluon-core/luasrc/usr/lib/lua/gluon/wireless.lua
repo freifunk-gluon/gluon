@@ -23,7 +23,7 @@ local function find_phy_by_path(path)
 		path_prefix = 'platform/'
 	end
 
-	-- Get all available PHYs of the device and dertermine the one with the lowest index
+	-- Get all available PHYs of the device and determine the one with the lowest index
 	local phy_names = dirent.dir('/sys/devices/' .. path_prefix .. device_path .. '/ieee80211')
 	local device_phy_idxs = {}
 	for _, v in ipairs(phy_names) do

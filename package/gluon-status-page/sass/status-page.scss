@@ -6,7 +6,7 @@
 
 	sass --sourcemap=none -C -t compressed sass/status-page.scss files/lib/gluon/status-page/www/static/status-page.css
 
-	When commiting changes to this file make sure to commit the respective
+	When committing changes to this file make sure to commit the respective
 	changes to the compiled version within the same commit!
 */
 

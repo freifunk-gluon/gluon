@@ -91,7 +91,7 @@ update.sh
 
 getversion.sh
     Used to determine the version numbers of the repositories of Gluon and the
-    site configuraiton, to be included in the built firmware images as
+    site configuration, to be included in the built firmware images as
     */lib/gluon/gluon-version* and */lib/gluon/site-version*.
 
     By default, this uses ``git describe`` to generate a version number based
