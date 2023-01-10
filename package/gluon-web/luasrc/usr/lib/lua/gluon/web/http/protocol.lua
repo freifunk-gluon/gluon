@@ -3,7 +3,7 @@
 -- Licensed to the public under the Apache License 2.0.
 
 -- This class contains several functions useful for http message- and content
--- decoding and to retrive form data from raw http messages.
+-- decoding and to retrieve form data from raw http messages.
 
 local M = {}
 
@@ -98,7 +98,7 @@ function M.urldecode_params(url)
 end
 
 -- Content-Type. Stores all extracted data associated with its parameter name
--- in the params table withing the given message object. Multiple parameter
+-- in the params table within the given message object. Multiple parameter
 -- values are stored as tables, ordinary ones as strings.
 -- If an optional file callback function is given then it is fed with the
 -- file contents chunk by chunk and only the extracted file name is stored

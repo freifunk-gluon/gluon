@@ -7,7 +7,7 @@ Bugfixes
 - LEDs on the ASUS RT-AC51 are now fully functional.
 
 - Netgear EX6150v1 randomly booting into failsafe mode has been fixed.
-  This happened dependant on the state of the mode setting switch.
+  This happened dependent on the state of the mode setting switch.
 
 - Dnsmasq has been patched against multiple security issues in its DNS response validation.
   See the OpenWrt advisory at https://openwrt.org/advisory/2021-01-19-1

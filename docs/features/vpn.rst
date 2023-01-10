@@ -102,7 +102,7 @@ However, the important changes to the fastd config on your Supernode are:
       | This tells fastd to use the l2tp kernel module.
 
     - | Set ``persist interface no;``
-      | This tells fastd to only keep interfaces arround while the connection is active.
+      | This tells fastd to only keep interfaces around while the connection is active.
 
 Note that in ``multitap`` mode, which is required when using L2TP offloading,
 fastd will create one interface per peer on the supernode's. This allows
@@ -114,7 +114,7 @@ There are two main options on how you can handle this:
     -  create ``on up`` and ``on down`` hooks
 
         - to handle interface setup and destruction
-        - preferrably using the async keyword, so hooks are not blocking fastd
+        - preferably using the async keyword, so hooks are not blocking fastd
 
     - use a daemon like systemd-networkd
 
@@ -179,7 +179,7 @@ More information about the wgpeerselector and its algorithm can be found
 `here <https://github.com/freifunk-gluon/packages/blob/master/net/wgpeerselector/README.md>`__.
 
 On the gluon node both VXLAN and the wgpeerselector are well integrated and no
-explicit configuation of those tools is necessary, once the general WireGuard
+explicit configuration of those tools is necessary, once the general WireGuard
 support has been configured.
 
 Attention must by paid to time synchronization. As WireGuard

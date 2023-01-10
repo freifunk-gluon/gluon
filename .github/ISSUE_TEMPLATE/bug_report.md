@@ -6,7 +6,7 @@ label: bug
 
 <!--
 
-Please carefully fill out the questionaire below to help improve the
+Please carefully fill out the questionnaire below to help improve the
 timely triaging of issues. Walk through the questions below and use
 them as an inspiration for what information you can provide.
 

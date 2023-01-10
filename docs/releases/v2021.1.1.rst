@@ -30,7 +30,7 @@ ramips-mt76x8
 Bugfixes
 --------
 
-- Missing bandwith limit settings resulted in a respondd crash for v2021.1.
+- Missing bandwidth limit settings resulted in a respondd crash for v2021.1.
 
 - The Tunneldigger VPN provider was not registered with the Gluon VPN backend, resulting in broken Tunneldigger configurations.
 
