@@ -137,7 +137,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Gluon.tex', 'Gluon Documentation',
-     'Project Gluon', 'manual'),
+    'Project Gluon', 'manual'),
 ]
 
 
@@ -147,7 +147,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'gluon', 'Gluon Documentation',
-     [author], 1)
+    [author], 1)
 ]
 
 
@@ -158,8 +158,8 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'Gluon', 'Gluon Documentation',
-     author, 'Gluon', 'One line description of project.',
-     'Miscellaneous'),
+    author, 'Gluon', 'One line description of project.',
+    'Miscellaneous'),
 ]
 
 
