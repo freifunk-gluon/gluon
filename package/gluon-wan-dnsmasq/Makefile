@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-wan-dnsmasq
   TITLE:=Support for a secondary DNS server using the WAN interface
-  DEPENDS:=+gluon-core +libubus-lua +dnsmasq +libpacketmark
+  DEPENDS:=+gluon-core +libubus-lua +dnsmasq-full +libpacketmark
 endef
 
 define Package/gluon-wan-dnsmasq/description

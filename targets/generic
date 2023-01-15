@@ -42,6 +42,15 @@ try_config('PACKAGE_usbip', false) -- fails to build
 
 try_config('PACKAGE_ATH_DEBUG', true)
 
+try_config('PACKAGE_dnsmasq_full_dhcpv6', false)
+try_config('PACKAGE_dnsmasq_full_auth', false)
+try_config('PACKAGE_dnsmasq_full_ipset', false)
+try_config('PACKAGE_dnsmasq_full_nftset', false)
+try_config('PACKAGE_dnsmasq_full_conntrack', false)
+try_config('PACKAGE_dnsmasq_full_noid', false)
+try_config('PACKAGE_dnsmasq_full_broken_rtc', false)
+try_config('PACKAGE_dnsmasq_full_rtc', false)
+
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
 config('KERNEL_PROC_STRIPPED', true)
@@ -81,6 +90,7 @@ config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 
 packages {
 	'-ca-bundle',
+	'-dnsmasq',
 	'-kmod-ipt-offload',
 	'-kmod-nft-offload',
 	'-libustream-wolfssl',
