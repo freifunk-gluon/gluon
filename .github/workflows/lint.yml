@@ -40,7 +40,7 @@ jobs:
         run: sudo apt install curl tar
       - name: Install editorconfig-checker
         env:
-          VERSION: 2.6.0
+          VERSION: 2.7.0
           OS: linux
           ARCH: amd64
         run: |
