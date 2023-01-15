@@ -34,8 +34,8 @@ static struct json_object * get_wifi_neighbours(const char *ifname) {
 
 		char mac[18];
 		snprintf(mac, sizeof(mac), "%02x:%02x:%02x:%02x:%02x:%02x",
-			 entry->mac[0], entry->mac[1], entry->mac[2],
-			 entry->mac[3], entry->mac[4], entry->mac[5]);
+				entry->mac[0], entry->mac[1], entry->mac[2],
+				entry->mac[3], entry->mac[4], entry->mac[5]);
 
 		json_object_object_add(neighbours, mac, obj);
 	}

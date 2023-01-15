@@ -61,7 +61,7 @@ void resize_recvbuffer(char **recvbuffer, size_t *recvbuffer_len, size_t recvlen
 }
 
 ssize_t recvtimeout(int socket, char **recvbuffer, size_t *recvbuffer_len,
-		    const struct timeval *timeout) {
+		const struct timeval *timeout) {
 	struct timeval now, timeout_left;
 	ssize_t recvlen;
 
@@ -84,8 +84,8 @@ ssize_t recvtimeout(int socket, char **recvbuffer, size_t *recvbuffer_len,
 }
 
 int request(const int sock, char **recvbuffer, size_t *recvbuffer_len,
-	    const struct sockaddr_in6 *client_addr, const char *request,
-	    const char *sse, double timeout, unsigned int max_count) {
+		const struct sockaddr_in6 *client_addr, const char *request,
+		const char *sse, double timeout, unsigned int max_count) {
 	ssize_t ret;
 	unsigned int count = 0;
 
@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
 
 	do {
 		ret = request(sock, &recvbuffer, &recvbuffer_len, &client_addr,
-			      request_string, sse, timeout, max_count);
+				request_string, sse, timeout, max_count);
 	} while(loop);
 
 	if (sse)

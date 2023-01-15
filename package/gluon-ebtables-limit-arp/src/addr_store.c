@@ -10,7 +10,7 @@
 #include "lookup3.h"
 
 static struct addr_list *addr_node_alloc(void *addr,
-					 struct addr_store *store)
+		struct addr_store *store)
 {
 	struct addr_list *node;
 	size_t addr_len = store->addr_len;
@@ -27,8 +27,8 @@ static struct addr_list *addr_node_alloc(void *addr,
 }
 
 static struct addr_list *addr_list_search(void *addr,
-					  size_t addr_len,
-					  struct addr_list *list)
+		size_t addr_len,
+		struct addr_list *list)
 {
 	struct addr_list *node = list;
 	struct addr_list *ret = NULL;
@@ -73,7 +73,7 @@ int addr_store_add(void *addr, struct addr_store *store)
 {
 	struct addr_list **bucket = addr_store_get_bucket(addr, store);
 	struct addr_list *node = addr_list_search(addr, store->addr_len,
-						  *bucket);
+			*bucket);
 
 	if (node) {
 		node->tic = clock;
@@ -91,9 +91,9 @@ int addr_store_add(void *addr, struct addr_store *store)
 }
 
 int addr_store_init(size_t addr_len,
-		    void (*destructor)(struct addr_list *),
-		    char *(*ntoa)(void *),
-		    struct addr_store *store)
+		void (*destructor)(struct addr_list *),
+		char *(*ntoa)(void *),
+		struct addr_store *store)
 {
 	int i;
 

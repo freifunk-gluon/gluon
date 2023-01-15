@@ -79,10 +79,8 @@ struct batadv_nlquery_opts {
  *
  * Return: Return true when a attribute is missing, false otherwise
  */
-static inline bool
-batadv_genl_missing_attrs(struct nlattr *attrs[],
-			  const enum batadv_nl_attrs mandatory[], size_t num)
-{
+static inline bool batadv_genl_missing_attrs(struct nlattr *attrs[],
+		const enum batadv_nl_attrs mandatory[], size_t num) {
 	size_t i;
 
 	for (i = 0; i < num; i++) {
@@ -96,7 +94,7 @@ batadv_genl_missing_attrs(struct nlattr *attrs[],
 extern struct nla_policy batadv_genl_policy[];
 
 int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
-		      nl_recvmsg_msg_cb_t callback, int flags,
-		      struct batadv_nlquery_opts *query_opts);
+		nl_recvmsg_msg_cb_t callback, int flags,
+		struct batadv_nlquery_opts *query_opts);
 
 #endif /* _BATADV_GENL_H_ */
