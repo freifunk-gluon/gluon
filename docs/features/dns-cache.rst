@@ -48,5 +48,4 @@ some browsers would open the searchpage instead.
   }
 
 
-The cache will be initialized during startup.
 Each cache entry will occupy about 90 bytes of RAM.
