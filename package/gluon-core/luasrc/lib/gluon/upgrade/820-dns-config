@@ -12,7 +12,7 @@ uci:set('dhcp', dnsmasq, 'localise_queries', true)
 uci:set('dhcp', dnsmasq, 'localservice', false)
 
 uci:set('dhcp', dnsmasq, 'server', dns.servers)
-uci:delete('dhcp', dnsmasq, 'cachesize')
+uci:set('dhcp', dnsmasq, 'cachesize', dns.cacheentries)
 
 uci:delete('firewall', 'client_dns')
 if dns.servers then

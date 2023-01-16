@@ -88,6 +88,8 @@ New features
 * Add support for making nodes a DNS cache for clients
   (`#1000 <https://github.com/freifunk-gluon/gluon/pull/1000>`_)
 
+  See also: :doc:`../features/dns-cache`
+
 * Add L2TP via tunneldigger as an alternative VPN system
   (`#978 <https://github.com/freifunk-gluon/gluon/pull/978>`_)
 
