@@ -25,6 +25,7 @@ M.site_code = assert(
 	dofile('scripts/site_config.lua')('site.conf').site_code, 'site_code missing in site.conf'
 )
 M.target_packages = {}
+M.target_class_packages = {}
 M.configs = {}
 M.devices = {}
 M.images = {}
@@ -202,6 +203,17 @@ function F.packages(pkgs)
 end
 M.packages = F.packages
 
+function F.class_packages(target, pkgs)
+	if not M.target_class_packages[target] then
+		M.target_class_packages[target] = {}
+	end
+
+	for _, pkg in ipairs(pkgs) do
+		table.insert(M.target_class_packages[target], pkg)
+	end
+end
+M.class_packages = F.class_packages
+
 local function as_table(v)
 	if type(v) == 'table' then
 		return v
@@ -270,12 +282,38 @@ function F.defaults(options)
 	default_options = merge(default_options, options)
 end
 
+local function load_and_assert(...)
+	for _, path in ipairs(arg) do
+		local fd = io.open(path, 'r')
+		if fd ~= nil then
+			fd:close()
+			-- only assert if file exists. this allows trying multiple files.
+			return assert(loadfile(path))
+		end
+	end
+
+	assert(nil)
+end
+
+-- this function allows including target configurations from the first source
+-- that a file is found
+-- targets are loaded in the following order:
+--  - current working directory
+--  - site
+--  - gluon
 function F.include(name)
-	local f = assert(loadfile(env.GLUON_TARGETSDIR .. '/' .. name))
+	local f = load_and_assert('./' .. name, env.GLUON_SITEDIR .. '/' .. name, env.GLUON_TARGETSDIR .. '/' .. name)
 	setfenv(f, funcs)
 	return f()
 end
 
+-- this function allows including target configurations from gluon
+-- can be used to include original targets via site, for example
+function F.include_gluon(name)
+	local f = load_and_assert(env.GLUON_TARGETSDIR .. '/' .. name)
+	setfenv(f, funcs)
+	return f()
+end
 
 function M.check_devices()
 	local device_list = {}
