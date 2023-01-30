@@ -5,9 +5,9 @@ Bugfixes
 --------
 
  * Various build-errors which sporadically occur when building with a large thread-count have been fixed
- 
+
  * Android devices do not lose their IPv6 connectivity after extended idle-time
- 
+
  * The 802.11s mesh network is now using 802.11ax HE-modes when supported by hardware
 
 
