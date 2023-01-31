@@ -1,0 +1,85 @@
+#!/bin/sh
+
+network_setup_mode_log() {
+	# The console is not accessible on most affected devices, so log to the
+	# kernel log buffer, which can be read with dmesg after boot
+	echo "gluon-setup-mode: $*" > /dev/kmsg
+}
+
+# Waits up to 5 seconds for any of the given interfaces to have a link
+network_setup_mode_wait_link() {
+	local iface
+	local i=0
+
+	while :; do
+		for iface in "$@"; do
+			[ "$(cat "/sys/class/net/${iface}/carrier" 2>/dev/null)" = 1 ] && return 0
+		done
+		[ $i -lt 5 ] || return 1
+		sleep 1
+		i=$((i + 1))
+	done
+}
+
+network_setup_mode_should_activate() {
+	local setup_ifnames iface
+	local down_ifnames=''
+	local should_start=1
+
+	setup_ifnames="$(cat /lib/gluon/core/sysconfig/setup_ifname 2>/dev/null)"
+	if [ -z "$setup_ifnames" ]; then
+		network_setup_mode_log "no setup interface found"
+		return 1
+	fi
+
+	# Remember which interfaces were down, to restore their state afterwards
+	for iface in $setup_ifnames; do
+		if [ $(($(cat "/sys/class/net/${iface}/flags" 2>/dev/null || echo 0) & 1)) = 0 ]; then
+			down_ifnames="${down_ifnames} ${iface}"
+		fi
+		ip link set dev "${iface}" up
+	done
+
+	# The request can only be received with a link, and the listening time
+	# should not be spent on link negotiation
+	# shellcheck disable=SC2086 # setup_ifnames can contain multiple interfaces
+	if ! network_setup_mode_wait_link ${setup_ifnames}; then
+		network_setup_mode_log "no link on ${setup_ifnames}, not waiting for setup-mode request"
+	else
+		network_setup_mode_log "waiting for setup-mode request on ${setup_ifnames}"
+
+		# Errors are logged to the kernel log, as the console is usually
+		# not accessible
+		# shellcheck disable=SC2086 # setup_ifnames can contain multiple interfaces
+		if /lib/gluon/setup-mode/wait-network-request ${setup_ifnames} 2>/dev/kmsg; then
+			network_setup_mode_log "setup-mode request received"
+			should_start=0
+		fi
+	fi
+
+	for iface in $down_ifnames; do
+		ip link set dev "${iface}" down
+	done
+
+	return $should_start
+}
+
+network_setup_mode_enable() {
+	local enabled configured
+	enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
+	configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
+
+	if [ "$enabled" = 1 ] || [ "$configured" != 1 ]; then
+		return 0
+	fi
+
+	if network_setup_mode_should_activate; then
+		# Not committed on purpose: 90_setup_mode picks up the pending change
+		# from the uci delta in /tmp, and the setup-mode boot script commits
+		# enabled=0, so setup mode is only active for this boot
+		uci -q set 'gluon-setup-mode.@setup_mode[0].enabled=1'
+	fi
+	return 0
+}
+
+boot_hook_add preinit_main network_setup_mode_enable

@@ -199,6 +199,7 @@ device('zyxel-nwa50ax', 'zyxel_nwa50ax')
 
 device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 	broken = true, -- Missing LED / Reset button
+	packages = {'gluon-network-setup-mode'}, -- No reset button
 })
 
 device('zyxel-wsm20', 'zyxel_wsm20', {
