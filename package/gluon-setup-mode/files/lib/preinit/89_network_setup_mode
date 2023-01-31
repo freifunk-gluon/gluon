@@ -1,0 +1,55 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+device_supports_networked_setup_mode() {
+	local is_networked="$(lua -e 'print(require("gluon.setup-mode").supports_networked_activation())')"
+	
+	if [ "${is_networked}" = "true" ]; then
+		return 0
+	fi
+
+	return 1
+}
+
+should_activate_networked() {
+	local setup_ifnames="$(lua -e 'print(require("gluon.sysconfig").setup_ifname)')"
+	local should_start=1
+
+	if ! device_supports_networked_setup_mode; then
+		return 1
+	fi
+
+	for iface in $setup_ifnames
+	do
+		ip link set dev "${iface}" up
+	done
+
+	# shellcheck disable=SC2086
+	if /lib/gluon/setup-mode/wait-network-request ${setup_ifnames}; then
+		should_start=0
+	fi
+
+	for iface in $setup_ifnames
+	do
+		ip link set dev "${iface}" down
+	done
+
+	return $should_start
+}
+
+network_setup_mode_enable() {
+	local enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
+	local configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
+
+	if [ "$enabled" = 1 ] || [ "$configured" != 1 ]; then
+		return 0
+	fi
+
+	if should_activate_networked; then
+		uci -q set 'gluon-setup-mode.@setup_mode[0].enabled=1'
+	fi
+	return 0
+}
+
+boot_hook_add preinit_main network_setup_mode_enable
