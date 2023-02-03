@@ -429,6 +429,23 @@ function Element:__init__(template, kv, ...)
 	self.error = false
 end
 
+function Element:parse(http)
+	if not self.datatype then
+		self.state = M.FORM_VALID
+		return
+	end
+
+	return AbstractValue:parse(http)
+end
+
+function Element:validate()
+	if not self.datatype then
+		return true
+	end
+
+	AbstractValue:validate()
+end
+
 local Section = class(Node)
 M.Section = Section
 
