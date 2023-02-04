@@ -22,6 +22,27 @@ If you have access to the console of the node, there is the
 ``gluon-enter-setup-mode`` command, which reboots a node into Config Mode.
 
 
+Network-Activated Config Mode
+-----------------------------
+
+Some models lack a physical button for activating Config Mode. In this case,
+Gluon supports Network-Activated Config Mode. A Linux-utility for activation
+can be built by invoking ``make tools``.
+
+To enter Config Mode on a device supporting this method, start the
+``enter-network-config-mode`` application in the ``tools`` subdirectory. Start
+this tool with the name of the network-interface connected to the target
+device as argument. Connect to the LAN-Port (or WAN port if the device has
+only a signle interface) and power-cycle the device.
+
+Make sure your computer and the target device are directly connected without
+an intermediate switch.
+
+This feature is supported for the following list of devices
+
+* ZyXEL NWA55AXE
+
+
 Port Configuration
 ------------------
 
