@@ -51,8 +51,8 @@ exec_all() {
 
 start() {
 	(
-		export EBTABLES_RULE='"ebtables-tiny -t " .. table .. " -A " .. command'
-		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. "  -N " .. name .. " -P " .. policy'
+		export EBTABLES_RULE='"ebtables -t " .. table .. " -A " .. command'
+		export EBTABLES_CHAIN='"ebtables -t " .. table .. "  -N " .. name .. " -P " .. policy'
 
 		# Contains /var/lib/ebtables/lock for '--concurrent'
 		[ ! -d "/var/lib/ebtables" ] && \
@@ -68,8 +68,8 @@ start() {
 
 stop() {
 	(
-		export EBTABLES_RULE='"ebtables-tiny -t " ..	table .. " -D " .. command'
-		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. " -X " .. name'
+		export EBTABLES_RULE='"ebtables -t " ..	table .. " -D " .. command'
+		export EBTABLES_CHAIN='"ebtables -t " .. table .. " -X " .. name'
 
 		if [ -z "$1" ]; then
 			exec_all '-r'

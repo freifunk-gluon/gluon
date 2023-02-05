@@ -1,0 +1,1 @@
+oifname "mesh-vpn*" tcp flags & (syn|rst) == syn counter tcp option maxseg size set rt mtu

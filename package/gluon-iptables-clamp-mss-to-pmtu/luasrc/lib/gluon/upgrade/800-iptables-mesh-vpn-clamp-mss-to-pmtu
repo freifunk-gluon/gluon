@@ -2,9 +2,10 @@
 
 local uci = require('simple-uci').cursor()
 uci:section('firewall', 'include', 'vpn_clamp_mss', {
-	family = 'ipv6',
-	type = 'restore',
-	path = '/lib/gluon/mesh-vpn/iptables-mss.rules'
+	type = 'nftables',
+	position = 'chain-prepend',
+	chain = 'mangle_forward',
+	path = '/lib/gluon/mesh-vpn/nftables-mss.rules',
 })
 
 uci:save('firewall')

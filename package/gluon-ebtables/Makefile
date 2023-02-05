@@ -6,8 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-ebtables
   TITLE:=Ebtables support
-  DEPENDS:=+gluon-core +ebtables-tiny \
-	+kmod-ebtables +kmod-ebtables-ipv4 +kmod-ebtables-ipv6
+  DEPENDS:=+gluon-core +ebtables-nft
 endef
 
 define Package/gluon-ebtables/description
