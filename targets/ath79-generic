@@ -1,3 +1,7 @@
+-- modify kernel builds slightly to work around a boot hang on various device
+-- based on the QCA9563 SoC - especially the Unifi AC-* devices
+config('KERNEL_AIO', true)
+
 -- enforce mainline ath10k kmod/firmware over openwrt default ath10k-ct usage
 -- ath10k-ct is unstable/broken with 11s meshing, works only wave2 chipsets
 
