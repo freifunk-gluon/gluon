@@ -455,6 +455,11 @@ sunxi-cortexa7
 * LeMaker
 
   - Banana Pi M1
+  
+* Sinovoip
+
+  - Banana Pi M2 Ultra
+  - Banana Pi M2 Berry
 
 x86-generic
 -----------
