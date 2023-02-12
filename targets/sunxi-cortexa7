@@ -16,6 +16,6 @@ device('lamobo-r1', 'lamobo_lamobo-r1', {
 	broken = true, -- AP+11s not working
 })
 
-device('sinovoip-bananapi-m2-ultra', 'sinovoip_bananapi-m2-ultra')
+device('banana-pi-m2-ultra', 'sinovoip_bananapi-m2-ultra')
 
 device('banana-pi-m2-berry', 'sinovoip_bananapi-m2-berry')
