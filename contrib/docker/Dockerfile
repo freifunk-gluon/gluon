@@ -29,8 +29,5 @@ RUN mkdir /tmp/ec &&\
     mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
 
-RUN useradd -d /gluon gluon
-USER gluon
-
 VOLUME /gluon
 WORKDIR /gluon
