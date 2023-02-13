@@ -12,7 +12,7 @@ TAG="gluon:${BRANCH:-latest}"
 if [ "$(command -v podman)" ]
 then
 	podman build -t "${TAG}" contrib/docker
-	podman run -it --rm --userns=keep-id --volume="$(pwd):/gluon" "${TAG}"
+	podman run -it --rm --userns=keep-id:uid=1000,gid=1000 --volume="$(pwd):/gluon" "${TAG}"
 elif [ "$(command -v docker)" ]
 then
 	docker build -t "${TAG}" contrib/docker
