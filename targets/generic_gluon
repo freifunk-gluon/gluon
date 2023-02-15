@@ -1,0 +1,84 @@
+assert(env.GLUON_LANGS)
+
+
+config('GLUON_SITEDIR', env.GLUON_SITEDIR)
+config('GLUON_VERSION', env.GLUON_VERSION)
+config('GLUON_SITE_VERSION', env.GLUON_SITE_VERSION)
+config('GLUON_RELEASE', env.GLUON_RELEASE)
+
+try_config('GLUON_AUTOUPDATER_BRANCH', env.GLUON_AUTOUPDATER_BRANCH)
+try_config('GLUON_AUTOUPDATER_ENABLED', istrue(env.GLUON_AUTOUPDATER_ENABLED))
+
+for lang in string.gmatch(env.GLUON_LANGS, '%S+') do
+	try_config('GLUON_WEB_LANG_' .. lang, true)
+end
+
+-- Disable non-default feeds in distfeeds.conf
+config('FEED_gluon_base', false)
+
+
+config('TARGET_ROOTFS_INITRAMFS', false)
+
+config('DEVEL', true)
+config('ALL_NONSHARED', true)
+
+try_config('PACKAGE_usbip', false) -- fails to build
+
+try_config('PACKAGE_ATH_DEBUG', true)
+
+try_config('PACKAGE_dnsmasq_full_dhcpv6', false)
+try_config('PACKAGE_dnsmasq_full_auth', false)
+try_config('PACKAGE_dnsmasq_full_ipset', false)
+try_config('PACKAGE_dnsmasq_full_nftset', false)
+try_config('PACKAGE_dnsmasq_full_conntrack', false)
+try_config('PACKAGE_dnsmasq_full_noid', false)
+try_config('PACKAGE_dnsmasq_full_broken_rtc', false)
+try_config('PACKAGE_dnsmasq_full_rtc', false)
+
+try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
+
+config('KERNEL_PROC_STRIPPED', true)
+config('KERNEL_AIO', false)
+config('KERNEL_IO_URING', false)
+config('KERNEL_FHANDLE', false)
+config('KERNEL_FANOTIFY', false)
+config('KERNEL_CGROUPS', false)
+config('KERNEL_IP_MROUTE', false)
+config('KERNEL_IPV6_MROUTE', false)
+config('KERNEL_IPV6_SEG6_LWTUNNEL', false)
+config('SECCOMP', false)
+config('KERNEL_SECCOMP', false)
+-- kmod-mt7915e pulls in CONFIG_KERNEL_RELAY
+-- use try_config, so enabling the package is still possible
+try_config('PACKAGE_kmod-mt7915e', false)
+
+config('COLLECT_KERNEL_DEBUG', true)
+
+config('TARGET_MULTI_PROFILE', true)
+config('TARGET_PER_DEVICE_ROOTFS', true)
+
+config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
+
+config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
+
+
+config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
+
+packages {
+	'-ca-bundle',
+	'-dnsmasq',
+	'-kmod-ipt-offload',
+	'-kmod-nft-offload',
+	'-libustream-wolfssl',
+	'-libwolfssl',
+	'-nftables',
+	'-odhcpd-ipv6only',
+	'-ppp',
+	'-ppp-mod-pppoe',
+	'-wpad-mini',
+	'-wpad-basic',
+	'-wpad-basic-wolfssl',
+	'-firewall4',
+	'gluon-core',
+	'ip6tables-zz-legacy',
+}

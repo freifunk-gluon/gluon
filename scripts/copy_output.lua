@@ -35,7 +35,7 @@ lib.include(target)
 
 local function image_source(image)
 	return string.format(
-		'openwrt/bin/targets/%s/openwrt-%s-%s%s%s',
+		'openwrt/bin/targets/%s/' .. (env.GLUON_PREFIX or 'openwrt') .. '-%s-%s%s%s',
 		bindir, openwrt_target, image.name, image.in_suffix, image.extension)
 end
 

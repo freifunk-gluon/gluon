@@ -27,6 +27,10 @@ config GLUON_VERSION
 config GLUON_MINIFY
 	bool "Minify Gluon scripts"
 	default y
+
+config GLUON_BASE
+	bool "Exclude everything except the very most basic"
+	default n
 endef
 
 define Package/gluon-core/conffiles
@@ -38,6 +42,10 @@ define Package/gluon-core/install
 
 	$(INSTALL_DIR) $(1)/lib/gluon
 	echo '$(call qstrip,$(CONFIG_GLUON_VERSION))' > $(1)/lib/gluon/gluon-version
+
+ifdef CONFIG_GLUON_BASE
+	find $(1)/lib/gluon/upgrade/ -type f -and ! -name "998-commit" -and ! -name "005-set-domain" -and ! -name "010-primary-mac" -and ! -name "030-system" -and ! -name "120-ntp-servers"　-and ! -name "150-poe-passthrough" -and ! -name "300-firewall-rules" -and ! -name "820-dns-config" -and ! -name "999-version" -delete
+endif
 endef
 
 $(eval $(call BuildPackageGluon,gluon-core))
