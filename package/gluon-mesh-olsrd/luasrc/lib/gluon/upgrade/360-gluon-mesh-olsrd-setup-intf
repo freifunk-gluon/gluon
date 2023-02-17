@@ -4,6 +4,8 @@ local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
 local util = require 'gluon.util'
 local wireless = require 'gluon.wireless'
+local l3 = require 'gluon.l3'
+
 local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
 local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
 local client_interfaces = util.get_role_interfaces(uci, 'client')
@@ -51,7 +53,6 @@ if pcall(function() require 'gluon.mesh-vpn' end) then
 	end
 end
 
-table.insert(intf.wired_mesh, 'loopback')
 
 local has_uplink_mesh = false
 local has_other_mesh = false
@@ -73,14 +74,15 @@ if has_other_mesh then
 end
 
 uci:delete_all('olsrd2', 'interface')
+uci:delete_all('olsrd2', 'lan_import')
 
 if site.mesh.olsrd.v2.enable(true) then
 	os.execute('/etc/init.d/olsrd2 enable')
 
 	local addrs = { }
-	local lan = { }
+	local lan = nil
+	local orig = { }
 	local cfg = site.mesh.olsrd.v2
-	local config = uci:get_first("olsrd2", "olsrv2")
 
 	-- set global config
 	local olsr2Config = {
@@ -115,11 +117,26 @@ if site.mesh.olsrd.v2.enable(true) then
 
 	table.insert(addrs, '-127.0.0.1/8')
 	table.insert(addrs, '-::1/128')
+	local addr = uci:get('network', 'loopback', 'ip6addr')
+	table.insert(orig, addr)
 
 	table.insert(addrs, 'default_accept')
+	table.insert(orig, 'default_reject')
 
-	uci:set("olsrd2", config, "originator", addrs)
-	uci:set("olsrd2", config, "lan", lan)
+	local client_ranges_v6 = {}
+	local l3roamd_ranges = {}
+
+	table.insert(client_ranges_v6, site.prefix6())
+	table.insert(client_ranges_v6, 'default_reject')
+
+	table.insert(l3roamd_ranges, l3.node_client_prefix6())
+	table.insert(l3roamd_ranges, 'default_reject')
+
+	uci:delete_all('olsrd2', 'olsrv2')
+	uci:section('olsrd2', 'olsrv2', nil, {
+		originator = orig,
+		lan = lan,
+	})
 
 	if #intf.wired_mesh then
 		uci:section('olsrd2', 'interface', 'wired_mesh', {
@@ -142,10 +159,32 @@ if site.mesh.olsrd.v2.enable(true) then
 		})
 	end
 
+	local loopback_addrs = {
+		uci:get('network', 'loopback', 'ip6addr'),
+		'default_reject',
+	}
+
 	uci:section('olsrd2', 'interface', 'loopback', {
 		ifname = { 'loopback' },
-		bindto = addrs,
+		routeable = loopback_addrs,
+		bindto = loopback_addrs,
 	})
+
+	uci:section('olsrd2', 'lan_import', 'l3roamd_clients_v6', {
+		name = 'l3roamd_clients_v6',
+		matches = client_ranges_v6,
+		prefix_length = 128,
+		protocol = 158, -- l3roamd
+	})
+
+	-- This does not work as olsrv2 rejects any addresses from loopback
+	-- as that is already a mesh interface
+	-- l3roamd works fine without, as wifi disassociation events still notify
+	-- the daemon and remove the routes
+	--uci:section('olsrd2', 'lan_import', 'l3roamd_prefix', {
+	--	name = 'l3roamd_ranges',
+	--	matches = l3roamd_ranges,
+	--})
 
 	uci:section('firewall', 'rule', 'allow_olsr2_mesh', {
 		src = 'mesh',

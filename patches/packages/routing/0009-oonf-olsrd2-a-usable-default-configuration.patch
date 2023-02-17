@@ -1,0 +1,52 @@
+From: Patrick Grimm <patrick@lunatiki.de>
+Date: Sat, 28 Jan 2023 11:28:00 +0100
+Subject: oonf-olsrd2: a usable default configuration
+
+Compile tested: mips_24kc, arm_cortex-a9_vfpv3-d16, i386_pentium4, x86_64, i386_pentium-mmx, mipsel_24kc
+
+Description:
+- OONF_OLSRV2_LAN_IMPORT for integration off other routing protocol (OLSR1, BGP, ...)
+- OONF_OLSRV2_ROUTE_MODIFIER for overwriting the link qualitty of a neighbor, called LinkQuality Multiplicator in OLSR1
+- OONF_GENERIC_REMOTECONTROL one of the goal of olsrv2
+- OONF_OLSRV2_MPR reduce the routing graph when the network gets bigger
+
+Signed-off-by: Patrick Grimm <patrick@lunatiki.de>
+
+diff --git a/oonf-olsrd2/Config.in b/oonf-olsrd2/Config.in
+index b0d7d7cb2767f7b12d089ccd44042e6788dcf9de..e4621e44e5a4ff55fbfe94ff7b4d5b9f27909034 100644
+--- a/oonf-olsrd2/Config.in
++++ b/oonf-olsrd2/Config.in
+@@ -12,13 +12,13 @@
+ 		bool "Lan_import plugin enabled"
+ 		help
+ 			The lan_import plugin can read routing tables and automatically export them as locally attached networks in olsrd2.
+-		default n
++		default y
+ 
+ 	config OONF_OLSRV2_ROUTE_MODIFIER
+ 		bool "route_modifier plugin enabled"
+ 		help
+ 			The route_modifier plugin allows you to overwrite aspects of routes (like table/protocol) for certain destinations. 
+-		default n
++		default y
+ 
+ 	config OONF_GENERIC_DLEP_ROUTER
+ 		bool "dlep_router plugin enabled"
+@@ -30,7 +30,7 @@
+ 		bool "remotecontrol plugin enabled"
+ 		help
+ 			The remotecontrol plugin allows you to control configuration and logging over the telnet plugin. Be careful not to open this functionality over the network without securing it.
+-		default n
++		default y
+ 
+ 	config OONF_GENERIC_HTTP
+ 		bool "http plugin enabled"
+@@ -42,7 +42,7 @@
+ 		bool "MPR plugin enabled"
+ 		help
+ 			The MPR plugin reduce the routing graph to limit the overhead of the OLSRv2 protocol
+-		default n
++		default y
+ 
+ 	config OONF_OLSRV2_LAN
+ 		bool "New config option for Locally attached entries"

@@ -1,0 +1,20 @@
+From: Patrick Grimm <patrick@lunatiki.de>
+Date: Sat, 14 Jan 2023 00:09:34 +0100
+Subject: oonf-olsrd2: add git version for compile in
+
+Compile tested: mips_24kc, arm_cortex-a9_vfpv3-d16, i386_pentium4, x86_64, i386_pentium-mmx, mipsel_24kc
+
+Signed-off-by: Patrick Grimm <patrick@lunatiki.de>
+
+diff --git a/oonf-olsrd2/Makefile b/oonf-olsrd2/Makefile
+index fe00dd1bc7969016856d5c3a19241d7750366352..15e5731a1612ae35cdc1d842dc0087cc31d4b290 100644
+--- a/oonf-olsrd2/Makefile
++++ b/oonf-olsrd2/Makefile
+@@ -37,6 +37,7 @@ CMAKE_OPTIONS+=-D CMAKE_BUILD_TYPE:String=$(BUILD_TYPE) \
+                -D UCI:Bool=true \
+                -D OONF_APP_DEFAULT_CFG_HANDLER:String=uci \
+                -D OONF_STATIC_PLUGINS:String="class;clock;duplicate_set;layer2;packet_socket;rfc5444;socket;stream_socket;telnet;timer;viewer;os_clock;os_fd;os_interface;os_routing;os_system;nhdp;olsrv2;ff_dat_metric;neighbor_probing;nl80211_listener;link_config;layer2info;systeminfo;cfg_uciloader;cfg_compact;nhdpinfo;olsrv2info;netjsoninfo;${CMAKE_OPTIONAL_PLUGINS}" \
++               -D OONF_LIB_GIT:String=$(PKG_SOURCE_VERSION) \
+                -D VERSION_SUB_TAG:String=$(PKG_SOURCE_DATE) \
+                -D INSTALL_LIB_DIR:Path=lib/oonf \
+                -D INSTALL_INCLUDE_DIR:Path=include/oonf \

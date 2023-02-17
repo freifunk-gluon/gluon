@@ -12,7 +12,8 @@ define Package/gluon-mesh-olsrd
 		@IPV6 \
 		+oonf-olsrd2 \
 		+firewall \
-		+gluon-mesh-layer3-common
+		+gluon-mesh-layer3-common \
+		+gluon-l3roamd
 	PROVIDES:=gluon-mesh-provider
 endef
 

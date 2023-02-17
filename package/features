@@ -47,7 +47,7 @@ when(_'status-page' and _'mesh-batman-adv-15', {
 })
 
 
-when(_'mesh-babel', {
+when(_'mesh-babel' or _'mesh-olsrd', {
 	'gluon-radvd',
 })
 

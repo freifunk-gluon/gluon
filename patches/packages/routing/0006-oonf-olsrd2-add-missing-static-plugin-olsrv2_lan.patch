@@ -1,0 +1,40 @@
+From: Patrick Grimm <patrick@lunatiki.de>
+Date: Sun, 8 Jan 2023 18:14:36 +0100
+Subject: oonf-olsrd2: add missing static plugin olsrv2_lan
+
+Signed-off-by: Patrick Grimm <patrick@lunatiki.de>
+
+diff --git a/oonf-olsrd2/Config.in b/oonf-olsrd2/Config.in
+index 1cc037aff3ebc9a2a1ea2d2c94857d62b8b28006..b0d7d7cb2767f7b12d089ccd44042e6788dcf9de 100644
+--- a/oonf-olsrd2/Config.in
++++ b/oonf-olsrd2/Config.in
+@@ -44,4 +44,16 @@
+ 			The MPR plugin reduce the routing graph to limit the overhead of the OLSRv2 protocol
+ 		default n
+ 
++	config OONF_OLSRV2_LAN
++		bool "New config option for Locally attached entries"
++		help
++			Adds the 'lan' section to the config to configure LANs without setting multiple settings in a single key/value pair
++		default y
++
++	config OONF_OLSRV2_OLD_LAN
++		bool "Legacy option for Locally attached entries"
++		help
++			Adds the olsr 'lan' config key in the olsrv2 section
++		default n
++
+ 	endmenu
+diff --git a/oonf-olsrd2/Makefile b/oonf-olsrd2/Makefile
+index 6067003a846340fb0e6221c2473959480b12fb4b..f3d81fcfe61936635280afd997ec487ed0ffa2fc 100644
+--- a/oonf-olsrd2/Makefile
++++ b/oonf-olsrd2/Makefile
+@@ -27,6 +27,8 @@ CMAKE_OPTIONAL_PLUGINS:= $(subst $(SPACE),;,$(strip \
+         $(if $(filter y,$(CONFIG_OONF_GENERIC_REMOTECONTROL)),remotecontrol,) \
+         $(if $(filter y,$(CONFIG_OONF_OLSRV2_MPR)),mpr,) \
+         $(if $(filter y,$(CONFIG_OONF_GENERIC_HTTP)),http,) \
++        $(if $(filter y,$(CONFIG_OONF_OLSRV2_LAN)),olsrv2_lan,) \
++        $(if $(filter y,$(CONFIG_OONF_OLSRV2_OLD_LAN)),olsrv2_old_lan,) \
+     ))
+ 
+ BUILD_TYPE:= $(if $(filter y,$(CONFIG_DEBUG)),Debug,Release)
