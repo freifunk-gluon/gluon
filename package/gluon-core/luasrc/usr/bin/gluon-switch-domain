@@ -16,7 +16,7 @@ end
 local setup_mode = unistd.access('/var/gluon/setup-mode') == 0
 
 if #arg ~= 1 then
-	io.stderr:write('Usage: gluon-switch-domain [--no-reboot] <domain>\n')
+	io.stderr:write('Usage: gluon-switch-domain [--no-reboot] <domain>\n use: uci show gluon.core to view your actual domain')
 	os.exit(1)
 end
 local domain = arg[1]
