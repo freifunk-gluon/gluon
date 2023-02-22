@@ -355,6 +355,7 @@ ramips-mt7621
 
 * Cudy
 
+  - WR1300 (v1)
   - WR2100
 
 * D-Link
