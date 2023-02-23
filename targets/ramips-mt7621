@@ -65,6 +65,7 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	},
 })
 
+
 -- TP-Link
 
 device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
@@ -75,17 +76,20 @@ device('tp-link-re500-v1', 'tplink_re500-v1')
 
 device('tp-link-re650-v1', 'tplink_re650-v1')
 
+
 -- Ubiquiti
 
 device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 	factory = false,
 })
 
+
 -- Wavlink
 
 device('wavlink-ws-wn572hp3-4g', 'wavlink_ws-wn572hp3-4g', {
 	factory = false,
 })
+
 
 -- Xiaomi
 
@@ -100,6 +104,7 @@ device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 	factory = false,
 })
+
 
 -- ZBT
 
