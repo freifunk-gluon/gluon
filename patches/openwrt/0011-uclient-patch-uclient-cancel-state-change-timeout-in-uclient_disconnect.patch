@@ -1,0 +1,51 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Fri, 24 Feb 2023 22:42:02 +0100
+Subject: uclient: patch: "uclient: cancel state change timeout in uclient_disconnect()"
+
+Fixes a use-after-free seen in the autoupdater when opening a TCP
+connection times out (resulting in a segfault in certain conditions).
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/libs/uclient/patches/0001-uclient-cancel-state-change-timeout-in-uclient_disco.patch b/package/libs/uclient/patches/0001-uclient-cancel-state-change-timeout-in-uclient_disco.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3a1277df99676ae97e17eb2be8358d2f4796c99c
+--- /dev/null
++++ b/package/libs/uclient/patches/0001-uclient-cancel-state-change-timeout-in-uclient_disco.patch
+@@ -0,0 +1,36 @@
++From 5191625b48c2dd44d5e094d12a12b608d1a6bae5 Mon Sep 17 00:00:00 2001
++Message-Id: <5191625b48c2dd44d5e094d12a12b608d1a6bae5.1677273776.git.mschiffer@universe-factory.net>
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Fri, 24 Feb 2023 22:17:13 +0100
++Subject: [PATCH uclient] uclient: cancel state change timeout in
++ uclient_disconnect()
++
++When the uloop is ended right after the state change timeout has been
++armed, the timeout will never be cancelled, without a way for the
++libuclient user to clean up. When uclient_free() is then called on the
++uclient context while the uloop is still live, the entry in uloop's timeout
++list will be dangling, often resulting in a segfault when new timeouts are
++added or the timeout list is cleaned up in uloop_done().
++
++Fix this by cancelling the timeout in uclient_disconnect().
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ uclient.c | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/uclient.c b/uclient.c
++index a372d4a9dcbf..ce76bcf0e547 100644
++--- a/uclient.c
+++++ b/uclient.c
++@@ -372,6 +372,7 @@ int uclient_read(struct uclient *cl, char *buf, int len)
++ void uclient_disconnect(struct uclient *cl)
++ {
++ 	uloop_timeout_cancel(&cl->connection_timeout);
+++	uloop_timeout_cancel(&cl->timeout);
++ 
++ 	if (!cl->backend->disconnect)
++ 		return;
++-- 
++2.39.2
++
