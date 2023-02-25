@@ -4,6 +4,6 @@ device('tp-link-td-w8968-v3', 'sagem_fast-2704n', {
 	sysupgrade = '-squashfs-cfe', 
 	sysupgrade_ext = '.bin', -- No sysupgrade image available
 
-
+aliases = {'tp-link-td-w8968-v3'},
 	broken = true, -- WiFi chip not supported
 })
