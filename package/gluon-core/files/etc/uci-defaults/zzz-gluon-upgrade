@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Work around an issue with wifi setup timing by waiting a bit
+# while device initialisation is ongoing.
+# https://github.com/freifunk-gluon/gluon/issues/2779
+sleep 3
+
 gluon-reconfigure
 
 exit 0
