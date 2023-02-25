@@ -18,7 +18,13 @@ local ATH10K_PACKAGES_QCA9887 = {
 	'-ath10k-firmware-qca9887-ct',
 }
 
-local ATH10K_PACKAGES_QCA9888 = {}
+local ATH10K_PACKAGES_QCA9888 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9888',
+	'-ath10k-firmware-qca9888-ct',
+}
 
 -- ALFA NETWORK
 
