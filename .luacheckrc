@@ -29,6 +29,7 @@ files["package/**/check_site.lua"] = {
 		"need",
 		"need_alphanumeric_key",
 		"need_array",
+		"need_array_elements_exclusive",
 		"need_array_of",
 		"need_boolean",
 		"need_chanlist",
