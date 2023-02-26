@@ -4,7 +4,7 @@
 -- The QCA9984 on the other hand works fine for 11s meshes on both bands.
 
 local QCA9980_PACKAGES = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca99x0', 'ath10k-firmware-qca99x0-ct'}
-local QCA9984_PACKAGES = {}
+local QCA9984_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9984', '-ath10k-firmware-qca9984-ct'}
 
 
 --
