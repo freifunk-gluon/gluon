@@ -1,13 +1,9 @@
 /*
-	Copyright 2008 Steven Barth <steven@midlink.org>
-	Copyright 2008-2012 Jo-Philipp Wich <jow@openwrt.org>
-	Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
-
-	Licensed under the Apache License, Version 2.0 (the "License");
-	you may not use this file except in compliance with the License.
-	You may obtain a copy of the License at
-
-	http://www.apache.org/licenses/LICENSE-2.0
+	SPDX-License-Identifier: Apache-2.0
+	SPDX-FileCopyrightText: 2008, Steven Barth <steven@midlink.org>
+	SPDX-FileCopyrightText: 2008-2012, Jo-Philipp Wich <jow@openwrt.org>
+	SPDX-FileCopyrightText: 2017, Matthias Schiffer <mschiffer@universe-factory.net>
+	SPDX-FileCopyrightText: 2023, Leonardo Mörlein <me@irrelefant.net>
 */
 
 /*

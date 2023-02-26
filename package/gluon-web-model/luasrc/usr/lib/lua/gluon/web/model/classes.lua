@@ -1,6 +1,7 @@
--- Copyright 2008 Steven Barth <steven@midlink.org>
--- Copyright 2017-2018 Matthias Schiffer <mschiffer@universe-factory.net>
--- Licensed to the public under the Apache License 2.0.
+-- SPDX-License-Identifier: Apache-2.0
+-- SPDX-FileCopyrightText: 2008, Steven Barth <steven@midlink.org>
+-- SPDX-FileCopyrightText: 2017-2018, Matthias Schiffer <mschiffer@universe-factory.net>
+-- SPDX-FileCopyrightText: 2023, Leonardo Mörlein <me@irrelefant.net>
 
 local util = require "gluon.web.util"
 local gluon_util = require "gluon.util"

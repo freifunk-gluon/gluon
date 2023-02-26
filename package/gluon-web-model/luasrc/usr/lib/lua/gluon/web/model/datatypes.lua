@@ -1,6 +1,6 @@
--- Copyright 2010 Jo-Philipp Wich <jow@openwrt.org>
--- Copyright 2017 Matthias Schiffer <mschiffer@universe-factory.net>
--- Licensed to the public under the Apache License 2.0.
+-- SPDX-License-Identifier: Apache-2.0
+-- SPDX-FileCopyrightText: 2010, Jo-Philipp Wich <jow@openwrt.org>
+-- SPDX-FileCopyrightText: 2017, Matthias Schiffer <mschiffer@universe-factory.net>
 
 local M = {}
 
