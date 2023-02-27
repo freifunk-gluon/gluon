@@ -53,16 +53,12 @@ local function is_outdoor()
 end
 
 local function get_channel(radio, config)
-	local channel
-	if wireless.preserve_channels(uci) then
-		-- preserved channel always wins
-		channel = radio.channel
-	elseif radio.band == '5g' and is_outdoor() then
+	if radio.band == '5g' and is_outdoor() then
 		-- actual channel will be picked and probed from chanlist
-		channel = 'auto'
+		return 'auto'
 	end
 
-	return channel or config.channel()
+	return config.channel()
 end
 
 local function get_htmode(radio)
@@ -179,6 +175,20 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 	)
 end
 
+local function set_channels(radio, radio_name, config)
+	if wireless.preserve_channels(uci) then
+		return
+	end
+	local channel = get_channel(radio, config)
+	uci:set('wireless', radio_name, 'channel', channel)
+
+	local chanlist
+	if radio.band == '5g' and is_outdoor() then
+		chanlist = config.outdor_chanlist()
+	end
+	uci:set('wireless', radio_name, 'channels', chanlist)
+end
+
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
 
@@ -194,13 +204,13 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		return
 	end
 
-	local channel = get_channel(radio, config)
 	local htmode = get_htmode(radio)
 	local beacon_interval = config.beacon_interval()
 
 	uci:delete('wireless', radio_name, 'disabled')
 
-	uci:set('wireless', radio_name, 'channel', channel)
+	set_channels(radio, radio_name, config)
+
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
 
@@ -218,13 +228,10 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
 
 		if is_outdoor() then
-			uci:set('wireless', radio_name, 'channels', config.outdoor_chanlist())
-
 			-- enforce outdoor channels by filtering the regdom for outdoor channels
 			uci:set('wireless', radio_name, 'country3', '0x4f')
 			configure_mesh_wireless(radio, index, config, true)
 		else
-			uci:delete('wireless', radio_name, 'channels')
 			uci:delete('wireless', radio_name, 'country3')
 			configure_mesh_wireless(radio, index, config)
 		end
