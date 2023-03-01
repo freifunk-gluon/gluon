@@ -184,7 +184,7 @@ local function set_channels(radio, radio_name, config)
 
 	local chanlist
 	if radio.band == '5g' and is_outdoor() then
-		chanlist = config.outdor_chanlist()
+		chanlist = config.outdoor_chanlist()
 	end
 	uci:set('wireless', radio_name, 'channels', chanlist)
 end
