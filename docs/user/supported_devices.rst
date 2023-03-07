@@ -344,6 +344,10 @@ ramips-mt7621
 
   - DIR-860L (B1)
 
+* GL.iNet
+
+  - GL-MT1300
+
 * NETGEAR
 
   - EX6150 (v1)
