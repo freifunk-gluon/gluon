@@ -82,6 +82,7 @@ end
 function M.is_cellular_device()
 	if M.match('ath79', 'nand', {
 		'zte,mf281',
+		'glinet,gl-e750',
 		'glinet,gl-xe300',
 	}) then
 		return true

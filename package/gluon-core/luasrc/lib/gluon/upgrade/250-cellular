@@ -46,6 +46,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 end
 
 if platform.match('ath79', 'nand', {
+	'glinet,gl-e750',
 	'glinet,gl-xe300',
 }) then
 	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
