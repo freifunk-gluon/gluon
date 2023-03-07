@@ -17,6 +17,13 @@ device('cudy-wr2100', 'cudy_wr2100', {
 device('d-link-dir-860l-b1', 'dlink_dir-860l-b1')
 
 
+-- GL.iNet
+
+device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
+	factory = false,
+})
+
+
 -- Netgear
 
 device('netgear-ex6150', 'netgear_ex6150', {
