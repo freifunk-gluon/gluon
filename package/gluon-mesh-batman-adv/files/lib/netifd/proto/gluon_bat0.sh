@@ -11,6 +11,7 @@ proto_gluon_bat0_init_config() {
 
 	proto_config_add_string 'gw_mode'
 	proto_config_add_boolean 'ap_isolation:bool'
+	proto_config_add_string 'isolation_mark'
 }
 
 lookup_site() {
@@ -42,8 +43,10 @@ proto_gluon_bat0_setup() {
 
 	local gw_mode
 	local ap_isolation
+	local isolation_mark
 	json_get_vars gw_mode
 	json_get_vars ap_isolation
+	json_get_vars isolation_mark
 
 	batctl routing_algo "$routing_algo"
 	batctl interface create
@@ -53,6 +56,7 @@ proto_gluon_bat0_setup() {
 	batctl noflood_mark 0x4/0x4
 	
 	[ -n "$ap_isolation" ] && batctl ap_isolation "$ap_isolation"
+	[ -n "$isolation_mark" ] && batctl isolation_mark "$isolation_mark"
 
 	case "$gw_mode" in
 		server)
