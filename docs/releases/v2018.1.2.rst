@@ -28,7 +28,7 @@ Bugfixes
   As the path to both config mode and status page were changed between versions
   users could be affected by a redirect to a no more valid URL. 
 
-* batman-adv has received two bugfixes, which were `backported <https://github.com/openwrt-routing/packages/commit/7bf62cc8b556b5046f9bbd37687376fe9ea175bb>`_ from v2018.4
+* batman-adv has received two bugfixes, which were `backported <https://github.com/openwrt/routing/commit/7bf62cc8b556b5046f9bbd37687376fe9ea175bb>`_ from v2018.4
 
 Other changes
 ~~~~~~~~~~~~~

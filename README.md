@@ -1,5 +1,5 @@
 [![Build Gluon](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml/badge.svg?branch=master)](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml)
-[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/license/bsd-2-clause/)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/freifunk-gluon/gluon?sort=semver)](https://github.com/freifunk-gluon/gluon/releases/latest)
 
 # Gluon
