@@ -1,0 +1,12 @@
+local isolate = require('gluon.site').mesh.isolate("none")
+
+if isolate == "all" then
+	for _,dev in ipairs({ 'eth0', 'eth1', 'client0', 'client1', 'owe0', 'owe1' }) do
+		rule('ISOLATED -i ' .. dev .. ' -j mark --mark-or 0x10 --mark-target CONTINUE')
+	end
+end
+if isolate == "wireless" then
+	for _,dev in ipairs({ 'client0', 'client1', 'owe0', 'owe1' }) do
+		rule('ISOLATED -i ' .. dev .. ' -j mark --mark-or 0x10 --mark-target CONTINUE')
+	end
+end
