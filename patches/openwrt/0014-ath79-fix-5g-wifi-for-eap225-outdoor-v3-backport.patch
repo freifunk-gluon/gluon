@@ -1,0 +1,16 @@
+From: Sebastian Schaper <openwrt@sebastianschaper.net>
+Date: Thu, 9 Mar 2023 23:24:33 +0100
+Subject: ath79: fix 5g wifi for eap225-outdoor v3 backport
+
+diff --git a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index 712bba76edc86b849bcb9214a9373ec067d66246..5bc4f0a43f0b221b5794e1b1fb95d22027125725 100644
+--- a/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ath79/generic/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -257,6 +257,7 @@ case "$FIRMWARE" in
+ 			/lib/firmware/ath10k/QCA9888/hw2.0/board.bin
+ 		;;
+ 	tplink,eap225-outdoor-v1|\
++	tplink,eap225-outdoor-v3|\
+ 	tplink,eap225-v3|\
+ 	tplink,eap225-wall-v2)
+ 		caldata_extract "art" 0x5000 0x2f20
