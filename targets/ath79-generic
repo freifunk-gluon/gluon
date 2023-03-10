@@ -1,7 +1,3 @@
--- modify kernel builds slightly to work around a boot hang on various device
--- based on the QCA9563 SoC - especially the Unifi AC-* devices
-config('KERNEL_AIO', true)
-
 local ATH10K_PACKAGES_QCA9880 = {
 	'kmod-ath10k',
 	'-kmod-ath10k-ct',
