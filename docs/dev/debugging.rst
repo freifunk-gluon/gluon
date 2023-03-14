@@ -45,7 +45,7 @@ Some more information on how to use this tool can be found at
 Obtaining Stacktraces
 .....................
 
-On many targets stacktraces can be read from the following
+On many targets stack traces can be read from the following
 location after reboot: ::
 
   /sys/kernel/debug/crashlog

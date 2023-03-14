@@ -57,7 +57,7 @@ commits, making `git reflog` the only way to recover them!
 
   make refresh-patches
 
-In order to refresh patches when updating feeds or the OpenWrt base, `make refresh-patches` applies and updates all of their patches without installing feed packages to the OpenWrt buildsystem.
+In order to refresh patches when updating feeds or the OpenWrt base, `make refresh-patches` applies and updates all of their patches without installing feed packages to the OpenWrt build system.
 
 This command speeds up the maintenance of updating OpenWrt and feeds.
 
@@ -77,7 +77,7 @@ apply:
 - use tabs instead of spaces
 - trailing whitespaces must be eliminated
 - files need to end with a final newline
-- newlines need to have unix line endings (lf)
+- newlines need to have Unix line endings (lf)
 
 To that end we provide a ``.editorconfig`` configuration, which is supported by most
 of the editors out there.
