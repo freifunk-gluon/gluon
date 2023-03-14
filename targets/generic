@@ -105,7 +105,7 @@ packages {
 	'-ppp-mod-pppoe',
 	'-wpad-mini',
 	'-wpad-basic',
-	'-wpad-basic-wolfssl',
+	'-wpad-basic-mbedtls',
 	'-firewall4',
 	'gluon-core',
 	'ip6tables-zz-legacy',
