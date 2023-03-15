@@ -4,6 +4,19 @@ local uci = require('simple-uci').cursor()
 
 local sysconfig = require 'gluon.sysconfig'
 local util = require 'gluon.util'
+local json = require 'jsonc'
+
+local function get_network_mac(name)
+	local board_data = json.load('/etc/board.json')
+	local network_data = (board_data or {}).network
+
+	if network_data == nil then
+		return nil
+	end
+
+	local ifdata = network_data[name] or {}
+	return ifdata.macaddr
+end
 
 local wan = uci:get_all('network_gluon-old', 'wan') or {}
 local wan6 = uci:get_all('network_gluon-old', 'wan6') or {}
@@ -27,6 +40,7 @@ uci:section('network', 'interface', 'wan', {
 	ipaddr = wan.ipaddr,
 	netmask = wan.netmask,
 	gateway = wan.gateway,
+	macaddr = get_network_mac('wan'),
 	ifname = util.get_role_interfaces(uci, 'uplink'),
 	type = 'bridge',
 	igmp_snooping = true,
