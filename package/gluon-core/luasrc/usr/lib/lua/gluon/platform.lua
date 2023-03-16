@@ -74,6 +74,7 @@ end
 function M.is_cellular_device()
 	if M.match('ath79', 'nand', {
 		'zte,mf281',
+		'glinet,gl-xe300',
 	}) then
 		return true
 	elseif M.match('ipq40xx', 'generic', {
