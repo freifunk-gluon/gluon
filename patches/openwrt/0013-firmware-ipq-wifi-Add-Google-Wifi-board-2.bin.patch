@@ -1,0 +1,154 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 22 Feb 2022 00:00:29 -0800
+Subject: firmware/ipq-wifi: Add Google Wifi board-2.bin
+
+From a manufacturer's image (version R89-13729.57.27), with appopriate
+',variant=' appended to the board names:
+
+  $ .../qca-swiss-army-knife/tools/scripts/ath10k/ath10k-bdencoder \
+        -i ./board-google_wifi.qca4019
+  FileSize: 48596
+  FileCRC32: 3966df5d
+  FileMD5: d54161b0fb9e93691c4272649c37535a
+  BoardNames[0]: 'bus=ahb,bmi-chip-id=0,bmi-board-id=16,variant=GO_GALE'
+  BoardLength[0]: 12064
+  BoardCRC32[0]: e117f336
+  BoardMD5[0]: ea35e78c88a8571201da8b75edc9b881
+  BoardNames[1]: 'bus=ahb,bmi-chip-id=0,bmi-board-id=21,variant=GO_GALE'
+  BoardLength[1]: 12064
+  BoardCRC32[1]: 6c751ec9
+  BoardMD5[1]: 44cbc4ca6cb7141ba4249615f7065582
+  BoardNames[2]: 'bus=ahb,bmi-chip-id=0,bmi-board-id=16,variant=GO_BREEZE'
+  BoardLength[2]: 12064
+  BoardCRC32[2]: 24fba117
+  BoardMD5[2]: b4ac055b3ab67d5a6f5607a96af39a1f
+  BoardNames[3]: 'bus=ahb,bmi-chip-id=0,bmi-board-id=21,variant=GO_BREEZE'
+  BoardLength[3]: 12064
+  BoardCRC32[3]: a3e16b2a
+  BoardMD5[3]: 8b26cb285032314247304114b8ac50e7
+
+Naming follows existing Google projects included in upstream board-2.bin
+-- GO(ogle) prefix, an underscore (_), and the project code name, all in
+caps.
+
+Note that I only tested the "gale" model; the "breeze" model is a later
+revision (same marketing name) with very small hardware changes but
+otherwise using the same firmware image.
+
+Submitted upstream here:
+
+  ath10k-firmware: QCA4019: hw1.0: Add Google Wifi BDFs
+  http://lists.infradead.org/pipermail/ath10k/2022-March/013465.html
+  https://lore.kernel.org/ath10k/YjaNGW252Ls%2FyDw8@localhost/
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+(cherry picked from commit 331d78a90f3f11e9abfbc114a601c565899e3764)
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+
+diff --git a/package/firmware/ipq-wifi/Makefile b/package/firmware/ipq-wifi/Makefile
+index be9b547cd052579880dbac38c64a940617ddd932..74d789bdf66c6fda407e060a1c91b0e0965c147c 100644
+--- a/package/firmware/ipq-wifi/Makefile
++++ b/package/firmware/ipq-wifi/Makefile
+@@ -43,6 +43,7 @@ ALLWIFIBOARDS:= \
+ 	glinet_gl-ap1300 \
+ 	glinet_gl-b2200 \
+ 	glinet_gl-s1300 \
++	google_wifi \
+ 	linksys_ea8300 \
+ 	linksys_mr8300-v0 \
+ 	luma_wrtq-329acn \
+@@ -134,6 +135,7 @@ $(eval $(call generate-ipq-wifi-package,ezviz_cs-w3-wd1200g-eup,EZVIZ CS-W3-WD12
+ $(eval $(call generate-ipq-wifi-package,glinet_gl-ap1300,GL.iNet GL-AP1300))
+ $(eval $(call generate-ipq-wifi-package,glinet_gl-b2200,GL.iNet GL-B2200))
+ $(eval $(call generate-ipq-wifi-package,glinet_gl-s1300,GL.iNet GL-S1300))
++$(eval $(call generate-ipq-wifi-package,google_wifi,Google WiFi))
+ $(eval $(call generate-ipq-wifi-package,linksys_ea8300,Linksys EA8300))
+ $(eval $(call generate-ipq-wifi-package,linksys_mr8300-v0,Linksys MR8300))
+ $(eval $(call generate-ipq-wifi-package,luma_wrtq-329acn,Luma WRTQ-329ACN))
+diff --git a/package/firmware/ipq-wifi/board-google_wifi.qca4019 b/package/firmware/ipq-wifi/board-google_wifi.qca4019
+new file mode 100644
+index 0000000000000000000000000000000000000000..1c10731f0d4945c9751ed797a679619ac621b6ac
+GIT binary patch
+literal 48596
+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
+TynQr!fy!OTF~9u~j}rd}l#2!U
+
+literal 0
+HcmV?d00001
+

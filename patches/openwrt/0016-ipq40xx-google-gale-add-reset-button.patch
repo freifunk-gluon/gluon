@@ -1,0 +1,30 @@
+From: Jan-Niklas Burfeind <git@aiyionpri.me>
+Date: Sat, 25 Mar 2023 19:55:41 +0100
+Subject: ipq40xx: google (gale) add reset button
+
+add the external button (GPIO 57) as reset button
+
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+(cherry picked from commit 5c41ab35562fdb814e943ea5eae513e9fa75c81d)
+
+diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+index 9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d..1c294689ea72edf2f238e00d5e7fa0a5239c360a 100644
+--- a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
++++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+@@ -39,6 +39,16 @@
+ 			status = "okay";
+ 		};
+ 	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			gpios = <&tlmm 57 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++	};
+ };
+ 
+ &tlmm {

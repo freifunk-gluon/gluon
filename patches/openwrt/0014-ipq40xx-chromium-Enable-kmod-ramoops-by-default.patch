@@ -1,0 +1,29 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 4 Feb 2023 16:35:35 -0800
+Subject: ipq40xx: chromium: Enable kmod-ramoops by default
+
+Chromium devices (like Google WiFi) have ramoops memory reserved by the
+bootloader. Let's enable the ramoops kernel module by default, so we get
+better crash logging.
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+(updated makefile after missing drop commit)
+
+diff --git a/target/linux/ipq40xx/image/chromium.mk b/target/linux/ipq40xx/image/chromium.mk
+index 2c8457dcfbbb042e6bda08ae946e1219af4c4ffc..e17398929e939ee3590ea34bd76b41aa089b4f89 100644
+--- a/target/linux/ipq40xx/image/chromium.mk
++++ b/target/linux/ipq40xx/image/chromium.mk
+@@ -30,7 +30,11 @@ define Device/google_wifi
+ 	KERNEL_NAME := zImage
+ 	IMAGES += factory.bin
+ 	IMAGE/factory.bin := cros-gpt | append-kernel-part | append-rootfs
++	# Note: Chromium/Depthcharge-based bootloaders insert a reserved-memory
++	# ramoops node into the Device Tree automatically, so we can use
++	# kmod-ramoops.
+ 	DEVICE_PACKAGES := ipq-wifi-google_wifi partx-utils mkf2fs e2fsprogs \
+-			   kmod-fs-ext4 kmod-fs-f2fs kmod-google-firmware
++			   kmod-fs-ext4 kmod-fs-f2fs kmod-google-firmware \
++			   kmod-ramoops
+ endef
+ TARGET_DEVICES += google_wifi

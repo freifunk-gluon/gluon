@@ -1,0 +1,645 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Mon, 25 May 2020 14:50:20 -0700
+Subject: ipq40xx: Add subtarget for Google WiFi (Gale)
+
+Google WiFi (codename: Gale) is an IPQ4019-based AP, with 2 Ethernet
+ports, 2x2 2.4+5GHz WiFi, 512 MB RAM, 4 GB eMMC, and a USB type C port.
+In its stock configuration, it runs a Chromium OS-based system, but you
+wouldn't know it, since you can only manage it via a "cloud" +
+mobile-app system.
+
+The "v2" label is coded into the bootloader, which prefers the
+"google,gale-v2" compatible string. I believe "v1" must have been
+pre-release hardware.
+
+Note: this is *not* the Google Nest WiFi, released in 2019.
+
+I include "factory.bin" support, where we generate a GPT-based disk
+image with 2 partitions -- a kernel partition (using the custom "Chrome
+OS kernel" GUID type) and a root filesystem partition. See below for
+flashing instructions.
+
+Sysupgrade is supported via recent emmc_do_upgrade() helper.
+
+This is a subtarget because it enables different features
+(FEATURES=boot-part rootfs-part) whose configurations don't make sense
+in the "generic" target, and because it builds in a few USB drivers,
+which are necessary for installation (installation is performed by
+booting from USB storage, and so these drivers cannot be built as
+modules, since we need to load modules from USB storage).
+
+Flashing instructions
+=====================
+
+Documented here:
+https://openwrt.org/inbox/toh/google/google_wifi
+
+Note this requires booting from USB storage.
+
+Features
+========
+
+I've tested:
+
+ * Ethernet, both WAN and LAN ports
+ * eMMC
+ * USB-C (hub, power-delivery, peripherals)
+ * LED0 (R/G/B)
+ * WiFi (limited testing)
+ * SPI flash
+ * Serial console: once in developer mode, console can be accessed via
+   the USB-C port with SuzyQable, or other similar "Closed Case
+   Debugging" tools:
+     https://chromium.googlesource.com/chromiumos/third_party/hdctools/+/master/docs/ccd.md#suzyq-suzyqable
+ * Sysupgrade
+
+Not tested:
+
+ * TPM
+
+Known not working:
+
+ * Reboot: this requires some additional TrustZone / SCM
+   configuration to disable Qualcomm's SDI. I have a proposal upstream,
+   and based on IRC chats, this might be acceptable with additional DT
+   logic:
+     [RFC PATCH] firmware: qcom_scm: disable SDI at boot
+     https://lore.kernel.org/linux-arm-msm/20200721080054.2803881-1-computersforpeace@gmail.com/
+ * SMP: enabling secondary CPUs doesn't currently work using the stock
+   bootloader, as the qcom_scm driver assumes newer features than this
+   TrustZone firmware has. I posted notes here:
+     [RFC] qcom_scm: IPQ4019 firmware does not support atomic API?
+     https://lore.kernel.org/linux-arm-msm/20200913201608.GA3162100@bDebian/
+ * There's a single external button, and a few useful internal GPIO
+   switches. I haven't hooked them up.
+
+The first two are fixed with subsequent commits.
+
+Additional notes
+================
+
+Much of the DTS is pulled from the Chrome OS kernel 3.18 branch, which
+the manufacturer image uses.
+
+Note: the manufacturer bootloader knows how to patch in calibration data
+via the wifi{0,1} aliases in the DTB, so while these properties aren't
+present in the DTS, they are available at runtime:
+
+  # ls -l
+/sys/firmware/devicetree/base/soc/wifi@a*/qcom,ath10k-pre-calibration-data
+  -r--r--r--    1 root     root         12064 Jul 15 19:11 /sys/firmware/devicetree/base/soc/wifi@a000000/qcom,ath10k-pre-calibration-data
+  -r--r--r--    1 root     root         12064 Jul 15 19:11 /sys/firmware/devicetree/base/soc/wifi@a800000/qcom,ath10k-pre-calibration-data
+
+Ethernet MAC addresses are similarly patched in via the ethernet{0,1} aliases.
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+(updated 901 - x1pro moved in the process)
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+(cherry picked from commit f1c041e34f9742fcdd0c8c65f69888d3ec580541)
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+(updated 901 - fixed offset, after missing drop commit)
+
+diff --git a/target/linux/ipq40xx/Makefile b/target/linux/ipq40xx/Makefile
+index b704e1b54efea35873661db9cb947412a54c41c7..6051c8294576a64d1ee80247addfedd4937758ff 100644
+--- a/target/linux/ipq40xx/Makefile
++++ b/target/linux/ipq40xx/Makefile
+@@ -6,7 +6,7 @@ BOARDNAME:=Qualcomm Atheros IPQ40XX
+ FEATURES:=squashfs fpu ramdisk nand
+ CPU_TYPE:=cortex-a7
+ CPU_SUBTYPE:=neon-vfpv4
+-SUBTARGETS:=generic mikrotik
++SUBTARGETS:=generic chromium mikrotik
+ 
+ KERNEL_PATCHVER:=5.10
+ KERNEL_TESTING_PATCHVER:=5.10
+diff --git a/target/linux/ipq40xx/base-files/etc/board.d/02_network b/target/linux/ipq40xx/base-files/etc/board.d/02_network
+index a38d35a10dcf30e19e2e29a1a3ea1a6f4539afdb..5072e709421a403c4600cf35e81e8bea407149e8 100644
+--- a/target/linux/ipq40xx/base-files/etc/board.d/02_network
++++ b/target/linux/ipq40xx/base-files/etc/board.d/02_network
+@@ -46,6 +46,7 @@ ipq40xx_setup_interfaces()
+ 	cilab,meshpoint-one|\
+ 	edgecore,ecw5211|\
+ 	edgecore,oap100|\
++	google,wifi|\
+ 	openmesh,a42|\
+ 	openmesh,a62)
+ 		ucidef_set_interfaces_lan_wan "eth1" "eth0"
+diff --git a/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh b/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
+index e9c17e5b01e6fa86b1d8bd070d95c51d822a1997..f02500a86c41ad1df371a0fcbd4c7ab80f033c0e 100644
+--- a/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ipq40xx/base-files/lib/upgrade/platform.sh
+@@ -153,6 +153,13 @@ platform_do_upgrade() {
+ 	compex,wpj419)
+ 		nand_do_upgrade "$1"
+ 		;;
++	google,wifi)
++		export_bootdevice
++		export_partdevice CI_ROOTDEV 0
++		CI_KERNPART="kernel"
++		CI_ROOTPART="rootfs"
++		emmc_do_upgrade "$1"
++		;;
+ 	linksys,ea6350v3 |\
+ 	linksys,ea8300 |\
+ 	linksys,mr8300)
+@@ -202,7 +209,8 @@ platform_do_upgrade() {
+ 
+ platform_copy_config() {
+ 	case "$(board_name)" in
+-	glinet,gl-b2200)
++	glinet,gl-b2200 |\
++	google,wifi)
+ 		emmc_copy_config
+ 		;;
+ 	esac
+diff --git a/target/linux/ipq40xx/chromium/config-default b/target/linux/ipq40xx/chromium/config-default
+new file mode 100644
+index 0000000000000000000000000000000000000000..83a42dfb663b045312eef331294a58d98ff3eb84
+--- /dev/null
++++ b/target/linux/ipq40xx/chromium/config-default
+@@ -0,0 +1,10 @@
++CONFIG_BLK_DEV_SD=y
++CONFIG_BLK_SCSI_REQUEST=y
++CONFIG_SCSI=y
++CONFIG_SG_POOL=y
++CONFIG_USB_DWC3=y
++CONFIG_USB_DWC3_HOST=y
++CONFIG_USB_DWC3_QCOM=y
++CONFIG_USB_STORAGE=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_PLATFORM=y
+diff --git a/target/linux/ipq40xx/chromium/target.mk b/target/linux/ipq40xx/chromium/target.mk
+new file mode 100644
+index 0000000000000000000000000000000000000000..3983a9281a5d20eccdba636c02c9622333d38699
+--- /dev/null
++++ b/target/linux/ipq40xx/chromium/target.mk
+@@ -0,0 +1,2 @@
++BOARDNAME:=Google Chromium
++FEATURES += emmc boot-part rootfs-part
+diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d
+--- /dev/null
++++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+@@ -0,0 +1,413 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2016, 2018 The Linux Foundation. All rights reserved.
++ * Copyright (c) 2016 Google, Inc
++ */
++
++#include "qcom-ipq4019.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/leds/common.h>
++
++/ {
++	model = "Google WiFi (Gale)";
++	compatible = "google,wifi", "google,gale-v2", "qcom,ipq4019";
++
++	chosen {
++		/*
++		 * rootwait: in case we're booting from slow/async USB storage.
++		 */
++		bootargs-append = " rootwait";
++		stdout-path = &blsp1_uart1;
++	};
++
++	memory {
++		device_type = "memory";
++		reg = <0x80000000 0x20000000>; /* 512MB */
++	};
++
++	soc {
++		ess-switch@c000000 {
++			status = "okay";
++		};
++
++		edma@c080000 {
++			status = "okay";
++		};
++
++		ess-psgmii@98000 {
++			status = "okay";
++		};
++	};
++};
++
++&tlmm {
++	fw_pinmux {
++		wp {
++			pins = "gpio53";
++			output-low;
++		};
++		recovery {
++			pins = "gpio57";
++			bias-none;
++		};
++		developer {
++			pins = "gpio41";
++			bias-none;
++		};
++	};
++
++	reset802_15_4 {
++		pins = "gpio60";
++	};
++
++	led_reset {
++		pins = "gpio22";
++		output-high;
++	};
++
++	sys_reset {
++		pins = "gpio19";
++		output-high;
++	};
++
++	rx_active {
++		pins = "gpio43";
++		bias-pull,down;
++	};
++
++	spi_0_pins: spi_0_pinmux {
++		pinmux {
++			function = "blsp_spi0";
++			pins = "gpio13", "gpio14","gpio15";
++		};
++		pinmux_cs {
++			function = "gpio";
++			pins = "gpio12";
++		};
++		pinconf {
++			pins = "gpio13", "gpio14","gpio15";
++			drive-strength = <12>;
++			bias-disable;
++		};
++		pinconf_cs {
++			pins = "gpio12";
++			drive-strength = <2>;
++			bias-disable;
++			output-high;
++		};
++	};
++
++	spi_1_pins: spi_1_pinmux {
++		pinmux {
++			function = "blsp_spi1";
++			pins = "gpio44", "gpio46","gpio47";
++		};
++		pinmux_cs {
++			function = "gpio";
++			pins = "gpio45";
++		};
++		pinconf {
++			pins = "gpio44", "gpio46","gpio47";
++			drive-strength = <12>;
++			bias-disable;
++		};
++		pinconf_cs {
++			pins = "gpio45";
++			drive-strength = <2>;
++			bias-disable;
++			output-high;
++		};
++	};
++
++	serial_0_pins: serial0_pinmux {
++		mux {
++			pins = "gpio16", "gpio17";
++			function = "blsp_uart0";
++			bias-disable;
++		};
++	};
++
++	serial_1_pins: serial1_pinmux {
++		mux {
++			pins = "gpio8", "gpio9", "gpio10", "gpio11";
++			function = "blsp_uart1";
++			bias-disable;
++		};
++	};
++
++	i2c_0_pins: i2c_0_pinmux {
++		mux {
++			pins = "gpio20", "gpio21";
++			function = "blsp_i2c0";
++			drive-open-drain;
++		};
++	};
++
++	i2c_1_pins: i2c_1_pinmux {
++		mux {
++			pins = "gpio34", "gpio35";
++			function = "blsp_i2c1";
++			drive-open-drain;
++		};
++	};
++
++	sd_0_pins: sd_0_pinmux {
++		sd0 {
++			pins = "gpio23", "gpio24", "gpio25", "gpio26", "gpio29", "gpio30", "gpio31", "gpio32";
++			function = "sdio";
++			drive-strength = <10>;
++			bias-pull-up;
++			pull-up-res = <0>;
++		};
++		sdclk {
++			pins = "gpio27";
++			function = "sdio";
++			drive-strength = <2>;
++			bias-pull-up;
++			pull-up-res = <0>;
++		};
++		sdcmd {
++			pins = "gpio28";
++			function = "sdio";
++			drive-strength = <10>;
++			bias-pull-up;
++			pull-up-res = <0>;
++		};
++	};
++
++	mdio_pins: mdio_pinmux {
++		mux_1 {
++			pins = "gpio6";
++			function = "mdio";
++			bias-disable;
++		};
++		mux_2 {
++			pins = "gpio7";
++			function = "mdc";
++			bias-disable;
++		};
++		mux_3 {
++			pins = "gpio40";
++			function = "gpio";
++			bias-disable;
++			output-high;
++		};
++	};
++
++	wifi1_1_pins: wifi2_pinmux {
++		mux {
++			pins = "gpio58";
++			output-low;
++		};
++	};
++};
++
++&blsp_dma {
++	status = "okay";
++};
++
++&blsp1_i2c3 {
++	pinctrl-0 = <&i2c_0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	tpm@20 {
++		compatible = "infineon,slb9645tt";
++		reg = <0x20>;
++		powered-while-suspended;
++	};
++};
++
++&blsp1_i2c4 {
++	pinctrl-0 = <&i2c_1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	led-controller@32 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "national,lp5523";
++		reg = <0x32>;
++		clock-mode = /bits/ 8 <1>;
++
++#if 1
++		led@0 {
++			reg = <0>;
++			chan-name = "LED0_Red";
++			led-cur = /bits/ 8 <0x64>;
++			max-cur = /bits/ 8 <0x78>;
++			color = <LED_COLOR_ID_RED>;
++		};
++
++		led@1 {
++			reg = <1>;
++			chan-name = "LED0_Green";
++			led-cur = /bits/ 8 <0x64>;
++			max-cur = /bits/ 8 <0x78>;
++			color = <LED_COLOR_ID_GREEN>;
++		};
++
++		led@2 {
++			reg = <2>;
++			chan-name = "LED0_Blue";
++			led-cur = /bits/ 8 <0x64>;
++			max-cur = /bits/ 8 <0x78>;
++			color = <LED_COLOR_ID_BLUE>;
++		};
++#else
++		/*
++		 * openwrt isn't ready to handle multi-intensity leds yet
++		 * # echo 255 255 255 > /sys/class/leds/tricolor/multi_intensity
++		 * # echo 255 > /sys/class/leds/tricolor/brightness
++		 */
++		multi-led@2 {
++			reg = <2>;
++			color = <LED_COLOR_ID_RGB>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			led@0 {
++				reg = <0>;
++				chan-name = "tricolor";
++				led-cur = /bits/ 8 <0x64>;
++				max-cur = /bits/ 8 <0x78>;
++				color = <LED_COLOR_ID_RED>;
++			};
++
++			led@1 {
++				reg = <1>;
++				chan-name = "tricolor";
++				led-cur = /bits/ 8 <0x64>;
++				max-cur = /bits/ 8 <0x78>;
++				color = <LED_COLOR_ID_GREEN>;
++			};
++
++			led@2 {
++				reg = <2>;
++				chan-name = "tricolor";
++				led-cur = /bits/ 8 <0x64>;
++				max-cur = /bits/ 8 <0x78>;
++				color = <LED_COLOR_ID_BLUE>;
++			};
++		};
++#endif
++	};
++};
++
++&blsp1_spi1 {
++	pinctrl-0 = <&spi_0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++	cs-gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <24000000>;
++	};
++};
++
++&blsp1_spi2 {
++	pinctrl-0 = <&spi_1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++	cs-gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
++
++	/*
++	 * This "spidev" was included in the manufacturer device tree. I
++	 * suspect it's the (unused; and removed from later HW spins) Zigbee
++	 * radio -- SiliconLabs EM3581 Zigbee? There's no driver or binding for
++	 * this at the moment.
++	 */
++	spidev@0 {
++		compatible = "spidev";
++		reg = <0>;
++		spi-max-frequency = <24000000>;
++	};
++};
++
++&blsp1_uart1 {
++	pinctrl-0 = <&serial_0_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&blsp1_uart2 {
++	pinctrl-0 = <&serial_1_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
++&gmac0 {
++	qcom,phy_mdio_addr = <4>;
++	qcom,poll_required = <1>;
++	qcom,forced_speed = <1000>;
++	qcom,forced_duplex = <1>;
++	vlan_tag = <2 0x20>;
++};
++
++&gmac1 {
++	qcom,phy_mdio_addr = <3>;
++	qcom,forced_duplex = <1>;
++	vlan_tag = <1 0x10>;
++};
++
++&mdio {
++	status = "okay";
++	pinctrl-0 = <&mdio_pins>;
++	pinctrl-names = "default";
++};
++
++&prng {
++	status = "okay";
++};
++
++&sdhci {
++	status = "okay";
++	pinctrl-0 = <&sd_0_pins>;
++	pinctrl-names = "default";
++	clock-frequency = <192000000>;
++	vqmmc-supply = <&vqmmc>;
++	non-removable;
++};
++
++&usb2 {
++	status = "okay";
++};
++
++&usb2_hs_phy {
++	status = "okay";
++};
++
++&usb3 {
++	status = "okay";
++};
++
++&usb3_ss_phy {
++	status = "okay";
++};
++
++&usb3_hs_phy {
++	status = "okay";
++};
++
++&vqmmc {
++	status = "okay";
++};
++
++&watchdog {
++	status = "okay";
++};
++
++&wifi0 {
++	status = "okay";
++	qcom,ath10k-calibration-variant = "GO_GALE";
++};
++
++&wifi1 {
++	status = "okay";
++	pinctrl-0 = <&wifi1_1_pins>;
++	pinctrl-names = "default";
++	qcom,ath10k-calibration-variant = "GO_GALE";
++};
+diff --git a/target/linux/ipq40xx/image/chromium.mk b/target/linux/ipq40xx/image/chromium.mk
+index 15d4c1a077e816056552261d09f64acf89530154..2c8457dcfbbb042e6bda08ae946e1219af4c4ffc 100644
+--- a/target/linux/ipq40xx/image/chromium.mk
++++ b/target/linux/ipq40xx/image/chromium.mk
+@@ -20,3 +20,17 @@ define Build/cros-vboot
+ 		-k $@ -c "root=PARTUUID=%U/PARTNROFF=1" -o $@.new
+ 	@mv $@.new $@
+ endef
++
++define Device/google_wifi
++	DEVICE_VENDOR := Google
++	DEVICE_MODEL := WiFi (Gale)
++	SOC := qcom-ipq4019
++	KERNEL_SUFFIX := -fit-zImage.itb.vboot
++	KERNEL = kernel-bin | fit none $$(DTS_DIR)/$$(DEVICE_DTS).dtb | cros-vboot
++	KERNEL_NAME := zImage
++	IMAGES += factory.bin
++	IMAGE/factory.bin := cros-gpt | append-kernel-part | append-rootfs
++	DEVICE_PACKAGES := ipq-wifi-google_wifi partx-utils mkf2fs e2fsprogs \
++			   kmod-fs-ext4 kmod-fs-f2fs kmod-google-firmware
++endef
++TARGET_DEVICES += google_wifi
+diff --git a/target/linux/ipq40xx/patches-5.10/901-arm-boot-add-dts-files.patch b/target/linux/ipq40xx/patches-5.10/901-arm-boot-add-dts-files.patch
+index c51586a2329cd658321359cbc93817c5392fee7b..c30bc011d7deb1fd5af49cc89344d9ce10f75ffe 100644
+--- a/target/linux/ipq40xx/patches-5.10/901-arm-boot-add-dts-files.patch
++++ b/target/linux/ipq40xx/patches-5.10/901-arm-boot-add-dts-files.patch
+@@ -10,7 +10,7 @@ Signed-off-by: John Crispin <john@phrozen.org>
+ 
+ --- a/arch/arm/boot/dts/Makefile
+ +++ b/arch/arm/boot/dts/Makefile
+-@@ -904,11 +904,76 @@ dtb-$(CONFIG_ARCH_QCOM) += \
++@@ -904,11 +904,77 @@ dtb-$(CONFIG_ARCH_QCOM) += \
+  	qcom-apq8074-dragonboard.dtb \
+  	qcom-apq8084-ifc6540.dtb \
+  	qcom-apq8084-mtp.dtb \
+@@ -72,10 +72,11 @@ Signed-off-by: John Crispin <john@phrozen.org>
+ +	qcom-ipq4019-rtl30vw.dtb \
+ +	qcom-ipq4019-srr60.dtb \
+ +	qcom-ipq4019-srs60.dtb \
+-+	qcom-ipq4019-x1pro.dtb \
+ +	qcom-ipq4019-u4019-32m.dtb \
+++	qcom-ipq4019-wifi.dtb \
+ +	qcom-ipq4019-wpj419.dtb \
+ +	qcom-ipq4019-wtr-m2133hp.dtb \
+++	qcom-ipq4019-x1pro.dtb \
+ +	qcom-ipq4028-wpj428.dtb \
+ +	qcom-ipq4029-ap-303.dtb \
+ +	qcom-ipq4029-ap-303h.dtb \

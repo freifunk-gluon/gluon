@@ -1,0 +1,5 @@
+-- Google
+
+device('google-wifi-gale', 'google_wifi', {
+	broken = true, -- can only be flashed by opening the device, to enter devmode
+})

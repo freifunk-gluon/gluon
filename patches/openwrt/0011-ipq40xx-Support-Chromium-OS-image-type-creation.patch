@@ -1,0 +1,76 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 13 Jun 2020 20:12:18 -0700
+Subject: ipq40xx: Support Chromium OS image-type creation
+
+See firmware-utils.git commits [1], which implemented the cros-vbutil
+verified-boot payload-packing tool, and extended ptgen for the CrOS
+kernel partition type. With these, it's now possible to package kernel +
+rootfs to make disk images that can boot a Chrome OS-based system (e.g.,
+Chromebooks, or even a few AP models).
+
+Regarding PARTUUID= changes: Chromium bootloaders work well with a
+partition number offset (i.e., relative to the kernel partition), so
+we'll be using a slightly different root UUID line.
+
+NB: I've made this support specific to ip40xx for now, because I only
+plan to support an IPQ4019-based AP that uses a Chromium-based
+bootloader, but this image format can be used for essentially any
+Chromebook, as well as the Google OnHub, a prior Chromium-based AP using
+an IPQ8064 chipset.
+
+[1]
+ptgen: add Chromium OS kernel partition support
+https://git.openwrt.org/?p=project/firmware-utils.git;a=commit;h=6c95945b5de973026dc6f52eb088d0943efa96bb
+
+cros-vbutil: add Chrome OS vboot kernel-signing utility
+https://git.openwrt.org/?p=project/firmware-utils.git;a=commit;h=8e7274e02fdc6f2cb61b415d6e5b2e1c7e977aa1
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+(cherry picked from commit 17b05045bd82f04a8839666ec0fe43a5041d77c7)
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+
+diff --git a/package/base-files/files/lib/upgrade/common.sh b/package/base-files/files/lib/upgrade/common.sh
+index 24ff77a8b3101e0ad1ee0f4b46ff626ecb1ce0f5..5af061f6a43990afea92f8eacd865fe5249d8300 100644
+--- a/package/base-files/files/lib/upgrade/common.sh
++++ b/package/base-files/files/lib/upgrade/common.sh
+@@ -155,9 +155,11 @@ export_bootdevice() {
+ 				fi
+ 			done
+ 		;;
++		PARTUUID=????????-????-????-????-??????????0?/PARTNROFF=1 | \
+ 		PARTUUID=????????-????-????-????-??????????02)
+ 			uuid="${rootpart#PARTUUID=}"
+-			uuid="${uuid%02}00"
++			uuid="${uuid%/PARTNROFF=1}"
++			uuid="${uuid%0?}00"
+ 			for disk in $(find /dev -type b); do
+ 				set -- $(dd if=$disk bs=1 skip=568 count=16 2>/dev/null | hexdump -v -e '8/1 "%02x "" "2/1 "%02x""-"6/1 "%02x"')
+ 				if [ "$4$3$2$1-$6$5-$8$7-$9" = "$uuid" ]; then
+diff --git a/target/linux/ipq40xx/image/chromium.mk b/target/linux/ipq40xx/image/chromium.mk
+new file mode 100644
+index 0000000000000000000000000000000000000000..15d4c1a077e816056552261d09f64acf89530154
+--- /dev/null
++++ b/target/linux/ipq40xx/image/chromium.mk
+@@ -0,0 +1,22 @@
++define Build/cros-gpt
++	cp $@ $@.tmp 2>/dev/null || true
++	ptgen -o $@.tmp -g \
++		-T cros_kernel	-N kernel -p $(CONFIG_TARGET_KERNEL_PARTSIZE)m \
++				-N rootfs -p $(CONFIG_TARGET_ROOTFS_PARTSIZE)m
++	cat $@.tmp >> $@
++	rm $@.tmp
++endef
++
++define Build/append-kernel-part
++	dd if=$(IMAGE_KERNEL) bs=$(CONFIG_TARGET_KERNEL_PARTSIZE)M conv=sync >> $@
++endef
++
++# NB: Chrome OS bootloaders replace the '%U' in command lines with the UUID of
++# the kernel partition it chooses to boot from. This gives a flexible way to
++# consistently build and sign kernels that always use the subsequent
++# (PARTNROFF=1) partition as their rootfs.
++define Build/cros-vboot
++	$(STAGING_DIR_HOST)/bin/cros-vbutil \
++		-k $@ -c "root=PARTUUID=%U/PARTNROFF=1" -o $@.new
++	@mv $@.new $@
++endef

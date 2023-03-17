@@ -1,0 +1,69 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Tue, 21 Jul 2020 00:23:07 -0700
+Subject: ipq40xx: qcom_scm: Disable SDI at boot
+
+See my upstream RFC of this:
+https://lore.kernel.org/linux-arm-msm/20200721080054.2803881-1-computersforpeace@gmail.com/
+
+This fixes warm boot (reboot) for Google WiFi devices using their
+factory bootloader/firmware.
+
+I may resend this upstream eventually.
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+(cherry picked from commit a93ec36630ef4ff5a2195ad613b616bffa50d00d)
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+
+diff --git a/target/linux/ipq40xx/patches-5.10/420-firmware-qcom-scm-disable-SDI.patch b/target/linux/ipq40xx/patches-5.10/420-firmware-qcom-scm-disable-SDI.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..eb474500b1b100423cf96e494f2f52d50ee0aaba
+--- /dev/null
++++ b/target/linux/ipq40xx/patches-5.10/420-firmware-qcom-scm-disable-SDI.patch
+@@ -0,0 +1,47 @@
++--- a/drivers/firmware/qcom_scm.c
+++++ b/drivers/firmware/qcom_scm.c
++@@ -404,6 +404,20 @@ static int __qcom_scm_set_dload_mode(str
++ 	return qcom_scm_call_atomic(__scm->dev, &desc, NULL);
++ }
++ 
+++static int __qcom_scm_disable_sdi(struct device *dev)
+++{
+++	struct qcom_scm_desc desc = {
+++		.svc = QCOM_SCM_SVC_BOOT,
+++		.cmd = QCOM_SCM_BOOT_CONFIG_SDI,
+++		.arginfo = QCOM_SCM_ARGS(2),
+++		.args[0] = 1  /* 1: disable watchdog debug */,
+++		.args[1] = 0  /* 0: disable SDI */,
+++		.owner = ARM_SMCCC_OWNER_SIP,
+++	};
+++
+++	return qcom_scm_call(__scm->dev, &desc, NULL);
+++}
+++
++ static void qcom_scm_set_download_mode(bool enable)
++ {
++ 	bool avail;
++@@ -1256,6 +1270,13 @@ static int qcom_scm_probe(struct platfor
++ 	if (download_mode)
++ 		qcom_scm_set_download_mode(true);
++ 
+++	/*
+++	 * Factory firmware leaves SDI (a debug interface), which prevents
+++	 * clean reboot.
+++	 */
+++	if (of_machine_is_compatible("google,wifi"))
+++		__qcom_scm_disable_sdi(__scm->dev);
+++
++ 	return 0;
++ }
++ 
++--- a/drivers/firmware/qcom_scm.h
+++++ b/drivers/firmware/qcom_scm.h
++@@ -77,6 +77,7 @@ extern int scm_legacy_call(struct device
++ #define QCOM_SCM_SVC_BOOT		0x01
++ #define QCOM_SCM_BOOT_SET_ADDR		0x01
++ #define QCOM_SCM_BOOT_TERMINATE_PC	0x02
+++#define QCOM_SCM_BOOT_CONFIG_SDI	0x09
++ #define QCOM_SCM_BOOT_SET_DLOAD_MODE	0x10
++ #define QCOM_SCM_BOOT_SET_REMOTE_STATE	0x0a
++ #define QCOM_SCM_FLUSH_FLAG_MASK	0x3

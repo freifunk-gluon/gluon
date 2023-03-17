@@ -47,6 +47,15 @@
     "targets/targets.mk",
     "targets/bcm27xx.inc"
   ],
+  "ipq40xx-chromium": [
+    "targets/ipq40xx-chromium",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "ipq40xx-generic": [
     "targets/ipq40xx-generic",
     "modules",
