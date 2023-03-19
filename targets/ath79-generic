@@ -136,7 +136,7 @@ device('d-link-dir825b1', 'dlink_dir-825-b1', {
 
 -- Enterasys
 
-device('enterasys-ws-ap3705', 'enterasys_ws-ap3705i', {
+device('enterasys-ws-ap3705i', 'enterasys_ws-ap3705i', {
 	factory = false,
 })
 
