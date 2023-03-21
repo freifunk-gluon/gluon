@@ -41,10 +41,10 @@ device('aruba-ap-303h', 'aruba_ap-303h', {
 	aliases = {'aruba-instant-on-ap11d'},
 })
 
-device('aruba-ap-365', 'aruba_ap-365', {
-	factory = false,
-	aliases = {'aruba-instant-on-ap17'},
-})
+-- device('aruba-ap-365', 'aruba_ap-365', {
+--	factory = false,
+--	aliases = {'aruba-instant-on-ap17'},
+-- })
 
 
 -- AVM
@@ -79,12 +79,12 @@ device('engenius-ens620ext', 'engenius_ens620ext', {
 
 -- GL.iNet
 
-device('gl.inet-gl-ap1300', 'glinet_gl-ap1300', {
-	factory = '-squashfs-nand-factory',
-	factory_ext = '.ubi',
-	sysupgrade = '-squashfs-nand-sysupgrade',
-	sysupgrade_ext = '.bin',
-})
+-- device('gl.inet-gl-ap1300', 'glinet_gl-ap1300', {
+--	factory = '-squashfs-nand-factory',
+--	factory_ext = '.ubi',
+--	sysupgrade = '-squashfs-nand-sysupgrade',
+--	sysupgrade_ext = '.bin',
+-- })
 
 device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 	factory = false,
@@ -129,11 +129,10 @@ device('plasma-cloud-pa2200', 'plasmacloud_pa2200', {
 
 device('zyxel-nbg6617', 'zyxel_nbg6617')
 
-device('zyxel-wre6606', 'zyxel_wre6606', {
-	packages = ATH10K_PACKAGES_IPQ40XX_SMALLBUFFERS,
-	factory = false,
-	class = 'tiny', -- 128M ath10k + ath10k
-})
+-- device('zyxel-wre6606', 'zyxel_wre6606', {
+--	factory = false,
+--	class = 'tiny', -- 128M ath10k + ath10k
+-- })
 
 
 -- 8devices
