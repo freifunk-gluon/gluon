@@ -14,14 +14,6 @@ local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
 	'ath10k-firmware-qca9888',
 	'-ath10k-firmware-qca9888-ct',
 }
-local ATH10K_PACKAGES_IPQ40XX_SMALLBUFFERS = {
-	'-kmod-ath10k',
-	'kmod-ath10k-smallbuffers',
-	'-kmod-ath10k-ct',
-	'-kmod-ath10k-ct-smallbuffers',
-	'ath10k-firmware-qca4019',
-	'-ath10k-firmware-qca4019-ct',
-}
 
 
 defaults {
@@ -63,17 +55,6 @@ device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
 
 device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
 	factory = false,
-})
-
-
--- EnGenius
-
-device('engenius-ens620ext', 'engenius_ens620ext', {
-	factory = false,
-	extra_images = {
-		{'-squashfs-factory_30', '-factory_fw30', '.bin'},
-		{'-squashfs-factory_35', '-factory_fw35', '.bin'},
-	},
 })
 
 
@@ -145,12 +126,6 @@ device('plasma-cloud-pa2200', 'plasmacloud_pa2200', {
 -- ZyXEL
 
 device('zyxel-nbg6617', 'zyxel_nbg6617')
-
-device('zyxel-wre6606', 'zyxel_wre6606', {
-	packages = ATH10K_PACKAGES_IPQ40XX_SMALLBUFFERS,
-	factory = false,
-	class = 'tiny', -- 128M ath10k + ath10k
-})
 
 
 -- 8devices
