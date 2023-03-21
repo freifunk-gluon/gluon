@@ -483,13 +483,13 @@ device('tp-link-re355-v1', 'tplink_re355-v1', {
 	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
-device('tp-link-re450-v1', 'tplink_re450-v1', {
-	packages = ATH10K_PACKAGES_QCA9880,
-	manifest_aliases = {
-		'tp-link-re450', -- upgrade from OpenWrt 19.07
-	},
-	class = 'tiny', -- Only 6M of usable Firmware space
-})
+-- device('tp-link-re450-v1', 'tplink_re450-v1', {
+--	packages = ATH10K_PACKAGES_QCA9880,
+--	manifest_aliases = {
+--		'tp-link-re450', -- upgrade from OpenWrt 19.07
+--	},
+--	class = 'tiny', -- Only 6M of usable Firmware space
+-- })
 
 device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
 device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
