@@ -23,8 +23,8 @@ using other parts or why the proposed change breaks other parts of the system.
 They might even refuse the idea altogether - after all, they have to sleep well
 after merging the changes, too.
 
-The preferred way to discuss in the IRC channel ([#gluon] on irc.hackint.org)
-or on the [mailing list], however, you can also open a new issue on Github to
+The preferred way to discuss is in the IRC channel ([#gluon] on irc.hackint.org)
+or on the [mailing list], however, you can also open a new issue on GitHub to
 discuss there. We maintain a [list of rejected features] and we'd like to
 kindly ask you to review it first. In general, looking for duplicates may save
 you some time.
