@@ -77,7 +77,7 @@ should always appear before ``null`` in the configuration when both are enabled.
 fastd v22 or newer is needed for the ``null@l2tp`` method.
 
 It is often not necessary to enable L2TP offloading on supernodes for
-performance reasons. Nodes using offloading can communicate with supornodes that
+performance reasons. Nodes using offloading can communicate with supernodes that
 don't use offloading as long as both use the ``null@l2tp`` method.
 
 
@@ -107,7 +107,7 @@ However, the important changes to the fastd config on your Supernode are:
 Note that in ``multitap`` mode, which is required when using L2TP offloading,
 fastd will create one interface per peer on the supernode's. This allows
 offloading the L2TP forwarding into the kernel space. But this also means added
-copmlexity with regards to handling those interfaces.
+complexity with regards to handling those interfaces.
 
 There are two main options on how you can handle this:
 
