@@ -67,7 +67,7 @@
 			iface = lower:sub(pattern:len())
 		end
 
-		return unistd.access('/sys/class/net/' .. iface .. '/wireless') ~= nil
+		return unistd.access('/sys/class/net/' .. iface .. '/phy80211') ~= nil
 	end
 
 	local uconn = ubus.connect()
