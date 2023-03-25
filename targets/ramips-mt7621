@@ -24,6 +24,11 @@ device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
 })
 
 
+-- Mercusys
+
+device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
+
+
 -- Netgear
 
 device('netgear-ex6150', 'netgear_ex6150', {

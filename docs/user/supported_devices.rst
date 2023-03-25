@@ -348,6 +348,10 @@ ramips-mt7621
 
   - GL-MT1300
 
+* Mercusys
+
+  - MR70X (v1)
+
 * NETGEAR
 
   - EX6150 (v1)
