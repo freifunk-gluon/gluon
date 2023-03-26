@@ -4,20 +4,23 @@ Subject: ipq40xx: google (gale) add reset button
 
 add the external button (GPIO 57) as reset button
 
+Co-authored-by: Brian Norris <computersforpeace@gmail.com>
 Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
-(cherry picked from commit 5c41ab35562fdb814e943ea5eae513e9fa75c81d)
+(cherry picked from commit b10a7ce51c36d15c548f2e154c2c3b7016276518)
 
 diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
-index 9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d..1c294689ea72edf2f238e00d5e7fa0a5239c360a 100644
+index 9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d..c48d6a75b391886840d1889ff0d3b091898e4996 100644
 --- a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
 +++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
-@@ -39,6 +39,16 @@
+@@ -39,16 +39,29 @@
  			status = "okay";
  		};
  	};
 +
 +	keys {
 +		compatible = "gpio-keys";
++		pinctrl-0 = <&fw_pinmux>;
++		pinctrl-names = "default";
 +
 +		reset {
 +			label = "reset";
@@ -28,3 +31,15 @@ index 9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d..1c294689ea72edf2f238e00d5e7fa0a5
  };
  
  &tlmm {
+-	fw_pinmux {
++	fw_pinmux: fw_pinmux {
+ 		wp {
+ 			pins = "gpio53";
+ 			output-low;
+ 		};
+ 		recovery {
+ 			pins = "gpio57";
++			function = "gpio";
+ 			bias-none;
+ 		};
+ 		developer {
