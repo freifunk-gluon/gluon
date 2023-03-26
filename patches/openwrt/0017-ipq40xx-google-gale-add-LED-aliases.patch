@@ -1,0 +1,68 @@
+From: Jan-Niklas Burfeind <git@aiyionpri.me>
+Date: Mon, 27 Mar 2023 00:10:17 +0200
+Subject: ipq40xx: google (gale) add LED aliases
+
+this is similar to
+commit 583ac0e11df7 ("mpc85xx: update lp5521 led-controller node for 5.10"
+
+Google uses white for running and red for an issue
+
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+(cherry picked from commit 2ae81ad14b915cd61dfa1931cab5e3ee430e2543)
+
+diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+index c48d6a75b391886840d1889ff0d3b091898e4996..173c6ff8041b8d75edda2e66dcad15f6e2b86ae9 100644
+--- a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
++++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+@@ -13,6 +13,13 @@
+ 	model = "Google WiFi (Gale)";
+ 	compatible = "google,wifi", "google,gale-v2", "qcom,ipq4019";
+ 
++	aliases {
++		led-boot = &led0_blue;
++		led-failsafe = &led0_red;
++		led-running = &led0_blue;
++		led-upgrade = &led0_red;
++	};
++
+ 	chosen {
+ 		/*
+ 		 * rootwait: in case we're booting from slow/async USB storage.
+@@ -245,12 +252,13 @@
+ 		clock-mode = /bits/ 8 <1>;
+ 
+ #if 1
+-		led@0 {
++		led0_red: led@0 {
+ 			reg = <0>;
+ 			chan-name = "LED0_Red";
+ 			led-cur = /bits/ 8 <0x64>;
+ 			max-cur = /bits/ 8 <0x78>;
+ 			color = <LED_COLOR_ID_RED>;
++			function = LED_FUNCTION_FAULT;
+ 		};
+ 
+ 		led@1 {
+@@ -261,12 +269,13 @@
+ 			color = <LED_COLOR_ID_GREEN>;
+ 		};
+ 
+-		led@2 {
++		led0_blue: led@2 {
+ 			reg = <2>;
+ 			chan-name = "LED0_Blue";
+ 			led-cur = /bits/ 8 <0x64>;
+ 			max-cur = /bits/ 8 <0x78>;
+ 			color = <LED_COLOR_ID_BLUE>;
++			function = LED_FUNCTION_POWER;
+ 		};
+ #else
+ 		/*
+@@ -275,6 +284,7 @@
+ 		 * # echo 255 > /sys/class/leds/tricolor/brightness
+ 		 */
+ 		multi-led@2 {
++			function = LED_FUNCTION_POWER;
+ 			reg = <2>;
+ 			color = <LED_COLOR_ID_RGB>;
+ 			#address-cells = <1>;
