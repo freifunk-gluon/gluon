@@ -1,0 +1,21 @@
+From: Jan-Niklas Burfeind <git@aiyionpri.me>
+Date: Mon, 27 Mar 2023 02:30:04 +0200
+Subject: ipq40xx: google (gale) add label-mac-device
+
+use gmac0 as in
+commit a3da858ab030 ("ipq40xx: Convert Google Wifi to DSA, reenable")
+
+Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
+
+diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+index 173c6ff8041b8d75edda2e66dcad15f6e2b86ae9..d65031786329e7c6f5e3033277bc1c82829bf226 100644
+--- a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
++++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
+@@ -14,6 +14,7 @@
+ 	compatible = "google,wifi", "google,gale-v2", "qcom,ipq4019";
+ 
+ 	aliases {
++		label-mac-device = &gmac0;
+ 		led-boot = &led0_blue;
+ 		led-failsafe = &led0_red;
+ 		led-running = &led0_blue;
