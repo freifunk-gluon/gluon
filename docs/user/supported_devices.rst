@@ -254,6 +254,9 @@ lantiq-xrx200
   - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
 
+* TP-Link
+  - TD-W8970 (v1) [#lan_as_wan]_
+
 lantiq-xway
 -----------
 
