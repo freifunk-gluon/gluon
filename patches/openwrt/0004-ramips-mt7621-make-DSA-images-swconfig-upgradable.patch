@@ -3,10 +3,10 @@ Date: Sun, 5 Jun 2022 23:43:38 +0200
 Subject: ramips-mt7621: make DSA images swconfig upgradable
 
 diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
-index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f33966503c 100644
+index 1fb806043460895182159504f48708ae717379cb..e14c61b69a4c7f236ff363569cc9943245f7f901 100644
 --- a/target/linux/ramips/image/mt7621.mk
 +++ b/target/linux/ramips/image/mt7621.mk
-@@ -179,7 +179,6 @@ endef
+@@ -180,7 +180,6 @@ endef
  TARGET_DEVICES += asiarf_ap7621-nv1
  
  define Device/asus_rt-ac57u
@@ -14,7 +14,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    DEVICE_VENDOR := ASUS
    DEVICE_MODEL := RT-AC57U
    DEVICE_ALT0_VENDOR := ASUS
-@@ -1246,7 +1245,6 @@ endef
+@@ -1247,7 +1246,6 @@ endef
  TARGET_DEVICES += mts_wg430223
  
  define Device/netgear_ex6150
@@ -22,7 +22,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := NETGEAR
    DEVICE_MODEL := EX6150
-@@ -1259,7 +1257,6 @@ endef
+@@ -1260,7 +1258,6 @@ endef
  TARGET_DEVICES += netgear_ex6150
  
  define Device/netgear_sercomm_nand
@@ -30,7 +30,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    $(Device/uimage-lzma-loader)
    BLOCKSIZE := 128k
    PAGESIZE := 2048
-@@ -1442,7 +1439,6 @@ endef
+@@ -1443,7 +1440,6 @@ endef
  TARGET_DEVICES += netgear_wax202
  
  define Device/netgear_wndr3700-v5
@@ -38,7 +38,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    $(Device/netgear_sercomm_nor)
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 15232k
-@@ -1779,7 +1775,6 @@ endef
+@@ -1780,7 +1776,6 @@ endef
  TARGET_DEVICES += tplink_tl-wpa8631p-v3
  
  define Device/ubnt_edgerouter_common
@@ -46,7 +46,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    $(Device/uimage-lzma-loader)
    DEVICE_VENDOR := Ubiquiti
    IMAGE_SIZE := 256768k
-@@ -2195,7 +2190,6 @@ endef
+@@ -2196,7 +2191,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg2626
  
  define Device/zbtlink_zbt-wg3526-16m
@@ -54,7 +54,7 @@ index df2b935c886df50badb2cfed64d803e36f995894..70286a5ce17581672467408dc001f4f3
    $(Device/uimage-lzma-loader)
    IMAGE_SIZE := 16064k
    DEVICE_VENDOR := Zbtlink
-@@ -2208,7 +2202,6 @@ endef
+@@ -2209,7 +2203,6 @@ endef
  TARGET_DEVICES += zbtlink_zbt-wg3526-16m
  
  define Device/zbtlink_zbt-wg3526-32m
