@@ -16,7 +16,7 @@ wireless.foreach_radio(uci, function(radio)
 			uci:set('wireless', vif, 'isolate', '1')
 		end
 	end
-	local vif = 'owe_' .. radio_name
+	vif = 'owe_' .. radio_name
 	if uci:get('wireless', vif) then
 		uci:delete('wireless', vif, 'isolate')
 		if isolate == "all" or isolate == "wireless" then
