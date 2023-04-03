@@ -9,14 +9,14 @@ local uci = require('simple-uci').cursor()
 
 wireless.foreach_radio(uci, function(radio)
 	local radio_name = radio['.name']
-	vif = 'client_' .. radio_name
+	local vif = 'client_' .. radio_name
 	if uci:get('wireless', vif) then
 		uci:delete('wireless', vif, 'isolate')
 		if isolate == "all" or isolate == "wireless" then
 			uci:set('wireless', vif, 'isolate', '1')
 		end
 	end
-	vif = 'owe_' .. radio_name
+	local vif = 'owe_' .. radio_name
 	if uci:get('wireless', vif) then
 		uci:delete('wireless', vif, 'isolate')
 		if isolate == "all" or isolate == "wireless" then
