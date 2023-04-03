@@ -127,10 +127,10 @@ Renamed targets
 Status Page
 ~~~~~~~~~~~
 
-- Gateway nexthop information has been added to the statuspage when batman-adv
+- Gateway nexthop information has been added to the status page when batman-adv
   is used. This includes its MAC address and prettyname as well as the interface
   name towards the selected gateway.
-- The site name has been added to the statuspage. If the node is in a multidomain
+- The site name has been added to the status page. If the node is in a multidomain
   setup it will also show the domain name.
 
 DECT button to enter config mode

@@ -10,7 +10,7 @@ USE_PROCD=1
 
 
 delete_interface() {
-        [ "$1" = 'loopback' ] || uci_remove network "$1"
+	[ "$1" = 'loopback' ] || uci_remove network "$1"
 }
 
 prepare_config() {

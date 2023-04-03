@@ -1,9 +1,5 @@
-/*
- * Copyright (c) 2017 Linus Lüssing <linus.luessing@c0d3.blue>
- *
- * SPDX-License-Identifier: GPL-2.0+
- * License-Filename: LICENSE
- */
+// SPDX-FileCopyrightText: 2017 Linus Lüssing <linus.luessing@c0d3.blue>
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -43,8 +39,8 @@ static void ebt_ip_call(char *mod, struct in_addr ip)
 	int ret;
 
 	snprintf(str, sizeof(str),
-		 EBTABLES " %s ARP_LIMIT_DATCHECK -p ARP --arp-ip-dst %s -j mark --mark-or 0x2 --mark-target RETURN",
-		 mod, inet_ntoa(ip));
+			EBTABLES " %s ARP_LIMIT_DATCHECK -p ARP --arp-ip-dst %s -j mark --mark-or 0x2 --mark-target RETURN",
+			mod, inet_ntoa(ip));
 
 	ret = system(str);
 	if (ret)
@@ -66,8 +62,8 @@ static void ebt_mac_limit_call(char *mod, struct mac_addr *mac)
 	int ret;
 
 	snprintf(str, sizeof(str),
-		 EBTABLES " %s ARP_LIMIT_TLCHECK --source %s --limit 6/min --limit-burst 50 -j RETURN",
-		 mod, mac_ntoa(mac));
+			EBTABLES " %s ARP_LIMIT_TLCHECK --source %s --limit 6/min --limit-burst 50 -j RETURN",
+			mod, mac_ntoa(mac));
 
 	ret = system(str);
 	if (ret)
@@ -82,8 +78,8 @@ static void ebt_mac_ret_call(char *mod, struct mac_addr *mac, int add)
 	int ret;
 
 	snprintf(str, sizeof(str),
-		 EBTABLES " %s ARP_LIMIT_TLCHECK %s --source %s -j DROP",
-		 mod, add ? "2" : "", mac_ntoa(mac));
+			EBTABLES " %s ARP_LIMIT_TLCHECK %s --source %s -j DROP",
+			mod, add ? "2" : "", mac_ntoa(mac));
 
 	ret = system(str);
 	if (ret)

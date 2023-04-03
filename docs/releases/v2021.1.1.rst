@@ -30,11 +30,11 @@ ramips-mt76x8
 Bugfixes
 --------
 
-- Missing bandwith limit settings resulted in a respondd crash for v2021.1.
+- Missing bandwidth limit settings resulted in a respondd crash for v2021.1.
 
 - The Tunneldigger VPN provider was not registered with the Gluon VPN backend, resulting in broken Tunneldigger configurations.
 
-- Disabling Radio interfaces in v2021.1 could lead to nullpointer dereferences in the respondd airtime module, as the survey returns no data in this case.
+- Disabling Radio interfaces in v2021.1 could lead to null pointer dereferences in the respondd airtime module, as the survey returns no data in this case.
 
 
 Known issues

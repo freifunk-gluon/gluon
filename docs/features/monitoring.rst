@@ -47,7 +47,7 @@ installed. Please note that at least one alfred daemon is required to run as
 
 .. _alfred-json: https://github.com/ffnord/alfred-json
 
-The following datatypes are used:
+The following data types are used:
 
 * `nodeinfo`: 158
 * `statistics`: 159

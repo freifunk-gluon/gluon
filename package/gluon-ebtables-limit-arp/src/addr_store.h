@@ -1,9 +1,5 @@
-/*
- * Copyright (c) 2017 Linus Lüssing <linus.luessing@c0d3.blue>
- *
- * SPDX-License-Identifier: GPL-2.0+
- * License-Filename: LICENSE
- */
+// SPDX-FileCopyrightText: 2017 Linus Lüssing <linus.luessing@c0d3.blue>
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #ifndef _ADDR_STORE_H_
 #define _ADDR_STORE_H_
@@ -24,9 +20,9 @@ struct addr_store {
 };
 
 int addr_store_init(size_t addr_len,
-		    void (*destructor)(struct addr_list *),
-		    char *(*ntoa)(void *),
-		    struct addr_store *store);
+		void (*destructor)(struct addr_list *),
+		char *(*ntoa)(void *),
+		struct addr_store *store);
 int addr_store_add(void *addr, struct addr_store *store);
 void addr_store_cleanup(struct addr_store *store);
 

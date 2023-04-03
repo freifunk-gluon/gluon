@@ -7,17 +7,42 @@ insert_final_newline = true
 indent_style = tab
 charset = utf-8
 
+[Dockerfile]
+indent_style = space
+indent_size = 4
+
 [/patches/**]
 indent_style = unset
 indent_size = unset
+
+[*.c]
+
+[*.css]
+
+[*.dia]
+indent_style = space
+indent_size = 2
+
+[*.h]
+
+[*.html]
+
+[*.js]
 
 [*{.json,.ecrc}]
 indent_style = space
 indent_size = 2
 
+[*.lua]
+
+[{Makefile,*.mk}]
+indent_style = unset
+
 [*.md]
 indent_style = space
 indent_size = 4
+
+[*.pl]
 
 [*.py]
 indent_style = space
@@ -27,10 +52,16 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
+[*.sh]
+
 [*.yml]
 indent_style = space
 indent_size = 2
 
 [CMakeLists.txt]
+indent_style = space
+indent_size = 2
+
+[{docs,contrib/ci}/*site*/**/*.conf]
 indent_style = space
 indent_size = 2

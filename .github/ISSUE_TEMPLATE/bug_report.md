@@ -6,7 +6,7 @@ label: bug
 
 <!--
 
-Please carefully fill out the questionaire below to help improve the
+Please carefully fill out the questionnaire below to help improve the
 timely triaging of issues. Walk through the questions below and use
 them as an inspiration for what information you can provide.
 
@@ -27,7 +27,7 @@ Thank you for taking the time to report a bug with the Gluon project.
 ### Bug report
 
 **What is the problem?**
-<!-- 
+<!--
 - What is not working as expected?
 - How is it misbehaving?
 - When did the problem first start showing up?
@@ -43,7 +43,7 @@ Thank you for taking the time to report a bug with the Gluon project.
 -->
 
 **Gluon Version:**
-<!-- 
+<!--
 Please provide a usable Git reference before applying custom patches:
 
 By using a Git reference:
@@ -58,9 +58,9 @@ Or the URL to the relevant Gluon commit
 <!--
 Please provide the URL to your site configuration repository and the
 explicit commit used to build the firmware experiencing the problem.
- 
+
 Additionally excerpts of problem-related configuration parts are 
-often helpful. 
+often helpful.
 -->
 
 **Custom patches:**

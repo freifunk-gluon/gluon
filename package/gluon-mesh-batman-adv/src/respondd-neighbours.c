@@ -1,27 +1,5 @@
-/*
-  Copyright (c) 2016-2019, Matthias Schiffer <mschiffer@universe-factory.net>
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-
-    1. Redistributions of source code must retain the above copyright notice,
-       this list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice,
-       this list of conditions and the following disclaimer in the documentation
-       and/or other materials provided with the distribution.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+/* SPDX-FileCopyrightText: 2016-2019, Matthias Schiffer <mschiffer@universe-factory.net> */
+/* SPDX-License-Identifier: BSD-2-Clause */
 
 #include "respondd-common.h"
 
@@ -90,7 +68,7 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 	char mac1[18];
 
 	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
-				   query_opts);
+			query_opts);
 
 	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
@@ -101,11 +79,11 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-		      genlmsg_len(ghdr), batadv_genl_policy))
+				genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
 	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory,
-				      BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
+				BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
 		return NL_OK;
 
 	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);

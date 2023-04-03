@@ -414,7 +414,7 @@ int template_error(lua_State *L, struct template_parser *parser)
 	}
 
 	snprintf(msg, sizeof(msg), "Syntax error in %s:%d: %s",
-			 parser->file ?: "[string]", line + chunkline, err ?: "(unknown error)");
+			parser->file ?: "[string]", line + chunkline, err ?: "(unknown error)");
 
 	lua_pushnil(L);
 	lua_pushinteger(L, line + chunkline);

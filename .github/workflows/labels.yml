@@ -4,8 +4,14 @@ on:
   # only execute base branch actions
   pull_request_target:
 
+permissions:
+  contents: read
+
 jobs:
   labels:
+    permissions:
+      contents: read  # for actions/labeler to determine modified files
+      pull-requests: write  # for actions/labeler to add labels to PRs
     runs-on: ubuntu-latest
     if: github.repository_owner == 'freifunk-gluon'
     steps:

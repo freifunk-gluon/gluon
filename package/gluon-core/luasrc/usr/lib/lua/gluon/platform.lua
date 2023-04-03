@@ -25,6 +25,7 @@ end
 function M.is_outdoor_device()
 	if M.match('ath79', 'generic', {
 		'devolo,dvl1750x',
+		'librerouter,librerouter-v1',
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',
 		'tplink,cpe210-v1',
@@ -61,7 +62,27 @@ function M.is_outdoor_device()
 		return true
 
 	elseif M.match('ramips', 'mt7621', {
+		'wavlink,ws-wn572hp3-4g',
 		'zyxel,nwa55axe',
+	}) then
+		return true
+	end
+
+	return false
+end
+
+function M.is_cellular_device()
+	if M.match('ath79', 'nand', {
+		'zte,mf281',
+		'glinet,gl-xe300',
+	}) then
+		return true
+	elseif M.match('ipq40xx', 'generic', {
+		'glinet,gl-ap1300',
+	}) then
+		return true
+	elseif M.match('ramips', 'mt7621', {
+		'wavlink,ws-wn572hp3-4g',
 	}) then
 		return true
 	end

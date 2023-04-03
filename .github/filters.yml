@@ -56,6 +56,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "ipq40xx-mikrotik": [
+    "targets/ipq40xx-mikrotik",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/mikrotik.inc"
+  ],
   "ipq806x-generic": [
     "targets/ipq806x-generic",
     "modules",
@@ -130,6 +140,15 @@
   ],
   "ramips-mt76x8": [
     "targets/ramips-mt76x8",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "realtek-rtl838x": [
+    "targets/realtek-rtl838x",
     "modules",
     "Makefile",
     "patches/**",

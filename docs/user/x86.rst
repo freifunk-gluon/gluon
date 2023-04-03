@@ -15,7 +15,7 @@ The following targets for x86 images exist:
 
     There are three images:
 
-    * `generic` (compressed "raw" image, can written to a disk directly or booted with qemu)
+    * `generic` (compressed "raw" image, can be written to a disk directly or booted with qemu)
     * `virtualbox` (VDI image)
     * `vmware` (VMDK image)
 

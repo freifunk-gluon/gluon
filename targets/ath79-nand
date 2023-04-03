@@ -23,6 +23,9 @@ device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s-nor', {
 	packages = ATH10K_PACKAGES_QCA9887,
 })
 
+device('gl.inet-gl-xe300', 'glinet_gl-xe300', {
+	factory = false,
+})
 
 -- Netgear
 
@@ -31,6 +34,10 @@ device('netgear-wndr3700-v4', 'netgear_wndr3700-v4', {
 	manifest_aliases = {
 		'netgear-wndr3700v4', -- Upgrade from OpenWrt 19.07
 	},
+})
+
+device('netgear-wndr4300', 'netgear_wndr4300', {
+	factory_ext = '.img',
 })
 
 

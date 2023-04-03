@@ -131,9 +131,9 @@ function M.get_mesh_devices(uconn)
 	local dump = uconn:call("network.interface", "dump", {})
 	local devices = {}
 	for _, interface in ipairs(dump.interface) do
-	    if ( (interface.proto == "gluon_mesh") and interface.up ) then
+		if ( (interface.proto == "gluon_mesh") and interface.up ) then
 			table.insert(devices, interface.device)
-	    end
+		end
 	end
 	return devices
 end

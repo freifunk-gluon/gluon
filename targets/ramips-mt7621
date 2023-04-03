@@ -8,13 +8,25 @@ device('asus-rt-ac57u', 'asus_rt-ac57u', {
 -- Cudy
 
 device('cudy-wr2100', 'cudy_wr2100', {
-        factory = false,
+	factory = false,
 })
 
 
 -- D-Link
 
 device('d-link-dir-860l-b1', 'dlink_dir-860l-b1')
+
+
+-- GL.iNet
+
+device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
+	factory = false,
+})
+
+
+-- Mercusys
+
+device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
 
 
 -- Netgear
@@ -49,6 +61,10 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 
 -- TP-Link
 
+device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
+	broken = true, -- LAN LED not working - review after resolving #2756
+})
+
 device('tp-link-re500-v1', 'tplink_re500-v1')
 
 device('tp-link-re650-v1', 'tplink_re650-v1')
@@ -59,6 +75,11 @@ device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 	factory = false,
 })
 
+-- Wavlink
+
+device('wavlink-ws-wn572hp3-4g', 'wavlink_ws-wn572hp3-4g', {
+	factory = false,
+})
 
 -- Xiaomi
 
@@ -66,10 +87,13 @@ device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
 	factory = false,
 })
 
-device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
+device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 	factory = false,
 })
 
+device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
+	factory = false,
+})
 
 -- ZBT
 

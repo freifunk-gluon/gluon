@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Text::Balanced qw(extract_bracketed extract_delimited extract_tagged);
 
-@ARGV >= 1 || die "Usage: $0 <source direcory>\n";
+@ARGV >= 1 || die "Usage: $0 <source directory>\n";
 
 
 my %stringtable;
@@ -79,7 +79,7 @@ if( open F, "find @ARGV -type f '(' -name '*.html' -o -name '*.lua' ')' |" )
 				{
 					my $stag = quotemeta $1;
 					my $etag = $stag;
-					   $etag =~ s/\[/]/g;
+					$etag =~ s/\[/]/g;
 
 					( $res ) = extract_tagged($code, $stag, $etag);
 

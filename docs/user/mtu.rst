@@ -15,7 +15,7 @@ Consider these key values:
   - and configure `MSS clamping`_ accordingly,
   - and announce your link MTU via Router Advertisements and DHCP
 
-  .. _MSS clamping: https://www.tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
+  .. _MSS clamping: https://tldp.org/HOWTO/Adv-Routing-HOWTO/lartc.cookbook.mtu-mss.html
 
 - Encapsulation: Account for the overhead created by the configured mesh protocol
   encapsulating the payload, which is up to 32 Byte (14 Byte Ethernet + 18 Byte
@@ -34,6 +34,8 @@ Calculate the minimum transport MTU by adding the encapsulation overhead to the
 minimum payload MTU required. This is the lowest recommended value, since going
 lower would cause unnecessary fragmentation for clients which respect the announced
 link MTU.
+
+.. editorconfig-checker-disable
 
 Example: Our network currently uses batman-adv v15, it therefore requires up
 to 32 Bytes of encapsulation overhead on top of the minimal link MTU required for
@@ -72,6 +74,7 @@ Tunneling.::
 
        MTU_HIGH = 1436 Byte - 20 Byte - 8 Byte - 24 Byte - 14 Byte = 1370 Byte
 
+.. editorconfig-checker-enable
 
 Tables for Different VPN Providers
 ----------------------------------
@@ -159,7 +162,7 @@ Maximum MTU
 
 Calculation of different derived MTUs based on a maximum WAN MTU of 1436.
 
-Sugestions:
+Suggestions:
 
 - This configuration can be used for fastd and Tunneldigger.
 

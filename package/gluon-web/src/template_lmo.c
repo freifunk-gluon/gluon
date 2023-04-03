@@ -38,9 +38,9 @@ static inline uint16_t get_le16(const void *data) {
 static inline uint32_t get_be32(const void *data) {
 	const uint8_t *d = data;
 	return (((uint32_t)d[0]) << 24)
-	     | (((uint32_t)d[1]) << 16)
-	     | (((uint32_t)d[2]) << 8)
-	     | d[3];
+		| (((uint32_t)d[1]) << 16)
+		| (((uint32_t)d[2]) << 8)
+		| d[3];
 }
 
 /*

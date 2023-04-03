@@ -49,10 +49,13 @@ node_prefix6
 
     node_prefix6 = 'fdca::ffee:babe:2::/64'
 
-node_client_prefix6
-  The ipv6 prefix from which the client-specific IP-address is calculated that
-  is assigned to each node by l3roamd to allow efficient communication when 
-  roaming. This is exclusively useful when running a routing mesh protocol
+node_client_prefix6 \: optional, deprecated
+  DEPRECATED: Don't specify it anymore, this prefix will then
+  automatically be generated from the domain_seed.
+
+  An IPv6 prefix internally used by the l3roamd protocol, used to allow
+  an efficient handover via unicast when a client roamed.
+  This is exclusively useful when running a routing mesh protocol
   like babel. e.g. ::
 
     node_client_prefix6 = 'fdca::ffee:babe:3::/64'

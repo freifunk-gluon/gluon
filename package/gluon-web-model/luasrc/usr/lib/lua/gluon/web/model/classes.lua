@@ -196,7 +196,6 @@ function Template:__init__(template)
 	self.template = template
 end
 
-
 local AbstractValue = class(Node)
 M.AbstractValue = AbstractValue
 
@@ -411,6 +410,42 @@ function TextValue:__init__(...)
 end
 
 
+local Element = class(AbstractValue)
+M.Element = Element
+
+function Element:__init__(template, kv, ...)
+	AbstractValue.__init__(self, ...)
+
+	self.default   = nil
+	self.size      = nil
+	self.optional  = false
+
+	self.template  = template
+
+	for key, value in pairs(kv) do
+		self[key] = value
+	end
+
+	self.error = false
+end
+
+function Element:parse(http)
+	if not self.datatype then
+		self.state = M.FORM_VALID
+		return
+	end
+
+	return AbstractValue:parse(http)
+end
+
+function Element:validate()
+	if not self.datatype then
+		return true
+	end
+
+	AbstractValue:validate()
+end
+
 local Section = class(Node)
 M.Section = Section
 
@@ -427,6 +462,11 @@ function Section:option(t, ...)
 	return obj
 end
 
+function Section:element(...)
+	local obj  = Element(...)
+	self:append(obj)
+	return obj
+end
 
 local Form = class(Node)
 M.Form = Form

@@ -1,5 +1,6 @@
 local uci = require("simple-uci").cursor()
 local wireless = require 'gluon.wireless'
+local util = require 'gluon.util'
 
 -- where to read the configuration from
 local primary_iface = 'wan_radio0'
@@ -13,8 +14,26 @@ local s = f:section(Section, nil, translate(
 	.. 'at the same time.'
 ))
 
+local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
+local mesh_on_wan = false
+
+for _, iface in ipairs(util.get_role_interfaces(uci, 'mesh')) do
+	if util.contains(uplink_interfaces, iface) then
+		mesh_on_wan = true
+	end
+end
+
 local enabled = s:option(Flag, "enabled", translate("Enabled"))
 enabled.default = uci:get('wireless', primary_iface) and not uci:get_bool('wireless', primary_iface, "disabled")
+
+local warning = s:element('model/warning', {
+	content = translate(
+		'Meshing on WAN interface is enabled. ' ..
+		'This can lead to problems.'
+	),
+	hide = not mesh_on_wan,
+}, 'warning')
+warning:depends(enabled, true)
 
 local ssid = s:option(Value, "ssid", translate("Name (SSID)"))
 ssid:depends(enabled, true)

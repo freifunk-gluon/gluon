@@ -1,7 +1,7 @@
 /*
 	Build using:
 
-	uglifyjs javascript/gluon-web-osm.js -o files/lib/gluon/web/www/static/gluon-web-osm.js -c -m
+	uglifyjs javascript/gluon-web-osm.js -o javascript/gluon-web-osm.min.js -c -m
 */
 
 'use strict';

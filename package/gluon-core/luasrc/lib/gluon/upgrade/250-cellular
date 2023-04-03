@@ -1,0 +1,63 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local platform = require 'gluon.platform'
+
+if not platform.is_cellular_device() then
+	return
+end
+
+local function set_or_delete(package, section, option, val)
+	if val ~= nil and string.len(val) ~= 0 then
+		uci:set(package, section, option, val)
+	else
+		uci:delete(package, section, option)
+	end
+end
+
+local function setup_ncm_qmi(devpath, control_type, delay)
+	local pdptype = uci:get('gluon', 'cellular', 'pdptype')
+
+	local pincode = uci:get('gluon', 'cellular', 'pin')
+	local username = uci:get('gluon', 'cellular', 'username')
+	local password = uci:get('gluon', 'cellular', 'password')
+
+	uci:section('network', 'interface', 'cellular', {
+		proto = control_type,
+		device = devpath,
+		disabled = not uci:get_bool('gluon', 'cellular', 'enabled'),
+		pdptype = pdptype,
+		apn = uci:get('gluon', 'cellular', 'apn'),
+	})
+
+	if pdptype ~= 'IP' then
+		uci:set('network', 'cellular', 'ipv6', 'auto')
+	else
+		uci:delete('network', 'cellular', 'ipv6')
+	end
+
+	set_or_delete('network', 'cellular', 'pincode', pincode)
+	set_or_delete('network', 'cellular', 'username', username)
+	set_or_delete('network', 'cellular', 'password', password)
+	set_or_delete('network', 'cellular', 'delay', delay)
+end
+
+if platform.match('ath79', 'nand', {
+	'glinet,gl-xe300',
+}) then
+	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
+elseif platform.match('ath79', 'nand', {
+	'zte,mf281',
+}) then
+	setup_ncm_qmi('/dev/ttyACM0', 'ncm', 15)
+elseif platform.match('ipq40xx', 'generic', {
+	'glinet,gl-ap1300',
+}) then
+	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
+elseif platform.match('ramips', 'mt7621', {
+	'wavlink,ws-wn572hp3-4g',
+}) then
+	setup_ncm_qmi('/dev/ttyUSB2', 'ncm', 15)
+end
+
+uci:save('network')
