@@ -40,6 +40,9 @@ Bugfixes
 Known issues
 ------------
 
+* Sysupgrade does not work on JOY-IT OR750i, devices running this release need to be recovered with an image newer than v2021.1.2 manually.
+  (`#2839 <https://github.com/freifunk-gluon/gluon/issues/2839>`_)
+
 * Upgrading EdgeRouter-X from versions before v2020.1.x may lead to a soft-bricked state due to bad blocks on the NAND flash which the NAND driver before this release does not handle well.
   (`#1937 <https://github.com/freifunk-gluon/gluon/issues/1937>`_)
 
