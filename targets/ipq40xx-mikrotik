@@ -1,9 +1,9 @@
 include 'mikrotik.inc'
 
-local ATH10K_PACKAGES_IPQ40XX = {}
+local ATH10K_PACKAGES_IPQ40XX_SMALLBUFFERS = {}
 
 device('mikrotik-hap-ac2', 'mikrotik_hap-ac2', {
-	packages = ATH10K_PACKAGES_IPQ40XX,
+	packages = ATH10K_PACKAGES_IPQ40XX_SMALLBUFFERS,
 })
 
 device('mikrotik-sxtsq-5-ac-rbsxtsqg-5acd', 'mikrotik_sxtsq-5-ac', {
