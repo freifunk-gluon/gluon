@@ -1,3 +1,10 @@
+-- Enterasys
+
+device('enterasys-ws-ap3715i', 'enterasys_ws-ap3715i', {
+	factory = false,
+})
+
+
 -- Sophos
 
 device('sophos-red-15w-rev.1', 'sophos_red-15w-rev1', {

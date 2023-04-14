@@ -309,6 +309,10 @@ mediatek-mt7622
 mpc85xx-p1010
 -------------
 
+* Enterasys
+
+  - WS-AP3715i
+
 * Sophos
 
   - RED 15w Rev.1

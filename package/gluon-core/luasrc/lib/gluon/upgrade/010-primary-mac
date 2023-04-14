@@ -120,6 +120,9 @@ local primary_addrs = {
 			'aerohive,hiveap-330',
 			'ocedo,panda',
 		}},
+		{'mpc85xx', 'p1010', {
+			'enterasys,ws-ap3715i',
+		}},
 		{'ramips', 'mt7620', {
 			'xiaomi,miwifi-mini',
 			'asus,rt-ac51u',
