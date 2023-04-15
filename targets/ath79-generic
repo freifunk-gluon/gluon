@@ -474,15 +474,6 @@ device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })
 
-device('tp-link-re355-v1', 'tplink_re355-v1', {
-	manifest_aliases = {
-		'tp-link-re355', -- upgrade from OpenWrt 19.07
-	},
-	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
-	broken = true, -- OOM with 5GHz enabled in most environments if device is 64M RAM variant
-	class = 'tiny', -- Only 6M of usable Firmware space
-})
-
 device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
 device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
 device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
