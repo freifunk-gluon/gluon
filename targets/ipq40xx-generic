@@ -68,13 +68,13 @@ device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
 
 -- EnGenius
 
-device('engenius-ens620ext', 'engenius_ens620ext', {
-	factory = false,
-	extra_images = {
-		{'-squashfs-factory_30', '-factory_fw30', '.bin'},
-		{'-squashfs-factory_35', '-factory_fw35', '.bin'},
-	},
-})
+-- device('engenius-ens620ext', 'engenius_ens620ext', {
+--	factory = false,
+--	extra_images = {
+--		{'-squashfs-factory_30', '-factory_fw30', '.bin'},
+--		{'-squashfs-factory_35', '-factory_fw35', '.bin'},
+--	},
+-- })
 
 
 -- GL.iNet
