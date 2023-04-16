@@ -342,7 +342,16 @@ ramips-mt7621
 
 * D-Link
 
+  - DAP-X1860 (A1)
   - DIR-860L (B1)
+
+* GL.iNet
+
+  - GL-MT1300
+
+* Mercusys
+
+  - MR70X (v1)
 
 * NETGEAR
 
