@@ -71,6 +71,13 @@ pygments_style = None
 # Don't highlight code blocks unless requested explicitly
 highlight_language = 'none'
 
+# Ignore links to the config mode, as well as anchors on on hackint, which are
+# used to mark channel names and do not exist. Regular links are not effected.
+linkcheck_ignore = [
+    'http://192.168.1.1',
+    'https://webirc.hackint.org/#'
+]
+
 
 # -- Options for HTML output -------------------------------------------------
 
