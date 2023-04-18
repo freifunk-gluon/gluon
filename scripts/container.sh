@@ -11,11 +11,11 @@ TAG="gluon:${BRANCH:-latest}"
 
 if [ "$(command -v podman)" ]
 then
-	podman build -t "${TAG}" contrib/docker
+	podman build --build-arg DGID="$(id -g)" --build-arg DUID="$(id -u)" -t "${TAG}" contrib/docker
 	podman run -it --rm --userns=keep-id --volume="$(pwd):/gluon" "${TAG}"
 elif [ "$(command -v docker)" ]
 then
-	docker build -t "${TAG}" contrib/docker
+	docker build --build-arg DGID="$(id -g)" --build-arg DUID="$(id -u)" -t "${TAG}" contrib/docker
 	docker run -it --rm --volume="$(pwd):/gluon" "${TAG}"
 else
 	1>&2 echo "Please install either podman or docker. Exiting" >/dev/null

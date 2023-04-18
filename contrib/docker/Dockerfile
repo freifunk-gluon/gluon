@@ -1,5 +1,8 @@
 FROM debian:bullseye-slim
 
+ARG DUID=1000
+ARG DGID=1000
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -30,7 +33,7 @@ RUN mkdir /tmp/ec &&\
     mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
 
-RUN useradd -d /gluon gluon
+RUN groupadd -g $DGID gluon && useradd -g $DGID -u $DUID -d /gluon gluon
 USER gluon
 
 VOLUME /gluon
