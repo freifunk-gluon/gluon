@@ -25,18 +25,20 @@ An example configuration can be found in the Gluon repository at *docs/site-exam
 Dependencies
 ------------
 To build Gluon, several packages need to be installed on the system. On a
-freshly installed Debian Stretch system the following packages are required:
+freshly installed Debian Bullseye system the following packages are required:
 
 * `git` (to get Gluon and other dependencies)
-* `subversion`
 * `python3`
 * `build-essential`
+* `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
 * `gawk`
 * `unzip`
 * `libncurses-dev` (actually `libncurses5-dev`)
 * `libz-dev` (actually `zlib1g-dev`)
 * `libssl-dev`
+* `libelf-dev` (to build x86-64)
 * `wget`
+* `rsync`
 * `time` (built-in `time` doesn't work)
 * `qemu-utils`
 

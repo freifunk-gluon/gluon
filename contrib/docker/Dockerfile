@@ -5,7 +5,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     file \
     git \
-    subversion \
     python3 \
     build-essential \
     gawk \
