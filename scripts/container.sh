@@ -16,7 +16,7 @@ then
 elif [ "$(command -v docker)" ]
 then
 	docker build -t "${TAG}" contrib/docker
-	docker run -it --rm --volume="$(pwd):/gluon" "${TAG}"
+	docker run -it --rm --user "$(id -u):$(id -g)" --volume="$(pwd):/gluon" "${TAG}"
 else
 	1>&2 echo "Please install either podman or docker. Exiting" >/dev/null
 	exit 1
