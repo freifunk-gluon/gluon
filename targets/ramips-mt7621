@@ -80,10 +80,13 @@ device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
 	factory = false,
 })
 
-device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
+device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 	factory = false,
 })
 
+device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
+	factory = false,
+})
 
 -- ZBT
 
