@@ -237,6 +237,10 @@ ipq806x-generic
 lantiq-xrx200
 -------------
 
+* Arcadyan
+
+  - VGV7510KW22 (o2 Box 6431)
+
 * AVM
 
   - FRITZ!Box 7360 (v1, v2) [#avmflash]_ [#lan_as_wan]_
