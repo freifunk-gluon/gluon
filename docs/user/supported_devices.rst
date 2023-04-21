@@ -53,6 +53,10 @@ ath79-generic
 
   - JT-OR750i
 
+* LibreRouter
+
+  - LibreRouter v1 [#missing_radios]_
+
 * Netgear
 
   - WNDR3700 (v1, v2)
@@ -507,6 +511,10 @@ Footnotes
 
 .. [#lan_as_wan]
   All LAN ports on this device are used as WAN.
+
+.. [#missing_radios]
+  This device contains more than two WLAN radios, which is currently
+  unsupported by Gluon. Only the first two radios will work.
 
 .. [#modular_ethernet]
   These devices follow a modular principle,
