@@ -25,15 +25,6 @@ uci:save('network')
 users.remove_user('gluon-fastd')
 users.remove_group('gluon-fastd')
 
-uci:section('firewall', 'include', 'mesh_vpn_dns', {
-	type = 'nftables',
-	path = '/lib/gluon/mesh-vpn/nftables.rules',
-	position = 'chain-prepend',
-	chain = 'dstnat',
-})
-
-uci:save('firewall')
-
 
 -- VPN migration
 if not uci:get('gluon', 'mesh_vpn') then
