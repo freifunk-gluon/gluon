@@ -1,0 +1,61 @@
+set limitmac {
+	type ether_addr
+}
+
+set datips {
+	type ipv4_addr
+}
+
+# Rewrite arp packet target hardware address if target protocol address matches a given address.
+# input meta iifname enp2s0 arp ptype 0x0800 arp htype 1 arp hlen 6 arp plen 4 @nh,192,32 0xc0a88f10 @nh,144,48 set 0x112233445566 accept
+
+# chain('ARP_LIMIT', 'DROP')
+chain arplimit {
+	# obrname "br-client" \
+	# oifname "bat0" \
+	# arp operation request \
+	# counter
+
+	# match everything which will land on bridge br-client
+	# protocol type: ipv4
+	# hardware type: ethernet
+	# hardware address length: 6 byte mac
+	# protocol address length: 4 byte ipv4
+	# arp request
+	# source address is mac to be limited
+	# target address is not in DAT
+	# we're over the limit
+	# count
+	# obrname "br-client" \
+	# oifname "bat0" \
+	arp ptype 0x0800 \
+	arp htype 1 \
+	arp hlen 6 \
+	arp plen 4 \
+	arp operation request \
+	arp saddr ether @limitmac \
+	arp daddr ip != @datips \
+	limit rate over 6/minute burst 50 packets \
+	counter \
+	drop
+
+	# obrname "br-client" \
+	# oifname "bat0" \
+	arp ptype 0x0800 \
+	arp htype 1 \
+	arp hlen 6 \
+	arp plen 4 \
+	arp operation request \
+	arp saddr ether != @limitmac \
+	arp daddr ip != @datips \
+	limit rate over 1/second burst 50 packets \
+	counter \
+	drop
+}
+
+# chain('ARP_LIMIT_DATCHECK', 'RETURN')
+# %s ARP_LIMIT_DATCHECK -p ARP --arp-ip-dst %s -j mark --mark-or 0x2 --mark-target RETURN
+
+# chain('ARP_LIMIT_TLCHECK', 'RETURN')
+# %s ARP_LIMIT_TLCHECK --source %s --limit 6/min --limit-burst 50 -j RETURN"
+# %s ARP_LIMIT_TLCHECK (add ? "2" : "") --source %s -j DROP

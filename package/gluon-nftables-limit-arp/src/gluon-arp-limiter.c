@@ -14,7 +14,7 @@
 
 #define BATCTL_DC "/usr/sbin/batctl dc -H -n"
 #define BATCTL_TL "/usr/sbin/batctl tl -H -n"
-#define EBTABLES "/usr/sbin/ebtables"
+#define NFTABLES "/usr/sbin/nft"
 
 #define BUILD_BUG_ON(check) ((void)sizeof(int[1-2*!!(check)]))
 
@@ -39,13 +39,13 @@ static void ebt_ip_call(char *mod, struct in_addr ip)
 	int ret;
 
 	snprintf(str, sizeof(str),
-			EBTABLES " %s ARP_LIMIT_DATCHECK -p ARP --arp-ip-dst %s -j mark --mark-or 0x2 --mark-target RETURN",
+			NFTABLES " %s element bridge gluon datips { %s }",
 			mod, inet_ntoa(ip));
 
 	ret = system(str);
 	if (ret)
 		fprintf(stderr,
-			"%i: Calling ebtables for DAT failed with status %i\n",
+			"%i: Calling nft for DAT failed with status %i\n",
 			clock, ret);
 }
 
@@ -53,7 +53,7 @@ static void ip_node_destructor(struct addr_list *node)
 {
 	struct in_addr *ip = (struct in_addr *)node->addr;
 
-	ebt_ip_call("-D", *ip);
+	ebt_ip_call("delete", *ip);
 }
 
 static void ebt_mac_limit_call(char *mod, struct mac_addr *mac)
@@ -62,40 +62,22 @@ static void ebt_mac_limit_call(char *mod, struct mac_addr *mac)
 	int ret;
 
 	snprintf(str, sizeof(str),
-			EBTABLES " %s ARP_LIMIT_TLCHECK --source %s --limit 6/min --limit-burst 50 -j RETURN",
+			NFTABLES " %s element bridge gluon limitmac { %s }",
 			mod, mac_ntoa(mac));
 
 	ret = system(str);
 	if (ret)
 		fprintf(stderr,
-			"%i: Calling ebtables for TL failed with status %i\n",
-			clock, ret);
-}
-
-static void ebt_mac_ret_call(char *mod, struct mac_addr *mac, int add)
-{
-	char str[128];
-	int ret;
-
-	snprintf(str, sizeof(str),
-			EBTABLES " %s ARP_LIMIT_TLCHECK %s --source %s -j DROP",
-			mod, add ? "2" : "", mac_ntoa(mac));
-
-	ret = system(str);
-	if (ret)
-		fprintf(stderr,
-			"%i: Calling ebtables for TL failed with status %i\n",
+			"%i: Calling nft for TL failed with status %i\n",
 			clock, ret);
 }
 
 static void ebt_mac_call(char *mod, struct mac_addr *mac)
 {
-	if (!strncmp(mod, "-D", strlen(mod))) {
-		ebt_mac_ret_call(mod, mac, 0);
+	if (!strncmp(mod, "delete", strlen(mod))) {
 		ebt_mac_limit_call(mod, mac);
 	} else {
 		ebt_mac_limit_call(mod, mac);
-		ebt_mac_ret_call(mod, mac, 1);
 	}
 }
 
@@ -103,7 +85,7 @@ static void mac_node_destructor(struct addr_list *node)
 {
 	struct mac_addr *mac = (struct mac_addr *)node->addr;
 
-	ebt_mac_call("-D", mac);
+	ebt_mac_call("delete", mac);
 }
 
 static int dat_parse_line(const char *line, struct in_addr *ip)
@@ -141,7 +123,7 @@ static void ebt_add_ip(struct in_addr ip)
 	if (ret)
 		return;
 
-	ebt_ip_call("-I", ip);
+	ebt_ip_call("add", ip);
 }
 
 static void ebt_add_mac(struct mac_addr *mac)
@@ -152,7 +134,7 @@ static void ebt_add_mac(struct mac_addr *mac)
 	if (ret)
 		return;
 
-	ebt_mac_call("-I", mac);
+	ebt_mac_call("add", mac);
 }
 
 static void ebt_dat_update(void)
@@ -168,7 +150,7 @@ static void ebt_dat_update(void)
 		fprintf(stderr, "%i: Error: Could not call batctl dc\n", clock);
 		return;
 	}
-	
+
 	while (1) {
 		pline = fgets(line, sizeof(line), fp);
 		if (!pline) {
@@ -257,18 +239,18 @@ static void ebt_tl_update(void)
 
 static void ebt_dat_flush(void)
 {
-	int ret = system(EBTABLES " -F ARP_LIMIT_DATCHECK");
+	int ret = system(NFTABLES " flush set bridge gluon datips");
 
 	if (ret)
-		fprintf(stderr, "Error flushing ARP_LIMIT_DATCHECK\n");
+		fprintf(stderr, "Error flushing arplimit datips set\n");
 }
 
 static void ebt_tl_flush(void)
 {
-	int ret = system(EBTABLES " -F ARP_LIMIT_TLCHECK");
+	int ret = system(NFTABLES " flush set bridge gluon limitmac");
 
 	if (ret)
-		fprintf(stderr, "Error flushing ARP_LIMIT_TLCHECK\n");
+		fprintf(stderr, "Error flushing arplimit limitmac\n");
 }
 
 int main(int argc, char *argv[])

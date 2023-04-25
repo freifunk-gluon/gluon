@@ -1,3 +1,0 @@
-chain('ARP_LIMIT', 'DROP')
-chain('ARP_LIMIT_DATCHECK', 'RETURN')
-chain('ARP_LIMIT_TLCHECK', 'RETURN')
