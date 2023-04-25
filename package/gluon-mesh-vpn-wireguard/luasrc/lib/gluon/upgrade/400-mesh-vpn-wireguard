@@ -1,18 +1,63 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+local unistd = require 'posix.unistd'
+local util = require('gluon.util')
 local site = require 'gluon.site'
+local sp = util.subprocess
+local wait = require 'posix.sys.wait'
 
-local private_key = uci:get("network_gluon-old", 'wg_mesh', "private_key")
+local wg_private_key = uci:get("network_gluon-old", 'wg_mesh', "private_key")
 
-if not private_key or not private_key:match("^" .. ("[%a%d+/]"):rep(42) .. "[AEIMQUYcgkosw480]=$") then
-	private_key = "generate"
+local function valid_fastd_key(fastd_key)
+	return fastd_key and fastd_key:match(('%x'):rep(64))
 end
+
+local function valid_wireguard_key(wireguard_key)
+	return wireguard_key and wireguard_key:match("^" .. ("[%a%d+/]"):rep(42) .. "[AEIMQUYcgkosw480]=$")
+end
+
+local function migrate_from_fastd_secret(fastd_secret)
+	local options = {
+		stdin = sp.PIPE,
+		stdout = sp.PIPE,
+	}
+	local pid, pipe = sp.popen('gluon-hex-to-b64', {}, options)
+
+	if not pid then
+		return
+	end
+
+	local inw = pipe.stdin
+	local out = pipe.stdout
+
+	unistd.write(inw, string.format('%s\n', fastd_secret))
+	unistd.close(inw)
+
+	local wpid, status, code = wait.wait(pid)
+	if wpid and status == 'exited' and code == 0 then
+		local result = unistd.read(out, 44)
+		unistd.close(out)
+		return result
+	end
+end
+
+if not valid_wireguard_key(wg_private_key) then
+	local fastd_secret = uci:get('fastd', 'mesh_vpn', 'secret')
+	if valid_fastd_key(fastd_secret) then
+		wg_private_key = migrate_from_fastd_secret(fastd_secret)
+	end
+end
+
+if not valid_wireguard_key(wg_private_key) then
+	wg_private_key = "generate"
+end
+
 
 uci:section('network', 'interface', 'wg_mesh', {
 	proto = 'wireguard',
 	fwmark = 1,
-	private_key = private_key,
+	private_key = wg_private_key,
 })
 
 uci:section('network', 'interface', 'mesh_wg_mesh', {

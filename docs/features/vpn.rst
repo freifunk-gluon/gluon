@@ -191,6 +191,16 @@ negative effects. Only when a previously connected node reboots the effect
 comes into play, as the gateway still knows about the old timestamp of the gluon
 node.
 
+gluon-mesh-vpn-key-translate
+""""""""""""""""""""""""""""
+
+Many communities already possess a collection of active fastd-keys when they
+plan migrating their community to WireGuard.
+These public keys known on the server-side can be derived into their WireGuard
+equivalent using `gluon-mesh-vpn-key-translate <https://github.com/AiyionPrime/gluon-mesh-vpn-key-translate>`__.
+The routers do the necessary reencoding of the private key seamlessly
+when updating firmware from fastd to the WireGuard variant.
+
 Gateway / Supernode Configuration
 """""""""""""""""""""""""""""""""
 
