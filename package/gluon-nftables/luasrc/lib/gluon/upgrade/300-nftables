@@ -1,0 +1,188 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local glob = require 'posix.glob'
+
+-- Library
+
+function string.starts(string, start)
+	return string.sub(string, 1, string.len(start)) == start
+end
+
+function basepath(str)
+		return str:match("([^./\\]+).lua")
+end
+
+function write_all_lines(table, file, close)
+	for _, line in ipairs(table) do
+		file:write(line .. '\n')
+	end
+
+	if close then
+		file:write('}\n')
+	end
+end
+
+function read_include(file)
+	local f = assert(io.open(path(file), "rb"))
+	local content = f:read("*all")
+	f:close()
+	return content
+end
+
+-- Functions
+
+function path(name)
+	return '/lib/gluon/nftables/' .. name .. '.nft'
+end
+
+function include(name, parameters)
+	local boilerplate = {
+		type = 'nftables',
+		path = path(name),
+	}
+
+	for k, v in pairs(parameters) do
+		boilerplate[k] = v
+	end
+
+	uci:section('firewall', 'include', 'gluon_nftables_' .. name, boilerplate)
+end
+
+function rule(name, chain, content)
+	local file = io.open(path(name), 'w')
+	file:write(content + '\n')
+	file:close()
+
+	include(name, {
+		position = 'chain-post',
+		chain = chain,
+	})
+end
+
+local bridge = {
+	chain = {
+		INPUT = {
+			'chain input {',
+			'type filter hook input priority filter; policy accept;',
+		},
+		FORWARD = {
+			'chain forward {',
+			'type filter hook forward priority filter; policy accept;',
+		},
+		OUTPUT = {
+			'chain output {',
+			'type filter hook output priority filter; policy accept;',
+		},
+		PREROUTING = {
+			'chain prerouting {',
+			'type filter hook prerouting priority dstnat; policy accept;',
+		},
+	},
+	table = {
+		pre = {
+			'table bridge gluon',
+			'flush table bridge gluon',
+			'table bridge gluon {',
+		},
+		post = {
+
+		},
+	}
+}
+
+function bridge_rule(chain, content)
+	if bridge.chain[chain] == nil then
+		error('No bridge chain ' .. chain)
+	end
+
+	table.insert(bridge.chain[chain], content)
+end
+
+function bridge_table(position, content)
+	if bridge.table[position] == nil then
+		error('No bridge position ' .. position)
+	end
+
+	table.insert(bridge.table[position], content)
+end
+
+function bridge_chain(name)
+	if bridge.chain[name] ~= nil then
+		error('Chain already exists ' .. name)
+	end
+
+	bridge.chain[name] = {
+		'chain ' .. name:lower() .. ' {'
+	}
+end
+
+function bridge_include_rule(chain, file)
+	if bridge.chain[chain] == nil then
+		error('No bridge chain ' .. chain)
+	end
+
+	table.insert(bridge.chain[chain], read_include(file))
+end
+
+function bridge_include_table(position, file)
+	if bridge.table[position] == nil then
+		error('No bridge position ' .. position)
+	end
+
+	table.insert(bridge.table[position], read_include(file))
+end
+
+-- Loader
+
+function load_file(path)
+	local nft = assert(loadfile(path))
+
+	local fncs = setmetatable({
+		path = path,
+		include = include,
+		rule = rule,
+
+		bridge_rule = bridge_rule,
+		bridge_chain = bridge_chain,
+		bridge_table = bridge_table,
+		bridge_include_rule = bridge_include_rule,
+		bridge_include_table = bridge_include_table,
+	}, { __index = _G })
+
+	local env = setmetatable({}, { __index = fncs })
+	setfenv(nft, env)
+
+	nft()
+end
+
+-- Clean old rules
+
+uci:foreach('firewall', 'include', function(i)
+	if string.starts(i['.name'], 'gluon_nftables_') then
+		uci:delete('firewall', i['.name'])
+	end
+end)
+
+-- Load new rules
+
+for _, path in ipairs(glob.glob("/lib/gluon/nftables/*.lua", 0) or {}) do
+	print(' - NFTables: ' .. basepath(path))
+	load_file(path)
+end
+
+local b = io.open(path('bridge'), 'w')
+
+include('bridge', {
+	position = 'ruleset-pre',
+})
+
+write_all_lines(bridge.table.pre, b)
+
+for _, lines in pairs(bridge.chain) do
+	write_all_lines(lines, b, true)
+end
+
+write_all_lines(bridge.table.post, b, true)
+
+uci:save('firewall')
