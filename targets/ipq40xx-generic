@@ -96,6 +96,23 @@ device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 device('linksys-ea6350v3', 'linksys_ea6350v3')
 
 
+-- Meraki
+
+device('meraki-mr33-access-point', 'meraki_mr33', {
+	packages = {
+		-- radio0 is monitoring radio - removed for now
+		-- the -ct firmware does not have working mesh
+		'-ath10k-firmware-qca9887-ct',
+		'-ath10k-board-qca9887',
+	},
+	factory = false,
+	broken = true,
+	-- case must be opened to install
+	-- the board also bricks the SoC on newer bootloader-versions which is irreversible
+	-- third radio not yet working
+})
+
+
 -- NETGEAR
 
 device('netgear-ex6100v2', 'netgear_ex6100v2', {
