@@ -55,6 +55,14 @@ local function merge(a, b)
 	return m
 end
 
+local function contains(table, val)
+	for i=1,#table do
+		if table[i] == val then
+			return true
+		end
+	end
+	return false
+end
 
 local function path_to_string(path)
 	if path.is_value then
@@ -368,6 +376,21 @@ end
 
 function M.need_array_of(path, array, required)
 	return M.need_array(path, function(e) M.need_one_of(e, array) end, required)
+end
+
+function M.need_array_elements_exclusive(path, a, b, required)
+	local val = need_type(path, 'table', required, 'be an array')
+	if not val then
+		return nil
+	end
+
+	if contains(val, a) and contains(val, b) then
+		config_error(conf_src(path),
+			'expected %s to contain only one of the elements %s and %s, but not both.',
+			path_to_string(path), format(a), format(b))
+	end
+
+	return val
 end
 
 function M.need_chanlist(path, channels, required)

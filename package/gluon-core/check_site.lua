@@ -77,7 +77,11 @@ need_boolean(in_domain({'mesh', 'vxlan'}), false)
 
 local interfaces_roles = {'client', 'uplink', 'mesh'}
 for _, config in ipairs({'wan', 'lan', 'single'}) do
-	need_array_of(in_site({'interfaces', config, 'default_roles'}), interfaces_roles, false)
+	local default_roles = in_site({'interfaces', config, 'default_roles'})
+
+	need_array_of(default_roles, interfaces_roles, false)
+	need_array_elements_exclusive(default_roles, 'client', 'mesh', false)
+	need_array_elements_exclusive(default_roles, 'client', 'uplink', false)
 end
 
 obsolete({'mesh_on_wan'}, 'Use interfaces.wan.default_roles.')

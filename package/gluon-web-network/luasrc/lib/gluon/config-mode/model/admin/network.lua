@@ -1,20 +1,13 @@
---[[
-Copyright 2014 Nils Schneider <nils@nilsschneider.net>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-]]--
+-- SPDX-License-Identifier: Apache-2.0
+-- SPDX-FileCopyrightText: 2014, Nils Schneider <nils@nilsschneider.net>
+-- SPDX-FileCopyrightText: 2023, Leonardo Mörlein <me@irrelefant.net>
 
 local uci = require("simple-uci").cursor()
-local sysconfig = require 'gluon.sysconfig'
-local util = require 'gluon.util'
 
 local wan = uci:get_all("network", "wan")
 local wan6 = uci:get_all("network", "wan6")
 local dns_static = uci:get_first("gluon-wan-dnsmasq", "static")
+
 
 local f = Form(translate("WAN connection"))
 
@@ -76,36 +69,30 @@ end
 
 s = f:section(Section)
 
-local wired_mesh_help = {
-	single = translate('Enable meshing on the Ethernet interface'),
-	wan = translate('Enable meshing on the WAN interface'),
-	lan = translate('Enable meshing on the LAN interface'),
+local pretty_ifnames = {
+	["/wan"] = translate("WAN Interfaces"),
+	["/single"] = translate("Interface"),
+	["/lan"] = translate("LAN Interfaces")
 }
 
-local function wired_mesh(iface)
-	if not sysconfig[iface .. '_ifname'] then return end
-	local iface_roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
+uci:foreach('gluon', 'interface', function(config)
+	local section_name = config['.name']
+	local ifaces = s:option(MultiListValue, section_name, pretty_ifnames[config.name] or config.name)
 
-	local option = s:option(Flag, 'mesh_' .. iface, wired_mesh_help[iface])
-	option.default = util.contains(iface_roles, 'mesh') ~= false
+	ifaces.orientation = 'horizontal'
+	ifaces:value('uplink', 'Uplink')
+	ifaces:value('mesh', 'Mesh')
+	ifaces:value('client', 'Client')
+	ifaces:exclusive('uplink', 'client')
+	ifaces:exclusive('mesh', 'client')
 
-	function option:write(data)
-		local roles = uci:get_list('gluon', 'iface_' .. iface, 'role')
-		if data then
-			util.add_to_set(roles, 'mesh')
-		else
-			util.remove_from_set(roles, 'mesh')
-		end
-		uci:set_list('gluon', 'iface_' .. iface, 'role', roles)
+	ifaces.default = config.role
 
-		-- Reconfigure on next reboot
-		uci:set('gluon', 'core', 'reconfigure', true)
+	function ifaces:write(data)
+		uci:set_list("gluon", section_name, "role", data)
 	end
-end
+end)
 
-wired_mesh('single')
-wired_mesh('wan')
-wired_mesh('lan')
 
 local section
 uci:foreach("system", "gpio_switch", function(si)
@@ -165,5 +152,6 @@ function f:write()
 	uci:commit("network")
 	uci:commit('system')
 end
+
 
 return f
