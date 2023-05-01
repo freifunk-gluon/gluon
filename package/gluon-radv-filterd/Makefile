@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-radv-filterd
   TITLE:=Filter IPv6 router advertisements
-  DEPENDS:=+gluon-ebtables +libgluonutil +libbatadv +libnl-tiny
+  DEPENDS:=+gluon-nftables +libgluonutil +libbatadv +libnl-tiny
 endef
 
 MAKE_VARS += \
