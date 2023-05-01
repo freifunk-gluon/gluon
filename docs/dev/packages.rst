@@ -29,10 +29,10 @@ the workflow using these scripts:
   contrib/run_qemu.sh output/images/factory/[...]-x86-64.img
 
   # apply changes to the desired package
-  vi package/gluon-ebtables/files/etc/init.d/gluon-ebtables
+  vi package/gluon-nftables/files/etc/init.d/gluon-nftables
 
   # rebuild and push the package to the qemu instance
-  contrib/push_pkg.sh package/gluon-ebtables/
+  contrib/push_pkg.sh package/gluon-nftables/
 
   # test your changes
   ...
@@ -41,7 +41,7 @@ the workflow using these scripts:
   ...
 
   # rebuild and push the package to the qemu instance
-  contrib/push_pkg.sh package/gluon-ebtables/
+  contrib/push_pkg.sh package/gluon-nftables/
 
   # test your changes
   ...
@@ -83,7 +83,7 @@ Note that:
 * If you add new packages, you must run ``make update config GLUON_TARGET=...``.
 * You can change the gluon target of the target machine via ``make config GLUON_TARGET=...``.
 * If you want to update the ``site.conf`` of the target machine, use ``push_pkg.sh package/gluon-site/``.
-* Sometimes when things break, you can heal them by compiling a package with its dependencies: ``cd openwrt; make package/gluon-ebtables/clean; make package/gluon-ebtables/compile; cd ..``.
+* Sometimes when things break, you can heal them by compiling a package with its dependencies: ``cd openwrt; make package/gluon-nftables/clean; make package/gluon-nftables/compile; cd ..``.
 * You can exit qemu by pressing ``CTRL + a`` and ``c`` afterwards.
 
 Gluon package makefiles
