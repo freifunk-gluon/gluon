@@ -81,10 +81,17 @@ files["package/**/luasrc/lib/gluon/**/controller/*"] = {
 	},
 }
 
-files["package/**/luasrc/lib/gluon/ebtables/*"] = {
+files["package/**/luasrc/lib/gluon/nftables/*"] = {
 	read_globals = {
-		"chain",
+		"path",
+		"include",
 		"rule",
+
+		"bridge_rule",
+		"bridge_chain",
+		"bridge_table",
+		"bridge_include_rule",
+		"bridge_include_table",
 	},
 	max_line_length = false,
 }
