@@ -1,7 +1,7 @@
-gluon-ebtables-source-filter
+gluon-nftables-source-filter
 ============================
 
-The *gluon-ebtables-source-filter* package adds an additional layer-2 filter
+The *gluon-nftables-source-filter* package adds an additional layer-2 filter
 ruleset to prevent unreasonable traffic entering the network via the nodes.
 Unreasonable means traffic entering the mesh via a node which source IP does
 not belong to the configured IP space.

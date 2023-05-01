@@ -13,7 +13,7 @@ domain and will see each other "as if they were connected to one giant switch".
 This comes with a set of advantages (like quick and economical client device roaming,
 layer 3 protocol agnosticism, broadcast/multicast). But also impediments, especially
 layer 2 multicast overhead - which Gluon tries to mitigate to achieve a certain degree
-of scalability. See :doc:`gluon-ebtables-filter-multicast` and
+of scalability. See :doc:`gluon-nftables-filter-multicast` and
 :ref:`batman-adv-multicast-architecture` for details.
 
 B.A.T.M.A.N. Advanced project homepage:
@@ -53,9 +53,9 @@ While generally broadcast capability is a nice feature of a layer 2
 mesh protocol, it quickly reaches its limit.
 
 For meshes with about **50 nodes / 100 clients, or more** it is therefore highly
-recommended to add the :doc:`gluon-ebtables-filter-multicast`
+recommended to add the :doc:`gluon-nftables-filter-multicast`
 package. Also, with the *mesh-batman-adv-15* feature,
-:doc:`gluon-ebtables-limit-arp` is selected by default.
+:doc:`gluon-nftables-limit-arp` is selected by default.
 
 Furthermore, by default IGMP and MLD messages are filtered. See
 :ref:`site.conf mesh section <user-site-mesh>` and
