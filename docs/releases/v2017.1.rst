@@ -105,7 +105,7 @@ New features
   The new package *gluon-ebtables-source-filter* can be used to prevent traffic
   using unexpected IP addresses or packet types from entering the mesh.
 
-  See also: :doc:`../package/gluon-ebtables-source-filter`
+  See also: :doc:`../package/gluon-nftables-source-filter`
 
 Bugfixes
 ~~~~~~~~

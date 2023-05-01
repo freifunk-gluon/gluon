@@ -120,7 +120,7 @@ trying it out, please contact us on our mailing list or in our IRC channel.
 gluon-ebtables-limit-arp enabled by default
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :doc:`../package/gluon-ebtables-limit-arp` package, introduced in Gluon
+The :doc:`../package/gluon-nftables-limit-arp` package, introduced in Gluon
 2018.1, is now included by default. In case of issues, it can be removed by
 adding ``-gluon-ebtables-limit-arp`` to *GLUON_SITE_PACKAGES*.
 
