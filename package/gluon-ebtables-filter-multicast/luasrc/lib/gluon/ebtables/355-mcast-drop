@@ -1,3 +1,0 @@
-rule ('MULTICAST_OUT -p IPv6 --ip6-dst ff02::1/128 -j DROP')
-rule ('MULTICAST_OUT -p IPv6 --ip6-dst ff00::/8 -j mark --set-mark 0x4 --mark-target RETURN')
-rule ('MULTICAST_OUT -j DROP')
