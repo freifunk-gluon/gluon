@@ -38,7 +38,7 @@ when(_'web-advanced' and _'autoupdater', {
 
 
 when(_'mesh-batman-adv-15', {
-	'gluon-ebtables-limit-arp',
+	'gluon-nftables-limit-arp',
 	'gluon-radvd',
 })
 
