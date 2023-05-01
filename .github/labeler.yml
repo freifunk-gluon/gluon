@@ -28,7 +28,7 @@
   - package/gluon-mesh-vpn-fastd/**
 "3. topic: firewall":
   - package/**/*-firewall
-  - package/gluon-ebtables-*/**
+  - package/gluon-nftables-*/**
 "3. topic: hardware":
   - package/gluon-core/luasrc/lib/gluon/upgrade/010-primary-mac
   - package/gluon-core/luasrc/usr/lib/lua/gluon/platform.lua
