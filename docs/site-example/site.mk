@@ -7,9 +7,9 @@
 
 GLUON_FEATURES := \
 	autoupdater \
-	ebtables-filter-multicast \
-	ebtables-filter-ra-dhcp \
-	ebtables-limit-arp \
+	nftables-filter-multicast \
+	nftables-filter-ra-dhcp \
+	nftables-limit-arp \
 	mesh-batman-adv-15 \
 	mesh-vpn-fastd \
 	respondd \

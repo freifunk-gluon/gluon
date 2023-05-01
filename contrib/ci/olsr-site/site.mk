@@ -7,9 +7,6 @@
 
 GLUON_FEATURES := \
 	autoupdater \
-	ebtables-filter-multicast \
-	ebtables-filter-ra-dhcp \
-	ebtables-limit-arp \
 	mesh-olsrd \
 	mesh-vpn-fastd \
 	respondd \
