@@ -1,12 +1,15 @@
 From: Jan-Niklas Burfeind <git@aiyionpri.me>
-Date: Sat, 25 Mar 2023 19:55:41 +0100
-Subject: ipq40xx: google (gale) add reset button
+Date: Sun, 26 Mar 2023 22:50:42 +0200
+Subject: ipq40xx: add reset button for Google WiFi (Gale)
 
-add the external button (GPIO 57) as reset button
+Add the external reset button for use with OpenWrt.
 
 Co-authored-by: Brian Norris <computersforpeace@gmail.com>
 Signed-off-by: Jan-Niklas Burfeind <git@aiyionpri.me>
-(cherry picked from commit b10a7ce51c36d15c548f2e154c2c3b7016276518)
+Reviewed-by: Brian Norris <computersforpeace@gmail.com>
+Tested-by: Brian Norris <computersforpeace@gmail.com>
+Signed-off-by: David Bauer <mail@david-bauer.net>
+(cherry picked from commit 791550b94fc791866e486e52d3c4d1d0378966ff)
 
 diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4019-wifi.dts
 index 9448e5145e29c39d4f7bfc2b94a745b2ccc1cf2d..c48d6a75b391886840d1889ff0d3b091898e4996 100644

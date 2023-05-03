@@ -1,0 +1,46 @@
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Sat, 19 Feb 2022 17:26:24 -0800
+Subject: kernel: Package GOOGLE_FIRMWARE drivers
+
+Useful for some Chromium OS based systems, like Google WiFi.
+
+Signed-off-by: Brian Norris <computersforpeace@gmail.com>
+(cherry picked from commit e5b009e532813d73fe7d3e3deb77b4a60c364913)
+
+diff --git a/package/kernel/linux/modules/other.mk b/package/kernel/linux/modules/other.mk
+index 36f4c8a57e98dc030ff0bbed894783e1e54f390c..178ab003d5d943fca359c8b22baa68c468a3a472 100644
+--- a/package/kernel/linux/modules/other.mk
++++ b/package/kernel/linux/modules/other.mk
+@@ -198,6 +198,32 @@ endef
+ $(eval $(call KernelPackage,eeprom-at25))
+ 
+ 
++define KernelPackage/google-firmware
++  SUBMENU:=$(OTHER_MENU)
++  TITLE:=Google firmware drivers (Coreboot, VPD, Memconsole)
++  KCONFIG:= \
++	CONFIG_GOOGLE_FIRMWARE=y \
++	CONFIG_GOOGLE_COREBOOT_TABLE \
++	CONFIG_GOOGLE_MEMCONSOLE \
++	CONFIG_GOOGLE_MEMCONSOLE_COREBOOT \
++	CONFIG_GOOGLE_VPD
++  FILES:= \
++	  $(LINUX_DIR)/drivers/firmware/google/coreboot_table.ko \
++	  $(LINUX_DIR)/drivers/firmware/google/memconsole.ko \
++	  $(LINUX_DIR)/drivers/firmware/google/memconsole-coreboot.ko \
++	  $(LINUX_DIR)/drivers/firmware/google/vpd-sysfs.ko
++  AUTOLOAD:=$(call AutoProbe,coreboot_table memconsole-coreboot vpd-sysfs)
++endef
++
++define KernelPackage/google-firmware/description
++  Kernel modules for Google firmware drivers. Useful for examining firmware and
++  boot details on devices using a Google bootloader based on Coreboot. Provides
++  files like /sys/firmware/log and /sys/firmware/vpd.
++endef
++
++$(eval $(call KernelPackage,google-firmware))
++
++
+ define KernelPackage/gpio-f7188x
+   SUBMENU:=$(OTHER_MENU)
+   TITLE:=Fintek F718xx/F818xx GPIO Support
