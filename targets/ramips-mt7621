@@ -11,6 +11,10 @@ device('cudy-wr2100', 'cudy_wr2100', {
 	factory = false,
 })
 
+device('cudy-x6-v1', 'cudy_x6-v1', {
+	factory = false,
+})
+
 
 -- D-Link
 
