@@ -359,7 +359,7 @@ ramips-mt7621
 * Cudy
 
   - WR2100
-  - X6 (v1)
+  - X6 (v1, v2)
 
 * D-Link
 
