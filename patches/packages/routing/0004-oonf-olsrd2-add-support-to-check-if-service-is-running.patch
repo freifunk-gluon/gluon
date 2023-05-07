@@ -3,18 +3,19 @@ Date: Sun, 10 Apr 2022 01:58:41 +0200
 Subject: oonf-olsrd2: add support to check if service is running
 
 diff --git a/oonf-olsrd2/files/olsrd2.init b/oonf-olsrd2/files/olsrd2.init
-index debae9883258b821a5ea0aecebe879ddc84e29eb..b6c1e9a5522788005db850ceaf6699aa1eee6877 100755
+index 04b30ffa4a7a4d65e2fb9944e4570273a9418f2e..f516b1b17e32b7eba7c4d485d72a123c87fb52f6 100755
 --- a/oonf-olsrd2/files/olsrd2.init
 +++ b/oonf-olsrd2/files/olsrd2.init
-@@ -3,4 +3,11 @@
- START=82
- DAEMON='olsrd2'
+@@ -5,4 +5,12 @@ DAEMON='olsrd2'
  
-+running() {
-+  test -e "/tmp/run/olsrd2.pid" && test -e "/proc/$(cat "/tmp/run/olsrd2.pid")" && return 0
-+  return 1
-+}
+ [ -n "$IPKG_INSTROOT" ] || {
+         . /lib/functions/oonf_init.sh
 +
-+extra_command "running" "Check if service is running"
++        running() {
++          test -e "/tmp/run/olsrd2.pid" && test -e "/proc/$(cat "/tmp/run/olsrd2.pid")" && return 0
++          return 1
++        }
 +
- . /lib/functions/oonf_init.sh
++        extra_command "running" "Check if service is running"
+ }
++
