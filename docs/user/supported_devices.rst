@@ -360,6 +360,7 @@ ramips-mt7621
 
 * Cudy
 
+  - WR1300 (v1)
   - WR2100
   - X6 (v1, v2)
 
