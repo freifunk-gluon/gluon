@@ -26,6 +26,7 @@ local values = {
 		.. ' / ' .. util.trim(util.readfile('/lib/gluon/site-version')) },
 	{ 'Firmware release', util.trim(util.readfile('/lib/gluon/release')) },
 	{ 'Site', site.site_name() },
+	{ 'Domain', uci:get('gluon', 'core', 'domain') or 'n/a' },
 	{ 'Public VPN key', pubkey or 'n/a' },
 }
 
