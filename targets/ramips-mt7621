@@ -7,6 +7,10 @@ device('asus-rt-ac57u', 'asus_rt-ac57u', {
 
 -- Cudy
 
+device('cudy-wr1300', 'cudy_wr1300', {
+	factory = false,
+})
+
 device('cudy-wr2100', 'cudy_wr2100', {
         factory = false,
 })
@@ -69,11 +73,13 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	},
 })
 
+
 -- TP-Link
 
 device('tp-link-re500-v1', 'tplink_re500-v1')
 
 device('tp-link-re650-v1', 'tplink_re650-v1')
+
 
 -- Ubiquiti
 
@@ -95,6 +101,7 @@ device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 	factory = false,
 })
+
 
 -- ZBT
 
