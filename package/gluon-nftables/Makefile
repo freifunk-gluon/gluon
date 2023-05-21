@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-nftables
   TITLE:=Nftables support
-  DEPENDS:=+nftables-json
+  DEPENDS:=+nftables-json +kmod-nft-bridge
 endef
 
 define Package/gluon-nftables/description
