@@ -73,6 +73,16 @@ device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 
 device('linksys-ea6350v3', 'linksys_ea6350v3')
 
+device('linksys-mr8300-dallas', 'linksys_mr8300', {
+	packages = { -- exclude until Gluon supports third radio
+		'-ath10k-firmware-qca9888-ct',
+		'-ath10k-board-qca9888',
+	},
+	broken = true,
+	-- 3rd WiFi radio not supported (5GHz DFS channels 100+)
+	-- outdoor mode is broken due to 5GHz being limited to channels 36-64
+})
+
 
 -- Meraki
 
