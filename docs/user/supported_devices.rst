@@ -387,6 +387,7 @@ ramips-mt7621
 
 * TP-Link
 
+  - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)
 
