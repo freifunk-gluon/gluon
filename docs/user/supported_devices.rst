@@ -158,6 +158,10 @@ ath79-nand
   - WNDR3700 (v4)
   - WNDR4300 (v1)
 
+* Zyxel
+
+  - NBG6716
+
 ath79-mikrotik
 --------------
 
