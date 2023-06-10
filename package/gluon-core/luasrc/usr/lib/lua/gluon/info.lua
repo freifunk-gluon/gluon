@@ -6,6 +6,7 @@ local sysconfig = require 'gluon.sysconfig'
 local platform = require 'gluon.platform'
 local util = require 'gluon.util'
 local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
+local ethernet = require 'gluon.ethernet'
 
 local pubkey
 if has_vpn and vpn.enabled() then
@@ -29,6 +30,7 @@ function M.get_info()
 		site = site.site_name(),
 		domain = uci:get('gluon', 'core', 'domain'),
 		public_vpn_key = pubkey,
+		switch_type = ethernet.get_switch_type(),
 	}
 end
 
@@ -44,6 +46,7 @@ function M.get_info_pretty(_)
 		{ _('Site'), data.site },
 		{ _('Domain'), data.domain or 'n/a' },
 		{ _('Public VPN key'), data.public_vpn_key or 'n/a' },
+		{ _('Switch type'), data.switch_type },
 	}
 end
 
