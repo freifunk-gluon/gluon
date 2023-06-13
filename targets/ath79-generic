@@ -591,6 +591,10 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 	},
 })
 
+device('ubiquiti-nanobeam-ac-gen1-xc', 'ubnt_nanobeam-ac-xc', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ubiquiti-nanobeam-m5-xw', 'ubnt_nanobeam-m5-xw')
 
 device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
