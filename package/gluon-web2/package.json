@@ -1,0 +1,18 @@
+{
+  "name": "gluon-web2",
+  "version": "1.0.0",
+  "description": "Gluon Web rewritten with Preact and Parcel",
+  "main": "index.js",
+  "author": "Gluon Contributors",
+  "license": "MIT",
+  "dependencies": {
+    "preact": "^10.15.1"
+  },
+  "devDependencies": {
+    "parcel": "^2.9.2",
+    "@types/jest": "^29.5.2",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.1.3"
+  }
+}
