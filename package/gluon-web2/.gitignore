@@ -1,1 +1,6 @@
-node_modules
+/node_modules
+/.parcel-cache
+/dist
+.DS_Store
+yarn-debug.log*
+yarn-error.log*
