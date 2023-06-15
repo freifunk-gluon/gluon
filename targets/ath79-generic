@@ -600,3 +600,9 @@ device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 })
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
+
+-- Meraki
+
+device('meraki_mr16', 'meraki_mr16', {
+        factory =false,
+})
