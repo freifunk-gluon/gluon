@@ -444,6 +444,7 @@ ramips-mt76x8
   - RE305 (v1) [#device-class-tiny]
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
+  - TL-MR6400 (v5)
   - TL-WA801ND (v5)
   - TL-WR841N (v13)
   - TL-WR902AC (v3)
