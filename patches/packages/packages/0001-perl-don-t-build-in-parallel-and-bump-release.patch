@@ -8,7 +8,7 @@ https://github.com/openwrt/packages/issues/8238
 https://github.com/openwrt/packages/pull/17274
 
 diff --git a/lang/perl/Makefile b/lang/perl/Makefile
-index 99302cb1a4414c309b238342d3f1b8bc7f43dd47..66c6ce7aaf342e404b8d9a133a7e396d0108a31f 100644
+index 40532b5f0163ffffc3ce8dfb697592c3a81e0af0..17e9202847b555a8e78a14f22b3536c2ceef9dd7 100644
 --- a/lang/perl/Makefile
 +++ b/lang/perl/Makefile
 @@ -34,8 +34,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/perl/$(PKG_NAME)-$(PKG_VERSION)
