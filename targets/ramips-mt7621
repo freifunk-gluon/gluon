@@ -1,7 +1,10 @@
 -- ASUS
 
-device('asus-rt-ac57u', 'asus_rt-ac57u', {
+device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 	factory = false,
+	manifest_aliases = {
+		'asus-rt-ac57u', -- Upgrade from OpenWrt 22.03
+	},
 })
 
 
