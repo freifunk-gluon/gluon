@@ -49,6 +49,6 @@ device('netgear-wndr4300', 'netgear_wndr4300', {
 -- ZTE
 
 device('zte-mf281', 'zte_mf281', {
-	broken = true,
+	broken = true, -- case must be opened to install
 	packages = ATH10K_PACKAGES_QCA9888,
 })
