@@ -282,7 +282,7 @@ mediatek-mt7622
 
 * Ubiquiti
 
-  - UniFi 6 LR
+  - UniFi 6 LR (v1)
 
 * Xiaomi
 
@@ -411,7 +411,7 @@ ramips-mt7621
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (Gigabit Edition)
+  - Xiaomi Mi Router 4A (Gigabit Edition v1)
   - Xiaomi Mi Router 3G (v1, v2)
 
 ramips-mt76x8
