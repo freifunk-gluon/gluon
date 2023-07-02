@@ -43,6 +43,7 @@ function M.is_outdoor_device()
 		'ubnt,nanobeam-m5-xw',
 		'ubnt,nanostation-loco-m-xw',
 		'ubnt,nanostation-m-xw',
+		'ubnt,rocket-m',
 		'ubnt,unifi-ap-outdoor-plus',
 		'ubnt,unifiac-mesh',
 		'ubnt,unifiac-mesh-pro',
