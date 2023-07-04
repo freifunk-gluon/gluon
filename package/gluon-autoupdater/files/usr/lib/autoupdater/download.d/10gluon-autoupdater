@@ -2,6 +2,7 @@
 
 . /lib/gluon/autoupdater/lib.sh
 
+flag_invocation 1
 
 stop cron
 stop urngd
