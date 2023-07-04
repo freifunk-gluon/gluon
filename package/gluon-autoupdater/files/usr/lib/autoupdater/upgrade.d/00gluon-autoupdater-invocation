@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Signal the first boot after this upgrade that it was triggered by the
+# autoupdater. The download was successful and the image verified, so the
+# upgrade is about to happen. The current release is recorded, so a flag
+# left behind by a failed upgrade can be recognized.
+cp /lib/gluon/release /lib/gluon/autoupdater/upgrade-invocation

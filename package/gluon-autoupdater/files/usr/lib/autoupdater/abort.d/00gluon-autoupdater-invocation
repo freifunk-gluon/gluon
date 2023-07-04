@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# The upgrade did not happen, so the next boot must not be treated as
+# following an automatic upgrade
+rm -f /lib/gluon/autoupdater/upgrade-invocation
