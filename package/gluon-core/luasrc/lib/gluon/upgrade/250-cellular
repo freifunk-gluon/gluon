@@ -58,6 +58,10 @@ elseif platform.match('ramips', 'mt7621', {
 	'wavlink,ws-wn572hp3-4g',
 }) then
 	setup_ncm_qmi('/dev/ttyUSB2', 'ncm', 15)
+elseif platform.match('ramips', 'mt76x8', {
+	'tplink,tl-mr6400-v5',
+}) then
+	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
 end
 
 uci:save('network')

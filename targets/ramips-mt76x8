@@ -80,6 +80,13 @@ device('tp-link-tl-mr3420-v5', 'tplink_tl-mr3420-v5', {
 	},
 })
 
+device('tp-link-tl-mr6400-v5', 'tplink_tl-mr6400-v5', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
 device('tp-link-tl-wa801nd-v5', 'tplink_tl-wa801nd-v5', {
 	factory = false,
 	extra_images = {
@@ -100,6 +107,7 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
 	},
 })
+
 
 -- VoCore 2
 

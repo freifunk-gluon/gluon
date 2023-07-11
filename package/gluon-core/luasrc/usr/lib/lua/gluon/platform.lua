@@ -85,6 +85,10 @@ function M.is_cellular_device()
 		'wavlink,ws-wn572hp3-4g',
 	}) then
 		return true
+	elseif M.match('ramips', 'mt76x8', {
+		'tplink,tl-mr6400-v5',
+	}) then
+		return true
 	end
 
 	return false
