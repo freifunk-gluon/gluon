@@ -1,6 +1,4 @@
 
-local util = require 'gluon.util'
-
 local function contains(table, val)
 	for i=1,#table do
 		if table[i] == val then
@@ -26,10 +24,10 @@ local function array_to_string(array)
 	return '[' .. table.concat(strings, ', ') .. ']'
 end
 
-Validator = {}
+local Validator = {}
 
 function Validator:new(data, var_error)
-	o = {
+	local o = {
 		data = data,
 		var_error = var_error,
 	}
@@ -53,7 +51,7 @@ function Validator:extend(path, c)
 	return extend(path, c)
 end
 
-function loadpath(path, base, c, ...)
+local function loadpath(path, base, c, ...)
 	if not c or base == nil then
 		return base
 	end
@@ -251,7 +249,8 @@ function Validator:need_array_elements_exclusive(path, a, b, required)
 	end
 
 	if contains(val, a) and contains(val, b) then
-		self:var_error(path, val, 'contain only one of the elements ' .. format(a) .. ' and ' .. format(b) .. ', but not both.')
+		self:var_error(path, val, 'contain only one of the elements '
+			.. format(a) .. ' and ' .. format(b) .. ', but not both.')
 	end
 
 	return val
