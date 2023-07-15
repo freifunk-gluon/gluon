@@ -1,0 +1,238 @@
+From: Patrick Grimm <patrick@lunatiki.de>
+Date: Fri, 13 Jan 2023 14:28:28 +0100
+Subject: oonf-olsrd2: change to git version from 2022-08-25
+
+Compile tested: mips_24kc, arm_cortex-a9_vfpv3-d16, i386_pentium4, x86_64, i386_pentium-mmx, mipsel_24kc
+Description:
+fb15d54d (HEAD -> master, origin/master, origin/HEAD) Merge pull request #23 from fhuberts/master
+a8e81e99 Merge pull request #43 from jpo-github-work/no-dh-systemd
+8cc65a10 Merge pull request #48 from jpo-github-work/fix_lan_import
+c7d404f8 build lan_import
+bbbd4f3d the package dh-systemd is not longer present in recent Ubuntu versions
+1bd73550 Merge pull request #42 from jpo-github-work/master
+1a5fa2a7 add missing extern to global symbol
+a0750337 Merge pull request #40 from trofi/fix-gcc-10-build
+5ea168ce fix build for gcc-10 (-fno-common default)
+02f69178 Merge pull request #7 from aaaaalbert/rename-to-BUILDING.md-#4
+9dc46726 Merge pull request #26 from sumpfralle/patch-1
+ced3ace0 Fix schema name for logging in README
+c6dd02a1 test_config_delta: fix the build on GCC 9
+8397c64e Merge pull request #19 in FKIEA/oonf-os from develop to master
+1d227500 Merge pull request #18 in FKIEA/oonf-os from bugfix/MOTOR-65-oonf-does-not-compile-cleanly-on-current-lede to develop
+f40be238 include unistd.h in oonf.h to keep modern GCC (e.g. in LEDE) from complaining about ssize_t
+8f2408f7 Merge pull request #17 in FKIEA/oonf-os from bugfix/MOTOR-62-fix-segfault-in-layer2_import to develop
+95fbcb35 Do avl_for_each_elements_with_key_safe() by hand until we had a closer look at the macro
+3fcd8fc5 Merge pull request #16 in FKIEA/oonf-os from bugfix/MOTOR-61-fix-clock-conversion-to-from-string to develop
+e9b08759 use scaling factor when dealing with fixed integer conversion calls
+65dc25e8 Merge pull request #15 in FKIEA/oonf-os from bugfix/MOTOR-60-prevent-division-by-zero-in-dat-metric to develop
+2f615dab Prevent division by zero through (malformed) RLQ value
+eb59d287 Merge pull request #14 in FKIEA/oonf-os from bugfix/MOTOR-59-fix-nhdp-status-for-ip-level-interfaces to develop
+8d424b24 Fix NHDP link status for interfaces without MAC addresses
+26557e54 Merge pull request #13 in FKIEA/oonf-os from bugfix/MOTOR-54-add-telnet-command-to-manipulate-layer2-data to develop
+eecc3333 Add missing telnet dependency to layer2-config
+0e24b09f Merge pull request #12 in FKIEA/oonf-os from feature/MOTOR-57-allow-import-of-non-unicast-routes to develop
+965c2f73 Allow "non-unicast" routes to be imported
+710b353b Merge pull request #11 in FKIEA/oonf-os from feature/MOTOR-54-add-telnet-command-to-manipulate-layer2-data to develop
+243e17e3 Allow setting l2config via telnet
+40f24ab9 Partly working telnet code for l2config
+1db358dc Merge pull request #10 in FKIEA/oonf-os from feature/MOTOR-54-add-telnet-command-to-manipulate-layer2-data to develop
+c33d680e Add LID capability to oonf_layer2 and l2config subsystem
+312d09d4 Merge pull request #9 in FKIEA/oonf-os from develop to master
+1551b86d Automatic merge from master -> develop
+c154c31b Merge pull request #8 in FKIEA/oonf-os from feature/MOTOR-52-ablehnen-von-konfigurationen-mit-unbekannten-werten to develop
+bad48ebc Do not accept configuration with unknown sections/values if 'global.failfast' is true. Set 'global.failfast' to true by default
+9996fe65 Merge pull request #7 in FKIEA/oonf-os from bugfix/MOTOR-51-vif-socket-is-blocking to develop
+05682c0c Make VIF sockets non-blocking
+9455e50f Automatic merge from master -> develop
+d05cc410 Merge pull request #6 in FKIEA/oonf-os from develop to master
+7416ba8d Merge pull request #5 in FKIEA/oonf-os from bugfix/MOTOR-50-olsr-compilation-fails-on-ubuntu-16.04 to develop
+63345654 Reorder libraries for testcase creation to prevent Ubuntu 16.04 Bug (MOTOR-50)
+3a7e5e8e Automatic merge from master -> develop
+d592fbf7 Merge pull request #4 in FKIEA/oonf-os from develop to master
+e489f97a Merge pull request #3 in FKIEA/oonf-os from feature/MOTOR-48-tracking-von-metadaten-in-layer2-database to develop
+3c1984f8 Fix compilation issue with "no-debug" logging
+52c6b569 Merge pull request #2 in FKIEA/oonf-os from feature/MOTOR-48-tracking-von-metadaten-in-layer2-database to develop
+3765eb01 Cleanup ffdat metric to be able to import rx_throughput.
+bdee26ba Improve combination of DAT speed and L2 throughput values
+a1c3ea66 Allow ffdat metric to consider rx_throughput field
+c8ec8301 Fix token validation
+ad72038e Improve DAT-Metric by shifting hysteresis to the loss side and consider other layer2 parameters
+9addfba4 Fix fixed integer arithmetics handling
+f9ccd26b Track scaling factors of layer2 data elements. Handle different scaling for DLEP conversion.
+603e48e8 Fix router_id for Netjson domain output
+6aebcf99 Merge pull request #1 in FKIEA/oonf-os from develop to master
+234e9109 Improve hello interval overwriting
+7fc0f50b Add SNR to layer2 neighbor data
+f9ebcf8e Fix bad 'is in list' test in stream socket processing
+29a2a385 Set path prefix length in CMakeListsGlobal
+a2ea9186 Replace VIF name pointer with array
+e8f04530 Simplify test case creation
+271ff097 Move 'enable test' to CMakeListsGlobal.cmake
+0482db42 Fix no-debug/no-info compilation
+38edcced Add more doxygen comments for layer2 import
+becd33bd Merge branch 'feature/MOTOR-47-route-redistribution-for-dlep' of ssh://team.fkie.fraunhofer.de:7999/fkiea/oonf-os into feature/MOTOR-47-route-redistribution-for-dlep
+1a709b5c Add missing comment for subsystem shutdown initiation, remove empty files
+c7a68650 Fix the handling of neighbor IPs in dlep radio.
+c255ead5 Add avl_for_each_elements_with_key_safe() macro and do some basic tests
+5f835533 Don't filter for protocol for routes being removed (linux does not report protocol in this case)
+83b19c54 Allow imported routed to be combined by l2import into the same l2 network. Allow multiple IP addresses being reported by DLEP
+d7d69064 (origin/staging) Merge branch 'develop' into staging
+5274ce6a Fix tarball generator
+6dd188ed Use relative path for calling archive builder
+988aac6e Move included cmake files into CMakeListsGlobal to allow inclusion in wrapper projects
+2a072733 Cleanup build installation directories
+fc1fbbed Move test include to include directory
+4043202f Rename "subsystems" directory to "base"
+2e3578ba Add "config query" command to remotecontrol plugin to query a configuration value including default
+48c2cdcb Prevent theoretical buffer overlow to make Coverity more happy (Coverity #181104)
+19583704 Fix possible Null reference in colored logging (Coverity #188445)
+6fa04505 Fix GCC 8 warning about small buffer
+356d3b9b Allow wrapped build directory around OONF directory
+11be4696 Cleanup and simplify OONF directory strucure
+f1a30ade Restructure import of FIB entries to go through the layer2 db allow export of layer2 IP entries to FIB allow transmission of layer2 IP entries over DLEP
+32bf829c Remove debugging code accidently left in for LID preparation
+f6b884b1 (origin/packet_socket_bug) Hotfix for closing UDP socket behavior mentioned in Github Issue 14
+e7e5b685 Add missing build target for test creation
+88efd166 Cleanup build system for tests and add generic 'build_tests' target.
+2e5803bd Add more linklayer data options and a better query function
+2dac53d9 Restructure ffdat plugin as preparation for external metric calculation Fix compiler warning in routing code
+8cb39863 Remove static modifier from olsrv2/nhdp logging sources. Otherwise they cannot be used by the other source files of the plugins.
+3a2dd24e Fix return values of DLEP signal processing callbacks
+b2e18c91 Fix handling of lid-length TLV in DLEP session ACK
+2b7b3ef8 Add doxygen comments for link-id code
+bc24cba0 Implement lid_length mechanism into DLEP
+b12ef6ea Add basic link-id capability to DLEP
+8cc2d03e Add a few example configurations to the repository
+1e3fb288 Add support for Link-ID to layer2 database
+28adaf5a Remove (done) TODO mark for outgoing TCP connection error handling
+2bfbcff3 Improve error handling for failed outgoing TCP connections
+1d1e8876 Add better debugging output to packet socket code
+3b89103e Fix issues with DLEP udp_mode none and reconnect
+d4d64875 Add function to calculate IPv6 address from MAC
+bdc2c2e6 Fixes for doxygen comments
+5e2a7b48 Fix variable used in layer2 generator loop
+a38b6847 Fix DLEP handling of mandatory TLVs
+50e4e1b8 Add netaddr constants for MAC48 prefixes for IPv4/6 multicast
+
+Signed-off-by: Patrick Grimm <patrick@lunatiki.de>
+
+diff --git a/oonf-olsrd2/Makefile b/oonf-olsrd2/Makefile
+index f3d81fcfe61936635280afd997ec487ed0ffa2fc..fe00dd1bc7969016856d5c3a19241d7750366352 100644
+--- a/oonf-olsrd2/Makefile
++++ b/oonf-olsrd2/Makefile
+@@ -1,16 +1,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=oonf-olsrd2
+-PKG_VERSION:=v0.15.1
+-PKG_REV:=bffb88b040659b237c4c91b6b42dbbb47431750e
+-PKG_RELEASE:=$(PKG_REV)
++PKG_RELEASE:=1
+ 
+-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+-PKG_SOURCE_URL:=https://github.com/OLSR/OONF.git
+ PKG_SOURCE_PROTO:=git
+-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+-PKG_SOURCE_VERSION:=$(PKG_REV)
+-PKG_MIRROR_HASH:=2e38140e804e7fc0138d0893416c4f19b1ca43bd9de066e8b028bd0d59ac9255
++PKG_SOURCE_URL:=https://github.com/OLSR/OONF.git
++PKG_SOURCE_DATE:=2022-08-25
++PKG_SOURCE_VERSION:=fb15d54d6a7a087cb0c5ec37c49804f6ce432396
++PKG_MIRROR_HASH:=e8b2e7890f7315694649bb26c22be09554cba3724bae5419ea047101a4f5d03d
+ 
+ CMAKE_INSTALL:=1
+ 
+@@ -40,8 +37,7 @@ CMAKE_OPTIONS+=-D CMAKE_BUILD_TYPE:String=$(BUILD_TYPE) \
+                -D UCI:Bool=true \
+                -D OONF_APP_DEFAULT_CFG_HANDLER:String=uci \
+                -D OONF_STATIC_PLUGINS:String="class;clock;duplicate_set;layer2;packet_socket;rfc5444;socket;stream_socket;telnet;timer;viewer;os_clock;os_fd;os_interface;os_routing;os_system;nhdp;olsrv2;ff_dat_metric;neighbor_probing;nl80211_listener;link_config;layer2info;systeminfo;cfg_uciloader;cfg_compact;nhdpinfo;olsrv2info;netjsoninfo;${CMAKE_OPTIONAL_PLUGINS}" \
+-               -D OONF_LIB_GIT:String=v$(PKG_VERSION)-archive \
+-               -D OONF_VERSION:String=$(PKG_VERSION) \
++               -D VERSION_SUB_TAG:String=$(PKG_SOURCE_DATE) \
+                -D INSTALL_LIB_DIR:Path=lib/oonf \
+                -D INSTALL_INCLUDE_DIR:Path=include/oonf \
+                -D INSTALL_CMAKE_DIR:Path=lib/oonf \
+diff --git a/oonf-olsrd2/patches/010-gcc10.patch b/oonf-olsrd2/patches/010-gcc10.patch
+deleted file mode 100644
+index e0b141ac8a764e5e3920d155df102560b9fadf24..0000000000000000000000000000000000000000
+--- a/oonf-olsrd2/patches/010-gcc10.patch
++++ /dev/null
+@@ -1,40 +0,0 @@
+---- a/src-plugins/generic/nl80211_listener/nl80211_internal.h
+-+++ b/src-plugins/generic/nl80211_listener/nl80211_internal.h
+-@@ -49,6 +49,6 @@
+- #include "core/oonf_logging.h"
+- 
+- /* headers only for use inside the NL80211 subsystem */
+--enum oonf_log_source LOG_NL80211;
+-+extern enum oonf_log_source LOG_NL80211;
+- 
+- #endif /* NL80211_INTERNAL_H_ */
+---- a/src-plugins/nhdp/nhdp/nhdp_internal.h
+-+++ b/src-plugins/nhdp/nhdp/nhdp_internal.h
+-@@ -49,8 +49,8 @@
+- #include "core/oonf_logging.h"
+- 
+- /* headers only for use inside the NHDP subsystem */
+--enum oonf_log_source LOG_NHDP;
+--enum oonf_log_source LOG_NHDP_R;
+--enum oonf_log_source LOG_NHDP_W;
+-+extern enum oonf_log_source LOG_NHDP;
+-+extern enum oonf_log_source LOG_NHDP_R;
+-+extern enum oonf_log_source LOG_NHDP_W;
+- 
+- #endif /* NHDP_INTERNAL_H_ */
+---- a/src-plugins/olsrv2/olsrv2/olsrv2_internal.h
+-+++ b/src-plugins/olsrv2/olsrv2/olsrv2_internal.h
+-@@ -50,9 +50,9 @@
+- #include "core/oonf_logging.h"
+- 
+- /* headers only for use inside the OLSRv2 subsystem */
+--EXPORT enum oonf_log_source LOG_OLSRV2;
+--EXPORT enum oonf_log_source LOG_OLSRV2_R;
+--EXPORT enum oonf_log_source LOG_OLSRV2_ROUTING;
+--EXPORT enum oonf_log_source LOG_OLSRV2_W;
+-+EXPORT extern enum oonf_log_source LOG_OLSRV2;
+-+EXPORT extern enum oonf_log_source LOG_OLSRV2_R;
+-+EXPORT extern enum oonf_log_source LOG_OLSRV2_ROUTING;
+-+EXPORT extern enum oonf_log_source LOG_OLSRV2_W;
+- 
+- #endif /* OLSRV2_INTERNAL_H_ */
+diff --git a/oonf-olsrd2/patches/020-static.patch b/oonf-olsrd2/patches/020-static.patch
+deleted file mode 100644
+index 87146bf1ae325a59440100b99f4726eb36857c47..0000000000000000000000000000000000000000
+--- a/oonf-olsrd2/patches/020-static.patch
++++ /dev/null
+@@ -1,32 +0,0 @@
+---- a/src-plugins/nhdp/nhdp/nhdp.c
+-+++ b/src-plugins/nhdp/nhdp/nhdp.c
+-@@ -187,9 +187,9 @@ static struct oonf_rfc5444_protocol *_pr
+- static struct netaddr _originator_v4, _originator_v6;
+- 
+- /* logging sources for NHDP subsystem */
+--static enum oonf_log_source LOG_NHDP;
+--static enum oonf_log_source LOG_NHDP_R;
+--static enum oonf_log_source LOG_NHDP_W;
+-+enum oonf_log_source LOG_NHDP;
+-+enum oonf_log_source LOG_NHDP_R;
+-+enum oonf_log_source LOG_NHDP_W;
+- 
+- /**
+-  * Initialize additional logging sources for NHDP
+---- a/src-plugins/olsrv2/olsrv2/olsrv2.c
+-+++ b/src-plugins/olsrv2/olsrv2/olsrv2.c
+-@@ -255,10 +255,10 @@ static uint64_t _overwrite_tc_interval;
+- static uint64_t _overwrite_tc_validity;
+- 
+- /* Additional logging sources */
+--static enum oonf_log_source LOG_OLSRV2;
+--static enum oonf_log_source LOG_OLSRV2_R;
+--static enum oonf_log_source LOG_OLSRV2_ROUTING;
+--static enum oonf_log_source LOG_OLSRV2_W;
+-+enum oonf_log_source LOG_OLSRV2;
+-+enum oonf_log_source LOG_OLSRV2_R;
+-+enum oonf_log_source LOG_OLSRV2_ROUTING;
+-+enum oonf_log_source LOG_OLSRV2_W;
+- 
+- /**
+-  * Initialize additional logging sources for NHDP

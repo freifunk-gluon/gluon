@@ -1,0 +1,22 @@
+From: Maciej Krüger <mkg20001@gmail.com>
+Date: Mon, 2 Jan 2023 01:45:37 +0100
+Subject: oonf-olsrd2: fix building with multiple plugins
+
+Code to replace colons wasn't working (debian stable)
+Took it from stackoverflow, works now
+
+diff --git a/oonf-olsrd2/Makefile b/oonf-olsrd2/Makefile
+index 40190edb72547587bc53bb3bee150398b7413aa2..6067003a846340fb0e6221c2473959480b12fb4b 100644
+--- a/oonf-olsrd2/Makefile
++++ b/oonf-olsrd2/Makefile
+@@ -17,8 +17,8 @@ CMAKE_INSTALL:=1
+ include $(INCLUDE_DIR)/package.mk
+ include $(INCLUDE_DIR)/cmake.mk
+ 
+-SPACE:=
+-SPACE+=
++# ref https://stackoverflow.com/a/10571900/3990041
++SPACE:= $(subst ,, )
+ CMAKE_OPTIONAL_PLUGINS:= $(subst $(SPACE),;,$(strip \
+         $(if $(filter y,$(CONFIG_OONF_NHDP_AUTOLL4)),auto_ll4,) \
+         $(if $(filter y,$(CONFIG_OONF_OLSRV2_LAN_IMPORT)),lan_import,) \
