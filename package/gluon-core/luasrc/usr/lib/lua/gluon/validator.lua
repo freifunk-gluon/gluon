@@ -29,8 +29,10 @@ local Validator = {}
 function Validator:new(data, var_error)
 	local o = {
 		data = data,
-		var_error = var_error,
 	}
+	if var_error then
+		o.var_error = var_error
+	end
 	setmetatable(o, self)
 	self.__index = self
 	return o
@@ -51,24 +53,20 @@ function Validator:extend(path, c)
 	return extend(path, c)
 end
 
-local function loadpath(path, base, c, ...)
+function Validator:loadpath(path, base, c, ...)
 	if not c or base == nil then
 		return base
 	end
 
 	if type(base) ~= 'table' then
 		if path then
-			var_error(path, base, 'be a table')
+			self:var_error(path, base, 'be a table')
 		else
 			return nil
 		end
 	end
 
-	return loadpath(extend(path, {c}), base[c], ...)
-end
-
-function Validator.loadpath(...)
-	return loadpath(...)
+	return self:loadpath(extend(path, {c}), base[c], ...)
 end
 
 function Validator.format(...)
@@ -80,7 +78,7 @@ function Validator:loadvar(path)
 		return path.value
 	end
 
-	return loadpath({}, self.data, unpack(path))
+	return self:loadpath({}, self.data, unpack(path))
 end
 
 local function check_type(t)

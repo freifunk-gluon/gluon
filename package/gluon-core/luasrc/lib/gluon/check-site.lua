@@ -71,6 +71,9 @@ function M.table_keys(tbl)
 	return keys
 end
 
+local ConfValidator = {}
+setmetatable(ConfValidator, { __index = Validator })
+
 local function site_src()
 	return 'site.conf'
 end
@@ -79,7 +82,7 @@ local function domain_src()
 	return 'domains/' .. domain_code .. '.conf'
 end
 
-local function conf_src(path)
+function ConfValidator:conf_src(path)
 	if path.is_value then
 		return 'Configuration'
 	end
@@ -87,9 +90,9 @@ local function conf_src(path)
 	local src
 
 	if has_domains then
-		if Validator.loadpath(nil, domain, unpack(path)) ~= nil then
+		if self:loadpath(nil, domain, unpack(path)) ~= nil then
 			src = domain_src()
-		elseif Validator.loadpath(nil, site, unpack(path)) ~= nil then
+		elseif self:loadpath(nil, site, unpack(path)) ~= nil then
 			src = site_src()
 		else
 			src = site_src() .. ' / ' .. domain_src()
@@ -101,25 +104,25 @@ local function conf_src(path)
 	return src
 end
 
-local function var_error(obj, path, val, msg)
+function ConfValidator:var_error(path, val, msg)
 	local found = 'unset'
 	if val ~= nil then
 		found = string.format('%s (a %s value)', Validator.format(val), type(val))
 	end
 
-	config_error(conf_src(path), 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
+	config_error(self:conf_src(path), 'expected %s to %s, but it is %s', path_to_string(path), msg, found)
 end
 
-function M.in_site(path)
-	if has_domains and Validator.loadpath(nil, domain, unpack(path)) ~= nil then
+function ConfValidator:in_site(path)
+	if has_domains and self:loadpath(nil, domain, unpack(path)) ~= nil then
 		config_error(domain_src(), '%s is allowed in site configuration only', path_to_string(path))
 	end
 
 	return path
 end
 
-function M.in_domain(path)
-	if has_domains and Validator.loadpath(nil, site, unpack(path)) ~= nil then
+function ConfValidator:in_domain(path)
+	if has_domains and self:loadpath(nil, site, unpack(path)) ~= nil then
 		config_error(site_src(), '%s is allowed in domain configuration only', path_to_string(path))
 	end
 
@@ -151,9 +154,6 @@ function M.alternatives(...)
 	error(table.concat(errs, '\n        '), 0)
 end
 
-local ConfValidator = {}
-setmetatable(ConfValidator, { __index = Validator })
-
 function ConfValidator:obsolete(path, msg)
 	local val = self:loadvar(path)
 	if val == nil then
@@ -164,7 +164,7 @@ function ConfValidator:obsolete(path, msg)
 		msg = 'Check the release notes and documentation for details.'
 	end
 
-	config_error(conf_src(path), '%s is obsolete. %s', path_to_string(path), msg)
+	config_error(self:conf_src(path), '%s is obsolete. %s', path_to_string(path), msg)
 end
 
 local function method_call_wrapper(obj, method_name)
@@ -203,12 +203,12 @@ local ok, err = pcall(function()
 			domain_code = k
 			domain = v
 			conf = merge(site, domain)
-			conf_validator = ConfValidator:new(conf, var_error)
+			local conf_validator = ConfValidator:new(conf)
 			check(conf_validator)
 		end
 	else
 		conf = site
-		conf_validator = ConfValidator:new(conf, var_error)
+		local conf_validator = ConfValidator:new(conf)
 		check(conf_validator)
 	end
 end)
