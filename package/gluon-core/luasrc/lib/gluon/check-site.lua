@@ -26,8 +26,7 @@ end
 local site, domain_code, domain, conf
 
 
-local M = setmetatable({}, { __index = _G })
-
+local M = {}
 
 local function merge(a, b)
 	local function is_array(t)
@@ -129,7 +128,7 @@ local function conf_src(path)
 	return src
 end
 
-local function var_error(path, val, msg)
+local function var_error(obj, path, val, msg)
 	local found = 'unset'
 	if val ~= nil then
 		found = string.format('%s (a %s value)', format(val), type(val))
@@ -194,12 +193,24 @@ function loadpath(path, base, c, ...)
 	return loadpath(M.extend(path, {c}), base[c], ...)
 end
 
-local function loadvar(path)
+Validator = {}
+
+function Validator:new(data, var_error)
+	o = {
+		data = data,
+		var_error = var_error,
+	}
+	setmetatable(o, self)
+	self.__index = self
+	return o
+end
+
+function Validator:loadvar(path)
 	if path.is_value then
 		return path.value
 	end
 
-	return loadpath({}, conf, unpack(path))
+	return loadpath({}, self.data, unpack(path))
 end
 
 local function check_type(t)
@@ -261,23 +272,22 @@ local function check_chanlist(channels)
 	end
 end
 
-function M.need(path, check, required, msg)
-	local val = loadvar(path)
+function Validator:need(path, check, required, msg)
+	local val = self:loadvar(path)
 	if required == false and val == nil then
 		return nil
 	end
 
 	if not check(val) then
-		var_error(path, val, msg)
+		self:var_error(path, val, msg)
 	end
 
 	return val
 end
 
-local function need_type(path, type, required, msg)
-	return M.need(path, check_type(type), required, msg)
+function Validator:need_type(path, type, required, msg)
+	return self:need(path, check_type(type), required, msg)
 end
-
 
 function M.need_alphanumeric_key(path)
 	local val = path[#path]
@@ -287,47 +297,46 @@ function M.need_alphanumeric_key(path)
 	end
 end
 
-
-function M.need_string(path, required)
-	return need_type(path, 'string', required, 'be a string')
+function Validator:need_string(path, required)
+	return self:need_type(path, 'string', required, 'be a string')
 end
 
-function M.need_string_match(path, pat, required)
-	local val = M.need_string(path, required)
+function Validator:need_string_match(path, pat, required)
+	local val = self:need_string(path, required)
 	if not val then
 		return nil
 	end
 
 	if not val:match(pat) then
-		var_error(path, val, "match pattern '" .. pat .. "'")
+		self:var_error(path, val, "match pattern '" .. pat .. "'")
 	end
 
 	return val
 end
 
-function M.need_number(path, required)
-	return need_type(path, 'number', required, 'be a number')
+function Validator:need_number(path, required)
+	return self:need_type(path, 'number', required, 'be a number')
 end
 
-function M.need_number_range(path, min, max, required)
-	local val = need_type(path, 'number', required)
+function Validator:need_number_range(path, min, max, required)
+	local val = self:need_number(path, required)
 	if not val then
 		return nil
 	end
 
 	if val < min or val > max then
-		var_error(path, val, "be in range [" .. min .. ", " .. max .. "]")
+		self:var_error(path, val, "be in range [" .. min .. ", " .. max .. "]")
 	end
 
 	return val
 end
 
-function M.need_boolean(path, required)
-	return need_type(path, 'boolean', required, 'be a boolean')
+function Validator:need_boolean(path, required)
+	return self:need_type(path, 'boolean', required, 'be a boolean')
 end
 
-function M.need_array(path, subcheck, required)
-	local val = need_type(path, 'table', required, 'be an array')
+function Validator:need_array(path, subcheck, required)
+	local val = self:need_type(path, 'table', required, 'be an array')
 	if not val then
 		return nil
 	end
@@ -341,8 +350,8 @@ function M.need_array(path, subcheck, required)
 	return val
 end
 
-function M.need_table(path, subcheck, required)
-	local val = need_type(path, 'table', required, 'be a table')
+function Validator:need_table(path, subcheck, required)
+	local val = self:need_type(path, 'table', required, 'be a table')
 	if not val then
 		return nil
 	end
@@ -356,53 +365,51 @@ function M.need_table(path, subcheck, required)
 	return val
 end
 
-function M.need_value(path, value, required)
-	return M.need(path, function(v)
+function Validator:need_value(path, value, required)
+	return self:need(path, function(v)
 		return v == value
 	end, required, 'be ' .. tostring(value))
 end
 
-function M.need_one_of(path, array, required)
-	return M.need(path, check_one_of(array), required, 'be one of the given array ' .. array_to_string(array))
+function Validator:need_one_of(path, array, required)
+	return self:need(path, check_one_of(array), required, 'be one of the given array ' .. array_to_string(array))
 end
 
-function M.need_string_array(path, required)
-	return M.need_array(path, M.need_string, required)
+function Validator:need_string_array(path, required)
+	return self:need_array(path, function(e) self:need_string(e) end, required)
 end
 
-function M.need_string_array_match(path, pat, required)
-	return M.need_array(path, function(e) M.need_string_match(e, pat) end, required)
+function Validator:need_string_array_match(path, pat, required)
+	return self:need_array(path, function(e) self:need_string_match(e, pat) end, required)
 end
 
-function M.need_array_of(path, array, required)
-	return M.need_array(path, function(e) M.need_one_of(e, array) end, required)
+function Validator:need_array_of(path, array, required)
+	return self:need_array(path, function(e) self:need_one_of(e, array) end, required)
 end
 
-function M.need_array_elements_exclusive(path, a, b, required)
-	local val = need_type(path, 'table', required, 'be an array')
+function Validator:need_array_elements_exclusive(path, a, b, required)
+	local val = self:need_array(path, nil, required)
 	if not val then
 		return nil
 	end
 
 	if contains(val, a) and contains(val, b) then
-		config_error(conf_src(path),
-			'expected %s to contain only one of the elements %s and %s, but not both.',
-			path_to_string(path), format(a), format(b))
+		self:var_error(path, val, 'contain only one of the elements ' .. format(a) .. ' and ' .. format(b) .. ', but not both.')
 	end
 
 	return val
 end
 
-function M.need_chanlist(path, channels, required)
+function Validator:need_chanlist(path, channels, required)
 	local valid_chanlist = check_chanlist(channels)
-	return M.need(path, valid_chanlist, required,
+	return self:need(path, valid_chanlist, required,
 		'be a space-separated list of WiFi channels or channel-ranges (separated by a hyphen). '
 		.. 'Valid channels are: ' .. array_to_string(channels))
 end
 
-function M.need_domain_name(path)
-	M.need_string(path)
-	M.need(path, function(domain_name)
+function Validator:need_domain_name(path)
+	self:need_string(path)
+	self:need(path, function(domain_name)
 		local f = io.open((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/domains/' .. domain_name .. '.json')
 		if not f then return false end
 		f:close()
@@ -410,21 +417,49 @@ function M.need_domain_name(path)
 	end, nil, 'be a valid domain name')
 end
 
-function M.obsolete(path, msg)
-	local val = loadvar(path)
+local ConfValidator = {}
+setmetatable(ConfValidator, { __index = Validator })
+
+function ConfValidator:obsolete(path, msg)
+	local val = self:loadvar(path)
 	if val == nil then
 		return nil
 	end
 
 	if not msg then
 		msg = 'Check the release notes and documentation for details.'
-
 	end
 
 	config_error(conf_src(path), '%s is obsolete. %s', path_to_string(path), msg)
 end
 
-local check = setfenv(assert(loadfile()), M)
+local function method_call_wrapper(obj, method_name)
+	return function (...)
+		return obj[method_name](obj, ...)
+	end
+end
+
+local function check(conf_validator)
+	local scope = {}
+	setmetatable(scope, { __index = function(_, k)
+		if M[k] then
+			-- Functions defined in this module.
+			return M[k]
+		elseif conf_validator[k] then
+			-- need_*() methods from the conf_validator.
+			--
+			-- We need method_call_wrapper() since conf_validator is a "class"
+			-- and class methods expect "self" as first argument, but the
+			-- need_*() calls in check_site.lua doesn't pass a self argument.
+			return method_call_wrapper(conf_validator, k)
+		elseif _G[k] then
+			-- This is necessary for globals like ipairs(), pairs(), etc. to
+			-- be available within check_site.lua scripts.
+			return _G[k]
+		end
+	end })
+	return setfenv(assert(loadfile()), scope)()
+end
 
 site = assert(json.load((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/site.json'))
 
@@ -434,11 +469,13 @@ local ok, err = pcall(function()
 			domain_code = k
 			domain = v
 			conf = merge(site, domain)
-			check()
+			conf_validator = ConfValidator:new(conf, var_error)
+			check(conf_validator)
 		end
 	else
 		conf = site
-		check()
+		conf_validator = ConfValidator:new(conf, var_error)
+		check(conf_validator)
 	end
 end)
 
