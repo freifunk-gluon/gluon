@@ -173,6 +173,8 @@ local function method_call_wrapper(obj, method_name)
 	end
 end
 
+local check_site_file_content = assert(loadfile())
+
 local function check(conf_validator)
 	local scope = {}
 	setmetatable(scope, { __index = function(_, k)
@@ -192,7 +194,7 @@ local function check(conf_validator)
 			return _G[k]
 		end
 	end })
-	return setfenv(assert(loadfile()), scope)()
+	return setfenv(check_site_file_content, scope)()
 end
 
 site = assert(json.load((os.getenv('IPKG_INSTROOT') or '') .. '/lib/gluon/site.json'))
