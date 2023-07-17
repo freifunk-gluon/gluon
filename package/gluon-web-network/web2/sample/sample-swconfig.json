@@ -1,0 +1,11 @@
+{
+  "path": "/network/interfaces",
+  "display": "Network Interfaces with swconfig",
+  "info": {
+    "switch_type": "swconfig",
+    "interfaces": ["eth0", "eth1"]
+  },
+  "get": {
+  
+  }
+}

@@ -16,11 +16,11 @@ class GluonWeb2Instance {
     const dataset = this.el.dataset
 
     try {
-      let parsedData = JSON.parse(atob(dataset.componentData))
+      let parsedData = JSON.parse(atob(dataset.componentData!))
 
       this.rendered = render(<GluonWeb2
-        id={dataset.gluonWeb2}
-        component={dataset.component}
+        id={dataset.gluonWeb2!}
+        component={dataset.component!}
         data={parsedData}
       />, this.el)
     } catch (error) {
