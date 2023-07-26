@@ -191,6 +191,8 @@ negative effects. Only when a previously connected node reboots the effect
 comes into play, as the gateway still knows about the old timestamp of the gluon
 node.
 
+.. _gluon-mesh-vpn-key-translate:
+
 gluon-mesh-vpn-key-translate
 """"""""""""""""""""""""""""
 

@@ -1,3 +1,5 @@
+.. _dns-caching:
+
 DNS caching
 ===========
 
