@@ -24,7 +24,7 @@ copyright = 'Project Gluon'
 author = 'Project Gluon'
 
 # The short X.Y version
-version = '2022.1'
+version = '2023.1'
 # The full version, including alpha/beta/rc tags
 release = version
 
