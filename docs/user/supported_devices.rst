@@ -282,7 +282,7 @@ mediatek-mt7622
 
 * Ubiquiti
 
-  - UniFi 6 LR
+  - UniFi 6 LR (v1)
 
 * Xiaomi
 
