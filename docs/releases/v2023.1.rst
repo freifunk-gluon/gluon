@@ -1,0 +1,122 @@
+Gluon 2023.1
+============
+
+Important notes
+---------------
+
+Upgrades to v2023.1 and later releases are only supported from releases v2021.1 and later.
+This is due to migrations that have been removed to simplify maintenance.
+
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- Extreme Networks
+
+  - WS-AP3805i
+
+ath79-nand
+~~~~~~~~~~
+
+- GL.iNet
+
+  - GL-XE300
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - EAP615-Wall
+
+- Wavlink
+
+  - WS-WN572HP3 4G
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - TL-MR6400 (v5)
+
+
+Features
+--------
+
+DNS Caching
+~~~~~~~~~~~
+
+DNS caching using the dnsmasq resolver is reintroduced.
+
+See the :ref:`DNS caching documentation <dns-caching>` section for
+details on how to enable this feature.
+
+Cellular Modem Support
+~~~~~~~~~~~~~~~~~~~~~~
+
+Support for using cellular data connections as the primary uplink connection has been added
+to Gluon. This is supported for hardware that comes with a built-in cellular modem. The required user
+configuration for the APN and SIM-PIN can be performed in the Advanced Settings in Config Mode.
+
+To use this feature in config-mode, the ``web-cellular`` needs to be enabled in ``site.mk``.
+
+Interface Role UI
+~~~~~~~~~~~~~~~~~
+
+Interface Roles can now be assigned from the Network page of the Advanced Settings
+in Config Mode. This configuration is preserved on Gluon upgrades.
+
+WireGuard Key Translation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This release adds a new mechanism for seamlessly translating existing fastd private keys on the nodes into
+equivalent WireGuard keys. The corresponding public keys can be translated **separately** on the servers.
+This mitigates the need to re-exchange public keys for communities when migrating to WireGuard-based VPN.
+
+See the :ref:`gluon-mesh-vpn-key-translate <gluon-mesh-vpn-key-translate>` section for details.
+
+
+Bugfixes
+--------
+
+- Custom channel lists using a radios ``channels`` UCI option are now preserved on upgrade
+  in case ``gluon.wireless.preserve_channels`` is set.
+- Custom HT modes for radios are now preserved when ``gluon.wireless.preserve_channels``
+  is set.
+- Broken mesh links between MediaTek 11ax and Qualcomm 11ac hardware are worked around. (`#2905 <https://github.com/freifunk-gluon/gluon/pull/2905>`_)
+- Fixed a bug in the MediaTek MT7621 NAND driver that caused devices to end in a bootlooping state
+  after the initial installation.
+
+
+Minor changes
+-------------
+
+- Images built for the ``x86`` targets are now natively bootable on
+  EFI systems without CSM or BIOS support modes.
+
+
+Known issues
+------------
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
