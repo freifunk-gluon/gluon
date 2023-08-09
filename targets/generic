@@ -53,6 +53,18 @@ try_config('PACKAGE_dnsmasq_full_noid', false)
 try_config('PACKAGE_dnsmasq_full_broken_rtc', false)
 try_config('PACKAGE_dnsmasq_full_rtc', false)
 
+try_config('PACKAGE_openvswitch', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-geneve', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-geneve-intree', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-gre', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-gre-intree', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-intree', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-lisp-intree', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-stt-intree', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-vxlan', false) -- fails to build
+try_config('PACKAGE_kmod-openvswitch-vxlan-intree', false) -- fails to build
+
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
 config('KERNEL_PROC_STRIPPED', true)
