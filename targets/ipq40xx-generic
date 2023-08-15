@@ -61,10 +61,7 @@ device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
 -- GL.iNet
 
 device('gl.inet-gl-ap1300', 'glinet_gl-ap1300', {
-	factory = '-squashfs-nand-factory',
 	factory_ext = '.ubi',
-	sysupgrade = '-squashfs-nand-sysupgrade',
-	sysupgrade_ext = '.bin',
 })
 
 device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
@@ -131,8 +128,5 @@ device('zyxel-nbg6617', 'zyxel_nbg6617')
 -- 8devices
 
 device('8devices-jalapeno', '8dev_jalapeno', {
-	factory = '-squashfs-nand-factory',
 	factory_ext = '.ubi',
-	sysupgrade = '-squashfs-nand-sysupgrade',
-	sysupgrade_ext = '.bin',
 })
