@@ -585,6 +585,10 @@ device('ubiquiti-nanobeam-ac-gen1-xc', 'ubnt_nanobeam-ac-xc', {
 
 device('ubiquiti-nanobeam-m5-xw', 'ubnt_nanobeam-m5-xw')
 
+device('ubiquiti-rocket-5ac-lite', 'ubnt_rocket-5ac-lite', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 	manifest_aliases = {
 		'ubiquiti-unifiap-outdoor+', -- upgrade from OpenWrt 19.07
