@@ -8,7 +8,7 @@
 #include "mac.h"
 
 static struct json_object * get_radv_filter() {
-	FILE *f = popen("exec ebtables-tiny -L RADV_FILTER", "r");
+	FILE *f = popen("exec ebtables -L RADV_FILTER", "r");
 	char *line = NULL;
 	size_t len = 0;
 	struct ether_addr mac = {};

@@ -35,7 +35,7 @@ connected to the client interface via cable or WLAN instead of via the mesh
 fake TQ of 512, so that they are always preferred.
 
 Be aware of problems if you plan to use local routers together with the
-:doc:`gluon-ebtables-filter-ra-dhcp` package. These router advertisements are
+:doc:`gluon-nftables-filter-ra-dhcp` package. These router advertisements are
 filtered anyway and reach neither the node nor any other client. Therefore the
 use of local routers is not possible as long as the package
 ``gluon-radv-filterd`` is used.

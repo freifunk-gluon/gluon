@@ -1,6 +1,0 @@
-rule('ARP_LIMIT -j ARP_LIMIT_DATCHECK')
-rule('ARP_LIMIT --mark 0x2/0x2 -j RETURN')
-rule('ARP_LIMIT -j ARP_LIMIT_TLCHECK')
-rule('ARP_LIMIT --limit 1/sec --limit-burst 50 -j RETURN')
-
-rule('FORWARD -p ARP --logical-out br-client -o bat0 --arp-op Request -j ARP_LIMIT')

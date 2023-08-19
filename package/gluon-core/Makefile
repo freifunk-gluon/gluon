@@ -11,7 +11,7 @@ define Package/gluon-core
   TITLE:=Base files of Gluon
   DEPENDS:= \
 	+gluon-site +libgluonutil +libiwinfo-lua +lua-platform-info +lua-simple-uci +lua-hash +lua-jsonc \
-	+luabitop +luaposix +vxlan +odhcp6c +firewall +pretty-hostname
+	+luabitop +luaposix +vxlan +odhcp6c +firewall4 +pretty-hostname
 endef
 
 define Package/gluon-core/description
