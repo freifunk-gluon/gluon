@@ -412,12 +412,6 @@ device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	},
 })
 
-device('tp-link-archer-c60-v1', 'tplink_archer-c60-v1', {
-	packages = ATH10K_PACKAGES_QCA9888,
-	broken = true, -- OOM with 5GHz enabled in most environments
-	class = 'tiny', -- 64M ath9k + ath10k
-})
-
 device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
@@ -472,23 +466,6 @@ device('tp-link-cpe710-v1', 'tplink_cpe710-v1')
 
 device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
-})
-
-device('tp-link-re355-v1', 'tplink_re355-v1', {
-	manifest_aliases = {
-		'tp-link-re355', -- upgrade from OpenWrt 19.07
-	},
-	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
-	broken = true, -- OOM with 5GHz enabled in most environments if device is 64M RAM variant
-	class = 'tiny', -- Only 6M of usable Firmware space
-})
-
-device('tp-link-re450-v1', 'tplink_re450-v1', {
-	packages = ATH10K_PACKAGES_QCA9880,
-	manifest_aliases = {
-		'tp-link-re450', -- upgrade from OpenWrt 19.07
-	},
-	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
 device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
@@ -582,7 +559,7 @@ device('ubiquiti-unifi-ac-pro', 'ubnt_unifiac-pro', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
-device('ubiquiti-unifi-ap', 'ubnt_unifi', {
+device('ubiquiti-unifi-ap', 'ubnt_unifi-ap', {
 	aliases = {
 		'ubiquiti-unifi-ap-lr',
 	},

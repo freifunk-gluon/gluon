@@ -1,14 +1,20 @@
 -- ASUS
 
-device('asus-rt-ac57u', 'asus_rt-ac57u', {
+device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 	factory = false,
+	manifest_aliases = {
+		'asus-rt-ac57u', -- Upgrade from OpenWrt 22.03
+	},
 })
 
 
 -- Cudy
 
-device('cudy-wr1300', 'cudy_wr1300', {
+device('cudy-wr1300-v1', 'cudy_wr1300-v1', {
 	factory = false,
+	manifest_aliases = {
+		'cudy-wr1300', -- Upgrade from OpenWrt 22.03
+	},
 })
 
 device('cudy-wr2100', 'cudy_wr2100', {

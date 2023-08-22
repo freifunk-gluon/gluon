@@ -115,7 +115,6 @@ ath79-generic
   - CPE510 (v1.0, v1.1, v2.0, v3.0)
   - CPE710 (v1.0)
   - EAP225-Outdoor (v1)
-  - RE450 (v1)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -200,10 +199,6 @@ ipq40xx-generic
   - FRITZ!Box 7530 [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
-* EnGenius
-
-  - ENS620EXT
-
 * GL.iNet
 
   - GL-AP1300
@@ -231,7 +226,6 @@ ipq40xx-generic
 * ZyXEL
 
   - NBG6617
-  - WRE6606  [#device-class-tiny]_
 
 ipq40xx-mikrotik
 ----------------
@@ -361,7 +355,7 @@ ramips-mt7621
 
 * ASUS
 
-  - RT-AC57U
+  - RT-AC57U (v1)
 
 * Cudy
 
@@ -447,7 +441,6 @@ ramips-mt76x8
   - Archer C20 (v4, v5)
   - Archer C50 (v3, v4)
   - RE200 (v2, v3)
-  - RE305 (v1) [#device-class-tiny]
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-MR6400 (v5)

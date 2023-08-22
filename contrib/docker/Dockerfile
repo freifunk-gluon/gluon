@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     file \
     git \
     python3 \
+    python3-distutils \
     build-essential \
     gawk \
     unzip \
