@@ -279,6 +279,10 @@ lantiq-xway
 mediatek-filogic
 ----------------
 
+* NETGEAR
+
+  - WAX220
+
 * ZyXEL
 
   - NWA50AX Pro
