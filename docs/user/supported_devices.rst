@@ -183,6 +183,10 @@ brcm2708-bcm2709
 ipq40xx-generic
 ---------------
 
+* 8devices
+
+  - Jalapeno
+
 * Aruba
 
   - AP-303
