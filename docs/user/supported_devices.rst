@@ -272,6 +272,13 @@ lantiq-xway
 
   - DGN3500B [#lan_as_wan]_
 
+mediatek-filogic
+----------------
+
+* ZyXEL
+
+  - NWA50AX Pro
+
 mediatek-mt7622
 ---------------
 

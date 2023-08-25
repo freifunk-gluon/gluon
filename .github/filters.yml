@@ -93,6 +93,15 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "mediatek-filogic": [
+    "targets/mediatek-filogic",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "mediatek-mt7622": [
     "targets/mediatek-mt7622",
     "modules",
