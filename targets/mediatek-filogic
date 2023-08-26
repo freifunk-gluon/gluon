@@ -1,3 +1,10 @@
+-- NETGEAR
+
+device('netgear-wax220', 'netgear_wax220', {
+	factory_ext = '.img',
+})
+
+
 -- ZyXEL
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')
