@@ -7,6 +7,7 @@ device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 	},
 })
 
+device('asus-rt-ax53u', 'asus_rt-ax53u')
 
 -- Cudy
 

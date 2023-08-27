@@ -371,6 +371,7 @@ ramips-mt7621
 * ASUS
 
   - RT-AC57U (v1)
+  - RT-AX53U
 
 * Cudy
 
