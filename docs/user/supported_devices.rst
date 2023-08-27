@@ -279,6 +279,10 @@ lantiq-xway
 mediatek-filogic
 ----------------
 
+* Cudy
+
+  - WR3000 (v1)
+
 * NETGEAR
 
   - WAX220

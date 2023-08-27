@@ -1,3 +1,10 @@
+-- Cudy
+
+device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
+	factory = false,
+})
+
+
 -- NETGEAR
 
 device('netgear-wax220', 'netgear_wax220', {
