@@ -149,6 +149,11 @@ device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 	broken = true, -- Missing LED / Reset button
 })
 
+device('zyxel-wsm20', 'zyxel_wsm20', {
+	factory = false,
+	aliases = {'zyxel-multy-m1'},
+})
+
 
 -- Devices without WLAN
 
