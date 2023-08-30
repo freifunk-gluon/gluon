@@ -2,9 +2,9 @@
 	ATTENTION: This file is not compiled when building gluon.
 	The compiled version is at ../files/lib/gluon/status-page/www/static/status-page.css
 
-	Use sass like this to update it:
+	Use dart-sass to update it:
 
-	sass --sourcemap=none -C -t compressed sass/status-page.scss files/lib/gluon/status-page/www/static/status-page.css
+	sass --style=compressed --no-source-map sass/status-page.scss files/lib/gluon/status-page/www/static/status-page.css
 
 	When committing changes to this file make sure to commit the respective
 	changes to the compiled version within the same commit!
@@ -241,4 +241,8 @@ canvas.signalgraph {
 			border-width: 1px 0 0 0;
 		}
 	}
+}
+
+[role=alert] {
+	font-weight: bold;
 }

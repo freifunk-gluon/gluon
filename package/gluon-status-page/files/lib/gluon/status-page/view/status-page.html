@@ -128,7 +128,8 @@
 
 		<title><%| nodeinfo.hostname %> - <%:Status%></title>
 
-		<link rel="stylesheet" href="/static/status-page.css" type="text/css">
+		<link rel="stylesheet" href="/static/status-page.css">
+		<script defer src="/static/status-page.js"></script>
 	</head>
 	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%=
 		attr('data-translations', translations) ..
@@ -138,8 +139,8 @@
 		<header>
 			<h1><%| nodeinfo.hostname %></h1>
 		</header>
-		<div class="container">
-			<div class="frame">
+		<main class="container">
+			<section class="frame">
 				<h2><%:Overview%></h2>
 				<dl>
 					<dt><%:Node name%></dt><dd><%| nodeinfo.hostname %></dd>
@@ -205,8 +206,11 @@
 						<%- end %>
 					<%- end %>
 				</dl>
-			</div>
-			<div class="frame">
+			</section>
+			<section class="frame">
+				<noscript>
+					<section role="alert">Warning: Javascript required!</section>
+				</noscript>
 				<h2><%:Monitoring%></h2>
 				<table>
 					<tbody>
@@ -255,8 +259,8 @@
 						<tbody id="mesh-vpn-peers"></tbody>
 					</table>
 				</div>
-			</div>
-			<div class="frame frame-wide">
+			</section>
+			<section class="frame frame-wide">
 				<h2><%:Neighbors%></h2>
 
 				<%
@@ -287,8 +291,7 @@
 						end
 					end
 				%>
-			</div>
-		</div>
-		<script src="/static/status-page.js"></script>
+			</section>
+		</main>
 	</body>
 </html>

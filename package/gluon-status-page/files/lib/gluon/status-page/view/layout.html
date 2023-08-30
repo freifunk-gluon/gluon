@@ -9,16 +9,16 @@
 
 		<title><%:Error%></title>
 
-		<link rel="stylesheet" href="/static/status-page.css" type="text/css">
+		<link rel="stylesheet" href="/static/status-page.css">
 	</head>
 	<body>
 		<header>
 			<h1><%:Error%></h1>
 		</header>
-		<div class="container">
-			<div class="frame">
+		<main class="container">
+			<section class="frame">
 				<% renderer.render(content, scope, pkg) %>
-			</div>
-		</div>
+			</section>
+		</main>
 	</body>
 </html>
