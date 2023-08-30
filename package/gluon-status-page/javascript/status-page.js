@@ -7,11 +7,12 @@
 'use strict';
 
 (function() {
-	var _ = JSON.parse(document.body.getAttribute('data-translations'));
+	const interfaces = {};
+	const _ = JSON.parse(document.body.getAttribute('data-translations'));
 
 	String.prototype.sprintf = function() {
-		var i = 0;
-		var args = arguments;
+		let i = 0;
+		const args = arguments;
 
 		return this.replace(/%s/g, function() {
 			return args[i++];
@@ -25,7 +26,7 @@
 	function formatNumber(d, digits) {
 		digits--;
 
-		for (var v = d; v >= 10 && digits > 0; v /= 10)
+		for (let v = d; v >= 10 && digits > 0; v /= 10)
 			digits--;
 
 		// avoid toPrecision as it might produce strings in exponential notation
@@ -37,10 +38,10 @@
 	}
 
 	function prettyPrefix(prefixes, step, d) {
-		var prefix = 0;
+		let prefix = 0;
 
 		if (d === undefined)
-			return "- ";
+			return '- ';
 
 		while (d > step && prefix < prefixes.length - 1) {
 			d /= step;
@@ -48,22 +49,22 @@
 		}
 
 		d = formatNumber(d, 3);
-		return d + " " + prefixes[prefix];
+		return d + ' ' + prefixes[prefix];
 	}
 
 	function prettySize(d) {
-		return prettyPrefix([ "", "K", "M", "G", "T" ], 1024, d);
+		return prettyPrefix([ '', 'K', 'M', 'G', 'T' ], 1024, d);
 	}
 
 	function prettyBits(d) {
-		return prettySize(8 * d) + "bps";
+		return prettySize(8 * d) + 'bps';
 	}
 
 	function prettyBytes(d) {
-		return prettySize(d) + "B";
+		return prettySize(d) + 'B';
 	}
 
-	var formats = {
+	const formats = {
 		'id': function(value) {
 			return value;
 		},
@@ -74,27 +75,27 @@
 			return _['%s used'].sprintf(formatNumber(100 * value, 3) + '%');
 		},
 		'memory': function(memory) {
-			var usage = 1 - memory.available / memory.total
+			const usage = 1 - memory.available / memory.total;
 			return formats.percent(usage);
 		},
 		'time': function(seconds) {
-			var minutes = Math.round(seconds / 60);
+			let minutes = Math.round(seconds / 60);
 
-			var days = Math.floor(minutes / 1440);
-			var hours = Math.floor((minutes % 1440) / 60);
+			const days = Math.floor(minutes / 1440);
+			const hours = Math.floor((minutes % 1440) / 60);
 			minutes = Math.floor(minutes % 60);
 
-			var out = '';
+			let out = '';
 
 			if (days === 1)
 				out += _['1 day'] + ', ';
 			else if (days > 1)
-				out += _['%s days'].sprintf(days) + ", ";
+				out += _['%s days'].sprintf(days) + ', ';
 
-			out += hours + ":";
+			out += hours + ':';
 
 			if (minutes < 10)
-				out += "0";
+				out += '0';
 
 			out += minutes;
 
@@ -102,12 +103,12 @@
 		},
 		'packetsDiff': function(packets, packetsPrev, diff) {
 			if (diff > 0)
-				return prettyPackets((packets-packetsPrev) / diff);
+				return prettyPackets((packets - packetsPrev) / diff);
 
 		},
 		'bytesDiff': function(bytes, bytesPrev, diff) {
 			if (diff > 0)
-				return prettyBits((bytes-bytesPrev) / diff);
+				return prettyBits((bytes - bytesPrev) / diff);
 		},
 		'bytes': function(bytes) {
 			return prettyBytes(bytes);
@@ -116,15 +117,15 @@
 			if (!addr)
 				return '';
 
-			for (var i in interfaces) {
-				var iface = interfaces[i];
-				var neigh = iface.lookup_neigh(addr);
+			for (const i in interfaces) {
+				const iface = interfaces[i];
+				const neigh = iface.lookup_neigh(addr);
 				if (!neigh)
 					continue;
 
-				var span = document.createElement('span');
+				const span = document.createElement('span');
 				span.appendChild(document.createTextNode('via '));
-				var a = document.createElement('a');
+				const a = document.createElement('a');
 				a.href = 'http://[' + neigh.get_addr() + ']/';
 				a.textContent = neigh.get_hostname();
 				span.appendChild(a);
@@ -137,7 +138,7 @@
 		'tq': function(value) {
 			return formatNumber(100/255 * value, 1) + '%';
 		}
-	}
+	};
 
 
 	function resolve_key(obj, key) {
@@ -150,10 +151,10 @@
 	}
 
 	function add_event_source(url, handler) {
-		var source = new EventSource(url);
-		var prev = {};
+		const source = new EventSource(url);
+		let prev = {};
 		source.onmessage = function(m) {
-			var data = JSON.parse(m.data);
+			const data = JSON.parse(m.data);
 			handler(data, prev);
 			prev = data;
 		}
@@ -165,12 +166,13 @@
 		}
 	}
 
-	var node_address = document.body.getAttribute('data-node-address');
+	const node_address = document.body.getAttribute('data-node-address');
 
-	var location;
+	let location;
 	try {
 		location = JSON.parse(document.body.getAttribute('data-node-location'));
 	} catch (e) {
+		console.error(e);
 	}
 
 
@@ -187,28 +189,28 @@
 			return peers;
 		}
 
-		var div = document.getElementById('mesh-vpn');
+		const div = document.getElementById('mesh-vpn');
 		if (!data) {
 			div.style.display = 'none';
 			return;
 		}
 
 		div.style.display = '';
-		var tbody = document.getElementById('mesh-vpn-peers');
+		const tbody = document.getElementById('mesh-vpn-peers');
 		while (tbody.lastChild)
 			tbody.removeChild(tbody.lastChild);
 
-		var peers = add_group([], data);
+		const peers = add_group([], data);
 		peers.sort();
 
-		peers.forEach(function (peer) {
-			var tr = document.createElement('tr');
+		peers.forEach(function(peer) {
+			const tr = document.createElement('tr');
 
-			var th = document.createElement('th');
+			const th = document.createElement('th');
 			th.textContent = peer[0];
 			tr.appendChild(th);
 
-			var td = document.createElement('td');
+			const td = document.createElement('td');
 			if (peer[1] && peer[1].established != null)
 				td.textContent = _['connected'] + ' (' + formats.time(peer[1].established) + ')';
 			else
@@ -219,21 +221,21 @@
 		});
 	}
 
-	var statisticsElems = document.querySelectorAll('[data-statistics]');
+	const statisticsElems = document.querySelectorAll('[data-statistics]');
 
 	add_event_source('/cgi-bin/dyn/statistics', function(data, dataPrev) {
-		var diff = data.uptime - dataPrev.uptime;
+		const diff = data.uptime - dataPrev.uptime;
 
 		statisticsElems.forEach(function(elem) {
-			var stat = elem.getAttribute('data-statistics');
-			var format = elem.getAttribute('data-format');
+			const stat = elem.getAttribute('data-statistics');
+			const format = elem.getAttribute('data-format');
 
-			var valuePrev = resolve_key(dataPrev, stat);
-			var value = resolve_key(data, stat);
+			const valuePrev = resolve_key(dataPrev, stat);
+			const value = resolve_key(data, stat);
 			try {
-				var format_result = formats[format](value, valuePrev, diff);
+				const format_result = formats[format](value, valuePrev, diff);
 				switch (typeof format_result) {
-					case "object":
+					case 'object':
 						if (elem.lastChild)
 							elem.removeChild(elem.lastChild);
 						elem.appendChild(format_result);
@@ -254,24 +256,22 @@
 	})
 
 	function haversine(lat1, lon1, lat2, lon2) {
-		var rad = Math.PI / 180;
+		const rad = Math.PI / 180;
 		lat1 *= rad; lon1 *= rad; lat2 *= rad; lon2 *= rad;
 
-		var R = 6372.8; // km
-		var dLat = lat2 - lat1;
-		var dLon = lon2 - lon1;
-		var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-		var c = 2 * Math.asin(Math.sqrt(a));
+		const R = 6372.8; // km
+		const dLat = lat2 - lat1;
+		const dLon = lon2 - lon1;
+		const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+		const c = 2 * Math.asin(Math.sqrt(a));
 		return R * c;
 	}
 
-	var interfaces = {};
-
 	function Signal(color) {
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext('2d');
-		var value = null;
-		var radius = 1.2;
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d', {willReadFrequently: true});
+		let value = null;
+		const radius = 1.2;
 
 		function drawPixel(x, y) {
 			ctx.beginPath();
@@ -286,10 +286,12 @@
 			'highlight': false,
 
 			'resize': function(w, h) {
-				var lastImage;
+				let lastImage;
 				try {
 					lastImage = ctx.getImageData(0, 0, w, h);
-				} catch (e) {}
+				} catch (e) {
+					console.error(e);
+				}
 				canvas.width = w;
 				canvas.height = h;
 				if (lastImage)
@@ -297,7 +299,7 @@
 			},
 
 			'draw': function(x, scale) {
-				var y = scale(value);
+				const y = scale(value);
 
 				ctx.clearRect(x, 0, 5, canvas.height)
 
@@ -305,23 +307,23 @@
 					drawPixel(x, y)
 			},
 
-			'set': function (d) {
+			'set': function(d) {
 				value = d;
 			},
 		};
 	}
 
 	function SignalGraph() {
-		var min = -100, max = 0;
-		var i = 0;
+		const min = -100, max = 0;
+		let i = 0;
 
-		var signals = [];
+		const signals = [];
 
-		var canvas = document.createElement('canvas');
+		const canvas = document.createElement('canvas');
 		canvas.className = 'signalgraph';
 		canvas.height = 200;
 
-		var ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext('2d');
 
 		function scaleInverse(n, min, max, height) {
 			return (min * n + max * (height - n)) / height;
@@ -332,7 +334,7 @@
 		}
 
 		function drawGrid() {
-			var nLines = Math.floor(canvas.height / 40);
+			const nLines = Math.floor(canvas.height / 40);
 			ctx.save();
 			ctx.lineWidth = 0.5;
 			ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
@@ -342,11 +344,11 @@
 
 			ctx.beginPath();
 
-			for (var i = 0; i < nLines; i++) {
-				var y = canvas.height - i * 40;
+			for (let i = 0; i < nLines; i++) {
+				const y = canvas.height - i * 40;
 				ctx.moveTo(0, y - 0.5);
 				ctx.lineTo(canvas.width, y - 0.5);
-				var dBm = Math.round(scaleInverse(y, min, max, canvas.height)) + ' dBm';
+				const dBm = Math.round(scaleInverse(y, min, max, canvas.height)) + ' dBm';
 
 				ctx.save();
 				ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
@@ -383,7 +385,7 @@
 
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			var highlight = false;
+			let highlight = false;
 			signals.forEach(function(signal) {
 				if (signal.highlight)
 					highlight = true;
@@ -417,15 +419,16 @@
 
 		window.addEventListener('resize', draw);
 
-		var last = 0;
+		let last = 0;
+
 		function step(timestamp) {
-			var delta = timestamp - last;
+			const delta = timestamp - last;
 
 			if (delta > 40) {
 				draw();
 				i = (i + 1) % canvas.width;
 				last = timestamp;
-			};
+			}
 
 			window.requestAnimationFrame(step);
 		}
@@ -447,34 +450,33 @@
 	}
 
 	function Neighbour(iface, addr, color, destroy) {
-		var th = iface.tbody.querySelector('tr');
-		var el = iface.tbody.insertRow();
+		const th = iface.tbody.querySelector('tr');
+		const el = iface.tbody.insertRow();
 
-		var tdHostname = el.insertCell();
+		const tdHostname = el.insertCell();
 		tdHostname.setAttribute('data-label', th.children[0].textContent);
 
 		if (iface.wireless) {
-			var marker = document.createElement("span");
-			marker.textContent = "⬤ ";
+			const marker = document.createElement('span');
+			marker.textContent = '⬤ ';
 			marker.style.color = color;
 			tdHostname.appendChild(marker);
 		}
 
-		var hostname = document.createElement("span");
-		var addr;
+		let hostname = document.createElement('span');
 		hostname.textContent = addr;
 		tdHostname.appendChild(hostname);
 
-		var meshAttrs = {};
+		const meshAttrs = {};
 
 		function add_attr(attr) {
-			var key = attr.getAttribute('data-key');
+			const key = attr.getAttribute('data-key');
 			if (!key)
 				return;
 
-			var suffix = attr.getAttribute('data-suffix') || '';
+			const suffix = attr.getAttribute('data-suffix') || '';
 
-			var td = el.insertCell();
+			const td = el.insertCell();
 			td.textContent = '-';
 			td.setAttribute('data-label', attr.textContent);
 
@@ -484,13 +486,14 @@
 			};
 		}
 
-		for (var i = 0; i < th.children.length; i++)
+		for (let i = 0; i < th.children.length; i++) {
 			add_attr(th.children[i]);
+		}
 
-		var tdSignal;
-		var tdDistance;
-		var tdInactive;
-		var signal;
+		let tdSignal;
+		let tdDistance;
+		let tdInactive;
+		let signal;
 
 		if (iface.wireless) {
 			tdSignal = el.insertCell();
@@ -518,19 +521,19 @@
 			iface.signalgraph.addSignal(signal);
 		}
 
-		el.onmouseenter = function () {
-			el.classList.add("highlight");
+		el.onmouseenter = function() {
+			el.classList.add('highlight');
 			if (signal)
 				signal.highlight = true;
 		};
 
-		el.onmouseleave = function () {
-			el.classList.remove("highlight");
+		el.onmouseleave = function() {
+			el.classList.remove('highlight');
 			if (signal)
 				signal.highlight = false;
 		};
 
-		var timeout;
+		let timeout;
 
 		function updated() {
 			if (timeout)
@@ -547,17 +550,18 @@
 		updated();
 
 		function address_to_groups(addr) {
-			if (addr.slice(0, 2) == '::')
+			if (addr.slice(0, 2) === '::')
 				addr = '0' + addr;
-			if (addr.slice(-2) == '::')
+			if (addr.slice(-2) === '::')
 				addr = addr + '0';
 
-			var parts = addr.split(':');
-			var n = parts.length;
-			var groups = [];
+			const parts = addr.split(':');
+			let n = parts.length;
+			/** @type number[] **/
+			const groups = [];
 
-			for (var i = 0; i < parts.length; i++) {
-				var part = parts[i];
+			for (let i = 0; i < parts.length; i++) {
+				const part = parts[i];
 				if (part === '') {
 					while (n++ <= 8)
 						groups.push(0);
@@ -567,17 +571,17 @@
 
 					groups.push(parseInt(part, 16));
 				}
-			};
+			}
 
 			return groups;
 		}
 
 		function address_to_binary(addr) {
-			var groups = address_to_groups(addr);
+			const groups = address_to_groups(addr);
 			if (!groups)
 				return;
 
-			var ret = '';
+			let ret = '';
 			groups.forEach(function(group) {
 				ret += ('0000000000000000' + group.toString(2)).slice(-16);
 			});
@@ -586,26 +590,26 @@
 		}
 
 		function common_length(a, b) {
-			var i;
-			for (i = 0; i < a.length && i < b.length; i++) {
-				if (a[i] !== b[i])
-				break;
+			const maxLength = Math.min(a.length, b.length);
+			for (let i = 0; i < maxLength; i++) {
+				if(a[i] !== b[i])
+					return i;
 			}
-			return i;
+			return maxLength;
 		}
 
 		function choose_address(addresses) {
-			var node_bin = address_to_binary(node_address);
+			const node_bin = address_to_binary(node_address);
 
 			if (!addresses || !addresses[0])
 				return;
 
 			addresses = addresses.map(function(addr) {
-				var addr_bin = address_to_binary(addr);
+				const addr_bin = address_to_binary(addr);
 				if (!addr_bin)
 					return [-1];
 
-				var common_prefix = 0;
+				let common_prefix = 0;
 				if (node_bin)
 					common_prefix = common_length(node_bin, addr_bin);
 
@@ -626,7 +630,7 @@
 
 			});
 
-			var address = addresses[0][2];
+			const address = addresses[0][2];
 			if (address && !/^fe80:/i.test(address))
 				return address;
 		}
@@ -642,7 +646,7 @@
 				addr = choose_address(nodeinfo.network.addresses);
 				if (addr) {
 					if (hostname.nodeName.toLowerCase() === 'span') {
-						var oldHostname = hostname;
+						const oldHostname = hostname;
 						hostname = document.createElement('a');
 						oldHostname.parentNode.replaceChild(hostname, oldHostname);
 					}
@@ -653,25 +657,25 @@
 				hostname.textContent = nodeinfo.hostname;
 
 				if (location && nodeinfo.location) {
-					var distance = haversine(
+					const distance = haversine(
 						location.latitude, location.longitude,
 						nodeinfo.location.latitude, nodeinfo.location.longitude
 					);
-					tdDistance.textContent = Math.round(distance * 1000) + " m"
+					tdDistance.textContent = Math.round(distance * 1000) + ' m'
 				}
 
 				updated();
 			},
 			'update_mesh': function(mesh) {
 				Object.keys(meshAttrs).forEach(function(key) {
-					var attr = meshAttrs[key];
+					const attr = meshAttrs[key];
 					attr.td.textContent = mesh[key] + attr.suffix;
 				});
 
 				updated();
 			},
 			'update_wifi': function(wifi) {
-				var inactiveLimit = 200;
+				const inactiveLimit = 200;
 
 				tdSignal.textContent = wifi.signal;
 				tdInactive.textContent = Math.round(wifi.inactive / 1000) + ' s';
@@ -685,39 +689,38 @@
 	}
 
 	function Interface(el, ifname, wireless) {
+		const neighs = {};
 
-		var neighs = {};
-
-		var signalgraph;
+		let signalgraph;
 		if (wireless) {
 			signalgraph = SignalGraph();
 			el.appendChild(signalgraph.el);
 		}
 
-		var info = {
+		const info = {
 			'tbody': el.querySelector('tbody'),
 			'signalgraph': signalgraph,
 			'ifname': ifname,
 			'wireless': wireless,
 		};
 
-		var nodeinfo_running = false;
-		var want_nodeinfo = {};
+		let nodeinfo_running = false;
+		const want_nodeinfo = {};
 
-		var graphColors = [];
+		let graphColors = [];
 		function get_color() {
 			if (!graphColors[0])
-				graphColors = ["#396AB1", "#DA7C30", "#3E9651", "#CC2529", "#535154", "#6B4C9A", "#922428", "#948B3D"];
+				graphColors = ['#396AB1', '#DA7C30', '#3E9651', '#CC2529', '#535154', '#6B4C9A', '#922428', '#948B3D'];
 
 			return graphColors.shift();
 		}
 
 		function neigh_addresses(nodeinfo) {
-			var addrs = [];
+			const addrs = [];
 
-			var mesh = nodeinfo.network.mesh;
+			const mesh = nodeinfo.network.mesh;
 			Object.keys(mesh).forEach(function(meshif) {
-				var ifaces = mesh[meshif].interfaces;
+				const ifaces = mesh[meshif].interfaces;
 				Object.keys(ifaces).forEach(function(ifaceType) {
 					ifaces[ifaceType].forEach(function(addr) {
 						addrs.push(addr);
@@ -734,12 +737,12 @@
 
 			nodeinfo_running = true;
 
-			var source = new EventSource('/cgi-bin/dyn/neighbours-nodeinfo?' + encodeURIComponent(ifname));
-			source.addEventListener("neighbour", function(m) {
+			const source = new EventSource('/cgi-bin/dyn/neighbours-nodeinfo?' + encodeURIComponent(ifname));
+			source.addEventListener('neighbour', function(m) {
 				try {
-					var data = JSON.parse(m.data);
+					const data = JSON.parse(m.data);
 					neigh_addresses(data).forEach(function(addr) {
-						var neigh = neighs[addr];
+						const neigh = neighs[addr];
 						if (neigh) {
 							delete want_nodeinfo[addr];
 							try {
@@ -758,7 +761,7 @@
 				source.close();
 				nodeinfo_running = false;
 
-				Object.keys(want_nodeinfo).forEach(function (addr) {
+				Object.keys(want_nodeinfo).forEach(function(addr) {
 					if (want_nodeinfo[addr] > 0) {
 						want_nodeinfo[addr]--;
 						load_nodeinfo();
@@ -772,7 +775,7 @@
 		}
 
 		function get_neigh(addr) {
-			var neigh = neighs[addr];
+			let neigh = neighs[addr];
 			if (!neigh) {
 				want_nodeinfo[addr] = 3;
 				neigh = neighs[addr] = Neighbour(info, addr, get_color(), function() {
@@ -787,8 +790,8 @@
 
 		if (wireless) {
 			add_event_source('/cgi-bin/dyn/stations?' + encodeURIComponent(ifname), function(data) {
-				Object.keys(data).forEach(function (addr) {
-					var wifi = data[addr];
+				Object.keys(data).forEach(function(addr) {
+					const wifi = data[addr];
 
 					get_neigh(addr).update_wifi(wifi);
 				});
@@ -802,19 +805,18 @@
 	}
 
 	document.querySelectorAll('[data-interface]').forEach(function(elem) {
-		var ifname = elem.getAttribute('data-interface');
-		var address = elem.getAttribute('data-interface-address');
-		var wireless = !!elem.getAttribute('data-interface-wireless');
+		const ifname = elem.getAttribute('data-interface');
+		const wireless = !!elem.getAttribute('data-interface-wireless');
 
 		interfaces[ifname] = Interface(elem, ifname, wireless);
 	});
 
-	var mesh_provider = document.body.getAttribute('data-mesh-provider');
+	const mesh_provider = document.body.getAttribute('data-mesh-provider');
 	if (mesh_provider) {
 		add_event_source(mesh_provider, function(data) {
-			Object.keys(data).forEach(function (addr) {
-				var mesh = data[addr];
-				var iface = interfaces[mesh.ifname];
+			Object.keys(data).forEach(function(addr) {
+				const mesh = data[addr];
+				const iface = interfaces[mesh.ifname];
 				if (!iface)
 					return;
 
