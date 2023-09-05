@@ -151,6 +151,9 @@ device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 
 device('zyxel-wsm20', 'zyxel_wsm20', {
 	factory = false,
+	aliases = {
+		'zyxel-multy-m1',
+	},
 })
 
 

@@ -428,7 +428,7 @@ ramips-mt7621
 * ZyXEL
 
   - NWA50AX
-  - WSM20
+  - WSM20 / Multy M1
 
 * Xiaomi
 
