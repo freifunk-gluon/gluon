@@ -44,8 +44,8 @@ packages {
 config('TARGET_ROOTFS_EXT4FS', false)
 
 defaults {
-	factory = '-squashfs-combined-efi',
+	factory = '-squashfs-combined',
 	factory_ext = {'.img.gz', '.vmdk', '.vdi'},
-	sysupgrade = '-squashfs-combined-efi',
+	sysupgrade = '-squashfs-combined',
 	sysupgrade_ext = '.img.gz',
 }
