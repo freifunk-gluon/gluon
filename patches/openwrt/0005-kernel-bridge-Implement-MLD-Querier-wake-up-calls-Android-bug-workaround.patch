@@ -183,7 +183,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 +2.40.1
 +
 diff --git a/target/linux/generic/config-5.15 b/target/linux/generic/config-5.15
-index 5cac839f593c704a8f5bc38b55102644773481b1..026e19993c52c45464c000e74594245be70949f7 100644
+index 6f28147ee3a0af3611fc108d0534207a4334a6de..476f0d1a6a3c3da1458d71b53214d27a276a1fcc 100644
 --- a/target/linux/generic/config-5.15
 +++ b/target/linux/generic/config-5.15
 @@ -761,6 +761,7 @@ CONFIG_BRIDGE=y
