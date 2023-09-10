@@ -30,7 +30,7 @@ RUN mkdir /tmp/ec &&\
     mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
 
-RUN useradd -m -d /gluon gluon
+RUN useradd -m -d /gluon -u 100 -g 100 gluon
 USER gluon
 
 VOLUME /gluon
