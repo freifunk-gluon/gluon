@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ecdsautils \
     lua-check \
     shellcheck \
+    libnss-unknown \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -30,7 +31,7 @@ RUN mkdir /tmp/ec &&\
     mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
 
-RUN useradd -m -d /gluon -u 100 -g 100 gluon
+RUN useradd -m -d /gluon -u 100 -g 100 -o gluon
 USER gluon
 
 VOLUME /gluon
