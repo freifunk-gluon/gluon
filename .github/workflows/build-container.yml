@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - name: Log in to the Container registry
         uses: docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb
         if: ${{ github.repository_owner == 'freifunk-gluon' && github.event_name == 'push' }}
@@ -38,5 +42,6 @@ jobs:
         with:
           context: ./contrib/docker
           push: ${{ github.repository_owner == 'freifunk-gluon' && github.event_name == 'push' }}
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
