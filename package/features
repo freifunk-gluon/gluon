@@ -19,7 +19,6 @@ when(_'web-wizard' and _'autoupdater', {
 when(_'web-wizard' and (
 	_'mesh-vpn-fastd' or
 	_'mesh-vpn-fastd-l2tp' or
-	_'mesh-vpn-tunneldigger' or
 	_'mesh-vpn-wireguard'
 ), {
 	'gluon-config-mode-mesh-vpn',

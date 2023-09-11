@@ -196,7 +196,7 @@ Example::
       'gluon-config-mode-outdoor',
     })
 
-    when(_'web-wizard' and (_'mesh-vpn-fastd' or _'mesh-vpn-tunneldigger'), {
+    when(_'web-wizard' and _'mesh-vpn-fastd' or _'mesh-vpn-wireguard'), {
       'gluon-config-mode-mesh-vpn',
     })
 
@@ -211,5 +211,5 @@ This will
   corresponding feature flags are evaluated as selected in the image-customization.lua file
 * enable four additional config mode packages when the *web-wizard* feature is enabled
 * enable *gluon-config-mode-mesh-vpn* when both *web-wizard* and one
-  of *mesh-vpn-fastd* and *mesh-vpn-tunneldigger* are enabled
+  of *mesh-vpn-fastd* and *mesh-vpn-wireguard* are enabled
 * disable the *gluon-radvd* package when *gluon-no-radvd* is enabled

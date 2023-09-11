@@ -7,7 +7,7 @@ allow connections between local meshes through the internet.
 Protocol handlers
 ^^^^^^^^^^^^^^^^^
 
-There are currently three protocol handlers which can be selected
+There are currently two protocol handlers which can be selected
 as a feature:
 
 mesh-vpn-fastd
@@ -23,15 +23,6 @@ A kernel-supported L2TPv3 offloading option is available to
 work around the context-switching bottleneck, but it comes
 at the cost of losing the ability to protect tunnel connections
 against eavesdropping or manipulation.
-
-mesh-vpn-tunneldigger
-"""""""""""""""""""""
-
-Tunneldigger always uses L2TPv3, generally achieving the same
-performance as fastd with the ``null@l2tp`` method, but offering
-no security.
-Tunneldigger's primary drawback is the lack of IPv6 support.
-It also provides less configurability than fastd.
 
 mesh-vpn-wireguard
 """"""""""""""""""

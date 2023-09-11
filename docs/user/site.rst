@@ -320,13 +320,6 @@ mesh_vpn
   to the peer list, removal and modification of peers can be prevented by
   setting the *preserve* option of a peer to ``1`` in UCI.
 
-  The `tunneldigger` section is used to define the *tunneldigger* broker list.
-
-  **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
-  sections in the same configuration file, as only one of the packages *gluon-mesh-vpn-fastd*
-  and *gluon-mesh-vpn-tunneldigger* should be installed with the current
-  implementation.
-
   **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
   in the build when using *gluon-mesh-babel* to work around ICMP black holes on the internet.
 
@@ -384,11 +377,6 @@ mesh_vpn
           --   peers = { ... },
           -- },
         },
-      },
-
-      tunneldigger = {
-        mtu = 1312,
-        brokers = {'vpn1.alpha-centauri.freifunk.net'},
       },
 
       wireguard = {
@@ -682,7 +670,7 @@ package:
 
   Includes the *gluon-config-mode-...* base packages (hostname, geolocation and contact info),
   as well as the *gluon-config-mode-autoupdater* (when *autoupdater* is an enabled feature),
-  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* are
+  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or `mesh-vpn-wireguard` are
   enabled features)
 
 * web-advanced

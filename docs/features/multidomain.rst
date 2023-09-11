@@ -206,7 +206,6 @@ domain.conf only variables
   - wifi*.mesh.id
   - mesh_vpn.fastd.groups.*.peers.remotes
   - mesh_vpn.fastd.groups.*.peers.key
-  - mesh_vpn.tunneldigger.brokers
 
 - Clients consider WiFi networks sharing the same ESSID as if they were
   the same L2 network and try to reconfirm and reuse previous
