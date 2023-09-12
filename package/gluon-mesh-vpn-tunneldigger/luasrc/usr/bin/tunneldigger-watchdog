@@ -33,7 +33,9 @@ local function has_mesh_vpn_neighbours()
 end
 
 if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
-	if io.popen('pgrep -x /usr/bin/tunneldigger'):read('*l') ~= read_pid_file() then
+-- tunneldigger misses .pid file for this script - workaround and simply generate one from process-list
+        os.execute('logger -t tunneldigger-watchdog "generating missing .pid file for gluon...";ps | grep "bin/tunneldigger -f" -m 1 | cut -d " " -f 2 >/var/run/tunneldigger.mesh-vpn.pid')
+        if io.popen('pgrep -x /usr/bin/tunneldigger'):read('*l') ~= read_pid_file() then
 		os.execute('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
 		restart_tunneldigger()
 		return
