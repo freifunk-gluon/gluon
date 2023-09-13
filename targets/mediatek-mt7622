@@ -6,10 +6,18 @@ device('linksys-e8450-ubi', 'linksys_e8450-ubi', {
 })
 
 
+-- Ubiquiti
+
 device('ubiquiti-unifi-6-lr-v1', 'ubnt_unifi-6-lr-v1', {
 	factory = false,
+	-- old name from OpenWrt 22.03.x
 	manifest_aliases = {'ubiquiti-unifi-6-lr'},
 })
+
+device('ubiquiti-unifi-6-lr-v3', 'ubnt_unifi-6-lr-v3', {
+	factory = false,
+})
+
 
 -- Xiaomi
 
