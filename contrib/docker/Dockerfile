@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lua-check \
     shellcheck \
     libnss-unknown \
+    openssh-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
