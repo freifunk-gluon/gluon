@@ -7,16 +7,6 @@ local function restart_tunneldigger()
 	os.execute('/etc/init.d/tunneldigger restart')
 end
 
-local function read_pid_file()
-	local pid_file = io.open('/var/run/tunneldigger.mesh-vpn.pid', 'r')
-	if not pid_file then
-		return nil
-	end
-	local pid = pid_file:read('*l')
-	pid_file:close()
-	return pid
-end
-
 local function has_mesh_vpn_neighbours()
 	local handle = io.popen('batctl o', 'r')
 	if not handle then
@@ -33,11 +23,6 @@ local function has_mesh_vpn_neighbours()
 end
 
 if uci:get_bool('tunneldigger', 'mesh_vpn', 'enabled') then
-	if io.popen('pgrep -x /usr/bin/tunneldigger'):read('*l') ~= read_pid_file() then
-		os.execute('logger -t tunneldigger-watchdog "Process-Pid does not match with pid-File."')
-		restart_tunneldigger()
-		return
-	end
 	if not has_mesh_vpn_neighbours() then
 		os.execute('logger -t tunneldigger-watchdog "No vpn-mesh neighbours found."')
 		restart_tunneldigger()
