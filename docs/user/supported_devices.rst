@@ -121,6 +121,7 @@ ath79-generic
   - TL-WR810N (v1)
   - TL-WR842N/ND (v3)
   - TL-WR1043N/ND (v2, v3, v4, v5)
+  - TL-WR2543N/ND (v1)
   - WBS210 (v1.20, v2.0)
   - WBS510 (v1.20)
 
