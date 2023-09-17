@@ -1,3 +1,7 @@
+.strike {
+	text-decoration: line-through;
+}
+
 /*
 	This fixes the vertical position of list markers when the first
 	element in the <li> is a <pre> block
