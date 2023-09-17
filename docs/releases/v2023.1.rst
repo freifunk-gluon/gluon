@@ -7,6 +7,11 @@ Important notes
 Upgrades to v2023.1 and later releases are only supported from releases v2021.1 and later.
 This is due to migrations that have been removed to simplify maintenance.
 
+**Note:**
+Due to a bug, configuration is lost on upgrades from Gluon v2021.1.x on the *x86-64*,
+*x86-generic* and *x86-legacy* targets, returning nodes to config mode. If your
+network is still running a Gluon version older than v2022.1, it is recommended to
+skip v2023.1 and wait for the v2023.1.1 release.
 
 Added hardware support
 ----------------------
@@ -95,9 +100,13 @@ Bugfixes
 Minor changes
 -------------
 
-- Images built for the ``x86`` targets are now natively bootable on
+- .. rst-class:: strike
+
+  Images built for the ``x86`` targets are now natively bootable on
   EFI systems without CSM or BIOS support modes.
 
+  EFI support was found to break upgrades from Gluon v2021.1.x. It will be removed from
+  v2023.1.x to be reintroduced in a later release.
 
 Known issues
 ------------
@@ -120,3 +129,7 @@ Known issues
   (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
 
   This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
+
+* Configuration is lost on upgrades from Gluon v2021.1.x on the *x86-64*, *x86-generic* and *x86-legacy* targets,
+  returning nodes to config mode
+  (`#2967 <https://github.com/freifunk-gluon/gluon/issues/2967>`_)
