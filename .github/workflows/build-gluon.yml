@@ -2,7 +2,7 @@ name: Build Gluon
 on:
   push:
     branches:
-      - master
+      - master*
       - next*
       - v20*
   pull_request:
