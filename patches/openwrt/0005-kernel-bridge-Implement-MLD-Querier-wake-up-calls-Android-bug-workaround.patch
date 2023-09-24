@@ -27,11 +27,11 @@ Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/package/network/config/netifd/patches/0001-bridge-Add-multicast_wakeupcall-option.patch b/package/network/config/netifd/patches/0001-bridge-Add-multicast_wakeupcall-option.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f9640683ae7fa9
+index 0000000000000000000000000000000000000000..a4da1863b313e68a0fefb969f72fbb4de8620518
 --- /dev/null
 +++ b/package/network/config/netifd/patches/0001-bridge-Add-multicast_wakeupcall-option.patch
 @@ -0,0 +1,151 @@
-+From d23a49e6542dc068b12fbc7b6a4520f9fb3626f9 Mon Sep 17 00:00:00 2001
++From be5641c1c1d2f007ee60f47fc5e45a6f6a7488ab Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 +Date: Sun, 5 Jul 2020 23:33:51 +0200
 +Subject: [PATCH] bridge: Add multicast_wakeupcall option
@@ -71,7 +71,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 3 files changed, 25 insertions(+)
 +
 +diff --git a/device.c b/device.c
-+index 1e892191d0ec..67111895b0f9 100644
++index 2417556..e67f792 100644
 +--- a/device.c
 ++++ b/device.c
 +@@ -47,6 +47,7 @@ static const struct blobmsg_policy dev_attrs[__DEV_ATTR_MAX] = {
@@ -82,7 +82,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 	[DEV_ATTR_MULTICAST_ROUTER] = { .name = "multicast_router", .type = BLOBMSG_TYPE_INT32 },
 + 	[DEV_ATTR_MULTICAST_FAST_LEAVE] = { .name = "multicast_fast_leave", . type = BLOBMSG_TYPE_BOOL },
 + 	[DEV_ATTR_MULTICAST] = { .name ="multicast", .type = BLOBMSG_TYPE_BOOL },
-+@@ -261,6 +262,7 @@ device_merge_settings(struct device *dev, struct device_settings *n)
++@@ -267,6 +268,7 @@ device_merge_settings(struct device *dev, struct device_settings *n)
 + 	n->multicast = s->flags & DEV_OPT_MULTICAST ?
 + 		s->multicast : os->multicast;
 + 	n->multicast_to_unicast = s->multicast_to_unicast;
@@ -90,7 +90,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 	n->multicast_router = s->multicast_router;
 + 	n->multicast_fast_leave = s->multicast_fast_leave;
 + 	n->learning = s->learning;
-+@@ -386,6 +388,11 @@ device_init_settings(struct device *dev, struct blob_attr **tb)
++@@ -438,6 +440,11 @@ device_init_settings(struct device *dev, struct blob_attr **tb)
 + 		s->flags |= DEV_OPT_MULTICAST_TO_UNICAST;
 + 	}
 + 
@@ -102,7 +102,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 	if ((cur = tb[DEV_ATTR_MULTICAST_ROUTER])) {
 + 		s->multicast_router = blobmsg_get_u32(cur);
 + 		if (s->multicast_router <= 2)
-+@@ -1203,6 +1210,8 @@ device_dump_status(struct blob_buf *b, struct device *dev)
++@@ -1281,6 +1288,8 @@ device_dump_status(struct blob_buf *b, struct device *dev)
 + 			blobmsg_add_u32(b, "dadtransmits", st.dadtransmits);
 + 		if (st.flags & DEV_OPT_MULTICAST_TO_UNICAST)
 + 			blobmsg_add_u8(b, "multicast_to_unicast", st.multicast_to_unicast);
@@ -112,7 +112,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 			blobmsg_add_u32(b, "multicast_router", st.multicast_router);
 + 		if (st.flags & DEV_OPT_MULTICAST_FAST_LEAVE)
 +diff --git a/device.h b/device.h
-+index 6751628b9b33..41583ac3da4f 100644
++index 14d7486..eb66ed0 100644
 +--- a/device.h
 ++++ b/device.h
 +@@ -44,6 +44,7 @@ enum {
@@ -123,15 +123,15 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 	DEV_ATTR_MULTICAST_ROUTER,
 + 	DEV_ATTR_MULTICAST_FAST_LEAVE,
 + 	DEV_ATTR_MULTICAST,
-+@@ -126,6 +127,7 @@ enum {
-+ 	DEV_OPT_ARP_ACCEPT		= (1ULL << 29),
-+ 	DEV_OPT_SPEED			= (1ULL << 30),
-+ 	DEV_OPT_DUPLEX			= (1ULL << 31),
++@@ -137,6 +138,7 @@ enum {
++ 	DEV_OPT_RXPAUSE			= (1ULL << 34),
++ 	DEV_OPT_TXPAUSE			= (1ULL << 35),
++ 	DEV_OPT_AUTONEG			= (1ULL << 36),
 ++	DEV_OPT_MULTICAST_WAKEUPCALL	= (1ULL << 63),
 + };
 + 
 + /* events broadcasted to all users of a device */
-+@@ -187,6 +189,7 @@ struct device_settings {
++@@ -198,6 +200,7 @@ struct device_settings {
 + 	int neigh4locktime;
 + 	unsigned int dadtransmits;
 + 	bool multicast_to_unicast;
@@ -140,10 +140,10 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 	bool multicast_fast_leave;
 + 	bool multicast;
 +diff --git a/system-linux.c b/system-linux.c
-+index cc15537ba3ad..5148a7eacce0 100644
++index e437377..af3738a 100644
 +--- a/system-linux.c
 ++++ b/system-linux.c
-+@@ -534,6 +534,11 @@ static void system_bridge_set_multicast_to_unicast(struct device *dev, const cha
++@@ -536,6 +536,11 @@ static void system_bridge_set_multicast_to_unicast(struct device *dev, const cha
 + 	system_set_dev_sysfs("brport/multicast_to_unicast", dev->ifname, val);
 + }
 + 
@@ -155,7 +155,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + static void system_bridge_set_multicast_fast_leave(struct device *dev, const char *val)
 + {
 + 	system_set_dev_sysfs("brport/multicast_fast_leave", dev->ifname, val);
-+@@ -913,8 +918,10 @@ static char *system_get_bridge(const char *name, char *buf, int buflen)
++@@ -915,8 +920,10 @@ static char *system_get_bridge(const char *name, char *buf, int buflen)
 + static void
 + system_bridge_set_wireless(struct device *bridge, struct device *dev)
 + {
@@ -166,7 +166,7 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 
 + 	if (dev->settings.flags & DEV_OPT_MULTICAST_TO_UNICAST)
 + 		mcast_to_ucast = dev->settings.multicast_to_unicast;
-+@@ -929,6 +936,12 @@ system_bridge_set_wireless(struct device *bridge, struct device *dev)
++@@ -931,6 +938,12 @@ system_bridge_set_wireless(struct device *bridge, struct device *dev)
 + 	system_bridge_set_multicast_to_unicast(dev, mcast_to_ucast ? "1" : "0");
 + 	system_bridge_set_hairpin_mode(dev, hairpin ? "1" : "0");
 + 	system_bridge_set_proxyarp_wifi(dev, dev->wireless_proxyarp ? "1" : "0");
@@ -180,10 +180,10 @@ index 0000000000000000000000000000000000000000..a00a60d63d37d94cbba116eaa0f96406
 + 
 + int system_bridge_addif(struct device *bridge, struct device *dev)
 +-- 
-+2.40.1
++2.42.0
 +
 diff --git a/target/linux/generic/config-5.15 b/target/linux/generic/config-5.15
-index 6f28147ee3a0af3611fc108d0534207a4334a6de..476f0d1a6a3c3da1458d71b53214d27a276a1fcc 100644
+index 214a1e6ecd83c067b96cb55ad052ae00b82fa8b5..bf6709ae2dbb87a21659558161d4882befd88b49 100644
 --- a/target/linux/generic/config-5.15
 +++ b/target/linux/generic/config-5.15
 @@ -761,6 +761,7 @@ CONFIG_BRIDGE=y
