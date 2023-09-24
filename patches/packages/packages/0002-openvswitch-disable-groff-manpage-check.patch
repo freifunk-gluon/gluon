@@ -1,0 +1,25 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sat, 23 Sep 2023 18:10:30 +0200
+Subject: openvswitch: disable groff manpage check
+
+The openvswitch build trips over a number of warnings during the
+manpage-check step if groff 1.23 is installed on the build host,
+resulting in a failed build.
+
+As this check is optional, and we don't even install the manpages, simply
+override the groff configure check to never detect groff.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/net/openvswitch/Makefile b/net/openvswitch/Makefile
+index 7f47c28226d53a850b7c480c092689cfea904f80..43b8bfaf5586f831df704442fdfa1b541312d3b3 100644
+--- a/net/openvswitch/Makefile
++++ b/net/openvswitch/Makefile
+@@ -251,6 +251,7 @@ CONFIGURE_ARGS+= \
+ CONFIGURE_VARS += \
+ 	$(if $(CONFIG_OPENVSWITCH_WITH_LIBUNBOUND),,ac_cv_lib_unbound_ub_ctx_create=no) \
+ 	ovs_cv_flake8=no \
++	ovs_cv_groff=no \
+ 	ovs_cv_python3=$(PYTHON3) \
+ 	ovs_cv_python3_host=$(HOST_PYTHON3_BIN) \
+ 	SPHINXBUILD=none \
