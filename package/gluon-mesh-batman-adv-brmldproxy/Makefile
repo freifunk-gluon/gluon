@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-mesh-batman-adv-brmldproxy
   TITLE:=Bridge MLD Proxy for Gluon
-  DEPENDS:=+brmldproxy gluon-mesh-batman-adv
+  DEPENDS:=+tc +kmod-sched +brmldproxy +ip-bridge gluon-mesh-batman-adv
 endef
 
 define Package/gluon-mesh-batman-adv-brmldproxy/description
