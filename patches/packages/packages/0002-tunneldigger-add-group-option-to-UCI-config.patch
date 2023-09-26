@@ -1,0 +1,28 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Tue, 26 Sep 2023 18:58:11 +0200
+Subject: tunneldigger: add group option to UCI config
+
+The group can be used for policy routing and similar purposes.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/net/tunneldigger/files/tunneldigger.init b/net/tunneldigger/files/tunneldigger.init
+index ea37751d5d024be7975ed66f9fa173a5e399bde3..bacaace8168ecddb8a82bff731df82d75830edbd 100644
+--- a/net/tunneldigger/files/tunneldigger.init
++++ b/net/tunneldigger/files/tunneldigger.init
+@@ -21,6 +21,7 @@ parse_broker() {
+ 	config_get limit_bw_down "$section" limit_bw_down
+ 	config_get hook_script "$section" hook_script
+ 	config_get bind_interface "$section" bind_interface
++	config_get group "$section" group
+ 	
+ 	[ $enabled -eq 0 ] && return
+ 
+@@ -53,6 +54,7 @@ parse_broker() {
+ 	procd_append_param command -i "${interface}"
+ 	procd_append_param command -t "${tunnel_id}"
+ 	procd_append_param command ${broker_opts}
++	[ -n "$group" ] && procd_set_param group "$group"
+ 	procd_set_param stdout 1
+ 	procd_set_param stderr 1
+ 	procd_set_param respawn
