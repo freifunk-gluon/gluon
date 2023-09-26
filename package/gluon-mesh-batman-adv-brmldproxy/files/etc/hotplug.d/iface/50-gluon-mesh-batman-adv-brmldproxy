@@ -1,0 +1,8 @@
+#!/bin/sh
+
+([ "$INTERFACE" != "bat0" ] || [ "$ACTION" != "ifup" ]) && exit 0
+
+[ "$(gluon-show-site | jsonfilter -e "@.mesh.filter_membership_reports")" = "false" ] && exit 0
+
+[ -x /etc/init.d/brmldproxy ] && /etc/init.d/brmldproxy enabled && \
+	batctl multicast_mld_rtr_only 1
