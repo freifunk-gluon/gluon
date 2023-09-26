@@ -1,0 +1,37 @@
+#!/bin/sh
+
+{ [ "$INTERFACE" != "client" ] || [ "$ACTION" != "ifup" ]; } && exit 0
+
+lookup_site() {
+	local path="$1" default="$2"
+	lua -e "print(require('gluon.site').$path('$default'))"
+}
+
+[ "$(lookup_site 'mesh.filter_membership_reports' 'true')" = "false" ] && exit 0
+
+wait_for_qdisc() {
+	for i in $(seq 1 15); do
+		tc qdisc show dev bat0 handle "$1" | grep -q qdisc && break
+		sleep 1
+	done
+}
+
+wait_for_qdisc "fffe:"
+wait_for_qdisc "ffff:"
+
+# MLD reports, mesh outgoing:
+# 1) DNAT to 33:33:42:4e:f3:14
+# 2) Change ICMPv6 type to 100, keep original type in code field
+# => only send report to IPv6 multicast routers
+tc filter add dev bat0 parent fffe: protocol ipv6 prio 4221 handle 11: u32 divisor 1
+tc filter add dev bat0 parent fffe: protocol ipv6 prio 4221 u32 ht 11: match u8 131 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set 33:33:42:4e:f3:14 munge offset 0x30 u16 set 0x6483 action pipe classid 1:1
+tc filter add dev bat0 parent fffe: protocol ipv6 prio 4221 u32 ht 11: match u8 132 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set 33:33:42:4e:f3:14 munge offset 0x30 u16 set 0x6484 action pipe classid 1:1
+tc filter add dev bat0 parent fffe: protocol ipv6 prio 4221 u32 ht 11: match u8 143 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set 33:33:42:4e:f3:14 munge offset 0x30 u16 set 0x648f action pipe classid 1:1
+tc filter add dev bat0 parent fffe: protocol ipv6 prio 4221 u32 match mark 0x0800000 0x0800000 link 11:
+
+# MLD reports, mesh incoming:
+# 1) undo DNAT
+# 2) Change ICMPv6 type back to MLD report
+tc filter add dev bat0 parent ffff: handle 2::231 protocol ipv6 prio 4223 u32 ht 2: match u8 100 0xff at 48 match u8 131 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:01 munge offset 0x30 u16 set 0x8300 reclassify
+tc filter add dev bat0 parent ffff: handle 2::232 protocol ipv6 prio 4223 u32 ht 2: match u8 100 0xff at 48 match u8 132 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:01 munge offset 0x30 u16 set 0x8400 reclassify
+tc filter add dev bat0 parent ffff: handle 2::243 protocol ipv6 prio 4223 u32 ht 2: match u8 100 0xff at 48 match u8 143 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:16 munge offset 0x30 u16 set 0x8f00 reclassify
