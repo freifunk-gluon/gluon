@@ -6,7 +6,7 @@ include $(TOPDIR)/../package/gluon.mk
 
 define Package/$(PKG_NAME)
   TITLE:=Bridge MLD Proxy for Gluon
-  DEPENDS:=+brmldproxy gluon-mesh-batman-adv
+  DEPENDS:=+tc +kmod-sched +brmldproxy +ip-bridge gluon-mesh-batman-adv
 endef
 
 define Package/$(PKG_NAME)/description
