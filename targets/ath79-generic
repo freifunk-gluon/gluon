@@ -17,6 +17,14 @@ local ATH10K_PACKAGES_QCA9887 = {
 	'-ath10k-firmware-qca9887-ct',
 }
 
+local ATH10K_PACKAGES_QCA9984 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9984',
+	'-ath10k-firmware-qca9984-ct',
+}
+
 -- enforce mainline ath10k-smallbuffers kmod, fixes 5GHz-OOM for low memory devices
 
 local ATH10K_PACKAGES_SMALLBUFFERS_QCA9880 = {
@@ -116,6 +124,11 @@ device('d-link-dap-1365-a1', 'dlink_dap-1365-a1')
 device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('d-link-dap-2680-a1', 'dlink_dap-2680-a1', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_QCA9984,
 })
 
 device('d-link-dir-505', 'dlink_dir-505', {
