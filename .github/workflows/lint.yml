@@ -11,7 +11,7 @@ jobs:
     name: Lua
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: sudo apt-get -y update && sudo apt-get -y install lua-check
       - name: Install example site
@@ -23,7 +23,7 @@ jobs:
     name: Shell
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: sudo apt-get -y update && sudo apt-get -y install shellcheck
       - name: Install example site
@@ -35,7 +35,7 @@ jobs:
     name: Editorconfig
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         run: sudo apt install curl tar
       - name: Install editorconfig-checker
