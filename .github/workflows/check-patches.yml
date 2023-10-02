@@ -20,7 +20,7 @@ jobs:
     name: Check patches
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Refresh patches
         run: make refresh-patches GLUON_SITEDIR="contrib/ci/minimal-site"
       - name: Show diff
