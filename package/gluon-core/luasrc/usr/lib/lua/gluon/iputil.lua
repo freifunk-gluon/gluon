@@ -1,4 +1,4 @@
-local bit = require 'bit'
+local bit = require 'bit32'
 
 
 local M = {}
