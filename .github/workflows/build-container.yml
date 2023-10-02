@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        uses: docker/metadata-action@879dcbb708d40f8b8679d4f7941b938a086e23a7
         with:
           images: ${{ env.REGISTRY }}/freifunk-gluon/${{ env.IMAGE_NAME }}
       - name: Build and push Docker image
