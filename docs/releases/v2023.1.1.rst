@@ -1,0 +1,55 @@
+Gluon 2023.1.1
+==============
+
+This is the first service release for the Gluon 2023.1.x line, fixing regressions reported by
+the community.
+
+Important notes
+---------------
+
+Upgrades to this version are only supported from releases v2021.1 and later.
+
+
+Bugfixes
+--------
+
+- x86: fix config loss during direct upgrades from v2021.1.x to v2023.1.x  (`#2972 <https://github.com/freifunk-gluon/gluon/pull/2972>`_)
+
+- tunneldigger: fix regression in v2023.1 caused by a always failing watchdog script resulting in endless restarts (`#2987 <https://github.com/freifunk-gluon/gluon/pull/2987>`_)
+
+- tunneldigger: fix regression in v2023.1 with DNS lookups not using the wan-dnsmasq (`#3001 <https://github.com/freifunk-gluon/gluon/pull/3001>`_)
+
+- gluon-wan-dnsmasq: fix regression in v2023.1 with restart handling and disable DNS caching on the WAN side (`#2991 <https://github.com/freifunk-gluon/gluon/pull/2991>`_)
+
+- D-Link DIR-860L B1: fix regression in v2023.1 that prevented direct upgrades from v2021.1.x to v2023.1.x (`#2990 <https://github.com/freifunk-gluon/gluon/pull/2990>`_)
+
+- Fix build issues with groff 1.23.0+ on the build host (`#3001 <https://github.com/freifunk-gluon/gluon/pull/3001>`_)
+
+
+Known issues
+------------
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
+
+* EFI only systems won't boot due to removed EFI support (introduced in v2023.1). This was necessary to work around a bug that
+  causes a config loss during direct upgrades from v2021.1.x to v2023.1.x with the *x86-64*, *x86-generic* and *x86-legacy* targets
+  (`#2967 <https://github.com/freifunk-gluon/gluon/issues/2967>`_).
+
+  It is planned that the next major release will reintroduce EFI support.
