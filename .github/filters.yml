@@ -1,4 +1,24 @@
 {
+  "armsr-armv7": [
+    "targets/armsr-armv7",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
+  "armsr-armv8": [
+    "targets/armsr-armv8",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
   "ath79-generic": [
     "targets/ath79-generic",
     "modules",
