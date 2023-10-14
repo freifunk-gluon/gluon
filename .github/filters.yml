@@ -222,7 +222,6 @@
     "targets/targets.mk",
     "targets/x86.inc",
     "contrib/ci/minimal-site/**",
-    "contrib/docker/Dockerfile",
     "package/**"
   ],
   "bcm27xx-bcm2710": [

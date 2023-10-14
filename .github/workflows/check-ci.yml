@@ -1,0 +1,22 @@
+name: Check generated CI
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+
+jobs:
+  check-ci:
+    name: Check generated CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install example site
+        run: ln -s ./docs/site-example ./site
+      - name: Update CI
+        run: make update-ci
+      - name: Show diff
+        run: git status; git diff
+      - name: Patch status
+        run: git diff-files --quiet
