@@ -43,6 +43,10 @@ local lan_ifname = iface_exists(lan_interfaces)
 local wan_ifname = iface_exists(wan_interfaces)
 
 if platform.match('ath79', 'generic', {
+	'dlink,dap-3662-a1',
+}) then
+	lan_ifname, wan_ifname = 'eth0.1', 'eth1.2'
+elseif platform.match('ath79', 'generic', {
 	'tplink,cpe210-v1',
 	'tplink,cpe210-v2',
 	'tplink,cpe510-v1',

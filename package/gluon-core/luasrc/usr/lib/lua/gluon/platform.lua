@@ -25,6 +25,7 @@ end
 function M.is_outdoor_device()
 	if M.match('ath79', 'generic', {
 		'devolo,dvl1750x',
+		'dlink,dap-3662-a1',
 		'librerouter,librerouter-v1',
 		'plasmacloud,pa300',
 		'plasmacloud,pa300e',

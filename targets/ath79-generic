@@ -118,6 +118,11 @@ device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
+device('d-link-dap-3662-a1', 'dlink_dap-3662-a1', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
 device('d-link-dir-505', 'dlink_dir-505', {
 	factory = false,
 	manifest_aliases = {
