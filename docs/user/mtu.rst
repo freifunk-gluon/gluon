@@ -19,7 +19,7 @@ Consider these key values:
 
 - Encapsulation: Account for the overhead created by the configured mesh protocol
   encapsulating the payload, which is up to 32 Byte (14 Byte Ethernet + 18 Byte
-  batadv).
+  batman-adv).
 
 - PMTU: What MTU does the path between your gateway and each of its peers support?
 
@@ -43,7 +43,7 @@ transporting IPv6.::
 
   \        1312              1294          1280                                 0
    \---------+-----------------+-------------+----------------------------------+
-    \TAP     |    batadv v15   |   Ethernet  |            Payload               |
+    \TAP     |  batman-adv v15 |   Ethernet  |            Payload               |
      \-------+-----------------+-------------+----------------------------------+
       \      ^
              |
@@ -57,13 +57,13 @@ Calculating the maximum transport MTU is interesting, because it increases the
 throughput, by allowing larger payloads to be transported, but also more difficult
 as you have to take into account the tunneling overhead and each peers PMTU, which
 varies between providers.
-The underlying reasons are mostly PPPoE, Tunneling and IPv6 transition technologies
+The underlying reasons are mostly PPPoE, tunneling and IPv6 transition technologies
 like DS-Lite.
 
 Example: The peer with the smallest MTU on your network is behind DS-Lite and can
 transport IPv4 packets up to 1436 Bytes in size. Your tunnel uses IPv4 (20 Byte),
 UDP (8 Byte), Fastd (24 byte) and you require TAP (14 Byte) for Layer 2 (Ethernet)
-Tunneling.::
+tunneling.::
 
   1436                1416     1408                    1384          1370    \
     +-------------------+--------+-----------------------+-------------+------\
@@ -85,7 +85,7 @@ VPN Protocol Overhead (IPv4)
 Overhead of the VPN protocol layers in bytes on top of an Ethernet frame.
 
 +----------+-------+--------------+-----------+
-|          | fastd | Tunneldigger | Wireguard |
+|          | fastd | Tunneldigger | WireGuard |
 +==========+=======+==============+===========+
 | IPv4     | 20    | 20           | 20        |
 +----------+-------+--------------+-----------+
@@ -105,7 +105,7 @@ Overhead of additional layers on top of the VPN packet needed for different VPN
 providers.
 
 +------------+-------+--------------+-----------+
-|            | fastd | Tunneldigger | Wireguard |
+|            | fastd | Tunneldigger | WireGuard |
 +============+=======+==============+===========+
 | IPv6       | /     | /            | 40        |
 +------------+-------+--------------+-----------+
@@ -137,11 +137,11 @@ Suggestions:
   for the WAN network.
 
 +-------------------------------+-------+--------------+-----------+
-|                               | fastd | Tunneldigger | Wireguard |
+|                               | fastd | Tunneldigger | WireGuard |
 +===============================+=======+==============+===========+
 | max unfragmented payload\*    | 1280  | 1280         | 1280      |
 +-------------------------------+-------+--------------+-----------+
-| intermed layer overhead       | 32    | 32           | 102       |
+| intermediate layer overhead   | 32    | 32           | 102       |
 +-------------------------------+-------+--------------+-----------+
 | VPN MTU\*\*                   | 1312  | 1312         | 1382      |
 +-------------------------------+-------+--------------+-----------+
@@ -170,7 +170,7 @@ Suggestions:
   fragment larger packets transparently to avoid packet loss.
 
 +-------------------------------+-------+--------------+-----------+
-|                               | fastd | Tunneldigger | Wireguard |
+|                               | fastd | Tunneldigger | WireGuard |
 +===============================+=======+==============+===========+
 | min acceptable WAN MTU (IPv4) | 1436  | 1436         | 1436      |
 +-------------------------------+-------+--------------+-----------+
@@ -178,7 +178,7 @@ Suggestions:
 +-------------------------------+-------+--------------+-----------+
 | VPN MTU\*\*                   | 1370  | 1386         | 1376      |
 +-------------------------------+-------+--------------+-----------+
-| intermed layer overhead       | 32    | 32           | 102       |
+| intermediate layer overhead   | 32    | 32           | 102       |
 +-------------------------------+-------+--------------+-----------+
 | max unfragmented payload\*    | 1338  | 1354         | 1274      |
 +-------------------------------+-------+--------------+-----------+

@@ -60,7 +60,7 @@ Features of ``push_pkg.sh``:
 
 * Works with native OpenWrt and Gluon packages.
 * Pushes to remote machines or local qemu instances.
-* Pushes multiple packages in in one call if desired.
+* Pushes multiple packages in one call if desired.
 * Performs site.conf checks.
 
 Implementation details of ``push_pkg.sh``:

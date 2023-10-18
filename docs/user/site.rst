@@ -160,7 +160,7 @@ wifi24 \: optional
       ap = {
         ssid = 'alpha-centauri.freifunk.net',
         owe_ssid = 'owe.alpha-centauri.freifunk.net',
-        owe_transition_mode = true,  
+        owe_transition_mode = true,
       },
       mesh = {
         id = 'ueH3uXjdp',
@@ -328,7 +328,7 @@ mesh_vpn
   implementation.
 
   **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
-  in the build when using *gluon-mesh-babel* to work around ICMP blackholes on the internet.
+  in the build when using *gluon-mesh-babel* to work around ICMP black holes on the internet.
 
   ::
 
@@ -777,7 +777,7 @@ to supply additional package feeds from which packages are built. The git reposi
 specified here are retrieved in addition to the default feeds when ``make update``
 is called.
 
-This file's format is very similar to the toplevel ``modules`` file of the Gluon
+This file's format is very similar to the top-level ``modules`` file of the Gluon
 tree, with the important different that the list of feeds must be assigned to
 the variable ``GLUON_SITE_FEEDS``. Multiple feed names must be separated by spaces,
 for example::

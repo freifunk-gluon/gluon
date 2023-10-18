@@ -246,7 +246,7 @@ Special variables
 GLUON_AUTOREMOVE
   Setting ``GLUON_AUTOREMOVE=1`` enables the ``CONFIG_AUTOREMOVE`` OpenWrt setting, which will delete package build
   directories after a package build has finished to save space. This is mostly useful for CI builds from scratch. Do
-  not set this flag during development (or generally, when you want you reuse your build tree for subsequent builds),
+  not set this flag during development (or generally, when you want to reuse your build tree for subsequent builds),
   as it significantly increases incremental build times.
 
 GLUON_DEBUG

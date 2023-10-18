@@ -118,7 +118,7 @@ image output directory.
     aliases = {'aruba-instant-on-ap11'},
   })
 
-The aliased name will also be added to the autoupdate manifest, allowing upgrade
+The aliased name will also be added to the autoupdater manifest, allowing upgrade
 images to be found under the different name on targets that perform model name
 detection at runtime.
 
