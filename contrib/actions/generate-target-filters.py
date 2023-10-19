@@ -10,6 +10,7 @@ import json
 
 # these changes trigger rebuilds on all targets
 common = [
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
