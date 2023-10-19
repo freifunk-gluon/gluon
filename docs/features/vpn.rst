@@ -86,7 +86,7 @@ don't use offloading as long as both use the ``null@l2tp`` method.
 Offloading on Gateways / Supernodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To enable L2TP offloading on the supornodes, it is recommended to study the
+To enable L2TP offloading on the supernodes, it is recommended to study the
 fastd documentation section pertaining to the `offload configuration option
 <https://fastd.readthedocs.io/en/stable/manual/config.html#option-offload>`_.
 

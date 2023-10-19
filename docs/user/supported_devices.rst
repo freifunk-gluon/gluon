@@ -173,12 +173,12 @@ ath79-mikrotik
 brcm2708-bcm2708
 ----------------
 
-* RaspberryPi 1
+* Raspberry Pi 1
 
 brcm2708-bcm2709
 ----------------
 
-* RaspberryPi 2
+* Raspberry Pi 2
 
 
 ipq40xx-generic
@@ -337,7 +337,7 @@ mpc85xx-p1020
 
   - WS-AP3825i
 
-* OCEDO
+* Ocedo
 
   - Panda
 
