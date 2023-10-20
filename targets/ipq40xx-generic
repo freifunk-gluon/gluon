@@ -120,6 +120,14 @@ device('plasma-cloud-pa2200', 'plasmacloud_pa2200', {
 })
 
 
+-- ZTE
+
+device('zte-mf289f', 'zte_mf289f', {
+	broken = true,	-- case must be opened to install
+	factory = false,
+})
+
+
 -- ZyXEL
 
 device('zyxel-nbg6617', 'zyxel_nbg6617')
