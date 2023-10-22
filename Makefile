@@ -170,7 +170,8 @@ $(LUA):
 
 	scripts/module_check.sh
 
-	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
+	$(GLUON_ENV) scripts/basic_openwrt_config.sh > openwrt/.config
+	$(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) tools/install
 	$(OPENWRTMAKE) package/lua/host/compile
 
