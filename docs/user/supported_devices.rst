@@ -248,6 +248,13 @@ ipq806x-generic
 
   - R7800
 
+ipq807x-generic
+---------------
+
+* Xiaomi
+
+  - R-3600 (Mi AIoT Router AX3600)
+
 lantiq-xrx200
 -------------
 

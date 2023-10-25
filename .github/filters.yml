@@ -83,6 +83,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "ipq807x-generic": [
+    "targets/ipq807x-generic",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "lantiq-xway": [
     "targets/lantiq-xway",
     ".github/workflows/build-gluon.yml",
