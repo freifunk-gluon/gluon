@@ -306,16 +306,13 @@ static struct router *router_find_orig(const struct ether_addr *orig) {
 static struct router *router_add(const struct ether_addr *mac) {
 	struct router *router;
 
-	router = malloc(sizeof(*router));
+	router = calloc(1, sizeof(*router));
 	if (!router)
 		return NULL;
 
 	router->src = *mac;
 	router->next = G.routers;
 	G.routers = router;
-	router->eol.tv_sec = 0;
-	router->eol.tv_nsec = 0;
-	memset(&router->originator, 0, sizeof(router->originator));
 
 	return router;
 }
