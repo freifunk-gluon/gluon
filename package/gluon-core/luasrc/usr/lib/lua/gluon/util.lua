@@ -296,4 +296,14 @@ function M.subprocess.popen(path, argt, options)
 
 	return pid, parentfds
 end
+
+function M.get_mem_total()
+	for line in io.lines('/proc/meminfo') do
+		local match = line:match('^MemTotal:%s+(%d+)')
+		if match then
+			return tonumber(match)
+		end
+	end
+end
+
 return M
