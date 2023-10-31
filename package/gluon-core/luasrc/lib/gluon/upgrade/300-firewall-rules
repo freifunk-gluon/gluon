@@ -65,12 +65,6 @@ for _, zone in ipairs({'mesh', 'loc_client', 'wired_mesh'}) do
 	})
 end
 
--- ToDo Remove in v2022.x
-uci:delete('firewall', 'local_client')
-uci:delete('firewall', 'local_client_ssh')
-uci:delete('firewall', 'local_client_ICMPv4_in')
-uci:delete('firewall', 'local_client_ICMPv6_in')
-
 uci:section('firewall', 'rule', 'loc_client_ICMPv4_in', {
 	src = 'loc_client',
 	proto = 'icmp',
