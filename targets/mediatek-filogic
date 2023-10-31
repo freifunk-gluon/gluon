@@ -1,3 +1,11 @@
+-- ASUS
+
+device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
+	factory = false,
+	broken = true, -- Installation requires internal serial
+})
+
+
 -- Cudy
 
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
