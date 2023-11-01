@@ -5,7 +5,7 @@ OPENWRT_BRANCH=openwrt-22.03
 OPENWRT_COMMIT=8bc8db9ad26da98ebe2d4f861f03f09ece165694
 
 PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
-PACKAGES_GLUON_COMMIT=ce2e6ac1937af9a4c5c54181ab00781a0bf0097c
+PACKAGES_GLUON_COMMIT=dc99bbb906f9faae472e48da013dbf67e1a00c23
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-22.03
