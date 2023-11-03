@@ -8,6 +8,19 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
+    inputs:
+      site_url:
+        description: 'Gluon Site Repo to use'
+        type: string
+      site_branch:
+        description: 'Gluon Site Branch to use'
+        type: string
+      autoupdater_enabled:
+        description: 'Gluon autoupdater activation State'
+        type: boolean
+      autoupdater_branch:
+        description: 'Gluon autoupdater default branch'
+        type: string
 
 permissions:
   contents: read
@@ -47,8 +60,17 @@ jobs:
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
 
+      - name: Checkout Site
+        run: contrib/actions/checkout-site.sh
+        env:
+          GLUON_SITE_URL: ${{ inputs.site_url }}
+          GLUON_SITE_BRANCH: ${{ inputs.site_branch }}
+
       - name: Build
         run: contrib/actions/run-build.sh ${{ matrix.target }}
+        env:
+          GLUON_AUTOUPDATER_ENABLED: ${{ inputs.autoupdater_enabled }}
+          GLUON_AUTOUPDATER_BRANCH: ${{ inputs.autoupdater_branch }}
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
