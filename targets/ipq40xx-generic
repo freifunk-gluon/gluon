@@ -57,6 +57,22 @@ device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
 	factory = false,
 })
 
+device('avm-fritz-repeater-3000', 'avm_fritzrepeater-3000', {
+	factory = false,
+	packages = { -- exclude until Gluon supports third radio
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+	'-ath10k-firmware-qca9984-ct',
+	'-ath10k-board-qca9984',
+	},
+	broken = true,
+	-- 3rd WiFi radio not supported (5GHz DFS channels 100+)
+	-- outdoor mode is broken due to 5GHz being limited to channels 36-64
+})
+
 
 -- GL.iNet
 
