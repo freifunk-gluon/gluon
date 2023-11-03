@@ -68,6 +68,10 @@ end
 uci:foreach('gluon', 'interface', function(interface)
 
 	local function has_role(role)
+		if interface.role == nil then
+			return false
+		end
+
 		return util.contains(interface.role, role)
 	end
 
