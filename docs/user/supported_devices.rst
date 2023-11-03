@@ -285,6 +285,10 @@ mediatek-filogic
 
   - WR3000 (v1)
 
+* GL.iNet
+
+  - GL-MT3000
+
 * NETGEAR
 
   - WAX220

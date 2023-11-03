@@ -13,6 +13,13 @@ device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
 })
 
 
+-- GL.iNet
+
+device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
+	factory = false,
+})
+
+
 -- NETGEAR
 
 device('netgear-wax220', 'netgear_wax220', {
