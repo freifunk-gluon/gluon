@@ -6,7 +6,7 @@ Frequently Asked Questions
 What hardware is supported?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 A table with hardware supported by Gluon can be found on the `OpenWrt Wiki`_.
-If you want to find out if your device can potentially be supported 
+If you want to find out if your device can potentially be supported
 have a look at :doc:`../dev/hardware` for detailed hardware requirements.
 
 .. _OpenWrt Wiki: https://openwrt.org/toh/views/toh_gluon_supported

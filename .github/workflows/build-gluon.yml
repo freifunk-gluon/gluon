@@ -3,10 +3,11 @@ on:
   push:
     branches:
       - master
-      - next*
-      - v20*
+      - next
+      - 'v20[2-9][0-9].[0-9].x'
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,7 +21,7 @@ jobs:
     outputs:
       targets: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Filter targets based on changed files
       - uses: dorny/paths-filter@v2
@@ -38,7 +39,7 @@ jobs:
         target: ${{ fromJSON(needs.changed.outputs.targets) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh

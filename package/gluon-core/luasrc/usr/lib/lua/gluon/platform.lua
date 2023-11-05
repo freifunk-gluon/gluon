@@ -37,6 +37,7 @@ function M.is_outdoor_device()
 		'tplink,cpe510-v3',
 		'tplink,cpe710-v1',
 		'tplink,eap225-outdoor-v1',
+		'tplink,eap225-outdoor-v3',
 		'tplink,wbs210-v1',
 		'tplink,wbs210-v2',
 		'tplink,wbs510-v1',
@@ -80,6 +81,7 @@ function M.is_cellular_device()
 		return true
 	elseif M.match('ipq40xx', 'generic', {
 		'glinet,gl-ap1300',
+		'zte,mf289f',
 	}) then
 		return true
 	elseif M.match('ramips', 'mt7621', {

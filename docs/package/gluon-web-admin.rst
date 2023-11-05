@@ -13,7 +13,7 @@ config_mode.remote_login.show_password_form \: optional
   - ``true`` the password section in config mode is shown
   - ``false`` the password section in config mode is hidden
   - defaults to ``false``
-  
+
 config_mode.remote_login.min_password_length \: optional
   - sets the minimum allowed password length. Set this to ``1`` to disable the
     length check.

@@ -94,6 +94,9 @@ local primary_addrs = {
 		{'lantiq', 'xway', {
 			'netgear,dgn3500b',
 		}},
+		{'mediatek', 'filogic', {
+			'asus,tuf-ax4200',
+		}},
 		{'ramips', 'mt7620', {
 			'netgear,ex3700',
 			'tplink,archer-c2-v1',

@@ -110,17 +110,19 @@ ath79-generic
   - Archer C6 (v2 EU/RU/JP)
   - Archer C7 (v2, v4, v5)
   - Archer C59 (v1)
+  - Archer C60 (v1)
   - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
   - CPE220 (v3.0)
   - CPE510 (v1.0, v1.1, v2.0, v3.0)
   - CPE710 (v1.0)
-  - EAP225-Outdoor (v1)
+  - EAP225-Outdoor (v1, v3)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
   - TL-WR810N (v1)
   - TL-WR842N/ND (v3)
   - TL-WR1043N/ND (v2, v3, v4, v5)
+  - TL-WR2543N/ND (v1)
   - WBS210 (v1.20, v2.0)
   - WBS510 (v1.20)
 
@@ -172,12 +174,12 @@ ath79-mikrotik
 brcm2708-bcm2708
 ----------------
 
-* RaspberryPi 1
+* Raspberry Pi 1
 
 brcm2708-bcm2709
 ----------------
 
-* RaspberryPi 2
+* Raspberry Pi 2
 
 
 ipq40xx-generic
@@ -336,7 +338,7 @@ mpc85xx-p1020
 
   - WS-AP3825i
 
-* OCEDO
+* Ocedo
 
   - Panda
 

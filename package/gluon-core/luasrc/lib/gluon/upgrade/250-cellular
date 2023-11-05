@@ -53,6 +53,7 @@ elseif platform.match('ath79', 'nand', {
 	setup_ncm_qmi('/dev/ttyACM0', 'ncm', 15)
 elseif platform.match('ipq40xx', 'generic', {
 	'glinet,gl-ap1300',
+	'zte,mf289f',
 }) then
 	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
 elseif platform.match('ramips', 'mt7621', {
