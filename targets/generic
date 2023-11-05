@@ -98,7 +98,7 @@ packages {
 	'-kmod-ipt-offload',
 	'-kmod-nft-offload',
 	'-libustream-mbedtls',
-	'-mbedtls',
+	'-libmbedtls',
 	'-nftables',
 	'-odhcpd-ipv6only',
 	'-ppp',
