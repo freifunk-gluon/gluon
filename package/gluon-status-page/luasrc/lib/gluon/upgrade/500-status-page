@@ -36,7 +36,4 @@ for _, zone in ipairs({'mesh', 'loc_client'}) do
 	})
 end
 
--- ToDo remove in v2022.x
-uci:delete('firewall', 'local_client_http')
-
 uci:save('firewall')
