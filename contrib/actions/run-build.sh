@@ -9,5 +9,9 @@ export GLUON_SITEDIR="contrib/ci/minimal-site"
 export GLUON_TARGET="$1"
 export BUILD_LOG=1
 
+BUILD_THREADS="$(($(nproc) + 1))"
+
+echo "Building Gluon with $BUILD_THREADS threads"
+
 make update
-make -j2 V=s
+make -j$BUILD_THREADS V=s
