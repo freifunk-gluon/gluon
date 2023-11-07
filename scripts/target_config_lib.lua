@@ -74,19 +74,6 @@ local function file_exists(file)
 	return true
 end
 
-local function site_vars(var)
-	return lib.exec_capture_raw(string.format(
-[[
-MAKEFLAGS= make print _GLUON_SITE_VARS_=%s --no-print-directory -s -f - <<'END_MAKE'
-include $(GLUON_SITEDIR)/site.mk
-
-print:
-	echo -n '$(_GLUON_SITE_VARS_)'
-END_MAKE
-]],
-	lib.escape(var)))
-end
-
 local function feature_packages(features)
 	local files = {'package/features'}
 	for _, feed in ipairs(feeds) do
