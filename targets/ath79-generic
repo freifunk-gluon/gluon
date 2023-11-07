@@ -57,6 +57,13 @@ device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
 	factory = false,
 })
 
+device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
+	factory = false,
+	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
+})
+
 -- Buffalo
 
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
