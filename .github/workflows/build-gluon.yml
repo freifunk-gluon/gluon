@@ -41,6 +41,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Show system information
+        run: contrib/actions/show-system-info.sh
+
       - name: Install Dependencies
         run: sudo contrib/actions/install-dependencies.sh
 
