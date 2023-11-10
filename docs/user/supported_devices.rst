@@ -170,6 +170,7 @@ ath79-mikrotik
 * Mikrotik
 
   - RB951Ui-2nD (hAP)
+  - RBwAPR-2nD (wAP R)
 
 brcm2708-bcm2708
 ----------------
