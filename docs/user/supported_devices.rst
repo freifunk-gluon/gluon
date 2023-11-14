@@ -281,6 +281,10 @@ lantiq-xway
 mediatek-filogic
 ----------------
 
+* ASUS
+
+  - TUF AX4200
+
 * Cudy
 
   - WR3000 (v1)
