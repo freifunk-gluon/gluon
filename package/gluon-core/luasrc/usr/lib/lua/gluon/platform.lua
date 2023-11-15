@@ -51,6 +51,11 @@ function M.is_outdoor_device()
 	}) then
 		return true
 
+	elseif M.match('ath79', 'mikrotik', {
+		'mikrotik,routerboard-wapr-2nd',
+	}) then
+		return true
+
 	elseif M.match('ipq40xx', 'generic', {
 		'aruba,ap-365',
 		'engenius,ens620ext',
