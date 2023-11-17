@@ -1,0 +1,25 @@
+local ATH11K_PACKAGES_IPQ807X = {
+	-- default: candela tech driver
+}
+
+
+defaults {
+	packages = ATH11K_PACKAGES_IPQ807X,
+}
+
+
+-- Xiaomi
+
+device('xiaomi-ax3600', 'xiaomi_ax3600', {
+	packages = {
+		-- radio0 is a monitoring radio - removed for now
+		'-ath10k-firmware-qca9887-ct',
+		'-ath10k-board-qca9887',
+		'-kmod-ath10k-ct-smallbuffers',
+		'-kmod-ath10k-smallbuffers',
+	},
+	-- broken = true,
+	-- 3rd WiFi radio is not supported
+	-- 3rd radio comes with smallbuffers by default (512MB RAM is not enough next to ath11k)
+	factory = false,
+})
