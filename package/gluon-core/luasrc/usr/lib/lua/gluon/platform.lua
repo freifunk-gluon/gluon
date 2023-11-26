@@ -41,10 +41,6 @@ function M.is_outdoor_device()
 		'tplink,wbs210-v1',
 		'tplink,wbs210-v2',
 		'tplink,wbs510-v1',
-		'ubnt,nanobeam-ac-xc',
-		'ubnt,nanobeam-m5-xw',
-		'ubnt,nanostation-loco-m-xw',
-		'ubnt,nanostation-m-xw',
 		'ubnt,unifi-ap-outdoor-plus',
 		'ubnt,unifiac-mesh',
 		'ubnt,unifiac-mesh-pro',
@@ -58,7 +54,6 @@ function M.is_outdoor_device()
 
 	elseif M.match('ipq40xx', 'generic', {
 		'aruba,ap-365',
-		'engenius,ens620ext',
 		'plasmacloud,pa1200',
 	}) then
 		return true
