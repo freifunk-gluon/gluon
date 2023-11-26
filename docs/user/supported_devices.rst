@@ -138,6 +138,14 @@ ath79-generic
   - UniFi AP Outdoor+
   - UniFi AP PRO
 
+ath79-mikrotik
+--------------
+
+* Mikrotik
+
+  - RB951Ui-2nD (hAP)
+  - RBwAPR-2nD (wAP R)
+
 ath79-nand
 ----------
 
@@ -159,14 +167,6 @@ ath79-nand
 * Zyxel
 
   - NBG6716
-
-ath79-mikrotik
---------------
-
-* Mikrotik
-
-  - RB951Ui-2nD (hAP)
-  - RBwAPR-2nD (wAP R)
 
 brcm2708-bcm2708
 ----------------
@@ -431,6 +431,11 @@ ramips-mt7621
 
   - WS-WN572HP3 (4G)
 
+* Xiaomi
+
+  - Xiaomi Mi Router 3G (v1, v2)
+  - Xiaomi Mi Router 4A (Gigabit Edition v1)
+
 * ZBT
 
   - WG3526-16M
@@ -440,11 +445,6 @@ ramips-mt7621
 
   - NWA50AX
   - WSM20
-
-* Xiaomi
-
-  - Xiaomi Mi Router 4A (Gigabit Edition v1)
-  - Xiaomi Mi Router 3G (v1, v2)
 
 ramips-mt76x8
 -------------
