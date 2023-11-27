@@ -57,6 +57,13 @@ device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
 	factory = false,
 })
 
+device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
+	factory = false,
+	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
+})
+
 -- Buffalo
 
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
@@ -534,21 +541,6 @@ device('tp-link-wbs510-v1', 'tplink_wbs510-v1', {
 
 -- Ubiquiti
 
-device('ubiquiti-nanostation-loco-m-xw', 'ubnt_nanostation-loco-m-xw', {
-	manifest_aliases = {
-		'ubiquiti-loco-m-xw', -- upgrade from OpenWrt 19.07
-		'ubiquiti-nanostation-loco-m2-xw', -- upgrade from OpenWrt 19.07
-		'ubiquiti-nanostation-loco-m5-xw', -- upgrade from OpenWrt 19.07
-	},
-})
-
-device('ubiquiti-nanostation-m-xw', 'ubnt_nanostation-m-xw', {
-	manifest_aliases = {
-		'ubiquiti-nanostation-m2-xw', -- upgrade from OpenWrt 19.07
-		'ubiquiti-nanostation-m5-xw', -- upgrade from OpenWrt 19.07
-	},
-})
-
 device('ubiquiti-unifi-ac-lite', 'ubnt_unifiac-lite', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
@@ -582,12 +574,6 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi-ap', {
 		'ubiquiti-unifi',
 	},
 })
-
-device('ubiquiti-nanobeam-ac-gen1-xc', 'ubnt_nanobeam-ac-xc', {
-	packages = ATH10K_PACKAGES_QCA9880,
-})
-
-device('ubiquiti-nanobeam-m5-xw', 'ubnt_nanobeam-m5-xw')
 
 device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 	manifest_aliases = {

@@ -6,6 +6,7 @@ $(eval $(call GluonTarget,bcm27xx,bcm2709))
 $(eval $(call GluonTarget,ipq40xx,generic))
 $(eval $(call GluonTarget,ipq40xx,mikrotik))
 $(eval $(call GluonTarget,ipq806x,generic))
+$(eval $(call GluonTarget,lantiq,xrx200))
 $(eval $(call GluonTarget,lantiq,xway))
 $(eval $(call GluonTarget,mediatek,filogic))
 $(eval $(call GluonTarget,mediatek,mt7622))
@@ -25,6 +26,5 @@ $(eval $(call GluonTarget,x86,64))
 
 ifneq ($(BROKEN),)
 $(eval $(call GluonTarget,bcm27xx,bcm2710)) # BROKEN: Untested
-$(eval $(call GluonTarget,lantiq,xrx200)) # BROKEN: Switch driver broken on Linux 5.15
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
 endif

@@ -83,6 +83,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "lantiq-xrx200": [
+    "targets/lantiq-xrx200",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "lantiq-xway": [
     "targets/lantiq-xway",
     ".github/workflows/build-gluon.yml",
@@ -248,16 +258,6 @@
     "targets/generic",
     "targets/targets.mk",
     "targets/bcm27xx.inc"
-  ],
-  "lantiq-xrx200": [
-    "targets/lantiq-xrx200",
-    ".github/workflows/build-gluon.yml",
-    "modules",
-    "Makefile",
-    "patches/**",
-    "scripts/**",
-    "targets/generic",
-    "targets/targets.mk"
   ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
