@@ -6,7 +6,7 @@
 "3. topic: batman-adv":
   - docs/package/gluon-mesh-batman-adv*
   - package/gluon-alfred/**
-  - package/gluon-cient-bridge/**
+  - package/gluon-client-bridge/**
   - package/gluon-mesh-batman-adv/**
   - package/libbatadv/**
 "3. topic: build":
@@ -15,7 +15,7 @@
 "3. topic: config-mode":
   - docs/dev/web/config-mode.rst
   - docs/package/gluon-config-mode-*
-  - packge/gluon-config-mode-*/**
+  - package/gluon-config-mode-*/**
   - package/gluon-web*/**
 "3. topic: continous integration":
   - .github/workflows/*
@@ -56,4 +56,4 @@
   - package/gluon-private-wifi/**
   - package/gluon-web-private-wifi/**
   - package/gluon-web-wifi-config/**
-  - package/gluon-wireless-encryption/**
+  - package/gluon-wireless-encryption-wpa3/**
