@@ -259,6 +259,17 @@
     "targets/targets.mk",
     "targets/bcm27xx.inc"
   ],
+  "bcm27xx-bcm2711": [
+    "targets/bcm27xx-bcm2711",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
     ".github/workflows/build-gluon.yml",
