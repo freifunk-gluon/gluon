@@ -48,11 +48,11 @@ jobs:
       - name: Show system information
         run: contrib/actions/show-system-info.sh
 
-      - name: Install Dependencies
-        run: sudo contrib/actions/install-dependencies.sh
+      - name: Build Docker container
+        run: docker build -t gluon-ci-container contrib/docker
 
-      - name: Build
-        run: contrib/actions/run-build.sh ${{ matrix.target }}
+      - name: Build Gluon
+        run: docker run --rm -v $PWD:/gluon-ci -w /gluon-ci --user "$(id -u):$(id -g)" gluon-ci-container contrib/actions/run-build.sh ${{ matrix.target }}
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
