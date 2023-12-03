@@ -12,11 +12,11 @@ on:
 jobs:
   build-documentation:
     name: docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
       - name: Install Dependencies
-        run: sudo pip3 install sphinx-rtd-theme
+        run: sudo pip3 install -r docs/requirements.txt
       - name: Build documentation
         run: make -C docs html
       - name: Archive build output
