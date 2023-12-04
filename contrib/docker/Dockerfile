@@ -1,5 +1,8 @@
 FROM debian:bookworm-slim
 
+ARG TARGETOS
+ARG TARGETARCH
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
@@ -27,9 +30,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /tmp/ec &&\
-    wget -O /tmp/ec/ec-linux-amd64.tar.gz https://github.com/editorconfig-checker/editorconfig-checker/releases/download/2.7.0/ec-linux-amd64.tar.gz &&\
-    tar -xvzf /tmp/ec/ec-linux-amd64.tar.gz &&\
-    mv bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker &&\
+    wget -O /tmp/ec/ec-${TARGETOS}-${TARGETARCH}.tar.gz https://github.com/editorconfig-checker/editorconfig-checker/releases/download/2.7.0/ec-${TARGETOS}-${TARGETARCH}.tar.gz &&\
+    tar -xvzf /tmp/ec/ec-${TARGETOS}-${TARGETARCH}.tar.gz &&\
+    mv bin/ec-${TARGETOS}-${TARGETARCH} /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
 
 RUN useradd -m -d /gluon -u 100 -g 100 -o gluon
