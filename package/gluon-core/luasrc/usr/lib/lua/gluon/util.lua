@@ -1,4 +1,4 @@
-local bit = require 'bit'
+local bit = require 'bit32'
 local posix_fcntl = require 'posix.fcntl'
 local posix_glob = require 'posix.glob'
 local posix_syslog = require 'posix.syslog'
