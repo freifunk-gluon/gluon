@@ -2,28 +2,18 @@
 
 START=60
 
-SERVICE_NAME=gluon-wan-dnsmasq
-SERVICE_USE_PID=1
-SERVICE_PID_FILE=/var/run/gluon-wan-dnsmasq.pid
-
-
-PORT=54
-PACKET_MARK=1
+USE_PROCD=1
 
 RESOLV_CONF_DIR=/var/gluon/wan-dnsmasq
 RESOLV_CONF=$RESOLV_CONF_DIR/resolv.conf
 
-
-start() {
+start_service() {
 	mkdir -p $RESOLV_CONF_DIR
-	/lib/gluon/wan-dnsmasq/update.lua
+	touch "$RESOLV_CONF"
 
-	export LD_PRELOAD=libpacketmark.so
-	export LIBPACKETMARK_MARK=$PACKET_MARK
-
-	service_start /usr/sbin/dnsmasq -x $SERVICE_PID_FILE -u root -i lo -p $PORT -h -r $RESOLV_CONF
-}
-
-stop() {
-	service_stop /usr/sbin/dnsmasq
+	procd_open_instance
+	procd_set_param command /usr/sbin/dnsmasq -u root -i lo -p 54 -h -k -c 0 -r $RESOLV_CONF
+	procd_set_param env LD_PRELOAD=libpacketmark.so LIBPACKETMARK_MARK=1
+	procd_set_param respawn 60 5 5
+	procd_close_instance
 }
