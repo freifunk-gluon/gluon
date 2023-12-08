@@ -42,6 +42,8 @@ local default_options = {
 	class = 'standard',
 	deprecated = false,
 	broken = false,
+	flashsize = nil,
+	ramsize = nil,
 }
 
 
@@ -61,6 +63,13 @@ local function want_device(dev, options)
 	end
 	if options.deprecated and env.GLUON_DEPRECATED == '0' then
 		return false
+	end
+
+	if options.flashsize and tonumber(env.GLUON_MIN_FLASHSIZE) then
+		return options.flashsize >= tonumber(env.GLUON_MIN_FLASHSIZE)
+	end
+	if options.ramsize and tonumber(env.GLUON_MIN_RAMSIZE) then
+		return options.ramsize >= tonumber(env.GLUON_MIN_RAMSIZE)
 	end
 
 	if (env.GLUON_DEVICES or '') == '' then

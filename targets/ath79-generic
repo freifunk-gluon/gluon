@@ -41,12 +41,16 @@ local ATH10K_PACKAGES_QCA9888 = {}
 
 device('alfa-network-ap121f', 'alfa-network_ap121f', {
 	factory = false,
+	flashsize = 16,
+	ramsize = 64,
 })
 
 -- AVM
 
 device('avm-fritz-box-4020', 'avm_fritz4020', {
 	factory = false,
+	flashsize = 16,
+	ramsize = 128,
 })
 
 device('avm-fritz-wlan-repeater-300e', 'avm_fritz300e', {

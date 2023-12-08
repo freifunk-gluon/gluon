@@ -259,6 +259,11 @@ GLUON_MINIFY
   devices are desired for development purposes. Be aware that this will increase the size of the
   resulting images and is therefore not suitable for devices with small flash chips.
 
+GLUON_MIN_RAMSIZE
+GLUON_MIN_FLASHSIZE
+  Setting these options to an integer larger 0 will omit building devices that have RAM or flash sizes below the
+  specified minimum. This only works if the respective device has a known flash or RAM size defined.
+
 GLUON_DEVICES
   List of devices to build. The list contains the Gluon profile name of a device, the profile
   name is the first parameter of the ``device`` command in a target file.
