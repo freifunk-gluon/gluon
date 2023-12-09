@@ -1,3 +1,5 @@
+local image_customization_lib = dofile('scripts/image_customization_lib.lua')
+
 -- Functions for use in targets/*
 local F = {}
 
@@ -55,11 +57,37 @@ function F.istrue(v)
 	return (tonumber(v) or 0) > 0
 end
 
-local function want_device(dev, options)
-	if options.broken and not F.istrue(env.BROKEN) then
+local function get_device_overrides(device_info)
+	return image_customization_lib.device_overrides(env, device_info)
+end
+
+local function device_broken(device_info, overrides)
+	if F.istrue(env.BROKEN) then
 		return false
 	end
-	if options.deprecated and env.GLUON_DEPRECATED == '0' then
+
+	if overrides['broken'] ~= nil then
+		return overrides['broken'] == true
+	elseif device_info.options.broken then
+		return true
+	end
+
+	return false
+end
+
+local function want_device(device_info)
+	local overrides = get_device_overrides(device_info)
+
+	-- Check if device is disabled via image-customization in site
+	if overrides['disabled'] then
+		return false
+	end
+
+	if device_broken(device_info, overrides) then
+		return false
+	end
+
+	if device_info.options.deprecated and env.GLUON_DEPRECATED == '0' then
 		return false
 	end
 
@@ -67,12 +95,9 @@ local function want_device(dev, options)
 		return true
 	end
 
-	unknown_devices[dev] = nil
-	return gluon_devices[dev]
+	unknown_devices[device_info.image] = nil
+	return gluon_devices[device_info.image]
 end
-
-local full_deprecated = env.GLUON_DEPRECATED == 'full'
-
 
 local function merge(a, b)
 	local ret = {}
@@ -210,18 +235,33 @@ local function as_table(v)
 	end
 end
 
+local function disable_factory_image(device_info)
+	if device_info.options.deprecated and env.GLUON_DEPRECATED ~= 'full' then
+		return true
+	end
+
+	local overrides = get_device_overrides(device_info)
+	if overrides["disable_factory"] then
+		return true
+	end
+
+	return false
+end
+
 function F.device(image, name, options)
 	options = merge(default_options, options)
 
-	if not want_device(image, options) then
-		return
-	end
-
-	table.insert(M.devices, {
+	local device_info = {
 		image = image,
 		name = name,
 		options = options,
-	})
+	}
+
+	if not want_device(device_info) then
+		return
+	end
+
+	table.insert(M.devices, device_info)
 
 	if options.sysupgrade then
 		add_image {
@@ -236,7 +276,7 @@ function F.device(image, name, options)
 		}
 	end
 
-	if options.deprecated and not full_deprecated then
+	if disable_factory_image(device_info) then
 		return
 	end
 

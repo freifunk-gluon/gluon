@@ -8,10 +8,23 @@ local function collect_keys(t)
 	return ret
 end
 
-local function evaluate_device(files, env, dev)
+local function file_exists(file)
+	local f = io.open(file)
+	if not f then
+		return false
+	end
+	f:close()
+	return true
+end
+
+local function get_customization_file_name(env)
+	return env.GLUON_SITEDIR .. '/image-customization'
+end
+
+local function evaluate_device(env, dev)
 	local selections = {}
 	local funcs = {}
-	local device_disabled = false
+	local device_overrides = {}
 
 	local function add_elements(element_type, element_list)
 		for _, element in ipairs(element_list) do
@@ -23,12 +36,31 @@ local function evaluate_device(files, env, dev)
 		end
 	end
 
+	local function add_override(ovr_key, ovr_value)
+		device_overrides[ovr_key] = ovr_value
+	end
+
 	function funcs.features(features)
 		add_elements('feature', features)
 	end
 
 	function funcs.packages(packages)
 		add_elements('package', packages)
+	end
+
+	function funcs.broken(broken)
+		assert(
+			type(broken) == 'boolean',
+			'Incorrect use of broken(): has to be a boolean value')
+		add_override('broken', broken)
+	end
+
+	function funcs.disable()
+		add_override('disabled', true)
+	end
+
+	function funcs.disable_factory()
+		add_override('disable_factory', true)
 	end
 
 	function funcs.device(device_names)
@@ -66,24 +98,35 @@ local function evaluate_device(files, env, dev)
 	end
 
 	-- Evaluate the feature definition files
-	for _, file in ipairs(files) do
-		local f, err = loadfile(file)
-		if not f then
-			error('Failed to parse feature definition: ' .. err)
-		end
-		setfenv(f, funcs)
-		f()
+	local f, err = loadfile(get_customization_file_name(env))
+	if not f then
+		error('Failed to parse feature definition: ' .. err)
 	end
+	setfenv(f, funcs)
+	f()
 
 	return {
 		selections = selections,
-		device_disabled = device_disabled,
+		device_overrides = device_overrides,
 	}
 end
 
-function M.get_selection(selection_type, files, env, dev)
-	local eval_result = evaluate_device(files, env, dev)
+function M.get_selection(selection_type, env, dev)
+	if not file_exists(get_customization_file_name(env)) then
+		return {}
+	end
+
+	local eval_result = evaluate_device(env, dev)
 	return collect_keys(eval_result.selections[selection_type] or {})
+end
+
+function M.device_overrides(env, dev)
+	if not file_exists(get_customization_file_name(env)) then
+		return {}
+	end
+
+	local eval_result = evaluate_device(env, dev)
+	return eval_result.device_overrides
 end
 
 return M
