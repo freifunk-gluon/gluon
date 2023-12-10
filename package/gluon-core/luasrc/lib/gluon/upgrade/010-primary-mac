@@ -96,6 +96,7 @@ local primary_addrs = {
 		}},
 		{'mediatek', 'filogic', {
 			'asus,tuf-ax4200',
+			'asus,tuf-ax6000',
 		}},
 		{'ramips', 'mt7620', {
 			'netgear,ex3700',

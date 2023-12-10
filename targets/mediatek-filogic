@@ -4,6 +4,10 @@ device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
 	factory = false,
 })
 
+device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
+	factory = false,
+})
+
 
 -- Cudy
 
