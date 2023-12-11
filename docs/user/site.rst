@@ -720,6 +720,49 @@ We recommend to use *GLUON_SITE_PACKAGES* for non-Gluon OpenWrt packages only an
 completely rely on *GLUON_FEATURES* for Gluon packages, as it is shown in the
 example *site.mk*.
 
+.. _site-image-customization:
+
+Image customization
+^^^^^^^^^^^^^^^^^^^
+
+Gluon allows configuration of the build-parameters for the images. A Lua domain-specific-language
+has been implemented to facilitate this configuration. This file is interpreted for every device
+independently. The file is located in the site-repository root as ``image-config``.
+
+A simple example for a device-specific image configuration can be found in the site-example.
+
+The following functions are available:
+
+device(device_name_list)
+  Returns true in case the current device is in the list of devices specified in ``device_name_list``.
+  ``device_name_list`` is a table of strings.
+
+target(openwrt_target, openwrt_subtarget)
+  Returns true in case the current device is of the specified OpenWrt target and subtarget.
+  The parameter ```openwrt_subtarget``` is optional. If it is not specified, only the target is matched.
+
+device_class(dev_class)
+  Returns true in case the current device is of the specified device class.
+
+features(feature_table)
+  Includes the specified list of features in the image. ``feature_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude features included earlier in the file.
+
+packages(package_table)
+  Includes the specified list of packages in the image. ``package_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude packages included earlier in the file.
+
+broken(broken_state)
+  Overrides the broken state specified by Gluon. Can be used to mark a device as broken or
+  remove the pre-defined broken state.
+
+disable()
+  Disables image generation.
+
+disable_factory()
+  Disables factory image generation. Sysupgrade images are still generated and stored in the image
+  output directory.
+
 .. _site-config-mode-texts:
 
 Config mode texts
