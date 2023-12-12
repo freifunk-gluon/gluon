@@ -18,7 +18,7 @@ GLUON_FEATURES := \
 	web-wizard
 
 GLUON_FEATURES_standard := \
-  wireless-encryption-wpa3
+	wireless-encryption-wpa3
 
 ##	GLUON_MULTIDOMAIN
 #		Build gluon with multidomain support.
