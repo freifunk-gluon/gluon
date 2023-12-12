@@ -26,6 +26,13 @@ device('netgear-wax220', 'netgear_wax220', {
 })
 
 
+-- Ubiquiti
+
+device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
+	factory = false,
+})
+
+
 -- ZyXEL
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')
