@@ -9,6 +9,10 @@ Important notes
 
 Upgrades to this version are only supported from releases v2021.1 and later.
 
+**Note:**
+This release was found to be soft-bricking AVM Fritz!Box 7520 and 7530.
+We advice to not offer the release for these two devices until this gets fixed.
+Affected devices can be recovered to Fritz!OS and then reinstalled by using the (`AVM Recovery Tool <http://ftp.avm.de/fritzbox/fritzbox-7530/other/recover/>`_)
 
 Bugfixes
 --------
@@ -53,3 +57,6 @@ Known issues
   (`#2967 <https://github.com/freifunk-gluon/gluon/issues/2967>`_).
 
   It is planned that the next major release will reintroduce EFI support.
+
+* AVM Fritz!Box 7520 and 7530 get soft-bricked by this release. The issue was introduced by a kernel bump.
+  (`#3023 <https://github.com/freifunk-gluon/gluon/issues/3023>`_)
