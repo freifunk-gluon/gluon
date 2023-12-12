@@ -24,7 +24,7 @@ $(eval $(call GluonTarget,x86,legacy))
 $(eval $(call GluonTarget,x86,64))
 
 
-ifneq ($(BROKEN),)
+ifeq ($(BROKEN),1)
 $(eval $(call GluonTarget,bcm27xx,bcm2710)) # BROKEN: Untested
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
 endif
