@@ -19,7 +19,7 @@ Gluon's features include:
 * community-specific technical settings and customizations through a common site.conf and site.mk
 * ecdsa signature-based autoupdater
 * node status web page
-* node information + statistics publication through respondd
+* publication of node information + statistics through respondd
 * a variety of preconfigured mesh and VPN protocols:
 
 
