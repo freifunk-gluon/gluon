@@ -239,7 +239,7 @@ GLUON_RELEASE
 
 GLUON_SITE_VERSION
   Version of the site configuration. This string is displayed in the config mode
-  and `gluon-info`. If not set, Gluon generates a version-string using `git describe`
+  and `gluon-info`. If unset, Gluon generates a version string using `git describe`
   on the site folder.
 
 GLUON_TARGET
