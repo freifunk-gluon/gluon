@@ -294,6 +294,10 @@ mediatek-filogic
 
   - WAX220
 
+* Ubiquiti
+
+  - UniFi 6 Plus
+
 * ZyXEL
 
   - NWA50AX Pro
