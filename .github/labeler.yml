@@ -1,8 +1,4 @@
 ---
-"3. topic: babel":
-  - package/gluon-l3roamd/**
-  - package/gluon-mesh-babel/**
-  - package/gluon-mmfd/**
 "3. topic: batman-adv":
   - docs/package/gluon-mesh-batman-adv*
   - package/gluon-alfred/**
@@ -38,6 +34,10 @@
   - docs/multidomain-site-example/**
   - package/gluon-config-mode-domain-select/**
   - package/gluon-scheduled-domain-switch/**
+"3. topic: olsr":
+  - package/gluon-l3roamd/**
+  - package/gluon-mesh-olsrd/**
+  - package/gluon-mmfd/**
 "3. topic: package":
   - package/**
 "3. topic: respondd":
