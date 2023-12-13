@@ -22,16 +22,17 @@ local function get_customization_file_name(env)
 end
 
 local function evaluate_device(env, dev)
-	local selections = {}
+	local selections = {
+		feature = {},
+		package = {},
+	}
 	local funcs = {}
 	local device_overrides = {}
 
 	local function add_elements(element_type, element_list)
+		-- We depend on the fact both feature and package
+		-- are already initialized as empty tables
 		for _, element in ipairs(element_list) do
-			if not selections[element_type] then
-				selections[element_type] = {}
-			end
-
 			selections[element_type][element] = true
 		end
 	end
@@ -111,13 +112,23 @@ local function evaluate_device(env, dev)
 	}
 end
 
-function M.get_selection(selection_type, env, dev)
+function M.get_selections(env, dev)
+	local return_object = {
+		features = {},
+		packages = {},
+	}
+
 	if not file_exists(get_customization_file_name(env)) then
-		return {}
+		return return_object
 	end
 
 	local eval_result = evaluate_device(env, dev)
-	return collect_keys(eval_result.selections[selection_type] or {})
+	return_object = {
+		features = collect_keys(eval_result.selections['feature']),
+		packages = collect_keys(eval_result.selections['package']),
+	}
+
+	return return_object
 end
 
 function M.device_overrides(env, dev)

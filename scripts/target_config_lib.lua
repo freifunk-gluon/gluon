@@ -87,19 +87,23 @@ local function feature_packages(features)
 end
 
 local function site_specific_packages(dev_info)
+	local site_selections
 	local site_packages
 	local feature_inherited_pkgs
 	local site_features
 
+	-- Get all enabled selections from image-customization
+	site_selections = image_customization_lib.get_selections(env, dev_info)
+
 	-- First read enabled features from site
-	site_features = image_customization_lib.get_selection('feature', env, dev_info)
+	site_features = site_selections['features']
 	site_features = compact_list(site_features, false)
 
 	-- Create List from packages inherited from features
 	feature_inherited_pkgs = feature_packages(site_features)
 
 	-- Read list of packages from site
-	site_packages = image_customization_lib.get_selection('package',  env, dev_info)
+	site_packages = site_selections['packages']
 
 	-- Concat feature-packages with site-packages
 	local pkgs = concat_list(feature_inherited_pkgs, site_packages)
