@@ -237,6 +237,11 @@ GLUON_RELEASE
   is available. The same GLUON_RELEASE has to be passed to ``make`` and ``make manifest``
   to generate a correct manifest.
 
+GLUON_SITE_VERSION
+  Version of the site configuration. This string is displayed in the config mode
+  and `gluon-info`. If unset, Gluon generates a version string using `git describe`
+  on the site folder.
+
 GLUON_TARGET
   Target architecture to build.
 
