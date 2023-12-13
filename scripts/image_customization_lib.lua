@@ -1,13 +1,5 @@
 local M = {}
 
-local function collect_keys(t)
-	local ret = {}
-	for v in pairs(t) do
-		table.insert(ret, v)
-	end
-	return ret
-end
-
 local function file_exists(file)
 	local f = io.open(file)
 	if not f then
@@ -33,7 +25,7 @@ local function evaluate_device(env, dev)
 		-- We depend on the fact both feature and package
 		-- are already initialized as empty tables
 		for _, element in ipairs(element_list) do
-			selections[element_type][element] = true
+			table.insert(selections[element_type], element)
 		end
 	end
 
@@ -124,8 +116,8 @@ function M.get_selections(env, dev)
 
 	local eval_result = evaluate_device(env, dev)
 	return_object = {
-		features = collect_keys(eval_result.selections['feature']),
-		packages = collect_keys(eval_result.selections['package']),
+		features = eval_result.selections['feature'],
+		packages = eval_result.selections['package'],
 	}
 
 	return return_object
