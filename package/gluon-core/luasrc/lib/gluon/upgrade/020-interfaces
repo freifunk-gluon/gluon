@@ -90,8 +90,15 @@ else
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
 
+-- Delete all UCI device esctions of type 'bridge'
+-- as well as the ones starting with 'br-'.
+-- Preserve all others to apply MAC address stored in UCI
+uci:foreach('network', 'device',function(s)
+	if s.type == 'bridge' or s.name:match('^br-') then
+		uci:delete('network', s['.name'])
+	end
+end)
 
-uci:delete_all('network', 'device')
 uci:delete_all('network', 'interface')
 
 uci:save('network')
