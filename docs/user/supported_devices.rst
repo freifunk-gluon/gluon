@@ -196,8 +196,6 @@ ipq40xx-generic
 * AVM
 
   - FRITZ!Box 4040 [#avmflash]_
-  - FRITZ!Box 7520 (v1) [#eva_ramboot]_ [#lan_as_wan]_
-  - FRITZ!Box 7530 [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
 * EnGenius
