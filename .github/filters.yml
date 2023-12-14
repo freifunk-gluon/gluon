@@ -1,6 +1,7 @@
 {
   "armsr-armv7": [
     "targets/armsr-armv7",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -11,6 +12,7 @@
   ],
   "armsr-armv8": [
     "targets/armsr-armv8",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
