@@ -6,7 +6,7 @@ Please note that you should not enable Wired Mesh on the uplink port at the same
 
 The private WLAN is encrypted using WPA2 by default. On devices with enough flash and a supported radio,
 WPA3 or WPA2/WPA3 mixed-mode can be used instead of WPA2. For this to work, the ``wireless-encryption-wpa3``
-feature has to be added to ``GLUON_FEATURES``.
+feature has to be enabled as a feature.
 
 It is recommended to enable IEEE 802.11w management frame protection for WPA2/WPA3 networks, however this
 can lead to connectivity problems for older clients. In this case, management frame protection can be
