@@ -78,7 +78,7 @@ end
 local function want_device(device_info)
 	local overrides = get_device_overrides(device_info)
 
-	-- Check if device is disabled via image-customization in site
+	-- Check if device is disabled via image-customization.lua in site
 	if overrides['disabled'] then
 		return false
 	end

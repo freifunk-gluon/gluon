@@ -92,7 +92,7 @@ local function site_specific_packages(dev_info)
 	local feature_inherited_pkgs
 	local site_features
 
-	-- Get all enabled selections from image-customization
+	-- Get all enabled selections from image-customization.lua
 	site_selections = image_customization_lib.get_selections(env, dev_info)
 
 	-- First read enabled features from site

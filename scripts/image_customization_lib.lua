@@ -10,7 +10,7 @@ local function file_exists(file)
 end
 
 local function get_customization_file_name(env)
-	return env.GLUON_SITEDIR .. '/image-customization'
+	return env.GLUON_SITEDIR .. '/image-customization.lua'
 end
 
 local function evaluate_device(env, dev)
