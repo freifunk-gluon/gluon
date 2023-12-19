@@ -9,13 +9,13 @@ Gluon is a firmware framework to build preconfigured OpenWrt images for public m
 ## Getting started
 
 Gluon provides an easy-to-use firmware for a public, decentral WLAN and/or wire based mesh network.
-Which common network capable devices, like smartphones, laptops or desktop PCs can connect to and communicate over, without the need of passwords for access and without the need of installing special software.
-Additionally, internet access and "cloud merging" can be provided over a WAN through VPN connected gateways.
+Common network capable devices, like smartphones, laptops or desktop PCs can connect to the mesh network and communicate over it, without the need of passwords for access and without the need of installing special software.
+Additionally, internet access and [merging mesh clouds](https://www.open-mesh.org/projects/batman-adv/wiki/Connecting-Batman-adv-clouds) can be accomplished over a WAN through VPN connected gateways.
 
 Gluon's features include:
 
 * a decentral mesh network
-* easy (or optional) configuration mode for less techy users
+* easy configuration mode for less techy users
 * community-specific technical settings and customizations through a common site.conf and site.mk
 * ecdsa signature-based autoupdater
 * node status web page
@@ -26,16 +26,14 @@ Gluon's features include:
 Supported mesh protocols:
 
 * batman-adv (BATMAN IV fully, BATMAN V partially)
-* Babel (partially)
 * OLSRv2 (partially)
 
 
 Supported protocols for node-to-node connections:
 
 * WLAN: 802.11s (with forwarding disabled)
-* WAN: VPNs via fastd, Wireguard or Tunneldigger
+* WAN: VPNs via fastd and Wireguard
 * LAN: via VXLAN
-
 
 
 We have a huge amount of documentation over at https://gluon.readthedocs.io/.
