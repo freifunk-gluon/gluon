@@ -15,8 +15,8 @@ end
 
 local function evaluate_device(env, dev)
 	local selections = {
-		feature = {},
-		package = {},
+		features = {},
+		packages = {},
 	}
 	local funcs = {}
 	local device_overrides = {}
@@ -34,11 +34,11 @@ local function evaluate_device(env, dev)
 	end
 
 	function funcs.features(features)
-		add_elements('feature', features)
+		add_elements('features', features)
 	end
 
 	function funcs.packages(packages)
-		add_elements('package', packages)
+		add_elements('packages', packages)
 	end
 
 	function funcs.broken(broken)
@@ -115,12 +115,7 @@ function M.get_selections(env, dev)
 	end
 
 	local eval_result = evaluate_device(env, dev)
-	return_object = {
-		features = eval_result.selections['feature'],
-		packages = eval_result.selections['package'],
-	}
-
-	return return_object
+	return eval_result.selections
 end
 
 function M.device_overrides(env, dev)
