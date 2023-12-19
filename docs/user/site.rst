@@ -647,7 +647,7 @@ leading to entangled package names like *gluon-mesh-vpn-fastd-respondd* or
 *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 For this reason, we have introduced *feature flags*, which can be specified
-in the using the image-customization.lua framework. These flags allow to specify
+using the image-customization.lua file. These flags allow to specify
 a set of features on a higher level than individual package names.
 
 Most Gluon packages can simply be specified as feature flags by removing the ``gluon-``
