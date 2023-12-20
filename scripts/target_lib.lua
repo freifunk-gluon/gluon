@@ -31,6 +31,8 @@ M.configs = {}
 M.devices = {}
 M.images = {}
 
+-- Initialize image-customization
+image_customization_lib.init(env)
 
 local default_options = {
 	factory = '-squashfs-factory',
@@ -57,10 +59,6 @@ function F.istrue(v)
 	return (tonumber(v) or 0) > 0
 end
 
-local function get_device_overrides(device_info)
-	return image_customization_lib.device_overrides(env, device_info)
-end
-
 local function device_broken(device_info, overrides)
 	if F.istrue(env.BROKEN) then
 		return false
@@ -76,7 +74,7 @@ local function device_broken(device_info, overrides)
 end
 
 local function want_device(device_info)
-	local overrides = get_device_overrides(device_info)
+	local overrides = image_customization_lib.device_overrides(device_info)
 
 	-- Check if device is disabled via image-customization.lua in site
 	if overrides['disabled'] then
@@ -240,7 +238,7 @@ local function disable_factory_image(device_info)
 		return true
 	end
 
-	local overrides = get_device_overrides(device_info)
+	local overrides = image_customization_lib.device_overrides(device_info)
 	if overrides["disable_factory"] then
 		return true
 	end

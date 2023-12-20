@@ -104,27 +104,31 @@ local function evaluate_device(env, dev)
 	}
 end
 
-function M.get_selections(env, dev)
+function M.get_selections(dev)
 	local return_object = {
 		features = {},
 		packages = {},
 	}
 
-	if not file_exists(get_customization_file_name(env)) then
+	if not file_exists(get_customization_file_name(M.env)) then
 		return return_object
 	end
 
-	local eval_result = evaluate_device(env, dev)
+	local eval_result = evaluate_device(M.env, dev)
 	return eval_result.selections
 end
 
-function M.device_overrides(env, dev)
-	if not file_exists(get_customization_file_name(env)) then
+function M.device_overrides(dev)
+	if not file_exists(get_customization_file_name(M.env)) then
 		return {}
 	end
 
-	local eval_result = evaluate_device(env, dev)
+	local eval_result = evaluate_device(M.env, dev)
 	return eval_result.device_overrides
+end
+
+function M.init(env)
+	M.env = env
 end
 
 return M

@@ -16,6 +16,8 @@ else
 	openwrt_config_target = env.BOARD
 end
 
+-- Initialize image-customization
+image_customization_lib.init(env)
 
 -- Split a string into words
 local function split(s)
@@ -93,7 +95,7 @@ local function site_specific_packages(dev_info)
 	local site_features
 
 	-- Get all enabled selections from image-customization.lua
-	site_selections = image_customization_lib.get_selections(env, dev_info)
+	site_selections = image_customization_lib.get_selections(dev_info)
 
 	-- First read enabled features from site
 	site_features = site_selections['features']
