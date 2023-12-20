@@ -109,6 +109,10 @@ ath79-generic
 
   - WS-AP3610
 
+* Sophos
+
+  - AP100c
+
 * Teltonika
 
   - RUT230 (v1)
