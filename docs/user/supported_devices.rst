@@ -112,6 +112,7 @@ ath79-generic
 * Sophos
 
   - AP100c
+  - AP55
   - AP55c
 
 * Teltonika

@@ -385,6 +385,11 @@ device('sophos-ap100c', 'sophos_ap100c', {
 	factory = false,
 })
 
+device('sophos-ap55', 'sophos_ap55', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 device('sophos-ap55c', 'sophos_ap55c', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
