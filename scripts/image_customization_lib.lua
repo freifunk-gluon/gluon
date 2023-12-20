@@ -1,17 +1,6 @@
-local M = {}
-
-local function file_exists(file)
-	local f = io.open(file)
-	if not f then
-		return false
-	end
-	f:close()
-	return true
-end
-
-local function get_customization_file_name(env)
-	return env.GLUON_SITEDIR .. '/image-customization.lua'
-end
+local M = {
+	customization_file = nil,
+}
 
 local function evaluate_device(env, dev)
 	local selections = {
@@ -91,12 +80,8 @@ local function evaluate_device(env, dev)
 	end
 
 	-- Evaluate the feature definition files
-	local f, err = loadfile(get_customization_file_name(env))
-	if not f then
-		error('Failed to parse feature definition: ' .. err)
-	end
-	setfenv(f, funcs)
-	f()
+	setfenv(M.customization_file, funcs)
+	M.customization_file()
 
 	return {
 		selections = selections,
@@ -110,7 +95,8 @@ function M.get_selections(dev)
 		packages = {},
 	}
 
-	if not file_exists(get_customization_file_name(M.env)) then
+	if M.customization_file == nil then
+		-- No customization file found
 		return return_object
 	end
 
@@ -119,7 +105,8 @@ function M.get_selections(dev)
 end
 
 function M.device_overrides(dev)
-	if not file_exists(get_customization_file_name(M.env)) then
+	if M.customization_file == nil then
+		-- No customization file found
 		return {}
 	end
 
@@ -128,7 +115,17 @@ function M.device_overrides(dev)
 end
 
 function M.init(env)
+	local filename = env.GLUON_SITEDIR .. '/image-customization.lua'
+
 	M.env = env
+
+	local f, _ = loadfile(filename)
+	if not f then
+		-- No customization file found, nothing to do
+		return
+	end
+
+	M.customization_file = f
 end
 
 return M
