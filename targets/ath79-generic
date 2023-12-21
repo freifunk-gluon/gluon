@@ -378,6 +378,13 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 	factory = false,
 })
 
+-- Sophos
+
+device('sophos-ap100c', 'sophos_ap100c', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 
 -- Teltonika
 
