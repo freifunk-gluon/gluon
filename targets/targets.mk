@@ -28,5 +28,6 @@ $(eval $(call GluonTarget,x86,64))
 
 ifeq ($(BROKEN),1)
 $(eval $(call GluonTarget,bcm27xx,bcm2710)) # BROKEN: Untested
+$(eval $(call GluonTarget,bcm27xx,bcm2711)) # BROKEN: No 11s support, no reset button, sys LED issues
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
 endif
