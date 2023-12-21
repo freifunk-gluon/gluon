@@ -63,6 +63,10 @@ elseif platform.match('ath79', 'generic', {
 	'ubnt,unifiac-pro',
 }) then
 	lan_ifname, wan_ifname = 'eth0.2', 'eth0.1'
+elseif platform.match('ipq40xx', 'generic', {
+	'avm,fritzbox-7530',
+}) then
+	lan_ifname, wan_ifname = 'lan2 lan3 lan4', 'lan1'
 elseif platform.match('ramips', 'mt7621', {
 	'netgear,wac104',
 }) then
