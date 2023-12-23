@@ -111,6 +111,7 @@ ath79-generic
 
 * Sophos
 
+  - AP100
   - AP100c
   - AP55c
 
