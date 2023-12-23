@@ -47,7 +47,6 @@ proto_gluon_bat0_setup() {
 
 	batctl orig_interval 5000
 	batctl hop_penalty "$(lookup_uci 'gluon.mesh_batman_adv.hop_penalty' 15)"
-	batctl noflood_mark 0x4/0x4
 
 	case "$gw_mode" in
 		server)
