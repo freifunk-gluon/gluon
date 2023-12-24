@@ -2,6 +2,8 @@
 config('TARGET_ROOTFS_EXT4FS', false)
 
 defaults {
+	factory = '-squashfs-combined',
 	factory_ext = '.img.gz',
+	sysupgrade = '-squashfs-combined',
 	sysupgrade_ext = '.img.gz',
 }

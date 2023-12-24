@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'master'
+      - 'next'
       - 'v202[0-9].[0-9].x'
     tags:
       - 'v*'
@@ -12,17 +13,21 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: gluon-build
+  IMAGE_NAME: ${{ github.repository }}-build
 
 jobs:
   build-and-push-image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions: write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - name: Log in to the Container registry
-        uses: docker/login-action@1f401f745bf57e30b3a2800ad308a87d2ebdf14b
+        uses: docker/login-action@3d58c274f17dffee475a5520cbe67f0a882c4dbb
         if: ${{ github.repository_owner == 'freifunk-gluon' && github.event_name == 'push' }}
         with:
           registry: ${{ env.REGISTRY }}
@@ -30,13 +35,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@62339db73c56dd749060f65a6ebb93a6e056b755
+        uses: docker/metadata-action@e6428a5c4e294a61438ed7f43155db912025b6b3
         with:
-          images: ${{ env.REGISTRY }}/freifunk-gluon/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push Docker image
-        uses: docker/build-push-action@fdf7f43ecf7c1a5c7afe936410233728a8c2d9c2
+        uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56
         with:
           context: ./contrib/docker
           push: ${{ github.repository_owner == 'freifunk-gluon' && github.event_name == 'push' }}
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

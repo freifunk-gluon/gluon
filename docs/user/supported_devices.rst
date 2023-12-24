@@ -1,6 +1,16 @@
 Supported Devices & Architectures
 =================================
 
+armsr-armv7
+-----------
+
+* Arm SystemReady (EFI) 32-bit
+
+armsr-armv8
+-----------
+
+* Arm SystemReady (EFI) 64-bit
+
 ath79-generic
 --------------
 
@@ -98,6 +108,11 @@ ath79-generic
 * Siemens
 
   - WS-AP3610
+
+* Sophos
+
+  - AP100c
+  - AP55c
 
 * Teltonika
 
@@ -293,6 +308,10 @@ mediatek-filogic
 * NETGEAR
 
   - WAX220
+
+* Ubiquiti
+
+  - UniFi 6 Plus
 
 * ZyXEL
 

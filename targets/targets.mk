@@ -1,3 +1,5 @@
+$(eval $(call GluonTarget,armsr,armv7))
+$(eval $(call GluonTarget,armsr,armv8))
 $(eval $(call GluonTarget,ath79,generic))
 $(eval $(call GluonTarget,ath79,nand))
 $(eval $(call GluonTarget,ath79,mikrotik))
@@ -24,7 +26,8 @@ $(eval $(call GluonTarget,x86,legacy))
 $(eval $(call GluonTarget,x86,64))
 
 
-ifneq ($(BROKEN),)
+ifeq ($(BROKEN),1)
 $(eval $(call GluonTarget,bcm27xx,bcm2710)) # BROKEN: Untested
+$(eval $(call GluonTarget,bcm27xx,bcm2711)) # BROKEN: No 11s support, no reset button, sys LED issues
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
 endif

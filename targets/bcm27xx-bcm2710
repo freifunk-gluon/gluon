@@ -4,7 +4,8 @@ device('raspberrypi-3-model-b', 'rpi-3', {
 	manifest_aliases = {
 		'raspberrypi-3-model-b-plus',
 
-		-- from Gluon 2019.1 and older
+		-- from Gluon 2023.1 and older
 		'raspberry-pi-3-model-b-rev-1.2',
+		'raspberry-pi-3-model-b-plus-rev-1.3',
 	},
 })

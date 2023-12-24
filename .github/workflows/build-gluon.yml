@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: read  # for dorny/paths-filter to fetch a list of changed files
       pull-requests: read  # for dorny/paths-filter to read pull requests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       targets: ${{ steps.filter.outputs.changes }}
     steps:
@@ -37,18 +37,18 @@ jobs:
       matrix:
         # Read back changed targets to create build matrix
         target: ${{ fromJSON(needs.changed.outputs.targets) }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Show system information
         run: contrib/actions/show-system-info.sh
 
-      - name: Install Dependencies
-        run: sudo contrib/actions/install-dependencies.sh
+      - name: Build Docker container
+        run: docker build -t gluon-ci-container contrib/docker
 
-      - name: Build
-        run: contrib/actions/run-build.sh ${{ matrix.target }}
+      - name: Build Gluon
+        run: docker run --rm -v $PWD:/gluon-ci -w /gluon-ci --user "$(id -u):$(id -g)" gluon-ci-container contrib/actions/run-build.sh ${{ matrix.target }}
 
       - name: Archive build logs
         if: ${{ !cancelled() }}

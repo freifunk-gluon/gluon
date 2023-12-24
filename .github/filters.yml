@@ -1,4 +1,26 @@
 {
+  "armsr-armv7": [
+    "targets/armsr-armv7",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
+  "armsr-armv8": [
+    "targets/armsr-armv8",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
   "ath79-generic": [
     "targets/ath79-generic",
     ".github/workflows/build-gluon.yml",
@@ -250,6 +272,17 @@
   ],
   "bcm27xx-bcm2710": [
     "targets/bcm27xx-bcm2710",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
+  "bcm27xx-bcm2711": [
+    "targets/bcm27xx-bcm2711",
     ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",

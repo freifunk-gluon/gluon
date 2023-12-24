@@ -54,7 +54,9 @@ $(eval $(call mkabspath,GLUON_TARGETSDIR))
 $(eval $(call mkabspath,GLUON_PATCHESDIR))
 
 GLUON_VERSION := $(shell scripts/getversion.sh '.')
-GLUON_SITE_VERSION := $(shell scripts/getversion.sh '$(GLUON_SITEDIR)')
+
+# Set default SITE_VERSION if not set by user
+GLUON_SITE_VERSION ?= $(shell scripts/getversion.sh '$(GLUON_SITEDIR)')
 
 GLUON_MULTIDOMAIN ?= 0
 GLUON_AUTOREMOVE ?= 0

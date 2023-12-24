@@ -5,7 +5,8 @@ device('raspberrypi-model-b', 'rpi', {
 		'raspberrypi-model-b-plus',
 		'raspberrypi-model-b-rev2',
 
-		-- from Gluon 2019.1 and older
+		-- from Gluon 2023.1 and older
+		'raspberry-pi-model-b-rev-1',
 		'raspberry-pi-model-b-rev-2',
 		'raspberry-pi-model-b-plus-rev-1.2',
 	},
