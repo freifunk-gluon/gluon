@@ -106,6 +106,7 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt76x8', {
 			'xiaomi,mi-router-4a-100m',
+			'xiaomi,mi-ra75',
 		}},
 		{'rockchip', 'armv8', {
 			'friendlyarm,nanopi-r2s',
