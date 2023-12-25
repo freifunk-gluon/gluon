@@ -11,7 +11,7 @@ features {
 	'web-wizard',
 }
 
-packages{
+packages {
 	'iwinfo',
 }
 
