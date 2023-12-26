@@ -415,6 +415,7 @@ ramips-mt7621
 
 * D-Link
 
+  - DAP-1620 (B1)
   - DAP-X1860 (A1)
   - DIR-860L (B1)
 
