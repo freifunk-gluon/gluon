@@ -106,7 +106,7 @@ Via config mode
 ^^^^^^^^^^^^^^^
 
 To allow switching the domain via config mode, add ``config-mode-domain-select``
-to GLUON_FEATURES in site.mk.
+to the enabled features in the image-customization.lua file.
 
 |image0|
 

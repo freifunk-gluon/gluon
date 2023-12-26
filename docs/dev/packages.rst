@@ -154,7 +154,8 @@ Feature flags
 
 Feature flags provide a convenient way to define package selections without
 making it necessary to list each package explicitly. The list of features to
-enable for a Gluon build is set by the *GLUON_FEATURES* variable in *site.mk*.
+enable for a Gluon build is determined by the evaluated image-customization.lua file
+in the root-directory of the Site repository.
 
 The main feature flag definition file is ``package/features``, but each package
 feed can provide additional definitions in a file called ``features`` at the root
@@ -207,7 +208,7 @@ Example::
 This will
 
 * disable the inclusion of the (non-existent) packages *gluon-web-wizard* and *gluon-no-radvd* when their
-  corresponding feature flags appear in *GLUON_FEATURES*
+  corresponding feature flags are evaluated as selected in the image-customization.lua file
 * enable four additional config mode packages when the *web-wizard* feature is enabled
 * enable *gluon-config-mode-mesh-vpn* when both *web-wizard* and one
   of *mesh-vpn-fastd* and *mesh-vpn-tunneldigger* are enabled

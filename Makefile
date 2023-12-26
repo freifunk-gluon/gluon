@@ -35,6 +35,14 @@ ifneq ($(GLUON_BRANCH),)
   GLUON_AUTOUPDATER_ENABLED ?= 1
 endif
 
+ifneq ($(GLUON_FEATURES)$(GLUON_FEATURES_standard)$(GLUON_FEATURES_tiny),)
+  $(error *** Warning: GLUON_FEATURES has been obsolete, please use the image-customization.lua file instead.)
+endif
+
+ifneq ($(GLUON_SITE_PACKAGES)$(GLUON_SITE_PACKAGES_standard)$(GLUON_SITE_PACKAGES_tiny),)
+  $(error *** Warning: GLUON_SITE_PACKAGES has been obsolete, please use the image-customization.lua file instead.)
+endif
+
 GLUON_AUTOUPDATER_ENABLED ?= 0
 
 # initialize (possibly already user set) directory variables

@@ -134,8 +134,8 @@ wifi24 \: optional
   For an OWE secured network, the ``owe_ssid`` string has to be set. It sets the
   SSID for the opportunistically encrypted wireless network, to which compatible
   clients can connect to.
-  For OWE to work, the ``wireless-encryption-wpa3`` has to be enabled (usually by
-  adding it to ``GLUON_FEATURES_standard``) in your ``site.mk``.
+  For OWE to work, the ``wireless-encryption-wpa3`` has to be enabled as a feature
+  in your site.
   To utilize the OWE transition mode, ``owe_transition_mode`` has to be set to true.
   When ``owe_transition_mode`` is enabled, the OWE secured SSID will be hidden.
   Compatible devices will automatically connect to the OWE secured SSID when selecting
@@ -611,33 +611,6 @@ GLUON_DEPRECATED
   and ``upgrade`` for existing configurations (where upgrades for existing
   deployments of low-flash devices are required). Defaults to ``0``.
 
-GLUON_FEATURES
-  Defines a list of features to include. Depending on the device, the feature list
-  defined from this value is combined with the feature list for either the standard
-  or the tiny device-class. The resulting feature list is used to generate the default
-  package set.
-
-GLUON_FEATURES_standard
-  Defines a list of additional features to include or exclude for devices of
-  the standard device-class.
-
-GLUON_FEATURES_tiny
-  Defines a list of additional features to include or exclude for devices of
-  the tiny device-class.
-
-GLUON_SITE_PACKAGES
-  Defines a list of packages which should be installed in addition to the
-  default package set. It is also possible to remove packages from the
-  default set by prepending a minus sign to the package name.
-
-GLUON_SITE_PACKAGES_standard
-  Defines a list of additional packages to include or exclude for devices of
-  the standard device-class.
-
-GLUON_SITE_PACKAGES_tiny
-  Defines a list of additional packages to include or exclude for devices of
-  the tiny device-class.
-
 GLUON_RELEASE
   The current release version Gluon should use.
 
@@ -674,8 +647,8 @@ leading to entangled package names like *gluon-mesh-vpn-fastd-respondd* or
 *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 For this reason, we have introduced *feature flags*, which can be specified
-in the *GLUON_FEATURES* variable. These flags allow to specify a set of features
-on a higher level than individual package names.
+using the image-customization.lua file. These flags allow to specify
+a set of features on a higher level than individual package names.
 
 Most Gluon packages can simply be specified as feature flags by removing the ``gluon-``
 prefix: The feature flag corresponding to the package *gluon-mesh-batman-adv-15* is
@@ -697,9 +670,10 @@ flags using a flexible ruleset defined in the Gluon repo or site package feeds.
 To some extent, it will even allow us to further modularize existing Gluon packages,
 without necessitating changes to existing site configurations.
 
-It is still possible to override such automatic rules using *GLUON_SITE_PACKAGES*
-(e.g., ``-gluon-status-page-mesh-batman-adv`` to remove the automatically added
-package *gluon-status-page-mesh-batman-adv*).
+It is still possible to override such automatic rules by removing them using 
+*packages* in the image-customization.lua file
+(e.g., ``features { '-gluon-status-page-mesh-batman-adv' }`` to remove
+the automatically added package *gluon-status-page-mesh-batman-adv*).
 
 For convenience, there are two feature flags that do not directly correspond to a Gluon
 package:
@@ -707,18 +681,61 @@ package:
 * web-wizard
 
   Includes the *gluon-config-mode-...* base packages (hostname, geolocation and contact info),
-  as well as the *gluon-config-mode-autoupdater* (when *autoupdater* is in *GLUON_FEATURES*),
-  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* are in
-  *GLUON_FEATURES*)
+  as well as the *gluon-config-mode-autoupdater* (when *autoupdater* is an enabled feature),
+  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* are
+  enabled features)
 
 * web-advanced
 
   Includes the *gluon-web-...* base packages (admin, network, WiFi config),
-  as well as the *gluon-web-autoupdater* (when *autoupdater* is in *GLUON_FEATURES*)
+  as well as the *gluon-web-autoupdater* (when *autoupdater* is an enabled feature),
 
-We recommend to use *GLUON_SITE_PACKAGES* for non-Gluon OpenWrt packages only and
-completely rely on *GLUON_FEATURES* for Gluon packages, as it is shown in the
+We recommend to include packages for non-Gluon OpenWrt packages only and
+completely rely on features for Gluon packages, as it is shown in the
 example *site.mk*.
+
+.. _site-image-customization:
+
+Image customization
+^^^^^^^^^^^^^^^^^^^
+
+Gluon allows configuration of the build-parameters for the images. A Lua domain-specific-language
+has been implemented to facilitate this configuration. This file is interpreted for every device
+independently. The file is located in the site-repository root as ``image-config``.
+
+A simple example for a device-specific image configuration can be found in the site-example.
+
+The following functions are available:
+
+device(device_name_list)
+  Returns true in case the current device is in the list of devices specified in ``device_name_list``.
+  ``device_name_list`` is a table of strings.
+
+target(openwrt_target, openwrt_subtarget)
+  Returns true in case the current device is of the specified OpenWrt target and subtarget.
+  The parameter ```openwrt_subtarget``` is optional. If it is not specified, only the target is matched.
+
+device_class(dev_class)
+  Returns true in case the current device is of the specified device class.
+
+features(feature_table)
+  Includes the specified list of features in the image. ``feature_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude features included earlier in the file.
+
+packages(package_table)
+  Includes the specified list of packages in the image. ``package_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude packages included earlier in the file.
+
+broken(broken_state)
+  Overrides the broken state specified by Gluon. Can be used to mark a device as broken or
+  remove the pre-defined broken state.
+
+disable()
+  Disables image generation.
+
+disable_factory()
+  Disables factory image generation. Sysupgrade images are still generated and stored in the image
+  output directory.
 
 .. _site-config-mode-texts:
 

@@ -25,5 +25,6 @@ This package is installed by default if the selected routing
 feature is *mesh-batman-adv-15*.
 It can be unselected via::
 
-    GLUON_SITE_PACKAGES := \
-      -gluon-ebtables-limit-arp
+    packages {
+      '-gluon-ebtables-limit-arp',
+    }

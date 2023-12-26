@@ -8,7 +8,7 @@ Protocol handlers
 ^^^^^^^^^^^^^^^^^
 
 There are currently three protocol handlers which can be selected
-via ``GLUON_FEATURES`` in ``site.mk``:
+as a feature:
 
 mesh-vpn-fastd
 """"""""""""""
