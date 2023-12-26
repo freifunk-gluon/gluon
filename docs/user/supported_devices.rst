@@ -505,7 +505,6 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi AC1200 WLAN Range Extender RA75
   - Xiaomi Mi Router 4A (100M Edition)
   - Xiaomi Mi Router 4A (100M International Edition)
   - Xiaomi Mi Router 4C
