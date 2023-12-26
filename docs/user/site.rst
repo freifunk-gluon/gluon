@@ -701,7 +701,7 @@ Image customization
 
 Gluon allows configuration of the build-parameters for the images. A Lua domain-specific-language
 has been implemented to facilitate this configuration. This file is interpreted for every device
-independently. The file is located in the site-repository root as ``image-config``.
+independently. The file is located in the site root as ``image-customization.lua``.
 
 A simple example for a device-specific image configuration can be found in the site-example.
 
