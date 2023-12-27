@@ -113,6 +113,7 @@ ath79-generic
 
   - AP100
   - AP100c
+  - AP55
   - AP55c
 
 * Teltonika
