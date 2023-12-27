@@ -380,6 +380,11 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 
 -- Sophos
 
+device('sophos-ap100', 'sophos_ap100', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 device('sophos-ap100c', 'sophos_ap100c', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
