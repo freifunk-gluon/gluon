@@ -836,6 +836,12 @@ site.conf
 .. literalinclude:: ../site-example/site.conf
   :language: lua
 
+image-customization.lua
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../site-example/image-customization.lua
+  :language: lua
+
 i18n/en.po
 ^^^^^^^^^^
 
