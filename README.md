@@ -6,7 +6,7 @@
 
 Gluon is a firmware framework to build preconfigured OpenWrt images for public mesh networks.
 
-## Getting started
+## Overview
 
 Gluon provides an easy-to-use firmware for a public, decentral WLAN and/or wire based mesh network.
 Common network capable devices, like smartphones, laptops or desktop PCs can connect to the mesh network and communicate over it, without the need of passwords for access and without the need of installing special software.
@@ -35,6 +35,7 @@ Supported protocols for node-to-node connections:
 * WAN: VPNs via fastd and Wireguard
 * LAN: via VXLAN
 
+## Getting started
 
 We have a huge amount of documentation over at https://gluon.readthedocs.io/.
 
