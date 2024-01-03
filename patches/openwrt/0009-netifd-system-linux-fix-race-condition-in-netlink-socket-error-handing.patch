@@ -1,0 +1,152 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 3 Jan 2024 16:43:09 +0100
+Subject: netifd: system-linux: fix race condition in netlink socket error handing
+
+The error handling needed for the buffer growth logic relies on
+uloop_fd's error flag, which is set based on epoll events. Doing so
+without handling recvmsg's error codes is racy, as an error state may be
+set between receiving epoll events and the next recvmsg, but calling
+recvmsg clears the error state.
+
+To fix this, add handling for errors returned by nl_recvmsgs_default()
+and nl_recv(); checking for u->error and retrieving the error status
+using getsockopt() becomes redundant.
+
+We have observed this issue on Gluon (recent OpenWrt 23.05); on some
+devices with DSA switches, the bridge interface's carrier-on event would
+consistenly get lost during boot due to insufficient buffer space
+(see [1]).
+
+We have bisected the issue to netifd commit 516ab774cc16 ("system-linux:
+fix race condition on bringing up wireless devices"), but that commit only
+uncovered the preexisting bug by switching from getting the carrier state
+from sysfs to using the netlink messages in cb_rtnl_event().
+
+I suspect that other recent issues about netifd missing a carrier state
+change like [2] may have the same underlying cause.
+
+[1] https://github.com/freifunk-gluon/gluon/issues/3130
+[2] https://github.com/openwrt/openwrt/issues/13863
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/network/config/netifd/patches/0002-netifd-system-linux-fix-race-condition-in-netlink-socket-error-handing.patch b/package/network/config/netifd/patches/0002-netifd-system-linux-fix-race-condition-in-netlink-socket-error-handing.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b8dd71da622ef7aa73794bd70c636ab0fe59c4e
+--- /dev/null
++++ b/package/network/config/netifd/patches/0002-netifd-system-linux-fix-race-condition-in-netlink-socket-error-handing.patch
+@@ -0,0 +1,113 @@
++From 54eb773cebb74ffecf1f0c4e8ebd4b65812095c0 Mon Sep 17 00:00:00 2001
++From: Matthias Schiffer <mschiffer@universe-factory.net>
++Date: Tue, 2 Jan 2024 15:58:30 +0100
++Subject: [PATCH] system-linux: fix race condition in netlink socket error
++ handing
++
++The error handling needed for the buffer growth logic relies on
++uloop_fd's error flag, which is set based on epoll events. Doing so
++without handling recvmsg's error codes is racy, as an error state may be
++set between receiving epoll events and the next recvmsg, but calling
++recvmsg clears the error state.
++
++To fix this, add handling for errors returned by nl_recvmsgs_default()
++and nl_recv(); checking for u->error and retrieving the error status
++using getsockopt() becomes redundant.
++
++We have observed this issue on Gluon (recent OpenWrt 23.05); on some
++devices with DSA switches, the bridge interface's carrier-on event would
++consistenly get lost during boot due to insufficient buffer space
++(see [1]).
++
++We have bisected the issue to netifd commit 516ab774cc16 ("system-linux:
++fix race condition on bringing up wireless devices"), but that commit only
++uncovered the preexisting bug by switching from getting the carrier state
++from sysfs to using the netlink messages in cb_rtnl_event().
++
++I suspect that other recent issues about netifd missing a carrier state
++change like [2] may have the same underlying cause.
++
++[1] https://github.com/freifunk-gluon/gluon/issues/3130
++[2] https://github.com/openwrt/openwrt/issues/13863
++
++Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
++---
++ system-linux.c | 38 +++++++++++++-------------------------
++ 1 file changed, 13 insertions(+), 25 deletions(-)
++
++--- a/system-linux.c
+++++ b/system-linux.c
++@@ -169,19 +169,14 @@ static void
++ handler_nl_event(struct uloop_fd *u, unsigned int events)
++ {
++ 	struct event_socket *ev = container_of(u, struct event_socket, uloop);
++-	int err;
++-	socklen_t errlen = sizeof(err);
+++	int ret;
++ 
++-	if (!u->error) {
++-		nl_recvmsgs_default(ev->sock);
+++	ret = nl_recvmsgs_default(ev->sock);
+++	if (ret >= 0)
++ 		return;
++-	}
++-
++-	if (getsockopt(u->fd, SOL_SOCKET, SO_ERROR, (void *)&err, &errlen))
++-		goto abort;
++ 
++-	switch(err) {
++-	case ENOBUFS:
+++	switch (-ret) {
+++	case NLE_NOMEM:
++ 		/* Increase rx buffer size on netlink socket */
++ 		ev->bufsize *= 2;
++ 		if (nl_socket_set_buffer_size(ev->sock, ev->bufsize, 0))
++@@ -195,7 +190,6 @@ handler_nl_event(struct uloop_fd *u, uns
++ 	default:
++ 		goto abort;
++ 	}
++-	u->error = false;
++ 	return;
++ 
++ abort:
++@@ -791,24 +785,19 @@ handle_hotplug_event(struct uloop_fd *u,
++ 	struct sockaddr_nl nla;
++ 	unsigned char *buf = NULL;
++ 	int size;
++-	int err;
++-	socklen_t errlen = sizeof(err);
++ 
++-	if (!u->error) {
++-		while ((size = nl_recv(ev->sock, &nla, &buf, NULL)) > 0) {
++-			if (nla.nl_pid == 0)
++-				handle_hotplug_msg((char *) buf, size);
+++	while ((size = nl_recv(ev->sock, &nla, &buf, NULL)) > 0) {
+++		if (nla.nl_pid == 0)
+++			handle_hotplug_msg((char *) buf, size);
++ 
++-			free(buf);
++-		}
++-		return;
+++		free(buf);
++ 	}
++ 
++-	if (getsockopt(u->fd, SOL_SOCKET, SO_ERROR, (void *)&err, &errlen))
++-		goto abort;
+++	switch (-size) {
+++	case 0:
+++		return;
++ 
++-	switch(err) {
++-	case ENOBUFS:
+++	case NLE_NOMEM:
++ 		/* Increase rx buffer size on netlink socket */
++ 		ev->bufsize *= 2;
++ 		if (nl_socket_set_buffer_size(ev->sock, ev->bufsize, 0))
++@@ -818,7 +807,6 @@ handle_hotplug_event(struct uloop_fd *u,
++ 	default:
++ 		goto abort;
++ 	}
++-	u->error = false;
++ 	return;
++ 
++ abort:
