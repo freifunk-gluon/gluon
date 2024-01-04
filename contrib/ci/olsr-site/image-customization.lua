@@ -18,3 +18,7 @@ packages {
 if not device_class('tiny') then
 	features {'wireless-encryption-wpa3'}
 end
+
+if device_has_usb() then
+	packages { 'usbutils' }
+end

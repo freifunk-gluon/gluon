@@ -46,6 +46,7 @@ local default_options = {
 	class = 'standard',
 	deprecated = false,
 	broken = false,
+	has_usb = false,
 }
 
 

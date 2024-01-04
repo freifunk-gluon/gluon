@@ -79,6 +79,10 @@ local function evaluate_device(env, dev)
 		return dev.options.class == class
 	end
 
+	function funcs.device_has_usb()
+		return dev.options.has_usb
+	end
+
 	-- Evaluate the feature definition files
 	setfenv(M.customization_file, funcs)
 	M.customization_file()
