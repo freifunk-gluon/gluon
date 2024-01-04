@@ -647,7 +647,7 @@ leading to entangled package names like *gluon-mesh-vpn-fastd-respondd* or
 *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 For this reason, we have introduced *feature flags*, which can be specified
-using the image-customization.lua file. These flags allow to specify
+using the ``image-customization.lua`` file. These flags allow to specify
 a set of features on a higher level than individual package names.
 
 Most Gluon packages can simply be specified as feature flags by removing the ``gluon-``
@@ -671,7 +671,7 @@ To some extent, it will even allow us to further modularize existing Gluon packa
 without necessitating changes to existing site configurations.
 
 It is still possible to override such automatic rules by removing them using 
-*packages* in the image-customization.lua file
+*packages* in the ``image-customization.lua`` file
 (e.g., ``features { '-gluon-status-page-mesh-batman-adv' }`` to remove
 the automatically added package *gluon-status-page-mesh-batman-adv*).
 
@@ -699,11 +699,14 @@ example *site.mk*.
 Image customization
 ^^^^^^^^^^^^^^^^^^^
 
-Gluon allows configuration of the build-parameters for the images. A Lua domain-specific-language
-has been implemented to facilitate this configuration. This file is interpreted for every device
-independently. The file is located in the site root as ``image-customization.lua``.
+Gluon allows configuration of the build parameters for the images. This
+configuration must always exist to configure the basic features included in a
+Gluon build.
 
-A simple example for a device-specific image configuration can be found in the site-example.
+The file ``image-customization.lua`` in the root of the site configuration is
+used for this purpose, making use of a Domain Specific Language based on Lua.
+See the :ref:`site-examples` section for a simple example showing both basic
+setup and a device-specific alteration.
 
 The following functions are available:
 
@@ -736,6 +739,11 @@ disable()
 disable_factory()
   Disables factory image generation. Sysupgrade images are still generated and stored in the image
   output directory.
+
+Technically, the image customzation file is evaluated once for each device, allowing
+to make use of regular Lua *if* statements for device-specific configuration as
+can be seen in the example.
+
 
 .. _site-config-mode-texts:
 
@@ -820,6 +828,7 @@ the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
 ``PACKAGES_FOO_COMMIT`` and ``PACKAGES_FOO_BRANCH``. Slashes in feed names are
 replaced by underscores to get valid shell variable identifiers.
 
+.. _site-examples:
 
 Examples
 --------
@@ -834,6 +843,12 @@ site.conf
 ^^^^^^^^^
 
 .. literalinclude:: ../site-example/site.conf
+  :language: lua
+
+image-customization.lua
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../site-example/image-customization.lua
   :language: lua
 
 i18n/en.po
