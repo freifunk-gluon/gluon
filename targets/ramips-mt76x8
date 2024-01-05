@@ -125,3 +125,8 @@ device('xiaomi-mi-router-4a-100m-international-edition', 'xiaomi_mi-router-4a-10
 device('xiaomi-mi-router-4c', 'xiaomi_mi-router-4c', {
 	factory = false,
 })
+
+device('xiaomi-mi-ra75', 'xiaomi_mi-ra75', {
+	factory = false,
+	broken = true,  -- Only serial flash possible
+})
