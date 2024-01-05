@@ -610,3 +610,9 @@ device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 })
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
+
+
+device('ubiquiti-unifi-swiss-army-knife-ultra', 'ubnt_uk-ultra', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9880,
+})
