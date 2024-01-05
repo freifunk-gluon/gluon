@@ -383,6 +383,12 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 
 -- Sophos
 
+device('sophos-ap15', 'sophos_ap15', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+	broken = true, -- no button and no external console port
+})
+
 device('sophos-ap100', 'sophos_ap100', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
