@@ -15,11 +15,6 @@ if vpn_name ~= 'fastd' then
 	uci:save('fastd')
 end
 
-if vpn_name ~= 'tunneldigger' then
-	uci:set('tunneldigger', 'mesh_vpn', 'enabled', false)
-	uci:save('tunneldigger')
-end
-
 vpn.enable(vpn_config.enabled)
 if vpn_config.limit_enabled then
 	vpn.set_limit(vpn_config.limit_ingress, vpn_config.limit_egress)
