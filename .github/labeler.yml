@@ -25,7 +25,7 @@
     - docs/package/gluon-config-mode-*
     - package/gluon-config-mode-*/**
     - package/gluon-web*/**
-"3. topic: continous integration":
+"3. topic: continuous integration":
 - changed-files:
   - any-glob-to-any-file:
     - .github/workflows/*
