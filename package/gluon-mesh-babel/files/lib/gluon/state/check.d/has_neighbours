@@ -1,2 +1,0 @@
-#!/bin/sh
-echo dump | nc ::1 33123 | grep -qF "add neighbour"

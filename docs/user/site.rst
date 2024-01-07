@@ -45,7 +45,7 @@ prefix6
 
 node_prefix6
   The ipv6 prefix from which the unique IP-addresses for nodes are selected
-  in babel-based networks. This may overlap with prefix6. e.g. ::
+  in olsr-based networks. This may overlap with prefix6. e.g. ::
 
     node_prefix6 = 'fdca::ffee:babe:2::/64'
 
@@ -56,7 +56,7 @@ node_client_prefix6 \: optional, deprecated
   An IPv6 prefix internally used by the l3roamd protocol, used to allow
   an efficient handover via unicast when a client roamed.
   This is exclusively useful when running a routing mesh protocol
-  like babel. e.g. ::
+  like olsr. e.g. ::
 
     node_client_prefix6 = 'fdca::ffee:babe:3::/64'
 
@@ -321,7 +321,7 @@ mesh_vpn
   setting the *preserve* option of a peer to ``1`` in UCI.
 
   **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
-  in the build when using *gluon-mesh-babel* to work around ICMP black holes on the internet.
+  in the build when using *gluon-mesh-olsrd* to work around ICMP black holes on the internet.
 
   ::
 

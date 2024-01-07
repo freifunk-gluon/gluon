@@ -196,11 +196,8 @@
 								string.format(' (%s)', nodeinfo.software.autoupdater.branch)
 						%></dd>
 					<%- end %>
-					<% if nodeinfo.software.babeld or nodeinfo.software['batman-adv'] then -%>
+					<% if nodeinfo.software['batman-adv'] then -%>
 						<dt><%:Mesh protocol%></dt>
-						<% if nodeinfo.software.babeld then -%>
-						<dd>babeld <%| nodeinfo.software.babeld.version %></dd>
-						<%- end %>
 						<% if nodeinfo.software['batman-adv'] then -%>
 						<dd>batman-adv <%| nodeinfo.software['batman-adv'].version %> (compat<%| nodeinfo.software['batman-adv'].compat %>)</dd>
 						<%- end %>
