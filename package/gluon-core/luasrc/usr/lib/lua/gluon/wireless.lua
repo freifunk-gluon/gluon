@@ -26,18 +26,40 @@ local function find_phy_by_path(path)
 	-- Get all available PHYs of the device and determine the one with the lowest index
 	local phy_names = dirent.dir('/sys/devices/' .. path_prefix .. device_path .. '/ieee80211')
 	local device_phy_idxs = {}
+	local device_wl_idxs = {}
+
 	for _, v in ipairs(phy_names) do
 		local phy_idx = v:match('^phy(%d+)$')
+		local wl_idx = v:match('^wl(%d+)$')
 
 		if phy_idx ~= nil then
 			table.insert(device_phy_idxs, tonumber(phy_idx))
+		elseif wl_idx ~= nil then
+			table.insert(device_wl_idxs, tonumber(wl_idx))
 		end
 	end
 
 	table.sort(device_phy_idxs)
+	table.sort(device_wl_idxs)
 
+	-- Determine the minimum index from both phy and wl
 	-- Index starts at 1
-	return 'phy' .. device_phy_idxs[tonumber(phy_offset) + 1]
+	local min_phy_idx = device_phy_idxs[tonumber(phy_offset) + 1]
+	local min_wl_idx = device_wl_idxs[tonumber(phy_offset) + 1]
+
+	-- Choose the minimum index and determine whether it is from PHY or WiFi
+	local min_idx
+	local interface_type
+
+	if min_phy_idx and (not min_wl_idx or min_phy_idx < min_wl_idx) then
+		min_idx = min_phy_idx
+		interface_type = 'phy'
+	else
+		min_idx = min_wl_idx
+		interface_type = 'wl'
+	end
+
+	return interface_type .. min_idx
 end
 
 local function find_phy_by_macaddr(macaddr)
