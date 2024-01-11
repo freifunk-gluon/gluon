@@ -154,6 +154,7 @@ ath79-generic
   - UniFi AP LR
   - UniFi AP Outdoor+
   - UniFi AP PRO
+  - UniFi Swiss Army Knife Ultra
 
 ath79-mikrotik
 --------------
