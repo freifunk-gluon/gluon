@@ -154,6 +154,7 @@ ath79-generic
   - UniFi AP LR
   - UniFi AP Outdoor+
   - UniFi AP PRO
+  - UniFi Swiss Army Knife Ultra
 
 ath79-mikrotik
 --------------
@@ -417,6 +418,7 @@ ramips-mt7621
 
 * D-Link
 
+  - COVR-X1860 (A1)
   - DAP-X1860 (A1)
   - DIR-860L (B1)
 
