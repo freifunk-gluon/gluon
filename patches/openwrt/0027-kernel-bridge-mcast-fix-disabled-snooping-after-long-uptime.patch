@@ -1,0 +1,181 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Mon, 29 Jan 2024 04:29:50 +0100
+Subject: kernel: bridge: mcast: fix disabled snooping after long uptime
+
+commit f5c3eb4b7251baba5cd72c9e93920e710ac8194a upstream.
+
+The original idea of the delay_time check was to not apply multicast
+snooping too early when an MLD querier appears. And to instead wait at
+least for MLD reports to arrive before switching from flooding to group
+based, MLD snooped forwarding, to avoid temporary packet loss.
+
+However in a batman-adv mesh network it was noticed that after 248 days of
+uptime 32bit MIPS based devices would start to signal that they had
+stopped applying multicast snooping due to missing queriers - even though
+they were the elected querier and still sending MLD queries themselves.
+
+While time_is_before_jiffies() generally is safe against jiffies
+wrap-arounds, like the code comments in jiffies.h explain, it won't
+be able to track a difference larger than ULONG_MAX/2. With a 32bit
+large jiffies and one jiffies tick every 10ms (CONFIG_HZ=100) on these MIPS
+devices running OpenWrt this would result in a difference larger than
+ULONG_MAX/2 after 248 (= 2^32/100/60/60/24/2) days and
+time_is_before_jiffies() would then start to return false instead of
+true. Leading to multicast snooping not being applied to multicast
+packets anymore.
+
+Fix this issue by using a proper timer_list object which won't have this
+ULONG_MAX/2 difference limitation.
+
+Fixes: b00589af3b04 ("bridge: disable snooping if there is no querier")
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+[linus.luessing@c0d3.blue: backported to OpenWrt 19.07 / Linux 4.14]
+
+diff --git a/target/linux/generic/backport-4.14/121-bridge-mcast-fix-disabled-snooping-after-long-uptime.patch b/target/linux/generic/backport-4.14/121-bridge-mcast-fix-disabled-snooping-after-long-uptime.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3cecc46ba0be23e1fd3b576a61d09249d48067a3
+--- /dev/null
++++ b/target/linux/generic/backport-4.14/121-bridge-mcast-fix-disabled-snooping-after-long-uptime.patch
+@@ -0,0 +1,142 @@
++From 37f4a51c6c14778d0a08a8600abae917668ebee2 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 23 Jan 2024 06:42:13 +0100
++Subject: [PATCH] bridge: mcast: fix disabled snooping after long uptime
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++commit f5c3eb4b7251baba5cd72c9e93920e710ac8194a upstream.
++
++The original idea of the delay_time check was to not apply multicast
++snooping too early when an MLD querier appears. And to instead wait at
++least for MLD reports to arrive before switching from flooding to group
++based, MLD snooped forwarding, to avoid temporary packet loss.
++
++However in a batman-adv mesh network it was noticed that after 248 days of
++uptime 32bit MIPS based devices would start to signal that they had
++stopped applying multicast snooping due to missing queriers - even though
++they were the elected querier and still sending MLD queries themselves.
++
++While time_is_before_jiffies() generally is safe against jiffies
++wrap-arounds, like the code comments in jiffies.h explain, it won't
++be able to track a difference larger than ULONG_MAX/2. With a 32bit
++large jiffies and one jiffies tick every 10ms (CONFIG_HZ=100) on these MIPS
++devices running OpenWrt this would result in a difference larger than
++ULONG_MAX/2 after 248 (= 2^32/100/60/60/24/2) days and
++time_is_before_jiffies() would then start to return false instead of
++true. Leading to multicast snooping not being applied to multicast
++packets anymore.
++
++Fix this issue by using a proper timer_list object which won't have this
++ULONG_MAX/2 difference limitation.
++
++Fixes: b00589af3b04 ("bridge: disable snooping if there is no querier")
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++[linus.luessing@c0d3.blue: backported to OpenWrt 19.07 / Linux 4.14]
++---
++ net/bridge/br_multicast.c | 20 +++++++++++++++-----
++ net/bridge/br_private.h   |  4 ++--
++ 2 files changed, 17 insertions(+), 7 deletions(-)
++
++--- a/net/bridge/br_multicast.c
+++++ b/net/bridge/br_multicast.c
++@@ -894,6 +894,10 @@ static void br_ip6_multicast_querier_exp
++ }
++ #endif
++ 
+++static void br_multicast_query_delay_expired(unsigned long data)
+++{
+++}
+++
++ static void br_multicast_select_own_querier(struct net_bridge *br,
++ 					    struct br_ip *ip,
++ 					    struct sk_buff *skb)
++@@ -1324,7 +1328,7 @@ br_multicast_update_query_timer(struct n
++ 				unsigned long max_delay)
++ {
++ 	if (!timer_pending(&query->timer))
++-		query->delay_time = jiffies + max_delay;
+++		mod_timer(&query->delay_timer, jiffies + max_delay);
++ 
++ 	mod_timer(&query->timer, jiffies + br->multicast_querier_interval);
++ }
++@@ -2001,12 +2005,10 @@ void br_multicast_init(struct net_bridge
++ 	br->multicast_querier_interval = 255 * HZ;
++ 	br->multicast_membership_interval = 260 * HZ;
++ 
++-	br->ip4_other_query.delay_time = 0;
++ 	br->ip4_querier.port = NULL;
++ 	br->multicast_igmp_version = 2;
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	br->multicast_mld_version = 1;
++-	br->ip6_other_query.delay_time = 0;
++ 	br->ip6_querier.port = NULL;
++ #endif
++ 	br->has_ipv6_addr = 1;
++@@ -2016,11 +2018,15 @@ void br_multicast_init(struct net_bridge
++ 		    br_multicast_local_router_expired, 0);
++ 	setup_timer(&br->ip4_other_query.timer,
++ 		    br_ip4_multicast_querier_expired, (unsigned long)br);
+++	setup_timer(&br->ip4_other_query.delay_timer,
+++		    br_multicast_query_delay_expired, 0);
++ 	setup_timer(&br->ip4_own_query.timer, br_ip4_multicast_query_expired,
++ 		    (unsigned long)br);
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	setup_timer(&br->ip6_other_query.timer,
++ 		    br_ip6_multicast_querier_expired, (unsigned long)br);
+++	setup_timer(&br->ip6_other_query.delay_timer,
+++		    br_multicast_query_delay_expired, 0);
++ 	setup_timer(&br->ip6_own_query.timer, br_ip6_multicast_query_expired,
++ 		    (unsigned long)br);
++ #endif
++@@ -2111,9 +2117,11 @@ void br_multicast_stop(struct net_bridge
++ {
++ 	del_timer_sync(&br->multicast_router_timer);
++ 	del_timer_sync(&br->ip4_other_query.timer);
+++	del_timer_sync(&br->ip4_other_query.delay_timer);
++ 	del_timer_sync(&br->ip4_own_query.timer);
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	del_timer_sync(&br->ip6_other_query.timer);
+++	del_timer_sync(&br->ip6_other_query.delay_timer);
++ 	del_timer_sync(&br->ip6_own_query.timer);
++ #endif
++ }
++@@ -2350,13 +2358,15 @@ int br_multicast_set_querier(struct net_
++ 	max_delay = br->multicast_query_response_interval;
++ 
++ 	if (!timer_pending(&br->ip4_other_query.timer))
++-		br->ip4_other_query.delay_time = jiffies + max_delay;
+++		mod_timer(&br->ip4_other_query.delay_timer,
+++			  jiffies + max_delay);
++ 
++ 	br_multicast_start_querier(br, &br->ip4_own_query);
++ 
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	if (!timer_pending(&br->ip6_other_query.timer))
++-		br->ip6_other_query.delay_time = jiffies + max_delay;
+++		mod_timer(&br->ip6_other_query.delay_timer,
+++			  jiffies + max_delay);
++ 
++ 	br_multicast_start_querier(br, &br->ip6_own_query);
++ #endif
++--- a/net/bridge/br_private.h
+++++ b/net/bridge/br_private.h
++@@ -68,7 +68,7 @@ struct bridge_mcast_own_query {
++ /* other querier */
++ struct bridge_mcast_other_query {
++ 	struct timer_list		timer;
++-	unsigned long			delay_time;
+++	struct timer_list		delay_timer;
++ };
++ 
++ /* selected querier */
++@@ -672,7 +672,7 @@ __br_multicast_querier_exists(struct net
++ 		own_querier_enabled = false;
++ 	}
++ 
++-	return time_is_before_jiffies(querier->delay_time) &&
+++	return !timer_pending(&querier->delay_timer) &&
++ 	       (own_querier_enabled || timer_pending(&querier->timer));
++ }
++ 
