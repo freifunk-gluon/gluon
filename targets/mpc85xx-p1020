@@ -6,6 +6,7 @@ local ATH10K_PACKAGES_QCA9880 = {
 	'-ath10k-firmware-qca988x-ct',
 }
 
+
 -- Aerohive
 
 device('aerohive-hiveap-330', 'aerohive_hiveap-330', {
@@ -33,4 +34,3 @@ device('extreme-networks-ws-ap3825i', 'extreme-networks_ws-ap3825i', {
 device('ocedo-panda', 'ocedo_panda', {
 	factory = false,
 })
-
