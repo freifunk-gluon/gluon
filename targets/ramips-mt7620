@@ -58,7 +58,6 @@ device('tp-link-archer-c20i', 'tplink_archer-c20i')
 
 device('tp-link-archer-c50-v1', 'tplink_archer-c50-v1', {
 	factory = '-squashfs-factory' .. tplink_region_suffix,
-	manifest_aliases = {'tp-link-archer-c50'},
 })
 
 

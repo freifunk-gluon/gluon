@@ -69,11 +69,8 @@ device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
 device('buffalo-wzr-600dhp', 'buffalo_wzr-600dhp')
 
-device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s', {
-	manifest_aliases = {
-		'buffalo-wzr-hp-g300nh', -- Upgrade from OpenWrt 19.07
-	},
-})
+device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s')
+
 
 -- devolo
 
@@ -120,18 +117,11 @@ device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
 
 device('d-link-dir-505', 'dlink_dir-505', {
 	factory = false,
-	manifest_aliases = {
-		'd-link-dir-505-rev-a1', -- Upgrade from OpenWrt 19.07
-		'd-link-dir-505-rev-a2', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 device('d-link-dir825b1', 'dlink_dir-825-b1', {
 	factory = false,
 	class = 'tiny', -- Only 6M of usable Firmware space
-	manifest_aliases = {
-		'd-link-dir-825-rev-b1', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 
@@ -154,9 +144,6 @@ device('extreme-networks-ws-ap3805i', 'extreme-networks_ws-ap3805i', {
 
 device('gl.inet-6416', 'glinet_6416', {
 	factory = false,
-	manifest_aliases = {
-		'gl-inet-6416a-v1', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 device('gl.inet-gl-ar150', 'glinet_gl-ar150', {
@@ -197,9 +184,6 @@ device('netgear-wndr3700', 'netgear_wndr3700', {
 })
 
 device('netgear-wndr3700-v2', 'netgear_wndr3700-v2', {
-	manifest_aliases = {
-		'netgear-wndr3700v2', -- Upgrade from OpenWrt 19.07
-	},
 	factory_ext = '.img',
 })
 
@@ -209,13 +193,9 @@ device('netgear-wndr3800', 'netgear_wndr3800', {
 
 device('netgear-wndr3800ch', 'netgear_wndr3800ch', {
 	factory_ext = '.img',
-	manifest_aliases = {'netgear-wndr3800chmychart'},  -- Upgrade from OpenWrt 19.07
 })
 
 device('netgear-wnr2200-8m', 'netgear_wnr2200-8m', {
-	manifest_aliases = {
-		'netgear-wnr2200', -- Upgrade from OpenWrt 19.07
-	},
 	factory_ext = '.img',
 })
 
@@ -256,86 +236,56 @@ device('openmesh-a60', 'openmesh_a60', {
 
 device('openmesh-mr600-v1', 'openmesh_mr600-v1', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr600'},
 })
 
 device('openmesh-mr600-v2', 'openmesh_mr600-v2', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr600v2'},
 })
 
 device('openmesh-mr900-v1', 'openmesh_mr900-v1', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr900'},
 })
 
 device('openmesh-mr900-v2', 'openmesh_mr900-v2', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr900v2'},
 })
 
 device('openmesh-mr1750-v1', 'openmesh_mr1750-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr1750'},
 })
 
 device('openmesh-mr1750-v2', 'openmesh_mr1750-v2', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-mr1750v2'},
 })
 
 device('openmesh-om2p-v1', 'openmesh_om2p-v1', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2p'},
 })
 
 device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x; deacticated at the moment because
-	-- the physical ethernet port for this device changed between 19.07
-	-- and 21.02. And automated update could therefore "break" the
-	-- device until someone physically changed the ethernet cable.
-	-- See https://github.com/freifunk-gluon/gluon/pull/2325#issuecomment-940749284
-	--manifest_aliases = {'openmesh-om2pv2'},
 })
 
 device('openmesh-om2p-v4', 'openmesh_om2p-v4', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2pv4'},
 })
 
 device('openmesh-om2p-hs-v1', 'openmesh_om2p-hs-v1', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2p-hs'},
 })
 
 device('openmesh-om2p-hs-v2', 'openmesh_om2p-hs-v2', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2p-hsv2'},
 })
 
 device('openmesh-om2p-hs-v3', 'openmesh_om2p-hs-v3', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2p-hsv3'},
 })
 
 device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om2p-hsv4'},
 })
 
 device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
@@ -349,15 +299,11 @@ device('openmesh-om5p', 'openmesh_om5p', {
 device('openmesh-om5p-ac-v1', 'openmesh_om5p-ac-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om5p-ac'},
 })
 
 device('openmesh-om5p-ac-v2', 'openmesh_om5p-ac-v2', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
-	-- old name from OpenWrt 19.07.x
-	manifest_aliases = {'openmesh-om5p-acv2'},
 })
 
 device('openmesh-om5p-an', 'openmesh_om5p-an', {
@@ -442,9 +388,6 @@ device('tp-link-archer-c58-v1', 'tplink_archer-c58-v1', {
 
 device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
-	manifest_aliases = {
-		'tp-link-archer-c6-v2', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
@@ -474,31 +417,16 @@ device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
 
-device('tp-link-cpe210-v1', 'tplink_cpe210-v1', {
-	manifest_aliases = {
-		'tp-link-cpe210-v1.0', -- Upgrade from OpenWrt 19.07
-		'tp-link-cpe210-v1.1', -- Upgrade from OpenWrt 19.07
-	},
-})
-device('tp-link-cpe210-v2', 'tplink_cpe210-v2', {
-	manifest_aliases = {
-		'tp-link-cpe210-v2.0', -- Upgrade from OpenWrt 19.07
-	},
-})
-device('tp-link-cpe210-v3', 'tplink_cpe210-v3', {
-	manifest_aliases = {
-		'tp-link-cpe210-v3.0', -- Upgrade from OpenWrt 19.07
-		'tp-link-cpe210-v3.1', -- Upgrade from OpenWrt 19.07
-		'tp-link-cpe210-v3.20', -- Upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-cpe210-v1', 'tplink_cpe210-v1')
+
+device('tp-link-cpe210-v2', 'tplink_cpe210-v2')
+
+device('tp-link-cpe210-v3', 'tplink_cpe210-v3')
+
 device('tp-link-cpe220-v3', 'tplink_cpe220-v3')
-device('tp-link-cpe510-v1', 'tplink_cpe510-v1', {
-	manifest_aliases = {
-		'tp-link-cpe510-v1.0', -- upgrade from OpenWrt 19.07
-		'tp-link-cpe510-v1.1', -- upgrade from OpenWrt 19.07
-	},
-})
+
+device('tp-link-cpe510-v1', 'tplink_cpe510-v1')
+
 device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
 device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
@@ -518,11 +446,7 @@ device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
 device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
-device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3', {
-	manifest_aliases = {
-		'tp-link-tl-wr842n-nd-v3', -- upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3')
 
 device('tp-link-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
 	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
@@ -530,42 +454,22 @@ device('tp-link-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
 	class = 'tiny', -- 64M ath9k + ath10k
 })
 
-device('tp-link-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2', {
-	manifest_aliases = {
-		'tp-link-tl-wr1043n-nd-v2', -- upgrade from OpenWrt 19.07
-	},
-})
-device('tp-link-tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3', {
-	manifest_aliases = {
-		'tp-link-tl-wr1043n-nd-v3', -- upgrade from OpenWrt 19.07
-	},
-})
-device('tp-link-tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4', {
-	manifest_aliases = {
-		'tp-link-tl-wr1043n-nd-v4', -- upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
+
+device('tp-link-tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
+
+device('tp-link-tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4')
+
 device('tp-link-tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
 
-device('tp-link-tl-wr2543n-nd', 'tplink_tl-wr2543-v1', {
-	manifest_aliases = {
-		'tp-link-tl-wr2543n-nd-v1', -- upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-tl-wr2543n-nd', 'tplink_tl-wr2543-v1')
 
-device('tp-link-wbs210-v1', 'tplink_wbs210-v1', {
-	manifest_aliases = {
-		'tp-link-wbs210-v1.20', -- upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-wbs210-v1', 'tplink_wbs210-v1')
 
 device('tp-link-wbs210-v2', 'tplink_wbs210-v2')
 
-device('tp-link-wbs510-v1', 'tplink_wbs510-v1', {
-	manifest_aliases = {
-		'tp-link-wbs510-v1.20', -- upgrade from OpenWrt 19.07
-	},
-})
+device('tp-link-wbs510-v1', 'tplink_wbs510-v1')
+
 
 -- Ubiquiti
 
@@ -599,15 +503,11 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi-ap', {
 		'ubiquiti-unifi-ap-lr',
 	},
 	manifest_aliases = {
-		'ubiquiti-unifi',
+		'ubiquiti-unifi', -- Upgrade from OpenWrt 22.03
 	},
 })
 
-device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
-	manifest_aliases = {
-		'ubiquiti-unifiap-outdoor+', -- upgrade from OpenWrt 19.07
-	},
-})
+device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus')
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
 
