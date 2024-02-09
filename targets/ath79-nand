@@ -41,7 +41,7 @@ device('gl.inet-gl-xe300', 'glinet_gl-xe300', {
 })
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-wndr3700-v4', 'netgear_wndr3700-v4', {
 	factory_ext = '.img',

@@ -9,6 +9,7 @@ device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 
 device('asus-rt-ax53u', 'asus_rt-ax53u')
 
+
 -- Cudy
 
 device('cudy-wr1300-v1', 'cudy_wr1300-v1', {
@@ -51,12 +52,12 @@ device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
 })
 
 
--- Mercusys
+-- MERCUSYS
 
 device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-ex6150', 'netgear_ex6150', {
 	factory_ext = '.chk',
@@ -133,7 +134,7 @@ device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 })
 
 
--- ZBT
+-- Zbtlink
 
 device('zbtlink-zbt-wg3526-16m', 'zbtlink_zbt-wg3526-16m', {
 	factory = false,
@@ -152,9 +153,10 @@ device('zbtlink-zbt-wg3526-32m', 'zbtlink_zbt-wg3526-32m', {
 })
 
 
--- ZyXEL
+-- Zyxel
 
 device('zyxel-nwa50ax', 'zyxel_nwa50ax')
+
 device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 	broken = true, -- Missing LED / Reset button
 })
