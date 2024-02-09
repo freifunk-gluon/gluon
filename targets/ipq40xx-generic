@@ -51,6 +51,22 @@ device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
 device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
 	factory = false,
 	aliases = {'avm-fritz-box-7520'},
+	packages = {
+		-- same as ATH10K_PACKAGES_IPQ40XX
+		'kmod-ath10k',
+		'-kmod-ath10k-ct',
+		'-kmod-ath10k-ct-smallbuffers',
+		'ath10k-firmware-qca4019',
+		'-ath10k-firmware-qca4019-ct',
+
+		-- VDSL modem
+		'-kmod-ltq-vdsl-vr11',
+		'-kmod-ltq-vdsl-vr11-mei',
+		'-ltq-vdsl-vr11-app',
+		'-ltq-dsl-base',
+		'-kmod-atm',
+		'-linux-atm',
+	},
 })
 
 device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
