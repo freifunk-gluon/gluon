@@ -57,6 +57,7 @@ try_config('PACKAGE_dnsmasq_full_rtc', false)
 
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
+config('KERNEL_NAMESPACES', false)
 config('KERNEL_PROC_STRIPPED', true)
 config('KERNEL_AIO', false)
 config('KERNEL_IO_URING', false)
@@ -110,6 +111,7 @@ packages {
 	'-wpad-basic',
 	'-wpad-basic-mbedtls',
 	'-firewall4',
+	'-procd-ujail',
 	'gluon-core',
 	'ip6tables-zz-legacy',
 }
