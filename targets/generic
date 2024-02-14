@@ -64,6 +64,7 @@ config('KERNEL_CGROUPS', false)
 config('KERNEL_IP_MROUTE', false)
 config('KERNEL_IPV6_MROUTE', false)
 config('KERNEL_IPV6_SEG6_LWTUNNEL', false)
+config('KERNEL_SWAP', false)
 config('SECCOMP', false)
 config('KERNEL_SECCOMP', false)
 -- kmod-mt7915e pulls in CONFIG_KERNEL_RELAY
