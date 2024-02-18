@@ -83,3 +83,6 @@ To that end we provide a ``.editorconfig`` configuration, which is supported by 
 of the editors out there.
 
 If you add Lua scripts to gluon, check formatting with ``luacheck``.
+
+Only English should be used for naming, comments, documentation and so on.
+The use of American English is preferred.

@@ -6,6 +6,7 @@ General guidelines
 
 * All config mode packages must be fully translatable, with complete English and German texts.
 * All new expert mode packages must be fully translatable. English texts are required.
+* American English should be used. English texts shouldn't mix American and British English.
 * German translations are recommended. Other supported languages, especially French, are
   nice-to-have, but not required. If you don't know a language well, rather leave the translation
   blank, so it is obvious that there is no proper translation yet.
