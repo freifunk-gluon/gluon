@@ -9,6 +9,7 @@ device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 
 device('asus-rt-ax53u', 'asus_rt-ax53u')
 
+
 -- Cudy
 
 device('cudy-wr1300-v1', 'cudy_wr1300-v1', {
@@ -51,12 +52,12 @@ device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
 })
 
 
--- Mercusys
+-- MERCUSYS
 
 device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-ex6150', 'netgear_ex6150', {
 	factory_ext = '.chk',
@@ -81,9 +82,6 @@ device('netgear-wax202', 'netgear_wax202', {
 device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	factory = false,
 	broken = true, -- untested
-	manifest_aliases = {
-		'netgear-wndr3700v5',
-	},
 })
 
 
@@ -129,28 +127,21 @@ device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 })
 
 
--- ZBT
+-- Zbtlink
 
 device('zbtlink-zbt-wg3526-16m', 'zbtlink_zbt-wg3526-16m', {
 	factory = false,
-	manifest_aliases = {
-		'zbt-wg3526',
-		'zbt-wg3526-16m',
-	},
 })
 
 device('zbtlink-zbt-wg3526-32m', 'zbtlink_zbt-wg3526-32m', {
 	factory = false,
-	manifest_aliases = {
-		'zbt-wg3526-32m',
-	},
-
 })
 
 
--- ZyXEL
+-- Zyxel
 
 device('zyxel-nwa50ax', 'zyxel_nwa50ax')
+
 device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 	broken = true, -- Missing LED / Reset button
 })
@@ -167,15 +158,9 @@ device('zyxel-wsm20', 'zyxel_wsm20', {
 device('ubiquiti-edgerouter-x', 'ubnt_edgerouter-x', {
 	factory = false,
 	packages = {'-hostapd-mini'},
-	manifest_aliases = {
-		'ubnt-erx',
-	},
 })
 
 device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
 	factory = false,
 	packages = {'-hostapd-mini'},
-	manifest_aliases = {
-		'ubnt-erx-sfp',
-	},
 })
