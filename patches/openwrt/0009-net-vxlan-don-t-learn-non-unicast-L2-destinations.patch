@@ -1,0 +1,48 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 17 Feb 2024 22:37:05 +0100
+Subject: net vxlan: don't learn non-unicast L2 destinations
+
+See Gluon #3191
+
+Link: https://github.com/freifunk-gluon/gluon/issues/3191
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/target/linux/generic/hack-5.15/999-net-vxlan-don-t-learn-non-unicast-L2-destinations.patch b/target/linux/generic/hack-5.15/999-net-vxlan-don-t-learn-non-unicast-L2-destinations.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..0be8783287b32c33ec76e19b8407397f8f0fe5f3
+--- /dev/null
++++ b/target/linux/generic/hack-5.15/999-net-vxlan-don-t-learn-non-unicast-L2-destinations.patch
+@@ -0,0 +1,32 @@
++From 3f1a227cb071f65f6ecc4db9f399649869735a7c Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 17 Feb 2024 22:34:59 +0100
++Subject: [PATCH] net vxlan: don't learn non-unicast L2 destinations
++
++See Gluon #3191
++
++Link: https://github.com/freifunk-gluon/gluon/issues/3191
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ drivers/net/vxlan.c | 4 ++++
++ 1 file changed, 4 insertions(+)
++
++diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
++index 141635a35c28..253a741d6c36 100644
++--- a/drivers/net/vxlan/vxlan_core.c
+++++ b/drivers/net/vxlan/vxlan_core.c
++@@ -1467,6 +1467,10 @@ static bool vxlan_snoop(struct net_device *dev,
++ 	struct vxlan_fdb *f;
++ 	u32 ifindex = 0;
++ 
+++	/* Don't learn broadcast packets (Gluon #3191) */
+++	if (is_multicast_ether_addr(src_mac) || is_zero_ether_addr(src_mac))
+++		return false;
+++
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	if (src_ip->sa.sa_family == AF_INET6 &&
++ 	    (ipv6_addr_type(&src_ip->sin6.sin6_addr) & IPV6_ADDR_LINKLOCAL))
++-- 
++2.43.0
++
