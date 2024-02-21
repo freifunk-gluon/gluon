@@ -22,7 +22,7 @@ Site changes
 Image customization
 ~~~~~~~~~~~~~~~~~~~
 
-``GLUON_FEATURES`` and ``GLUON_PACKAGES`` have been replaced by a more flexible customization framework
+``GLUON_FEATURES`` and ``GLUON_SITE_PACKAGES`` have been replaced by a more flexible customization framework
 based on Lua. Feature and Package selection can be specified more granularly at both target and device level.
 
 All site configs need to be updated. Configuration like the following
