@@ -1,0 +1,44 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 2 Mar 2024 23:22:13 +0100
+Subject: mt7915: restart target on MCU timeout
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/100-mt7915-trigger-reset-upon-MCU-timeout.patch b/package/kernel/mt76/patches/100-mt7915-trigger-reset-upon-MCU-timeout.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..93a1807314df519749cf13da4e7e69be9ac145e3
+--- /dev/null
++++ b/package/kernel/mt76/patches/100-mt7915-trigger-reset-upon-MCU-timeout.patch
+@@ -0,0 +1,32 @@
++From 031d12d6f6a37d53ba0d8f26e0103d70a925d4eb Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 2 Mar 2024 21:23:06 +0100
++Subject: [PATCH] mt7915: trigger reset upon MCU timeout
++
++---
++ mt7915/mcu.c | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/mt7915/mcu.c b/mt7915/mcu.c
++index 8224f8be..590a8b24 100644
++--- a/mt7915/mcu.c
+++++ b/mt7915/mcu.c
++@@ -157,12 +157,15 @@ static int
++ mt7915_mcu_parse_response(struct mt76_dev *mdev, int cmd,
++ 			  struct sk_buff *skb, int seq)
++ {
+++	struct mt7915_dev *dev = container_of(mdev, struct mt7915_dev, mt76);
++ 	struct mt76_connac2_mcu_rxd *rxd;
++ 	int ret = 0;
++ 
++ 	if (!skb) {
++ 		dev_err(mdev->dev, "Message %08x (seq %d) timeout\n",
++ 			cmd, seq);
+++		dev->recovery.state |= MT_MCU_CMD_WDT_MASK;
+++		mt7915_reset(dev);
++ 		return -ETIMEDOUT;
++ 	}
++ 
++-- 
++2.43.0
++
