@@ -144,7 +144,6 @@ device('d-link-dir-505', 'dlink_dir-505', {
 
 device('d-link-dir825b1', 'dlink_dir-825-b1', {
 	factory = false,
-	class = 'tiny', -- Only 6M of usable Firmware space
 })
 
 
