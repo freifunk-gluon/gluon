@@ -9,6 +9,14 @@ device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
 })
 
 
+-- BananaPi
+
+device('bananapi-bpi-r4', 'bananapi_bpi-r4', {
+	factory = false,
+	sysupgrade_ext = '.itb',
+})
+
+
 -- Cudy
 
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
