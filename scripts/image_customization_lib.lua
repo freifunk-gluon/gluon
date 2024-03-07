@@ -90,26 +90,11 @@ local function evaluate_device(env, dev)
 end
 
 function M.get_selections(dev)
-	local return_object = {
-		features = {},
-		packages = {},
-	}
-
-	if M.customization_file == nil then
-		-- No customization file found
-		return return_object
-	end
-
 	local eval_result = evaluate_device(M.env, dev)
 	return eval_result.selections
 end
 
 function M.device_overrides(dev)
-	if M.customization_file == nil then
-		-- No customization file found
-		return {}
-	end
-
 	local eval_result = evaluate_device(M.env, dev)
 	return eval_result.device_overrides
 end
@@ -118,14 +103,7 @@ function M.init(env)
 	local filename = env.GLUON_SITEDIR .. '/image-customization.lua'
 
 	M.env = env
-
-	local f, _ = loadfile(filename)
-	if not f then
-		-- No customization file found, nothing to do
-		return
-	end
-
-	M.customization_file = f
+	M.customization_file = assert(loadfile(filename))
 end
 
 return M
