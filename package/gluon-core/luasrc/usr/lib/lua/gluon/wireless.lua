@@ -174,4 +174,8 @@ function M.device_uses_11a(uci)
 	return ret
 end
 
+function M.site_supports_outdoor_mode()
+	return site.wifi5.outdoor_chanlist() ~= nil
+end
+
 return M
