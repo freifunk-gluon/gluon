@@ -36,11 +36,7 @@ local function get_wlan_mac_from_driver(radio, vif)
 		return nil
 	end
 
-	for i, addr in ipairs(addresses) do
-		if i == vif then
-			return addr
-		end
-	end
+	return addresses[vif]
 end
 
 function M.get_wlan_mac(_, radio, index, vif)
