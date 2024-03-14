@@ -1,0 +1,43 @@
+Gluon 2023.2.2
+==============
+
+Bugfixes
+--------
+
+* Fixed a bug where nodes connected using VXLAN would lose connectivity to all but one neighbor 
+  (`#3191 <https://github.com/freifunk-gluon/gluon/issues/3191>`_)  
+
+* fastd-l2tp VPN did not re-generate the flow-label for the inner-tunnel traffic,
+  breaking QoS mechanisms 
+  (`#3203 <https://github.com/freifunk-gluon/gluon/issues/3203>`_)  
+
+* Fixed silent-failures when image-customization files were not valid
+  (`#3218 <https://github.com/freifunk-gluon/gluon/issues/3218>`_)
+
+* Multicast-snooping did stop working after extended uptime periods
+  (`#3176 <https://github.com/freifunk-gluon/gluon/issues/3176>`_)
+
+
+Known issues
+------------
+
+* Unstable wireless with certain MediaTek devices (`#3154 <https://github.com/freifunk-gluon/gluon/issues/3154>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
