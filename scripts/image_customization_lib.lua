@@ -33,7 +33,7 @@ local function evaluate_device(env, dev)
 	function funcs.broken(broken)
 		assert(
 			type(broken) == 'boolean',
-			'Incorrect use of broken(): has to be a boolean value')
+			'incorrect use of broken(): has to be a boolean value')
 		add_override('broken', broken)
 	end
 
@@ -48,7 +48,7 @@ local function evaluate_device(env, dev)
 	function funcs.device(device_names)
 		assert(
 			type(device_names) == 'table',
-			'Incorrect use of device(): pass a list of device names as argument')
+			'incorrect use of device(): pass a list of device names as argument')
 
 		for _, device_name in ipairs(device_names) do
 			if device_name == dev.image then
@@ -62,7 +62,7 @@ local function evaluate_device(env, dev)
 	function funcs.target(target, subtarget)
 		assert(
 			type(target) == 'string',
-			'Incorrect use of target(): pass a target name as first argument')
+			'incorrect use of target(): pass a target name as first argument')
 
 		if target ~= env.BOARD then
 			return false
@@ -77,6 +77,18 @@ local function evaluate_device(env, dev)
 
 	function funcs.device_class(class)
 		return dev.options.class == class
+	end
+
+	function funcs.include(path)
+		if string.sub(path, 1, 1) ~= '/' then
+			assert(
+				string.find(path, '/') == nil,
+				'incorrect use of include(): including files from subdirectories is unsupported')
+			path = env.GLUON_SITEDIR .. '/' .. path
+		end
+		local f = assert(loadfile(path))
+		setfenv(f, funcs)
+		return f()
 	end
 
 	-- Evaluate the feature definition files

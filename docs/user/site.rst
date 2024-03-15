@@ -728,6 +728,10 @@ disable_factory()
   Disables factory image generation. Sysupgrade images are still generated and stored in the image
   output directory.
 
+include(path)
+  Includes another image customization file. Relative paths are interpreted relative to the site
+  repository root. Values returned from the included file become the return value of ``include``.
+
 Technically, the image customzation file is evaluated once for each device, allowing
 to make use of regular Lua *if* statements for device-specific configuration as
 can be seen in the example.
