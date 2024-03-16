@@ -81,6 +81,7 @@ local primary_addrs = {
 		{'brcm2708'},
 		{'ipq40xx', 'generic', {
 			'avm,fritzbox-4040',
+			'linksys,mr8300',
 			'meraki,mr33',
 			'plasmacloud,pa1200',
 			'plasmacloud,pa2200',
