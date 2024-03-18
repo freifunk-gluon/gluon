@@ -31,7 +31,7 @@ as otherwise the generated manifest will be incomplete.
 
 
 Manifest format
-------------------------
+---------------
 
 The manifest starts with a short header, followed by the list of firmwares and signatures.
 The header contains the following information:
