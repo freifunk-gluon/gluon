@@ -9,13 +9,17 @@ Important notes
 
 Upgrades to this version are only supported from releases v2021.1 and later.
 
+**Note:**
+This release was found to be soft-bricking AVM Fritz!Box 7520 and 7530.
+We advice to not offer the release for these two devices until this gets fixed.
+Affected devices can be recovered to Fritz!OS and then reinstalled by using the (`AVM Recovery Tool <https://download.avm.de/fritzbox/fritzbox-7530/other/recover/>`_)
 
 Bugfixes
 --------
 
-- x86: fix config loss during direct upgrades from v2021.1.x to v2023.1.x  (`#2972 <https://github.com/freifunk-gluon/gluon/pull/2972>`_)
+- x86: fix config loss during direct upgrades from v2021.1.x to v2023.1.x (`#2972 <https://github.com/freifunk-gluon/gluon/pull/2972>`_)
 
-- tunneldigger: fix regression in v2023.1 caused by a always failing watchdog script resulting in endless restarts (`#2987 <https://github.com/freifunk-gluon/gluon/pull/2987>`_)
+- tunneldigger: fix regression in v2023.1 caused by an always failing watchdog script resulting in endless restarts (`#2987 <https://github.com/freifunk-gluon/gluon/pull/2987>`_)
 
 - tunneldigger: fix regression in v2023.1 with DNS lookups not using the wan-dnsmasq (`#3001 <https://github.com/freifunk-gluon/gluon/pull/3001>`_)
 
@@ -53,3 +57,6 @@ Known issues
   (`#2967 <https://github.com/freifunk-gluon/gluon/issues/2967>`_).
 
   It is planned that the next major release will reintroduce EFI support.
+
+* AVM Fritz!Box 7520 and 7530 get soft-bricked by this release. The issue was introduced by a kernel bump.
+  (`#3023 <https://github.com/freifunk-gluon/gluon/issues/3023>`_)
