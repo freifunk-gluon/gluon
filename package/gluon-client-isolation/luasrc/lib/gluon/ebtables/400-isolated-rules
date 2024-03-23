@@ -1,0 +1,1 @@
+rule('FORWARD --logical-in br-client -j ISOLATED')
