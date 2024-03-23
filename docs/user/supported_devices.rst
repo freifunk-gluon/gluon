@@ -302,6 +302,7 @@ mediatek-filogic
 * ASUS
 
   - TUF AX4200
+  - TUF AX6000
 
 * Cudy
 
