@@ -1,8 +1,8 @@
 gluon-web-network
 =================
 
-The package *gluon-web-network* is part of the :ref:`Feature Flag <user-site-feature-flags>` web-advanced.
-It allows to configure the roles of the gluon nodes network interfaces in config mode through checkboxes.
+The package *gluon-web-network* is part of :ref:`Feature Flag <user-site-feature-flags>` web-advanced.
+It allows to configure the network interfaces roles of the gluon node in config mode through checkboxes.
 
 It is a user-friendly way to configure what otherwise would need the :ref:`wired-mesh-commandline`.
 

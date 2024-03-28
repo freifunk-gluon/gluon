@@ -9,7 +9,7 @@ configuration.
 Outdoor mode
 ------------
 
-Configuring the node for `outdoor use` tunes the 5 GHz radio to a frequency and transmission power that conforms with the local regulatory requirements. 
+Configuring the node for outdoor use tunes the 5 GHz radio to a frequency and transmission power that conforms with the local regulatory requirements. 
 It also enables dynamic frequency selection (DFS; radar detection).
 At the same time, mesh functionality is disabled as it requires neighbouring nodes to stay on the same channel permanently.
 
