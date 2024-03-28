@@ -161,7 +161,7 @@ if wireless.device_uses_11a(uci) and not wireless.preserve_channels(uci) then
 			return
 		end
 
-		local phy = wireless.find_phy(uci:get_all('wireless', radio))
+		local phy = wireless.find_phy(config)
 
 		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
 		ht:depends(outdoor, true)
