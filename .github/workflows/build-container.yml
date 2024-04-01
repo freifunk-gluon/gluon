@@ -27,7 +27,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Log in to the Container registry
-        uses: docker/login-action@5139682d94efc37792e6b54386b5b470a68a4737
+        uses: docker/login-action@5f4866a30a54f16a52d2ecb4a3898e9e424939cf
         if: ${{ github.repository_owner == 'freifunk-gluon' && github.event_name == 'push' }}
         with:
           registry: ${{ env.REGISTRY }}
