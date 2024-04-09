@@ -12,7 +12,7 @@ factory image and install a Gluon sysupgrade.
 Signed-off-by: David Bauer <mail@david-bauer.net>
 
 diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
-index 1a558c30a05433c585cdf81967e265b1f7711af7..bfea8fb8e3623790cf627628d6d58760fce22a67 100644
+index f264c14314ca862e39c71e821621a81f8f1957fa..d3e2a9ccd7ae3cb03e35bb4b68a2360bb4d4f84c 100644
 --- a/target/linux/ath79/image/generic.mk
 +++ b/target/linux/ath79/image/generic.mk
 @@ -1073,11 +1073,6 @@ define Device/dlink_dir-825-b1
