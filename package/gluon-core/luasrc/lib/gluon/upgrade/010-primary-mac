@@ -120,6 +120,9 @@ local primary_addrs = {
 			'openmesh,a42',
 			'openmesh,a62',
 		}},
+		{'kirkwood', 'generic', {
+			'linksys,e4200-v2',
+		}},
 		{'mpc85xx', 'p1020', {
 			'aerohive,hiveap-330',
 			'ocedo,panda',

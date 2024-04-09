@@ -1,0 +1,5 @@
+-- Linksys
+
+device('linksys-e4200-v2', 'linksys_e4200-v2', {
+	broken = true, -- 802.11s untested
+})
