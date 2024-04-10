@@ -20,7 +20,7 @@ gluon-config-mode-hostname
 gluon-config-mode-geo-location
     Enables the user to set the geographical location of the node.
 
-gluon-config-mode-geo-location-osm
+:doc:`../../package/gluon-config-mode-geo-location-osm`
     Lets the user click on a map to select the geographical location through a OSM map
 
 gluon-config-mode-contact-info
