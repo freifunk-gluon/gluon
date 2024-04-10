@@ -39,6 +39,8 @@ Config Mode can be accessed at http://192.168.1.1. The node will offer DHCP
 to clients. Should this fail, you may assign an IP from 192.168.1.0/24 to
 your computer manually.
 
+.. image:: configmode.png
+
 Advanced Config Options
 -----------------------
 
