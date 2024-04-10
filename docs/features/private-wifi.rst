@@ -1,5 +1,5 @@
-Private WLAN
-============
+Private WIFI/WLAN
+=================
 
 It is possible to set up a private WLAN that bridges the uplink port and is separated from the mesh network.
 Please note that you should not enable Wired Mesh on the uplink port at the same time.
