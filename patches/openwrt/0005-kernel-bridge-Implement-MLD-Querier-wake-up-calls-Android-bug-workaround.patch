@@ -174,7 +174,7 @@ index 0000000000000000000000000000000000000000..077a563b6066cd1d3aee4b1e82328e8c
 + 
 + int system_bridge_addif(struct device *bridge, struct device *dev)
 diff --git a/target/linux/generic/config-5.15 b/target/linux/generic/config-5.15
-index aaffee332963db8e8afe72db6e21f39c4db9a8a4..d1139b9614df97a72a5da803e54d028f86b91544 100644
+index e9b8fc42cde92fc88e92f70662faaad858662204..7542451ec73b20dd754c519167d5bca5a7c6c7a7 100644
 --- a/target/linux/generic/config-5.15
 +++ b/target/linux/generic/config-5.15
 @@ -761,6 +761,7 @@ CONFIG_BRIDGE=y
