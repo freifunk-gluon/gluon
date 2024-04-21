@@ -424,7 +424,7 @@ interfaces \: optional
     },
 
   For devices that have two distinct Ethernet ports or port groups (often
-  labelled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
+  labeled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
   is only one port (group), ``single`` is used instead.
 
   Available interface roles:
@@ -658,7 +658,7 @@ flags using a flexible ruleset defined in the Gluon repo or site package feeds.
 To some extent, it will even allow us to further modularize existing Gluon packages,
 without necessitating changes to existing site configurations.
 
-It is still possible to override such automatic rules by removing them using 
+It is still possible to override such automatic rules by removing them using
 *packages* in the ``image-customization.lua`` file
 (e.g., ``features { '-gluon-status-page-mesh-batman-adv' }`` to remove
 the automatically added package *gluon-status-page-mesh-batman-adv*).
@@ -728,7 +728,7 @@ disable_factory()
   Disables factory image generation. Sysupgrade images are still generated and stored in the image
   output directory.
 
-Technically, the image customzation file is evaluated once for each device, allowing
+Technically, the image customization file is evaluated once for each device, allowing
 to make use of regular Lua *if* statements for device-specific configuration as
 can be seen in the example.
 
