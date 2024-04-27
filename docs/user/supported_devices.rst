@@ -425,6 +425,7 @@ ramips-mt7621
   - COVR-X1860 (A1)
   - DAP-X1860 (A1)
   - DIR-860L (B1)
+  - DIR-882 (A1)
 
 * GL.iNet
 
