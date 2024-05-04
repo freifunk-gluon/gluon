@@ -43,6 +43,7 @@ try_config('PACKAGE_coova-chilli', false) -- fails to build
 try_config('PACKAGE_kmod-ipt-coova', false) -- fails to build
 try_config('PACKAGE_libpfring', false) -- fails to build
 try_config('PACKAGE_kmod-pf-ring', false) -- fails to build
+try_config('PACKAGE_kmod-usb-serial-xr_usb_serial_common', false)
 
 try_config('PACKAGE_ATH_DEBUG', true)
 
