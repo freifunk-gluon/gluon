@@ -411,6 +411,11 @@ device('teltonika-rut230-v1', 'teltonika_rut230-v1')
 
 -- TP-Link
 
+local tplink_region_suffix = ''
+if (env.GLUON_REGION or '') ~= '' then
+	tplink_region_suffix = '-' .. env.GLUON_REGION
+end
+
 device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
@@ -446,6 +451,7 @@ device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 
 device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
 	packages = ATH10K_PACKAGES_QCA9880,
+	factory = '-squashfs-factory' .. tplink_region_suffix,
 })
 
 device('tp-link-archer-c7-v4', 'tplink_archer-c7-v4', {
