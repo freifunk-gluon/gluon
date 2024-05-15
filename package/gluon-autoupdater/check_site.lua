@@ -2,7 +2,7 @@ local branches = table_keys(need_table({'autoupdater', 'branches'}, function(bra
 	need_alphanumeric_key(branch)
 
 	need_string(in_site(extend(branch, {'name'})))
-	need_string_array_match(extend(branch, {'mirrors'}), '^http://')
+	need_string_array_match(extend(branch, {'mirrors'}), '^https?://')
 
 	local pubkeys = need_string_array_match(in_site(extend(branch, {'pubkeys'})), '^%x+$')
 	need_number(in_site(extend(branch, {'good_signatures'})))
