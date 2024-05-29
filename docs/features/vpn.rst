@@ -203,3 +203,45 @@ interfaces, so traffic is sent correctly into the WireGuard interface. Thereby
 the forwarding rules are only installed if a client is connected, so
 unnecessary traffic in the kernel is avoided. The source can be found
 `here <https://github.com/freifunkh/wireguard-vxlan-glue/>`__.
+
+
+Protocol evaluation table
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To compare and evaluate which VPN method of the supported and former supported suits best for your needs, the following table should help (don't forget to scroll to the right):
+
+
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| Gluon VPN method                    | IPv4                       | IPv6        | Authentication    | Encryption          | Kernelspace forwarding    | MTU overhead   | Multithreading | Single interface for all    |
+|                                     |                            |             |                   | [no -> faster] [1]_ | [yes -> faster]           | (bytes @v4)    |                | peers                       |
++=====================================+============================+=============+===================+=====================+===========================+================+================+=============================+
+| fastd, encrypted                    | yes                        | yes         | optional [2]_     | yes                 | no                        | low (98)       | no             | optional                    |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| fastd, null                         | yes                        | yes         | optional [2]_,    | no                  | no                        | low (98)       | no             | optional                    |
+|                                     |                            |             | partial [3]_      |                     |                           |                |                |                             |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| fastd, ``null@l2tp``, offloaded     | yes                        | yes         | optional [2]_,    | no                  | yes                       | low (82)       |                | optional                    |
+|                                     |                            |             | partial [3]_      |                     |                           |                |                |                             |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| fastd, ``null@l2tp``, not offloaded | yes                        | yes         | optional [2]_,    | no                  | no                        | low (82)       | no             | optional                    |
+|                                     |                            |             | partial [3]_      |                     |                           |                |                |                             |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| Tunneldigger (L2TP)                 | yes                        | no [4]_     | no                | no                  | yes                       | low (82)       |                | no                          |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+| WireGuard + VXLAN                   | yes                        | yes         | yes               | yes                 | yes                       | high (162)     | yes [5]_       | yes                         |
++-------------------------------------+----------------------------+-------------+-------------------+---------------------+---------------------------+----------------+----------------+-----------------------------+
+
+.. [1] But more insecure as internet providers can read and alter mesh traffic.
+.. [2] Gateway side can ignore authentication for the initial connection request, via ``"on verify 'true'"``, however node->gateway handshake authentication with valid fastd keys in the site.conf is still required.
+.. [3] Initial connection request can be authenticated, however payload data is not authenticated afterwards.
+
+
+.. [4] https://github.com/wlanslovenija/tunneldigger/issues/75
+.. [5] https://www.wireguard.com/performance/
+
+Additional, notable compatibility features
+""""""""""""""""""""""""""""""""""""""""""
+
+* fastd: multiple encrypted and unencrypted methods can be handled by one daemon
+* fastd: a ``null@l2tp`` peer with offloading is fully compatible with a peer with ``null@l2tp`` without offloading
+* fastd+WireGuard: a single secret can be used for both fastd and WireGuard via `gluon-mesh-vpn-key <https://gluon.readthedocs.io/en/latest/features/vpn.html#gluon-mesh-vpn-key-translate>`_, so no need for a node owner switching to (or from) Wireguard from (or to) fastd to submit a new key
