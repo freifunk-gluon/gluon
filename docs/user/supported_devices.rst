@@ -369,6 +369,10 @@ mpc85xx-p1020
 
   - WS-AP3825i
 
+* Hewlett-Packard
+
+  - MSM460
+
 * Ocedo
 
   - Panda
