@@ -34,6 +34,10 @@ device('cudy-x6-v2', 'cudy_x6-v2', {
 
 -- D-Link
 
+device('d-link-dap-1620-b1', 'dlink_dap-1620-b1', {
+	broken = true, -- mt76 driver issue - See #3124
+})
+
 device('d-link-covr-x1860-a1', 'dlink_covr-x1860-a1', {
 	extra_images = {
 		{'-squashfs-recovery', '-recovery', '.bin'}
