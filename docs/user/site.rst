@@ -297,7 +297,7 @@ mesh_vpn
   data; this prevents malicious ISPs from correlating VPN sessions with specific mesh
   nodes via public respondd data. If this is of no concern in your threat model,
   this behaviour can be disabled (and thus announcing the public key be enabled) by
-  setting `pubkey_privacy` to `false`. At the moment, this option only affects fastd.
+  setting `pubkey_privacy` to `false`.
 
   The `fastd` section configures settings specific to the *fastd* VPN
   implementation.
