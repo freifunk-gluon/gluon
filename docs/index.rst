@@ -86,7 +86,7 @@ License
 
 See LICENCE_
 
-.. _LICENCE: https://github.com/freifunk-gluon/gluon/blob/master/LICENSE
+.. _LICENCE: https://github.com/freifunk-gluon/gluon/blob/main/LICENSE
 
 Indices and tables
 ==================

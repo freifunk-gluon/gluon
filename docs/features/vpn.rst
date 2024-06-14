@@ -167,7 +167,7 @@ gateway, tries to establish a connection, and if it fails, tries to connect
 to the next gateway. This approach has several advantages, such as load
 balancing VPN connection attempts and avoiding problems with offline gateways.
 More information about the wgpeerselector and its algorithm can be found
-`here <https://github.com/freifunk-gluon/packages/blob/master/net/wgpeerselector/README.md>`__.
+`here <https://github.com/freifunk-gluon/packages/blob/main/net/wgpeerselector/README.md>`__.
 
 On the gluon node both VXLAN and the wgpeerselector are well integrated and no
 explicit configuration of those tools is necessary, once the general WireGuard
