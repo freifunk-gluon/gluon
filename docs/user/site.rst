@@ -821,7 +821,7 @@ PACKAGES_${feed}_COMMIT
 
 PACKAGES_${feed}_BRANCH
   Optional: The branch of the repository the given commit ID can be found in.
-  Defaults to the default branch of the repository (usually ``master``)
+  Defaults to the default branch of the repository (usually ``main`` or ``master``)
 
 These variables are always all uppercase, so for an entry ``foo`` in GLUON_SITE_FEEDS,
 the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
