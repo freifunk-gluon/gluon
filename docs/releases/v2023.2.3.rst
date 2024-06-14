@@ -1,0 +1,59 @@
+Gluon 2023.2.3
+==============
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- NETGEAR
+
+  - WNDRMAC v2
+
+
+mpc85xx-p1020
+~~~~~~~~~~~~~
+
+- Hewlett-Packard
+
+  - MSM460
+
+
+Bugfixes
+--------
+
+* Factory images for TP-Link Archer C7 v2 now contain the correct region code
+  (`#3260 <https://github.com/freifunk-gluon/gluon/issues/3260>`_)
+
+* Fixed an issue where some bootloader versions of the NETGEAR EX6150 v2 failed
+  to boot Gluon images in rare cases
+  (`Upstream <https://github.com/openwrt/openwrt/commit/de59fc45402ff03e320264c8204f6928090534ad>`_)  
+
+* Fixed boot procedure becoming stuck on Enterasys WS-AP3710i devices
+  (`#3248 <https://github.com/freifunk-gluon/gluon/issues/3248>`_)
+
+
+Known issues
+------------
+
+* Unstable wireless with certain MediaTek devices (`#3154 <https://github.com/freifunk-gluon/gluon/issues/3154>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).
