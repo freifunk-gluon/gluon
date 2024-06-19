@@ -1,0 +1,19 @@
+From: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Date: Sun, 26 May 2024 11:54:04 +0200
+Subject: ipq40xx: disable DMA for fritzbox 4040
+
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+
+diff --git a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4018-fritzbox-4040.dts b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4018-fritzbox-4040.dts
+index e448206c369e2264e22da3de755f24ee111eb6f2..9991a21807b46f9cb1c830d7da235e9c7b2306d8 100644
+--- a/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4018-fritzbox-4040.dts
++++ b/target/linux/ipq40xx/files/arch/arm/boot/dts/qcom-ipq4018-fritzbox-4040.dts
+@@ -157,6 +157,8 @@
+ 	pinctrl-0 = <&spi_0_pins>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
++	/delete-property/ dmas;
++	/delete-property/ dma-names;
+ 	cs-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>;
+ 
+ 	flash@0 {
