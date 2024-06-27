@@ -68,7 +68,7 @@ GLUON_SITE_VERSION ?= $(shell scripts/getversion.sh '$(GLUON_SITEDIR)')
 
 GLUON_MULTIDOMAIN ?= 0
 GLUON_AUTOREMOVE ?= 0
-GLUON_DEBUG ?= 0
+GLUON_DEBUG ?= 1
 GLUON_MINIFY ?= 1
 
 # Can be overridden via environment/command line/... to use the Gluon
