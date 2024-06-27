@@ -81,7 +81,7 @@ function f:write()
 				ssid       = ssid.data,
 				key        = key.data,
 				macaddr    = macaddr,
-				ifname     = suffix and 'wan' .. suffix,
+				ifname     = suffix and 'wl-wan' .. suffix,
 				disabled   = false,
 			})
 
