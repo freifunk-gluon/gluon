@@ -14,3 +14,11 @@ start_enabled() {
 		/etc/init.d/"$1" start
 	fi
 }
+
+flag_invocation() {
+	if [ "$1" -eq "0" ]; then
+		rm -f /lib/gluon/autoupdater/upgrade-invocation
+	else
+		echo "$1" > /lib/gluon/autoupdater/upgrade-invocation
+	fi
+}
