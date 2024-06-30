@@ -38,3 +38,17 @@ Accessing Config Mode
 Config Mode can be accessed at http://192.168.1.1. The node will offer DHCP
 to clients. Should this fail, you may assign an IP from 192.168.1.0/24 to
 your computer manually.
+
+.. image:: configmode.png
+
+Advanced Config Options
+-----------------------
+
+Depending on the installed packages, the advanced config mode allows to configure packages further.
+
+* :doc:`gluon-web-wifi-config enable <wlan-configuration>` radios used for wifi and mesh as well as outdoor mode
+* :doc:`../package/gluon-web-network` allows to configure the used roles (uplink, mesh, client) on each interface
+* :doc:`../package/gluon-web-admin` allows to enter SSH keys or set a password in the `Remote access` section
+* :doc:`../package/gluon-web-cellular` allows to configure SIM card / WWAN settings on supported cellular devices
+
+The advanced config does also allow to upload a sysupgrade file to update the firmware to a different version.
