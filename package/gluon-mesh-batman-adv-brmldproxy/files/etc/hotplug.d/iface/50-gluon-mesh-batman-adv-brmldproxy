@@ -1,0 +1,12 @@
+#!/bin/sh
+
+([ "$INTERFACE" != "bat0" ] || [ "$ACTION" != "ifup" ]) && exit 0
+
+lookup_site() {
+	local path="$1" default="$2"
+	lua -e "print(require('gluon.site').$path('$default'))"
+}
+
+[ "$(lookup_site 'mesh.filter_membership_reports' 'true')" = "false" ] && exit 0
+
+batctl multicast_mld_rtr_only 1
