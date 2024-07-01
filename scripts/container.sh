@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -euo pipefail
 
@@ -21,4 +22,3 @@ else
 	echo "Please install either podman or docker. Exiting" >&2
 	exit 1
 fi
-

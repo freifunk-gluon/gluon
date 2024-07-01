@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -e
 shopt -s nullglob
