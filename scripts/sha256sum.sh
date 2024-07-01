@@ -15,6 +15,7 @@ else
 	exit 1
 fi
 
+# shellcheck disable=SC2181
 [ "$?" -eq 0 ] || exit 1
 
 echo "$ret" | awk '{ print $1 }'
