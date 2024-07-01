@@ -24,5 +24,5 @@ find scripts -type f | while read -r file; do
 	is_scriptfile "$file" || continue
 
 	echo "Checking $file"
-	shellcheck -f gcc -x -e SC2154,SC1090,SC2181,SC2155,SC2148,SC2034,SC2148 "$file"
+	shellcheck -f gcc -x "$file"
 done

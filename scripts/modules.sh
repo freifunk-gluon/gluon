@@ -1,4 +1,8 @@
+#!/bin/sh
+
+# shellcheck source=./modules
 . ./modules
+
 [ ! -f "$GLUON_SITEDIR"/modules ] || . "$GLUON_SITEDIR"/modules
 
 # shellcheck disable=SC2086

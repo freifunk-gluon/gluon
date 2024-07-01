@@ -14,8 +14,10 @@ fi
 need_sync=false
 
 for module in $GLUON_MODULES; do
-	var=$(echo "$module" | tr '[:lower:]/' '[:upper:]_')
-	eval 'commit_expected=${'"${var}"'_COMMIT}'
+	echo "Checking module '$module'"
+	var=${module//\//_}
+	_remote_commit=${var^^}_COMMIT
+	commit_expected=${!_remote_commit}
 
 	prefix=invalid
 	cd "$GLUONDIR/$module" 2>/dev/null && prefix="$(git rev-parse --show-prefix 2>/dev/null)"
