@@ -60,7 +60,8 @@ uci:section('network', 'interface', 'wg_mesh', {
 	proto = 'wireguard',
 	fwmark = 1,
 	private_key = wg_private_key,
-	mtu = active_vpn.mtu(),
+	-- Add 70 bytes for IPv6 VXLAN overhead
+	mtu = active_vpn.mtu() + 70,
 })
 
 uci:section('network', 'interface', 'mesh_wg_mesh', {
