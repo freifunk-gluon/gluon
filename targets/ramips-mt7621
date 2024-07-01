@@ -120,6 +120,10 @@ device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
 	factory = false,
 })
 
+device('xiaomi-mi-router-4a-gigabit-edition-v2', 'xiaomi_mi-router-4a-gigabit-v2', {
+	factory = false,
+})
+
 device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 	factory = false,
 })

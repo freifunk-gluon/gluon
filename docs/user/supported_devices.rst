@@ -462,7 +462,7 @@ ramips-mt7621
 * Xiaomi
 
   - Xiaomi Mi Router 3G (v1, v2)
-  - Xiaomi Mi Router 4A (Gigabit Edition v1)
+  - Xiaomi Mi Router 4A (Gigabit Edition v1, v2)
 
 * ZBT
 
