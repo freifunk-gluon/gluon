@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -eo pipefail
 
@@ -66,4 +67,3 @@ for MODULE in "OPENWRT" "PACKAGES_PACKAGES" "PACKAGES_ROUTING" "PACKAGES_GLUON";
 	# remove the checkout
 	rm -fr "${CHECKOUT}"
 done
-
