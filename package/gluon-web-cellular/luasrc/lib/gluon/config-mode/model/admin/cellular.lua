@@ -33,6 +33,14 @@ local password = s:option(Value, "password", translate("Password"))
 password:depends(enabled, true)
 password.default = uci:get('gluon', 'cellular', 'password')
 
+local auth = s:option(ListValue, "auth", translate("Authentication"))
+auth:depends(enabled, true)
+auth:value("none", translate("None"))
+auth:value("pap", translate("PAP"))
+auth:value("chap", translate("CHAP"))
+auth:value("both", translate("Both"))
+auth.default = uci:get('gluon', 'cellular', 'auth') or "none"
+
 function f:write()
 	local cellular_enabled = false
 	if enabled.data then
@@ -46,6 +54,7 @@ function f:write()
 		pin = pin.data,
 		username = username.data,
 		password = password.data,
+		auth = auth.data,
 	})
 
 	uci:commit('gluon')
