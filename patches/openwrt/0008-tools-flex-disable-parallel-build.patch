@@ -12,7 +12,7 @@ occuring.
 Signed-off-by: David Bauer <mail@david-bauer.net>
 
 diff --git a/tools/flex/Makefile b/tools/flex/Makefile
-index 86ba5a4415d3a82aaf5e9897736b465cc7e30c42..f3b6d0b1495b30c278e5bf0d2b322b5ade79ec4f 100644
+index 177136b78c77c31c56db2fc993d1273d3dd81562..cb4f95e8d0c45a9c328c7ce48235a0ba80c02c6e 100644
 --- a/tools/flex/Makefile
 +++ b/tools/flex/Makefile
 @@ -15,7 +15,6 @@ PKG_SOURCE_URL:=https://github.com/westes/flex/releases/download/v$(PKG_VERSION)
