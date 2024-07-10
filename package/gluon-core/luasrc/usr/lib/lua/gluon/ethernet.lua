@@ -16,11 +16,11 @@ end
 local function is_swconfig()
 	local has = false
 
-	uci:foreach("system", "switch", function()
+	uci:foreach("network", "switch", function()
 		has = true
 	end)
 
-	uci:foreach("system", "switch_vlan", function()
+	uci:foreach("network", "switch_vlan", function()
 		has = true
 	end)
 
