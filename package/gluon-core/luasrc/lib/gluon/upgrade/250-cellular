@@ -21,6 +21,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 	local pincode = uci:get('gluon', 'cellular', 'pin')
 	local username = uci:get('gluon', 'cellular', 'username')
 	local password = uci:get('gluon', 'cellular', 'password')
+	local auth = uci:get('gluon', 'cellular', 'auth')
 
 	uci:section('network', 'interface', 'cellular', {
 		proto = control_type,
@@ -40,6 +41,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 	set_or_delete('network', 'cellular', 'pincode', pincode)
 	set_or_delete('network', 'cellular', 'username', username)
 	set_or_delete('network', 'cellular', 'password', password)
+	set_or_delete('network', 'cellular', 'auth', auth)
 	set_or_delete('network', 'cellular', 'delay', delay)
 end
 
