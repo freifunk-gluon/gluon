@@ -239,7 +239,7 @@ GLUON_RELEASE
 
 GLUON_SITE_VERSION
   Version of the site configuration. This string is displayed in the config mode
-  and `gluon-info`. If unset, Gluon generates a version string using `git describe`
+  and ``gluon-info``. If unset, Gluon generates a version string using ``git describe``
   on the site folder.
 
 GLUON_TARGET
@@ -255,8 +255,17 @@ GLUON_AUTOREMOVE
   as it significantly increases incremental build times.
 
 GLUON_DEBUG
-  Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or
-  similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
+  The following values are supported:
+
+  - ``0``: Remove symbol tables and debug information as well as most section and other
+    information not strictly necessary for execution using ``sstrip``. This saves a small amount
+    of flash space over the default ``strip`` command (roughly 70kiB for ath79), but makes any
+    kind of binary analysis much more difficult, as common tools like objdump and gdb can't
+    handle such files at all.
+  - ``1``: Remove symbol tables and debug information from binaries using the standard ``strip``
+    command. This is the default.
+  - ``2``:  Include debugging symbols usable with GDB or similar tools in all binaries of the image.
+    Requires a device or target with at least 16 MB of flash space, e.g. ``x86-64``.
 
 GLUON_MINIFY
   Setting ``GLUON_MINIFY=0`` will omit the minification of scripts during the build process. By

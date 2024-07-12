@@ -6,6 +6,8 @@ local util = require('gluon.util')
 local site = require 'gluon.site'
 local sp = util.subprocess
 local wait = require 'posix.sys.wait'
+local vpn_core = require('gluon.mesh-vpn')
+local _, active_vpn = vpn_core.get_active_provider()
 
 local wg_private_key = uci:get("network_gluon-old", 'wg_mesh', "private_key")
 
@@ -58,6 +60,8 @@ uci:section('network', 'interface', 'wg_mesh', {
 	proto = 'wireguard',
 	fwmark = 1,
 	private_key = wg_private_key,
+	-- Add 70 bytes for IPv6 VXLAN overhead
+	mtu = active_vpn.mtu() + 70,
 })
 
 uci:section('network', 'interface', 'mesh_wg_mesh', {

@@ -84,13 +84,16 @@ config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
 config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
 
-if istrue(env.GLUON_DEBUG) then
+if (tonumber(env.GLUON_DEBUG) or 0) > 1 then
 	config('DEBUG', true)
 	config('NO_STRIP', true)
 	config('USE_STRIP', false)
 	config('USE_SSTRIP', false)
 
 	try_config('TARGET_ROOTFS_PARTSIZE', 500)
+elseif istrue(env.GLUON_DEBUG) then
+	config('USE_STRIP', true)
+	config('USE_SSTRIP', false)
 end
 
 config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))

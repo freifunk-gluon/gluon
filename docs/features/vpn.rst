@@ -1,14 +1,59 @@
+.. _mesh-vpn:
+
 Mesh VPN
 ========
 
 Gluon integrates several layer 2 tunneling protocols to
 allow connections between local meshes through the internet.
 
-Protocol handlers
-^^^^^^^^^^^^^^^^^
+Protocols overview
+^^^^^^^^^^^^^^^^^^
 
-There are currently two protocol handlers which can be selected
-as a feature:
+For a comprehensive comparison and evaluation of the supported and formerly supported VPN methods that best suit your needs, refer to the following table (Be sure to scroll to the right):
+
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| Gluon VPN method                      | IPv4 | IPv6     | Authentication | Encryption                 | Kernelspace forwarding | MTU overhead     | Multithreading | Single interface for all |
+|                                       |      |          |                | (no→faster,insecure [1]_)  | (yes→faster)           | (bytes @v4) [7]_ |                | peers                    |
++=======================================+======+==========+================+============================+========================+==================+================+==========================+
+| fastd, encrypted                      | yes  | yes      | optional [2]_  | yes                        | no                     | low (98)         | no             | optional                 |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| fastd, null                           | yes  | yes      | optional [2]_, | no                         | no                     | low (98)         | no             | optional                 |
+|                                       |      |          | partial [3]_   |                            |                        |                  |                |                          |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| fastd, ``null@l2tp``, with offloading | yes  | yes      | optional [2]_, | no                         | yes                    | low (82)         |                | optional                 |
+|                                       |      |          | partial [3]_   |                            |                        |                  |                |                          |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| fastd, ``null@l2tp``, no offloading   | yes  | yes      | optional [2]_, | no                         | no                     | low (82)         | no             | optional                 |
+|                                       |      |          | partial [3]_   |                            |                        |                  |                |                          |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| Tunneldigger (L2TP - deprecated) [6]_ | yes  | no [4]_  | no             | no                         | yes                    | low (82)         |                | no                       |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+| WireGuard + VXLAN                     | yes  | yes      | yes            | yes                        | yes                    | high (162)       | yes [5]_       | yes                      |
++---------------------------------------+------+----------+----------------+----------------------------+------------------------+------------------+----------------+--------------------------+
+
+.. [1] No encryption allows internet providers to read and alter mesh traffic.
+.. [2] The Gateway can ignore authentication for the initial connection request, via ``"on verify 'true'"``. However, a node→gateway handshake authentication with valid fastd keys in the site.conf is still required.
+.. [3] Initial connection request can be authenticated, however, payload data is not authenticated afterward.
+
+
+.. [4] https://github.com/wlanslovenija/tunneldigger/issues/75
+.. [5] https://www.wireguard.com/performance/
+.. [6] https://github.com/ffac/community-packages/tree/master/ff-mesh-vpn-tunneldigger
+.. [7] :ref:`mtu`
+
+Additional, notable compatibility features
+""""""""""""""""""""""""""""""""""""""""""
+
+* fastd: multiple encrypted and unencrypted methods can be handled by one daemon
+* fastd: a ``null@l2tp`` peer with offloading is fully compatible with a peer with ``null@l2tp`` without offloading
+* fastd+WireGuard: a single secret can be used for both fastd and WireGuard via :ref:`gluon-mesh-vpn-key-translate <gluon-mesh-vpn-key-translate>`, so no need for a node owner switching to (or from) Wireguard from (or to) fastd to submit a new key
+
+
+Core Protocol handlers
+^^^^^^^^^^^^^^^^^^^^^^
+
+There are currently two supported protocol handlers which
+can be selected as a feature:
 
 mesh-vpn-fastd
 """"""""""""""

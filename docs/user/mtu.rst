@@ -1,3 +1,5 @@
+.. _mtu:
+
 MTU for Mesh-VPN
 ================
 
