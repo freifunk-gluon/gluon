@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -eo pipefail
 
