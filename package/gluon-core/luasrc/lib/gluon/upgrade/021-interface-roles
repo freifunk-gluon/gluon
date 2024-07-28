@@ -43,6 +43,7 @@ if uci:get('gluon', 'iface_wan') then
 end
 if uci:get('gluon', 'iface_single') then
 	roles.wan = uci:get_list('gluon', 'iface_single', 'role')
+	roles.lan = uci:get_list('gluon', 'iface_single', 'role')
 end
 
 -- Non-existing interfaces are nil, so they will not be added to the table
