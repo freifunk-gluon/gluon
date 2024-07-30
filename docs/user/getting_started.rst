@@ -29,7 +29,7 @@ freshly installed Debian Bullseye system the following packages are required:
 
 * `git` (to get Gluon and other dependencies)
 * `python3`
-* `python3-distutils`
+* `python3-setuptools`
 * `build-essential`
 * `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
 * `gawk`
