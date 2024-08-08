@@ -1,0 +1,67 @@
+#!/bin/sh
+
+[ -z "$IFNAME" ] && exit 0
+
+if [ -z "$1" ]; then
+	SOCKETSSUB="mesh"
+else
+	SOCKETSSUB="$1"
+fi
+
+. /lib/functions.sh
+
+lock /var/lock/gluon_bpfcountd.lock
+
+BPFCOUNTD_RUN="/var/run/bpfcountd"
+mkdir -p "${BPFCOUNTD_RUN}/gluon-sockets/$SOCKETSSUB"
+
+export UCI_CONFIG_DIR="${BPFCOUNTD_RUN}/gluon-config"
+mkdir -p "${UCI_CONFIG_DIR}"
+touch "${UCI_CONFIG_DIR}/bpfcountd"
+
+
+# Skip anything which might be unicast payload to avoid
+# a noticeable performance impact:
+# -> a batadv unicast packet with an IP unicast destination in
+#    the inner ethernet header; all batadv unicast fragments
+# Note: batadv unicast fragments might contain a multicast
+# packet, too (though unlikely, usually they are smaller
+# than MTU).
+
+# All IP packets with a unicast destination, except
+# IGMP, OSPF (89), PIM (103) or MANET (138)
+PREFILTER_IP4_UC="(ip and not ip multicast and not igmp and not (ip proto (89 or 103 or 138)))"
+PREFILTER_IP6_UC="(ip6 and not ip6 multicast and not ip6 proto 0 and not (ip6 proto (89 or 103 or 138)))"
+PREFILTER_IP_UC="(${PREFILTER_IP4_UC} or ${PREFILTER_IP6_UC})"
+
+PREFILTER_CLIENT="not ${PREFILTER_IP_UC}"
+PREFILTER_MESH="not (batadv 15 unicast and ${PREFILTER_IP_UC}) and not batadv 15 unicast_frag"
+PREFILTER="${PREFILTER_CLIENT} and ${PREFILTER_MESH}"
+
+SECTION_IN="gluon_${IFNAME//-/_}_in"
+SECTION_OUT="gluon_${IFNAME//-/_}_out"
+uci -c "${UCI_CONFIG_DIR}" batch <<-EOF
+	set bpfcountd.${SECTION_IN}="bpfcountd"
+	set bpfcountd.${SECTION_IN}.ifname=${IFNAME}
+	set bpfcountd.${SECTION_IN}.prefilter="inbound and (${PREFILTER})"
+	set bpfcountd.${SECTION_IN}.filterfile='/lib/gluon/bpfcountd/mesh.filters'
+	set bpfcountd.${SECTION_IN}.buffersize='131072'
+	set bpfcountd.${SECTION_IN}.disabled='0'
+
+	set bpfcountd.${SECTION_OUT}="bpfcountd"
+	set bpfcountd.${SECTION_OUT}.ifname=${IFNAME}
+	set bpfcountd.${SECTION_OUT}.prefilter="outbound and (${PREFILTER})"
+	set bpfcountd.${SECTION_OUT}.filterfile='/lib/gluon/bpfcountd/mesh.filters'
+	set bpfcountd.${SECTION_OUT}.buffersize='131072'
+	set bpfcountd.${SECTION_OUT}.disabled='0'
+
+	commit bpfcountd
+EOF
+
+ln -s "../../${SECTION_IN}.sock" "${BPFCOUNTD_RUN}/gluon-sockets/$SOCKETSSUB/${IFNAME}.in.sock"
+ln -s "../../${SECTION_OUT}.sock" "${BPFCOUNTD_RUN}/gluon-sockets/$SOCKETSSUB/${IFNAME}.out.sock"
+
+/etc/init.d/bpfcountd start "${SECTION_IN}"
+/etc/init.d/bpfcountd start "${SECTION_OUT}"
+
+lock -u /var/lock/gluon_bpfcountd.lock
