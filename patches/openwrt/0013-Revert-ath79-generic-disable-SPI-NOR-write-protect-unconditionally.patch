@@ -1,0 +1,19 @@
+From: Tom Herbers <mail@tomherbers.de>
+Date: Wed, 31 Jul 2024 14:43:13 +0200
+Subject: Revert "ath79: generic: disable SPI-NOR write protect unconditionally"
+
+This reverts commit c55aaa7c9a98e7c0a5e1ea8293a534dc5b395cf3.
+
+diff --git a/target/linux/ath79/generic/config-default b/target/linux/ath79/generic/config-default
+index 09ea9d93d7a567897c9de5fdd925cb13de332930..06f264b626a72be16854e6f984a2ee4f8b3b906a 100644
+--- a/target/linux/ath79/generic/config-default
++++ b/target/linux/ath79/generic/config-default
+@@ -14,8 +14,6 @@ CONFIG_LEDS_RESET=y
+ CONFIG_MARVELL_PHY=y
+ CONFIG_MICREL_PHY=y
+ CONFIG_MTD_REDBOOT_PARTS=y
+-CONFIG_MTD_SPI_NOR_SWP_DISABLE=y
+-# CONFIG_MTD_SPI_NOR_SWP_DISABLE_ON_VOLATILE is not set
+ CONFIG_MTD_SPLIT_EVA_FW=y
+ CONFIG_NVMEM_SYSFS=y
+ CONFIG_NVMEM_U_BOOT_ENV=y
