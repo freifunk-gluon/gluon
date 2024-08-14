@@ -48,6 +48,7 @@ ath79-generic
   - DIR-505 A1 [#lan_as_wan]_
   - DIR-505 A2 [#lan_as_wan]_
   - DIR-825 B1
+  - EAGLE PRO AI R32 A1
 
 * Enterasys
 
