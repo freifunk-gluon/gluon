@@ -9,10 +9,14 @@ GLUONDIR="$(pwd)"
 
 for module in $GLUON_MODULES; do
 	echo "--- Updating module '$module' ---"
-	var=$(echo "$module" | tr '[:lower:]/' '[:upper:]_')
-	eval 'repo=${'"${var}"'_REPO}'
-	eval 'branch=${'"${var}"'_BRANCH}'
-	eval 'commit=${'"${var}"'_COMMIT}'
+	var=${module//\//_}
+	_remote_url=${var^^}_REPO
+	_remote_branch=${var^^}_BRANCH
+	_remote_commit=${var^^}_COMMIT
+
+	repo=${!_remote_url}
+	branch=${!_remote_branch}
+	commit=${!_remote_commit}
 
 	mkdir -p "$GLUONDIR/$module"
 	cd "$GLUONDIR/$module"

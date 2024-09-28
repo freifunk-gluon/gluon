@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -eo pipefail
 
@@ -16,7 +17,11 @@ git diff --quiet ./modules || {
 LOCAL_BRANCH=$(git branch --show-current)
 [[ $LOCAL_BRANCH != *-updates ]] && LOCAL_BRANCH+=-updates
 
-for MODULE in "OPENWRT" "PACKAGES_PACKAGES" "PACKAGES_ROUTING" "PACKAGES_GLUON"; do
+for MODULE in "OPENWRT" ${GLUON_FEEDS}; do
+	if [[ $MODULE != "OPENWRT" ]]; then
+		MODULE=PACKAGES_${MODULE^^}
+	fi
+
 	_REMOTE_URL=${MODULE}_REPO
 	_REMOTE_BRANCH=${MODULE}_BRANCH
 	_LOCAL_HEAD=${MODULE}_COMMIT
@@ -48,7 +53,7 @@ for MODULE in "OPENWRT" "PACKAGES_PACKAGES" "PACKAGES_ROUTING" "PACKAGES_GLUON";
 
 	# prepare the commit message
 	# shellcheck disable=SC2001
-	MODULE=$(echo ${MODULE,,} | sed 's/packages_//')
+	MODULE=$(echo "${MODULE,,}" | sed 's/packages_//')
 	TITLE="modules: update ${MODULE}"
 	MESSAGE="$(mktemp)"
 	{
@@ -66,4 +71,3 @@ for MODULE in "OPENWRT" "PACKAGES_PACKAGES" "PACKAGES_ROUTING" "PACKAGES_GLUON";
 	# remove the checkout
 	rm -fr "${CHECKOUT}"
 done
-
