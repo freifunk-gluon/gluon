@@ -1,5 +1,9 @@
 -- Linksys
 
 device('linksys-e4200-v2-viper', 'linksys_e4200-v2', {
-	broken = true, -- 802.11s untested
+	broken = true, -- no 802.11s support
+})
+
+device('linksys-ea4500-viper', 'linksys_ea4500', {
+	broken = true, -- no 802.11s support
 })
