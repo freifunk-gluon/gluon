@@ -1,0 +1,11 @@
+-- Xiaomi
+
+device('xiaomi_ax3600', 'xiaomi_ax3600', {
+	factory = false,
+	packages = {
+	'-kmod-ath10k-ct-smallbuffers',
+	'-ath10k-firmware-qca9887-ct',
+	'-ath10k-board-qca9887',
+	'-kmod-ath10k-smallbuffers',}
+})
+
