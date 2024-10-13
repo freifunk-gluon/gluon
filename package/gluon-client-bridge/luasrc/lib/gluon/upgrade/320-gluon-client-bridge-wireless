@@ -4,7 +4,6 @@ local wireless = require 'gluon.wireless'
 
 local uci = require('simple-uci').cursor()
 local sysconfig = require 'gluon.sysconfig'
-local iwinfo = require 'iwinfo'
 
 
 local function is_disabled(config, name)
@@ -24,7 +23,7 @@ local function configure_ap(radio, index, config, radio_name)
 	local ap = config.ap
 	local disabled = is_disabled(ap, name)
 
-	if not util.supports_channel(radio, config.channel()) then
+	if not wireless.supports_channel(radio, config.channel()) then
 		has_client_radio = true
 	end
 
@@ -121,12 +120,13 @@ wireless.foreach_radio(uci, function(radio, index, config)
 end)
 
 if not sysconfig.gluon_version and has_client_radio then
-	util.foreach_radio(uci, function(radio, index, config)
+	wireless.foreach_radio(uci, function(radio, _, config)
 		local radio_name = radio['.name']
 
 		local name = 'client_' .. radio_name
 
-		if util.supports_channel(radio, config.channel()) and (radio.hwmode == '11a' or radio.hwmode == '11na') then
+		-- disable client radio on the 5GHz band which supports the mesh channel
+		if wireless.supports_channel(radio, config.channel()) and radio.band == '5g' then
 			uci:set('wireless', name, 'disabled', true)
 		end
 	end)
