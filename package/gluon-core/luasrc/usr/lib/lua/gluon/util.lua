@@ -167,16 +167,6 @@ function M.get_role_interfaces(uci, role, exclusive)
 	return ret
 end
 
-local function supports_channel(radio, channel)
-	local phy = M.find_phy(radio)
-	for i, chan in ipairs(iwinfo.nl80211.freqlist(phy)) do
-		if channel == chan.channel then
-			return true
-		end
-	end
-	return false
-end
-
 -- Safe glob: returns an empty table when the glob fails because of
 -- a non-existing path
 function M.glob(pattern)
