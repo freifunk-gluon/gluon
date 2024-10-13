@@ -1,3 +1,4 @@
+local iwinfo = require 'iwinfo'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
 local util = require 'gluon.util'
@@ -37,6 +38,16 @@ local function get_wlan_mac_from_driver(radio, vif)
 	end
 
 	return addresses[vif]
+end
+
+function M.supports_channel(radio, channel)
+	local phy = M.find_phy(radio)
+	for _, chan in ipairs(iwinfo.nl80211.freqlist(phy)) do
+		if channel == chan.channel then
+			return true
+		end
+	end
+	return false
 end
 
 function M.get_wlan_mac(_, radio, index, vif)
