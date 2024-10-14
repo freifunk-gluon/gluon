@@ -1,4 +1,3 @@
-local iwinfo = require 'iwinfo'
 local sysconfig = require 'gluon.sysconfig'
 local site = require 'gluon.site'
 local util = require 'gluon.util'
