@@ -125,7 +125,8 @@ if not sysconfig.gluon_version and has_client_radio then
 
 		local name = 'client_' .. radio_name
 
-		if wireless.supports_channel(radio, config.channel()) and (radio.hwmode == '11a' or radio.hwmode == '11na') then
+		-- disable client radio on the 5GHz band which supports the mesh channel
+		if wireless.supports_channel(radio, config.channel()) and radio.band == '5g' then
 			uci:set('wireless', name, 'disabled', true)
 		end
 	end)
