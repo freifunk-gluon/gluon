@@ -267,6 +267,13 @@ ipq806x-generic
 
   - R7800
 
+ipq807x-generic
+---------------
+
+* Xiaomi
+
+  - AX3600
+
 lantiq-xrx200
 -------------
 
