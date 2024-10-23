@@ -122,6 +122,7 @@ local primary_addrs = {
 		}},
 		{'kirkwood', 'generic', {
 			'linksys,e4200-v2',
+			'linksys,ea4500',
 		}},
 		{'mpc85xx', 'p1020', {
 			'aerohive,hiveap-330',
