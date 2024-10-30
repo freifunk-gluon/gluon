@@ -43,7 +43,7 @@ If you're new to Gluon and ready to get your feet wet, have a look at the
 [Getting Started Guide](https://gluon.readthedocs.io/en/latest/user/getting_started.html).
 
 Gluon's developers frequent an IRC chatroom at [#gluon](ircs://irc.hackint.org/#gluon)
-on [hackint](https://hackint.org/). There is also a [webchat](https://webirc.hackint.org/#irc://irc.hackint.org/#gluon)
+on [hackint](https://hackint.org/). There is also a [webchat](https://chat.hackint.org/?join=gluon)
 that allows for uncomplicated access from within your browser. This channel is also available as a bridged Matrix Room at [#gluon:hackint.org](https://matrix.to/#/#gluon:hackint.org).
 
 ## Issues & Feature requests
