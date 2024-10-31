@@ -267,6 +267,10 @@ ipq806x-generic
 
   - R7800
 
+* Ubiquiti
+
+  - UniFi AC HD
+
 lantiq-xrx200
 -------------
 
