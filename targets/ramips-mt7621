@@ -112,6 +112,10 @@ device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 	factory = false,
 })
 
+device('ubiquiti-unifi-nanohd', 'ubnt_unifi-nanohd', {
+	factory = false,
+})
+
 
 -- Wavlink
 
