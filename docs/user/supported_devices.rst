@@ -457,8 +457,6 @@ ramips-mt7621
 
 * Ubiquiti
 
-  - EdgeRouter X
-  - EdgeRouter X-SFP
   - UniFi 6 Lite
   - UniFi nanoHD
 
