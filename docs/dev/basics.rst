@@ -21,7 +21,7 @@ web browser. You're welcome to join us!
 
 .. _#gluon: ircs://irc.hackint.org/#gluon
 .. _hackint: https://hackint.org/
-.. _webchat: https://webirc.hackint.org/#irc://irc.hackint.org/#gluon
+.. _webchat: https://chat.hackint.org/?join=gluon
 
 .. _working-with-repositories:
 

@@ -75,7 +75,7 @@ highlight_language = 'none'
 # used to mark channel names and do not exist. Regular links are not effected.
 linkcheck_ignore = [
     'http://192.168.1.1',
-    'https://webirc.hackint.org/#'
+    'https://chat.hackint.org'
 ]
 
 
