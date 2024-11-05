@@ -26,3 +26,9 @@ device('netgear-nighthawk-x4s-r7800', 'netgear_r7800', {
 	factory_ext = '.img',
 	packages = QCA9984_PACKAGES,
 })
+
+-- Ubiquiti
+device('ubiquiti-unifi-ac-hd', 'ubnt_unifi-ac-hd', {
+	packages = QCA9984_PACKAGES,
+	factory = false,
+})
