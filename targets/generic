@@ -82,6 +82,8 @@ config('TARGET_PER_DEVICE_ROOTFS', true)
 
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
+try_config('GRUB_TITLE', 'Gluon')
+
 config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
 
 if (tonumber(env.GLUON_DEBUG) or 0) > 1 then
