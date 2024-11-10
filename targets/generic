@@ -63,6 +63,9 @@ try_config('KERNEL_IO_URING', false)
 config('KERNEL_FHANDLE', false)
 config('KERNEL_FANOTIFY', false)
 config('KERNEL_CGROUPS', false)
+-- KERNEL_NAMESPACES is required for procd-ujail
+-- This option is enabled by default on non small flash targets
+config('KERNEL_NAMESPACES', true)
 config('KERNEL_IP_MROUTE', false)
 config('KERNEL_IPV6_MROUTE', false)
 config('KERNEL_IPV6_SEG6_LWTUNNEL', false)
