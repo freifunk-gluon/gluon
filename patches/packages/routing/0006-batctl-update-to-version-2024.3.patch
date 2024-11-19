@@ -1,0 +1,2305 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 19 Nov 2024 14:58:54 +0100
+Subject: batctl: update to version 2024.3
+
+Similarly, also update batctl to the version provided in the
+latest openwrt/routing feed's master branch.
+Plus the noflood mark patch used by Gluon.
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/batctl/Makefile b/batctl/Makefile
+index 129015f77ee49950f32b3af160cff35fbc92c703..daee9dc41aa8ded1dd0223842bb2a3eeda8576f9 100644
+--- a/batctl/Makefile
++++ b/batctl/Makefile
+@@ -1,53 +1,50 @@
+-#
+-# Copyright (C) 2014 OpenWrt.org
+-#
+-# This is free software, licensed under the GNU General Public License v2.
+-# See /LICENSE for more information.
+-#
++# SPDX-License-Identifier: GPL-2.0-only
+ 
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=batctl
+-
+-PKG_VERSION:=2019.2
+-PKG_RELEASE:=8
+-PKG_HASH:=fb656208ff7d4cd8b1b422f60c9e6d8747302a347cbf6c199d7afa9b80f80ea3
++PKG_VERSION:=2024.3
++PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+-PKG_LICENSE:=GPL-2.0
+-
++PKG_HASH:=665e655eda381415218a4d5f5fd77ff33c4fa9b5edbb7e88e839096961e3600b
+ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSION)
+ 
++PKG_MAINTAINER:=Simon Wunderlich <sw@simonwunderlich.de>
++PKG_LICENSE:=GPL-2.0-only ISC MIT
++PKG_LICENSE_FILES:=LICENSES/preferred/GPL-2.0 LICENSES/preferred/MIT LICENSES/deprecated/ISC
++
++PKG_BUILD_PARALLEL:=1
++PKG_BUILD_FLAGS:=gc-sections lto
++
+ include $(INCLUDE_DIR)/package.mk
+ 
+ define Package/batctl/Default
+-  URL:=https://www.open-mesh.org/
+   SECTION:=net
+   CATEGORY:=Network
++  URL:=https://www.open-mesh.org/
+   DEPENDS:=+libnl-tiny +libc +librt
+   PROVIDES:=batctl
+-  MAINTAINER:=Simon Wunderlich <sw@simonwunderlich.de>
+ endef
+ 
+ define Package/batctl/description
+-batctl is a more intuitive managment utility for B.A.T.M.A.N.-Advanced.
+-It is an easier method for configuring batman-adv and provides some
+-additional tools for debugging as well. This package builds
+-version $(PKG_VERSION) of the user space utility.
++  batctl is a more intuitive managment utility for B.A.T.M.A.N.-Advanced.
++  It is an easier method for configuring batman-adv and provides some
++  additional tools for debugging as well. This package builds
++  version $(PKG_VERSION) of the user space utility.
+ endef
+ 
+ define Package/batctl-tiny
+ $(call Package/batctl/Default)
+   TITLE:=B.A.T.M.A.N. Advanced user space configuration tool (Minimal)
+   VARIANT:=tiny
+-  PROVIDES:=batctl
+   ALTERNATIVES:=100:/usr/sbin/batctl:/usr/libexec/batctl-tiny
+ endef
+ 
+ define Package/batctl-tiny/description
+ $(Package/batctl/description)
+-Only configuration relevant subcommands are enabled.
++  Only configuration relevant subcommands are enabled.
+ endef
+ 
+ define Package/batctl-default
+@@ -59,7 +56,7 @@ endef
+ 
+ define Package/batctl-default/description
+ $(Package/batctl/description)
+-Standard subcommands for configuration and online debugging are enabled.
++  Standard subcommands for configuration and online debugging are enabled.
+ endef
+ 
+ define Package/batctl-full
+@@ -71,36 +68,15 @@ endef
+ 
+ define Package/batctl-full/description
+ $(Package/batctl/description)
+-Subcommands for configuration, online and offline debugging are enabled.
++  Subcommands for configuration, online and offline debugging are enabled.
+ endef
+ 
+-# The linker can identify unused sections of a binary when each symbol is stored
+-# in a separate section. This mostly removes unused linker sections and reduces
+-# the size by ~3% on mipsel.
+-
+-TARGET_CFLAGS  += -ffunction-sections -fdata-sections
+-TARGET_LDFLAGS += -Wl,--gc-sections
+-
+-# Link-time optimization allows to move parts of the optimization from the single
+-# source file to the global source view. This is done by emitting the GIMPLE
+-# representation in each object file and analyzing it again during the link step.
+-
+-TARGET_CFLAGS  += -flto
+-TARGET_LDFLAGS += -fuse-linker-plugin
+-
+-MAKE_BATCTL_ENV += \
+-        CPPFLAGS="$(TARGET_CPPFLAGS)" \
+-        CFLAGS="$(TARGET_CFLAGS)" \
+-        LDFLAGS="$(TARGET_LDFLAGS)" \
++MAKE_VARS += \
+         LIBNL_NAME="libnl-tiny" \
+         LIBNL_GENL_NAME="libnl-tiny"
+ 
+-MAKE_BATCTL_ARGS += \
+-        REVISION="$(PKG_BATCTL_SHORTREV)" \
+-        CC="$(TARGET_CC)" \
+-        DESTDIR="$(PKG_INSTALL_DIR)" \
+-        batctl install \
+-        REVISION="openwrt-$(PKG_VERSION)-$(PKG_RELEASE)"
++MAKE_FLAGS += \
++        REVISION="$(PKG_VERSION)-openwrt-$(PKG_RELEASE)"
+ 
+ config-n := \
+ 	aggregation \
+@@ -108,28 +84,37 @@ config-n := \
+ 	backbonetable \
+ 	bisect_iv \
+ 	bonding \
++	bla_backbone_json \
++	bla_claim_json \
+ 	bridge_loop_avoidance \
+ 	claimtable \
+ 	dat_cache \
++	dat_cache_json \
+ 	distributed_arp_table \
+ 	elp_interval \
+ 	event \
+ 	fragmentation \
+ 	gateways \
++	gateways_json \
+ 	gw_mode \
++	hardif_json \
++	hardifs_json \
+ 	hop_penalty \
+ 	interface \
+ 	isolation_mark \
+ 	loglevel \
+ 	mcast_flags \
++	mcast_flags_json \
++	mesh_json \
+ 	multicast_fanout \
+ 	multicast_forceflood \
+ 	multicast_mode \
+-	nc_nodes \
+ 	neighbors \
++	neighbors_json \
+ 	network_coding \
+ 	orig_interval \
+ 	originators \
++	originators_json \
+ 	ping \
+ 	routing_algo \
+ 	statistics \
+@@ -140,6 +125,9 @@ config-n := \
+ 	transglobal \
+ 	translate \
+ 	translocal \
++	transtable_global_json \
++	transtable_local_json \
++	vlan_json \
+ 
+ config-settings := \
+ 	aggregation \
+@@ -168,13 +156,27 @@ config-tables := \
+ 	dat_cache \
+ 	gateways \
+ 	mcast_flags \
+-	nc_nodes \
+ 	neighbors \
+ 	originators \
+ 	statistics \
+ 	transglobal \
+ 	translocal \
+ 
++config-json := \
++	bla_backbone_json \
++	bla_claim_json \
++	dat_cache_json \
++	gateways_json \
++	hardif_json \
++	hardifs_json \
++	mcast_flags_json \
++	mesh_json \
++	neighbors_json \
++	originators_json \
++	transtable_global_json \
++	transtable_local_json \
++	vlan_json \
++
+ config-tools := \
+ 	event \
+ 	ping \
+@@ -198,6 +200,7 @@ ifeq ($(BUILD_VARIANT),default)
+ config-y := \
+ 	$(config-settings) \
+ 	$(config-tables) \
++	$(config-json) \
+ 	$(config-tools) \
+ 
+ endif
+@@ -207,6 +210,7 @@ ifeq ($(BUILD_VARIANT),full)
+ config-y := \
+ 	$(config-settings) \
+ 	$(config-tables) \
++	$(config-json) \
+ 	$(config-tools) \
+ 	$(config-extratools) \
+ 
+@@ -222,10 +226,7 @@ $(call ConfigVars,n)$(call ConfigVars,y)
+ endef
+ $(eval $(call shexport,batctl_config))
+ 
+-define Build/Compile
+-	$(MAKE_BATCTL_ENV) $(MAKE) -C "$(PKG_BUILD_DIR)" $(MAKE_BATCTL_ARGS) \
+-		$$$$$(call shvar,batctl_config)
+-endef
++MAKE_FLAGS += $$$$$(call shvar,batctl_config)
+ 
+ define Package/batctl-tiny/install
+ 	$(INSTALL_DIR) $(1)/usr/libexec
+diff --git a/batctl/patches/0001-batctl-Make-vlan-setting-explicit.patch b/batctl/patches/0001-batctl-Make-vlan-setting-explicit.patch
+deleted file mode 100644
+index 77fe2fdabb309dc771523ae99d3f2a62ba0c3fd9..0000000000000000000000000000000000000000
+--- a/batctl/patches/0001-batctl-Make-vlan-setting-explicit.patch
++++ /dev/null
+@@ -1,592 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Tue, 9 Jul 2019 19:26:46 +0200
+-Subject: batctl: Make vlan setting explicit
+-
+-The requirement to have a VLAN master device on top of the batadv mesh
+-interface is artificially limiting the capabilities of batctl. Not all
+-master devices in linux which register a VLAN are from type "vlan" and are
+-only registering a single VLAN.
+-
+-For example VLAN aware bridges can create multiple VLANs. These require
+-that the VLAN is identified using the VID and not the vlan device.
+-
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/4704c5e05af7a4f6a397d80ff80f2f2c56fe8f2c
+-
+-diff --git a/ap_isolation.c b/ap_isolation.c
+-index 71dcd00eac845d488c4969b17e1339f181c6c913..36fd4d607d03768251150951ebe450740501d446 100644
+---- a/ap_isolation.c
+-+++ b/ap_isolation.c
+-@@ -28,7 +28,7 @@ static int get_attrs_ap_isolation(struct nl_msg *msg, void *arg)
+- {
+- 	struct state *state = arg;
+- 
+--	if (state->vid >= 0)
+-+	if (state->selector == SP_VLAN)
+- 		nla_put_u16(msg, BATADV_ATTR_VLANID, state->vid);
+- 
+- 	return 0;
+-@@ -38,7 +38,7 @@ static int get_ap_isolation(struct state *state)
+- {
+- 	enum batadv_nl_commands nl_cmd = BATADV_CMD_SET_MESH;
+- 
+--	if (state->vid >= 0)
+-+	if (state->selector == SP_VLAN)
+- 		nl_cmd = BATADV_CMD_GET_VLAN;
+- 
+- 	return sys_simple_nlquery(state, nl_cmd, get_attrs_ap_isolation,
+-@@ -53,7 +53,7 @@ static int set_attrs_ap_isolation(struct nl_msg *msg, void *arg)
+- 
+- 	nla_put_u8(msg, BATADV_ATTR_AP_ISOLATION_ENABLED, data->val);
+- 
+--	if (state->vid >= 0)
+-+	if (state->selector == SP_VLAN)
+- 		nla_put_u16(msg, BATADV_ATTR_VLANID, state->vid);
+- 
+- 	return 0;
+-@@ -63,7 +63,7 @@ static int set_ap_isolation(struct state *state)
+- {
+- 	enum batadv_nl_commands nl_cmd = BATADV_CMD_SET_MESH;
+- 
+--	if (state->vid >= 0)
+-+	if (state->selector == SP_VLAN)
+- 		nl_cmd = BATADV_CMD_SET_VLAN;
+- 
+- 	return sys_simple_nlquery(state, nl_cmd, set_attrs_ap_isolation, NULL);
+-@@ -81,3 +81,8 @@ COMMAND_NAMED(SUBCOMMAND, ap_isolation, "ap", handle_sys_setting,
+- 	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+- 	      &batctl_settings_ap_isolation,
+- 	      "[0|1]             \tdisplay or modify ap_isolation setting");
+-+
+-+COMMAND_NAMED(SUBCOMMAND_VID, ap_isolation, "ap", handle_sys_setting,
+-+	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+-+	      &batctl_settings_ap_isolation,
+-+	      "[0|1]             \tdisplay or modify ap_isolation setting for vlan device or id");
+-diff --git a/functions.c b/functions.c
+-index aad6327a8f0fe6e512157e427d88dd0649acd052..61ea4879ebffbdadf8ef5bb12bb737c1ed7ff76f 100644
+---- a/functions.c
+-+++ b/functions.c
+-@@ -919,32 +919,44 @@ static int query_rtnl_link_single(int mesh_ifindex,
+- 	return 0;
+- }
+- 
+--int translate_mesh_iface(struct state *state)
+-+int translate_vlan_iface(struct state *state, const char *vlandev)
+- {
+- 	struct rtnl_link_iface_data link_data;
+- 	unsigned int arg_ifindex;
+- 
+--	arg_ifindex = if_nametoindex(state->arg_iface);
+-+	arg_ifindex = if_nametoindex(vlandev);
+- 	if (arg_ifindex == 0)
+--		goto fallback_meshif;
+-+		return -ENODEV;
+- 
+- 	query_rtnl_link_single(arg_ifindex, &link_data);
+- 	if (!link_data.vid_found)
+--		goto fallback_meshif;
+-+		return -ENODEV;
+- 
+- 	if (!link_data.link_found)
+--		goto fallback_meshif;
+-+		return -EINVAL;
+- 
+- 	if (!link_data.kind_found)
+--		goto fallback_meshif;
+-+		return -EINVAL;
+- 
+- 	if (strcmp(link_data.kind, "vlan") != 0)
+--		goto fallback_meshif;
+-+		return -EINVAL;
+- 
+- 	if (!if_indextoname(link_data.link, state->mesh_iface))
+--		goto fallback_meshif;
+-+		return -ENODEV;
+- 
+- 	state->vid = link_data.vid;
+-+	state->selector = SP_VLAN;
+-+
+-+	return 0;
+-+}
+-+
+-+int translate_mesh_iface_vlan(struct state *state, const char *vlandev)
+-+{
+-+	int ret;
+-+
+-+	ret = translate_vlan_iface(state, vlandev);
+-+	if (ret < 0)
+-+		goto fallback_meshif;
+- 
+- 	return 0;
+- 
+-@@ -952,9 +964,36 @@ int translate_mesh_iface(struct state *state)
+- 	/* if there is no vid then the argument must be the
+- 	 * mesh interface
+- 	 */
+--	snprintf(state->mesh_iface, sizeof(state->mesh_iface), "%s",
+--		 state->arg_iface);
+--	state->vid = -1;
+-+	snprintf(state->mesh_iface, sizeof(state->mesh_iface), "%s", vlandev);
+-+	state->selector = SP_NONE_OR_MESHIF;
+-+
+-+	return 0;
+-+}
+-+
+-+int translate_vid(struct state *state, const char *vidstr)
+-+{
+-+	unsigned long vid;
+-+	char *endptr;
+-+
+-+	if (vidstr[0] == '\0') {
+-+		fprintf(stderr, "Error - unparsable vid\n");
+-+		return -EINVAL;
+-+	}
+-+
+-+	vid = strtoul(vidstr, &endptr, 0);
+-+	if (!endptr || *endptr != '\0') {
+-+		fprintf(stderr, "Error - unparsable vid\n");
+-+		return -EINVAL;
+-+	}
+-+
+-+	if (vid > 4095) {
+-+		fprintf(stderr, "Error - too large vid (max 4095)\n");
+-+		return -ERANGE;
+-+	}
+-+
+-+	/* get mesh interface and overwrite vid afterwards */
+-+	state->vid = vid;
+-+	state->selector = SP_VLAN;
+- 
+- 	return 0;
+- }
+-diff --git a/functions.h b/functions.h
+-index d4a556879664eb5b4b11e6c638c22728db7a83a4..7474c40bbcdcb8fac8865def2e82514aede62b69 100644
+---- a/functions.h
+-+++ b/functions.h
+-@@ -50,7 +50,9 @@ struct ether_addr *translate_mac(const char *mesh_iface,
+- struct ether_addr *resolve_mac(const char *asc);
+- int query_rtnl_link(int ifindex, nl_recvmsg_msg_cb_t func, void *arg);
+- int netlink_simple_request(struct nl_msg *msg);
+--int translate_mesh_iface(struct state *state);
+-+int translate_mesh_iface_vlan(struct state *state, const char *vlandev);
+-+int translate_vlan_iface(struct state *state, const char *vlandev);
+-+int translate_vid(struct state *state, const char *vidstr);
+- int get_algoname(const char *mesh_iface, char *algoname, size_t algoname_len);
+- int check_mesh_iface(struct state *state);
+- int check_mesh_iface_ownership(struct state *state, char *hard_iface);
+-diff --git a/main.c b/main.c
+-index 278683c6080e3ff4a9f3225931d0c5eb44f89595..309087799b839848029bd5cbec60cbe1213f9190 100644
+---- a/main.c
+-+++ b/main.c
+-@@ -28,48 +28,75 @@ extern const struct command *__stop___command[];
+- 
+- static void print_usage(void)
+- {
+--	enum command_type type[] = {
+--		SUBCOMMAND,
+--		DEBUGTABLE,
+-+	struct {
+-+		const char *label;
+-+		uint32_t types;
+-+	} type[] = {
+-+		{
+-+			.label = "commands:\n",
+-+			.types = BIT(SUBCOMMAND) |
+-+				 BIT(SUBCOMMAND_VID),
+-+		},
+-+		{
+-+			.label = "debug tables:                                   \tdisplay the corresponding debug table\n",
+-+			.types = BIT(DEBUGTABLE),
+-+		},
+-+	};
+-+	const char *default_prefixes[] = {
+-+		"",
+-+		NULL,
+-+	};
+-+	const char *vlan_prefixes[] = {
+-+		"vlan <vdev> ",
+-+		"vid <vid> ",
+-+		NULL,
+- 	};
+- 	const struct command **p;
+--	char buf[32];
+-+	const char **prefixes;
+-+	const char **prefix;
+-+	char buf[64];
+- 	size_t i;
+- 
+- 	fprintf(stderr, "Usage: batctl [options] command|debug table [parameters]\n");
+- 	fprintf(stderr, "options:\n");
+--	fprintf(stderr, " \t-m mesh interface or VLAN created on top of a mesh interface (default 'bat0')\n");
+-+	fprintf(stderr, " \t-m mesh interface (default 'bat0')\n");
+- 	fprintf(stderr, " \t-h print this help (or 'batctl <command|debug table> -h' for the parameter help)\n");
+- 	fprintf(stderr, " \t-v print version\n");
+- 
+- 	for (i = 0; i < sizeof(type) / sizeof(*type); i++) {
+- 		fprintf(stderr, "\n");
+- 
+--		switch (type[i]) {
+--		case SUBCOMMAND:
+--			fprintf(stderr, "commands:\n");
+--			break;
+--		case DEBUGTABLE:
+--			fprintf(stderr, "debug tables:                                   \tdisplay the corresponding debug table\n");
+--			break;
+--		}
+-+		fprintf(stderr, "%s", type[i].label);
+- 
+- 		for (p = __start___command; p < __stop___command; p++) {
+- 			const struct command *cmd = *p;
+- 
+--			if (cmd->type != type[i])
+-+			if (!(BIT(cmd->type) & type[i].types))
+- 				continue;
+- 
+- 			if (!cmd->usage)
+- 				continue;
+- 
+--			if (strcmp(cmd->name, cmd->abbr) == 0)
+--				snprintf(buf, sizeof(buf), "%s", cmd->name);
+--			else
+--				snprintf(buf, sizeof(buf), "%s|%s", cmd->name,
+--					 cmd->abbr);
+-+			switch (cmd->type) {
+-+			case SUBCOMMAND_VID:
+-+				prefixes = vlan_prefixes;
+-+				break;
+-+			default:
+-+				prefixes = default_prefixes;
+-+				break;
+-+			}
+- 
+--			fprintf(stderr, " \t%-27s%s\n", buf, cmd->usage);
+-+			for (prefix = &prefixes[0]; *prefix; prefix++) {
+-+				if (strcmp(cmd->name, cmd->abbr) == 0)
+-+					snprintf(buf, sizeof(buf), "%s%s",
+-+						 *prefix, cmd->name);
+-+				else
+-+					snprintf(buf, sizeof(buf), "%s%s|%s",
+-+						 *prefix, cmd->name, cmd->abbr);
+-+
+-+				fprintf(stderr, " \t%-35s%s\n", buf,
+-+					cmd->usage);
+-+			}
+- 		}
+- 	}
+- }
+-@@ -93,13 +120,17 @@ static void version(void)
+- 	exit(EXIT_SUCCESS);
+- }
+- 
+--static const struct command *find_command(const char *name)
+-+static const struct command *find_command_by_types(uint32_t types,
+-+						   const char *name)
+- {
+- 	const struct command **p;
+- 
+- 	for (p = __start___command; p < __stop___command; p++) {
+- 		const struct command *cmd = *p;
+- 
+-+		if (!(BIT(cmd->type) & types))
+-+			continue;
+-+
+- 		if (strcmp(cmd->name, name) == 0)
+- 			return cmd;
+- 
+-@@ -110,13 +141,123 @@ static const struct command *find_command(const char *name)
+- 	return NULL;
+- }
+- 
+-+static const struct command *find_command(struct state *state, const char *name)
+-+{
+-+	uint32_t types;
+-+
+-+	switch (state->selector) {
+-+	case SP_NONE_OR_MESHIF:
+-+		types = BIT(SUBCOMMAND) |
+-+			BIT(DEBUGTABLE);
+-+		break;
+-+	case SP_VLAN:
+-+		types = BIT(SUBCOMMAND_VID);
+-+		break;
+-+	default:
+-+		return NULL;
+-+	}
+-+
+-+	return find_command_by_types(types, name);
+-+}
+-+
+-+static int detect_selector_prefix(int argc, char *argv[],
+-+				  enum selector_prefix *selector)
+-+{
+-+	/* not enough remaining arguments to detect anything */
+-+	if (argc < 2)
+-+		return -EINVAL;
+-+
+-+	/* only detect selector prefix which identifies meshif */
+-+	if (strcmp(argv[0], "vlan") == 0) {
+-+		*selector = SP_VLAN;
+-+		return 2;
+-+	}
+-+
+-+	return 0;
+-+}
+-+
+-+static int parse_meshif_args(struct state *state, int argc, char *argv[])
+-+{
+-+	enum selector_prefix selector;
+-+	int parsed_args;
+-+	char *dev_arg;
+-+	int ret;
+-+
+-+	parsed_args = detect_selector_prefix(argc, argv, &selector);
+-+	if (parsed_args < 1)
+-+		goto fallback_meshif_vlan;
+-+
+-+	dev_arg = argv[parsed_args - 1];
+-+
+-+	switch (selector) {
+-+	case SP_VLAN:
+-+		ret = translate_vlan_iface(state, dev_arg);
+-+		if (ret < 0) {
+-+			fprintf(stderr, "Error - invalid vlan device %s: %s\n",
+-+				dev_arg, strerror(-ret));
+-+			return ret;
+-+		}
+-+
+-+		return parsed_args;
+-+	case SP_NONE_OR_MESHIF:
+-+		/* not allowed - see detect_selector_prefix */
+-+		break;
+-+	}
+-+
+-+fallback_meshif_vlan:
+-+	/* parse vlan as part of -m parameter or mesh_dfl_iface */
+-+	translate_mesh_iface_vlan(state, state->arg_iface);
+-+	return 0;
+-+}
+-+
+-+static int parse_dev_args(struct state *state, int argc, char *argv[])
+-+{
+-+	int dev_arguments;
+-+	int ret;
+-+
+-+	/* try to parse selector prefix which can be used to identify meshif */
+-+	dev_arguments = parse_meshif_args(state, argc, argv);
+-+	if (dev_arguments < 0)
+-+		return dev_arguments;
+-+
+-+	/* try to parse secondary prefix selectors which cannot be used to
+-+	 * identify the meshif
+-+	 */
+-+	argv += dev_arguments;
+-+	argc -= dev_arguments;
+-+
+-+	switch (state->selector) {
+-+	case SP_NONE_OR_MESHIF:
+-+		/* continue below */
+-+		break;
+-+	default:
+-+		return dev_arguments;
+-+	}
+-+
+-+	/* enough room for additional selectors? */
+-+	if (argc < 2)
+-+		return dev_arguments;
+-+
+-+	if (strcmp(argv[0], "vid") == 0) {
+-+		ret = translate_vid(state, argv[1]);
+-+		if (ret < 0)
+-+			return ret;
+-+
+-+		return dev_arguments + 2;
+-+	}
+-+
+-+	return dev_arguments;
+-+}
+-+
+- int main(int argc, char **argv)
+- {
+- 	const struct command *cmd;
+- 	struct state state = {
+- 		.arg_iface = mesh_dfl_iface,
+-+		.selector = SP_NONE_OR_MESHIF,
+- 		.cmd = NULL,
+- 	};
+-+	int dev_arguments;
+- 	int opt;
+- 	int ret;
+- 
+-@@ -152,7 +293,20 @@ int main(int argc, char **argv)
+- 	argc -= optind;
+- 	optind = 0;
+- 
+--	cmd = find_command(argv[0]);
+-+	/* parse arguments to identify vlan, ... */
+-+	dev_arguments = parse_dev_args(&state, argc, argv);
+-+	if (dev_arguments < 0)
+-+		goto err;
+-+
+-+	argv += dev_arguments;
+-+	argc -= dev_arguments;
+-+
+-+	if (argc == 0) {
+-+		fprintf(stderr, "Error - no command specified\n");
+-+		goto err;
+-+	}
+-+
+-+	cmd = find_command(&state, argv[0]);
+- 	if (!cmd) {
+- 		fprintf(stderr,
+- 			"Error - no valid command or debug table specified: %s\n",
+-@@ -162,8 +316,6 @@ int main(int argc, char **argv)
+- 
+- 	state.cmd = cmd;
+- 
+--	translate_mesh_iface(&state);
+--
+- 	if (cmd->flags & COMMAND_FLAG_MESH_IFACE &&
+- 	    check_mesh_iface(&state) < 0) {
+- 		fprintf(stderr,
+-diff --git a/main.h b/main.h
+-index 1a4701513c49ad8974b9c9189619f5dde622acd4..efc277c5465942d7b4dba284d29f653273b42dce 100644
+---- a/main.h
+-+++ b/main.h
+-@@ -56,13 +56,20 @@ enum command_flags {
+- 	COMMAND_FLAG_INVERSE = BIT(2),
+- };
+- 
+-+enum selector_prefix {
+-+	SP_NONE_OR_MESHIF,
+-+	SP_VLAN,
+-+};
+-+
+- enum command_type {
+- 	SUBCOMMAND,
+-+	SUBCOMMAND_VID,
+- 	DEBUGTABLE,
+- };
+- 
+- struct state {
+- 	char *arg_iface;
+-+	enum selector_prefix selector;
+- 	char mesh_iface[IF_NAMESIZE];
+- 	unsigned int mesh_ifindex;
+- 	int vid;
+-@@ -84,7 +91,7 @@ struct command {
+- };
+- 
+- #define COMMAND_NAMED(_type, _name, _abbr, _handler, _flags, _arg, _usage) \
+--	static const struct command command_ ## _name = { \
+-+	static const struct command command_ ## _name ## _ ## _type = { \
+- 		.type = (_type), \
+- 		.name = (#_name), \
+- 		.abbr = _abbr, \
+-@@ -93,8 +100,8 @@ struct command {
+- 		.arg = (_arg), \
+- 		.usage = (_usage), \
+- 	}; \
+--	static const struct command *__command_ ## _name \
+--	__attribute__((__used__)) __attribute__ ((__section__ ("__command"))) = &command_ ## _name
+-+	static const struct command *__command_ ## _name ## _ ## _type \
+-+	__attribute__((__used__)) __attribute__ ((__section__ ("__command"))) = &command_ ## _name ## _ ## _type
+- 
+- #define COMMAND(_type, _handler, _abbr, _flags, _arg, _usage) \
+- 	COMMAND_NAMED(_type, _handler, _abbr, _handler, _flags, _arg, _usage)
+-diff --git a/man/batctl.8 b/man/batctl.8
+-index 0b430313075b5a7a4c796eba0867954e10061002..a5656cf9059bd82c1b85928c22e30d01c56e475f 100644
+---- a/man/batctl.8
+-+++ b/man/batctl.8
+-@@ -46,7 +46,7 @@ performances, is also included.
+- .SH OPTIONS
+- .TP
+- .I \fBoptions:
+--\-m     specify mesh interface or VLAN created on top of a mesh interface (default 'bat0')
+-+\-m     specify mesh interface (default 'bat0')
+- .br
+- \-h     print general batctl help
+- .br
+-@@ -70,7 +70,11 @@ originator interval. The interval is in units of milliseconds.
+- .br
+- .IP "\fBap_isolation\fP|\fBap\fP [\fB0\fP|\fB1\fP]"
+- If no parameter is given the current ap isolation setting is displayed. Otherwise the parameter is used to enable or
+--disable ap isolation. This command can be used in conjunction with "\-m" option to target per VLAN configurations.
+-+disable ap isolation.
+-+.br
+-+.IP "<\fBvlan <vdev>\fP|\fBvid <vid>\fP> \fBap_isolation\fP|\fBap\fP [\fB0\fP|\fB1\fP]"
+-+If no parameter is given the current ap isolation setting for the specified VLAN is displayed. Otherwise the parameter is used to enable or
+-+disable ap isolation for the specified VLAN.
+- .br
+- .IP "\fBbridge_loop_avoidance\fP|\fBbl\fP [\fB0\fP|\fB1\fP]"
+- If no parameter is given the current bridge loop avoidance setting is displayed. Otherwise the parameter is used to enable
+-diff --git a/sys.c b/sys.c
+-index 39123db87d391b8898b7454eba7708515bfb3c78..61a314d88010ef34507ec9dd6a77b53f318f63a8 100644
+---- a/sys.c
+-+++ b/sys.c
+-@@ -141,9 +141,35 @@ int sys_simple_print_boolean(struct nl_msg *msg, void *arg,
+- 
+- static void settings_usage(struct state *state)
+- {
+--	fprintf(stderr, "Usage: batctl [options] %s|%s [parameters] %s\n",
+--		state->cmd->name, state->cmd->abbr,
+--		state->cmd->usage ? state->cmd->usage : "");
+-+	const char *default_prefixes[] = {
+-+		"",
+-+		NULL,
+-+	};
+-+	const char *vlan_prefixes[] = {
+-+		"vlan <vdev> ",
+-+		"vid <vid> ",
+-+		NULL,
+-+	};
+-+	const char *linestart = "Usage:";
+-+	const char **prefixes;
+-+	const char **prefix;
+-+
+-+	switch (state->cmd->type) {
+-+	case SUBCOMMAND_VID:
+-+		prefixes = vlan_prefixes;
+-+		break;
+-+	default:
+-+		prefixes = default_prefixes;
+-+		break;
+-+	}
+-+
+-+	for (prefix = &prefixes[0]; *prefix; prefix++) {
+-+		fprintf(stderr, "%s batctl [options] %s%s|%s [parameters] %s\n",
+-+			linestart, *prefix, state->cmd->name, state->cmd->abbr,
+-+			state->cmd->usage ? state->cmd->usage : "");
+-+
+-+		linestart = "      ";
+-+	}
+- 
+- 	fprintf(stderr, "parameters:\n");
+- 	fprintf(stderr, " \t -h print this help\n");
+-@@ -233,15 +259,19 @@ int handle_sys_setting(struct state *state, int argc, char **argv)
+- 		return EXIT_FAILURE;
+- 	}
+- 
+--	/* if the specified interface is a VLAN then change the path to point
+--	 * to the proper "vlan%{vid}" subfolder in the sysfs tree.
+--	 */
+--	if (state->vid >= 0)
+--		snprintf(path_buff, PATH_BUFF_LEN, SYS_VLAN_PATH,
+--			 state->mesh_iface, state->vid);
+--	else
+-+	switch (state->selector) {
+-+	case SP_NONE_OR_MESHIF:
+- 		snprintf(path_buff, PATH_BUFF_LEN, SYS_BATIF_PATH_FMT,
+- 			 state->mesh_iface);
+-+		break;
+-+	case SP_VLAN:
+-+		/* if the specified interface is a VLAN then change the path to
+-+		 * point to the proper "vlan%{vid}" subfolder in the sysfs tree.
+-+		 */
+-+		snprintf(path_buff, PATH_BUFF_LEN, SYS_VLAN_PATH,
+-+			 state->mesh_iface, state->vid);
+-+		break;
+-+	}
+- 
+- 	if (argc == 1) {
+- 		res = sys_read_setting(state, path_buff, settings->sysfs_name);
+diff --git a/batctl/patches/0002-batctl-Integrate-hardif-setting-framework.patch b/batctl/patches/0002-batctl-Integrate-hardif-setting-framework.patch
+deleted file mode 100644
+index 21f6e94f199b23336271d608ac1080ce5a2c884c..0000000000000000000000000000000000000000
+--- a/batctl/patches/0002-batctl-Integrate-hardif-setting-framework.patch
++++ /dev/null
+@@ -1,222 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Tue, 9 Jul 2019 19:26:47 +0200
+-Subject: batctl: Integrate hardif setting framework
+-
+-batctl currently supports settings which are either mesh interface or vlan
+-specific. But B.A.T.M.A.N. V introduced two additional settings which are
+-hard (slave) interface specific.
+-
+-To support these, an additional command prefix called hardif is implemented
+-for some sysfs commands:
+-
+-  $ batctl hardif eth0 ...
+-
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/6ed4dfc5459fd3b9ed221308075db592e538c92f
+-
+-diff --git a/functions.c b/functions.c
+-index 61ea4879ebffbdadf8ef5bb12bb737c1ed7ff76f..4ffa86ca7830dea3ed2599656831b56f6fec9e33 100644
+---- a/functions.c
+-+++ b/functions.c
+-@@ -998,6 +998,28 @@ int translate_vid(struct state *state, const char *vidstr)
+- 	return 0;
+- }
+- 
+-+int translate_hard_iface(struct state *state, const char *hardif)
+-+{
+-+	struct rtnl_link_iface_data link_data;
+-+	unsigned int arg_ifindex;
+-+
+-+	arg_ifindex = if_nametoindex(hardif);
+-+	if (arg_ifindex == 0)
+-+		return -ENODEV;
+-+
+-+	query_rtnl_link_single(arg_ifindex, &link_data);
+-+	if (!link_data.master_found)
+-+		return -ENOLINK;
+-+
+-+	if (!if_indextoname(link_data.master, state->mesh_iface))
+-+		return -ENOLINK;
+-+
+-+	state->hif = arg_ifindex;
+-+	state->selector = SP_HARDIF;
+-+
+-+	return 0;
+-+}
+-+
+- static int check_mesh_iface_netlink(struct state *state)
+- {
+- 	struct rtnl_link_iface_data link_data;
+-diff --git a/functions.h b/functions.h
+-index 7474c40bbcdcb8fac8865def2e82514aede62b69..0a08870cee651ee676e67d3e55677c53f59e41c4 100644
+---- a/functions.h
+-+++ b/functions.h
+-@@ -53,6 +53,7 @@ int netlink_simple_request(struct nl_msg *msg);
+- int translate_mesh_iface_vlan(struct state *state, const char *vlandev);
+- int translate_vlan_iface(struct state *state, const char *vlandev);
+- int translate_vid(struct state *state, const char *vidstr);
+-+int translate_hard_iface(struct state *state, const char *hardif);
+- int get_algoname(const char *mesh_iface, char *algoname, size_t algoname_len);
+- int check_mesh_iface(struct state *state);
+- int check_mesh_iface_ownership(struct state *state, char *hard_iface);
+-diff --git a/main.c b/main.c
+-index 309087799b839848029bd5cbec60cbe1213f9190..3b3a16f4c1caffdd2be897e6bf2a00564e5580f8 100644
+---- a/main.c
+-+++ b/main.c
+-@@ -35,7 +35,8 @@ static void print_usage(void)
+- 		{
+- 			.label = "commands:\n",
+- 			.types = BIT(SUBCOMMAND) |
+--				 BIT(SUBCOMMAND_VID),
+-+				 BIT(SUBCOMMAND_VID) |
+-+				 BIT(SUBCOMMAND_HIF),
+- 		},
+- 		{
+- 			.label = "debug tables:                                   \tdisplay the corresponding debug table\n",
+-@@ -51,6 +52,10 @@ static void print_usage(void)
+- 		"vid <vid> ",
+- 		NULL,
+- 	};
+-+	const char *hardif_prefixes[] = {
+-+		"hardif <netdev> ",
+-+		NULL,
+-+	};
+- 	const struct command **p;
+- 	const char **prefixes;
+- 	const char **prefix;
+-@@ -81,6 +86,9 @@ static void print_usage(void)
+- 			case SUBCOMMAND_VID:
+- 				prefixes = vlan_prefixes;
+- 				break;
+-+			case SUBCOMMAND_HIF:
+-+				prefixes = hardif_prefixes;
+-+				break;
+- 			default:
+- 				prefixes = default_prefixes;
+- 				break;
+-@@ -153,6 +161,9 @@ static const struct command *find_command(struct state *state, const char *name)
+- 	case SP_VLAN:
+- 		types = BIT(SUBCOMMAND_VID);
+- 		break;
+-+	case SP_HARDIF:
+-+		types = BIT(SUBCOMMAND_HIF);
+-+		break;
+- 	default:
+- 		return NULL;
+- 	}
+-@@ -171,6 +182,9 @@ static int detect_selector_prefix(int argc, char *argv[],
+- 	if (strcmp(argv[0], "vlan") == 0) {
+- 		*selector = SP_VLAN;
+- 		return 2;
+-+	} else if (strcmp(argv[0], "hardif") == 0) {
+-+		*selector = SP_HARDIF;
+-+		return 2;
+- 	}
+- 
+- 	return 0;
+-@@ -197,7 +211,17 @@ static int parse_meshif_args(struct state *state, int argc, char *argv[])
+- 				dev_arg, strerror(-ret));
+- 			return ret;
+- 		}
+-+		return parsed_args;
+-+	case SP_HARDIF:
+-+		ret = translate_hard_iface(state, dev_arg);
+-+		if (ret < 0) {
+-+			fprintf(stderr, "Error - invalid hardif %s: %s\n",
+-+				dev_arg, strerror(-ret));
+-+			return ret;
+-+		}
+- 
+-+		snprintf(state->hard_iface, sizeof(state->hard_iface), "%s",
+-+			 dev_arg);
+- 		return parsed_args;
+- 	case SP_NONE_OR_MESHIF:
+- 		/* not allowed - see detect_selector_prefix */
+-diff --git a/main.h b/main.h
+-index efc277c5465942d7b4dba284d29f653273b42dce..a97b26fe7b969e01cbdb848e58824e36e3d236ab 100644
+---- a/main.h
+-+++ b/main.h
+-@@ -59,11 +59,13 @@ enum command_flags {
+- enum selector_prefix {
+- 	SP_NONE_OR_MESHIF,
+- 	SP_VLAN,
+-+	SP_HARDIF,
+- };
+- 
+- enum command_type {
+- 	SUBCOMMAND,
+- 	SUBCOMMAND_VID,
+-+	SUBCOMMAND_HIF,
+- 	DEBUGTABLE,
+- };
+- 
+-@@ -72,7 +74,11 @@ struct state {
+- 	enum selector_prefix selector;
+- 	char mesh_iface[IF_NAMESIZE];
+- 	unsigned int mesh_ifindex;
+--	int vid;
+-+	char hard_iface[IF_NAMESIZE];
+-+	union {
+-+		unsigned int hif;
+-+		int vid;
+-+	};
+- 	const struct command *cmd;
+- 
+- 	struct nl_sock *sock;
+-diff --git a/sys.c b/sys.c
+-index 61a314d88010ef34507ec9dd6a77b53f318f63a8..b9555ee484f89c1022c0b4e74e18154d18b7af6b 100644
+---- a/sys.c
+-+++ b/sys.c
+-@@ -150,6 +150,10 @@ static void settings_usage(struct state *state)
+- 		"vid <vid> ",
+- 		NULL,
+- 	};
+-+	const char *hardif_prefixes[] = {
+-+		"hardif <netdev> ",
+-+		NULL,
+-+	};
+- 	const char *linestart = "Usage:";
+- 	const char **prefixes;
+- 	const char **prefix;
+-@@ -158,6 +162,9 @@ static void settings_usage(struct state *state)
+- 	case SUBCOMMAND_VID:
+- 		prefixes = vlan_prefixes;
+- 		break;
+-+	case SUBCOMMAND_HIF:
+-+		prefixes = hardif_prefixes;
+-+		break;
+- 	default:
+- 		prefixes = default_prefixes;
+- 		break;
+-@@ -271,6 +278,14 @@ int handle_sys_setting(struct state *state, int argc, char **argv)
+- 		snprintf(path_buff, PATH_BUFF_LEN, SYS_VLAN_PATH,
+- 			 state->mesh_iface, state->vid);
+- 		break;
+-+	case SP_HARDIF:
+-+		/* if a hard interface was specified then change the path to
+-+		 * point to the proper ${hardif}/batman-adv path in the sysfs
+-+		 * tree.
+-+		 */
+-+		snprintf(path_buff, PATH_BUFF_LEN, SYS_HARDIF_PATH,
+-+			 state->hard_iface);
+-+		break;
+- 	}
+- 
+- 	if (argc == 1) {
+-diff --git a/sys.h b/sys.h
+-index d4f2fcf542bc66b2b1c6ec55a9ac16e10fdc5cac..b6f0f9043a9af8e3c4d4f8bf7e4af4cab0aa5df9 100644
+---- a/sys.h
+-+++ b/sys.h
+-@@ -21,8 +21,9 @@
+- #define SYS_BATIF_PATH_FMT	"/sys/class/net/%s/mesh/"
+- #define SYS_IFACE_PATH		"/sys/class/net"
+- #define SYS_IFACE_DIR		SYS_IFACE_PATH"/%s/"
+--#define SYS_MESH_IFACE_FMT	SYS_IFACE_PATH"/%s/batman_adv/mesh_iface"
+--#define SYS_IFACE_STATUS_FMT	SYS_IFACE_PATH"/%s/batman_adv/iface_status"
+-+#define SYS_HARDIF_PATH		SYS_IFACE_DIR "batman_adv/"
+-+#define SYS_MESH_IFACE_FMT	SYS_HARDIF_PATH "mesh_iface"
+-+#define SYS_IFACE_STATUS_FMT	SYS_HARDIF_PATH "iface_status"
+- #define SYS_VLAN_PATH		SYS_IFACE_PATH"/%s/mesh/vlan%d/"
+- #define SYS_ROUTING_ALGO_FMT	SYS_IFACE_PATH"/%s/mesh/routing_algo"
+- #define VLAN_ID_MAX_LEN		4
+diff --git a/batctl/patches/0003-batctl-Add-elp_interval-setting-command.patch b/batctl/patches/0003-batctl-Add-elp_interval-setting-command.patch
+deleted file mode 100644
+index 4bb6fc664a15000a75d9e3d0d62d5f0b07b8ac59..0000000000000000000000000000000000000000
+--- a/batctl/patches/0003-batctl-Add-elp_interval-setting-command.patch
++++ /dev/null
+@@ -1,183 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Tue, 9 Jul 2019 19:26:48 +0200
+-Subject: batctl: Add elp_interval setting command
+-
+-B.A.T.M.A.N. V introduced a hard interface specific setting called
+-elp_interval. It defines the interval in milliseconds in which batman-adv
+-emits probing packets for neighbor sensing (ELP).
+-
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/df5c452a446951c5f2fde265d08f3c2809ac2334
+-
+-diff --git a/Makefile b/Makefile
+-index b7bd545e92963c62128efe60c0dc401bdd9fa023..f071da20f866bff6c162d697d2e43fa9d68ee08d 100755
+---- a/Makefile
+-+++ b/Makefile
+-@@ -45,6 +45,7 @@ $(eval $(call add_command,bridge_loop_avoidance,y))
+- $(eval $(call add_command,claimtable,y))
+- $(eval $(call add_command,dat_cache,y))
+- $(eval $(call add_command,distributed_arp_table,y))
+-+$(eval $(call add_command,elp_interval,y))
+- $(eval $(call add_command,event,y))
+- $(eval $(call add_command,fragmentation,y))
+- $(eval $(call add_command,gateways,y))
+-diff --git a/README.rst b/README.rst
+-index bc54412bc77dae1889d4f05298c34efc1966776b..92983aa6030e2a890283bca448b9203cd4d56b51 100644
+---- a/README.rst
+-+++ b/README.rst
+-@@ -386,6 +386,22 @@ Example::
+-   1000
+- 
+- 
+-+batctl elp interval
+-+===================
+-+
+-+display or modify the elp interval in ms for hard interface
+-+
+-+Usage::
+-+
+-+  batctl hardif $hardif elp_interval|et [interval]
+-+
+-+Example::
+-+
+-+  $ batctl hardif eth0 elp_interval 200
+-+  $ batctl hardif eth0 elp_interval
+-+  200
+-+
+-+
+- batctl loglevel
+- ===============
+- 
+-diff --git a/elp_interval.c b/elp_interval.c
+-new file mode 100644
+-index 0000000000000000000000000000000000000000..0a5e98923a622f52e523696b1ec1bfb856eeca9f
+---- /dev/null
+-+++ b/elp_interval.c
+-@@ -0,0 +1,111 @@
+-+// SPDX-License-Identifier: GPL-2.0
+-+/* Copyright (C) 2009-2019  B.A.T.M.A.N. contributors:
+-+ *
+-+ * Marek Lindner <mareklindner@neomailbox.ch>
+-+ *
+-+ * License-Filename: LICENSES/preferred/GPL-2.0
+-+ */
+-+
+-+#include <errno.h>
+-+#include <stddef.h>
+-+#include <stdint.h>
+-+#include <string.h>
+-+
+-+#include "main.h"
+-+#include "sys.h"
+-+
+-+static struct elp_interval_data {
+-+	uint32_t elp_interval;
+-+} elp_interval;
+-+
+-+static int parse_elp_interval(struct state *state, int argc, char *argv[])
+-+{
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct elp_interval_data *data = settings->data;
+-+	char *endptr;
+-+
+-+	if (argc != 2) {
+-+		fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+-+		return -EINVAL;
+-+	}
+-+
+-+	data->elp_interval = strtoul(argv[1], &endptr, 0);
+-+	if (!endptr || *endptr != '\0') {
+-+		fprintf(stderr, "Error - the supplied argument is invalid: %s\n", argv[1]);
+-+		return -EINVAL;
+-+	}
+-+
+-+	return 0;
+-+}
+-+
+-+static int print_elp_interval(struct nl_msg *msg, void *arg)
+-+{
+-+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+-+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+-+	struct genlmsghdr *ghdr;
+-+	int *result = arg;
+-+
+-+	if (!genlmsg_valid_hdr(nlh, 0))
+-+		return NL_OK;
+-+
+-+	ghdr = nlmsg_data(nlh);
+-+
+-+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+-+		      genlmsg_len(ghdr), batadv_netlink_policy)) {
+-+		return NL_OK;
+-+	}
+-+
+-+	if (!attrs[BATADV_ATTR_ELP_INTERVAL])
+-+		return NL_OK;
+-+
+-+	printf("%u\n", nla_get_u32(attrs[BATADV_ATTR_ELP_INTERVAL]));
+-+
+-+	*result = 0;
+-+	return NL_STOP;
+-+}
+-+
+-+static int get_attrs_elp_interval(struct nl_msg *msg, void *arg)
+-+{
+-+	struct state *state = arg;
+-+
+-+	nla_put_u32(msg, BATADV_ATTR_HARD_IFINDEX, state->hif);
+-+
+-+	return 0;
+-+}
+-+
+-+static int get_elp_interval(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_GET_HARDIF,
+-+				  get_attrs_elp_interval, print_elp_interval);
+-+}
+-+
+-+static int set_attrs_elp_interval(struct nl_msg *msg, void *arg)
+-+{
+-+	struct state *state = arg;
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct elp_interval_data *data = settings->data;
+-+
+-+	nla_put_u32(msg, BATADV_ATTR_HARD_IFINDEX, state->hif);
+-+	nla_put_u32(msg, BATADV_ATTR_ELP_INTERVAL, data->elp_interval);
+-+
+-+	return 0;
+-+}
+-+
+-+static int set_elp_interval(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_SET_HARDIF,
+-+				  set_attrs_elp_interval, NULL);
+-+}
+-+
+-+static struct settings_data batctl_settings_elp_interval = {
+-+	.sysfs_name = "elp_interval",
+-+	.data = &elp_interval,
+-+	.parse = parse_elp_interval,
+-+	.netlink_get = get_elp_interval,
+-+	.netlink_set = set_elp_interval,
+-+};
+-+
+-+COMMAND_NAMED(SUBCOMMAND_HIF, elp_interval, "et", handle_sys_setting,
+-+	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+-+	      &batctl_settings_elp_interval,
+-+	      "[interval]        \tdisplay or modify elp_interval setting");
+-diff --git a/man/batctl.8 b/man/batctl.8
+-index a5656cf9059bd82c1b85928c22e30d01c56e475f..eef7cd8f1246b83f03627cf307471abcade87cfc 100644
+---- a/man/batctl.8
+-+++ b/man/batctl.8
+-@@ -97,6 +97,10 @@ the bonding mode.
+- batctl will monitor for events from the netlink kernel interface of batman-adv. The local timestamp of the event will be printed
+- when parameter \fB\-t\fP is specified. Parameter \fB\-r\fP will do the same but with relative timestamps.
+- .br
+-+.IP "\fBhardif <hardif>\fP \fBelp_interval\fP|\fBet\fP [\fBinterval\fP]"
+-+If no parameter is given the current ELP interval setting of the hard interface is displayed otherwise the parameter is used to set the
+-+ELP interval. The interval is in units of milliseconds.
+-+.br
+- .IP "\fBfragmentation\fP|\fBf\fP [\fB0\fP|\fB1\fP]"
+- If no parameter is given the current fragmentation mode setting is displayed. Otherwise the parameter is used to enable or
+- disable fragmentation.
+diff --git a/batctl/patches/0004-batctl-Add-throughput_override-setting-command.patch b/batctl/patches/0004-batctl-Add-throughput_override-setting-command.patch
+deleted file mode 100644
+index 28dbb5381ec2ca30132f6cd4acc2b053b52a2eb5..0000000000000000000000000000000000000000
+--- a/batctl/patches/0004-batctl-Add-throughput_override-setting-command.patch
++++ /dev/null
+@@ -1,189 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Tue, 9 Jul 2019 19:26:49 +0200
+-Subject: batctl: Add throughput_override setting command
+-
+-B.A.T.M.A.N. V introduced a hard interface specific setting called
+-throughput. It defines the throughput value to be used by B.A.T.M.A.N. V
+-when estimating the link throughput using this interface. If the value is
+-set to 0 then batman-adv will try to estimate the throughput by itself.
+-
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/e5e6560df82813a9aad4a6c958be4d8ea012e909
+-
+-diff --git a/Makefile b/Makefile
+-index f071da20f866bff6c162d697d2e43fa9d68ee08d..e3747a2a28eb34323e34a1e22f5507dd1d7cd0f6 100755
+---- a/Makefile
+-+++ b/Makefile
+-@@ -67,6 +67,7 @@ $(eval $(call add_command,ping,y))
+- $(eval $(call add_command,routing_algo,y))
+- $(eval $(call add_command,statistics,y))
+- $(eval $(call add_command,tcpdump,y))
+-+$(eval $(call add_command,throughput_override,y))
+- $(eval $(call add_command,throughputmeter,y))
+- $(eval $(call add_command,traceroute,y))
+- $(eval $(call add_command,transglobal,y))
+-diff --git a/README.rst b/README.rst
+-index 92983aa6030e2a890283bca448b9203cd4d56b51..128f539852fa085d023fb6d26ae436e76b617bb6 100644
+---- a/README.rst
+-+++ b/README.rst
+-@@ -402,6 +402,23 @@ Example::
+-   200
+- 
+- 
+-+batctl throughput override
+-+==========================
+-+
+-+display or modify the throughput override in kbit/s for hard interface
+-+
+-+Usage::
+-+
+-+  batctl hardif $hardif throughput_override|to [kbit]
+-+
+-+Example::
+-+
+-+  $ batctl hardif eth0 throughput_override 15000
+-+  $ batctl hardif eth0 throughput_override 15mbit
+-+  $ batctl hardif eth0 throughput_override
+-+  15.0 MBit
+-+
+-+
+- batctl loglevel
+- ===============
+- 
+-diff --git a/man/batctl.8 b/man/batctl.8
+-index eef7cd8f1246b83f03627cf307471abcade87cfc..d42b6825dd3172009369e370e45ed6e7a9bf9d0d 100644
+---- a/man/batctl.8
+-+++ b/man/batctl.8
+-@@ -207,6 +207,12 @@ supported routing algorithms are displayed.
+- Otherwise the parameter is used to select the routing algorithm for the following
+- batX interface to be created.
+- .br
+-+.IP "\fBhardif <hardif>\fP \fBthroughput_override|to\fP [\fBbandwidth\fP]\fP"
+-+If no parameter is given the current througput override is displayed otherwise
+-+the parameter is used to set the throughput override for the specified hard
+-+interface.
+-+Just enter any number (optionally followed by "kbit" or "mbit").
+-+.br
+- .IP "\fBisolation_mark\fP|\fBmark\fP"
+- If no parameter is given the current isolation mark value is displayed.
+- Otherwise the parameter is used to set or unset the isolation mark used by the
+-diff --git a/throughput_override.c b/throughput_override.c
+-new file mode 100644
+-index 0000000000000000000000000000000000000000..28a6588b9417cca213ebde3545a3eb425592ad89
+---- /dev/null
+-+++ b/throughput_override.c
+-@@ -0,0 +1,113 @@
+-+// SPDX-License-Identifier: GPL-2.0
+-+/* Copyright (C) 2009-2019  B.A.T.M.A.N. contributors:
+-+ *
+-+ * Marek Lindner <mareklindner@neomailbox.ch>
+-+ *
+-+ * License-Filename: LICENSES/preferred/GPL-2.0
+-+ */
+-+
+-+#include <errno.h>
+-+#include <stddef.h>
+-+#include <stdint.h>
+-+#include <string.h>
+-+
+-+#include "functions.h"
+-+#include "main.h"
+-+#include "sys.h"
+-+
+-+static struct throughput_override_data {
+-+	uint32_t throughput_override;
+-+} throughput_override;
+-+
+-+static int parse_throughput_override(struct state *state, int argc, char *argv[])
+-+{
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct throughput_override_data *data = settings->data;
+-+	bool ret;
+-+
+-+	if (argc != 2) {
+-+		fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+-+		return -EINVAL;
+-+	}
+-+
+-+	ret = parse_throughput(argv[1], "throughput override",
+-+				&data->throughput_override);
+-+	if (!ret)
+-+		return -EINVAL;
+-+
+-+	return 0;
+-+}
+-+
+-+static int print_throughput_override(struct nl_msg *msg, void *arg)
+-+{
+-+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+-+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+-+	struct genlmsghdr *ghdr;
+-+	int *result = arg;
+-+	uint32_t mbit;
+-+
+-+	if (!genlmsg_valid_hdr(nlh, 0))
+-+		return NL_OK;
+-+
+-+	ghdr = nlmsg_data(nlh);
+-+
+-+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+-+		      genlmsg_len(ghdr), batadv_netlink_policy)) {
+-+		return NL_OK;
+-+	}
+-+
+-+	if (!attrs[BATADV_ATTR_THROUGHPUT_OVERRIDE])
+-+		return NL_OK;
+-+
+-+	mbit = nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT_OVERRIDE]);
+-+	printf("%u.%u MBit\n", mbit / 10, mbit % 10);
+-+
+-+	*result = 0;
+-+	return NL_STOP;
+-+}
+-+
+-+static int get_attrs_elp_isolation(struct nl_msg *msg, void *arg)
+-+{
+-+	struct state *state = arg;
+-+
+-+	nla_put_u32(msg, BATADV_ATTR_HARD_IFINDEX, state->hif);
+-+
+-+	return 0;
+-+}
+-+
+-+static int get_throughput_override(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_GET_HARDIF,
+-+				  get_attrs_elp_isolation, print_throughput_override);
+-+}
+-+
+-+static int set_attrs_throughput_override(struct nl_msg *msg, void *arg)
+-+{
+-+	struct state *state = arg;
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct throughput_override_data *data = settings->data;
+-+
+-+	nla_put_u32(msg, BATADV_ATTR_HARD_IFINDEX, state->hif);
+-+	nla_put_u32(msg, BATADV_ATTR_THROUGHPUT_OVERRIDE, data->throughput_override);
+-+
+-+	return 0;
+-+}
+-+
+-+static int set_throughput_override(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_SET_HARDIF,
+-+				  set_attrs_throughput_override, NULL);
+-+}
+-+
+-+static struct settings_data batctl_settings_throughput_override = {
+-+	.sysfs_name = "throughput_override",
+-+	.data = &throughput_override,
+-+	.parse = parse_throughput_override,
+-+	.netlink_get = get_throughput_override,
+-+	.netlink_set = set_throughput_override,
+-+};
+-+
+-+COMMAND_NAMED(SUBCOMMAND_HIF, throughput_override, "to", handle_sys_setting,
+-+	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+-+	      &batctl_settings_throughput_override,
+-+	      "[mbit]        \tdisplay or modify throughput_override setting");
+diff --git a/batctl/patches/0005-batctl-Prefer-netlink-hardif-status-retrieval-over-s.patch b/batctl/patches/0005-batctl-Prefer-netlink-hardif-status-retrieval-over-s.patch
+deleted file mode 100644
+index 87262449b0771d445d41fe3562a23261d9793b26..0000000000000000000000000000000000000000
+--- a/batctl/patches/0005-batctl-Prefer-netlink-hardif-status-retrieval-over-s.patch
++++ /dev/null
+@@ -1,90 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Wed, 19 Jun 2019 09:37:50 +0200
+-Subject: batctl: Prefer netlink hardif status retrieval over sysfs
+-
+-The sysfs code in batman-adv was changed to print a deprecated warning when
+-sysfs files are accessed. The `batctl if` call would therefore cause
+-warnings like this in the kernel log:
+-
+-  batman_adv: [Deprecated]: batctl (pid 18540) Use of sysfs file "iface_status".
+-  Use batadv genl family instead
+-
+-It is now appropriate to try the generic netlink BATADV_CMD_GET_HARDIF
+-request first to get the status of the interface before falling back to
+-sysfs.
+-
+-Reported-by: Linus Lüssing <linus.luessing@c0d3.blue>
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/ce5f0efb35bff8a80992df63876bcac1d4a94867
+-
+-diff --git a/interface.c b/interface.c
+-index 5ff25a7b790d68aa69155f0cc7661080145ac86e..0a694c9f41f71a3dd72ae87b79b28434f7e8918f 100644
+---- a/interface.c
+-+++ b/interface.c
+-@@ -67,18 +67,18 @@ static int get_iface_status_netlink_parse(struct nl_msg *msg, void *arg)
+- static char *get_iface_status_netlink(unsigned int meshif, unsigned int hardif,
+- 				      char *iface_status)
+- {
+-+	char *ret_status = NULL;
+- 	struct nl_sock *sock;
+- 	struct nl_msg *msg;
+- 	int batadv_family;
+- 	struct nl_cb *cb;
+- 	int ret;
+- 
+--	strncpy(iface_status, "<error reading status>\n", IFACE_STATUS_LEN);
+--	iface_status[IFACE_STATUS_LEN - 1] = '\0';
+-+	iface_status[0] = '\0';
+- 
+- 	sock = nl_socket_alloc();
+- 	if (!sock)
+--		return iface_status;
+-+		return NULL;
+- 
+- 	ret = genl_connect(sock);
+- 	if (ret < 0)
+-@@ -111,6 +111,9 @@ static char *get_iface_status_netlink(unsigned int meshif, unsigned int hardif,
+- 
+- 	nl_recvmsgs(sock, cb);
+- 
+-+	if (strlen(iface_status) > 0)
+-+		ret_status = iface_status;
+-+
+- err_free_msg:
+- 	nlmsg_free(msg);
+- err_free_cb:
+-@@ -118,7 +121,7 @@ static char *get_iface_status_netlink(unsigned int meshif, unsigned int hardif,
+- err_free_sock:
+- 	nl_socket_free(sock);
+- 
+--	return iface_status;
+-+	return ret_status;
+- }
+- 
+- static struct nla_policy link_policy[IFLA_MAX + 1] = {
+-@@ -161,13 +164,17 @@ static int print_interfaces_rtnl_parse(struct nl_msg *msg, void *arg)
+- 	if (master != print_arg->ifindex)
+- 		goto err;
+- 
+--	snprintf(path_buff, sizeof(path_buff), SYS_IFACE_STATUS_FMT, ifname);
+--	ret = read_file("", path_buff, USE_READ_BUFF | SILENCE_ERRORS, 0, 0, 0);
+--	if (ret != EXIT_SUCCESS)
+--		status = get_iface_status_netlink(master, ifm->ifi_index,
+--						  iface_status);
+--	else
+--		status = line_ptr;
+-+	status = get_iface_status_netlink(master, ifm->ifi_index, iface_status);
+-+	if (!status) {
+-+		snprintf(path_buff, sizeof(path_buff), SYS_IFACE_STATUS_FMT,
+-+			 ifname);
+-+		ret = read_file("", path_buff, USE_READ_BUFF | SILENCE_ERRORS,
+-+				0, 0, 0);
+-+		if (ret != EXIT_SUCCESS)
+-+			status = "<error reading status>\n";
+-+		else
+-+			status = line_ptr;
+-+	}
+- 
+- 	printf("%s: %s", ifname, status);
+- 
+diff --git a/batctl/patches/0006-batctl-Return-EXIT_FAILURE-when-throughputmeter-fail.patch b/batctl/patches/0006-batctl-Return-EXIT_FAILURE-when-throughputmeter-fail.patch
+deleted file mode 100644
+index fc7131dd9fb39634be7138b3250d9482322998a8..0000000000000000000000000000000000000000
+--- a/batctl/patches/0006-batctl-Return-EXIT_FAILURE-when-throughputmeter-fail.patch
++++ /dev/null
+@@ -1,37 +0,0 @@
+-From: Leonardo Mörlein <me@irrelefant.net>
+-Date: Wed, 8 Apr 2020 23:49:03 +0200
+-Subject: batctl: Return EXIT_FAILURE when throughputmeter failed
+-
+-The command returned a success even an error was shown during the
+-execution.
+-
+-  $ (sudo batctl tp 77:77:77:77:77:77 && echo true) || echo false
+-  Destination unreachable
+-  true
+-
+-Instead it should indicate a failure when the kernel replied with a
+-non-success return_value:
+-
+-  $ (sudo ./batctl tp 77:77:77:77:77:77 && echo true) || echo false
+-  Destination unreachable
+-  false
+-
+-Fixes: f109b3473f86 ("batctl: introduce throughput meter support")
+-Signed-off-by: Leonardo Mörlein <me@irrelefant.net>
+-[sven@narfation.org: adjusted commit message]
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/df8bf5164b6904f61ae0b0db090fb5bb41b4f06d
+-
+-diff --git a/throughputmeter.c b/throughputmeter.c
+-index f9d98cfcac86d7a9398e2adddd143924b38e50b0..f19d4891981c99b7b9f3fae39c8d59f549243d0a 100644
+---- a/throughputmeter.c
+-+++ b/throughputmeter.c
+-@@ -465,6 +465,7 @@ static int throughputmeter(struct state *state, int argc, char **argv)
+- 		goto out;
+- 	}
+- 
+-+	ret = EXIT_FAILURE;
+- 	switch (result.return_value) {
+- 	case BATADV_TP_REASON_DST_UNREACHABLE:
+- 		fprintf(stderr, "Destination unreachable\n");
+diff --git a/batctl/patches/0007-batctl-fix-endianness-when-reading-radiotap-header.patch b/batctl/patches/0007-batctl-fix-endianness-when-reading-radiotap-header.patch
+deleted file mode 100644
+index bec1b9ed8e717356973048127ec70d57d29da791..0000000000000000000000000000000000000000
+--- a/batctl/patches/0007-batctl-fix-endianness-when-reading-radiotap-header.patch
++++ /dev/null
+@@ -1,38 +0,0 @@
+-From: Marek Lindner <mareklindner@neomailbox.ch>
+-Date: Wed, 29 Apr 2020 12:09:44 +0200
+-Subject: batctl: fix endianness when reading radiotap header
+-
+-All radiotap header fields are specified in little endian byte-order.
+-Header length conversion is necessary on some platforms.
+-
+-Fixes: c6fcdb6dc9a9 ("batctl: add radiotap wifi packet decapsulation support")
+-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/440ae55a6ef96eb73ee628f9237915cf9fb26dee
+-
+-diff --git a/tcpdump.c b/tcpdump.c
+-index 8106a6457ac1b000f2f802e4b0a751d783540b69..72c1869eb50d25c1f6b1e1fcae42199b9337cb4e 100644
+---- a/tcpdump.c
+-+++ b/tcpdump.c
+-@@ -15,6 +15,7 @@
+- #include <time.h>
+- #include <sys/time.h>
+- #include <arpa/inet.h>
+-+#include <endian.h>
+- #include <net/if.h>
+- #include <net/if_arp.h>
+- #include <netinet/in.h>
+-@@ -1034,10 +1035,10 @@ static int monitor_header_length(unsigned char *packet_buff, ssize_t buff_len, i
+- 			return -1;
+- 
+- 		radiotap_hdr = (struct radiotap_header*)packet_buff;
+--		if (buff_len <= radiotap_hdr->it_len)
+-+		if (buff_len <= le16toh(radiotap_hdr->it_len))
+- 			return -1;
+- 		else
+--			return radiotap_hdr->it_len;
+-+			return le16toh(radiotap_hdr->it_len);
+- 	}
+- 
+- 	return -1;
+diff --git a/batctl/patches/0008-batctl-Only-remove-batadv-interface-on-hardif-reduct.patch b/batctl/patches/0008-batctl-Only-remove-batadv-interface-on-hardif-reduct.patch
+deleted file mode 100644
+index 08a87daa3d1abbe61378fba6bb2449f3827e631d..0000000000000000000000000000000000000000
+--- a/batctl/patches/0008-batctl-Only-remove-batadv-interface-on-hardif-reduct.patch
++++ /dev/null
+@@ -1,49 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Sat, 13 Jun 2020 17:59:34 +0200
+-Subject: batctl: Only remove batadv interface on hardif reduction
+-
+-A deletion of a hardif from a batadv meshif will also get a success reply
+-from the kernel when the hardif was never part of the batadv meshif. If the
+-batadv meshif had no attached hardifs before the removal was started, then
+-users are then not expecting that the batadv meshif is removed at all.
+-
+-Since the delete operation is not an atomic compare-and-swap operation,
+-just check first the number of attached interfaces and only start the
+-removal of the batadv meshif when the number attached hardifs was reduced.
+-
+-Fixes: 25022e0b154d ("batctl: Use rtnl to add/remove interfaces")
+-Reported-by: Matthias Schiffer <mschiffer@universe-factory.net>
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/6d49a82cf58ee5ebd6235b6ddaca46febd42f876
+-
+-diff --git a/interface.c b/interface.c
+-index 0a694c9f41f71a3dd72ae87b79b28434f7e8918f..138a6cd45744081a04f986fe4be67901b3305b74 100644
+---- a/interface.c
+-+++ b/interface.c
+-@@ -386,6 +386,7 @@ static int interface(struct state *state, int argc, char **argv)
+- 	int ret;
+- 	unsigned int ifindex;
+- 	unsigned int ifmaster;
+-+	unsigned int pre_cnt;
+- 	const char *long_op;
+- 	unsigned int cnt;
+- 	int rest_argc;
+-@@ -502,6 +503,8 @@ static int interface(struct state *state, int argc, char **argv)
+- 		goto err;
+- 	}
+- 
+-+	pre_cnt = count_interfaces(state->mesh_iface);
+-+
+- 	for (i = 1; i < rest_argc; i++) {
+- 		ifindex = if_nametoindex(rest_argv[i]);
+- 
+-@@ -531,7 +534,7 @@ static int interface(struct state *state, int argc, char **argv)
+- 	/* check if there is no interface left and then destroy mesh_iface */
+- 	if (!manual_mode && rest_argv[0][0] == 'd') {
+- 		cnt = count_interfaces(state->mesh_iface);
+--		if (cnt == 0)
+-+		if (cnt == 0 && pre_cnt > 0)
+- 			destroy_interface(state->mesh_iface);
+- 	}
+- 
+diff --git a/batctl/patches/0009-batctl-tcpdump-Fix-endianness-in-ICMPv6-Echo-Request.patch b/batctl/patches/0009-batctl-tcpdump-Fix-endianness-in-ICMPv6-Echo-Request.patch
+deleted file mode 100644
+index 145c9b12625dfaf875b3998be6c44e0b4b34d771..0000000000000000000000000000000000000000
+--- a/batctl/patches/0009-batctl-tcpdump-Fix-endianness-in-ICMPv6-Echo-Request.patch
++++ /dev/null
+@@ -1,39 +0,0 @@
+-From: Linus Lüssing <linus.luessing@c0d3.blue>
+-Date: Sun, 13 Sep 2020 23:30:19 +0200
+-Subject: batctl: tcpdump: Fix endianness in ICMPv6 Echo Request/Reply parsing
+-
+-The ICMPv6 Echo Request/Reply sequence number and id as well as the
+-IPv6 header length are two byte long fields and therefore might need a
+-conversion on a little endian system. Otherwise the output will be
+-broken on such a machine.
+-
+-Fixes: 35b37756f4a3 ("add IPv6 support to tcpdump parser")
+-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/e42f73d0d2a04edfbed1b9d0ad9fd57af9e90faf
+-
+-diff --git a/tcpdump.c b/tcpdump.c
+-index 72c1869eb50d25c1f6b1e1fcae42199b9337cb4e..f3b1b8bd536e83e583bc535d01630843b80a558d 100644
+---- a/tcpdump.c
+-+++ b/tcpdump.c
+-@@ -537,13 +537,15 @@ static void dump_ipv6(unsigned char *packet_buff, ssize_t buff_len,
+- 			break;
+- 		case ICMP6_ECHO_REQUEST:
+- 			printf(" echo request, id: %d, seq: %d, length: %hu\n",
+--			       icmphdr->icmp6_id, icmphdr->icmp6_seq,
+--			       iphdr->ip6_plen);
+-+			       ntohs(icmphdr->icmp6_id),
+-+			       ntohs(icmphdr->icmp6_seq),
+-+			       ntohs(iphdr->ip6_plen));
+- 			break;
+- 		case ICMP6_ECHO_REPLY:
+- 			printf(" echo reply, id: %d, seq: %d, length: %hu\n",
+--			       icmphdr->icmp6_id, icmphdr->icmp6_seq,
+--			       iphdr->ip6_plen);
+-+			       ntohs(icmphdr->icmp6_id),
+-+			       ntohs(icmphdr->icmp6_seq),
+-+			       ntohs(iphdr->ip6_plen));
+- 			break;
+- 		case ICMP6_TIME_EXCEEDED:
+- 			printf(" time exceeded in-transit, length %zu\n",
+diff --git a/batctl/patches/0010-batctl-Don-t-stop-when-create_interface-detected-exi.patch b/batctl/patches/0010-batctl-Don-t-stop-when-create_interface-detected-exi.patch
+deleted file mode 100644
+index b77d3cd63a4379ba467cc762f782909753beed57..0000000000000000000000000000000000000000
+--- a/batctl/patches/0010-batctl-Don-t-stop-when-create_interface-detected-exi.patch
++++ /dev/null
+@@ -1,31 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Fri, 15 Jan 2021 23:38:31 +0100
+-Subject: batctl: Don't stop when create_interface detected existing interface
+-
+-"batctl meshif bat0 interface add ..." should never be called in parallel.
+-But when something still does this, it could be that the code first detects
+-the missing meshif and then tries to create it - which fails when another
+-process requested the creation of the same interface slightly before batctl
+-did it.
+-
+-But this should not prevent batctl to add the lower interface to the
+-meshif. It is not really important that the batctl process was the one
+-which created it - only that it exists is important.
+-
+-Fixes: 25022e0b154d ("batctl: Use rtnl to add/remove interfaces")
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/5d465bfd9a19c4bda20fb4e36c6e4b22c56ceb17
+-
+-diff --git a/interface.c b/interface.c
+-index 138a6cd45744081a04f986fe4be67901b3305b74..2c6a78ad17cb716fbb7f6a1c78e0076494397b01 100644
+---- a/interface.c
+-+++ b/interface.c
+-@@ -479,7 +479,7 @@ static int interface(struct state *state, int argc, char **argv)
+- 	ifmaster = if_nametoindex(state->mesh_iface);
+- 	if (!manual_mode && !ifmaster && rest_argv[0][0] == 'a') {
+- 		ret = create_interface(state->mesh_iface);
+--		if (ret < 0) {
+-+		if (ret < 0 && ret != -EEXIST) {
+- 			fprintf(stderr,
+- 				"Error - failed to create batman-adv interface: %s\n",
+- 				strerror(-ret));
+diff --git a/batctl/patches/0011-batctl-Fix-retrieval-of-meshif-ap_isolation.patch b/batctl/patches/0011-batctl-Fix-retrieval-of-meshif-ap_isolation.patch
+deleted file mode 100644
+index 8b77612bf25b8194b6a215c4177586b68bc6ab1d..0000000000000000000000000000000000000000
+--- a/batctl/patches/0011-batctl-Fix-retrieval-of-meshif-ap_isolation.patch
++++ /dev/null
+@@ -1,26 +0,0 @@
+-From: Sven Eckelmann <sven@narfation.org>
+-Date: Sat, 31 Oct 2020 18:00:26 +0100
+-Subject: batctl: Fix retrieval of meshif ap_isolation
+-
+-The batadv command to retrieve the attributes is called
+-BATADV_CMD_GET_MESH. The used BATADV_CMD_SET_MESH will only return the
+-current settings via the "config" multicast group which is not evaluated by
+-the ap_isolation command.
+-
+-Fixes: c56a63a5f12a ("batctl: Support generic netlink for ap_isolation command")
+-Signed-off-by: Sven Eckelmann <sven@narfation.org>
+-Origin: upstream, https://git.open-mesh.org/batctl.git/commit/107cee536a0f8024208923f49a2a548b40bfc432
+-
+-diff --git a/ap_isolation.c b/ap_isolation.c
+-index 36fd4d607d03768251150951ebe450740501d446..4854bcd1d6514a02786388dc014966f326818122 100644
+---- a/ap_isolation.c
+-+++ b/ap_isolation.c
+-@@ -36,7 +36,7 @@ static int get_attrs_ap_isolation(struct nl_msg *msg, void *arg)
+- 
+- static int get_ap_isolation(struct state *state)
+- {
+--	enum batadv_nl_commands nl_cmd = BATADV_CMD_SET_MESH;
+-+	enum batadv_nl_commands nl_cmd = BATADV_CMD_GET_MESH;
+- 
+- 	if (state->selector == SP_VLAN)
+- 		nl_cmd = BATADV_CMD_GET_VLAN;
+diff --git a/batctl/patches/0012-batctl-Add-noflood_mark-command.patch b/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
+deleted file mode 100644
+index 296f3c51b79333a8e96c340d151ba00b8f457120..0000000000000000000000000000000000000000
+--- a/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
++++ /dev/null
+@@ -1,273 +0,0 @@
+-From c14abebbeb4af76600cd6eb508e5e4e38a436b2f Mon Sep 17 00:00:00 2001
+-From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
+-Date: Fri, 26 Apr 2019 19:27:38 +0200
+-Subject: [PATCH] batctl: Add noflood_mark command
+-MIME-Version: 1.0
+-Content-Type: text/plain; charset=UTF-8
+-Content-Transfer-Encoding: 8bit
+-
+-Adds support for the new 'noflood_mark' setting in batman-adv.
+-
+-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+----
+-Changelog v3:
+-* changed command from a noflood tri-state option
+-  to a value/mask one similar to the isolation mark
+-* noflood.c -> noflood_mark.c
+-
+-Changelog v2:
+-* added noflood.c
+----
+- Makefile       |   1 +
+- README.rst     |  15 ++++++
+- batman_adv.h   |  12 +++++
+- man/batctl.8   |  23 ++++++++
+- noflood_mark.c | 141 +++++++++++++++++++++++++++++++++++++++++++++++++
+- 5 files changed, 192 insertions(+)
+- create mode 100644 noflood_mark.c
+-
+-diff --git a/Makefile b/Makefile
+-index e3747a2..686de7e 100755
+---- a/Makefile
+-+++ b/Makefile
+-@@ -61,6 +61,7 @@ $(eval $(call add_command,multicast_mode,y))
+- $(eval $(call add_command,nc_nodes,y))
+- $(eval $(call add_command,neighbors,y))
+- $(eval $(call add_command,network_coding,y))
+-+$(eval $(call add_command,noflood_mark,y))
+- $(eval $(call add_command,orig_interval,y))
+- $(eval $(call add_command,originators,y))
+- $(eval $(call add_command,ping,y))
+-diff --git a/README.rst b/README.rst
+-index 128f539..bc937d2 100644
+---- a/README.rst
+-+++ b/README.rst
+-@@ -582,6 +582,21 @@ Usage::
+- * Example 4: ``batctl mark 0x0f``
+- 
+- 
+-+batctl noflood_mark
+-+=======================
+-+
+-+display or modify noflood_mark setting
+-+
+-+Usage::
+-+
+-+  batctl noflood_mark|nf $value[/0x$mask]
+-+
+-+* Example 1: ``batctl nf 0x00000001/0xffffffff``
+-+* Example 2: ``batctl nf 0x00040000/0xffff0000``
+-+* Example 3: ``batctl nf 16``
+-+* Example 4: ``batctl nf 0x0f``
+-+
+-+
+- batctl translocal
+- =================
+- 
+-diff --git a/batman_adv.h b/batman_adv.h
+-index 67f4636..6fabb7a 100644
+---- a/batman_adv.h
+-+++ b/batman_adv.h
+-@@ -480,6 +480,18 @@ enum batadv_nl_attrs {
+- 	 */
+- 	BATADV_ATTR_MULTICAST_FANOUT,
+- 
+-+	/**
+-+	 * @BATADV_ATTR_NOFLOOD_MARK: the noflood mark which allows to tag
+-+	 *  frames which should never be broadcast flooded through the mesh.
+-+	 */
+-+	BATADV_ATTR_NOFLOOD_MARK,
+-+
+-+	/**
+-+	 * @BATADV_ATTR_NOFLOOD_MASK: the noflood (bit)mask which allows to tag
+-+	 *  frames which should never be broadcast flooded through the mesh.
+-+	 */
+-+	BATADV_ATTR_NOFLOOD_MASK,
+-+
+- 	/* add attributes above here, update the policy in netlink.c */
+- 
+- 	/**
+-diff --git a/man/batctl.8 b/man/batctl.8
+-index d42b682..5489c2e 100644
+---- a/man/batctl.8
+-+++ b/man/batctl.8
+-@@ -124,6 +124,29 @@ If no parameter is given the current multicast fanout setting is displayed. Othe
+- the multicast fanout. The multicast fanout defines the maximum number of packet copies that may be generated for a
+- multicast-to-unicast conversion. Once this limit is exceeded distribution will fall back to broadcast.
+- .br
+-+.IP "\fBnoflood_mark\fP|\fBnf\fP"
+-+If no parameter is given the current noflood mark value is displayed.
+-+Otherwise the parameter is used to set or unset the noflood mark. The
+-+noflood mark allows to prevent broadcast flooding of a frame which
+-+was previously tagged via netfilter for instance. batman-adv will
+-+then only forward a frame into the mesh if destined to a limited
+-+number of destination nodes and drop the frame otherwise.
+-+.br
+-+The input is supposed to be of the form $value/$mask, where $value can be any
+-+32bit long integer (expressed in decimal or hex base) and $mask is a generic
+-+bitmask (expressed in hex base) that selects the bits to take into consideration
+-+from $value. It is also possible to enter the input using only $value and in
+-+this case the full bitmask is used by default.
+-+
+-+.br
+-+.br
+-+Example 1: 0x00000001/0xffffffff
+-+.br
+-+Example 2: 0x00040000/0xffff0000
+-+.br
+-+Example 3: 16 or 0x0F
+-+.br
+-+.br
+- .IP "\fBloglevel\fP|\fBll\fP [\fBlevel\fP[ \fBlevel\fP[ \fBlevel\fP]] \fB...\fP]"
+- If no parameter is given the current log level settings are displayed otherwise the parameter(s) is/are used to set the log
+- level. Level 'none' disables all verbose logging. Level 'batman' enables messages related to routing / flooding / broadcasting.
+-diff --git a/noflood_mark.c b/noflood_mark.c
+-new file mode 100644
+-index 0000000..e89205c
+---- /dev/null
+-+++ b/noflood_mark.c
+-@@ -0,0 +1,141 @@
+-+// SPDX-License-Identifier: GPL-2.0
+-+/* Copyright (C) 2009-2019  B.A.T.M.A.N. contributors:
+-+ *
+-+ * Antonio Quartulli <a@unstable.cc>
+-+ * Linus Lüssing <linus.luessing@c0d3.blue>
+-+ *
+-+ * License-Filename: LICENSES/preferred/GPL-2.0
+-+ */
+-+
+-+#include <errno.h>
+-+#include <stddef.h>
+-+#include <stdint.h>
+-+#include <string.h>
+-+
+-+#include "main.h"
+-+#include "sys.h"
+-+
+-+static struct noflood_mark_data {
+-+	uint32_t noflood_mark;
+-+	uint32_t noflood_mask;
+-+} noflood_mark;
+-+
+-+static int parse_noflood_mark(struct state *state, int argc, char *argv[])
+-+{
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct noflood_mark_data *data = settings->data;
+-+	char *mask_ptr;
+-+	char buff[256];
+-+	uint32_t mark;
+-+	uint32_t mask;
+-+	char *endptr;
+-+
+-+	if (argc != 2) {
+-+		fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+-+		return -EINVAL;
+-+	}
+-+
+-+	strncpy(buff, argv[1], sizeof(buff));
+-+	buff[sizeof(buff) - 1] = '\0';
+-+
+-+	/* parse the mask if it has been specified, otherwise assume the mask is
+-+	 * the biggest possible
+-+	 */
+-+	mask = 0xFFFFFFFF;
+-+	mask_ptr = strchr(buff, '/');
+-+	if (mask_ptr) {
+-+		*mask_ptr = '\0';
+-+		mask_ptr++;
+-+
+-+		/* the mask must be entered in hex base as it is going to be a
+-+		 * bitmask and not a prefix length
+-+		 */
+-+		mask = strtoul(mask_ptr, &endptr, 16);
+-+		if (!endptr || *endptr != '\0')
+-+			goto inval_format;
+-+	}
+-+
+-+	/* the mark can be entered in any base */
+-+	mark = strtoul(buff, &endptr, 0);
+-+	if (!endptr || *endptr != '\0')
+-+		goto inval_format;
+-+
+-+	data->noflood_mask = mask;
+-+	/* erase bits not covered by the mask */
+-+	data->noflood_mark = mark & mask;
+-+
+-+	return 0;
+-+
+-+inval_format:
+-+	fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+-+	fprintf(stderr, "The following formats for mark(/mask) are allowed:\n");
+-+	fprintf(stderr, " * 0x12345678\n");
+-+	fprintf(stderr, " * 0x12345678/0xabcdef09\n");
+-+	return -EINVAL;
+-+}
+-+
+-+static int print_noflood_mark(struct nl_msg *msg, void *arg)
+-+{
+-+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+-+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+-+	struct genlmsghdr *ghdr;
+-+	int *result = arg;
+-+
+-+	if (!genlmsg_valid_hdr(nlh, 0))
+-+		return NL_OK;
+-+
+-+	ghdr = nlmsg_data(nlh);
+-+
+-+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+-+		      genlmsg_len(ghdr), batadv_netlink_policy)) {
+-+		return NL_OK;
+-+	}
+-+
+-+	if (!attrs[BATADV_ATTR_NOFLOOD_MARK] ||
+-+	    !attrs[BATADV_ATTR_NOFLOOD_MASK])
+-+		return NL_OK;
+-+
+-+	printf("0x%08x/0x%08x\n",
+-+	       nla_get_u32(attrs[BATADV_ATTR_NOFLOOD_MARK]),
+-+	       nla_get_u32(attrs[BATADV_ATTR_NOFLOOD_MASK]));
+-+
+-+	*result = 0;
+-+	return NL_STOP;
+-+}
+-+
+-+static int get_noflood_mark(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_GET_MESH,
+-+				  NULL, print_noflood_mark);
+-+}
+-+
+-+static int set_attrs_noflood_mark(struct nl_msg *msg, void *arg)
+-+{
+-+	struct state *state = arg;
+-+	struct settings_data *settings = state->cmd->arg;
+-+	struct noflood_mark_data *data = settings->data;
+-+
+-+	nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MARK, data->noflood_mark);
+-+	nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MASK, data->noflood_mask);
+-+
+-+	return 0;
+-+}
+-+
+-+static int set_noflood_mark(struct state *state)
+-+{
+-+	return sys_simple_nlquery(state, BATADV_CMD_SET_MESH,
+-+				  set_attrs_noflood_mark, NULL);
+-+}
+-+
+-+static struct settings_data batctl_settings_noflood_mark = {
+-+	.sysfs_name = NULL,
+-+	.data = &noflood_mark,
+-+	.parse = parse_noflood_mark,
+-+	.netlink_get = get_noflood_mark,
+-+	.netlink_set = set_noflood_mark,
+-+};
+-+
+-+COMMAND_NAMED(SUBCOMMAND, noflood_mark, "nf", handle_sys_setting,
+-+	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+-+	      &batctl_settings_noflood_mark,
+-+	      "[mark]            \tdisplay or modify noflood_mark setting");
+--- 
+-2.31.0
+-
+diff --git a/batctl/patches/2002-batctl-Add-noflood_mark-command.patch b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4498603785a21a71951a6195cd96661be44d685
+--- /dev/null
++++ b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
+@@ -0,0 +1,217 @@
++From 12884631753aa24d9e36c5d65950320ecab61384 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Fri, 26 Apr 2019 19:27:38 +0200
++Subject: [PATCH] batctl: Add noflood_mark command
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Adds support for the new 'noflood_mark' setting in batman-adv.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ Makefile       |   1 +
++ README.rst     |  15 ++++++
++ batman_adv.h   |  12 +++++
++ noflood_mark.c | 140 +++++++++++++++++++++++++++++++++++++++++++++++++
++ 4 files changed, 168 insertions(+)
++ create mode 100644 noflood_mark.c
++
++--- a/Makefile
+++++ b/Makefile
++@@ -69,6 +69,7 @@ $(eval $(call add_command,multicast_mode
++ $(eval $(call add_command,neighbors,y))
++ $(eval $(call add_command,neighbors_json,y))
++ $(eval $(call add_command,network_coding,y))
+++$(eval $(call add_command,noflood_mark,y))
++ $(eval $(call add_command,orig_interval,y))
++ $(eval $(call add_command,originators,y))
++ $(eval $(call add_command,originators_json,y))
++--- a/README.rst
+++++ b/README.rst
++@@ -430,6 +430,21 @@ Example::
++ 
++ 
++ 
+++batctl noflood_mark
+++=======================
+++
+++display or modify noflood_mark setting
+++
+++Usage::
+++
+++  batctl noflood_mark|nf $value[/0x$mask]
+++
+++* Example 1: ``batctl nf 0x00000001/0xffffffff``
+++* Example 2: ``batctl nf 0x00040000/0xffff0000``
+++* Example 3: ``batctl nf 16``
+++* Example 4: ``batctl nf 0x0f``
+++
+++
++ batctl translocal
++ -----------------
++ 
++--- a/batman_adv.h
+++++ b/batman_adv.h
++@@ -481,6 +481,18 @@ enum batadv_nl_attrs {
++ 	 */
++ 	BATADV_ATTR_MULTICAST_FANOUT,
++ 
+++	/**
+++	 * @BATADV_ATTR_NOFLOOD_MARK: the noflood mark which allows to tag
+++	 *  frames which should never be broadcast flooded through the mesh.
+++	 */
+++	BATADV_ATTR_NOFLOOD_MARK,
+++
+++	/**
+++	 * @BATADV_ATTR_NOFLOOD_MASK: the noflood (bit)mask which allows to tag
+++	 *  frames which should never be broadcast flooded through the mesh.
+++	 */
+++	BATADV_ATTR_NOFLOOD_MASK,
+++
++ 	/* add attributes above here, update the policy in netlink.c */
++ 
++ 	/**
++--- /dev/null
+++++ b/noflood_mark.c
++@@ -0,0 +1,140 @@
+++// SPDX-License-Identifier: GPL-2.0
+++/* Copyright (C) 2009-2019  B.A.T.M.A.N. contributors:
+++ *
+++ * Antonio Quartulli <a@unstable.cc>
+++ * Linus Lüssing <linus.luessing@c0d3.blue>
+++ *
+++ * License-Filename: LICENSES/preferred/GPL-2.0
+++ */
+++
+++#include <errno.h>
+++#include <stddef.h>
+++#include <stdint.h>
+++#include <string.h>
+++
+++#include "main.h"
+++#include "sys.h"
+++
+++static struct noflood_mark_data {
+++	uint32_t noflood_mark;
+++	uint32_t noflood_mask;
+++} noflood_mark;
+++
+++static int parse_noflood_mark(struct state *state, int argc, char *argv[])
+++{
+++	struct settings_data *settings = state->cmd->arg;
+++	struct noflood_mark_data *data = settings->data;
+++	char *mask_ptr;
+++	char buff[256];
+++	uint32_t mark;
+++	uint32_t mask;
+++	char *endptr;
+++
+++	if (argc != 2) {
+++		fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+++		return -EINVAL;
+++	}
+++
+++	strncpy(buff, argv[1], sizeof(buff));
+++	buff[sizeof(buff) - 1] = '\0';
+++
+++	/* parse the mask if it has been specified, otherwise assume the mask is
+++	 * the biggest possible
+++	 */
+++	mask = 0xFFFFFFFF;
+++	mask_ptr = strchr(buff, '/');
+++	if (mask_ptr) {
+++		*mask_ptr = '\0';
+++		mask_ptr++;
+++
+++		/* the mask must be entered in hex base as it is going to be a
+++		 * bitmask and not a prefix length
+++		 */
+++		mask = strtoul(mask_ptr, &endptr, 16);
+++		if (!endptr || *endptr != '\0')
+++			goto inval_format;
+++	}
+++
+++	/* the mark can be entered in any base */
+++	mark = strtoul(buff, &endptr, 0);
+++	if (!endptr || *endptr != '\0')
+++		goto inval_format;
+++
+++	data->noflood_mask = mask;
+++	/* erase bits not covered by the mask */
+++	data->noflood_mark = mark & mask;
+++
+++	return 0;
+++
+++inval_format:
+++	fprintf(stderr, "Error - incorrect number of arguments (expected 1)\n");
+++	fprintf(stderr, "The following formats for mark(/mask) are allowed:\n");
+++	fprintf(stderr, " * 0x12345678\n");
+++	fprintf(stderr, " * 0x12345678/0xabcdef09\n");
+++	return -EINVAL;
+++}
+++
+++static int print_noflood_mark(struct nl_msg *msg, void *arg)
+++{
+++	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+++	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+++	struct genlmsghdr *ghdr;
+++	int *result = arg;
+++
+++	if (!genlmsg_valid_hdr(nlh, 0))
+++		return NL_OK;
+++
+++	ghdr = nlmsg_data(nlh);
+++
+++	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+++		      genlmsg_len(ghdr), batadv_netlink_policy)) {
+++		return NL_OK;
+++	}
+++
+++	if (!attrs[BATADV_ATTR_NOFLOOD_MARK] ||
+++	    !attrs[BATADV_ATTR_NOFLOOD_MASK])
+++		return NL_OK;
+++
+++	printf("0x%08x/0x%08x\n",
+++	       nla_get_u32(attrs[BATADV_ATTR_NOFLOOD_MARK]),
+++	       nla_get_u32(attrs[BATADV_ATTR_NOFLOOD_MASK]));
+++
+++	*result = 0;
+++	return NL_STOP;
+++}
+++
+++static int get_noflood_mark(struct state *state)
+++{
+++	return sys_simple_nlquery(state, BATADV_CMD_GET_MESH,
+++				  NULL, print_noflood_mark);
+++}
+++
+++static int set_attrs_noflood_mark(struct nl_msg *msg, void *arg)
+++{
+++	struct state *state = arg;
+++	struct settings_data *settings = state->cmd->arg;
+++	struct noflood_mark_data *data = settings->data;
+++
+++	nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MARK, data->noflood_mark);
+++	nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MASK, data->noflood_mask);
+++
+++	return 0;
+++}
+++
+++static int set_noflood_mark(struct state *state)
+++{
+++	return sys_simple_nlquery(state, BATADV_CMD_SET_MESH,
+++				  set_attrs_noflood_mark, NULL);
+++}
+++
+++static struct settings_data batctl_settings_noflood_mark = {
+++	.data = &noflood_mark,
+++	.parse = parse_noflood_mark,
+++	.netlink_get = get_noflood_mark,
+++	.netlink_set = set_noflood_mark,
+++};
+++
+++COMMAND_NAMED(SUBCOMMAND, noflood_mark, "nf", handle_sys_setting,
+++	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+++	      &batctl_settings_noflood_mark,
+++	      "[mark]            \tdisplay or modify noflood_mark setting");
