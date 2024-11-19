@@ -11,6 +11,10 @@ device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
 
 -- Cudy
 
+device('cudy-ap3000-outdoor-v1', 'cudy_ap3000outdoor-v1', {
+	factory = false,
+})
+
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
 	factory = false,
 })
