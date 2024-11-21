@@ -1,5 +1,14 @@
 local site = require 'gluon.site'
 
+local function file_exists(file)
+	local f = io.open(file)
+	if not f then
+		return false
+	end
+	f:close()
+	return true
+end
+
 rule('MULTICAST_IN -p IPv4 --ip-protocol igmp --ip-igmp-type membership-query -j DROP', 'nat')
 rule('MULTICAST_OUT -p IPv4 --ip-protocol igmp --ip-igmp-type membership-query -j DROP')
 
@@ -14,7 +23,10 @@ if site.mesh.filter_membership_reports(true) then
 	rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j DROP') -- MLDv1 Done
 	rule('MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP') -- MLDv2 Report
 
-	rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j DROP', 'nat') -- MLDv1 Report
-	rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j DROP', 'nat') -- MLDv1 Done
-	rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP', 'nat') -- MLDv2 Report
+	# only install if gluon-mesh-batman-adv-brmldproxy is not
+	if not file_exists("/lib/gluon/upgrade/400-brmldproxy") then
+	        rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j DROP', 'nat') -- MLDv1 Report
+	        rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j DROP', 'nat') -- MLDv1 Done
+	        rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j DROP', 'nat') -- MLDv2 Report
+	end
 end
