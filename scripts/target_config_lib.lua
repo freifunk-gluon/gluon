@@ -173,7 +173,11 @@ lib.include(target)
 
 lib.check_devices()
 
-handle_target_pkgs(concat_list(get_default_pkgs(), lib.target_packages))
+-- Hack: opkg is added removed from the target packages and instead added
+-- to the devices packages to make it removable via image-customization
+local target_packages = concat_list(get_default_pkgs(), lib.target_packages)
+target_packages = concat_list(target_packages, {'-opkg'})
+handle_target_pkgs(target_packages)
 
 for _, dev in ipairs(lib.devices) do
 	local device_pkgs = {}
@@ -187,6 +191,7 @@ for _, dev in ipairs(lib.devices) do
 	end
 
 	handle_pkgs(lib.target_packages)
+	handle_pkgs({'opkg'})
 	handle_pkgs(dev.options.packages or {})
 	handle_pkgs(site_specific_packages(dev))
 
