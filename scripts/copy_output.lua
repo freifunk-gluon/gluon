@@ -92,5 +92,6 @@ if (env.GLUON_DEVICES or '') == '' then
 	lib.exec {'rm', '-f', dest_dir('\0')..'/\0'}
 	lib.exec({'rmdir', '-p', dest_dir('\0')}, true, '2>/dev/null')
 	mkdir(dest_dir(package_prefix))
+	lib.exec {'rm', '-rf', 'openwrt/bin/targets/'..bindir..'/packages/tmp'}
 	lib.exec {'cp', 'openwrt/bin/targets/'..bindir..'/packages/\0', dest_dir(package_prefix)}
 end
