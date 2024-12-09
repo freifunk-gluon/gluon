@@ -339,10 +339,6 @@ mediatek-mt7622
 
   - UniFi 6 LR (v1)
 
-* Xiaomi
-
-  - AX3200 (RB03)
-
 mpc85xx-p1010
 -------------
 
@@ -461,8 +457,6 @@ ramips-mt7621
 
 * Ubiquiti
 
-  - EdgeRouter X
-  - EdgeRouter X-SFP
   - UniFi 6 Lite
   - UniFi nanoHD
 

@@ -9,7 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     file \
     git \
     python3 \
+    python3-dev \
     python3-distutils \
+    python3-pyelftools \
+    python3-setuptools \
     build-essential \
     gawk \
     unzip \
@@ -26,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     shellcheck \
     libnss-unknown \
     openssh-client \
+    swig \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
