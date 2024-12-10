@@ -1,0 +1,61 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sun, 7 Jan 2024 21:16:07 +0100
+Subject: ath79: unlock full flash on Ubiquiti airMax boards
+
+Instead of unlocking full flash on all devices, selectively unlock the
+full flash on Ubiquiti airMax boards.
+
+The flash unlock was only necessary on these boards in the first place.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+[added swp-disable flag for qca955x_ubnt_xc]
+Signed-off-by: Tom Herbers <mail@tomherbers.de>
+
+diff --git a/target/linux/ath79/dts/ar724x_ubnt_xm.dtsi b/target/linux/ath79/dts/ar724x_ubnt_xm.dtsi
+index 341d0bad0d6f700abfc4bbee69c776ed21839c93..66779042555705e57c9316342103098df12d6849 100644
+--- a/target/linux/ath79/dts/ar724x_ubnt_xm.dtsi
++++ b/target/linux/ath79/dts/ar724x_ubnt_xm.dtsi
+@@ -22,6 +22,7 @@
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <25000000>;
++		swp-disable;
+ 
+ 		partitions {
+ 			compatible = "fixed-partitions";
+diff --git a/target/linux/ath79/dts/ar9342_ubnt_wa.dtsi b/target/linux/ath79/dts/ar9342_ubnt_wa.dtsi
+index ba0f7ad23e52940b1bc4ec2971a8d8e8c73062a6..60d930e434a866a6a891814b7eaec1025d898aef 100644
+--- a/target/linux/ath79/dts/ar9342_ubnt_wa.dtsi
++++ b/target/linux/ath79/dts/ar9342_ubnt_wa.dtsi
+@@ -36,6 +36,7 @@
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <25000000>;
++		swp-disable;
+ 
+ 		partitions {
+ 			compatible = "fixed-partitions";
+diff --git a/target/linux/ath79/dts/ar9342_ubnt_xw.dtsi b/target/linux/ath79/dts/ar9342_ubnt_xw.dtsi
+index ce49c10e5ccb5bc634444cd2dbbce1deb60ef73c..5ddf89488ceb3958926465413515de33506e5817 100644
+--- a/target/linux/ath79/dts/ar9342_ubnt_xw.dtsi
++++ b/target/linux/ath79/dts/ar9342_ubnt_xw.dtsi
+@@ -64,6 +64,7 @@
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <25000000>;
++		swp-disable;
+ 
+ 		partitions {
+ 			compatible = "fixed-partitions";
+diff --git a/target/linux/ath79/dts/qca955x_ubnt_xc.dtsi b/target/linux/ath79/dts/qca955x_ubnt_xc.dtsi
+index 0f803945db632873a6d7e97cb0a482106354e8c2..196e1b5382f5508610a65247832e47006a3ca11b 100644
+--- a/target/linux/ath79/dts/qca955x_ubnt_xc.dtsi
++++ b/target/linux/ath79/dts/qca955x_ubnt_xc.dtsi
+@@ -16,6 +16,7 @@
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <25000000>;
++		swp-disable;
+ 
+ 		partitions {
+ 			compatible = "fixed-partitions";
