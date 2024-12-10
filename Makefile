@@ -205,6 +205,10 @@ container: FORCE
 	@scripts/container.sh
 
 
+tools:
+	mkdir -p tools
+	gcc -o tools/enter-network-config-mode package/gluon-setup-mode/src/send-network-request.c
+
 all: config
 	+@
 	$(GLUON_ENV) $(LUA) scripts/clean_output.lua
@@ -212,6 +216,7 @@ all: config
 	$(GLUON_ENV) $(LUA) scripts/copy_output.lua
 
 clean download: config
+	rm -rf tools
 	+@$(OPENWRTMAKE) $@
 
 dirclean: FORCE
