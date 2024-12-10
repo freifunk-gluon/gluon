@@ -1,0 +1,226 @@
+From: Linus Lüssing <linus.luessing@c0d3.blue>
+Date: Tue, 26 Sep 2023 17:58:22 +0200
+Subject: batctl: add switch for setting multicast_mld_rtr_only
+
+This patch adds an option for the new multicast_mld_rtr_only setting in
+batman-adv.
+
+Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
+
+diff --git a/batctl/patches/0013-batctl-add-switch-for-setting-multicast_mld_rtr_only.patch b/batctl/patches/0013-batctl-add-switch-for-setting-multicast_mld_rtr_only.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ec1a192840f87a19e9a45ebca7ac8f40236340c1
+--- /dev/null
++++ b/batctl/patches/0013-batctl-add-switch-for-setting-multicast_mld_rtr_only.patch
+@@ -0,0 +1,211 @@
++From 7b0ac996e5bf0060a62e05cae35c772de790e0d4 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
++Date: Tue, 26 Sep 2023 17:09:27 +0200
++Subject: [PATCH] batctl: add switch for setting multicast_mld_rtr_only
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++This patch adds an option for the new multicast_mld_rtr_only setting in
++batman-adv.
++
++Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
++---
++ Makefile                 |  1 +
++ README.rst               | 10 +++++
++ batman_adv.h             |  9 +++++
++ event.c                  |  4 ++
++ man/batctl.8             | 18 +++++++++
++ multicast_mld_rtr_only.c | 83 ++++++++++++++++++++++++++++++++++++++++
++ 6 files changed, 125 insertions(+)
++ create mode 100644 multicast_mld_rtr_only.c
++
++diff --git a/Makefile b/Makefile
++index 0610e3c8eb6d..8bb2c673be8e 100755
++--- a/Makefile
+++++ b/Makefile
++@@ -66,6 +66,7 @@ $(eval $(call add_command,mesh_json,y))
++ $(eval $(call add_command,multicast_fanout,y))
++ $(eval $(call add_command,multicast_forceflood,y))
++ $(eval $(call add_command,multicast_mode,y))
+++$(eval $(call add_command,multicast_mld_rtr_only,y))
++ $(eval $(call add_command,neighbors,y))
++ $(eval $(call add_command,neighbors_json,y))
++ $(eval $(call add_command,network_coding,y))
++diff --git a/README.rst b/README.rst
++index 0b0f62f30a7a..a00613ad800c 100644
++--- a/README.rst
+++++ b/README.rst
++@@ -673,6 +673,16 @@ Usage::
++   batctl multicast_forceflood|mff [0|1]
++ 
++ 
+++batctl multicast_mld_rtr_only
+++-----------------------------
+++
+++display or modify the multicast MLD router only setting
+++
+++Usage::
+++
+++  batctl multicast_mld_rtr_only|mro [0|1]
+++
+++
++ batctl network_coding
++ ---------------------
++ 
++diff --git a/batman_adv.h b/batman_adv.h
++index e5b62f6c35a2..885cc2482dc8 100644
++--- a/batman_adv.h
+++++ b/batman_adv.h
++@@ -493,6 +493,15 @@ enum batadv_nl_attrs {
++ 	 */
++ 	BATADV_ATTR_NOFLOOD_MASK,
++ 
+++	/**
+++	 * @BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED: defines how IGMP/MLD
+++	 * reports are forwarded in the mesh. If set to non-zero then IGMP/MLD
+++	 * reports are only forwarded to detected multicast routers. If set to
+++	 * zero then they are flooded instead.
+++	 * Warning: The former is experimental and potentially unsafe!
+++	 */
+++	BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED,
+++
++ 	/* add attributes above here, update the policy in netlink.c */
++ 
++ 	/**
++diff --git a/event.c b/event.c
++index 274f99fcb65a..14700ea57ae0 100644
++--- a/event.c
+++++ b/event.c
++@@ -283,6 +283,10 @@ static void event_parse_set_mesh(struct nlattr **attrs)
++ 		printf("* multicast_forceflood %s\n",
++ 		       u8_to_boolstr(attrs[BATADV_ATTR_MULTICAST_FORCEFLOOD_ENABLED]));
++ 
+++	if (attrs[BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED])
+++		printf("* multicast_forceflood %s\n",
+++		       u8_to_boolstr(attrs[BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED]));
+++
++ 	if (attrs[BATADV_ATTR_NETWORK_CODING_ENABLED])
++ 		printf("* network_coding %s\n",
++ 		       u8_to_boolstr(attrs[BATADV_ATTR_NETWORK_CODING_ENABLED]));
++diff --git a/man/batctl.8 b/man/batctl.8
++index b5be0b801708..9d830907ac7f 100644
++--- a/man/batctl.8
+++++ b/man/batctl.8
++@@ -341,6 +341,24 @@ disable multicast forceflood. This setting defines whether multicast optimizatio
++ flooding of multicast packets. If set to non-zero then all nodes in the mesh are going to use classic flooding for any
++ multicast packet with no optimizations.
++ .TP
+++[\fBmeshif\fP \fInetdev\fP] \fBmulticast_mld_rtr_only\fP|\fBmro\fP [\fI0\fP|\fI1\fP]
+++If no parameter is given the current multicast MLD router only setting is displayed. Otherwise the parameter is used to
+++set the IGMP/MLD report forwarding behaviour. If enabled then MLD reports are forwarded to detected multicast routers only.
+++If disabled then they are flooded instead.
+++
+++.br
+++.br
+++Warning: Enabling this is experimental and potentially unsafe!
+++
+++.br
+++.br
+++If the IGMP/MLD querier is configured directly on the bridge on top of
+++bat0. But there is no multicast router on or behind this node. Then this
+++bridge will be unable to detect multicast listeners on/behind other
+++nodes which have the MLD-RTR-ONLY setting enabled. (A workaround for this
+++can then in turn be to set multicast_router=2 on the bat0 bridge port
+++on the node with the IGMP/MLD querier.)
+++.TP
++ [\fBmeshif\fP \fInetdev\fP] \fBnetwork_coding\fP|\fBnc\fP [\fI0\fP|\fI1\fP]
++ If no parameter is given the current network coding mode setting is displayed. Otherwise the parameter is used to enable or
++ disable network coding.
++diff --git a/multicast_mld_rtr_only.c b/multicast_mld_rtr_only.c
++new file mode 100644
++index 000000000000..599f96fb2375
++--- /dev/null
+++++ b/multicast_mld_rtr_only.c
++@@ -0,0 +1,83 @@
+++// SPDX-License-Identifier: GPL-2.0
+++/* Copyright (C) B.A.T.M.A.N. contributors:
+++ *
+++ * Linus Lüssing <linus.luessing@c0d3.blue>
+++ *
+++ * License-Filename: LICENSES/preferred/GPL-2.0
+++ */
+++
+++#include "main.h"
+++
+++#include <errno.h>
+++#include <linux/genetlink.h>
+++#include <netlink/genl/genl.h>
+++
+++#include "batman_adv.h"
+++#include "netlink.h"
+++#include "sys.h"
+++
+++static struct simple_boolean_data multicast_mld_rtr_only;
+++
+++static int print_multicast_mld_rtr_only(struct nl_msg *msg, void *arg)
+++{
+++	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+++	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+++	struct genlmsghdr *ghdr;
+++	int *result = arg;
+++
+++	if (!genlmsg_valid_hdr(nlh, 0))
+++		return NL_OK;
+++
+++	ghdr = nlmsg_data(nlh);
+++
+++	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+++		      genlmsg_len(ghdr), batadv_netlink_policy)) {
+++		return NL_OK;
+++	}
+++
+++	if (!attrs[BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED])
+++		return NL_OK;
+++
+++	printf("%s\n", nla_get_u8(attrs[BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED]) ? "enabled" : "disabled");
+++
+++	*result = 0;
+++	return NL_STOP;
+++}
+++
+++static int get_multicast_mld_rtr_only(struct state *state)
+++{
+++	return sys_simple_nlquery(state, BATADV_CMD_GET_MESH,
+++				  NULL, print_multicast_mld_rtr_only);
+++}
+++
+++static int set_attrs_multicast_mld_rtr_only(struct nl_msg *msg, void *arg)
+++{
+++	struct state *state = arg;
+++	struct settings_data *settings = state->cmd->arg;
+++	struct simple_boolean_data *data = settings->data;
+++
+++	if (data->val)
+++		printf("Warning: MLD-RTR-ONLY is experimental and has known, broken scenarios\n");
+++
+++	nla_put_u8(msg, BATADV_ATTR_MULTICAST_MLD_RTR_ONLY_ENABLED, data->val);
+++
+++	return 0;
+++}
+++
+++static int set_multicast_mld_rtr_only(struct state *state)
+++{
+++	return sys_simple_nlquery(state, BATADV_CMD_SET_MESH,
+++				  set_attrs_multicast_mld_rtr_only, NULL);
+++}
+++
+++static struct settings_data batctl_settings_multicast_mld_rtr_only = {
+++	.data = &multicast_mld_rtr_only,
+++	.parse = parse_simple_boolean,
+++	.netlink_get = get_multicast_mld_rtr_only,
+++	.netlink_set = set_multicast_mld_rtr_only,
+++};
+++
+++COMMAND_NAMED(SUBCOMMAND_MIF, multicast_mld_rtr_only, "mro", handle_sys_setting,
+++	      COMMAND_FLAG_MESH_IFACE | COMMAND_FLAG_NETLINK,
+++	      &batctl_settings_multicast_mld_rtr_only,
+++	      "[0|1]             \tdisplay or modify multicast_mld_rtr_only setting");
++-- 
++2.40.1
++
