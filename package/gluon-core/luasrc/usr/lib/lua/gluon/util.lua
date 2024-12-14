@@ -194,7 +194,6 @@ function M.generate_mac(i)
 	local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
 
 	m1 = tonumber(m1, 16)
-	m5 = tonumber(m5, 16)
 	m6 = tonumber(m6, 16)
 
 	m1 = bit.bor(m1, 0x02)  -- set locally administered bit
@@ -205,12 +204,10 @@ function M.generate_mac(i)
 	-- a hardware MAC filter. (e.g 'rt305x')
 
 	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
-	m6 = m6 + i                   -- add virtual interface id
+	m6 = math.fmod(m6 + i, 256)   -- add virtual interface id
 
-	local overflow = math.floor(i/8)
-	m5 = math.fmod(m5 + overflow, 256)
 
-	return string.format('%02x:%s:%s:%s:%02x:%02x', m1, m2, m3, m4, m5, m6)
+	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 function M.get_uptime()
