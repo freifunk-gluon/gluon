@@ -210,7 +210,7 @@ function M.generate_mac(i)
 	local overflow = math.floor(i/8)
 	m5 = math.fmod(m5 + overflow, 256)
 
-	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+	return string.format('%02x:%s:%s:%s:%02x:%02x', m1, m2, m3, m4, m5, m6)
 end
 
 function M.get_uptime()
