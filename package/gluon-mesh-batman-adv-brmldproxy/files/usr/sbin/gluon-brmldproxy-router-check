@@ -1,0 +1,13 @@
+#!/bin/sh
+
+BRMLDPROXY_RTR_GROUP="ff12::424e:f314"
+
+update_router_recv() {
+	bridge mdb "$1" dev br-client port local-port grp "$BRMLDPROXY_RTR_GROUP" permanent 2> /dev/null
+}
+
+if batctl mcast_flags | grep -q "^Multicast flags (own flags: \[.*R6\.*\]"; then
+	update_router_recv add
+else
+	update_router_recv del
+fi
