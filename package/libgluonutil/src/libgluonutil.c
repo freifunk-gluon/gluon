@@ -11,6 +11,7 @@
 
 #include <errno.h>
 #include <glob.h>
+#include <libgen.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
