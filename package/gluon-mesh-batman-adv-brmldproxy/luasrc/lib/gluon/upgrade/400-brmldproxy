@@ -1,0 +1,52 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+
+local excludefilters = { 'ff00::/ff0e::' }
+if site.mesh.filter_membership_reports(true) then
+	table.insert(excludefilters, 'ff02::/ff0f::')
+	table.insert(excludefilters, 'ff05::2:1001')
+end
+
+uci:delete('brmldproxy', 'client')
+uci:section('brmldproxy', 'brmldproxy', 'client', {
+	disabled = 0,
+	bridge = 'client',
+	family = 'ipv6',
+	proxiedport = { 'bat0' },
+	excludedport = { 'local-port' },
+	excludefilter = excludefilters,
+})
+uci:save('brmldproxy')
+
+-- Allow incoming MLD on brmldp0/1/... devices
+uci:section('firewall', 'rule', 'brmldproxy_mld_in', {
+	name = 'brmldproxy_mld_in',
+	device = 'brmldp+',
+	direction = 'in',
+	src = '*',
+	src_ip = 'fe80::/10',
+	target = 'ACCEPT',
+	family = 'ipv6',
+	proto = 'icmp',
+	icmp_type = { '130/0', '131/0', '132/0', '143/0', },
+})
+
+-- Fix default mark of MLDv2 reports (bug in the Linux IPv6 stack)
+-- See: https://marc.info/?l=netfilter&m=168959399302909
+--   Subject: skb->mark not cleared for MLDv2 Reports? (skb->mark == 212 / 0xd4)
+uci:section('firewall', 'rule', 'brmldproxy_mldv2_mark_fixup', {
+	name = 'brmldproxy_mldv2_mark_fixup',
+	device = 'brmldp+',
+	direction = 'out',
+	dest = '*',
+	src_ip = 'fe80::/10',
+	target = 'MARK',
+	set_mark = '0x0',
+	family = 'ipv6',
+	proto = 'icmp',
+	icmp_type = { '143/0', },
+})
+
+uci:save('firewall')
