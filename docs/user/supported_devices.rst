@@ -311,6 +311,7 @@ mediatek-filogic
 
 * Cudy
 
+  - AP3000 Outdoor (v1)
   - WR3000 (v1)
 
 * GL.iNet
