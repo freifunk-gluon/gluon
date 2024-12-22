@@ -6,7 +6,7 @@ This conflicts with our reset button usage.
 
 diff --git a/package/base-files/files/etc/rc.button/reset b/package/base-files/files/etc/rc.button/reset
 deleted file mode 100755
-index 2403122ad21d1abd568337908c9d58060e87bf08..0000000000000000000000000000000000000000
+index 84651334710dce09b6a9c342d4b871c64516204d..0000000000000000000000000000000000000000
 --- a/package/base-files/files/etc/rc.button/reset
 +++ /dev/null
 @@ -1,31 +0,0 @@
@@ -35,7 +35,7 @@ index 2403122ad21d1abd568337908c9d58060e87bf08..00000000000000000000000000000000
 -	elif [ "$SEEN" -ge 5 -a -n "$OVERLAY" ]
 -	then
 -		echo "FACTORY RESET" > /dev/console
--		jffs2reset -y && reboot &
+-		factoryreset -y && reboot &
 -	fi
 -;;
 -esac
