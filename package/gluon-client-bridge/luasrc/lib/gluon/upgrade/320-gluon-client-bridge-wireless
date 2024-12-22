@@ -14,7 +14,7 @@ local function is_disabled(config, name)
 	return config.disabled(false)
 end
 
-local has_client_radio = false
+local has_client_only_radio = false
 
 local function configure_ap(radio, index, config, radio_name)
 	local name = 'client_' .. radio_name
@@ -24,7 +24,7 @@ local function configure_ap(radio, index, config, radio_name)
 	local disabled = is_disabled(ap, name)
 
 	if not wireless.supports_channel(radio, config.channel()) then
-		has_client_radio = true
+		has_client_only_radio = true
 	end
 
 	uci:delete('wireless', name)
@@ -119,7 +119,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	configure_owe_transition_mode(config, radio_name)
 end)
 
-if not sysconfig.gluon_version and has_client_radio then
+if not sysconfig.gluon_version and has_client_only_radio then
 	wireless.foreach_radio(uci, function(radio, _, config)
 		local radio_name = radio['.name']
 
