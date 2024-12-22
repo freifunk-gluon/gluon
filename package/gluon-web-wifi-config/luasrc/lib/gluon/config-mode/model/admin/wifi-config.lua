@@ -95,9 +95,17 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
 
-	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
-	if is_5ghz then
-		table.insert(mesh_vifs_5ghz, mesh_vif)
+	-- disable setting mesh iface setting if radio does not support configured mesh channel
+	if wireless.supports_channel(config, tonumber(config.channel)) then
+		local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
+
+		if is_5ghz then
+			table.insert(mesh_vifs_5ghz, mesh_vif)
+		end
+	else
+		p:element('model/warning', {
+			content = translate("Mesh deactivated due to unsupported channel"),
+		}, 'warning')
 	end
 
 	local phy = wireless.find_phy(config)
