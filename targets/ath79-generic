@@ -399,6 +399,11 @@ device('sophos-ap15', 'sophos_ap15', {
 	broken = true, -- no button and no external console port
 })
 
+device('sophos-ap15c', 'sophos_ap15c', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 device('sophos-ap100', 'sophos_ap100', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
