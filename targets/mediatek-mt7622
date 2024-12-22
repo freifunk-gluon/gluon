@@ -1,3 +1,13 @@
+-- D-Link
+
+device('d-link-eagle-pro-ai-r32-a1', 'dlink_eagle-pro-ai-r32-a1', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-recovery', '-recovery', '.bin'}
+	},
+	broken = true, -- Wifi LEDs don't work
+})
+
 -- Linksys
 
 device('linksys-e8450-ubi', 'linksys_e8450-ubi', {
