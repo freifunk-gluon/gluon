@@ -9,6 +9,16 @@ device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
 })
 
 
+-- D-Link
+
+device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-recovery', '-recovery', '.bin'}
+	},
+})
+
+
 -- Cudy
 
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
