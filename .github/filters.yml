@@ -115,6 +115,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "lantiq-xrx200_legacy": [
+    "targets/lantiq-xrx200_legacy",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "lantiq-xway": [
     "targets/lantiq-xway",
     ".github/workflows/build-gluon.yml",
