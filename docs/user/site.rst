@@ -297,7 +297,7 @@ mesh_vpn
   data; this prevents malicious ISPs from correlating VPN sessions with specific mesh
   nodes via public respondd data. If this is of no concern in your threat model,
   this behaviour can be disabled (and thus announcing the public key be enabled) by
-  setting `pubkey_privacy` to `false`. At the moment, this option only affects fastd.
+  setting `pubkey_privacy` to `false`.
 
   The `fastd` section configures settings specific to the *fastd* VPN
   implementation.
@@ -436,7 +436,7 @@ interfaces \: optional
     },
 
   For devices that have two distinct Ethernet ports or port groups (often
-  labelled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
+  labeled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
   is only one port (group), ``single`` is used instead.
 
   Available interface roles:
@@ -670,7 +670,7 @@ flags using a flexible ruleset defined in the Gluon repo or site package feeds.
 To some extent, it will even allow us to further modularize existing Gluon packages,
 without necessitating changes to existing site configurations.
 
-It is still possible to override such automatic rules by removing them using 
+It is still possible to override such automatic rules by removing them using
 *packages* in the ``image-customization.lua`` file
 (e.g., ``features { '-gluon-status-page-mesh-batman-adv' }`` to remove
 the automatically added package *gluon-status-page-mesh-batman-adv*).
@@ -740,7 +740,7 @@ disable_factory()
   Disables factory image generation. Sysupgrade images are still generated and stored in the image
   output directory.
 
-Technically, the image customzation file is evaluated once for each device, allowing
+Technically, the image customization file is evaluated once for each device, allowing
 to make use of regular Lua *if* statements for device-specific configuration as
 can be seen in the example.
 
@@ -821,7 +821,7 @@ PACKAGES_${feed}_COMMIT
 
 PACKAGES_${feed}_BRANCH
   Optional: The branch of the repository the given commit ID can be found in.
-  Defaults to the default branch of the repository (usually ``master``)
+  Defaults to the default branch of the repository (usually ``main`` or ``master``)
 
 These variables are always all uppercase, so for an entry ``foo`` in GLUON_SITE_FEEDS,
 the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,

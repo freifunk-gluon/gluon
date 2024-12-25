@@ -37,11 +37,13 @@ local ATH10K_PACKAGES_SMALLBUFFERS_QCA9887 = {
 
 local ATH10K_PACKAGES_QCA9888 = {}
 
--- ALFA NETWORK
+
+-- ALFA Network
 
 device('alfa-network-ap121f', 'alfa-network_ap121f', {
 	factory = false,
 })
+
 
 -- AVM
 
@@ -64,9 +66,11 @@ device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
 	class = 'tiny', -- 64M ath9k + ath10k
 })
 
+
 -- Buffalo
 
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
+
 device('buffalo-wzr-600dhp', 'buffalo_wzr-600dhp')
 
 device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s', {
@@ -111,6 +115,7 @@ device('devolo-wifi-pro-1750x', 'devolo_dvl1750x', {
 -- D-Link
 
 device('d-link-dap-1330-a1', 'dlink_dap-1330-a1')
+
 device('d-link-dap-1365-a1', 'dlink_dap-1365-a1')
 
 device('d-link-dap-2660-a1', 'dlink_dap-2660-a1', {
@@ -176,12 +181,14 @@ device('gl.inet-gl-usb150', 'glinet_gl-usb150', {
 	factory = false,
 })
 
--- JOY-IT
+
+-- Joy-IT
 
 device('joy-it-jt-or750i', 'joyit_jt-or750i', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	factory = false,
 })
+
 
 -- LibreRouter
 
@@ -190,7 +197,8 @@ device('librerouter-v1', 'librerouter_librerouter-v1', {
 	factory = false,
 })
 
--- Netgear
+
+-- NETGEAR
 
 device('netgear-wndr3700', 'netgear_wndr3700', {
 	factory_ext = '.img',
@@ -237,6 +245,7 @@ device('ocedo-koala', 'ocedo_koala', {
 device('ocedo-raccoon', 'ocedo_raccoon', {
 	factory = false,
 })
+
 
 -- Onion
 
@@ -381,6 +390,7 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 	factory = false,
 })
 
+
 -- Sophos
 
 device('sophos-ap15', 'sophos_ap15', {
@@ -509,6 +519,7 @@ device('tp-link-cpe510-v1', 'tplink_cpe510-v1', {
 	},
 })
 device('tp-link-cpe510-v2', 'tplink_cpe510-v2')
+
 device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
 device('tp-link-cpe710-v1', 'tplink_cpe710-v1')
@@ -522,7 +533,9 @@ device('tp-link-eap225-outdoor-v3', 'tplink_eap225-outdoor-v3', {
 })
 
 device('tp-link-tl-wdr3500-v1', 'tplink_tl-wdr3500-v1')
+
 device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+
 device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
 device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
@@ -619,7 +632,6 @@ device('ubiquiti-unifi-ap-outdoor+', 'ubnt_unifi-ap-outdoor-plus', {
 })
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
-
 
 device('ubiquiti-unifi-swiss-army-knife-ultra', 'ubnt_uk-ultra', {
 	factory = false,

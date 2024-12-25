@@ -1,4 +1,4 @@
-[![Build Gluon](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml/badge.svg?branch=master)](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml)
+[![Build Gluon](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml/badge.svg?branch=main)](https://github.com/freifunk-gluon/gluon/actions/workflows/build-gluon.yml)
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/license/bsd-2-clause/)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/freifunk-gluon/gluon?sort=semver)](https://github.com/freifunk-gluon/gluon/releases/latest)
 
@@ -57,12 +57,12 @@ the future development of Gluon.
 
 ## Use a release!
 
-Please refrain from using the `master` branch for anything else but development purposes!
+Please refrain from using the `main` branch for anything else but development purposes!
 Use the most recent release instead. You can list all releases by running `git tag`
 and switch to one by running `git checkout v2023.2.4 && make update`.
 
 If you're using the autoupdater, do not autoupdate nodes with anything but releases.
-If you upgrade using random master commits the nodes *might break* eventually.
+If you upgrade using random main commits the nodes *might break* eventually.
 
 ## Mailinglist
 

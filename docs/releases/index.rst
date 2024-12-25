@@ -15,6 +15,7 @@ Release Notes
   :caption: Gluon 2023.1
   :maxdepth: 2
 
+  v2023.1.2
   v2023.1.1
   v2023.1
 

@@ -18,7 +18,7 @@ device('gl.inet-vixmini', 'glinet_vixmini', {
 })
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-r6020', 'netgear_r6020', {
 	factory_ext = '.img',

@@ -12,6 +12,8 @@ packages {
 }
 
 
+-- AVM
+
 device('avm-fritz-box-3370-rev-2-hynix-nand', 'avm_fritz3370-rev2-hynix', {
 	factory = false,
 	extra_images = {
@@ -51,6 +53,7 @@ device('arcadyan-vgv7510kw22', 'arcadyan_vgv7510kw22-nor', {
 	factory = false,
 	aliases = {'o2-box-6431'},
 })
+
 
 -- TP-Link
 

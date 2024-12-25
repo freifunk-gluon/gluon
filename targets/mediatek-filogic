@@ -33,6 +33,6 @@ device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
 })
 
 
--- ZyXEL
+-- Zyxel
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')

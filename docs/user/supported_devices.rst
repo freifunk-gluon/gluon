@@ -71,7 +71,7 @@ ath79-generic
 
   - LibreRouter v1 [#missing_radios]_
 
-* Netgear
+* NETGEAR
 
   - WNDR3700 (v1, v2)
   - WNDR3800
@@ -178,7 +178,7 @@ ath79-nand
   - GL-AR750S
   - GL-XE300
 
-* Netgear
+* NETGEAR
 
   - WNDR3700 (v4)
   - WNDR4300 (v1)
@@ -245,7 +245,7 @@ ipq40xx-generic
   - PA1200
   - PA2200
 
-* ZyXEL
+* Zyxel
 
   - NBG6617
 
@@ -317,7 +317,7 @@ mediatek-filogic
 
   - UniFi 6 Plus
 
-* ZyXEL
+* Zyxel
 
   - NWA50AX Pro
 
@@ -432,7 +432,7 @@ ramips-mt7621
 
   - GL-MT1300
 
-* Mercusys
+* MERCUSYS
 
   - MR70X (v1)
 
@@ -465,12 +465,12 @@ ramips-mt7621
   - Xiaomi Mi Router 3G (v1, v2)
   - Xiaomi Mi Router 4A (Gigabit Edition v1, v2)
 
-* ZBT
+* Zbtlink
 
   - WG3526-16M
   - WG3526-32M
 
-* ZyXEL
+* Zyxel
 
   - NWA50AX
   - WSM20
