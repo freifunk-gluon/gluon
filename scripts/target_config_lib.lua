@@ -150,7 +150,7 @@ local function handle_target_pkgs(pkgs)
 end
 
 local function get_default_pkgs()
-	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/')
+	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/', 1)
 	local target_matches = false
 	for line in io.lines('openwrt/tmp/.targetinfo') do
 		local target_match = string.match(line, '^Target: (.+)$')

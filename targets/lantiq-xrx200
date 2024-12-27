@@ -54,21 +54,3 @@ device('arcadyan-vgv7510kw22', 'arcadyan_vgv7510kw22-nor', {
 	factory = false,
 	aliases = {'o2-box-6431'},
 })
-
-
--- TP-Link
-
--- CAVEAT: These devices don't have a dedicated WAN port.
---         All ethernet ports on the device are bridged and
---         used as WAN ports. Clients connected to these
---         ports will be connected to your private network.
-
-device('tp-link-td-w8970', 'tplink_tdw8970', {
-	factory = false,
-})
-
-device('tp-link-td-w8980', 'tplink_tdw8980', {
-	factory = false,
-	aliases = {'tp-link-td-w9980'},
-	broken = true, -- 5GHz unsupported
-})
