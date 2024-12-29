@@ -154,3 +154,9 @@ device('zyxel-nbg6617', 'zyxel_nbg6617')
 device('8devices-jalapeno', '8dev_jalapeno', {
 	factory_ext = '.ubi',
 })
+
+-- Extreme Networks
+
+device('extreme-networks-ws-ap3915i', 'extreme-networks_ws-ap3915i', {
+	factory = false,
+})
