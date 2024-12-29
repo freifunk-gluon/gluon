@@ -60,12 +60,9 @@ device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
 		'-ath10k-firmware-qca4019-ct',
 
 		-- VDSL modem
-		'-kmod-ltq-vdsl-vr11',
-		'-kmod-ltq-vdsl-vr11-mei',
-		'-ltq-vdsl-vr11-app',
-		'-ltq-dsl-base',
-		'-kmod-atm',
-		'-linux-atm',
+		'ppp',
+		'kmod-ppp',
+		'ppp-mod-pppoe',
 	},
 })
 
