@@ -18,6 +18,13 @@ device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
 	},
 })
 
+device('d-link-aquila-pro-ai-m60-a1', 'dlink_aquila-pro-ai-m60-a1', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-recovery', '-recovery', '.bin'}
+	},
+})
+
 
 -- Cudy
 
