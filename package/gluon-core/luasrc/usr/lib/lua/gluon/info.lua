@@ -59,7 +59,7 @@ function M.get_info_pretty(i18n)
 		{ _('Firmware release'), data.firmware_release },
 		{ _('Site'), data.site },
 		{ _('Domain'), data.domain or 'n/a' },
-		{ _('Public VPN key'), data.public_vpn_key or 'n/a' },
+		{ _('Public VPN key'), data.public_vpn_key or _('disabled') },
 		{ _('Switch type'), data.switch_type },
 		{ _('Autoupdater branch'), data.updater_branch or _('disabled') },
 	}
