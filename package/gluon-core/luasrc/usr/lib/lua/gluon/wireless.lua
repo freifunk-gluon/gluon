@@ -3,13 +3,62 @@ local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local unistd = require 'posix.unistd'
+local dirent = require 'posix.dirent'
 
-local iwinfo = require 'iwinfo'
 
 local M = {}
 
+local function find_phy_by_path(path)
+	local device_path, phy_offset = string.match(path, "^(.+)%+(%d+)$")
+
+	-- Special handling required for multi-phy devices
+	if device_path == nil then
+		device_path = path
+		phy_offset = '0'
+	end
+
+	-- Find the device path. Either it's located at /sys/devices or /sys/devices/platform
+	local path_prefix = ''
+	if not unistd.access('/sys/devices/' .. device_path .. '/ieee80211') then
+		path_prefix = 'platform/'
+	end
+
+	-- Get all available PHYs of the device and determine the one with the lowest index
+	local phy_names = dirent.dir('/sys/devices/' .. path_prefix .. device_path .. '/ieee80211')
+	local device_phy_idxs = {}
+	for _, v in ipairs(phy_names) do
+		local phy_idx = v:match('^phy(%d+)$')
+
+		if phy_idx ~= nil then
+			table.insert(device_phy_idxs, tonumber(phy_idx))
+		end
+	end
+
+	table.sort(device_phy_idxs)
+
+	-- Index starts at 1
+	return 'phy' .. device_phy_idxs[tonumber(phy_offset) + 1]
+end
+
+local function find_phy_by_macaddr(macaddr)
+	local addr = macaddr:lower()
+	for _, file in ipairs(util.glob('/sys/class/ieee80211/*/macaddress')) do
+		if util.trim(util.readfile(file)) == addr then
+			return file:match('([^/]+)/macaddress$')
+		end
+	end
+end
+
 function M.find_phy(config)
-	return iwinfo.nl80211.phyname(config['.name'])
+	if not config or config.type ~= 'mac80211' then
+		return nil
+	elseif config.path then
+		return find_phy_by_path(config.path)
+	elseif config.macaddr then
+		return find_phy_by_macaddr(config.macaddr)
+	else
+		return nil
+	end
 end
 
 local function get_addresses(radio)
