@@ -5,6 +5,8 @@ local util = require 'gluon.util'
 local unistd = require 'posix.unistd'
 local dirent = require 'posix.dirent'
 
+local iwinfo = require 'iwinfo'
+
 
 local M = {}
 
@@ -50,8 +52,9 @@ local function find_phy_by_macaddr(macaddr)
 end
 
 function M.find_phy(config)
-	if not config or config.type ~= 'mac80211' then
-		return nil
+	phyname = iwinfo.nl80211.phyname(config['.name'])
+	if phyname then
+		return phyname
 	elseif config.path then
 		return find_phy_by_path(config.path)
 	elseif config.macaddr then
