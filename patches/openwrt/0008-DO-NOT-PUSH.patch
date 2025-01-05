@@ -1,0 +1,23 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sun, 5 Jan 2025 02:02:45 +0100
+Subject: DO NOT PUSH
+
+diff --git a/target/linux/ath79/patches-6.6/999-ath79-reset-state.patch b/target/linux/ath79/patches-6.6/999-ath79-reset-state.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..40ac79b8b1135330668a674c60b865d662fdd8de
+--- /dev/null
++++ b/target/linux/ath79/patches-6.6/999-ath79-reset-state.patch
+@@ -0,0 +1,13 @@
++--- a/drivers/reset/reset-ath79.c
+++++ b/drivers/reset/reset-ath79.c
++@@ -149,6 +149,10 @@ static int ath79_reset_probe(struct plat
++ 	if (err)
++ 		dev_warn(&pdev->dev, "Failed to register restart handler\n");
++ 
+++	if (of_device_is_compatible(ath79_reset->pdev->dev.of_node, "qca,ar9340-reset")) {
+++		dev_warn(&pdev->dev, "Enabling extended AR9344 reset sequence");
+++	}
+++
++ 	return 0;
++ }
++ 
