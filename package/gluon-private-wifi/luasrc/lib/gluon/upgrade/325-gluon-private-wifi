@@ -13,6 +13,11 @@ wireless.foreach_radio(uci, function(radio)
 	end
 
 	uci:set('wireless', name, 'ifname', suffix and 'wl-wan' .. suffix)
+
+	-- migrate encryption from Gluon v2023.2.x or older
+	-- remove in 2027 or on first release supporting only upgrades from >=v2025.1.x
+	local encryption = uci:get('wireless', name, 'encryption')
+	uci:set('wireless', name, 'encryption', encryption:gsub("psk3", "sae"))
 end)
 
 uci:save('wireless')

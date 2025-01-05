@@ -49,8 +49,8 @@ local encryption = s:option(ListValue, "encryption", translate("Encryption"))
 encryption:depends(enabled, true)
 encryption:value("psk2", translate("WPA2"))
 if wireless.device_supports_wpa3() then
-	encryption:value("psk3-mixed", translate("WPA2 / WPA3"))
-	encryption:value("psk3", translate("WPA3"))
+	encryption:value("sae-mixed", translate("WPA2 / WPA3"))
+	encryption:value("sae", translate("WPA3"))
 end
 encryption.default = uci:get('wireless', primary_iface, 'encryption') or "psk2"
 
