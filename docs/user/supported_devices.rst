@@ -225,6 +225,10 @@ ipq40xx-generic
   - FRITZ!Box 7530 [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
+* Extreme Networks
+
+  - WS-AP3915i
+
 * GL.iNet
 
   - GL-AP1300
