@@ -31,6 +31,8 @@ update_router_recv() {
 
 if [ "$(batctl mj | jsonfilter -e "@.mcast_flags.want_no_rtr_ipv6")" = "false" ]; then
 	update_router_recv add
+	echo 1 > /sys/class/net/brmldpb0/bridge/multicast_querier
 else
 	update_router_recv del
+	echo 0 > /sys/class/net/brmldpb0/bridge/multicast_querier
 fi
