@@ -138,6 +138,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		mesh_id = config.id,
 		mesh_fwding = false,
 		macaddr = macaddr,
+		basic_rate = { config.mcast_rate },
 		mcast_rate = config.mcast_rate,
 		ifname = suffix and 'mesh' .. suffix,
 		disabled = disabled,
