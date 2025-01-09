@@ -40,8 +40,6 @@ ath79-generic
 
 * D-Link
 
-  - AQUILA PRO AI M30 A1
-  - AQUILA PRO AI M60 A1
   - DAP-1330 A1 [#lan_as_wan]_
   - DAP-1365 A1 [#lan_as_wan]_
   - DAP-2660 A1 [#lan_as_wan]_
@@ -322,6 +320,11 @@ mediatek-filogic
 
   - AP3000 Outdoor (v1)
   - WR3000 (v1)
+
+* D-Link
+
+  - AQUILA PRO AI M30 A1
+  - AQUILA PRO AI M60 A1
 
 * GL.iNet
 
