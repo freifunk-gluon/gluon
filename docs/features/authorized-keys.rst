@@ -13,3 +13,13 @@ If you select this package, add a list of authorized keys to ``site.conf`` like 
     ...
 
 Existing keys in ``/etc/dropbear/authorized_keys`` will be preserved.
+
+If you want to remove specific keys in the future, specify them like this:::
+
+  {
+    unauthorized_keys = { 'ssh-rsa AAA.... user1@host',
+                          'ssh-rsa AAA.... user2@host' },
+    authorized_keys = { 'ssh-rsa AAA.... user3@host',
+                        'ssh-rsa AAA.... user4@host' },
+    hostname_prefix = ...
+    ...
