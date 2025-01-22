@@ -100,6 +100,10 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 
 -- TP-Link
 
+device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1', {
+	broken = true, -- LAN LED not working - review after resolving #2756
+})
+
 device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
 	broken = true, -- LAN LED not working - review after resolving #2756
 })
