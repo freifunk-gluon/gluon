@@ -465,6 +465,9 @@ ramips-mt7621
 
 * TP-Link
 
+  - EAX11 (v2)
+  - EAX12
+  - EAX15 (v2)
   - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)
