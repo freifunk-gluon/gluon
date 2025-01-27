@@ -9,7 +9,11 @@ local iwinfo = require 'iwinfo'
 local M = {}
 
 function M.find_phy(config)
-	return iwinfo.nl80211.phyname(config['.name'])
+	local phyname = iwinfo.nl80211.phyname(config['.name'])
+	if not phyname then
+		phyname = iwinfo.nl80211.phyname(config['.name']:gsub("radio", "phy"))
+	end
+	return phyname
 end
 
 local function get_addresses(radio)
