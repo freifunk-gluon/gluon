@@ -5,10 +5,28 @@ local util = require 'gluon.util'
 local unistd = require 'posix.unistd'
 
 local iwinfo = require 'iwinfo'
+local json = require 'jsonc'
 
 local M = {}
 
+local wlan_data
+
 function M.find_phy(config)
+	-- Avoid loading board.json if config.phy isn't set
+	if config.phy then
+		if not wlan_data then
+			local board_data = json.load('/etc/board.json')
+			wlan_data = board_data.wlan or {}
+		end
+
+		local path = (wlan_data[config.phy] or {}).path
+		if path then
+			-- Currently only used on mediatek-mt7622. On all other targets,
+			-- wlan_data will not have any PHY entries, so path will be nil.
+			return iwinfo.nl80211.phyname('path=' .. path)
+		end
+	end
+
 	return iwinfo.nl80211.phyname(config['.name'])
 end
 
