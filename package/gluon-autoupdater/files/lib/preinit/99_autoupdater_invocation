@@ -1,0 +1,10 @@
+#!/bin/sh
+
+. /lib/gluon/autoupdater/lib.sh
+
+
+autoupdater_invocation_remove() {
+#	flag_invocation 0
+}
+
+boot_hook_add preinit_main autoupdater_invocation_remove
