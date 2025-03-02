@@ -7,6 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
+    clang \
     ecdsautils \
     file \
     gawk \
@@ -15,6 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libncurses5-dev \
     libnss-unknown \
     libssl-dev \
+    llvm \
     lua-check \
     openssh-client \
     python3 \
