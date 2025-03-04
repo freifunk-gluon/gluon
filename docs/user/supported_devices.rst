@@ -506,6 +506,7 @@ ramips-mt76x8
 
 * Cudy
 
+  - TR1200 (v1)
   - WR1000 (v1)
 
 * GL.iNet
