@@ -1,3 +1,6 @@
+config('TARGET_ROOTFS_INITRAMFS', true)
+config('TARGET_INITRAMFS_COMPRESSION_LZMA', true)
+
 -- ASUS
 
 device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
@@ -48,6 +51,13 @@ device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
 
 device('netgear-wax220', 'netgear_wax220', {
 	factory_ext = '.img',
+})
+
+-- OpenWRT
+device('openwrt-one', 'openwrt_one',{
+	factory = '-factory',
+	factory_ext = '.ubi',
+	sysupgrade_ext = '.itb',
 })
 
 
