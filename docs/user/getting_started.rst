@@ -27,6 +27,7 @@ Dependencies
 To build Gluon, several packages need to be installed on the system. On a
 freshly installed Debian Bullseye system the following packages are required:
 
+* `clang`
 * `git` (to get Gluon and other dependencies)
 * `python3`
 * `build-essential`
@@ -37,6 +38,7 @@ freshly installed Debian Bullseye system the following packages are required:
 * `libz-dev` (actually `zlib1g-dev`)
 * `libssl-dev`
 * `libelf-dev` (to build x86-64)
+* `llvm`
 * `wget`
 * `rsync`
 * `time` (built-in `time` doesn't work)
