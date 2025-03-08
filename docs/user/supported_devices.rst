@@ -536,9 +536,10 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (100M Edition)
-  - Xiaomi Mi Router 4A (100M International Edition)
-  - Xiaomi Mi Router 4C
+  - Xiaomi Mi Router 4A (100M Chinese Edition - MIR4A)
+  - Xiaomi Mi Router 4A (100M International Edition - R4AC)
+  - Xiaomi Mi Router 4A (100M International Edition v2 - R4ACv2)
+  - Xiaomi Mi Router 4C (R4CM)
 
 realtek-rtl838x
 ---------------
