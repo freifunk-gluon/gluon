@@ -334,6 +334,10 @@ mediatek-filogic
 
   - WAX220
 
+* OpenWrt
+
+  - One
+
 * Ubiquiti
 
   - UniFi 6 Plus
