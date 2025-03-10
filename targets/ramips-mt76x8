@@ -124,6 +124,10 @@ device('xiaomi-mi-router-4a-100m-international-edition', 'xiaomi_mi-router-4a-10
 	factory = false,
 })
 
+device('xiaomi-mi-router-4a-100m-international-edition-v2', 'xiaomi_mi-router-4a-100m-intl-v2', {
+	factory = false,
+})
+
 device('xiaomi-mi-router-4c', 'xiaomi_mi-router-4c', {
 	factory = false,
 })
