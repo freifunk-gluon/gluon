@@ -12,6 +12,11 @@ return function(form, uci)
 		return
 	end
 
+	if not wireless.site_supports_outdoor_mode() then
+		-- Don't show in case the site does not support outdoor-mode
+		return
+	end
+
 	local pkg_i18n = i18n 'gluon-config-mode-outdoor'
 
 	local section = form:section(Section, nil, pkg_i18n.translate(
