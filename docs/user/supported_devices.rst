@@ -236,6 +236,7 @@ ipq40xx-generic
 * Linksys
 
   - EA6350 (v3)
+  - WHW03 (v2)
 
 * NETGEAR
 
