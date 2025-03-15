@@ -6,6 +6,13 @@ device('linksys-e8450-ubi', 'linksys_e8450-ubi', {
 })
 
 
+-- Netgear
+
+device('netgear-wax206', 'netgear_wax206', {
+	factory_ext = '.img',
+})
+
+
 -- Ubiquiti
 
 device('ubiquiti-unifi-6-lr-v1', 'ubnt_unifi-6-lr-v1', {
