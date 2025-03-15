@@ -412,6 +412,7 @@ ramips-mt7620
 
   - EX3700
   - EX3800
+  - EX6120
   - EX6130
 
 * Nexx
