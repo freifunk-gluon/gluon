@@ -27,10 +27,14 @@ proto_gluon_bat0_renew() {
 
 	lock /var/lock/gluon_bat0.lock
 
-	ubus call network.interface dump | jsonfilter \
-		-e "@.interface[@.proto='gluon_mesh' && @.up=true].device" \
-	| xargs -r -n 1 batctl interface add
-
+	for device in $(ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"); do
+		batctl interface add "$device"
+		local device_sanitized="$(echo "$device" | sed 's/[^a-zA-Z0-9]/_/g')"
+		local hop_penalty="$(lookup_uci "gluon.mesh_batman_adv.hop_penalty_$device_sanitized" 0)"
+		if [ "$hop_penalty" -ne 0 ]; then
+			batctl hardif "$device" hop_penalty "$hop_penalty"
+		fi
+	done
 	lock -u /var/lock/gluon_bat0.lock
 }
 
