@@ -129,8 +129,34 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	end
 end)
 
+local function show_outdoor_mode()
+	local enabled = uci:get_bool('gluon', 'wireless', 'outdoor')
 
-if wireless.device_uses_11a(uci) and not wireless.preserve_channels(uci) then
+	-- Don't show if no radio is 5 GHz
+	if not wireless.device_uses_11a(uci) then
+		return false
+	end
+
+	-- Don't show if preserve_channels is enabled
+	if wireless.preserve_channels(uci) then
+		return false
+	end
+
+	-- Show if outdoor mode is enabled regardless if site
+	-- supports it or not
+	if not wireless.site_supports_outdoor_mode() then
+		return true
+	end
+
+	-- Don't show if site does not support outdoor mode
+	if not wireless.site_supports_outdoor_mode() then
+		return false
+	end
+	
+	return true
+end
+
+if show_outdoor_mode() then
 	local r = f:section(Section, translate("Outdoor Installation"), translate(
 		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
 		.. "and transmission power that conforms with the local regulatory requirements. "
