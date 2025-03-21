@@ -187,7 +187,7 @@ end
 -- 7: wan_radio1 (private WLAN); mesh VPN
 -- 8: client2
 -- 9: mesh2
--- A: ibss2
+-- A: owe2
 -- B: wan_radio2
 function M.generate_mac(i)
 	local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
