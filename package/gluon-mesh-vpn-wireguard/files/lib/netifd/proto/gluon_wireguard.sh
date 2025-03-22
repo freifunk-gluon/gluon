@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
+
+# FIXME: The following lints should not need to be disabled
+# shellcheck disable=SC2034,SC2155
+
 PROTO_DEBUG=1
 
 . /lib/functions.sh

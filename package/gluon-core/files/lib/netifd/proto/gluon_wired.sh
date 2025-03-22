@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
+
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
@@ -17,7 +19,8 @@ xor2() {
 }
 
 is_layer3_device () {
-	local addrlen="$(cat "/sys/class/net/$1/addr_len")"
+	local addrlen
+	addrlen="$(cat "/sys/class/net/$1/addr_len")"
 	test "$addrlen" -eq 0
 }
 
@@ -34,7 +37,8 @@ interface_linklocal() {
 		return
 	fi
 
-	local macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
+	local macaddr
+	macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
 	local oldIFS="$IFS"; IFS=':'; set -- $macaddr; IFS="$oldIFS"
 
 	echo "fe80::$(xor2 "$1")$2:$3ff:fe$4:$5$6"
