@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091,SC2034
+
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
@@ -37,7 +39,8 @@ proto_gluon_bat0_renew() {
 proto_gluon_bat0_setup() {
 	local config="$1"
 
-	local routing_algo="$(lookup_site 'mesh.batman_adv.routing_algo' 'BATMAN_IV')"
+	local routing_algo
+	routing_algo="$(lookup_site 'mesh.batman_adv.routing_algo' 'BATMAN_IV')"
 
 	local gw_mode
 	json_get_vars gw_mode
@@ -54,7 +57,8 @@ proto_gluon_bat0_setup() {
 			batctl gw_mode "server"
 		;;
 		client)
-			local gw_sel_class="$(lookup_site 'mesh.batman_adv.gw_sel_class')"
+			local gw_sel_class
+			gw_sel_class="$(lookup_site 'mesh.batman_adv.gw_sel_class')"
 			if [ -n "$gw_sel_class" ]; then
 				batctl gw_mode "client" "$gw_sel_class"
 			else
@@ -67,7 +71,8 @@ proto_gluon_bat0_setup() {
 	esac
 
 
-	local primary0_mac="$(lua -e 'print(require("gluon.util").generate_mac(3))')"
+	local primary0_mac
+	primary0_mac="$(lua -e 'print(require("gluon.util").generate_mac(3))')"
 
 	ip link add primary0 type dummy
 	echo 1 > /proc/sys/net/ipv6/conf/primary0/disable_ipv6
