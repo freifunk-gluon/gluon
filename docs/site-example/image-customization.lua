@@ -10,11 +10,11 @@ features {
 	'respondd',
 	'status-page',
 	'web-advanced',
-	'web-wizard'
+	'web-wizard',
 }
 
 if not device_class('tiny') then
 	features {
-		'wireless-encryption-wpa3'
+		'wireless-encryption-wpa3',
 	}
 end
