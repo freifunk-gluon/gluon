@@ -790,6 +790,39 @@ disable_factory()
       disable_factory()
     end
 
+include(path)
+  Includes another image customization file. Relative paths are interpreted relative to the site
+  repository root.
+
+  .. code-block:: lua
+    :caption: target-settings.lua
+
+    features {'wireless-encryption-wpa3'}
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if target('x86', '64') then
+      include 'target-settings.lua'
+    end
+
+  Values returned from the included file become the return value of ``include``:
+
+  .. code-block:: lua
+    :caption: matches-device.lua
+
+    return device {
+      'openmesh-a40',
+      'openmesh-a60',
+    }
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if include('matches-device.lua') then
+      packages {'iperf3'}
+    end
+
 Technically, the image customization file is evaluated once for each device, allowing
 to make use of regular Lua *if* statements for device-specific configuration as
 can be seen in the examples.
