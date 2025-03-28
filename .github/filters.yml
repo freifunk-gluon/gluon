@@ -205,16 +205,6 @@
     "targets/generic",
     "targets/targets.mk"
   ],
-  "realtek-rtl838x": [
-    "targets/realtek-rtl838x",
-    ".github/workflows/build-gluon.yml",
-    "modules",
-    "Makefile",
-    "patches/**",
-    "scripts/**",
-    "targets/generic",
-    "targets/targets.mk"
-  ],
   "rockchip-armv8": [
     "targets/rockchip-armv8",
     ".github/workflows/build-gluon.yml",
