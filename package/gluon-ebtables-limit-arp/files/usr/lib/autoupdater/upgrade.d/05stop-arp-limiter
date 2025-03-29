@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# shellcheck source=package/gluon-autoupdater/files/lib/gluon/autoupdater/lib.sh
 . /lib/gluon/autoupdater/lib.sh
 
 # Stop before network
