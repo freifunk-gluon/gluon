@@ -12,7 +12,14 @@ start_service() {
 	touch "$RESOLV_CONF"
 
 	procd_open_instance
-	procd_set_param command /usr/sbin/dnsmasq -u root -i lo -p 54 -h -k -c 0 -r $RESOLV_CONF
+	procd_set_param command /usr/sbin/dnsmasq \
+		--user=root \
+		--interface=lo \
+		--port=54 \
+		--no-hosts \
+		--keep-in-foreground \
+		--cache-size=0 \
+		--resolv-file=$RESOLV_CONF
 	procd_set_param env LD_PRELOAD=libpacketmark.so LIBPACKETMARK_MARK=1
 	procd_set_param respawn 60 5 5
 	procd_close_instance
