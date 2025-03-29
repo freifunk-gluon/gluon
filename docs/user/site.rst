@@ -467,7 +467,10 @@ autoupdater \: package
           name = 'stable',
           mirrors = {
             'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-            'http://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+            -- Requires the tls feature in image-customization.lua
+            'https://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+            -- Uses http or https depending on the tls feature in image-customization.lua
+            '//autoupdate2.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
           },
           -- Number of good signatures required
           good_signatures = 2,
@@ -481,6 +484,16 @@ autoupdater \: package
 
   All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
   explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
+
+  HTTPS URLs can be used if the **tls** feature is enabled in **image-customization.lua**.
+
+  Use protocol-less ``//server/path`` URLs to use HTTPS if the **tls** feature is available,
+  but fall back to HTTP otherwise. The server **must** allow HTTPS connections and provide
+  a valid certificate in this case; the autoupdater will not fall back to HTTP if the **tls**
+  feature is enabled, but the HTTPS connection fails.
+
+  Note that the validity period of TLS certificates is checked as well, so care must be taken
+  to provide working NTP servers in addition to the update mirrors when using HTTPS.
 
 .. _user-site-config_mode:
 
