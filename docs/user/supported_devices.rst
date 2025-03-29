@@ -540,9 +540,9 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (100M Edition)
-  - Xiaomi Mi Router 4A (100M International Edition)
-  - Xiaomi Mi Router 4C
+  - Xiaomi Mi Router 4A (100M Edition) - MIR4A
+  - Xiaomi Mi Router 4A (100M International Edition) - R4AC
+  - Xiaomi Mi Router 4C - R4CM
 
 rockchip-armv8
 --------------
