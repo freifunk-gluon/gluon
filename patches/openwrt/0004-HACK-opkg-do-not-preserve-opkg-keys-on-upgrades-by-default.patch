@@ -1,0 +1,20 @@
+From: Matthias Schiffer <mschiffer@universe-factory.net>
+Date: Sun, 30 Mar 2025 13:16:02 +0200
+Subject: HACK: opkg: do not preserve opkg keys on upgrades by default
+
+Custom keys can still be preserved by listing them in sysupgrade.conf.
+
+Signed-off-by: Matthias Schiffer <mschiffer@universe-factory.net>
+
+diff --git a/package/system/opkg/Makefile b/package/system/opkg/Makefile
+index e7c45e3523135a6cc35385a81c65cf2831b842bb..fc5ec6a7ed1eb559a478b00b03102fbccd543c57 100644
+--- a/package/system/opkg/Makefile
++++ b/package/system/opkg/Makefile
+@@ -56,7 +56,6 @@ endef
+ 
+ define Package/opkg/conffiles
+ /etc/opkg.conf
+-/etc/opkg/keys/
+ /etc/opkg/customfeeds.conf
+ endef
+ 
