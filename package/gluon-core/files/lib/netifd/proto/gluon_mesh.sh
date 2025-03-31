@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
+
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
