@@ -1,0 +1,6 @@
+#!/bin/sh
+
+exec unshare -m /bin/sh -ec '
+	mount -t overlay overlay -olowerdir=/lib/gluon/setup-mode/dropbear/etc:/etc /etc
+	exec /usr/sbin/dropbear "$@"
+' - "$@"
