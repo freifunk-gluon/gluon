@@ -3,7 +3,7 @@
 set -e
 
 is_scriptfile() {
-	echo "$1" | grep -qE '.*\.sh$' || head -n1 "$1" | grep -qE '^#.*(sh|bash)$'
+	echo "$1" | grep -q '\.sh$' || head -n1 "$1" | grep -qE '^#!(.*\<bash|/bin/sh)$'
 }
 
 find contrib -type f | while read -r file; do
