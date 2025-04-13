@@ -1,0 +1,38 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local platform = require 'gluon.platform'
+
+-- This is a workaround to result in a configuration where all ports
+-- on the DSA switch are connected to the same CPU interface.
+--
+-- See Gluon issue #3479 for details.
+-- https://github.com/freifunk-gluon/gluon/issues/3479
+
+if not platform.match('ipq806x', 'generic', {
+	'netgear,r7800',
+	'tplink,c2600',
+}) then
+	return
+end
+
+
+local ports = {
+	'lan1',
+	'lan2',
+	'lan3',
+	'lan4',
+	'wan',
+}
+local cpu_conduit = 'eth0'
+
+for _, port in ipairs(ports) do
+	local section_name = 'port_' .. port
+
+	uci:section('network', 'device', section_name, {
+		name = port,
+		conduit = cpu_conduit,
+	})
+end
+
+uci:save('network')
