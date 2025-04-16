@@ -11,7 +11,6 @@ local _, active_vpn = vpn_core.get_active_provider()
 uci:section('network', 'interface', 'mesh_vpn', {
 	ifname = vpn_core.get_interface(),
 	proto = 'gluon_mesh',
-	transitive = true,
 	fixed_mtu = true,
 	macaddr = util.generate_mac(7),
 	mtu = active_vpn.mtu(),
