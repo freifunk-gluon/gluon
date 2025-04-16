@@ -2,25 +2,18 @@
 
 # shellcheck disable=SC1091
 
-# FIXME: The following lints should not need to be disabled
-# shellcheck disable=SC2034,SC2155
-
-PROTO_DEBUG=1
-
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
 
-WG=/usr/bin/wg
-
 proto_gluon_wireguard_init_config() {
-	proto_config_add_int index
-	proto_config_add_int mtu
+	:
 }
 
 interface_linklocal_from_wg_public_key() {
 	# We generate a predictable v6 address
-	local macaddr="$(printf "%s" "$1"|md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/')"
+	local macaddr
+	macaddr="$(printf "%s" "$1"|md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/')"
 	local oldIFS="$IFS"; IFS=':';
 	# shellcheck disable=SC2086
 	set -- $macaddr; IFS="$oldIFS"
@@ -31,14 +24,13 @@ proto_gluon_wireguard_setup() {
 	local config="$1"
 	local ifname="$2"
 
-	local index mtu
-	json_get_vars index mtu
-
-	local public_key="$(/lib/gluon/mesh-vpn/wireguard_pubkey.sh)"
+	local public_key
+	public_key="$(/lib/gluon/mesh-vpn/wireguard_pubkey.sh)"
 
 	# The wireguard proto itself can not be moved here, as the proto does not
 	# allow add_dynamic.
 
+	local wireguard_ip
 	wireguard_ip=$(interface_linklocal_from_wg_public_key "$public_key")
 
 	## Add IP
