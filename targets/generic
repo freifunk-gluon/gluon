@@ -58,6 +58,10 @@ try_config('PACKAGE_dnsmasq_full_rtc', false)
 
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
+-- OpenWrt disables ed25519 keys on SMALL_FLASH targets
+-- (e.g. ramips-mt76x8) by default.
+config('DROPBEAR_ED25519', true)
+
 config('KERNEL_PROC_STRIPPED', true)
 config('KERNEL_AIO', false)
 try_config('KERNEL_IO_URING', false)
