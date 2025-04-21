@@ -106,6 +106,13 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 	},
 })
 
+device('tp-link-tl-wr902ac-v4', 'tplink_tl-wr902ac-v4', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
 
 -- VoCore 2
 

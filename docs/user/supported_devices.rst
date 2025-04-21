@@ -533,7 +533,7 @@ ramips-mt76x8
   - TL-MR6400 (v5)
   - TL-WA801ND (v5)
   - TL-WR841N (v13)
-  - TL-WR902AC (v3)
+  - TL-WR902AC (v3, v4)
 
 * VoCore
 
