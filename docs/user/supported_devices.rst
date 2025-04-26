@@ -313,6 +313,7 @@ mediatek-filogic
 
 * ASUS
 
+  - RT-AX52
   - TUF AX4200
   - TUF AX6000
 
