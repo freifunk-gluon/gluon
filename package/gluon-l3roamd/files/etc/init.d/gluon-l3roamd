@@ -27,7 +27,7 @@ reload_service() {
 
 	for i in $(echotol3roamd "get_meshifs"| jsonfilter -e "@.mesh_interfaces[@]")
 	do
-		if ! ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device"|grep -q $i
+		if ! ubus call network.interface dump | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device" | grep -qxF "$i"
 		then
 			echotol3roamd "del_meshif $i"
 		fi
@@ -35,15 +35,17 @@ reload_service() {
 }
 
 start_service () {
-	local interfaces=$(
-	for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
-	[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
+	local interfaces prefix4 prefix6 localip roamingprefix
+
+	interfaces=$(
+		for dev in $(gluon-list-mesh-interfaces); do echo " -m $dev"; done
+		[ "$(ifstatus local_node | jsonfilter -e '@.up')" = 'true' ] && echo ' -i local-node'
 	)
 
-	local prefix4="$(lua -e 'prefix4 = require("gluon.site").prefix4() if prefix4 then print(" -p " .. prefix4) end')"
-	local prefix6="$(lua -e 'print(" -p " .. require("gluon.site").prefix6())')"
-	local localip="$(uci get network.loopback.ip6addr | cut -d/ -f1)"
-	local roamingprefix="$(lua -e 'print(" -P " .. require("gluon.l3").node_client_prefix6())')"
+	prefix4="$(lua -e 'prefix4 = require("gluon.site").prefix4() if prefix4 then print(" -p " .. prefix4) end')"
+	prefix6="$(lua -e 'print(" -p " .. require("gluon.site").prefix6())')"
+	localip="$(uci get network.loopback.ip6addr | cut -d/ -f1)"
+	roamingprefix="$(lua -e 'print(" -P " .. require("gluon.l3").node_client_prefix6())')"
 
 	/sbin/sysctl -w net.ipv6.neigh.default.gc_thresh1=2
 	/sbin/sysctl -w net.ipv4.neigh.default.gc_thresh1=2
@@ -51,14 +53,17 @@ start_service () {
 	procd_open_instance
 	procd_set_param stdout 1
 	procd_set_param stderr 1
-	procd_set_param respawn ${respawn_threshold:-3660} ${respawn_timeout:-5} ${respawn_retry:-0}
-	procd_set_param command "$PROG" -s /var/run/l3roamd.sock $prefix4 $prefix6 $interfaces -t 254 -a $localip -b br-client $roamingprefix
+	procd_set_param respawn "${respawn_threshold:-3660}" "${respawn_timeout:-5}" "${respawn_retry:-0}"
+	# shellcheck disable=SC2086
+	procd_set_param command "$PROG" -s /var/run/l3roamd.sock "$prefix4" "$prefix6" $interfaces -t 254 -a "$localip" -b br-client "$roamingprefix"
 	procd_close_instance
 }
 
 service_triggers() {
-	local script=$(readlink "$initscript")
-	local name=$(basename "${script:-$initscript}")
+	local script name
+	# shellcheck disable=SC2154
+	script=$(readlink "$initscript")
+	name=$(basename "${script:-$initscript}")
 
 	procd_open_trigger
 	procd_add_raw_trigger 'interface.*' 0 "/etc/init.d/$name" reload

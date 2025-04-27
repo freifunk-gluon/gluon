@@ -1,5 +1,9 @@
 -- Cudy
 
+device('cudy-tr1200-v1', 'cudy_tr1200-v1', {
+	factory = false,
+})
+
 device('cudy-wr1000', 'cudy_wr1000')
 
 
@@ -106,6 +110,13 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 	},
 })
 
+device('tp-link-tl-wr902ac-v4', 'tplink_tl-wr902ac-v4', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
 
 -- VoCore 2
 
@@ -121,6 +132,10 @@ device('xiaomi-mi-router-4a-100m-edition', 'xiaomi_mi-router-4a-100m', {
 })
 
 device('xiaomi-mi-router-4a-100m-international-edition', 'xiaomi_mi-router-4a-100m-intl', {
+	factory = false,
+})
+
+device('xiaomi-mi-router-4a-100m-international-edition-v2', 'xiaomi_mi-router-4a-100m-intl-v2', {
 	factory = false,
 })
 

@@ -1,23 +1,23 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
+
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
 
 proto_gluon_mesh_init_config() {
 	proto_config_add_boolean fixed_mtu
-	proto_config_add_boolean transitive
 }
 
 proto_gluon_mesh_setup() {
 	export CONFIG="$1"
 	export IFNAME="$2"
 
-	local fixed_mtu transitive
-	json_get_vars fixed_mtu transitive
+	local fixed_mtu
+	json_get_vars fixed_mtu
 
 	export FIXED_MTU="${fixed_mtu:-0}"
-	export TRANSITIVE="${transitive:-0}"
 
 	for script in /lib/gluon/core/mesh/setup.d/*; do
 		[ ! -x "$script" ] || "$script"
@@ -27,7 +27,6 @@ proto_gluon_mesh_setup() {
 
 	proto_add_data
 	json_add_boolean fixed_mtu "$FIXED_MTU"
-	json_add_boolean transitive "$TRANSITIVE"
 	[ "$IFNAME" != 'br-wan' ] && json_add_string zone 'mesh'
 	proto_close_data
 	proto_send_update "$CONFIG"

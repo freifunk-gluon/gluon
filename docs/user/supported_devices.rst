@@ -40,8 +40,6 @@ ath79-generic
 
 * D-Link
 
-  - AQUILA PRO AI M30 A1
-  - AQUILA PRO AI M60 A1
   - DAP-1330 A1 [#lan_as_wan]_
   - DAP-1365 A1 [#lan_as_wan]_
   - DAP-2660 A1 [#lan_as_wan]_
@@ -321,15 +319,26 @@ mediatek-filogic
 * Cudy
 
   - AP3000 Outdoor (v1)
+  - TR3000 (v1)
   - WR3000 (v1)
+
+* D-Link
+
+  - AQUILA PRO AI M30 A1
+  - AQUILA PRO AI M60 A1
 
 * GL.iNet
 
+  - GL-MT2500
   - GL-MT3000
 
 * NETGEAR
 
   - WAX220
+
+* OpenWrt
+
+  - One
 
 * Ubiquiti
 
@@ -463,6 +472,9 @@ ramips-mt7621
 
 * TP-Link
 
+  - EAX11 (v2)
+  - EAX12
+  - EAX15 (v2)
   - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)
@@ -496,6 +508,7 @@ ramips-mt76x8
 
 * Cudy
 
+  - TR1200 (v1)
   - WR1000 (v1)
 
 * GL.iNet
@@ -523,7 +536,7 @@ ramips-mt76x8
   - TL-MR6400 (v5)
   - TL-WA801ND (v5)
   - TL-WR841N (v13)
-  - TL-WR902AC (v3)
+  - TL-WR902AC (v3, v4)
 
 * VoCore
 
@@ -531,16 +544,10 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (100M Edition)
-  - Xiaomi Mi Router 4A (100M International Edition)
-  - Xiaomi Mi Router 4C
-
-realtek-rtl838x
----------------
-
-* D-Link
-
-  - DGS-1210-10P (F1)
+  - Xiaomi Mi Router 4A (100M Edition) - MIR4A
+  - Xiaomi Mi Router 4A (100M International Edition) - R4AC
+  - Xiaomi Mi Router 4A (100M International Edition v2) - R4ACv2
+  - Xiaomi Mi Router 4C - R4CM
 
 rockchip-armv8
 --------------

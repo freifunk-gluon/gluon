@@ -249,5 +249,10 @@ if uci:get('system', 'rssid_wlan0') then
 	uci:save('system')
 end
 
+if uci:get('system', 'rssid_wlan1') then
+	uci:set('system', 'rssid_wlan1', 'dev', 'mesh1')
+	uci:save('system')
+end
+
 uci:save('wireless')
 uci:save('network')

@@ -83,10 +83,6 @@ elseif platform.match('lantiq', 'xrx200', {
 	'arcadyan,vgv7510kw22-nor',
 }) then
 	lan_ifname, wan_ifname = 'lan1 lan2 lan3 lan4', 'wan'
-elseif platform.match('realtek', 'rtl838x', {
-	'd-link,dgs-1210-10p',
-}) then
-	lan_ifname, wan_ifname = 'lan2 lan3 lan4 lan5 lan6 lan7 lan8 lan9 lan10', 'lan1'
 end
 
 if wan_ifname and lan_ifname then

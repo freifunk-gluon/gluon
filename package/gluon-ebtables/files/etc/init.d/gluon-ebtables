@@ -15,10 +15,8 @@
 # Removing a specific rule file:
 # $ /etc/init.d/gluon-ebtables stop /lib/gluon/ebtables/100-mcast-chain
 
-
 START=19
 STOP=91
-
 
 exec_file() {
 	local file="$1"
@@ -37,12 +35,10 @@ exec_file() {
 }
 
 exec_all() {
-	local sort_arg="$1"
-
 	local old_ifs="$IFS"
 	IFS='
 '
-	for file in `find /lib/gluon/ebtables -type f | sort $sort_arg`; do
+	for file in $(find /lib/gluon/ebtables -type f | sort "$@"); do
 		exec_file "$file"
 	done
 	IFS="$old_ifs"
@@ -51,7 +47,9 @@ exec_all() {
 
 start() {
 	(
+		# shellcheck disable=SC2030,SC2031,SC2089
 		export EBTABLES_RULE='"ebtables-tiny -t " .. table .. " -A " .. command'
+		# shellcheck disable=SC2030,SC2031,SC2089
 		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. "  -N " .. name .. " -P " .. policy'
 
 		# Contains /var/lib/ebtables/lock for '--concurrent'
@@ -59,7 +57,7 @@ start() {
 			mkdir -p /var/lib/ebtables
 
 		if [ -z "$1" ]; then
-			exec_all ''
+			exec_all
 		else
 			exec_file "$1"
 		fi
@@ -68,11 +66,13 @@ start() {
 
 stop() {
 	(
+		# shellcheck disable=SC2030,SC2031,SC2090
 		export EBTABLES_RULE='"ebtables-tiny -t " ..	table .. " -D " .. command'
+		# shellcheck disable=SC2030,SC2031,SC2090
 		export EBTABLES_CHAIN='"ebtables-tiny -t " .. table .. " -X " .. name'
 
 		if [ -z "$1" ]; then
-			exec_all '-r'
+			exec_all -r
 		else
 			exec_file "$1"
 		fi

@@ -1,3 +1,6 @@
+config('TARGET_ROOTFS_INITRAMFS', true)
+config('TARGET_INITRAMFS_COMPRESSION_LZMA', true)
+
 -- ASUS
 
 device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
@@ -32,12 +35,20 @@ device('cudy-ap3000-outdoor-v1', 'cudy_ap3000outdoor-v1', {
 	factory = false,
 })
 
+device('cudy-tr3000-v1', 'cudy_tr3000-v1', {
+	factory = false,
+})
+
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
 	factory = false,
 })
 
 
 -- GL.iNet
+
+device('gl.inet-gl-mt2500', 'glinet_gl-mt2500', {
+	factory = false,
+})
 
 device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
 	factory = false,
@@ -48,6 +59,13 @@ device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
 
 device('netgear-wax220', 'netgear_wax220', {
 	factory_ext = '.img',
+})
+
+-- OpenWRT
+device('openwrt-one', 'openwrt_one',{
+	factory = '-factory',
+	factory_ext = '.ubi',
+	sysupgrade_ext = '.itb',
 })
 
 

@@ -1,5 +1,0 @@
--- D-Link
-
-device('d-link_dgs-1210-10p', 'd-link_dgs-1210-10p', {
-	factory = '-squashfs-factory_image1',
-})

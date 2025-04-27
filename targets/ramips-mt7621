@@ -67,6 +67,11 @@ device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
 
 -- NETGEAR
 
+device('netgear-eax12', 'netgear_eax12', {
+	factory_ext = '.img',
+	aliases = {'netgear-eax11-v2', 'netgear-eax15-v2'},
+})
+
 device('netgear-ex6150', 'netgear_ex6150', {
 	factory_ext = '.chk',
 })
@@ -94,6 +99,10 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 
 
 -- TP-Link
+
+device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1', {
+	broken = true, -- LAN LED not working - review after resolving #2756
+})
 
 device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
 	broken = true, -- LAN LED not working - review after resolving #2756

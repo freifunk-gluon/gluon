@@ -27,20 +27,26 @@ Dependencies
 To build Gluon, several packages need to be installed on the system. On a
 freshly installed Debian Bullseye system the following packages are required:
 
+* `clang`
 * `git` (to get Gluon and other dependencies)
 * `python3`
+* `python3-dev`
+* `python3-pyelftools`
+* `python3-setuptools`
 * `build-essential`
-* `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
 * `gawk`
 * `unzip`
 * `libncurses-dev` (actually `libncurses5-dev`)
 * `libz-dev` (actually `zlib1g-dev`)
 * `libssl-dev`
 * `libelf-dev` (to build x86-64)
+* `llvm`
 * `wget`
 * `rsync`
 * `time` (built-in `time` doesn't work)
 * `qemu-utils`
+* `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
+* `swig`
 
 We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
 

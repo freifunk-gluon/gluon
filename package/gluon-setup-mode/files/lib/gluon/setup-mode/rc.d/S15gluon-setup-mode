@@ -2,15 +2,15 @@
 
 START=15
 
-
 boot() {
-	local enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
-	local configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
+	local enabled configured
+	enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
+	configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
 
 	uci set 'gluon-setup-mode.@setup_mode[0].enabled=0'
 	uci commit gluon-setup-mode
 
-	if [ "$enabled" != 1 -a "$configured" = 1 ]; then
+	if [ "$enabled" != 1 ] && [ "$configured" = 1 ]; then
 		# This can happen after an upgrade from a version before the config file was called gluon-setup-mode
 		# We'll just reboot to return to the normal mode...
 		/etc/init.d/done boot

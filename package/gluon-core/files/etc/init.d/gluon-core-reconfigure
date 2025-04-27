@@ -6,6 +6,7 @@ START=10
 start() {
 	config_load gluon
 	config_get_bool reconfigure core reconfigure 0
+	# shellcheck disable=SC2154
 	if [ "$reconfigure" = 1 ]; then
 		gluon-reconfigure
 	fi

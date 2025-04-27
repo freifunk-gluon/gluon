@@ -48,6 +48,9 @@ jobs:
       - name: Show system information
         run: contrib/actions/show-system-info.sh
 
+      - name: Remove non-required software
+        run: contrib/actions/free-runner-space.sh
+
       - name: Build Docker container
         run: docker build -t gluon-ci-container contrib/docker
 
