@@ -329,6 +329,7 @@ mediatek-filogic
 
 * GL.iNet
 
+  - GL-MT2500
   - GL-MT3000
 
 * NETGEAR
