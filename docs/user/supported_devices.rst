@@ -429,6 +429,10 @@ ramips-mt7621
   - DAP-X1860 (A1)
   - DIR-860L (B1)
 
+* Genexis
+
+  - Pulse EX400
+
 * GL.iNet
 
   - GL-MT1300
