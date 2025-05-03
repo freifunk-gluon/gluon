@@ -101,6 +101,9 @@ struct json_object * respondd_provider_nodeinfo(void) {
 	struct json_object *software_firmware = json_object_new_object();
 	json_object_object_add(software_firmware, "base", gluon_version());
 	json_object_object_add(software_firmware, "release", gluonutil_wrap_and_free_string(gluonutil_read_line("/lib/gluon/release")));
+	json_object_object_add(software_firmware, "target", gluonutil_wrap_string(platforminfo_get_target()));
+	json_object_object_add(software_firmware, "subtarget", gluonutil_wrap_string(platforminfo_get_subtarget()));
+	json_object_object_add(software_firmware, "image_name", gluonutil_wrap_string(platforminfo_get_image_name()));
 	json_object_object_add(software, "firmware", software_firmware);
 	json_object_object_add(ret, "software", software);
 
