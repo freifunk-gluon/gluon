@@ -12,6 +12,7 @@ configuration options
 ---------------------
 
 The following roles can be assigned to the interfaces:
+
 * `Uplink` - interface is used for WAN connection, which is used for the VPN if `mesh-vpn` checkbox is enabled in basic config mode
 * `Mesh` - interface is used for :doc:`../features/wired-mesh`. Using this on the WAN interface is also known as "Mesh-on-WAN"
 * `Client` - interface is used as client network - connected devices to this interface should get a working internet configuration through DHCP
