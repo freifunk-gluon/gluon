@@ -20,6 +20,7 @@ end
 local M = {}
 
 function M.get_info()
+	local updater_enabled = uci:get_bool('autoupdater', 'settings', 'enabled')
 	return {
 		hostname = pretty_hostname.get(uci),
 		mac_address = sysconfig.primary_mac,
@@ -31,6 +32,7 @@ function M.get_info()
 		domain = uci:get('gluon', 'core', 'domain'),
 		public_vpn_key = pubkey,
 		switch_type = ethernet.get_switch_type(),
+		updater_branch = updater_enabled and uci:get('autoupdater', 'settings', 'branch'),
 	}
 end
 
@@ -45,8 +47,9 @@ function M.get_info_pretty(_)
 		{ _('Firmware release'), data.firmware_release },
 		{ _('Site'), data.site },
 		{ _('Domain'), data.domain or 'n/a' },
-		{ _('Public VPN key'), data.public_vpn_key or 'n/a' },
+		{ _('Public VPN key'), data.public_vpn_key or _('disabled') },
 		{ _('Switch type'), data.switch_type },
+		{ _('Autoupdater branch'), data.updater_branch or _('disabled') },
 	}
 end
 
