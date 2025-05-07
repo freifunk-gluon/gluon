@@ -1,3 +1,8 @@
 device('linksys-wrt1200ac', 'linksys_wrt1200ac', {
 	factory_ext = '.img',
 })
+
+device('cznic-turris-omnia', 'cznic_turris-omnia', {
+	factory = false,
+	sysupgrade_ext = '.img.gz',
+})
