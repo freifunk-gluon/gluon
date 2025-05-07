@@ -34,7 +34,19 @@ function M.get_info()
 	}
 end
 
-function M.get_info_pretty(_)
+function M.get_info_pretty(i18n)
+	local _
+	if i18n then
+		local pkg_i18n = i18n 'gluon-core'
+		_ = function(s)
+			return pkg_i18n.translate(s)
+		end
+	else
+		_ = function(s)
+			return s
+		end
+	end
+
 	local data = M.get_info()
 
 	return {

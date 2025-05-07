@@ -2,7 +2,7 @@
 
 local info = require 'gluon.info'
 
-local values = info.get_info_pretty(function(str) return str end)
+local values = info.get_info_pretty()
 
 local padTo = 24
 
