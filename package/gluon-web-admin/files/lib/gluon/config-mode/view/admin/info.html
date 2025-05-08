@@ -1,7 +1,7 @@
 <%-
 	local info = require 'gluon.info'
 
-	local values = info.get_info_pretty(translate)
+	local values = info.get_info_pretty(i18n)
 -%>
 <h2><%:Information%></h2>
 <% for _, v in ipairs(values) do %>
