@@ -1,0 +1,50 @@
+#!/bin/sh
+
+lookup_site() {
+	local path="$1" default="$2"
+	lua -e "print(require('gluon.site').$path('$default'))"
+}
+
+lookup_prefix6() {
+	local prefix
+
+	prefix="$(lookup_site 'prefix6')"
+	echo "${prefix%/*}"
+}
+
+lookup_prefix6_len() {
+	local prefix
+
+	prefix="$(lookup_site 'prefix6')"
+	echo "${prefix#*/}"
+}
+
+# Generates and prints an RFC3306, section 4 style network prefix based
+# multicast address from the site prefix6 with a pseudo-random group-id
+# from the domain seed.
+get_gluon_all_mc_routers_ip6() {
+	local prefix6 prefix6_len group_id
+
+	prefix6="$(lookup_prefix6)"
+	prefix6_len="$(lookup_prefix6_len)"
+	group_id="$(lua -e 'print(require("gluon.util").domain_seed_bytes("gluon-mesh-batman-adv-brmldproxy.gluon-all-mc-routers-group", 4))')"
+	group_id="$(echo "${group_id}" | sed 's/\(....\)/\1:/g;s/:$//')"
+
+	echo "ff32:$(printf "%x" "${prefix6_len}"):${prefix6}${group_id}"
+}
+
+update_router_recv() {
+	local action="$1"
+	local mc_ip6
+
+	mc_ip6="$(get_gluon_all_mc_routers_ip6)"
+	bridge mdb "$action" dev br-client port local-port grp "${mc_ip6}" permanent 2> /dev/null
+}
+
+if [ "$(batctl mj | jsonfilter -e "@.mcast_flags.want_no_rtr_ipv6")" = "false" ]; then
+	update_router_recv add
+	echo 1 > /sys/class/net/brmldpb0/bridge/multicast_querier
+else
+	update_router_recv del
+	echo 0 > /sys/class/net/brmldpb0/bridge/multicast_querier
+fi
