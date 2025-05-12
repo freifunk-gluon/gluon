@@ -1,0 +1,423 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Mon, 12 May 2025 19:15:55 +0200
+Subject: ramips-mt7621: add support for Genexis Pulse EX400
+
+diff --git a/package/boot/uboot-envtools/files/ramips b/package/boot/uboot-envtools/files/ramips
+index dac61be02e4b3231a391fdc76ba4c73156572f6a..110e24c978cd8fe428433297ca123749120c56dc 100644
+--- a/package/boot/uboot-envtools/files/ramips
++++ b/package/boot/uboot-envtools/files/ramips
+@@ -141,6 +141,10 @@ xiaomi,mi-router-cr6608|\
+ xiaomi,mi-router-cr6609)
+ 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x20000"
+ 	;;
++genexis,pulse-ex400)
++	ubootenv_add_uci_config "/dev/ubi0_0" "0x0" "0x1f000" "0x1f000" "1"
++	ubootenv_add_uci_config "/dev/ubi0_1" "0x0" "0x1f000" "0x1f000" "1"
++	;;
+ esac
+ 
+ config_load ubootenv
+diff --git a/target/linux/ramips/dts/mt7621_genexis_pulse-ex400.dts b/target/linux/ramips/dts/mt7621_genexis_pulse-ex400.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..a566e356d103a65dca3d53fa40bc2cd0d920444c
+--- /dev/null
++++ b/target/linux/ramips/dts/mt7621_genexis_pulse-ex400.dts
+@@ -0,0 +1,215 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "mt7621.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
++
++
++/ {
++	compatible = "genexis,pulse-ex400", "mediatek,mt7621-soc";
++	model = "Genexis Pulse EX400";
++
++	aliases {
++		led-boot = &led_status_red;
++		led-failsafe = &led_status_red;
++		led-running = &led_status_green;
++		led-upgrade = &led_status_red;
++
++		ethernet0 = &gmac0;
++		label-mac-device = &gmac0;
++	};
++
++	chosen {
++		bootargs-override = "console=ttyS0,115200 rootfstype=squashfs,jffs2";
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++	};
++
++	leds: leds {
++		compatible = "gpio-leds";
++
++		led_status_green: led-0 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
++		};
++
++		led_status_red: led-1 {
++			color = <LED_COLOR_ID_RED>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&gpio 11 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	i2c_gpio: i2c-gpio {
++		compatible = "i2c-gpio";
++
++		sda-gpios = <&gpio 3 GPIO_ACTIVE_HIGH>;
++		scl-gpios = <&gpio 4 GPIO_ACTIVE_HIGH>;
++
++		i2c-gpio,delay-us = <50>;
++		i2c-gpio,timeout-ms = <100>;
++
++		/* Semtech SX9512 */
++	};
++};
++
++&leds {
++	led_wps_green: led-2 {
++		color = <LED_COLOR_ID_GREEN>;
++		function = LED_FUNCTION_WPS;
++		gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&i2c_gpio {
++	touch@2b {
++		compatible = "semtech,sx9512";
++
++		reg = <0x2b>;
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		poll-interval = <150>;
++
++		/* Touch area 2.4 GHz */
++		channel@1 {
++			reg = <1>;
++
++			semtech,cin-delta = <0x3>;
++			semtech,sense-threshold = <0x04>;
++
++			linux,keycodes = <KEY_A>;
++		};
++
++		/* Touch area 5 GHz */
++		channel@2 {
++			reg = <2>;
++
++			semtech,cin-delta = <0x3>;
++			semtech,sense-threshold = <0x04>;
++
++			linux,keycodes = <KEY_B>;
++		};
++		/* Touch area WPS */
++		channel@3 {
++			reg = <3>;
++
++			semtech,cin-delta = <0x3>;
++			semtech,sense-threshold = <0x04>;
++
++			linux,keycodes = <KEY_WPS_BUTTON>;
++		};
++
++		channel@4 {
++			reg = <4>;
++
++			led {
++				color = <LED_COLOR_ID_RED>;
++				function = LED_FUNCTION_WAN;
++			};
++		};
++
++		channel@5 {
++			reg = <5>;
++
++			led {
++				color = <LED_COLOR_ID_GREEN>;
++				function = LED_FUNCTION_WAN;
++			};
++		};
++
++		channel@6 {
++			reg = <6>;
++
++			led {
++				color = <LED_COLOR_ID_GREEN>;
++				function = LED_FUNCTION_WLAN_5GHZ;
++				linux,default-trigger = "phy1tpt";
++			};
++		};
++
++		channel@7 {
++			reg = <7>;
++
++			led {
++				color = <LED_COLOR_ID_GREEN>;
++				function = LED_FUNCTION_WLAN_2GHZ;
++				linux,default-trigger = "phy0tpt";
++			};
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&nand {
++	status = "okay";
++
++	partitions {
++		compatible = "fixed-partitions";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			reg = <0x00 0x100000>;
++			label = "uboot";
++			read-only;
++		};
++
++		partition@100000 {
++			reg = <0x100000 0xff00000>;
++			label = "ubi";
++		};
++	};
++};
++
++&mdio {
++	ethphy0: ethernet-phy@0 {
++		reg = <0>;
++	};
++};
++
++&gmac1 {
++	label = "wan";
++	phy-handle = <&ethphy0>;
++	status = "okay";
++};
++
++&i2c {
++	/* Uses i2c-gpio */
++	status = "disabled";
++};
++
++&ethphy0 {
++	/delete-property/ interrupts;
++};
++
++&state_default {
++	gpio {
++		groups = "i2c", "uart2", "uart3";
++		function = "gpio";
++	};
++};
++
++&switch0 {
++	ports {
++		port@1 {
++			label = "lan";
++			status = "okay";
++		};
++	};
++};
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index 0b1d1b6dfc0c60d0aaed4818f3646059805409f3..b98989c1fcb2b31bebf49fe00939371268470494 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -45,6 +45,19 @@ define Build/arcadyan-trx
+ 	rm $@.hsqs $@.tail
+ endef
+ 
++define Build/inteno-bootfs
++	mkdir -p $@.ubifs-dir/boot
++
++	# populate the boot fs with the dtb and the kernel image
++	$(CP) $(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb $@.ubifs-dir/boot/dtb
++	$(CP) $@ $@.ubifs-dir/boot/uImage
++
++	# create ubifs
++	$(STAGING_DIR_HOST)/bin/mkfs.ubifs ${MKUBIFS_OPTS} -r $@.ubifs-dir/ -o $@.new
++	rm -rf $@.ubifs-dir
++	mv $@.new $@
++endef
++
+ define Build/gemtek-trailer
+ 	printf "%s%08X" ".GEMTEK." "$$(cksum $@ | cut -d ' ' -f1)" >> $@
+ endef
+@@ -1091,6 +1104,30 @@ define Device/gehua_ghl-r-001
+ endef
+ TARGET_DEVICES += gehua_ghl-r-001
+ 
++# Common definitions shared between genexis_pulse-ex400 and dna_valokuitu-plus-ex400
++define Device/genexis_pulse-ex400/common
++  $(Device/dsa-migration)
++  IMAGE_SIZE := 117m
++  PAGESIZE := 2048
++  MKUBIFS_OPTS := --min-io-size=$$(PAGESIZE) --leb-size=124KiB --max-leb-cnt=96 \
++    --log-lebs=2 --space-fixup --squash-uids
++  KERNEL := kernel-bin | lzma | uImage lzma
++  KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma | uImage lzma
++  IMAGE/sysupgrade.bin := append-kernel | inteno-bootfs | \
++    sysupgrade-tar kernel=$$$$@ | check-size | append-metadata
++  DEVICE_IMG_NAME = $$(DEVICE_IMG_PREFIX)-$$(2)
++  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware kmod-usb3 kmod-keyboard-sx951x kmod-button-hotplug
++endef
++
++define Device/genexis_pulse-ex400
++  $(Device/genexis_pulse-ex400/common)
++  DEVICE_VENDOR := Genexis
++  DEVICE_MODEL := Pulse EX400
++  DEVICE_ALT0_VENDOR := Inteno
++  DEVICE_ALT0_MODEL := Pulse EX400
++endef
++TARGET_DEVICES += genexis_pulse-ex400
++
+ define Device/glinet_gl-mt1300
+   $(Device/dsa-migration)
+   IMAGE_SIZE := 32448k
+diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
+index a903969965b3bd8a05de8074e1742fa0377415a2..e8ac29af328d07f6db5e54f482b6c91153e77fac 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
++++ b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
+@@ -183,6 +183,7 @@ netgear,r7450)
+ netgear,wax202)
+ 	ucidef_set_led_netdev "internet" "Internet" "green:net" "wan"
+ 	;;
++genexis,pulse-ex400|\
+ netis,n6)
+ 	ucidef_set_led_netdev "wan" "wan" "green:wan" "wan" "link tx rx"
+ 	;;
+diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+index 71e6f9386205f238147c04b442eb09ccee7df70b..ef04afcfa2c173df59f7ff8a7e2d0af4bcab00b5 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+@@ -92,6 +92,7 @@ ramips_setup_interfaces()
+ 		uci add_list firewall.@zone[1].network='eth_om'
+ 		;;
+ 	cudy,m1800|\
++	genexis,pulse-ex400|\
+ 	yuncore,ax820|\
+ 	zyxel,nr7101)
+ 		ucidef_set_interfaces_lan_wan "lan" "wan"
+diff --git a/target/linux/ramips/mt7621/base-files/etc/init.d/bootcount b/target/linux/ramips/mt7621/base-files/etc/init.d/bootcount
+index 9db700bff5560bde52bb88f02d97a0199b4bb787..4110a35528610712f7783902c222b5905f18668a 100755
+--- a/target/linux/ramips/mt7621/base-files/etc/init.d/bootcount
++++ b/target/linux/ramips/mt7621/base-files/etc/init.d/bootcount
+@@ -29,6 +29,10 @@ boot() {
+ 	samknows,whitebox-v8)
+ 		fw_setenv bootcount 0
+ 		;;
++	genexis,pulse-ex400)
++		fw_setenv boot_cnt_primary 0
++		fw_setenv boot_cnt_alt 0
++		;;
+ 	zyxel,lte3301-plus)
+ 		[ $(printf %d $(fw_printenv -n DebugFlag)) -gt 0 ] || fw_setenv DebugFlag 1
+ 		[ $(printf %d $(fw_printenv -n Image1Stable)) -gt 0 ] || fw_setenv Image1Stable 1
+diff --git a/target/linux/ramips/mt7621/base-files/lib/preinit/10_fix_eth_mac.sh b/target/linux/ramips/mt7621/base-files/lib/preinit/10_fix_eth_mac.sh
+new file mode 100644
+index 0000000000000000000000000000000000000000..a688deea0bfa56a45178f4cdee76d0a18ee0fce0
+--- /dev/null
++++ b/target/linux/ramips/mt7621/base-files/lib/preinit/10_fix_eth_mac.sh
+@@ -0,0 +1,14 @@
++. /lib/functions/system.sh
++
++preinit_set_mac_address() {
++	case $(board_name) in
++	genexis,pulse-ex400)
++		ethaddr=$(get_mac_ascii /dev/ubi0_0 ethaddr)
++		ip link set dev wan address $(macaddr_add $ethaddr 1)
++		ip link set dev eth0 address $ethaddr
++		ip link set dev lan address $ethaddr
++		;;
++	esac
++}
++
++boot_hook_add preinit_main preinit_set_mac_address
+diff --git a/target/linux/ramips/mt7621/base-files/lib/upgrade/inteno.sh b/target/linux/ramips/mt7621/base-files/lib/upgrade/inteno.sh
+new file mode 100644
+index 0000000000000000000000000000000000000000..677000f6b1aef7223e98aeb9ec000281af0722ed
+--- /dev/null
++++ b/target/linux/ramips/mt7621/base-files/lib/upgrade/inteno.sh
+@@ -0,0 +1,49 @@
++#
++# Copyright (C) 2023 Mauri Sandberg
++#
++
++# The vendor UBI is split in volumes 0-3. Volumes 0 and 1 contain U-Boot
++# environments env1 and env2, respectively. The vendor root file systems
++# are in volumes 2 (rootfs_0) and 3 (rootfs_1). Drop the two roots and
++# explicitly use rootfs_0 as a boot partition that contains the dtb and the
++# OpenWrt kernel. This is because the vendor U-Boot expects to find them there.
++# Then continue upgrade with the default method - a SquashFS rootfs will be
++# installed and the rest of UBI will be used as an overlay.
++
++# The 'kernel' inside the sysupgrage.tar is an UBIFS image that contains
++# /boot/dtb and /boot/kernel. The 'root' is an OpenWrt SquashFS root
++
++. /lib/functions.sh
++. /lib/upgrade/nand.sh
++
++inteno_do_upgrade () {
++	local tar_file=$1
++	local cmd=cat
++	# WARNING: This fails if tar contains more than one 'sysupgrade-*' directory.
++	local board_dir="$(tar tf "$tar_file" | grep -m 1 '^sysupgrade-.*/$')"
++	board_dir="${board_dir%/}"
++	tar -xaf "$tar_file"
++
++	# get the size of the new bootfs
++	local _bootfs_size=$(wc -c < "$board_dir/kernel")
++	[ -n "$_bootfs_size" -a "$_bootfs_size" -gt "0" ] || nand_do_upgrade_failed
++
++	# remove existing rootfses and recreate rootfs_0
++	ubirmvol /dev/ubi0 --name=rootfs_0 > /dev/null 2>&1
++	ubirmvol /dev/ubi0 --name=rootfs_1 > /dev/null 2>&1
++	ubirmvol /dev/ubi0 --name=rootfs > /dev/null 2>&1
++	ubirmvol /dev/ubi0 --name=rootfs_data > /dev/null 2>&1
++	ubimkvol /dev/ubi0 --type=static --size=${_bootfs_size} --name=rootfs_0
++
++	# update the rootfs_0 contents
++	local _kern_ubivol=$( nand_find_volume "ubi0" "rootfs_0" )
++	ubiupdatevol "/dev/$_kern_ubivol" "$board_dir/kernel"
++
++	fw_setenv root_vol rootfs_0
++	fw_setenv boot_cnt_primary 0
++	fw_setenv boot_cnt_alt 0
++
++	# proceed to upgrade the default way
++	CI_KERNPART=none
++	nand_do_upgrade "$1"
++}
+diff --git a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+index 60dba1bdec540ac5173d53d6c9c3cb6ef5907bd1..027cfd711ceb805e6ec8539810e17b2f9ccd5fe2 100755
+--- a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+@@ -125,6 +125,9 @@ platform_do_upgrade() {
+ 	zyxel,nwa55axe)
+ 		nand_do_upgrade "$1"
+ 		;;
++	genexis,pulse-ex400)
++		inteno_do_upgrade "$1"
++		;;
+ 	iodata,wn-ax1167gr2|\
+ 	iodata,wn-ax2033gr|\
+ 	iodata,wn-dx1167r|\
