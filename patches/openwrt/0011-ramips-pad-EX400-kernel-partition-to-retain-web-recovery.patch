@@ -1,0 +1,30 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 14 May 2025 01:49:44 +0200
+Subject: ramips: pad EX400 kernel partition to retain web recovery
+
+The web-recovery of the Genexis EX400 validates uploaded images to fit
+in the rootf_0 partition.
+
+With OpenWrt, only the kernel is stored in this partition, leaving the
+partition very small. Currently, the first factory release image won't
+be accepted by the recovery interface after the OpenWrt installation.
+
+Pad the image of the ubifs to 10MB. This allows the 24.10 release image
+to be uploaded, enabling device recovery.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+(cherry picked from commit eea4689654e1b07cffe62bc97ad8fef0474bb3b7)
+
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index b98989c1fcb2b31bebf49fe00939371268470494..b2e32851947b10112f8be24c88e0321666781e0d 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -1113,7 +1113,7 @@ define Device/genexis_pulse-ex400/common
+     --log-lebs=2 --space-fixup --squash-uids
+   KERNEL := kernel-bin | lzma | uImage lzma
+   KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma | uImage lzma
+-  IMAGE/sysupgrade.bin := append-kernel | inteno-bootfs | \
++  IMAGE/sysupgrade.bin := append-kernel | inteno-bootfs | pad-to 10M | \
+     sysupgrade-tar kernel=$$$$@ | check-size | append-metadata
+   DEVICE_IMG_NAME = $$(DEVICE_IMG_PREFIX)-$$(2)
+   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615-firmware kmod-usb3 kmod-keyboard-sx951x kmod-button-hotplug
