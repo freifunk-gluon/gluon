@@ -454,6 +454,10 @@ ramips-mt7621
   - DIR-878 (A1)
   - DIR-882 (A1)
 
+* Genexis
+
+  - Pulse EX400
+
 * GL.iNet
 
   - GL-MT1300
