@@ -3,6 +3,10 @@ config('TARGET_INITRAMFS_COMPRESSION_LZMA', true)
 
 -- ASUS
 
+device('asus-rt-ax52', 'asus_rt-ax52', {
+	factory = false,
+})
+
 device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
 	factory = false,
 })
