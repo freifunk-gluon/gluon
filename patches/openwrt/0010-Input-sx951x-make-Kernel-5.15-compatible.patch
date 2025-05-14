@@ -1,0 +1,115 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Mon, 12 May 2025 20:15:07 +0200
+Subject: Input sx951x: make Kernel 5.15 compatible
+
+diff --git a/target/linux/ramips/patches-5.15/871-Input-sx951x-make-Kernel-5.15-compatible.patch b/target/linux/ramips/patches-5.15/871-Input-sx951x-make-Kernel-5.15-compatible.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ff64db97750dadcfa43276b75e56eead764375bf
+--- /dev/null
++++ b/target/linux/ramips/patches-5.15/871-Input-sx951x-make-Kernel-5.15-compatible.patch
+@@ -0,0 +1,105 @@
++From 6e27a79444f0f3ff640e5e14d9f72bf6f94fe32f Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Mon, 12 May 2025 20:14:16 +0200
++Subject: [PATCH] Input sx951x: make Kernel 5.15 compatible
++
++---
++ drivers/input/keyboard/sx951x.c | 31 ++++++++++++++++++++++++++++++-
++ 1 file changed, 30 insertions(+), 1 deletion(-)
++
++diff --git a/drivers/input/keyboard/sx951x.c b/drivers/input/keyboard/sx951x.c
++index 66355036aa95..29296d583d58 100644
++--- a/drivers/input/keyboard/sx951x.c
+++++ b/drivers/input/keyboard/sx951x.c
++@@ -20,6 +20,8 @@
++  #include <linux/gpio/consumer.h>
++  #include <linux/bitfield.h>
++ 
+++ #include <linux/version.h>
+++
++  /* Generic properties */
++ #define SX951X_I2C_ADDRESS		0x2b
++ #define SX951XB_I2C_ADDRESS_		0x2d
++@@ -160,7 +162,11 @@ static const struct regmap_config sx951x_regmap_config = {
++ 	.reg_defaults = sx951x_reg_defaults,
++ 	.num_reg_defaults = ARRAY_SIZE(sx951x_reg_defaults),
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++	.cache_type = REGCACHE_FLAT,
+++#else
++ 	.cache_type = REGCACHE_MAPLE,
+++#endif
++ 	.volatile_reg = sx951x_volatile_reg,
++ };
++ 
++@@ -301,10 +307,17 @@ static int sx951x_channels_init(struct sx951x_priv *priv)
++ {
++ 	struct device *dev = priv->dev;
++ 	unsigned int channels = 0;
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++	struct device_node *child;
+++#endif
++ 	int error;
++ 	u32 reg;
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++	for_each_child_of_node(dev->of_node, child) {
+++#else
++ 	for_each_child_of_node_scoped(dev->of_node, child) {
+++#endif
++ 		error = of_property_read_u32(child, "reg", &reg);
++ 		if (error != 0 || reg >= SX951X_NUM_CHANNELS) {
++ 			dev_err(dev, "Invalid channel %d\n", reg);
++@@ -383,9 +396,15 @@ static int sx951x_input_init(struct sx951x_priv *priv)
++ 	return 0;
++ }
++ 
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++static int sx951x_probe(struct i2c_client *i2c_client, const struct i2c_device_id *id)
+++#else
++ static int sx951x_probe(struct i2c_client *i2c_client)
+++#endif
++ {
+++#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
++ 	const struct i2c_device_id *id;
+++#endif
++ 	const struct sx951x_hw_data *hw;
++ 	struct device *dev = &i2c_client->dev;
++ 	struct sx951x_priv *priv;
++@@ -398,7 +417,9 @@ static int sx951x_probe(struct i2c_client *i2c_client)
++ 		return -ENODEV;
++ 	}
++ 
+++#if LINUX_VERSION_CODE > KERNEL_VERSION(6, 0, 0)
++ 	id = i2c_client_get_device_id(i2c_client);
+++#endif
++ 	hw = i2c_get_match_data(i2c_client);
++ 	if (!id || !hw) {
++ 		dev_err(dev, "Invalid device configuration\n");
++@@ -440,7 +461,12 @@ static int sx951x_probe(struct i2c_client *i2c_client)
++ 	return 0;
++ }
++ 
++-static void sx951x_remove(struct i2c_client *i2c_client)
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++static int sx951x_remove(struct i2c_client *i2c_client)
+++#else
+++static int sx951x_remove(struct i2c_client *i2c_client, 
+++			  const struct i2c_device_id *id)
+++#endif
++ {
++ 	struct sx951x_priv *priv = i2c_get_clientdata(i2c_client);
++ 
++@@ -449,6 +475,9 @@ static void sx951x_remove(struct i2c_client *i2c_client)
++ 
++ 	/* Turn off all LEDs */
++ 	regmap_write(priv->regmap, SX951X_REG_LED_MAP_ENG2, 0x00);
+++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+++	return 0;
+++#endif
++ }
++ 
++ static const struct sx951x_hw_data sx9512_hw_data = {
++-- 
++2.47.2
++
