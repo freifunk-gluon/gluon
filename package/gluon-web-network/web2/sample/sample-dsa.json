@@ -1,0 +1,11 @@
+{
+  "path": "/network/interfaces",
+  "display": "Network Interfaces with dsa",
+  "info": {
+    "switch_type": "dsa",
+    "interfaces": ["wan", "lan1", "lan2", "lan3", "lan4"]
+  },
+  "get": {
+  
+  }
+}
