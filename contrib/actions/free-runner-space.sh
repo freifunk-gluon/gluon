@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # For a List of pre-installed packages on the runner image see
 # https://github.com/actions/runner-images/tree/main?tab=readme-ov-file#available-images

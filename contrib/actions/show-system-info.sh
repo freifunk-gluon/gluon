@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "-- CPU --"
 cat /proc/cpuinfo
