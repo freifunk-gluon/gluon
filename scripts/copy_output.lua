@@ -28,6 +28,7 @@ mkdir(env.GLUON_IMAGEDIR..'/factory')
 mkdir(env.GLUON_IMAGEDIR..'/sysupgrade')
 mkdir(env.GLUON_IMAGEDIR..'/other')
 mkdir(env.GLUON_DEBUGDIR)
+mkdir(env.GLUON_METADIR..'/openwrt-profiles')
 
 
 lib.include(target)
@@ -81,6 +82,13 @@ local kernel_debug_dest = string.format('%s/gluon-%s-%s-%s-kernel-debug.tar.zst'
 	target)
 lib.exec {'cp', kernel_debug_source, kernel_debug_dest}
 
+-- copy OpenWrt profile JSON
+local profile_json_source = string.format('openwrt/bin/targets/%s/profiles.json',
+	bindir)
+local profile_json_dest = string.format('%s/openwrt-profiles/%s.json',
+	env.GLUON_METADIR,
+	target)
+lib.exec {'cp', profile_json_source, profile_json_dest}
 
 -- Copy opkg repo
 if (env.GLUON_DEVICES or '') == '' then
