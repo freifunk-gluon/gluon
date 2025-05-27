@@ -345,6 +345,10 @@ mediatek-filogic
 
   - UniFi 6 Plus
 
+* Wavlink
+
+  - WL-WN573HX3 [#lan_as_wan]_
+
 * Zyxel
 
   - NWA50AX Pro
