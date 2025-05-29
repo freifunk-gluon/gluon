@@ -1,0 +1,22 @@
+From: Grische <2787581+grische@users.noreply.github.com>
+Date: Thu, 29 May 2025 11:00:10 +0200
+Subject: ipq806x: fix Extreme Networks AP3935 ports
+
+LED "1" was assigned to LAN2 and vice versa.
+Also WAN was on LAN2 instead of LAN1.
+
+diff --git a/target/linux/ipq806x/base-files/etc/board.d/01_leds b/target/linux/ipq806x/base-files/etc/board.d/01_leds
+index c96d5e69c471d6b13d1ce94b274fecd5fe2d4eb0..60988dec6b5d829c38173309e1fac4f52c5ec0b2 100644
+--- a/target/linux/ipq806x/base-files/etc/board.d/01_leds
++++ b/target/linux/ipq806x/base-files/etc/board.d/01_leds
+@@ -34,8 +34,8 @@ edgecore,ecw5410)
+ 	ucidef_set_led_wlan "wlan5g" "WLAN5G" "green:wlan5g" "phy0tpt"
+ 	;;
+ extreme,ap3935)
+-	ucidef_set_led_netdev "wan" "wan" "orange:lan1" "eth1"
+-	ucidef_set_led_netdev "lan" "lan" "orange:lan2" "eth0"
++	ucidef_set_led_netdev "wan" "wan" "orange:lan1" "eth0"
++	ucidef_set_led_netdev "lan" "lan" "orange:lan2" "eth1"
+ 	;;
+ fortinet,fap-421e)
+ 	ucidef_set_led_netdev "eth1-100" "ETH1-100" "amber:eth1" "eth0" "link_100"
