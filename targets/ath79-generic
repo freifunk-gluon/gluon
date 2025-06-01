@@ -434,6 +434,7 @@ device('tp-link-archer-c58-v1', 'tplink_archer-c58-v1', {
 
 device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
+	factory = false,
 })
 
 device('tp-link-archer-c7-v2', 'tplink_archer-c7-v2', {
