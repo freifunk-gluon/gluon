@@ -24,7 +24,7 @@ Bugfixes
 
 * VXLAN encapsulated mesh traffic arriving at a client interface is now filtered and not forwarded to the mesh
 
-* Fixed a missing import in `libgluonutil` which lead to undefined behavior on 64 bit architectures
+* Fixed a missing import in `libgluonutil` which led to undefined behavior on 64 bit architectures
 
 
 Known issues
