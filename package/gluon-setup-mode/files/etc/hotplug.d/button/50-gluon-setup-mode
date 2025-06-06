@@ -9,6 +9,12 @@ wait_setup_mode() {
 	gluon-enter-setup-mode
 }
 
+# Special case for devices that use capacitive buttons
+case "$(board_name)" in
+genexis,pulse-ex400)
+	[ "$BUTTON" = wps ] && exit 0
+	;;
+esac
 
 if [ "$BUTTON" = wps ] || [ "$BUTTON" = reset ] || [ "$BUTTON" = phone ]; then
 	case "$ACTION" in
