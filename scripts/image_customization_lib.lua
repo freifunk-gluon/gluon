@@ -11,9 +11,15 @@ local function evaluate_device(env, dev)
 	local device_overrides = {}
 
 	local function add_elements(element_type, element_list)
+		local error_msg = string.format(
+			'incorrect use of %s(): list of %s expected as argument',
+			element_type, element_type)
+		assert(type(element_list) == 'table', error_msg)
+
 		-- We depend on the fact both feature and package
 		-- are already initialized as empty tables
 		for _, element in ipairs(element_list) do
+			assert(type(element) == 'string', error_msg)
 			table.insert(selections[element_type], element)
 		end
 	end
@@ -33,7 +39,7 @@ local function evaluate_device(env, dev)
 	function funcs.broken(broken)
 		assert(
 			type(broken) == 'boolean',
-			'Incorrect use of broken(): has to be a boolean value')
+			'incorrect use of broken(): boolean argument expected')
 		add_override('broken', broken)
 	end
 
@@ -48,9 +54,13 @@ local function evaluate_device(env, dev)
 	function funcs.device(device_names)
 		assert(
 			type(device_names) == 'table',
-			'Incorrect use of device(): pass a list of device names as argument')
+			'incorrect use of device(): list of device names expected as argument')
 
 		for _, device_name in ipairs(device_names) do
+			assert(
+				type(device_name) == 'string',
+				'incorrect use of device(): list of device names expected as argument')
+
 			if device_name == dev.image then
 				return true
 			end
@@ -62,21 +72,47 @@ local function evaluate_device(env, dev)
 	function funcs.target(target, subtarget)
 		assert(
 			type(target) == 'string',
-			'Incorrect use of target(): pass a target name as first argument')
+			'incorrect use of target(): target name expected as first argument')
 
 		if target ~= env.BOARD then
 			return false
 		end
 
-		if subtarget and subtarget ~= env.SUBTARGET then
-			return false
+		if subtarget then
+			assert(
+				type(subtarget) == 'string',
+				'incorrect use of target(): subtarget name expected as first argument')
+
+			if subtarget ~= env.SUBTARGET then
+				return false
+			end
 		end
 
 		return true
 	end
 
 	function funcs.device_class(class)
+		assert(
+			type(class) == 'string',
+			'incorrect use of device_class(): class name expected as first argument')
+
 		return dev.options.class == class
+	end
+
+	function funcs.include(path)
+		assert(
+			type(path) == 'string',
+			'incorrect use of include(): path expected as first argument')
+
+		if string.sub(path, 1, 1) ~= '/' then
+			assert(
+				string.find(path, '/') == nil,
+				'incorrect use of include(): including files from subdirectories is unsupported')
+			path = env.GLUON_SITEDIR .. '/' .. path
+		end
+		local f = assert(loadfile(path))
+		setfenv(f, funcs)
+		return f()
 	end
 
 	-- Evaluate the feature definition files
