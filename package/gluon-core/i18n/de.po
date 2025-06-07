@@ -1,14 +1,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2015-05-04 00:34+0200\n"
-"Last-Translator:  <mschiffer@universe-factory.net>\n"
+"PO-Revision-Date: 2025-06-06 08:00+0200\n"
+"Last-Translator: Florian Maurer <fmaurer@disroot.org>\n"
 "Language-Team: German\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Autoupdater branch"
+msgstr "Autoupdater-Branch"
 
 msgid "Domain"
 msgstr "Domäne"
@@ -39,3 +42,6 @@ msgstr "Site-Version"
 
 msgid "Switch type"
 msgstr "Switch-Typ"
+
+msgid "disabled"
+msgstr "deaktiviert"
