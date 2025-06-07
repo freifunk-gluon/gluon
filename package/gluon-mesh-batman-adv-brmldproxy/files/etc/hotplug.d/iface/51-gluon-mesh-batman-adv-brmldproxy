@@ -1,0 +1,60 @@
+#!/bin/sh
+set -e
+
+if [ "$INTERFACE" != "client" ] || [ "$ACTION" != "ifup" ]; then exit 0; fi
+
+lookup_site() {
+	local path="$1" default="$2"
+	lua -e "print(require('gluon.site').$path('$default'))"
+}
+
+get_gluon_all_mc_routers_mac() {
+	local group_id
+
+	group_id="$(lua -e 'print(require("gluon.util").domain_seed_bytes("gluon-mesh-batman-adv-brmldproxy.gluon-all-mc-routers-group", 4))')"
+	group_id="$(echo "${group_id}" | sed 's/\(..\)/\1:/g;s/:$//')"
+
+	echo "33:33:${group_id}"
+}
+
+wait_for_qdisc() {
+	for _ in $(seq 1 15); do
+		tc qdisc show dev bat0 handle "$1" | grep -q qdisc && break
+		sleep 1
+	done
+}
+
+add_filter() {
+	local parent="$1"
+	local prio="$2"
+	local handle="$3"
+	local rule="$4"
+
+	# shellcheck disable=SC2086 # Intended splitting of $rule
+	tc filter add dev bat0 \
+		parent "$parent" prio "$prio" handle "$handle" protocol ipv6 \
+		u32 $rule
+}
+
+if [ "$(lookup_site 'mesh.filter_membership_reports' 'true')" = "false" ]; then exit 0; fi
+
+wait_for_qdisc "fffe:"
+wait_for_qdisc "ffff:"
+
+# MLD reports, mesh outgoing:
+# 1) DNAT to 33:33:42:4e:f3:14
+# 2) Change ICMPv6 type to 100, keep original type in code field
+# => only send report to IPv6 multicast routers
+MC_MAC="$(get_gluon_all_mc_routers_mac)"
+add_filter fffe: 4221 11: "divisor 1"
+add_filter fffe: 4221 11::800 "ht 11: match u8 131 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set ${MC_MAC} munge offset 0x30 u16 set 0x6483 action pipe classid 1:1"
+add_filter fffe: 4221 11::801 "ht 11: match u8 132 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set ${MC_MAC} munge offset 0x30 u16 set 0x6484 action pipe classid 1:1"
+add_filter fffe: 4221 11::802 "ht 11: match u8 143 0xff at 48 match u8 0 0xff at 49 action pedit ex munge eth dst set ${MC_MAC} munge offset 0x30 u16 set 0x648f action pipe classid 1:1"
+add_filter fffe: 4221 801::800 "match mark 0x0800000 0x0800000 link 11:"
+
+# MLD reports, mesh incoming:
+# 1) undo DNAT
+# 2) Change ICMPv6 type back to MLD report
+add_filter ffff: 4223 2::231 "ht 2: match u8 100 0xff at 48 match u8 131 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:01 munge offset 0x30 u16 set 0x8300 reclassify"
+add_filter ffff: 4223 2::232 "ht 2: match u8 100 0xff at 48 match u8 132 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:01 munge offset 0x30 u16 set 0x8400 reclassify"
+add_filter ffff: 4223 2::243 "ht 2: match u8 100 0xff at 48 match u8 143 0xff at 49 action pedit ex munge eth dst set 33:33:00:00:00:16 munge offset 0x30 u16 set 0x8f00 reclassify"
