@@ -1,0 +1,40 @@
+#!/usr/bin/lua
+
+local platform_info = require 'platform_info'
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+
+local M = setmetatable({}, {
+	__index = platform_info,
+})
+
+function M.match(target, subtarget, boards)
+	if target and M.get_target() ~= target then
+		return false
+	end
+
+	if subtarget and M.get_subtarget() ~= subtarget then
+		return false
+	end
+
+	if boards and not util.contains(boards, M.get_board_name()) then
+		return false
+	end
+
+	return true
+end
+
+function M.discard_oem_config()
+	if M.match('mediatek', 'filogic', {
+		'wavlink,wl-wn573hx3',
+	}) and uci:get('winstar', 'system') then
+		return true
+	end
+
+	return false
+end
+
+if M.discard_oem_config() then
+	print("restoring UCI defaults to discard broken OEM config")
+	os.execute('yes | firstboot && reboot')
+end

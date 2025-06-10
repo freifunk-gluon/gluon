@@ -80,6 +80,14 @@ device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
 })
 
 
+-- Wavlink
+
+device('wavlink-wl-wn573hx3', 'wavlink_wl-wn573hx3', {
+	factory = false,
+	sysupgrade = '-squashfs-WN573HX3-sysupgrade',
+})
+
+
 -- Zyxel
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')

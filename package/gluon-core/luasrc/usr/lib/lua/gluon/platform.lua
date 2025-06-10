@@ -65,7 +65,8 @@ function M.is_outdoor_device()
 		return true
 
 	elseif M.match('mediatek', 'filogic', {
-		'cudy,ap3000outdoor-v1'
+		'cudy,ap3000outdoor-v1',
+		'wavlink,wl-wn573hx3',
 	}) then
 		return true
 
