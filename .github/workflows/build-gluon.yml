@@ -57,6 +57,9 @@ jobs:
       - name: Build Gluon
         run: docker run --rm -v $PWD:/gluon-ci -w /gluon-ci --user "$(id -u):$(id -g)" gluon-ci-container contrib/actions/run-build.sh ${{ matrix.target }}
 
+      - name: Check Image size
+        run: contrib/check-image-size.py --github-actions --overhead 256 output/meta/openwrt-profiles/${{ matrix.target }}.json
+
       - name: Archive build logs
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -70,3 +73,8 @@ jobs:
           name: ${{ matrix.target }}_output
           path: output
 
+      - name: Archive metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}_metadata
+          path: output/meta
