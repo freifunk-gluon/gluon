@@ -1,0 +1,50 @@
+#!/bin/busybox sh
+
+# Show the current ntp state using gluon-state-check.
+#
+# In case of an unsynced ntp session the file has_lost_ntp_sync is created.
+# Its atime will be bumped upon further failed synchronizations.
+# As long as there is no sync, the file has_ntp_sync is absent.
+#
+# Vice versa, the file has_ntp_sync is created upon stratum-level <16.
+# As long as the sync persists, only the files atime is updated.
+# Furthermore, if there is an ntp sync, the file has_lost_ntp_sync is deleted.
+#
+# This allows the following code to emit the current ntp status and how long its been going on.
+
+# These two variables must not contain spaces in order for the awk splitting to work.
+HAS_LOST_NTP_SYNC="/var/gluon/state/has_lost_ntp_sync"
+HAS_NTP_SYNC="/var/gluon/state/has_ntp_sync"
+
+get_duration() {
+	local flag_file
+	local use_atime
+	local mtime
+	local time_epoch
+	local current_time
+
+	flag_file=$1
+	use_atime=$2
+
+	if [ "$use_atime" = true ]; then
+		ls_option="-u"
+	fi
+
+	# shellcheck disable=SC2012 # stat is unavailable and busybox find does not emit the necessary fields.
+	mtime=$(ls -l "$ls_option" "$flag_file" --full-time | awk '{print $6, $7}') 2>/dev/null
+	time_epoch=$(date -d "$mtime" +%s)
+	current_time=$(date +%s)
+	echo $((current_time - time_epoch))
+}
+
+if [ -f "$HAS_NTP_SYNC" ]; then
+	duration=$(get_duration "$HAS_NTP_SYNC")
+	last_checked=$(get_duration "$HAS_NTP_SYNC" true)
+	echo "NTP has been synced for $duration seconds (last checked $last_checked seconds ago)."
+elif [ -f "$HAS_LOST_NTP_SYNC" ]; then
+	duration=$(get_duration "$HAS_LOST_NTP_SYNC")
+	last_checked=$(get_duration "$HAS_LOST_NTP_SYNC" true)
+	echo "NTP has been unsynced for $duration seconds (last checked $last_checked seconds ago)."
+else
+	echo "NTP state is unknown, ntpd hotplugs might not have been invoked, yet."
+fi
