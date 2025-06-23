@@ -105,7 +105,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	else
 		p:element('model/warning', {
 			content = translate("Mesh deactivated due to unsupported channel"),
-		}, 'warning')
+		}, 'notice')
 	end
 
 	local phy = wireless.find_phy(config)
