@@ -55,7 +55,7 @@ start_service () {
 	procd_set_param stderr 1
 	procd_set_param respawn "${respawn_threshold:-3660}" "${respawn_timeout:-5}" "${respawn_retry:-0}"
 	# shellcheck disable=SC2086
-	procd_set_param command "$PROG" -s /var/run/l3roamd.sock "$prefix4" "$prefix6" $interfaces -t 254 -a "$localip" -b br-client "$roamingprefix"
+	procd_set_param command "$PROG" -s /var/run/l3roamd.sock $prefix4 $prefix6 $interfaces -t 254 -a "$localip" -b br-client "$roamingprefix"
 	procd_close_instance
 }
 
