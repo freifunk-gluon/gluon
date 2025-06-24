@@ -183,3 +183,17 @@ device('zyxel-wsm20', 'zyxel_wsm20', {
 	factory = false,
 })
 
+
+-- Devices without WLAN
+
+-- Ubiquiti
+
+device('ubiquiti-edgerouter-x', 'ubnt_edgerouter-x', {
+	factory = false,
+	packages = {'-hostapd-mini'},
+})
+
+device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
+	factory = false,
+	packages = {'-hostapd-mini'},
+})
