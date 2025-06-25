@@ -1,0 +1,3 @@
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 131 -j RETURN', 'nat') -- MLDv1 Report
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 132 -j RETURN', 'nat') -- MLDv1 Done
+rule('MULTICAST_IN_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 143 -j RETURN', 'nat') -- MLDv2 Report
