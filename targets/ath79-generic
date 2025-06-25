@@ -84,6 +84,11 @@ device('buffalo-wzr-600dhp', 'buffalo_wzr-600dhp')
 device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s')
 
 
+-- COMFAST
+device('comfast-cf-ew71-v2', 'comfast_cf-ew71-v2', {
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-dlan-pro-1200+-wifi-ac', 'devolo_dlan-pro-1200plus-ac', {
