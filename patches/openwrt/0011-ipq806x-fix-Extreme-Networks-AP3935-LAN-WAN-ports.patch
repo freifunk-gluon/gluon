@@ -1,0 +1,28 @@
+From: Grische <2787581+grische@users.noreply.github.com>
+Date: Thu, 29 May 2025 13:45:10 +0200
+Subject: ipq806x: fix Extreme Networks AP3935 LAN/WAN ports
+
+This partially reverts commit 84a489b7cfc4c98b8747c9965826b2588eb3a57d.
+
+diff --git a/target/linux/ipq806x/base-files/etc/board.d/02_network b/target/linux/ipq806x/base-files/etc/board.d/02_network
+index 43ee5ccd14b9c52142e70eeb6d610d576681b281..93ccc961f3813037e44d4f66fe586daf9e72fbc5 100644
+--- a/target/linux/ipq806x/base-files/etc/board.d/02_network
++++ b/target/linux/ipq806x/base-files/etc/board.d/02_network
+@@ -47,7 +47,8 @@ ipq806x_setup_interfaces()
+ 		ucidef_set_network_device_conduit "lan1" "eth1"
+ 		ucidef_set_network_device_conduit "wan" "eth0"
+ 		;;
+-	edgecore,ecw5410)
++	edgecore,ecw5410 |\
++	extreme,ap3935)
+ 		ucidef_set_interfaces_lan_wan "eth1" "eth0"
+ 		;;
+ 	qcom,ipq8064-ap161)
+@@ -63,7 +64,6 @@ ipq806x_setup_interfaces()
+ 	meraki,mr42)
+ 		ucidef_set_interface_lan "eth0"
+ 		;;
+-	extreme,ap3935 |\
+ 	meraki,mr52)
+ 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+ 		;;
