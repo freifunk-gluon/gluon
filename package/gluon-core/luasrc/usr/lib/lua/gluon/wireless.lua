@@ -39,13 +39,14 @@ local function get_wlan_mac_from_driver(radio, vif)
 	return addresses[vif]
 end
 
-function M.get_wlan_mac(_, radio, index, vif)
-	local addr = get_wlan_mac_from_driver(radio, vif)
+function M.get_wlan_mac(_, radio, index, use)
+	local vif = util.interface_ids[use]
+	local addr = get_wlan_mac_from_driver(radio, vif+1)
 	if addr then
 		return addr
 	end
 
-	return util.generate_mac(4*(index-1) + (vif-1))
+	return util.generate_mac(index-1, use)
 end
 
 -- Iterate over all radios defined in UCI calling
