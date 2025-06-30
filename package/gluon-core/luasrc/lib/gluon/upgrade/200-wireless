@@ -3,13 +3,28 @@
 local util = require 'gluon.util'
 local wireless = require 'gluon.wireless'
 local site = require 'gluon.site'
-local sysconfig = require 'gluon.sysconfig'
 local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
--- Initial
-if not sysconfig.gluon_version then
+local function is_disabled_wireless(name)
+	if uci:get('wireless', name) then
+		return uci:get_bool('wireless', name, 'disabled')
+	end
+
+	return nil
+end
+
+local initial_exists = true
+-- check if initial config exists
+wireless.foreach_radio(uci, function(radio)
+	local radio_name = radio['.name']
+	if is_disabled_wireless('client_' .. radio_name) == nil then
+		initial_exists = false
+	end
+end)
+
+if not initial_exists then
 	uci:delete_all('wireless', 'wifi-iface')
 
 	-- First count all radios with a fixed frequency band.
@@ -83,14 +98,6 @@ local function get_htmode(radio)
 	end
 
 	return 'HT20'
-end
-
-local function is_disabled(name)
-	if not uci:get('wireless', name) then
-		return nil
-	end
-
-	return uci:get_bool('wireless', name, 'disabled')
 end
 
 -- Returns the first argument that is not nil; don't call without any non-nil arguments!
@@ -170,7 +177,7 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 	configure_mesh(config.mesh(), radio, index, suffix,
 		first_non_nil(
 			disabled,
-			is_disabled('mesh_' .. radio_name),
+			is_disabled_wireless('mesh_' .. radio_name),
 			config.mesh.disabled(false)
 		)
 	)
@@ -218,11 +225,10 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	uci:delete('wireless', radio_name, 'supported_rates')
 	uci:delete('wireless', radio_name, 'basic_rate')
 
-	local band = radio.band
-	if band == '2g' then
+	if radio.band == '2g' then
 		uci:set('wireless', radio_name, 'legacy_rates', false)
 		configure_mesh_wireless(radio, index, config)
-	elseif (band == '5g') then
+	elseif (radio.band == '5g') then
 		-- ToDo: Remove in v2024.x
 		local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
 		util.remove_from_set(hostapd_options, 'country3=0x4f')
