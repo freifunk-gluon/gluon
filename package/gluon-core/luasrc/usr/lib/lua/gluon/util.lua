@@ -175,7 +175,17 @@ end
 
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the MAC address
---
+
+local interface_ids = {
+	client = 0,
+	mesh = 1,
+	owe = 2,
+	wan_radio = 3,
+	primary = 3,
+	mesh_other = 4,
+	mesh_vpn = 7,
+}
+
 -- IDs defined so far:
 -- 0: client0; WAN
 -- 1: mesh0
@@ -185,8 +195,8 @@ end
 -- 5: mesh1
 -- 6: owe1
 -- 7: wan_radio1 (private WLAN); mesh VPN
-function M.generate_mac(i)
-	if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
+function M.generate_mac(id, use)
+	-- when use is set, the id should be radio id, but can be plain id for backwards compatibility
 
 	local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
 	local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
@@ -200,6 +210,14 @@ function M.generate_mac(i)
 	-- It's necessary that the first 45 bits of the MAC address don't
 	-- vary on a single hardware interface, since some chips are using
 	-- a hardware MAC filter. (e.g 'rt305x')
+
+	local i
+
+	if use == nil then
+		i = id
+	else
+		i = 4*id + interface_ids[use]
+	end
 
 	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
 	m6 = m6 + i                   -- add virtual interface id
