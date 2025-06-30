@@ -290,6 +290,7 @@ lantiq-xrx200
   - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
   - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
+  - FRITZ!Box 7430 [#eva_ramboot]_
 
 lantiq-xrx200_legacy
 --------------------
