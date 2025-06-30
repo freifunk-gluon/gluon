@@ -5,7 +5,14 @@ local util = require 'gluon.util'
 local site = require 'gluon.site'
 
 local offline_flag_file = "/tmp/gluon_offline"
-local is_offline = true
+
+local ntp_negative_state_file = "/var/gluon/state/has_lost_ntp_sync"
+
+
+local function is_offline()
+	return unistd.access(ntp_negative_state_file)
+end
+
 
 -- Check if domain-switch is scheduled
 if site.domain_switch() == nil then
@@ -13,16 +20,7 @@ if site.domain_switch() == nil then
 	os.exit(0)
 end
 
--- Check reachability of pre-defined targets
-for _, ip in ipairs(site.domain_switch.connection_check_targets()) do
-	local exit_code = os.execute("ping -c 1 -w 10 " .. ip)
-	if exit_code == 0 then
-		is_offline = false
-		break
-	end
-end
-
-if is_offline then
+if is_offline() then
 	-- Check if we were previously offline
 	if unistd.access(offline_flag_file) then
 		os.exit(0)
