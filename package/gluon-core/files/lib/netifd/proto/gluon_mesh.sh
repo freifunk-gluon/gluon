@@ -8,6 +8,7 @@ init_proto "$@"
 
 proto_gluon_mesh_init_config() {
 	proto_config_add_boolean fixed_mtu
+	proto_config_add_int hop_penalty
 }
 
 proto_gluon_mesh_setup() {
