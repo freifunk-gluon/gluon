@@ -177,6 +177,7 @@ end
 -- The parameter defines the ID to add to the MAC address
 
 local interface_ids = {
+	wan = 0,
 	client = 0,
 	mesh = 1,
 	owe = 2,
@@ -186,15 +187,6 @@ local interface_ids = {
 	mesh_vpn = 7,
 }
 
--- IDs defined so far:
--- 0: client0; WAN
--- 1: mesh0
--- 2: owe0
--- 3: wan_radio0 (private WLAN); batman-adv primary address
--- 4: client1; LAN
--- 5: mesh1
--- 6: owe1
--- 7: wan_radio1 (private WLAN); mesh VPN
 function M.generate_mac(id, use)
 	-- when use is set, the id should be radio id, but can be plain id for backwards compatibility
 
@@ -215,12 +207,14 @@ function M.generate_mac(id, use)
 
 	if use == nil then
 		i = id
+	elseif interface_ids[use] == nil then
+		return nil
 	else
 		i = 4*id + interface_ids[use]
 	end
 
 	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
-	m6 = m6 + i                   -- add virtual interface id
+	m6 = bit.band(m6 + i, 0xFF) -- add virtual interface id (check overflow)
 
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
 end
