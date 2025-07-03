@@ -29,10 +29,19 @@ proto_gluon_bat0_renew() {
 
 	lock /var/lock/gluon_bat0.lock
 
-	ubus call network.interface dump | jsonfilter \
-		-e "@.interface[@.proto='gluon_mesh' && @.up=true].device" \
-	| xargs -r -n 1 batctl interface add
+	ubus call network.interface dump | \
+		jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].device" | \
+		while read -r device
+	do
+		batctl interface add "$device"	
+		
+		hop_penalty="$(ubus call network.interface dump | \
+			jsonfilter -e "@.interface[@.device='$device'].data.hop_penalty")"
 
+		if [ -n "$hop_penalty" ]; then
+			batctl hardif "$device" hop_penalty "$hop_penalty"
+		fi
+	done
 	lock -u /var/lock/gluon_bat0.lock
 }
 

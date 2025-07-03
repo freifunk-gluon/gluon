@@ -22,6 +22,7 @@ if #mesh_interfaces_uplink > 0 then
 		ifname = 'br-wan',
 		proto = 'gluon_wired',
 		index = 0,
+		hop_penalty = uci:get('gluon', 'batadv_hop_penalty', 'wan') or 0,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
@@ -49,6 +50,7 @@ if #mesh_interfaces_other > 0 then
 		igmp_snooping = false,
 		proto = 'gluon_wired',
 		index = 4,
+		hop_penalty = uci:get('gluon', 'batadv_hop_penalty', 'mesh_other') or 0,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
