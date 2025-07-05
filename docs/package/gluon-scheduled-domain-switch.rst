@@ -10,6 +10,9 @@ powered off while this was supposed to happen, it might not be able to acquire t
 correct time. In this case, the node will switch after it has not seen any gateway
 for a given period of time.
 
+In older versions ping was used against an array of endpoints to determine mesh-connectivity.
+Nowadays *gluon-state-check* is used for this and evaluates mesh-(VPN) connectivity and NTP states.
+
 site.conf
 ---------
 All those settings have to be defined exclusively in the domain, not the site.
@@ -21,9 +24,6 @@ domain_switch : optional (needed for domains to switch)
     - amount of time without reachable gateway to switch unconditionally
   switch_time :
     - UNIX epoch after which domain will be switched
-  connection_check_targets :
-    - array of IPv6 addresses which are probed to determine if the node is
-      connected to the mesh
 
 Example::
 
@@ -31,8 +31,4 @@ Example::
     target_domain = 'new_domain',
     switch_after_offline_mins = 120,
     switch_time = 1546344000, -- 01.01.2019 - 12:00 UTC
-    connection_check_targets = {
-      '2001:4860:4860::8888',
-      '2001:4860:4860::8844',
-    },
   },
