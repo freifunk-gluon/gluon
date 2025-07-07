@@ -438,6 +438,8 @@ interfaces \: optional
 poe_passthrough \: optional
   Enable PoE passthrough by default on hardware with such a feature.
 
+.. _user-site-autoupdater:
+
 autoupdater \: package
   Configuration for the autoupdater feature of Gluon.
 
@@ -483,6 +485,13 @@ autoupdater \: package
 
   Note that the validity period of TLS certificates is checked as well, so care must be taken
   to provide working NTP servers in addition to the update mirrors when using HTTPS.
+
+  The autoupdater will only accept images signed by as many keys as `good_signatures` specifies.
+
+  The pubkeys section must in turn contain at least that many pubkeys.
+  It's advised to provide more than that to account for human or e.g. hard-drive errors.
+
+  See :doc:`../features/autoupdater` for more information about the process.
 
 .. _user-site-config_mode:
 
