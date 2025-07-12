@@ -7,7 +7,7 @@
 init_proto "$@"
 
 proto_gluon_wired_init_config() {
-	proto_config_add_int index
+	proto_config_add_string func
 	proto_config_add_boolean vxlan
 	proto_config_add_string vxpeer6addr
 }
@@ -49,8 +49,8 @@ proto_gluon_wired_setup() {
 
 	local meshif="$config"
 
-	local index vxlan vxpeer6addr
-	json_get_vars index vxlan vxpeer6addr
+	local func vxlan vxpeer6addr
+	json_get_vars func vxlan vxpeer6addr
 
 	# default args
 	[ -z "$vxlan" ] && vxlan=1
@@ -64,7 +64,7 @@ proto_gluon_wired_setup() {
 
 		json_init
 		json_add_string name "$meshif"
-		[ -n "$index" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac($index))")"
+		[ -n "$func" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac_by_name('$func'))")"
 		json_add_string proto 'vxlan6'
 		json_add_string tunlink "$config"
 		# ip6addr (the lower interface ip6) is used by the vxlan.sh proto
