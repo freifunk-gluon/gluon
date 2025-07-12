@@ -1,0 +1,49 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local util = require('gluon.util')
+
+local function is_root_pw_unlocked()
+	for line in io.lines("/etc/shadow") do
+		if line:match("^root:!") then
+			return false
+		end
+	end
+	return true
+end
+
+local function has_authorized_keys()
+	local file = io.open("/etc/dropbear/authorized_keys", "r")
+	if not file then
+		return false
+	end
+	for line in file:lines() do
+		-- if the line is neither comments nor solely whitespaces
+		if not (line:match("^%s*#") or line:match("^%s*$")) then
+			file:close()
+			return true
+		end
+	end
+	file:close()
+	return false
+end
+
+local root_pw_is_unlocked = is_root_pw_unlocked()
+
+local password_auth = 'off'
+if root_pw_is_unlocked then
+	password_auth = 'on'
+end
+
+-- disable dropbear alltogether, if no access is configured
+local enable_dropbear = has_authorized_keys() or root_pw_is_unlocked
+
+uci:foreach('dropbear', 'dropbear', function(s)
+	uci:tset('dropbear', s['.name'], {
+		enable = enable_dropbear,
+		PasswordAuth = password_auth,
+		RootPasswordAuth = password_auth}
+	)
+end)
+
+uci:save('dropbear')
