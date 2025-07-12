@@ -71,7 +71,7 @@ function f:write()
 		local name   = "wan_" .. radio_name
 
 		if enabled.data then
-			local macaddr = wireless.get_wlan_mac(uci, radio, index, 4)
+			local macaddr = wireless.get_wlan_mac(radio, index, 3)
 
 			uci:section('wireless', 'wifi-iface', name, {
 				device     = radio_name,

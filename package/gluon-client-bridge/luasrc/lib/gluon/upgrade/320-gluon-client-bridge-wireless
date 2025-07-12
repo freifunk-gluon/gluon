@@ -22,7 +22,7 @@ local function configure_ap(radio, index, config, radio_name)
 
 	uci:delete('wireless', name)
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 1)
+	local macaddr = wireless.get_wlan_mac(radio, index, 0)
 
 	if not ap.ssid() or not macaddr then
 		return
@@ -55,7 +55,7 @@ local function configure_owe(radio, index, config, radio_name)
 		return
 	end
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 3)
+	local macaddr = wireless.get_wlan_mac(radio, index, 2)
 
 	if not ap.owe_ssid() or not macaddr then
 		return

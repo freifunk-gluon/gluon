@@ -36,16 +36,16 @@ local function get_wlan_mac_from_driver(radio, vif)
 		return nil
 	end
 
-	return addresses[vif]
+	return addresses[vif+1]
 end
 
-function M.get_wlan_mac(_, radio, index, vif)
+function M.get_wlan_mac(radio, index, vif)
 	local addr = get_wlan_mac_from_driver(radio, vif)
 	if addr then
 		return addr
 	end
 
-	return util.generate_mac(4*(index-1) + (vif-1))
+	return util.generate_mac(4*index + vif)
 end
 
 -- Iterate over all radios defined in UCI calling
@@ -61,10 +61,11 @@ function M.foreach_radio(uci, f)
 	for index, radio in ipairs(radios) do
 		local band = radio.band
 
+		-- radio index is zero-based
 		if band == '2g' then
-			f(radio, index, site.wifi24)
+			f(radio, index-1, site.wifi24)
 		elseif band == '5g' then
-			f(radio, index, site.wifi5)
+			f(radio, index-1, site.wifi5)
 		end
 	end
 end

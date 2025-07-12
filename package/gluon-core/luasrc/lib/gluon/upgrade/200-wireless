@@ -122,7 +122,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		return
 	end
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 2)
+	local macaddr = wireless.get_wlan_mac(radio, index, 1)
 	if not macaddr then
 		return
 	end
@@ -155,7 +155,7 @@ local function fixup_wan(radio, index)
 		return
 	end
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 4)
+	local macaddr = wireless.get_wlan_mac(radio, index, 3)
 	if not macaddr then
 		return
 	end
