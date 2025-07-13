@@ -182,6 +182,10 @@ device('gl.inet-gl-ar300m-lite', 'glinet_gl-ar300m-lite', {
 	factory = false,
 })
 
+device('gl.inet-gl-ar300m16', 'glinet_gl-ar300m16', {
+	factory = false,
+})
+
 device('gl.inet-gl-ar750', 'glinet_gl-ar750', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9887,
