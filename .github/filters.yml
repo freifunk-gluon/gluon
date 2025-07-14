@@ -292,6 +292,16 @@
     "targets/targets.mk",
     "targets/bcm27xx.inc"
   ],
+  "ipq40xx-chromium": [
+    "targets/ipq40xx-chromium",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "kirkwood-generic": [
     "targets/kirkwood-generic",
     ".github/workflows/build-gluon.yml",
