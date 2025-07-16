@@ -62,6 +62,7 @@ ath79-generic
   - 6416A
   - GL-AR150
   - GL-AR300M-Lite
+  - GL-AR300M16
   - GL-AR750
   - GL-USB150 (Microuter)
 
