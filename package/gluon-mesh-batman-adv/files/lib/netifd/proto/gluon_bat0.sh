@@ -72,7 +72,7 @@ proto_gluon_bat0_setup() {
 
 
 	local primary0_mac
-	primary0_mac="$(lua -e 'print(require("gluon.util").generate_mac(3))')"
+	primary0_mac="$(lua -e 'print(require("gluon.util").generate_mac_by_name("primary"))')"
 
 	ip link add primary0 type dummy
 	echo 1 > /proc/sys/net/ipv6/conf/primary0/disable_ipv6

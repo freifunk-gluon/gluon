@@ -7,9 +7,9 @@ local uci = require('simple-uci').cursor()
 
 -- fix up potentially duplicate MAC addresses (for meshing)
 if not site.mesh.vxlan(true) then
-	uci:set('network', 'wan', 'macaddr', util.generate_mac(0))
+	uci:set('network', 'wan', 'macaddr', util.generate_mac_by_name('wan'))
 end
 if uci:get('network', 'mesh_other') then
-	uci:set('network', 'mesh_other', 'macaddr', util.generate_mac(4))
+	uci:set('network', 'mesh_other', 'macaddr', util.generate_mac_by_name('mesh_other'))
 end
 uci:save('network')

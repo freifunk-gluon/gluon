@@ -21,7 +21,7 @@ if #mesh_interfaces_uplink > 0 then
 	uci:section('network', 'interface', 'mesh_uplink', {
 		ifname = 'br-wan',
 		proto = 'gluon_wired',
-		index = 0,
+		func = 'wan',
 		vxlan = site.mesh.vxlan(true),
 	})
 end
@@ -48,7 +48,7 @@ if #mesh_interfaces_other > 0 then
 		type = iftype,
 		igmp_snooping = false,
 		proto = 'gluon_wired',
-		index = 4,
+		func = 'mesh_other',
 		vxlan = site.mesh.vxlan(true),
 	})
 end
