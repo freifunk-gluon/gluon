@@ -22,6 +22,7 @@ if #mesh_interfaces_uplink > 0 then
 		ifname = 'br-wan',
 		proto = 'gluon_wired',
 		func = 'wan',
+		hop_penalty = 0,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
@@ -49,6 +50,7 @@ if #mesh_interfaces_other > 0 then
 		igmp_snooping = false,
 		proto = 'gluon_wired',
 		func = 'mesh_other',
+		hop_penalty = 0,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
