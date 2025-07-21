@@ -168,3 +168,32 @@ or to at least manually mark the port to the Gluon router as a
 Alternatively, the filtering of IGMP/MLD reports can be disabled via
 the site.conf (which is not recommended in large meshes though).
 See :ref:`site.conf mesh section <user-site-mesh>` for details.
+
+Tweaking Hop Penalty
+^^^^^^^^^^^^^^^^^^^^
+
+In general, the usage of a directly connected uplink is preferred over a faster more distant connection.
+In situations where the uplink of a device should only be used as a fallback (e.g. metered connection or slower encryption), this can be tweaked using a hop_penalty in gluon.
+Examples of this are shown below:
+
+.. code-block:: sh
+
+  # use mesh-vpn as fallback only
+  uci set gluon.mesh_vpn.batadv_hop_penalty='120'
+  # optional penalty for wired mesh
+  uci set gluon.iface_lan.batadv_hop_penalty=10
+  # optional for mesh on wan
+  uci set gluon.iface_wan.batadv_hop_penalty=10
+  # don't forget to commit changes
+  uci commit gluon
+
+To apply the changes, run the following commands:
+
+.. code-block:: sh
+
+  gluon-reconfigure
+  reboot
+
+Further documentation of the hop penalty can be found here:
+
+https://www.open-mesh.org/doc/batman-adv/Tweaking.html#hop-penalty
