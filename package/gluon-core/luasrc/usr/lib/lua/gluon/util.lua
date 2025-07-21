@@ -175,18 +175,15 @@ end
 
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the MAC address
---
--- IDs defined so far:
--- 0: client0; WAN
--- 1: mesh0
--- 2: owe0
--- 3: wan_radio0 (private WLAN); batman-adv primary address
--- 4: client1; LAN
--- 5: mesh1
--- 6: owe1
--- 7: wan_radio1 (private WLAN); mesh VPN
-function M.generate_mac(i)
-	if i > 7 or i < 0 then return nil end -- max allowed id (0b111)
+
+local if_mac_offsets = {
+	wan = 0,
+	primary = 3,
+	mesh_other = 4,
+	mesh_vpn = 7,
+}
+
+function M.generate_mac(index)
 
 	local hashed = string.sub(hash.md5(sysconfig.primary_mac), 0, 12)
 	local m1, m2, m3, m4, m5, m6 = string.match(hashed, '(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)(%x%x)')
@@ -202,9 +199,21 @@ function M.generate_mac(i)
 	-- a hardware MAC filter. (e.g 'rt305x')
 
 	m6 = bit.band(m6, 0xF8) -- zero the last three bits (space needed for counting)
-	m6 = m6 + i                   -- add virtual interface id
+	m6 = bit.band(m6 + index, 0xFF) -- add virtual interface id (check overflow)
 
 	return string.format('%02x:%s:%s:%s:%s:%02x', m1, m2, m3, m4, m5, m6)
+end
+
+function M.generate_mac_by_name(func)
+	-- when radio is set, use radio_mac_offsets, else use if_mac_offsets for the interfaces
+	local idx
+
+	idx = if_mac_offsets[func]
+	if idx == nil then
+		return nil
+	end
+
+	return M.generate_mac(idx)
 end
 
 function M.get_uptime()

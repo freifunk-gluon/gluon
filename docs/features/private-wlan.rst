@@ -27,7 +27,7 @@ You may also enable a private WLAN using the command line::
   uci set wireless.wan_radio$RID.ssid="$SSID"
   uci set wireless.wan_radio$RID.key="$KEY"
   uci set wireless.wan_radio$RID.disabled=0
-  uci set wireless.wan_radio$RID.macaddr=$(lua -e "print(require('gluon.util').generate_mac(3+4*$RID))")
+  uci set wireless.wan_radio$RID.macaddr=$(lua -e "print(require('gluon.wireless').get_wlan_mac('wan_radio', $RID))")
   uci commit
   wifi
 
