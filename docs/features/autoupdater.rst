@@ -50,6 +50,32 @@ The header contains the following information:
   the number of days over which the update should be stretched out after ``DATE``. Nodes will calculate a probability
   based on the time left to determine when to update.
 
+Signing images
+--------------
+
+As noted above, manifest files can be signed by an arbitrary amount of ECDSA keys.
+The amount of valid signatures required to have the autoupdater accept an image is configured using the :ref:`site.conf <user-site-autoupdater>`.
+
+A secret key (that like an SSH private key must never be shared) can be generated like this:
+
+.. code-block:: sh
+
+    mkdir ~/.ecdsa/
+    ( umask 077 && ecdsautil generate-key > ~/.ecdsa/id_y25519 )
+
+This is then used to derive a public key, meant to be placed in the ``site.conf``.
+
+.. code-block:: sh
+
+    ( umask 033 && ecdsautil show-key < ~/.ecdsa/id_y25519 > ~/.ecdsa/id_y25519.pub )
+
+A manifest can then be signed using the helper in gluons `contrib` directory.
+
+.. code-block:: sh
+
+    ./contrib/sign.sh ~/.ecdsa/id_y25519 output/images/sysupgrade/stable.manifest
+
+In the manifest file only the content above the three dashes is signed, not other signatures that might exist.
 
 Automated nightly builds
 ------------------------

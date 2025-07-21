@@ -12,7 +12,7 @@ uci:section('network', 'interface', 'mesh_vpn', {
 	ifname = vpn_core.get_interface(),
 	proto = 'gluon_mesh',
 	fixed_mtu = true,
-	macaddr = util.generate_mac(7),
+	macaddr = util.generate_mac_by_name('mesh_vpn'),
 	mtu = active_vpn.mtu(),
 })
 

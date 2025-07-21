@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-scheduled-domain-switch
   TITLE:=Allows scheduled migrations between domains
-  DEPENDS:=+gluon-core @GLUON_MULTIDOMAIN
+  DEPENDS:=+gluon-core +gluon-state-check @GLUON_MULTIDOMAIN
 endef
 
 $(eval $(call BuildPackageGluon,gluon-scheduled-domain-switch))

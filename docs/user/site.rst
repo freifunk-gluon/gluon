@@ -438,6 +438,8 @@ interfaces \: optional
 poe_passthrough \: optional
   Enable PoE passthrough by default on hardware with such a feature.
 
+.. _user-site-autoupdater:
+
 autoupdater \: package
   Configuration for the autoupdater feature of Gluon.
 
@@ -483,6 +485,13 @@ autoupdater \: package
 
   Note that the validity period of TLS certificates is checked as well, so care must be taken
   to provide working NTP servers in addition to the update mirrors when using HTTPS.
+
+  The autoupdater will only accept images signed by as many keys as `good_signatures` specifies.
+
+  The pubkeys section must in turn contain at least that many pubkeys.
+  It's advised to provide more than that to account for human or e.g. hard-drive errors.
+
+  See :doc:`../features/autoupdater` for more information about the process.
 
 .. _user-site-config_mode:
 
@@ -701,39 +710,131 @@ setup and a device-specific alteration.
 The following functions are available:
 
 device(device_name_list)
-  Returns true in case the current device is in the list of devices specified in ``device_name_list``.
+  Returns true for devices listed in ``device_name_list``.
   ``device_name_list`` is a table of strings.
 
+  .. code-block:: lua
+
+    if device {
+      'openmesh-a40',
+      'openmesh-a60',
+    } then
+      packages {'iperf3'}
+    end
+
 target(openwrt_target, openwrt_subtarget)
-  Returns true in case the current device is of the specified OpenWrt target and subtarget.
-  The parameter ```openwrt_subtarget``` is optional. If it is not specified, only the target is matched.
+  Returns true for devices of the specified OpenWrt target and subtarget.
+  The parameter ``openwrt_subtarget`` is optional. If it is not specified,
+  the function matches all subtargets of the given target.
+
+  .. code-block:: lua
+
+    if target('x86', '64') then
+      features {'wireless-encryption-wpa3'}
+    end
 
 device_class(dev_class)
   Returns true in case the current device is of the specified device class.
+
+  .. code-block:: lua
+
+    if not device_class('tiny') then
+      features {'wireless-encryption-wpa3'}
+    end
+
 
 features(feature_table)
   Includes the specified list of features in the image. ``feature_table`` is a table of strings.
   These strings can be prefixed with a dash to exclude features included earlier in the file.
 
+  .. code-block:: lua
+
+    features {
+      'autoupdater',
+      'ebtables-filter-multicast',
+      'ebtables-filter-ra-dhcp',
+      'ebtables-limit-arp',
+      'mesh-batman-adv-15',
+      'mesh-vpn-fastd',
+      'respondd',
+      'status-page',
+      'web-advanced',
+      'web-wizard',
+    }
+
 packages(package_table)
   Includes the specified list of packages in the image. ``package_table`` is a table of strings.
   These strings can be prefixed with a dash to exclude packages included earlier in the file.
+
+  .. code-block:: lua
+
+    packages {'iwinfo'}
 
 broken(broken_state)
   Overrides the broken state specified by Gluon. Can be used to mark a device as broken or
   remove the pre-defined broken state.
 
+  .. code-block:: lua
+
+    if device {'meraki-mr33-access-point'} then
+      broken(false)
+    end
+
 disable()
   Disables image generation.
+
+  .. code-block:: lua
+
+    if device {'tp-link-cpe220-v3'} then
+      disable()
+    end
 
 disable_factory()
   Disables factory image generation. Sysupgrade images are still generated and stored in the image
   output directory.
 
+  .. code-block:: lua
+
+    if device {'tp-link-cpe220-v3'} then
+      disable_factory()
+    end
+
+include(path)
+  Includes another image customization file. Relative paths are interpreted relative to the site
+  repository root.
+
+  .. code-block:: lua
+    :caption: target-settings.lua
+
+    features {'wireless-encryption-wpa3'}
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if target('x86', '64') then
+      include 'target-settings.lua'
+    end
+
+  Values returned from the included file become the return value of ``include``:
+
+  .. code-block:: lua
+    :caption: matches-device.lua
+
+    return device {
+      'openmesh-a40',
+      'openmesh-a60',
+    }
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if include('matches-device.lua') then
+      packages {'iperf3'}
+    end
+
 Technically, the image customization file is evaluated once for each device, allowing
 to make use of regular Lua *if* statements for device-specific configuration as
-can be seen in the example.
-
+can be seen in the examples.
 
 .. _site-config-mode-texts:
 

@@ -20,8 +20,12 @@ define Package/gluon-state-check/description
 
   This package provides the following checks:
   - `has_default_gw6` - check whether the router has a default IPv6-route on br-client.
+  - `has_ntp_sync` - check whether the last stratum event of busybox ntpd was <16
+  - `has_lost_ntp_sync` - check whether the last stratum event of busybox was 16
 
   The checks are executed once every minute (by micron.d).
+  The two NTP checks are hotplug results of ntpd and as a result not available
+  in the first 11 minutes of uptime.
 endef
 
 $(eval $(call BuildPackageGluon,gluon-state-check))

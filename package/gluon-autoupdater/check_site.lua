@@ -29,7 +29,7 @@ local branches = table_keys(need_table({'autoupdater', 'branches'}, function(bra
 		return good_signatures <= #pubkeys
 	end, nil, string.format('be less than or equal to the number of public keys (%d)', #pubkeys))
 
-	obsolete(in_site(extend(branch, {'probability'})), 'Use GLUON_PRIORITY in site.mk instead.')
+	obsolete(extend(branch, {'probability'}), 'Use GLUON_PRIORITY in site.mk instead.')
 end))
 
 need_one_of(in_site({'autoupdater', 'branch'}), branches, false)
