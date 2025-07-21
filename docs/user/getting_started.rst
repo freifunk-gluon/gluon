@@ -25,7 +25,7 @@ An example configuration can be found in the Gluon repository at *docs/site-exam
 Dependencies
 ------------
 To build Gluon, several packages need to be installed on the system. On a
-freshly installed Debian Bullseye system the following packages are required:
+freshly installed Debian Bookworm system the following packages are required:
 
 * `clang`
 * `git` (to get Gluon and other dependencies)
@@ -47,6 +47,12 @@ freshly installed Debian Bullseye system the following packages are required:
 * `qemu-utils`
 * `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
 * `swig`
+
+You can install all these packages with this command.
+
+::
+
+  apt install clang git python3 python3-{dev,pyelftools,setuptools} build-essential gawk unzip libncurses5-dev zlib1g-dev libssl-dev libelf-dev llvm wget rsync time qemu-utils ecdsautils swig
 
 We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
 
