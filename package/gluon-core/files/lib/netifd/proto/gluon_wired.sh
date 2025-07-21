@@ -49,8 +49,8 @@ proto_gluon_wired_setup() {
 
 	local meshif="$config"
 
-	local func vxlan vxpeer6addr
-	json_get_vars func vxlan vxpeer6addr
+	local hop_penalty func vxlan vxpeer6addr
+	json_get_vars hop_penalty func vxlan vxpeer6addr
 
 	# default args
 	[ -z "$vxlan" ] && vxlan=1
@@ -82,6 +82,7 @@ proto_gluon_wired_setup() {
 	json_add_string ifname "@${meshif}"
 	json_add_string proto 'gluon_mesh'
 	json_add_boolean fixed_mtu 1
+	[ -n "${hop_penalty}" ] && json_add_int hop_penalty "${hop_penalty}"
 	json_close_object
 	ubus call network add_dynamic "$(json_dump)"
 }
