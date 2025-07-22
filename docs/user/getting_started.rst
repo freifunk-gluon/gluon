@@ -25,7 +25,7 @@ An example configuration can be found in the Gluon repository at *docs/site-exam
 Dependencies
 ------------
 To build Gluon, several packages need to be installed on the system.
-You can install the required packages with the following command:
+On Debian Bookworm, you can install the required packages with the following command:
 
 .. code-block:: sh
 
