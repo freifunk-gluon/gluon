@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export SHELL=/bin/ash
+exec nsenter --target=1 --mount --wd="$PWD" "$SHELL" --login "$@"
