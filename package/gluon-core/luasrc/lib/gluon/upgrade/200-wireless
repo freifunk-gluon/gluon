@@ -137,6 +137,7 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		mode = 'mesh',
 		mesh_id = config.id,
 		mesh_fwding = false,
+		mesh_nolearn = true,
 		macaddr = macaddr,
 		basic_rate = { config.mcast_rate },
 		mcast_rate = config.mcast_rate,
