@@ -8,14 +8,15 @@ init_proto "$@"
 
 proto_gluon_mesh_init_config() {
 	proto_config_add_boolean fixed_mtu
+	proto_config_add_int hop_penalty
 }
 
 proto_gluon_mesh_setup() {
 	export CONFIG="$1"
 	export IFNAME="$2"
 
-	local fixed_mtu
-	json_get_vars fixed_mtu
+	local fixed_mtu hop_penalty
+	json_get_vars fixed_mtu hop_penalty
 
 	export FIXED_MTU="${fixed_mtu:-0}"
 
@@ -27,6 +28,7 @@ proto_gluon_mesh_setup() {
 
 	proto_add_data
 	json_add_boolean fixed_mtu "$FIXED_MTU"
+	[ -n "${hop_penalty}" ] && json_add_int hop_penalty "${hop_penalty}"
 	[ "$IFNAME" != 'br-wan' ] && json_add_string zone 'mesh'
 	proto_close_data
 	proto_send_update "$CONFIG"

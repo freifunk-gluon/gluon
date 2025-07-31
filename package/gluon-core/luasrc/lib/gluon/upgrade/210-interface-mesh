@@ -4,35 +4,52 @@ local site = require 'gluon.site'
 local uci = require('simple-uci').cursor()
 local util = require 'gluon.util'
 
-local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
-local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
+local mesh_interfaces = util.get_role_interfaces_with_options(uci, 'mesh', {'batadv_hop_penalty'})
+local uplink_interfaces = util.get_role_interfaces_with_options(uci, 'uplink', {})
 
 local mesh_interfaces_uplink = {}
 local mesh_interfaces_other = {}
-for _, iface in ipairs(mesh_interfaces) do
-	if util.contains(uplink_interfaces, iface) then
-		table.insert(mesh_interfaces_uplink, iface)
+for iface, options in pairs(mesh_interfaces) do
+	if uplink_interfaces[iface] ~= nil then
+		table.insert(mesh_interfaces_uplink, {iface = iface, options = options})
 	else
-		table.insert(mesh_interfaces_other, iface)
+		table.insert(mesh_interfaces_other, {iface = iface, options = options})
 	end
 end
 
+local function extract_ifaces(interfaces)
+	local ifnames = {}
+	local max_hop_penalty = 0
+	for _, iface in ipairs(interfaces) do
+		table.insert(ifnames, iface.iface)
+		local hop_penalty = tonumber(iface.options.batadv_hop_penalty) or 0
+		if max_hop_penalty < hop_penalty  then
+			max_hop_penalty = hop_penalty
+		end
+	end
+	table.sort(ifnames)
+	return max_hop_penalty, ifnames
+end
+
 if #mesh_interfaces_uplink > 0 then
+	local max_hop_penalty, _ = extract_ifaces(mesh_interfaces_uplink)
 	uci:section('network', 'interface', 'mesh_uplink', {
 		ifname = 'br-wan',
 		proto = 'gluon_wired',
 		func = 'wan',
+		hop_penalty = max_hop_penalty,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
 
 if #mesh_interfaces_other > 0 then
+	local max_hop_penalty, ifnames = extract_ifaces(mesh_interfaces_other)
 	local iftype, ifname
-	if #mesh_interfaces_other == 1 then
-		ifname = mesh_interfaces_other[1]
+	if #ifnames == 1 then
+		ifname = ifnames[1]
 	else
 		iftype = 'bridge'
-		ifname = mesh_interfaces_other
+		ifname = ifnames
 
 		for _, iface in ipairs(ifname) do
 			uci:section('network', 'device', nil, {
@@ -49,6 +66,7 @@ if #mesh_interfaces_other > 0 then
 		igmp_snooping = false,
 		proto = 'gluon_wired',
 		func = 'mesh_other',
+		hop_penalty = max_hop_penalty,
 		vxlan = site.mesh.vxlan(true),
 	})
 end
