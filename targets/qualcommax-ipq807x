@@ -1,0 +1,11 @@
+-- Xiaomi
+
+device('xiaomi-ax3600', 'xiaomi_ax3600', {
+	factory = false,
+	packages = {
+		'-ath10k-firmware-qca9887-ct', -- block the 3rd "iot" radio, which is unsuitable for gluon
+		'-ath10k-board-qca9887'      , -- block the 3rd "iot" radio, which is unsuitable for gluon
+		'-kmod-ath10k-ct-smallbuffers',
+		'-kmod-ath10k-smallbuffers',
+	}
+})
