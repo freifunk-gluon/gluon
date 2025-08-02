@@ -351,6 +351,10 @@ mediatek-filogic
 
   - WL-WN573HX3 [#lan_as_wan]_
 
+* Xiaomi
+
+  - Mi Router AX3000T
+
 * Zyxel
 
   - NWA50AX Pro

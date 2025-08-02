@@ -87,6 +87,11 @@ device('wavlink-wl-wn573hx3', 'wavlink_wl-wn573hx3', {
 	sysupgrade = '-squashfs-WN573HX3-sysupgrade',
 })
 
+-- Xiaomi
+
+device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
+	factory = false,
+})
 
 -- Zyxel
 
