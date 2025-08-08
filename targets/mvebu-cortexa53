@@ -1,0 +1,3 @@
+device('glinet-gl-mv1000', 'glinet_gl-mv1000', {
+	factory_ext = '.img',
+})

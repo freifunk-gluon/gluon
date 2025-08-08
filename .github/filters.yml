@@ -321,5 +321,15 @@
     "scripts/**",
     "targets/generic",
     "targets/targets.mk"
+  ],
+  "mvebu-cortexa53": [
+    "targets/mvebu-cortexa53",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
   ]
 }
