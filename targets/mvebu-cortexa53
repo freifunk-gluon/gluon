@@ -1,3 +1,6 @@
 device('glinet-gl-mv1000', 'glinet_gl-mv1000', {
-	factory_ext = '.img',
+	factory = false,
+	sysupgrade = '-ext4-sdcard',
+	sysupgrade_ext = '.img.gz',
+	manifest_aliases = {'gl-inet-gl-mv1000'},
 })
