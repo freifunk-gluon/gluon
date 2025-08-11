@@ -32,6 +32,5 @@ $(eval $(call GluonTarget,bcm27xx,bcm2711)) # BROKEN: No 11s support, no reset b
 $(eval $(call GluonTarget,ipq40xx,chromium)) # BROKEN: Devices cannot be flashed without opening the case
 $(eval $(call GluonTarget,kirkwood,generic)) # BROKEN: No devices with 11s support
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
-$(eval $(call GluonTarget,mvebu,cortexa53)) # BROKEN:
-
+$(eval $(call GluonTarget,mvebu,cortexa53)) # BROKEN: Untested
 endif
