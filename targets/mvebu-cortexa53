@@ -1,4 +1,4 @@
-device('glinet-gl-mv1000', 'glinet_gl-mv1000', {
+device('gl.inet-gl-mv1000', 'glinet_gl-mv1000', {
 	factory = false,
 	sysupgrade = '-ext4-sdcard',
 	sysupgrade_ext = '.img.gz',
