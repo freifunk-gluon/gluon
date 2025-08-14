@@ -155,6 +155,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "mvebu-cortexa53": [
+    "targets/mvebu-cortexa53",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "mpc85xx-p1010": [
     "targets/mpc85xx-p1010",
     ".github/workflows/build-gluon.yml",
@@ -314,16 +324,6 @@
   ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
-    ".github/workflows/build-gluon.yml",
-    "modules",
-    "Makefile",
-    "patches/**",
-    "scripts/**",
-    "targets/generic",
-    "targets/targets.mk"
-  ],
-  "mvebu-cortexa53": [
-    "targets/mvebu-cortexa53",
     ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
