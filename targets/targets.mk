@@ -13,6 +13,7 @@ $(eval $(call GluonTarget,lantiq,xrx200_legacy))
 $(eval $(call GluonTarget,lantiq,xway))
 $(eval $(call GluonTarget,mediatek,filogic))
 $(eval $(call GluonTarget,mediatek,mt7622))
+$(eval $(call GluonTarget,mvebu,cortexa53))
 $(eval $(call GluonTarget,mpc85xx,p1010))
 $(eval $(call GluonTarget,mpc85xx,p1020))
 $(eval $(call GluonTarget,ramips,mt7620))
@@ -32,5 +33,4 @@ $(eval $(call GluonTarget,bcm27xx,bcm2711)) # BROKEN: No 11s support, no reset b
 $(eval $(call GluonTarget,ipq40xx,chromium)) # BROKEN: Devices cannot be flashed without opening the case
 $(eval $(call GluonTarget,kirkwood,generic)) # BROKEN: No devices with 11s support
 $(eval $(call GluonTarget,mvebu,cortexa9)) # BROKEN: No 11s support
-$(eval $(call GluonTarget,mvebu,cortexa53)) # BROKEN: Wireless untested
 endif
