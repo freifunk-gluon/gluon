@@ -370,6 +370,13 @@ mediatek-mt7622
 
   - UniFi 6 LR (v1)
 
+mvebu-cortexa53
+---------------
+
+* GL.iNet
+
+  - GL-MV1000
+
 mpc85xx-p1010
 -------------
 
