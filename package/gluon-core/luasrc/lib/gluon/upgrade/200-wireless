@@ -3,57 +3,64 @@
 local util = require 'gluon.util'
 local wireless = require 'gluon.wireless'
 local site = require 'gluon.site'
-local sysconfig = require 'gluon.sysconfig'
 local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
--- Initial
-if not sysconfig.gluon_version then
-	uci:delete_all('wireless', 'wifi-iface')
+uci:delete_all('wireless', 'wifi-iface')
 
-	-- First count all radios with a fixed frequency band.
-	-- This is needed to distribute devices which have radios
-	-- capable of operating in the 2.4 GHz and 5 GHz band need
-	-- to be distributed evenly.
-	local radio_band_count = {band24=0, band5=0}
-	wireless.foreach_radio(uci, function(radio)
-		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
-		if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
-			-- 2.4 GHz
-			radio_band_count["band24"] = radio_band_count["band24"] + 1
-		elseif (hwmodes.a or hwmodes.ac) and not hwmodes.g then
-			-- 5 GHz
-			radio_band_count["band5"] = radio_band_count["band5"] + 1
-		end
-	end)
+-- First count all radios with a fixed frequency band.
+-- This is needed to distribute devices which have radios
+-- capable of operating in the 2.4 GHz and 5 GHz band need
+-- to be distributed evenly.
+local client_only_radio = {band2g=0, band5g=0}
+local radio_band_count = {band2g=0, band5g=0}
 
-	-- Use the number of all fixed 2.4G GHz and 5 GHz radios to
-	-- distribute dualband radios in this step.
-	wireless.foreach_radio(uci, function(radio)
-		local radio_name = radio['.name']
-		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
-		if (hwmodes.a or hwmodes.ac) and hwmodes.g then
-			-- Dualband radio
-			if radio_band_count["band24"] <= radio_band_count["band5"] then
-				-- Assign radio to 2.4GHz band
-				radio_band_count["band24"] = radio_band_count["band24"] + 1
-				uci:set('wireless', radio_name, 'band', '2g')
-			else
-				-- Assign radio to 5GHz band
-				radio_band_count["band5"] = radio_band_count["band5"] + 1
-				uci:set('wireless', radio_name, 'band', '5g')
-			end
-		end
-	end)
+local function count_band(band, supports_mesh)
+	radio_band_count[band] = radio_band_count[band] + 1
+	if not supports_mesh then
+		client_only_radio[band] = client_only_radio[band] + 1
+	end
 end
+
+wireless.foreach_radio(uci, function(radio, _, config)
+	local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
+	if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
+		-- 2.4 GHz
+		count_band("band2g", wireless.supports_channel(radio, config.channel()))
+	elseif (hwmodes.a or hwmodes.ac) and not hwmodes.g then
+		-- 5 GHz
+		count_band("band5g", wireless.supports_channel(radio, config.channel()))
+	end
+end)
+
+-- Use the number of all fixed 2.4G GHz and 5 GHz radios to
+-- distribute dualband radios in this step.
+wireless.foreach_radio(uci, function(radio, _, config)
+    local radio_name = radio['.name']
+    local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
+    if (hwmodes.a or hwmodes.ac) and hwmodes.g then
+        -- Dualband radio
+        if radio_band_count["band2g"] <= radio_band_count["band5g"] then
+            -- Assign radio to 2.4GHz band
+			count_band("band2g", wireless.supports_channel(radio, config.channel()))
+            uci:set('wireless', radio_name, 'band', '2g')
+        else
+            -- Assign radio to 5GHz band
+			count_band("band5g", wireless.supports_channel(radio, config.channel()))
+            uci:set('wireless', radio_name, 'band', '5g')
+        end
+    end
+end)
 
 local function is_outdoor()
 	return uci:get_bool('gluon', 'wireless', 'outdoor')
 end
 
 local function get_channel(radio, config)
-	if radio.band == '5g' and is_outdoor() then
+	-- do not set channel if 5ghz outdoor
+	-- also do not set channel if the set channel is not supported on either band
+	if (radio.band == '5g' and is_outdoor()) or not wireless.supports_channel(radio, config.channel()) then
 		-- actual channel will be picked and probed from chanlist
 		return 'auto'
 	end
@@ -83,14 +90,6 @@ local function get_htmode(radio)
 	end
 
 	return 'HT20'
-end
-
-local function is_disabled(name)
-	if not uci:get('wireless', name) then
-		return nil
-	end
-
-	return uci:get_bool('wireless', name, 'disabled')
 end
 
 -- Returns the first argument that is not nil; don't call without any non-nil arguments!
@@ -171,7 +170,6 @@ local function configure_mesh_wireless(radio, index, config, disabled)
 	configure_mesh(config.mesh(), radio, index, suffix,
 		first_non_nil(
 			disabled,
-			is_disabled('mesh_' .. radio_name),
 			config.mesh.disabled(false)
 		)
 	)
@@ -220,27 +218,40 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	uci:delete('wireless', radio_name, 'basic_rate')
 
 	local band = radio.band
+	-- now we assign radios to roles
+	local roles = uci:get('gluon', band, 'role')
+
 	if band == '2g' then
 		uci:set('wireless', radio_name, 'legacy_rates', false)
-		configure_mesh_wireless(radio, index, config)
-	elseif (band == '5g') then
-		-- ToDo: Remove in v2024.x
-		local hostapd_options = uci:get_list('wireless', radio_name, 'hostapd_options')
-		util.remove_from_set(hostapd_options, 'country3=0x4f')
-		uci:set_list('wireless', radio_name, 'hostapd_options', hostapd_options)
+	end
 
-		if is_outdoor() then
-			-- enforce outdoor channels by filtering the regdom for outdoor channels
-			uci:set('wireless', radio_name, 'country3', '0x4f')
-			configure_mesh_wireless(radio, index, config, true)
-		else
-			uci:delete('wireless', radio_name, 'country3')
-			configure_mesh_wireless(radio, index, config)
+	if util.contains(roles, 'mesh') then
+		if band == '2g' then
+			configure_mesh_wireless(radio, index, config, false)
+		elseif (band == '5g') then
+			if is_outdoor() or not wireless.supports_channel(radio, config.channel()) then
+				-- enforce outdoor channels by filtering the regdom for outdoor channels
+				uci:set('wireless', radio_name, 'country3', '0x4f')
+				configure_mesh_wireless(radio, index, config, true)
+			else
+				uci:delete('wireless', radio_name, 'country3')
+				configure_mesh_wireless(radio, index, config, false)
+			end
 		end
+	else
+		-- disable mesh if role is not configured
+		configure_mesh_wireless(radio, index, config, true)
 	end
 
 	uci:set('wireless', radio_name, 'beacon_int', beacon_interval)
 
+	-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
+	-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
+	local disable_client = wireless.supports_channel(radio, config.channel()) and client_only_radio['band' .. band] > 0
+
+	uci:set('wireless', 'client_' .. radio_name, 'disabled', util.contains(roles, 'client') and not disable_client)
+
+	uci:set('wireless', "wan_" .. radio_name, 'disabled', util.contains(roles, 'private'))
 	fixup_wan(radio, index)
 end)
 
