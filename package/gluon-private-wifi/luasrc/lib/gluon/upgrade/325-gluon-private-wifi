@@ -15,9 +15,18 @@ wireless.foreach_radio(uci, function(radio)
 	uci:set('wireless', name, 'ifname', suffix and 'wl-wan' .. suffix)
 
 	-- migrate encryption from Gluon v2023.2.x or older
-	-- remove in 2027 or on first release supporting only upgrades from >=v2025.1.x
-	local encryption = uci:get('wireless', name, 'encryption')
+	-- remove gsub in 2027 or on first release supporting only upgrades from >=v2025.1.x
+	local encryption = uci:get('gluon', 'wireless', 'private_encryption')
 	uci:set('wireless', name, 'encryption', encryption:gsub("psk3", "sae"))
+
+	local ssid = uci:get('gluon', 'wireless', 'private_ssid')
+	uci:set('wireless', name, 'ssid', ssid)
+
+	local key = uci:get('gluon', 'wireless', 'private_key')
+	uci:set('wireless', name, 'key', key)
+
+	local mfp = uci:get('gluon', 'wireless', 'private_mfp') and wireless.device_supports_mfp(uci)
+	uci:set('wireless', name, 'mfp', mfp)
 end)
 
 uci:save('wireless')
