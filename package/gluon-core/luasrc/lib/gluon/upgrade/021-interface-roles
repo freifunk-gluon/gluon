@@ -62,4 +62,49 @@ uci:foreach('gluon', 'interface', function(interface)
 	end
 end)
 
+-- Create wifi roles if they do not exist yet
+local wifi_roles = {
+	band2g = {'client'},
+	band5g = {'client'},
+}
+
+if not site.wifi24.mesh.disabled(false) then
+	table.insert(wifi_roles['band2g'], 'mesh')
+end
+if not site.wifi5.mesh.disabled(false) then
+	table.insert(wifi_roles['band5g'], 'mesh')
+end
+
+for band_name, band_roles in pairs(wifi_roles) do
+	local section_name = band_name:gsub("band", "")
+	if not uci:get('gluon', section_name) then
+		uci:section('gluon', 'wireless_band', section_name, {
+			role = band_roles,
+		})
+	end
+end
+
+
+local function is_outdoor()
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
+-- Fix invalid mesh role configurations for outdoor
+uci:foreach('gluon', 'wireless_band', function(interface)
+
+	local function has_role(role)
+		if interface.role == nil then
+			return false
+		end
+
+		return util.contains(interface.role, role)
+	end
+
+	if interface['.name'].name=='5g' and has_role('mesh') and is_outdoor() then
+		-- remove 'mesh' role
+		util.remove_from_set(interface.role, 'mesh')
+		uci:set('gluon', interface['.name'], 'role', interface.role)
+	end
+end)
+
 uci:save('gluon')
