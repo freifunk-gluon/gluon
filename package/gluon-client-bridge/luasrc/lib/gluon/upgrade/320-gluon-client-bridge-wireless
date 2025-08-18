@@ -17,12 +17,15 @@ wireless.foreach_radio(uci, function(radio, _, config)
 	end
 end)
 
-local function is_disabled(config, name)
-	if uci:get('wireless', name) then
-		return uci:get_bool('wireless', name, 'disabled')
-	end
-
-	return config.disabled(false)
+local function is_disabled(radio, config)
+	-- now we assign radios to roles
+	local band = radio.band
+	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
+	-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
+	local disable_client = wireless.supports_channel(radio, config.channel()) and client_only_radio['band_' .. band] > 0
+	local client_enabled = util.contains(roles, 'client') and not disable_client
+	return config.ap.disabled(not client_enabled)
 end
 
 local function configure_ap(radio, index, config, radio_name)
@@ -30,7 +33,6 @@ local function configure_ap(radio, index, config, radio_name)
 	local suffix = radio_name:match('^radio(%d+)$')
 
 	local ap = config.ap
-	local disabled = is_disabled(ap, name)
 
 	uci:delete('wireless', name)
 
@@ -47,7 +49,6 @@ local function configure_ap(radio, index, config, radio_name)
 		ssid = ap.ssid(),
 		macaddr = macaddr,
 		ifname = suffix and 'client' .. suffix,
-		disabled = disabled or false,
 	})
 end
 
@@ -56,8 +57,6 @@ local function configure_owe(radio, index, config, radio_name)
 	local suffix = radio_name:match('^radio(%d+)$')
 
 	local ap = config.ap
-
-	local disabled = is_disabled(ap, 'client_' .. radio_name)
 
 	uci:delete('wireless', name)
 
@@ -80,7 +79,6 @@ local function configure_owe(radio, index, config, radio_name)
 		ssid = ap.owe_ssid(),
 		macaddr = macaddr,
 		ifname = suffix and 'owe' .. suffix,
-		disabled = disabled or false,
 		encryption = 'owe',
 		ieee80211w = 2,
 	})
@@ -117,20 +115,12 @@ end
 
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
-	-- now we assign radios to roles
-	local band = radio.band
-	local roles = uci:get('gluon', band, 'role')
+	if not is_disabled(radio, config) then
+		configure_ap(radio, index, config, radio_name)
 
-	-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
-	-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
-	local disable_client = wireless.supports_channel(radio, config.channel()) and client_only_radio['band' .. band] > 0
-
-	uci:set('wireless', 'client_' .. radio_name, 'disabled', util.contains(roles, 'client') and not disable_client)
-
-	configure_ap(radio, index, config, radio_name)
-
-	configure_owe(radio, index, config, radio_name)
-	configure_owe_transition_mode(config, radio_name)
+		configure_owe(radio, index, config, radio_name)
+		configure_owe_transition_mode(config, radio_name)
+	end
 end)
 
 uci:save('wireless')
