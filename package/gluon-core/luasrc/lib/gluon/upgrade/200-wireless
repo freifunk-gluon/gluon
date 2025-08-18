@@ -7,7 +7,9 @@ local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
-uci:delete_all('wireless', 'wifi-iface')
+if not uci:get_bool('gluon', 'wireless', 'preserve_channels') then
+	uci:delete_all('wireless', 'wifi-iface')
+end
 
 local radio_band_count = {band2g=0, band5g=0}
 
@@ -120,8 +122,11 @@ local function configure_mesh(config, radio, index, suffix, disabled)
 		return
 	end
 
+	local batadv_hop_penalty = uci:get('gluon', radio.band, 'batadv_hop_penalty') or 0
+
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
+		hop_penalty = batadv_hop_penalty,
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
