@@ -122,11 +122,11 @@ function M.device_uses_wlan(uci)
 	return ret
 end
 
-function M.device_uses_11a(uci)
+function M.device_uses_band(uci, band)
 	local ret = false
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
-		if radio.band == '5g' then
+		if radio.band == band then
 			ret = true
 			return false
 		end
