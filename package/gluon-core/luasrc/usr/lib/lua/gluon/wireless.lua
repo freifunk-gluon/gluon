@@ -122,7 +122,7 @@ function M.device_uses_wlan(uci)
 	return ret
 end
 
-function M.device_uses_11a(uci)
+function M.device_uses_5ghz(uci)
 	local ret = false
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
