@@ -109,8 +109,11 @@ local function configure_mesh(radio, index, mesh_config)
 		return
 	end
 
+	local batadv_hop_penalty = uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
+
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
+		hop_penalty = batadv_hop_penalty,
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
