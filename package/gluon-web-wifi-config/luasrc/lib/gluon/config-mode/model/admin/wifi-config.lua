@@ -70,30 +70,32 @@ uci:foreach('wireless', 'wifi-device', function(config)
 	local title
 	local band = config.band
 
-	if bands and util.contains(bands, band) then
-		return
-	end
-
-	table.insert(bands, band)
-
-	if band == '2g' then
-		title = translate("2.4GHz WLAN")
-	elseif band == '5g' then
-		is_5ghz = true
-		title = translate("5GHz WLAN")
+	local p
+	-- store section to add txpower and htmode to
+	if bands and bands[band] then
+		p = bands[band]
 	else
-		return
+		if band == '2g' then
+			title = translate("2.4GHz WLAN")
+		elseif band == '5g' then
+			is_5ghz = true
+			title = translate("5GHz WLAN")
+		else
+			return
+		end
+
+		p = f:section(Section, title)
+
+		vif_option(p, 'client', band, translate('Enable client network (access point)'))
+
+		local mesh_vif = vif_option(p, 'mesh', band, translate("Enable mesh network (802.11s)"))
+		if is_5ghz then
+			table.insert(mesh_vifs_5ghz, mesh_vif)
+		end
+		bands[band] = p
 	end
 
-	local p = f:section(Section, title)
-
-	vif_option(p, 'client', band, translate('Enable client network (access point)'))
-
-	local mesh_vif = vif_option(p, 'mesh', band, translate("Enable mesh network (802.11s)"))
-	if is_5ghz then
-		table.insert(mesh_vifs_5ghz, mesh_vif)
-	end
-
+	-- txpowerlist
 	local phy = wireless.find_phy(config)
 	if not phy then
 		return
@@ -104,8 +106,8 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return
 	end
 
-	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power"))
-	tp.default = uci:get('wireless', radio, 'txpower') or 'default'
+	local tp = p:option(ListValue, 'txpower_' .. radio, translate("Transmission power").. ' (' .. radio .. ')')
+	tp.default = uci:get('gluon', 'wireless', 'txpower_' .. radio) or 'default'
 
 	tp:value('default', translate("(default)"))
 
@@ -119,7 +121,25 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		if data == 'default' then
 			data = nil
 		end
-		uci:set('wireless', radio, 'txpower', data)
+		uci:set('gluon', 'wireless', 'txpower_' .. radio, data)
+	end
+
+	-- htmode
+	local ht = p:option(ListValue, 'htmode_' .. radio, translate('HT Mode') .. ' (' .. radio .. ')')
+	ht.default = uci:get('gluon', 'wireless', 'htmode_' .. radio) or 'default'
+	ht:value('default', translate("(default)"))
+
+	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
+		if available then
+			ht:value(mode, mode)
+		end
+	end
+
+	function ht:write(data)
+		if data == 'default' then
+			data = nil
+		end
+		uci:set('gluon', 'wireless', 'htmode_' .. radio, data)
 	end
 end)
 
@@ -146,35 +166,6 @@ if wireless.device_uses_5ghz(uci) and not wireless.preserve_channels(uci) then
 	function outdoor:write(data)
 		uci:set('gluon', 'wireless', 'outdoor', data)
 	end
-
-	uci:foreach('wireless', 'wifi-device', function(config)
-		local radio = config['.name']
-		local band = uci:get('wireless', radio, 'band')
-
-		if band ~= '5g' then
-			return
-		end
-
-		local phy = wireless.find_phy(config)
-
-		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
-		ht:depends(outdoor, true)
-		ht.default = uci:get('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode') or 'default'
-
-		ht:value('default', translate("(default)"))
-		for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
-			if available then
-				ht:value(mode, mode)
-			end
-		end
-
-		function ht:write(data)
-			if data == 'default' then
-				data = nil
-			end
-			uci:set('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode', data)
-		end
-	end)
 end
 
 
