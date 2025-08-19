@@ -1,0 +1,14 @@
+<%- if not self.hide then -%>
+<div class="gluon-section-descr"<%=
+	attr("id", id) ..
+	attr("data-index", self.index) ..
+	attr("data-depends", self:deplist(self.deps))
+%>>
+	<%- if self.content then -%>
+	<%= self.content %>
+	<%- else -%>
+	<b><%= self.title %></b><br>
+	<%= self.description %>
+	<%- end -%>
+</div>
+<%- end -%>
