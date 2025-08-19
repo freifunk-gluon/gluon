@@ -12,19 +12,24 @@ local uci = require('simple-uci').cursor()
 if not sysconfig.gluon_version then
 	uci:delete_all('wireless', 'wifi-iface')
 
+	local radio_band_count = {band_2g=0, band_5g=0}
+
+	local function count_band(band)
+		radio_band_count[band] = radio_band_count[band] + 1
+	end
+
 	-- First count all radios with a fixed frequency band.
 	-- This is needed to distribute devices which have radios
 	-- capable of operating in the 2.4 GHz and 5 GHz band need
 	-- to be distributed evenly.
-	local radio_band_count = {band24=0, band5=0}
 	wireless.foreach_radio(uci, function(radio)
 		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
 		if hwmodes.g and not (hwmodes.a or hwmodes.ac) then
 			-- 2.4 GHz
-			radio_band_count["band24"] = radio_band_count["band24"] + 1
+			count_band("band_2g")
 		elseif (hwmodes.a or hwmodes.ac) and not hwmodes.g then
 			-- 5 GHz
-			radio_band_count["band5"] = radio_band_count["band5"] + 1
+			count_band("band_5g")
 		end
 	end)
 
@@ -35,13 +40,13 @@ if not sysconfig.gluon_version then
 		local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
 		if (hwmodes.a or hwmodes.ac) and hwmodes.g then
 			-- Dualband radio
-			if radio_band_count["band24"] <= radio_band_count["band5"] then
+			if radio_band_count["band_2g"] <= radio_band_count["band_5g"] then
 				-- Assign radio to 2.4GHz band
-				radio_band_count["band24"] = radio_band_count["band24"] + 1
+				count_band("band_2g")
 				uci:set('wireless', radio_name, 'band', '2g')
 			else
 				-- Assign radio to 5GHz band
-				radio_band_count["band5"] = radio_band_count["band5"] + 1
+				count_band("band_5g")
 				uci:set('wireless', radio_name, 'band', '5g')
 			end
 		end
