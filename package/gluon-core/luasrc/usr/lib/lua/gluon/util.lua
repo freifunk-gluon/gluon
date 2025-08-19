@@ -138,31 +138,56 @@ function M.get_mesh_devices(uconn)
 	return devices
 end
 
--- Returns a list of all interfaces with a given role
+-- Returns a table of all interfaces with a given role
 --
 -- If exclusive is set to true, only interfaces that have no other role
 -- are returned; this is used to ensure that the client role is not active
 -- at the same time as any other role
-function M.get_role_interfaces(uci, role, exclusive)
+--
+-- A list of additional options to collect from the UCI interface
+-- sections can be passed. The return value is a table mapping interface names
+-- to tables of the extra options and their respective values.
+function M.get_role_interfaces_with_options(uci, role, extra_keys, exclusive)
 	local ret = {}
 
-	local function add(name)
+	local function add(name, extra_values)
 		-- Interface names with a / prefix refer to sysconfig interfaces
 		-- (lan_ifname/wan_ifname/single_ifname)
 		if string.sub(name, 1, 1) == '/' then
 			name = sysconfig[string.sub(name, 2) .. '_ifname'] or ''
 		end
 		for iface in string.gmatch(name, '%S+') do
-			M.add_to_set(ret, iface)
+			ret[iface] = extra_values
 		end
 	end
 
 	uci:foreach('gluon', 'interface', function(s)
 		local roles = s.role or {}
+		local extra_values = {}
+		for _, key in ipairs(extra_keys) do
+			extra_values[key] = s[key]
+		end
 		if M.contains(roles, role) and (not exclusive or #roles == 1) then
-			add(s.name)
+			add(s.name, extra_values)
 		end
 	end)
+
+	return ret
+end
+
+-- Returns a list of all interfaces with a given role
+--
+-- If exclusive is set to true, only interfaces that have no other role
+-- are returned; this is used to ensure that the client role is not active
+-- at the same time as any other role
+function M.get_role_interfaces(uci, role, exclusive)
+	local ifaces = M.get_role_interfaces_with_options(uci, role, {}, exclusive)
+
+	local ret = {}
+	for iface in pairs(ifaces) do
+		table.insert(ret, iface)
+	end
+	table.sort(ret)
 
 	return ret
 end

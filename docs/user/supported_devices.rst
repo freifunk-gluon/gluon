@@ -136,7 +136,7 @@ ath79-generic
   - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
   - CPE220 (v3.0)
   - CPE510 (v1.0, v1.1, v2.0, v3.0)
-  - CPE710 (v1.0)
+  - CPE710 (v1.0, v2.0)
   - EAP225-Outdoor (v1, v3)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
@@ -290,6 +290,7 @@ lantiq-xrx200
   - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
   - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
+  - FRITZ!Box 7430 [#eva_ramboot]_
 
 lantiq-xrx200_legacy
 --------------------
@@ -350,6 +351,10 @@ mediatek-filogic
 
   - WL-WN573HX3 [#lan_as_wan]_
 
+* Xiaomi
+
+  - Mi Router AX3000T
+
 * Zyxel
 
   - NWA50AX Pro
@@ -364,6 +369,13 @@ mediatek-mt7622
 * Ubiquiti
 
   - UniFi 6 LR (v1)
+
+mvebu-cortexa53
+---------------
+
+* GL.iNet
+
+  - GL-MV1000
 
 mpc85xx-p1010
 -------------

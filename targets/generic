@@ -68,7 +68,7 @@ try_config('KERNEL_IO_URING', false)
 config('KERNEL_FHANDLE', false)
 config('KERNEL_FANOTIFY', false)
 config('KERNEL_CGROUPS', false)
--- KERNEL_NAMESPACES is required for procd-ujail
+-- KERNEL_NAMESPACES is required for procd-ujail and unshare
 -- This option is enabled by default on non small flash targets
 config('KERNEL_NAMESPACES', true)
 config('KERNEL_IP_MROUTE', false)
@@ -84,6 +84,10 @@ try_config('PACKAGE_kmod-mt7915e', false)
 try_config('OONF_GENERIC_HTTP', true)
 
 config('COLLECT_KERNEL_DEBUG', true)
+
+config('BUSYBOX_CUSTOM', true)
+config('BUSYBOX_CONFIG_NSENTER', true)
+config('BUSYBOX_CONFIG_UNSHARE', true)
 
 config('TARGET_MULTI_PROFILE', true)
 config('TARGET_PER_DEVICE_ROOTFS', true)

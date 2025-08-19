@@ -88,6 +88,13 @@ device('wavlink-wl-wn573hx3', 'wavlink_wl-wn573hx3', {
 })
 
 
+-- Xiaomi
+
+device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
+	factory = false,
+})
+
+
 -- Zyxel
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')

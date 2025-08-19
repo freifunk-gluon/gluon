@@ -484,6 +484,8 @@ device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
 device('tp-link-cpe710-v1', 'tplink_cpe710-v1')
 
+device('tp-link-cpe710-v2', 'tplink_cpe710-v2')
+
 device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
 })

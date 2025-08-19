@@ -24,15 +24,34 @@ lookup_uci() {
 	uci -q get "$path" || echo "$default"
 }
 
+handle_mesh_interface() {
+	local proto up device hop_penalty
+
+	# Enter item in the array by index
+	json_select "$2"
+
+	json_get_vars proto up device
+	json_select "data"
+	json_get_var hop_penalty hop_penalty
+	json_select ".."
+
+	if [ "$proto" = "gluon_mesh" ] && [ "$up" = 1 ]; then
+		batctl interface add "$device"
+		batctl hardif "$device" hop_penalty "${hop_penalty:-0}"
+	fi
+
+	json_select ".."
+	# exit array item at the end of the loop
+}
+
 proto_gluon_bat0_renew() {
 	local config="$1"
 
 	lock /var/lock/gluon_bat0.lock
 
-	ubus call network.interface dump | jsonfilter \
-		-e "@.interface[@.proto='gluon_mesh' && @.up=true].device" \
-	| xargs -r -n 1 batctl interface add
+	json_load "$(ubus call network.interface dump)"
 
+	json_for_each_item handle_mesh_interface interface
 	lock -u /var/lock/gluon_bat0.lock
 }
 
