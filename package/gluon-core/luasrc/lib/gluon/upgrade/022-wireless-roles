@@ -1,0 +1,92 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+
+-- Create wifi roles if they do not exist yet
+local wifi_roles = {
+	band2g = {'client'},
+	band5g = {'client'},
+}
+
+-- enable mesh if it is not disabled
+if not site.wifi24.mesh.disabled(false) then
+	util.add_to_set(wifi_roles['band2g'], 'mesh')
+end
+if not site.wifi5.mesh.disabled(false) then
+	util.add_to_set(wifi_roles['band5g'], 'mesh')
+end
+
+local function add_or_remove_role(roles, role, disabled)
+	if disabled == '1' then
+		util.remove_from_set(roles, role)
+	elseif disabled == '0' then
+		util.add_to_set(roles, role)
+	end
+end
+
+local function migrate_wifi_to_roles(band, roles)
+	wireless.foreach_radio(uci, function(radio)
+		if radio.band ~= band then
+			return
+		end
+		local radio_name = radio['.name']
+		local suffix = radio_name:match('^radio(%d+)$')
+
+		local client_disabled = uci:get('wireless', 'client_radio' .. suffix, 'disabled')
+		local mesh_disabled = uci:get('wireless', 'mesh_radio' .. suffix, 'disabled')
+		local wan_disabled = uci:get('wireless', 'wan_radio' .. suffix, 'disabled')
+		add_or_remove_role(roles, 'client', client_disabled)
+		add_or_remove_role(roles, 'mesh', mesh_disabled)
+		add_or_remove_role(roles, 'private', wan_disabled)
+		if not wan_disabled then
+			local wan_name = 'wan_radio' .. suffix
+			local ssid = uci:get('wireless', wan_name, 'ssid')
+			local key = uci:get('wireless', wan_name, 'key')
+			local encryption = uci:get('wireless', wan_name, 'encryption')
+			local mfp = uci:get('wireless', wan_name, 'ieee80211w')
+			uci:set('gluon', 'wireless', 'private_ssid', ssid)
+			uci:set('gluon', 'wireless', 'private_key', key)
+			uci:set('gluon', 'wireless', 'private_encryption', encryption)
+			uci:set('gluon', 'wireless', 'private_mfp', mfp)
+		end
+	end)
+end
+
+for band_name, band_roles in pairs(wifi_roles) do
+	local section_name = band_name:gsub("band", "")
+	if not uci:get('gluon', section_name) then
+		-- remove when upgrades are only possible from v2025.1 onwards
+		migrate_wifi_to_roles(band_name, band_roles)
+
+		uci:section('gluon', 'wireless_band', section_name, {
+			role = band_roles,
+		})
+	end
+end
+
+
+local function is_outdoor()
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
+-- Fix invalid mesh role configurations for outdoor
+uci:foreach('gluon', 'wireless_band', function(band)
+	local function has_role(role)
+		if band.role == nil then
+			return false
+		end
+
+		return util.contains(band.role, role)
+	end
+
+	if band['.name'].name=='5g' and has_role('mesh') and is_outdoor() then
+		-- remove 'mesh' role
+		util.remove_from_set(band.role, 'mesh')
+		uci:set('gluon', band['.name'], 'role', band.role)
+	end
+end)
+
+uci:save('gluon')
