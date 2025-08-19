@@ -242,6 +242,7 @@ ipq40xx-generic
 
   - EX6100 (v2)
   - EX6150 (v2)
+  - RBR50
 
 * OpenMesh
 

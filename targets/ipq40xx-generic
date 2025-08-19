@@ -114,6 +114,10 @@ device('netgear-ex6150v2', 'netgear_ex6150v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-rbr50', 'netgear_rbr50', {
+	factory_ext = '.img',
+})
+
 
 -- OpenMesh
 
