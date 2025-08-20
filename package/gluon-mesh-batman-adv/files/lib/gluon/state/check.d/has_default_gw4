@@ -8,12 +8,8 @@ if ! out=$(batctl gwl -H 2>/dev/null); then
 	exit 1
 fi
 
-if [ -n "$out" ]; then
-	# no batctl gw available
+# node does not have any gateways listed
+# and is also not in gw_mode
+if [ -z "$out" ] && ! batctl gw_mode | grep -qw '^server'; then
 	exit 2
-fi
-
-if ! batctl gw_mode | grep -qw '^server'; then
-	# server is also not in gw_mode
-	exit 3
 fi
