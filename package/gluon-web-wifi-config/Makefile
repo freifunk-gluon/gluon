@@ -5,7 +5,7 @@ PKG_NAME:=gluon-web-wifi-config
 include ../gluon.mk
 
 define Package/gluon-web-wifi-config
-  DEPENDS:=+gluon-web-admin +libiwinfo-lua
+  DEPENDS:=+gluon-web-admin +gluon-client-bridge +libiwinfo-lua
   TITLE:=UI for Wifi Settings
 endef
 

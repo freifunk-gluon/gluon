@@ -2,7 +2,7 @@ local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
 local site = require 'gluon.site'
 local wireless = require 'gluon.wireless'
-
+local util = require 'gluon.util'
 
 local function txpower_list(phy)
 	local list = iwinfo.nl80211.txpwrlist(phy) or { }
@@ -38,68 +38,64 @@ f:section(Section, nil, translate(
 
 local mesh_vifs_5ghz = {}
 
+local function add_or_remove_role(roles, role, disabled)
+	if disabled == true then
+		util.remove_from_set(roles, role)
+	elseif disabled == false then
+		util.add_to_set(roles, role)
+	end
+end
+
+local function vif_option(section, role_name, band, msg)
+	local config_roles = uci:get('gluon', band, 'role') or {}
+	local o = section:option(Flag, band .. '_' .. role_name .. '_enabled', msg)
+	o.default = util.contains(config_roles, role_name)
+
+	function o:write(data)
+		-- this does race for multiple options without additional read before write in o:write
+		local roles = uci:get('gluon', band, 'role') or {}
+		add_or_remove_role(roles, role_name, not data)
+		uci:set('gluon', band, 'role', roles)
+	end
+
+	return o
+end
+
+local bands = {}
 
 uci:foreach('wireless', 'wifi-device', function(config)
 	local radio = config['.name']
 
 	local is_5ghz = false
 	local title
-	if config.band == '2g' then
-		title = translate("2.4GHz WLAN")
-	elseif config.band == '5g' then
-		is_5ghz = true
-		title = translate("5GHz WLAN")
+	local band = config.band
+
+	local p
+	-- store section to add txpower and htmode to
+	if bands and bands[band] then
+		p = bands[band]
 	else
-		return
-	end
-
-	local p = f:section(Section, title)
-
-	local function filter_existing_interfaces(interfaces)
-		local out = {}
-		for _, interface in ipairs(interfaces) do
-			if uci:get('wireless', interface .. '_' .. radio) then
-				table.insert(out, interface)
-			end
-		end
-		return out
-	end
-
-	local function has_active_interfaces(interfaces)
-		for _, interface in ipairs(interfaces) do
-			if not uci:get_bool('wireless', interface .. '_' .. radio, 'disabled') then
-				return true
-			end
-		end
-		return false
-	end
-
-	local function vif_option(name, interfaces, msg)
-		local existing_interfaces = filter_existing_interfaces(interfaces)
-
-		if #existing_interfaces == 0 then
+		if band == '2g' then
+			title = translate("2.4GHz WLAN")
+		elseif band == '5g' then
+			is_5ghz = true
+			title = translate("5GHz WLAN")
+		else
 			return
 		end
 
-		local o = p:option(Flag, radio .. '_' .. name .. '_enabled', msg)
-		o.default = has_active_interfaces(existing_interfaces)
+		p = f:section(Section, title)
 
-		function o:write(data)
-			for _, interface in ipairs(existing_interfaces) do
-				uci:set('wireless', interface .. '_' .. radio, 'disabled', not data)
-			end
+		vif_option(p, 'client', band, translate('Enable client network (access point)'))
+
+		local mesh_vif = vif_option(p, 'mesh', band, translate("Enable mesh network (802.11s)"))
+		if is_5ghz then
+			table.insert(mesh_vifs_5ghz, mesh_vif)
 		end
-
-		return o
+		bands[band] = p
 	end
 
-	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
-
-	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
-	if is_5ghz then
-		table.insert(mesh_vifs_5ghz, mesh_vif)
-	end
-
+	-- txpowerlist
 	local phy = wireless.find_phy(config)
 	if not phy then
 		return
@@ -110,8 +106,8 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return
 	end
 
-	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power"))
-	tp.default = uci:get('wireless', radio, 'txpower') or 'default'
+	local tp = p:option(ListValue, 'txpower_' .. radio, translate("Transmission power").. ' (' .. radio .. ')')
+	tp.default = uci:get('gluon', 'wireless', 'txpower_' .. radio) or 'default'
 
 	tp:value('default', translate("(default)"))
 
@@ -125,12 +121,30 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		if data == 'default' then
 			data = nil
 		end
-		uci:set('wireless', radio, 'txpower', data)
+		uci:set('gluon', 'wireless', 'txpower_' .. radio, data)
+	end
+
+	-- htmode
+	local ht = p:option(ListValue, 'htmode_' .. radio, translate('HT Mode') .. ' (' .. radio .. ')')
+	ht.default = uci:get('gluon', 'wireless', 'htmode_' .. radio) or 'default'
+	ht:value('default', translate("(default)"))
+
+	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
+		if available then
+			ht:value(mode, mode)
+		end
+	end
+
+	function ht:write(data)
+		if data == 'default' then
+			data = nil
+		end
+		uci:set('gluon', 'wireless', 'htmode_' .. radio, data)
 	end
 end)
 
 
-if wireless.device_uses_11a(uci) and not wireless.preserve_channels(uci) then
+if wireless.device_uses_5ghz(uci) and not wireless.preserve_channels(uci) then
 	local r = f:section(Section, translate("Outdoor Installation"), translate(
 		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
 		.. "and transmission power that conforms with the local regulatory requirements. "
@@ -152,41 +166,13 @@ if wireless.device_uses_11a(uci) and not wireless.preserve_channels(uci) then
 	function outdoor:write(data)
 		uci:set('gluon', 'wireless', 'outdoor', data)
 	end
-
-	uci:foreach('wireless', 'wifi-device', function(config)
-		local radio = config['.name']
-		local band = uci:get('wireless', radio, 'band')
-
-		if band ~= '5g' then
-			return
-		end
-
-		local phy = wireless.find_phy(config)
-
-		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
-		ht:depends(outdoor, true)
-		ht.default = uci:get('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode') or 'default'
-
-		ht:value('default', translate("(default)"))
-		for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
-			if available then
-				ht:value(mode, mode)
-			end
-		end
-
-		function ht:write(data)
-			if data == 'default' then
-				data = nil
-			end
-			uci:set('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode', data)
-		end
-	end)
 end
 
 
 function f:write()
 	uci:commit('gluon')
 	os.execute('/lib/gluon/upgrade/200-wireless')
+	os.execute('/lib/gluon/upgrade/320-gluon-client-bridge-wireless')
 	uci:commit('network')
 	uci:commit('wireless')
 end
