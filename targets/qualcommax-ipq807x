@@ -1,0 +1,13 @@
+-- Xiaomi
+
+device('xiaomi-ax3600', 'xiaomi_ax3600', {
+	-- third radio is not supported
+	broken = true,
+	factory = false,
+	packages = {
+		'-ath10k-firmware-qca9887-ct',
+		'-ath10k-board-qca9887',
+		'-kmod-ath10k-ct-smallbuffers',
+		'-kmod-ath10k-smallbuffers',
+	}
+})
