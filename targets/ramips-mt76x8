@@ -62,7 +62,7 @@ device('tp-link-archer-c50-v4', 'tplink_archer-c50-v4', {
 	factory = false,
 })
 
-device('tp-link-archer-c50-v6', 'tplink_archer-c50-v6', {
+device('tp-link-archer-c50-v6-ca-eu-ru', 'tplink_archer-c50-v6', {
 	factory = false,
 })
 
