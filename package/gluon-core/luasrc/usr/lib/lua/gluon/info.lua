@@ -9,12 +9,8 @@ local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
 local ethernet = require 'gluon.ethernet'
 
 local pubkey
-if has_vpn and vpn.enabled() then
-	local _, active_vpn = vpn.get_active_provider()
-
-	if active_vpn ~= nil then
-		pubkey = active_vpn.public_key()
-	end
+if has_vpn then
+	pubkey = vpn.get_enabled_public_key()
 end
 
 local M = {}
