@@ -11,7 +11,7 @@ jobs:
     if: github.repository_owner == 'freifunk-gluon' && github.event.pull_request.merged == true && (github.event_name != 'labeled' || startsWith('backport', github.event.label.name))
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Create backport PRs
         uses: korthout/backport-action@v3.2.1
         with:
