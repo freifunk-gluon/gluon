@@ -134,7 +134,6 @@ site.conf only variables
   - setup_mode.skip
   - autoupdater.branch
   - mesh_vpn.enabled
-  - mesh_vpn.pubkey_privacy
   - mesh_vpn.bandwidth_limit
   - mesh_vpn.bandwidth_limit.enabled
   - mesh_vpn.bandwidth_limit.ingress
