@@ -312,6 +312,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "qualcommax-ipq807x": [
+    "targets/qualcommax-ipq807x",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "kirkwood-generic": [
     "targets/kirkwood-generic",
     ".github/workflows/build-gluon.yml",
