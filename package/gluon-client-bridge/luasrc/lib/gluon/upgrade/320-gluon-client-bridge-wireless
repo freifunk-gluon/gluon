@@ -55,7 +55,7 @@ local function configure_owe(radio, index, config, radio_name)
 		return
 	end
 
-	local macaddr = wireless.get_wlan_mac('mesh', index, radio)
+	local macaddr = wireless.get_wlan_mac('owe', index, radio)
 
 	if not ap.owe_ssid() or not macaddr then
 		return
