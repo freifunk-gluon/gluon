@@ -38,12 +38,12 @@ warning:depends(enabled, true)
 local ssid = s:option(Value, "ssid", translate("Name (SSID)"))
 ssid:depends(enabled, true)
 ssid.datatype = "maxlength(32)"
-ssid.default = uci:get('wireless', primary_iface, "ssid")
+ssid.default = uci:get('gluon', 'wireless', 'private_ssid')
 
 local key = s:option(Value, "key", translate("Key"), translate("8-63 characters"))
 key:depends(enabled, true)
 key.datatype = "wpakey"
-key.default = uci:get('wireless', primary_iface, "key")
+key.default = uci:get('gluon', 'wireless', 'private_key')
 
 local encryption = s:option(ListValue, "encryption", translate("Encryption"))
 encryption:depends(enabled, true)
@@ -52,7 +52,7 @@ if wireless.device_supports_wpa3() then
 	encryption:value("sae-mixed", translate("WPA2 / WPA3"))
 	encryption:value("sae", translate("WPA3"))
 end
-encryption.default = uci:get('wireless', primary_iface, 'encryption') or "psk2"
+encryption.default = uci:get('gluon', 'wireless', 'private_encryption') or "psk2"
 
 local mfp = s:option(ListValue, "mfp", translate("Management Frame Protection"))
 mfp:depends(enabled, true)
@@ -61,41 +61,31 @@ if wireless.device_supports_mfp(uci) then
 	mfp:value("1", translate("Optional"))
 	mfp:value("2", translate("Required"))
 end
-mfp.default = uci:get('wireless', primary_iface, 'ieee80211w') or "0"
+mfp.default = uci:get('gluon', 'wireless', 'private_mfp') or "0"
 
 
 function f:write()
-	wireless.foreach_radio(uci, function(radio, index)
-		local radio_name = radio['.name']
-		local suffix = radio_name:match('^radio(%d+)$')
-		local name   = "wan_" .. radio_name
+	local roles_2g = uci:get_list('gluon', '2g', 'role')
+	local roles_5g = uci:get_list('gluon', '5g', 'role')
+	if enabled.data then
+		-- set new private wifi configuration
+		uci:set('gluon', 'wireless', 'private_ssid', ssid.data)
+		uci:set('gluon', 'wireless', 'private_key', key.data)
+		uci:set('gluon', 'wireless', 'private_encryption', encryption.data)
+		uci:set('gluon', 'wireless', 'private_mfp', mfp.data)
 
-		if enabled.data then
-			local macaddr = wireless.get_wlan_mac('wan_radio', index, radio)
+		util.add_to_set(roles_2g, 'private')
+		util.add_to_set(roles_5g, 'private')
+	else
+		util.remove_from_set(roles_2g, 'private')
+		util.remove_from_set(roles_5g, 'private')
+	end
+	uci:set_list('gluon', '2g', 'role', roles_2g)
+	uci:set_list('gluon', '5g', 'role', roles_5g)
 
-			uci:section('wireless', 'wifi-iface', name, {
-				device     = radio_name,
-				network    = 'wan',
-				mode       = 'ap',
-				encryption = encryption.data,
-				ssid       = ssid.data,
-				key        = key.data,
-				macaddr    = macaddr,
-				ifname     = suffix and 'wl-wan' .. suffix,
-				disabled   = false,
-			})
-
-			-- hostapd-mini won't start in case 802.11w is configured
-			if wireless.device_supports_mfp(uci) then
-				uci:set('wireless', name, 'ieee80211w', mfp.data)
-			else
-				uci:delete('wireless', name, 'ieee80211w')
-			end
-		else
-			uci:set('wireless', name, "disabled", true)
-		end
-	end)
-
+	uci:commit('gluon')
+	os.execute('/lib/gluon/upgrade/325-gluon-private-wifi')
+	uci:commit('network')
 	uci:commit('wireless')
 end
 
