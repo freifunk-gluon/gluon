@@ -4,14 +4,27 @@ local wireless = require 'gluon.wireless'
 
 local uci = require('simple-uci').cursor()
 
-
-local function is_disabled(config, name)
+local function is_disabled_wireless(name)
 	if uci:get('wireless', name) then
 		return uci:get_bool('wireless', name, 'disabled')
 	end
 
-	return config.disabled(false)
+	return nil
 end
+
+local function is_disabled(config, name)
+	local disabled = is_disabled_wireless(name)
+
+	if disabled == nil then
+		return config.disabled(false)
+	end
+
+	return disabled
+end
+
+-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
+-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
+local has_client_only_radio = false
 
 local function configure_ap(radio, index, config, radio_name)
 	local name = 'client_' .. radio_name
@@ -19,6 +32,10 @@ local function configure_ap(radio, index, config, radio_name)
 
 	local ap = config.ap
 	local disabled = is_disabled(ap, name)
+
+	if not wireless.supports_channel(radio, config.channel()) then
+		has_client_only_radio = true
+	end
 
 	uci:delete('wireless', name)
 
@@ -111,5 +128,23 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	configure_owe(radio, index, config, radio_name)
 	configure_owe_transition_mode(config, radio_name)
 end)
+
+-- Assign mesh radio and client radio to separate 5GHz radios if at least
+-- two exist and one of them doesn't support mesh channels.
+-- Let the one(s) that don't support mesh channels run as client radio and
+-- run mesh radio on all remaining 5GHz radios.
+if has_client_only_radio then
+	wireless.foreach_radio(uci, function(radio, _, config)
+		local radio_name = radio['.name']
+
+		if is_disabled_wireless(radio_name) == nil then
+			local name = 'client_' .. radio_name
+			-- disable client radio on the 5GHz band which supports the mesh channel
+			if wireless.supports_channel(radio, config.channel()) and radio.band == '5g' then
+				uci:set('wireless', name, 'disabled', true)
+			end
+		end
+	end)
+end
 
 uci:save('wireless')
