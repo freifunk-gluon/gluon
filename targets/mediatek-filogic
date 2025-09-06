@@ -1,6 +1,13 @@
 config('TARGET_ROOTFS_INITRAMFS', true)
 config('TARGET_INITRAMFS_COMPRESSION_LZMA', true)
 
+-- Acer
+
+device('acer-connect-vero-w6m', 'acer_vero-w6m', {
+	factory = false,
+})
+
+
 -- ASUS
 
 device('asus-rt-ax52', 'asus_rt-ax52', {
