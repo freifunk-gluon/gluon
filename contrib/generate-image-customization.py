@@ -3,7 +3,10 @@
 import requests
 from pathlib import Path
 
-toh = requests.get("https://openwrt.org/toh.json").json()
+header = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0"
+}
+toh = requests.get("https://openwrt.org/toh.json", headers=header).json()
 
 
 def get_devices_from_gluon():
@@ -30,6 +33,7 @@ map_openwrt_to_gluon = {
     ],
     "buffalo-wzr-hp-ag300h-v1": "buffalo-wzr-hp-ag300h",
     "buffalo-wzr-hp-g300nh-v1": "buffalo-wzr-hp-g300nh-rtl8366s",
+    "buffalo-wzr-hp-g450h-v1": "buffalo-wzr-hp-g450h-wzr-450hp",
     "cudy-wr1000-v1": "cudy-wr1000",
     "cudy-x6": "cudy-x6-v1",
     "d-link-aquila-pro-ai-m30": "d-link-aquila-pro-ai-m30-a1",
@@ -56,6 +60,10 @@ map_openwrt_to_gluon = {
     "linksys-e8450": "linksys-e8450-ubi",
     "linksys-ea4500-v1": "linksys-ea4500-viper",
     "linksys-ea6350-v3": "linksys-ea6350v3",
+    "linksys-mr8300": "linksys-mr8300-dallas",
+    "linksys-whw01-v1": "linksys-whw01",
+    "linksys-whw03-v1": "linksys-whw03-velop",
+    "linksys-whw03-v2": "linksys-whw03-v2-velop",
     "meraki-mr33": "meraki-mr33-access-point",
     "mikrotik-rb951ui-2nd": "mikrotik-routerboard-951ui-2nd-hap",
     "mikrotik-rbd52g-5hacd2hnd-tc-hap-ac2": "mikrotik-hap-ac2",
@@ -92,6 +100,7 @@ map_openwrt_to_gluon = {
     "tp-link-archer-c20i-ac750-v1": "tp-link-archer-c20i",
     "tp-link-archer-c5-ac1200-v1": "tp-link-archer-c5-v1",
     "tp-link-archer-c6-v2-eu": "tp-link-archer-c6-v2-eu-ru-jp",
+    "tp-link-archer-c50-v6": "tp-link-archer-c50-v6-ca-eu-ru",
     "tp-link-archer-c7-ac1750-v2.0": "tp-link-archer-c7-v2",
     "tp-link-ax23-v1": "tp-link-archer-ax23-v1",
     "tp-link-eap615-wall": "tp-link-eap615-wall-v1",
@@ -149,18 +158,18 @@ def create_caption_dict(columns: list, entries: dict):
     return result
 
 
-result = create_caption_dict(columns, entries)
+openwrt_device_map = create_caption_dict(columns, entries)
 
 devices = get_devices_from_gluon()
-has_gluon = {k: v for k, v in result.items() if k in devices}
+has_gluon = {k: v for k, v in openwrt_device_map.items() if k in devices}
 # sort dictionary
 has_gluon = {k: has_gluon[k] for k in sorted(has_gluon)}
 
 # to check which elements are missing
-gluon_missing_from_openwrt = [d for d in devices if d not in result.keys()]
+gluon_missing_from_openwrt = [d for d in devices if d not in openwrt_device_map.keys()]
 
 if gluon_missing_from_openwrt:
-    print("Following devices are missing", gluon_missing_from_openwrt)
+    print("Following gluon devices are missing", gluon_missing_from_openwrt)
 
 has_lte = {
     k: v for k, v in has_gluon.items() if v["modem"] and v["modem"].lower() == "lte"
