@@ -77,6 +77,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   package/gluon-radvd
   package/gluon-radv-filterd
   package/gluon-scheduled-domain-switch
+  package/gluon-state-check
   package/gluon-web-admin
   package/gluon-web-cellular
   package/gluon-web-network
