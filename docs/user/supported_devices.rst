@@ -415,6 +415,13 @@ mpc85xx-p1020
 
   - Panda
 
+qualcommax-ipq807x
+------------------
+
+* Xiaomi
+
+  - Mi AIoT Router AX3600
+
 ramips-mt7620
 -------------
 
