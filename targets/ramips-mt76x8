@@ -62,6 +62,10 @@ device('tp-link-archer-c50-v4', 'tplink_archer-c50-v4', {
 	factory = false,
 })
 
+device('tp-link-archer-c50-v6-ca-eu-ru', 'tplink_archer-c50-v6', {
+	factory = false,
+})
+
 device('tp-link-re200-v2', 'tplink_re200-v2')
 
 device('tp-link-re200-v3', 'tplink_re200-v3')
