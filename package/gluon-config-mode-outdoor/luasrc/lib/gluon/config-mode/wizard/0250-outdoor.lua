@@ -2,7 +2,7 @@ return function(form, uci)
 	local platform = require 'gluon.platform'
 	local wireless = require 'gluon.wireless'
 
-	if not (platform.is_outdoor_device() and wireless.device_uses_11a(uci)) then
+	if not (platform.is_outdoor_device() and wireless.device_uses_band(uci, '5g')) then
 		-- only visible on wizard for outdoor devices
 		return
 	end

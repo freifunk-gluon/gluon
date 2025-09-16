@@ -1,0 +1,100 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
+local wireless = require 'gluon.wireless'
+
+-- Create wifi roles if they do not exist yet
+local default_wifi_roles = {
+	band2g = {'client'},
+	band5g = {'client'},
+}
+
+-- enable mesh if it is not disabled
+if not site.wifi24.mesh.disabled(false) then
+	util.add_to_set(default_wifi_roles['band2g'], 'mesh')
+end
+if not site.wifi5.mesh.disabled(false) then
+	util.add_to_set(default_wifi_roles['band5g'], 'mesh')
+end
+
+local role_iface_names = {
+	client = 'client_radio',
+	mesh = 'mesh_radio',
+	private = 'wan_radio',
+}
+
+local function migrate_wifi_to_roles(band)
+	local band_roles = {}
+	local config_exists = false
+	wireless.foreach_radio(uci, function(radio)
+		if radio.band ~= band then
+			return
+		end
+		local radio_name = radio['.name']
+		local suffix = radio_name:match('^radio(%d+)$')
+
+		for role, iface_prefix in pairs(role_iface_names) do
+			local iface_name = iface_prefix .. suffix
+			local role_disabled = uci:get('wireless', iface_prefix .. suffix, 'disabled')
+			if role_disabled == '0' then
+				util.add_to_set(band_roles, role)
+			end
+			if role_disabled ~= nil then
+				config_exists = true
+				if role == 'private' then
+					local ssid = uci:get('wireless', iface_name, 'ssid')
+					local key = uci:get('wireless', iface_name, 'key')
+					local encryption = uci:get('wireless', iface_name, 'encryption')
+					local mfp = uci:get('wireless', iface_name, 'ieee80211w')
+					uci:set('gluon', 'wireless', 'private_ssid', ssid)
+					uci:set('gluon', 'wireless', 'private_key', key)
+					uci:set('gluon', 'wireless', 'private_encryption', encryption)
+					uci:set('gluon', 'wireless', 'private_mfp', mfp)
+				end
+			end
+		end
+	end)
+
+	-- if no config exists for this band, we apply the default
+	if not config_exists then
+		band_roles = default_wifi_roles["band" .. band]
+	end
+
+	uci:section('gluon', 'wireless_band', band, {
+		role = band_roles,
+	})
+end
+
+for band_name, _ in pairs(default_wifi_roles) do
+	local raw_band = band_name:gsub("band", "")
+	if not uci:get('gluon', raw_band) and wireless.device_uses_band(uci, raw_band) then
+		-- remove when upgrades are only possible from v2025.1 onwards
+		migrate_wifi_to_roles(raw_band)
+	end
+end
+
+
+local function is_outdoor()
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
+-- Fix invalid mesh role configurations for outdoor
+uci:foreach('gluon', 'wireless_band', function(band)
+	local function has_role(role)
+		if band.role == nil then
+			return false
+		end
+
+		return util.contains(band.role, role)
+	end
+
+	if band['.name'].name=='5g' and has_role('mesh') and is_outdoor() then
+		-- remove 'mesh' role
+		util.remove_from_set(band.role, 'mesh')
+		uci:set('gluon', band['.name'], 'role', band.role)
+	end
+end)
+
+uci:save('gluon')
