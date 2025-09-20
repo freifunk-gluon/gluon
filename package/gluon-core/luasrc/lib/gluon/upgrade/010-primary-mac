@@ -72,6 +72,7 @@ end
 local primary_addrs = {
 	{interface('lan'), {
 		{'ath79', 'generic', {
+			'comfast,cf-ew71-v2',
 			'glinet,gl-ar750s-nor',
 			'ocedo,raccoon',
 			'tplink,archer-a7-v5',
