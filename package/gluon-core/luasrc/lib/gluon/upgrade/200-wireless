@@ -145,8 +145,6 @@ end
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
 
-	delete_ibss(radio_name)
-
 	if not config() then
 		uci:set('wireless', radio_name, 'disabled', true)
 		return
