@@ -208,7 +208,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		if band == '2g' then
 			configure_mesh_wireless(radio, index, config)
 		elseif (band == '5g') then
-			if is_outdoor() then
+			if is_outdoor() or not wireless.supports_channel(radio, config.channel()) then
 				-- enforce outdoor channels by filtering the regdom for outdoor channels
 				uci:set('wireless', radio_name, 'country3', '0x4f')
 			else
