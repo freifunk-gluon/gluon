@@ -86,12 +86,6 @@ local function get_htmode(radio)
 	return 'HT20'
 end
 
-local function delete_ibss(radio_name)
-	local name = 'ibss_' .. radio_name
-
-	uci:delete('wireless', name)
-end
-
 local function configure_mesh(radio, index, mesh_config)
 	local radio_name = radio['.name']
 	local name = 'mesh_' .. radio_name
@@ -164,8 +158,6 @@ end
 
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
-
-	delete_ibss(radio_name)
 
 	if not config() then
 		uci:set('wireless', radio_name, 'disabled', true)
