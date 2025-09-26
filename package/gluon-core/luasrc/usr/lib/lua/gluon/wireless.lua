@@ -39,6 +39,16 @@ local function get_wlan_mac_from_driver(radio, vif)
 	return addresses[vif+1]
 end
 
+function M.supports_channel(radio, channel)
+	local phy = M.find_phy(radio)
+	for _, chan in ipairs(iwinfo.nl80211.freqlist(phy)) do
+		if channel == chan.channel then
+			return true
+		end
+	end
+	return false
+end
+
 local radio_mac_offsets = {
 	client = 0,
 	mesh = 1,
@@ -122,11 +132,11 @@ function M.device_uses_wlan(uci)
 	return ret
 end
 
-function M.device_uses_11a(uci)
+function M.device_uses_band(uci, band)
 	local ret = false
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
-		if radio.band == '5g' then
+		if radio.band == band then
 			ret = true
 			return false
 		end
