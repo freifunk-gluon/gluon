@@ -79,7 +79,7 @@ local function migrate_wifi_to_roles(band)
 end
 
 for band, _ in pairs(default_wifi_roles) do
-	if not uci:get('gluon', 'band_' .. band) and wireless.device_uses_band(uci, band) then
+	if not uci:get('gluon', 'band_' .. band) and wireless.device_supports_band(uci, band) then
 		-- should only create defaults when upgrades are only possible from v2025.1 onwards
 		migrate_wifi_to_roles(band)
 	end
