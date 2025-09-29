@@ -78,7 +78,7 @@ end
 
 for band_name, _ in pairs(default_wifi_roles) do
 	local raw_band = band_name:gsub("^band_", "")
-	if not uci:get('gluon', band_name) and wireless.device_uses_band(uci, raw_band) then
+	if not uci:get('gluon', band_name) and wireless.device_supports_band(uci, raw_band) then
 		-- should only create defaults when upgrades are only possible from v2025.1 onwards
 		migrate_wifi_to_roles(raw_band)
 	end
