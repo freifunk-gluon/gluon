@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-22.04
     if: github.repository_owner == 'freifunk-gluon'
     steps:
-    - uses: actions/labeler@v5
+    - uses: actions/labeler@v6
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         sync-labels: true
