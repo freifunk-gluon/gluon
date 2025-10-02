@@ -3,6 +3,7 @@
 # shellcheck source=package/gluon-autoupdater/files/lib/gluon/autoupdater/lib.sh
 . /lib/gluon/autoupdater/lib.sh
 
+flag_invocation 0
 
 start_enabled cron
 start_enabled urngd
