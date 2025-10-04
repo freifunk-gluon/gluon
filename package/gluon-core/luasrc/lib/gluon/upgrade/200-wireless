@@ -190,8 +190,6 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	end
 
 	uci:set('wireless', radio_name, 'beacon_int', beacon_interval)
-
-	fixup_wan(radio, index)
 end)
 
 
