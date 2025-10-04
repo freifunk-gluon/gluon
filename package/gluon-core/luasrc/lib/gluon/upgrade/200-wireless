@@ -199,7 +199,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	local band = radio.band
 	-- now we assign radios to roles
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 	local enable_mesh = wireless.supports_channel(radio, config.channel()) and util.contains(roles, 'mesh')
 
 	if band == '2g' then

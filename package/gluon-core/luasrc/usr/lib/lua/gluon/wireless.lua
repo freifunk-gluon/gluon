@@ -148,4 +148,8 @@ function M.device_uses_band(uci, band)
 	return ret
 end
 
+function M.radio_roles(uci, radio)
+	return uci:get_list('gluon', 'band_' .. radio.band, 'role')
+end
+
 return M
