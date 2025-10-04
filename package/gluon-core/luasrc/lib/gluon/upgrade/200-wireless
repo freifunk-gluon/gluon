@@ -126,22 +126,6 @@ local function configure_mesh(radio, index, mesh_config)
 	})
 end
 
-local function fixup_wan(radio, index)
-	local radio_name = radio['.name']
-	local name = 'wan_' .. radio_name
-
-	if not uci:get('wireless', name) then
-		return
-	end
-
-	local macaddr = wireless.get_wlan_mac('wan_radio', index, radio)
-	if not macaddr then
-		return
-	end
-
-	uci:set('wireless', name, 'macaddr', macaddr)
-end
-
 local function set_channels(radio, radio_name, config)
 	if wireless.preserve_channels(uci) then
 		return
@@ -205,8 +189,6 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	end
 
 	uci:set('wireless', radio_name, 'beacon_int', beacon_interval)
-
-	fixup_wan(radio, index)
 end)
 
 
