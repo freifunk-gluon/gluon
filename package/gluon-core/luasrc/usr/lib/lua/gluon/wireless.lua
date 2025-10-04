@@ -145,4 +145,12 @@ function M.device_uses_band(uci, band)
 	return ret
 end
 
+function M.radio_roles(uci, radio)
+	return uci:get_list('gluon', 'band_' .. radio.band, 'role')
+end
+
+function M.radio_option(uci, radio, option, default)
+	return uci:get('gluon', 'band_' .. radio.band, option) or default
+end
+
 return M

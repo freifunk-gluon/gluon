@@ -124,11 +124,9 @@ local function configure_mesh(radio, index, mesh_config)
 		return
 	end
 
-	local batadv_hop_penalty = uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
-
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
-		hop_penalty = batadv_hop_penalty,
+		hop_penalty = wireless.radio_option(uci, radio, 'batadv_hop_penalty')
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
@@ -189,7 +187,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	local band = radio.band
 	-- now we assign radios to roles
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 	local enable_mesh = wireless.supports_channel(radio, config.channel()) and util.contains(roles, 'mesh')
 
 	if band == '2g' then
