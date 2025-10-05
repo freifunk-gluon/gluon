@@ -28,6 +28,7 @@ ath79-generic
 
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G300NH (rtl8366s)
+  - WZR-HP-G450H / WZR-450HP
 
 * devolo
 
