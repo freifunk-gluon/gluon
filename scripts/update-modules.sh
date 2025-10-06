@@ -31,7 +31,7 @@ for MODULE in "OPENWRT" "PACKAGES_PACKAGES" "PACKAGES_ROUTING" "PACKAGES_GLUON";
 	}
 
 	# fetch the commit id for the HEAD of the module
-	REMOTE_HEAD=$(git ls-remote "${REMOTE_URL}" "${REMOTE_BRANCH}" | awk '{ print $1 }')
+	REMOTE_HEAD=$(git ls-remote --heads "${REMOTE_URL}" "${REMOTE_BRANCH}" | awk '{ print $1 }')
 
 	# skip ahead if the commit id did not change
 	[ "$LOCAL_HEAD" == "$REMOTE_HEAD" ] && continue 1
