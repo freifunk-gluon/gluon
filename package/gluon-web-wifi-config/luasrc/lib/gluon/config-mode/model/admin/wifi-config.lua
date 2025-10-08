@@ -2,7 +2,7 @@ local iwinfo = require 'iwinfo'
 local uci = require("simple-uci").cursor()
 local site = require 'gluon.site'
 local wireless = require 'gluon.wireless'
-
+local util = require 'gluon.util'
 
 local function txpower_list(phy)
 	local list = iwinfo.nl80211.txpwrlist(phy) or { }
@@ -38,15 +38,37 @@ f:section(Section, nil, translate(
 
 local mesh_vifs_5ghz = {}
 
+local function add_or_remove_role(roles, role, enabled)
+	if enabled then
+		util.add_to_set(roles, role)
+	else
+		util.remove_from_set(roles, role)
+	end
+end
 
-uci:foreach('wireless', 'wifi-device', function(config)
-	local radio = config['.name']
+local function vif_option(section, role_name, band, band_config, msg)
+	local o = section:option(Flag, band .. '_' .. role_name .. '_enabled', msg)
+	o.default = util.contains(band_config.role or {}, role_name)
+
+	function o:write(data)
+		-- Without the additional read before write in o:write, this would race
+		local roles = uci:get_list('gluon', band, 'role')
+		add_or_remove_role(roles, role_name, data)
+		uci:set_list('gluon', band, 'role', roles)
+	end
+
+	return o
+end
+
+uci:foreach('gluon', 'wireless_band', function(band_config)
+	local band = band_config['.name']
 
 	local is_5ghz = false
 	local title
-	if config.band == '2g' then
+
+	if band == 'band_2g' then
 		title = translate("2.4GHz WLAN")
-	elseif config.band == '5g' then
+	elseif band == 'band_5g' then
 		is_5ghz = true
 		title = translate("5GHz WLAN")
 	else
@@ -55,51 +77,16 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	local p = f:section(Section, title)
 
-	local function filter_existing_interfaces(interfaces)
-		local out = {}
-		for _, interface in ipairs(interfaces) do
-			if uci:get('wireless', interface .. '_' .. radio) then
-				table.insert(out, interface)
-			end
-		end
-		return out
-	end
+	vif_option(p, 'client', band, band_config, translate('Enable client network (access point)'))
 
-	local function has_active_interfaces(interfaces)
-		for _, interface in ipairs(interfaces) do
-			if not uci:get_bool('wireless', interface .. '_' .. radio, 'disabled') then
-				return true
-			end
-		end
-		return false
-	end
-
-	local function vif_option(name, interfaces, msg)
-		local existing_interfaces = filter_existing_interfaces(interfaces)
-
-		if #existing_interfaces == 0 then
-			return
-		end
-
-		local o = p:option(Flag, radio .. '_' .. name .. '_enabled', msg)
-		o.default = has_active_interfaces(existing_interfaces)
-
-		function o:write(data)
-			for _, interface in ipairs(existing_interfaces) do
-				uci:set('wireless', interface .. '_' .. radio, 'disabled', not data)
-			end
-		end
-
-		return o
-	end
-
-	vif_option('client', {'client', 'owe'}, translate('Enable client network (access point)'))
-
-	local mesh_vif = vif_option('mesh', {'mesh'}, translate("Enable mesh network (802.11s)"))
+	local mesh_vif = vif_option(p, 'mesh', band, band_config, translate("Enable mesh network (802.11s)"))
 	if is_5ghz then
 		table.insert(mesh_vifs_5ghz, mesh_vif)
 	end
+end)
 
+local p = f:section(Section, translate("Per radio settings"))
+uci:foreach('wireless', 'wifi-device', function(config)
 	local phy = wireless.find_phy(config)
 	if not phy then
 		return
@@ -110,7 +97,8 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return
 	end
 
-	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power"))
+	local radio = config['.name']
+	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power") .. ' (' .. radio .. ')')
 	tp.default = uci:get('wireless', radio, 'txpower') or 'default'
 
 	tp:value('default', translate("(default)"))
@@ -163,7 +151,7 @@ if wireless.device_uses_band(uci, '5g') and not wireless.preserve_channels(uci) 
 
 		local phy = wireless.find_phy(config)
 
-		local ht = r:option(ListValue, 'outdoor_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
+		local ht = r:option(ListValue, 'outdoor_' .. radio .. '_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
 		ht:depends(outdoor, true)
 		ht.default = uci:get('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode') or 'default'
 
@@ -186,9 +174,7 @@ end
 
 function f:write()
 	uci:commit('gluon')
-	os.execute('/lib/gluon/upgrade/200-wireless')
-	uci:commit('network')
-	uci:commit('wireless')
+	os.execute('exec gluon-reconfigure >/dev/null')
 end
 
 return f
