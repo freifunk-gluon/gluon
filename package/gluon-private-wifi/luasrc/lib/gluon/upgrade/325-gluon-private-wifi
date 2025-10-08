@@ -14,6 +14,10 @@ local function configure_private_wifi(radio, index)
 	end
 
 	local encryption = uci:get('gluon', 'wireless', 'private_encryption')
+	-- 6GHz radio requires usage of WPA3/SAE
+	if radio.band == '6g' then
+		encryption = 'sae'
+	end
 	local ssid = uci:get('gluon', 'wireless', 'private_ssid')
 	local key = uci:get('gluon', 'wireless', 'private_key')
 	local mfp = wireless.device_supports_mfp(uci) and uci:get('gluon', 'wireless', 'private_mfp')
