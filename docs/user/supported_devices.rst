@@ -366,6 +366,10 @@ mediatek-mt7622
 
   - E8450
 
+* Netgear
+
+  - WAX206
+
 * Ubiquiti
 
   - UniFi 6 LR (v1)
