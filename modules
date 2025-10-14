@@ -2,7 +2,7 @@ GLUON_FEEDS='gluon packages routing'
 
 OPENWRT_REPO=https://github.com/openwrt/openwrt.git
 OPENWRT_BRANCH=openwrt-24.10
-OPENWRT_COMMIT=c1d14f27348f10308f8d87d39255f39a503e3d23
+OPENWRT_COMMIT=0c1ff934eca71e149ab80c9c250598e01226100e
 
 PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
 PACKAGES_GLUON_COMMIT=5221e0e50239d64d91ace6eadc5dab9ad00e76e6
