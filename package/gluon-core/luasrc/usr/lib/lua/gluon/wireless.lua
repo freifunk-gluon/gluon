@@ -9,7 +9,15 @@ local iwinfo = require 'iwinfo'
 local M = {}
 
 function M.find_phy(config)
-	return iwinfo.nl80211.phyname(config['.name'])
+	local phyname = iwinfo.nl80211.phyname(config['.name'])
+
+	-- TODO: quick-fix for mt7622 phy renaming
+	-- remove if fixed in upstream openwrt
+	-- similar renaming as in openwrt files-ucode/usr/share/ucode/iwinfo.uc
+	if not phyname then
+		phyname = config["phy"]:gsub("wl", "phy")
+	end
+	return phyname
 end
 
 local function get_addresses(radio)
