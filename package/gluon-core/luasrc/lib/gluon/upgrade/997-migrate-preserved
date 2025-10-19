@@ -2,7 +2,7 @@
 
 local uci = require('simple-uci').cursor()
 
-for _, config in ipairs({'system', 'network'}) do
+for _, config in ipairs({'system', 'network', 'wireless'}) do
 	uci:foreach(config .. '_gluon-old', nil, function(s)
 		if s.gluon_preserve ~= '1' then return end
 
