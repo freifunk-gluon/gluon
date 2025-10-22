@@ -434,7 +434,7 @@ device('tp-link-archer-c5-v1', 'tplink_archer-c5-v1', {
 
 device('tp-link-archer-c58-v1', 'tplink_archer-c58-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
-	broken = true, -- OOM with 5GHz enabled in most environments
+	broken = true, -- OOM with 5GHz enabled in most environments and also broken, GitHub Issue #3425
 	class = 'tiny', -- 64M ath9k + ath10k
 })
 
