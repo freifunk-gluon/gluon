@@ -86,6 +86,10 @@ device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 
 device('linksys-ea6350v3', 'linksys_ea6350v3')
 
+device('linksys-whw03-v2-velop', 'linksys_whw03v2', {
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
 
 -- Meraki
 
