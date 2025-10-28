@@ -62,16 +62,19 @@ local function get_channel(radio, config)
 	return config.channel()
 end
 
+local function get_txpower(radio_name)
+	return uci:get('gluon', radio_name, 'txpower')
+end
+
 local function get_htmode(radio)
 	if wireless.preserve_channels(uci) then
 		return radio.htmode
 	end
 
-	if radio.band == '5g' and is_outdoor() then
-		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
-		if outdoor_htmode ~= nil then
-			return outdoor_htmode
-		end
+
+	local htmode = uci:get('gluon', radio['.name'], 'htmode')
+	if htmode ~= nil then
+		return htmode
 	end
 
 	local channel_width = 20
@@ -170,6 +173,11 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	local suffix = radio_name:match('^radio(%d+)$')
 	if not suffix then
 		return
+	end
+
+	local txpower = get_txpower(radio_name)
+	if txpower ~= nil then
+		uci:set('wireless', radio_name, 'txpower', txpower)
 	end
 
 	local htmode = get_htmode(radio)

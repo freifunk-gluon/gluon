@@ -41,8 +41,9 @@ local function migrate_wifi_to_roles(band)
 		if radio.band ~= band then
 			return
 		end
+		local radio_name = radio['.name']
 		for role, iface_prefix in pairs(role_iface_names) do
-			local iface_name = iface_prefix .. radio['.name']
+			local iface_name = iface_prefix .. radio_name
 			if uci:get('wireless', iface_name) then
 				config_exists = true
 				local role_enabled = not uci:get_bool('wireless', iface_name, 'disabled')
@@ -66,6 +67,23 @@ local function migrate_wifi_to_roles(band)
 				end
 			end
 		end
+
+		uci:section('gluon', 'wireless_radio', radio_name, {
+		})
+
+		local txpower = uci:get('wireless', radio_name, 'txpower')
+		if txpower ~= nil then
+			uci:set('gluon', radio_name, 'txpower', txpower)
+		end
+
+		-- remove this in 2027 or on first release supporting only upgrades from >=v2025.1.x
+		if radio.band == '5g' then
+			local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
+			if outdoor_htmode ~= nil then
+				uci:set('gluon', radio_name, 'htmode', outdoor_htmode)
+				uci:delete('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
+			end
+		end
 	end)
 
 	-- if no config exists for this band, we apply the default
@@ -80,7 +98,7 @@ end
 
 for band, _ in pairs(default_wifi_roles) do
 	if not uci:get('gluon', 'band_' .. band) and wireless.device_uses_band(uci, band) then
-		-- should only create defaults when upgrades are only possible from v2025.1 onwards
+		-- remove defaults creation in 2027 or on first release supporting only upgrades from >=v2025.1.x
 		migrate_wifi_to_roles(band)
 	end
 end

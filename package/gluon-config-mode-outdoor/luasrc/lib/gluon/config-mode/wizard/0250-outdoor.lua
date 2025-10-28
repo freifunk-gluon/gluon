@@ -30,12 +30,12 @@ return function(form, uci)
 
 			if data == false then
 				local mesh_ifaces_5ghz = {}
-				uci:foreach('wireless', 'wifi-device', function(config)
-					if config.band ~= '5g' then
+				uci:foreach('wireless', 'wifi-device', function(radio)
+					if radio.band ~= '5g' then
 						return
 					end
 
-					local radio_name = config['.name']
+					local radio_name = radio['.name']
 					local mesh_iface = 'mesh_' .. radio_name
 					table.insert(mesh_ifaces_5ghz, mesh_iface)
 				end)
