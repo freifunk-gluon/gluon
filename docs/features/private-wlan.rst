@@ -15,27 +15,23 @@ made optional or completely disabled in the advanced settings tab.
 The private WLAN can be enabled through the config mode if the package ``gluon-web-private-wifi`` is installed.
 You may also enable a private WLAN using the command line::
 
-  RID=0
   SSID="privateWLANname"
   KEY="yoursecret1337password"
 
-  uci set wireless.wan_radio$RID=wifi-iface
-  uci set wireless.wan_radio$RID.device=radio$RID
-  uci set wireless.wan_radio$RID.network=wan
-  uci set wireless.wan_radio$RID.mode=ap
-  uci set wireless.wan_radio$RID.encryption=psk2
-  uci set wireless.wan_radio$RID.ssid="$SSID"
-  uci set wireless.wan_radio$RID.key="$KEY"
-  uci set wireless.wan_radio$RID.disabled=0
-  uci set wireless.wan_radio$RID.macaddr=$(lua -e "print(require('gluon.wireless').get_wlan_mac('wan_radio', $RID))")
-  uci commit
+  uci add_list gluon.band_2g.role=private
+  uci add_list gluon.band_5g.role=private
+  uci set gluon.wireless.private_encryption=psk2
+  uci set gluon.wireless.private_ssid="$SSID"
+  uci set gluon.wireless.private_key="$KEY"
+  uci commit gluon
+  gluon-reconfigure
   wifi
 
 Please replace ``$SSID`` by the name of the WLAN and ``$KEY`` by your passphrase (8-63 characters).
-If you have two radios (e.g. 2.4 and 5 GHz) you need to do this for radio0 and radio1.
+If you have two radios (e.g. 2.4 and 5 GHz) you need to add the role to both bands.
 
 It may also be disabled by running::
 
-  uci set wireless.wan_radio0.disabled=1
-  uci commit
+  uci del_list set gluon.band_2g.role=private
+  uci commit gluon
   wifi
