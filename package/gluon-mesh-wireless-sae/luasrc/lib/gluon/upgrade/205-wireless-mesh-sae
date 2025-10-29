@@ -20,7 +20,8 @@ wireless.foreach_radio(uci, function(radio)
 		uci:delete('wireless', vif, 'encryption')
 		uci:delete('wireless', vif, 'key')
 
-		if enable then
+		-- 6ghz should always use SAE
+		if enable or radio.band == '6g' then
 			configure_sae(vif)
 		end
 	end
