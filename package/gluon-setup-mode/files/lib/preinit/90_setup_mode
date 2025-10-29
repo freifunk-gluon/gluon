@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 setup_mode_enable() {
 	local enabled configured
 	enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
