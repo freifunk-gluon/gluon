@@ -71,6 +71,8 @@ uci:foreach('gluon', 'wireless_band', function(band_config)
 	elseif band == 'band_5g' then
 		is_5ghz = true
 		title = translate("5GHz WLAN")
+	elseif band == 'band_6g' then
+		title = translate("6GHz WLAN")
 	else
 		return
 	end
