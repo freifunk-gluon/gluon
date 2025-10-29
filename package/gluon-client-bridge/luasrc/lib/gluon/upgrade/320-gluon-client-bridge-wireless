@@ -27,15 +27,13 @@ local function is_disabled(radio, config)
 	return not util.contains(roles, 'client') or disable_client
 end
 
-local function configure_ap(radio, index, config, radio_name)
+local function configure_ap(radio, index, radio_name, ssid)
 	local name = 'client_' .. radio_name
 	local suffix = radio_name:match('^radio(%d+)$')
 
-	local ap = config.ap
-
 	local macaddr = wireless.get_wlan_mac('client', index, radio)
 
-	if not ap.ssid() or not macaddr or not suffix then
+	if not ssid or not macaddr or not suffix then
 		return
 	end
 
@@ -43,17 +41,15 @@ local function configure_ap(radio, index, config, radio_name)
 		device = radio_name,
 		network = 'client',
 		mode = 'ap',
-		ssid = ap.ssid(),
+		ssid = ssid,
 		macaddr = macaddr,
 		ifname = 'client' .. suffix,
 	})
 end
 
-local function configure_owe(radio, index, config, radio_name)
+local function configure_owe(radio, index, radio_name, ssid)
 	local name = 'owe_' .. radio_name
 	local suffix = radio_name:match('^radio(%d+)$')
-
-	local ap = config.ap
 
 	-- Don't configure OWE in case our device
 	-- can't do MFP, as it's mandatory for OWE.
@@ -63,7 +59,7 @@ local function configure_owe(radio, index, config, radio_name)
 
 	local macaddr = wireless.get_wlan_mac('owe', index, radio)
 
-	if not ap.owe_ssid() or not macaddr or not suffix then
+	if not ssid or not macaddr or not suffix then
 		return
 	end
 
@@ -71,7 +67,7 @@ local function configure_owe(radio, index, config, radio_name)
 		device = radio_name,
 		network = 'client',
 		mode = 'ap',
-		ssid = ap.owe_ssid(),
+		ssid = ssid,
 		macaddr = macaddr,
 		ifname = 'owe' .. suffix,
 		encryption = 'owe',
@@ -79,16 +75,11 @@ local function configure_owe(radio, index, config, radio_name)
 	})
 end
 
-local function configure_owe_transition_mode(config, radio_name)
-	local ap = config.ap
+local function configure_owe_transition_mode(radio_name)
 
 	-- Don't configure OWE in case our device
 	-- can't do MFP, as it's mandatory for OWE.
 	if not wireless.device_supports_mfp(uci) then
-		return
-	end
-
-	if not ap.owe_transition_mode(false) then
 		return
 	end
 
@@ -110,11 +101,18 @@ end
 
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
-	if not is_disabled(radio, config) then
-		configure_ap(radio, index, config, radio_name)
 
-		configure_owe(radio, index, config, radio_name)
-		configure_owe_transition_mode(config, radio_name)
+	if not is_disabled(radio, config)  then
+		-- 6ghz does not support unencrypted client ifaces
+		if radio.band == '6g' then
+			configure_owe(radio, index, radio_name, config.ap.ssid())
+		else
+			configure_ap(radio, index, radio_name, config.ap.ssid())
+			configure_owe(radio, index, radio_name, config.ap.owe_ssid())
+			if config.ap.owe_transition_mode(false) then
+				configure_owe_transition_mode(radio_name)
+			end
+		end
 	end
 end)
 
