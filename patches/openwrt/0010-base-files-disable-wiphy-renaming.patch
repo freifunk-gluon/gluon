@@ -1,0 +1,23 @@
+From: Florian Maurer <f.maurer@outlook.de>
+Date: Thu, 23 Oct 2025 14:22:01 +0200
+Subject: base-files: disable wiphy renaming
+
+The phy renaming is currently only done when the wifi iface is used.
+This is too late for gluon - disable it therefore, so that all targets use phyX as well.
+This is currently needed for the mediatek-mt7622 target.
+Only needed for openwrt-24.10 branch as later releases will be able to handle renaming early enough.
+
+Signed-off-by: Florian Maurer <f.maurer@outlook.de>
+
+diff --git a/package/base-files/files/lib/functions/uci-defaults.sh b/package/base-files/files/lib/functions/uci-defaults.sh
+index 5293ce12c0e08f2d211999e4f00fcbac6639a774..c55ff3fd681150adc9456b992a3c315c0950fb4f 100644
+--- a/package/base-files/files/lib/functions/uci-defaults.sh
++++ b/package/base-files/files/lib/functions/uci-defaults.sh
+@@ -757,6 +757,7 @@ ucidef_set_poe() {
+ }
+ 
+ ucidef_add_wlan() {
++	return 0
+ 	local path="$1"; shift
+ 
+ 	ucidef_wlan_idx=${ucidef_wlan_idx:-0}
