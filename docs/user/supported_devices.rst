@@ -238,6 +238,7 @@ ipq40xx-generic
 * Linksys
 
   - EA6350 (v3)
+  - MR8300
   - VLP01
   - WHW01
   - WHW03 (v2)

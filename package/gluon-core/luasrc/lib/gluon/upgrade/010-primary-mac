@@ -118,6 +118,7 @@ local primary_addrs = {
 	{interface('wan'), {
 		{'ipq40xx', 'generic', {
 			'linksys,ea6350v3',
+			'linksys,mr8300',
 			'openmesh,a42',
 			'openmesh,a62',
 		}},
