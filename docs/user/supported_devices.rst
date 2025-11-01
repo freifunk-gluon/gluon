@@ -240,7 +240,7 @@ ipq40xx-generic
   - EA6350 (v3)
   - VLP01
   - WHW01
-  - WHW03 (v2)
+  - WHW03 (v1,v2)
 
 * NETGEAR
 
