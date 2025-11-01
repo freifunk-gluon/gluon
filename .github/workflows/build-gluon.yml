@@ -62,19 +62,19 @@ jobs:
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
 
       - name: Archive build output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}_output
           path: output
 
       - name: Archive metadata
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}_metadata
           path: output/meta
