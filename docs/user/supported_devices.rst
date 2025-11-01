@@ -241,7 +241,7 @@ ipq40xx-generic
   - MR8300
   - VLP01
   - WHW01
-  - WHW03 (v2)
+  - WHW03 (v1,v2)
 
 * NETGEAR
 
