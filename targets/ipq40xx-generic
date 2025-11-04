@@ -14,6 +14,15 @@ local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
 	'ath10k-firmware-qca9888',
 	'-ath10k-firmware-qca9888-ct',
 }
+local ATH10K_PACKAGES_IPQ40XX_QCA9984 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+	'ath10k-firmware-qca9984',
+	'-ath10k-firmware-qca9984-ct',
+}
 
 
 defaults {
@@ -131,6 +140,16 @@ device('netgear-ex6100v2', 'netgear_ex6100v2', {
 
 device('netgear-ex6150v2', 'netgear_ex6150v2', {
 	factory_ext = '.img',
+})
+
+device('netgear-srr60', 'netgear_srr60', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-srs60', 'netgear_srs60', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
 })
 
 
