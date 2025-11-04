@@ -360,7 +360,7 @@ mediatek-filogic
 
 * Xiaomi
 
-  - Mi Router AX3000T
+  - Mi Router AX3000T (Stock, ubootmod)
 
 * Zyxel
 
