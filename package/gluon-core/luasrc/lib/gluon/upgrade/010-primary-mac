@@ -119,6 +119,7 @@ local primary_addrs = {
 		{'ipq40xx', 'generic', {
 			'linksys,ea6350v3',
 			'linksys,mr8300',
+			'linksys,whw03',
 			'openmesh,a42',
 			'openmesh,a62',
 		}},
