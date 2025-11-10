@@ -62,28 +62,46 @@ local function get_channel(radio, config)
 	return config.channel()
 end
 
+local function get_txpower(radio_name)
+	return uci:get('gluon', radio_name, 'txpower')
+end
+
 local function get_htmode(radio)
 	if wireless.preserve_channels(uci) then
 		return radio.htmode
 	end
 
-	if radio.band == '5g' and is_outdoor() then
-		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
-		if outdoor_htmode ~= nil then
-			return outdoor_htmode
-		end
+	local htmode = uci:get('gluon', radio['.name'], 'htmode')
+	if htmode ~= nil then
+		return htmode
+	end
+
+	local bandwidth
+
+	if radio.band == '2g' then
+		bandwidth = site.wifi24.bandwidth('20')
+	elseif radio.band == '5g' then
+		bandwidth = site.wifi5.bandwidth('20')
 	end
 
 	local phy = wireless.find_phy(radio)
 	if iwinfo.nl80211.hwmodelist(phy).ax then
-		return 'HE20'
+		htmode = 'HE' .. bandwidth
+	elseif iwinfo.nl80211.hwmodelist(phy).ac then
+		htmode = 'VHT' .. bandwidth
+	else
+		htmode = 'HT' .. bandwidth
 	end
 
-	if iwinfo.nl80211.hwmodelist(phy).ac then
-		return 'VHT20'
+	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
+		if available and mode == htmode then
+			return htmode
+		end
 	end
 
-	return 'HT20'
+	-- if preferred htmode is not available
+	-- select the last one we got
+	return htmode
 end
 
 local function configure_mesh(radio, index, mesh_config)
@@ -103,11 +121,9 @@ local function configure_mesh(radio, index, mesh_config)
 		return
 	end
 
-	local batadv_hop_penalty = uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
-
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
-		hop_penalty = batadv_hop_penalty,
+		hop_penalty = wireless.radio_hop_penalty(uci, radio)
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
@@ -153,6 +169,11 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		return
 	end
 
+	local txpower = get_txpower(radio_name)
+	if txpower ~= nil then
+		uci:set('wireless', radio_name, 'txpower', txpower)
+	end
+
 	local htmode = get_htmode(radio)
 	local beacon_interval = config.beacon_interval()
 
@@ -168,7 +189,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	local band = radio.band
 	-- now we assign radios to roles
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 	local enable_mesh = wireless.supports_channel(radio, config.channel()) and util.contains(roles, 'mesh')
 
 	if band == '2g' then
