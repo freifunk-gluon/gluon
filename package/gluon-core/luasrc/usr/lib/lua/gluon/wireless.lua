@@ -73,7 +73,8 @@ end
 
 -- Iterate over all radios defined in UCI calling
 -- f(radio, index, site.wifiX) for each radio found while passing
---  site.wifi24 for 2.4 GHz devices and site.wifi5 for 5 GHz ones.
+--  site.wifi24 for 2.4 GHz devices, site.wifi5 for 5 GHz ones
+--  and site.wifi6 for 6 GHz devices
 function M.foreach_radio(uci, f)
 	local radios = {}
 
@@ -89,6 +90,8 @@ function M.foreach_radio(uci, f)
 			f(radio, index-1, site.wifi24)
 		elseif band == '5g' then
 			f(radio, index-1, site.wifi5)
+		elseif band == '6g' then
+			f(radio, index-1, site.wifi6)
 		end
 	end
 end
@@ -143,6 +146,39 @@ function M.device_uses_band(uci, band)
 	end)
 
 	return ret
+end
+
+function M.device_supports_band(uci, band)
+	local ret = false
+	M.foreach_radio(uci, function(radio)
+		local hwmodes = iwinfo.nl80211.hwmodelist(M.find_phy(radio))
+
+		if band == '2g' and hwmodes.g then
+			ret = true
+		elseif band == '5g' and (hwmodes.a or hwmodes.ac) then
+			ret = true
+		elseif band == '6g' and (hwmodes.ax and not hwmodes.ac and not hwmodes.g) then
+			ret = true
+		end
+	end)
+	return ret
+end
+
+function M.radio_roles(uci, radio)
+	local band = radio.band
+	local radio_name = radio['.name']
+	local radio_roles = uci:get_list('gluon', radio_name, 'role')
+
+	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	if next(radio_roles) == nil then
+		return roles
+	else
+		return radio_roles
+	end
+end
+
+function M.radio_hop_penalty(uci, radio)
+	return uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
 end
 
 return M
