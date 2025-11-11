@@ -287,6 +287,9 @@ mesh_vpn
   nodes via public respondd data. If this is of no concern in your threat model,
   this behaviour can be disabled (and thus announcing the public key be enabled) by
   setting `pubkey_privacy` to `false`.
+  As *WireGuard* is *identity hiding*, there is no need to omit the public key from
+  respondd data to prevent such correlation.
+  As such the setting is obsolete for *WireGuard*.
 
   The `fastd` section configures settings specific to the *fastd* VPN
   implementation.

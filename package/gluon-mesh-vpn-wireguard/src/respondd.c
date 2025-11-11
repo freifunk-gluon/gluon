@@ -93,37 +93,13 @@ disabled_nofree:
 	return enabled;
 }
 
-static bool get_pubkey_privacy(void) {
-	bool ret = true;
-	struct json_object *site = NULL;
-
-	site = gluonutil_load_site_config();
-	if (!site)
-		goto end;
-
-	struct json_object *mesh_vpn;
-	if (!json_object_object_get_ex(site, "mesh_vpn", &mesh_vpn))
-		goto end;
-
-	struct json_object *pubkey_privacy;
-	if (!json_object_object_get_ex(mesh_vpn, "pubkey_privacy", &pubkey_privacy))
-		goto end;
-
-	ret = json_object_get_boolean(pubkey_privacy);
-
-end:
-	json_object_put(site);
-
-	return ret;
-}
-
 static struct json_object * get_wireguard(void) {
 	bool wg_enabled = wireguard_enabled();
 
 	struct json_object *ret = json_object_new_object();
 	json_object_object_add(ret, "version", get_wireguard_version());
 	json_object_object_add(ret, "enabled", json_object_new_boolean(wg_enabled));
-	if (wg_enabled && !get_pubkey_privacy())
+	if (wg_enabled)
 		json_object_object_add(ret, "public_key", get_wireguard_public_key());
 	return ret;
 }

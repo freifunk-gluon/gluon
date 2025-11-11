@@ -67,6 +67,10 @@ elseif platform.match('ipq40xx', 'generic', {
 	'avm,fritzbox-7530',
 }) then
 	lan_ifname, wan_ifname = 'lan2 lan3 lan4', 'lan1'
+elseif platform.match('ipq40xx', 'generic', {
+	'linksys,whw01',
+}) then
+	lan_ifname, wan_ifname = 'eth2', 'eth1'
 elseif platform.match('ipq806x', 'generic', {
 	'ubnt,unifi-ac-hd',
 }) then

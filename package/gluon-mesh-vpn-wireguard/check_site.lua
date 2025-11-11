@@ -8,3 +8,5 @@ end
 
 need_table({'mesh_vpn', 'wireguard', 'peers'}, check_peer)
 need_number({'mesh_vpn', 'wireguard', 'mtu'})
+obsolete({'mesh_vpn', 'pubkey_privacy'},
+'WireGuard inherently doesn\'t leak the pubkey to third parties upon initiating connections.')

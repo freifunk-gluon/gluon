@@ -28,6 +28,7 @@ ath79-generic
 
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G300NH (rtl8366s)
+  - WZR-HP-G450H / WZR-450HP
 
 * COMFAST
 
@@ -241,11 +242,17 @@ ipq40xx-generic
 * Linksys
 
   - EA6350 (v3)
+  - MR8300
+  - VLP01
+  - WHW01
+  - WHW03 (v1,v2)
 
 * NETGEAR
 
   - EX6100 (v2)
   - EX6150 (v2)
+  - SRR60
+  - SRS60
 
 * OpenMesh
 
@@ -419,6 +426,13 @@ mpc85xx-p1020
 
   - Panda
 
+qualcommax-ipq807x
+------------------
+
+* Xiaomi
+
+  - Mi AIoT Router AX3600
+
 ramips-mt7620
 -------------
 
@@ -556,7 +570,7 @@ ramips-mt76x8
 * TP-Link
 
   - Archer C20 (v4, v5)
-  - Archer C50 (v3, v4)
+  - Archer C50 (v3, v4, v6 CA/EU/RU)
   - RE200 (v2, v3, v4)
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)

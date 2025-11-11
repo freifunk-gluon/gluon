@@ -44,4 +44,19 @@ function M.get_active_provider()
 	return nil, nil
 end
 
+function M.get_enabled_public_key()
+	if M.enabled() ~= true or uci:get_bool('gluon', 'mesh_vpn', 'pubkey_privacy') ~= true then
+		return nil
+	end
+
+	local _, active_vpn = M.get_active_provider()
+
+	local pubkey
+	if active_vpn ~= nil then
+		pubkey = active_vpn.public_key()
+	end
+
+	return pubkey
+end
+
 return M

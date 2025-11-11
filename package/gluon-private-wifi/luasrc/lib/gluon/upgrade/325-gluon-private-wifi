@@ -2,22 +2,46 @@
 
 local uci = require("simple-uci").cursor()
 local wireless = require 'gluon.wireless'
+local util = require 'gluon.util'
 
-wireless.foreach_radio(uci, function(radio)
+local function configure_private_wifi(radio, index)
 	local radio_name = radio['.name']
 	local suffix = radio_name:match('^radio(%d+)$')
 	local name   = "wan_" .. radio_name
 
-	if not uci:get('wireless', name, 'device') then
+	if not suffix then
 		return
 	end
 
-	uci:set('wireless', name, 'ifname', suffix and 'wl-wan' .. suffix)
+	local encryption = uci:get('gluon', 'wireless', 'private_encryption')
+	local ssid = uci:get('gluon', 'wireless', 'private_ssid')
+	local key = uci:get('gluon', 'wireless', 'private_key')
+	local mfp = wireless.device_supports_mfp(uci) and uci:get('gluon', 'wireless', 'private_mfp')
 
-	-- migrate encryption from Gluon v2023.2.x or older
-	-- remove in 2027 or on first release supporting only upgrades from >=v2025.1.x
-	local encryption = uci:get('wireless', name, 'encryption')
-	uci:set('wireless', name, 'encryption', encryption:gsub("psk3", "sae"))
+	local macaddr = wireless.get_wlan_mac('wan_radio', index, radio)
+	uci:section('wireless', 'wifi-iface', name, {
+		device     = radio_name,
+		network    = 'wan',
+		mode       = 'ap',
+		encryption = encryption,
+		ssid       = ssid,
+		key        = key,
+		macaddr    = macaddr,
+		ifname     = 'wl-wan' .. suffix,
+	})
+
+	-- hostapd-mini won't start in case 802.11w is configured
+	if mfp then
+		uci:set('wireless', name, 'ieee80211w', mfp)
+	end
+end
+
+wireless.foreach_radio(uci, function(radio, index)
+	local roles = uci:get_list('gluon', 'band_' .. radio.band, 'role')
+
+	if util.contains(roles, 'private') then
+		configure_private_wifi(radio, index)
+	end
 end)
 
 uci:save('wireless')

@@ -4,6 +4,7 @@
 	local unistd = require 'posix.unistd'
 	local util = require 'gluon.util'
 	local wireless = require 'gluon.wireless'
+	local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
 
 	local uci = require('simple-uci').cursor()
 
@@ -32,6 +33,11 @@
 	end
 
 	local mesh = get_mesh()
+
+	local vpn_pubkey
+	if has_vpn then
+		vpn_pubkey = vpn.get_enabled_public_key()
+	end
 
 	local function get_interfaces(uconn)
 		local interfaces = util.get_mesh_devices(uconn)
@@ -163,6 +169,9 @@
 							<%| enabled(nodeinfo.network.mesh_vpn.enabled) %>
 							<% if nodeinfo.network.mesh_vpn.provider then -%>
 							<br><%| nodeinfo.network.mesh_vpn.provider %>
+							<%- end %>
+							<% if vpn_pubkey then -%>
+							<br><%| vpn_pubkey %> (public key)
 							<%- end %>
 						</dd>
 						<% if nodeinfo.network.mesh_vpn.bandwidth_limit.enabled then -%>

@@ -7,3 +7,11 @@ io.write("-i local-node -p " .. site.prefix6())
 if site.dns.servers() and site.next_node.ip6() then
 	io.write(" --rdnss " .. site.next_node.ip6())
 end
+if site.radvd() then
+	if site.radvd.preferred_lifetime() then
+		io.write(" --preferred-lifetime " .. site.radvd.preferred_lifetime())
+	end
+	if site.radvd.valid_lifetime() then
+		io.write(" --valid-lifetime " .. site.radvd.valid_lifetime())
+	end
+end

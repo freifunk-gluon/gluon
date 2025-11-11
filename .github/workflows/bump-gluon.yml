@@ -17,7 +17,7 @@ jobs:
       COMMIT_EMAIL: bot@freifunk-gluon.github.io
     steps:
       - name: Clone Gluon
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.event.inputs.branch }}
       
