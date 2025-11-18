@@ -26,7 +26,7 @@ start_service() {
 	procd_set_param env LD_PRELOAD=libpacketmark.so LIBPACKETMARK_MARK=1
 	procd_set_param respawn 60 5 5
 
-	procd_add_jail dnsmasq log
+	procd_add_jail gluon-wan-dnsmasq log
 	procd_add_jail_mount $RESOLV_CONF_DIR
 	procd_add_jail_mount /usr/lib/libpacketmark.so
 	procd_add_jail_mount /etc/passwd /etc/group /etc/TZ
