@@ -22,6 +22,7 @@ start_service() {
 		--keep-in-foreground \
 		--pid-file=/var/run/dnsmasq/gluon-wan-dnsmasq.pid \
 		--cache-size=0 \
+		--enable-ubus=gluon-wan-dnsmasq \
 		--resolv-file="$RESOLV_CONF"
 	procd_set_param env LD_PRELOAD=libpacketmark.so LIBPACKETMARK_MARK=1
 	procd_set_param respawn 60 5 5
