@@ -142,6 +142,16 @@ device('netgear-ex6150v2', 'netgear_ex6150v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-rbr50', 'netgear_rbr50', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-rbs50', 'netgear_rbs50', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
 device('netgear-srr60', 'netgear_srr60', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
