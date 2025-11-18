@@ -21,14 +21,14 @@ device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
 device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
 	factory = false,
 	extra_images = {
-		{'-squashfs-recovery', '-recovery', '.bin'}
+		{ '-squashfs-recovery', '-recovery', '.bin' }
 	},
 })
 
 device('d-link-aquila-pro-ai-m60-a1', 'dlink_aquila-pro-ai-m60-a1', {
 	factory = false,
 	extra_images = {
-		{'-squashfs-recovery', '-recovery', '.bin'}
+		{ '-squashfs-recovery', '-recovery', '.bin' }
 	},
 })
 
@@ -69,7 +69,7 @@ device('netgear-wax220', 'netgear_wax220', {
 })
 
 -- OpenWRT
-device('openwrt-one', 'openwrt_one',{
+device('openwrt-one', 'openwrt_one', {
 	factory = '-factory',
 	factory_ext = '.ubi',
 	sysupgrade_ext = '.itb',
@@ -97,6 +97,10 @@ device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
 	factory = false,
 })
 
+device('xiaomi-mi-router-ax3000t-openwrt-u-boot-layout', 'xiaomi_mi-router-ax3000t-ubootmod', {
+	factory = false,
+	sysupgrade_ext = '.itb',
+})
 
 -- Zyxel
 
