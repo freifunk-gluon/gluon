@@ -1,33 +1,28 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
-local platform = require 'gluon.platform'
-
 
 local defaults = uci:get_first('firewall', 'defaults')
 uci:set('firewall', defaults, 'input', 'REJECT')
 
-
-local function reject_input_on_wan(zone)
-	if zone.name == 'wan' then
-		uci:set('firewall', zone['.name'], 'input', 'REJECT')
-		uci:set('firewall', zone['.name'], 'conntrack', true)
+local function configure_wan(zone)
+	if zone.name ~= 'wan' then
+		return
 	end
+
+	uci:set('firewall', zone['.name'], 'input', 'REJECT')
+	uci:set('firewall', zone['.name'], 'conntrack', true)
+
+	uci:set('firewall', zone['.name'], 'network', {
+		'wan',
+		'wan6',
+		'cellular_4',
+		'cellular_6',
+	})
 
 	return true
 end
-
-local function add_cellular_wan(zone)
-	if zone.name == 'wan' then
-		uci:set('firewall', zone['.name'], 'network', {'wan', 'wan6', 'cellular_4', 'cellular_6'})
-	end
-end
-
-uci:foreach('firewall', 'zone', reject_input_on_wan)
-
-if platform.is_cellular_device() then
-	uci:foreach('firewall', 'zone', add_cellular_wan)
-end
+uci:foreach('firewall', 'zone', configure_wan)
 
 for _, zone in ipairs({'mesh', 'loc_client', 'wired_mesh'}) do
 	-- Other packages assign interfaces to these zones
