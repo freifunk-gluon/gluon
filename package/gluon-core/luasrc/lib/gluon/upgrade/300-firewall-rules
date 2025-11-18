@@ -16,6 +16,7 @@ local function configure_wan(zone)
 	uci:set('firewall', zone['.name'], 'network', {
 		'wan',
 		'wan6',
+		'cellular',
 		'cellular_4',
 		'cellular_6',
 	})
