@@ -322,6 +322,10 @@ lantiq-xway
 mediatek-filogic
 ----------------
 
+* Acer
+
+  - Vero-W6M
+
 * ASUS
 
   - RT-AX52
