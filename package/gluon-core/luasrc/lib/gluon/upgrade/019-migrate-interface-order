@@ -1,0 +1,112 @@
+#!/usr/bin/lua
+
+local platform = require 'gluon.platform'
+local sysconfig = require 'gluon.sysconfig'
+
+local libgen = require 'posix.libgen'
+local unistd = require 'posix.unistd'
+local uci = require('simple-uci').cursor()
+
+if not platform.match('x86') then
+	return
+end
+
+if sysconfig.migrated_interface_order then
+	return
+end
+sysconfig.migrated_interface_order = ''
+
+local lan_roles = uci:get_list('gluon', 'iface_lan', 'role')
+local wan_roles = uci:get_list('gluon', 'iface_wan', 'role')
+
+if #lan_roles == 0 and #wan_roles == 0 then
+	return
+end
+
+local lan_ifname = sysconfig.lan_ifname
+local wan_ifname = sysconfig.wan_ifname
+
+local function is_default(ifname)
+	return ifname == 'eth0' or ifname == 'eth1'
+end
+
+if not is_default(lan_ifname) or not is_default(wan_ifname) then
+	return
+end
+
+-- v2023.2.x load order (/proc/modules) - Ethernet drivers only
+-- (x86-64; should be accurate enough for x64-generic as well)
+-- Does not account for site-specific driver additions
+local prev_load_order = {
+	'tg3',
+	'igb',
+	'fsl_mph_dr_of',
+	'ena',
+	'natsemi',
+	'amd_xgbe',
+	'e1000',
+	'ixgbe',
+	'3c59x',
+	'8139cp',
+	'8139too',
+	'8390',
+	'bnx2',
+	'e100',
+	'e1000e',
+	'forcedeth',
+	'igc',
+	'ne2k_pci',
+	'pcnet32',
+	'r8169',
+	'sis900',
+	'sky2',
+	'tulip',
+	'via_rhine',
+	'via_velocity',
+}
+
+local prev_load_index = {}
+for index, driver in ipairs(prev_load_order) do
+	prev_load_index[driver] = index
+end
+
+local function get_prev_driver_index(ifname)
+	local path = '/sys/class/net/' .. ifname .. '/device/driver'
+	local driver_path = unistd.readlink(path)
+	if not driver_path then
+		return 0
+	end
+	local driver = libgen.basename(driver_path)
+	local order = prev_load_index[driver]
+	if not order then
+		return 0
+	end
+	return order
+end
+
+-- If the drivers would be loaded in the inverse order in previous Gluon
+-- versions (eth1 had a smaller load index than eth0), switch the roles
+if get_prev_driver_index('eth0') <= get_prev_driver_index('eth1') then
+	return
+end
+
+print('Switching LAN and WAN roles after module load order change')
+
+uci:set('gluon', 'iface_lan', 'role', wan_roles)
+uci:set('gluon', 'iface_wan', 'role', lan_roles)
+
+-- Migrate VLAN interfaces
+uci:foreach('gluon', 'interface', function(interface)
+	local base, suffix = string.match(interface.name, '^(eth[01])(%..*)$')
+	if base == 'eth0' then
+		base = 'eth1'
+	elseif base == 'eth1' then
+		base = 'eth0'
+	else
+		return
+	end
+
+	uci:set('gluon', interface['.name'], 'name', base .. suffix)
+end)
+
+uci:save('gluon')
