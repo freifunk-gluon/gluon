@@ -36,6 +36,9 @@ init_links := \
 define Package/gluon-setup-mode/install
 	$(Gluon/Build/Install)
 
+	$(INSTALL_DIR) $(1)/lib/gluon/setup-mode
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wait-network-request $(1)/lib/gluon/setup-mode
+
 	$(LN) S20network $(1)/lib/gluon/setup-mode/rc.d/K90network
 
 	for link in $(init_links); do \
