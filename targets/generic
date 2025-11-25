@@ -86,7 +86,6 @@ try_config('OONF_GENERIC_HTTP', true)
 config('COLLECT_KERNEL_DEBUG', true)
 
 config('BUSYBOX_CUSTOM', true)
-config('BUSYBOX_CONFIG_NSENTER', true)
 config('BUSYBOX_CONFIG_UNSHARE', true)
 
 config('TARGET_MULTI_PROFILE', true)
