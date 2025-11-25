@@ -1,7 +1,1 @@
-#!/bin/sh /etc/rc.common
-
-# shellcheck disable=SC1091
-
-if [ -x /etc/init.d/urngd ] && /etc/init.d/urngd enabled; then
-	. /etc/init.d/urngd
-fi
+../init.d/urngd
