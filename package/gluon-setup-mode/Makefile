@@ -36,10 +36,9 @@ init_links := \
 define Package/gluon-setup-mode/install
 	$(Gluon/Build/Install)
 
-	$(LN) S20network $(1)/lib/gluon/setup-mode/rc.d/K90network
-
 	for link in $(init_links); do \
-		$(LN) "/etc/init.d/$$$${link:3}" "$(1)/lib/gluon/setup-mode/rc.d/$$$${link}"; \
+		$(LN) "/etc/init.d/$$$${link:3}" "$(1)/lib/gluon/setup-mode/init.d/$$$${link:3}"; \
+		$(LN) "../init.d/$$$${link:3}" "$(1)/lib/gluon/setup-mode/rc.d/$$$${link}"; \
 	done
 
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ash-wrapper $(1)/lib/gluon/setup-mode/dropbear/ash
