@@ -1,8 +1,17 @@
 #!/bin/sh
 
+LIMIT=""
+
 if [ "${ACTION}" = 'add' ]; then
 	RAM=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-	if [ "$RAM" -le $((32*1024)) ]; then
-		echo 'fq_memory_limit 262144' > "/sys/kernel/debug/ieee80211/$DEVICENAME/aqm"
+	if [ "$RAM" -le $((64*1024)) ]; then
+		LIMIT=524288
+	elif [ "$RAM" -le $((128*1024)) ]; then
+		LIMIT=2097152
+	fi
+
+	if [ -n "$LIMIT" ]; then
+		echo "fq_memory_limit $LIMIT" > "/sys/kernel/debug/ieee80211/$DEVICENAME/aqm"
+		iw phy "$DEVICENAME" set txq memory_limit $LIMIT
 	fi
 fi
