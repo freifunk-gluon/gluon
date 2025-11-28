@@ -145,4 +145,26 @@ function M.device_uses_band(uci, band)
 	return ret
 end
 
+function M.device_supports_band(uci, band)
+	local ret = false
+	M.foreach_radio(uci, function(radio)
+		local hwmodes = iwinfo.nl80211.hwmodelist(M.find_phy(radio))
+
+		if band == '2g' and hwmodes.g then
+			ret = true
+		elseif band == '5g' and (hwmodes.a or hwmodes.ac) then
+			ret = true
+		end
+	end)
+	return ret
+end
+
+function M.radio_roles(uci, radio)
+	return uci:get_list('gluon', 'band_' .. radio.band, 'role')
+end
+
+function M.radio_option(uci, radio, option, default)
+	return uci:get('gluon', 'band_' .. radio.band, option) or default
+end
+
 return M
