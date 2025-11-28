@@ -76,21 +76,21 @@ local function get_htmode(radio)
 		return htmode
 	end
 
-	local bandwidth
+	local channel_width = 20
 
 	if radio.band == '2g' then
-		bandwidth = site.wifi24.bandwidth('20')
+		channel_width = site.wifi24.channel_width(20)
 	elseif radio.band == '5g' then
-		bandwidth = site.wifi5.bandwidth('20')
+		channel_width = site.wifi5.channel_width(20)
 	end
 
 	local phy = wireless.find_phy(radio)
 	if iwinfo.nl80211.hwmodelist(phy).ax then
-		htmode = 'HE' .. bandwidth
+		htmode = 'HE' .. channel_width
 	elseif iwinfo.nl80211.hwmodelist(phy).ac then
-		htmode = 'VHT' .. bandwidth
+		htmode = 'VHT' .. channel_width
 	else
-		htmode = 'HT' .. bandwidth
+		htmode = 'HT' .. channel_width
 	end
 
 	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
@@ -123,7 +123,7 @@ local function configure_mesh(radio, index, mesh_config)
 
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
-		hop_penalty = wireless.radio_hop_penalty(uci, radio)
+		hop_penalty = wireless.radio_option(uci, radio, 'batadv_hop_penalty')
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {

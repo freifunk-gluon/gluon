@@ -160,20 +160,11 @@ function M.device_supports_band(uci, band)
 end
 
 function M.radio_roles(uci, radio)
-	local band = radio.band
-	local radio_name = radio['.name']
-	local radio_roles = uci:get_list('gluon', radio_name, 'role')
-
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
-	if next(radio_roles) == nil then
-		return roles
-	else
-		return radio_roles
-	end
+	return uci:get_list('gluon', 'band_' .. radio.band, 'role')
 end
 
-function M.radio_hop_penalty(uci, radio)
-	return uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
+function M.radio_option(uci, radio, option, default)
+	return uci:get('gluon', 'band_' .. radio.band, option) or default
 end
 
 return M
