@@ -43,4 +43,9 @@ function M.mtu()
 	return site.mesh_vpn.wireguard.mtu()
 end
 
+function M.pubkey_privacy()
+	-- WireGuard inherently doesn't leak the pubkey to third parties upon initiating connections.
+	return false
+end
+
 return M
