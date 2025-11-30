@@ -1,5 +1,6 @@
 local uci = require('simple-uci').cursor()
 
+local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local M = {}
@@ -45,7 +46,7 @@ function M.get_active_provider()
 end
 
 function M.get_enabled_public_key()
-	if M.enabled() ~= true or uci:get_bool('gluon', 'mesh_vpn', 'pubkey_privacy') ~= true then
+	if M.enabled() ~= true then
 		return nil
 	end
 
@@ -53,7 +54,17 @@ function M.get_enabled_public_key()
 
 	local pubkey
 	if active_vpn ~= nil then
-		pubkey = active_vpn.public_key()
+		active_vpn.public_key()
+
+		local privacy_disabled
+		if active_vpn.pubkey_privacy then
+			privacy_disabled = not active_vpn.pubkey_privacy()
+		else
+			privacy_disabled = site.mesh_vpn.pubkey_privacy ~= false
+		end
+		if privacy_disabled then
+			pubkey = active_vpn.public_key()
+		end
 	end
 
 	return pubkey
