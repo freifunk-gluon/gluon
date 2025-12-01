@@ -17,7 +17,7 @@ jobs:
     name: docs
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: sudo pip3 install -r docs/requirements.txt
       - name: Build documentation

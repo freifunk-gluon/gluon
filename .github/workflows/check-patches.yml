@@ -20,7 +20,7 @@ jobs:
     name: Check patches
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Refresh patches
         run: make refresh-patches GLUON_SITEDIR="contrib/ci/minimal-site"
       - name: Show diff

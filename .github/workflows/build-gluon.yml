@@ -25,7 +25,7 @@ jobs:
     outputs:
       targets: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Filter targets based on changed files
       - uses: dorny/paths-filter@v3
@@ -43,7 +43,7 @@ jobs:
         target: ${{ fromJSON(needs.changed.outputs.targets) }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Show system information
         run: contrib/actions/show-system-info.sh
