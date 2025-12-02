@@ -1,0 +1,336 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 2 Dec 2025 01:25:42 +0100
+Subject: mt7915: detect and purge stuck PLE queues
+
+When stations leave the area of service while there are transmissions
+pending inside the hardware, these queues can become stuck.
+
+This results in missing TXRX free / TXS events to the host. Also the
+throughput of other connected stations substantially decreases and
+latency massively increases.
+
+Periodically poll the queue state of connected station from hardware and
+purge queues detected as stuck.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/200-mt7915-detect-and-purge-stuck-PLE-queues.patch b/package/kernel/mt76/patches/200-mt7915-detect-and-purge-stuck-PLE-queues.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9b35e64c83641a08c36d042c296afa05fa111cf2
+--- /dev/null
++++ b/package/kernel/mt76/patches/200-mt7915-detect-and-purge-stuck-PLE-queues.patch
+@@ -0,0 +1,314 @@
++From e3706f4706c7388c96011883062bf1d362f6b208 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 15 Nov 2025 14:36:38 +0100
++Subject: [PATCH] mt7915: detect and purge stuck PLE queues
++
++When stations leave the area of service while there are transmissions
++pending inside the hardware, these queues can become stuck.
++
++This results in missing TXRX free / TXS events to the host. Also the
++throughput of other connected stations substantially decreases and
++latency massively increases.
++
++Periodically poll the queue state of connected station from hardware and
++purge queues detected as stuck.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ mt7915/debugfs.c |   2 +
++ mt7915/init.c    |   1 +
++ mt7915/mac.c     | 118 +++++++++++++++++++++++++++++++++++++++++++++++
++ mt7915/mmio.c    |   4 ++
++ mt7915/mt7915.h  |  15 ++++++
++ mt7915/regs.h    |  22 +++++++++
++ 6 files changed, 162 insertions(+)
++
++diff --git a/mt7915/debugfs.c b/mt7915/debugfs.c
++index b287b7d9..380b35c8 100644
++--- a/mt7915/debugfs.c
+++++ b/mt7915/debugfs.c
++@@ -860,9 +860,11 @@ mt7915_sta_hw_queue_read(void *data, struct ieee80211_sta *sta)
++ 		if (val & BIT(offs))
++ 			continue;
++ 
+++		mutex_lock(&dev->qctrl_mutex);
++ 		mt76_wr(dev, MT_FL_Q0_CTRL, ctrl | msta->wcid.idx);
++ 		qlen = mt76_get_field(dev, MT_FL_Q3_CTRL,
++ 				      GENMASK(11, 0));
+++		mutex_unlock(&dev->qctrl_mutex);
++ 		seq_printf(s, "\tSTA %pM wcid %d: AC%d%d queued:%d\n",
++ 			   sta->addr, msta->wcid.idx,
++ 			   msta->vif->mt76.wmm_idx, ac, qlen);
++diff --git a/mt7915/init.c b/mt7915/init.c
++index 3eae4b9c..80c60693 100644
++--- a/mt7915/init.c
+++++ b/mt7915/init.c
++@@ -1230,6 +1230,7 @@ int mt7915_register_device(struct mt7915_dev *dev)
++ 	INIT_WORK(&dev->reset_work, mt7915_mac_reset_work);
++ 	INIT_WORK(&dev->dump_work, mt7915_mac_dump_work);
++ 	mutex_init(&dev->dump_mutex);
+++	mutex_init(&dev->qctrl_mutex);
++ 
++ 	dev->dbdc_support = mt7915_band_config(dev);
++ 
++diff --git a/mt7915/mac.c b/mt7915/mac.c
++index 1c0d3101..0dc9e25e 100644
++--- a/mt7915/mac.c
+++++ b/mt7915/mac.c
++@@ -1994,10 +1994,116 @@ void mt7915_mac_sta_rc_work(struct work_struct *work)
++ 	spin_unlock_bh(&dev->mt76.sta_poll_lock);
++ }
++ 
+++static void
+++mt7915_sta_read_hw_queue(struct ieee80211_sta *sta,
+++			 u8 ac, u16 *head, u16 *tail, u16 *qlen)
+++{
+++	struct mt7915_sta *msta = (struct mt7915_sta *)sta->drv_priv;
+++	struct mt7915_dev *dev = msta->vif->phy->dev;
+++	u32 q0_ctrl, q2_ctrl, q3_ctrl;
+++
+++	q0_ctrl = MT_FL_Q0_CTRL_EXECUTE | BIT(11) | FIELD_PREP(MT_FL_Q0_CTRL_SRC_QID, ac);
+++
+++	mutex_lock(&dev->qctrl_mutex);
+++	mt76_wr(dev, MT_FL_Q0_CTRL, q0_ctrl | msta->wcid.idx);
+++	q2_ctrl = mt76_rr(dev, MT_FL_Q2_CTRL);
+++	q3_ctrl = mt76_rr(dev, MT_FL_Q3_CTRL);
+++	mutex_unlock(&dev->qctrl_mutex);
+++
+++	*head = FIELD_GET(MT_FL_Q2_CTRL_HFID, q2_ctrl);
+++	*tail = FIELD_GET(MT_FL_Q2_CTRL_TFID, q2_ctrl);
+++	*qlen = FIELD_GET(MT_FL_Q3_CTRL_PKT_NUM, q3_ctrl);
+++}
+++
+++static void mt7915_purge_ac(struct ieee80211_sta *sta, int ac, int fid_start, int fid_end)
+++{
+++	struct mt7915_sta *msta = (struct mt7915_sta *)sta->drv_priv;
+++	struct mt7915_dev *dev = msta->vif->phy->dev;
+++	u32 deq_ctrl[3];
+++
+++	deq_ctrl[0] = MT_PLE_DEQ_0_EXECUTE | BIT(11);
+++	deq_ctrl[0] |= FIELD_PREP(MT_PLE_DEQ_0_DEQ_SRC_WCID, msta->wcid.idx);
+++	deq_ctrl[0] |= FIELD_PREP(MT_PLE_DEQ_0_SRC_QID, ac);
+++	deq_ctrl[0] |= FIELD_PREP(MT_PLE_DEQ_0_DEQ_SUB_TYPE, 0x2);
+++	deq_ctrl[0] |= FIELD_PREP(MT_PLE_DEQ_0_ENQ_SUB_TYPE, 0x1);
+++	deq_ctrl[0] |= MT_PLE_DEQ_0_ENQ_VALID;
+++
+++	deq_ctrl[1] = FIELD_PREP(MT_PLE_DEQ_1_FID_START, fid_start);
+++	deq_ctrl[1] |= FIELD_PREP(MT_PLE_DEQ_1_FID_END, fid_end);
+++
+++	deq_ctrl[2] = FIELD_PREP(MT_PLE_DEQ_2_DST_QID, 0x1f);
+++
+++	mt76_wr(dev, MT_PLE_DEQ(1), deq_ctrl[1]);
+++	mt76_wr(dev, MT_PLE_DEQ(2), deq_ctrl[2]);
+++	mt76_wr(dev, MT_PLE_DEQ(0), deq_ctrl[0]);
+++}
+++
+++static int
+++mt7915_sta_purge_hw_queue(struct ieee80211_sta *sta, u8 ac)
+++{
+++	u16 head_frame_id, tail_frame_id, q_len;
+++	int i = MT7915_PLE_PURGE_MAX_ITER;
+++
+++	do {
+++		mt7915_sta_read_hw_queue(sta, ac, &head_frame_id,
+++					 &tail_frame_id, &q_len);
+++
+++		if (q_len == 0)
+++			break;
+++
+++		mt7915_purge_ac(sta, ac, head_frame_id, head_frame_id);
+++	} while (--i > 0);
+++
+++	return MT7915_PLE_PURGE_MAX_ITER - i;
+++}
+++
+++static void
+++mt7915_sta_check_hw_queues(void *data, struct ieee80211_sta *sta)
+++{
+++	struct mt7915_sta *msta = (struct mt7915_sta *)sta->drv_priv;
+++	struct mt7915_dev *dev = msta->vif->phy->dev;
+++	struct mt7915_hw_queue_state *hwq;
+++	bool *purged = data;
+++
+++	u16 head_frame_id, tail_frame_id, q_len;
+++	u32 q_empty;
+++	u8 ac;
+++
+++	for (ac = 0; ac < 4; ac++) {
+++		hwq = &msta->hwq_state[ac];
+++
+++		/* Check if STA has frames pending. */
+++		q_empty = mt76_rr(dev, MT_PLE_AC_QEMPTY(ac, msta->wcid.idx >> 5));
+++		if (q_empty & BIT(msta->wcid.idx & GENMASK(4, 0))) {
+++			/* Queue empty */
+++			hwq->head = 0xFFF;
+++			hwq->last_update = jiffies;
+++			continue;
+++		}
+++
+++		/* Check hardware queue state */
+++		mt7915_sta_read_hw_queue(sta, ac, &head_frame_id, &tail_frame_id, &q_len);
+++		if (hwq->head != head_frame_id) {
+++			/* Queue moved, update */
+++			hwq->last_update = jiffies;
+++			hwq->head = head_frame_id;
+++			continue;
+++		}
+++
+++		/* Begin purge after queue detected stuck for QUEUE_TIMEOUT */
+++		if (time_is_after_jiffies(hwq->last_update + MT7915_PLE_QUEUE_TIMEOUT))
+++			continue;
+++
+++		mt7915_sta_purge_hw_queue(sta, ac);
+++		*purged = true;
+++	}
+++}
+++
++ void mt7915_mac_work(struct work_struct *work)
++ {
++ 	struct mt7915_phy *phy;
++ 	struct mt76_phy *mphy;
+++	bool purged = false;
++ 
++ 	mphy = (struct mt76_phy *)container_of(work, struct mt76_phy,
++ 					       mac_work.work);
++@@ -2020,6 +2126,18 @@ void mt7915_mac_work(struct work_struct *work)
++ 
++ 	mt76_tx_status_check(mphy->dev, false);
++ 
+++	if (++phy->stuck_queue_check >= 5) {
+++		/* Lock MCU Lock to avoid command timeouts */
+++		mutex_lock(&mphy->dev->mcu.mutex);
+++		ieee80211_iterate_stations_atomic(mphy->hw,
+++						  mt7915_sta_check_hw_queues,
+++						  &purged);
+++		if (purged)
+++			usleep_range(10000, 15000);
+++		mutex_unlock(&mphy->dev->mcu.mutex);
+++		phy->stuck_queue_check = 0;
+++	}
+++
++ 	ieee80211_queue_delayed_work(mphy->hw, &mphy->mac_work,
++ 				     MT7915_WATCHDOG_TIME);
++ }
++diff --git a/mt7915/mmio.c b/mt7915/mmio.c
++index 36488aa6..94c060c4 100644
++--- a/mt7915/mmio.c
+++++ b/mt7915/mmio.c
++@@ -183,6 +183,8 @@ static const u32 mt7915_offs[] = {
++ 	[MIB_ARNG]		= 0x4b8,
++ 	[WTBLON_TOP_WDUCR]	= 0x0,
++ 	[WTBL_UPDATE]		= 0x030,
+++	[PLE_ENQ]		= 0x060,
+++	[PLE_DEQ]		= 0x080,
++ 	[PLE_FL_Q_EMPTY]	= 0x0b0,
++ 	[PLE_FL_Q_CTRL]		= 0x1b0,
++ 	[PLE_AC_QEMPTY]		= 0x500,
++@@ -258,6 +260,8 @@ static const u32 mt7916_offs[] = {
++ 	[MIB_ARNG]		= 0x0b0,
++ 	[WTBLON_TOP_WDUCR]	= 0x200,
++ 	[WTBL_UPDATE]		= 0x230,
+++	[PLE_ENQ]		= 0x320,
+++	[PLE_DEQ]		= 0x330,
++ 	[PLE_FL_Q_EMPTY]	= 0x360,
++ 	[PLE_FL_Q_CTRL]		= 0x3e0,
++ 	[PLE_AC_QEMPTY]		= 0x600,
++diff --git a/mt7915/mt7915.h b/mt7915/mt7915.h
++index 2e94347c..fd7b2604 100644
++--- a/mt7915/mt7915.h
+++++ b/mt7915/mt7915.h
++@@ -83,6 +83,9 @@
++ #define MT7915_CRIT_TEMP		110
++ #define MT7915_MAX_TEMP			120
++ 
+++#define MT7915_PLE_PURGE_MAX_ITER	64
+++#define MT7915_PLE_QUEUE_TIMEOUT	(HZ * 5)
+++
++ struct mt7915_vif;
++ struct mt7915_sta;
++ struct mt7915_dfs_pulse;
++@@ -131,6 +134,12 @@ struct mt7915_twt_flow {
++ 
++ DECLARE_EWMA(avg_signal, 10, 8)
++ 
+++struct mt7915_hw_queue_state {
+++	u32 head;
+++	u32 tail;
+++	unsigned long last_update;
+++};
+++
++ struct mt7915_sta {
++ 	struct mt76_wcid wcid; /* must be first */
++ 
++@@ -146,6 +155,8 @@ struct mt7915_sta {
++ 	unsigned long jiffies;
++ 	struct mt76_connac_sta_key_conf bip;
++ 
+++	struct mt7915_hw_queue_state hwq_state[4];
+++
++ 	struct {
++ 		u8 flowid_mask;
++ 		struct mt7915_twt_flow flow[MT7915_MAX_STA_TWT_AGRT];
++@@ -220,6 +231,8 @@ struct mt7915_phy {
++ 	u32 rx_ampdu_ts;
++ 	u32 ampdu_ref;
++ 
+++	u8 stuck_queue_check;
+++
++ 	struct mt76_mib_stats mib;
++ 	struct mt76_channel_state state_ts;
++ 
++@@ -284,6 +297,8 @@ struct mt7915_dev {
++ 	} coredump;
++ #endif
++ 
+++	struct mutex qctrl_mutex;
+++
++ 	struct list_head sta_rc_list;
++ 	struct list_head twt_list;
++ 	spinlock_t reg_lock;
++diff --git a/mt7915/regs.h b/mt7915/regs.h
++index c5ec63a2..5c682329 100644
++--- a/mt7915/regs.h
+++++ b/mt7915/regs.h
++@@ -111,6 +111,8 @@ enum offs_rev {
++ 	MIB_ARNG,
++ 	WTBLON_TOP_WDUCR,
++ 	WTBL_UPDATE,
+++	PLE_ENQ,
+++	PLE_DEQ,
++ 	PLE_FL_Q_EMPTY,
++ 	PLE_FL_Q_CTRL,
++ 	PLE_AC_QEMPTY,
++@@ -151,8 +153,28 @@ enum offs_rev {
++ 
++ #define MT_FL_Q_EMPTY			MT_PLE(__OFFS(PLE_FL_Q_EMPTY))
++ #define MT_FL_Q0_CTRL			MT_PLE(__OFFS(PLE_FL_Q_CTRL))
+++#define MT_FL_Q0_CTRL_EXECUTE		BIT(31)
+++#define MT_FL_Q0_CTRL_SRC_QID		GENMASK(30, 24)
++ #define MT_FL_Q2_CTRL			MT_PLE(__OFFS(PLE_FL_Q_CTRL) + 0x8)
+++#define MT_FL_Q2_CTRL_HFID		GENMASK(11, 0)
+++#define MT_FL_Q2_CTRL_TFID		GENMASK(27, 16)
++ #define MT_FL_Q3_CTRL			MT_PLE(__OFFS(PLE_FL_Q_CTRL) + 0xc)
+++#define MT_FL_Q3_CTRL_PKT_NUM		GENMASK(11, 0)
+++
+++#define MT_PLE_ENQ(idx)			MT_PLE(__OFFS(PLE_ENQ) + (idx * 4))
+++#define MT_PLE_DEQ(idx)			MT_PLE(__OFFS(PLE_DEQ) + (idx * 4))
+++#define MT_PLE_DEQ_0_EXECUTE		BIT(31)
+++#define MT_PLE_DEQ_0_SRC_QID		GENMASK(30, 24)
+++#define MT_PLE_DEQ_0_ENQ_VALID		BIT(23)
+++#define MT_PLE_DEQ_0_ENQ_SUB_TYPE	GENMASK(22, 20)
+++#define MT_PLE_DEQ_0_DEQ_SUB_TYPE	GENMASK(19, 16)
+++#define MT_PLE_DEQ_0_DEQ_SRC_WCID	GENMASK(9, 0)
+++#define MT_PLE_DEQ_1_FID_END		GENMASK(27, 16)
+++#define MT_PLE_DEQ_1_FID_START		GENMASK(11, 0)
+++#define MT_PLE_DEQ_2_DST_QID		GENMASK(30, 24)
+++#define MT_PLE_DEQ_3_TAIL_FID		GENMASK(27, 16)
+++#define MT_PLE_DEQ_3_EMPTY		BIT(15)
+++#define MT_PLE_DEQ_3_HEAD_FID		GENMASK(11, 0)
++ 
++ #define MT_PLE_FREEPG_CNT		MT_PLE(__OFFS(PLE_FREEPG_CNT))
++ #define MT_PLE_FREEPG_HEAD_TAIL		MT_PLE(__OFFS(PLE_FREEPG_HEAD_TAIL))
++-- 
++2.51.0
++
