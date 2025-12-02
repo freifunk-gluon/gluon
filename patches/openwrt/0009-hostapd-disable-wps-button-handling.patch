@@ -1,6 +1,7 @@
+From f009c202fa579bf0e0cf9484e11223f249f90f8f Mon Sep 17 00:00:00 2001
 From: David Bauer <mail@david-bauer.net>
 Date: Thu, 24 Jul 2025 20:25:22 +0200
-Subject: hostapd: disable wps button handling
+Subject: [PATCH] hostapd: disable wps button handling
 
 Pressing the WPS button when wpa-supplicant is installed for encrypted
 mesh operation triggers WPS in the wpa_supplicant process.
@@ -8,16 +9,23 @@ mesh operation triggers WPS in the wpa_supplicant process.
 This disables the wireless mesh completely.
 
 Signed-off-by: David Bauer <mail@david-bauer.net>
+---
+ package/network/config/wifi-scripts/files/etc/rc.button/wps | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/package/network/services/hostapd/files/wps-hotplug.sh b/package/network/services/hostapd/files/wps-hotplug.sh
-index 073bdd18687c53c4dd00065fbc6fab8da66410e9..104accc828c6baa520e146089a04fe1c25977424 100644
---- a/package/network/services/hostapd/files/wps-hotplug.sh
-+++ b/package/network/services/hostapd/files/wps-hotplug.sh
-@@ -1,5 +1,7 @@
+diff --git a/package/network/config/wifi-scripts/files/etc/rc.button/wps b/package/network/config/wifi-scripts/files/etc/rc.button/wps
+index 59b1aeff17..fa6e287bee 100755
+--- a/package/network/config/wifi-scripts/files/etc/rc.button/wps
++++ b/package/network/config/wifi-scripts/files/etc/rc.button/wps
+@@ -1,5 +1,8 @@
  #!/bin/sh
- 
+ [ "$ACTION" = "pressed" ] && exit 5
++
 +exit 0
 +
- wps_catch_credentials() {
- 	local iface ifaces ifc ifname ssid encryption key radio radios
- 	local found=0
+ for script in /etc/rc.wps/*; do
+ 	[ -x "$script" ] || continue
+ 	"$script" && break
+-- 
+2.51.0
+
