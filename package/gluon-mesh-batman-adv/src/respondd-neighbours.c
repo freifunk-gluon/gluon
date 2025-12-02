@@ -114,7 +114,7 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 
 	json_object_object_add(obj, "tq", json_object_new_int(tq));
 	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
-	json_object_object_add(obj, "best", json_object_new_boolean(!!attrs[BATADV_ATTR_FLAG_BEST]));
+	json_object_object_add(obj, "best", json_object_new_boolean(nla_get_flag(attrs[BATADV_ATTR_FLAG_BEST])));
 	json_object_object_add(interface, mac1, obj);
 
 	return NL_OK;
