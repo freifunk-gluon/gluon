@@ -92,6 +92,11 @@ config('BUSYBOX_CONFIG_UNSHARE', true)
 config('TARGET_MULTI_PROFILE', true)
 config('TARGET_PER_DEVICE_ROOTFS', true)
 
+config('IMAGEOPT', true)
+config('TARGET_BUTTON_CUSTOMIZATION', true)
+config('TARGET_BUTTON_CUSTOMIZATION_RESET_DISABLED', true)
+try_config('WIFI_SCRIPTS_WPS_BUTTON_DISABLED', true)
+
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
 try_config('GRUB_TITLE', 'Gluon')
