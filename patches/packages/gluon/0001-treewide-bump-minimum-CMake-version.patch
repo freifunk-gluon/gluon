@@ -1,0 +1,62 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 2 Dec 2025 13:49:03 +0100
+Subject: treewide: bump minimum CMake version
+
+CMake 4 dropped support for CMakeList files with a minimum version less
+than 3.5.
+
+Update all CMakeList files to target version 3.20 in order to build
+Gluon next.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/admin/autoupdater/src/CMakeLists.txt b/admin/autoupdater/src/CMakeLists.txt
+index 44992e9f294c8afa8cbfc5f2c1b20074509f356e..de75957fb40ed357b74367b1dd44bfa2ff4fc96c 100644
+--- a/admin/autoupdater/src/CMakeLists.txt
++++ b/admin/autoupdater/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.8)
++cmake_minimum_required(VERSION 3.20)
+ 
+ project(AUTOUPDATER C)
+ 
+diff --git a/libs/libplatforminfo/src/CMakeLists.txt b/libs/libplatforminfo/src/CMakeLists.txt
+index 2d0974bb775695600ea1be114a1ab648682e106c..812b8ecaa7c075abfad0c4399d61276e313e299e 100644
+--- a/libs/libplatforminfo/src/CMakeLists.txt
++++ b/libs/libplatforminfo/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.20)
+ project(LIBPLATFORMINFO C)
+ 
+ set(LIBDIR "lib${LIB_SUFFIX}")
+diff --git a/libs/lua-jsonc/src/CMakeLists.txt b/libs/lua-jsonc/src/CMakeLists.txt
+index 93090a50e09301e6c447823420245067d4ce6c84..e0fee214de028abe4597a188b14b6e732b20e831 100644
+--- a/libs/lua-jsonc/src/CMakeLists.txt
++++ b/libs/lua-jsonc/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.20)
+ 
+ project(lua-jsonc C)
+ 
+diff --git a/net/respondd/src/CMakeLists.txt b/net/respondd/src/CMakeLists.txt
+index 21cb756411171df242d7883bc4d54cbf10ab2d18..0425a20ce7b2c5849815df79c241329c95bef057 100644
+--- a/net/respondd/src/CMakeLists.txt
++++ b/net/respondd/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.20)
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+diff --git a/net/sse-multiplex/src/CMakeLists.txt b/net/sse-multiplex/src/CMakeLists.txt
+index 3e83212a33beb01c8ba93f68ae2d263c0ee37ddf..d3894289f40f2246339121edf89f5e2fbd60dc72 100644
+--- a/net/sse-multiplex/src/CMakeLists.txt
++++ b/net/sse-multiplex/src/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.20)
+ 
+ project(sse-multiplex C)
+ 
