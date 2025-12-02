@@ -8,7 +8,6 @@ df -h
 
 # Remove packages not required to run the Gluon build CI
 sudo apt-get -y remove \
-	dotnet-* \
 	firefox \
 	google-chrome-stable \
 	kubectl \
@@ -17,6 +16,9 @@ sudo apt-get -y remove \
 
 # Remove Android SDK tools
 sudo rm -rf /usr/local/lib/android
+
+# Remove .NET
+sudo rm -rf /usr/share/dotnet
 
 echo "Disk space after cleanup"
 df -h
