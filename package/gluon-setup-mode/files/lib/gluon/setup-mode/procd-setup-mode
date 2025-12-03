@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# We need the 'exec sh' here because this script will be mounted over /sbin/procd,
+# and we can't umount it while it is still running.
+
+exec sh -ec 'umount /sbin/procd && \
+	exec /sbin/procd \
+	-I /lib/gluon/setup-mode/init.d \
+	-R /lib/gluon/setup-mode/rc.d \
+	"$@"' - "$@"
