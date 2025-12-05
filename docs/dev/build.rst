@@ -95,7 +95,7 @@ getversion.sh
     */lib/gluon/gluon-version* and */lib/gluon/site-version*.
 
     By default, this uses ``git describe`` to generate a version number based
-    on the last git tag. This can be overridden by putting a file called
+    on the last annotated git tag. This can be overridden by putting a file called
     *.scmversion* into the root of the respective repositories.
 
     A command like ``rm -f .scmversion; echo "$(./scripts/getversion.sh .)" > .scmversion``

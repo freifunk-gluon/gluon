@@ -923,6 +923,14 @@ the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
 ``PACKAGES_FOO_COMMIT`` and ``PACKAGES_FOO_BRANCH``. Slashes in feed names are
 replaced by underscores to get valid shell variable identifiers.
 
+Versioning
+----------
+
+Is it recommended to maintain the site configuration in a Git repository. Gluon
+displays a "site version" in its Advanced Settings, ``gluon-info`` and respondd
+node information; this version is derived from the latest annotated Git tag
+using ``git describe``.
+
 .. _site-examples:
 
 Examples
