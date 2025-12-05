@@ -1,10 +1,11 @@
 Site configuration
 ==================
 
-The ``site`` consists of the files ``site.conf`` and ``site.mk``.
-In the first community based values are defined, which both are processed
-during the build process and runtime.
-The last is directly included in the make process of Gluon.
+The ``site`` consists of various files, most importantly ``site.conf``,
+``site.mk`` and ``image-customization.lua``.
+
+``site.conf`` primarily contains runtime settings, while ``site.mk`` and
+``image-customatization.lua`` are used for build configuration.
 
 Configuration
 -------------
