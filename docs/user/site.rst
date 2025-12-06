@@ -1,10 +1,11 @@
 Site configuration
 ==================
 
-The ``site`` consists of the files ``site.conf`` and ``site.mk``.
-In the first community based values are defined, which both are processed
-during the build process and runtime.
-The last is directly included in the make process of Gluon.
+The ``site`` consists of various files, most importantly ``site.conf``,
+``site.mk`` and ``image-customization.lua``.
+
+``site.conf`` primarily contains runtime settings, while ``site.mk`` and
+``image-customatization.lua`` are used for build configuration.
 
 Configuration
 -------------
@@ -921,6 +922,14 @@ These variables are always all uppercase, so for an entry ``foo`` in GLUON_SITE_
 the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
 ``PACKAGES_FOO_COMMIT`` and ``PACKAGES_FOO_BRANCH``. Slashes in feed names are
 replaced by underscores to get valid shell variable identifiers.
+
+Versioning
+----------
+
+Is it recommended to maintain the site configuration in a Git repository. Gluon
+displays a "site version" in its Advanced Settings, ``gluon-info`` and respondd
+node information; this version is derived from the latest annotated Git tag
+using ``git describe``.
 
 .. _site-examples:
 
