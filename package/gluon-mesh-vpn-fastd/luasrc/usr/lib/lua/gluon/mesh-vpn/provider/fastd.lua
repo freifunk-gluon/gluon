@@ -73,4 +73,8 @@ function M.mtu()
 	return site.mesh_vpn.fastd.mtu()
 end
 
+function M.pubkey_privacy()
+	return site.mesh_vpn.pubkey_privacy(true)
+end
+
 return M
