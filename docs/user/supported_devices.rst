@@ -506,6 +506,9 @@ ramips-mt7621
 
 * NETGEAR
 
+  - EAX11 (v2)
+  - EAX12
+  - EAX15 (v2)
   - EX6150 (v1)
   - R6220
   - R6260
@@ -514,9 +517,6 @@ ramips-mt7621
 
 * TP-Link
 
-  - EAX11 (v2)
-  - EAX12
-  - EAX15 (v2)
   - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)
