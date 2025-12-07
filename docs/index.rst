@@ -83,6 +83,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   package/gluon-web-cellular
   package/gluon-web-network
   package/gluon-web-logging
+  package/gluon-wireless-encryption-wpa3
 
 .. toctree::
   :caption: Releases
