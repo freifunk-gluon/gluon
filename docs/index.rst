@@ -74,6 +74,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   package/gluon-logging
   package/gluon-mesh-batman-adv
   package/gluon-mesh-batman-adv-brmldproxy
+  package/gluon-mesh-vpn-sqm
   package/gluon-mesh-wireless-sae
   package/gluon-radvd
   package/gluon-radv-filterd
