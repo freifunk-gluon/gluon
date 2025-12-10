@@ -531,6 +531,18 @@ device('tp-link-wbs510-v1', 'tplink_wbs510-v1')
 
 -- Ubiquiti
 
+device('ubiquiti-nanobeam-ac-gen1-xc', 'ubnt_nanobeam-ac-xc', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('ubiquiti-nanostation-loco-m-xw', 'ubnt_nanostation-loco-m-xw', {
+	aliases = {
+		'ubiquiti-nanobeam-m5-xw',
+	},
+})
+
+device('ubiquiti-nanostation-m-xw', 'ubnt_nanostation-m-xw')
+
 device('ubiquiti-unifi-ac-lite', 'ubnt_unifiac-lite', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
