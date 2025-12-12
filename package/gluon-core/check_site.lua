@@ -35,6 +35,7 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 	if need_table({config}, nil, false) then
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
 		need_number({config, 'beacon_interval'}, false)
+		need_one_of({config, 'channel_width'}, {20, 40, 80, 160}, false)
 
 		if config == "wifi24" then
 			local channels = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
