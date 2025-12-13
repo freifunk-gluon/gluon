@@ -125,7 +125,7 @@ wifi24 \: optional
   SSID for the opportunistically encrypted wireless network, to which compatible
   clients can connect to.
   For OWE to work, the :doc:`wireless-encryption-wpa3 <../package/gluon-wireless-encryption-wpa3>`
-  feature has to be enabled and configure in your site.
+  feature has to be enabled and configured in your site.
   To utilize the OWE transition mode, ``owe_transition_mode`` has to be set to true.
   When ``owe_transition_mode`` is enabled, the OWE secured SSID will be hidden.
   Compatible devices will automatically connect to the OWE secured SSID when selecting

@@ -35,7 +35,7 @@ Keep in mind that nodes running wifi interfaces on custom channels can't mesh wi
 Role Adjustments
 ----------------
 
-Besides of the :doc:`../features/configmode`, the used modes of each band can be configured using UCI on the router:
+Besides the :doc:`../features/configmode`, the used modes of each band can be configured using UCI on the node:
 
 Enable Mesh on all interfaces using the 2.4GHz band::
 

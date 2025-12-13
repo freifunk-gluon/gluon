@@ -1,11 +1,11 @@
 # Docs
 
-The docs are build and automatically deployed in the CI.
+The docs are automatically built and deployed in the CI.
 A temporary deployment of changed docs is created for every PR as well, accessible from the PR checks.
 
 ## Building docs
 
-To build the docs locally, a python environment is required.
+To build the docs locally, a Python environment is required.
 
 1. Install the requirements using `pip install -r requirements.txt`
 2. Build the docs using `make html`
