@@ -5,7 +5,7 @@ It is possible to set up a private WLAN that bridges the uplink port and is sepa
 Please note that you should not enable Wired Mesh on the uplink port at the same time.
 
 The private WLAN is encrypted using WPA2 by default. On devices with enough flash and a supported radio,
-WPA3 or WPA2/WPA3 mixed-mode can be used instead of WPA2. For this to work, the ``wireless-encryption-wpa3``
+WPA3 or WPA2/WPA3 mixed-mode can be used instead of WPA2. For this to work, the :doc:`wireless-encryption-wpa3 <../package/gluon-wireless-encryption-wpa3>`
 feature has to be enabled as a feature.
 
 It is recommended to enable IEEE 802.11w management frame protection for WPA2/WPA3 networks, however this
