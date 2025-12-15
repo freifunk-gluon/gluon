@@ -495,6 +495,7 @@ ramips-mt7621
 
 * Cudy
 
+  - AP1300 Outdoor (v1)
   - WR1300 (v1)
   - WR2100
   - X6 (v1, v2)
