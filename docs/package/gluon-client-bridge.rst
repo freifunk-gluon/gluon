@@ -7,5 +7,5 @@ also setup a wireless interface, provided it is configured in *site.conf*.
 site.conf
 ---------
 
-wifi24.ap.ssid / wifi5.ap.ssid
+wifi24.ap.ssid / wifi5.ap.ssid / wifi6.ap.ssid
     SSID for the client network

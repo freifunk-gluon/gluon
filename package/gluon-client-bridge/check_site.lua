@@ -7,7 +7,7 @@ end
 need_string_match(in_domain({'next_node', 'ip6'}), '^[%x:]+$', false)
 
 
-for _, config in ipairs({'wifi24', 'wifi5'}) do
+for _, config in ipairs({'wifi24', 'wifi5', 'wifi6'}) do
 	if need_table({config, 'ap'}, nil, false) then
 		need_boolean({config, 'ap', 'disabled'}, false)
 		if need_boolean({config, 'ap', 'owe_transition_mode'}, false) then
