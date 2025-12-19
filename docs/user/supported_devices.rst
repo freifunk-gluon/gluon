@@ -30,6 +30,10 @@ ath79-generic
   - WZR-HP-G300NH (rtl8366s)
   - WZR-HP-G450H / WZR-450HP
 
+* COMFAST
+
+  - CF-EW71 (v2)
+
 * devolo
 
   - WiFi pro 1200e [#lan_as_wan]_
