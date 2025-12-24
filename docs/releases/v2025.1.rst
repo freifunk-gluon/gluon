@@ -1,0 +1,428 @@
+Gluon 2025.1
+============
+
+Major updates and notices
+-------------------------
+
+This release is based on the latest OpenWrt 24.10 release branch. It ships with Linux kernel 6.6.y,
+wireless-backports 6.12.y and batman-adv 2024.3.
+
+Updates are only supported from v2022.1 and later.
+
+The following devices can't be updated automatically due to breaking changes in OpenWrt, requiring
+manual steps to adjust the flash layout:
+
+- Ubiquiti EdgeRouter-X (`upgrade instructions <https://github.com/darkxst/erx-migration>`__)
+- Xiaomi AX3200
+  (`upgrade instructions <https://openwrt.org/toh/xiaomi/ax3200#upgrading_from_2305_and_earlier_to_upcoming_2410_or_snapshot>`__)
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- Buffalo
+
+  - WZR-HP-G450H / WZR-450HP
+
+- D-Link
+
+  - DAP-2680 A1
+  - DAP-2695 A1
+
+- GL.iNet
+
+  - GL-AR300M16
+
+- TP-Link
+
+  - CPE710 v2
+
+- Ubiquiti
+
+  - NanoBeam 5AC 19 (XC) [#readded]_
+  - NanoBeam M5 (XW) [#readded]_
+  - NanoStation Loco M2/M5 (XW) [#readded]_
+  - NanoStation M2/M5 (XW) [#readded]_
+
+.. [#readded]
+  This previously supported device had been removed in an earlier release and was reintroduced in
+  v2025.1.
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- Extreme Networks
+
+  - WS-AP3915i
+
+- Linksys
+
+  - MR8300
+  - VLP01
+  - WHW01
+  - WHW03 v1, v2
+
+- NETGEAR
+
+  - RBR50 v1
+  - RBS50 v1
+  - SRS60
+  - SRR60
+
+ipq806x-generic
+~~~~~~~~~~~~~~~
+
+- Ubiquiti
+
+  - UniFi AC HD
+
+lantiq-xrx200
+~~~~~~~~~~~~~
+
+- AVM
+
+  - FRITZ!Box 7430
+
+lantiq-xrx200_legacy
+~~~~~~~~~~~~~~~~~~~~
+
+This is a new target.
+
+The following device previously found in the *lantiq-xrx200* target is now built as part of
+*lantiq-xrx200_legacy*:
+
+- TP-Link
+
+  - TD-W8970 v1
+
+mediatek-filogic
+~~~~~~~~~~~~~~~~
+
+- ASUS
+
+  - RT-AX52
+  - TUF-AX6000
+
+- Cudy
+
+  - AP3000 Outdoor v1
+  - TR3000 v1
+  - WR3000e v1
+
+- D-Link
+
+  - AQUILA PRO AI M30 A1
+  - AQUILA PRO AI M60 A1
+
+- GL.iNet
+
+  - GL-MT2500
+
+- OpenWrt
+
+  - OpenWrt One
+
+- Wavlink
+
+  - WL-WN573HX3
+
+- Xiaomi
+
+  - AX3000T (Stock, ubootmod)
+
+mediatek-mt7622
+~~~~~~~~~~~~~~~
+
+- NETGEAR
+
+  - WAX206
+
+mvebu-cortexa53
+~~~~~~~~~~~~~~~
+
+This is a new target.
+
+- GL.iNet
+
+  - GL-MV1000
+
+qualcommax-ipq807x
+~~~~~~~~~~~~~~~~~~
+
+This is a new target.
+
+- Xiaomi
+
+  - Mi AIoT Router AX3600
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- D-Link
+
+  - DIR-878 A1
+  - DIR-882 A1
+
+- NETGEAR
+
+  - EAX11 v2
+  - EAX12
+  - EAX15 v2
+
+- Ubiquiti
+
+  - UniFi nanoHD
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+- Cudy
+
+  - TR1200 v1
+
+- TP-Link
+
+  - Archer C50 v6
+  - TL-WR902AC v4
+
+- Xiaomi
+
+  - Mi Router 4A 100M International Edition v2 (R4ACv2)
+
+rockchip-armv8
+~~~~~~~~~~~~~~
+
+- FriendlyElec
+
+  - NanoPi R3S
+
+Removed hardware support
+------------------------
+
+realtek-rtl838x
+~~~~~~~~~~~~~~~
+
+The *realtek-rtl838x* target has been removed with its only device, the D-Link DGS-1210-10P. The
+device had never been working properly and is not an appropriate platform for batman-adv-based mesh
+routing.
+
+New Features
+------------
+
+Autoupdater HTTPS support (`#3463`_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _#3463: https://github.com/freifunk-gluon/gluon/pull/3463
+
+Autoupdater mirror URLs can use HTTPS now if the *tls* feature is enabled in the image
+customization. There are two options for specifying HTTPS URLs:
+
+- With ``https://`` scheme: HTTPS is mandatory
+
+  The build will fail if the *tls* feature is not enabled.
+
+- Without scheme (``//``): Use HTTP or HTTPS depending on the availability of the *tls* feature
+
+  This allows using the same URL when enabling *tls* only for some targets, while leaving it
+  disabled for devices with insufficient flash.
+
+  When *tls* is enabled, HTTPS will always be used for such URLs. No fallback to HTTP happens at
+  runtime if the HTTPS connection fails.
+
+.. code-block:: lua
+
+    mirrors = {
+      -- Always uses HTTP
+      'http://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+      -- Always uses HTTPS (requires the tls feature in image-customization.lua)
+      'https://autoupdate2.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+      -- Uses HTTP or HTTPS depending on the tls feature in image-customization.lua
+      '//autoupdate3.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+    }
+
+Include support in ``image-customization.lua`` (`#3148`_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _#3148: https://github.com/freifunk-gluon/gluon/pull/3148
+
+Image customization now supports the ``include()`` function to include another Lua file, allowing
+for easier code reuse. See the
+:ref:`image customization documentation <site-image-customization>` for details.
+
+brmldproxy -- Bridge MLD Proxy (`#2995`_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _#2995: https://github.com/freifunk-gluon/gluon/pull/2995
+
+The new :doc:`../package/gluon-mesh-batman-adv-brmldproxy` package can be used to reduce overhead in
+multicast routing between different domains and sites. Note that by itself, this does not enable
+multicast routing.
+
+Optimized multicast forwarding
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The :doc:`../package/gluon-ebtables-filter-multicast` package filters many kinds of multicast
+packets when they would be flooded through the whole mesh, but it allows packets that are only
+forwarded to a limited number of nodes. In earlier version of Gluon, this allowed multicasts with up
+to 16 destination nodes, as these were sent as separate unicasts instead of broadcasting them.
+
+batman-adv 2024.3 has introduced a new
+`multicast packet type <https://www.open-mesh.org/projects/batman-adv/wiki/Multicast-Packet-Type>`__,
+which adds support for more directed forwarding of multicast packets without duplicating them for
+each destination, allowing packets with a higher number of destinations not to be filtered by the
+ebtables filter.
+
+Other new features
+~~~~~~~~~~~~~~~~~~
+
+.. _#3208: https://github.com/freifunk-gluon/gluon/pull/3208
+.. _#3307: https://github.com/freifunk-gluon/gluon/pull/3307
+.. _#3454: https://github.com/freifunk-gluon/gluon/pull/3454
+.. _#3484: https://github.com/freifunk-gluon/gluon/pull/3484
+.. _#3488: https://github.com/freifunk-gluon/gluon/pull/3488
+.. _#3496: https://github.com/freifunk-gluon/gluon/pull/3496
+.. _#3541: https://github.com/freifunk-gluon/gluon/pull/3541
+.. _#3554: https://github.com/freifunk-gluon/gluon/pull/3554
+.. _#3570: https://github.com/freifunk-gluon/gluon/pull/3570
+
+- Dropbear now supports ED22519 (host and user) SSH keys on all targets (`#3488`_)
+- With the new feature *harden-dropbear* enabled in the image customization, the dropbear server
+  will be disabled completely outside of config mode when no password and no authorized keys have
+  been configured (`#3541`_)
+- The status page now displays the VPN public key unless disabled via the ``pubkey_privacy`` site
+  setting (`#3554`_)
+- respondd now reports a device's target, subtarget and autoupdater image name (`#3496`_)
+- *gluon-info* now shows the autoupdater enable status and branch name (`#3484`_)
+- Airtime limits are applied to multicast/broadcast packets as well now (`#3208`_)
+- Added configuration of the authentication method to the *web-cellular* interface (`#3307`_)
+- Added gluon-radvd prefix lifetime configuration in *site.conf* (`#3570`_)
+- Added per-interface hop penalty configuration via UCI (`#3454`_)
+
+Removed Features
+----------------
+
+.. _#3105: https://github.com/freifunk-gluon/gluon/pull/3105
+.. _#3109: https://github.com/freifunk-gluon/gluon/pull/3109
+
+- Tunneldigger Mesh VPN support has been dropped (`#3109`_)
+
+  Tunneldigger support was deprecated in Gluon v2023.2 and has been subsequently moved to
+  `community-packages
+  <https://github.com/freifunk-gluon/community-packages/tree/main/ff-mesh-vpn-tunneldigger>`__.
+- Babel protocol support has been dropped (`#3105`_)
+
+  The experimental and unmaintained support for the Babel mesh routing protocol has been removed
+  from Gluon.
+
+Bugfixes
+--------
+
+.. _#3258: https://github.com/freifunk-gluon/gluon/pull/3258
+.. _#3261: https://github.com/freifunk-gluon/gluon/pull/3261
+.. _#3436: https://github.com/freifunk-gluon/gluon/pull/3436
+.. _#3557: https://github.com/freifunk-gluon/gluon/pull/3557
+.. _#3617: https://github.com/freifunk-gluon/gluon/pull/3617
+.. _#3621: https://github.com/freifunk-gluon/gluon/pull/3621
+
+- Fixed using WAN/uplink DNS servers with global IPv6 addresses (`#3617`_)
+- Wireguard: fixed setting MTU configured in *site.conf* (`#3258`_)
+- Disable default handling of WPS button conflicting with config mode activation (`#3557`_)
+- Various improvements have been made to stability of the MT76 WLAN driver
+  (`#3261`_, `#3436`_, `#3621`_)
+
+Other
+-----
+
+.. _#3097: https://github.com/freifunk-gluon/gluon/pull/3097
+.. _#3295: https://github.com/freifunk-gluon/gluon/pull/3295
+.. _#3312: https://github.com/freifunk-gluon/gluon/pull/3312
+.. _#3465: https://github.com/freifunk-gluon/gluon/pull/3465
+.. _#3536: https://github.com/freifunk-gluon/gluon/pull/3536
+.. _#3547: https://github.com/freifunk-gluon/gluon/pull/3547
+
+- Old opkg public keys are deleted on upgrades now (`#3465`_)
+
+  Avoid more and more old key files accumulating with every upgrade.
+- The ``gluon-wan`` command has been renamed to ``gluon-wan-dns``
+  (`#3547`_)
+
+  The command only affects DNS requests, other packets are still routed through
+  the mesh.
+- gluon-scheduled-domain-switch: removed connection check address configuration (`#3536`_)
+
+  Instead of trying to ping explicitly configured addresses, a node is now considered offline
+  when no NTP sync is possible.
+- Binaries are stripped using regular *strip* instead of *sstrip* by default now (`#3295`_)
+
+  Allow *objdump* and *gdb* to work as expected, at the cost of slightly increasing image sizes.
+  ``GLUON_DEBUG`` can be set to 0 (use *sstrip*), 1 (default, use *strip*) or 2 (don't strip,
+  keep debug info) in *site.mk* or on the *make* command line.
+- Build metainformation like kernel and rootfs sizes are emitted to the ``output/meta`` directory
+  (`#3097`_)
+- On AVM FRITZ!Box 7520/7530, the LAN1 port is used as WAN now by default (`#3312`_)
+
+Internal changes
+----------------
+
+.. _#3464: https://github.com/freifunk-gluon/gluon/pull/3464
+.. _#3563: https://github.com/freifunk-gluon/gluon/pull/3563
+.. _#3612: https://github.com/freifunk-gluon/gluon/pull/3612
+
+- gluon-wan-dnsmasq: run in a ujail sandbox for privilege reduction (`#3464`_)
+
+  Targets with the *small_flash* flag (*lantiq-xrx200_legacy* and *ramips-mt76x8*) do not include
+  ujail by default and run dnsmasq without sandbox.
+- Added migration for x86 Ethernet driver load order change (`#3612`_)
+
+  Between OpenWrt 23.05 and 24.10, the load order of some kernel modules was changed, potentially
+  resulting in Ethernet interfaces changing names if multiple different drivers are in use. In
+  particular, this affects the Intel *igc* and Realtek *r8169* drivers.
+
+  When upgrading from older Gluon versions to v2025.1 or newer and such a combination of drivers is
+  detected, the roles of the "LAN" and "WAN" interfaces are switched, and the interface names for
+  custom VLAN role configurations are adjusted. In most common cases this should avoid breaking
+  connectivity, but it does not cover setups with more than two Ethernet interfaces when the
+  abovementioned drivers are involved.
+- Wireless configuration has been moved to ``/etc/config/gluon`` (`#3563`_)
+
+  All ``wifi-iface`` sections in ``/etc/config/wireless`` are regenerated on upgrades and config
+  changes now. The ``gluon_preserve`` option can be used for custom interface sections, similar to
+  custom sections in the ``network`` and ``system`` UCI configs.
+
+  Configuration of wireless interfaces is done per-band rather than addressing individual radios,
+  and uses a role system similar to that of wired interfaces. In certain setups with more than one
+  radio per band, radios which don't support the site's mesh channel because of hardware limitations
+  will become client-only, while the rest of the radios are configured as mesh-only (when *client*
+  and *mesh* roles are both enabled for the band).
+
+  This change also enables support for devices with more than 2 radios in total.
+
+Known issues
+------------
+
+.. _#94: https://github.com/freifunk-gluon/gluon/issues/94
+.. _#496: https://github.com/freifunk-gluon/gluon/issues/496
+.. _#1726: https://github.com/freifunk-gluon/gluon/issues/1726
+.. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+
+- The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page (`#1726`_)
+
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new
+    throughput metric.
+  - Throughput values are not correctly acquired for different interface types (`#1728`_)
+
+    This affects virtual interface types like bridges and VXLAN.
+
+- Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+- In configurations without VXLAN, the MAC address of the WAN interface is modified even when
+  Mesh-on-WAN is disabled (`#496`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when
+  promiscuous mode is disallowed).
