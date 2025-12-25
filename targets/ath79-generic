@@ -85,6 +85,11 @@ device('buffalo-wzr-hp-g300nh-rtl8366s', 'buffalo_wzr-hp-g300nh-s')
 
 device('buffalo-wzr-hp-g450h-wzr-450hp', 'buffalo_wzr-hp-g450h')
 
+-- COMFAST
+device('comfast-cf-ew71-v2', 'comfast_cf-ew71-v2', {
+	factory = false,
+})
+
 
 -- devolo
 
