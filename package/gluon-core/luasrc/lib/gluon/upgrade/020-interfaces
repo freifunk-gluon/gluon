@@ -49,6 +49,7 @@ if platform.match('ath79', 'generic', {
 	'tplink,wbs210-v1',
 	'tplink,wbs210-v2',
 	'tplink,wbs510-v1',
+	'ubnt,nanostation-m-xw',
 	'ubnt,unifi-ap-pro',
 }) then
 	lan_ifname, wan_ifname = wan_ifname, lan_ifname
