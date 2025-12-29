@@ -29,6 +29,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 		disabled = not uci:get_bool('gluon', 'cellular', 'enabled'),
 		pdptype = pdptype,
 		peerdns = false,
+		ip6table = 1,
 		apn = uci:get('gluon', 'cellular', 'apn'),
 	})
 
