@@ -142,6 +142,8 @@ wifi24 \: optional
   ``mesh`` also accepts an optional ``mcast_rate`` (kbit/s) parameter for
   setting the multicast bitrate. Increasing the default value of 1000 to something
   like 12000 is recommended.
+  Increasing this (e.g. to 24000) decreases airtime of multicast traffic, but also
+  reduces coverage as higher-quality meshes are required for a successful connection.
 
   ::
 
