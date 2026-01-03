@@ -7,7 +7,13 @@ local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
+-- recreate radios
+os.execute('rm /etc/config/wireless && wifi config')
+
+-- delete default wireless config
 uci:delete_all('wireless', 'wifi-iface')
+uci:save('wireless')
+
 
 local radio_band_count = {band_2g=0, band_5g=0}
 
@@ -49,17 +55,24 @@ wireless.foreach_radio(uci, function(radio)
 	end
 end)
 
-local function get_txpower(radio_name)
-	return uci:get('gluon', radio_name, 'txpower')
+local function get_wradio(radio)
+	local wradio_name
+	uci:foreach('gluon', 'wireless_radio', function(wradio)
+		if wradio.path == radio.path then
+			wradio_name = wradio['.name']
+		end
+	end)
+	return wradio_name
+end
+
+local function get_txpower(radio)
+	local wradio_name = get_wradio(radio)
+	return uci:get('gluon', wradio_name, 'txpower')
 end
 
 local function get_htmode(radio)
-	if wireless.preserve_channels(uci) then
-		return radio.htmode
-	end
-
-
-	local htmode = uci:get('gluon', radio['.name'], 'htmode')
+	local wradio_name = get_wradio(radio)
+	local htmode = uci:get('gluon', wradio_name, 'htmode')
 	if htmode ~= nil then
 		return htmode
 	end
@@ -134,11 +147,13 @@ local function configure_mesh(radio, index, mesh_config)
 	})
 end
 
-local function set_channels(radio, radio_name, config)
-	if wireless.preserve_channels(uci) then
-		return
+local function set_channels(radio, config)
+	local radio_name = radio['.name']
+	local wradio_name = get_wradio(radio)
+	local channel = uci:get('gluon', wradio_name, 'channel')
+	if not channel then
+		channel = wireless.get_channel(radio, config, uci)
 	end
-	local channel = wireless.get_channel(radio, config, uci)
 	uci:set('wireless', radio_name, 'channel', channel)
 
 	local chanlist
@@ -161,7 +176,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		return
 	end
 
-	local txpower = get_txpower(radio_name)
+	local txpower = get_txpower(radio)
 	if txpower ~= nil then
 		uci:set('wireless', radio_name, 'txpower', txpower)
 	end
@@ -171,7 +186,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	uci:delete('wireless', radio_name, 'disabled')
 
-	set_channels(radio, radio_name, config)
+	set_channels(radio, config)
 
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())

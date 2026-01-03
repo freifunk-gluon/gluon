@@ -99,7 +99,7 @@ local function migrate_radio_config()
 		local channel = tonumber(uci:get('wireless', radio_name, 'channel'))
 
 		-- migrate channel setting if custom channel is set
-		if channel ~= wireless.get_channel(radio, config, uci) then
+		if wireless.preserve_channels(uci) and channel ~= wireless.get_channel(radio, config, uci) then
 			uci:set('gluon', wradio_name, 'channel', channel)
 		end
 
@@ -111,7 +111,8 @@ local function migrate_radio_config()
 			end
 		end
 
-		if not uci:get('gluon', wradio_name, 'htmode') then
+		-- migrate htmode setting if custom htmode is set
+		if wireless.preserve_channels(uci) then
 			local htmode = uci:get('wireless', radio_name, 'htmode')
 
 			if htmode ~= wireless.default_htmode(radio, config) then
