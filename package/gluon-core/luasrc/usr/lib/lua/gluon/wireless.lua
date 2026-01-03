@@ -153,4 +153,47 @@ function M.radio_option(uci, radio, option, default)
 	return uci:get('gluon', 'band_' .. radio.band, option) or default
 end
 
+
+function M.is_outdoor(uci)
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
+function M.get_channel(radio, config, uci)
+	if (radio.band == '5g' and M.is_outdoor(uci)) or not M.supports_channel(radio, config.channel()) then
+		-- actual channel will be picked and probed from chanlist
+		return 'auto'
+	end
+
+	return config.channel()
+end
+
+function M.default_htmode(radio)
+	local channel_width = 20
+	local htmode
+
+	if radio.band == '2g' then
+		channel_width = site.wifi24.channel_width(20)
+	elseif radio.band == '5g' then
+		channel_width = site.wifi5.channel_width(20)
+	end
+
+	local phy = M.find_phy(radio)
+	if iwinfo.nl80211.hwmodelist(phy).ax then
+		htmode = 'HE' .. channel_width
+	elseif iwinfo.nl80211.hwmodelist(phy).ac then
+		htmode = 'VHT' .. channel_width
+	else
+		htmode = 'HT' .. channel_width
+	end
+
+	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
+		if available and mode == htmode then
+			return htmode
+		end
+	end
+	-- if preferred htmode is not available
+	-- select the last one we got
+	return htmode
+end
+
 return M

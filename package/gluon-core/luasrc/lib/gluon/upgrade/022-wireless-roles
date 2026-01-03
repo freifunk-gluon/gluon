@@ -67,23 +67,6 @@ local function migrate_wifi_to_roles(band)
 				end
 			end
 		end
-
-		uci:section('gluon', 'wireless_radio', radio_name, {
-		})
-
-		local txpower = uci:get('wireless', radio_name, 'txpower')
-		if txpower ~= nil then
-			uci:set('gluon', radio_name, 'txpower', txpower)
-		end
-
-		-- remove this in 2027 or on first release supporting only upgrades from >=v2025.1.x
-		if radio.band == '5g' then
-			local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
-			if outdoor_htmode ~= nil then
-				uci:set('gluon', radio_name, 'htmode', outdoor_htmode)
-				uci:delete('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
-			end
-		end
 	end)
 
 	-- if no config exists for this band, we apply the default
@@ -94,6 +77,48 @@ local function migrate_wifi_to_roles(band)
 	uci:section('gluon', 'wireless_band', "band_" .. band, {
 		role = band_roles,
 	})
+
+end
+
+local function migrate_radio_config()
+	wireless.foreach_radio(uci, function(radio, index, config)
+		local radio_name = radio['.name']
+
+		-- migrate radios
+		-- remove this in 2027 or on first release supporting only upgrades from >=v2025.1.x
+		local wradio_name = 'wradio' .. index
+
+		local path = uci:get('wireless', radio_name, 'path')
+		local txpower = uci:get('wireless', radio_name, 'txpower')
+
+		uci:section('gluon', 'wireless_radio', wradio_name, {
+			path = path,
+			txpower = txpower,
+		})
+
+		local channel = tonumber(uci:get('wireless', radio_name, 'channel'))
+
+		-- migrate channel setting if custom channel is set
+		if channel ~= wireless.get_channel(radio, config, uci) then
+			uci:set('gluon', wradio_name, 'channel', channel)
+		end
+
+		if radio.band == '5g' then
+			local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
+			if outdoor_htmode ~= nil then
+				uci:set('gluon', wradio_name, 'htmode', outdoor_htmode)
+				uci:delete('gluon', 'wireless', 'outdoor_' .. radio_name .. '_htmode')
+			end
+		end
+
+		if not uci:get('gluon', wradio_name, 'htmode') then
+			local htmode = uci:get('wireless', radio_name, 'htmode')
+
+			if htmode ~= wireless.default_htmode(radio, config) then
+				uci:set('gluon', wradio_name, 'htmode', htmode)
+			end
+		end
+	end)
 end
 
 for band, _ in pairs(default_wifi_roles) do
@@ -103,14 +128,13 @@ for band, _ in pairs(default_wifi_roles) do
 	end
 end
 
-
-local function is_outdoor()
-	return uci:get_bool('gluon', 'wireless', 'outdoor')
+if not uci:get_first('gluon', 'wireless_radio')then
+	migrate_radio_config()
 end
 
 -- Remove 5ghz mesh role configuration for outdoor
 local roles_5g = uci:get_list('gluon', 'band_5g', 'role')
-if util.contains(roles_5g, 'mesh') and is_outdoor() then
+if util.contains(roles_5g, 'mesh') and wireless.is_outdoor(uci) then
 	util.remove_from_set(roles_5g, 'mesh')
 	uci:set_list('gluon', 'band_5g', 'role', roles_5g)
 end
