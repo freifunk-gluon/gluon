@@ -230,8 +230,12 @@
 					<tbody>
 						<tr><th><%:Total%></th><td><%= statistics('clients/total') %></td></tr>
 						<tr><th><%:Wireless 2.4 GHz%></th><td><%= statistics('clients/wifi24') %></td></tr>
+					<% if wireless.device_uses_band(uci, '5g') then -%>
 						<tr><th><%:Wireless 5 GHz%></th><td><%= statistics('clients/wifi5') %></td></tr>
+					<%- end %>
+					<% if wireless.device_uses_band(uci, '6g') then -%>
 						<tr><th><%:Wireless 6 GHz%></th><td><%= statistics('clients/wifi6') %></td></tr>
+					<%- end %>
 					</tbody>
 				</table>
 				<% if radios[1] then -%>
