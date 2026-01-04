@@ -15,6 +15,7 @@ manual steps to adjust the flash layout:
 - Ubiquiti EdgeRouter-X (`upgrade instructions <https://github.com/darkxst/erx-migration>`__)
 - Xiaomi AX3200
   (`upgrade instructions <https://openwrt.org/toh/xiaomi/ax3200#upgrading_from_2305_and_earlier_to_upcoming_2410_or_snapshot>`__)
+- MikroTik SXTsq 5 ac (Only a sysupgrade -n is possible, meaning that the device settings will be lost and must be reset.)
 
 Added hardware support
 ----------------------
