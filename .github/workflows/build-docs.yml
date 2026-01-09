@@ -15,15 +15,15 @@ permissions:
 jobs:
   build-documentation:
     name: docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: sudo pip3 install -r docs/requirements.txt
       - name: Build documentation
         run: make -C docs html
       - name: Archive build output
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: docs_output
           path: docs/_build/html

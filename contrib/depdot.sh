@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Script to output the dependency graph of Gluon's packages
 # Limitations:

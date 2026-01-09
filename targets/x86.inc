@@ -37,7 +37,9 @@ packages {
 	'kmod-mt76x0e',
 	'kmod-mt76x2',
 	'kmod-mt7603',
-	'kmod-mt7615e',
+	'kmod-mt7615-firmware',
+	'kmod-mt7915-firmware',
+	'kmod-mt7921-firmware',
 }
 
 -- We do not use the ext4 images, so we do not want to build them.

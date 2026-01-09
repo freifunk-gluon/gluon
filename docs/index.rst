@@ -25,12 +25,14 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   features/wlan-configuration
   features/private-wlan
   features/wired-mesh
+  features/tls
   features/dns-cache
   features/monitoring
   features/multidomain
   features/authorized-keys
   features/roles
   features/vpn
+  features/status-page
 
 .. toctree::
   :caption: Developer Documentation
@@ -62,17 +64,24 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
 
   package/gluon-client-bridge
   package/gluon-config-mode-domain-select
+  package/gluon-config-mode-geo-location-osm
   package/gluon-ebtables-filter-multicast
   package/gluon-ebtables-filter-ra-dhcp
   package/gluon-ebtables-limit-arp
   package/gluon-ebtables-source-filter
+  package/gluon-harden-dropbear
   package/gluon-hoodselector
   package/gluon-logging
   package/gluon-mesh-batman-adv
+  package/gluon-mesh-batman-adv-brmldproxy
   package/gluon-mesh-wireless-sae
+  package/gluon-radvd
   package/gluon-radv-filterd
   package/gluon-scheduled-domain-switch
+  package/gluon-state-check
   package/gluon-web-admin
+  package/gluon-web-cellular
+  package/gluon-web-network
   package/gluon-web-logging
 
 .. toctree::
@@ -86,7 +95,7 @@ License
 
 See LICENCE_
 
-.. _LICENCE: https://github.com/freifunk-gluon/gluon/blob/master/LICENSE
+.. _LICENCE: https://github.com/freifunk-gluon/gluon/blob/main/LICENSE
 
 Indices and tables
 ==================

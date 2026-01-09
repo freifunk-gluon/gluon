@@ -1,0 +1,64 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Mon, 6 Jan 2025 08:30:35 +0100
+Subject: net: mac80211: override incompatible basic-rates for mesh
+
+This is a dirty hack for Gluon.
+
+We assume basic rate setup only affects the rate-controller on the TX
+side. As all devices we support have at least a 802.11n radio and thus
+cover 802.11b as well as 802.11g on 2.4 GHz, they are compatible with
+each other.
+
+As the basic rate was incorrectly set for mesh interfaces in the past,
+connections between mesh neighbors would fail when altering the basic
+rate.
+
+This patch ignores mismatches in the basic-rate field. By doing so, we
+avoid implementing some sort of scheduled switch between wireless
+configurations.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mac80211/patches/subsys/995-net-mac80211-override-incompatible-basic-rates-for-m.patch b/package/kernel/mac80211/patches/subsys/995-net-mac80211-override-incompatible-basic-rates-for-m.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..efcf0b4f041bb21184e9cd997bc6caca4729a1fe
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/995-net-mac80211-override-incompatible-basic-rates-for-m.patch
+@@ -0,0 +1,37 @@
++From 091e1eea9e34db7cbf84379021fcbff82887e09a Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Mon, 6 Jan 2025 08:23:54 +0100
++Subject: [PATCH] net: mac80211: override incompatible basic-rates for mesh
++
++This is a dirty hack for Gluon.
++
++We assume basic rate setup only affects the rate-controller on the TX
++side. As all devices we support have at least a 802.11n radio and thus
++cover 802.11b as well as 802.11g on 2.4 GHz, they are compatible with
++each other.
++
++As the basic rate was incorrectly set for mesh interfaces in the past,
++connections between mesh neighbors would fail when altering the basic
++rate.
++
++This patch ignores mismatches in the basic-rate field. By doing so, we
++avoid implementing some sort of scheduled switch between wireless
++configurations.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ net/mac80211/mesh.c | 7 +++++--
++ 1 file changed, 5 insertions(+), 2 deletions(-)
++
++--- a/net/mac80211/mesh.c
+++++ b/net/mac80211/mesh.c
++@@ -94,9 +94,6 @@ bool mesh_matches_local(struct ieee80211
++ 	ieee80211_sta_get_rates(sdata, ie, sband->band,
++ 				&basic_rates);
++ 
++-	if (sdata->vif.bss_conf.basic_rates != basic_rates)
++-		return false;
++-
++ 	cfg80211_chandef_create(&sta_chan_def, sdata->vif.bss_conf.chanreq.oper.chan,
++ 				NL80211_CHAN_NO_HT);
++ 	ieee80211_chandef_ht_oper(ie->ht_operation, &sta_chan_def);

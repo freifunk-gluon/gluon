@@ -1,6 +1,63 @@
+config('TARGET_ROOTFS_INITRAMFS', true)
+config('TARGET_INITRAMFS_COMPRESSION_LZMA', true)
+
+-- ASUS
+
+device('asus-rt-ax52', 'asus_rt-ax52', {
+	factory = false,
+})
+
+device('asus-tuf-ax4200', 'asus_tuf-ax4200', {
+	factory = false,
+})
+
+device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
+	factory = false,
+})
+
+
+-- D-Link
+
+device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
+	factory = false,
+	extra_images = {
+		{ '-squashfs-recovery', '-recovery', '.bin' }
+	},
+})
+
+device('d-link-aquila-pro-ai-m60-a1', 'dlink_aquila-pro-ai-m60-a1', {
+	factory = false,
+	extra_images = {
+		{ '-squashfs-recovery', '-recovery', '.bin' }
+	},
+})
+
+
 -- Cudy
 
+device('cudy-ap3000-outdoor-v1', 'cudy_ap3000outdoor-v1', {
+	factory = false,
+})
+
+device('cudy-tr3000-v1', 'cudy_tr3000-v1', {
+	factory = false,
+})
+
 device('cudy-wr3000-v1', 'cudy_wr3000-v1', {
+	factory = false,
+})
+
+device('cudy-wr3000e-v1', 'cudy_wr3000e-v1', {
+	factory = false,
+})
+
+-- GL.iNet
+
+device('gl.inet-gl-mt2500', 'glinet_gl-mt2500', {
+	factory = false,
+})
+
+device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
 	factory = false,
 })
 
@@ -11,7 +68,40 @@ device('netgear-wax220', 'netgear_wax220', {
 	factory_ext = '.img',
 })
 
+-- OpenWRT
+device('openwrt-one', 'openwrt_one', {
+	factory = '-factory',
+	factory_ext = '.ubi',
+	sysupgrade_ext = '.itb',
+})
 
--- ZyXEL
+
+-- Ubiquiti
+
+device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
+	factory = false,
+})
+
+
+-- Wavlink
+
+device('wavlink-wl-wn573hx3', 'wavlink_wl-wn573hx3', {
+	factory = false,
+	sysupgrade = '-squashfs-WN573HX3-sysupgrade',
+})
+
+
+-- Xiaomi
+
+device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
+	factory = false,
+})
+
+device('xiaomi-mi-router-ax3000t-openwrt-u-boot-layout', 'xiaomi_mi-router-ax3000t-ubootmod', {
+	factory = false,
+	sysupgrade_ext = '.itb',
+})
+
+-- Zyxel
 
 device('zyxel-nwa50ax-pro', 'zyxel_nwa50ax-pro')

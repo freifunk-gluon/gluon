@@ -43,6 +43,7 @@ local lan_ifname = iface_exists(lan_interfaces)
 local wan_ifname = iface_exists(wan_interfaces)
 
 if platform.match('ath79', 'generic', {
+	'dlink,dap-2695-a1',
 	'tplink,cpe210-v1',
 	'tplink,cpe210-v2',
 	'tplink,cpe510-v1',
@@ -63,6 +64,18 @@ elseif platform.match('ath79', 'generic', {
 	'ubnt,unifiac-pro',
 }) then
 	lan_ifname, wan_ifname = 'eth0.2', 'eth0.1'
+elseif platform.match('ipq40xx', 'generic', {
+	'avm,fritzbox-7530',
+}) then
+	lan_ifname, wan_ifname = 'lan2 lan3 lan4', 'lan1'
+elseif platform.match('ipq40xx', 'generic', {
+	'linksys,whw01',
+}) then
+	lan_ifname, wan_ifname = 'eth2', 'eth1'
+elseif platform.match('ipq806x', 'generic', {
+	'ubnt,unifi-ac-hd',
+}) then
+	lan_ifname, wan_ifname = 'eth1', 'eth0'
 elseif platform.match('ramips', 'mt7621', {
 	'netgear,wac104',
 }) then
@@ -72,13 +85,13 @@ elseif platform.match('ramips', 'mt7621', {
 }) then
 	lan_ifname, wan_ifname = 'lan1 lan2 lan3', 'lan0'
 elseif platform.match('lantiq', 'xrx200', {
+	'avm,fritz7430',
+}) then
+	lan_ifname, wan_ifname = 'lan2 lan3 lan4', 'lan1'
+elseif platform.match('lantiq', 'xrx200', {
 	'arcadyan,vgv7510kw22-nor',
 }) then
 	lan_ifname, wan_ifname = 'lan1 lan2 lan3 lan4', 'wan'
-elseif platform.match('realtek', 'rtl838x', {
-	'd-link,dgs-1210-10p',
-}) then
-	lan_ifname, wan_ifname = 'lan2 lan3 lan4 lan5 lan6 lan7 lan8 lan9 lan10', 'lan1'
 end
 
 if wan_ifname and lan_ifname then
@@ -91,8 +104,13 @@ else
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
 
+-- Delete all UCI device sections of type 'bridge'
+-- as well as the ones starting with 'br-'.
+-- Preserve all others to apply MAC address stored in UCI
+uci:delete_all('network', 'device', function(dev)
+	return (dev.type == 'bridge' or dev.name:match('^br-'))
+end)
 
-uci:delete_all('network', 'device')
 uci:delete_all('network', 'interface')
 
 uci:save('network')

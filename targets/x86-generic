@@ -11,8 +11,4 @@ device('x86-generic', 'generic', {
 		{'-kernel', '-kernel', '.bin'},
 		{'-squashfs-rootfs', '-rootfs', '.img.gz'},
 	},
-	manifest_aliases = {
-		'x86-kvm',
-		'x86-xen_domu',
-	},
 })

@@ -1,5 +1,6 @@
 local lib = dofile('scripts/target_lib.lua')
 local feature_lib = dofile('scripts/feature_lib.lua')
+local image_customization_lib = dofile('scripts/image_customization_lib.lua')
 local env = lib.env
 
 local target = env.GLUON_TARGET
@@ -15,6 +16,8 @@ else
 	openwrt_config_target = env.BOARD
 end
 
+-- Initialize image-customization
+image_customization_lib.init(env)
 
 -- Split a string into words
 local function split(s)
@@ -73,23 +76,6 @@ local function file_exists(file)
 	return true
 end
 
-local function site_vars(var)
-	return lib.exec_capture_raw(string.format(
-[[
-MAKEFLAGS= make print _GLUON_SITE_VARS_=%s --no-print-directory -s -f - <<'END_MAKE'
-include $(GLUON_SITEDIR)/site.mk
-
-print:
-	echo -n '$(_GLUON_SITE_VARS_)'
-END_MAKE
-]],
-	lib.escape(var)))
-end
-
-local function site_packages(image)
-	return split(site_vars(string.format('$(GLUON_%s_SITE_PACKAGES)', image)))
-end
-
 local function feature_packages(features)
 	local files = {'package/features'}
 	for _, feed in ipairs(feeds) do
@@ -102,20 +88,29 @@ local function feature_packages(features)
 	return feature_lib.get_packages(files, features)
 end
 
--- This involves running a few processes to evaluate site.mk, so we add a simple cache
-local class_cache = {}
-local function class_packages(class)
-	if class_cache[class] then
-		return class_cache[class]
-	end
+local function site_specific_packages(dev_info)
+	local site_selections
+	local site_packages
+	local feature_inherited_pkgs
+	local site_features
 
-	local features = site_vars(string.format('$(GLUON_FEATURES) $(GLUON_FEATURES_%s)', class))
-	features = compact_list(split(features), false)
+	-- Get all enabled selections from image-customization.lua
+	site_selections = image_customization_lib.get_selections(dev_info)
 
-	local pkgs = feature_packages(features)
-	pkgs = concat_list(pkgs, split(site_vars(string.format('$(GLUON_SITE_PACKAGES) $(GLUON_SITE_PACKAGES_%s)', class))))
+	-- First read enabled features from site
+	site_features = site_selections['features']
+	site_features = compact_list(site_features, false)
 
-	class_cache[class] = pkgs
+	-- Create List from packages inherited from features
+	feature_inherited_pkgs = feature_packages(site_features)
+
+	-- Read list of packages from site
+	site_packages = site_selections['packages']
+
+	-- Concat feature-packages with site-packages
+	local pkgs = concat_list(feature_inherited_pkgs, site_packages)
+
+	-- Negations for the resulting package-list are dealt with in the calling function
 	return pkgs
 end
 
@@ -155,7 +150,7 @@ local function handle_target_pkgs(pkgs)
 end
 
 local function get_default_pkgs()
-	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/')
+	local targetinfo_target = string.gsub(openwrt_config_target, '_', '/', 1)
 	local target_matches = false
 	for line in io.lines('openwrt/tmp/.targetinfo') do
 		local target_match = string.match(line, '^Target: (.+)$')
@@ -192,9 +187,8 @@ for _, dev in ipairs(lib.devices) do
 	end
 
 	handle_pkgs(lib.target_packages)
-	handle_pkgs(class_packages(dev.options.class))
 	handle_pkgs(dev.options.packages or {})
-	handle_pkgs(site_packages(dev.image))
+	handle_pkgs(site_specific_packages(dev))
 
 	local profile_config = string.format('%s_DEVICE_%s', openwrt_config_target, dev.name)
 	lib.config(

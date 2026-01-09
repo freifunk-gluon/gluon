@@ -1,0 +1,14 @@
+#!/bin/sh
+sync_flag="/var/gluon/state/has_ntp_sync"
+unsync_flag="/var/gluon/state/has_lost_ntp_sync"
+
+# shellcheck disable=SC2154 # stratum is set by busybox ntpd.
+if [ "$stratum" = 16 ]
+then
+	touch -a "$unsync_flag"
+	rm -f "$sync_flag"
+elif [ "$stratum" -lt 16 ]
+then
+	touch -a "$sync_flag"
+	rm -f "$unsync_flag"
+fi

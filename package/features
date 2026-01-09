@@ -1,4 +1,4 @@
--- GLUON_FEATURES definition file
+-- Feature definition file
 --
 -- See the page `dev/packages` (Developer Documentation / Package development)
 -- in the `docs` directory or on gluon.readthedocs.io for information on the
@@ -19,7 +19,6 @@ when(_'web-wizard' and _'autoupdater', {
 when(_'web-wizard' and (
 	_'mesh-vpn-fastd' or
 	_'mesh-vpn-fastd-l2tp' or
-	_'mesh-vpn-tunneldigger' or
 	_'mesh-vpn-wireguard'
 ), {
 	'gluon-config-mode-mesh-vpn',
@@ -47,7 +46,7 @@ when(_'status-page' and _'mesh-batman-adv-15', {
 })
 
 
-when(_'mesh-babel' or _'mesh-olsrd', {
+when(_'mesh-olsrd', {
 	'gluon-radvd',
 })
 

@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
-local bit = require('bit')
+local bit = require('bit32')
 local util = require ('gluon.util')
 local unistd = require('posix.unistd')
 local fcntl = require('posix.fcntl')

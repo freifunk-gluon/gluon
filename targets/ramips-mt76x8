@@ -1,5 +1,9 @@
 -- Cudy
 
+device('cudy-tr1200-v1', 'cudy_tr1200-v1', {
+	factory = false,
+})
+
 device('cudy-wr1000', 'cudy_wr1000')
 
 
@@ -18,7 +22,7 @@ device('gl.inet-vixmini', 'glinet_vixmini', {
 })
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-r6020', 'netgear_r6020', {
 	factory_ext = '.img',
@@ -58,9 +62,15 @@ device('tp-link-archer-c50-v4', 'tplink_archer-c50-v4', {
 	factory = false,
 })
 
+device('tp-link-archer-c50-v6-ca-eu-ru', 'tplink_archer-c50-v6', {
+	factory = false,
+})
+
 device('tp-link-re200-v2', 'tplink_re200-v2')
 
 device('tp-link-re200-v3', 'tplink_re200-v3')
+
+device('tp-link-re200-v4', 'tplink_re200-v4')
 
 device('tp-link-tl-mr3020-v3', 'tplink_tl-mr3020-v3', {
 	factory = false,
@@ -104,6 +114,13 @@ device('tp-link-tl-wr902ac-v3', 'tplink_tl-wr902ac-v3', {
 	},
 })
 
+device('tp-link-tl-wr902ac-v4', 'tplink_tl-wr902ac-v4', {
+	factory = false,
+	extra_images = {
+		{'-squashfs-tftp-recovery', '-bootloader', '.bin'},
+	},
+})
+
 
 -- VoCore 2
 
@@ -122,6 +139,15 @@ device('xiaomi-mi-router-4a-100m-international-edition', 'xiaomi_mi-router-4a-10
 	factory = false,
 })
 
+device('xiaomi-mi-router-4a-100m-international-edition-v2', 'xiaomi_mi-router-4a-100m-intl-v2', {
+	factory = false,
+})
+
 device('xiaomi-mi-router-4c', 'xiaomi_mi-router-4c', {
 	factory = false,
+})
+
+device('xiaomi-mi-ra75', 'xiaomi_mi-ra75', {
+	factory = false,
+	broken = true,  -- Only serial flash possible
 })

@@ -26,7 +26,7 @@ Let's start with an example:
 
   return f
 
-The toplevel element of a model is always a *Form*, but it is also possible for
+The top-level element of a model is always a *Form*, but it is also possible for
 a model to return multiple forms, which are displayed one below the other.
 
 A *Form* has one or more *Sections*, and each *Section* has different types

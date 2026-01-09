@@ -24,7 +24,7 @@ copyright = 'Project Gluon'
 author = 'Project Gluon'
 
 # The short X.Y version
-version = '2023.1.1'
+version = '2025.1'
 # The full version, including alpha/beta/rc tags
 release = version
 
@@ -48,7 +48,7 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {'.rst': 'restructuredtext'}
 
 # The master toctree document.
 master_doc = 'index'
@@ -75,7 +75,7 @@ highlight_language = 'none'
 # used to mark channel names and do not exist. Regular links are not effected.
 linkcheck_ignore = [
     'http://192.168.1.1',
-    'https://webirc.hackint.org/#'
+    'https://chat.hackint.org'
 ]
 
 

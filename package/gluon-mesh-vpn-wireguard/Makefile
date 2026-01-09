@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-mesh-vpn-wireguard
   TITLE:=Support for connecting meshes via wireguard
-  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +wireguard-tools +wgpeerselector +libubox +libubus
+  DEPENDS:=+gluon-core +libgluonutil +gluon-mesh-vpn-core +wireguard-tools +wgpeerselector +libubox +libubus +simple-tc
 endef
 
 define Package/gluon-mesh-vpn-wireguard/install

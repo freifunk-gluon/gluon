@@ -1,19 +1,11 @@
 #!/usr/bin/lua
 
 local uci = require('simple-uci').cursor()
+local util = require 'gluon.util'
 
-
-local function get_mem_total()
-	for line in io.lines('/proc/meminfo') do
-		local match = line:match('^MemTotal:%s+(%d+)')
-		if match then
-			return tonumber(match)
-		end
-	end
-end
 
 local max_requests = 32
-if get_mem_total() < 48*1024 then
+if util.get_mem_total() < 48*1024 then
 	max_requests = 16
 end
 
@@ -35,8 +27,5 @@ for _, zone in ipairs({'mesh', 'loc_client'}) do
 		target = 'ACCEPT',
 	})
 end
-
--- ToDo remove in v2022.x
-uci:delete('firewall', 'local_client_http')
 
 uci:save('firewall')

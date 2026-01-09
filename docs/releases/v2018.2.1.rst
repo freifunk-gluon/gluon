@@ -47,26 +47,26 @@ Bugfixes
   This was visible on the status page and several map implementations.
   The new implementation uses netlink instead of parsing `/proc/net/if_inet6`.
 
-* Fixes a localization issue in gluon-config-mode-geo-location which 
+* Fixes a localization issue in gluon-config-mode-geo-location which
   resulted in a partial translation of the wizard's location section
   text. (`#1611 <https://github.com/freifunk-gluon/gluon/issues/1611>`_)
 
 * Fixes the display of the improved memory usage estimation in gluon-status-page
 
-  This change was actually already merged in time for v2018.2 but the 
+  This change was actually already merged in time for v2018.2 but the
   JavaScript was not rebuilt.
 
-* Fixes automatic updates for several devices by adding and updating 
+* Fixes automatic updates for several devices by adding and updating
   the autoupdater image names
 
   This affects the following devices:
 
-  * GL.iNet GL-AR150, 
+  * GL.iNet GL-AR150
   * GL.iNet GL-AR300M
   * GL.iNet GL-AR750
   * Raspberry Pi Model B+ Rev 1.2
 
-* Fixes the primary MAC address selection for Unifi AC 
+* Fixes the primary MAC address selection for Unifi AC
   Lite/Mesh/Pro/Mesh Pro (`#1629 <https://github.com/freifunk-gluon/gluon/issues/1629>`_)
 
 * Fixes low data rate selection for multicast and management frames on
@@ -74,7 +74,7 @@ Bugfixes
 
   A patchset has been backported that notifies these drivers of requested data rate changes
 
-* Fixes the data rate selection in ath10k and ath10k-ct when no 
+* Fixes the data rate selection in ath10k and ath10k-ct when no
   `mcast_rate` is configured (`#1657 <https://github.com/freifunk-gluon/gluon/pull/1657>`_)
 
   Previously a missing mcast_rate could result in broken 5 GHz connectivity
@@ -86,7 +86,7 @@ Scheduled domain switch
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Gluon has support for multiple domains since its v2018.1 release.
-The scheduled domain switch allows for reliable migrations between 
+The scheduled domain switch allows for reliable migrations between
 domains at a preconfigured time.
 This can be useful for communities that, among other things, plan to
 
@@ -98,7 +98,7 @@ Improved frequency band distribution of dual-band radios
 
 A new algorithm that improves the distribution of dual-band radios was
 added. They will now be evenly distributed between the 2.4 and 5 GHz
-band, with a preference towards 2.4 GHz. 
+band, with a preference towards 2.4 GHz.
 
 If a device has only a single dual-band radio, like the AVM FRITZ!WLAN
 Repeater 300E, it will be configured for 2.4 GHz.

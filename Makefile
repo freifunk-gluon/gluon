@@ -35,6 +35,14 @@ ifneq ($(GLUON_BRANCH),)
   GLUON_AUTOUPDATER_ENABLED ?= 1
 endif
 
+ifneq ($(GLUON_FEATURES)$(GLUON_FEATURES_standard)$(GLUON_FEATURES_tiny),)
+  $(error GLUON_FEATURES is obsolete, please use the image-customization.lua file instead)
+endif
+
+ifneq ($(GLUON_SITE_PACKAGES)$(GLUON_SITE_PACKAGES_standard)$(GLUON_SITE_PACKAGES_tiny),)
+  $(error GLUON_SITE_PACKAGES is obsolete, please use the image-customization.lua file instead)
+endif
+
 GLUON_AUTOUPDATER_ENABLED ?= 0
 
 # initialize (possibly already user set) directory variables
@@ -43,6 +51,7 @@ GLUON_OUTPUTDIR ?= output
 GLUON_IMAGEDIR ?= $(GLUON_OUTPUTDIR)/images
 GLUON_PACKAGEDIR ?= $(GLUON_OUTPUTDIR)/packages
 GLUON_DEBUGDIR ?= $(GLUON_OUTPUTDIR)/debug
+GLUON_METADIR ?= $(GLUON_OUTPUTDIR)/meta
 GLUON_TARGETSDIR ?= targets
 GLUON_PATCHESDIR ?= patches
 
@@ -54,11 +63,13 @@ $(eval $(call mkabspath,GLUON_TARGETSDIR))
 $(eval $(call mkabspath,GLUON_PATCHESDIR))
 
 GLUON_VERSION := $(shell scripts/getversion.sh '.')
-GLUON_SITE_VERSION := $(shell scripts/getversion.sh '$(GLUON_SITEDIR)')
+
+# Set default SITE_VERSION if not set by user
+GLUON_SITE_VERSION ?= $(shell scripts/getversion.sh '$(GLUON_SITEDIR)')
 
 GLUON_MULTIDOMAIN ?= 0
 GLUON_AUTOREMOVE ?= 0
-GLUON_DEBUG ?= 0
+GLUON_DEBUG ?= 1
 GLUON_MINIFY ?= 1
 
 # Can be overridden via environment/command line/... to use the Gluon
@@ -71,7 +82,7 @@ GLUON_VARS = \
 	GLUON_VERSION GLUON_SITE_VERSION \
 	GLUON_RELEASE GLUON_REGION GLUON_MULTIDOMAIN GLUON_AUTOREMOVE GLUON_DEBUG GLUON_MINIFY GLUON_DEPRECATED \
 	GLUON_DEVICES GLUON_TARGETSDIR GLUON_PATCHESDIR GLUON_TMPDIR GLUON_IMAGEDIR GLUON_PACKAGEDIR GLUON_DEBUGDIR \
-	GLUON_SITEDIR GLUON_AUTOUPDATER_BRANCH GLUON_AUTOUPDATER_ENABLED GLUON_LANGS GLUON_BASE_FEEDS \
+	GLUON_METADIR GLUON_SITEDIR GLUON_AUTOUPDATER_BRANCH GLUON_AUTOUPDATER_ENABLED GLUON_LANGS GLUON_BASE_FEEDS \
 	GLUON_TARGET BOARD SUBTARGET
 
 unexport $(GLUON_VARS)
@@ -170,7 +181,8 @@ $(LUA):
 
 	scripts/module_check.sh
 
-	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
+	$(GLUON_ENV) scripts/basic_openwrt_config.sh > openwrt/.config
+	$(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) tools/install
 	$(OPENWRTMAKE) package/lua/host/compile
 

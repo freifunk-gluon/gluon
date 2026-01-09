@@ -8,7 +8,7 @@ Gluon's releases are managed using `Git tags`_. If you are just getting
 started with Gluon we recommend to use the latest stable release of Gluon.
 
 Take a look at the `list of gluon releases`_ and notice the latest release,
-e.g. *v2023.1.1*. Always get Gluon using git and don't try to download it
+e.g. *v2025.1*. Always get Gluon using git and don't try to download it
 as a Zip archive as the archive will be missing version information.
 
 Please keep in mind that there is no "default Gluon" build; a site configuration
@@ -24,24 +24,15 @@ An example configuration can be found in the Gluon repository at *docs/site-exam
 
 Dependencies
 ------------
-To build Gluon, several packages need to be installed on the system. On a
-freshly installed Debian Bullseye system the following packages are required:
+To build Gluon, several packages need to be installed on the system.
+On Debian Bookworm, you can install the required packages with the following command:
 
-* `git` (to get Gluon and other dependencies)
-* `python3`
-* `python3-distutils`
-* `build-essential`
-* `ecdsautils` (to sign firmware, see `contrib/sign.sh`)
-* `gawk`
-* `unzip`
-* `libncurses-dev` (actually `libncurses5-dev`)
-* `libz-dev` (actually `zlib1g-dev`)
-* `libssl-dev`
-* `libelf-dev` (to build x86-64)
-* `wget`
-* `rsync`
-* `time` (built-in `time` doesn't work)
-* `qemu-utils`
+.. code-block:: sh
+
+  apt install clang git python3 python3-dev python3-pyelftools \
+  python3-setuptools build-essential gawk unzip libncurses5-dev \
+  zlib1g-dev libssl-dev libelf-dev llvm wget rsync time qemu-utils \
+  ecdsautils swig
 
 We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
 
@@ -53,7 +44,7 @@ Building the images
 -------------------
 
 To build Gluon, first check out the repository. Replace *RELEASE* with the
-version you'd like to checkout, e.g. *v2023.1.1*.
+version you'd like to checkout, e.g. *v2025.1*.
 
 ::
 
@@ -237,6 +228,11 @@ GLUON_RELEASE
   is available. The same GLUON_RELEASE has to be passed to ``make`` and ``make manifest``
   to generate a correct manifest.
 
+GLUON_SITE_VERSION
+  Version of the site configuration. This string is displayed in the config mode
+  and ``gluon-info``. If unset, Gluon generates a version string using ``git describe``
+  on the site folder.
+
 GLUON_TARGET
   Target architecture to build.
 
@@ -246,12 +242,21 @@ Special variables
 GLUON_AUTOREMOVE
   Setting ``GLUON_AUTOREMOVE=1`` enables the ``CONFIG_AUTOREMOVE`` OpenWrt setting, which will delete package build
   directories after a package build has finished to save space. This is mostly useful for CI builds from scratch. Do
-  not set this flag during development (or generally, when you want you reuse your build tree for subsequent builds),
+  not set this flag during development (or generally, when you want to reuse your build tree for subsequent builds),
   as it significantly increases incremental build times.
 
 GLUON_DEBUG
-  Setting ``GLUON_DEBUG=1`` will provide firmware images including debugging symbols usable with GDB or
-  similar tools. Requires a device or target with at least 16 MB of flash space, e.g. `x86-64`. Unset by default.
+  The following values are supported:
+
+  - ``0``: Remove symbol tables and debug information as well as most section and other
+    information not strictly necessary for execution using ``sstrip``. This saves a small amount
+    of flash space over the default ``strip`` command (roughly 70kiB for ath79), but makes any
+    kind of binary analysis much more difficult, as common tools like objdump and gdb can't
+    handle such files at all.
+  - ``1``: Remove symbol tables and debug information from binaries using the standard ``strip``
+    command. This is the default.
+  - ``2``:  Include debugging symbols usable with GDB or similar tools in all binaries of the image.
+    Requires a device or target with at least 16 MB of flash space, e.g. ``x86-64``.
 
 GLUON_MINIFY
   Setting ``GLUON_MINIFY=0`` will omit the minification of scripts during the build process. By

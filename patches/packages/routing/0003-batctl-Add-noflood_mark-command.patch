@@ -1,18 +1,18 @@
 From: Linus Lüssing <linus.luessing@c0d3.blue>
-Date: Sat, 1 May 2021 22:19:41 +0200
+Date: Sun, 10 Nov 2024 19:35:52 +0100
 Subject: batctl: Add noflood_mark command
 
 Adds support for the new 'noflood_mark' setting in batman-adv.
 
 Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
-diff --git a/batctl/patches/0012-batctl-Add-noflood_mark-command.patch b/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
+diff --git a/batctl/patches/2002-batctl-Add-noflood_mark-command.patch b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..1234c56cc0be080de8142f3a563cf4e070c4840a
+index 0000000000000000000000000000000000000000..d4498603785a21a71951a6195cd96661be44d685
 --- /dev/null
-+++ b/batctl/patches/0012-batctl-Add-noflood_mark-command.patch
-@@ -0,0 +1,226 @@
-+From c14abebbeb4af76600cd6eb508e5e4e38a436b2f Mon Sep 17 00:00:00 2001
++++ b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
+@@ -0,0 +1,217 @@
++From 12884631753aa24d9e36c5d65950320ecab61384 Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 +Date: Fri, 26 Apr 2019 19:27:38 +0200
 +Subject: [PATCH] batctl: Add noflood_mark command
@@ -24,20 +24,11 @@ index 0000000000000000000000000000000000000000..1234c56cc0be080de8142f3a563cf4e0
 +
 +Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 +---
-+Changelog v3:
-+* changed command from a noflood tri-state option
-+  to a value/mask one similar to the isolation mark
-+* noflood.c -> noflood_mark.c
-+
-+Changelog v2:
-+* added noflood.c
-+---
 + Makefile       |   1 +
 + README.rst     |  15 ++++++
 + batman_adv.h   |  12 +++++
-+ man/batctl.8   |  23 ++++++++
-+ noflood_mark.c | 141 +++++++++++++++++++++++++++++++++++++++++++++++++
-+ 5 files changed, 192 insertions(+)
++ noflood_mark.c | 140 +++++++++++++++++++++++++++++++++++++++++++++++++
++ 4 files changed, 168 insertions(+)
 + create mode 100644 noflood_mark.c
 +
 +--- a/Makefile
@@ -52,7 +43,7 @@ index 0000000000000000000000000000000000000000..1234c56cc0be080de8142f3a563cf4e0
 + $(eval $(call add_command,originators_json,y))
 +--- a/README.rst
 ++++ b/README.rst
-+@@ -419,6 +419,21 @@ Example::
++@@ -430,6 +430,21 @@ Example::
 + 
 + 
 + 

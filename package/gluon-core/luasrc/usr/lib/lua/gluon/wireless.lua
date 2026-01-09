@@ -3,62 +3,13 @@ local site = require 'gluon.site'
 local util = require 'gluon.util'
 
 local unistd = require 'posix.unistd'
-local dirent = require 'posix.dirent'
 
+local iwinfo = require 'iwinfo'
 
 local M = {}
 
-local function find_phy_by_path(path)
-	local device_path, phy_offset = string.match(path, "^(.+)%+(%d+)$")
-
-	-- Special handling required for multi-phy devices
-	if device_path == nil then
-		device_path = path
-		phy_offset = '0'
-	end
-
-	-- Find the device path. Either it's located at /sys/devices or /sys/devices/platform
-	local path_prefix = ''
-	if not unistd.access('/sys/devices/' .. device_path .. '/ieee80211') then
-		path_prefix = 'platform/'
-	end
-
-	-- Get all available PHYs of the device and determine the one with the lowest index
-	local phy_names = dirent.dir('/sys/devices/' .. path_prefix .. device_path .. '/ieee80211')
-	local device_phy_idxs = {}
-	for _, v in ipairs(phy_names) do
-		local phy_idx = v:match('^phy(%d+)$')
-
-		if phy_idx ~= nil then
-			table.insert(device_phy_idxs, tonumber(phy_idx))
-		end
-	end
-
-	table.sort(device_phy_idxs)
-
-	-- Index starts at 1
-	return 'phy' .. device_phy_idxs[tonumber(phy_offset) + 1]
-end
-
-local function find_phy_by_macaddr(macaddr)
-	local addr = macaddr:lower()
-	for _, file in ipairs(util.glob('/sys/class/ieee80211/*/macaddress')) do
-		if util.trim(util.readfile(file)) == addr then
-			return file:match('([^/]+)/macaddress$')
-		end
-	end
-end
-
 function M.find_phy(config)
-	if not config or config.type ~= 'mac80211' then
-		return nil
-	elseif config.path then
-		return find_phy_by_path(config.path)
-	elseif config.macaddr then
-		return find_phy_by_macaddr(config.macaddr)
-	else
-		return nil
-	end
+	return iwinfo.nl80211.phyname(config['.name'])
 end
 
 local function get_addresses(radio)
@@ -85,20 +36,39 @@ local function get_wlan_mac_from_driver(radio, vif)
 		return nil
 	end
 
-	for i, addr in ipairs(addresses) do
-		if i == vif then
+	return addresses[vif+1]
+end
+
+function M.supports_channel(radio, channel)
+	local phy = M.find_phy(radio)
+	for _, chan in ipairs(iwinfo.nl80211.freqlist(phy)) do
+		if channel == chan.channel then
+			return true
+		end
+	end
+	return false
+end
+
+local radio_mac_offsets = {
+	client = 0,
+	mesh = 1,
+	owe = 2,
+	wan_radio = 3,
+}
+
+function M.get_wlan_mac(func, index, radio)
+	local offset = radio_mac_offsets[func]
+	if offset == nil then
+		return nil
+	end
+	if radio then
+		local addr = get_wlan_mac_from_driver(radio, offset)
+		if addr then
 			return addr
 		end
 	end
-end
 
-function M.get_wlan_mac(_, radio, index, vif)
-	local addr = get_wlan_mac_from_driver(radio, vif)
-	if addr then
-		return addr
-	end
-
-	return util.generate_mac(4*(index-1) + (vif-1))
+	return util.generate_mac(4*index + offset)
 end
 
 -- Iterate over all radios defined in UCI calling
@@ -114,10 +84,11 @@ function M.foreach_radio(uci, f)
 	for index, radio in ipairs(radios) do
 		local band = radio.band
 
+		-- radio index is zero-based
 		if band == '2g' then
-			f(radio, index, site.wifi24)
+			f(radio, index-1, site.wifi24)
 		elseif band == '5g' then
-			f(radio, index, site.wifi5)
+			f(radio, index-1, site.wifi5)
 		end
 	end
 end
@@ -161,11 +132,11 @@ function M.device_uses_wlan(uci)
 	return ret
 end
 
-function M.device_uses_11a(uci)
+function M.device_uses_band(uci, band)
 	local ret = false
 
 	uci:foreach('wireless', 'wifi-device', function(radio)
-		if radio.band == '5g' then
+		if radio.band == band then
 			ret = true
 			return false
 		end

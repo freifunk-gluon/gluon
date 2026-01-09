@@ -146,7 +146,7 @@ Ignored tx-power offset on Ubiquiti AirMax devices
 
 https://github.com/freifunk-gluon/gluon/issues/94
 
-There is still no OpenWRT support for determining the transmission
+There is still no OpenWrt support for determining the transmission
 power offsets on Ubiquiti AirMax devices (Bullet M2, Picostation
 M2, Nanostation (loco) M2, ...). Use Gluon with caution on these
 devices! Manual adjustment may be required.

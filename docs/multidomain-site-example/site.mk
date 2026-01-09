@@ -1,35 +1,9 @@
 ##	gluon site.mk makefile example
 
-##	GLUON_FEATURES
-#		Specify Gluon features/packages to enable;
-#		Gluon will automatically enable a set of packages
-#		depending on the combination of features listed
-
-GLUON_FEATURES := \
-	autoupdater \
-	ebtables-filter-multicast \
-	ebtables-filter-ra-dhcp \
-	ebtables-limit-arp \
-	mesh-batman-adv-15 \
-	mesh-vpn-fastd \
-	respondd \
-	status-page \
-	web-advanced \
-	web-wizard
-
 ##	GLUON_MULTIDOMAIN
 #		Build gluon with multidomain support.
 
 GLUON_MULTIDOMAIN=1
-
-##	GLUON_SITE_PACKAGES
-#		Specify additional Gluon/LEDE packages to include here;
-#		A minus sign may be prepended to remove a packages from the
-#		selection that would be enabled by default or due to the
-#		chosen feature flags
-
-
-GLUON_SITE_PACKAGES := iwinfo
 
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images

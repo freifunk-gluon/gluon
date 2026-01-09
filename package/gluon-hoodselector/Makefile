@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-hoodselector
   TITLE:=Automatically migrate nodes between domains.
-  DEPENDS:=+luaposix +libgluonutil +lua-math-polygon +libjson-c +gluon-site +micrond +luabitop @GLUON_MULTIDOMAIN
+  DEPENDS:=+luaposix +libgluonutil +lua-math-polygon +libjson-c +gluon-site +micrond +lua-bit32 @GLUON_MULTIDOMAIN
   CONFLICTS:=+gluon-config-mode-domain-select
 endef
 

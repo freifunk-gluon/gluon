@@ -137,13 +137,15 @@ batman-adv. Which even with IGMP/MLD filtered, will have full multicast
 membership knowledge through its own propagation through the batman-adv
 translation table.
 
-Advantages are:
+**Advantages:**
 
 * Reduced overhead through reactive batman-adv multicast TT vs.
   periodic IGMP/MLD messages in the mesh
 * Increased IGMP/MLD snooping robustness via local, per node
   IGMP/MLD queriers
 * DDoS vector mitigation
+
+**Limitations:**
 
 **Note:** For nodes running an operating system other than Gluon, but a bridge
 interface on top of the batman-adv interface, you will need to set the
@@ -159,12 +161,52 @@ assume that there is no multicast router behind this port, meaning
 to only forward multicast to this port if an according multicast
 listener on this link was detected.
 
-Further limitations: IGMP/MLD snooping switches (e.g. "enterprise switches")
+IGMP/MLD snooping switches (e.g. "enterprise switches")
 behind the client network of a node (LAN ports) are unsupported. It is
 advised to disable IGMP/MLD snooping on those enterprise switches for now
 or to at least manually mark the port to the Gluon router as a
 "multicast router port".
 
-Alternatively, the filtering of IGMP/MLD reports can be disabled via
+Also IPv4/IPv6 multicast routers are unsupported, unless the
+:doc:`gluon-mesh-batman-adv-brmldproxy` package is installed.
+
+**Configuration options:**
+
+The filtering of IGMP/MLD reports can be disabled via
 the site.conf (which is not recommended in large meshes though).
 See :ref:`site.conf mesh section <user-site-mesh>` for details.
+
+Another alternative is to install the :doc:`gluon-mesh-batman-adv-brmldproxy`
+package. Which allows proxied MLD reports for listeners of
+routable IPv6 multicast addresses, while keeping link-local
+IPv6 multicast addresses filtered. This allows using IPv6
+multicast routers.
+
+Tweaking Hop Penalty
+^^^^^^^^^^^^^^^^^^^^
+
+In general, the usage of a directly connected uplink is preferred over a faster more distant connection.
+In situations where the uplink of a device should only be used as a fallback (e.g. metered connection or slower encryption), this can be tweaked using a hop_penalty in gluon.
+Examples of this are shown below:
+
+.. code-block:: sh
+
+  # use mesh-vpn as fallback only
+  uci set gluon.mesh_vpn.batadv_hop_penalty='120'
+  # optional penalty for wired mesh
+  uci set gluon.iface_lan.batadv_hop_penalty=10
+  # optional for mesh on wan
+  uci set gluon.iface_wan.batadv_hop_penalty=10
+  # don't forget to commit changes
+  uci commit gluon
+
+To apply the changes, run the following commands:
+
+.. code-block:: sh
+
+  gluon-reconfigure
+  reboot
+
+Further documentation of the hop penalty can be found here:
+
+https://www.open-mesh.org/doc/batman-adv/Tweaking.html#hop-penalty

@@ -102,15 +102,28 @@ uci:foreach("system", "gpio_switch", function(si)
 		end
 
 		local texts = {
-			["^PoE Power Port(%d*)$"] = function(m) return translatef("Enable PoE Power Port %s", m[1]) end,
-			["^PoE Passthrough$"] = function() return translate("Enable PoE Passthrough") end,
+			["^PoE Power Port(%d*)$"] = {
+				get_title = function(m) return translatef("Enable PoE Power Port %s", m[1]) end,
+				active_low = false,
+			},
+			["^PoE Passthrough$"] = {
+				get_title = function() return translate("Enable PoE Passthrough") end,
+				active_low = false,
+			},
+			-- Typo in AP-303H (ipq40xx-generic)
+			["^POE passtrough disable$"] = {
+				get_title = function() return translate("Enable PoE Passthrough") end,
+				active_low = true,
+			},
 		}
 
 		local name
-		for pattern, func in pairs(texts) do
+		local active_low = false
+		for pattern, text_obj in pairs(texts) do
 			local match = {si.name:match(pattern)}
 			if match[1] then
-				name = func(match)
+				name = text_obj.get_title(match)
+				active_low = text_obj.active_low
 				break
 			end
 		end
@@ -120,9 +133,17 @@ uci:foreach("system", "gpio_switch", function(si)
 
 		local poe = section:option(Flag, si[".name"], name)
 		poe.default = uci:get_bool("system", si[".name"], "value")
+		if active_low then
+			poe.default = not poe.default
+		end
 
 		function poe:write(data)
-			uci:set("system", si[".name"], "value", data)
+			local write_value = data
+
+			if active_low then
+				write_value = not write_value
+			end
+			uci:set("system", si[".name"], "value", write_value)
 		end
 	end
 end)

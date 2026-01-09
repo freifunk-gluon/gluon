@@ -1,0 +1,64 @@
+Gluon 2023.2.4
+==============
+
+Added hardware support
+----------------------
+
+ramips-mt7620
+~~~~~~~~~~~~~
+
+- NETGEAR
+
+  - EX6130
+
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- Xiaomi
+
+  - Mi Router 4A (Gigabit Edition v2)
+
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - RE200 (v4)
+
+
+Bugfixes
+--------
+
+* Fixed an issue where Enterasys WS-AP3710i devices regularly boot with all-zero MAC-addresses in previous releases
+
+* Detection of `swconfig` based switch architecture has been fixed (`#3309 <https://github.com/freifunk-gluon/gluon/pull/3309>`_)
+
+* Fixed an issue where the AVM FRITZ!Box 4040 used an incorrect primary MAC address
+  (`Upstream <https://github.com/openwrt/openwrt/commit/87fbb5085d7e290b0ba536ad7d0876c4224723a6>`_)
+
+
+Known issues
+------------
+
+* Unstable wireless with certain MediaTek devices (`#3154 <https://github.com/freifunk-gluon/gluon/issues/3154>`_)
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).

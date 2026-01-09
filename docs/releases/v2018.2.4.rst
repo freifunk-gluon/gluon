@@ -12,7 +12,7 @@ Bugfixes
 * Fixes device alias for Ubiquiti UniFi AC LR. (`#1834 <https://github.com/freifunk-gluon/gluon/issues/1834>`_)
   Autoupdates on this model were impossible before, since we were missing the proper device alias.
 
-* Add correct ath10k firmware package for OCEDO Koala. (`#1838 <https://github.com/freifunk-gluon/gluon/pull/1838>`_)
+* Add correct ath10k firmware package for Ocedo Koala. (`#1838 <https://github.com/freifunk-gluon/gluon/pull/1838>`_)
 
 * Fixes various batman-adv bugs with backports from 2019.4 and 2019.5 by updating the openwrt-routing packages feed
 
@@ -20,7 +20,7 @@ Other changes
 ~~~~~~~~~~~~~
 
 * Linux kernel has been updated to either
-  
+
   - 4.9.207 (ar71xx, brcm2708, mpc85xx) or
   - 4.14.160 (ipq40xx, ipq806x, mvebu, ramips, sunxi, x86).
 

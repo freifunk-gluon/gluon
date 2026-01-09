@@ -44,4 +44,21 @@ function M.get_active_provider()
 	return nil, nil
 end
 
+function M.get_enabled_public_key()
+	if M.enabled() ~= true then
+		return nil
+	end
+
+	local _, active_vpn = M.get_active_provider()
+
+	local pubkey
+	if active_vpn ~= nil then
+		if not active_vpn.pubkey_privacy() then
+			pubkey = active_vpn.public_key()
+		end
+	end
+
+	return pubkey
+end
+
 return M

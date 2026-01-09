@@ -6,6 +6,13 @@ may include one or both of the two networks "client" (AP mode) and "mesh" (802.1
 mode), which can be used simultaneously. See :doc:`../user/site` for details on the
 configuration.
 
+Outdoor mode
+------------
+
+Configuring the node for outdoor use tunes the 5 GHz radio to a frequency and transmission power that conforms with the local regulatory requirements. 
+It also enables dynamic frequency selection (DFS; radar detection).
+At the same time, mesh functionality is disabled as it requires neighbouring nodes to stay on the same channel permanently.
+
 Upgrade behaviour
 -----------------
 

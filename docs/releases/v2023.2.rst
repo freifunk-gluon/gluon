@@ -1,0 +1,327 @@
+Gluon 2023.2
+============
+
+Important notes
+---------------
+
+Upgrades to v2023.2 and later releases are only supported from releases v2022.1 and later.
+This is due to migrations that have been removed to simplify maintenance.
+
+
+Deprecation of Tunneldigger VPN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Tunneldigger is set to be removed from the Gluon base repository in the next major Gluon release. It is recommended
+to migrate to fastd or WireGuard. Tunneldigger will be moved to the
+community-packages repository and can be installed from there as an alternative.
+
+
+Site changes
+------------
+
+Image customization
+~~~~~~~~~~~~~~~~~~~
+
+``GLUON_FEATURES`` and ``GLUON_SITE_PACKAGES`` have been replaced by a more flexible customization framework
+based on Lua. Feature and Package selection can be specified more granularly at both target and device level.
+
+All site configs need to be updated. Configuration like the following
+must be removed from ``site.mk``:
+
+.. code-block:: make
+
+    GLUON_FEATURES := \
+        autoupdater \
+        mesh-batman-adv-15 \
+        mesh-vpn-fastd \
+        respondd \
+        status-page \
+        web-advanced \
+        web-wizard
+
+    GLUON_FEATURES_standard := \
+        wireless-encryption-wpa3
+
+    GLUON_SITE_PACKAGES := iwinfo
+
+It is replaced by a new file ``image-customization.lua`` with content
+like the following:
+
+.. code-block:: lua
+
+    features({
+        'autoupdater',
+        'mesh-batman-adv-15',
+        'mesh-vpn-fastd',
+        'respondd',
+        'status-page',
+        'web-advanced',
+        'web-wizard',
+    })
+
+    if not device_class('tiny') then
+        features({
+            'wireless-encryption-wpa3',
+        })
+    end
+
+    packages({'iwinfo'})
+
+
+Additionally, this framework also allows communities to specify which devices should or should not be built.
+For more information, see the :ref:`image customization documentation <site-image-customization>`.
+
+
+Added hardware support
+----------------------
+
+armsr-armv7
+~~~~~~~~~~~
+
+- Arm
+
+  - Arm SystemReady 32-bit (EFI) [#virt]_
+
+
+armsr-armv8
+~~~~~~~~~~~
+
+- Arm
+
+  - Arm SystemReady 64-bit (EFI) [#virt]_
+
+
+.. [#virt]
+  The ArmSR targets can be used for running Gluon as a Virtual Machine on
+  Arm systems.
+
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- AVM
+
+  - FRITZ!Repeater 1750E
+
+- Sophos
+
+  - AP100
+  - AP100c
+  - AP55
+  - AP55c
+
+- TP-Link
+
+  - Archer C60 (v1)
+  - EAP225-Outdoor v3
+  - TL-WR2543N/ND (v1)
+
+
+ath79-mikrotik
+~~~~~~~~~~~~~~
+
+- MikroTik
+
+  - wAPR-2nD (wAP R)
+
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- ZTE
+
+  - MF289F
+
+
+mediatek-filogic
+~~~~~~~~~~~~~~~~
+
+- ASUS
+
+  - TUF-AX4200
+
+- Cudy
+
+  - WR3000 (v1)
+
+- GL.iNet
+
+  - GL-MT3000
+
+- NETGEAR
+
+  - WAX220
+
+- Ubiquiti
+
+  - Unifi 6 Plus
+
+- ZyXEL
+
+  - NWA50AX Pro
+
+
+mpc85xx-p1010
+~~~~~~~~~~~~~
+
+- Enterasys
+
+  - WS-AP3715i
+
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - EAP615-Wall
+
+- Wavlink
+
+  - WS-WN572HP3 4G
+
+
+ramips-mt76x8
+~~~~~~~~~~~~~
+
+- ASUS
+
+  - RT-AX53U
+
+- ZyXEL
+
+  - WSM20
+
+
+Removed hardware support
+------------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - Archer C60 (v1)
+  - RE355
+  - RE450 (v1)
+
+- Ubiquiti
+
+  - NanoBeam 5AC 19 (XC) [#airmax]_
+  - NanoBeam M5 (XW) [#airmax]_
+  - NanoStation Loco M2/M5 (XW) [#airmax]_
+  - NanoStation M2/M5 (XW) [#airmax]_
+
+.. [#airmax]
+  Ubiquiti airMax devices have been removed temporarily due to an unsolved issue with the flash write-protect.
+  They will eventually be re-added once the issue has been fixed upstream.
+  (`#2939 <https://github.com/freifunk-gluon/gluon/issues/2939>`_)
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- TP-Link
+
+  - RE305
+
+
+Features
+--------
+
+TLS support
+~~~~~~~~~~~
+
+Gluon now provides HTTPS client support when the `tls` feature is included in the site
+configuration, allowing nodes to establish encrypted connections to autoupdater mirrors,
+opkg repositories and other HTTPS servers.
+
+Existing site configurations that add libustream TLS packages should switch to the `tls`
+feature instead, which will always include the recommended TLS implementation as well
+as common CA certificates (`ca-bundle`).
+
+
+EFI images
+~~~~~~~~~~
+
+Gluon x86-64 images now support systems using EFI boot. The same images are still compatible
+with legacy MBR boot methods.
+
+
+Support for CAKE with fastd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Gluon now supports CAKE as a QoS mechanism with fastd. It is automatically enabled with devices
+offering at least 200MB of system memory. CAKE is enabled when throughput limits are configured
+for the mesh-VPN.
+
+For more information about the technical details, see the
+(`OpenWrt wiki <https://openwrt.org/docs/guide-user/network/traffic-shaping/sqm>`_).
+
+Support can be activated by including the `mesh-vpn-sqm` feature in the site configuration.
+
+
+Docker container
+~~~~~~~~~~~~~~~~
+
+The Gluon build-container is now published to the GitHub container registry.
+The container contains all the tools required to build Gluon images from source.
+
+See the (`container registry <https://github.com/freifunk-gluon/gluon/pkgs/container/gluon-build>`_) for more information.
+
+
+GitHub actions
+~~~~~~~~~~~~~~
+
+Gluon build tests now run inside a Docker container built from the gluon-build Dockerfile of the same version.
+
+
+Bugfixes
+--------
+
+- Fixed script failure when reconfiguring interface groups without an assigned role.
+- Host tools used to be built twice on first compilation.
+
+
+Major changes
+-------------
+
+This release is based on the newest OpenWrt 23.05 release branch.
+It ships with Linux kernel 5.15.y, wireless-backports 6.1.24 and batman-adv 2023.1.
+
+.. _releases-v2023.2-minor-changes:
+
+Minor changes
+-------------
+
+- D-Link DIR-825 B1 factory images are no longer built due to size constraints.
+  Please use a recent OpenWrt 23.05 image for factory installation and install Gluon
+  using sysupgrade.
+- The robots.txt now prohibits crawling the status page.
+- Changed the order in which Gluon installs packages into the OpenWrt build system
+  to favor Gluon and site packages over upstream OpenWrt packages.
+- If enough nodes are updated, the batman-adv multicast optimizations originally introduced in Gluon 2021.1 for link-local IPv6 multicast addresses
+  will be applied within the domain to routable IPv6 multicast addresses.
+- Gluon now uses mbedtls instead of WolfSSL for hostapd and wpa-supplicant.
+
+
+Known issues
+------------
+
+* The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page. (`#1726 <https://github.com/freifunk-gluon/gluon/issues/1726>`_)
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new throughput
+    metric.
+  - Throughput values are not correctly acquired for different interface types.
+    (`#1728 <https://github.com/freifunk-gluon/gluon/issues/1728>`_)
+    This affects virtual interface types like bridges and VXLAN.
+
+* Default TX power on many Ubiquiti devices is too high, correct offsets are unknown
+  (`#94 <https://github.com/freifunk-gluon/gluon/issues/94>`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+* In configurations without VXLAN, the MAC address of the WAN interface is modified even when Mesh-on-WAN is disabled
+  (`#496 <https://github.com/freifunk-gluon/gluon/issues/496>`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when promiscuous mode is disallowed).

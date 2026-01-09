@@ -1,6 +1,29 @@
 {
+  "armsr-armv7": [
+    "targets/armsr-armv7",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
+  "armsr-armv8": [
+    "targets/armsr-armv8",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/armsr.inc"
+  ],
   "ath79-generic": [
     "targets/ath79-generic",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -10,6 +33,7 @@
   ],
   "ath79-nand": [
     "targets/ath79-nand",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -19,6 +43,7 @@
   ],
   "ath79-mikrotik": [
     "targets/ath79-mikrotik",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -29,6 +54,7 @@
   ],
   "bcm27xx-bcm2708": [
     "targets/bcm27xx-bcm2708",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -39,6 +65,7 @@
   ],
   "bcm27xx-bcm2709": [
     "targets/bcm27xx-bcm2709",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -49,6 +76,7 @@
   ],
   "ipq40xx-generic": [
     "targets/ipq40xx-generic",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -58,6 +86,7 @@
   ],
   "ipq40xx-mikrotik": [
     "targets/ipq40xx-mikrotik",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -68,6 +97,27 @@
   ],
   "ipq806x-generic": [
     "targets/ipq806x-generic",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "lantiq-xrx200": [
+    "targets/lantiq-xrx200",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "lantiq-xrx200_legacy": [
+    "targets/lantiq-xrx200_legacy",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -77,6 +127,7 @@
   ],
   "lantiq-xway": [
     "targets/lantiq-xway",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -86,6 +137,7 @@
   ],
   "mediatek-filogic": [
     "targets/mediatek-filogic",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -95,6 +147,17 @@
   ],
   "mediatek-mt7622": [
     "targets/mediatek-mt7622",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "mvebu-cortexa53": [
+    "targets/mvebu-cortexa53",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -104,6 +167,7 @@
   ],
   "mpc85xx-p1010": [
     "targets/mpc85xx-p1010",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -113,6 +177,17 @@
   ],
   "mpc85xx-p1020": [
     "targets/mpc85xx-p1020",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "qualcommax-ipq807x": [
+    "targets/qualcommax-ipq807x",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -122,6 +197,7 @@
   ],
   "ramips-mt7620": [
     "targets/ramips-mt7620",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -131,6 +207,7 @@
   ],
   "ramips-mt7621": [
     "targets/ramips-mt7621",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -140,15 +217,7 @@
   ],
   "ramips-mt76x8": [
     "targets/ramips-mt76x8",
-    "modules",
-    "Makefile",
-    "patches/**",
-    "scripts/**",
-    "targets/generic",
-    "targets/targets.mk"
-  ],
-  "realtek-rtl838x": [
-    "targets/realtek-rtl838x",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -158,6 +227,7 @@
   ],
   "rockchip-armv8": [
     "targets/rockchip-armv8",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -167,6 +237,7 @@
   ],
   "sunxi-cortexa7": [
     "targets/sunxi-cortexa7",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -176,6 +247,7 @@
   ],
   "x86-generic": [
     "targets/x86-generic",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -186,6 +258,7 @@
   ],
   "x86-geode": [
     "targets/x86-geode",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -195,6 +268,7 @@
   ],
   "x86-legacy": [
     "targets/x86-legacy",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -205,6 +279,7 @@
   ],
   "x86-64": [
     "targets/x86-64",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -217,6 +292,7 @@
   ],
   "bcm27xx-bcm2710": [
     "targets/bcm27xx-bcm2710",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -225,8 +301,30 @@
     "targets/targets.mk",
     "targets/bcm27xx.inc"
   ],
-  "lantiq-xrx200": [
-    "targets/lantiq-xrx200",
+  "bcm27xx-bcm2711": [
+    "targets/bcm27xx-bcm2711",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk",
+    "targets/bcm27xx.inc"
+  ],
+  "ipq40xx-chromium": [
+    "targets/ipq40xx-chromium",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
+  "kirkwood-generic": [
+    "targets/kirkwood-generic",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",
@@ -236,6 +334,7 @@
   ],
   "mvebu-cortexa9": [
     "targets/mvebu-cortexa9",
+    ".github/workflows/build-gluon.yml",
     "modules",
     "Makefile",
     "patches/**",

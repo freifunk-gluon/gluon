@@ -26,12 +26,15 @@ device('aerohive-hiveap-121', 'aerohive_hiveap-121')
 
 device('gl.inet-gl-ar300m-nor', 'glinet_gl-ar300m-nor', {
 	factory = false,
-	manifest_aliases = {
-		'gl.inet-gl-ar300m', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 device('gl.inet-gl-ar750s-nor', 'glinet_gl-ar750s-nor', {
+	factory = false,
+	packages = ATH10K_PACKAGES_QCA9887,
+})
+
+device('gl.inet-gl-e750', 'glinet_gl-e750', {
+	broken = true, -- the display is not showing status and there are no LEDs
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9887,
 })
@@ -41,13 +44,10 @@ device('gl.inet-gl-xe300', 'glinet_gl-xe300', {
 })
 
 
--- Netgear
+-- NETGEAR
 
 device('netgear-wndr3700-v4', 'netgear_wndr3700-v4', {
 	factory_ext = '.img',
-	manifest_aliases = {
-		'netgear-wndr3700v4', -- Upgrade from OpenWrt 19.07
-	},
 })
 
 device('netgear-wndr4300', 'netgear_wndr4300', {

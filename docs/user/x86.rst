@@ -9,9 +9,9 @@ Targets
 
 The following targets for x86 images exist:
 
-`x86-generic`
-    Generic x86 support with many different ethernet drivers; should run on
-    most x86 systems.
+`x86-64`
+    Generic x86 64-bit support with many different ethernet drivers; should run on
+    most x86 systems with 64-bit support.
 
     There are three images:
 
@@ -20,10 +20,15 @@ The following targets for x86 images exist:
     * `vmware` (VMDK image)
 
     These images differ in the image file format, the content is the same. Therefore
-    a single `x86-generic` sysupgrade image is provided, only.
+    a single `x86-64` sysupgrade image is provided, only.
+
+`x86-generic`
+    32-bit version of `x86-64` for hardware not supporting 64-bit images.
+    Also comes with `virtualbox` and `vmware` factory installs.
 
 `x86-geode`
     x86 image for Geode CPUs.
 
-`x86-64`
-    64bit version of `x86-generic`.
+`x86-legacy`
+    x86 image for very old PC hardware like i586.
+

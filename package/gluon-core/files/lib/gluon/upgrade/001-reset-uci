@@ -6,6 +6,9 @@ NETWORK_SAVED="${NETWORK_CFG}_gluon-old"
 SYSTEM_CFG='/etc/config/system'
 SYSTEM_SAVED="${SYSTEM_CFG}_gluon-old"
 
+WIRELESS_CFG='/etc/config/wireless'
+WIRELESS_SAVED="${WIRELESS_CFG}_gluon-old"
+
 # Make sure everything is saved before we move away the config files
 uci commit
 
@@ -16,6 +19,10 @@ if [ -s "$NETWORK_CFG" ] && ! [ -s "$NETWORK_SAVED" ]; then
 fi
 if [ -s "$SYSTEM_CFG" ] && ! [ -s "$SYSTEM_SAVED" ]; then
 	mv -f "$SYSTEM_CFG" "$SYSTEM_SAVED"
+fi
+if [ -s "$WIRELESS_CFG" ] && ! [ -s "$WIRELESS_SAVED" ]; then
+	# TODO wireless should be moved as well after migrating radio specific settings
+	cp "$WIRELESS_CFG" "$WIRELESS_SAVED"
 fi
 
 # Generate a new network config

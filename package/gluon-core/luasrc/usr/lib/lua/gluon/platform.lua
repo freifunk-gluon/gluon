@@ -24,6 +24,7 @@ end
 
 function M.is_outdoor_device()
 	if M.match('ath79', 'generic', {
+		'comfast,cf-ew71-v2',
 		'devolo,dvl1750x',
 		'librerouter,librerouter-v1',
 		'plasmacloud,pa300',
@@ -36,29 +37,41 @@ function M.is_outdoor_device()
 		'tplink,cpe510-v2',
 		'tplink,cpe510-v3',
 		'tplink,cpe710-v1',
+		'tplink,cpe710-v2',
 		'tplink,eap225-outdoor-v1',
+		'tplink,eap225-outdoor-v3',
 		'tplink,wbs210-v1',
 		'tplink,wbs210-v2',
 		'tplink,wbs510-v1',
 		'ubnt,nanobeam-ac-xc',
-		'ubnt,nanobeam-m5-xw',
 		'ubnt,nanostation-loco-m-xw',
 		'ubnt,nanostation-m-xw',
+		'ubnt,uk-ultra',
 		'ubnt,unifi-ap-outdoor-plus',
 		'ubnt,unifiac-mesh',
 		'ubnt,unifiac-mesh-pro',
 	}) then
 		return true
 
+	elseif M.match('ath79', 'mikrotik', {
+		'mikrotik,routerboard-wapr-2nd',
+	}) then
+		return true
+
 	elseif M.match('ipq40xx', 'generic', {
 		'aruba,ap-365',
-		'engenius,ens620ext',
 		'plasmacloud,pa1200',
 	}) then
 		return true
 
 	elseif M.match('ipq40xx', 'mikrotik', {
 		'mikrotik,sxtsq-5-ac',
+	}) then
+		return true
+
+	elseif M.match('mediatek', 'filogic', {
+		'cudy,ap3000outdoor-v1',
+		'wavlink,wl-wn573hx3',
 	}) then
 		return true
 
@@ -75,11 +88,13 @@ end
 function M.is_cellular_device()
 	if M.match('ath79', 'nand', {
 		'zte,mf281',
+		'glinet,gl-e750',
 		'glinet,gl-xe300',
 	}) then
 		return true
 	elseif M.match('ipq40xx', 'generic', {
 		'glinet,gl-ap1300',
+		'zte,mf289f',
 	}) then
 		return true
 	elseif M.match('ramips', 'mt7621', {

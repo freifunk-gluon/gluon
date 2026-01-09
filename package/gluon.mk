@@ -24,7 +24,7 @@ shell-verbatim = $(call shell-unescape,$(call shell-escape,$(1)))
 
 define GluonCheckSite
 [ -z "$$STAGING_DIR_HOSTPKG" ] || PATH="$$STAGING_DIR_HOSTPKG/bin:$$PATH"
-lua "$$IPKG_INSTROOT/lib/gluon/check-site.lua" <<'END__GLUON__CHECK__SITE'
+LUA_PATH="$$IPKG_INSTROOT/usr/lib/lua/?.lua" lua "$$IPKG_INSTROOT/lib/gluon/check-site.lua" <<'END__GLUON__CHECK__SITE'
 $(call shell-verbatim,cat '$(1)')
 END__GLUON__CHECK__SITE
 endef

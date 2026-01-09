@@ -9,9 +9,9 @@ permissions:
 jobs:
   check-ci:
     name: Check generated CI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install example site
         run: ln -s ./docs/site-example ./site
       - name: Update CI

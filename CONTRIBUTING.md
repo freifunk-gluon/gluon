@@ -29,13 +29,13 @@ discuss there. We maintain a [list of rejected features] and we'd like to
 kindly ask you to review it first. In general, looking for duplicates may save
 you some time.
 
-Develop on top of master
-------------------------
+Develop on top of main
+----------------------
 If you are not developing something specific to a release (like for example a
 security fix to a feature that got completely rewritten since the release),
-develop it on top of the master branch. New features and even feature changes
+develop it on top of the main branch. New features and even feature changes
 aren't usually backported to old releases, but will be included in the upcoming
-release, which will be built from master.
+release, which will be built from main.
 
 Use descriptive commit messages
 -------------------------------
@@ -48,6 +48,6 @@ existing commit messages to get the idea.
 
 
 [packages]: https://gluon.readthedocs.io/en/latest/user/site.html#packages
-[#gluon]: https://webirc.hackint.org/#gluon
+[#gluon]: https://chat.hackint.org/?join=gluon
 [mailing list]: mailto:gluon@luebeck.freifunk.net
 [list of rejected features]: https://github.com/freifunk-gluon/gluon/issues?q=label%3A%222.+status%3A+rejected%22

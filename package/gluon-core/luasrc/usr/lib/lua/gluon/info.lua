@@ -9,17 +9,14 @@ local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
 local ethernet = require 'gluon.ethernet'
 
 local pubkey
-if has_vpn and vpn.enabled() then
-	local _, active_vpn = vpn.get_active_provider()
-
-	if active_vpn ~= nil then
-		pubkey = active_vpn.public_key()
-	end
+if has_vpn then
+	pubkey = vpn.get_enabled_public_key()
 end
 
 local M = {}
 
 function M.get_info()
+	local updater_enabled = uci:get_bool('autoupdater', 'settings', 'enabled')
 	return {
 		hostname = pretty_hostname.get(uci),
 		mac_address = sysconfig.primary_mac,
@@ -31,10 +28,23 @@ function M.get_info()
 		domain = uci:get('gluon', 'core', 'domain'),
 		public_vpn_key = pubkey,
 		switch_type = ethernet.get_switch_type(),
+		updater_branch = updater_enabled and uci:get('autoupdater', 'settings', 'branch'),
 	}
 end
 
-function M.get_info_pretty(_)
+function M.get_info_pretty(i18n)
+	local _
+	if i18n then
+		local pkg_i18n = i18n 'gluon-core'
+		_ = function(s)
+			return pkg_i18n.translate(s)
+		end
+	else
+		_ = function(s)
+			return s
+		end
+	end
+
 	local data = M.get_info()
 
 	return {
@@ -45,8 +55,9 @@ function M.get_info_pretty(_)
 		{ _('Firmware release'), data.firmware_release },
 		{ _('Site'), data.site },
 		{ _('Domain'), data.domain or 'n/a' },
-		{ _('Public VPN key'), data.public_vpn_key or 'n/a' },
+		{ _('Public VPN key'), data.public_vpn_key or _('disabled') },
 		{ _('Switch type'), data.switch_type },
+		{ _('Autoupdater branch'), data.updater_branch or _('disabled') },
 	}
 end
 

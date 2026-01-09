@@ -11,18 +11,28 @@ gluon-config-mode-core
 gluon-config-mode-hostname
     Provides a hostname field.
 
-gluon-config-mode-autoupdater
+:doc:`gluon-config-mode-autoupdater <../../features/autoupdater>`
     Informs whether the autoupdater is enabled.
 
-gluon-config-mode-mesh-vpn
-    Allows toggling of mesh-vpn-fastd and setting a bandwidth limit.
+:doc:`gluon-config-mode-mesh-vpn <../../features/vpn>`
+    Allows toggling of installed mesh-vpn technology and setting a bandwidth limit.
 
 gluon-config-mode-geo-location
     Enables the user to set the geographical location of the node.
 
+:doc:`../../package/gluon-config-mode-geo-location-osm`
+    Lets the user click on a map to select the geographical location through a OSM map
+
 gluon-config-mode-contact-info
     Adds a field where the user can provide contact information.
 
+:doc:`../../package/gluon-web-cellular`
+    Adds advanced options to enter WWAN config.
+
+:doc:`../../package/gluon-web-network`
+    Adds option to configure used role on interfaces
+
+Most of the configuration options are described in :ref:`user-site-config_mode`
 
 Writing Config Mode modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

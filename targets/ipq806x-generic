@@ -8,8 +8,17 @@ local QCA9984_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca
 
 
 --
--- QCA9980
+-- QCA9980 / QCA9990
 --
+
+-- Extreme Networks
+
+device('extreme-networks-ap3935', 'extreme_ap3935', {
+	factory = false,
+	sysupgrade = '-squashfs-nand-sysupgrade',
+	packages = QCA9980_PACKAGES,
+	broken = true,	-- https://github.com/openwrt/openwrt/issues/17635
+})
 
 -- TP-Link
 device('tp-link-archer-c2600', 'tplink_c2600', {
@@ -25,4 +34,10 @@ device('tp-link-archer-c2600', 'tplink_c2600', {
 device('netgear-nighthawk-x4s-r7800', 'netgear_r7800', {
 	factory_ext = '.img',
 	packages = QCA9984_PACKAGES,
+})
+
+-- Ubiquiti
+device('ubiquiti-unifi-ac-hd', 'ubnt_unifi-ac-hd', {
+	packages = QCA9984_PACKAGES,
+	factory = false,
 })

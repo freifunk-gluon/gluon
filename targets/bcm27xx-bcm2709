@@ -2,7 +2,7 @@ include 'bcm27xx.inc'
 
 device('raspberrypi-2-model-b', 'rpi-2', {
 	manifest_aliases = {
-		-- from Gluon 2019.1 and older
+		-- from Gluon 2023.1 and older
 		'raspberry-pi-2-model-b-rev-1.1',
 	},
 })

@@ -1,10 +1,11 @@
 Site configuration
 ==================
 
-The ``site`` consists of the files ``site.conf`` and ``site.mk``.
-In the first community based values are defined, which both are processed
-during the build process and runtime.
-The last is directly included in the make process of Gluon.
+The ``site`` consists of various files, most importantly ``site.conf``,
+``site.mk`` and ``image-customization.lua``.
+
+``site.conf`` primarily contains runtime settings, while ``site.mk`` and
+``image-customatization.lua`` are used for build configuration.
 
 Configuration
 -------------
@@ -45,20 +46,9 @@ prefix6
 
 node_prefix6
   The ipv6 prefix from which the unique IP-addresses for nodes are selected
-  in babel-based networks. This may overlap with prefix6. e.g. ::
+  in olsr-based networks. This may overlap with prefix6. e.g. ::
 
     node_prefix6 = 'fdca::ffee:babe:2::/64'
-
-node_client_prefix6 \: optional, deprecated
-  DEPRECATED: Don't specify it anymore, this prefix will then
-  automatically be generated from the domain_seed.
-
-  An IPv6 prefix internally used by the l3roamd protocol, used to allow
-  an efficient handover via unicast when a client roamed.
-  This is exclusively useful when running a routing mesh protocol
-  like babel. e.g. ::
-
-    node_client_prefix6 = 'fdca::ffee:babe:3::/64'
 
 timezone
   The timezone of your community live in, e.g. ::
@@ -134,8 +124,8 @@ wifi24 \: optional
   For an OWE secured network, the ``owe_ssid`` string has to be set. It sets the
   SSID for the opportunistically encrypted wireless network, to which compatible
   clients can connect to.
-  For OWE to work, the ``wireless-encryption-wpa3`` has to be enabled (usually by
-  adding it to ``GLUON_FEATURES_standard``) in your ``site.mk``.
+  For OWE to work, the ``wireless-encryption-wpa3`` has to be enabled as a feature
+  in your site.
   To utilize the OWE transition mode, ``owe_transition_mode`` has to be set to true.
   When ``owe_transition_mode`` is enabled, the OWE secured SSID will be hidden.
   Compatible devices will automatically connect to the OWE secured SSID when selecting
@@ -152,6 +142,8 @@ wifi24 \: optional
   ``mesh`` also accepts an optional ``mcast_rate`` (kbit/s) parameter for
   setting the multicast bitrate. Increasing the default value of 1000 to something
   like 12000 is recommended.
+  Increasing this (e.g. to 24000) decreases airtime of multicast traffic, but also
+  reduces coverage as higher-quality meshes are required for a successful connection.
 
   ::
 
@@ -160,7 +152,7 @@ wifi24 \: optional
       ap = {
         ssid = 'alpha-centauri.freifunk.net',
         owe_ssid = 'owe.alpha-centauri.freifunk.net',
-        owe_transition_mode = true,  
+        owe_transition_mode = true,
       },
       mesh = {
         id = 'ueH3uXjdp',
@@ -297,7 +289,10 @@ mesh_vpn
   data; this prevents malicious ISPs from correlating VPN sessions with specific mesh
   nodes via public respondd data. If this is of no concern in your threat model,
   this behaviour can be disabled (and thus announcing the public key be enabled) by
-  setting `pubkey_privacy` to `false`. At the moment, this option only affects fastd.
+  setting `pubkey_privacy` to `false`.
+  As *WireGuard* is *identity hiding*, there is no need to omit the public key from
+  respondd data to prevent such correlation.
+  As such the setting is obsolete for *WireGuard*.
 
   The `fastd` section configures settings specific to the *fastd* VPN
   implementation.
@@ -320,15 +315,8 @@ mesh_vpn
   to the peer list, removal and modification of peers can be prevented by
   setting the *preserve* option of a peer to ``1`` in UCI.
 
-  The `tunneldigger` section is used to define the *tunneldigger* broker list.
-
-  **Note:** It doesn't make sense to include both `fastd` and `tunneldigger`
-  sections in the same configuration file, as only one of the packages *gluon-mesh-vpn-fastd*
-  and *gluon-mesh-vpn-tunneldigger* should be installed with the current
-  implementation.
-
   **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
-  in the build when using *gluon-mesh-babel* to work around ICMP blackholes on the internet.
+  in the build when using *gluon-mesh-olsrd* to work around ICMP black holes on the internet.
 
   ::
 
@@ -386,11 +374,6 @@ mesh_vpn
         },
       },
 
-      tunneldigger = {
-        mtu = 1312,
-        brokers = {'vpn1.alpha-centauri.freifunk.net'},
-      },
-
       wireguard = {
         mtu = 1376,
         peers = {
@@ -436,7 +419,7 @@ interfaces \: optional
     },
 
   For devices that have two distinct Ethernet ports or port groups (often
-  labelled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
+  labeled WAN and LAN), the ``lan`` and ``wan`` sections are used. When there
   is only one port (group), ``single`` is used instead.
 
   Available interface roles:
@@ -461,6 +444,8 @@ interfaces \: optional
 poe_passthrough \: optional
   Enable PoE passthrough by default on hardware with such a feature.
 
+.. _user-site-autoupdater:
+
 autoupdater \: package
   Configuration for the autoupdater feature of Gluon.
 
@@ -479,7 +464,10 @@ autoupdater \: package
           name = 'stable',
           mirrors = {
             'http://[fdca:ffee:babe:1::fec1]/firmware/stable/sysupgrade/',
-            'http://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+            -- Requires the tls feature in image-customization.lua
+            'https://autoupdate.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
+            -- Uses http or https depending on the tls feature in image-customization.lua
+            '//autoupdate2.alpha-centauri.freifunk.net/firmware/stable/sysupgrade/',
           },
           -- Number of good signatures required
           good_signatures = 2,
@@ -493,6 +481,23 @@ autoupdater \: package
 
   All configured mirrors must be reachable from the nodes via IPv6. If you don't want to set an IPv6 address
   explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
+
+  HTTPS URLs can be used if the **tls** feature is enabled in **image-customization.lua**.
+
+  Use protocol-less ``//server/path`` URLs to use HTTPS if the **tls** feature is available,
+  but fall back to HTTP otherwise. The server **must** allow HTTPS connections and provide
+  a valid certificate in this case; the autoupdater will not fall back to HTTP if the **tls**
+  feature is enabled, but the HTTPS connection fails.
+
+  Note that the validity period of TLS certificates is checked as well, so care must be taken
+  to provide working NTP servers in addition to the update mirrors when using HTTPS.
+
+  The autoupdater will only accept images signed by as many keys as `good_signatures` specifies.
+
+  The pubkeys section must in turn contain at least that many pubkeys.
+  It's advised to provide more than that to account for human or e.g. hard-drive errors.
+
+  See :doc:`../features/autoupdater` for more information about the process.
 
 .. _user-site-config_mode:
 
@@ -611,33 +616,6 @@ GLUON_DEPRECATED
   and ``upgrade`` for existing configurations (where upgrades for existing
   deployments of low-flash devices are required). Defaults to ``0``.
 
-GLUON_FEATURES
-  Defines a list of features to include. Depending on the device, the feature list
-  defined from this value is combined with the feature list for either the standard
-  or the tiny device-class. The resulting feature list is used to generate the default
-  package set.
-
-GLUON_FEATURES_standard
-  Defines a list of additional features to include or exclude for devices of
-  the standard device-class.
-
-GLUON_FEATURES_tiny
-  Defines a list of additional features to include or exclude for devices of
-  the tiny device-class.
-
-GLUON_SITE_PACKAGES
-  Defines a list of packages which should be installed in addition to the
-  default package set. It is also possible to remove packages from the
-  default set by prepending a minus sign to the package name.
-
-GLUON_SITE_PACKAGES_standard
-  Defines a list of additional packages to include or exclude for devices of
-  the standard device-class.
-
-GLUON_SITE_PACKAGES_tiny
-  Defines a list of additional packages to include or exclude for devices of
-  the tiny device-class.
-
 GLUON_RELEASE
   The current release version Gluon should use.
 
@@ -674,8 +652,8 @@ leading to entangled package names like *gluon-mesh-vpn-fastd-respondd* or
 *gluon-status-page-mesh-batman-adv-i18n-de*.
 
 For this reason, we have introduced *feature flags*, which can be specified
-in the *GLUON_FEATURES* variable. These flags allow to specify a set of features
-on a higher level than individual package names.
+using the ``image-customization.lua`` file. These flags allow to specify
+a set of features on a higher level than individual package names.
 
 Most Gluon packages can simply be specified as feature flags by removing the ``gluon-``
 prefix: The feature flag corresponding to the package *gluon-mesh-batman-adv-15* is
@@ -697,9 +675,10 @@ flags using a flexible ruleset defined in the Gluon repo or site package feeds.
 To some extent, it will even allow us to further modularize existing Gluon packages,
 without necessitating changes to existing site configurations.
 
-It is still possible to override such automatic rules using *GLUON_SITE_PACKAGES*
-(e.g., ``-gluon-status-page-mesh-batman-adv`` to remove the automatically added
-package *gluon-status-page-mesh-batman-adv*).
+It is still possible to override such automatic rules by removing them using
+*packages* in the ``image-customization.lua`` file
+(e.g., ``features { '-gluon-status-page-mesh-batman-adv' }`` to remove
+the automatically added package *gluon-status-page-mesh-batman-adv*).
 
 For convenience, there are two feature flags that do not directly correspond to a Gluon
 package:
@@ -707,18 +686,161 @@ package:
 * web-wizard
 
   Includes the *gluon-config-mode-...* base packages (hostname, geolocation and contact info),
-  as well as the *gluon-config-mode-autoupdater* (when *autoupdater* is in *GLUON_FEATURES*),
-  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or *mesh-vpn-tunneldigger* are in
-  *GLUON_FEATURES*)
+  as well as the *gluon-config-mode-autoupdater* (when *autoupdater* is an enabled feature),
+  and *gluon-config-mode-mesh-vpn* (when *mesh-vpn-fastd* or `mesh-vpn-wireguard` are
+  enabled features)
 
 * web-advanced
 
   Includes the *gluon-web-...* base packages (admin, network, WiFi config),
-  as well as the *gluon-web-autoupdater* (when *autoupdater* is in *GLUON_FEATURES*)
+  as well as the *gluon-web-autoupdater* (when *autoupdater* is an enabled feature),
 
-We recommend to use *GLUON_SITE_PACKAGES* for non-Gluon OpenWrt packages only and
-completely rely on *GLUON_FEATURES* for Gluon packages, as it is shown in the
+We recommend to include packages for non-Gluon OpenWrt packages only and
+completely rely on features for Gluon packages, as it is shown in the
 example *site.mk*.
+
+.. _site-image-customization:
+
+Image customization
+^^^^^^^^^^^^^^^^^^^
+
+Gluon allows configuration of the build parameters for the images. This
+configuration must always exist to configure the basic features included in a
+Gluon build.
+
+The file ``image-customization.lua`` in the root of the site configuration is
+used for this purpose, making use of a Domain Specific Language based on Lua.
+See the :ref:`site-examples` section for a simple example showing both basic
+setup and a device-specific alteration.
+
+The following functions are available:
+
+device(device_name_list)
+  Returns true for devices listed in ``device_name_list``.
+  ``device_name_list`` is a table of strings.
+
+  .. code-block:: lua
+
+    if device {
+      'openmesh-a40',
+      'openmesh-a60',
+    } then
+      packages {'iperf3'}
+    end
+
+target(openwrt_target, openwrt_subtarget)
+  Returns true for devices of the specified OpenWrt target and subtarget.
+  The parameter ``openwrt_subtarget`` is optional. If it is not specified,
+  the function matches all subtargets of the given target.
+
+  .. code-block:: lua
+
+    if target('x86', '64') then
+      features {'wireless-encryption-wpa3'}
+    end
+
+device_class(dev_class)
+  Returns true in case the current device is of the specified device class.
+
+  .. code-block:: lua
+
+    if not device_class('tiny') then
+      features {'wireless-encryption-wpa3'}
+    end
+
+
+features(feature_table)
+  Includes the specified list of features in the image. ``feature_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude features included earlier in the file.
+
+  .. code-block:: lua
+
+    features {
+      'autoupdater',
+      'ebtables-filter-multicast',
+      'ebtables-filter-ra-dhcp',
+      'ebtables-limit-arp',
+      'mesh-batman-adv-15',
+      'mesh-vpn-fastd',
+      'respondd',
+      'status-page',
+      'web-advanced',
+      'web-wizard',
+    }
+
+packages(package_table)
+  Includes the specified list of packages in the image. ``package_table`` is a table of strings.
+  These strings can be prefixed with a dash to exclude packages included earlier in the file.
+
+  .. code-block:: lua
+
+    packages {'iwinfo'}
+
+broken(broken_state)
+  Overrides the broken state specified by Gluon. Can be used to mark a device as broken or
+  remove the pre-defined broken state.
+
+  .. code-block:: lua
+
+    if device {'meraki-mr33-access-point'} then
+      broken(false)
+    end
+
+disable()
+  Disables image generation.
+
+  .. code-block:: lua
+
+    if device {'tp-link-cpe220-v3'} then
+      disable()
+    end
+
+disable_factory()
+  Disables factory image generation. Sysupgrade images are still generated and stored in the image
+  output directory.
+
+  .. code-block:: lua
+
+    if device {'tp-link-cpe220-v3'} then
+      disable_factory()
+    end
+
+include(path)
+  Includes another image customization file. Relative paths are interpreted relative to the site
+  repository root.
+
+  .. code-block:: lua
+    :caption: target-settings.lua
+
+    features {'wireless-encryption-wpa3'}
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if target('x86', '64') then
+      include 'target-settings.lua'
+    end
+
+  Values returned from the included file become the return value of ``include``:
+
+  .. code-block:: lua
+    :caption: matches-device.lua
+
+    return device {
+      'openmesh-a40',
+      'openmesh-a60',
+    }
+
+  .. code-block:: lua
+    :caption: image-customization.lua
+
+    if include('matches-device.lua') then
+      packages {'iperf3'}
+    end
+
+Technically, the image customization file is evaluated once for each device, allowing
+to make use of regular Lua *if* statements for device-specific configuration as
+can be seen in the examples.
 
 .. _site-config-mode-texts:
 
@@ -777,7 +899,7 @@ to supply additional package feeds from which packages are built. The git reposi
 specified here are retrieved in addition to the default feeds when ``make update``
 is called.
 
-This file's format is very similar to the toplevel ``modules`` file of the Gluon
+This file's format is very similar to the top-level ``modules`` file of the Gluon
 tree, with the important different that the list of feeds must be assigned to
 the variable ``GLUON_SITE_FEEDS``. Multiple feed names must be separated by spaces,
 for example::
@@ -796,13 +918,22 @@ PACKAGES_${feed}_COMMIT
 
 PACKAGES_${feed}_BRANCH
   Optional: The branch of the repository the given commit ID can be found in.
-  Defaults to the default branch of the repository (usually ``master``)
+  Defaults to the default branch of the repository (usually ``main`` or ``master``)
 
 These variables are always all uppercase, so for an entry ``foo`` in GLUON_SITE_FEEDS,
 the corresponding configuration variables would be ``PACKAGES_FOO_REPO``,
 ``PACKAGES_FOO_COMMIT`` and ``PACKAGES_FOO_BRANCH``. Slashes in feed names are
 replaced by underscores to get valid shell variable identifiers.
 
+Versioning
+----------
+
+Is it recommended to maintain the site configuration in a Git repository. Gluon
+displays a "site version" in its Advanced Settings, ``gluon-info`` and respondd
+node information; this version is derived from the latest annotated Git tag
+using ``git describe``.
+
+.. _site-examples:
 
 Examples
 --------
@@ -817,6 +948,12 @@ site.conf
 ^^^^^^^^^
 
 .. literalinclude:: ../site-example/site.conf
+  :language: lua
+
+image-customization.lua
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../site-example/image-customization.lua
   :language: lua
 
 i18n/en.po

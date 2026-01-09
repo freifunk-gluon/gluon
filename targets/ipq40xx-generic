@@ -14,6 +14,15 @@ local ATH10K_PACKAGES_IPQ40XX_QCA9888 = {
 	'ath10k-firmware-qca9888',
 	'-ath10k-firmware-qca9888-ct',
 }
+local ATH10K_PACKAGES_IPQ40XX_QCA9984 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca4019',
+	'-ath10k-firmware-qca4019-ct',
+	'ath10k-firmware-qca9984',
+	'-ath10k-firmware-qca9984-ct',
+}
 
 
 defaults {
@@ -51,6 +60,19 @@ device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
 device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
 	factory = false,
 	aliases = {'avm-fritz-box-7520'},
+	packages = {
+		-- same as ATH10K_PACKAGES_IPQ40XX
+		'kmod-ath10k',
+		'-kmod-ath10k-ct',
+		'-kmod-ath10k-ct-smallbuffers',
+		'ath10k-firmware-qca4019',
+		'-ath10k-firmware-qca4019-ct',
+
+		-- VDSL modem
+		'ppp',
+		'kmod-ppp',
+		'ppp-mod-pppoe',
+	},
 })
 
 device('avm-fritz-repeater-1200', 'avm_fritzrepeater-1200', {
@@ -72,6 +94,25 @@ device('gl.inet-gl-b1300', 'glinet_gl-b1300', {
 -- Linksys
 
 device('linksys-ea6350v3', 'linksys_ea6350v3')
+
+device('linksys-mr8300-dallas', 'linksys_mr8300',{
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+	factory = false,
+})
+
+device('linksys-whw01', 'linksys_whw01', {
+	aliases = {
+		'linksys-vlp01',
+	},
+})
+
+device('linksys-whw03-velop', 'linksys_whw03', {
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
+device('linksys-whw03-v2-velop', 'linksys_whw03v2', {
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
 
 
 -- Meraki
@@ -101,6 +142,26 @@ device('netgear-ex6150v2', 'netgear_ex6150v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-rbr50', 'netgear_rbr50', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-rbs50', 'netgear_rbs50', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-srr60', 'netgear_srr60', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-srs60', 'netgear_srs60', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
 
 -- OpenMesh
 
@@ -120,7 +181,15 @@ device('plasma-cloud-pa2200', 'plasmacloud_pa2200', {
 })
 
 
--- ZyXEL
+-- ZTE
+
+device('zte-mf289f', 'zte_mf289f', {
+	broken = true,	-- case must be opened to install
+	factory = false,
+})
+
+
+-- Zyxel
 
 device('zyxel-nbg6617', 'zyxel_nbg6617')
 
@@ -129,4 +198,10 @@ device('zyxel-nbg6617', 'zyxel_nbg6617')
 
 device('8devices-jalapeno', '8dev_jalapeno', {
 	factory_ext = '.ubi',
+})
+
+-- Extreme Networks
+
+device('extreme-networks-ws-ap3915i', 'extreme-networks_ws-ap3915i', {
+	factory = false,
 })

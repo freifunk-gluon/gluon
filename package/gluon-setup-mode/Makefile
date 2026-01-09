@@ -9,7 +9,8 @@ include ../gluon.mk
 
 define Package/gluon-setup-mode
   TITLE:=Setup mode
-  DEPENDS:=+gluon-core +gluon-lock-password +ubus +dnsmasq-full
+  DEPENDS:=+gluon-core +gluon-lock-password +ubus +dnsmasq-full \
+    +!BUSYBOX_CONFIG_UNSHARE:unshare
 endef
 
 define Package/gluon-setup-mode/description
@@ -40,6 +41,8 @@ define Package/gluon-setup-mode/install
 	for link in $(init_links); do \
 		$(LN) "/etc/init.d/$$$${link:3}" "$(1)/lib/gluon/setup-mode/rc.d/$$$${link}"; \
 	done
+
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ash-wrapper $(1)/lib/gluon/setup-mode/dropbear/ash
 endef
 
 $(eval $(call BuildPackageGluon,gluon-setup-mode))

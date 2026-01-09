@@ -1,6 +1,16 @@
 Supported Devices & Architectures
 =================================
 
+armsr-armv7
+-----------
+
+* Arm SystemReady (EFI) 32-bit
+
+armsr-armv8
+-----------
+
+* Arm SystemReady (EFI) 64-bit
+
 ath79-generic
 --------------
 
@@ -18,6 +28,11 @@ ath79-generic
 
   - WZR-HP-AG300H / WZR-600DHP
   - WZR-HP-G300NH (rtl8366s)
+  - WZR-HP-G450H / WZR-450HP
+
+* COMFAST
+
+  - CF-EW71 (v2)
 
 * devolo
 
@@ -33,6 +48,8 @@ ath79-generic
   - DAP-1330 A1 [#lan_as_wan]_
   - DAP-1365 A1 [#lan_as_wan]_
   - DAP-2660 A1 [#lan_as_wan]_
+  - DAP-2680 A1 [#lan_as_wan]_
+  - DAP-2695 A1 [#lan_as_wan]_
   - DIR-505 A1 [#lan_as_wan]_
   - DIR-505 A2 [#lan_as_wan]_
   - DIR-825 B1
@@ -50,6 +67,7 @@ ath79-generic
   - 6416A
   - GL-AR150
   - GL-AR300M-Lite
+  - GL-AR300M16
   - GL-AR750
   - GL-USB150 (Microuter)
 
@@ -61,11 +79,12 @@ ath79-generic
 
   - LibreRouter v1 [#missing_radios]_
 
-* Netgear
+* NETGEAR
 
   - WNDR3700 (v1, v2)
   - WNDR3800
   - WNR2200 (8M, 16M)
+  - WNDRMAC (v2)
 
 * OCEDO
 
@@ -99,6 +118,14 @@ ath79-generic
 
   - WS-AP3610
 
+* Sophos
+
+  - AP15C
+  - AP100
+  - AP100c
+  - AP55
+  - AP55c
+
 * Teltonika
 
   - RUT230 (v1)
@@ -110,11 +137,12 @@ ath79-generic
   - Archer C6 (v2 EU/RU/JP)
   - Archer C7 (v2, v4, v5)
   - Archer C59 (v1)
+  - Archer C60 (v1)
   - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
   - CPE220 (v3.0)
   - CPE510 (v1.0, v1.1, v2.0, v3.0)
-  - CPE710 (v1.0)
-  - EAP225-Outdoor (v1)
+  - CPE710 (v1.0, v2.0)
+  - EAP225-Outdoor (v1, v3)
   - TL-WDR3500 (v1)
   - TL-WDR3600 (v1)
   - TL-WDR4300 (v1)
@@ -140,6 +168,15 @@ ath79-generic
   - UniFi AP LR
   - UniFi AP Outdoor+
   - UniFi AP PRO
+  - UniFi Swiss Army Knife Ultra
+
+ath79-mikrotik
+--------------
+
+* Mikrotik
+
+  - RB951Ui-2nD (hAP)
+  - RBwAPR-2nD (wAP R)
 
 ath79-nand
 ----------
@@ -154,7 +191,7 @@ ath79-nand
   - GL-AR750S
   - GL-XE300
 
-* Netgear
+* NETGEAR
 
   - WNDR3700 (v4)
   - WNDR4300 (v1)
@@ -163,22 +200,15 @@ ath79-nand
 
   - NBG6716
 
-ath79-mikrotik
---------------
-
-* Mikrotik
-
-  - RB951Ui-2nD (hAP)
-
 brcm2708-bcm2708
 ----------------
 
-* RaspberryPi 1
+* Raspberry Pi 1
 
 brcm2708-bcm2709
 ----------------
 
-* RaspberryPi 2
+* Raspberry Pi 2
 
 
 ipq40xx-generic
@@ -204,6 +234,10 @@ ipq40xx-generic
   - FRITZ!Box 7530 [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Repeater 1200 [#eva_ramboot]_
 
+* Extreme Networks
+
+  - WS-AP3915i
+
 * GL.iNet
 
   - GL-AP1300
@@ -212,11 +246,19 @@ ipq40xx-generic
 * Linksys
 
   - EA6350 (v3)
+  - MR8300
+  - VLP01
+  - WHW01
+  - WHW03 (v1,v2)
 
 * NETGEAR
 
   - EX6100 (v2)
   - EX6150 (v2)
+  - RBR50 (v1)
+  - RBS50 (v1)
+  - SRR60
+  - SRS60
 
 * OpenMesh
 
@@ -228,7 +270,7 @@ ipq40xx-generic
   - PA1200
   - PA2200
 
-* ZyXEL
+* Zyxel
 
   - NBG6617
 
@@ -248,6 +290,10 @@ ipq806x-generic
 
   - R7800
 
+* Ubiquiti
+
+  - UniFi AC HD
+
 lantiq-xrx200
 -------------
 
@@ -261,6 +307,10 @@ lantiq-xrx200
   - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
   - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
   - FRITZ!Box 7412 [#eva_ramboot]_
+  - FRITZ!Box 7430 [#eva_ramboot]_
+
+lantiq-xrx200_legacy
+--------------------
 
 * TP-Link
 
@@ -280,15 +330,50 @@ lantiq-xway
 mediatek-filogic
 ----------------
 
+* ASUS
+
+  - RT-AX52
+  - TUF AX4200
+  - TUF AX6000
+
 * Cudy
 
+  - AP3000 Outdoor (v1)
+  - TR3000 (v1)
   - WR3000 (v1)
+  - WR3000e (v1)
+
+* D-Link
+
+  - AQUILA PRO AI M30 A1
+  - AQUILA PRO AI M60 A1
+
+* GL.iNet
+
+  - GL-MT2500
+  - GL-MT3000
 
 * NETGEAR
 
   - WAX220
 
-* ZyXEL
+* OpenWrt
+
+  - One
+
+* Ubiquiti
+
+  - UniFi 6 Plus
+
+* Wavlink
+
+  - WL-WN573HX3 [#lan_as_wan]_
+
+* Xiaomi
+
+  - Mi Router AX3000T (Stock, ubootmod)
+
+* Zyxel
 
   - NWA50AX Pro
 
@@ -299,13 +384,20 @@ mediatek-mt7622
 
   - E8450
 
+* Netgear
+
+  - WAX206
+
 * Ubiquiti
 
   - UniFi 6 LR (v1, v3)
 
-* Xiaomi
+mvebu-cortexa53
+---------------
 
-  - AX3200 (RB03)
+* GL.iNet
+
+  - GL-MV1000
 
 mpc85xx-p1010
 -------------
@@ -337,9 +429,20 @@ mpc85xx-p1020
 
   - WS-AP3825i
 
-* OCEDO
+* Hewlett-Packard
+
+  - MSM460
+
+* Ocedo
 
   - Panda
+
+qualcommax-ipq807x
+------------------
+
+* Xiaomi
+
+  - Mi AIoT Router AX3600
 
 ramips-mt7620
 -------------
@@ -358,6 +461,7 @@ ramips-mt7620
 
   - EX3700
   - EX3800
+  - EX6130
 
 * Nexx
 
@@ -390,19 +494,29 @@ ramips-mt7621
 
 * D-Link
 
+  - COVR-X1860 (A1)
   - DAP-X1860 (A1)
   - DIR-860L (B1)
+  - DIR-878 (A1)
+  - DIR-882 (A1)
+
+* Genexis
+
+  - Pulse EX400
 
 * GL.iNet
 
   - GL-MT1300
 
-* Mercusys
+* MERCUSYS
 
   - MR70X (v1)
 
 * NETGEAR
 
+  - EAX11 (v2)
+  - EAX12
+  - EAX15 (v2)
   - EX6150 (v1)
   - R6220
   - R6260
@@ -420,31 +534,33 @@ ramips-mt7621
   - EdgeRouter X
   - EdgeRouter X-SFP
   - UniFi 6 Lite
+  - UniFi nanoHD
 
 * Wavlink
 
   - WS-WN572HP3 (4G)
 
-* ZBT
+* Xiaomi
+
+  - Xiaomi Mi Router 3G (v1, v2)
+  - Xiaomi Mi Router 4A (Gigabit Edition v1, v2)
+
+* Zbtlink
 
   - WG3526-16M
   - WG3526-32M
 
-* ZyXEL
+* Zyxel
 
   - NWA50AX
   - WSM20
-
-* Xiaomi
-
-  - Xiaomi Mi Router 4A (Gigabit Edition v1)
-  - Xiaomi Mi Router 3G (v1, v2)
 
 ramips-mt76x8
 -------------
 
 * Cudy
 
+  - TR1200 (v1)
   - WR1000 (v1)
 
 * GL.iNet
@@ -465,14 +581,14 @@ ramips-mt76x8
 * TP-Link
 
   - Archer C20 (v4, v5)
-  - Archer C50 (v3, v4)
-  - RE200 (v2, v3)
+  - Archer C50 (v3, v4, v6 CA/EU/RU)
+  - RE200 (v2, v3, v4)
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-MR6400 (v5)
   - TL-WA801ND (v5)
   - TL-WR841N (v13)
-  - TL-WR902AC (v3)
+  - TL-WR902AC (v3, v4)
 
 * VoCore
 
@@ -480,16 +596,10 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (100M Edition)
-  - Xiaomi Mi Router 4A (100M International Edition)
-  - Xiaomi Mi Router 4C
-
-realtek-rtl838x
----------------
-
-* D-Link
-
-  - DGS-1210-10P (F1)
+  - Xiaomi Mi Router 4A (100M Edition) - MIR4A
+  - Xiaomi Mi Router 4A (100M International Edition) - R4AC
+  - Xiaomi Mi Router 4A (100M International Edition v2) - R4ACv2
+  - Xiaomi Mi Router 4C - R4CM
 
 rockchip-armv8
 --------------
@@ -497,6 +607,7 @@ rockchip-armv8
 * FriendlyElec
 
   - NanoPi R2S
+  - NanoPi R3S
   - NanoPi R4S (4GB LPDDR4)
 
 sunxi-cortexa7
@@ -533,12 +644,6 @@ See also: :doc:`x86`
 
 Footnotes
 ---------
-
-.. [#device-class-tiny]
-  These devices only support a subset of Gluons capabilities due to flash or memory
-  size constraints. Devices are classified as tiny if they provide less than 7M of usable
-  flash space or have a low amount of system memory. For more information, see the
-  developer documentation: :ref:`device-class-definition`.
 
 .. [#avmflash]
   For instructions on how to flash AVM devices, visit https://fritz-tools.readthedocs.io

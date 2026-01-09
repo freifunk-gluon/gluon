@@ -2,28 +2,33 @@ name: Build Gluon
 on:
   push:
     branches:
-      - master
-      - next*
-      - v20*
+      - main
+      - next
+      - 'v20[2-9][0-9].[0-9].x'
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   changed:
     permissions:
       contents: read  # for dorny/paths-filter to fetch a list of changed files
       pull-requests: read  # for dorny/paths-filter to read pull requests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       targets: ${{ steps.filter.outputs.changes }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Filter targets based on changed files
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: .github/filters.yml
@@ -36,26 +41,40 @@ jobs:
       matrix:
         # Read back changed targets to create build matrix
         target: ${{ fromJSON(needs.changed.outputs.targets) }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Install Dependencies
-        run: sudo contrib/actions/install-dependencies.sh
+      - name: Show system information
+        run: contrib/actions/show-system-info.sh
 
-      - name: Build
-        run: contrib/actions/run-build.sh ${{ matrix.target }}
+      - name: Remove non-required software
+        run: contrib/actions/free-runner-space.sh
+
+      - name: Build Docker container
+        run: docker build -t gluon-ci-container contrib/docker
+
+      - name: Build Gluon
+        run: docker run --rm -v $PWD:/gluon-ci -w /gluon-ci --user "$(id -u):$(id -g)" gluon-ci-container contrib/actions/run-build.sh ${{ matrix.target }}
+
+      - name: Check Image size
+        run: contrib/check-image-size.py --github-actions --overhead 256 output/meta/openwrt-profiles/${{ matrix.target }}.json
 
       - name: Archive build logs
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}_logs
           path: openwrt/logs
 
       - name: Archive build output
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}_output
           path: output
 
+      - name: Archive metadata
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ matrix.target }}_metadata
+          path: output/meta

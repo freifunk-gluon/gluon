@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck enable=check-unassigned-uppercase
 
 set -euo pipefail
 
@@ -12,7 +13,7 @@ TAG="gluon:${BRANCH:-latest}"
 if [ "$(command -v podman)" ]
 then
 	podman build -t "${TAG}" contrib/docker
-	podman run -it --rm -u "$(id -u):$(id -g)" --userns=keep-id --volume="$(pwd):/gluon" "${TAG}"
+	podman run -it --rm -u "$(id -u):$(id -g)" --userns=keep-id --volume="$(pwd):/gluon:z" "${TAG}"
 elif [ "$(command -v docker)" ]
 then
 	docker build -t "${TAG}" contrib/docker
@@ -21,4 +22,3 @@ else
 	echo "Please install either podman or docker. Exiting" >&2
 	exit 1
 fi
-

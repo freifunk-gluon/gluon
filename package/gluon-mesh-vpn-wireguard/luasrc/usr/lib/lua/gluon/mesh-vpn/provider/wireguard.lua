@@ -26,7 +26,6 @@ function M.active()
 end
 
 function M.set_limit(ingress_limit, egress_limit)
-	-- TODO: Test that limiting this via simple-tc here is correct!
 	uci:delete('simple-tc', 'mesh_vpn')
 	if ingress_limit ~= nil and egress_limit ~= nil then
 		uci:section('simple-tc', 'interface', 'mesh_vpn', {
@@ -42,6 +41,11 @@ end
 
 function M.mtu()
 	return site.mesh_vpn.wireguard.mtu()
+end
+
+function M.pubkey_privacy()
+	-- WireGuard inherently doesn't leak the pubkey to third parties upon initiating connections.
+	return false
 end
 
 return M

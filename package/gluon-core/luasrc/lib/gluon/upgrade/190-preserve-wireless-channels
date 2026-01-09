@@ -5,18 +5,6 @@ local uci = require('simple-uci').cursor()
 
 local preserve_channels = wireless.preserve_channels(uci)
 
--- Migrate preserve channels from pre-2022.01
-local core_wireless = uci:get_first('gluon-core', 'wireless')
-if core_wireless ~= nil then
-	local preserve_legacy = uci:get_bool('gluon-core', core_wireless, 'preserve_channels')
-	if preserve_legacy then
-		preserve_channels = true
-	end
-
-	uci:delete('gluon-core', core_wireless)
-	uci:save('gluon-core')
-end
-
 uci:section('gluon', 'wireless', 'wireless', {
 	preserve_channels = preserve_channels or false,
 })

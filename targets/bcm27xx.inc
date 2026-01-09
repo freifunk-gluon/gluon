@@ -1,6 +1,7 @@
+-- We do not use the ext4 images, so we do not want to build them.
+config('TARGET_ROOTFS_EXT4FS', false)
+
 defaults {
-	factory = '-ext4-factory',
 	factory_ext = '.img.gz',
-	sysupgrade = '-ext4-sysupgrade',
 	sysupgrade_ext = '.img.gz',
 }

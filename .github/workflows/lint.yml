@@ -9,9 +9,9 @@ permissions:
 jobs:
   lua:
     name: Lua
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: sudo apt-get -y update && sudo apt-get -y install lua-check
       - name: Install example site
@@ -21,9 +21,9 @@ jobs:
 
   sh:
     name: Shell
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: sudo apt-get -y update && sudo apt-get -y install shellcheck
       - name: Install example site
@@ -33,9 +33,9 @@ jobs:
 
   editorconfig:
     name: Editorconfig
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: sudo apt install curl tar
       - name: Install editorconfig-checker

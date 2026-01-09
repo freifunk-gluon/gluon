@@ -37,10 +37,13 @@ config('TARGET_ROOTFS_INITRAMFS', false)
 
 config('DEVEL', true)
 config('ALL_NONSHARED', true)
+config('BPF_TOOLCHAIN_HOST', true)
 
 try_config('PACKAGE_usbip', false) -- fails to build
 try_config('PACKAGE_coova-chilli', false) -- fails to build
 try_config('PACKAGE_kmod-ipt-coova', false) -- fails to build
+try_config('PACKAGE_libpfring', false) -- fails to build
+try_config('PACKAGE_kmod-pf-ring', false) -- fails to build
 
 try_config('PACKAGE_ATH_DEBUG', true)
 
@@ -55,16 +58,25 @@ try_config('PACKAGE_dnsmasq_full_rtc', false)
 
 try_config('TARGET_SQUASHFS_BLOCK_SIZE', 256)
 
+-- OpenWrt disables ed25519 keys on SMALL_FLASH targets
+-- (e.g. ramips-mt76x8) by default.
+config('DROPBEAR_ED25519', true)
+
 config('KERNEL_PROC_STRIPPED', true)
 config('KERNEL_AIO', false)
-config('KERNEL_IO_URING', false)
+try_config('KERNEL_IO_URING', false)
 config('KERNEL_FHANDLE', false)
 config('KERNEL_FANOTIFY', false)
 config('KERNEL_CGROUPS', false)
+-- KERNEL_NAMESPACES is required for procd-ujail and unshare
+-- This option is enabled by default on non small flash targets
+config('KERNEL_NAMESPACES', true)
 config('KERNEL_IP_MROUTE', false)
 config('KERNEL_IPV6_MROUTE', false)
 config('KERNEL_IPV6_SEG6_LWTUNNEL', false)
-config('SECCOMP', false)
+config('KERNEL_MPTCP', false)
+config('KERNEL_SWAP', false)
+config('USE_SECCOMP', false)
 config('KERNEL_SECCOMP', false)
 -- kmod-mt7915e pulls in CONFIG_KERNEL_RELAY
 -- use try_config, so enabling the package is still possible
@@ -74,20 +86,28 @@ try_config('OONF_GENERIC_HTTP', true)
 
 config('COLLECT_KERNEL_DEBUG', true)
 
+config('BUSYBOX_CUSTOM', true)
+config('BUSYBOX_CONFIG_UNSHARE', true)
+
 config('TARGET_MULTI_PROFILE', true)
 config('TARGET_PER_DEVICE_ROOTFS', true)
 
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
+try_config('GRUB_TITLE', 'Gluon')
+
 config('AUTOREMOVE', istrue(env.GLUON_AUTOREMOVE))
 
-if istrue(env.GLUON_DEBUG) then
+if (tonumber(env.GLUON_DEBUG) or 0) > 1 then
 	config('DEBUG', true)
 	config('NO_STRIP', true)
 	config('USE_STRIP', false)
 	config('USE_SSTRIP', false)
 
 	try_config('TARGET_ROOTFS_PARTSIZE', 500)
+elseif istrue(env.GLUON_DEBUG) then
+	config('USE_STRIP', true)
+	config('USE_SSTRIP', false)
 end
 
 config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
@@ -98,9 +118,7 @@ packages {
 	'-kmod-ipt-offload',
 	'-kmod-nft-offload',
 	'-libustream-mbedtls',
-	'-libustream-wolfssl',
-	'-libwolfssl',
-	'-mbedtls',
+	'-libmbedtls',
 	'-nftables',
 	'-odhcpd-ipv6only',
 	'-ppp',

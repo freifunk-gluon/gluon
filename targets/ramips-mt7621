@@ -9,6 +9,7 @@ device('asus-rt-ac57u-v1', 'asus_rt-ac57u-v1', {
 
 device('asus-rt-ax53u', 'asus_rt-ax53u')
 
+
 -- Cudy
 
 device('cudy-wr1300-v1', 'cudy_wr1300-v1', {
@@ -33,9 +34,31 @@ device('cudy-x6-v2', 'cudy_x6-v2', {
 
 -- D-Link
 
+device('d-link-dap-1620-b1', 'dlink_dap-1620-b1', {
+	broken = true, -- mt76 driver issue - See #3124
+})
+
+device('d-link-covr-x1860-a1', 'dlink_covr-x1860-a1', {
+	extra_images = {
+		{'-squashfs-recovery', '-recovery', '.bin'}
+	},
+})
+
 device('d-link-dap-x1860-a1', 'dlink_dap-x1860-a1')
 
 device('d-link-dir-860l-b1', 'dlink_dir-860l-b1')
+
+device('d-link-dir-878-a1', 'dlink_dir-878-a1')
+
+device('d-link-dir-882-a1', 'dlink_dir-882-a1')
+
+
+-- Genexis
+
+device('genexis-pulse-ex400', 'genexis_pulse-ex400', {
+	factory = false,
+	sysupgrade = '-sysupgrade',
+})
 
 
 -- GL.iNet
@@ -45,12 +68,17 @@ device('gl.inet-gl-mt1300', 'glinet_gl-mt1300', {
 })
 
 
--- Mercusys
+-- MERCUSYS
 
 device('mercusys-mr70x-v1', 'mercusys_mr70x-v1')
 
 
--- Netgear
+-- NETGEAR
+
+device('netgear-eax12', 'netgear_eax12', {
+	factory_ext = '.img',
+	aliases = {'netgear-eax11-v2', 'netgear-eax15-v2'},
+})
 
 device('netgear-ex6150', 'netgear_ex6150', {
 	factory_ext = '.chk',
@@ -75,13 +103,14 @@ device('netgear-wax202', 'netgear_wax202', {
 device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 	factory = false,
 	broken = true, -- untested
-	manifest_aliases = {
-		'netgear-wndr3700v5',
-	},
 })
 
 
 -- TP-Link
+
+device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1', {
+	broken = true, -- LAN LED not working - review after resolving #2756
+})
 
 device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
 	broken = true, -- LAN LED not working - review after resolving #2756
@@ -100,6 +129,10 @@ device('ubiquiti-unifi-6-lite', 'ubnt_unifi-6-lite', {
 	factory = false,
 })
 
+device('ubiquiti-unifi-nanohd', 'ubnt_unifi-nanohd', {
+	factory = false,
+})
+
 
 -- Wavlink
 
@@ -114,6 +147,10 @@ device('xiaomi-mi-router-4a-gigabit-edition', 'xiaomi_mi-router-4a-gigabit', {
 	factory = false,
 })
 
+device('xiaomi-mi-router-4a-gigabit-edition-v2', 'xiaomi_mi-router-4a-gigabit-v2', {
+	factory = false,
+})
+
 device('xiaomi-mi-router-3g', 'xiaomi_mi-router-3g', {
 	factory = false,
 })
@@ -123,28 +160,21 @@ device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 })
 
 
--- ZBT
+-- Zbtlink
 
 device('zbtlink-zbt-wg3526-16m', 'zbtlink_zbt-wg3526-16m', {
 	factory = false,
-	manifest_aliases = {
-		'zbt-wg3526',
-		'zbt-wg3526-16m',
-	},
 })
 
 device('zbtlink-zbt-wg3526-32m', 'zbtlink_zbt-wg3526-32m', {
 	factory = false,
-	manifest_aliases = {
-		'zbt-wg3526-32m',
-	},
-
 })
 
 
--- ZyXEL
+-- Zyxel
 
 device('zyxel-nwa50ax', 'zyxel_nwa50ax')
+
 device('zyxel-nwa55axe', 'zyxel_nwa55axe', {
 	broken = true, -- Missing LED / Reset button
 })
@@ -161,15 +191,9 @@ device('zyxel-wsm20', 'zyxel_wsm20', {
 device('ubiquiti-edgerouter-x', 'ubnt_edgerouter-x', {
 	factory = false,
 	packages = {'-hostapd-mini'},
-	manifest_aliases = {
-		'ubnt-erx',
-	},
 })
 
 device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
 	factory = false,
 	packages = {'-hostapd-mini'},
-	manifest_aliases = {
-		'ubnt-erx-sfp',
-	},
 })

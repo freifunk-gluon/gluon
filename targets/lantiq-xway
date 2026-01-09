@@ -8,9 +8,15 @@ packages {
 	'-kmod-ltq-deu-ar9'
 }
 
+
+-- AVM
+
 device('avm-fritz-box-7312', 'avm_fritz7312', {
 	factory = false,
 })
+
+
+-- NETGEAR
 
 device('netgear-dgn3500b', 'netgear_dgn3500b', {
 	factory_ext = '.img',

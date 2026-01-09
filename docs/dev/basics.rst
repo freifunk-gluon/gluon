@@ -8,7 +8,7 @@ Gluon's source is kept in `git repositories`_ at GitHub.
 Bug Tracker
 -----------
 
-The `main repo`_ does have issues enabled. 
+The `main repo`_ does have issues enabled.
 
 .. _main repo: https://github.com/freifunk-gluon/gluon
 
@@ -17,11 +17,11 @@ IRC
 
 Gluon's developers frequent the IRC chatroom `#gluon`_ on `hackint`_.
 There is a `webchat`_ that allows for easy access from within your
-webbrowser. You're welcome to join us!
+web browser. You're welcome to join us!
 
 .. _#gluon: ircs://irc.hackint.org/#gluon
 .. _hackint: https://hackint.org/
-.. _webchat: https://webirc.hackint.org/#irc://irc.hackint.org/#gluon
+.. _webchat: https://chat.hackint.org/?join=gluon
 
 .. _working-with-repositories:
 
@@ -75,7 +75,7 @@ the code in the project is formatted in the same way. The following basic rules
 apply:
 
 - use tabs instead of spaces
-- trailing whitespaces must be eliminated
+- trailing whitespace characters must be eliminated
 - files need to end with a final newline
 - newlines need to have Unix line endings (lf)
 

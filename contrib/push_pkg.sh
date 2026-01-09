@@ -10,7 +10,7 @@ build_only=0
 preserve_config=1
 
 print_help() {
-	echo "$0 [OPTIONS] PACAKGE_DIR [PACKAGE_DIR] ..."
+	echo "$0 [OPTIONS] PACKAGE_DIR [PACKAGE_DIR] ..."
 	echo ""
 	echo " -h          print this help"
 	echo " -r HOST     use a remote machine as target machine. By default if this"

@@ -12,7 +12,7 @@ After the VPN connection has been established, the node should be able to reach
 the mesh's DNS servers and use these for all other name resolution.
 
 If a device has only a single Ethernet port (or group of ports), it will be
-used as an uplink port even when it is not labelled as "WAN" by default. This
+used as an uplink port even when it is not labeled as "WAN" by default. This
 behavior can be controlled using the ``interfaces.single.default_roles``
 site.conf option. It is also possible to alter the interface assignment after
 installation by modifying ``/etc/config/gluon`` and running

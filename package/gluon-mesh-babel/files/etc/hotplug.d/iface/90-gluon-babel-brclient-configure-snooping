@@ -1,9 +1,0 @@
-#!/bin/sh
-
-case "$ACTION"
-in
-	ifup)
-	echo 1 > /sys/devices/virtual/net/br-client/bridge/multicast_snooping
-	echo 2 > /sys/devices/virtual/net/br-client/bridge/multicast_router
-	;;
-esac

@@ -1,7 +1,6 @@
 #!/usr/bin/lua
 
 local site = require 'gluon.site'
-local users = require 'gluon.users'
 local util = require 'gluon.util'
 
 local uci = require('simple-uci').cursor()
@@ -12,18 +11,14 @@ local _, active_vpn = vpn_core.get_active_provider()
 uci:section('network', 'interface', 'mesh_vpn', {
 	ifname = vpn_core.get_interface(),
 	proto = 'gluon_mesh',
-	transitive = true,
 	fixed_mtu = true,
-	macaddr = util.generate_mac(7),
+	hop_penalty = uci:get('gluon', 'mesh_vpn', 'batadv_hop_penalty'),
+	macaddr = util.generate_mac_by_name('mesh_vpn'),
 	mtu = active_vpn.mtu(),
 })
 
 uci:save('network')
 
-
--- The previously used user and group are removed, we now have a generic group
-users.remove_user('gluon-fastd')
-users.remove_group('gluon-fastd')
 
 uci:section('firewall', 'include', 'mesh_vpn_dns', {
 	type = 'restore',
@@ -33,50 +28,13 @@ uci:section('firewall', 'include', 'mesh_vpn_dns', {
 
 uci:save('firewall')
 
-
--- VPN migration
+-- Inital VPN setup
 if not uci:get('gluon', 'mesh_vpn') then
-	local vpn, _ = vpn_core.get_active_provider()
+	local enabled = site.mesh_vpn.enabled(false)
 
-	local fastd_enabled = uci:get('fastd', 'mesh_vpn', 'enabled')
-	local tunneldigger_enabled = uci:get('tunneldigger', 'mesh_vpn', 'enabled')
-
-	local enabled
-
-	-- If the installed VPN package has its enabled state set, keep the value
-	if vpn == 'fastd' and fastd_enabled then
-		enabled = fastd_enabled == '1'
-	elseif vpn == 'tunneldigger' and tunneldigger_enabled then
-		enabled = tunneldigger_enabled == '1'
-	-- Otherwise, migrate the other package's value if any is set
-	elseif fastd_enabled or tunneldigger_enabled then
-		enabled = fastd_enabled == '1' or tunneldigger_enabled == '1'
-	-- If nothing is set, use the default
-	else
-		enabled = site.mesh_vpn.enabled(false)
-	end
-	-- wireguard is not listed here, as it didn't exist before the uci section
-	-- gluon.mesh_vpn was introduced. Therefore no migration is necessary.
-
-
-	local limit_enabled = tonumber((uci:get('simple-tc', 'mesh_vpn', 'enabled')))
-	if limit_enabled == nil then
-		limit_enabled = site.mesh_vpn.bandwidth_limit.enabled(false)
-	end
-
-	local limit_ingress = tonumber((uci:get('tunneldigger', 'mesh_vpn', 'limit_bw_down')))
-	if limit_ingress == nil then
-		limit_ingress = tonumber((uci:get('simple-tc', 'mesh_vpn', 'limit_ingress')))
-	end
-	if limit_ingress == nil then
-		limit_ingress = site.mesh_vpn.bandwidth_limit.ingress()
-	end
-
-	local limit_egress = tonumber((uci:get('simple-tc', 'mesh_vpn', 'limit_egress')))
-	if limit_egress == nil then
-		limit_egress = site.mesh_vpn.bandwidth_limit.egress()
-	end
-
+	local limit_enabled = site.mesh_vpn.bandwidth_limit.enabled(false)
+	local limit_ingress = site.mesh_vpn.bandwidth_limit.ingress()
+	local limit_egress = site.mesh_vpn.bandwidth_limit.egress()
 
 	uci:section('gluon', 'mesh_vpn', 'mesh_vpn', {
 		enabled = enabled,

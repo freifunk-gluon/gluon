@@ -1,0 +1,82 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 7 Jan 2025 00:49:41 +0100
+Subject: net: mac80211: force backwards compatible basic rates
+
+Force backwards-compatible basic-rates on the mesh interface.
+This is required to maintain backwards-compatible with older
+Gluon releases.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mac80211/patches/subsys/996-net-mac80211-always-pretend-1-Mbit-s-as-mesh-basic-r.patch b/package/kernel/mac80211/patches/subsys/996-net-mac80211-always-pretend-1-Mbit-s-as-mesh-basic-r.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..6af899c754dcc58df8e262c2db9be0bd9c347e5e
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/996-net-mac80211-always-pretend-1-Mbit-s-as-mesh-basic-r.patch
+@@ -0,0 +1,66 @@
++From 70c1812fa170ee35cdc576c886bed4bfaae1d23c Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Tue, 7 Jan 2025 00:47:33 +0100
++Subject: [PATCH] net: mac80211: force backwards compatible basic rates
++
++Force backwards-compatible basic-rates on the mesh interface.
++This is required to maintain backwards-compatible with older
++Gluon releases.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ net/mac80211/util.c | 4 ++--
++ 1 file changed, 2 insertions(+), 2 deletions(-)
++
++--- a/net/mac80211/mesh.c
+++++ b/net/mac80211/mesh.c
++@@ -954,6 +954,7 @@ ieee80211_mesh_build_beacon(struct ieee8
++ 	struct ieee80211_sub_if_data *sdata;
++ 	int hdr_len = offsetofend(struct ieee80211_mgmt, u.beacon);
++ 	u32 rate_flags;
+++	u32 br_bitfield;
++ 
++ 	sdata = container_of(ifmsh, struct ieee80211_sub_if_data, u.mesh);
++ 
++@@ -1086,8 +1087,16 @@ ieee80211_mesh_build_beacon(struct ieee8
++ 	}
++ 	rcu_read_unlock();
++ 
+++	if (sband->band == NL80211_BAND_2GHZ) {
+++		br_bitfield = BIT(0);
+++	} else if (sband->band == NL80211_BAND_5GHZ) {
+++		br_bitfield = BIT(0) | BIT(2) | BIT(4);
+++	} else {
+++		br_bitfield = sdata->vif.bss_conf.basic_rates;
+++	}
+++
++ 	if (ieee80211_put_srates_elem(skb, sband,
++-				      sdata->vif.bss_conf.basic_rates,
+++				      br_bitfield,
++ 				      rate_flags, 0, WLAN_EID_SUPP_RATES) ||
++ 	    mesh_add_ds_params_ie(sdata, skb))
++ 		goto out_free;
++@@ -1100,7 +1109,7 @@ ieee80211_mesh_build_beacon(struct ieee8
++ 	bcn->tail = bcn->head + bcn->head_len;
++ 
++ 	if (ieee80211_put_srates_elem(skb, sband,
++-				      sdata->vif.bss_conf.basic_rates,
+++				      br_bitfield,
++ 				      rate_flags, 0, WLAN_EID_EXT_SUPP_RATES) ||
++ 	    mesh_add_rsn_ie(sdata, skb) ||
++ 	    mesh_add_ht_cap_ie(sdata, skb) ||
++--- a/net/mac80211/mesh_plink.c
+++++ b/net/mac80211/mesh_plink.c
++@@ -284,6 +284,12 @@ static int mesh_plink_frame_tx(struct ie
++ 			ieee80211_chandef_rate_flags(&sdata->vif.bss_conf.chanreq.oper);
++ 		basic_rates = sdata->vif.bss_conf.basic_rates;
++ 
+++		if (sband->band == NL80211_BAND_2GHZ) {
+++			basic_rates = BIT(0); /* mandatory rate */
+++		} else if (sband->band == NL80211_BAND_5GHZ) {
+++			basic_rates = BIT(0) | BIT(2) | BIT(4); /* mandatory rate */
+++		}
+++
++ 		if (ieee80211_put_srates_elem(skb, sband, basic_rates,
++ 					      rate_flags, 0,
++ 					      WLAN_EID_SUPP_RATES) ||

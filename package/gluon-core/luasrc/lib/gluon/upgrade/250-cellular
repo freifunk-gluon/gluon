@@ -21,6 +21,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 	local pincode = uci:get('gluon', 'cellular', 'pin')
 	local username = uci:get('gluon', 'cellular', 'username')
 	local password = uci:get('gluon', 'cellular', 'password')
+	local auth = uci:get('gluon', 'cellular', 'auth')
 
 	uci:section('network', 'interface', 'cellular', {
 		proto = control_type,
@@ -28,6 +29,7 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 		disabled = not uci:get_bool('gluon', 'cellular', 'enabled'),
 		pdptype = pdptype,
 		peerdns = false,
+		ip6table = 1,
 		apn = uci:get('gluon', 'cellular', 'apn'),
 	})
 
@@ -40,10 +42,12 @@ local function setup_ncm_qmi(devpath, control_type, delay)
 	set_or_delete('network', 'cellular', 'pincode', pincode)
 	set_or_delete('network', 'cellular', 'username', username)
 	set_or_delete('network', 'cellular', 'password', password)
+	set_or_delete('network', 'cellular', 'auth', auth)
 	set_or_delete('network', 'cellular', 'delay', delay)
 end
 
 if platform.match('ath79', 'nand', {
+	'glinet,gl-e750',
 	'glinet,gl-xe300',
 }) then
 	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
@@ -53,6 +57,7 @@ elseif platform.match('ath79', 'nand', {
 	setup_ncm_qmi('/dev/ttyACM0', 'ncm', 15)
 elseif platform.match('ipq40xx', 'generic', {
 	'glinet,gl-ap1300',
+	'zte,mf289f',
 }) then
 	setup_ncm_qmi('/dev/cdc-wdm0', 'qmi', 15)
 elseif platform.match('ramips', 'mt7621', {

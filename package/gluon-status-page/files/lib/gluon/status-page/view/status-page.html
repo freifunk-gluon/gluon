@@ -4,6 +4,7 @@
 	local unistd = require 'posix.unistd'
 	local util = require 'gluon.util'
 	local wireless = require 'gluon.wireless'
+	local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
 
 	local uci = require('simple-uci').cursor()
 
@@ -32,6 +33,11 @@
 	end
 
 	local mesh = get_mesh()
+
+	local vpn_pubkey
+	if has_vpn then
+		vpn_pubkey = vpn.get_enabled_public_key()
+	end
 
 	local function get_interfaces(uconn)
 		local interfaces = util.get_mesh_devices(uconn)
@@ -124,7 +130,7 @@
 <html lang="">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<meta name="robots" content="noindex,nofollow">
 
 		<title><%| nodeinfo.hostname %> - <%:Status%></title>
@@ -164,6 +170,9 @@
 							<% if nodeinfo.network.mesh_vpn.provider then -%>
 							<br><%| nodeinfo.network.mesh_vpn.provider %>
 							<%- end %>
+							<% if vpn_pubkey then -%>
+							<br><%| vpn_pubkey %> (public key)
+							<%- end %>
 						</dd>
 						<% if nodeinfo.network.mesh_vpn.bandwidth_limit.enabled then -%>
 						<dt><%:Bandwidth limit%></dt>
@@ -196,11 +205,8 @@
 								string.format(' (%s)', nodeinfo.software.autoupdater.branch)
 						%></dd>
 					<%- end %>
-					<% if nodeinfo.software.babeld or nodeinfo.software['batman-adv'] then -%>
+					<% if nodeinfo.software['batman-adv'] then -%>
 						<dt><%:Mesh protocol%></dt>
-						<% if nodeinfo.software.babeld then -%>
-						<dd>babeld <%| nodeinfo.software.babeld.version %></dd>
-						<%- end %>
 						<% if nodeinfo.software['batman-adv'] then -%>
 						<dd>batman-adv <%| nodeinfo.software['batman-adv'].version %> (compat<%| nodeinfo.software['batman-adv'].compat %>)</dd>
 						<%- end %>

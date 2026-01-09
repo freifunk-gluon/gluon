@@ -1,12 +1,13 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
+
 . /lib/functions.sh
 . ../netifd-proto.sh
 init_proto "$@"
 
 proto_gluon_wired_init_config() {
-	proto_config_add_boolean transitive
-	proto_config_add_int index
+	proto_config_add_string func
 	proto_config_add_boolean vxlan
 	proto_config_add_string vxpeer6addr
 }
@@ -17,7 +18,8 @@ xor2() {
 }
 
 is_layer3_device () {
-	local addrlen="$(cat "/sys/class/net/$1/addr_len")"
+	local addrlen
+	addrlen="$(cat "/sys/class/net/$1/addr_len")"
 	test "$addrlen" -eq 0
 }
 
@@ -34,7 +36,8 @@ interface_linklocal() {
 		return
 	fi
 
-	local macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
+	local macaddr
+	macaddr="$(ubus call network.device status '{"name": "'"$1"'"}' | jsonfilter -e '@.macaddr')"
 	local oldIFS="$IFS"; IFS=':'; set -- $macaddr; IFS="$oldIFS"
 
 	echo "fe80::$(xor2 "$1")$2:$3ff:fe$4:$5$6"
@@ -46,8 +49,8 @@ proto_gluon_wired_setup() {
 
 	local meshif="$config"
 
-	local transitive index vxlan vxpeer6addr
-	json_get_vars transitive index vxlan vxpeer6addr
+	local hop_penalty func vxlan vxpeer6addr
+	json_get_vars hop_penalty func vxlan vxpeer6addr
 
 	# default args
 	[ -z "$vxlan" ] && vxlan=1
@@ -61,7 +64,7 @@ proto_gluon_wired_setup() {
 
 		json_init
 		json_add_string name "$meshif"
-		[ -n "$index" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac($index))")"
+		[ -n "$func" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac_by_name('$func'))")"
 		json_add_string proto 'vxlan6'
 		json_add_string tunlink "$config"
 		# ip6addr (the lower interface ip6) is used by the vxlan.sh proto
@@ -79,7 +82,7 @@ proto_gluon_wired_setup() {
 	json_add_string ifname "@${meshif}"
 	json_add_string proto 'gluon_mesh'
 	json_add_boolean fixed_mtu 1
-	[ -n "$transitive" ] && json_add_boolean transitive "$transitive"
+	[ -n "${hop_penalty}" ] && json_add_int hop_penalty "${hop_penalty}"
 	json_close_object
 	ubus call network add_dynamic "$(json_dump)"
 }

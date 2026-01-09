@@ -1,2 +1,15 @@
 #!/bin/sh
-out=$(batctl gwl -H 2>/dev/null) && [ -n "$out" ]
+
+# shellcheck disable=SC3040
+set -o pipefail
+
+if ! out=$(batctl gwl -H 2>/dev/null); then
+	# batctl gwl command failed
+	exit 1
+fi
+
+# node does not have any gateways listed
+# and is also not in gw_mode
+if [ -z "$out" ] && ! batctl gw_mode | grep -qw '^server'; then
+	exit 2
+fi

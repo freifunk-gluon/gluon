@@ -94,6 +94,10 @@ local primary_addrs = {
 		{'lantiq', 'xway', {
 			'netgear,dgn3500b',
 		}},
+		{'mediatek', 'filogic', {
+			'asus,tuf-ax4200',
+			'asus,tuf-ax6000',
+		}},
 		{'ramips', 'mt7620', {
 			'netgear,ex3700',
 			'tplink,archer-c2-v1',
@@ -106,6 +110,7 @@ local primary_addrs = {
 		}},
 		{'rockchip', 'armv8', {
 			'friendlyarm,nanopi-r2s',
+			'friendlyarm,nanopi-r3s',
 			'friendlyarm,nanopi-r4s',
 		}},
 		{'x86'},
@@ -113,8 +118,14 @@ local primary_addrs = {
 	{interface('wan'), {
 		{'ipq40xx', 'generic', {
 			'linksys,ea6350v3',
+			'linksys,mr8300',
+			'linksys,whw03',
 			'openmesh,a42',
 			'openmesh,a62',
+		}},
+		{'kirkwood', 'generic', {
+			'linksys,e4200-v2',
+			'linksys,ea4500',
 		}},
 		{'mpc85xx', 'p1020', {
 			'aerohive,hiveap-330',

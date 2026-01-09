@@ -1,0 +1,3 @@
+include 'armsr.inc'
+
+device('armsr-armv7', 'generic')

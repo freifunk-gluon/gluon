@@ -158,7 +158,7 @@ Bugfixes
   (`#1777 <https://github.com/freifunk-gluon/gluon/issues/1777>`_)
 
 * Fixes cross-domain leakage of respondd data by not joining the link-local multicast group on br-client. Nodes will
-  not be answering respondd queries on  ``[ff02::2:1001]:1001`` anymore. Respondd queries using that address must be
+  not be answering respondd queries on ``[ff02::2:1001]:1001`` anymore. Respondd queries using that address must be
   updated to the new address ``[ff05::2:1001]:1001``. (`#1701 <https://github.com/freifunk-gluon/gluon/issues/1701>`_)
 
 
@@ -176,7 +176,7 @@ site.mk
 * The variable ``DEVICES`` that controls which devices to build images for has been renamed to ``GLUON_DEVICES``.
   (`#1686 <https://github.com/freifunk-gluon/gluon/pull/1686>`_)
 
-* The ``gluon-radvd`` package is now included by default and can be dropped from *FEATURES* and  *GLUON_SITE_PACKGES*.
+* The ``gluon-radvd`` package is now included by default and can be dropped from *FEATURES* and *GLUON_SITE_PACKAGES*.
 
 site.conf
 =========

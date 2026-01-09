@@ -1,16 +1,30 @@
 #!/usr/bin/lua
 
 local wireless = require 'gluon.wireless'
-
 local uci = require('simple-uci').cursor()
+local util = require "gluon.util"
 
+local client_only_radio = {band_2g=0, band_5g=0}
 
-local function is_disabled(config, name)
-	if uci:get('wireless', name) then
-		return uci:get_bool('wireless', name, 'disabled')
+local function count_band(band)
+	client_only_radio[band] = client_only_radio[band] + 1
+end
+
+wireless.foreach_radio(uci, function(radio, _, config)
+	if not wireless.supports_channel(radio, config.channel()) then
+		count_band("band_" .. radio.band)
 	end
+end)
 
-	return config.disabled(false)
+local function is_disabled(radio, config)
+	-- now we assign radios to roles
+	local band = radio.band
+	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
+	-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
+	local disable_client = wireless.supports_channel(radio, config.channel()) and client_only_radio['band_' .. band] > 0
+
+	return not util.contains(roles, 'client') or disable_client
 end
 
 local function configure_ap(radio, index, config, radio_name)
@@ -18,13 +32,10 @@ local function configure_ap(radio, index, config, radio_name)
 	local suffix = radio_name:match('^radio(%d+)$')
 
 	local ap = config.ap
-	local disabled = is_disabled(ap, name)
 
-	uci:delete('wireless', name)
+	local macaddr = wireless.get_wlan_mac('client', index, radio)
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 1)
-
-	if not ap.ssid() or not macaddr then
+	if not ap.ssid() or not macaddr or not suffix then
 		return
 	end
 
@@ -34,8 +45,7 @@ local function configure_ap(radio, index, config, radio_name)
 		mode = 'ap',
 		ssid = ap.ssid(),
 		macaddr = macaddr,
-		ifname = suffix and 'client' .. suffix,
-		disabled = disabled or false,
+		ifname = 'client' .. suffix,
 	})
 end
 
@@ -45,19 +55,15 @@ local function configure_owe(radio, index, config, radio_name)
 
 	local ap = config.ap
 
-	local disabled = is_disabled(ap, 'client_' .. radio_name)
-
-	uci:delete('wireless', name)
-
 	-- Don't configure OWE in case our device
 	-- can't do MFP, as it's mandatory for OWE.
 	if not wireless.device_supports_mfp(uci) then
 		return
 	end
 
-	local macaddr = wireless.get_wlan_mac(uci, radio, index, 3)
+	local macaddr = wireless.get_wlan_mac('owe', index, radio)
 
-	if not ap.owe_ssid() or not macaddr then
+	if not ap.owe_ssid() or not macaddr or not suffix then
 		return
 	end
 
@@ -67,8 +73,7 @@ local function configure_owe(radio, index, config, radio_name)
 		mode = 'ap',
 		ssid = ap.owe_ssid(),
 		macaddr = macaddr,
-		ifname = suffix and 'owe' .. suffix,
-		disabled = disabled or false,
+		ifname = 'owe' .. suffix,
 		encryption = 'owe',
 		ieee80211w = 2,
 	})
@@ -105,11 +110,12 @@ end
 
 wireless.foreach_radio(uci, function(radio, index, config)
 	local radio_name = radio['.name']
+	if not is_disabled(radio, config) then
+		configure_ap(radio, index, config, radio_name)
 
-	configure_ap(radio, index, config, radio_name)
-
-	configure_owe(radio, index, config, radio_name)
-	configure_owe_transition_mode(config, radio_name)
+		configure_owe(radio, index, config, radio_name)
+		configure_owe_transition_mode(config, radio_name)
+	end
 end)
 
 uci:save('wireless')

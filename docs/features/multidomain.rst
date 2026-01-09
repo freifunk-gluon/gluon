@@ -106,7 +106,7 @@ Via config mode
 ^^^^^^^^^^^^^^^
 
 To allow switching the domain via config mode, add ``config-mode-domain-select``
-to GLUON_FEATURES in site.mk.
+to the enabled features in the image-customization.lua file.
 
 |image0|
 
@@ -134,7 +134,6 @@ site.conf only variables
   - setup_mode.skip
   - autoupdater.branch
   - mesh_vpn.enabled
-  - mesh_vpn.pubkey_privacy
   - mesh_vpn.bandwidth_limit
   - mesh_vpn.bandwidth_limit.enabled
   - mesh_vpn.bandwidth_limit.ingress
@@ -206,7 +205,6 @@ domain.conf only variables
   - wifi*.mesh.id
   - mesh_vpn.fastd.groups.*.peers.remotes
   - mesh_vpn.fastd.groups.*.peers.key
-  - mesh_vpn.tunneldigger.brokers
 
 - Clients consider WiFi networks sharing the same ESSID as if they were
   the same L2 network and try to reconfirm and reuse previous

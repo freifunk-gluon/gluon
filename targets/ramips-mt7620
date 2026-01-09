@@ -19,7 +19,8 @@ device('gl-mt750', 'glinet_gl-mt750', {
 	factory = false,
 })
 
--- Netgear
+
+-- NETGEAR
 
 device('netgear-ex3700', 'netgear_ex3700', {
 	aliases = {
@@ -28,6 +29,11 @@ device('netgear-ex3700', 'netgear_ex3700', {
 	manifest_aliases = {'netgear-ex3700-ex3800'},
 	factory_ext = '.chk',
 })
+
+device('netgear-ex6130', 'netgear_ex6130', {
+	factory_ext = '.chk',
+})
+
 
 -- Nexx
 
@@ -38,6 +44,7 @@ device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
 		'nexx-wt3020h',
 	},
 })
+
 
 -- TP-Link
 
@@ -58,7 +65,6 @@ device('tp-link-archer-c20i', 'tplink_archer-c20i')
 
 device('tp-link-archer-c50-v1', 'tplink_archer-c50-v1', {
 	factory = '-squashfs-factory' .. tplink_region_suffix,
-	manifest_aliases = {'tp-link-archer-c50'},
 })
 
 

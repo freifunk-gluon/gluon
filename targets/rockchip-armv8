@@ -4,4 +4,5 @@ defaults {
 }
 
 device('friendlyelec-nanopi-r2s', 'friendlyarm_nanopi-r2s')
+device('friendlyelec-nanopi-r3s', 'friendlyarm_nanopi-r3s')
 device('friendlyelec-nanopi-r4s', 'friendlyarm_nanopi-r4s') -- 4GB LPDDR4
