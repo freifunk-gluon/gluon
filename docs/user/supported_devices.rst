@@ -340,6 +340,7 @@ mediatek-filogic
 * Cudy
 
   - AP3000 Outdoor (v1)
+  - M3000 (v1)
   - RE3000 (v1)
   - TR3000 (v1)
   - WR3000 (v1)
