@@ -304,6 +304,7 @@ mediatek-filogic
 
 * Cudy
 
+  - RE3000 (v1)
   - WR3000 (v1)
 
 * GL.iNet
