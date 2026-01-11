@@ -548,6 +548,8 @@ device('ubiquiti-nanostation-loco-m-xw', 'ubnt_nanostation-loco-m-xw', {
 
 device('ubiquiti-nanostation-m-xw', 'ubnt_nanostation-m-xw')
 
+device('ubiquiti-rocket-m-xm', 'ubnt_rocket-m')
+
 device('ubiquiti-unifi-ac-lite', 'ubnt_unifiac-lite', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
