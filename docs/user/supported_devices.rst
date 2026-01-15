@@ -155,7 +155,7 @@ ath79-generic
 
 * Totolink 
 
- - X5000R (v1)
+  - X5000R (v1)
 
 * Ubiquiti
 
