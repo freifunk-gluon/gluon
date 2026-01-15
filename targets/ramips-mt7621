@@ -125,7 +125,7 @@ device('tp-link-re650-v1', 'tplink_re650-v1')
 -- Totolink
 
 device('totolink-x5000r', 'totolink_x5000r', {
-       factory = false,
+		factory = false,
 })
 
 -- Ubiquiti
