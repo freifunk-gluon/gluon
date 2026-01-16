@@ -11,6 +11,8 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include <sys/vfs.h>
@@ -186,7 +188,26 @@ static struct json_object * get_time(void) {
 	return json_object_new_int64(now.tv_sec);
 }
 
-static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifname) {
+struct station_counts {
+	size_t wifi24;
+	size_t wifi5;
+	size_t wifi6;
+	size_t owe24;
+	size_t owe5;
+	size_t owe6;
+
+	bool has_wifi24;
+	bool has_wifi5;
+	bool has_wifi6;
+	bool has_owe24;
+	bool has_owe5;
+	bool has_owe6;
+};
+
+static void count_iface_stations(struct station_counts *s, const char *ifname) {
+	if (!s)
+		return;
+
 	const struct iwinfo_ops *iw = iwinfo_backend(ifname);
 	if (!iw)
 		return;
@@ -195,13 +216,29 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 	if (iw->frequency(ifname, &freq) < 0)
 		return;
 
-	size_t *wifi;
-	if (freq >= 2400 && freq < 2500)
-		wifi = wifi24;
-	else if (freq >= 5000 && freq < 6000)
-		wifi = wifi5;
-	else
+	size_t *wifi = NULL;
+	size_t *owe = NULL;
+	if (freq >= 2400 && freq < 2500) {
+		wifi = &s->wifi24;
+		owe = &s->owe24;
+		s->has_wifi24 = true;
+		if (strstr(ifname, "owe") == ifname)
+			s->has_owe24 = true;
+	} else if (freq >= 5000 && freq < 5900) {
+		wifi = &s->wifi5;
+		owe = &s->owe5;
+		s->has_wifi5 = true;
+		if (strstr(ifname, "owe") == ifname)
+			s->has_owe5 = true;
+	} else if (freq >= 5935 && freq < 7000) {
+		wifi = &s->wifi6;
+		owe = &s->owe6;
+		s->has_wifi6 = true;
+		if (strstr(ifname, "owe") == ifname)
+			s->has_owe6 = true;
+	} else {
 		return;
+	}
 
 	int len;
 	char buf[IWINFO_BUFSIZE];
@@ -214,13 +251,17 @@ static void count_iface_stations(size_t *wifi24, size_t *wifi5, const char *ifna
 			continue;
 
 		(*wifi)++;
+
+		if (strstr(ifname, "owe") == ifname && owe)
+			(*owe)++;
 	}
 }
 
-static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t *owe5) {
+static struct station_counts *count_stations(void) {
+	struct station_counts *counts = calloc(1, sizeof(*counts));
 	struct uci_context *ctx = uci_alloc_context();
 	if (!ctx)
-		return;
+		return counts;
 	ctx->flags &= ~UCI_FLAG_STRICT;
 
 
@@ -247,30 +288,38 @@ static void count_stations(size_t *wifi24, size_t *wifi5, size_t *owe24, size_t 
 		if (!ifname)
 			continue;
 
-		if (strstr(ifname, "owe") == ifname)
-			count_iface_stations(owe24, owe5, ifname);
-
-		count_iface_stations(wifi24, wifi5, ifname);
+		count_iface_stations(counts, ifname);
 	}
 
 end:
 	uci_free_context(ctx);
+	return counts;
 }
 
 static struct json_object * get_clients(void) {
-	size_t wifi24 = 0, wifi5 = 0, owe24 = 0, owe5 = 0;
+	struct station_counts *stat_counts = count_stations();
 
-	count_stations(&wifi24, &wifi5, &owe24, &owe5);
 
 	struct json_object *ret = json_object_new_object();
 
-	json_object_object_add(ret, "wifi", json_object_new_int(wifi24 + wifi5));
-	json_object_object_add(ret, "wifi24", json_object_new_int(wifi24));
-	json_object_object_add(ret, "wifi5", json_object_new_int(wifi5));
+	json_object_object_add(ret, "wifi", json_object_new_int(stat_counts->wifi24 + stat_counts->wifi5 + stat_counts->wifi6));
+	if (stat_counts->has_wifi24)
+		json_object_object_add(ret, "wifi24", json_object_new_int(stat_counts->wifi24));
+	if (stat_counts->has_wifi5)
+		json_object_object_add(ret, "wifi5", json_object_new_int(stat_counts->wifi5));
+	if (stat_counts->has_wifi6)
+		json_object_object_add(ret, "wifi6", json_object_new_int(stat_counts->wifi6));
 
-	json_object_object_add(ret, "owe", json_object_new_int(owe24 + owe5));
-	json_object_object_add(ret, "owe24", json_object_new_int(owe24));
-	json_object_object_add(ret, "owe5", json_object_new_int(owe5));
+	if (stat_counts->has_owe24 || stat_counts->has_owe5 || stat_counts->has_owe6)
+		json_object_object_add(ret, "owe", json_object_new_int(stat_counts->owe24 + stat_counts->owe5 + stat_counts->owe6));
+	if (stat_counts->has_owe24)
+		json_object_object_add(ret, "owe24", json_object_new_int(stat_counts->owe24));
+	if (stat_counts->has_owe5)
+		json_object_object_add(ret, "owe5", json_object_new_int(stat_counts->owe5));
+	if (stat_counts->has_owe6)
+		json_object_object_add(ret, "owe6", json_object_new_int(stat_counts->owe6));
+
+	free(stat_counts);
 
 	return ret;
 }
