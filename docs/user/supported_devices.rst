@@ -153,6 +153,10 @@ ath79-generic
   - WBS210 (v1.20, v2.0)
   - WBS510 (v1.20)
 
+* Totolink 
+
+  - X5000R (v1)
+
 * Ubiquiti
 
   - NanoBeam 5AC 19 (XC)
