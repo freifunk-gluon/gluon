@@ -2,10 +2,10 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gluon-site
 
-GLUON_SITEDIR = $(call qstrip,$(CONFIG_GLUON_SITEDIR))
+SITEDIR := $(call qstrip,$(CONFIG_GLUON_SITEDIR))
 
 PKG_CONFIG_DEPENDS := CONFIG_GLUON_SITE_VERSION CONFIG_GLUON_RELEASE CONFIG_GLUON_SITEDIR CONFIG_GLUON_MULTIDOMAIN
-PKG_FILE_DEPENDS := $(GLUON_SITEDIR)/site.conf $(GLUON_SITEDIR)/domains/ $(GLUON_SITEDIR)/i18n/
+PKG_FILE_DEPENDS := $(SITEDIR)/site.conf $(SITEDIR)/domains/ $(SITEDIR)/i18n/
 PKG_BUILD_DEPENDS := lua-jsonc/host gluon-web/host
 
 include ../gluon.mk
@@ -38,7 +38,7 @@ config GLUON_MULTIDOMAIN
 endef
 
 define GenerateJSON
-	GLUON_SITEDIR='$$(GLUON_SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' \
+	GLUON_SITEDIR='$$(SITEDIR)' GLUON_SITE_CONFIG='$(1).conf' \
 		lua -e 'print(require("jsonc").stringify(assert(dofile("../../scripts/site_config.lua")(os.getenv("GLUON_SITE_CONFIG")))))' \
 		> '$$(PKG_BUILD_DIR)/$(1).json'
 endef
@@ -49,7 +49,7 @@ define Build/Compile
   ifdef CONFIG_GLUON_MULTIDOMAIN
 	rm -rf $(PKG_BUILD_DIR)/domains
 	mkdir -p $(PKG_BUILD_DIR)/domains
-	$(foreach domain,$(patsubst $(GLUON_SITEDIR)/domains/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),
+	$(foreach domain,$(patsubst $(SITEDIR)/domains/%.conf,%,$(wildcard $(SITEDIR)/domains/*.conf)),
 		@if [ -e '$(PKG_BUILD_DIR)/domains/$(domain).json' ]; then \
 			link='$(PKG_BUILD_DIR)/domains/$(domain).json'; \
 			other="$$$$(basename $$$$(readlink -f "$$$$link") .json)"; \
@@ -73,7 +73,7 @@ define Build/Compile
 	)
   endif
 
-	$(call GluonBuildI18N,$(GLUON_SITEDIR)/i18n)
+	$(call GluonBuildI18N,$(SITEDIR)/i18n)
 endef
 
 define Package/gluon-site/install
