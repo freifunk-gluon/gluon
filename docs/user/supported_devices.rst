@@ -519,6 +519,7 @@ ramips-mt7621
 * MERCUSYS
 
   - MR70X (v1)
+  - MR90X (v1)
 
 * NETGEAR
 
