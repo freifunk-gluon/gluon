@@ -78,6 +78,13 @@ device('gl.inet-gl-mt3000', 'glinet_gl-mt3000', {
 })
 
 
+-- Mercusys
+
+device('mercusys-mr90x-v1', 'mercusys_mr90x-v1', {
+	factory = false,
+})
+
+
 -- NETGEAR
 
 device('netgear-wax220', 'netgear_wax220', {
