@@ -20,3 +20,6 @@ device('ubiquiti-unifi-6-lr-v1', 'ubnt_unifi-6-lr-v1', {
 	manifest_aliases = {'ubiquiti-unifi-6-lr'}, -- Upgrade from OpenWrt 22.03
 })
 
+device('ubiquiti-unifi-6-lr-v3', 'ubnt_unifi-6-lr-v3', {
+	factory = false,
+})

@@ -399,7 +399,7 @@ mediatek-mt7622
 
 * Ubiquiti
 
-  - UniFi 6 LR (v1)
+  - UniFi 6 LR (v1, v3)
 
 mvebu-cortexa53
 ---------------
