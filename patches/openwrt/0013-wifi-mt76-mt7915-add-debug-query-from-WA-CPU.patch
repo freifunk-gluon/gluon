@@ -1,0 +1,136 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 17 Jan 2026 23:11:06 +0100
+Subject: wifi: mt76: mt7915: add debug query from WA CPU
+
+Add a new file to the mt76 debugfs to allow querying internal state
+information from the WA (offloading) CPU.
+
+This allows to extract more information from the internal queue
+strcutures.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/400-wifi-mt76-mt7915-add-debug-query-from-WA-CPU.patch b/package/kernel/mt76/patches/400-wifi-mt76-mt7915-add-debug-query-from-WA-CPU.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..34506ffdaf9d47f48ca4a4c0edee883348a98006
+--- /dev/null
++++ b/package/kernel/mt76/patches/400-wifi-mt76-mt7915-add-debug-query-from-WA-CPU.patch
+@@ -0,0 +1,118 @@
++From b4190e8358f624479aaecaeddd4e5060547d775c Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sun, 21 Dec 2025 14:58:14 +0100
++Subject: [PATCH 1/2] wifi: mt76: mt7915: add debug query from WA CPU
++
++Add a new file to the mt76 debugfs to allow querying internal state
++information from the WA (offloading) CPU.
++
++This allows to extract more information from the internal queue
++strcutures.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ mt7915/debugfs.c | 81 ++++++++++++++++++++++++++++++++++++++++++++++++
++ 1 file changed, 81 insertions(+)
++
++diff --git a/mt7915/debugfs.c b/mt7915/debugfs.c
++index e80d1548..00050b90 100644
++--- a/mt7915/debugfs.c
+++++ b/mt7915/debugfs.c
++@@ -603,6 +603,86 @@ mt7915_fw_debug_wa_get(void *data, u64 *val)
++ DEFINE_DEBUGFS_ATTRIBUTE(fops_fw_debug_wa, mt7915_fw_debug_wa_get,
++ 			 mt7915_fw_debug_wa_set, "%lld\n");
++ 
+++struct {
+++	u8 idx;
+++	u8 query_cmd;
+++	char *description;
+++} mt7915_fw_wa_debug_query[] = {
+++	{ 0, 0x16, "MSDU drop info" },
+++	{ 1, 0x17, "AC queue tail drop" },
+++	{ 2, 0x19, "TX Free info" },
+++	{ 3, 0x20, "BSS Table" },
+++	{ 4, 0x21, "STA records" },
+++};
+++
+++static ssize_t
+++mt7915_fw_debug_wa_query_set(struct file *file, const char __user *user_buf,
+++			     size_t count, loff_t *ppos)
+++{
+++	struct mt7915_phy *phy = file->private_data;
+++	struct mt7915_dev *dev = phy->dev;
+++	char buf[16];
+++	u16 val;
+++
+++	if (count >= sizeof(buf))
+++		return -EINVAL;
+++
+++	if (copy_from_user(buf, user_buf, count))
+++		return -EFAULT;
+++
+++	if (count && buf[count - 1] == '\n')
+++		buf[count - 1] = '\0';
+++	else
+++		buf[count] = '\0';
+++
+++	if (kstrtou16(buf, 0, &val))
+++		return -EINVAL;
+++
+++	for (int i = 0; i < ARRAY_SIZE(mt7915_fw_wa_debug_query); i++) {
+++		if (val != mt7915_fw_wa_debug_query[i].idx)
+++			continue;
+++
+++		mt7915_mcu_wa_cmd(dev, MCU_WA_PARAM_CMD(QUERY), 
+++					 mt7915_fw_wa_debug_query[i].query_cmd,
+++					 0, 0);
+++		return count;
+++	}
+++
+++	return count;
+++}
+++
+++static ssize_t
+++mt7915_fw_debug_wa_query_get(struct file *file, char __user *user_buf,
+++			     size_t count, loff_t *ppos)
+++{
+++	char *buff;
+++	int desc = 0;
+++	ssize_t ret;
+++	static const size_t bufsz = 1024;
+++
+++	buff = kmalloc(bufsz, GFP_KERNEL);
+++	if (!buff)
+++		return -ENOMEM;
+++
+++	/* HELP */
+++	for (int i = 0; i < ARRAY_SIZE(mt7915_fw_wa_debug_query); i++) {
+++		desc += scnprintf(buff + desc, bufsz - desc,
+++				  "%d: %s\n", mt7915_fw_wa_debug_query[i].idx,
+++				  mt7915_fw_wa_debug_query[i].description);
+++	}
+++
+++	ret = simple_read_from_buffer(user_buf, count, ppos, buff, desc);
+++	kfree(buff);
+++	return ret;
+++}
+++
+++static const struct file_operations mt7915_fw_debug_wa_query_ops = {
+++	.write = mt7915_fw_debug_wa_query_set,
+++	.read = mt7915_fw_debug_wa_query_get,
+++	.open = simple_open,
+++	.llseek = default_llseek,
+++};
+++
++ static struct dentry *
++ create_buf_file_cb(const char *filename, struct dentry *parent, umode_t mode,
++ 		   struct rchan_buf *buf, int *is_global)
++@@ -1310,6 +1390,7 @@ int mt7915_init_debugfs(struct mt7915_phy *phy)
++ 			    &mt7915_sys_recovery_ops);
++ 	debugfs_create_file("fw_debug_wm", 0600, dir, dev, &fops_fw_debug_wm);
++ 	debugfs_create_file("fw_debug_wa", 0600, dir, dev, &fops_fw_debug_wa);
+++	debugfs_create_file("fw_debug_wa_query", 0600, dir, dev, &mt7915_fw_debug_wa_query_ops);
++ 	debugfs_create_file("fw_debug_bin", 0600, dir, dev, &fops_fw_debug_bin);
++ 	debugfs_create_file("fw_util_wm", 0400, dir, dev,
++ 			    &mt7915_fw_util_wm_fops);
++-- 
++2.51.0
++

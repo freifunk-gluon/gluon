@@ -1,0 +1,94 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 29 Jan 2026 00:05:36 +0100
+Subject: wifi: mt76: don't return TXQ when exceeding max non-AQL packets
+
+mt76_txq_send_burst does check if the number of non-AQL frames exceeds
+the maximum. In this case the queue is returned to ieee80211_return_txq
+when iterating over the scheduled TXQs in mt76_txq_schedule_list.
+
+This has the effect of inserting said TXQ at the head of the list. In
+return this means the same TXQ as there are still frames pending which
+AQL still considers transmittable. The TXQs following thus never get
+scheduled in the iteration.
+
+This can manifest in high latency, and low throughput for other clients.
+Check if the non-AQL packet count exceeds the limit and not return the
+TXQ. Schedule all TXQs in case the non-AQL limit can be satisfied again.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/800-wifi-mt76-don-t-return-TXQ-when-exceeding-max-non-AQ.patch b/package/kernel/mt76/patches/800-wifi-mt76-don-t-return-TXQ-when-exceeding-max-non-AQ.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8fe76061017dab205307b359757fd8a19d039ca2
+--- /dev/null
++++ b/package/kernel/mt76/patches/800-wifi-mt76-don-t-return-TXQ-when-exceeding-max-non-AQ.patch
+@@ -0,0 +1,69 @@
++From b281a10c96f065731f869dd3b9abe9d6cb8973c5 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Mon, 26 Jan 2026 23:03:07 +0100
++Subject: [PATCH] wifi: mt76: don't return TXQ when exceeding max non-AQL
++ packets
++
++mt76_txq_send_burst does check if the number of non-AQL frames exceeds
++the maximum. In this case the queue is returned to ieee80211_return_txq
++when iterating over the scheduled TXQs in mt76_txq_schedule_list.
++
++This has the effect of inserting said TXQ at the head of the list. In
++return this means the same TXQ as there are still frames pending which
++AQL still considers transmittable. The TXQs following thus never get
++scheduled in the iteration.
++
++This can manifest in high latency, and low throughput for other clients.
++Check if the non-AQL packet count exceeds the limit and not return the
++TXQ. Schedule all TXQs in case the non-AQL limit can be satisfied again.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ tx.c | 16 ++++++++++++++++
++ 1 file changed, 16 insertions(+)
++
++diff --git a/tx.c b/tx.c
++index 9ec6d0b5..0753acf2 100644
++--- a/tx.c
+++++ b/tx.c
++@@ -227,7 +227,9 @@ mt76_tx_check_non_aql(struct mt76_dev *dev, struct mt76_wcid *wcid,
++ 		      struct sk_buff *skb)
++ {
++ 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
+++	struct ieee80211_sta *sta;
++ 	int pending;
+++	int i;
++ 
++ 	if (!wcid || info->tx_time_est)
++ 		return;
++@@ -235,6 +237,17 @@ mt76_tx_check_non_aql(struct mt76_dev *dev, struct mt76_wcid *wcid,
++ 	pending = atomic_dec_return(&wcid->non_aql_packets);
++ 	if (pending < 0)
++ 		atomic_cmpxchg(&wcid->non_aql_packets, pending, 0);
+++
+++	sta = wcid_to_sta(wcid);
+++	if (!sta || pending != MT_MAX_NON_AQL_PKT - 1)
+++		return;
+++
+++	for (i = 0; i < ARRAY_SIZE(sta->txq); i++) {
+++		if (!sta->txq[i])
+++			continue;
+++
+++		ieee80211_schedule_txq(dev->hw, sta->txq[i]);
+++	}
++ }
++ 
++ void __mt76_tx_complete_skb(struct mt76_dev *dev, u16 wcid_idx, struct sk_buff *skb,
++@@ -542,6 +555,9 @@ mt76_txq_schedule_list(struct mt76_phy *phy, enum mt76_txq_id qid)
++ 		if (!wcid || test_bit(MT_WCID_FLAG_PS, &wcid->flags))
++ 			continue;
++ 
+++		if (atomic_read(&wcid->non_aql_packets) >= MT_MAX_NON_AQL_PKT)
+++			continue;
+++
++ 		phy = mt76_dev_phy(dev, wcid->phy_idx);
++ 		if (test_bit(MT76_RESET, &phy->state) || phy->offchannel)
++ 			continue;
++-- 
++2.51.0
++
