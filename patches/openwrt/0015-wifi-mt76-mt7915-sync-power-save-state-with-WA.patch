@@ -1,0 +1,200 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 29 Jan 2026 12:58:11 +0100
+Subject: wifi: mt76: mt7915: sync power save state with WA
+
+Host receives a power save state change event everytime a station enters
+or leaves PS mode. Use this unsolicited event to stop filling up TX
+queues in firmware, as the hardware will buffer frames for stations in
+power safe indefinitely.
+
+Limit packets to be enqueued for sleeping STAs in order to manage the
+packet backlog in the host-system while still being able to indicate
+pending traffic to said STAs.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/801-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch b/package/kernel/mt76/patches/801-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..17afa1d121da872d3bb474cbc2bd80c91044a9ff
+--- /dev/null
++++ b/package/kernel/mt76/patches/801-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch
+@@ -0,0 +1,179 @@
++From 06987f7ce1de142bb4564393dc300152d585268e Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Fri, 16 Jan 2026 21:53:22 +0100
++Subject: [PATCH] wifi: mt76: mt7915: sync power save state with WA
++
++Host receives a power save state change event everytime a station enters
++or leaves PS mode. Use this unsolicited event to stop filling up TX
++queues in firmware, as the hardware will buffer frames for stations in
++power safe indefinitely.
++
++Limit packets to be enqueued for sleeping STAs in order to manage the
++packet backlog in the host-system while still being able to indicate
++pending traffic to said STAs.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ mt76.h       |  3 +++
++ mt7915/mcu.c | 39 +++++++++++++++++++++++++++++++++++++++
++ mt7915/mcu.h |  9 +++++++++
++ tx.c         | 31 +++++++++++++++++++++++++++++--
++ 4 files changed, 80 insertions(+), 2 deletions(-)
++
++diff --git a/mt76.h b/mt76.h
++index df66b70b..2c96c1d5 100644
++--- a/mt76.h
+++++ b/mt76.h
++@@ -411,6 +411,9 @@ struct mt76_wcid {
++ 	u8 link_id:4;
++ 	bool link_valid;
++ 
+++	atomic_t ps_entered_packets;
+++	unsigned long ps_entered_time;
+++
++ 	u8 rx_check_pn;
++ 	u8 rx_key_pn[IEEE80211_NUM_TIDS + 1][6];
++ 	u16 cipher;
++diff --git a/mt7915/mcu.c b/mt7915/mcu.c
++index c9567aa9..ba786223 100644
++--- a/mt7915/mcu.c
+++++ b/mt7915/mcu.c
++@@ -402,6 +402,42 @@ mt7915_mcu_rx_bcc_notify(struct mt7915_dev *dev, struct sk_buff *skb)
++ 			mt7915_mcu_cca_finish, mphy->hw);
++ }
++ 
+++static void mt7915_mcu_rx_ps_sync(struct mt7915_dev *dev, struct sk_buff *skb)
+++{
+++	struct mt7915_mcu_ps_notify *p;
+++	struct ieee80211_sta *sta;
+++	struct mt76_wcid *wcid;
+++	u16 wcid_idx;
+++	int i;
+++
+++	p = (struct mt7915_mcu_ps_notify *)skb->data;
+++
+++	wcid_idx = p->wtbl_lower | (p->wtbl_higher) << 8;
+++	wcid = mt76_wcid_ptr(dev, wcid_idx);
+++
+++	if (!wcid)
+++		return;
+++
+++	sta = wcid_to_sta(wcid);
+++	if (!sta)
+++		return;
+++
+++	if (p->ps_bit) {
+++		set_bit(MT_WCID_FLAG_PS, &wcid->flags);
+++		wcid->ps_entered_time = jiffies;
+++		atomic_set(&wcid->ps_entered_packets, 0);
+++	} else {
+++		clear_bit(MT_WCID_FLAG_PS, &wcid->flags);
+++		wcid->ps_entered_time = 0;
+++		for (i = 0; i < ARRAY_SIZE(sta->txq); i++) {
+++			if (!sta->txq[i])
+++				continue;
+++
+++			ieee80211_schedule_txq(dev->mt76.hw, sta->txq[i]);
+++		}
+++	}
+++}
+++
++ static void
++ mt7915_mcu_rx_ext_event(struct mt7915_dev *dev, struct sk_buff *skb)
++ {
++@@ -424,6 +460,9 @@ mt7915_mcu_rx_ext_event(struct mt7915_dev *dev, struct sk_buff *skb)
++ 	case MCU_EXT_EVENT_BCC_NOTIFY:
++ 		mt7915_mcu_rx_bcc_notify(dev, skb);
++ 		break;
+++	case MCU_EXT_EVENT_PS_SYNC:
+++		mt7915_mcu_rx_ps_sync(dev, skb);
+++		break;
++ 	default:
++ 		break;
++ 	}
++diff --git a/mt7915/mcu.h b/mt7915/mcu.h
++index f12969d2..ba5e4108 100644
++--- a/mt7915/mcu.h
+++++ b/mt7915/mcu.h
++@@ -54,6 +54,15 @@ struct mt7915_mcu_bcc_notify {
++ 	u8 rsv;
++ } __packed;
++ 
+++struct mt7915_mcu_ps_notify {
+++	struct mt76_connac2_mcu_rxd_hdr rxd;
+++
+++	u8 wtbl_lower;
+++	u8 ps_bit;
+++	u8 wtbl_higher;
+++	u8 rsv;
+++} __packed;
+++
++ struct mt7915_mcu_rdd_report {
++ 	struct mt76_connac2_mcu_rxd_hdr rxd;
++ 
++diff --git a/tx.c b/tx.c
++index 0753acf2..3a784d33 100644
++--- a/tx.c
+++++ b/tx.c
++@@ -330,6 +330,9 @@ __mt76_tx_queue_skb(struct mt76_phy *phy, int qid, struct sk_buff *skb,
++ 
++ 	q->entry[idx].wcid = wcid->idx;
++ 
+++	if (wcid->ps_entered_time)
+++		atomic_inc(&wcid->ps_entered_packets);
+++
++ 	if (!non_aql)
++ 		return idx;
++ 
++@@ -467,6 +470,27 @@ mt76_txq_stopped(struct mt76_queue *q)
++ 	       q->queued + MT_TXQ_FREE_THR >= q->ndesc;
++ }
++ 
+++static int
+++mt76_txq_ps_shall_transmit(struct mt76_dev *dev, struct mt76_wcid *wcid)
+++{
+++	if (!test_bit(MT_WCID_FLAG_PS, &wcid->flags))
+++		return 1;
+++	
+++	if (!(dev->drv->drv_flags & MT_DRV_HW_MGMT_TXQ))
+++		return 0;
+++	
+++	if (!wcid->ps_entered_time)
+++		return 1;
+++	
+++	if (time_is_after_jiffies(wcid->ps_entered_time + (5 * HZ)))
+++		return 1;
+++	
+++	if (atomic_read(&wcid->ps_entered_packets) >= 16)
+++		return 0;
+++
+++	return 1;
+++}
+++
++ static int
++ mt76_txq_send_burst(struct mt76_phy *phy, struct mt76_queue *q,
++ 		    struct mt76_txq *mtxq, struct mt76_wcid *wcid)
++@@ -480,7 +504,7 @@ mt76_txq_send_burst(struct mt76_phy *phy, struct mt76_queue *q,
++ 	bool stop = false;
++ 	int idx;
++ 
++-	if (test_bit(MT_WCID_FLAG_PS, &wcid->flags))
+++	if (!mt76_txq_ps_shall_transmit(dev, wcid))
++ 		return 0;
++ 
++ 	if (atomic_read(&wcid->non_aql_packets) >= MT_MAX_NON_AQL_PKT)
++@@ -552,7 +576,10 @@ mt76_txq_schedule_list(struct mt76_phy *phy, enum mt76_txq_id qid)
++ 
++ 		mtxq = (struct mt76_txq *)txq->drv_priv;
++ 		wcid = __mt76_wcid_ptr(dev, mtxq->wcid);
++-		if (!wcid || test_bit(MT_WCID_FLAG_PS, &wcid->flags))
+++		if (!wcid)
+++			continue;
+++		
+++		if (!mt76_txq_ps_shall_transmit(dev, wcid))
++ 			continue;
++ 
++ 		if (atomic_read(&wcid->non_aql_packets) >= MT_MAX_NON_AQL_PKT)
++-- 
++2.51.0
++
