@@ -1,0 +1,186 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Fri, 30 Jan 2026 17:08:22 +0100
+Subject: wifi: mac80211: introduce framework for exempt PS stations from airtime accounting
+
+diff --git a/package/kernel/mac80211/patches/subsys/990-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch b/package/kernel/mac80211/patches/subsys/990-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..be466689aed0603dd7a918eaa630a45eec40a480
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/990-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch
+@@ -0,0 +1,176 @@
++From b14a04065f9d1de3773e5c0747285a6e4a0d1e97 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Fri, 30 Jan 2026 17:02:04 +0100
++Subject: [PATCH] wifi: mac80211: introduce framework for exempt PS stations
++ from airtime accounting
++
++---
++ include/net/mac80211.h  |  2 ++
++ net/mac80211/rx.c       |  8 +++++
++ net/mac80211/sta_info.c | 66 +++++++++++++++++++++++++++++++++--------
++ net/mac80211/sta_info.h |  4 +++
++ 4 files changed, 67 insertions(+), 13 deletions(-)
++
++diff --git a/include/net/mac80211.h b/include/net/mac80211.h
++index 36ae7fe9ddf35..d58b354be095f 100644
++--- a/include/net/mac80211.h
+++++ b/include/net/mac80211.h
++@@ -5273,6 +5273,8 @@ static inline void ieee80211_rx_ni(struct ieee80211_hw *hw,
++  */
++ int ieee80211_sta_ps_transition(struct ieee80211_sta *sta, bool start);
++ 
+++int ieee80211_sta_aql_ps(struct ieee80211_sta *pubsta, bool enable);
+++
++ /**
++  * ieee80211_sta_ps_transition_ni - PS transition for connected sta
++  *                                  (in process context)
++diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
++index 30b9b4d763578..6ee7ecbe431e8 100644
++--- a/net/mac80211/rx.c
+++++ b/net/mac80211/rx.c
++@@ -1739,6 +1739,14 @@ int ieee80211_sta_ps_transition(struct ieee80211_sta *pubsta, bool start)
++ }
++ EXPORT_SYMBOL(ieee80211_sta_ps_transition);
++ 
+++int ieee80211_sta_aql_ps(struct ieee80211_sta *pubsta, bool enable)
+++{
+++	struct sta_info *sta = container_of(pubsta, struct sta_info, sta);
+++	ieee80211_sta_pending_airtime_ps(sta, enable);
+++	return 0;
+++}
+++EXPORT_SYMBOL(ieee80211_sta_aql_ps);
+++
++ void ieee80211_sta_pspoll(struct ieee80211_sta *pubsta)
++ {
++ 	struct sta_info *sta = container_of(pubsta, struct sta_info, sta);
++diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
++index 22e8561ad6fc2..cbb0962c4c10d 100644
++--- a/net/mac80211/sta_info.c
+++++ b/net/mac80211/sta_info.c
++@@ -640,6 +640,7 @@ __sta_info_alloc(struct ieee80211_sub_if_data *sdata,
++ 
++ 	spin_lock_init(&sta->lock);
++ 	spin_lock_init(&sta->ps_lock);
+++	spin_lock_init(&sta->airtime_lock);
++ 	INIT_WORK(&sta->drv_deliver_wk, sta_deliver_ps_frames);
++ 	wiphy_work_init(&sta->ampdu_mlme.work, ieee80211_ba_session_work);
++ #ifdef CONFIG_MAC80211_MESH
++@@ -2441,6 +2442,35 @@ void ieee80211_sta_recalc_aggregates(struct ieee80211_sta *pubsta)
++ }
++ EXPORT_SYMBOL(ieee80211_sta_recalc_aggregates);
++ 
+++void ieee80211_sta_pending_airtime_ps(struct sta_info *sta, bool ps_state)
+++{
+++	int tx_pending;
+++	int ac;
+++
+++	if (!wiphy_ext_feature_isset(sta->local->hw.wiphy,
+++				    NL80211_EXT_FEATURE_AQL))
+++		return;
+++
+++	if (sta->airtime_ps == ps_state)
+++		return;
+++	
+++	spin_lock_bh(&sta->airtime_lock);
+++	for (ac = 0; ac < IEEE80211_NUM_ACS; ac++) {
+++		tx_pending = atomic_read(&sta->airtime[ac].aql_tx_pending);
+++
+++		if (!ps_state) {
+++			atomic_add(tx_pending, &sta->local->aql_total_pending_airtime);
+++			atomic_add(tx_pending, &sta->local->aql_ac_pending_airtime[ac]);
+++		} else {
+++			atomic_sub(tx_pending, &sta->local->aql_total_pending_airtime);
+++			atomic_sub(tx_pending, &sta->local->aql_ac_pending_airtime[ac]);
+++		}
+++	}
+++	spin_unlock_bh(&sta->airtime_lock);
+++
+++	sta->airtime_ps = ps_state;
+++}
+++
++ void ieee80211_sta_update_pending_airtime(struct ieee80211_local *local,
++ 					  struct sta_info *sta, u8 ac,
++ 					  u16 tx_airtime, bool tx_completed)
++@@ -2450,14 +2480,19 @@ void ieee80211_sta_update_pending_airtime(struct ieee80211_local *local,
++ 	if (!wiphy_ext_feature_isset(local->hw.wiphy, NL80211_EXT_FEATURE_AQL))
++ 		return;
++ 
+++	if (sta)
+++		spin_lock_bh(&sta->airtime_lock);
+++
++ 	if (!tx_completed) {
++ 		if (sta)
++ 			atomic_add(tx_airtime,
++ 				   &sta->airtime[ac].aql_tx_pending);
++ 
++-		atomic_add(tx_airtime, &local->aql_total_pending_airtime);
++-		atomic_add(tx_airtime, &local->aql_ac_pending_airtime[ac]);
++-		return;
+++		if (!sta || !sta->airtime_ps) {
+++			atomic_add(tx_airtime, &local->aql_total_pending_airtime);
+++			atomic_add(tx_airtime, &local->aql_ac_pending_airtime[ac]);
+++		}
+++		goto out;
++ 	}
++ 
++ 	if (sta) {
++@@ -2468,17 +2503,22 @@ void ieee80211_sta_update_pending_airtime(struct ieee80211_local *local,
++ 				       tx_pending, 0);
++ 	}
++ 
++-	atomic_sub(tx_airtime, &local->aql_total_pending_airtime);
++-	tx_pending = atomic_sub_return(tx_airtime,
++-				       &local->aql_ac_pending_airtime[ac]);
++-	if (WARN_ONCE(tx_pending < 0,
++-		      "Device %s AC %d pending airtime underflow: %u, %u",
++-		      wiphy_name(local->hw.wiphy), ac, tx_pending,
++-		      tx_airtime)) {
++-		atomic_cmpxchg(&local->aql_ac_pending_airtime[ac],
++-			       tx_pending, 0);
++-		atomic_sub(tx_pending, &local->aql_total_pending_airtime);
+++	if (!sta || !sta->airtime_ps) {
+++		atomic_sub(tx_airtime, &local->aql_total_pending_airtime);
+++		tx_pending = atomic_sub_return(tx_airtime,
+++					       &local->aql_ac_pending_airtime[ac]);
+++		if (WARN_ONCE(tx_pending < 0,
+++			      "Device %s AC %d pending airtime underflow: %u, %u",
+++			      wiphy_name(local->hw.wiphy), ac, tx_pending,
+++			      tx_airtime)) {
+++			atomic_cmpxchg(&local->aql_ac_pending_airtime[ac],
+++				       tx_pending, 0);
+++			atomic_sub(tx_pending, &local->aql_total_pending_airtime);
+++		}
++ 	}
+++out:
+++	if (sta)
+++		spin_unlock_bh(&sta->airtime_lock);
++ }
++ 
++ static struct ieee80211_sta_rx_stats *
++diff --git a/net/mac80211/sta_info.h b/net/mac80211/sta_info.h
++index b1edf8ed102f6..b81697e716247 100644
++--- a/net/mac80211/sta_info.h
+++++ b/net/mac80211/sta_info.h
++@@ -149,6 +149,8 @@ void ieee80211_sta_update_pending_airtime(struct ieee80211_local *local,
++ 					  struct sta_info *sta, u8 ac,
++ 					  u16 tx_airtime, bool tx_completed);
++ 
+++void ieee80211_sta_pending_airtime_ps(struct sta_info *sta, bool ps_state);
+++
++ struct sta_info;
++ 
++ /**
++@@ -749,8 +751,10 @@ struct sta_info {
++ 
++ 	u16 tid_seq[IEEE80211_QOS_CTL_TID_MASK + 1];
++ 
+++	spinlock_t airtime_lock;
++ 	struct airtime_info airtime[IEEE80211_NUM_ACS];
++ 	u16 airtime_weight;
+++	u8 airtime_ps;
++ 
++ 	/*
++ 	 * Aggregation information, locked with lock.
++-- 
++2.51.0
++
