@@ -1,0 +1,126 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 4 Feb 2026 14:13:13 +0100
+Subject: wifi: mt76: mt7915: sync power save state with WA
+
+Host receives a power save state change event everytime a station enters
+or leaves PS mode. Use this unsolicited event to stop filling up TX
+queues in firmware, as the hardware will buffer frames for stations in
+power safe indefinitely.
+
+Limit packets to be enqueued for sleeping STAs in order to manage the
+packet backlog in the host-system while still being able to indicate
+pending traffic to said STAs.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mt76/patches/805-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch b/package/kernel/mt76/patches/805-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..28c2c0e642e83d8e822de45b260951228fe06b92
+--- /dev/null
++++ b/package/kernel/mt76/patches/805-wifi-mt76-mt7915-sync-power-save-state-with-WA.patch
+@@ -0,0 +1,105 @@
++From aba719cf08cffef49d84298104540cd2b187e2e9 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Fri, 16 Jan 2026 21:53:22 +0100
++Subject: [PATCH] wifi: mt76: mt7915: sync power save state with WA
++
++Host receives a power save state change event everytime a station enters
++or leaves PS mode. Use this unsolicited event to stop filling up TX
++queues in firmware, as the hardware will buffer frames for stations in
++power safe indefinitely.
++
++Limit packets to be enqueued for sleeping STAs in order to manage the
++packet backlog in the host-system while still being able to indicate
++pending traffic to said STAs.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ mt7915/main.c |  1 +
++ mt7915/mcu.c  | 31 +++++++++++++++++++++++++++++++
++ mt7915/mcu.h  |  9 +++++++++
++ 3 files changed, 41 insertions(+)
++
++diff --git a/mt7915/main.c b/mt7915/main.c
++index ea4d3e21..790ed29f 100644
++--- a/mt7915/main.c
+++++ b/mt7915/main.c
++@@ -1832,6 +1832,7 @@ const struct ieee80211_ops mt7915_ops = {
++ 	.sw_scan_complete = mt76_sw_scan_complete,
++ 	.release_buffered_frames = mt76_release_buffered_frames,
++ 	.get_txpower = mt76_get_txpower,
+++	.set_tim = mt76_set_tim,
++ 	.set_sar_specs = mt7915_set_sar_specs,
++ 	.channel_switch_beacon = mt7915_channel_switch_beacon,
++ 	.get_stats = mt7915_get_stats,
++diff --git a/mt7915/mcu.c b/mt7915/mcu.c
++index c9567aa9..f0f213a7 100644
++--- a/mt7915/mcu.c
+++++ b/mt7915/mcu.c
++@@ -402,6 +402,34 @@ mt7915_mcu_rx_bcc_notify(struct mt7915_dev *dev, struct sk_buff *skb)
++ 			mt7915_mcu_cca_finish, mphy->hw);
++ }
++ 
+++static void mt7915_mcu_rx_ps_sync(struct mt7915_dev *dev, struct sk_buff *skb)
+++{
+++	struct mt7915_mcu_ps_notify *p;
+++	struct ieee80211_sta *sta;
+++	struct mt76_wcid *wcid;
+++	u16 wcid_idx;
+++	//int i;
+++
+++	p = (struct mt7915_mcu_ps_notify *)skb->data;
+++
+++	wcid_idx = p->wtbl_lower | (p->wtbl_higher) << 8;
+++
+++	rcu_read_lock();
+++	wcid = mt76_wcid_ptr(dev, wcid_idx);
+++
+++	if (!wcid)
+++		goto out;
+++
+++	sta = wcid_to_sta(wcid);
+++	if (!sta)
+++		goto out;
+++
+++	ieee80211_sta_ps_transition_ni(sta, !!p->ps_bit);
+++
+++out:
+++	rcu_read_unlock();
+++}
+++
++ static void
++ mt7915_mcu_rx_ext_event(struct mt7915_dev *dev, struct sk_buff *skb)
++ {
++@@ -424,6 +452,9 @@ mt7915_mcu_rx_ext_event(struct mt7915_dev *dev, struct sk_buff *skb)
++ 	case MCU_EXT_EVENT_BCC_NOTIFY:
++ 		mt7915_mcu_rx_bcc_notify(dev, skb);
++ 		break;
+++	case MCU_EXT_EVENT_PS_SYNC:
+++		mt7915_mcu_rx_ps_sync(dev, skb);
+++		break;
++ 	default:
++ 		break;
++ 	}
++diff --git a/mt7915/mcu.h b/mt7915/mcu.h
++index f12969d2..ba5e4108 100644
++--- a/mt7915/mcu.h
+++++ b/mt7915/mcu.h
++@@ -54,6 +54,15 @@ struct mt7915_mcu_bcc_notify {
++ 	u8 rsv;
++ } __packed;
++ 
+++struct mt7915_mcu_ps_notify {
+++	struct mt76_connac2_mcu_rxd_hdr rxd;
+++
+++	u8 wtbl_lower;
+++	u8 ps_bit;
+++	u8 wtbl_higher;
+++	u8 rsv;
+++} __packed;
+++
++ struct mt7915_mcu_rdd_report {
++ 	struct mt76_connac2_mcu_rxd_hdr rxd;
++ 
++-- 
++2.51.0
++
