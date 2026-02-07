@@ -1,0 +1,66 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 7 Feb 2026 00:38:34 +0100
+Subject: wifi: mac80211: add debugfs for PS airtime
+
+diff --git a/package/kernel/mac80211/patches/subsys/803-wifi-mac80211-add-debugfs-for-PS-airtime.patch b/package/kernel/mac80211/patches/subsys/803-wifi-mac80211-add-debugfs-for-PS-airtime.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..05a60e638f5187838b65669a3adaba40b647940d
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/803-wifi-mac80211-add-debugfs-for-PS-airtime.patch
+@@ -0,0 +1,56 @@
++From 2819969d85b7d73a8b1ad7e2d9815470744b4faa Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 7 Feb 2026 00:37:23 +0100
++Subject: [PATCH 2/2] wifi: mac80211: add debugfs for PS airtime
++
++---
++ net/mac80211/debugfs.c | 30 ++++++++++++++++++++++++++++++
++ 1 file changed, 30 insertions(+)
++
++--- a/net/mac80211/debugfs.c
+++++ b/net/mac80211/debugfs.c
++@@ -233,6 +233,36 @@ static const struct file_operations aql_
++ 	.llseek = default_llseek,
++ };
++ 
+++static ssize_t aql_pending_ps_read(struct file *file,
+++				char __user *user_buf,
+++				size_t count, loff_t *ppos)
+++{
+++	struct ieee80211_local *local = file->private_data;
+++	char buf[400];
+++	int len = 0;
+++
+++	len = scnprintf(buf, sizeof(buf),
+++			"AC     AQL pending\n"
+++			"VO     %u us\n"
+++			"VI     %u us\n"
+++			"BE     %u us\n"
+++			"BK     %u us\n"
+++			"total  %u us\n",
+++			atomic_read(&local->aql_ac_pending_airtime_ps[IEEE80211_AC_VO]),
+++			atomic_read(&local->aql_ac_pending_airtime_ps[IEEE80211_AC_VI]),
+++			atomic_read(&local->aql_ac_pending_airtime_ps[IEEE80211_AC_BE]),
+++			atomic_read(&local->aql_ac_pending_airtime_ps[IEEE80211_AC_BK]),
+++			atomic_read(&local->aql_total_pending_airtime_ps));
+++	return simple_read_from_buffer(user_buf, count, ppos,
+++				       buf, len);
+++}
+++
+++static const struct file_operations aql_pending_ps_ops = {
+++	.read = aql_pending_ps_read,
+++	.open = simple_open,
+++	.llseek = default_llseek,
+++};
+++
++ static ssize_t aql_txq_limit_read(struct file *file,
++ 				  char __user *user_buf,
++ 				  size_t count,
++@@ -717,6 +747,7 @@ void debugfs_hw_add(struct ieee80211_loc
++ 	DEBUGFS_ADD_MODE(force_tx_status, 0600);
++ 	DEBUGFS_ADD_MODE(aql_enable, 0600);
++ 	DEBUGFS_ADD(aql_pending);
+++	DEBUGFS_ADD(aql_pending_ps);
++ 	DEBUGFS_ADD_MODE(aqm, 0600);
++ 
++ 	DEBUGFS_ADD_MODE(airtime_flags, 0600);
