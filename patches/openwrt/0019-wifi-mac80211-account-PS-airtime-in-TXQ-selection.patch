@@ -1,0 +1,53 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Sat, 7 Feb 2026 09:54:39 +0100
+Subject: wifi: mac80211: account PS airtime in TXQ selection
+
+diff --git a/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch b/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..094640396ae3ad29f784b5e7e27a14bc5530fbc0
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch
+@@ -0,0 +1,43 @@
++From 7cf09f805d93fa9235c8e4fd04958c9fb5665735 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 7 Feb 2026 09:34:31 +0100
++Subject: [PATCH 2/2] wifi: mac80211: account PS airtime in TXQ selection
++
++---
++ net/mac80211/tx.c | 13 ++++++++++++-
++ 1 file changed, 12 insertions(+), 1 deletion(-)
++
++diff --git a/net/mac80211/tx.c b/net/mac80211/tx.c
++index 007f5a368d414..050c1df02bcb7 100644
++--- a/net/mac80211/tx.c
+++++ b/net/mac80211/tx.c
++@@ -4190,6 +4190,8 @@ ieee80211_txq_schedule_airtime_check(struct ieee80211_local *local, u8 ac)
++ {
++ 	unsigned int num_txq = 0;
++ 	struct txq_info *txq;
+++	int total_pending;
+++	int ps_pending;
++ 	u32 aql_limit;
++ 
++ 	if (!wiphy_ext_feature_isset(local->hw.wiphy, NL80211_EXT_FEATURE_AQL))
++@@ -4201,7 +4203,16 @@ ieee80211_txq_schedule_airtime_check(struct ieee80211_local *local, u8 ac)
++ 	aql_limit = (num_txq - 1) * local->aql_txq_limit_low[ac] / 2 +
++ 		    local->aql_txq_limit_high[ac];
++ 
++-	return atomic_read(&local->aql_ac_pending_airtime[ac]) < aql_limit;
+++	total_pending = atomic_read(&local->aql_total_pending_airtime);
+++	ps_pending = atomic_read(&local->aql_total_pending_airtime_ps);
+++
+++	/* PS frames can be greater in case driver delivers TX complete
+++	 * prior to PS change. Avoids locking TX and RX path.
+++	 */
+++	if (ps_pending > total_pending)
+++		return true;
+++
+++	return total_pending - ps_pending < aql_limit;
++ }
++ 
++ bool ieee80211_txq_may_transmit(struct ieee80211_hw *hw,
++-- 
++2.51.0
++
