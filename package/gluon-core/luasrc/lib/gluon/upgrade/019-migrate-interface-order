@@ -36,7 +36,7 @@ end
 
 -- v2023.2.x load order (/proc/modules) - Ethernet drivers only
 -- (x86-64; should be accurate enough for x64-generic as well)
--- Does not account for site-specific driver additions
+-- It includes some common site-specific usb-net drivers.
 local prev_load_order = {
 	'tg3',
 	'igb',
@@ -54,15 +54,28 @@ local prev_load_order = {
 	'e100',
 	'e1000e',
 	'forcedeth',
+	'hso',
 	'igc',
+	'ipheth',
 	'ne2k_pci',
 	'pcnet32',
+	'pegasus',
+	'r8152',
 	'r8169',
 	'sis900',
 	'sky2',
 	'tulip',
 	'via_rhine',
 	'via_velocity',
+	'asix',
+	'ax88179_178a',
+	'cdc_eem',
+	'cdc_ether',
+	'cdc_subset',
+	'dm9601',
+	'mcs7830',
+	'rndis_host',
+	'smsc95xx',
 }
 
 local prev_load_index = {}
