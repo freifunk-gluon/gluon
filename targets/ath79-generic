@@ -203,7 +203,6 @@ device('gl.inet-gl-mifi', 'glinet_gl-mifi', {
         manifest_aliases = {'gl-mifi'},
 })
 
-
 device('gl.inet-gl-usb150', 'glinet_gl-usb150', {
 	factory = false,
 })
