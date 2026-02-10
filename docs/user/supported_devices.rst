@@ -349,6 +349,7 @@ mediatek-filogic
   - TR3000 (v1)
   - WR3000 (v1)
   - WR3000e (v1)
+  - WR3000h (v1)
   - WR3000s (v1)
 
 * D-Link
