@@ -7,7 +7,13 @@ local iwinfo = require 'iwinfo'
 
 local uci = require('simple-uci').cursor()
 
+-- recreate radios
+os.execute('rm /etc/config/wireless && wifi config')
+
+-- delete default wireless config
 uci:delete_all('wireless', 'wifi-iface')
+uci:save('wireless')
+
 
 local radio_band_count = {band_2g=0, band_5g=0}
 
@@ -49,29 +55,26 @@ wireless.foreach_radio(uci, function(radio)
 	end
 end)
 
-local function is_outdoor()
-	return uci:get_bool('gluon', 'wireless', 'outdoor')
+local function get_wradio(radio)
+	local wradio_name
+	uci:foreach('gluon', 'wireless_radio', function(wradio)
+		if wradio.path == radio.path then
+			wradio_name = wradio['.name']
+		end
+	end)
+	return wradio_name
 end
 
-local function get_channel(radio, config)
-	if (radio.band == '5g' and is_outdoor()) or not wireless.supports_channel(radio, config.channel()) then
-		-- actual channel will be picked and probed from chanlist
-		return 'auto'
-	end
-
-	return config.channel()
+local function get_txpower(radio)
+	local wradio_name = get_wradio(radio)
+	return uci:get('gluon', wradio_name, 'txpower')
 end
 
 local function get_htmode(radio)
-	if wireless.preserve_channels(uci) then
-		return radio.htmode
-	end
-
-	if radio.band == '5g' and is_outdoor() then
-		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
-		if outdoor_htmode ~= nil then
-			return outdoor_htmode
-		end
+	local wradio_name = get_wradio(radio)
+	local htmode = uci:get('gluon', wradio_name, 'htmode')
+	if htmode ~= nil then
+		return htmode
 	end
 
 	local channel_width = 20
@@ -83,7 +86,6 @@ local function get_htmode(radio)
 	end
 
 	local phy = wireless.find_phy(radio)
-	local htmode
 	if iwinfo.nl80211.hwmodelist(phy).ax then
 		htmode = 'HE' .. channel_width
 	elseif iwinfo.nl80211.hwmodelist(phy).ac then
@@ -124,11 +126,9 @@ local function configure_mesh(radio, index, mesh_config)
 		return
 	end
 
-	local batadv_hop_penalty = uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty') or 0
-
 	uci:section('network', 'interface', name, {
 		proto = 'gluon_mesh',
-		hop_penalty = batadv_hop_penalty,
+		hop_penalty = wireless.radio_option(uci, radio, 'batadv_hop_penalty')
 	})
 
 	uci:section('wireless', 'wifi-iface', name, {
@@ -147,15 +147,17 @@ local function configure_mesh(radio, index, mesh_config)
 	})
 end
 
-local function set_channels(radio, radio_name, config)
-	if wireless.preserve_channels(uci) then
-		return
+local function set_channels(radio, config)
+	local radio_name = radio['.name']
+	local wradio_name = get_wradio(radio)
+	local channel = uci:get('gluon', wradio_name, 'channel')
+	if not channel then
+		channel = wireless.get_channel(radio, config, uci)
 	end
-	local channel = get_channel(radio, config)
 	uci:set('wireless', radio_name, 'channel', channel)
 
 	local chanlist
-	if radio.band == '5g' and is_outdoor() then
+	if radio.band == '5g' and wireless.is_outdoor(uci) then
 		chanlist = config.outdoor_chanlist()
 	end
 	uci:set('wireless', radio_name, 'channels', chanlist)
@@ -174,12 +176,17 @@ wireless.foreach_radio(uci, function(radio, index, config)
 		return
 	end
 
+	local txpower = get_txpower(radio)
+	if txpower ~= nil then
+		uci:set('wireless', radio_name, 'txpower', txpower)
+	end
+
 	local htmode = get_htmode(radio)
 	local beacon_interval = config.beacon_interval()
 
 	uci:delete('wireless', radio_name, 'disabled')
 
-	set_channels(radio, radio_name, config)
+	set_channels(radio, config)
 
 	uci:set('wireless', radio_name, 'htmode', htmode)
 	uci:set('wireless', radio_name, 'country', site.regdom())
@@ -189,7 +196,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	local band = radio.band
 	-- now we assign radios to roles
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 	local enable_mesh = wireless.supports_channel(radio, config.channel()) and util.contains(roles, 'mesh')
 
 	if band == '2g' then
@@ -198,7 +205,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 			configure_mesh(radio, index, config.mesh())
 		end
 	elseif band == '5g' then
-		if is_outdoor() then
+		if wireless.is_outdoor(uci) then
 			-- enforce outdoor channels by filtering the regdom for outdoor channels
 			uci:set('wireless', radio_name, 'country3', '0x4f')
 		else

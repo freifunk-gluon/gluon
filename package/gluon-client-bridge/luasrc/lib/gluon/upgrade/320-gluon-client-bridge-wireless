@@ -19,7 +19,7 @@ end)
 local function is_disabled(radio, config)
 	-- now we assign radios to roles
 	local band = radio.band
-	local roles = uci:get_list('gluon', 'band_' .. band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 	-- if there is a radio which does not support the mesh channel, we can configure it on a different channel
 	-- in this case, the other radio on the same band supporting the channel turns off its client radio and is mesh only
 	local disable_client = wireless.supports_channel(radio, config.channel()) and client_only_radio['band_' .. band] > 0

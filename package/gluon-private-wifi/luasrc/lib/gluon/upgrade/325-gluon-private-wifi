@@ -37,7 +37,7 @@ local function configure_private_wifi(radio, index)
 end
 
 wireless.foreach_radio(uci, function(radio, index)
-	local roles = uci:get_list('gluon', 'band_' .. radio.band, 'role')
+	local roles = wireless.radio_roles(uci, radio)
 
 	if util.contains(roles, 'private') then
 		configure_private_wifi(radio, index)
