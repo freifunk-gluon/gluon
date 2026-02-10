@@ -1,0 +1,32 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Tue, 10 Feb 2026 21:22:29 +0100
+Subject: dirty fixes
+
+diff --git a/package/kernel/mac80211/patches/subsys/801-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch b/package/kernel/mac80211/patches/subsys/801-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch
+index 5bfd8e3655dff8658a8efab852a2c2ce06eb64c8..8a09d1c5d0bbf21970010db87f468057a1198088 100644
+--- a/package/kernel/mac80211/patches/subsys/801-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch
++++ b/package/kernel/mac80211/patches/subsys/801-wifi-mac80211-introduce-framework-for-exempt-PS-stat.patch
+@@ -107,7 +107,7 @@ Subject: [PATCH] wifi: mac80211: introduce framework for exempt PS stations
+ +		return;
+ +
+ +	/* Only need to recalc if STA has TX pending */
+-+	if (!ieee80211_sta_has_tx_pending(local, sta))
+++	if (0 && !ieee80211_sta_has_tx_pending(local, sta))
+ +		return;
+ +
+ +	rcu_read_lock();
+diff --git a/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch b/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch
+index 094640396ae3ad29f784b5e7e27a14bc5530fbc0..868ee82ec224b42a1fdaff7deb9b21ae34491638 100644
+--- a/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch
++++ b/package/kernel/mac80211/patches/subsys/804-wifi-mac80211-account-PS-airtime-in-TXQ-selection.patch
+@@ -25,8 +25,8 @@ index 007f5a368d414..050c1df02bcb7 100644
+  		    local->aql_txq_limit_high[ac];
+  
+ -	return atomic_read(&local->aql_ac_pending_airtime[ac]) < aql_limit;
+-+	total_pending = atomic_read(&local->aql_total_pending_airtime);
+-+	ps_pending = atomic_read(&local->aql_total_pending_airtime_ps);
+++	total_pending = atomic_read(&local->aql_ac_pending_airtime[ac]);
+++	ps_pending = atomic_read(&local->aql_ac_pending_airtime_ps[ac]);
+ +
+ +	/* PS frames can be greater in case driver delivers TX complete
+ +	 * prior to PS change. Avoids locking TX and RX path.
