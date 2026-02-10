@@ -6,6 +6,7 @@ wait=3
 
 wait_setup_mode() {
 	sleep $wait
+	/lib/gluon/setup-mode/led.sh confirm
 	gluon-enter-setup-mode
 }
 
