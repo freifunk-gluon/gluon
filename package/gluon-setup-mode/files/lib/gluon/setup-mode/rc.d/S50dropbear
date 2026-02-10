@@ -1,15 +1,1 @@
-#!/bin/sh /etc/rc.common
-
-# shellcheck disable=SC1091
-
-[ -x /etc/init.d/dropbear ] || return 0
-. /etc/init.d/dropbear
-
-start_service() {
-	hk_generate_as_needed
-
-	procd_open_instance
-	procd_set_param command /lib/gluon/setup-mode/dropbear/dropbear -F -B
-	procd_set_param respawn
-	procd_close_instance
-}
+../init.d/dropbear
