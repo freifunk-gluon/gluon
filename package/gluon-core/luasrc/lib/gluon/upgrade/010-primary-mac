@@ -131,6 +131,9 @@ local primary_addrs = {
 			'aerohive,hiveap-330',
 			'ocedo,panda',
 		}},
+		{'mediatek', 'filogic', {
+			'acer,vero-w6m',
+		}},
 		{'mpc85xx', 'p1010', {
 			'enterasys,ws-ap3715i',
 		}},

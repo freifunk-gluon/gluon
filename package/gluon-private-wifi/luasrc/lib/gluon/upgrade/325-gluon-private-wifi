@@ -17,6 +17,11 @@ local function configure_private_wifi(radio, index)
 	local ssid = uci:get('gluon', 'wireless', 'private_ssid')
 	local key = uci:get('gluon', 'wireless', 'private_key')
 	local mfp = wireless.device_supports_mfp(uci) and uci:get('gluon', 'wireless', 'private_mfp')
+	-- 6GHz radio requires usage of WPA3/SAE and management frame protection
+	if radio.band == '6g' then
+		encryption = 'sae'
+		mfp = 2
+	end
 
 	local macaddr = wireless.get_wlan_mac('wan_radio', index, radio)
 	uci:section('wireless', 'wifi-iface', name, {

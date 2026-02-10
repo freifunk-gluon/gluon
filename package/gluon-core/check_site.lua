@@ -31,7 +31,7 @@ need_string_match(in_domain({'prefix6'}), '^[%x:]+/64$')
 need_string_array_match(in_domain({'extra_prefixes6'}), '^[%x:]+/%d+$', false)
 
 local supported_rates = {6000, 9000, 12000, 18000, 24000, 36000, 48000, 54000}
-for _, config in ipairs({'wifi24', 'wifi5'}) do
+for _, config in ipairs({'wifi24', 'wifi5', 'wifi6'}) do
 	if need_table({config}, nil, false) then
 		need_string(in_site({'regdom'})) -- regdom is only required when wifi24 or wifi5 is configured
 		need_number({config, 'beacon_interval'}, false)
@@ -49,6 +49,12 @@ for _, config in ipairs({'wifi24', 'wifi5'}) do
 			need_one_of({config, 'channel'}, channels)
 			need_chanlist({config, 'outdoor_chanlist'}, channels, false)
 			need_one_of({config, 'outdoors'}, {true, false, 'preset'}, false)
+		elseif config == 'wifi6' then
+			local channels = {
+				1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33,
+				35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63,
+				65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93 }
+			need_one_of({config, 'channel'}, channels)
 		end
 
 		obsolete({config, 'supported_rates'}, '802.11b rates are disabled by default.')
