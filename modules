@@ -2,7 +2,7 @@ GLUON_FEEDS='gluon packages routing'
 
 OPENWRT_REPO=https://github.com/herbetom/openwrt.git
 OPENWRT_BRANCH=ltq-fixes-23.05
-OPENWRT_COMMIT=00b6462cb00c87dc5c9678e61c6e35f63d616de9
+OPENWRT_COMMIT=7fa474223158a3bb021136e9d887460bfd0fd3d5
 
 PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
 PACKAGES_GLUON_COMMIT=d75722c2ee89dcca228b02465bdd8107c574676d
