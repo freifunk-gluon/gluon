@@ -9,7 +9,7 @@ configuration.
 Outdoor mode
 ------------
 
-Configuring the node for outdoor use tunes the 5 GHz radio to a frequency and transmission power that conforms with the local regulatory requirements. 
+Configuring the node for outdoor use tunes the 5 GHz radio to a frequency and transmission power that conforms with the local regulatory requirements.
 It also enables dynamic frequency selection (DFS; radar detection).
 At the same time, mesh functionality is disabled as it requires neighbouring nodes to stay on the same channel permanently.
 
@@ -31,3 +31,22 @@ these settings during upgrades you can configure this via the uci section ``gluo
 When channels should be preserved, toggling the outdoor mode will have no effect on the channel settings.
 Therefore, the Outdoor mode settings won't be displayed in config mode.
 Keep in mind that nodes running wifi interfaces on custom channels can't mesh with default nodes anymore!
+
+Role Adjustments
+----------------
+
+Besides the :doc:`../features/configmode`, the used modes of each band can be configured using UCI on the node:
+
+Enable Mesh on all interfaces using the 2.4GHz band::
+
+  uci add_list gluon.band_2g.role='mesh'
+  uci commit gluon
+
+Disable Mesh on all interfaces using the 2.4GHz band::
+
+  uci del_list gluon.band_2g.role='mesh'
+  uci commit gluon
+
+To apply this configuration change run::
+
+  gluon-reconfigure && wifi reconf

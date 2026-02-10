@@ -34,6 +34,8 @@ Notable layer 3 IPv6 multicast router implementations:
 * pim6sd: https://github.com/troglobit/pim6sd
     * HowTo at DN42: https://dn42.dev/howto/IPv6-Multicast
 
+Further usage information in Freifunk Gluon Wiki: `<https://github.com/freifunk-gluon/gluon/wiki/Multicast-Routing-(layer-3)>`__
+
 .. _brmldproxy: https://github.com/T-X/brmldproxy
 .. _VideoLAN player: https://wiki.videolan.org/Documentation:Streaming_HowTo/Streaming_over_IPv6
 .. _Session Announcement Protocol (RFC2974): https://en.wikipedia.org/wiki/Session_Announcement_Protocol

@@ -13,6 +13,8 @@ over unencrypted mesh connections in that it protects against a
 passive attacker who did not observe the key agreement. In addition
 Management Frame Protection (802.11w) gets automatically enabled on
 wireless mesh interfaces to prevent protocol-level deauthentication attacks.
+Similar security advancements are also independently available for the client
+network using OWE with :doc:`gluon-wireless-encryption-wpa3`.
 
 If `wifi.mesh.sae` is enabled, a shared secret will automatically be
 derived from the `prefix6` variable. This is as secure as it gets

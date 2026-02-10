@@ -79,22 +79,30 @@ In order to make persistent changes to the router's configuration it's necessary
 * call ``gluon-reconfigure`` to re-generate ``/etc/config/network``
 * apply the networking changes, either through executing ``service network restart`` or by performing a ``reboot``
 
-Enable Mesh-on-WAN::
+Enable Mesh-on-WAN
+
+.. code-block:: sh
 
   uci add_list gluon.iface_wan.role='mesh'
   uci commit gluon
 
-Disable Mesh-on-WAN::
+Disable Mesh-on-WAN
+
+.. code-block:: sh
 
   uci del_list gluon.iface_wan.role='mesh'
   uci commit gluon
 
-Enable Mesh-on-LAN::
+Enable Mesh-on-LAN
+
+.. code-block:: sh
 
   uci add_list gluon.iface_lan.role='mesh'
   uci commit gluon
 
-Disable Mesh-on-LAN::
+Disable Mesh-on-LAN
+
+.. code-block:: sh
 
   uci del_list gluon.iface_lan.role='mesh'
   uci commit gluon
@@ -102,18 +110,24 @@ Disable Mesh-on-LAN::
 For devices with a single interface, instead of `iface_lan` and `iface_wan` configuration is
 done with `iface_single`.
 
-Enable Mesh-on-Single::
+Enable Mesh-on-Single
+
+.. code-block:: sh
 
   uci add_list gluon.iface_single.role='mesh'
   uci commit gluon
 
-Disable Mesh-on-Single::
+Disable Mesh-on-Single
+
+.. code-block:: sh
 
   uci del_list gluon.iface_single.role='mesh'
   uci commit gluon
 
 Furthermore it is possible to make use of 802.1Q VLAN.
-The following statements would create a VLAN with id 8 on ``eth0`` and join the mesh network with it::
+The following statements would create a VLAN with id 8 on ``eth0`` and join the mesh network with it
+
+.. code-block:: sh
 
   uci set gluon.iface_lan_vlan8=interface
   uci set gluon.iface_lan_vlan8.name='eth0.8'
