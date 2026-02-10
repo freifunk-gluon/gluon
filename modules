@@ -1,15 +1,15 @@
 GLUON_FEEDS='gluon packages routing'
 
-OPENWRT_REPO=https://github.com/openwrt/openwrt.git
-OPENWRT_BRANCH=openwrt-23.05
-OPENWRT_COMMIT=b6d7048c8bcf23d9852cf17f1fa1d532d1552474
+OPENWRT_REPO=https://github.com/herbetom/openwrt.git
+OPENWRT_BRANCH=ltq-fixes-23.05
+OPENWRT_COMMIT=7fa474223158a3bb021136e9d887460bfd0fd3d5
 
 PACKAGES_GLUON_REPO=https://github.com/freifunk-gluon/packages.git
 PACKAGES_GLUON_COMMIT=d75722c2ee89dcca228b02465bdd8107c574676d
 
 PACKAGES_PACKAGES_REPO=https://github.com/openwrt/packages.git
 PACKAGES_PACKAGES_BRANCH=openwrt-23.05
-PACKAGES_PACKAGES_COMMIT=2f29fccbd13a6c5bc77c640e8d7bc9b8ffe96368
+PACKAGES_PACKAGES_COMMIT=b52dfce83fd6a1260b98d25b297749b060a05a0a
 
 PACKAGES_ROUTING_REPO=https://github.com/openwrt/routing.git
 PACKAGES_ROUTING_BRANCH=openwrt-23.05
