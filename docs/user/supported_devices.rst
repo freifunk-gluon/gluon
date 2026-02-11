@@ -69,6 +69,7 @@ ath79-generic
   - GL-AR300M-Lite
   - GL-AR300M16
   - GL-AR750
+  - GL-MIFI
   - GL-USB150 (Microuter)
 
 * Joy-IT
@@ -399,7 +400,7 @@ mediatek-mt7622
 
 * Ubiquiti
 
-  - UniFi 6 LR (v1, v3)
+  - UniFi 6 LR (v1, v2, v3)
 
 mvebu-cortexa53
 ---------------
