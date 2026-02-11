@@ -69,6 +69,7 @@ ath79-generic
   - GL-AR300M-Lite
   - GL-AR300M16
   - GL-AR750
+  - GL-MIFI
   - GL-USB150 (Microuter)
 
 * Joy-IT
