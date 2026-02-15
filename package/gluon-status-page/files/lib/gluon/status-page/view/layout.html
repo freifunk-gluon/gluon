@@ -1,4 +1,11 @@
 <%-
+	local pretty_hostname = require 'pretty_hostname'
+	local uci = require("simple-uci").cursor()
+
+	local hostname = pretty_hostname.get(uci)
+
+	local is_error = string.find(content, '^error') ~= nil
+
 	http:prepare_content("text/html")
 -%>
 <!DOCTYPE html>
@@ -8,18 +15,31 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		<meta name="robots" content="noindex,nofollow">
 
+		<%-if is_error then-%>
 		<title><%:Error%></title>
+		<%-else-%>
+		<title><%=hostname%></title>
+		<%-end-%>
+
 
 		<link rel="stylesheet" href="/static/status-page.css" type="text/css">
 	</head>
 	<body>
 		<header>
+			<%-if is_error then-%>
 			<h1><%:Error%></h1>
+			<%-else-%>
+			<h1><%=hostname%></h1>
+			<%-end-%>
 		</header>
 		<div class="container">
+			<%-if is_error then-%>
 			<div class="frame">
+			<%-end-%>
 				<% renderer.render(content, scope, pkg) %>
+			<%-if is_error then-%>
 			</div>
+			<%-end-%>
 		</div>
 	</body>
 </html>
