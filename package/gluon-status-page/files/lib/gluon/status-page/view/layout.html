@@ -5,6 +5,25 @@
 	local hostname = pretty_hostname.get(uci)
 
 	local is_error = string.find(content, '^error') ~= nil
+	local display_nav = false
+
+	local root = node()
+
+	local categories = {
+		'',
+	}
+
+	for k, v in pairs(root.nodes) do
+		display_nav = true
+		table.insert(categories, k)
+	end
+
+	table.sort(categories,
+		function(a, b)
+			return (node(a).order or 100)
+				< (node(b).order or 100)
+		end
+	)
 
 	http:prepare_content("text/html")
 -%>
@@ -41,5 +60,14 @@
 			</div>
 			<%-end-%>
 		</div>
+		<% if display_nav then %>
+		<footer>
+			<ul id="topmenu">
+				<% for i, r in ipairs(categories) do %>
+					<li><a class="topcat" href="<%|url({r})%>"><%|node(r).title%></a></li>
+				<% end %>
+			</ul>
+		</footer>
+		<% end %>
 	</body>
 </html>
