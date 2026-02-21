@@ -406,6 +406,9 @@ Known issues
 .. _#496: https://github.com/freifunk-gluon/gluon/issues/496
 .. _#1726: https://github.com/freifunk-gluon/gluon/issues/1726
 .. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+.. _#3699: https://github.com/freifunk-gluon/gluon/pull/3699
+.. _#3576: https://github.com/freifunk-gluon/gluon/issues/3576
+
 
 - The integration of the BATMAN_V routing algorithm is incomplete.
 
@@ -416,6 +419,8 @@ Known issues
   - Throughput values are not correctly acquired for different interface types (`#1728`_)
 
     This affects virtual interface types like bridges and VXLAN.
+  
+  - Devices hang randomly at sysupgrade until power cycled due to a bug in BATMAN_V (`#3699`_)
 
 - Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
 
@@ -426,3 +431,7 @@ Known issues
 
   This may lead to issues in environments where a fixed MAC address is expected (like VMware when
   promiscuous mode is disallowed).
+
+- Devices using additional USB drivers of the community config switch the interface order (`#3576`_)
+
+- The wireless phy pci path migration of Cudy WR3000 devices introduced in openwrt-24.10 happens too late, breaking wifi config for these devices.
