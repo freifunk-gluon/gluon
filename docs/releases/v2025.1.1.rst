@@ -1,0 +1,138 @@
+Gluon 2025.1.1
+==============
+
+Added hardware support
+----------------------
+
+ath79-generic
+~~~~~~~~~~~~~
+
+- Ubiquiti
+
+  - Rocket M2/M5 (XM) [#readded]_
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- ASUS
+
+  - Lyra MAP-AC2200
+
+mediatek-filogic
+~~~~~~~~~~~~~~~~
+
+- Cudy
+
+  - RE3000 (v1)
+  - M3000 (v1)
+  - WR3000s
+  - WR3000h (v1)
+
+- Mercusys
+
+  - MR90X (v1)
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- Totolink
+
+  - X5000R
+
+- Xiaomi
+
+  - Mi Router AC2100
+  - Redmi Router AC2100
+
+ramips-mt7622
+~~~~~~~~~~~~~
+
+- Ubiquiti
+
+  - UniFi 6 LR (v2, v3)
+
+- Xiaomi
+
+  - AX3200 / Redmi AX6S [#readded]_
+
+qualcommax-ipq807x
+~~~~~~~~~~~~~~~~~~
+
+* Linksys
+
+  - MX5300
+
+.. [#readded]
+  This previously supported device had been removed in an earlier release and was reintroduced in
+  v2025.1.1.
+
+New Features
+------------
+
+Configuration of channel_width per band in site configuration (`#3659`_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _#3659: https://github.com/freifunk-gluon/gluon/pull/3659
+
+The default channel width can be set in the site configuration.
+This uses the highest MCS (HT/VHT/HE/...) available and combines it with the selected channel width in MHz.
+The following example increases the width to 40MHz for all 5GHz radios.
+
+.. code-block:: lua
+
+    wifi5 = {
+      channel_width = 40,
+      ...
+    }
+
+Additional information on status page (`#3654`_)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _#3654: https://github.com/freifunk-gluon/gluon/pull/3654
+
+Add more information to the status page, including:
+
+- number of cores (nproc) of the device
+- base version
+- firmware target
+- currently active ssid
+- configured htmode
+
+Bugfixes
+--------
+
+.. _#3576: https://github.com/freifunk-gluon/gluon/issues/3576
+.. _#3705: https://github.com/freifunk-gluon/gluon/issues/3705
+.. _#3735: https://github.com/freifunk-gluon/gluon/issues/3735
+
+- Fix phy path migration timing on some devices (like WR3000), which led to a broken wifi configuration (`#3735`_)
+- Improve migration for x86 Ethernet driver load order change to also cover typical USB drivers (`#3576`_)
+- Fix hang at sysupgrade when using BATMAN_V (`#3705`_)
+
+Known issues
+------------
+
+.. _#94: https://github.com/freifunk-gluon/gluon/issues/94
+.. _#496: https://github.com/freifunk-gluon/gluon/issues/496
+.. _#1726: https://github.com/freifunk-gluon/gluon/issues/1726
+.. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+
+- The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page (`#1726`_)
+
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new
+    throughput metric.
+  - Throughput values are not correctly acquired for different interface types (`#1728`_)
+
+    This affects virtual interface types like bridges and VXLAN.
+
+- Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+- In configurations without VXLAN, the MAC address of the WAN interface is modified even when
+  Mesh-on-WAN is disabled (`#496`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when
+  promiscuous mode is disallowed).
