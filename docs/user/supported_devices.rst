@@ -223,6 +223,10 @@ ipq40xx-generic
 
   - Jalapeno
 
+* ASUS
+
+  - Lyra MAP-AC2200
+
 * Aruba
 
   - AP-303
