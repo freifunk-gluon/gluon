@@ -48,6 +48,14 @@ device('aruba-ap-365', 'aruba_ap-365', {
 })
 
 
+-- ASUS
+
+device('asus-lyra-map-ac2200', 'asus_map-ac2200',{
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+	factory = false,
+})
+
+
 -- AVM
 
 device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
