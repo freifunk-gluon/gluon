@@ -140,6 +140,9 @@ local primary_addrs = {
 		}},
 	}},
 	{phy(1), {
+		{'ipq40xx', 'generic', {
+			'asus,map-ac2200',
+		}},
 		{'ramips', 'mt7621', {
 			'dlink,dir-860l-b1',
 		}},
