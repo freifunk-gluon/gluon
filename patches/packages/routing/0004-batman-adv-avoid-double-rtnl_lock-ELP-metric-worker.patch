@@ -1,0 +1,133 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Sat, 21 Feb 2026 09:58:32 +0100
+Subject: batman-adv: avoid double-rtnl_lock ELP metric worker
+
+batadv_v_elp_get_throughput() might be called when the RTNL lock is already
+held. This could be problematic when the work queue item is canceled via
+cancel_delayed_work_sync() in batadv_v_elp_iface_disable(). In this case,
+an rtnl_lock() would cause a deadlock.
+
+To avoid this, rtnl_trylock() was used in this function to skip the
+retrieval of the ethtool information in case the RTNL lock was already
+held.
+
+But for cfg80211 interfaces, batadv_get_real_netdev() was called - which
+also uses rtnl_lock(). The approach for __ethtool_get_link_ksettings() must
+also be used instead and the lockless version __batadv_get_real_netdev()
+has to called.
+
+Fixes: a5e1df1b4da0 ("batman-adv: Merge bugfixes from 2025.0")
+Reported-by: Christian Schmidbauer <github@grische.xyz>
+Tested-by: Sören Skaarup <freifunk_nordm4nn@gmx.de>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+
+diff --git a/batman-adv/Makefile b/batman-adv/Makefile
+index 4eae4b20d42174d85bbc9ee330630766213ca7f6..f320a5a6f13e807152ce2894525a3dfe8bf57e18 100644
+--- a/batman-adv/Makefile
++++ b/batman-adv/Makefile
+@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=batman-adv
+ PKG_VERSION:=2023.1
+-PKG_RELEASE:=12
++PKG_RELEASE:=13
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://downloads.open-mesh.org/batman/releases/batman-adv-$(PKG_VERSION)
+diff --git a/batman-adv/patches/0021-batman-adv-Avoid-double-rtnl_lock-ELP-metric-worker.patch b/batman-adv/patches/0021-batman-adv-Avoid-double-rtnl_lock-ELP-metric-worker.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..2f06ef2eae1a896ede44e5ccd939a671385c0657
+--- /dev/null
++++ b/batman-adv/patches/0021-batman-adv-Avoid-double-rtnl_lock-ELP-metric-worker.patch
+@@ -0,0 +1,91 @@
++From: Sven Eckelmann <sven@narfation.org>
++Date: Mon, 16 Feb 2026 20:05:55 +0100
++Subject: batman-adv: Avoid double-rtnl_lock ELP metric worker
++
++batadv_v_elp_get_throughput() might be called when the RTNL lock is already
++held. This could be problematic when the work queue item is canceled via
++cancel_delayed_work_sync() in batadv_v_elp_iface_disable(). In this case,
++an rtnl_lock() would cause a deadlock.
++
++To avoid this, rtnl_trylock() was used in this function to skip the
++retrieval of the ethtool information in case the RTNL lock was already
++held.
++
++But for cfg80211 interfaces, batadv_get_real_netdev() was called - which
++also uses rtnl_lock(). The approach for __ethtool_get_link_ksettings() must
++also be used instead and the lockless version __batadv_get_real_netdev()
++has to called.
++
++Fixes: 405d49a20a20 ("batman-adv: Drop unmanaged ELP metric worker")
++Reported-by: Christian Schmidbauer <github@grische.xyz>
++Tested-by: Sören Skaarup <freifunk_nordm4nn@gmx.de>
++Signed-off-by: Sven Eckelmann <sven@narfation.org>
++Origin: upstream, https://git.open-mesh.org/batman-adv.git/commit/?id=b0af0a376fb19812c557ae08be190ddd74208149
++
++--- a/net/batman-adv/bat_v_elp.c
+++++ b/net/batman-adv/bat_v_elp.c
++@@ -112,7 +112,15 @@ static bool batadv_v_elp_get_throughput(
++ 			/* unsupported WiFi driver version */
++ 			goto default_throughput;
++ 
++-		real_netdev = batadv_get_real_netdev(hard_iface->net_dev);
+++		/* only use rtnl_trylock because the elp worker will be cancelled while
+++		 * the rntl_lock is held. the cancel_delayed_work_sync() would otherwise
+++		 * wait forever when the elp work_item was started and it is then also
+++		 * trying to rtnl_lock
+++		 */
+++		if (!rtnl_trylock())
+++			return false;
+++		real_netdev = __batadv_get_real_netdev(hard_iface->net_dev);
+++		rtnl_unlock();
++ 		if (!real_netdev)
++ 			goto default_throughput;
++ 
++--- a/net/batman-adv/hard-interface.c
+++++ b/net/batman-adv/hard-interface.c
++@@ -202,7 +202,7 @@ static bool batadv_is_valid_iface(const
++ }
++ 
++ /**
++- * batadv_get_real_netdevice() - check if the given netdev struct is a virtual
+++ * __batadv_get_real_netdev() - check if the given netdev struct is a virtual
++  *  interface on top of another 'real' interface
++  * @netdev: the device to check
++  *
++@@ -212,7 +212,7 @@ static bool batadv_is_valid_iface(const
++  * Return: the 'real' net device or the original net device and NULL in case
++  *  of an error.
++  */
++-static struct net_device *batadv_get_real_netdevice(struct net_device *netdev)
+++struct net_device *__batadv_get_real_netdev(struct net_device *netdev)
++ {
++ 	struct batadv_hard_iface *hard_iface = NULL;
++ 	struct net_device *real_netdev = NULL;
++@@ -265,7 +265,7 @@ struct net_device *batadv_get_real_netde
++ 	struct net_device *real_netdev;
++ 
++ 	rtnl_lock();
++-	real_netdev = batadv_get_real_netdevice(net_device);
+++	real_netdev = __batadv_get_real_netdev(net_device);
++ 	rtnl_unlock();
++ 
++ 	return real_netdev;
++@@ -333,7 +333,7 @@ static u32 batadv_wifi_flags_evaluate(st
++ 	if (batadv_is_cfg80211_netdev(net_device))
++ 		wifi_flags |= BATADV_HARDIF_WIFI_CFG80211_DIRECT;
++ 
++-	real_netdev = batadv_get_real_netdevice(net_device);
+++	real_netdev = __batadv_get_real_netdev(net_device);
++ 	if (!real_netdev)
++ 		return wifi_flags;
++ 
++--- a/net/batman-adv/hard-interface.h
+++++ b/net/batman-adv/hard-interface.h
++@@ -68,6 +68,7 @@ enum batadv_hard_if_bcast {
++ 
++ extern struct notifier_block batadv_hard_if_notifier;
++ 
+++struct net_device *__batadv_get_real_netdev(struct net_device *net_device);
++ struct net_device *batadv_get_real_netdev(struct net_device *net_device);
++ bool batadv_is_cfg80211_hardif(struct batadv_hard_iface *hard_iface);
++ bool batadv_is_wifi_hardif(struct batadv_hard_iface *hard_iface);
