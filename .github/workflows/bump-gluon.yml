@@ -30,7 +30,10 @@ jobs:
 
       - name: Link example Site
         run: ln -s docs/site-example site
-      
+
+      - name: Clone modules
+        run: make update
+
       - name: Invoke update-modules
         run: make update-modules
       
