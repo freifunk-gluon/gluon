@@ -7,7 +7,7 @@
 'use strict';
 
 (function() {
-	var _ = JSON.parse(document.body.getAttribute('data-translations'));
+	var _ = JSON.parse(document.getElementById('request-data').getAttribute('data-translations'));
 
 	String.prototype.sprintf = function() {
 		var i = 0;
@@ -165,11 +165,11 @@
 		}
 	}
 
-	var node_address = document.body.getAttribute('data-node-address');
+	var node_address = document.getElementById('request-data').getAttribute('data-node-address');
 
 	var location;
 	try {
-		location = JSON.parse(document.body.getAttribute('data-node-location'));
+		location = JSON.parse(document.getElementById('request-data').getAttribute('data-node-location'));
 	} catch (e) {
 	}
 
@@ -811,7 +811,7 @@
 		interfaces[ifname] = Interface(elem, ifname, wireless);
 	});
 
-	var mesh_provider = document.body.getAttribute('data-mesh-provider');
+	var mesh_provider = document.getElementById('request-data').getAttribute('data-mesh-provider');
 	if (mesh_provider) {
 		add_event_source(mesh_provider, function(data) {
 			Object.keys(data).forEach(function (addr) {

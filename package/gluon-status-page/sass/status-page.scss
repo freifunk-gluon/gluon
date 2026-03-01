@@ -192,6 +192,43 @@ canvas.signalgraph {
 	width: 100%;
 }
 
+footer {
+	background-color: rgb(253, 253, 253);
+	box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.19), 0px 3px 6px rgba(0, 0, 0, 0.23);
+	padding: 1rem;
+	border-top: 1px solid #ddd;
+	max-width: fit-content;
+	margin: 24px auto 24px auto;
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		gap: 1rem;
+
+		li {
+			margin: 0;
+
+			a {
+				text-decoration: none;
+				color: rgba(0, 0, 0, 0.87);
+				padding: 0.5rem 1rem;
+
+				&:hover {
+					background-color: #e0e0e0;
+					border-radius: 4px;
+				}
+
+				&.active {
+					font-weight: bold;
+					color: #0066cc;
+				}
+			}
+		}
+	}
+}
+
 @media only screen and (max-width: 1250px) {
 	.container {
 		max-width: none;
@@ -239,6 +276,22 @@ canvas.signalgraph {
 
 		& > .frame + .frame {
 			border-width: 1px 0 0 0;
+		}
+	}
+
+	footer {
+		max-width: none;
+
+		ul {
+			flex-direction: column;
+			gap: 0;
+
+			li {
+				a {
+					display: block;
+					border-bottom: 1px solid #ddd;
+				}
+			}
 		}
 	}
 }
