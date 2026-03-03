@@ -32,7 +32,7 @@ On Debian Bookworm, you can install the required packages with the following com
   apt install clang git python3 python3-dev python3-pyelftools \
   python3-setuptools build-essential gawk unzip libncurses5-dev \
   zlib1g-dev libssl-dev libelf-dev llvm wget rsync time qemu-utils \
-  ecdsautils swig
+  ecdsautils swig file
 
 We also provide a container environment that already tracks all these dependencies. It quickly gets you up and running, if you already have either Docker or Podman installed locally.
 
