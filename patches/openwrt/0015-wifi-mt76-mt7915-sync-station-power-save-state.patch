@@ -1,0 +1,117 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 4 Mar 2026 14:16:22 +0100
+Subject: wifi: mt76: mt7915: sync station power save state
+
+Host receives a power save state change event everytime a station enters
+or leaves PS mode. Use this unsolicited event to stop filling up TX
+queues in firmware, as the hardware will buffer frames for stations in
+power safe indefinitely.
+
+Limit packets to be enqueued for sleeping STAs in order to manage the
+packet backlog in the host-system while still being able to indicate
+pending traffic to said STAs.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+Link: https://patch.msgid.link/20260210201917.993424-1-mail@david-bauer.net
+
+diff --git a/package/kernel/mt76/patches/351-wifi-mt76-mt7915-sync-station-power-save-state.patch b/package/kernel/mt76/patches/351-wifi-mt76-mt7915-sync-station-power-save-state.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..a78b658a8108b650d65c43e4ca9bd988bb872436
+--- /dev/null
++++ b/package/kernel/mt76/patches/351-wifi-mt76-mt7915-sync-station-power-save-state.patch
+@@ -0,0 +1,95 @@
++From be3aad4c2e1058ff97d5dfb23add34d32b3d37ae Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Tue, 10 Feb 2026 21:19:14 +0100
++Subject: [PATCH] wifi: mt76: mt7915: sync station power save state
++
++Host receives a power save state change event everytime a station enters
++or leaves PS mode. Use this unsolicited event to stop filling up TX
++queues in firmware, as the hardware will buffer frames for stations in
++power safe indefinitely.
++
++Limit packets to be enqueued for sleeping STAs in order to manage the
++packet backlog in the host-system while still being able to indicate
++pending traffic to said STAs.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++Link: https://patch.msgid.link/20260210201917.993424-1-mail@david-bauer.net
++Signed-off-by: Felix Fietkau <nbd@nbd.name>
++---
++ mt7915/main.c |  1 +
++ mt7915/mcu.c  | 28 ++++++++++++++++++++++++++++
++ mt7915/mcu.h  |  9 +++++++++
++ 3 files changed, 38 insertions(+)
++
++--- a/mt7915/main.c
+++++ b/mt7915/main.c
++@@ -1684,6 +1684,7 @@ const struct ieee80211_ops mt7915_ops =
++ 	.sw_scan_complete = mt76_sw_scan_complete,
++ 	.release_buffered_frames = mt76_release_buffered_frames,
++ 	.get_txpower = mt76_get_txpower,
+++	.set_tim = mt76_set_tim,
++ 	.set_sar_specs = mt7915_set_sar_specs,
++ 	.channel_switch_beacon = mt7915_channel_switch_beacon,
++ 	.get_stats = mt7915_get_stats,
++--- a/mt7915/mcu.c
+++++ b/mt7915/mcu.c
++@@ -354,6 +354,31 @@ mt7915_mcu_rx_bcc_notify(struct mt7915_d
++ 			mt7915_mcu_cca_finish, mphy->hw);
++ }
++ 
+++static void mt7915_mcu_rx_ps_sync(struct mt7915_dev *dev, struct sk_buff *skb)
+++{
+++	struct mt7915_mcu_ps_notify *p;
+++	struct ieee80211_sta *sta;
+++	struct mt76_wcid *wcid;
+++	u16 wcid_idx;
+++
+++	p = (struct mt7915_mcu_ps_notify *)skb->data;
+++	wcid_idx = p->wtbl_lower | (p->wtbl_higher) << 8;
+++
+++	rcu_read_lock();
+++	wcid = rcu_dereference(dev->mt76.wcid[wcid_idx]);
+++	if (!wcid)
+++		goto out;
+++
+++	sta = wcid_to_sta(wcid);
+++	if (!sta)
+++		goto out;
+++
+++	ieee80211_sta_ps_transition_ni(sta, !!p->ps_bit);
+++
+++out:
+++	rcu_read_unlock();
+++}
+++
++ static void
++ mt7915_mcu_rx_ext_event(struct mt7915_dev *dev, struct sk_buff *skb)
++ {
++@@ -376,6 +401,9 @@ mt7915_mcu_rx_ext_event(struct mt7915_de
++ 	case MCU_EXT_EVENT_BCC_NOTIFY:
++ 		mt7915_mcu_rx_bcc_notify(dev, skb);
++ 		break;
+++	case MCU_EXT_EVENT_PS_SYNC:
+++		mt7915_mcu_rx_ps_sync(dev, skb);
+++		break;
++ 	default:
++ 		break;
++ 	}
++--- a/mt7915/mcu.h
+++++ b/mt7915/mcu.h
++@@ -54,6 +54,15 @@ struct mt7915_mcu_bcc_notify {
++ 	u8 rsv;
++ } __packed;
++ 
+++struct mt7915_mcu_ps_notify {
+++	struct mt76_connac2_mcu_rxd rxd;
+++
+++	u8 wtbl_lower;
+++	u8 ps_bit;
+++	u8 wtbl_higher;
+++	u8 rsv;
+++} __packed;
+++
++ struct mt7915_mcu_rdd_report {
++ 	struct mt76_connac2_mcu_rxd rxd;
++ 
