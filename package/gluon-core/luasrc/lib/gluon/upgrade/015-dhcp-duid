@@ -1,0 +1,18 @@
+#!/usr/bin/lua
+
+-- Configure global DUID for DHCPv4/DHCPv6 based on the primary MAC address.
+-- OpenWrt generates the DUID randomly based on a UUID. As we regenerate the configuration
+-- for every "gluon-reconfigure" run, we need to ensure the DUID remains identical across reconfigurations.
+
+-- In the past (OpenWrt 25.12) DUID was based on the interface MAC address, so this was not necessary.
+
+-- Even though DUID is IPv6 specific, the set value from UCI is also used as the client-id for DHCPv4.
+
+local uci = require('simple-uci').cursor()
+local sysconfig = require 'gluon.sysconfig'
+
+local primary_mac = sysconfig.primary_mac
+local duid = '0003' .. primary_mac:gsub(':', ''):lower()
+
+uci:set('network', 'globals', 'dhcp_default_duid', duid)
+uci:save('network')
