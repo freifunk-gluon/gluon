@@ -1,0 +1,151 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 5 Mar 2026 23:29:23 +0100
+Subject: wifi: mac80211: calculate pending airtime for PS STAs
+
+Calculate the total of pending airtime for STAs in power-save.
+
+This is required in case the device firmware buffers frames of STAs in
+power save mode. It allows further down the road to subtract this
+airtime from the total when calculating AQL limits.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mac80211/patches/subsys/950-002-wifi-mac80211-calculate-pending-airtime-for-PS-STAs.patch b/package/kernel/mac80211/patches/subsys/950-002-wifi-mac80211-calculate-pending-airtime-for-PS-STAs.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3ea7df4341ea19e86c21a0f9f30a1241738088ed
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/950-002-wifi-mac80211-calculate-pending-airtime-for-PS-STAs.patch
+@@ -0,0 +1,133 @@
++From 2f5dd5c409fb8226c4529c6e70e1765ce3bbd6e6 Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Fri, 30 Jan 2026 17:02:04 +0100
++Subject: [PATCH 2/3] wifi: mac80211: calculate pending airtime for PS STAs
++
++Calculate the total of pending airtime for STAs in power-save.
++
++This is required in case the device firmware buffers frames of STAs in
++power save mode. It allows further down the road to subtract this
++airtime from the total when calculating AQL limits.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ net/mac80211/ieee80211_i.h |  3 +++
++ net/mac80211/main.c        |  2 ++
++ net/mac80211/rx.c          |  7 ++++++-
++ net/mac80211/sta_info.c    | 31 +++++++++++++++++++++++++++++++
++ net/mac80211/sta_info.h    |  1 +
++ 5 files changed, 43 insertions(+), 1 deletion(-)
++
++--- a/net/mac80211/ieee80211_i.h
+++++ b/net/mac80211/ieee80211_i.h
++@@ -1385,6 +1385,9 @@ struct ieee80211_local {
++ 
++ 	const struct ieee80211_ops *ops;
++ 
+++	atomic_t aql_total_pending_airtime_ps;
+++	atomic_t aql_ac_pending_airtime_ps[IEEE80211_NUM_ACS];
+++
++ 	/*
++ 	 * private workqueue to mac80211. mac80211 makes this accessible
++ 	 * via ieee80211_queue_work()
++--- a/net/mac80211/main.c
+++++ b/net/mac80211/main.c
++@@ -962,11 +962,13 @@ struct ieee80211_hw *ieee80211_alloc_hw_
++ 		local->aql_txq_limit_high[i] =
++ 			IEEE80211_DEFAULT_AQL_TXQ_LIMIT_H;
++ 		atomic_set(&local->aql_ac_pending_airtime[i], 0);
+++		atomic_set(&local->aql_ac_pending_airtime_ps[i], 0);
++ 	}
++ 
++ 	local->airtime_flags = AIRTIME_USE_TX | AIRTIME_USE_RX;
++ 	local->aql_threshold = IEEE80211_AQL_THRESHOLD;
++ 	atomic_set(&local->aql_total_pending_airtime, 0);
+++	atomic_set(&local->aql_total_pending_airtime_ps, 0);
++ 
++ 	spin_lock_init(&local->handle_wake_tx_queue_lock);
++ 
++--- a/net/mac80211/rx.c
+++++ b/net/mac80211/rx.c
++@@ -1586,6 +1586,8 @@ static void sta_ps_start(struct sta_info
++ 	ps_dbg(sdata, "STA %pM aid %d enters power save mode\n",
++ 	       sta->sta.addr, sta->sta.aid);
++ 
+++	ieee80211_sta_recalc_pending_airtime_ps(sta);
+++
++ 	ieee80211_clear_fast_xmit(sta);
++ 
++ 	for (tid = 0; tid < IEEE80211_NUM_TIDS; tid++) {
++@@ -1619,12 +1621,15 @@ static void sta_ps_end(struct sta_info *
++ 		clear_sta_flag(sta, WLAN_STA_PS_STA);
++ 		ps_dbg(sta->sdata, "STA %pM aid %d driver-ps-blocked\n",
++ 		       sta->sta.addr, sta->sta.aid);
++-		return;
+++		goto out;
++ 	}
++ 
++ 	set_sta_flag(sta, WLAN_STA_PS_DELIVER);
++ 	clear_sta_flag(sta, WLAN_STA_PS_STA);
++ 	ieee80211_sta_ps_deliver_wakeup(sta);
+++
+++out:
+++	ieee80211_sta_recalc_pending_airtime_ps(sta);
++ }
++ 
++ int ieee80211_sta_ps_transition(struct ieee80211_sta *pubsta, bool start)
++--- a/net/mac80211/sta_info.c
+++++ b/net/mac80211/sta_info.c
++@@ -153,6 +153,8 @@ static void __cleanup_single_sta(struct
++ 		clear_sta_flag(sta, WLAN_STA_PS_DELIVER);
++ 
++ 		atomic_dec(&ps->num_sta_ps);
+++
+++		ieee80211_sta_recalc_pending_airtime_ps(sta);
++ 	}
++ 
++ 	ieee80211_purge_sta_txqs(sta);
++@@ -2358,6 +2360,35 @@ void ieee80211_sta_recalc_aggregates(str
++ }
++ EXPORT_SYMBOL(ieee80211_sta_recalc_aggregates);
++ 
+++void ieee80211_sta_recalc_pending_airtime_ps(struct sta_info *sta)
+++{
+++	struct ieee80211_local *local = sta->local;
+++	int ac_ps_airtime[IEEE80211_NUM_ACS] = {0};
+++	int total_ps_airtime = 0;
+++	int tx_pending = 0;
+++	int ac;
+++
+++	if (!ieee80211_hw_check(&local->hw, STORES_PS_FRAMES))
+++		return;
+++
+++	rcu_read_lock();
+++	list_for_each_entry_rcu(sta, &local->sta_list, list) {
+++		if (!test_sta_flag(sta, WLAN_STA_PS_STA))
+++			continue;
+++
+++		for (ac = 0; ac < IEEE80211_NUM_ACS; ac++) {
+++			tx_pending = atomic_read(&sta->airtime[ac].aql_tx_pending);
+++			ac_ps_airtime[ac] += tx_pending;
+++			total_ps_airtime += tx_pending;
+++		}
+++	}
+++	rcu_read_unlock();
+++
+++	atomic_set(&local->aql_total_pending_airtime_ps, total_ps_airtime);
+++	for (ac = 0; ac < IEEE80211_NUM_ACS; ac++)
+++		atomic_set(&local->aql_ac_pending_airtime_ps[ac], ac_ps_airtime[ac]);
+++}
+++
++ void ieee80211_sta_update_pending_airtime(struct ieee80211_local *local,
++ 					  struct sta_info *sta, u8 ac,
++ 					  u16 tx_airtime, bool tx_completed,
++--- a/net/mac80211/sta_info.h
+++++ b/net/mac80211/sta_info.h
++@@ -149,6 +149,7 @@ void ieee80211_sta_update_pending_airtim
++ 					  struct sta_info *sta, u8 ac,
++ 					  u16 tx_airtime, bool tx_completed,
++ 					  bool mcast);
+++void ieee80211_sta_recalc_pending_airtime_ps(struct sta_info *sta);
++ 
++ struct sta_info;
++ 
