@@ -1,0 +1,83 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 5 Mar 2026 23:29:39 +0100
+Subject: wifi: mac80211: subtract power save airtime from AQL total
+
+This subtracts the airtime of power saving STAs from the total pending
+airtime when deciding of the eligibility to transmit a given TXQ.
+
+This is necessary in case the driver buffers frames of power saving STAs
+in hardware. A STA with a large amount of airtime retaining power save
+mode can block TX for other connected STAs.
+
+Subtracting the PS airtime from the total allows mac80211 to queue up
+frames for awake STAs even when the total airtime of PS STAs would
+prevent this due to AQL.
+
+Once a STA wakes up, the power save total gets recalculated, removing
+the now awake STAs pending airtime from the PS pool.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/mac80211/patches/subsys/950-003-wifi-mac80211-subtract-power-save-airtime-from-AQL-t.patch b/package/kernel/mac80211/patches/subsys/950-003-wifi-mac80211-subtract-power-save-airtime-from-AQL-t.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8a06a6154202fce6098174d5d9a5c1e03aa2a24e
+--- /dev/null
++++ b/package/kernel/mac80211/patches/subsys/950-003-wifi-mac80211-subtract-power-save-airtime-from-AQL-t.patch
+@@ -0,0 +1,57 @@
++From fe6a5cf64b82f5a6cc37cc9ca05ab7d8d1baa53b Mon Sep 17 00:00:00 2001
++From: David Bauer <mail@david-bauer.net>
++Date: Sat, 7 Feb 2026 09:34:31 +0100
++Subject: [PATCH 3/3] wifi: mac80211: subtract power save airtime from AQL
++ total
++
++This subtracts the airtime of power saving STAs from the total pending
++airtime when deciding of the eligibility to transmit a given TXQ.
++
++This is necessary in case the driver buffers frames of power saving STAs
++in hardware. A STA with a large amount of airtime retaining power save
++mode can block TX for other connected STAs.
++
++Subtracting the PS airtime from the total allows mac80211 to queue up
++frames for awake STAs even when the total airtime of PS STAs would
++prevent this due to AQL.
++
++Once a STA wakes up, the power save total gets recalculated, removing
++the now awake STAs pending airtime from the PS pool.
++
++Signed-off-by: David Bauer <mail@david-bauer.net>
++---
++ net/mac80211/tx.c | 16 +++++++++++++++-
++ 1 file changed, 15 insertions(+), 1 deletion(-)
++
++--- a/net/mac80211/tx.c
+++++ b/net/mac80211/tx.c
++@@ -4186,6 +4186,8 @@ ieee80211_txq_schedule_airtime_check(str
++ {
++ 	unsigned int num_txq = 0;
++ 	struct txq_info *txq;
+++	int total_pending;
+++	int ps_pending;
++ 	u32 aql_limit;
++ 
++ 	if (!wiphy_ext_feature_isset(local->hw.wiphy, NL80211_EXT_FEATURE_AQL))
++@@ -4197,7 +4199,19 @@ ieee80211_txq_schedule_airtime_check(str
++ 	aql_limit = (num_txq - 1) * local->aql_txq_limit_low[ac] / 2 +
++ 		    local->aql_txq_limit_high[ac];
++ 
++-	return atomic_read(&local->aql_ac_pending_airtime[ac]) < aql_limit;
+++	total_pending = atomic_read(&local->aql_ac_pending_airtime[ac]);
+++	ps_pending = atomic_read(&local->aql_ac_pending_airtime_ps[ac]);
+++
+++	/* PS frames can exceed the total in case driver delivers
+++	 * TX complete messages prior to the STAs PS change.
+++	 *
+++	 * Handle this case here by accounting PS pending packets as
+++	 * non-PS packets.
+++	 */
+++	if (ps_pending > total_pending)
+++		ps_pending = 0;
+++
+++	return total_pending - ps_pending < aql_limit;
++ }
++ 
++ bool ieee80211_txq_may_transmit(struct ieee80211_hw *hw,
