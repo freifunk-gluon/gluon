@@ -341,6 +341,10 @@ mediatek-filogic
   - TUF AX4200
   - TUF AX6000
 
+* CreatLentem / EDUP / Dragonglass / Livinet
+  - CreatLentem CLT-R30B1 / EDUP RT2980 / Dragonglass DGX21 / Livinet Li228
+  - CreatLentem CLT-R30B1 112M / EDUP RT2980 112M / Dragonglass DGX21 112M / Livinet Li228 112M
+
 * Cudy
 
   - AP3000 Outdoor (v1)
