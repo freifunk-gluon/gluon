@@ -28,7 +28,7 @@ Bugfixes
 
 .. _#3705: https://github.com/freifunk-gluon/gluon/issues/3705
 
-- Fix hang at sysupgrade when using BATMAN_V (`#3705`_)
+- Fix the hang that occurs during sysupgrade when using BATMAN_V (`#3705`_)
 
 Known issues
 ------------
