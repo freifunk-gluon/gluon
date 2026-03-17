@@ -1,0 +1,30 @@
+From: Andrew LaMarche <andrewjlamarche@gmail.com>
+Date: Thu, 12 Mar 2026 13:22:03 +0000
+Subject: airoha: an7581: fix w1700k fan script
+
+W1700K fan script is missing the #!/bin/sh /etc/rc.common shebang and
+requires execution bits set. Also, set the fallback to hwmon 3 instead
+of 5, since the new RTL PHY driver was not merged.
+
+Signed-off-by: Andrew LaMarche <andrewjlamarche@gmail.com>
+
+diff --git a/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan b/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan
+old mode 100644
+new mode 100755
+index 0705402ea7fddf9bcbedd2abaa1ce03e9ba7de83..ab9eeca83ae69530d90299c8932ecf2456a6dd75
+--- a/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan
++++ b/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan
+@@ -1,3 +1,4 @@
++#!/bin/sh /etc/rc.common
+ #
+ # Copyright (C) 2025 openwrt.org
+ #
+@@ -14,7 +15,7 @@ find_nct7802()
+ 			return
+ 		fi
+ 	done
+-	echo "/sys/class/hwmon/hwmon5" # fallback
++	echo "/sys/class/hwmon/hwmon3" # fallback
+ }
+ 
+ boot()

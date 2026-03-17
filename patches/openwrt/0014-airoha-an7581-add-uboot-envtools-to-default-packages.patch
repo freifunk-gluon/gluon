@@ -1,0 +1,24 @@
+From: Andrew LaMarche <andrewjlamarche@gmail.com>
+Date: Fri, 20 Feb 2026 15:03:12 +0000
+Subject: airoha: an7581: add uboot-envtools to default packages
+
+Add uboot-envtools to default packages to facilitate modifying the
+u-boot environment.
+
+Signed-off-by: Andrew LaMarche <andrewjlamarche@gmail.com>
+Link: https://github.com/openwrt/openwrt/pull/17869
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/target/linux/airoha/an7581/target.mk b/target/linux/airoha/an7581/target.mk
+index 5eacac3f3b3c1d4e4c717b497313dfc1d07c8a3b..b3e539b649d14cb782752a19f5ae96937f843524 100644
+--- a/target/linux/airoha/an7581/target.mk
++++ b/target/linux/airoha/an7581/target.mk
+@@ -6,7 +6,7 @@ KERNELNAME:=Image dtbs
+ FEATURES+=pwm source-only
+ 
+ DEFAULT_PACKAGES += \
+-	airoha-en7581-npu-firmware
++	airoha-en7581-npu-firmware uboot-envtools
+ 
+ define Target/Description
+ 	Build firmware images for Airoha an7581 ARM based boards.
