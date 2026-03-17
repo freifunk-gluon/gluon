@@ -1,0 +1,6 @@
+-- Gemtek
+
+device('gemtek-w1700k-ubi', 'gemtek_w1700k-ubi', {
+	factory = false,
+	sysupgrade_ext = '.itb',
+})
