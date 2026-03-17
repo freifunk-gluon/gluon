@@ -1,4 +1,14 @@
 {
+  "airoha-an7581": [
+    "targets/airoha-an7581",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "armsr-armv7": [
     "targets/armsr-armv7",
     ".github/workflows/build-gluon.yml",
