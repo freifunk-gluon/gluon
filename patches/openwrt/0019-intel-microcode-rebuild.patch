@@ -1,0 +1,23 @@
+From 20b4d9b39f5d3401e16efa1c8f0497ecf8f5528c Mon Sep 17 00:00:00 2001
+From: Sander Schutten <schutten@hotmail.com>
+Date: Wed, 15 Jan 2025 08:38:17 +0000
+Subject: [PATCH] intel-microcode: fix dirty build
+
+Signed-off-by: Sander Schutten <schutten@hotmail.com>
+---
+ package/firmware/intel-microcode/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package/firmware/intel-microcode/Makefile b/package/firmware/intel-microcode/Makefile
+index bdd8ae73d88f3c..951a7d6f74144a 100644
+--- a/package/firmware/intel-microcode/Makefile
++++ b/package/firmware/intel-microcode/Makefile
+@@ -39,7 +39,7 @@ endef
+ 
+ define Build/Compile
+ 	IUCODE_TOOL=$(STAGING_DIR)/../host/bin/iucode_tool $(MAKE) -C $(PKG_BUILD_DIR)
+-	mkdir $(PKG_BUILD_DIR)/intel-ucode-ipkg
++	mkdir -p $(PKG_BUILD_DIR)/intel-ucode-ipkg
+ 	$(STAGING_DIR)/../host/bin/iucode_tool -q \
+ 		--write-firmware=$(PKG_BUILD_DIR)/intel-ucode-ipkg $(PKG_BUILD_DIR)/$(MICROCODE).bin
+ endef
