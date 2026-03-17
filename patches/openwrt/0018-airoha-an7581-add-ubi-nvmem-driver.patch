@@ -1,0 +1,22 @@
+From: Dirk Buchwalder <buchwalder@posteo.de>
+Date: Sun, 1 Mar 2026 14:16:43 +0100
+Subject: airoha: an7581: add ubi nvmem driver
+
+Add ubi nvmem driver, required to load nvmem entries from ubi volumes
+
+Signed-off-by: Dirk Buchwalder <buchwalder@posteo.de>
+Link: https://github.com/openwrt/openwrt/pull/22151
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/target/linux/airoha/an7581/config-6.12 b/target/linux/airoha/an7581/config-6.12
+index dcb5fea9e8316039316e99463252c7be4cbd9d8d..3f07f207e61f5a363b9a588a3effa9ef445bee85 100644
+--- a/target/linux/airoha/an7581/config-6.12
++++ b/target/linux/airoha/an7581/config-6.12
+@@ -237,6 +237,7 @@ CONFIG_MTD_SPLIT_FIT_FW=y
+ CONFIG_MTD_UBI=y
+ CONFIG_MTD_UBI_BEB_LIMIT=20
+ CONFIG_MTD_UBI_BLOCK=y
++CONFIG_MTD_UBI_NVMEM=y
+ CONFIG_MTD_UBI_WL_THRESHOLD=4096
+ CONFIG_MTK_NET_PHYLIB=y
+ CONFIG_MUTEX_SPIN_ON_OWNER=y

@@ -1,0 +1,22 @@
+From: Dirk Buchwalder <buchwalder@posteo.de>
+Date: Sun, 1 Mar 2026 14:13:55 +0100
+Subject: airoha: an7581: enable fitblk driver
+
+Enable fitblk driver, required to parse the fit image and set-up the rootfs volume
+
+Signed-off-by: Dirk Buchwalder <buchwalder@posteo.de>
+Link: https://github.com/openwrt/openwrt/pull/22151
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/target/linux/airoha/an7581/config-6.12 b/target/linux/airoha/an7581/config-6.12
+index 30602f8d2157171dfcfdef7d297a2496755394e8..dcb5fea9e8316039316e99463252c7be4cbd9d8d 100644
+--- a/target/linux/airoha/an7581/config-6.12
++++ b/target/linux/airoha/an7581/config-6.12
+@@ -396,6 +396,7 @@ CONFIG_TREE_RCU=y
+ CONFIG_TREE_SRCU=y
+ CONFIG_UBIFS_FS=y
+ # CONFIG_UNMAP_KERNEL_AT_EL0 is not set
++CONFIG_UIMAGE_FIT_BLK=y
+ CONFIG_USB_SUPPORT=y
+ CONFIG_USER_STACKTRACE_SUPPORT=y
+ CONFIG_VDSO_GETRANDOM=y

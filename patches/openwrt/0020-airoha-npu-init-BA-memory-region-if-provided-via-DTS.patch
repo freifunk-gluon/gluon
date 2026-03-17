@@ -1,0 +1,78 @@
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+Date: Fri, 24 Oct 2025 17:10:08 +0200
+Subject: airoha: npu: init BA memory region if provided via DTS
+
+Initialize NPU Block Ack memory region if reserved via DTS.
+Block Ack memory region is used by NPU MT7996 (Eagle) offloading.
+
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Link: https://github.com/openwrt/openwrt/pull/22289
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/target/linux/airoha/dts/an7581.dtsi b/target/linux/airoha/dts/an7581.dtsi
+index c038c94314d52ebefc4189f5938d1c63668c6411..0cb4d32701ed66218b114dba98184f66a6d8ff9c 100644
+--- a/target/linux/airoha/dts/an7581.dtsi
++++ b/target/linux/airoha/dts/an7581.dtsi
+@@ -54,6 +54,11 @@
+ 			no-map;
+ 			reg = <0x0 0x90c00000 0x0 0x6800>;
+ 		};
++
++		npu_ba: npu-ba@90c06800 {
++			no-map;
++			reg = <0x0 0x90c06800 0x0 0x200000>;
++		};
+ 	};
+ 
+ 	psci {
+@@ -855,9 +860,10 @@
+ 				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
+ 			memory-region = <&npu_binary>, <&npu_pkt>, <&npu_txpkt>,
+-					<&npu_txbufid>;
++					<&npu_txbufid>, <&npu_ba>;
+ 			memory-region-names = "binary", "pkt", "tx-pkt",
+-					      "tx-bufid";
++					      "tx-bufid", "ba";
++			status = "disabled";
+ 		};
+ 
+ 		eth: ethernet@1fb50000 {
+diff --git a/target/linux/airoha/patches-6.12/910-01-v7.0-net-airoha-npu-Init-BA-memory-region-if.patch b/target/linux/airoha/patches-6.12/910-01-v7.0-net-airoha-npu-Init-BA-memory-region-if.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9283e18de6b3bbcaece516bba68e4a27912e6db0
+--- /dev/null
++++ b/target/linux/airoha/patches-6.12/910-01-v7.0-net-airoha-npu-Init-BA-memory-region-if.patch
+@@ -0,0 +1,32 @@
++From 875a59c9a9e584d99d8e9e5aa8435ec9300bfe91 Mon Sep 17 00:00:00 2001
++From: Lorenzo Bianconi <lorenzo@kernel.org>
++Date: Thu, 8 Jan 2026 16:05:08 +0100
++Subject: [PATCH] net: airoha: npu: Init BA memory region if provided via DTS
++
++Initialize NPU Block Ack memory region if reserved via DTS.
++Block Ack memory region is used by NPU MT7996 (Eagle) offloading.
++
++Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
++Link: https://patch.msgid.link/20260108-airoha-ba-memory-region-v3-2-bf1814e5dcc4@kernel.org
++Signed-off-by: Jakub Kicinski <kuba@kernel.org>
++---
++ drivers/net/ethernet/airoha/airoha_npu.c | 8 ++++++++
++ 1 file changed, 8 insertions(+)
++
++--- a/drivers/net/ethernet/airoha/airoha_npu.c
+++++ b/drivers/net/ethernet/airoha/airoha_npu.c
++@@ -519,6 +519,14 @@ static int airoha_npu_wlan_init_memory(s
++ 	if (err)
++ 		return err;
++ 
+++	if (of_property_match_string(npu->dev->of_node, "memory-region-names",
+++				     "ba") >= 0) {
+++		cmd = WLAN_FUNC_SET_WAIT_DRAM_BA_NODE_ADDR;
+++		err = airoha_npu_wlan_set_reserved_memory(npu, 0, "ba", cmd);
+++		if (err)
+++			return err;
+++	}
+++
++ 	cmd = WLAN_FUNC_SET_WAIT_IS_FORCE_TO_CPU;
++ 	return airoha_npu_wlan_msg_send(npu, 0, cmd, &val, sizeof(val),
++ 					GFP_KERNEL);

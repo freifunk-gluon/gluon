@@ -1,0 +1,5026 @@
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Date: Wed, 11 Feb 2026 17:33:43 +0300
+Subject: uboot-airoha: update to U-Boot v2026.01
+
+Changes:
+ * update to v2026.01 (this brings up EN7523 SoC support)
+ * drop upstream patches
+ * refresh and adapt an7583 support patches (changes based on
+   https://github.com/Ansuel/openwrt/commits/main-airoha-6.12/)
+ * add ethernet switch mdio support from upstream U-Boot
+
+Notable changes:
+ * make an7583 memory initialization similar to an7581 one
+ * add an7583 scu/chip_scu helpers to access scu/chip_scu regmaps.
+ * fix misprint in an7583 'system-controller@1fb00000' node name
+ * always use board dts for nand partitioning
+
+Notes about en7523 support
+--------------------------
+This set of patches brings up more or less complete support of EN7523 SoC.
+Unfortunately, building of en7523 bootloader will require en7523-bl2.bin
+and en7523-bl31.bin blobs which is not available at the moment.
+
+This is the only known blocker for adding en7523 bootloader support.
+
+Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Link: https://github.com/openwrt/openwrt/pull/21984
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+
+diff --git a/package/boot/uboot-airoha/Makefile b/package/boot/uboot-airoha/Makefile
+index 100cee9c4c844a3cd3c297e633b7b37aa8d439a5..7520f92d08b5f87dcc442fe2c4a63818fa54ffeb 100644
+--- a/package/boot/uboot-airoha/Makefile
++++ b/package/boot/uboot-airoha/Makefile
+@@ -1,8 +1,8 @@
+ include $(TOPDIR)/rules.mk
+ include $(INCLUDE_DIR)/kernel.mk
+ 
+-PKG_VERSION:=2025.10
+-PKG_HASH:=b4f032848e56cc8f213ad59f9132c084dbbb632bc29176d024e58220e0efdf4a
++PKG_VERSION:=2026.01
++PKG_HASH:=b60d5865cefdbc75da8da4156c56c458e00de75a49b80c1a2e58a96e30ad0d54
+ PKG_BUILD_DEPENDS:=arm-trusted-firmware-tools/host
+ 
+ UBOOT_USE_INTREE_DTC:=1
+@@ -16,6 +16,16 @@ define U-Boot/Default
+   FIP_COMPRESS:=1
+ endef
+ 
++define U-Boot/en7523_rfb
++  NAME:=EN7523 Reference Board
++  UBOOT_CONFIG:=en7523_evb
++  BUILD_DEVICES:=airoha_en7523-evb
++  BUILD_SUBTARGET:=en7523
++  UBOOT_IMAGE:=u-boot.fip
++  BL2_IMAGE:=en7523-bl2.bin
++  BL31_IMAGE:=en7523-bl31.bin
++endef
++
+ define U-Boot/an7581_rfb
+   NAME:=AN7581 Reference Board
+   UBOOT_CONFIG:=an7581_evb
+@@ -37,6 +47,7 @@ define U-Boot/an7583_rfb
+ endef
+ 
+ UBOOT_TARGETS := \
++	en7523_rfb \
+ 	an7581_rfb \
+ 	an7583_rfb
+ 
+diff --git a/package/boot/uboot-airoha/patches/202-mtd-spinand-Use-the-spi-mem-dirmap-API.patch b/package/boot/uboot-airoha/patches/202-mtd-spinand-Use-the-spi-mem-dirmap-API.patch
+deleted file mode 100644
+index 319781893115bd18a914d5d649aa65423b73f242..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/202-mtd-spinand-Use-the-spi-mem-dirmap-API.patch
++++ /dev/null
+@@ -1,315 +0,0 @@
+-From f45ae9019afb838979792e4237e344003151fbf7 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Sun, 12 Nov 2023 20:57:52 +0300
+-Subject: [PATCH 1/5] mtd: spinand: Use the spi-mem dirmap API
+-
+-Make use of the spi-mem direct mapping API to let advanced controllers
+-optimize read/write operations when they support direct mapping.
+-
+-Based on a linux commit 981d1aa0697c ("mtd: spinand: Use the spi-mem dirmap API")
+-created by Boris Brezillon <bbrezillon@kernel.org> with additional
+-fixes taken from Linux 6.10.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+----
+- drivers/mtd/nand/spi/core.c | 185 +++++++++++++++++-------------------
+- include/linux/mtd/spinand.h |   7 ++
+- 2 files changed, 95 insertions(+), 97 deletions(-)
+-
+---- a/drivers/mtd/nand/spi/core.c
+-+++ b/drivers/mtd/nand/spi/core.c
+-@@ -41,21 +41,6 @@ struct spinand_plat {
+- /* SPI NAND index visible in MTD names */
+- static int spi_nand_idx;
+- 
+--static void spinand_cache_op_adjust_colum(struct spinand_device *spinand,
+--					  const struct nand_page_io_req *req,
+--					  u16 *column)
+--{
+--	struct nand_device *nand = spinand_to_nand(spinand);
+--	unsigned int shift;
+--
+--	if (nand->memorg.planes_per_lun < 2)
+--		return;
+--
+--	/* The plane number is passed in MSB just above the column address */
+--	shift = fls(nand->memorg.pagesize);
+--	*column |= req->pos.plane << shift;
+--}
+--
+- static int spinand_read_reg_op(struct spinand_device *spinand, u8 reg, u8 *val)
+- {
+- 	struct spi_mem_op op = SPINAND_GET_FEATURE_OP(reg,
+-@@ -249,27 +234,21 @@ static int spinand_load_page_op(struct spinand_device *spinand,
+- static int spinand_read_from_cache_op(struct spinand_device *spinand,
+- 				      const struct nand_page_io_req *req)
+- {
+--	struct spi_mem_op op = *spinand->op_templates.read_cache;
+- 	struct nand_device *nand = spinand_to_nand(spinand);
+- 	struct mtd_info *mtd = nanddev_to_mtd(nand);
+--	struct nand_page_io_req adjreq = *req;
+-+	struct spi_mem_dirmap_desc *rdesc;
+- 	unsigned int nbytes = 0;
+- 	void *buf = NULL;
+- 	u16 column = 0;
+--	int ret;
+-+	ssize_t ret;
+- 
+- 	if (req->datalen) {
+--		adjreq.datalen = nanddev_page_size(nand);
+--		adjreq.dataoffs = 0;
+--		adjreq.databuf.in = spinand->databuf;
+- 		buf = spinand->databuf;
+--		nbytes = adjreq.datalen;
+-+		nbytes = nanddev_page_size(nand);
+-+		column = 0;
+- 	}
+- 
+- 	if (req->ooblen) {
+--		adjreq.ooblen = nanddev_per_page_oobsize(nand);
+--		adjreq.ooboffs = 0;
+--		adjreq.oobbuf.in = spinand->oobbuf;
+- 		nbytes += nanddev_per_page_oobsize(nand);
+- 		if (!buf) {
+- 			buf = spinand->oobbuf;
+-@@ -277,28 +256,19 @@ static int spinand_read_from_cache_op(struct spinand_device *spinand,
+- 		}
+- 	}
+- 
+--	spinand_cache_op_adjust_colum(spinand, &adjreq, &column);
+--	op.addr.val = column;
+-+	rdesc = spinand->dirmaps[req->pos.plane].rdesc;
+- 
+--	/*
+--	 * Some controllers are limited in term of max RX data size. In this
+--	 * case, just repeat the READ_CACHE operation after updating the
+--	 * column.
+--	 */
+- 	while (nbytes) {
+--		op.data.buf.in = buf;
+--		op.data.nbytes = nbytes;
+--		ret = spi_mem_adjust_op_size(spinand->slave, &op);
+--		if (ret)
+-+		ret = spi_mem_dirmap_read(rdesc, column, nbytes, buf);
+-+		if (ret < 0)
+- 			return ret;
+- 
+--		ret = spi_mem_exec_op(spinand->slave, &op);
+--		if (ret)
+--			return ret;
+-+		if (!ret || ret > nbytes)
+-+			return -EIO;
+- 
+--		buf += op.data.nbytes;
+--		nbytes -= op.data.nbytes;
+--		op.addr.val += op.data.nbytes;
+-+		nbytes -= ret;
+-+		column += ret;
+-+		buf += ret;
+- 	}
+- 
+- 	if (req->datalen)
+-@@ -322,14 +292,12 @@ static int spinand_read_from_cache_op(struct spinand_device *spinand,
+- static int spinand_write_to_cache_op(struct spinand_device *spinand,
+- 				     const struct nand_page_io_req *req)
+- {
+--	struct spi_mem_op op = *spinand->op_templates.write_cache;
+- 	struct nand_device *nand = spinand_to_nand(spinand);
+- 	struct mtd_info *mtd = nanddev_to_mtd(nand);
+--	struct nand_page_io_req adjreq = *req;
+--	unsigned int nbytes = 0;
+--	void *buf = NULL;
+--	u16 column = 0;
+--	int ret;
+-+	struct spi_mem_dirmap_desc *wdesc;
+-+	unsigned int nbytes, column = 0;
+-+	void *buf = spinand->databuf;
+-+	ssize_t ret;
+- 
+- 	/*
+- 	 * Looks like PROGRAM LOAD (AKA write cache) does not necessarily reset
+-@@ -338,19 +306,12 @@ static int spinand_write_to_cache_op(struct spinand_device *spinand,
+- 	 * the data portion of the page, otherwise we might corrupt the BBM or
+- 	 * user data previously programmed in OOB area.
+- 	 */
+--	memset(spinand->databuf, 0xff,
+--	       nanddev_page_size(nand) +
+--	       nanddev_per_page_oobsize(nand));
+-+	nbytes = nanddev_page_size(nand) + nanddev_per_page_oobsize(nand);
+-+	memset(spinand->databuf, 0xff, nbytes);
+- 
+--	if (req->datalen) {
+-+	if (req->datalen)
+- 		memcpy(spinand->databuf + req->dataoffs, req->databuf.out,
+- 		       req->datalen);
+--		adjreq.dataoffs = 0;
+--		adjreq.datalen = nanddev_page_size(nand);
+--		adjreq.databuf.out = spinand->databuf;
+--		nbytes = adjreq.datalen;
+--		buf = spinand->databuf;
+--	}
+- 
+- 	if (req->ooblen) {
+- 		if (req->mode == MTD_OPS_AUTO_OOB)
+-@@ -361,52 +322,21 @@ static int spinand_write_to_cache_op(struct spinand_device *spinand,
+- 		else
+- 			memcpy(spinand->oobbuf + req->ooboffs, req->oobbuf.out,
+- 			       req->ooblen);
+--
+--		adjreq.ooblen = nanddev_per_page_oobsize(nand);
+--		adjreq.ooboffs = 0;
+--		nbytes += nanddev_per_page_oobsize(nand);
+--		if (!buf) {
+--			buf = spinand->oobbuf;
+--			column = nanddev_page_size(nand);
+--		}
+- 	}
+- 
+--	spinand_cache_op_adjust_colum(spinand, &adjreq, &column);
+--
+--	op = *spinand->op_templates.write_cache;
+--	op.addr.val = column;
+-+	wdesc = spinand->dirmaps[req->pos.plane].wdesc;
+- 
+--	/*
+--	 * Some controllers are limited in term of max TX data size. In this
+--	 * case, split the operation into one LOAD CACHE and one or more
+--	 * LOAD RANDOM CACHE.
+--	 */
+- 	while (nbytes) {
+--		op.data.buf.out = buf;
+--		op.data.nbytes = nbytes;
+--
+--		ret = spi_mem_adjust_op_size(spinand->slave, &op);
+--		if (ret)
+--			return ret;
+--
+--		ret = spi_mem_exec_op(spinand->slave, &op);
+--		if (ret)
+-+		ret = spi_mem_dirmap_write(wdesc, column, nbytes, buf);
+-+		if (ret < 0)
+- 			return ret;
+- 
+--		buf += op.data.nbytes;
+--		nbytes -= op.data.nbytes;
+--		op.addr.val += op.data.nbytes;
+-+		if (!ret || ret > nbytes)
+-+			return -EIO;
+- 
+--		/*
+--		 * We need to use the RANDOM LOAD CACHE operation if there's
+--		 * more than one iteration, because the LOAD operation resets
+--		 * the cache to 0xff.
+--		 */
+--		if (nbytes) {
+--			column = op.addr.val;
+--			op = *spinand->op_templates.update_cache;
+--			op.addr.val = column;
+--		}
+-+		nbytes -= ret;
+-+		column += ret;
+-+		buf += ret;
+- 	}
+- 
+- 	return 0;
+-@@ -819,6 +749,59 @@ static int spinand_mtd_block_isreserved(struct mtd_info *mtd, loff_t offs)
+- 	return ret;
+- }
+- 
+-+static int spinand_create_dirmap(struct spinand_device *spinand,
+-+				 unsigned int plane)
+-+{
+-+	struct nand_device *nand = spinand_to_nand(spinand);
+-+	struct spi_mem_dirmap_info info = {
+-+		.length = nanddev_page_size(nand) +
+-+			  nanddev_per_page_oobsize(nand),
+-+	};
+-+	struct spi_mem_dirmap_desc *desc;
+-+
+-+	/* The plane number is passed in MSB just above the column address */
+-+	info.offset = plane << fls(nand->memorg.pagesize);
+-+
+-+	info.op_tmpl = *spinand->op_templates.update_cache;
+-+	desc = spi_mem_dirmap_create(spinand->slave, &info);
+-+	if (IS_ERR(desc))
+-+		return PTR_ERR(desc);
+-+
+-+	spinand->dirmaps[plane].wdesc = desc;
+-+
+-+	info.op_tmpl = *spinand->op_templates.read_cache;
+-+	desc = spi_mem_dirmap_create(spinand->slave, &info);
+-+	if (IS_ERR(desc)) {
+-+		spi_mem_dirmap_destroy(spinand->dirmaps[plane].wdesc);
+-+		return PTR_ERR(desc);
+-+	}
+-+
+-+	spinand->dirmaps[plane].rdesc = desc;
+-+
+-+	return 0;
+-+}
+-+
+-+static int spinand_create_dirmaps(struct spinand_device *spinand)
+-+{
+-+	struct nand_device *nand = spinand_to_nand(spinand);
+-+	int i, ret;
+-+
+-+	spinand->dirmaps = devm_kzalloc(spinand->slave->dev,
+-+					sizeof(*spinand->dirmaps) *
+-+					nand->memorg.planes_per_lun,
+-+					GFP_KERNEL);
+-+	if (!spinand->dirmaps)
+-+		return -ENOMEM;
+-+
+-+	for (i = 0; i < nand->memorg.planes_per_lun; i++) {
+-+		ret = spinand_create_dirmap(spinand, i);
+-+		if (ret)
+-+			return ret;
+-+	}
+-+
+-+	return 0;
+-+}
+-+
+- static const struct nand_ops spinand_ops = {
+- 	.erase = spinand_erase,
+- 	.markbad = spinand_markbad,
+-@@ -1134,6 +1117,14 @@ static int spinand_init(struct spinand_device *spinand)
+- 		goto err_free_bufs;
+- 	}
+- 
+-+	ret = spinand_create_dirmaps(spinand);
+-+	if (ret) {
+-+		dev_err(spinand->slave->dev,
+-+			"Failed to create direct mappings for read/write operations (err = %d)\n",
+-+			ret);
+-+		goto err_manuf_cleanup;
+-+	}
+-+
+- 	/* After power up, all blocks are locked, so unlock them here. */
+- 	for (i = 0; i < nand->memorg.ntargets; i++) {
+- 		ret = spinand_select_target(spinand, i);
+-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+-index 6fe6fd520a4..163269313f6 100644
+---- a/include/linux/mtd/spinand.h
+-+++ b/include/linux/mtd/spinand.h
+-@@ -363,6 +363,11 @@ struct spinand_info {
+- 		__VA_ARGS__						\
+- 	}
+- 
+-+struct spinand_dirmap {
+-+	struct spi_mem_dirmap_desc *wdesc;
+-+	struct spi_mem_dirmap_desc *rdesc;
+-+};
+-+
+- /**
+-  * struct spinand_device - SPI NAND device instance
+-  * @base: NAND device instance
+-@@ -406,6 +411,8 @@ struct spinand_device {
+- 		const struct spi_mem_op *update_cache;
+- 	} op_templates;
+- 
+-+	struct spinand_dirmap *dirmaps;
+-+
+- 	int (*select_target)(struct spinand_device *spinand,
+- 			     unsigned int target);
+- 	unsigned int cur_target;
+diff --git a/package/boot/uboot-airoha/patches/203-spi-airoha-remove-unnecessary-operation-adjust_op_si.patch b/package/boot/uboot-airoha/patches/203-spi-airoha-remove-unnecessary-operation-adjust_op_si.patch
+deleted file mode 100644
+index 79435081a35bf2f84fec8e1849e3154e9d826d5c..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/203-spi-airoha-remove-unnecessary-operation-adjust_op_si.patch
++++ /dev/null
+@@ -1,46 +0,0 @@
+-From 1e29cf13c183ee457ed70055f5cbff60ff56a726 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Sat, 7 Jun 2025 07:18:12 +0300
+-Subject: [PATCH 2/5] spi: airoha: remove unnecessary operation adjust_op_size
+-
+-This operation is not needed because airoha_snand_write_data() and
+-airoha_snand_read_data() will properly handle data transfers above
+-SPI_MAX_TRANSFER_SIZE.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 16 ----------------
+- 1 file changed, 16 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -525,21 +525,6 @@ static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+- 				  SPI_NFI_CUS_SEC_SIZE, val);
+- }
+- 
+--static int airoha_snand_adjust_op_size(struct spi_slave *slave,
+--				       struct spi_mem_op *op)
+--{
+--	size_t max_len;
+--
+--	max_len = 1 + op->addr.nbytes + op->dummy.nbytes;
+--	if (max_len >= 160)
+--		return -EOPNOTSUPP;
+--
+--	if (op->data.nbytes > 160 - max_len)
+--		op->data.nbytes = 160 - max_len;
+--
+--	return 0;
+--}
+--
+- static bool airoha_snand_supports_op(struct spi_slave *slave,
+- 				     const struct spi_mem_op *op)
+- {
+-@@ -691,7 +676,6 @@ static int airoha_snand_nfi_setup(struct spi_slave *slave,
+- }
+- 
+- static const struct spi_controller_mem_ops airoha_snand_mem_ops = {
+--	.adjust_op_size = airoha_snand_adjust_op_size,
+- 	.supports_op = airoha_snand_supports_op,
+- 	.exec_op = airoha_snand_exec_op,
+- };
+diff --git a/package/boot/uboot-airoha/patches/204-spi-airoha-add-support-of-dual-quad-wires-spi-modes-.patch b/package/boot/uboot-airoha/patches/204-spi-airoha-add-support-of-dual-quad-wires-spi-modes-.patch
+deleted file mode 100644
+index f665e2ca9276d0c131eda93881158dd784ea0cc4..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/204-spi-airoha-add-support-of-dual-quad-wires-spi-modes-.patch
++++ /dev/null
+@@ -1,257 +0,0 @@
+-From fe8c32af9d8c8ff8875efece82001680fc300ad5 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Sat, 7 Jun 2025 09:09:38 +0300
+-Subject: [PATCH 3/5] spi: airoha: add support of dual/quad wires spi modes
+- to exec_op() handler
+-
+-Booting without this patch and disabled dirmap support results in
+-
+-[    2.980719] spi-nand spi0.0: Micron SPI NAND was found.
+-[    2.986040] spi-nand spi0.0: 256 MiB, block size: 128 KiB, page size: 2048, OOB size: 128
+-[    2.994709] 2 fixed-partitions partitions found on MTD device spi0.0
+-[    3.001075] Creating 2 MTD partitions on "spi0.0":
+-[    3.005862] 0x000000000000-0x000000020000 : "bl2"
+-[    3.011272] 0x000000020000-0x000010000000 : "ubi"
+-...
+-[    6.195594] ubi0: attaching mtd1
+-[   13.338398] ubi0: scanning is finished
+-[   13.342188] ubi0 error: ubi_read_volume_table: the layout volume was not found
+-[   13.349784] ubi0 error: ubi_attach_mtd_dev: failed to attach mtd1, error -22
+-[   13.356897] UBI error: cannot attach mtd1
+-
+-If dirmap is disabled or not supported in the spi driver, the dirmap requests
+-will be executed via exec_op() handler. Thus, if the hardware supports
+-dual/quad spi modes, then corresponding requests will be sent to exec_op()
+-handler. Current driver does not support such requests, so error is arrised.
+-As result the flash can't be read/write.
+-
+-This patch adds support of dual and quad wires spi modes to exec_op() handler.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 143 +++++++++++++++++++++++++++-------
+- 1 file changed, 117 insertions(+), 26 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -186,6 +186,14 @@
+- #define SPI_NAND_OP_RESET			0xff
+- #define SPI_NAND_OP_DIE_SELECT			0xc2
+- 
+-+/* SNAND FIFO commands */
+-+#define SNAND_FIFO_TX_BUSWIDTH_SINGLE		0x08
+-+#define SNAND_FIFO_TX_BUSWIDTH_DUAL		0x09
+-+#define SNAND_FIFO_TX_BUSWIDTH_QUAD		0x0a
+-+#define SNAND_FIFO_RX_BUSWIDTH_SINGLE		0x0c
+-+#define SNAND_FIFO_RX_BUSWIDTH_DUAL		0x0e
+-+#define SNAND_FIFO_RX_BUSWIDTH_QUAD		0x0f
+-+
+- #define SPI_NAND_CACHE_SIZE			(SZ_4K + SZ_256)
+- #define SPI_MAX_TRANSFER_SIZE			511
+- 
+-@@ -380,10 +388,26 @@ static int airoha_snand_set_mode(struct airoha_snand_priv *priv,
+- 	return regmap_write(priv->regmap_ctrl, REG_SPI_CTRL_DUMMY, 0);
+- }
+- 
+--static int airoha_snand_write_data(struct airoha_snand_priv *priv, u8 cmd,
+--				   const u8 *data, int len)
+-+static int airoha_snand_write_data(struct airoha_snand_priv *priv,
+-+				   const u8 *data, int len, int buswidth)
+- {
+- 	int i, data_len;
+-+	u8 cmd;
+-+
+-+	switch (buswidth) {
+-+	case 0:
+-+	case 1:
+-+		cmd = SNAND_FIFO_TX_BUSWIDTH_SINGLE;
+-+		break;
+-+	case 2:
+-+		cmd = SNAND_FIFO_TX_BUSWIDTH_DUAL;
+-+		break;
+-+	case 4:
+-+		cmd = SNAND_FIFO_TX_BUSWIDTH_QUAD;
+-+		break;
+-+	default:
+-+		return -EINVAL;
+-+	}
+- 
+- 	for (i = 0; i < len; i += data_len) {
+- 		int err;
+-@@ -402,16 +426,32 @@ static int airoha_snand_write_data(struct airoha_snand_priv *priv, u8 cmd,
+- 	return 0;
+- }
+- 
+--static int airoha_snand_read_data(struct airoha_snand_priv *priv, u8 *data,
+--				  int len)
+-+static int airoha_snand_read_data(struct airoha_snand_priv *priv,
+-+				  u8 *data, int len, int buswidth)
+- {
+- 	int i, data_len;
+-+	u8 cmd;
+-+
+-+	switch (buswidth) {
+-+	case 0:
+-+	case 1:
+-+		cmd = SNAND_FIFO_RX_BUSWIDTH_SINGLE;
+-+		break;
+-+	case 2:
+-+		cmd = SNAND_FIFO_RX_BUSWIDTH_DUAL;
+-+		break;
+-+	case 4:
+-+		cmd = SNAND_FIFO_RX_BUSWIDTH_QUAD;
+-+		break;
+-+	default:
+-+		return -EINVAL;
+-+	}
+- 
+- 	for (i = 0; i < len; i += data_len) {
+- 		int err;
+- 
+- 		data_len = min(len - i, SPI_MAX_TRANSFER_SIZE);
+--		err = airoha_snand_set_fifo_op(priv, 0xc, data_len);
+-+		err = airoha_snand_set_fifo_op(priv, cmd, data_len);
+- 		if (err)
+- 			return err;
+- 
+-@@ -525,6 +565,38 @@ static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+- 				  SPI_NFI_CUS_SEC_SIZE, val);
+- }
+- 
+-+static bool airoha_snand_is_page_ops(const struct spi_mem_op *op)
+-+{
+-+	if (op->addr.nbytes != 2)
+-+		return false;
+-+
+-+	if (op->addr.buswidth != 1 && op->addr.buswidth != 2 &&
+-+	    op->addr.buswidth != 4)
+-+		return false;
+-+
+-+	switch (op->data.dir) {
+-+	case SPI_MEM_DATA_IN:
+-+		if (op->dummy.nbytes * BITS_PER_BYTE / op->dummy.buswidth > 0xf)
+-+			return false;
+-+
+-+		/* quad in / quad out */
+-+		if (op->addr.buswidth == 4)
+-+			return op->data.buswidth == 4;
+-+
+-+		if (op->addr.buswidth == 2)
+-+			return op->data.buswidth == 2;
+-+
+-+		/* standard spi */
+-+		return op->data.buswidth == 4 || op->data.buswidth == 2 ||
+-+		       op->data.buswidth == 1;
+-+	case SPI_MEM_DATA_OUT:
+-+		return !op->dummy.nbytes && op->addr.buswidth == 1 &&
+-+		       (op->data.buswidth == 4 || op->data.buswidth == 1);
+-+	default:
+-+		return false;
+-+	}
+-+}
+-+
+- static bool airoha_snand_supports_op(struct spi_slave *slave,
+- 				     const struct spi_mem_op *op)
+- {
+-@@ -534,6 +606,9 @@ static bool airoha_snand_supports_op(struct spi_slave *slave,
+- 	if (op->cmd.buswidth != 1)
+- 		return false;
+- 
+-+	if (airoha_snand_is_page_ops(op))
+-+		return true;
+-+
+- 	return (!op->addr.nbytes || op->addr.buswidth == 1) &&
+- 	       (!op->dummy.nbytes || op->dummy.buswidth == 1) &&
+- 	       (!op->data.nbytes || op->data.buswidth == 1);
+-@@ -542,13 +617,29 @@ static bool airoha_snand_supports_op(struct spi_slave *slave,
+- static int airoha_snand_exec_op(struct spi_slave *slave,
+- 				const struct spi_mem_op *op)
+- {
+--	u8 data[8], cmd, opcode = op->cmd.opcode;
+- 	struct udevice *bus = slave->dev->parent;
+- 	struct airoha_snand_priv *priv;
+-+	int op_len, addr_len, dummy_len;
+-+	u8 buf[20], *data;
+- 	int i, err;
+- 
+- 	priv = dev_get_priv(bus);
+- 
+-+	op_len = op->cmd.nbytes;
+-+	addr_len = op->addr.nbytes;
+-+	dummy_len = op->dummy.nbytes;
+-+
+-+	if (op_len + dummy_len + addr_len > sizeof(buf))
+-+		return -EIO;
+-+
+-+	data = buf;
+-+	for (i = 0; i < op_len; i++)
+-+		*data++ = op->cmd.opcode >> (8 * (op_len - i - 1));
+-+	for (i = 0; i < addr_len; i++)
+-+		*data++ = op->addr.val >> (8 * (addr_len - i - 1));
+-+	for (i = 0; i < dummy_len; i++)
+-+		*data++ = 0xff;
+-+
+- 	/* switch to manual mode */
+- 	err = airoha_snand_set_mode(priv, SPI_MODE_MANUAL);
+- 	if (err < 0)
+-@@ -559,40 +650,40 @@ static int airoha_snand_exec_op(struct spi_slave *slave,
+- 		return err;
+- 
+- 	/* opcode */
+--	err = airoha_snand_write_data(priv, 0x8, &opcode, sizeof(opcode));
+-+	data = buf;
+-+	err = airoha_snand_write_data(priv, data, op_len,
+-+				      op->cmd.buswidth);
+- 	if (err)
+- 		return err;
+- 
+- 	/* addr part */
+--	cmd = opcode == SPI_NAND_OP_GET_FEATURE ? 0x11 : 0x8;
+--	put_unaligned_be64(op->addr.val, data);
+--
+--	for (i = ARRAY_SIZE(data) - op->addr.nbytes;
+--	     i < ARRAY_SIZE(data); i++) {
+--		err = airoha_snand_write_data(priv, cmd, &data[i],
+--					      sizeof(data[0]));
+-+	data += op_len;
+-+	if (addr_len) {
+-+		err = airoha_snand_write_data(priv, data, addr_len,
+-+					      op->addr.buswidth);
+- 		if (err)
+- 			return err;
+- 	}
+- 
+- 	/* dummy */
+--	data[0] = 0xff;
+--	for (i = 0; i < op->dummy.nbytes; i++) {
+--		err = airoha_snand_write_data(priv, 0x8, &data[0],
+--					      sizeof(data[0]));
+-+	data += addr_len;
+-+	if (dummy_len) {
+-+		err = airoha_snand_write_data(priv, data, dummy_len,
+-+					      op->dummy.buswidth);
+- 		if (err)
+- 			return err;
+- 	}
+- 
+- 	/* data */
+--	if (op->data.dir == SPI_MEM_DATA_IN) {
+--		err = airoha_snand_read_data(priv, op->data.buf.in,
+--					     op->data.nbytes);
+--		if (err)
+--			return err;
+--	} else {
+--		err = airoha_snand_write_data(priv, 0x8, op->data.buf.out,
+--					      op->data.nbytes);
+-+	if (op->data.nbytes) {
+-+		if (op->data.dir == SPI_MEM_DATA_IN)
+-+			err = airoha_snand_read_data(priv, op->data.buf.in,
+-+						     op->data.nbytes,
+-+						     op->data.buswidth);
+-+		else
+-+			err = airoha_snand_write_data(priv, op->data.buf.out,
+-+						      op->data.nbytes,
+-+						      op->data.buswidth);
+- 		if (err)
+- 			return err;
+- 	}
+diff --git a/package/boot/uboot-airoha/patches/205-spi-airoha-add-dma-support.patch b/package/boot/uboot-airoha/patches/205-spi-airoha-add-dma-support.patch
+deleted file mode 100644
+index 982af4cf9d797dd3de0d94b29905d42aee5a0547..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/205-spi-airoha-add-dma-support.patch
++++ /dev/null
+@@ -1,373 +0,0 @@
+-From f1fe2f174f26eb98af35862caea083439e08a344 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Sun, 8 Jun 2025 05:30:22 +0300
+-Subject: [PATCH 4/5] spi: airoha: add dma support
+-
+-This patch speed up cache reading/writing/updating opearions.
+-It was tested on en7523/an7581 and some other Airoha chips.
+-
+-It will speed up
+- * page reading/writing without oob
+- * page reading/writing with oob
+- * oob reading/writing (significant for UBI scanning)
+-
+-The only know issue appears in a very specific conditions for en7523 family
+-chips only.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 309 ++++++++++++++++++++++++++++++++++
+- 1 file changed, 309 insertions(+)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -141,12 +141,14 @@
+- #define SPI_NFI_CUS_SEC_SIZE_EN			BIT(16)
+- 
+- #define REG_SPI_NFI_RD_CTL2			0x0510
+-+
+- #define REG_SPI_NFI_RD_CTL3			0x0514
+- 
+- #define REG_SPI_NFI_PG_CTL1			0x0524
+- #define SPI_NFI_PG_LOAD_CMD			GENMASK(15, 8)
+- 
+- #define REG_SPI_NFI_PG_CTL2			0x0528
+-+
+- #define REG_SPI_NFI_NOR_PROG_ADDR		0x052c
+- #define REG_SPI_NFI_NOR_RD_ADDR			0x0534
+- 
+-@@ -219,6 +221,8 @@ struct airoha_snand_priv {
+- 		u8 sec_num;
+- 		u8 spare_size;
+- 	} nfi_cfg;
+-+
+-+	u8 *txrx_buf;
+- };
+- 
+- static int airoha_snand_set_fifo_op(struct airoha_snand_priv *priv,
+-@@ -614,6 +618,302 @@ static bool airoha_snand_supports_op(struct spi_slave *slave,
+- 	       (!op->data.nbytes || op->data.buswidth == 1);
+- }
+- 
+-+static int airoha_snand_dirmap_create(struct spi_mem_dirmap_desc *desc)
+-+{
+-+	struct spi_slave *slave = desc->slave;
+-+	struct udevice *bus = slave->dev->parent;
+-+	struct airoha_snand_priv *priv = dev_get_priv(bus);
+-+
+-+	if (!priv->txrx_buf)
+-+		return -EINVAL;
+-+
+-+	if (desc->info.offset + desc->info.length > U32_MAX)
+-+		return -EINVAL;
+-+
+-+	if (!airoha_snand_supports_op(desc->slave, &desc->info.op_tmpl))
+-+		return -EOPNOTSUPP;
+-+
+-+	return 0;
+-+}
+-+
+-+static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+-+					u64 offs, size_t len, void *buf)
+-+{
+-+	struct spi_mem_op *op = &desc->info.op_tmpl;
+-+	struct spi_slave *slave = desc->slave;
+-+	struct udevice *bus = slave->dev->parent;
+-+	struct airoha_snand_priv *priv = dev_get_priv(bus);
+-+	u8 *txrx_buf = priv->txrx_buf;
+-+	dma_addr_t dma_addr;
+-+	u32 val, rd_mode;
+-+	int err;
+-+
+-+	switch (op->cmd.opcode) {
+-+	case SPI_NAND_OP_READ_FROM_CACHE_DUAL:
+-+		rd_mode = 1;
+-+		break;
+-+	case SPI_NAND_OP_READ_FROM_CACHE_QUAD:
+-+		rd_mode = 2;
+-+		break;
+-+	default:
+-+		rd_mode = 0;
+-+		break;
+-+	}
+-+
+-+	err = airoha_snand_set_mode(priv, SPI_MODE_DMA);
+-+	if (err < 0)
+-+		return err;
+-+
+-+	err = airoha_snand_nfi_config(priv);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	dma_addr = dma_map_single(txrx_buf, SPI_NAND_CACHE_SIZE,
+-+				  DMA_FROM_DEVICE);
+-+
+-+	/* set dma addr */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_STRADDR,
+-+			   dma_addr);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set cust sec size */
+-+	val = priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num;
+-+	val = FIELD_PREP(SPI_NFI_READ_DATA_BYTE_NUM, val);
+-+	err = regmap_update_bits(priv->regmap_nfi,
+-+				 REG_SPI_NFI_SNF_MISC_CTL2,
+-+				 SPI_NFI_READ_DATA_BYTE_NUM, val);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set read command */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_RD_CTL2,
+-+			   op->cmd.opcode);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set read mode */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_SNF_MISC_CTL,
+-+			   FIELD_PREP(SPI_NFI_DATA_READ_WR_MODE, rd_mode));
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set read addr: zero page offset + descriptor read offset */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_RD_CTL3,
+-+			   desc->info.offset);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set nfi read */
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+				 SPI_NFI_OPMODE,
+-+				 FIELD_PREP(SPI_NFI_OPMODE, 6));
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+			      SPI_NFI_READ_MODE | SPI_NFI_DMA_MODE);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CMD, 0x0);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* trigger dma reading */
+-+	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+				SPI_NFI_RD_TRIG);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+			      SPI_NFI_RD_TRIG);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_read_poll_timeout(priv->regmap_nfi,
+-+				       REG_SPI_NFI_SNF_STA_CTL1, val,
+-+				       (val & SPI_NFI_READ_FROM_CACHE_DONE),
+-+				       0, 1 * MSEC_PER_SEC);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/*
+-+	 * SPI_NFI_READ_FROM_CACHE_DONE bit must be written at the end
+-+	 * of dirmap_read operation even if it is already set.
+-+	 */
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SNF_STA_CTL1,
+-+				 SPI_NFI_READ_FROM_CACHE_DONE,
+-+				 SPI_NFI_READ_FROM_CACHE_DONE);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_read_poll_timeout(priv->regmap_nfi, REG_SPI_NFI_INTR,
+-+				       val, (val & SPI_NFI_AHB_DONE), 0,
+-+				       1 * MSEC_PER_SEC);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* DMA read need delay for data ready from controller to DRAM */
+-+	udelay(1);
+-+
+-+	dma_unmap_single(dma_addr, SPI_NAND_CACHE_SIZE, DMA_FROM_DEVICE);
+-+
+-+	err = airoha_snand_set_mode(priv, SPI_MODE_MANUAL);
+-+	if (err < 0)
+-+		return err;
+-+
+-+	memcpy(buf, txrx_buf + offs, len);
+-+
+-+	return len;
+-+
+-+error_dma_unmap:
+-+	dma_unmap_single(dma_addr, SPI_NAND_CACHE_SIZE, DMA_FROM_DEVICE);
+-+error_dma_mode_off:
+-+	airoha_snand_set_mode(priv, SPI_MODE_MANUAL);
+-+	return err;
+-+}
+-+
+-+static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+-+					 u64 offs, size_t len, const void *buf)
+-+{
+-+	struct spi_slave *slave = desc->slave;
+-+	struct udevice *bus = slave->dev->parent;
+-+	struct airoha_snand_priv *priv = dev_get_priv(bus);
+-+	u8 *txrx_buf = priv->txrx_buf;
+-+	dma_addr_t dma_addr;
+-+	u32 wr_mode, val, opcode;
+-+	int err;
+-+
+-+	opcode = desc->info.op_tmpl.cmd.opcode;
+-+	switch (opcode) {
+-+	case SPI_NAND_OP_PROGRAM_LOAD_SINGLE:
+-+	case SPI_NAND_OP_PROGRAM_LOAD_RAMDOM_SINGLE:
+-+		wr_mode = 0;
+-+		break;
+-+	case SPI_NAND_OP_PROGRAM_LOAD_QUAD:
+-+	case SPI_NAND_OP_PROGRAM_LOAD_RAMDON_QUAD:
+-+		wr_mode = 2;
+-+		break;
+-+	default:
+-+		/* unknown opcode */
+-+		return -EOPNOTSUPP;
+-+	}
+-+
+-+	memcpy(txrx_buf + offs, buf, len);
+-+
+-+	err = airoha_snand_set_mode(priv, SPI_MODE_DMA);
+-+	if (err < 0)
+-+		return err;
+-+
+-+	err = airoha_snand_nfi_config(priv);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	dma_addr = dma_map_single(txrx_buf, SPI_NAND_CACHE_SIZE,
+-+				  DMA_TO_DEVICE);
+-+
+-+	/* set dma addr */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_STRADDR,
+-+			   dma_addr);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	val = FIELD_PREP(SPI_NFI_PROG_LOAD_BYTE_NUM,
+-+			 priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num);
+-+	err = regmap_update_bits(priv->regmap_nfi,
+-+				 REG_SPI_NFI_SNF_MISC_CTL2,
+-+				 SPI_NFI_PROG_LOAD_BYTE_NUM, val);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set write command */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_PG_CTL1,
+-+			   FIELD_PREP(SPI_NFI_PG_LOAD_CMD, opcode));
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set write mode */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_SNF_MISC_CTL,
+-+			   FIELD_PREP(SPI_NFI_DATA_READ_WR_MODE, wr_mode));
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* set write addr: zero page offset + descriptor write offset */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_PG_CTL2,
+-+			   desc->info.offset);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+				SPI_NFI_READ_MODE);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+				 SPI_NFI_OPMODE,
+-+				 FIELD_PREP(SPI_NFI_OPMODE, 3));
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+			      SPI_NFI_DMA_MODE);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CMD, 0x80);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/* trigger dma writing */
+-+	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+				SPI_NFI_WR_TRIG);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+			      SPI_NFI_WR_TRIG);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_read_poll_timeout(priv->regmap_nfi, REG_SPI_NFI_INTR,
+-+				       val, (val & SPI_NFI_AHB_DONE), 0,
+-+				       1 * MSEC_PER_SEC);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	err = regmap_read_poll_timeout(priv->regmap_nfi,
+-+				       REG_SPI_NFI_SNF_STA_CTL1, val,
+-+				       (val & SPI_NFI_LOAD_TO_CACHE_DONE),
+-+				       0, 1 * MSEC_PER_SEC);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	/*
+-+	 * SPI_NFI_LOAD_TO_CACHE_DONE bit must be written at the end
+-+	 * of dirmap_write operation even if it is already set.
+-+	 */
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SNF_STA_CTL1,
+-+				 SPI_NFI_LOAD_TO_CACHE_DONE,
+-+				 SPI_NFI_LOAD_TO_CACHE_DONE);
+-+	if (err)
+-+		goto error_dma_unmap;
+-+
+-+	dma_unmap_single(dma_addr, SPI_NAND_CACHE_SIZE, DMA_TO_DEVICE);
+-+
+-+	err = airoha_snand_set_mode(priv, SPI_MODE_MANUAL);
+-+	if (err < 0)
+-+		return err;
+-+
+-+	return len;
+-+
+-+error_dma_unmap:
+-+	dma_unmap_single(dma_addr, SPI_NAND_CACHE_SIZE, DMA_TO_DEVICE);
+-+error_dma_mode_off:
+-+	airoha_snand_set_mode(priv, SPI_MODE_MANUAL);
+-+	return err;
+-+}
+-+
+- static int airoha_snand_exec_op(struct spi_slave *slave,
+- 				const struct spi_mem_op *op)
+- {
+-@@ -696,6 +996,12 @@ static int airoha_snand_probe(struct udevice *dev)
+- 	struct airoha_snand_priv *priv = dev_get_priv(dev);
+- 	int ret;
+- 
+-+	priv->txrx_buf = memalign(ARCH_DMA_MINALIGN, SPI_NAND_CACHE_SIZE);
+-+	if (!priv->txrx_buf) {
+-+		dev_err(dev, "failed to alloacate memory for dirmap\n");
+-+		return -ENOMEM;
+-+	}
+-+
+- 	ret = regmap_init_mem_index(dev_ofnode(dev), &priv->regmap_ctrl, 0);
+- 	if (ret) {
+- 		dev_err(dev, "failed to init spi ctrl regmap\n");
+-@@ -769,6 +1075,9 @@ static int airoha_snand_nfi_setup(struct spi_slave *slave,
+- static const struct spi_controller_mem_ops airoha_snand_mem_ops = {
+- 	.supports_op = airoha_snand_supports_op,
+- 	.exec_op = airoha_snand_exec_op,
+-+	.dirmap_create = airoha_snand_dirmap_create,
+-+	.dirmap_read = airoha_snand_dirmap_read,
+-+	.dirmap_write = airoha_snand_dirmap_write,
+- };
+- 
+- static const struct dm_spi_ops airoha_snfi_spi_ops = {
+diff --git a/package/boot/uboot-airoha/patches/206-spi-airoha-support-of-dualio-quadio-flash-reading-co.patch b/package/boot/uboot-airoha/patches/206-spi-airoha-support-of-dualio-quadio-flash-reading-co.patch
+deleted file mode 100644
+index f2d8ef4404776eead9f0848482828c627cd241bb..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/206-spi-airoha-support-of-dualio-quadio-flash-reading-co.patch
++++ /dev/null
+@@ -1,89 +0,0 @@
+-From 2ebbccfa053993d0fe90bee523020a8f796e8988 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Sun, 8 Jun 2025 05:30:22 +0300
+-Subject: [PATCH 5/5] spi: airoha: support of dualio/quadio flash reading
+- commands
+-
+-Airoha snfi spi controller supports acceleration of DUAL/QUAD
+-operations, but does not supports DUAL_IO/QUAD_IO operations.
+-Luckily DUAL/QUAD operations do the same as DUAL_IO/QUAD_IO ones,
+-so we can issue corresponding DUAL/QUAD operation instead of
+-DUAL_IO/QUAD_IO one.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 27 +++++++++++++++++++++------
+- 1 file changed, 21 insertions(+), 6 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -141,6 +141,7 @@
+- #define SPI_NFI_CUS_SEC_SIZE_EN			BIT(16)
+- 
+- #define REG_SPI_NFI_RD_CTL2			0x0510
+-+#define SPI_NFI_DATA_READ_CMD			GENMASK(7, 0)
+- 
+- #define REG_SPI_NFI_RD_CTL3			0x0514
+- 
+-@@ -175,7 +176,9 @@
+- #define SPI_NAND_OP_READ_FROM_CACHE_SINGLE	0x03
+- #define SPI_NAND_OP_READ_FROM_CACHE_SINGLE_FAST	0x0b
+- #define SPI_NAND_OP_READ_FROM_CACHE_DUAL	0x3b
+-+#define SPI_NAND_OP_READ_FROM_CACHE_DUALIO	0xbb
+- #define SPI_NAND_OP_READ_FROM_CACHE_QUAD	0x6b
+-+#define SPI_NAND_OP_READ_FROM_CACHE_QUADIO	0xeb
+- #define SPI_NAND_OP_WRITE_ENABLE		0x06
+- #define SPI_NAND_OP_WRITE_DISABLE		0x04
+- #define SPI_NAND_OP_PROGRAM_LOAD_SINGLE		0x02
+-@@ -639,25 +642,37 @@ static int airoha_snand_dirmap_create(struct spi_mem_dirmap_desc *desc)
+- static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 					u64 offs, size_t len, void *buf)
+- {
+--	struct spi_mem_op *op = &desc->info.op_tmpl;
+- 	struct spi_slave *slave = desc->slave;
+- 	struct udevice *bus = slave->dev->parent;
+- 	struct airoha_snand_priv *priv = dev_get_priv(bus);
+- 	u8 *txrx_buf = priv->txrx_buf;
+- 	dma_addr_t dma_addr;
+--	u32 val, rd_mode;
+-+	u32 val, rd_mode, opcode;
+- 	int err;
+- 
+--	switch (op->cmd.opcode) {
+-+	/*
+-+	 * DUALIO and QUADIO opcodes are not supported by the spi controller,
+-+	 * replace them with supported opcodes.
+-+	 */
+-+	opcode = desc->info.op_tmpl.cmd.opcode;
+-+	switch (opcode) {
+-+	case SPI_NAND_OP_READ_FROM_CACHE_SINGLE:
+-+	case SPI_NAND_OP_READ_FROM_CACHE_SINGLE_FAST:
+-+		rd_mode = 0;
+-+		break;
+- 	case SPI_NAND_OP_READ_FROM_CACHE_DUAL:
+-+	case SPI_NAND_OP_READ_FROM_CACHE_DUALIO:
+-+		opcode = SPI_NAND_OP_READ_FROM_CACHE_DUAL;
+- 		rd_mode = 1;
+- 		break;
+- 	case SPI_NAND_OP_READ_FROM_CACHE_QUAD:
+-+	case SPI_NAND_OP_READ_FROM_CACHE_QUADIO:
+-+		opcode = SPI_NAND_OP_READ_FROM_CACHE_QUAD;
+- 		rd_mode = 2;
+- 		break;
+- 	default:
+--		rd_mode = 0;
+--		break;
+-+		/* unknown opcode */
+-+		return -EOPNOTSUPP;
+- 	}
+- 
+- 	err = airoha_snand_set_mode(priv, SPI_MODE_DMA);
+-@@ -688,7 +703,7 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 
+- 	/* set read command */
+- 	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_RD_CTL2,
+--			   op->cmd.opcode);
+-+			   FIELD_PREP(SPI_NFI_DATA_READ_CMD, opcode));
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+diff --git a/package/boot/uboot-airoha/patches/207-spi-airoha-avoid-setting-of-page-oob-sizes-in-REG_SP.patch b/package/boot/uboot-airoha/patches/207-spi-airoha-avoid-setting-of-page-oob-sizes-in-REG_SP.patch
+deleted file mode 100644
+index a619627347a9916e598d5eb6c6b2c34fef495679..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/207-spi-airoha-avoid-setting-of-page-oob-sizes-in-REG_SP.patch
++++ /dev/null
+@@ -1,62 +0,0 @@
+-From 073de6579cf8c7599d925852bb0fc7fa50378dd3 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Thu, 14 Aug 2025 18:00:32 +0300
+-Subject: [PATCH 1/4] spi: airoha: avoid setting of page/oob sizes in
+- REG_SPI_NFI_PAGEFMT
+-
+-spi-airoha-snfi uses custom sector size in REG_SPI_NFI_SECCUS_SIZE
+-register, so setting of page/oob sizes in REG_SPI_NFI_PAGEFMT is not
+-required.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 38 -----------------------------------
+- 1 file changed, 38 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -514,44 +514,6 @@ static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+- 	if (err)
+- 		return err;
+- 
+--	/* page format */
+--	switch (priv->nfi_cfg.spare_size) {
+--	case 26:
+--		val = FIELD_PREP(SPI_NFI_SPARE_SIZE, 0x1);
+--		break;
+--	case 27:
+--		val = FIELD_PREP(SPI_NFI_SPARE_SIZE, 0x2);
+--		break;
+--	case 28:
+--		val = FIELD_PREP(SPI_NFI_SPARE_SIZE, 0x3);
+--		break;
+--	default:
+--		val = FIELD_PREP(SPI_NFI_SPARE_SIZE, 0x0);
+--		break;
+--	}
+--
+--	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_PAGEFMT,
+--				 SPI_NFI_SPARE_SIZE, val);
+--	if (err)
+--		return err;
+--
+--	switch (priv->nfi_cfg.page_size) {
+--	case 2048:
+--		val = FIELD_PREP(SPI_NFI_PAGE_SIZE, 0x1);
+--		break;
+--	case 4096:
+--		val = FIELD_PREP(SPI_NFI_PAGE_SIZE, 0x2);
+--		break;
+--	default:
+--		val = FIELD_PREP(SPI_NFI_PAGE_SIZE, 0x0);
+--		break;
+--	}
+--
+--	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_PAGEFMT,
+--				 SPI_NFI_PAGE_SIZE, val);
+--	if (err)
+--		return err;
+--
+- 	/* sec num */
+- 	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+diff --git a/package/boot/uboot-airoha/patches/208-spi-airoha-reduce-the-number-of-modification-of-REG_.patch b/package/boot/uboot-airoha/patches/208-spi-airoha-reduce-the-number-of-modification-of-REG_.patch
+deleted file mode 100644
+index 92db90e5d23c0336db39d4ce2bffc1cb00e778d0..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/208-spi-airoha-reduce-the-number-of-modification-of-REG_.patch
++++ /dev/null
+@@ -1,195 +0,0 @@
+-From 3bd6ca4ddaae4f0a667a9359c8092d2271006687 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Thu, 14 Aug 2025 18:49:34 +0300
+-Subject: [PATCH 2/4] spi: airoha: reduce the number of modification of
+- REG_SPI_NFI_CNFG and REG_SPI_NFI_SECCUS_SIZE registers
+-
+-This just reduce the number of modification of REG_SPI_NFI_CNFG and
+-REG_SPI_NFI_SECCUS_SIZE registers during dirmap operation.
+-
+-This patch is a necessary step to avoid usage of flash specific
+-parameters.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 134 +++++++++++++++++++++++++---------
+- 1 file changed, 101 insertions(+), 33 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -641,7 +641,47 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	if (err < 0)
+- 		return err;
+- 
+--	err = airoha_snand_nfi_config(priv);
+-+	/* NFI reset */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+			   SPI_NFI_FIFO_FLUSH | SPI_NFI_RST);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	/* NFI configure:
+-+	 *   - No AutoFDM (custom sector size (SECCUS) register will be used)
+-+	 *   - No SoC's hardware ECC (flash internal ECC will be used)
+-+	 *   - Use burst mode (faster, but requires 16 byte alignment for addresses)
+-+	 *   - Setup for reading (SPI_NFI_READ_MODE)
+-+	 *   - Setup reading command: FIELD_PREP(SPI_NFI_OPMODE, 6)
+-+	 *   - Use DMA instead of PIO for data reading
+-+	 *   - Use AHB bus for DMA transfer
+-+	 */
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+				 SPI_NFI_DMA_MODE |
+-+				 SPI_NFI_READ_MODE |
+-+				 SPI_NFI_DMA_BURST_EN |
+-+				 SPI_NFI_HW_ECC_EN |
+-+				 SPI_NFI_AUTO_FDM_EN |
+-+				 SPI_NFI_OPMODE,
+-+				 SPI_NFI_DMA_MODE |
+-+				 SPI_NFI_READ_MODE |
+-+				 SPI_NFI_DMA_BURST_EN |
+-+				 FIELD_PREP(SPI_NFI_OPMODE, 6));
+-+
+-+	/* Set number of sector will be read */
+-+	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+				 SPI_NFI_SEC_NUM, val);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	/* Set custom sector size */
+-+	val = priv->nfi_cfg.sec_size;
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SECCUS_SIZE,
+-+				 SPI_NFI_CUS_SEC_SIZE |
+-+				 SPI_NFI_CUS_SEC_SIZE_EN,
+-+				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, val) |
+-+				 SPI_NFI_CUS_SEC_SIZE_EN);
+- 	if (err)
+- 		goto error_dma_mode_off;
+- 
+-@@ -654,7 +694,14 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+--	/* set cust sec size */
+-+	/*
+-+	 * Setup transfer length
+-+	 * ---------------------
+-+	 * The following rule MUST be met:
+-+	 *     transfer_length =
+-+	 *        = NFI_SNF_MISC_CTL2.read_data_byte_number =
+-+	 *        = NFI_CON.sector_number * NFI_SECCUS.custom_sector_size
+-+	 */
+- 	val = priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num;
+- 	val = FIELD_PREP(SPI_NFI_READ_DATA_BYTE_NUM, val);
+- 	err = regmap_update_bits(priv->regmap_nfi,
+-@@ -681,18 +728,6 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+--	/* set nfi read */
+--	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--				 SPI_NFI_OPMODE,
+--				 FIELD_PREP(SPI_NFI_OPMODE, 6));
+--	if (err)
+--		goto error_dma_unmap;
+--
+--	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--			      SPI_NFI_READ_MODE | SPI_NFI_DMA_MODE);
+--	if (err)
+--		goto error_dma_unmap;
+--
+- 	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CMD, 0x0);
+- 	if (err)
+- 		goto error_dma_unmap;
+-@@ -783,7 +818,48 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	if (err < 0)
+- 		return err;
+- 
+--	err = airoha_snand_nfi_config(priv);
+-+	/* NFI reset */
+-+	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+			   SPI_NFI_FIFO_FLUSH | SPI_NFI_RST);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	/*
+-+	 * NFI configure:
+-+	 *   - No AutoFDM (custom sector size (SECCUS) register will be used)
+-+	 *   - No SoC's hardware ECC (flash internal ECC will be used)
+-+	 *   - Use burst mode (faster, but requires 16 byte alignment for addresses)
+-+	 *   - Setup for writing (SPI_NFI_READ_MODE bit is cleared)
+-+	 *   - Setup writing command: FIELD_PREP(SPI_NFI_OPMODE, 3)
+-+	 *   - Use DMA instead of PIO for data writing
+-+	 */
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+-+				 SPI_NFI_DMA_MODE |
+-+				 SPI_NFI_READ_MODE |
+-+				 SPI_NFI_DMA_BURST_EN |
+-+				 SPI_NFI_HW_ECC_EN |
+-+				 SPI_NFI_AUTO_FDM_EN |
+-+				 SPI_NFI_OPMODE,
+-+				 SPI_NFI_DMA_MODE |
+-+				 SPI_NFI_DMA_BURST_EN |
+-+				 FIELD_PREP(SPI_NFI_OPMODE, 3));
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	/* Set number of sector will be written */
+-+	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+-+				 SPI_NFI_SEC_NUM, val);
+-+	if (err)
+-+		goto error_dma_mode_off;
+-+
+-+	/* Set custom sector size */
+-+	val = priv->nfi_cfg.sec_size;
+-+	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SECCUS_SIZE,
+-+				 SPI_NFI_CUS_SEC_SIZE |
+-+				 SPI_NFI_CUS_SEC_SIZE_EN,
+-+				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, val) |
+-+				 SPI_NFI_CUS_SEC_SIZE_EN);
+- 	if (err)
+- 		goto error_dma_mode_off;
+- 
+-@@ -796,8 +872,16 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+--	val = FIELD_PREP(SPI_NFI_PROG_LOAD_BYTE_NUM,
+--			 priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num);
+-+	/*
+-+	 * Setup transfer length
+-+	 * ---------------------
+-+	 * The following rule MUST be met:
+-+	 *     transfer_length =
+-+	 *        = NFI_SNF_MISC_CTL2.write_data_byte_number =
+-+	 *        = NFI_CON.sector_number * NFI_SECCUS.custom_sector_size
+-+	 */
+-+	val = priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num;
+-+	val = FIELD_PREP(SPI_NFI_PROG_LOAD_BYTE_NUM, val);
+- 	err = regmap_update_bits(priv->regmap_nfi,
+- 				 REG_SPI_NFI_SNF_MISC_CTL2,
+- 				 SPI_NFI_PROG_LOAD_BYTE_NUM, val);
+-@@ -822,22 +906,6 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+--	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--				SPI_NFI_READ_MODE);
+--	if (err)
+--		goto error_dma_unmap;
+--
+--	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--				 SPI_NFI_OPMODE,
+--				 FIELD_PREP(SPI_NFI_OPMODE, 3));
+--	if (err)
+--		goto error_dma_unmap;
+--
+--	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--			      SPI_NFI_DMA_MODE);
+--	if (err)
+--		goto error_dma_unmap;
+--
+- 	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CMD, 0x80);
+- 	if (err)
+- 		goto error_dma_unmap;
+diff --git a/package/boot/uboot-airoha/patches/209-spi-airoha-set-custom-sector-size-equal-to-flash-pag.patch b/package/boot/uboot-airoha/patches/209-spi-airoha-set-custom-sector-size-equal-to-flash-pag.patch
+deleted file mode 100644
+index 55a953d14887a6340862e6292f50b67e1efaed9c..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/209-spi-airoha-set-custom-sector-size-equal-to-flash-pag.patch
++++ /dev/null
+@@ -1,135 +0,0 @@
+-From 8e6cba428ce48005b5b8be64c2a08c98d04865e9 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Thu, 14 Aug 2025 22:47:17 +0300
+-Subject: [PATCH 3/4] spi: airoha: set custom sector size equal to flash page
+- size
+-
+-Set custom sector size equal to flash page size including oob. Thus we
+-will always read a single sector. The maximum custom sector size is
+-8187, so all possible flash sector sizes are supported.
+-
+-This patch is a necessary step to avoid usage of flash specific
+-parameters.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 35 +++++++++++++++++++----------------
+- 1 file changed, 19 insertions(+), 16 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -515,7 +515,7 @@ static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+- 		return err;
+- 
+- 	/* sec num */
+--	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+-+	val = FIELD_PREP(SPI_NFI_SEC_NUM, 1);
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+- 				 SPI_NFI_SEC_NUM, val);
+- 	if (err)
+-@@ -528,7 +528,8 @@ static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+- 		return err;
+- 
+- 	/* set cust sec size */
+--	val = FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, priv->nfi_cfg.sec_size);
+-+	val = FIELD_PREP(SPI_NFI_CUS_SEC_SIZE,
+-+			 priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num);
+- 	return regmap_update_bits(priv->regmap_nfi,
+- 				  REG_SPI_NFI_SECCUS_SIZE,
+- 				  SPI_NFI_CUS_SEC_SIZE, val);
+-@@ -610,8 +611,11 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	u8 *txrx_buf = priv->txrx_buf;
+- 	dma_addr_t dma_addr;
+- 	u32 val, rd_mode, opcode;
+-+	size_t bytes;
+- 	int err;
+- 
+-+	bytes = priv->nfi_cfg.sec_num * priv->nfi_cfg.sec_size;
+-+
+- 	/*
+- 	 * DUALIO and QUADIO opcodes are not supported by the spi controller,
+- 	 * replace them with supported opcodes.
+-@@ -669,18 +673,17 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 				 FIELD_PREP(SPI_NFI_OPMODE, 6));
+- 
+- 	/* Set number of sector will be read */
+--	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+--				 SPI_NFI_SEC_NUM, val);
+-+				 SPI_NFI_SEC_NUM,
+-+				 FIELD_PREP(SPI_NFI_SEC_NUM, 1));
+- 	if (err)
+- 		goto error_dma_mode_off;
+- 
+- 	/* Set custom sector size */
+--	val = priv->nfi_cfg.sec_size;
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SECCUS_SIZE,
+- 				 SPI_NFI_CUS_SEC_SIZE |
+- 				 SPI_NFI_CUS_SEC_SIZE_EN,
+--				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, val) |
+-+				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, bytes) |
+- 				 SPI_NFI_CUS_SEC_SIZE_EN);
+- 	if (err)
+- 		goto error_dma_mode_off;
+-@@ -702,11 +705,10 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	 *        = NFI_SNF_MISC_CTL2.read_data_byte_number =
+- 	 *        = NFI_CON.sector_number * NFI_SECCUS.custom_sector_size
+- 	 */
+--	val = priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num;
+--	val = FIELD_PREP(SPI_NFI_READ_DATA_BYTE_NUM, val);
+- 	err = regmap_update_bits(priv->regmap_nfi,
+- 				 REG_SPI_NFI_SNF_MISC_CTL2,
+--				 SPI_NFI_READ_DATA_BYTE_NUM, val);
+-+				 SPI_NFI_READ_DATA_BYTE_NUM,
+-+				 FIELD_PREP(SPI_NFI_READ_DATA_BYTE_NUM, bytes));
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+-@@ -795,8 +797,11 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	u8 *txrx_buf = priv->txrx_buf;
+- 	dma_addr_t dma_addr;
+- 	u32 wr_mode, val, opcode;
+-+	size_t bytes;
+- 	int err;
+- 
+-+	bytes = priv->nfi_cfg.sec_num * priv->nfi_cfg.sec_size;
+-+
+- 	opcode = desc->info.op_tmpl.cmd.opcode;
+- 	switch (opcode) {
+- 	case SPI_NAND_OP_PROGRAM_LOAD_SINGLE:
+-@@ -847,18 +852,17 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 		goto error_dma_mode_off;
+- 
+- 	/* Set number of sector will be written */
+--	val = FIELD_PREP(SPI_NFI_SEC_NUM, priv->nfi_cfg.sec_num);
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+--				 SPI_NFI_SEC_NUM, val);
+-+				 SPI_NFI_SEC_NUM,
+-+				 FIELD_PREP(SPI_NFI_SEC_NUM, 1));
+- 	if (err)
+- 		goto error_dma_mode_off;
+- 
+- 	/* Set custom sector size */
+--	val = priv->nfi_cfg.sec_size;
+- 	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_SECCUS_SIZE,
+- 				 SPI_NFI_CUS_SEC_SIZE |
+- 				 SPI_NFI_CUS_SEC_SIZE_EN,
+--				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, val) |
+-+				 FIELD_PREP(SPI_NFI_CUS_SEC_SIZE, bytes) |
+- 				 SPI_NFI_CUS_SEC_SIZE_EN);
+- 	if (err)
+- 		goto error_dma_mode_off;
+-@@ -880,11 +884,10 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	 *        = NFI_SNF_MISC_CTL2.write_data_byte_number =
+- 	 *        = NFI_CON.sector_number * NFI_SECCUS.custom_sector_size
+- 	 */
+--	val = priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num;
+--	val = FIELD_PREP(SPI_NFI_PROG_LOAD_BYTE_NUM, val);
+- 	err = regmap_update_bits(priv->regmap_nfi,
+- 				 REG_SPI_NFI_SNF_MISC_CTL2,
+--				 SPI_NFI_PROG_LOAD_BYTE_NUM, val);
+-+				 SPI_NFI_PROG_LOAD_BYTE_NUM,
+-+				 FIELD_PREP(SPI_NFI_PROG_LOAD_BYTE_NUM, bytes));
+- 	if (err)
+- 		goto error_dma_unmap;
+- 
+diff --git a/package/boot/uboot-airoha/patches/210-spi-airoha-avoid-usage-of-flash-specific-parameters.patch b/package/boot/uboot-airoha/patches/210-spi-airoha-avoid-usage-of-flash-specific-parameters.patch
+deleted file mode 100644
+index 216a515a980abdb346d1d63105feb862028cc1ae..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/210-spi-airoha-avoid-usage-of-flash-specific-parameters.patch
++++ /dev/null
+@@ -1,170 +0,0 @@
+-From f015b0211a36bf818023c82ab44644631987d23c Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Thu, 14 Aug 2025 23:56:24 +0300
+-Subject: [PATCH 4/4] spi: airoha: avoid usage of flash specific parameters
+-
+-The spinand driver do 3 type of dirmap requests:
+- * read/write whole flash page without oob
+-   (offs = 0, len = page_size)
+- * read/write whole flash page including oob
+-   (offs = 0, len = page_size + oob_size)
+- * read/write oob area only
+-   (offs = page_size, len = oob_size)
+-
+-The trick is:
+- * read/write a single "sector"
+- * set a custom sector size equal to offs + len. It's a bit safer to
+-   round up "sector size" value 64.
+- * set the transfer length equal to custom sector size
+-
+-And it works!
+-
+-Thus we can find all data directly from dirmap request, so flash specific
+-parameters is not needed anymore. Also
+- * airoha_snand_nfi_config(),
+- * airoha_snand_nfi_setup()
+-functions becomes unnecessary.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/spi/airoha_snfi_spi.c | 94 ++---------------------------------
+- 1 file changed, 4 insertions(+), 90 deletions(-)
+-
+---- a/drivers/spi/airoha_snfi_spi.c
+-+++ b/drivers/spi/airoha_snfi_spi.c
+-@@ -218,13 +218,6 @@ struct airoha_snand_priv {
+- 	struct regmap *regmap_nfi;
+- 	struct clk *spi_clk;
+- 
+--	struct {
+--		size_t page_size;
+--		size_t sec_size;
+--		u8 sec_num;
+--		u8 spare_size;
+--	} nfi_cfg;
+--
+- 	u8 *txrx_buf;
+- };
+- 
+-@@ -486,55 +479,6 @@ static int airoha_snand_nfi_init(struct airoha_snand_priv *priv)
+- 				  SPI_NFI_ALL_IRQ_EN, SPI_NFI_AHB_DONE_EN);
+- }
+- 
+--static int airoha_snand_nfi_config(struct airoha_snand_priv *priv)
+--{
+--	int err;
+--	u32 val;
+--
+--	err = regmap_write(priv->regmap_nfi, REG_SPI_NFI_CON,
+--			   SPI_NFI_FIFO_FLUSH | SPI_NFI_RST);
+--	if (err)
+--		return err;
+--
+--	/* auto FDM */
+--	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--				SPI_NFI_AUTO_FDM_EN);
+--	if (err)
+--		return err;
+--
+--	/* HW ECC */
+--	err = regmap_clear_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--				SPI_NFI_HW_ECC_EN);
+--	if (err)
+--		return err;
+--
+--	/* DMA Burst */
+--	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_CNFG,
+--			      SPI_NFI_DMA_BURST_EN);
+--	if (err)
+--		return err;
+--
+--	/* sec num */
+--	val = FIELD_PREP(SPI_NFI_SEC_NUM, 1);
+--	err = regmap_update_bits(priv->regmap_nfi, REG_SPI_NFI_CON,
+--				 SPI_NFI_SEC_NUM, val);
+--	if (err)
+--		return err;
+--
+--	/* enable cust sec size */
+--	err = regmap_set_bits(priv->regmap_nfi, REG_SPI_NFI_SECCUS_SIZE,
+--			      SPI_NFI_CUS_SEC_SIZE_EN);
+--	if (err)
+--		return err;
+--
+--	/* set cust sec size */
+--	val = FIELD_PREP(SPI_NFI_CUS_SEC_SIZE,
+--			 priv->nfi_cfg.sec_size * priv->nfi_cfg.sec_num);
+--	return regmap_update_bits(priv->regmap_nfi,
+--				  REG_SPI_NFI_SECCUS_SIZE,
+--				  SPI_NFI_CUS_SEC_SIZE, val);
+--}
+--
+- static bool airoha_snand_is_page_ops(const struct spi_mem_op *op)
+- {
+- 	if (op->addr.nbytes != 2)
+-@@ -614,7 +558,8 @@ static ssize_t airoha_snand_dirmap_read(struct spi_mem_dirmap_desc *desc,
+- 	size_t bytes;
+- 	int err;
+- 
+--	bytes = priv->nfi_cfg.sec_num * priv->nfi_cfg.sec_size;
+-+	/* minimum oob size is 64 */
+-+	bytes = round_up(offs + len, 64);
+- 
+- 	/*
+- 	 * DUALIO and QUADIO opcodes are not supported by the spi controller,
+-@@ -800,7 +745,8 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
+- 	size_t bytes;
+- 	int err;
+- 
+--	bytes = priv->nfi_cfg.sec_num * priv->nfi_cfg.sec_size;
+-+	/* minimum oob size is 64 */
+-+	bytes = round_up(offs + len, 64);
+- 
+- 	opcode = desc->info.op_tmpl.cmd.opcode;
+- 	switch (opcode) {
+-@@ -1089,37 +1035,6 @@ static int airoha_snand_nfi_set_mode(struct udevice *bus, uint mode)
+- 	return 0;
+- }
+- 
+--static int airoha_snand_nfi_setup(struct spi_slave *slave,
+--				  const struct spinand_info *spinand_info)
+--{
+--	struct udevice *bus = slave->dev->parent;
+--	struct airoha_snand_priv *priv;
+--	u32 sec_size, sec_num;
+--	int pagesize, oobsize;
+--
+--	priv = dev_get_priv(bus);
+--
+--	pagesize = spinand_info->memorg.pagesize;
+--	oobsize = spinand_info->memorg.oobsize;
+--
+--	if (pagesize == 2 * 1024)
+--		sec_num = 4;
+--	else if (pagesize == 4 * 1024)
+--		sec_num = 8;
+--	else
+--		sec_num = 1;
+--
+--	sec_size = (pagesize + oobsize) / sec_num;
+--
+--	/* init default value */
+--	priv->nfi_cfg.sec_size = sec_size;
+--	priv->nfi_cfg.sec_num = sec_num;
+--	priv->nfi_cfg.page_size = round_down(sec_size * sec_num, 1024);
+--	priv->nfi_cfg.spare_size = 16;
+--
+--	return airoha_snand_nfi_config(priv);
+--}
+--
+- static const struct spi_controller_mem_ops airoha_snand_mem_ops = {
+- 	.supports_op = airoha_snand_supports_op,
+- 	.exec_op = airoha_snand_exec_op,
+-@@ -1132,7 +1047,6 @@ static const struct dm_spi_ops airoha_snfi_spi_ops = {
+- 	.mem_ops = &airoha_snand_mem_ops,
+- 	.set_speed = airoha_snand_nfi_set_speed,
+- 	.set_mode = airoha_snand_nfi_set_mode,
+--	.setup_for_spinand = airoha_snand_nfi_setup,
+- };
+- 
+- static const struct udevice_id airoha_snand_ids[] = {
+diff --git a/package/boot/uboot-airoha/patches/300-airoha-add-support-for-Airoha-AN7583-SoC.patch b/package/boot/uboot-airoha/patches/300-airoha-add-support-for-Airoha-AN7583-SoC.patch
+index aa3a0f1df91d9aa5508bb4fe5e539ec29bcfed25..6e35cfd119bc6e5c21329f93e11c26c567a8b17b 100644
+--- a/package/boot/uboot-airoha/patches/300-airoha-add-support-for-Airoha-AN7583-SoC.patch
++++ b/package/boot/uboot-airoha/patches/300-airoha-add-support-for-Airoha-AN7583-SoC.patch
+@@ -1,7 +1,7 @@
+-From 0ee8053a17e6f4d6dbde0828e775309cba38c171 Mon Sep 17 00:00:00 2001
++From 4791e708e2976c3e8bf4e69c92ccd6f1103e8f1f Mon Sep 17 00:00:00 2001
+ From: Christian Marangi <ansuelsmth@gmail.com>
+ Date: Tue, 29 Apr 2025 13:06:59 +0200
+-Subject: [PATCH 1/3] airoha: add support for Airoha AN7583 SoC
++Subject: [PATCH 01/24] airoha: add support for Airoha AN7583 SoC
+ 
+ Add support for Airoha AN7583 SoC. This adds the Kconfig and Makefile
+ entry for the SoC, DTSI and initial config for it. Also add the code for
+@@ -19,9 +19,9 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+  board/airoha/an7583/MAINTAINERS      |   5 +
+  board/airoha/an7583/Makefile         |   3 +
+  board/airoha/an7583/an7583_rfb.c     |  16 ++
+- configs/an7583_evb_defconfig         |  81 ++++++
++ configs/an7583_evb_defconfig         |  80 ++++++
+  include/configs/an7583.h             |  19 ++
+- 11 files changed, 643 insertions(+)
++ 11 files changed, 642 insertions(+)
+  create mode 100644 arch/arm/dts/an7583-evb.dts
+  create mode 100644 arch/arm/dts/an7583.dtsi
+  create mode 100644 arch/arm/mach-airoha/an7583/Makefile
+@@ -32,6 +32,9 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+  create mode 100644 configs/an7583_evb_defconfig
+  create mode 100644 include/configs/an7583.h
+ 
++diff --git a/arch/arm/dts/an7583-evb.dts b/arch/arm/dts/an7583-evb.dts
++new file mode 100644
++index 00000000000..d02cd194e8a
+ --- /dev/null
+ +++ b/arch/arm/dts/an7583-evb.dts
+ @@ -0,0 +1,67 @@
+@@ -102,6 +105,9 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +&snfi {
+ +	status = "okay";
+ +};
++diff --git a/arch/arm/dts/an7583.dtsi b/arch/arm/dts/an7583.dtsi
++new file mode 100644
++index 00000000000..e1fda15ba37
+ --- /dev/null
+ +++ b/arch/arm/dts/an7583.dtsi
+ @@ -0,0 +1,387 @@
+@@ -242,7 +248,7 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +			reg = <0x0 0x1fbe3400 0x0 0xff>;
+ +		};
+ +
+-+		system-controller@1fa20000 {
+++		system-controller@1fb00000 {
+ +			compatible = "syscon", "simple-mfd";
+ +			reg = <0x0 0x1fb00000 0x0 0x970>;
+ +
+@@ -492,9 +498,11 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +		};
+ +	};
+ +};
++diff --git a/arch/arm/mach-airoha/Kconfig b/arch/arm/mach-airoha/Kconfig
++index b9cd0a413e1..2d74e3ce902 100644
+ --- a/arch/arm/mach-airoha/Kconfig
+ +++ b/arch/arm/mach-airoha/Kconfig
+-@@ -17,16 +17,30 @@ config TARGET_AN7581
++@@ -28,19 +28,33 @@ config TARGET_AN7581
+  	  Peripherals include Gigabit Ethernet, switch, USB3.0 and OTG, PCIe,
+  	  I2S, PCM, S/PDIF, UART, SPI, I2C, IR TX/RX, and PWM.
+  
+@@ -512,32 +520,43 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+  endchoice
+  
+  config SYS_SOC
++ 	default "en7523" if TARGET_EN7523
+  	default "an7581" if TARGET_AN7581
+ +	default "an7583" if TARGET_AN7583
+  
+  config SYS_BOARD
++ 	default "en7523" if TARGET_EN7523
+  	default "an7581" if TARGET_AN7581
+ +	default "an7583" if TARGET_AN7583
+  
+  config SYS_CONFIG_NAME
++ 	default "en7523" if TARGET_EN7523
+  	default "an7581" if TARGET_AN7581
+ +	default "an7583" if TARGET_AN7583
+  
+  endif
+  
++diff --git a/arch/arm/mach-airoha/Makefile b/arch/arm/mach-airoha/Makefile
++index 91395b8a850..51d82ea3e21 100644
+ --- a/arch/arm/mach-airoha/Makefile
+ +++ b/arch/arm/mach-airoha/Makefile
+-@@ -3,3 +3,4 @@
+- obj-y	+= cpu.o
++@@ -4,3 +4,4 @@ obj-y	+= cpu.o
+  
++ obj-$(CONFIG_TARGET_EN7523) += en7523/
+  obj-$(CONFIG_TARGET_AN7581) += an7581/
+ +obj-$(CONFIG_TARGET_AN7583) += an7583/
++diff --git a/arch/arm/mach-airoha/an7583/Makefile b/arch/arm/mach-airoha/an7583/Makefile
++new file mode 100644
++index 00000000000..886ab7e4eb9
+ --- /dev/null
+ +++ b/arch/arm/mach-airoha/an7583/Makefile
+ @@ -0,0 +1,3 @@
+ +# SPDX-License-Identifier:	GPL-2.0
+ +
+ +obj-y += init.o
++diff --git a/arch/arm/mach-airoha/an7583/init.c b/arch/arm/mach-airoha/an7583/init.c
++new file mode 100644
++index 00000000000..77c29290331
+ --- /dev/null
+ +++ b/arch/arm/mach-airoha/an7583/init.c
+ @@ -0,0 +1,47 @@
+@@ -588,6 +607,9 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +	}
+ +};
+ +struct mm_region *mem_map = an7583_mem_map;
++diff --git a/board/airoha/an7583/MAINTAINERS b/board/airoha/an7583/MAINTAINERS
++new file mode 100644
++index 00000000000..71ee542a8bc
+ --- /dev/null
+ +++ b/board/airoha/an7583/MAINTAINERS
+ @@ -0,0 +1,5 @@
+@@ -596,12 +618,18 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +S:	Maintained
+ +N:      airoha
+ +N:      an7583
++diff --git a/board/airoha/an7583/Makefile b/board/airoha/an7583/Makefile
++new file mode 100644
++index 00000000000..d582684d1f7
+ --- /dev/null
+ +++ b/board/airoha/an7583/Makefile
+ @@ -0,0 +1,3 @@
+ +# SPDX-License-Identifier:	GPL-2.0
+ +
+ +obj-y	+= an7583_rfb.o
++diff --git a/board/airoha/an7583/an7583_rfb.c b/board/airoha/an7583/an7583_rfb.c
++new file mode 100644
++index 00000000000..aa73679d929
+ --- /dev/null
+ +++ b/board/airoha/an7583/an7583_rfb.c
+ @@ -0,0 +1,16 @@
+@@ -621,9 +649,12 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +
+ +	return 0;
+ +}
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++new file mode 100644
++index 00000000000..d1893fff398
+ --- /dev/null
+ +++ b/configs/an7583_evb_defconfig
+-@@ -0,0 +1,81 @@
++@@ -0,0 +1,80 @@
+ +CONFIG_ARM=y
+ +CONFIG_ARCH_AIROHA=y
+ +CONFIG_TARGET_AN7583=y
+@@ -634,7 +665,6 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_ENV_OFFSET=0x7c000
+ +CONFIG_DM_GPIO=y
+ +CONFIG_DEFAULT_DEVICE_TREE="an7583-evb"
+-+CONFIG_DM_RESET=y
+ +CONFIG_SYS_LOAD_ADDR=0x81800000
+ +CONFIG_BUILD_TARGET="u-boot.bin"
+ +# CONFIG_EFI_LOADER is not set
+@@ -670,6 +700,7 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_ENV_RELOC_GD_ENV_ADDR=y
+ +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+ +CONFIG_NET_RANDOM_ETHADDR=y
+++CONFIG_SYS_RX_ETH_BUFFER=8
+ +CONFIG_REGMAP=y
+ +CONFIG_SYSCON=y
+ +CONFIG_CLK=y
+@@ -677,6 +708,7 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_LED=y
+ +CONFIG_LED_GPIO=y
+ +CONFIG_MMC_HS200_SUPPORT=y
+++CONFIG_MMC_MTK=y
+ +CONFIG_MTD=y
+ +CONFIG_DM_MTD=y
+ +CONFIG_MTD_SPI_NAND=y
+@@ -689,7 +721,7 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_SPI_FLASH_STMICRO=y
+ +CONFIG_SPI_FLASH_WINBOND=y
+ +CONFIG_SPI_FLASH_MTD=y
+-+CONFIG_PHYLIB=y
+++CONFIG_AIROHA_ETH=y
+ +CONFIG_PHY=y
+ +CONFIG_PINCTRL=y
+ +CONFIG_PINCONF=y
+@@ -701,10 +733,11 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_SYS_NS16550=y
+ +CONFIG_SPI=y
+ +CONFIG_DM_SPI=y
+-+CONFIG_SHA512=y
+-+CONFIG_AIROHA_ETH=y
+-+CONFIG_MMC_MTK=y
+ +CONFIG_AIROHA_SNFI_SPI=y
+++CONFIG_SHA512=y
++diff --git a/include/configs/an7583.h b/include/configs/an7583.h
++new file mode 100644
++index 00000000000..c865afea1a2
+ --- /dev/null
+ +++ b/include/configs/an7583.h
+ @@ -0,0 +1,19 @@
+@@ -727,3 +760,6 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +#define CFG_SYS_SDRAM_BASE		0x80000000
+ +
+ +#endif
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/301-arm-an7583-sync-init-code-with-an7581.patch b/package/boot/uboot-airoha/patches/301-arm-an7583-sync-init-code-with-an7581.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..57b138a27f2a86aebe4f6d3f52899c517101dc3b
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/301-arm-an7583-sync-init-code-with-an7581.patch
+@@ -0,0 +1,83 @@
++From 2ed022130bb42e3c419a4943115144259fa3b4b6 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Fri, 17 Oct 2025 02:53:28 +0300
++Subject: [PATCH 02/24] arm/an7583: sync init code with an7581
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ arch/arm/mach-airoha/an7583/init.c | 31 ++++++++++++++++++++++++------
++ 1 file changed, 25 insertions(+), 6 deletions(-)
++
++diff --git a/arch/arm/mach-airoha/an7583/init.c b/arch/arm/mach-airoha/an7583/init.c
++index 77c29290331..4cf7f8caf85 100644
++--- a/arch/arm/mach-airoha/an7583/init.c
+++++ b/arch/arm/mach-airoha/an7583/init.c
++@@ -2,9 +2,14 @@
++ 
++ #include <fdtdec.h>
++ #include <init.h>
+++#include <linux/sizes.h>
+++#include <sysreset.h>
++ #include <asm/armv8/mmu.h>
+++#include <asm/global_data.h>
++ #include <asm/system.h>
++ 
+++DECLARE_GLOBAL_DATA_PTR;
+++
++ int print_cpuinfo(void)
++ {
++ 	printf("CPU:   Airoha AN7583\n");
++@@ -18,30 +23,44 @@ int dram_init(void)
++ 
++ int dram_init_banksize(void)
++ {
++-	return fdtdec_setup_memory_banksize();
+++	gd->bd->bi_dram[0].start = gd->ram_base;
+++	gd->bd->bi_dram[0].size = get_effective_memsize();
+++
+++	if (gd->ram_size > SZ_2G) {
+++		gd->bd->bi_dram[1].start = gd->ram_base + SZ_2G;
+++		gd->bd->bi_dram[1].size = gd->ram_size - SZ_2G;
+++	}
+++
+++	return 0;
++ }
++ 
++-void reset_cpu(ulong addr)
+++void reset_cpu(void)
++ {
++ 	psci_system_reset();
++ }
++ 
++ static struct mm_region an7583_mem_map[] = {
++ 	{
++-		/* DDR */
+++		/* DDR, 32-bit area */
++ 		.virt = 0x80000000UL,
++ 		.phys = 0x80000000UL,
++-		.size = 0x80000000UL,
+++		.size = SZ_2G,
+++		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_OUTER_SHARE,
+++	}, {
+++		/* DDR, 64-bit area */
+++		.virt = 0x100000000UL,
+++		.phys = 0x100000000UL,
+++		.size = SZ_4G + SZ_2G,
++ 		.attrs = PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_OUTER_SHARE,
++ 	}, {
++ 		.virt = 0x00000000UL,
++ 		.phys = 0x00000000UL,
++-		.size = 0x20000000UL,
+++		.size = 0x40000000UL,
++ 		.attrs = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) |
++ 			 PTE_BLOCK_NON_SHARE |
++ 			 PTE_BLOCK_PXN | PTE_BLOCK_UXN
++ 	}, {
++-		0,
+++		/* List terminator */
++ 	}
++ };
++ struct mm_region *mem_map = an7583_mem_map;
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/301-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch b/package/boot/uboot-airoha/patches/301-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch
+deleted file mode 100644
+index fcbc13366b4c5237a2a0f8401fe13195b92d5068..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/301-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch
++++ /dev/null
+@@ -1,171 +0,0 @@
+-From 62ab067847b30d73d4f661bdc99e9f32ff03f338 Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Tue, 29 Apr 2025 13:19:11 +0200
+-Subject: [PATCH] clk: airoha: add support for Airoha AN7583 SoC clock
+-
+-Add support for Airoha AN7583 SoC clock that implement more base values
+-for clocks compared to AN7581.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- drivers/clk/airoha/clk-airoha.c | 131 ++++++++++++++++++++++++++++++++
+- 1 file changed, 131 insertions(+)
+-
+---- a/drivers/clk/airoha/clk-airoha.c
+-+++ b/drivers/clk/airoha/clk-airoha.c
+-@@ -73,6 +73,14 @@ static const u32 bus7581_base[] = { 6000
+- static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
+- static const u32 crypto_base[] = { 540000000, 480000000 };
+- static const u32 emmc7581_base[] = { 200000000, 150000000 };
+-+/* AN7583 */
+-+static const u32 gsw7583_base[] = { 540672000, 270336000, 400000000, 200000000 };
+-+static const u32 emi7583_base[] = { 540672000, 480000000, 400000000, 300000000 };
+-+static const u32 bus7583_base[] = { 600000000, 540672000, 480000000, 400000000 };
+-+static const u32 spi7583_base[] = { 100000000, 12500000 };
+-+static const u32 npu7583_base[] = { 666000000, 800000000, 720000000, 600000000 };
+-+static const u32 crypto7583_base[] = { 540672000, 400000000 };
+-+static const u32 emmc7583_base[] = { 150000000, 200000000 };
+- 
+- static const struct airoha_clk_desc en7581_base_clks[EN7581_MAX_CLKS] = {
+- 	[EN7523_CLK_GSW] = {
+-@@ -186,6 +194,121 @@ static const struct airoha_clk_desc en75
+- 	}
+- };
+- 
+-+static const struct airoha_clk_desc an7583_base_clks[EN7581_MAX_CLKS] = {
+-+	[EN7523_CLK_GSW] = {
+-+		.id = EN7523_CLK_GSW,
+-+		.name = "gsw",
+-+
+-+		.base_reg = REG_GSW_CLK_DIV_SEL,
+-+		.base_bits = 2,
+-+		.base_shift = 8,
+-+		.base_values = gsw7583_base,
+-+		.n_base_values = ARRAY_SIZE(gsw7583_base),
+-+
+-+		.div_bits = 3,
+-+		.div_shift = 0,
+-+		.div_step = 1,
+-+		.div_offset = 1,
+-+	},
+-+	[EN7523_CLK_EMI] = {
+-+		.id = EN7523_CLK_EMI,
+-+		.name = "emi",
+-+
+-+		.base_reg = REG_EMI_CLK_DIV_SEL,
+-+		.base_bits = 2,
+-+		.base_shift = 8,
+-+		.base_values = emi7583_base,
+-+		.n_base_values = ARRAY_SIZE(emi7583_base),
+-+
+-+		.div_bits = 3,
+-+		.div_shift = 0,
+-+		.div_step = 1,
+-+		.div_offset = 1,
+-+	},
+-+	[EN7523_CLK_BUS] = {
+-+		.id = EN7523_CLK_BUS,
+-+		.name = "bus",
+-+
+-+		.base_reg = REG_BUS_CLK_DIV_SEL,
+-+		.base_bits = 2,
+-+		.base_shift = 8,
+-+		.base_values = bus7583_base,
+-+		.n_base_values = ARRAY_SIZE(bus7583_base),
+-+
+-+		.div_bits = 3,
+-+		.div_shift = 0,
+-+		.div_step = 1,
+-+		.div_offset = 1,
+-+	},
+-+	[EN7523_CLK_SLIC] = {
+-+		.id = EN7523_CLK_SLIC,
+-+		.name = "slic",
+-+
+-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
+-+		.base_bits = 1,
+-+		.base_shift = 0,
+-+		.base_values = slic_base,
+-+		.n_base_values = ARRAY_SIZE(slic_base),
+-+
+-+		.div_reg = REG_SPI_CLK_DIV_SEL,
+-+		.div_bits = 5,
+-+		.div_shift = 24,
+-+		.div_val0 = 20,
+-+		.div_step = 2,
+-+	},
+-+	[EN7523_CLK_SPI] = {
+-+		.id = EN7523_CLK_SPI,
+-+		.name = "spi",
+-+
+-+		.base_reg = REG_SPI_CLK_FREQ_SEL,
+-+		.base_bits = 1,
+-+		.base_shift = 1,
+-+		.base_values = spi7583_base,
+-+		.n_base_values = ARRAY_SIZE(spi7583_base),
+-+
+-+		.div_reg = REG_SPI_CLK_DIV_SEL,
+-+		.div_bits = 5,
+-+		.div_shift = 8,
+-+		.div_val0 = 40,
+-+		.div_step = 2,
+-+	},
+-+	[EN7523_CLK_NPU] = {
+-+		.id = EN7523_CLK_NPU,
+-+		.name = "npu",
+-+
+-+		.base_reg = REG_NPU_CLK_DIV_SEL,
+-+		.base_bits = 2,
+-+		.base_shift = 9,
+-+		.base_values = npu7583_base,
+-+		.n_base_values = ARRAY_SIZE(npu7583_base),
+-+
+-+		.div_bits = 3,
+-+		.div_shift = 0,
+-+		.div_step = 1,
+-+		.div_offset = 1,
+-+	},
+-+	[EN7523_CLK_CRYPTO] = {
+-+		.id = EN7523_CLK_CRYPTO,
+-+		.name = "crypto",
+-+
+-+		.base_reg = REG_CRYPTO_CLKSRC2,
+-+		.base_bits = 1,
+-+		.base_shift = 0,
+-+		.base_values = crypto7583_base,
+-+		.n_base_values = ARRAY_SIZE(crypto7583_base),
+-+	},
+-+	[EN7581_CLK_EMMC] = {
+-+		.id = EN7581_CLK_EMMC,
+-+		.name = "emmc",
+-+
+-+		.base_reg = REG_CRYPTO_CLKSRC2,
+-+		.base_bits = 1,
+-+		.base_shift = 13,
+-+		.base_values = emmc7583_base,
+-+		.n_base_values = ARRAY_SIZE(emmc7583_base),
+-+	}
+-+};
+-+
+- static u32 airoha_clk_get_base_rate(const struct airoha_clk_desc *desc, u32 val)
+- {
+- 	if (!desc->base_bits)
+-@@ -436,10 +559,18 @@ static const struct airoha_clk_soc_data
+- 	.descs = en7581_base_clks,
+- };
+- 
+-+static const struct airoha_clk_soc_data an7583_data = {
+-+	.num_clocks = ARRAY_SIZE(an7583_base_clks),
+-+	.descs = an7583_base_clks,
+-+};
+-+
+- static const struct udevice_id airoha_clk_ids[] = {
+- 	{ .compatible = "airoha,en7581-scu",
+- 	  .data = (ulong)&en7581_data,
+- 	},
+-+	{ .compatible = "airoha,an7583-scu",
+-+	  .data = (ulong)&an7583_data,
+-+	},
+- 	{ }
+- };
+- 
+diff --git a/package/boot/uboot-airoha/patches/302-reset-airoha-convert-to-regmap-API.patch b/package/boot/uboot-airoha/patches/302-reset-airoha-convert-to-regmap-API.patch
+deleted file mode 100644
+index fd0c4d173d1a6379a821969aa3aae22166117a97..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/302-reset-airoha-convert-to-regmap-API.patch
++++ /dev/null
+@@ -1,90 +0,0 @@
+-From 7daf0565460e548eb766a0bcc171c34e02dd6eba Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Mon, 19 May 2025 14:22:55 +0200
+-Subject: [PATCH 3/6] reset: airoha: convert to regmap API
+-
+-In preparation for support for Airoha AN7583, convert the driver to
+-regmap API. This is needed as Airoha AN7583 will use syscon to access
+-reset registers.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- drivers/reset/reset-airoha.c | 35 ++++++++++++++++++-----------------
+- 1 file changed, 18 insertions(+), 17 deletions(-)
+-
+---- a/drivers/reset/reset-airoha.c
+-+++ b/drivers/reset/reset-airoha.c
+-@@ -10,6 +10,7 @@
+- #include <dm.h>
+- #include <linux/io.h>
+- #include <reset-uclass.h>
+-+#include <regmap.h>
+- 
+- #include <dt-bindings/reset/airoha,en7581-reset.h>
+- 
+-@@ -21,7 +22,7 @@
+- struct airoha_reset_priv {
+- 	const u16 *bank_ofs;
+- 	const u16 *idx_map;
+--	void __iomem *base;
+-+	struct regmap *map;
+- };
+- 
+- static const u16 en7581_rst_ofs[] = {
+-@@ -90,17 +91,11 @@ static const u16 en7581_rst_map[] = {
+- static int airoha_reset_update(struct airoha_reset_priv *priv,
+- 			       unsigned long id, bool assert)
+- {
+--	void __iomem *addr = priv->base + priv->bank_ofs[id / RST_NR_PER_BANK];
+--	u32 val;
+--
+--	val = readl(addr);
+--	if (assert)
+--		val |= BIT(id % RST_NR_PER_BANK);
+--	else
+--		val &= ~BIT(id % RST_NR_PER_BANK);
+--	writel(val, addr);
+-+	u16 offset = priv->bank_ofs[id / RST_NR_PER_BANK];
+- 
+--	return 0;
+-+	return regmap_update_bits(priv->map, offset,
+-+				  BIT(id % RST_NR_PER_BANK),
+-+				  assert ? BIT(id % RST_NR_PER_BANK) : 0);
+- }
+- 
+- static int airoha_reset_assert(struct reset_ctl *reset_ctl)
+-@@ -123,11 +118,16 @@ static int airoha_reset_status(struct re
+- {
+- 	struct airoha_reset_priv *priv = dev_get_priv(reset_ctl->dev);
+- 	int id = reset_ctl->id;
+--	void __iomem *addr;
+-+	u16 offset;
+-+	u32 val;
+-+	int ret;
+- 
+--	addr = priv->base + priv->bank_ofs[id / RST_NR_PER_BANK];
+-+	offset = priv->bank_ofs[id / RST_NR_PER_BANK];
+-+	ret = regmap_read(priv->map, offset, &val);
+-+	if (ret)
+-+		return ret;
+- 
+--	return !!(readl(addr) & BIT(id % RST_NR_PER_BANK));
+-+	return !!(val & BIT(id % RST_NR_PER_BANK));
+- }
+- 
+- static int airoha_reset_xlate(struct reset_ctl *reset_ctl,
+-@@ -153,10 +153,11 @@ static struct reset_ops airoha_reset_ops
+- static int airoha_reset_probe(struct udevice *dev)
+- {
+- 	struct airoha_reset_priv *priv = dev_get_priv(dev);
+-+	int ret;
+- 
+--	priv->base = dev_remap_addr(dev);
+--	if (!priv->base)
+--		return -ENOMEM;
+-+	ret = regmap_init_mem(dev_ofnode(dev), &priv->map);
+-+	if (ret)
+-+		return ret;
+- 
+- 	priv->bank_ofs = en7581_rst_ofs;
+- 	priv->idx_map = en7581_rst_map;
+diff --git a/package/boot/uboot-airoha/patches/303-arm-airoha-introduce-AN7583-helpers-to-get-SCU-and-C.patch b/package/boot/uboot-airoha/patches/303-arm-airoha-introduce-AN7583-helpers-to-get-SCU-and-C.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d2d884b6ec02e8264694704d75bdbb50a8f10950
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/303-arm-airoha-introduce-AN7583-helpers-to-get-SCU-and-C.patch
+@@ -0,0 +1,83 @@
++From 59e3fa0d74fd36ba61a2b4e63eb6faf31b4e2396 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Fri, 31 Oct 2025 00:42:08 +0300
++Subject: [PATCH 03/24] arm: airoha: introduce AN7583 helpers to get SCU and
++ CHIP_SCU regmaps
++
++We need access SCU and CHIP_SCU regmaps in several places (clk-airoha,
++reset-airoha, airoha_eth). Unfortunately these regmaps can't be easily
++retrieved with a common code, because of different Airoha SoCs uses
++a different dts structure.
++
++To make life easy we can write a commonly named SoC specific helpers
++for these tasks. This patch implements helpers for Airoha AN7583 SoC.
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ arch/arm/include/asm/arch-an7583         |  1 +
++ arch/arm/mach-airoha/an7583/Makefile     |  1 +
++ arch/arm/mach-airoha/an7583/scu-regmap.c | 34 ++++++++++++++++++++++++
++ 3 files changed, 36 insertions(+)
++ create mode 120000 arch/arm/include/asm/arch-an7583
++ create mode 100644 arch/arm/mach-airoha/an7583/scu-regmap.c
++
++diff --git a/arch/arm/include/asm/arch-an7583 b/arch/arm/include/asm/arch-an7583
++new file mode 120000
++index 00000000000..d2317ed3bc3
++--- /dev/null
+++++ b/arch/arm/include/asm/arch-an7583
++@@ -0,0 +1 @@
+++arch-airoha
++\ No newline at end of file
++diff --git a/arch/arm/mach-airoha/an7583/Makefile b/arch/arm/mach-airoha/an7583/Makefile
++index 886ab7e4eb9..51f978aa101 100644
++--- a/arch/arm/mach-airoha/an7583/Makefile
+++++ b/arch/arm/mach-airoha/an7583/Makefile
++@@ -1,3 +1,4 @@
++ # SPDX-License-Identifier:	GPL-2.0
++ 
++ obj-y += init.o
+++obj-y += scu-regmap.o
++diff --git a/arch/arm/mach-airoha/an7583/scu-regmap.c b/arch/arm/mach-airoha/an7583/scu-regmap.c
++new file mode 100644
++index 00000000000..96f3564eec0
++--- /dev/null
+++++ b/arch/arm/mach-airoha/an7583/scu-regmap.c
++@@ -0,0 +1,34 @@
+++// SPDX-License-Identifier: GPL-2.0+
+++/*
+++ * Author: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+++ */
+++
+++#include <syscon.h>
+++#include <linux/err.h>
+++#include <asm/arch/scu-regmap.h>
+++
+++struct regmap *airoha_get_scu_regmap(void)
+++{
+++	ofnode node;
+++
+++	node = ofnode_by_compatible(ofnode_null(), "airoha,an7583-scu");
+++	if (!ofnode_valid(node))
+++		return ERR_PTR(-EINVAL);
+++
+++	node = ofnode_get_parent(node);
+++	if (!ofnode_valid(node))
+++		return ERR_PTR(-EINVAL);
+++
+++	return syscon_node_to_regmap(node);
+++}
+++
+++struct regmap *airoha_get_chip_scu_regmap(void)
+++{
+++	ofnode node;
+++
+++	node = ofnode_by_compatible(ofnode_null(), "airoha,en7581-chip-scu");
+++	if (!ofnode_valid(node))
+++		return ERR_PTR(-EINVAL);
+++
+++	return syscon_node_to_regmap(node);
+++}
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/303-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch b/package/boot/uboot-airoha/patches/303-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch
+deleted file mode 100644
+index d0d563a6470a1874d42a92e2aa539d692c023869..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/303-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch
++++ /dev/null
+@@ -1,226 +0,0 @@
+-From 23031ad51d55361be507b83307f55995e0204188 Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Tue, 29 Apr 2025 13:33:35 +0200
+-Subject: [PATCH 4/6] reset: airoha: Add support for Airoha AN7583 reset
+-
+-Adapt the Airoha reset driver to support Airoha AN7583 node structure.
+-In AN7583 the register is exposed by the parent syscon hence a different
+-logic needs to be applied. Also the reset line differ from AN7581 hence
+-a dedicated table is needed.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- drivers/reset/reset-airoha.c                  | 94 ++++++++++++++++++-
+- .../dt-bindings/reset/airoha,an7583-reset.h   | 61 ++++++++++++
+- 2 files changed, 153 insertions(+), 2 deletions(-)
+- create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
+-
+---- a/drivers/reset/reset-airoha.c
+-+++ b/drivers/reset/reset-airoha.c
+-@@ -11,8 +11,10 @@
+- #include <linux/io.h>
+- #include <reset-uclass.h>
+- #include <regmap.h>
+-+#include <syscon.h>
+- 
+- #include <dt-bindings/reset/airoha,en7581-reset.h>
+-+#include <dt-bindings/reset/airoha,an7583-reset.h>
+- 
+- #define RST_NR_PER_BANK			32
+- 
+-@@ -22,6 +24,7 @@
+- struct airoha_reset_priv {
+- 	const u16 *bank_ofs;
+- 	const u16 *idx_map;
+-+	int num_rsts;
+- 	struct regmap *map;
+- };
+- 
+-@@ -88,6 +91,59 @@ static const u16 en7581_rst_map[] = {
+- 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+- };
+- 
+-+static const u16 an7583_rst_map[] = {
+-+	/* RST_CTRL2 */
+-+	[AN7583_XPON_PHY_RST]		= 0,
+-+	[AN7583_GPON_OLT_RST]		= 1,
+-+	[AN7583_CPU_TIMER2_RST]		= 2,
+-+	[AN7583_HSUART_RST]		= 3,
+-+	[AN7583_UART4_RST]		= 4,
+-+	[AN7583_UART5_RST]		= 5,
+-+	[AN7583_I2C2_RST]		= 6,
+-+	[AN7583_XSI_MAC_RST]		= 7,
+-+	[AN7583_XSI_PHY_RST]		= 8,
+-+	[AN7583_NPU_RST]		= 9,
+-+	[AN7583_TRNG_MSTART_RST]	= 12,
+-+	[AN7583_DUAL_HSI0_RST]		= 13,
+-+	[AN7583_DUAL_HSI1_RST]		= 14,
+-+	[AN7583_DUAL_HSI0_MAC_RST]	= 16,
+-+	[AN7583_DUAL_HSI1_MAC_RST]	= 17,
+-+	[AN7583_WDMA_RST]		= 19,
+-+	[AN7583_WOE0_RST]		= 20,
+-+	[AN7583_HSDMA_RST]		= 22,
+-+	[AN7583_TDMA_RST]		= 24,
+-+	[AN7583_EMMC_RST]		= 25,
+-+	[AN7583_SOE_RST]		= 26,
+-+	[AN7583_XFP_MAC_RST]		= 28,
+-+	[AN7583_MDIO0]			= 30,
+-+	[AN7583_MDIO1]			= 31,
+-+	/* RST_CTRL1 */
+-+	[AN7583_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
+-+	[AN7583_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
+-+	[AN7583_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
+-+	[AN7583_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
+-+	[AN7583_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
+-+	[AN7583_TIMER_RST]		= RST_NR_PER_BANK + 8,
+-+	[AN7583_PCM1_RST]		= RST_NR_PER_BANK + 11,
+-+	[AN7583_UART_RST]		= RST_NR_PER_BANK + 12,
+-+	[AN7583_GPIO_RST]		= RST_NR_PER_BANK + 13,
+-+	[AN7583_GDMA_RST]		= RST_NR_PER_BANK + 14,
+-+	[AN7583_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
+-+	[AN7583_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
+-+	[AN7583_SFC_RST]		= RST_NR_PER_BANK + 18,
+-+	[AN7583_UART2_RST]		= RST_NR_PER_BANK + 19,
+-+	[AN7583_GDMP_RST]		= RST_NR_PER_BANK + 20,
+-+	[AN7583_FE_RST]			= RST_NR_PER_BANK + 21,
+-+	[AN7583_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
+-+	[AN7583_GSW_RST]		= RST_NR_PER_BANK + 23,
+-+	[AN7583_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
+-+	[AN7583_PCIE0_RST]		= RST_NR_PER_BANK + 26,
+-+	[AN7583_PCIE1_RST]		= RST_NR_PER_BANK + 27,
+-+	[AN7583_CPU_TIMER_RST]		= RST_NR_PER_BANK + 28,
+-+	[AN7583_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
+-+	[AN7583_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+-+};
+-+
+- static int airoha_reset_update(struct airoha_reset_priv *priv,
+- 			       unsigned long id, bool assert)
+- {
+-@@ -135,7 +191,7 @@ static int airoha_reset_xlate(struct reset_ctl *reset_ctl,
+- {
+- 	struct airoha_reset_priv *priv = dev_get_priv(reset_ctl->dev);
+- 
+--	if (args->args[0] >= ARRAY_SIZE(en7581_rst_map))
+-+	if (args->args[0] >= priv->num_rsts)
+- 		return -EINVAL;
+- 
+- 	reset_ctl->id = priv->idx_map[args->args[0]];
+-@@ -150,7 +206,7 @@ static struct reset_ops airoha_reset_ops = {
+- 	.rst_status = airoha_reset_status,
+- };
+- 
+--static int airoha_reset_probe(struct udevice *dev)
+-+static int an7581_reset_probe(struct udevice *dev)
+- {
+- 	struct airoha_reset_priv *priv = dev_get_priv(dev);
+- 	int ret;
+-@@ -161,10 +217,44 @@ static int airoha_reset_probe(struct udevice *dev)
+- 
+- 	priv->bank_ofs = en7581_rst_ofs;
+- 	priv->idx_map = en7581_rst_map;
+-+	priv->num_rsts = ARRAY_SIZE(en7581_rst_map);
+-+
+-+	return 0;
+-+}
+-+
+-+static int an7583_reset_probe(struct udevice *dev)
+-+{
+-+	struct airoha_reset_priv *priv = dev_get_priv(dev);
+-+	ofnode pnode, scu_node = dev_ofnode(dev);
+-+
+-+	pnode = ofnode_get_parent(scu_node);
+-+	if (!ofnode_valid(pnode))
+-+		return -EINVAL;
+-+
+-+	priv->map = syscon_node_to_regmap(pnode);
+-+	if (IS_ERR(priv->map))
+-+		return PTR_ERR(priv->map);
+-+
+-+	priv->bank_ofs = en7581_rst_ofs;
+-+	priv->idx_map = an7583_rst_map;
+-+	priv->num_rsts = ARRAY_SIZE(an7583_rst_map);
+- 
+- 	return 0;
+- }
+- 
+-+static int airoha_reset_probe(struct udevice *dev)
+-+{
+-+	if (ofnode_device_is_compatible(dev_ofnode(dev),
+-+					"airoha,en7581-scu"))
+-+		return an7581_reset_probe(dev);
+-+
+-+	if (ofnode_device_is_compatible(dev_ofnode(dev),
+-+					"airoha,an7583-scu"))
+-+		return an7583_reset_probe(dev);
+-+
+-+	return -ENODEV;
+-+}
+-+
+- U_BOOT_DRIVER(airoha_reset) = {
+- 	.name = "airoha-reset",
+- 	.id = UCLASS_RESET,
+---- /dev/null
+-+++ b/include/dt-bindings/reset/airoha,an7583-reset.h
+-@@ -0,0 +1,61 @@
+-+// SPDX-License-Identifier: GPL-2.0-only
+-+/*
+-+ * Copyright (c) 2024 AIROHA Inc
+-+ * Author: Christian Marangi <ansuelsmth@gmail.com>
+-+ */
+-+
+-+#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
+-+#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
+-+
+-+/* RST_CTRL2 */
+-+#define AN7583_XPON_PHY_RST		 0
+-+#define AN7583_GPON_OLT_RST		 1
+-+#define AN7583_CPU_TIMER2_RST		 2
+-+#define AN7583_HSUART_RST		 3
+-+#define AN7583_UART4_RST		 4
+-+#define AN7583_UART5_RST		 5
+-+#define AN7583_I2C2_RST			 6
+-+#define AN7583_XSI_MAC_RST		 7
+-+#define AN7583_XSI_PHY_RST		 8
+-+#define AN7583_NPU_RST			 9
+-+#define AN7583_TRNG_MSTART_RST		10
+-+#define AN7583_DUAL_HSI0_RST		11
+-+#define AN7583_DUAL_HSI1_RST		12
+-+#define AN7583_DUAL_HSI0_MAC_RST	13
+-+#define AN7583_DUAL_HSI1_MAC_RST	14
+-+#define AN7583_WDMA_RST			15
+-+#define AN7583_WOE0_RST			16
+-+#define AN7583_HSDMA_RST		17
+-+#define AN7583_TDMA_RST			18
+-+#define AN7583_EMMC_RST			19
+-+#define AN7583_SOE_RST			20
+-+#define AN7583_XFP_MAC_RST		21
+-+#define AN7583_MDIO0    		22
+-+#define AN7583_MDIO1            	23
+-+/* RST_CTRL1 */
+-+#define AN7583_PCM1_ZSI_ISI_RST		24
+-+#define AN7583_FE_PDMA_RST		25
+-+#define AN7583_FE_QDMA_RST		26
+-+#define AN7583_PCM_SPIWP_RST		27
+-+#define AN7583_CRYPTO_RST		28
+-+#define AN7583_TIMER_RST		29
+-+#define AN7583_PCM1_RST			30
+-+#define AN7583_UART_RST			31
+-+#define AN7583_GPIO_RST			32
+-+#define AN7583_GDMA_RST			33
+-+#define AN7583_I2C_MASTER_RST		34
+-+#define AN7583_PCM2_ZSI_ISI_RST		35
+-+#define AN7583_SFC_RST			36
+-+#define AN7583_UART2_RST		37
+-+#define AN7583_GDMP_RST			38
+-+#define AN7583_FE_RST			39
+-+#define AN7583_USB_HOST_P0_RST		40
+-+#define AN7583_GSW_RST			41
+-+#define AN7583_SFC2_PCM_RST		42
+-+#define AN7583_PCIE0_RST		43
+-+#define AN7583_PCIE1_RST		44
+-+#define AN7583_CPU_TIMER_RST		45
+-+#define AN7583_PCIE_HB_RST		46
+-+#define AN7583_XPON_MAC_RST		47
+-+
+-+#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_ */
+-
+diff --git a/package/boot/uboot-airoha/patches/304-dt-bindings-clock-airoha-Document-support-for-AN7583.patch b/package/boot/uboot-airoha/patches/304-dt-bindings-clock-airoha-Document-support-for-AN7583.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..d49fde7d5853113636b4baf096247912921b3949
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/304-dt-bindings-clock-airoha-Document-support-for-AN7583.patch
+@@ -0,0 +1,32 @@
++From 0faf0f239a145129063a1a2c798fc97c362cc98d Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Tue, 30 Sep 2025 22:15:15 +0200
++Subject: [PATCH 04/24] dt-bindings: clock: airoha: Document support for AN7583
++ clock
++
++Document support for Airoha AN7583 clock. This is based on the EN7523
++clock schema with the new requirement of the "airoha,chip-scu"
++(previously optional for EN7581).
++
++Add additional binding for additional clock and reset lines.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ dts/upstream/include/dt-bindings/clock/en7523-clk.h | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/dts/upstream/include/dt-bindings/clock/en7523-clk.h b/dts/upstream/include/dt-bindings/clock/en7523-clk.h
++index edfa64045f5..0fbbcb7b1b2 100644
++--- a/dts/upstream/include/dt-bindings/clock/en7523-clk.h
+++++ b/dts/upstream/include/dt-bindings/clock/en7523-clk.h
++@@ -14,4 +14,7 @@
++ 
++ #define EN7581_CLK_EMMC		8
++ 
+++#define AN7583_CLK_MDIO0	9
+++#define AN7583_CLK_MDIO1	10
+++
++ #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/304-net-airoha-add-support-for-Airoha-AN7583.patch b/package/boot/uboot-airoha/patches/304-net-airoha-add-support-for-Airoha-AN7583.patch
+deleted file mode 100644
+index 60cdf43e8262a6e672400e00935a7be01a82a3d5..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/304-net-airoha-add-support-for-Airoha-AN7583.patch
++++ /dev/null
+@@ -1,278 +0,0 @@
+-From dfdc7309ba22f6a6b6c581acfe95a222108bd760 Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Mon, 19 May 2025 14:29:53 +0200
+-Subject: [PATCH] net: airoha: add support for Airoha AN7583
+-
+-Add support for Ethernet controller present in Airoha AN7583. This
+-follow the same implementation of Airoha AN7581 with the only difference
+-of having a different reset number and a different logic to reach the
+-SCU node.
+-
+-Generalize the driver for these 2 part to account for these minor
+-difference.
+-
+-The switch init part also required some care as the Switch Internal PHY
+-enable BMCR_PDOWN by default and tweak to GEPHY_CONN_CFG is also needed.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- drivers/net/airoha_eth.c | 168 ++++++++++++++++++++++++++++++++++-----
+- 1 file changed, 147 insertions(+), 21 deletions(-)
+-
+---- a/drivers/net/airoha_eth.c
+-+++ b/drivers/net/airoha_eth.c
+-@@ -20,6 +20,7 @@
+- #include <linux/dma-mapping.h>
+- #include <linux/io.h>
+- #include <linux/iopoll.h>
+-+#include <linux/mii.h>
+- #include <linux/time.h>
+- 
+- #define AIROHA_MAX_NUM_GDM_PORTS	1
+-@@ -27,6 +28,11 @@
+- #define AIROHA_MAX_NUM_RSTS		3
+- #define AIROHA_MAX_NUM_XSI_RSTS		4
+- 
+-+#define AIROHA_MAX_NUM_SWITCH_PORT	4
+-+#define AIROHA_MAX_PBUS_TRY		10
+-+#define AIROHA_PBUS_SLEEP		100
+-+#define AIROHA_PBUS_C22_MASK		0x800000
+-+
+- #define AIROHA_MAX_PACKET_SIZE		2048
+- #define AIROHA_NUM_TX_RING		1
+- #define AIROHA_NUM_RX_RING		1
+-@@ -77,6 +83,19 @@
+- #define   SWITCH_PHY_PRE_EN		BIT(15)
+- #define   SWITCH_PHY_END_ADDR		GENMASK(12, 8)
+- #define   SWITCH_PHY_ST_ADDR		GENMASK(4, 0)
+-+#define SWITCH_GEPHY_CONN_CFG		0x7c14
+-+#define   SWITCH_DPHY_CKIN_SEL		BIT(31)
+-+#define   SWITCH_PHY_CORE_REG_CLK_SEL	BIT(30)
+-+#define   SWITCH_ETHER_AFE_PWD		GENMASK(28, 24)
+-+#define SWITCH_PBUS_PHY_IAC		0x7c20
+-+#define   SWITCH_PBUS_PHY_START		BIT(31)
+-+#define   SWITCH_PBUS_PHY_CMD		BIT(30)
+-+#define   SWITCH_PBUS_PHY_CMD_READ	FIELD_PREP(SWITCH_PBUS_PHY_CMD, 0x0)
+-+#define   SWITCH_PBUS_PHY_CMD_WRITE	FIELD_PREP(SWITCH_PBUS_PHY_CMD, 0x1)
+-+#define   SWITCH_PBUS_PHY_PORTADDR	GENMASK(28, 24)
+-+#define   SWITCH_PBUS_PHY_REGADDR	GENMASK(23, 0)
+-+#define SWITCH_PBUS_PHY_IAWD		0x7c24
+-+#define SWITCH_PBUS_PHY_IARD		0x7c28
+- 
+- /* FE */
+- #define PSE_BASE			0x0100
+-@@ -312,6 +331,26 @@ struct airoha_eth {
+- 	struct airoha_gdm_port *ports[AIROHA_MAX_NUM_GDM_PORTS];
+- };
+- 
+-+struct airoha_eth_soc_data {
+-+	int num_xsi_rsts;
+-+	const char * const *xsi_rsts_names;
+-+	ofnode (*get_scu_node)(struct udevice *dev);
+-+	const char *switch_compatible;
+-+};
+-+
+-+static const char * const en7581_xsi_rsts_names[] = {
+-+	"hsi0-mac",
+-+	"hsi1-mac",
+-+	"hsi-mac",
+-+	"xfp-mac",
+-+};
+-+
+-+static const char * const an7583_xsi_rsts_names[] = {
+-+	"hsi0-mac",
+-+	"hsi1-mac",
+-+	"xfp-mac",
+-+};
+-+
+- static u32 airoha_rr(void __iomem *base, u32 offset)
+- {
+- 	return readl(base + offset);
+-@@ -352,8 +391,12 @@ static u32 airoha_rmw(void __iomem *base, u32 offset, u32 mask, u32 val)
+- #define airoha_qdma_clear(qdma, offset, val)			\
+- 	airoha_rmw((qdma)->regs, (offset), (val), 0)
+- 
+-+#define airoha_switch_rr(eth, offset)				\
+-+	airoha_rr((eth)->switch_regs, (offset))
+- #define airoha_switch_wr(eth, offset, val)			\
+- 	airoha_wr((eth)->switch_regs, (offset), (val))
+-+#define airoha_switch_rmw(eth, offset, mask, val)		\
+-+	airoha_rmw((eth)->switch_regs, (offset), (mask), (val))
+- 
+- static inline dma_addr_t dma_map_unaligned(void *vaddr, size_t len,
+- 					   enum dma_data_direction dir)
+-@@ -682,10 +725,12 @@ static int airoha_hw_init(struct udevice *dev,
+- 
+- static int airoha_switch_init(struct udevice *dev, struct airoha_eth *eth)
+- {
+-+	struct airoha_eth_soc_data *data = (void *)dev_get_driver_data(dev);
+- 	ofnode switch_node;
+- 	fdt_addr_t addr;
+- 
+--	switch_node = ofnode_by_compatible(ofnode_null(), "airoha,en7581-switch");
+-+	switch_node = ofnode_by_compatible(ofnode_null(),
+-+					   data->switch_compatible);
+- 	if (!ofnode_valid(switch_node))
+- 		return -EINVAL;
+- 
+-@@ -717,17 +762,71 @@ static int airoha_switch_init(struct udevice *dev, struct airoha_eth *eth)
+- 			 FIELD_PREP(SWITCH_PHY_END_ADDR, 0xc) |
+- 			 FIELD_PREP(SWITCH_PHY_ST_ADDR, 0x8));
+- 
+-+	/* AN7583 require tweak to GEPHY_CONN_CFG and clear PHY BMCR_PDOWN */
+-+	if (!strcmp(data->switch_compatible, "airoha,an7583-switch")) {
+-+		int i;
+-+
+-+		airoha_switch_rmw(eth, SWITCH_GEPHY_CONN_CFG,
+-+				  SWITCH_DPHY_CKIN_SEL |
+-+				  SWITCH_PHY_CORE_REG_CLK_SEL |
+-+				  SWITCH_ETHER_AFE_PWD,
+-+				  SWITCH_DPHY_CKIN_SEL |
+-+				  SWITCH_PHY_CORE_REG_CLK_SEL |
+-+				  FIELD_PREP(SWITCH_ETHER_AFE_PWD, 0));
+-+
+-+		/* Disable BMCR_PDOWN for every PHY */
+-+		for (i = 0; i < AIROHA_MAX_NUM_SWITCH_PORT; i++) {
+-+			int try;
+-+			u32 val;
+-+
+-+			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAC,
+-+					 SWITCH_PBUS_PHY_START |
+-+					 SWITCH_PBUS_PHY_CMD_READ |
+-+					 FIELD_PREP(SWITCH_PBUS_PHY_PORTADDR, i) |
+-+					 FIELD_PREP(SWITCH_PBUS_PHY_REGADDR,
+-+						    AIROHA_PBUS_C22_MASK | MII_BMCR));
+-+
+-+			for (try = 0; try < AIROHA_MAX_PBUS_TRY; try++) {
+-+				val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IAC);
+-+				if (!(val & SWITCH_PBUS_PHY_START))
+-+					break;
+-+
+-+				udelay(AIROHA_PBUS_SLEEP);
+-+			}
+-+
+-+			val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IARD);
+-+			val &= ~BMCR_PDOWN;
+-+
+-+			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAWD, val);
+-+			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAC,
+-+					 SWITCH_PBUS_PHY_START |
+-+					 SWITCH_PBUS_PHY_CMD_WRITE |
+-+					 FIELD_PREP(SWITCH_PBUS_PHY_PORTADDR, i) |
+-+					 FIELD_PREP(SWITCH_PBUS_PHY_REGADDR,
+-+						    AIROHA_PBUS_C22_MASK | MII_BMCR));
+-+
+-+			for (try = 0; try < AIROHA_MAX_PBUS_TRY; try++) {
+-+				val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IAC);
+-+				if (!(val & SWITCH_PBUS_PHY_START))
+-+					break;
+-+
+-+				udelay(AIROHA_PBUS_SLEEP);
+-+			}
+-+		}
+-+	}
+-+
+- 	return 0;
+- }
+- 
+- static int airoha_eth_probe(struct udevice *dev)
+- {
+-+	struct airoha_eth_soc_data *data = (void *)dev_get_driver_data(dev);
+- 	struct airoha_eth *eth = dev_get_priv(dev);
+- 	struct regmap *scu_regmap;
+- 	ofnode scu_node;
+--	int ret;
+-+	int i, ret;
+- 
+--	scu_node = ofnode_by_compatible(ofnode_null(), "airoha,en7581-scu");
+-+	scu_node = data->get_scu_node(dev);
+- 	if (!ofnode_valid(scu_node))
+- 		return -EINVAL;
+- 
+-@@ -751,11 +850,11 @@ static int airoha_eth_probe(struct udevice *dev)
+- 		return -ENOMEM;
+- 	eth->rsts.count = AIROHA_MAX_NUM_RSTS;
+- 
+--	eth->xsi_rsts.resets = devm_kcalloc(dev, AIROHA_MAX_NUM_XSI_RSTS,
+-+	eth->xsi_rsts.resets = devm_kcalloc(dev, data->num_xsi_rsts,
+- 					    sizeof(struct reset_ctl), GFP_KERNEL);
+- 	if (!eth->xsi_rsts.resets)
+- 		return -ENOMEM;
+--	eth->xsi_rsts.count = AIROHA_MAX_NUM_XSI_RSTS;
+-+	eth->xsi_rsts.count = data->num_xsi_rsts;
+- 
+- 	ret = reset_get_by_name(dev, "fe", &eth->rsts.resets[0]);
+- 	if (ret)
+-@@ -769,21 +868,12 @@ static int airoha_eth_probe(struct udevice *dev)
+- 	if (ret)
+- 		return ret;
+- 
+--	ret = reset_get_by_name(dev, "hsi0-mac", &eth->xsi_rsts.resets[0]);
+--	if (ret)
+--		return ret;
+--
+--	ret = reset_get_by_name(dev, "hsi1-mac", &eth->xsi_rsts.resets[1]);
+--	if (ret)
+--		return ret;
+--
+--	ret = reset_get_by_name(dev, "hsi-mac", &eth->xsi_rsts.resets[2]);
+--	if (ret)
+--		return ret;
+--
+--	ret = reset_get_by_name(dev, "xfp-mac", &eth->xsi_rsts.resets[3]);
+--	if (ret)
+--		return ret;
+-+	for (i = 0; i < data->num_xsi_rsts; i++) {
+-+		ret = reset_get_by_name(dev, data->xsi_rsts_names[i],
+-+					&eth->xsi_rsts.resets[i]);
+-+		if (ret)
+-+			return ret;
+-+	}
+- 
+- 	ret = airoha_hw_init(dev, eth);
+- 	if (ret)
+-@@ -971,8 +1061,43 @@ static int arht_eth_write_hwaddr(struct udevice *dev)
+- 	return 0;
+- }
+- 
+-+static ofnode en7581_get_scu_node(struct udevice *dev)
+-+{
+-+	return ofnode_by_compatible(ofnode_null(), "airoha,en7581-scu");
+-+}
+-+
+-+static ofnode an7583_get_scu_node(struct udevice *dev)
+-+{
+-+	ofnode scu_node;
+-+
+-+	scu_node = ofnode_by_compatible(ofnode_null(), "airoha,an7583-scu");
+-+	if (!ofnode_valid(scu_node))
+-+		return scu_node;
+-+
+-+	return ofnode_get_parent(scu_node);
+-+}
+-+
+-+static const struct airoha_eth_soc_data en7581_data = {
+-+	.xsi_rsts_names = en7581_xsi_rsts_names,
+-+	.num_xsi_rsts = ARRAY_SIZE(en7581_xsi_rsts_names),
+-+	.get_scu_node = en7581_get_scu_node,
+-+	.switch_compatible = "airoha,en7581-switch",
+-+};
+-+
+-+static const struct airoha_eth_soc_data an7583_data = {
+-+	.xsi_rsts_names = an7583_xsi_rsts_names,
+-+	.num_xsi_rsts = ARRAY_SIZE(an7583_xsi_rsts_names),
+-+	.get_scu_node = an7583_get_scu_node,
+-+	.switch_compatible = "airoha,an7583-switch",
+-+};
+-+
+- static const struct udevice_id airoha_eth_ids[] = {
+--	{ .compatible = "airoha,en7581-eth" },
+-+	{ .compatible = "airoha,en7581-eth",
+-+	  .data = (ulong)&en7581_data,
+-+	},
+-+	{ .compatible = "airoha,an7583-eth",
+-+	  .data = (ulong)&an7583_data,
+-+	},
+- 	{ }
+- };
+- 
+diff --git a/package/boot/uboot-airoha/patches/305-airoha-add-Ethernet-node-in-AN7583-dtsi.patch b/package/boot/uboot-airoha/patches/305-airoha-add-Ethernet-node-in-AN7583-dtsi.patch
+deleted file mode 100644
+index 8873af7c5384f2bf7ab539a6c32b09b37d02584b..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/305-airoha-add-Ethernet-node-in-AN7583-dtsi.patch
++++ /dev/null
+@@ -1,45 +0,0 @@
+-From 613d695d0939cbbe6b66933267e3a4be263e1c7b Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Mon, 19 May 2025 14:31:59 +0200
+-Subject: [PATCH 2/4] airoha: add Ethernet node in AN7583 dtsi
+-
+-Add Ethernet node in AN7583 dtsi to add support for the integrated
+-Ethernet Controller.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- arch/arm/dts/an7583.dtsi | 23 +++++++++++++++++++++++
+- 1 file changed, 23 insertions(+)
+-
+---- a/arch/arm/dts/an7583.dtsi
+-+++ b/arch/arm/dts/an7583.dtsi
+-@@ -130,6 +130,29 @@
+- 			reg = <0x0 0x1fa20000 0x0 0x388>;
+- 		};
+- 
+-+		eth: ethernet@1fb50000 {
+-+			compatible = "airoha,an7583-eth";
+-+			reg = <0 0x1fb50000 0 0x2600>,
+-+				<0 0x1fb54000 0 0x2000>,
+-+				<0 0x1fb56000 0 0x2000>;
+-+			reg-names = "fe", "qdma0", "qdma1";
+-+
+-+			resets = <&scuclk AN7583_FE_RST>,
+-+				 <&scuclk AN7583_FE_PDMA_RST>,
+-+				 <&scuclk AN7583_FE_QDMA_RST>,
+-+				 <&scuclk AN7583_DUAL_HSI0_MAC_RST>,
+-+				 <&scuclk AN7583_DUAL_HSI1_MAC_RST>,
+-+				 <&scuclk AN7583_XFP_MAC_RST>;
+-+			reset-names = "fe", "pdma", "qdma",
+-+				      "hsi0-mac", "hsi1-mac",
+-+				      "xfp-mac";
+-+		};
+-+
+-+		switch: switch@1fb58000 {
+-+			compatible = "airoha,an7583-switch";
+-+			reg = <0 0x1fb58000 0 0x8000>;
+-+		};
+-+
+- 		syscon@1fbe3400 {
+- 			compatible = "airoha,en7581-pbus-csr", "syscon";
+- 			reg = <0x0 0x1fbe3400 0x0 0xff>;
+diff --git a/package/boot/uboot-airoha/patches/305-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch b/package/boot/uboot-airoha/patches/305-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f424bc2a106555c730ea8808ef7f953620fee9d9
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/305-clk-airoha-add-support-for-Airoha-AN7583-SoC-clock.patch
+@@ -0,0 +1,213 @@
++From c2bc25eaebdaf865c52418ff89ece3eb6aded616 Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Tue, 29 Apr 2025 13:19:11 +0200
++Subject: [PATCH 05/24] clk: airoha: add support for Airoha AN7583 SoC clock
++
++Add support for Airoha AN7583 SoC clock that implement more base values
++for clocks compared to AN7581.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ drivers/clk/airoha/clk-airoha.c | 158 ++++++++++++++++++++++++++++++++
++ 1 file changed, 158 insertions(+)
++
++diff --git a/drivers/clk/airoha/clk-airoha.c b/drivers/clk/airoha/clk-airoha.c
++index 49dbca82135..68dca6ab202 100644
++--- a/drivers/clk/airoha/clk-airoha.c
+++++ b/drivers/clk/airoha/clk-airoha.c
++@@ -36,6 +36,7 @@
++ 
++ #define EN7523_MAX_CLKS			8
++ #define EN7581_MAX_CLKS			9
+++#define EN7583_MAX_CLKS			11
++ 
++ struct airoha_clk_desc {
++ 	int id;
++@@ -78,6 +79,14 @@ static const u32 bus7581_base[] = { 600000000, 540000000 };
++ static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
++ static const u32 crypto_base[] = { 540000000, 480000000 };
++ static const u32 emmc7581_base[] = { 200000000, 150000000 };
+++/* AN7583 */
+++static const u32 gsw7583_base[] = { 540672000, 270336000, 400000000, 200000000 };
+++static const u32 emi7583_base[] = { 540672000, 480000000, 400000000, 300000000 };
+++static const u32 bus7583_base[] = { 600000000, 540672000, 480000000, 400000000 };
+++static const u32 spi7583_base[] = { 100000000, 12500000 };
+++static const u32 npu7583_base[] = { 666000000, 800000000, 720000000, 600000000 };
+++static const u32 crypto7583_base[] = { 540672000, 400000000 };
+++static const u32 emmc7583_base[] = { 150000000, 200000000 };
++ 
++ static const struct airoha_clk_desc en7523_base_clks[EN7523_MAX_CLKS] = {
++ 	[EN7523_CLK_GSW] = {
++@@ -293,6 +302,147 @@ static const struct airoha_clk_desc en7581_base_clks[EN7581_MAX_CLKS] = {
++ 	}
++ };
++ 
+++static const struct airoha_clk_desc an7583_base_clks[EN7583_MAX_CLKS] = {
+++	[EN7523_CLK_GSW] = {
+++		.id = EN7523_CLK_GSW,
+++		.name = "gsw",
+++
+++		.base_reg = REG_GSW_CLK_DIV_SEL,
+++		.base_bits = 2,
+++		.base_shift = 8,
+++		.base_values = gsw7583_base,
+++		.n_base_values = ARRAY_SIZE(gsw7583_base),
+++
+++		.div_bits = 3,
+++		.div_shift = 0,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	},
+++	[EN7523_CLK_EMI] = {
+++		.id = EN7523_CLK_EMI,
+++		.name = "emi",
+++
+++		.base_reg = REG_EMI_CLK_DIV_SEL,
+++		.base_bits = 2,
+++		.base_shift = 8,
+++		.base_values = emi7583_base,
+++		.n_base_values = ARRAY_SIZE(emi7583_base),
+++
+++		.div_bits = 3,
+++		.div_shift = 0,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	},
+++	[EN7523_CLK_BUS] = {
+++		.id = EN7523_CLK_BUS,
+++		.name = "bus",
+++
+++		.base_reg = REG_BUS_CLK_DIV_SEL,
+++		.base_bits = 2,
+++		.base_shift = 8,
+++		.base_values = bus7583_base,
+++		.n_base_values = ARRAY_SIZE(bus7583_base),
+++
+++		.div_bits = 3,
+++		.div_shift = 0,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	},
+++	[EN7523_CLK_SLIC] = {
+++		.id = EN7523_CLK_SLIC,
+++		.name = "slic",
+++
+++		.base_reg = REG_SPI_CLK_FREQ_SEL,
+++		.base_bits = 1,
+++		.base_shift = 0,
+++		.base_values = slic_base,
+++		.n_base_values = ARRAY_SIZE(slic_base),
+++
+++		.div_reg = REG_SPI_CLK_DIV_SEL,
+++		.div_bits = 5,
+++		.div_shift = 24,
+++		.div_val0 = 20,
+++		.div_step = 2,
+++	},
+++	[EN7523_CLK_SPI] = {
+++		.id = EN7523_CLK_SPI,
+++		.name = "spi",
+++
+++		.base_reg = REG_SPI_CLK_FREQ_SEL,
+++		.base_bits = 1,
+++		.base_shift = 1,
+++		.base_values = spi7583_base,
+++		.n_base_values = ARRAY_SIZE(spi7583_base),
+++
+++		.div_reg = REG_SPI_CLK_DIV_SEL,
+++		.div_bits = 5,
+++		.div_shift = 8,
+++		.div_val0 = 40,
+++		.div_step = 2,
+++	},
+++	[EN7523_CLK_NPU] = {
+++		.id = EN7523_CLK_NPU,
+++		.name = "npu",
+++
+++		.base_reg = REG_NPU_CLK_DIV_SEL,
+++		.base_bits = 2,
+++		.base_shift = 9,
+++		.base_values = npu7583_base,
+++		.n_base_values = ARRAY_SIZE(npu7583_base),
+++
+++		.div_bits = 3,
+++		.div_shift = 0,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	},
+++	[EN7523_CLK_CRYPTO] = {
+++		.id = EN7523_CLK_CRYPTO,
+++		.name = "crypto",
+++
+++		.base_reg = REG_CRYPTO_CLKSRC2,
+++		.base_bits = 1,
+++		.base_shift = 0,
+++		.base_values = crypto7583_base,
+++		.n_base_values = ARRAY_SIZE(crypto7583_base),
+++	},
+++	[EN7581_CLK_EMMC] = {
+++		.id = EN7581_CLK_EMMC,
+++		.name = "emmc",
+++
+++		.base_reg = REG_CRYPTO_CLKSRC2,
+++		.base_bits = 1,
+++		.base_shift = 13,
+++		.base_values = emmc7583_base,
+++		.n_base_values = ARRAY_SIZE(emmc7583_base),
+++	},
+++	[AN7583_CLK_MDIO0] = {
+++		.id = AN7583_CLK_MDIO0,
+++		.name = "mdio0",
+++
+++		.base_reg = REG_CRYPTO_CLKSRC2,
+++
+++		.base_value = 25000000,
+++
+++		.div_bits = 4,
+++		.div_shift = 15,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	},
+++	[AN7583_CLK_MDIO1] = {
+++		.id = AN7583_CLK_MDIO1,
+++		.name = "mdio1",
+++
+++		.base_reg = REG_CRYPTO_CLKSRC2,
+++
+++		.base_value = 25000000,
+++
+++		.div_bits = 4,
+++		.div_shift = 19,
+++		.div_step = 1,
+++		.div_offset = 1,
+++	}
+++};
+++
++ static u32 airoha_clk_get_base_rate(const struct airoha_clk_desc *desc, u32 val)
++ {
++ 	if (!desc->base_bits)
++@@ -542,6 +692,11 @@ static const struct airoha_clk_soc_data en7581_data = {
++ 	.descs = en7581_base_clks,
++ };
++ 
+++static const struct airoha_clk_soc_data an7583_data = {
+++	.num_clocks = ARRAY_SIZE(an7583_base_clks),
+++	.descs = an7583_base_clks,
+++};
+++
++ static const struct udevice_id airoha_clk_ids[] = {
++ 	{ .compatible = "airoha,en7523-scu",
++ 	  .data = (ulong)&en7523_data,
++@@ -549,6 +704,9 @@ static const struct udevice_id airoha_clk_ids[] = {
++ 	{ .compatible = "airoha,en7581-scu",
++ 	  .data = (ulong)&en7581_data,
++ 	},
+++	{ .compatible = "airoha,an7583-scu",
+++	  .data = (ulong)&an7583_data,
+++	},
++ 	{ }
++ };
++ 
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/306-airoha-add-MMC-node-for-Airoha-AN7583.patch b/package/boot/uboot-airoha/patches/306-airoha-add-MMC-node-for-Airoha-AN7583.patch
+deleted file mode 100644
+index ecd225df1a21bce7afb7d3ee6fb2f6c0c35e16c6..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/306-airoha-add-MMC-node-for-Airoha-AN7583.patch
++++ /dev/null
+@@ -1,65 +0,0 @@
+-From 1a3039c1e3a194b3f1e72b4506f8bdcd5b10fbbf Mon Sep 17 00:00:00 2001
+-From: Christian Marangi <ansuelsmth@gmail.com>
+-Date: Mon, 19 May 2025 14:52:26 +0200
+-Subject: [PATCH] airoha: add MMC node for Airoha AN7583
+-
+-Add MMC node for Airoha AN7583. These follow the same node of Airoha
+-AN7581.
+-
+-Similar to Airoha AN7581, add the fixed regulator and fixed clock for
+-MMC.
+-
+-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+----
+- arch/arm/dts/an7583.dtsi | 33 +++++++++++++++++++++++++++++++++
+- 1 file changed, 33 insertions(+)
+-
+---- a/arch/arm/dts/an7583.dtsi
+-+++ b/arch/arm/dts/an7583.dtsi
+-@@ -105,6 +105,21 @@
+- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+- 	};
+- 
+-+	clk25m: oscillator {
+-+		compatible = "fixed-clock";
+-+		#clock-cells = <0>;
+-+		clock-frequency = <25000000>;
+-+		clock-output-names = "clkxtal";
+-+	};
+-+
+-+	vmmc_3v3: regulator-vmmc-3v3 {
+-+		compatible = "regulator-fixed";
+-+		regulator-name = "vmmc";
+-+		regulator-min-microvolt = <3300000>;
+-+		regulator-max-microvolt = <3300000>;
+-+		regulator-always-on;
+-+	};
+-+
+- 	soc {
+- 		compatible = "simple-bus";
+- 		#address-cells = <2>;
+-@@ -259,6 +274,24 @@
+- 			};
+- 		};
+- 
+-+		mmc0: mmc@1fa0e000 {
+-+			compatible = "mediatek,mt7622-mmc";
+-+			reg = <0x0 0x1fa0e000 0x0 0x1000>,
+-+				<0x0 0x1fa0c000 0x0 0x60>;
+-+			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+-+			clocks = <&scuclk EN7581_CLK_EMMC>, <&clk25m>;
+-+			clock-names = "source", "hclk";
+-+			bus-width = <4>;
+-+			max-frequency = <52000000>;
+-+			vmmc-supply = <&vmmc_3v3>;
+-+			disable-wp;
+-+			cap-mmc-highspeed;
+-+			non-removable;
+-+
+-+			assigned-clocks = <&scuclk EN7581_CLK_EMMC>;
+-+			assigned-clock-rates = <200000000>;
+-+		};
+-+
+- 		uart1: serial@1fbf0000 {
+- 			compatible = "ns16550";
+- 			reg = <0x0 0x1fbf0000 0x0 0x30>;
+diff --git a/package/boot/uboot-airoha/patches/306-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch b/package/boot/uboot-airoha/patches/306-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..3f736f87896dcbd9b92f720471a78ce8e9eae466
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/306-reset-airoha-Add-support-for-Airoha-AN7583-reset.patch
+@@ -0,0 +1,173 @@
++From 6b54d65d6b247d06d94c28c6df92ed5b45d7468a Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Tue, 29 Apr 2025 13:33:35 +0200
++Subject: [PATCH 06/24] reset: airoha: Add support for Airoha AN7583 reset
++
++Adapt the Airoha reset driver to support Airoha AN7583 node structure.
++In AN7583 the register is exposed by the parent syscon hence a different
++logic needs to be applied. Also the reset line differ from AN7581 hence
++a dedicated table is needed.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ drivers/reset/reset-airoha.c                  | 60 ++++++++++++++++++
++ .../dt-bindings/reset/airoha,an7583-reset.h   | 62 +++++++++++++++++++
++ 2 files changed, 122 insertions(+)
++ create mode 100644 include/dt-bindings/reset/airoha,an7583-reset.h
++
++diff --git a/drivers/reset/reset-airoha.c b/drivers/reset/reset-airoha.c
++index ef8c47a067b..071f29b6f22 100644
++--- a/drivers/reset/reset-airoha.c
+++++ b/drivers/reset/reset-airoha.c
++@@ -15,6 +15,7 @@
++ 
++ #include <dt-bindings/reset/airoha,en7523-reset.h>
++ #include <dt-bindings/reset/airoha,en7581-reset.h>
+++#include <dt-bindings/reset/airoha,an7583-reset.h>
++ 
++ #define RST_NR_PER_BANK			32
++ 
++@@ -138,6 +139,60 @@ static const u16 en7581_rst_map[] = {
++ 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
++ };
++ 
+++static const u16 an7583_rst_map[] = {
+++	/* RST_CTRL2 */
+++	[AN7583_XPON_PHY_RST]		= 0,
+++	[AN7583_GPON_OLT_RST]		= 1,
+++	[AN7583_CPU_TIMER2_RST]		= 2,
+++	[AN7583_HSUART_RST]		= 3,
+++	[AN7583_UART4_RST]		= 4,
+++	[AN7583_UART5_RST]		= 5,
+++	[AN7583_I2C2_RST]		= 6,
+++	[AN7583_XSI_MAC_RST]		= 7,
+++	[AN7583_XSI_PHY_RST]		= 8,
+++	[AN7583_NPU_RST]		= 9,
+++	[AN7583_TRNG_MSTART_RST]	= 12,
+++	[AN7583_DUAL_HSI0_RST]		= 13,
+++	[AN7583_DUAL_HSI1_RST]		= 14,
+++	[AN7583_DUAL_HSI0_MAC_RST]	= 16,
+++	[AN7583_DUAL_HSI1_MAC_RST]	= 17,
+++	[AN7583_XPON_XFI_RST]		= 18,
+++	[AN7583_WDMA_RST]		= 19,
+++	[AN7583_WOE0_RST]		= 20,
+++	[AN7583_HSDMA_RST]		= 22,
+++	[AN7583_TDMA_RST]		= 24,
+++	[AN7583_EMMC_RST]		= 25,
+++	[AN7583_SOE_RST]		= 26,
+++	[AN7583_XFP_MAC_RST]		= 28,
+++	[AN7583_MDIO0]			= 30,
+++	[AN7583_MDIO1]			= 31,
+++	/* RST_CTRL1 */
+++	[AN7583_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
+++	[AN7583_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
+++	[AN7583_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
+++	[AN7583_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
+++	[AN7583_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
+++	[AN7583_TIMER_RST]		= RST_NR_PER_BANK + 8,
+++	[AN7583_PCM1_RST]		= RST_NR_PER_BANK + 11,
+++	[AN7583_UART_RST]		= RST_NR_PER_BANK + 12,
+++	[AN7583_GPIO_RST]		= RST_NR_PER_BANK + 13,
+++	[AN7583_GDMA_RST]		= RST_NR_PER_BANK + 14,
+++	[AN7583_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
+++	[AN7583_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
+++	[AN7583_SFC_RST]		= RST_NR_PER_BANK + 18,
+++	[AN7583_UART2_RST]		= RST_NR_PER_BANK + 19,
+++	[AN7583_GDMP_RST]		= RST_NR_PER_BANK + 20,
+++	[AN7583_FE_RST]			= RST_NR_PER_BANK + 21,
+++	[AN7583_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
+++	[AN7583_GSW_RST]		= RST_NR_PER_BANK + 23,
+++	[AN7583_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
+++	[AN7583_PCIE0_RST]		= RST_NR_PER_BANK + 26,
+++	[AN7583_PCIE1_RST]		= RST_NR_PER_BANK + 27,
+++	[AN7583_CPU_TIMER_RST]		= RST_NR_PER_BANK + 28,
+++	[AN7583_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
+++	[AN7583_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+++};
+++
++ static int airoha_reset_update(struct airoha_reset_priv *priv,
++ 			       unsigned long id, bool assert)
++ {
++@@ -227,6 +282,11 @@ static int airoha_reset_probe(struct udevice *dev)
++ 		return reset_init(dev, en7581_rst_map,
++ 				  ARRAY_SIZE(en7581_rst_map));
++ 
+++	if (ofnode_device_is_compatible(dev_ofnode(dev),
+++					"airoha,an7583-scu"))
+++		return reset_init(dev, an7583_rst_map,
+++				 ARRAY_SIZE(an7583_rst_map));
+++
++ 	return -ENODEV;
++ }
++ 
++diff --git a/include/dt-bindings/reset/airoha,an7583-reset.h b/include/dt-bindings/reset/airoha,an7583-reset.h
++new file mode 100644
++index 00000000000..be80d0e0bf5
++--- /dev/null
+++++ b/include/dt-bindings/reset/airoha,an7583-reset.h
++@@ -0,0 +1,62 @@
+++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+++/*
+++ * Copyright (c) 2024 AIROHA Inc
+++ * Author: Christian Marangi <ansuelsmth@gmail.com>
+++ */
+++
+++#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
+++#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_
+++
+++/* RST_CTRL2 */
+++#define AN7583_XPON_PHY_RST		 0
+++#define AN7583_GPON_OLT_RST		 1
+++#define AN7583_CPU_TIMER2_RST		 2
+++#define AN7583_HSUART_RST		 3
+++#define AN7583_UART4_RST		 4
+++#define AN7583_UART5_RST		 5
+++#define AN7583_I2C2_RST			 6
+++#define AN7583_XSI_MAC_RST		 7
+++#define AN7583_XSI_PHY_RST		 8
+++#define AN7583_NPU_RST			 9
+++#define AN7583_TRNG_MSTART_RST		10
+++#define AN7583_DUAL_HSI0_RST		11
+++#define AN7583_DUAL_HSI1_RST		12
+++#define AN7583_DUAL_HSI0_MAC_RST	13
+++#define AN7583_DUAL_HSI1_MAC_RST	14
+++#define AN7583_XPON_XFI_RST     	15
+++#define AN7583_WDMA_RST			16
+++#define AN7583_WOE0_RST			17
+++#define AN7583_HSDMA_RST		18
+++#define AN7583_TDMA_RST			19
+++#define AN7583_EMMC_RST			20
+++#define AN7583_SOE_RST			21
+++#define AN7583_XFP_MAC_RST		22
+++#define AN7583_MDIO0                    23
+++#define AN7583_MDIO1                    24
+++/* RST_CTRL1 */
+++#define AN7583_PCM1_ZSI_ISI_RST		25
+++#define AN7583_FE_PDMA_RST		26
+++#define AN7583_FE_QDMA_RST		27
+++#define AN7583_PCM_SPIWP_RST		28
+++#define AN7583_CRYPTO_RST		29
+++#define AN7583_TIMER_RST		30
+++#define AN7583_PCM1_RST			31
+++#define AN7583_UART_RST			32
+++#define AN7583_GPIO_RST			33
+++#define AN7583_GDMA_RST			34
+++#define AN7583_I2C_MASTER_RST		35
+++#define AN7583_PCM2_ZSI_ISI_RST		36
+++#define AN7583_SFC_RST			37
+++#define AN7583_UART2_RST		38
+++#define AN7583_GDMP_RST			39
+++#define AN7583_FE_RST			40
+++#define AN7583_USB_HOST_P0_RST		41
+++#define AN7583_GSW_RST			42
+++#define AN7583_SFC2_PCM_RST		43
+++#define AN7583_PCIE0_RST		44
+++#define AN7583_PCIE1_RST		45
+++#define AN7583_CPU_TIMER_RST		46
+++#define AN7583_PCIE_HB_RST		47
+++#define AN7583_XPON_MAC_RST		48
+++
+++#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_AN7583_H_ */
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/307-net-airoha-add-support-for-Airoha-AN7583.patch b/package/boot/uboot-airoha/patches/307-net-airoha-add-support-for-Airoha-AN7583.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..08f49f5915831b0d9c9e81bfb745c10a939dc866
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/307-net-airoha-add-support-for-Airoha-AN7583.patch
+@@ -0,0 +1,177 @@
++From fca7240fd0ea0b30d8b6eda68eec67d84d48f15d Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Mon, 19 May 2025 14:29:53 +0200
++Subject: [PATCH 07/24] net: airoha: add support for Airoha AN7583
++
++Add support for Ethernet controller present in Airoha AN7583. This
++follow the same implementation of Airoha AN7581 with the only difference
++of having a different reset number and a different logic to reach the
++SCU node.
++
++Generalize the driver for these 2 part to account for these minor
++difference.
++
++The switch init part also required some care as the Switch Internal PHY
++enable BMCR_PDOWN by default and tweak to GEPHY_CONN_CFG is also needed.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ drivers/net/airoha_eth.c | 91 ++++++++++++++++++++++++++++++++++++++++
++ 1 file changed, 91 insertions(+)
++
++diff --git a/drivers/net/airoha_eth.c b/drivers/net/airoha_eth.c
++index 3234d875887..75af93f182d 100644
++--- a/drivers/net/airoha_eth.c
+++++ b/drivers/net/airoha_eth.c
++@@ -20,6 +20,7 @@
++ #include <linux/dma-mapping.h>
++ #include <linux/io.h>
++ #include <linux/iopoll.h>
+++#include <linux/mii.h>
++ #include <linux/time.h>
++ #include <asm/arch/scu-regmap.h>
++ 
++@@ -28,6 +29,11 @@
++ #define AIROHA_MAX_NUM_RSTS		3
++ #define AIROHA_MAX_NUM_XSI_RSTS		4
++ 
+++#define AIROHA_MAX_NUM_SWITCH_PORT	4
+++#define AIROHA_MAX_PBUS_TRY		10
+++#define AIROHA_PBUS_SLEEP		100
+++#define AIROHA_PBUS_C22_MASK		0x800000
+++
++ #define AIROHA_MAX_PACKET_SIZE		2048
++ #define AIROHA_NUM_TX_RING		1
++ #define AIROHA_NUM_RX_RING		1
++@@ -78,6 +84,19 @@
++ #define   SWITCH_PHY_PRE_EN		BIT(15)
++ #define   SWITCH_PHY_END_ADDR		GENMASK(12, 8)
++ #define   SWITCH_PHY_ST_ADDR		GENMASK(4, 0)
+++#define SWITCH_GEPHY_CONN_CFG		0x7c14
+++#define   SWITCH_DPHY_CKIN_SEL		BIT(31)
+++#define   SWITCH_PHY_CORE_REG_CLK_SEL	BIT(30)
+++#define   SWITCH_ETHER_AFE_PWD		GENMASK(28, 24)
+++#define SWITCH_PBUS_PHY_IAC		0x7c20
+++#define   SWITCH_PBUS_PHY_START		BIT(31)
+++#define   SWITCH_PBUS_PHY_CMD		BIT(30)
+++#define   SWITCH_PBUS_PHY_CMD_READ	FIELD_PREP(SWITCH_PBUS_PHY_CMD, 0x0)
+++#define   SWITCH_PBUS_PHY_CMD_WRITE	FIELD_PREP(SWITCH_PBUS_PHY_CMD, 0x1)
+++#define   SWITCH_PBUS_PHY_PORTADDR	GENMASK(28, 24)
+++#define   SWITCH_PBUS_PHY_REGADDR	GENMASK(23, 0)
+++#define SWITCH_PBUS_PHY_IAWD		0x7c24
+++#define SWITCH_PBUS_PHY_IARD		0x7c28
++ 
++ /* FE */
++ #define PSE_BASE			0x0100
++@@ -332,6 +351,12 @@ static const char * const en7581_xsi_rsts_names[] = {
++ 	"xfp-mac",
++ };
++ 
+++static const char * const an7583_xsi_rsts_names[] = {
+++	"hsi0-mac",
+++	"hsi1-mac",
+++	"xfp-mac",
+++};
+++
++ static u32 airoha_rr(void __iomem *base, u32 offset)
++ {
++ 	return readl(base + offset);
++@@ -372,8 +397,12 @@ static u32 airoha_rmw(void __iomem *base, u32 offset, u32 mask, u32 val)
++ #define airoha_qdma_clear(qdma, offset, val)			\
++ 	airoha_rmw((qdma)->regs, (offset), (val), 0)
++ 
+++#define airoha_switch_rr(eth, offset)				\
+++	airoha_rr((eth)->switch_regs, (offset))
++ #define airoha_switch_wr(eth, offset, val)			\
++ 	airoha_wr((eth)->switch_regs, (offset), (val))
+++#define airoha_switch_rmw(eth, offset, mask, val)		\
+++	airoha_rmw((eth)->switch_regs, (offset), (mask), (val))
++ 
++ static inline dma_addr_t dma_map_unaligned(void *vaddr, size_t len,
++ 					   enum dma_data_direction dir)
++@@ -735,6 +764,59 @@ static int airoha_switch_init(struct udevice *dev, struct airoha_eth *eth)
++ 			 FIELD_PREP(SWITCH_PHY_END_ADDR, 0xc) |
++ 			 FIELD_PREP(SWITCH_PHY_ST_ADDR, 0x8));
++ 
+++	/* AN7583 require tweak to GEPHY_CONN_CFG and clear PHY BMCR_PDOWN */
+++	if (!strcmp(data->switch_compatible, "airoha,an7583-switch")) {
+++		int i;
+++
+++		airoha_switch_rmw(eth, SWITCH_GEPHY_CONN_CFG,
+++				  SWITCH_DPHY_CKIN_SEL |
+++				  SWITCH_PHY_CORE_REG_CLK_SEL |
+++				  SWITCH_ETHER_AFE_PWD,
+++				  SWITCH_DPHY_CKIN_SEL |
+++				  SWITCH_PHY_CORE_REG_CLK_SEL |
+++				  FIELD_PREP(SWITCH_ETHER_AFE_PWD, 0));
+++
+++		/* Disable BMCR_PDOWN for every PHY */
+++		for (i = 0; i < AIROHA_MAX_NUM_SWITCH_PORT; i++) {
+++			int try;
+++			u32 val;
+++
+++			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAC,
+++					 SWITCH_PBUS_PHY_START |
+++					 SWITCH_PBUS_PHY_CMD_READ |
+++					 FIELD_PREP(SWITCH_PBUS_PHY_PORTADDR, i) |
+++					 FIELD_PREP(SWITCH_PBUS_PHY_REGADDR,
+++						    AIROHA_PBUS_C22_MASK | MII_BMCR));
+++
+++			for (try = 0; try < AIROHA_MAX_PBUS_TRY; try++) {
+++				val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IAC);
+++				if (!(val & SWITCH_PBUS_PHY_START))
+++					break;
+++
+++				udelay(AIROHA_PBUS_SLEEP);
+++			}
+++
+++			val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IARD);
+++			val &= ~BMCR_PDOWN;
+++
+++			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAWD, val);
+++			airoha_switch_wr(eth, SWITCH_PBUS_PHY_IAC,
+++					 SWITCH_PBUS_PHY_START |
+++					 SWITCH_PBUS_PHY_CMD_WRITE |
+++					 FIELD_PREP(SWITCH_PBUS_PHY_PORTADDR, i) |
+++					 FIELD_PREP(SWITCH_PBUS_PHY_REGADDR,
+++						    AIROHA_PBUS_C22_MASK | MII_BMCR));
+++
+++			for (try = 0; try < AIROHA_MAX_PBUS_TRY; try++) {
+++				val = airoha_switch_rr(eth, SWITCH_PBUS_PHY_IAC);
+++				if (!(val & SWITCH_PBUS_PHY_START))
+++					break;
+++
+++				udelay(AIROHA_PBUS_SLEEP);
+++			}
+++		}
+++	}
+++
++ 	return 0;
++ }
++ 
++@@ -994,6 +1076,12 @@ static const struct airoha_eth_soc_data en7581_data = {
++ 	.switch_compatible = "airoha,en7581-switch",
++ };
++ 
+++static const struct airoha_eth_soc_data an7583_data = {
+++	.xsi_rsts_names = an7583_xsi_rsts_names,
+++	.num_xsi_rsts = ARRAY_SIZE(an7583_xsi_rsts_names),
+++	.switch_compatible = "airoha,an7583-switch",
+++};
+++
++ static const struct udevice_id airoha_eth_ids[] = {
++ 	{ .compatible = "airoha,en7523-eth",
++ 	  .data = (ulong)&en7523_data,
++@@ -1001,6 +1089,9 @@ static const struct udevice_id airoha_eth_ids[] = {
++ 	{ .compatible = "airoha,en7581-eth",
++ 	  .data = (ulong)&en7581_data,
++ 	},
+++	{ .compatible = "airoha,an7583-eth",
+++	  .data = (ulong)&an7583_data,
+++	},
++ 	{ }
++ };
++ 
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/308-airoha-add-Ethernet-node-in-AN7583-dtsi.patch b/package/boot/uboot-airoha/patches/308-airoha-add-Ethernet-node-in-AN7583-dtsi.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ff8fa2a3e89bde15df71868af6ab350d1e1020a8
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/308-airoha-add-Ethernet-node-in-AN7583-dtsi.patch
+@@ -0,0 +1,50 @@
++From e3acb9cf6e3e08e72e3549788a4cb35eb88ce206 Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Mon, 19 May 2025 14:31:59 +0200
++Subject: [PATCH 08/24] airoha: add Ethernet node in AN7583 dtsi
++
++Add Ethernet node in AN7583 dtsi to add support for the integrated
++Ethernet Controller.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ arch/arm/dts/an7583.dtsi | 23 +++++++++++++++++++++++
++ 1 file changed, 23 insertions(+)
++
++diff --git a/arch/arm/dts/an7583.dtsi b/arch/arm/dts/an7583.dtsi
++index e1fda15ba37..daf9886af64 100644
++--- a/arch/arm/dts/an7583.dtsi
+++++ b/arch/arm/dts/an7583.dtsi
++@@ -130,6 +130,29 @@
++ 			reg = <0x0 0x1fa20000 0x0 0x388>;
++ 		};
++ 
+++		eth: ethernet@1fb50000 {
+++			compatible = "airoha,an7583-eth";
+++			reg = <0 0x1fb50000 0 0x2600>,
+++				<0 0x1fb54000 0 0x2000>,
+++				<0 0x1fb56000 0 0x2000>;
+++			reg-names = "fe", "qdma0", "qdma1";
+++
+++			resets = <&scuclk AN7583_FE_RST>,
+++				 <&scuclk AN7583_FE_PDMA_RST>,
+++				 <&scuclk AN7583_FE_QDMA_RST>,
+++				 <&scuclk AN7583_DUAL_HSI0_MAC_RST>,
+++				 <&scuclk AN7583_DUAL_HSI1_MAC_RST>,
+++				 <&scuclk AN7583_XFP_MAC_RST>;
+++			reset-names = "fe", "pdma", "qdma",
+++				      "hsi0-mac", "hsi1-mac",
+++				      "xfp-mac";
+++		};
+++
+++		switch: switch@1fb58000 {
+++			compatible = "airoha,an7583-switch";
+++			reg = <0 0x1fb58000 0 0x8000>;
+++		};
+++
++ 		syscon@1fbe3400 {
++ 			compatible = "airoha,en7581-pbus-csr", "syscon";
++ 			reg = <0x0 0x1fbe3400 0x0 0xff>;
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/309-airoha-add-MMC-node-for-Airoha-AN7583.patch b/package/boot/uboot-airoha/patches/309-airoha-add-MMC-node-for-Airoha-AN7583.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..cd77fb90c8b1db6ce2bf72bb8784a466e4b6e288
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/309-airoha-add-MMC-node-for-Airoha-AN7583.patch
+@@ -0,0 +1,70 @@
++From a982b2b81c8c73213915ff7ff655461fe2fe0cef Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Mon, 19 May 2025 14:52:26 +0200
++Subject: [PATCH 09/24] airoha: add MMC node for Airoha AN7583
++
++Add MMC node for Airoha AN7583. These follow the same node of Airoha
++AN7581.
++
++Similar to Airoha AN7581, add the fixed regulator and fixed clock for
++MMC.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ arch/arm/dts/an7583.dtsi | 33 +++++++++++++++++++++++++++++++++
++ 1 file changed, 33 insertions(+)
++
++diff --git a/arch/arm/dts/an7583.dtsi b/arch/arm/dts/an7583.dtsi
++index daf9886af64..95c9d9a9507 100644
++--- a/arch/arm/dts/an7583.dtsi
+++++ b/arch/arm/dts/an7583.dtsi
++@@ -105,6 +105,21 @@
++ 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++ 	};
++ 
+++	clk25m: oscillator {
+++		compatible = "fixed-clock";
+++		#clock-cells = <0>;
+++		clock-frequency = <25000000>;
+++		clock-output-names = "clkxtal";
+++	};
+++
+++	vmmc_3v3: regulator-vmmc-3v3 {
+++		compatible = "regulator-fixed";
+++		regulator-name = "vmmc";
+++		regulator-min-microvolt = <3300000>;
+++		regulator-max-microvolt = <3300000>;
+++		regulator-always-on;
+++	};
+++
++ 	soc {
++ 		compatible = "simple-bus";
++ 		#address-cells = <2>;
++@@ -259,6 +274,24 @@
++ 			};
++ 		};
++ 
+++		mmc0: mmc@1fa0e000 {
+++			compatible = "mediatek,mt7622-mmc";
+++			reg = <0x0 0x1fa0e000 0x0 0x1000>,
+++				<0x0 0x1fa0c000 0x0 0x60>;
+++			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+++			clocks = <&scuclk EN7581_CLK_EMMC>, <&clk25m>;
+++			clock-names = "source", "hclk";
+++			bus-width = <4>;
+++			max-frequency = <52000000>;
+++			vmmc-supply = <&vmmc_3v3>;
+++			disable-wp;
+++			cap-mmc-highspeed;
+++			non-removable;
+++
+++			assigned-clocks = <&scuclk EN7581_CLK_EMMC>;
+++			assigned-clock-rates = <200000000>;
+++		};
+++
++ 		uart1: serial@1fbf0000 {
++ 			compatible = "ns16550";
++ 			reg = <0x0 0x1fbf0000 0x0 0x30>;
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/500-net-airoha-bind-MDIO-controller-on-Ethernet-load.patch b/package/boot/uboot-airoha/patches/500-net-airoha-bind-MDIO-controller-on-Ethernet-load.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..93c67997ba84939270e43666be0a9c15ff608b6b
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/500-net-airoha-bind-MDIO-controller-on-Ethernet-load.patch
+@@ -0,0 +1,89 @@
++From 1357636b826cadf15e410b64f1c98bde930dfb4e Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Thu, 23 Oct 2025 19:07:45 +0200
++Subject: [PATCH 10/24] net: airoha: bind MDIO controller on Ethernet load
++
++Bind MDIO controller on Ethernet Controller load. The Airoha AN7581 SoC
++have an integrated Switch based on MT7531 (or more saying MT7988).
++
++Attach it to the mdio node in the switch node to support scanning for
++MDIO devices on the BUS with DM API.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ drivers/net/Kconfig      |  1 +
++ drivers/net/airoha_eth.c | 32 ++++++++++++++++++++++++++++++++
++ 2 files changed, 33 insertions(+)
++
++diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
++index 544e302d600..f382a7752d5 100644
++--- a/drivers/net/Kconfig
+++++ b/drivers/net/Kconfig
++@@ -126,6 +126,7 @@ config AIROHA_ETH
++ 	depends on ARCH_AIROHA
++ 	select PHYLIB
++ 	select DM_RESET
+++	select MDIO_MT7531
++ 	help
++ 	  This Driver support Airoha Ethernet QDMA Driver
++ 	  Say Y to enable support for the Airoha Ethernet QDMA.
++diff --git a/drivers/net/airoha_eth.c b/drivers/net/airoha_eth.c
++index 75af93f182d..661b6ac19f0 100644
++--- a/drivers/net/airoha_eth.c
+++++ b/drivers/net/airoha_eth.c
++@@ -10,6 +10,7 @@
++ 
++ #include <dm.h>
++ #include <dm/devres.h>
+++#include <dm/lists.h>
++ #include <mapmem.h>
++ #include <net.h>
++ #include <regmap.h>
++@@ -1064,6 +1065,36 @@ static int arht_eth_write_hwaddr(struct udevice *dev)
++ 	return 0;
++ }
++ 
+++static int airoha_eth_bind(struct udevice *dev)
+++{
+++	ofnode switch_node, mdio_node;
+++	struct udevice *mdio_dev;
+++	int ret = 0;
+++
+++	if (!CONFIG_IS_ENABLED(MDIO_MT7531))
+++		return 0;
+++
+++	switch_node = ofnode_by_compatible(ofnode_null(),
+++					   "airoha,en7581-switch");
+++	if (!ofnode_valid(switch_node)) {
+++		debug("Warning: missing switch node\n");
+++		return 0;
+++	}
+++
+++	mdio_node = ofnode_find_subnode(switch_node, "mdio");
+++	if (!ofnode_valid(mdio_node)) {
+++		debug("Warning: missing mdio node\n");
+++		return 0;
+++	}
+++
+++	ret = device_bind_driver_to_node(dev, "mt7531-mdio", "mdio",
+++					 mdio_node, &mdio_dev);
+++	if (ret)
+++		debug("Warning: failed to bind mdio controller\n");
+++
+++	return 0;
+++}
+++
++ static const struct airoha_eth_soc_data en7523_data = {
++ 	.xsi_rsts_names = en7523_xsi_rsts_names,
++ 	.num_xsi_rsts = ARRAY_SIZE(en7523_xsi_rsts_names),
++@@ -1109,6 +1140,7 @@ U_BOOT_DRIVER(airoha_eth) = {
++ 	.id = UCLASS_ETH,
++ 	.of_match = airoha_eth_ids,
++ 	.probe = airoha_eth_probe,
+++	.bind = airoha_eth_bind,
++ 	.ops = &airoha_eth_ops,
++ 	.priv_auto = sizeof(struct airoha_eth),
++ 	.plat_auto = sizeof(struct eth_pdata),
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/500-net-airoha-simplify-rx-free-packet-logic-a-bit.patch b/package/boot/uboot-airoha/patches/500-net-airoha-simplify-rx-free-packet-logic-a-bit.patch
+deleted file mode 100644
+index 41871e4a2577b1418f523d6e36ebc68167d93b07..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/500-net-airoha-simplify-rx-free-packet-logic-a-bit.patch
++++ /dev/null
+@@ -1,93 +0,0 @@
+-From e7b7bd119b68fe9106a1c9a45a7eba811fc40ce0 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Fri, 3 Oct 2025 20:12:06 +0300
+-Subject: [PATCH v2 1/2] net: airoha: simplify rx/free packet logic a bit
+-
+-The commit 997786bbf473 ("drivers/net/airoha_eth: fix stalling in package
+-receiving") can be improved. Instead of returning previous descriptor
+-it's possible:
+- * do nothing in even descriptor case
+- * return 2 descriptor to the queue (current and previous) in the odd
+-   descriptor case.
+-
+-This patch:
+- * implements above approach
+- * remove logic not required within new approach
+- * adds note that PKTBUFSRX must be even and larger than 7
+-   for reliable driver operations
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- drivers/net/airoha_eth.c | 40 +++++++++++++++++++++-------------------
+- 1 file changed, 21 insertions(+), 19 deletions(-)
+-
+---- a/drivers/net/airoha_eth.c
+-+++ b/drivers/net/airoha_eth.c
+-@@ -492,14 +492,10 @@ static int airoha_qdma_init_rx_queue(struct airoha_queue *q,
+- 			RX_RING_SIZE_MASK,
+- 			FIELD_PREP(RX_RING_SIZE_MASK, ndesc));
+- 
+--	/*
+--	 * See arht_eth_free_pkt() for the reasons used to fill
+--	 * REG_RX_CPU_IDX(qid) register.
+--	 */
+- 	airoha_qdma_rmw(qdma, REG_RX_RING_SIZE(qid), RX_RING_THR_MASK,
+- 			FIELD_PREP(RX_RING_THR_MASK, 0));
+- 	airoha_qdma_rmw(qdma, REG_RX_CPU_IDX(qid), RX_RING_CPU_IDX_MASK,
+--			FIELD_PREP(RX_RING_CPU_IDX_MASK, q->ndesc - 3));
+-+			FIELD_PREP(RX_RING_CPU_IDX_MASK, q->ndesc - 1));
+- 	airoha_qdma_rmw(qdma, REG_RX_DMA_IDX(qid), RX_RING_DMA_IDX_MASK,
+- 			FIELD_PREP(RX_RING_DMA_IDX_MASK, q->head));
+- 
+-@@ -1010,7 +1006,6 @@ static int arht_eth_free_pkt(struct udevice *dev, uchar *packet, int length)
+- 	struct airoha_qdma *qdma = &eth->qdma[0];
+- 	struct airoha_queue *q;
+- 	int qid;
+--	u16 prev, pprev;
+- 
+- 	if (!packet)
+- 		return 0;
+-@@ -1020,22 +1015,29 @@ static int arht_eth_free_pkt(struct udevice *dev, uchar *packet, int length)
+- 
+- 	/*
+- 	 * Due to cpu cache issue the airoha_qdma_reset_rx_desc() function
+--	 * will always touch 2 descriptors:
+--	 *   - if current descriptor is even, then the previous and the one
+--	 *     before previous descriptors will be touched (previous cacheline)
+--	 *   - if current descriptor is odd, then only current and previous
+--	 *     descriptors will be touched (current cacheline)
+-+	 * will always touch 2 descriptors placed on the same cacheline:
+-+	 *   - if current descriptor is even, then current and next
+-+	 *     descriptors will be touched
+-+	 *   - if current descriptor is odd, then current and previous
+-+	 *     descriptors will be touched
+- 	 *
+--	 * Thus, to prevent possible destroying of rx queue, only (q->ndesc - 2)
+--	 * descriptors might be used for packet receiving.
+-+	 * Thus, to prevent possible destroying of rx queue, we should:
+-+	 *   - do nothing in the even descriptor case,
+-+	 *   - utilize 2 descriptors (current and previous one) in the
+-+	 *     odd descriptor case.
+-+	 *
+-+	 * WARNING: Observations shows that PKTBUFSRX must be even and
+-+	 *          larger than 7 for reliable driver operations.
+- 	 */
+--	prev  = (q->head + q->ndesc - 1) % q->ndesc;
+--	pprev = (q->head + q->ndesc - 2) % q->ndesc;
+--	q->head = (q->head + 1) % q->ndesc;
+-+	if (q->head & 0x01) {
+-+		airoha_qdma_reset_rx_desc(q, q->head - 1);
+-+		airoha_qdma_reset_rx_desc(q, q->head);
+- 
+--	airoha_qdma_reset_rx_desc(q, prev);
+--	airoha_qdma_rmw(qdma, REG_RX_CPU_IDX(qid), RX_RING_CPU_IDX_MASK,
+--			FIELD_PREP(RX_RING_CPU_IDX_MASK, pprev));
+-+		airoha_qdma_rmw(qdma, REG_RX_CPU_IDX(qid), RX_RING_CPU_IDX_MASK,
+-+				FIELD_PREP(RX_RING_CPU_IDX_MASK, q->head));
+-+	}
+-+
+-+	q->head = (q->head + 1) % q->ndesc;
+- 
+- 	return 0;
+- }
+-
+diff --git a/package/boot/uboot-airoha/patches/501-net-airoha_eth-fix-mdio-binding-to-switch-device.patch b/package/boot/uboot-airoha/patches/501-net-airoha_eth-fix-mdio-binding-to-switch-device.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ef4e0fd59c77fda8f113e0cb8b929de283bf975e
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/501-net-airoha_eth-fix-mdio-binding-to-switch-device.patch
+@@ -0,0 +1,55 @@
++From 967084a19cf6aef3a5f2a43d758e93ae1fadebbf Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:23 +0300
++Subject: [PATCH 11/24] net: airoha_eth: fix mdio binding to switch device
++
++Commit d2145a89bcf6 ("net: airoha: bind MDIO controller on Ethernet load")
++refers to non-present CONFIG_MDIO_MT7531 and non-present "mt7531-mdio"
++driver. It should use CONFIG_MDIO_MT7531_MMIO and "mt7531-mdio-mmio"
++instead.
++
++Fixes: d2145a89bcf6 ("net: airoha: bind MDIO controller on Ethernet load")
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ drivers/net/Kconfig      | 2 +-
++ drivers/net/airoha_eth.c | 4 ++--
++ 2 files changed, 3 insertions(+), 3 deletions(-)
++
++diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
++index f382a7752d5..51663580bdc 100644
++--- a/drivers/net/Kconfig
+++++ b/drivers/net/Kconfig
++@@ -126,7 +126,7 @@ config AIROHA_ETH
++ 	depends on ARCH_AIROHA
++ 	select PHYLIB
++ 	select DM_RESET
++-	select MDIO_MT7531
+++	select MDIO_MT7531_MMIO
++ 	help
++ 	  This Driver support Airoha Ethernet QDMA Driver
++ 	  Say Y to enable support for the Airoha Ethernet QDMA.
++diff --git a/drivers/net/airoha_eth.c b/drivers/net/airoha_eth.c
++index 661b6ac19f0..7be4f3c074f 100644
++--- a/drivers/net/airoha_eth.c
+++++ b/drivers/net/airoha_eth.c
++@@ -1071,7 +1071,7 @@ static int airoha_eth_bind(struct udevice *dev)
++ 	struct udevice *mdio_dev;
++ 	int ret = 0;
++ 
++-	if (!CONFIG_IS_ENABLED(MDIO_MT7531))
+++	if (!CONFIG_IS_ENABLED(MDIO_MT7531_MMIO))
++ 		return 0;
++ 
++ 	switch_node = ofnode_by_compatible(ofnode_null(),
++@@ -1087,7 +1087,7 @@ static int airoha_eth_bind(struct udevice *dev)
++ 		return 0;
++ 	}
++ 
++-	ret = device_bind_driver_to_node(dev, "mt7531-mdio", "mdio",
+++	ret = device_bind_driver_to_node(dev, "mt7531-mdio-mmio", "mdio",
++ 					 mdio_node, &mdio_dev);
++ 	if (ret)
++ 		debug("Warning: failed to bind mdio controller\n");
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/502-net-airoha_eth-use-proper-switch-node-for-en7523-cas.patch b/package/boot/uboot-airoha/patches/502-net-airoha_eth-use-proper-switch-node-for-en7523-cas.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..ed83789e5a90d16c62204b3a054271206b6519ec
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/502-net-airoha_eth-use-proper-switch-node-for-en7523-cas.patch
+@@ -0,0 +1,39 @@
++From 54e56dd99f1c00eae7be5ca8c37149b8671f25d8 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:24 +0300
++Subject: [PATCH 12/24] net: airoha_eth: use proper switch node for en7523 case
++
++Commit d2145a89bcf6 ("net: airoha: bind MDIO controller on Ethernet load")
++uses "airoha,en7581-switch" dts node for finding MDIO childs. This is wrong
++for EN7523 SoC. The correct node name should be used instead.
++
++Fixes: d2145a89bcf6 ("net: airoha: bind MDIO controller on Ethernet load")
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ drivers/net/airoha_eth.c | 3 ++-
++ 1 file changed, 2 insertions(+), 1 deletion(-)
++
++diff --git a/drivers/net/airoha_eth.c b/drivers/net/airoha_eth.c
++index 7be4f3c074f..f8d7235146d 100644
++--- a/drivers/net/airoha_eth.c
+++++ b/drivers/net/airoha_eth.c
++@@ -1067,6 +1067,7 @@ static int arht_eth_write_hwaddr(struct udevice *dev)
++ 
++ static int airoha_eth_bind(struct udevice *dev)
++ {
+++	struct airoha_eth_soc_data *data = (void *)dev_get_driver_data(dev);
++ 	ofnode switch_node, mdio_node;
++ 	struct udevice *mdio_dev;
++ 	int ret = 0;
++@@ -1075,7 +1076,7 @@ static int airoha_eth_bind(struct udevice *dev)
++ 		return 0;
++ 
++ 	switch_node = ofnode_by_compatible(ofnode_null(),
++-					   "airoha,en7581-switch");
+++					   data->switch_compatible);
++ 	if (!ofnode_valid(switch_node)) {
++ 		debug("Warning: missing switch node\n");
++ 		return 0;
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/503-net-mdio-mt7531-mmio-fix-switch-regs-initialization.patch b/package/boot/uboot-airoha/patches/503-net-mdio-mt7531-mmio-fix-switch-regs-initialization.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..cab601aa86c016c0e7efa58882409262ee002289
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/503-net-mdio-mt7531-mmio-fix-switch-regs-initialization.patch
+@@ -0,0 +1,35 @@
++From 9317668aa6e37152d799d7cbaf8b3ce7926b526a Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:25 +0300
++Subject: [PATCH 13/24] net: mdio-mt7531-mmio: fix switch regs initialization
++
++mdio is a child node of the switch, so to get switch base address
++we need to lookup for a parent node
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ drivers/net/mdio-mt7531-mmio.c | 7 ++++++-
++ 1 file changed, 6 insertions(+), 1 deletion(-)
++
++diff --git a/drivers/net/mdio-mt7531-mmio.c b/drivers/net/mdio-mt7531-mmio.c
++index 3e325ca58da..5a0725010f2 100644
++--- a/drivers/net/mdio-mt7531-mmio.c
+++++ b/drivers/net/mdio-mt7531-mmio.c
++@@ -151,8 +151,13 @@ static const struct mdio_ops mt7531_mdio_ops = {
++ static int mt7531_mdio_probe(struct udevice *dev)
++ {
++ 	struct mt7531_mdio_priv *priv = dev_get_priv(dev);
+++	ofnode switch_node;
++ 
++-	priv->switch_regs = dev_read_addr(dev);
+++	switch_node = ofnode_get_parent(dev_ofnode(dev));
+++	if (!ofnode_valid(switch_node))
+++		return -EINVAL;
+++
+++	priv->switch_regs = ofnode_get_addr(switch_node);
++ 	if (priv->switch_regs == FDT_ADDR_T_NONE)
++ 		return -EINVAL;
++ 
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/504-net-airoha-increase-the-number-of-rx-network-buffers.patch b/package/boot/uboot-airoha/patches/504-net-airoha-increase-the-number-of-rx-network-buffers.patch
+deleted file mode 100644
+index 6193397977afe6d3c11c71353f3c3eede232c017..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/504-net-airoha-increase-the-number-of-rx-network-buffers.patch
++++ /dev/null
+@@ -1,35 +0,0 @@
+-From 75d82c8878b2ffff489fbc7a5c0381f8f6484ec2 Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Fri, 3 Oct 2025 05:28:41 +0300
+-Subject: [PATCH 5/5] net: airoha: increase the number of rx network buffers
+-
+-According to commit 997786bbf473 ("drivers/net/airoha_eth: fix stalling
+-in package receiving") the minimal possible value of SYS_RX_ETH_BUFFER
+-is 4. Unfortunately it's too small for reliable ping.
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- configs/an7581_evb_defconfig | 1 +
+- configs/an7583_evb_defconfig | 1 +
+- 2 files changed, 2 insertions(+)
+-
+---- a/configs/an7581_evb_defconfig
+-+++ b/configs/an7581_evb_defconfig
+-@@ -43,6 +43,7 @@ CONFIG_ENV_IS_IN_MMC=y
+- CONFIG_ENV_RELOC_GD_ENV_ADDR=y
+- CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+- CONFIG_NET_RANDOM_ETHADDR=y
+-+CONFIG_SYS_RX_ETH_BUFFER=8
+- CONFIG_REGMAP=y
+- CONFIG_SYSCON=y
+- CONFIG_CLK=y
+---- a/configs/an7583_evb_defconfig
+-+++ b/configs/an7583_evb_defconfig
+-@@ -44,6 +44,7 @@ CONFIG_ENV_IS_IN_MMC=y
+- CONFIG_ENV_RELOC_GD_ENV_ADDR=y
+- CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+- CONFIG_NET_RANDOM_ETHADDR=y
+-+CONFIG_SYS_RX_ETH_BUFFER=8
+- CONFIG_REGMAP=y
+- CONFIG_SYSCON=y
+- CONFIG_CLK=y
+diff --git a/package/boot/uboot-airoha/patches/504-net-mdio-mt7531-mmio-use-common-header-priv-struct.patch b/package/boot/uboot-airoha/patches/504-net-mdio-mt7531-mmio-use-common-header-priv-struct.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..1f807b1e513b38b8f2ad7db837cc2b45e920531a
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/504-net-mdio-mt7531-mmio-use-common-header-priv-struct.patch
+@@ -0,0 +1,114 @@
++From 1a853053a3e44cae45f16b1b30da70da2629c590 Mon Sep 17 00:00:00 2001
++From: Christian Marangi <ansuelsmth@gmail.com>
++Date: Mon, 9 Feb 2026 12:20:33 +0100
++Subject: [PATCH 14/24] net: mdio-mt7531-mmio: use common header priv struct
++
++Instead of having duplicate priv struct for mdio-mt7531-mmio driver in
++both driver and header, use the one exposed by the header directly.
++
++This make sure we have consistent priv struct if the driver will be
++updated in the future.
++
++Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
++---
++ drivers/net/mdio-mt7531-mmio.c | 24 +++++++++++-------------
++ 1 file changed, 11 insertions(+), 13 deletions(-)
++
++diff --git a/drivers/net/mdio-mt7531-mmio.c b/drivers/net/mdio-mt7531-mmio.c
++index 5a0725010f2..930454a9b0e 100644
++--- a/drivers/net/mdio-mt7531-mmio.c
+++++ b/drivers/net/mdio-mt7531-mmio.c
++@@ -6,6 +6,8 @@
++ #include <linux/iopoll.h>
++ #include <miiphy.h>
++ 
+++#include "mdio-mt7531-mmio.h"
+++
++ #define MT7531_PHY_IAC			0x701c
++ #define   MT7531_PHY_ACS_ST		BIT(31)
++ #define   MT7531_MDIO_REG_ADDR_CL22	GENMASK(29, 25)
++@@ -25,11 +27,7 @@
++ #define MT7531_MDIO_TIMEOUT		100000
++ #define MT7531_MDIO_SLEEP		20
++ 
++-struct mt7531_mdio_priv {
++-	phys_addr_t switch_regs;
++-};
++-
++-static int mt7531_mdio_wait_busy(struct mt7531_mdio_priv *priv)
+++static int mt7531_mdio_wait_busy(struct mt7531_mdio_mmio_priv *priv)
++ {
++ 	unsigned int busy;
++ 
++@@ -38,7 +36,7 @@ static int mt7531_mdio_wait_busy(struct mt7531_mdio_priv *priv)
++ 					MT7531_MDIO_SLEEP, MT7531_MDIO_TIMEOUT);
++ }
++ 
++-static int mt7531_mdio_read(struct mt7531_mdio_priv *priv, int addr, int devad, int reg)
+++static int mt7531_mdio_read(struct mt7531_mdio_mmio_priv *priv, int addr, int devad, int reg)
++ {
++ 	u32 val;
++ 
++@@ -75,7 +73,7 @@ static int mt7531_mdio_read(struct mt7531_mdio_priv *priv, int addr, int devad,
++ 	return val & MT7531_MDIO_RW_DATA;
++ }
++ 
++-static int mt7531_mdio_write(struct mt7531_mdio_priv *priv, int addr, int devad,
+++static int mt7531_mdio_write(struct mt7531_mdio_mmio_priv *priv, int addr, int devad,
++ 			     int reg, u16 value)
++ {
++ 	u32 val;
++@@ -115,7 +113,7 @@ static int mt7531_mdio_write(struct mt7531_mdio_priv *priv, int addr, int devad,
++ 
++ int mt7531_mdio_mmio_read(struct mii_dev *bus, int addr, int devad, int reg)
++ {
++-	struct mt7531_mdio_priv *priv = bus->priv;
+++	struct mt7531_mdio_mmio_priv *priv = bus->priv;
++ 
++ 	return mt7531_mdio_read(priv, addr, devad, reg);
++ }
++@@ -123,14 +121,14 @@ int mt7531_mdio_mmio_read(struct mii_dev *bus, int addr, int devad, int reg)
++ int mt7531_mdio_mmio_write(struct mii_dev *bus, int addr, int devad,
++ 			   int reg, u16 value)
++ {
++-	struct mt7531_mdio_priv *priv = bus->priv;
+++	struct mt7531_mdio_mmio_priv *priv = bus->priv;
++ 
++ 	return mt7531_mdio_write(priv, addr, devad, reg, value);
++ }
++ 
++ static int dm_mt7531_mdio_read(struct udevice *dev, int addr, int devad, int reg)
++ {
++-	struct mt7531_mdio_priv *priv = dev_get_priv(dev);
+++	struct mt7531_mdio_mmio_priv *priv = dev_get_priv(dev);
++ 
++ 	return mt7531_mdio_read(priv, addr, devad, reg);
++ }
++@@ -138,7 +136,7 @@ static int dm_mt7531_mdio_read(struct udevice *dev, int addr, int devad, int reg
++ static int dm_mt7531_mdio_write(struct udevice *dev, int addr, int devad,
++ 				int reg, u16 value)
++ {
++-	struct mt7531_mdio_priv *priv = dev_get_priv(dev);
+++	struct mt7531_mdio_mmio_priv *priv = dev_get_priv(dev);
++ 
++ 	return mt7531_mdio_write(priv, addr, devad, reg, value);
++ }
++@@ -150,7 +148,7 @@ static const struct mdio_ops mt7531_mdio_ops = {
++ 
++ static int mt7531_mdio_probe(struct udevice *dev)
++ {
++-	struct mt7531_mdio_priv *priv = dev_get_priv(dev);
+++	struct mt7531_mdio_mmio_priv *priv = dev_get_priv(dev);
++ 	ofnode switch_node;
++ 
++ 	switch_node = ofnode_get_parent(dev_ofnode(dev));
++@@ -169,5 +167,5 @@ U_BOOT_DRIVER(mt7531_mdio) = {
++ 	.id             = UCLASS_MDIO,
++ 	.probe          = mt7531_mdio_probe,
++ 	.ops            = &mt7531_mdio_ops,
++-	.priv_auto	  = sizeof(struct mt7531_mdio_priv),
+++	.priv_auto	  = sizeof(struct mt7531_mdio_mmio_priv),
++ };
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/505-configs-an7581-add-mii-mdio-support.patch b/package/boot/uboot-airoha/patches/505-configs-an7581-add-mii-mdio-support.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..9fa399a442fc41e2d50cad6a58ce77304bf14cfa
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/505-configs-an7581-add-mii-mdio-support.patch
+@@ -0,0 +1,29 @@
++From 25125e98275aa43023c1d311433e0dca1c12e069 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:26 +0300
++Subject: [PATCH 15/24] configs: an7581: add mii/mdio support
++
++This enables mdio/mii command support.
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ configs/an7581_evb_defconfig | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/configs/an7581_evb_defconfig b/configs/an7581_evb_defconfig
++index 73af30cd693..8e2c694dbbb 100644
++--- a/configs/an7581_evb_defconfig
+++++ b/configs/an7581_evb_defconfig
++@@ -66,6 +66,9 @@ CONFIG_SPI_FLASH_STMICRO=y
++ CONFIG_SPI_FLASH_WINBOND=y
++ CONFIG_SPI_FLASH_MTD=y
++ CONFIG_AIROHA_ETH=y
+++CONFIG_DM_MDIO=y
+++CONFIG_CMD_MII=y
+++CONFIG_CMD_MDIO=y
++ CONFIG_PHY=y
++ CONFIG_PINCTRL=y
++ CONFIG_PINCONF=y
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/506-arm-dts-an7581-add-mdio-child-node-to-switch-node.patch b/package/boot/uboot-airoha/patches/506-arm-dts-an7581-add-mdio-child-node-to-switch-node.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..70601701e00375ee7978922d3ef1adf406a574a3
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/506-arm-dts-an7581-add-mdio-child-node-to-switch-node.patch
+@@ -0,0 +1,31 @@
++From 3236c124261ca9da41632762c36b86aface13b05 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:27 +0300
++Subject: [PATCH 16/24] arm: dts: an7581: add mdio child node to switch node
++
++add mdio node to be able see switch port states
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ arch/arm/dts/an7581-u-boot.dtsi | 5 +++++
++ 1 file changed, 5 insertions(+)
++
++diff --git a/arch/arm/dts/an7581-u-boot.dtsi b/arch/arm/dts/an7581-u-boot.dtsi
++index a9297ca6503..c5e24c76457 100644
++--- a/arch/arm/dts/an7581-u-boot.dtsi
+++++ b/arch/arm/dts/an7581-u-boot.dtsi
++@@ -57,6 +57,11 @@
++ 		switch: switch@1fb58000 {
++ 			compatible = "airoha,en7581-switch";
++ 			reg = <0 0x1fb58000 0 0x8000>;
+++
+++			mdio: mdio {
+++				#address-cells = <1>;
+++				#size-cells = <0>;
+++			};
++ 		};
++ 
++ 		snfi: spi@1fa10000 {
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/507-configs-en7523-add-mii-mdio-support.patch b/package/boot/uboot-airoha/patches/507-configs-en7523-add-mii-mdio-support.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..49fdc9602f2e0fcd41b0f17a233e8ba881f054d0
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/507-configs-en7523-add-mii-mdio-support.patch
+@@ -0,0 +1,29 @@
++From 6efbdacd79d253507e62ae93358953fff6fb3173 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:28 +0300
++Subject: [PATCH 17/24] configs: en7523: add mii/mdio support
++
++This enables mdio/mii command support.
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ configs/en7523_evb_defconfig | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/configs/en7523_evb_defconfig b/configs/en7523_evb_defconfig
++index 113ddb46a7f..ebd99d133c9 100644
++--- a/configs/en7523_evb_defconfig
+++++ b/configs/en7523_evb_defconfig
++@@ -51,6 +51,9 @@ CONFIG_MTD=y
++ CONFIG_DM_MTD=y
++ CONFIG_MTD_SPI_NAND=y
++ CONFIG_AIROHA_ETH=y
+++CONFIG_DM_MDIO=y
+++CONFIG_CMD_MII=y
+++CONFIG_CMD_MDIO=y
++ CONFIG_PHY=y
++ CONFIG_PINCTRL=y
++ CONFIG_PINCONF=y
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/508-arm-dts-en7523-add-mdio-child-node-to-switch-node.patch b/package/boot/uboot-airoha/patches/508-arm-dts-en7523-add-mdio-child-node-to-switch-node.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..f498fd0fd215fdfcad3ae6cdb892a4faf5bc5fda
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/508-arm-dts-en7523-add-mdio-child-node-to-switch-node.patch
+@@ -0,0 +1,31 @@
++From 3ad8d165ce15559d5cab0df0cad9559e81c995f4 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Sat, 31 Jan 2026 01:06:29 +0300
++Subject: [PATCH 18/24] arm: dts: en7523: add mdio child node to switch node
++
++add mdio node to be able see switch port states
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ arch/arm/dts/en7523-u-boot.dtsi | 5 +++++
++ 1 file changed, 5 insertions(+)
++
++diff --git a/arch/arm/dts/en7523-u-boot.dtsi b/arch/arm/dts/en7523-u-boot.dtsi
++index f031f81515a..9eadaccc500 100644
++--- a/arch/arm/dts/en7523-u-boot.dtsi
+++++ b/arch/arm/dts/en7523-u-boot.dtsi
++@@ -42,6 +42,11 @@
++ 	switch: switch@1fb58000 {
++ 		compatible = "airoha,en7523-switch";
++ 		reg = <0x1fb58000 0x8000>;
+++
+++		mdio: mdio {
+++			#address-cells = <1>;
+++			#size-cells = <0>;
+++		};
++ 	};
++ 
++ 	snfi: spi@1fa10000 {
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/509-configs-an7583-add-mii-mdio-support.patch b/package/boot/uboot-airoha/patches/509-configs-an7583-add-mii-mdio-support.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..fba62782439b39b3684d4a3333082c1bf981057b
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/509-configs-an7583-add-mii-mdio-support.patch
+@@ -0,0 +1,29 @@
++From c8d2c4c3beb5fd27a041744f0f9a6b6d5c4e1ebe Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Wed, 11 Feb 2026 03:26:13 +0300
++Subject: [PATCH 19/24] configs: an7583: add mii/mdio support
++
++This enables mdio/mii command support.
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu
++---
++ configs/an7583_evb_defconfig | 3 +++
++ 1 file changed, 3 insertions(+)
++
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++index d1893fff398..41d98bab5de 100644
++--- a/configs/an7583_evb_defconfig
+++++ b/configs/an7583_evb_defconfig
++@@ -65,6 +65,9 @@ CONFIG_SPI_FLASH_STMICRO=y
++ CONFIG_SPI_FLASH_WINBOND=y
++ CONFIG_SPI_FLASH_MTD=y
++ CONFIG_AIROHA_ETH=y
+++CONFIG_DM_MDIO=y
+++CONFIG_CMD_MII=y
+++CONFIG_CMD_MDIO=y
++ CONFIG_PHY=y
++ CONFIG_PINCTRL=y
++ CONFIG_PINCONF=y
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/510-arm-dts-an7583-add-mdio-child-node-to-switch-node.patch b/package/boot/uboot-airoha/patches/510-arm-dts-an7583-add-mdio-child-node-to-switch-node.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..c2f0644417b48cef941284333140df3906b5cf00
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/510-arm-dts-an7583-add-mdio-child-node-to-switch-node.patch
+@@ -0,0 +1,31 @@
++From 7f9bbd9ed8d2e3b7dae0fbc7d2bd2b0c08a115d0 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Wed, 11 Feb 2026 03:29:23 +0300
++Subject: [PATCH 20/24] arm: dts: an7583: add mdio child node to switch node
++
++add mdio node to be able see switch port states
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ arch/arm/dts/an7583.dtsi | 5 +++++
++ 1 file changed, 5 insertions(+)
++
++diff --git a/arch/arm/dts/an7583.dtsi b/arch/arm/dts/an7583.dtsi
++index 95c9d9a9507..d84ccf27f2c 100644
++--- a/arch/arm/dts/an7583.dtsi
+++++ b/arch/arm/dts/an7583.dtsi
++@@ -166,6 +166,11 @@
++ 		switch: switch@1fb58000 {
++ 			compatible = "airoha,an7583-switch";
++ 			reg = <0 0x1fb58000 0 0x8000>;
+++
+++			mdio: mdio {
+++				#address-cells = <1>;
+++				#size-cells = <0>;
+++			};
++ 		};
++ 
++ 		syscon@1fbe3400 {
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/900-airoha-enable-UBI-support-and-define-default-partiti.patch b/package/boot/uboot-airoha/patches/900-airoha-enable-UBI-support-and-define-default-partiti.patch
+index 66733c3abaf5f222f336df5917af1f1f3b6aff49..1f3dec09bc109d44e318ff271a6b906338776076 100644
+--- a/package/boot/uboot-airoha/patches/900-airoha-enable-UBI-support-and-define-default-partiti.patch
++++ b/package/boot/uboot-airoha/patches/900-airoha-enable-UBI-support-and-define-default-partiti.patch
+@@ -1,47 +1,30 @@
+-From 28a72d957b897e7f7212c11f99052a32b0f6abc4 Mon Sep 17 00:00:00 2001
++From 06a44c562647bedd0705cac8bec862877371ff1f Mon Sep 17 00:00:00 2001
+ From: Christian Marangi <ansuelsmth@gmail.com>
+ Date: Wed, 28 May 2025 03:10:53 +0200
+-Subject: [PATCH 1/2] airoha: enable UBI support and define default partition
++Subject: [PATCH 21/24] airoha: enable UBI support and define default partition
+ 
+ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ ---
+- arch/arm/dts/an7581-u-boot.dtsi | 16 ++++++++++++++++
+- arch/arm/dts/an7583-evb.dts     | 22 ++++++++++++++++++++++
+- configs/an7581_evb_defconfig    | 16 ++++++++++++++++
+- configs/an7583_evb_defconfig    | 16 ++++++++++++++++
+- 4 files changed, 70 insertions(+)
++ arch/arm/dts/an7583-evb.dts         | 22 ++++++++++++++++++++++
++ arch/arm/dts/en7523-evb-u-boot.dtsi | 22 ++++++++++++++++++++++
++ arch/arm/dts/en7581-evb-u-boot.dtsi | 22 ++++++++++++++++++++++
++ configs/an7581_evb_defconfig        | 17 +++++++++++++++++
++ configs/an7583_evb_defconfig        | 17 +++++++++++++++++
++ configs/en7523_evb_defconfig        | 20 ++++++++++++++++++--
++ 6 files changed, 118 insertions(+), 2 deletions(-)
+ 
+---- a/arch/arm/dts/an7581-u-boot.dtsi
+-+++ b/arch/arm/dts/an7581-u-boot.dtsi
+-@@ -76,6 +76,22 @@
+- 				spi-max-frequency = <50000000>;
+- 				spi-tx-bus-width = <1>;
+- 				spi-rx-bus-width = <2>;
+-+
+-+				partitions {
+-+					compatible = "fixed-partitions";
+-+					#address-cells = <1>;
+-+					#size-cells = <1>;
+-+
+-+					bl2@0 {
+-+						label = "bl2";
+-+						reg = <0x0 0x20000>;
+-+					};
+-+
+-+					ubi@20000 {
+-+						label = "ubi";
+-+						reg = <0x20000 0x0>;
+-+					};
+-+				};
+- 			};
+- 		};
+- 
++diff --git a/arch/arm/dts/an7583-evb.dts b/arch/arm/dts/an7583-evb.dts
++index d02cd194e8a..b3045e6e7d0 100644
+ --- a/arch/arm/dts/an7583-evb.dts
+ +++ b/arch/arm/dts/an7583-evb.dts
+-@@ -46,6 +46,24 @@
++@@ -46,6 +46,28 @@
+  	};
+  };
+  
+++&snfi {
+++	status = "okay";
+++};
+++
+ +&spi_nand {
+ +	partitions {
+ +		compatible = "fixed-partitions";
+@@ -63,16 +46,79 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+  &pcie0 {
+  	pinctrl-names = "default";
+  	pinctrl-0 = <&pcie0_rst_pins>;
++diff --git a/arch/arm/dts/en7523-evb-u-boot.dtsi b/arch/arm/dts/en7523-evb-u-boot.dtsi
++index c109d6794fb..b74bfe2d707 100644
++--- a/arch/arm/dts/en7523-evb-u-boot.dtsi
+++++ b/arch/arm/dts/en7523-evb-u-boot.dtsi
++@@ -9,3 +9,25 @@
++ };
++ 
++ #include "en7523-u-boot.dtsi"
+++
+++&snfi {
+++	status = "okay";
+++};
+++
+++&spi_nand {
+++	partitions {
+++		compatible = "fixed-partitions";
+++		#address-cells = <1>;
+++		#size-cells = <1>;
+++
+++		bl2@0 {
+++			label = "bl2";
+++			reg = <0x0 0x20000>;
+++		};
+++
+++		ubi@20000 {
+++			label = "ubi";
+++			reg = <0x20000 0x0>;
+++		};
+++	};
+++};
++diff --git a/arch/arm/dts/en7581-evb-u-boot.dtsi b/arch/arm/dts/en7581-evb-u-boot.dtsi
++index ebd3b8b4958..b9a9382e254 100644
++--- a/arch/arm/dts/en7581-evb-u-boot.dtsi
+++++ b/arch/arm/dts/en7581-evb-u-boot.dtsi
++@@ -9,3 +9,25 @@
++ };
++ 
++ #include "an7581-u-boot.dtsi"
+++
+++&snfi {
+++	status = "okay";
+++};
+++
+++&spi_nand {
+++	partitions {
+++		compatible = "fixed-partitions";
+++		#address-cells = <1>;
+++		#size-cells = <1>;
+++
+++		bl2@0 {
+++			label = "bl2";
+++			reg = <0x0 0x20000>;
+++		};
+++
+++		ubi@20000 {
+++			label = "ubi";
+++			reg = <0x20000 0x0>;
+++		};
+++	};
+++};
++diff --git a/configs/an7581_evb_defconfig b/configs/an7581_evb_defconfig
++index 8e2c694dbbb..05e37d04681 100644
+ --- a/configs/an7581_evb_defconfig
+ +++ b/configs/an7581_evb_defconfig
+-@@ -78,3 +78,19 @@ CONFIG_SPI=y
++@@ -81,4 +81,21 @@ CONFIG_SYS_NS16550=y
++ CONFIG_SPI=y
+  CONFIG_DM_SPI=y
+  CONFIG_AIROHA_SNFI_SPI=y
+- CONFIG_SHA512=y
+ +CONFIG_CMD_UBI=y
+ +# CONFIG_CMD_UBI_RENAME is not set
+ +CONFIG_CMD_UBIFS=y
+ +CONFIG_ENV_IS_IN_UBI=y
+++CONFIG_ENV_REDUNDANT=y
+ +CONFIG_ENV_UBI_PART="ubi"
+ +CONFIG_ENV_UBI_VOLUME="ubootenv"
+ +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
+@@ -85,16 +131,20 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_UBI_BLOCK=y
+ +# CONFIG_UBIFS_SILENCE_MSG is not set
+ +# CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
++ CONFIG_SHA512=y
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++index 41d98bab5de..663d1ec52ae 100644
+ --- a/configs/an7583_evb_defconfig
+ +++ b/configs/an7583_evb_defconfig
+-@@ -80,3 +80,19 @@ CONFIG_SHA512=y
+- CONFIG_AIROHA_ETH=y
+- CONFIG_MMC_MTK=y
++@@ -80,4 +80,21 @@ CONFIG_SYS_NS16550=y
++ CONFIG_SPI=y
++ CONFIG_DM_SPI=y
+  CONFIG_AIROHA_SNFI_SPI=y
+ +CONFIG_CMD_UBI=y
+ +# CONFIG_CMD_UBI_RENAME is not set
+ +CONFIG_CMD_UBIFS=y
+ +CONFIG_ENV_IS_IN_UBI=y
+++CONFIG_ENV_REDUNDANT=y
+ +CONFIG_ENV_UBI_PART="ubi"
+ +CONFIG_ENV_UBI_VOLUME="ubootenv"
+ +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
+@@ -107,3 +157,51 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +CONFIG_UBI_BLOCK=y
+ +# CONFIG_UBIFS_SILENCE_MSG is not set
+ +# CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
++ CONFIG_SHA512=y
++diff --git a/configs/en7523_evb_defconfig b/configs/en7523_evb_defconfig
++index ebd99d133c9..4d01e3f54fe 100644
++--- a/configs/en7523_evb_defconfig
+++++ b/configs/en7523_evb_defconfig
++@@ -5,7 +5,6 @@ CONFIG_TEXT_BASE=0x81E00000
++ CONFIG_SYS_MALLOC_F_LEN=0x4000
++ CONFIG_NR_DRAM_BANKS=1
++ CONFIG_ENV_SIZE=0x4000
++-CONFIG_ENV_OFFSET=0x7c000
++ CONFIG_DM_GPIO=y
++ CONFIG_DEFAULT_DEVICE_TREE="airoha/en7523-evb"
++ CONFIG_SYS_LOAD_ADDR=0x81800000
++@@ -36,8 +35,8 @@ CONFIG_CMD_MTDPARTS=y
++ CONFIG_CMD_LOG=y
++ CONFIG_OF_UPSTREAM=y
++ CONFIG_ENV_OVERWRITE=y
+++# CONFIG_ENV_IS_IN_MTD is not set
++ CONFIG_ENV_RELOC_GD_ENV_ADDR=y
++-CONFIG_ENV_MTD_DEV="spi-nand0"
++ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
++ CONFIG_NET_RANDOM_ETHADDR=y
++ CONFIG_SYS_RX_ETH_BUFFER=8
++@@ -63,4 +62,21 @@ CONFIG_SYS_NS16550=y
++ CONFIG_SPI=y
++ CONFIG_DM_SPI=y
++ CONFIG_AIROHA_SNFI_SPI=y
+++CONFIG_CMD_UBI=y
+++# CONFIG_CMD_UBI_RENAME is not set
+++CONFIG_CMD_UBIFS=y
+++CONFIG_ENV_IS_IN_UBI=y
+++CONFIG_ENV_REDUNDANT=y
+++CONFIG_ENV_UBI_PART="ubi"
+++CONFIG_ENV_UBI_VOLUME="ubootenv"
+++CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
+++CONFIG_ENV_UBI_VID_OFFSET=0
+++CONFIG_MTD_UBI=y
+++CONFIG_MTD_UBI_MODULE=y
+++CONFIG_MTD_UBI_WL_THRESHOLD=4096
+++CONFIG_MTD_UBI_BEB_LIMIT=20
+++# CONFIG_MTD_UBI_FASTMAP is not set
+++CONFIG_UBI_BLOCK=y
+++# CONFIG_UBIFS_SILENCE_MSG is not set
+++# CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
++ CONFIG_SHA512=y
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/901-airoha-add-default-configuration.patch b/package/boot/uboot-airoha/patches/901-airoha-add-default-configuration.patch
+index 9908733bb6fa26358d3a3666bcdbd919c1534232..78e9488b391102ad1341b8307207110c7f543450 100644
+--- a/package/boot/uboot-airoha/patches/901-airoha-add-default-configuration.patch
++++ b/package/boot/uboot-airoha/patches/901-airoha-add-default-configuration.patch
+@@ -1,34 +1,57 @@
+-From f85e675d7be222d88246bfdb42a1faac92f1eb63 Mon Sep 17 00:00:00 2001
++From 2bd435e8b2da2047ea0c5bb9b9af96bc6af2f8cd Mon Sep 17 00:00:00 2001
+ From: Christian Marangi <ansuelsmth@gmail.com>
+ Date: Wed, 28 May 2025 03:18:32 +0200
+-Subject: [PATCH 2/2] airoha: add default configuration
++Subject: [PATCH 22/24] airoha: add default configuration
+ 
+ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ ---
+  configs/an7581_evb_defconfig | 2 ++
+  configs/an7583_evb_defconfig | 2 ++
++ configs/en7523_evb_defconfig | 2 ++
+  defenvs/an7581_rfb_env       | 4 ++++
+  defenvs/an7583_rfb_env       | 4 ++++
+- 4 files changed, 12 insertions(+)
++ defenvs/en7523_rfb_env       | 4 ++++
++ 6 files changed, 18 insertions(+)
+  create mode 100644 defenvs/an7581_rfb_env
+  create mode 100644 defenvs/an7583_rfb_env
++ create mode 100644 defenvs/en7523_rfb_env
+ 
++diff --git a/configs/an7581_evb_defconfig b/configs/an7581_evb_defconfig
++index 05e37d04681..7633cb7ac96 100644
+ --- a/configs/an7581_evb_defconfig
+ +++ b/configs/an7581_evb_defconfig
+-@@ -94,3 +94,5 @@ CONFIG_MTD_UBI_BEB_LIMIT=20
++@@ -98,4 +98,6 @@ CONFIG_MTD_UBI_BEB_LIMIT=20
+  CONFIG_UBI_BLOCK=y
+  # CONFIG_UBIFS_SILENCE_MSG is not set
+  # CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
+ +CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
+ +CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/an7581_rfb_env"
++ CONFIG_SHA512=y
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++index 663d1ec52ae..c69cf353ffa 100644
+ --- a/configs/an7583_evb_defconfig
+ +++ b/configs/an7583_evb_defconfig
+-@@ -96,3 +96,5 @@ CONFIG_MTD_UBI_BEB_LIMIT=20
++@@ -97,4 +97,6 @@ CONFIG_MTD_UBI_BEB_LIMIT=20
+  CONFIG_UBI_BLOCK=y
+  # CONFIG_UBIFS_SILENCE_MSG is not set
+  # CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
+ +CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
+ +CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/an7583_rfb_env"
++ CONFIG_SHA512=y
++diff --git a/configs/en7523_evb_defconfig b/configs/en7523_evb_defconfig
++index 4d01e3f54fe..8febb6cabdd 100644
++--- a/configs/en7523_evb_defconfig
+++++ b/configs/en7523_evb_defconfig
++@@ -79,4 +79,6 @@ CONFIG_MTD_UBI_BEB_LIMIT=20
++ CONFIG_UBI_BLOCK=y
++ # CONFIG_UBIFS_SILENCE_MSG is not set
++ # CONFIG_UBIFS_SILENCE_DEBUG_DUMP is not set
+++CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE=y
+++CONFIG_ENV_DEFAULT_ENV_TEXT_FILE="defenvs/en7523_rfb_env"
++ CONFIG_SHA512=y
++diff --git a/defenvs/an7581_rfb_env b/defenvs/an7581_rfb_env
++new file mode 100644
++index 00000000000..716ddc321e2
+ --- /dev/null
+ +++ b/defenvs/an7581_rfb_env
+ @@ -0,0 +1,4 @@
+@@ -36,6 +59,9 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +ipaddr=192.168.1.1
+ +serverip=192.168.1.10
+ +bootargs=ubi.mtd=ubi root=/dev/ubiblock0_5 rootwait
++diff --git a/defenvs/an7583_rfb_env b/defenvs/an7583_rfb_env
++new file mode 100644
++index 00000000000..716ddc321e2
+ --- /dev/null
+ +++ b/defenvs/an7583_rfb_env
+ @@ -0,0 +1,4 @@
+@@ -43,3 +69,16 @@ Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+ +ipaddr=192.168.1.1
+ +serverip=192.168.1.10
+ +bootargs=ubi.mtd=ubi root=/dev/ubiblock0_5 rootwait
++diff --git a/defenvs/en7523_rfb_env b/defenvs/en7523_rfb_env
++new file mode 100644
++index 00000000000..716ddc321e2
++--- /dev/null
+++++ b/defenvs/en7523_rfb_env
++@@ -0,0 +1,4 @@
+++loadaddr=0x81800000
+++ipaddr=192.168.1.1
+++serverip=192.168.1.10
+++bootargs=ubi.mtd=ubi root=/dev/ubiblock0_5 rootwait
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/902-arm-airoha-disable-environment-inside-mtd-partition.patch b/package/boot/uboot-airoha/patches/902-arm-airoha-disable-environment-inside-mtd-partition.patch
+index c78114506acaafff759a47f4156bbe6f6d4739c8..213f3d25568e739fc0576295d9aa1e63ccad0641 100644
+--- a/package/boot/uboot-airoha/patches/902-arm-airoha-disable-environment-inside-mtd-partition.patch
++++ b/package/boot/uboot-airoha/patches/902-arm-airoha-disable-environment-inside-mtd-partition.patch
+@@ -1,7 +1,7 @@
+-From 10bd131a6a365965ce868419933fd7936e91c635 Mon Sep 17 00:00:00 2001
++From c89b8f1baa9bf4e32b9f146f5fece6f2151e2dd0 Mon Sep 17 00:00:00 2001
+ From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+ Date: Mon, 13 Oct 2025 20:48:00 +0300
+-Subject: [PATCH 2/3] arm: airoha: disable environment inside mtd partition
++Subject: [PATCH 23/24] arm: airoha: disable environment inside mtd partition
+ 
+ When booting on en7581_evb board equipped with spinand flash, a u-boot
+ panic occurs. The panic is caused by the absence any available mtd
+@@ -17,9 +17,11 @@ Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+  configs/an7583_evb_defconfig | 1 +
+  2 files changed, 2 insertions(+)
+ 
++diff --git a/configs/an7581_evb_defconfig b/configs/an7581_evb_defconfig
++index 7633cb7ac96..afdb0cd8586 100644
+ --- a/configs/an7581_evb_defconfig
+ +++ b/configs/an7581_evb_defconfig
+-@@ -40,6 +40,7 @@ CONFIG_CMD_LOG=y
++@@ -41,6 +41,7 @@ CONFIG_CMD_LOG=y
+  CONFIG_OF_UPSTREAM=y
+  CONFIG_ENV_OVERWRITE=y
+  CONFIG_ENV_IS_IN_MMC=y
+@@ -27,9 +29,11 @@ Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+  CONFIG_ENV_RELOC_GD_ENV_ADDR=y
+  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+  CONFIG_NET_RANDOM_ETHADDR=y
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++index c69cf353ffa..c3d47c411ba 100644
+ --- a/configs/an7583_evb_defconfig
+ +++ b/configs/an7583_evb_defconfig
+-@@ -41,6 +41,7 @@ CONFIG_CMD_MTDPARTS=y
++@@ -40,6 +40,7 @@ CONFIG_CMD_MTDPARTS=y
+  CONFIG_CMD_LOG=y
+  CONFIG_ENV_OVERWRITE=y
+  CONFIG_ENV_IS_IN_MMC=y
+@@ -37,4 +41,6 @@ Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+  CONFIG_ENV_RELOC_GD_ENV_ADDR=y
+  CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+  CONFIG_NET_RANDOM_ETHADDR=y
++-- 
++2.51.0
+ 
+diff --git a/package/boot/uboot-airoha/patches/903-arm-airoha-dts-enable-spi-support-for-en7581_evb-boa.patch b/package/boot/uboot-airoha/patches/903-arm-airoha-dts-enable-spi-support-for-en7581_evb-boa.patch
+deleted file mode 100644
+index 92e96e1450e9ade07fbf44eefb3ded17e33060d7..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/903-arm-airoha-dts-enable-spi-support-for-en7581_evb-boa.patch
++++ /dev/null
+@@ -1,23 +0,0 @@
+-From 6c4a07ecf211b56eb28fe2dbd8e324b2fdecb84a Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Mon, 13 Oct 2025 20:44:24 +0300
+-Subject: [PATCH 1/3] arm: airoha: dts: enable spi support for en7581_evb board
+-
+-spinand flashes are inaccessible without this patch
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- arch/arm/dts/en7581-evb-u-boot.dtsi | 4 ++++
+- 1 file changed, 4 insertions(+)
+-
+---- a/arch/arm/dts/en7581-evb-u-boot.dtsi
+-+++ b/arch/arm/dts/en7581-evb-u-boot.dtsi
+-@@ -9,3 +9,7 @@
+- };
+- 
+- #include "an7581-u-boot.dtsi"
+-+
+-+&snfi {
+-+	status = "okay";
+-+};
+-
+diff --git a/package/boot/uboot-airoha/patches/903-arm-airoha-enable-position-independent-code.patch b/package/boot/uboot-airoha/patches/903-arm-airoha-enable-position-independent-code.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..46f0b1fbe25faa77a5837d306fbaaba34eb79a7a
+--- /dev/null
++++ b/package/boot/uboot-airoha/patches/903-arm-airoha-enable-position-independent-code.patch
+@@ -0,0 +1,51 @@
++From 78a01bfa242139ae6b7ac487c0e857457d8ff416 Mon Sep 17 00:00:00 2001
++From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++Date: Mon, 13 Oct 2025 20:56:31 +0300
++Subject: [PATCH 24/24] arm: airoha: enable position independent code
++
++This slightly increase the code, but makes debugging a bit easy
++
++Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
++---
++ configs/an7581_evb_defconfig | 1 +
++ configs/an7583_evb_defconfig | 1 +
++ configs/en7523_evb_defconfig | 1 +
++ 3 files changed, 3 insertions(+)
++
++diff --git a/configs/an7581_evb_defconfig b/configs/an7581_evb_defconfig
++index afdb0cd8586..be076ec7723 100644
++--- a/configs/an7581_evb_defconfig
+++++ b/configs/an7581_evb_defconfig
++@@ -1,5 +1,6 @@
++ CONFIG_ARM=y
++ CONFIG_ARCH_AIROHA=y
+++CONFIG_POSITION_INDEPENDENT=y
++ CONFIG_TARGET_AN7581=y
++ CONFIG_TEXT_BASE=0x81E00000
++ CONFIG_SYS_MALLOC_F_LEN=0x4000
++diff --git a/configs/an7583_evb_defconfig b/configs/an7583_evb_defconfig
++index c3d47c411ba..7ef2d6feeba 100644
++--- a/configs/an7583_evb_defconfig
+++++ b/configs/an7583_evb_defconfig
++@@ -1,5 +1,6 @@
++ CONFIG_ARM=y
++ CONFIG_ARCH_AIROHA=y
+++CONFIG_POSITION_INDEPENDENT=y
++ CONFIG_TARGET_AN7583=y
++ CONFIG_TEXT_BASE=0x81E00000
++ CONFIG_SYS_MALLOC_F_LEN=0x4000
++diff --git a/configs/en7523_evb_defconfig b/configs/en7523_evb_defconfig
++index 8febb6cabdd..53011e47f55 100644
++--- a/configs/en7523_evb_defconfig
+++++ b/configs/en7523_evb_defconfig
++@@ -1,6 +1,7 @@
++ CONFIG_ARM=y
++ CONFIG_SYS_ARCH_TIMER=y
++ CONFIG_ARCH_AIROHA=y
+++CONFIG_POSITION_INDEPENDENT=y
++ CONFIG_TEXT_BASE=0x81E00000
++ CONFIG_SYS_MALLOC_F_LEN=0x4000
++ CONFIG_NR_DRAM_BANKS=1
++-- 
++2.51.0
++
+diff --git a/package/boot/uboot-airoha/patches/904-arm-airoha-enable-position-independent-code.patch b/package/boot/uboot-airoha/patches/904-arm-airoha-enable-position-independent-code.patch
+deleted file mode 100644
+index 88ea40b2476ebf56e43ac9f3ee79b0b5bd758600..0000000000000000000000000000000000000000
+--- a/package/boot/uboot-airoha/patches/904-arm-airoha-enable-position-independent-code.patch
++++ /dev/null
+@@ -1,32 +0,0 @@
+-From bee36b6f42792556e123f331ece80f8d5a40e8cd Mon Sep 17 00:00:00 2001
+-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+-Date: Mon, 13 Oct 2025 20:56:31 +0300
+-Subject: [PATCH 3/3] arm: airoha: enable position independent code
+-
+-This slightly increase the code, but makes debugging a bit easy
+-
+-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+----
+- configs/an7581_evb_defconfig | 1 +
+- configs/an7583_evb_defconfig | 1 +
+- 2 files changed, 2 insertions(+)
+-
+---- a/configs/an7581_evb_defconfig
+-+++ b/configs/an7581_evb_defconfig
+-@@ -1,5 +1,6 @@
+- CONFIG_ARM=y
+- CONFIG_ARCH_AIROHA=y
+-+CONFIG_POSITION_INDEPENDENT=y
+- CONFIG_TEXT_BASE=0x81E00000
+- CONFIG_SYS_MALLOC_F_LEN=0x4000
+- CONFIG_NR_DRAM_BANKS=1
+---- a/configs/an7583_evb_defconfig
+-+++ b/configs/an7583_evb_defconfig
+-@@ -1,5 +1,6 @@
+- CONFIG_ARM=y
+- CONFIG_ARCH_AIROHA=y
+-+CONFIG_POSITION_INDEPENDENT=y
+- CONFIG_TARGET_AN7583=y
+- CONFIG_TEXT_BASE=0x81E00000
+- CONFIG_SYS_MALLOC_F_LEN=0x4000
+-
