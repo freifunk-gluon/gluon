@@ -1,0 +1,23 @@
+From: Andrew LaMarche <andrewjlamarche@gmail.com>
+Date: Fri, 20 Feb 2026 15:04:32 +0000
+Subject: airoha: add leds-gpio and gpio-button-hotplug to default
+
+Most, if not all Airoha devices will have LEDs and buttons. Add them to
+default packages.
+
+Signed-off-by: Andrew LaMarche <andrewjlamarche@gmail.com>
+Link: https://github.com/openwrt/openwrt/pull/17869
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/target/linux/airoha/Makefile b/target/linux/airoha/Makefile
+index 970a3398f975b3eb6f8cd95575c36da355b29eb2..2da3acbef24be2cb3cb7ac3c2dba867fe132ff7e 100644
+--- a/target/linux/airoha/Makefile
++++ b/target/linux/airoha/Makefile
+@@ -9,5 +9,7 @@ FEATURES:=dt squashfs nand ramdisk gpio
+ KERNEL_PATCHVER:=6.12
+ 
+ include $(INCLUDE_DIR)/target.mk
++DEFAULT_PACKAGES += \
++	kmod-leds-gpio kmod-gpio-button-hotplug
+ 
+ $(eval $(call BuildTarget))

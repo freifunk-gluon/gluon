@@ -1,0 +1,703 @@
+From: Andrew LaMarche <andrewjlamarche@gmail.com>
+Date: Tue, 28 Jan 2025 02:52:16 +0000
+Subject: airoha: add support for Gemtek W1700K
+
+This commit adds support for Gemtek (Centurylink/Lumen/Quantum Fiber)
+W1700K.
+
+Device specification
+--------------------
+SoC Type:	Airoha AN7581
+RAM:		ESMT M16U8G16512A (2GB)
+Flash:		Winbond 25N04KVZEIR (512MB)
+Ethernet:	2x gigabit via AN7581, 2x 10g via RTL8261N
+Wi-Fi:		MT7996 - BE19000
+LEDs:		1 LED, power/status
+Button:		Reset
+USB ports:	None
+Bootloader:	U-Boot 2014.04-rc1 (Jun 12 2024 - 08:14:34) AXON 2.0
+Fan:		1x controlled by Nuvoton NCT7511Y
+
+This device is pretty useless with the stock firmware as it requires an
+account to completely set it up. Additionally, the vendor bootloader is
+signed and uses Airoha/Mediatek's BBT/BMT for bad block management on
+the flash. It does not support UBI, thus kernel updates are subject to
+BMT/BBT which OpenWrt does not support. In turn, if a kernel update
+happens and a block is marked bad in the process, the device will fail
+to boot and will need to be recovered via serial.
+
+The workaround is to chainload U-Boot in place of the kernel, as it
+should not need frequent updates and thus should not cause BBT/BMT to
+misbehave and soft-brick the device. Upstream U-Boot supports loading
+a FIT image from UBI, so we create a UBI partition for the new u-boot
+env, FIT image and factory data. This way, bad blocks are managed by UBI
+instead, which will not soft-brick the device should a block be marked
+bad during a normal OpenWrt update. Users wishing to update U-Boot can
+do so, but should be prepared to recover if a block goes bad.
+
+Because the device is not useful with stock firmware, this is a one-way
+ticket for most users and reverting will not be documented.
+
+The following steps can be used to install OpenWrt on the W1700K.
+
+Connect to serial console. There is a Torx T10 screw underneath the QR
+code printed onto the label. Then, pry between the gray and white
+plastic, starting by the ports on the back. There are clips arount the
+entire device. Starting closest to the screw next to the UART header,
+TX - GND - VCC - N/A - RX. The bootloader can be interrupted by
+pressing any key.
+
+Configuring Vendor Bootloader and Installing U-Boot Chainloader:
+The bootloader's default bootcmd will only run a signed image. However,
+we can still bootm our own image from flash.
+
+NOTE: The vendor's ethernet drivers are flaky. You may have to reboot
+and try the tftpboot part several times for it to work.
+
+- setenv one flash read 0x600000 0x1000000 \$loadaddr
+- setenv two "; bootm"
+- setenv bootcmd "$one$two"
+- setenv one
+- setenv two
+- saveenv
+- setenv serverip 192.168.1.10; setenv ipaddr 192.168.1.1; tftpboot
+0x89000000 openwrt-airoha-an7581-gemtek_w1700k-ubi-chainload-uboot.itb
+- flash erase 0x600000 0x100000
+- flash write 0x600000 0x100000 0x89000000
+- reset
+
+The device will now reboot into the U-Boot chainloader.
+
+Loading the W1700K UBI Installer:
+The installer can be downloaded at
+https://github.com/hurrian/w1700k-ubi-installer/releases
+
+- Boot the installer via the TFTP option in the U-Boot menu. This
+  process is automatic, though you may be prompted to answer some
+  questions.
+- Once it is done, you may upgrade to your preferred build.
+- For more information: https://github.com/hurrian/w1700k-ubi-installer
+
+For those wishing to explore the stock firmware:
+
+Rooting Stock FW (for making backups, recommended):
+- Boot the router and watch serial console until presented with failsafe
+  mode. Enter it (f + enter).
+- mount_root
+- Change the root password (passwd).
+- Open /etc/config/axon_platform_manager and set sshServerEnable,
+  localAccessEnable and remoteAccessEnable to 1.
+- Search for "SSH". You'll find a long string with 3 matches such as
+  Enabled%25252c1%25252cSSH%Drop. Change any instances of "Disabled"
+  preceding SSH to "Enabled" and any instances of "Drop" to "Accept"
+  that follow SSH. Same for "Local SSH" and "Remote SSH".
+- Set /etc/config/dropbear to:
+
+config dropbear
+	option PasswordAuth 'on'
+	option RootPasswordAuth 'on'
+	option Port '22'
+
+- Reboot.
+- Connect 10g WAN port to existing network and SSH in with the password
+  you set.
+- SSH into rooted stock fw.
+
+Signed-off-by: Andrew LaMarche <andrewjlamarche@gmail.com>
+Link: https://github.com/openwrt/openwrt/pull/17869
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/package/boot/uboot-tools/uboot-envtools/files/airoha_an7581 b/package/boot/uboot-tools/uboot-envtools/files/airoha_an7581
+new file mode 100644
+index 0000000000000000000000000000000000000000..29e6c398868a4110629cd1fd14968693b6cc1c53
+--- /dev/null
++++ b/package/boot/uboot-tools/uboot-envtools/files/airoha_an7581
+@@ -0,0 +1,23 @@
++#
++# Copyright (C) 2025 OpenWrt.org
++#
++
++[ -e /etc/config/ubootenv ] && exit 0
++
++touch /etc/config/ubootenv
++
++. /lib/uboot-envtools.sh
++. /lib/functions.sh
++
++board=$(board_name)
++
++case "$board" in
++gemtek,w1700k-ubi)
++	ubootenv_add_ubi_default
++	;;
++esac
++
++config_load ubootenv
++config_foreach ubootenv_add_app_config
++
++exit 0
+diff --git a/target/linux/airoha/an7581/base-files/etc/board.d/01_leds b/target/linux/airoha/an7581/base-files/etc/board.d/01_leds
+index 2eac5c6f1525e5bb596b8b4b0545d43cd740106e..f492d3e14d3b15cf04343b2ab66020e6e8ab19d7 100644
+--- a/target/linux/airoha/an7581/base-files/etc/board.d/01_leds
++++ b/target/linux/airoha/an7581/base-files/etc/board.d/01_leds
+@@ -13,6 +13,12 @@ airoha,an7581-evb)
+ 	ucidef_set_led_usbport "usb1" "USB 1" "green:usb-1" "usb1-port1" "usb2-port1"
+ 	ucidef_set_led_usbport "usb2" "USB 2" "green:usb-2" "usb3-port1" "usb4-port1"
+ 	;;
++gemtek,w1700k-ubi)
++	ucidef_set_led_netdev "lan3-yellow" "lan3" "yellow:lan-3" "lan3" "link_10 link_100"
++	ucidef_set_led_netdev "lan3-green" "lan3" "green:lan-3" "lan3" "link_1000 tx rx"
++	ucidef_set_led_netdev "lan4-yellow" "lan4" "yellow:lan-4" "lan4" "link_10 link_100"
++	ucidef_set_led_netdev "lan4-green" "lan4" "green:lan-4" "lan4" "link_1000 tx rx"
++	;;
+ esac
+ 
+ board_config_flush
+diff --git a/target/linux/airoha/an7581/base-files/etc/board.d/02_network b/target/linux/airoha/an7581/base-files/etc/board.d/02_network
+index 7f03fdc51296a9a8849aad86345e0886ac9816b0..734808cb3db942aff5050432fa6c8409ffd0f8eb 100644
+--- a/target/linux/airoha/an7581/base-files/etc/board.d/02_network
++++ b/target/linux/airoha/an7581/base-files/etc/board.d/02_network
+@@ -14,6 +14,9 @@ an7581_setup_interfaces()
+ 	airoha,an7581-evb)
+ 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "eth1"
+ 		;;
++	gemtek,w1700k-ubi)
++		ucidef_set_interfaces_lan_wan "lan2 lan3 lan4" "wan"
++		;;
+ 	*)
+ 		echo "Unsupported hardware. Network interfaces not initialized"
+ 		;;
+diff --git a/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan b/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan
+new file mode 100644
+index 0000000000000000000000000000000000000000..0705402ea7fddf9bcbedd2abaa1ce03e9ba7de83
+--- /dev/null
++++ b/target/linux/airoha/an7581/base-files/etc/init.d/airoha_fan
+@@ -0,0 +1,47 @@
++#
++# Copyright (C) 2025 openwrt.org
++#
++
++START=99
++
++. /lib/functions.sh
++
++find_nct7802()
++{
++	for hwmon in /sys/class/hwmon/hwmon*; do
++		if [ -f "$hwmon/name" ] && [ "$(cat "$hwmon/name" 2>/dev/null)" = "nct7802" ]; then
++			echo "$hwmon"
++			return
++		fi
++	done
++	echo "/sys/class/hwmon/hwmon5" # fallback
++}
++
++boot()
++{
++	case $(board_name) in
++	gemtek,w1700k-ubi)
++		hwmon=$(find_nct7802)
++
++		# Temporarily disable automatic fan control to configure curve
++		echo 1 > $hwmon/pwm1_enable
++
++		# Match trigger points from vendor firmware
++		echo 40000 > $hwmon/pwm1_auto_point1_temp
++		echo 50000 > $hwmon/pwm1_auto_point2_temp
++		echo 60000 > $hwmon/pwm1_auto_point3_temp
++		echo 70000 > $hwmon/pwm1_auto_point4_temp
++		echo 80000 > $hwmon/pwm1_auto_point5_temp
++
++		# Match fan speed from vendor firmware
++		echo 54  > $hwmon/pwm1_auto_point1_pwm
++		echo 69  > $hwmon/pwm1_auto_point2_pwm
++		echo 95  > $hwmon/pwm1_auto_point3_pwm
++		echo 199 > $hwmon/pwm1_auto_point4_pwm
++
++		# Re-enable automatic fan control
++		echo 2 > $hwmon/pwm1_enable
++		;;
++	esac
++}
++
+diff --git a/target/linux/airoha/an7581/base-files/lib/upgrade/platform.sh b/target/linux/airoha/an7581/base-files/lib/upgrade/platform.sh
+new file mode 100644
+index 0000000000000000000000000000000000000000..767f499faad1a9a4080b055c7f4a0f8930d7a4a2
+--- /dev/null
++++ b/target/linux/airoha/an7581/base-files/lib/upgrade/platform.sh
+@@ -0,0 +1,19 @@
++REQUIRE_IMAGE_METADATA=1
++RAMFS_COPY_BIN='fitblk fit_check_sign'
++
++platform_do_upgrade() {
++	local board=$(board_name)
++
++	case "$board" in
++		gemtek,w1700k-ubi)
++			fit_do_upgrade "$1"
++			;;
++		*)
++			nand_do_upgrade "$1"
++			;;
++	esac
++}
++
++platform_check_image() {
++	return 0
++}
+diff --git a/target/linux/airoha/dts/an7581-w1700k-ubi.dts b/target/linux/airoha/dts/an7581-w1700k-ubi.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..10a2c7d11560936f47d39d8eacf4c1e838f3908c
+--- /dev/null
++++ b/target/linux/airoha/dts/an7581-w1700k-ubi.dts
+@@ -0,0 +1,407 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++/dts-v1/;
++
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include "an7581.dtsi"
++
++/ {
++	model = "Gemtek W1700K (OpenWrt U-Boot layout)";
++	compatible = "gemtek,w1700k-ubi", "airoha,an7581", "airoha,en7581";
++
++	aliases {
++		serial0 = &uart1;
++		led-boot = &led_status_red;
++		led-failsafe = &led_status_blue;
++		led-upgrade = &led_status_blue;
++		led-running = &led_status_green;
++	};
++
++	chosen {
++		rootdisk = <&ubi_rootfs>;
++		bootargs = "console=ttyS0,115200 earlycon ubi.block=0,fit root=/dev/fit0 rootwait";
++		stdout-path = "serial0:115200n8";
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		key-restart {
++			label = "reset";
++			gpios = <&en7581_pinctrl 0 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_status_green: led-0 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&en7581_pinctrl 17 GPIO_ACTIVE_LOW>;
++		};
++
++		led_status_blue: led-1 {
++			color = <LED_COLOR_ID_BLUE>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&en7581_pinctrl 19 GPIO_ACTIVE_LOW>;
++		};
++
++		led_status_red: led-2 {
++			color = <LED_COLOR_ID_RED>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&en7581_pinctrl 29 GPIO_ACTIVE_LOW>;
++		};
++
++		led_status_white: led-3 {
++			color = <LED_COLOR_ID_WHITE>;
++			function = LED_FUNCTION_STATUS;
++			gpios = <&en7581_pinctrl 20 GPIO_ACTIVE_LOW>;
++		};
++
++		led-4 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_LAN;
++			function-enumerator = <3>;
++			gpios = <&en7581_pinctrl 9 GPIO_ACTIVE_LOW>;
++		};
++
++		led-5 {
++			color = <LED_COLOR_ID_YELLOW>;
++			function = LED_FUNCTION_LAN;
++			function-enumerator = <3>;
++			gpios = <&en7581_pinctrl 10 GPIO_ACTIVE_LOW>;
++		};
++
++		led-6 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_LAN;
++			function-enumerator = <4>;
++			gpios = <&en7581_pinctrl 27 GPIO_ACTIVE_LOW>;
++		};
++
++		led-7 {
++			color = <LED_COLOR_ID_YELLOW>;
++			function = LED_FUNCTION_LAN;
++			function-enumerator = <4>;
++			gpios = <&en7581_pinctrl 28 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&en7581_pinctrl {
++	gpio-ranges = <&en7581_pinctrl 0 13 47>;
++
++	mdio_pins: mdio-pins {
++		mux {
++			function = "mdio";
++			groups = "mdio";
++		};
++
++		conf {
++			pins = "gpio2";
++			output-high;
++		};
++	};
++
++	pcie0_rst_pins: pcie0-rst-pins {
++		conf {
++			pins = "pcie_reset0";
++			drive-open-drain = <1>;
++		};
++	};
++
++	pcie2_rst_pins: pcie2-rst-pins {
++		conf {
++			pins = "pcie_reset2";
++			drive-open-drain = <1>;
++		};
++	};
++
++	/* W1700K does not use the built-in LED controller. Instead, it uses GPIO.
++	 * The driver fails to probe without gswpX_led0_pins defined, so put a dummy
++	 * here.
++	 */
++
++	gswp1_led0_pins: gswp1-led0-pins {
++		mux {
++			function = "phy1_led0";
++			pins = "gpio33";
++		};
++	};
++
++	gswp2_led0_pins: gswp2-led0-pins {
++		mux {
++			function = "phy2_led0";
++			pins = "gpio34";
++		};
++	};
++
++	uart2_pins: uart2-pins {
++		mux {
++			function = "uart";
++			groups = "uart2";
++		};
++	};
++
++	hsuart_pins: hsuart-pins {
++		mux {
++			function = "uart";
++			groups = "hsuart";
++		};
++	};
++};
++
++&snfi {
++	status = "okay";
++};
++
++&spi_nand {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	partitions {
++		compatible = "fixed-partitions";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			label = "vendor";
++			reg = <0x00000000 0x00600000>;
++			read-only;
++		};
++
++		partition@600000 {
++			label = "chainloader";
++			reg = <0x00600000 0x00100000>;
++			read-only;
++		};
++
++		partition@700000 {
++			label = "ubi";
++			reg = <0x00700000 0x1f700000>;
++			compatible = "linux,ubi";
++
++			volumes {
++				ubi-volume-ubootenv {
++					volname = "ubootenv";
++					nvmem-layout {
++						compatible = "u-boot,env-redundant-bool";
++					};
++				};
++
++				ubi-volume-ubootenv2 {
++					volname = "ubootenv2";
++					nvmem-layout {
++						compatible = "u-boot,env-redundant-bool";
++					};
++				};
++
++				ubi_rootfs: ubi-volume-fit {
++					volname = "fit";
++				};
++
++				ubi_factory: ubi-volume-factory {
++					volname = "factory";
++				};
++			};
++		};
++
++		/* reserved for bad block table */
++		reserved_bmt@1fe00000 {
++			label = "reserved_bmt";
++			reg = <0x1fe00000 0x00200000>;
++			read-only;
++		};
++	};
++};
++
++&ubi_factory {
++	nvmem-layout {
++		compatible = "fixed-layout";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		eeprom: eeprom@0 {
++			reg = <0x0 0x1e00>;
++		};
++
++		wan_mac: macaddr@5000 {
++			reg = <0x5000 0x6>;
++		};
++
++		lan_mac: macaddr@6000 {
++			compatible = "mac-base";
++			reg = <0x6000 0x6>;
++			#nvmem-cell-cells = <1>;
++		};
++	};
++};
++
++&i2c0 {
++	status = "okay";
++
++	hwmon@2e {
++		compatible = "nuvoton,nct7802";
++		reg = <0x2e>;
++	};
++};
++
++&pcie0 {
++	status = "okay";
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie0_rst_pins>;
++	pcie@0,0 {
++		reg = <0x0000 0 0 0 0>;
++		device_type = "pci";
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		mt7996@0,0 {
++			reg = <0x0000 0 0 0 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			nvmem-cells = <&eeprom>;
++			nvmem-cell-names = "eeprom";
++			airoha,npu = <&npu>;
++			airoha,eth = <&eth>;
++
++			band@0 {
++				/* 2.4 GHz */
++				reg = <0>;
++				nvmem-cells = <&lan_mac 1>;
++				nvmem-cell-names = "mac-address";
++			};
++
++			band@1 {
++				/* 5 GHz */
++				reg = <1>;
++				nvmem-cells = <&lan_mac 2>;
++				nvmem-cell-names = "mac-address";
++			};
++
++			band@2 {
++				/* 6 GHz */
++				reg = <2>;
++				nvmem-cells = <&lan_mac 3>;
++				nvmem-cell-names = "mac-address";
++			};
++		};
++	};
++};
++
++&pcie2 {
++	status = "okay";
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&pcie2_rst_pins>;
++};
++
++&npu {
++	firmware-name = "airoha/en7581_MT7996_npu_rv32.bin",
++		"airoha/en7581_MT7996_npu_data.bin";
++	status = "okay";
++};
++
++&eth {
++	status = "okay";
++};
++
++&gdm1 {
++	status = "okay";
++
++	nvmem-cells = <&lan_mac 0>;
++	nvmem-cell-names = "mac-address";
++};
++
++&gdm2 {
++	status = "okay";
++
++	phy-handle = <&phy8>;
++	phy-mode = "usxgmii";
++
++	nvmem-cells = <&wan_mac 0>;
++	nvmem-cell-names = "mac-address";
++	openwrt,netdev-name = "wan";
++};
++
++&gdm4 {
++	status = "okay";
++
++	phy-handle = <&phy5>;
++	phy-mode = "usxgmii";
++
++	nvmem-cells = <&lan_mac 0>;
++	nvmem-cell-names = "mac-address";
++	openwrt,netdev-name = "lan2";
++};
++
++&switch {
++	status = "okay";
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&mdio_pins>;
++
++	mdio {
++		phy5: ethernet-phy@5 {
++			compatible = "ethernet-phy-ieee802.3-c45";
++			reg = <5>;
++			reset-gpios = <&en7581_pinctrl 46 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <40000>;
++			reset-deassert-us = <150000>;
++			interrupt-parent = <&en7581_pinctrl>;
++			interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
++			realtek,pnswap-tx;
++			realtek,pnswap-rx;
++		};
++
++		phy8: ethernet-phy@8 {
++			compatible = "ethernet-phy-ieee802.3-c45";
++			reg = <8>;
++			reset-gpios = <&en7581_pinctrl 31 GPIO_ACTIVE_LOW>;
++			reset-assert-us = <40000>;
++			reset-deassert-us = <150000>;
++			interrupt-parent = <&en7581_pinctrl>;
++			interrupts = <23 IRQ_TYPE_LEVEL_LOW>;
++			realtek,pnswap-tx;
++			realtek,pnswap-rx;
++		};
++	};
++};
++
++&gsw_phy1 {
++	status = "okay";
++	pinctrl-names = "gbe-led";
++	pinctrl-0 = <&gswp1_led0_pins>;
++};
++
++&gsw_port1 {
++	status = "okay";
++	label = "lan3";
++};
++
++&gsw_phy2 {
++	status = "okay";
++	pinctrl-names = "gbe-led";
++	pinctrl-0 = <&gswp2_led0_pins>;
++};
++
++&gsw_port2 {
++	status = "okay";
++	label = "lan4";
++};
++
++&uart2 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>;
++};
++
++&hsuart3 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&hsuart_pins>;
++};
+diff --git a/target/linux/airoha/image/an7581.mk b/target/linux/airoha/image/an7581.mk
+index 35bfd09a5053f92fff5a059bbc7d97f16e380c76..e52eff03a94e79098fe76cb2dbae1058e0547797 100644
+--- a/target/linux/airoha/image/an7581.mk
++++ b/target/linux/airoha/image/an7581.mk
+@@ -69,3 +69,38 @@ define Device/airoha_an7581-evb-emmc
+   ARTIFACTS := preloader.bin bl31-uboot.fip
+ endef
+ TARGET_DEVICES += airoha_an7581-evb-emmc
++
++define Device/gemtek_w1700k-ubi
++  DEVICE_VENDOR := Gemtek
++  DEVICE_MODEL := W1700K
++  DEVICE_VARIANT := UBI
++  DEVICE_ALT0_VENDOR := CenturyLink
++  DEVICE_ALT0_MODEL := W1700K
++  DEVICE_ALT0_VARIANT := UBI
++  DEVICE_ALT1_VENDOR := Lumen
++  DEVICE_ALT1_MODEL := W1700K
++  DEVICE_ALT1_VARIANT := UBI
++  DEVICE_ALT2_VENDOR := Quantum Fiber
++  DEVICE_ALT2_MODEL := W1700K
++  DEVICE_ALT2_VARIANT := UBI
++  DEVICE_DTS := an7581-w1700k-ubi
++  DEVICE_PACKAGES := airoha-en7581-mt7996-npu-firmware \
++		    fitblk kmod-i2c-an7581 kmod-hwmon-nct7802 \
++		    kmod-mt7996-firmware kmod-phy-rtl8261n \
++		    wpad-basic-mbedtls
++  UBINIZE_OPTS := -E 5
++  BLOCKSIZE := 128k
++  PAGESIZE := 2048
++  UBOOTENV_IN_UBI := 1
++  KERNEL_IN_UBI := 1
++  KERNEL := kernel-bin | gzip
++  KERNEL_INITRAMFS := kernel-bin | lzma | \
++	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 128k
++  KERNEL_INITRAMFS_SUFFIX := -recovery.itb
++  IMAGES := sysupgrade.itb
++  IMAGE/sysupgrade.itb := append-kernel | fit gzip $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb external-static-with-rootfs | append-metadata
++  ARTIFACTS := chainload-uboot.itb
++  ARTIFACT/chainload-uboot.itb := an7581-chainloader gemtek_w1700k
++  SOC := an7581
++endef
++TARGET_DEVICES += gemtek_w1700k-ubi
