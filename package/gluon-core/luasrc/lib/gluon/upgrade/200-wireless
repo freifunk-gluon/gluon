@@ -38,7 +38,7 @@ end)
 wireless.foreach_radio(uci, function(radio)
 	local radio_name = radio['.name']
 	local hwmodes = iwinfo.nl80211.hwmodelist(wireless.find_phy(radio))
-	if (hwmodes.a or hwmodes.ac) and hwmodes.g then
+	if (hwmodes.a or hwmodes.ac) and hwmodes.g and not hwmodes.be then
 		-- Dualband radio
 		if radio_band_count["band_2g"] <= radio_band_count["band_5g"] then
 			-- Assign radio to 2.4GHz band
@@ -87,7 +87,9 @@ local function get_htmode(radio)
 
 	local phy = wireless.find_phy(radio)
 	local htmode
-	if iwinfo.nl80211.hwmodelist(phy).ax then
+	if iwinfo.nl80211.hwmodelist(phy).be then
+		htmode = 'EHT' .. channel_width
+	elseif iwinfo.nl80211.hwmodelist(phy).ax then
 		htmode = 'HE' .. channel_width
 	elseif iwinfo.nl80211.hwmodelist(phy).ac then
 		htmode = 'VHT' .. channel_width
