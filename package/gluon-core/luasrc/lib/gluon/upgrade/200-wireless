@@ -142,7 +142,6 @@ local function configure_mesh(radio, index, mesh_config)
 		mesh_fwding = false,
 		mesh_nolearn = true,
 		macaddr = macaddr,
-		basic_rate = { mesh_config.mcast_rate },
 		mcast_rate = mesh_config.mcast_rate,
 		ifname = 'mesh' .. suffix,
 		macfilter = macfilter,
