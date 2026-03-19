@@ -16,20 +16,14 @@ device('asus-tuf-ax6000', 'asus_tuf-ax6000', {
 })
 
 
--- D-Link
+-- CreatLentem / EDUP / Dragonglass / Livinet
 
-device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
+device('creatlentem-clt-r30b1', 'creatlentem_clt-r30b1', {
 	factory = false,
-	extra_images = {
-		{ '-squashfs-recovery', '-recovery', '.bin' }
-	},
 })
 
-device('d-link-aquila-pro-ai-m60-a1', 'dlink_aquila-pro-ai-m60-a1', {
+device('creatlentem-clt-r30b1-112m', 'creatlentem_clt-r30b1-112m', {
 	factory = false,
-	extra_images = {
-		{ '-squashfs-recovery', '-recovery', '.bin' }
-	},
 })
 
 
@@ -65,6 +59,22 @@ device('cudy-wr3000h-v1', 'cudy_wr3000h-v1', {
 
 device('cudy-wr3000s-v1', 'cudy_wr3000s-v1', {
 	factory = false,
+})
+
+-- D-Link
+
+device('d-link-aquila-pro-ai-m30-a1', 'dlink_aquila-pro-ai-m30-a1', {
+	factory = false,
+	extra_images = {
+		{ '-squashfs-recovery', '-recovery', '.bin' }
+	},
+})
+
+device('d-link-aquila-pro-ai-m60-a1', 'dlink_aquila-pro-ai-m60-a1', {
+	factory = false,
+	extra_images = {
+		{ '-squashfs-recovery', '-recovery', '.bin' }
+	},
 })
 
 -- GL.iNet
