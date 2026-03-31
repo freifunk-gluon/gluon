@@ -128,29 +128,14 @@
 			statistics(key .. '/bytes', 'bytes')
 		)
 	end
-
-	http:prepare_content("text/html")
 -%>
-<!DOCTYPE html>
-<html lang="">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<meta name="robots" content="noindex,nofollow">
-
-		<title><%| nodeinfo.hostname %> - <%:Status%></title>
-
-		<link rel="stylesheet" href="/static/status-page.css" type="text/css">
-	</head>
-	<body data-node-address="<%| http:getenv('SERVER_ADDR') %>"<%=
-		attr('data-translations', translations) ..
-		attr('data-node-location', nodeinfo.location) ..
-		attr('data-mesh-provider', mesh.provider)
-	%>>
-		<header>
-			<h1><%| nodeinfo.hostname %></h1>
-		</header>
-		<div class="container">
+			<div id="request-data"
+				data-node-address="<%| http:getenv('SERVER_ADDR') %>"
+			<%=
+				attr('data-translations', translations) ..
+				attr('data-node-location', nodeinfo.location) ..
+				attr('data-mesh-provider', mesh.provider)
+			%>></div>
 			<div class="frame">
 				<h2><%:Overview%></h2>
 				<dl>
@@ -311,7 +296,4 @@
 					end
 				%>
 			</div>
-		</div>
-		<script src="/static/status-page.js"></script>
-	</body>
-</html>
+			<script src="/static/status-page.js"></script>
