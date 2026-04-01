@@ -457,6 +457,10 @@ mpc85xx-p1020
 qualcommax-ipq807x
 ------------------
 
+* Linksys
+
+  - MX5300
+
 * Xiaomi
 
   - Mi AIoT Router AX3600
