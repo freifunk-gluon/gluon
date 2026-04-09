@@ -1,0 +1,46 @@
+From: Kenneth Kasilag <kenneth@kasilag.me>
+Date: Wed, 4 Mar 2026 02:48:32 +0000
+Subject: uboot-airoha: rename FIP_COMPRESS to LZMA_COMPRESS
+
+It is more accurate to describe the contents of the FIP as
+compressed, instead of the FIP itself becoming compressed.
+
+Update variable naming accordingly.
+
+Signed-off-by: Kenneth Kasilag <kenneth@kasilag.me>
+Link: https://github.com/openwrt/openwrt/pull/22151
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+diff --git a/package/boot/uboot-airoha/Makefile b/package/boot/uboot-airoha/Makefile
+index 7520f92d08b5f87dcc442fe2c4a63818fa54ffeb..4fedd972e42c4540e9a5555f5a96f5ec09db3bbe 100644
+--- a/package/boot/uboot-airoha/Makefile
++++ b/package/boot/uboot-airoha/Makefile
+@@ -13,7 +13,7 @@ include $(INCLUDE_DIR)/host-build.mk
+ 
+ define U-Boot/Default
+   BUILD_TARGET:=airoha
+-  FIP_COMPRESS:=1
++  LZMA_COMPRESS:=1
+ endef
+ 
+ define U-Boot/en7523_rfb
+@@ -65,15 +65,15 @@ define Build/fip-image-bl2
+ endef
+ 
+ define Build/fip-image
+-	$(if $(FIP_COMPRESS), $(STAGING_DIR_HOST)/bin/lzma e \
++	$(if $(LZMA_COMPRESS), $(STAGING_DIR_HOST)/bin/lzma e \
+ 		$(PKG_BUILD_DIR)/u-boot.bin \
+ 		$(PKG_BUILD_DIR)/u-boot.bin.lzma)
+-	$(if $(FIP_COMPRESS), $(STAGING_DIR_HOST)/bin/lzma e \
++	$(if $(LZMA_COMPRESS), $(STAGING_DIR_HOST)/bin/lzma e \
+ 		files/$(BL31_IMAGE) \
+ 		$(PKG_BUILD_DIR)/bl31.bin.lzma)
+ 	$(STAGING_DIR_HOST)/bin/fiptool create \
+-		--soc-fw $(PKG_BUILD_DIR)/bl31.bin$(if $(FIP_COMPRESS),.lzma) \
+-		--nt-fw $(PKG_BUILD_DIR)/u-boot.bin$(if $(FIP_COMPRESS),.lzma) \
++		--soc-fw $(PKG_BUILD_DIR)/bl31.bin$(if $(LZMA_COMPRESS),.lzma) \
++		--nt-fw $(PKG_BUILD_DIR)/u-boot.bin$(if $(LZMA_COMPRESS),.lzma) \
+ 		$(PKG_BUILD_DIR)/u-boot.fip
+ endef
+ 
