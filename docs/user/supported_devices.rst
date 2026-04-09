@@ -223,6 +223,10 @@ ipq40xx-generic
 
   - Jalapeno
 
+* ASUS
+
+  - Lyra MAP-AC2200
+
 * Aruba
 
   - AP-303
@@ -399,7 +403,7 @@ mediatek-mt7622
 
 * Ubiquiti
 
-  - UniFi 6 LR (v1, v3)
+  - UniFi 6 LR (v1, v2, v3)
 
 mvebu-cortexa53
 ---------------
@@ -448,6 +452,10 @@ mpc85xx-p1020
 
 qualcommax-ipq807x
 ------------------
+
+* Linksys
+
+  - MX5300
 
 * Xiaomi
 
@@ -555,6 +563,8 @@ ramips-mt7621
 
   - Xiaomi Mi Router 3G (v1, v2)
   - Xiaomi Mi Router 4A (Gigabit Edition v1, v2)
+  - Xiaomi Mi Router AC2100
+  - Xiaomi Redmi Router AC2100
 
 * Zbtlink
 
