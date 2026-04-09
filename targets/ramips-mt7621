@@ -169,9 +169,10 @@ device('xiaomi-mi-router-3g-v2', 'xiaomi_mi-router-3g-v2', {
 })
 
 device('xiaomi-mi-router-ac2100', 'xiaomi_mi-router-ac2100', {
-	aliases = {
-		'xiaomi-redmi-router-ac2100',
-	},
+	factory = false,
+})
+
+device('xiaomi-redmi-router-ac2100', 'xiaomi_redmi-router-ac2100', {
 	factory = false,
 })
 
