@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /tmp/ec &&\
-    wget -O /tmp/ec/ec-${TARGETOS}-${TARGETARCH}.tar.gz https://github.com/editorconfig-checker/editorconfig-checker/releases/download/2.7.0/ec-${TARGETOS}-${TARGETARCH}.tar.gz &&\
+    wget -O /tmp/ec/ec-${TARGETOS}-${TARGETARCH}.tar.gz https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v3.6.1/ec-${TARGETOS}-${TARGETARCH}.tar.gz &&\
     tar -xvzf /tmp/ec/ec-${TARGETOS}-${TARGETARCH}.tar.gz &&\
     mv bin/ec-${TARGETOS}-${TARGETARCH} /usr/local/bin/editorconfig-checker &&\
     rm -rf /tmp/ec
