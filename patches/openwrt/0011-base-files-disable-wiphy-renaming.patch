@@ -10,7 +10,7 @@ Only needed for openwrt-24.10 branch as later releases will be able to handle re
 Signed-off-by: Florian Maurer <f.maurer@outlook.de>
 
 diff --git a/package/base-files/files/lib/functions/uci-defaults.sh b/package/base-files/files/lib/functions/uci-defaults.sh
-index 5293ce12c0e08f2d211999e4f00fcbac6639a774..c55ff3fd681150adc9456b992a3c315c0950fb4f 100644
+index f77ce4ab27c970dd5e616a1db0dcb87686411b99..b1fbcb3bdcde9efdd200cd3a9feb01a8903c044b 100644
 --- a/package/base-files/files/lib/functions/uci-defaults.sh
 +++ b/package/base-files/files/lib/functions/uci-defaults.sh
 @@ -757,6 +757,7 @@ ucidef_set_poe() {
