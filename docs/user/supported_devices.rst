@@ -568,6 +568,7 @@ ramips-mt7621
   - Xiaomi Mi Router 3G (v1, v2)
   - Xiaomi Mi Router 4A (Gigabit Edition v1, v2)
   - Xiaomi Mi Router AC2100
+  - Xiaomi Redmi Router AC2100
 
 * Zbtlink
 
