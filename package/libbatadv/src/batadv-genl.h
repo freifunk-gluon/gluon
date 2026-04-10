@@ -29,9 +29,20 @@
 #include <netlink/genl/genl.h>
 #include <netlink/genl/ctrl.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 #include "batman_adv.h"
+
+/* Zero-init default at slot 0: a struct field that misses
+ * batadv_genl_get_algo() trips a defined sentinel rather than
+ * silently being treated as BATMAN_IV.
+ */
+enum batadv_algo {
+	BATADV_ALGO_UNKNOWN = 0,
+	BATADV_ALGO_BATMAN_IV,
+	BATADV_ALGO_BATMAN_V,
+};
 
 /**
  * struct batadv_nlquery_opts - internal state for batadv_genl_query()
@@ -96,5 +107,10 @@ extern struct nla_policy batadv_genl_policy[];
 int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
 		nl_recvmsg_msg_cb_t callback, int flags,
 		struct batadv_nlquery_opts *query_opts);
+
+int batadv_genl_get_algoname(const char *mesh_iface, char *algoname,
+		size_t algoname_len);
+
+int batadv_genl_get_algo(const char *mesh_iface, enum batadv_algo *algo);
 
 #endif /* _BATADV_GENL_H_ */

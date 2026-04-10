@@ -37,11 +37,11 @@
 
 #include "mac.h"
 
-// Recheck TQs after this time even if no RA was received
+// Recheck metrics after this time even if no RA was received
 #define MAX_INTERVAL 60
 
-// Recheck TQs at most this often, even if new RAs were received (they won't
-// become the preferred routers until the TQs have been rechecked)
+// Recheck metrics at most this often, even if new RAs were received (they won't
+// become the preferred routers until the metrics have been rechecked)
 // Also, the first update will take at least this long
 #define MIN_INTERVAL 15
 
@@ -52,8 +52,10 @@
 // max execution time of a single ebtables call in nanoseconds
 #define EBTABLES_TIMEOUT 500000000 // 500ms
 
-// TQ value assigned to local routers
+// Local-router metric: must dominate any real neighbour value.
+// IV TQ max is 255; V reports throughput in kbit/s.
 #define LOCAL_TQ 512
+#define LOCAL_THROUGHPUT (10 * 1000 * 1000)
 
 #define BUFSIZE 1500
 
@@ -86,7 +88,7 @@ struct router {
 	struct ether_addr src;
 	struct timespec eol;
 	struct ether_addr originator;
-	uint16_t tq;
+	uint32_t metric;
 };
 
 static struct global {
@@ -94,9 +96,10 @@ static struct global {
 	struct router *routers;
 	const char *mesh_iface;
 	const char *chain;
-	uint16_t max_tq;
-	uint16_t hysteresis_thresh;
+	uint32_t max_metric;
+	uint32_t hysteresis_thresh;
 	struct router *best_router;
+	enum batadv_algo algo;
 	volatile sig_atomic_t stop_daemon;
 } G = {
 	.mesh_iface = "bat0",
@@ -166,8 +169,9 @@ static void usage(const char *msg) {
 	fprintf(stderr,
 		"Usage: %s [-m <mesh_iface>] [-t <thresh>] -c <chain> -i <iface>\n\n"
 		"  -m <mesh_iface>  B.A.T.M.A.N. advanced mesh interface used to get metric\n"
-		"                   information (\"TQ\") for the available gateways. Default: bat0\n"
-		"  -t <thresh>      Minimum TQ difference required to switch the gateway.\n"
+		"                   information (TQ or throughput) for the available gateways.\n"
+		"                   Default: bat0\n"
+		"  -t <thresh>      Minimum metric difference required to switch the gateway.\n"
 		"                   Default: 0\n"
 		"  -c <chain>       ebtables chain that should be managed by the daemon. The\n"
 		"                   chain already has to exist on program invocation and should\n"
@@ -267,9 +271,7 @@ static void parse_cmdline(int argc, char *argv[]) {
 				threshold = strtoul(optarg, &endptr, 10);
 				if (*endptr != '\0')
 					exit_errmsg("Threshold must be a number: %s", optarg);
-				if (threshold >= LOCAL_TQ)
-					exit_errmsg("Threshold too large: %ld (max is %d)", threshold, LOCAL_TQ);
-				G.hysteresis_thresh = (uint16_t) threshold;
+				G.hysteresis_thresh = (uint32_t) threshold;
 				break;
 			case 'h':
 				usage(NULL);
@@ -431,21 +433,26 @@ static int parse_tt_global(struct nl_msg *msg,
 	return NL_OK;
 }
 
+static const enum batadv_nl_attrs originator_mandatory_batadv_iv[] = {
+	BATADV_ATTR_ORIG_ADDRESS,
+	BATADV_ATTR_TQ,
+};
+
+static const enum batadv_nl_attrs originator_mandatory_batadv_v[] = {
+	BATADV_ATTR_ORIG_ADDRESS,
+	BATADV_ATTR_THROUGHPUT,
+};
+
 static int parse_originator(struct nl_msg *msg,
 		void *arg __attribute__((unused)))
 {
-
-	static const enum batadv_nl_attrs mandatory[] = {
-		BATADV_ATTR_ORIG_ADDRESS,
-		BATADV_ATTR_TQ,
-	};
 	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
 	struct nlmsghdr *nlh = nlmsg_hdr(msg);
 	struct ether_addr mac_a;
 	struct genlmsghdr *ghdr;
 	struct router *router;
 	uint8_t *orig;
-	uint8_t tq;
+	uint32_t metric;
 
 	// parse netlink entry
 	if (!genlmsg_valid_hdr(nlh, 0))
@@ -461,14 +468,23 @@ static int parse_originator(struct nl_msg *msg,
 		return NL_OK;
 	}
 
-	if (batadv_genl_missing_attrs(attrs, mandatory, ARRAY_SIZE(mandatory)))
-		return NL_OK;
-
-	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
-	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
+	if (G.algo == BATADV_ALGO_BATMAN_V) {
+		if (batadv_genl_missing_attrs(attrs, originator_mandatory_batadv_v,
+					ARRAY_SIZE(originator_mandatory_batadv_v)))
+			return NL_OK;
+	} else {
+		if (batadv_genl_missing_attrs(attrs, originator_mandatory_batadv_iv,
+					ARRAY_SIZE(originator_mandatory_batadv_iv)))
+			return NL_OK;
+	}
 
 	if (!attrs[BATADV_ATTR_FLAG_BEST])
 		return NL_OK;
+
+	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	metric = (G.algo == BATADV_ALGO_BATMAN_V)
+		? nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])
+		: nla_get_u8(attrs[BATADV_ATTR_TQ]);
 
 	MAC2ETHER(mac_a, orig);
 
@@ -477,11 +493,11 @@ static int parse_originator(struct nl_msg *msg,
 	if (!router)
 		return NL_OK;
 
-	DEBUG_MSG("Found TQ for router " F_MAC " (originator " F_MAC "), it's %d",
-			F_MAC_VAR(router->src), F_MAC_VAR(router->originator), tq);
-	router->tq = tq;
-	if (router->tq > G.max_tq)
-		G.max_tq = router->tq;
+	DEBUG_MSG("Found metric for router " F_MAC " (originator " F_MAC "), it's %u",
+			F_MAC_VAR(router->src), F_MAC_VAR(router->originator), metric);
+	router->metric = metric;
+	if (router->metric > G.max_metric)
+		G.max_metric = router->metric;
 
 	return NL_OK;
 }
@@ -524,25 +540,26 @@ static int parse_tt_local(struct nl_msg *msg,
 	if (!router)
 		return NL_OK;
 
-	DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d",
-			F_MAC_VAR(router->src), LOCAL_TQ);
-	router->tq = LOCAL_TQ;
-	if (router->tq > G.max_tq)
-		G.max_tq = router->tq;
+	uint32_t local_metric = (G.algo == BATADV_ALGO_BATMAN_V) ? LOCAL_THROUGHPUT : LOCAL_TQ;
+	DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning metric %u",
+			F_MAC_VAR(router->src), local_metric);
+	router->metric = local_metric;
+	if (router->metric > G.max_metric)
+		G.max_metric = router->metric;
 
 	return NL_OK;
 }
 
-static void update_tqs(void) {
+static void update_metrics(void) {
 	static const struct ether_addr unspec = {};
 	struct router *router;
 	bool update_originators = false;
 	struct batadv_nlquery_opts opts;
 	int ret;
 
-	// reset TQs
+	// reset metrics
 	foreach(router, G.routers) {
-		router->tq = 0;
+		router->metric = 0;
 		if (ether_addr_equal(router->originator, unspec))
 			update_originators = true;
 	}
@@ -557,8 +574,8 @@ static void update_tqs(void) {
 			fprintf(stderr, "Parsing of global translation table failed\n");
 	}
 
-	// look up TQs of originators
-	G.max_tq = 0;
+	// look up metrics of originators
+	G.max_metric = 0;
 	opts.err = 0;
 	ret = batadv_genl_query(G.mesh_iface,
 				BATADV_CMD_GET_ORIGINATORS,
@@ -566,9 +583,9 @@ static void update_tqs(void) {
 	if (ret < 0)
 		fprintf(stderr, "Parsing of originators failed\n");
 
-	// if all routers have a TQ value, we don't need to check translocal
+	// if all routers have a metric value, we don't need to check translocal
 	foreach(router, G.routers) {
-		if (router->tq == 0)
+		if (router->metric == 0)
 			break;
 	}
 	if (router != NULL) {
@@ -581,14 +598,14 @@ static void update_tqs(void) {
 	}
 
 	foreach(router, G.routers) {
-		if (router->tq == 0) {
+		if (router->metric == 0) {
 			if (ether_addr_equal(router->originator, unspec))
 				DEBUG_MSG(
 					"Unable to find router " F_MAC " in transtable_{global,local}",
 					F_MAC_VAR(router->src));
 			else
 				DEBUG_MSG(
-					"Unable to find TQ for originator " F_MAC " (router " F_MAC ")",
+					"Unable to find metric for originator " F_MAC " (router " F_MAC ")",
 					F_MAC_VAR(router->originator),
 					F_MAC_VAR(router->src));
 		}
@@ -654,11 +671,11 @@ static bool election_required(void)
 	if (!G.best_router)
 		return true;
 
-	/* should never happen. G.max_tq also contains G.best_router->tq */
-	if (G.max_tq < G.best_router->tq)
+	/* should never happen. G.max_metric also contains G.best_router->metric */
+	if (G.max_metric < G.best_router->metric)
 		return false;
 
-	if ((G.max_tq - G.best_router->tq) <= G.hysteresis_thresh)
+	if ((G.max_metric - G.best_router->metric) <= G.hysteresis_thresh)
 		return false;
 
 	return true;
@@ -672,29 +689,29 @@ static void update_ebtables(void) {
 	struct router *router;
 
 	if (!election_required()) {
-		DEBUG_MSG(F_MAC " is still good enough with TQ=%d (max_tq=%d), not executing ebtables",
+		DEBUG_MSG(F_MAC " is still good enough with metric=%u (max_metric=%u), not executing ebtables",
 			F_MAC_VAR(G.best_router->src),
-			G.best_router->tq,
-			G.max_tq);
+			G.best_router->metric,
+			G.max_metric);
 		return;
 	}
 
 	foreach(router, G.routers) {
-		if (router->tq == G.max_tq) {
+		if (router->metric == G.max_metric) {
 			snprintf(mac, sizeof(mac), F_MAC, F_MAC_VAR(router->src));
 			break;
 		}
 	}
 	if (G.best_router)
-		fprintf(stderr, "Switching from " F_MAC " (TQ=%d) to %s (TQ=%d)\n",
+		fprintf(stderr, "Switching from " F_MAC " (metric=%u) to %s (metric=%u)\n",
 			F_MAC_VAR(G.best_router->src),
-			G.best_router->tq,
+			G.best_router->metric,
 			mac,
-			G.max_tq);
+			G.max_metric);
 	else
-		fprintf(stderr, "Switching to %s (TQ=%d)\n",
+		fprintf(stderr, "Switching to %s (metric=%u)\n",
 			mac,
-			G.max_tq);
+			G.max_metric);
 	G.best_router = router;
 
 	if (fork_execvp_timeout(&timeout, "ebtables-tiny", (const char *[])
@@ -742,6 +759,17 @@ int main(int argc, char *argv[]) {
 	if (G.chain == NULL)
 		usage("No chain set!");
 
+	if (batadv_genl_get_algo(G.mesh_iface, &G.algo) < 0)
+		exit_errmsg("Failed to detect batman-adv routing algorithm on %s", G.mesh_iface);
+
+	fprintf(stderr, "Using batman-adv algorithm: %s\n",
+		G.algo == BATADV_ALGO_BATMAN_V ? "BATMAN_V" : "BATMAN_IV");
+
+	uint32_t max_threshold = (G.algo == BATADV_ALGO_BATMAN_V) ? LOCAL_THROUGHPUT : LOCAL_TQ;
+	if (G.hysteresis_thresh >= max_threshold)
+		exit_errmsg("Threshold too large: %u (max is %u)",
+			G.hysteresis_thresh, max_threshold);
+
 	G.stop_daemon = 0;
 	signal(SIGINT, sighandler);
 	signal(SIGTERM, sighandler);
@@ -779,7 +807,7 @@ int main(int argc, char *argv[]) {
 					next_invalidation.tv_sec += ORIGINATOR_CACHE_TTL;
 				}
 
-				update_tqs();
+				update_metrics();
 				update_ebtables();
 
 				next_update = now;
