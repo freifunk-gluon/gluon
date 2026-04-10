@@ -6,5 +6,6 @@ return {
 	-- 3) value suffix (optional)
 	attrs = {
 		{'tq', 'TQ', ' %'},
+		{'tp', 'bit/s', ''},
 	},
 }

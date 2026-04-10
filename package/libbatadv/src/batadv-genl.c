@@ -361,3 +361,77 @@ err_free_sock:
 
 	return query_opts->err;
 }
+
+struct batadv_algoname_opts {
+	char *algoname;
+	size_t algoname_len;
+	bool found;
+	struct batadv_nlquery_opts query_opts;
+};
+
+static int batadv_algoname_cb(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX + 1];
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct batadv_algoname_opts *opts;
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct genlmsghdr *ghdr;
+	const char *algoname;
+
+	opts = batadv_container_of(query_opts, struct batadv_algoname_opts,
+			query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_MESH)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+				genlmsg_len(ghdr), batadv_genl_policy))
+		return NL_OK;
+
+	if (!attrs[BATADV_ATTR_ALGO_NAME])
+		return NL_OK;
+
+	algoname = nla_data(attrs[BATADV_ATTR_ALGO_NAME]);
+	strncpy(opts->algoname, algoname, opts->algoname_len);
+	if (opts->algoname_len > 0)
+		opts->algoname[opts->algoname_len - 1] = '\0';
+
+	opts->found = true;
+	return NL_OK;
+}
+
+/**
+ * batadv_genl_get_algoname() - Query the routing algorithm name of a mesh
+ * @mesh_iface: name of the batman-adv mesh interface
+ * @algoname: buffer to store the algorithm name (e.g. "BATMAN_IV", "BATMAN_V")
+ * @algoname_len: size of @algoname buffer
+ *
+ * Return: 0 on success or negative error value otherwise
+ */
+__attribute__ ((visibility ("default")))
+int batadv_genl_get_algoname(const char *mesh_iface, char *algoname,
+		size_t algoname_len)
+{
+	struct batadv_algoname_opts opts = {
+		.algoname = algoname,
+		.algoname_len = algoname_len,
+		.found = false,
+		.query_opts = { .err = 0 },
+	};
+	int ret;
+
+	ret = batadv_genl_query(mesh_iface, BATADV_CMD_GET_MESH,
+			batadv_algoname_cb, 0, &opts.query_opts);
+	if (ret < 0)
+		return ret;
+
+	if (!opts.found)
+		return -EOPNOTSUPP;
+
+	return 0;
+}

@@ -667,7 +667,7 @@
 			'update_mesh': function(mesh) {
 				Object.keys(meshAttrs).forEach(function(key) {
 					var attr = meshAttrs[key];
-					attr.td.textContent = mesh[key] + attr.suffix;
+					if (mesh[key] !== undefined) attr.td.textContent = mesh[key] + attr.suffix;
 				});
 
 				updated();

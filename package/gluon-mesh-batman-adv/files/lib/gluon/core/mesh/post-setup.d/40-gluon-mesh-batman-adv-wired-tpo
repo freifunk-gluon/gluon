@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# throughput_override is only relevant for Batman V
+algo=$(batctl routing_algo 2>/dev/null)
+[ "$algo" = "BATMAN_V" ] || exit 0
+
+if [ "$IFNAME" = "vx_mesh_uplink" ] || [ "$IFNAME" = "vx_mesh_other" ] || [ "$IFNAME" = "mesh-vpn" ]; then
+	sleep 3
+	batctl hardif "${IFNAME}" throughput_override 1000mbit
+fi

@@ -97,4 +97,7 @@ int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
 		nl_recvmsg_msg_cb_t callback, int flags,
 		struct batadv_nlquery_opts *query_opts);
 
+int batadv_genl_get_algoname(const char *mesh_iface, char *algoname,
+		size_t algoname_len);
+
 #endif /* _BATADV_GENL_H_ */
