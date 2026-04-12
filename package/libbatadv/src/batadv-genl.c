@@ -435,3 +435,30 @@ int batadv_genl_get_algoname(const char *mesh_iface, char *algoname,
 
 	return 0;
 }
+
+/**
+ * batadv_genl_get_algo() - Query the routing algorithm of a mesh as enum
+ * @mesh_iface: name of the batman-adv mesh interface
+ * @algo: pointer to store the algorithm (BATADV_ALGO_BATMAN_IV or
+ *  BATADV_ALGO_BATMAN_V)
+ *
+ * Return: 0 on success or negative error value otherwise
+ */
+__attribute__ ((visibility ("default")))
+int batadv_genl_get_algo(const char *mesh_iface, uint8_t *algo)
+{
+	char algoname[256];
+
+	if (batadv_genl_get_algoname(mesh_iface, algoname, sizeof(algoname)) < 0)
+		return -1;
+
+	if (strcmp(algoname, "BATMAN_IV") == 0) {
+		*algo = BATADV_ALGO_BATMAN_IV;
+		return 0;
+	} else if (strcmp(algoname, "BATMAN_V") == 0) {
+		*algo = BATADV_ALGO_BATMAN_V;
+		return 0;
+	}
+
+	return -1;
+}

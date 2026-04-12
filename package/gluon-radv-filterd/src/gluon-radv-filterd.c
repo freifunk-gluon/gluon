@@ -56,10 +56,6 @@
 #define LOCAL_TQ 512
 #define LOCAL_THROUGHPUT 10000000
 
-enum batadv_algo {
-	ALGO_BATMAN_IV,
-	ALGO_BATMAN_V,
-};
 
 #define BUFSIZE 1500
 
@@ -103,7 +99,7 @@ static struct global {
 	uint32_t max_metric;
 	uint32_t hysteresis_thresh;
 	struct router *best_router;
-	enum batadv_algo algo;
+	uint8_t algo;
 	volatile sig_atomic_t stop_daemon;
 } G = {
 	.mesh_iface = "bat0",
@@ -472,7 +468,7 @@ static int parse_originator(struct nl_msg *msg,
 		return NL_OK;
 	}
 
-	if (G.algo == ALGO_BATMAN_V) {
+	if (G.algo == BATADV_ALGO_BATMAN_V) {
 		if (batadv_genl_missing_attrs(attrs, originator_mandatory_batadv_v,
 					ARRAY_SIZE(originator_mandatory_batadv_v)))
 			return NL_OK;
@@ -486,7 +482,7 @@ static int parse_originator(struct nl_msg *msg,
 		return NL_OK;
 
 	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
-	metric = (G.algo == ALGO_BATMAN_V)
+	metric = (G.algo == BATADV_ALGO_BATMAN_V)
 		? nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])
 		: nla_get_u8(attrs[BATADV_ATTR_TQ]);
 
@@ -544,7 +540,7 @@ static int parse_tt_local(struct nl_msg *msg,
 	if (!router)
 		return NL_OK;
 
-	uint32_t local_metric = (G.algo == ALGO_BATMAN_IV) ? LOCAL_TQ : LOCAL_THROUGHPUT;
+	uint32_t local_metric = (G.algo == BATADV_ALGO_BATMAN_V) ? LOCAL_THROUGHPUT : LOCAL_TQ;
 	DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning metric %u",
 			F_MAC_VAR(router->src), local_metric);
 	router->metric = local_metric;
@@ -763,20 +759,11 @@ int main(int argc, char *argv[]) {
 	if (G.chain == NULL)
 		usage("No chain set!");
 
-	{
-		char algoname[256];
-		if (batadv_genl_get_algoname(G.mesh_iface, algoname, sizeof(algoname)) < 0)
-			exit_errmsg("Failed to detect batman-adv routing algorithm on %s", G.mesh_iface);
+	if (batadv_genl_get_algo(G.mesh_iface, &G.algo) < 0)
+		exit_errmsg("Failed to detect batman-adv routing algorithm on %s", G.mesh_iface);
 
-		if (strcmp(algoname, "BATMAN_IV") == 0) {
-			G.algo = ALGO_BATMAN_IV;
-		} else if (strcmp(algoname, "BATMAN_V") == 0) {
-			G.algo = ALGO_BATMAN_V;
-		} else {
-			exit_errmsg("Unknown batman-adv routing algorithm: %s", algoname);
-		}
-		fprintf(stderr, "Using batman-adv algorithm: %s\n", algoname);
-	}
+	fprintf(stderr, "Using batman-adv algorithm: %s\n",
+		G.algo == BATADV_ALGO_BATMAN_V ? "BATMAN_V" : "BATMAN_IV");
 
 	G.stop_daemon = 0;
 	signal(SIGINT, sighandler);

@@ -11,7 +11,6 @@
 #include <netlink/netlink.h>
 #include <netlink/genl/genl.h>
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +20,7 @@
 
 struct neigh_netlink_opts {
 	struct json_object *interfaces;
-	bool is_batman_v;
+	uint8_t algo;
 	struct batadv_nlquery_opts query_opts;
 };
 
@@ -89,7 +88,7 @@ static int parse_orig_neigh_list_netlink_cb(struct nl_msg *msg, void *arg)
 				genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (opts->is_batman_v) {
+	if (opts->algo == BATADV_ALGO_BATMAN_V) {
 		if (ghdr->cmd != BATADV_CMD_GET_NEIGHBORS)
 			return NL_OK;
 
@@ -149,30 +148,27 @@ static struct json_object * get_batadv(void) {
 		},
 	};
 	int ret;
-	char algoname[256];
+	uint8_t algo;
 
 	opts.interfaces = json_object_new_object();
 	if (!opts.interfaces)
 		return NULL;
 
-	if (batadv_genl_get_algoname("bat0", algoname, sizeof(algoname)) < 0) {
+	if (batadv_genl_get_algo("bat0", &algo) < 0) {
 		json_object_put(opts.interfaces);
 		return NULL;
 	}
 
-	if (strcmp(algoname, "BATMAN_V") == 0) {
-		opts.is_batman_v = true;
+	opts.algo = algo;
+
+	if (algo == BATADV_ALGO_BATMAN_V) {
 		ret = batadv_genl_query("bat0", BATADV_CMD_GET_NEIGHBORS,
 					parse_orig_neigh_list_netlink_cb, NLM_F_DUMP,
 					&opts.query_opts);
-	} else if (strcmp(algoname, "BATMAN_IV") == 0) {
-		opts.is_batman_v = false;
+	} else {
 		ret = batadv_genl_query("bat0", BATADV_CMD_GET_ORIGINATORS,
 					parse_orig_neigh_list_netlink_cb, NLM_F_DUMP,
 					&opts.query_opts);
-	} else {
-		json_object_put(opts.interfaces);
-		return NULL;
 	}
 
 	if (ret < 0) {

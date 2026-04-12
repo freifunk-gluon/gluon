@@ -29,9 +29,15 @@
 #include <netlink/genl/genl.h>
 #include <netlink/genl/ctrl.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 #include "batman_adv.h"
+
+enum batadv_algo {
+	BATADV_ALGO_BATMAN_IV,
+	BATADV_ALGO_BATMAN_V,
+};
 
 /**
  * struct batadv_nlquery_opts - internal state for batadv_genl_query()
@@ -99,5 +105,7 @@ int batadv_genl_query(const char *mesh_iface, enum batadv_nl_commands nl_cmd,
 
 int batadv_genl_get_algoname(const char *mesh_iface, char *algoname,
 		size_t algoname_len);
+
+int batadv_genl_get_algo(const char *mesh_iface, uint8_t *algo);
 
 #endif /* _BATADV_GENL_H_ */

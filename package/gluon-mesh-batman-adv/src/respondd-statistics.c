@@ -34,7 +34,7 @@ struct clients_netlink_opts {
 
 struct gw_netlink_opts {
 	struct json_object *obj;
-	bool is_batman_v;
+	uint8_t algo;
 	struct batadv_nlquery_opts query_opts;
 };
 
@@ -77,7 +77,7 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 				genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (opts->is_batman_v) {
+	if (opts->algo == BATADV_ALGO_BATMAN_V) {
 		if (batadv_genl_missing_attrs(attrs, gateways_mandatory_batadv_v,
 					BATADV_ARRAY_SIZE(gateways_mandatory_batadv_v)))
 			return NL_OK;
@@ -98,7 +98,7 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 
 	json_object_object_add(opts->obj, "gateway", json_object_new_string(addr));
 
-	if (opts->is_batman_v) {
+	if (opts->algo == BATADV_ALGO_BATMAN_V) {
 		uint32_t throughput = nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT]);
 		json_object_object_add(opts->obj, "gateway_throughput", json_object_new_int(throughput));
 	} else {
@@ -121,12 +121,12 @@ static void add_gateway(struct json_object *obj) {
 			.err = 0,
 		},
 	};
-	char algoname[256];
+	uint8_t algo;
 
-	if (batadv_genl_get_algoname("bat0", algoname, sizeof(algoname)) < 0)
+	if (batadv_genl_get_algo("bat0", &algo) < 0)
 		return;
 
-	opts.is_batman_v = (strcmp(algoname, "BATMAN_V") == 0);
+	opts.algo = algo;
 
 	batadv_genl_query("bat0", BATADV_CMD_GET_GATEWAYS,
 			parse_gw_list_netlink_cb, NLM_F_DUMP,
