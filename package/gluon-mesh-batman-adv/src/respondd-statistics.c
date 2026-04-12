@@ -39,13 +39,13 @@ struct gw_netlink_opts {
 };
 
 
-static const enum batadv_nl_attrs gateways_iv_mandatory[] = {
+static const enum batadv_nl_attrs gateways_mandatory_batadv_iv[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_ROUTER,
 	BATADV_ATTR_TQ,
 };
 
-static const enum batadv_nl_attrs gateways_v_mandatory[] = {
+static const enum batadv_nl_attrs gateways_mandatory_batadv_v[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_ROUTER,
 	BATADV_ATTR_THROUGHPUT,
@@ -78,12 +78,12 @@ static int parse_gw_list_netlink_cb(struct nl_msg *msg, void *arg)
 		return NL_OK;
 
 	if (opts->is_batman_v) {
-		if (batadv_genl_missing_attrs(attrs, gateways_v_mandatory,
-					BATADV_ARRAY_SIZE(gateways_v_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, gateways_mandatory_batadv_v,
+					BATADV_ARRAY_SIZE(gateways_mandatory_batadv_v)))
 			return NL_OK;
 	} else {
-		if (batadv_genl_missing_attrs(attrs, gateways_iv_mandatory,
-					BATADV_ARRAY_SIZE(gateways_iv_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, gateways_mandatory_batadv_iv,
+					BATADV_ARRAY_SIZE(gateways_mandatory_batadv_iv)))
 			return NL_OK;
 	}
 

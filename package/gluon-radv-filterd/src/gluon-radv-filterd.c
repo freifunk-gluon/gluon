@@ -437,12 +437,12 @@ static int parse_tt_global(struct nl_msg *msg,
 	return NL_OK;
 }
 
-static const enum batadv_nl_attrs originator_iv_mandatory[] = {
+static const enum batadv_nl_attrs originator_mandatory_batadv_iv[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_TQ,
 };
 
-static const enum batadv_nl_attrs originator_v_mandatory[] = {
+static const enum batadv_nl_attrs originator_mandatory_batadv_v[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_THROUGHPUT,
 };
@@ -473,12 +473,12 @@ static int parse_originator(struct nl_msg *msg,
 	}
 
 	if (G.algo == ALGO_BATMAN_V) {
-		if (batadv_genl_missing_attrs(attrs, originator_v_mandatory,
-					ARRAY_SIZE(originator_v_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, originator_mandatory_batadv_v,
+					ARRAY_SIZE(originator_mandatory_batadv_v)))
 			return NL_OK;
 	} else {
-		if (batadv_genl_missing_attrs(attrs, originator_iv_mandatory,
-					ARRAY_SIZE(originator_iv_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, originator_mandatory_batadv_iv,
+					ARRAY_SIZE(originator_mandatory_batadv_iv)))
 			return NL_OK;
 	}
 

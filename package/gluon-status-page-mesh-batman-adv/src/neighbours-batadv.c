@@ -17,7 +17,7 @@ struct neigh_netlink_opts {
 };
 
 /* Batman IV mandatory attrs */
-static const enum batadv_nl_attrs parse_orig_list_iv_mandatory[] = {
+static const enum batadv_nl_attrs parse_orig_list_mandatory_batadv_iv[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_NEIGH_ADDRESS,
 	BATADV_ATTR_TQ,
@@ -26,7 +26,7 @@ static const enum batadv_nl_attrs parse_orig_list_iv_mandatory[] = {
 };
 
 /* Batman V mandatory attrs */
-static const enum batadv_nl_attrs parse_neigh_list_v_mandatory[] = {
+static const enum batadv_nl_attrs parse_neigh_list_mandatory_batadv_v[] = {
 	BATADV_ATTR_NEIGH_ADDRESS,
 	BATADV_ATTR_THROUGHPUT,
 	BATADV_ATTR_HARD_IFINDEX,
@@ -60,8 +60,8 @@ static int parse_orig_neigh_list_netlink_cb(struct nl_msg *msg, void *arg)
 		if (ghdr->cmd != BATADV_CMD_GET_NEIGHBORS)
 			return NL_OK;
 
-		if (batadv_genl_missing_attrs(attrs, parse_neigh_list_v_mandatory,
-					BATADV_ARRAY_SIZE(parse_neigh_list_v_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, parse_neigh_list_mandatory_batadv_v,
+					BATADV_ARRAY_SIZE(parse_neigh_list_mandatory_batadv_v)))
 			return NL_OK;
 
 		mac = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
@@ -69,8 +69,8 @@ static int parse_orig_neigh_list_netlink_cb(struct nl_msg *msg, void *arg)
 		if (ghdr->cmd != BATADV_CMD_GET_ORIGINATORS)
 			return NL_OK;
 
-		if (batadv_genl_missing_attrs(attrs, parse_orig_list_iv_mandatory,
-					BATADV_ARRAY_SIZE(parse_orig_list_iv_mandatory)))
+		if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory_batadv_iv,
+					BATADV_ARRAY_SIZE(parse_orig_list_mandatory_batadv_iv)))
 			return NL_OK;
 
 		mac = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
