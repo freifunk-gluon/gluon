@@ -765,6 +765,11 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "Using batman-adv algorithm: %s\n",
 		G.algo == BATADV_ALGO_BATMAN_V ? "BATMAN_V" : "BATMAN_IV");
 
+	uint32_t max_threshold = (G.algo == BATADV_ALGO_BATMAN_V) ? LOCAL_THROUGHPUT : LOCAL_TQ;
+	if (G.hysteresis_thresh >= max_threshold)
+		exit_errmsg("Threshold too large: %u (max is %u)",
+			G.hysteresis_thresh, max_threshold);
+
 	G.stop_daemon = 0;
 	signal(SIGINT, sighandler);
 	signal(SIGTERM, sighandler);
