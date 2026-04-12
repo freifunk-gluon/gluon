@@ -20,7 +20,6 @@
 
 struct neigh_netlink_opts {
 	struct json_object *interfaces;
-	uint8_t algo;
 	struct batadv_nlquery_opts query_opts;
 };
 
@@ -62,56 +61,13 @@ static const enum batadv_nl_attrs parse_neigh_list_mandatory_batadv_v[] = {
 	BATADV_ATTR_LAST_SEEN_MSECS,
 };
 
-static int parse_orig_neigh_list_netlink_cb(struct nl_msg *msg, void *arg)
+static int add_neighbour(struct neigh_netlink_opts *opts, struct nlattr **attrs,
+		uint8_t *mac, uint8_t tq)
 {
-	struct nlattr *attrs[BATADV_ATTR_MAX+1];
-	struct nlmsghdr *nlh = nlmsg_hdr(msg);
-	struct batadv_nlquery_opts *query_opts = arg;
-	struct genlmsghdr *ghdr;
-	uint8_t *mac;
-	uint8_t tq;
 	uint32_t hardif;
 	uint32_t lastseen;
 	char ifname_buf[IF_NAMESIZE], *ifname;
-	struct neigh_netlink_opts *opts;
 	char mac1[18];
-
-	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
-			query_opts);
-
-	if (!genlmsg_valid_hdr(nlh, 0))
-		return NL_OK;
-
-	ghdr = nlmsg_data(nlh);
-
-	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
-				genlmsg_len(ghdr), batadv_genl_policy))
-		return NL_OK;
-
-	if (opts->algo == BATADV_ALGO_BATMAN_V) {
-		if (ghdr->cmd != BATADV_CMD_GET_NEIGHBORS)
-			return NL_OK;
-
-		if (batadv_genl_missing_attrs(attrs, parse_neigh_list_mandatory_batadv_v,
-					BATADV_ARRAY_SIZE(parse_neigh_list_mandatory_batadv_v)))
-			return NL_OK;
-
-		mac = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
-		tq = gluonutil_get_pseudo_tq(nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT]));
-	} else {
-		if (ghdr->cmd != BATADV_CMD_GET_ORIGINATORS)
-			return NL_OK;
-
-		if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory_batadv_iv,
-					BATADV_ARRAY_SIZE(parse_orig_list_mandatory_batadv_iv)))
-			return NL_OK;
-
-		mac = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
-		if (memcmp(mac, nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]), 6) != 0)
-			return NL_OK;
-
-		tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
-	}
 
 	hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
 	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
@@ -141,6 +97,75 @@ static int parse_orig_neigh_list_netlink_cb(struct nl_msg *msg, void *arg)
 	return NL_OK;
 }
 
+static int parse_orig_list_netlink_cb_batadv_iv(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	uint8_t *mac;
+	struct neigh_netlink_opts *opts;
+
+	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
+			query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_ORIGINATORS)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+				genlmsg_len(ghdr), batadv_genl_policy))
+		return NL_OK;
+
+	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory_batadv_iv,
+				BATADV_ARRAY_SIZE(parse_orig_list_mandatory_batadv_iv)))
+		return NL_OK;
+
+	mac = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	if (memcmp(mac, nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]), 6) != 0)
+		return NL_OK;
+
+	return add_neighbour(opts, attrs, mac, nla_get_u8(attrs[BATADV_ATTR_TQ]));
+}
+
+static int parse_neigh_list_netlink_cb_batadv_v(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	uint8_t *mac;
+	struct neigh_netlink_opts *opts;
+
+	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
+			query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
+		return NL_OK;
+
+	ghdr = nlmsg_data(nlh);
+
+	if (ghdr->cmd != BATADV_CMD_GET_NEIGHBORS)
+		return NL_OK;
+
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+				genlmsg_len(ghdr), batadv_genl_policy))
+		return NL_OK;
+
+	if (batadv_genl_missing_attrs(attrs, parse_neigh_list_mandatory_batadv_v,
+				BATADV_ARRAY_SIZE(parse_neigh_list_mandatory_batadv_v)))
+		return NL_OK;
+
+	mac = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
+
+	return add_neighbour(opts, attrs, mac,
+			gluonutil_get_pseudo_tq(nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])));
+}
+
 static struct json_object * get_batadv(void) {
 	struct neigh_netlink_opts opts = {
 		.query_opts = {
@@ -159,15 +184,13 @@ static struct json_object * get_batadv(void) {
 		return NULL;
 	}
 
-	opts.algo = algo;
-
 	if (algo == BATADV_ALGO_BATMAN_V) {
 		ret = batadv_genl_query("bat0", BATADV_CMD_GET_NEIGHBORS,
-					parse_orig_neigh_list_netlink_cb, NLM_F_DUMP,
+					parse_neigh_list_netlink_cb_batadv_v, NLM_F_DUMP,
 					&opts.query_opts);
 	} else {
 		ret = batadv_genl_query("bat0", BATADV_CMD_GET_ORIGINATORS,
-					parse_orig_neigh_list_netlink_cb, NLM_F_DUMP,
+					parse_orig_list_netlink_cb_batadv_iv, NLM_F_DUMP,
 					&opts.query_opts);
 	}
 
