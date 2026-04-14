@@ -405,6 +405,10 @@ mediatek-mt7622
 
   - UniFi 6 LR (v1, v2, v3)
 
+* Xiaomi
+
+  - AX3200 / Redmi AX6S
+
 mvebu-cortexa53
 ---------------
 
