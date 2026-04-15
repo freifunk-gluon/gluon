@@ -4,7 +4,6 @@
 #include "respondd-common.h"
 
 #include <batadv-genl.h>
-#include <libgluonutil.h>
 
 #include <json-c/json.h>
 
@@ -62,7 +61,7 @@ static const enum batadv_nl_attrs parse_neigh_list_mandatory_batadv_v[] = {
 };
 
 static int add_neighbour(struct neigh_netlink_opts *opts, struct nlattr **attrs,
-		uint8_t *mac, uint8_t tq)
+		uint8_t *mac, const char *metric_name, struct json_object *metric_value)
 {
 	uint32_t hardif;
 	uint32_t lastseen;
@@ -73,15 +72,19 @@ static int add_neighbour(struct neigh_netlink_opts *opts, struct nlattr **attrs,
 	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
 
 	ifname = if_indextoname(hardif, ifname_buf);
-	if (!ifname)
+	if (!ifname) {
+		json_object_put(metric_value);
 		return NL_OK;
+	}
 
 	sprintf(mac1, "%02x:%02x:%02x:%02x:%02x:%02x",
 		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
 	struct json_object *obj = json_object_new_object();
-	if (!obj)
+	if (!obj) {
+		json_object_put(metric_value);
 		return NL_OK;
+	}
 
 	struct json_object *interface;
 	if (!json_object_object_get_ex(opts->interfaces, ifname, &interface)) {
@@ -89,7 +92,7 @@ static int add_neighbour(struct neigh_netlink_opts *opts, struct nlattr **attrs,
 		json_object_object_add(opts->interfaces, ifname, interface);
 	}
 
-	json_object_object_add(obj, "tq", json_object_new_int(tq));
+	json_object_object_add(obj, metric_name, metric_value);
 	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
 	json_object_object_add(obj, "best", json_object_new_boolean(nla_get_flag(attrs[BATADV_ATTR_FLAG_BEST])));
 	json_object_object_add(interface, mac1, obj);
@@ -129,7 +132,8 @@ static int parse_orig_list_netlink_cb_batadv_iv(struct nl_msg *msg, void *arg)
 	if (memcmp(mac, nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]), 6) != 0)
 		return NL_OK;
 
-	return add_neighbour(opts, attrs, mac, nla_get_u8(attrs[BATADV_ATTR_TQ]));
+	return add_neighbour(opts, attrs, mac, "tq",
+			json_object_new_int(nla_get_u8(attrs[BATADV_ATTR_TQ])));
 }
 
 static int parse_neigh_list_netlink_cb_batadv_v(struct nl_msg *msg, void *arg)
@@ -162,8 +166,8 @@ static int parse_neigh_list_netlink_cb_batadv_v(struct nl_msg *msg, void *arg)
 
 	mac = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
 
-	return add_neighbour(opts, attrs, mac,
-			gluonutil_get_pseudo_tq(nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])));
+	return add_neighbour(opts, attrs, mac, "throughput",
+			json_object_new_int64(nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])));
 }
 
 static struct json_object * get_batadv(void) {
