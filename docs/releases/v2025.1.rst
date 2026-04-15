@@ -406,6 +406,15 @@ Known issues
 .. _#496: https://github.com/freifunk-gluon/gluon/issues/496
 .. _#1726: https://github.com/freifunk-gluon/gluon/issues/1726
 .. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+.. _#3576: https://github.com/freifunk-gluon/gluon/issues/3576
+.. _#3699: https://github.com/freifunk-gluon/gluon/pull/3699
+.. _#3704: https://github.com/freifunk-gluon/gluon/issues/3704
+
+- The phy path migration happening on some devices (like WR3000) can happen at the wrong time, leading to a broken wifi configuration (`#3704`_)
+  
+- Devices hang randomly at sysupgrade until power cycled due to a bug in BATMAN_V (`#3699`_)
+
+- Devices using additional USB network drivers of the community config switch the interface order (`#3576`_)
 
 - The integration of the BATMAN_V routing algorithm is incomplete.
 
