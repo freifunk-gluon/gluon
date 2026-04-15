@@ -36,6 +36,4 @@ char * gluonutil_get_domain(void);
 char * gluonutil_get_primary_domain(void);
 struct json_object * gluonutil_load_site_config(void);
 
-uint8_t gluonutil_get_pseudo_tq(uint32_t throughput);
-
 #endif /* _LIBGLUON_LIBGLUON_H_ */
