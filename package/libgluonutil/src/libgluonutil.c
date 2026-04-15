@@ -11,7 +11,6 @@
 
 #include <errno.h>
 #include <glob.h>
-#include <math.h>
 #include <libgen.h>
 #include <limits.h>
 #include <stdio.h>
@@ -339,14 +338,3 @@ err:
 	return NULL;
 }
 
-uint8_t gluonutil_get_pseudo_tq(uint32_t throughput) {
-	return throughput >= 54000 ? 255 :
-		throughput < 417 ? 0 :
-		(uint8_t)(
-			(
-				1.42459274279287898080 * log2(throughput) -
-				12.39555493934044793479
-			)
-			* 25.5
-		);
-}
