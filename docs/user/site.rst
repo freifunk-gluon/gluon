@@ -104,7 +104,7 @@ regdom \: optional
 wifi24 \: optional
   WLAN configuration for 2.4 GHz devices.
   ``channel`` must be set to a valid wireless channel for your radio.
-  ``bandwidth`` can be specified to set a custom bandwidth per radio band in MHz. Can be 20, 40, 80 or 160.
+  ``channel_width`` can be specified to set a custom channel width per radio band in MHz. Can be 20, 40, 80 or 160.
   ``beacon_interval`` can be specified to set a custom beacon interval in
   time units (TU). A time unit is equivalent to 1024 µs.
   If not set, the default value of 100 TU (=102.4 ms) is used.
@@ -180,6 +180,19 @@ wifi5 \: optional
     wifi5 = {
       channel = 44,
       outdoor_chanlist = "100-140",
+
+      [...]
+    },
+
+.. _user-site-wifi6:
+
+wifi6 \: optional
+  Same as `wifi24` but for the 6 GHz radio.
+
+  ::
+
+    wifi6 = {
+      channel = 33,
 
       [...]
     },
