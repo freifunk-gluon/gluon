@@ -184,6 +184,19 @@ wifi5 \: optional
       [...]
     },
 
+.. _user-site-wifi6:
+
+wifi6 \: optional
+  Same as `wifi24` but for the 6 GHz radio.
+
+  ::
+
+    wifi6 = {
+      channel = 33,
+
+      [...]
+    },
+
 next_node \: package
   Configuration of the local node feature of Gluon
 
