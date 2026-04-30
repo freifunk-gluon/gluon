@@ -594,7 +594,7 @@ static void update_metrics(void) {
 					BATADV_CMD_GET_TRANSTABLE_LOCAL,
 					parse_tt_local, NLM_F_DUMP, &opts);
 		if (ret < 0)
-			fprintf(stderr, "Parsing of global translation table failed\n");
+			fprintf(stderr, "Parsing of local translation table failed\n");
 	}
 
 	foreach(router, G.routers) {
