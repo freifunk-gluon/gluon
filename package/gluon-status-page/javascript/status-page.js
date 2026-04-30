@@ -136,6 +136,10 @@
 		},
 		'tq': function(value) {
 			return formatNumber(100/255 * value, 1) + '%';
+		},
+		// input value is in kbit/s
+		'bitrate': function(value) {
+			return prettyPrefix([ "", "K", "M", "G", "T" ], 1000, value * 1000);
 		}
 	}
 
@@ -475,6 +479,7 @@
 				return;
 
 			var suffix = attr.getAttribute('data-suffix') || '';
+			var formatter = attr.getAttribute('data-format') || '';
 
 			var td = el.insertCell();
 			td.textContent = '-';
@@ -483,6 +488,7 @@
 			meshAttrs[key] = {
 				'td': td,
 				'suffix': suffix,
+				'formatter': formatter,
 			};
 		}
 
@@ -667,7 +673,13 @@
 			'update_mesh': function(mesh) {
 				Object.keys(meshAttrs).forEach(function(key) {
 					var attr = meshAttrs[key];
-					attr.td.textContent = mesh[key] + attr.suffix;
+					var raw = mesh[key];
+					if (raw === undefined)
+						return;
+					var rendered = (attr.formatter && formats[attr.formatter])
+						? formats[attr.formatter](raw)
+						: raw;
+					attr.td.textContent = rendered + attr.suffix;
 				});
 
 				updated();
