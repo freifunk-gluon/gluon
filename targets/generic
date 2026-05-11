@@ -115,7 +115,6 @@ config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 packages {
 	'-ca-bundle',
 	'-dnsmasq',
-	'-kmod-ipt-offload',
 	'-kmod-nft-offload',
 	'-libustream-mbedtls',
 	'-libmbedtls',
@@ -123,8 +122,6 @@ packages {
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
-	'-wpad-mini',
-	'-wpad-basic',
 	'-wpad-basic-mbedtls',
 	'-firewall4',
 	'gluon-core',
