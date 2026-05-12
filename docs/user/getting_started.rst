@@ -40,6 +40,27 @@ We also provide a container environment that already tracks all these dependenci
 
   ./scripts/container.sh
 
+If you intend to develop something in gluon, the container can sometimes be a bit too restrictive. E.g. you can not change out of the cwd, editors are not installed, push_pkg.sh does not work, ... For this case, we suggest to use debian inside `distrobox`_. Simply put, distrobox is a fancy wrapper around podman, docker, or lilipod to create and start containers which are highly integrated with the hosts.
+
+.. _distrobox: https://github.com/89luca89/distrobox
+
+To initially create a distrobox for gluon:
+
+.. code-block:: sh
+
+  distrobox create -n gluon --image debian:trixie
+  distrobox enter gluon
+  apt install ... # install packages mentioned above
+
+The container stays persistent. To reenter it, you can simply do:
+
+.. code-block:: sh
+
+  distrobox enter gluon
+
+Now, from this distrobox, you can browse your whole host file system, install more software, use push_pkg.sh, etc.
+
+
 Building the images
 -------------------
 
