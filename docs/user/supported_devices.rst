@@ -382,6 +382,10 @@ mediatek-filogic
 
   - UniFi 6 Plus
 
+* TP-Link
+
+  - TP-Link FR365 (v1)
+
 * Wavlink
 
   - WL-WN573HX3 [#lan_as_wan]_

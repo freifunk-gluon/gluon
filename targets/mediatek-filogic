@@ -106,6 +106,10 @@ device('openwrt-one', 'openwrt_one', {
 })
 
 
+-- TP-Link
+device('tp-link-fr365-v1', 'tplink_fr365-v1')
+
+
 -- Ubiquiti
 
 device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
