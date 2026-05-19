@@ -110,6 +110,11 @@ device('netgear-wndr3700-v5', 'netgear_wndr3700-v5', {
 })
 
 
+-- Plasma Cloud
+
+device('plasma-cloud-pax1800-lite', 'plasmacloud_pax1800-lite')
+
+
 -- TP-Link
 
 device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1', {
