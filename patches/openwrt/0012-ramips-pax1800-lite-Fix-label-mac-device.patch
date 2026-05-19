@@ -1,0 +1,26 @@
+From: Sven Eckelmann <sven@narfation.org>
+Date: Tue, 19 May 2026 21:43:16 +0200
+Subject: ramips: pax1800-lite: Fix label-mac-device
+
+The gmac1 is not used and doesn't have any mac address configured. The
+gmac0 has the nvmem-cells set and can actually be used to retrieve the
+correct mac address.
+
+Fixes: c7c54f313425 ("ramips: add support for Plasma Cloud PAX1800-Lite")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Origin: upstream, https://github.com/openwrt/openwrt/commit/e75f33d0f244aee6d91bfe07394ba9d4e074b337
+Forwarded: https://github.com/openwrt/openwrt/pull/23441
+
+diff --git a/target/linux/ramips/dts/mt7621_plasmacloud_pax1800-lite.dts b/target/linux/ramips/dts/mt7621_plasmacloud_pax1800-lite.dts
+index 6805a2938a17a643b2d2fb7b65329a868f3327cb..48f06bb3ba677c1d0daf2caa1233ce7ef69170cf 100644
+--- a/target/linux/ramips/dts/mt7621_plasmacloud_pax1800-lite.dts
++++ b/target/linux/ramips/dts/mt7621_plasmacloud_pax1800-lite.dts
+@@ -19,7 +19,7 @@
+ 		led-failsafe = &led_status_green;
+ 		led-running = &led_status_green;
+ 		led-upgrade = &led_status_green;
+-		label-mac-device = &gmac1;
++		label-mac-device = &gmac0;
+ 	};
+ 
+ 	gpio_export {
