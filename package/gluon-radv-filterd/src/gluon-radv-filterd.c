@@ -52,8 +52,9 @@
 // max execution time of a single ebtables call in nanoseconds
 #define EBTABLES_TIMEOUT 500000000 // 500ms
 
-// TQ value assigned to local routers
-#define LOCAL_TQ 512
+// BATMAN IV TQ values are 0-255; reject larger thresholds since
+// it would silently prevent the gateway from switching.
+#define BATMAN_IV_MAX_THRESHOLD 255
 
 #define BUFSIZE 1500
 
@@ -267,8 +268,8 @@ static void parse_cmdline(int argc, char *argv[]) {
 				threshold = strtoul(optarg, &endptr, 10);
 				if (*endptr != '\0')
 					exit_errmsg("Threshold must be a number: %s", optarg);
-				if (threshold >= LOCAL_TQ)
-					exit_errmsg("Threshold too large: %ld (max is %d)", threshold, LOCAL_TQ);
+				if (threshold > BATMAN_IV_MAX_THRESHOLD)
+					exit_errmsg("Threshold too large: %ld (max is %d)", threshold, BATMAN_IV_MAX_THRESHOLD);
 				G.hysteresis_thresh = (uint16_t) threshold;
 				break;
 			case 'h':
@@ -524,9 +525,9 @@ static int parse_tt_local(struct nl_msg *msg,
 	if (!router)
 		return NL_OK;
 
+	router->tq = UINT16_MAX;
 	DEBUG_MSG("Found router " F_MAC " in transtable_local, assigning TQ %d",
-			F_MAC_VAR(router->src), LOCAL_TQ);
-	router->tq = LOCAL_TQ;
+			F_MAC_VAR(router->src), router->tq);
 	if (router->tq > G.max_tq)
 		G.max_tq = router->tq;
 
