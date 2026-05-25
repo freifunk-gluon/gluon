@@ -1,3 +1,4 @@
+$(eval $(call GluonTarget,airoha,an7581))
 $(eval $(call GluonTarget,armsr,armv7))
 $(eval $(call GluonTarget,armsr,armv8))
 $(eval $(call GluonTarget,ath79,generic))
