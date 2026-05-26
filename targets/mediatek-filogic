@@ -7,6 +7,10 @@ device('acer-connect-vero-w6m', 'acer_vero-w6m', {
 	factory = false,
 })
 
+device('acer-predator-connect-w6', 'acer_predator-w6', {
+	factory = false,
+})
+
 
 -- ASUS
 
