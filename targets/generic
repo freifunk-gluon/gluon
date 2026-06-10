@@ -18,7 +18,7 @@ if env.SUBTARGET ~= '' then
 	config(string.format('TARGET_%s_%s', env.BOARD, env.SUBTARGET), true)
 end
 
--- Disable non-default feeds in distfeeds.conf
+-- Disable non-default feeds in distfeeds.list
 config('FEED_gluon_base', false)
 
 local default_feeds = {}
