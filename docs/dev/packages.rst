@@ -65,17 +65,17 @@ Features of ``push_pkg.sh``:
 
 Implementation details of ``push_pkg.sh``:
 
-* First, the script builds an opkg package using the OpenWrt build system.
+* First, the script builds an apk package using the OpenWrt build system.
 * This package is pushed to a *target machine* using scp:
 
   * By default the *target machine* is a locally running x86 qemu started using ``run_qemu.sh``.
   * The *target machine* can also be remote machine. (See the cli switch ``-r``)
   * Remote machines are not limited to a specific architecture. All architectures supported by gluon can be used as remote machines.
 
-* Finally opkg is used to install/update the packages in the target machine.
+* Finally apk is used to install/update the packages in the target machine.
 
   * While doing this, it will not override ``/etc/config`` with package defaults by default. (See the cli switch ``-P``).
-  * While doing this, opkg calls the ``check_site.lua`` from the package as post_install script to validate the ``site.conf``. This means that the ``site.conf`` of the target machine is used for this validation.
+  * While doing this, apk calls the ``check_site.lua`` from the package as post-install script to validate the ``site.conf``. This means that the ``site.conf`` of the target machine is used for this validation.
 
 Note that:
 
