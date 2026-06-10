@@ -3,7 +3,7 @@
 ##	DEFAULT_GLUON_RELEASE
 #		version string to use for images
 #		gluon relies on
-#			opkg compare-versions "$1" '>>' "$2"
+#			apk version -t "$1" "$2"  # prints '>' when $1 is newer than $2
 #		to decide if a version is newer or not.
 
 DEFAULT_GLUON_RELEASE := 0.6+exp$(shell date '+%Y%m%d')
