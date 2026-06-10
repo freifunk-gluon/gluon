@@ -1,0 +1,87 @@
+#!/usr/bin/lua
+
+local unistd = require 'posix.unistd'
+
+local distfeeds_path = '/etc/apk/repositories.d/distfeeds.list'
+local gluonfeeds_path = '/etc/apk/repositories.d/gluon.list'
+
+if not unistd.access(distfeeds_path) then
+	os.exit(0)
+end
+
+
+local site = require 'gluon.site'
+local util = require 'gluon.util'
+
+
+local subst = {}
+
+
+local f = io.popen('. /etc/os-release; echo "$ID"; echo "$VERSION_ID"; echo "$OPENWRT_BOARD"; echo "$OPENWRT_ARCH"')
+subst['%%d'] = f:read()
+subst['%%v'] = f:read():gsub('-snapshot', '')
+subst['%%S'] = f:read()
+subst['%%A'] = f:read()
+f:close()
+
+subst['%%GS'] = site.site_code()
+subst['%%GV'] = util.trim(util.readfile('/lib/gluon/gluon-version'))
+subst['%%GR'] = util.trim(util.readfile('/lib/gluon/release'))
+
+
+local function replace_patterns(url)
+	for k, v in pairs(subst) do
+		url = url:gsub(k, v)
+	end
+
+	return url
+end
+
+
+local openwrt = site.apk.openwrt()
+local extra = site.apk.extra({})
+
+
+local distfeeds = {}
+for line in io.lines(distfeeds_path) do
+	table.insert(distfeeds, line)
+end
+
+f = io.open(distfeeds_path, 'w')
+
+for _, line in ipairs(distfeeds) do
+	-- Only rewrite uncommented URL lines. base-files emits `# <url>` for
+	-- per-feed entries disabled via `CONFIG_FEED_<name>=m` (e.g. the
+	-- FEED_gluon_base toggle in targets/generic); those must pass through.
+	if openwrt and line:match('^https?://') then
+		if line:match('/targets/.-/packages/packages%.adb$') then
+			-- core/board line: an architecture-derived custom mirror cannot
+			-- serve target distfeeds paths, so disable it.
+			f:write('# ' .. line .. '\n')
+		else
+			local name = line:match('/packages/[^/]+/([^/]+)/packages%.adb$')
+			if name then
+				f:write(string.format('%s/%s/packages.adb\n', replace_patterns(openwrt), name))
+			else
+				f:write(line .. '\n')
+			end
+		end
+	else
+		f:write(line .. '\n')
+	end
+end
+
+f:close()
+
+if next(extra) then
+	f = io.open(gluonfeeds_path, 'w')
+
+	for _, v in pairs(extra) do
+		f:write(replace_patterns(v) .. '/packages.adb\n')
+	end
+
+	f:close()
+
+else
+	os.remove(gluonfeeds_path)
+end
