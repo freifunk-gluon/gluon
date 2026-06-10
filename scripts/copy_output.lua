@@ -90,7 +90,7 @@ local profile_json_dest = string.format('%s/openwrt-profiles/%s.json',
 	target)
 lib.exec {'cp', profile_json_source, profile_json_dest}
 
--- Copy opkg repo
+-- Copy apk repo
 if (env.GLUON_DEVICES or '') == '' then
 	local package_prefix = string.format('gluon-%s-%s', lib.site_code, env.GLUON_RELEASE)
 	local function dest_dir(prefix)
