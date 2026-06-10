@@ -64,23 +64,27 @@ ntp_servers
   These NTP servers must be reachable via IPv6 from the nodes. If you don't want to set an IPv6 address
   explicitly, but use a hostname (which is recommended), see also the :ref:`FAQ <faq-dns>`.
 
-opkg \: optional
-  ``opkg`` package manager configuration.
+apk \: optional
+  ``apk`` package manager configuration.
 
-  There are two optional fields in the ``opkg`` section:
+  There are two optional fields in the ``apk`` section:
 
   - ``openwrt`` overrides the default OpenWrt repository URL. The default URL would
     correspond to ``http://downloads.openwrt.org/snapshots/packages/%A``
     and usually doesn't need to be changed when nodes are expected to have IPv6
-    internet connectivity.
-  - ``extra`` specifies a table of additional repositories (with arbitrary keys)
+    internet connectivity. The value is treated as a directory prefix; the per-feed
+    component and the ``/packages.adb`` index name are appended automatically, so
+    the URL must **not** end in a slash or in ``packages.adb``.
+  - ``extra`` specifies a table of additional repositories (with arbitrary keys).
+    Each entry is a URL pointing at an apk index folder, so
+    the URL must **not** end in a slash or in ``packages.adb``.
 
   ::
 
-    opkg = {
-      openwrt = 'http://opkg.services.ffac/openwrt/snapshots/packages/%A',
+    apk = {
+      openwrt = 'http://apk.services.ffac/openwrt/snapshots/packages/%A',
       extra = {
-        gluon = 'http://opkg.services.ffac/modules/gluon-%GS-%GR/%S',
+        gluon = 'http://apk.services.ffac/modules/gluon-%GS-%GR/%S/packages.adb',
       },
     }
 

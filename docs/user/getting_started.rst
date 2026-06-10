@@ -166,22 +166,21 @@ necessary, but may fix certain kinds of build failures.
 
 will clean the entire tree, so the toolchain will be rebuilt as well, which will take a while.
 
-opkg repositories
------------------
+apk repositories
+----------------
 
 Gluon is mostly compatible with OpenWrt, so the normal OpenWrt package repositories
 can be used for Gluon as well.
 
 This is not true for kernel modules; the Gluon kernel is incompatible with the
 kernel of the default OpenWrt images. Therefore, Gluon will not only generate images,
-but also an opkg repository containing all core packages provided by OpenWrt,
+but also an apk repository containing all core packages provided by OpenWrt,
 including modules for the kernel of the generated images.
 
 Signing keys
 ............
 
-Gluon does not support HTTPS for downloading packages; fortunately, opkg deploys
-public-key cryptography to ensure package integrity.
+apk deploys public-key cryptography to ensure package integrity.
 
 The Gluon images will contain public keys from two sources: the official OpenWrt keyring
 (to allow installing userspace packages) and a Gluon-specific key (which is used
@@ -190,8 +189,8 @@ to sign the generated package repository).
 OpenWrt will handle the generation and handling of the keys itself.
 When making firmware releases based on Gluon, it might make sense to store
 the keypair, so updating the module repository later is possible.
-In fact you should take care to reuse the same opkg keypair, so you don't pollute the key
-store (see ``/etc/opkg/keys``) on the node.
+In fact you should take care to reuse the same signing keypair, so you don't pollute the key
+store (see ``/etc/apk/keys``) on the node.
 
 The signing-key is stored at ``openwrt/key-build.pub``, ``openwrt/key-build``,
 ``key-build.ucert`` and  ``key-build.ucert.revoke``.
@@ -295,7 +294,7 @@ GLUON_IMAGEDIR
   Path where images will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/images``.
 
 GLUON_PACKAGEDIR
-  Path where the opkg package repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/packages``.
+  Path where the apk package repository will be stored. Defaults to ``$(GLUON_OUTPUTDIR)/packages``.
 
 GLUON_OUTPUTDIR
   Path where output files will be stored. Defaults to ``output``.
