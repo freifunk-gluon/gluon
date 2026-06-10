@@ -1,0 +1,24 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 24 Jul 2025 20:25:22 +0200
+Subject: hostapd: disable wps button handling
+
+Pressing the WPS button when wpa-supplicant is installed for encrypted
+mesh operation triggers WPS in the wpa_supplicant process.
+
+This disables the wireless mesh completely.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/network/config/wifi-scripts/files/etc/rc.button/wps b/package/network/config/wifi-scripts/files/etc/rc.button/wps
+index 59b1aeff17bb62e0f66350eda5e1293b033e05e1..fa6e287bee298d04a2b662ede2b9fdf31dc8a7a6 100755
+--- a/package/network/config/wifi-scripts/files/etc/rc.button/wps
++++ b/package/network/config/wifi-scripts/files/etc/rc.button/wps
+@@ -1,5 +1,8 @@
+ #!/bin/sh
+ [ "$ACTION" = "pressed" ] && exit 5
++
++exit 0
++
+ for script in /etc/rc.wps/*; do
+ 	[ -x "$script" ] || continue
+ 	"$script" && break
