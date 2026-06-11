@@ -88,28 +88,33 @@ local function get_htmode(radio)
 	local phy = wireless.find_phy(radio)
 	local htmode
 	if iwinfo.nl80211.hwmodelist(phy).ax then
-		htmode = 'HE' .. channel_width
+		htmode = 'HE'
 	elseif iwinfo.nl80211.hwmodelist(phy).ac then
-		htmode = 'VHT' .. channel_width
+		htmode = 'VHT'
 	else
-		htmode = 'HT' .. channel_width
+		htmode = 'HT'
 	end
 
-	local last_mode
+	local last_width
 
 	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
 		if available then
-			if mode == htmode then
-				return htmode
-			end
+			local hwmode = mode:match("%a+")
+			local width = mode:match("%d+")
 
-			last_mode = mode
+			if hwmode .. width == mode and hwmode == htmode then
+				if width == channel_width then
+					return hwmode .. width
+				end
+
+				if not last_width or width > last_width then
+					last_width = width
+				end
+			end
 		end
 	end
 
-	-- if preferred htmode is not available
-	-- select the last one we got
-	return last_mode
+	return htmode .. last_width
 end
 
 local function configure_mesh(radio, index, mesh_config)
