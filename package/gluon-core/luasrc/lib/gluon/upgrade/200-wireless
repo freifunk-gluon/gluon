@@ -98,11 +98,13 @@ local function get_htmode(radio)
 	local last_mode
 
 	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
-		if available and mode == htmode then
-			return htmode
-		end
+		if available then
+			if mode == htmode then
+				return htmode
+			end
 
-		last_mode = mode
+			last_mode = mode
+		end
 	end
 
 	-- if preferred htmode is not available
