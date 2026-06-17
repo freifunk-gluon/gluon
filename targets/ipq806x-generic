@@ -17,7 +17,6 @@ device('extreme-networks-ap3935', 'extreme_ap3935', {
 	factory = false,
 	sysupgrade = '-squashfs-nand-sysupgrade',
 	packages = QCA9980_PACKAGES,
-	broken = true,	-- https://github.com/openwrt/openwrt/issues/17635
 })
 
 -- TP-Link
