@@ -295,6 +295,10 @@ ipq40xx-mikrotik
 ipq806x-generic
 ---------------
 
+* Extreme Networks
+
+  - WS-AP3935i
+
 * NETGEAR
 
   - R7800
