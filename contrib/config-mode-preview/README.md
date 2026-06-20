@@ -17,12 +17,12 @@ Config mode is a tree of pages registered by `entry()` controllers (the wizard
 is just one such page). `generate.lua`:
 
 1. runs the **real** controllers from every package to build the same
-   navigation tree the dispatcher builds;
+    navigation tree the dispatcher builds;
 2. for each `model()` entry, runs the **real** model file (and, for the wizard,
-   every package's `config-mode/wizard/*.lua` section) against small stubbed
-   backends (uci, `gluon.site`, platform, wireless, …);
+    every package's `config-mode/wizard/*.lua` section) against small stubbed
+    backends (uci, `gluon.site`, platform, wireless, …);
 3. walks each resulting form tree and emits HTML mirroring the gluon-web view
-   templates, writing **one HTML file per page** with a working menu.
+    templates, writing **one HTML file per page** with a working menu.
 
 Because it uses the same controller/model/section discovery the router does,
 **any package — including plugins — that registers config-mode pages shows up
@@ -68,15 +68,15 @@ exercise different states, e.g.:
 ## Caveats
 
 - `template()` pages (e.g. Information) and `call()` actions (firmware upgrade)
-  are shown in the navigation as **placeholders** — they render device-side
-  templates/actions outside this static preview's scope.
+    are shown in the navigation as **placeholders** — they render device-side
+    templates/actions outside this static preview's scope.
 - The WLAN page is rendered against **mock radios** (one 2.4 GHz, one 5 GHz)
-  with representative txpower/HT-mode lists, since real values come from
-  `iwinfo` on the device.
+    with representative txpower/HT-mode lists, since real values come from
+    `iwinfo` on the device.
 - The OpenStreetMap map widget (geo-location) is not rendered; its lat/lon
-  fields are.
+    fields are.
 - Translations use the English source strings (plus a few mocked `gluon-site`
-  keys); this is a layout/behaviour preview, not an i18n preview.
+    keys); this is a layout/behaviour preview, not an i18n preview.
 - The emitter mirrors the widget templates by hand. If those templates change,
-  update `generate.lua` to match (the CI job and a glance at the pages make
-  drift obvious).
+    update `generate.lua` to match (the CI job and a glance at the pages make
+    drift obvious).
