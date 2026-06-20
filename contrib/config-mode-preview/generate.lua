@@ -62,7 +62,7 @@ local MOCK = {
 
 	-- toggles that gate whole sections / pages
 	outdoor_device = true,    -- show the outdoor wizard section
-	cellular_device = false,  -- register the cellular admin page
+	cellular_device = true,   -- register the cellular admin page
 	mesh_vpn_provider = "fastd",
 }
 
@@ -104,6 +104,8 @@ local MOCK_UCI = {
 		{ [".name"] = "d_lan", [".type"] = "interface", name = "/lan", role = { "client" } },
 		{ [".name"] = "band_2g", [".type"] = "wireless_band", role = { "client", "mesh" } },
 		{ [".name"] = "band_5g", [".type"] = "wireless_band", role = { "client", "mesh" } },
+		{ [".name"] = "cellular", [".type"] = "cellular", enabled = "1", pin = "",
+			apn = "internet", pdptype = "IPV4V6", username = "", password = "", auth = "none" },
 	},
 	["gluon-node-info"] = {
 		{ [".name"] = "system", [".type"] = "system", role = "node" },
