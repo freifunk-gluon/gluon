@@ -35,11 +35,12 @@ run_lua() {
 
 mkdir -p "$out/static"
 
-# generate.lua expects to run from the repository root (it globs package/...).
-( cd "$root" && run_lua "contrib/config-mode-preview/generate.lua" ) > "$out/index.html"
+# generate.lua expects to run from the repository root (it globs package/...)
+# and writes one HTML file per config-mode page into the given output dir.
+( cd "$root" && run_lua "contrib/config-mode-preview/generate.lua" "$out" )
 
 cp "$css" "$out/static/gluon.css"
 cp "$js" "$out/static/gluon-web-model.js"
 
-echo "Built preview at $out/index.html"
+echo "Built preview in $out (open index.html)"
 echo "Serve it with: python3 -m http.server -d $out 8000"
