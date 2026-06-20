@@ -70,8 +70,9 @@ exercise different states, e.g.:
 - `template()` pages (e.g. Information) and `call()` actions (firmware upgrade)
   are shown in the navigation as **placeholders** — they render device-side
   templates/actions outside this static preview's scope.
-- The WLAN page is rendered against **mock radios**; real per-radio data
-  (txpower/HT-mode lists from `iwinfo`) is empty, so those options are omitted.
+- The WLAN page is rendered against **mock radios** (one 2.4 GHz, one 5 GHz)
+  with representative txpower/HT-mode lists, since real values come from
+  `iwinfo` on the device.
 - The OpenStreetMap map widget (geo-location) is not rendered; its lat/lon
   fields are.
 - Translations use the English source strings (plus a few mocked `gluon-site`

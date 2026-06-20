@@ -358,10 +358,21 @@ package.preload["gluon.wireless"] = function()
 end
 
 package.preload["iwinfo"] = function()
+	-- Representative values so the per-radio txpower and outdoor HT-mode
+	-- selects are populated (a real device reports these from the driver).
 	local nl = {
-		txpwrlist = function() return {} end,
+		txpwrlist = function()
+			local list = {}
+			for _, dbm in ipairs({ 0, 6, 12, 15, 17, 20, 23 }) do
+				list[#list + 1] = { dbm = dbm }
+			end
+			return list
+		end,
 		txpower_offset = function() return 0 end,
-		htmodelist = function() return {} end,
+		htmodelist = function()
+			return { HT20 = true, HT40 = true, VHT20 = true, VHT40 = true,
+				VHT80 = true, VHT160 = true }
+		end,
 	}
 	return { nl80211 = nl }
 end
