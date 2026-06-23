@@ -48,7 +48,7 @@ after calling gluon-reconfigure.
 
 How can I retain options upon updates anyway?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-For settings in the sections *network* and *system*, the option *gluon_preserve* can be set to true
+For settings in the sections *network*, *system* and *wireless*, the option *gluon_preserve* can be set to true
 in order to preserve the sections. However, this is still at a high risk and may result in broken setups.
 
 There are two conditions that must hold:
