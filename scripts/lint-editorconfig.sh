@@ -2,4 +2,4 @@
 
 set -e
 
-editorconfig-checker .github contrib docs package scripts targets tests ./*.* .luacheckrc .editorconfig
+editorconfig-checker .github contrib docs package scripts targets tests ./*.* .luacheckrc .editorconfig .editorconfig-checker.json .readthedocs.yaml
