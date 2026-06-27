@@ -45,7 +45,7 @@ jobs:
           ARCH: amd64
         run: |
           curl -O -L -C - https://github.com/editorconfig-checker/editorconfig-checker/releases/download/$VERSION/ec-$OS-$ARCH.tar.gz
-          tar xzf ec-$OS-$ARCH.tar.gz
+          tar xzf ec-$OS-$ARCH.tar.gz bin/ec-$OS-$ARCH
           sudo mv ./bin/ec-$OS-$ARCH /usr/bin/editorconfig-checker
           sudo chmod +x /usr/bin/editorconfig-checker
       - name: Install example site
