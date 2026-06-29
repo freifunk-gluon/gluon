@@ -40,12 +40,12 @@ jobs:
         run: sudo apt install curl tar
       - name: Install editorconfig-checker
         env:
-          VERSION: 2.7.0
+          VERSION: v3.7.0
           OS: linux
           ARCH: amd64
         run: |
           curl -O -L -C - https://github.com/editorconfig-checker/editorconfig-checker/releases/download/$VERSION/ec-$OS-$ARCH.tar.gz
-          tar xzf ec-$OS-$ARCH.tar.gz
+          tar xzf ec-$OS-$ARCH.tar.gz bin/ec-$OS-$ARCH
           sudo mv ./bin/ec-$OS-$ARCH /usr/bin/editorconfig-checker
           sudo chmod +x /usr/bin/editorconfig-checker
       - name: Install example site
