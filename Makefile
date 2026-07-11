@@ -157,6 +157,34 @@ define CheckSite
 	fi
 endef
 
+LLVM_MIN_VERSION := 12
+
+define CheckLLVM
+	clang="$$(command -v clang || command -v clang-13 || command -v clang-12 || true)"
+	if [ -z "$$clang" ]; then
+		echo 'Required build dependency clang was not found.'
+		echo 'Please install LLVM/clang $(LLVM_MIN_VERSION) or newer before building Gluon/OpenWrt targets using BPF.'
+		exit 1
+	fi
+	llvm_suffix="$$(basename "$$clang" | sed -n 's/^clang\(-[0-9][0-9]*\)$$/\1/p')"
+	clang_version="$$("$$clang" --version | sed -n 's/.*clang version \([0-9][0-9]*\).*/\1/p' | head -n1)"
+	if [ -z "$$clang_version" ]; then
+		echo "Could not determine clang version from $$clang; LLVM/clang $(LLVM_MIN_VERSION) or newer is required."
+		exit 1
+	fi
+	if [ "$$clang_version" -lt "$(LLVM_MIN_VERSION)" ]; then
+		echo "LLVM/clang $(LLVM_MIN_VERSION) or newer is required; found clang $$clang_version at $$clang."
+		exit 1
+	fi
+	for tool in opt llc llvm-dis llvm-strip; do
+		if ! command -v "$$tool$$llvm_suffix" >/dev/null 2>&1; then
+			echo "Required build dependency '$$tool$$llvm_suffix' was not found."
+			echo 'Please install the matching LLVM tool package for the selected clang.'
+			exit 1
+		fi
+	done
+endef
+
 list-targets: FORCE
 	@for target in $(GLUON_TARGETS); do
 		echo "$$target"
@@ -179,6 +207,7 @@ LUA := openwrt/staging_dir/hostpkg/bin/lua
 $(LUA):
 	+@
 
+	$(CheckLLVM)
 	scripts/module_check.sh
 
 	$(GLUON_ENV) scripts/basic_openwrt_config.sh > openwrt/.config
@@ -192,6 +221,7 @@ config: $(LUA) FORCE
 
 	scripts/module_check.sh
 	$(CheckTarget)
+	$(CheckLLVM)
 	$(foreach conf,site $(patsubst $(GLUON_SITEDIR)/%.conf,%,$(wildcard $(GLUON_SITEDIR)/domains/*.conf)),\
 		$(call CheckSite,$(conf)); \
 	)
