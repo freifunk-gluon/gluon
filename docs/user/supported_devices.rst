@@ -1,38 +1,151 @@
 Supported Devices & Architectures
 =================================
 
-armsr-armv7
------------
+Wi-Fi 6E (IEEE 802.11ax-2021)
+-----------------------------
 
-* Arm SystemReady (EFI) 32-bit
+* Acer
 
-armsr-armv8
------------
+  - Vero-W6M
 
-* Arm SystemReady (EFI) 64-bit
+
+Wi-Fi 6 (IEEE 802.11ax-2021)
+----------------------------
+
+mediatek-filogic
+^^^^^^^^^^^^^^^^
+
+* ASUS
+
+  - RT-AX52
+  - TUF AX4200
+  - TUF AX6000
+
+* Cudy
+
+  - AP3000 Outdoor (v1)
+  - M3000 (v1)
+  - RE3000 (v1)
+  - TR3000 (v1)
+  - WR3000 (v1)
+  - WR3000e (v1)
+  - WR3000h (v1)
+  - WR3000s (v1)
+
+* D-Link
+
+  - AQUILA PRO AI M30 A1
+  - AQUILA PRO AI M60 A1
+
+* GL.iNet
+
+  - GL-MT3000
+
+* NETGEAR
+
+  - WAX220
+
+* OpenWrt
+
+  - One
+
+* Ubiquiti
+
+  - UniFi 6 Plus
+
+* Wavlink
+
+  - WL-WN573HX3 [#lan_as_wan]_
+
+* Xiaomi
+
+  - Mi Router AX3000T (Stock, ubootmod)
+
+* Zyxel
+
+  - NWA50AX Pro
+
+mediatek-mt7622
+^^^^^^^^^^^^^^^
+
+* Linksys
+
+  - E8450
+
+* Netgear
+
+  - WAX206
+
+* Ubiquiti
+
+  - UniFi 6 LR (v1, v2, v3)
+
+* Xiaomi
+
+  - AX3200 / Redmi AX6S
+
+qualcommax-ipq807x
+^^^^^^^^^^^^^^^^^^
+
+* Linksys
+
+  - MX5300
+
+* Xiaomi
+
+  - Mi AIoT Router AX3600
+
+ramips-mt7621
+^^^^^^^^^^^^^
+
+* ASUS
+
+  - RT-AX53U
+
+* Cudy
+
+  - X6 (v1, v2)
+
+* D-Link
+
+  - COVR-X1860 (A1)
+  - DAP-X1860 (A1)
+
+* MERCUSYS
+
+  - MR70X (v1)
+  - MR90X (v1)
+
+* NETGEAR
+
+  - EAX11 (v2)
+  - EAX12
+  - EAX15 (v2)
+  - WAX202
+
+* Totolink
+
+  - X5000R (v1)
+
+* TP-Link
+
+  - EAP615-Wall (v1)
+
+* Ubiquiti
+
+  - UniFi 6 Lite
+
+* Zyxel
+
+  - NWA50AX
+  - WSM20
+
+
+Wi-Fi 5 (IEEE 802.11ac-2013)
+----------------------------
 
 ath79-generic
---------------
-
-* ALFA Network
-
-  - AP121F
-
-* AVM
-
-  - FRITZ!WLAN Repeater 300E [#avmflash]_
-  - Fritz!WLAN Repeater 450E [#avmflash]_
-  - Fritz!Box 4020 [#avmflash]_
-
-* Buffalo
-
-  - WZR-HP-AG300H / WZR-600DHP
-  - WZR-HP-G300NH (rtl8366s)
-  - WZR-HP-G450H / WZR-450HP
-
-* COMFAST
-
-  - CF-EW71 (v2)
+^^^^^^^^^^^^^
 
 * devolo
 
@@ -45,18 +158,9 @@ ath79-generic
 
 * D-Link
 
-  - DAP-1330 A1 [#lan_as_wan]_
-  - DAP-1365 A1 [#lan_as_wan]_
   - DAP-2660 A1 [#lan_as_wan]_
   - DAP-2680 A1 [#lan_as_wan]_
   - DAP-2695 A1 [#lan_as_wan]_
-  - DIR-505 A1 [#lan_as_wan]_
-  - DIR-505 A2 [#lan_as_wan]_
-  - DIR-825 B1
-
-* Enterasys
-
-  - WS-AP3705i
 
 * Extreme Networks
 
@@ -64,71 +168,29 @@ ath79-generic
 
 * GL.iNet
 
-  - 6416A
-  - GL-AR150
-  - GL-AR300M-Lite
-  - GL-AR300M16
   - GL-AR750
-  - GL-USB150 (Microuter)
 
 * Joy-IT
 
   - JT-OR750i
 
-* LibreRouter
-
-  - LibreRouter v1 [#missing_radios]_
-
-* NETGEAR
-
-  - WNDR3700 (v1, v2)
-  - WNDR3800
-  - WNR2200 (8M, 16M)
-  - WNDRMAC (v2)
-
 * OCEDO
 
   - Koala
-  - Raccoon
-
-* Onion
-
-  - Omega [#modular_ethernet]_
 
 * OpenMesh
 
   - A40
   - A60
-  - MR600 (v1, v2)
-  - MR900 (v1, v2)
   - MR1750 (v1, v2)
-  - OM2P (v1, v2, v4)
-  - OM2P-HS (v1, v2, v3, v4)
-  - OM2P-LC
-  - OM5P
   - OM5P-AC (v1, v2)
-  - OM5P-AN
-
-* Plasma Cloud
-
-  - PA300
-  - PA300E
-
-* Siemens
-
-  - WS-AP3610
 
 * Sophos
 
-  - AP15C
   - AP100
   - AP100c
   - AP55
   - AP55c
-
-* Teltonika
-
-  - RUT230 (v1)
 
 * TP-Link
 
@@ -138,86 +200,32 @@ ath79-generic
   - Archer C7 (v2, v4, v5)
   - Archer C59 (v1)
   - Archer C60 (v1)
-  - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
-  - CPE220 (v3.0)
-  - CPE510 (v1.0, v1.1, v2.0, v3.0)
   - CPE710 (v1.0, v2.0)
   - EAP225-Outdoor (v1, v3)
-  - TL-WDR3500 (v1)
-  - TL-WDR3600 (v1)
-  - TL-WDR4300 (v1)
-  - TL-WR810N (v1)
-  - TL-WR842N/ND (v3)
-  - TL-WR1043N/ND (v2, v3, v4, v5)
-  - TL-WR2543N/ND (v1)
-  - WBS210 (v1.20, v2.0)
-  - WBS510 (v1.20)
-
-* Totolink 
-
-  - X5000R (v1)
 
 * Ubiquiti
 
   - NanoBeam 5AC 19 (XC)
-  - NanoBeam M5 (XW)
-  - NanoStation Loco M2/M5 (XW)
-  - NanoStation M2/M5 (XW)
-  - Rocket M2/M5 (XM)
   - UniFi AC Lite
   - UniFi AC LR
   - UniFi AC Mesh
   - UniFi AC Mesh Pro
   - UniFi AC Pro
-  - UniFi AP
-  - UniFi AP LR
-  - UniFi AP Outdoor+
-  - UniFi AP PRO
   - UniFi Swiss Army Knife Ultra
 
-ath79-mikrotik
---------------
-
-* Mikrotik
-
-  - RB951Ui-2nD (hAP)
-  - RBwAPR-2nD (wAP R)
-
 ath79-nand
-----------
-
-* Aerohive
-
-  - HiveAP 121
+^^^^^^^^^^
 
 * GL.iNet
 
-  - GL-AR300M
   - GL-AR750S
-  - GL-XE300
-
-* NETGEAR
-
-  - WNDR3700 (v4)
-  - WNDR4300 (v1)
 
 * Zyxel
 
   - NBG6716
 
-brcm2708-bcm2708
-----------------
-
-* Raspberry Pi 1
-
-brcm2708-bcm2709
-----------------
-
-* Raspberry Pi 2
-
-
 ipq40xx-generic
----------------
+^^^^^^^^^^^^^^^
 
 * 8devices
 
@@ -284,7 +292,7 @@ ipq40xx-generic
   - NBG6617
 
 ipq40xx-mikrotik
-----------------
+^^^^^^^^^^^^^^^^
 
 * Mikrotik
 
@@ -293,7 +301,7 @@ ipq40xx-mikrotik
   - SXTsq 5 ac (RBSXTsqG-5acD)
 
 ipq806x-generic
----------------
+^^^^^^^^^^^^^^^
 
 * Extreme Networks
 
@@ -307,174 +315,15 @@ ipq806x-generic
 
   - UniFi AC HD
 
-lantiq-xrx200
--------------
-
-* Arcadyan
-
-  - VGV7510KW22 (o2 Box 6431)
-
-* AVM
-
-  - FRITZ!Box 7360 (v1, v2) [#avmflash]_ [#lan_as_wan]_
-  - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
-  - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
-  - FRITZ!Box 7412 [#eva_ramboot]_
-  - FRITZ!Box 7430 [#eva_ramboot]_
-
-lantiq-xrx200_legacy
---------------------
-
-* TP-Link
-
-  - TD-W8970 (v1) [#lan_as_wan]_
-
-lantiq-xway
------------
-
-* AVM
-
-  - FRITZ!Box 7312 [#avmflash]_
-
-* NETGEAR
-
-  - DGN3500B [#lan_as_wan]_
-
-mediatek-filogic
-----------------
-
-* Acer
-
-  - Vero-W6M
-
-* ASUS
-
-  - RT-AX52
-  - TUF AX4200
-  - TUF AX6000
-
-* Cudy
-
-  - AP3000 Outdoor (v1)
-  - M3000 (v1)
-  - RE3000 (v1)
-  - TR3000 (v1)
-  - WR3000 (v1)
-  - WR3000e (v1)
-  - WR3000h (v1)
-  - WR3000s (v1)
-
-* D-Link
-
-  - AQUILA PRO AI M30 A1
-  - AQUILA PRO AI M60 A1
-
-* GL.iNet
-
-  - GL-MT2500
-  - GL-MT3000
-
-* NETGEAR
-
-  - WAX220
-
-* OpenWrt
-
-  - One
-
-* Ubiquiti
-
-  - UniFi 6 Plus
-
-* Wavlink
-
-  - WL-WN573HX3 [#lan_as_wan]_
-
-* Xiaomi
-
-  - Mi Router AX3000T (Stock, ubootmod)
-
-* Zyxel
-
-  - NWA50AX Pro
-
-mediatek-mt7622
----------------
-
-* Linksys
-
-  - E8450
-
-* Netgear
-
-  - WAX206
-
-* Ubiquiti
-
-  - UniFi 6 LR (v1, v2, v3)
-
-* Xiaomi
-
-  - AX3200 / Redmi AX6S
-
-mvebu-cortexa53
----------------
-
-* GL.iNet
-
-  - GL-MV1000
-
-mpc85xx-p1010
--------------
-
-* Enterasys
-
-  - WS-AP3715i
-
-* Sophos
-
-  - RED 15w Rev.1
-
-* TP-Link
-
-  - TL-WDR4900 (v1)
-
 mpc85xx-p1020
----------------
-
-* Aerohive
-
-  - HiveAP 330
-
-* Enterasys
-
-  - WS-AP3710i
+^^^^^^^^^^^^^
 
 * Extreme Networks
 
   - WS-AP3825i
 
-* Hewlett-Packard
-
-  - MSM460
-
-* Ocedo
-
-  - Panda
-
-qualcommax-ipq807x
-------------------
-
-* Linksys
-
-  - MX5300
-
-* Xiaomi
-
-  - Mi AIoT Router AX3600
-
 ramips-mt7620
--------------
+^^^^^^^^^^^^^
 
 * ASUS
 
@@ -482,8 +331,6 @@ ramips-mt7620
 
 * GL.iNet
 
-  - GL-MT300A
-  - GL-MT300N
   - GL-MT750
 
 * NETGEAR
@@ -491,10 +338,6 @@ ramips-mt7620
   - EX3700
   - EX3800
   - EX6130
-
-* Nexx
-
-  - WT3020AD/F/H
 
 * TP-Link
 
@@ -508,24 +351,20 @@ ramips-mt7620
   - MiWiFi Mini
 
 ramips-mt7621
--------------
+^^^^^^^^^^^^^
 
 * ASUS
 
   - RT-AC57U (v1)
-  - RT-AX53U
 
 * Cudy
 
   - AP1300 Outdoor (v1)
   - WR1300 (v1)
   - WR2100
-  - X6 (v1, v2)
 
 * D-Link
 
-  - COVR-X1860 (A1)
-  - DAP-X1860 (A1)
   - DIR-860L (B1)
   - DIR-878 (A1)
   - DIR-882 (A1)
@@ -538,33 +377,20 @@ ramips-mt7621
 
   - GL-MT1300
 
-* MERCUSYS
-
-  - MR70X (v1)
-  - MR90X (v1)
-
 * NETGEAR
 
-  - EAX11 (v2)
-  - EAX12
-  - EAX15 (v2)
   - EX6150 (v1)
   - R6220
   - R6260
   - WAC104
-  - WAX202
 
 * TP-Link
 
-  - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)
 
 * Ubiquiti
 
-  - EdgeRouter X
-  - EdgeRouter X-SFP
-  - UniFi 6 Lite
   - UniFi nanoHD
 
 * Wavlink
@@ -583,24 +409,13 @@ ramips-mt7621
   - WG3526-16M
   - WG3526-32M
 
-* Zyxel
-
-  - NWA50AX
-  - WSM20
-
 ramips-mt76x8
--------------
+^^^^^^^^^^^^^
 
 * Cudy
 
   - TR1200 (v1)
   - WR1000 (v1)
-
-* GL.iNet
-
-  - GL-MT300N (v2)
-  - microuter-N300
-  - VIXMINI
 
 * NETGEAR
 
@@ -616,12 +431,253 @@ ramips-mt76x8
   - Archer C20 (v4, v5)
   - Archer C50 (v3, v4, v6 CA/EU/RU)
   - RE200 (v2, v3, v4)
+  - TL-WR902AC (v3, v4)
+
+* Xiaomi
+
+  - Xiaomi Mi Router 4A (100M Edition) - MIR4A
+  - Xiaomi Mi Router 4A (100M International Edition) - R4AC
+  - Xiaomi Mi Router 4A (100M International Edition v2) - R4ACv2
+
+
+Wi-Fi 4 (IEEE 802.11n-2009)
+---------------------------
+
+ath79-generic
+^^^^^^^^^^^^^
+
+* ALFA Network
+
+  - AP121F
+
+* AVM
+
+  - FRITZ!WLAN Repeater 300E [#avmflash]_
+  - Fritz!WLAN Repeater 450E [#avmflash]_
+  - Fritz!Box 4020 [#avmflash]_
+
+* Buffalo
+
+  - WZR-HP-AG300H / WZR-600DHP
+  - WZR-HP-G300NH (rtl8366s)
+  - WZR-HP-G450H / WZR-450HP
+
+* COMFAST
+
+  - CF-EW71 (v2)
+
+* D-Link
+
+  - DAP-1330 A1 [#lan_as_wan]_
+  - DAP-1365 A1 [#lan_as_wan]_
+  - DIR-505 A1 [#lan_as_wan]_
+  - DIR-505 A2 [#lan_as_wan]_
+  - DIR-825 B1
+
+* Enterasys
+
+  - WS-AP3705i
+
+* GL.iNet
+
+  - 6416A
+  - GL-AR150
+  - GL-AR300M-Lite
+  - GL-AR300M16
+  - GL-USB150 (Microuter)
+
+* LibreRouter
+
+  - LibreRouter v1 [#missing_radios]_
+
+* NETGEAR
+
+  - WNDR3700 (v1, v2)
+  - WNDR3800
+  - WNR2200 (8M, 16M)
+  - WNDRMAC (v2)
+
+* OCEDO
+
+  - Raccoon
+
+* Onion
+
+  - Omega [#modular_ethernet]_
+
+* OpenMesh
+
+  - MR600 (v1, v2)
+  - MR900 (v1, v2)
+  - OM2P (v1, v2, v4)
+  - OM2P-HS (v1, v2, v3, v4)
+  - OM2P-LC
+  - OM5P
+  - OM5P-AN
+
+* Plasma Cloud
+
+  - PA300
+  - PA300E
+
+* Siemens
+
+  - WS-AP3610
+
+* Sophos
+
+  - AP15C
+
+* Teltonika
+
+  - RUT230 (v1)
+
+* TP-Link
+
+  - CPE210 (v1.0, v1.1, v2.0, v3.0, v3.1, v3.20)
+  - CPE220 (v3.0)
+  - CPE510 (v1.0, v1.1, v2.0, v3.0)
+  - TL-WDR3500 (v1)
+  - TL-WDR3600 (v1)
+  - TL-WDR4300 (v1)
+  - TL-WR810N (v1)
+  - TL-WR842N/ND (v3)
+  - TL-WR1043N/ND (v2, v3, v4, v5)
+  - TL-WR2543N/ND (v1)
+  - WBS210 (v1.20, v2.0)
+  - WBS510 (v1.20)
+
+* Ubiquiti
+
+  - NanoBeam M5 (XW)
+  - NanoStation Loco M2/M5 (XW)
+  - NanoStation M2/M5 (XW)
+  - Rocket M2/M5 (XM)
+  - UniFi AP
+  - UniFi AP LR
+  - UniFi AP Outdoor+
+  - UniFi AP PRO
+
+ath79-mikrotik
+^^^^^^^^^^^^^^
+
+* Mikrotik
+
+  - RB951Ui-2nD (hAP)
+  - RBwAPR-2nD (wAP R)
+
+ath79-nand
+^^^^^^^^^^
+
+* Aerohive
+
+  - HiveAP 121
+
+* GL.iNet
+
+  - GL-AR300M
+  - GL-XE300
+
+* NETGEAR
+
+  - WNDR3700 (v4)
+  - WNDR4300 (v1)
+
+lantiq-xrx200
+^^^^^^^^^^^^^
+
+* Arcadyan
+
+  - VGV7510KW22 (o2 Box 6431)
+
+* AVM
+
+  - FRITZ!Box 7360 (v1, v2) [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7360 SL [#avmflash]_ [#lan_as_wan]_
+  - FRITZ!Box 7362 SL [#eva_ramboot]_ [#lan_as_wan]_
+  - FRITZ!Box 7412 [#eva_ramboot]_
+  - FRITZ!Box 7430 [#eva_ramboot]_
+
+lantiq-xrx200_legacy
+^^^^^^^^^^^^^^^^^^^^
+
+* TP-Link
+
+  - TD-W8970 (v1) [#lan_as_wan]_
+
+lantiq-xway
+^^^^^^^^^^^
+
+* AVM
+
+  - FRITZ!Box 7312 [#avmflash]_
+
+* NETGEAR
+
+  - DGN3500B [#lan_as_wan]_
+
+mpc85xx-p1010
+^^^^^^^^^^^^^
+
+* Enterasys
+
+  - WS-AP3715i
+
+* Sophos
+
+  - RED 15w Rev.1
+
+* TP-Link
+
+  - TL-WDR4900 (v1)
+
+mpc85xx-p1020
+^^^^^^^^^^^^^
+
+* Aerohive
+
+  - HiveAP 330
+
+* Enterasys
+
+  - WS-AP3710i
+
+* Hewlett-Packard
+
+  - MSM460
+
+* Ocedo
+
+  - Panda
+
+ramips-mt7620
+^^^^^^^^^^^^^
+
+* GL.iNet
+
+  - GL-MT300A
+  - GL-MT300N
+
+* Nexx
+
+  - WT3020AD/F/H
+
+ramips-mt76x8
+^^^^^^^^^^^^^
+
+* GL.iNet
+
+  - GL-MT300N (v2)
+  - microuter-N300
+  - VIXMINI
+
+* TP-Link
+
   - TL-MR3020 (v3)
   - TL-MR3420 (v5)
   - TL-MR6400 (v5)
   - TL-WA801ND (v5)
   - TL-WR841N (v13)
-  - TL-WR902AC (v3, v4)
 
 * VoCore
 
@@ -629,13 +685,57 @@ ramips-mt76x8
 
 * Xiaomi
 
-  - Xiaomi Mi Router 4A (100M Edition) - MIR4A
-  - Xiaomi Mi Router 4A (100M International Edition) - R4AC
-  - Xiaomi Mi Router 4A (100M International Edition v2) - R4ACv2
   - Xiaomi Mi Router 4C - R4CM
 
+
+Wi-Fi-less
+----------
+
+armsr-armv7
+^^^^^^^^^^^
+
+* Arm SystemReady (EFI) 32-bit
+
+armsr-armv8
+^^^^^^^^^^^
+
+* Arm SystemReady (EFI) 64-bit
+
+brcm2708-bcm2708
+^^^^^^^^^^^^^^^^
+
+* Raspberry Pi 1
+
+brcm2708-bcm2709
+^^^^^^^^^^^^^^^^
+
+* Raspberry Pi 2
+
+mediatek-filogic
+^^^^^^^^^^^^^^^^
+
+* GL.iNet
+
+  - GL-MT2500
+
+mvebu-cortexa53
+^^^^^^^^^^^^^^^
+
+* GL.iNet
+
+  - GL-MV1000
+
+
+ramips-mt7621
+^^^^^^^^^^^^^
+
+* Ubiquiti
+
+  - EdgeRouter X
+  - EdgeRouter X-SFP
+
 rockchip-armv8
---------------
+^^^^^^^^^^^^^^
 
 * FriendlyElec
 
@@ -644,14 +744,14 @@ rockchip-armv8
   - NanoPi R4S (4GB LPDDR4)
 
 sunxi-cortexa7
---------------
+^^^^^^^^^^^^^^
 
 * LeMaker
 
   - Banana Pi M1
 
 x86-generic
------------
+^^^^^^^^^^^
 
 * x86-generic
 * x86-virtualbox
@@ -660,14 +760,14 @@ x86-generic
 See also: :doc:`x86`
 
 x86-geode
----------
+^^^^^^^^^
 
 * x86-geode
 
 See also: :doc:`x86`
 
 x86-64
-------
+^^^^^^
 
 * x86-64-generic
 * x86-64-virtualbox
