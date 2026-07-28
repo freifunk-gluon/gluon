@@ -307,34 +307,42 @@ device('openmesh-mr1750-v2', 'openmesh_mr1750-v2', {
 })
 
 device('openmesh-om2p-v1', 'openmesh_om2p-v1', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-v2', 'openmesh_om2p-v2', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-v4', 'openmesh_om2p-v4', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-hs-v1', 'openmesh_om2p-hs-v1', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-hs-v2', 'openmesh_om2p-hs-v2', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-hs-v3', 'openmesh_om2p-hs-v3', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-hs-v4', 'openmesh_om2p-hs-v4', {
+	class = 'tiny',
 	factory = false,
 })
 
 device('openmesh-om2p-lc', 'openmesh_om2p-lc', {
+	class = 'tiny',
 	factory = false,
 })
 
@@ -359,9 +367,13 @@ device('openmesh-om5p-an', 'openmesh_om5p-an', {
 
 -- Plasma Cloud
 
-device('plasma-cloud-pa300', 'plasmacloud_pa300')
+device('plasma-cloud-pa300', 'plasmacloud_pa300', {
+	class = 'tiny',
+})
 
-device('plasma-cloud-pa300e', 'plasmacloud_pa300e')
+device('plasma-cloud-pa300e', 'plasmacloud_pa300e', {
+	class = 'tiny',
+})
 
 
 -- Siemens
@@ -445,6 +457,7 @@ device('tp-link-archer-c58-v1', 'tplink_archer-c58-v1', {
 
 device('tp-link-archer-c6-v2-eu-ru-jp', 'tplink_archer-c6-v2', {
 	packages = ATH10K_PACKAGES_QCA9888,
+	class = 'tiny',
 	factory = false,
 })
 
@@ -467,6 +480,7 @@ device('tp-link-archer-c59-v1', 'tplink_archer-c59-v1', {
 
 device('tp-link-archer-c60-v1', 'tplink_archer-c60-v1', {
 	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
+	class = 'tiny',
 	factory = false,
 })
 
@@ -492,7 +506,9 @@ device('tp-link-cpe510-v3', 'tplink_cpe510-v3')
 
 device('tp-link-cpe710-v1', 'tplink_cpe710-v1')
 
-device('tp-link-cpe710-v2', 'tplink_cpe710-v2')
+device('tp-link-cpe710-v2', 'tplink_cpe710-v2', {
+	class = 'tiny',
+})
 
 device('tp-link-eap225-outdoor-v1', 'tplink_eap225-outdoor-v1', {
 	packages = ATH10K_PACKAGES_QCA9888,
