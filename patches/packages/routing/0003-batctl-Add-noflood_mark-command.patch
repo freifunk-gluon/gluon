@@ -8,10 +8,10 @@ Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/batctl/patches/2002-batctl-Add-noflood_mark-command.patch b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..d4498603785a21a71951a6195cd96661be44d685
+index 0000000000000000000000000000000000000000..1a01971f66bf66b5d6339213849bca61bf36994b
 --- /dev/null
 +++ b/batctl/patches/2002-batctl-Add-noflood_mark-command.patch
-@@ -0,0 +1,217 @@
+@@ -0,0 +1,216 @@
 +From 12884631753aa24d9e36c5d65950320ecab61384 Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Linus=20L=C3=BCssing?= <linus.luessing@c0d3.blue>
 +Date: Fri, 26 Apr 2019 19:27:38 +0200
@@ -33,10 +33,9 @@ index 0000000000000000000000000000000000000000..d4498603785a21a71951a6195cd96661
 +
 +--- a/Makefile
 ++++ b/Makefile
-+@@ -69,6 +69,7 @@ $(eval $(call add_command,multicast_mode
++@@ -69,5 +69,6 @@ $(eval $(call add_command,multicast_mode
 + $(eval $(call add_command,neighbors,y))
 + $(eval $(call add_command,neighbors_json,y))
-+ $(eval $(call add_command,network_coding,y))
 ++$(eval $(call add_command,noflood_mark,y))
 + $(eval $(call add_command,orig_interval,y))
 + $(eval $(call add_command,originators,y))

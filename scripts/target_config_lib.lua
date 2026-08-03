@@ -187,6 +187,10 @@ for _, dev in ipairs(lib.devices) do
 	end
 
 	handle_pkgs(lib.target_packages)
+	-- disable apk for tiny devices
+	if dev.options.class == 'tiny' then
+		handle_pkgs({'-apk-mbedtls', '-apk'})
+	end
 	handle_pkgs(dev.options.packages or {})
 	handle_pkgs(site_specific_packages(dev))
 
