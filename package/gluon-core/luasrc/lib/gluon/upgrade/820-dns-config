@@ -8,11 +8,26 @@ local next_node = site.next_node({})
 
 local dnsmasq = uci:get_first("dhcp", "dnsmasq")
 
+local function dnsmasq_tiny_selected()
+	local f = io.open("/lib/gluon/gluon-dnsmasq-variant", "r")
+	if f then
+		local variant = f:read("*l")
+		f:close()
+		return variant == "tiny"
+	end
+	return nil
+end
+
 uci:set('dhcp', dnsmasq, 'localise_queries', true)
 uci:set('dhcp', dnsmasq, 'localservice', false)
 
 uci:set('dhcp', dnsmasq, 'server', dns.servers)
-uci:set('dhcp', dnsmasq, 'cachesize', dns.cacheentries)
+
+if dnsmasq_tiny_selected() then
+	uci:set('dhcp', dnsmasq, 'cachesize', 0)
+else
+	uci:set('dhcp', dnsmasq, 'cachesize', dns.cacheentries)
+end
 
 uci:delete('firewall', 'client_dns')
 if dns.servers then
