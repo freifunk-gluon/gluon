@@ -1,0 +1,7 @@
+vm.min_free_kbytes="2048"
+net.ipv4.ipfrag_low_thresh="393216"
+net.ipv4.ipfrag_high_thresh="524288"
+net.ipv6.ip6frag_low_thresh="393216"
+net.ipv6.ip6frag_high_thresh="524288"
+net.netfilter.nf_conntrack_frag6_low_thresh="393216"
+net.netfilter.nf_conntrack_frag6_high_thresh="524288"
