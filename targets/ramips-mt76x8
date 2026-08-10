@@ -1,3 +1,7 @@
+config('GLUON_DNSMASQ_VARIANT_DEFAULT', false)
+config('GLUON_DNSMASQ_VARIANT_TINY', true)
+
+
 -- Cudy
 
 device('cudy-tr1200-v1', 'cudy_tr1200-v1', {
