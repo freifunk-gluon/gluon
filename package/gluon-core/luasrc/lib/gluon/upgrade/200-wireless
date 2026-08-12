@@ -103,7 +103,7 @@ local function get_htmode(radio)
 			local width = mode:match("%d+")
 
 			if hwmode .. width == mode and hwmode == htmode then
-				if width == channel_width then
+				if width == tostring(channel_width) then
 					return hwmode .. width
 				end
 
