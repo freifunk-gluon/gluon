@@ -97,7 +97,7 @@ local function get_htmode(radio)
 	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
 		if available then
 			local hwmode = mode:match("%a+")
-			local width = mode:match("%d+")
+			local width = tonumber(mode:match("%d+"))
 
 			if hwmode .. width == mode and hwmode == htmode then
 				if width == channel_width then
