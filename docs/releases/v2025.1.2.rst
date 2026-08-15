@@ -1,0 +1,56 @@
+Gluon 2025.1.2
+==============
+
+Important notes
+---------------
+
+The OpenWrt Base of Gluon has been updated to the latest version of openwrt-24.10
+introducing various security related bugfixes.
+
+Added hardware support
+----------------------
+
+ipq806x-generic
+~~~~~~~~~~~~~~~
+
+- Extreme Networks
+
+  - WS-AP3935i
+
+Bugfixes
+--------
+
+.. _#3797: https://github.com/freifunk-gluon/gluon/pull/3797
+.. _#3802: https://github.com/freifunk-gluon/gluon/pull/3802
+
+- Fix wireless htmode selection on devices with channel widths smaller than the site configuration (`#3797`_)
+- Fix wireless bandwidth selection logic sometimes prioritizing lower rates (`#3797`_)
+- Adapt sysctl parameters for 64M RAM devices to improve performance and stability (`#3802`_)
+
+Known issues
+------------
+
+.. _#94: https://github.com/freifunk-gluon/gluon/issues/94
+.. _#496: https://github.com/freifunk-gluon/gluon/issues/496
+.. _#1726: https://github.com/freifunk-gluon/gluon/issues/1726
+.. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+
+- The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Mesh neighbors don't appear on the status page (`#1726`_)
+
+    Many tools have the BATMAN_IV metric hardcoded, these need to be updated to account for the new
+    throughput metric.
+  - Throughput values are not correctly acquired for different interface types (`#1728`_)
+
+    This affects virtual interface types like bridges and VXLAN.
+
+- Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+- In configurations without VXLAN, the MAC address of the WAN interface is modified even when
+  Mesh-on-WAN is disabled (`#496`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when
+  promiscuous mode is disallowed).
