@@ -52,12 +52,8 @@ wireless.foreach_radio(uci, function(radio)
 	end
 end)
 
-local function is_outdoor()
-	return uci:get_bool('gluon', 'wireless', 'outdoor')
-end
-
 local function get_channel(radio, config)
-	if (radio.band == '5g' and is_outdoor()) or not wireless.supports_channel(radio, config.channel()) then
+	if (radio.band == '5g' and wireless.is_outdoor(uci)) or not wireless.supports_channel(radio, config.channel()) then
 		-- actual channel will be picked and probed from chanlist
 		return 'auto'
 	end
@@ -70,7 +66,7 @@ local function get_htmode(radio)
 		return radio.htmode
 	end
 
-	if radio.band == '5g' and is_outdoor() then
+	if radio.band == '5g' and wireless.is_outdoor(uci) then
 		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
 		if outdoor_htmode ~= nil then
 			return outdoor_htmode
@@ -165,7 +161,7 @@ local function set_channels(radio, radio_name, config)
 	uci:set('wireless', radio_name, 'channel', channel)
 
 	local chanlist
-	if radio.band == '5g' and is_outdoor() then
+	if radio.band == '5g' and wireless.is_outdoor(uci) then
 		chanlist = config.outdoor_chanlist()
 	end
 	uci:set('wireless', radio_name, 'channels', chanlist)
@@ -212,7 +208,7 @@ wireless.foreach_radio(uci, function(radio, index, config)
 			configure_mesh(radio, index, config.mesh())
 		end
 	elseif band == '5g' then
-		if is_outdoor() then
+		if wireless.is_outdoor(uci) then
 			-- enforce outdoor channels by filtering the regdom for outdoor channels
 			uci:set('wireless', radio_name, 'country3', '0x4f')
 		else

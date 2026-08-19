@@ -130,7 +130,7 @@ if wireless.device_uses_band(uci, '5g') and not wireless.preserve_channels(uci) 
 	))
 
 	local outdoor = r:option(Flag, 'outdoor', translate("Node will be installed outdoors"))
-	outdoor.default = uci:get_bool('gluon', 'wireless', 'outdoor')
+	outdoor.default = wireless.is_outdoor(uci)
 
 	for _, mesh_vif in ipairs(mesh_vifs_5ghz) do
 		mesh_vif:depends(outdoor, false)

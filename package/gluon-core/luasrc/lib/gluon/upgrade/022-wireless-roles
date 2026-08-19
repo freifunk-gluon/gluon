@@ -94,13 +94,9 @@ for band, _ in pairs(default_wifi_roles) do
 end
 
 
-local function is_outdoor()
-	return uci:get_bool('gluon', 'wireless', 'outdoor')
-end
-
 -- Remove 5ghz mesh role configuration for outdoor
 local roles_5g = uci:get_list('gluon', 'band_5g', 'role')
-if util.contains(roles_5g, 'mesh') and is_outdoor() then
+if util.contains(roles_5g, 'mesh') and wireless.is_outdoor(uci) then
 	util.remove_from_set(roles_5g, 'mesh')
 	uci:set_list('gluon', 'band_5g', 'role', roles_5g)
 end
