@@ -197,6 +197,8 @@ Examples of this are shown below:
   uci set gluon.iface_lan.batadv_hop_penalty=10
   # optional for mesh on wan
   uci set gluon.iface_wan.batadv_hop_penalty=10
+  # optional penalty for wireless mesh per band
+  uci set gluon.band_5g.batadv_hop_penalty=10
   # don't forget to commit changes
   uci commit gluon
 

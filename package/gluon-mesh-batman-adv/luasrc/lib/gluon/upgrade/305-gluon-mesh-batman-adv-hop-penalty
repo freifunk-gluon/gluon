@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local wireless = require 'gluon.wireless'
+
+local uci = require('simple-uci').cursor()
+
+
+wireless.foreach_radio(uci, function(radio)
+	local name = 'mesh_' .. radio['.name']
+
+	if not uci:get('network', name) then
+		return
+	end
+
+	local hop_penalty = uci:get('gluon', 'band_' .. radio.band, 'batadv_hop_penalty')
+	if hop_penalty ~= nil then
+		uci:set('network', name, 'hop_penalty', hop_penalty)
+	end
+end)
+
+uci:save('network')
