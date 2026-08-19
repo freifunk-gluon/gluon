@@ -345,7 +345,8 @@ mediatek-filogic
 
 * Acer
 
-  - Vero-W6M
+  - Predator Connect W6
+  - Connect Vero W6m
 
 * ASUS
 
