@@ -1,0 +1,8 @@
+#!/usr/bin/lua
+
+require 'gluon.web.cgi' {
+	base_path = '/lib/gluon/config-api',
+
+	layout_package = 'gluon-config-api',
+	layout_template = 'theme/layout', -- only used for error pages
+}
