@@ -148,4 +148,12 @@ function M.device_uses_band(uci, band)
 	return ret
 end
 
+function M.radio_roles(uci, radio)
+	return uci:get_list('gluon', 'band_' .. radio.band, 'role')
+end
+
+function M.is_outdoor(uci)
+	return uci:get_bool('gluon', 'wireless', 'outdoor')
+end
+
 return M
