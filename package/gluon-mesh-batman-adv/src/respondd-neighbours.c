@@ -4,7 +4,6 @@
 #include "respondd-common.h"
 
 #include <batadv-genl.h>
-#include <libgluonutil.h>
 
 #include <json-c/json.h>
 
@@ -44,7 +43,8 @@ static struct json_object * ifnames2addrs(struct json_object *interfaces) {
 	return ret;
 }
 
-static const enum batadv_nl_attrs parse_orig_list_mandatory[] = {
+/* Batman IV mandatory attrs */
+static const enum batadv_nl_attrs parse_orig_list_mandatory_batadv_iv[] = {
 	BATADV_ATTR_ORIG_ADDRESS,
 	BATADV_ATTR_NEIGH_ADDRESS,
 	BATADV_ATTR_TQ,
@@ -52,20 +52,62 @@ static const enum batadv_nl_attrs parse_orig_list_mandatory[] = {
 	BATADV_ATTR_LAST_SEEN_MSECS,
 };
 
-static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
+/* Batman V mandatory attrs */
+static const enum batadv_nl_attrs parse_neigh_list_mandatory_batadv_v[] = {
+	BATADV_ATTR_NEIGH_ADDRESS,
+	BATADV_ATTR_THROUGHPUT,
+	BATADV_ATTR_HARD_IFINDEX,
+	BATADV_ATTR_LAST_SEEN_MSECS,
+};
+
+static int add_neighbour(struct neigh_netlink_opts *opts, struct nlattr **attrs,
+		uint8_t *mac, const char *metric_name, struct json_object *metric_value)
+{
+	uint32_t hardif;
+	uint32_t lastseen;
+	char ifname_buf[IF_NAMESIZE], *ifname;
+	char mac1[18];
+
+	hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
+	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
+
+	ifname = if_indextoname(hardif, ifname_buf);
+	if (!ifname) {
+		json_object_put(metric_value);
+		return NL_OK;
+	}
+
+	sprintf(mac1, "%02x:%02x:%02x:%02x:%02x:%02x",
+		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+	struct json_object *obj = json_object_new_object();
+	if (!obj) {
+		json_object_put(metric_value);
+		return NL_OK;
+	}
+
+	struct json_object *interface;
+	if (!json_object_object_get_ex(opts->interfaces, ifname, &interface)) {
+		interface = json_object_new_object();
+		json_object_object_add(opts->interfaces, ifname, interface);
+	}
+
+	json_object_object_add(obj, metric_name, metric_value);
+	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
+	json_object_object_add(obj, "best", json_object_new_boolean(nla_get_flag(attrs[BATADV_ATTR_FLAG_BEST])));
+	json_object_object_add(interface, mac1, obj);
+
+	return NL_OK;
+}
+
+static int parse_orig_list_netlink_cb_batadv_iv(struct nl_msg *msg, void *arg)
 {
 	struct nlattr *attrs[BATADV_ATTR_MAX+1];
 	struct nlmsghdr *nlh = nlmsg_hdr(msg);
 	struct batadv_nlquery_opts *query_opts = arg;
 	struct genlmsghdr *ghdr;
-	uint8_t *orig;
-	uint8_t *dest;
-	uint8_t tq;
-	uint32_t hardif;
-	uint32_t lastseen;
-	char ifname_buf[IF_NAMESIZE], *ifname;
+	uint8_t *mac;
 	struct neigh_netlink_opts *opts;
-	char mac1[18];
 
 	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
 			query_opts);
@@ -82,42 +124,50 @@ static int parse_orig_list_netlink_cb(struct nl_msg *msg, void *arg)
 				genlmsg_len(ghdr), batadv_genl_policy))
 		return NL_OK;
 
-	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory,
-				BATADV_ARRAY_SIZE(parse_orig_list_mandatory)))
+	if (batadv_genl_missing_attrs(attrs, parse_orig_list_mandatory_batadv_iv,
+				BATADV_ARRAY_SIZE(parse_orig_list_mandatory_batadv_iv)))
 		return NL_OK;
 
-	orig = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
-	dest = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
-	tq = nla_get_u8(attrs[BATADV_ATTR_TQ]);
-	hardif = nla_get_u32(attrs[BATADV_ATTR_HARD_IFINDEX]);
-	lastseen = nla_get_u32(attrs[BATADV_ATTR_LAST_SEEN_MSECS]);
-
-	if (memcmp(orig, dest, 6) != 0)
+	mac = nla_data(attrs[BATADV_ATTR_ORIG_ADDRESS]);
+	if (memcmp(mac, nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]), 6) != 0)
 		return NL_OK;
 
-	ifname = if_indextoname(hardif, ifname_buf);
-	if (!ifname)
+	return add_neighbour(opts, attrs, mac, "tq",
+			json_object_new_int(nla_get_u8(attrs[BATADV_ATTR_TQ])));
+}
+
+static int parse_neigh_list_netlink_cb_batadv_v(struct nl_msg *msg, void *arg)
+{
+	struct nlattr *attrs[BATADV_ATTR_MAX+1];
+	struct nlmsghdr *nlh = nlmsg_hdr(msg);
+	struct batadv_nlquery_opts *query_opts = arg;
+	struct genlmsghdr *ghdr;
+	uint8_t *mac;
+	struct neigh_netlink_opts *opts;
+
+	opts = batadv_container_of(query_opts, struct neigh_netlink_opts,
+			query_opts);
+
+	if (!genlmsg_valid_hdr(nlh, 0))
 		return NL_OK;
 
-	sprintf(mac1, "%02x:%02x:%02x:%02x:%02x:%02x",
-		orig[0], orig[1], orig[2], orig[3], orig[4], orig[5]);
+	ghdr = nlmsg_data(nlh);
 
-	struct json_object *obj = json_object_new_object();
-	if (!obj)
+	if (ghdr->cmd != BATADV_CMD_GET_NEIGHBORS)
 		return NL_OK;
 
-	struct json_object *interface;
-	if (!json_object_object_get_ex(opts->interfaces, ifname, &interface)) {
-		interface = json_object_new_object();
-		json_object_object_add(opts->interfaces, ifname, interface);
-	}
+	if (nla_parse(attrs, BATADV_ATTR_MAX, genlmsg_attrdata(ghdr, 0),
+				genlmsg_len(ghdr), batadv_genl_policy))
+		return NL_OK;
 
-	json_object_object_add(obj, "tq", json_object_new_int(tq));
-	json_object_object_add(obj, "lastseen", json_object_new_double(lastseen / 1000.));
-	json_object_object_add(obj, "best", json_object_new_boolean(nla_get_flag(attrs[BATADV_ATTR_FLAG_BEST])));
-	json_object_object_add(interface, mac1, obj);
+	if (batadv_genl_missing_attrs(attrs, parse_neigh_list_mandatory_batadv_v,
+				BATADV_ARRAY_SIZE(parse_neigh_list_mandatory_batadv_v)))
+		return NL_OK;
 
-	return NL_OK;
+	mac = nla_data(attrs[BATADV_ATTR_NEIGH_ADDRESS]);
+
+	return add_neighbour(opts, attrs, mac, "throughput",
+			json_object_new_int64(nla_get_u32(attrs[BATADV_ATTR_THROUGHPUT])));
 }
 
 static struct json_object * get_batadv(void) {
@@ -127,14 +177,27 @@ static struct json_object * get_batadv(void) {
 		},
 	};
 	int ret;
+	enum batadv_algo algo;
 
 	opts.interfaces = json_object_new_object();
 	if (!opts.interfaces)
 		return NULL;
 
-	ret = batadv_genl_query("bat0", BATADV_CMD_GET_ORIGINATORS,
-				parse_orig_list_netlink_cb, NLM_F_DUMP,
-				&opts.query_opts);
+	if (batadv_genl_get_algo("bat0", &algo) < 0) {
+		json_object_put(opts.interfaces);
+		return NULL;
+	}
+
+	if (algo == BATADV_ALGO_BATMAN_V) {
+		ret = batadv_genl_query("bat0", BATADV_CMD_GET_NEIGHBORS,
+					parse_neigh_list_netlink_cb_batadv_v, NLM_F_DUMP,
+					&opts.query_opts);
+	} else {
+		ret = batadv_genl_query("bat0", BATADV_CMD_GET_ORIGINATORS,
+					parse_orig_list_netlink_cb_batadv_iv, NLM_F_DUMP,
+					&opts.query_opts);
+	}
+
 	if (ret < 0) {
 		json_object_put(opts.interfaces);
 		return NULL;
