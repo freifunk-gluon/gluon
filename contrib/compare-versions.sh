@@ -2,22 +2,22 @@
 set -e
 
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <version1> <version2>"
-    exit 1
+	echo "Usage: $0 <version1> <version2>"
+	exit 1
 fi
 
 GLUONDIR="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION_C="${GLUONDIR}/packages/gluon/admin/autoupdater/src/version.c"
 
 if [ ! -f "$VERSION_C" ]; then
-    echo "Error: autoupdater source not found." >&2
-    echo "Please run 'make update' in the gluon root directory to fetch the packages feed before using this script." >&2
-    exit 1
+	echo "Error: autoupdater source not found." >&2
+	echo "Please run 'make update' in the gluon root directory to fetch the packages feed before using this script." >&2
+	exit 1
 fi
 
 if ! command -v gcc >/dev/null 2>&1; then
-    echo "Error: gcc is required to compile the version comparison logic." >&2
-    exit 1
+	echo "Error: gcc is required to compile the version comparison logic." >&2
+	exit 1
 fi
 
 TMPBIN=$(mktemp)
