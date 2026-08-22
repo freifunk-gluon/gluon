@@ -192,11 +192,15 @@ the keypair, so updating the module repository later is possible.
 In fact you should take care to reuse the same signing keypair, so you don't pollute the key
 store (see ``/etc/apk/keys``) on the node.
 
-The signing-key is stored at ``openwrt/key-build.pub``, ``openwrt/key-build``,
-``key-build.ucert`` and  ``key-build.ucert.revoke``.
+The signing keys are stored in the ``openwrt/`` directory. For firmware image
+signatures and legacy components, OpenWrt generates ``openwrt/key-build.pub``,
+``openwrt/key-build``, ``key-build.ucert`` and ``key-build.ucert.revoke``.
+For the apk package repository, OpenWrt generates standard ECDSA keys located
+at ``openwrt/private-key.pem`` and ``openwrt/public-key.pem``.
 
-The ``openwrt`` directory is the Git checkout, that gets created after calling ``make update``.
-After making a fresh clone copy the key files to the aforementioned locations.
+The ``openwrt`` directory is the Git checkout that gets created after calling ``make update``.
+After making a fresh clone, copy all of these key files to their aforementioned locations
+to ensure package signatures remain valid across updates.
 
 .. _getting-started-make-variables:
 
