@@ -89,10 +89,10 @@ while [ $# -gt 0 ]; do
 		exit 1
 	fi
 
-	opkg_packages="$(make TOPDIR="${topdir}" -C "${pkgdir}" DUMP=1 | awk '/^Package: / { print $2 }')"
+	pkg_names="$(make TOPDIR="${topdir}" -C "${pkgdir}" DUMP=1 | awk '/^Package: / { print $2 }')"
 
 	search_package() {
-		find "$2" -name "$1_*.ipk" -printf '%f\n'
+		find "$2" -name "$1-*.apk" -printf '%f\n'
 	}
 
 	make TOPDIR="${topdir}" -C "${pkgdir}" clean
@@ -108,7 +108,7 @@ while [ $# -gt 0 ]; do
 		BR=]
 	fi
 
-	for pkg in ${opkg_packages}; do
+	for pkg in ${pkg_names}; do
 
 		for feed in "${topdir}/bin/packages/${REMOTE_OPENWRT_ARCH}/"*/ "${topdir}/bin/targets/${REMOTE_OPENWRT_BOARD}/packages/"; do
 			printf "%s" "searching ${pkg} in ${feed}: "
@@ -121,8 +121,12 @@ while [ $# -gt 0 ]; do
 			fi
 		done
 
+		clobber_script="true"
 		if [ "$preserve_config" -eq 0 ]; then
-			opkg_flags=" --force-maintainer"
+			# opkg's --force-maintainer analog: apk preserves protected paths
+			# by default and drops .apk-new files. There is no native flag to
+			# forcefully overwrite them, so we manually clobber them after installation.
+			clobber_script="find /etc -name '*.apk-new' -exec sh -c 'echo \"  Force-overwriting \${1%.apk-new}\"; mv \"\$1\" \"\${1%.apk-new}\"' _ {} \\;"
 		fi
 
 		# shellcheck disable=SC2029
@@ -130,19 +134,20 @@ while [ $# -gt 0 ]; do
 			scp -O -P "${ssh_port}" "$feed/$filename" "root@${BL}${ssh_host}${BR}:/tmp/${filename}"
 			ssh -p "${ssh_port}" "root@${ssh_host}" "
 				set -e
-				echo Running opkg:
-				opkg install --force-reinstall ${opkg_flags} '/tmp/${filename}'
+				echo Running apk:
+				apk add --allow-untrusted --force-reinstall '/tmp/${filename}'
+				${clobber_script}
 				rm '/tmp/${filename}'
 				gluon-reconfigure
 			"
 		else
 			# Some packages (e.g. procd-seccomp) seem to contain BuildPackage commands
-			# which do not generate *.ipk files. Till this point, I am not aware why
+			# which do not generate *.apk files. Till this point, I am not aware why
 			# this is happening. However, dropping a warning if the corresponding
-			# *.ipk is not found (maybe due to other reasons as well), seems to
+			# *.apk is not found (maybe due to other reasons as well), seems to
 			# be more reasonable than aborting. Before this commit, the command
 			# has failed.
-			echo "Warning: ${pkg}*.ipk not found! Ignoring." 1>&2
+			echo "Warning: ${pkg}*.apk not found! Ignoring." 1>&2
 		fi
 
 	done
