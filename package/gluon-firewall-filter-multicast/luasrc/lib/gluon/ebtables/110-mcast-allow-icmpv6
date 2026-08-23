@@ -1,3 +1,0 @@
-rule 'MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type echo-request -j RETURN'
-rule 'MULTICAST_OUT_ICMPV6 -p IPv6 --ip6-protocol ipv6-icmp --ip6-icmp-type 139 -j RETURN' -- ICMP Node Information Query
-rule 'MULTICAST_OUT_ICMPV6 -j ACCEPT'
