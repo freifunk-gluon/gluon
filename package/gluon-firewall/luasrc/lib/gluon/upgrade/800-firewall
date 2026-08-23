@@ -1,0 +1,181 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+local glob = require 'posix.glob'
+
+-- Helpers
+
+local function nft_path(name)
+	return '/lib/gluon/nftables/' .. name .. '.nft'
+end
+
+local function read_file(path)
+	local f = assert(io.open(path, 'rb'))
+	local content = f:read('*a')
+	f:close()
+	return content
+end
+
+local function sorted_keys(t)
+	local keys = {}
+	for k in pairs(t) do
+		table.insert(keys, k)
+	end
+	table.sort(keys)
+	return keys
+end
+
+-- firewall4 include for a rule file below /lib/gluon/nftables
+-- (name must be a valid uci section name, so use underscores)
+local function include(name, parameters)
+	local section = {
+		type = 'nftables',
+		path = nft_path(name),
+	}
+
+	for k, v in pairs(parameters) do
+		section[k] = v
+	end
+
+	uci:section('firewall', 'include', 'gluon_firewall_' .. name, section)
+end
+
+-- Bridge-family table
+--
+-- The base chains mirror the ebtables chains previously used by Gluon:
+-- prerouting runs at dstnat priority (like the ebtables nat table), so
+-- rules there see packets before any other bridge processing; input,
+-- forward and output run at filter priority.
+
+local bridge = {
+	chain = {
+		INPUT = {
+			'chain input {',
+			'type filter hook input priority filter; policy accept;',
+		},
+		FORWARD = {
+			'chain forward {',
+			'type filter hook forward priority filter; policy accept;',
+		},
+		OUTPUT = {
+			'chain output {',
+			'type filter hook output priority filter; policy accept;',
+		},
+		PREROUTING = {
+			'chain prerouting {',
+			'type filter hook prerouting priority dstnat; policy accept;',
+		},
+	},
+	table = {
+		pre = {},
+		post = {},
+	},
+}
+
+local function bridge_chain(name)
+	if bridge.chain[name] ~= nil then
+		error('bridge chain already exists: ' .. name)
+	end
+
+	bridge.chain[name] = {
+		'chain ' .. name:lower() .. ' {',
+	}
+end
+
+local function bridge_rule(chain, content)
+	if bridge.chain[chain] == nil then
+		error('no bridge chain: ' .. chain)
+	end
+
+	table.insert(bridge.chain[chain], content)
+end
+
+local function bridge_table(position, content)
+	if bridge.table[position] == nil then
+		error('no bridge table position: ' .. position)
+	end
+
+	table.insert(bridge.table[position], content)
+end
+
+local function bridge_include_rule(chain, name)
+	bridge_rule(chain, read_file(nft_path(name)))
+end
+
+local function bridge_include_table(position, name)
+	bridge_table(position, read_file(nft_path(name)))
+end
+
+-- Loader
+
+local function load_file(path)
+	local f = assert(loadfile(path))
+
+	local fncs = setmetatable({
+		include = include,
+
+		bridge_rule = bridge_rule,
+		bridge_chain = bridge_chain,
+		bridge_table = bridge_table,
+		bridge_include_rule = bridge_include_rule,
+		bridge_include_table = bridge_include_table,
+	}, { __index = _G })
+
+	setfenv(f, setmetatable({}, { __index = fncs }))
+
+	f()
+end
+
+-- Remove includes of previously installed rule files
+uci:foreach('firewall', 'include', function(s)
+	if s['.name']:match('^gluon_firewall_') then
+		uci:delete('firewall', s['.name'])
+	end
+end)
+
+-- The numbered file name prefixes define the rule order, so sort
+-- explicitly instead of relying on the glob implementation
+local paths = glob.glob('/lib/gluon/nftables/*.lua', 0) or {}
+table.sort(paths)
+
+for _, path in ipairs(paths) do
+	load_file(path)
+end
+
+-- Write out the bridge table
+
+local out = assert(io.open(nft_path('bridge'), 'w'))
+
+local function write_lines(lines, close)
+	for _, line in ipairs(lines) do
+		out:write(line, '\n')
+	end
+
+	if close then
+		out:write('}\n')
+	end
+end
+
+-- firewall4 only flushes its own table on reload, so the bridge table
+-- has to be reset here to stay idempotent (the leading declaration
+-- makes the delete work even when the table does not exist yet)
+write_lines({
+	'table bridge gluon',
+	'delete table bridge gluon',
+	'table bridge gluon {',
+})
+write_lines(bridge.table.pre)
+
+for _, name in ipairs(sorted_keys(bridge.chain)) do
+	write_lines(bridge.chain[name], true)
+end
+
+write_lines(bridge.table.post, true)
+
+out:close()
+
+include('bridge', {
+	position = 'ruleset-prepend',
+})
+
+uci:save('firewall')

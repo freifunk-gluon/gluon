@@ -123,12 +123,9 @@ packages {
 	'-kmod-nft-offload',
 	'-libustream-mbedtls',
 	'-libmbedtls',
-	'-nftables',
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
 	'-wpad-basic-mbedtls',
-	'-firewall4',
 	'gluon-core',
-	'ip6tables-zz-legacy',
 }

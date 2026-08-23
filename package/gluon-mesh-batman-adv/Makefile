@@ -13,7 +13,8 @@ define Package/gluon-mesh-batman-adv-15
 	+libgluonutil \
 	+gluon-client-bridge \
 	+gluon-firewall \
-	+firewall \
+	+gluon-firewall-multicast \
+	+firewall4 \
 	+libiwinfo \
 	+kmod-dummy \
 	+libnl-tiny \

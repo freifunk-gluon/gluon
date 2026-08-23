@@ -89,6 +89,19 @@ files["package/**/luasrc/lib/gluon/ebtables/*"] = {
 	max_line_length = false,
 }
 
+files["package/**/lib/gluon/nftables/*"] = {
+	read_globals = {
+		"include",
+
+		"bridge_rule",
+		"bridge_chain",
+		"bridge_table",
+		"bridge_include_rule",
+		"bridge_include_table",
+	},
+	max_line_length = false,
+}
+
 files["targets/*"] = {
 	read_globals = {
 		"class",
