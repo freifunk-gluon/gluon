@@ -81,14 +81,6 @@ files["package/**/luasrc/lib/gluon/**/controller/*"] = {
 	},
 }
 
-files["package/**/luasrc/lib/gluon/ebtables/*"] = {
-	read_globals = {
-		"chain",
-		"rule",
-	},
-	max_line_length = false,
-}
-
 files["package/**/lib/gluon/nftables/*"] = {
 	read_globals = {
 		"include",

@@ -29,7 +29,7 @@ the workflow using these scripts:
   contrib/run_qemu.sh output/images/factory/[...]-x86-64.img
 
   # apply changes to the desired package
-  vi package/gluon-firewall/files/etc/init.d/gluon-ebtables
+  vi package/gluon-firewall/luasrc/lib/gluon/upgrade/800-firewall
 
   # rebuild and push the package to the qemu instance
   contrib/push_pkg.sh package/gluon-firewall/
