@@ -49,8 +49,8 @@
 // seconds). Re-read it from the transtable afterwards.
 #define ORIGINATOR_CACHE_TTL 300
 
-// max execution time of a single ebtables call in nanoseconds
-#define EBTABLES_TIMEOUT 500000000 // 500ms
+// max execution time of a single nft call in nanoseconds
+#define NFT_TIMEOUT 500000000 // 500ms
 
 // TQ value assigned to local routers
 #define LOCAL_TQ 512
@@ -136,7 +136,7 @@ static int timespec_diff(struct timespec *tv1, struct timespec *tv2,
 static void cleanup(void) {
 	struct router *router;
 	struct timespec timeout = {
-		.tv_nsec = EBTABLES_TIMEOUT,
+		.tv_nsec = NFT_TIMEOUT,
 	};
 
 	close(G.sock);
@@ -149,13 +149,13 @@ static void cleanup(void) {
 
 	if (G.chain) {
 		/* Reset chain to accept everything again */
-		if (fork_execvp_timeout(&timeout, "ebtables-tiny", (const char *[])
-				{ "ebtables-tiny", "-F", G.chain, NULL }))
-			DEBUG_MSG("warning: flushing ebtables chain %s failed, not adding a new rule", G.chain);
+		if (fork_execvp_timeout(&timeout, "nft", (const char *[])
+				{ "nft", "flush", "chain", "bridge", "gluon", G.chain, NULL }))
+			DEBUG_MSG("warning: flushing nftables chain %s failed, not adding a new rule", G.chain);
 
-		if (fork_execvp_timeout(&timeout, "ebtables-tiny", (const char *[])
-				{ "ebtables-tiny", "-A", G.chain, "-j", "ACCEPT", NULL }))
-			DEBUG_MSG("warning: adding new rule to ebtables chain %s failed", G.chain);
+		if (fork_execvp_timeout(&timeout, "nft", (const char *[])
+				{ "nft", "add", "rule", "bridge", "gluon", G.chain, "accept", NULL }))
+			DEBUG_MSG("warning: adding new rule to nftables chain %s failed", G.chain);
 	}
 }
 
@@ -169,9 +169,9 @@ static void usage(const char *msg) {
 		"                   information (\"TQ\") for the available gateways. Default: bat0\n"
 		"  -t <thresh>      Minimum TQ difference required to switch the gateway.\n"
 		"                   Default: 0\n"
-		"  -c <chain>       ebtables chain that should be managed by the daemon. The\n"
-		"                   chain already has to exist on program invocation and should\n"
-		"                   have a DROP policy. It will be flushed by the program!\n"
+		"  -c <chain>       nftables chain in the 'bridge gluon' table that should be\n"
+		"                   managed by the daemon. The chain already has to exist on\n"
+		"                   program invocation. It will be flushed by the program!\n"
 		"  -i <iface>       Interface to listen on for router advertisements. Should be\n"
 		"                   <mesh_iface> or a bridge on top of it, as no metric\n"
 		"                   information will be available for hosts on other interfaces.\n\n",
@@ -664,15 +664,15 @@ static bool election_required(void)
 	return true;
 }
 
-static void update_ebtables(void) {
+static void update_nftables(void) {
 	struct timespec timeout = {
-		.tv_nsec = EBTABLES_TIMEOUT,
+		.tv_nsec = NFT_TIMEOUT,
 	};
 	char mac[F_MAC_LEN + 1];
 	struct router *router;
 
 	if (!election_required()) {
-		DEBUG_MSG(F_MAC " is still good enough with TQ=%d (max_tq=%d), not executing ebtables",
+		DEBUG_MSG(F_MAC " is still good enough with TQ=%d (max_tq=%d), not updating the filter",
 			F_MAC_VAR(G.best_router->src),
 			G.best_router->tq,
 			G.max_tq);
@@ -695,14 +695,13 @@ static void update_ebtables(void) {
 		fprintf(stderr, "Switching to %s (TQ=%d)\n",
 			mac,
 			G.max_tq);
-	G.best_router = router;
-
-	if (fork_execvp_timeout(&timeout, "ebtables-tiny", (const char *[])
-			{ "ebtables-tiny", "-F", G.chain, NULL }))
-		error_message(0, 0, "warning: flushing ebtables chain %s failed, not adding a new rule", G.chain);
-	else if (fork_execvp_timeout(&timeout, "ebtables-tiny", (const char *[])
-			{ "ebtables-tiny", "-A", G.chain, "-s", mac, "-j", "ACCEPT", NULL }))
-		error_message(0, 0, "warning: adding new rule to ebtables chain %s failed", G.chain);
+	if (fork_execvp_timeout(&timeout, "nft", (const char *[])
+			{ "nft", "flush", "chain", "bridge", "gluon", G.chain, ";",
+				"add", "rule", "bridge", "gluon", G.chain,
+				"ether", "saddr", "!=", mac, "counter", "drop", NULL }))
+		error_message(0, 0, "warning: updating nftables chain %s failed", G.chain);
+	else
+		G.best_router = router;
 }
 
 static void invalidate_originators(void)
@@ -780,7 +779,7 @@ int main(int argc, char *argv[]) {
 				}
 
 				update_tqs();
-				update_ebtables();
+				update_nftables();
 
 				next_update = now;
 				next_update.tv_sec += MIN_INTERVAL;
