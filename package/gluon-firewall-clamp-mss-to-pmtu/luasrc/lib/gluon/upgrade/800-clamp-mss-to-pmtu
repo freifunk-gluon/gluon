@@ -1,0 +1,9 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+-- Remove the pre-nftables ip6tables include
+if uci:get('firewall', 'vpn_clamp_mss') then
+	uci:delete('firewall', 'vpn_clamp_mss')
+	uci:save('firewall')
+end
