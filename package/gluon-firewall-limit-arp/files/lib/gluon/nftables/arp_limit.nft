@@ -1,0 +1,30 @@
+# Sets managed by gluon-arp-limiter: limitmac holds the client MACs
+# from the batman-adv translation table, datips the IPs in the
+# batman-adv DAT cache.
+set limitmac {
+	type ether_addr
+}
+
+set datips {
+	type ipv4_addr
+}
+
+# Per-client ARP request rate state, keyed by source MAC
+set arp_ratelimit {
+	type ether_addr
+	size 65535
+	flags dynamic,timeout
+	timeout 1h
+}
+
+chain arp_limit {
+	# ARP requests for targets in the DAT cache are answered locally by
+	# batman-adv without burdening the mesh, so they are not limited
+	arp daddr ip @datips return
+
+	# 6/minute (burst 50) per client device
+	ether saddr @limitmac add @arp_ratelimit { ether saddr limit rate over 6/minute burst 50 packets } counter drop
+
+	# 1/second (burst 50) for the node in total
+	limit rate over 1/second burst 50 packets counter drop
+}

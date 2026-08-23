@@ -5,12 +5,12 @@ PKG_NAME:=gluon-firewall-limit-arp
 include ../gluon.mk
 
 define Package/gluon-firewall-limit-arp
-  TITLE:=Ebtables limiter for ARP packets
+  TITLE:=nftables limiter for ARP packets
   DEPENDS:=+gluon-core +gluon-firewall gluon-mesh-batman-adv
 endef
 
 define Package/gluon-firewall-limit-arp/description
-	Gluon community wifi mesh firmware framework: Ebtables rules to
+	Gluon community wifi mesh firmware framework: nftables rules to
 	rate-limit ARP packets.
 
 	This package adds filters to limit the amount of ARP Requests
@@ -19,7 +19,7 @@ define Package/gluon-firewall-limit-arp/description
 	node in total.
 
 	A burst of up to 50 ARP Requests is allowed until the rate-limiting
-	takes effect (see --limit-burst in the ebtables manpage).
+	takes effect (see "burst" in the nft manpage).
 
 	Furthermore, ARP Requests with a target IP already present in the
 	batman-adv DAT Cache are excluded from the rate-limiting,
