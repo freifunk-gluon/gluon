@@ -19,14 +19,11 @@ uci:section('network', 'interface', 'mesh_vpn', {
 
 uci:save('network')
 
-
-uci:section('firewall', 'include', 'mesh_vpn_dns', {
-	type = 'restore',
-	path = '/lib/gluon/mesh-vpn/iptables.rules',
-	family = 'ipv4',
-})
-
-uci:save('firewall')
+-- Remove the pre-nftables iptables include
+if uci:get('firewall', 'mesh_vpn_dns') then
+	uci:delete('firewall', 'mesh_vpn_dns')
+	uci:save('firewall')
+end
 
 -- Inital VPN setup
 if not uci:get('gluon', 'mesh_vpn') then
