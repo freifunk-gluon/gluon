@@ -65,10 +65,10 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   package/gluon-client-bridge
   package/gluon-config-mode-domain-select
   package/gluon-config-mode-geo-location-osm
-  package/gluon-ebtables-filter-multicast
-  package/gluon-ebtables-filter-ra-dhcp
-  package/gluon-ebtables-limit-arp
-  package/gluon-ebtables-source-filter
+  package/gluon-firewall-filter-multicast
+  package/gluon-firewall-filter-ra-dhcp
+  package/gluon-firewall-limit-arp
+  package/gluon-firewall-source-filter
   package/gluon-harden-dropbear
   package/gluon-hoodselector
   package/gluon-logging

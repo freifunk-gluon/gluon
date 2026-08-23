@@ -1,7 +1,7 @@
-gluon-ebtables-limit-arp
+gluon-firewall-limit-arp
 ========================
 
-The *gluon-ebtables-limit-arp* package adds filters to limit the
+The *gluon-firewall-limit-arp* package adds filters to limit the
 amount of ARP requests client devices are allowed to send into the
 mesh.
 
@@ -26,5 +26,5 @@ feature is *mesh-batman-adv-15*.
 It can be unselected via::
 
     packages {
-      '-gluon-ebtables-limit-arp',
+      '-gluon-firewall-limit-arp',
     }

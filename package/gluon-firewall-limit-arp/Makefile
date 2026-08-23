@@ -1,15 +1,15 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gluon-ebtables-limit-arp
+PKG_NAME:=gluon-firewall-limit-arp
 
 include ../gluon.mk
 
-define Package/gluon-ebtables-limit-arp
+define Package/gluon-firewall-limit-arp
   TITLE:=Ebtables limiter for ARP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+  DEPENDS:=+gluon-core +gluon-firewall gluon-mesh-batman-adv
 endef
 
-define Package/gluon-ebtables-limit-arp/description
+define Package/gluon-firewall-limit-arp/description
 	Gluon community wifi mesh firmware framework: Ebtables rules to
 	rate-limit ARP packets.
 
@@ -32,11 +32,11 @@ define Package/gluon-ebtables-limit-arp/description
 	a significant amount of overhead for all participants so far.
 endef
 
-define Package/gluon-ebtables-limit-arp/install
+define Package/gluon-firewall-limit-arp/install
 	$(Gluon/Build/Install)
 
 	$(INSTALL_DIR) $(1)/usr/sbin/
 	$(CP) $(PKG_BUILD_DIR)/gluon-arp-limiter $(1)/usr/sbin/gluon-arp-limiter
 endef
 
-$(eval $(call BuildPackageGluon,gluon-ebtables-limit-arp))
+$(eval $(call BuildPackageGluon,gluon-firewall-limit-arp))

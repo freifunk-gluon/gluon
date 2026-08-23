@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gluon-iptables-clamp-mss-to-pmtu
+PKG_NAME:=gluon-firewall-clamp-mss-to-pmtu
 
 include ../gluon.mk
 

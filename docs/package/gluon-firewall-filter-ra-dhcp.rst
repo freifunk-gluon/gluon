@@ -1,7 +1,7 @@
-gluon-ebtables-filter-ra-dhcp
+gluon-firewall-filter-ra-dhcp
 =============================
 
-The *gluon-ebtables-filter-ra-dhcp* package tries to prevent common
+The *gluon-firewall-filter-ra-dhcp* package tries to prevent common
 misconfigurations (i.e. connecting the client interface of a Gluon
 node to a private network) from causing issues for either of the
 networks.

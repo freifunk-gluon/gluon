@@ -37,7 +37,7 @@ when(_'web-advanced' and _'autoupdater', {
 
 
 when(_'mesh-batman-adv-15', {
-	'gluon-ebtables-limit-arp',
+	'gluon-firewall-limit-arp',
 	'gluon-radvd',
 })
 
