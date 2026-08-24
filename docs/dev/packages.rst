@@ -187,6 +187,14 @@ Feature definitions use Lua syntax. Two basic functions are defined:
     add *gluon-$flag* by default.
   * *pkgs* is handled as for *feature()*.
 
+* *deprecated(old, new)*: Declares that a feature flag has been renamed.
+
+  * A site that still sets *old* is treated as if it had set *new*, and a
+    warning is printed. This lets a rename land without breaking every
+    existing site config at once.
+  * Declare deprecations before the *feature()* and *when()* entries that
+    reference the new name, so those see the substituted flag.
+
 Example::
 
     feature('web-wizard', {

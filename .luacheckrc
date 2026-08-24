@@ -118,6 +118,7 @@ files["targets/*"] = {
 files["package/features"] = {
 	read_globals = {
 		"_",
+		"deprecated",
 		"feature",
 		"when",
 	},

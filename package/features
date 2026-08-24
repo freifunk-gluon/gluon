@@ -5,6 +5,18 @@
 -- file format
 
 
+-- The ebtables and iptables backends were replaced by a single nftables
+-- one, and their packages renamed to gluon-firewall-*. Sites keep
+-- building with the old feature names for now, so a site does not have
+-- to be changed in the same commit that updates Gluon.
+deprecated('ebtables', 'firewall')
+deprecated('ebtables-filter-multicast', 'firewall-filter-multicast')
+deprecated('ebtables-filter-ra-dhcp', 'firewall-filter-ra-dhcp')
+deprecated('ebtables-limit-arp', 'firewall-limit-arp')
+deprecated('ebtables-source-filter', 'firewall-source-filter')
+deprecated('iptables-clamp-mss-to-pmtu', 'firewall-clamp-mss-to-pmtu')
+
+
 feature('web-wizard', {
 	'gluon-config-mode-hostname',
 	'gluon-config-mode-geo-location',
