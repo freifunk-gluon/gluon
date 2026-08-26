@@ -1,0 +1,72 @@
+name: Mesh Tests
+on:
+  push:
+    branches:
+      - main
+      - next
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'tests/**'
+      - 'package/*/tests/**'
+      - 'package/**'
+      - 'targets/x86*'
+      - 'targets/generic'
+      - 'contrib/ci/**'
+      - 'contrib/actions/**'
+      - 'scripts/**'
+      - 'modules'
+      - '.github/workflows/test-gluon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  mesh-test:
+    name: x86-64 ${{ matrix.proto }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # one entry per routing protocol; the site config selects it
+          - proto: batman-adv
+            site: contrib/ci/minimal-site
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Show system information
+        run: contrib/actions/show-system-info.sh
+
+      - name: Remove non-required software
+        run: contrib/actions/free-runner-space.sh
+
+      - name: Build Docker container
+        run: docker build -t gluon-ci-container contrib/docker
+
+      - name: Build Gluon
+        run: docker run --rm -v $PWD:/gluon-ci -w /gluon-ci --user "$(id -u):$(id -g)" -e GLUON_SITEDIR=${{ matrix.site }} gluon-ci-container contrib/actions/run-build.sh x86-64
+
+      - name: Install test dependencies
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install qemu-system-x86 tcpdump
+          sudo python3 -m pip install -r tests/requirements.txt
+
+      - name: Allow KVM access
+        run: sudo chmod 666 /dev/kvm
+
+      - name: Run mesh tests
+        run: cd tests && sudo python3 run.py -j 2 --image ../output/images/factory/gluon-ci-*-x86-64.img.gz
+
+      - name: Archive node logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: mesh-test-${{ matrix.proto }}-logs
+          path: tests/run
