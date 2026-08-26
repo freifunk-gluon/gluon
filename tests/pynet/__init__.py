@@ -22,8 +22,16 @@ from operator import itemgetter
 #    stream=sys.stderr,
 #)
 
-image = "image.img"
-SSH_KEY_FILE = 'id_rsa.key'
+image = os.environ.get('GLUON_IMAGE', 'image.img')
+
+# Each parallel run picks a slot that shifts every host port it binds;
+# per-run files are kept apart by running in separate directories.
+SLOT = int(os.environ.get('PYNET_SLOT', '0'))
+if not 0 <= SLOT <= 7:
+    raise ValueError('PYNET_SLOT must be 0..7')
+MESH_PORT_BASE = 17000 + SLOT * 500
+SSH_PORT_BASE = 22000 + SLOT * 200
+SSH_KEY_FILE = 'id_ed25519.key'
 SSH_PUBKEY_FILE = SSH_KEY_FILE + '.pub'
 HOST_ID = 1
 USE_CLIENT_TAP = False
@@ -34,11 +42,13 @@ USE_NETNS = False
 #
 # https://github.com/NixOS/nixpkgs/blob/2577ec293255cbb995e42a86169cc40c427a6e7d/nixos/lib/test-driver/test-driver.py#L129-L140
 #
-def retry(fn) -> None:
+def retry(fn, timeout=180) -> None:
     """Call the given function repeatedly, with 1 second intervals,
-    until it returns True or a timeout is reached.
+    until it returns True or timeout seconds have passed (wall-clock:
+    each attempt is an ssh round trip).
     """
-    for _ in range(180):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
         if fn(False):
             return
         time.sleep(1)
@@ -49,7 +59,7 @@ def retry(fn) -> None:
 class Node():
 
     max_id = 0
-    max_port = 17321
+    max_port = MESH_PORT_BASE
     all_nodes = []
 
     def __init__(self):
@@ -64,6 +74,7 @@ class Node():
         self.domain_code = None
         self.configured = False
         self.addresses = []
+        self.client_tap = False  # host tap on the client interface (requires root)
         self.dbg = debug_print(initial_time, self.hostname)
 
     def add_mesh_link(self, peer, _is_peer=False, _port=None):
@@ -100,7 +111,9 @@ class Node():
 
     @property
     def if_client(self):
-        return "client" + str(self.id)
+        # Host-visible when the node has a client tap, so it carries the
+        # slot; parallel runs would otherwise create the same interface.
+        return "client%d_%d" % (SLOT, self.id)
 
     def execute_in_background(self, cmd, _msg=True):
         class bg_cmd:
@@ -148,7 +161,7 @@ class Node():
             self.dbg(f'Expected success: command "{cmd}" succeeded with exit status {status}.')
             return stdout
 
-    def wait_until_succeeds(self, cmd):
+    def wait_until_succeeds(self, cmd, timeout=180):
         output = ""
 
         def check_success(is_last_attempt) -> bool:
@@ -161,7 +174,7 @@ class Node():
                 return status == 0
 
         self.dbg(f'Waiting until "{cmd}" succeeds.')
-        retry(check_success)
+        retry(check_success, timeout)
         self.dbg(f'"{cmd}" succeeded.')
         return output
 
@@ -171,7 +184,10 @@ class Node():
             self.node = node
 
         async def __aenter__(self):
-            if USE_CLIENT_TAP:
+            # client_tap nodes are reached over the client interface only
+            # in config mode; afterwards the tap may live in a client
+            # netns, so the WAN hostfwd port is used.
+            if USE_CLIENT_TAP or (self.node.client_tap and not self.node.configured):
                 # client iface link local addr
                 ifname = self.node.if_client
                 host_id = HOST_ID
@@ -180,7 +196,7 @@ class Node():
                 port = 22
             else:
                 addr = '127.0.0.1'
-                port = 22000 + self.node.id
+                port = SSH_PORT_BASE + self.node.id
                 if self.node.configured:
                     port += 100
 
@@ -255,7 +271,7 @@ async def gen_qemu_call(image, node):
         os.mkdir(imgdir)
 
     imgfile = os.path.join(imgdir, '%02x.img' % node.id)
-    shutil.copyfile('./' + image, imgfile)
+    shutil.copyfile(image, imgfile)
 
     # TODO: machine identifier
     host_id = HOST_ID
@@ -287,12 +303,12 @@ async def gen_qemu_call(image, node):
 
         mesh_id += 1
 
-    ssh_port = 22000 + node.id
-    ssh_port_configured = 22100 + node.id
+    ssh_port = SSH_PORT_BASE + node.id
+    ssh_port_configured = SSH_PORT_BASE + 100 + node.id
 
     wan_netdev = 'user,id=hn1,hostfwd=tcp::' + str(ssh_port_configured) + '-10.0.2.15:22'
 
-    if USE_CLIENT_TAP:
+    if USE_CLIENT_TAP or node.client_tap:
         client_netdev = 'tap,id=hn2,script=no,downscript=no,ifname=%s' % node.if_client
     else:
         # in config mode, the device is used for configuration with net 192.168.1.0/24
@@ -300,12 +316,18 @@ async def gen_qemu_call(image, node):
 
     call = ['-nographic',
             '-enable-kvm',
+            '-m', '256',
 #            '-no-hpet',
 #            '-cpu', 'host',
             '-netdev', wan_netdev,
             '-device', eth_driver + ',addr=0x06,netdev=hn1,id=nic1,mac=' + nat_mac,
             '-netdev', client_netdev,
             '-device', eth_driver + ',addr=0x05,netdev=hn2,id=nic2,mac=' + client_mac]
+
+    # needed to boot combined-efi images, e.g. an OVMF firmware path
+    bios = os.environ.get('GLUON_QEMU_BIOS')
+    if bios:
+        call += ['-bios', bios]
 
     # '-d', 'guest_errors', '-d', 'cpu_reset', '-gdb', 'tcp::' + str(3000 + node.id),
     args = ['qemu-system-x86_64',
@@ -331,17 +353,14 @@ async def ssh_call(p, cmd):
     return res.stdout
 
 async def set_mesh_devs(p, devs):
+    # Assign the 'mesh' role; gluon-reconfigure generates the network
+    # and firewall configuration from it.
     for d in devs:
-        await ssh_call(p, 'uci set network.' + d + '_mesh=interface')
-        await ssh_call(p, 'uci set network.' + d + '_mesh.auto=1')
-        await ssh_call(p, 'uci set network.' + d + '_mesh.proto=gluon_wired')
-        await ssh_call(p, 'uci set network.' + d + '_mesh.ifname=' + d)
+        await ssh_call(p, 'uci set gluon.iface_' + d + '=interface')
+        await ssh_call(p, "uci set gluon.iface_" + d + ".name='" + d + "'")
+        await ssh_call(p, "uci add_list gluon.iface_" + d + ".role='mesh'")
 
-        # allow vxlan in firewall
-        await ssh_call(p, 'uci add_list firewall.wired_mesh.network=' + d + '_mesh')
-
-    await ssh_call(p, 'uci commit network')
-    await ssh_call(p, 'uci commit firewall')
+    await ssh_call(p, 'uci commit gluon')
 
 async def add_ssh_key(p):
     keyfile = os.path.join(workdir, 'ssh', SSH_PUBKEY_FILE)
@@ -349,13 +368,11 @@ async def add_ssh_key(p):
         content = f.read()
         await ssh_call(p, 'cat >> /etc/dropbear/authorized_keys <<EOF\n' + content)
 
-@asyncio.coroutine
-def wait_bash_cmd(cmd):
-    create = asyncio.create_subprocess_exec(shutil.which("bash"), '-c', cmd)
-    proc = yield from create
+async def wait_bash_cmd(cmd):
+    proc = await asyncio.create_subprocess_exec(shutil.which("bash"), '-c', cmd)
 
     # Wait for the subprocess exit
-    yield from proc.wait()
+    await proc.wait()
 
 async def configure_client_if(node):
     dbg = debug_print(initial_time, node.hostname)
@@ -398,7 +415,7 @@ def configure_netns(node):
 async def configure_node(initial_time, node):
     dbg = debug_print(initial_time, node.hostname)
 
-    if USE_CLIENT_TAP:
+    if USE_CLIENT_TAP or node.client_tap:
         await configure_client_if(node)
 
     dbg('configuring node')
@@ -432,18 +449,17 @@ async def install_client(initial_time, node):
     spawn_in_tmux(clientname, 'ip netns exec ' + netns + ' ' + shell)
 
     # spawn ssh shell
-    ssh_opts = '-o UserKnownHostsFile=/dev/null ' + \
-               '-o StrictHostKeyChecking=no ' + \
-               '-i ' + SSH_KEY_FILE + ' '
+    ssh_opts = ('-o UserKnownHostsFile=/dev/null '
+        '-o StrictHostKeyChecking=no '
+        '-i ' + SSH_KEY_FILE + ' ')
     spawn_in_tmux(node.hostname, 'ip netns exec ' + netns + ' /bin/bash -c "while ! ssh ' + ssh_opts + ' root@' + node.next_node_addr + '; do sleep 1; done"')
 
 def spawn_in_tmux(title, cmd):
     run('tmux -S test new-window -d -n ' + title + ' ' + cmd)
 
-@asyncio.coroutine
-def read_to_buffer(node):
+async def read_to_buffer(node):
     while processes.get(node.id) is None:
-        yield from asyncio.sleep(0)
+        await asyncio.sleep(0)
     process = processes[node.id]
     master = masters[node.id]
     stdout_buffers[node.id] = b""
@@ -454,7 +470,7 @@ def read_to_buffer(node):
 
     with open(os.path.join(logdir, node.hostname + '.log'), 'wb') as f1:
         while True:
-            b = yield from process.stdout.read(1) # TODO: is this unbuffered?
+            b = await process.stdout.read(1) # TODO: is this unbuffered?
             stdout_buffers[node.id] += b
             try:
                 os.write(master, b)
@@ -465,15 +481,14 @@ def read_to_buffer(node):
             if b == b'\n':
                 f1.flush()
 
-@asyncio.coroutine
-def wait_for(node, b):
+async def wait_for(node, b):
     i = node.id
     while stdout_buffers.get(i) is None:
-        yield from asyncio.sleep(0)
+        await asyncio.sleep(0)
     while True:
         if b.encode('utf-8') in stdout_buffers[i]:
             return
-        yield from asyncio.sleep(0)
+        await asyncio.sleep(0)
 
 async def add_hosts(p):
     host_entries = ""
@@ -509,8 +524,8 @@ async def config_node(initial_time, node, ssh_conn):
     for cmd in set(node.uci_commits):
         await ssh_call(p, cmd)
 
-    if node.domain_code is not None:
-        await ssh_call(p, "gluon-reconfigure")
+    # apply interface roles, domain and uci changes
+    await ssh_call(p, "gluon-reconfigure")
 
     prefix = (await ssh_call(p, 'gluon-show-site | jsonfilter -e @.prefix6')).strip()
     prefix = ipaddress.ip_network(prefix)
@@ -590,10 +605,11 @@ def start():
         os.mkdir(sshdir)
 
     if not os.path.exists(os.path.join(sshdir, SSH_PUBKEY_FILE)):
-        run('ssh-keygen -t rsa -f ' + os.path.join(sshdir, SSH_KEY_FILE) + ' -N \'\'')
+        run('ssh-keygen -t ed25519 -f ' + os.path.join(sshdir, SSH_KEY_FILE) + ' -N \'\'')
 
     global loop
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
     if args.run_tests_on_existing_instance:
         # We expect the nodes to be already configured.
@@ -601,6 +617,12 @@ def start():
             node.configured = True
 
         return loop
+
+    if not args.run_forever:
+        # atexit rather than finish(): a failing scenario never reaches
+        # finish(). Runs after the qemus are terminated (atexit unwinds
+        # in reverse).
+        atexit.register(discard_artifacts)
 
     host_id = HOST_ID
     global host_entries
@@ -624,6 +646,12 @@ def start():
 
     return loop
 
+def discard_artifacts():
+    """Remove the per-node image copies, ssh key and console symlinks.
+    The logs stay."""
+    for d in ('images', 'ssh', 'ptys'):
+        shutil.rmtree(os.path.join(workdir, d), ignore_errors=True)
+
 def finish():
     if args.run_tests_on_existing_instance:
         return
@@ -640,7 +668,8 @@ def connect(a, b):
 
 def new_loop():
     global loop
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
 
 initial_time = time.time()
