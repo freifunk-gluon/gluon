@@ -57,6 +57,13 @@ def retry(fn, timeout=180) -> None:
         raise Exception("action timed out")
 
 class Node():
+    """A Gluon node, booted as a QEMU guest by :func:`start`.
+
+    Calls before :func:`start` (mesh links, uci settings, domain) are
+    recorded and applied while the guest is configured; calls after run
+    on the booted node over SSH. ``dbg`` writes a timestamped line to
+    the node's log.
+    """
 
     max_id = 0
     max_port = MESH_PORT_BASE
@@ -78,6 +85,8 @@ class Node():
         self.dbg = debug_print(initial_time, self.hostname)
 
     def add_mesh_link(self, peer, _is_peer=False, _port=None):
+        """Give this node and peer an interface on a shared segment.
+        See :func:`connect`."""
         self.if_index_max += 1
         ifname = 'eth' + str(self.if_index_max)
         if _port is None:
@@ -101,11 +110,13 @@ class Node():
         self.uci_set('fastd', 'mesh_vpn', 'enabled', 1)
 
     def uci_set(self, config, section, option, value):
+        """Set a uci option, applied before gluon-reconfigure runs."""
         self.uci_sets += ["uci set {}.{}.{}='{}'".format(
             config, section, option, value)]
         self.uci_commits += ["uci commit {}".format(config)]
 
     def set_domain(self, domain_code):
+        """Put the node in a site domain, for multidomain sites."""
         self.uci_set('gluon', 'core', 'domain', domain_code)
         self.domain_code = domain_code
 
@@ -116,6 +127,8 @@ class Node():
         return "client%d_%d" % (SLOT, self.id)
 
     def execute_in_background(self, cmd, _msg=True):
+        """Start a command on the node without waiting. The handle's
+        ``cancel()`` interrupts it and waits for it to end."""
         class bg_cmd:
             def __init__(self, node, cmd):
                 self.cmd = cmd
@@ -141,6 +154,8 @@ class Node():
         return bg_cmd(self, cmd)
 
     def execute(self, cmd):
+        """Run a shell command on the node and return
+        ``(exit_status, output)``, with stderr folded into output."""
         t = self.execute_in_background(cmd, _msg=False).task
         loop.run_until_complete(t)
 
@@ -148,6 +163,8 @@ class Node():
         return (res.exit_status, res.stdout.strip())
 
     def succeed(self, cmd):
+        """Run a command that has to work and return its output.
+        A non-zero exit logs the output and raises."""
         status, stdout = self.execute(cmd)
 
         if status != 0:
@@ -162,6 +179,8 @@ class Node():
             return stdout
 
     def wait_until_succeeds(self, cmd, timeout=180):
+        """Run a command once a second until it exits zero (wall-clock
+        timeout) and return its output."""
         output = ""
 
         def check_success(is_last_attempt) -> bool:
@@ -579,6 +598,9 @@ def mac_to_ip6(mac, net):
     return ipaddress.ip_address(bytes(x))
 
 def start():
+    """Boot and configure every node declared so far: interface roles,
+    uci settings, SSH key, gluon-reconfigure. Returns once all are
+    reachable."""
     global workdir
     global configured
     if configured:
@@ -653,6 +675,8 @@ def discard_artifacts():
         shutil.rmtree(os.path.join(workdir, d), ignore_errors=True)
 
 def finish():
+    """Shut the nodes down. With ``--run-forever`` they stay up for
+    inspection, along with the images, ssh key and console symlinks."""
     if args.run_tests_on_existing_instance:
         return
 
@@ -664,6 +688,7 @@ def finish():
             print('Exiting now. Closing qemus.')
 
 def connect(a, b):
+    """Put a mesh link between two nodes: a segment only they share."""
     a.add_mesh_link(b)
 
 def new_loop():

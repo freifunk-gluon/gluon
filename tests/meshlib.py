@@ -14,8 +14,10 @@ import time
 
 from pynet import SLOT, Node, connect
 
+#: Routing protocols the rig knows how to drive.
 PROTOCOLS = ('batman-adv',)
 
+#: How long a protocol may take to converge, in seconds.
 CONVERGENCE_TIMEOUT = {'batman-adv': 180}
 
 _DETECT = {
@@ -105,16 +107,21 @@ def wait_all_connected(nodes):
 
 
 def ping(frm, to, count=5):
+    """Ping one node from another over the mesh, retrying until it
+    works or the protocol's convergence budget runs out."""
     frm.wait_until_succeeds('ping -c {} {}'.format(count, node_addr(to)),
                             CONVERGENCE_TIMEOUT[proto(frm)])
 
 
 # --- uplink / internet ---
 
-# Overridable so a disconnected lab can point at a local responder
-# instead of a public one.
+#: IPv4 internet reachability target (``GLUON_TEST_V4_TARGET``).
 V4_TARGET = os.environ.get('GLUON_TEST_V4_TARGET', '1.1.1.1')
+
+#: IPv6 internet reachability target (``GLUON_TEST_V6_TARGET``).
 V6_TARGET = os.environ.get('GLUON_TEST_V6_TARGET', '2606:4700:4700::1111')
+
+#: Name used to check DNS resolution (``GLUON_TEST_DNS_NAME``).
 DNS_NAME = os.environ.get('GLUON_TEST_DNS_NAME', 'one.one.one.one')
 
 
@@ -154,6 +161,7 @@ def reaches_internet(node, family=6, target=None):
 
 
 def resolves_dns(node, name=None):
+    """True if the node's own resolver answers for a name."""
     status, _ = node.execute('nslookup {} >/dev/null'.format(name or DNS_NAME))
     return status == 0
 
@@ -327,6 +335,8 @@ class Client:
         return self._host('ip netns exec {} {}'.format(self.netns, cmd), check=check)
 
     def move_to(self, node):
+        """Bring the client up behind a node, keeping its MAC and
+        address, which makes the move a roam."""
         if self.at is not None:
             self._ns('ip -6 addr flush dev ' + self.at.if_client)
             self._ns('ip link set {} down'.format(self.at.if_client))
@@ -348,4 +358,5 @@ class Client:
         raise Exception('client got no SLAAC address on ' + self.at.hostname)
 
     def succeed(self, cmd):
+        """Run a command in the client's network namespace."""
         return self._ns(cmd)
