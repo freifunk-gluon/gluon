@@ -62,7 +62,11 @@ jobs:
         run: sudo chmod 666 /dev/kvm
 
       - name: Run mesh tests
-        run: cd tests && sudo python3 run.py -j 2 --image ../output/images/factory/gluon-ci-*-x86-64.img.gz
+        # Azure drops ICMP to the internet; QEMU's user networking answers
+        # pings to its own gateway address, so probe that instead.
+        env:
+          GLUON_TEST_V4_TARGET: 10.0.2.2
+        run: cd tests && sudo --preserve-env=GLUON_TEST_V4_TARGET python3 run.py -j 2 --image ../output/images/factory/gluon-ci-*-x86-64.img.gz
 
       - name: Archive node logs
         if: ${{ !cancelled() }}
