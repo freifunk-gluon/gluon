@@ -46,4 +46,4 @@ uci:foreach('dropbear', 'dropbear', function(s)
 	)
 end)
 
-uci:save('dropbear')
+assert(uci:save('dropbear'))

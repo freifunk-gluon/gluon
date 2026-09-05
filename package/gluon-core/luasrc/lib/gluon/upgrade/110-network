@@ -74,7 +74,7 @@ uci:section('network', 'route6', 'wan6_unreachable', {
 	metric = 65535,
 })
 
-uci:save('network')
+assert(uci:save('network'))
 
 
 uci:section('firewall', 'rule', 'wan_igmp', {
@@ -95,4 +95,4 @@ uci:section('firewall', 'rule', 'wan_mld', {
 	target = 'ACCEPT',
 })
 
-uci:save('firewall')
+assert(uci:save('firewall'))
