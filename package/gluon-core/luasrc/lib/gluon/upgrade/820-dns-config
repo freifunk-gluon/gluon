@@ -29,7 +29,6 @@ else
 	uci:set('dhcp', dnsmasq, 'cachesize', dns.cacheentries)
 end
 
-uci:delete('firewall', 'client_dns')
 if dns.servers then
 	-- allow inbound traffic for dns from client zone
 	uci:section('firewall', 'rule', 'client_dns', {

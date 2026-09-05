@@ -126,13 +126,6 @@ local function load_file(path)
 	f()
 end
 
--- Remove includes of previously installed rule files
-uci:foreach('firewall', 'include', function(s)
-	if s['.name']:match('^gluon_firewall_') then
-		uci:delete('firewall', s['.name'])
-	end
-end)
-
 -- The numbered file name prefixes define the rule order, so sort
 -- explicitly instead of relying on the glob implementation
 local paths = glob.glob('/lib/gluon/nftables/*.lua', 0) or {}

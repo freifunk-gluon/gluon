@@ -19,12 +19,6 @@ uci:section('network', 'interface', 'mesh_vpn', {
 
 uci:save('network')
 
--- Remove the pre-nftables iptables include
-if uci:get('firewall', 'mesh_vpn_dns') then
-	uci:delete('firewall', 'mesh_vpn_dns')
-	uci:save('firewall')
-end
-
 -- Inital VPN setup
 if not uci:get('gluon', 'mesh_vpn') then
 	local enabled = site.mesh_vpn.enabled(false)
