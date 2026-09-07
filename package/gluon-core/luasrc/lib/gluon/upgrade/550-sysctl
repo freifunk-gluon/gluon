@@ -3,11 +3,11 @@
 local util = require "gluon.util"
 local unistd = require "posix.unistd"
 
-if util.get_mem_total() >= 64 * 1024 * 1024 then
+if util.get_mem_total() >= 64 * 1024 then
 	return
 end
 
 unistd.link(
-	"/lib/gluon/sysctl/memory-64m.sysctl",
-	"/etc/sysctl.d/35-gluon-memory-64m.sysctl",
+	"/lib/gluon/sysctl/memory-64m.conf",
+	"/etc/sysctl.d/35-gluon-memory-64m.conf",
 	true)
