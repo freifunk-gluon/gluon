@@ -1,0 +1,28 @@
+From: Maciej Krüger <mkg20001@gmail.com>
+Date: Wed, 2 Sep 2026 21:23:46 +0200
+Subject: olsrd: give the IPv6 daemon a ubus object of its own
+
+The ubus object is announced as "olsrd" no matter which address family the
+daemon runs, so a node that runs one daemon per family - olsrd and olsrd6, as
+the two init scripts in this package are meant for - gets the object
+registered by whichever came up first and "Failed to add object: Invalid
+argument" from the other. The interfaces of that second daemon can then only
+be reached by restarting it.
+
+Name the object after the daemon: olsrd for IPv4, olsrd6 for IPv6.
+
+diff --git a/olsrd/src/src/ubus.c b/olsrd/src/src/ubus.c
+index 37c2dbf99d1c188c200deaab59b1b58f8bf8d789..98fd1be3286b78e4c614da1f47b5e627b0271137 100644
+--- a/olsrd/src/src/ubus.c
++++ b/olsrd/src/src/ubus.c
+@@ -179,6 +179,10 @@ static struct ubus_object olsrd_object = {
+ static bool ubus_init_object() {
+   int ret;
+ 
++  // one daemon per family, both cannot be "olsrd" on the bus
++  if (olsr_cnf->ip_version == AF_INET6)
++    olsrd_object.name = "olsrd6";
++
+   ret = ubus_add_object(shared_ctx, &olsrd_object);
+   if (ret) {
+     olsr_syslog(OLSR_LOG_ERR, "Failed to add object: %s\n", ubus_strerror(ret));

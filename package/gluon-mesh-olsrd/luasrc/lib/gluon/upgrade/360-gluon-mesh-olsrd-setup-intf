@@ -2,201 +2,133 @@
 
 local uci = require('simple-uci').cursor()
 local site = require 'gluon.site'
-local util = require 'gluon.util'
-local wireless = require 'gluon.wireless'
-local l3 = require 'gluon.l3'
+local olsrd = require 'gluon.olsrd'
 
-local mesh_interfaces = util.get_role_interfaces(uci, 'mesh')
-local uplink_interfaces = util.get_role_interfaces(uci, 'uplink')
-local client_interfaces = util.get_role_interfaces(uci, 'client')
+-- one olsrd daemon per address family, enabled by the site prefix of that
+-- family, each with its own jsoninfo port (see libolsrdhelper)
+--
+-- interfaces are added over ubus by gluon-olsrd-sync-interfaces as they come
+-- and go, they inherit InterfaceDefaults; the Interface section holds the
+-- runtime list
 
-local mesh_interfaces_uplink = {}
-local mesh_interfaces_client = {}
-local mesh_interfaces_other = {}
-for _, iface in ipairs(mesh_interfaces) do
-	if util.contains(uplink_interfaces, iface) then
-		table.insert(mesh_interfaces_uplink, iface)
-	elseif util.contains(client_interfaces, iface) then
-		table.insert(mesh_interfaces_client, iface)
-	else
-		table.insert(mesh_interfaces_other, iface)
-	end
-end
+local node_ip6 = uci:get('network', 'loopback', 'ip6addr')
+-- strip the prefix length, if any
+node_ip6 = node_ip6 and node_ip6:match('^[^/]+')
 
-local intf = {
-	wired_mesh = {},
-	vpn_mesh = {},
-	radio_mesh = {},
+local daemons = {
+	{
+		key = 'v4',
+		ipv = 4,
+		prefix = site.prefix4(),
+		name = 'olsrd',
+		accept = '127.0.0.1',
+		jsoninfo_port = 9090,
+		txtinfo_port = 2006,
+		-- httpinfo: IPv4 only
+		httpinfo_port = 1978,
+	},
+	{
+		key = 'v6',
+		ipv = 6,
+		prefix = site.prefix6(),
+		name = 'olsrd6',
+		accept = '::1',
+		jsoninfo_port = 9091,
+		txtinfo_port = 2007,
+	},
 }
 
-intf.all_intfs = {}
+for _, daemon in ipairs(daemons) do
+	local uci_name = daemon.name
+	local fw_rule = 'allow_olsr' .. daemon.ipv .. '_mesh'
 
-for _, l in ipairs({ intf.wired_mesh, intf.vpn_mesh, intf.radio_mesh }) do
-	for _, n in ipairs(l) do
-		table.insert(intf.all_intfs, n)
-	end
-end
+	uci:delete_all(uci_name, 'Interface')
+	uci:delete_all(uci_name, 'InterfaceDefaults')
+	uci:delete_all(uci_name, 'LoadPlugin')
 
--- get all mesh radios and mesh lans and then add them to olsrd
-wireless.foreach_radio(uci, function(radio, _, _)
-	local radio_name = radio['.name']
-	table.insert(intf.radio_mesh, 'mesh_' .. radio_name)
-end)
+	if daemon.prefix then
+		os.execute('/etc/init.d/' .. uci_name .. ' enable')
 
-if pcall(function() require 'gluon.mesh-vpn' end) then
-	local vpn_core = require 'gluon.mesh-vpn'
+		-- set config
+		local olsrConfig = {
+			FIBMetric = 'flat',
+			LinkQualityLevel = '2',
+			OlsrPort = 698,
+			Willingness = '3',
+		}
 
-	if vpn_core.enabled() then
-		-- mesh_vpn is a interface that has the right ifname
-		-- we can't use mesh-vpn (dash instead of underscore) since it's not a uci interface
-		table.insert(intf.vpn_mesh, 'mesh_vpn')
-	end
-end
-
-
-local has_uplink_mesh = false
-local has_other_mesh = false
-
-for _,i in pairs(mesh_interfaces) do
-	if util.contains(uplink_interfaces, i) then
-		has_uplink_mesh = true
-	else
-		has_other_mesh = true
-	end
-end
-
-if has_uplink_mesh then
-	table.insert(intf.wired_mesh, 'mesh_uplink')
-end
-
-if has_other_mesh then
-	table.insert(intf.wired_mesh, 'mesh_other')
-end
-
-uci:delete_all('olsrd2', 'interface')
-uci:delete_all('olsrd2', 'lan_import')
-
-if site.mesh.olsrd.v2.enable(true) then
-	os.execute('/etc/init.d/olsrd2 enable')
-
-	local addrs = { }
-	local lan = nil
-	local orig = { }
-	local cfg = site.mesh.olsrd.v2
-
-	-- set global config
-	local olsr2Config = {
-		failfast = 'no',
-		pidfile = '/var/run/olsrd2.pid',
-		lockfile = '/var/lock/olsrd2'
-	}
-
-	local extraConf = cfg.config()
-	if extraConf then
-		for k, _ in pairs(extraConf) do
-			olsr2Config[k] = extraConf[k]
+		local cfg = site.mesh.olsrd[daemon.key]
+		local extraConf = cfg and cfg.config()
+		if extraConf then
+			for k, v in pairs(extraConf) do
+				olsrConfig[k] = v
+			end
 		end
-	end
 
-	uci:delete_all('olsrd2', 'global')
-	uci:section('olsrd2', 'global', 'global', olsr2Config)
+		-- overwrite address family set by site
+		olsrConfig.IpVersion = daemon.ipv
 
-	uci:delete_all('olsrd2', 'telnet')
-	uci:section('olsrd2', 'telnet', 'telnet', {
+		uci:delete_all(uci_name, 'olsrd')
+		uci:section(uci_name, 'olsrd', nil, olsrConfig)
 
-	})
-
-	uci:delete_all('olsrd2', 'http')
-	uci:section('olsrd2', 'http', 'http', {
-
-	})
-
-	if cfg.lan() then
-		lan = cfg.lan()
-	end
-
-	table.insert(addrs, '-127.0.0.1/8')
-	table.insert(addrs, '-::1/128')
-	local addr = uci:get('network', 'loopback', 'ip6addr')
-	table.insert(orig, addr)
-
-	table.insert(addrs, 'default_accept')
-	table.insert(orig, 'default_reject')
-
-	local client_ranges_v6 = {}
-	local l3roamd_ranges = {}
-
-	table.insert(client_ranges_v6, site.prefix6())
-	table.insert(client_ranges_v6, 'default_reject')
-
-	table.insert(l3roamd_ranges, l3.node_client_prefix6())
-	table.insert(l3roamd_ranges, 'default_reject')
-
-	uci:delete_all('olsrd2', 'olsrv2')
-	uci:section('olsrd2', 'olsrv2', nil, {
-		originator = orig,
-		lan = lan,
-	})
-
-	if #intf.wired_mesh then
-		uci:section('olsrd2', 'interface', 'wired_mesh', {
-			ifname = intf.wired_mesh,
-			bindto = addrs,
+		-- add jsoninfo
+		uci:section(uci_name, 'LoadPlugin', 'jsoninfo', {
+			library = olsrd.find_module_version('olsrd_jsoninfo'),
+			accept = daemon.accept,
+			port = daemon.jsoninfo_port,
 		})
-	end
-
-	if #intf.vpn_mesh then
-		uci:section('olsrd2', 'interface', 'vpn_mesh', {
-			ifname = intf.vpn_mesh,
-			bindto = addrs,
+		-- add txtinfo
+		uci:section(uci_name, 'LoadPlugin', 'txtinfo', {
+			library = olsrd.find_module_version('olsrd_txtinfo'),
+			accept = daemon.accept,
+			port = daemon.txtinfo_port,
 		})
-	end
+		-- add httpinfo
+		if daemon.httpinfo_port then
+			uci:section(uci_name, 'LoadPlugin', 'httpinfo', {
+				library = olsrd.find_module_version('olsrd_httpinfo'),
+				Net = { daemon.accept },
+				port = daemon.httpinfo_port,
+			})
+		end
 
-	if #intf.radio_mesh then
-		uci:section('olsrd2', 'interface', 'radio_mesh', {
-			ifname = intf.radio_mesh,
-			bindto = addrs,
+		uci:section(uci_name, 'InterfaceDefaults', nil, {
+			Mode = 'mesh', -- should be mode 'ether' but that appears broken for some reason
+			-- olsrd6 meshes on the node address sync-interfaces puts on every interface
+			IPv6Src = daemon.ipv == 6 and node_ip6 and (node_ip6 .. '/128') or nil,
 		})
+
+		uci:section(uci_name, 'Interface', 'mesh')
+
+		uci:foreach(uci_name, 'userconfig', function(config)
+			local section_name = config['.name']
+
+			for k, v in pairs(config) do
+				if k:find("^\\.") == nil then
+					if not config['.anonymous'] then
+						uci:set(uci_name, section_name:sub(2), k, v)
+					else
+						uci:set(uci_name, uci:get_first(uci_name, 'olsrd'), k, v)
+					end
+				end
+			end
+		end)
+
+		uci:section('firewall', 'rule', fw_rule, {
+			name = 'Allow olsr' .. daemon.ipv .. ' mesh',
+			src = 'mesh',
+			dest_port = 698,
+			proto = 'udp',
+			family = 'ipv' .. daemon.ipv,
+			target = 'ACCEPT',
+		})
+	else
+		-- no prefix for this family
+		os.execute('/etc/init.d/' .. uci_name .. ' disable')
+		uci:delete('firewall', fw_rule)
 	end
 
-	local loopback_addrs = {
-		uci:get('network', 'loopback', 'ip6addr'),
-		'default_reject',
-	}
-
-	uci:section('olsrd2', 'interface', 'loopback', {
-		ifname = { 'loopback' },
-		routeable = loopback_addrs,
-		bindto = loopback_addrs,
-	})
-
-	uci:section('olsrd2', 'lan_import', 'l3roamd_clients_v6', {
-		name = 'l3roamd_clients_v6',
-		matches = client_ranges_v6,
-		prefix_length = 128,
-		protocol = 158, -- l3roamd
-	})
-
-	-- This does not work as olsrv2 rejects any addresses from loopback
-	-- as that is already a mesh interface
-	-- l3roamd works fine without, as wifi disassociation events still notify
-	-- the daemon and remove the routes
-	--uci:section('olsrd2', 'lan_import', 'l3roamd_prefix', {
-	--	name = 'l3roamd_ranges',
-	--	matches = l3roamd_ranges,
-	--})
-
-	uci:section('firewall', 'rule', 'allow_olsr2_mesh', {
-		src = 'mesh',
-		dest_port = '269',
-		proto = 'udp',
-		target = 'ACCEPT',
-	})
-else
-	-- site.mesh.olsrd.v2.enable false
-	os.execute('/etc/init.d/olsrd2 disable')
-	uci:delete('firewall', 'allow_olsr2_mesh')
+	uci:save(uci_name)
 end
-uci:save('olsrd2')
+
 uci:save('firewall')
-uci:save('network')

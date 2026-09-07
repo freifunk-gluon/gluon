@@ -92,4 +92,27 @@ function M.mac_to_ip(prefix, mac, firstbyte, secondbyte)
 	return string.format("%x:%x:%x:%x:%x:%x:%x:%x/%d", p1, p2, p3, p4, h1, h2, h3, h4, 128)
 end
 
+
+-- IPv4 mac_to_ip: the host part is the low bits of the MAC, `range` bits
+-- when given. .0 and .1 are skipped.
+function M.mac_to_ip4(prefix, mac, range)
+	local a, b, c, d, plen = prefix:match('^(%d+)%.(%d+)%.(%d+)%.(%d+)/(%d+)$')
+	if not a then
+		return nil
+	end
+
+	local host = tonumber((mac:gsub(':', '')):sub(-8), 16) % 2 ^ (32 - (range or tonumber(plen)))
+	if host < 2 then
+		host = 2
+	end
+
+	local address = ((a * 256 + b) * 256 + c) * 256 + d + host
+
+	return string.format('%d.%d.%d.%d/32',
+		math.floor(address / 2 ^ 24) % 256,
+		math.floor(address / 2 ^ 16) % 256,
+		math.floor(address / 2 ^ 8) % 256,
+		address % 256)
+end
+
 return M

@@ -1,0 +1,462 @@
+From: Maciej Krüger <mkg20001@gmail.com>
+Date: Tue, 3 Jan 2023 01:20:58 +0100
+Subject: olsrd: add l3roamd patch
+
+diff --git a/olsrd/patches/999-l3roamd.patch b/olsrd/patches/999-l3roamd.patch
+new file mode 100644
+index 0000000000000000000000000000000000000000..8c8cdc670de5d4a1143a315f1fc4f8d629880fdd
+--- /dev/null
++++ b/olsrd/patches/999-l3roamd.patch
+@@ -0,0 +1,452 @@
++From 75e4d8c491d4d0849a741cb9d26e1bf8abface22 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Maciej=20Kr=C3=BCger?= <mkg20001@gmail.com>
++Date: Sun, 15 Jan 2023 02:03:19 +0100
++Subject: [PATCH] l3roamd
++
++---
++ src/l3roamd.c                | 279 +++++++++++++++++++++++++++++++++++
++ src/l3roamd.h                |  13 ++
++ src/linux/kernel_routes_nl.c |  36 ++++-
++ src/main.c                   |   8 +-
++ src/olsr_cfg.h               |   2 +
++ 5 files changed, 331 insertions(+), 7 deletions(-)
++ create mode 100644 src/l3roamd.c
++ create mode 100644 src/l3roamd.h
++
++diff --git a/src/l3roamd.c b/src/l3roamd.c
++new file mode 100644
++index 0000000..943d19b
++--- /dev/null
+++++ b/src/l3roamd.c
++@@ -0,0 +1,279 @@
+++#include "olsr.h"
+++#include "olsr_types.h"
+++#include "ipcalc.h"
+++#include "l3roamd.h"
+++
+++#include <string.h>
+++#include <stdlib.h>
+++#include <errno.h>
+++#include <time.h>
+++#include <stdio.h>
+++#include <arpa/inet.h>
+++#include <sys/socket.h>
+++#include <linux/rtnetlink.h>
+++#include <netinet/in.h>
+++
+++// adapted from https://olegkutkov.me/2019/03/24/getting-linux-routing-table-using-netlink/
+++
+++// ref https://gist.github.com/cl4u2/5204374
+++
+++int rtnl_receive(int fd, struct msghdr *msg, int flags)
+++{
+++    int len;
+++
+++    do {
+++        len = recvmsg(fd, msg, flags);
+++    } while (len < 0 && (errno == EINTR || errno == EAGAIN));
+++
+++    if (len < 0) {
+++        perror("Netlink receive failed");
+++        return -errno;
+++    }
+++
+++    if (len == 0) {
+++        perror("EOF on netlink");
+++        return -ENODATA;
+++    }
+++
+++    return len;
+++}
+++
+++static int rtnl_recvmsg(int fd, struct msghdr *msg, char **answer)
+++{
+++    struct iovec *iov = msg->msg_iov;
+++    char *buf;
+++    int len;
+++
+++    iov->iov_base = NULL;
+++    iov->iov_len = 0;
+++
+++    len = rtnl_receive(fd, msg, MSG_PEEK | MSG_TRUNC);
+++
+++    if (len < 0) {
+++        return len;
+++    }
+++
+++    buf = malloc(len);
+++
+++    if (!buf) {
+++        perror("malloc failed");
+++        return -ENOMEM;
+++    }
+++
+++    iov->iov_base = buf;
+++    iov->iov_len = len;
+++
+++    len = rtnl_receive(fd, msg, 0);
+++
+++    if (len < 0) {
+++        free(buf);
+++        return len;
+++    }
+++
+++    *answer = buf;
+++
+++    return len;
+++}
+++
+++void parse_rtattr(struct rtattr *tb[], int max, struct rtattr *rta, int len)
+++{
+++    memset(tb, 0, sizeof(struct rtattr *) * (max + 1));
+++
+++    while (RTA_OK(rta, len)) {
+++        if (rta->rta_type <= max) {
+++            tb[rta->rta_type] = rta;
+++        }
+++
+++        rta = RTA_NEXT(rta,len);
+++    }
+++}
+++
+++static inline int rtm_get_table(struct rtmsg *r, struct rtattr **tb)
+++{
+++    __u32 table = r->rtm_table;
+++
+++    if (tb[RTA_TABLE]) {
+++        table = *(__u32 *)RTA_DATA(tb[RTA_TABLE]);
+++    }
+++
+++    return table;
+++}
+++
+++#define RTPROTO_L3ROAMD 158
+++
+++/* l3roamd installs a host route per client, in whichever family we run in */
+++static uint8_t l3_host_len(void) {
+++    return olsr_cnf->ip_version == AF_INET ? 32 : 128;
+++}
+++
+++void
+++l3_ip_prefix_list_add(struct ip_prefix_list **list, const union olsr_ip_addr *net, uint8_t prefix_len) {
+++    struct ipaddr_str buf;
+++    OLSR_PRINTF(0, "l3roamd HNA: Add %s/%u\n", olsr_ip_to_string(&buf, net), prefix_len);
+++    return ip_prefix_list_add(list, net, prefix_len);
+++}
+++
+++int
+++l3_ip_prefix_list_remove(struct ip_prefix_list **list, const union olsr_ip_addr *net, uint8_t prefix_len) {
+++    struct ipaddr_str buf;
+++    int ret = ip_prefix_list_remove(list, net, prefix_len);
+++    OLSR_PRINTF(0, "l3roamd HNA: Remove %s/%u - OK %i\n", olsr_ip_to_string(&buf, net), prefix_len, ret);
+++    return ret;
+++}
+++
+++int convert_route (struct nlmsghdr* nl_header_answer, union olsr_ip_addr * prefix, uint8_t * prefix_len) {
+++    struct rtmsg* r = NLMSG_DATA(nl_header_answer);
+++    int len = nl_header_answer->nlmsg_len;
+++    struct rtattr* tb[RTA_MAX+1];
+++    int table;
+++
+++    len -= NLMSG_LENGTH(sizeof(*r));
+++
+++    if (len < 0) {
+++        perror("Wrong message length");
+++        return -1;
+++    }
+++
+++    parse_rtattr(tb, RTA_MAX, RTM_RTA(r), len);
+++
+++    table = rtm_get_table(r, tb);
+++
+++    if (r->rtm_family != olsr_cnf->ip_version || table != RT_TABLE_MAIN || r->rtm_protocol != RTPROTO_L3ROAMD || !tb[RTA_DST] || r->rtm_dst_len != l3_host_len()) {
+++        return 1;
+++    }
+++
+++    if (RTA_PAYLOAD(tb[RTA_DST]) < olsr_cnf->ipsize) {
+++        return 1;
+++    }
+++
+++    memcpy(prefix, RTA_DATA(tb[RTA_DST]), olsr_cnf->ipsize);
+++
+++    *prefix_len = r->rtm_dst_len;
+++
+++    return 0;
+++}
+++
+++int do_route_dump_requst(int sock)
+++{
+++    struct {
+++        struct nlmsghdr nlh;
+++        struct rtmsg rtm;
+++    } nl_request;
+++
+++    memset(&nl_request, 0, sizeof(nl_request));
+++
+++    nl_request.nlh.nlmsg_type = RTM_GETROUTE;
+++    nl_request.nlh.nlmsg_flags = NLM_F_REQUEST | NLM_F_DUMP;
+++    nl_request.nlh.nlmsg_len = sizeof(nl_request);
+++    nl_request.nlh.nlmsg_seq = time(NULL);
+++    nl_request.rtm.rtm_family = olsr_cnf->ip_version;
+++
+++    // set l3 specifics
+++
+++    nl_request.rtm.rtm_dst_len = l3_host_len();
+++    nl_request.rtm.rtm_protocol = RTPROTO_L3ROAMD;
+++
+++    return send(sock, &nl_request, sizeof(nl_request), 0);
+++}
+++
+++int get_route_dump_response(int sock, struct ip_prefix_list ** out)
+++{
+++    struct sockaddr_nl nladdr;
+++    struct iovec iov;
+++    struct msghdr msg = {
+++            .msg_name = &nladdr,
+++            .msg_namelen = sizeof(nladdr),
+++            .msg_iov = &iov,
+++            .msg_iovlen = 1,
+++    };
+++
+++    char *buf = NULL;
+++
+++    int status = rtnl_recvmsg(sock, &msg, &buf);
+++
+++    if (status < 0) {
+++        return status;
+++    }
+++
+++    struct nlmsghdr *h = (struct nlmsghdr *)buf;
+++    int msglen = status;
+++
+++    union olsr_ip_addr prefix;
+++    memset(&prefix, 0, sizeof(union olsr_ip_addr));
+++    uint8_t prefix_len;
+++
+++    while (NLMSG_OK(h, msglen)) {
+++        if (h->nlmsg_flags & NLM_F_DUMP_INTR) {
+++            fprintf(stderr, "Dump was interrupted\n");
+++            free(buf);
+++            return -1;
+++        }
+++
+++        if (nladdr.nl_pid != 0) {
+++            continue;
+++        }
+++
+++        if (h->nlmsg_type == NLMSG_ERROR) {
+++            perror("netlink reported error");
+++            goto cleanup;
+++        }
+++
+++        int route_status = convert_route(h, &prefix, &prefix_len);
+++
+++        if (route_status < 0) {
+++            status = -1;
+++            goto cleanup;
+++        }
+++
+++        if (!route_status) {
+++            l3_ip_prefix_list_add(out, &prefix, prefix_len);
+++        }
+++
+++        h = NLMSG_NEXT(h, msglen);
+++    }
+++
+++    free(buf);
+++
+++    return 0;
+++cleanup:
+++    free(buf);
+++    ip_prefix_list_clear(out);
+++
+++    return status;
+++}
+++
+++void process_l3roamd_nlh(struct nlmsghdr * nlh, bool isDelete) {
+++    union olsr_ip_addr prefix;
+++    memset(&prefix, 0, sizeof(union olsr_ip_addr));
+++    uint8_t prefix_len;
+++
+++    int route_status = convert_route(nlh, &prefix, &prefix_len);
+++
+++    if (route_status < 0) {
+++        OLSR_PRINTF(1, "l3roamd HNA: Failed to convert route: %i", route_status);
+++        return;
+++    }
+++
+++    if (route_status) { // we should ignore it
+++        return;
+++    }
+++
+++    if (isDelete) {
+++        if (!l3_ip_prefix_list_remove(&olsr_cnf->hna_entries, &prefix, prefix_len)) {
+++            olsr_exit("l3roamd HNA: remove failed to delete route, this should not happen", 1);
+++        }
+++    } else {
+++        l3_ip_prefix_list_add(&olsr_cnf->hna_entries, &prefix, prefix_len);
+++    }
+++}
+++
+++void l3roamd_hna_init(void) {
+++    if (do_route_dump_requst(olsr_cnf->rtnl_s) < 0) {
+++        perror("Failed to perfom request");
+++        olsr_exit("l3roamd HNA: failed to send dump request", 1);
+++    }
+++
+++    if (get_route_dump_response(olsr_cnf->rtnl_s, &olsr_cnf->hna_entries)) {
+++        olsr_exit("l3roamd HNA: failed to dump netlink response", 1);
+++    }
+++}
++diff --git a/src/l3roamd.h b/src/l3roamd.h
++new file mode 100644
++index 0000000..1a67014
++--- /dev/null
+++++ b/src/l3roamd.h
++@@ -0,0 +1,13 @@
+++//
+++// Created by maciej on 02.01.23.
+++//
+++
+++#include<linux/netlink.h>
+++
+++#ifndef OLSRD_L3ROAMD_H
+++#define OLSRD_L3ROAMD_H
+++
+++void process_l3roamd_nlh(struct nlmsghdr * nlh, bool isDelete);
+++void l3roamd_hna_init(void);
+++
+++#endif //OLSRD_L3ROAMD_H
++diff --git a/src/linux/kernel_routes_nl.c b/src/linux/kernel_routes_nl.c
++index 1a2810d..49513e1 100644
++--- a/src/linux/kernel_routes_nl.c
+++++ b/src/linux/kernel_routes_nl.c
++@@ -50,6 +50,8 @@
++ #include "log.h"
++ #include "net_os.h"
++ #include "ifnet.h"
+++#include "l3roamd.h"
+++#include "olsr.h"
++ 
++ #include <assert.h>
++ #include <linux/types.h>
++@@ -166,14 +168,31 @@ static void rtnetlink_read(int sock, void *data __attribute__ ((unused)), unsign
++     0
++   };
++ 
++-  char buffer[4096];
+++  int bufsize = 4096;
+++
+++  char * buffer = olsr_malloc(bufsize, "netlink receive buffer");
+++  iov.iov_base = (void *) buffer;
+++  iov.iov_len = bufsize;
++   struct nlmsghdr *nlh = (struct nlmsghdr *)ARM_NOWARN_ALIGN(buffer);
+++
++   int ret;
++ 
++-  iov.iov_base = (void *) buffer;
++-  iov.iov_len = sizeof(buffer);
+++  while ((ret = recvmsg(sock, &msg, MSG_DONTWAIT | MSG_TRUNC | MSG_PEEK)) >= 0) {
+++    if (ret > bufsize) {
+++      free(buffer);
+++      buffer = olsr_malloc(ret, "netlink receive buffer expansion");
+++      bufsize = ret;
+++
+++      iov.iov_base = (void *) buffer;
+++      iov.iov_len = bufsize;
+++      nlh = (struct nlmsghdr *)ARM_NOWARN_ALIGN(buffer);
+++    }
+++
+++    ret = recvmsg(sock, &msg, MSG_DONTWAIT);
+++    if (ret < 0) {
+++      goto end;
+++    }
++ 
++-  while ((ret = recvmsg(sock, &msg, MSG_DONTWAIT)) >= 0) {
++     /*check message*/
++     len = nlh->nlmsg_len;
++     plen = len - sizeof(nlh);
++@@ -181,7 +200,7 @@ static void rtnetlink_read(int sock, void *data __attribute__ ((unused)), unsign
++       OLSR_PRINTF(1,"Malformed netlink message: "
++              "len=%d left=%d plen=%d\n",
++               len, ret, plen);
++-      return;
+++      goto end;
++     }
++ 
++     OLSR_PRINTF(3, "Netlink message received: type 0x%x\n", nlh->nlmsg_type);
++@@ -189,11 +208,18 @@ static void rtnetlink_read(int sock, void *data __attribute__ ((unused)), unsign
++       /* handle ifup/ifdown */
++       netlink_process_link(nlh);
++     }
+++
+++    if ((nlh->nlmsg_type == RTM_DELROUTE) || (nlh->nlmsg_type == RTM_NEWROUTE)) {
+++      /* handle l3roamd route changes */
+++      process_l3roamd_nlh(nlh, nlh->nlmsg_type == RTM_DELROUTE);
+++    }
++   }
++ 
++   if (errno != EAGAIN) {
++     OLSR_PRINTF(1,"netlink listen error %u - %s\n",errno,strerror(errno));
++   }
+++end:
+++  free(buffer);
++ }
++ 
++ static void
++diff --git a/src/main.c b/src/main.c
++index 6e66359..4085a8e 100644
++--- a/src/main.c
+++++ b/src/main.c
++@@ -86,6 +86,7 @@
++ #include <linux/types.h>
++ #include <linux/rtnetlink.h>
++ #include "kernel_routes.h"
+++#include "l3roamd.h"
++ 
++ #endif /* __linux__ */
++ 
++@@ -416,6 +417,7 @@ void get_argc_argv(int *argc, char ***argv) {
++   }
++ }
++ 
+++
++ int main(int argc, char *argv[]) {
++   int argcLocal = argc;
++ 
++@@ -571,7 +573,7 @@ int main(int argc, char *argv[]) {
++     olsr_syslog(OLSR_LOG_INFO, "rtnetlink could not be set to nonblocking");
++   }
++ 
++-  if ((olsr_cnf->rt_monitor_socket = rtnetlink_register_socket(RTMGRP_LINK)) < 0) {
+++  if ((olsr_cnf->rt_monitor_socket = rtnetlink_register_socket(RTMGRP_LINK | RTMGRP_IPV4_ROUTE | RTMGRP_IPV6_ROUTE)) < 0) {
++     char buf2[1024];
++     snprintf(buf2, sizeof(buf2), "rtmonitor socket: %s", strerror(errno));
++     olsr_exit(buf2, EXIT_FAILURE);
++@@ -771,7 +773,9 @@ int main(int argc, char *argv[]) {
++   signal(SIGUSR2, SIG_IGN);
++ #endif /* _WIN32 */
++ 
++-  /* Starting scheduler */
+++  l3roamd_hna_init();
+++
+++    /* Starting scheduler */
++   olsr_scheduler();
++ 
++   /* We'll only get here when olsr_shutdown has stopped the scheduler */
++diff --git a/src/olsr_cfg.h b/src/olsr_cfg.h
++index de49062..4e4195b 100644
++--- a/src/olsr_cfg.h
+++++ b/src/olsr_cfg.h
++@@ -417,6 +417,8 @@ extern "C" {
++ 
++   int ip_prefix_list_remove(struct ip_prefix_list **, const union olsr_ip_addr *, uint8_t);
++ 
+++  void ip_prefix_list_clear(struct ip_prefix_list **list);
+++
++   struct ip_prefix_list *ip_prefix_list_find(struct ip_prefix_list *, const union olsr_ip_addr *net, uint8_t prefix_len);
++ 
++ /*
++-- 
++2.54.0
++
