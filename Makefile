@@ -86,7 +86,7 @@ GLUON_VARS = \
 	GLUON_TARGET BOARD SUBTARGET
 
 unexport $(GLUON_VARS)
-GLUON_ENV = $(foreach var,$(GLUON_VARS),$(var)=$(call escape,$($(var))))
+override GLUON_ENV = $(foreach var,$(GLUON_VARS),$(var)=$(call escape,$($(var))))
 
 show-release:
 	@echo '$(GLUON_RELEASE)'
@@ -122,11 +122,11 @@ update-modules: FORCE
 update-ci: FORCE
 	@$(GLUON_ENV) scripts/update-ci.sh
 
-GLUON_TARGETS :=
+override GLUON_TARGETS :=
 
 define GluonTarget
 gluon_target := $(1)$$(if $(2),-$(2))
-GLUON_TARGETS += $$(gluon_target)
+override GLUON_TARGETS += $$(gluon_target)
 GLUON_TARGET_$$(gluon_target)_BOARD := $(1)
 GLUON_TARGET_$$(gluon_target)_SUBTARGET := $(2)
 endef
@@ -136,8 +136,8 @@ include $(GLUON_TARGETSDIR)/targets.mk
 
 OPENWRTMAKE = $(MAKE) -C openwrt
 
-BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
-SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
+override BOARD := $(GLUON_TARGET_$(GLUON_TARGET)_BOARD)
+override SUBTARGET := $(GLUON_TARGET_$(GLUON_TARGET)_SUBTARGET)
 
 
 define CheckTarget
