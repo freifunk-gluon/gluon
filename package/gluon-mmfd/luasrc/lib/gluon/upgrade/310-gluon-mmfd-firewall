@@ -52,4 +52,20 @@ uci:section('firewall', 'rule',  'mmfd_respondd_mesh', {
 	target = 'ACCEPT',
 })
 
+-- the flood carries the same respondd queries as the mesh, so the asker can
+-- be in any prefix the mesh zone accepts (see 400-respondd-firewall)
+uci:delete_all('firewall', 'rule', function(rule)
+	return rule['.name']:find('^mmfd_respondd_extraprefix')
+end)
+
+for idx, prefix in ipairs(site.extra_prefixes6({})) do
+	uci:section('firewall', 'rule',  'mmfd_respondd_extraprefix' .. idx, {
+		src = 'mmfd',
+		src_ip = prefix,
+		dest_port = '1001',
+		proto = 'udp',
+		target = 'ACCEPT',
+	})
+end
+
 uci:save('firewall')
