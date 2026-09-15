@@ -16,7 +16,7 @@ The proper fix is pending in https://github.com/openwrt/openwrt/pull/23860
 Signed-off-by: Florian Maurer <f.maurer@outlook.de>
 
 diff --git a/package/base-files/files/lib/functions/uci-defaults.sh b/package/base-files/files/lib/functions/uci-defaults.sh
-index f77ce4ab27c970dd5e616a1db0dcb87686411b99..b1fbcb3bdcde9efdd200cd3a9feb01a8903c044b 100644
+index 43c630fc7cb000bccc9d57a49700afb8e23d764f..360126db1b1c164dafc18f8109b8631bd8505ecf 100644
 --- a/package/base-files/files/lib/functions/uci-defaults.sh
 +++ b/package/base-files/files/lib/functions/uci-defaults.sh
 @@ -757,6 +757,7 @@ ucidef_set_poe() {
@@ -24,6 +24,6 @@ index f77ce4ab27c970dd5e616a1db0dcb87686411b99..b1fbcb3bdcde9efdd200cd3a9feb01a8
  
  ucidef_add_wlan() {
 +	return 0
- 	local path="$1"; shift
- 
  	ucidef_wlan_idx=${ucidef_wlan_idx:-0}
+ 
+ 	json_select_object wlan
