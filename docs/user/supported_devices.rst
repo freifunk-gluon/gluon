@@ -295,6 +295,11 @@ ipq40xx-mikrotik
 ipq806x-generic
 ---------------
 
+* Aruba
+
+  - AP-324
+  - AP-325
+
 * Extreme Networks
 
   - WS-AP3935i
