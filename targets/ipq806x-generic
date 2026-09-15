@@ -11,6 +11,13 @@ local QCA9984_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca
 -- QCA9980 / QCA9990
 --
 
+-- Aruba
+
+device('aruba-ap-32x', 'aruba_ap-32x', {
+   packages = QCA9980_PACKAGES,
+   factory = false,
+})
+
 -- Extreme Networks
 
 device('extreme-networks-ap3935', 'extreme_ap3935', {
