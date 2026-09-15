@@ -47,6 +47,7 @@ Several Freifunk communities in Germany use Gluon as the foundation of their Fre
   dev/site_library
   dev/build
   dev/debugging
+  dev/tests
 
 .. toctree::
   :caption: gluon-web Reference

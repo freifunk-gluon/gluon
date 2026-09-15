@@ -12,9 +12,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+
+# the integration test rig, for autodoc
+sys.path.insert(0, os.path.abspath('../tests'))
 
 
 # -- Project information -----------------------------------------------------
@@ -39,7 +41,14 @@ release = version
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
 ]
+
+# asyncssh is only needed to run the tests, not to document them
+autodoc_mock_imports = ['asyncssh']
+
+# Keep the rig's own grouping instead of sorting everything alphabetically.
+autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
