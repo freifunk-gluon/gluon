@@ -14,9 +14,9 @@ end
 
 need_string_match(in_domain({'domain_seed'}), '^' .. ('%x'):rep(64) .. '$')
 
-need_string({'opkg', 'openwrt'}, false)
-obsolete({'opkg', 'lede'}, 'Use opkg.openwrt instead.')
-need_table({'opkg', 'extra'}, function(extra_repo)
+need_string({'apk', 'openwrt'}, false)
+obsolete({'opkg'}, 'Use apk instead.')
+need_table({'apk', 'extra'}, function(extra_repo)
 	need_alphanumeric_key(extra_repo)
 	need_string(extra_repo)
 end, false)

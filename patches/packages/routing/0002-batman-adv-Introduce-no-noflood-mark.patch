@@ -14,7 +14,7 @@ Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
 diff --git a/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch b/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..6058bff5bb4d07c78a82f59b47213a52b04d6a1e
+index 0000000000000000000000000000000000000000..4c7e3040f2bfd67ab3d1c700006c85c3c914d1c0
 --- /dev/null
 +++ b/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
 @@ -0,0 +1,137 @@
@@ -98,15 +98,15 @@ index 0000000000000000000000000000000000000000..6058bff5bb4d07c78a82f59b47213a52
 + 	if (info->attrs[BATADV_ATTR_BONDING_ENABLED]) {
 + 		attr = info->attrs[BATADV_ATTR_BONDING_ENABLED];
 + 
-+--- a/net/batman-adv/soft-interface.c
-++++ b/net/batman-adv/soft-interface.c
++--- a/net/batman-adv/mesh-interface.c
+++++ b/net/batman-adv/mesh-interface.c
 +@@ -177,6 +177,23 @@ static void batadv_interface_set_rx_mode
 + {
 + }
 + 
 ++/**
 ++ * batadv_send_skb_has_noflood_mark() - check if packet has a noflood mark
-++ * @bat_priv: the bat priv with all the soft interface information
+++ * @bat_priv: the bat priv with all the mesh interface information
 ++ * @skb: the packet to check
 ++ *
 ++ * Return: True if the skb's mark matches a configured noflood mark and
@@ -122,7 +122,7 @@ index 0000000000000000000000000000000000000000..6058bff5bb4d07c78a82f59b47213a52
 ++}
 ++
 + static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
-+ 				       struct net_device *soft_iface)
++ 				       struct net_device *mesh_iface)
 + {
 +@@ -333,6 +350,9 @@ send:
 + 		if (batadv_dat_snoop_outgoing_arp_request(bat_priv, skb))

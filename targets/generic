@@ -18,7 +18,7 @@ if env.SUBTARGET ~= '' then
 	config(string.format('TARGET_%s_%s', env.BOARD, env.SUBTARGET), true)
 end
 
--- Disable non-default feeds in distfeeds.conf
+-- Disable non-default feeds in distfeeds.list
 config('FEED_gluon_base', false)
 
 local default_feeds = {}
@@ -92,6 +92,11 @@ config('BUSYBOX_CONFIG_UNSHARE', true)
 config('TARGET_MULTI_PROFILE', true)
 config('TARGET_PER_DEVICE_ROOTFS', true)
 
+config('IMAGEOPT', true)
+config('TARGET_BUTTON_CUSTOMIZATION', true)
+config('TARGET_BUTTON_CUSTOMIZATION_RESET_DISABLED', true)
+try_config('WIFI_SCRIPTS_WPS_BUTTON_DISABLED', true)
+
 config('GLUON_MULTIDOMAIN', istrue(env.GLUON_MULTIDOMAIN))
 
 try_config('GRUB_TITLE', 'Gluon')
@@ -115,7 +120,6 @@ config('GLUON_MINIFY', istrue(env.GLUON_MINIFY))
 packages {
 	'-ca-bundle',
 	'-dnsmasq',
-	'-kmod-ipt-offload',
 	'-kmod-nft-offload',
 	'-libustream-mbedtls',
 	'-libmbedtls',
@@ -123,8 +127,6 @@ packages {
 	'-odhcpd-ipv6only',
 	'-ppp',
 	'-ppp-mod-pppoe',
-	'-wpad-mini',
-	'-wpad-basic',
 	'-wpad-basic-mbedtls',
 	'-firewall4',
 	'gluon-core',

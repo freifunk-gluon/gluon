@@ -5,12 +5,18 @@ Subject: base-files: disable wiphy renaming
 The phy renaming is currently only done when the wifi iface is used.
 This is too late for gluon - disable it therefore, so that all targets use phyX as well.
 This is currently needed for the mediatek-mt7622 target.
-Only needed for openwrt-24.10 branch as later releases will be able to handle renaming early enough.
+
+Still needed on openwrt-25.12: although upstream
+commit 4b7323e ("netifd: always call setup for disabled radios") partially
+addresses the issue, the phy name remains incorrect when radios are not
+brought up through netifd (e.g. in Gluon config/setup mode).
+
+The proper fix is pending in https://github.com/openwrt/openwrt/pull/23860
 
 Signed-off-by: Florian Maurer <f.maurer@outlook.de>
 
 diff --git a/package/base-files/files/lib/functions/uci-defaults.sh b/package/base-files/files/lib/functions/uci-defaults.sh
-index 5293ce12c0e08f2d211999e4f00fcbac6639a774..c55ff3fd681150adc9456b992a3c315c0950fb4f 100644
+index f77ce4ab27c970dd5e616a1db0dcb87686411b99..b1fbcb3bdcde9efdd200cd3a9feb01a8903c044b 100644
 --- a/package/base-files/files/lib/functions/uci-defaults.sh
 +++ b/package/base-files/files/lib/functions/uci-defaults.sh
 @@ -757,6 +757,7 @@ ucidef_set_poe() {
