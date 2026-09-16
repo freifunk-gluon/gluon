@@ -226,6 +226,7 @@ ipq40xx-generic
 * ASUS
 
   - Lyra MAP-AC2200
+  - Lyra Mini MAP-AC1300
 
 * Aruba
 
