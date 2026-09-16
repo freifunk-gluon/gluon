@@ -150,9 +150,19 @@ device('netgear-ex6150v2', 'netgear_ex6150v2', {
 	factory_ext = '.img',
 })
 
+device('netgear-rbr20', 'netgear_rbr20', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
 device('netgear-rbr50', 'netgear_rbr50', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
+})
+
+device('netgear-rbs20', 'netgear_rbs20', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
 })
 
 device('netgear-rbs50', 'netgear_rbs50', {
