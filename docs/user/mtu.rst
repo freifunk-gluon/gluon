@@ -201,7 +201,8 @@ Especially on small embedded devices, fragmentation costs performance.
 
 As batmans fragmentation is transparent to the TCP layer, clamping the MSS
 automatically to the PMTU does not work. Instead, the MSS must be specified
-explicitly. In iptables, this is done via :code:`-j TCPMSS --set-mss X`,
+explicitly. In iptables, this is done via :code:`-j TCPMSS --set-mss X`, in
+nftables via :code:`tcp option maxseg size set X`,
 whereby :code:`X` is the desired MSS.
 
 Since the MSS is specified in terms of payload of a TCP packet, the MSS is

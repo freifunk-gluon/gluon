@@ -11,7 +11,6 @@ local function configure_wan(zone)
 	end
 
 	uci:set('firewall', zone['.name'], 'input', 'REJECT')
-	uci:set('firewall', zone['.name'], 'conntrack', true)
 
 	uci:set('firewall', zone['.name'], 'network', {
 		'wan',
