@@ -184,19 +184,18 @@ local function get_prev_driver_index(ifname)
 	local path = '/sys/class/net/' .. ifname .. '/device/driver'
 	local driver_path = unistd.readlink(path)
 	if not driver_path then
-		return 0
+		return nil
 	end
 	local driver = libgen.basename(driver_path)
-	local order = prev_load_index[driver]
-	if not order then
-		return 0
-	end
-	return order
+	return prev_load_index[driver]
 end
+
+local index0 = get_prev_driver_index('eth0')
+local index1 = get_prev_driver_index('eth1')
 
 -- If the drivers would be loaded in the inverse order in the previous Gluon
 -- version (eth1 had a smaller load index than eth0), switch the roles
-if get_prev_driver_index('eth0') <= get_prev_driver_index('eth1') then
+if not index0 or not index1 or index0 <= index1 then
 	return
 end
 
