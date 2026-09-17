@@ -1,0 +1,27 @@
+From: Florian Maurer <maurer@fh-aachen.de>
+Date: Thu, 17 Sep 2026 07:01:29 +0000
+Subject: Revert "kernel: modules: load e1000e driver during pre-init stage"
+
+This reverts commit f22f533ebcbc0f7123481a01abd3a547f0232260.
+
+Loading e1000e during pre-init moves it ahead of r8169, e1000 and other
+Ethernet drivers, so on x86 devices combining an e1000e NIC with one of
+those, eth0 and eth1 are switched compared to OpenWrt 24.10.
+
+On the first upgrade from v2025.1.x, Gluon maps the stored kernel names to
+the new stable names by this order, so keep the order of 24.10. This revert
+can be dropped once upgrades from v2025.1.x are no longer supported.
+
+diff --git a/package/kernel/linux/modules/netdevices.mk b/package/kernel/linux/modules/netdevices.mk
+index 42fc497e8d24dbb7aad42e902bcd72b93b744fe4..0396520f7aebb10f2fb84813fb4cd815350cbc1c 100644
+--- a/package/kernel/linux/modules/netdevices.mk
++++ b/package/kernel/linux/modules/netdevices.mk
+@@ -1292,7 +1292,7 @@ define KernelPackage/e1000e
+   DEPENDS:=@PCIE_SUPPORT +kmod-ptp
+   KCONFIG:=CONFIG_E1000E
+   FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/e1000e/e1000e.ko
+-  AUTOLOAD:=$(call AutoProbe,e1000e,1)
++  AUTOLOAD:=$(call AutoProbe,e1000e)
+   MODPARAMS.e1000e:= \
+     IntMode=1 \
+     InterruptThrottleRate=4,4,4,4,4,4,4,4
