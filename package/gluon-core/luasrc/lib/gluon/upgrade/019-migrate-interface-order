@@ -11,10 +11,151 @@ if not platform.match('x86') then
 	return
 end
 
-if sysconfig.migrated_interface_order then
+-- Load orders (/proc/modules) of Gluon releases, oldest first - Ethernet
+-- drivers only (x86-64; should be accurate enough for x86-generic as well)
+-- It includes some common site-specific usb-net drivers.
+local load_orders = {
+	-- v2023.2.x (OpenWrt 23.05)
+	{
+		'tg3',
+		'igb',
+		'fsl_mph_dr_of',
+		'ena',
+		'natsemi',
+		'amd_xgbe',
+		'e1000',
+		'ixgbe',
+		'3c59x',
+		'8139cp',
+		'8139too',
+		'8390',
+		'bnx2',
+		'e100',
+		'e1000e',
+		'forcedeth',
+		'hso',
+		'igc',
+		'ipheth',
+		'ne2k_pci',
+		'pcnet32',
+		'pegasus',
+		'r8152',
+		'r8169',
+		'sis900',
+		'sky2',
+		'tulip',
+		'via_rhine',
+		'via_velocity',
+		'asix',
+		'ax88179_178a',
+		'cdc_eem',
+		'cdc_ether',
+		'cdc_subset',
+		'dm9601',
+		'mcs7830',
+		'rndis_host',
+		'smsc95xx',
+	},
+	-- v2025.1.x (OpenWrt 24.10): igc and r8169 are loaded at boot time
+	{
+		'tg3',
+		'igc',
+		'igb',
+		'fsl_mph_dr_of',
+		'r8169',
+		'ena',
+		'natsemi',
+		'amd_xgbe',
+		'e1000',
+		'ixgbe',
+		'3c59x',
+		'8139cp',
+		'8139too',
+		'8390',
+		'bnx2',
+		'e100',
+		'e1000e',
+		'forcedeth',
+		'hso',
+		'ipheth',
+		'ne2k_pci',
+		'pcnet32',
+		'pegasus',
+		'r8152',
+		'sis900',
+		'sky2',
+		'tulip',
+		'via_rhine',
+		'via_velocity',
+		'asix',
+		'ax88179_178a',
+		'cdc_eem',
+		'cdc_ether',
+		'cdc_subset',
+		'dm9601',
+		'mcs7830',
+		'rndis_host',
+		'smsc95xx',
+	},
+	-- v2026.1.x (OpenWrt 25.12): e1000e is loaded at boot time
+	{
+		'tg3',
+		'igc',
+		'igb',
+		'fsl_mph_dr_of',
+		'e1000e',
+		'r8169',
+		'ena',
+		'natsemi',
+		'amd_xgbe',
+		'e1000',
+		'ixgbe',
+		'3c59x',
+		'8139cp',
+		'8139too',
+		'8390',
+		'bnx2',
+		'e100',
+		'forcedeth',
+		'hso',
+		'ipheth',
+		'ne2k_pci',
+		'pcnet32',
+		'pegasus',
+		'r8152',
+		'sis900',
+		'sky2',
+		'tulip',
+		'via_rhine',
+		'via_velocity',
+		'asix',
+		'ax88179_178a',
+		'cdc_eem',
+		'cdc_ether',
+		'cdc_subset',
+		'dm9601',
+		'mcs7830',
+		'rndis_host',
+		'smsc95xx',
+	},
+}
+
+local current_order = #load_orders
+
+-- Load order the roles were last aligned to ('' was written by v2025.1.x)
+local prev_order = sysconfig.migrated_interface_order
+if prev_order == nil then
+	prev_order = 1
+elseif prev_order == '' then
+	prev_order = 2
+else
+	prev_order = tonumber(prev_order) or current_order
+end
+
+if prev_order >= current_order then
 	return
 end
-sysconfig.migrated_interface_order = ''
+sysconfig.migrated_interface_order = tostring(current_order)
 
 local lan_roles = uci:get_list('gluon', 'iface_lan', 'role')
 local wan_roles = uci:get_list('gluon', 'iface_wan', 'role')
@@ -34,52 +175,8 @@ if not is_default(lan_ifname) or not is_default(wan_ifname) then
 	return
 end
 
--- v2023.2.x load order (/proc/modules) - Ethernet drivers only
--- (x86-64; should be accurate enough for x64-generic as well)
--- It includes some common site-specific usb-net drivers.
-local prev_load_order = {
-	'tg3',
-	'igb',
-	'fsl_mph_dr_of',
-	'ena',
-	'natsemi',
-	'amd_xgbe',
-	'e1000',
-	'ixgbe',
-	'3c59x',
-	'8139cp',
-	'8139too',
-	'8390',
-	'bnx2',
-	'e100',
-	'e1000e',
-	'forcedeth',
-	'hso',
-	'igc',
-	'ipheth',
-	'ne2k_pci',
-	'pcnet32',
-	'pegasus',
-	'r8152',
-	'r8169',
-	'sis900',
-	'sky2',
-	'tulip',
-	'via_rhine',
-	'via_velocity',
-	'asix',
-	'ax88179_178a',
-	'cdc_eem',
-	'cdc_ether',
-	'cdc_subset',
-	'dm9601',
-	'mcs7830',
-	'rndis_host',
-	'smsc95xx',
-}
-
 local prev_load_index = {}
-for index, driver in ipairs(prev_load_order) do
+for index, driver in ipairs(load_orders[prev_order]) do
 	prev_load_index[driver] = index
 end
 
@@ -87,19 +184,18 @@ local function get_prev_driver_index(ifname)
 	local path = '/sys/class/net/' .. ifname .. '/device/driver'
 	local driver_path = unistd.readlink(path)
 	if not driver_path then
-		return 0
+		return nil
 	end
 	local driver = libgen.basename(driver_path)
-	local order = prev_load_index[driver]
-	if not order then
-		return 0
-	end
-	return order
+	return prev_load_index[driver]
 end
 
--- If the drivers would be loaded in the inverse order in previous Gluon
--- versions (eth1 had a smaller load index than eth0), switch the roles
-if get_prev_driver_index('eth0') <= get_prev_driver_index('eth1') then
+local index0 = get_prev_driver_index('eth0')
+local index1 = get_prev_driver_index('eth1')
+
+-- If the drivers would be loaded in the inverse order in the previous Gluon
+-- version (eth1 had a smaller load index than eth0), switch the roles
+if not index0 or not index1 or index0 <= index1 then
 	return
 end
 
