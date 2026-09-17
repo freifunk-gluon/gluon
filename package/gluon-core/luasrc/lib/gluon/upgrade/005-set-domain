@@ -43,6 +43,6 @@ if not domain then
 
 end
 
-uci:set('gluon', 'core', 'domain', domain)
+assert(uci:set('gluon', 'core', 'domain', domain))
 uci:delete('gluon', 'core', 'switch_domain')
-uci:save('gluon')
+assert(uci:save('gluon'))
