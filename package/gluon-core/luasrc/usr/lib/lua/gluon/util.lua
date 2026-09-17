@@ -1,6 +1,7 @@
 local bit = require 'bit32'
 local posix_fcntl = require 'posix.fcntl'
 local posix_glob = require 'posix.glob'
+local posix_stdlib = require 'posix.stdlib'
 local posix_syslog = require 'posix.syslog'
 local posix_unistd = require 'posix.unistd'
 local hash = require 'hash'
@@ -196,6 +197,26 @@ end
 -- a non-existing path
 function M.glob(pattern)
 	return posix_glob.glob(pattern, 0) or {}
+end
+
+-- Returns the sysfs device path of a network interface (relative to
+-- /sys/devices), or nil for interfaces without a device
+function M.get_netdev_path(ifname)
+	local path = posix_stdlib.realpath('/sys/class/net/' .. ifname .. '/device')
+	if not path then
+		return nil
+	end
+	return string.match(path, '^/sys/devices/(.+)$')
+end
+
+-- Returns the name of the network interface at a sysfs device path, or nil
+-- if there is no or more than one interface
+function M.get_netdev_by_path(path)
+	local netdevs = M.glob('/sys/devices/' .. path .. '/net/*')
+	if #netdevs ~= 1 then
+		return nil
+	end
+	return string.match(netdevs[1], '[^/]+$')
 end
 
 -- Generates a (hopefully) unique MAC address
