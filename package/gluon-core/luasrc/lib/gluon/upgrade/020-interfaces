@@ -3,6 +3,8 @@
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
 
+local util = require 'gluon.util'
+
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
@@ -102,6 +104,31 @@ else
 	sysconfig.wan_ifname = nil
 	sysconfig.lan_ifname = nil
 	sysconfig.single_ifname = lan_ifname or wan_ifname
+end
+
+local function get_netdev_paths(ifnames)
+	local paths = {}
+	for ifname in string.gmatch(ifnames, '%S+') do
+		local path = util.get_netdev_path(ifname)
+		-- Only paths identifying a single interface are useful (DSA ports
+		-- share the device of their switch, VLAN interfaces have none)
+		if not path or util.get_netdev_by_path(path) ~= ifname then
+			return nil
+		end
+		table.insert(paths, path)
+	end
+	return table.concat(paths, ' ')
+end
+
+-- The names of PCI and USB network interfaces depend on the driver load
+-- order, which may change between OpenWrt releases. Record the device paths
+-- of the interfaces once, so the roles can follow the devices instead of
+-- the names
+for _, role in ipairs({'lan', 'wan', 'single'}) do
+	local ifnames = sysconfig[role .. '_ifname']
+	if ifnames and not sysconfig[role .. '_ifpath'] then
+		sysconfig[role .. '_ifpath'] = get_netdev_paths(ifnames)
+	end
 end
 
 -- Delete all UCI device sections of type 'bridge'
