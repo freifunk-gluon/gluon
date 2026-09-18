@@ -8,6 +8,7 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 char * gluonutil_read_line(const char *filename);
