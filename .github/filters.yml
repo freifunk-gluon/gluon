@@ -185,6 +185,16 @@
     "targets/generic",
     "targets/targets.mk"
   ],
+  "qualcommax-ipq50xx": [
+    "targets/qualcommax-ipq50xx",
+    ".github/workflows/build-gluon.yml",
+    "modules",
+    "Makefile",
+    "patches/**",
+    "scripts/**",
+    "targets/generic",
+    "targets/targets.mk"
+  ],
   "qualcommax-ipq807x": [
     "targets/qualcommax-ipq807x",
     ".github/workflows/build-gluon.yml",
