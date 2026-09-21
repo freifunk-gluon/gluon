@@ -42,10 +42,6 @@ uci:section('firewall', 'rule',  'mesh_respondd_siteprefix', {
 	target = 'ACCEPT',
 })
 
-uci:delete_all('firewall', 'rule', function(rule)
-	return rule['.name']:find('^mesh_respondd_extraprefix')
-end)
-
 for idx, prefix in ipairs(site.extra_prefixes6({})) do
 	uci:section('firewall', 'rule',  'mesh_respondd_extraprefix' .. idx, {
 		name = 'mesh_respondd_extraprefix' .. idx,

@@ -36,7 +36,7 @@ sockets created by a process in accordance with the ``LIBPACKETMARK_MARK`` envir
 the packet mark for processes which don't support this themselves. The process must run as root (or at least
 with ``CAP_NET_ADMIN``) for this to work.
 
-Unfortunately there's no nice way to set the packet mark via iptables for outgoing packets. The iptables will
+Unfortunately there's no nice way to set the packet mark via netfilter for outgoing packets. The netfilter hooks will
 run after the packet has been created, to even when the packet mark is changed and the packet is re-routed, the
 source address won't be rewritten to the default source address of the newly chosen route. *libpacketmark* avoids
 this issue as the packet mark will already be set when the packet is created.
@@ -51,5 +51,5 @@ so the WAN DNS servers aren't leaked to the primary DNS daemon.
 
 *libpacketmark* is used to make the secondary DNS daemon send its requests over the WAN interface.
 
-The package ``gluon-mesh-vpn-fastd`` provides an iptables rule which will redirect all DNS requests from processes running
+The package ``gluon-mesh-vpn-core`` provides an nftables rule which will redirect all DNS requests from processes running
 with the primary group ``gluon-mesh-vpn`` to ``127.0.0.1:54``, thus making fastd use the secondary DNS daemon.

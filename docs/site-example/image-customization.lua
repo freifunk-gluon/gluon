@@ -2,9 +2,9 @@ packages {'iwinfo'}
 
 features {
 	'autoupdater',
-	'ebtables-filter-multicast',
-	'ebtables-filter-ra-dhcp',
-	'ebtables-limit-arp',
+	'firewall-filter-multicast',
+	'firewall-filter-ra-dhcp',
+	'firewall-limit-arp',
 	'mesh-batman-adv-15',
 	'mesh-vpn-fastd',
 	'respondd',

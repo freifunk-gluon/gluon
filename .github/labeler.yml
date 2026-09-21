@@ -38,7 +38,7 @@
   - changed-files:
     - any-glob-to-any-file:
       - package/**/*-firewall
-      - package/gluon-ebtables-*/**
+      - package/gluon-firewall*/**
 "3. topic: hardware":
   - changed-files:
     - any-glob-to-any-file:

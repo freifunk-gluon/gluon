@@ -263,7 +263,7 @@ multicast routing.
 Optimized multicast forwarding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :doc:`../package/gluon-ebtables-filter-multicast` package filters many kinds of multicast
+The :doc:`../package/gluon-firewall-filter-multicast` package filters many kinds of multicast
 packets when they would be flooded through the whole mesh, but it allows packets that are only
 forwarded to a limited number of nodes. In earlier version of Gluon, this allowed multicasts with up
 to 16 destination nodes, as these were sent as separate unicasts instead of broadcasting them.

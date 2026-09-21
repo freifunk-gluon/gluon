@@ -1,0 +1,21 @@
+#!/usr/bin/lua
+
+local uci = require('simple-uci').cursor()
+
+uci:foreach('firewall_gluon-old', 'rule', function(rule)
+	local name = rule['.name']
+	if not name:match('^userconfig_') then
+		return
+	end
+
+	local options = {}
+	for option, value in pairs(rule) do
+		if not option:match('^%.') then
+			options[option] = value
+		end
+	end
+
+	uci:section('firewall', 'rule', name, options)
+end)
+
+uci:save('firewall')

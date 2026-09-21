@@ -1,9 +1,0 @@
-chain('IN_ONLY', 'RETURN')
-chain('OUT_ONLY', 'RETURN')
-
--- nat chain runs early, so we can drop IGMP/MLD
-chain('MULTICAST_IN', 'RETURN', 'nat')
-chain('MULTICAST_IN_ICMPV6', 'RETURN', 'nat')
-
-chain('MULTICAST_OUT', 'RETURN')
-chain('MULTICAST_OUT_ICMPV6', 'RETURN')

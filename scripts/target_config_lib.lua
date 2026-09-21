@@ -120,7 +120,7 @@ local enabled_packages = {}
 local function config_package(pkg, v)
 	-- HACK: Handle virtual default packages
 	local subst = {
-		nftables = 'nftables-nojson'
+		nftables = 'nftables-json'
 	}
 	if subst[pkg] then
 		pkg = subst[pkg]

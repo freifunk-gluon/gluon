@@ -195,7 +195,6 @@ if site.mesh.olsrd.v2.enable(true) then
 else
 	-- site.mesh.olsrd.v2.enable false
 	os.execute('/etc/init.d/olsrd2 disable')
-	uci:delete('firewall', 'allow_olsr2_mesh')
 end
 uci:save('olsrd2')
 uci:save('firewall')

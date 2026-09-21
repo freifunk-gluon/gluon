@@ -1,7 +1,0 @@
--- Bridge loop avoidance
-rule 'MULTICAST_OUT -p ARP --arp-opcode Reply --arp-gratuitous --arp-mac-dst ff:43:05:00:00:00/ff:ff:ff:fc:00:00 -j RETURN'
-rule 'MULTICAST_OUT -p ARP --arp-opcode Reply --arp-gratuitous --arp-mac-dst ff:43:05:05:00:00/ff:ff:ff:ff:00:00 -j RETURN'
-
-rule 'MULTICAST_OUT -p ARP --arp-opcode Reply --arp-ip-src 0.0.0.0 -j DROP'
-rule 'MULTICAST_OUT -p ARP --arp-opcode Request --arp-ip-dst 0.0.0.0 -j DROP'
-rule 'MULTICAST_OUT -p ARP -j RETURN'

@@ -1,0 +1,1 @@
+meta nfproto ipv6 oifname "mesh-vpn*" tcp flags syn / syn,rst counter tcp option maxseg size set rt mtu

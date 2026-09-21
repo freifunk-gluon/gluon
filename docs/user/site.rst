@@ -326,7 +326,7 @@ mesh_vpn
   to the peer list, removal and modification of peers can be prevented by
   setting the *preserve* option of a peer to ``1`` in UCI.
 
-  **Note:** It may be interesting to include the package *gluon-iptables-clamp-mss-to-pmtu*
+  **Note:** It may be interesting to include the package *gluon-firewall-clamp-mss-to-pmtu*
   in the build when using *gluon-mesh-olsrd* to work around ICMP black holes on the internet.
 
   ::
@@ -768,9 +768,9 @@ features(feature_table)
 
     features {
       'autoupdater',
-      'ebtables-filter-multicast',
-      'ebtables-filter-ra-dhcp',
-      'ebtables-limit-arp',
+      'firewall-filter-multicast',
+      'firewall-filter-ra-dhcp',
+      'firewall-limit-arp',
       'mesh-batman-adv-15',
       'mesh-vpn-fastd',
       'respondd',
