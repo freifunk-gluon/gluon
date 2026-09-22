@@ -265,8 +265,10 @@ ipq40xx-generic
   - EX6100 (v2)
   - EX6150 (v2)
   - RBR20
+  - RBR40
   - RBR50 (v1)
   - RBS20
+  - RBS40
   - RBS50 (v1)
   - SRR60
   - SRS60

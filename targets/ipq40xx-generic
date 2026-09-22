@@ -155,12 +155,22 @@ device('netgear-rbr20', 'netgear_rbr20', {
 	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
 })
 
+device('netgear-rbr40', 'netgear_rbr40', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
 device('netgear-rbr50', 'netgear_rbr50', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_IPQ40XX_QCA9984,
 })
 
 device('netgear-rbs20', 'netgear_rbs20', {
+	factory_ext = '.img',
+	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
+})
+
+device('netgear-rbs40', 'netgear_rbs40', {
 	factory_ext = '.img',
 	packages = ATH10K_PACKAGES_IPQ40XX_QCA9888,
 })
