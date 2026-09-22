@@ -174,10 +174,10 @@ index 0000000000000000000000000000000000000000..077a563b6066cd1d3aee4b1e82328e8c
 + 
 + int system_bridge_addif(struct device *bridge, struct device *dev)
 diff --git a/target/linux/generic/config-5.15 b/target/linux/generic/config-5.15
-index f4fa7b3b46252abcc350d42aa4a751756bf9305d..aa5d0c2666f92b558090e1b66d43b4ebc54b3f97 100644
+index 226c6b1418c7ab8a1925e63ae06a34252a6e7fe1..cc557201103cb5292d1059e7a7d558f8c8ae2e81 100644
 --- a/target/linux/generic/config-5.15
 +++ b/target/linux/generic/config-5.15
-@@ -763,6 +763,7 @@ CONFIG_BRIDGE=y
+@@ -765,6 +765,7 @@ CONFIG_BRIDGE=y
  # CONFIG_BRIDGE_EBT_T_NAT is not set
  # CONFIG_BRIDGE_EBT_VLAN is not set
  CONFIG_BRIDGE_IGMP_SNOOPING=y
