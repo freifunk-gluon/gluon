@@ -530,13 +530,6 @@ device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
 device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3')
 
-device('tp-link-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
-	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
-	broken = true, -- OOM with 5GHz enabled in most environments
-	class = 'tiny', -- 64M ath9k + ath10k
-	factory = false,
-})
-
 device('tp-link-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
 
 device('tp-link-tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
