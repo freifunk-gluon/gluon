@@ -280,7 +280,7 @@
 								<tr>
 									<th><%:Node%></th>
 									<% for i, v in ipairs(mesh.attrs or {}) do %>
-										<th<%= attr('class', 'row-' .. v[1] ) .. attr('data-key', v[1]) .. attr('data-suffix', v[3]) %>><%| v[2] %></th>
+										<th<%= attr('class', 'row-' .. v[1] ) .. attr('data-key', v[1]) .. attr('data-suffix', v[3]) .. attr('data-format', v[4]) %>><%| v[2] %></th>
 									<% end %>
 									<% if wireless then %>
 										<th class="row-signal">dBm</th>
