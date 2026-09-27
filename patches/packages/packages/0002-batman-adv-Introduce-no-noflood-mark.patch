@@ -12,11 +12,11 @@ therefore creating no burdon to unrelated nodes.
 
 Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
 
-diff --git a/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch b/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
+diff --git a/net/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch b/net/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..4c7e3040f2bfd67ab3d1c700006c85c3c914d1c0
+index 0000000000000000000000000000000000000000..65fcf6538239127fef881a9cefb1e1a37d2d46e2
 --- /dev/null
-+++ b/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
++++ b/net/batman-adv/patches/2002-batman-adv-Introduce-no-noflood-mark.patch
 @@ -0,0 +1,137 @@
 +From: Linus Lüssing <linus.luessing@c0d3.blue>
 +Date: Sat, 31 Mar 2018 03:36:19 +0200
@@ -53,54 +53,9 @@ index 0000000000000000000000000000000000000000..4c7e3040f2bfd67ab3d1c700006c85c3
 + 	/* add attributes above here, update the policy in netlink.c */
 + 
 + 	/**
-+--- a/net/batman-adv/netlink.c
-++++ b/net/batman-adv/netlink.c
-+@@ -133,6 +133,8 @@ static const struct nla_policy batadv_ne
-+ 	[BATADV_ATTR_AP_ISOLATION_ENABLED]	= { .type = NLA_U8 },
-+ 	[BATADV_ATTR_ISOLATION_MARK]		= { .type = NLA_U32 },
-+ 	[BATADV_ATTR_ISOLATION_MASK]		= { .type = NLA_U32 },
-++	[BATADV_ATTR_NOFLOOD_MARK]		= { .type = NLA_U32 },
-++	[BATADV_ATTR_NOFLOOD_MASK]		= { .type = NLA_U32 },
-+ 	[BATADV_ATTR_BONDING_ENABLED]		= { .type = NLA_U8 },
-+ 	[BATADV_ATTR_BRIDGE_LOOP_AVOIDANCE_ENABLED]	= { .type = NLA_U8 },
-+ 	[BATADV_ATTR_DISTRIBUTED_ARP_TABLE_ENABLED]	= { .type = NLA_U8 },
-+@@ -285,6 +287,14 @@ static int batadv_netlink_mesh_fill(stru
-+ 			bat_priv->isolation_mark_mask))
-+ 		goto nla_put_failure;
-+ 
-++	if (nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MARK,
-++			bat_priv->noflood_mark))
-++		goto nla_put_failure;
-++
-++	if (nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MASK,
-++			bat_priv->noflood_mark_mask))
-++		goto nla_put_failure;
-++
-+ 	if (nla_put_u8(msg, BATADV_ATTR_BONDING_ENABLED,
-+ 		       !!atomic_read(&bat_priv->bonding)))
-+ 		goto nla_put_failure;
-+@@ -463,6 +473,18 @@ static int batadv_netlink_set_mesh(struc
-+ 		bat_priv->isolation_mark_mask = nla_get_u32(attr);
-+ 	}
-+ 
-++	if (info->attrs[BATADV_ATTR_NOFLOOD_MARK]) {
-++		attr = info->attrs[BATADV_ATTR_NOFLOOD_MARK];
-++
-++		bat_priv->noflood_mark = nla_get_u32(attr);
-++	}
-++
-++	if (info->attrs[BATADV_ATTR_NOFLOOD_MASK]) {
-++		attr = info->attrs[BATADV_ATTR_NOFLOOD_MASK];
-++
-++		bat_priv->noflood_mark_mask = nla_get_u32(attr);
-++	}
-++
-+ 	if (info->attrs[BATADV_ATTR_BONDING_ENABLED]) {
-+ 		attr = info->attrs[BATADV_ATTR_BONDING_ENABLED];
-+ 
 +--- a/net/batman-adv/mesh-interface.c
 ++++ b/net/batman-adv/mesh-interface.c
-+@@ -177,6 +177,23 @@ static void batadv_interface_set_rx_mode
++@@ -203,6 +203,23 @@ static void batadv_interface_set_rx_mode(struct net_device *dev)
 + {
 + }
 + 
@@ -121,10 +76,10 @@ index 0000000000000000000000000000000000000000..4c7e3040f2bfd67ab3d1c700006c85c3
 ++	       match_mark == bat_priv->noflood_mark;
 ++}
 ++
-+ static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
-+ 				       struct net_device *mesh_iface)
-+ {
-+@@ -333,6 +350,9 @@ send:
++ /**
++  * batadv_interface_tx() - transmit a frame on a mesh interface
++  * @skb: the frame to send
++@@ -373,6 +390,9 @@ static netdev_tx_t batadv_interface_tx(struct sk_buff *skb,
 + 		if (batadv_dat_snoop_outgoing_arp_request(bat_priv, skb))
 + 			brd_delay = msecs_to_jiffies(ARP_REQ_DELAY);
 + 
@@ -134,9 +89,54 @@ index 0000000000000000000000000000000000000000..4c7e3040f2bfd67ab3d1c700006c85c3
 + 		if (batadv_skb_head_push(skb, sizeof(*bcast_packet)) < 0)
 + 			goto dropped;
 + 
++--- a/net/batman-adv/netlink.c
+++++ b/net/batman-adv/netlink.c
++@@ -139,6 +139,8 @@ static const struct nla_policy batadv_netlink_policy[NUM_BATADV_ATTR] = {
++ 	[BATADV_ATTR_AP_ISOLATION_ENABLED]	= { .type = NLA_U8 },
++ 	[BATADV_ATTR_ISOLATION_MARK]		= { .type = NLA_U32 },
++ 	[BATADV_ATTR_ISOLATION_MASK]		= { .type = NLA_U32 },
+++	[BATADV_ATTR_NOFLOOD_MARK]		= { .type = NLA_U32 },
+++	[BATADV_ATTR_NOFLOOD_MASK]		= { .type = NLA_U32 },
++ 	[BATADV_ATTR_BONDING_ENABLED]		= { .type = NLA_U8 },
++ 	[BATADV_ATTR_BRIDGE_LOOP_AVOIDANCE_ENABLED]	= { .type = NLA_U8 },
++ 	[BATADV_ATTR_DISTRIBUTED_ARP_TABLE_ENABLED]	= { .type = NLA_U8 },
++@@ -289,6 +291,14 @@ static int batadv_netlink_mesh_fill(struct sk_buff *msg,
++ 			bat_priv->isolation_mark_mask))
++ 		goto nla_put_failure;
++ 
+++	if (nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MARK,
+++			bat_priv->noflood_mark))
+++		goto nla_put_failure;
+++
+++	if (nla_put_u32(msg, BATADV_ATTR_NOFLOOD_MASK,
+++			bat_priv->noflood_mark_mask))
+++		goto nla_put_failure;
+++
++ 	if (nla_put_u8(msg, BATADV_ATTR_BONDING_ENABLED,
++ 		       !!READ_ONCE(bat_priv->bonding)))
++ 		goto nla_put_failure;
++@@ -461,6 +471,18 @@ static int batadv_netlink_set_mesh(struct sk_buff *skb, struct genl_info *info)
++ 		bat_priv->isolation_mark_mask = nla_get_u32(attr);
++ 	}
++ 
+++	if (info->attrs[BATADV_ATTR_NOFLOOD_MARK]) {
+++		attr = info->attrs[BATADV_ATTR_NOFLOOD_MARK];
+++
+++		bat_priv->noflood_mark = nla_get_u32(attr);
+++	}
+++
+++	if (info->attrs[BATADV_ATTR_NOFLOOD_MASK]) {
+++		attr = info->attrs[BATADV_ATTR_NOFLOOD_MASK];
+++
+++		bat_priv->noflood_mark_mask = nla_get_u32(attr);
+++	}
+++
++ 	if (info->attrs[BATADV_ATTR_BONDING_ENABLED]) {
++ 		attr = info->attrs[BATADV_ATTR_BONDING_ENABLED];
++ 
 +--- a/net/batman-adv/types.h
 ++++ b/net/batman-adv/types.h
-+@@ -1711,6 +1711,18 @@ struct batadv_priv {
++@@ -1634,6 +1634,18 @@ struct batadv_priv {
 + 	 */
 + 	u32 isolation_mark_mask;
 + 
