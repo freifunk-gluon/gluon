@@ -55,6 +55,10 @@ device('asus-lyra-map-ac2200', 'asus_map-ac2200',{
 	factory = false,
 })
 
+device('asus-lyra-mini-map-ac1300', 'asus_map-ac1300',{
+	factory = false,
+})
+
 
 -- AVM
 
