@@ -467,6 +467,13 @@ mpc85xx-p1020
 
   - Panda
 
+qualcommax-ipq50xx
+------------------
+
+* Linksys
+
+  - MX5500
+
 qualcommax-ipq807x
 ------------------
 
