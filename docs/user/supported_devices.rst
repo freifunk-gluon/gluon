@@ -479,6 +479,7 @@ qualcommax-ipq807x
 
 * Linksys
 
+  - MX4200 v1
   - MX5300
 
 * Xiaomi

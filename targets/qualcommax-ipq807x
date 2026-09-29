@@ -1,4 +1,7 @@
 -- Linksys
+
+device('linksys-mx4200v1', 'linksys_mx4200v1')
+
 device('linksys-mx5300', 'linksys_mx5300', {
 	packages = {
 		'-kmod-ath10k-ct-smallbuffers',
