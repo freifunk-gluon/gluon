@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.5)
+
+PROJECT(utils C)
+INCLUDE(GNUInstallDirs)
+ADD_DEFINITIONS(-Os -Wall -Werror --std=gnu99)
+
+SET(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+
+ADD_LIBRARY(system SHARED system.c)
+SET_TARGET_PROPERTIES(system PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(system ubox)
+
+ADD_LIBRARY(platform SHARED platform.c)
+SET_TARGET_PROPERTIES(platform PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(platform ubox platforminfo)
+
+ADD_LIBRARY(util SHARED util.c)
+SET_TARGET_PROPERTIES(util PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(util ubox gluonutil)
+
+
+INSTALL(TARGETS system platform util LIBRARY DESTINATION lib)
