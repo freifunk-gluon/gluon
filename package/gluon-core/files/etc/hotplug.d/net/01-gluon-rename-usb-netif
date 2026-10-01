@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$ACTION" = add ] || exit 0
+
+/lib/gluon/rename-usb-netif "$INTERFACE"

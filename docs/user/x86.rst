@@ -32,3 +32,14 @@ The following targets for x86 images exist:
 `x86-legacy`
     x86 image for very old PC hardware like i586.
 
+Network interfaces
+^^^^^^^^^^^^^^^^^^
+
+Unless a board defines its own interface names, the first Ethernet interface
+(`eth0`) is used for LAN and the second one (`eth1`) for WAN.
+
+USB Ethernet adapters are named after the second half of their MAC address
+(e.g. `usb534458` for `00:e0:4c:53:44:58`), as the order in which they are
+detected may differ from boot to boot. Adapters without a fixed MAC address,
+or with the same name as another adapter, keep their name `ethX`.
+

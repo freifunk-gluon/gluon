@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# Names USB network interfaces on x86 after the device-specific half of their
+# MAC address (usbXXXXXX), as their kernel names depend on the probe order,
+# which is not even stable between boots. Their device paths are not stable
+# either (e.g. controllers sharing a PHY). The names leave room for a VLAN
+# suffix within IFNAMSIZ.
+#
+# Without arguments, all present interfaces are handled. Every rename is
+# logged to /var/run/gluon-netif-renames as "<kernel name> <new name>".
+
+# shellcheck disable=SC1091
+. /etc/openwrt_release
+
+case "$DISTRIB_TARGET" in
+x86/*) ;;
+*) exit 0 ;;
+esac
+
+RENAME_LOG=/var/run/gluon-netif-renames
+
+rename_netif() {
+	local ifname="$1"
+	local sysdir="/sys/class/net/$ifname"
+	local subsystem addr newname devpath
+
+	case "$ifname" in
+	eth[0-9]*) ;;
+	*) return ;;
+	esac
+
+	# Only names enumerated by the kernel (NET_NAME_ENUM)
+	[ "$(cat "$sysdir/name_assign_type" 2>/dev/null)" = 1 ] || return
+	# Only addresses read from the device (NET_ADDR_PERM), not random ones
+	[ "$(cat "$sysdir/addr_assign_type" 2>/dev/null)" = 0 ] || return
+
+	subsystem="$(readlink -f "$sysdir/device/subsystem")"
+	[ "${subsystem##*/}" = usb ] || return
+
+	addr="$(cat "$sysdir/address")" || return
+
+	# usbnet assigns a random address generated at boot to devices without
+	# one, still as NET_ADDR_PERM, and USB tethering devices often use random
+	# addresses as well. Random addresses are locally administered.
+	case "$addr" in
+	?[2367abef]:*) return ;;
+	esac
+
+	newname="usb$(echo "${addr#??:??:??:}" | tr -d ':')"
+
+	# Another NIC with the same address (e.g. the default address of
+	# RTL8153 adapters without EEPROM) keeps its kernel name
+	[ -e "/sys/class/net/$newname" ] && return
+
+	ip link set dev "$ifname" name "$newname" || return
+
+	mkdir -p "${RENAME_LOG%/*}"
+	echo "$ifname $newname" >> "$RENAME_LOG"
+	logger -t gluon-rename-usb-netif "renamed $ifname to $newname"
+
+	# The rename only causes a move event, while hotplug handlers act on add
+	# events, which they got for the kernel name (or will get for a name that
+	# is gone). Repeat the add event for the new name.
+	devpath="$(readlink -f "/sys/class/net/$newname")"
+	ACTION=add INTERFACE="$newname" DEVPATH="${devpath#/sys}" SUBSYSTEM=net \
+		/sbin/hotplug-call net
+}
+
+if [ $# -eq 0 ]; then
+	for sysdir in /sys/class/net/*; do
+		rename_netif "${sysdir##*/}"
+	done
+else
+	for ifname in "$@"; do
+		rename_netif "$ifname"
+	done
+fi
