@@ -198,6 +198,42 @@ function M.glob(pattern)
 	return posix_glob.glob(pattern, 0) or {}
 end
 
+-- Returns true for the names given to network interfaces by
+-- /lib/gluon/rename-netif
+function M.is_stable_netdev_name(ifname)
+	return string.match(ifname, '^enp%d+s%d+f?%d*$') ~= nil or string.match(ifname, '^usb%x%x%x%x%x%x$') ~= nil
+end
+
+-- Returns the current name of the interface the kernel named ifname (ethX),
+-- following renames by /lib/gluon/rename-netif. As kernel names are reused
+-- after a rename, the interface is found by the order of registration
+-- (ifindex), which is the order of the kernel names
+function M.get_renamed_netdev(ifname)
+	local index = tonumber(string.match(ifname, '^eth(%d+)$'))
+	local netdevs = {}
+	local renamed = false
+	for _, path in ipairs(M.glob('/sys/class/net/*')) do
+		local name = string.match(path, '[^/]+$')
+		local assign_type = M.trim(M.readfile(path .. '/name_assign_type') or '')
+		-- NET_NAME_ENUM / NET_NAME_RENAMED
+		if (string.match(name, '^eth%d+$') and assign_type == '1') or
+				(M.is_stable_netdev_name(name) and assign_type == '4') then
+			renamed = renamed or assign_type == '4'
+			table.insert(netdevs, {
+				name = name,
+				ifindex = tonumber(M.readfile(path .. '/ifindex')),
+			})
+		end
+	end
+	if not index or not renamed then
+		return unistd.access('/sys/class/net/' .. ifname) and ifname or nil
+	end
+
+	table.sort(netdevs, function(a, b) return a.ifindex < b.ifindex end)
+	local netdev = netdevs[index + 1]
+	return netdev and netdev.name
+end
+
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the MAC address
 
