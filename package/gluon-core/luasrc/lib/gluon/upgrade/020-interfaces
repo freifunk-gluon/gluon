@@ -3,6 +3,8 @@
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
 
+local util = require 'gluon.util'
+
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
 local unistd = require 'posix.unistd'
@@ -94,6 +96,15 @@ elseif platform.match('lantiq', 'xrx200', {
 	lan_ifname, wan_ifname = 'lan1 lan2 lan3 lan4', 'wan'
 end
 
+local roles = {'lan', 'wan', 'single'}
+
+-- Interface names used by the previous run, to migrate interface sections
+-- referring to them by name below
+local prev_ifnames = {}
+for _, role in ipairs(roles) do
+	prev_ifnames[role] = sysconfig[role .. '_ifname']
+end
+
 if wan_ifname and lan_ifname then
 	sysconfig.wan_ifname = wan_ifname
 	sysconfig.lan_ifname = lan_ifname
@@ -103,6 +114,192 @@ else
 	sysconfig.lan_ifname = nil
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
+
+local function get_netdev_paths(ifnames)
+	local paths = {}
+	for ifname in string.gmatch(ifnames, '%S+') do
+		local path = util.get_netdev_path(ifname)
+		-- Only paths identifying a single interface are useful (DSA ports
+		-- share the device of their switch, VLAN interfaces have none)
+		if not path or util.get_netdev_by_path(path) ~= ifname then
+			return nil
+		end
+		table.insert(paths, path)
+	end
+	return table.concat(paths, ' ')
+end
+
+local function get_netdevs_by_paths(paths)
+	local ifnames = {}
+	for path in string.gmatch(paths, '%S+') do
+		local ifname = util.get_netdev_by_path(path)
+		if not ifname then
+			return nil
+		end
+		table.insert(ifnames, ifname)
+	end
+	return table.concat(ifnames, ' ')
+end
+
+-- The names of PCI network interfaces depend on the driver load order, which
+-- may change between OpenWrt releases. Record the device paths of the
+-- interfaces, and use the interfaces found at these paths afterwards, so the
+-- roles follow the devices instead of the names
+local defaults = {}
+local resolved = {}
+
+for _, role in ipairs(roles) do
+	local ifnames = sysconfig[role .. '_ifname']
+	local paths = sysconfig[role .. '_ifpath']
+	if ifnames then
+		for ifname in string.gmatch(ifnames, '%S+') do
+			table.insert(defaults, ifname)
+		end
+		if paths then
+			resolved[role] = get_netdevs_by_paths(paths)
+		end
+	end
+end
+
+local function split(ifnames)
+	local ret = {}
+	for ifname in string.gmatch(ifnames, '%S+') do
+		table.insert(ret, ifname)
+	end
+	return ret
+end
+
+-- Returns the interface names of all roles, or nil if the resolved names
+-- cannot be used.
+--
+-- The resolved names must be default names. A resolved name outside the
+-- defaults means that the board.json defaults have changed (a switch was
+-- converted to DSA, a port was added) and the recorded paths are obsolete.
+--
+-- Roles which were not resolved (paths not recorded yet, or a device not
+-- found) keep their default names, unless these are used by resolved roles
+-- (e.g. the device of another role was moved to another slot, and the
+-- default names have changed). Such roles get the remaining default names.
+-- All defaults must end up with a role, as otherwise the board.json
+-- defaults have changed as well.
+local function resolve_roles()
+	local names = {}
+	local used = {}
+
+	for _, role in ipairs(roles) do
+		if resolved[role] then
+			for _, ifname in ipairs(split(resolved[role])) do
+				if used[ifname] or not util.contains(defaults, ifname) then
+					return nil
+				end
+				used[ifname] = true
+			end
+			names[role] = resolved[role]
+		end
+	end
+
+	local pending = {}
+	for _, role in ipairs(roles) do
+		local ifnames = sysconfig[role .. '_ifname']
+		if ifnames and not names[role] then
+			local free = true
+			for _, ifname in ipairs(split(ifnames)) do
+				if used[ifname] then
+					free = false
+				end
+			end
+			if free then
+				for _, ifname in ipairs(split(ifnames)) do
+					used[ifname] = true
+				end
+				names[role] = ifnames
+			else
+				table.insert(pending, role)
+			end
+		end
+	end
+
+	local remaining = {}
+	for _, ifname in ipairs(defaults) do
+		if not used[ifname] then
+			table.insert(remaining, ifname)
+		end
+	end
+
+	for _, role in ipairs(pending) do
+		local num = #split(sysconfig[role .. '_ifname'])
+		if #remaining < num then
+			return nil
+		end
+		names[role] = table.concat(remaining, ' ', 1, num)
+		for _ = 1, num do
+			used[table.remove(remaining, 1)] = true
+		end
+	end
+
+	if #remaining > 0 then
+		return nil
+	end
+
+	return names
+end
+
+local names = resolve_roles()
+
+for _, role in ipairs(roles) do
+	local ifnames = sysconfig[role .. '_ifname']
+	if names and resolved[role] then
+		sysconfig[role .. '_ifname'] = resolved[role]
+	elseif ifnames then
+		if names then
+			ifnames = names[role]
+			sysconfig[role .. '_ifname'] = ifnames
+		end
+		-- The paths of a role were not recorded yet, or do not lead to the
+		-- default interfaces anymore (a NIC was moved to another slot or
+		-- port): (re)record them, if the interfaces exist. Otherwise the
+		-- recorded paths are kept, so a temporarily missing device is found
+		-- again later
+		local paths = get_netdev_paths(ifnames)
+		if paths then
+			sysconfig[role .. '_ifpath'] = paths
+		end
+	end
+end
+
+-- Migrate interface sections referring to the previous names directly
+-- rather than through a role (e.g. VLANs like eth0.8) when the names of
+-- a role have changed
+local renames = {}
+for _, role in ipairs(roles) do
+	local prev = prev_ifnames[role]
+	local cur = sysconfig[role .. '_ifname']
+	if prev and cur and prev ~= cur then
+		local prev_names = {}
+		local cur_names = {}
+		for ifname in string.gmatch(prev, '%S+') do
+			table.insert(prev_names, ifname)
+		end
+		for ifname in string.gmatch(cur, '%S+') do
+			table.insert(cur_names, ifname)
+		end
+		if #prev_names == #cur_names then
+			for i, ifname in ipairs(prev_names) do
+				renames[ifname] = cur_names[i]
+			end
+		end
+	end
+end
+
+uci:foreach('gluon', 'interface', function(interface)
+	local base, suffix = string.match(interface.name or '', '^([^/.]+)(.*)$')
+	if not base or not renames[base] or renames[base] == base then
+		return
+	end
+	uci:set('gluon', interface['.name'], 'name', renames[base] .. suffix)
+end)
+
+uci:save('gluon')
 
 -- Delete all UCI device sections of type 'bridge'
 -- as well as the ones starting with 'br-'.
