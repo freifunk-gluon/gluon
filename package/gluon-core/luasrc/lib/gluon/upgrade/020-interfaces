@@ -115,13 +115,27 @@ else
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
 
+-- USB interfaces renamed by /lib/gluon/rename-usb-netif are recorded by
+-- their name instead of their device path, which is not stable for USB
+local function get_netdev_by_path(path)
+	if util.is_usb_netdev_name(path) then
+		return unistd.access('/sys/class/net/' .. path) and path or nil
+	end
+	return util.get_netdev_by_path(path)
+end
+
 local function get_netdev_paths(ifnames)
 	local paths = {}
 	for ifname in string.gmatch(ifnames, '%S+') do
-		local path = util.get_netdev_path(ifname)
+		local path
+		if util.is_usb_netdev_name(ifname) then
+			path = ifname
+		else
+			path = util.get_netdev_path(ifname)
+		end
 		-- Only paths identifying a single interface are useful (DSA ports
 		-- share the device of their switch, VLAN interfaces have none)
-		if not path or util.get_netdev_by_path(path) ~= ifname then
+		if not path or get_netdev_by_path(path) ~= ifname then
 			return nil
 		end
 		table.insert(paths, path)
@@ -132,7 +146,7 @@ end
 local function get_netdevs_by_paths(paths)
 	local ifnames = {}
 	for path in string.gmatch(paths, '%S+') do
-		local ifname = util.get_netdev_by_path(path)
+		local ifname = get_netdev_by_path(path)
 		if not ifname then
 			return nil
 		end
@@ -175,13 +189,16 @@ end
 -- The resolved names must be default names. A resolved name outside the
 -- defaults means that the board.json defaults have changed (a switch was
 -- converted to DSA, a port was added) and the recorded paths are obsolete.
+-- Renamed USB interfaces are exempt: the defaults are derived from the
+-- kernel names, which are assigned in random order to several USB
+-- interfaces, so a resolved USB interface may replace a default one.
 --
 -- Roles which were not resolved (paths not recorded yet, or a device not
 -- found) keep their default names, unless these are used by resolved roles
 -- (e.g. the device of another role was moved to another slot, and the
 -- default names have changed). Such roles get the remaining default names.
--- All defaults must end up with a role, as otherwise the board.json
--- defaults have changed as well.
+-- All defaults except renamed USB interfaces must end up with a role, as
+-- otherwise the board.json defaults have changed as well.
 local function resolve_roles()
 	local names = {}
 	local used = {}
@@ -189,7 +206,7 @@ local function resolve_roles()
 	for _, role in ipairs(roles) do
 		if resolved[role] then
 			for _, ifname in ipairs(split(resolved[role])) do
-				if used[ifname] or not util.contains(defaults, ifname) then
+				if used[ifname] or not (util.contains(defaults, ifname) or util.is_usb_netdev_name(ifname)) then
 					return nil
 				end
 				used[ifname] = true
@@ -237,8 +254,10 @@ local function resolve_roles()
 		end
 	end
 
-	if #remaining > 0 then
-		return nil
+	for _, ifname in ipairs(remaining) do
+		if not util.is_usb_netdev_name(ifname) then
+			return nil
+		end
 	end
 
 	return names
@@ -258,8 +277,8 @@ for _, role in ipairs(roles) do
 		-- The paths of a role were not recorded yet, or do not lead to the
 		-- default interfaces anymore (a NIC was moved to another slot or
 		-- port): (re)record them, if the interfaces exist. Otherwise the
-		-- recorded paths are kept, so a temporarily missing device is found
-		-- again later
+		-- recorded paths are kept, so a temporarily missing device
+		-- (unplugged, or a USB NIC not enumerated yet) is found again later
 		local paths = get_netdev_paths(ifnames)
 		if paths then
 			sysconfig[role .. '_ifpath'] = paths

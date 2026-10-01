@@ -1,0 +1,70 @@
+#!/bin/sh
+
+# Default LAN/WAN interfaces for boards without a network configuration in
+# board.d, like 99-default_network (eth0 LAN, eth1 WAN), but including the
+# USB interfaces renamed by /lib/gluon/rename-usb-netif. As their kernel names
+# are gone (and may have been reused), the first two interfaces in the order
+# of registration (ifindex) are used, which is the order of the kernel names.
+
+# shellcheck disable=SC1091
+. /lib/functions/uci-defaults.sh
+
+board_config_update
+
+json_is_a network object && exit 0
+
+is_renamed_netif() {
+	case "$1" in
+	usb[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+	*) return 1 ;;
+	esac
+	# NET_NAME_RENAMED
+	[ "$(cat "/sys/class/net/$1/name_assign_type" 2>/dev/null)" = 4 ]
+}
+
+# Prints the ifindex of the Nth interface named ethX by the kernel or renamed
+# by rename-usb-netif
+netif_index() {
+	local sysdir ifname
+
+	for sysdir in /sys/class/net/*; do
+		ifname="${sysdir##*/}"
+		case "$ifname" in
+		eth[0-9]*)
+			# NET_NAME_ENUM
+			[ "$(cat "$sysdir/name_assign_type" 2>/dev/null)" = 1 ] || continue
+			;;
+		*)
+			is_renamed_netif "$ifname" || continue
+			;;
+		esac
+		cat "$sysdir/ifindex"
+	done | sort -n | sed -n "${1}p"
+}
+
+netif_name() {
+	[ -n "$1" ] || return
+	grep -lx "$1" /sys/class/net/*/ifindex | sed -n 's#^/sys/class/net/\([^/]*\)/ifindex$#\1#p'
+}
+
+/lib/gluon/rename-usb-netif
+
+lan_index="$(netif_index 1)"
+wan_index="$(netif_index 2)"
+
+# Rename interfaces that appeared since the first run
+# shellcheck disable=SC2046
+/lib/gluon/rename-usb-netif $(netif_name "$lan_index") $(netif_name "$wan_index")
+
+lan="$(netif_name "$lan_index")"
+wan="$(netif_name "$wan_index")"
+
+# Without renamed interfaces, 99-default_network applies
+is_renamed_netif "$lan" || is_renamed_netif "$wan" || exit 0
+
+ucidef_set_interface_lan "$lan"
+[ -n "$wan" ] && ucidef_set_interface_wan "$wan"
+
+board_config_flush
+
+exit 0

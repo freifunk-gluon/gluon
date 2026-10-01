@@ -233,6 +233,33 @@ function M.get_netdev_by_path(path)
 	return string.match(netdevs[1], '[^/]+$')
 end
 
+-- Returns true for the names given to USB network interfaces by
+-- /lib/gluon/rename-usb-netif, which are derived from their MAC address
+function M.is_usb_netdev_name(ifname)
+	return string.match(ifname, '^usb%x%x%x%x%x%x$') ~= nil
+end
+
+-- Returns the current name of the network interface the kernel named
+-- ifname at boot, following renames by /lib/gluon/rename-usb-netif
+function M.get_renamed_netdev(ifname)
+	if unistd.access('/sys/class/net/' .. ifname) then
+		return ifname
+	end
+
+	local renamed
+	local f = io.open('/var/run/gluon-netif-renames')
+	if f then
+		for line in f:lines() do
+			local from, to = string.match(line, '^(%S+) (%S+)$')
+			if from == ifname then
+				renamed = to
+			end
+		end
+		f:close()
+	end
+	return renamed
+end
+
 -- Generates a (hopefully) unique MAC address
 -- The parameter defines the ID to add to the MAC address
 

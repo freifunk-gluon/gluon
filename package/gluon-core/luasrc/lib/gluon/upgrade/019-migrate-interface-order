@@ -2,6 +2,7 @@
 
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local libgen = require 'posix.libgen'
 local unistd = require 'posix.unistd'
@@ -84,6 +85,11 @@ for index, driver in ipairs(prev_load_order) do
 end
 
 local function get_prev_driver_index(ifname)
+	-- USB interfaces may have been renamed after the kernel named them
+	ifname = util.get_renamed_netdev(ifname)
+	if not ifname then
+		return nil
+	end
 	local path = '/sys/class/net/' .. ifname .. '/device/driver'
 	local driver_path = unistd.readlink(path)
 	if not driver_path then
