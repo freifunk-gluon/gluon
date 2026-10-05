@@ -2,6 +2,14 @@
 
 cd /lib/gluon/upgrade || exit 1
 
+touch /etc/config/gluon
+if ! uci -q get gluon.core >/dev/null; then
+	uci add gluon core >/dev/null
+	uci rename gluon.@core[-1]=core
+	uci commit gluon
+fi
+
+
 err=0
 
 for script in *; do
