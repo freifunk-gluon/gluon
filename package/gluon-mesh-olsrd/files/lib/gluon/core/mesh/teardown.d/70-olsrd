@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gluon-olsrd-sync-interfaces "$CONFIG"

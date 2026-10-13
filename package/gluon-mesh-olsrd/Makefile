@@ -9,9 +9,12 @@ define Package/gluon-mesh-olsrd
 	TITLE:=olsrd mesh
 	DEPENDS:= \
 		+gluon-core \
-		@IPV6 \
-		+oonf-olsrd2 \
+		+olsrd \
 		+firewall \
+		+olsrd-mod-jsoninfo \
+		+olsrd-mod-httpinfo \
+		+olsrd-mod-txtinfo \
+		+ip-full \
 		+gluon-mesh-layer3-common \
 		+gluon-l3roamd
 	PROVIDES:=gluon-mesh-provider
