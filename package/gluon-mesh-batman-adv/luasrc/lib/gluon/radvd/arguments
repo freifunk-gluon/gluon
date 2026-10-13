@@ -1,6 +1,34 @@
 #!/usr/bin/lua
 
 local site = require "gluon.site"
+local has_vpn, vpn = pcall(require, 'gluon.mesh-vpn')
+
+if has_vpn then
+	local provider_name, _ = vpn.get_active_provider()
+	if provider_name == "parker" then
+		-- If parker is used as vpn-provider uradvd must be started
+		-- with a different configuration than in vanilla gluon.
+		-- If parker has VPN enabled and has obtained a valid configuration
+		-- /tmp/range6 and /tmp/addr6 have been written by nodeconfig.
+
+		local f_range6 = io.open("/tmp/range6","r")
+		if f_range6 then
+			local range6 = f_range6:read('*a')
+			f_range6:close()
+
+			io.write("-i br-client -p " .. range6)
+		end
+
+		local f_addr6 = io.open("/tmp/addr6","r")
+		if f_addr6 then
+			local addr6 = f_addr6:read('*a')
+			f_addr6:close()
+
+			io.write(" --rdnss " .. addr6)
+		end
+		os.exit()
+	end
+end
 
 io.write("-i local-node -p " .. site.prefix6())
 
