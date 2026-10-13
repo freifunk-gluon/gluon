@@ -567,6 +567,10 @@ ramips-mt7621
   - WAC104
   - WAX202
 
+* Plasma Cloud
+
+  - PAX1800-Lite
+
 * TP-Link
 
   - EAP615-Wall (v1)
