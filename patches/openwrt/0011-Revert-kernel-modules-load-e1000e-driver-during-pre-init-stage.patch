@@ -1,0 +1,33 @@
+From: Florian Maurer <maurer@fh-aachen.de>
+Date: Thu, 17 Sep 2026 07:01:29 +0000
+Subject: Revert "kernel: modules: load e1000e driver during pre-init stage"
+
+This reverts commit f22f533ebcbc0f7123481a01abd3a547f0232260.
+
+Loading e1000e in the pre-init stage moves it in front of r8169, e1000,
+8139cp, e100 and other Ethernet drivers in the module load order, so on
+x86 devices combining an e1000e NIC with one of those, eth0 and eth1 are
+switched compared to OpenWrt 24.10 and Gluon assigns the interface roles
+to the wrong ports after an upgrade from v2025.1.x.
+
+Gluon does not need the early load: the pre-init renaming by device path
+from board.json only applies to a handful of x86 boards, which behaved
+the same way on 24.10. Keep the 24.10 load order until the interface
+roles follow the device paths on all devices (see 020-interfaces), after
+which this revert can be dropped.
+
+Assisted-by: claude:opus-5
+
+diff --git a/package/kernel/linux/modules/netdevices.mk b/package/kernel/linux/modules/netdevices.mk
+index 42fc497e8d24dbb7aad42e902bcd72b93b744fe4..0396520f7aebb10f2fb84813fb4cd815350cbc1c 100644
+--- a/package/kernel/linux/modules/netdevices.mk
++++ b/package/kernel/linux/modules/netdevices.mk
+@@ -1292,7 +1292,7 @@ define KernelPackage/e1000e
+   DEPENDS:=@PCIE_SUPPORT +kmod-ptp
+   KCONFIG:=CONFIG_E1000E
+   FILES:=$(LINUX_DIR)/drivers/net/ethernet/intel/e1000e/e1000e.ko
+-  AUTOLOAD:=$(call AutoProbe,e1000e,1)
++  AUTOLOAD:=$(call AutoProbe,e1000e)
+   MODPARAMS.e1000e:= \
+     IntMode=1 \
+     InterruptThrottleRate=4,4,4,4,4,4,4,4

@@ -1,0 +1,124 @@
+#!/bin/sh
+
+# Gives the network interfaces on x86 names that do not depend on the probe
+# order, which changes between OpenWrt releases and, for USB, even between
+# boots:
+#
+# - PCI and virtio interfaces are named after their PCI address, like systemd
+#   does (enp<bus>s<slot>[f<function>])
+# - USB interfaces, whose device paths are not stable, are named after the
+#   device-specific half of their MAC address (usb<XXXXXX>)
+#
+# Only interfaces named ethX by the kernel are renamed. Without arguments,
+# all present interfaces are handled.
+
+# shellcheck disable=SC1091
+. /etc/openwrt_release
+
+case "$DISTRIB_TARGET" in
+x86/*) ;;
+*) exit 0 ;;
+esac
+
+# The interfaces of boards with device paths in board.d are named by OpenWrt
+[ -n "$(jsonfilter -i /etc/board.json -e '@.network_device[*].path' 2>/dev/null)" ] && exit 0
+
+pci_name() {
+	local pcidev="$1"
+	local addr="${pcidev##*/}"
+	local domain bus slot fn name
+
+	case "$addr" in
+	????:??:??.?) ;;
+	*) return ;;
+	esac
+
+	domain="${addr%%:*}"
+	bus="${addr#*:}"; bus="${bus%%:*}"
+	slot="${addr##*:}"; slot="${slot%.*}"
+	fn="${addr##*.}"
+
+	name="enp$((0x$bus))s$((0x$slot))"
+
+	set -- "/sys/bus/pci/devices/$domain:$bus:$slot".*
+	[ $# -gt 1 ] && name="${name}f$fn"
+
+	echo "$name"
+}
+
+usb_name() {
+	local sysdir="$1"
+	local addr
+
+	# Only addresses read from the device (NET_ADDR_PERM)
+	[ "$(cat "$sysdir/addr_assign_type" 2>/dev/null)" = 0 ] || return
+
+	addr="$(cat "$sysdir/address")" || return
+
+	# usbnet assigns a random address generated at boot to devices without
+	# one, still as NET_ADDR_PERM, and USB tethering devices often use random
+	# addresses as well. Random addresses are locally administered.
+	case "$addr" in
+	?[2367abef]:*) return ;;
+	esac
+
+	echo "usb$(echo "${addr#??:??:??:}" | tr -d ':')"
+}
+
+rename_netif() {
+	local ifname="$1"
+	local sysdir="/sys/class/net/$ifname"
+	local device subsystem newname devpath
+
+	case "$ifname" in
+	eth[0-9]*) ;;
+	*) return ;;
+	esac
+
+	# Only names enumerated by the kernel (NET_NAME_ENUM)
+	[ "$(cat "$sysdir/name_assign_type" 2>/dev/null)" = 1 ] || return
+
+	device="$(readlink -f "$sysdir/device")" || return
+	subsystem="$(readlink -f "$device/subsystem")"
+
+	case "${subsystem##*/}" in
+	pci)
+		newname="$(pci_name "$device")"
+		;;
+	virtio)
+		subsystem="$(readlink -f "${device%/*}/subsystem")"
+		[ "${subsystem##*/}" = pci ] || return
+		newname="$(pci_name "${device%/*}")"
+		;;
+	usb)
+		newname="$(usb_name "$sysdir")"
+		;;
+	esac
+
+	[ -n "$newname" ] || return
+
+	# Another interface with the same name (e.g. USB adapters with the same
+	# default address) keeps its kernel name
+	[ -e "/sys/class/net/$newname" ] && return
+
+	ip link set dev "$ifname" name "$newname" || return
+	logger -t gluon-rename-netif "renamed $ifname to $newname"
+
+	# The rename only causes a move event, while hotplug handlers act on add
+	# events, which they got for the kernel name (or will get for a name that
+	# is gone). Repeat the add event for the new name, except in pre-init.
+	[ -z "$PREINIT" ] || return
+	devpath="$(readlink -f "/sys/class/net/$newname")"
+	ACTION=add INTERFACE="$newname" DEVPATH="${devpath#/sys}" SUBSYSTEM=net \
+		/sbin/hotplug-call net
+}
+
+if [ $# -eq 0 ]; then
+	for sysdir in /sys/class/net/*; do
+		rename_netif "${sysdir##*/}"
+	done
+else
+	for ifname in "$@"; do
+		rename_netif "$ifname"
+	done
+fi
