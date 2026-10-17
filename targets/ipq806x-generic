@@ -1,7 +1,7 @@
 -- The QCA9980 was discontinued by Qualcomm. It didn't receive any firmware-update for over 4 years.
 -- See https://github.com/kvalo/ath10k-firmware/tree/master/QCA99X0/hw2.0
--- 802.11s was never implemented for the chip's firmware. It will most likely be broken forever.
--- The QCA9984 on the other hand works fine for 11s meshes on both bands.
+-- The QCA9980 has working 802.11s with the ath10k-ct driver.
+-- The QCA9984 on the other hand works fine with the non-ct driver.
 
 local QCA9980_PACKAGES = {'-kmod-ath10k', 'kmod-ath10k-ct', '-ath10k-firmware-qca99x0', 'ath10k-firmware-qca99x0-ct'}
 local QCA9984_PACKAGES = {'kmod-ath10k', '-kmod-ath10k-ct', 'ath10k-firmware-qca9984', '-ath10k-firmware-qca9984-ct'}
@@ -29,7 +29,7 @@ device('extreme-networks-ap3935', 'extreme_ap3935', {
 -- TP-Link
 device('tp-link-archer-c2600', 'tplink_c2600', {
 	packages = QCA9980_PACKAGES,
-	broken = true,
+	broken = true, -- untested 802.11s
 })
 
 --
