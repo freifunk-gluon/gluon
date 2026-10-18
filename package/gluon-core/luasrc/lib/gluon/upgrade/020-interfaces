@@ -2,6 +2,7 @@
 
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
@@ -38,6 +39,23 @@ end
 if wan_data.device ~= nil then
 	wan_interfaces = {wan_data.device}
 end
+
+-- On x86, the interfaces are renamed by /lib/gluon/rename-netif, while
+-- board.json may refer to their kernel names
+local function get_renamed(ifaces)
+	if not ifaces or not platform.match('x86') then
+		return ifaces
+	end
+	local ret = {}
+	for _, iface in ipairs(ifaces) do
+		local base, suffix = string.match(iface, '^([^.]*)(.*)$')
+		table.insert(ret, (util.get_renamed_netdev(base) or base) .. suffix)
+	end
+	return ret
+end
+
+lan_interfaces = get_renamed(lan_interfaces)
+wan_interfaces = get_renamed(wan_interfaces)
 
 local lan_ifname = iface_exists(lan_interfaces)
 local wan_ifname = iface_exists(wan_interfaces)
@@ -103,6 +121,19 @@ else
 	sysconfig.lan_ifname = nil
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
+
+-- Migrate interface sections referring to the kernel name of a renamed
+-- interface (e.g. VLANs like eth0.8)
+uci:foreach('gluon', 'interface', function(interface)
+	local base, suffix = string.match(interface.name or '', '^([^/.]+)(.*)$')
+	local name = base and not unistd.access('/sys/class/net/' .. base) and util.get_renamed_netdev(base)
+	if not name then
+		return
+	end
+	uci:set('gluon', interface['.name'], 'name', name .. suffix)
+end)
+
+uci:save('gluon')
 
 -- Delete all UCI device sections of type 'bridge'
 -- as well as the ones starting with 'br-'.
