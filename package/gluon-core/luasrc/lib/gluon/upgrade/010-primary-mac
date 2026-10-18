@@ -33,7 +33,7 @@ end
 
 local function netdev(ifname)
 	return function()
-		return get_netdev_addr(ifname)
+		return get_netdev_addr(util.get_renamed_netdev(ifname) or ifname)
 	end
 end
 

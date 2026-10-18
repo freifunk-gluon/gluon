@@ -25,6 +25,10 @@ if [ -s "$WIRELESS_CFG" ] && ! [ -s "$WIRELESS_SAVED" ]; then
 	cp "$WIRELESS_CFG" "$WIRELESS_SAVED"
 fi
 
+# Rename the interfaces while /etc/board.json still tells whether OpenWrt
+# names them, without waiting for the hotplug handler
+/lib/gluon/rename-netif
+
 # Generate a new network config
 rm -f /etc/board.json "$NETWORK_CFG" "$SYSTEM_CFG"
 config_generate

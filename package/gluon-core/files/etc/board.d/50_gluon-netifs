@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Default LAN/WAN interfaces for boards without a network configuration in
+# board.d, like 99-default_network (eth0 LAN, eth1 WAN), but with the names
+# given by /lib/gluon/rename-netif (run by 001-reset-uci before). As the
+# kernel names are gone (and may have been reused), the first two interfaces
+# in the order of registration (ifindex) are used, which is the order of the
+# kernel names.
+
+# shellcheck disable=SC1091
+. /lib/functions/uci-defaults.sh
+
+board_config_update
+
+json_is_a network object && exit 0
+
+is_stable_netif() {
+	case "$1" in
+	enp[0-9]*s[0-9]*) ;;
+	enx[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+	*) return 1 ;;
+	esac
+}
+
+# Prints the Nth interface named ethX by the kernel or renamed by rename-netif
+netif_name() {
+	local sysdir ifname
+
+	for sysdir in /sys/class/net/*; do
+		ifname="${sysdir##*/}"
+		case "$ifname" in
+		eth[0-9]*)
+			# NET_NAME_ENUM
+			[ "$(cat "$sysdir/name_assign_type" 2>/dev/null)" = 1 ] || continue
+			;;
+		*)
+			is_stable_netif "$ifname" || continue
+			;;
+		esac
+		echo "$(cat "$sysdir/ifindex") $ifname"
+	done | sort -n | sed -n "${1}s/.* //p"
+}
+
+lan="$(netif_name 1)"
+wan="$(netif_name 2)"
+
+# Without renamed interfaces, 99-default_network applies
+is_stable_netif "$lan" || is_stable_netif "$wan" || exit 0
+
+ucidef_set_interface_lan "$lan"
+[ -n "$wan" ] && ucidef_set_interface_wan "$wan"
+
+board_config_flush
+
+exit 0
