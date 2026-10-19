@@ -25,7 +25,7 @@ Gluon's features include:
 
 Supported mesh protocols:
 
-* batman-adv (BATMAN IV fully, BATMAN V partially)
+* batman-adv (BATMAN IV and BATMAN V)
 * OLSRv2 (partially)
 
 

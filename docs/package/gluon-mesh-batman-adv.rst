@@ -26,19 +26,21 @@ B.A.T.M.A.N. Routing Algorithms
 Two routing algorithms are selectable via
 :ref:`site.conf mesh section <user-site-mesh>`: BATMAN_IV and BATMAN_V.
 
-BATMAN_IV - stable
-""""""""""""""""""
+BATMAN_IV
+"""""""""
 
-This is the recommended algorithm to use with `gluon-mesh-batman-adv-15`.
+BATMAN_IV uses a packet-loss-based link quality metric (TQ).
 
-BATMAN_V - experimental
-"""""""""""""""""""""""
+BATMAN_V
+""""""""
 
-This is the experimental B.A.T.M.A.N. routing algorithm. It is packet format /
-compatibility stable but is still in development.
+BATMAN_V uses a throughput-based metric.
+It is incompatible with BATMAN_IV.
+Upstream batman-adv still describes it as experimental.
 
 For more details, see:
 
+* https://www.open-mesh.org/projects/batman-adv/wiki/BATMAN_IV
 * https://www.open-mesh.org/projects/batman-adv/wiki/BATMAN_V
 
 .. _batman-adv-multicast-architecture:
