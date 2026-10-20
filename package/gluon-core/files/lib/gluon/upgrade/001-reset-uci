@@ -28,3 +28,9 @@ fi
 # Generate a new network config
 rm -f /etc/board.json "$NETWORK_CFG" "$SYSTEM_CFG"
 config_generate
+
+# Create the gluon config from its defaults on first boot, or if it was
+# removed, so the following upgrade scripts can store their settings in it
+if ! [ -s /etc/config/gluon ]; then
+	cp /lib/gluon/core/config/gluon /etc/config/gluon
+fi

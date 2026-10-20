@@ -29,10 +29,6 @@ config GLUON_MINIFY
 	default y
 endef
 
-define Package/gluon-core/conffiles
-/etc/config/gluon
-endef
-
 define Package/gluon-core/install
 	$(Gluon/Build/Install)
 
