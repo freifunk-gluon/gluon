@@ -1,0 +1,98 @@
+#!/bin/sh
+
+# Hands the up gluon_mesh interfaces to the olsrd daemons over ubus and
+# writes them to the uci state for the next daemon start.
+# Called from the gluon_mesh protocol hooks, with the interface going down
+# as the argument, if there is one.
+
+# shellcheck disable=SC1091
+. /lib/functions.sh
+
+GONE="$1"
+
+DUMP="$(ubus call network.interface dump)"
+
+device_of() {
+	echo "$DUMP" | jsonfilter -e "@.interface[@.interface='$1'].device"
+}
+
+# node address of the daemon's family, olsrd needs it on every interface
+address_of() {
+	local address
+
+	case "$1" in
+		olsrd6)
+			uci -q get network.loopback.ip6addr
+			;;
+		olsrd)
+			# set by 350-gluon-mesh-olsrd-node-address
+			for address in $(uci -q get network.loopback.ipaddr); do
+				case "$address" in
+					127.*) ;;
+					*) echo "${address%/*}"; return ;;
+				esac
+			done
+			;;
+		*)
+			exit 2
+			;;
+	esac
+}
+
+ifname_call() {
+	ubus call "$1" "$2" "{\"ifname\":\"$3\"}" > /dev/null 2>&1
+
+	case "$?" in
+		0) ;;
+		4) ;; # daemon not running, it reads the state on start
+		6) ;; # already added / never added
+		*) logger -t gluon-mesh-olsrd "$1 $2 $3 failed" ;;
+	esac
+}
+
+daemons=
+for daemon in olsrd olsrd6; do
+	[ -x "/etc/init.d/$daemon" ] || continue
+	"/etc/init.d/$daemon" enabled || continue
+
+	daemons="$daemons $daemon"
+
+	[ -n "$(address_of "$daemon")" ] ||
+		logger -t gluon-mesh-olsrd "$daemon has no address to mesh with, it will take no interface"
+done
+
+interfaces=
+
+for iface in $(echo "$DUMP" | jsonfilter -e "@.interface[@.proto='gluon_mesh' && @.up=true].interface"); do
+	[ "$iface" != "$GONE" ] || continue
+
+	device="$(device_of "$iface")"
+	[ -n "$device" ] || continue
+
+	for daemon in $daemons; do
+		address="$(address_of "$daemon")"
+		[ -z "$address" ] || ip addr replace "$address" dev "$device"
+
+		ifname_call "$daemon" add_interface "$device"
+	done
+
+	interfaces="$interfaces $iface"
+done
+
+device=
+[ -z "$GONE" ] || device="$(device_of "$GONE")"
+
+if [ -n "$device" ]; then
+	for daemon in $daemons; do
+		ifname_call "$daemon" del_interface "$device"
+
+		address="$(address_of "$daemon")"
+		# the device may be gone already
+		[ -z "$address" ] || ip addr del "$address" dev "$device" 2>/dev/null
+	done
+fi
+
+# read by the init script on daemon start
+for daemon in $daemons; do
+	uci_toggle_state "$daemon" mesh interface "${interfaces# }"
+done
