@@ -90,7 +90,8 @@ end)
 local p = f:section(Section, translate("Per radio settings"))
 uci:foreach('wireless', 'wifi-device', function(config)
 	local phy = wireless.find_phy(config)
-	if not phy then
+	-- Per-radio settings are identified by the radio path
+	if not phy or not config.path then
 		return
 	end
 
@@ -101,7 +102,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 
 	local radio = config['.name']
 	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power") .. ' (' .. radio .. ')')
-	tp.default = uci:get('wireless', radio, 'txpower') or 'default'
+	tp.default = wireless.radio_option(uci, config, 'txpower') or 'default'
 
 	tp:value('default', translate("(default)"))
 
@@ -115,7 +116,7 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		if data == 'default' then
 			data = nil
 		end
-		uci:set('wireless', radio, 'txpower', data)
+		wireless.set_radio_option(uci, config, 'txpower', data)
 	end
 end)
 

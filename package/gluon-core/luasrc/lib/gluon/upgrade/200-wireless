@@ -182,6 +182,11 @@ wireless.foreach_radio(uci, function(radio, index, config)
 
 	uci:delete('wireless', radio_name, 'disabled')
 
+	-- Radios without a path cannot have per-radio settings
+	if radio.path then
+		uci:set('wireless', radio_name, 'txpower', wireless.radio_option(uci, radio, 'txpower'))
+	end
+
 	set_channels(radio, radio_name, config)
 
 	uci:set('wireless', radio_name, 'htmode', htmode)
