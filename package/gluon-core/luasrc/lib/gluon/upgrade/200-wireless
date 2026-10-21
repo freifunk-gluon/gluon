@@ -66,19 +66,18 @@ local function get_htmode(radio)
 		return radio.htmode
 	end
 
-	if radio.band == '5g' and wireless.is_outdoor(uci) then
-		local outdoor_htmode = uci:get('gluon', 'wireless', 'outdoor_' .. radio['.name'] .. '_htmode')
-		if outdoor_htmode ~= nil then
-			return outdoor_htmode
-		end
-	end
-
 	local channel_width = 20
 
 	if radio.band == '2g' then
 		channel_width = site.wifi24.channel_width(20)
 	elseif radio.band == '5g' then
 		channel_width = site.wifi5.channel_width(20)
+	end
+
+	-- A valid channel width configured for the radio takes precedence
+	local radio_channel_width = tonumber(wireless.radio_option(uci, radio, 'channel_width'))
+	if util.contains(wireless.channel_widths, radio_channel_width) then
+		channel_width = radio_channel_width
 	end
 
 	local phy = wireless.find_phy(radio)
@@ -181,6 +180,11 @@ wireless.foreach_radio(uci, function(radio, index, config)
 	local beacon_interval = config.beacon_interval()
 
 	uci:delete('wireless', radio_name, 'disabled')
+
+	-- Radios without a path cannot have per-radio settings
+	if radio.path then
+		uci:set('wireless', radio_name, 'txpower', wireless.radio_option(uci, radio, 'txpower'))
+	end
 
 	set_channels(radio, radio_name, config)
 
