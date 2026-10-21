@@ -35,6 +35,11 @@ when(_'web-advanced' and _'autoupdater', {
 	'gluon-web-autoupdater',
 })
 
+feature('config-api', {
+	'gluon-config-api-contact-info',
+	'gluon-config-api-geo-location',
+})
+
 
 when(_'mesh-batman-adv-15', {
 	'gluon-ebtables-limit-arp',
