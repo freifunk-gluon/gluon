@@ -24,14 +24,30 @@ local function txpower_list(phy)
 	return new
 end
 
+-- Returns the configurable channel widths supported by the radio in
+-- ascending order, considering the HT modes that are applied
+local function channel_width_list(phy)
+	local widths = {}
+	for mode, available in pairs(iwinfo.nl80211.htmodelist(phy) or {}) do
+		local hwmode, width = mode:match('^(%a+)(%d+)$')
+		width = tonumber(width)
+		if available and util.contains({'HT', 'VHT', 'HE'}, hwmode)
+				and util.contains(wireless.channel_widths, width) then
+			util.add_to_set(widths, width)
+		end
+	end
+	table.sort(widths)
+	return widths
+end
+
 local f = Form(translate("WLAN"))
 
 f:section(Section, nil, translate(
 	"You can enable or disable your node's client and mesh network "
 	.. "SSIDs here. Please don't disable the mesh network without "
 	.. "a good reason, so other nodes can mesh with yours.<br><br>"
-	.. "It is also possible to configure the WLAN adapters transmission power "
-	.. "here. Please note that the transmission power values include the antenna gain "
+	.. "It is also possible to configure the transmission power and the channel "
+	.. "width of the WLAN adapters here. Please note that the transmission power values include the antenna gain "
 	.. "where available, but there are many devices for which the gain is unavailable or inaccurate."
 ))
 
@@ -95,28 +111,47 @@ uci:foreach('wireless', 'wifi-device', function(config)
 		return
 	end
 
-	local txpowers = txpower_list(phy)
-	if #txpowers <= 1 then
-		return
-	end
-
 	local radio = config['.name']
-	local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power") .. ' (' .. radio .. ')')
-	tp.default = wireless.radio_option(uci, config, 'txpower') or 'default'
 
-	tp:value('default', translate("(default)"))
+	local txpowers = txpower_list(phy)
+	if #txpowers > 1 then
+		local tp = p:option(ListValue, radio .. '_txpower', translate("Transmission power") .. ' (' .. radio .. ')')
+		tp.default = wireless.radio_option(uci, config, 'txpower') or 'default'
 
-	table.sort(txpowers, function(a, b) return a.driver_dbm > b.driver_dbm end)
+		tp:value('default', translate("(default)"))
 
-	for _, entry in ipairs(txpowers) do
-		tp:value(entry.driver_dbm, string.format("%i dBm (%i mW)", entry.display_dbm, entry.display_mw))
+		table.sort(txpowers, function(a, b) return a.driver_dbm > b.driver_dbm end)
+
+		for _, entry in ipairs(txpowers) do
+			tp:value(entry.driver_dbm, string.format("%i dBm (%i mW)", entry.display_dbm, entry.display_mw))
+		end
+
+		function tp:write(data)
+			if data == 'default' then
+				data = nil
+			end
+			wireless.set_radio_option(uci, config, 'txpower', data)
+		end
 	end
 
-	function tp:write(data)
-		if data == 'default' then
-			data = nil
+	-- The channel width is not applied when channels are preserved
+	local channel_widths = channel_width_list(phy)
+	if #channel_widths > 1 and not wireless.preserve_channels(uci) then
+		local cw = p:option(ListValue, radio .. '_channel_width', translate("Channel width") .. ' (' .. radio .. ')')
+		cw.default = wireless.radio_option(uci, config, 'channel_width') or 'default'
+
+		cw:value('default', translate("(default)"))
+
+		for _, width in ipairs(channel_widths) do
+			cw:value(tostring(width), string.format("%i MHz", width))
 		end
-		wireless.set_radio_option(uci, config, 'txpower', data)
+
+		function cw:write(data)
+			if data == 'default' then
+				data = nil
+			end
+			wireless.set_radio_option(uci, config, 'channel_width', data)
+		end
 	end
 end)
 
@@ -143,35 +178,6 @@ if wireless.device_uses_band(uci, '5g') and not wireless.preserve_channels(uci) 
 	function outdoor:write(data)
 		uci:set('gluon', 'wireless', 'outdoor', data)
 	end
-
-	uci:foreach('wireless', 'wifi-device', function(config)
-		local radio = config['.name']
-		local band = uci:get('wireless', radio, 'band')
-
-		if band ~= '5g' then
-			return
-		end
-
-		local phy = wireless.find_phy(config)
-
-		local ht = r:option(ListValue, 'outdoor_' .. radio .. '_htmode', translate('HT Mode') .. ' (' .. radio .. ')')
-		ht:depends(outdoor, true)
-		ht.default = uci:get('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode') or 'default'
-
-		ht:value('default', translate("(default)"))
-		for mode, available in pairs(iwinfo.nl80211.htmodelist(phy)) do
-			if available then
-				ht:value(mode, mode)
-			end
-		end
-
-		function ht:write(data)
-			if data == 'default' then
-				data = nil
-			end
-			uci:set('gluon', 'wireless', 'outdoor_' .. radio .. '_htmode', data)
-		end
-	end)
 end
 
 
