@@ -1,0 +1,82 @@
+#!/bin/sh
+
+MANIFEST_FILE="/lib/gluon/core/sysupgrade/manifest.txt"
+
+notfound() {
+	echo 'Status: 404 Not Found'
+	echo
+	exit 1
+}
+
+list_directory() {
+	local branch="$1"
+
+	echo
+
+	cat <<EOF
+<html>
+<head>
+<title>Directory listing for /cgi-bin/firmware/</title>
+</head>
+<body>
+<h1>Directory listing for /cgi-bin/firmware/</h1>
+<hr>
+<ul>
+EOF
+
+	if [ -f "$MANIFEST_FILE" ]; then
+		echo "<li><a href=\"/cgi-bin/firmware/manifest.txt\">manifest.txt</a></li>"
+
+		if [ -n "$branch" ]; then
+			echo "<li><a href=\"/cgi-bin/firmware/$branch.manifest\">$branch.manifest@</a></li>"
+		fi
+	fi
+
+	cat <<EOF
+</ul>
+<hr>
+</body>
+</html>
+EOF
+}
+
+manifest_response() {
+	if [ -f "$MANIFEST_FILE" ]; then
+		echo "Content-Type: text/plain"
+		echo
+		cat "$MANIFEST_FILE"
+	else
+		notfound
+	fi
+}
+
+manifest_redirect() {
+	local branch="$1"
+
+	echo "Status: 307 Temporary Redirect"
+	echo "Location: /cgi-bin/firmware/$branch.manifest"
+	echo
+}
+
+
+BRANCH="$(sed -n "s/^BRANCH=//p;q" "$MANIFEST_FILE")"
+
+if [ -z "$PATH_INFO" ]; then
+	list_directory "$BRANCH"
+elif [ "$PATH_INFO" = "/manifest.txt" ]; then
+	if [ -z "$BRANCH" ]; then
+		manifest_response
+	else
+		manifest_redirect "$BRANCH"
+	fi
+else
+	if [ -z "$BRANCH" ]; then
+		notfound
+	fi
+
+	if [ "/$BRANCH.manifest" = "$PATH_INFO" ]; then
+		manifest_response
+	else
+		notfound
+	fi
+fi
