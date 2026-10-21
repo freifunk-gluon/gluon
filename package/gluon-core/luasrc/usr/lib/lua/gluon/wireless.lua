@@ -156,6 +156,9 @@ function M.is_outdoor(uci)
 	return uci:get_bool('gluon', 'wireless', 'outdoor')
 end
 
+-- Channel widths in MHz that can be configured for a band or radio
+M.channel_widths = {20, 40, 80, 160}
+
 -- Per-radio settings are stored in wireless_radio sections of the gluon
 -- config. Radios are identified by their path, as radio names may change.
 -- Radios of a PHY supporting multiple radios share the path and are told
