@@ -156,4 +156,69 @@ function M.is_outdoor(uci)
 	return uci:get_bool('gluon', 'wireless', 'outdoor')
 end
 
+-- Per-radio settings are stored in wireless_radio sections of the gluon
+-- config. Radios are identified by their path, as radio names may change.
+-- Radios of a PHY supporting multiple radios share the path and are told
+-- apart by their radio index.
+local function radio_section(uci, radio)
+	if not radio.path then
+		return nil
+	end
+
+	local name
+	uci:foreach('gluon', 'wireless_radio', function(section)
+		if section.path == radio.path and section.radio == radio.radio then
+			name = section['.name']
+			return false
+		end
+	end)
+
+	return name
+end
+
+-- Creates the settings section of a radio, returns nil for radios without
+-- a path
+function M.add_radio_section(uci, radio, values)
+	if not radio.path then
+		return nil
+	end
+
+	local section = uci:section('gluon', 'wireless_radio', nil, values)
+	uci:set('gluon', section, 'path', radio.path)
+	uci:set('gluon', section, 'radio', radio.radio)
+	return section
+end
+
+function M.has_radio_section(uci, radio)
+	return radio_section(uci, radio) ~= nil
+end
+
+function M.radio_option(uci, radio, option)
+	local section = radio_section(uci, radio)
+	if not section then
+		return nil
+	end
+
+	-- Only return the value, not the error of a missing option
+	local value = uci:get('gluon', section, option)
+	return value
+end
+
+-- Setting an option to nil removes it
+function M.set_radio_option(uci, radio, option, value)
+	local section = radio_section(uci, radio)
+	if not section then
+		if value == nil then
+			return
+		end
+
+		section = M.add_radio_section(uci, radio)
+		if not section then
+			return
+		end
+	end
+
+	uci:set('gluon', section, option, value)
+end
+
 return M
