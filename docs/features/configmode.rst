@@ -36,6 +36,12 @@ built with
 ``cc -std=c99 -o tools/enter-network-config-mode package/gluon-network-setup-mode/src/send-network-request.c``
 after creating the ``tools`` directory.
 
+Alternatively, the packet can be sent by the Python script
+``contrib/enter-network-config-mode.py``, which takes the same argument. On
+Linux, it only requires Python 3. On other systems, such as macOS or Windows,
+it requires `Scapy <https://scapy.net>`_ (``pip install scapy``) and, on
+Windows, `Npcap <https://npcap.com>`_.
+
 To enter Config Mode:
 
 1.  Connect your computer directly to the port Config Mode is offered on (see
