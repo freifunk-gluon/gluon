@@ -49,10 +49,21 @@
 		local ret = {}
 
 		wireless.foreach_radio(uci, function(radio)
-			local channel = iwinfo.nl80211.channel(wireless.find_phy(radio))
 			local radio_name = radio['.name']
-			local suffix = radio_name:match('^radio(%d+)$')
-			local ssid = iwinfo.nl80211.ssid('client' .. suffix) 
+			local channel, ssid
+
+			-- Query the interfaces instead of the phy, as multiple radios
+			-- can share a single phy. Only show the SSIDs of the public ones.
+			for _, prefix in ipairs({'client_', 'owe_', 'mesh_', 'wan_'}) do
+				local ifname = uci:get('wireless', prefix .. radio_name, 'ifname')
+				if ifname then
+					channel = channel or iwinfo.nl80211.channel(ifname)
+					if prefix == 'client_' or prefix == 'owe_' then
+						ssid = ssid or iwinfo.nl80211.ssid(ifname)
+					end
+				end
+			end
+
 			if channel then
 				table.insert(ret, {
 					name = radio_name,
