@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Set by the autoupdater before upgrading. It is only visible here on
+# devices whose configuration is restored before preinit after a sysupgrade
+# (e.g. with a UBIFS overlay), so only select this package for such devices.
+NETWORK_SETUP_MODE_AUTOUPDATER_FLAG=/lib/gluon/autoupdater/upgrade-invocation
+
 network_setup_mode_log() {
 	# The console is not accessible on most affected devices, so log to the
 	# kernel log buffer, which can be read with dmesg after boot
@@ -65,11 +70,29 @@ network_setup_mode_should_activate() {
 }
 
 network_setup_mode_enable() {
-	local enabled configured
+	local enabled configured after_autoupdate
+
+	# Consume the flag on every boot, so it cannot affect a later boot. It
+	# contains the release the upgrade started from; if the release did not
+	# change, the upgrade failed and this boot does not follow it.
+	if [ -e "$NETWORK_SETUP_MODE_AUTOUPDATER_FLAG" ]; then
+		if [ "$(cat "$NETWORK_SETUP_MODE_AUTOUPDATER_FLAG")" != "$(cat /lib/gluon/release)" ]; then
+			after_autoupdate=1
+		fi
+		rm -f "$NETWORK_SETUP_MODE_AUTOUPDATER_FLAG"
+	fi
+
 	enabled="$(uci -q get 'gluon-setup-mode.@setup_mode[0].enabled')"
 	configured="$(uci -q get 'gluon-setup-mode.@setup_mode[0].configured')"
 
 	if [ "$enabled" = 1 ] || [ "$configured" != 1 ]; then
+		return 0
+	fi
+
+	# Do not open the activation window when rebooting after an automatic
+	# upgrade, as this reboot is predictable for anyone on the same link
+	if [ "$after_autoupdate" = 1 ]; then
+		network_setup_mode_log "booting after automatic upgrade, not waiting for setup-mode request"
 		return 0
 	fi
 
