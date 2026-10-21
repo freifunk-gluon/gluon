@@ -206,6 +206,10 @@ container: FORCE
 	@scripts/container.sh
 
 
+tools: FORCE
+	mkdir -p tools
+	$(CC) -std=c99 -O2 -Wall -o tools/enter-network-config-mode package/gluon-network-setup-mode/src/send-network-request.c
+
 all: config
 	+@
 	$(GLUON_ENV) $(LUA) scripts/clean_output.lua
@@ -219,7 +223,7 @@ dirclean: FORCE
 	+@
 	[ -e openwrt/.config ] || $(OPENWRTMAKE) defconfig
 	$(OPENWRTMAKE) dirclean
-	rm -rf $(GLUON_TMPDIR) $(GLUON_OUTPUTDIR)
+	rm -rf $(GLUON_TMPDIR) $(GLUON_OUTPUTDIR) tools
 
 manifest: $(LUA) FORCE
 	@

@@ -608,6 +608,7 @@ ramips-mt7621
 * Zyxel
 
   - NWA50AX
+  - NWA55AXE
   - WSM20
 
 ramips-mt76x8
