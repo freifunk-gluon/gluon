@@ -100,6 +100,17 @@ device('openwrt-one', 'openwrt_one', {
 })
 
 
+-- TP-Link
+
+device('tp-link-fr365-v1', 'tplink_fr365-v1', {
+	broken = true,
+	-- case must be opened and requires soldering to install;
+	-- however root access is possible, so an easier installation might
+	-- be possible in the future:
+	-- https://openwrt.org/toh/tp-link/fr365_v1#stock_firmware_root_access
+})
+
+
 -- Ubiquiti
 
 device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
