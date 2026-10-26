@@ -1,0 +1,134 @@
+Gluon 2026.1
+============
+
+Important Notes
+---------------
+
+Upgrades to v2023.2 and later releases are only supported from releases v2023.1 and later.
+
+This release is based on the OpenWrt 25.12 release branch, using Linux 6.12 and
+mac80211-backports 6.18.
+
+
+Introduction of APK
+-------------------
+
+OpenWrt 25.12 uses ``apk`` as its package manager. An introduction
+on the usage of ``apk`` can be found in the MOTD when connecting via SSH
+as well as in the OpenWrt documentation.
+
+
+Site changes
+------------
+
+The aforementioned introduction of APK as the package manager requires updates
+to ``opkg`` section of the site configuration. The key has to be renamed to
+``apk`` while the section content can be kept identical.
+
+
+Added hardware support
+----------------------
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- ASUS
+
+  - Lyra Mini
+
+- NETGEAR
+
+  - Orbi RBR20 / RBS20
+  - Orbi RBR40 / RBS40
+
+ipq806x-generic
+~~~~~~~~~~~~~~~
+
+- Aruba
+
+  - AP-32x series
+
+mediatek-filogic
+~~~~~~~~~~~~~~~~
+
+- Vero
+
+  - W6M
+
+qualcommax-ipq50xx
+~~~~~~~~~~~~~~~~~~
+
+- Linksys
+
+  - MX5500
+
+qualcommax-ipq807x
+~~~~~~~~~~~~~~~~~~
+
+- Linksys
+
+  - MX4200 v1
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- Plasma Cloud
+
+  - PAX1800-Lite
+
+
+Features
+--------
+
+.. _#3602: https://github.com/freifunk-gluon/gluon/pull/3602
+.. _#3701: https://github.com/freifunk-gluon/gluon/pull/3701
+.. _#3736: https://github.com/freifunk-gluon/gluon/pull/3736
+.. _#3791: https://github.com/freifunk-gluon/gluon/pull/3791
+.. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
+
+- Add basic support for 6 GHz Wi-Fi, including client bridge configuration and radio statistics
+  (`#3602`_)
+- Expand BATMAN_V integration with throughput reporting and algorithm-specific status-page metrics
+  (`#3736`_)
+- Allow the autoupdater to retrieve update manifests over HTTPS when TLS support is installed
+  (`#3813`_)
+- Extend the status-page to allow navigation elements for community-specific subpages (`#3701`_)
+- Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3791`_)
+
+
+Bugfixes and other changes
+--------------------------
+
+.. _#3799: https://github.com/freifunk-gluon/gluon/pull/3799
+.. _#3801: https://github.com/freifunk-gluon/gluon/pull/3801
+
+- Adjust kernel parameters for devices with 64 MB RAM to improve performance and stability
+  (`#3801`_)
+- Use the smaller dnsmasq variant on constrained targets (`#3799`_)
+
+
+Known issues
+------------
+
+.. _#94: https://github.com/freifunk-gluon/gluon/issues/94
+.. _#496: https://github.com/freifunk-gluon/gluon/issues/496
+.. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+.. _#3576: https://github.com/freifunk-gluon/gluon/issues/3576
+
+- Devices using additional USB network drivers of the community config switch the interface order (`#3576`_)
+
+- The integration of the BATMAN_V routing algorithm is incomplete.
+
+  - Throughput values are not correctly acquired for different interface types (`#1728`_)
+
+    This affects virtual interface types like bridges and VXLAN.
+
+- Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+- In configurations without VXLAN, the MAC address of the WAN interface is modified even when
+  Mesh-on-WAN is disabled (`#496`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when
+  promiscuous mode is disallowed).
