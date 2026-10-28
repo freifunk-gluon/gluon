@@ -1,9 +1,11 @@
 #!/bin/sh
 
-# shellcheck disable=SC1091,SC2034
+private_key="$(uci -q get network.wg_mesh.private_key)"
 
-INCLUDE_ONLY=1
-. /lib/netifd/proto/wireguard.sh
+if [ "$private_key" = "generate" ] || [ -z "$private_key" ]; then
+	private_key="$(/usr/bin/wg genkey)"
+	uci -q set network.wg_mesh.private_key="$private_key" &&
+		uci -q commit network
+fi
 
-ensure_key_is_generated wg_mesh
-uci get "network.wg_mesh.private_key" | /usr/bin/wg pubkey
+echo "$private_key" | /usr/bin/wg pubkey
