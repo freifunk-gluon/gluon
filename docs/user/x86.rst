@@ -32,3 +32,22 @@ The following targets for x86 images exist:
 `x86-legacy`
     x86 image for very old PC hardware like i586.
 
+
+Network interfaces
+^^^^^^^^^^^^^^^^^^
+
+Unless a board defines its own interface names, the first Ethernet interface
+is used for LAN and the second one for WAN. On upgrades, the interfaces keep
+their roles as long as they still exist; if an interface is gone or the
+number of interfaces of a role has changed, the defaults apply.
+
+The names of Ethernet interfaces do not depend on the order in which their
+drivers are loaded:
+
+* PCI and virtio interfaces are named after their PCI address, as on other
+  Linux distributions (e.g. `enp1s0`).
+* Other interfaces, like USB Ethernet adapters, are named after the second
+  half of their MAC address (e.g. `enx534458` for `00:e0:4c:53:44:58`).
+
+Adapters without a fixed MAC address, or with the same name as another
+adapter, keep their name `ethX`.

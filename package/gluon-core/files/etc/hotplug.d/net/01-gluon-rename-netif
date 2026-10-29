@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ "$ACTION" = add ] || exit 0
+
+case "$INTERFACE" in
+eth[0-9]*) /lib/gluon/rename-netif "$INTERFACE" ;;
+esac

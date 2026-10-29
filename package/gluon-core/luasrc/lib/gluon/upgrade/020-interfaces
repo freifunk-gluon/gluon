@@ -2,6 +2,7 @@
 
 local platform = require 'gluon.platform'
 local sysconfig = require 'gluon.sysconfig'
+local util = require 'gluon.util'
 
 local json = require 'jsonc'
 local uci = require('simple-uci').cursor()
@@ -38,6 +39,23 @@ end
 if wan_data.device ~= nil then
 	wan_interfaces = {wan_data.device}
 end
+
+-- On x86, the interfaces are renamed by /lib/gluon/rename-netif, while
+-- board.json may refer to their kernel names
+local function get_renamed(ifaces)
+	if not ifaces or not platform.match('x86') then
+		return ifaces
+	end
+	local ret = {}
+	for _, iface in ipairs(ifaces) do
+		local base, suffix = string.match(iface, '^([^.]*)(.*)$')
+		table.insert(ret, (util.get_renamed_netdev(base) or base) .. suffix)
+	end
+	return ret
+end
+
+lan_interfaces = get_renamed(lan_interfaces)
+wan_interfaces = get_renamed(wan_interfaces)
 
 local lan_ifname = iface_exists(lan_interfaces)
 local wan_ifname = iface_exists(wan_interfaces)
@@ -94,6 +112,13 @@ elseif platform.match('lantiq', 'xrx200', {
 	lan_ifname, wan_ifname = 'lan1 lan2 lan3 lan4', 'wan'
 end
 
+local roles = {'lan', 'wan', 'single'}
+
+local prev_ifnames = {}
+for _, role in ipairs(roles) do
+	prev_ifnames[role] = sysconfig[role .. '_ifname']
+end
+
 if wan_ifname and lan_ifname then
 	sysconfig.wan_ifname = wan_ifname
 	sysconfig.lan_ifname = lan_ifname
@@ -103,6 +128,58 @@ else
 	sysconfig.lan_ifname = nil
 	sysconfig.single_ifname = lan_ifname or wan_ifname
 end
+
+local function split(ifnames)
+	local ret = {}
+	for ifname in string.gmatch(ifnames or '', '%S+') do
+		table.insert(ret, ifname)
+	end
+	return ret
+end
+
+-- The defaults are derived from the order of the interfaces, which may
+-- change between OpenWrt releases (driver probe order), between boots for
+-- USB interfaces, and when an interface is added. On x86, the names given by
+-- rename-netif do not depend on this order, so the roles stay on their
+-- interfaces as long as these still exist.
+--
+-- When an interface is gone or the number of interfaces of a role has
+-- changed, the defaults apply.
+local function keep_roles()
+	for _, role in ipairs(roles) do
+		local prev = split(prev_ifnames[role])
+		if #prev ~= #split(sysconfig[role .. '_ifname']) then
+			return
+		end
+
+		for _, ifname in ipairs(prev) do
+			if not (util.is_stable_netdev_name(ifname) and unistd.access('/sys/class/net/' .. ifname)) then
+				return
+			end
+		end
+	end
+
+	for _, role in ipairs(roles) do
+		sysconfig[role .. '_ifname'] = prev_ifnames[role]
+	end
+end
+
+if platform.match('x86') then
+	keep_roles()
+end
+
+-- Migrate interface sections referring to the kernel name of a renamed
+-- interface (e.g. VLANs like eth0.8)
+uci:foreach('gluon', 'interface', function(interface)
+	local base, suffix = string.match(interface.name or '', '^([^/.]+)(.*)$')
+	local name = base and not unistd.access('/sys/class/net/' .. base) and util.get_renamed_netdev(base)
+	if not name then
+		return
+	end
+	uci:set('gluon', interface['.name'], 'name', name .. suffix)
+end)
+
+uci:save('gluon')
 
 -- Delete all UCI device sections of type 'bridge'
 -- as well as the ones starting with 'br-'.
