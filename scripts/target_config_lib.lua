@@ -88,6 +88,26 @@ local function feature_packages(features)
 	return feature_lib.get_packages(files, features)
 end
 
+-- Packages whose functionality has been merged into Gluon itself
+local obsolete_packages = {
+	['ffda-network-setup-mode'] = 'network-triggered Config Mode activation is provided by ' ..
+		'gluon-network-setup-mode, which is selected for supported devices automatically',
+}
+
+local function check_obsolete_packages(dev_info, pkgs)
+	for _, pkg in ipairs(pkgs) do
+		local reason = obsolete_packages[pkg]
+		if reason then
+			io.stderr:write(string.format(
+				"Error: package '%s' selected for device '%s' is obsolete: %s.\n" ..
+				"Please remove it, or the feature selecting it, from the package selection.\n",
+				pkg, dev_info.image, reason
+			))
+			os.exit(1)
+		end
+	end
+end
+
 local function site_specific_packages(dev_info)
 	local site_selections
 	local site_packages
@@ -178,6 +198,7 @@ handle_target_pkgs(concat_list(get_default_pkgs(), lib.target_packages))
 for _, dev in ipairs(lib.devices) do
 	local device_pkgs = {}
 	local function handle_pkgs(pkgs)
+		check_obsolete_packages(dev, pkgs)
 		for _, pkg in ipairs(pkgs) do
 			if string.sub(pkg, 1, 1) ~= '-' then
 				config_package(pkg, nil)
