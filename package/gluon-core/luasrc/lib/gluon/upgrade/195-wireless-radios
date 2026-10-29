@@ -1,0 +1,38 @@
+#!/usr/bin/lua
+
+local site = require 'gluon.site'
+local wireless = require 'gluon.wireless'
+local uci = require('simple-uci').cursor()
+
+-- The HT mode of 5 GHz radios in outdoor mode is replaced by the channel
+-- width of the radio. Remove it for all radios, including removed ones.
+local outdoor_htmodes = {}
+for option, htmode in pairs(uci:get_all('gluon', 'wireless') or {}) do
+	local radio_name = option:match('^outdoor_(.+)_htmode$')
+	if radio_name then
+		outdoor_htmodes[radio_name] = htmode
+		uci:delete('gluon', 'wireless', option)
+	end
+end
+
+wireless.foreach_radio(uci, function(radio)
+	if not wireless.has_radio_section(uci, radio) then
+		-- Create the settings of a new radio, migrating a transmission power
+		-- configured in the wireless config
+		wireless.add_radio_section(uci, radio, {
+			txpower = radio.txpower,
+		})
+	end
+
+	-- The HT mode only applied in outdoor mode, while the channel width
+	-- applies regardless of it. Only migrate it in outdoor mode, if it
+	-- differs from the channel width of the site configuration.
+	local htmode = outdoor_htmodes[radio['.name']]
+	local channel_width = htmode and tonumber(htmode:match('%d+'))
+	if radio.band == '5g' and wireless.is_outdoor(uci) and channel_width
+			and channel_width ~= site.wifi5.channel_width(20) then
+		wireless.set_radio_option(uci, radio, 'channel_width', channel_width)
+	end
+end)
+
+uci:save('gluon')
