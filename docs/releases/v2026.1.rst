@@ -4,18 +4,21 @@ Gluon 2026.1
 Important Notes
 ---------------
 
-Upgrades to v2023.2 and later releases are only supported from releases v2023.1 and later.
+Upgrades are only supported from v2023.2 and later.
 
-This release is based on the OpenWrt 25.12 release branch, using Linux 6.12 and
-mac80211-backports 6.18.
+This release is based on the OpenWrt 25.12 release branch, using the following components:
+
+- Linux 6.12
+- mac80211-backports 6.18
+- batman-adv 2025.4
 
 
 Introduction of APK
 -------------------
 
-OpenWrt 25.12 uses ``apk`` as its package manager. An introduction
-on the usage of ``apk`` can be found in the MOTD when connecting via SSH
-as well as in the OpenWrt documentation.
+OpenWrt 25.12 uses ``apk`` as its package manager. A Quci reference guide
+for ``apk`` can be found in the MOTD when connecting via SSH as well as in
+the OpenWrt documentation.
 
 
 Site changes
@@ -51,12 +54,14 @@ ipq806x-generic
 mediatek-filogic
 ~~~~~~~~~~~~~~~~
 
-- Vero
+- Acer
 
-  - W6M
+  - Vero W6M
 
 qualcommax-ipq50xx
 ~~~~~~~~~~~~~~~~~~
+
+This is a new target.
 
 - Linksys
 
@@ -76,6 +81,31 @@ ramips-mt7621
 
   - PAX1800-Lite
 
+- Zyxel
+
+  - NWA55AXE
+
+
+Device class changes
+--------------------
+
+The following devices have been reclassified into the ``tiny`` device class.
+This affects site-specific package selection
+
+- OpenMesh
+
+  - OM2P
+
+- Plasma Cloud
+
+  - PA300 / PA300E
+
+- TP-Link
+
+  - Archer C6 v2
+  - Archer C60 v1
+  - CPE710 v2
+
 
 Features
 --------
@@ -85,6 +115,7 @@ Features
 .. _#3736: https://github.com/freifunk-gluon/gluon/pull/3736
 .. _#3791: https://github.com/freifunk-gluon/gluon/pull/3791
 .. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
+.. _f10732fb: https://github.com/openwrt/openwrt/commit/f10732fb5632091452c5b091d3bbd3102d1148da
 
 - Add basic support for 6 GHz Wi-Fi, including client bridge configuration and radio statistics
   (`#3602`_)
@@ -94,6 +125,7 @@ Features
   (`#3813`_)
 - Extend the status-page to allow navigation elements for community-specific subpages (`#3701`_)
 - Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3791`_)
+- mac80211 now estimates the available throughput of wireless links which use rate control offloading (`f10732fb`_)
 
 
 Bugfixes and other changes
@@ -113,9 +145,6 @@ Known issues
 .. _#94: https://github.com/freifunk-gluon/gluon/issues/94
 .. _#496: https://github.com/freifunk-gluon/gluon/issues/496
 .. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
-.. _#3576: https://github.com/freifunk-gluon/gluon/issues/3576
-
-- Devices using additional USB network drivers of the community config switch the interface order (`#3576`_)
 
 - The integration of the BATMAN_V routing algorithm is incomplete.
 
