@@ -1,3 +1,0 @@
-if grep -qxFe "$INTERFACE" /lib/gluon/wan-dnsmasq/interface.d/*; then
-	/lib/gluon/wan-dnsmasq/update.lua
-fi
