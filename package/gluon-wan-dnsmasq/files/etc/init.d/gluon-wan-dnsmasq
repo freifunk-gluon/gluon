@@ -7,11 +7,16 @@ USE_PROCD=1
 RESOLV_CONF_DIR='/var/gluon/wan-dnsmasq'
 RESOLV_CONF="$RESOLV_CONF_DIR/resolv.conf"
 
+update_dns_servers() {
+	/lib/gluon/wan-dnsmasq/update.lua
+}
+
 start_service() {
 	mkdir -p /var/run/dnsmasq/
 	mkdir -p "$RESOLV_CONF_DIR"
 	touch "$RESOLV_CONF"
 
+	update_dns_servers
 	procd_open_instance
 	procd_set_param command /usr/sbin/dnsmasq \
 		--user=dnsmasq \
@@ -36,4 +41,13 @@ start_service() {
 	procd_add_jail_mount_rw /var/run/dnsmasq/
 
 	procd_close_instance
+}
+
+reload_service() {
+	update_dns_servers
+}
+
+service_triggers() {
+	# Debounce 1s to avoid blocking pending interface changes
+	procd_add_raw_trigger "interface.*" 1000 /etc/init.d/gluon-wan-dnsmasq reload
 }
