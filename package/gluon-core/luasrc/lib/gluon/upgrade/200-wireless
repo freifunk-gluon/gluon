@@ -11,6 +11,11 @@ uci:delete_all('wireless', 'wifi-iface')
 
 local radio_band_count = {band_2g=0, band_5g=0, band_6g=0}
 
+-- 5 GHz channels that do not require DFS radar detection. These channels
+-- can be used outdoors in most regulatory domains (including the EU), but
+-- are limited to a lower transmit power.
+local no_dfs_outdoor_chanlist = '149-173'
+
 local function count_band(band)
 	radio_band_count[band] = radio_band_count[band] + 1
 end
@@ -159,7 +164,14 @@ local function set_channels(radio, radio_name, config)
 
 	local chanlist
 	if radio.band == '5g' and wireless.is_outdoor(uci) then
-		chanlist = config.outdoor_chanlist()
+		if wireless.supports_dfs(radio) then
+			chanlist = config.outdoor_chanlist()
+		else
+			-- Channels requiring DFS can't be used on radios without radar
+			-- detection support: CAC would fail and the radio would never
+			-- come up
+			chanlist = no_dfs_outdoor_chanlist
+		end
 	end
 	uci:set('wireless', radio_name, 'channels', chanlist)
 end

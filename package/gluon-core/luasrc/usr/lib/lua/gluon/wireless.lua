@@ -49,6 +49,32 @@ function M.supports_channel(radio, channel)
 	return false
 end
 
+function M.supports_dfs(radio)
+	local phy = M.find_phy(radio)
+	if not phy then
+		return true
+	end
+
+	local hw = iwinfo.nl80211.hardware_id(phy)
+	if not hw then
+		return true
+	end
+
+	-- The mt76 driver does not implement radar detection (DFS) for
+	-- MT7613/MT7663 radios
+	-- https://github.com/openwrt/mt76/issues/925
+	if hw.vendor_id == 0x14c3 and hw.device_id == 0x7663 then
+		-- PCIe variant
+		return false
+	elseif hw.vendor_id == 0 and hw.device_id == 0 and
+			hw.subsystem_vendor_id == 0x0e8d and hw.subsystem_device_id == 0x7663 then
+		-- USB variant
+		return false
+	end
+
+	return true
+end
+
 local radio_mac_offsets = {
 	client = 0,
 	mesh = 1,
@@ -141,6 +167,19 @@ function M.device_uses_band(uci, band)
 	uci:foreach('wireless', 'wifi-device', function(radio)
 		if radio.band == band then
 			ret = true
+			return false
+		end
+	end)
+
+	return ret
+end
+
+function M.device_supports_dfs(uci)
+	local ret = true
+
+	uci:foreach('wireless', 'wifi-device', function(radio)
+		if not M.supports_dfs(radio) then
+			ret = false
 			return false
 		end
 	end)
