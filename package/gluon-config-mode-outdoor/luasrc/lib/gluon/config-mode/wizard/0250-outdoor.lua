@@ -14,10 +14,20 @@ return function(form, uci)
 
 	local pkg_i18n = i18n 'gluon-config-mode-outdoor'
 
-	local section = form:section(Section, nil, pkg_i18n.translate(
+	local description = pkg_i18n.translate(
 		"Please enable this option in case the node is to be installed outdoors "
 		.. "to comply with local frequency regulations."
-	))
+	)
+
+	if not wireless.device_supports_dfs(uci) then
+		description = description .. ' ' .. pkg_i18n.translate(
+			"The 5 GHz radio of this device does not support DFS (radar detection). "
+			.. "In outdoor mode, only the channels 149-173 can be used instead, "
+			.. "which are limited to a lower transmit power."
+		)
+	end
+
+	local section = form:section(Section, nil, description)
 
 	local outdoor_mode = wireless.is_outdoor(uci)
 	local outdoor = section:option(Flag, 'outdoor', pkg_i18n.translate("Node will be installed outdoors"))
