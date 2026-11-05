@@ -26,20 +26,13 @@ For signing the generated ``apk`` package repository, OpenWrt 25.12 uses ECDSA k
 for firmware image signatures). Communities that persist signing keys across builds must back up
 and restore these ``.pem`` files as well.
 
-Since ``apk`` version comparison rules differ from ``autoupdater``, ``contrib/compare-versions.sh``
-has been added to replace ``opkg compare-versions`` when testing ``DEFAULT_GLUON_RELEASE`` ordering.
-
 
 Site changes
 ------------
 
-.. _#3852: https://github.com/freifunk-gluon/gluon/pull/3852
 .. _#3859: https://github.com/freifunk-gluon/gluon/issues/3859
 
-- The introduction of APK requires renaming the ``opkg`` section in ``site.conf`` to ``apk``.
-  Note that repository URLs in ``apk.openwrt`` and ``apk.extra`` must **not** end with a trailing
-  slash (or ``packages.adb``), as ``/packages.adb`` is appended automatically, and custom mirrors
-  must serve an APK index instead of an ``opkg`` feed.
+- The ``opkg`` section in ``site.conf`` must be renamed to ``apk``.
 - Unlike ``opkg``, OpenWrt 25.12 fails the build when deselecting non-existent packages
   (``-pkgname``) in ``image-customization.lua`` (such as ``-opkg``, ``-wpad-basic``, ``-wpad-mini``,
   or ``-kmod-ipt-offload``).
@@ -47,8 +40,6 @@ Site changes
   dependency (`#3859`_). Communities including USB Ethernet drivers in ``image-customization.lua``
   should explicitly add ``kmod-usb-net-cdc-ncm`` so NCM-based adapters (such as ASIX AX88179B) keep
   working after an upgrade.
-- The obsolete ``ffda-network-setup-mode`` community package is now rejected at build time in favor
-  of ``gluon-network-setup-mode`` (`#3852`_).
 
 
 Added hardware support
@@ -138,6 +129,7 @@ Features
 .. _#3777: https://github.com/freifunk-gluon/gluon/pull/3777
 .. _#3791: https://github.com/freifunk-gluon/gluon/pull/3791
 .. _#3832: https://github.com/freifunk-gluon/gluon/pull/3832
+.. _#3852: https://github.com/freifunk-gluon/gluon/pull/3852
 .. _f10732fb: https://github.com/openwrt/openwrt/commit/f10732fb5632091452c5b091d3bbd3102d1148da
 
 - Add basic support for 6 GHz Wi-Fi, including client bridge configuration and radio statistics
@@ -157,14 +149,11 @@ Features
 Bugfixes and other changes
 --------------------------
 
-.. _#3673: https://github.com/freifunk-gluon/gluon/pull/3673
 .. _#3717: https://github.com/freifunk-gluon/gluon/pull/3717
-.. _#3757: https://github.com/freifunk-gluon/gluon/pull/3757
 .. _#3799: https://github.com/freifunk-gluon/gluon/pull/3799
 .. _#3801: https://github.com/freifunk-gluon/gluon/pull/3801
 .. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
 .. _#3814: https://github.com/freifunk-gluon/gluon/pull/3814
-.. _#3816: https://github.com/freifunk-gluon/gluon/pull/3816
 .. _#3826: https://github.com/freifunk-gluon/gluon/pull/3826
 .. _#3862: https://github.com/freifunk-gluon/gluon/pull/3862
 
@@ -175,9 +164,6 @@ Bugfixes and other changes
 - Fix WAN DNS servers getting lost after ``network restart`` in ``gluon-wan-dnsmasq`` (`#3862`_)
 - Recreate ``/etc/config/gluon`` during ``gluon-reconfigure`` if it is missing (`#3814`_)
 - Set a deterministic MAC-derived global DHCPv4/DHCPv6 client DUID across reconfigures (`#3717`_)
-- Fix MT7915 Wi-Fi power-save state synchronization and mac80211 AQL airtime accounting (`#3673`_)
-- Drop factory image for TP-Link Archer C6 v2 due to flash size constraints (`#3757`_)
-- Remove non-working recovery images for D-Link AQUILA PRO AI M30 A1 and M60 A1 (`#3816`_)
 
 
 Known issues
