@@ -1,7 +1,7 @@
 Gluon 2026.1
 ============
 
-Important Notes
+Important notes
 ---------------
 
 Upgrades are only supported from v2023.2 and later.
@@ -18,15 +18,32 @@ Introduction of APK
 
 OpenWrt 25.12 uses ``apk`` as its package manager. A quick reference guide
 for ``apk`` can be found in the MOTD when connecting via SSH as well as in
-the OpenWrt documentation.
+the `OpenWrt documentation <https://openwrt.org/docs/guide-user/additional-software/opkg-to-apk-cheatsheet>`__.
+To save flash space, ``apk`` is disabled by default on ``tiny`` class devices.
+
+For signing the generated ``apk`` package repository, OpenWrt 25.12 uses ECDSA keys stored at
+``openwrt/private-key.pem`` and ``openwrt/public-key.pem`` (in addition to ``openwrt/key-build*``
+for firmware image signatures). Communities that persist signing keys across builds must back up
+and restore these ``.pem`` files as well.
+
+Since ``apk`` version comparison rules differ from ``autoupdater``, ``contrib/compare-versions.sh``
+has been added to replace ``opkg compare-versions`` when testing ``DEFAULT_GLUON_RELEASE`` ordering.
 
 
 Site changes
 ------------
 
-The aforementioned introduction of APK as the package manager requires updates
-to ``opkg`` section of the site configuration. The key has to be renamed to
-``apk`` while the section content can be kept identical.
+.. _#3852: https://github.com/freifunk-gluon/gluon/pull/3852
+
+- The introduction of APK requires renaming the ``opkg`` section in ``site.conf`` to ``apk``.
+  Note that repository URLs in ``apk.openwrt`` and ``apk.extra`` must **not** end with a trailing
+  slash (or ``packages.adb``), as ``/packages.adb`` is appended automatically, and custom mirrors
+  must serve an APK index instead of an ``opkg`` feed.
+- Unlike ``opkg``, OpenWrt 25.12 fails the build when deselecting non-existent packages
+  (``-pkgname``) in ``image-customization.lua`` (such as ``-opkg``, ``-wpad-basic``, ``-wpad-mini``,
+  or ``-kmod-ipt-offload``).
+- The obsolete ``ffda-network-setup-mode`` community package is now rejected at build time in favor
+  of ``gluon-network-setup-mode`` (`#3852`_).
 
 
 Added hardware support
@@ -37,7 +54,7 @@ ipq40xx-generic
 
 - ASUS
 
-  - Lyra Mini
+  - Lyra Mini (MAP-AC1300)
 
 - NETGEAR
 
@@ -90,7 +107,7 @@ Device class changes
 --------------------
 
 The following devices have been reclassified into the ``tiny`` device class.
-This affects site-specific package selection
+This affects site-specific feature and package selection and disables ``apk`` by default.
 
 - OpenMesh
 
@@ -113,30 +130,49 @@ Features
 .. _#3602: https://github.com/freifunk-gluon/gluon/pull/3602
 .. _#3701: https://github.com/freifunk-gluon/gluon/pull/3701
 .. _#3736: https://github.com/freifunk-gluon/gluon/pull/3736
+.. _#3777: https://github.com/freifunk-gluon/gluon/pull/3777
 .. _#3791: https://github.com/freifunk-gluon/gluon/pull/3791
-.. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
+.. _#3832: https://github.com/freifunk-gluon/gluon/pull/3832
 .. _f10732fb: https://github.com/openwrt/openwrt/commit/f10732fb5632091452c5b091d3bbd3102d1148da
 
 - Add basic support for 6 GHz Wi-Fi, including client bridge configuration and radio statistics
   (`#3602`_)
-- Expand BATMAN_V integration with throughput reporting and algorithm-specific status-page metrics
-  (`#3736`_)
-- Allow the autoupdater to retrieve update manifests over HTTPS when TLS support is installed
-  (`#3813`_)
+- Expand BATMAN_V integration with throughput reporting, algorithm-specific status-page metrics,
+  and ``gluon-radv-filterd`` support (`#3736`_)
+- Add network-triggered Config Mode activation (``gluon-network-setup-mode``) for devices without a
+  reset button (`#3852`_)
+- Give network interfaces on x86 persistent names based on PCI address (``enpXsY``) or MAC address
+  (``enxXXXXXX``) and preserve interface roles across upgrades (`#3832`_)
 - Extend the status-page to allow navigation elements for community-specific subpages (`#3701`_)
-- Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3791`_)
-- mac80211 now estimates the available throughput of wireless links which use rate control offloading (`f10732fb`_)
+- Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3777`_, `#3791`_)
+- mac80211 now estimates the available throughput of wireless links which use rate control
+  offloading (`f10732fb`_)
 
 
 Bugfixes and other changes
 --------------------------
 
+.. _#3673: https://github.com/freifunk-gluon/gluon/pull/3673
+.. _#3717: https://github.com/freifunk-gluon/gluon/pull/3717
+.. _#3757: https://github.com/freifunk-gluon/gluon/pull/3757
 .. _#3799: https://github.com/freifunk-gluon/gluon/pull/3799
 .. _#3801: https://github.com/freifunk-gluon/gluon/pull/3801
+.. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
+.. _#3814: https://github.com/freifunk-gluon/gluon/pull/3814
+.. _#3816: https://github.com/freifunk-gluon/gluon/pull/3816
+.. _#3826: https://github.com/freifunk-gluon/gluon/pull/3826
+.. _#3862: https://github.com/freifunk-gluon/gluon/pull/3862
 
+- Fix autoupdater HTTPS downloads when TLS support is installed (`#3813`_)
 - Adjust kernel parameters for devices with 64 MB RAM to improve performance and stability
-  (`#3801`_)
+  (`#3801`_, `#3826`_)
 - Use the smaller dnsmasq variant on constrained targets (`#3799`_)
+- Fix WAN DNS servers getting lost after ``network restart`` in ``gluon-wan-dnsmasq`` (`#3862`_)
+- Recreate ``/etc/config/gluon`` during ``gluon-reconfigure`` if it is missing (`#3814`_)
+- Set a deterministic MAC-derived global DHCPv4/DHCPv6 client DUID across reconfigures (`#3717`_)
+- Fix MT7915 Wi-Fi power-save state synchronization and mac80211 AQL airtime accounting (`#3673`_)
+- Drop factory image for TP-Link Archer C6 v2 due to flash size constraints (`#3757`_)
+- Remove non-working recovery images for D-Link AQUILA PRO AI M30 A1 and M60 A1 (`#3816`_)
 
 
 Known issues
@@ -146,11 +182,9 @@ Known issues
 .. _#496: https://github.com/freifunk-gluon/gluon/issues/496
 .. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
 
-- The integration of the BATMAN_V routing algorithm is incomplete.
+- BATMAN_V: Throughput values are not correctly acquired for different interface types (`#1728`_)
 
-  - Throughput values are not correctly acquired for different interface types (`#1728`_)
-
-    This affects virtual interface types like bridges and VXLAN.
+  This affects virtual interface types like bridges and VXLAN.
 
 - Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
 
