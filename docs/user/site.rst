@@ -179,6 +179,12 @@ wifi5 \: optional
 
   .. _weather radars: https://homepage.univie.ac.at/albert.rafetseder/RADARs/help.html
 
+  Radios whose driver does not support DFS (radar detection), such as those based on the
+  MediaTek MT7613 chipset, cannot use ``outdoor_chanlist`` if it contains DFS channels.
+  In outdoor mode, such radios will fall back to the channels 149-173, which do not
+  require DFS in most regulatory domains, but are limited to a lower transmit power.
+  See :doc:`../features/wlan-configuration` for details.
+
   ::
 
     wifi5 = {
