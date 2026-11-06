@@ -139,7 +139,7 @@ Features
 - Add network-triggered Config Mode activation (``gluon-network-setup-mode``) for devices without a
   reset button (`#3852`_)
 - Give network interfaces on x86 persistent names based on PCI address (``enpXsY``) or MAC address
-  (``enxXXXXXX``) and preserve interface roles across upgrades (`#3832`_)
+  (``enxXXXXXX``) (`#3832`_)
 - Extend the status-page to allow navigation elements for community-specific subpages (`#3701`_)
 - Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3777`_, `#3791`_)
 - mac80211 now estimates the available throughput of wireless links which use rate control
