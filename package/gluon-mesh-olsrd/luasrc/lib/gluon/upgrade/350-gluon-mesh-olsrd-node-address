@@ -1,0 +1,41 @@
+#!/usr/bin/lua
+
+local iputil = require 'gluon.iputil'
+local site = require 'gluon.site'
+local sysconfig = require 'gluon.sysconfig'
+
+local uci = require('simple-uci').cursor()
+
+-- IPv4 address on loopback, an existing non-127 one is kept
+
+local LOOPBACK4 = '127.0.0.1/8'
+
+local function configured_address()
+	for _, address in ipairs(uci:get_list('network', 'loopback', 'ipaddr')) do
+		if not address:match('^127%.') then
+			return address
+		end
+	end
+end
+
+local function generate_address()
+	local prefix = site.node_prefix4()
+	local range = prefix and site.node_prefix4_range()
+
+	prefix = prefix or site.prefix4()
+	if not prefix then
+		return
+	end
+
+	return iputil.mac_to_ip4(prefix, uci:get('network', 'loopback', 'macaddr') or sysconfig.primary_mac, range)
+end
+
+if not configured_address() then
+	local address = generate_address()
+
+	if address then
+		uci:set_list('network', 'loopback', 'ipaddr', { LOOPBACK4, address })
+		uci:delete('network', 'loopback', 'netmask')
+		uci:save('network')
+	end
+end
