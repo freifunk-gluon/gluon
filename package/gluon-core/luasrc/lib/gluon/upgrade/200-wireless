@@ -79,6 +79,8 @@ local function get_htmode(radio)
 		channel_width = site.wifi24.channel_width(20)
 	elseif radio.band == '5g' then
 		channel_width = site.wifi5.channel_width(20)
+	elseif radio.band == '6g' then
+		channel_width = site.wifi6.channel_width(20)
 	end
 
 	local phy = wireless.find_phy(radio)
