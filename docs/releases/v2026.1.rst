@@ -1,0 +1,188 @@
+Gluon 2026.1
+============
+
+Important notes
+---------------
+
+Upgrades are only supported from v2023.2 and later.
+
+This release is based on the OpenWrt 25.12 release branch, using the following components:
+
+- Linux 6.12
+- mac80211-backports 6.18
+- batman-adv 2025.4
+
+
+Introduction of APK
+-------------------
+
+OpenWrt 25.12 uses ``apk`` as its package manager. A quick reference guide
+for ``apk`` can be found in the MOTD when connecting via SSH as well as in
+the `OpenWrt documentation <https://openwrt.org/docs/guide-user/additional-software/opkg-to-apk-cheatsheet>`__.
+To save flash space, ``apk`` is disabled by default on ``tiny`` class devices.
+
+For signing the generated ``apk`` package repository, OpenWrt 25.12 uses ECDSA keys stored at
+``openwrt/private-key.pem`` and ``openwrt/public-key.pem`` (in addition to ``openwrt/key-build*``
+for firmware image signatures). Communities that persist signing keys across builds must back up
+and restore these ``.pem`` files as well.
+
+
+Site changes
+------------
+
+.. _#3859: https://github.com/freifunk-gluon/gluon/issues/3859
+
+- The ``opkg`` section in ``site.conf`` must be renamed to ``apk``.
+- Unlike ``opkg``, OpenWrt 25.12 fails the build when deselecting non-existent packages
+  (``-pkgname``) in ``image-customization.lua`` (such as ``-opkg``, ``-wpad-basic``, ``-wpad-mini``,
+  or ``-kmod-ipt-offload``).
+- In OpenWrt 25.12, ``kmod-usb-net-rtl8152`` no longer pulls in ``kmod-usb-net-cdc-ncm`` as a
+  dependency (`#3859`_). Communities including USB Ethernet drivers in ``image-customization.lua``
+  should explicitly add ``kmod-usb-net-cdc-ncm`` so NCM-based adapters (such as ASIX AX88179B) keep
+  working after an upgrade.
+
+
+Added hardware support
+----------------------
+
+ipq40xx-generic
+~~~~~~~~~~~~~~~
+
+- ASUS
+
+  - Lyra Mini (MAP-AC1300)
+
+- NETGEAR
+
+  - Orbi RBR20 / RBS20
+  - Orbi RBR40 / RBS40
+
+ipq806x-generic
+~~~~~~~~~~~~~~~
+
+- Aruba
+
+  - AP-32x series
+
+mediatek-filogic
+~~~~~~~~~~~~~~~~
+
+- Acer
+
+  - Vero W6M
+
+qualcommax-ipq50xx
+~~~~~~~~~~~~~~~~~~
+
+This is a new target.
+
+- Linksys
+
+  - MX5500
+
+qualcommax-ipq807x
+~~~~~~~~~~~~~~~~~~
+
+- Linksys
+
+  - MX4200 v1
+
+ramips-mt7621
+~~~~~~~~~~~~~
+
+- Plasma Cloud
+
+  - PAX1800-Lite
+
+- Zyxel
+
+  - NWA55AXE
+
+
+Device class changes
+--------------------
+
+The following devices have been reclassified into the ``tiny`` device class.
+This affects site-specific feature and package selection and disables ``apk`` by default.
+
+- OpenMesh
+
+  - OM2P
+
+- Plasma Cloud
+
+  - PA300 / PA300E
+
+- TP-Link
+
+  - Archer C6 v2
+  - Archer C60 v1
+  - CPE710 v2
+
+
+Features
+--------
+
+.. _#3602: https://github.com/freifunk-gluon/gluon/pull/3602
+.. _#3701: https://github.com/freifunk-gluon/gluon/pull/3701
+.. _#3736: https://github.com/freifunk-gluon/gluon/pull/3736
+.. _#3777: https://github.com/freifunk-gluon/gluon/pull/3777
+.. _#3791: https://github.com/freifunk-gluon/gluon/pull/3791
+.. _#3832: https://github.com/freifunk-gluon/gluon/pull/3832
+.. _#3852: https://github.com/freifunk-gluon/gluon/pull/3852
+.. _f10732fb: https://github.com/openwrt/openwrt/commit/f10732fb5632091452c5b091d3bbd3102d1148da
+
+- Add basic support for 6 GHz Wi-Fi, including client bridge configuration and radio statistics
+  (`#3602`_)
+- Expand BATMAN_V integration with throughput reporting, algorithm-specific status-page metrics,
+  and ``gluon-radv-filterd`` support (`#3736`_)
+- Add network-triggered Config Mode activation (``gluon-network-setup-mode``) for devices without a
+  reset button (`#3852`_)
+- Give network interfaces on x86 persistent names based on PCI address (``enpXsY``) or MAC address
+  (``enxXXXXXX``) (`#3832`_)
+- Extend the status-page to allow navigation elements for community-specific subpages (`#3701`_)
+- Allow Meshtastic multicast traffic to pass the mesh multicast filter (`#3777`_, `#3791`_)
+- mac80211 now estimates the available throughput of wireless links which use rate control
+  offloading (`f10732fb`_)
+
+
+Bugfixes and other changes
+--------------------------
+
+.. _#3717: https://github.com/freifunk-gluon/gluon/pull/3717
+.. _#3799: https://github.com/freifunk-gluon/gluon/pull/3799
+.. _#3801: https://github.com/freifunk-gluon/gluon/pull/3801
+.. _#3813: https://github.com/freifunk-gluon/gluon/pull/3813
+.. _#3814: https://github.com/freifunk-gluon/gluon/pull/3814
+.. _#3826: https://github.com/freifunk-gluon/gluon/pull/3826
+.. _#3862: https://github.com/freifunk-gluon/gluon/pull/3862
+
+- Fix autoupdater HTTPS downloads when TLS support is installed (`#3813`_)
+- Adjust kernel parameters for devices with 64 MB RAM to improve performance and stability
+  (`#3801`_, `#3826`_)
+- Use the smaller dnsmasq variant on constrained targets (`#3799`_)
+- Fix WAN DNS servers getting lost after ``network restart`` in ``gluon-wan-dnsmasq`` (`#3862`_)
+- Recreate ``/etc/config/gluon`` during ``gluon-reconfigure`` if it is missing (`#3814`_)
+- Set a deterministic MAC-derived global DHCPv4/DHCPv6 client DUID across reconfigures (`#3717`_)
+
+
+Known issues
+------------
+
+.. _#94: https://github.com/freifunk-gluon/gluon/issues/94
+.. _#496: https://github.com/freifunk-gluon/gluon/issues/496
+.. _#1728: https://github.com/freifunk-gluon/gluon/issues/1728
+
+- BATMAN_V: Throughput values are not correctly acquired for different interface types (`#1728`_)
+
+  This affects virtual interface types like bridges and VXLAN.
+
+- Default TX power on many Ubiquiti devices is too high, correct offsets are unknown (`#94`_)
+
+  Reducing the TX power in the Advanced Settings is recommended.
+
+- In configurations without VXLAN, the MAC address of the WAN interface is modified even when
+  Mesh-on-WAN is disabled (`#496`_)
+
+  This may lead to issues in environments where a fixed MAC address is expected (like VMware when
+  promiscuous mode is disallowed).
