@@ -21,7 +21,8 @@ device('avm-fritz-box-3370-rev-2-hynix-nand', 'avm_fritz3370-rev2-hynix', {
 		{'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
 		{'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
 	},
-	broken = true, -- no button for setup mode; hw revision not visible on device
+	packages = {'gluon-network-setup-mode'}, -- No reset button
+	broken = true, -- hw revision not visible on device
 })
 
 device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
@@ -30,7 +31,8 @@ device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
 		{'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
 		{'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
 	},
-	broken = true, -- no button for setup mode; hw revision not visible on device
+	packages = {'gluon-network-setup-mode'}, -- No reset button
+	broken = true, -- hw revision not visible on device
 })
 
 device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
