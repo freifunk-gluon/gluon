@@ -1,0 +1,24 @@
+#!/bin/sh
+
+badrequest() {
+	echo 'Status: 400 Bad Request'
+	echo
+	exit 1
+}
+
+case "${REQUEST_METHOD}" in
+	POST)
+		;;
+	*)
+		badrequest
+		;;
+esac
+
+if ! [ -e /usr/sbin/autoupdater ]; then
+	badrequest
+fi
+
+echo ""
+
+logger -t autoupdater "Receiving manifest via HTTP POST, starting autoupdater"
+exec autoupdater - > /dev/null 2>&1
