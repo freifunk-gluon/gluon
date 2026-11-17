@@ -1,0 +1,98 @@
+From: Christian Buschau <cbuschau@d00t.de>
+Date: Fri, 13 Nov 2026 17:57:32 +0100
+Subject: ramips: use network trigger for some single LAN LED devices
+
+The TP-Link Archer A6 v3, C6 v3 and AX23 v1 all have multiple LAN ports
+with a single LAN LED. Currently, this LED is driven by the state of the
+virtual br-lan bridge. In conditions where this bridge does not exist or
+contains other virtual devices (e.g. in Gluon), the LED also indicates
+the status of these virtual interfaces, which is not desired.
+Use the new network LED trigger to limit the LED to physical devices.
+
+Fixes https://github.com/freifunk-gluon/gluon/issues/2756
+
+Signed-off-by: Christian Buschau <cbuschau@d00t.de>
+(cherry picked from commit de1e5fd2d8f471b657e21e93b8fb61a956df302c)
+
+diff --git a/target/linux/ramips/dts/mt7621_tplink_archer-ax23-v1.dts b/target/linux/ramips/dts/mt7621_tplink_archer-ax23-v1.dts
+index 0ffa2d387e9e4cf04822bc34c0614472e30ebf52..f218b9fefd44e5c4acb703c6ea502f8eddd006b3 100644
+--- a/target/linux/ramips/dts/mt7621_tplink_archer-ax23-v1.dts
++++ b/target/linux/ramips/dts/mt7621_tplink_archer-ax23-v1.dts
+@@ -75,6 +75,7 @@
+ 			function = LED_FUNCTION_LAN;
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "network";
+ 		};
+ 
+ 		wps {
+diff --git a/target/linux/ramips/dts/mt7621_tplink_archer-x6-v3.dtsi b/target/linux/ramips/dts/mt7621_tplink_archer-x6-v3.dtsi
+index 83864975416dca01bac51822a2f53b0a163c2f71..64a407bcbf4c41ede8edd5cd501024d53ba39c53 100644
+--- a/target/linux/ramips/dts/mt7621_tplink_archer-x6-v3.dtsi
++++ b/target/linux/ramips/dts/mt7621_tplink_archer-x6-v3.dtsi
+@@ -56,6 +56,7 @@
+ 			color = <LED_COLOR_ID_GREEN>;
+ 			function = LED_FUNCTION_LAN;
+ 			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "network";
+ 		};
+ 
+ 		led-wifi5g {
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index 1b6360b9d6ba5afc8b0adda1fb87dedc0c30d2d5..4de1bb596891b1ff9f05f84e028d28faccbc8322 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -2914,7 +2914,7 @@ define Device/tplink_archer-ax23-v1
+   $(Device/tplink-safeloader)
+   DEVICE_MODEL := Archer AX23
+   DEVICE_VARIANT := v1
+-  DEVICE_PACKAGES := kmod-mt7915-firmware -uboot-envtools
++  DEVICE_PACKAGES := kmod-mt7915-firmware kmod-ledtrig-network -uboot-envtools
+   TPLINK_BOARD_ID := ARCHER-AX23-V1
+   KERNEL := $(KERNEL_DTB) | uImage lzma
+   IMAGE_SIZE := 15744k
+@@ -2926,7 +2926,7 @@ define Device/tplink_archer-a6-v3
+   $(Device/tplink-safeloader)
+   DEVICE_MODEL := Archer A6
+   DEVICE_VARIANT := V3
+-  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e \
++  DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-ledtrig-network \
+ 	kmod-mt7663-firmware-ap -uboot-envtools
+   TPLINK_BOARD_ID := ARCHER-A6-V3
+   KERNEL := $(KERNEL_DTB) | uImage lzma
+@@ -2940,7 +2940,7 @@ define Device/tplink_archer-c6-v3
+   DEVICE_MODEL := Archer C6
+   DEVICE_VARIANT := V3
+   DEVICE_PACKAGES := kmod-mt7603 kmod-mt7615e kmod-mt7663-firmware-ap \
+-	-uboot-envtools
++	kmod-ledtrig-network -uboot-envtools
+   TPLINK_BOARD_ID := ARCHER-C6-V3
+   KERNEL := $(KERNEL_DTB) | uImage lzma
+   IMAGE_SIZE := 15744k
+diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
+index ee89f1a5cd3fd7a23d4a5f9a52b2a02d9058f26c..a9ad30442b163b927f3342b205984f8cc2519b8d 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
++++ b/target/linux/ramips/mt7621/base-files/etc/board.d/01_leds
+@@ -188,7 +188,10 @@ netgear,r6260|\
+ netgear,r6350|\
+ netgear,r6850|\
+ netgear,wac124|\
+-netgear,wndr3700-v5)
++netgear,wndr3700-v5|\
++tplink,archer-a6-v3|\
++tplink,archer-ax23-v1|\
++tplink,archer-c6-v3)
+ 	ucidef_set_led_netdev "wan" "wan" "green:wan" "wan"
+ 	;;
+ netgear,r6700-v2|\
+@@ -212,10 +215,7 @@ oraybox,x3a)
+ snr,snr-cpe-me1)
+ 	ucidef_set_led_usbport "usb" "USB" "green:usb" "usb1-port1" "usb2-port1"
+ 	;;
+-tplink,archer-a6-v3|\
+ tplink,archer-ax21-v4|\
+-tplink,archer-ax23-v1|\
+-tplink,archer-c6-v3|\
+ tplink,archer-c6u-v1|\
+ tplink,ex220-v1)
+ 	ucidef_set_led_netdev "lan" "LAN" "green:lan" "br-lan"
