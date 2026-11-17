@@ -578,6 +578,8 @@ ramips-mt7621
 
 * TP-Link
 
+  - Archer AX23 (v1)
+  - Archer C6 (v3)
   - EAP615-Wall (v1)
   - RE500 (v1)
   - RE650 (v1)

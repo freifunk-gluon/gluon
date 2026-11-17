@@ -117,13 +117,9 @@ device('plasma-cloud-pax1800-lite', 'plasmacloud_pax1800-lite')
 
 -- TP-Link
 
-device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1', {
-	broken = true, -- LAN LED not working - review after resolving #2756
-})
+device('tp-link-archer-ax23-v1', 'tplink_archer-ax23-v1')
 
-device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3', {
-	broken = true, -- LAN LED not working - review after resolving #2756
-})
+device('tp-link-archer-c6-v3', 'tplink_archer-c6-v3')
 
 device('tp-link-eap615-wall-v1', 'tplink_eap615-wall-v1')
 
