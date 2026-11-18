@@ -86,3 +86,6 @@ local f = io.open('/usr/lib/micron.d/autoupdater', 'w')
 f:write(string.format('%i 4 * * * /usr/sbin/autoupdater\n', minute))
 f:write(string.format('%i 0-3,5-23 * * * /usr/sbin/autoupdater --fallback\n', minute))
 f:close()
+
+os.remove("/lib/gluon/core/sysupgrade/manifest.txt")
+os.rename("/lib/gluon/core/sysupgrade/manifest.txt.new", "/lib/gluon/core/sysupgrade/manifest.txt")

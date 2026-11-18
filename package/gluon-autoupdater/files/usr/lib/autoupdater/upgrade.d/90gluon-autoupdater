@@ -1,0 +1,12 @@
+#!/bin/sh
+
+OUTDIR="/lib/gluon/core/sysupgrade"
+
+if [ -f /tmp/manifest.txt ]; then
+	# ignore errors, the sysupgrade is more important
+	if ! [ -d "$OUTDIR" ]; then
+		mkdir "$OUTDIR" || true
+	fi
+
+	cp /tmp/manifest.txt "$OUTDIR/manifest.txt.new" || true
+fi
