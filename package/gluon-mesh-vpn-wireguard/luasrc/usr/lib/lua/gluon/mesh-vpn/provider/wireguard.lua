@@ -26,17 +26,7 @@ function M.active()
 end
 
 function M.set_limit(ingress_limit, egress_limit)
-	uci:delete('simple-tc', 'mesh_vpn')
-	if ingress_limit ~= nil and egress_limit ~= nil then
-		uci:section('simple-tc', 'interface', 'mesh_vpn', {
-			ifname = vpn_core.get_interface(),
-			enabled = true,
-			limit_egress = egress_limit,
-			limit_ingress = ingress_limit,
-		})
-	end
-
-	uci:save('simple-tc')
+	vpn_core.set_limit(ingress_limit, egress_limit)
 end
 
 function M.mtu()
