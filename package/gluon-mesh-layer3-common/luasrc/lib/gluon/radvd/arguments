@@ -2,7 +2,10 @@
 
 local site = require "gluon.site"
 
-io.write("-i local-node --default-lifetime 900 -a " .. site.prefix6())
+io.write("-i local-node -a " .. site.prefix6())
+
+local default_lifetime = site.radvd() and site.radvd.default_lifetime() or 900
+io.write(" --default-lifetime " .. default_lifetime)
 
 if site.dns.servers() and site.next_node.ip6() then
 	io.write(" --rdnss " .. site.next_node.ip6())
@@ -13,5 +16,9 @@ if site.radvd() then
 	end
 	if site.radvd.valid_lifetime() then
 		io.write(" --valid-lifetime " .. site.radvd.valid_lifetime())
+	end
+	if site.radvd.min_interval() and site.radvd.max_interval() then
+		io.write(" --min-router-adv-interval " .. site.radvd.min_interval())
+		io.write(" --max-router-adv-interval " .. site.radvd.max_interval())
 	end
 end

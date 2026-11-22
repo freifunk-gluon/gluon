@@ -14,4 +14,11 @@ if site.radvd() then
 	if site.radvd.valid_lifetime() then
 		io.write(" --valid-lifetime " .. site.radvd.valid_lifetime())
 	end
+	if site.radvd.default_lifetime() then
+		io.write(" --default-lifetime " .. site.radvd.default_lifetime())
+	end
+	if site.radvd.min_interval() and site.radvd.max_interval() then
+		io.write(" --min-router-adv-interval " .. site.radvd.min_interval())
+		io.write(" --max-router-adv-interval " .. site.radvd.max_interval())
+	end
 end
