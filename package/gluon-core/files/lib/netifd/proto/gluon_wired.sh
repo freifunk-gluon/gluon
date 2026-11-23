@@ -7,6 +7,7 @@
 init_proto "$@"
 
 proto_gluon_wired_init_config() {
+	proto_config_add_int hop_penalty
 	proto_config_add_string func
 	proto_config_add_boolean vxlan
 	proto_config_add_string vxpeer6addr
