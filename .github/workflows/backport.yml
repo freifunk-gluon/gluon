@@ -9,7 +9,7 @@ jobs:
   backport:
     name: Backport Pull Request
     if: github.repository_owner == 'freifunk-gluon' && github.event.pull_request.merged == true && (github.event_name != 'labeled' || startsWith('backport', github.event.label.name))
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - name: Create backport PRs
