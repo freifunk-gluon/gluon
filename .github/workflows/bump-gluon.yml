@@ -11,7 +11,7 @@ on:
 
 jobs:
   update-openwrt:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       COMMIT_NAME: Gluon CI Bot
       COMMIT_EMAIL: bot@freifunk-gluon.github.io

@@ -9,7 +9,7 @@ permissions:
 jobs:
   check-ci:
     name: Check generated CI
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - name: Install example site
