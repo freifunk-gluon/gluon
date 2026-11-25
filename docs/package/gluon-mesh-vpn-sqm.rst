@@ -2,7 +2,7 @@ gluon-mesh-vpn-sqm
 ==================
 
 Tools for Smart Queue Management (SQM) can be used to reduce bufferbloat latency on the mesh-VPN connection.
-For this, CAKE is used as a QoS mechanism on compatible VPN providers (currently only fastd supported).
+For this, CAKE is used as a QoS mechanism on the mesh-VPN interface (supported by the fastd and WireGuard providers).
 
 As CAKE needs to know the upper limits of the connection speed, it is enabled when throughput limits are configured for the mesh-VPN.
 These limits are then used for traffic shaping.
