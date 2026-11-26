@@ -20,6 +20,33 @@ B.A.T.M.A.N. Advanced project homepage:
 
 * https://www.open-mesh.org/projects/batman-adv/wiki/Wiki
 
+Packages
+^^^^^^^^
+
+Support for batman-adv is split into two packages:
+
+* *gluon-mesh-batman-adv-common* sets up the batman-adv mesh itself: the
+  ``bat0`` interface, the client bridge, the next-node address, respondd data
+  and status checks. Packages that only need a batman-adv mesh depend on it.
+* *gluon-mesh-batman-adv-15* (feature *mesh-batman-adv-15*) adds the role of
+  a node in the usual Gluon topology: the node is a host on the client network
+  (no IPv6 forwarding on ``br-client`` and ``local-node``), announces the site
+  prefix to its own clients on ``local-node`` via :doc:`gluon-radvd`, without
+  announcing a default route, and router advertisements and solicitations do
+  not cross the mesh.
+
+The client bridge set up by *gluon-mesh-batman-adv-common* still assumes a
+single site prefix: the node takes its own address on the client network by
+SLAAC or DHCPv6 and has an on-link route for ``prefix6`` on it.
+
+A mesh package for a different topology on top of batman-adv can depend on
+*gluon-mesh-batman-adv-common* and provide its own
+``/lib/gluon/radvd/arguments`` instead of *gluon-mesh-batman-adv-15*. The
+packages that the feature rules in ``package/features`` add together with
+*mesh-batman-adv-15* (:doc:`gluon-radvd`, :doc:`gluon-ebtables-limit-arp`,
+*gluon-status-page-mesh-batman-adv*) are then selected by the mesh package or
+by the ``features`` file of its feed.
+
 B.A.T.M.A.N. Routing Algorithms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
