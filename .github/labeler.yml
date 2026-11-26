@@ -5,7 +5,7 @@
       - docs/package/gluon-mesh-batman-adv*
       - package/gluon-alfred/**
       - package/gluon-client-bridge/**
-      - package/gluon-mesh-batman-adv/**
+      - package/gluon-mesh-batman-adv*/**
       - package/libbatadv/**
 "3. topic: build":
   - changed-files:

@@ -6,7 +6,7 @@ include ../gluon.mk
 
 define Package/gluon-ebtables-limit-arp
   TITLE:=Ebtables limiter for ARP packets
-  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv
+  DEPENDS:=+gluon-core +gluon-ebtables gluon-mesh-batman-adv-common
 endef
 
 define Package/gluon-ebtables-limit-arp/description
