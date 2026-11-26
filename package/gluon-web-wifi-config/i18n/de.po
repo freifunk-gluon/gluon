@@ -50,6 +50,15 @@ msgstr "Knoten wird im Außenbereich betrieben"
 msgid "Outdoor Installation"
 msgstr "Outdoor-Installation"
 
+msgid ""
+"The 5 GHz radio of this device does not support DFS (radar detection). In "
+"outdoor mode, only the channels 149-173 can be used instead, which are "
+"limited to a lower transmit power."
+msgstr ""
+"Das 5-GHz-Funkmodul dieses Geräts unterstützt kein DFS (Radarerkennung). Im "
+"Outdoor-Modus können daher stattdessen nur die Kanäle 149-173 verwendet "
+"werden, die auf eine geringere Sendeleistung begrenzt sind."
+
 msgid "Transmission power"
 msgstr "Sendeleistung"
 

@@ -13,6 +13,10 @@ Configuring the node for outdoor use tunes the 5 GHz radio to a frequency and tr
 It also enables dynamic frequency selection (DFS; radar detection).
 At the same time, mesh functionality is disabled as it requires neighbouring nodes to stay on the same channel permanently.
 
+Radios whose driver does not implement radar detection (DFS), such as those based on the MediaTek MT7613 chipset, cannot use DFS channels:
+The channel availability check would fail and the radio would never come up.
+On such radios, outdoor mode restricts the 5 GHz radio to the channels 149-173 instead, which do not require DFS in most regulatory domains, but are limited to a lower transmit power (for example, 25 mW EIRP in the EU).
+
 Upgrade behaviour
 -----------------
 

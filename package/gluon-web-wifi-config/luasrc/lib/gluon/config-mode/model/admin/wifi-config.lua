@@ -121,13 +121,23 @@ end)
 
 
 if wireless.device_uses_band(uci, '5g') and not wireless.preserve_channels(uci) then
-	local r = f:section(Section, translate("Outdoor Installation"), translate(
+	local outdoor_desc = translate(
 		"Configuring the node for outdoor use tunes the 5 GHz radio to a frequency "
 		.. "and transmission power that conforms with the local regulatory requirements. "
 		.. "It also enables dynamic frequency selection (DFS; radar detection). At the "
 		.. "same time, mesh functionality is disabled as it requires neighbouring nodes "
 		.. "to stay on the same channel permanently."
-	))
+	)
+
+	if not wireless.device_supports_dfs(uci) then
+		outdoor_desc = outdoor_desc .. ' ' .. translate(
+			"The 5 GHz radio of this device does not support DFS (radar detection). "
+			.. "In outdoor mode, only the channels 149-173 can be used instead, "
+			.. "which are limited to a lower transmit power."
+		)
+	end
+
+	local r = f:section(Section, translate("Outdoor Installation"), outdoor_desc)
 
 	local outdoor = r:option(Flag, 'outdoor', translate("Node will be installed outdoors"))
 	outdoor.default = wireless.is_outdoor(uci)
